@@ -21729,5 +21729,22 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.6.44): case piece `Raise eid` of ncompile_correct (crep_to_loopProofScript.sml:110-134 statement; Resume ncompile_correct[Raise] at 1750-1756; evaluate_ind's Raise case has no induction hypothesis). No extra antecedent: the payload eid (the crepLang 'a word) and v1, then HOL's ∀res s1 t ctxt l, all seven premises with v := Raise eid, and the full ∃ck res1 t1 conclusion as in the If piece. compile (Raise eid) = Seq (Assign (vmax+1) (Const eid)) (Raise (vmax+1)) (tagged compileHOLExact). The proof follows HOL: ck = 0; the source gives (SOME (Exception eid), empty_locals s); the target gives (SOME (Exception (Word eid)), call_env [] (set_var ...)), matching the result case; state/mem/globals/code relations carry over (locals-only updates); the locals case is T. Qualifiers as for the If piece."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ncompile_correct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NCompileCorrect/Seq.lean",
+    "lean_name": "crepToLoop_ncompile_correct_seq",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison (2026-09-29; bead flapjack-pxn.18.5.6.43) against ncompile_correct at crep_to_loopProofScript.sml:110-154 and Resume ncompile_correct[Seq] at :1679-1703. The two and only two added induction premises are the full ncompile_correct property for c1 and c2 at the same source state; the theorem keeps the source evaluation and non-Error premises, all five input relations, and the HOL existential target clock/result/state and six postconditions. No target evaluation/result or post-relation is assumed. Exact evalCrepSemHOLProgExact, LoopSemStateFiniteExact.evaluate, compileHOLExact and exact relations are used. The source Seq equation is the line-443 fix-clock-free evaluate_def form: run c1, run c2 from its state iff the first result is NONE, otherwise retain its pair. When the first source result is NONE, the proof lifts the first target run by the second clock extension using evaluate_add_clock_eq, then composes the second induction hypothesis; for a non-NONE result, the target Seq short-circuits after the first run. The finite-map relation qualifier names the exact fields traversed by state_rel, mem_rel/globals_rel/code_rel/locals_rel carriers and their context, with same-module roundtrip witnesses; words_as_type_indexed_bitvec records HOL's positive type-indexed word dimension as BitVec width."
   }
 ]
