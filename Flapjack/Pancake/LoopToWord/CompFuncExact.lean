@@ -10,7 +10,9 @@ These are the clause-for-clause HOL ports of `comp_func_def`,
 `cakeml/pancake/loop_to_wordScript.sml:164-177`, over the exact
 `HolLoopProg`/`Spt` carriers and the exact `compHOL`. They reuse the reviewed
 `accVarsHOL`, `toNumSetHOL`, `fromNumSetHOL`, `sptDifference`, `makeCtxtHOL`,
-and `compHOL`. The production list-based route remains separate.
+and `compHOL`. Fixed-width production entrypoints call these definitions when
+the executable source codec and FFI byte-range guard succeed; executable-only
+syntax retains the compatibility implementation.
 -/
 
 namespace Flapjack

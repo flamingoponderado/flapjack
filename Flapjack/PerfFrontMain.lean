@@ -424,7 +424,7 @@ def main : IO Unit := do
           let loop := pipelineLoopFunctionsSource .rv64i 1 crepe
           let t9 ← stage "crepToLoop" t8
             (loop.foldl (fun acc (_, _, body) => acc + countLoop body) 0)
-          let word := pipelineWordFunctionsSource loop
+          let word := pipelineWordFunctionsSourceRouted loop
           let _ ← stage "loopToWord" t9
             (word.foldl (fun acc (_, _, body) => acc + countWord body) 0)
           IO.println s!"PERF functions loop={loop.length} word={word.length}"
