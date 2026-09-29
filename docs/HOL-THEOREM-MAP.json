@@ -23641,6 +23641,15 @@
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/CallHelpers.lean",
+    "lean_name": "wordSemMustTerminateLimit",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "MustTerminate_limit_def",
+    "statement_status": "reviewed_word_dimension_as_width",
+    "word_dimension_as_width": "width",
+    "reviewer": "flapjack-luna-c source comparison (2026-09-29; bead flapjack-h29l.13): HOL wordSemScript.sml:970-978 defines MustTerminate_limit over a type dimension as 2*dimword + dimword*dimword + dimword**dimword + dimword**dimword**dimword. HOL uses the type argument only through numeric dimword; Lean binds width : Nat with [NeZero width] via word_dimension_as_width and dimword = 2^width. Arithmetic clauses match exactly, including right-associated exponentiation; no word carrier or other statement/behavior difference is claimed. Direct row must_terminate_limit_1=28 in scripts/hol-probes/word_sem_call_helpers_probe.out is checked by Flapjack.Test.WordSemCallHelpersParity."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/CallHelpers.lean",
     "lean_name": "wordSemSTOP",
     "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
     "hol_name": "STOP_def",

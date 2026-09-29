@@ -98,6 +98,11 @@ also carries `fmap_as_finite_support_relation`, use
 qualifiers required together in either case). The
 reference checker reads only the tagged declaration's signature (not its proof
 or body) and records both qualifiers.
+The separate `word_dimension_as_width := width` qualifier is only for a
+word-free HOL type dimension used numerically: it records the named explicit
+`Nat` width and its own `[NeZero width]` discharge. It cannot be combined with
+`words_as_type_indexed_bitvec`, and, like every qualifier, it permits no change
+to the HOL declaration's equation or behavior.
 The attribute is inert for the kernel; it exists so that
 
 * a reader can find the original statement without a lookup table, whatever
@@ -211,6 +216,12 @@ structure HolRef where
       quantifiers, hypotheses, side conditions, or conclusions, and no
       cross-assistant agreement theorem is required. -/
   wordsAsTypeIndexedBitvec : Bool := false
+  /-- Word-free type-dimension translation: HOL `dimindex (:'a)` is named by
+      an explicit Nat width parameter when the declaration uses the dimension
+      only as a Nat value, without carrying a word. The checker requires the
+      named binder to be Nat and retain its own `[NeZero width]` discharge;
+      source review compares how the dimension is used in both bodies. -/
+  wordDimensionAsWidth : Option String := none
   deriving Inhabited, Repr, BEq
 
 open Lean Meta
@@ -226,6 +237,7 @@ syntax "(" "fmap_as_finite_support_existentials" ":=" "[" ident,+ "]" ")" : holQ
 syntax "(" "fmap_as_finite_support_relation" ":=" "[" ident,* "]" ")" : holQualifier
 syntax "(" "fmap_as_finite_support_equalities" ")" : holQualifier
 syntax "(" "words_as_type_indexed_bitvec" ")" : holQualifier
+syntax "(" "word_dimension_as_width" ":=" ident ")" : holQualifier
 syntax (name := hol) "hol " str str (num)? holQualifier* : attr
 
 private def checkedHolRef (path name : String) (line? : Option Nat := none)
@@ -235,7 +247,8 @@ private def checkedHolRef (path name : String) (line? : Option Nat := none)
     (fmapAsFiniteSupportExistentials : Array String := #[])
     (fmapAsFiniteSupportRelation : Array (String × String) := #[])
     (fmapAsFiniteSupportEqualities : Bool := false)
-    (wordsAsTypeIndexedBitvec : Bool := false) : CoreM HolRef := do
+    (wordsAsTypeIndexedBitvec : Bool := false)
+    (wordDimensionAsWidth : Option String := none) : CoreM HolRef := do
   unless path.startsWith "cakeml/" && path.endsWith ".sml" do
     throwError "@[hol]: path must be a repository-relative `cakeml/...Script.sml` file, got {path}"
   if name.isEmpty || name.any Char.isWhitespace then
@@ -256,7 +269,9 @@ private def checkedHolRef (path name : String) (line? : Option Nat := none)
     throwError "@[hol]: fmap_as_finite_support_existentials binders must be distinct"
   if fmapAsFiniteSupportRelation.toList.eraseDups.length != fmapAsFiniteSupportRelation.size then
     throwError "@[hol]: fmap_as_finite_support_relation entries must be distinct"
-  pure { path, name, line?, listAsArray, namesAsString, namesAsStringBoundary, fmapAsFiniteSupport, fmapAsFiniteSupportResult, fmapAsFiniteSupportParameters, fmapAsFiniteSupportExistentials, fmapAsFiniteSupportRelation, fmapAsFiniteSupportEqualities, wordsAsTypeIndexedBitvec }
+  if wordDimensionAsWidth.isSome && wordsAsTypeIndexedBitvec then
+    throwError "@[hol]: word_dimension_as_width is mutually exclusive with words_as_type_indexed_bitvec"
+  pure { path, name, line?, listAsArray, namesAsString, namesAsStringBoundary, fmapAsFiniteSupport, fmapAsFiniteSupportResult, fmapAsFiniteSupportParameters, fmapAsFiniteSupportExistentials, fmapAsFiniteSupportRelation, fmapAsFiniteSupportEqualities, wordsAsTypeIndexedBitvec, wordDimensionAsWidth }
 
 private def parseHolQualifier (stx : Syntax) : CoreM (String × Array String × Bool × Array (String × String)) := do
   match stx with
@@ -290,6 +305,8 @@ private def parseHolQualifier (stx : Syntax) : CoreM (String × Array String × 
       pure ("fmap_as_finite_support_equalities", #[], true, #[])
   | `(holQualifier| (words_as_type_indexed_bitvec)) =>
       pure ("words_as_type_indexed_bitvec", #[], true, #[])
+  | `(holQualifier| (word_dimension_as_width := $width:ident)) =>
+      pure ("word_dimension_as_width", #[width.getId.eraseMacroScopes.toString], false, #[])
   | _ => throwError "@[hol]: malformed qualifier"
 
 private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
@@ -304,6 +321,7 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
     let mut fmapAsFiniteSupportRelation : Array (String × String) := #[]
     let mut fmapAsFiniteSupportEqualities : Bool := false
     let mut wordsAsTypeIndexedBitvec : Bool := false
+    let mut wordDimensionAsWidth : Option String := none
     for qualifier in qualifiers do
       let (kind, fields, isResult, pairs) ← parseHolQualifier qualifier
       if kind == "list_as_array" then listAsArray := listAsArray ++ fields
@@ -315,8 +333,12 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
       else if kind == "fmap_as_finite_support_relation" then fmapAsFiniteSupportRelation := fmapAsFiniteSupportRelation ++ pairs
       else if kind == "fmap_as_finite_support_equalities" then fmapAsFiniteSupportEqualities := isResult
       else if kind == "words_as_type_indexed_bitvec" then wordsAsTypeIndexedBitvec := isResult
+      else if kind == "word_dimension_as_width" then
+        if wordDimensionAsWidth.isSome then
+          throwError "@[hol]: word_dimension_as_width may appear only once"
+        wordDimensionAsWidth := fields[0]!
       else fmapAsFiniteSupport := fmapAsFiniteSupport ++ fields
-    checkedHolRef path name line? listAsArray namesAsString namesAsStringBoundary fmapAsFiniteSupport fmapAsFiniteSupportResult fmapAsFiniteSupportParameters fmapAsFiniteSupportExistentials fmapAsFiniteSupportRelation fmapAsFiniteSupportEqualities wordsAsTypeIndexedBitvec
+    checkedHolRef path name line? listAsArray namesAsString namesAsStringBoundary fmapAsFiniteSupport fmapAsFiniteSupportResult fmapAsFiniteSupportParameters fmapAsFiniteSupportExistentials fmapAsFiniteSupportRelation fmapAsFiniteSupportEqualities wordsAsTypeIndexedBitvec wordDimensionAsWidth
   match stx with
   | `(attr| hol $path:str $name:str $line:num $qualifiers:holQualifier*) =>
       parse path.getString name.getString (some line.getNat) qualifiers
@@ -481,7 +503,9 @@ private def HolRef.qualifierSuffix (ref : HolRef) : String :=
     " (fmap_as_finite_support_equalities)" else ""
   let wordsAsTypeIndexedBitvec := if ref.wordsAsTypeIndexedBitvec then
     " (words_as_type_indexed_bitvec)" else ""
-  listAsArray ++ namesAsString ++ namesAsStringBoundary ++ fmapAsFiniteSupport ++ fmapAsFiniteSupportResult ++ fmapAsFiniteSupportParameters ++ fmapAsFiniteSupportExistentials ++ fmapAsFiniteSupportRelation ++ fmapAsFiniteSupportEqualities ++ wordsAsTypeIndexedBitvec
+  let wordDimensionAsWidth := ref.wordDimensionAsWidth.map
+    (fun width => s!" (word_dimension_as_width := {width})") |>.getD ""
+  listAsArray ++ namesAsString ++ namesAsStringBoundary ++ fmapAsFiniteSupport ++ fmapAsFiniteSupportResult ++ fmapAsFiniteSupportParameters ++ fmapAsFiniteSupportExistentials ++ fmapAsFiniteSupportRelation ++ fmapAsFiniteSupportEqualities ++ wordsAsTypeIndexedBitvec ++ wordDimensionAsWidth
 
 /-! Parser regressions for the original syntax, each qualifier alone, and both
 qualifiers together. These elaborate temporary syntax values only; they do not
@@ -511,6 +535,30 @@ run_cmd do
   unless HolRef.qualifierSuffix both ==
       " (list_as_array := [fields]) (names_as_string := [name, fieldName])" do
     throwError "@[hol] #hol_refs qualifier-output regression"
+  let dimensionSyntax ← `(attr| hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "MustTerminate_limit_def"
+    (word_dimension_as_width := width))
+  let dimensionRef ← Lean.Elab.Command.liftCoreM (parseHolRefAttribute dimensionSyntax)
+  unless dimensionRef.wordDimensionAsWidth == some "width" &&
+      HolRef.qualifierSuffix dimensionRef == " (word_dimension_as_width := width)" do
+    throwError "@[hol] word_dimension_as_width syntax regression"
+  let duplicateDimensionSyntax ← `(attr| hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "MustTerminate_limit_def"
+    (word_dimension_as_width := width) (word_dimension_as_width := width))
+  let duplicateDimensionRejected ← Lean.Elab.Command.liftCoreM do
+    try
+      let _ ← parseHolRefAttribute duplicateDimensionSyntax
+      pure false
+    catch _ => pure true
+  unless duplicateDimensionRejected do
+    throwError "@[hol] duplicate word_dimension_as_width qualifiers must be rejected"
+  let conflictingDimensionSyntax ← `(attr| hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "MustTerminate_limit_def"
+    (word_dimension_as_width := width) (words_as_type_indexed_bitvec))
+  let conflictingDimensionRejected ← Lean.Elab.Command.liftCoreM do
+    try
+      let _ ← parseHolRefAttribute conflictingDimensionSyntax
+      pure false
+    catch _ => pure true
+  unless conflictingDimensionRejected do
+    throwError "@[hol] word_dimension_as_width and words_as_type_indexed_bitvec must be mutually exclusive"
   let boundarySyntax ← `(attr| hol "cakeml/pancake/panLangScript.sml" "varname"
     (names_as_string := [name, generated]) (names_as_string_boundary := [generated]))
   let boundaryRef ← Lean.Elab.Command.liftCoreM (parseHolRefAttribute boundarySyntax)
