@@ -11,6 +11,8 @@ the exact carriers, using the shared statement helpers of
 
 namespace Flapjack
 
+open Pancake.CrepToLoop.Proofs.NCompileCorrect
+
 namespace ShMemHelpers
 /-! Flapjack helpers (no HOL declaration): the per-operator `sh_mem_load` /
 `sh_mem_store` steps of HOL's ShMem case (`crepSemTheory.sh_mem_*_def`,
@@ -57,12 +59,12 @@ theorem shMemLoad_corresponds (v1 : CrepSemHOLState width σ) [DecidablePred v1.
     (hn : ctxt.vars.lookup name = some mn) (hmn : sptMem mn l)
     (he : crepShMemLoadExactHOL name addr nb v1 = (r, s1)) (hne : r ≠ some .error) :
     ∃ t1 : LoopSemStateFiniteExact width σ,
-      LoopSemStateFiniteExact.shMemLoad mn addr nb st = (crepToLoopResultHOL r, t1) ∧
+      LoopSemStateFiniteExact.shMemLoad mn addr nb st = (resultToLoop r, t1) ∧
       crepToLoopStateRelExact s1 t1 ∧
       crepToLoopMemRelHOLExact s1.memory t1.memory s1.memaddrs ∧
       crepToLoopGlobalsRelHOLExact s1.globals t1.globals ∧
       crepToLoopCodeRelExact ctxt s1.code t1.code ∧
-      crepToLoopResultLocalsHOL ctxt l s1.locals t1.locals r := by
+      localsResultRel ctxt l r s1 t1 := by
   obtain ⟨hs1, hs2, hs3, hs4, hs5, hs6, hs7⟩ := hs
   unfold crepShMemLoadExactHOL at he
   unfold LoopSemStateFiniteExact.shMemLoad
@@ -104,12 +106,12 @@ theorem shMemStore_corresponds (v1 : CrepSemHOLState width σ) [DecidablePred v1
     (hn : ctxt.vars.lookup name = some mn)
     (he : crepShMemStoreExactHOL name addr nb v1 = (r, s1)) (hne : r ≠ some .error) :
     ∃ t1 : LoopSemStateFiniteExact width σ,
-      LoopSemStateFiniteExact.shMemStore mn addr nb st = (crepToLoopResultHOL r, t1) ∧
+      LoopSemStateFiniteExact.shMemStore mn addr nb st = (resultToLoop r, t1) ∧
       crepToLoopStateRelExact s1 t1 ∧
       crepToLoopMemRelHOLExact s1.memory t1.memory s1.memaddrs ∧
       crepToLoopGlobalsRelHOLExact s1.globals t1.globals ∧
       crepToLoopCodeRelExact ctxt s1.code t1.code ∧
-      crepToLoopResultLocalsHOL ctxt l s1.locals t1.locals r := by
+      localsResultRel ctxt l r s1 t1 := by
   obtain ⟨hs1, hs2, hs3, hs4, hs5, hs6, hs7⟩ := hs
   unfold crepShMemStoreExactHOL at he
   unfold LoopSemStateFiniteExact.shMemStore
@@ -201,8 +203,8 @@ theorem crepToLoop_ncompile_correct_shMem {width : Nat} [NeZero width] {σ : Typ
         crepToLoopMemRelHOLExact s1.memory t1.memory s1.memaddrs ∧
         crepToLoopGlobalsRelHOLExact s1.globals t1.globals ∧
         crepToLoopCodeRelExact ctxt s1.code t1.code ∧
-        res1 = crepToLoopResultHOL res ∧
-        crepToLoopResultLocalsHOL ctxt l s1.locals t1.locals res := by
+        res1 = resultToLoop res ∧
+        localsResultRel ctxt l res s1 t1 := by
   intro op v ad v1 res s1 t ctxt l ⟨he, hne, hs, hm, hg, hc, hl⟩
   classical
   rw [evalCrepSemHOLProgExact_eq_evaluate_def] at he
@@ -232,12 +234,12 @@ theorem crepToLoop_ncompile_correct_shMem {width : Nat} [NeZero width] {σ : Typ
   have hnn : n = mn := Option.some.inj (hn1.symm.trans hmn1)
   subst hnn
   obtain ⟨t1, hL, h2s, h2m, h2g, h2c, h2l⟩ : ∃ t1 : LoopSemStateFiniteExact width σ,
-      LoopSemStateFiniteExact.shMemOp op n addr st = (crepToLoopResultHOL res, t1) ∧
+      LoopSemStateFiniteExact.shMemOp op n addr st = (resultToLoop res, t1) ∧
       crepToLoopStateRelExact s1 t1 ∧
       crepToLoopMemRelHOLExact s1.memory t1.memory s1.memaddrs ∧
       crepToLoopGlobalsRelHOLExact s1.globals t1.globals ∧
       crepToLoopCodeRelExact ctxt s1.code t1.code ∧
-      crepToLoopResultLocalsHOL ctxt l s1.locals t1.locals res := by
+      localsResultRel ctxt l res s1 t1 := by
     cases op <;> simp only [crepShMemOpExactHOL] at he <;>
       simp only [LoopSemStateFiniteExact.shMemOp] <;>
       first
@@ -245,7 +247,7 @@ theorem crepToLoop_ncompile_correct_shMem {width : Nat} [NeZero width] {σ : Typ
           he hne
       | exact shMemStore_corresponds v1 st ctxt l v n addr _ res s1 h1s h1m h1g h1c hlst hmn1
           he hne
-  refine ⟨ck, crepToLoopResultHOL res, t1, ?_, h2s, h2m, h2g, h2c, rfl, h2l⟩
+  refine ⟨ck, resultToLoop res, t1, ?_, h2s, h2m, h2g, h2c, rfl, h2l⟩
   rw [compileHOLExact, hmn1]
   simp only [hC]
   rw [LoopSemStateFiniteExact.evaluate_nested_seq_append_none p _ _ _ h1]

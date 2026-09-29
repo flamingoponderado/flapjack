@@ -13,6 +13,8 @@ exact carriers, using the shared statement helpers of
 
 namespace Flapjack
 
+open Pancake.CrepToLoop.Proofs.NCompileCorrect
+
 /-! Owning carriers of the finite maps the statement traverses; same-module
 witnesses for the `fmap_as_finite_support_relation` qualifier. -/
 namespace CrepToLoopNcompileCorrectCallWitnesses
@@ -179,14 +181,14 @@ theorem crepToLoop_ncompile_correct_call {width : Nat} [NeZero width] {σ : Type
           evalCrepSemHOLProgExact { decClockCrepSemHOL v1 with locals := newlocals } prog =
             (some (.exception eid), st) ∧
           caltyp = some (rts, some (eid, p)) →
-        crepToLoopNcompileCorrectAt p { st with locals := v1.locals }) →
+        PropertyAt p { st with locals := v1.locals }) →
       (∀ (args : List (HolWordLab width)) (prog : CrepProgHOL width)
           (newlocals : HolFiniteMapExact Nat (HolWordLab width)),
         argexps.mapM (evalCrepSemHOLExp v1) = some args ∧
           lookupCodeFiniteHOL v1.code fname args args.length = some (prog, newlocals) ∧
           ¬ (match caltyp with | none => False | some (rts, _) => ¬ rts.Nodup) ∧
           v1.clock ≠ 0 →
-        crepToLoopNcompileCorrectAt prog { decClockCrepSemHOL v1 with locals := newlocals }) →
+        PropertyAt prog { decClockCrepSemHOL v1 with locals := newlocals }) →
     ∀ (res : Option (CrepResultHOLExact width)) (s1 : CrepSemHOLState width σ)
       (t : LoopSemStateFiniteExact width σ) (ctxt : CrepToLoopContextExact) (l : NumSet),
       evalCrepSemHOLProgExact v1 (.call caltyp fname argexps) = (res, s1) ∧
@@ -204,8 +206,8 @@ theorem crepToLoop_ncompile_correct_call {width : Nat} [NeZero width] {σ : Type
         crepToLoopMemRelHOLExact s1.memory t1.memory s1.memaddrs ∧
         crepToLoopGlobalsRelHOLExact s1.globals t1.globals ∧
         crepToLoopCodeRelExact ctxt s1.code t1.code ∧
-        res1 = crepToLoopResultHOL res ∧
-        crepToLoopResultLocalsHOL ctxt l s1.locals t1.locals res := by
+        res1 = resultToLoop res ∧
+        localsResultRel ctxt l res s1 t1 := by
   intro caltyp fname argexps v1 ihh ihb res s1 t ctxt l ⟨he, hne, hs, hm, hg, hc, hl⟩
   rw [evalCrepSemHOLProgExact_eq_evaluate_def] at he
   simp only at he
@@ -366,7 +368,7 @@ theorem crepToLoop_ncompile_correct_call {width : Nat} [NeZero width] {σ : Type
           r ≠ .error → (∀ n, r ≠ .break n) → (∀ n, r ≠ .continue n) →
           ∃ (ck' : Nat) (t1 : LoopSemStateFiniteExact width σ),
             LoopSemStateFiniteExact.evaluate (HolLoopProg.call none (some loc) temps none)
-                { sA with clock := sA.clock + ck' } = (crepToLoopResultHOL (some r), t1) ∧
+                { sA with clock := sA.clock + ck' } = (resultToLoop (some r), t1) ∧
             crepToLoopStateRelExact st' t1 ∧
             crepToLoopMemRelHOLExact st'.memory t1.memory st'.memaddrs ∧
             crepToLoopGlobalsRelHOLExact st'.globals t1.globals ∧
@@ -375,12 +377,12 @@ theorem crepToLoop_ncompile_correct_call {width : Nat} [NeZero width] {σ : Type
         obtain ⟨ck', res1', t1, h2, h2s, h2m, h2g, h2c, h2r, _⟩ :=
           ihb args prog _ ⟨hargs, hlc, by simp, hz⟩ (some r) st' T0 nctxt
             (listToNumSetHOLExact (List.range len))
-            ⟨hb, fun h => hre (Option.some.inj h), hSc, h1m, h1g, hCc, hLc⟩
+            hb (fun h => hre (Option.some.inj h)) hSc h1m h1g hCc hLc
         subst h2r
-        have hopt := optimise_correct _ _ _ _ ⟨h2, by cases r <;> simp_all [crepToLoopResultHOL],
-          by intro n; cases r <;> simp_all [crepToLoopResultHOL],
-          by intro n; cases r <;> simp_all [crepToLoopResultHOL],
-          by cases r <;> simp [crepToLoopResultHOL]⟩
+        have hopt := optimise_correct _ _ _ _ ⟨h2, by cases r <;> simp_all [resultToLoop],
+          by intro n; cases r <;> simp_all [resultToLoop],
+          by intro n; cases r <;> simp_all [resultToLoop],
+          by cases r <;> simp [resultToLoop]⟩
         refine ⟨ck', t1, ?_, h2s, h2m, h2g, h2c⟩
         have hrec : ({ LoopSemStateFiniteExact.decClock { sA with clock := sA.clock + ck' } with
             locals := sptFromAList ((List.range len).zip vals) } : LoopSemStateFiniteExact width σ) =
@@ -405,7 +407,7 @@ theorem crepToLoop_ncompile_correct_call {width : Nat} [NeZero width] {σ : Type
         obtain ⟨rfl, rfl⟩ := he
         obtain ⟨ck', t1, h3, h3s, h3m, h3g, h3c⟩ :=
           key (.return retvs) st' heq (by simp) (by simp) (by simp)
-        refine ⟨ck + ck', crepToLoopResultHOL (some (.return retvs)), t1, ?_, h3s, h3m, h3g, h3c, rfl, ?_⟩
+        refine ⟨ck + ck', resultToLoop (some (.return retvs)), t1, ?_, h3s, h3m, h3g, h3c, rfl, ?_⟩
         · rw [hpre ck' _]
           simp only [loopNestedSeqHOL, LoopSemStateFiniteExact.evaluate_seq, h3]
           rfl
@@ -415,7 +417,7 @@ theorem crepToLoop_ncompile_correct_call {width : Nat} [NeZero width] {σ : Type
         obtain ⟨rfl, rfl⟩ := he
         obtain ⟨ck', t1, h3, h3s, h3m, h3g, h3c⟩ :=
           key (.exception eid) st' heq (by simp) (by simp) (by simp)
-        refine ⟨ck + ck', crepToLoopResultHOL (some (.exception eid)), t1, ?_, h3s, h3m, h3g, h3c, rfl, ?_⟩
+        refine ⟨ck + ck', resultToLoop (some (.exception eid)), t1, ?_, h3s, h3m, h3g, h3c, rfl, ?_⟩
         · rw [hpre ck' _]
           simp only [loopNestedSeqHOL, LoopSemStateFiniteExact.evaluate_seq, h3]
           rfl
@@ -428,7 +430,7 @@ theorem crepToLoop_ncompile_correct_call {width : Nat} [NeZero width] {σ : Type
         have hre : r ≠ .error := fun h => hne (by rw [h])
         obtain ⟨ck', t1, h3, h3s, h3m, h3g, h3c⟩ :=
           key r st' heq hre (fun n h => hb n (by rw [h])) (fun n h => hcn n (by rw [h]))
-        refine ⟨ck + ck', crepToLoopResultHOL (some r), t1, ?_, h3s, h3m, h3g, h3c, rfl, ?_⟩
+        refine ⟨ck + ck', resultToLoop (some r), t1, ?_, h3s, h3m, h3g, h3c, rfl, ?_⟩
         · rw [hpre ck' _]
           simp only [loopNestedSeqHOL, LoopSemStateFiniteExact.evaluate_seq, h3]
           cases r <;> rfl
@@ -538,7 +540,7 @@ theorem crepToLoop_ncompile_correct_call {width : Nat} [NeZero width] {σ : Type
             ∃ (ck' : Nat) (t1 : LoopSemStateFiniteExact width σ),
               LoopSemStateFiniteExact.evaluate
                   (ocompileHOLExact nctxt (listToNumSetHOLExact (List.range len)) prog)
-                  { T0 with clock := T0.clock + ck' } = (crepToLoopResultHOL (some r), t1) ∧
+                  { T0 with clock := T0.clock + ck' } = (resultToLoop (some r), t1) ∧
               crepToLoopStateRelExact st' t1 ∧
               crepToLoopMemRelHOLExact st'.memory t1.memory st'.memaddrs ∧
               crepToLoopGlobalsRelHOLExact st'.globals t1.globals ∧
@@ -547,13 +549,13 @@ theorem crepToLoop_ncompile_correct_call {width : Nat} [NeZero width] {σ : Type
           obtain ⟨ck', res1', t1, h2, h2s, h2m, h2g, h2c, h2r, _⟩ :=
             ihb args prog _ ⟨hargs, hlc, by simpa using hnd, hz⟩ (some r) st' T0 nctxt
               (listToNumSetHOLExact (List.range len))
-              ⟨hb, fun h => hre (Option.some.inj h), hSc, h1m, h1g, hCc, hLc⟩
+              hb (fun h => hre (Option.some.inj h)) hSc h1m h1g hCc hLc
           subst h2r
           have hopt := optimise_correct _ _ _ _ ⟨h2,
-            by cases r <;> simp_all [crepToLoopResultHOL],
-            by intro n; cases r <;> simp_all [crepToLoopResultHOL],
-            by intro n; cases r <;> simp_all [crepToLoopResultHOL],
-            by cases r <;> simp [crepToLoopResultHOL]⟩
+            by cases r <;> simp_all [resultToLoop],
+            by intro n; cases r <;> simp_all [resultToLoop],
+            by intro n; cases r <;> simp_all [resultToLoop],
+            by cases r <;> simp [resultToLoop]⟩
           exact ⟨ck', t1, hopt, h2s, h2m, h2g, h2c⟩
         split at he
         · simp only [Prod.mk.injEq] at he; exact absurd he.1.symm hne
@@ -576,8 +578,8 @@ theorem crepToLoop_ncompile_correct_call {width : Nat} [NeZero width] {σ : Type
                 (ocompileHOLExact nctxt (listToNumSetHOLExact (List.range len)) prog)
                 { T0 with clock := T0.clock + (ck' + 1) } =
                 (some (.result (retvs.map wlabWlocExact)), { t1 with clock := t1.clock + 1 }) := by
-              have := LoopSemStateFiniteExact.evaluate_add_clock_eq _ _ _ _ 1 hrun (by simp [crepToLoopResultHOL])
-              simpa [Nat.add_assoc, crepToLoopResultHOL] using this
+              have := LoopSemStateFiniteExact.evaluate_add_clock_eq _ _ _ _ 1 hrun (by simp [resultToLoop])
+              simpa [Nat.add_assoc, resultToLoop] using this
             let X : LoopSemStateFiniteExact width σ :=
               LoopSemStateFiniteExact.setVars rn (retvs.map wlabWlocExact)
                 { t1 with clock := t1.clock + 1, locals := sptInter sA.locals l }
@@ -616,7 +618,7 @@ theorem crepToLoop_ncompile_correct_call {width : Nat} [NeZero width] {σ : Type
               rw [hXc]
             · have := locals_rel_after_return ctxt l v1.locals sA.locals rts rn retvs hA
                 (hrn ▸ hnm) (hrn ▸ hnl) hnd hrnnd hlr
-              simpa [X, LoopSemStateFiniteExact.setVars, crepToLoopResultLocalsHOL] using this
+              simpa [X, LoopSemStateFiniteExact.setVars, localsResultRel] using this
           · simp only [hlr, ne_eq, not_false_eq_true, if_true, Prod.mk.injEq] at he
             exact absurd he.1.symm hne
         · rename_i _ eid st' heq
@@ -638,7 +640,7 @@ theorem crepToLoop_ncompile_correct_call {width : Nat} [NeZero width] {σ : Type
             rw [hcutK (ck')]
             simp only
             rw [LoopSemStateFiniteExact.fix_clock_evaluate, hrecK (ck'), hrun]
-            simp only [crepToLoopResultHOL, hbody, LoopSemStateFiniteExact.evaluate,
+            simp only [resultToLoop, hbody, LoopSemStateFiniteExact.evaluate,
               LoopSemStateFiniteExact.setVar, sptLookup_sptInsert, if_true]
             rfl
           | some hq =>
@@ -653,7 +655,7 @@ theorem crepToLoop_ncompile_correct_call {width : Nat} [NeZero width] {σ : Type
                   (locals_rel_inter ctxt l v1.locals sA.locals hA) (Nat.lt_succ_self _)
               obtain ⟨ck'', res1, t2, h3, h3s, h3m, h3g, h3c, h3r, h3l⟩ :=
                 ihh args prog _ st' eid rts hp ⟨hargs, hlc, by simpa using hnd, hz, heq, rfl⟩
-                  res s1 Z ctxt l ⟨he, hne, h2s, h2m, h2g, h2c, hZl⟩
+                  res s1 Z ctxt l he hne h2s h2m h2g h2c hZl
               -- the handler body from a clock extension `J ≥ 1`
               have hbodyJ : ∀ J, 1 ≤ J → LoopSemStateFiniteExact.evaluate hbody
                   (LoopSemStateFiniteExact.setVar (ctxt.vmax + 1) (.word eid)
@@ -676,7 +678,7 @@ theorem crepToLoop_ncompile_correct_call {width : Nat} [NeZero width] {σ : Type
                 omega
               cases res with
               | none =>
-                have hr1 : res1 = none := by simpa [crepToLoopResultHOL] using h3r
+                have hr1 : res1 = none := by simpa [resultToLoop] using h3r
                 subst hr1
                 have h3l' : crepToLoopLocalsRelExact ctxt l s1.locals t2.locals := h3l
                 have hrunK : LoopSemStateFiniteExact.evaluate
@@ -684,8 +686,8 @@ theorem crepToLoop_ncompile_correct_call {width : Nat} [NeZero width] {σ : Type
                     { T0 with clock := T0.clock + (ck' + (ck'' + 3)) } =
                     (some (.exception (.word eid)), { t1 with clock := t1.clock + (ck'' + 3) }) := by
                   have := LoopSemStateFiniteExact.evaluate_add_clock_eq _ _ _ _ (ck'' + 3) hrun
-                    (by simp [crepToLoopResultHOL])
-                  simpa [Nat.add_assoc, crepToLoopResultHOL] using this
+                    (by simp [resultToLoop])
+                  simpa [Nat.add_assoc, resultToLoop] using this
                 have h3k : LoopSemStateFiniteExact.evaluate (compileHOLExact ctxt l hp)
                     { Z with clock := Z.clock + (ck'' + 3 - 1) } =
                     (none, { t2 with clock := t2.clock + 2 }) := by
@@ -725,14 +727,14 @@ theorem crepToLoop_ncompile_correct_call {width : Nat} [NeZero width] {σ : Type
                 simp only [LoopSemStateFiniteExact.evaluate]
               | some r =>
                 obtain ⟨x, hx⟩ : ∃ x, res1 = some x := by
-                  cases r <;> simp only [crepToLoopResultHOL] at h3r <;> exact ⟨_, h3r⟩
+                  cases r <;> simp only [resultToLoop] at h3r <;> exact ⟨_, h3r⟩
                 have hrunK : LoopSemStateFiniteExact.evaluate
                     (ocompileHOLExact nctxt (listToNumSetHOLExact (List.range len)) prog)
                     { T0 with clock := T0.clock + (ck' + (ck'' + 1)) } =
                     (some (.exception (.word eid)), { t1 with clock := t1.clock + (ck'' + 1) }) := by
                   have := LoopSemStateFiniteExact.evaluate_add_clock_eq _ _ _ _ (ck'' + 1) hrun
-                    (by simp [crepToLoopResultHOL])
-                  simpa [Nat.add_assoc, crepToLoopResultHOL] using this
+                    (by simp [resultToLoop])
+                  simpa [Nat.add_assoc, resultToLoop] using this
                 have h3k : LoopSemStateFiniteExact.evaluate (compileHOLExact ctxt l hp)
                     { Z with clock := Z.clock + (ck'' + 1 - 1) } = (res1, t2) := by
                   simpa using h3
@@ -764,7 +766,7 @@ theorem crepToLoop_ncompile_correct_call {width : Nat} [NeZero width] {σ : Type
               simp only
               rw [LoopSemStateFiniteExact.fix_clock_evaluate, hrecK (ck'), hrun]
               have hb : (eid == eid') = false := beq_eq_false_iff_ne.mpr hee
-              simp only [crepToLoopResultHOL, hbody, LoopSemStateFiniteExact.evaluate,
+              simp only [resultToLoop, hbody, LoopSemStateFiniteExact.evaluate,
                 LoopSemStateFiniteExact.setVar, sptLookup_sptInsert, if_true,
                 LoopSemStateFiniteExact.getVarImm, Compiler.Encoders.Asm.wordCmpHOL, hb,
                 Bool.not_false]
@@ -777,7 +779,7 @@ theorem crepToLoop_ncompile_correct_call {width : Nat} [NeZero width] {σ : Type
           have hre : r ≠ .error := fun h => hne (by rw [h])
           obtain ⟨ck', t1, hrun, h2s, h2m, h2g, h2c⟩ :=
             keyR r st' heq hre (fun n h => hb n (by rw [h])) (fun n h => hcn n (by rw [h]))
-          refine ⟨ck + ck', crepToLoopResultHOL (some r), t1, ?_, h2s, h2m, h2g, h2c, rfl, ?_⟩
+          refine ⟨ck + ck', resultToLoop (some r), t1, ?_, h2s, h2m, h2g, h2c, rfl, ?_⟩
           · rw [hpre ck' _]
             simp only [loopNestedSeqHOL, LoopSemStateFiniteExact.evaluate_seq]
             rw [LoopSemStateFiniteExact.evaluate]

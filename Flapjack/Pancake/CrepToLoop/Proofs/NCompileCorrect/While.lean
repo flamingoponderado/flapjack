@@ -11,6 +11,8 @@ unfold one step of loopSem's `Loop` clause and the compiled While body.
 
 namespace Flapjack
 
+open Pancake.CrepToLoop.Proofs.NCompileCorrect
+
 /-! Owning carriers of the finite maps the statement traverses; same-module
 witnesses for the `fmap_as_finite_support_relation` qualifier. -/
 namespace CrepToLoopNcompileCorrectWhileWitnesses
@@ -198,10 +200,10 @@ private theorem while_body_eval (np : List (HolLoopProg width)) (le : HolLoopExp
     simp only [hb, Bool.not_false, if_true, hw, if_false]
     split <;> rename_i h <;> exact h.symm
 
-private theorem crepToLoopResultHOL_exitLoop (r : CrepResultHOLExact width)
+private theorem resultToLoop_exitLoop (r : CrepResultHOLExact width)
     (h0 : r ≠ .continue 0) (h1 : r ≠ .break 0) :
-    LoopSemStateFiniteExact.exitLoop (crepToLoopResultHOL (some r)) =
-      crepToLoopResultHOL (exitLoopCrepResult (some r)) := by
+    LoopSemStateFiniteExact.exitLoop (resultToLoop (some r)) =
+      resultToLoop (exitLoopCrepResult (some r)) := by
   cases r with
   | «continue» n => cases n with
     | zero => exact absurd rfl h0
@@ -211,10 +213,10 @@ private theorem crepToLoopResultHOL_exitLoop (r : CrepResultHOLExact width)
     | succ n => rfl
   | _ => rfl
 
-private theorem crepToLoopResultLocalsHOL_exitLoop (ctxt : CrepToLoopContextExact) (l : NumSet)
-    (sl : HolFiniteMapExact Nat (HolWordLab width)) (tl : Spt (WordLocW width))
-    (r : CrepResultHOLExact width) (h : crepToLoopResultLocalsHOL ctxt l sl tl (some r)) :
-    crepToLoopResultLocalsHOL ctxt l sl tl (exitLoopCrepResult (some r)) := by
+private theorem localsResultRel_exitLoop (ctxt : CrepToLoopContextExact) (l : NumSet)
+    (s : CrepSemHOLState width F) (tt : LoopSemStateFiniteExact width F)
+    (r : CrepResultHOLExact width) (h : localsResultRel ctxt l (some r) s tt) :
+    localsResultRel ctxt l (exitLoopCrepResult (some r)) s tt := by
   cases r <;> exact h
 
 end WhileHelpers
@@ -236,15 +238,15 @@ theorem crepToLoop_ncompile_correct_while {width : Nat} [NeZero width] {σ : Typ
         evalCrepSemHOLExp v1 e = some (.word w) ∧ w ≠ 0 ∧ v1.clock ≠ 0 ∧
           evalCrepSemHOLProgExact (decClockCrepSemHOL v1) c = (res, s1) ∧
           res = some (.continue 0) →
-        crepToLoopNcompileCorrectAt (.while e c) s1) →
+        PropertyAt (.while e c) s1) →
       (∀ (w : BitVec width) (res : Option (CrepResultHOLExact width))
           (s1 : CrepSemHOLState width σ),
         evalCrepSemHOLExp v1 e = some (.word w) ∧ w ≠ 0 ∧ v1.clock ≠ 0 ∧
           evalCrepSemHOLProgExact (decClockCrepSemHOL v1) c = (res, s1) ∧ res = none →
-        crepToLoopNcompileCorrectAt (.while e c) s1) →
+        PropertyAt (.while e c) s1) →
       (∀ (w : BitVec width),
         evalCrepSemHOLExp v1 e = some (.word w) ∧ w ≠ 0 ∧ v1.clock ≠ 0 →
-        crepToLoopNcompileCorrectAt c (decClockCrepSemHOL v1)) →
+        PropertyAt c (decClockCrepSemHOL v1)) →
     ∀ (res : Option (CrepResultHOLExact width)) (s1 : CrepSemHOLState width σ)
       (t : LoopSemStateFiniteExact width σ) (ctxt : CrepToLoopContextExact) (l : NumSet),
       evalCrepSemHOLProgExact v1 (.while e c) = (res, s1) ∧ res ≠ some .error ∧
@@ -261,8 +263,8 @@ theorem crepToLoop_ncompile_correct_while {width : Nat} [NeZero width] {σ : Typ
         crepToLoopMemRelHOLExact s1.memory t1.memory s1.memaddrs ∧
         crepToLoopGlobalsRelHOLExact s1.globals t1.globals ∧
         crepToLoopCodeRelExact ctxt s1.code t1.code ∧
-        res1 = crepToLoopResultHOL res ∧
-        crepToLoopResultLocalsHOL ctxt l s1.locals t1.locals res := by
+        res1 = resultToLoop res ∧
+        localsResultRel ctxt l res s1 t1 := by
   intro e c v1 ihc ihn ihb res s1 t ctxt l ⟨he, hne, hs, hm, hg, hc, hl⟩
   rw [evalCrepSemHOLProgExact_eq_evaluate_def] at he
   simp only at he
@@ -362,9 +364,7 @@ theorem crepToLoop_ncompile_correct_while {width : Nat} [NeZero width] {σ : Typ
         exact hne he.1.symm
       obtain ⟨ck', res1', t1, h2, h2s, h2m, h2g, h2c, h2r, h2l⟩ :=
         ihb w ⟨hev, hw, hz⟩ res' s1' (LoopSemStateFiniteExact.setVar tmp (.word w) st) ctxt l
-          ⟨hbodyS, hne', h1s, h1m, h1g, h1c,
-            locals_rel_insert_of ctxt l nl v1.locals _ st.locals
-              (locals_rel_inter ctxt l v1.locals t.locals hl) h1l hlnl tmp htmp _⟩
+          hbodyS hne' h1s h1m h1g h1c (locals_rel_insert_of ctxt l nl v1.locals _ st.locals (locals_rel_inter ctxt l v1.locals t.locals hl) h1l hlnl tmp htmp _)
       -- the loop entry, condition and body run from any clock extension
       have hentryK : ∀ k, LoopSemStateFiniteExact.cutRes l
           (none, { t with clock := t.clock + (ck + k) }) =
@@ -397,11 +397,11 @@ theorem crepToLoop_ncompile_correct_while {width : Nat} [NeZero width] {σ : Typ
             (res1', t1) := h2
       cases res' with
       | none =>
-        have hr1 : res1' = none := by simpa [crepToLoopResultHOL] using h2r
+        have hr1 : res1' = none := by simpa [resultToLoop] using h2r
         subst hr1
         obtain ⟨ck'', res1, t2, h3, h3s, h3m, h3g, h3c, h3r, h3l⟩ :=
           ihn w none s1' ⟨hev, hw, hz, hbodyS, rfl⟩ res s1 t1 ctxt l
-            ⟨he, hne, h2s, h2m, h2g, h2c, h2l⟩
+            he hne h2s h2m h2g h2c h2l
         rw [hcomp] at h3
         have h2k : LoopSemStateFiniteExact.evaluate (compileHOLExact ctxt l c)
             { LoopSemStateFiniteExact.setVar tmp (.word w) st with clock := st.clock + (ck' + ck'') } =
@@ -418,11 +418,11 @@ theorem crepToLoop_ncompile_correct_while {width : Nat} [NeZero width] {σ : Typ
         by_cases hr0 : r = .continue 0
         · subst hr0
           simp only at he
-          have hr1 : res1' = some (.continue 0) := by simpa [crepToLoopResultHOL] using h2r
+          have hr1 : res1' = some (.continue 0) := by simpa [resultToLoop] using h2r
           subst hr1
           obtain ⟨ck'', res1, t2, h3, h3s, h3m, h3g, h3c, h3r, h3l⟩ :=
             ihc w (some (.continue 0)) s1' ⟨hev, hw, hz, hbodyS, rfl⟩ res s1 t1 ctxt l
-              ⟨he, hne, h2s, h2m, h2g, h2c, h2l⟩
+              he hne h2s h2m h2g h2c h2l
           rw [hcomp] at h3
           have h2k : LoopSemStateFiniteExact.evaluate (compileHOLExact ctxt l c)
               { LoopSemStateFiniteExact.setVar tmp (.word w) st with
@@ -440,7 +440,7 @@ theorem crepToLoop_ncompile_correct_while {width : Nat} [NeZero width] {σ : Typ
         · subst hr1
           simp only [Prod.mk.injEq] at he
           obtain ⟨rfl, rfl⟩ := he
-          have hr : res1' = some (.break 0) := by simpa [crepToLoopResultHOL] using h2r
+          have hr : res1' = some (.break 0) := by simpa [resultToLoop] using h2r
           subst hr
           have h2l' : crepToLoopLocalsRelExact ctxt l s1'.locals t1.locals := h2l
           have h2k : LoopSemStateFiniteExact.evaluate (compileHOLExact ctxt l c)
@@ -473,19 +473,19 @@ theorem crepToLoop_ncompile_correct_while {width : Nat} [NeZero width] {σ : Typ
           simp only [Prod.mk.injEq] at he'
           obtain ⟨rfl, rfl⟩ := he'
           obtain ⟨x, hx⟩ : ∃ x, res1' = some x := by
-            cases r <;> simp only [crepToLoopResultHOL] at h2r <;> exact ⟨_, h2r⟩
+            cases r <;> simp only [resultToLoop] at h2r <;> exact ⟨_, h2r⟩
           subst hx
           have hx0 : x ≠ .continue 0 := by
-            intro h; subst h; cases r <;> simp_all [crepToLoopResultHOL]
+            intro h; subst h; cases r <;> simp_all [resultToLoop]
           have hx1 : x ≠ .break 0 := by
-            intro h; subst h; cases r <;> simp_all [crepToLoopResultHOL]
+            intro h; subst h; cases r <;> simp_all [resultToLoop]
           have hb : LoopSemStateFiniteExact.evaluate B
               { t with locals := sptInter t.locals l, clock := t.clock - 1 + (ck + ck') } =
               (some x, t1) := by
             rw [hbodyK, seq_continue_some h2']; rfl
           refine ⟨ck + ck', _, _, loop_step_exit (L' := l) hx0 hx1 (hentryK _) hb, h2s, h2m, h2g,
-            h2c, ?_, crepToLoopResultLocalsHOL_exitLoop ctxt l _ _ r h2l⟩
+            h2c, ?_, localsResultRel_exitLoop ctxt l _ _ r h2l⟩
           rw [h2r]
-          exact crepToLoopResultHOL_exitLoop r hr0 hr1
+          exact resultToLoop_exitLoop r hr0 hr1
 
 end Flapjack
