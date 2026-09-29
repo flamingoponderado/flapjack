@@ -24265,6 +24265,15 @@
   },
   {
     "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "cut_env_mk_new_cutset_IMP",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "wordSemCutEnvMkNewCutsetIMPHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison (2026-09-29; bead flapjack-pxn.18.5.9.17.6) against loop_to_wordProofScript.sml:438-444. HOL states the exact implication cut_env (mk_new_cutset ctxt x1,LN) l1 = SOME l2 ==> lookup 0 l2 = lookup 0 l1. Lean retains context, live num_set, locals and result carriers, the same successful cut premise, and the same key-0 lookup conclusion with no extra logical premise. mkNewCutsetHOL is the tagged definition port of mk_new_cutset_def over Spt; wordSemCutEnv/wordSemCutEnvs/wordSemCutNames are the tagged cut_env definitions over the same Spt carrier. The proof extracts the first cut's subset guard and inter result, uses that the generated set inserts key 0 and the empty second cut is LN, then matches HOL's left-empty union and intersection lookup clauses. The only representation qualification is HOL's polymorphic word payload represented by positive-width WordLocW width (BitVec); there is no map, list, state, or evaluator translation."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
     "hol_name": "TAKE_1_word_to_bytes",
     "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/WordToBytes.lean",
     "lean_name": "takeOneWordToBytesHOL",

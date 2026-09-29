@@ -2,6 +2,7 @@ import Flapjack.Pancake.LoopToWord
 import Flapjack.Pancake.LoopToWord.MakeCtxtExact
 import Flapjack.Pancake.Proofs.LoopToWord.LocalsRel
 import Flapjack.Compiler.Backend.Semantics.WordSem.EnvListSupport
+import Flapjack.Pancake.Semantics.LoopProps.UnassignedVarsExact
 
 /-!
 # Loop-to-word context-domain support
@@ -175,6 +176,52 @@ theorem wordSemCutEnvLNIMPHOL {width : Nat} [NeZero width]
         simpa [wordSemCutEnvs, hfirst, hempty, sptUnion] using hcut
       subst env
       simp [wordSemCutEnvs, hfirst, hempty]
+
+/-- Exact HOL `cut_env_mk_new_cutset_IMP` from
+`cakeml/pancake/proofs/loop_to_wordProofScript.sml:438-444`. A successful
+cut by `mk_new_cutset ctxt x1` preserves register zero because that generated
+set always contains zero; the second `LN` cut contributes the empty map to the
+`cut_env` union. The premise and lookup conclusion use the same exact Spt
+`cut_env` definition as HOL; the only representation qualification is HOL's
+type-indexed word values represented by `WordLocW width`. -/
+@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "cut_env_mk_new_cutset_IMP"
+  (words_as_type_indexed_bitvec)]
+theorem wordSemCutEnvMkNewCutsetIMPHOL {width : Nat} [NeZero width]
+    (context : Spt Nat) (live : WordLangNumSetHOL)
+    (locals result : Spt (WordLocW width))
+    (hcut : wordSemCutEnv (mkNewCutsetHOL context live, (Spt.ln : WordLangNumSetHOL))
+      locals = some result) :
+    sptLookup 0 result = sptLookup 0 locals := by
+  have hempty : wordSemCutNames (Spt.ln : WordLangNumSetHOL) locals =
+      some (Spt.ln : Spt (WordLocW width)) := by
+    have hinter : sptInter locals (Spt.ln : WordLangNumSetHOL) = Spt.ln := by
+      cases locals <;> simp [sptInter]
+    simp [wordSemCutNames, LoopSemStateFiniteExact.sptSubsetLive, hinter]
+  unfold wordSemCutEnv at hcut
+  cases hfirst : wordSemCutNames (mkNewCutsetHOL context live) locals with
+  | none => simp [wordSemCutEnvs, hfirst, hempty] at hcut
+  | some first =>
+      have hsubset : LoopSemStateFiniteExact.sptSubsetLive
+          (mkNewCutsetHOL context live) locals := by
+        change (if LoopSemStateFiniteExact.sptSubsetLive
+            (mkNewCutsetHOL context live) locals
+          then some (sptInter locals (mkNewCutsetHOL context live)) else none) =
+          some first at hfirst
+        split at hfirst
+        · assumption
+        · simp at hfirst
+      have hfirstEq : sptInter locals (mkNewCutsetHOL context live) = first := by
+        simpa [wordSemCutNames, hsubset] using hfirst
+      have hzero : sptMem 0 (mkNewCutsetHOL context live) := by
+        change (sptLookup 0 (mkNewCutsetHOL context live)).isSome
+        simp [mkNewCutsetHOL, sptLookup_sptInsert_same]
+      have hcut' : sptUnion (Spt.ln : Spt (WordLocW width)) first = result := by
+        simpa [wordSemCutEnvs, hfirst, hempty] using hcut
+      have hresult : result = first := by
+        simpa [sptUnion] using hcut'.symm
+      rw [hresult, ← hfirstEq, Flapjack.sptLookup_sptInter]
+      change (sptLookup 0 (mkNewCutsetHOL context live)).isSome at hzero
+      simp [hzero]
 
 /-- Flapjack-specific induction strengthening for `make_ctxt_inj`: adding a
 fresh register preserves lookup injectivity while advancing its value bound.
