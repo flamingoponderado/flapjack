@@ -115,4 +115,37 @@ def loopToWordStateRelHOLExact {width : Nat} [NeZero width] {C F : Type}
       loopToWordGlobalsRelHOLExact source.globals target.store ∧
       loopToWordCodeRelHOLExact source.code target.code
 
+/-- Exact HOL `loop_to_wordProof$state_rel_IMP` (`loop_to_wordProofScript.sml:272-274`):
+    the state relation pins the target clock to the source clock. -/
+@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "state_rel_IMP"
+  (fmap_as_finite_support_relation :=
+    [LoopSemStateFiniteExact.globals, WordSemStateFiniteExact.store])
+  (words_as_type_indexed_bitvec)]
+theorem loopToWordStateRelHOLExact_imp_clock {width : Nat} [NeZero width] {C F : Type}
+    (source : LoopSemStateFiniteExact width F)
+    (target : WordSemStateFiniteExact width C F)
+    (h : loopToWordStateRelHOLExact source target) :
+    target.clock = source.clock := by
+  obtain ⟨_len, _hmem, _hmdomain, _hshMdomain, hclock, _⟩ := h
+  exact hclock
+
+/-- Exact HOL `loop_to_wordProof$state_rel_with_clock`
+    (`loop_to_wordProofScript.sml:1497-1501`): the state relation is preserved
+    by setting the same clock on both sides. -/
+@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "state_rel_with_clock"
+  (fmap_as_finite_support_relation :=
+    [LoopSemStateFiniteExact.globals, WordSemStateFiniteExact.store])
+  (words_as_type_indexed_bitvec)]
+theorem loopToWordStateRelHOLExact_withClock {width : Nat} [NeZero width] {C F : Type}
+    (source : LoopSemStateFiniteExact width F)
+    (target : WordSemStateFiniteExact width C F) (k : Nat)
+    (h : loopToWordStateRelHOLExact source target) :
+    loopToWordStateRelHOLExact { source with clock := k } { target with clock := k } := by
+  obtain ⟨len, hmem, hmdomain, hshMdomain, _hclock, hbe, hffi, hcurrHeap, hheapLength,
+    htopAddr, hglobals, hcode⟩ := h
+  exact ⟨len, by simpa using hmem, by simpa using hmdomain, by simpa using hshMdomain,
+    rfl, by simpa using hbe, by simpa using hffi, by simpa using hcurrHeap,
+    by simpa using hheapLength, by simpa using htopAddr, by simpa using hglobals,
+    by simpa using hcode⟩
+
 end Flapjack

@@ -24243,5 +24243,31 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.9.13) against loop_to_wordProofScript.sml:41-52. HOL state_rel s t = EX (len) with t.memory=s.memory, t.mdomain=s.mdomain, t.sh_mdomain=s.sh_mdomain, t.clock=s.clock, t.be=s.be, t.ffi=s.ffi, ALOOKUP (fmap_to_alist t.store) CurrHeap = SOME (Word s.base_addr), ALOOKUP (fmap_to_alist t.store) HeapLength = SOME (Word len), s.top_addr = s.base_addr + 2w*len, globals_rel s.globals t.store, code_rel s.code t.code. Lean loopToWordStateRelHOLExact over LoopSemStateFiniteExact/WordSemStateFiniteExact keeps the same existential length and all eleven conjuncts; ALOOKUP (fmap_to_alist t.store) key is the canonical HolFiniteMapExact lookup, CurrHeap/HeapLength are WordStore .currHeap/.heapLength, Word len is WordLocW.word (BitVec.ofNat width len), and 2w*len is (2 : BitVec width)*BitVec.ofNat width len. The named finite-map carriers are the eligible fields LoopSemStateFiniteExact.globals and WordSemStateFiniteExact.store (both HolFiniteMapExact); code is an Spt tree map and is not named. Same-module witnesses holFmapAsFiniteSupportRelationWitness_LoopSemStateFiniteExact and _WordSemStateFiniteExact re-export the canonical roundtrips."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "state_rel_IMP",
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/RelationsExact.lean",
+    "lean_name": "loopToWordStateRelHOLExact_imp_clock",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "LoopSemStateFiniteExact.globals",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds5 source comparison (2026-09-29; bead flapjack-pxn.18.5.9.19) against loop_to_wordProofScript.sml:272-274. HOL state_rel s t ==> t.clock = s.clock projects the clock conjunct of state_rel_def. Lean states the same implication over the exact carriers LoopSemStateFiniteExact/WordSemStateFiniteExact and projects the clock conjunct of loopToWordStateRelHOLExact; no extra premise. The relation names the eligible finite-map fields LoopSemStateFiniteExact.globals and WordSemStateFiniteExact.store (both HolFiniteMapExact; code is an Spt tree map and is not named), with the same-module witnesses in LoopToWordStateRelWitnesses."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "state_rel_with_clock",
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/RelationsExact.lean",
+    "lean_name": "loopToWordStateRelHOLExact_withClock",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "LoopSemStateFiniteExact.globals",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds5 source comparison (2026-09-29; bead flapjack-pxn.18.5.9.19) against loop_to_wordProofScript.sml:1497-1501. HOL state_rel s t ==> state_rel (s with clock := k) (t with clock := k) sets the same clock on both states. Lean keeps the same implication and the same existential length and eleven conjuncts over the exact carriers, with the clock conjunct becoming k = k; memory/mdomain/shMdomain/be/ffi/store base and length/top_addr/globals/code are unchanged. Same qualifier carriers and witnesses as state_rel_IMP; no extra premise."
   }
 ]
