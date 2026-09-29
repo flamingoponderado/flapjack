@@ -62,6 +62,7 @@ def findVarEvenContext : Spt Nat := sptInsert 0 2 .ln
 
 example : findVarHOL findVarEvenContext 0 ≠ 0 := by
   apply findVarNeZeroContextHOLExact findVarEvenContext 0
+  constructor
   · intro n m hlookup
     by_cases hn : n = 0
     · subst n

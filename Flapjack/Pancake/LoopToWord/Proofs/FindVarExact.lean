@@ -20,8 +20,10 @@ namespace Flapjack
 lookup condition, domain premise, and conclusion are unchanged. -/
 @[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "find_var_neq_0_ctxt"]
 theorem findVarNeZeroContextHOLExact (ctxt : Spt Nat) (v : Nat)
-    (hcontext : ∀ n m, sptLookup n ctxt = some m → m ≠ 0 ∧ m % 2 = 0)
-    (hdomain : sptMem v ctxt) : findVarHOL ctxt v ≠ 0 := by
+    (hpremises :
+      (∀ n m, sptLookup n ctxt = some m → m ≠ 0 ∧ m % 2 = 0) ∧
+        sptMem v ctxt) : findVarHOL ctxt v ≠ 0 := by
+  rcases hpremises with ⟨hcontext, hdomain⟩
   obtain ⟨m, hm⟩ := (sptMem_iff_lookup v ctxt).mp hdomain
   change (sptLookup v ctxt).getD 0 ≠ 0
   rw [hm]
