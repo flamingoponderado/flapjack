@@ -23675,6 +23675,19 @@
     "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.7): HOL exit_loop (:1010-1014): SOME (Break n) = SOME (Break (n - 1)), SOME (Continue n) = SOME (Continue (n - 1)), res = res (num monus); Lean identical. Words are BitVec width with [NeZero width] (words_as_type_indexed_bitvec); no other representation change. Rows exit_loop_* of scripts/hol-probes/word_sem_call_helpers_probe.out are checked by Flapjack.Test.WordSemCallHelpersParity."
   },
   {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "globals_rel_def",
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/RelationsExact.lean",
+    "lean_name": "loopToWordGlobalsRelHOLExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "g1",
+      "g2"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-29; bead flapjack-pxn.18.5.9.11): HOL globals_rel_def (loop_to_wordProofScript.sml:27-30) quantifies n and v and states FLOOKUP g1 n = SOME v ==> FLOOKUP g2 (Temp n) = SOME v. Lean uses the same one-way implication; g1 and g2 are standalone HOL |-> parameters represented by canonical HolFiniteMapExact, the Temp key retains the fixed BitVec 5 width, and word_loc values are WordLocW width with [NeZero width] under words_as_type_indexed_bitvec. Extra target store entries remain unconstrained. Direct HOL EVAL rows globals_rel_match/value_mismatch/temp_mismatch/empty_source are in scripts/hol-probes/loop_to_word_globals_rel_probe.out and replayed by Flapjack.Test.LoopToWordGlobalsRelParity."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Alloc.lean",
     "lean_name": "wordSemFindCode",
     "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",

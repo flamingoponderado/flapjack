@@ -418,6 +418,8 @@ import Flapjack.Test.CrepToLoopCompileExactParity
 import Flapjack.Test.CrepToLoopCompFuncParity
 import Flapjack.Test.CrepFindLabParity
 import Flapjack.Pancake.LoopLive
+import Flapjack.Pancake.LoopToWord
+import Flapjack.Pancake.LoopToWord.Proofs.RelationsExact
 import Flapjack.Pancake.LoopLang.AssignedVars
 import Flapjack.Pancake.Semantics.LoopProps.AssignedVars
 import Flapjack.Test.LoopExactAssignedVarsParity

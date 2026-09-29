@@ -227,6 +227,10 @@ run_probe loop_to_word_comp_probeScript.sml loop_to_word_comp_probe.out \
 run_probe loop_to_word_comp_recursive_probeScript.sml loop_to_word_comp_recursive_probe.out \
   comp_seq comp_if comp_loop comp_mark \
   "$cake_dir/pancake/loop_to_wordScript.sml"
+run_probe loop_to_word_globals_rel_probeScript.sml loop_to_word_globals_rel_probe.out \
+  globals_rel_match globals_rel_value_mismatch globals_rel_temp_mismatch globals_rel_empty_source \
+  "$cake_dir/pancake/proofs/loop_to_wordProofScript.sml" \
+  "$cake_dir/pancake/proofs"
 run_probe loop_to_word_comp_call_probeScript.sml loop_to_word_comp_call_probe.out \
   comp_call_tail comp_call_no_handler comp_call_handler \
   "$cake_dir/pancake/loop_to_wordScript.sml"
