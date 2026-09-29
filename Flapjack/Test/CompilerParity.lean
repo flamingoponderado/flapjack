@@ -382,6 +382,7 @@ import Flapjack.Test.CrepToLoopCompFuncParity
 import Flapjack.Test.CrepArithExactParity
 import Flapjack.Test.CrepArithStoreGlobParity
 import Flapjack.Test.CrepArithStore32Parity
+import Flapjack.Test.CrepArithStoreByteParity
 import Flapjack.Test.CrepToLoopCompileProgParity
 import Flapjack.Test.LoopCallEnvParity
 import Flapjack.Test.InstructionTransfer
@@ -875,6 +876,7 @@ def main : IO Unit := do
     Flapjack.Test.CrepNestedDecsLoadGlobalsParity.runChecks,
     Flapjack.Test.CrepShMemHOLParity.runChecks,
     Flapjack.Test.CrepArithShMemOpCodeParity.runChecks,
+    Flapjack.Test.CrepArithStoreByteParity.runChecks,
     Flapjack.Test.PanGlobalsExceptionsAppendParity.runChecks,
     Flapjack.Test.PanGlobalsExceptionsFilterIsFunctionParity.runChecks,
     Flapjack.Test.PanGlobalsDeclPredicateParity.runChecks,

@@ -44,6 +44,18 @@ def crepSimpMapcsHOL {width : Nat} [NeZero width] {σ : Type}
   { state with code := state.code.map2 (fun (_, entry) =>
       (entry.1, crepSimpProgHOL entry.2)) }
 
+/-- Flapjack-only abbreviation (no HOL declaration) of the `simp_prog_correct`
+    statement at a fixed program and state, over the shared `mapcs` renderer
+    `crepSimpMapcsHOL`: the `evaluate_ind` predicate the case proofs receive for
+    a sub-program. -/
+def simpProgCorrectAt {width : Nat} [NeZero width] {σ : Type}
+    (program : CrepProgHOL width) (state : CrepSemHOLState width σ) : Prop :=
+  ∀ (result : Option (CrepResultHOLExact width)) (finalState : CrepSemHOLState width σ),
+    evalCrepSemHOLProgExact state program = (result, finalState) →
+    result ≠ some .error →
+    evalCrepSemHOLProgExact (crepSimpMapcsHOL state) (crepSimpProgHOL program) =
+      (result, crepSimpMapcsHOL finalState)
+
 private theorem crepSimpMapcsHOL_emptyLocals {width : Nat} [NeZero width]
     {σ : Type} (state : CrepSemHOLState width σ) :
     crepSimpMapcsHOL (CrepSemHOLState.emptyLocals state) =
