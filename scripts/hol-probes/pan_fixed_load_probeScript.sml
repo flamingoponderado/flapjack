@@ -91,6 +91,9 @@ val _ = print_eval "aligned_width1_address0"
   ``aligned 2 (0w : 1 word)``
 val _ = print_eval "aligned_width1_address1"
   ``aligned 2 (1w : 1 word)``
+(* Keep this direct EVAL row symbolic: HOL defines LOG2 only for positive
+   inputs, so LOG2 0 is the global completion parameter modeled by z in
+   CrepSem.Log2ZeroParametric. *)
 val _ = print_eval "byte_align_width1_address1"
   ``byte_align (1w : 1 word)``
 val _ = print_eval "byte_align_width24_address5"
