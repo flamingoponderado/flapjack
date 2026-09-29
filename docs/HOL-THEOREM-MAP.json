@@ -23965,6 +23965,14 @@
     "reviewer": "flapjack-ds5 source comparison (2026-09-29; bead flapjack-pxn.18.5.9.15.3) against loop_to_wordProofScript.sml:234-240. HOL keeps exactly three premises: locals_rel ctxt lcl lcl', set xs SUBSET domain ctxt, and ALL_DISTINCT xs, concluding ALL_DISTINCT (MAP (find_var ctxt) xs). Lean retains the conjunction including both extra premises unchanged; the subset is the reviewed pointwise rendering forall name, name IN xs -> sptMem name context (HOL set membership as a predicate, as in sptDomain/sptMem), ALL_DISTINCT is List.Nodup and HOL MAP is constructor-for-constructor List.map. The proof uses only the injectivity clause of localsRelHOL and findVarHOL (exact find_var_def) over the exact Spt context carrier; sourceLocals/targetLocals appear only in the relation premise. The only representation qualifier is the type-indexed word of the relation carrier (WordLocW), so words_as_type_indexed_bitvec; no finite-map or name qualifier applies. Positive and negative parity examples (distinct-in-domain list, out-of-domain default register 0 collision, repeated name, and non-injective context collision) are kernel-replayed in Flapjack.Test.LoopToWordAllDistinctMapParity."
   },
   {
+    "lean_path": "Flapjack/FpSemHOL.lean",
+    "lean_name": "fpSemFpfma",
+    "hol_path": "cakeml/semantics/fpSemScript.sml",
+    "hol_name": "fpfma_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.6.2.2): HOL fpfma v1 v2 v3 = fp64_mul_add roundTiesToEven v2 v3 v1 (fpSemScript.sml:60-62), argument order preserved (v1 is the addend). HOL word64 is the fixed BitVec 64 and needs no width qualifier. fp64_mul_add is the untagged HOL standard-library rendering holFp64MulAdd = float_to_fp64 o SND o float_mul_add over fp64_to_float (machine_ieeeLib lift3). float_mul_add renders binary_ieeeScript.sml:692-722 clause for clause, including flags and the zero-sign rule, over the Classical.epsilon rendering of HOL's choice-based rounding and float_some_qnan, so the definition is noncomputable. Rows fma_pinf_product/fma_ninf_addend/fma_neg_inf_product of scripts/hol-probes/machine_ieee_fp64_arith_special_probe.out are kernel-checked in Flapjack.Test.MachineIeeeArithSpecialParity. Rounded finite results await the computable agreement of flapjack-h29l.6.2.3."
+  },
+  {
     "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/FindVarExact.lean",
     "lean_name": "findVarNeZeroContextHOLExact",
     "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
