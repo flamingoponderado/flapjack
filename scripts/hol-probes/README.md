@@ -74,15 +74,6 @@ and negative Loop/Seq cases and both residual If existential cases are in
 `crep_to_loop$comp_func_def` output rows and the right-recursive
 `list_to_num_set` rows in `crep_to_loop_comp_func_probe.out` and
 `crep_to_loop_list_to_num_set_probe.out`.
-`crep_to_loop_write_bytearray_mem_rel_probe.out` records direct HOL EVAL for
-both `panSem$write_bytearray` and `wordSem$write_bytearray` from related 64-bit
-memories, across little/big endian and full/partial memory domains. The
-matching Lean guards in `Flapjack.Test.CrepToLoopWriteBytearrayMemRelParity`
-replay all twelve observed words and the domain-restricted memory relation for
-the exact tagged `write_bytearray_mem_rel` theorem. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
-HOL_PROBE_ONLY=crep_to_loop_write_bytearray_mem_rel_probeScript.sml
-bash scripts/hol-probes/regenerate.sh`.
 `Flapjack.Test.LoopDecClockParity` probes `dec_clock_def` at lines 42--43 of
 the same source.
 `Flapjack.Test.LoopFixClockParity` probes `fix_clock_def` at lines 46--49.

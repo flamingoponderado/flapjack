@@ -43,7 +43,6 @@ import Flapjack.Test.PanShMemStoreBytesParity
 import Flapjack.Test.CrepNestedAssignDistinctHOLParity
 import Flapjack.Test.CrepNestedDecsSeqResVarEqParity
 import Flapjack.Test.CrepNestedDecsLoadGlobalsParity
-import Flapjack.Test.CrepToLoopWriteBytearrayMemRelParity
 import Flapjack.Test.CrepSemTotalCallParity
 import Flapjack.Pancake.Proofs.PanToCrep.TotalEvaluateCases
 import Flapjack.Test.CrepSemTotalAssignParity

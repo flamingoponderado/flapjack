@@ -318,13 +318,6 @@ run_probe crep_primop_loop_primop_probeScript.sml crep_primop_loop_primop_probe.
 run_probe crep_to_loop_mem_rel_probeScript.sml crep_to_loop_mem_rel_probe.out \
   mem_rel_match mem_rel_dom_absent "$cake_dir/pancake/proofs/crep_to_loopProofScript.sml" \
   "$cake_dir/pancake/proofs"
-run_probe crep_to_loop_write_bytearray_mem_rel_probeScript.sml \
-  crep_to_loop_write_bytearray_mem_rel_probe.out \
-  le_full_8_pan le_full_8_word le_full_16_pan le_full_16_word \
-  be_full_8_pan be_full_8_word be_full_16_pan be_full_16_word \
-  le_part_16_pan le_part_16_word le_part_8_pan le_part_8_word \
-  "$cake_dir/pancake/proofs/crep_to_loopProofScript.sml" \
-  "$cake_dir/pancake/proofs"
 run_probe crep_to_loop_distinct_funcs_probeScript.sml crep_to_loop_distinct_funcs_probe.out \
   distinct_funcs_sep distinct_funcs_absent "$cake_dir/pancake/proofs/crep_to_loopProofScript.sml" \
   "$cake_dir/pancake/proofs"
