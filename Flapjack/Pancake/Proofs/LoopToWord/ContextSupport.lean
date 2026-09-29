@@ -214,6 +214,37 @@ theorem makeCtxtHOL_notMem (names : List Nat) (next : Nat)
         _ = sptLookup key context :=
           sptLookup_sptInsert_ne name key next context hne
 
+/-- Exact HOL `lookup_EL_make_ctxt`
+(`cakeml/pancake/proofs/loop_to_wordProofScript.sml:323-329`). The valid
+`List.get` index is HOL's `EL` under the same in-range premise, and `Nodup` is
+HOL's `ALL_DISTINCT`; each listed name receives its even register. -/
+@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "lookup_EL_make_ctxt"]
+theorem makeCtxtHOL_lookupEL (params : List Nat) (k n : Nat)
+    (context : Spt Nat) (hk : k < params.length) (hdistinct : params.Nodup) :
+    sptLookup params[k] (Flapjack.makeCtxtHOL n params context) =
+      some (2 * k + n) := by
+  induction params generalizing k n context with
+  | nil => simp at hk
+  | cons name rest ih =>
+      rcases List.nodup_cons.mp hdistinct with ⟨hname, hrest⟩
+      cases k with
+      | zero =>
+          simp only [List.getElem_cons_zero, Flapjack.makeCtxtHOL]
+          rw [makeCtxtHOL_notMem rest (n + 2)
+            (sptInsert name n context) name hname]
+          rw [sptLookup_sptInsert_same]
+          simp
+      | succ k =>
+          have hk' : k < rest.length := by simp at hk; omega
+          change sptLookup rest[k]
+              (Flapjack.makeCtxtHOL (n + 2) rest
+                (sptInsert name n context)) =
+            some (2 * (k + 1) + n)
+          calc
+            _ = some (2 * k + (n + 2)) :=
+              ih k (n + 2) (sptInsert name n context) hk' hrest
+            _ = _ := by congr 1 <;> omega
+
 /-- Exact HOL `lookup_make_ctxt_range`
 (`cakeml/pancake/proofs/loop_to_wordProofScript.sml:331-339`). Any register
 found after context construction was either already present with the same
