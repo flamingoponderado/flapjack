@@ -24187,7 +24187,15 @@
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds10 source comparison (2026-09-29; bead flapjack-pxn.18.5.9.8.3) against loop_to_wordScript.sml:152-155. HOL make_ctxt n [] l = l and make_ctxt n (x::xs) l = make_ctxt (n+2) xs (insert x n l); Lean makeCtxtHOL is the constructor-for-constructor port over the exact spt num|->num carrier Spt Nat with the reviewed sptInsert, keeping the same recursion, the +2 register stride, and the list order. No word, fmap, or list qualifier applies (Spt is the ordinary reviewed sptree carrier, as for find_var_neq_0_ctxt). The production association-list makeCtxt in Flapjack/Pancake/LoopToWord.lean stays distinct; executable routing through this reviewed definition remains tracked by the comp_func chain (.18.5.9.8/.18.5.9.9)."
   },
-{
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "LASTN_ADD_CONS",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/LastNAddCons.lean",
+    "lean_name": "wordSemLastN_add_cons",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds5 source comparison (2026-09-29; bead flapjack-pxn.18.5.9.18.1) against loop_to_wordProofScript.sml:447-450. HOL statement is exactly ~(LENGTH xs <= n) ==> LASTN (n + 1) (x::xs) = LASTN (n + 1) xs, with x/xs/n universally quantified and no word or finite-map carrier. Lean keeps the same single hypothesis (not xs.length <= n) and conclusion, rendering the HOL standard-library LASTN (rich_listScript LASTN_def = REVERSE (TAKE n (REVERSE xs))) by the untagged Flapjack.wordSemLastN. No qualifier applies (reviewed_exact). Regression examples for the concrete equality and for the load-bearing hypothesis are in Flapjack.Test.LoopToWordLastNParity."
+  },
+  {
   "hol_path": "cakeml/pancake/loopLangScript.sml",
   "hol_name": "acc_vars_def",
   "lean_path": "Flapjack/Pancake/LoopLang.lean",
