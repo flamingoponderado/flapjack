@@ -116,6 +116,7 @@ import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOk
 import Flapjack.Pancake.Semantics.LoopSemStateExact
 import Flapjack.Pancake.Semantics.LoopSemStateExact.ShMem
 import Flapjack.Pancake.Semantics.LoopSemStateExact.Evaluate
+import Flapjack.Pancake.Semantics.LoopSemStateExact.ProductionExtCall
 import Flapjack.Pancake.Semantics.LoopSemStateExact.Semantics
 import Flapjack.Pancake.Semantics.LoopProps.EvaluateClockExact
 import Flapjack.Pancake.Semantics.LoopProps.EvaluateIoEventsExact
@@ -343,6 +344,7 @@ import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Assembly
 import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Dec
 import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Primitive
 import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Store
+import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Store32
 import Flapjack.Pancake.CrepToLoop.Proofs.CompExpPreservesEval.Leaf
 import Flapjack.Pancake.CrepToLoop.Proofs.SemanticsWrapper
 import Flapjack.Pancake.LoopLive.Fixedpoint
