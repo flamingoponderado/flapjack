@@ -2333,7 +2333,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileShapeExact.lean",
     "lean_name": "compileShapesExact_eq_map",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-luna-a statement comparison (2026-09-29; bead flapjack-pxn.18.5.3.77.1.1) against pan_structsProofScript.sml:310-314. HOL quantifies the fields-only context and shape list and states compile_shapes sctxt shs = MAP (compile_shape sctxt) shs. Lean has the same function equality on the exact list carriers, with no added hypotheses, fuel, or production context. The kernel proof is in CompileShapeExact.lean."
+    "reviewer": "flapjack-luna-a statement comparison (2026-09-30; bead flapjack-pxn.18.5.3.77.1.1.1.1) against pan_structsProofScript.sml:310-314. HOL explicitly quantifies the fields-only context and shape list and states compile_shapes sctxt shs = MAP (compile_shape sctxt) shs. Lean uses the same explicit context and shapes binders and pointwise equality over the exact list carriers, with no added hypotheses, fuel, or production context. The kernel proof is in CompileShapeExact.lean."
   },
   {
     "hol_path": "cakeml/pancake/pan_to_crepScript.sml",

@@ -14,10 +14,8 @@ open Flapjack.Pancake.PanStructs.CompileShapeExact
     hypotheses or fuel argument. -/
 @[hol "cakeml/pancake/proofs/pan_structsProofScript.sml" "compile_shapes_eq_map" 310]
 theorem compileShapesExact_eq_map
-    (sctxt : List (MlS × List (MlS × ShapeHOL))) :
-    (compileShapesExact sctxt : List ShapeHOL → List ShapeHOL) =
-      fun shapes => shapes.map (compileShapeExact sctxt) := by
-  funext shapes
+    (sctxt : List (MlS × List (MlS × ShapeHOL))) (shapes : List ShapeHOL) :
+    compileShapesExact sctxt shapes = shapes.map (compileShapeExact sctxt) := by
   induction shapes with
   | nil => simp [compileShapesExact]
   | cons shape shapes ih => simp [compileShapesExact, ih]
