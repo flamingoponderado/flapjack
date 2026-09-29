@@ -20074,4 +20074,65 @@
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.21) against crep_to_loop_compile_prog_lab_min at crep_to_loopProofScript.sml:4398-4400. HOL `crep_to_loop$compile_prog c cprog = lprog ⇒ EVERY (λprog. 60 ≤ FST prog) lprog` with free variables c, cprog, lprog (implicitly universal); Lean quantifies them in order of occurrence (c as the AsmArchitecture carrier of the tagged compileProgHOLExact, cprog at its argument type, lprog at its result type), keeps the equation premise, and renders EVERY as ∀ prog ∈ lprog with FST as .1. Words qualifier for the width-indexed Crep/Loop program carriers."
 }
+,
+{
+  "hol_path": "cakeml/pancake/proofs/loop_callProofScript.sml",
+  "hol_name": "get_vars_front",
+  "hol_line": 273,
+  "lean_path": "Flapjack/Pancake/Proofs/LoopCall/GetVars.lean",
+  "lean_name": "getVars_dropLast",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "globals"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds5 (source comparison, 2026-09-29; bead flapjack-pxn.18.5.7.4.1): HOL get_vars_front (loop_callProofScript.sml:273-297) states forall xs ys s, get_vars xs s = SOME ys /\\ xs <> [] ==> get_vars (FRONT xs) s = SOME (FRONT ys). The Lean statement has the same binders and hypotheses over the tagged exact getVars (loopSemScript.sml get_vars_def) and LoopSemStateFiniteExact; FRONT is HOL core listTheory (outside cakeml) rendered as List.dropLast; the result nonemptiness is derived internally (getVars_ne_nil) so no premise is added. The state carrier's globals |-> field is HolFiniteMapExact with the same-module witness holFmapAsFiniteSupportWitness (fresh namespace LoopCallGetVarsFiniteSupport); words_as_type_indexed_bitvec records the positive BitVec width."
+},
+{
+  "hol_path": "cakeml/pancake/proofs/loop_callProofScript.sml",
+  "hol_name": "get_vars_last",
+  "hol_line": 300,
+  "lean_path": "Flapjack/Pancake/Proofs/LoopCall/GetVars.lean",
+  "lean_name": "getVars_getLast",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "globals"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds5 (source comparison, 2026-09-29; bead flapjack-pxn.18.5.7.4.1): HOL get_vars_last (loop_callProofScript.sml:300-324) states forall xs ys s, get_vars xs s = SOME ys /\\ xs <> [] ==> lookup (LAST xs) s.locals = SOME (LAST ys). The Lean statement keeps the same binders/hypotheses over the tagged exact getVars and sptLookup; LAST is HOL core listTheory rendered as List.getLast, and the result nonemptiness is supplied by the derived helper getVars_ne_nil (no extra premise). Same carrier/qualifier justification as get_vars_front."
+}
+,
+{
+  "hol_path": null,
+  "hol_name": null,
+  "lean_path": "Flapjack/Pancake/Proofs/LoopCall/GetVars.lean",
+  "lean_name": "getVars_length",
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "flapjack-ds5 (bead flapjack-pxn.18.5.7.4.1): untagged Flapjack-specific helper for the two tagged loop_callProofScript.sml get_vars lemmas; HOL proves the corresponding list facts inline in the compile_correct Call case, so there is no named HOL declaration to cite."
+},
+{
+  "hol_path": null,
+  "hol_name": null,
+  "lean_path": "Flapjack/Pancake/Proofs/LoopCall/GetVars.lean",
+  "lean_name": "getVars_ne_nil",
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "flapjack-ds5 (bead flapjack-pxn.18.5.7.4.1): untagged Flapjack-specific helper for the two tagged loop_callProofScript.sml get_vars lemmas; HOL proves the corresponding list facts inline in the compile_correct Call case, so there is no named HOL declaration to cite."
+},
+{
+  "hol_path": null,
+  "hol_name": null,
+  "lean_path": "Flapjack/Pancake/Proofs/LoopCall/GetVars.lean",
+  "lean_name": "getVars_getLast_aux",
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "flapjack-ds5 (bead flapjack-pxn.18.5.7.4.1): untagged Flapjack-specific helper for the two tagged loop_callProofScript.sml get_vars lemmas; HOL proves the corresponding list facts inline in the compile_correct Call case, so there is no named HOL declaration to cite."
+}
+,
+{
+  "hol_path": null,
+  "hol_name": null,
+  "lean_path": "Flapjack/Pancake/Proofs/LoopCall/GetVars.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "flapjack-ds5 (bead flapjack-pxn.18.5.7.4.1): fresh-namespace re-export of the canonical fmap witness for the imported LoopSemStateFiniteExact carrier, required by the qualified get_vars_front/get_vars_last tags in this module; no HOL original."
+}
 ]
