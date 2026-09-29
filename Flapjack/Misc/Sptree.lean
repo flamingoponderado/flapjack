@@ -608,6 +608,26 @@ theorem sptAcc_eq (index key : Nat) :
             rw [hmul, Nat.mul_add, Nat.mul_one]
             omega
 
+/-- `lrNext` is always positive, so the affine address assigned to a local
+index by `sptAcc` is injective. This is the key uniqueness fact needed when
+foldi's mixed traversal order is related back to `lookup` keys. -/
+theorem lrNext_pos (index : Nat) : 0 < lrNext index := by
+  induction index using Nat.strongRecOn with
+  | ind index ih =>
+      cases index with
+      | zero => simp [lrNext]
+      | succ index =>
+          have hlt : index / 2 < index + 1 := by omega
+          simp only [lrNext]
+          exact Nat.mul_pos (by omega) (ih (index / 2) hlt)
+
+/-- Distinct local keys have distinct absolute indices under `sptAcc`. -/
+theorem sptAcc_injective (index : Nat) : Function.Injective (sptAcc index) := by
+  intro left right h
+  rw [sptAcc_eq, sptAcc_eq] at h
+  have hmul : lrNext index * left = lrNext index * right := Nat.add_left_cancel h
+  exact Nat.eq_of_mul_eq_mul_left (lrNext_pos index) hmul
+
 /-- HOL sptree `foldi` (`HOL/src/finite_maps/sptreeScript.sml:737-749`) over
 the exact tree, in the same mixed order. -/
 def sptFoldi {α : Type} (f : Nat → α → List (Nat × α) → List (Nat × α))
