@@ -189,8 +189,8 @@ mutual
         if result.isNone then evaluateLoop fuel hooks second state' else (result, state')
     | .ite operator condition right thenBranch elseBranch live =>
         match state.locals condition, getVarImm state right with
-        | some left, some rightValue =>
-            let branch := if hooks.compare operator left rightValue then thenBranch
+        | some (.word left), some (.word rightValue) =>
+            let branch := if hooks.compare operator (.word left) (.word rightValue) then thenBranch
               else elseBranch
             cutLoopResult live (evaluateLoop fuel hooks branch state)
         | _, _ => (some .error, state)

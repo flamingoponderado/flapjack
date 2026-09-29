@@ -4,6 +4,8 @@ import Flapjack.Compiler.Backend.BackendCommon
 import Flapjack.Compiler.Backend.Semantics.WordSem
 import Flapjack.Compiler.Backend.Semantics.WordSem.State
 import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
+import Flapjack.Compiler.Backend.Semantics.WordSem.Env
+import Flapjack.Basis.Pure.MlList
 import Flapjack.Pancake.PanLang
 import Flapjack.Pancake.PanLang.Shape
 import Flapjack.Pancake.PanLang.Exp
@@ -134,9 +136,11 @@ import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.Ffi
 import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.CutState
 import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.FfiHook
 import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.SetGlobal
+import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.If
 import Flapjack.Pancake.Semantics.LoopSemStateExact.ProductionExtCall
 import Flapjack.Pancake.Semantics.LoopSemStateExact.ProductionEvalHook
 import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.OpShift
+import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.AllExpressions
 import Flapjack.Pancake.Semantics.LoopSemStateExact.Semantics
 import Flapjack.Pancake.Semantics.LoopProps.EvaluateClockExact
 import Flapjack.Pancake.Semantics.LoopProps.EvaluateIoEventsExact
@@ -203,6 +207,7 @@ import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.ExtCall
 import Flapjack.Pancake.Proofs.PanToCrep.NotMemContextAssignedMemGt
 import Flapjack.Pancake.Proofs.PanToWord
 import Flapjack.Pipeline
+import Flapjack.Pipeline.Proofs.SourceLoopState
 import Flapjack.RiscV.PipelineDiagnostics
 import Flapjack.RiscV.CorrectnessTraps
 import Flapjack.RiscV.RegisterRelabel

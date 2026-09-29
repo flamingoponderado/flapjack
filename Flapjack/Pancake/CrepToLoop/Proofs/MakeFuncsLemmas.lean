@@ -30,14 +30,15 @@ private theorem map_fst_zipWith_pair {α β γ : Type} (g : α → β → γ) :
 
 /-- Exact HOL `map_map2_fst` (`crep_to_loopProofScript.sml:3799-3803`):
     `!xs ys h. LENGTH xs = LENGTH ys ==> MAP FST (MAP2 (λx (n,p,b).
-    (x, GENLIST I (LENGTH p), h p b)) xs ys) = xs`. The right-associated
-    Lean triple is the HOL program triple, and `panMap2` preserves HOL `MAP2`
-    truncation behavior. The binders remain in HOL order; no representation
-    qualifier is needed. -/
+    (x, GENLIST I (LENGTH p), h p b)) xs ys) = xs`. Its fully polymorphic
+    HOL carrier has `xs : 'a list`, `ys : ('b # 'c list # 'd) list`, and
+    `h : 'c list -> 'd -> 'e`; only `p` is constrained to be a list. The
+    right-associated Lean triple is the HOL triple, and `panMap2` preserves
+    HOL `MAP2` truncation behavior. -/
 @[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "map_map2_fst"]
-theorem mapMap2FstHOL {α β γ : Type} :
-    ∀ (xs : List α) (ys : List (Nat × List Nat × β))
-      (h : List Nat → β → γ),
+theorem mapMap2FstHOL {α β γ δ ε : Type} :
+    ∀ (xs : List α) (ys : List (β × List γ × δ))
+      (h : List γ → δ → ε),
       xs.length = ys.length →
         (panMap2
           (fun x y => (x, List.range y.2.1.length, h y.2.1 y.2.2)) xs ys).map

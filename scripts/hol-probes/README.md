@@ -48,14 +48,21 @@ loopLang-to-wordLang expression compiler `comp_exp_def` at
 `cakeml/pancake/loop_to_wordScript.sml:22-40`; its kernel-checked Lean replay
 is also `Flapjack.Test.LoopToWordExactParity`.
 `loop_to_word_comp_probe.out` records direct HOL EVAL rows for the initial
-constructor slice of `comp_def` at `cakeml/pancake/loop_to_wordScript.sml:56-77`
-and the simple control/result clauses at `:96-110`: Skip, Assign, valid and
-malformed AddCarry Primitive arities, all three Arith constructors, and
-Break/Continue/Raise/Return/Tick/Fail/LocValue, plus the FFI and ShMem clauses at
-`:141-146` (`comp_ffi` and `comp_shMem`, the latter compiling `ShMem` to
-`ShareInst`). Its kernel-checked Lean replay
-is in `Flapjack.Test.LoopToWordExactParity`; the partial helper is intentionally
+and memory constructor slices of `comp_def` at
+`cakeml/pancake/loop_to_wordScript.sml:56-108` (Skip, Assign, valid and
+malformed AddCarry Primitive arities, all three Arith constructors, Store,
+SetGlobal, and the four direct memory operations), the simple control/result
+clauses at `:96-110` (Break/Continue/Raise/Return/Tick/Fail/LocValue), and the
+FFI and ShMem clauses at `:141-146` (`comp_ffi` and `comp_shMem`, the latter
+compiling `ShMem` to `ShareInst`). Its kernel-checked Lean replay is in
+`Flapjack.Test.LoopToWordExactParity`; the partial helper is intentionally
 untagged until every `comp_def` clause has an exact Lean port.
+`loop_to_word_comp_recursive_probe.out` records direct HOL EVAL rows for the
+recursive Seq, If, Loop, and Mark clauses of `comp_def` at
+`cakeml/pancake/loop_to_wordScript.sml:107-120,138`, including the threaded
+label pair, If/Loop Tick placement, and Loop live cutsets. Its kernel-checked
+Lean replay is `Flapjack.Test.LoopToWordRecursiveParity`; the partial helper
+remains untagged until the other `comp_def` clauses are ported and assembled.
 `loop_live_comp_probe.out` records direct HOL EVAL rows for
 `loop_live$comp` at `cakeml/pancake/loop_liveScript.sml:217`; the Lean replay
 is `Flapjack.Test.LoopLiveCompParity`. `loop_live_optimise_probe.out` records

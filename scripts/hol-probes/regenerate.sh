@@ -214,8 +214,12 @@ run_probe loop_to_word_comp_exp_probeScript.sml loop_to_word_comp_exp_probe.out 
 run_probe loop_to_word_comp_probeScript.sml loop_to_word_comp_probe.out \
   comp_skip comp_assign comp_addcarry_valid comp_addcarry_bad_dest_arity \
   comp_addcarry_bad_argument_arity comp_longmul comp_longdiv comp_div \
+  comp_store comp_setglobal comp_load32 comp_loadbyte comp_store32 comp_storebyte \
   comp_break comp_continue comp_raise comp_return comp_tick comp_fail \
   comp_locValue comp_ffi comp_shMem \
+  "$cake_dir/pancake/loop_to_wordScript.sml"
+run_probe loop_to_word_comp_recursive_probeScript.sml loop_to_word_comp_recursive_probe.out \
+  comp_seq comp_if comp_loop comp_mark \
   "$cake_dir/pancake/loop_to_wordScript.sml"
 # The get_stack_only probe observes the allocator driver's stack-only
 # analysis over wordLang programs (backend word_alloc).
@@ -1464,7 +1468,8 @@ run_probe loop_sem_eval_probeScript.sml loop_sem_eval_probe.out \
 run_probe loop_sem_evaluate_probeScript.sml loop_sem_evaluate_probe.out \
   skip tick_timeout "$cake_dir/pancake/semantics/loopSemScript.sml"
 run_probe loop_sem_evaluate_control_probeScript.sml loop_sem_evaluate_control_probe.out \
-  if_true if_false if_cut_error loop_break0 loop_return loop_timeout \
+  if_true if_false if_cut_error if_nonword_left_error if_nonword_right_error \
+  loop_break0 loop_return loop_timeout \
   loop_continue0_timeout loop_break_outer call_return call_return_handler \
   call_exception_handler call_exception_no_handler call_arity_error \
   tail_call_return raise primitive_add_carry loc_value loc_value_missing \
@@ -1620,6 +1625,15 @@ run_probe word_sem_carriers_probeScript.sml word_sem_carriers_probe.out \
 # state accessors over record updates of a free state (bead flapjack-h29l.2).
 run_probe word_sem_accessors_probeScript.sml word_sem_accessors_probe.out \
   cmp_equal exp_op fix_clock var_imm_reg \
+  "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
+# The wordSem env/stack probe observes key_val_compare, list_rearrange (with
+# its BIJ guard decided over the finite count set), fromList2, mllist$sort,
+# env_to_list, call_env, push_env/pop_env, jump_exc and the cut_* helpers
+# (bead flapjack-h29l.4).
+run_probe word_sem_env_probeScript.sml word_sem_env_probe.out \
+  kvc_loc_loc rearrange_rev env_to_list push_env_some jump_exc cut_state_opt_none \
   "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 

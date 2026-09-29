@@ -1,6 +1,6 @@
 (*
-  Direct HOL EVAL oracle for the initial constructor slice of the exact
-  loop_to_word compiler at cakeml/pancake/loop_to_wordScript.sml:56-77.
+  Direct HOL EVAL oracle for the first two constructor slices of the exact
+  loop_to_word compiler at cakeml/pancake/loop_to_wordScript.sml:56-108.
 
   This fixture observes the compiler's returned label pair as well as each
   emitted Word program. The remaining comp_def constructors are intentionally
@@ -39,6 +39,20 @@ print_eval "comp_longdiv" ``comp ^ctxt
   (loopLang$Arith (LLongDiv 10 11 12 13 14)) ^labels``;
 print_eval "comp_div" ``comp ^ctxt
   (loopLang$Arith (LDiv 10 12 13)) ^labels``;
+
+(* comp_def memory clauses, loop_to_wordScript.sml:79-95 *)
+print_eval "comp_store" ``comp ^ctxt
+  (loopLang$Store (loopLang$Var 10) 11) ^labels``;
+print_eval "comp_setglobal" ``comp ^ctxt
+  (loopLang$SetGlobal (5w : 5 word) (loopLang$Var 10)) ^labels``;
+print_eval "comp_load32" ``comp ^ctxt
+  (loopLang$Load32 12 13 : 8 word loopLang$prog) ^labels``;
+print_eval "comp_loadbyte" ``comp ^ctxt
+  (loopLang$LoadByte 13 12 : 8 word loopLang$prog) ^labels``;
+print_eval "comp_store32" ``comp ^ctxt
+  (loopLang$Store32 12 14 : 8 word loopLang$prog) ^labels``;
+print_eval "comp_storebyte" ``comp ^ctxt
+  (loopLang$StoreByte 13 11 : 8 word loopLang$prog) ^labels``;
 
 (* comp_def simple control/result clauses, loop_to_wordScript.sml:96-110 *)
 print_eval "comp_break" ``comp ^ctxt (loopLang$Break 5) ^labels``;
