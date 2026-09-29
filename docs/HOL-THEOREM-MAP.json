@@ -22113,5 +22113,13 @@
     "lean_name": "holFmapAsFiniteSupportWitness",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack same-module canonical finite-support witness for the eval_mul_const qualifier (re-export of CrepSemHOLState.holFmapAsFiniteSupportWitness); no CakeML declaration"
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "semantics_wrapper_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/SemanticsWrapper.lean",
+    "lean_name": "crepToLoopSemanticsWrapper",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.34.6): HOL crep_to_loopProofScript.sml:4132-4136 semantics_wrapper f = if ?k v. f k = (RunError, v) then Fail else case some res. ?k r ev. f k = (CompleteResult r, ev) /\\ res = Terminate r ev of SOME res => res | NONE => Diverge (LUB (IMAGE (fromList o SND o f) UNIV)). Lean crepToLoopSemanticsWrapper takes the same arbitrary f : Nat -> CrepToLoopSemanticsRunRes HolOutcome x List HolIoEvent (the tagged crep_to_loop semantics_run_res at HOL's outcome instance, which Terminate forces) with no chain, LUB or witness premise; same guard, same some-predicate (binder order k r ev, conjunct order), same branches. HOL option some is holOptionSome (@ as Classical.choose under the guard) and LUB (overload of build_lprefix_lub) is the total chain-free HolLList.buildLprefixLub over the exact lrep_ok llist subtype HolLList, fromList is HolLList.fromList, IMAGE g UNIV is fun l => exists k, l = g k -- the same renderings accepted for the tagged loopSem/crepSem semantics_def. Noncomputable as HOL's classical definition. No finite-map or word carriers occur in the signature, so no qualifier. Caveat (coordinator review, 2026-09-29): HOL @ and Lean Classical.choose are the standard translation and the Lean definition states the same choice formula, but their arbitrarily selected values (buildLprefixLub per-index choice on non-chain families, holOptionSome among several completed runs) are not proved cross-language equal; that is out of scope per docs/SOUNDNESS.md. The generic carrier 4ac.4.105.2 is resolved as a representation port (HolLList = exact lrep_ok subtype; buildLprefixLub unfolds build_lprefix_lub_f, lprefix_lubScript.sml:200-203,430-438), not as a proved choice correspondence; on lprefixChain families buildLprefixLub_thm characterises the LUB uniquely."
   }
 ]
