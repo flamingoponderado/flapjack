@@ -27,11 +27,12 @@ agreement for its address as a recursive premise; its proof handles failed and
 location-valued address evaluation, an address outside `mdomain`, and both word
 and location-valued memory cells.
 
-Only `Const`, `Var`, `Lookup`, and the `Load` case with its recursive address
-premise are verified here; the other adapter cases and wiring to an executed
-caller remain open. These are Flapjack-specific cross-carrier bridges between
-the exact finite-support carrier and the production carrier; none ports a HOL
-declaration, so they intentionally carry no `@[hol]` tag.
+Only `Const`, `Var`, `Lookup`, `BaseAddr`, `TopAddr`, and the `Load` case with
+its recursive address premise are verified here; `Op`/`Shift`, other adapter
+cases, and wiring to an executed caller remain open. These are Flapjack-specific
+cross-carrier bridges between the exact finite-support carrier and the
+production carrier; none ports a HOL declaration, so they intentionally carry
+no `@[hol]` tag.
 -/
 
 namespace Flapjack
@@ -49,10 +50,10 @@ def loopValueToWordLocW {width : Nat} [NeZero width] :
     word, `Var` reads the local cell (word or location, or `none` when absent),
     `Lookup` reads globals, `Load` consults `mdomain`/`memory`, `Op`/`Shift`
     reuse the reviewed `wordOpHOL`/`wordShiftHOL`, and `BaseAddr`/`TopAddr`
-    return the state's address bounds. `Const`, `Var`, and `Lookup` have
-    unconditional exact/production agreement below; `Load` has agreement when
-    supplied the recursive agreement for its address. The other clauses need
-    separate review.
+    return the state's address bounds. `Const`, `Var`, `Lookup`, `BaseAddr`, and
+    `TopAddr` have unconditional exact/production agreement below; `Load` has
+    agreement when supplied the recursive agreement for its address. `Op` and
+    `Shift` still need separate review.
 
     Only the `crepOp`/`cmp` constructors, which the executable `LoopExp` adds but
     the faithful `HolLoopExp` does not contain, have no source counterpart and
@@ -218,5 +219,33 @@ theorem loopMachineEvalHook_load_prodRel_of_ih {width : Nat} [NeZero width] {F :
               simp [LoopSemStateFiniteExact.memLoad, hmemory word, hcell,
                 loopValueOfWordLocW, hdomain]
           · simp [LoopSemStateFiniteExact.memLoad, hdomain]
+
+/-- The production `BaseAddr` hook agrees with exact `eval` under `prodRel`.
+    The equation follows from the base-address conjunct and preserves the
+    width-indexed word payload. Flapjack-only cross-carrier bridge, with no
+    `@[hol]` tag. -/
+theorem loopMachineEvalHook_baseAddr_prodRel {width : Nat} [NeZero width] {F : Type}
+    {state : LoopSemStateFiniteExact width F}
+    {machine : LoopMachineState (BitVec width) F}
+    (hrel : state.prodRel machine) :
+    loopMachineEvalHook machine (holLoopExpToExecutable (.baseAddr : HolLoopExp width)) =
+      (LoopSemStateFiniteExact.eval state .baseAddr).map loopValueOfWordLocW := by
+  rcases hrel with ⟨_, _, _, _, _, _, _, _, hbaseAddr, _, _, _⟩
+  simp [holLoopExpToExecutable, loopMachineEvalHook,
+    LoopSemStateFiniteExact.eval, loopValueOfWordLocW, hbaseAddr]
+
+/-- The production `TopAddr` hook agrees with exact `eval` under `prodRel`.
+    The equation follows from the top-address conjunct and preserves the
+    width-indexed word payload. Flapjack-only cross-carrier bridge, with no
+    `@[hol]` tag. -/
+theorem loopMachineEvalHook_topAddr_prodRel {width : Nat} [NeZero width] {F : Type}
+    {state : LoopSemStateFiniteExact width F}
+    {machine : LoopMachineState (BitVec width) F}
+    (hrel : state.prodRel machine) :
+    loopMachineEvalHook machine (holLoopExpToExecutable (.topAddr : HolLoopExp width)) =
+      (LoopSemStateFiniteExact.eval state .topAddr).map loopValueOfWordLocW := by
+  rcases hrel with ⟨_, _, _, _, _, _, _, _, _, htopAddr, _, _⟩
+  simp [holLoopExpToExecutable, loopMachineEvalHook,
+    LoopSemStateFiniteExact.eval, loopValueOfWordLocW, htopAddr]
 
 end Flapjack
