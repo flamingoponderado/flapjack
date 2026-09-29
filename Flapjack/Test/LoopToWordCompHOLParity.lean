@@ -26,12 +26,26 @@ def compContext : Spt Nat :=
 /-- `insert 10 () (insert 11 () LN)`, the loop cut-set fixture. -/
 def compLive : Spt Unit := sptInsert 11 () (sptInsert 10 () .ln)
 
+/-- The independent Loop probe inputs `insert 10 () LN` and `insert 11 () LN`.
+The HOL output prints their mapped cutsets as `{0,20}` and `{0,22}`. -/
+def compLoopLiveIn : Spt Unit := sptInsert 10 () .ln
+def compLoopLiveOut : Spt Unit := sptInsert 11 () .ln
+
+/-- Constructor-level Spt tree printed by HOL as `⦕ 0; 20 ⦖`. -/
+def compLoopCutset20 : Spt Unit :=
+  .bs (.bn .ln (.bn (.bn .ln (.ls ())) .ln)) () .ln
+
+/-- Constructor-level Spt tree printed by HOL as `⦕ 0; 22 ⦖`. -/
+def compLoopCutset22 : Spt Unit :=
+  .bs (.bn (.bn (.bn .ln (.ls ())) .ln) .ln) () .ln
+
 /-- The FFI fixture `FFI «foo» 10 11 12 13 (insert 6 () LN)`. -/
 def loopLangFfiRow : HolLoopProg 8 :=
   .ffi (Flapjack.Basis.Pure.MlString.ofString "foo") 10 11 12 13 (sptInsert 6 () .ln)
 
 attribute [local simp] Flapjack.LoopToWord.compHOL.eq_def findVarHOL compExpHOL
-  compContext compLabels compLive loopLangFfiRow
+  compContext compLabels compLive compLoopLiveIn compLoopLiveOut
+  compLoopCutset20 compLoopCutset22 loopLangFfiRow
 attribute [local simp] sptLookup_sptInsert_same sptLookup_sptInsert_ne
 
 example : Flapjack.LoopToWord.compHOL (width := 8) compContext .skip compLabels =
@@ -110,11 +124,18 @@ example : Flapjack.LoopToWord.compHOL (width := 8) compContext
         (.assign 24 (.const (5 : BitVec 8))) (.assign 26 (.var 28))) .tick,
         compLabels) := by simp
 
+/-! The direct HOL `comp_loop` row (recursive probe output) is concrete:
+`Loop ⦕ 0; 20 ⦖ (Assign 24 (Var 26)) ⦕ 0; 22 ⦖`.  Check the complete
+returned program and both exact Spt trees, rather than only checking that key
+zero survives in each cutset.  HOL's source clauses are `mk_new_cutset_def`
+at `loop_to_wordScript.sml:51-53` and the Loop branch of `comp_def` at
+`loop_to_wordScript.sml:116-120`. -/
 example : Flapjack.LoopToWord.compHOL (width := 8) compContext
-    (.loop compLive (.assign 12 (.var 13)) compLive) compLabels =
-      (.seq .tick (.seq (.loop (mkNewCutsetHOL compContext compLive)
-        (.assign 24 (.var 26)) (mkNewCutsetHOL compContext compLive)) .tick),
-        compLabels) := by simp
+    (.loop compLoopLiveIn (.assign 12 (.var 13)) compLoopLiveOut) compLabels =
+      (.seq .tick (.seq (.loop compLoopCutset20
+        (.assign 24 (.var 26)) compLoopCutset22) .tick), compLabels) := by
+  simp [mkNewCutsetHOL, fromNumSetHOL, toNumSetHOL, findVarHOL,
+    sptToAList, sptFoldi, lrNext, sptInsert, sptLookup]
 
 example : Flapjack.LoopToWord.compHOL (width := 8) compContext
     (.mark (.assign 10 (.var 14))) compLabels =
@@ -179,6 +200,11 @@ def compHOLProbeChecks : List Bool :=
         (.call (some ([12, 13], compLive)) (some 5) [10, 11] none) compLabels with
       | (.call (some ([24, 26], (cutset, .ln), .skip, (7, 11))) (some 5)
           [20, 22] none, (7, 12)) => (sptLookup 0 cutset).isSome
+      | _ => false),
+    (match Flapjack.LoopToWord.compHOL (width := 8) compContext
+        (.loop compLoopLiveIn (.assign 12 (.var 13)) compLoopLiveOut) compLabels with
+      | (.seq .tick (.seq (.loop liveIn (.assign 24 (.var 26)) liveOut) .tick), (7, 11)) =>
+          liveIn == compLoopCutset20 && liveOut == compLoopCutset22
       | _ => false) ]
 
 def runChecks : IO Bool := do
