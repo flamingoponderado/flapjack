@@ -24407,5 +24407,13 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.9.20.2): HOL loop_to_wordProof evaluate_tick_loop_tick_unfold[local] (loop_to_wordProofScript.sml:517-531): t1.clock <> 0 ==> evaluate (Seq Tick (Seq (Loop names body exit_names) Tick), t1) = (λ(res',s1). if res' = NONE then if s1.clock = 0 then (SOME TimeOut, flush_state T s1) else (NONE, s1 with clock := s1.clock − 1) else (res', s1)) (evaluate (Loop names body exit_names, t1 with clock := t1.clock − 1)). Lean states it over the tagged exact wordSem evaluate. HOL's free t1, names, body and exit_names are parameters, with names and exit_names at the Loop constructor's WordLangNumSetHOL (num_set). The single hypothesis is t1.clock ≠ 0. The paired lambda is a lambda matching on the pair. res' = NONE is decided classically, because WordSemResult has no DecidableEq. The record updates are literal. The proof uses the rebound evaluate_def (Seq, fix_clock removed) and evaluate_tick_unfold. Qualifiers are as for evaluate_def, with the same-module witness. Kernel-checked."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/TickUnfold.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module re-export of the existing WordSemStateExact toBroad/ofBroad finite-support roundtrip. The finite-map qualifiers on the tagged evaluate_tick_unfold and evaluate_tick_loop_tick_unfold ports require it. It introduces no carrier and has no separate HOL declaration."
   }
 ]
