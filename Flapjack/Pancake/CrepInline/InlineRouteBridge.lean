@@ -507,5 +507,42 @@ theorem crepProgToHOL_crepTransformBranch {width : Nat} [NeZero width] (loopDept
             · exact absurd rfl (hcs names handler body nm ar)
       | _ => simp_all [transformBranchHOLExact, crepProgToHOL]
 
+/-- `nestedDecs` over a constant-zero value list maps to `List.replicate` of the
+    exact constant under the codec. -/
+private theorem crepExpMap_const_replicate {width : Nat} [NeZero width] (l : List Nat) :
+    (l.map (fun _ => CrepExp.const (0 : BitVec width))).map crepExpToHOL =
+      List.replicate l.length (CrepExpHOL.const 0) := by
+  induction l with
+  | nil => rfl
+  | cons n t ih =>
+      have h : crepExpToHOL (CrepExp.const (0 : BitVec width)) = CrepExpHOL.const 0 := by
+        simp [crepExpToHOL]
+      simp only [List.map_cons]
+      rw [ih, h]
+      rfl
+
+/-- Executed `crepInlineNontail` lifts to the exact `inlineNontailHOLExact`
+    under the `crepProgToHOL` codec. -/
+theorem crepProgToHOL_crepInlineNontail {width : Nat} [NeZero width]
+    (program : CrepProg (BitVec width))
+    (returnNames temporaryReturns temporaryNames : List Nat)
+    (arguments : List (CrepExp (BitVec width))) (argumentNames : List Nat) :
+    crepProgToHOL (crepInlineNontail program returnNames temporaryReturns temporaryNames
+        arguments argumentNames) =
+      inlineNontailHOLExact (crepProgToHOL program) returnNames temporaryReturns temporaryNames
+        (arguments.map crepExpToHOL) argumentNames := by
+  unfold crepInlineNontail inlineNontailHOLExact
+  rw [crepProgToHOL_nestedDecs]
+  congr 1
+  · exact crepExpMap_const_replicate temporaryReturns
+  · simp only [crepProgToHOL, crepProgToHOL_crepArgLoad, crepProgToHOL_crepNestedSeqHOL]
+    rw [List.map_zipWith]
+    have hfun : (fun x y => crepProgToHOL (CrepProg.assign (α := BitVec width) x
+        (CrepExp.var (α := BitVec width) y))) =
+        (fun name temporary => CrepProgHOL.assign name (CrepExpHOL.var temporary)) := by
+      funext name temporary
+      simp [crepProgToHOL, crepExpToHOL]
+    rw [hfun]
+
 end CrepInlineRoute
 end Flapjack
