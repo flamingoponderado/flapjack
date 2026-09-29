@@ -1174,6 +1174,27 @@ class HolAttributeSitesTest(unittest.TestCase):
         self.assertIn("State width", text)
         self.assertNotIn("other : Nat", text)
 
+    def test_tagged_noncomputable_def_disambiguates_finite_map_carrier(self):
+        lines = [
+            "structure BroadState where",
+            "  locals : HolFiniteMapExact Nat Nat",
+            "structure FiniteState where",
+            "  locals : HolFiniteMapExact Nat Nat",
+            "theorem holFmapAsFiniteSupportWitness :",
+            "    (\u2200 s : FiniteState, ofBroad (toBroad s) = s) := by rfl",
+            '@[hol "cakeml/pancake/semantics/crepSemScript.sml" "eval_def"',
+            "  (fmap_as_finite_support := [locals])]",
+            "noncomputable def evalHOLFinite (s : FiniteState) : Nat := 0",
+            "def unrelated (s : BroadState) : Nat := 0",
+        ]
+        declaration_text = CHECKER["tagged_declaration_text"](lines, 7)
+        self.assertIn("FiniteState", declaration_text)
+        self.assertNotIn("unrelated", declaration_text)
+        errors = CHECKER["fmap_as_finite_support_errors"](
+            lines, ("locals",), "Flapjack/Crep/HOLState.lean", declaration_text
+        )
+        self.assertEqual(errors, [])
+
     def test_representation_witness_is_checked_in_same_module(self):
         lines = [
             "structure State where",

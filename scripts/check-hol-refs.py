@@ -731,7 +731,8 @@ def owning_structure_for_fields(
 
 
 TOP_DECL_RE = re.compile(
-    r"^(?:@\[|def |theorem |lemma |abbrev |instance |structure |inductive )"
+    r"^(?:@\[|(?:private |protected |noncomputable |partial |unsafe )*"
+    r"(?:def |theorem |lemma |abbrev |instance |structure |inductive ))"
 )
 
 
@@ -750,7 +751,11 @@ def tagged_declaration_text(lines: list[str], attribute_start: int) -> str:
             if seen_declaration:
                 break
             region.append(line)
-            if re.search(r"(?:^|\s)(?:def|theorem|lemma|abbrev|instance|structure) ", stripped):
+            if re.search(
+                r"(?:^|\s)(?:(?:private|protected|noncomputable|partial|unsafe)\s+)*"
+                r"(?:def|theorem|lemma|abbrev|instance|structure) ",
+                stripped,
+            ):
                 seen_declaration = True
                 if ":=" in stripped:
                     break
@@ -760,7 +765,11 @@ def tagged_declaration_text(lines: list[str], attribute_start: int) -> str:
             continue
         if seen_declaration and TOP_DECL_RE.match(line):
             break
-        if re.match(r"(?:def|theorem|lemma|abbrev|instance|structure) ", stripped):
+        if re.match(
+            r"(?:(?:private|protected|noncomputable|partial|unsafe)\s+)*"
+            r"(?:def|theorem|lemma|abbrev|instance|structure) ",
+            stripped,
+        ):
             seen_declaration = True
         region.append(line)
         if seen_declaration and ":=" in line:
