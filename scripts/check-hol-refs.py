@@ -28,6 +28,8 @@ Uses only the standard library.
 from __future__ import annotations
 
 import os
+import hashlib
+import json
 import re
 import sys
 from functools import lru_cache
@@ -37,6 +39,41 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 LEAN_DIRS = [ROOT / "Flapjack", ROOT / "Flapjack.lean"]
+
+# External sources are deliberately restricted to the reviewed snapshot.
+EXTERNAL_HOL_PATH = "hol4/src/finite_maps/sptreeScript.sml"
+EXTERNAL_HOL_REPOSITORY = "https://github.com/HOL-Theorem-Prover/HOL"
+
+
+def hol_source_error(root: Path, path: str) -> str | None:
+    """Validate a repository-relative source, including external byte pins."""
+    parts = path.split("/")
+    if any(part in ("", ".", "..") for part in parts) or not path.endswith(".sml"):
+        return "invalid repository-relative HOL source path"
+    if path.startswith("cakeml/"):
+        return None
+    if path != EXTERNAL_HOL_PATH:
+        return "HOL source is not a supported pinned external path"
+    try:
+        lock = json.loads((root / "hol4/SOURCES.json").read_text())
+        if (set(lock) != {"repository", "commit", "files"}
+                or lock["repository"] != EXTERNAL_HOL_REPOSITORY
+                or not isinstance(lock["commit"], str)
+                or not re.fullmatch(r"[0-9a-f]{40}", lock["commit"])
+                or not isinstance(lock["files"], dict)
+                or set(lock["files"]) != {"COPYRIGHT", "src/finite_maps/sptreeScript.sml"}):
+            return "invalid pinned external HOL source manifest"
+        for relative, digest in lock["files"].items():
+            target = root / "hol4" / relative
+            if (not isinstance(digest, str) or not re.fullmatch(r"[0-9a-f]{64}", digest)
+                    or not target.is_file()
+                    or target.resolve() != target.absolute()
+                    or hashlib.sha256(target.read_bytes()).hexdigest() != digest):
+                return f"pinned external HOL source/license mismatch: {relative}"
+    except (OSError, ValueError, TypeError):
+        return "missing or invalid pinned external HOL source manifest"
+    return None
+
 
 ATTR_RE = re.compile(r'\bhol\s+"([^"]+)"\s+"([^"]+)"(?:\s+(\d+))?')
 QUALIFIER_RE = re.compile(r'\(\s*list_as_array\s*:=\s*\[([^]]*)\]\s*\)')
@@ -2730,8 +2767,9 @@ def main(argv: list[str]) -> int:
                     )
                 )
             target = ROOT / hol_path
-            if not hol_path.startswith("cakeml/") or not hol_path.endswith(".sml"):
-                errors.append(f"{where}: path is not a cakeml/...sml file: {hol_path}")
+            source_error = hol_source_error(ROOT, hol_path)
+            if source_error is not None:
+                errors.append(f"{where}: {source_error}: {hol_path}")
                 continue
             if not target.is_file():
                 errors.append(f"{where}: HOL file does not exist: {hol_path}")

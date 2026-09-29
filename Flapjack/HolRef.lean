@@ -260,8 +260,10 @@ private def checkedHolRef (path name : String) (line? : Option Nat := none)
     (fmapAsFiniteSupportEqualities : Bool := false)
     (wordsAsTypeIndexedBitvec : Bool := false)
     (wordDimensionAsWidth : Option String := none) : CoreM HolRef := do
-  unless path.startsWith "cakeml/" && path.endsWith ".sml" do
-    throwError "@[hol]: path must be a repository-relative `cakeml/...Script.sml` file, got {path}"
+  unless (path.startsWith "cakeml/" && path.endsWith ".sml" ||
+      path == "hol4/src/finite_maps/sptreeScript.sml") &&
+      (path.splitOn "/").all (fun part => part != "" && part != "." && part != "..") do
+    throwError "@[hol]: path must be a safe `cakeml/...Script.sml` file or the pinned HOL4 sptree snapshot, got {path}"
   if name.isEmpty || name.any Char.isWhitespace then
     throwError "@[hol]: declaration name must be a single HOL identifier, got {repr name}"
   if listAsArray.toList.eraseDups.length != listAsArray.size then
