@@ -24348,5 +24348,14 @@
     "hol_name": "state_rel_with_clock",
     "lean_name": "loopToWordStateRelWithClockHOLExact",
     "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.9.19) against loop_to_wordProofScript.sml:1497-1501 `state_rel s t ==> state_rel (s with clock := k) (t with clock := k)`; Lean over loopToWordStateRelHOLExact with both records updated at the same clock; all other conjuncts survive unchanged. Source comparison of the relation carrier and eligible finite-support fields globals/store recorded."
-  }
+  },
+{
+  "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+  "hol_name": "word_sh_SOME_MOD_dimword",
+  "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/WordShiftModDimword.lean",
+  "lean_name": "wordShiftHOL_some_mod_dimword",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds5 source comparison (2026-09-29; bead flapjack-pxn.18.5.9.18.2) against loop_to_wordProofScript.sml:453-458. HOL statement is exactly good_dimindex (:'a) /\\ word_sh sh (w : 'a word) n = SOME z ==> n MOD dimword (:'a) = n, with sh/w/n/z universally quantified. Lean keeps the same two hypotheses and conclusion, rendering HOL dimindex (:'a) as the positive width (BitVec width), dimword (:'a) = 2 ** dimindex (:'a) as 2 ^ width, HOL word_sh by the tagged Flapjack.wordShiftHOL (word_sh_def, Flapjack/Pancake/WordLang.lean:46) and good_dimindex by the tagged Flapjack.goodDimindex (good_dimindex_def, Flapjack/Misc/GoodDimindex.lean:27). The words_as_type_indexed_bitvec qualifier records the type-indexed-word-to-BitVec translation; the word_sh SOME guard forces n = 0 or n < width, and goodDimindex restricts width to 32 or 64, giving n % 2 ^ width = n. Regression examples in Flapjack.Test.LoopToWordWordShiftModDimwordParity."
+}
 ]
