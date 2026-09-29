@@ -13,6 +13,22 @@ namespace Flapjack
 
 open Flapjack.Basis.Pure.MlString
 
+/-! The canonical finite-map carrier is owned by the Crep semantics module.
+This same-module re-export makes its existing kernel-checked roundtrip
+available to finite-support qualifiers in the CrepArith counterpart, without
+declaring another state carrier. -/
+namespace CrepArithSimpExpCorrectWitnesses
+
+theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width]
+    {ffiState : Type} :
+    (∀ (state : CrepSemBroadState width ffiState) (h : state.FiniteSupport),
+        (CrepSemBroadState.ofBroad state h).toBroad = state) ∧
+    (∀ state : CrepSemHOLState width ffiState,
+        CrepSemBroadState.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  CrepSemHOLState.holFmapAsFiniteSupportWitness
+
+end CrepArithSimpExpCorrectWitnesses
+
 /-- Flapjack-only record extensionality for the evaluator-state carrier. -/
 private theorem crepHolState_eq_of_fields {α σ : Type}
     {left right : CrepHolState α σ}
@@ -844,14 +860,14 @@ theorem crepSimpExpCorrect1CrepSemHOLStateHolEval
   rw [hCodeId] at hPres
   exact hPres
 
-/-- Flapjack proof support for the `Var` case of HOL
-    `simp_exp_correct1` (`crep_arithProofScript.sml:111`). It retains HOL's
-    successful-evaluation premise, polymorphic unused result binder, full
-    `Option (word_lab)` result and proof-script-local code-only `mapc` update. The
-    evaluator reads `locals`, which `mapc` preserves. This is untagged because
-    `CrepSemHOLState` is declared in `Semantics.CrepSem.HOLState`, outside this
-    counterpart module, so the required same-module finite-map carrier witness
-    is not available here; a faithful tagged case remains open. -/
+/-- Var case of HOL `simp_exp_correct1` (`crep_arithProofScript.sml:111`). It
+    retains the successful-evaluation premise, polymorphic unused result
+    binder, full `Option (word_lab)` result and proof-script-local code-only
+    `mapc` update. The same-module finite-map witness above re-exports the
+    existing `CrepSemHOLState` roundtrip; it does not declare a second carrier. -/
+@[hol "cakeml/pancake/proofs/crep_arithProofScript.sml" "simp_exp_correct1"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
 theorem crepSimpExpCorrect1NativeVarCase
     {width : Nat} [NeZero width] {σ : Type}
     (update : MlString × (List Nat × CrepProgHOL width) →
@@ -864,12 +880,15 @@ theorem crepSimpExpCorrect1NativeVarCase
       evalCrepSemHOLExp state (.var name) := by
   simp only [CrepSemHOLState.mapc, crepSimpExpHOL, evalCrepSemHOLExp]
 
-/-- Flapjack proof support for the `Const` case of HOL
-    `simp_exp_correct1` (`crep_arithProofScript.sml:111`). It preserves the
-    same premise and polymorphic unused result binder, plus the complete
-    optional `word_lab` conclusion; a constant evaluates to the same word after the code-only
-    `mapc` update. This is untagged for the same carrier-module reason as the
-    `Var` case above; a faithful tagged case remains open. -/
+/-- Const case of HOL `simp_exp_correct1` (`crep_arithProofScript.sml:111`). It
+    preserves the same premise and polymorphic unused result binder, plus the
+    complete optional `word_lab` conclusion; a constant evaluates to the same
+    word after the code-only `mapc` update. The state finite-map fields use the
+    reviewed canonical finite-support carrier, and words use the reviewed
+    positive-width `BitVec` model. -/
+@[hol "cakeml/pancake/proofs/crep_arithProofScript.sml" "simp_exp_correct1"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
 theorem crepSimpExpCorrect1NativeConstCase
     {width : Nat} [NeZero width] {σ : Type}
     (update : MlString × (List Nat × CrepProgHOL width) →
