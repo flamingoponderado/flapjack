@@ -20140,5 +20140,28 @@
     "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only carrier-named alias of CrepSemHOLState's reviewed finite-support roundtrip witness for multi-map relation qualifiers; no CakeML HOL declaration."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "eval_code_inl",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "evalCodeInlExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "inl_fs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.5.7.9) against crep_inlineProofScript.sml:1513-1521. HOL universally quantifies s, e, val, s1 and inl_fs; its single premise is the left-associated conjunction of eval s e = SOME val, state_rel_code s s1, locals_strong_rel s s1 and code_inl_rel inl_fs s s1, and its conclusion is eval s1 e = SOME val. Lean evalCodeInlExact preserves that binder order, conjunction and successful target-evaluation conclusion over CrepSemHOLState, CrepExpHOL, HolWordLab, the reviewed exact state/local/code relations and evalCrepSemHOLExp. The domain inclusion used by the proof is derived from code_inl_rel; it is not an added hypothesis. The state maps and standalone inl_fs use canonical HolFiniteMapExact, while positive-width BitVec models HOL's type-indexed words. No target-success premise or result relation is added."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "evalCrepSemHOLExp_state_rel_code_exact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only evaluator congruence helper on CrepSemHOLState; it supports the exact eval_code_inl proof while retaining code-domain inclusion as an unused premise, and has no standalone CakeML HOL declaration."
   }
 ]

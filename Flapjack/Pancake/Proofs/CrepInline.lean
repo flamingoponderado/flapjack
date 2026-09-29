@@ -1279,6 +1279,93 @@ def crepInlineCodeInlRelExact {width : Nat} [NeZero width] {σ : Type}
       t.code.lookup fname = some
         (args, CrepInlineCanonical.inlineProgHOLExact inl_bag prog)
 
+/-- Expression evaluation on the exact state carrier is insensitive to code.
+The code-domain premise is retained to mirror HOL's
+`eval_state_locals_same_code_fdom_same`; this evaluator does not read `code`. -/
+theorem evalCrepSemHOLExp_state_rel_code_exact {width : Nat} [NeZero width]
+    {σ : Type} (s t : CrepSemHOLState width σ) (e : CrepExpHOL width)
+    (hstate : crepInlineStateRelCodeExact s t)
+    (hlocals : crepInlineLocalsStrongRelExact s t)
+    (_hcode : ∀ name, s.code.lookup name ≠ none → t.code.lookup name ≠ none) :
+    evalCrepSemHOLExp s e = evalCrepSemHOLExp t e := by
+  obtain ⟨hg, hm, hma, _hsm, _hclock, hbe, _hffi, hbase, htop⟩ := hstate
+  have hloc : s.locals = t.locals := hlocals
+  induction e using evalCrepSemHOLExp.induct with
+  | case1 value => simp only [evalCrepSemHOLExp]
+  | case2 name => simp only [evalCrepSemHOLExp, hloc]
+  | case3 address ih =>
+      simp [evalCrepSemHOLExp, ih, hm]
+      rw [hma]
+  | case4 address ih =>
+      simp [evalCrepSemHOLExp, ih, hm, hbe, panMemLoad32HOL]
+      rw [hma]
+  | case5 address ih =>
+      simp [evalCrepSemHOLExp, ih, hm, hbe, panMemLoadByteHOL]
+      rw [hma]
+  | case6 address => simp only [evalCrepSemHOLExp, hg]
+  | case7 operator expressions ih =>
+      simp only [evalCrepSemHOLExp]
+      have hmap : expressions.mapM (evalCrepSemHOLExp s) =
+          expressions.mapM (evalCrepSemHOLExp t) := by
+        induction expressions with
+        | nil => simp
+        | cons x xs ihxs =>
+            have htail : xs.mapM (evalCrepSemHOLExp s) =
+                xs.mapM (evalCrepSemHOLExp t) :=
+              ihxs (fun y hy => ih y (by simp [hy]))
+            simp only [List.mapM_cons, ih x (by simp), htail]
+      rw [hmap]
+  | case8 operator expressions ih =>
+      simp only [evalCrepSemHOLExp]
+      have hmap : expressions.mapM (evalCrepSemHOLExp s) =
+          expressions.mapM (evalCrepSemHOLExp t) := by
+        induction expressions with
+        | nil => simp
+        | cons x xs ihxs =>
+            have htail : xs.mapM (evalCrepSemHOLExp s) =
+                xs.mapM (evalCrepSemHOLExp t) :=
+              ihxs (fun y hy => ih y (by simp [hy]))
+            simp only [List.mapM_cons, ih x (by simp), htail]
+      rw [hmap]
+  | case9 operator left right ihl ihr =>
+      simp only [evalCrepSemHOLExp, ihl, ihr]
+  | case10 operator left right ihl ihr =>
+      simp only [evalCrepSemHOLExp, ihl, ihr]
+  | case11 => simp only [evalCrepSemHOLExp, hbase]
+  | case12 => simp only [evalCrepSemHOLExp, htop]
+
+/-- Exact port of CakeML's `eval_code_inl` (`crep_inlineProofScript.sml:1513-1521`).
+The four premises and successful target evaluation conclusion match HOL; the
+intermediate finite-map domain inclusion is derived from `code_inl_rel`. -/
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "eval_code_inl"
+  (fmap_as_finite_support_relation :=
+    [CrepSemHOLState.locals, CrepSemHOLState.globals,
+      CrepSemHOLState.code, inl_fs])
+  (words_as_type_indexed_bitvec)]
+theorem evalCodeInlExact {width : Nat} [NeZero width] {σ : Type}
+    (s : CrepSemHOLState width σ) (e : CrepExpHOL width)
+    (value : HolWordLab width) (t : CrepSemHOLState width σ)
+    (inl_fs : HolFiniteMapExact CrepInlineMapHOLName
+      (List Nat × CrepProgHOL width)) :
+    (evalCrepSemHOLExp s e = some value ∧
+      crepInlineStateRelCodeExact s t ∧
+      crepInlineLocalsStrongRelExact s t ∧
+      crepInlineCodeInlRelExact inl_fs s t) →
+    evalCrepSemHOLExp t e = some value := by
+  intro h
+  obtain ⟨heval, hstate, hlocals, hcode⟩ := h
+  have hsubset : ∀ name, s.code.lookup name ≠ none → t.code.lookup name ≠ none := by
+    intro name hsource
+    cases hlookup : s.code.lookup name with
+    | none => exact False.elim (hsource hlookup)
+    | some entry =>
+        rcases entry with ⟨args, prog⟩
+        obtain ⟨_bag, _hsub, htarget⟩ := hcode name args prog hlookup
+        rw [htarget]
+        simp
+  rw [← heval]
+  exact (evalCrepSemHOLExp_state_rel_code_exact s t e hstate hlocals hsubset).symm
+
 end CrepInlineExact
 
 end Flapjack
