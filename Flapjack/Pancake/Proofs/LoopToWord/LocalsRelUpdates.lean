@@ -127,4 +127,42 @@ theorem localsRelHOLAlistInsert {width : Nat} [NeZero width]
               exact hpremises.2 tailName (List.mem_cons_of_mem name htail)
           · exact hpremises.2 name (by simp)
 
+/-- The external HOL finite-map theorem `lookup_fromAList_toAList` is
+unrestricted: replacing a local Spt by `fromAList (toAList env)` preserves
+every lookup, including for non-well-formed trees. -/
+private theorem localsRelHOLFromAListToAList {width : Nat} [NeZero width]
+    (context : Spt Nat) (sourceLocals env : Spt (WordLocW width))
+    (hrel : localsRelHOL context sourceLocals env) :
+    localsRelHOL context sourceLocals (sptFromAList (sptToAList env)) := by
+  rcases hrel with ⟨hinjective, heven, hsim⟩
+  refine ⟨hinjective, heven, ?_⟩
+  intro name value hsource
+  obtain ⟨register, hcontext, hlookup⟩ := hsim name value hsource
+  refine ⟨register, hcontext, ?_⟩
+  rw [sptLookup_sptFromAList_sptToAList]
+  exact hlookup
+
+/-- Exact HOL `locals_rel_alist_insert_toAList`: parallel source/target list
+updates preserve `locals_rel` when each source name belongs to the context
+domain, after rebuilding the target locals with `fromAList (toAList env)`.
+The external HOL lookup/fromAList/toAList lemma is proved on the unrestricted
+Spt carrier, so this statement adds no well-formedness premise. -/
+@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml"
+  "locals_rel_alist_insert_toAList" (words_as_type_indexed_bitvec)]
+theorem localsRelHOLAlistInsertToAList {width : Nat} [NeZero width]
+    (context : Spt Nat) :
+    ∀ (names : List Nat) (values : List (WordLocW width))
+      (sourceLocals env : Spt (WordLocW width)),
+      (localsRelHOL context sourceLocals env ∧
+        ∀ name, name ∈ names → sptMem name context) →
+      localsRelHOL context
+        (LoopSemStateFiniteExact.sptAlistInsert names values sourceLocals)
+        (LoopSemStateFiniteExact.sptAlistInsert
+          (names.map (findVarHOL context)) values
+          (sptFromAList (sptToAList env))) := by
+  intro names values sourceLocals env hpremises
+  apply localsRelHOLAlistInsert
+  exact ⟨localsRelHOLFromAListToAList context sourceLocals env hpremises.1,
+    hpremises.2⟩
+
 end Flapjack.LoopToWord

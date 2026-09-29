@@ -558,6 +558,91 @@ theorem lrNext_offset_two (index : Nat) :
           rw [hstep, ih half hlt]
           omega
 
+/-- HOL `sptree$spt_acc` (`HOL/src/finite_maps/sptreeScript.sml:750-755`):
+the key at local index `key` when a subtree is rooted at `index`. This is
+external HOL-library support and is intentionally untagged. -/
+def sptAcc (index : Nat) : Nat → Nat
+  | 0 => index
+  | key + 1 =>
+      sptAcc (index + if (key + 1) % 2 = 0 then 2 * lrNext index else lrNext index)
+        (key / 2)
+termination_by key => key
+decreasing_by omega
+
+/-- HOL `spt_acc` computes the affine key `index + lrnext index * key`; this
+is the arithmetic bridge between `foldi`'s threaded indices and `lookup`'s
+binary key recursion. -/
+theorem sptAcc_eq (index key : Nat) :
+    sptAcc index key = index + lrNext index * key := by
+  revert index
+  induction key using Nat.strongRecOn with
+  | ind key ih =>
+      cases key with
+      | zero => intro index; simp [sptAcc]
+      | succ key =>
+          intro index
+          rw [sptAcc]
+          by_cases heven : (key + 1) % 2 = 0
+          · rw [if_pos heven]
+            have hlt : key / 2 < key + 1 := by omega
+            have hkey : key + 1 = 2 * (key / 2) + 2 := by omega
+            have hchild := ih (key / 2) hlt (index + 2 * lrNext index)
+            rw [lrNext_offset_two index] at hchild
+            rw [hchild]
+            rw [hkey]
+            have hmul : (2 * lrNext index) * (key / 2) =
+                lrNext index * (2 * (key / 2)) := by
+              simp [Nat.mul_comm, Nat.mul_left_comm]
+            rw [hmul, Nat.mul_add]
+            omega
+          · rw [if_neg heven]
+            have hlt : key / 2 < key + 1 := by omega
+            have hkey : key + 1 = 2 * (key / 2) + 1 := by omega
+            have hchild := ih (key / 2) hlt (index + lrNext index)
+            rw [lrNext_offset_one index] at hchild
+            rw [hchild]
+            rw [hkey]
+            have hmul : (2 * lrNext index) * (key / 2) =
+                lrNext index * (2 * (key / 2)) := by
+              simp [Nat.mul_comm, Nat.mul_left_comm]
+            rw [hmul, Nat.mul_add, Nat.mul_one]
+            omega
+
+/-- `lrNext` is always positive, so the affine address assigned to a local
+index by `sptAcc` is injective. This is the key uniqueness fact needed when
+foldi's mixed traversal order is related back to `lookup` keys. -/
+theorem lrNext_pos (index : Nat) : 0 < lrNext index := by
+  induction index using Nat.strongRecOn with
+  | ind index ih =>
+      cases index with
+      | zero => simp [lrNext]
+      | succ index =>
+          have hlt : index / 2 < index + 1 := by omega
+          simp only [lrNext]
+          exact Nat.mul_pos (by omega) (ih (index / 2) hlt)
+
+/-- Distinct local keys have distinct absolute indices under `sptAcc`. -/
+theorem sptAcc_injective (index : Nat) : Function.Injective (sptAcc index) := by
+  intro left right h
+  rw [sptAcc_eq, sptAcc_eq] at h
+  have hmul : lrNext index * left = lrNext index * right := Nat.add_left_cancel h
+  exact Nat.eq_of_mul_eq_mul_left (lrNext_pos index) hmul
+
+/-- Child offsets produced by `foldi` agree with `sptAcc`'s parent-key
+encoding. -/
+theorem sptAcc_childLeft (index key : Nat) :
+    sptAcc (index + 2 * lrNext index) key = sptAcc index (2 * key + 2) := by
+  rw [sptAcc_eq, sptAcc_eq, lrNext_offset_two]
+  rw [Nat.mul_add, ← Nat.mul_assoc, Nat.mul_comm (lrNext index) 2]
+  omega
+
+/-- Right-child counterpart of `sptAcc_childLeft`. -/
+theorem sptAcc_childRight (index key : Nat) :
+    sptAcc (index + lrNext index) key = sptAcc index (2 * key + 1) := by
+  rw [sptAcc_eq, sptAcc_eq, lrNext_offset_one]
+  rw [Nat.mul_add, ← Nat.mul_assoc, Nat.mul_comm (lrNext index) 2]
+  omega
+
 /-- HOL sptree `foldi` (`HOL/src/finite_maps/sptreeScript.sml:737-749`) over
 the exact tree, in the same mixed order. -/
 def sptFoldi {α : Type} (f : Nat → α → List (Nat × α) → List (Nat × α))
@@ -577,6 +662,268 @@ def sptFoldi {α : Type} (f : Nat → α → List (Nat × α) → List (Nat × �
 association list of the tree in the mixed sptree enumeration order. -/
 def sptToAList {α : Type} (tree : Spt α) : List (Nat × α) :=
   sptFoldi (fun key value accumulator => (key, value) :: accumulator) 0 [] tree
+
+/-- Every association emitted by `foldi` is either part of its initial
+accumulator or is keyed by the affine address assigned to some local index.
+This is the support half of the unrestricted `toAList`/`lookup` bridge; it
+does not assume that the Spt tree is well formed. -/
+theorem sptFoldi_mem_address {α : Type} (tree : Spt α) :
+    ∀ (index : Nat) (accumulator : List (Nat × α)) (key : Nat) (value : α),
+      (key, value) ∈
+          sptFoldi (fun k v entries => (k, v) :: entries) index accumulator tree →
+        (key, value) ∈ accumulator ∨
+          ∃ localKey, key = sptAcc index localKey ∧
+            sptLookup localKey tree = some value := by
+  induction tree with
+  | ln =>
+      intro index accumulator key value hmem
+      exact Or.inl hmem
+  | ls stored =>
+      intro index accumulator key value hmem
+      simp only [sptFoldi, List.mem_cons] at hmem
+      rcases hmem with hhead | htail
+      · right
+        injection hhead with hkey _
+        subst key
+        subst value
+        exact ⟨0, by simp [sptAcc], by simp [sptLookup]⟩
+      · exact Or.inl htail
+  | bn left right ihLeft ihRight =>
+      intro index accumulator key value hmem
+      change (key, value) ∈
+          sptFoldi (fun k v entries => (k, v) :: entries)
+            (index + lrNext index)
+            (sptFoldi (fun k v entries => (k, v) :: entries)
+              (index + 2 * lrNext index) accumulator left) right at hmem
+      rcases ihRight _ _ _ _ hmem with hacc | ⟨rightKey, hkey, hlookup⟩
+      · rcases ihLeft _ _ _ _ hacc with hacc | ⟨leftKey, hkey, hlookup⟩
+        · exact Or.inl hacc
+        · right
+          refine ⟨2 * leftKey + 2, ?_⟩
+          constructor
+          · rw [← sptAcc_childLeft]
+            exact hkey
+          · have hzero : 2 * leftKey + 2 ≠ 0 := by omega
+            have hparity : (2 * leftKey + 2) % 2 = 0 := by omega
+            have hdiv : (2 * leftKey + 1) / 2 = leftKey := by omega
+            simpa [sptLookup, hzero, hparity, hdiv] using hlookup
+      · right
+        refine ⟨2 * rightKey + 1, ?_⟩
+        constructor
+        · rw [← sptAcc_childRight]
+          exact hkey
+        · have hzero : 2 * rightKey + 1 ≠ 0 := by omega
+          have hparity : (2 * rightKey + 1) % 2 = 1 := by omega
+          have hdiv : (2 * rightKey + 1 - 1) / 2 = rightKey := by omega
+          simpa [sptLookup, hzero, hparity, hdiv] using hlookup
+  | bs left stored right ihLeft ihRight =>
+      intro index accumulator key value hmem
+      change (key, value) ∈
+          sptFoldi (fun k v entries => (k, v) :: entries)
+            (index + lrNext index)
+            ((index, stored) ::
+              sptFoldi (fun k v entries => (k, v) :: entries)
+                (index + 2 * lrNext index) accumulator left) right at hmem
+      rcases ihRight _ _ _ _ hmem with hacc | ⟨rightKey, hkey, hlookup⟩
+      · simp only [List.mem_cons] at hacc
+        rcases hacc with hroot | hleft
+        · right
+          injection hroot with hkey _
+          subst key
+          subst value
+          refine ⟨0, by simp [sptAcc], ?_⟩
+          simp [sptLookup]
+        · rcases ihLeft _ _ _ _ hleft with hacc | ⟨leftKey, hkey, hlookup⟩
+          · exact Or.inl hacc
+          · right
+            refine ⟨2 * leftKey + 2, ?_⟩
+            constructor
+            · rw [← sptAcc_childLeft]
+              exact hkey
+            · have hzero : 2 * leftKey + 2 ≠ 0 := by omega
+              have hparity : (2 * leftKey + 2) % 2 = 0 := by omega
+              have hdiv : (2 * leftKey + 1) / 2 = leftKey := by omega
+              simpa [sptLookup, hzero, hparity, hdiv] using hlookup
+      · right
+        refine ⟨2 * rightKey + 1, ?_⟩
+        constructor
+        · rw [← sptAcc_childRight]
+          exact hkey
+        · have hzero : 2 * rightKey + 1 ≠ 0 := by omega
+          have hparity : (2 * rightKey + 1) % 2 = 1 := by omega
+          have hdiv : (2 * rightKey + 1) / 2 = rightKey := by omega
+          simpa [sptLookup, hzero, hparity, hdiv] using hlookup
+
+/-- `foldi` preserves every entry supplied in its initial accumulator. -/
+theorem sptFoldi_mem_acc {α : Type} (tree : Spt α) :
+    ∀ (index : Nat) (accumulator : List (Nat × α)) (entry : Nat × α),
+      entry ∈ accumulator →
+        entry ∈ sptFoldi (fun k v entries => (k, v) :: entries) index accumulator tree := by
+  induction tree with
+  | ln =>
+      intro index accumulator entry hmem
+      simpa [sptFoldi] using hmem
+  | ls stored =>
+      intro index accumulator entry hmem
+      simp only [sptFoldi, List.mem_cons]
+      exact Or.inr hmem
+  | bn left right ihLeft ihRight =>
+      intro index accumulator entry hmem
+      change entry ∈
+        sptFoldi (fun k v entries => (k, v) :: entries)
+          (index + lrNext index)
+          (sptFoldi (fun k v entries => (k, v) :: entries)
+            (index + 2 * lrNext index) accumulator left) right
+      exact ihRight _ _ entry (ihLeft _ _ entry hmem)
+  | bs left stored right ihLeft ihRight =>
+      intro index accumulator entry hmem
+      change entry ∈
+        sptFoldi (fun k v entries => (k, v) :: entries)
+          (index + lrNext index)
+          ((index, stored) ::
+            sptFoldi (fun k v entries => (k, v) :: entries)
+              (index + 2 * lrNext index) accumulator left) right
+      apply ihRight
+      simp only [List.mem_cons]
+      exact Or.inr (ihLeft _ _ entry hmem)
+
+/-- Every successful lookup in a subtree is emitted by its corresponding
+`foldi` traversal. Together with `sptFoldi_mem_address`, this characterizes
+the traversal's entries without any well-formedness premise. -/
+theorem sptFoldi_lookup_mem {α : Type} (tree : Spt α) :
+    ∀ (index : Nat) (accumulator : List (Nat × α)) (localKey : Nat) (value : α),
+      sptLookup localKey tree = some value →
+        (sptAcc index localKey, value) ∈
+          sptFoldi (fun k v entries => (k, v) :: entries) index accumulator tree := by
+  induction tree with
+  | ln =>
+      intro index accumulator localKey value hlookup
+      simp [sptLookup] at hlookup
+  | ls stored =>
+      intro index accumulator localKey value hlookup
+      simp [sptLookup] at hlookup
+      rcases hlookup with ⟨rfl, rfl⟩
+      simp [sptFoldi, sptAcc]
+  | bn left right ihLeft ihRight =>
+      intro index accumulator localKey value hlookup
+      have hzero : localKey ≠ 0 := by
+        intro hz
+        subst localKey
+        simp [sptLookup] at hlookup
+      by_cases heven : localKey % 2 = 0
+      · let childKey := (localKey - 1) / 2
+        have hparent : localKey = 2 * childKey + 2 := by
+          dsimp [childKey]
+          omega
+        have hchild : sptLookup childKey left = some value := by
+          simpa [sptLookup, hzero, heven, childKey] using hlookup
+        have hchildMem :
+            (sptAcc (index + 2 * lrNext index) childKey, value) ∈
+              sptFoldi (fun k v entries => (k, v) :: entries)
+                (index + 2 * lrNext index) accumulator left :=
+          ihLeft _ _ _ _ hchild
+        have haddr :
+            sptAcc (index + 2 * lrNext index) childKey = sptAcc index localKey := by
+          rw [sptAcc_childLeft, hparent]
+        have hleft :
+            (sptAcc index localKey, value) ∈
+              sptFoldi (fun k v entries => (k, v) :: entries)
+                (index + 2 * lrNext index) accumulator left := by
+          simpa [haddr] using hchildMem
+        change (sptAcc index localKey, value) ∈
+          sptFoldi (fun k v entries => (k, v) :: entries)
+            (index + lrNext index)
+            (sptFoldi (fun k v entries => (k, v) :: entries)
+              (index + 2 * lrNext index) accumulator left) right
+        exact sptFoldi_mem_acc right _ _ _ hleft
+      · have hodd : localKey % 2 = 1 := by omega
+        let childKey := (localKey - 1) / 2
+        have hparent : localKey = 2 * childKey + 1 := by
+          dsimp [childKey]
+          omega
+        have hchild : sptLookup childKey right = some value := by
+          simpa [sptLookup, hzero, heven, childKey] using hlookup
+        have hchildMem :
+            (sptAcc (index + lrNext index) childKey, value) ∈
+              sptFoldi (fun k v entries => (k, v) :: entries)
+                (index + lrNext index)
+                (sptFoldi (fun k v entries => (k, v) :: entries)
+                  (index + 2 * lrNext index) accumulator left) right :=
+          ihRight _ _ _ _ hchild
+        have haddr :
+            sptAcc (index + lrNext index) childKey = sptAcc index localKey := by
+          rw [sptAcc_childRight, hparent]
+        change (sptAcc index localKey, value) ∈
+          sptFoldi (fun k v entries => (k, v) :: entries)
+            (index + lrNext index)
+            (sptFoldi (fun k v entries => (k, v) :: entries)
+              (index + 2 * lrNext index) accumulator left) right
+        simpa [haddr] using hchildMem
+  | bs left stored right ihLeft ihRight =>
+      intro index accumulator localKey value hlookup
+      by_cases hzero : localKey = 0
+      · subst localKey
+        simp [sptLookup] at hlookup
+        subst value
+        change (sptAcc index 0, stored) ∈
+          sptFoldi (fun k v entries => (k, v) :: entries)
+            (index + lrNext index)
+            ((index, stored) ::
+              sptFoldi (fun k v entries => (k, v) :: entries)
+                (index + 2 * lrNext index) accumulator left) right
+        exact sptFoldi_mem_acc right _ _ _ (by simp [sptAcc])
+      · by_cases heven : localKey % 2 = 0
+        · let childKey := (localKey - 1) / 2
+          have hparent : localKey = 2 * childKey + 2 := by
+            dsimp [childKey]
+            omega
+          have hchild : sptLookup childKey left = some value := by
+            simpa [sptLookup, hzero, heven, childKey] using hlookup
+          have hchildMem :
+              (sptAcc (index + 2 * lrNext index) childKey, value) ∈
+                sptFoldi (fun k v entries => (k, v) :: entries)
+                  (index + 2 * lrNext index) accumulator left :=
+            ihLeft _ _ _ _ hchild
+          have haddr :
+              sptAcc (index + 2 * lrNext index) childKey = sptAcc index localKey := by
+            rw [sptAcc_childLeft, hparent]
+          have hleft :
+              (sptAcc index localKey, value) ∈
+                sptFoldi (fun k v entries => (k, v) :: entries)
+                  (index + 2 * lrNext index) accumulator left := by
+            simpa [haddr] using hchildMem
+          change (sptAcc index localKey, value) ∈
+            sptFoldi (fun k v entries => (k, v) :: entries)
+              (index + lrNext index)
+              ((index, stored) ::
+                sptFoldi (fun k v entries => (k, v) :: entries)
+                  (index + 2 * lrNext index) accumulator left) right
+          exact sptFoldi_mem_acc right _ _ _ (by simp [hleft])
+        · have hodd : localKey % 2 = 1 := by omega
+          let childKey := (localKey - 1) / 2
+          have hparent : localKey = 2 * childKey + 1 := by
+            dsimp [childKey]
+            omega
+          have hchild : sptLookup childKey right = some value := by
+            simpa [sptLookup, hzero, heven, childKey] using hlookup
+          have hchildMem :
+              (sptAcc (index + lrNext index) childKey, value) ∈
+                sptFoldi (fun k v entries => (k, v) :: entries)
+                  (index + lrNext index)
+                  ((index, stored) ::
+                    sptFoldi (fun k v entries => (k, v) :: entries)
+                      (index + 2 * lrNext index) accumulator left) right :=
+            ihRight _ _ _ _ hchild
+          have haddr :
+              sptAcc (index + lrNext index) childKey = sptAcc index localKey := by
+            rw [sptAcc_childRight, hparent]
+          change (sptAcc index localKey, value) ∈
+            sptFoldi (fun k v entries => (k, v) :: entries)
+              (index + lrNext index)
+              ((index, stored) ::
+                sptFoldi (fun k v entries => (k, v) :: entries)
+                  (index + 2 * lrNext index) accumulator left) right
+          simpa [haddr] using hchildMem
 
 /-- `toAList` on the empty tree is empty. -/
 @[simp] theorem sptToAList_ln {α : Type} :
@@ -679,6 +1026,38 @@ def sptInter {α β : Type} : Spt α → Spt β → Spt α
           sptMkBN (sptInter first first') (sptInter second second')
       | .bs first' _ second' =>
           sptMkBS (sptInter first first') value (sptInter second second')
+termination_by left _ => sizeOf left
+
+/-- HOL `sptree$difference` (`HOL/src/finite_maps/sptreeScript.sml:319-339`):
+remove every key present in the right tree while retaining the left payloads.
+The right value type is independent because its payloads are never read. The
+recursive clauses and `sptMkBN`/`sptMkBS` collapse behavior follow the HOL
+definition exactly. The source is outside the CakeML submodule, so this is
+Flapjack infrastructure without an `@[hol]` tag. -/
+def sptDifference {α β : Type} : Spt α → Spt β → Spt α
+  | .ln, _ => .ln
+  | .ls value, right =>
+      match right with
+      | .ln => .ls value
+      | .ls _ => .ln
+      | .bn _ _ => .ls value
+      | .bs _ _ _ => .ln
+  | .bn first second, right =>
+      match right with
+      | .ln => .bn first second
+      | .ls _ => .bn first second
+      | .bn first' second' =>
+          sptMkBN (sptDifference first first') (sptDifference second second')
+      | .bs first' _ second' =>
+          sptMkBN (sptDifference first first') (sptDifference second second')
+  | .bs first value second, right =>
+      match right with
+      | .ln => .bs first value second
+      | .ls _ => .bn first second
+      | .bn first' second' =>
+          sptMkBS (sptDifference first first') value (sptDifference second second')
+      | .bs first' _ second' =>
+          sptMkBN (sptDifference first first') (sptDifference second second')
 termination_by left _ => sizeOf left
 
 /-- HOL `list_delete` (`cakeml/compiler/backend/backend_commonScript.sml:180-182`):
@@ -929,6 +1308,131 @@ standard-library definition. -/
 def sptFromAList {α : Type} : List (Nat × α) → Spt α
   | [] => .ln
   | (key, value) :: entries => sptInsert key value (sptFromAList entries)
+
+/-- External HOL-library `ALOOKUP` rendering for numeric Spt association lists:
+return the first value paired with `key`. This helper is untagged because
+`ALOOKUP` and `fromAList` here come from the external Sptree library. -/
+def sptAListLookup {α : Type} (key : Nat) : List (Nat × α) → Option α
+  | [] => none
+  | (other, value) :: entries =>
+      if key = other then some value else sptAListLookup key entries
+
+/-- Lookup in external HOL `fromAList` is first-match association-list lookup,
+with no distinct-key or well-formedness premise. -/
+theorem sptLookup_sptFromAList {α : Type} (key : Nat)
+    (entries : List (Nat × α)) :
+    sptLookup key (sptFromAList entries) = sptAListLookup key entries := by
+  induction entries with
+  | nil => simp [sptFromAList, sptAListLookup]
+  | cons entry entries ih =>
+      obtain ⟨other, value⟩ := entry
+      by_cases hkey : key = other
+      · subst key
+        rw [sptFromAList, sptLookup_sptInsert_same]
+        simp [sptAListLookup]
+      · rw [sptFromAList,
+          sptLookup_sptInsert_ne other key value (sptFromAList entries) hkey]
+        simpa [sptAListLookup, hkey] using ih
+/-- A first-match AList lookup is determined by a present entry when every
+entry at that key carries the same value. -/
+theorem sptAListLookup_eq_of_mem_unique {α : Type} (key : Nat) (value : α) :
+    ∀ (entries : List (Nat × α)),
+      (key, value) ∈ entries →
+      (∀ other, (key, other) ∈ entries → other = value) →
+      sptAListLookup key entries = some value := by
+  intro entries
+  induction entries with
+  | nil =>
+      intro hmem _
+      simp at hmem
+  | cons entry entries ih =>
+      obtain ⟨other, found⟩ := entry
+      intro hmem hunique
+      simp only [List.mem_cons] at hmem
+      by_cases hkey : key = other
+      · have hfound : found = value := by
+          apply hunique found
+          simp [hkey]
+        simp [sptAListLookup, hkey, hfound]
+      · rcases hmem with hhead | htail
+        · have hEq : key = other := by
+            cases hhead
+            rfl
+          exact False.elim (hkey hEq)
+        · have huniqueTail :
+              ∀ candidate, (key, candidate) ∈ entries → candidate = value := by
+            intro candidate hcandidate
+            apply hunique candidate
+            exact List.mem_cons_of_mem _ hcandidate
+          simp [sptAListLookup, hkey, ih htail huniqueTail]
+
+/-- A successful first-match lookup always witnesses a matching association. -/
+theorem sptAListLookup_mem {α : Type} (key : Nat) (entries : List (Nat × α))
+    (value : α) (hlookup : sptAListLookup key entries = some value) :
+    (key, value) ∈ entries := by
+  induction entries with
+  | nil => simp [sptAListLookup] at hlookup
+  | cons entry entries ih =>
+      obtain ⟨other, found⟩ := entry
+      by_cases hkey : key = other
+      · simp [sptAListLookup, hkey] at hlookup
+        subst value
+        simp only [List.mem_cons]
+        exact Or.inl (by cases hkey; rfl)
+      · have htail : sptAListLookup key entries = some value := by
+          simpa [sptAListLookup, hkey] using hlookup
+        exact List.mem_cons_of_mem _ (ih htail)
+
+/-- External HOL-library lookup/fromAList/toAList observation on the exact
+unrestricted Spt carrier. sptFoldi_mem_address and sptFoldi_lookup_mem establish
+soundness and completeness of the mixed foldi enumeration;
+sptLookup_sptFromAList supplies HOL's first-match ALOOKUP behavior. This
+infrastructure is untagged because the source theorem is in the external HOL
+finite-map library, not in CakeML (HOL/src/finite_maps/sptreeScript.sml:902-930,
+1501-1504). -/
+theorem sptLookup_sptFromAList_sptToAList {α : Type} (key : Nat)
+    (tree : Spt α) :
+    sptLookup key (sptFromAList (sptToAList tree)) = sptLookup key tree := by
+  rw [sptLookup_sptFromAList]
+  cases htree : sptLookup key tree with
+  | none =>
+      cases hlist : sptAListLookup key (sptToAList tree) with
+      | none => rfl
+      | some value =>
+          have hmem := sptAListLookup_mem key (sptToAList tree) value hlist
+          have hfold :
+              (key, value) ∈
+                sptFoldi (fun k v entries => (k, v) :: entries) 0 [] tree := by
+            simpa [sptToAList] using hmem
+          rcases sptFoldi_mem_address tree 0 [] key value hfold with hacc | ⟨localKey, haddr, hlookup⟩
+          · simp at hacc
+          · have hkey : key = localKey := by
+              simpa [sptAcc_eq, lrNext] using haddr
+            subst localKey
+            rw [htree] at hlookup
+            contradiction
+  | some value =>
+      have hfold := sptFoldi_lookup_mem tree 0 [] key value htree
+      have hmem : (key, value) ∈ sptToAList tree := by
+        simpa [sptToAList, sptAcc_eq, lrNext] using hfold
+      have hunique :
+          ∀ other, (key, other) ∈ sptToAList tree → other = value := by
+        intro other hother
+        have hotherFold :
+            (key, other) ∈
+              sptFoldi (fun k v entries => (k, v) :: entries) 0 [] tree := by
+          simpa [sptToAList] using hother
+        rcases sptFoldi_mem_address tree 0 [] key other hotherFold with hacc | ⟨localKey, haddr, hlookup⟩
+        · simp at hacc
+        · have hkey : key = localKey := by
+            simpa [sptAcc_eq, lrNext] using haddr
+          subst localKey
+          rw [htree] at hlookup
+          injection hlookup with hvalue
+          exact hvalue.symm
+      have hresult := sptAListLookup_eq_of_mem_unique key value
+        (sptToAList tree) hmem hunique
+      exact hresult
 
 /-- Exact HOL `misc$fromList2_def` (`cakeml/misc/miscScript.sml:351-353`):
     `fromList2 l = SND (FOLDL (\(i,t) a. (i + 2, insert i a t)) (0,LN) l)`,

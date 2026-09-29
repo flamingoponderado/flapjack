@@ -1,10 +1,11 @@
 import Flapjack.Misc.Sptree
 
-/-! Direct HOL parity for the sptree set operations used by `loop_live`
-    (`sptree$union`, `inter`, `delete`, `backend_common$list_delete`, `list$oEL`).
-    Each row matches `scripts/hol-probes/sptree_set_ops_probe.out`, the HOL
-    `EVAL` of the same expression; trees are compared through their `toAList`
-    key order and emptiness. -/
+/-! Direct HOL parity for sptree operations. The set operations used by
+    `loop_live` (`sptree$union`, `inter`, `delete`, `backend_common$list_delete`,
+    `list$oEL`) match `sptree_set_ops_probe.out`. Constructor-level
+    `sptree$difference` rows match the external HOL `EVAL` fixture
+    `sptree_difference_probe.out`; the latter assertions compare exact trees,
+    so they also check payload retention and `mk_BN`/`mk_BS` collapse behavior. -/
 
 namespace Flapjack.Test.SptreeSetOpsParity
 
@@ -55,6 +56,44 @@ def sptreeInterMixedGuard : Bool :=
 
 #guard sptreeInterMixedGuard
 
+/-- Direct replay of each clause in HOL `sptree$difference`
+(`HOL/src/finite_maps/sptreeScript.sml:319-339`). The operands intentionally
+have different value types as in HOL's heterogeneous map operation. These
+closed checks are kernel-reduced Lean computations against
+`scripts/hol-probes/sptree_difference_probe.out`. -/
+def sptreeDifferenceGuard : Bool :=
+  decide (sptDifference (.ln : Spt Nat) (.bs .ln true .ln : Spt Bool) = .ln) &&
+  decide (sptDifference (.ls 17 : Spt Nat) (.ln : Spt Bool) = .ls 17) &&
+  decide (sptDifference (.ls 17 : Spt Nat) (.ls false : Spt Bool) = .ln) &&
+  decide (sptDifference (.ls 17 : Spt Nat) (.bn (.ls true) .ln : Spt Bool) = .ls 17) &&
+  decide (sptDifference (.ls 17 : Spt Nat) (.bs .ln false .ln : Spt Bool) = .ln) &&
+  decide (sptDifference (.bn (.ls 11) (.ls 22) : Spt Nat) (.ln : Spt Bool) =
+      .bn (.ls 11) (.ls 22)) &&
+  decide (sptDifference (.bn (.ls 11) (.ls 22) : Spt Nat) (.ls false : Spt Bool) =
+      .bn (.ls 11) (.ls 22)) &&
+  decide (sptDifference (.bn (.ls 11) (.ls 22) : Spt Nat) (.bn (.ls true) .ln : Spt Bool) =
+      .bn .ln (.ls 22)) &&
+  decide (sptDifference (.bn (.ls 11) .ln : Spt Nat) (.bn (.ls true) .ln : Spt Bool) = .ln) &&
+  decide (sptDifference (.bn (.ls 11) (.ls 22) : Spt Nat) (.bs (.ls true) false .ln : Spt Bool) =
+      .bn .ln (.ls 22)) &&
+  decide (sptDifference (.bs (.ls 11) 33 (.ls 22) : Spt Nat) (.ln : Spt Bool) =
+      .bs (.ls 11) 33 (.ls 22)) &&
+  decide (sptDifference (.bs (.ls 11) 33 (.ls 22) : Spt Nat) (.ls false : Spt Bool) =
+      .bn (.ls 11) (.ls 22)) &&
+  decide (sptDifference (.bs .ln 33 .ln : Spt Nat) (.bn .ln .ln : Spt Bool) = .ls 33) &&
+  decide (sptDifference (.bs (.ls 11) 33 (.ls 22) : Spt Nat) (.bn (.ls true) .ln : Spt Bool) =
+      .bs .ln 33 (.ls 22)) &&
+  decide (sptDifference (.bs (.ls 11) 33 (.ls 22) : Spt Nat) (.bs .ln false .ln : Spt Bool) =
+      .bn (.ls 11) (.ls 22)) &&
+  decide (sptDifference (.bs (.ls 11) 33 .ln : Spt Nat) (.bs (.ls true) false .ln : Spt Bool) =
+      .ln)
+
+#guard sptreeDifferenceGuard
+
+/-- Kernel-checked replay of the constructor-level difference oracle rows. -/
+theorem sptreeDifferenceGuard_proof : sptreeDifferenceGuard = true := by
+  simp [sptreeDifferenceGuard, sptDifference, sptMkBN, sptMkBS]
+
 def runChecks : IO Bool := do
   if sptreeSetOpsGuard then
     IO.println "PASS sptree set operations HOL parity"
@@ -64,6 +103,10 @@ def runChecks : IO Bool := do
     IO.println "PASS heterogeneous sptree inter (mixed-payload) HOL parity"
   else
     IO.println "FAIL heterogeneous sptree inter (mixed-payload) HOL parity"
-  pure (sptreeSetOpsGuard && sptreeInterMixedGuard)
+  if sptreeDifferenceGuard then
+    IO.println "PASS heterogeneous sptree difference direct HOL EVAL parity"
+  else
+    IO.println "FAIL heterogeneous sptree difference direct HOL EVAL parity"
+  pure (sptreeSetOpsGuard && sptreeInterMixedGuard && sptreeDifferenceGuard)
 
 end Flapjack.Test.SptreeSetOpsParity

@@ -1,5 +1,6 @@
 import Flapjack.Pancake.LoopToWord
 import Flapjack.Pancake.LoopToWord.Proofs.FindVarExact
+import Flapjack.Pancake.Proofs.LoopToWord.ContextSupport
 import Flapjack.Pancake.Proofs.LoopToWord.LocalsRel
 import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelUpdates
 
@@ -18,6 +19,149 @@ direct HOL-EVAL results from
 namespace Flapjack.Test.LoopToWordExactParity
 
 open Flapjack Flapjack.LoopToWord
+
+/-! The `fromNumSet` support theorem applies even to unrestricted Spt trees;
+`toNumSet` retains list-set behavior, including duplicate elimination. -/
+
+example {α : Type} (tree : Spt α) (key : Nat) :
+    key ∈ fromNumSetHOL tree ↔ sptMem key tree := by
+  exact Iff.of_eq (congrFun (fromNumSetHOL_set tree) key)
+
+example : sptMem 2 (toNumSetHOL [2, 4, 2]) := by
+  change sptDomain (toNumSetHOL [2, 4, 2]) 2
+  rw [sptDomain_toNumSetHOL]
+  simp
+
+example : ¬ sptMem 3 (toNumSetHOL [2, 4, 2]) := by
+  change ¬ sptDomain (toNumSetHOL [2, 4, 2]) 3
+  rw [sptDomain_toNumSetHOL]
+  simp
+
+example : ¬ sptMem 0 (toNumSetHOL ([] : List Nat)) := by
+  change ¬ sptDomain (toNumSetHOL ([] : List Nat)) 0
+  rw [sptDomain_toNumSetHOL]
+  simp
+
+/-! The exact `make_ctxt` domain theorem includes empty, nonempty, and repeated
+names over the reviewed Spt context carrier. -/
+
+example {context : Spt Nat} (key : Nat) :
+    sptMem key (makeCtxtHOL 2 [] context) ↔ sptMem key context := by
+  change sptDomain (makeCtxtHOL 2 [] context) key ↔ _
+  rw [sptDomain_makeCtxtHOL]
+  simp [sptMem]
+
+example : sptMem 4 (makeCtxtHOL 2 [4, 6] (.ln : Spt Nat)) := by
+  change sptDomain (makeCtxtHOL 2 [4, 6] (.ln : Spt Nat)) 4
+  rw [sptDomain_makeCtxtHOL]
+  simp
+
+example : ¬ sptMem 9 (makeCtxtHOL 2 [4, 6, 4] (.ln : Spt Nat)) := by
+  change ¬ sptDomain (makeCtxtHOL 2 [4, 6, 4] (.ln : Spt Nat)) 9
+  rw [sptDomain_makeCtxtHOL]
+  simp [sptDomain, sptLookup]
+
+example : sptMem 4 (makeCtxtHOL 2 [4, 6, 4] (.ln : Spt Nat)) := by
+  change sptDomain (makeCtxtHOL 2 [4, 6, 4] (.ln : Spt Nat)) 4
+  rw [sptDomain_makeCtxtHOL]
+  simp
+
+/-! The exact `make_ctxt_inj` theorem covers repeated names as HOL does: the
+last insertion wins, and all names that successfully look up the same
+register must be equal. -/
+
+def makeCtxtInjProbe : Spt Nat := makeCtxtHOL 4 [7, 8, 7] (.ln : Spt Nat)
+
+#guard sptLookup 7 makeCtxtInjProbe == some 8
+#guard sptLookup 8 makeCtxtInjProbe == some 6
+
+example {x y v : Nat}
+    (hx : sptLookup x makeCtxtInjProbe = some v)
+    (hy : sptLookup y makeCtxtInjProbe = some v) : x = y := by
+  exact makeCtxtHOL_inj [7, 8, 7] (.ln : Spt Nat) 4
+    (by intro x y v hx hy; simp [sptLookup] at hx) x y v hx hy
+
+example :
+    makeCtxtHOL 3 ([7, 8] ++ [8, 9]) (.ln : Spt Nat) =
+      makeCtxtHOL (3 + 2 * 2) [8, 9]
+        (makeCtxtHOL 3 [7, 8] (.ln : Spt Nat)) := by
+  exact makeCtxtHOL_append [7, 8] [8, 9] 3 (.ln : Spt Nat)
+
+#guard sptLookup 8 (makeCtxtHOL 3 [7, 8, 8, 9] (.ln : Spt Nat)) == some 7
+
+#guard sptLookup 5 (makeCtxtHOL 4 [5, 6] (.ln : Spt Nat)) == some 4
+#guard sptLookup 6 (makeCtxtHOL 4 [5, 6] (.ln : Spt Nat)) == some 6
+
+example {key value : Nat}
+    (hlookup : sptLookup key (makeCtxtHOL 4 [5, 6] (.ln : Spt Nat)) =
+      some value) : 4 ≤ value := by
+  rcases makeCtxtHOL_lookupRange [5, 6] 4 (.ln : Spt Nat) key value hlookup with
+    hsource | hbound
+  · simp [sptLookup] at hsource
+  · exact hbound
+
+example :
+    sptLookup 9 (makeCtxtHOL 2 [4, 6, 4] (.ln : Spt Nat)) =
+      sptLookup 9 (.ln : Spt Nat) := by
+  exact makeCtxtHOL_notMem [4, 6, 4] 2 (.ln : Spt Nat) 9 (by simp)
+
+/-! `lookup_EL_make_ctxt` assigns the kth distinct parameter the kth even
+register starting at the supplied base. -/
+
+#guard sptLookup 3 (makeCtxtHOL 4 [3, 5, 9] (.ln : Spt Nat)) == some 4
+#guard sptLookup 9 (makeCtxtHOL 4 [3, 5, 9] (.ln : Spt Nat)) == some 8
+
+example :
+    sptLookup 3 (makeCtxtHOL 4 [3, 5, 9] (.ln : Spt Nat)) = some 4 := by
+  exact makeCtxtHOL_lookupEL [3, 5, 9] 0 4 (.ln : Spt Nat) (by decide)
+    (by decide)
+
+example :
+    sptLookup 9 (makeCtxtHOL 4 [3, 5, 9] (.ln : Spt Nat)) = some 8 := by
+  exact makeCtxtHOL_lookupEL [3, 5, 9] 2 4 (.ln : Spt Nat) (by decide)
+    (by decide)
+
+/-! `lookup_make_ctxt_EVEN` preserves even values from the incoming context
+and establishes even values for newly assigned names. -/
+
+def lookupEvenContext : Spt Nat := sptInsert 1 10 (.ln : Spt Nat)
+
+#guard sptLookup 1 (makeCtxtHOL 2 [4, 6] lookupEvenContext) == some 10
+#guard sptLookup 6 (makeCtxtHOL 2 [4, 6] lookupEvenContext) == some 4
+
+example : 4 % 2 = 0 := by
+  exact makeCtxtHOL_lookupEven [4, 6] 2 lookupEvenContext 6 4 (by decide)
+    (by
+      intro key value hlookup
+      by_cases hkey : key = 1
+      · subst key
+        change sptLookup 1 (sptInsert 1 10 (.ln : Spt Nat)) = some value at hlookup
+        rw [sptLookup_sptInsert_same] at hlookup
+        have hv : value = 10 := Option.some.inj hlookup.symm
+        subst value
+        decide
+      · change sptLookup key (sptInsert 1 10 (.ln : Spt Nat)) = some value at hlookup
+        rw [sptLookup_sptInsert_ne 1 key 10 (.ln : Spt Nat) hkey] at hlookup
+        simp at hlookup)
+    (makeCtxtHOL_lookupEL [4, 6] 1 2 lookupEvenContext (by decide) (by decide))
+
+example : 10 % 2 = 0 := by
+  exact makeCtxtHOL_lookupEven [] 2 lookupEvenContext 1 10 (by decide)
+    (by
+      intro key value hlookup
+      by_cases hkey : key = 1
+      · subst key
+        change sptLookup 1 (sptInsert 1 10 (.ln : Spt Nat)) = some value at hlookup
+        rw [sptLookup_sptInsert_same] at hlookup
+        have hv : value = 10 := Option.some.inj hlookup.symm
+        subst value
+        decide
+      · change sptLookup key (sptInsert 1 10 (.ln : Spt Nat)) = some value at hlookup
+        rw [sptLookup_sptInsert_ne 1 key 10 (.ln : Spt Nat) hkey] at hlookup
+        simp at hlookup)
+    (by
+      change sptLookup 1 (sptInsert 1 10 (.ln : Spt Nat)) = some 10
+      rw [sptLookup_sptInsert_same])
 
 /-- Probe context `insert 3 7 (insert 5 9 LN)` over `num |-> num` spt. -/
 def probeContext : Spt Nat := sptInsert 3 7 (sptInsert 5 9 .ln)
@@ -194,6 +338,41 @@ example : localsRelHOL (width := 64) localsRelProbeContext
   have hmem : sptMem 0 localsRelProbeContext := by
     simp [sptMem, sptDomain, localsRelProbeContext, sptLookup]
   have hupdated := localsRelHOLAlistInsert (width := 64)
+    localsRelProbeContext [0] [.word 9] localsRelProbeSource localsRelProbeTarget
+      ⟨hrel, by
+        intro name hname
+        have hnameZero : name = 0 := by simpa using hname
+        subst name
+        exact hmem⟩
+  simpa [LoopSemStateFiniteExact.sptAlistInsert, findVarHOL,
+    localsRelProbeContext, sptLookup, sptInsert] using hupdated
+
+/-! Replay the exact `locals_rel_alist_insert_toAList` theorem for empty and
+nonempty updates; the target premise is observed only through the unrestricted
+`toAList`/`fromAList` lookup bridge. -/
+
+example : localsRelHOL (width := 64) localsRelProbeContext
+    (LoopSemStateFiniteExact.sptAlistInsert [] [] localsRelProbeSource)
+    (LoopSemStateFiniteExact.sptAlistInsert [] []
+      (sptFromAList (sptToAList localsRelProbeTarget))) := by
+  have hrel : localsRelHOL (width := 64) localsRelProbeContext
+      localsRelProbeSource localsRelProbeTarget := by
+    simp [localsRelHOL, localsRelProbeContext, localsRelProbeSource,
+      localsRelProbeTarget, findVarHOL, sptMem, sptDomain, sptLookup, sptInsert]
+  exact localsRelHOLAlistInsertToAList (width := 64) localsRelProbeContext
+    [] [] localsRelProbeSource localsRelProbeTarget ⟨hrel, by simp⟩
+
+example : localsRelHOL (width := 64) localsRelProbeContext
+    (LoopSemStateFiniteExact.sptAlistInsert [0] [.word 9] localsRelProbeSource)
+    (LoopSemStateFiniteExact.sptAlistInsert [4] [.word 9]
+      (sptFromAList (sptToAList localsRelProbeTarget))) := by
+  have hrel : localsRelHOL (width := 64) localsRelProbeContext
+      localsRelProbeSource localsRelProbeTarget := by
+    simp [localsRelHOL, localsRelProbeContext, localsRelProbeSource,
+      localsRelProbeTarget, findVarHOL, sptMem, sptDomain, sptLookup, sptInsert]
+  have hmem : sptMem 0 localsRelProbeContext := by
+    simp [sptMem, sptDomain, localsRelProbeContext, sptLookup]
+  have hupdated := localsRelHOLAlistInsertToAList (width := 64)
     localsRelProbeContext [0] [.word 9] localsRelProbeSource localsRelProbeTarget
       ⟨hrel, by
         intro name hname

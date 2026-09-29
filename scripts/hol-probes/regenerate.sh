@@ -212,7 +212,20 @@ run_probe loop_to_word_locals_rel_probeScript.sml loop_to_word_locals_rel_probe.
   lt_locals_rel_zero_register lt_locals_rel_noninjective \
   lt_locals_rel_missing_context lt_locals_rel_wrong_value \
   lt_locals_rel_insert_mapped lt_locals_rel_insert_unmapped \
-  lt_locals_rel_insert_unmapped_collision \
+  lt_locals_rel_insert_unmapped_collision locals_rel_get_var_statement \
+  locals_rel_get_vars_statement loop_get_vars_hit loop_get_vars_miss \
+  word_get_vars_hit word_get_vars_miss \
+  "$cake_dir/pancake/proofs/loop_to_wordProofScript.sml" \
+  "$cake_dir/pancake/proofs"
+# The compile_correct case probe rebuilds HOL's specialised evaluate_ind for
+# loop_to_word compile_correct and prints each ported case conjunct, together
+# with the rebound wordSem evaluate_ind/evaluate_def (beads
+# flapjack-pxn.18.5.9.21/.24, flapjack-h29l.9.2).
+run_probe loop_to_word_compile_correct_cases_probeScript.sml \
+  loop_to_word_compile_correct_cases_probe.out \
+  cc_ind_thm_conclusion_is_compile_correct cc_case_Skip cc_case_Fail cc_case_Mark \
+  cc_case_Break cc_case_Continue cc_case_Raise cc_case_Return cc_case_Tick \
+  ws_evaluate_ind ws_evaluate_def ws_end \
   "$cake_dir/pancake/proofs/loop_to_wordProofScript.sml" \
   "$cake_dir/pancake/proofs"
 run_probe loop_to_word_comp_exp_probeScript.sml loop_to_word_comp_exp_probe.out \
@@ -236,6 +249,16 @@ run_probe loop_to_word_globals_rel_probeScript.sml loop_to_word_globals_rel_prob
 run_probe loop_to_word_comp_call_probeScript.sml loop_to_word_comp_call_probe.out \
   comp_call_tail comp_call_no_handler comp_call_handler \
   "$cake_dir/pancake/loop_to_wordScript.sml"
+run_probe loop_to_word_comp_func_probeScript.sml loop_to_word_comp_func_probe.out \
+  comp_func_skip comp_func_param_assign comp_func_new_temp \
+  compile_prog_code compile_code \
+  "$cake_dir/pancake/loop_to_wordScript.sml"
+run_probe loop_to_word_take_word_to_bytes_probeScript.sml \
+  loop_to_word_take_word_to_bytes_probe.out \
+  take1_statement twb32_0 twb32_1 twb32_hi gb32_0 gb32_1 gb32_hi \
+  twb64_0 twb64_1 twb64_hi gb64_0 gb64_1 gb64_hi \
+  "$cake_dir/pancake/proofs/loop_to_wordProofScript.sml" \
+  "$cake_dir/pancake/proofs"
 # The get_stack_only probe observes the allocator driver's stack-only
 # analysis over wordLang programs (backend word_alloc).
 run_probe get_stack_only_probeScript.sml get_stack_only_probe.out \
@@ -1701,6 +1724,80 @@ run_probe machine_ieee_fp64_arith_special_probeScript.sml machine_ieee_fp64_arit
   "$cake_dir/semantics/fpSemScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 
+# The binary64 rounding probe observes float_round roundTiesToEven on ties,
+# subnormal ties, the overflow threshold, negative inputs and zero signs
+# (bead flapjack-h29l.6.2.3).
+run_probe binary_ieee_round_fp64_probeScript.sml binary_ieee_round_fp64_probe.out \
+  third tie_up_even sub_three_half at_threshold big_odd \
+  "$hol_dir/src/floating-point/binary_ieeeScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
+# The binary64 rounded-arithmetic probe observes finite results of
+# fp64_add/sub/mul/div and the tagged fpSem fpfma, including zero signs,
+# overflow and subnormal ties (bead flapjack-h29l.6.2.4).
+run_probe machine_ieee_fp64_arith_round_probeScript.sml machine_ieee_fp64_arith_round_probe.out \
+  add_tenth_fifth mul_max_two div_sub1_two fma_cancel \
+  "$cake_dir/semantics/fpSemScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
+# The NaN probe prints a kernel-proved float_some_qnan classification theorem
+# and exact HOL EVAL operation branches.  Payloads are unspecified and flags
+# are not compared.
+run_probe machine_ieee_fp64_arith_nan_probeScript.sml machine_ieee_fp64_arith_nan_probe.out \
+  source_qnan_classification add_qnan_input sub_qnan_input mul_qnan_input \
+  div_qnan_input fma_qnan_input \
+  add_invalid_infinities sub_invalid_infinities mul_invalid_inf_zero \
+  div_invalid_zero_zero div_invalid_inf_inf fma_invalid_inf_zero \
+  fma_invalid_opposed_infinities \
+  "$hol_dir/src/floating-point/binary_ieeeScript.sml" \
+  "$hol_dir/src/floating-point"
+
+# The binary64 conversion probe observes fp64_to_int in all four modes (ties,
+# NaN/infinity to NONE) and int_to_fp64 roundTiesToEven (ties, overflow,
+# negative) (bead flapjack-h29l.6.3.1).
+run_probe machine_ieee_fp64_convert_probeScript.sml machine_ieee_fp64_convert_probe.out \
+  to_int_2_5 to_int_nan to_int_rtn_neg_2_1 from_int_2p53_1 from_int_neg_big \
+  "$hol_dir/src/floating-point/binary_ieeeScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
+# The binary64 sqrt special-case probe observes the choice-free fp64_sqrt
+# branches (+inf, -0) (bead flapjack-h29l.6.3.2.1).
+run_probe machine_ieee_fp64_sqrt_special_probeScript.sml machine_ieee_fp64_sqrt_special_probe.out \
+  sqrt_pinf sqrt_nz \
+  "$hol_dir/src/floating-point/binary_ieeeScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
+# The binary64 exact-square sqrt probe observes fp64_sqrt roundTiesToEven on
+# exact squares, whose sqrt isqrtLib proves (bead flapjack-h29l.6.3.2.2).
+run_probe machine_ieee_fp64_sqrt_exact_probeScript.sml machine_ieee_fp64_sqrt_exact_probe.out \
+  sqrt_four sqrt_min_sub sqrt_2p1022 \
+  "$hol_dir/src/floating-point/binary_ieeeScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
+# The wordSem inst_def probe observes integer arithmetic, memory and
+# floating-point instructions over record updates of a free state (bead
+# flapjack-h29l.6).
+run_probe word_sem_inst_probeScript.sml word_sem_inst_probe.out \
+  div long_div load32 store8 fp_fma fp_to_int fp_missing \
+  "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
+# The wordSem evaluate prerequisite probe observes misc$shift_seq and the
+# sptree domain set conditions of the Call clause (bead flapjack-h29l.8.1).
+run_probe word_sem_eval_prereq_probeScript.sml word_sem_eval_prereq_probe.out \
+  shift_seq dom_empty_one dom_union_eq dom_union_missing \
+  "$cake_dir/misc/miscScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
+# The wordSem evaluate probe observes evaluate_def on straight-line, control,
+# loop, raise/return, MustTerminate, Move/Get/Set/LocValue/StoreConsts, tail and
+# returning calls, and FFI over record updates of a free state (bead
+# flapjack-h29l.8.2).
+run_probe word_sem_evaluate_probeScript.sml word_sem_evaluate_probe.out \
+  skip loop_timeout raise_handler must_terminate call_ret ffi_ok \
+  "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
 # The good_handlers probe observes the structural handler-label predicate,
 # including the NONE-ret case (handler ignored) and nested bad handlers.
 run_probe word_convs_good_handlers_probeScript.sml word_convs_good_handlers_probe.out \
@@ -1874,6 +1971,10 @@ run_probe sptree_set_ops_probeScript.sml sptree_set_ops_probe.out \
   union_keys oel_miss \
   "$cake_dir/compiler/backend/backend_commonScript.sml" \
   "$cake_dir/compiler/backend"
+run_probe sptree_difference_probeScript.sml sptree_difference_probe.out \
+  difference_ln_bs difference_bs_bs_collapse \
+  "$hol_dir/src/finite_maps/sptreeScript.sml" \
+  "$hol_dir/src/finite_maps"
 # Mixed-payload oracle for the heterogeneous HOL sptree$inter used by loopSem
 # cut_state (flapjack-pxgp.2.1): the result keeps the left operand's values.
 run_probe sptree_inter_mixed_probeScript.sml sptree_inter_mixed_probe.out \
