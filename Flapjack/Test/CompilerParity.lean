@@ -336,6 +336,11 @@ import Flapjack.Test.MachineIeeeArithSpecialParity
 import Flapjack.Test.BinaryIeeeRoundFp64Parity
 import Flapjack.Test.MachineIeeeArithRoundParity
 import Flapjack.Test.MachineIeeeArithNaNParity
+import Flapjack.Test.MachineIeeeConvertParity
+import Flapjack.Test.MachineIeeeSqrtSpecialParity
+import Flapjack.Test.MachineIeeeSqrtExactParity
+import Flapjack.Test.WordSemInstParity
+import Flapjack.Test.WordSemEvalPrereqParity
 import Flapjack.Test.WordLangGoodHandlersParity
 import Flapjack.Test.NumSetAuditParity
 import Flapjack.Test.WordLangEveryNameParity
@@ -1102,6 +1107,11 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.BinaryIeeeRoundFp64Parity.runChecks,
     Flapjack.Test.MachineIeeeArithRoundParity.runChecks,
     Flapjack.Test.MachineIeeeArithNaNParity.runChecks,
+    Flapjack.Test.MachineIeeeConvertParity.runChecks,
+    Flapjack.Test.MachineIeeeSqrtSpecialParity.runChecks,
+    Flapjack.Test.MachineIeeeSqrtExactParity.runChecks,
+    Flapjack.Test.WordSemInstParity.runChecks,
+    Flapjack.Test.WordSemEvalPrereqParity.runChecks,
     Flapjack.Test.WordLangGoodHandlersParity.runChecks,
     Flapjack.Test.NumSetAuditParity.runChecks,
     Flapjack.Test.WordLangEveryNameParity.runChecks,
