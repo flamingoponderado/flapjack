@@ -1,0 +1,4 @@
+simp_prog_extcall=T
+extcall_mapcs_code=T
+evaluate_extcall_missing_locals=T
+evaluate_extcall_mapc_missing_locals=T
