@@ -22091,5 +22091,79 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-b source comparison (bead flapjack-pxgp.22, 2026-09-29): exact loopSem$evaluate_def at loopSemScript.sml:278; If case at 341, Loop at 350, non-tail Call at 386, FFI at 426. Each Lean theorem is the corresponding constructor equation with no added premises, over the same finite-support globals and width-indexed word carriers as evaluate. Loop/Call/FFI statements retain the state rebound by cut_res/cut_state in the source; If retains HOL selected-program-before-cut_res form and is proved equal to the generated Lean equation. Case results are kernel-checked evaluate.eq_13/17/23/24 equations. No executable compiler/runtime path changes."
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_arithScript.sml",
+    "hol_name": "dest_2exp_lemma",
+    "lean_path": "Flapjack/Pancake/CrepArith.lean",
+    "lean_name": "crepDest2ExpHOL_lemma",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.4.6) against the [local] dest_2exp_lemma at crep_arithScript.sml:22-41: `!i w n. dest_2exp i w = SOME n ==> i <= n /\\ w = word_lsl 1w (n - i)`; same binders over the tagged crepDest2ExpHOL (dest_2exp_def), word_lsl 1w k as (1 : BitVec width) <<< k, 'a word as BitVec width. Proof by strong induction on the word value (the definition's own measure) in place of HOL's dest_2exp_ind.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_arithScript.sml",
+    "hol_name": "dest_2exp_thm",
+    "lean_path": "Flapjack/Pancake/CrepArith.lean",
+    "lean_name": "crepDest2ExpHOL_thm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.4.6) against dest_2exp_thm at crep_arithScript.sml:43-48: `dest_2exp 0n w = SOME n2 ==> w = word_lsl 1w n2`; free variables w n2 universally quantified in order; from dest_2exp_lemma at i = 0 as in HOL.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_arithProofScript.sml",
+    "hol_name": "dest_2exp_bound",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/MulConst.lean",
+    "lean_name": "crepDest2ExpHOL_bound",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.4.6) against dest_2exp_bound at crep_arithProofScript.sml:10-38: `∀n w m. dest_2exp n w = SOME m ⇒ m ≤ n + w2n (word_log2 w)`; same binders; w2n as toNat; HOL words$word_log2 w = n2w (LOG2 (w2n w)) as the untagged HOL-library helper holWordLog2 = BitVec.ofNat width (Nat.log2 w.toNat) (Nat.log2 = LOG2 on the positive argument used, since dest_2exp = SOME forces w ≠ 0w).",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_arithProofScript.sml",
+    "hol_name": "dest_2exp_bound'",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/MulConst.lean",
+    "lean_name": "crepDest2ExpHOL_bound'",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.4.6) against dest_2exp_bound' at crep_arithProofScript.sml:40-62: `∀n w m. dest_2exp 0 w = SOME m ⇒ m < dimindex(:'a)`; the unused HOL binder n is kept; dimindex(:'a) is width.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_arithProofScript.sml",
+    "hol_name": "eval_mul_const",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/MulConst.lean",
+    "lean_name": "crepEval_mul_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.4.6) against eval_mul_const at crep_arithProofScript.sml:70-91: `eval s exp = SOME (Word w) ==> eval s (mul_const exp c) = SOME (Word (w * c))`; free variables s exp w c universally quantified; eval is the tagged exact evalCrepSemHOLExp (crepSem eval_def), mul_const the tagged crepMulConstHOL (mul_const_def), crep_op Mul = crepOpCrepWord .mul, word_sh Lsl = wordShiftHOL .lsl. The proof follows HOL's case split (c = 0w, c = 1w, dest_2exp NONE / SOME with dest_2exp_thm and dest_2exp_bound'). Qualifiers: the Crep state's finite maps and the width-indexed word.",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ]
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/MulConst.lean",
+    "lean_name": "crepDest2ExpHOL_ne_zero",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper: a successful dest_2exp has a nonzero argument (the first dest_2exp_def clause); no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/MulConst.lean",
+    "lean_name": "crepDest2ExpHOL_value",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper: dest_2exp_lemma restated with the width bound and the natural-number value 2 ^ (n - i), used by dest_2exp_bound/dest_2exp_bound'/eval_mul_const; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/MulConst.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack same-module canonical finite-support witness for the eval_mul_const qualifier (re-export of CrepSemHOLState.holFmapAsFiniteSupportWitness); no CakeML declaration"
   }
 ]
