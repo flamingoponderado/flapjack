@@ -22404,4 +22404,65 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.4.2.18): HOL simp_exp_correct1 (crep_arithProofScript.sml:111-145) universally quantifies state, expression, and unused result; assumes eval s exp <> NONE; and concludes eval (mapc f s) (simp_exp exp) = eval s exp. This is the native Op induction case over the tagged evalCrepSemHOLExp and crepSimpExpHOL. Its premises are the successful full-Op premise, the eval_ind Op IH fixed to the current state over the operand list (for every child in es, the predicate at (s, child) with its unused polymorphic result binder), exact code-only mapc, and the complete Option (word_lab) result. HOL eval_def (crepSemScript.sml:112-117) evaluates the operand list with OPT_MMAP, checks every value is a Word, and returns OPTION_MAP Word (word_op op ...). The Word check is trivially true over the single-constructor HolWordLab carrier, as recorded on the tagged eval_def entry. HOL simp_exp (crep_arithScript.sml:75) is Op bop (MAP simp_exp exps), matched by crepSimpExpHOL's .op clause. The proof lifts the per-operand IH equalities through OPT_MMAP with OPT_MMAP_EQ_SOME_MONO (optMmapEqSomeMono, crep_arithProofScript.sml:93) and List.mapM_map, and then both sides apply the same wordOpHOL to the same value list. It adds no target-success/result, post-state, or context premise. Direct HOL Op evaluation rows are in scripts/hol-probes/crep_eval_op_rv64_probe.out. The exact finite-map fields and positive-width BitVec qualifiers match the neighboring native cases. Axioms: propext, Classical.choice, Quot.sound."
   }
+,
+{
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrectPrimitiveRaise.lean",
+    "lean_name": "simpProgCorrectPrimitiveCase",
+    "hol_path": "cakeml/pancake/proofs/crep_arithProofScript.sml",
+    "hol_name": "simp_prog_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison (2026-09-29; bead flapjack-pxn.18.5.4.9; PR #1174 review): HOL simp_prog_correct (cakeml/pancake/proofs/crep_arithProofScript.sml:184-212) states !p s r s'. evaluate (p,s) = (r,s') ==> r <> SOME Error ==> evaluate (simp_prog p, mapcs s) = (r, mapcs s'). The Primitive case keeps the source evaluation equation, the r <> SOME Error premise, and the target conclusion over the exact CrepProgHOL/CrepSemHOLState/CrepResultHOLExact carriers and the tagged exact crepSimpProgHOL; simp_prog leaves Primitive unchanged. The code-only mapcs update commutes with the locals/empty_locals changes, so the post-state equality is derived from the source equation and no target-result assumption or simp_exp_correct IH is used. The named finite-map fields are the exact carrier's locals/globals/code with holFmapAsFiniteSupportWitness supplying the roundtrip, and the positive BitVec width represents HOL's word dimension. Direct HOL oracle rows: scripts/hol-probes/crep_arith_probe.out."
+  },
+{
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrectPrimitiveRaise.lean",
+    "lean_name": "simpProgCorrectRaiseCase",
+    "hol_path": "cakeml/pancake/proofs/crep_arithProofScript.sml",
+    "hol_name": "simp_prog_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison (2026-09-29; bead flapjack-pxn.18.5.4.9; PR #1174 review): HOL simp_prog_correct (cakeml/pancake/proofs/crep_arithProofScript.sml:184-212) states !p s r s'. evaluate (p,s) = (r,s') ==> r <> SOME Error ==> evaluate (simp_prog p, mapcs s) = (r, mapcs s'). The Raise case keeps the source evaluation equation, the r <> SOME Error premise, and the target conclusion over the exact CrepProgHOL/CrepSemHOLState/CrepResultHOLExact carriers and the tagged exact crepSimpProgHOL; simp_prog leaves Raise unchanged. The code-only mapcs update commutes with the locals/empty_locals changes, so the post-state equality is derived from the source equation and no target-result assumption or simp_exp_correct IH is used. The named finite-map fields are the exact carrier's locals/globals/code with holFmapAsFiniteSupportWitness supplying the roundtrip, and the positive BitVec width represents HOL's word dimension. Direct HOL oracle rows: scripts/hol-probes/crep_arith_probe.out."
+  },
+{
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrectPrimitiveRaise.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module canonical finite-support witness re-export for the CrepSemHOLState carrier used by the Primitive/Raise case tags; no separate HOL declaration."
+  },
+{
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrectPrimitiveRaise.lean",
+    "lean_name": "crepSimpMapcsHOLPrimitiveRaise_locals",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only locals projection for the slice-local mapcs rendering; HOL mapc is a script-local overload with no named declaration."
+  },
+{
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrectPrimitiveRaise.lean",
+    "lean_name": "crepSimpMapcsHOLPrimitiveRaise_localsUpdate",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only commutation of the slice-local mapcs rendering with a locals update; HOL mapc/FMAP_MAP2 reasoning is inline in the proof script."
+  },
+{
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrectPrimitiveRaise.lean",
+    "lean_name": "crepSimpMapcsHOLPrimitiveRaise_emptyLocals",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only commutation of the slice-local mapcs rendering with empty_locals; HOL mapc/FMAP_MAP2 reasoning is inline in the proof script."
+  }
 ]
