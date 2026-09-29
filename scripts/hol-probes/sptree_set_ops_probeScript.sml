@@ -28,3 +28,8 @@ pe "delete_absent_keys" ``MAP FST (toAList (delete 7 (fromAList [(0:num,()); (4,
 pe "list_delete_keys" ``MAP FST (toAList (list_delete [4; 9; 11] (fromAList [(0:num,()); (4,()); (6,()); (9,())])))``;
 pe "oel_hit" ``oEL 1 [10:num; 20; 30]``;
 pe "oel_miss" ``oEL 3 [10:num; 20; 30]``;
+pe "diff_keys" ``MAP FST (toAList (difference (fromAList [(0:num,()); (4,()); (6,())]) (fromAList [(1:num,()); (4,())])))``;
+pe "diff_lookup_hit" ``lookup 0 (difference (fromAList [(0:num,()); (4,())]) (fromAList [(4:num,())]))``;
+pe "diff_lookup_miss" ``lookup 4 (difference (fromAList [(0:num,()); (4,())]) (fromAList [(4:num,())]))``;
+pe "diff_empty" ``isEmpty (difference (fromAList [(0:num,()); (4,())]) (fromAList [(0:num,()); (4,())]))``;
+pe "diff_self_keys" ``MAP FST (toAList (difference (fromAList [(0:num,()); (4,()); (6,()); (9,())]) (fromAList [(0:num,()); (9,())])))``;

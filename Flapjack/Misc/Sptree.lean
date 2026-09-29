@@ -580,6 +580,41 @@ def sptInter {α β : Type} : Spt α → Spt β → Spt α
           sptMkBS (sptInter first first') value (sptInter second second')
 termination_by left _ => sizeOf left
 
+/-- HOL `sptree$difference` (`HOL/src/finite_maps/sptreeScript.sml:319-338`):
+keep the keys of the left operand that are absent from the right, merging the
+`mk_BN`/`mk_BS` collapsing exactly as HOL does.  The HOL source lives in the
+HOL installation's `src/finite_maps`, outside `cakeml/`, so this rendering is
+Flapjack infrastructure and carries no `@[hol]` tag (the same convention as
+`sptListInsert`/`sptMkBN`/`sptMkBS`/`sptDelete`/`sptUnion`/`sptInter`); the
+`difference_def` clause order and `mk_BN`/`mk_BS` collapsing are tracked
+against `scripts/hol-probes/sptree_set_ops_probe.out` and replayed by
+`Flapjack.Test.SptreeSetOpsParity`. -/
+def sptDifference {α : Type} : Spt α → Spt α → Spt α
+  | .ln, _ => .ln
+  | .ls value, right =>
+      match right with
+      | .ln => .ls value
+      | .ls _ => .ln
+      | .bn _ _ => .ls value
+      | .bs _ _ _ => .ln
+  | .bn first second, right =>
+      match right with
+      | .ln => .bn first second
+      | .ls _ => .bn first second
+      | .bn first' second' =>
+          sptMkBN (sptDifference first first') (sptDifference second second')
+      | .bs first' _ second' =>
+          sptMkBN (sptDifference first first') (sptDifference second second')
+  | .bs first value second, right =>
+      match right with
+      | .ln => .bs first value second
+      | .ls _ => .bn first second
+      | .bn first' second' =>
+          sptMkBS (sptDifference first first') value (sptDifference second second')
+      | .bs first' _ second' =>
+          sptMkBN (sptDifference first first') (sptDifference second second')
+termination_by left _ => sizeOf left
+
 /-- HOL `list_delete` (`cakeml/compiler/backend/backend_commonScript.sml:180-182`):
 delete each key (with unit value) from the tree, left to right.  HOL's declared
 type is generic in the map's value type (`num list -> 'a num_map -> 'a num_map`),

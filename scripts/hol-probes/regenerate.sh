@@ -206,7 +206,8 @@ run_probe loop_to_word_defs_probeScript.sml loop_to_word_defs_probe.out \
   lt_find_var_hit lt_find_var_miss lt_find_reg_imm_imm lt_find_reg_imm_reg \
   lt_to_num_set_lookup0 lt_to_num_set_lookup2 lt_to_num_set_lookup3 \
   lt_from_num_set lt_mk_new_cutset_lookup0 lt_mk_new_cutset_lookup5 \
-  lt_mk_new_cutset_absent "$cake_dir/pancake/loop_to_wordScript.sml"
+  lt_mk_new_cutset_absent lt_make_ctxt_lookup3 lt_make_ctxt_lookup5 \
+  lt_make_ctxt_lookup7 "$cake_dir/pancake/loop_to_wordScript.sml"
 run_probe loop_to_word_comp_exp_probeScript.sml loop_to_word_comp_exp_probe.out \
   comp_exp_const comp_exp_var comp_exp_var_miss comp_exp_lookup \
   comp_exp_base_addr comp_exp_top_addr comp_exp_load comp_exp_shift \
@@ -1417,7 +1418,8 @@ run_probe loop_lang_assigned_vars_probeScript.sml \
   skip load_byte "$cake_dir/pancake/loopLangScript.sml"
 run_probe loop_lang_acc_vars_probeScript.sml \
   loop_lang_acc_vars_probe.out \
-  skip call_none "$cake_dir/pancake/loopLangScript.sml"
+  skip call_none seq loop_mark call_handler primitive load32 shmem \
+  "$cake_dir/pancake/loopLangScript.sml"
 run_probe loop_lang_nested_seq_probeScript.sml \
   loop_lang_nested_seq_probe.out \
   empty assign_load "$cake_dir/pancake/loopLangScript.sml"
@@ -1769,7 +1771,8 @@ run_probe pan_lang_exp_probeScript.sml pan_lang_exp_probe.out \
   "$cake_dir/pancake/panLangScript.sml" \
   "$cake_dir/pancake"
 run_probe sptree_set_ops_probeScript.sml sptree_set_ops_probe.out \
-  union_keys oel_miss \
+  union_keys oel_miss diff_keys diff_lookup_hit diff_lookup_miss diff_empty \
+  diff_self_keys \
   "$cake_dir/compiler/backend/backend_commonScript.sml" \
   "$cake_dir/compiler/backend"
 # Mixed-payload oracle for the heterogeneous HOL sptree$inter used by loopSem

@@ -40,8 +40,8 @@ additionally probes `pan_op_def` at lines 191--193.
 `cakeml/pancake/semantics/loopSemScript.sml:108-110`.
 `loop_to_word_defs_probe.out` records direct HOL EVAL rows for the exact
 `spt`-carrier loop_to_word context definitions `find_var_def`,
-`find_reg_imm_def`, `toNumSet_def`, `fromNumSet_def`, and
-`mk_new_cutset_def` at `cakeml/pancake/loop_to_wordScript.sml:10-53`; the
+`find_reg_imm_def`, `toNumSet_def`, `fromNumSet_def`, `mk_new_cutset_def`, and
+`make_ctxt_def` at `cakeml/pancake/loop_to_wordScript.sml:10-53,150-153`; the
 kernel-checked Lean replay is `Flapjack.Test.LoopToWordExactParity`.
 `loop_to_word_comp_exp_probe.out` records direct HOL EVAL rows for the exact
 loopLang-to-wordLang expression compiler `comp_exp_def` at
@@ -972,11 +972,20 @@ with `HOL_PROBE_ONLY=pan_word_of_bytes_overlong_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
 
 `sptree_set_ops_probe` evaluates the sptree set operations used by `loop_live`
-(`sptree$union`/`inter`/`delete`, `backend_common$list_delete`, `list$oEL`) on
-small `fromAList` trees and records their `toAList` key order, emptiness and
-`oEL` results.  `Flapjack.Test.SptreeSetOpsParity` checks the Lean renderings
-in `Flapjack/Misc/Sptree.lean` against every row.  Refresh with
+(`sptree$union`/`inter`/`delete`/`difference`, `backend_common$list_delete`,
+`list$oEL`) on small `fromAList` trees and records their `toAList` key order,
+lookup/emptiness and `oEL` results.  `Flapjack.Test.SptreeSetOpsParity` checks
+the Lean renderings in `Flapjack/Misc/Sptree.lean` against every row.  Refresh
+with
 `HOL_PROBE_ONLY=sptree_set_ops_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`loop_lang_acc_vars_probe` evaluates `loopLang$acc_vars` on representative
+programs (empty/Assign/Return/Store/Arith, nested Seq/Loop/Mark, the Call
+return/handler cases, Primitive, Load32 and ShMem) and records the resulting
+`num_set` contents.  `Flapjack.Test.LoopAccVarsParity` replays every row over
+the exact `HolLoopProg` carrier via `Flapjack.accVarsHOL` in
+`Flapjack/Pancake/LoopLang/AccVars.lean`.  Refresh with
+`HOL_PROBE_ONLY=loop_lang_acc_vars_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `sptree_inter_mixed_probe` evaluates the HETEROGENEOUS `sptree$inter`
 (`'a num_map -> 'b num_map -> 'a num_map`) on mixed-payload `fromAList` trees and

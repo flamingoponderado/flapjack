@@ -50,6 +50,22 @@ def originalCutsetAbsent : Option Unit := none
 #guard (sptLookup 2 (mkNewCutsetHOL probeContext probeLive) : Option Unit) ==
   originalCutsetAbsent
 
+/-! ## Original-domain parity for exact `make_ctxt_def`
+
+`make_ctxt_def` at `cakeml/pancake/loop_to_wordScript.sml:150-153` assigns
+consecutive even registers starting at `n` to a list of variables. The expected
+observations are the direct HOL-EVAL results from
+`scripts/hol-probes/loop_to_word_defs_probeScript.sml`, checked in at
+`scripts/hol-probes/loop_to_word_defs_probe.out`. -/
+
+def originalMakeCtxt3 : Option Nat := some 2
+def originalMakeCtxt5 : Option Nat := some 4
+def originalMakeCtxt7 : Option Nat := none
+
+#guard sptLookup 3 (makeCtxtHOL 2 [3, 5] (.ln : Spt Nat)) == originalMakeCtxt3
+#guard sptLookup 5 (makeCtxtHOL 2 [3, 5] (.ln : Spt Nat)) == originalMakeCtxt5
+#guard sptLookup 7 (makeCtxtHOL 2 [3, 5] (.ln : Spt Nat)) == originalMakeCtxt7
+
 /-! ## Original-domain parity for exact `comp_exp_def`
 
 `comp_exp_def` at `cakeml/pancake/loop_to_wordScript.sml:22-40` is the exact
@@ -272,6 +288,12 @@ def runChecks : IO Bool := do
       ("LoopToWord mk_new_cutset leaves an unmapped key absent",
         (sptLookup 2 (mkNewCutsetHOL probeContext probeLive) : Option Unit) ==
           originalCutsetAbsent),
+      ("LoopToWord make_ctxt assigns register 2 to the first name",
+        sptLookup 3 (makeCtxtHOL 2 [3, 5] (.ln : Spt Nat)) == originalMakeCtxt3),
+      ("LoopToWord make_ctxt assigns register 4 to the second name",
+        sptLookup 5 (makeCtxtHOL 2 [3, 5] (.ln : Spt Nat)) == originalMakeCtxt5),
+      ("LoopToWord make_ctxt leaves an unlisted name absent",
+        sptLookup 7 (makeCtxtHOL 2 [3, 5] (.ln : Spt Nat)) == originalMakeCtxt7),
       ("LoopToWord comp_exp_def exact HOL rows", compExpProbeChecks.all id),
       ("LoopToWord comp_def exact HOL rows", compProbeChecks.all id) ]
   let results ← checks.mapM fun (name, ok) => do

@@ -7,6 +7,7 @@
     toNumSet_def      (:42-45)
     fromNumSet_def    (:47-48)
     mk_new_cutset_def (:51-53)
+    make_ctxt_def     (:150-153)
 
   This is intentionally a HOL script rather than a second implementation; the
   checked-in output is captured from a direct HOL invocation of this file.
@@ -48,3 +49,11 @@ print_eval "lt_from_num_set" ``fromNumSet (insert 3 () (insert 1 () (LN : unit s
 print_eval "lt_mk_new_cutset_lookup0" ``lookup 0 (mk_new_cutset ^ctxt ^live)``;
 print_eval "lt_mk_new_cutset_lookup5" ``lookup 5 (mk_new_cutset ^ctxt ^live)``;
 print_eval "lt_mk_new_cutset_absent" ``lookup 2 (mk_new_cutset ^ctxt ^live)``;
+
+(* make_ctxt_def, loop_to_wordScript.sml:150-153 *)
+print_eval "lt_make_ctxt_lookup3"
+  ``lookup 3 (make_ctxt 2 [3;5] (LN : num num_map))``;
+print_eval "lt_make_ctxt_lookup5"
+  ``lookup 5 (make_ctxt 2 [3;5] (LN : num num_map))``;
+print_eval "lt_make_ctxt_lookup7"
+  ``lookup 7 (make_ctxt 2 [3;5] (LN : num num_map))``;

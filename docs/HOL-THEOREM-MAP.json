@@ -19917,5 +19917,22 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "ds10 (bead flapjack-pxn.18.5.6.34.3): exact port of HOL evaluate_io_mono_rephrases[local] (crep_to_loopProofScript.sml:4066-4070), the LIST_CONJ of crepPropsTheory.evaluate_add_clock_io_events_mono and loopPropsTheory.evaluate_add_clock_io_events_mono each specialized at `s with clock := k` via the source SIMP_RULE (srw_ss()) []. Lean keeps the two exact state carriers separate (CrepSemHOLState and LoopSemStateFiniteExact); each conjunct keeps its own `!extra` (k bound once), matching the source LIST_CONJ binder shape. The exact evaluators consume finite-map fields, so the relation qualifier records CrepSemHOLState.locals/globals/code and LoopSemStateFiniteExact.globals, validated by the same-module witnesses holFmapAsFiniteSupportRelationWitness_CrepSemHOLState and holFmapAsFiniteSupportRelationWitness_LoopSemStateFiniteExact; words_as_type_indexed_bitvec records the two width-indexed carriers. Both conjuncts are the already-tagged one-carrier monotonicity theorems Flapjack.crepPropsEvaluateAddClockIoEventsMono and Flapjack.LoopSemStateFiniteExact.evaluate_add_clock_io_events_mono. No extra side conditions. Replayed by the evaluate_io_mono example and evaluateIOMonoGuard in Flapjack/Test/CrepToLoopParity.lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/loop_to_wordScript.sml",
+    "hol_name": "make_ctxt_def",
+    "lean_path": "Flapjack/Pancake/LoopToWord.lean",
+    "lean_name": "makeCtxtHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 source comparison (2026-09-29, bead flapjack-pxn.18.5.9.8) against cakeml/pancake/loop_to_wordScript.sml:150-153. Both clauses match exactly: make_ctxt n [] l = l and make_ctxt n (x::xs) l = make_ctxt (n+2) xs (insert x n l). The HOL num |-> num spt context is the reviewed exact sptree carrier Spt (Flapjack/Misc/Sptree.lean), a tree map, never an fmap_as_finite_support |-> finite map, so no width-indexed BitVec carrier appears and no qualifier is used. Direct HOL EVAL rows scripts/hol-probes/loop_to_word_defs_probe.out (lookup 3 (make_ctxt 2 [3;5] LN)=SOME 2, lookup 5=SOME 4, lookup 7=NONE) are replayed by kernel-checked guards in Flapjack/Test/LoopToWordExactParity.lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/loopLangScript.sml",
+    "hol_name": "acc_vars_def",
+    "lean_path": "Flapjack/Pancake/LoopLang/AccVars.lean",
+    "lean_name": "accVarsHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-09-29, bead flapjack-pxn.18.5.9.8) against cakeml/pancake/loopLangScript.sml:117-158. All 24 prog constructors are ported clause-for-clause: Seq p1 p2 -> acc_vars p1 (acc_vars p2 l); Break/Continue -> l; Loop l1 body l2 -> acc_vars body l; If -> acc_vars p1 (acc_vars p2 l); Arith LLongMul/LLongDiv -> insert v1 () (insert v2 () l) and LDiv -> insert v1 () l; Mark -> recurse; Tick/Skip/Fail/Raise/Return/Store/SetGlobal/Store32/StoreByte/FFI -> l; Call NONE -> l, Call (SOME (vs,live)) with handler NONE -> list_insert vs l, with handler SOME (n,p1,p2,l1) -> acc_vars p1 (acc_vars p2 (insert n () (list_insert vs l))); LocValue/Assign/ShMem -> insert n () l; Primitive -> list_insert lhss l; Load32/LoadByte -> insert m () l. The HOL polymorphic 'a prog becomes HolLoopProg width (the tag records the standard type-indexed-word translation, so words_as_type_indexed_bitvec) and num_set = unit spt is the reviewed exact NumSet = Spt Unit carrier; insert/list_insert are sptInsert/sptListInsert. Direct HOL EVAL rows scripts/hol-probes/loop_lang_acc_vars_probe.out (Skip/Assign/Return/Store/LLongDiv, nested Seq/Loop/Mark, the Call return+handler case, Primitive, Load32, ShMem) are replayed by kernel-checked guards over HolLoopProg in Flapjack/Test/LoopAccVarsParity.lean."
   }
 ]

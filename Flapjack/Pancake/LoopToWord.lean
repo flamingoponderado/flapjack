@@ -273,6 +273,18 @@ def fromNumSetHOL {α : Type} (tree : Spt α) : List Nat :=
 def mkNewCutsetHOL (context : Spt Nat) (live : Spt Unit) : Spt Unit :=
   sptInsert 0 () (toNumSetHOL ((fromNumSetHOL live).map (findVarHOL context)))
 
+/-- Exact HOL `make_ctxt_def` (`cakeml/pancake/loop_to_wordScript.sml:150-153`):
+assign consecutive even registers starting at `n` to a list of variables,
+inserting each further name into the context.  The HOL `num |-> num` context is
+the reviewed exact `Spt Nat` tree map (a tree map, not an `fmap_as_finite_support`
+`|->` finite map), so no width-indexed `BitVec` carrier appears and the tag is
+unqualified `reviewed_exact`, exactly as for the sibling context functions
+`findVarHOL`/`toNumSetHOL`/`fromNumSetHOL`/`mkNewCutsetHOL`. -/
+@[hol "cakeml/pancake/loop_to_wordScript.sml" "make_ctxt_def"]
+def makeCtxtHOL (n : Nat) : List Nat → Spt Nat → Spt Nat
+  | [], context => context
+  | x :: xs, context => makeCtxtHOL (n + 2) xs (sptInsert x n context)
+
 /-- Exact HOL `comp_exp_def` (`cakeml/pancake/loop_to_wordScript.sml:22-40`),
 well-founded over the loopLang expression size.  HOL's type-indexed `'a word`
 is rendered as the positive-width `BitVec width`; the HOL stackLang

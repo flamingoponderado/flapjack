@@ -9,3 +9,6 @@ lt_from_num_set=[3; 1]
 lt_mk_new_cutset_lookup0=SOME ()
 lt_mk_new_cutset_lookup5=NONE
 lt_mk_new_cutset_absent=NONE
+lt_make_ctxt_lookup3=SOME 2
+lt_make_ctxt_lookup5=SOME 4
+lt_make_ctxt_lookup7=NONE

@@ -55,6 +55,24 @@ def sptreeInterMixedGuard : Bool :=
 
 #guard sptreeInterMixedGuard
 
+/-- Difference rows matching `sptree_set_ops_probe.out`: `sptree$difference`
+(`HOL/src/finite_maps/sptreeScript.sml:319-338`) keeps the left keys absent from
+the right, with the `mk_BN`/`mk_BS` collapsing, observed through `toAList` key
+order, `lookup` and `isEmpty`. -/
+def sptreeDifferenceGuard : Bool :=
+  -- diff_keys=[0; 6]
+  keys (sptDifference (set [0, 4, 6]) (set [1, 4])) == [0, 6] &&
+  -- diff_lookup_hit=SOME ()
+  (sptLookup 0 (sptDifference (set [0, 4]) (set [4])) : Option Unit) == some () &&
+  -- diff_lookup_miss=NONE
+  (sptLookup 4 (sptDifference (set [0, 4]) (set [4])) : Option Unit) == none &&
+  -- diff_empty=T
+  sptIsEmpty (sptDifference (set [0, 4]) (set [0, 4])) &&
+  -- diff_self_keys=[4; 6]
+  keys (sptDifference (set [0, 4, 6, 9]) (set [0, 9])) == [4, 6]
+
+#guard sptreeDifferenceGuard
+
 def runChecks : IO Bool := do
   if sptreeSetOpsGuard then
     IO.println "PASS sptree set operations HOL parity"
@@ -64,6 +82,10 @@ def runChecks : IO Bool := do
     IO.println "PASS heterogeneous sptree inter (mixed-payload) HOL parity"
   else
     IO.println "FAIL heterogeneous sptree inter (mixed-payload) HOL parity"
-  pure (sptreeSetOpsGuard && sptreeInterMixedGuard)
+  if sptreeDifferenceGuard then
+    IO.println "PASS sptree difference HOL parity"
+  else
+    IO.println "FAIL sptree difference HOL parity"
+  pure (sptreeSetOpsGuard && sptreeInterMixedGuard && sptreeDifferenceGuard)
 
 end Flapjack.Test.SptreeSetOpsParity
