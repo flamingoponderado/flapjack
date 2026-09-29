@@ -35,7 +35,7 @@ import sys
 from functools import lru_cache
 from stat import S_ISREG
 from collections.abc import Iterable
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 ROOT = Path(__file__).resolve().parent.parent
 LEAN_DIRS = [ROOT / "Flapjack", ROOT / "Flapjack.lean"]
@@ -2457,9 +2457,12 @@ def external_pin_drift_error(
     When no external HOL4 checkout is available (for example in CI) the reviewed
     pin is authoritative and nothing is reported.  When a checkout root exists it
     must contain the pinned upstream file: a missing file, a sha256 mismatch, or
-    a declaration-index drift is an error.
+    a declaration-index drift is an error.  A malformed entry is reported as a
+    diagnostic instead of raising.
     """
-    upstream = entry["upstream"]
+    upstream = entry.get("upstream")
+    if not isinstance(upstream, str):
+        return f"external HOL pin {entry.get('tag_path')} has no usable `upstream`"
     if not external_root.is_dir():
         return None
     source = external_root / upstream
@@ -2467,46 +2470,124 @@ def external_pin_drift_error(
         return (
             f"external HOL checkout {external_root} has no pinned source {upstream}"
         )
-    digest = hashlib.sha256(source.read_bytes()).hexdigest()
-    if digest != entry["sha256"]:
-        return (
-            f"external HOL source {upstream} sha256 {digest} does not match "
-            f"pinned {entry['sha256']}"
-        )
-    actual = hol_declaration_lines(source, cache)
-    for key, lines in entry["declarations"].items():
-        if actual.get(key, []) != list(lines):
+    try:
+        digest = hashlib.sha256(source.read_bytes()).hexdigest()
+        if digest != entry.get("sha256"):
             return (
-                f"pinned declaration index for {entry['tag_path']} drifted from "
-                f"{upstream}: `{key}` is at {actual.get(key, [])}, pinned at "
-                f"{lines}"
+                f"external HOL source {upstream} sha256 {digest} does not match "
+                f"pinned {entry.get('sha256')}"
             )
+        actual = hol_declaration_lines(source, cache)
+        declared = entry.get("declarations")
+        if not isinstance(declared, dict):
+            return f"external HOL pin {entry.get('tag_path')} has malformed declarations"
+        for key, lines in declared.items():
+            if actual.get(key, []) != list(lines):
+                return (
+                    f"pinned declaration index for {entry.get('tag_path')} drifted from "
+                    f"{upstream}: `{key}` is at {actual.get(key, [])}, pinned at "
+                    f"{lines}"
+                )
+    except (OSError, TypeError, ValueError) as exc:
+        return (
+            f"external HOL pin {entry.get('tag_path')} could not be validated "
+            f"against {upstream}: {exc}"
+        )
     return None
 
 
-def external_pin_schema_errors(data: list) -> list[str]:
-    """Report malformed or duplicated entries in the external-HOL pin file."""
+SHA256_RE = re.compile(r"[0-9a-f]{64}")
+
+
+def external_pin_entry_errors(entry: object, index: int) -> list[str]:
+    """Report shape errors in one external-HOL pin entry."""
+    if not isinstance(entry, dict):
+        return [f"external HOL pin #{index} is not an object"]
+    errors: list[str] = []
     required = {"tag_path", "upstream", "sha256", "declarations"}
+    missing = sorted(required - set(entry))
+    if missing:
+        errors.append(f"external HOL pin #{index} is missing field(s) {missing}")
+    tag_path = entry.get("tag_path")
+    upstream = entry.get("upstream")
+    if (
+        not isinstance(tag_path, str)
+        or not tag_path.startswith(EXTERNAL_HOL_PREFIX)
+        or not tag_path.endswith(".sml")
+    ):
+        errors.append(
+            f"external HOL pin #{index} tag_path must be a "
+            f"`{EXTERNAL_HOL_PREFIX}...sml` path"
+        )
+    if not isinstance(upstream, str) or not upstream.endswith(".sml"):
+        errors.append(f"external HOL pin #{index} upstream must be an .sml path")
+    else:
+        relative = PurePosixPath(upstream)
+        if upstream.startswith("/") or relative.is_absolute() or ".." in relative.parts:
+            errors.append(
+                f"external HOL pin #{index} upstream must be a relative path "
+                f"without `..`"
+            )
+    if (
+        isinstance(tag_path, str)
+        and isinstance(upstream, str)
+        and tag_path != EXTERNAL_HOL_PREFIX + upstream
+    ):
+        errors.append(
+            f"external HOL pin #{index} tag_path must equal "
+            f"`{EXTERNAL_HOL_PREFIX}` + upstream"
+        )
+    sha256 = entry.get("sha256")
+    if not isinstance(sha256, str) or SHA256_RE.fullmatch(sha256) is None:
+        errors.append(
+            f"external HOL pin #{index} sha256 must be 64 lowercase hex digits"
+        )
+    declarations = entry.get("declarations")
+    if not isinstance(declarations, dict) or not declarations:
+        errors.append(
+            f"external HOL pin #{index} declarations must be a nonempty object"
+        )
+    else:
+        for name, lines in declarations.items():
+            if not isinstance(name, str) or not name:
+                errors.append(
+                    f"external HOL pin #{index} declaration names must be "
+                    f"nonempty strings"
+                )
+                continue
+            if not isinstance(lines, list) or not lines:
+                errors.append(
+                    f"external HOL pin #{index} declaration `{name}` must list "
+                    f"at least one line number"
+                )
+                continue
+            if any(
+                not isinstance(line, int) or isinstance(line, bool) or line <= 0
+                for line in lines
+            ):
+                errors.append(
+                    f"external HOL pin #{index} declaration `{name}` line numbers "
+                    f"must be positive integers"
+                )
+    return errors
+
+
+def external_pin_schema_errors(data: object) -> list[str]:
+    """Report malformed or duplicated entries in the external-HOL pin file."""
+    if not isinstance(data, list):
+        return [
+            "external HOL pin file must be a JSON list, found "
+            f"{type(data).__name__}"
+        ]
     errors: list[str] = []
     seen: set[str] = set()
     for index, entry in enumerate(data):
-        if not isinstance(entry, dict):
-            errors.append(f"external HOL pin #{index} is not an object")
-            continue
-        missing = sorted(required - set(entry))
-        if missing:
-            errors.append(
-                f"external HOL pin #{index} is missing field(s) {missing}"
-            )
-        tag_path = entry.get("tag_path")
-        if not isinstance(tag_path, str) or not tag_path.startswith(EXTERNAL_HOL_PREFIX):
-            errors.append(
-                f"external HOL pin #{index} tag_path must be a `{EXTERNAL_HOL_PREFIX}` path"
-            )
-            continue
-        if tag_path in seen:
-            errors.append(f"duplicate external HOL pin for {tag_path}")
-        seen.add(tag_path)
+        errors.extend(external_pin_entry_errors(entry, index))
+        tag_path = entry.get("tag_path") if isinstance(entry, dict) else None
+        if isinstance(tag_path, str):
+            if tag_path in seen:
+                errors.append(f"duplicate external HOL pin for {tag_path}")
+            seen.add(tag_path)
     return errors
 
 

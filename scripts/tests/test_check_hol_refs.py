@@ -2179,6 +2179,7 @@ class RealCrepPropsWordCarrierResolutionTest(unittest.TestCase):
 
 
 EXTERNAL = CHECKER["external_hol_ref_error"]
+EXTERNAL_DRIFT = CHECKER["external_pin_drift_error"]
 HOL_DECL_LINES = CHECKER["hol_declaration_lines"]
 
 
@@ -2289,7 +2290,86 @@ class ExternalHolSourceTest(unittest.TestCase):
         )
         joined = " ".join(errors)
         self.assertIn("missing field", joined)
-        self.assertIn("must be a `hol/` path", joined)
+        self.assertIn("tag_path must be a `hol/", joined)
+
+    def _valid_pin(self, **overrides):
+        entry = {
+            "tag_path": self.TAG,
+            "upstream": "src/finite_maps/sptreeScript.sml",
+            "sha256": "0" * 64,
+            "declarations": {"difference_def": [319]},
+        }
+        entry.update(overrides)
+        return entry
+
+    def test_schema_accepts_valid_entry(self):
+        self.assertEqual(SCHEMA([self._valid_pin()]), [])
+
+    def test_schema_rejects_non_list_top_level(self):
+        self.assertIn("must be a JSON list", " ".join(SCHEMA({"tag_path": self.TAG})))
+
+    def test_schema_rejects_bad_field_types(self):
+        joined = " ".join(
+            SCHEMA(
+                [
+                    self._valid_pin(upstream=5),
+                    self._valid_pin(tag_path="hol/other.sml"),
+                    self._valid_pin(sha256="ABC"),
+                    self._valid_pin(declarations=[]),
+                ]
+            )
+        )
+        self.assertIn("upstream must be an .sml path", joined)
+        self.assertIn("tag_path must equal", joined)
+        self.assertIn("sha256 must be 64 lowercase hex digits", joined)
+        self.assertIn("declarations must be a nonempty object", joined)
+
+    def test_schema_rejects_traversal_and_absolute_upstream(self):
+        joined = " ".join(
+            SCHEMA(
+                [
+                    self._valid_pin(
+                        upstream="../outside.sml", tag_path="hol/../outside.sml"
+                    ),
+                    self._valid_pin(
+                        upstream="/abs/x.sml", tag_path="hol//abs/x.sml"
+                    ),
+                ]
+            )
+        )
+        self.assertIn("relative path without `..`", joined)
+
+    def test_schema_rejects_bad_declaration_values(self):
+        joined = " ".join(
+            SCHEMA(
+                [
+                    self._valid_pin(declarations={"difference_def": []}),
+                    self._valid_pin(declarations={"difference_def": [0]}),
+                    self._valid_pin(declarations={"difference_def": [-3]}),
+                    self._valid_pin(declarations={"difference_def": 319}),
+                    self._valid_pin(declarations={"": [3]}),
+                ]
+            )
+        )
+        self.assertIn("must list at least one line number", joined)
+        self.assertIn("must be positive integers", joined)
+        self.assertIn("declaration names must be nonempty strings", joined)
+
+    def test_drift_reports_diagnostic_instead_of_raising(self):
+        entry = self._valid_pin(upstream=5)
+        error = EXTERNAL_DRIFT(entry, {}, Path("/nonexistent-hol-checkout"))
+        self.assertIn("no usable `upstream`", error)
+
+    def test_drift_reports_malformed_declarations(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source = Path(tmp) / "src" / "finite_maps" / "sptreeScript.sml"
+            source.parent.mkdir(parents=True)
+            source.write_text("Definition difference_def:\n  x = y\n\n", encoding="utf-8")
+            digest = hashlib.sha256(source.read_bytes()).hexdigest()
+            entry = self._valid_pin(sha256=digest, declarations="nope")
+            error = EXTERNAL_DRIFT(entry, {}, Path(tmp))
+        self.assertIn("declarations", error)
+
 
 
 if __name__ == "__main__":
