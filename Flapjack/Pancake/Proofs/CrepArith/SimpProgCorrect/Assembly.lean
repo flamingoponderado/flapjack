@@ -12,6 +12,7 @@ import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectShMem
 import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectStore32
 import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectStoreByte
 import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectStoreGlob
+import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectExtCall
 import Flapjack.Pancake.Semantics.CrepSem.EvaluateInd
 
 /-!
@@ -23,16 +24,28 @@ HOL proves `simp_prog_correct` (`crep_arithProofScript.sml:186-212`) by
 tagged Crep `evaluate_ind` port `evalCrepSemHOLProgExact_induct`, with the
 per-program predicate `simpProgCorrectAt`.
 
-Preparation (bead `flapjack-pxn.18.5.4.26`): the `ExtCall` case is still being
-ported (bead `flapjack-pxn.18.5.4.25`), so `simpProgCorrectOfExtCall` takes it
-as an explicit hypothesis. It is untagged and makes no HOL claim. Once the
-tagged ExtCall case lands, the tagged `simp_prog_correct` theorem is this
-assembly applied to it.
+`simpProgCorrectOfExtCall` assembles all cases except `ExtCall`, which it
+takes as a hypothesis; `crepArithSimpProgCorrect` discharges that hypothesis
+with the tagged `simpProgCorrectExtCallCase` and states HOL's
+`simp_prog_correct` (bead `flapjack-pxn.18.5.4.26`).
 -/
 
 namespace Flapjack
 
 open Flapjack.Basis.Pure.MlString
+
+namespace SimpProgCorrectAssemblySupport
+
+/-- Same-module canonical finite-support witness for the named state fields
+    used by the tagged `simp_prog_correct` theorem below. -/
+theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {σ : Type} :
+    (∀ (state : CrepSemBroadState width σ) (h : state.FiniteSupport),
+        (CrepSemBroadState.ofBroad state h).toBroad = state) ∧
+    (∀ state : CrepSemHOLState width σ,
+        CrepSemBroadState.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  CrepSemHOLState.holFmapAsFiniteSupportWitness
+
+end SimpProgCorrectAssemblySupport
 
 /-- The evaluator's `lookupCodeFiniteHOL` and the induction principle's
     `lookupCodeHOLFinite` agree on a finite-support code map. -/
@@ -123,5 +136,27 @@ theorem simpProgCorrectOfExtCall {width : Nat} [NeZero width] {σ : Type}
               | some x => obtain ⟨rts, y⟩ := x; simpa using h3) h4)
   · intro f p1 l1 p2 l2 s
     exact hext f p1 l1 p2 l2 s
+
+
+/-- Exact HOL `simp_prog_correct` (`crep_arithProofScript.sml:186-190`):
+    `∀p s r s'. crepSem$evaluate (p, s) = (r, s') ⇒ r ≠ SOME Error ⇒
+      evaluate (simp_prog p, mapcs s) = (r, mapcs s')`, over the tagged native
+    Crep evaluator `evalCrepSemHOLProgExact`, the tagged `crepSimpProgHOL`, and
+    the proof script's `mapcs` rendered by `crepSimpMapcsHOL`
+    (`crepSimpMapcsHOL_eq_mapc`).  Same binders, premises and conclusion; no
+    other premise.  Proved as HOL does, by `evaluate_ind`
+    (`evalCrepSemHOLProgExact_induct`) over the nineteen tagged constructor
+    cases. -/
+@[hol "cakeml/pancake/proofs/crep_arithProofScript.sml" "simp_prog_correct"
+  (fmap_as_finite_support := [locals, globals, code]) (words_as_type_indexed_bitvec)]
+theorem crepArithSimpProgCorrect {width : Nat} [NeZero width] {σ : Type} :
+    ∀ (p : CrepProgHOL width) (s : CrepSemHOLState width σ)
+      (r : Option (CrepResultHOLExact width)) (s' : CrepSemHOLState width σ),
+      evalCrepSemHOLProgExact s p = (r, s') →
+      r ≠ some .error →
+      evalCrepSemHOLProgExact (crepSimpMapcsHOL s) (crepSimpProgHOL p) =
+        (r, crepSimpMapcsHOL s') :=
+  fun p s => simpProgCorrectOfExtCall
+    (fun f p1 l1 p2 l2 s => simpProgCorrectExtCallCase s f p1 l1 p2 l2) p s
 
 end Flapjack
