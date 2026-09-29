@@ -3,6 +3,7 @@ import Flapjack.PanToCrepMaxList
 import Flapjack.Pancake.Semantics.CrepSem
 import Flapjack.Pancake.Semantics.CrepSem.Eval
 import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
+import Flapjack.Pancake.Semantics.CrepSem.EvaluateInd
 import Flapjack.Pancake.Semantics.CrepSem.HOLState
 import Flapjack.Pancake.CrepInline.Pass
 import Flapjack.Pancake.CrepInline.Canonical
@@ -1515,6 +1516,154 @@ theorem inlineProgCorrectDecCaseExact {width : Nat} [NeZero width] {σ : Type}
           · exact hstatePost
           · exact hcodePost
           · split <;> simp_all [crepInlineLocalsStrongRelExact]
+
+/-! ## `inline_prog_correct` If constructor case
+
+HOL `crep_inlineProofScript.sml:2301-2309` states the theorem; its If case at
+2374-2381 is the `If` conjunct of the source-reviewed `crepSem$evaluate_ind`
+at `crepSemScript.sml:440`. That conjunct contributes exactly one IH: the
+theorem predicate for the branch selected by a successfully evaluated word
+condition. The exact `CrepExpHOL`, `CrepProgHOL`, width-indexed
+`CrepSemHOLState`, and `HolWordLab` carriers are the counterparts already
+recorded by those datatype and evaluator tags. The relation qualifier records
+the state maps and both inline maps; no premise or conclusion is weakened. -/
+
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "inline_prog_correct"
+  (fmap_as_finite_support_relation :=
+    [CrepSemHOLState.locals, CrepSemHOLState.globals,
+      CrepSemHOLState.code, inlFs, inlBag])
+  (words_as_type_indexed_bitvec)]
+theorem inlineProgCorrectIfCaseExact {width : Nat} [NeZero width] {σ : Type}
+    (condition : CrepExpHOL width) (thenBranch elseBranch : CrepProgHOL width)
+    (s : CrepSemHOLState width σ)
+    (inlFs : HolFiniteMapExact CrepInlineMapHOLName
+      (List Nat × CrepProgHOL width))
+    (inlBag : HolFiniteMapExact CrepInlineMapHOLName
+      (List Nat × CrepProgHOL width))
+    (t : CrepSemHOLState width σ)
+    (ih : ∀ (value : HolWordLab width) (word : BitVec width),
+        crepExactEvalExpClassical s condition = some value →
+        value = .word word →
+        ∀ (inlFs' : HolFiniteMapExact CrepInlineMapHOLName
+              (List Nat × CrepProgHOL width))
+          (inlBag' : HolFiniteMapExact CrepInlineMapHOLName
+              (List Nat × CrepProgHOL width))
+          (source target : CrepSemHOLState width σ)
+          (result : Option (CrepResultHOLExact width))
+          (source' : CrepSemHOLState width σ),
+          evalCrepSemHOLProgExact source
+              (if word ≠ 0 then thenBranch else elseBranch) = (result, source') →
+          result ≠ some .error →
+          HolFiniteMapExact.submap inlFs' source.code →
+          HolFiniteMapExact.submap inlBag' inlFs' →
+          crepInlineStateRelCodeExact source target →
+          crepInlineLocalsStrongRelExact source target →
+          crepInlineCodeInlRelExact inlFs' source target →
+          ∃ target' : CrepSemHOLState width σ,
+            evalCrepSemHOLProgExact target
+                (CrepInlineCanonical.inlineProgHOLExact inlBag'
+                  (if word ≠ 0 then thenBranch else elseBranch)) =
+              (result, target') ∧
+            crepInlineStateRelCodeExact source' target' ∧
+            crepInlineCodeInlRelExact inlFs' source' target' ∧
+            match result with
+            | none => crepInlineLocalsStrongRelExact source' target'
+            | some (CrepResultHOLExact.break _) =>
+                crepInlineLocalsStrongRelExact source' target'
+            | some (CrepResultHOLExact.continue _) =>
+                crepInlineLocalsStrongRelExact source' target'
+            | some .error => False
+            | _ => True)
+    (r : Option (CrepResultHOLExact width))
+    (s' : CrepSemHOLState width σ)
+    (hsource : evalCrepSemHOLProgExact s (.ite condition thenBranch elseBranch) = (r, s'))
+    (hnotError : r ≠ some .error)
+    (hsubmap : HolFiniteMapExact.submap inlFs s.code)
+    (hbag : HolFiniteMapExact.submap inlBag inlFs)
+    (hstate : crepInlineStateRelCodeExact s t)
+    (hlocals : crepInlineLocalsStrongRelExact s t)
+    (hcode : crepInlineCodeInlRelExact inlFs s t) :
+    ∃ t' : CrepSemHOLState width σ,
+      evalCrepSemHOLProgExact t
+          (CrepInlineCanonical.inlineProgHOLExact inlBag
+            (.ite condition thenBranch elseBranch)) = (r, t') ∧
+      crepInlineStateRelCodeExact s' t' ∧
+      crepInlineCodeInlRelExact inlFs s' t' ∧
+      match r with
+      | none => crepInlineLocalsStrongRelExact s' t'
+      | some (CrepResultHOLExact.break _) =>
+          crepInlineLocalsStrongRelExact s' t'
+      | some (CrepResultHOLExact.continue _) =>
+          crepInlineLocalsStrongRelExact s' t'
+      | some .error => False
+      | _ => True := by
+  classical
+  rw [evalCrepSemHOLProgExact_ite_holShape] at hsource
+  cases hcondition : evalCrepSemHOLExp s condition with
+  | none =>
+      simp [hcondition] at hsource
+      have hresult : r = some .error := hsource.1.symm
+      subst r
+      exact False.elim (hnotError rfl)
+  | some value =>
+      cases value with
+      | word word =>
+          have hconditionIH :
+              crepExactEvalExpClassical s condition = some (.word word) := by
+            rw [crepExactEvalExpClassical_eq]
+            exact hcondition
+          have hsourceBranch :
+              evalCrepSemHOLProgExact s
+                  (if word ≠ 0 then thenBranch else elseBranch) = (r, s') := by
+            simpa [hcondition] using hsource
+          have htargetCondition :
+              evalCrepSemHOLExp t condition = some (.word word) := by
+            apply evalCodeInlExact s condition (.word word) t inlFs
+            exact ⟨hcondition, hstate, hlocals, hcode⟩
+          obtain ⟨t', htargetBranch, hstatePost, hcodePost, hlocalsPost⟩ :=
+            ih (.word word) word hconditionIH rfl
+              inlFs inlBag s t r s' hsourceBranch hnotError
+              hsubmap hbag hstate hlocals hcode
+          have hinlineIf :
+              CrepInlineCanonical.inlineProgHOLExact inlBag
+                  (.ite condition thenBranch elseBranch) =
+                .ite condition
+                  (CrepInlineCanonical.inlineProgHOLExact inlBag thenBranch)
+                  (CrepInlineCanonical.inlineProgHOLExact inlBag elseBranch) := by
+            unfold CrepInlineCanonical.inlineProgHOLExact
+            simp only [CrepInlineCanonical.inlineProgHOLCoreExact]
+          have hinlineSelected :
+              CrepInlineCanonical.inlineProgHOLExact inlBag
+                  (if word ≠ 0 then thenBranch else elseBranch) =
+                if word ≠ 0 then
+                  CrepInlineCanonical.inlineProgHOLExact inlBag thenBranch
+                else CrepInlineCanonical.inlineProgHOLExact inlBag elseBranch := by
+            by_cases hnz : word ≠ 0
+            · simp only [if_pos hnz]
+            · simp only [if_neg hnz]
+          refine ⟨t', ?_, hstatePost, hcodePost, ?_⟩
+          · calc
+              evalCrepSemHOLProgExact t
+                  (CrepInlineCanonical.inlineProgHOLExact inlBag
+                    (.ite condition thenBranch elseBranch)) =
+                  evalCrepSemHOLProgExact t
+                    (.ite condition
+                      (CrepInlineCanonical.inlineProgHOLExact inlBag thenBranch)
+                      (CrepInlineCanonical.inlineProgHOLExact inlBag elseBranch)) := by
+                    rw [hinlineIf]
+              _ = evalCrepSemHOLProgExact t
+                    (if word ≠ 0 then
+                      CrepInlineCanonical.inlineProgHOLExact inlBag thenBranch
+                     else CrepInlineCanonical.inlineProgHOLExact inlBag elseBranch) := by
+                    rw [evalCrepSemHOLProgExact_ite_holShape, htargetCondition]
+              _ = evalCrepSemHOLProgExact t
+                    (CrepInlineCanonical.inlineProgHOLExact inlBag
+                      (if word ≠ 0 then thenBranch else elseBranch)) := by
+                    rw [← hinlineSelected]
+              _ = (r, t') := htargetBranch
+          · cases r with
+            | none => simpa using hlocalsPost
+            | some result => cases result <;> simp_all
 
 end CrepInlineExact
 
