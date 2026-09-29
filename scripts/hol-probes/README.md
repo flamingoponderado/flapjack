@@ -507,14 +507,17 @@ general multipliers, with a word-valued local. Its matching production runtime
 cases live in `Flapjack.Test.CrepeMulConstParity`.
 `crep_simp_exp_probe.out` records direct HOL EVAL of
 `crep_arith$simp_exp_def` (`crep_arithScript.sml:59-64`) for constant folding,
-left/right constant multiplication, nested multiplication, and recursive
-load/word-operation children. It also evaluates the original
+left/right constant multiplication, nested multiplication, recursive
+load/word-operation children, and identity Var/Const constructor rows used by
+the native `simp_exp_correct1` cases. It also evaluates the original
 `crepSem$eval` before and after simplifying `Crepop Mul [Var 2; Const 8w]`
 with local 2 set to `Word 5w`; the simplifier yields `Shift Lsl (Var 2)
 (Const 3w)` and both evaluations return `SOME (Word 40w)`. The matching
 production source-runtime observation and all-width theorem application are
-in `Flapjack.Test.CrepeSimpExpParity`. These checks exercise the result shape,
-but do not close the polymorphic evaluator-preservation theorem
+in `Flapjack.Test.CrepeSimpExpParity`; the exact-carrier Var/Const replay is
+checked there alongside the tagged native evaluator cases in
+`Flapjack.Pancake.Proofs.CrepArith.HOLStateMapc`. These checks exercise the
+result shape, but do not close the polymorphic evaluator-preservation theorem
 `simp_exp_correct1`; the explicit finite-index adapter's relation to HOL's
 implicit word carrier remains open.
 `crep_eval_probe.out` records direct HOL EVAL of the `Const`, `Var`, `Load`,

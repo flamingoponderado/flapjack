@@ -6,6 +6,17 @@ import Flapjack.RiscV.PanMemory
 
 namespace Flapjack.Test.CrepeSimpExpParity
 
+/-! Exact carrier replay of the direct HOL `simp_exp` Var/Const EVAL rows. The
+matching native `eval_def` preservation cases, including the proof-script-local
+code-map update and full word_lab result, are kernel-checked in
+`CrepArith.HOLStateMapc`. -/
+example : crepSimpExpHOL (.var 7 : CrepExpHOL 8) = .var 7 := by
+  simp [crepSimpExpHOL]
+
+example (value : BitVec 8) :
+    crepSimpExpHOL (.const value) = .const value := by
+  simp [crepSimpExpHOL]
+
 /-! HOL words use a finite Boolean-function carrier. This direct check
     exercises its `Fin n` encoding and conversion to the production BitVec
     representation independently of the expression evaluator bridge. -/

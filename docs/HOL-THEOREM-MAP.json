@@ -636,6 +636,22 @@
     "reviewer": "Flapjack support for HOL simp_exp_correct1 over arbitrary finite-index words and exact finite-map/set state fields, with opaque code entries. Evaluation still uses the explicit HolFiniteDimension source projection; native crepSem eval_def, HOL program/FFI carriers, and their representation relations remain unproved, so the declaration is untagged."
   },
   {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "crepSimpExpCorrect1NativeVarCase",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack support case for HOL simp_exp_correct1, with the exact native evaluator, successful-evaluation premise, unused result binder, code-only mapc update, and Option word_lab result. Kept untagged because CrepSemHOLState is declared in Semantics.CrepSem.HOLState, outside this counterpart module, and the required same-module finite-map carrier witness is unavailable; the faithful tagged case remains open (bead flapjack-pxn.18.5.4.2.19.5)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "crepSimpExpCorrect1NativeConstCase",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack support case for HOL simp_exp_correct1, with the exact native evaluator, successful-evaluation premise, unused result binder, code-only mapc update, and Option word_lab result. Kept untagged because CrepSemHOLState is declared in Semantics.CrepSem.HOLState, outside this counterpart module, and the required same-module finite-map carrier witness is unavailable; the faithful tagged case remains open (bead flapjack-pxn.18.5.4.2.19.5)."
+  },
+  {
     "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
     "hol_name": "result",
     "lean_path": "Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean",
