@@ -525,8 +525,9 @@ def compileFlapjackRiscVSourceBytesChecked [NeZero width]
               (some (.isTrue targetByteRanged)) with
           | none => .error .entryNotFound
           | some pipeline =>
-              let sourceLoop :=
-                pipelineLoopFunctionsSourceCompileProgRouted architecture 1 pipeline.crepe
+              -- The single production Crep-to-Loop route, already computed by
+              -- `compileFlapjackEntryCake` (`pipelineLoopFunctionsSource architecture 1`).
+              let sourceLoop := pipeline.loop
               let sourceWord := pipelineWordFunctionsSource sourceLoop
               /- Cake's backend scans the compiled section list from its
                  reverse function order before `export_riscv` reverses the
@@ -596,8 +597,9 @@ def compileFlapjackRiscVSourceImageChecked [NeZero width]
               (some (.isTrue targetByteRanged)) with
           | none => .error .entryNotFound
           | some pipeline =>
-              let sourceLoop :=
-                pipelineLoopFunctionsSourceCompileProgRouted architecture 1 pipeline.crepe
+              -- The single production Crep-to-Loop route, already computed by
+              -- `compileFlapjackEntryCake` (`pipelineLoopFunctionsSource architecture 1`).
+              let sourceLoop := pipeline.loop
               let sourceWord := pipelineWordFunctionsSource sourceLoop
               /- Keep FFI discovery in Cake's reverse section order; the
                  artifact exporter reverses this list once more. -/
@@ -649,8 +651,10 @@ def compileFlapjackRiscVSourceRuntimeImageChecked [NeZero width]
               (some (.isTrue targetByteRanged)) with
           | none => .error .entryNotFound
           | some pipeline =>
-              let loop := pipelineLoopFunctionsSourceCompileProgRouted architecture
-                stackFunctionFirstLabel pipeline.crepe
+              -- Same production Crep-to-Loop route as `pipeline.loop`, at the
+              -- runtime-image label base.
+              let loop := pipelineLoopFunctionsSource architecture stackFunctionFirstLabel
+                pipeline.crepe
               let sourceWords := panToWordCompileProg loop
               let discoveryWords :=
                 sourceWords.map
