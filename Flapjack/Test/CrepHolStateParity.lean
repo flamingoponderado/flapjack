@@ -301,6 +301,30 @@ example :
   classical
   simp [evalCrepSemHOLExp, load32State, panMemLoad32HOL, panByteAlignHOL]
 
+example :
+    evalCrepSemHOLExp (load32State.mapc sampleMapc64)
+        (.loadByte (.const (BitVec.ofNat 64 8))) =
+      evalCrepSemHOLExp load32State (.loadByte (.const (BitVec.ofNat 64 8))) := by
+  classical
+  simpa [crepSimpExpHOL] using
+    (crepSimpExpCorrect1NativeLoadByteCase sampleMapc64 load32State
+      (.const (BitVec.ofNat 64 8)) (HolWordLab.word (BitVec.ofNat 64 136))
+      (by
+        have hlog : Nat.log2 8 = 3 := by decide
+        simp [evalCrepSemHOLExp, load32State, panMemLoadByteHOL,
+          panByteAlignHOL, hlog])
+      (by
+        intro state' resultType result hAddress
+        exact crepSimpExpCorrect1NativeConstCase sampleMapc64 state'
+          (BitVec.ofNat 64 8) result (by simp [evalCrepSemHOLExp])))
+
+example :
+    evalCrepSemHOLExp load32State (.loadByte (.const (BitVec.ofNat 64 24))) = none := by
+  classical
+  have hlog : Nat.log2 8 = 3 := by decide
+  simp [evalCrepSemHOLExp, load32State, panMemLoadByteHOL,
+    panByteAlignHOL, hlog]
+
 private def lookupNames : List Nat := [0, 1]
 
 example :
