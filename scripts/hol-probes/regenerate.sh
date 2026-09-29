@@ -1703,6 +1703,22 @@ run_probe machine_ieee_fp64_arith_special_probeScript.sml machine_ieee_fp64_arit
   "$cake_dir/semantics/fpSemScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 
+# The binary64 rounding probe observes float_round roundTiesToEven on ties,
+# subnormal ties, the overflow threshold, negative inputs and zero signs
+# (bead flapjack-h29l.6.2.3).
+run_probe binary_ieee_round_fp64_probeScript.sml binary_ieee_round_fp64_probe.out \
+  third tie_up_even sub_three_half at_threshold big_odd \
+  "$hol_dir/src/floating-point/binary_ieeeScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
+# The binary64 rounded-arithmetic probe observes finite results of
+# fp64_add/sub/mul/div and the tagged fpSem fpfma, including zero signs,
+# overflow and subnormal ties (bead flapjack-h29l.6.2.4).
+run_probe machine_ieee_fp64_arith_round_probeScript.sml machine_ieee_fp64_arith_round_probe.out \
+  add_tenth_fifth mul_max_two div_sub1_two fma_cancel \
+  "$cake_dir/semantics/fpSemScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
 # The good_handlers probe observes the structural handler-label predicate,
 # including the NONE-ret case (handler ignored) and nested bad handlers.
 run_probe word_convs_good_handlers_probeScript.sml word_convs_good_handlers_probe.out \
