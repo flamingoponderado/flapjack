@@ -21256,7 +21256,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
     "lean_name": "evaluate_ShMem_not_load_locals",
     "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
-    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.7) against evaluate_ShMem_not_load_locals at loop_callProofScript.sml:424-427: `evaluate (ShMem op v ad, s) = (res, s') ∧ ¬is_load op ∧ ¬ (∃x. res = SOME (FinalFFI x)) ⇒ s.locals = s'.locals`; free variables in order of occurrence; loop_call$is_load is the untagged crepIsLoadMemOp, which agrees with is_load_def (loop_callScript.sml:10-15) clause for clause.",
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.7) against evaluate_ShMem_not_load_locals at loop_callProofScript.sml:424-427: `evaluate (ShMem op v ad, s) = (res, s') ∧ ¬is_load op ∧ ¬ (∃x. res = SOME (FinalFFI x)) ⇒ s.locals = s'.locals`; free variables in order of occurrence; loop_call$is_load is the tagged loopCallIsLoadHOL (is_load_def, Flapjack/Pancake/LoopCall/IsLoad.lean), proved equal to the evaluator's crepIsLoadMemOp (restated per coordinator review, 2026-09-29; bead flapjack-pxn.18.5.7.3.1).",
     "words_as_type_indexed_bitvec": true,
     "fmap_as_finite_support": [
       "globals"
@@ -21304,7 +21304,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
     "lean_name": "get_vars_last",
     "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
-    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.7) against get_vars_last at loop_callProofScript.sml:300-302: `!xs ys s. get_vars xs s = SOME ys /\\ xs <> [] ==> lookup (LAST xs) s.locals = SOME (LAST ys)`; binders in order with the premise bound as h, LAST xs as xs.getLast h.2, and SOME (LAST ys) as ys.getLast? (equal to SOME (LAST ys) since ys is non-empty whenever get_vars succeeds on a non-empty xs). Reviewer: please confirm this LAST rendering.",
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.7) against get_vars_last at loop_callProofScript.sml:300-302: `!xs ys s. get_vars xs s = SOME ys /\\ xs <> [] ==> lookup (LAST xs) s.locals = SOME (LAST ys)`; binders in order with the premise bound as h, LAST xs as xs.getLast h.2 and SOME (LAST ys) as some (ys.getLast (getVars_ne_nil h.1 h.2)), the non-emptiness of ys being derived from the successful get_vars on non-empty xs (restated per coordinator review, 2026-09-29).",
     "words_as_type_indexed_bitvec": true,
     "fmap_as_finite_support": [
       "globals"
@@ -21374,5 +21374,21 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.6.33.15.7): case piece `Crepop bop es` of comp_exp_preserves_eval (crep_to_loopProofScript.sml:772-786 statement; case proof at 889-972). Its only extra antecedent is eval_ind's hypothesis for every argument expression e ∈ es at the same state s (untagged crepToLoopCompExpPreservesEvalAt s e, which unfolds to the HOL statement at (s, e)). HOL quantifier order ∀v t ctxt tmp l p le ntmp nl, the eight premises with e := Crepop bop es and the full HOL existential conclusion over the tagged decider-free evalCrepSemHOLExp, compileExpHOLExact, LoopSemStateFiniteExact.evaluate/eval, loopNestedSeqHOL, wlabWlocExact and the exact relations. Proof follows HOL: crep_op Mul forces two word arguments; IH on both operands, evaluate_add_clock_eq, nested_seq_pure_evaluation, the two Assigns and compile_crepop's LongMul (armv7 and other target register layouts), locals_rel via fresh temporaries above vmax. Typing: one shared σ (t : ('a,'b) loopSem$state and state_rel's s.ffi = t.ffi)."
+  },
+  {
+    "hol_path": "cakeml/pancake/loop_callScript.sml",
+    "hol_name": "is_load_def",
+    "lean_path": "Flapjack/Pancake/LoopCall/IsLoad.lean",
+    "lean_name": "loopCallIsLoadHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.7.3.1) against is_load_def at loop_callScript.sml:10-15: `is_load Load = T ∧ is_load Load8 = T ∧ is_load Load16 = T ∧ is_load Load32 = T ∧ is_load _ = F`; over CrepMemOp, the memop carrier of the tagged HolLoopProg.shMem (constructor-for-constructor Load/Load8/Load16/Load32/Store/Store8/Store16/Store32), same five clauses. Proved equal to the evaluator's untagged crepIsLoadMemOp."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
+    "lean_name": "getVars_ne_nil",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper: a successful get_vars on a non-empty list returns a non-empty list (the proof term used for LAST ys in get_vars_last); no separate CakeML declaration"
   }
 ]

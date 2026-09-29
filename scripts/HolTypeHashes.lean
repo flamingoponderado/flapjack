@@ -49,6 +49,7 @@ import Flapjack.Pancake.CrepToLoop.Proofs.SemanticsWrapper
 import Flapjack.Pancake.LoopLive.Fixedpoint
 import Flapjack.Pancake.Proofs.LoopLive.CompileCorrect
 import Flapjack.Pancake.Proofs.LoopLive.Optimise
+import Flapjack.Pancake.LoopCall.IsLoad
 import Flapjack.Pancake.Proofs.LoopCall.CompileCorrect
 import Flapjack.Pancake.CrepToLoop.StateRel
 import Flapjack.Pancake.LoopToWord
