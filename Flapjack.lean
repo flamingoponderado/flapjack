@@ -194,6 +194,7 @@ import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.ReturnRaise
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Assign
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Arith
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Seq
+import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.If
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Memory
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.ShMem
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.FFI
