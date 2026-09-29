@@ -1799,11 +1799,14 @@ run_probe word_sem_eval_prereq_probeScript.sml word_sem_eval_prereq_probe.out \
   "$cake_dir/compiler/backend/semantics"
 
 # The wordSem evaluate probe observes evaluate_def on straight-line, control,
-# loop, raise/return, MustTerminate, Move/Get/Set/LocValue/StoreConsts, tail and
-# returning calls, and FFI over record updates of a free state (bead
-# flapjack-h29l.8.2).
+# loop, raise/return, MustTerminate, Move/Get/Set/LocValue/StoreConsts, Alloc,
+# Store, OpCurrHeap, ShareInst, CodeBufferWrite, DataBufferWrite, Install, tail
+# and returning calls (including the caught-handler exception path), and FFI
+# over record updates of a free state (bead flapjack-h29l.8.2).
 run_probe word_sem_evaluate_probeScript.sml word_sem_evaluate_probe.out \
   skip loop_timeout raise_handler must_terminate call_ret ffi_ok \
+  alloc_ok store_ok op_curr_heap share_inst_load code_buffer_write \
+  data_buffer_write install_ok call_handler_exception \
   "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 
