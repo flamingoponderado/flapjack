@@ -7,18 +7,22 @@ import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOkLemmas
 import Flapjack.Pancake.Semantics.LoopProps.NestedSeqExact
 
 /-!
-# loop_live `compile_correct`, split by HOL's `Resume` cases
+# loop_live `compile_correct`, proved along HOL's `Resume` cases
 
-Pieces of `cakeml/pancake/proofs/loop_liveProofScript.sml`'s `compile_correct`
+Proof of `cakeml/pancake/proofs/loop_liveProofScript.sml`'s `compile_correct`
 (17-64) over the exact `LoopSemStateFiniteExact.evaluate` (`evaluate_def`), the
 tagged `shrinkHOL` (`loop_live$shrink_def`), `sptSubspt` (sptree `subspt`),
 `sptInter` (`inter`) and `sptOel` (`oEL`) (bead `flapjack-pxn.18.5.8.1`).
 HOL proves it by `recInduct loopSemTheory.evaluate_ind` and resumes one case
-per constructor (`Resume compile_correct[Skip]`, ...); each Lean piece is one
-such case, with HOL's quantifier order `∀v v1 res s1 lt locals prog1 l1 l0`
-(constructor payload in place of `v`), all four premises and the full
-conclusion, plus `evaluate_ind` hypotheses for sub-programs where the case has
-any.  The assembling theorem is bead `flapjack-pxn.18.5.8.1.9`.
+per constructor (`Resume compile_correct[Skip]`, ...).  The per-constructor
+lemmas below follow those cases, with HOL's quantifier order
+`∀v v1 res s1 lt locals prog1 l1 l0` (constructor payload in place of `v`), all
+four premises and the full conclusion.  They are Flapjack-only auxiliary lemmas,
+not ports of HOL declarations and not case pieces in the `AGENTS.md` sense:
+their sub-program hypotheses are the ones the Lean lexicographic
+`(clock, program size)` assembly supplies, not `evaluate_ind`'s, so they carry
+no `@[hol]` tag.  The tag is on the assembled `loopLive_compile_correct`
+(bead `flapjack-pxn.18.5.8.1.9`).
 -/
 
 namespace Flapjack
@@ -103,8 +107,8 @@ private theorem getVars_locals_agree {width : Nat} [NeZero width] {F : Type}
             getVars_locals_agree v1 locals ns ws (fun m hm => hag m (List.mem_cons_of_mem _ hm)) hr]
           simpa using h
 
-/-- Untagged case piece (the `@[hol compile_correct]` tag is on the assembled
-    `loopLive_compile_correct` below): `compile_correct`, case `Skip` (`loop_liveProofScript.sml:17-37` statement;
+/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
+    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `Skip` (`loop_liveProofScript.sml:17-37` statement;
     `Resume compile_correct[Skip]` at 66-69). -/
 theorem loopLive_compile_correct_skip {width : Nat} [NeZero width] {F : Type} :
     ∀ (v1 : LoopSemStateFiniteExact width F),
@@ -136,8 +140,8 @@ theorem loopLive_compile_correct_skip {width : Nat} [NeZero width] {F : Type} :
   obtain ⟨rfl, rfl⟩ := he
   exact ⟨locals, by simp [evaluate], hsub⟩
 
-/-- Untagged case piece (the `@[hol compile_correct]` tag is on the assembled
-    `loopLive_compile_correct` below): `compile_correct`, case `Fail` (`loop_liveProofScript.sml:17-37` statement;
+/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
+    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `Fail` (`loop_liveProofScript.sml:17-37` statement;
     `Resume compile_correct[Fail]` at 71-74). -/
 theorem loopLive_compile_correct_fail {width : Nat} [NeZero width] {F : Type} :
     ∀ (v1 : LoopSemStateFiniteExact width F),
@@ -166,8 +170,8 @@ theorem loopLive_compile_correct_fail {width : Nat} [NeZero width] {F : Type} :
   simp only [evaluate, Prod.mk.injEq] at he
   exact absurd he.1.symm hne
 
-/-- Untagged case piece (the `@[hol compile_correct]` tag is on the assembled
-    `loopLive_compile_correct` below): `compile_correct`, case `Tick` (`loop_liveProofScript.sml:17-37` statement;
+/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
+    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `Tick` (`loop_liveProofScript.sml:17-37` statement;
     `Resume compile_correct[Tick]` at 76-79). -/
 theorem loopLive_compile_correct_tick {width : Nat} [NeZero width] {F : Type} :
     ∀ (v1 : LoopSemStateFiniteExact width F),
@@ -203,8 +207,8 @@ theorem loopLive_compile_correct_tick {width : Nat} [NeZero width] {F : Type} :
     obtain ⟨rfl, rfl⟩ := he
     exact ⟨locals, by simp [evaluate, hc, decClock], hsub⟩
 
-/-- Untagged case piece (the `@[hol compile_correct]` tag is on the assembled
-    `loopLive_compile_correct` below): `compile_correct`, case `Continue` (`loop_liveProofScript.sml:17-37` statement;
+/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
+    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `Continue` (`loop_liveProofScript.sml:17-37` statement;
     `Resume compile_correct[Continue]` at 81-87). -/
 theorem loopLive_compile_correct_continue {width : Nat} [NeZero width] {F : Type} :
     ∀ (k : Nat) (v1 : LoopSemStateFiniteExact width F),
@@ -240,8 +244,8 @@ theorem loopLive_compile_correct_continue {width : Nat} [NeZero width] {F : Type
   · rename_i cont brk heq; simpa [heq] using hsub
   · trivial
 
-/-- Untagged case piece (the `@[hol compile_correct]` tag is on the assembled
-    `loopLive_compile_correct` below): `compile_correct`, case `Break` (`loop_liveProofScript.sml:17-37` statement;
+/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
+    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `Break` (`loop_liveProofScript.sml:17-37` statement;
     `Resume compile_correct[Break]` at 89-95). -/
 theorem loopLive_compile_correct_break {width : Nat} [NeZero width] {F : Type} :
     ∀ (k : Nat) (v1 : LoopSemStateFiniteExact width F),
@@ -277,8 +281,8 @@ theorem loopLive_compile_correct_break {width : Nat} [NeZero width] {F : Type} :
   · rename_i cont brk heq; simpa [heq] using hsub
   · trivial
 
-/-- Untagged case piece (the `@[hol compile_correct]` tag is on the assembled
-    `loopLive_compile_correct` below): `compile_correct`, case `Mark` (`loop_liveProofScript.sml:17-37` statement;
+/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
+    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `Mark` (`loop_liveProofScript.sml:17-37` statement;
     `Resume compile_correct[Mark]` at 97-99). -/
 theorem loopLive_compile_correct_mark {width : Nat} [NeZero width] {F : Type} :
     ∀ (p : HolLoopProg width) (v1 : LoopSemStateFiniteExact width F),
@@ -309,8 +313,8 @@ theorem loopLive_compile_correct_mark {width : Nat} [NeZero width] {F : Type} :
   simp only [evaluate] at he
   exact ih res s1 lt locals prog1 l1 l0 ⟨he, hne, hs, hsub⟩
 
-/-- Untagged case piece (the `@[hol compile_correct]` tag is on the assembled
-    `loopLive_compile_correct` below): `compile_correct`, case `Return` (`loop_liveProofScript.sml:17-37` statement;
+/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
+    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `Return` (`loop_liveProofScript.sml:17-37` statement;
     `Resume compile_correct[Return]` at 101-110). -/
 theorem loopLive_compile_correct_return {width : Nat} [NeZero width] {F : Type} :
     ∀ (ns : List Nat) (v1 : LoopSemStateFiniteExact width F),
@@ -347,8 +351,8 @@ theorem loopLive_compile_correct_return {width : Nat} [NeZero width] {F : Type} 
       sptSubspt_inter_lookup hsub (sptMem_sptListInsert_of_mem n ns _ hn) w hw) hg
     exact ⟨(LoopSemStateFiniteExact.callEnv [] v1).locals, by simp [evaluate, hg', LoopSemStateFiniteExact.callEnv], rfl⟩
 
-/-- Untagged case piece (the `@[hol compile_correct]` tag is on the assembled
-    `loopLive_compile_correct` below): `compile_correct`, case `Raise` (`loop_liveProofScript.sml:17-37` statement;
+/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
+    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `Raise` (`loop_liveProofScript.sml:17-37` statement;
     `Resume compile_correct[Raise]` at 112-116). -/
 theorem loopLive_compile_correct_raise {width : Nat} [NeZero width] {F : Type} :
     ∀ (x : Nat) (v1 : LoopSemStateFiniteExact width F),
@@ -384,8 +388,8 @@ theorem loopLive_compile_correct_raise {width : Nat} [NeZero width] {F : Type} :
     have hx' := sptSubspt_inter_lookup hsub ((sptMem_sptInsert x x () _).mpr (Or.inl rfl)) w hx
     exact ⟨(LoopSemStateFiniteExact.callEnv [] v1).locals, by simp [evaluate, hx', LoopSemStateFiniteExact.callEnv], rfl⟩
 
-/-- Untagged case piece (the `@[hol compile_correct]` tag is on the assembled
-    `loopLive_compile_correct` below): `compile_correct`, case `Seq c1 c2` (`loop_liveProofScript.sml:17-37` statement;
+/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
+    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `Seq c1 c2` (`loop_liveProofScript.sml:17-37` statement;
     `Resume compile_correct[Seq]` at 118-129), with the `evaluate_ind` hypotheses:
     the statement for `c1` at `v1`, and for `c2` at every `s1` with
     `fix_clock v1 (evaluate (c1,v1)) = (NONE, s1)`. -/
@@ -769,8 +773,8 @@ private theorem subspt_inter_apply {width : Nat} [NeZero width]
   rw [(h k ((mem_inter_iff a l k).mpr ⟨ha, hl⟩)).2, sptLookup_sptInter,
     if_pos (show (sptLookup k l).isSome = true from hl)]
 
-/-- Untagged case piece (the `@[hol compile_correct]` tag is on the assembled
-    `loopLive_compile_correct` below): `compile_correct`, case `Assign` (`loop_liveProofScript.sml:17-37` statement;
+/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
+    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `Assign` (`loop_liveProofScript.sml:17-37` statement;
     `Resume compile_correct[Assign]` at 490-509). -/
 theorem loopLive_compile_correct_assign {width : Nat} [NeZero width] {F : Type} :
     ∀ (n : Nat) (x : HolLoopExp width) (v1 : LoopSemStateFiniteExact width F)
@@ -832,8 +836,8 @@ theorem loopLive_compile_correct_assign {width : Nat} [NeZero width] {F : Type} 
       simp only [setVar, sptLookup_sptInsert, hkn, if_false]
       exact subspt_inter_apply hsub hka' hkv
 
-/-- Untagged case piece (the `@[hol compile_correct]` tag is on the assembled
-    `loopLive_compile_correct` below): `compile_correct`, case `SetGlobal` (`loop_liveProofScript.sml:17-37` statement;
+/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
+    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `SetGlobal` (`loop_liveProofScript.sml:17-37` statement;
     `Resume compile_correct[SetGlobal]` at 511-519). -/
 theorem loopLive_compile_correct_setGlobal {width : Nat} [NeZero width] {F : Type} :
     ∀ (g : BitVec 5) (x : HolLoopExp width) (v1 : LoopSemStateFiniteExact width F)
@@ -873,8 +877,8 @@ theorem loopLive_compile_correct_setGlobal {width : Nat} [NeZero width] {F : Typ
   rw [sptLookup_sptInter, if_pos (show (sptLookup k l0).isSome = true from hkl)]
   exact subspt_inter_apply hsub hka ((vars_of_exp_mono x l0 k hkl).1)
 
-/-- Untagged case piece (the `@[hol compile_correct]` tag is on the assembled
-    `loopLive_compile_correct` below): `compile_correct`, case `LocValue` (`loop_liveProofScript.sml:17-37` statement;
+/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
+    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `LocValue` (`loop_liveProofScript.sml:17-37` statement;
     `Resume compile_correct[LocValue]` at 521-532). -/
 theorem loopLive_compile_correct_locValue {width : Nat} [NeZero width] {F : Type} :
     ∀ (r m : Nat) (v1 : LoopSemStateFiniteExact width F)
@@ -970,8 +974,8 @@ private theorem post_setVar {width : Nat} [NeZero width]
       simp only [sptLookup_sptInsert, hky, if_false]
       exact subspt_inter_apply h hka' (hsub k hky hkl)
 
-/-- Untagged case piece (the `@[hol compile_correct]` tag is on the assembled
-    `loopLive_compile_correct` below): `compile_correct`, case `Store` (`loop_liveProofScript.sml:17-37` statement;
+/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
+    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `Store` (`loop_liveProofScript.sml:17-37` statement;
     `Resume compile_correct[Store]` at 705-718). -/
 theorem loopLive_compile_correct_store {width : Nat} [NeZero width] {F : Type} :
     ∀ (e : HolLoopExp width) (n : Nat) (v1 : LoopSemStateFiniteExact width F)
@@ -1018,8 +1022,8 @@ theorem loopLive_compile_correct_store {width : Nat} [NeZero width] {F : Type} :
     exact post_none_same hsub fun k hk => (vars_of_exp_mono e _ k (mem_insert_of' n hk)).1
   · simp [evaluate, hx, hn, memStore, hd] at he; exact absurd he.1.symm hne
 
-/-- Untagged case piece (the `@[hol compile_correct]` tag is on the assembled
-    `loopLive_compile_correct` below): `compile_correct`, case `Store32` (`loop_liveProofScript.sml:17-37` statement;
+/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
+    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `Store32` (`loop_liveProofScript.sml:17-37` statement;
     `Resume compile_correct[Store32]` at 720-727). -/
 theorem loopLive_compile_correct_store32 {width : Nat} [NeZero width] {F : Type} :
     ∀ (a w : Nat) (v1 : LoopSemStateFiniteExact width F)
@@ -1069,8 +1073,8 @@ theorem loopLive_compile_correct_store32 {width : Nat} [NeZero width] {F : Type}
   refine ⟨locals, by simp [evaluate, ha', hw', hm], ?_⟩
   exact post_none_same hsub fun k hk => mem_insert_of' a (mem_insert_of' w hk)
 
-/-- Untagged case piece (the `@[hol compile_correct]` tag is on the assembled
-    `loopLive_compile_correct` below): `compile_correct`, case `StoreByte` (`loop_liveProofScript.sml:17-37` statement;
+/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
+    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `StoreByte` (`loop_liveProofScript.sml:17-37` statement;
     `Resume compile_correct[StoreByte]` at 729-736). -/
 theorem loopLive_compile_correct_storeByte {width : Nat} [NeZero width] {F : Type} :
     ∀ (a w : Nat) (v1 : LoopSemStateFiniteExact width F)
@@ -1120,8 +1124,8 @@ theorem loopLive_compile_correct_storeByte {width : Nat} [NeZero width] {F : Typ
   refine ⟨locals, by simp [evaluate, ha', hw', hm], ?_⟩
   exact post_none_same hsub fun k hk => mem_insert_of' a (mem_insert_of' w hk)
 
-/-- Untagged case piece (the `@[hol compile_correct]` tag is on the assembled
-    `loopLive_compile_correct` below): `compile_correct`, case `Load32` (`loop_liveProofScript.sml:17-37` statement;
+/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
+    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `Load32` (`loop_liveProofScript.sml:17-37` statement;
     `Resume compile_correct[Load32]` at 738-745). -/
 theorem loopLive_compile_correct_load32 {width : Nat} [NeZero width] {F : Type} :
     ∀ (a y : Nat) (v1 : LoopSemStateFiniteExact width F)
@@ -1165,8 +1169,8 @@ theorem loopLive_compile_correct_load32 {width : Nat} [NeZero width] {F : Type} 
   refine post_setVar y _ hsub fun k hky hk => mem_insert_of' a ?_
   simp only [sptMem, sptDomain, sptLookup_sptDelete', hky, if_false]; exact hk
 
-/-- Untagged case piece (the `@[hol compile_correct]` tag is on the assembled
-    `loopLive_compile_correct` below): `compile_correct`, case `LoadByte` (`loop_liveProofScript.sml:17-37` statement;
+/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
+    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `LoadByte` (`loop_liveProofScript.sml:17-37` statement;
     `Resume compile_correct[LoadByte]` at 747-754). -/
 theorem loopLive_compile_correct_loadByte {width : Nat} [NeZero width] {F : Type} :
     ∀ (a y : Nat) (v1 : LoopSemStateFiniteExact width F)
@@ -1258,8 +1262,8 @@ private theorem holAlookup_zip_none {β : Type} :
         simp only [List.mem_cons, not_or]
         exact ⟨fun e => hne e.symm, holAlookup_zip_none xs ys k (by simpa using h) hz⟩
 
-/-- Untagged case piece (the `@[hol compile_correct]` tag is on the assembled
-    `loopLive_compile_correct` below): `compile_correct`, case `Primitive` (`loop_liveProofScript.sml:17-37` statement;
+/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
+    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `Primitive` (`loop_liveProofScript.sml:17-37` statement;
     `Resume compile_correct[Primitive]` at 844-856). -/
 theorem loopLive_compile_correct_primitive {width : Nat} [NeZero width] {F : Type} :
     ∀ (lhss : List Nat) (pop : PrimOp) (rhss : List Nat) (v1 : LoopSemStateFiniteExact width F)
@@ -1315,8 +1319,8 @@ theorem loopLive_compile_correct_primitive {width : Nat} [NeZero width] {F : Typ
       exact subspt_inter_apply hsub hka' (sptMem_sptListInsert_of k rhss _ hkd)
   · simp [evaluate, hg, hp, hl] at he; exact absurd he.1.symm hne
 
-/-- Untagged case piece (the `@[hol compile_correct]` tag is on the assembled
-    `loopLive_compile_correct` below): `compile_correct`, case `Arith a` (`loop_liveProofScript.sml:17-37` statement;
+/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
+    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `Arith a` (`loop_liveProofScript.sml:17-37` statement;
     `Resume compile_correct[Arith]` at 781-790). -/
 theorem loopLive_compile_correct_arith {width : Nat} [NeZero width] {F : Type} :
     ∀ (a : LoopArith) (v1 : LoopSemStateFiniteExact width F)
@@ -1482,8 +1486,8 @@ private theorem shMemStore_frame {width : Nat} [NeZero width] {F : Type}
           | ret f b => exact Or.inl ⟨f, rfl, rfl⟩
         · simp [hd]
 
-/-- Untagged case piece (the `@[hol compile_correct]` tag is on the assembled
-    `loopLive_compile_correct` below): `compile_correct`, case `ShMem op r ad` (`loop_liveProofScript.sml:17-37` statement;
+/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
+    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `ShMem op r ad` (`loop_liveProofScript.sml:17-37` statement;
     `Resume compile_correct[ShMem]` at 799-826). -/
 theorem loopLive_compile_correct_shMem {width : Nat} [NeZero width] {F : Type} :
     ∀ (op : CrepMemOp) (r : Nat) (ad : HolLoopExp width) (v1 : LoopSemStateFiniteExact width F)
@@ -1645,8 +1649,8 @@ theorem loopLive_compile_correct_shMem {width : Nat} [NeZero width] {F : Type} :
         shMemOp, h2]; rfl, rfl⟩
     · rw [he] at h1; exact absurd h1 hne
 
-/-- Untagged case piece (the `@[hol compile_correct]` tag is on the assembled
-    `loopLive_compile_correct` below): `compile_correct`, case `FFI name ptr1 len1 ptr2 len2 cutset`
+/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
+    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `FFI name ptr1 len1 ptr2 len2 cutset`
     (`loop_liveProofScript.sml:17-37` statement; `Resume compile_correct[FFI]` at 756-779). -/
 theorem loopLive_compile_correct_ffi {width : Nat} [NeZero width] {F : Type} :
     ∀ (idx : Basis.Pure.MlString.MlString) (p1 n1 p2 n2 : Nat) (cs : NumSet) (v1 : LoopSemStateFiniteExact width F)
@@ -1902,8 +1906,8 @@ def regImmLive {α : Type} : RegImm α → NumSet
   | .reg r => sptInsert r () .ln
   | .imm _ => .ln
 
-/-- Untagged case piece (the `@[hol compile_correct]` tag is on the assembled
-    `loopLive_compile_correct` below): `compile_correct`, case `If cmp r1 ri c1 c2 live_out` (`loop_liveProofScript.sml:17-37`
+/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
+    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `If cmp r1 ri c1 c2 live_out` (`loop_liveProofScript.sml:17-37`
     statement; `Resume compile_correct[If]` at 534-559), with the `evaluate_ind`
     hypothesis for the branch `if word_cmp cmp x y then c1 else c2` selected by the
     register values. -/
@@ -2032,8 +2036,8 @@ private theorem sptMem_fromAList_args (k : Nat) :
       · exact mem_insert_self' k _
       · exact mem_insert_of' a (sptMem_fromAList_args k as h)
 
-/-- Untagged case piece (the `@[hol compile_correct]` tag is on the assembled
-    `loopLive_compile_correct` below): `compile_correct`, case `Call ret dest args handler` (`loop_liveProofScript.sml:17-37`
+/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
+    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `Call ret dest args handler` (`loop_liveProofScript.sml:17-37`
     statement; `Resume compile_correct[Call]` at 567-703), with the `evaluate_ind`
     hypotheses for the handler's return continuation `r` and exception handler `h`
     at every state with a smaller clock (the continuation states HOL's induction
@@ -2626,8 +2630,8 @@ private theorem loopLive_loop_core {width : Nat} [NeZero width] {F : Type}
     exact ⟨nl, (hshr _).mpr (by simp [LoopSemStateFiniteExact.exitLoop]), hp⟩
   | error => exact absurd rfl hrb
 
-/-- Untagged case piece (the `@[hol compile_correct]` tag is on the assembled
-    `loopLive_compile_correct` below): `compile_correct`, case `Loop live_in body live_out` (`loop_liveProofScript.sml:17-37`
+/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
+    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `Loop live_in body live_out` (`loop_liveProofScript.sml:17-37`
     statement; `Resume compile_correct[Loop]` at 157-337), with the `evaluate_ind`
     hypotheses for the body and for the loop itself, at every state with a smaller
     clock (the body runs after `cut_res`'s `dec_clock`, and the loop re-enters
@@ -2757,7 +2761,7 @@ private theorem loopLive_compile_correct_at {width : Nat} [NeZero width] {F : Ty
   exact fun v v1 => key _ v v1 rfl
 
 /-- Exact HOL `compile_correct` (`loop_liveProofScript.sml:17-37`), assembled from
-    the case pieces above by the lexicographic `(clock, program size)` induction
+    the auxiliary per-constructor lemmas above by the lexicographic `(clock, program size)` induction
     that mirrors `loopSemTheory.evaluate_ind`:
     `∀v v1 res s1 lt locals prog1 l1 l0. evaluate (v,v1) = (res,s1) ∧ res ≠ SOME Error ∧
       shrink lt v l0 = (prog1,l1) ∧ subspt (inter v1.locals l1) locals ⇒

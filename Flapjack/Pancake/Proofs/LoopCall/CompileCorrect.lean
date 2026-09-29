@@ -14,8 +14,12 @@ and `compile_correct` (16) over the exact `LoopSemStateFiniteExact.evaluate`
 (`evaluate_def`) and the tagged `loopCallCompHOL` (`loop_call$comp_def`)
 (bead `flapjack-pxn.18.5.7`).  HOL proves `compile_correct` by
 `recInduct loopSemTheory.evaluate_ind` with one `Resume` block per constructor.
-The Lean case pieces below are untagged Flapjack helpers; the `@[hol]` tag is on
-the assembled theorem, whose statement is HOL's.
+The per-constructor lemmas below are Flapjack-only auxiliary lemmas of that
+proof, not ports of HOL declarations and not case pieces in the `AGENTS.md`
+sense: their sub-program hypotheses are the ones the Lean lexicographic
+`(clock, program size)` assembly supplies, not `evaluate_ind`'s.  They carry no
+`@[hol]` tag; the tag is on the assembled `loopCall_compile_correct`, whose
+statement is HOL's.
 -/
 
 namespace Flapjack
@@ -46,7 +50,7 @@ private theorem labelsIn_ln {width : Nat} [NeZero width] (locals : Spt (WordLocW
     labelsInHOL .ln locals := fun n x h => by simp [sptLookup] at h
 
 /-- Flapjack-only abbreviation (no HOL declaration) of the `compile_correct`
-    statement at a fixed program `v` and state `v1`, used for the case pieces'
+    statement at a fixed program `v` and state `v1`, used for the auxiliary lemmas'
     induction hypotheses. -/
 def loopCallCompileCorrectAt {width : Nat} [NeZero width] {F : Type}
     (v : HolLoopProg width) (v1 : LoopSemStateFiniteExact width F) : Prop :=
@@ -56,7 +60,8 @@ def loopCallCompileCorrectAt {width : Nat} [NeZero width] {F : Type}
       labelsInHOL l v1.locals →
     evaluate p v1 = (res, s1) ∧ labelsInHOL nl s1.locals
 
-/-- Untagged case piece of HOL `compile_correct` (`loop_callProofScript.sml:16-20`). -/
+/-- Flapjack-only auxiliary lemma (no HOL declaration) for a leaf case of the proof of the
+    tagged `loopCall_compile_correct` (HOL `compile_correct`, `loop_callProofScript.sml:16-20`). -/
 theorem loopCall_compile_correct_skip {width : Nat} [NeZero width] {F : Type} :
     ∀ (v1 : LoopSemStateFiniteExact width F), loopCallCompileCorrectAt (.skip : HolLoopProg width) v1 := by
   intro v1 res s1 l p nl ⟨he, hne, hc, hl⟩
@@ -66,14 +71,16 @@ theorem loopCall_compile_correct_skip {width : Nat} [NeZero width] {F : Type} :
   obtain ⟨rfl, rfl⟩ := he
   exact ⟨by simp [evaluate], hl⟩
 
-/-- Untagged case piece of HOL `compile_correct` (`loop_callProofScript.sml:16-20`). -/
+/-- Flapjack-only auxiliary lemma (no HOL declaration) for a leaf case of the proof of the
+    tagged `loopCall_compile_correct` (HOL `compile_correct`, `loop_callProofScript.sml:16-20`). -/
 theorem loopCall_compile_correct_fail {width : Nat} [NeZero width] {F : Type} :
     ∀ (v1 : LoopSemStateFiniteExact width F), loopCallCompileCorrectAt (.fail : HolLoopProg width) v1 := by
   intro v1 res s1 l p nl ⟨he, hne, hc, hl⟩
   simp only [evaluate, Prod.mk.injEq] at he
   exact absurd he.1.symm hne
 
-/-- Untagged case piece of HOL `compile_correct` (`loop_callProofScript.sml:16-20`). -/
+/-- Flapjack-only auxiliary lemma (no HOL declaration) for a leaf case of the proof of the
+    tagged `loopCall_compile_correct` (HOL `compile_correct`, `loop_callProofScript.sml:16-20`). -/
 theorem loopCall_compile_correct_tick {width : Nat} [NeZero width] {F : Type} :
     ∀ (v1 : LoopSemStateFiniteExact width F), loopCallCompileCorrectAt (.tick : HolLoopProg width) v1 := by
   intro v1 res s1 l p nl ⟨he, hne, hc, hl⟩
@@ -81,7 +88,8 @@ theorem loopCall_compile_correct_tick {width : Nat} [NeZero width] {F : Type} :
   obtain ⟨rfl, rfl⟩ := hc
   exact ⟨he, labelsIn_ln _⟩
 
-/-- Untagged case piece of HOL `compile_correct` (`loop_callProofScript.sml:16-20`). -/
+/-- Flapjack-only auxiliary lemma (no HOL declaration) for a leaf case of the proof of the
+    tagged `loopCall_compile_correct` (HOL `compile_correct`, `loop_callProofScript.sml:16-20`). -/
 theorem loopCall_compile_correct_break {width : Nat} [NeZero width] {F : Type} :
     ∀ (k : Nat) (v1 : LoopSemStateFiniteExact width F), loopCallCompileCorrectAt (.break k : HolLoopProg width) v1 := by
   intro k v1 res s1 l p nl ⟨he, hne, hc, hl⟩
@@ -91,7 +99,8 @@ theorem loopCall_compile_correct_break {width : Nat} [NeZero width] {F : Type} :
   obtain ⟨rfl, rfl⟩ := he
   exact ⟨by simp [evaluate], hl⟩
 
-/-- Untagged case piece of HOL `compile_correct` (`loop_callProofScript.sml:16-20`). -/
+/-- Flapjack-only auxiliary lemma (no HOL declaration) for a leaf case of the proof of the
+    tagged `loopCall_compile_correct` (HOL `compile_correct`, `loop_callProofScript.sml:16-20`). -/
 theorem loopCall_compile_correct_continue {width : Nat} [NeZero width] {F : Type} :
     ∀ (k : Nat) (v1 : LoopSemStateFiniteExact width F), loopCallCompileCorrectAt (.continue k : HolLoopProg width) v1 := by
   intro k v1 res s1 l p nl ⟨he, hne, hc, hl⟩
@@ -101,7 +110,8 @@ theorem loopCall_compile_correct_continue {width : Nat} [NeZero width] {F : Type
   obtain ⟨rfl, rfl⟩ := he
   exact ⟨by simp [evaluate], hl⟩
 
-/-- Untagged case piece of HOL `compile_correct` (`loop_callProofScript.sml:16-20`). -/
+/-- Flapjack-only auxiliary lemma (no HOL declaration) for a leaf case of the proof of the
+    tagged `loopCall_compile_correct` (HOL `compile_correct`, `loop_callProofScript.sml:16-20`). -/
 theorem loopCall_compile_correct_return {width : Nat} [NeZero width] {F : Type} :
     ∀ (ns : List Nat) (v1 : LoopSemStateFiniteExact width F), loopCallCompileCorrectAt (.return ns : HolLoopProg width) v1 := by
   intro ns v1 res s1 l p nl ⟨he, hne, hc, hl⟩
@@ -109,7 +119,8 @@ theorem loopCall_compile_correct_return {width : Nat} [NeZero width] {F : Type} 
   obtain ⟨rfl, rfl⟩ := hc
   exact ⟨he, labelsIn_ln _⟩
 
-/-- Untagged case piece of HOL `compile_correct` (`loop_callProofScript.sml:16-20`). -/
+/-- Flapjack-only auxiliary lemma (no HOL declaration) for a leaf case of the proof of the
+    tagged `loopCall_compile_correct` (HOL `compile_correct`, `loop_callProofScript.sml:16-20`). -/
 theorem loopCall_compile_correct_raise {width : Nat} [NeZero width] {F : Type} :
     ∀ (x : Nat) (v1 : LoopSemStateFiniteExact width F), loopCallCompileCorrectAt (.raise x : HolLoopProg width) v1 := by
   intro x v1 res s1 l p nl ⟨he, hne, hc, hl⟩
@@ -117,7 +128,8 @@ theorem loopCall_compile_correct_raise {width : Nat} [NeZero width] {F : Type} :
   obtain ⟨rfl, rfl⟩ := hc
   exact ⟨he, labelsIn_ln _⟩
 
-/-- Untagged case piece of HOL `compile_correct` (`loop_callProofScript.sml:16-20`). -/
+/-- Flapjack-only auxiliary lemma (no HOL declaration) for a leaf case of the proof of the
+    tagged `loopCall_compile_correct` (HOL `compile_correct`, `loop_callProofScript.sml:16-20`). -/
 theorem loopCall_compile_correct_setGlobal {width : Nat} [NeZero width] {F : Type} :
     ∀ (g : BitVec 5) (x : HolLoopExp width) (v1 : LoopSemStateFiniteExact width F), loopCallCompileCorrectAt (.setGlobal g x : HolLoopProg width) v1 := by
   intro g x v1 res s1 l p nl ⟨he, hne, hc, hl⟩
@@ -131,7 +143,8 @@ theorem loopCall_compile_correct_setGlobal {width : Nat} [NeZero width] {F : Typ
     obtain ⟨rfl, rfl⟩ := he
     exact hl
 
-/-- Untagged case piece (`Resume compile_correct[Seq]`, `loop_callProofScript.sml:50-76`). -/
+/-- Flapjack-only auxiliary lemma (no HOL declaration) for the `Seq` case of the proof of the
+    tagged `loopCall_compile_correct`, following `Resume compile_correct[Seq]` (`loop_callProofScript.sml:50-76`). -/
 theorem loopCall_compile_correct_seq {width : Nat} [NeZero width] {F : Type} :
     ∀ (c1 c2 : HolLoopProg width) (v1 : LoopSemStateFiniteExact width F),
       loopCallCompileCorrectAt c1 v1 →
@@ -159,7 +172,8 @@ theorem loopCall_compile_correct_seq {width : Nat} [NeZero width] {F : Type} :
     exact (ih2 sm hfix res s1 nl1 nq nl2 ⟨he, hne, h2c, hl1⟩).1
   | some _ => exact he
 
-/-- Untagged case piece (`Resume compile_correct[Mark]`, `loop_callProofScript.sml:164-175`). -/
+/-- Flapjack-only auxiliary lemma (no HOL declaration) for the `Mark` case of the proof of the
+    tagged `loopCall_compile_correct`, following `Resume compile_correct[Mark]` (`loop_callProofScript.sml:164-175`). -/
 theorem loopCall_compile_correct_mark {width : Nat} [NeZero width] {F : Type} :
     ∀ (body : HolLoopProg width) (v1 : LoopSemStateFiniteExact width F),
       loopCallCompileCorrectAt body v1 → loopCallCompileCorrectAt (.mark body) v1 := by
@@ -172,7 +186,8 @@ theorem loopCall_compile_correct_mark {width : Nat} [NeZero width] {F : Type} :
   obtain ⟨h1, h2⟩ := ih res s1 l np nl1 ⟨he, hne, hbc, hl⟩
   exact ⟨by rw [evaluate]; exact h1, h2⟩
 
-/-- Untagged case piece (`Resume compile_correct[If]`, `loop_callProofScript.sml:192-235`). -/
+/-- Flapjack-only auxiliary lemma (no HOL declaration) for the `If` case of the proof of the
+    tagged `loopCall_compile_correct`, following `Resume compile_correct[If]` (`loop_callProofScript.sml:192-235`). -/
 theorem loopCall_compile_correct_if {width : Nat} [NeZero width] {F : Type} :
     ∀ (cmp : Cmp) (r1 : Nat) (ri : RegImm (BitVec width)) (c1 c2 : HolLoopProg width)
       (live : NumSet) (v1 : LoopSemStateFiniteExact width F),
@@ -213,7 +228,8 @@ theorem loopCall_compile_correct_if {width : Nat} [NeZero width] {F : Type} :
     have hrne : rr ≠ some .error := fun e => by subst e; simp [cutRes] at he; exact hne he.1.symm
     rw [(ih' rr sr l nq n2 ⟨hr, hrne, h2c, hl⟩).1]; exact he
 
-/-- Untagged case piece (`Resume compile_correct[Loop]`, `loop_callProofScript.sml:371-401`). -/
+/-- Flapjack-only auxiliary lemma (no HOL declaration) for the `Loop` case of the proof of the
+    tagged `loopCall_compile_correct`, following `Resume compile_correct[Loop]` (`loop_callProofScript.sml:371-401`). -/
 theorem loopCall_compile_correct_loop {width : Nat} [NeZero width] {F : Type} :
     ∀ (liveIn : NumSet) (body : HolLoopProg width) (liveOut : NumSet)
       (v1 : LoopSemStateFiniteExact width F),
@@ -285,7 +301,8 @@ private theorem labelsIn_set_del {width : Nat} [NeZero width] (l : Spt Nat)
     · rw [if_neg hnk] at hn
       exact ⟨hn, by rw [sptLookup_sptInsert, if_neg hnk]⟩
 
-/-- Untagged case piece (`Resume compile_correct[LocValue]`, `loop_callProofScript.sml:79-92`). -/
+/-- Flapjack-only auxiliary lemma (no HOL declaration) for the `LocValue` case of the proof of the
+    tagged `loopCall_compile_correct`, following `Resume compile_correct[LocValue]` (`loop_callProofScript.sml:79-92`). -/
 theorem loopCall_compile_correct_locValue {width : Nat} [NeZero width] {F : Type} :
     ∀ (r m : Nat) (v1 : LoopSemStateFiniteExact width F),
       loopCallCompileCorrectAt (.locValue r m : HolLoopProg width) v1 := by
@@ -303,7 +320,8 @@ theorem loopCall_compile_correct_locValue {width : Nat} [NeZero width] {F : Type
     · rw [if_neg hnr] at hn ⊢; exact hl n x hn
   · simp [evaluate, hcd] at he; exact absurd he.1.symm hne
 
-/-- Untagged case piece (`Resume compile_correct[Assign]`, `loop_callProofScript.sml:95-129`). -/
+/-- Flapjack-only auxiliary lemma (no HOL declaration) for the `Assign` case of the proof of the
+    tagged `loopCall_compile_correct`, following `Resume compile_correct[Assign]` (`loop_callProofScript.sml:95-129`). -/
 theorem loopCall_compile_correct_assign {width : Nat} [NeZero width] {F : Type} :
     ∀ (n : Nat) (e : HolLoopExp width) (v1 : LoopSemStateFiniteExact width F),
       loopCallCompileCorrectAt (.assign n e) v1 := by
@@ -341,7 +359,8 @@ theorem loopCall_compile_correct_assign {width : Nat} [NeZero width] {F : Type} 
     obtain ⟨rfl, rfl⟩ := hc
     exact ⟨by simp [evaluate, hx], labelsIn_set_del l v1.locals n w hl⟩
 
-/-- Untagged case piece (`Resume compile_correct[Load32]`, `loop_callProofScript.sml:131-145`). -/
+/-- Flapjack-only auxiliary lemma (no HOL declaration) for the `Load32` case of the proof of the
+    tagged `loopCall_compile_correct`, following `Resume compile_correct[Load32]` (`loop_callProofScript.sml:131-145`). -/
 theorem loopCall_compile_correct_load32 {width : Nat} [NeZero width] {F : Type} :
     ∀ (a dst : Nat) (v1 : LoopSemStateFiniteExact width F),
       loopCallCompileCorrectAt (.load32 a dst : HolLoopProg width) v1 := by
@@ -362,7 +381,8 @@ theorem loopCall_compile_correct_load32 {width : Nat} [NeZero width] {F : Type} 
   obtain ⟨rfl, rfl⟩ := he
   exact labelsIn_set_del l v1.locals dst _ hl
 
-/-- Untagged case piece (`Resume compile_correct[LoadByte]`, `loop_callProofScript.sml:147-161`). -/
+/-- Flapjack-only auxiliary lemma (no HOL declaration) for the `LoadByte` case of the proof of the
+    tagged `loopCall_compile_correct`, following `Resume compile_correct[LoadByte]` (`loop_callProofScript.sml:147-161`). -/
 theorem loopCall_compile_correct_loadByte {width : Nat} [NeZero width] {F : Type} :
     ∀ (a dst : Nat) (v1 : LoopSemStateFiniteExact width F),
       loopCallCompileCorrectAt (.loadByte a dst : HolLoopProg width) v1 := by
@@ -383,7 +403,8 @@ theorem loopCall_compile_correct_loadByte {width : Nat} [NeZero width] {F : Type
   obtain ⟨rfl, rfl⟩ := he
   exact labelsIn_set_del l v1.locals dst _ hl
 
-/-- Untagged case piece (`Resume compile_correct[Store]`, `loop_callProofScript.sml:261-271`). -/
+/-- Flapjack-only auxiliary lemma (no HOL declaration) for the `Store` case of the proof of the
+    tagged `loopCall_compile_correct`, following `Resume compile_correct[Store]` (`loop_callProofScript.sml:261-271`). -/
 theorem loopCall_compile_correct_store {width : Nat} [NeZero width] {F : Type} :
     ∀ (e : HolLoopExp width) (n : Nat) (v1 : LoopSemStateFiniteExact width F),
       loopCallCompileCorrectAt (.store e n) v1 := by
@@ -406,7 +427,8 @@ theorem loopCall_compile_correct_store {width : Nat} [NeZero width] {F : Type} :
     exact hl
   · simp [evaluate, hx, hn, memStore, hd] at he; exact absurd he.1.symm hne
 
-/-- Untagged case piece (`Resume compile_correct[Store32]`, `loop_callProofScript.sml:237-247`). -/
+/-- Flapjack-only auxiliary lemma (no HOL declaration) for the `Store32` case of the proof of the
+    tagged `loopCall_compile_correct`, following `Resume compile_correct[Store32]` (`loop_callProofScript.sml:237-247`). -/
 theorem loopCall_compile_correct_store32 {width : Nat} [NeZero width] {F : Type} :
     ∀ (a w : Nat) (v1 : LoopSemStateFiniteExact width F),
       loopCallCompileCorrectAt (.store32 a w : HolLoopProg width) v1 := by
@@ -433,7 +455,8 @@ theorem loopCall_compile_correct_store32 {width : Nat} [NeZero width] {F : Type}
   obtain ⟨rfl, rfl⟩ := he
   exact hl
 
-/-- Untagged case piece (`Resume compile_correct[StoreByte]`, `loop_callProofScript.sml:249-259`). -/
+/-- Flapjack-only auxiliary lemma (no HOL declaration) for the `StoreByte` case of the proof of the
+    tagged `loopCall_compile_correct`, following `Resume compile_correct[StoreByte]` (`loop_callProofScript.sml:249-259`). -/
 theorem loopCall_compile_correct_storeByte {width : Nat} [NeZero width] {F : Type} :
     ∀ (a w : Nat) (v1 : LoopSemStateFiniteExact width F),
       loopCallCompileCorrectAt (.storeByte a w : HolLoopProg width) v1 := by
@@ -460,7 +483,8 @@ theorem loopCall_compile_correct_storeByte {width : Nat} [NeZero width] {F : Typ
   obtain ⟨rfl, rfl⟩ := he
   exact hl
 
-/-- Untagged case piece (`Resume compile_correct[FFI]`, `loop_callProofScript.sml:178-189`). -/
+/-- Flapjack-only auxiliary lemma (no HOL declaration) for the `FFI` case of the proof of the
+    tagged `loopCall_compile_correct`, following `Resume compile_correct[FFI]` (`loop_callProofScript.sml:178-189`). -/
 theorem loopCall_compile_correct_ffi {width : Nat} [NeZero width] {F : Type} :
     ∀ (idx : Basis.Pure.MlString.MlString) (p1 n1 p2 n2 : Nat) (cs : NumSet)
       (v1 : LoopSemStateFiniteExact width F),
@@ -470,7 +494,8 @@ theorem loopCall_compile_correct_ffi {width : Nat} [NeZero width] {F : Type} :
   obtain ⟨rfl, rfl⟩ := hc
   exact ⟨he, labelsIn_ln _⟩
 
-/-- Untagged case piece (`Resume compile_correct[ShMem]`, `loop_callProofScript.sml:436-443`). -/
+/-- Flapjack-only auxiliary lemma (no HOL declaration) for the `ShMem` case of the proof of the
+    tagged `loopCall_compile_correct`, following `Resume compile_correct[ShMem]` (`loop_callProofScript.sml:436-443`). -/
 theorem loopCall_compile_correct_shMem {width : Nat} [NeZero width] {F : Type} :
     ∀ (op : CrepMemOp) (r : Nat) (ad : HolLoopExp width) (v1 : LoopSemStateFiniteExact width F),
       loopCallCompileCorrectAt (.shMem op r ad) v1 := by
@@ -488,7 +513,8 @@ private theorem holAlookup_zip_not_mem {β : Type} :
       rw [if_neg (fun (e : x = k) => h (e ▸ List.mem_cons_self))]
       exact holAlookup_zip_not_mem xs ys k (fun hk => h (List.mem_cons_of_mem _ hk))
 
-/-- Untagged case piece (`Resume compile_correct[Primitive]`, `loop_callProofScript.sml:445-451`). -/
+/-- Flapjack-only auxiliary lemma (no HOL declaration) for the `Primitive` case of the proof of the
+    tagged `loopCall_compile_correct`, following `Resume compile_correct[Primitive]` (`loop_callProofScript.sml:445-451`). -/
 theorem loopCall_compile_correct_primitive {width : Nat} [NeZero width] {F : Type} :
     ∀ (lhss : List Nat) (pop : PrimOp) (rhss : List Nat) (v1 : LoopSemStateFiniteExact width F),
       loopCallCompileCorrectAt (.primitive lhss pop rhss : HolLoopProg width) v1 := by
@@ -557,7 +583,8 @@ private theorem comp_two_dests (l : Spt Nat) (d1 d2 : Nat) :
         · rw [if_pos e2] at hn; cases hn
         · rw [if_neg e2] at hn; exact ⟨hn, e1, e2⟩
 
-/-- Untagged case piece (`Resume compile_correct[Arith]`, `loop_callProofScript.sml:403-410`). -/
+/-- Flapjack-only auxiliary lemma (no HOL declaration) for the `Arith` case of the proof of the
+    tagged `loopCall_compile_correct`, following `Resume compile_correct[Arith]` (`loop_callProofScript.sml:403-410`). -/
 theorem loopCall_compile_correct_arith {width : Nat} [NeZero width] {F : Type} :
     ∀ (a : LoopArith) (v1 : LoopSemStateFiniteExact width F),
       loopCallCompileCorrectAt (.arith a : HolLoopProg width) v1 := by
@@ -817,7 +844,8 @@ private theorem findCode_front {width : Nat} [NeZero width]
     obtain ⟨params, body⟩ := pb
     simp only [List.length_dropLast, List.length_cons, Nat.add_sub_cancel, Nat.add_right_cancel_iff]
 
-/-- Untagged case piece (`Resume compile_correct[Call]`, `loop_callProofScript.sml:326-368`).
+/-- Flapjack-only auxiliary lemma (no HOL declaration) for the `Call` case of the proof of the
+    tagged `loopCall_compile_correct`, following `Resume compile_correct[Call]` (`loop_callProofScript.sml:326-368`).
     `comp` only rewrites `Call` targets, never the callee or handler programs, so the
     compiled call evaluates identically and no sub-program hypothesis is needed. -/
 theorem loopCall_compile_correct_call {width : Nat} [NeZero width] {F : Type} :
@@ -931,7 +959,7 @@ private theorem loopCall_compile_correct_at {width : Nat} [NeZero width] {F : Ty
   exact fun v v1 => key _ v v1 rfl
 
 /-- Exact HOL `compile_correct` (`loop_callProofScript.sml:16-20`), assembled from the
-    case pieces above by the lexicographic `(clock, program size)` induction that
+    auxiliary per-constructor lemmas above by the lexicographic `(clock, program size)` induction that
     mirrors `loopSemTheory.evaluate_ind`:
     `∀v v1 res s1 l p nl. evaluate (v,v1) = (res,s1) ∧ res ≠ SOME Error ∧
       comp l v = (p,nl) ∧ labels_in l v1.locals ⇒

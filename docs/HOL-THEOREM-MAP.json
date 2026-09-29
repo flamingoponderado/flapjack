@@ -20284,7 +20284,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
   "lean_name": "loopLive_compile_correct_skip",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.8.1.1): case piece `Skip` of loop_live compile_correct (loop_liveProofScript.sml:17-37 statement; Resume compile_correct[Skip] at 66-69; HOL proves the theorem by recInduct loopSemTheory.evaluate_ind with one Resume block per constructor). The piece keeps HOL's quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises (evaluate (v,v1) = (res,s1), res ≠ SOME Error, shrink lt v l0 = (prog1,l1), subspt (inter v1.locals l1) locals) and the full existential conclusion including the eight-way case split on res (oEL as sptOel, inter as sptInter, subspt as sptSubspt), over the exact LoopSemStateFiniteExact.evaluate (evaluate_def) and the tagged shrinkHOL (shrink_def). Proof: shrink Skip l = (Skip, l); evaluate unchanged, new_locals = locals. Qualifiers: loopSem state globals as canonical HolFiniteMapExact; width-indexed word carriers."
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.8.1.1): auxiliary lemma for case `Skip` of loop_live compile_correct (loop_liveProofScript.sml:17-37 statement; Resume compile_correct[Skip] at 66-69; HOL proves the theorem by recInduct loopSemTheory.evaluate_ind with one Resume block per constructor). The lemma keeps HOL's quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises (evaluate (v,v1) = (res,s1), res ≠ SOME Error, shrink lt v l0 = (prog1,l1), subspt (inter v1.locals l1) locals) and the full existential conclusion including the eight-way case split on res (oEL as sptOel, inter as sptInter, subspt as sptSubspt), over the exact LoopSemStateFiniteExact.evaluate (evaluate_def) and the tagged shrinkHOL (shrink_def). Proof: shrink Skip l = (Skip, l); evaluate unchanged, new_locals = locals. Qualifiers: loopSem state globals as canonical HolFiniteMapExact; width-indexed word carriers."
 },
 {
   "hol_path": null,
@@ -20292,7 +20292,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
   "lean_name": "loopLive_compile_correct_fail",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.8.1.1): case piece `Fail` of loop_live compile_correct (loop_liveProofScript.sml:17-37 statement; Resume compile_correct[Fail] at 71-74; HOL proves the theorem by recInduct loopSemTheory.evaluate_ind with one Resume block per constructor). The piece keeps HOL's quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises (evaluate (v,v1) = (res,s1), res ≠ SOME Error, shrink lt v l0 = (prog1,l1), subspt (inter v1.locals l1) locals) and the full existential conclusion including the eight-way case split on res (oEL as sptOel, inter as sptInter, subspt as sptSubspt), over the exact LoopSemStateFiniteExact.evaluate (evaluate_def) and the tagged shrinkHOL (shrink_def). Proof: evaluate Fail = SOME Error, excluded by res ≠ SOME Error. Qualifiers: loopSem state globals as canonical HolFiniteMapExact; width-indexed word carriers."
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.8.1.1): auxiliary lemma for case `Fail` of loop_live compile_correct (loop_liveProofScript.sml:17-37 statement; Resume compile_correct[Fail] at 71-74; HOL proves the theorem by recInduct loopSemTheory.evaluate_ind with one Resume block per constructor). The lemma keeps HOL's quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises (evaluate (v,v1) = (res,s1), res ≠ SOME Error, shrink lt v l0 = (prog1,l1), subspt (inter v1.locals l1) locals) and the full existential conclusion including the eight-way case split on res (oEL as sptOel, inter as sptInter, subspt as sptSubspt), over the exact LoopSemStateFiniteExact.evaluate (evaluate_def) and the tagged shrinkHOL (shrink_def). Proof: evaluate Fail = SOME Error, excluded by res ≠ SOME Error. Qualifiers: loopSem state globals as canonical HolFiniteMapExact; width-indexed word carriers."
 },
 {
   "hol_path": null,
@@ -20300,7 +20300,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
   "lean_name": "loopLive_compile_correct_tick",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.8.1.1): case piece `Tick` of loop_live compile_correct (loop_liveProofScript.sml:17-37 statement; Resume compile_correct[Tick] at 76-79; HOL proves the theorem by recInduct loopSemTheory.evaluate_ind with one Resume block per constructor). The piece keeps HOL's quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises (evaluate (v,v1) = (res,s1), res ≠ SOME Error, shrink lt v l0 = (prog1,l1), subspt (inter v1.locals l1) locals) and the full existential conclusion including the eight-way case split on res (oEL as sptOel, inter as sptInter, subspt as sptSubspt), over the exact LoopSemStateFiniteExact.evaluate (evaluate_def) and the tagged shrinkHOL (shrink_def). Proof: shrink Tick l = (Tick, l); both clock branches; timeout sets locals to LN on both sides. Qualifiers: loopSem state globals as canonical HolFiniteMapExact; width-indexed word carriers."
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.8.1.1): auxiliary lemma for case `Tick` of loop_live compile_correct (loop_liveProofScript.sml:17-37 statement; Resume compile_correct[Tick] at 76-79; HOL proves the theorem by recInduct loopSemTheory.evaluate_ind with one Resume block per constructor). The lemma keeps HOL's quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises (evaluate (v,v1) = (res,s1), res ≠ SOME Error, shrink lt v l0 = (prog1,l1), subspt (inter v1.locals l1) locals) and the full existential conclusion including the eight-way case split on res (oEL as sptOel, inter as sptInter, subspt as sptSubspt), over the exact LoopSemStateFiniteExact.evaluate (evaluate_def) and the tagged shrinkHOL (shrink_def). Proof: shrink Tick l = (Tick, l); both clock branches; timeout sets locals to LN on both sides. Qualifiers: loopSem state globals as canonical HolFiniteMapExact; width-indexed word carriers."
 },
 {
   "hol_path": null,
@@ -20308,7 +20308,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
   "lean_name": "loopLive_compile_correct_continue",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.8.1.1): case piece `Continue` of loop_live compile_correct (loop_liveProofScript.sml:17-37 statement; Resume compile_correct[Continue] at 81-87; HOL proves the theorem by recInduct loopSemTheory.evaluate_ind with one Resume block per constructor). The piece keeps HOL's quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises (evaluate (v,v1) = (res,s1), res ≠ SOME Error, shrink lt v l0 = (prog1,l1), subspt (inter v1.locals l1) locals) and the full existential conclusion including the eight-way case split on res (oEL as sptOel, inter as sptInter, subspt as sptSubspt), over the exact LoopSemStateFiniteExact.evaluate (evaluate_def) and the tagged shrinkHOL (shrink_def). Proof: shrink returns the oEL cont set; the premise is the conclusion. Qualifiers: loopSem state globals as canonical HolFiniteMapExact; width-indexed word carriers."
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.8.1.1): auxiliary lemma for case `Continue` of loop_live compile_correct (loop_liveProofScript.sml:17-37 statement; Resume compile_correct[Continue] at 81-87; HOL proves the theorem by recInduct loopSemTheory.evaluate_ind with one Resume block per constructor). The lemma keeps HOL's quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises (evaluate (v,v1) = (res,s1), res ≠ SOME Error, shrink lt v l0 = (prog1,l1), subspt (inter v1.locals l1) locals) and the full existential conclusion including the eight-way case split on res (oEL as sptOel, inter as sptInter, subspt as sptSubspt), over the exact LoopSemStateFiniteExact.evaluate (evaluate_def) and the tagged shrinkHOL (shrink_def). Proof: shrink returns the oEL cont set; the premise is the conclusion. Qualifiers: loopSem state globals as canonical HolFiniteMapExact; width-indexed word carriers."
 },
 {
   "hol_path": null,
@@ -20316,7 +20316,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
   "lean_name": "loopLive_compile_correct_break",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.8.1.1): case piece `Break` of loop_live compile_correct (loop_liveProofScript.sml:17-37 statement; Resume compile_correct[Break] at 89-95; HOL proves the theorem by recInduct loopSemTheory.evaluate_ind with one Resume block per constructor). The piece keeps HOL's quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises (evaluate (v,v1) = (res,s1), res ≠ SOME Error, shrink lt v l0 = (prog1,l1), subspt (inter v1.locals l1) locals) and the full existential conclusion including the eight-way case split on res (oEL as sptOel, inter as sptInter, subspt as sptSubspt), over the exact LoopSemStateFiniteExact.evaluate (evaluate_def) and the tagged shrinkHOL (shrink_def). Proof: shrink returns the oEL brk set; the premise is the conclusion. Qualifiers: loopSem state globals as canonical HolFiniteMapExact; width-indexed word carriers."
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.8.1.1): auxiliary lemma for case `Break` of loop_live compile_correct (loop_liveProofScript.sml:17-37 statement; Resume compile_correct[Break] at 89-95; HOL proves the theorem by recInduct loopSemTheory.evaluate_ind with one Resume block per constructor). The lemma keeps HOL's quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises (evaluate (v,v1) = (res,s1), res ≠ SOME Error, shrink lt v l0 = (prog1,l1), subspt (inter v1.locals l1) locals) and the full existential conclusion including the eight-way case split on res (oEL as sptOel, inter as sptInter, subspt as sptSubspt), over the exact LoopSemStateFiniteExact.evaluate (evaluate_def) and the tagged shrinkHOL (shrink_def). Proof: shrink returns the oEL brk set; the premise is the conclusion. Qualifiers: loopSem state globals as canonical HolFiniteMapExact; width-indexed word carriers."
 },
 {
   "hol_path": null,
@@ -20324,7 +20324,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
   "lean_name": "loopLive_compile_correct_mark",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.8.1.1): case piece `Mark` of loop_live compile_correct (loop_liveProofScript.sml:17-37 statement; Resume compile_correct[Mark] at 97-99; HOL proves the theorem by recInduct loopSemTheory.evaluate_ind with one Resume block per constructor). The piece keeps HOL's quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises (evaluate (v,v1) = (res,s1), res ≠ SOME Error, shrink lt v l0 = (prog1,l1), subspt (inter v1.locals l1) locals) and the full existential conclusion including the eight-way case split on res (oEL as sptOel, inter as sptInter, subspt as sptSubspt), over the exact LoopSemStateFiniteExact.evaluate (evaluate_def) and the tagged shrinkHOL (shrink_def). Proof: shrink (Mark p) = shrink p and evaluate (Mark p) = evaluate p, so it is the evaluate_ind hypothesis for p (stated by the untagged loopLiveCompileCorrectAt p v1, which unfolds to exactly the HOL statement at (p, v1)). Qualifiers: loopSem state globals as canonical HolFiniteMapExact; width-indexed word carriers."
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.8.1.1): auxiliary lemma for case `Mark` of loop_live compile_correct (loop_liveProofScript.sml:17-37 statement; Resume compile_correct[Mark] at 97-99; HOL proves the theorem by recInduct loopSemTheory.evaluate_ind with one Resume block per constructor). The lemma keeps HOL's quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises (evaluate (v,v1) = (res,s1), res ≠ SOME Error, shrink lt v l0 = (prog1,l1), subspt (inter v1.locals l1) locals) and the full existential conclusion including the eight-way case split on res (oEL as sptOel, inter as sptInter, subspt as sptSubspt), over the exact LoopSemStateFiniteExact.evaluate (evaluate_def) and the tagged shrinkHOL (shrink_def). Proof: shrink (Mark p) = shrink p and evaluate (Mark p) = evaluate p, so it is the evaluate_ind hypothesis for p (stated by the untagged loopLiveCompileCorrectAt p v1, which unfolds to exactly the HOL statement at (p, v1)). Qualifiers: loopSem state globals as canonical HolFiniteMapExact; width-indexed word carriers."
 },
 {
   "hol_path": null,
@@ -20332,7 +20332,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
   "lean_name": "loopLive_compile_correct_return",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.8.1.1): case piece `Return` of loop_live compile_correct (loop_liveProofScript.sml:17-37 statement; Resume compile_correct[Return] at 101-110; HOL proves the theorem by recInduct loopSemTheory.evaluate_ind with one Resume block per constructor). The piece keeps HOL's quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises (evaluate (v,v1) = (res,s1), res ≠ SOME Error, shrink lt v l0 = (prog1,l1), subspt (inter v1.locals l1) locals) and the full existential conclusion including the eight-way case split on res (oEL as sptOel, inter as sptInter, subspt as sptSubspt), over the exact LoopSemStateFiniteExact.evaluate (evaluate_def) and the tagged shrinkHOL (shrink_def). Proof: get_vars ns agrees on locals via subspt (inter v1.locals (list_insert ns LN)) locals; call_env [] replaces locals. Qualifiers: loopSem state globals as canonical HolFiniteMapExact; width-indexed word carriers."
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.8.1.1): auxiliary lemma for case `Return` of loop_live compile_correct (loop_liveProofScript.sml:17-37 statement; Resume compile_correct[Return] at 101-110; HOL proves the theorem by recInduct loopSemTheory.evaluate_ind with one Resume block per constructor). The lemma keeps HOL's quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises (evaluate (v,v1) = (res,s1), res ≠ SOME Error, shrink lt v l0 = (prog1,l1), subspt (inter v1.locals l1) locals) and the full existential conclusion including the eight-way case split on res (oEL as sptOel, inter as sptInter, subspt as sptSubspt), over the exact LoopSemStateFiniteExact.evaluate (evaluate_def) and the tagged shrinkHOL (shrink_def). Proof: get_vars ns agrees on locals via subspt (inter v1.locals (list_insert ns LN)) locals; call_env [] replaces locals. Qualifiers: loopSem state globals as canonical HolFiniteMapExact; width-indexed word carriers."
 },
 {
   "hol_path": null,
@@ -20340,7 +20340,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
   "lean_name": "loopLive_compile_correct_raise",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.8.1.1): case piece `Raise` of loop_live compile_correct (loop_liveProofScript.sml:17-37 statement; Resume compile_correct[Raise] at 112-116; HOL proves the theorem by recInduct loopSemTheory.evaluate_ind with one Resume block per constructor). The piece keeps HOL's quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises (evaluate (v,v1) = (res,s1), res ≠ SOME Error, shrink lt v l0 = (prog1,l1), subspt (inter v1.locals l1) locals) and the full existential conclusion including the eight-way case split on res (oEL as sptOel, inter as sptInter, subspt as sptSubspt), over the exact LoopSemStateFiniteExact.evaluate (evaluate_def) and the tagged shrinkHOL (shrink_def). Proof: lookup v agrees via subspt (inter v1.locals (insert v () LN)) locals; call_env [] replaces locals. Qualifiers: loopSem state globals as canonical HolFiniteMapExact; width-indexed word carriers."
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.8.1.1): auxiliary lemma for case `Raise` of loop_live compile_correct (loop_liveProofScript.sml:17-37 statement; Resume compile_correct[Raise] at 112-116; HOL proves the theorem by recInduct loopSemTheory.evaluate_ind with one Resume block per constructor). The lemma keeps HOL's quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises (evaluate (v,v1) = (res,s1), res ≠ SOME Error, shrink lt v l0 = (prog1,l1), subspt (inter v1.locals l1) locals) and the full existential conclusion including the eight-way case split on res (oEL as sptOel, inter as sptInter, subspt as sptSubspt), over the exact LoopSemStateFiniteExact.evaluate (evaluate_def) and the tagged shrinkHOL (shrink_def). Proof: lookup v agrees via subspt (inter v1.locals (insert v () LN)) locals; call_env [] replaces locals. Qualifiers: loopSem state globals as canonical HolFiniteMapExact; width-indexed word carriers."
 },
 {
   "hol_path": null,
@@ -20380,7 +20380,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
   "lean_name": "loopLive_compile_correct_seq",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.8.1.2): case piece `Seq c1 c2` of loop_live compile_correct (loop_liveProofScript.sml:17-37 statement; Resume compile_correct[Seq] at 118-129). Extra antecedents are exactly loopSem evaluate_ind's Seq hypotheses: the statement for (c1, v1) and, for every s1' with fix_clock v1 (evaluate (c1,v1)) = (NONE, s1'), the statement for (c2, s1'); both via the untagged loopLiveCompileCorrectAt, which unfolds to the HOL statement at that (program, state). Otherwise identical binders/premises/conclusion to the other pieces with v := Seq c1 c2. Proof follows HOL: shrink c2 then c1, IH on c1 then c2 (fix_clock_evaluate), early-exit results carry the c1 conclusion (independent of l0). Qualifiers as for the other pieces."
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.8.1.2): auxiliary lemma for case `Seq c1 c2` of loop_live compile_correct (loop_liveProofScript.sml:17-37 statement; Resume compile_correct[Seq] at 118-129). Extra antecedents are exactly loopSem evaluate_ind's Seq hypotheses: the statement for (c1, v1) and, for every s1' with fix_clock v1 (evaluate (c1,v1)) = (NONE, s1'), the statement for (c2, s1'); both via the untagged loopLiveCompileCorrectAt, which unfolds to the HOL statement at that (program, state). Otherwise identical binders/premises/conclusion to the other auxiliary lemmas with v := Seq c1 c2. Proof follows HOL: shrink c2 then c1, IH on c1 then c2 (fix_clock_evaluate), early-exit results carry the c1 conclusion (independent of l0). Qualifiers as for the other pieces."
 },
 {
   "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
@@ -20430,7 +20430,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
   "lean_name": "loopLive_compile_correct_assign",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.8.1.4) against case piece `Assign` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[Assign] at 490-509). No sub-program, so no evaluate_ind hypothesis; HOL quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises and the full conclusion as in the other pieces. Proof: both shrink branches (dead target becomes Skip; live target keeps Assign with l1 = vars_of_exp x (delete n l0)) via eval_lemma and vars_of_exp_mono."
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.8.1.4) against auxiliary lemma for case `Assign` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[Assign] at 490-509). No sub-program, so no evaluate_ind hypothesis; HOL quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises and the full conclusion as in the other auxiliary lemmas. Proof: both shrink branches (dead target becomes Skip; live target keeps Assign with l1 = vars_of_exp x (delete n l0)) via eval_lemma and vars_of_exp_mono."
 },
 {
   "hol_path": null,
@@ -20438,7 +20438,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
   "lean_name": "loopLive_compile_correct_setGlobal",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.8.1.4) against case piece `SetGlobal` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[SetGlobal] at 511-519). No sub-program, so no evaluate_ind hypothesis; HOL quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises and the full conclusion as in the other pieces. Proof: eval_lemma with l := l0 and vars_of_exp_mono."
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.8.1.4) against auxiliary lemma for case `SetGlobal` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[SetGlobal] at 511-519). No sub-program, so no evaluate_ind hypothesis; HOL quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises and the full conclusion as in the other auxiliary lemmas. Proof: eval_lemma with l := l0 and vars_of_exp_mono."
 },
 {
   "hol_path": null,
@@ -20446,7 +20446,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
   "lean_name": "loopLive_compile_correct_locValue",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.8.1.4) against case piece `LocValue` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[LocValue] at 521-532). No sub-program, so no evaluate_ind hypothesis; HOL quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises and the full conclusion as in the other pieces. Proof: both shrink branches (dead target becomes Skip; live target keeps LocValue with l1 = delete r l0); the error branch is excluded by res ≠ SOME Error."
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.8.1.4) against auxiliary lemma for case `LocValue` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[LocValue] at 521-532). No sub-program, so no evaluate_ind hypothesis; HOL quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises and the full conclusion as in the other auxiliary lemmas. Proof: both shrink branches (dead target becomes Skip; live target keeps LocValue with l1 = delete r l0); the error branch is excluded by res ≠ SOME Error."
 },
 {
   "hol_path": null,
@@ -20558,7 +20558,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
   "lean_name": "loopLive_compile_correct_store",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.7): case piece `Store` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[Store] at 705-718). No sub-program, so no evaluate_ind hypothesis; HOL quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises and the full conclusion as in the other pieces, over exact evaluate/shrinkHOL. Proof: eval_lemma on the address with l := insert n () l0, the stored register from subspt, mem_store touches memory only; failure branches are excluded by res ≠ SOME Error."
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.7): auxiliary lemma for case `Store` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[Store] at 705-718). No sub-program, so no evaluate_ind hypothesis; HOL quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises and the full conclusion as in the other auxiliary lemmas, over exact evaluate/shrinkHOL. Proof: eval_lemma on the address with l := insert n () l0, the stored register from subspt, mem_store touches memory only; failure branches are excluded by res ≠ SOME Error."
 },
 {
   "hol_path": null,
@@ -20566,7 +20566,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
   "lean_name": "loopLive_compile_correct_store32",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.7): case piece `Store32` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[Store32] at 720-727). No sub-program, so no evaluate_ind hypothesis; HOL quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises and the full conclusion as in the other pieces, over exact evaluate/shrinkHOL. Proof: both registers from subspt (insert a (insert w l0)); mem_store_32 touches memory only; failure branches are excluded by res ≠ SOME Error."
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.7): auxiliary lemma for case `Store32` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[Store32] at 720-727). No sub-program, so no evaluate_ind hypothesis; HOL quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises and the full conclusion as in the other auxiliary lemmas, over exact evaluate/shrinkHOL. Proof: both registers from subspt (insert a (insert w l0)); mem_store_32 touches memory only; failure branches are excluded by res ≠ SOME Error."
 },
 {
   "hol_path": null,
@@ -20574,7 +20574,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
   "lean_name": "loopLive_compile_correct_storeByte",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.7): case piece `StoreByte` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[StoreByte] at 729-736). No sub-program, so no evaluate_ind hypothesis; HOL quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises and the full conclusion as in the other pieces, over exact evaluate/shrinkHOL. Proof: both registers from subspt; mem_store_byte_aux touches memory only; failure branches are excluded by res ≠ SOME Error."
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.7): auxiliary lemma for case `StoreByte` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[StoreByte] at 729-736). No sub-program, so no evaluate_ind hypothesis; HOL quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises and the full conclusion as in the other auxiliary lemmas, over exact evaluate/shrinkHOL. Proof: both registers from subspt; mem_store_byte_aux touches memory only; failure branches are excluded by res ≠ SOME Error."
 },
 {
   "hol_path": null,
@@ -20582,7 +20582,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
   "lean_name": "loopLive_compile_correct_load32",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.7): case piece `Load32` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[Load32] at 738-745). No sub-program, so no evaluate_ind hypothesis; HOL quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises and the full conclusion as in the other pieces, over exact evaluate/shrinkHOL. Proof: address register from subspt; destination set on both sides; other live keys via delete y l0; failure branches are excluded by res ≠ SOME Error."
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.7): auxiliary lemma for case `Load32` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[Load32] at 738-745). No sub-program, so no evaluate_ind hypothesis; HOL quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises and the full conclusion as in the other auxiliary lemmas, over exact evaluate/shrinkHOL. Proof: address register from subspt; destination set on both sides; other live keys via delete y l0; failure branches are excluded by res ≠ SOME Error."
 },
 {
   "hol_path": null,
@@ -20590,7 +20590,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
   "lean_name": "loopLive_compile_correct_loadByte",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.7): case piece `LoadByte` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[LoadByte] at 747-754). No sub-program, so no evaluate_ind hypothesis; HOL quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises and the full conclusion as in the other pieces, over exact evaluate/shrinkHOL. Proof: address register from subspt; destination set on both sides; other live keys via delete y l0; failure branches are excluded by res ≠ SOME Error."
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.7): auxiliary lemma for case `LoadByte` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[LoadByte] at 747-754). No sub-program, so no evaluate_ind hypothesis; HOL quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises and the full conclusion as in the other auxiliary lemmas, over exact evaluate/shrinkHOL. Proof: address register from subspt; destination set on both sides; other live keys via delete y l0; failure branches are excluded by res ≠ SOME Error."
 },
 {
   "hol_path": null,
@@ -20659,7 +20659,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
   "lean_name": "loopLive_compile_correct_primitive",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.8) against case piece `Primitive` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[Primitive] at 844-856). No sub-program; HOL quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the payload in place of v, all four premises and full conclusion as in the other pieces. Proof: get_vars_subspt for the arguments, then set_vars (alist_insert) on both sides via lookup_alist_insert_any; keys outside lhss are live in list_insert rhss (list_delete lhss l0); failure branches excluded by res ≠ SOME Error."
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.8) against auxiliary lemma for case `Primitive` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[Primitive] at 844-856). No sub-program; HOL quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the payload in place of v, all four premises and full conclusion as in the other auxiliary lemmas. Proof: get_vars_subspt for the arguments, then set_vars (alist_insert) on both sides via lookup_alist_insert_any; keys outside lhss are live in list_insert rhss (list_delete lhss l0); failure branches excluded by res ≠ SOME Error."
 },
 {
   "hol_path": null,
@@ -20667,7 +20667,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
   "lean_name": "loopLive_compile_correct_arith",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.8) against case piece `Arith` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[Arith] at 781-790). No sub-program; HOL quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the payload in place of v, all four premises and full conclusion as in the other pieces. Proof: by cases on the arith op (LDiv/LLongMul/LLongDiv): source registers from subspt of arith_vars, destinations set on both sides with set_var; failure branches excluded by res ≠ SOME Error."
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.8) against auxiliary lemma for case `Arith` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[Arith] at 781-790). No sub-program; HOL quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the payload in place of v, all four premises and full conclusion as in the other auxiliary lemmas. Proof: by cases on the arith op (LDiv/LLongMul/LLongDiv): source registers from subspt of arith_vars, destinations set on both sides with set_var; failure branches excluded by res ≠ SOME Error."
 },
 {
   "hol_path": null,
@@ -20691,7 +20691,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
   "lean_name": "loopLive_compile_correct_shMem",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.8) against case piece `ShMem` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[ShMem] at 799-826). No sub-program; HOL quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the payload in place of v (FFI's name as the mlstring carrier), all four premises and full conclusion as in the other pieces. Proof: eval_lemma on the address with l := insert r () l0, the register from subspt; by cases on the eight memops, sh_mem_load/sh_mem_store behave identically up to locals (frame lemmas): load success sets r on both sides, store success leaves locals, final FFI uses call_env []; failure branches excluded by res ≠ SOME Error."
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.8) against auxiliary lemma for case `ShMem` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[ShMem] at 799-826). No sub-program; HOL quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the payload in place of v (FFI's name as the mlstring carrier), all four premises and full conclusion as in the other auxiliary lemmas. Proof: eval_lemma on the address with l := insert r () l0, the register from subspt; by cases on the eight memops, sh_mem_load/sh_mem_store behave identically up to locals (frame lemmas): load success sets r on both sides, store success leaves locals, final FFI uses call_env []; failure branches excluded by res ≠ SOME Error."
 },
 {
   "hol_path": null,
@@ -20699,7 +20699,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
   "lean_name": "loopLive_compile_correct_ffi",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.8) against case piece `FFI` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[FFI] at 756-779). No sub-program; HOL quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the payload in place of v (FFI's name as the mlstring carrier), all four premises and full conclusion as in the other pieces. Proof: the four registers from subspt; cut_state (inter cutset l0) succeeds on the new locals because every cutset key is a source local and live; read_bytearray/call_FFI see identical memory/ffi; on return new_locals = inter locals (inter cutset l0) (HOL's qexists), on final FFI call_env []; failure branches excluded by res ≠ SOME Error."
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.8) against auxiliary lemma for case `FFI` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[FFI] at 756-779). No sub-program; HOL quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the payload in place of v (FFI's name as the mlstring carrier), all four premises and full conclusion as in the other auxiliary lemmas. Proof: the four registers from subspt; cut_state (inter cutset l0) succeeds on the new locals because every cutset key is a source local and live; read_bytearray/call_FFI see identical memory/ffi; on return new_locals = inter locals (inter cutset l0) (HOL's qexists), on final FFI call_env []; failure branches excluded by res ≠ SOME Error."
 },
 {
   "hol_path": null,
@@ -20723,7 +20723,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
   "lean_name": "loopLive_compile_correct_if",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.5): case piece `If cmp r1 ri c1 c2 live_out` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[If] at 534-559). Extra antecedent is exactly loopSem evaluate_ind's If hypothesis: for the register values x, y (lookup r1 = SOME (Word x), get_var_imm ri = SOME (Word y)), the statement for (if word_cmp cmp x y then c1 else c2, v1), via the untagged loopLiveCompileCorrectAt. Otherwise HOL binders/premises/conclusion as in the other pieces. Proof follows HOL: both operands are live in insert r1 () (union l3 (union l1 l2)), the chosen branch's IH at live set inter l0 live_out, then cut_res with the shrunk cutset inter l0 live_out succeeds because of the IH's NONE postcondition (subspt_IMP_domain reasoning inline)."
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.5): auxiliary lemma for case `If cmp r1 ri c1 c2 live_out` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[If] at 534-559). Extra antecedent is exactly loopSem evaluate_ind's If hypothesis: for the register values x, y (lookup r1 = SOME (Word x), get_var_imm ri = SOME (Word y)), the statement for (if word_cmp cmp x y then c1 else c2, v1), via the untagged loopLiveCompileCorrectAt. Otherwise HOL binders/premises/conclusion as in the other auxiliary lemmas. Proof follows HOL: both operands are live in insert r1 () (union l3 (union l1 l2)), the chosen branch's IH at live set inter l0 live_out, then cut_res with the shrunk cutset inter l0 live_out succeeds because of the IH's NONE postcondition (subspt_IMP_domain reasoning inline)."
 },
 {
   "hol_path": null,
@@ -20739,7 +20739,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
   "lean_name": "loopLive_compile_correct_call",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.6): case piece `Call ret dest args handler` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[Call] at 567-703). Extra antecedent: for a handler SOME (e, h, r, lo), the statement for the return continuation r and the exception handler h at every state with clock < v1.clock (via the untagged loopLiveCompileCorrectAt). This is the form of loopSem evaluate_ind's Call hypotheses that the lexicographic (clock, size) assembly supplies: every continuation state HOL's induction uses has clock < v1.clock, because the callee runs after dec_clock (or cut_res's dec_clock). The callee body needs no hypothesis because shrink does not touch it and it runs on an identical state (only caller locals differ). Otherwise HOL binders/premises/conclusion as in the other pieces. Proof follows HOL's case split (ret NONE/SOME, handler NONE/SOME, clock 0, callee result): arguments from subspt of union (fromAList args) l1', the shrunk cut_state succeeds (cutset ⊆ live ⊆ source locals and live in l1'), set_vars/set_var on both sides, and continuations via their hypotheses and the shared cut_res tail."
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.6): auxiliary lemma for case `Call ret dest args handler` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[Call] at 567-703). Extra antecedent: for a handler SOME (e, h, r, lo), the statement for the return continuation r and the exception handler h at every state with clock < v1.clock (via the untagged loopLiveCompileCorrectAt). This is the form of loopSem evaluate_ind's Call hypotheses that the lexicographic (clock, size) assembly supplies: every continuation state HOL's induction uses has clock < v1.clock, because the callee runs after dec_clock (or cut_res's dec_clock). The callee body needs no hypothesis because shrink does not touch it and it runs on an identical state (only caller locals differ). Otherwise HOL binders/premises/conclusion as in the other auxiliary lemmas. Proof follows HOL's case split (ret NONE/SOME, handler NONE/SOME, clock 0, callee result): arguments from subspt of union (fromAList args) l1', the shrunk cut_state succeeds (cutset ⊆ live ⊆ source locals and live in l1'), set_vars/set_var on both sides, and continuations via their hypotheses and the shared cut_res tail."
 },
 {
   "hol_path": null,
@@ -20812,7 +20812,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
   "lean_name": "loopLive_compile_correct_loop",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.3) against case piece `Loop live_in body live_out` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[Loop] at 157-337). Extra antecedent: the statement for the body and for the Loop itself at every state with clock < v1.clock (via the untagged loopLiveCompileCorrectAt): exactly the evaluate_ind recursive calls, all at states after cut_res's dec_clock. Otherwise HOL binders/premises/conclusion as in the other pieces. Proof follows HOL: shrink's fixed-point branch (via the tagged fixedpoint_thm) and no-fixed-point branch both reduce to the private loopLive_loop_core (cut with the shrunk live_in, body IH, then loop IH on NONE/Continue 0, cut_res live_out vs inter live_out l0 on Break 0, exit_loop otherwise)."
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.3) against auxiliary lemma for case `Loop live_in body live_out` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[Loop] at 157-337). Extra antecedent: the statement for the body and for the Loop itself at every state with clock < v1.clock (via the untagged loopLiveCompileCorrectAt): exactly the evaluate_ind recursive calls, all at states after cut_res's dec_clock. Otherwise HOL binders/premises/conclusion as in the other auxiliary lemmas. Proof follows HOL: shrink's fixed-point branch (via the tagged fixedpoint_thm) and no-fixed-point branch both reduce to the private loopLive_loop_core (cut with the shrunk live_in, body IH, then loop IH on NONE/Continue 0, cut_res live_out vs inter live_out l0 on Break 0, exit_loop otherwise)."
 },
 {
   "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
@@ -20848,7 +20848,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
   "lean_name": "loopLive_compile_correct_at",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Flapjack helper: the lexicographic (clock, size) induction assembling the compile_correct case pieces (mirrors loopSemTheory.evaluate_ind); no separate CakeML declaration"
+  "reviewer": "Flapjack helper: the lexicographic (clock, size) induction assembling the compile_correct auxiliary per-constructor lemmas (mirrors loopSemTheory.evaluate_ind); no separate CakeML declaration"
 },
 {
   "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
@@ -20921,7 +20921,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
   "lean_name": "loopCall_compile_correct_skip",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
 },
 {
   "hol_path": null,
@@ -20929,7 +20929,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
   "lean_name": "loopCall_compile_correct_fail",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
 },
 {
   "hol_path": null,
@@ -20937,7 +20937,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
   "lean_name": "loopCall_compile_correct_tick",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
 },
 {
   "hol_path": null,
@@ -20945,7 +20945,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
   "lean_name": "loopCall_compile_correct_break",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
 },
 {
   "hol_path": null,
@@ -20953,7 +20953,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
   "lean_name": "loopCall_compile_correct_continue",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
 },
 {
   "hol_path": null,
@@ -20961,7 +20961,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
   "lean_name": "loopCall_compile_correct_return",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
 },
 {
   "hol_path": null,
@@ -20969,7 +20969,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
   "lean_name": "loopCall_compile_correct_raise",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
 },
 {
   "hol_path": null,
@@ -20977,7 +20977,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
   "lean_name": "loopCall_compile_correct_setGlobal",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
 },
 {
   "hol_path": null,
@@ -20985,7 +20985,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
   "lean_name": "loopCall_compile_correct_seq",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
 },
 {
   "hol_path": null,
@@ -20993,7 +20993,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
   "lean_name": "loopCall_compile_correct_mark",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
 },
 {
   "hol_path": null,
@@ -21001,7 +21001,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
   "lean_name": "loopCall_compile_correct_if",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
 },
 {
   "hol_path": null,
@@ -21009,7 +21009,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
   "lean_name": "loopCall_compile_correct_loop",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
 },
 {
   "hol_path": null,
@@ -21033,7 +21033,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
   "lean_name": "loopCall_compile_correct_locValue",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
 },
 {
   "hol_path": null,
@@ -21041,7 +21041,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
   "lean_name": "loopCall_compile_correct_assign",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
 },
 {
   "hol_path": null,
@@ -21049,7 +21049,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
   "lean_name": "loopCall_compile_correct_load32",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
 },
 {
   "hol_path": null,
@@ -21057,7 +21057,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
   "lean_name": "loopCall_compile_correct_loadByte",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
 },
 {
   "hol_path": null,
@@ -21065,7 +21065,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
   "lean_name": "loopCall_compile_correct_store",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
 },
 {
   "hol_path": null,
@@ -21073,7 +21073,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
   "lean_name": "loopCall_compile_correct_store32",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
 },
 {
   "hol_path": null,
@@ -21081,7 +21081,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
   "lean_name": "loopCall_compile_correct_storeByte",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
 },
 {
   "hol_path": null,
@@ -21089,7 +21089,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
   "lean_name": "loopCall_compile_correct_ffi",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
 },
 {
   "hol_path": null,
@@ -21097,7 +21097,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
   "lean_name": "loopCall_compile_correct_shMem",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
 },
 {
   "hol_path": null,
@@ -21113,7 +21113,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
   "lean_name": "loopCall_compile_correct_primitive",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
 },
 {
   "hol_path": null,
@@ -21129,7 +21129,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
   "lean_name": "loopCall_compile_correct_arith",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
 },
 {
   "hol_path": null,
@@ -21233,7 +21233,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
   "lean_name": "loopCall_compile_correct_call",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
 },
 {
   "hol_path": null,
@@ -21241,7 +21241,7 @@
   "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
   "lean_name": "loopCall_compile_correct_at",
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Untagged Flapjack case piece of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
 },
 {
   "hol_path": "cakeml/pancake/proofs/loop_callProofScript.sml",
