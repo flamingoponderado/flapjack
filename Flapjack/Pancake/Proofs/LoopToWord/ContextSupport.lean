@@ -1,4 +1,5 @@
 import Flapjack.Pancake.LoopToWord
+import Flapjack.Pancake.LoopToWord.MakeCtxtExact
 
 /-!
 # Loop-to-word context-domain support
@@ -75,5 +76,38 @@ theorem sptDomain_toNumSetHOL (names : List Nat) :
         (sptLookup key (toNumSetHOL names)).isSome = true) ↔ _
       simp only [List.mem_cons]
       exact or_congr Iff.rfl (by simpa [sptDomain] using ih)
+
+/-- Exact HOL `domain_make_ctxt`: assigning the listed names into the exact
+Spt context adds precisely those names to its domain.  HOL set union is
+rendered as disjunction between the old `sptDomain` membership and list
+membership. -/
+@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "domain_make_ctxt"]
+theorem sptDomain_makeCtxtHOL (next : Nat) (names : List Nat)
+    (context : Spt Nat) :
+    sptDomain (Flapjack.makeCtxtHOL next names context) =
+      (fun key => sptDomain context key ∨ key ∈ names) := by
+  funext key
+  apply propext
+  induction names generalizing next context with
+  | nil => simp [Flapjack.makeCtxtHOL]
+  | cons name names ih =>
+      change sptDomain
+          (Flapjack.makeCtxtHOL (next + 2) names
+            (sptInsert name next context)) key ↔ _
+      rw [ih]
+      change (sptMem key (sptInsert name next context) ∨ key ∈ names) ↔
+        (sptMem key context ∨ key ∈ name :: names)
+      rw [sptMem_sptInsert]
+      simp only [List.mem_cons]
+      constructor
+      · rintro ((hkey | hctx) | hnames)
+        · exact Or.inr (Or.inl hkey)
+        · exact Or.inl hctx
+        · exact Or.inr (Or.inr hnames)
+      · rintro (hctx | hrest)
+        · exact Or.inl (Or.inr hctx)
+        · rcases hrest with hkey | hnames
+          · exact Or.inl (Or.inl hkey)
+          · exact Or.inr hnames
 
 end Flapjack.LoopToWord
