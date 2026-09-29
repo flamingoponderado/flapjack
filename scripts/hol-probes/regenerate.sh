@@ -2120,16 +2120,6 @@ run_probe crep_arith_store_glob_probeScript.sml crep_arith_store_glob_probe.out 
   storeglob_mapc_commute evaluate_storeglob_missing_var \
   "$cake_dir/pancake/proofs/crep_arithProofScript.sml" "$cake_dir/pancake/proofs"
 
-# The StoreByte case of crep_arithProofScript.sml:184-212 `simp_prog_correct`.
-# HOL `simp_prog (StoreByte dst src) = StoreByte (simp_exp dst) (simp_exp src)`
-# and `evaluate (StoreByte dst src, s)` evaluates both operands and stores the
-# low byte through `mem_store_byte` (`(NONE, s with memory := m)`, or
-# `(SOME Error, s)`); the local `mapc` overload is inlined.
-run_probe crep_arith_store_byte_probeScript.sml crep_arith_store_byte_probe.out \
-  simp_prog_storebyte evaluate_storebyte_success_result \
-  evaluate_storebyte_mapc_success_result evaluate_storebyte_error_domain \
-  evaluate_storebyte_mapc_error_domain evaluate_storebyte_missing_var \
-  storebyte_memory_mapc \
 # The Store32 case of crep_arithProofScript.sml:184-212 `simp_prog_correct`.
 # HOL `simp_prog (Store32 exp1 exp2) = Store32 (simp_exp exp1) (simp_exp exp2)`
 # and `evaluate (Store32 dst src, s)` evaluate both operands into
@@ -2141,6 +2131,18 @@ run_probe crep_arith_store_32_probeScript.sml crep_arith_store_32_probe.out \
   simp_prog_store32 evaluate_store32_const evaluate_store32_mapc \
   store32_mapc_commute evaluate_store32_domain_error \
   evaluate_store32_unaligned_error evaluate_store32_missing_var \
+  "$cake_dir/pancake/proofs/crep_arithProofScript.sml" "$cake_dir/pancake/proofs"
+
+# The StoreByte case of crep_arithProofScript.sml:184-212 `simp_prog_correct`.
+# HOL `simp_prog (StoreByte dst src) = StoreByte (simp_exp dst) (simp_exp src)`
+# and `evaluate (StoreByte dst src, s)` evaluates both operands and stores the
+# low byte through `mem_store_byte` (`(NONE, s with memory := m)`, or
+# `(SOME Error, s)`); the local `mapc` overload is inlined.
+run_probe crep_arith_store_byte_probeScript.sml crep_arith_store_byte_probe.out \
+  simp_prog_storebyte evaluate_storebyte_success_result \
+  evaluate_storebyte_mapc_success_result evaluate_storebyte_error_domain \
+  evaluate_storebyte_mapc_error_domain evaluate_storebyte_missing_var \
+  storebyte_memory_mapc \
   "$cake_dir/pancake/proofs/crep_arithProofScript.sml" "$cake_dir/pancake/proofs"
 
 # The loopSem evaluate_ind statement (rebound through fix_clock_evaluate at
