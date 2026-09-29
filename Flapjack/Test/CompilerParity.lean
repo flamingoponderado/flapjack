@@ -110,6 +110,7 @@ import Flapjack.Test.LoopToWordAllDistinctMapParity
 import Flapjack.Test.LoopToWordLocalsRelLookupsParity
 import Flapjack.Test.LoopToWordFindVarParity
 import Flapjack.Test.LoopToWordLastNParity
+import Flapjack.Test.LoopToWordWordShiftModDimwordParity
 import Flapjack.Test.LoopToWordLocalsRelIntroParity
 import Flapjack.Test.LoopToWordTakeWordToBytesParity
 import Flapjack.Test.LoopDecClockParity
@@ -873,6 +874,7 @@ def main : IO Unit := do
     Flapjack.Test.LoopToWordLocalsRelLookupsParity.runChecks,
     Flapjack.Test.LoopToWordFindVarParity.runChecks,
     Flapjack.Test.LoopToWordLastNParity.runChecks,
+    Flapjack.Test.LoopToWordWordShiftModDimwordParity.runChecks,
     Flapjack.Test.LoopToWordLocalsRelIntroParity.runChecks,
     Flapjack.Test.LoopToWordTakeWordToBytesParity.runChecks,
     Flapjack.Test.LoopDecClockParity.runChecks,
