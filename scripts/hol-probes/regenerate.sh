@@ -231,6 +231,9 @@ run_probe loop_to_word_globals_rel_probeScript.sml loop_to_word_globals_rel_prob
   globals_rel_match globals_rel_value_mismatch globals_rel_temp_mismatch globals_rel_empty_source \
   "$cake_dir/pancake/proofs/loop_to_wordProofScript.sml" \
   "$cake_dir/pancake/proofs"
+run_probe loop_to_word_comp_call_probeScript.sml loop_to_word_comp_call_probe.out \
+  comp_call_tail comp_call_no_handler comp_call_handler \
+  "$cake_dir/pancake/loop_to_wordScript.sml"
 # The get_stack_only probe observes the allocator driver's stack-only
 # analysis over wordLang programs (backend word_alloc).
 run_probe get_stack_only_probeScript.sml get_stack_only_probe.out \

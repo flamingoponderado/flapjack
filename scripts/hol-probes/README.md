@@ -76,6 +76,11 @@ a matching `Temp` value, value/key mismatches, and the one-way empty-source
 case. The exact finite-map relation and kernel replay are
 `Flapjack.Pancake.LoopToWord.Proofs.RelationsExact` and
 `Flapjack.Test.LoopToWordGlobalsRelParity`.
+`loop_to_word_comp_call_probe.out` records direct HOL EVAL rows for the Call
+clauses of `comp_def` at `cakeml/pancake/loop_to_wordScript.sml:145-166`
+(tail-call, non-tail without handler, non-tail with handler), checking link slot
+`0`, the computed live cutset, label threading, and the trailing `Tick`. Its
+kernel-checked Lean replay is `Flapjack.Test.LoopToWordCallParity`.
 `loop_live_comp_probe.out` records direct HOL EVAL rows for
 `loop_live$comp` at `cakeml/pancake/loop_liveScript.sml:217`; the Lean replay
 is `Flapjack.Test.LoopLiveCompParity`. `loop_live_optimise_probe.out` records
