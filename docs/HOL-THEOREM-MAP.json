@@ -11467,6 +11467,14 @@
     "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.9.16.6) against loop_to_wordProofScript.sml:331-339. HOL quantifies xs, m, l, n, y; from lookup n (make_ctxt m xs l) = SOME y it concludes lookup n l = SOME y or m <= y. Lean preserves this order, the same lookup result/value, the source disjunction order and Nat bound over exact Spt Nat. The proof mirrors the HOL induction using same-key insertion, distinct-key lookup preservation and monotonicity of m+2. No freshness or additional assumptions are imposed. Regression checks all results from [5,6] started at 4 are at least 4 and observes registers 4 and 6."
   },
   {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "lookup_EL_make_ctxt",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "makeCtxtHOL_lookupEL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.9.16.7) against loop_to_wordProofScript.sml:323-329. HOL quantifies params, k, n, l and assumes k < LENGTH params ∧ ALL_DISTINCT params before concluding lookup (EL k params) (make_ctxt n params l) = SOME (2*k+n). Lean preserves binder order, the same bound and distinctness premise (List.Nodup is the exact List rendering of ALL_DISTINCT), lookup result, starting register and arithmetic. The dependent List.get index is justified by the existing k < length premise and adds no semantic assumption; both source `make_ctxt` and Spt insertion are constructor-for-constructor exact carriers. Regression checks index zero and index two for distinct [3,5,9] from base 4."
+  },
+  {
     "hol_path": "cakeml/pancake/pan_commonScript.sml",
     "hol_name": "distinct_lists_def",
     "lean_path": "Flapjack/Pancake/PanCommon.lean",
@@ -24056,6 +24064,14 @@
     "reviewer": "Flapjack-only qualifier witness: names WordSemStateFiniteExact and its WordSemStateBroad toBroad/ofBroad roundtrip; supports the relation finite-map qualifier and is not a HOL declaration."
   },
   {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_WordSemStateFiniteExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only qualifier witness: names WordSemStateFiniteExact and its WordSemStateBroad toBroad/ofBroad roundtrip; supports the relation finite-map qualifier of envToListIMPHOL and is not a HOL declaration."
+  },
+  {
     "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
     "hol_name": "locals_rel_get_var",
     "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/LocalsRelLookups.lean",
@@ -24166,6 +24182,19 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-c source comparison (2026-09-29; bead flapjack-pxn.18.5.9.17.1) against wordPropsScript.sml:4636-4663. HOL has exactly the premise env_to_list y f = (q,r) and concludes both (!n. ALOOKUP q n = lookup n y) and (!x1 x2. MEM (x1,x2) q ==> lookup x1 y = SOME x2); Lean retains the same result equation, tuple/list carriers, two conjuncts, key/value quantifiers, and no extra premise. Spt ALOOKUP uses the untagged first-match sptAListLookup rendering; the proof uses the exact env_to_list sort/rearrange entry-preservation lemmas and Spt toAList membership/lookup support, deriving uniqueness from functional Spt lookup. WordLocW's type-indexed words use words_as_type_indexed_bitvec; no state, evaluator, map-carrier, or list-to-array translation is introduced."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "env_to_list_IMP",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "envToListIMPHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison (2026-09-29; bead flapjack-pxn.18.5.9.17.3) against loop_to_wordProofScript.sml:410-417, corrected after coordinator review HOLD. HOL quantifies target state t and premise env_to_list env1 t.permute = (l,permute). Lean now takes target : WordSemStateFiniteExact width C F and uses target.permute in the premise, rather than quantifying an independent bijSeq. Both conclusions remain over exact Spt maps: sptDomain/sptFromAList render domain/fromAList, and sptLookup_sptFromAList is the first-match ALOOKUP rendering. The proof obtains lookup equality from env_to_list_lookup_equiv with that same target.permute, with no additional premise. fmap_as_finite_support_relation records only the exact target-state fpRegs/store finite-map carrier; words_as_type_indexed_bitvec records HOL's word dimension."
   },
   {
     "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
