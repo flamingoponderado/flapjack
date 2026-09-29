@@ -2304,6 +2304,38 @@
     "reviewer": "flapjack-ds8 (bead flapjack-5ldn): clause-for-clause exact vs pan_structsScript.sml:25-34: nil -> none; matching head key -> some 0; otherwise recurse and add 1 to some index. Polymorphic over (alpha x beta) as in HOL; Lean DecidableEq alpha is HOL's computable equality. No extra hypotheses or side conditions."
   },
   {
+    "hol_path": "cakeml/pancake/pan_structsScript.sml",
+    "hol_name": "context",
+    "lean_path": "Flapjack/Pancake/PanStructs/CompileShapeExact.lean",
+    "lean_name": "ContextExact",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.3.77.1.1) against pan_structsScript.sml:15-21. The record fields and order match: structs is a list of (MlString × list (MlString × ShapeHOL)); locals and globals are lists of (MlString × ShapeHOL). Cake aliases stcname, fldname, varname, and shape to these exact carriers. This is a source carrier only; production StructPassContext remains separate."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_structsScript.sml",
+    "hol_name": "compile_shape_def",
+    "lean_path": "Flapjack/Pancake/PanStructs/CompileShapeExact.lean",
+    "lean_name": "compileShapeExact",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a clause comparison (2026-09-29; bead flapjack-pxn.18.5.3.77.1.1) against pan_structsScript.sml:37-67. One returns One; Comb maps the mutually recursive compile_shapes over its children; Named uses HOL first-match dropWhile by structural MlString equality, compiles the selected fields in the returned suffix context, and returns One on no match. The List.dropWhile expression is direct; dropWhile_suffix_length_lt is termination evidence only. Inputs/results use the exact MlString and ShapeHOL carriers. Direct HOL rows One, Comb, forward nested lookup, backward suffix, and missing-name fallback are replayed under #guard and kernel-checked in Test/PanStructsCompileShapeParity. This tagged definition now lives in the Pancake PanStructs source counterpart and does not claim production structCompileShapeWF routing."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_structsScript.sml",
+    "hol_name": "compile_shape_def",
+    "lean_path": "Flapjack/Pancake/PanStructs/CompileShapeExact.lean",
+    "lean_name": "compileShapesExact",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a clause comparison (2026-09-29; bead flapjack-pxn.18.5.3.77.1.1) against pan_structsScript.sml:44-46. Nil returns nil; cons compiles the head with exact compileShapeExact and recursively compiles the tail with the same fields-only context, preserving list order and the exact MlString/ShapeHOL carriers. This mutual definition is tagged at the source Definition declaration line 37. Direct HOL compile_shape rows are replayed under #guard in Test/PanStructsCompileShapeParity."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_shapes_eq_map",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileShapeExact.lean",
+    "lean_name": "compileShapesExact_eq_map",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a statement comparison (2026-09-30; bead flapjack-pxn.18.5.3.77.1.1.1.1) against pan_structsProofScript.sml:310-314. HOL explicitly quantifies the fields-only context and shape list and states compile_shapes sctxt shs = MAP (compile_shape sctxt) shs. Lean uses the same explicit context and shapes binders and pointwise equality over the exact list carriers, with no added hypotheses, fuel, or production context. The kernel proof is in CompileShapeExact.lean."
+  },
+  {
     "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
     "hol_name": "cexp_heads_def",
     "lean_path": "Flapjack/Pancake/PanToCrep.lean",
@@ -25150,5 +25182,33 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-pxn.18.5.9.27.3): the Call_SOMEhandler piece of HOL loop_to_wordProof compile_correct (loop_to_wordProofScript.sml:57-97, i.e. loopSem evaluate_ind specialised to goal; the Call resume at :1017-1082 does Cases_on ret and then Cases_on handler, and the SOME/SOME branch is resumed as Call_SOMEhandler at :1223-1407). The statement is HOL's evaluate_ind Call conjunct with ret fixed to SOME (ns, live) and handler to SOME (hn, hh, hr, lo), splitting along HOL's own case structure. The tail-call premise set (ret = NONE) is vacuous and omitted. The three remaining premise sets are transcribed binder for binder, with ret and handler substituted: (1) ∀argvals v7 env prog v6 ns live v9 s' v8 st v11 retvs v v1 v2 v3 v4 r live_out. … evaluate (prog,s' with locals := env) = (v8,st) ∧ v8 = SOME v11 ∧ v11 = Result retvs ∧ LENGTH retvs = LENGTH ns ∧ handler = SOME v ∧ v = (v1,v2) ∧ v2 = (v3,v4) ∧ v4 = (r,live_out) ⇒ P (r, set_vars ns retvs (st with locals := s'.locals)); (2) ∀argvals v7 env prog v6 ns live v9 s' v8 st v11 exn v n v2 h v4 v5 live_out. … v11 = Exception exn ∧ handler = SOME v ∧ v = (n,v2) ∧ v2 = (h,v4) ∧ v4 = (v5,live_out) ⇒ P (h, set_var n exn (st with locals := s'.locals)); (3) the callee premise, as in Call_NOhandler. P is rendered as PropertyAt. The conclusion is HOL's goal written out for Call (SOME (ns,live)) dest argvars (SOME (hn,hh,hr,lo)), as for the integrated cases. There is no target-run or post-state premise. The acc_vars conditions for ns, hn, hh and hr come from the tagged acc_vars_acc. The proof follows HOL: the target Seq (Call (SOME (…, wordP2, l)) dest args (SOME (find_var hn, wordP1, labels2))) Tick is stepped with the rebound evaluate_def, with the same prefix as Call_NOhandler, and push_env records the handler frame. Result: pop_env restores stack and handler and the cut locals, then the compiled hr runs under premise (1). Exception: jump_exc at the pushed state lands exactly on the handler frame (the LASTN of the full stack is the identity), so the callee's exception target is that frame's state; the label and domain checks pass, and the compiled hh runs under premise (2). Both continuations finish through the untagged handlerTail (Call/HandlerTail.lean): the loopSem cut_res live_out against the target Tick, with locals_rel restricted by inter and resultCase transferred along equal stack and handler. Kernel-checked. The relation qualifier and same-module witnesses (LoopToWordCompileCorrectCallSomeHandlerWitnesses.*) are as for the other cases. This is one of the reviewed case slices of a partial port; the full compile_correct theorem remains partial, with no assembled theorem claimed, and the Call case assembly is bead flapjack-pxn.18.5.9.27.4."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/CompileCorrect/Call.lean",
+    "lean_name": "compileCorrect_Call",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "LoopSemStateFiniteExact.globals",
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-pxn.18.5.9.27.4): the full Call case of HOL loop_to_wordProof compile_correct (loop_to_wordProofScript.sml:57-97, i.e. loopSem evaluate_ind specialised to goal, resumed at :1017-1407). The statement is HOL's evaluate_ind Call conjunct ∀ret dest argvars handler s. (IH1 ∧ IH2 ∧ IH3 ∧ IH4) ⇒ P (Call ret dest argvars handler,s), with the four premise sets as one conjunction as in HOL (checked against scripts/hol-probes/loop_sem_evaluate_ind_probe.out), transcribed binder for binder with general ret and handler: (1) Result-handler continuation; (2) Exception-handler continuation; (3) callee body; (4) tail call. P is rendered as PropertyAt for the IHs and written out for the conclusion, as in the integrated cases. There is no target-run or post-state premise. The proof follows HOL's Cases_on ret / Cases_on handler (:1030, :1080) and dispatches to the tagged pieces compileCorrect_Call_TailCall (ret = NONE, IH4), compileCorrect_Call_NOhandler (SOME/NONE, IH3) and compileCorrect_Call_SOMEhandler (SOME/SOME, IH1-3). No other reasoning is involved. Kernel-checked. The relation qualifier and same-module witnesses (LoopToWordCompileCorrectCallAssemblyWitnesses.*) are as for the other cases. This is one of the reviewed case slices of a partial port; the full compile_correct theorem remains partial, with no assembled theorem claimed."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/CompileCorrect/FFI.lean",
+    "lean_name": "compileCorrect_FFI",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "LoopSemStateFiniteExact.globals",
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.9.26.2): the FFI case of HOL loop_to_wordProof compile_correct (loop_to_wordProofScript.sml:57-97, i.e. loopSem evaluate_ind specialised to goal, resumed at :1408-1430). The statement follows the HOL evaluate_ind conjunct ∀ffi_index ptr1 len1 ptr2 len2 cutset s. P (FFI ffi_index ptr1 len1 ptr2 len2 cutset,s), with P unfolded to HOL's goal written out: ∀res s1 t ctxt retv l. evaluate (prog,s) = (res,s1) ∧ res ≠ SOME Error ∧ state_rel s t ∧ locals_rel ctxt s.locals t.locals ∧ lookup 0 t.locals = SOME retv ∧ good_dimindex(:'a) ∧ ~isWord retv ∧ domain (acc_vars prog LN) ⊆ domain ctxt ⇒ ∃t1 res1. evaluate (FST (comp ctxt prog l),t) = (res1,t1) ∧ t1.ffi = s1.ffi ∧ case res of .... The binders and the premise conjunction are in HOL order. The case over res is the untagged resultCase (LoopToWord/Proofs/CompileCorrect/Property.lean), compared arm by arm: NONE, Result, Exception (including the jump_exc record update of stack and handler), Break, Continue, TimeOut, FinalFFI, and _ => F. The carriers are the tagged exact loopSem evaluate, wordSem evaluate, compHOL (comp_def), loopToWordStateRelHOLExact (state_rel_def), localsRelHOL (locals_rel_def), accVarsHOL (acc_vars_def), goodDimindex, wordSemIsWordLoc (isWord_def) and jumpExc (jump_exc_def). ⊆ on domain is the sptMem implication, and the HOL bool isWord is = true. No induction hypothesis. The target FFI ffi_index (find_var ctxt ptr1) (find_var ctxt len1) (find_var ctxt ptr2) (find_var ctxt len2) (mk_new_cutset ctxt cutset, LN) reads the four registers via the tagged locals_rel_get_var. The source cut_state cutset succeeds, so the tagged cut_env_mk_new_cutset gives the target cut_env with locals_rel for inter s.locals cutset, and cut_env_mk_new_cutset_IMP keeps register 0. Both sides read the same byte arrays from the equal memory/mdomain/be and make the same call_FFI on the equal ffi. FFI_final gives FinalFFI on both sides (call_env [] vs flush_state T keep ffi). FFI_return writes the same bytes and installs the same new ffi; the target's fp_regs reset is outside state_rel. There is no target-run or post-state premise. Kernel-checked. The relation qualifier names the |-> fields of the two state carriers that the goal traverses (loopSem globals; wordSem fpRegs and store), with same-module witnesses LoopToWordCompileCorrectFFIWitnesses.*. This is one of the reviewed case slices of a partial port; the full compile_correct theorem remains partial, with no assembled theorem claimed."
   }
 ]
