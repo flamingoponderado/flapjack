@@ -24375,6 +24375,15 @@
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-ds5 source comparison (2026-09-29; bead flapjack-pxn.18.5.9.18.2) against loop_to_wordProofScript.sml:453-458. HOL statement is exactly good_dimindex (:'a) /\\ word_sh sh (w : 'a word) n = SOME z ==> n MOD dimword (:'a) = n, with sh/w/n/z universally quantified. Lean keeps the same two hypotheses and conclusion, rendering HOL dimindex (:'a) as the positive width (BitVec width), dimword (:'a) = 2 ** dimindex (:'a) as 2 ^ width, HOL word_sh by the tagged Flapjack.wordShiftHOL (word_sh_def, Flapjack/Pancake/WordLang.lean:46) and good_dimindex by the tagged Flapjack.goodDimindex (good_dimindex_def, Flapjack/Misc/GoodDimindex.lean:27). The words_as_type_indexed_bitvec qualifier records the type-indexed-word-to-BitVec translation; the word_sh SOME guard forces n = 0 or n < width, and goodDimindex restricts width to 32 or 64, giving n % 2 ^ width = n. Regression examples in Flapjack.Test.LoopToWordWordShiftModDimwordParity."
 },
+{
+  "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+  "hol_name": "env_to_list_LN_IMP",
+  "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/CutEnvSupport.lean",
+  "lean_name": "envToListLNIMPHOL",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds5 source comparison (2026-09-29; bead flapjack-pxn.18.5.9.17.5) against loop_to_wordProofScript.sml:427-435. HOL statement is exactly env_to_list LN l = (x,p) ==> x = [] (l/bijSeq, x and p universally quantified). Lean keeps the same single hypothesis and conclusion over the exact Spt carrier, rendering HOL env_to_list by the tagged Flapjack.wordSemEnvToList (wordSemScript.sml:507-515), HOL LN by the empty Spt, and the indexed word dimension by WordLocW width (the words_as_type_indexed_bitvec qualifier). Proof: wordSemEnvToList_mem_iff plus sptToAList_ln show no association is emitted from the empty environment, so the list is empty."
+},
   {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Evaluate.lean",
     "lean_name": "evaluate",
