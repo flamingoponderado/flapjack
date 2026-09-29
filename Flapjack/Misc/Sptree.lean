@@ -1012,6 +1012,31 @@ def sptFromAList {α : Type} : List (Nat × α) → Spt α
   | [] => .ln
   | (key, value) :: entries => sptInsert key value (sptFromAList entries)
 
+/-- External HOL-library `ALOOKUP` rendering for numeric Spt association lists:
+return the first value paired with `key`. This helper is untagged because
+`ALOOKUP` and `fromAList` here come from the external Sptree library. -/
+def sptAListLookup {α : Type} (key : Nat) : List (Nat × α) → Option α
+  | [] => none
+  | (other, value) :: entries =>
+      if key = other then some value else sptAListLookup key entries
+
+/-- Lookup in external HOL `fromAList` is first-match association-list lookup,
+with no distinct-key or well-formedness premise. -/
+theorem sptLookup_sptFromAList {α : Type} (key : Nat)
+    (entries : List (Nat × α)) :
+    sptLookup key (sptFromAList entries) = sptAListLookup key entries := by
+  induction entries with
+  | nil => simp [sptFromAList, sptAListLookup]
+  | cons entry entries ih =>
+      obtain ⟨other, value⟩ := entry
+      by_cases hkey : key = other
+      · subst key
+        rw [sptFromAList, sptLookup_sptInsert_same]
+        simp [sptAListLookup]
+      · rw [sptFromAList,
+          sptLookup_sptInsert_ne other key value (sptFromAList entries) hkey]
+        simpa [sptAListLookup, hkey] using ih
+
 /-- Exact HOL `misc$fromList2_def` (`cakeml/misc/miscScript.sml:351-353`):
     `fromList2 l = SND (FOLDL (\(i,t) a. (i + 2, insert i a t)) (0,LN) l)`,
     which inserts the list elements at the even keys `0, 2, 4, …`. -/
