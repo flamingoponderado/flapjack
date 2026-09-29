@@ -56,43 +56,11 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {F : Type} :
 
 end LoopEvaluateFiniteSupport
 
-/-- Flapjack helper (no HOL declaration): the constructor-for-constructor map
-    from the Crep/Loop `memop` carrier `CrepMemOp` to the tagged asm carrier
-    `HolMemop` (HOL `asm$memop`, which loopLang and crepLang reuse). -/
-def crepMemOpToHolMemop : CrepMemOp → Compiler.Encoders.Asm.HolMemop
-  | .load => .load
-  | .load8 => .load8
-  | .load16 => .load16
-  | .load32 => .load32
-  | .store => .store
-  | .store8 => .store8
-  | .store16 => .store16
-  | .store32 => .store32
-
-/-- Inverse of `crepMemOpToHolMemop`. -/
-def holMemopToCrepMemOp : Compiler.Encoders.Asm.HolMemop → CrepMemOp
-  | .load => .load
-  | .load8 => .load8
-  | .load16 => .load16
-  | .load32 => .load32
-  | .store => .store
-  | .store8 => .store8
-  | .store16 => .store16
-  | .store32 => .store32
-
-theorem holMemopToCrepMemOp_crepMemOpToHolMemop (op : CrepMemOp) :
-    holMemopToCrepMemOp (crepMemOpToHolMemop op) = op := by
-  cases op <;> rfl
-
-theorem crepMemOpToHolMemop_holMemopToCrepMemOp (op : Compiler.Encoders.Asm.HolMemop) :
-    crepMemOpToHolMemop (holMemopToCrepMemOp op) = op := by
-  cases op <;> rfl
-
-/-- `crepIsLoadMemOp` is the tagged `asm$is_load_def` port `asmIsLoad` transported
-    along `crepMemOpToHolMemop`, clause for clause. -/
-theorem crepIsLoadMemOp_eq_asmIsLoad (op : CrepMemOp) :
-    crepIsLoadMemOp op = Compiler.Encoders.Asm.asmIsLoad (crepMemOpToHolMemop op) := by
-  cases op <;> rfl
+/-- The evaluators' untagged `crepIsLoadMemOp` is the tagged `asm$is_load_def`
+    port `asmIsLoad`, over the one shared `asm$memop` carrier `WordMemOp`. -/
+theorem crepIsLoadMemOp_eq_asmIsLoad :
+    crepIsLoadMemOp = Compiler.Encoders.Asm.asmIsLoad := by
+  funext op; cases op <;> rfl
 
 open Flapjack.Compiler.Encoders.Asm in
 /-- Exact HOL `loopSem$evaluate_def` (`loopSemScript.sml:278-440`) over
@@ -109,13 +77,9 @@ open Flapjack.Compiler.Encoders.Asm in
     then c1 else c2, s))`, equal by `apply_ite`); `res = NONE` / `res ≠ NONE`
     tests are the corresponding `Option` patterns; `l1 ∈ domain s.code` is
     `(lookup l1 s.code).isSome`; HOL `w2w` is `BitVec.setWidth`; and `is_load`
-    over the Crep/Loop `memop` carrier is `crepIsLoadMemOp`.  The `is_load` in
-    the `ShMem` clause is `asm$is_load_def` (`asmScript.sml:324-330`; loopLang's
-    ancestors include `asm`), whose tagged port is `asmIsLoad` over `HolMemop`;
-    `crepIsLoadMemOp_eq_asmIsLoad` proves the two agree under the
-    constructor-for-constructor bijection `crepMemOpToHolMemop` (the Crep/Loop
-    `CrepMemOp` carrier duplicates `asm$memop`; unification is bead
-    `flapjack-pxgp.20`).
+    over `asm$memop` (`WordMemOp`, tagged as `HolMemop`) is the tagged
+    `asmIsLoad` (`asm$is_load_def`, `asmScript.sml:324-330`; loopLang's
+    ancestors include `asm`).
 
     Source audit (bead `flapjack-pxgp.19`, 2026-09-29): every HOL equation, from
     `Skip` to `FFI`, is compared with the clause below.  Where a HOL `case`
@@ -221,7 +185,7 @@ def evaluate {width : Nat} [NeZero width] {F : Type} :
   | .shMem op v ad, s =>
       match eval s ad with
       | some (.word addr) =>
-          if crepIsLoadMemOp op then
+          if asmIsLoad op then
             match sptLookup v s.locals with
             | some _ => shMemOp op v addr s
             | _ => (some .error, s)
@@ -331,7 +295,7 @@ theorem shMemStore_clock {width : Nat} [NeZero width] {F : Type} (v : Nat)
     (shMemStore v a nb s).2.clock = s.clock := by
   unfold shMemStore; split <;> (try split) <;> (try split) <;> (try split) <;> rfl
 
-theorem shMemOp_clock {width : Nat} [NeZero width] {F : Type} (op : CrepMemOp) (v : Nat)
+theorem shMemOp_clock {width : Nat} [NeZero width] {F : Type} (op : WordMemOp) (v : Nat)
     (a : BitVec width) (s : LoopSemStateFiniteExact width F) :
     (shMemOp op v a s).2.clock = s.clock := by
   cases op <;> simp only [shMemOp, shMemLoad_clock, shMemStore_clock]

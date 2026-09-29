@@ -178,7 +178,7 @@ theorem riscv64CrepRuntimeTarget_sharedDomain
     domain applied to the (byte-aligned) address, i.e. HOL `addr IN
     s.sh_memaddrs` / `byte_align addr IN s.sh_memaddrs`. -/
 theorem crepRuntimeSharedAddressValid_eq_sharedDomain
-    (base : CrepRuntimeState (RiscV.Word 64) σ) (operator : CrepMemOp)
+    (base : CrepRuntimeState (RiscV.Word 64) σ) (operator : WordMemOp)
     (address : RiscV.Word 64) :
     crepRuntimeSharedAddressValid (riscv64CrepRuntimeTarget base) operator address =
       (riscv64CrepRuntimeTarget base).ffiContext.sharedDomain
@@ -910,7 +910,7 @@ theorem riscv64ExtCallCallFfiHandler_extCall
     ffi unchanged.  Direct oracle follows from the same HOL `call_FFI` case
     analysis; included so the handler is characterised on every request. -/
 theorem riscv64ExtCallCallFfiHandler_sharedMem
-    (operator : CrepMemOp) (name : Nat) (address : RiscV.Word 64)
+    (operator : WordMemOp) (name : Nat) (address : RiscV.Word 64)
     (payload : List UInt8) (ffi : FfiState σ) :
     riscv64ExtCallCallFfiHandler
         (.sharedMem operator name address payload) ffi = .returned ffi [] := rfl
@@ -1299,19 +1299,19 @@ production `crepRuntimeSharedMem` step is the HOL rule once the source outcome i
 fixed. Direct oracle: `scripts/hol-probes/crep_runtime_shared_mem_probe.out`. -/
 
 /-- The `FfiShmemOp` selected by a Crep shared-memory operator (HOL `sh_mem_op`). -/
-def crepSharedMemOperator : CrepMemOp → FfiShmemOp
+def crepSharedMemOperator : WordMemOp → FfiShmemOp
   | .load | .load8 | .load16 | .load32 => .mappedRead
   | .store | .store8 | .store16 | .store32 => .mappedWrite
 
 /-- HOL `sh_mem_op` read case: an `OpSize` becomes the Crep load operator. -/
-def opSizeToCrepLoadOp : OpSize → CrepMemOp
+def opSizeToCrepLoadOp : OpSize → WordMemOp
   | .opW => .load
   | .op8 => .load8
   | .op16 => .load16
   | .op32 => .load32
 
 /-- HOL `sh_mem_op` store case: an `OpSize` becomes the Crep store operator. -/
-def opSizeToCrepStoreOp : OpSize → CrepMemOp
+def opSizeToCrepStoreOp : OpSize → WordMemOp
   | .opW => .store
   | .op8 => .store8
   | .op16 => .store16
@@ -1369,7 +1369,7 @@ def riscv64SharedMemCallFfiHandler :
 /-- The canonical shared-memory handler characterises the `sharedMem` request
     exactly as HOL `call_FFI (SharedMem ...)`. -/
 theorem riscv64SharedMemCallFfiHandler_sharedMem
-    (operator : CrepMemOp) (name : Nat) (address : RiscV.Word 64)
+    (operator : WordMemOp) (name : Nat) (address : RiscV.Word 64)
     (payload : List UInt8) (ffi : FfiState σ) :
     riscv64SharedMemCallFfiHandler
         (.sharedMem operator name address payload :
@@ -1629,7 +1629,7 @@ theorem isRiscV64CrepRuntimeTarget_crepRuntimeWriteBytes
 theorem isRiscV64CrepRuntimeTarget_crepRuntimeSharedMem
     (handler : CrepRuntimeFfiHandler (RiscV.Word 64) σ ε)
     {state : CrepRuntimeState (RiscV.Word 64) σ}
-    (operator : CrepMemOp) (name : Nat) (address : RiscV.Word 64)
+    (operator : WordMemOp) (name : Nat) (address : RiscV.Word 64)
     (h : isRiscV64CrepRuntimeTarget state) :
     isRiscV64CrepRuntimeTarget
       (crepRuntimeSharedMem handler state operator name address).2 := by
