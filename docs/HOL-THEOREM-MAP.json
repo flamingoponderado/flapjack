@@ -11839,7 +11839,7 @@
     "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/MakeFuncsLemmas.lean",
     "lean_name": "mapMap2FstHOL",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-luna-b source comparison (2026-09-29; bead flapjack-pxn.18.5.6.33.20.3) against crep_to_loopProofScript.sml:3799-3803: preserves HOL's binder order xs, ys, h, exact LENGTH premise, concrete program-triple MAP2 lambda (including GENLIST I (LENGTH p) and h p b), and MAP FST conclusion. Lean's right-associated product is the HOL triple; panMap2 matches HOL MAP2 truncation. No representation qualifier or added typeclass is needed. The tagged theorem lives beside the crep_to_loop proof lemmas; the untagged panMap2_fst_eq helper only discharges the proof. Existing direct HOL-EVAL parity rows remain exercised by Flapjack/Test/CrepToLoopParity.lean."
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pybd) against crep_to_loopProofScript.sml:3799-3803: preserves HOL binder order xs, ys, h, exact LENGTH premise, concrete MAP2 lambda including GENLIST I (LENGTH p) and h p b, and MAP FST conclusion. Generalizes the first ys component as arbitrary 'b and p elements as arbitrary 'c (only p is constrained to be a list); h has type 'c list -> 'd -> 'e. Lean's right-associated product is the HOL triple and panMap2 preserves MAP2 truncation. No representation qualifier or extra typeclass is used. The theorem stays in the crep_to_loop proof counterpart; untagged panMap2_fst_eq only discharges the proof. Existing direct HOL EVAL rows remain exercised by Flapjack/Test/CrepToLoopParity.lean."
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
