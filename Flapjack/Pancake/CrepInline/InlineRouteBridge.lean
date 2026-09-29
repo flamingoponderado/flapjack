@@ -725,5 +725,58 @@ theorem crepProgToHOL_crepUnreachElim {width : Nat} [NeZero width] (program : Cr
   · obtain ⟨a, b⟩ := crepUnreachElim program
     rfl
 
+private theorem crepInlineActiveNames_contains_any_go [BEq FunName] [LawfulBEq FunName]
+    [LawfulHashable FunName] {α : Type} (inlineable : List (CrepInlineEntry α))
+    (name : FunName) (s : Std.HashSet FunName) :
+    (inlineable.foldl (fun names entry => names.insert entry.1) s).contains name =
+      (s.contains name || inlineable.any (fun entry => entry.1 == name)) := by
+  induction inlineable generalizing s with
+  | nil => simp
+  | cons entry rest ih =>
+      simp only [List.foldl_cons, List.any_cons]
+      rw [ih (s.insert entry.1), Std.HashSet.contains_insert]
+      rw [Bool.or_comm (entry.1 == name) (s.contains name), Bool.or_assoc]
+
+/-- Membership in the production active-name set (`crepInlineActiveNames`) is
+    first-match lookup success in the inline-candidate list.  Untagged
+    Flapjack-specific infrastructure. -/
+theorem crepInlineActiveNames_contains_any [BEq FunName] [LawfulBEq FunName]
+    [LawfulHashable FunName] {α : Type} (inlineable : List (CrepInlineEntry α))
+    (name : FunName) :
+    (crepInlineActiveNames inlineable).contains name =
+      inlineable.any (fun entry => entry.1 == name) := by
+  unfold crepInlineActiveNames
+  rw [crepInlineActiveNames_contains_any_go inlineable name ∅,
+    Std.HashSet.contains_empty, Bool.false_or]
+
+/-- First-match lookup success is the same `any` used for active-name
+    membership.  Untagged Flapjack-specific infrastructure. -/
+theorem crepInlineLookup_isSome_any [BEq FunName] [LawfulBEq FunName]
+    {α : Type} (name : FunName) (inlineable : List (CrepInlineEntry α)) :
+    (crepInlineLookup name inlineable).isSome =
+      inlineable.any (fun entry => entry.1 == name) := by
+  induction inlineable with
+  | nil => rfl
+  | cons entry rest ih =>
+      simp only [crepInlineLookup, List.any_cons]
+      by_cases h : (name == entry.1) = true
+      · have h' : (entry.1 == name) = true := by rw [beq_comm entry.1 name]; exact h
+        rw [if_pos h, h', Bool.true_or]
+        rfl
+      · have hnf : (name == entry.1) = false := by
+          cases hv : (name == entry.1) <;> simp_all
+        have h' : (entry.1 == name) = false := by rw [beq_comm entry.1 name]; exact hnf
+        rw [if_neg h, ih, h', Bool.false_or]
+
+/-- The executable active-name guard equals the exact finite-map lookup used by
+    `inlineProgHOLCoreExact`.  Untagged Flapjack-specific infrastructure. -/
+theorem crepInlineActiveNames_contains_eq [BEq FunName] [LawfulBEq FunName]
+    [LawfulHashable FunName] {α : Type} (inlineable : List (CrepInlineEntry α))
+    (name : FunName) :
+    (crepInlineActiveNames inlineable).contains name =
+      (crepInlineLookup name inlineable).isSome := by
+  rw [crepInlineActiveNames_contains_any inlineable name,
+    ← crepInlineLookup_isSome_any name inlineable]
+
 end CrepInlineRoute
 end Flapjack
