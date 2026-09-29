@@ -457,6 +457,107 @@ def lrNext : Nat → Nat
   | 0 => 1
   | n + 1 => 2 * lrNext (n / 2)
 
+/-! The `foldi` traversal in HOL's `toAList` relies on these two adjacent
+`lrNext` identities (`lrlemma1` and `lrlemma2` in
+`HOL/src/finite_maps/sptreeScript.sml`).  They are untagged infrastructure
+because the source is the external HOL standard library, not CakeML. -/
+
+theorem lrNext_offset_one (index : Nat) :
+    lrNext (index + lrNext index) = 2 * lrNext index := by
+  induction index using Nat.strongRecOn with
+  | ind index ih =>
+      by_cases hzero : index = 0
+      · subst index
+        simp [lrNext]
+      · rcases Nat.mod_two_eq_zero_or_one index with heven | hodd
+        · let half := index / 2 - 1
+          have hindex : index = 2 * half + 2 := by omega
+          have hlt : half < index := by omega
+          have hquot : (2 * half + 1) / 2 = half := by omega
+          have hinc : lrNext (2 * half + 2) = 2 * lrNext half := by
+            simp only [lrNext]
+            rw [hquot]
+          rw [hindex, hinc]
+          have hsum : 2 * half + 2 + 2 * lrNext half =
+              2 * (half + lrNext half) + 2 := by omega
+          rw [hsum]
+          have hstep : lrNext (2 * (half + lrNext half) + 2) =
+              2 * lrNext (half + lrNext half) := by
+            have hdiv : (2 * (half + lrNext half) + 1) / 2 =
+                half + lrNext half := by omega
+            simp only [lrNext]
+            rw [hdiv]
+          rw [hstep, ih half hlt]
+        · let half := index / 2
+          have hindex : index = 2 * half + 1 := by omega
+          have hlt : half < index := by omega
+          have hquot : (2 * half) / 2 = half := by omega
+          have hinc : lrNext (2 * half + 1) = 2 * lrNext half := by
+            simp only [lrNext]
+            rw [hquot]
+          rw [hindex, hinc]
+          have hsum : 2 * half + 1 + 2 * lrNext half =
+              2 * (half + lrNext half) + 1 := by omega
+          rw [hsum]
+          have hstep : lrNext (2 * (half + lrNext half) + 1) =
+              2 * lrNext (half + lrNext half) := by
+            have hdiv : (2 * (half + lrNext half)) / 2 =
+                half + lrNext half := by omega
+            simp only [lrNext]
+            rw [hdiv]
+          rw [hstep, ih half hlt]
+
+theorem lrNext_offset_two (index : Nat) :
+    lrNext (index + 2 * lrNext index) = 2 * lrNext index := by
+  induction index using Nat.strongRecOn with
+  | ind index ih =>
+      by_cases hzero : index = 0
+      · subst index
+        simp [lrNext]
+      · rcases Nat.mod_two_eq_zero_or_one index with heven | hodd
+        · let half := index / 2 - 1
+          have hindex : index = 2 * half + 2 := by omega
+          have hlt : half < index := by omega
+          have hquot : (2 * half + 1) / 2 = half := by omega
+          have hinc : lrNext (2 * half + 2) = 2 * lrNext half := by
+            simp only [lrNext]
+            rw [hquot]
+          rw [hindex, hinc]
+          have hdouble : 2 * (2 * lrNext half) = 4 * lrNext half := by omega
+          rw [hdouble]
+          have hsum : 2 * half + 2 + 4 * lrNext half =
+              2 * (half + 2 * lrNext half) + 2 := by omega
+          rw [hsum]
+          have hstep : lrNext (2 * (half + 2 * lrNext half) + 2) =
+              2 * lrNext (half + 2 * lrNext half) := by
+            have hdiv : (2 * (half + 2 * lrNext half) + 1) / 2 =
+                half + 2 * lrNext half := by omega
+            simp only [lrNext]
+            rw [hdiv]
+          rw [hstep, ih half hlt]
+          omega
+        · let half := index / 2
+          have hindex : index = 2 * half + 1 := by omega
+          have hlt : half < index := by omega
+          have hquot : (2 * half) / 2 = half := by omega
+          have hinc : lrNext (2 * half + 1) = 2 * lrNext half := by
+            simp only [lrNext]
+            rw [hquot]
+          rw [hindex, hinc]
+          have hdouble : 2 * (2 * lrNext half) = 4 * lrNext half := by omega
+          rw [hdouble]
+          have hsum : 2 * half + 1 + 4 * lrNext half =
+              2 * (half + 2 * lrNext half) + 1 := by omega
+          rw [hsum]
+          have hstep : lrNext (2 * (half + 2 * lrNext half) + 1) =
+              2 * lrNext (half + 2 * lrNext half) := by
+            have hdiv : (2 * (half + 2 * lrNext half)) / 2 =
+                half + 2 * lrNext half := by omega
+            simp only [lrNext]
+            rw [hdiv]
+          rw [hstep, ih half hlt]
+          omega
+
 /-- HOL sptree `foldi` (`HOL/src/finite_maps/sptreeScript.sml:737-749`) over
 the exact tree, in the same mixed order. -/
 def sptFoldi {α : Type} (f : Nat → α → List (Nat × α) → List (Nat × α))
