@@ -267,17 +267,17 @@ noncomputable def evaluate
       | some (.word ad) => shareInst op v ad s
       | _ => (some .error, s)
   | .call ret dest args handler =>
-      match getVars args s with
+      match (generalizing := false) getVars args s with
       | none => (some .error, s)
       | some xs =>
           if wordSemBadDestArgs dest args then (some .error, s)
           else
-            match wordSemFindCode dest (wordSemAddRetLoc ret xs) s.code s.stackSize with
+            match (generalizing := false) wordSemFindCode dest (wordSemAddRetLoc ret xs) s.code s.stackSize with
             | none => (some .error, s)
             | some (args1, prog, ss) =>
-                match ret with
+                match (generalizing := false) ret with
                 | none =>
-                    match handler with
+                    match (generalizing := false) handler with
                     | none =>
                         if _hc : s.clock = 0 then (some .timeOut, flushState true s)
                         else
@@ -288,7 +288,7 @@ noncomputable def evaluate
                 | some (n, names, retHandler, l1, l2) =>
                     if sptDomainEmpty names.1 ∨ ¬ n.Nodup then (some .error, s)
                     else
-                      match wordSemCutEnvs names s.locals with
+                      match (generalizing := false) wordSemCutEnvs names s.locals with
                       | none => (some .error, s)
                       | some envs =>
                           if _hc : s.clock = 0 then

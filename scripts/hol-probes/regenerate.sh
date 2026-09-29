@@ -1756,6 +1756,15 @@ run_probe word_sem_eval_prereq_probeScript.sml word_sem_eval_prereq_probe.out \
   "$cake_dir/misc/miscScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 
+# The wordSem evaluate probe observes evaluate_def on straight-line, control,
+# loop, raise/return, MustTerminate, Move/Get/Set/LocValue/StoreConsts, tail and
+# returning calls, and FFI over record updates of a free state (bead
+# flapjack-h29l.8.2).
+run_probe word_sem_evaluate_probeScript.sml word_sem_evaluate_probe.out \
+  skip loop_timeout raise_handler must_terminate call_ret ffi_ok \
+  "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
 # The good_handlers probe observes the structural handler-label predicate,
 # including the NONE-ret case (handler ignored) and nested bad handlers.
 run_probe word_convs_good_handlers_probeScript.sml word_convs_good_handlers_probe.out \
