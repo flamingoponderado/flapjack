@@ -528,7 +528,7 @@ def compileFlapjackRiscVSourceBytesChecked [NeZero width]
               -- The single production Crep-to-Loop route, already computed by
               -- `compileFlapjackEntryCake` (`pipelineLoopFunctionsSource architecture 1`).
               let sourceLoop := pipeline.loop
-              let sourceWord := pipelineWordFunctionsSource sourceLoop
+              let sourceWord := pipelineWordFunctionsSourceRouted sourceLoop
               /- Cake's backend scans the compiled section list from its
                  reverse function order before `export_riscv` reverses the
                  names into the startup-frame stubs.  `compile_prog` keeps
@@ -600,7 +600,7 @@ def compileFlapjackRiscVSourceImageChecked [NeZero width]
               -- The single production Crep-to-Loop route, already computed by
               -- `compileFlapjackEntryCake` (`pipelineLoopFunctionsSource architecture 1`).
               let sourceLoop := pipeline.loop
-              let sourceWord := pipelineWordFunctionsSource sourceLoop
+              let sourceWord := pipelineWordFunctionsSourceRouted sourceLoop
               /- Keep FFI discovery in Cake's reverse section order; the
                  artifact exporter reverses this list once more. -/
               let discoveredNames :=

@@ -13,8 +13,9 @@ than silently erasing them. Spt cutsets are enumerated with `fromNumSetHOL`.
 FFI names project with `MlString.toStringOfBytes`; the reverse `ofString`
 round-trip is total on this projected String. An arbitrary production String
 round-trips through `ofString` only when its characters are byte-ranged, so
-production-String-to-HOL use still needs that boundary premise. This is a
-carrier bridge, not production routing.
+production-String-to-HOL use still needs that boundary premise. The
+fixed-width production route uses this projection only after the source
+encoder's FFI byte-range guard succeeds.
 -/
 
 namespace Flapjack
