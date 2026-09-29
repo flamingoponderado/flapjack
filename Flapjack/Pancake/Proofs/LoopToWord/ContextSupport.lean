@@ -1,5 +1,6 @@
 import Flapjack.Pancake.LoopToWord
 import Flapjack.Pancake.LoopToWord.MakeCtxtExact
+import Flapjack.Compiler.Backend.Semantics.WordSem.EnvListSupport
 
 /-!
 # Loop-to-word context-domain support
@@ -10,6 +11,18 @@ Exact ports of `set_fromNumSet` and `domain_toNumSet` from
 -/
 
 namespace Flapjack.LoopToWord
+
+/-- Local finite-map carrier witness for `WordSemStateFiniteExact` in the
+`env_to_list_IMP` theorem below. This records the `fpRegs` and `store`
+translations on the full target state; the theorem only observes its
+`permute` field. -/
+theorem holFmapAsFiniteSupportRelationWitness_WordSemStateFiniteExact
+    {width : Nat} [NeZero width] {C F : Type} :
+    (∀ (state : WordSemStateBroad width C F) (h : state.FiniteSupport),
+      (WordSemStateBroad.ofBroad state h).toBroad = state) ∧
+    (∀ state : WordSemStateFiniteExact width C F,
+      WordSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  WordSemStateExact.holFmapAsFiniteSupportWitness
 
 /-- Inserting an association-list entry makes its key lookup successfully;
 this helper describes the external HOL `fromAList` rendering and has no
@@ -109,6 +122,32 @@ theorem sptDomain_makeCtxtHOL (next : Nat) (names : List Nat)
         · rcases hrest with hkey | hnames
           · exact Or.inl (Or.inl hkey)
           · exact Or.inr hnames
+
+/-- Exact HOL `env_to_list_IMP` from
+`cakeml/pancake/proofs/loop_to_wordProofScript.sml:410-417`. The result equation
+feeds the exact `env_to_list_lookup_equiv` theorem; HOL `fromAList` is rendered
+by `sptFromAList`, whose lookup is the same first-match lookup as `ALOOKUP`.
+The premise uses the `permute` field of the exact target WordSem state `t`;
+`fpRegs` and `store` are recorded by the finite-map carrier qualifier, and
+`WordLocW width` by the word-width qualifier. -/
+@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "env_to_list_IMP"
+  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
+    WordSemStateFiniteExact.store])
+  (words_as_type_indexed_bitvec)]
+theorem envToListIMPHOL {width : Nat} [NeZero width] {C F : Type}
+    (env : Spt (WordLocW width)) (target : WordSemStateFiniteExact width C F)
+    (entries : List (Nat × WordLocW width)) (permutation : Nat → Nat → Nat)
+    (hresult : wordSemEnvToList env target.permute = (entries, permutation)) :
+    sptDomain (sptFromAList entries) = sptDomain env ∧
+      ∀ key, sptLookup key (sptFromAList entries) = sptLookup key env := by
+  obtain ⟨hlookup, _⟩ :=
+    wordSemEnvToListLookupEquiv env target.permute entries permutation hresult
+  constructor
+  · funext key
+    simp only [sptDomain]
+    rw [sptLookup_sptFromAList, hlookup key]
+  · intro key
+    rw [sptLookup_sptFromAList, hlookup key]
 
 /-- Flapjack-specific induction strengthening for `make_ctxt_inj`: adding a
 fresh register preserves lookup injectivity while advancing its value bound.
@@ -213,6 +252,37 @@ theorem makeCtxtHOL_notMem (names : List Nat) (next : Nat)
           ih (next + 2) (sptInsert name next context) hnotRest
         _ = sptLookup key context :=
           sptLookup_sptInsert_ne name key next context hne
+
+/-- Exact HOL `lookup_EL_make_ctxt`
+(`cakeml/pancake/proofs/loop_to_wordProofScript.sml:323-329`). The valid
+`List.get` index is HOL's `EL` under the same in-range premise, and `Nodup` is
+HOL's `ALL_DISTINCT`; each listed name receives its even register. -/
+@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "lookup_EL_make_ctxt"]
+theorem makeCtxtHOL_lookupEL (params : List Nat) (k n : Nat)
+    (context : Spt Nat) (hk : k < params.length) (hdistinct : params.Nodup) :
+    sptLookup params[k] (Flapjack.makeCtxtHOL n params context) =
+      some (2 * k + n) := by
+  induction params generalizing k n context with
+  | nil => simp at hk
+  | cons name rest ih =>
+      rcases List.nodup_cons.mp hdistinct with ⟨hname, hrest⟩
+      cases k with
+      | zero =>
+          simp only [List.getElem_cons_zero, Flapjack.makeCtxtHOL]
+          rw [makeCtxtHOL_notMem rest (n + 2)
+            (sptInsert name n context) name hname]
+          rw [sptLookup_sptInsert_same]
+          simp
+      | succ k =>
+          have hk' : k < rest.length := by simp at hk; omega
+          change sptLookup rest[k]
+              (Flapjack.makeCtxtHOL (n + 2) rest
+                (sptInsert name n context)) =
+            some (2 * (k + 1) + n)
+          calc
+            _ = some (2 * k + (n + 2)) :=
+              ih k (n + 2) (sptInsert name n context) hk' hrest
+            _ = _ := by congr 1 <;> omega
 
 /-- Exact HOL `lookup_make_ctxt_range`
 (`cakeml/pancake/proofs/loop_to_wordProofScript.sml:331-339`). Any register

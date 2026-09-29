@@ -105,6 +105,22 @@ example :
       sptLookup 9 (.ln : Spt Nat) := by
   exact makeCtxtHOL_notMem [4, 6, 4] 2 (.ln : Spt Nat) 9 (by simp)
 
+/-! `lookup_EL_make_ctxt` assigns the kth distinct parameter the kth even
+register starting at the supplied base. -/
+
+#guard sptLookup 3 (makeCtxtHOL 4 [3, 5, 9] (.ln : Spt Nat)) == some 4
+#guard sptLookup 9 (makeCtxtHOL 4 [3, 5, 9] (.ln : Spt Nat)) == some 8
+
+example :
+    sptLookup 3 (makeCtxtHOL 4 [3, 5, 9] (.ln : Spt Nat)) = some 4 := by
+  exact makeCtxtHOL_lookupEL [3, 5, 9] 0 4 (.ln : Spt Nat) (by decide)
+    (by decide)
+
+example :
+    sptLookup 9 (makeCtxtHOL 4 [3, 5, 9] (.ln : Spt Nat)) = some 8 := by
+  exact makeCtxtHOL_lookupEL [3, 5, 9] 2 4 (.ln : Spt Nat) (by decide)
+    (by decide)
+
 /-- Probe context `insert 3 7 (insert 5 9 LN)` over `num |-> num` spt. -/
 def probeContext : Spt Nat := sptInsert 3 7 (sptInsert 5 9 .ln)
 
