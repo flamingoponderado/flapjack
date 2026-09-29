@@ -40,8 +40,9 @@ namespace Flapjack
 
 open Flapjack.Basis.Pure.MlString
 open Flapjack.Pancake.PanLang
-  (MlS ShapeHOL ExpHOL expToHOL expOfHOL ExpByteRanged ListExpByteRanged shapeOfHOL
-    shapeValHOL mlstrAppend ProgHOL freeVarIdsHOL varExpHOL)
+  (MlS ShapeHOL ExpHOL DeclHOL FunDeclHOL expToHOL expOfHOL ExpByteRanged
+    ListExpByteRanged shapeOfHOL sizeOfShapeHOL shapeValHOL mlstrAppend ProgHOL
+    freeVarIdsHOL varExpHOL)
 
 /-- Broad function-backed representation paired with support evidence, used
     only to state the finite-support representation roundtrip for
@@ -290,6 +291,60 @@ def compileProgExactHOL {width : Nat} [NeZero width]
 termination_by program => sizeOf program
 decreasing_by
   all_goals decreasing_trivial
+
+/-! ### Exact-carrier `pan_globals$compile_decs_def`
+
+This stays beside `PanGlobalsContextExact`, its required finite-support witness,
+and the exact `compile_def` above so the `fmap_as_finite_support` tag has its
+owning carrier in this module.  The HOL result is a four-tuple of initializer
+programs, compiled function declarations, exceptions, and updated context.
+Function bodies are compiled with the context at their source position;
+global `Decl`s update the map only for subsequent declarations. -/
+
+private def compileDecsGlobalAddressExact {width : Nat} [NeZero width]
+    (context : PanGlobalsContextExact width) (shape : ShapeHOL) : BitVec width :=
+  context.globalsSize + cakeBytesInWord width * BitVec.ofNat width (sizeOfShapeHOL shape)
+
+/- Exact port of HOL `pan_globals$compile_decs_def`
+   (`pan_globalsScript.sml:160-176`) over the reviewed exact carriers.  The
+   `words_as_type_indexed_bitvec` qualifier records HOL's positive-dimensional
+   word type; `fmap_as_finite_support` records only the exact finite-map
+   carrier.  No production-route claim is made here. -/
+@[hol "cakeml/pancake/pan_globalsScript.sml" "compile_decs_def"
+  (fmap_as_finite_support := [globals])
+  (words_as_type_indexed_bitvec)]
+def compileDecsExactHOL {width : Nat} [NeZero width]
+    (context : PanGlobalsContextExact width) :
+    List (DeclHOL width) →
+      List (ProgHOL width) × List (DeclHOL width) × List (DeclHOL width) ×
+        PanGlobalsContextExact width
+  | [] => ([], [], [], context)
+  | .decl shape name value :: declarations =>
+      let address := compileDecsGlobalAddressExact context shape
+      let nextContext : PanGlobalsContextExact width := {
+        context with
+        globals := context.globals.updateEq (name, (shape, address))
+        globalsSize := address
+      }
+      let (initializers, functions, exceptions, finalContext) :=
+        compileDecsExactHOL nextContext declarations
+      (.store (.op .sub [.topAddr, .const address])
+          (compileExpExactHOL context value) :: initializers,
+        functions, exceptions, finalContext)
+  | .function declaration :: declarations =>
+      let (initializers, functions, exceptions, finalContext) :=
+        compileDecsExactHOL context declarations
+      (initializers,
+        .function { declaration with body := compileProgExactHOL context declaration.body }
+          :: functions,
+        exceptions, finalContext)
+  | .exnDecl exceptionName shape :: declarations =>
+      let (initializers, functions, exceptions, finalContext) :=
+        compileDecsExactHOL context declarations
+      (initializers, functions, .exnDecl exceptionName shape :: exceptions, finalContext)
+  | .name _ _ :: declarations => compileDecsExactHOL context declarations
+termination_by declarations => sizeOf declarations
+decreasing_by all_goals decreasing_trivial
 
 /-- Kernel-checked codec bridge between the executed String-backed production
     compiler `compileExpCake` and the reviewed exact `compileExpExactHOL`.  For
