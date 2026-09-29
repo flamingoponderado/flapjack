@@ -8,9 +8,12 @@ It ports the recursive `Seq`, `If`, `Loop`, and `Mark` clauses of `comp_def`
 (lines 107-120 and 138), and the `Call` clauses (lines 145-166), over
 `HolLoopProg` and `WordLangProgHOL`. It delegates
 covered leaves to `compInitialHOL`, so `none` means a leaf constructor is not
-yet in the assembled partial port. This intentionally remains untagged and
-does not claim to define total HOL `comp`; the later clause slices must be
-assembled before that tag is appropriate.
+yet in the assembled partial port. This helper is a superseded, deliberately
+untagged partial slice; the canonical reviewed total port of HOL `comp_def` is
+the tagged `compHOL` in `Flapjack/Pancake/LoopToWord.lean`, which is the
+definition tests should use. The recursive clause bodies here are the shared
+ones, so on every constructor this helper covers its output agrees with
+`compHOL` at the same label pair.
 
 The source clauses compile `Seq` children left-to-right while threading the
 label pair, compile `If` branches in the same order before appending `Tick`,

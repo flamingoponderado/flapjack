@@ -302,9 +302,14 @@ currently ported clauses. It covers Skip, Assign, AddCarry Primitive, the three
 Arith constructors, Store, SetGlobal, the four direct memory operations, the
 control/result clauses Break, Continue, Raise, Return, Tick, Fail and LocValue
 (source lines 96-110), and FFI and ShMem (source lines 141-146). `none` marks
-constructors whose clauses have not yet been ported; this helper is deliberately
-untagged and is not a replacement for the total HOL `comp`. The returned label
-pair is the input pair for each covered clause. AddCarry follows HOL's positional
+constructors whose clauses have not yet been ported. This helper is a
+superseded, deliberately untagged partial slice; the canonical reviewed total
+port of HOL `comp_def` is the tagged `compHOL` below, which is the definition
+tests should use. For every clause this helper covers, its output agrees with
+`compHOL` at the same label pair, since the clause bodies are the shared ones;
+for example `compInitialHOL context labels .skip` and
+`some (compHOL context .skip labels)` are the same `some (.skip, labels)`.
+The returned label pair is the input pair for each covered clause. AddCarry follows HOL's positional
 order `(result, left, right, carry-in)`, confirmed by the direct oracle; the shared
 Lean constructor's local binder names do not reorder those four Nat fields. -/
 def compInitialHOL {width : Nat} [NeZero width] (context : Spt Nat)
