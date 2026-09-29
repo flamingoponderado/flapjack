@@ -11687,6 +11687,15 @@
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "first_compile_prog_all_distinct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/MakeFuncsLemmas.lean",
+    "lean_name": "firstCompileProgAllDistinctExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-29; bead flapjack-pxn.18.5.6.33.20.4) against crep_to_loopProofScript.sml:3832-3838: HOL universally quantifies c then crep_code and states ALL_DISTINCT (MAP FST (compile_prog c crep_code)) with no premises. Lean preserves that binder order and conclusion using the exact AsmArchitecture, MlString/parameter-list/CrepProgHOL width input, and List.Nodup over map Prod.fst; only the positive word width uses words_as_type_indexed_bitvec. The exact compileProgHOLExact body uses the reviewed GENLIST/range labels and MAP2/zipWith carrier; the private injective-map Nodup helper only proves the theorem. No finite-map qualifier is needed on this theorem signature because its only map uses are local intermediates in compile_prog_def."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
     "hol_name": "alookup_el_pair_eq_el",
     "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
     "lean_name": "alookupElPairEqEl",
