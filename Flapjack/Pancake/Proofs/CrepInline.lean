@@ -1279,9 +1279,14 @@ def crepInlineCodeInlRelExact {width : Nat} [NeZero width] {σ : Type}
       t.code.lookup fname = some
         (args, CrepInlineCanonical.inlineProgHOLExact inl_bag prog)
 
-/-- Expression evaluation on the exact state carrier is insensitive to code.
-The code-domain premise is retained to mirror HOL's
-`eval_state_locals_same_code_fdom_same`; this evaluator does not read `code`. -/
+/-- Flapjack-only helper: expression evaluation on the exact state carrier is
+insensitive to code. This is not a port of HOL's
+`eval_state_locals_same_code_fdom_same`: this fixed-width Lean evaluator proves
+equality of the complete `Option` results without assuming a successful source
+evaluation, while HOL proves one-way preservation of a supplied successful
+result for its polymorphic evaluator. The unused code-domain premise is kept
+only to make the call site correspond to the premise needed by the HOL theorem;
+the Lean evaluator itself does not read `code`. -/
 theorem evalCrepSemHOLExp_state_rel_code_exact {width : Nat} [NeZero width]
     {σ : Type} (s t : CrepSemHOLState width σ) (e : CrepExpHOL width)
     (hstate : crepInlineStateRelCodeExact s t)
