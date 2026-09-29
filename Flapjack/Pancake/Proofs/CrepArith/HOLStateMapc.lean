@@ -1529,4 +1529,95 @@ theorem evalCrepRuntimeExp_toBitVecEvaluatorState_loadGlob
   change state.toBitVecEvaluatorState.globals address = _
   rfl
 
+
+/-! ## Assembled `simp_exp_correct1` and `simp_exp_correct`
+
+HOL proves `simp_exp_correct1` by `ho_match_mp_tac (name_ind_cases [] eval_ind)`
+(`crep_arithProofScript.sml:111-142`).  Crep's expression `eval_ind` is not
+ported as a Lean declaration, so the assembly below uses structural induction
+on `CrepExpHOL` (with the operand-list motive `∀ child ∈ es, P child`).  This
+supplies exactly the `eval_ind` IHs, all at the fixed current state, to the
+twelve tagged native case theorems above. -/
+
+/-- Exact HOL `simp_exp_correct1` (`crep_arithProofScript.sml:111-114`):
+    `∀s exp v. crepSem$eval s exp ≠ NONE ⇒
+      eval (mapc f s) (simp_exp exp) = eval s exp`, with `f` free (here the
+    first explicit argument `update`) and HOL's unused, arbitrarily typed `v`.
+    It is stated over the tagged native `evalCrepSemHOLExp` (`eval_def`),
+    `crepSimpExpHOL` (`simp_exp_def`) and `CrepSemHOLState.mapc`, with the
+    complete `Option word_lab` result and no other premise.  Assembled from the
+    tagged native constructor cases (`crepSimpExpCorrect1Native*Case`).
+    (HOL marks this theorem `[local]`; it is ported because `simp_exp_correct`
+    and `simp_prog_correct` depend on it.) -/
+@[hol "cakeml/pancake/proofs/crep_arithProofScript.sml" "simp_exp_correct1"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
+theorem crepSimpExpCorrect1NativeHOL
+    {width : Nat} [NeZero width] {σ : Type}
+    (update : MlString × (List Nat × CrepProgHOL width) →
+      List Nat × CrepProgHOL width) :
+    ∀ (state : CrepSemHOLState width σ) (exp : CrepExpHOL width)
+      {resultType : Type} (_v : resultType),
+      evalCrepSemHOLExp state exp ≠ none →
+      evalCrepSemHOLExp (CrepSemHOLState.mapc update state) (crepSimpExpHOL exp) =
+        evalCrepSemHOLExp state exp := by
+  intro state exp
+  induction exp using CrepExpHOL.rec (motive_2 := fun es => ∀ child ∈ es,
+      ∀ {resultType : Type} (_v : resultType),
+        evalCrepSemHOLExp state child ≠ none →
+        evalCrepSemHOLExp (CrepSemHOLState.mapc update state) (crepSimpExpHOL child) =
+          evalCrepSemHOLExp state child) with
+  | const value =>
+      intro _ v h; exact crepSimpExpCorrect1NativeConstCase update state value v h
+  | var name =>
+      intro _ v h; exact crepSimpExpCorrect1NativeVarCase update state name v h
+  | load address ih =>
+      intro _ v h; exact crepSimpExpCorrect1NativeLoadCase update state address v h ih
+  | load32 address ih =>
+      intro _ v h; exact crepSimpExpCorrect1NativeLoad32Case update state address v h ih
+  | loadByte address ih =>
+      intro _ v h; exact crepSimpExpCorrect1NativeLoadByteCase update state address v h ih
+  | loadGlob address =>
+      intro _ v h; exact crepSimpExpCorrect1NativeLoadGlobCase update state address v h
+  | op operator args ih =>
+      intro _ v h; exact crepSimpExpCorrect1NativeOpCase update state operator args v h ih
+  | crepOp operator args ih =>
+      intro _ v h; exact crepSimpExpCorrect1NativeCrepopCase update state operator args v h ih
+  | cmp operator left right ihLeft ihRight =>
+      intro _ v h
+      exact crepSimpExpCorrect1NativeCmpCase update state operator left right v h ihLeft ihRight
+  | shift operator left right ihLeft ihRight =>
+      intro _ v h
+      exact crepSimpExpCorrect1NativeShiftCase update state operator left right v h
+        ihLeft ihRight
+  | baseAddr =>
+      intro _ v h; exact crepSimpExpCorrect1NativeBaseAddrCase update state v h
+  | topAddr =>
+      intro _ v h; exact crepSimpExpCorrect1NativeTopAddrCase update state v h
+  | nil =>
+      rename_i hmem _ _ _
+      cases hmem
+  | cons head tail ihHead ihTail =>
+      rename_i child hmem _ v h
+      rcases List.mem_cons.mp hmem with rfl | hmem
+      · exact ihHead v h
+      · exact ihTail child hmem v h
+
+/-- Exact HOL `simp_exp_correct` (`crep_arithProofScript.sml:143-145`):
+    `crepSem$eval s exp = SOME v ⇒ eval (mapc f s) (simp_exp exp) = SOME v`,
+    with `f`, `s`, `exp`, `v` free, over the same tagged native evaluator,
+    simplifier and `mapc`.  Proved from `simp_exp_correct1`, as in HOL. -/
+@[hol "cakeml/pancake/proofs/crep_arithProofScript.sml" "simp_exp_correct"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
+theorem crepSimpExpCorrectNativeHOL
+    {width : Nat} [NeZero width] {σ : Type}
+    (update : MlString × (List Nat × CrepProgHOL width) →
+      List Nat × CrepProgHOL width)
+    (state : CrepSemHOLState width σ) (exp : CrepExpHOL width) (v : HolWordLab width) :
+    evalCrepSemHOLExp state exp = some v →
+    evalCrepSemHOLExp (CrepSemHOLState.mapc update state) (crepSimpExpHOL exp) = some v := by
+  intro h
+  rw [crepSimpExpCorrect1NativeHOL update state exp v (by rw [h]; simp), h]
+
 end Flapjack

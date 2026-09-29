@@ -22403,5 +22403,33 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.4.2.18): HOL simp_exp_correct1 (crep_arithProofScript.sml:111-145) universally quantifies state, expression, and unused result; assumes eval s exp <> NONE; and concludes eval (mapc f s) (simp_exp exp) = eval s exp. This is the native Op induction case over the tagged evalCrepSemHOLExp and crepSimpExpHOL. Its premises are the successful full-Op premise, the eval_ind Op IH fixed to the current state over the operand list (for every child in es, the predicate at (s, child) with its unused polymorphic result binder), exact code-only mapc, and the complete Option (word_lab) result. HOL eval_def (crepSemScript.sml:112-117) evaluates the operand list with OPT_MMAP, checks every value is a Word, and returns OPTION_MAP Word (word_op op ...). The Word check is trivially true over the single-constructor HolWordLab carrier, as recorded on the tagged eval_def entry. HOL simp_exp (crep_arithScript.sml:75) is Op bop (MAP simp_exp exps), matched by crepSimpExpHOL's .op clause. The proof lifts the per-operand IH equalities through OPT_MMAP with OPT_MMAP_EQ_SOME_MONO (optMmapEqSomeMono, crep_arithProofScript.sml:93) and List.mapM_map, and then both sides apply the same wordOpHOL to the same value list. It adds no target-success/result, post-state, or context premise. Direct HOL Op evaluation rows are in scripts/hol-probes/crep_eval_op_rv64_probe.out. The exact finite-map fields and positive-width BitVec qualifiers match the neighboring native cases. Axioms: propext, Classical.choice, Quot.sound."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "crepSimpExpCorrect1NativeHOL",
+    "hol_path": "cakeml/pancake/proofs/crep_arithProofScript.sml",
+    "hol_name": "simp_exp_correct1",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.4.2.29): assembled HOL simp_exp_correct1 (crep_arithProofScript.sml:111-114, [local]): ∀s exp v. crepSem$eval s exp <> NONE ==> eval (mapc f s) (simp_exp exp) = eval s exp, with f free. Lean crepSimpExpCorrect1NativeHOL takes f as the first argument update, then ∀ state exp {resultType} (_v : resultType) with HOL's unused arbitrarily typed v, the same single premise and the same conclusion. It works over the tagged native evalCrepSemHOLExp (eval_def), crepSimpExpHOL (simp_exp_def) and CrepSemHOLState.mapc, with the complete Option word_lab result and no other premise. HOL proves it by eval_ind (name_ind_cases). Crep expression eval_ind is not a ported Lean declaration, so the assembly uses structural CrepExpHOL induction with the operand-list motive ∀ child ∈ es, P child. That supplies exactly the fixed-state eval_ind IHs to the twelve tagged native case theorems crepSimpExpCorrect1Native{Const,Var,Load,Load32,LoadByte,LoadGlob,Op,Crepop,Cmp,Shift,BaseAddr,TopAddr}Case, each separately source-reviewed. Qualifiers match those cases. Axioms: propext, Classical.choice, Quot.sound."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "crepSimpExpCorrectNativeHOL",
+    "hol_path": "cakeml/pancake/proofs/crep_arithProofScript.sml",
+    "hol_name": "simp_exp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.4.2.29): HOL simp_exp_correct (crep_arithProofScript.sml:143-145): crepSem$eval s exp = SOME v ==> eval (mapc f s) (simp_exp exp) = SOME v, with f s exp v free. Lean crepSimpExpCorrectNativeHOL binds update (f), state, exp and v : HolWordLab width (HOL word_lab) with the same premise and conclusion, over the tagged native evalCrepSemHOLExp, crepSimpExpHOL and CrepSemHOLState.mapc. It is proved from simp_exp_correct1 as in HOL (rw [simp_exp_correct1]). There is no other premise. Qualifiers as for simp_exp_correct1. Axioms: propext, Classical.choice, Quot.sound."
   }
 ]
