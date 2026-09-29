@@ -659,4 +659,60 @@ theorem evalCrepRuntimeExpsWordLab_executed {width : Nat} [NeZero width] {σ : T
   rw [evalCrepRuntimeExps_executed state es]
   exact option_map_list_holWordLabToWord_map_word (width := width) _
 
+
+/-! ## HOL-quantified evaluator relation (bead `flapjack-pxn.18.5.4.3.8`)
+
+The final form of the production-to-HOL Crep expression evaluator relation.
+The source side ranges over every exact HOL state `CrepSemHOLState` and every
+HOL expression `CrepExpHOL`.  The production side runs `evalCrepRuntimeExpWordLab`
+on the canonical executed runtime `executedCrepState` (built from the HOL state
+fields only) and on the production image `crepExpOfHOL e`.  The result is the
+complete `word_lab` value.  There is no `DecidablePred` instance or other
+premise: the executed state decides memory-domain membership classically, so
+the instance binder of the earlier bridges is discharged inside the proof.
+The width boundary is the source-specified domain: `width ≥ 8` for the whole
+language (below 8 HOL's `LOG2 0`/`MOD 0` in `byte_align`/`byte_index` are
+unspecified), and every positive width for expressions without
+`loadByte`/`load32`, whose HOL semantics never touch those operators.
+Flapjack-only, untagged: HOL has no production evaluator to relate. -/
+
+/-- For `width ≥ 8`, every exact HOL state and every HOL Crep expression: the
+production evaluator on the executed runtime returns HOL `crepSem$eval_def`'s
+complete `word_lab` result (`evalCrepSemHOLExp`), with no further premise. -/
+theorem evalCrepRuntimeExpWordLab_crepSemEval {width : Nat} [NeZero width] {σ : Type}
+    (_hwidth : 8 ≤ width) (state : CrepSemHOLState width σ) (e : CrepExpHOL width) :
+    evalCrepRuntimeExpWordLab (executedCrepState state) (crepExpOfHOL e) =
+      (evalCrepSemHOLExp state e).map HolWordLab.toPanWordLab := by
+  classical
+  have h := evalCrepRuntimeExpWordLab_executed state (crepExpOfHOL e)
+  rwa [crepExpToHOL_crepExpOfHOL] at h
+
+/-- List form (HOL `OPT_MMAP (eval s) es`) of `evalCrepRuntimeExpWordLab_crepSemEval`. -/
+theorem evalCrepRuntimeExpsWordLab_crepSemEval {width : Nat} [NeZero width] {σ : Type}
+    (_hwidth : 8 ≤ width) (state : CrepSemHOLState width σ) (es : List (CrepExpHOL width)) :
+    evalCrepRuntimeExpsWordLab (executedCrepState state) (es.map crepExpOfHOL) =
+      (es.mapM (evalCrepSemHOLExp state)).map (List.map HolWordLab.toPanWordLab) := by
+  classical
+  have h := evalCrepRuntimeExpsWordLab_executed state (es.map crepExpOfHOL)
+  rw [h]
+  congr 1
+  have hfun : ((fun e => evalCrepSemHOLExp state (crepExpToHOL e)) ∘ crepExpOfHOL) =
+      evalCrepSemHOLExp state := by
+    funext x
+    simp [crepExpToHOL_crepExpOfHOL]
+  rw [List.mapM_map, hfun]
+
+/-- Every positive width, for HOL expressions without `loadByte`/`load32`
+(whose HOL semantics never use `byte_align`/`byte_index`): the production
+evaluator on the executed runtime returns HOL `crepSem$eval_def`'s complete
+`word_lab` result, with no further premise. -/
+theorem evalCrepRuntimeExpWordLab_crepSemEval_noByteLoad {width : Nat} [NeZero width]
+    {σ : Type} (state : CrepSemHOLState width σ) (e : CrepExpHOL width)
+    (hm : crepExpNoByteMemoryLoad (crepExpOfHOL e)) :
+    evalCrepRuntimeExpWordLab (executedCrepState state) (crepExpOfHOL e) =
+      (evalCrepSemHOLExp state e).map HolWordLab.toPanWordLab := by
+  classical
+  have h := evalCrepRuntimeExpWordLab_executed_of_noByteMemoryLoad state (crepExpOfHOL e) hm
+  rwa [crepExpToHOL_crepExpOfHOL] at h
+
 end Flapjack
