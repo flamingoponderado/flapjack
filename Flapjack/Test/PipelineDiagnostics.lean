@@ -55,6 +55,33 @@ def routedCompileProgSkipShape : Bool :=
 
 #guard routedCompileProgSkipShape
 
+private def routedCallCaller : CompiledFunction (BitVec 64) :=
+  { name := "caller", params := [], body := .call none "callee" [],
+    returnShape := .one }
+
+private def routedCallCallee : CompiledFunction (BitVec 64) :=
+  { name := "callee", params := [], body := .skip, returnShape := .one }
+
+/-- A two-function call goes through the parser-backed whole-program route:
+the exact compiler's generated target 65 is rebased to production label 4.
+Crep input syntax has no LocValue constructor, so the second conjunct checks
+the LocValue code-source case against the same two-function [64,66) label map
+used by this routed result. -/
+def routedTwoFunctionCallLocValueShape : Bool :=
+  let functions := [routedCallCaller, routedCallCallee]
+  let routed := pipelineLoopFunctionsSourceCompileProgRouted
+    (width := 64) .rv64i 3 functions
+  routed.map Prod.fst == [3, 4] &&
+    (match routed with
+    | [(3, [], .mark (.seq (.mark (.call none (some 4) [] none)) (.mark .skip))),
+        (4, [], .mark .skip)] => true
+    | _ => false) &&
+    (match rebaseHOLFunctionLabels 3 2 (.locValue 9 65 : LoopProg (BitVec 64)) with
+    | .locValue 9 4 => true
+    | _ => false)
+
+#guard routedTwoFunctionCallLocValueShape
+
 /-- Rebase function code sources and nested call targets together, while
 preserving destination/argument locals and local control labels. -/
 def rebasedFunctionLabelsShape : Bool :=
