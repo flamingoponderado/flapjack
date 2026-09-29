@@ -76,7 +76,7 @@ private def generatedAddCarry : WordLangProgHOL (BitVec 8) :=
   .inst (.arith (.addCarry 3 4 5 6))
 
 example : wordLangProgFromHOL generatedAddCarry =
-    some (.inst (.arith (.cakeAddCarry 3 5 6 4))) := by
+    some (.inst (.arith (.cakeAddCarry 3 4 5 6))) := by
   simp [generatedAddCarry, wordLangProgFromHOL,
     wordLangInstFromHOL, wordLangArithFromHOL]
 
