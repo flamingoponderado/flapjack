@@ -11475,6 +11475,14 @@
     "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.9.16.7) against loop_to_wordProofScript.sml:323-329. HOL quantifies params, k, n, l and assumes k < LENGTH params ∧ ALL_DISTINCT params before concluding lookup (EL k params) (make_ctxt n params l) = SOME (2*k+n). Lean preserves binder order, the same bound and distinctness premise (List.Nodup is the exact List rendering of ALL_DISTINCT), lookup result, starting register and arithmetic. The dependent List.get index is justified by the existing k < length premise and adds no semantic assumption; both source `make_ctxt` and Spt insertion are constructor-for-constructor exact carriers. Regression checks index zero and index two for distinct [3,5,9] from base 4."
   },
   {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "lookup_make_ctxt_EVEN",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "makeCtxtHOL_lookupEven",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.9.16.8) against loop_to_wordProofScript.sml:341-353. HOL quantifies xs, m, l, n, y; assumes EVEN m, all successful lookups in l are even, and lookup n (make_ctxt m xs l) = SOME y; concludes EVEN y. Lean keeps that binder/premise/conclusion order over exact List Nat and Spt Nat carriers, using the source-reviewed HOL EVEN encoding v % 2 = 0 from FindVarExact. Proof preserves parity at the inserted value and carries existing-context parity through distinct-key insertion. Tests cover both a pre-existing even-valued key and a generated even register."
+  },
+  {
     "hol_path": "cakeml/pancake/pan_commonScript.sml",
     "hol_name": "distinct_lists_def",
     "lean_path": "Flapjack/Pancake/PanCommon.lean",
@@ -24195,6 +24203,15 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-c source comparison (2026-09-29; bead flapjack-pxn.18.5.9.17.3) against loop_to_wordProofScript.sml:410-417, corrected after coordinator review HOLD. HOL quantifies target state t and premise env_to_list env1 t.permute = (l,permute). Lean now takes target : WordSemStateFiniteExact width C F and uses target.permute in the premise, rather than quantifying an independent bijSeq. Both conclusions remain over exact Spt maps: sptDomain/sptFromAList render domain/fromAList, and sptLookup_sptFromAList is the first-match ALOOKUP rendering. The proof obtains lookup equality from env_to_list_lookup_equiv with that same target.permute, with no additional premise. fmap_as_finite_support_relation records only the exact target-state fpRegs/store finite-map carrier; words_as_type_indexed_bitvec records HOL's word dimension."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "cut_env_LN_IMP",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "wordSemCutEnvLNIMPHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison (2026-09-29; bead flapjack-pxn.18.5.9.17.4) against loop_to_wordProofScript.sml:419-424. HOL states cut_env (s,LN) l = SOME env ==> cut_envs (s,LN) l = SOME (env,LN). Lean retains the same two inputs, success premise, and pair conclusion using WordLangCutsetsHOL = Spt Unit × Spt Unit and exact Spt locals/outputs; no logical premise was added. The tagged wordSem cut_envs/cut_names/cut_env definitions match HOL: the empty second num_set succeeds and intersects to LN, while cut_env unions that second result on the left of e1, so union LN e1 is e1. The only representation qualification is the polymorphic HOL word value model as width-indexed BitVec; the Lean positive-width instance is the carrier constraint."
   },
   {
     "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
