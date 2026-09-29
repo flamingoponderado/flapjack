@@ -21933,5 +21933,39 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.6.54): case piece `ShMem op v e` of ncompile_correct (crep_to_loopProofScript.sml:110-134 statement; Resume ncompile_correct[ShMem] at 2106-2239; evaluate_ind's ShMem case has no induction hypothesis). No extra antecedent: payload (op : memop as the shared asm$memop carrier WordMemOp, v : varname, e) and v1, then HOL's ∀res s1 t ctxt l, all seven premises and the full ∃ck res1 t1 conclusion as in the other pieces. compile (ShMem op v e) = nested_seq (p ++ [ShMem op (vars v) le]) when v is mapped (tagged compileHOLExact; the unmapped Skip branch cannot follow a non-Error source run because locals_rel maps every present local). The proof follows HOL: comp_exp_preserves_eval on the address; locals_rel_cutset_prop with comp_syn_impl_cut_sets_subspt; locals_rel_intro for the mapped variable's value; then sh_mem_op by operator: the four loads and four stores each correspond via private lemmas (same call_FFI SharedMem request: panWordToBytesHOL = map toBitVec crepClockWordToBytes, same FFI state and shared domain by state_rel, byte_align bridge), FFI_final giving SOME (FinalFFI) on both sides (source empty_locals / unchanged locals vs target call_env []: state_rel is locals-free, locals case T), FFI_return giving NONE with the same new ffi and, for loads, the same decoded word (panWordOfBytesHOL_eq_crepClockWordOfBytes) written to v and vars v (the lookup_insert / FLOOKUP_UPDATE / distinct_vars locals_rel step). #print axioms: [propext, Classical.choice, Quot.sound]. Qualifiers as for the other ncompile_correct pieces. [flapjack-pxn.18.5.6.24.1, 2026-09-29: the result map, result-dependent locals relation and evaluate_ind property are the canonical NCompileCorrect.resultToLoop / localsResultRel / PropertyAt (NCompileCorrect/Property.lean) shared by all ncompile_correct pieces; statements relocked, content unchanged.]"
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ncompile_correct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NCompileCorrect/Assembly.lean",
+    "lean_name": "crepToLoop_ncompile_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.6.24) against ncompile_correct at crep_to_loopProofScript.sml:110-134: `∀v v1 res s1 t ctxt l. evaluate (v,v1) = (res,s1) ∧ res ≠ SOME Error ∧ state_rel v1 t ∧ mem_rel v1.memory t.memory v1.memaddrs ∧ globals_rel v1.globals t.globals ∧ code_rel ctxt v1.code t.code ∧ locals_rel ctxt l v1.locals t.locals ⇒ ∃ck res1 t1. evaluate (compile ctxt l v,t with clock := t.clock + ck) = (res1,t1) ∧ state_rel s1 t1 ∧ mem_rel s1.memory t1.memory s1.memaddrs ∧ globals_rel s1.globals t1.globals ∧ code_rel ctxt s1.code t1.code ∧ (res1 = case res of ...) ∧ case res of ...`. All seven binders in HOL order, the seven premises, and the full existential conclusion over the tagged exact evalCrepSemHOLProgExact (crepSem evaluate_def), LoopSemStateFiniteExact.evaluate (loopSem evaluate_def), compileHOLExact (compile_def) and the tagged relations. HOL's two inline `case res` expressions are the canonical untagged NCompileCorrect.resultToLoop (NONE/Break/Continue/Return with MAP wlab_wloc/Exception with Word/TimeOut/FinalFFI/Error, clause for clause) and NCompileCorrect.localsResultRel (locals_rel for NONE/Break/Continue, F for Error, T otherwise), the same helpers every case piece uses. No extra hypotheses. The proof is HOL's recInduct crepSemTheory.evaluate_ind: the tagged evaluate_ind port evalCrepSemHOLProgExact_induct dispatches all nineteen tagged case pieces (untagged assembly helper crepToLoopNcompileCorrectOf in the same module). #print axioms: [propext, Classical.choice, Quot.sound]. Qualifiers as for the case pieces."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ocompile_correct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NCompileCorrect/Assembly.lean",
+    "lean_name": "crepToLoop_ocompile_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; beads flapjack-pxn.18.5.6.24/.25) against ocompile_correct at crep_to_loopProofScript.sml:3720-3750: `evaluate (p,s) = (res,s1) ∧ state_rel s t ∧ mem_rel s.memory t.memory s.memaddrs ∧ globals_rel s.globals t.globals ∧ code_rel ctxt s.code t.code ∧ locals_rel ctxt l s.locals t.locals ∧ res ≠ SOME Error ∧ (!n. res ≠ SOME (Break n)) ∧ (!n. res ≠ SOME (Continue n)) ∧ res ≠ NONE ⇒ ∃ck res1 t1. evaluate (ocompile ctxt l p,t with clock := t.clock + ck) = (res1,t1) ∧ state_rel s1 t1 ∧ mem_rel s1.memory t1.memory s1.memaddrs ∧ globals_rel s1.globals t1.globals ∧ code_rel ctxt s1.code t1.code ∧ case res of NONE => F | SOME Error => F | SOME TimeOut => res1 = SOME TimeOut | SOME (Break n) => F | SOME (Continue n) => F | SOME (Return v) => res1 = SOME (Result (MAP wlab_wloc v)) | SOME (Exception eid) => res1 = SOME (Exception (Word eid)) | SOME (FinalFFI f) => res1 = SOME (FinalFFI f)`. HOL's free variables are universally quantified in order of first occurrence (p s res s1 t ctxt l); all ten premises in order, the existential, the four relations and the result case (as an inline match, clause for clause, with MAP wlab_wloc as List.map wlabWlocExact) over the tagged ocompileHOLExact (ocompile_def). No extra hypotheses. The proof is HOL's: the tagged crepToLoop_ncompile_correct, then loop_liveProof optimise_correct (via the untagged helper crepToLoopOcompileCorrectOf). #print axioms: [propext, Classical.choice, Quot.sound]. Qualifiers as for ncompile_correct."
   }
 ]
