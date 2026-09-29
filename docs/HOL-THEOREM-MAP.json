@@ -24264,6 +24264,14 @@
     "reviewer": "flapjack-luna-c source comparison (2026-09-29; bead flapjack-pxn.18.5.9.17.4) against loop_to_wordProofScript.sml:419-424. HOL states cut_env (s,LN) l = SOME env ==> cut_envs (s,LN) l = SOME (env,LN). Lean retains the same two inputs, success premise, and pair conclusion using WordLangCutsetsHOL = Spt Unit × Spt Unit and exact Spt locals/outputs; no logical premise was added. The tagged wordSem cut_envs/cut_names/cut_env definitions match HOL: the empty second num_set succeeds and intersects to LN, while cut_env unions that second result on the left of e1, so union LN e1 is e1. The only representation qualification is the polymorphic HOL word value model as width-indexed BitVec; the Lean positive-width instance is the carrier constraint."
   },
   {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "mkNewCutsetHOL_subsetTarget",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only private helper for the tagged cut_env_mk_new_cutset proof. HOL derives this subset implication inline from locals_rel and the source live-domain premise; there is no separate HOL declaration."
+  },
+  {
     "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
     "hol_name": "cut_env_mk_new_cutset",
     "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
