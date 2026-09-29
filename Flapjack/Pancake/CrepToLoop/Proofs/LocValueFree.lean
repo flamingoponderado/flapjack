@@ -32,6 +32,492 @@ decreasing_by
     | decreasing_trivial
     | (simp_all only [HolLoopProg.call.sizeOf_spec]; omega)
 
+/-- Every element of a list satisfies the nested LocValue-free predicate. -/
+def holLoopProgListLocValueFree {width : Nat} [NeZero width]
+    (programs : List (HolLoopProg width)) : Prop :=
+  ∀ program, program ∈ programs → holLoopProgLocValueFree program
+
+private theorem holLoopProgListLocValueFree_append {width : Nat} [NeZero width]
+    (first second : List (HolLoopProg width))
+    (hfirst : holLoopProgListLocValueFree first)
+    (hsecond : holLoopProgListLocValueFree second) :
+    holLoopProgListLocValueFree (first ++ second) := by
+  intro program hmem
+  rcases List.mem_append.mp hmem with hmem | hmem
+  · exact hfirst program hmem
+  · exact hsecond program hmem
+
+private theorem holLoopProgListLocValueFree_append3 {width : Nat} [NeZero width]
+    (first second : List (HolLoopProg width)) (last : HolLoopProg width)
+    (hfirst : holLoopProgListLocValueFree first)
+    (hsecond : holLoopProgListLocValueFree second)
+    (hlast : holLoopProgListLocValueFree [last]) :
+    holLoopProgListLocValueFree (first ++ second ++ [last]) := by
+  intro program hmem
+  rcases List.mem_append.mp hmem with hprefix | hlastMem
+  · rcases List.mem_append.mp hprefix with hfirstMem | hsecondMem
+    · exact hfirst program hfirstMem
+    · exact hsecond program hsecondMem
+  · exact hlast program (by simpa using hlastMem)
+
+private theorem loopNestedSeqHOL_preserves_locValueFree {width : Nat} [NeZero width]
+    (programs : List (HolLoopProg width))
+    (hfree : holLoopProgListLocValueFree programs) :
+    holLoopProgLocValueFree (loopNestedSeqHOL programs) := by
+  induction programs with
+  | nil => simp [loopNestedSeqHOL, holLoopProgLocValueFree]
+  | cons first rest ih =>
+      have hfirst := hfree first (by simp)
+      have hrest : holLoopProgListLocValueFree rest := by
+        intro program hmem
+        exact hfree program (by simp [hmem])
+      simpa [loopNestedSeqHOL, holLoopProgLocValueFree] using And.intro hfirst (ih hrest)
+
+private theorem holLoopProgListLocValueFree_zipWith {width : Nat} [NeZero width]
+    {α β : Type} (f : α → β → HolLoopProg width)
+    (hfree : ∀ x y, holLoopProgLocValueFree (f x y)) :
+    ∀ (xs : List α) (ys : List β), holLoopProgListLocValueFree (xs.zipWith f ys)
+  | [], _ => by simp [holLoopProgListLocValueFree]
+  | _ :: _, [] => by simp [holLoopProgListLocValueFree]
+  | x :: xs, y :: ys => by
+      simp only [List.zipWith_cons_cons, holLoopProgListLocValueFree, List.mem_cons]
+      intro program hmem
+      rcases hmem with rfl | hmem
+      · exact hfree x y
+      · exact holLoopProgListLocValueFree_zipWith f hfree xs ys program hmem
+
+private theorem compileCrepopHOLExact_codeLocValueFree {width : Nat} [NeZero width]
+    (operator : CrepOp) (target : Compiler.Encoders.Asm.AsmArchitecture)
+    (left right tmp : Nat)
+    (live : NumSet) :
+    holLoopProgListLocValueFree
+      (compileCrepopHOLExact (width := width) operator target left right tmp live).1 := by
+  cases operator with
+  | mul =>
+      by_cases htarget : target = .armv7 <;>
+        simp [compileCrepopHOLExact, htarget,
+          holLoopProgListLocValueFree, holLoopProgLocValueFree]
+
+mutual
+private theorem compileExpHOLExact_codeLocValueFree {width : Nat} [NeZero width]
+    (context : CrepToLoopContextExact) (tmp : Nat) (live : NumSet) :
+    ∀ expression : CrepExpHOL width,
+      holLoopProgListLocValueFree (compileExpHOLExact context tmp live expression).1
+  | .baseAddr => by simp [compileExpHOLExact, holLoopProgListLocValueFree]
+  | .topAddr => by simp [compileExpHOLExact, holLoopProgListLocValueFree]
+  | .const _ => by simp [compileExpHOLExact, holLoopProgListLocValueFree]
+  | .var _ => by simp [compileExpHOLExact, holLoopProgListLocValueFree]
+  | .load address => by
+      have ih := compileExpHOLExact_codeLocValueFree context tmp live address
+      rcases hA : compileExpHOLExact context tmp live address with ⟨code, value, next, outLive⟩
+      rw [hA] at ih
+      simp only at ih
+      simp only [compileExpHOLExact, hA]
+      exact ih
+  | .load32 address => by
+      have ih := compileExpHOLExact_codeLocValueFree context tmp live address
+      rcases hA : compileExpHOLExact context tmp live address with ⟨code, value, next, outLive⟩
+      rw [hA] at ih
+      simp only at ih
+      simp only [compileExpHOLExact, hA]
+      exact holLoopProgListLocValueFree_append code _ ih (by
+        simp [holLoopProgListLocValueFree, holLoopProgLocValueFree])
+  | .loadByte address => by
+      have ih := compileExpHOLExact_codeLocValueFree context tmp live address
+      rcases hA : compileExpHOLExact context tmp live address with ⟨code, value, next, outLive⟩
+      rw [hA] at ih
+      simp only at ih
+      simp only [compileExpHOLExact, hA]
+      exact holLoopProgListLocValueFree_append code _ ih (by
+        simp [holLoopProgListLocValueFree, holLoopProgLocValueFree])
+  | .loadGlob _ => by simp [compileExpHOLExact, holLoopProgListLocValueFree]
+  | .op operator expressions => by
+      have ih := compileExpsHOLExact_codeLocValueFree context tmp live expressions
+      rcases hA : compileExpsHOLExact context tmp live expressions with
+        ⟨code, values, next, outLive⟩
+      rw [hA] at ih
+      simp only at ih
+      simp only [compileExpHOLExact, hA]
+      exact ih
+  | .crepOp operator expressions => by
+      have ih := compileExpsHOLExact_codeLocValueFree context tmp live expressions
+      rcases hA : compileExpsHOLExact context tmp live expressions with
+        ⟨code, values, next, outLive⟩
+      rw [hA] at ih
+      simp only at ih
+      rcases hC : compileCrepopHOLExact (width := width) operator context.target next (next + 1)
+          (next + values.length)
+          (sptListInsert ((List.range values.length).map (fun offset => next + offset)) outLive)
+          with ⟨operationCode, destination⟩
+      simp only [compileExpHOLExact, hA, hC]
+      have hAssigned : holLoopProgListLocValueFree
+          ((List.range values.length).zipWith
+            (fun offset value => HolLoopProg.assign (next + offset) value) values) :=
+        holLoopProgListLocValueFree_zipWith _
+          (fun _ _ => by simp [holLoopProgLocValueFree]) _ _
+      have hPrefix := holLoopProgListLocValueFree_append code _ ih hAssigned
+      have hOperation : holLoopProgListLocValueFree operationCode := by
+        have h := compileCrepopHOLExact_codeLocValueFree (width := width) operator context.target next
+          (next + 1) (next + values.length)
+          (sptListInsert ((List.range values.length).map (fun offset => next + offset)) outLive)
+        rw [hC] at h
+        exact h
+      exact holLoopProgListLocValueFree_append _ operationCode hPrefix hOperation
+  | .cmp operator left right => by
+      have ihLeft := compileExpHOLExact_codeLocValueFree context tmp live left
+      rcases hA : compileExpHOLExact context tmp live left with
+        ⟨leftCode, leftValue, leftNext, leftLive⟩
+      rw [hA] at ihLeft
+      simp only at ihLeft
+      have ihRight := compileExpHOLExact_codeLocValueFree context leftNext leftLive right
+      rcases hB : compileExpHOLExact context leftNext leftLive right with
+        ⟨rightCode, rightValue, rightNext, rightLive⟩
+      rw [hB] at ihRight
+      simp only at ihRight
+      simp only [compileExpHOLExact, hA, hB, progIfHOLExact]
+      have htail : holLoopProgListLocValueFree
+          [.assign (rightNext + 1) leftValue,
+           .assign (rightNext + 2) rightValue,
+           .ite operator (rightNext + 1) (.reg (rightNext + 2))
+             (.assign (rightNext + 1) (.const 1))
+             (.assign (rightNext + 1) (.const 0))
+             (sptListInsert [rightNext + 1, rightNext + 2] rightLive)] := by
+        simp [holLoopProgListLocValueFree, holLoopProgLocValueFree]
+      exact holLoopProgListLocValueFree_append (leftCode ++ rightCode) _
+        (holLoopProgListLocValueFree_append leftCode rightCode ihLeft ihRight) htail
+  | .shift operator left right => by
+      have ihLeft := compileExpHOLExact_codeLocValueFree context tmp live left
+      rcases hA : compileExpHOLExact context tmp live left with
+        ⟨leftCode, leftValue, leftNext, leftLive⟩
+      rw [hA] at ihLeft
+      simp only at ihLeft
+      have ihRight := compileExpHOLExact_codeLocValueFree context leftNext leftLive right
+      rcases hB : compileExpHOLExact context leftNext leftLive right with
+        ⟨rightCode, rightValue, rightNext, rightLive⟩
+      rw [hB] at ihRight
+      simp only at ihRight
+      simp only [compileExpHOLExact, hA, hB]
+      exact holLoopProgListLocValueFree_append leftCode rightCode ihLeft ihRight
+  termination_by expression => sizeOf expression
+
+private theorem compileExpsHOLExact_codeLocValueFree {width : Nat} [NeZero width]
+    (context : CrepToLoopContextExact) (tmp : Nat) (live : NumSet) :
+    ∀ expressions : List (CrepExpHOL width),
+      holLoopProgListLocValueFree (compileExpsHOLExact context tmp live expressions).1
+  | [] => by simp [compileExpsHOLExact, holLoopProgListLocValueFree]
+  | expression :: expressions => by
+      have ihExpression :=
+        compileExpHOLExact_codeLocValueFree context tmp live expression
+      rcases hA : compileExpHOLExact context tmp live expression with
+        ⟨code, value, next, outLive⟩
+      rw [hA] at ihExpression
+      simp only at ihExpression
+      have ihTail := compileExpsHOLExact_codeLocValueFree context next outLive expressions
+      rcases hB : compileExpsHOLExact context next outLive expressions with
+        ⟨tailCode, tailValues, finalTemp, finalLive⟩
+      rw [hB] at ihTail
+      simp only at ihTail
+      simp only [compileExpsHOLExact, hA, hB]
+      exact holLoopProgListLocValueFree_append code tailCode ihExpression ihTail
+  termination_by expressions => sizeOf expressions
+end
+
+private theorem compileHOLExact_locValueFree {width : Nat} [NeZero width] :
+    ∀ (context : CrepToLoopContextExact) (live : NumSet)
+      (program : CrepProgHOL width),
+      holLoopProgLocValueFree (compileHOLExact context live program)
+  | context, live, .skip => by simp [compileHOLExact, holLoopProgLocValueFree]
+  | context, live, .break _ => by simp [compileHOLExact, holLoopProgLocValueFree]
+  | context, live, .continue _ => by simp [compileHOLExact, holLoopProgLocValueFree]
+  | context, live, .tick => by simp [compileHOLExact, holLoopProgLocValueFree]
+  | context, live, .raise exception => by
+      simp [compileHOLExact, holLoopProgLocValueFree]
+  | context, live, .shMem operator name address => by
+      cases hname : context.vars.lookup name with
+      | none => simp [compileHOLExact, hname, holLoopProgLocValueFree]
+      | some mappedName =>
+          rcases hA : compileExpHOLExact context (context.vmax + 1) live address with
+            ⟨code, compiledAddress, next, outLive⟩
+          have hcode := compileExpHOLExact_codeLocValueFree context
+            (context.vmax + 1) live address
+          rw [hA] at hcode
+          simp only at hcode
+          simp only [compileHOLExact, hname, hA]
+          apply loopNestedSeqHOL_preserves_locValueFree
+          exact holLoopProgListLocValueFree_append code _ hcode (by
+            simp [holLoopProgListLocValueFree, holLoopProgLocValueFree])
+  | context, live, .store destination source => by
+      rcases hD : compileExpHOLExact context (context.vmax + 1) live destination with
+        ⟨destinationCode, address, nextTemporary, nextLive⟩
+      rcases hS : compileExpHOLExact context nextTemporary nextLive source with
+        ⟨sourceCode, value, finalTemporary, finalLive⟩
+      have hDfree := compileExpHOLExact_codeLocValueFree context
+        (context.vmax + 1) live destination
+      have hSfree := compileExpHOLExact_codeLocValueFree context
+        nextTemporary nextLive source
+      rw [hD] at hDfree
+      rw [hS] at hSfree
+      simp only at hDfree hSfree
+      simp only [compileHOLExact, hD, hS]
+      apply loopNestedSeqHOL_preserves_locValueFree
+      have htail : holLoopProgListLocValueFree
+          [.assign finalTemporary value, .store address finalTemporary] := by
+        simp [holLoopProgListLocValueFree, holLoopProgLocValueFree]
+      apply holLoopProgListLocValueFree_append
+        (destinationCode ++ sourceCode) _
+        (holLoopProgListLocValueFree_append destinationCode sourceCode hDfree hSfree)
+      exact htail
+  | context, live, .store32 destination source => by
+      rcases hD : compileExpHOLExact context (context.vmax + 1) live destination with
+        ⟨destinationCode, address, nextTemporary, nextLive⟩
+      rcases hS : compileExpHOLExact context nextTemporary nextLive source with
+        ⟨sourceCode, value, finalTemporary, finalLive⟩
+      have hDfree := compileExpHOLExact_codeLocValueFree context
+        (context.vmax + 1) live destination
+      have hSfree := compileExpHOLExact_codeLocValueFree context
+        nextTemporary nextLive source
+      rw [hD] at hDfree
+      rw [hS] at hSfree
+      simp only at hDfree hSfree
+      simp only [compileHOLExact, hD, hS]
+      apply loopNestedSeqHOL_preserves_locValueFree
+      have htail : holLoopProgListLocValueFree
+          [.assign finalTemporary address, .assign (finalTemporary + 1) value,
+           .store32 finalTemporary (finalTemporary + 1)] := by
+        simp [holLoopProgListLocValueFree, holLoopProgLocValueFree]
+      apply holLoopProgListLocValueFree_append
+        (destinationCode ++ sourceCode) _
+        (holLoopProgListLocValueFree_append destinationCode sourceCode hDfree hSfree)
+      exact htail
+  | context, live, .storeByte destination source => by
+      rcases hD : compileExpHOLExact context (context.vmax + 1) live destination with
+        ⟨destinationCode, address, nextTemporary, nextLive⟩
+      rcases hS : compileExpHOLExact context nextTemporary nextLive source with
+        ⟨sourceCode, value, finalTemporary, finalLive⟩
+      have hDfree := compileExpHOLExact_codeLocValueFree context
+        (context.vmax + 1) live destination
+      have hSfree := compileExpHOLExact_codeLocValueFree context
+        nextTemporary nextLive source
+      rw [hD] at hDfree
+      rw [hS] at hSfree
+      simp only at hDfree hSfree
+      simp only [compileHOLExact, hD, hS]
+      apply loopNestedSeqHOL_preserves_locValueFree
+      have htail : holLoopProgListLocValueFree
+          [.assign finalTemporary address, .assign (finalTemporary + 1) value,
+           .storeByte finalTemporary (finalTemporary + 1)] := by
+        simp [holLoopProgListLocValueFree, holLoopProgLocValueFree]
+      apply holLoopProgListLocValueFree_append
+        (destinationCode ++ sourceCode) _
+        (holLoopProgListLocValueFree_append destinationCode sourceCode hDfree hSfree)
+      exact htail
+  | context, live, .storeGlob address value => by
+      rcases hA : compileExpHOLExact context (context.vmax + 1) live value with
+        ⟨code, compiledValue, next, outLive⟩
+      have hcode := compileExpHOLExact_codeLocValueFree context
+        (context.vmax + 1) live value
+      rw [hA] at hcode
+      simp only at hcode
+      simp only [compileHOLExact, hA]
+      apply loopNestedSeqHOL_preserves_locValueFree
+      exact holLoopProgListLocValueFree_append code _ hcode (by
+        simp [holLoopProgListLocValueFree, holLoopProgLocValueFree])
+  | context, live, .seq first second => by
+      simp only [compileHOLExact, holLoopProgLocValueFree]
+      exact ⟨compileHOLExact_locValueFree context live first,
+        compileHOLExact_locValueFree context live second⟩
+  | context, live, .ite condition thenBranch elseBranch => by
+      rcases hC : compileExpHOLExact context (context.vmax + 1) live condition with
+        ⟨conditionCode, compiledCondition, temporary, outLive⟩
+      have hcode := compileExpHOLExact_codeLocValueFree context
+        (context.vmax + 1) live condition
+      rw [hC] at hcode
+      simp only at hcode
+      have hthen := compileHOLExact_locValueFree context live thenBranch
+      have helse := compileHOLExact_locValueFree context live elseBranch
+      simp only [compileHOLExact, hC]
+      apply loopNestedSeqHOL_preserves_locValueFree
+      have htail : holLoopProgListLocValueFree
+          [.assign temporary compiledCondition,
+           .ite .notEqual temporary (.imm (0 : BitVec width))
+             (compileHOLExact context live thenBranch)
+             (compileHOLExact context live elseBranch) live] := by
+        simp [holLoopProgListLocValueFree, holLoopProgLocValueFree, hthen, helse]
+      exact holLoopProgListLocValueFree_append conditionCode _ hcode htail
+  | context, live, .while condition body => by
+      rcases hC : compileExpHOLExact context (context.vmax + 1) live condition with
+        ⟨conditionCode, compiledCondition, temporary, outLive⟩
+      have hcode := compileExpHOLExact_codeLocValueFree context
+        (context.vmax + 1) live condition
+      rw [hC] at hcode
+      simp only at hcode
+      have hbody := compileHOLExact_locValueFree context live body
+      simp only [compileHOLExact, hC, holLoopProgLocValueFree]
+      apply loopNestedSeqHOL_preserves_locValueFree
+      have htail : holLoopProgListLocValueFree
+          [.assign temporary compiledCondition,
+           .ite .notEqual temporary (.imm (0 : BitVec width))
+             (.seq (compileHOLExact context live body) (.continue 0)) (.break 0) live] := by
+        simp [holLoopProgListLocValueFree, holLoopProgLocValueFree, hbody]
+      exact holLoopProgListLocValueFree_append conditionCode _ hcode htail
+  | context, live, .assign name value => by
+      cases hname : context.vars.lookup name with
+      | none => simp [compileHOLExact, hname, holLoopProgLocValueFree]
+      | some mappedName =>
+          rcases hA : compileExpHOLExact context (context.vmax + 1) live value with
+            ⟨code, compiledValue, next, outLive⟩
+          have hcode := compileExpHOLExact_codeLocValueFree context
+            (context.vmax + 1) live value
+          rw [hA] at hcode
+          simp only at hcode
+          simp only [compileHOLExact, hname, hA]
+          apply loopNestedSeqHOL_preserves_locValueFree
+          exact holLoopProgListLocValueFree_append code _ hcode (by
+            simp [holLoopProgListLocValueFree, holLoopProgLocValueFree])
+  | context, live, .primitive destinations operator arguments => by
+      cases hDest : destinations.mapM context.vars.lookup <;>
+        cases hArgs : arguments.mapM context.vars.lookup <;>
+          simp [compileHOLExact, hDest, hArgs, holLoopProgLocValueFree]
+  | context, live, .dec name value body => by
+      rcases hA : compileExpHOLExact context (context.vmax + 1) live value with
+        ⟨code, compiledValue, temporary, outLive⟩
+      have hcode := compileExpHOLExact_codeLocValueFree context
+        (context.vmax + 1) live value
+      rw [hA] at hcode
+      simp only at hcode
+      let bodyContext :=
+        { context with vars := context.vars.updateEq (name, temporary), vmax := temporary }
+      let bodyLive := sptInsert temporary () live
+      have hbody := compileHOLExact_locValueFree bodyContext bodyLive body
+      simp only [compileHOLExact, hA, holLoopProgLocValueFree]
+      exact ⟨loopNestedSeqHOL_preserves_locValueFree code hcode, True.intro, hbody⟩
+  | context, live, .call none name arguments => by
+      rcases hA : compileExpsHOLExact context (context.vmax + 1) live arguments with
+        ⟨code, values, nextTemporary, outLive⟩
+      have hcode := compileExpsHOLExact_codeLocValueFree context
+        (context.vmax + 1) live arguments
+      rw [hA] at hcode
+      simp only at hcode
+      have hAssignments := holLoopProgListLocValueFree_zipWith
+        HolLoopProg.assign
+        (fun _ _ => by simp [holLoopProgLocValueFree])
+        (genTemps nextTemporary values.length) values
+      have hCall : holLoopProgListLocValueFree
+          [HolLoopProg.call (width := width) none (some (findLabExact context name))
+            (genTemps nextTemporary values.length) none] := by
+        simp [holLoopProgListLocValueFree, holLoopProgLocValueFree]
+      simp only [compileHOLExact, hA]
+      apply loopNestedSeqHOL_preserves_locValueFree
+      exact holLoopProgListLocValueFree_append3 code
+        (List.zipWith HolLoopProg.assign (genTemps nextTemporary values.length) values)
+        (HolLoopProg.call none (some (findLabExact context name))
+          (genTemps nextTemporary values.length) none)
+        hcode hAssignments hCall
+  | context, live, .call (some (returns, none)) name arguments => by
+      rcases hA : compileExpsHOLExact context (context.vmax + 1) live arguments with
+        ⟨code, values, nextTemporary, outLive⟩
+      have hcode := compileExpsHOLExact_codeLocValueFree context
+        (context.vmax + 1) live arguments
+      rw [hA] at hcode
+      simp only at hcode
+      have hAssignments := holLoopProgListLocValueFree_zipWith
+        HolLoopProg.assign
+        (fun _ _ => by simp [holLoopProgLocValueFree])
+        (genTemps nextTemporary values.length) values
+      have hCall : holLoopProgListLocValueFree
+          [HolLoopProg.call (width := width)
+            (some ((match returns.mapM context.vars.lookup with
+              | none => [context.vmax + 2]
+              | some names => names), live))
+            (some (findLabExact context name)) (genTemps nextTemporary values.length)
+            (some (context.vmax + 1, .raise (context.vmax + 1), .skip, live))] := by
+        simp [holLoopProgListLocValueFree, holLoopProgLocValueFree]
+      rw [compileHOLExact]
+      simp only [hA]
+      apply loopNestedSeqHOL_preserves_locValueFree
+      exact holLoopProgListLocValueFree_append3 code
+        (List.zipWith HolLoopProg.assign (genTemps nextTemporary values.length) values)
+        (HolLoopProg.call
+          (some ((match returns.mapM context.vars.lookup with
+            | none => [context.vmax + 2]
+            | some names => names), live))
+          (some (findLabExact context name)) (genTemps nextTemporary values.length)
+          (some (context.vmax + 1, .raise (context.vmax + 1), .skip, live)))
+        hcode hAssignments hCall
+  | context, live, .call (some (returns, some (exception, handler))) name arguments => by
+      rcases hA : compileExpsHOLExact context (context.vmax + 1) live arguments with
+        ⟨code, values, nextTemporary, outLive⟩
+      have hcode := compileExpsHOLExact_codeLocValueFree context
+        (context.vmax + 1) live arguments
+      rw [hA] at hcode
+      simp only at hcode
+      have hAssignments := holLoopProgListLocValueFree_zipWith
+        HolLoopProg.assign
+        (fun _ _ => by simp [holLoopProgLocValueFree])
+        (genTemps nextTemporary values.length) values
+      have hhandler := compileHOLExact_locValueFree context live handler
+      have hCall : holLoopProgListLocValueFree
+          [HolLoopProg.call (width := width)
+            (some ((match returns.mapM context.vars.lookup with
+              | none => [context.vmax + 2]
+              | some names => names), live))
+            (some (findLabExact context name)) (genTemps nextTemporary values.length)
+            (some (context.vmax + 1,
+              .ite .notEqual (context.vmax + 1) (.imm exception) (.raise (context.vmax + 1))
+                (.seq .tick (compileHOLExact context live handler)) live,
+              .skip, live))] := by
+        simp [holLoopProgListLocValueFree, holLoopProgLocValueFree, hhandler]
+      rw [compileHOLExact]
+      simp only [hA]
+      apply loopNestedSeqHOL_preserves_locValueFree
+      exact holLoopProgListLocValueFree_append3 code
+        (List.zipWith HolLoopProg.assign (genTemps nextTemporary values.length) values)
+        (HolLoopProg.call
+          (some ((match returns.mapM context.vars.lookup with
+            | none => [context.vmax + 2]
+            | some names => names), live))
+          (some (findLabExact context name)) (genTemps nextTemporary values.length)
+          (some (context.vmax + 1,
+            .ite .notEqual (context.vmax + 1) (.imm exception)
+              (.raise (context.vmax + 1)) (.seq .tick (compileHOLExact context live handler)) live,
+            .skip, live)))
+        hcode hAssignments hCall
+  | context, live, .extCall function configuration configurationLength array arrayLength => by
+      rw [compileHOLExact]
+      split <;> simp [holLoopProgLocValueFree]
+  | context, live, .return values => by
+      rcases hA : compileExpsHOLExact context (context.vmax + 1) live values with
+        ⟨code, compiledValues, nextTemporary, outLive⟩
+      have hcode := compileExpsHOLExact_codeLocValueFree context
+        (context.vmax + 1) live values
+      rw [hA] at hcode
+      simp only at hcode
+      have hAssignments := holLoopProgListLocValueFree_zipWith
+        HolLoopProg.assign
+        (fun _ _ => by simp [holLoopProgLocValueFree])
+        (genTemps nextTemporary compiledValues.length) compiledValues
+      have hReturn : holLoopProgListLocValueFree
+          [HolLoopProg.return (width := width)
+            (genTemps nextTemporary compiledValues.length)] := by
+        simp [holLoopProgListLocValueFree, holLoopProgLocValueFree]
+      unfold compileHOLExact
+      simp only [hA]
+      apply loopNestedSeqHOL_preserves_locValueFree
+      exact holLoopProgListLocValueFree_append3 code
+        (List.zipWith HolLoopProg.assign
+          (genTemps nextTemporary compiledValues.length) compiledValues)
+        (HolLoopProg.return (width := width)
+          (genTemps nextTemporary compiledValues.length))
+        hcode hAssignments hReturn
+termination_by _ _ program => sizeOf program
+decreasing_by
+  all_goals simp_wf
+  all_goals first
+    | decreasing_trivial
+    | (simp_all only [CrepProgHOL.dec.sizeOf_spec, CrepProgHOL.seq.sizeOf_spec,
+        CrepProgHOL.ite.sizeOf_spec, CrepProgHOL.while.sizeOf_spec,
+        CrepProgHOL.call.sizeOf_spec]; omega)
+
 /-- The exact loop-call optimizer does not introduce `locValue` into a
 program that was recursively free of it.  The live-set parameter is
 generalized so the `Seq` case can use the second induction hypothesis at the
@@ -304,11 +790,132 @@ theorem markAllHOL_preserves_locValueFree {width : Nat} [NeZero width]
                   rw [hmarkHandler] at hHandler'
                   rw [hmarkNormal] at hNormal'
                   cases handlerMarked <;> cases normalMarked <;>
-                    simp [holLoopProgLocValueFree, hHandler', hNormal']
+          simp [holLoopProgLocValueFree, hHandler', hNormal']
     all_goals
       intros
       simp_all [mProg, mPair, mTriple, mQuad, mHandler,
         holLoopProgLocValueFree, markAllHOL]
+  exact hgeneral hfree
+
+private theorem compHOL_preserves_locValueFree {width : Nat} [NeZero width]
+    (program : HolLoopProg width) (hfree : holLoopProgLocValueFree program) :
+    holLoopProgLocValueFree (compHOL program) := by
+  exact markAllHOL_preserves_locValueFree _
+    (shrinkHOL_preserves_locValueFree program .ln hfree)
+
+private theorem optimiseHOL_preserves_locValueFree {width : Nat} [NeZero width]
+    (program : HolLoopProg width) (hfree : holLoopProgLocValueFree program) :
+    holLoopProgLocValueFree (optimiseHOL program) := by
+  apply compHOL_preserves_locValueFree
+  exact loopCallCompHOL_preserves_locValueFree program .ln hfree
+
+/-- Every body row emitted by the exact, parser-oriented `compileProgHOLExact`
+entry point contains no recursive `locValue`. This is Flapjack-only path
+infrastructure, not an additional HOL result. The proof covers all constructors
+of `compileHOLExact`, including nested call handlers, then the exact `optimiseHOL`
+composition; the list theorem covers the `MAP2`/truncate boundary. The canonical
+projection to executable `LoopProg` is structural and leaves the forbidden
+constructor explicit, so the free-output fact is established before projection
+and does not rely on projection to erase it. `holLoopProgToExecutable_preserves_locValueFree`
+and the production adapter's `rebaseHOLFunctionLabels_preserves_locValueFree`
+cover the projection and label-rebase boundaries used by `Pipeline.lean`. -/
+theorem compileProgHOLExact_bodiesLocValueFree {width : Nat} [NeZero width]
+    (target : Flapjack.Compiler.Encoders.Asm.AsmArchitecture)
+    (program : List
+      (Flapjack.Basis.Pure.MlString.MlString × List Nat × CrepProgHOL width)) :
+    holLoopProgListLocValueFree
+      ((compileProgHOLExact target program).map (fun entry => entry.2.2)) := by
+  let functionNames := (List.range program.length).map (fun n => n + firstLoopName)
+  let compileFunction :=
+    compFuncHOLExact (width := width) target
+      (crepToLoopMakeFuncsExactExecutable program)
+  have hRows : holLoopProgListLocValueFree
+      (List.zipWith
+        (fun _ entry =>
+          optimiseHOL (compileFunction entry.2.1 (crepSimpProgHOL entry.2.2)))
+        functionNames program) := by
+    apply holLoopProgListLocValueFree_zipWith
+    intro _ entry
+    apply optimiseHOL_preserves_locValueFree
+    exact compileHOLExact_locValueFree
+      (mkCtxtExact target (makeVmapExact entry.2.1)
+        (crepToLoopMakeFuncsExactExecutable program) (entry.2.1.length - 1))
+      (listToNumSetHOLExact (List.range entry.2.1.length))
+      (crepSimpProgHOL entry.2.2)
+  simpa [compileProgHOLExact, functionNames, compileFunction,
+    compFuncHOLExact, List.map_zipWith] using hRows
+
+/-- Membership-oriented form of `compileProgHOLExact_bodiesLocValueFree` for
+callers inspecting one exact compiler row. -/
+theorem compileProgHOLExact_rowLocValueFree {width : Nat} [NeZero width]
+    (target : Flapjack.Compiler.Encoders.Asm.AsmArchitecture)
+    (program : List
+      (Flapjack.Basis.Pure.MlString.MlString × List Nat × CrepProgHOL width))
+    (entry : Nat × List Nat × HolLoopProg width)
+    (hentry : entry ∈ compileProgHOLExact target program) :
+    holLoopProgLocValueFree entry.2.2 := by
+  have hmem : entry.2.2 ∈ (compileProgHOLExact target program).map (fun row => row.2.2) :=
+    List.mem_map.mpr ⟨entry, hentry, rfl⟩
+  exact compileProgHOLExact_bodiesLocValueFree target program _ hmem
+
+/-- The executable Loop carrier has no nested `locValue` constructor. -/
+def loopProgLocValueFree {width : Nat} : LoopProg (BitVec width) → Prop
+  | .locValue _ _ => False
+  | .seq first second => loopProgLocValueFree first ∧ loopProgLocValueFree second
+  | .ite _ _ _ thenBranch elseBranch _ =>
+      loopProgLocValueFree thenBranch ∧ loopProgLocValueFree elseBranch
+  | .loop _ body _ => loopProgLocValueFree body
+  | .mark body => loopProgLocValueFree body
+  | .call _ _ _ none => True
+  | .call _ _ _ (some (_, handler, normal, _)) =>
+      loopProgLocValueFree handler ∧ loopProgLocValueFree normal
+  | _ => True
+termination_by program => sizeOf program
+decreasing_by
+  simp_wf
+  all_goals first
+    | decreasing_trivial
+    | (simp_all only [LoopProg.call.sizeOf_spec]; omega)
+
+/-- Structural exact-to-executable projection preserves recursive absence of
+`locValue`. In particular, the projection does not make a generated
+`locValue` disappear; the compiler proof establishes the constructor absent
+before this boundary is crossed. -/
+theorem holLoopProgToExecutable_preserves_locValueFree {width : Nat} [NeZero width]
+    (projectLive : NumSet → List Nat) (program : HolLoopProg width)
+    (hfree : holLoopProgLocValueFree program) :
+    loopProgLocValueFree (holLoopProgToExecutable projectLive program) := by
+  let mProg : HolLoopProg width → Prop := fun p =>
+    holLoopProgLocValueFree p →
+      loopProgLocValueFree (holLoopProgToExecutable projectLive p)
+  let mPair : HolLoopProg width × NumSet → Prop := fun p => mProg p.1
+  let mTriple : HolLoopProg width × HolLoopProg width × NumSet → Prop :=
+    fun p => mProg p.1 ∧ mProg p.2.1
+  let mQuad : Nat × HolLoopProg width × HolLoopProg width × NumSet → Prop :=
+    fun p => mTriple p.2
+  let mHandler : Option (Nat × HolLoopProg width × HolLoopProg width × NumSet) → Prop
+    | none => True
+    | some entry => mQuad entry
+  have hgeneral : mProg program := by
+    refine HolLoopProg.rec
+        (motive_1 := mProg) (motive_2 := mHandler) (motive_3 := mQuad)
+        (motive_4 := mTriple) (motive_5 := mPair)
+        ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_
+        ?_ ?_ ?_ ?_ ?_ ?_ ?_ program <;>
+      simp_all [mProg, mPair, mTriple, mQuad, mHandler,
+        holLoopProgLocValueFree, loopProgLocValueFree, holLoopProgToExecutable]
+    case refine_23 =>
+      intro returns target arguments handler hHandler hfree
+      cases handler with
+      | none => simp [loopProgLocValueFree, holLoopProgToExecutable]
+      | some entry =>
+          rcases entry with ⟨exception, first, second, live⟩
+          rcases hHandler with ⟨ihFirst, ihSecond⟩
+          simp only [holLoopProgLocValueFree] at hfree
+          rcases hfree with ⟨hFirst, hSecond⟩
+          have hFirst' := ihFirst hFirst
+          have hSecond' := ihSecond hSecond
+          simp [loopProgLocValueFree, holLoopProgToExecutable, hFirst', hSecond']
   exact hgeneral hfree
 
 end Flapjack
