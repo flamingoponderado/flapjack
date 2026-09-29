@@ -15,6 +15,36 @@ open Flapjack
 
 private abbrev Word64 := RiscV.Word 64
 
+/-! `scripts/hol-probes/crep_runtime_ffi_boundary_probe.out` records the direct
+HOL row `set_byte_0_roundtrip=0x102030405060708w`. Guard both reviewed
+renderings on that exact input, in addition to the production RISC-V codec
+checks in `CrepRuntimeFfiTargetParity`. -/
+private def byteSetOracleWord : Word64 := 0x0102030405060708
+private def byteSetOracleByte : UInt8 :=
+  panGetByteHOL (0 : Word64) byteSetOracleWord false
+private def byteSetOraclePanResult : Word64 :=
+  panSetByteHOL (0 : Word64) (BitVec.ofNat 64 byteSetOracleByte.toNat)
+    byteSetOracleWord false
+private def byteSetOracleRiscvResult : Word64 :=
+  riscvSetByteHOL false (0 : Word64) byteSetOracleWord byteSetOracleByte
+
+#guard byteSetOraclePanResult == byteSetOracleWord
+#guard byteSetOracleRiscvResult == byteSetOracleWord
+#guard byteSetOraclePanResult == byteSetOracleRiscvResult
+
+/-! Width 12 has one complete byte plus four preserved high bits. It is not a
+multiple of eight, but still satisfies the exact theorem's `8 ≤ width` premise. -/
+private def byteSetWidth12PanResult : RiscV.Word 12 :=
+  panSetByteHOL (0 : RiscV.Word 12) (BitVec.ofNat 12 0x12)
+    (BitVec.ofNat 12 0xABC) false
+private def byteSetWidth12RiscvResult : RiscV.Word 12 :=
+  riscvSetByteHOL false (0 : RiscV.Word 12) (BitVec.ofNat 12 0xABC)
+    (UInt8.ofNat 0x12)
+
+#guard byteSetWidth12PanResult == (BitVec.ofNat 12 0xA12)
+#guard byteSetWidth12RiscvResult == (BitVec.ofNat 12 0xA12)
+#guard byteSetWidth12PanResult == byteSetWidth12RiscvResult
+
 def originalProbeSource : String :=
   "cakeml/pancake/semantics/panSemScript.sml:209-297 (eval_def)"
 
