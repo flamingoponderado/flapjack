@@ -117,7 +117,7 @@ theorem decClock_crepStateAddClock {width : Nat} [NeZero width] {σ : Type}
 
 /-- The exact expression evaluator is insensitive to the clock shift. -/
 @[simp] theorem evalCrepSemHOLExp_crepStateAddClock {width : Nat} [NeZero width] {σ : Type}
-    (state : CrepSemHOLState width σ) [DecidablePred state.memaddrs]
+    (state : CrepSemHOLState width σ)
     (expression : CrepExpHOL width) (extra : Nat) :
     evalCrepSemHOLExp (crepStateAddClock state extra) expression =
       evalCrepSemHOLExp state expression := by
@@ -130,18 +130,18 @@ theorem decClock_crepStateAddClock {width : Nat} [NeZero width] {σ : Type}
     (motive_2 := fun expressions =>
       expressions.mapM (evalCrepSemHOLExp { state with clock := state.clock + extra }) =
         expressions.mapM (evalCrepSemHOLExp state))
-    (fun value => by simp only [evalCrepSemHOLExp])
-    (fun name => by simp only [evalCrepSemHOLExp])
-    (fun address ih => by simp only [evalCrepSemHOLExp, ih])
-    (fun address ih => by simp only [evalCrepSemHOLExp, ih])
-    (fun address ih => by simp only [evalCrepSemHOLExp, ih])
-    (fun address => by simp only [evalCrepSemHOLExp])
-    (fun operator args ih => by simp only [evalCrepSemHOLExp, ih])
-    (fun operator args ih => by simp only [evalCrepSemHOLExp, ih])
-    (fun operator left right ihl ihr => by simp only [evalCrepSemHOLExp, ihl, ihr])
-    (fun operator left right ihl ihr => by simp only [evalCrepSemHOLExp, ihl, ihr])
-    (by simp only [evalCrepSemHOLExp])
-    (by simp only [evalCrepSemHOLExp])
+    (fun value => by simp [evalCrepSemHOLExp])
+    (fun name => by simp [evalCrepSemHOLExp])
+    (fun address ih => by simp [evalCrepSemHOLExp, ih])
+    (fun address ih => by simp [evalCrepSemHOLExp, ih])
+    (fun address ih => by simp [evalCrepSemHOLExp, ih])
+    (fun address => by simp [evalCrepSemHOLExp])
+    (fun operator args ih => by simp [evalCrepSemHOLExp, ih])
+    (fun operator args ih => by simp [evalCrepSemHOLExp, ih])
+    (fun operator left right ihl ihr => by simp [evalCrepSemHOLExp, ihl, ihr])
+    (fun operator left right ihl ihr => by simp [evalCrepSemHOLExp, ihl, ihr])
+    (by simp [evalCrepSemHOLExp])
+    (by simp [evalCrepSemHOLExp])
     (by simp only [List.mapM_nil])
     (fun head tail ihh iht => by simp only [List.mapM_cons, ihh, iht])
     expression
@@ -180,7 +180,7 @@ theorem crepShMemStoreExactHOL_crepStateAddClock {width : Nat} [NeZero width] {�
 
 /-- The shared-memory dispatch commutes with the clock shift. -/
 theorem crepShMemOpExactHOL_crepStateAddClock {width : Nat} [NeZero width] {σ : Type}
-    (operator : CrepMemOp) (name : Nat) (address : BitVec width)
+    (operator : WordMemOp) (name : Nat) (address : BitVec width)
     (state : CrepSemHOLState width σ) [DecidablePred state.shMemaddrs]
     (r : Option (CrepResultHOLExact width)) (s' : CrepSemHOLState width σ)
     (extra : Nat) (h : crepShMemOpExactHOL operator name address state = (r, s')) :

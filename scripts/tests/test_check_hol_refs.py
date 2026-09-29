@@ -102,6 +102,70 @@ class HolAttributeSitesTest(unittest.TestCase):
               False, ("fm", "fm2"))],
         )
 
+    def test_fmap_as_finite_support_existentials_qualifier(self):
+        self.assertEqual(
+            list(SITES([
+                '@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml"',
+                '  "code_inl_rel_def"',
+                '  (fmap_as_finite_support_existentials := [inl_bag])]',
+            ], include_fmap_existentials=True)),
+            [(1, "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+              "code_inl_rel_def", None, (), (), (), (), False, (), False,
+              False, (), ("inl_bag",))],
+        )
+
+    def test_fmap_existential_requires_explicit_exact_carrier_and_witness(self):
+        lines = [
+            "theorem holFmapAsFiniteSupportExistentialWitness_eval_bag",
+            "    (bag : HolFiniteMapExact Nat Nat) :",
+            "    (Broad.ofBroad (Broad.toBroad bag)).lookup = bag.lookup ∧",
+            "      (Broad.ofBroad (Broad.toBroad bag)).finiteSupport = bag.finiteSupport ∧",
+            "      Broad.ofBroad (Broad.toBroad bag) = bag := by",
+            "  cases bag; rfl",
+        ]
+        declaration = "theorem eval : ∃ bag : HolFiniteMapExact Nat Nat, P bag"
+        self.assertEqual(
+            CHECKER["fmap_as_finite_support_existentials_errors"](
+                lines, "Example.lean", declaration, "eval", ("bag",)
+            ),
+            [],
+        )
+
+    def test_fmap_existential_rejects_raw_map_missing_binder_and_vacuous_witness(self):
+        errors = CHECKER["fmap_as_finite_support_existentials_errors"](
+            [], "Example.lean", "theorem eval : ∃ bag : Nat → Option Nat, P bag",
+            "eval", ("bag",),
+        )
+        self.assertTrue(any("must be an existential typed HolFiniteMapExact" in e for e in errors))
+        lines = [
+            "theorem holFmapAsFiniteSupportExistentialWitness_eval_bag",
+            "    (bag : HolFiniteMapExact Nat Nat) :",
+            "    ¬ (mapofBroad = maptoBroadlookup ∧ bag = bag) := by",
+            "  intro h; exact absurd h (by decide)",
+        ]
+        errors = CHECKER["fmap_as_finite_support_existentials_errors"](
+            lines, "Example.lean",
+            "theorem eval : ∃ bag : HolFiniteMapExact Nat Nat, P bag",
+            "eval", ("bag",),
+        )
+        self.assertTrue(any("canonical lookup/finiteSupport" in e for e in errors))
+
+    def test_fmap_existential_rejects_witness_assumption_and_scans_definition_body(self):
+        lines = [
+            "theorem holFmapAsFiniteSupportExistentialWitness_eval_bag",
+            "    (bag : HolFiniteMapExact Nat Nat)",
+            "    (h : (Broad.ofBroad (Broad.toBroad bag)).lookup = bag.lookup) :",
+            "    (Broad.ofBroad (Broad.toBroad bag)).lookup = bag.lookup ∧",
+            "      (Broad.ofBroad (Broad.toBroad bag)).finiteSupport = bag.finiteSupport ∧",
+            "      Broad.ofBroad (Broad.toBroad bag) = bag := by",
+            "  exact ⟨h, rfl, rfl⟩",
+        ]
+        declaration = "def eval (bag : HolFiniteMapExact Nat Nat) : Prop :=\n  ∃ bag : HolFiniteMapExact Nat Nat, P bag"
+        errors = CHECKER["fmap_as_finite_support_existentials_errors"](
+            lines, "Example.lean", declaration, "eval", ("bag",)
+        )
+        self.assertTrue(any("canonical lookup/finiteSupport" in e for e in errors))
+
     def test_fmap_as_finite_support_parameters_requires_direct_exact_binders_and_witnesses(self):
         lines = [
             "theorem holFmapAsFiniteSupportParamWitness_eval_fm",
@@ -1127,6 +1191,27 @@ class HolAttributeSitesTest(unittest.TestCase):
         text = CHECKER["tagged_declaration_text"](lines, 1)
         self.assertIn("State width", text)
         self.assertNotIn("other : Nat", text)
+
+    def test_tagged_noncomputable_def_disambiguates_finite_map_carrier(self):
+        lines = [
+            "structure BroadState where",
+            "  locals : HolFiniteMapExact Nat Nat",
+            "structure FiniteState where",
+            "  locals : HolFiniteMapExact Nat Nat",
+            "theorem holFmapAsFiniteSupportWitness :",
+            "    (\u2200 s : FiniteState, ofBroad (toBroad s) = s) := by rfl",
+            '@[hol "cakeml/pancake/semantics/crepSemScript.sml" "eval_def"',
+            "  (fmap_as_finite_support := [locals])]",
+            "noncomputable def evalHOLFinite (s : FiniteState) : Nat := 0",
+            "def unrelated (s : BroadState) : Nat := 0",
+        ]
+        declaration_text = CHECKER["tagged_declaration_text"](lines, 7)
+        self.assertIn("FiniteState", declaration_text)
+        self.assertNotIn("unrelated", declaration_text)
+        errors = CHECKER["fmap_as_finite_support_errors"](
+            lines, ("locals",), "Flapjack/Crep/HOLState.lean", declaration_text
+        )
+        self.assertEqual(errors, [])
 
     def test_representation_witness_is_checked_in_same_module(self):
         lines = [

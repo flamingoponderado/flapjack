@@ -36,7 +36,7 @@ generic over `α` and stores its `Call`/`ExtCall` names as `String`, so it is
 not an exact port (HOL `funname = mlstring`); it stays untagged.
 `CrepProgHOL` is the exact carrier: the word type is `BitVec width` with
 `[NeZero width]`, the function names are the faithful `MlString`, and the
-expression/`ShMem` payloads use the exact `CrepExpHOL`/`CrepMemOp` carriers.
+expression/`ShMem` payloads use the exact `CrepExpHOL`/`WordMemOp` carriers.
 -/
 
 namespace Flapjack
@@ -46,7 +46,7 @@ open Flapjack.Basis.Pure.MlString
 /-- Exact port of `crepLang$prog` (`cakeml/pancake/crepLangScript.sml:41-66`):
 19 constructors in HOL order, `funname` as the faithful `MlString`, `varname`
 as `Nat`, the `'a exp` payload as `CrepExpHOL width`, the `('a word)` payloads
-as `BitVec width`, and `memop` as `CrepMemOp`. -/
+as `BitVec width`, and `memop` as `WordMemOp`. -/
 @[hol "cakeml/pancake/crepLangScript.sml" "prog"]
 inductive CrepProgHOL (width : Nat) [NeZero width] where
   | skip
@@ -67,13 +67,23 @@ inductive CrepProgHOL (width : Nat) [NeZero width] where
   | extCall (function : MlString) (configuration configurationLength array arrayLength : Nat)
   | raise (exception : BitVec width)
   | return (values : List (CrepExpHOL width))
-  | shMem (operator : CrepMemOp) (name : Nat) (address : CrepExpHOL width)
+  | shMem (operator : WordMemOp) (name : Nat) (address : CrepExpHOL width)
   | tick
   deriving Repr
 
 /-- `NameRanged` for the production `String` function names: every code unit is
 a byte, so `MlString.ofString`/`toStringOfBytes` round-trip exactly. -/
 def CrepNameRanged (s : String) : Prop := ∀ c ∈ s.toList, c.toNat < 256
+
+/-- Executable check for the `String`/HOL `mlstring` byte boundary. This is a
+runtime predicate so source-pipeline dispatch can choose the exact codec route
+without a classical, noncomputable `Decidable` instance. -/
+def CrepNameRangedBool (s : String) : Bool :=
+  s.toList.all (fun c => decide (c.toNat < 256))
+
+theorem crepNameRangedBool_eq_true_iff (s : String) :
+    CrepNameRangedBool s = true ↔ CrepNameRanged s := by
+  simp [CrepNameRangedBool, CrepNameRanged, List.all_eq_true]
 
 /-- Production-to-HOL direction: forget the exact carrier. -/
 def crepProgToHOL {width : Nat} [NeZero width] : CrepProg (BitVec width) → CrepProgHOL width
@@ -204,6 +214,46 @@ decreasing_by
     | (simp_all only [CrepProg.dec.sizeOf_spec, CrepProg.seq.sizeOf_spec,
         CrepProg.ite.sizeOf_spec, CrepProg.while.sizeOf_spec, CrepProg.call.sizeOf_spec];
        omega)
+
+/-- Executable structural counterpart of `CrepProgNameRanged`. -/
+def CrepProgNameRangedBool {width : Nat} : CrepProg (BitVec width) → Bool
+  | .skip => true
+  | .dec _ _ body => CrepProgNameRangedBool body
+  | .assign _ _ => true
+  | .primitive _ _ _ => true
+  | .store _ _ => true
+  | .store32 _ _ => true
+  | .storeByte _ _ => true
+  | .storeGlob _ _ => true
+  | .seq first second => CrepProgNameRangedBool first && CrepProgNameRangedBool second
+  | .ite _ thenBranch elseBranch =>
+      CrepProgNameRangedBool thenBranch && CrepProgNameRangedBool elseBranch
+  | .while _ body => CrepProgNameRangedBool body
+  | .break _ => true
+  | .continue _ => true
+  | .call none name _ => CrepNameRangedBool name
+  | .call (some (_, none)) name _ => CrepNameRangedBool name
+  | .call (some (_, some (_, body))) name _ =>
+      CrepNameRangedBool name && CrepProgNameRangedBool body
+  | .extCall function _ _ _ _ => CrepNameRangedBool function
+  | .raise _ => true
+  | .return _ => true
+  | .shMem _ _ _ => true
+  | .tick => true
+termination_by p => sizeOf p
+decreasing_by
+  simp_wf
+  all_goals first
+    | decreasing_trivial
+    | (simp_all only [CrepProg.dec.sizeOf_spec, CrepProg.seq.sizeOf_spec,
+        CrepProg.ite.sizeOf_spec, CrepProg.while.sizeOf_spec, CrepProg.call.sizeOf_spec];
+       omega)
+
+theorem crepProgNameRangedBool_eq_true_iff {width : Nat}
+    (program : CrepProg (BitVec width)) :
+    CrepProgNameRangedBool program = true ↔ CrepProgNameRanged program := by
+  fun_induction CrepProgNameRangedBool program <;>
+    simp_all [CrepProgNameRanged, crepNameRangedBool_eq_true_iff]
 
 @[simp] theorem crepProgOfHOL_crepProgToHOL {width : Nat} [NeZero width] :
     (p : CrepProg (BitVec width)) → CrepProgNameRanged p →

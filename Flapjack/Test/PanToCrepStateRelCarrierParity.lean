@@ -245,7 +245,9 @@ private def loadCaseHolOracleGuard : Bool :=
     | _ => false) &&
   memLoadCrepSemHOL loadCaseAddress loadCaseTarget ==
     some (.word loadCaseAddress) &&
-  evalCrepSemHOLExp loadCaseTarget (.load (.const loadCaseAddress)) ==
+  evalCrepSemHOLExpWithDecider loadCaseTarget
+      (fun address => (inferInstance : Decidable (loadCaseTarget.memaddrs address)))
+      (.load (.const loadCaseAddress)) ==
     some (.word loadCaseAddress)
 
 #guard loadCaseHolOracleGuard
@@ -397,7 +399,7 @@ enclosing HOL theorem are irrelevant to `Const` and are not needed here. -/
 example {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) [hs : DecidablePred state.memaddrs]
     (context : PanToCrepContextExact width)
-    (targetState : CrepSemHOLState width σ) [ht : DecidablePred targetState.memaddrs]
+    (targetState : CrepSemHOLState width σ)
     (word : BitVec width) :
     ([CrepExpHOL.const word].map (evalCrepSemHOLExp targetState)) =
       (flattenHOL (ValueHOL.val (HolWordLab.word word))).map some :=
@@ -408,7 +410,7 @@ example {width : Nat} {σ : Type} [NeZero width]
 example {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) [hs : DecidablePred state.memaddrs]
     (context : PanToCrepContextExact width)
-    (targetState : CrepSemHOLState width σ) [ht : DecidablePred targetState.memaddrs]
+    (targetState : CrepSemHOLState width σ)
     (word : BitVec width) :
     shapeOfHOLExact (ValueHOL.val (HolWordLab.word word)) = ShapeHOL.one :=
   (compileExpValRelHOL_const state context targetState word
@@ -688,7 +690,7 @@ example {width : Nat} {σ : Type} [NeZero width]
 example {width : Nat} [NeZero width]
     (state : PanSemStateFiniteExact width Unit) [_hs : DecidablePred state.memaddrs]
     (context : PanToCrepContextExact width)
-    (targetState : CrepSemHOLState width Unit) [ht : DecidablePred targetState.memaddrs]
+    (targetState : CrepSemHOLState width Unit)
     (fields : List (ExpHOL width)) (values : List (ValueHOL width))
     (compiled : List (List (CrepExpHOL width) × ShapeHOL))
     (hrel : ∀ (expression : ExpHOL width), expression ∈ fields →
@@ -713,7 +715,7 @@ example {width : Nat} [NeZero width]
 example {width : Nat} [NeZero width]
     (state : PanSemStateFiniteExact width Unit) [_hs : DecidablePred state.memaddrs]
     (context : PanToCrepContextExact width)
-    (targetState : CrepSemHOLState width Unit) [ht : DecidablePred targetState.memaddrs]
+    (targetState : CrepSemHOLState width Unit) [_ht : DecidablePred targetState.memaddrs]
     (fields : List (ExpHOL width)) (value : ValueHOL width)
     (expressions : List (CrepExpHOL width)) (shape : ShapeHOL)
     (hrel : ∀ (expression : ExpHOL width), expression ∈ fields →
@@ -990,7 +992,7 @@ example {width : Nat} [NeZero width]
 example {width : Nat} [NeZero width]
     (state : PanSemStateFiniteExact width Unit) [_hs : DecidablePred state.memaddrs]
     (context : PanToCrepContextExact width)
-    (targetState : CrepSemHOLState width Unit) [ht : DecidablePred targetState.memaddrs]
+    (targetState : CrepSemHOLState width Unit)
     (fields : List (ExpHOL width)) (values : List (ValueHOL width))
     (compiled : List (List (CrepExpHOL width) × ShapeHOL))
     (hrel : ∀ (expression : ExpHOL width), expression ∈ fields →

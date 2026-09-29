@@ -15,7 +15,7 @@ domain check.
 namespace Flapjack
 
 def crepShMemOp (handler : CrepRuntimeFfiHandler α σ ε)
-    (state : CrepRuntimeState α σ) (operator : CrepMemOp)
+    (state : CrepRuntimeState α σ) (operator : WordMemOp)
     (name : Nat) (address : α) : CrepRuntimeStep α σ ε :=
   match operator with
   | .load => crepRuntimeSharedMem handler state .load name address

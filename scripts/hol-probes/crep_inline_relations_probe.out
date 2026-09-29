@@ -1,0 +1,10 @@
+locals_rel_extension=T
+locals_rel_missing_key=F
+locals_rel_conflicting_value=F
+state_rel_ignores_locals=T
+state_rel_checks_code=F
+locals_ext_rel_self=T
+locals_ext_rel_same_extension=T
+locals_ext_rel_unequal_witness=F
+locals_rel_dec_clock=T
+state_rel_dec_clock=T

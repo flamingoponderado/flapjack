@@ -2,7 +2,8 @@ import Flapjack.Pancake.LoopLive
 
 namespace Flapjack.Test.LoopLiveCompParity
 
-/-! Direct parity for `loop_live$comp` (`loop_liveScript.sml:217`). -/
+/-! Direct parity for `loop_live$comp` (`loop_liveScript.sml:217`); these
+observations replay `scripts/hol-probes/loop_live_comp_probe.out`. -/
 def parityGuard : Bool :=
   (match loopLiveComp (.skip : LoopProg Nat) with
   | .mark .skip => true

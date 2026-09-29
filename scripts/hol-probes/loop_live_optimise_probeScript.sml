@@ -27,3 +27,15 @@ val _ = print_eval "seq"
 val _ = print_eval "ffi"
   ``loop_live$optimise
       (loopLang$FFI «f» 1 2 3 4 LN : 8 word loopLang$prog)``;
+
+val live_one = ``(sptree$fromAList [(1:num,())] : sptree$num_set)``;
+val _ = print_eval "loop_fixedpoint_iter"
+  ``loop_live$fixedpoint [] ^live_one LN ^live_one
+      (loopLang$Return [1] : 8 word loopLang$prog)``;
+val _ = print_eval "fixedpoint_none_fallback"
+  ``loop_live$fixedpoint [] ^live_one ^live_one LN
+      (loopLang$Skip : 8 word loopLang$prog)``;
+val _ = print_eval "shrink_loop_fixedpoint"
+  ``loop_live$shrink []
+      (loopLang$Loop ^live_one
+        (loopLang$Return [1] : 8 word loopLang$prog) LN) LN``;

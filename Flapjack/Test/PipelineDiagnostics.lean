@@ -27,6 +27,92 @@ def pipelineDiagnosticsConfig : WordStackConfig :=
 def diagnosticCompiledMain : CompiledFunction Nat :=
   { name := "main", params := [], body := .skip, returnShape := .one }
 
+private def routedSkipFunction : CompiledFunction (BitVec 64) :=
+  { name := "main", params := [], body := .skip, returnShape := .one }
+
+private def nonByteRoutedFunction : CompiledFunction (BitVec 64) :=
+  { name := "λ", params := [],
+    body := .extCall "λ" 0 0 0 0,
+    returnShape := .one }
+
+/-- Byte-ranged per-function input takes the exact `compile_def`/`ocompile_def`
+route, including the canonical executable projection. -/
+def routedSkipShape : Bool :=
+  match pipelineLoopFunctionsSourceRouted (width := 64) .rv64i 1
+      [routedSkipFunction] with
+  | [(1, [], .mark .skip)] => true
+  | _ => false
+
+#guard routedSkipShape
+
+/-- The parser-backed route executes whole-program `compile_prog_def` and
+rebases its exact first function label (64) to this caller's label base (1). -/
+def routedCompileProgSkipShape : Bool :=
+  match pipelineLoopFunctionsSourceCompileProgRouted (width := 64) .rv64i 1
+      [routedSkipFunction] with
+  | [(1, [], .mark .skip)] => true
+  | _ => false
+
+#guard routedCompileProgSkipShape
+
+private def routedCallCaller : CompiledFunction (BitVec 64) :=
+  { name := "caller", params := [], body := .call none "callee" [],
+    returnShape := .one }
+
+private def routedCallCallee : CompiledFunction (BitVec 64) :=
+  { name := "callee", params := [], body := .skip, returnShape := .one }
+
+/-- A two-function call goes through the parser-backed whole-program route:
+the exact compiler's generated target 65 is rebased to production label 4.
+Crep input syntax has no LocValue constructor, so the second conjunct checks
+the LocValue code-source case against the same two-function [64,66) label map
+used by this routed result. -/
+def routedTwoFunctionCallLocValueShape : Bool :=
+  let functions := [routedCallCaller, routedCallCallee]
+  let routed := pipelineLoopFunctionsSourceCompileProgRouted
+    (width := 64) .rv64i 3 functions
+  routed.map Prod.fst == [3, 4] &&
+    (match routed with
+    | [(3, [], .mark (.seq (.mark (.call none (some 4) [] none)) (.mark .skip))),
+        (4, [], .mark .skip)] => true
+    | _ => false) &&
+    (match rebaseHOLFunctionLabels 3 2 (.locValue 9 65 : LoopProg (BitVec 64)) with
+    | .locValue 9 4 => true
+    | _ => false)
+
+#guard routedTwoFunctionCallLocValueShape
+
+/-- Rebase function code sources and nested call targets together, while
+preserving destination/argument locals and local control labels. -/
+def rebasedFunctionLabelsShape : Bool :=
+  let program : LoopProg (BitVec 64) :=
+    .seq (.locValue 8 64)
+      (.call (some ([1], [2])) (some 65) [3]
+        (some (4, .locValue 9 66, .continue 65, [6])))
+  match rebaseHOLFunctionLabels 3 3 program with
+  | .seq (.locValue 8 3)
+      (.call (some ([1], [2])) (some 4) [3]
+        (some (4, .locValue 9 5, .continue 65, [6]))) => true
+  | _ => false
+
+#guard rebasedFunctionLabelsShape
+
+/-- An out-of-byte-range function name keeps the old production route; the
+exact `MlString` conversion is not used for a truncated Lean `String`. -/
+example : pipelineLoopFunctionsSourceRouted (width := 64) .rv64i 1
+    [nonByteRoutedFunction] =
+      pipelineLoopFunctionsSource .rv64i 1 [nonByteRoutedFunction] := by
+  simp [pipelineLoopFunctionsSourceRouted, nonByteRoutedFunction,
+    pipelineFunctionInfos, crepMakeFuncsAt, CrepNameRangedBool,
+    CrepProgNameRangedBool, pipelineLoopFunctionsSource]
+
+example : pipelineLoopFunctionsSourceCompileProgRouted (width := 64) .rv64i 1
+    [nonByteRoutedFunction] =
+      pipelineLoopFunctionsSource .rv64i 1 [nonByteRoutedFunction] := by
+  simp [pipelineLoopFunctionsSourceCompileProgRouted, nonByteRoutedFunction,
+    pipelineFunctionInfos, crepMakeFuncsAt, CrepNameRangedBool,
+    CrepProgNameRangedBool, pipelineLoopFunctionsSource]
+
 example :
     pipelineFunctionNameAtLabel 1 [diagnosticCompiledMain] 1 = some "main" := by
   rfl

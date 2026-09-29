@@ -56,17 +56,17 @@ inductive LoopFfiResult (α : Type u) (σ : Type v) where
 abbrev LoopFfiStep (α : Type u) (σ : Type v) :=
   LoopFfiResult α σ × LoopFfiState α σ
 
-def loopFfiMemWidth : CrepMemOp → Nat
+def loopFfiMemWidth : WordMemOp → Nat
   | .load | .store => 0
   | .load8 | .store8 => 1
   | .load16 | .store16 => 2
   | .load32 | .store32 => 4
 
-def loopFfiSharedOperator : CrepMemOp → FfiShmemOp
+def loopFfiSharedOperator : WordMemOp → FfiShmemOp
   | .load | .load8 | .load16 | .load32 => .mappedRead
   | .store | .store8 | .store16 | .store32 => .mappedWrite
 
-def loopFfiIsLoad : CrepMemOp → Bool
+def loopFfiIsLoad : WordMemOp → Bool
   | .load | .load8 | .load16 | .load32 => true
   | .store | .store8 | .store16 | .store32 => false
 
@@ -163,7 +163,7 @@ def loopFfiSharedAddressValid (state : LoopFfiState α σ)
   state.shMemaddrs (loopFfiSharedAddress state address width)
 
 def loopFfiSharedLoad [BEq α] [OfNat α 1] [Add α]
-    (state : LoopFfiState α σ) (operator : CrepMemOp)
+    (state : LoopFfiState α σ) (operator : WordMemOp)
     (name : Nat) (address : α) : LoopFfiStep α σ :=
   let width := loopFfiMemWidth operator
   let alignedAddress := loopFfiSharedAddress state address width
@@ -236,7 +236,7 @@ def loopFfiShMemStore [BEq α] [OfNat α 1] [Add α]
 /-! Exact dispatch counterpart of `loopSem$sh_mem_op_def`
     (`loopSemScript.sml:255-262`). -/
 def loopFfiShMemOp [BEq α] [OfNat α 1] [Add α]
-    (state : LoopFfiState α σ) (operator : CrepMemOp)
+    (state : LoopFfiState α σ) (operator : WordMemOp)
     (name : Nat) (address : α) : LoopFfiStep α σ :=
   match operator with
   | .load => loopFfiShMemLoad state name address 0
@@ -249,7 +249,7 @@ def loopFfiShMemOp [BEq α] [OfNat α 1] [Add α]
   | .store32 => loopFfiShMemStore state name address 4
 
 def loopFfiSharedStore [BEq α] [OfNat α 1] [Add α]
-    (state : LoopFfiState α σ) (operator : CrepMemOp)
+    (state : LoopFfiState α σ) (operator : WordMemOp)
     (name : Nat) (address : α) : LoopFfiStep α σ :=
   let width := loopFfiMemWidth operator
   let alignedAddress := loopFfiSharedAddress state address width
@@ -275,7 +275,7 @@ def loopFfiSharedStore [BEq α] [OfNat α 1] [Add α]
             (.normal state, state)
 
 def loopFfiSharedMem [BEq α] [OfNat α 1] [Add α]
-    (state : LoopFfiState α σ) (operator : CrepMemOp)
+    (state : LoopFfiState α σ) (operator : WordMemOp)
     (name : Nat) (address : α) : LoopFfiStep α σ :=
   if loopFfiIsLoad operator then
     loopFfiSharedLoad state operator name address
@@ -330,7 +330,7 @@ theorem loopFfiProgramBoundary_shMem
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α]
     [ShiftRight α] [LT α]
     [DecidableRel (fun left right : α => left < right)] [PanCmp α]
-    (state : LoopFfiState α σ) (operator : CrepMemOp)
+    (state : LoopFfiState α σ) (operator : WordMemOp)
     (name : Nat) (address : LoopExp α) (addressValue : α)
     (haddress : loopFfiEvalExp state address = some addressValue) :
     loopFfiProgramBoundary state (.shMem operator name address) =
@@ -360,7 +360,7 @@ theorem loopFfiProgramBoundary_ffi
     harray, harrayLength]
 
 theorem loopFfiSharedLoad_final [BEq α] [OfNat α 1] [Add α]
-    (state : LoopFfiState α σ) (operator : CrepMemOp)
+    (state : LoopFfiState α σ) (operator : WordMemOp)
     (name : Nat) (address : α) (event : FfiFinalEvent)
     (hvalid : loopFfiSharedAddressValid state address
       (loopFfiMemWidth operator) = true)

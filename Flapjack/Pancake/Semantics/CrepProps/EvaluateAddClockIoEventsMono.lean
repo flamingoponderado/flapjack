@@ -368,7 +368,11 @@ theorem evalCrepSemHOLProgExact_addClock_mono_aux {width : Nat} [NeZero width] {
           rw [evalCrepSemHOLProgExact_call_holShape]
           rw [evalCrepSemHOLExps_addClock]
           have hargsconv : List.mapM (evalCrepSemHOLExp s) argexps =
-              List.mapM (crepExactEvalExpClassical s) argexps := rfl
+              List.mapM (crepExactEvalExpClassical s) argexps := by
+            have heq := optMmapCongHOL argexps argexps
+              (crepExactEvalExpClassical s) (evalCrepSemHOLExp s) rfl
+              (fun expression _ => crepExactEvalExpClassical_eq s expression)
+            exact heq.symm
           rw [hargsconv]
           rw [crepStateAddClock_code]
           cases hargs : List.mapM (crepExactEvalExpClassical s) argexps with
@@ -389,8 +393,7 @@ theorem evalCrepSemHOLProgExact_addClock_mono_aux {width : Nat} [NeZero width] {
                   some (prog, newlocals) :=
                 (lookupCodeHOLFinite_eq_some_iff s.code.lookup fname args args.length
                   prog newlocals).mpr hcode'
-              by_cases hbad : (crepCallFixed_domains.match_1
-                  (fun _ => Prop) caltyp (fun _ => False) (fun rts snd => ¬ rts.Nodup))
+              by_cases hbad : crepReturnInfoNodupError caltyp
               · rw [if_pos hbad]
                 rw [if_pos hbad]
                 exact List.prefix_refl _
@@ -431,7 +434,20 @@ theorem evalCrepSemHOLProgExact_addClock_mono_aux {width : Nat} [NeZero width] {
                           locals := newlocals } extra) prog with
                     | mk rh sh =>
                       have hb := ihnormal args (prog, newlocals) prog newlocals
-                        hargs hcodeFin rfl hbad hclk extra
+                        hargs hcodeFin rfl
+                        (by
+                          intro hnotBad
+                          cases caltyp with
+                          | none => cases hnotBad
+                          | some info =>
+                              rcases info with ⟨rts, snd⟩
+                              have hnodup : rts.Nodup := by
+                                by_cases hnodup : rts.Nodup
+                                · exact hnodup
+                                · exact False.elim
+                                    (hbad (by simp [crepReturnInfoNodupError, hnodup]))
+                              exact hnotBad hnodup)
+                        hclk extra
                       unfold CrepAddClockCombined at hb
                       rw [hbodyL, hbodyH] at hb
                       by_cases hto : r = some CrepResultHOLExact.timeOut
@@ -469,6 +485,11 @@ theorem evalCrepSemHOLProgExact_addClock_mono_aux {width : Nat} [NeZero width] {
                                       try simp only []
                                       by_cases heq2 : eid = eid'
                                       · simp only [if_pos heq2]
+                                        have hnodup : rts.Nodup := by
+                                          by_cases hnodup : rts.Nodup
+                                          · exact hnodup
+                                          · exact False.elim
+                                              (hbad (by simp [crepReturnInfoNodupError, hnodup]))
                                         rw [show ({ crepStateAddClock st extra with
                                               locals := s.locals } : CrepSemHOLState width σ) =
                                             crepStateAddClock ({ st with
@@ -479,7 +500,9 @@ theorem evalCrepSemHOLProgExact_addClock_mono_aux {width : Nat} [NeZero width] {
                                             { decClockCrepSemHOL s with locals := newlocals } prog)
                                           (some (.exception eid)) st (.exception eid) eid
                                           (rts, some (eid', p)) rts (some (eid', p)) (eid', p) eid' p
-                                          hargs hcodeFin rfl hbad hclk rfl hbodyL rfl rfl rfl rfl rfl
+                                          hargs hcodeFin rfl
+                                          (by intro hnotBad; exact hnotBad hnodup)
+                                          hclk rfl hbodyL rfl rfl rfl rfl rfl
                                           rfl heq2 extra).1
                                       · simp only [if_neg heq2]
                                         exact List.prefix_refl _

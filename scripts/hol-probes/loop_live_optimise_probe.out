@@ -1,7 +1,7 @@
 skip=Mark Skip
-
 loc_value=Mark Skip
-
 seq=Mark (Seq (Mark Skip) (Mark Skip))
-
 ffi=Mark (FFI «f» 1 2 3 4 LN)
+loop_fixedpoint_iter=SOME (Return [1],⦕ 1 ⦖)
+fixedpoint_none_fallback=NONE
+shrink_loop_fixedpoint=(Loop ⦕ 1 ⦖ (Return [1]) LN,⦕ 1 ⦖)

@@ -53,6 +53,9 @@ FMAP_AS_FINITE_SUPPORT_RESULT_RE = re.compile(
 FMAP_AS_FINITE_SUPPORT_PARAMS_RE = re.compile(
     r'\(\s*fmap_as_finite_support_parameters\s*:=\s*\[([^]]*)\]\s*\)'
 )
+FMAP_AS_FINITE_SUPPORT_EXISTENTIALS_RE = re.compile(
+    r'\(\s*fmap_as_finite_support_existentials\s*:=\s*\[([^]]*)\]\s*\)'
+)
 FMAP_AS_FINITE_SUPPORT_RELATION_RE = re.compile(
     r'\(\s*fmap_as_finite_support_relation\s*:=\s*\[([^]]*)\]\s*\)'
 )
@@ -229,7 +232,7 @@ def find_lean_decl(lines: list[str], start: int) -> str:
     return "?"
 
 
-def hol_attribute_sites(lines: list[str]):
+def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = False):
     """Yield HOL attributes, including attributes split across Lean lines."""
     comment_depth = 0
     start: int | None = None
@@ -275,7 +278,7 @@ def hol_attribute_sites(lines: list[str]):
                             entries.append((raw.strip(), ""))
                     return tuple(entries)
 
-                yield (
+                site = (
                     start,
                     hol_path,
                     hol_name,
@@ -290,6 +293,10 @@ def hol_attribute_sites(lines: list[str]):
                     bool(WORDS_AS_TYPE_INDEXED_BITVEC_RE.search(attribute)),
                     fields_for(FMAP_AS_FINITE_SUPPORT_PARAMS_RE),
                 )
+                if include_fmap_existentials:
+                    yield site + (fields_for(FMAP_AS_FINITE_SUPPORT_EXISTENTIALS_RE),)
+                else:
+                    yield site
         start = None
         chunks = []
         attribute_bracket_depth = 0
@@ -724,7 +731,8 @@ def owning_structure_for_fields(
 
 
 TOP_DECL_RE = re.compile(
-    r"^(?:@\[|def |theorem |lemma |abbrev |instance |structure |inductive )"
+    r"^(?:@\[|(?:private |protected |noncomputable |partial |unsafe )*"
+    r"(?:def |theorem |lemma |abbrev |instance |structure |inductive ))"
 )
 
 
@@ -743,7 +751,11 @@ def tagged_declaration_text(lines: list[str], attribute_start: int) -> str:
             if seen_declaration:
                 break
             region.append(line)
-            if re.search(r"(?:^|\s)(?:def|theorem|lemma|abbrev|instance|structure) ", stripped):
+            if re.search(
+                r"(?:^|\s)(?:(?:private|protected|noncomputable|partial|unsafe)\s+)*"
+                r"(?:def|theorem|lemma|abbrev|instance|structure) ",
+                stripped,
+            ):
                 seen_declaration = True
                 if ":=" in stripped:
                     break
@@ -753,12 +765,33 @@ def tagged_declaration_text(lines: list[str], attribute_start: int) -> str:
             continue
         if seen_declaration and TOP_DECL_RE.match(line):
             break
-        if re.match(r"(?:def|theorem|lemma|abbrev|instance|structure) ", stripped):
+        if re.match(
+            r"(?:(?:private|protected|noncomputable|partial|unsafe)\s+)*"
+            r"(?:def|theorem|lemma|abbrev|instance|structure) ",
+            stripped,
+        ):
             seen_declaration = True
         region.append(line)
         if seen_declaration and ":=" in line:
             break
     return "\n".join(region)
+
+
+def tagged_declaration_source(lines: list[str], attribute_start: int) -> str:
+    """Signature and body of the declaration carrying an attribute.
+
+    Most carrier checks need only the signature. Existential representation
+    qualifiers also need to inspect a relation body whose existential is in
+    the definition, rather than in its type.
+    """
+    signature = tagged_declaration_text(lines, attribute_start)
+    header_lines = len(signature.splitlines())
+    body: list[str] = []
+    for line in lines[attribute_start - 1 + header_lines:]:
+        if TOP_DECL_RE.match(line):
+            break
+        body.append(line)
+    return signature + "\n" + "\n".join(body)
 
 
 TO_FUNCTION_RE = re.compile(r"\bto([A-Z][A-Za-z0-9_']*)")
@@ -1372,6 +1405,88 @@ def fmap_as_finite_support_parameters_errors(
                 "fmap_as_finite_support_parameters witness "
                 f"`{witness}` must state the canonical lookup/finiteSupport "
                 f"toBroad/ofBroad roundtrip for `{parameter}`"
+            )
+    return errors
+
+
+def fmap_as_finite_support_existentials_errors(
+    lines: list[str], module: str, declaration_text: str, decl_name: str,
+    binders: tuple[str, ...],
+) -> list[str]:
+    """Validate named existential HolFiniteMapExact binders.
+
+    This qualifier records only the representation of an existential HOL
+    finite-map witness. The existential scope and use remain part of the
+    tagged declaration and require source review.
+    """
+    errors: list[str] = []
+    if not binders:
+        return ["fmap_as_finite_support_existentials requires at least one binder"]
+    if len(set(binders)) != len(binders):
+        errors.append("fmap_as_finite_support_existentials has duplicate binders")
+    for binder in binders:
+        existential = re.compile(
+            r"∃\s*\(?\s*" + re.escape(binder)
+            + r"\s*:\s*HolFiniteMapExact\b"
+        )
+        if existential.search(declaration_text) is None:
+            errors.append(
+                "fmap_as_finite_support_existentials binder "
+                f"`{binder}` must be an existential typed HolFiniteMapExact"
+            )
+            continue
+        witness = f"holFmapAsFiniteSupportExistentialWitness_{decl_name}_{binder}"
+        source = strip_lean_comments("\n".join(lines))
+        pattern = re.compile(
+            rf"^\s*(?:@\[[\s\S]*?\]\s*)?(?:private\s+|protected\s+)?"
+            rf"(?:theorem|lemma)\s+{re.escape(witness)}\b"
+            rf"(?P<statement>[\s\S]*?):=",
+            re.M,
+        )
+        match = pattern.search(source)
+        if match is None:
+            errors.append(
+                "fmap_as_finite_support_existentials requires same-module "
+                f"canonical witness `{witness}` for binder `{binder}`"
+            )
+            continue
+        statement = match.group("statement")
+        colon = _last_top_level_colon(statement)
+        binder_zone = statement[:colon] if colon >= 0 else ""
+        conclusion = statement[colon + 1:] if colon >= 0 else ""
+        has_roundtrip = (
+            re.search(r"ofBroad\s*[\(.A-Za-z_]", conclusion) is not None
+            and re.search(r"toBroad\s*(?:lookup)?\s*[\(.A-Za-z_]", conclusion) is not None
+            and re.search(
+                r"\.lookup\s*=\s*" + re.escape(binder) + r"\.lookup\b",
+                conclusion,
+            ) is not None
+            and re.search(
+                r"\.finiteSupport\s*=\s*" + re.escape(binder) + r"\.finiteSupport\b",
+                conclusion,
+            ) is not None
+            and re.search(
+                r"ofBroad[\s\S]*?toBroad\s+" + re.escape(binder)
+                + r"\s*\)\s*=\s*" + re.escape(binder) + r"\b",
+                conclusion,
+            ) is not None
+        )
+        if (
+            colon < 0
+            or "HolFiniteMapExact" not in binder_zone
+            or re.search(
+                r"\([^():]*:\s*[^)]*(?:lookup|finiteSupport|toBroad|ofBroad)[^)]*\)",
+                binder_zone,
+            ) is not None
+            or "lookup" not in conclusion
+            or "finiteSupport" not in conclusion
+            or _split_top_level(conclusion, ("\u2192", "->")) is not None
+            or not has_roundtrip
+        ):
+            errors.append(
+                "fmap_as_finite_support_existentials witness "
+                f"`{witness}` must state the canonical lookup/finiteSupport "
+                f"toBroad/ofBroad roundtrip for `{binder}`"
             )
     return errors
 
@@ -2275,7 +2390,9 @@ def main(argv: list[str]) -> int:
         for (number, hol_path, hol_name, hol_line, list_fields,
              names_fields, boundary_fields, fmap_fields, fmap_result,
              fmap_relation, fmap_equalities, words_bitvec,
-             fmap_parameters) in hol_attribute_sites(lines):
+             fmap_parameters, fmap_existentials) in hol_attribute_sites(
+                 lines, include_fmap_existentials=True
+             ):
             where = f"{rel}:{number}"
             lean_decl = find_lean_decl(lines, number - 1)
             if module not in reachable and not module_reported:
@@ -2308,6 +2425,14 @@ def main(argv: list[str]) -> int:
                     for error in fmap_as_finite_support_parameters_errors(
                         lines, rel, tagged_declaration_text(lines, number),
                         lean_decl, fmap_parameters,
+                    )
+                )
+            if fmap_existentials:
+                errors.extend(
+                    f"{where}: {error}"
+                    for error in fmap_as_finite_support_existentials_errors(
+                        lines, module, tagged_declaration_source(lines, number),
+                        lean_decl, fmap_existentials,
                     )
                 )
             if fmap_result:

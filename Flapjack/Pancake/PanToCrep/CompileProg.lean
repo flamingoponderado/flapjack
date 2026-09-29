@@ -8,13 +8,14 @@ import Flapjack.Pancake.PanLang.Decl
 import Flapjack.Pancake.PanLang.ProgHOLInduction
 
 /-!
-HOL-shaped top-level Pancake-to-Crep compiler boundary. The compilation
-produces HOL's function-triple shape and passes it through Flapjack's
-source-shaped inline traversal; the exact `compile_inl_top` carrier port is
-tracked by `flapjack-e7w.1`. Its executed selection filter calls the reviewed
-`inlinableHOL` through the total `inlinableThroughHOL` declaration adapter.
-Metadata is attached only in a downstream adapter for Flapjack's existing
-pipeline representation.
+HOL-shaped top-level Pancake-to-Crep compiler boundary. The parser-backed
+route compiles each body through the reviewed exact `compFuncExactHOLW` and
+inlines with the production `compileInlTopHOL`;
+`compileProgTopHOLProductionExact_eq` proves it equals the generic
+compatibility route.  The variant that also inlines on exact carriers
+(`compileProgTopHOLProductionExactInline`, via `compileInlTopHOLExact`) is a
+tested alternative that is not executed, until its equality is proved. Metadata is attached only in a downstream
+adapter for Flapjack's existing pipeline representation.
 -/
 
 namespace Flapjack
@@ -125,16 +126,17 @@ private theorem panToCrepParamsVmapEntries_exact_offset
 -- `Flapjack/Test/CompileProgParity.lean`; the `params_two_words` row is
 -- reproduced by `Flapjack/Test/CompileProgParamsParity.lean`. Faithful-port
 -- dependency `flapjack-pxn.18.3.5.8` (parent `flapjack-pxn.18.3.5.7.2`; exact
--- `compile` by `.18.3.5.8.13`, exact `compile_inl_top` carrier by
--- `flapjack-e7w.1`; the full exact `compile_inl_top` and production inliner
--- are tracked by open epic `flapjack-e7w.2`). In `compileFlapjackEntryCake`
--- (Pipeline.lean), the parser-proved branch invokes
--- `compileProgTopHOLWithMetadataOfExact`. Its body route now calls exact
--- `compileProgExactHOLW` on each function and decodes at the existing
--- source-shaped Crep boundary. Exact `compile_inl_top` and its production
--- routing remain an open carrier gap, not a performance exception. Keep the
--- `compile_prog_def` inventory bead open until the whole exact
--- `compile_to_crep`/`compile_inl_top` path is accepted.
+-- `compile` by `.18.3.5.8.13`, exact `compile_inl_top` by
+-- `flapjack-e7w.1`; the exact-carrier inliner is a tested, non-executed
+-- alternative until proved equal. The full compile_prog adapter and end-to-end
+-- carrier bridge remain tracked by open epic `flapjack-e7w.2`). In
+-- `compileFlapjackEntryCake` (Pipeline.lean), the parser-proved branch invokes
+-- `compileProgTopHOLWithMetadataOfExact`. Its body route calls exact
+-- `compileProgExactHOLW` on each function, decodes at the existing
+-- source-shaped Crep boundary and inlines with `compileInlTopHOL`;
+-- `compileProgTopHOLProductionExact_eq` proves equality with this generic
+-- route. The `compile_prog_def` inventory remains open for the full
+-- exact-carrier declaration and end-to-end bridge.
 def compileProgTopHOL [BEq FunName] [LawfulBEq FunName]
     [LawfulHashable FunName] [OfNat (BitVec width) 0]
     [OfNat (BitVec width) 1]
@@ -148,8 +150,7 @@ def compileProgTopHOL [BEq FunName] [LawfulBEq FunName]
 /-! The parser-backed route consumes the exact, word-indexed HOL function
     projection because its input already carries the byte-range evidence needed
     by declToHOL. This Flapjack-only adapter has no HOL original: it decodes
-    `functionsHOL` only at the existing production function tuple boundary. Its
-    equality below records that no output change is made. -/
+    names and bodies only at the existing production function tuple boundary. -/
 
 /-- Byte-ranged production declarations round-trip through the exact carrier. -/
 theorem map_declOfHOL_declToHOL {width : Nat} [NeZero width]
@@ -261,6 +262,63 @@ def compileProgTopHOLProductionExact {width : Nat} [NeZero width]
         exactParams (progToHOL entry.2.2.1)))
   compileInlTopHOL inlineNames compiled
 
+/-- Tested alternative, NOT executed: the parser-backed route with the inline
+    stage also on exact carriers.  Each body goes through `compFuncExactHOLW` as
+    in `compileProgTopHOLProductionExact`, but inlining uses the tagged
+    `CrepInlineCanonical.compileInlTopHOLExact` over `MlString`/`CrepProgHOL`
+    (with the `inlinableHOL` name filter) instead of the production
+    `compileInlTopHOL`, decoding afterwards.  No equality with the executed
+    `compileProgTopHOLProductionExact` is proved yet (PR #1174 review), so the
+    compiler keeps executing the proved route; `Flapjack.Test.CompileProgParity`
+    checks this alternative against the direct HOL `compile_prog` rows and
+    against the executed route on the same fixtures. -/
+def compileProgTopHOLProductionExactInline {width : Nat} [NeZero width]
+    [BEq FunName] [LawfulBEq FunName]
+    [LawfulHashable FunName] [OfNat (BitVec width) 0]
+    [OfNat (BitVec width) 1]
+    (declarations : List (Decl (BitVec width)))
+    (hdecls : ∀ declaration ∈ declarations, DeclByteRanged declaration) :
+    List (FunName × List Nat × CrepProg (BitVec width)) :=
+  let functions := functionEntriesOfHOLExact declarations hdecls
+  let functionMap := functionInfosHOL declarations
+  -- The exact HOL-shaped lookup rebuilds the full exception map at every
+  -- lookup. Use the production map here: the equality theorem below proves
+  -- this is the same function for byte-ranged declarations.
+  let exceptionMap := panToCrepGetEidsFromDeclsHOL declarations
+  let inlineNamesExact :=
+    (functionsHOL ((declarations.map declToHOL).filter inlinableHOL)).map Prod.fst
+  let compiledExact := functions.attach.map fun entryWithProof =>
+    let entry := entryWithProof.val
+    let productionContext :=
+      panToCrepMkCtxtHOL (panToCrepMakeVmapHOL entry.2.1)
+        functionMap
+        (Shape.shapeSize (.comb (entry.2.1.map Prod.snd)) - 1)
+        exceptionMap
+    have hmap : exceptionMap = panToCrepGetEidsFromDeclsHOL declarations := rfl
+    have hentry : entry ∈ functionEntries declarations := by
+      rw [← functionEntriesOfHOLExact_eq declarations hdecls]
+      exact entryWithProof.property
+    let evidence := by
+      simpa [productionContext, hmap] using
+        panToCrepFunctionContextProductionEvidence declarations entry
+          hdecls hentry
+    let exactContext := panToCrepContextExactOfProduction productionContext evidence
+    let exactParams := entry.2.1.map fun (name, shape) =>
+      (Flapjack.Basis.Pure.MlString.ofString name,
+        Flapjack.Pancake.PanLang.shapeToHOL shape)
+    (Flapjack.Basis.Pure.MlString.ofString entry.1, panToCrepVars entry.2.1,
+      compFuncExactHOLW exactContext.funcs exactContext.eids exactParams
+        (progToHOL entry.2.2.1))
+  let inlinedExact :=
+    Flapjack.CrepInlineCanonical.compileInlTopHOLExact inlineNamesExact
+      compiledExact
+  -- `DeclByteRanged` proves names and Crep call names round-trip through this
+  -- existing production boundary; the exact inliner itself never observes a
+  -- generic String or production Crep carrier.
+  inlinedExact.map fun (name, params, body) =>
+    (Flapjack.Basis.Pure.MlString.toStringOfBytes name, params,
+      crepProgOfHOL body)
+
 /-! Metadata adapter following the exact `compile_prog` triple boundary.
 The Cake passes following `compile_prog` consume triples; the production
 Flapjack pipeline keeps the source return shape in `CompiledFunction`. -/
@@ -281,8 +339,9 @@ declaration-level compiler boundary. This standalone adapter is retained for
 callers that need the production projection. The parser-backed executable
 entrypoint instead passes its byte-range proof to
 `compileProgTopHOLWithMetadataOfExact`, which routes every body through the
-exact compiler before decoding. Output and remaining inline carrier gaps are
-documented above. -/
+exact compiler before decoding (output equality:
+`compileProgTopHOLWithMetadataOfExact_eq`). Remaining full compile_prog carrier
+gaps are documented above. -/
 def compileProgTopHOLOfExact {width : Nat} [NeZero width]
     [BEq FunName] [LawfulBEq FunName]
     [LawfulHashable FunName] [OfNat (BitVec width) 0]

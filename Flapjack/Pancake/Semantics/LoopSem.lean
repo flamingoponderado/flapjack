@@ -50,7 +50,7 @@ structure LoopEvaluateHooks (W : Type := Nat) (F : Type := LoopWordLoc) where
   storeByte : LoopMachineState W F → LoopValue W → LoopValue W →
     Option (LoopMachineState W F)
   compare : Cmp → LoopValue W → LoopValue W → Bool
-  shMem : CrepMemOp → Nat → LoopValue W → LoopMachineState W F →
+  shMem : WordMemOp → Nat → LoopValue W → LoopMachineState W F →
     LoopMachineStep W F
   ffi : FunName → W → W → W → W → List Nat →
     LoopMachineState W F → LoopMachineStep W F
@@ -75,7 +75,7 @@ def fixLoopMachineClock {W F : Type} (oldState : LoopMachineState W F)
     clock := if oldState.clock < newState.clock then oldState.clock
       else newState.clock })
 
-def loopIsLoad : CrepMemOp → Bool
+def loopIsLoad : WordMemOp → Bool
   | .load | .load8 | .load16 | .load32 => true
   | .store | .store8 | .store16 | .store32 => false
 
@@ -312,12 +312,18 @@ mutual
 
 end
 
-/-- HOL `loopSem$loop_primop` (`cakeml/pancake/semantics/loopSemScript.sml:242-252`).
-    The only Loop primitive is `AddCarry`: it accepts exactly three word cells
-    and returns the low word followed by the carry word; a malformed arity or
-    any non-word cell yields `none`.  This is the `LoopEvaluateHooks.primitive`
-    boundary over word-location cells. -/
-@[hol "cakeml/pancake/semantics/loopSemScript.sml" "loop_primop_def"]
+/-- Flapjack-specific rendering of HOL `loopSem$loop_primop`
+    (`cakeml/pancake/semantics/loopSemScript.sml:242-252`) over the executable
+    `LoopValue` carrier.  The only Loop primitive is `AddCarry`: it accepts
+    exactly three word cells and returns the low word followed by the carry
+    word; a malformed arity or any non-word cell yields `none`.  This is the
+    `LoopEvaluateHooks.primitive` boundary over word-location cells.
+
+    The `@[hol]` tag is withdrawn: `LoopValue` is not the exact HOL `word_loc`
+    carrier, so this is not a source-exact port.  The canonical exact port is
+    `LoopSemStateFiniteExact.loopPrimop` (`Flapjack/Pancake/Semantics/LoopSemStateExact.lean`,
+    tagged `loop_primop_def` with `(words_as_type_indexed_bitvec)`), valued in
+    the exact `WordLocW` carrier. -/
 def loopPrimopHOL {width : Nat} [NeZero width] :
     PrimOp → List (LoopValue (BitVec width)) →
       Option (List (LoopValue (BitVec width)))
@@ -418,7 +424,7 @@ def loopShMemStore (state : LoopMachineState (RiscV.Word 64) F)
     or 4) matches HOL.  The exact polymorphic port is tracked by the dependency
     bead and recorded as a documented mismatch. -/
 def loopShMemOp (state : LoopMachineState (RiscV.Word 64) F)
-    (operator : CrepMemOp) (name : Nat) (address : RiscV.Word 64) :
+    (operator : WordMemOp) (name : Nat) (address : RiscV.Word 64) :
     LoopMachineStep (RiscV.Word 64) F :=
   match operator with
   | .load => loopShMemLoad state name address 0
@@ -432,7 +438,7 @@ def loopShMemOp (state : LoopMachineState (RiscV.Word 64) F)
 
 /-- The `LoopEvaluateHooks.shMem` boundary: unwrap the evaluated address cell. -/
 def loopShMemHook (state : LoopMachineState (RiscV.Word 64) F)
-    (operator : CrepMemOp) (name : Nat) : LoopValue (RiscV.Word 64) →
+    (operator : WordMemOp) (name : Nat) : LoopValue (RiscV.Word 64) →
     LoopMachineStep (RiscV.Word 64) F
   | .word address => loopShMemOp state operator name address
   | .loc _ _ => (some .error, state)
@@ -671,7 +677,7 @@ def shMemStoreHOL {width : Nat} [NeZero width]
     tracked by `flapjack-s6a.3.2.1`. -/
 def shMemOpHOL {width : Nat} [NeZero width]
     (state : LoopMachineState (RiscV.Word width) F)
-    (operator : CrepMemOp) (name : Nat) (address : RiscV.Word width) :
+    (operator : WordMemOp) (name : Nat) (address : RiscV.Word width) :
     LoopMachineStep (RiscV.Word width) F :=
   match operator with
   | .load => shMemLoadHOL state name address 0
@@ -811,47 +817,6 @@ def loopMemStoreByteAux (state : LoopMachineState (RiscV.Word 64) F)
       (loopTotalDomain state) state.be address byte with
   | some memory => some { state with memory := fun current => some (memory current) }
   | none => none
-
-/-- 64-bit instance of HOL `read_bytearray_def` (`miscScript.sml:113`). -/
-def loopReadByteArray (state : LoopMachineState (RiscV.Word 64) F)
-    (address : RiscV.Word 64) : Nat → Option (List UInt8) :=
-  fun length => readBytearrayHOL address length (loopMemLoadByteAux state)
-
-/-- 64-bit instance of HOL `write_bytearray_def` (`wordSemScript.sml:178`).  As in
-    HOL, a failed byte store leaves the original state unchanged. -/
-def loopWriteByteArray (state : LoopMachineState (RiscV.Word 64) F)
-    (address : RiscV.Word 64) : List UInt8 → LoopMachineState (RiscV.Word 64) F
-  | bytes => { state with
-      memory := fun current =>
-        some (writeBytearrayHOL address bytes (loopTotalMemory state)
-          (loopTotalDomain state) state.be current) }
-
-/-! FLAPJACK-SPECIFIC (not an exact HOL port).  The `LoopEvaluateHooks.ffi`
-    boundary for the source `ExtCall` case of `loopSem$evaluate_def`
-    (`loopSemScript.sml:427-440`).  `evaluateLoop` reads the four argument
-    locals from the pre-cut state, then applies `cut_state`, so the hook
-    receives the argument word values together with the cut state.  The exact
-    polymorphic port is tracked by the dependency bead. -/
-def loopMachineExtCall (state : LoopMachineState (RiscV.Word 64) F)
-    (function : FunName)
-    (configurationSize configurationAddress arraySize arrayAddress : RiscV.Word 64) :
-    LoopMachineStep (RiscV.Word 64) F :=
-  match loopReadByteArray state configurationAddress configurationSize.toNat,
-      loopReadByteArray state arrayAddress arraySize.toNat with
-  | some configurationBytes, some arrayBytes =>
-      match callFfi state.ffi (.extCall function) configurationBytes arrayBytes with
-      | .final event => (some (.finalFfi event), callEnv [] state)
-      | .returned newFfi newBytes =>
-          (none, { loopWriteByteArray state arrayAddress newBytes with ffi := newFfi })
-  | _, _ => (some .error, state)
-
-/-- The `LoopEvaluateHooks.ffi` boundary.  The live set is ignored because
-    `evaluateLoop` performs the `cut_state` before calling the hook. -/
-def loopMachineFfiHook (function : FunName)
-    (configurationSize configurationAddress arraySize arrayAddress : RiscV.Word 64)
-    (_live : List Nat) (state : LoopMachineState (RiscV.Word 64) F) :
-    LoopMachineStep (RiscV.Word 64) F :=
-  loopMachineExtCall state function configurationSize configurationAddress arraySize arrayAddress
 
 /-! ## `loopSem.get_var_imm` support (untagged)
 

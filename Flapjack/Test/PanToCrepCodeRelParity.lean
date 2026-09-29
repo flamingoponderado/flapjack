@@ -620,7 +620,7 @@ example : (3 : Nat) ∈ crepAssignedFreeVars
   left
   rw [mem_crepAssignedFreeVars_assign]
 example : (3 : Nat) ∉ crepAssignedFreeVars
-    (CrepProg.shMem CrepMemOp.load8 7 (CrepExp.const (0 : Nat))) := by
+    (CrepProg.shMem WordMemOp.load8 7 (CrepExp.const (0 : Nat))) := by
   rw [mem_crepAssignedFreeVars_shMem]
   decide
 

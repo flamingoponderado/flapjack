@@ -38,6 +38,54 @@ DATA_DECLARATION_RE = re.compile(
 # inventory small and source-reviewed; a mismatch row is not generated merely
 # because an arbitrary Lean def happens to mention a HOL name.
 WITHDRAWN_HOL_DECLARATIONS = {
+    ("Flapjack/Pancake/CrepToLoop/StateRel.lean", "crepToLoopGlobalsRel"): (
+        "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+        "globals_rel_def",
+        "flapjack-luna-a source review (2026-09-28; bead flapjack-pxn.18.5.6.33.18): tag withdrawn. "
+        "This production helper takes raw option-valued functions rather than HOL |-> finite maps "
+        "and uses PanWordLab/LoopValue rather than HolWordLab/WordLocW, so it is not an exact port "
+        "of globals_rel_def. Preserve it as executable bridge infrastructure. Exact-carrier port: "
+        "crepToLoopGlobalsRelHOLExact in Flapjack/Pancake/CrepToLoop/Proofs/RelationsExact.lean."
+    ),
+    ("Flapjack/Pancake/CrepToLoop/StateRel.lean", "crepToLoopGlobalsRel_intro"): (
+        "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+        "globals_rel_intro",
+        "flapjack-luna-a source review (2026-09-28; bead flapjack-pxn.18.5.6.33.18): tag withdrawn "
+        "with its production relation because it inherits the raw option-function and "
+        "PanWordLab/LoopValue carrier mismatch documented for crepToLoopGlobalsRel. Preserve this "
+        "implication helper for the executable bridge. Exact-carrier port: "
+        "crepToLoopGlobalsRelHOLExact_intro in Flapjack/Pancake/CrepToLoop/Proofs/RelationsExact.lean."
+    ),
+    ("Flapjack/Pancake/CrepToLoop/StateRel.lean", "crepToLoopMemRel"): (
+        "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+        "mem_rel_def",
+        "flapjack-luna-a source review (2026-09-28; bead flapjack-pxn.18.5.6.33.18): tag withdrawn. "
+        "This production analogue uses PanWordLab/LoopValue rather than HolWordLab/WordLocW, and "
+        "a Bool domain rather than HOL set membership (Prop); its bridge also adapts production "
+        "Option-valued loop memory to a total view. These are representation/carrier differences, "
+        "not authorized by an exact tag. Preserve the helper for production. Exact total-memory, "
+        "Prop-domain port: crepToLoopMemRelHOLExact in "
+        "Flapjack/Pancake/CrepToLoop/Proofs/RelationsExact.lean."
+    ),
+    ("Flapjack/Pancake/CrepToLoop/StateRel.lean", "crepToLoopMemRel_intro"): (
+        "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+        "mem_rel_intro",
+        "flapjack-luna-a source review (2026-09-28; bead flapjack-pxn.18.5.6.33.18): tag withdrawn "
+        "with its production relation because it inherits the Bool-domain and PanWordLab/LoopValue "
+        "carrier mismatch documented for crepToLoopMemRel. Preserve the implication helper for the "
+        "executable bridge. Exact-carrier port: crepToLoopMemRelHOLExact_intro in "
+        "Flapjack/Pancake/CrepToLoop/Proofs/RelationsExact.lean."
+    ),
+    ("Flapjack/Pancake/Semantics/LoopSem.lean", "loopPrimopHOL"): (
+        "cakeml/pancake/semantics/loopSemScript.sml",
+        "loop_primop_def",
+        "flapjack-ds9 (bead flapjack-ptzz): the @[hol] tag is withdrawn. HOL loop_primop "
+        "returns a word_loc option, but this declaration is valued in LoopValue "
+        "(Flapjack/LoopFindCode.lean), a Flapjack executable/faithful loop value, not the exact "
+        "word_loc carrier WordLocW (Flapjack/Pancake/WordLang.lean). The canonical exact port is "
+        "LoopSemStateFiniteExact.loopPrimop (Flapjack/Pancake/Semantics/LoopSemStateExact.lean), "
+        "tagged loop_primop_def with (words_as_type_indexed_bitvec)."
+    ),
     ("Flapjack/Pancake/Proofs/PanGlobals.lean", "goodResHOL"): (
         "cakeml/pancake/proofs/pan_globalsProofScript.sml",
         "good_res_def",
@@ -348,6 +396,73 @@ DEFINITION_RE = re.compile(
     r"(?:def|abbrev|opaque|theorem|lemma)\s+([^\s:({\[]+)"
 )
 DOCUMENTED_MISMATCHES = {
+    ("Flapjack/Pancake/Proofs/CrepInline.lean", "crepInlineStateRelW"): (
+        "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+        "state_rel_def",
+        "flapjack-luna-a source review (2026-09-29; bead flapjack-2de.13): tag withdrawn. "
+        "CrepHolState has raw lookup functions for locals/globals/code and admits "
+        "infinite-support states HOL finite maps cannot represent; words_as_type_indexed_bitvec "
+        "does not authorize this map-carrier difference. The helper remains useful Flapjack "
+        "infrastructure; the exact state_rel finite-support port is still open."
+    ),
+    ("Flapjack/Pancake/Proofs/CrepInline.lean", "crepInlineLocalsRelW"): (
+        "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+        "locals_rel_def",
+        "flapjack-luna-a source review (2026-09-29; bead flapjack-2de.13): tag withdrawn. "
+        "CrepHolState locals are a raw lookup function admitting infinite support, unlike HOL "
+        "finite maps. This helper remains Flapjack infrastructure; an exact finite-support "
+        "locals_rel port is still open."
+    ),
+    ("Flapjack/Pancake/Proofs/CrepInline.lean", "crepInlineLocalsStrongRelW"): (
+        "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+        "locals_strong_rel_def",
+        "flapjack-luna-a source review (2026-09-29; bead flapjack-2de.13): tag withdrawn. "
+        "CrepHolState locals are a raw lookup function admitting infinite support, unlike HOL "
+        "finite maps. Exact finite-support counterpart crepInlineLocalsStrongRelExact is "
+        "tagged in this file."
+    ),
+    ("Flapjack/Pancake/Proofs/CrepInline.lean", "crepInlineLocalsRel_decClockW"): (
+        "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+        "locals_rel_dec_clock",
+        "flapjack-luna-a source review (2026-09-29; bead flapjack-2de.13): tag withdrawn "
+        "because this theorem quantifies over CrepHolState raw-function maps, not HOL "
+        "finite-support maps. The helper remains useful Flapjack infrastructure."
+    ),
+    ("Flapjack/Pancake/Proofs/CrepInline.lean", "crepInlineLocalsExtRelW"): (
+        "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+        "locals_ext_rel_def",
+        "flapjack-luna-a source review (2026-09-29; bead flapjack-2de.13): tag withdrawn. "
+        "CrepHolState locals are raw lookup functions admitting infinite support, unlike HOL "
+        "finite maps. This helper remains Flapjack infrastructure; an exact finite-support "
+        "locals_ext_rel port is still open."
+    ),
+    ("Flapjack/Pancake/Proofs/CrepInline.lean", "crepInlineStateRelCodeW"): (
+        "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+        "state_rel_code_def",
+        "flapjack-luna-a source review (2026-09-29; bead flapjack-2de.13): tag withdrawn. "
+        "CrepHolState has raw lookup functions for locals/globals/code and admits "
+        "infinite-support states HOL finite maps cannot represent; words_as_type_indexed_bitvec "
+        "does not authorize this map-carrier difference. Exact finite-support counterpart "
+        "crepInlineStateRelCodeExact is tagged in this file."
+    ),
+    ("Flapjack/Pancake/CrepToLoop/StateRel.lean", "crepToLoopGlobalsRel_intro"): (
+        "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+        "globals_rel_intro",
+        "flapjack-luna-a source review (2026-09-28; bead flapjack-pxn.18.5.6.33.18): tag withdrawn "
+        "with its production relation because it inherits the raw option-function and "
+        "PanWordLab/LoopValue carrier mismatch documented for crepToLoopGlobalsRel. Preserve this "
+        "implication helper for the executable bridge. Exact-carrier port: "
+        "crepToLoopGlobalsRelHOLExact_intro in Flapjack/Pancake/CrepToLoop/Proofs/RelationsExact.lean.",
+    ),
+    ("Flapjack/Pancake/CrepToLoop/StateRel.lean", "crepToLoopMemRel_intro"): (
+        "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+        "mem_rel_intro",
+        "flapjack-luna-a source review (2026-09-28; bead flapjack-pxn.18.5.6.33.18): tag withdrawn "
+        "with its production relation because it inherits the Bool-domain and PanWordLab/LoopValue "
+        "carrier mismatch documented for crepToLoopMemRel. Preserve the implication helper for the "
+        "executable bridge. Exact-carrier port: crepToLoopMemRelHOLExact_intro in "
+        "Flapjack/Pancake/CrepToLoop/Proofs/RelationsExact.lean.",
+    ),
     ("Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean", "evalCrepSemHOLProgExact_seq_fixClockFree"): (
         "cakeml/pancake/semantics/crepSemScript.sml",
         "evaluate_def",
@@ -1540,6 +1655,11 @@ DOCUMENTED_MISMATCHES = {
 # Proofs/ and are inventoried automatically; counterpart-side witnesses and
 # induction helpers belong beside their semantic definitions instead.
 INFRASTRUCTURE_THEOREMS = {
+    ("Flapjack/Pancake/Proofs/CrepInline.lean", "holFmapAsFiniteSupportWitness"): (
+        "Same-module canonical finite-support roundtrip witness for the exact "
+        "CrepInline relation qualifiers. It reuses CrepSemHOLState's reviewed "
+        "toBroad/ofBroad witness and has no standalone HOL declaration."
+    ),
     ("Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean", "panWriteBytearrayWord8HOL_domainCongr"): (
         "Flapjack-specific support for the ExtCall returned-byte state relation. "
         "This congruence handles distinct DecidablePred instances after equality "
@@ -1570,6 +1690,9 @@ VALID_STATUSES = {
     "reviewed_fmap_as_finite_support_result",
     "reviewed_fmap_as_finite_support_parameters",
     "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
+    "reviewed_fmap_as_finite_support_existentials",
+    "reviewed_fmap_as_finite_support_existentials_words_as_type_indexed_bitvec",
+    "reviewed_fmap_as_finite_support_relation_existentials_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_relation",
     "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_equalities",
@@ -1720,7 +1843,9 @@ def tagged_declarations(
         for (line, hol_path, hol_name, _hol_line, list_fields,
              names_fields, boundary_fields, fmap_fields, fmap_result,
              fmap_relation, fmap_equalities, words_bitvec,
-             fmap_parameters) in HOL_ATTRIBUTE_SITES(lines):
+             fmap_parameters, fmap_existentials) in HOL_ATTRIBUTE_SITES(
+                 lines, include_fmap_existentials=True
+             ):
             lean_name = FIND_LEAN_DECL(lines, line - 1)
             key = (rel, lean_name)
             # Source-line disambiguation is checked against the HOL script by
@@ -1728,7 +1853,8 @@ def tagged_declarations(
             # stable HOL file/name pair, not by an editable source line.
             value = (hol_path, hol_name, list_fields, names_fields,
                      boundary_fields, fmap_fields, fmap_result, fmap_relation,
-                     fmap_equalities, words_bitvec, fmap_parameters)
+                     fmap_equalities, words_bitvec, fmap_parameters,
+                     fmap_existentials)
             if key in tagged and tagged[key] != value:
                 raise ValueError(f"conflicting @[hol] references for {rel}:{lean_name}")
             tagged[key] = value
@@ -1742,6 +1868,7 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
     for (lean_path, lean_name), (
         hol_path, hol_name, list_fields, names_fields, boundary_fields, fmap_fields,
         fmap_result, fmap_relation, fmap_equalities, words_bitvec, fmap_parameters,
+        fmap_existentials,
     ) in tagged.items():
         entry = {
             "hol_path": hol_path,
@@ -1763,6 +1890,8 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
             entry["fmap_as_finite_support_result"] = True
         if fmap_parameters:
             entry["fmap_as_finite_support_parameters"] = list(fmap_parameters)
+        if fmap_existentials:
+            entry["fmap_as_finite_support_existentials"] = list(fmap_existentials)
         if fmap_relation:
             entry["fmap_as_finite_support_relation"] = [
                 f"{carrier}.{field}" if field else carrier
@@ -1975,6 +2104,11 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         ("Flapjack/Pancake/PanSimp.lean", "retToTailHOL"),
         ("Flapjack/Pancake/PanSimp.lean", "panSimpCompileHOL"),
         ("Flapjack/Pancake/PanSimp.lean", "panSimpDeclsHOL"),
+        ("Flapjack/Pancake/CrepToLoop/Proofs/Primop.lean", "crepPrimopLoopPrimopHOL"),
+        ("Flapjack/Pancake/LoopToWord.lean", "findVarHOL"),
+        ("Flapjack/Pancake/LoopToWord.lean", "toNumSetHOL"),
+        ("Flapjack/Pancake/LoopToWord.lean", "fromNumSetHOL"),
+        ("Flapjack/Pancake/LoopToWord.lean", "mkNewCutsetHOL"),
     }
     for key in reviewed_exact:
         # A source comparison cannot claim an exact HOL port after its tag is
@@ -2037,12 +2171,14 @@ def validate_inventory(
         fmap_equalities = bool(tag[8]) if tag is not None and len(tag) > 8 else False
         words_bitvec = bool(tag[9]) if tag is not None and len(tag) > 9 else False
         fmap_parameters = tag[10] if tag is not None and len(tag) > 10 else ()
+        fmap_existentials = tag[11] if tag is not None and len(tag) > 11 else ()
         manifest_list_fields = tuple(record.get("list_as_array", ()))
         manifest_names_fields = tuple(record.get("names_as_string", ()))
         manifest_boundary_fields = tuple(record.get("names_as_string_boundary", ()))
         manifest_fmap_fields = tuple(record.get("fmap_as_finite_support", ()))
         manifest_fmap_result = bool(record.get("fmap_as_finite_support_result", False))
         manifest_fmap_parameters = tuple(record.get("fmap_as_finite_support_parameters", ()))
+        manifest_fmap_existentials = tuple(record.get("fmap_as_finite_support_existentials", ()))
         manifest_fmap_relation = tuple(record.get("fmap_as_finite_support_relation", ()))
         manifest_fmap_equalities = bool(record.get("fmap_as_finite_support_equalities", False))
         tag_fmap_relation = tuple(
@@ -2073,6 +2209,10 @@ def validate_inventory(
             errors.append(
                 f"{key[0]}:{key[1]}: manifest fmap_as_finite_support_parameters do not match its @[hol] tag"
             )
+        if manifest_fmap_existentials != fmap_existentials:
+            errors.append(
+                f"{key[0]}:{key[1]}: manifest fmap_as_finite_support_existentials do not match its @[hol] tag"
+            )
         if manifest_fmap_relation != tag_fmap_relation:
             errors.append(
                 f"{key[0]}:{key[1]}: manifest fmap_as_finite_support_relation entries do not match its @[hol] tag"
@@ -2095,13 +2235,22 @@ def validate_inventory(
         combined_parameter_words_status = (
             "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec"
         )
+        combined_existential_words_status = (
+            "reviewed_fmap_as_finite_support_existentials_words_as_type_indexed_bitvec"
+        )
+        combined_relation_existential_words_status = (
+            "reviewed_fmap_as_finite_support_relation_existentials_words_as_type_indexed_bitvec"
+        )
         if words_bitvec and fmap_fields and status != combined_words_status:
             errors.append(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support combined with "
                 "words_as_type_indexed_bitvec requires the combined review status "
                 "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec"
             )
-        if words_bitvec and fmap_relation and status != combined_relation_words_status:
+        if words_bitvec and fmap_relation and status not in {
+            combined_relation_words_status,
+            combined_relation_existential_words_status,
+        }:
             errors.append(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support_relation combined with "
                 "words_as_type_indexed_bitvec requires the combined review status "
@@ -2113,17 +2262,20 @@ def validate_inventory(
                 "words_as_type_indexed_bitvec requires the combined review status "
                 "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec"
             )
+        if words_bitvec and fmap_existentials and status not in {
+            combined_existential_words_status,
+            combined_relation_existential_words_status,
+        }:
+            errors.append(
+                f"{key[0]}:{key[1]}: fmap_as_finite_support_existentials combined with "
+                "words_as_type_indexed_bitvec requires the combined review status "
+                "reviewed_fmap_as_finite_support_existentials_words_as_type_indexed_bitvec"
+            )
         if status == combined_words_status and not (words_bitvec and fmap_fields):
             errors.append(
                 f"{key[0]}:{key[1]}: "
                 "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec needs "
                 "both the fmap_as_finite_support and words_as_type_indexed_bitvec @[hol] qualifiers"
-            )
-        if words_bitvec and fmap_relation and status != combined_relation_words_status:
-            errors.append(
-                f"{key[0]}:{key[1]}: fmap_as_finite_support_relation combined with "
-                "words_as_type_indexed_bitvec requires the combined review status "
-                "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec"
             )
         if status == combined_relation_words_status and not (
             words_bitvec and fmap_relation
@@ -2141,6 +2293,23 @@ def validate_inventory(
                 "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec needs "
                 "both the fmap_as_finite_support_parameters and words_as_type_indexed_bitvec qualifiers"
             )
+        if status == combined_existential_words_status and not (
+            words_bitvec and fmap_existentials
+        ):
+            errors.append(
+                f"{key[0]}:{key[1]}: "
+                "reviewed_fmap_as_finite_support_existentials_words_as_type_indexed_bitvec needs "
+                "both the fmap_as_finite_support_existentials and words_as_type_indexed_bitvec qualifiers"
+            )
+        if status == combined_relation_existential_words_status and not (
+            words_bitvec and fmap_existentials and fmap_relation
+        ):
+            errors.append(
+                f"{key[0]}:{key[1]}: "
+                "reviewed_fmap_as_finite_support_relation_existentials_words_as_type_indexed_bitvec needs "
+                "the fmap_as_finite_support_relation, fmap_as_finite_support_existentials, and "
+                "words_as_type_indexed_bitvec qualifiers"
+            )
         if words_bitvec and status == "reviewed_exact":
             errors.append(
                 f"{key[0]}:{key[1]}: words_as_type_indexed_bitvec @[hol] tag cannot have "
@@ -2151,6 +2320,8 @@ def validate_inventory(
             combined_words_status,
             combined_relation_words_status,
             combined_parameter_words_status,
+            combined_existential_words_status,
+            combined_relation_existential_words_status,
         }:
             errors.append(
                 f"{key[0]}:{key[1]}: words_as_type_indexed_bitvec @[hol] tag needs a reviewed "
@@ -2195,6 +2366,39 @@ def validate_inventory(
                 errors.append(
                     f"{key[0]}:{key[1]}: reviewed_fmap_as_finite_support_parameters requires a source-comparison note"
                 )
+        if fmap_existentials and status == "reviewed_exact":
+            errors.append(
+                f"{key[0]}:{key[1]}: fmap_as_finite_support_existentials @[hol] tag cannot have "
+                "reviewed_exact status; use reviewed_fmap_as_finite_support_existentials after source comparison"
+            )
+        if fmap_existentials and status not in {
+            "reviewed_fmap_as_finite_support_existentials",
+            combined_existential_words_status,
+            combined_relation_existential_words_status,
+        }:
+            errors.append(
+                f"{key[0]}:{key[1]}: fmap_as_finite_support_existentials @[hol] tag needs a reviewed "
+                "source classification (reviewed_fmap_as_finite_support_existentials, or the combined "
+                "status with words_as_type_indexed_bitvec)"
+            )
+        if not fmap_existentials and status in {
+            "reviewed_fmap_as_finite_support_existentials",
+            combined_existential_words_status,
+            combined_relation_existential_words_status,
+        }:
+            errors.append(
+                f"{key[0]}:{key[1]}: reviewed_fmap_as_finite_support_existentials needs a "
+                "fmap_as_finite_support_existentials @[hol] tag"
+            )
+        if fmap_existentials:
+            reviewer_text = reviewer.lower() if isinstance(reviewer, str) else ""
+            if "source" not in reviewer_text or any(
+                binder not in reviewer_text for binder in fmap_existentials
+            ):
+                errors.append(
+                    f"{key[0]}:{key[1]}: reviewed_fmap_as_finite_support_existentials requires "
+                    "a source-comparison note naming every existential binder"
+                )
         if fmap_relation and status == "reviewed_exact":
             errors.append(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support_relation @[hol] tag cannot have "
@@ -2203,6 +2407,7 @@ def validate_inventory(
         if fmap_relation and status not in {
             "reviewed_fmap_as_finite_support_relation",
             combined_relation_words_status,
+            combined_relation_existential_words_status,
         }:
             errors.append(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support_relation @[hol] tag needs a reviewed "

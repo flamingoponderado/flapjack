@@ -165,6 +165,35 @@ private theorem compileProbeNameMidRanged : NameRanged "mid" := by
   have hc' : c = 'm' ∨ c = 'i' ∨ c = 'd' := by simpa using hc
   rcases hc' with h | h | h <;> subst c <;> decide
 
+private theorem compileProbeNameFRanged : NameRanged "f" := by
+  intro c hc
+  have hc' : c = 'f' := by simpa using hc
+  subst c
+  decide
+
+private theorem compileProbeNameGRanged : NameRanged "g" := by
+  intro c hc
+  have hc' : c = 'g' := by simpa using hc
+  subst c
+  decide
+
+private theorem compileProbeNamePairRanged : NameRanged "pair" := by
+  intro c hc
+  have hc' : c = 'p' ∨ c = 'a' ∨ c = 'i' ∨ c = 'r' := by simpa using hc
+  rcases hc' with h | h | h | h <;> subst c <;> decide
+
+private theorem compileProbeNameERanged : NameRanged "E" := by
+  intro c hc
+  have hc' : c = 'E' := by simpa using hc
+  subst c
+  decide
+
+private theorem compileProbeNameCaughtRanged : NameRanged "caught" := by
+  intro c hc
+  have hc' : c = 'c' ∨ c = 'a' ∨ c = 'u' ∨ c = 'g' ∨ c = 'h' ∨ c = 't' := by
+    simpa using hc
+  rcases hc' with h | h | h | h | h | h <;> subst c <;> decide
+
 private theorem compileProbeInlineReturnRanged {width : Nat} (name : String)
     (hname : NameRanged name) (value : BitVec width) :
     DeclByteRanged (width := width) (.function
@@ -242,14 +271,14 @@ theorem compileProgExactNestedDeclsByteRanged :
         compileProbeNameMainRanged compileProbeNameMidRanged
 
 def compileProgExactProductionEmptyParity : Bool :=
-  match compileProgTopHOLProductionExact ([] : List (Decl (BitVec 8))) (by
+  match compileProgTopHOLProductionExactInline ([] : List (Decl (BitVec 8))) (by
       intro declaration hmem
       simp at hmem) with
   | [] => true
   | _ => false
 
 def compileProgExactProductionDuplicateParity : Bool :=
-  match compileProgTopHOLProductionExact compileProgExactDuplicateDecls
+  match compileProgTopHOLProductionExactInline compileProgExactDuplicateDecls
       compileProgExactDuplicateDeclsByteRanged with
   | [("id", [], .return [.const first]),
      ("id", [], .return [.const second]),
@@ -259,7 +288,7 @@ def compileProgExactProductionDuplicateParity : Bool :=
   | _ => false
 
 def compileProgExactProductionNestedParity : Bool :=
-  match compileProgTopHOLProductionExact compileProgExactNestedDecls
+  match compileProgTopHOLProductionExactInline compileProgExactNestedDecls
       compileProgExactNestedDeclsByteRanged with
   | [("leaf", [], .return [.const leafValue]),
      ("mid", [], .seq .tick (.return [.const midValue])),
@@ -272,9 +301,165 @@ def compileProgExactProductionNestedParity : Bool :=
 #guard compileProgExactProductionDuplicateParity
 #guard compileProgExactProductionNestedParity
 
+/-! Further direct `compile_prog_probe.out` rows exercise the exact parser route
+    on a mutual inline cycle, handler recursion, and a multi-value return. These
+    distinguish HOL's per-callee `DOMSUB` recursion and handler clause from a
+    top-level recursion guard, and retain the exact output shapes observed by
+    the original HOL EVAL probe. -/
+def compileProgExactCycleDecls : List (Decl (BitVec 8)) :=
+  [.function
+     { name := "f", inline := true, exported := false, params := [],
+       body := .call none "g" [], returnShape := .one },
+   .function
+     { name := "g", inline := true, exported := false, params := [],
+       body := .call none "f" [], returnShape := .one },
+   .function
+     { name := "main", inline := false, exported := true, params := [],
+       body := .call none "f" [], returnShape := .one }]
+
+theorem compileProgExactCycleDeclsByteRanged :
+    ∀ declaration ∈ compileProgExactCycleDecls, DeclByteRanged declaration := by
+  intro declaration hmem
+  simp [compileProgExactCycleDecls] at hmem
+  rcases hmem with h | h | h
+  · subst declaration
+    simpa [DeclByteRanged, FunDeclByteRanged] using
+      (compileProbeInlineCallRanged (width := 8) "f" "g"
+        compileProbeNameFRanged compileProbeNameGRanged)
+  · subst declaration
+    simpa [DeclByteRanged, FunDeclByteRanged] using
+      (compileProbeInlineCallRanged (width := 8) "g" "f"
+        compileProbeNameGRanged compileProbeNameFRanged)
+  · subst declaration
+    exact compileProbeInlineCallRanged (width := 8) "main" "f"
+      compileProbeNameMainRanged compileProbeNameFRanged
+
+def compileProgExactCycleParity : Bool :=
+  match compileProgTopHOLProductionExactInline compileProgExactCycleDecls
+      compileProgExactCycleDeclsByteRanged with
+  | [("f", [], .seq .tick (.call none "f" [])),
+     ("g", [], .seq .tick (.call none "g" [])),
+     ("main", [], .seq .tick (.seq .tick (.call none "f" [])))] => true
+  | _ => false
+
+#guard compileProgExactCycleParity
+
+def compileProgCycleCompatibilityParity : Bool :=
+  match compileProgTopHOL compileProgExactCycleDecls with
+  | [("f", [], .seq .tick (.call none "f" [])),
+     ("g", [], .seq .tick (.call none "g" [])),
+     ("main", [], .seq .tick (.seq .tick (.call none "f" [])))] => true
+  | _ => false
+
+#guard compileProgCycleCompatibilityParity
+
+def compileProgExactHandlerDecls : List (Decl (BitVec 8)) :=
+  [.exnDecl "E" .one,
+   .function
+     { name := "id", inline := true, exported := false, params := [],
+       body := .return (.const 7), returnShape := .one },
+   .function
+     { name := "main", inline := false, exported := true, params := [],
+       body := .call (some (none, some ("E", "caught", .call none "id" [])))
+         "id" [], returnShape := .one }]
+
+theorem compileProgExactHandlerDeclsByteRanged :
+    ∀ declaration ∈ compileProgExactHandlerDecls, DeclByteRanged declaration := by
+  intro declaration hmem
+  simp [compileProgExactHandlerDecls] at hmem
+  rcases hmem with h | h | h
+  · subst declaration
+    exact ⟨compileProbeNameERanged, by simp [ShapeByteRanged]⟩
+  · subst declaration
+    exact compileProbeInlineReturnRanged (width := 8) "id"
+      compileProbeNameIdRanged 7
+  · subst declaration
+    simp only [DeclByteRanged, FunDeclByteRanged]
+    refine ⟨compileProbeNameMainRanged, ?_, ?_, ?_⟩
+    · simp [ListParamByteRanged]
+    · simp only [ProgByteRanged]
+      exact ⟨compileProbeNameIdRanged, by simp,
+        ⟨True.intro,
+          ⟨compileProbeNameERanged, compileProbeNameCaughtRanged,
+            compileProbeNameIdRanged, by simp, True.intro⟩⟩⟩
+    · simp [ShapeByteRanged]
+
+def compileProgExactHandlerParity : Bool :=
+  match compileProgTopHOLProductionExactInline compileProgExactHandlerDecls
+      compileProgExactHandlerDeclsByteRanged with
+  | [("id", [], .return [.const value]),
+     ("main", [], .dec 1 (.const 0)
+       (.call (some ([1], some (0, .seq .skip
+         (.seq .tick (.return [.const handledValue]))))) "id" []))] =>
+      value == BitVec.ofNat 8 7 && handledValue == BitVec.ofNat 8 7
+  | _ => false
+
+#guard compileProgExactHandlerParity
+
+def compileProgHandlerCompatibilityParity : Bool :=
+  match compileProgTopHOL compileProgExactHandlerDecls with
+  | [("id", [], .return [.const value]),
+     ("main", [], .dec 1 (.const 0)
+       (.call (some ([1], some (0, .seq .skip
+         (.seq .tick (.return [.const handledValue]))))) "id" []))] =>
+      value == BitVec.ofNat 8 7 && handledValue == BitVec.ofNat 8 7
+  | _ => false
+
+#guard compileProgHandlerCompatibilityParity
+
+def compileProgExactAggregateReturnDecls : List (Decl (BitVec 8)) :=
+  [.function
+     { name := "pair", inline := true, exported := false, params := [],
+       body := .return (.rStruct [.const 7, .const 9]),
+       returnShape := .comb [.one, .one] },
+   .function
+     { name := "main", inline := false, exported := true, params := [],
+       body := .call none "pair" [], returnShape := .comb [.one, .one] }]
+
+theorem compileProgExactAggregateReturnDeclsByteRanged :
+    ∀ declaration ∈ compileProgExactAggregateReturnDecls,
+      DeclByteRanged declaration := by
+  intro declaration hmem
+  simp [compileProgExactAggregateReturnDecls] at hmem
+  rcases hmem with h | h
+  · subst declaration
+    simp only [DeclByteRanged, FunDeclByteRanged]
+    refine ⟨compileProbeNamePairRanged, ?_, ?_, ?_⟩
+    · simp [ListParamByteRanged]
+    · simp [ProgByteRanged, ExpByteRanged, ListExpByteRanged]
+    · simp [ShapeByteRanged]
+  · subst declaration
+    simp only [DeclByteRanged, FunDeclByteRanged]
+    refine ⟨compileProbeNameMainRanged, ?_, ?_, ?_⟩
+    · simp [ListParamByteRanged]
+    · simp only [ProgByteRanged]
+      exact ⟨compileProbeNamePairRanged, by simp, True.intro⟩
+    · simp [ShapeByteRanged]
+
+def compileProgExactAggregateReturnParity : Bool :=
+  match compileProgTopHOLProductionExactInline compileProgExactAggregateReturnDecls
+      compileProgExactAggregateReturnDeclsByteRanged with
+  | [("pair", [], .return [.const first, .const second]),
+     ("main", [], .seq .tick (.return [.const mainFirst, .const mainSecond]))] =>
+      first == BitVec.ofNat 8 7 && second == BitVec.ofNat 8 9 &&
+        mainFirst == BitVec.ofNat 8 7 && mainSecond == BitVec.ofNat 8 9
+  | _ => false
+
+#guard compileProgExactAggregateReturnParity
+
+def compileProgAggregateReturnCompatibilityParity : Bool :=
+  match compileProgTopHOL compileProgExactAggregateReturnDecls with
+  | [("pair", [], .return [.const first, .const second]),
+     ("main", [], .seq .tick (.return [.const mainFirst, .const mainSecond]))] =>
+      first == BitVec.ofNat 8 7 && second == BitVec.ofNat 8 9 &&
+        mainFirst == BitVec.ofNat 8 7 && mainSecond == BitVec.ofNat 8 9
+  | _ => false
+
+#guard compileProgAggregateReturnCompatibilityParity
+
 def compileProgExactDuplicateMatchesProduction : Bool :=
   match compileProgTopHOL compileProgExactDuplicateDecls,
-      compileProgTopHOLProductionExact compileProgExactDuplicateDecls
+      compileProgTopHOLProductionExactInline compileProgExactDuplicateDecls
         compileProgExactDuplicateDeclsByteRanged with
   | [(_, [], .return [.const directFirst]),
      (_, [], .return [.const directSecond]),
@@ -288,7 +473,7 @@ def compileProgExactDuplicateMatchesProduction : Bool :=
 
 def compileProgExactNestedMatchesProduction : Bool :=
   match compileProgTopHOL compileProgExactNestedDecls,
-      compileProgTopHOLProductionExact compileProgExactNestedDecls
+      compileProgTopHOLProductionExactInline compileProgExactNestedDecls
         compileProgExactNestedDeclsByteRanged with
   | [(_, [], .return [.const directLeaf]),
      (_, [], .seq .tick (.return [.const directMid])),
