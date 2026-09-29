@@ -22963,7 +22963,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrect/Assembly.lean",
     "lean_name": "simpProgCorrectOfExtCall",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-only preparation for bead flapjack-pxn.18.5.4.26 (untagged, no HOL claim): assembles all tagged simp_prog_correct constructor cases via the tagged Crep evaluate_ind port evalCrepSemHOLProgExact_induct into ∀ p s, simpProgCorrectAt p s, taking the not-yet-landed ExtCall case (bead .18.5.4.25) as an explicit hypothesis. The Call IHs are bridged from the induction principle's un-normalized form, as in the reviewed ncompile assembly. Once the tagged ExtCall case lands, the tagged HOL simp_prog_correct is this assembly applied to it."
+    "reviewer": "Flapjack-only preparation for bead flapjack-pxn.18.5.4.26 (untagged, no HOL claim): assembles all tagged simp_prog_correct constructor cases via the tagged Crep evaluate_ind port evalCrepSemHOLProgExact_induct into ∀ p s, simpProgCorrectAt p s, taking the ExtCall case as an explicit hypothesis. The Call IHs are bridged from the induction principle's un-normalized form, as in the reviewed ncompile assembly. The tagged HOL simp_prog_correct (crepArithSimpProgCorrect) is this assembly applied to the tagged simpProgCorrectExtCallCase."
   },
   {
     "hol_path": null,
@@ -23011,5 +23011,27 @@
   "lean_name": "evalCrepSemHOLProgExact_extCall_mapcs",
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-specific commutation of the code-only mapcs rendering with the exact ExtCall clause (no HOL declaration); the clause reads only locals/memory/memaddrs/be/ffi, all preserved by mapcs (bead flapjack-pxn.18.5.4.25)."
-}
+},
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrect/Assembly.lean",
+    "lean_name": "crepArithSimpProgCorrect",
+    "hol_path": "cakeml/pancake/proofs/crep_arithProofScript.sml",
+    "hol_name": "simp_prog_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.4.26): full HOL simp_prog_correct (crep_arithProofScript.sml:186-190): ∀ p s r s'. crepSem$evaluate (p, s) = (r, s') ==> r <> SOME Error ==> evaluate (simp_prog p, mapcs s) = (r, mapcs s'). Lean crepArithSimpProgCorrect binds p : CrepProgHOL width, s : CrepSemHOLState width σ, r : Option CrepResultHOLExact and s' in HOL order, with the same two curried premises and the same conclusion. It works over the tagged native evalCrepSemHOLProgExact (evaluate_def), the tagged crepSimpProgHOL (simp_prog_def), and the proof script's local mapcs overload (mapc (λ(s,n,p). (n, simp_prog p)), :160) rendered by the shared crepSimpMapcsHOL; crepSimpMapcsHOL_eq_mapc proves that rendering by rfl. There is no other premise. The proof follows HOL's ho_match_mp_tac evaluate_ind: the tagged evalCrepSemHOLProgExact_induct over the nineteen tagged per-constructor cases (Skip, Dec, Primitive, Assign, Store, Store32, StoreByte, StoreGlob, ShMem, Seq, If, Break, Continue, While, Return, Raise, Tick, Call, ExtCall) via the untagged simpProgCorrectOfExtCall, with the Call IHs bridged as in the reviewed ncompile assembly. Qualifiers match the case pieces. Axioms: propext, Classical.choice, Quot.sound."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrect/Assembly.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module canonical finite-support witness for crepArithSimpProgCorrect: the exact state and broad counterpart roundtrip through toBroad/ofBroad; this is Flapjack representation infrastructure, not a HOL declaration."
+  }
 ]
