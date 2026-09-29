@@ -137,6 +137,16 @@
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "crepSimpExpCorrect1NativeCrepopCase",
+    "hol_path": "cakeml/pancake/proofs/crep_arithProofScript.sml",
+    "hol_name": "simp_exp_correct1",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison (2026-09-29; bead flapjack-pxn.18.5.4.2.28): HOL simp_exp_correct1 (crep_arithProofScript.sml:111-145) universally quantifies state, expression, and unused result; assumes eval s exp <> NONE; and concludes eval (mapc f s) (simp_exp exp) = eval s exp. This is the native Crepop/Mul induction case with the successful full-expression premise, fixed-current-state child-list IH with the unused polymorphic result binder, exact code-only mapc, and complete Option (word_lab) result. HOL eval_def evaluates the entire operand list with OPT_MMAP, rejects non-Word values, and applies crep_op; crep_op_def (crepSemScript.sml:85-88) returns SOME (w1*w2) only for exactly two operands. simp_exp_def (crep_arithScript.sml:59-81) bottom-up simplifies children, then folds two constants, uses mul_const for either single-constant orientation, or leaves a mapped Crepop; the proof uses OPT_MMAP_EQ_SOME_MONO and eval_mul_const (crep_arithProofScript.sml:93,70-91). The Lean case follows those branches over the tagged evalCrepSemHOLExp, crepOpCrepWord, crepSimpExpHOL, crepDestConstHOL, and crepEval_mul_const declarations. It adds no target-success/result, post-state, or context premise. The test fixture exercises both mul_const orientations and the direct RV64 oracle rows in scripts/hol-probes/crep_eval_crepop_mul_rv64_probe.out:1-5, including empty/one/three-operand failure. Exact finite-map fields and positive-width BitVec qualifiers match the neighboring native cases."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
     "lean_name": "crepSimpExpCorrect1NativeShiftCase",
     "hol_path": "cakeml/pancake/proofs/crep_arithProofScript.sml",
     "hol_name": "simp_exp_correct1",
