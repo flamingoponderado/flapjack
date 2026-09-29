@@ -3,6 +3,7 @@ import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Seq
 import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Primitive
 import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Store
 import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Store32
+import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.StoreByte
 import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Dec
 import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.While
 import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Call
@@ -22,6 +23,31 @@ pieces, all stated over the canonical `NCompileCorrect.PropertyAt`.
 namespace Flapjack
 
 open Pancake.CrepToLoop.Proofs.NCompileCorrect
+
+/-! Owning carriers of the finite maps the statements traverse; same-module
+witnesses for the `fmap_as_finite_support_relation` qualifier. -/
+namespace CrepToLoopNcompileCorrectAssemblyWitnesses
+
+theorem holFmapAsFiniteSupportRelationWitness_CrepToLoopContextExact
+    (context : CrepToLoopContextExact) :
+    CrepToLoopContextExact.ofBroad (CrepToLoopContextExact.toBroad context) = context :=
+  CrepToLoopContextExact.holFmapAsFiniteSupportWitness context
+
+theorem holFmapAsFiniteSupportRelationWitness_CrepSemHOLState
+    {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) :
+    CrepSemBroadState.ofBroad state.toBroad state.toBroad_finiteSupport = state :=
+  CrepSemBroadState.ofBroad_toBroad state
+
+theorem holFmapAsFiniteSupportRelationWitness_LoopSemStateFiniteExact
+    {width : Nat} [NeZero width] {F : Type} :
+    (∀ (state : LoopSemStateBroad width F) (h : state.FiniteSupport),
+        (LoopSemStateBroad.ofBroad state h).toBroad = state) ∧
+    (∀ state : LoopSemStateFiniteExact width F,
+        LoopSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  LoopSemStateFiniteExact.LoopEvaluateFiniteSupport.holFmapAsFiniteSupportWitness
+
+end CrepToLoopNcompileCorrectAssemblyWitnesses
 
 private theorem lookupCodeFinite_eq_HOLFinite' {width : Nat} [NeZero width]
     (c : HolFiniteMapExact Flapjack.Basis.Pure.MlString.MlString (List Nat × CrepProgHOL width))
@@ -48,12 +74,10 @@ private theorem lookupCodeFinite_eq_HOLFinite' {width : Nat} [NeZero width]
         exact holFiniteMapExact_eq_of_lookup_eq hm
 
 /-- Flapjack helper (no HOL declaration): HOL `ncompile_correct`'s
-    `recInduct crepSemTheory.evaluate_ind` assembly of all the case pieces, given
-    the `StoreByte` case (bead `flapjack-pxn.18.5.6.53`) in `PropertyAt` form.  The
-    tagged assembled theorem instantiates it. -/
-theorem crepToLoopNcompileCorrectOf {width : Nat} [NeZero width] {σ : Type}
-    (hstoreByte : ∀ (dst src : CrepExpHOL width) (s : CrepSemHOLState width σ),
-      PropertyAt (.storeByte dst src) s) :
+    `recInduct crepSemTheory.evaluate_ind` assembly of all nineteen case pieces
+    into the canonical `PropertyAt` form; the tagged `crepToLoop_ncompile_correct`
+    below restates it with HOL's bundled premises. -/
+theorem crepToLoopNcompileCorrectOf {width : Nat} [NeZero width] {σ : Type} :
     ∀ (v : CrepProgHOL width) (s : CrepSemHOLState width σ), PropertyAt v s := by
   intro v s
   apply evalCrepSemHOLProgExact_induct (P := fun x => PropertyAt x.1 x.2)
@@ -72,7 +96,9 @@ theorem crepToLoopNcompileCorrectOf {width : Nat} [NeZero width] {σ : Type}
   · intro dst src s res s1 t ctxt l he hne hs hm hg hc hl
     exact crepToLoop_ncompile_correct_store32 dst src s res s1 t ctxt l
       ⟨he, hne, hs, hm, hg, hc, hl⟩
-  · exact hstoreByte
+  · intro dst src s res s1 t ctxt l he hne hs hm hg hc hl
+    exact crepToLoop_ncompile_correct_storeByte dst src s res s1 t ctxt l
+      ⟨he, hne, hs, hm, hg, hc, hl⟩
   · intro dst src s res s1 t ctxt l he hne hs hm hg hc hl
     exact crepToLoop_ncompile_correct_storeGlob dst src s res s1 t ctxt l
       ⟨he, hne, hs, hm, hg, hc, hl⟩
@@ -177,4 +203,79 @@ theorem crepToLoopOcompileCorrectOf {width : Nat} [NeZero width] {σ : Type}
     | «break» n => exact absurd rfl (hnb n)
     | «continue» n => exact absurd rfl (hnc n)
     | _ => rfl
+/-- Exact HOL `ncompile_correct` (`crep_to_loopProofScript.sml:110-154`):
+    `∀v v1 res s1 t ctxt l. evaluate (v,v1) = (res,s1) ∧ res ≠ SOME Error ∧
+      state_rel v1 t ∧ mem_rel v1.memory t.memory v1.memaddrs ∧
+      globals_rel v1.globals t.globals ∧ code_rel ctxt v1.code t.code ∧
+      locals_rel ctxt l v1.locals t.locals ⇒
+      ∃ck res1 t1. evaluate (compile ctxt l v, t with clock := t.clock + ck) = (res1,t1) ∧
+        state_rel s1 t1 ∧ mem_rel s1.memory t1.memory s1.memaddrs ∧
+        globals_rel s1.globals t1.globals ∧ code_rel ctxt s1.code t1.code ∧
+        (res1 = case res of ...) ∧ case res of ...`, with HOL's two `case res`
+    expressions as the canonical `resultToLoop` and `localsResultRel`; proved by
+    `recInduct crepSemTheory.evaluate_ind` over the case pieces. -/
+@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "ncompile_correct"
+  (fmap_as_finite_support_relation := [CrepToLoopContextExact.vars,
+    CrepToLoopContextExact.funcs, CrepSemHOLState.locals, CrepSemHOLState.globals,
+    CrepSemHOLState.code, LoopSemStateFiniteExact.globals])
+  (words_as_type_indexed_bitvec)]
+theorem crepToLoop_ncompile_correct {width : Nat} [NeZero width] {σ : Type} :
+    ∀ (v : CrepProgHOL width) (v1 : CrepSemHOLState width σ)
+      (res : Option (CrepResultHOLExact width)) (s1 : CrepSemHOLState width σ)
+      (t : LoopSemStateFiniteExact width σ) (ctxt : CrepToLoopContextExact) (l : NumSet),
+      evalCrepSemHOLProgExact v1 v = (res, s1) ∧ res ≠ some .error ∧
+        crepToLoopStateRelExact v1 t ∧
+        crepToLoopMemRelHOLExact v1.memory t.memory v1.memaddrs ∧
+        crepToLoopGlobalsRelHOLExact v1.globals t.globals ∧
+        crepToLoopCodeRelExact ctxt v1.code t.code ∧
+        crepToLoopLocalsRelExact ctxt l v1.locals t.locals →
+      ∃ (ck : Nat) (res1 : Option (LoopSemStateFiniteExact.LoopResultExact width))
+        (t1 : LoopSemStateFiniteExact width σ),
+        LoopSemStateFiniteExact.evaluate (compileHOLExact ctxt l v)
+            { t with clock := t.clock + ck } = (res1, t1) ∧
+        crepToLoopStateRelExact s1 t1 ∧
+        crepToLoopMemRelHOLExact s1.memory t1.memory s1.memaddrs ∧
+        crepToLoopGlobalsRelHOLExact s1.globals t1.globals ∧
+        crepToLoopCodeRelExact ctxt s1.code t1.code ∧
+        res1 = resultToLoop res ∧
+        localsResultRel ctxt l res s1 t1 :=
+  fun v v1 res s1 t ctxt l ⟨he, hne, hs, hm, hg, hc, hl⟩ =>
+    crepToLoopNcompileCorrectOf v v1 res s1 t ctxt l he hne hs hm hg hc hl
+
+/-- Exact HOL `ocompile_correct` (`crep_to_loopProofScript.sml:3720-3750`), proved
+    as in HOL from `ncompile_correct` and `loop_liveProofTheory.optimise_correct`. -/
+@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "ocompile_correct"
+  (fmap_as_finite_support_relation := [CrepToLoopContextExact.vars,
+    CrepToLoopContextExact.funcs, CrepSemHOLState.locals, CrepSemHOLState.globals,
+    CrepSemHOLState.code, LoopSemStateFiniteExact.globals])
+  (words_as_type_indexed_bitvec)]
+theorem crepToLoop_ocompile_correct {width : Nat} [NeZero width] {σ : Type} :
+    ∀ (p : CrepProgHOL width) (s : CrepSemHOLState width σ)
+      (res : Option (CrepResultHOLExact width)) (s1 : CrepSemHOLState width σ)
+      (t : LoopSemStateFiniteExact width σ) (ctxt : CrepToLoopContextExact) (l : NumSet),
+      evalCrepSemHOLProgExact s p = (res, s1) ∧ crepToLoopStateRelExact s t ∧
+        crepToLoopMemRelHOLExact s.memory t.memory s.memaddrs ∧
+        crepToLoopGlobalsRelHOLExact s.globals t.globals ∧
+        crepToLoopCodeRelExact ctxt s.code t.code ∧
+        crepToLoopLocalsRelExact ctxt l s.locals t.locals ∧ res ≠ some .error ∧
+        (∀ n, res ≠ some (.break n)) ∧ (∀ n, res ≠ some (.continue n)) ∧ res ≠ none →
+      ∃ (ck : Nat) (res1 : Option (LoopSemStateFiniteExact.LoopResultExact width))
+        (t1 : LoopSemStateFiniteExact width σ),
+        LoopSemStateFiniteExact.evaluate (ocompileHOLExact ctxt l p)
+            { t with clock := t.clock + ck } = (res1, t1) ∧
+        crepToLoopStateRelExact s1 t1 ∧
+        crepToLoopMemRelHOLExact s1.memory t1.memory s1.memaddrs ∧
+        crepToLoopGlobalsRelHOLExact s1.globals t1.globals ∧
+        crepToLoopCodeRelExact ctxt s1.code t1.code ∧
+        (match res with
+         | none => False
+         | some .error => False
+         | some .timeOut => res1 = some .timeOut
+         | some (.break _) => False
+         | some (.continue _) => False
+         | some (.return v) => res1 = some (.result (v.map wlabWlocExact))
+         | some (.exception eid) => res1 = some (.exception (.word eid))
+         | some (.finalFfi f) => res1 = some (.finalFfi f)) :=
+  crepToLoopOcompileCorrectOf (fun v s res s1 t ctxt l he hne hs hm hg hc hl =>
+    crepToLoop_ncompile_correct v s res s1 t ctxt l ⟨he, hne, hs, hm, hg, hc, hl⟩)
 end Flapjack
