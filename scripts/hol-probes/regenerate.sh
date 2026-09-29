@@ -2099,6 +2099,16 @@ run_probe crep_sem_evaluate_ind_probeScript.sml crep_sem_evaluate_ind_probe.out 
   evaluate_ind "$cake_dir/pancake/semantics/crepSemScript.sml" \
   "$cake_dir/pancake/semantics"
 
+# The proof-script-local crep_arith `sh_mem_op_code` (crep_arithProofScript.sml
+# :173-180) commutes the local `mapc` code rewrite with `sh_mem_op`; `mapc` is
+# a proof-script `[local]` Overload, so the probe inlines it.  Rows pin the
+# shared-memory domain to the empty set so the domain checks decide.
+run_probe crep_arith_sh_mem_op_code_probeScript.sml crep_arith_sh_mem_op_code_probe.out \
+  sh_mem_op_code_code sh_mem_op_code_load_err sh_mem_op_code_store_err \
+  sh_mem_op_code_load8_err sh_mem_op_code_store8_err sh_mem_op_code_load16_err \
+  sh_mem_op_code_store16_err sh_mem_op_code_load32_err sh_mem_op_code_store32_err \
+  "$cake_dir/pancake/proofs/crep_arithProofScript.sml" "$cake_dir/pancake/proofs"
+
 # The loopSem evaluate_ind statement (rebound through fix_clock_evaluate at
 # loopSemScript.sml:497) is likewise tdefn-generated; capture it for the exact
 # Lean port used by loop_liveProof compile_correct's `recInduct evaluate_ind`.
