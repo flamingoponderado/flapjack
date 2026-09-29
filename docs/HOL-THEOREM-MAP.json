@@ -24268,5 +24268,18 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.9.2): HOL rebound evaluate_def (wordSemScript.sml:1369-1370, REWRITE_RULE [fix_clock_evaluate] evaluate_def), compared with the statement printed from wordSemTheory. It is a conjunction of 26 universally quantified equations, one per clause in HOL order, with HOL's binder order (for example !s c2 c1 for Seq, !s names exit_names c for Loop, and !s ret handler dest args for Call). Each right-hand side is the corresponding clause of the reviewed tagged evaluate (evaluate_def line 1016), with fix_clock removed from the Seq, Loop and returning-Call clauses (HOL prints no fix_clock), and with Lean-only termination annotations (match h :, dite on the clock) replaced by plain match and if. Install's classical equality is under open Classical, as in the definition. Each conjunct is proved from the equation lemma of evaluate and fix_clock_evaluate; no extra premise. Kernel-checked; axioms propext, Classical.choice, Quot.sound; qualifiers as for evaluate_def with the same-module witness WordSemEvaluateIndSupport.holFmapAsFiniteSupportWitness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Semantics.lean",
+    "lean_name": "semantics",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "semantics_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.9.3): HOL wordSem semantics_def (wordSemScript.sml:1374-1401) over the tagged exact evaluate and WordSemStateFiniteExact. prog = Call NONE (SOME start) [0] NONE. The guard is: if ∃k. case FST (evaluate (prog, s with clock := k)) of SOME (Exception _ _) => T | SOME (Result ret _) => ret <> Loc 1 0 | SOME Error => T | NONE => T | _ => F, then Fail. Otherwise the result is case (some res. ∃k t r outcome. evaluate (prog, s with clock := k) = (r,t) ∧ (case r of SOME (FinalFFI e) => outcome = FFI_outcome e | SOME (Result _ _) => outcome = Success | SOME NotEnoughSpace => outcome = Resource_limit_hit | _ => F) ∧ res = Terminate outcome t.ffi.io_events) of SOME res => res | NONE => Diverge (build_lprefix_lub (IMAGE (λk. fromList (SND (evaluate (prog, s with clock := k))).ffi.io_events) UNIV)). Lean has the same let, guard (the same five match arms in HOL order, with <> on word_loc decided classically), choice and branches, with the tagged HolBehaviour/HolOutcome carriers. HOL option some is holOptionSome. build_lprefix_lub and fromList are the untagged renderings of HOL's lprefix_lub/llist libraries (Flapjack/Misc/LprefixLub.lean, Flapjack/Misc/LList.lean), as in the reviewed loopSem semantics port. The set IMAGE f UNIV is the predicate fun l => ∃ k, l = f k. Noncomputable, as is HOL's classical definition; no witness parameter. Kernel-checked observations in Flapjack.Test.WordSemSemanticsParity: Terminate Success [] for an entry returning Loc 1 0; Fail for a missing argument local; and Fail for an entry returning Loc 2 0. Qualifiers are as for evaluate_def, with the same-module witness WordSemSemanticsSupport.holFmapAsFiniteSupportWitness."
   }
 ]
