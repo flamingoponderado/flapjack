@@ -1,4 +1,5 @@
 import Flapjack.Pancake.LoopToWord
+import Flapjack.Pancake.LoopToWord.CompFuncExact
 import Flapjack.Pancake.Semantics.LoopSemStateExact
 import Flapjack.Compiler.Backend.Semantics.WordSem.State
 
@@ -40,5 +41,25 @@ theorem loopToWordGlobalsRelIntroHOLExact {width : Nat} [NeZero width]
       ∀ n v, g1.lookup n = some v → g2.lookup (.temp n) = some v := by
   intro h n v hLookup
   exact h n v hLookup
+
+/-- Exact HOL `code_rel_def` from
+`cakeml/pancake/proofs/loop_to_wordProofScript.sml:33-39`: every source code
+entry `(params, body)` reached by `name` must be compiled to
+`(LENGTH params + 1, comp_func name params body)` in the target code table,
+and the parameter list must have no duplicates. The source code carrier is the
+`loopSem` state's `funname |-> (varname list # prog)` as a reviewed
+`Spt`, the target carrier is `wordSem`'s code `Spt` of
+`Nat × WordLangProgHOL`, and the compiled body uses the exact
+`loopToWordCompFuncHOL` port of HOL `comp_func`. -/
+@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "code_rel_def"
+  (words_as_type_indexed_bitvec)]
+def loopToWordCodeRelHOLExact {width : Nat} [NeZero width]
+    (sourceCode : Spt (List Nat × HolLoopProg width))
+    (targetCode : Spt (Nat × WordLangProgHOL (BitVec width))) : Prop :=
+  ∀ name params body,
+    sptLookup name sourceCode = some (params, body) →
+      sptLookup name targetCode =
+          some (params.length + 1, loopToWordCompFuncHOL name params body) ∧
+        params.Nodup
 
 end Flapjack

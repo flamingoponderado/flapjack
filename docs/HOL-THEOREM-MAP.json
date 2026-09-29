@@ -24171,5 +24171,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.9.9): exact port of HOL compile_def (loop_to_wordScript.sml:176-177) compile p = compile_prog p; Lean compileHOL code = compileProgHOL code."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "code_rel_def",
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/RelationsExact.lean",
+    "lean_name": "loopToWordCodeRelHOLExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.9.12) against cakeml/pancake/proofs/loop_to_wordProofScript.sml:33-39: HOL code_rel s_code t_code = (!name params body. lookup name s_code = SOME (params,body) ==> lookup name t_code = SOME (LENGTH params+1, comp_func name params body) /\\ ALL_DISTINCT params). Lean keeps the same quantified name/params/body, the source Spt lookup returning (params,body), the target Spt lookup returning (params.length+1, loopToWordCompFuncHOL name params body) and params.Nodup, over the exact HolLoopProg/WordLangProgHOL/Spt carriers with the exact comp_func port."
   }
 ]
