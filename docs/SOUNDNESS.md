@@ -101,6 +101,31 @@ The following are open review or verification obligations:
    `evalPanValueDeclarationsWithStructs` remains Flapjack-specific and is not
    used as evidence for the exact `compile_top_shape_wf` port. This work does
    not claim a cross-prover equivalence proof.
+8. HOL's IEEE-754 library (`HOL/src/floating-point`, used by wordSem
+   `inst_def`) is specified over HOL `real`, and Flapjack has no real
+   numbers. The untagged renderings in `Flapjack/Misc/BinaryIeee*.lean` rely
+   on two explicit external assurance assumptions that Lean does not check:
+   - Float values (`float_to_real`) are dyadic rationals, rendered as Lean
+     `Rat`. HOL's comparisons and arithmetic on them agree with `Rat` because
+     `Rat → real` is an ordered-field embedding.
+   - `float_sqrt` rounds the real `sqrt r` of a nonnegative rational `r`. In
+     `Flapjack/Misc/BinaryIeeeSqrt.lean` each HOL comparison against
+     `s = sqrt r` is replaced by an exact rational criterion:
+     - `s ≤ q` iff `0 ≤ q ∧ r ≤ q²`;
+     - `s < q` iff `0 < q ∧ r < q²`;
+     - `q ≤ s` iff `q ≤ 0 ∨ q² ≤ r`;
+     - `q < s` iff `q < 0 ∨ q² < r`;
+     - `q = s` iff `0 ≤ q ∧ q² = r`;
+     - `|A − s| ≤ |B − s|` iff `A = B`, or `A < B ∧ s ≤ (A+B)/2`, or
+       `B < A ∧ (A+B)/2 ≤ s`;
+     - `|s| = s`.
+
+   These are standard real-analysis facts, but they are not proved in either
+   prover here. The sqrt specification is therefore not an exact `@[hol]`
+   port. HOL's choice-based `closest_such` and `float_some_qnan` are rendered
+   with `Classical.epsilon`. Kernel-checked results start at those Lean
+   specifications: for example, `holFloatRound_rte_fp64` proves that the
+   computable binary64 rounding equals the specification.
 
 ## Trust and reproducibility notes
 

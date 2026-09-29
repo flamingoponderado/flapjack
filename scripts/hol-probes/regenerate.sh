@@ -1725,6 +1725,13 @@ run_probe machine_ieee_fp64_convert_probeScript.sml machine_ieee_fp64_convert_pr
   "$hol_dir/src/floating-point/binary_ieeeScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 
+# The binary64 sqrt special-case probe observes the choice-free fp64_sqrt
+# branches (+inf, -0) (bead flapjack-h29l.6.3.2.1).
+run_probe machine_ieee_fp64_sqrt_special_probeScript.sml machine_ieee_fp64_sqrt_special_probe.out \
+  sqrt_pinf sqrt_nz \
+  "$hol_dir/src/floating-point/binary_ieeeScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
 # The good_handlers probe observes the structural handler-label predicate,
 # including the NONE-ret case (handler ignored) and nested bad handlers.
 run_probe word_convs_good_handlers_probeScript.sml word_convs_good_handlers_probe.out \
