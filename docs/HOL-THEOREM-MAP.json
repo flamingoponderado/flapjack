@@ -24108,6 +24108,14 @@
     "reviewer": "flapjack-ds5 source comparison (2026-09-29; bead flapjack-pxn.18.5.9.14.4) against loop_to_wordProofScript.sml:129-135. HOL conclusion is exactly locals_rel ctxt l1 l2 ==>: INJ (find_var ctxt) (domain ctxt) UNIV /\\ (forall n m. lookup n ctxt = SOME m ==> m <> 0 /\\ EVEN m) /\\ forall n v. lookup n l1 = SOME v ==> exists m. lookup n ctxt = SOME m /\\ lookup m l2 = SOME v. Lean keeps the three conjuncts in order; INJ is rendered pointwise (sptMem domain membership -> findVarHOL equality -> equal keys), EVEN m is m % 2 = 0, and the source simulation uses sptLookup. The theorem is the definitional unfolding of localsRelHOL, so the only qualifier is the type-indexed word of the WordLocW relation carrier (words_as_type_indexed_bitvec). No extra premise and no strengthened quantifiers."
   },
   {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "domain_mk_new_cutset_not_empty",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/CutsetDomain.lean",
+    "lean_name": "domainMkNewCutsetNotEmpty",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-c source comparison (2026-09-29; bead flapjack-pxn.18.5.9.17.2) against loop_to_wordProofScript.sml:389-393. HOL states domain (mk_new_cutset ctxt x1) <> {} with no premise. Lean quantifies the exact Spt Nat context and Spt Unit live-set carriers and states sptDomain (mkNewCutsetHOL context live) <> (fun _ => False), the predicate-set rendering of domain nonemptiness. The tagged mkNewCutsetHOL definition is the direct Spt construction and inserts register zero, establishing the same conclusion. No word, finite-map, list, name, evaluator, or extra-hypothesis translation applies."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Inst.lean",
     "lean_name": "inst",
     "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
