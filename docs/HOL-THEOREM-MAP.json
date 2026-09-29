@@ -22490,6 +22490,24 @@
   {
     "hol_path": "cakeml/pancake/proofs/crep_arithProofScript.sml",
     "hol_name": "simp_prog_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrect/If.lean",
+    "lean_name": "simpProgCorrectIfCase",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison (2026-09-29; bead flapjack-pxn.18.5.4.23): HOL crep_arithProofScript.sml:184-212 states evaluate (p,s)=(r,s') and r<>SOME Error, concluding evaluate (simp_prog p,mapcs s)=(r,mapcs s'). This is the If constructor branch of crepSem$evaluate_ind (crepSemScript.sml:440, captured in scripts/hol-probes/crep_sem_evaluate_ind_probe.out): its single IH binder is (∀v1 w. eval s e = SOME v1 ∧ v1 = Word w ⇒ P (if w <> 0w then c1 else c2, s)), a guarded single hypothesis over the branch selected by the condition word at the input state. The Lean case keeps exactly that IH as one premise (value and w, the source eval equation evalCrepSemHOLExp state condition = some value, value = .word w, and the selected branch program if w <> 0 then thenBranch else elseBranch), plus the unchanged source evaluation and non-Error premises and the mapped-state target conclusion; it takes no target-run, post-state relation, or extra success premise. HOL's If evaluator clause crepSemScript.sml:307-311 evaluates the condition and selects c1/c2 by w <> 0w, else (SOME Error,s); Lean follows that branch in evalCrepSemHOLProgExact_ite_holShape, and the non-word/absent condition arm is discharged by r<>SOME Error. The condition is transported across the shared code-only mapcs update by the tagged exact simp_exp_correct, so the target selects the same branch. The only representation qualifiers are finite-support locals/globals/code and width-indexed BitVec, with a same-module roundtrip witness."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrect/If.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module canonical finite-support witness for simpProgCorrectIfCase: the exact state and broad counterpart roundtrip through toBroad/ofBroad; this is Flapjack representation infrastructure, not a HOL declaration."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_arithProofScript.sml",
+    "hol_name": "simp_prog_correct",
     "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrectShMem.lean",
     "lean_name": "simpProgCorrectShMemCase",
     "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",

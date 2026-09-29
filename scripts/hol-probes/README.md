@@ -408,6 +408,19 @@ probe inlines `st with code := FMAP_MAP2 f st.code`.
 exact `simpProgCorrectStore32Case` and the exact `CrepSemHOLState` carriers.
 Refresh with
 `HOL_PROBE_ONLY=crep_arith_store_32_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`crep_arith_if_probe.out` records eight direct HOL EVAL rows for the `If` case
+of the proof-script `simp_prog_correct` at
+`cakeml/pancake/proofs/crep_arithProofScript.sml:184-212`:
+`simp_prog (If exp c1 c2) = If (simp_exp exp) (simp_prog c1) (simp_prog c2)`
+(`crep_arithScript.sml:90`); the true- and false-guard `evaluate` equations
+`evaluate (If e c1 c2, s)` selecting `c1`/`c2` and their resulting states
+(`crepSemScript.sml:307-311`); the absent-condition failure branch
+`(SOME Error, s)`; and the code-only commutation of `mapc f` with the selected
+branch update. The `mapc` overload is local to the proof script, so the probe
+inlines `st with code := FMAP_MAP2 f st.code`.
+`Flapjack.Test.CrepArithIfParity` replays the rows against the tagged exact
+`simpProgCorrectIfCase` and the exact `CrepSemHOLState` carriers. Refresh with
+`HOL_PROBE_ONLY=crep_arith_if_probeScript.sml scripts/hol-probes/regenerate.sh`.
 `crep_dest_2exp_probe.out` records direct HOL EVAL of
 `crep_arith$dest_2exp_def` at `cakeml/pancake/crep_arithScript.sml:15`, including
 the corresponding `word_lsl 1w` results for successful exponents. Its Lean
