@@ -26,6 +26,14 @@ example : fpSemFpCmpComp .greaterEqual = holFp64GreaterEqual := rfl
 
 example : fpSemFpCmpComp .equal = holFp64Equal := rfl
 
+example : fpSemFpCmp .lt = holFp64LessThan := rfl
+
+example : fpSemFpCmp .leq = holFp64LessEqual := rfl
+
+example : fpSemFpCmp .gt = holFp64GreaterThan := rfl
+
+example : fpSemFpCmp .geq = holFp64GreaterEqual := rfl
+
 example : fpSemFpUopComp .abs = holFp64Abs := rfl
 
 example : fpSemFpUopComp .neg = holFp64Negate := rfl
@@ -59,6 +67,16 @@ example : holFp64LessThan 2 1 = false := by decide +kernel
 example : fpSemFpCmpComp .less 1 2 = true := by decide +kernel
 
 example : fpSemFpCmpComp .greater 2 1 = true := by decide +kernel
+
+example : fpSemFpCmp .lt 1 2 = true := by decide +kernel
+
+example : fpSemFpCmp .leq 1 1 = true := by decide +kernel
+
+example : fpSemFpCmp .gt 2 1 = true := by decide +kernel
+
+example : fpSemFpCmp .geq 1 1 = true := by decide +kernel
+
+example : fpSemFpCmp .lt 2 1 = false := by decide +kernel
 
 /-! ## Executable checks -/
 
