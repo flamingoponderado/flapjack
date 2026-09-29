@@ -14,7 +14,7 @@ is documented there as *not* that adapter; likewise the legacy word-valued
 location in its `LoopState` locals/memory, so it is not a faithful `loopSem$eval`
 adapter either.
 
-This module defines the faithful production adapter `loopMachineEvalHook` and
+This module defines a candidate production adapter `loopMachineEvalHook` and
 proves that, under the exact/production state relation
 `LoopSemStateFiniteExact.prodRel`, it agrees with the exact
 `LoopSemStateFiniteExact.eval` on the `HolLoopExp.const` and `.var` expressions
@@ -23,9 +23,10 @@ word-valued local, a present location-valued local, and an absent local, i.e. th
 complete word/location payload, and it is derived from the `prodRel` local-lookup
 conjunct rather than assumed as a hook equation.
 
-These are Flapjack-specific cross-carrier bridge declarations relating the exact
-finite-support HOL-shaped carrier to the production executable carrier; none of
-them ports a HOL declaration, so they intentionally carry no `@[hol]` tag.
+Only `Const` and `Var` are verified here; the other adapter cases and wiring to
+an executed caller remain open. These are Flapjack-specific cross-carrier
+bridges between the exact finite-support carrier and the production carrier;
+none ports a HOL declaration, so they intentionally carry no `@[hol]` tag.
 -/
 
 namespace Flapjack
@@ -37,13 +38,14 @@ def loopValueToWordLocW {width : Nat} [NeZero width] :
   | .word value => .word value
   | .loc identifier offset => .loc identifier offset
 
-/-- Faithful production adapter for the `LoopEvaluateHooks.eval` field, at the
-    executed `LoopMachineState`/`LoopValue` carrier.  It is the executable
+/-- Candidate production adapter for the `LoopEvaluateHooks.eval` field, at the
+    `LoopMachineState`/`LoopValue` carrier. It is the proposed executable
     counterpart of the exact `LoopSemStateFiniteExact.eval`: `Const` wraps the
     word, `Var` reads the local cell (word or location, or `none` when absent),
     `Lookup` reads globals, `Load` consults `mdomain`/`memory`, `Op`/`Shift`
     reuse the reviewed `wordOpHOL`/`wordShiftHOL`, and `BaseAddr`/`TopAddr`
-    return the state's address bounds.
+    return the state's address bounds. Only `Const` and `Var` have proven
+    exact/production agreement below; the other clauses need separate review.
 
     Only the `crepOp`/`cmp` constructors, which the executable `LoopExp` adds but
     the faithful `HolLoopExp` does not contain, have no source counterpart and
