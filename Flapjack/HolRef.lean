@@ -249,8 +249,8 @@ private def checkedHolRef (path name : String) (line? : Option Nat := none)
     (fmapAsFiniteSupportEqualities : Bool := false)
     (wordsAsTypeIndexedBitvec : Bool := false)
     (wordDimensionAsWidth : Option String := none) : CoreM HolRef := do
-  unless path.startsWith "cakeml/" && path.endsWith ".sml" do
-    throwError "@[hol]: path must be a repository-relative `cakeml/...Script.sml` file, got {path}"
+  unless (path.startsWith "cakeml/" || path.startsWith "hol/") && path.endsWith ".sml" do
+    throwError "@[hol]: path must be a repository-relative `cakeml/...Script.sml` file or a pinned external `hol/...Script.sml` file, got {path}"
   if name.isEmpty || name.any Char.isWhitespace then
     throwError "@[hol]: declaration name must be a single HOL identifier, got {repr name}"
   if listAsArray.toList.eraseDups.length != listAsArray.size then
@@ -344,7 +344,7 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
       parse path.getString name.getString (some line.getNat) qualifiers
   | `(attr| hol $path:str $name:str $qualifiers:holQualifier*) =>
       parse path.getString name.getString none qualifiers
-  | _ => throwError "@[hol]: expected `hol \"<cakeml path>\" \"<HOL declaration name>\" [line] [(list_as_array := [fields])] [(names_as_string := [fields])]`"
+  | _ => throwError "@[hol]: expected `hol \"<cakeml or pinned hol/ path>\" \"<HOL declaration name>\" [line] [(list_as_array := [fields])] [(names_as_string := [fields])]`"
 
 /-! Elaborated-type width validation for `(words_as_type_indexed_bitvec)`.
 Runs in the attribute handler on the elaborated declaration type (no textual

@@ -1,5 +1,6 @@
 """Regression checks for the HOL-reference scanner."""
 
+import hashlib
 import os
 import runpy
 import tempfile
@@ -2154,6 +2155,75 @@ class RealCrepPropsWordCarrierResolutionTest(unittest.TestCase):
                 ),
                 [],
                 hol_name,
+            )
+
+
+EXTERNAL = CHECKER["external_hol_ref_error"]
+HOL_DECL_LINES = CHECKER["hol_declaration_lines"]
+
+
+class ExternalHolSourceTest(unittest.TestCase):
+    TAG = "hol/src/finite_maps/sptreeScript.sml"
+
+    def _pin(self, declarations, sha256=""):
+        return {
+            self.TAG: {
+                "tag_path": self.TAG,
+                "upstream": "src/finite_maps/sptreeScript.sml",
+                "sha256": sha256,
+                "declarations": declarations,
+            }
+        }
+
+    def _check(self, pins, name, line=None, root=None):
+        return EXTERNAL(self.TAG, name, line, pins, {}, root or Path("/nonexistent-hol"))
+
+    def test_accepts_pinned_declaration_without_checkout(self):
+        self.assertIsNone(self._check(self._pin({"difference_def": [319]}), "difference_def"))
+
+    def test_rejects_unpinned_path(self):
+        error = self._check({}, "difference_def")
+        self.assertIn("not pinned", error)
+
+    def test_rejects_missing_declaration(self):
+        error = self._check(self._pin({}), "difference_def")
+        self.assertIn("declares no `difference_def`", error)
+
+    def test_rejects_wrong_line(self):
+        error = self._check(self._pin({"difference_def": [319]}), "difference_def", 999)
+        self.assertIn("not at line 999", error)
+
+    def test_rejects_ambiguous_declaration_without_line(self):
+        error = self._check(self._pin({"difference_def": [319, 400]}), "difference_def")
+        self.assertIn("multiple lines", error)
+
+    def test_rejects_hash_mismatch(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source = Path(tmp) / "src" / "finite_maps" / "sptreeScript.sml"
+            source.parent.mkdir(parents=True)
+            source.write_text("Definition difference_def:\n  x = y\n", encoding="utf-8")
+            error = self._check(self._pin({"difference_def": [1]}, sha256="0" * 64), "difference_def", root=Path(tmp))
+        self.assertIn("sha256", error)
+
+    def test_rejects_declaration_drift(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source = Path(tmp) / "src" / "finite_maps" / "sptreeScript.sml"
+            source.parent.mkdir(parents=True)
+            source.write_text("Definition difference_def:\n  x = y\n", encoding="utf-8")
+            import hashlib
+            digest = hashlib.sha256(source.read_bytes()).hexdigest()
+            error = self._check(self._pin({"difference_def": [42]}, sha256=digest), "difference_def", root=Path(tmp))
+        self.assertIn("drifted", error)
+
+    def test_accepts_matching_checkout(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source = Path(tmp) / "src" / "finite_maps" / "sptreeScript.sml"
+            source.parent.mkdir(parents=True)
+            source.write_text("Definition difference_def:\n  x = y\n", encoding="utf-8")
+            import hashlib
+            digest = hashlib.sha256(source.read_bytes()).hexdigest()
+            self.assertIsNone(
+                self._check(self._pin({"difference_def": [1]}, sha256=digest), "difference_def", root=Path(tmp))
             )
 
 

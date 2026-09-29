@@ -144,6 +144,17 @@ source line to the tag, for example `@[hol "cakeml/...Script.sml" "name" 123]`.
 The reference checker rejects ambiguous names without a line and lines that
 do not declare that name.
 
+**Pinned external HOL sources.** A reviewed helper whose HOL original lives
+outside the `cakeml` submodule (for example HOL4's own `src/` libraries) is
+tagged with the `hol/` prefix, e.g.
+`@[hol "hol/src/finite_maps/sptreeScript.sml" "difference_def"]`. Every such
+path must have an entry in `docs/HOL-EXTERNAL-SOURCES.json` recording the
+upstream path, the reviewed file's `sha256`, and the reviewed declaration
+index. The reference checker rejects an unpinned path, a declaration that is
+not in the pinned index, a wrong line, and, when a HOL4 checkout is available
+(`HOL_EXTERNAL_ROOT`, default `/home/zksecurity/HOL`), a sha256 or declaration
+index that has drifted from the pin. The `cakeml/...sml` checks are unchanged.
+
 **Lean names may differ; the tag may not.** Naming may follow Lean
 conventions (`pcCompileCorrect`, `stateRel`), and keeping the HOL name
 verbatim is also fine. Whatever the name, the `@[hol]` tag carries the exact

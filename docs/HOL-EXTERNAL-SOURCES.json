@@ -1,0 +1,28 @@
+[
+  {
+    "tag_path": "hol/src/finite_maps/sptreeScript.sml",
+    "upstream": "src/finite_maps/sptreeScript.sml",
+    "sha256": "97791ac7f3f7b0de823afb00f6f1fbd18cd158b9fe8a818a272b39daa0e49b71",
+    "declarations": {
+      "lookup_def": [
+        46
+      ],
+      "insert_def": [
+        67
+      ],
+      "lookup_insert1": [
+        161
+      ],
+      "lookup_insert": [
+        194
+      ],
+      "difference_def": [
+        319
+      ],
+      "lookup_difference": [
+        411
+      ]
+    },
+    "note": "Pinned from the read-only HOL4 checkout for the reviewed sptree helper ports. Re-derive with scripts/check-hol-refs.py when HOL4_EXTERNAL_ROOT is set; update this pin only after re-reviewing the upstream declarations."
+  }
+]

@@ -27,6 +27,8 @@ Uses only the standard library.
 
 from __future__ import annotations
 
+import hashlib
+import json
 import os
 import re
 import sys
@@ -37,6 +39,17 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 LEAN_DIRS = [ROOT / "Flapjack", ROOT / "Flapjack.lean"]
+
+# Reviewed external HOL4 sources (for example HOL4's own `src/` libraries) are
+# cited as `hol/<upstream-path>.sml` and pinned in the file below: each entry
+# records the upstream path, the file's sha256, and the reviewed declaration
+# index.  The `cakeml/...sml` scheme and its checks are unchanged; an external
+# path that is not pinned is rejected, so this never weakens the submodule
+# checks.
+EXTERNAL_HOL_PREFIX = "hol/"
+EXTERNAL_HOL_PIN_FILE = ROOT / "docs" / "HOL-EXTERNAL-SOURCES.json"
+EXTERNAL_HOL_ROOT_ENV = "HOL_EXTERNAL_ROOT"
+DEFAULT_EXTERNAL_HOL_ROOT = Path("/home/zksecurity/HOL")
 
 ATTR_RE = re.compile(r'\bhol\s+"([^"]+)"\s+"([^"]+)"(?:\s+(\d+))?')
 QUALIFIER_RE = re.compile(r'\(\s*list_as_array\s*:=\s*\[([^]]*)\]\s*\)')
@@ -2409,6 +2422,87 @@ def hol_ref_error(
     return None
 
 
+def load_external_hol_pins() -> dict[str, dict]:
+    """Load the reviewed external-HOL pin file, keyed by tag path."""
+    if not EXTERNAL_HOL_PIN_FILE.is_file():
+        return {}
+    data = json.loads(EXTERNAL_HOL_PIN_FILE.read_text(encoding="utf-8"))
+    pins: dict[str, dict] = {}
+    for entry in data:
+        pins[entry["tag_path"]] = entry
+    return pins
+
+
+def external_hol_root() -> Path:
+    """The local HOL4 checkout used to re-verify pinned external sources."""
+    return Path(os.environ.get(EXTERNAL_HOL_ROOT_ENV, str(DEFAULT_EXTERNAL_HOL_ROOT)))
+
+
+def external_pin_drift_error(
+    entry: dict, cache: dict[Path, dict[str, list[int]]], external_root: Path
+) -> str | None:
+    """Re-derive a pinned external source and report drift, if a checkout is present."""
+    upstream = entry["upstream"]
+    source = external_root / upstream
+    if not source.is_file():
+        return None
+    digest = hashlib.sha256(source.read_bytes()).hexdigest()
+    if digest != entry["sha256"]:
+        return (
+            f"external HOL source {upstream} sha256 {digest} does not match "
+            f"pinned {entry['sha256']}"
+        )
+    actual = hol_declaration_lines(source, cache)
+    for key, lines in entry["declarations"].items():
+        if actual.get(key, []) != list(lines):
+            return (
+                f"pinned declaration index for {entry['tag_path']} drifted from "
+                f"{upstream}: `{key}` is at {actual.get(key, [])}, pinned at "
+                f"{lines}"
+            )
+    return None
+
+
+def external_hol_ref_error(
+    tag_path: str, name: str, line: int | None,
+    pins: dict[str, dict], cache: dict[Path, dict[str, list[int]]],
+    external_root: Path,
+) -> str | None:
+    """Validate a `hol/<upstream>.sml` reference against its pinned index.
+
+    The tag must name a pinned path.  When the external HOL4 checkout is
+    present the file's sha256 and declaration index are re-derived and must
+    match the pin; otherwise the reviewed pin itself is authoritative, which
+    keeps the check reproducible in CI without a HOL4 checkout.
+    """
+    entry = pins.get(tag_path)
+    if entry is None:
+        return (
+            f"external HOL path {tag_path} is not pinned in "
+            f"{EXTERNAL_HOL_PIN_FILE.relative_to(ROOT).as_posix()}"
+        )
+    drift_error = external_pin_drift_error(entry, cache, external_root)
+    if drift_error is not None:
+        return drift_error
+    pin_decls: dict[str, list[int]] = {
+        key: list(value) for key, value in entry["declarations"].items()
+    }
+    declared = pin_decls.get(name, [])
+    if not declared:
+        return f"pinned external HOL source {tag_path} declares no `{name}`"
+    if line is None and len(declared) > 1:
+        return (
+            f"pinned external HOL source {tag_path} declares `{name}` at "
+            f"multiple lines {declared}; add the source line to @[hol]"
+        )
+    if line is not None and line not in declared:
+        return (
+            f"pinned external HOL source {tag_path} declares `{name}` at "
+            f"{declared}, not at line {line}"
+        )
+    return None
+
+
 def main(argv: list[str]) -> int:
     want_mapping = "--mapping" in argv
     want_orphans = "--orphans" in argv
@@ -2416,6 +2510,14 @@ def main(argv: list[str]) -> int:
     mapping: list[tuple[str, str, str, str]] = []
     cache: dict[Path, dict[str, list[int]]] = {}
     reachable = reachable_modules()
+    external_pins = load_external_hol_pins()
+    external_root = external_hol_root()
+    for entry in external_pins.values():
+        drift_error = external_pin_drift_error(entry, cache, external_root)
+        if drift_error is not None:
+            errors.append(
+                f"{EXTERNAL_HOL_PIN_FILE.relative_to(ROOT).as_posix()}: {drift_error}"
+            )
 
     if not (ROOT / "cakeml" / "pancake").is_dir():
         print(
@@ -2532,17 +2634,32 @@ def main(argv: list[str]) -> int:
                     )
                 )
             target = ROOT / hol_path
-            if not hol_path.startswith("cakeml/") or not hol_path.endswith(".sml"):
-                errors.append(f"{where}: path is not a cakeml/...sml file: {hol_path}")
-                continue
-            if not target.is_file():
-                errors.append(f"{where}: HOL file does not exist: {hol_path}")
-                continue
-            ref_error = hol_ref_error(target, hol_name, hol_line, cache)
-            if ref_error is not None:
+            if hol_path.startswith("cakeml/"):
+                if not hol_path.endswith(".sml"):
+                    errors.append(f"{where}: path is not a cakeml/...sml file: {hol_path}")
+                    continue
+                if not target.is_file():
+                    errors.append(f"{where}: HOL file does not exist: {hol_path}")
+                    continue
+                ref_error = hol_ref_error(target, hol_name, hol_line, cache)
+                if ref_error is not None:
+                    errors.append(
+                        f"{where}: {hol_path} {ref_error} "
+                        f"(cited by {lean_decl})"
+                    )
+                    continue
+            elif hol_path.startswith(EXTERNAL_HOL_PREFIX) and hol_path.endswith(".sml"):
+                ref_error = external_hol_ref_error(
+                    hol_path, hol_name, hol_line, external_pins, cache, external_root
+                )
+                if ref_error is not None:
+                    errors.append(
+                        f"{where}: {ref_error} (cited by {lean_decl})"
+                    )
+                    continue
+            else:
                 errors.append(
-                    f"{where}: {hol_path} {ref_error} "
-                    f"(cited by {lean_decl})"
+                    f"{where}: path is not a cakeml/...sml or hol/...sml file: {hol_path}"
                 )
                 continue
             mapped_name = f"{hol_name}:{hol_line}" if hol_line is not None else hol_name

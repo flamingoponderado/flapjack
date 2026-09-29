@@ -94,4 +94,21 @@ if ! lake env lean "$test_file" >/dev/null 2>&1; then
   exit 1
 fi
 
+printf '%s\n' \
+  'import Flapjack.HolRef' \
+  '@[hol "hol/src/finite_maps/sptreeScript.sml" "difference_def"]' \
+  'theorem externalSyntax : True := trivial' \
+  '#hol_refs' > "$test_file"
+output=$(lake env lean "$test_file")
+[[ "$output" == *'externalSyntax  hol/src/finite_maps/sptreeScript.sml  difference_def'* ]]
+
+printf '%s\n' \
+  'import Flapjack.HolRef' \
+  '@[hol "hol/src/finite_maps/sptreeScript" "difference_def"]' \
+  'theorem externalMissingSuffix : True := trivial' > "$test_file"
+if lake env lean "$test_file" >/dev/null 2>&1; then
+  echo 'external path without .sml suffix was accepted' >&2
+  exit 1
+fi
+
 echo 'HOL reference attribute syntax: exact and qualified forms pass; invalid qualifiers rejected'
