@@ -1463,7 +1463,8 @@ run_probe loop_sem_eval_probeScript.sml loop_sem_eval_probe.out \
 run_probe loop_sem_evaluate_probeScript.sml loop_sem_evaluate_probe.out \
   skip tick_timeout "$cake_dir/pancake/semantics/loopSemScript.sml"
 run_probe loop_sem_evaluate_control_probeScript.sml loop_sem_evaluate_control_probe.out \
-  if_true if_false if_cut_error loop_break0 loop_return loop_timeout \
+  if_true if_false if_cut_error if_nonword_left_error if_nonword_right_error \
+  loop_break0 loop_return loop_timeout \
   loop_continue0_timeout loop_break_outer call_return call_return_handler \
   call_exception_handler call_exception_no_handler call_arity_error \
   tail_call_return raise primitive_add_carry loc_value loc_value_missing \
