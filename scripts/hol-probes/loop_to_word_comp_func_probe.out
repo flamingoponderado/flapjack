@@ -1,0 +1,5 @@
+comp_func_skip=Skip
+comp_func_param_assign=Assign 2 (Var 2)
+comp_func_new_temp=Assign 2 (Var 2)
+compile_prog_code=[(3,3,Skip); (6,2,Assign 2 (Var 2)); (20,1,Assign 2 (Var 2))]
+compile_code=[(3,3,Skip); (6,2,Assign 2 (Var 2)); (20,1,Assign 2 (Var 2))]
