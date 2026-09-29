@@ -1,6 +1,7 @@
 import Flapjack.Pancake.PanStructs
 import Flapjack.Pancake.PanLang.Decl
 import Flapjack.Pancake.PanLang.Prog
+import Flapjack.Pancake.PanStructs.CompileShapeExact
 
 /-!
 Byte-rangedness preservation for the named-structure elimination pass
@@ -17,6 +18,7 @@ parser-to-Crep boundary.
 namespace Flapjack
 
 open Flapjack.Pancake.PanLang
+open Flapjack.Basis.Pure.MlString
 
 /-- Byte-rangedness of the production struct context used by the struct pass. -/
 def CtxBR (c : StructContext) : Prop :=
@@ -98,6 +100,135 @@ theorem structCompileShapeWF_byteRanged (context : StructContext) (shape : Shape
       rw [hlookup] at heq
       simp at heq
     · simp [ShapeByteRanged]
+
+/-- Project the production structure context onto the exact fields-only carrier
+consumed by HOL `compile_shape`. -/
+def structContextToCompileShapeExact (context : StructContext) :
+    List (MlS × List (MlS × ShapeHOL)) :=
+  context.map fun entry =>
+    (ofString entry.1, entry.2.fields.map fun field => (ofString field.1, shapeToHOL field.2))
+
+private theorem ofString_injective_of_ranged_local {a b : String}
+    (ha : NameRanged a) (hb : NameRanged b) (h : ofString a = ofString b) : a = b := by
+  have h' := congrArg toStringOfBytes h
+  rwa [toStringOfBytes_ofString_of_bytes a ha,
+    toStringOfBytes_ofString_of_bytes b hb] at h'
+
+/-- The exact HOL first-match search and production `lookupInfoWithRest` select
+the same entry and suffix when identifiers are byte-ranged. -/
+theorem structContextToCompileShapeExact_dropWhile
+    (name : String) (context : StructContext) (hc : CtxBR context)
+    (hn : NameRanged name) :
+    (structContextToCompileShapeExact context).dropWhile
+        (fun entry => ! decide (entry.1 = ofString name)) =
+      match lookupInfoWithRest name context with
+      | none => []
+      | some (info, suffix) =>
+          (ofString name,
+            info.fields.map fun field => (ofString field.1, shapeToHOL field.2)) ::
+              structContextToCompileShapeExact suffix := by
+  induction context with
+  | nil => rfl
+  | cons entry rest ih =>
+      obtain ⟨candidate, info⟩ := entry
+      have hcand : NameRanged candidate := (hc (candidate, info) (by simp)).1
+      have hrest : CtxBR rest := fun p hp => hc p (by simp [hp])
+      by_cases hmatch : candidate == name
+      · have heq : candidate = name := beq_iff_eq.mp hmatch
+        subst candidate
+        simp [structContextToCompileShapeExact, lookupInfoWithRest]
+      · have hnot : ofString candidate ≠ ofString name := by
+          intro heq
+          apply hmatch
+          apply beq_iff_eq.mpr
+          exact ofString_injective_of_ranged_local hcand hn heq
+        have hdrop : decide (ofString candidate = ofString name) = false :=
+          by simp [hnot]
+        simp only [structContextToCompileShapeExact, List.map_cons,
+          List.dropWhile_cons, hdrop, Bool.not_false, lookupInfoWithRest, hmatch]
+        exact ih hrest
+
+/-- On parser-ranged identifiers and shapes, production `compile_shape`
+agrees with the reviewed exact HOL `compile_shape` after the checked carrier
+conversion. This is an untagged bridge theorem; it does not change which
+definition the executable pass calls. -/
+theorem structCompileShapeWF_eq_compileShapeExact
+    (context : StructContext) (shape : Shape) (hc : CtxBR context)
+    (hs : ShapeByteRanged shape) :
+    structCompileShapeWF context shape =
+      shapeOfHOL (Flapjack.Pancake.PanStructs.CompileShapeExact.compileShapeExact
+        (structContextToCompileShapeExact context) (shapeToHOL shape)) := by
+  refine (structCompileShapeWF.induct
+    (motive1 := fun context shapes => CtxBR context →
+      (∀ s ∈ shapes, ShapeByteRanged s) →
+        structCompileShapeWF.structCompileShapesWF context shapes =
+          (Flapjack.Pancake.PanStructs.CompileShapeExact.compileShapesExact
+            (structContextToCompileShapeExact context) (shapes.map shapeToHOL)).map shapeOfHOL)
+    (motive2 := fun context shape => CtxBR context → ShapeByteRanged shape →
+      structCompileShapeWF context shape =
+        shapeOfHOL (Flapjack.Pancake.PanStructs.CompileShapeExact.compileShapeExact
+          (structContextToCompileShapeExact context) (shapeToHOL shape)))
+    ?_ ?_ ?_ ?_ ?_ ?_) context shape hc hs
+  · intro context hc _hs
+    simp [structCompileShapeWF.structCompileShapesWF,
+      Flapjack.Pancake.PanStructs.CompileShapeExact.compileShapesExact]
+  · intro context shape shapes ihshape ihshapes hc hshapes
+    simp only [structCompileShapeWF.structCompileShapesWF,
+      Flapjack.Pancake.PanStructs.CompileShapeExact.compileShapesExact,
+      List.map_cons]
+    rw [ihshape hc (hshapes shape (by simp))]
+    rw [ihshapes hc (fun s hmem => hshapes s (by simp [hmem]))]
+  · intro _context hc hs
+    simp [structCompileShapeWF,
+      Flapjack.Pancake.PanStructs.CompileShapeExact.compileShapeExact,
+      shapeOfHOL, shapeToHOL]
+  · intro context shapes ih hc hshapes
+    simp only [structCompileShapeWF,
+      Flapjack.Pancake.PanStructs.CompileShapeExact.compileShapeExact,
+      shapeOfHOL, shapeToHOL]
+    have hchildren : ∀ s ∈ shapes, ShapeByteRanged s := by
+      simpa only [ShapeByteRanged] using hshapes
+    exact congrArg Shape.comb (ih hc hchildren)
+  · intro context name info suffix hlookup ih hc hnamed
+    have hname : NameRanged name := by simpa only [ShapeByteRanged] using hnamed
+    rw [structCompileShapeWF]
+    split
+    · rename_i info' suffix' heq
+      rw [hlookup] at heq
+      simp only [Option.some.injEq, Prod.mk.injEq] at heq
+      obtain ⟨rfl, rfl⟩ := heq
+      simp only [shapeToHOL,
+        Flapjack.Pancake.PanStructs.CompileShapeExact.compileShapeExact]
+      rw [structContextToCompileShapeExact_dropWhile name context hc hname]
+      rw [hlookup]
+      simp only [shapeOfHOL]
+      have hfields : ∀ s ∈ info.fields.map Prod.snd, ShapeByteRanged s := by
+        intro s hs
+        obtain ⟨p, hp, rfl⟩ := List.mem_map.mp hs
+        obtain ⟨k, hk⟩ := lookupInfoWithRest_exists_mem hlookup
+        exact ((hc (k, info) hk).2 p hp).2
+      have hctxsuffix : CtxBR suffix := lookupInfoWithRest_ctxBR hlookup hc
+      simpa [Function.comp_def] using
+        congrArg Shape.comb (ih hctxsuffix hfields)
+    · rename_i heq
+      rw [hlookup] at heq
+      simp at heq
+  · intro context name hlookup hc hnamed
+    have hname : NameRanged name := by simpa only [ShapeByteRanged] using hnamed
+    rw [structCompileShapeWF]
+    split
+    · rename_i info suffix heq
+      rw [hlookup] at heq
+      simp at heq
+    · have hdrop := structContextToCompileShapeExact_dropWhile name context hc hname
+      have hdropNone :
+          (structContextToCompileShapeExact context).dropWhile
+            (fun entry => ! decide (entry.1 = ofString name)) = [] := by
+        rw [hdrop, hlookup]
+      simp only [shapeToHOL,
+        Flapjack.Pancake.PanStructs.CompileShapeExact.compileShapeExact]
+      rw [hdropNone]
+      simp [shapeOfHOL]
 
 theorem structCompileShape_byteRanged (context : StructContext) (shape : Shape)
     (hc : CtxBR context) (hs : ShapeByteRanged shape) :
