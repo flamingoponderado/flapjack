@@ -24005,5 +24005,14 @@
     "hol_name": "find_var_neq_0_ctxt",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-luna-b source comparison (2026-09-29; bead flapjack-pxn.18.5.9.14.2) against loop_to_wordProofScript.sml:178-184. HOL has one conjunctive premise: (forall n m. lookup n ctxt = SOME m implies m <> 0 and EVEN m) and v IN domain ctxt, implying find_var ctxt v <> 0. Lean now preserves that single conjunction as one hypothesis, including the quantifier order and lookup direction. HOL ctxt is the exact spt num_map carrier rendered by Spt Nat; lookup is sptLookup, domain membership is sptMem with its kernel-checked equivalence to an existential successful lookup in Misc.Sptree, and find_var is the tagged findVarHOL definition (lookup default 0). HOL EVEN is rendered by % 2 = 0, matching the Spt lookup parity equations. No word, fmap, or list representation qualifier applies. A concrete nonzero even singleton context applies the theorem in LoopToWordExactParity."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "locals_rel_intro",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/LocalsRelIntro.lean",
+    "lean_name": "localsRelHOLIntro",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds5 source comparison (2026-09-29; bead flapjack-pxn.18.5.9.14.4) against loop_to_wordProofScript.sml:129-135. HOL conclusion is exactly locals_rel ctxt l1 l2 ==>: INJ (find_var ctxt) (domain ctxt) UNIV /\\ (forall n m. lookup n ctxt = SOME m ==> m <> 0 /\\ EVEN m) /\\ forall n v. lookup n l1 = SOME v ==> exists m. lookup n ctxt = SOME m /\\ lookup m l2 = SOME v. Lean keeps the three conjuncts in order; INJ is rendered pointwise (sptMem domain membership -> findVarHOL equality -> equal keys), EVEN m is m % 2 = 0, and the source simulation uses sptLookup. The theorem is the definitional unfolding of localsRelHOL, so the only qualifier is the type-indexed word of the WordLocW relation carrier (words_as_type_indexed_bitvec). No extra premise and no strengthened quantifiers."
   }
 ]
