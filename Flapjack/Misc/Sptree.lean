@@ -558,6 +558,56 @@ theorem lrNext_offset_two (index : Nat) :
           rw [hstep, ih half hlt]
           omega
 
+/-- HOL `sptree$spt_acc` (`HOL/src/finite_maps/sptreeScript.sml:888-894`):
+the key at local index `key` when a subtree is rooted at `index`. This is
+external HOL-library support and is intentionally untagged. -/
+def sptAcc (index : Nat) : Nat → Nat
+  | 0 => index
+  | key + 1 =>
+      sptAcc (index + if (key + 1) % 2 = 0 then 2 * lrNext index else lrNext index)
+        (key / 2)
+termination_by key => key
+decreasing_by omega
+
+/-- HOL `spt_acc` computes the affine key `index + lrnext index * key`; this
+is the arithmetic bridge between `foldi`'s threaded indices and `lookup`'s
+binary key recursion. -/
+theorem sptAcc_eq (index key : Nat) :
+    sptAcc index key = index + lrNext index * key := by
+  revert index
+  induction key using Nat.strongRecOn with
+  | ind key ih =>
+      cases key with
+      | zero => intro index; simp [sptAcc]
+      | succ key =>
+          intro index
+          rw [sptAcc]
+          by_cases heven : (key + 1) % 2 = 0
+          · rw [if_pos heven]
+            have hlt : key / 2 < key + 1 := by omega
+            have hkey : key + 1 = 2 * (key / 2) + 2 := by omega
+            have hchild := ih (key / 2) hlt (index + 2 * lrNext index)
+            rw [lrNext_offset_two index] at hchild
+            rw [hchild]
+            rw [hkey]
+            have hmul : (2 * lrNext index) * (key / 2) =
+                lrNext index * (2 * (key / 2)) := by
+              simp [Nat.mul_comm, Nat.mul_left_comm]
+            rw [hmul, Nat.mul_add]
+            omega
+          · rw [if_neg heven]
+            have hlt : key / 2 < key + 1 := by omega
+            have hkey : key + 1 = 2 * (key / 2) + 1 := by omega
+            have hchild := ih (key / 2) hlt (index + lrNext index)
+            rw [lrNext_offset_one index] at hchild
+            rw [hchild]
+            rw [hkey]
+            have hmul : (2 * lrNext index) * (key / 2) =
+                lrNext index * (2 * (key / 2)) := by
+              simp [Nat.mul_comm, Nat.mul_left_comm]
+            rw [hmul, Nat.mul_add, Nat.mul_one]
+            omega
+
 /-- HOL sptree `foldi` (`HOL/src/finite_maps/sptreeScript.sml:737-749`) over
 the exact tree, in the same mixed order. -/
 def sptFoldi {α : Type} (f : Nat → α → List (Nat × α) → List (Nat × α))
