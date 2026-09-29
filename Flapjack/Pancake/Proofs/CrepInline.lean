@@ -4,6 +4,7 @@ import Flapjack.Pancake.Semantics.CrepSem
 import Flapjack.Pancake.Semantics.CrepSem.Eval
 import Flapjack.Pancake.Semantics.CrepSem.HOLState
 import Flapjack.Pancake.CrepInline.Pass
+import Flapjack.Pancake.CrepInline.Canonical
 
 /-! Exact theorem counterpart for CakeML's `crep_inlineProofScript.sml`.
 
@@ -1222,6 +1223,28 @@ lookup functions. -/
 def crepInlineLocalsStrongRelExact {width : Nat} [NeZero width] {σ : Type}
     (s t : CrepSemHOLState width σ) : Prop :=
   s.locals = t.locals
+
+/-- HOL `code_inl_rel_def` (`crep_inlineProofScript.sml:1504-1511`) on the
+canonical finite-map and state carriers. This keeps HOL's existential
+`inl_bag` as a finite-support map and uses the reviewed `inlineProgHOLExact`
+definition, with the source quantifiers and conclusion unchanged.
+
+This declaration intentionally has no `@[hol]` tag yet. The existing
+`fmap_as_finite_support_parameters` qualifier validates explicit input maps,
+but not the existentially bound `inl_bag`; the checker needs a reviewed
+bound-map qualifier before this non-identity carrier translation can be
+tagged. The prior `crepInlineCodeInlRel` remains Flapjack-specific
+list-backed infrastructure. -/
+def crepInlineCodeInlRelExact {width : Nat} [NeZero width] {σ : Type}
+    (inl_fs : HolFiniteMapExact CrepInlineMapHOLName
+      (List Nat × CrepProgHOL width))
+    (s t : CrepSemHOLState width σ) : Prop :=
+  ∀ fname args prog, s.code.lookup fname = some (args, prog) →
+    ∃ inl_bag : HolFiniteMapExact CrepInlineMapHOLName
+        (List Nat × CrepProgHOL width),
+      HolFiniteMapExact.submap inl_bag inl_fs ∧
+      t.code.lookup fname = some
+        (args, CrepInlineCanonical.inlineProgHOLExact inl_bag prog)
 
 end CrepInlineExact
 
