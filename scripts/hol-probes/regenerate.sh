@@ -217,6 +217,17 @@ run_probe loop_to_word_locals_rel_probeScript.sml loop_to_word_locals_rel_probe.
   word_get_vars_hit word_get_vars_miss \
   "$cake_dir/pancake/proofs/loop_to_wordProofScript.sml" \
   "$cake_dir/pancake/proofs"
+# The compile_correct case probe rebuilds HOL's specialised evaluate_ind for
+# loop_to_word compile_correct and prints each ported case conjunct, together
+# with the rebound wordSem evaluate_ind/evaluate_def (beads
+# flapjack-pxn.18.5.9.21/.24, flapjack-h29l.9.2).
+run_probe loop_to_word_compile_correct_cases_probeScript.sml \
+  loop_to_word_compile_correct_cases_probe.out \
+  cc_ind_thm_conclusion_is_compile_correct cc_case_Skip cc_case_Fail cc_case_Mark \
+  cc_case_Break cc_case_Continue cc_case_Raise cc_case_Return cc_case_Tick \
+  ws_evaluate_ind ws_evaluate_def ws_end \
+  "$cake_dir/pancake/proofs/loop_to_wordProofScript.sml" \
+  "$cake_dir/pancake/proofs"
 run_probe loop_to_word_comp_exp_probeScript.sml loop_to_word_comp_exp_probe.out \
   comp_exp_const comp_exp_var comp_exp_var_miss comp_exp_lookup \
   comp_exp_base_addr comp_exp_top_addr comp_exp_load comp_exp_shift \
@@ -237,6 +248,10 @@ run_probe loop_to_word_globals_rel_probeScript.sml loop_to_word_globals_rel_prob
   "$cake_dir/pancake/proofs"
 run_probe loop_to_word_comp_call_probeScript.sml loop_to_word_comp_call_probe.out \
   comp_call_tail comp_call_no_handler comp_call_handler \
+  "$cake_dir/pancake/loop_to_wordScript.sml"
+run_probe loop_to_word_comp_func_probeScript.sml loop_to_word_comp_func_probe.out \
+  comp_func_skip comp_func_param_assign comp_func_new_temp \
+  compile_prog_code compile_code \
   "$cake_dir/pancake/loop_to_wordScript.sml"
 run_probe loop_to_word_take_word_to_bytes_probeScript.sml \
   loop_to_word_take_word_to_bytes_probe.out \
@@ -1781,6 +1796,15 @@ run_probe word_sem_inst_probeScript.sml word_sem_inst_probe.out \
 run_probe word_sem_eval_prereq_probeScript.sml word_sem_eval_prereq_probe.out \
   shift_seq dom_empty_one dom_union_eq dom_union_missing \
   "$cake_dir/misc/miscScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
+# The wordSem evaluate probe observes evaluate_def on straight-line, control,
+# loop, raise/return, MustTerminate, Move/Get/Set/LocValue/StoreConsts, tail and
+# returning calls, and FFI over record updates of a free state (bead
+# flapjack-h29l.8.2).
+run_probe word_sem_evaluate_probeScript.sml word_sem_evaluate_probe.out \
+  skip loop_timeout raise_handler must_terminate call_ret ffi_ok \
+  "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 
 # The good_handlers probe observes the structural handler-label predicate,

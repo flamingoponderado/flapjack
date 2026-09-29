@@ -1,0 +1,458 @@
+cc_ind_thm_conclusion_is_compile_correct=T
+cc_case_Skip=!s res s1 t ctxt retv l.
+  evaluate (Skip,s) = (res,s1) /\ res <> SOME Error /\ state_rel s t /\ locals_rel ctxt s.locals t.locals /\ lookup 0 t.locals = SOME retv /\
+  good_dimindex (:'a) /\ ~isWord retv /\ domain (acc_vars Skip LN) SUBSET domain ctxt ==>
+  ?t1 res1.
+    evaluate (FST (comp ctxt Skip l),t) = (res1,t1) /\ t1.ffi = s1.ffi /\
+    case res of
+      NONE =>
+        state_rel s1 t1 /\ res1 = NONE /\ lookup 0 t1.locals = SOME retv /\ locals_rel ctxt s1.locals t1.locals /\ t1.stack = t.stack /\
+        t1.handler = t.handler
+    | SOME (Result v) => state_rel s1 t1 /\ res1 = SOME (Result retv v) /\ t1.stack = t.stack /\ t1.handler = t.handler
+    | SOME (Exception v') =>
+      state_rel s1 t1 /\ (res1 <> SOME Error ==> ?u1 u2. res1 = SOME (Exception u1 u2)) /\
+      !r l1 l2. jump_exc (t1 with <|stack := t.stack; handler := t.handler|>) = SOME (r,l1,l2) ==> res1 = SOME (Exception (Loc l1 l2) v') /\ r = t1
+    | SOME (Break n) =>
+      state_rel s1 t1 /\ res1 = SOME (Break n) /\ lookup 0 t1.locals = SOME retv /\ locals_rel ctxt s1.locals t1.locals /\ t1.stack = t.stack /\
+      t1.handler = t.handler
+    | SOME (Continue n') =>
+      state_rel s1 t1 /\ res1 = SOME (Continue n') /\ lookup 0 t1.locals = SOME retv /\ locals_rel ctxt s1.locals t1.locals /\ t1.stack = t.stack /\
+      t1.handler = t.handler
+    | SOME TimeOut => res1 = SOME TimeOut
+    | SOME (FinalFFI f) => res1 = SOME (FinalFFI f)
+    | SOME Error => F
+cc_case_Fail=!s res s1 t ctxt retv l.
+  evaluate (Fail,s) = (res,s1) /\ res <> SOME Error /\ state_rel s t /\ locals_rel ctxt s.locals t.locals /\ lookup 0 t.locals = SOME retv /\
+  good_dimindex (:'a) /\ ~isWord retv /\ domain (acc_vars Fail LN) SUBSET domain ctxt ==>
+  ?t1 res1.
+    evaluate (FST (comp ctxt Fail l),t) = (res1,t1) /\ t1.ffi = s1.ffi /\
+    case res of
+      NONE =>
+        state_rel s1 t1 /\ res1 = NONE /\ lookup 0 t1.locals = SOME retv /\ locals_rel ctxt s1.locals t1.locals /\ t1.stack = t.stack /\
+        t1.handler = t.handler
+    | SOME (Result v) => state_rel s1 t1 /\ res1 = SOME (Result retv v) /\ t1.stack = t.stack /\ t1.handler = t.handler
+    | SOME (Exception v') =>
+      state_rel s1 t1 /\ (res1 <> SOME Error ==> ?u1 u2. res1 = SOME (Exception u1 u2)) /\
+      !r l1 l2. jump_exc (t1 with <|stack := t.stack; handler := t.handler|>) = SOME (r,l1,l2) ==> res1 = SOME (Exception (Loc l1 l2) v') /\ r = t1
+    | SOME (Break n) =>
+      state_rel s1 t1 /\ res1 = SOME (Break n) /\ lookup 0 t1.locals = SOME retv /\ locals_rel ctxt s1.locals t1.locals /\ t1.stack = t.stack /\
+      t1.handler = t.handler
+    | SOME (Continue n') =>
+      state_rel s1 t1 /\ res1 = SOME (Continue n') /\ lookup 0 t1.locals = SOME retv /\ locals_rel ctxt s1.locals t1.locals /\ t1.stack = t.stack /\
+      t1.handler = t.handler
+    | SOME TimeOut => res1 = SOME TimeOut
+    | SOME (FinalFFI f) => res1 = SOME (FinalFFI f)
+    | SOME Error => F
+cc_case_Mark=!p s.
+  (!res s1 t ctxt retv l.
+     evaluate (p,s) = (res,s1) /\ res <> SOME Error /\ state_rel s t /\ locals_rel ctxt s.locals t.locals /\ lookup 0 t.locals = SOME retv /\
+     good_dimindex (:'a) /\ ~isWord retv /\ domain (acc_vars p LN) SUBSET domain ctxt ==>
+     ?t1 res1.
+       evaluate (FST (comp ctxt p l),t) = (res1,t1) /\ t1.ffi = s1.ffi /\
+       case res of
+         NONE =>
+           state_rel s1 t1 /\ res1 = NONE /\ lookup 0 t1.locals = SOME retv /\ locals_rel ctxt s1.locals t1.locals /\ t1.stack = t.stack /\
+           t1.handler = t.handler
+       | SOME (Result v) => state_rel s1 t1 /\ res1 = SOME (Result retv v) /\ t1.stack = t.stack /\ t1.handler = t.handler
+       | SOME (Exception v') =>
+         state_rel s1 t1 /\ (res1 <> SOME Error ==> ?u1 u2. res1 = SOME (Exception u1 u2)) /\
+         !r l1 l2. jump_exc (t1 with <|stack := t.stack; handler := t.handler|>) = SOME (r,l1,l2) ==> res1 = SOME (Exception (Loc l1 l2) v') /\ r = t1
+       | SOME (Break n) =>
+         state_rel s1 t1 /\ res1 = SOME (Break n) /\ lookup 0 t1.locals = SOME retv /\ locals_rel ctxt s1.locals t1.locals /\ t1.stack = t.stack /\
+         t1.handler = t.handler
+       | SOME (Continue n') =>
+         state_rel s1 t1 /\ res1 = SOME (Continue n') /\ lookup 0 t1.locals = SOME retv /\ locals_rel ctxt s1.locals t1.locals /\
+         t1.stack = t.stack /\ t1.handler = t.handler
+       | SOME TimeOut => res1 = SOME TimeOut
+       | SOME (FinalFFI f) => res1 = SOME (FinalFFI f)
+       | SOME Error => F) ==>
+  !res s1 t ctxt retv l.
+    evaluate (Mark p,s) = (res,s1) /\ res <> SOME Error /\ state_rel s t /\ locals_rel ctxt s.locals t.locals /\ lookup 0 t.locals = SOME retv /\
+    good_dimindex (:'a) /\ ~isWord retv /\ domain (acc_vars (Mark p) LN) SUBSET domain ctxt ==>
+    ?t1 res1.
+      evaluate (FST (comp ctxt (Mark p) l),t) = (res1,t1) /\ t1.ffi = s1.ffi /\
+      case res of
+        NONE =>
+          state_rel s1 t1 /\ res1 = NONE /\ lookup 0 t1.locals = SOME retv /\ locals_rel ctxt s1.locals t1.locals /\ t1.stack = t.stack /\
+          t1.handler = t.handler
+      | SOME (Result v) => state_rel s1 t1 /\ res1 = SOME (Result retv v) /\ t1.stack = t.stack /\ t1.handler = t.handler
+      | SOME (Exception v') =>
+        state_rel s1 t1 /\ (res1 <> SOME Error ==> ?u1 u2. res1 = SOME (Exception u1 u2)) /\
+        !r l1 l2. jump_exc (t1 with <|stack := t.stack; handler := t.handler|>) = SOME (r,l1,l2) ==> res1 = SOME (Exception (Loc l1 l2) v') /\ r = t1
+      | SOME (Break n) =>
+        state_rel s1 t1 /\ res1 = SOME (Break n) /\ lookup 0 t1.locals = SOME retv /\ locals_rel ctxt s1.locals t1.locals /\ t1.stack = t.stack /\
+        t1.handler = t.handler
+      | SOME (Continue n') =>
+        state_rel s1 t1 /\ res1 = SOME (Continue n') /\ lookup 0 t1.locals = SOME retv /\ locals_rel ctxt s1.locals t1.locals /\ t1.stack = t.stack /\
+        t1.handler = t.handler
+      | SOME TimeOut => res1 = SOME TimeOut
+      | SOME (FinalFFI f) => res1 = SOME (FinalFFI f)
+      | SOME Error => F
+cc_case_Break=!k s res s1 t ctxt retv l.
+  evaluate (Break k,s) = (res,s1) /\ res <> SOME Error /\ state_rel s t /\ locals_rel ctxt s.locals t.locals /\ lookup 0 t.locals = SOME retv /\
+  good_dimindex (:'a) /\ ~isWord retv /\ domain (acc_vars (Break k) LN) SUBSET domain ctxt ==>
+  ?t1 res1.
+    evaluate (FST (comp ctxt (Break k) l),t) = (res1,t1) /\ t1.ffi = s1.ffi /\
+    case res of
+      NONE =>
+        state_rel s1 t1 /\ res1 = NONE /\ lookup 0 t1.locals = SOME retv /\ locals_rel ctxt s1.locals t1.locals /\ t1.stack = t.stack /\
+        t1.handler = t.handler
+    | SOME (Result v) => state_rel s1 t1 /\ res1 = SOME (Result retv v) /\ t1.stack = t.stack /\ t1.handler = t.handler
+    | SOME (Exception v') =>
+      state_rel s1 t1 /\ (res1 <> SOME Error ==> ?u1 u2. res1 = SOME (Exception u1 u2)) /\
+      !r l1 l2. jump_exc (t1 with <|stack := t.stack; handler := t.handler|>) = SOME (r,l1,l2) ==> res1 = SOME (Exception (Loc l1 l2) v') /\ r = t1
+    | SOME (Break n) =>
+      state_rel s1 t1 /\ res1 = SOME (Break n) /\ lookup 0 t1.locals = SOME retv /\ locals_rel ctxt s1.locals t1.locals /\ t1.stack = t.stack /\
+      t1.handler = t.handler
+    | SOME (Continue n') =>
+      state_rel s1 t1 /\ res1 = SOME (Continue n') /\ lookup 0 t1.locals = SOME retv /\ locals_rel ctxt s1.locals t1.locals /\ t1.stack = t.stack /\
+      t1.handler = t.handler
+    | SOME TimeOut => res1 = SOME TimeOut
+    | SOME (FinalFFI f) => res1 = SOME (FinalFFI f)
+    | SOME Error => F
+cc_case_Continue=!k s res s1 t ctxt retv l.
+  evaluate (Continue k,s) = (res,s1) /\ res <> SOME Error /\ state_rel s t /\ locals_rel ctxt s.locals t.locals /\ lookup 0 t.locals = SOME retv /\
+  good_dimindex (:'a) /\ ~isWord retv /\ domain (acc_vars (Continue k) LN) SUBSET domain ctxt ==>
+  ?t1 res1.
+    evaluate (FST (comp ctxt (Continue k) l),t) = (res1,t1) /\ t1.ffi = s1.ffi /\
+    case res of
+      NONE =>
+        state_rel s1 t1 /\ res1 = NONE /\ lookup 0 t1.locals = SOME retv /\ locals_rel ctxt s1.locals t1.locals /\ t1.stack = t.stack /\
+        t1.handler = t.handler
+    | SOME (Result v) => state_rel s1 t1 /\ res1 = SOME (Result retv v) /\ t1.stack = t.stack /\ t1.handler = t.handler
+    | SOME (Exception v') =>
+      state_rel s1 t1 /\ (res1 <> SOME Error ==> ?u1 u2. res1 = SOME (Exception u1 u2)) /\
+      !r l1 l2. jump_exc (t1 with <|stack := t.stack; handler := t.handler|>) = SOME (r,l1,l2) ==> res1 = SOME (Exception (Loc l1 l2) v') /\ r = t1
+    | SOME (Break n) =>
+      state_rel s1 t1 /\ res1 = SOME (Break n) /\ lookup 0 t1.locals = SOME retv /\ locals_rel ctxt s1.locals t1.locals /\ t1.stack = t.stack /\
+      t1.handler = t.handler
+    | SOME (Continue n') =>
+      state_rel s1 t1 /\ res1 = SOME (Continue n') /\ lookup 0 t1.locals = SOME retv /\ locals_rel ctxt s1.locals t1.locals /\ t1.stack = t.stack /\
+      t1.handler = t.handler
+    | SOME TimeOut => res1 = SOME TimeOut
+    | SOME (FinalFFI f) => res1 = SOME (FinalFFI f)
+    | SOME Error => F
+cc_case_Raise=!n s res s1 t ctxt retv l.
+  evaluate (Raise n,s) = (res,s1) /\ res <> SOME Error /\ state_rel s t /\ locals_rel ctxt s.locals t.locals /\ lookup 0 t.locals = SOME retv /\
+  good_dimindex (:'a) /\ ~isWord retv /\ domain (acc_vars (Raise n) LN) SUBSET domain ctxt ==>
+  ?t1 res1.
+    evaluate (FST (comp ctxt (Raise n) l),t) = (res1,t1) /\ t1.ffi = s1.ffi /\
+    case res of
+      NONE =>
+        state_rel s1 t1 /\ res1 = NONE /\ lookup 0 t1.locals = SOME retv /\ locals_rel ctxt s1.locals t1.locals /\ t1.stack = t.stack /\
+        t1.handler = t.handler
+    | SOME (Result v) => state_rel s1 t1 /\ res1 = SOME (Result retv v) /\ t1.stack = t.stack /\ t1.handler = t.handler
+    | SOME (Exception v') =>
+      state_rel s1 t1 /\ (res1 <> SOME Error ==> ?u1 u2. res1 = SOME (Exception u1 u2)) /\
+      !r l1 l2. jump_exc (t1 with <|stack := t.stack; handler := t.handler|>) = SOME (r,l1,l2) ==> res1 = SOME (Exception (Loc l1 l2) v') /\ r = t1
+    | SOME (Break n) =>
+      state_rel s1 t1 /\ res1 = SOME (Break n) /\ lookup 0 t1.locals = SOME retv /\ locals_rel ctxt s1.locals t1.locals /\ t1.stack = t.stack /\
+      t1.handler = t.handler
+    | SOME (Continue n') =>
+      state_rel s1 t1 /\ res1 = SOME (Continue n') /\ lookup 0 t1.locals = SOME retv /\ locals_rel ctxt s1.locals t1.locals /\ t1.stack = t.stack /\
+      t1.handler = t.handler
+    | SOME TimeOut => res1 = SOME TimeOut
+    | SOME (FinalFFI f) => res1 = SOME (FinalFFI f)
+    | SOME Error => F
+cc_case_Return=!ns s res s1 t ctxt retv l.
+  evaluate (Return ns,s) = (res,s1) /\ res <> SOME Error /\ state_rel s t /\ locals_rel ctxt s.locals t.locals /\ lookup 0 t.locals = SOME retv /\
+  good_dimindex (:'a) /\ ~isWord retv /\ domain (acc_vars (Return ns) LN) SUBSET domain ctxt ==>
+  ?t1 res1.
+    evaluate (FST (comp ctxt (Return ns) l),t) = (res1,t1) /\ t1.ffi = s1.ffi /\
+    case res of
+      NONE =>
+        state_rel s1 t1 /\ res1 = NONE /\ lookup 0 t1.locals = SOME retv /\ locals_rel ctxt s1.locals t1.locals /\ t1.stack = t.stack /\
+        t1.handler = t.handler
+    | SOME (Result v) => state_rel s1 t1 /\ res1 = SOME (Result retv v) /\ t1.stack = t.stack /\ t1.handler = t.handler
+    | SOME (Exception v') =>
+      state_rel s1 t1 /\ (res1 <> SOME Error ==> ?u1 u2. res1 = SOME (Exception u1 u2)) /\
+      !r l1 l2. jump_exc (t1 with <|stack := t.stack; handler := t.handler|>) = SOME (r,l1,l2) ==> res1 = SOME (Exception (Loc l1 l2) v') /\ r = t1
+    | SOME (Break n) =>
+      state_rel s1 t1 /\ res1 = SOME (Break n) /\ lookup 0 t1.locals = SOME retv /\ locals_rel ctxt s1.locals t1.locals /\ t1.stack = t.stack /\
+      t1.handler = t.handler
+    | SOME (Continue n') =>
+      state_rel s1 t1 /\ res1 = SOME (Continue n') /\ lookup 0 t1.locals = SOME retv /\ locals_rel ctxt s1.locals t1.locals /\ t1.stack = t.stack /\
+      t1.handler = t.handler
+    | SOME TimeOut => res1 = SOME TimeOut
+    | SOME (FinalFFI f) => res1 = SOME (FinalFFI f)
+    | SOME Error => F
+cc_case_Tick=!s res s1 t ctxt retv l.
+  evaluate (Tick,s) = (res,s1) /\ res <> SOME Error /\ state_rel s t /\ locals_rel ctxt s.locals t.locals /\ lookup 0 t.locals = SOME retv /\
+  good_dimindex (:'a) /\ ~isWord retv /\ domain (acc_vars Tick LN) SUBSET domain ctxt ==>
+  ?t1 res1.
+    evaluate (FST (comp ctxt Tick l),t) = (res1,t1) /\ t1.ffi = s1.ffi /\
+    case res of
+      NONE =>
+        state_rel s1 t1 /\ res1 = NONE /\ lookup 0 t1.locals = SOME retv /\ locals_rel ctxt s1.locals t1.locals /\ t1.stack = t.stack /\
+        t1.handler = t.handler
+    | SOME (Result v) => state_rel s1 t1 /\ res1 = SOME (Result retv v) /\ t1.stack = t.stack /\ t1.handler = t.handler
+    | SOME (Exception v') =>
+      state_rel s1 t1 /\ (res1 <> SOME Error ==> ?u1 u2. res1 = SOME (Exception u1 u2)) /\
+      !r l1 l2. jump_exc (t1 with <|stack := t.stack; handler := t.handler|>) = SOME (r,l1,l2) ==> res1 = SOME (Exception (Loc l1 l2) v') /\ r = t1
+    | SOME (Break n) =>
+      state_rel s1 t1 /\ res1 = SOME (Break n) /\ lookup 0 t1.locals = SOME retv /\ locals_rel ctxt s1.locals t1.locals /\ t1.stack = t.stack /\
+      t1.handler = t.handler
+    | SOME (Continue n') =>
+      state_rel s1 t1 /\ res1 = SOME (Continue n') /\ lookup 0 t1.locals = SOME retv /\ locals_rel ctxt s1.locals t1.locals /\ t1.stack = t.stack /\
+      t1.handler = t.handler
+    | SOME TimeOut => res1 = SOME TimeOut
+    | SOME (FinalFFI f) => res1 = SOME (FinalFFI f)
+    | SOME Error => F
+ws_evaluate_ind=!P. (!s. P (Skip,s)) /\ (!n names s. P (Alloc n names,s)) /\ (!t1 t2 addr offset words s. P (StoreConsts t1 t2 addr offset words,s)) /\
+    (!pri moves s. P (Move pri moves,s)) /\ (!i s. P (Inst i,s)) /\ (!v exp s. P (Assign v exp,s)) /\ (!v name s. P (Get v name,s)) /\
+    (!v exp s. P (Set v exp,s)) /\ (!b dst src s. P (OpCurrHeap b dst src,s)) /\ (!exp v s. P (Store exp v,s)) /\ (!s. P (Tick,s)) /\
+    (!p s. (s.termdep <> 0 ==> P (p,s with <|clock := MustTerminate_limit (:'a); termdep := s.termdep - 1|>)) ==> P (MustTerminate p,s)) /\
+    (!c1 c2 s. (!res s1. (res,s1) = evaluate (c1,s) /\ res = NONE ==> P (c2,s1)) /\ P (c1,s) ==> P (Seq c1 c2,s)) /\ (!n ms s. P (Return n ms,s)) /\
+    (!n s. P (Raise n,s)) /\ (!k s. P (Break k,s)) /\ (!k s. P (Continue k,s)) /\
+    (!cmp r1 ri c1 c2 s.
+       (!v3 v4 x y v. (get_var r1 s,get_var_imm ri s) = (v3,v4) /\ v3 = SOME x /\ v4 = SOME y /\ word_cmp cmp x y = SOME v /\ v ==> P (c1,s)) /\
+       (!v3 v4 x y v. (get_var r1 s,get_var_imm ri s) = (v3,v4) /\ v3 = SOME x /\ v4 = SOME y /\ word_cmp cmp x y = SOME v /\ ~v ==> P (c2,s)) ==>
+       P (If cmp r1 ri c1 c2,s)) /\
+    (!names c exit_names s.
+       (!v res s1.
+          cut_state (names,LN) s = SOME v /\ (res,s1) = evaluate (c,v) /\ cont_loop res /\ s1.clock <> 0 ==>
+          P (STOP (Loop names c exit_names),dec_clock s1)) /\ (!v. cut_state (names,LN) s = SOME v ==> P (c,v)) ==>
+       P (Loop names c exit_names,s)) /\ (!r l1 s. P (LocValue r l1,s)) /\ (!ptr len dptr dlen names s. P (Install ptr len dptr dlen names,s)) /\
+    (!r1 r2 s. P (CodeBufferWrite r1 r2,s)) /\ (!r1 r2 s. P (DataBufferWrite r1 r2,s)) /\
+    (!ffi_index ptr1 len1 ptr2 len2 names s. P (FFI ffi_index ptr1 len1 ptr2 len2 names,s)) /\ (!op v exp s. P (ShareInst op v exp,s)) /\
+    (!ret dest args handler s.
+       (!xs v3 args1 v10 prog ss v1 n v6 names v9 ret_handler v11 l1 l2 envs v5 s2 v8 x ys s1.
+          get_vars args s = SOME xs /\ ~bad_dest_args dest args /\ find_code dest (add_ret_loc ret xs) s.code s.stack_size = SOME v3 /\
+          v3 = (args1,v10) /\ v10 = (prog,ss) /\ ret = SOME v1 /\ v1 = (n,v6) /\ v6 = (names,v9) /\ v9 = (ret_handler,v11) /\ v11 = (l1,l2) /\
+          ~(domain (FST names) = {} \/ ~ALL_DISTINCT n) /\ cut_envs names s.locals = SOME envs /\ s.clock <> 0 /\
+          evaluate (prog,call_env args1 ss (push_env envs handler (dec_clock s))) = (v5,s2) /\ v5 = SOME v8 /\ v8 = Result x ys /\
+          ~(x <> Loc l1 l2 \/ LENGTH ys <> LENGTH n) /\ pop_env s2 = SOME s1 /\ domain s1.locals = domain (FST envs) UNION domain (SND envs) ==>
+          P (ret_handler,set_vars n ys s1)) /\
+       (!xs v3 args1 v10 prog ss v1 n v6 names v9 ret_handler v11 l1 l2 envs v5 s2 v8 x' y v n' v2 h v4 l1' l2'.
+          get_vars args s = SOME xs /\ ~bad_dest_args dest args /\ find_code dest (add_ret_loc ret xs) s.code s.stack_size = SOME v3 /\
+          v3 = (args1,v10) /\ v10 = (prog,ss) /\ ret = SOME v1 /\ v1 = (n,v6) /\ v6 = (names,v9) /\ v9 = (ret_handler,v11) /\ v11 = (l1,l2) /\
+          ~(domain (FST names) = {} \/ ~ALL_DISTINCT n) /\ cut_envs names s.locals = SOME envs /\ s.clock <> 0 /\
+          evaluate (prog,call_env args1 ss (push_env envs handler (dec_clock s))) = (v5,s2) /\ v5 = SOME v8 /\ v8 = Exception x' y /\
+          handler = SOME v /\ v = (n',v2) /\ v2 = (h,v4) /\ v4 = (l1',l2') /\ x' = Loc l1' l2' /\
+          domain s2.locals = domain (FST envs) UNION domain (SND envs) ==>
+          P (h,set_var n' y s2)) /\
+       (!xs v3 args1 v10 prog ss v1 n v6 names v9 ret_handler v11 l1 l2 envs.
+          get_vars args s = SOME xs /\ ~bad_dest_args dest args /\ find_code dest (add_ret_loc ret xs) s.code s.stack_size = SOME v3 /\
+          v3 = (args1,v10) /\ v10 = (prog,ss) /\ ret = SOME v1 /\ v1 = (n,v6) /\ v6 = (names,v9) /\ v9 = (ret_handler,v11) /\ v11 = (l1,l2) /\
+          ~(domain (FST names) = {} \/ ~ALL_DISTINCT n) /\ cut_envs names s.locals = SOME envs /\ s.clock <> 0 ==>
+          P (prog,call_env args1 ss (push_env envs handler (dec_clock s)))) /\
+       (!xs v3 args1 v10 prog ss.
+          get_vars args s = SOME xs /\ ~bad_dest_args dest args /\ find_code dest (add_ret_loc ret xs) s.code s.stack_size = SOME v3 /\
+          v3 = (args1,v10) /\ v10 = (prog,ss) /\ ret = NONE /\ handler = NONE /\ s.clock <> 0 ==>
+          P (prog,call_env args1 ss (dec_clock s))) ==>
+       P (Call ret dest args handler,s)) ==>
+    !v v1. P (v,v1)
+ws_evaluate_def=(!s. evaluate (Skip,s) = (NONE,s)) /\
+(!s names n.
+   evaluate (Alloc n names,s) = case get_var n s of NONE => (SOME Error,s) | SOME (Word w) => alloc w names s | SOME (Loc v6 v7) => (SOME Error,s)) /\
+(!words t2 t1 s offset addr.
+   evaluate (StoreConsts t1 t2 addr offset words,s) =
+   case (get_var addr s,get_var offset s) of
+     (NONE,v3) => (SOME Error,s)
+   | (SOME (Word a),NONE) => (SOME Error,s)
+   | (SOME (Word a),SOME (Word off)) =>
+     if ~const_addresses a words s.mdomain then (SOME Error,s)
+     else
+       (let
+          s = s with memory := const_writes a off words s.memory;
+          s = set_var offset (Word off) (unset_var t1 (unset_var t2 s))
+        in
+          (NONE,set_var addr (Word (a + bytes_in_word * n2w (LENGTH words))) s))
+   | (SOME (Word a),SOME (Loc v18 v19)) => (SOME Error,s)
+   | (SOME (Loc v10 v11),v3) => (SOME Error,s)) /\
+(!s pri moves.
+   evaluate (Move pri moves,s) =
+   if ALL_DISTINCT (MAP FST moves) then case get_vars (MAP SND moves) s of NONE => (SOME Error,s) | SOME vs => (NONE,set_vars (MAP FST moves) vs s)
+   else (SOME Error,s)) /\ (!s i. evaluate (Inst i,s) = case inst i s of NONE => (SOME Error,s) | SOME s1 => (NONE,s1)) /\
+(!v s exp. evaluate (Assign v exp,s) = case word_exp s exp of NONE => (SOME Error,s) | SOME w => (NONE,set_var v w s)) /\
+(!v s name. evaluate (Get v name,s) = case get_store name s of NONE => (SOME Error,s) | SOME x => (NONE,set_var v x s)) /\
+(!v s exp.
+   evaluate (Set v exp,s) =
+   if v = Handler \/ v = BitmapBase then (SOME Error,s) else case word_exp s exp of NONE => (SOME Error,s) | SOME w => (NONE,set_store v w s)) /\
+(!src s dst b.
+   evaluate (OpCurrHeap b dst src,s) = case word_exp s (Op b [Var src; Lookup CurrHeap]) of NONE => (SOME Error,s) | SOME w => (NONE,set_var dst w s)) /\
+(!v s exp.
+   evaluate (Store exp v,s) =
+   case (word_exp s exp,get_var v s) of
+     (NONE,v3) => (SOME Error,s)
+   | (SOME (Word a),NONE) => (SOME Error,s)
+   | (SOME (Word a),SOME w) => (case mem_store a w s of NONE => (SOME Error,s) | SOME s1 => (NONE,s1))
+   | (SOME (Loc v10 v11),v3) => (SOME Error,s)) /\
+(!s. evaluate (Tick,s) = if s.clock = 0 then (SOME TimeOut,flush_state T s) else (NONE,dec_clock s)) /\
+(!s p.
+   evaluate (MustTerminate p,s) =
+   if s.termdep = 0 then (SOME Error,s)
+   else
+     (let
+        (res,s1) = evaluate (p,s with <|clock := MustTerminate_limit (:'a); termdep := s.termdep - 1|>)
+      in
+        if res = SOME TimeOut then (SOME Error,s) else (res,s1 with <|clock := s.clock; termdep := s.termdep|>))) /\
+(!s c2 c1. evaluate (Seq c1 c2,s) = (let (res,s1) = evaluate (c1,s) in if res = NONE then evaluate (c2,s1) else (res,s1))) /\
+(!s n ms.
+   evaluate (Return n ms,s) =
+   case (get_var n s,get_vars ms s) of
+     (NONE,v3) => (SOME Error,s)
+   | (SOME (Word v9),v3) => (SOME Error,s)
+   | (SOME (Loc l1 l2),NONE) => (SOME Error,s)
+   | (SOME (Loc l1 l2),SOME ys) => (SOME (Result (Loc l1 l2) ys),flush_state F s)) /\
+(!s n.
+   evaluate (Raise n,s) =
+   case get_var n s of
+     NONE => (SOME Error,s)
+   | SOME w => case jump_exc s of NONE => (SOME Error,s) | SOME (v1,v3,v4) => (SOME (Exception (Loc v3 v4) w),v1)) /\
+(!s k. evaluate (Break k,s) = (SOME (Break k),s)) /\ (!s k. evaluate (Continue k,s) = (SOME (Continue k),s)) /\
+(!s ri r1 cmp c2 c1.
+   evaluate (If cmp r1 ri c1 c2,s) =
+   case (get_var r1 s,get_var_imm ri s) of
+     (NONE,v4) => (SOME Error,s)
+   | (SOME x,NONE) => (SOME Error,s)
+   | (SOME x,SOME y) => case word_cmp cmp x y of NONE => (SOME Error,s) | SOME T => evaluate (c1,s) | SOME F => evaluate (c2,s)) /\
+(!s names exit_names c.
+   evaluate (Loop names c exit_names,s) =
+   case cut_state (names,LN) s of
+     NONE => (SOME Error,s)
+   | SOME v =>
+     (let
+        (res,s1) = evaluate (c,v)
+      in
+        if cont_loop res then if s1.clock = 0 then (SOME TimeOut,flush_state T s1) else evaluate (STOP (Loop names c exit_names),dec_clock s1)
+        else if res = SOME (Break 0) then case cut_state (exit_names,LN) s1 of NONE => (SOME Error,s1) | SOME s2 => (NONE,s2)
+        else (exit_loop res,s1))) /\
+(!s r l1. evaluate (LocValue r l1,s) = if l1 IN domain s.code then (NONE,set_var r (Loc l1 0) s) else (SOME Error,s)) /\
+(!s ptr names len dptr dlen.
+   evaluate (Install ptr len dptr dlen names,s) =
+   case cut_env names s.locals of
+     NONE => (SOME Error,s)
+   | SOME env =>
+     case (get_var ptr s,get_var len s,get_var dptr s,get_var dlen s) of
+       (NONE,v11) => (SOME Error,s)
+     | (SOME (Word w1),NONE,v25) => (SOME Error,s)
+     | (SOME (Word w1),SOME (Word w2),NONE,v37) => (SOME Error,s)
+     | (SOME (Word w1),SOME (Word w2),SOME (Word w3),NONE) => (SOME Error,s)
+     | (SOME (Word w1),SOME (Word w2),SOME (Word w3),SOME (Word w4)) =>
+       (let
+          (cfg,progs) = s.compile_oracle 0
+        in
+          case (buffer_flush s.code_buffer w1 w2,buffer_flush s.data_buffer w3 w4) of
+            (NONE,v5) => (SOME Error,s)
+          | (SOME v10,NONE) => (SOME Error,s)
+          | (SOME (bytes,cb),SOME (data,db)) =>
+            (let
+               new_oracle = shift_seq 1 s.compile_oracle
+             in
+               case (s.compile cfg progs,progs) of
+                 (v2,[]) => (SOME Error,s)
+               | (NONE,v6::v7) => (SOME Error,s)
+               | (SOME (bytes',data',cfg'),(k,prog)::v7) =>
+                 if bytes = bytes' /\ data = data' /\ FST (new_oracle 0) = cfg' then
+                   (let
+                      s' =
+                        s with
+                        <|code_buffer := cb; data_buffer := db; code := union s.code (fromAList progs); locals := insert ptr (Loc k 0) env;
+                          fp_regs := FEMPTY; compile_oracle := new_oracle; stack_max := NONE; stack_size := LN|>
+                    in
+                      (NONE,s'))
+                 else (SOME Error,s)))
+     | (SOME (Word w1),SOME (Word w2),SOME (Word w3),SOME (Loc v52 v53)) => (SOME Error,s)
+     | (SOME (Word w1),SOME (Word w2),SOME (Loc v44 v45),v37) => (SOME Error,s)
+     | (SOME (Word w1),SOME (Loc v32 v33),v25) => (SOME Error,s)
+     | (SOME (Loc v20 v21),v11) => (SOME Error,s)) /\
+(!s r2 r1.
+   evaluate (CodeBufferWrite r1 r2,s) =
+   case (get_var r1 s,get_var r2 s) of
+     (NONE,v3) => (SOME Error,s)
+   | (SOME (Word w1),NONE) => (SOME Error,s)
+   | (SOME (Word w1),SOME (Word w2)) =>
+     (case buffer_write s.code_buffer w1 (w2w w2) of NONE => (SOME Error,s) | SOME new_cb => (NONE,s with code_buffer := new_cb))
+   | (SOME (Word w1),SOME (Loc v18 v19)) => (SOME Error,s)
+   | (SOME (Loc v10 v11),v3) => (SOME Error,s)) /\
+(!s r2 r1.
+   evaluate (DataBufferWrite r1 r2,s) =
+   case (get_var r1 s,get_var r2 s) of
+     (NONE,v3) => (SOME Error,s)
+   | (SOME (Word w1),NONE) => (SOME Error,s)
+   | (SOME (Word w1),SOME (Word w2)) =>
+     (case buffer_write s.data_buffer w1 w2 of NONE => (SOME Error,s) | SOME new_db => (NONE,s with data_buffer := new_db))
+   | (SOME (Word w1),SOME (Loc v18 v19)) => (SOME Error,s)
+   | (SOME (Loc v10 v11),v3) => (SOME Error,s)) /\
+(!s ptr2 ptr1 names len2 len1 ffi_index.
+   evaluate (FFI ffi_index ptr1 len1 ptr2 len2 names,s) =
+   case (get_var len1 s,get_var ptr1 s,get_var len2 s,get_var ptr2 s) of
+     (NONE,v5) => (SOME Error,s)
+   | (SOME (Word w),NONE,v17) => (SOME Error,s)
+   | (SOME (Word w),SOME (Word w2),NONE,v29) => (SOME Error,s)
+   | (SOME (Word w),SOME (Word w2),SOME (Word w3),NONE) => (SOME Error,s)
+   | (SOME (Word w),SOME (Word w2),SOME (Word w3),SOME (Word w4)) =>
+     (case cut_env names s.locals of
+        NONE => (SOME Error,s)
+      | SOME env =>
+        case
+          (read_bytearray w2 (w2n w) (mem_load_byte_aux s.memory s.mdomain s.be),
+           read_bytearray w4 (w2n w3) (mem_load_byte_aux s.memory s.mdomain s.be))
+        of
+          (NONE,v3) => (SOME Error,s)
+        | (SOME bytes,NONE) => (SOME Error,s)
+        | (SOME bytes,SOME bytes2) =>
+          case call_FFI s.ffi (ExtCall ffi_index) bytes bytes2 of
+            FFI_return new_ffi new_bytes =>
+              (let
+                 new_m = write_bytearray w4 new_bytes s.memory s.mdomain s.be
+               in
+                 (NONE,s with <|memory := new_m; locals := env; fp_regs := FEMPTY; ffi := new_ffi|>))
+          | FFI_final outcome => (SOME (FinalFFI outcome),flush_state T s))
+   | (SOME (Word w),SOME (Word w2),SOME (Word w3),SOME (Loc v44 v45)) => (SOME Error,s)
+   | (SOME (Word w),SOME (Word w2),SOME (Loc v36 v37),v29) => (SOME Error,s)
+   | (SOME (Word w),SOME (Loc v24 v25),v17) => (SOME Error,s)
+   | (SOME (Loc v12 v13),v5) => (SOME Error,s)) /\
+(!v s op exp.
+   evaluate (ShareInst op v exp,s) =
+   case word_exp s exp of NONE => (SOME Error,s) | SOME (Word ad) => share_inst op v ad s | SOME (Loc v7 v8) => (SOME Error,s)) /\
+!s ret handler dest args.
+  evaluate (Call ret dest args handler,s) =
+  case get_vars args s of
+    NONE => (SOME Error,s)
+  | SOME xs =>
+    if bad_dest_args dest args then (SOME Error,s)
+    else
+      case find_code dest (add_ret_loc ret xs) s.code s.stack_size of
+        NONE => (SOME Error,s)
+      | SOME (args1,prog,ss) =>
+        case ret of
+          NONE =>
+            if handler = NONE then
+              if s.clock = 0 then (SOME TimeOut,flush_state T s)
+              else case evaluate (prog,call_env args1 ss (dec_clock s)) of (res,s') => if bad_fun_return res then (SOME Error,s') else (res,s')
+            else (SOME Error,s)
+        | SOME (n,names,ret_handler,l1,l2) =>
+          if domain (FST names) = {} \/ ~ALL_DISTINCT n then (SOME Error,s)
+          else
+            case cut_envs names s.locals of
+              NONE => (SOME Error,s)
+            | SOME envs =>
+              if s.clock = 0 then
+                (SOME TimeOut,flush_state T (s with <|stack := []; stack_max := (call_env args1 ss (push_env envs handler s)).stack_max|>))
+              else
+                case evaluate (prog,call_env args1 ss (push_env envs handler (dec_clock s))) of
+                  (NONE,s2) => (SOME Error,s2)
+                | (SOME (Result x ys),s2) =>
+                  if x <> Loc l1 l2 \/ LENGTH ys <> LENGTH n then (SOME Error,s2)
+                  else
+                    (case pop_env s2 of
+                       NONE => (SOME Error,s2)
+                     | SOME s1 =>
+                       if domain s1.locals = domain (FST envs) UNION domain (SND envs) then evaluate (ret_handler,set_vars n ys s1)
+                       else (SOME Error,s1))
+                | (SOME (Exception x' y),s2) =>
+                  (case handler of
+                     NONE => (SOME (Exception x' y),s2)
+                   | SOME (n',h,l1',l2') =>
+                     if x' <> Loc l1' l2' then (SOME Error,s2)
+                     else if domain s2.locals = domain (FST envs) UNION domain (SND envs) then evaluate (h,set_var n' y s2)
+                     else (SOME Error,s2))
+                | (SOME (Break v20),s2) => (SOME Error,s2)
+                | (SOME (Continue v21),s2) => (SOME Error,s2)
+                | (SOME TimeOut,s2) => (SOME TimeOut,s2)
+                | (SOME NotEnoughSpace,s2) => (SOME NotEnoughSpace,s2)
+                | (SOME (FinalFFI v22),s2) => (SOME (FinalFFI v22),s2)
+                | (SOME Error,s2) => (SOME Error,s2)
+ws_end=T

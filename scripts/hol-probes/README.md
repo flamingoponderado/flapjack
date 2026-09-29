@@ -124,6 +124,14 @@ clauses of `comp_def` at `cakeml/pancake/loop_to_wordScript.sml:145-166`
 (tail-call, non-tail without handler, non-tail with handler), checking link slot
 `0`, the computed live cutset, label threading, and the trailing `Tick`. Its
 kernel-checked Lean replay is `Flapjack.Test.LoopToWordCallParity`.
+`loop_to_word_comp_func_probe.out` records direct HOL EVAL rows for the
+executable entry points `comp_func_def` / `compile_prog_def` / `compile_def`
+at `cakeml/pancake/loop_to_wordScript.sml:164-177`: `comp_func` with no new
+temporaries, with a parameter already assigned, and with a fresh
+`acc_vars` temporary; plus the `LENGTH params + 1` mapping of `compile_prog`
+and its `compile` alias over a three-entry code list. Its kernel-checked Lean
+replay is `Flapjack.Test.LoopToWordCompFuncParity` through the tagged exact
+`loopToWordCompFuncHOL` / `loopToWordCompileProgHOL` / `loopToWordCompileHOL`.
 `loop_live_comp_probe.out` records direct HOL EVAL rows for
 `loop_live$comp` at `cakeml/pancake/loop_liveScript.sml:217`; the Lean replay
 is `Flapjack.Test.LoopLiveCompParity`. `loop_live_optimise_probe.out` records
@@ -642,8 +650,17 @@ HOL_PROBE_ONLY=pan_fixed_load_probeScript.sml scripts/hol-probes/regenerate.sh`
 against matching CakeML source commit `857f0d98da8f8a3580f3442338e697809308ede`.
 The `aligned_width1_address0=T` and `aligned_width1_address1=F` rows confirm
 that HOL accepts address zero and rejects address one; `byte_align_width1_address1`
-records the source `byte_align` definition at that carrier width. The tagged
-Lean `panMemLoad32HOL` states the equivalent modulo-four guard directly; the
+records the source `byte_align` definition at that carrier width and retains
+`LOG2 0` symbolically (`pan_fixed_load_probe.out:50`), direct HOL evidence
+that the source does not select Lean's `Nat.log2 0 = 0` completion. The source
+expression is emitted by `pan_fixed_load_probeScript.sml:94-95` and was
+captured with the command above. The untagged
+`CrepSem.Log2ZeroParametric` evaluator uses one explicit natural `z` at every
+recursive load; its one-bit examples show that completions 0 and 1 can differ,
+while a kernel theorem proves all expression results coincide with the current
+evaluator at widths at least 8 for every `z`. This is a model parameter, not
+reviewed production equivalence or an approved HOL qualifier. The tagged Lean
+`panMemLoad32HOL` states the equivalent modulo-four guard directly; the
 matching Lean fixture checks that address zero returns `0x00010001` and address
 one returns `none`. HOL EVAL leaves the raw width-one pack in
 `get_byte`/shift/concatenation form; a direct HOL simplifier/evaluator pass

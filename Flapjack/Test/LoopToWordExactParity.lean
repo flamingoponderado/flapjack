@@ -81,6 +81,88 @@ example {x y v : Nat}
   exact makeCtxtHOL_inj [7, 8, 7] (.ln : Spt Nat) 4
     (by intro x y v hx hy; simp [sptLookup] at hx) x y v hx hy
 
+example :
+    makeCtxtHOL 3 ([7, 8] ++ [8, 9]) (.ln : Spt Nat) =
+      makeCtxtHOL (3 + 2 * 2) [8, 9]
+        (makeCtxtHOL 3 [7, 8] (.ln : Spt Nat)) := by
+  exact makeCtxtHOL_append [7, 8] [8, 9] 3 (.ln : Spt Nat)
+
+#guard sptLookup 8 (makeCtxtHOL 3 [7, 8, 8, 9] (.ln : Spt Nat)) == some 7
+
+#guard sptLookup 5 (makeCtxtHOL 4 [5, 6] (.ln : Spt Nat)) == some 4
+#guard sptLookup 6 (makeCtxtHOL 4 [5, 6] (.ln : Spt Nat)) == some 6
+
+example {key value : Nat}
+    (hlookup : sptLookup key (makeCtxtHOL 4 [5, 6] (.ln : Spt Nat)) =
+      some value) : 4 ≤ value := by
+  rcases makeCtxtHOL_lookupRange [5, 6] 4 (.ln : Spt Nat) key value hlookup with
+    hsource | hbound
+  · simp [sptLookup] at hsource
+  · exact hbound
+
+example :
+    sptLookup 9 (makeCtxtHOL 2 [4, 6, 4] (.ln : Spt Nat)) =
+      sptLookup 9 (.ln : Spt Nat) := by
+  exact makeCtxtHOL_notMem [4, 6, 4] 2 (.ln : Spt Nat) 9 (by simp)
+
+/-! `lookup_EL_make_ctxt` assigns the kth distinct parameter the kth even
+register starting at the supplied base. -/
+
+#guard sptLookup 3 (makeCtxtHOL 4 [3, 5, 9] (.ln : Spt Nat)) == some 4
+#guard sptLookup 9 (makeCtxtHOL 4 [3, 5, 9] (.ln : Spt Nat)) == some 8
+
+example :
+    sptLookup 3 (makeCtxtHOL 4 [3, 5, 9] (.ln : Spt Nat)) = some 4 := by
+  exact makeCtxtHOL_lookupEL [3, 5, 9] 0 4 (.ln : Spt Nat) (by decide)
+    (by decide)
+
+example :
+    sptLookup 9 (makeCtxtHOL 4 [3, 5, 9] (.ln : Spt Nat)) = some 8 := by
+  exact makeCtxtHOL_lookupEL [3, 5, 9] 2 4 (.ln : Spt Nat) (by decide)
+    (by decide)
+
+/-! `lookup_make_ctxt_EVEN` preserves even values from the incoming context
+and establishes even values for newly assigned names. -/
+
+def lookupEvenContext : Spt Nat := sptInsert 1 10 (.ln : Spt Nat)
+
+#guard sptLookup 1 (makeCtxtHOL 2 [4, 6] lookupEvenContext) == some 10
+#guard sptLookup 6 (makeCtxtHOL 2 [4, 6] lookupEvenContext) == some 4
+
+example : 4 % 2 = 0 := by
+  exact makeCtxtHOL_lookupEven [4, 6] 2 lookupEvenContext 6 4 (by decide)
+    (by
+      intro key value hlookup
+      by_cases hkey : key = 1
+      · subst key
+        change sptLookup 1 (sptInsert 1 10 (.ln : Spt Nat)) = some value at hlookup
+        rw [sptLookup_sptInsert_same] at hlookup
+        have hv : value = 10 := Option.some.inj hlookup.symm
+        subst value
+        decide
+      · change sptLookup key (sptInsert 1 10 (.ln : Spt Nat)) = some value at hlookup
+        rw [sptLookup_sptInsert_ne 1 key 10 (.ln : Spt Nat) hkey] at hlookup
+        simp at hlookup)
+    (makeCtxtHOL_lookupEL [4, 6] 1 2 lookupEvenContext (by decide) (by decide))
+
+example : 10 % 2 = 0 := by
+  exact makeCtxtHOL_lookupEven [] 2 lookupEvenContext 1 10 (by decide)
+    (by
+      intro key value hlookup
+      by_cases hkey : key = 1
+      · subst key
+        change sptLookup 1 (sptInsert 1 10 (.ln : Spt Nat)) = some value at hlookup
+        rw [sptLookup_sptInsert_same] at hlookup
+        have hv : value = 10 := Option.some.inj hlookup.symm
+        subst value
+        decide
+      · change sptLookup key (sptInsert 1 10 (.ln : Spt Nat)) = some value at hlookup
+        rw [sptLookup_sptInsert_ne 1 key 10 (.ln : Spt Nat) hkey] at hlookup
+        simp at hlookup)
+    (by
+      change sptLookup 1 (sptInsert 1 10 (.ln : Spt Nat)) = some 10
+      rw [sptLookup_sptInsert_same])
+
 /-- Probe context `insert 3 7 (insert 5 9 LN)` over `num |-> num` spt. -/
 def probeContext : Spt Nat := sptInsert 3 7 (sptInsert 5 9 .ln)
 

@@ -12,6 +12,10 @@ Counterpart of `cakeml/compiler/backend/semantics/wordSemScript.sml:374-470`
 are over the tagged `WordSemStateFiniteExact` and the exact FFI carrier: the
 tagged `callFFIHOL` (`call_FFI_def`) and the `asm$memop` carrier
 `WordMemOp`.  The carrier translations are those of the `state` port.
+HOL types the results of `sh_mem_store*`, `sh_mem_set_var` and `share_inst`
+as `'d result option`, with `'d` independent of the state's word type `'a`
+(no clause returns a word in the result).  Here that is a separate result
+width `rw` with `[NeZero rw]`.
 
 The HOL standard-library byte helpers are the untagged renderings used by the
 panSem/loopSem shared-memory ports:
@@ -45,9 +49,9 @@ namespace WordSemStateFiniteExact
     the new FFI state.  Outside the domain the result is `(SOME Error, s)`. -/
 @[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "sh_mem_store_def"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-def shMemStore {width : Nat} [NeZero width] {C : Type} {F : Type}
+def shMemStore {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] {C : Type} {F : Type}
     (a w : BitVec width) (s : WordSemStateFiniteExact width C F) :
-    Option (WordSemResult width) × WordSemStateFiniteExact width C F :=
+    Option (WordSemResult rw) × WordSemStateFiniteExact width C F :=
   if s.shMdomain a then
     match callFFIHOL s.ffi (.sharedMem .mappedWrite) [0]
         (panWordToBytesHOL w false ++ panWordToBytesHOL a false) with
@@ -71,9 +75,9 @@ def shMemLoad {width : Nat} [NeZero width] {C : Type} {F : Type}
     `[get_byte 0w w F] ++ word_to_bytes a F`. -/
 @[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "sh_mem_store_byte_def"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-def shMemStoreByte {width : Nat} [NeZero width] {C : Type} {F : Type}
+def shMemStoreByte {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] {C : Type} {F : Type}
     (a w : BitVec width) (s : WordSemStateFiniteExact width C F) :
-    Option (WordSemResult width) × WordSemStateFiniteExact width C F :=
+    Option (WordSemResult rw) × WordSemStateFiniteExact width C F :=
   if s.shMdomain (riscvByteAlignHOL a) then
     match callFFIHOL s.ffi (.sharedMem .mappedWrite) [1]
         ([getByteHOL8 0 w false] ++ panWordToBytesHOL a false) with
@@ -86,9 +90,9 @@ def shMemStoreByte {width : Nat} [NeZero width] {C : Type} {F : Type}
     `TAKE 2 (word_to_bytes w F) ++ word_to_bytes a F`. -/
 @[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "sh_mem_store16_def"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-def shMemStore16 {width : Nat} [NeZero width] {C : Type} {F : Type}
+def shMemStore16 {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] {C : Type} {F : Type}
     (a w : BitVec width) (s : WordSemStateFiniteExact width C F) :
-    Option (WordSemResult width) × WordSemStateFiniteExact width C F :=
+    Option (WordSemResult rw) × WordSemStateFiniteExact width C F :=
   if s.shMdomain (riscvByteAlignHOL a) then
     match callFFIHOL s.ffi (.sharedMem .mappedWrite) [2]
         ((panWordToBytesHOL w false).take 2 ++ panWordToBytesHOL a false) with
@@ -101,9 +105,9 @@ def shMemStore16 {width : Nat} [NeZero width] {C : Type} {F : Type}
     `TAKE 4 (word_to_bytes w F) ++ word_to_bytes a F`. -/
 @[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "sh_mem_store32_def"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-def shMemStore32 {width : Nat} [NeZero width] {C : Type} {F : Type}
+def shMemStore32 {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] {C : Type} {F : Type}
     (a w : BitVec width) (s : WordSemStateFiniteExact width C F) :
-    Option (WordSemResult width) × WordSemStateFiniteExact width C F :=
+    Option (WordSemResult rw) × WordSemStateFiniteExact width C F :=
   if s.shMdomain (riscvByteAlignHOL a) then
     match callFFIHOL s.ffi (.sharedMem .mappedWrite) [4]
         ((panWordToBytesHOL w false).take 4 ++ panWordToBytesHOL a false) with
@@ -152,9 +156,9 @@ def shMemLoad32 {width : Nat} [NeZero width] {C : Type} {F : Type}
     * `NONE` gives `(SOME Error, s)`. -/
 @[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "sh_mem_set_var_def"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-def shMemSetVar {width : Nat} [NeZero width] {C : Type} {F : Type} :
+def shMemSetVar {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] {C : Type} {F : Type} :
     Option (HolFfiResult F) → Nat → WordSemStateFiniteExact width C F →
-      Option (WordSemResult width) × WordSemStateFiniteExact width C F
+      Option (WordSemResult rw) × WordSemStateFiniteExact width C F
   | some (.final outcome), _, s => (some (.finalFfi outcome), flushState true s)
   | some (.ret newFfi newBytes), v, s =>
       (none, setVar v (.word (panWordOfBytesHOL false 0 newBytes)) { s with ffi := newFfi })
@@ -166,9 +170,9 @@ def shMemSetVar {width : Nat} [NeZero width] {C : Type} {F : Type} :
     `sh_mem_store*`, and give `(SOME Error, s)` otherwise. -/
 @[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "share_inst_def"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-def shareInst {width : Nat} [NeZero width] {C : Type} {F : Type} :
+def shareInst {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] {C : Type} {F : Type} :
     WordMemOp → Nat → BitVec width → WordSemStateFiniteExact width C F →
-      Option (WordSemResult width) × WordSemStateFiniteExact width C F
+      Option (WordSemResult rw) × WordSemStateFiniteExact width C F
   | .load, v, ad, s => shMemSetVar (shMemLoad ad s) v s
   | .load8, v, ad, s => shMemSetVar (shMemLoadByte ad s) v s
   | .load16, v, ad, s => shMemSetVar (shMemLoad16 ad s) v s
