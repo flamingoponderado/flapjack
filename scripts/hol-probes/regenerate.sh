@@ -1630,6 +1630,14 @@ run_probe word_sem_env_probeScript.sml word_sem_env_probe.out \
   "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 
+# The wordSem call-helper probe observes add_ret_loc, bad_dest_args,
+# const_addresses/const_writes, STOP, bad_fun_return, cont_loop, exit_loop and
+# the [nocompute] MustTerminate_limit unfolded at width 1 (bead flapjack-h29l.7).
+run_probe word_sem_call_helpers_probeScript.sml word_sem_call_helpers_probe.out \
+  add_ret_loc_none const_writes exit_loop_break0 must_terminate_limit_1 \
+  "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
 # The good_handlers probe observes the structural handler-label predicate,
 # including the NONE-ret case (handler ignored) and nested bad handlers.
 run_probe word_convs_good_handlers_probeScript.sml word_convs_good_handlers_probe.out \
