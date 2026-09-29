@@ -122,6 +122,7 @@ import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call.NoHandler
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call.HandlerTail
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call.SomeHandler
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call
+import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Assembly
 import Flapjack.Pancake.LoopLang.AssignedVars
 import Flapjack.Pancake.Semantics.LoopProps.AssignedVars
 import Flapjack.Pancake.Semantics.LoopProps.CutSets
