@@ -61,7 +61,19 @@ open Classical in
     same predicate), `LUB` is HOL's overload for `build_lprefix_lub`, rendered by
     the chain-free `HolLList.buildLprefixLub` over HOL's exact `llist` subtype
     `HolLList` (as in the tagged loopSem/crepSem `semantics_def`), and
-    `IMAGE g UNIV` is the predicate `fun l => ∃ k, l = g k`. -/
+    `IMAGE g UNIV` is the predicate `fun l => ∃ k, l = g k`.
+
+    Caveat (choice translation): HOL `@` and Lean `Classical.choose` are the standard
+    translation of one another, and this definition states the same choice formula
+    as HOL.  The value each selects when the predicate has several witnesses is
+    unspecified in both logics, and no cross-language equality of those selections
+    is proved.  This matters for non-chain event families, where
+    `buildLprefixLub`'s per-index choice and `holOptionSome`'s choice among several
+    completed runs may pick different witnesses than HOL.  Such equality is outside
+    scope (see `docs/SOUNDNESS.md`, "HOL-to-Lean trust boundary"); the tag records a representation port of the
+    same formula over the exact `lrep_ok` lazy-list subtype `HolLList`, not an
+    extensional agreement on unspecified choices.  On `lprefixChain` families the LUB
+    is characterised uniquely by `buildLprefixLub_thm` in both logics. -/
 @[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "semantics_wrapper_def"]
 noncomputable def crepToLoopSemanticsWrapper
     (f : Nat → CrepToLoopSemanticsRunRes HolOutcome × List HolIoEvent) : HolBehaviour :=
