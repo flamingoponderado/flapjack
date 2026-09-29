@@ -24093,6 +24093,7 @@
     "lean_name": "evaluate",
     "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
     "hol_name": "evaluate_def",
+    "hol_line": 1016,
     "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
     "fmap_as_finite_support": [
       "fpRegs",

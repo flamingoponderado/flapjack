@@ -77,10 +77,6 @@ theorem wordSemLex {a b c a' b' c' : Nat}
 
 end Measure
 
-section Evaluate
-
-variable {width : Nat} [NeZero width] {C : Type} {F : Type}
-
 open Classical in
 /-- Exact HOL `evaluate_def` (`wordSemScript.sml:1016-1260`), clause by clause
     over the tagged helpers:
@@ -94,9 +90,9 @@ open Classical in
       and handler cases.
     HOL's equality tests on results are rendered as matches, and set
     conditions on `domain` use `sptDomainEmpty`/`sptDomainEqUnion`. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "evaluate_def"
+@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "evaluate_def" 1016
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-noncomputable def evaluate
+noncomputable def evaluate {width : Nat} [NeZero width] {C : Type} {F : Type}
     (p : WordLangProgHOL (BitVec width)) (s : WordSemStateFiniteExact width C F) :
     Option (WordSemResult width) × WordSemStateFiniteExact width C F :=
   match p with
@@ -331,8 +327,6 @@ decreasing_by
     try simp only [callEnv, decClock, setVars, setVar, pushEnv_clock, pushEnv_termdep,
       wordSemSTOP, true_and] at *
     omega
-
-end Evaluate
 
 end WordSemStateFiniteExact
 
