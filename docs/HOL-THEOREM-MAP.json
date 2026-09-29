@@ -21886,6 +21886,23 @@
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
     "hol_name": "ncompile_correct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NCompileCorrect/StoreByte.lean",
+    "lean_name": "crepToLoop_ncompile_correct_storeByte",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.6.53) against ncompile_correct at crep_to_loopProofScript.sml:110-154 and Resume ncompile_correct[StoreByte] at :1966-2074. This StoreByte evaluate_ind case has no induction hypothesis. It retains the source evaluation and non-Error premises, all five pre-state relations, and the complete existential clock/result/target-state conclusion with all six postconditions; no target evaluation/result or post relation is assumed. The source clause is the exact evalCrepSemHOLProgExact_storeByte_holShape: destination and source expression evaluation followed by panMemStoreByteWord8HOL with the source address-domain and HOL byte-width operation. The target is LoopSemStateFiniteExact.evaluate of compileHOLExact: assign the destination address and source value to adjacent fresh temporaries, then execute StoreByte using memStoreByteAuxExact. The proof checks the source/target word8 conversion and carries memory_rel at every in-domain address, with the aligned cell handled by the exact one-byte write relation; locals_rel follows temporary freshness, insert_gt_vmax, cutset propagation, and the compiled-code subspt fact. Constructor carriers and quantified statement match the cited HOL case; the finite-map qualifier names fields traversed by the exact state/context/relation carriers with same-module roundtrip witnesses, and words_as_type_indexed_bitvec records HOL's positive word dimension as BitVec width."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ncompile_correct",
     "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NCompileCorrect/Call.lean",
     "lean_name": "crepToLoop_ncompile_correct_call",
     "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
