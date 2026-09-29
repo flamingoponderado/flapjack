@@ -18756,6 +18756,15 @@
   },
   {
     "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
+    "hol_name": "acc_vars_acc",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopProps/AccVars.lean",
+    "lean_name": "accVarsAccHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-ds9 source comparison (2026-09-29; bead flapjack-pxn.18.5.9.20.3) against loopPropsScript.sml:89. HOL states forall p l, domain (acc_vars p l) = domain (acc_vars p LN) UNION domain l; Lean keeps the same universal binders and equality over HolLoopProg and NumSet = Spt Unit, rendering domain by the sptDomain predicate and UNION by pointwise disjunction. accVarsHOL is the tagged loopLangScript.sml:118-155 clause-for-clause port. Only the reviewed HolLoopProg width-indexed word translation applies. The proof follows HOL's acc_vars_ind, using the sptree insert and list-insert domain characterisations (sptMem_sptInsert, sptMem_sptListInsert_iff).",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
     "hol_name": "assigned_vars_nested_seq_split",
     "lean_path": "Flapjack/Pancake/Semantics/LoopProps/AssignedVars.lean",
     "lean_name": "holAssignedVarsNestedSeqSplit",
@@ -24185,6 +24194,15 @@
     "lean_name": "wordSemLastN_add_cons",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds5 source comparison (2026-09-29; bead flapjack-pxn.18.5.9.18.1) against loop_to_wordProofScript.sml:447-450. HOL statement is exactly ~(LENGTH xs <= n) ==> LASTN (n + 1) (x::xs) = LASTN (n + 1) xs, with x/xs/n universally quantified and no word or finite-map carrier. Lean keeps the same single hypothesis (not xs.length <= n) and conclusion, rendering the HOL standard-library LASTN (rich_listScript LASTN_def = REVERSE (TAKE n (REVERSE xs))) by the untagged Flapjack.wordSemLastN. No qualifier applies (reviewed_exact). Regression examples for the concrete equality and for the load-bearing hypothesis are in Flapjack.Test.LoopToWordLastNParity."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "acc_vars_acc'",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/AccVarsAcc.lean",
+    "lean_name": "accVarsAccPrimeHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-ds9 source comparison (2026-09-29; bead flapjack-pxn.18.5.9.20.3) against loop_to_wordProofScript.sml:979-980. HOL defines Theorem acc_vars_acc'[local] by specialising loopProps$acc_vars_acc at l := acc_vars q LN after SWAP_FORALL_CONV, giving forall q p. domain (acc_vars p (acc_vars q LN)) = domain (acc_vars p LN) UNION domain (acc_vars q LN). Lean states exactly that over HolLoopProg and NumSet, with q then p binder order, domain as sptDomain and UNION as pointwise disjunction; it is derived directly from the reviewed accVarsAccHOL (loopPropsScript.sml:89). Only the reviewed width-indexed word translation applies.",
+    "words_as_type_indexed_bitvec": true
   },
   {
   "hol_path": "cakeml/pancake/loopLangScript.sml",

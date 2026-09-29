@@ -112,6 +112,7 @@ import Flapjack.Test.LoopToWordFindVarParity
 import Flapjack.Test.LoopToWordLastNParity
 import Flapjack.Test.LoopToWordLocalsRelIntroParity
 import Flapjack.Test.LoopToWordTakeWordToBytesParity
+import Flapjack.Test.LoopToWordAccVarsAccParity
 import Flapjack.Test.LoopDecClockParity
 import Flapjack.Test.LoopFixClockParity
 import Flapjack.Test.LoopPropsSurvivesParity
@@ -875,6 +876,7 @@ def main : IO Unit := do
     Flapjack.Test.LoopToWordLastNParity.runChecks,
     Flapjack.Test.LoopToWordLocalsRelIntroParity.runChecks,
     Flapjack.Test.LoopToWordTakeWordToBytesParity.runChecks,
+    Flapjack.Test.LoopToWordAccVarsAccParity.runChecks,
     Flapjack.Test.LoopDecClockParity.runChecks,
     Flapjack.Test.LoopFixClockParity.runChecks,
     Flapjack.Test.LoopPropsSurvivesParity.runChecks,

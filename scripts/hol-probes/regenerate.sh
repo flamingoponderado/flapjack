@@ -244,6 +244,15 @@ run_probe loop_to_word_take_word_to_bytes_probeScript.sml \
   twb64_0 twb64_1 twb64_hi gb64_0 gb64_1 gb64_hi \
   "$cake_dir/pancake/proofs/loop_to_wordProofScript.sml" \
   "$cake_dir/pancake/proofs"
+run_probe loop_to_word_acc_vars_acc_prime_probeScript.sml \
+  loop_to_word_acc_vars_acc_prime_probe.out \
+  assign_lhs_key assign_q_key assign_absent_key \
+  seq_p_first seq_p_second seq_q_key \
+  if_then_key if_else_key if_absent_key \
+  loop_p_key loop_q_key \
+  call_return_first call_return_second call_q_key \
+  "$cake_dir/pancake/proofs/loop_to_wordProofScript.sml" \
+  "$cake_dir/pancake/proofs"
 # The get_stack_only probe observes the allocator driver's stack-only
 # analysis over wordLang programs (backend word_alloc).
 run_probe get_stack_only_probeScript.sml get_stack_only_probe.out \

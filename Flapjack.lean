@@ -168,6 +168,7 @@ import Flapjack.Pancake.Semantics.LoopProps.UnassignedVarsExact
 import Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact
 import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOkLemmas
 import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOkEvalExact
+import Flapjack.Pancake.Semantics.LoopProps.AccVars
 import Flapjack.Pancake.Proofs.LoopToWord.ContextSupport
 import Flapjack.Pancake.Proofs.LoopToWord.LocalsRel
 import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelUpdates
@@ -178,6 +179,7 @@ import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelIntro
 import Flapjack.Pancake.Proofs.LoopToWord.CutsetDomain
 import Flapjack.Pancake.Proofs.LoopToWord.LastNAddCons
 import Flapjack.Pancake.Proofs.LoopToWord.WordToBytes
+import Flapjack.Pancake.Proofs.LoopToWord.AccVarsAcc
 import Flapjack.PanObservationalSemantics
 import Flapjack.PanMrec
 import Flapjack.PanHProgDec
