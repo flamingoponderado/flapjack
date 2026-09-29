@@ -781,7 +781,7 @@ theorem crepInlineActiveNames_contains_eq [BEq FunName] [LawfulBEq FunName]
 /-- The executed `crepExpVars` family over a list of production expressions
     agrees with the exact `crepExpVarsHOL` read through `crepExpToHOL`.
     Untagged Flapjack-specific infrastructure. -/
-private theorem crepExpVars_flatMap_codec {width : Nat} [NeZero width]
+theorem crepExpVars_flatMap_codec {width : Nat} [NeZero width]
     (arguments : List (CrepExp (BitVec width))) :
     arguments.flatMap crepExpVars =
       (arguments.map crepExpToHOL).flatMap crepExpVarsHOL := by
@@ -821,6 +821,152 @@ theorem crepProgToHOL_crepInlineCallBody_none {width : Nat} [NeZero width]
           (arguments.map crepExpToHOL) argumentNames (crepProgToHOL body)) := by
   unfold crepInlineCallBody
   rw [crepProgToHOL_crepInlineTail, crepProgToHOL_crepArgLoad, crepInlineTmpNames_codec]
+
+/-! ## Variable-occurrence and branch-return codec bridges
+
+The executed inliner consults the variable-occurrence analysis `crepVarProg`,
+its maximum `crepVmaxProg`, and the branch-return predicates `crepHasReturn`
+and `crepNotBranchRet` on the production `CrepProg` carrier.  The exact
+`inlineProgHOLCoreExact` instead consults the tagged exact ports
+`crepVarProgHOLExact`, `crepVmaxProgHOLExact`, `hasReturnHOLExact` and
+`notBranchRetHOLExact` on `CrepProgHOL`.  These helper declarations prove that
+the executed analyses are the `crepProgToHOL` images of the exact ones, so the
+call-arm guard and maximum computations agree under the codec.  They are
+Flapjack-specific cross-representation facts with no cakeml HOL original, so
+they carry no `@[hol]` tag. -/
+
+/-- `crepExpVars` agrees with the exact `crepExpVarsHOL` under `crepExpToHOL`:
+    a form of `crepExpVarsW_eq_crepExpVarsHOL_crepExpToHOL` with the production
+    delegating definition on the left. -/
+theorem crepExpVars_codec {width : Nat} [NeZero width] (expression : CrepExp (BitVec width)) :
+    crepExpVars expression = crepExpVarsHOL (crepExpToHOL expression) :=
+  crepExpVarsW_eq_crepExpVarsHOL_crepExpToHOL expression
+
+/-- Executed `crepVarProg` agrees with the exact `crepVarProgHOLExact` under the
+    `crepProgToHOL` codec. -/
+theorem crepVarProg_codec {width : Nat} [NeZero width] (program : CrepProg (BitVec width)) :
+    crepVarProg program = crepVarProgHOLExact (crepProgToHOL program) := by
+  fun_induction crepVarProg program with
+  | case1 name value body ih =>
+      simp only [crepProgToHOL, crepVarProgHOLExact, crepExpVars_codec, ih]
+  | case2 name value =>
+      simp only [crepProgToHOL, crepVarProgHOLExact, crepExpVars_codec]
+  | case3 names op arguments =>
+      simp only [crepProgToHOL, crepVarProgHOLExact]
+  | case4 address value =>
+      simp only [crepProgToHOL, crepVarProgHOLExact, crepExpVars_codec]
+  | case5 address value =>
+      simp only [crepProgToHOL, crepVarProgHOLExact, crepExpVars_codec]
+  | case6 address value =>
+      simp only [crepProgToHOL, crepVarProgHOLExact, crepExpVars_codec]
+  | case7 address value =>
+      simp only [crepProgToHOL, crepVarProgHOLExact, crepExpVars_codec]
+  | case8 first second ih1 ih2 =>
+      simp only [crepProgToHOL, crepVarProgHOLExact, ih1, ih2]
+  | case9 condition thenBranch elseBranch ih1 ih2 =>
+      simp only [crepProgToHOL, crepVarProgHOLExact, crepExpVars_codec, ih1, ih2]
+  | case10 condition body ih =>
+      simp only [crepProgToHOL, crepVarProgHOLExact, crepExpVars_codec, ih]
+  | case11 name arguments =>
+      simp only [crepProgToHOL, crepVarProgHOLExact, crepExpVars_flatMap_codec]
+  | case12 names name arguments =>
+      simp only [crepProgToHOL, crepVarProgHOLExact, crepExpVars_flatMap_codec]
+  | case13 names handler body name arguments ih =>
+      simp only [crepProgToHOL, crepVarProgHOLExact, crepExpVars_flatMap_codec, ih]
+  | case14 function configuration configurationLength array arrayLength =>
+      simp only [crepProgToHOL, crepVarProgHOLExact]
+  | case15 values =>
+      simp only [crepProgToHOL, crepVarProgHOLExact, crepExpVars_flatMap_codec]
+  | case16 operator name address =>
+      simp only [crepProgToHOL, crepVarProgHOLExact, crepExpVars_codec]
+  | case17 => simp only [crepProgToHOL, crepVarProgHOLExact]
+  | case18 label => simp only [crepProgToHOL, crepVarProgHOLExact]
+  | case19 label => simp only [crepProgToHOL, crepVarProgHOLExact]
+  | case20 exception => simp only [crepProgToHOL, crepVarProgHOLExact]
+  | case21 => simp only [crepProgToHOL, crepVarProgHOLExact]
+
+/-- Executed `crepVmaxProg` agrees with the exact `crepVmaxProgHOLExact` under
+    the codec. -/
+theorem crepVmaxProg_codec {width : Nat} [NeZero width] (program : CrepProg (BitVec width)) :
+    crepVmaxProg program = crepVmaxProgHOLExact (crepProgToHOL program) := by
+  unfold crepVmaxProg crepVmaxProgHOLExact
+  rw [crepVarProg_codec]
+
+/-- Executed `crepHasReturn` agrees with the exact `hasReturnHOLExact` under the
+    codec. -/
+theorem crepHasReturn_codec {width : Nat} [NeZero width] :
+    (program : CrepProg (BitVec width)) →
+      crepHasReturn program = hasReturnHOLExact (crepProgToHOL program)
+  | .skip => by simp only [crepHasReturn, crepProgToHOL, hasReturnHOLExact]
+  | .dec name value body => by
+      simp only [crepHasReturn, crepProgToHOL, hasReturnHOLExact]
+      exact crepHasReturn_codec body
+  | .assign name value => by simp only [crepHasReturn, crepProgToHOL, hasReturnHOLExact]
+  | .primitive names operator args => by simp only [crepHasReturn, crepProgToHOL, hasReturnHOLExact]
+  | .store address value => by simp only [crepHasReturn, crepProgToHOL, hasReturnHOLExact]
+  | .store32 address value => by simp only [crepHasReturn, crepProgToHOL, hasReturnHOLExact]
+  | .storeByte address value => by simp only [crepHasReturn, crepProgToHOL, hasReturnHOLExact]
+  | .storeGlob address value => by simp only [crepHasReturn, crepProgToHOL, hasReturnHOLExact]
+  | .seq first second => by
+      simp only [crepHasReturn, crepProgToHOL, hasReturnHOLExact]
+      rw [crepHasReturn_codec first, crepHasReturn_codec second]
+  | .ite condition thenBranch elseBranch => by
+      simp only [crepHasReturn, crepProgToHOL, hasReturnHOLExact]
+      rw [crepHasReturn_codec thenBranch, crepHasReturn_codec elseBranch]
+  | .while condition body => by
+      simp only [crepHasReturn, crepProgToHOL, hasReturnHOLExact]
+      exact crepHasReturn_codec body
+  | .break label => by simp only [crepHasReturn, crepProgToHOL, hasReturnHOLExact]
+  | .continue label => by simp only [crepHasReturn, crepProgToHOL, hasReturnHOLExact]
+  | .call none _ _ => by simp only [crepHasReturn, crepProgToHOL, hasReturnHOLExact]
+  | .call (some (_, none)) _ _ => by simp only [crepHasReturn, crepProgToHOL, hasReturnHOLExact]
+  | .call (some (_, some (_, handler))) _ _ => by
+      simp only [crepHasReturn, crepProgToHOL, hasReturnHOLExact]
+      exact crepHasReturn_codec handler
+  | .extCall function configuration configurationLength array arrayLength =>
+      by simp only [crepHasReturn, crepProgToHOL, hasReturnHOLExact]
+  | .raise exception => by simp only [crepHasReturn, crepProgToHOL, hasReturnHOLExact]
+  | .return values => by simp only [crepHasReturn, crepProgToHOL, hasReturnHOLExact]
+  | .shMem operator name address => by simp only [crepHasReturn, crepProgToHOL, hasReturnHOLExact]
+  | .tick => by simp only [crepHasReturn, crepProgToHOL, hasReturnHOLExact]
+
+/-- Executed `crepNotBranchRet` agrees with the exact `notBranchRetHOLExact`
+    under the codec. -/
+theorem crepNotBranchRet_codec {width : Nat} [NeZero width] :
+    (program : CrepProg (BitVec width)) →
+      crepNotBranchRet program = notBranchRetHOLExact (crepProgToHOL program)
+  | .skip => by simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
+  | .dec _ _ body => by
+      simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
+      exact crepNotBranchRet_codec body
+  | .assign name value => by simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
+  | .primitive names operator args => by simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
+  | .store address value => by simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
+  | .store32 address value => by simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
+  | .storeByte address value => by simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
+  | .storeGlob address value => by simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
+  | .seq first second => by
+      simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
+      rw [crepNotBranchRet_codec first, crepNotBranchRet_codec second]
+  | .ite _ thenBranch elseBranch => by
+      simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
+      rw [crepHasReturn_codec thenBranch, crepHasReturn_codec elseBranch]
+  | .while _ body => by
+      simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
+      rw [crepHasReturn_codec body]
+  | .break label => by simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
+  | .continue label => by simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
+  | .call none _ _ => by simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
+  | .call (some (_, none)) _ _ => by simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
+  | .call (some (_, some (_, handler))) _ _ => by
+      simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
+      rw [crepHasReturn_codec handler]
+  | .extCall function configuration configurationLength array arrayLength =>
+      by simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
+  | .raise exception => by simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
+  | .return values => by simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
+  | .shMem operator name address => by simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
+  | .tick => by simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
 
 end CrepInlineRoute
 end Flapjack
