@@ -581,6 +581,8 @@ theorem compileProgCakeOfExact_store_exact_bridge [LawfulBEq String]
   simp [compileProgCakeOfExact, compileProgExactHOL, progOfHOL, progToHOL,
     compileExpRouteCake]
 
+/-- Flapjack-only constructor bridge: there is no separate HOL declaration for
+    this representation-level commute. -/
 theorem compileProgCakeOfExact_store32_exact_bridge [LawfulBEq String]
     {width : Nat} [NeZero width]
     (context : GlobalPassContext (BitVec width)) (address value : Exp (BitVec width)) :
@@ -590,6 +592,8 @@ theorem compileProgCakeOfExact_store32_exact_bridge [LawfulBEq String]
   simp [compileProgCakeOfExact, compileProgExactHOL, progOfHOL, progToHOL,
     compileExpRouteCake]
 
+/-- Flapjack-only constructor bridge: there is no separate HOL declaration for
+    this representation-level commute. -/
 theorem compileProgCakeOfExact_storeByte_exact_bridge [LawfulBEq String]
     {width : Nat} [NeZero width]
     (context : GlobalPassContext (BitVec width)) (address value : Exp (BitVec width)) :
@@ -599,6 +603,8 @@ theorem compileProgCakeOfExact_storeByte_exact_bridge [LawfulBEq String]
   simp [compileProgCakeOfExact, compileProgExactHOL, progOfHOL, progToHOL,
     compileExpRouteCake]
 
+/-- Flapjack-only constructor bridge: there is no separate HOL declaration for
+    this representation-level commute. -/
 theorem compileProgCakeOfExact_shMemStore_exact_bridge [LawfulBEq String]
     {width : Nat} [NeZero width]
     (context : GlobalPassContext (BitVec width)) (size : OpSize)
@@ -641,6 +647,195 @@ theorem compileProgCakeOfExact_extCall_exact_bridge [LawfulBEq String]
   simp only [compileProgCakeOfExact, compileProgExactHOL, progToHOL, progOfHOL,
     compileExpRouteCake]
   rw [Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes function hname]
+
+/-- Flapjack-only list adapter: exposes that the routed argument list is the
+    decoded `compileExpExactHOLList` result.  There is no separate HOL
+    declaration for this factoring lemma; it unfolds the local route/list
+    definitions and is intentionally untagged. -/
+theorem compileExpRouteCakeArgs_eq_exact [BEq String] [LawfulBEq String]
+    {width : Nat} [NeZero width]
+    (context : GlobalPassContext (BitVec width))
+    (arguments : List (Exp (BitVec width))) :
+    compileExpRouteCakeArgs context arguments =
+      (compileExpExactHOLList (PanGlobalsContextExact.ofPass context)
+        (arguments.map expToHOL)).map expOfHOL := by
+  induction arguments with
+  | nil => simp [compileExpRouteCakeArgs, compileExpExactHOLList]
+  | cons argument rest ih =>
+      simp [compileExpRouteCakeArgs, compileExpRouteCake, compileExpExactHOLList, ih]
+
+/-- The primitive constructor commute is exact when its primitive identifier is
+    representable by HOL `mlstring`.  Its argument list uses the exact routed
+    expression-list compiler on both sides.  Flapjack routing infrastructure
+    (untagged). -/
+theorem compileProgCakeOfExact_primitive_exact_bridge [LawfulBEq String]
+    {width : Nat} [NeZero width]
+    (context : GlobalPassContext (BitVec width)) (name : String)
+    (operator : PrimOp) (arguments : List (Exp (BitVec width)))
+    (hname : NameRanged name) :
+    compileProgCakeOfExact context (.primitive name operator arguments) =
+      progOfHOL (compileProgExactHOL (PanGlobalsContextExact.ofPass context)
+        (progToHOL (.primitive name operator arguments))) := by
+  simp only [compileProgCakeOfExact, compileProgExactHOL, progToHOL, progOfHOL]
+  rw [Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes name hname]
+  rw [compileExpRouteCakeArgs_eq_exact]
+
+/-- Compositional `Seq` case for the exact compiler commute.  These are exactly
+    the two recursive commute premises; no extra success or evaluator premise
+    is introduced.  Flapjack routing infrastructure (untagged). -/
+theorem compileProgCakeOfExact_seq_exact_bridge [LawfulBEq String]
+    {width : Nat} [NeZero width]
+    (context : GlobalPassContext (BitVec width))
+    (first second : Prog (BitVec width))
+    (hfirst : compileProgCakeOfExact context first =
+      progOfHOL (compileProgExactHOL (PanGlobalsContextExact.ofPass context)
+        (progToHOL first)))
+    (hsecond : compileProgCakeOfExact context second =
+      progOfHOL (compileProgExactHOL (PanGlobalsContextExact.ofPass context)
+        (progToHOL second))) :
+    compileProgCakeOfExact context (.seq first second) =
+      progOfHOL (compileProgExactHOL (PanGlobalsContextExact.ofPass context)
+        (progToHOL (.seq first second))) := by
+  simp [compileProgCakeOfExact, compileProgExactHOL, progOfHOL, progToHOL,
+    hfirst, hsecond]
+
+/-- Compositional `If` case for the exact compiler commute.  It takes the two
+    branch commute facts as its recursive premises; the condition follows the
+    same exact expression route on both sides.  Flapjack routing infrastructure
+    (untagged). -/
+theorem compileProgCakeOfExact_ite_exact_bridge [LawfulBEq String]
+    {width : Nat} [NeZero width]
+    (context : GlobalPassContext (BitVec width)) (condition : Exp (BitVec width))
+    (thenBranch elseBranch : Prog (BitVec width))
+    (hthen : compileProgCakeOfExact context thenBranch =
+      progOfHOL (compileProgExactHOL (PanGlobalsContextExact.ofPass context)
+        (progToHOL thenBranch)))
+    ( helse : compileProgCakeOfExact context elseBranch =
+      progOfHOL (compileProgExactHOL (PanGlobalsContextExact.ofPass context)
+        (progToHOL elseBranch))) :
+    compileProgCakeOfExact context (.ite condition thenBranch elseBranch) =
+      progOfHOL (compileProgExactHOL (PanGlobalsContextExact.ofPass context)
+        (progToHOL (.ite condition thenBranch elseBranch))) := by
+  simp [compileProgCakeOfExact, compileProgExactHOL, progOfHOL, progToHOL,
+    compileExpRouteCake, hthen, helse]
+
+/-- Compositional `While` case for the exact compiler commute, with precisely
+    the recursive body commute premise.  Flapjack routing infrastructure
+    (untagged). -/
+theorem compileProgCakeOfExact_while_exact_bridge [LawfulBEq String]
+    {width : Nat} [NeZero width]
+    (context : GlobalPassContext (BitVec width)) (condition : Exp (BitVec width))
+    (body : Prog (BitVec width))
+    (hbody : compileProgCakeOfExact context body =
+      progOfHOL (compileProgExactHOL (PanGlobalsContextExact.ofPass context)
+        (progToHOL body))) :
+    compileProgCakeOfExact context (.while condition body) =
+      progOfHOL (compileProgExactHOL (PanGlobalsContextExact.ofPass context)
+        (progToHOL (.while condition body))) := by
+  simp [compileProgCakeOfExact, compileProgExactHOL, progOfHOL, progToHOL,
+    compileExpRouteCake, hbody]
+
+/-- Compositional `.dec` case.  The body commute is the recursive premise;
+    `NameRanged` and `ShapeByteRanged` are precisely the codecs needed to
+    recover the production binder and shape after the HOL round trip.  Flapjack
+    routing infrastructure (untagged). -/
+theorem compileProgCakeOfExact_dec_exact_bridge [LawfulBEq String]
+    {width : Nat} [NeZero width]
+    (context : GlobalPassContext (BitVec width)) (name : String) (shape : Shape)
+    (value : Exp (BitVec width)) (body : Prog (BitVec width))
+    (hname : NameRanged name) (hshape : ShapeByteRanged shape)
+    (hbody : compileProgCakeOfExact context body =
+      progOfHOL (compileProgExactHOL (PanGlobalsContextExact.ofPass context)
+        (progToHOL body))) :
+    compileProgCakeOfExact context (.dec name shape value body) =
+      progOfHOL (compileProgExactHOL (PanGlobalsContextExact.ofPass context)
+        (progToHOL (.dec name shape value body))) := by
+  simp only [compileProgCakeOfExact, compileProgExactHOL, progToHOL, progOfHOL,
+    compileExpRouteCake]
+  rw [Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes name hname,
+    Flapjack.Pancake.PanLang.shapeOfHOL_shapeToHOL shape hshape, hbody]
+
+/-- Compositional `.decCall` case.  The body equality is the sole recursive
+    premise.  The declaration/callee identifiers and shape retain the exact
+    parser-backed codec premises; arguments use the pointwise exact expression
+    route.  Flapjack routing infrastructure (untagged). -/
+theorem compileProgCakeOfExact_decCall_exact_bridge [LawfulBEq String]
+    {width : Nat} [NeZero width]
+    (context : GlobalPassContext (BitVec width)) (name : String) (shape : Shape)
+    (function : String) (arguments : List (Exp (BitVec width)))
+    (body : Prog (BitVec width))
+    (hname : NameRanged name) (hshape : ShapeByteRanged shape)
+    (hfunction : NameRanged function)
+    (hbody : compileProgCakeOfExact context body =
+      progOfHOL (compileProgExactHOL (PanGlobalsContextExact.ofPass context)
+        (progToHOL body))) :
+    compileProgCakeOfExact context (.decCall name shape function arguments body) =
+      progOfHOL (compileProgExactHOL (PanGlobalsContextExact.ofPass context)
+        (progToHOL (.decCall name shape function arguments body))) := by
+  simp only [compileProgCakeOfExact, compileProgExactHOL, progToHOL, progOfHOL]
+  rw [Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes name hname,
+    Flapjack.Pancake.PanLang.shapeOfHOL_shapeToHOL shape hshape,
+    Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes function hfunction,
+    hbody, compileExpRouteCakeArgs_eq_exact]
+
+/-- The local `.shMemLoad` commute is exact under the byte-string premise for
+    its binder; its address uses the same exact expression route on both sides.
+    Flapjack routing infrastructure (untagged). -/
+theorem compileProgCakeOfExact_shMemLoad_local_exact_bridge [LawfulBEq String]
+    {width : Nat} [NeZero width]
+    (context : GlobalPassContext (BitVec width)) (size : OpSize) (name : String)
+    (address : Exp (BitVec width)) (hname : NameRanged name) :
+    compileProgCakeOfExact context (.shMemLoad size .local name address) =
+      progOfHOL (compileProgExactHOL (PanGlobalsContextExact.ofPass context)
+        (progToHOL (.shMemLoad size .local name address))) := by
+  simp only [compileProgCakeOfExact, compileProgExactHOL, progToHOL, progOfHOL,
+    compileExpRouteCake]
+  rw [Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes name hname]
+
+/-- Literal control constructors `.break`, `.continue`, and `.tick` commute
+    without byte-range premises because both compilers leave them unchanged.
+    Flapjack routing infrastructure (untagged). -/
+theorem compileProgCakeOfExact_break_exact_bridge [LawfulBEq String]
+    {width : Nat} [NeZero width]
+    (context : GlobalPassContext (BitVec width)) :
+    compileProgCakeOfExact context (.break : Prog (BitVec width)) =
+      progOfHOL (compileProgExactHOL (PanGlobalsContextExact.ofPass context)
+        (progToHOL (.break : Prog (BitVec width)))) := by
+  simp [compileProgCakeOfExact, compileProgExactHOL, progToHOL, progOfHOL]
+
+/-- Flapjack-only constructor bridge: there is no separate HOL declaration for
+    this representation-level commute. -/
+theorem compileProgCakeOfExact_continue_exact_bridge [LawfulBEq String]
+    {width : Nat} [NeZero width]
+    (context : GlobalPassContext (BitVec width)) :
+    compileProgCakeOfExact context (.continue : Prog (BitVec width)) =
+      progOfHOL (compileProgExactHOL (PanGlobalsContextExact.ofPass context)
+        (progToHOL (.continue : Prog (BitVec width)))) := by
+  simp [compileProgCakeOfExact, compileProgExactHOL, progToHOL, progOfHOL]
+
+/-- Flapjack-only constructor bridge: there is no separate HOL declaration for
+    this representation-level commute. -/
+theorem compileProgCakeOfExact_tick_exact_bridge [LawfulBEq String]
+    {width : Nat} [NeZero width]
+    (context : GlobalPassContext (BitVec width)) :
+    compileProgCakeOfExact context (.tick : Prog (BitVec width)) =
+      progOfHOL (compileProgExactHOL (PanGlobalsContextExact.ofPass context)
+        (progToHOL (.tick : Prog (BitVec width)))) := by
+  simp [compileProgCakeOfExact, compileProgExactHOL, progToHOL, progOfHOL]
+
+/-- The annotation constructor is the exact fallback case when both literal
+    annotation strings are in HOL's byte-string domain.  Flapjack routing
+    infrastructure (untagged). -/
+theorem compileProgCakeOfExact_annot_exact_bridge [LawfulBEq String]
+    {width : Nat} [NeZero width]
+    (context : GlobalPassContext (BitVec width)) (tag text : String)
+    (htag : NameRanged tag) (htext : NameRanged text) :
+    compileProgCakeOfExact context (.annot tag text) =
+      progOfHOL (compileProgExactHOL (PanGlobalsContextExact.ofPass context)
+        (progToHOL (.annot tag text))) := by
+  simp only [compileProgCakeOfExact, compileProgExactHOL, progToHOL, progOfHOL]
+  rw [Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes tag htag,
+    Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes text htext]
 
 /-- The routed program compiler computes exactly the production `compileProgCake`
     on the `cakeContextOfPass` view, for byte-ranged programs.  Flapjack routing
