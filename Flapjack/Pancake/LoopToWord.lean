@@ -317,25 +317,6 @@ def compExpHOL {width : Nat} [NeZero width] (context : Spt Nat) :
   decreasing_by all_goals first | sizeOf_list_dec | decreasing_trivial | simp_wf
 
 /-- Representation bridge between the two reviewed Lean representations of HOL
-`asm$memop` (`cakeml/compiler/encoders/asm/asmScript.sml:125-128`):
-`CrepMemOp` is the carrier of the exact `HolLoopProg` `ShMem` field, and
-`WordMemOp` (tagged `asm$memop`, aliased `HolMemop`) is the carrier of the exact
-`WordLangProgHOL` `ShareInst` field.  The two datatypes have the same eight
-nullary constructors in the same order, so this map is the identity on the HOL
-value.  It is the total form of the partial production `Flapjack.wordMemOp`; it
-is untagged Flapjack infrastructure (HOL has a single shared `memop` type and no
-such conversion declaration). -/
-def crepMemOpToWordMemOp : CrepMemOp → WordMemOp
-  | .load => .load
-  | .load8 => .load8
-  | .load16 => .load16
-  | .load32 => .load32
-  | .store => .store
-  | .store8 => .store8
-  | .store16 => .store16
-  | .store32 => .store32
-
-/-- Representation bridge between the two reviewed Lean representations of HOL
 `asm$reg_imm` (`cakeml/compiler/encoders/asm/asmScript.sml`):
 `RegImm` is the carrier of the exact `HolLoopProg` `If` field, and
 `WordRegImm` is the carrier of the exact `WordLangProgHOL` `If` field.  The two
@@ -354,9 +335,8 @@ label)` pair.  The HOL `num |-> num` context is the reviewed exact `Spt Nat`
 tree map, and the type-indexed `'a word` is rendered as `BitVec width` under
 `[NeZero width]`.  Every clause is translated source-exactly, reusing
 `compExpHOL`, `findRegImmHOL`, and `mkNewCutsetHOL`; the only representation
-bridges are `loopRegImmToWordRegImm` (for the shared HOL `asm$reg_imm` carried by
-`If`) and `crepMemOpToWordMemOp` (for the shared HOL `asm$memop` carried by
-`ShMem`/`ShareInst`).  This is the proof-side exact port; routing the executed
+bridge is `loopRegImmToWordRegImm` (for the shared HOL `asm$reg_imm` carried by
+`If`), while `ShMem`/`ShareInst` both carry the unified tagged `WordMemOp` carrier.  This is the proof-side exact port; routing the executed
 production `loopToWord` path through it is tracked separately by bead
 `flapjack-pxn.18.5.9.5`. -/
 @[hol "cakeml/pancake/loop_to_wordScript.sml" "comp_def" (words_as_type_indexed_bitvec)]
@@ -457,7 +437,7 @@ def compHOL {width : Nat} [NeZero width] (context : Spt Nat) :
         (findVarHOL context configurationLength) (findVarHOL context array)
         (findVarHOL context arrayLength) (mkNewCutsetHOL context live, .ln), labels)
   | .shMem operator name address, labels =>
-      (.shareInst (crepMemOpToWordMemOp operator) (findVarHOL context name)
+      (.shareInst operator (findVarHOL context name)
         (compExpHOL context address), labels)
   termination_by program _ => sizeOf program
   decreasing_by all_goals first | sizeOf_list_dec | decreasing_trivial | simp_wf
