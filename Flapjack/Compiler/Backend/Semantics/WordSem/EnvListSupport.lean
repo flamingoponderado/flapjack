@@ -230,4 +230,71 @@ theorem sptToAList_mem_iff_lookup {α : Type} (tree : Spt α)
     have hfold := sptFoldi_lookup_mem tree 0 [] key value hlookup
     simpa [sptToAList, sptAcc_eq, lrNext] using hfold
 
+/-- Exact HOL `env_to_list_lookup_equiv` from
+`cakeml/compiler/backend/semantics/wordPropsScript.sml:4636-4663`. Given the
+HOL environment-list result equation, both source conclusions are preserved:
+association-list lookup agrees with Spt lookup, and every emitted association
+has that same source lookup value. The Spt carrier is exact; HOL's indexed word
+dimension is represented by `WordLocW width`. -/
+@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml"
+  "env_to_list_lookup_equiv" (words_as_type_indexed_bitvec)]
+theorem wordSemEnvToListLookupEquiv {width : Nat} [NeZero width]
+    (env : Spt (WordLocW width)) (bijSeq : Nat → Nat → Nat)
+    (entries : List (Nat × WordLocW width)) (permutation : Nat → Nat → Nat)
+    (hresult : wordSemEnvToList env bijSeq = (entries, permutation)) :
+    (∀ key, sptAListLookup key entries = sptLookup key env) ∧
+    (∀ key value, (key, value) ∈ entries → sptLookup key env = some value) := by
+  have hentries : entries = (wordSemEnvToList env bijSeq).1 :=
+    (congrArg Prod.fst hresult).symm
+  constructor
+  · intro key
+    by_cases hnone : sptLookup key env = none
+    · cases halookup : sptAListLookup key entries with
+      | none => simp [hnone]
+      | some value =>
+          have hqmem : (key, value) ∈ entries :=
+            sptAListLookup_mem key entries value halookup
+          have hpipeline :
+              (key, value) ∈ (wordSemEnvToList env bijSeq).1 := by
+            simpa [hentries] using hqmem
+          have hsourceMem :=
+            (wordSemEnvToList_mem_iff env bijSeq (key, value)).mp hpipeline
+          have hsourceLookup :=
+            (sptToAList_mem_iff_lookup env key value).mp hsourceMem
+          rw [hnone] at hsourceLookup
+          cases hsourceLookup
+    · have hexists : ∃ value, sptLookup key env = some value := by
+        cases hlookup : sptLookup key env with
+        | none => exact (hnone hlookup).elim
+        | some value => exact ⟨value, rfl⟩
+      obtain ⟨value, hlookup⟩ := hexists
+      have hsourceMem : (key, value) ∈ sptToAList env :=
+        (sptToAList_mem_iff_lookup env key value).mpr hlookup
+      have hpipeline :=
+        (wordSemEnvToList_mem_iff env bijSeq (key, value)).mpr hsourceMem
+      have hqmem : (key, value) ∈ entries := by
+        simpa [hentries] using hpipeline
+      have hunique : ∀ other, (key, other) ∈ entries → other = value := by
+        intro other hother
+        have hotherPipeline :
+            (key, other) ∈ (wordSemEnvToList env bijSeq).1 := by
+          simpa [hentries] using hother
+        have hotherSourceMem :=
+          (wordSemEnvToList_mem_iff env bijSeq (key, other)).mp hotherPipeline
+        have hotherLookup :=
+          (sptToAList_mem_iff_lookup env key other).mp hotherSourceMem
+        rw [hlookup] at hotherLookup
+        injection hotherLookup with hvalue
+        exact hvalue.symm
+      have halookup :=
+        sptAListLookup_eq_of_mem_unique key value entries hqmem hunique
+      exact halookup.trans hlookup.symm
+  · intro key value hqmem
+    have hpipeline :
+        (key, value) ∈ (wordSemEnvToList env bijSeq).1 := by
+      simpa [hentries] using hqmem
+    have hsourceMem :=
+      (wordSemEnvToList_mem_iff env bijSeq (key, value)).mp hpipeline
+    exact (sptToAList_mem_iff_lookup env key value).mp hsourceMem
+
 end Flapjack
