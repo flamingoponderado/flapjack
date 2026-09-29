@@ -1673,6 +1673,15 @@ INFRASTRUCTURE_THEOREMS = {
         "Flapjack-only commuting law for the local simp_prog_correct mapcs "
         "rendering and exact decClock; HOL has no standalone declaration."
     ),
+    ("Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrectStoreGlob.lean", "holFmapAsFiniteSupportWitness"): (
+        "Same-module canonical finite-support roundtrip witness for the tagged "
+        "simp_prog_correct StoreGlob case. It reuses CrepSemHOLState's reviewed "
+        "toBroad/ofBroad witness and has no standalone HOL declaration."
+    ),
+    ("Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrectStoreGlob.lean", "crepSimpMapcsHOL_setGlobals"): (
+        "Flapjack-only commuting law for the local simp_prog_correct mapcs "
+        "rendering and exact setGlobals; HOL has no standalone declaration."
+    ),
     ("Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean", "panWriteBytearrayWord8HOL_domainCongr"): (
         "Flapjack-specific support for the ExtCall returned-byte state relation. "
         "This congruence handles distinct DecidablePred instances after equality "
