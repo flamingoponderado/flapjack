@@ -102,4 +102,28 @@ theorem strongLocalsRelUnion {width : Nat} [NeZero width]
     | inl ha' => exact ha n v ⟨ha', hv⟩
     | inr hb' => exact hb n v ⟨hb', hv⟩
 
+/-- Exact HOL strong_locals_rel_insert: colours need be injective only on
+`n INSERT live`; the old relation is required only on `live DELETE n`.
+HOL INJ's codomain UNIV membership is tautological. -/
+@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "strong_locals_rel_insert"
+  (words_as_type_indexed_bitvec)]
+theorem strongLocalsRelInsert {width : Nat} [NeZero width]
+    (f : Nat → Nat) (n : Nat) (live : Nat → Prop)
+    (source target : Spt (WordLocW width)) (value : WordLocW width)
+    (h : (∀ a b, (a = n ∨ live a) → (b = n ∨ live b) → f a = f b → a = b) ∧
+      strongLocalsRel f (fun k => live k ∧ k ≠ n) source target) :
+    strongLocalsRel f live (sptInsert n value source) (sptInsert (f n) value target) := by
+  intro k v ⟨hk, hv⟩
+  by_cases heq : k = n
+  · subst k
+    rw [sptLookup_sptInsert_same] at hv
+    cases hv
+    exact sptLookup_sptInsert_same (f n) value target
+  · rw [sptLookup_sptInsert_ne n k value source heq] at hv
+    have hcolour : f k ≠ f n := by
+      intro hc
+      exact heq (h.1 k n (Or.inr hk) (Or.inl rfl) hc)
+    rw [sptLookup_sptInsert_ne (f n) (f k) value target hcolour]
+    exact h.2 k v ⟨⟨hk, heq⟩, hv⟩
+
 end Flapjack.WordAlloc
