@@ -1096,15 +1096,21 @@ def exactMakeFuncsProg :
 
 example :
     (crepToLoopMakeFuncsExactHOL exactMakeFuncsProg).lookup
-      (Flapjack.Basis.Pure.MlString.ofString "f") = some (64, 2) := by native_decide
+      (Flapjack.Basis.Pure.MlString.ofString "f") = some (64, 2) := by
+  rw [← crepToLoopMakeFuncsHOL_lookup_eq_exact]
+  decide
 
 example :
     (crepToLoopMakeFuncsExactHOL exactMakeFuncsProg).lookup
-      (Flapjack.Basis.Pure.MlString.ofString "g") = some (65, 0) := by native_decide
+      (Flapjack.Basis.Pure.MlString.ofString "g") = some (65, 0) := by
+  rw [← crepToLoopMakeFuncsHOL_lookup_eq_exact]
+  decide
 
 example :
     (crepToLoopMakeFuncsExactHOL exactMakeFuncsProg).lookup
-      (Flapjack.Basis.Pure.MlString.ofString "h") = none := by native_decide
+      (Flapjack.Basis.Pure.MlString.ofString "h") = none := by
+  rw [← crepToLoopMakeFuncsHOL_lookup_eq_exact]
+  decide
 
 /-- Duplicate names keep the first association, as required by HOL
     `alist_to_fmap` (`mkf_dup_first`). -/
@@ -1113,7 +1119,9 @@ example :
       ([(Flapjack.Basis.Pure.MlString.ofString "f", [1], .skip),
         (Flapjack.Basis.Pure.MlString.ofString "f", [1, 2, 3], .skip)] :
           List (Flapjack.Basis.Pure.MlString.MlString × List Nat × CrepProgHOL 8))).lookup
-      (Flapjack.Basis.Pure.MlString.ofString "f") = some (64, 1) := by native_decide
+      (Flapjack.Basis.Pure.MlString.ofString "f") = some (64, 1) := by
+  rw [← crepToLoopMakeFuncsHOL_lookup_eq_exact]
+  decide
 
 /-! The following proofs exercise the *relation itself* on the same 8-bit
     cases as the checked-in HOL oracle, rather than only its total-memory view. -/

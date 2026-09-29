@@ -275,44 +275,6 @@ class HolTypeHashesTest(unittest.TestCase):
         lock = MODULE.expected_lock(manifest, export, "leanprover/lean4:v4")
         self.assertTrue(lock["records"][0]["qualifiers"]["words_as_type_indexed_bitvec"])
 
-    def test_combined_fmap_result_words_status_is_locked(self):
-        manifest = [{
-            **self.manifest[0],
-            "statement_status": (
-                "reviewed_fmap_as_finite_support_result_words_as_type_indexed_bitvec"
-            ),
-            "fmap_as_finite_support_result": True,
-            "words_as_type_indexed_bitvec": True,
-        }]
-        export = [{
-            **self.export[0],
-            "qualifiers": {
-                "list_as_array": [],
-                "names_as_string": [],
-                "names_as_string_boundary": [],
-                "fmap_as_finite_support": [],
-                "fmap_as_finite_support_result": True,
-                "words_as_type_indexed_bitvec": True,
-            },
-        }]
-        lock = MODULE.expected_lock(manifest, export, "leanprover/lean4:v4")
-        self.assertTrue(
-            lock["records"][0]["qualifiers"]["fmap_as_finite_support_result"]
-        )
-        self.assertTrue(
-            lock["records"][0]["qualifiers"]["words_as_type_indexed_bitvec"]
-        )
-        without_result = [{
-            **export[0],
-            "qualifiers": {
-                key: value
-                for key, value in export[0]["qualifiers"].items()
-                if key != "fmap_as_finite_support_result"
-            },
-        }]
-        with self.assertRaisesRegex(ValueError, "manifest qualifiers differ"):
-            MODULE.lock_records(manifest, without_result)
-
     def test_combined_relation_words_status_is_locked(self):
         manifest = [{
             **self.manifest[0],

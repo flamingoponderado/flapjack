@@ -514,21 +514,24 @@ returns `alist_to_fmap` of that ordered association list. Here the source
 `MAP FST prog`, `GENLIST (λn. n + first_name) (LENGTH prog)` and
 `MAP (LENGTH o FST o SND) prog` are rendered as `entry.1.1`,
 `firstLoopName + entry.2` and `entry.1.2.1.length` over
-`(prog.zip (List.range prog.length))`; the value key is the HOL `mlstring`
-carrier `MlString`. HOL `alist_to_fmap` is `FOLDR FUPDATE FEMPTY`, so the
+`(prog.zip (List.range prog.length))`. The input type remains generic in HOL's
+name type `α`, parameter type `β`, and ignored body type `γ`; result keys have
+type `α`. HOL `alist_to_fmap` is `FOLDR FUPDATE FEMPTY`, so the
 first duplicate function name wins, while `FUPDATE_LIST_HOL` is a left fold
 whose last duplicate wins; reversing the association list restores HOL's
 first-wins order. `updateListEq` builds the map so the finite-support witness
 is discharged by the definition itself. This is the exact finite-support
-carrier rendering of `make_funcs_def`; the standalone result qualifier is
-backed by the lookup witness below. The production-carrier helper in
-`StateRel.lean` is retained separately as Flapjack-specific infrastructure. -/
+carrier rendering of polymorphic `make_funcs_def`: all three tuple components
+remain generic (`α`, `β`, and `γ`), and the body component is ignored just as
+in HOL. The standalone result qualifier is backed by the lookup witness below.
+The raw production-carrier helper in `StateRel.lean` is retained separately as
+Flapjack-specific infrastructure. -/
 @[hol "cakeml/pancake/crep_to_loopScript.sml" "make_funcs_def"
-  (fmap_as_finite_support_result) (words_as_type_indexed_bitvec)]
-def crepToLoopMakeFuncsExactHOL {width : Nat} [NeZero width]
-    (prog : List (MlString × List Nat × CrepProgHOL width)) :
-    HolFiniteMapExact MlString (Nat × Nat) :=
-  HolFiniteMapExact.updateListEq HolFiniteMapExact.empty
+  (fmap_as_finite_support_result)]
+noncomputable def crepToLoopMakeFuncsExactHOL {α β γ : Type}
+    (prog : List (α × List β × γ)) : HolFiniteMapExact α (Nat × Nat) := by
+  letI : DecidableEq α := fun a b => Classical.propDecidable (a = b)
+  exact HolFiniteMapExact.updateListEq HolFiniteMapExact.empty
     ((prog.zip (List.range prog.length)).map
       (fun entry =>
         (entry.1.1, (firstLoopName + entry.2, entry.1.2.1.length)))).reverse
@@ -538,14 +541,38 @@ def crepToLoopMakeFuncsExactHOL {width : Nat} [NeZero width]
 over the reversed association list, which is the `FOLDR FUPDATE FEMPTY`
 behavior of `alist_to_fmap` and therefore preserves the first duplicate key. -/
 theorem holFmapAsFiniteSupportResultWitness_crepToLoopMakeFuncsExactHOL
-    {width : Nat} [NeZero width]
-    (prog : List (MlString × List Nat × CrepProgHOL width)) (key : MlString) :
+    {α β γ : Type} (prog : List (α × List β × γ)) (key : α) :
     (crepToLoopMakeFuncsExactHOL prog).lookup key =
-      FUPDATE_LIST_HOL (FEMPTY : FiniteMap MlString (Nat × Nat))
-        (((prog.zip (List.range prog.length)).map
-          (fun entry =>
-            (entry.1.1, (firstLoopName + entry.2, entry.1.2.1.length)))).reverse) key := by
+      (letI : DecidableEq α := fun a b => Classical.propDecidable (a = b)
+       FUPDATE_LIST_HOL (FEMPTY : FiniteMap α (Nat × Nat))
+         (((prog.zip (List.range prog.length)).map
+           (fun entry =>
+             (entry.1.1, (firstLoopName + entry.2, entry.1.2.1.length)))).reverse) key) := by
   rfl
+
+/-- Executable Flapjack companion for the generic, classically typed HOL
+`make_funcs_def` port. For a concrete key carrier with lawful Boolean equality,
+this retains the same finite-support result representation while staying
+computable. Its lookup correspondence to the tagged generic definition is
+proved below; it is infrastructure, not another HOL port. -/
+def crepToLoopMakeFuncsExactExecutable [BEq α] [LawfulBEq α] {β γ : Type}
+    (prog : List (α × List β × γ)) : HolFiniteMapExact α (Nat × Nat) :=
+  HolFiniteMapExact.updateList HolFiniteMapExact.empty
+    ((prog.zip (List.range prog.length)).map
+      (fun entry =>
+        (entry.1.1, (firstLoopName + entry.2, entry.1.2.1.length)))).reverse
+
+/-- The executable companion specializes to exactly the same lookup as the
+generic tagged HOL definition for lawful Boolean equality. -/
+theorem crepToLoopMakeFuncsExactExecutable_lookup_eq_HOL
+    [BEq α] [LawfulBEq α] {β γ : Type}
+    (prog : List (α × List β × γ)) (key : α) :
+    (crepToLoopMakeFuncsExactExecutable prog).lookup key =
+      (crepToLoopMakeFuncsExactHOL prog).lookup key := by
+  classical
+  simp [crepToLoopMakeFuncsExactExecutable, crepToLoopMakeFuncsExactHOL,
+    HolFiniteMapExact.lookup_updateList, HolFiniteMapExact.lookup_updateListEq,
+    FUPDATE_LIST_HOL_eq_FUPDATE_LIST]
 
 /-- Exact HOL `compile_prog_def` (`cakeml/pancake/crep_to_loopScript.sml:257-265`)
 over the exact `MlString`/`CrepProgHOL width`/`HolLoopProg width` carriers.
@@ -556,9 +583,11 @@ Clause-by-clause source review against the HOL text:
   `(mlstring # num list # 'a crepLang$prog) list`);
 * `let fnums = GENLIST (λn. n + first_name) (LENGTH prog)` is
   `(List.range prog.length).map (fun n => n + firstLoopName)`;
-* `comp = comp_func target (make_funcs prog)` is
-  `compFuncHOLExact target (crepToLoopMakeFuncsExactHOL prog)`, using the exact
-  tagged `comp_func_def` and the finite-support tagged `make_funcs_def` above;
+* `comp = comp_func target (make_funcs prog)` uses
+  `compFuncHOLExact target (crepToLoopMakeFuncsExactExecutable prog)`. This
+  concrete-carrier executable companion has a proved lookup equality to the
+  generic, finite-support tagged `make_funcs_def` port above, and `comp_func`
+  is the exact tagged `comp_func_def`;
 * `MAP2 (λn (name, params, body). (n, (GENLIST I o LENGTH) params,
   loop_live$optimise (comp params (crep_arith$simp_prog body)))) fnums prog`
   is `List.zipWith (fun n entry => (n, List.range entry.2.1.length,
@@ -583,7 +612,7 @@ def compileProgHOLExact {width : Nat} [NeZero width] (target : AsmArchitecture)
     (prog : List (MlString × List Nat × CrepProgHOL width)) :
     List (Nat × List Nat × HolLoopProg width) :=
   let fnums := (List.range prog.length).map (fun n => n + firstLoopName)
-  let comp := compFuncHOLExact target (crepToLoopMakeFuncsExactHOL prog)
+  let comp := compFuncHOLExact target (crepToLoopMakeFuncsExactExecutable prog)
   List.zipWith
     (fun n entry =>
       (n, List.range entry.2.1.length,

@@ -1667,63 +1667,6 @@ class StandaloneFmapResultStatusTest(unittest.TestCase):
         self.assertTrue(any("mutually exclusive" in error for error in errors))
 
 
-class CombinedFmapResultWordsStatusTest(unittest.TestCase):
-    """Standalone finite-map results can also carry indexed word programs."""
-
-    COMBINED = (
-        "reviewed_fmap_as_finite_support_result_words_as_type_indexed_bitvec"
-    )
-
-    def _record(self, **overrides):
-        record = {
-            "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
-            "hol_name": "make_funcs_def",
-            "lean_path": "Flapjack/Example.lean",
-            "lean_name": "makeFuncsExact",
-            "statement_status": self.COMBINED,
-            "reviewer": "source comparison of HOL/Lean result and word carriers",
-            "fmap_as_finite_support_result": True,
-            "words_as_type_indexed_bitvec": True,
-        }
-        record.update(overrides)
-        return record
-
-    def _tag(self, fmap_result=True, words=True):
-        return {
-            ("Flapjack/Example.lean", "makeFuncsExact"): (
-                "cakeml/pancake/crep_to_loopScript.sml",
-                "make_funcs_def",
-                (), (), (), (), fmap_result, (), False, words,
-            )
-        }
-
-    def _errors(self, record, tagged):
-        return MAP["validate_inventory"]([record], set(), tagged, set())
-
-    def test_accepts_combined_result_and_words_status(self):
-        self.assertEqual(self._errors(self._record(), self._tag()), [])
-
-    def test_rejects_combined_status_without_words_qualifier(self):
-        errors = self._errors(self._record(), self._tag(words=False))
-        self.assertTrue(any("needs both" in error for error in errors), errors)
-
-    def test_rejects_combined_status_without_result_qualifier(self):
-        errors = self._errors(self._record(), self._tag(fmap_result=False))
-        self.assertTrue(any("needs both" in error for error in errors), errors)
-
-    def test_rejects_simple_result_status_with_words_qualifier(self):
-        errors = self._errors(
-            self._record(statement_status="reviewed_fmap_as_finite_support_result"),
-            self._tag(),
-        )
-        self.assertTrue(any("combined review status" in error for error in errors), errors)
-
-    def test_rejects_result_status_without_source_note(self):
-        errors = self._errors(
-            self._record(reviewer="inventory only"), self._tag())
-        self.assertTrue(any("source-comparison note" in error for error in errors))
-
-
 class MultiOwnerFmapRelationStatusTest(unittest.TestCase):
     def _record(self, **overrides):
         record = {

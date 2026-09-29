@@ -942,6 +942,22 @@ def crepToLoopMakeFuncsHOL [BEq α] [LawfulBEq α] {β γ : Type}
       (fun entry =>
         (entry.1.1, (firstLoopName + entry.2, entry.1.2.1.length)))).reverse
 
+/-- The raw Flapjack helper and the exact generic HOL port compute the same
+    lookup whenever the executable key equality is lawful. This connects the
+    production-friendly function carrier to the tagged finite-support result;
+    the helper itself stays untagged because its result carrier admits infinite
+    support. -/
+theorem crepToLoopMakeFuncsHOL_lookup_eq_exact
+    [BEq α] [LawfulBEq α] {β γ : Type}
+    (prog : List (α × List β × γ)) (key : α) :
+    FLOOKUP (crepToLoopMakeFuncsHOL prog) key =
+      (crepToLoopMakeFuncsExactHOL prog).lookup key := by
+  classical
+  simp [FLOOKUP, crepToLoopMakeFuncsHOL, crepToLoopMakeFuncsExactHOL,
+    HolFiniteMapExact.lookup_updateListEq,
+    FUPDATE_LIST_HOL_eq_FUPDATE_LIST, HolFiniteMapExact.empty]
+  rfl
+
 /-! ## Association-list lookup
 
 `crep_to_loopProofScript.sml`'s `mem_lookup_fromalist_some` (`:3813`) concludes
@@ -1358,7 +1374,7 @@ theorem crepToLoopCompileProgDistinctParamsHOLExact {width : Nat} [NeZero width]
   intro _
   unfold compileProgHOLExact
   let fnums := (List.range prog.length).map (fun n => n + firstLoopName)
-  let comp := compFuncHOLExact (width := width) target (crepToLoopMakeFuncsExactHOL prog)
+  let comp := compFuncHOLExact (width := width) target (crepToLoopMakeFuncsExactExecutable prog)
   have hzip : ∀ (ns : List Nat) (entries : List (MlS × List Nat × CrepProgHOL width)),
       (List.zipWith
         (fun n entry =>
