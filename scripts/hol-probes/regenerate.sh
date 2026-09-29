@@ -1677,6 +1677,15 @@ run_probe word_sem_sh_mem_probeScript.sml word_sem_sh_mem_probe.out \
   "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 
+# The machine_ieee fp64 probe observes fp64_lessThan/lessEqual/equal/abs/negate
+# on +-0, subnormals, the least normal, the largest finite value, infinities
+# and quiet/signalling NaNs; binary_ieeeLib extends EVAL with the IEEE
+# conversions (bead flapjack-h29l.6.1).
+run_probe machine_ieee_fp64_compare_probeScript.sml machine_ieee_fp64_compare_probe.out \
+  lt_one_two le_pz_nz eq_pz_nz abs_negone neg_sub1 \
+  "$hol_dir/src/floating-point/binary_ieeeScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
 # The good_handlers probe observes the structural handler-label predicate,
 # including the NONE-ret case (handler ignored) and nested bad handlers.
 run_probe word_convs_good_handlers_probeScript.sml word_convs_good_handlers_probe.out \
