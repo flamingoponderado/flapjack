@@ -10,7 +10,8 @@ It ports the recursive `Seq`, `If`, `Loop`, and `Mark` clauses of `comp_def`
 covered leaves to `compInitialHOL`, so `none` means a leaf constructor is not
 yet in the assembled partial port. This intentionally remains untagged; it is a
 superseded partial slice helper, not a HOL port. The reviewed total port of
-`comp_def` is the tagged `compHOL` in `Flapjack/Pancake/LoopToWord.lean`.
+`comp_def` is the tagged `compHOL` in `Flapjack/Pancake/LoopToWord.lean`; no
+equality between this partial helper and `compHOL` is proved here or claimed.
 
 The source clauses compile `Seq` children left-to-right while threading the
 label pair, compile `If` branches in the same order before appending `Tick`,
