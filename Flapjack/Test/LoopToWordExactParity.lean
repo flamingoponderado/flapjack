@@ -1,4 +1,5 @@
 import Flapjack.Pancake.LoopToWord
+import Flapjack.Pancake.Proofs.LoopToWord.LocalsRel
 
 /-!
 # Original-domain parity for the exact `loop_to_word` context definitions
@@ -49,6 +50,73 @@ def originalCutsetAbsent : Option Unit := none
   originalCutsetFive
 #guard (sptLookup 2 (mkNewCutsetHOL probeContext probeLive) : Option Unit) ==
   originalCutsetAbsent
+
+/-! ## Original-domain parity for loop_to_wordProof `locals_rel_def`
+
+The direct HOL proof rows are in
+`scripts/hol-probes/loop_to_word_locals_rel_probe.out`. They cover the exact
+three clauses, including that extra target locals are allowed. -/
+
+def localsRelProbeContext : Spt Nat := sptInsert 0 4 .ln
+def localsRelProbeSource : Spt (WordLocW 64) :=
+  sptInsert 0 (.word 7) .ln
+def localsRelProbeTarget : Spt (WordLocW 64) :=
+  sptInsert 4 (.word 7) (sptInsert 6 (.loc 1 2) .ln)
+def localsRelProbeOddContext : Spt Nat := sptInsert 0 3 .ln
+def localsRelProbeOddTarget : Spt (WordLocW 64) :=
+  sptInsert 3 (.word 7) .ln
+def localsRelProbeZeroContext : Spt Nat := sptInsert 0 0 .ln
+def localsRelProbeNoninjectiveContext : Spt Nat :=
+  sptInsert 1 4 (sptInsert 0 4 .ln)
+def localsRelProbeNoninjectiveSource : Spt (WordLocW 64) :=
+  sptInsert 0 (.word 7) (sptInsert 1 (.word 8) .ln)
+def localsRelProbeMissingSource : Spt (WordLocW 64) :=
+  sptInsert 2 (.word 7) .ln
+def localsRelProbeWrongTarget : Spt (WordLocW 64) :=
+  sptInsert 4 (.word 8) .ln
+
+example : localsRelHOL (width := 64) localsRelProbeContext
+    localsRelProbeSource localsRelProbeTarget := by
+  simp [localsRelHOL, localsRelProbeContext, localsRelProbeSource,
+    localsRelProbeTarget, findVarHOL, sptMem, sptDomain, sptLookup, sptInsert]
+
+example : ¬ localsRelHOL (width := 64) localsRelProbeOddContext
+    localsRelProbeSource localsRelProbeOddTarget := by
+  simp [localsRelHOL, localsRelProbeOddContext, localsRelProbeSource,
+    localsRelProbeOddTarget, findVarHOL, sptMem, sptDomain, sptLookup, sptInsert]
+
+example : ¬ localsRelHOL (width := 64) localsRelProbeZeroContext
+    localsRelProbeSource (sptInsert 0 (.word 7) .ln) := by
+  simp [localsRelHOL, localsRelProbeZeroContext, localsRelProbeSource,
+    findVarHOL, sptMem, sptDomain, sptLookup]
+
+example : ¬ localsRelHOL (width := 64) localsRelProbeNoninjectiveContext
+    localsRelProbeNoninjectiveSource (sptInsert 4 (.word 7) .ln) := by
+  intro hRel
+  have h0 : sptMem 0 localsRelProbeNoninjectiveContext := by
+    simp [sptMem, sptDomain, localsRelProbeNoninjectiveContext,
+      sptLookup, sptInsert]
+  have h1 : sptMem 1 localsRelProbeNoninjectiveContext := by
+    simp [sptMem, sptDomain, localsRelProbeNoninjectiveContext,
+      sptLookup, sptInsert]
+  have hsame : findVarHOL localsRelProbeNoninjectiveContext 0 =
+      findVarHOL localsRelProbeNoninjectiveContext 1 := by
+    simp [findVarHOL, localsRelProbeNoninjectiveContext, sptLookup, sptInsert]
+  have heq := hRel.1 0 1 h0 h1 hsame
+  omega
+
+example : ¬ localsRelHOL (width := 64) localsRelProbeContext
+    localsRelProbeMissingSource localsRelProbeTarget := by
+  intro hRel
+  have hsrc : sptLookup 2 localsRelProbeMissingSource = some (.word 7) := by
+    simp [localsRelProbeMissingSource, sptLookup, sptInsert]
+  obtain ⟨register, hctx, _⟩ := hRel.2.2 2 (.word 7) hsrc
+  simp [localsRelProbeContext, sptLookup] at hctx
+
+example : ¬ localsRelHOL (width := 64) localsRelProbeContext
+    localsRelProbeSource localsRelProbeWrongTarget := by
+  simp [localsRelHOL, localsRelProbeContext, localsRelProbeSource,
+    localsRelProbeWrongTarget, findVarHOL, sptMem, sptDomain, sptLookup, sptInsert]
 
 /-! ## Original-domain parity for exact `comp_exp_def`
 
@@ -205,8 +273,57 @@ example : compInitialHOL (width := 8) compInitialContext compInitialLabels
     sptLookup_sptInsert_same, sptLookup_sptInsert_ne]
 
 example : compInitialHOL (width := 8) compInitialContext compInitialLabels
+    (.break 5) = some (.break 5, compInitialLabels) := by
+  rfl
+
+example : compInitialHOL (width := 8) compInitialContext compInitialLabels
+    (.continue 6) = some (.continue 6, compInitialLabels) := by
+  rfl
+
+example : compInitialHOL (width := 8) compInitialContext compInitialLabels
+    (.raise 10) =
+      some (.raise 20, compInitialLabels) := by
+  simp [compInitialHOL, findVarHOL, compInitialContext,
+    sptLookup_sptInsert_same, sptLookup_sptInsert_ne]
+
+example : compInitialHOL (width := 8) compInitialContext compInitialLabels
+    (.return [10, 11, 12]) =
+      some (.return 0 [20, 22, 24], compInitialLabels) := by
+  simp [compInitialHOL, findVarHOL, compInitialContext,
+    sptLookup_sptInsert_same, sptLookup_sptInsert_ne]
+
+example : compInitialHOL (width := 8) compInitialContext compInitialLabels
+    .tick = some (.tick, compInitialLabels) := by
+  rfl
+
+example : compInitialHOL (width := 8) compInitialContext compInitialLabels
+    .fail = some (.skip, compInitialLabels) := by
+  rfl
+
+example : compInitialHOL (width := 8) compInitialContext compInitialLabels
+    (.locValue 10 3) =
+      some (.locValue 20 3, compInitialLabels) := by
+  simp [compInitialHOL, findVarHOL, compInitialContext,
+    sptLookup_sptInsert_same, sptLookup_sptInsert_ne]
+
+example : compInitialHOL (width := 8) compInitialContext compInitialLabels
     (.seq .skip .skip) = none := by
   rfl
+
+example : compInitialHOL (width := 8) compInitialContext compInitialLabels
+    (.ffi (Flapjack.Basis.Pure.MlString.ofString "foo") 10 11 12 13
+      (sptInsert 6 () .ln)) =
+      some (.ffi (Flapjack.Basis.Pure.MlString.ofString "foo") 20 22 24 26
+        (mkNewCutsetHOL compInitialContext (sptInsert 6 () .ln), .ln),
+        compInitialLabels) := by
+  simp [compInitialHOL, findVarHOL, compInitialContext,
+    sptLookup_sptInsert_same, sptLookup_sptInsert_ne]
+
+example : compInitialHOL (width := 8) compInitialContext compInitialLabels
+    (.shMem .load 10 (.var 12)) =
+      some (.shareInst .load 20 (.var 24), compInitialLabels) := by
+  simp [compInitialHOL, compExpHOL, findVarHOL, compInitialContext,
+    sptLookup_sptInsert_same, sptLookup_sptInsert_ne]
 
 def compInitialProbeChecks : List Bool :=
   [ (match compInitialHOL (width := 8) compInitialContext compInitialLabels .skip with
@@ -257,6 +374,35 @@ def compInitialProbeChecks : List Bool :=
     (match compInitialHOL (width := 8) compInitialContext compInitialLabels
         (.primitive [10, 11] .addCarry [12, 13]) with
       | some (.skip, (7, 11)) => true | _ => false),
+    (match compInitialHOL (width := 8) compInitialContext compInitialLabels
+        (.break 5) with
+      | some (.break 5, (7, 11)) => true | _ => false),
+    (match compInitialHOL (width := 8) compInitialContext compInitialLabels
+        (.continue 6) with
+      | some (.continue 6, (7, 11)) => true | _ => false),
+    (match compInitialHOL (width := 8) compInitialContext compInitialLabels
+        (.raise 10) with
+      | some (.raise 20, (7, 11)) => true | _ => false),
+    (match compInitialHOL (width := 8) compInitialContext compInitialLabels
+        (.return [10, 11, 12]) with
+      | some (.return 0 [20, 22, 24], (7, 11)) => true | _ => false),
+    (match compInitialHOL (width := 8) compInitialContext compInitialLabels
+        .tick with
+      | some (.tick, (7, 11)) => true | _ => false),
+    (match compInitialHOL (width := 8) compInitialContext compInitialLabels
+        .fail with
+      | some (.skip, (7, 11)) => true | _ => false),
+    (match compInitialHOL (width := 8) compInitialContext compInitialLabels
+        (.locValue 10 3) with
+      | some (.locValue 20 3, (7, 11)) => true | _ => false),
+    (match compInitialHOL (width := 8) compInitialContext compInitialLabels
+        (.ffi (Flapjack.Basis.Pure.MlString.ofString "foo") 10 11 12 13
+          (sptInsert 6 () .ln)) with
+      | some (.ffi _ 20 22 24 26 (cut, .ln), (7, 11)) => (sptLookup 0 cut).isSome
+      | _ => false),
+    (match compInitialHOL (width := 8) compInitialContext compInitialLabels
+        (.shMem .load 10 (.var 12)) with
+      | some (.shareInst .load 20 (.var 24), (7, 11)) => true | _ => false),
     (match compInitialHOL (width := 8) compInitialContext compInitialLabels
         (.seq .skip .skip) with
       | none => true | _ => false) ]
@@ -329,7 +475,7 @@ def runChecks : IO Bool := do
         (sptLookup 2 (mkNewCutsetHOL probeContext probeLive) : Option Unit) ==
           originalCutsetAbsent),
       ("LoopToWord comp_exp_def exact HOL rows", compExpProbeChecks.all id),
-      ("LoopToWord comp_def initial constructor exact HOL rows",
+      ("LoopToWord comp_def initial, control/result and FFI/ShMem constructor exact HOL rows",
         compInitialProbeChecks.all id) ]
   let results ← checks.mapM fun (name, ok) => do
     if ok then

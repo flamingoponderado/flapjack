@@ -322,6 +322,7 @@ import Flapjack.Test.WordSemCarriersParity
 import Flapjack.Test.WordSemAccessorsParity
 import Flapjack.Test.WordSemEnvParity
 import Flapjack.Test.WordSemCallHelpersParity
+import Flapjack.Test.WordSemAllocParity
 import Flapjack.Test.WordLangGoodHandlersParity
 import Flapjack.Test.NumSetAuditParity
 import Flapjack.Test.WordLangEveryNameParity
@@ -1074,6 +1075,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.WordSemAccessorsParity.runChecks,
     Flapjack.Test.WordSemEnvParity.runChecks,
     Flapjack.Test.WordSemCallHelpersParity.runChecks,
+    Flapjack.Test.WordSemAllocParity.runChecks,
     Flapjack.Test.WordLangGoodHandlersParity.runChecks,
     Flapjack.Test.NumSetAuditParity.runChecks,
     Flapjack.Test.WordLangEveryNameParity.runChecks,
