@@ -1,15 +1,16 @@
 import Flapjack.Pancake.Semantics.LoopSem
 
 /-!
-# Exact width-generic parity for `loopSem.mem_load` / `mem_store`
+# Width-generic memory helper parity
 
-`memLoadHOL`/`memStoreHOL` are the exact HOL-shaped ports of
-`cakeml/pancake/semantics/loopSemScript.sml:64-69` and `:57-62` (total
-`word_loc` memory, address-set domain).  The expected observations match the
-direct HOL-EVAL probes at `scripts/hol-probes/loop_sem_mem_load_probe.out`
-(`mem_load_hit=SOME (Word 7w)`, `mem_load_miss=NONE`) and
-`scripts/hol-probes/loop_sem_mem_store_probe.out` (`mem_store_hit=SOME (Word 7w)`,
-`mem_store_miss=NONE`).
+The `memLoadHOL`/`memStoreHOL` split-argument helpers below are
+FLAPJACK-SPECIFIC convenience functions; they are not the whole-state HOL
+`loopSem.mem_load`/`mem_store` definitions. The exact tagged definitions are
+`LoopSemStateFiniteExact.memLoad`/`memStore` in
+`Flapjack/Pancake/Semantics/LoopSemStateExact.lean`. Their direct HOL-EVAL
+rows from `scripts/hol-probes/loop_sem_mem_load_probe.out` and
+`loop_sem_mem_store_probe.out` are checked over the same total-state carrier
+in `Flapjack/Test/LoopSemEvalExactParity.lean`.
 
 `memLoad32HOL`/`memStore32HOL` are the exact width-generic ports of
 `cakeml/compiler/backend/semantics/wordSemScript.sml:70-81` and `:84-97`
