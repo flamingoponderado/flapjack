@@ -420,6 +420,20 @@ verifying the `BitVec`/`NeZero`/`Type` obligations; it remains syntactic and
 does not prove HOL-to-Lean correspondence, so source review must compare the
 declaration itself.
 
+**Qualify a word-free HOL dimension used numerically.** Use
+`(word_dimension_as_width := width)` only when the HOL declaration takes a
+type dimension `(:'a)` but has no word-valued carrier, and uses that dimension
+only through its numeric size (`dimindex`/`dimword`). Lean must bind the named
+`(width : Nat)` explicitly with `[NeZero width]`; `dimword` becomes `2 ^ width`.
+The qualifier is mutually exclusive with `words_as_type_indexed_bitvec` and
+requires manifest status `reviewed_word_dimension_as_width`. The reference
+checker verifies the Lean binder, positivity discharge, word-free signature,
+and exclusivity, but cannot verify that HOL actually has the dimension argument
+or uses it only numerically. Source review must check both points, compare the
+entire equation and its operator associativity, and record the comparison in
+the manifest. The qualifier permits no changed hypotheses or behavior and does
+not itself prove cross-language equivalence.
+
 **Port the executable path, too.** As HOL definitions are ported, make the
 compiler that `flapjack-compile` actually runs call the reviewed `@[hol]`
 definitions. A tagged proof-only duplicate beside a different production
