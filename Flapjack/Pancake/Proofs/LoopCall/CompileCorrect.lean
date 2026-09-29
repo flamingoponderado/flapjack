@@ -4,6 +4,7 @@ import Flapjack.Pancake.Semantics.LoopProps.EvalExact
 import Flapjack.Pancake.Semantics.LoopProps.NestedSeqExact
 import Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact
 import Flapjack.Misc.SptreeLookup
+import Flapjack.Pancake.LoopCall.IsLoad
 
 /-!
 # loop_call `compile_correct`
@@ -673,17 +674,17 @@ theorem evaluate_ShMem_neq_locals {width : Nat} [NeZero width] {F : Type} :
 /-- Exact HOL `evaluate_ShMem_not_load_locals` (`loop_callProofScript.sml:424-427`):
     `evaluate (ShMem op v ad, s) = (res, s') ∧ ¬is_load op ∧
       ¬ (∃x. res = SOME (FinalFFI x)) ⇒ s.locals = s'.locals`; HOL `loop_call$is_load`
-    is the untagged `crepIsLoadMemOp`, which agrees with `is_load_def`
-    (`loop_callScript.sml:10-15`) clause for clause. -/
+    is the tagged `loopCallIsLoadHOL` (`is_load_def`). -/
 @[hol "cakeml/pancake/proofs/loop_callProofScript.sml" "evaluate_ShMem_not_load_locals"
   (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 theorem evaluate_ShMem_not_load_locals {width : Nat} [NeZero width] {F : Type} :
     ∀ (op : CrepMemOp) (v : Nat) (ad : HolLoopExp width) (s : LoopSemStateFiniteExact width F)
       (res : Option (LoopResultExact width)) (s' : LoopSemStateFiniteExact width F),
-      evaluate (.shMem op v ad) s = (res, s') ∧ ¬ crepIsLoadMemOp op = true ∧
+      evaluate (.shMem op v ad) s = (res, s') ∧ ¬ loopCallIsLoadHOL op = true ∧
         ¬ (∃ e, res = some (.finalFfi e)) →
       s.locals = s'.locals := by
   intro op v ad s res s' ⟨he, hnl, hnf⟩
+  rw [loopCallIsLoadHOL_eq_crepIsLoadMemOp] at hnl
   rcases evaluate_shMem_cases op v ad s res s' he with rfl | ⟨addr, hop⟩
   · rfl
   · rcases shMemOp_locals op v addr s with ⟨e, he'⟩ | hl | ⟨hld, _, _⟩
@@ -773,20 +774,32 @@ theorem get_vars_front {width : Nat} [NeZero width] {F : Type} :
   rw [getVars_eq_mapM] at h ⊢
   exact mapM_dropLast _ xs ys h
 
+/-- A successful `get_vars` on a non-empty name list returns a non-empty list. -/
+theorem getVars_ne_nil {width : Nat} [NeZero width] {F : Type}
+    {xs : List Nat} {ys : List (WordLocW width)} {s : LoopSemStateFiniteExact width F}
+    (h : LoopSemStateFiniteExact.getVars xs s = some ys) (hxs : xs ≠ []) : ys ≠ [] := by
+  intro e; subst e
+  cases xs with
+  | nil => exact hxs rfl
+  | cons x rest =>
+    simp only [LoopSemStateFiniteExact.getVars] at h
+    cases hx : sptLookup x s.locals <;> cases hr : LoopSemStateFiniteExact.getVars rest s <;>
+      simp [hx, hr] at h
+
 /-- Exact HOL `get_vars_last` (`loop_callProofScript.sml:300-302`):
     `!xs ys s. get_vars xs s = SOME ys /\ xs <> [] ==> lookup (LAST xs) s.locals = SOME (LAST ys)`.
-    HOL `LAST xs` is `xs.getLast` at the premise's `xs ≠ []`, and `SOME (LAST ys)` is
-    `ys.getLast?` (equal to `SOME (LAST ys)` because `ys` is non-empty whenever
-    `get_vars` succeeds on a non-empty `xs`). -/
+    HOL `LAST xs` and `LAST ys` are `List.getLast` at the premise's `xs ≠ []` and at the
+    derived `ys ≠ []` (`getVars_ne_nil`). -/
 @[hol "cakeml/pancake/proofs/loop_callProofScript.sml" "get_vars_last"
   (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 theorem get_vars_last {width : Nat} [NeZero width] {F : Type} :
     ∀ (xs : List Nat) (ys : List (WordLocW width)) (s : LoopSemStateFiniteExact width F)
       (h : LoopSemStateFiniteExact.getVars xs s = some ys ∧ xs ≠ []),
-      sptLookup (xs.getLast h.2) s.locals = ys.getLast? := by
+      sptLookup (xs.getLast h.2) s.locals = some (ys.getLast (getVars_ne_nil h.1 h.2)) := by
   intro xs ys s ⟨h, hxs⟩
-  rw [getVars_eq_mapM] at h
-  exact mapM_getLast _ xs ys hxs h
+  have h' := h
+  rw [getVars_eq_mapM] at h'
+  rw [mapM_getLast _ xs ys hxs h', List.getLast?_eq_some_getLast]
 
 private theorem findCode_front {width : Nat} [NeZero width]
     (av : List (WordLocW width)) (n : Nat) (code : Spt (List Nat × HolLoopProg width))
@@ -844,7 +857,9 @@ theorem loopCall_compile_correct_call {width : Nat} [NeZero width] {F : Type} :
   have hla : args.getLast hargs = last := by
     rw [List.getLast?_eq_some_getLast hargs] at hlast; exact Option.some.inj hlast
   rw [hla, hl last n hn] at hL
-  have key := findCode_front av n v1.code hL.symm
+  have hL' : av.getLast? = some (.loc n 0) := by
+    rw [List.getLast?_eq_some_getLast (getVars_ne_nil hg hargs)]; exact hL.symm
+  have key := findCode_front av n v1.code hL'
   rw [evaluate] at he ⊢
   rw [hg] at he
   rw [hg']
