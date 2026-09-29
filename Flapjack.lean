@@ -355,6 +355,7 @@ import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Store32
 import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.StoreByte
 import Flapjack.Pancake.CrepToLoop.Proofs.CompExpPreservesEval.Leaf
 import Flapjack.Pancake.CrepToLoop.Proofs.SemanticsWrapper
+import Flapjack.Pancake.CrepToLoop.Proofs.CrepNonFailStartLookup
 import Flapjack.Pancake.LoopLive.Fixedpoint
 import Flapjack.Pancake.Proofs.LoopLive.CompileCorrect
 import Flapjack.Pancake.Proofs.LoopLive.Optimise
