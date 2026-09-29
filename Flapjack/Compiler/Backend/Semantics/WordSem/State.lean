@@ -78,14 +78,17 @@ inductive WordSemStackFrame (width : Nat) [NeZero width] where
   | stackFrame (size : Option Nat) (nonGcCutset : List (Nat × WordLocW width))
       (gcCutset : List (Nat × WordLocW width)) (handler : Option (Nat × Nat × Nat))
 
-/-- HOL `gc_fun_type` (`wordSemScript.sml:193-197`), a type abbreviation for the
-    garbage-collector function over the root list, memory, memory domain and
-    store.  Untagged: its argument and result carry the `store_name |->
-    'a word_loc` finite map inside a function type, which no reviewed
-    finite-map qualifier yet covers (the field and result qualifiers apply to
-    structure fields and declaration results, not to maps nested in a function
-    type).  It uses the canonical `HolFiniteMapExact` translation, and the
-    `'a word set` domain is rendered as `BitVec width → Bool`. -/
+/-- Exact HOL `gc_fun_type` (`wordSemScript.sml:193-197`): a function from the
+    four-component `(roots, memory, memory-domain, store)` product to an
+    optional three-component `(roots, memory, store)` product. Its store maps
+    occupy argument slot 4 and result slot 3 and use the same canonical
+    `HolFiniteMapExact WordStoreHOL (WordLocW width)` carrier. The finite-map
+    function qualifier records this nested pointwise carrier translation; the
+    word qualifier records the positive-width translation in all word-bearing
+    components. -/
+@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "gc_fun_type" 193
+  (fmap_as_finite_support_function := [argument_4, result_3])
+  (words_as_type_indexed_bitvec)]
 abbrev WordSemGcFun (width : Nat) [NeZero width] : Type :=
   (List (WordLocW width) × (BitVec width → WordLocW width) × (BitVec width → Bool) ×
       HolFiniteMapExact WordStoreHOL (WordLocW width)) →

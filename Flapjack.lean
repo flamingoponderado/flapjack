@@ -198,6 +198,7 @@ import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Memory
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.ShMem
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call.Support
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call.TailCall
+import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call.NoHandler
 import Flapjack.PanObservationalSemantics
 import Flapjack.PanMrec
 import Flapjack.PanHProgDec
@@ -315,6 +316,7 @@ import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectStoreByte
 import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectExtCall
 import Flapjack.Pancake.Proofs.CrepInline
 import Flapjack.Pancake.CrepInline.Canonical
+import Flapjack.Pancake.CrepInline.InlineRouteBridge
 import Flapjack.CompileFunctionDistinct
 import Flapjack.Semantics
 import Flapjack.CrepeSemantics

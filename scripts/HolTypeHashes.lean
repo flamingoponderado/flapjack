@@ -112,6 +112,7 @@ import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Memory
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.ShMem
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call.Support
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call.TailCall
+import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call.NoHandler
 import Flapjack.Pancake.LoopLang.AssignedVars
 import Flapjack.Pancake.Semantics.LoopProps.AssignedVars
 import Flapjack.Pancake.Semantics.LoopProps.CutSets
@@ -312,6 +313,7 @@ elab "#emit_hol_type_hashes" : command => do
           ("names_as_string_boundary", toJson ref.namesAsStringBoundary),
           ("fmap_as_finite_support", toJson ref.fmapAsFiniteSupport),
           ("fmap_as_finite_support_result", toJson ref.fmapAsFiniteSupportResult),
+          ("fmap_as_finite_support_function", toJson ref.fmapAsFiniteSupportFunction),
           ("fmap_as_finite_support_parameters", toJson ref.fmapAsFiniteSupportParameters),
           ("fmap_as_finite_support_existentials", toJson ref.fmapAsFiniteSupportExistentials),
           ("fmap_as_finite_support_relation",
