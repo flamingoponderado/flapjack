@@ -113,6 +113,59 @@ theorem distinct_make_funcs {α β γ : Type} :
   subst this
   rfl
 
+/-- Flapjack proof infrastructure: a key occurring in an association list's
+    first projections occurs in the domain of its `sptFromAList` tree. HOL's
+    `make_funcs_domain_compile_prog` is the result theorem below; this generic
+    list-to-tree membership step has no standalone HOL declaration. -/
+private theorem sptFromAList_mem_key {β : Type} :
+    ∀ (entries : List (Nat × β)) (key : Nat),
+      key ∈ entries.map Prod.fst → sptMem key (sptFromAList entries)
+  | [], _, h => by simp at h
+  | (headKey, headValue) :: entries, key, h => by
+      simp only [List.map_cons, List.mem_cons] at h
+      change sptMem key (sptInsert headKey headValue (sptFromAList entries))
+      rw [sptMem_sptInsert]
+      rcases h with hhead | htail
+      · exact Or.inl hhead
+      · exact Or.inr (sptFromAList_mem_key entries key htail)
+
+/-- Exact HOL `make_funcs_domain_compile_prog`
+    (`crep_to_loopProofScript.sml:3908-3918`): if `make_funcs` maps `start` to
+    label `lc` with zero parameters, then that label is in the domain of the
+    association-list tree built from `compile_prog`. The map result uses the
+    canonical finite-support `make_funcs` port; `domain`/`fromAList` are the
+    exact `sptMem`/`sptFromAList` rendering, and `compile_prog` is the tagged
+    `compileProgHOLExact`. -/
+@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "make_funcs_domain_compile_prog"
+  (words_as_type_indexed_bitvec)]
+theorem makeFuncsDomainCompileProgExact {width : Nat} [NeZero width] :
+    ∀ (start : Basis.Pure.MlString.MlString) (lc : Nat)
+      (crep_code : List (Basis.Pure.MlString.MlString × List Nat × CrepProgHOL width))
+      (c : Compiler.Encoders.Asm.AsmArchitecture),
+      (crepToLoopMakeFuncsExactHOL crep_code).lookup start = some (lc, 0) →
+        sptMem lc (sptFromAList (compileProgHOLExact c crep_code)) := by
+  intro start lc crep_code c h
+  letI : DecidableEq Basis.Pure.MlString.MlString :=
+    fun a b => Classical.propDecidable (a = b)
+  rw [holFmapAsFiniteSupportResultWitness_crepToLoopMakeFuncsExactHOL crep_code start] at h
+  have hentry : (start, (lc, 0)) ∈
+      (crep_code.zip (List.range crep_code.length)).map
+        (fun entry => (entry.1.1, (firstLoopName + entry.2, entry.1.2.1.length))) :=
+    flookup_fupdateListHOL_reverse_mem _ _ _ h
+  obtain ⟨i, hi, _, hlc, _⟩ := makeFuncsExact_entry_mem crep_code start lc 0 hentry
+  have hkeys : (compileProgHOLExact c crep_code).map Prod.fst =
+      (List.range crep_code.length).map (fun i => i + firstLoopName) := by
+    simp only [compileProgHOLExact]
+    exact map_fst_zipWith_pair _ _ _ (by simp)
+  have hkey : lc ∈ (compileProgHOLExact c crep_code).map Prod.fst := by
+    rw [hkeys]
+    apply List.mem_map.mpr
+    refine ⟨i, List.mem_range.mpr hi, ?_⟩
+    calc
+      i + firstLoopName = firstLoopName + i := Nat.add_comm _ _
+      _ = lc := hlc.symm
+  exact sptFromAList_mem_key (compileProgHOLExact c crep_code) lc hkey
+
 /-- Exact HOL `crep_to_loop_compile_prog_lab_min` (`crep_to_loopProofScript.sml:4398-4400`):
     `crep_to_loop$compile_prog c cprog = lprog ⇒ EVERY (λprog. 60 ≤ FST prog) lprog`,
     with its free variables universally quantified and `EVERY` as `∀ x ∈ lprog`. -/

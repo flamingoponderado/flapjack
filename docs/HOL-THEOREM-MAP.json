@@ -11678,6 +11678,15 @@
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "make_funcs_domain_compile_prog",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/MakeFuncsLemmas.lean",
+    "lean_name": "makeFuncsDomainCompileProgExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-29; bead flapjack-dq51) against crep_to_loopProofScript.sml:3908-3918: preserves HOL binders start, lc, crep_code, c and the premise FLOOKUP (make_funcs crep_code) start = SOME (lc,0), concluding lc ∈ domain (fromAList (compile_prog c crep_code)). Lean uses MlString for mlstring, Nat for labels, exact CrepProgHOL width input, and the actual AsmArchitecture target; the only direct qualifier is HOL positive word width mapped to BitVec width. The map lookup in the premise is the canonical HolFiniteMapExact result of the separately tagged make_funcs_def port, justified by holFmapAsFiniteSupportResultWitness_crepToLoopMakeFuncsExactHOL; compile_prog is compileProgHOLExact. HOL sptree domain/fromAList are represented by sptMem/sptFromAList, and the private membership helper only proves the theorem. No distinctness, success, or other hypothesis was added. Proof-only, no executable path change."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
     "hol_name": "alookup_el_pair_eq_el",
     "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
     "lean_name": "alookupElPairEqEl",
