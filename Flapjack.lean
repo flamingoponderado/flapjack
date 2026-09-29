@@ -227,6 +227,7 @@ import Flapjack.Pancake.PanToCrep.ContextBridge
 import Flapjack.Pancake.PanToCrep.ContextProductionEvidence
 import Flapjack.Pancake.Proofs.CrepArith
 import Flapjack.Pancake.Proofs.CrepArith.HOLStateMapc
+import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrect.Assign
 import Flapjack.Pancake.Proofs.CrepArith.MulConst
 import Flapjack.Pancake.Proofs.CrepInline
 import Flapjack.Pancake.CrepInline.Canonical
