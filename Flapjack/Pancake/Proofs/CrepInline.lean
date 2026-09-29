@@ -1777,6 +1777,63 @@ theorem inlineProgCorrectReturnCaseExact {width : Nat} [NeZero width] {σ : Type
       · simpa [crepInlineCodeInlRelExact, CrepSemHOLState.emptyLocals] using hcode
       · simp
 
+/-! ## `inline_prog_correct` Skip constructor case
+
+HOL `crep_inlineProofScript.sml:2301-2309` states the theorem; the terminal
+remaining case in its `evaluate_ind` proof (`:2402-2405`) reduces Skip using
+`inline_prog_def` and `evaluate_def`. The HOL inline transformation's generic
+unchanged-program clause at `crep_inlineScript.sml:249` covers Skip, and
+`crepSemScript.sml:241` gives `evaluate (Skip, s) = (NONE, s)`. Lean's exact
+`CrepProgHOL` Skip constructor and `evalCrepSemHOLProgExact_skip` have the same
+state-preserving behavior. The tagged theorem keeps the same exact finite-map
+and positive-width word carriers reviewed for the other inline cases. -/
+
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "inline_prog_correct"
+  (fmap_as_finite_support_relation :=
+    [CrepSemHOLState.locals, CrepSemHOLState.globals,
+      CrepSemHOLState.code, inlFs, inlBag])
+  (words_as_type_indexed_bitvec)]
+theorem inlineProgCorrectSkipCaseExact {width : Nat} [NeZero width] {σ : Type}
+    (s : CrepSemHOLState width σ)
+    (inlFs : HolFiniteMapExact CrepInlineMapHOLName
+      (List Nat × CrepProgHOL width))
+    (inlBag : HolFiniteMapExact CrepInlineMapHOLName
+      (List Nat × CrepProgHOL width))
+    (t : CrepSemHOLState width σ)
+    (r : Option (CrepResultHOLExact width)) (s' : CrepSemHOLState width σ)
+    (hsource : evalCrepSemHOLProgExact s (.skip : CrepProgHOL width) = (r, s'))
+    (_hnotError : r ≠ some .error)
+    (_hsubmap : HolFiniteMapExact.submap inlFs s.code)
+    (_hbag : HolFiniteMapExact.submap inlBag inlFs)
+    (hstate : crepInlineStateRelCodeExact s t)
+    (hlocals : crepInlineLocalsStrongRelExact s t)
+    (hcode : crepInlineCodeInlRelExact inlFs s t) :
+    ∃ t' : CrepSemHOLState width σ,
+      evalCrepSemHOLProgExact t
+          (CrepInlineCanonical.inlineProgHOLExact inlBag (.skip : CrepProgHOL width)) =
+            (r, t') ∧
+      crepInlineStateRelCodeExact s' t' ∧
+      crepInlineCodeInlRelExact inlFs s' t' ∧
+      match r with
+      | none => crepInlineLocalsStrongRelExact s' t'
+      | some (CrepResultHOLExact.break _) =>
+          crepInlineLocalsStrongRelExact s' t'
+      | some (CrepResultHOLExact.continue _) =>
+          crepInlineLocalsStrongRelExact s' t'
+      | some .error => False
+      | _ => True := by
+  classical
+  rw [evalCrepSemHOLProgExact_skip] at hsource
+  cases hsource
+  have hinline :
+      CrepInlineCanonical.inlineProgHOLExact inlBag (.skip : CrepProgHOL width) =
+        .skip := by
+    unfold CrepInlineCanonical.inlineProgHOLExact
+    simp only [CrepInlineCanonical.inlineProgHOLCoreExact]
+  refine ⟨t, ?_, hstate, hcode, ?_⟩
+  · rw [hinline, evalCrepSemHOLProgExact_skip]
+  · simpa [crepInlineLocalsStrongRelExact]
+
 end CrepInlineExact
 
 end Flapjack
