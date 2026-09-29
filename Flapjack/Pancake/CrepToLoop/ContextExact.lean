@@ -604,8 +604,8 @@ applies; the type-indexed `'a word` becomes `BitVec width` with `[NeZero
 width]`. No premise, side condition, or result case is added. Direct original
 HOL rows are in `scripts/hol-probes/crep_to_loop_compile_prog_probe.out` and
 replayed by `Flapjack.Test.CrepToLoopCompileProgParity`. Proof-side exact port:
-the executed `flapjack-compile` path still uses the production
-`CrepProg`/`LoopProg`/`String` lowering, not this declaration. -/
+this is the whole-program exact `compile_prog_def` rendering; it does not itself
+assert equality with the production lowering. -/
 @[hol "cakeml/pancake/crep_to_loopScript.sml" "compile_prog_def"
   (words_as_type_indexed_bitvec)]
 def compileProgHOLExact {width : Nat} [NeZero width] (target : AsmArchitecture)

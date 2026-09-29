@@ -10965,14 +10965,6 @@
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
-    "hol_name": "wlab_wloc_def",
-    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
-    "lean_name": "wlabWloc",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Codex (definition compared against wlab_wloc_def at crep_to_loopProofScript.sml:45-47; panSem$Word/wordLang$Word rendered as PanWordLab.word/LoopValue.word single-constructor maps; direct HOL-EVAL row wlab_wloc_word=T reproduced by a Lean guard in Flapjack/Test/CrepToLoopParity.lean); carriers width-specialized to BitVec width because HOL states/word_lab are word-length indexed (agreed exact-shape rule) Carrier requires positive width ([NeZero width]) because HOL word types have positive dimindex."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
     "hol_name": "globals_rel_def",
     "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
     "lean_name": "crepToLoopGlobalsRel",
@@ -19625,7 +19617,7 @@
     "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpSyntaxHelpers.lean",
     "lean_name": "not_mem_assigned_mem_gt_comp_exp_cases",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.33.5): HOL not_mem_assigned_mem_gt_comp_exp_cases (crep_to_loopProofScript.sml:1466-1476) is the conjunction over compile_exp/compile_exps of `compile_exp ctxt tmp l e = (p,le,ntmp,nl) /\\ ctxt_max ctxt.vmax ctxt.vars /\\ (!v m. FLOOKUP ctxt.vars v = SOME m ==> n <> m) ∧ n < tmp ==> ~MEM n (assigned_vars (nested_seq p))`; Lean states both conjuncts with the same variables and four-conjunct premise (ctxt_max as the tagged crepToLoopCtxtMax over ctxt.vars.lookup, FLOOKUP as .lookup) over compileExpHOLExact/compileExpsHOLExact, holLoopAssignedVars, loopNestedSeqHOL; proved from the tagged comp_exp(s)_assigned_vars_tmp_bound. fmap_as_finite_support [vars, funcs]: quantifies over the exact context CrepToLoopContextExact whose HOL |-> vars/funcs are canonical HolFiniteMapExact carriers; same-module re-exported canonical witness. (words_as_type_indexed_bitvec): width-indexed Crep/Loop carriers.",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.33.5): HOL not_mem_assigned_mem_gt_comp_exp_cases (crep_to_loopProofScript.sml:1466-1476) is the conjunction over compile_exp/compile_exps of `compile_exp ctxt tmp l e = (p,le,ntmp,nl) /\\ ctxt_max ctxt.vmax ctxt.vars /\\ (!v m. FLOOKUP ctxt.vars v = SOME m ==> n <> m) ∧ n < tmp ==> ~MEM n (assigned_vars (nested_seq p))`; Lean states both conjuncts with the same variables and four-conjunct premise (ctxt_max as the tagged crepToLoopCtxtMaxExact over ctxt.vars.lookup, FLOOKUP as .lookup) over compileExpHOLExact/compileExpsHOLExact, holLoopAssignedVars, loopNestedSeqHOL; proved from the tagged comp_exp(s)_assigned_vars_tmp_bound. fmap_as_finite_support [vars, funcs]: quantifies over the exact context CrepToLoopContextExact whose HOL |-> vars/funcs are canonical HolFiniteMapExact carriers; same-module re-exported canonical witness. (words_as_type_indexed_bitvec): width-indexed Crep/Loop carriers.",
     "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
     "fmap_as_finite_support": [
       "vars",
@@ -20250,7 +20242,7 @@
     "lc",
     "lc'"
   ],
-  "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.5.19.2; crep_inlineProofScript.sml:699): exact HOL `res_var_commutes_strong` over the canonical finite-support carrier `HolFiniteMapExact` (the same statement as the untagged `_hol` raw-function form, which quantified `FiniteMap α β = α → Option β` and admitted infinite support). Uses HOL-equality DecidableEq with `resVarEq` and no BEq/LawfulBEq side conditions; the cited map binders are the finite-support translation of HOL `α |-> β` (relation qualifier). The bridges `resVarEq_lookup`/`foldl_resVarEq_lookup` (untagged Flapjack infrastructure) relate the exact lookup to HOL's raw `res_var` and justify the reduction to the already-tagged raw statements."
+  "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.5.19.2; crep_inlineProofScript.sml:699): exact HOL `res_var_commutes_strong` over the canonical finite-support carrier `HolFiniteMapExact` (the same statement as the untagged `_hol` raw-function form, which quantified `FiniteMap α β = α → Option β` and admitted infinite support). Uses HOL-equality DecidableEq with `resVarEq` and no BEq/LawfulBEq side conditions; the cited map binders are the finite-support translation of HOL `α |-> β` (relation qualifier). The bridges `resVarEq_lookup`/`foldl_resVarEq_lookup` (untagged Flapjack infrastructure) relate the exact lookup to HOL's raw `res_var` and justify the reduction to the untagged raw statements."
 },
 {
   "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
@@ -20262,7 +20254,7 @@
     "lc1",
     "lc2"
   ],
-  "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.5.19.2; crep_inlineProofScript.sml:706): exact HOL `res_var_foldl_commutes_strong` over the canonical finite-support carrier `HolFiniteMapExact` (the same statement as the untagged `_hol` raw-function form, which quantified `FiniteMap α β = α → Option β` and admitted infinite support). Uses HOL-equality DecidableEq with `resVarEq` and no BEq/LawfulBEq side conditions; the cited map binders are the finite-support translation of HOL `α |-> β` (relation qualifier). The bridges `resVarEq_lookup`/`foldl_resVarEq_lookup` (untagged Flapjack infrastructure) relate the exact lookup to HOL's raw `res_var` and justify the reduction to the already-tagged raw statements."
+  "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.5.19.2; crep_inlineProofScript.sml:706): exact HOL `res_var_foldl_commutes_strong` over the canonical finite-support carrier `HolFiniteMapExact` (the same statement as the untagged `_hol` raw-function form, which quantified `FiniteMap α β = α → Option β` and admitted infinite support). Uses HOL-equality DecidableEq with `resVarEq` and no BEq/LawfulBEq side conditions; the cited map binders are the finite-support translation of HOL `α |-> β` (relation qualifier). The bridges `resVarEq_lookup`/`foldl_resVarEq_lookup` (untagged Flapjack infrastructure) relate the exact lookup to HOL's raw `res_var` and justify the reduction to the untagged raw statements."
 },
 {
   "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
@@ -20274,7 +20266,7 @@
     "lc1",
     "lc2"
   ],
-  "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.5.19.2; crep_inlineProofScript.sml:802): exact HOL `flookup_res_var_is_mem_zip_eq` over the canonical finite-support carrier `HolFiniteMapExact` (the same statement as the untagged `_hol` raw-function form, which quantified `FiniteMap α β = α → Option β` and admitted infinite support). Uses HOL-equality DecidableEq with `resVarEq` and no BEq/LawfulBEq side conditions; the cited map binders are the finite-support translation of HOL `α |-> β` (relation qualifier). The bridges `resVarEq_lookup`/`foldl_resVarEq_lookup` (untagged Flapjack infrastructure) relate the exact lookup to HOL's raw `res_var` and justify the reduction to the already-tagged raw statements."
+  "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.5.19.2; crep_inlineProofScript.sml:802): exact HOL `flookup_res_var_is_mem_zip_eq` over the canonical finite-support carrier `HolFiniteMapExact` (the same statement as the untagged `_hol` raw-function form, which quantified `FiniteMap α β = α → Option β` and admitted infinite support). Uses HOL-equality DecidableEq with `resVarEq` and no BEq/LawfulBEq side conditions; the cited map binders are the finite-support translation of HOL `α |-> β` (relation qualifier). The bridges `resVarEq_lookup`/`foldl_resVarEq_lookup` (untagged Flapjack infrastructure) relate the exact lookup to HOL's raw `res_var` and justify the reduction to the untagged raw statements."
 },
 {
   "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
@@ -20287,7 +20279,7 @@
     "l'",
     "l1"
   ],
-  "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.5.19.2; crep_inlineProofScript.sml:2661): exact HOL `FOLDL_res_var_ZIP_lookup_var` over the canonical finite-support carrier `HolFiniteMapExact` (the same statement as the untagged `_hol` raw-function form, which quantified `FiniteMap α β = α → Option β` and admitted infinite support). Uses HOL-equality DecidableEq with `resVarEq` and no BEq/LawfulBEq side conditions; the cited map binders are the finite-support translation of HOL `α |-> β` (relation qualifier). The bridges `resVarEq_lookup`/`foldl_resVarEq_lookup` (untagged Flapjack infrastructure) relate the exact lookup to HOL's raw `res_var` and justify the reduction to the already-tagged raw statements."
+  "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.5.19.2; crep_inlineProofScript.sml:2661): exact HOL `FOLDL_res_var_ZIP_lookup_var` over the canonical finite-support carrier `HolFiniteMapExact` (the same statement as the untagged `_hol` raw-function form, which quantified `FiniteMap α β = α → Option β` and admitted infinite support). Uses HOL-equality DecidableEq with `resVarEq` and no BEq/LawfulBEq side conditions; the cited map binders are the finite-support translation of HOL `α |-> β` (relation qualifier). The bridges `resVarEq_lookup`/`foldl_resVarEq_lookup` (untagged Flapjack infrastructure) relate the exact lookup to HOL's raw `res_var` and justify the reduction to the untagged raw statements."
 },
 {
   "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
@@ -20300,7 +20292,7 @@
     "l'",
     "l1"
   ],
-  "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.5.19.2; crep_inlineProofScript.sml:2675): exact HOL `FOLDL_res_var_ZIP_lookup` over the canonical finite-support carrier `HolFiniteMapExact` (the same statement as the untagged `_hol` raw-function form, which quantified `FiniteMap α β = α → Option β` and admitted infinite support). Uses HOL-equality DecidableEq with `resVarEq` and no BEq/LawfulBEq side conditions; the cited map binders are the finite-support translation of HOL `α |-> β` (relation qualifier). The bridges `resVarEq_lookup`/`foldl_resVarEq_lookup` (untagged Flapjack infrastructure) relate the exact lookup to HOL's raw `res_var` and justify the reduction to the already-tagged raw statements."
+  "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.5.19.2; crep_inlineProofScript.sml:2675): exact HOL `FOLDL_res_var_ZIP_lookup` over the canonical finite-support carrier `HolFiniteMapExact` (the same statement as the untagged `_hol` raw-function form, which quantified `FiniteMap α β = α → Option β` and admitted infinite support). Uses HOL-equality DecidableEq with `resVarEq` and no BEq/LawfulBEq side conditions; the cited map binders are the finite-support translation of HOL `α |-> β` (relation qualifier). The bridges `resVarEq_lookup`/`foldl_resVarEq_lookup` (untagged Flapjack infrastructure) relate the exact lookup to HOL's raw `res_var` and justify the reduction to the untagged raw statements."
 },
 {
   "hol_path": null,
@@ -20329,7 +20321,7 @@
     "funcs"
   ],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.19) against not_mem_context_assigned_mem_gt at crep_to_loopProofScript.sml:1570-1575. HOL `!ctxt l p n. ctxt_max ctxt.vmax ctxt.vars /\\ (!v m. FLOOKUP ctxt.vars v = SOME m ==> n <> m) ∧ n <= ctxt.vmax ==> ~MEM n (assigned_vars (compile ctxt l p))`. Lean keeps the binders in order (ctxt : CrepToLoopContextExact, l : NumSet, p : CrepProgHOL width, n : Nat), the same three-conjunct premise (tagged crepToLoopCtxtMax over ctxt.vars.lookup, FLOOKUP as HolFiniteMapExact.lookup) and conclusion over the tagged compileHOLExact (compile_def) and holLoopAssignedVars (assigned_vars_def). No Crep evaluator occurs, so no DecidablePred binder. Proof: well-founded recursion on the source program mirroring compile_ind, using the tagged not_mem_assigned_mem_gt_comp_exp(s), compile_exp(s)_out_rel, assigned_vars_nested_seq_split and assigned_vars_nested_seq_assign. Qualifiers: ctxt's HOL |-> vars/funcs as canonical HolFiniteMapExact; width-indexed Crep/Loop program carriers."
+  "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.19) against not_mem_context_assigned_mem_gt at crep_to_loopProofScript.sml:1570-1575. HOL `!ctxt l p n. ctxt_max ctxt.vmax ctxt.vars /\\ (!v m. FLOOKUP ctxt.vars v = SOME m ==> n <> m) ∧ n <= ctxt.vmax ==> ~MEM n (assigned_vars (compile ctxt l p))`. Lean keeps the binders in order (ctxt : CrepToLoopContextExact, l : NumSet, p : CrepProgHOL width, n : Nat), the same three-conjunct premise (tagged crepToLoopCtxtMaxExact over ctxt.vars.lookup, FLOOKUP as HolFiniteMapExact.lookup) and conclusion over the tagged compileHOLExact (compile_def) and holLoopAssignedVars (assigned_vars_def). No Crep evaluator occurs, so no DecidablePred binder. Proof: well-founded recursion on the source program mirroring compile_ind, using the tagged not_mem_assigned_mem_gt_comp_exp(s), compile_exp(s)_out_rel, assigned_vars_nested_seq_split and assigned_vars_nested_seq_assign. Qualifiers: ctxt's HOL |-> vars/funcs as canonical HolFiniteMapExact; width-indexed Crep/Loop program carriers."
 },
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",

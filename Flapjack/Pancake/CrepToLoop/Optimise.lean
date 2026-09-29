@@ -19,8 +19,8 @@ def oCompile [OfNat α 0] [OfNat α 1]
     maps, and the generic executable `LoopProg`, while HOL uses `asm$architecture`,
     `mlstring` keys, and `HolLoopProg`; moreover it calls the production
     `compileCrepToLoop`/`loopLiveOptimise`, not an exact `compile_def` port.
-    The parser-backed source pipeline instead calls exact whole-program
-    `compileProgHOLExact` over checked `MlString`/width carriers. -/
+    The exact-carrier per-function route is `crepCompFuncThroughHOLExact` below;
+    the whole-program exact definition is `compileProgHOLExact`. -/
 def crepCompFunc [OfNat α 0] [OfNat α 1]
     (target : RiscV.Architecture) (functions : InfoMap (Nat × Nat))
     (params : List Nat) (body : CrepProg α) : LoopProg α :=
@@ -30,9 +30,9 @@ def crepCompFunc [OfNat α 0] [OfNat α 1]
 
 /-! ## Exact-carrier executable bridge
 
-The parser-backed source compiler uses exact whole-program
-`compileProgHOLExact`. This per-function boundary remains available for callers
-that need the exact `ocompile_def` result and can prove the byte-range premises.
+This per-function `ocompile_def` boundary stays available for callers that can
+prove the byte-range premises; whole-program exact compilation uses
+`compileProgHOLExact`.
 It is usable only when the program and every function-map key satisfy the checked
 `CrepNameRanged` codec premise. Without those premises, `MlString.ofString`
 can truncate a non-byte Lean `String`, so callers must keep using the generic

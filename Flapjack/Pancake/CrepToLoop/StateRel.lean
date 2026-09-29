@@ -154,12 +154,13 @@ theorem crepToLoopStateRel_intro {width : Nat} [NeZero width] {σ : Type} (s : C
         s.topAddress = t.topAddr :=
   Iff.rfl
 
-/-- Exact port of HOL `wlab_wloc_def`
+/-- Production-carrier analogue of HOL `wlab_wloc_def`
     (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:45-47`):
-    `wlab_wloc (panSem$Word w) = wordLang$Word w`. `PanWordLab` and `LoopValue`
-    both have a single `word` constructor for word payloads, so the map is the
-    identity on the word. -/
-@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "wlab_wloc_def"]
+    `wlab_wloc (panSem$Word w) = wordLang$Word w`. It is intentionally
+    untagged: its carriers are the production `PanWordLab`/`LoopValue`, not the
+    exact `HolWordLab`/`WordLocW`. The exact tagged port is `wlabWlocExact` in
+    `Proofs/RelationsExact.lean`; the exact-carrier bridge below is
+    `wlabWlocHOL`. -/
 def wlabWloc {width : Nat} [NeZero width] : PanWordLab (BitVec width) → LoopValue (BitVec width)
   | .word value => .word value
 
@@ -468,12 +469,13 @@ theorem crepToLoopCtxtMax_iff {κ : Type} (n : Nat) (fm : FiniteMap κ Nat) :
     crepToLoopCtxtMax n fm ↔ ∀ (v : κ) (m : Nat), FLOOKUP fm v = some m → m ≤ n :=
   Iff.rfl
 
-/-- Flapjack-specific exact bridge for HOL `wlab_wloc`
+/-- Flapjack-specific exact-carrier bridge matching HOL `wlab_wloc`
     (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:45-47`, `wlab_wloc_def`):
-    `wlab_wloc (panSem$Word w) = wordLang$Word w`. The HOL tag `wlab_wloc_def`
-    lives on the production-carrier `wlabWloc` above; the exact relation ports
-    below use this version so their source and target value carriers are the
-    tagged `HolWordLab` (HOL `word_lab`) and `WordLocW` (HOL `word_loc`). -/
+    `wlab_wloc (panSem$Word w) = wordLang$Word w`. It is untagged because the
+    canonical tagged port is `wlabWlocExact` in `Proofs/RelationsExact.lean`;
+    the exact relation ports below use this version so their source and target
+    value carriers are the exact `HolWordLab` (HOL `word_lab`) and `WordLocW`
+    (HOL `word_loc`). -/
 def wlabWlocHOL {width : Nat} [NeZero width] : HolWordLab width → WordLocW width
   | .word value => .word value
 
