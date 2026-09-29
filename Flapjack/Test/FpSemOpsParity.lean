@@ -87,6 +87,15 @@ example : fpSemFpCmp .lt (0x7FF8000000000000 : BitVec 64) (0x3FF0000000000000 : 
 
 example : fpSemFpCmp .gt (0x7FF0000000000000 : BitVec 64) (0x3FF0000000000000 : BitVec 64) = true :=
   by decide +kernel
+example : fpSemFpCmp .lt 1 2 = true := by decide +kernel
+
+example : fpSemFpCmp .leq 1 1 = true := by decide +kernel
+
+example : fpSemFpCmp .gt 2 1 = true := by decide +kernel
+
+example : fpSemFpCmp .geq 1 1 = true := by decide +kernel
+
+example : fpSemFpCmp .lt 2 1 = false := by decide +kernel
 
 /-! ## Executable checks -/
 

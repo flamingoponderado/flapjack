@@ -9,6 +9,7 @@ import Flapjack.Misc.BinaryIeeeSqrt
 Lean counterpart of `cakeml/semantics/fpSemScript.sml` (bead
 `flapjack-h29l.6.2.2`).  The `fp_cmp`/`fp_uop`/`fp_bop`/`fp_top` datatypes and
 their `*_comp` interpretation functions are ported here, together with
+`fp_cmp_def` (over the exact `ast$opb` carrier `Flapjack.Opb`),
 `fpfma_def`, the fused multiply-add used by wordSem `inst_def`'s `FPFma` case,
 over the rendered HOL `machine_ieee` `fp64_*` operations.  HOL `word64` is
 `BitVec 64`.
@@ -62,6 +63,17 @@ noncomputable def fpSemFpCmpComp : FpCmp → BitVec 64 → BitVec 64 → Bool
   | .greaterEqual => holFp64GreaterEqual
   | .equal => holFp64Equal
 
+/-- Exact HOL `fp_cmp_def` (`fpSemScript.sml:24-31`): `fp_cmp cmp = case cmp of
+    | Lt => fp64_lessThan | Leq => fp64_lessEqual | Gt => fp64_greaterThan
+    | Geq => fp64_greaterEqual`.  The argument is the `ast$opb` carrier
+    `Flapjack.Opb`; HOL `word64` is `BitVec 64`. -/
+@[hol "cakeml/semantics/fpSemScript.sml" "fp_cmp_def"]
+noncomputable def fpSemFpCmp : Opb → BitVec 64 → BitVec 64 → Bool
+  | .lt => holFp64LessThan
+  | .leq => holFp64LessEqual
+  | .gt => holFp64GreaterThan
+  | .geq => holFp64GreaterEqual
+
 /-- Exact HOL `fp_uop_comp_def` (`fpSemScript.sml:43-49`): `FP_Sqrt` uses
     `roundTiesToEven`, the other two are sign operations. -/
 @[hol "cakeml/semantics/fpSemScript.sml" "fp_uop_comp_def"]
@@ -92,16 +104,5 @@ noncomputable def fpSemFpfma (v1 v2 v3 : BitVec 64) : BitVec 64 :=
 noncomputable def fpSemFpTopComp : FpTop → BitVec 64 → BitVec 64 → BitVec 64 → BitVec 64 :=
   fun _ => fpSemFpfma
 
-/-- Exact HOL `fp_cmp_def` (`fpSemScript.sml:24-31`): the comparison argument
-    has the source-syntax carrier `ast$opb` (`Lt | Gt | Leq | Geq`, ported as
-    `Flapjack.Opb`), and each constructor maps to the corresponding
-    `machine_ieee` `fp64_*` predicate.  HOL `word64` is `BitVec 64`.  This is
-    the `ast$opb`-keyed counterpart of the tagged `fpSemFpCmpComp`. -/
-@[hol "cakeml/semantics/fpSemScript.sml" "fp_cmp_def"]
-noncomputable def fpSemFpCmp : Opb → BitVec 64 → BitVec 64 → Bool
-  | .lt => holFp64LessThan
-  | .gt => holFp64GreaterThan
-  | .leq => holFp64LessEqual
-  | .geq => holFp64GreaterEqual
 
 end Flapjack
