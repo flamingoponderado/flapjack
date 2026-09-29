@@ -190,6 +190,9 @@ import Flapjack.Pancake.Proofs.LoopToWord.AccVarsAcc
 import Flapjack.Pancake.Proofs.LoopToWord.TickUnfold
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Base
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.ReturnRaise
+import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Assign
+import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Arith
+import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Memory
 import Flapjack.PanObservationalSemantics
 import Flapjack.PanMrec
 import Flapjack.PanHProgDec
@@ -458,6 +461,8 @@ import Flapjack.Pancake.LoopToWord
 import Flapjack.Pancake.LoopToWord.ExpCarrierCodec
 import Flapjack.Pancake.LoopToWord.WordExpCarrierCodec
 import Flapjack.Pancake.LoopToWord.WordContextCodec
+import Flapjack.Pancake.LoopToWord.WordCompileExpExact
+import Flapjack.Test.WordCompileExpExactParity
 import Flapjack.Pancake.LoopToWord.WordContextCoverage
 import Flapjack.Test.WordContextCoverage
 import Flapjack.Pancake.LoopToWord.Proofs.RelationsExact
