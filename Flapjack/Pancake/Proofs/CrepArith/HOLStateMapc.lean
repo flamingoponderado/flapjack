@@ -1140,6 +1140,60 @@ theorem crepSimpExpCorrect1NativeShiftCase
   simp only [evalCrepSemHOLExp]
   rw [hLeftEval, hRightEval]
 
+/-- Op case of HOL `simp_exp_correct1` (`crep_arithProofScript.sml:111`), where
+    `simp_exp (Op bop exps) = Op bop (MAP simp_exp exps)`
+    (`crep_arithScript.sml:75`).  The operand-list induction hypothesis is
+    HOL `eval_ind`'s Op premise at the current state (`∀e. MEM e es ⇒ P s e`)
+    and keeps HOL's unused result binder.  The successful full-expression
+    premise, code-only `mapc`, and complete optional `word_lab` result are
+    retained; the proof lifts the per-operand equalities through `OPT_MMAP`
+    with `OPT_MMAP_EQ_SOME_MONO` (`optMmapEqSomeMono`), as HOL does. -/
+@[hol "cakeml/pancake/proofs/crep_arithProofScript.sml" "simp_exp_correct1"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
+theorem crepSimpExpCorrect1NativeOpCase
+    {width : Nat} [NeZero width] {σ : Type}
+    (update : MlString × (List Nat × CrepProgHOL width) →
+      List Nat × CrepProgHOL width)
+    (state : CrepSemHOLState width σ) (operator : BinOp)
+    (expressions : List (CrepExpHOL width))
+    {resultType : Type} (_result : resultType)
+    (_h : evalCrepSemHOLExp state (.op operator expressions) ≠ none)
+    (ih : ∀ (child : CrepExpHOL width), child ∈ expressions →
+      ∀ {resultType : Type} (_result : resultType),
+        evalCrepSemHOLExp state child ≠ none →
+        evalCrepSemHOLExp (CrepSemHOLState.mapc update state)
+            (crepSimpExpHOL child) = evalCrepSemHOLExp state child) :
+    evalCrepSemHOLExp (CrepSemHOLState.mapc update state)
+        (crepSimpExpHOL (.op operator expressions)) =
+      evalCrepSemHOLExp state (.op operator expressions) := by
+  have hArgsSome : expressions.mapM (evalCrepSemHOLExp state) ≠ none := by
+    intro hNone
+    apply _h
+    rw [evalCrepSemHOLExp.eq_7, hNone]
+    rfl
+  obtain ⟨values, hArgs⟩ := Option.ne_none_iff_exists'.mp hArgsSome
+  have hSimplifiedArgs := optMmapEqSomeMono
+    (evalCrepSemHOLExp state)
+    (fun child => evalCrepSemHOLExp
+      (CrepSemHOLState.mapc update state) (crepSimpExpHOL child))
+    expressions values hArgs
+    (by
+      intro child value hmem hValue
+      have hChildIH := ih child hmem _result (by rw [hValue]; simp)
+      rw [hChildIH, hValue])
+  have hSimplifiedArgs' :
+      (expressions.map crepSimpExpHOL).mapM
+          (evalCrepSemHOLExp (CrepSemHOLState.mapc update state)) = some values := by
+    rw [List.mapM_map]
+    exact hSimplifiedArgs
+  have hSimplified :
+      crepSimpExpHOL (.op operator expressions) =
+        .op operator (expressions.map crepSimpExpHOL) := by
+    simp only [crepSimpExpHOL]
+  rw [hSimplified, evalCrepSemHOLExp.eq_7, evalCrepSemHOLExp.eq_7,
+    hSimplifiedArgs', hArgs]
+
 /-- Flapjack-only inversion lemma for the exact `dest_const` function. HOL's
     proof script invokes the analogous standard HOL equality reasoning
     directly; this local theorem exposes the constructor inversion needed by
