@@ -165,6 +165,38 @@ example : compInitialHOL (width := 8) compInitialContext compInitialLabels
     sptLookup_sptInsert_same, sptLookup_sptInsert_ne]
 
 example : compInitialHOL (width := 8) compInitialContext compInitialLabels
+    (.break 5) = some (.break 5, compInitialLabels) := by
+  rfl
+
+example : compInitialHOL (width := 8) compInitialContext compInitialLabels
+    (.continue 6) = some (.continue 6, compInitialLabels) := by
+  rfl
+
+example : compInitialHOL (width := 8) compInitialContext compInitialLabels
+    (.raise 10) = some (.raise 20, compInitialLabels) := by
+  simp [compInitialHOL, findVarHOL, compInitialContext,
+    sptLookup_sptInsert_same, sptLookup_sptInsert_ne]
+
+example : compInitialHOL (width := 8) compInitialContext compInitialLabels
+    (.return [10, 11, 12]) =
+      some (.return 0 [20, 22, 24], compInitialLabels) := by
+  simp [compInitialHOL, findVarHOL, compInitialContext,
+    sptLookup_sptInsert_same, sptLookup_sptInsert_ne]
+
+example : compInitialHOL (width := 8) compInitialContext compInitialLabels
+    .tick = some (.tick, compInitialLabels) := by
+  rfl
+
+example : compInitialHOL (width := 8) compInitialContext compInitialLabels
+    .fail = some (.skip, compInitialLabels) := by
+  rfl
+
+example : compInitialHOL (width := 8) compInitialContext compInitialLabels
+    (.locValue 10 3) = some (.locValue 20 3, compInitialLabels) := by
+  simp [compInitialHOL, findVarHOL, compInitialContext,
+    sptLookup_sptInsert_same, sptLookup_sptInsert_ne]
+
+example : compInitialHOL (width := 8) compInitialContext compInitialLabels
     (.store (.var 10) 11) = none := by
   rfl
 
@@ -195,6 +227,27 @@ def compInitialProbeChecks : List Bool :=
     (match compInitialHOL (width := 8) compInitialContext compInitialLabels
         (.primitive [10, 11] .addCarry [12, 13]) with
       | some (.skip, (7, 11)) => true | _ => false),
+    (match compInitialHOL (width := 8) compInitialContext compInitialLabels
+        (.break 5) with
+      | some (.break 5, (7, 11)) => true | _ => false),
+    (match compInitialHOL (width := 8) compInitialContext compInitialLabels
+        (.continue 6) with
+      | some (.continue 6, (7, 11)) => true | _ => false),
+    (match compInitialHOL (width := 8) compInitialContext compInitialLabels
+        (.raise 10) with
+      | some (.raise 20, (7, 11)) => true | _ => false),
+    (match compInitialHOL (width := 8) compInitialContext compInitialLabels
+        (.return [10, 11, 12]) with
+      | some (.return 0 [20, 22, 24], (7, 11)) => true | _ => false),
+    (match compInitialHOL (width := 8) compInitialContext compInitialLabels
+        .tick with
+      | some (.tick, (7, 11)) => true | _ => false),
+    (match compInitialHOL (width := 8) compInitialContext compInitialLabels
+        .fail with
+      | some (.skip, (7, 11)) => true | _ => false),
+    (match compInitialHOL (width := 8) compInitialContext compInitialLabels
+        (.locValue 10 3) with
+      | some (.locValue 20 3, (7, 11)) => true | _ => false),
     (match compInitialHOL (width := 8) compInitialContext compInitialLabels
         (.store (.var 10) 11) with
       | none => true | _ => false) ]
@@ -267,7 +320,7 @@ def runChecks : IO Bool := do
         (sptLookup 2 (mkNewCutsetHOL probeContext probeLive) : Option Unit) ==
           originalCutsetAbsent),
       ("LoopToWord comp_exp_def exact HOL rows", compExpProbeChecks.all id),
-      ("LoopToWord comp_def initial constructor exact HOL rows",
+      ("LoopToWord comp_def initial and control/result constructor exact HOL rows",
         compInitialProbeChecks.all id) ]
   let results ← checks.mapM fun (name, ok) => do
     if ok then

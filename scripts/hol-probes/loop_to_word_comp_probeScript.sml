@@ -39,3 +39,12 @@ print_eval "comp_longdiv" ``comp ^ctxt
   (loopLang$Arith (LLongDiv 10 11 12 13 14)) ^labels``;
 print_eval "comp_div" ``comp ^ctxt
   (loopLang$Arith (LDiv 10 12 13)) ^labels``;
+
+(* comp_def simple control/result clauses, loop_to_wordScript.sml:96-110 *)
+print_eval "comp_break" ``comp ^ctxt (loopLang$Break 5) ^labels``;
+print_eval "comp_continue" ``comp ^ctxt (loopLang$Continue 6) ^labels``;
+print_eval "comp_raise" ``comp ^ctxt (loopLang$Raise 10) ^labels``;
+print_eval "comp_return" ``comp ^ctxt (loopLang$Return [10;11;12]) ^labels``;
+print_eval "comp_tick" ``comp ^ctxt loopLang$Tick ^labels``;
+print_eval "comp_fail" ``comp ^ctxt loopLang$Fail ^labels``;
+print_eval "comp_locValue" ``comp ^ctxt (loopLang$LocValue 10 3) ^labels``;

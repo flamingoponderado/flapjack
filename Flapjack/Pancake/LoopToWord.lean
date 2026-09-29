@@ -333,6 +333,13 @@ def compInitialHOL {width : Nat} [NeZero width] (context : Spt Nat)
   | .arith (.div destination dividend divisor) =>
       some (.inst (.arith (.div (findVarHOL context destination)
         (findVarHOL context dividend) (findVarHOL context divisor))), labels)
+  | .break n => some (.break n, labels)
+  | .continue n => some (.continue n, labels)
+  | .raise v => some (.raise (findVarHOL context v), labels)
+  | .return vs => some (.return 0 (vs.map (findVarHOL context)), labels)
+  | .tick => some (.tick, labels)
+  | .fail => some (.skip, labels)
+  | .locValue n m => some (.locValue (findVarHOL context n) m, labels)
   | _ => none
 
 end Flapjack.LoopToWord

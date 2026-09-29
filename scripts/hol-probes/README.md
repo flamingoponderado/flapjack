@@ -48,10 +48,11 @@ loopLang-to-wordLang expression compiler `comp_exp_def` at
 `cakeml/pancake/loop_to_wordScript.sml:22-40`; its kernel-checked Lean replay
 is also `Flapjack.Test.LoopToWordExactParity`.
 `loop_to_word_comp_probe.out` records direct HOL EVAL rows for the initial
-constructor slice of `comp_def` at `cakeml/pancake/loop_to_wordScript.sml:56-77`:
-Skip, Assign, valid and malformed AddCarry Primitive arities, and all three
-Arith constructors. Its kernel-checked Lean replay is in
-`Flapjack.Test.LoopToWordExactParity`; the partial helper is intentionally
+constructor slice of `comp_def` at `cakeml/pancake/loop_to_wordScript.sml:56-77`
+and the simple control/result clauses at `:96-110`: Skip, Assign, valid and
+malformed AddCarry Primitive arities, all three Arith constructors, and
+Break/Continue/Raise/Return/Tick/Fail/LocValue. Its kernel-checked Lean replay
+is in `Flapjack.Test.LoopToWordExactParity`; the partial helper is intentionally
 untagged until every `comp_def` clause has an exact Lean port.
 `loop_live_comp_probe.out` records direct HOL EVAL rows for
 `loop_live$comp` at `cakeml/pancake/loop_liveScript.sml:217`; the Lean replay
