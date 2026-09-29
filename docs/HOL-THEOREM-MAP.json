@@ -21784,7 +21784,7 @@
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
     "hol_name": "ncompile_correct",
-    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NcompileCorrect.lean",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NCompileCorrect/While.lean",
     "lean_name": "crepToLoop_ncompile_correct_while",
     "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
     "fmap_as_finite_support_relation": [
