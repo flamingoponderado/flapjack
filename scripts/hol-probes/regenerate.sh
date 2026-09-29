@@ -1410,6 +1410,10 @@ run_probe loop_live_comp_probeScript.sml loop_live_comp_probe.out \
   skip return "$cake_dir/pancake/loop_liveScript.sml"
 run_probe loop_live_optimise_probeScript.sml loop_live_optimise_probe.out \
   skip shrink_loop_fixedpoint "$cake_dir/pancake/loop_liveScript.sml"
+run_probe loop_live_domain_list_delete_probeScript.sml \
+  loop_live_domain_list_delete_probe.out \
+  dld_kept dld_absent \
+  "$cake_dir/pancake/proofs/loop_liveProofScript.sml" "$cake_dir/pancake/proofs"
 run_probe ocompile_probeScript.sml ocompile_probe.out \
   skip ffi "$cake_dir/pancake/crep_to_loopScript.sml"
 run_probe loop_lang_assigned_vars_probeScript.sml \

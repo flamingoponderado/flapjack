@@ -21128,6 +21128,14 @@
 },
 {
   "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
+  "hol_name": "domain_list_delete",
+  "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+  "lean_name": "sptDomain_sptListDelete",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-ds5 source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.16) against domain_list_delete at loop_liveProofScript.sml:561-562 ([simp]): forall vs s. domain (list_delete vs s) = domain s DIFF set vs; rendered as the pointwise equivalence sptMem key (sptListDelete vs s) <-> sptMem key s and key notin vs (HOL set equality as the pointwise rendering already used for the sibling domain facts; sptMem is the reviewed rendering of k IN domain _ documented in Flapjack/Misc/Sptree.lean, set vs membership is k in vs, list_delete is sptListDelete, values polymorphic). Direct HOL EVAL rows in scripts/hol-probes/loop_live_domain_list_delete_probe.out replayed by Flapjack.Test.LoopLiveDomainListDeleteParity. No qualifiers: the statement has no word dimension and no finite-map field."
+},
+{
+  "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
   "hol_name": "compile_correct",
   "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
   "lean_name": "loopLive_compile_correct_loop",
