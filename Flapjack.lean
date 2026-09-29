@@ -12,6 +12,8 @@ import Flapjack.Misc.BinaryIeee
 import Flapjack.Misc.MachineIeee
 import Flapjack.Misc.BinaryIeeeRound
 import Flapjack.Misc.BinaryIeeeArith
+import Flapjack.Misc.BinaryIeeeRoundFp64
+import Flapjack.Misc.BinaryIeeeArithFp64
 import Flapjack.FpSemHOL
 import Flapjack.Basis.Pure.MlList
 import Flapjack.Pancake.PanLang
@@ -161,6 +163,7 @@ import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOkLemmas
 import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOkEvalExact
 import Flapjack.Pancake.Proofs.LoopToWord.LocalsRel
 import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelUpdates
+import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelLookups
 import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelAllDistinct
 import Flapjack.Pancake.Proofs.LoopToWord.FindVar
 import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelIntro

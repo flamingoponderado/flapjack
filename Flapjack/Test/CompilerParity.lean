@@ -109,6 +109,7 @@ import Flapjack.Test.LoopToWordGlobalsRelParity
 import Flapjack.Test.LoopToWordCallParity
 import Flapjack.Test.LoopToWordCompHOLParity
 import Flapjack.Test.LoopToWordAllDistinctMapParity
+import Flapjack.Test.LoopToWordLocalsRelLookupsParity
 import Flapjack.Test.LoopToWordFindVarParity
 import Flapjack.Test.LoopToWordLocalsRelIntroParity
 import Flapjack.Test.LoopDecClockParity
@@ -332,6 +333,8 @@ import Flapjack.Test.WordSemShMemParity
 import Flapjack.Test.MachineIeeeCompareParity
 import Flapjack.Test.BinaryIeeeRoundParity
 import Flapjack.Test.MachineIeeeArithSpecialParity
+import Flapjack.Test.BinaryIeeeRoundFp64Parity
+import Flapjack.Test.MachineIeeeArithRoundParity
 import Flapjack.Test.WordLangGoodHandlersParity
 import Flapjack.Test.NumSetAuditParity
 import Flapjack.Test.WordLangEveryNameParity
@@ -863,6 +866,7 @@ def main : IO Unit := do
     Flapjack.Test.LoopToWordCallParity.runChecks,
     Flapjack.Test.LoopToWordCompHOLParity.runChecks,
     Flapjack.Test.LoopToWordAllDistinctMapParity.runChecks,
+    Flapjack.Test.LoopToWordLocalsRelLookupsParity.runChecks,
     Flapjack.Test.LoopToWordFindVarParity.runChecks,
     Flapjack.Test.LoopToWordLocalsRelIntroParity.runChecks,
     Flapjack.Test.LoopDecClockParity.runChecks,
@@ -1094,6 +1098,8 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.MachineIeeeCompareParity.runChecks,
     Flapjack.Test.BinaryIeeeRoundParity.runChecks,
     Flapjack.Test.MachineIeeeArithSpecialParity.runChecks,
+    Flapjack.Test.BinaryIeeeRoundFp64Parity.runChecks,
+    Flapjack.Test.MachineIeeeArithRoundParity.runChecks,
     Flapjack.Test.WordLangGoodHandlersParity.runChecks,
     Flapjack.Test.NumSetAuditParity.runChecks,
     Flapjack.Test.WordLangEveryNameParity.runChecks,
