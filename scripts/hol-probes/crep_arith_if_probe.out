@@ -1,0 +1,8 @@
+simp_prog_if=T
+evaluate_if_true=T
+evaluate_if_true_state=T
+evaluate_if_false=T
+evaluate_if_false_state=T
+evaluate_if_error=T
+if_mapc_true=T
+if_mapc_commute=T
