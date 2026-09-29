@@ -101,6 +101,15 @@ recursive Seq, If, Loop, and Mark clauses of `comp_def` at
 label pair, If/Loop Tick placement, and Loop live cutsets. Its kernel-checked
 Lean replay is `Flapjack.Test.LoopToWordRecursiveParity`; the partial helper
 remains untagged until the other `comp_def` clauses are ported and assembled.
+`loop_to_word_compile_correct_cases_probe.out` rebuilds the specialized
+`loopSem$evaluate_ind` used by `loop_to_wordProof$compile_correct` and records
+the exact case conjuncts at `cakeml/pancake/proofs/loop_to_wordProofScript.sml`.
+The probe now includes Seq, whose two hypotheses are the first-command case
+and the second-command case conditional on the first returning `NONE`; its
+conclusion retains the complete existential target run and `resultCase`.
+Regenerate it with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=loop_to_word_compile_correct_cases_probeScript.sml
+bash scripts/hol-probes/regenerate.sh`.
 `loop_to_word_globals_rel_probe.out` records direct HOL EVAL rows for
 `globals_rel_def` at `cakeml/pancake/proofs/loop_to_wordProofScript.sml:27-30`:
 a matching `Temp` value, value/key mismatches, and the one-way empty-source
