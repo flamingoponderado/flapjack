@@ -73,7 +73,7 @@ theorem simpProgCorrectAssignCase {width : Nat} [NeZero width] {σ : Type} :
             congr 1
           have hexp := crepSimpExpCorrectNativeHOL update state src value hsrc
           rw [crepSimpProgHOL, evalCrepSemHOLProgExact_assign_holShape, hmap, hexp]
-          simp [CrepSemHOLState.mapc, crepSimpMapcsHOL, hlocal]
+          simp [crepSimpMapcsHOL, hlocal]
           rw [hcode]
 
 end Flapjack

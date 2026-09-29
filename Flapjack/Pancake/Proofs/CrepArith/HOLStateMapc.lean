@@ -1,4 +1,5 @@
 import Flapjack.Pancake.Semantics.CrepSem.HOLState
+import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
 import Flapjack.Pancake.Proofs.CrepArith
 import Flapjack.Pancake.Proofs.CrepArith.MulConst
 
@@ -50,8 +51,11 @@ private theorem crepHolState_eq_of_fields {α σ : Type}
   cases right
   simp_all
 
-/-- HOL's local `mapc f` state update, using `FMAP_MAP2` on the code map. -/
-def CrepSemHOLState.mapc {width : Nat} [NeZero width] {σ : Type}
+/-- HOL's local `mapc f` state update, using `FMAP_MAP2` on the code map.
+Declared as an `abbrev` so that projection equations (and the shared-memory
+domain decision procedure) reduce during type class synthesis, exactly as for
+the clock-shift abbreviation `crepStateAddClock`. -/
+abbrev CrepSemHOLState.mapc {width : Nat} [NeZero width] {σ : Type}
     (f : MlString × (List Nat × CrepProgHOL width) →
       List Nat × CrepProgHOL width)
     (state : CrepSemHOLState width σ) : CrepSemHOLState width σ :=
@@ -994,7 +998,6 @@ theorem crepSimpExpCorrect1NativeLoadCase
   simp only [crepSimpExpHOL]
   simp only [evalCrepSemHOLExp]
   rw [hAddressEval]
-  rfl
 
 /-- Load32 case of HOL `simp_exp_correct1` (`crep_arithProofScript.sml:111`).
     The recursive premise uses the current state, as in HOL `eval_ind`, and
@@ -1026,7 +1029,6 @@ theorem crepSimpExpCorrect1NativeLoad32Case
   simp only [crepSimpExpHOL]
   simp only [evalCrepSemHOLExp]
   rw [hAddressEval]
-  rfl
 
 /-- LoadByte case of HOL `simp_exp_correct1` (`crep_arithProofScript.sml:111`).
     Its recursive premise uses the current state, as in HOL `eval_ind`, and
@@ -1058,7 +1060,6 @@ theorem crepSimpExpCorrect1NativeLoadByteCase
   simp only [crepSimpExpHOL]
   simp only [evalCrepSemHOLExp]
   rw [hAddressEval]
-  rfl
 
 /-- Cmp case of HOL `simp_exp_correct1` (`crep_arithProofScript.sml:111`).
     Both child induction hypotheses use the current state, as in HOL
@@ -1644,5 +1645,76 @@ theorem crepOptMmapSimpExpCorrectNativeHOL
   exact optMmapEqSomeMono (evalCrepSemHOLExp state) _ es vs h
     (fun child value _ hValue =>
       crepSimpExpCorrectNativeHOL update state child value hValue)
+
+/-! ## The proof-script-local `sh_mem_op_code`
+
+`crep_arithProofScript.sml:173-180` proves that the proof-script-local `mapc`
+code rewrite commutes with the shared-memory operation. `sh_mem_op` reads only
+the locals, the shared-memory domain and the FFI, and writes only the locals
+and the FFI, so the code map is untouched on both sides. The two lemmas below
+are the exact `sh_mem_load`/`sh_mem_store` instances of the HOL
+`Cases_on op` step; they are Flapjack-specific support with no separate HOL
+original. -/
+
+private theorem crepShMemLoadExactHOL_mapc {width : Nat} [NeZero width] {σ : Type}
+    (f : MlString × (List Nat × CrepProgHOL width) → List Nat × CrepProgHOL width)
+    (name : Nat) (address : BitVec width) (nb : Nat)
+    (state : CrepSemHOLState width σ) [DecidablePred state.shMemaddrs]
+    (r : Option (CrepResultHOLExact width)) (s' : CrepSemHOLState width σ)
+    (h : crepShMemLoadExactHOL name address nb state = (r, s')) :
+    crepShMemLoadExactHOL name address nb (state.mapc f) = (r, s'.mapc f) := by
+  have hs : s' = (crepShMemLoadExactHOL name address nb state).2 := by rw [h]
+  subst hs
+  have hr : r = (crepShMemLoadExactHOL name address nb state).1 := by rw [h]
+  subst hr
+  unfold crepShMemLoadExactHOL
+  simp only [CrepSemHOLState.mapc]
+  split <;> (try split) <;> (try split) <;> (try split) <;> rfl
+
+private theorem crepShMemStoreExactHOL_mapc {width : Nat} [NeZero width] {σ : Type}
+    (f : MlString × (List Nat × CrepProgHOL width) → List Nat × CrepProgHOL width)
+    (name : Nat) (address : BitVec width) (nb : Nat)
+    (state : CrepSemHOLState width σ) [DecidablePred state.shMemaddrs]
+    (r : Option (CrepResultHOLExact width)) (s' : CrepSemHOLState width σ)
+    (h : crepShMemStoreExactHOL name address nb state = (r, s')) :
+    crepShMemStoreExactHOL name address nb (state.mapc f) = (r, s'.mapc f) := by
+  have hs : s' = (crepShMemStoreExactHOL name address nb state).2 := by rw [h]
+  subst hs
+  have hr : r = (crepShMemStoreExactHOL name address nb state).1 := by rw [h]
+  subst hr
+  unfold crepShMemStoreExactHOL
+  simp only [CrepSemHOLState.mapc]
+  split <;> (try split) <;> (try split) <;> (try split) <;> (try split) <;> rfl
+
+/-- Exact port of HOL `sh_mem_op_code` (`crep_arithProofScript.sml:173-180`):
+    the proof-script-local `mapc f` code update commutes with `sh_mem_op`. HOL
+    writes the pair map as `I ## mapc f`; here it is `Prod.map id
+    (CrepSemHOLState.mapc f)`. The operator/register/address/state binder order
+    is HOL's `op p addr s`. The `[DecidablePred state.shMemaddrs]` argument is
+    Lean's decision procedure for the shared-memory domain predicate (HOL uses
+    classical decidability of `addr IN s.sh_memaddrs`), exactly as in the
+    tagged `sh_mem_load_def`/`sh_mem_store_def`/`sh_mem_op_def` ports; there is
+    no additional mathematical premise. -/
+@[hol "cakeml/pancake/proofs/crep_arithProofScript.sml" "sh_mem_op_code"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
+theorem crepShMemOpExactHOL_mapc {width : Nat} [NeZero width] {σ : Type}
+    (f : MlString × (List Nat × CrepProgHOL width) → List Nat × CrepProgHOL width)
+    (operator : WordMemOp) (name : Nat) (address : BitVec width)
+    (state : CrepSemHOLState width σ) [DecidablePred state.shMemaddrs] :
+    crepShMemOpExactHOL operator name address (state.mapc f) =
+      Prod.map id (CrepSemHOLState.mapc f)
+        (crepShMemOpExactHOL operator name address state) := by
+  cases operator <;>
+    simp only [crepShMemOpExactHOL, Prod.map, id_eq] <;>
+    first
+    | exact crepShMemLoadExactHOL_mapc f name address 0 state _ _ rfl
+    | exact crepShMemStoreExactHOL_mapc f name address 0 state _ _ rfl
+    | exact crepShMemLoadExactHOL_mapc f name address 1 state _ _ rfl
+    | exact crepShMemStoreExactHOL_mapc f name address 1 state _ _ rfl
+    | exact crepShMemLoadExactHOL_mapc f name address 2 state _ _ rfl
+    | exact crepShMemStoreExactHOL_mapc f name address 2 state _ _ rfl
+    | exact crepShMemLoadExactHOL_mapc f name address 4 state _ _ rfl
+    | exact crepShMemStoreExactHOL_mapc f name address 4 state _ _ rfl
 
 end Flapjack
