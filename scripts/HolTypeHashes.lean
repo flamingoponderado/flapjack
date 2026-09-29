@@ -6,6 +6,7 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.Env
 import Flapjack.Compiler.Backend.Semantics.WordSem.CallHelpers
 import Flapjack.Compiler.Backend.Semantics.WordSem.Alloc
 import Flapjack.Compiler.Backend.Semantics.WordSem.ShMem
+import Flapjack.FpSemHOL
 import Flapjack.Basis.Pure.MlList
 import Flapjack.Compiler.Backend.RegAlloc
 import Flapjack.AstHOL
@@ -77,6 +78,7 @@ import Flapjack.Pancake.CrepToLoop.Proofs.CallPreserveStateCodeLocalsRel
 import Flapjack.Pancake.CrepToLoop.StateRel
 import Flapjack.Pancake.LoopToWord
 import Flapjack.Pancake.LoopToWord.Proofs.RelationsExact
+import Flapjack.Pancake.LoopToWord.Proofs.FindVarExact
 import Flapjack.Pancake.Proofs.LoopToWord.LocalsRel
 import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelUpdates
 import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelAllDistinct
