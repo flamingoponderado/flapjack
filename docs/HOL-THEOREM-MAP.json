@@ -11424,6 +11424,22 @@
     "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.9.16.2) against loop_to_wordProofScript.sml:293-296. HOL states forall n ps l, domain (make_ctxt n ps l) = domain l UNION set ps. Lean preserves all binders and equality, rendering domain membership as exact sptDomain/sptMem over Spt Nat and set union as predicate disjunction with List membership. makeCtxtHOL is the constructor-for-constructor tagged loop_to_wordScript.sml:152-155 definition over the same exact Spt carrier; sptMem_sptInsert supplies the inserted-name disjunction. There are no additional premises or width, array, finite-map, or mlstring representation changes. Focused empty, nonempty, and duplicate-list tests are in LoopToWordExactParity.lean."
   },
   {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "sptInsert_preserves_bounded_lookup_injectivity",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific private induction strengthening used to port make_ctxt_inj: insertion of the next fresh register preserves uniqueness and advances the bound by two. HOL proves this obligation inside make_ctxt_inj rather than declaring a separate theorem."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "make_ctxt_inj",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "makeCtxtHOL_inj",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.9.16.3) against loop_to_wordProofScript.sml:296-300. HOL quantifies xs, l, n, assumes for all x y v that two lookups of the same SOME v in l imply x=y and v<n, and concludes that two lookups of the same SOME v in make_ctxt n xs l imply x=y. Lean keeps that same result variable v, quantifier order, bound, and conclusion over the exact Spt Nat carrier; makeCtxtHOL and sptInsert are the exact tagged HOL definitions. No ALL_DISTINCT, extra premise, changed lookup result shape, or carrier qualifier is introduced. The proof establishes HOL's induction obligation that inserting the next register preserves injectivity below next+2. Regression exercises repeated names [7,8,7], where the last insertion maps 7 to 8 and 8 to 6."
+  },
+  {
     "hol_path": "cakeml/pancake/pan_commonScript.sml",
     "hol_name": "distinct_lists_def",
     "lean_path": "Flapjack/Pancake/PanCommon.lean",
@@ -24116,15 +24132,6 @@
     "reviewer": "flapjack-luna-c source comparison (2026-09-29; bead flapjack-pxn.18.5.9.17.2) against loop_to_wordProofScript.sml:389-393. HOL states domain (mk_new_cutset ctxt x1) <> {} with no premise. Lean quantifies the exact Spt Nat context and Spt Unit live-set carriers and states sptDomain (mkNewCutsetHOL context live) <> (fun _ => False), the predicate-set rendering of domain nonemptiness. The tagged mkNewCutsetHOL definition is the direct Spt construction and inserts register zero, establishing the same conclusion. No word, finite-map, list, name, evaluator, or extra-hypothesis translation applies."
   },
   {
-    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
-    "hol_name": "TAKE_1_word_to_bytes",
-    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/WordToBytes.lean",
-    "lean_name": "takeOneWordToBytesHOL",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "reviewer": "flapjack-ds9 source comparison (2026-09-29; bead flapjack-pxn.18.5.9.20.1) against loop_to_wordProofScript.sml:1449-1451. HOL states good_dimindex(:'a) ==> TAKE 1 (word_to_bytes (w:'a word) F) = [get_byte 0w w F]. Lean keeps the same single side condition goodDimindex width and concludes (panWordToBytesHOL w false).take 1 = [getByteHOL8 0 w false], with the width-indexed zero address 0w and the same true/false endian flag. word_to_bytes is the repository-reviewed untagged standard-library rendering panWordToBytesHOL (List (BitVec 8)) and get_byte is getByteHOL8 (BitVec 8), the exact pair declared in the tagged wordSem shared-memory ports; good_dimindex is the tagged goodDimindex. The only carrier translation is HOL's type-indexed 'a word to positive-width BitVec width (and its fixed word8 to BitVec 8), so the qualifier is words_as_type_indexed_bitvec. No extra hypothesis, weakened conclusion, or changed side condition. Direct HOL EVAL rows for both sides at widths 32 and 64 are in scripts/hol-probes/loop_to_word_take_word_to_bytes_probe.out; the kernel-checked replay is Flapjack.Test.LoopToWordTakeWordToBytesParity.",
-    "words_as_type_indexed_bitvec": true
-  },
-  {
     "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
     "hol_name": "env_to_list_lookup_equiv",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/EnvListSupport.lean",
@@ -24132,6 +24139,15 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-c source comparison (2026-09-29; bead flapjack-pxn.18.5.9.17.1) against wordPropsScript.sml:4636-4663. HOL has exactly the premise env_to_list y f = (q,r) and concludes both (!n. ALOOKUP q n = lookup n y) and (!x1 x2. MEM (x1,x2) q ==> lookup x1 y = SOME x2); Lean retains the same result equation, tuple/list carriers, two conjuncts, key/value quantifiers, and no extra premise. Spt ALOOKUP uses the untagged first-match sptAListLookup rendering; the proof uses the exact env_to_list sort/rearrange entry-preservation lemmas and Spt toAList membership/lookup support, deriving uniqueness from functional Spt lookup. WordLocW's type-indexed words use words_as_type_indexed_bitvec; no state, evaluator, map-carrier, or list-to-array translation is introduced."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "TAKE_1_word_to_bytes",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/WordToBytes.lean",
+    "lean_name": "takeOneWordToBytesHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-ds9 source comparison (2026-09-29; bead flapjack-pxn.18.5.9.20.1) against loop_to_wordProofScript.sml:1449-1451. HOL states good_dimindex(:'a) ==> TAKE 1 (word_to_bytes (w:'a word) F) = [get_byte 0w w F]. Lean keeps the same single side condition goodDimindex width and concludes (panWordToBytesHOL w false).take 1 = [getByteHOL8 0 w false], with the width-indexed zero address 0w and the same true/false endian flag. word_to_bytes is the repository-reviewed untagged standard-library rendering panWordToBytesHOL (List (BitVec 8)) and get_byte is getByteHOL8 (BitVec 8), the exact pair declared in the tagged wordSem shared-memory ports; good_dimindex is the tagged goodDimindex. The only carrier translation is HOL's type-indexed 'a word to positive-width BitVec width (and its fixed word8 to BitVec 8), so the qualifier is words_as_type_indexed_bitvec. No extra hypothesis, weakened conclusion, or changed side condition. Direct HOL EVAL rows for both sides at widths 32 and 64 are in scripts/hol-probes/loop_to_word_take_word_to_bytes_probe.out; the kernel-checked replay is Flapjack.Test.LoopToWordTakeWordToBytesParity.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Inst.lean",
