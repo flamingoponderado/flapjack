@@ -15,24 +15,17 @@ location in its `LoopState` locals/memory, so it is not a faithful `loopSem$eval
 adapter either.
 
 This module defines a candidate production adapter `loopMachineEvalHook` and
-proves that, under the exact/production state relation
-`LoopSemStateFiniteExact.prodRel`, it agrees with the exact
-`LoopSemStateFiniteExact.eval` on the `HolLoopExp.const` and `.var` expressions
-carried across by `holLoopExpToExecutable`. It also proves the `Lookup` clause
-and the `Load` clause from the exact relation. The `Var` statement covers a
-present word-valued local, a present location-valued local, and an absent local,
-i.e. the complete word/location payload, and it is derived from the `prodRel`
-local-lookup conjunct rather than assumed as a hook equation. `Load` takes the
-agreement for its address as a recursive premise; its proof handles failed and
-location-valued address evaluation, an address outside `mdomain`, and both word
-and location-valued memory cells.
-
-Only `Const`, `Var`, `Lookup`, `BaseAddr`, `TopAddr`, and the `Load` case with
-its recursive address premise are verified here; `Op`/`Shift`, other adapter
-cases, and wiring to an executed caller remain open. These are Flapjack-specific
-cross-carrier bridges between the exact finite-support carrier and the
-production carrier; none ports a HOL declaration, so they intentionally carry
-no `@[hol]` tag.
+proves that it agrees with exact `LoopSemStateFiniteExact.eval` for every
+`HolLoopExp` under `LoopSemStateFiniteExact.prodRel`; the constructor cases are
+assembled in
+`Flapjack.LoopSemStateFiniteExact.EvaluateCases.loopMachineEvalHook_holLoopExp_prodRel`.
+The `Var` case preserves present word and location payloads as well as absent
+locals. `Load` uses a recursive address premise, `Op` uses recursive premises
+for every operand, and `Shift` uses premises for both children. These are
+Flapjack-specific cross-carrier bridges between the exact finite-support
+carrier and production carrier; none ports a HOL declaration, so they
+intentionally carry no `@[hol]` tag. The candidate adapter's wiring to an
+executed caller remains open.
 -/
 
 namespace Flapjack
@@ -50,10 +43,10 @@ def loopValueToWordLocW {width : Nat} [NeZero width] :
     word, `Var` reads the local cell (word or location, or `none` when absent),
     `Lookup` reads globals, `Load` consults `mdomain`/`memory`, `Op`/`Shift`
     reuse the reviewed `wordOpHOL`/`wordShiftHOL`, and `BaseAddr`/`TopAddr`
-    return the state's address bounds. `Const`, `Var`, `Lookup`, `BaseAddr`, and
-    `TopAddr` have unconditional exact/production agreement below; `Load` has
-    agreement when supplied the recursive agreement for its address. `Op` and
-    `Shift` still need separate review.
+    return the state's address bounds. The theorem
+    `EvaluateCases.loopMachineEvalHook_holLoopExp_prodRel` proves the candidate
+    agrees with exact `eval` for all faithful expression constructors under
+    `prodRel`.
 
     Only the `crepOp`/`cmp` constructors, which the executable `LoopExp` adds but
     the faithful `HolLoopExp` does not contain, have no source counterpart and
