@@ -39,6 +39,7 @@ import Flapjack.Pancake.CrepToLoop.Proofs.CrepEvalHelpers
 import Flapjack.Pancake.CrepToLoop.Proofs.CompExpOutRel
 import Flapjack.Pancake.CrepToLoop.Proofs.CompExpPreservesEval
 import Flapjack.Pancake.CrepToLoop.Proofs.RelationsExact
+import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Leaf
 import Flapjack.Pancake.CrepToLoop.Proofs.LocalsRelHelpers
 import Flapjack.Pancake.CrepToLoop.Proofs.LocalsRelOptMmap
 import Flapjack.Pancake.CrepToLoop.Proofs.CompExpPreservesEval.Leaf
