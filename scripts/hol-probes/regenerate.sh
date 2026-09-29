@@ -2109,6 +2109,17 @@ run_probe crep_arith_sh_mem_op_code_probeScript.sml crep_arith_sh_mem_op_code_pr
   sh_mem_op_code_store16_err sh_mem_op_code_load32_err sh_mem_op_code_store32_err \
   "$cake_dir/pancake/proofs/crep_arithProofScript.sml" "$cake_dir/pancake/proofs"
 
+# The StoreGlob case of crep_arithProofScript.sml:184-212 `simp_prog_correct`.
+# HOL `simp_prog (StoreGlob g exp) = StoreGlob g (simp_exp exp)` and
+# `evaluate (StoreGlob dst src, s)` evaluate only `src` into
+# `(NONE, set_globals dst w s)` (or `(SOME Error, s)`); the local `mapc`
+# overload is inlined, and `storeglob_mapc_commute` pins the code-only `mapc`
+# commutation with `set_globals`.
+run_probe crep_arith_store_glob_probeScript.sml crep_arith_store_glob_probe.out \
+  simp_prog_storeglob evaluate_storeglob_const evaluate_storeglob_mapc \
+  storeglob_mapc_commute evaluate_storeglob_missing_var \
+  "$cake_dir/pancake/proofs/crep_arithProofScript.sml" "$cake_dir/pancake/proofs"
+
 # The loopSem evaluate_ind statement (rebound through fix_clock_evaluate at
 # loopSemScript.sml:497) is likewise tdefn-generated; capture it for the exact
 # Lean port used by loop_liveProof compile_correct's `recInduct evaluate_ind`.
