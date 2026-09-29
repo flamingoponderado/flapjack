@@ -1,4 +1,6 @@
 import Flapjack.Pancake.Semantics.CrepSem.HOLState
+import Flapjack.Pancake.Semantics.CrepSem.LookupCode
+import Flapjack.Pancake.Semantics.CrepSem.EvaluateInd
 import Flapjack.Pancake.Proofs.CrepArith
 import Flapjack.Pancake.Proofs.CrepArith.MulConst
 
@@ -1644,5 +1646,74 @@ theorem crepOptMmapSimpExpCorrectNativeHOL
   exact optMmapEqSomeMono (evalCrepSemHOLExp state) _ es vs h
     (fun child value _ hValue =>
       crepSimpExpCorrectNativeHOL update state child value hValue)
+
+
+/-- Exact HOL `lookup_code` (`crep_arithProofScript.sml:162-164`, `[local]`):
+    `lookup_code (FMAP_MAP2 (\(s,n,p). (n, simp_prog p)) c) fname args len =
+      OPTION_MAP (simp_prog ## I) (lookup_code c fname args len)`, with
+    `c fname args len` free.  `c` is the HOL finite map `funname |-> (varname
+    list # prog)` in the canonical `HolFiniteMapExact` carrier (hence the
+    standalone relation-qualifier entry `c`), `FMAP_MAP2` is
+    `HolFiniteMapExact.map2`, and `lookup_code` is the tagged `lookupCodeHOL`
+    applied to the map's `lookup` function, the same way the tagged Crep
+    evaluator reads `s.code`.  `f ## I` is `Prod.map f id`.  No premise. -/
+@[hol "cakeml/pancake/proofs/crep_arithProofScript.sml" "lookup_code"
+  (fmap_as_finite_support_relation := [c])
+  (words_as_type_indexed_bitvec)]
+theorem crepArithLookupCodeNativeHOL {width : Nat} [NeZero width]
+    (c : HolFiniteMapExact MlString (List Nat × CrepProgHOL width))
+    (fname : MlString) (args : List (HolWordLab width)) (len : Nat) :
+    lookupCodeHOL
+        (c.map2 (fun (_, n, p) => (n, crepSimpProgHOL p))).lookup fname args len =
+      (lookupCodeHOL c.lookup fname args len).map (Prod.map crepSimpProgHOL id) := by
+  unfold lookupCodeHOL
+  simp only [FLOOKUP, HolFiniteMapExact.lookup_map2]
+  cases hc : c.lookup fname with
+  | none => rfl
+  | some entry =>
+      obtain ⟨parameters, body⟩ := entry
+      simp only [Option.map_some]
+      split <;> rfl
+
+/-- The `lookup_code` lemma at the finite-support wrapper `lookupCodeHOLFinite`
+    that the tagged Crep evaluator's Call clause uses on `(mapcs s).code`:
+    looking up in the `simp_prog`-mapped code returns the simplified body with
+    the same callee locals.  Flapjack-only companion of
+    `crepArithLookupCodeNativeHOL`, untagged. -/
+theorem crepArithLookupCodeHOLFinite_mapcs {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (fname : MlString) (args : List (HolWordLab width)) (len : Nat) :
+    lookupCodeHOLFinite
+        (state.mapc (fun (_, n, p) => (n, crepSimpProgHOL p))).code.lookup fname args len =
+      (lookupCodeHOLFinite state.code.lookup fname args len).map
+        (Prod.map crepSimpProgHOL id) := by
+  have hbase := crepArithLookupCodeNativeHOL state.code fname args len
+  unfold lookupCodeHOLFinite
+  split
+  · rename_i hnone
+    split
+    · rfl
+    · rename_i body locals hsome
+      change lookupCodeHOL
+          (state.code.map2 (fun (_, n, p) => (n, crepSimpProgHOL p))).lookup
+          fname args len = none at hnone
+      rw [hbase, hsome] at hnone
+      cases hnone
+  · rename_i body locals hsome
+    split
+    · rename_i hnone
+      change lookupCodeHOL
+          (state.code.map2 (fun (_, n, p) => (n, crepSimpProgHOL p))).lookup
+          fname args len = some (body, locals) at hsome
+      rw [hbase, hnone] at hsome
+      cases hsome
+    · rename_i body' locals' hsome'
+      change lookupCodeHOL
+          (state.code.map2 (fun (_, n, p) => (n, crepSimpProgHOL p))).lookup
+          fname args len = some (body, locals) at hsome
+      rw [hbase, hsome'] at hsome
+      simp only [Option.map_some, Prod.map, Option.some.injEq, Prod.mk.injEq] at hsome
+      obtain ⟨rfl, rfl⟩ := hsome
+      rfl
 
 end Flapjack

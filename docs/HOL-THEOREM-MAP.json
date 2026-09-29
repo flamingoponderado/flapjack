@@ -22509,5 +22509,25 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.4.11): HOL opt_mmap_simp_exp_correct (crep_arithProofScript.sml:150-152): OPT_MMAP (crepSem$eval s) es = SOME vs ==> OPT_MMAP (eval (mapc f s)) (MAP simp_exp es) = SOME vs, with f s es vs free. Lean crepOptMmapSimpExpCorrectNativeHOL binds update (f), state, es : List CrepExpHOL and vs : List HolWordLab, with the same premise and conclusion. HOL OPT_MMAP is List.mapM and MAP is List.map, over the tagged native evalCrepSemHOLExp, crepSimpExpHOL and CrepSemHOLState.mapc. There is no other premise. The proof is elementwise from the tagged simp_exp_correct (crepSimpExpCorrectNativeHOL) via the tagged OPT_MMAP_EQ_SOME_MONO port optMmapEqSomeMono and List.mapM_map, mirroring HOL's OPT_MMAP_MAP_o/OPT_MMAP_CONG. Qualifiers as for simp_exp_correct. Axioms: propext, Classical.choice, Quot.sound."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "crepArithLookupCodeNativeHOL",
+    "hol_path": "cakeml/pancake/proofs/crep_arithProofScript.sml",
+    "hol_name": "lookup_code",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "c"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.4.12): HOL local lookup_code (crep_arithProofScript.sml:162-164): lookup_code (FMAP_MAP2 (\\(s,n,p). (n, simp_prog p)) c) fname args len = OPTION_MAP (simp_prog ## I) (lookup_code c fname args len), with c fname args len free and no premise. Lean crepArithLookupCodeNativeHOL binds c : HolFiniteMapExact MlString (List Nat × CrepProgHOL width) (HOL funname |-> varname list # prog, the canonical finite-support carrier, recorded by the standalone relation-qualifier entry c), fname : MlString, args : List HolWordLab and len : Nat, and states lookupCodeHOL (c.map2 (fun (_, n, p) => (n, crepSimpProgHOL p))).lookup fname args len = (lookupCodeHOL c.lookup fname args len).map (Prod.map crepSimpProgHOL id). Carriers: lookup_code is the tagged lookupCodeHOL (crepSemScript.sml:76-84) read through the map's lookup function, exactly as the tagged Crep evaluator reads s.code. FMAP_MAP2 is HolFiniteMapExact.map2 (key-aware value map, the same encoding used by CrepSemHOLState.mapc), simp_prog is the tagged crepSimpProgHOL, f ## I is Prod.map f id, and names are exact MlString. It has the same equality and no side condition. The proof follows HOL's: unfold lookup_code, FLOOKUP of the mapped map, and case on the lookup and the length/ALL_DISTINCT guard. words_as_type_indexed_bitvec for BitVec width with NeZero. The untagged companion crepArithLookupCodeHOLFinite_mapcs restates it at the evaluator's lookupCodeHOLFinite on (mapcs s).code. The production-carrier variants crepArithLookupCodeSimpProg/W remain documented_mismatch. Axioms: propext, Quot.sound."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "crepArithLookupCodeHOLFinite_mapcs",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only companion (bead flapjack-pxn.18.5.4.12) of the tagged crepArithLookupCodeNativeHOL (HOL local lookup_code, crep_arithProofScript.sml:162). It restates that lemma at the untagged finite-support wrapper lookupCodeHOLFinite that the tagged Crep evaluator's Call clause applies to (mapcs s).code: the simp_prog-mapped lookup returns the simplified body with the same callee locals. It is not a HOL declaration; it bridges the wrapper for native simp_prog_correct Call/DecCall cases."
   }
 ]
