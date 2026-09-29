@@ -1,4 +1,5 @@
 import Flapjack.Pancake.LoopToWord
+import Flapjack.Pancake.LoopToWord.Proofs.FindVarExact
 import Flapjack.Pancake.Proofs.LoopToWord.LocalsRel
 import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelUpdates
 
@@ -51,6 +52,24 @@ def originalCutsetAbsent : Option Unit := none
   originalCutsetFive
 #guard (sptLookup 2 (mkNewCutsetHOL probeContext probeLive) : Option Unit) ==
   originalCutsetAbsent
+
+/-! ## The HOL proof's `find_var_neq_0_ctxt` context condition
+
+The exact theorem is also applied to a concrete even, nonzero Spt context, so
+the source-level lookup and `domain` renderings are exercised together. -/
+
+def findVarEvenContext : Spt Nat := sptInsert 0 2 .ln
+
+example : findVarHOL findVarEvenContext 0 ≠ 0 := by
+  apply findVarNeZeroContextHOLExact findVarEvenContext 0
+  · intro n m hlookup
+    by_cases hn : n = 0
+    · subst n
+      simp [findVarEvenContext, sptLookup] at hlookup
+      subst m
+      constructor <;> decide
+    · simp [findVarEvenContext, sptLookup, hn] at hlookup
+  · simp [findVarEvenContext, sptMem, sptDomain, sptLookup]
 
 /-! ## Original-domain parity for loop_to_wordProof `locals_rel_def`
 

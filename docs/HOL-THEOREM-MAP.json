@@ -23954,5 +23954,13 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.9.15.1) against loop_to_wordProofScript.sml:210-220. HOL premises are exactly locals_rel ctxt lcl lcl' AND FORALL n. n IN domain ctxt implies find_var ctxt n differs from k; conclusion only inserts (k,x) into target locals. Lean retains the conjunction and universal noncollision premise as sptMem/findVarHOL, without strengthening it, using Spt insertion. The exact Spt and WordLocW carriers and sole words_as_type_indexed_bitvec qualifier match locals_rel_def; no finite-map/list/name qualifier applies. Direct original HOL rows mapped insert and target-register collision are in loop_to_word_locals_rel_probe.out and kernel-replayed in LoopToWordExactParity."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/FindVarExact.lean",
+    "lean_name": "findVarNeZeroContextHOLExact",
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "find_var_neq_0_ctxt",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-b source comparison (2026-09-29; bead flapjack-pxn.18.5.9.14.2) against loop_to_wordProofScript.sml:178-184. HOL states ((forall n m. lookup n ctxt = SOME m implies m <> 0 and EVEN m) and v IN domain ctxt) implies find_var ctxt v <> 0. Lean preserves the same two premises, quantifier order, lookup direction, and conclusion. HOL ctxt is the exact spt num_map carrier rendered by Spt Nat; lookup is sptLookup, domain membership is sptMem with its kernel-checked equivalence to an existential successful lookup in Misc.Sptree, and find_var is the tagged findVarHOL definition (lookup default 0). HOL EVEN is rendered by % 2 = 0, matching the Spt lookup parity equations. No word, fmap, or list representation qualifier applies. A concrete nonzero even singleton context applies the theorem in LoopToWordExactParity."
   }
 ]
