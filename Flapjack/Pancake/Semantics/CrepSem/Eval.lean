@@ -1295,11 +1295,25 @@ def holFiniteWordRiscVMemoryModel {ι : Type u}
     (RiscV.panRiscVMemoryModelForEndian bigEndian)
 
 /-! HOL `byte_align_def` clears the low bits selected by
-    `LOG2 (dimindex DIV 8)`. This differs from target rounding when a word has
-    a non-power-of-two number of bytes. -/
+    `LOG2 (dimindex DIV 8)`. -/
 def holByteAlignBitVec [NeZero width] (address : BitVec width) : BitVec width :=
   let alignment := 2 ^ Nat.log2 (width / 8)
   BitVec.ofNat width ((address.toNat / alignment) * alignment)
+
+/-- For `width ≥ 8`, production RISC-V alignment with
+    `bytesInWord = width / 8` is HOL's `byte_align`, including non-power-of-two
+    byte counts such as width 24 (bead `flapjack-pxn.18.5.4.3.4`). HOL leaves
+    `LOG2 (width / 8)` unspecified when `width < 8`, so this Flapjack-only
+    bridge makes no claim there. -/
+theorem panRiscVByteAlign_bytesInWord_eq_holByteAlignBitVec [NeZero width]
+    (hwidth : 8 ≤ width) (address : BitVec width) :
+    RiscV.panRiscVByteAlign (BitVec.ofNat width (width / 8)) address =
+      holByteAlignBitVec address := by
+  have hlt : width / 8 < 2 ^ width :=
+    Nat.lt_of_le_of_lt (Nat.div_le_self _ _) (Nat.lt_two_pow_self)
+  have hbytes0 : width / 8 ≠ 0 := by omega
+  simp [RiscV.panRiscVByteAlign, holByteAlignBitVec,
+    Nat.mod_eq_of_lt hlt, hbytes0]
 
 /-! Source-shaped finite-word memory adapter. Its byteAlign, getByte, and
     aligned fields encode the imported HOL formulas through the finite-word /
@@ -1307,9 +1321,10 @@ def holByteAlignBitVec [NeZero width] (address : BitVec width) : BitVec width :=
     HOL's `set_byte_def`, and `wordOfBytes` follows the recursive
     `word_of_bytes_def`. Generic finite-word/BitVec transport is now proved for
     byte alignment, `setByte`, recursive `wordOfBytes`, and the byte/word load
-    helpers. This does not identify the transported model with the production
-    RISC-V memory model at every width (the 24-bit alignment counterexample is
-    documented above), or identify the explicit enumeration with HOL's
+    helpers. Production alignment corresponds to HOL `byte_align` for widths
+    of at least 8; below 8, HOL's zero-byte `LOG2` case is unspecified. This
+    does not identify the transported model with the production RISC-V memory
+    model field by field, or identify the explicit enumeration with HOL's
     implicit `finite_index` dictionary. Word operators, comparisons, and shifts
     use generic source-level definitions. This runtime supports the untagged
     recursive preservation theorem; production evaluator correspondence and
