@@ -1,21 +1,22 @@
-import Flapjack.Pancake.Semantics.LoopSem
+import Flapjack.Pancake.Semantics.LoopSemStateExact.ProductionExtCall
 import Flapjack.HolRef
 
 /-!
 # Loop `ExtCall` FFI boundary regression
 
-Exercises `loopMachineExtCall`, the 64-bit RISC-V instance of the source
+Exercises the production `loopMachineExtCall` adapter, which uses the tagged
+exact `wordSem` byte operations for the 64-bit RISC-V instance of the source
 `ExtCall` case of `loopSem$evaluate_def` (`loopSemScript.sml:427-440`).
 
 The observations are compared with the direct 64-bit HOL oracle
 `scripts/hol-probes/loop_sem_ffi_rv64_probe.out`: it records intermediate
 lookups, byte loads and byte-array reads, plus returned, terminal `FinalFFI`,
-and malformed-local outcomes. The byte helpers `memLoadByteAuxHOL`,
-`memStoreByteAuxHOL`, `readBytearrayHOL` and `writeBytearrayHOL` (in `LoopSem`)
-follow HOL's recursive equations but use `UInt8` where the relevant HOL byte
-carrier is `word8` (`BitVec 8`); they are untagged pending the faithful carrier
-replacement tracked by `flapjack-4ac.5.16.5.4`. The RV64 `ExtCall` executable
-path is also untagged because HOL states the evaluator polymorphically.
+and malformed-local outcomes. The additional byte-helper rows retain coverage
+of the older `UInt8`-native Loop helpers. The production ExtCall path under test
+calls the tagged exact `memLoadByteAuxExact`, `readBytearrayWordHOL`, and
+`writeBytearrayExact` definitions, projecting bytes only at the `FfiState` API
+boundary. The adapter remains untagged because its production state, name, and
+FFI carriers specialize HOL's polymorphic exact evaluator.
 -/
 
 namespace Flapjack.Test.LoopFfiParity
@@ -153,13 +154,11 @@ def memLoadGuard : Bool :=
   loopMemLoadByteAux (baseState returningState) 8 == some (0xCD : UInt8) &&
   loopMemLoadByteAux (baseState returningState) 9 == some (0xEF : UInt8)
 
-/-- `rv64_read_bytearrays=(SOME [171w],SOME [205w; 239w])`: the width-generic
-    `readBytearrayHOL` fed by the 64-bit byte loader. -/
+/-- `rv64_read_bytearrays=(SOME [171w],SOME [205w; 239w])`: the production
+    adapter's projection of exact `readBytearrayWordHOL` bytes. -/
 def readBytearrayGuard : Bool :=
-  readBytearrayHOL (0 : Word) 1 (loopMemLoadByteAux (baseState returningState)) ==
-      some [0xAB] &&
-  readBytearrayHOL (8 : Word) 2 (loopMemLoadByteAux (baseState returningState)) ==
-      some [0xCD, 0xEF]
+  loopReadByteArray (baseState returningState) (0 : Word) 1 == some [0xAB] &&
+  loopReadByteArray (baseState returningState) (8 : Word) 2 == some [0xCD, 0xEF]
 
 /-- The width-generic `memStoreByteAuxHOL` replaces the aligned byte and leaves
     other words untouched (`0xEFCD` with byte 0 set to `0x11` is `0xEF11`). -/
@@ -172,13 +171,13 @@ def memStoreGuard : Bool :=
       memory (0 : Word) == .word (0xAB : Word)
   | none => false
 
-/-- The width-generic `writeBytearrayHOL` writes the byte list in order at
-    increasing addresses; the HOL probe records the result `0x2211` at `8w`. -/
+/-- The production adapter projects bytes to `BitVec 8` and invokes exact
+    `writeBytearrayExact`; the HOL probe records the result `0x2211` at `8w`. -/
 def writeBytearrayGuard : Bool :=
   let state := baseState returningState
-  let memory := writeBytearrayHOL (8 : Word) [0x11, 0x22]
-      (loopTotalMemory state) (loopTotalDomain state) state.be
-  memory (8 : Word) == .word (0x2211 : Word)
+  let written := loopWriteByteArray state (8 : Word) [0x11, 0x22]
+  written.memory (8 : Word) == some (.word (0x2211 : Word)) &&
+    written.memory (0 : Word) == some (.word (0xAB : Word))
 
 /-- HOL `byte_align_def` (`alignmentScript.sml:23`) is
     `align (LOG2 (dimindex DIV 8))`: the low `LOG2 (width DIV 8)` bits are
@@ -257,10 +256,10 @@ def runChecks : IO Bool := do
       pure false
   let readBytearrayOk ←
     if readBytearrayGuard then
-      IO.println "PASS Loop width-generic read_bytearray byte-array reads"
+      IO.println "PASS Loop production ExtCall reads exact read_bytearray bytes"
       pure true
     else
-      IO.println "FAIL Loop width-generic read_bytearray byte-array reads"
+      IO.println "FAIL Loop production ExtCall reads exact read_bytearray bytes"
       pure false
   let memStoreOk ←
     if memStoreGuard then
@@ -271,10 +270,10 @@ def runChecks : IO Bool := do
       pure false
   let writeBytearrayOk ←
     if writeBytearrayGuard then
-      IO.println "PASS Loop width-generic write_bytearray byte-array writes"
+      IO.println "PASS Loop production ExtCall writes exact write_bytearray bytes"
       pure true
     else
-      IO.println "FAIL Loop width-generic write_bytearray byte-array writes"
+      IO.println "FAIL Loop production ExtCall writes exact write_bytearray bytes"
       pure false
   let byteAlignOk ←
     if byteAlignGuard then

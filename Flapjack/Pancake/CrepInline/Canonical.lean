@@ -4,11 +4,11 @@ import Flapjack.Pancake.CrepInline.Pass
 # HOL `inline_prog` over the canonical `HolFiniteMapExact`
 
 This module contains the tagged `inlineProgHOLExact` port of HOL
-`inline_prog_def` plus its Flapjack-specific termination core and support
-helpers.  The separate inventory bead for routing the executable compiler
-through the reviewed definition remains open (`flapjack-e7w.2.1.13`, child of
-`flapjack-e7w.2.1`; it blocks the production-path completion of
-`compile_inl_prog`/`compile_inl_top` and `compile_prog_def`).
+`inline_prog_def`, its Flapjack-specific termination core and support helpers,
+and the tagged `compileInlTopHOLExact` wrapper for HOL `compile_inl_top_def`.
+The parser-backed production compiler now calls `compileInlTopHOLExact` before
+decoding to its String-backed output carrier; the legacy generic API remains
+separate and untagged.
 
 The Flapjack-specific recursive core implementing the HOL `inline_prog`
 equations (`cakeml/pancake/crep_inlineScript.sml:203-257`) uses the canonical
@@ -16,6 +16,12 @@ finite-support carrier
 `Flapjack.HolFiniteMapExact` (`Flapjack/Pancake/Semantics/CrepSem/HOLState.lean:34`)
 rather than the untagged unique-key list model `CrepInlineFmapHOL`
 (`Flapjack/Pancake/CrepInline/Pass.lean:495`).
+
+The recursive core is intentionally untagged because it carries Lean-only
+support-list termination evidence. Its support-independent wrapper and the
+top-level exact wrapper are tagged; parser-backed production now executes the
+top-level wrapper. The wider exact `compile_prog` output/metadata bridge remains
+tracked separately.
 
 The core `inlineProgHOLCoreExact` reproduces the clause structure of
 `inlineProgHOLCore` (`Pass.lean:827`) and of the HOL source equation by
@@ -43,8 +49,8 @@ carriers.  `compileInlProgHOLExact` and `compileInlTopHOLExact` are tagged
 definition ports with their own reviewed input and carrier shapes.  The
 recursive core `inlineProgHOLCoreExact` remains Flapjack-specific because its
 support list and proof are termination certificates absent from HOL's
-statement.  The separate inventory bead for routing the production compiler
-through the reviewed definitions remains open (`flapjack-e7w.2.1.13`).
+statement. The exact wrappers preserve HOL's external signatures while the core
+keeps those Lean-only termination certificates internal.
 -/
 
 namespace Flapjack
@@ -502,7 +508,7 @@ theorem inlineProgHOLCoreExact_shMem [BEq CrepInlineMapHOLName]
       (List Nat × CrepProgHOL width))
     (supportKeys : List CrepInlineMapHOLName)
     (support_spec : ∀ key, inlineable.lookup key ≠ none → key ∈ supportKeys)
-    (operator : CrepMemOp) (name : Nat) (address : CrepExpHOL width) :
+    (operator : WordMemOp) (name : Nat) (address : CrepExpHOL width) :
     inlineProgHOLCoreExact inlineable supportKeys support_spec (.shMem operator name address) =
       .shMem operator name address := by
   simp only [inlineProgHOLCoreExact]
@@ -697,9 +703,9 @@ noncomputable def compileInlProgHOLExact
     does not occur in the signature, and the finite support is derived from the
     filtered alist's keys. The word-indexed representation is recorded by the
     qualifier; source membership, alist first-binding behavior, and recursive
-    inlining are checked by `canonicalOracleGuard`. This executable definition
-    remains separate from production compiler routing (bead
-    `flapjack-e7w.2.1.13`). -/
+    inlining are checked by `canonicalOracleGuard`. The parser-backed compiler
+    invokes this exact wrapper; callers without byte-range evidence may still
+    use the generic String-backed compatibility route. -/
 @[hol "cakeml/pancake/crep_inlineScript.sml" "compile_inl_top_def"
   (words_as_type_indexed_bitvec)]
 def compileInlTopHOLExact

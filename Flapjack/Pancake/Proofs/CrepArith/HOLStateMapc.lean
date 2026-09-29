@@ -13,6 +13,22 @@ namespace Flapjack
 
 open Flapjack.Basis.Pure.MlString
 
+/-! The canonical finite-map carrier is owned by the Crep semantics module.
+This same-module re-export makes its existing kernel-checked roundtrip
+available to finite-support qualifiers in the CrepArith counterpart, without
+declaring another state carrier. -/
+namespace CrepArithSimpExpCorrectWitnesses
+
+theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width]
+    {ffiState : Type} :
+    (∀ (state : CrepSemBroadState width ffiState) (h : state.FiniteSupport),
+        (CrepSemBroadState.ofBroad state h).toBroad = state) ∧
+    (∀ state : CrepSemHOLState width ffiState,
+        CrepSemBroadState.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  CrepSemHOLState.holFmapAsFiniteSupportWitness
+
+end CrepArithSimpExpCorrectWitnesses
+
 /-- Flapjack-only record extensionality for the evaluator-state carrier. -/
 private theorem crepHolState_eq_of_fields {α σ : Type}
     {left right : CrepHolState α σ}
@@ -843,6 +859,141 @@ theorem crepSimpExpCorrect1CrepSemHOLStateHolEval
     projected (crepExpOfHOL expression) h
   rw [hCodeId] at hPres
   exact hPres
+
+/-- Var case of HOL `simp_exp_correct1` (`crep_arithProofScript.sml:111`). It
+    retains the successful-evaluation premise, polymorphic unused result
+    binder, full `Option (word_lab)` result and proof-script-local code-only
+    `mapc` update. The same-module finite-map witness above re-exports the
+    existing `CrepSemHOLState` roundtrip; it does not declare a second carrier. -/
+@[hol "cakeml/pancake/proofs/crep_arithProofScript.sml" "simp_exp_correct1"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
+theorem crepSimpExpCorrect1NativeVarCase
+    {width : Nat} [NeZero width] {σ : Type}
+    (update : MlString × (List Nat × CrepProgHOL width) →
+      List Nat × CrepProgHOL width)
+    (state : CrepSemHOLState width σ) (name : Nat)
+    {resultType : Type} (_result : resultType)
+    (_h : evalCrepSemHOLExp state (.var name) ≠ none) :
+    evalCrepSemHOLExp (CrepSemHOLState.mapc update state)
+        (crepSimpExpHOL (.var name)) =
+      evalCrepSemHOLExp state (.var name) := by
+  simp only [CrepSemHOLState.mapc, crepSimpExpHOL, evalCrepSemHOLExp]
+
+/-- Const case of HOL `simp_exp_correct1` (`crep_arithProofScript.sml:111`). It
+    preserves the same premise and polymorphic unused result binder, plus the
+    complete optional `word_lab` conclusion; a constant evaluates to the same
+    word after the code-only `mapc` update. The state finite-map fields use the
+    reviewed canonical finite-support carrier, and words use the reviewed
+    positive-width `BitVec` model. -/
+@[hol "cakeml/pancake/proofs/crep_arithProofScript.sml" "simp_exp_correct1"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
+theorem crepSimpExpCorrect1NativeConstCase
+    {width : Nat} [NeZero width] {σ : Type}
+    (update : MlString × (List Nat × CrepProgHOL width) →
+      List Nat × CrepProgHOL width)
+    (state : CrepSemHOLState width σ) (value : BitVec width)
+    {resultType : Type} (_result : resultType)
+    (_h : evalCrepSemHOLExp state (.const value) ≠ none) :
+    evalCrepSemHOLExp (CrepSemHOLState.mapc update state)
+        (crepSimpExpHOL (.const value)) =
+      evalCrepSemHOLExp state (.const value) := by
+  simp only [CrepSemHOLState.mapc, crepSimpExpHOL, evalCrepSemHOLExp]
+
+/-- LoadGlob case of HOL `simp_exp_correct1` (`crep_arithProofScript.sml:111`).
+    HOL `eval_def` reads the globals finite map, while the proof-script-local
+    `mapc` update changes only code; `simp_exp` leaves LoadGlob unchanged.
+    The theorem keeps the unused polymorphic result binder, successful
+    evaluation premise, and complete optional `word_lab` result. -/
+@[hol "cakeml/pancake/proofs/crep_arithProofScript.sml" "simp_exp_correct1"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
+theorem crepSimpExpCorrect1NativeLoadGlobCase
+    {width : Nat} [NeZero width] {σ : Type}
+    (update : MlString × (List Nat × CrepProgHOL width) →
+      List Nat × CrepProgHOL width)
+    (state : CrepSemHOLState width σ) (address : BitVec 5)
+    {resultType : Type} (_result : resultType)
+    (_h : evalCrepSemHOLExp state (.loadGlob address) ≠ none) :
+    evalCrepSemHOLExp (CrepSemHOLState.mapc update state)
+        (crepSimpExpHOL (.loadGlob address)) =
+      evalCrepSemHOLExp state (.loadGlob address) := by
+  simp only [CrepSemHOLState.mapc, crepSimpExpHOL, evalCrepSemHOLExp]
+
+/-- BaseAddr case of HOL `simp_exp_correct1` (`crep_arithProofScript.sml:111`).
+    HOL `eval_def` reads `state.base_addr`, `simp_exp` leaves BaseAddr
+    unchanged, and the proof-script-local `mapc` update changes only code.
+    The theorem preserves the unused polymorphic result binder, successful
+    evaluation premise, and complete optional `word_lab` result. -/
+@[hol "cakeml/pancake/proofs/crep_arithProofScript.sml" "simp_exp_correct1"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
+theorem crepSimpExpCorrect1NativeBaseAddrCase
+    {width : Nat} [NeZero width] {σ : Type}
+    (update : MlString × (List Nat × CrepProgHOL width) →
+      List Nat × CrepProgHOL width)
+    (state : CrepSemHOLState width σ)
+    {resultType : Type} (_result : resultType)
+    (_h : evalCrepSemHOLExp state .baseAddr ≠ none) :
+    evalCrepSemHOLExp (CrepSemHOLState.mapc update state)
+        (crepSimpExpHOL .baseAddr) =
+      evalCrepSemHOLExp state .baseAddr := by
+  simp only [CrepSemHOLState.mapc, crepSimpExpHOL, evalCrepSemHOLExp]
+
+/-- TopAddr case of HOL `simp_exp_correct1` (`crep_arithProofScript.sml:111`).
+    HOL `eval_def` reads `state.top_addr`, `simp_exp` leaves TopAddr
+    unchanged, and the proof-script-local `mapc` update changes only code.
+    The theorem preserves the unused polymorphic result binder, successful
+    evaluation premise, and complete optional `word_lab` result. -/
+@[hol "cakeml/pancake/proofs/crep_arithProofScript.sml" "simp_exp_correct1"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
+theorem crepSimpExpCorrect1NativeTopAddrCase
+    {width : Nat} [NeZero width] {σ : Type}
+    (update : MlString × (List Nat × CrepProgHOL width) →
+      List Nat × CrepProgHOL width)
+    (state : CrepSemHOLState width σ)
+    {resultType : Type} (_result : resultType)
+    (_h : evalCrepSemHOLExp state .topAddr ≠ none) :
+    evalCrepSemHOLExp (CrepSemHOLState.mapc update state)
+        (crepSimpExpHOL .topAddr) =
+      evalCrepSemHOLExp state .topAddr := by
+  simp only [CrepSemHOLState.mapc, crepSimpExpHOL, evalCrepSemHOLExp]
+
+/-- Load case of HOL `simp_exp_correct1` (`crep_arithProofScript.sml:111`).
+    The recursive premise is generalized over the state and the unused result
+    binder, as in HOL's induction rule. The successful full Load evaluation
+    premise is retained; code-only `mapc` preserves evaluation of the address,
+    and the complete optional `word_lab` result is unchanged. -/
+@[hol "cakeml/pancake/proofs/crep_arithProofScript.sml" "simp_exp_correct1"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
+theorem crepSimpExpCorrect1NativeLoadCase
+    {width : Nat} [NeZero width] {σ : Type}
+    (update : MlString × (List Nat × CrepProgHOL width) →
+      List Nat × CrepProgHOL width)
+    (state : CrepSemHOLState width σ) (address : CrepExpHOL width)
+    {resultType : Type} (_result : resultType)
+    (_h : evalCrepSemHOLExp state (.load address) ≠ none)
+    (ih : ∀ (state' : CrepSemHOLState width σ) {resultType : Type}
+      (_result : resultType),
+      evalCrepSemHOLExp state' address ≠ none →
+      evalCrepSemHOLExp (CrepSemHOLState.mapc update state')
+          (crepSimpExpHOL address) =
+        evalCrepSemHOLExp state' address) :
+    evalCrepSemHOLExp (CrepSemHOLState.mapc update state)
+        (crepSimpExpHOL (.load address)) =
+      evalCrepSemHOLExp state (.load address) := by
+  have hAddress : evalCrepSemHOLExp state address ≠ none := by
+    intro hNone
+    apply _h
+    simp [evalCrepSemHOLExp, hNone]
+  have hAddressEval := ih state _result hAddress
+  simp only [crepSimpExpHOL]
+  simp only [evalCrepSemHOLExp]
+  rw [hAddressEval]
+  rfl
 
 /-- Arbitrary finite-index support over the exact HOL-shaped state/code
 carriers. The state retains finite-map locals/globals/code, the HOL

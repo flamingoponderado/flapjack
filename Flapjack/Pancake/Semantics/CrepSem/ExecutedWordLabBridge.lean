@@ -331,12 +331,13 @@ at width 64 by `crepRuntimeLoad32_riscv64_eq_panMemLoad32HOL` and
 address-subterm correspondence as a hypothesis. -/
 
 theorem evalCrepRuntimeExp_executed_load32 {σ : Type}
-    (state : CrepSemHOLState 64 σ) [DecidablePred state.memaddrs]
+    (state : CrepSemHOLState 64 σ)
     (address : CrepExp (BitVec 64))
     (haddr : evalCrepRuntimeExp (executedCrepState state) address =
       (evalCrepSemHOLExp state (crepExpToHOL address)).map holWordLabToWord) :
     evalCrepRuntimeExp (executedCrepState state) (.load32 address) =
       (evalCrepSemHOLExp state (crepExpToHOL (.load32 address))).map holWordLabToWord := by
+  classical
   simp only [evalCrepRuntimeExp, evalCrepSemHOLExp, crepExpToHOL]
   rw [haddr]
   cases ha : evalCrepSemHOLExp state (crepExpToHOL address) with
@@ -358,20 +359,16 @@ theorem evalCrepRuntimeExp_executed_load32 {σ : Type}
               exact HolWordLab.toPanWordLab_toHolWordLab (state.memory c)
             rw [hmem] at h
             exact h
-          show crepRuntimeLoad32 (executedCrepState state) w =
-            (Option.map (fun v => HolWordLab.word (BitVec.ofNat 64 v.toNat))
-              (panMemLoad32HOL state.memory state.memaddrs state.be w)).map
-                holWordLabToWord
-          rw [hload]
-          simp only [Option.map_map, Function.comp_def, holWordLabToWord_eq]
+          simp [hload, Option.bind, Function.comp_def, holWordLabToWord_eq]
 
 theorem evalCrepRuntimeExp_executed_loadByte {σ : Type}
-    (state : CrepSemHOLState 64 σ) [DecidablePred state.memaddrs]
+    (state : CrepSemHOLState 64 σ)
     (address : CrepExp (BitVec 64))
     (haddr : evalCrepRuntimeExp (executedCrepState state) address =
       (evalCrepSemHOLExp state (crepExpToHOL address)).map holWordLabToWord) :
     evalCrepRuntimeExp (executedCrepState state) (.loadByte address) =
       (evalCrepSemHOLExp state (crepExpToHOL (.loadByte address))).map holWordLabToWord := by
+  classical
   simp only [evalCrepRuntimeExp, evalCrepSemHOLExp, crepExpToHOL]
   rw [haddr]
   cases ha : evalCrepSemHOLExp state (crepExpToHOL address) with
@@ -393,12 +390,7 @@ theorem evalCrepRuntimeExp_executed_loadByte {σ : Type}
               exact HolWordLab.toPanWordLab_toHolWordLab (state.memory c)
             rw [hmem] at h
             exact h
-          show crepRuntimeLoadByte (executedCrepState state) w =
-            (Option.map (fun v => HolWordLab.word (BitVec.ofNat 64 v.toNat))
-              (panMemLoadByteHOL state.memory state.memaddrs state.be w)).map
-                holWordLabToWord
-          rw [hload]
-          simp only [Option.map_map, Function.comp_def, holWordLabToWord_eq]
+          simp [hload, Option.bind, Function.comp_def, holWordLabToWord_eq]
 
 /-! ## Production `word_lab` result shape
 

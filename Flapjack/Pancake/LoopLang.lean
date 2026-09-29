@@ -71,13 +71,12 @@ inductive LoopArith where
 /-- Faithful Cake `loopLang$prog` over a fixed word width. HOL's generic `'a word`
 carrier is instantiated at `BitVec width`, `num_set` fields use the exact
 `spt`-backed `NumSet` (`miscScript.sml:787`, `unit spt`), `shMem` uses
-`CrepMemOp`, whose eight constructors (`load/load8/load16/load32/store/store8/
-store16/store32`) match `asm$memop` (`asmScript.sml:125-128`) name for name, and
-the `ite` fields use the eight `Cmp` constructors and `RegImm (BitVec width)`;
-the latter maps HOL `asm$reg_imm`'s `Reg` to Lean `.reg` and `Imm` to `.imm`,
-with matching `Nat`/word payload types. Lean's `CrepMemOp` is a separate
-datatype from HOL `asm$memop`, but its eight nullary constructors match in
-order; both `HolLoopProg` and executable `LoopProg` use that same Lean carrier.
+`WordMemOp`, the tagged `asm$memop` carrier (`HolMemop`,
+`asmScript.sml:125-128`; loopLang reuses `asm$memop`), and the `ite` fields use
+the eight `Cmp` constructors and `RegImm (BitVec width)`; the latter maps HOL
+`asm$reg_imm`'s `Reg` to Lean `.reg` and `Imm` to `.imm`, with matching
+`Nat`/word payload types. Both `HolLoopProg` and executable `LoopProg` use the
+same `WordMemOp` carrier.
 The FFI name is the exact `MlString` carrier rather than the executable
 `FunName = String`. The executable `LoopProg` is a one-parameter superset
 (`LoopExp` adds `crepOp`/`cmp`; FFI names are `String`), so the
@@ -102,7 +101,7 @@ inductive HolLoopProg (width : Nat) [NeZero width] where
   | continue (label : Nat)
   | raise (exception : Nat)
   | return (values : List Nat)
-  | shMem (operator : CrepMemOp) (name : Nat) (address : HolLoopExp width)
+  | shMem (operator : WordMemOp) (name : Nat) (address : HolLoopExp width)
   | tick
   | mark (body : HolLoopProg width)
   | fail
@@ -133,7 +132,7 @@ inductive LoopProg (α : Type u) where
   | continue (label : Nat)
   | raise (exception : Nat)
   | return (values : List Nat)
-  | shMem (operator : CrepMemOp) (name : Nat) (address : LoopExp α)
+  | shMem (operator : WordMemOp) (name : Nat) (address : LoopExp α)
   | tick
   | mark (body : LoopProg α)
   | fail

@@ -46,7 +46,7 @@ end CrepToLoopOptMmapFiniteMapWitnesses
 theorem crepToLoop_not_mem_nlhss_lemma :
     ∀ (ctxt : CrepToLoopContextExact) (vname : Nat) (lhss : List Nat) (n : Nat)
       (nlhss : List Nat),
-      crepToLoopDistinctVars ctxt.vars.lookup ∧ vname ∉ lhss ∧
+      crepToLoopDistinctVarsExact ctxt.vars ∧ vname ∉ lhss ∧
         ctxt.vars.lookup vname = some n ∧ lhss.mapM ctxt.vars.lookup = some nlhss →
       n ∉ nlhss := by
   intro ctxt vname lhss
@@ -65,7 +65,8 @@ theorem crepToLoop_not_mem_nlhss_lemma :
         subst hm
         simp only [List.mem_cons, not_or] at hnm ⊢
         refine ⟨fun hnmv => hnm.1 ?_, ih n ms ⟨hd, hnm.2, hl, hvs⟩⟩
-        exact hd vname v n m hl hv hnmv
+        exact (crepToLoopDistinctVarsExact_iff_lookup ctxt.vars).mp hd
+          vname v n m hl hv hnmv
 
 /-- Exact HOL `opt_mmap_rhss_locals_rel` (`crep_to_loopProofScript.sml:2282-2298`):
     `OPT_MMAP (FLOOKUP s.locals) rhss = SOME ws ∧ locals_rel ctxt l s.locals t.locals ⇒

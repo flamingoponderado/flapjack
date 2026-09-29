@@ -104,7 +104,7 @@ theorem holLoopLocalsTouched_op (o : BinOp) (les : List (HolLoopExp width)) :
 
 mutual
 theorem compileExpHOLExact_le_tmp_domain (ct : CrepToLoopContextExact)
-    (hmax : crepToLoopCtxtMax ct.vmax ct.vars.lookup) (tmp : Nat) (l : NumSet) :
+    (hmax : crepToLoopCtxtMaxExact ct.vmax ct.vars) (tmp : Nat) (l : NumSet) :
     ∀ (e : CrepExpHOL width) (n : Nat), ct.vmax < tmp →
       (∀ v, v ∈ crepExpVarsHOL e → ∃ m, ct.vars.lookup v = some m ∧ (sptLookup m l).isSome = true) →
       n ∈ holLoopLocalsTouched (compileExpHOLExact ct tmp l e).2.1 →
@@ -175,7 +175,7 @@ theorem compileExpHOLExact_le_tmp_domain (ct : CrepToLoopContextExact)
 termination_by e => sizeOf e
 
 theorem compileExpsHOLExact_le_tmp_domain (ct : CrepToLoopContextExact)
-    (hmax : crepToLoopCtxtMax ct.vmax ct.vars.lookup) (tmp : Nat) (l : NumSet) :
+    (hmax : crepToLoopCtxtMaxExact ct.vmax ct.vars) (tmp : Nat) (l : NumSet) :
     ∀ (es : List (CrepExpHOL width)) (n : Nat), ct.vmax < tmp →
       (∀ v, v ∈ (es.map crepExpVarsHOL).flatten →
         ∃ m, ct.vars.lookup v = some m ∧ (sptLookup m l).isSome = true) →
@@ -221,8 +221,8 @@ theorem holFmapAsFiniteSupportWitness (context : CrepToLoopContextExact) :
 end CrepToLoopCompExpLeTmpDomainWitnesses
 
 /-- Exact HOL `compile_exp_le_tmp_domain_cases`
-    (`crep_to_loopProofScript.sml:682-692`).  `ctxt_max ct.vmax ct.vars` is the
-    tagged `crepToLoopCtxtMax` applied to the map's lookup, `FLOOKUP` is
+    (`crep_to_loopProofScript.sml:682-692`). `ctxt_max ct.vmax ct.vars` is the
+    exact-carrier `crepToLoopCtxtMaxExact`, `FLOOKUP` is
     `HolFiniteMapExact.lookup`, `m ∈ domain l` is `(sptLookup m l).isSome`, and
     `var_cexp`/`locals_touched` are the tagged `crepExpVarsHOL`/`holLoopLocalsTouched`. -/
 @[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "compile_exp_le_tmp_domain_cases"
@@ -230,7 +230,7 @@ end CrepToLoopCompExpLeTmpDomainWitnesses
 theorem compile_exp_le_tmp_domain_cases :
     (∀ (ct : CrepToLoopContextExact) (tmp : Nat) (l : NumSet) (e : CrepExpHOL width)
       (p : List (HolLoopProg width)) (le : HolLoopExp width) (tmp' : Nat) (l' : NumSet) (n : Nat),
-      crepToLoopCtxtMax ct.vmax ct.vars.lookup ∧
+      crepToLoopCtxtMaxExact ct.vmax ct.vars ∧
       compileExpHOLExact ct tmp l e = (p, le, tmp', l') ∧ ct.vmax < tmp ∧
       (∀ n, n ∈ crepExpVarsHOL e → ∃ m, ct.vars.lookup n = some m ∧ (sptLookup m l).isSome = true) ∧
       n ∈ holLoopLocalsTouched le →
@@ -238,7 +238,7 @@ theorem compile_exp_le_tmp_domain_cases :
     (∀ (ct : CrepToLoopContextExact) (tmp : Nat) (l : NumSet) (es : List (CrepExpHOL width))
       (p : List (HolLoopProg width)) (les : List (HolLoopExp width)) (tmp' : Nat) (l' : NumSet)
       (n : Nat),
-      crepToLoopCtxtMax ct.vmax ct.vars.lookup ∧
+      crepToLoopCtxtMaxExact ct.vmax ct.vars ∧
       compileExpsHOLExact ct tmp l es = (p, les, tmp', l') ∧ ct.vmax < tmp ∧
       (∀ n, n ∈ (es.map crepExpVarsHOL).flatten →
         ∃ m, ct.vars.lookup n = some m ∧ (sptLookup m l).isSome = true) ∧
@@ -258,7 +258,7 @@ theorem compile_exp_le_tmp_domain_cases :
 theorem compile_exp_le_tmp_domain :
     ∀ (ct : CrepToLoopContextExact) (tmp : Nat) (l : NumSet) (e : CrepExpHOL width)
       (p : List (HolLoopProg width)) (le : HolLoopExp width) (tmp' : Nat) (l' : NumSet) (n : Nat),
-      crepToLoopCtxtMax ct.vmax ct.vars.lookup ∧
+      crepToLoopCtxtMaxExact ct.vmax ct.vars ∧
       compileExpHOLExact ct tmp l e = (p, le, tmp', l') ∧ ct.vmax < tmp ∧
       (∀ n, n ∈ crepExpVarsHOL e → ∃ m, ct.vars.lookup n = some m ∧ (sptLookup m l).isSome = true) ∧
       n ∈ holLoopLocalsTouched le →
@@ -273,7 +273,7 @@ theorem compile_exps_le_tmp_domain :
     ∀ (ct : CrepToLoopContextExact) (tmp : Nat) (l : NumSet) (es : List (CrepExpHOL width))
       (p : List (HolLoopProg width)) (les : List (HolLoopExp width)) (tmp' : Nat) (l' : NumSet)
       (n : Nat),
-      crepToLoopCtxtMax ct.vmax ct.vars.lookup ∧
+      crepToLoopCtxtMaxExact ct.vmax ct.vars ∧
       compileExpsHOLExact ct tmp l es = (p, les, tmp', l') ∧ ct.vmax < tmp ∧
       (∀ n, n ∈ (es.map crepExpVarsHOL).flatten →
         ∃ m, ct.vars.lookup n = some m ∧ (sptLookup m l).isSome = true) ∧

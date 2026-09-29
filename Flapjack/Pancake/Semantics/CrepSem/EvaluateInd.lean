@@ -94,20 +94,16 @@ noncomputable def crepExactEvalExpClassical {width : Nat} [NeZero width] {σ : T
     Option (HolWordLab width) :=
   crepExactEvalExp state (fun a => Classical.propDecidable (state.memaddrs a)) expression
 
-/-- The classical-decider rendering of the exact expression evaluator is
-extensionally equal to the reviewed `crepExactEvalExp` at *any* decider for the
-same memory-domain predicate.  `Decidable` instances of one proposition are
-subsingletons, so the evaluator's `DecidablePred` argument is proof-irrelevant
-and the two readings coincide.  This justifies keeping the classical spelling
-`crepExactEvalExpClassical` in the clause hypotheses. -/
+/-- Flapjack-only compatibility lemma: the classical spelling used by the
+    induction principle agrees with the public expression evaluator. The
+    explicit-decider evaluator equivalence proves this independently of the
+    chosen `Decidable` instances. -/
 theorem crepExactEvalExpClassical_eq {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ)
-    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
     (expression : CrepExpHOL width) :
-    crepExactEvalExpClassical state expression = crepExactEvalExp state memDec expression := by
-  classical
-  unfold crepExactEvalExpClassical crepExactEvalExp
-  congr 1
+    crepExactEvalExpClassical state expression = evalCrepSemHOLExp state expression := by
+  exact crepExactEvalExp_eq_eval state
+    (fun a => Classical.propDecidable (state.memaddrs a)) expression
 
 /-- The lookup function of the finite-support `HolFiniteMapExact` callee locals
 installed by the `Call` clause is definitionally the raw `FiniteMap` computed by

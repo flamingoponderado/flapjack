@@ -116,6 +116,9 @@ import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOk
 import Flapjack.Pancake.Semantics.LoopSemStateExact
 import Flapjack.Pancake.Semantics.LoopSemStateExact.ShMem
 import Flapjack.Pancake.Semantics.LoopSemStateExact.Evaluate
+import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateInd
+import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.StateRebinding
+import Flapjack.Pancake.Semantics.LoopSemStateExact.ProductionExtCall
 import Flapjack.Pancake.Semantics.LoopSemStateExact.Semantics
 import Flapjack.Pancake.Semantics.LoopProps.EvaluateClockExact
 import Flapjack.Pancake.Semantics.LoopProps.EvaluateIoEventsExact
@@ -127,7 +130,6 @@ import Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact
 import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOkLemmas
 import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOkEvalExact
 import Flapjack.PanObservationalSemantics
-import Flapjack.PanHHandleCallRet
 import Flapjack.PanMrec
 import Flapjack.PanHProgDec
 import Flapjack.PanHProgSeq
@@ -146,7 +148,6 @@ import Flapjack.Pancake.Proofs.PanStructs.CompileCorrect
 import Flapjack.Pancake.PanGlobals
 import Flapjack.Pancake.PanGlobalsByteRanged
 import Flapjack.Pancake.Proofs.PanGlobals
-import Flapjack.Pancake.Proofs.LoopCall.GetVars
 import Flapjack.Pancake.Proofs.PanToCrep.EvaluateCases
 import Flapjack.Pancake.Proofs.PanToCrep.TotalEvaluateCases
 import Flapjack.Pancake.Proofs.PanToCrep.EvaluateNestedAssign
@@ -154,6 +155,7 @@ import Flapjack.Pancake.Proofs.PanToCrep.EvaluateNestedDecs
 import Flapjack.Pancake.Proofs.PanToCrep
 import Flapjack.Pancake.Proofs.PanToCrep.StateRelFiniteSupport
 import Flapjack.Pancake.Proofs.PanToCrep.CompileExpValRel
+import Flapjack.Pancake.Proofs.PanToCrep.CompileExpValRel.Load
 import Flapjack.Pancake.Proofs.PanToCrep.Primop
 import Flapjack.Pancake.Proofs.PanToCrep.CompileProgParams
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect
@@ -207,6 +209,7 @@ import Flapjack.Pancake.CrepLang.Prog
 import Flapjack.Pancake.Semantics.CrepProps
 import Flapjack.Pancake.Semantics.CrepProps.MemLoadFlatRel
 import Flapjack.Pancake.Semantics.CrepProps.EvaluateAddClock
+import Flapjack.Pancake.Semantics.CrepProps.EvalSomeVarCexp
 import Flapjack.Pancake.Semantics.CrepProps.EvaluateAddClockIoEventsMono
 import Flapjack.Pancake.WordConvs
 import Flapjack.Pancake.PanToCrep
@@ -223,6 +226,8 @@ import Flapjack.Pancake.PanToCrep.ContextExact
 import Flapjack.Pancake.PanToCrep.ContextBridge
 import Flapjack.Pancake.PanToCrep.ContextProductionEvidence
 import Flapjack.Pancake.Proofs.CrepArith
+import Flapjack.Pancake.Proofs.CrepArith.HOLStateMapc
+import Flapjack.Pancake.Proofs.CrepArith.MulConst
 import Flapjack.Pancake.Proofs.CrepInline
 import Flapjack.Pancake.CrepInline.Canonical
 import Flapjack.CompileFunctionDistinct
@@ -312,7 +317,6 @@ import Flapjack.RiscV.CorrectnessStackRemoveDynamic
 import Flapjack.RiscV.CorrectnessStackRemoveBitmap
 import Flapjack.RiscV.CorrectnessStack
 import Flapjack.RiscV.CorrectnessFfiMachine
-import Flapjack.RiscV.CorrectnessStack
 import Flapjack.RiscV.Ffi
 import Flapjack.RiscV.ExactFfi
 import Flapjack.RiscV.Link
@@ -333,13 +337,34 @@ import Flapjack.Pancake.CrepToLoop.Proofs.LocalListHelpers
 import Flapjack.Pancake.CrepToLoop.Proofs.CrepEvalHelpers
 import Flapjack.Pancake.CrepToLoop.Proofs.CompExpOutRel
 import Flapjack.Pancake.CrepToLoop.Proofs.RelationsExact
+import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Leaf
 import Flapjack.Pancake.CrepToLoop.Proofs.LocalsRelHelpers
 import Flapjack.Pancake.CrepToLoop.Proofs.LocalsRelOptMmap
-import Flapjack.Pancake.CrepToLoop.Proofs.CompExpPreservesEvalShift
-import Flapjack.Pancake.CrepToLoop.Proofs.CompExpPreservesEvalLoadByte32
+import Flapjack.Pancake.CrepToLoop.Proofs.CompExpPreservesEval
+import Flapjack.Pancake.CrepToLoop.Proofs.NcompileCorrect
+import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.While
+import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Call
+import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.ShMem
+import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Assembly
+import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Dec
+import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Primitive
+import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Store
+import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Store32
+import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.StoreByte
+import Flapjack.Pancake.CrepToLoop.Proofs.CompExpPreservesEval.Leaf
 import Flapjack.Pancake.CrepToLoop.Proofs.SemanticsWrapper
+import Flapjack.Pancake.LoopLive.Fixedpoint
+import Flapjack.Pancake.Proofs.LoopLive.CompileCorrect
+import Flapjack.Pancake.Proofs.LoopLive.Optimise
+import Flapjack.Misc.SptreeLookup
+import Flapjack.Pancake.LoopCall.IsLoad
+import Flapjack.Pancake.Proofs.LoopCall.CompileCorrect
 import Flapjack.Pancake.CrepToLoop.Proofs.MakeFuncsLemmas
+import Flapjack.Pancake.CrepToLoop.Proofs.CodeRel2
+import Flapjack.Pancake.CrepToLoop.Proofs.CodeRel2CallEntryLookup
 import Flapjack.Pancake.CrepToLoop.Proofs.NotMemContextAssigned
+import Flapjack.Pancake.CrepToLoop.Proofs.WriteBytearrayMemRel
+import Flapjack.Pancake.CrepToLoop.Proofs.CallPreserveStateCodeLocalsRel
 import Flapjack.Pancake.CrepToLoop.Optimise
 import Flapjack.Pancake.CrepToLoop.StateRel
 import Flapjack.Test.CrepToLoopCompileExpExactParity
@@ -357,6 +382,7 @@ import Flapjack.Test.CrepToLoopSurvivesMapiAssignParity
    the faithful `findLoopVar` lowering and is intentionally not in this
    umbrella until its old identity-map assumptions are repaired. -/
 import Flapjack.LoopSemantics
+import Flapjack.MemOp
 import Flapjack.Word
 import Flapjack.Stack
 import Flapjack.Compiler.Backend.StackLang
@@ -386,7 +412,6 @@ import Flapjack.RiscV.CakeAllocatorBitsBridge
 import Flapjack.StackAlloc
 import Flapjack.StackAlloc.Runtime
 import Flapjack.StackAlloc.Machine
-import Flapjack.RiscV.CorrectnessWordToStack
 import Flapjack.StackAlloc.FrameMachine
 import Flapjack.StackAlloc.CollectorSemantics
 import Flapjack.StackAlloc.Correctness
