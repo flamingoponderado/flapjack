@@ -22498,6 +22498,28 @@
     "reviewer": "Source comparison (2026-09-29; bead flapjack-pxn.18.5.4.18): HOL crep_arithProofScript.sml:184-212 states evaluate (p,s)=(r,s') and r<>SOME Error, concluding evaluate (simp_prog p,mapcs s)=(r,mapcs s'). The Seq clause is the evaluate_ind case from crepSemScript.sml:440, whose exact IHs are P(c1,s) and, for every (res,s1)=evaluate(c1,s) with res=NONE, P(c2,s1). Lean spells P as the unchanged source evaluator equation, non-Error premise, and mapped-state target evaluator conclusion; the second IH retains the exact intermediate state and is guarded by the first result NONE. The HOL Seq evaluator clause at crepSemScript.sml:304-306 evaluates c2 iff c1 returns NONE; Lean uses the same branch in evalCrepSemHOLProgExact_seq_holShape. The only representation qualifiers are finite-support locals/globals/code and width-indexed BitVec, with a same-module roundtrip witness."
   },
   {
+    "hol_path": "cakeml/pancake/proofs/crep_arithProofScript.sml",
+    "hol_name": "simp_prog_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrectShMem.lean",
+    "lean_name": "simpProgCorrectShMemCase",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison (2026-09-29; bead flapjack-pxn.18.5.4.14): HOL crep_arithProofScript.sml:184-212 quantifies p,s,r,s', assumes evaluate (p,s)=(r,s') and r<>SOME Error, and concludes evaluate (simp_prog p,mapcs s)=(r,mapcs s'). This is exactly its evaluate_ind ShMem leaf, specializing p to ShMem op name address, and it preserves the two premises and the full result/post-state equation with no target-result premise. HOL simp_prog simplifies only the address expression and the proof-script-local mapc code rewrite (mapcs) leaves locals, the shared-memory domain and the FFI unchanged, so both sides use the same address value (HOL simp_exp_correct) and the same local lookup, and the shared-memory operation commutes with the code-only mapc rewrite (HOL sh_mem_op_code). Every failing arm (non-word address, or a missing or non-word local on store) yields SOME Error and is discharged by the r<>SOME Error side condition, as in HOL. State and word qualifiers match the exact carriers."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrectShMem.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack same-module canonical finite-support witness for the ShMem simp_prog_correct case qualifiers; it restates the CrepSemHOLState roundtrip so the state and word qualifiers on simpProgCorrectShMemCase resolve to a single owning structure. Not a HOL declaration, so no @[hol] tag."
+  },
+  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrect.lean",
