@@ -531,4 +531,71 @@ theorem crepToLoop_ncompile_correct_extCall {width : Nat} [NeZero width] {σ : T
         hr1, hr2, hf, tf]
     · exact write_bytearray_mem_rel_dom nb v1.memory t.memory wa v1.memaddrs t.mdomain t.be
         hdom hm
+
+/-- `ncompile_correct`, case `StoreGlob dst e` (`crep_to_loopProofScript.sml:110-134`
+    statement; `Resume ncompile_correct[StoreGlob]` at 2075-2104).  `evaluate_ind`
+    gives this case no induction hypothesis. -/
+@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "ncompile_correct"
+  (fmap_as_finite_support_relation := [CrepToLoopContextExact.vars,
+    CrepToLoopContextExact.funcs, CrepSemHOLState.locals, CrepSemHOLState.globals,
+    CrepSemHOLState.code, LoopSemStateFiniteExact.globals])
+  (words_as_type_indexed_bitvec)]
+theorem crepToLoop_ncompile_correct_storeGlob {width : Nat} [NeZero width] {σ : Type} :
+    ∀ (dst : BitVec 5) (e : CrepExpHOL width) (v1 : CrepSemHOLState width σ)
+      (res : Option (CrepResultHOLExact width)) (s1 : CrepSemHOLState width σ)
+      (t : LoopSemStateFiniteExact width σ) (ctxt : CrepToLoopContextExact) (l : NumSet),
+      evalCrepSemHOLProgExact v1 (.storeGlob dst e) = (res, s1) ∧ res ≠ some .error ∧
+        crepToLoopStateRelExact v1 t ∧
+        crepToLoopMemRelHOLExact v1.memory t.memory v1.memaddrs ∧
+        crepToLoopGlobalsRelHOLExact v1.globals t.globals ∧
+        crepToLoopCodeRelExact ctxt v1.code t.code ∧
+        crepToLoopLocalsRelExact ctxt l v1.locals t.locals →
+      ∃ (ck : Nat) (res1 : Option (LoopSemStateFiniteExact.LoopResultExact width))
+        (t1 : LoopSemStateFiniteExact width σ),
+        LoopSemStateFiniteExact.evaluate (compileHOLExact ctxt l (.storeGlob dst e))
+            { t with clock := t.clock + ck } = (res1, t1) ∧
+        crepToLoopStateRelExact s1 t1 ∧
+        crepToLoopMemRelHOLExact s1.memory t1.memory s1.memaddrs ∧
+        crepToLoopGlobalsRelHOLExact s1.globals t1.globals ∧
+        crepToLoopCodeRelExact ctxt s1.code t1.code ∧
+        res1 = crepToLoopResultHOL res ∧
+        crepToLoopResultLocalsHOL ctxt l s1.locals t1.locals res := by
+  intro dst e v1 res s1 t ctxt l ⟨he, hne, hs, hm, hg, hc, hl⟩
+  rw [evalCrepSemHOLProgExact_eq_evaluate_def] at he
+  simp only at he
+  cases hev : evalCrepSemHOLExp v1 e with
+  | none =>
+    simp only [hev, Prod.mk.injEq] at he
+    exact absurd he.1.symm hne
+  | some w =>
+  simp only [hev, Prod.mk.injEq] at he
+  obtain ⟨rfl, rfl⟩ := he
+  rcases hC : compileExpHOLExact ctxt (ctxt.vmax + 1) l e with ⟨p, le, tmp, l'⟩
+  obtain ⟨ck, st, h1, h1v, h1s, h1m, h1g, h1c, h1l⟩ :=
+    crepToLoop_comp_exp_preserves_eval v1 e w t ctxt (ctxt.vmax + 1) l p le tmp l'
+      ⟨hev, hs, hm, hg, hc, hl, hC, Nat.lt_succ_self _⟩
+  obtain ⟨hokA, _, hlA⟩ := compile_exp_out_rel ctxt (ctxt.vmax + 1) l e p le tmp l' hC
+  have hsub : sptSubspt l l' := hlA ▸ comp_syn_impl_cut_sets_subspt _ l hokA
+  refine ⟨ck, none, LoopSemStateFiniteExact.setGlobals dst (wlabWlocExact w) st, ?_, h1s, h1m,
+    ?_, h1c, rfl, crepToLoopLocalsRelExact_cutset_prop ctxt l l' v1.locals t.locals st.locals
+      hl h1l hsub⟩
+  · rw [compileHOLExact, hC]
+    simp only
+    rw [LoopSemStateFiniteExact.evaluate_nested_seq_append_none p _ _ _ h1]
+    simp only [loopNestedSeqHOL, LoopSemStateFiniteExact.evaluate_seq,
+      LoopSemStateFiniteExact.evaluate, h1v]
+  · intro ad v hv
+    simp only [CrepSemHOLState.setGlobals, HolFiniteMapExact.lookup_updateEq,
+      FUPDATE_HOL] at hv
+    simp only [LoopSemStateFiniteExact.setGlobals, HolFiniteMapExact.lookup_update, FUPDATE]
+    by_cases had : ad = dst
+    · subst had
+      simp only [if_true] at hv
+      simp only [beq_self_eq_true, if_true, Option.some.injEq]
+      rw [Option.some.inj hv]
+    · rw [if_neg had] at hv
+      have hne' : (dst == ad) = false := beq_eq_false_iff_ne.mpr (fun h => had h.symm)
+      rw [hne']
+      simp only [Bool.false_eq_true, if_false]
+      exact h1g ad v hv
 end Flapjack
