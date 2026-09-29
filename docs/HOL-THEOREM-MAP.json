@@ -23971,5 +23971,13 @@
     "hol_name": "fpfma_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.6.2.2): HOL fpfma v1 v2 v3 = fp64_mul_add roundTiesToEven v2 v3 v1 (fpSemScript.sml:60-62), argument order preserved (v1 is the addend). HOL word64 is the fixed BitVec 64 and needs no width qualifier. fp64_mul_add is the untagged HOL standard-library rendering holFp64MulAdd = float_to_fp64 o SND o float_mul_add over fp64_to_float (machine_ieeeLib lift3). float_mul_add renders binary_ieeeScript.sml:692-722 clause for clause, including flags and the zero-sign rule, over the Classical.epsilon rendering of HOL's choice-based rounding and float_some_qnan, so the definition is noncomputable. Rows fma_pinf_product/fma_ninf_addend/fma_neg_inf_product of scripts/hol-probes/machine_ieee_fp64_arith_special_probe.out are kernel-checked in Flapjack.Test.MachineIeeeArithSpecialParity. Rounded finite results await the computable agreement of flapjack-h29l.6.2.3."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/FindVarExact.lean",
+    "lean_name": "findVarNeZeroContextHOLExact",
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "find_var_neq_0_ctxt",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-b source comparison (2026-09-29; bead flapjack-pxn.18.5.9.14.2) against loop_to_wordProofScript.sml:178-184. HOL has one conjunctive premise: (forall n m. lookup n ctxt = SOME m implies m <> 0 and EVEN m) and v IN domain ctxt, implying find_var ctxt v <> 0. Lean now preserves that single conjunction as one hypothesis, including the quantifier order and lookup direction. HOL ctxt is the exact spt num_map carrier rendered by Spt Nat; lookup is sptLookup, domain membership is sptMem with its kernel-checked equivalence to an existential successful lookup in Misc.Sptree, and find_var is the tagged findVarHOL definition (lookup default 0). HOL EVEN is rendered by % 2 = 0, matching the Spt lookup parity equations. No word, fmap, or list representation qualifier applies. A concrete nonzero even singleton context applies the theorem in LoopToWordExactParity."
   }
 ]
