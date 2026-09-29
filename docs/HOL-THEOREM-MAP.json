@@ -24365,5 +24365,31 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.9.3): HOL wordSem semantics_def (wordSemScript.sml:1374-1401) over the tagged exact evaluate and WordSemStateFiniteExact. prog = Call NONE (SOME start) [0] NONE. The guard is: if ∃k. case FST (evaluate (prog, s with clock := k)) of SOME (Exception _ _) => T | SOME (Result ret _) => ret <> Loc 1 0 | SOME Error => T | NONE => T | _ => F, then Fail. Otherwise the result is case (some res. ∃k t r outcome. evaluate (prog, s with clock := k) = (r,t) ∧ (case r of SOME (FinalFFI e) => outcome = FFI_outcome e | SOME (Result _ _) => outcome = Success | SOME NotEnoughSpace => outcome = Resource_limit_hit | _ => F) ∧ res = Terminate outcome t.ffi.io_events) of SOME res => res | NONE => Diverge (build_lprefix_lub (IMAGE (λk. fromList (SND (evaluate (prog, s with clock := k))).ffi.io_events) UNIV)). Lean has the same let, guard (the same five match arms in HOL order, with <> on word_loc decided classically), choice and branches, with the tagged HolBehaviour/HolOutcome carriers. HOL option some is holOptionSome. build_lprefix_lub and fromList are the untagged renderings of HOL's lprefix_lub/llist libraries (Flapjack/Misc/LprefixLub.lean, Flapjack/Misc/LList.lean), as in the reviewed loopSem semantics port. The set IMAGE f UNIV is the predicate fun l => ∃ k, l = f k. Noncomputable, as is HOL's classical definition; no witness parameter. Kernel-checked observations in Flapjack.Test.WordSemSemanticsParity: Terminate Success [] for an entry returning Loc 1 0; Fail for a missing argument local; and Fail for an entry returning Loc 2 0. Qualifiers are as for evaluate_def, with the same-module witness WordSemSemanticsSupport.holFmapAsFiniteSupportWitness."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/TickUnfold.lean",
+    "lean_name": "evaluate_tick_unfold",
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "evaluate_tick_unfold",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.9.20.2): HOL loop_to_wordProof evaluate_tick_unfold[local] (loop_to_wordProofScript.sml:510-515): evaluate (Tick, s) = if s.clock = 0 then (SOME TimeOut, flush_state T s) else (NONE, dec_clock s), over wordSem evaluate. Lean states it over the tagged exact WordSemStateFiniteExact.evaluate (evaluate_def), with tagged flushState and decClock. HOL's free s is a parameter. There is no hypothesis, and the proof is the evaluate equation. Qualifiers are as for evaluate_def, with the same-module witness LoopToWordTickUnfoldSupport.holFmapAsFiniteSupportWitness. Kernel-checked."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/TickUnfold.lean",
+    "lean_name": "evaluate_tick_loop_tick_unfold",
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "evaluate_tick_loop_tick_unfold",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.9.20.2): HOL loop_to_wordProof evaluate_tick_loop_tick_unfold[local] (loop_to_wordProofScript.sml:517-531): t1.clock <> 0 ==> evaluate (Seq Tick (Seq (Loop names body exit_names) Tick), t1) = (λ(res',s1). if res' = NONE then if s1.clock = 0 then (SOME TimeOut, flush_state T s1) else (NONE, s1 with clock := s1.clock − 1) else (res', s1)) (evaluate (Loop names body exit_names, t1 with clock := t1.clock − 1)). Lean states it over the tagged exact wordSem evaluate. HOL's free t1, names, body and exit_names are parameters, with names and exit_names at the Loop constructor's WordLangNumSetHOL (num_set). The single hypothesis is t1.clock ≠ 0. The paired lambda is a lambda matching on the pair. res' = NONE is decided classically, because WordSemResult has no DecidableEq. The record updates are literal. The proof uses the rebound evaluate_def (Seq, fix_clock removed) and evaluate_tick_unfold. Qualifiers are as for evaluate_def, with the same-module witness. Kernel-checked."
   }
 ]

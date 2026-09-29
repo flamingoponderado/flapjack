@@ -97,6 +97,7 @@ import Flapjack.Pancake.Proofs.LoopToWord.FindVar
 import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelIntro
 import Flapjack.Pancake.Proofs.LoopToWord.CutsetDomain
 import Flapjack.Pancake.Proofs.LoopToWord.WordToBytes
+import Flapjack.Pancake.Proofs.LoopToWord.TickUnfold
 import Flapjack.Pancake.LoopLang.AssignedVars
 import Flapjack.Pancake.Semantics.LoopProps.AssignedVars
 import Flapjack.Pancake.Semantics.LoopProps.CutSets
