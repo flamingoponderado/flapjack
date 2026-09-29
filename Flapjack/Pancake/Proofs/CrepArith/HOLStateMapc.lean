@@ -1028,6 +1028,39 @@ theorem crepSimpExpCorrect1NativeLoad32Case
   rw [hAddressEval]
   rfl
 
+/-- LoadByte case of HOL `simp_exp_correct1` (`crep_arithProofScript.sml:111`).
+    Its recursive premise is generalized over the state and unused result
+    binder for the address expression. The full successful-load premise,
+    code-only `mapc`, and complete optional `word_lab` result are retained. -/
+@[hol "cakeml/pancake/proofs/crep_arithProofScript.sml" "simp_exp_correct1"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
+theorem crepSimpExpCorrect1NativeLoadByteCase
+    {width : Nat} [NeZero width] {σ : Type}
+    (update : MlString × (List Nat × CrepProgHOL width) →
+      List Nat × CrepProgHOL width)
+    (state : CrepSemHOLState width σ) (address : CrepExpHOL width)
+    {resultType : Type} (_result : resultType)
+    (_h : evalCrepSemHOLExp state (.loadByte address) ≠ none)
+    (ih : ∀ (state' : CrepSemHOLState width σ) {resultType : Type}
+      (_result : resultType),
+      evalCrepSemHOLExp state' address ≠ none →
+      evalCrepSemHOLExp (CrepSemHOLState.mapc update state')
+          (crepSimpExpHOL address) =
+        evalCrepSemHOLExp state' address) :
+    evalCrepSemHOLExp (CrepSemHOLState.mapc update state)
+        (crepSimpExpHOL (.loadByte address)) =
+      evalCrepSemHOLExp state (.loadByte address) := by
+  have hAddress : evalCrepSemHOLExp state address ≠ none := by
+    intro hNone
+    apply _h
+    simp [evalCrepSemHOLExp, hNone]
+  have hAddressEval := ih state _result hAddress
+  simp only [crepSimpExpHOL]
+  simp only [evalCrepSemHOLExp]
+  rw [hAddressEval]
+  rfl
+
 /-- Arbitrary finite-index support over the exact HOL-shaped state/code
 carriers. The state retains finite-map locals/globals/code, the HOL
 `MlString`/`CrepProgHOL` code-entry type, total memory and set domains, and

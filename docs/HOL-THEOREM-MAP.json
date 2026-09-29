@@ -116,6 +116,16 @@
     "reviewer": "Source comparison (2026-09-29; bead flapjack-pxn.18.5.4.2.24): HOL simp_exp_correct1 (crep_arithProofScript.sml:111) universally quantifies s, exp, and unused v; assumes eval s exp <> NONE; and concludes eval (mapc f s) (simp_exp exp) = eval s exp. This Load32 case preserves that successful evaluation premise, the polymorphic unused result binder, complete optional word_lab result, and exact code-only mapc update. Its IH is generalized over state and unused result binder for the address child, mirroring eval_ind; no target-success/result or post-state premise was added. HOL crepSem eval_def (crepSemScript.sml:96-102) evaluates the address and calls mem_load_32, whose exact carrier is HOL panSem mem_load_32_def (panSemScript.sml:94-104); simp_exp recursively transforms the address (crep_arithScript.sml:72-74). Lean uses the exact tagged evalCrepSemHOLExp and panMemLoad32HOL definitions over the same total memory and address-domain carriers, returning the word32 widened to the width-indexed HOL word as `w2w` does. Existing direct Crep HOL hit, unaligned, outside-domain, and endian rows are scripts/hol-probes/crep_eval_load_32_probe.out:1-6. The native fixture uses the same width-64 little-endian address-8 cell and checks the successful case plus unaligned failure. Named finite-map fields and word qualifiers match neighboring reviewed native cases."
   },
   {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "crepSimpExpCorrect1NativeLoadByteCase",
+    "hol_path": "cakeml/pancake/proofs/crep_arithProofScript.sml",
+    "hol_name": "simp_exp_correct1",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison (2026-09-29; bead flapjack-pxn.18.5.4.2.25): HOL simp_exp_correct1 (crep_arithProofScript.sml:111) universally quantifies s, exp, and unused v; assumes eval s exp <> NONE; and concludes eval (mapc f s) (simp_exp exp) = eval s exp. This LoadByte case preserves the full successful-evaluation premise, unused polymorphic result binder, generalized address IH, code-only mapc, and complete Option (word_lab) result. HOL crepSem eval_def (crepSemScript.sml:104-108) evaluates the address then calls mem_load_byte; panSem mem_load_byte_def (panSemScript.sml:86-92) returns word8 from total memory at byte_align after the memaddrs guard; simp_exp recursively transforms the address (crep_arithScript.sml:73). evalCrepSemHOLExp currently uses the UInt8 adapter panMemLoadByteHOL, whose all-width kernel witness panMemLoadByteHOL_eq_word8_projection maps it to the exact tagged panMemLoadByteWord8HOL carrier; the evaluator then widens the byte through toNat/ofNat, matching HOL w2w. The fixed-width source rows used here are scripts/hol-probes/crep_eval_load_byte_probe.out:1,4 (address-8 hit and out-of-domain failure). The width-64 fixture mirrors those rows. Narrow-width direct rows are not claimed as exact HOL observations here; any width<8 evaluator completion fixtures describe Lean behavior only. Finite-map and positive-width BitVec qualifiers match the other native cases."
+  },
+  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
@@ -711,7 +721,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
     "lean_name": "holFmapAsFiniteSupportWitness",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-only same-module re-export of the existing CrepSemHOLState/CrepSemBroadState toBroad/ofBroad finite-support roundtrip, required by the finite-map qualifiers on the tagged simp_exp_correct1 Var, Const, LoadGlob, BaseAddr, TopAddr, Load, and Load32 case ports. It introduces no carrier and has no separate HOL declaration."
+    "reviewer": "Flapjack-only same-module re-export of the existing CrepSemHOLState/CrepSemBroadState toBroad/ofBroad finite-support roundtrip, required by the finite-map qualifiers on the tagged simp_exp_correct1 Var, Const, LoadGlob, BaseAddr, TopAddr, Load, Load32, and LoadByte case ports. It introduces no carrier and has no separate HOL declaration."
   },
   {
     "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
