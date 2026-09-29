@@ -325,6 +325,34 @@ example :
   simp [evalCrepSemHOLExp, load32State, panMemLoadByteHOL,
     panByteAlignHOL, hlog]
 
+example :
+    evalCrepSemHOLExp (load32State.mapc sampleMapc64)
+        (.cmp .equal (.const (BitVec.ofNat 64 5)) (.const (BitVec.ofNat 64 5))) =
+      evalCrepSemHOLExp load32State
+        (.cmp .equal (.const (BitVec.ofNat 64 5)) (.const (BitVec.ofNat 64 5))) := by
+  classical
+  simpa [crepSimpExpHOL] using
+    (crepSimpExpCorrect1NativeCmpCase sampleMapc64 load32State .equal
+      (.const (BitVec.ofNat 64 5)) (.const (BitVec.ofNat 64 5))
+      (HolWordLab.word (BitVec.ofNat 64 1))
+      (by simp [evalCrepSemHOLExp, Compiler.Encoders.Asm.wordCmpResultHOL,
+        Compiler.Encoders.Asm.wordCmpHOL])
+      (by
+        intro state' resultType result hLeft
+        exact crepSimpExpCorrect1NativeConstCase sampleMapc64 state'
+          (BitVec.ofNat 64 5) result (by simp [evalCrepSemHOLExp]))
+      (by
+        intro state' resultType result hRight
+        exact crepSimpExpCorrect1NativeConstCase sampleMapc64 state'
+          (BitVec.ofNat 64 5) result (by simp [evalCrepSemHOLExp])))
+
+example :
+    evalCrepSemHOLExp load32State
+        (.cmp .equal (.const (BitVec.ofNat 64 5)) (.var 99)) = none := by
+  classical
+  simp [evalCrepSemHOLExp, load32State, HolFiniteMapExact.empty,
+    Compiler.Encoders.Asm.wordCmpResultHOL, Compiler.Encoders.Asm.wordCmpHOL]
+
 private def lookupNames : List Nat := [0, 1]
 
 example :
