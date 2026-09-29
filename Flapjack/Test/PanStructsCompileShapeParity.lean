@@ -78,9 +78,6 @@ private def exactCompileShapeOracleRows : Bool :=
 #eval exactCompileShapeOracleRows
 #guard exactCompileShapeOracleRows
 
-theorem exactCompileShapeOracleRows_proved : exactCompileShapeOracleRows = true := by
-  native_decide
-
 /-! Direct parity for `pan_structs$compile_shape_def`
     (`pan_structsScript.sml:37`).  The nested cases distinguish the source's
     suffix context from an incorrect lookup through the whole context. -/
