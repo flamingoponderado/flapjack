@@ -13,6 +13,7 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.Evaluate
 import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateClock
 import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateInd
 import Flapjack.Compiler.Backend.Semantics.WordSem.Semantics
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClock
 import Flapjack.Misc.ShiftSeq
 import Flapjack.FpSemHOL
 import Flapjack.Basis.Pure.MlList
