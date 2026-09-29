@@ -207,19 +207,22 @@ theorem makeFuncsDomainCompileProgExact {width : Nat} [NeZero width] :
 
 /-- Local total rendering of HOL `EL` on a fully polymorphic triple list. HOL
     `EL` unfolds via `HD`/`TL` (`listScript.sml:225-228`), so for an
-    out-of-range index it is `HD [] = ARB`, an unspecified element. This
-    rendering returns an explicit `fallback` (the Lean translation of the
-    unspecified `ARB` slot). The two agree exactly on in-range indices, and the
-    exact theorem below proves its own index is in range, so the fallback is
-    never observed here. This helper is proof infrastructure, not a separately
-    tagged HOL declaration. -/
-private def initialProgEL {α β γ : Type} (fallback : α × List β × γ)
+    out-of-range index it is `HD [] = ARB`: HOL's `ARB` is a *fixed*
+    Hilbert-choice element `@x. T` of the (necessarily nonempty) HOL type, not a
+    universally quantified one. This rendering therefore returns the type's
+    canonical Lean inhabitant `default` out of range, discharging HOL's implicit
+    type nonemptiness with the standard `Inhabited` instance (the same
+    translation used for `dimindex` positivity elsewhere via `[NeZero]`). The
+    two agree exactly on in-range indices, and the exact theorem below proves
+    its own index is in range, so the default is never observed here. This
+    helper is proof infrastructure, not a separately tagged HOL declaration. -/
+private def initialProgEL {α β γ : Type} [Inhabited (α × List β × γ)]
     (prog : List (α × List β × γ)) (n : Nat) : α × List β × γ :=
-  (prog[n]?).getD fallback
+  (prog[n]?).getD default
 
-private theorem initialProgEL_eq_getElem {α β γ : Type} (fallback : α × List β × γ)
+private theorem initialProgEL_eq_getElem {α β γ : Type} [Inhabited (α × List β × γ)]
     (prog : List (α × List β × γ)) (n : Nat) (hn : n < prog.length) :
-    initialProgEL fallback prog n = prog[n]'hn := by
+    initialProgEL prog n = prog[n]'hn := by
   simp [initialProgEL, hn]
 
 /-- Exact HOL `initial_prog_make_funcs_el`
@@ -231,22 +234,25 @@ private theorem initialProgEL_eq_getElem {α β γ : Type} (fallback : α × Lis
     `prog, start, n` and the conclusion order over the same right-associated
     triple, with `make_funcs` the tagged exact finite-support
     `crepToLoopMakeFuncsExactHOL` and `first_name` the tagged `firstLoopName`.
-    HOL `EL` is rendered by `initialProgEL`, which takes the unspecified
-    out-of-range `ARB` slot as an explicit `fallback`; the conclusion itself
-    establishes `n < prog.length`, and `initialProgEL_eq_getElem` shows the two
-    agree on that in-range index, so the fallback is never observed. No
+    HOL `EL` is rendered by `initialProgEL prog n`, which returns the type's
+    canonical Lean inhabitant `default` only out of range (HOL's `ARB` is the
+    fixed Hilbert-choice element of the nonempty HOL type, translated by the
+    standard `Inhabited` instance, not by a universally quantified fallback
+    binder); the conclusion itself establishes `n < prog.length`, and
+    `initialProgEL_eq_getElem` shows the two agree on that in-range index, so
+    the default is never observed. Lean's only extra binder is that `Inhabited`
+    instance, the standard discharge of HOL's implicit type nonemptiness. No
     representation qualifier is needed: no word, finite-map or fixed-name
     carrier appears in the statement. -/
 @[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "initial_prog_make_funcs_el"]
-theorem initialProgMakeFuncsElExact {α β γ : Type} :
-    ∀ (prog : List (α × List β × γ)) (start : α) (n : Nat)
-      (fallback : α × List β × γ),
+theorem initialProgMakeFuncsElExact {α β γ : Type} [Inhabited (α × List β × γ)] :
+    ∀ (prog : List (α × List β × γ)) (start : α) (n : Nat),
       (crepToLoopMakeFuncsExactHOL prog).lookup start =
           some (n + firstLoopName, 0) →
-        (start, [], (initialProgEL fallback prog n).2.2) =
-            initialProgEL fallback prog n ∧
+        (start, [], (initialProgEL prog n).2.2) =
+            initialProgEL prog n ∧
           n < prog.length := by
-  intro prog start n fallback hlookup
+  intro prog start n hlookup
   letI : DecidableEq α := fun a b => Classical.propDecidable (a = b)
   rw [holFmapAsFiniteSupportResultWitness_crepToLoopMakeFuncsExactHOL prog start]
     at hlookup
@@ -270,7 +276,7 @@ theorem initialProgMakeFuncsElExact {α β γ : Type} :
     · apply Prod.ext
       · exact hparamsN.symm
       · rfl
-  rw [initialProgEL_eq_getElem fallback prog n hn]
+  rw [initialProgEL_eq_getElem prog n hn]
   exact ⟨hshape, hn⟩
 
 /-- Exact HOL `crep_to_loop_compile_prog_lab_min` (`crep_to_loopProofScript.sml:4398-4400`):
