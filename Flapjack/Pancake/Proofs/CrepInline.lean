@@ -5,6 +5,7 @@ import Flapjack.Pancake.Semantics.CrepSem.Eval
 import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
 import Flapjack.Pancake.Semantics.CrepSem.EvaluateInd
 import Flapjack.Pancake.Semantics.CrepSem.HOLState
+import Flapjack.Pancake.Semantics.CrepProps
 import Flapjack.Pancake.CrepInline.Pass
 import Flapjack.Pancake.CrepInline.Canonical
 
@@ -1719,6 +1720,183 @@ theorem inlineProgCorrectIfCaseExact {width : Nat} [NeZero width] {σ : Type}
           · cases r with
             | none => simpa using hlocalsPost
             | some result => cases result <;> simp_all
+
+/-! ## `inline_prog_correct` Seq constructor case
+
+HOL `crep_inlineProofScript.sml:2383-2400` applies the `evaluate_ind` Seq
+case: first the predicate for `first`, then the conditional predicate for
+`second` when the first result is `NONE`. The case below keeps the theorem's
+source evaluation, non-Error premise, finite-map submap premises, and all
+three relations. Its only additional premises are those two induction
+hypotheses. The exact `CrepSemHOLState` evaluator and `inlineProgHOLExact`
+are used throughout. The state-code invariant used to carry `inlFs SUBMAP`
+through a successful first command is the already tagged exact
+`evaluate_code_invariant` port; HOL uses that same fact in this case.
+-/
+
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "inline_prog_correct"
+  (fmap_as_finite_support_relation :=
+    [CrepSemHOLState.locals, CrepSemHOLState.globals,
+      CrepSemHOLState.code, inlFs, inlBag])
+  (words_as_type_indexed_bitvec)]
+theorem inlineProgCorrectSeqCaseExact {width : Nat} [NeZero width] {σ : Type}
+    (first second : CrepProgHOL width) (s : CrepSemHOLState width σ)
+    (r : Option (CrepResultHOLExact width)) (s' : CrepSemHOLState width σ)
+    (inlFs : HolFiniteMapExact CrepInlineMapHOLName
+      (List Nat × CrepProgHOL width))
+    (inlBag : HolFiniteMapExact CrepInlineMapHOLName
+      (List Nat × CrepProgHOL width))
+    (t : CrepSemHOLState width σ)
+    (hsource : evalCrepSemHOLProgExact s (.seq first second) = (r, s'))
+    (hnotError : r ≠ some .error)
+    (hsubmap : HolFiniteMapExact.submap inlFs s.code)
+    (hbag : HolFiniteMapExact.submap inlBag inlFs)
+    (hstate : crepInlineStateRelCodeExact s t)
+    (hlocals : crepInlineLocalsStrongRelExact s t)
+    (hcode : crepInlineCodeInlRelExact inlFs s t)
+    (ihFirst : ∀ (result : Option (CrepResultHOLExact width))
+        (source' : CrepSemHOLState width σ)
+        (inlFs' : HolFiniteMapExact CrepInlineMapHOLName
+          (List Nat × CrepProgHOL width))
+        (target : CrepSemHOLState width σ)
+        (inlBag' : HolFiniteMapExact CrepInlineMapHOLName
+          (List Nat × CrepProgHOL width)),
+        evalCrepSemHOLProgExact s first = (result, source') →
+        result ≠ some .error →
+        HolFiniteMapExact.submap inlFs' s.code →
+        HolFiniteMapExact.submap inlBag' inlFs' →
+        crepInlineStateRelCodeExact s target →
+        crepInlineLocalsStrongRelExact s target →
+        crepInlineCodeInlRelExact inlFs' s target →
+        ∃ target' : CrepSemHOLState width σ,
+          evalCrepSemHOLProgExact target
+              (CrepInlineCanonical.inlineProgHOLExact inlBag' first) =
+            (result, target') ∧
+          crepInlineStateRelCodeExact source' target' ∧
+          crepInlineCodeInlRelExact inlFs' source' target' ∧
+          match result with
+          | none => crepInlineLocalsStrongRelExact source' target'
+          | some (CrepResultHOLExact.break _) =>
+              crepInlineLocalsStrongRelExact source' target'
+          | some (CrepResultHOLExact.continue _) =>
+              crepInlineLocalsStrongRelExact source' target'
+          | some .error => False
+          | _ => True)
+    (ihSecond : ∀ (resultFirst : Option (CrepResultHOLExact width))
+        (sourceFirst : CrepSemHOLState width σ),
+        (resultFirst, sourceFirst) = evalCrepSemHOLProgExact s first →
+        resultFirst = none →
+        ∀ (result : Option (CrepResultHOLExact width))
+          (source' : CrepSemHOLState width σ)
+          (inlFs' : HolFiniteMapExact CrepInlineMapHOLName
+            (List Nat × CrepProgHOL width))
+          (target : CrepSemHOLState width σ)
+          (inlBag' : HolFiniteMapExact CrepInlineMapHOLName
+            (List Nat × CrepProgHOL width)),
+          evalCrepSemHOLProgExact sourceFirst second = (result, source') →
+          result ≠ some .error →
+          HolFiniteMapExact.submap inlFs' sourceFirst.code →
+          HolFiniteMapExact.submap inlBag' inlFs' →
+          crepInlineStateRelCodeExact sourceFirst target →
+          crepInlineLocalsStrongRelExact sourceFirst target →
+          crepInlineCodeInlRelExact inlFs' sourceFirst target →
+          ∃ target' : CrepSemHOLState width σ,
+            evalCrepSemHOLProgExact target
+                (CrepInlineCanonical.inlineProgHOLExact inlBag' second) =
+              (result, target') ∧
+            crepInlineStateRelCodeExact source' target' ∧
+            crepInlineCodeInlRelExact inlFs' source' target' ∧
+            match result with
+            | none => crepInlineLocalsStrongRelExact source' target'
+            | some (CrepResultHOLExact.break _) =>
+                crepInlineLocalsStrongRelExact source' target'
+            | some (CrepResultHOLExact.continue _) =>
+                crepInlineLocalsStrongRelExact source' target'
+            | some .error => False
+            | _ => True) :
+    ∃ target' : CrepSemHOLState width σ,
+      evalCrepSemHOLProgExact t
+          (CrepInlineCanonical.inlineProgHOLExact inlBag
+            (.seq first second)) = (r, target') ∧
+      crepInlineStateRelCodeExact s' target' ∧
+      crepInlineCodeInlRelExact inlFs s' target' ∧
+      match r with
+      | none => crepInlineLocalsStrongRelExact s' target'
+      | some (CrepResultHOLExact.break _) =>
+          crepInlineLocalsStrongRelExact s' target'
+      | some (CrepResultHOLExact.continue _) =>
+          crepInlineLocalsStrongRelExact s' target'
+      | some .error => False
+      | _ => True := by
+  classical
+  rw [evalCrepSemHOLProgExact_seq_holShape] at hsource
+  cases hfirst : evalCrepSemHOLProgExact s first with
+  | mk resultFirst sourceFirst =>
+      have hfirstRun :
+          evalCrepSemHOLProgExact s first = (resultFirst, sourceFirst) := hfirst
+      have hsourceCase :
+          (if resultFirst = none then
+            evalCrepSemHOLProgExact sourceFirst second
+           else (resultFirst, sourceFirst)) = (r, s') := by
+        simpa only [hfirst] using hsource
+      by_cases hfirstNone : resultFirst = none
+      · have hsourceSecond :
+            evalCrepSemHOLProgExact sourceFirst second = (r, s') := by
+          simpa [hfirstNone] using hsourceCase
+        have hcodeInvariant :=
+          evaluateCodeInvariantHOL first s resultFirst sourceFirst hfirstRun
+        have hsubmapFirst : HolFiniteMapExact.submap inlFs sourceFirst.code := by
+          intro key value hlookup
+          have hlookup' := hsubmap key value hlookup
+          simpa [hcodeInvariant] using hlookup'
+        obtain ⟨targetFirst, htargetFirst, hstateFirst, hcodeFirst,
+            hlocalsFirst⟩ :=
+          ihFirst resultFirst sourceFirst inlFs t inlBag hfirstRun
+            (by simp [hfirstNone]) hsubmap hbag hstate hlocals hcode
+        simp [hfirstNone] at hlocalsFirst
+        obtain ⟨targetFinal, htargetSecond, hstateFinal, hcodeFinal,
+            hlocalsFinal⟩ :=
+          ihSecond resultFirst sourceFirst hfirstRun.symm hfirstNone
+            r s' inlFs targetFirst inlBag hsourceSecond hnotError hsubmapFirst hbag
+            hstateFirst hlocalsFirst hcodeFirst
+        have hinlineSeq :
+            CrepInlineCanonical.inlineProgHOLExact inlBag
+                (.seq first second) =
+              .seq (CrepInlineCanonical.inlineProgHOLExact inlBag first)
+                (CrepInlineCanonical.inlineProgHOLExact inlBag second) := by
+          unfold CrepInlineCanonical.inlineProgHOLExact
+          simp only [CrepInlineCanonical.inlineProgHOLCoreExact]
+        refine ⟨targetFinal, ?_, hstateFinal, hcodeFinal, ?_⟩
+        rw [hinlineSeq, evalCrepSemHOLProgExact_seq_holShape, htargetFirst]
+        · simpa [hfirstNone] using htargetSecond
+        · cases r with
+          | none => exact hlocalsFinal
+          | some result => cases result <;> simp_all
+      · have hsourcePair :
+            (resultFirst, sourceFirst) = (r, s') := by
+          simpa [hfirstNone] using hsourceCase
+        clear hsource
+        rcases Prod.mk.inj hsourcePair with ⟨hr, hs'⟩
+        subst r
+        subst s'
+        clear hsourceCase hsourcePair
+        obtain ⟨targetFirst, htargetFirst, hstateFirst, hcodeFirst,
+            hlocalsFirst⟩ :=
+          ihFirst resultFirst sourceFirst inlFs t inlBag hfirstRun hnotError
+            hsubmap hbag hstate hlocals hcode
+        have hinlineSeq :
+            CrepInlineCanonical.inlineProgHOLExact inlBag
+                (.seq first second) =
+              .seq (CrepInlineCanonical.inlineProgHOLExact inlBag first)
+                (CrepInlineCanonical.inlineProgHOLExact inlBag second) := by
+          unfold CrepInlineCanonical.inlineProgHOLExact
+          simp only [CrepInlineCanonical.inlineProgHOLCoreExact]
+        refine ⟨targetFirst, ?_, hstateFirst, hcodeFirst, ?_⟩
+        rw [hinlineSeq, evalCrepSemHOLProgExact_seq_holShape, htargetFirst]
+        · simp [hfirstNone]
+        · cases resultFirst with
+          | none => exact False.elim (hfirstNone rfl)
+          | some result => cases result <;> simp_all
 
 /-! ## `inline_prog_correct` Return constructor case
 
