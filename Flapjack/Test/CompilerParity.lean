@@ -380,6 +380,7 @@ import Flapjack.Test.LoopSemCodeTableParity
 import Flapjack.Test.LoopSemCutParity
 import Flapjack.Test.CrepToLoopCompFuncParity
 import Flapjack.Test.CrepArithExactParity
+import Flapjack.Test.CrepArithStoreGlobParity
 import Flapjack.Test.CrepToLoopCompileProgParity
 import Flapjack.Test.LoopCallEnvParity
 import Flapjack.Test.InstructionTransfer

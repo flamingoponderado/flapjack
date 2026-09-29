@@ -229,6 +229,7 @@ import Flapjack.Pancake.Proofs.CrepArith
 import Flapjack.Pancake.Proofs.CrepArith.HOLStateMapc
 import Flapjack.Pancake.Proofs.CrepArith.MulConst
 import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectPrimitiveRaise
+import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectStoreGlob
 import Flapjack.Pancake.Proofs.CrepInline
 import Flapjack.Pancake.CrepInline.Canonical
 import Flapjack.CompileFunctionDistinct

@@ -22592,4 +22592,35 @@
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Same-module canonical finite-support witness re-export for the CrepSemHOLState carrier used by the Primitive/Raise case tags; no separate HOL declaration."
   }
+,
+{
+    "hol_path": "cakeml/pancake/proofs/crep_arithProofScript.sml",
+    "hol_name": "simp_prog_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrectStoreGlob.lean",
+    "lean_name": "simpProgCorrectStoreGlobCase",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison (2026-09-29; bead flapjack-pxn.18.5.4.16): HOL simp_prog_correct (cakeml/pancake/proofs/crep_arithProofScript.sml:184-212) states !p s r s'. evaluate (p,s) = (r,s') ==> r <> SOME Error ==> evaluate (simp_prog p, mapcs s) = (r, mapcs s'). The StoreGlob dst src case keeps the source evaluation equation, the r <> SOME Error premise, and the target conclusion over the exact CrepProgHOL/CrepSemHOLState/CrepResultHOLExact carriers and the tagged exact crepSimpProgHOL. HOL simp_prog (StoreGlob g exp) = StoreGlob g (simp_exp exp) (crep_arithScript.sml:89) and evaluate (StoreGlob dst src, s) evaluates only src into (NONE, set_globals dst w s) or (SOME Error, s) (crepSemScript.sml:288-291). The proof consumes the tagged exact simp_exp_correct (crepSimpExpCorrectNativeHOL) to transport the evaluated value across the code-only mapcs update and proves set_globals commutes with the code-only mapcs; no target-run assumption is taken. The named finite-map fields are the exact carrier's locals/globals/code with holFmapAsFiniteSupportWitness supplying the roundtrip, and the positive BitVec width represents HOL's word dimension. Direct HOL oracle rows: scripts/hol-probes/crep_arith_store_glob_probe.out (simp_prog_storeglob, evaluate_storeglob_const, evaluate_storeglob_mapc, storeglob_mapc_commute, evaluate_storeglob_missing_var)."
+  },
+{
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrectStoreGlob.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module canonical finite-support witness re-export for the CrepSemHOLState carrier used by the StoreGlob case tag; no separate HOL declaration."
+  },
+{
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrectStoreGlob.lean",
+    "lean_name": "crepSimpMapcsHOL_setGlobals",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only commuting law for the local simp_prog_correct mapcs rendering and exact setGlobals; HOL has no standalone declaration."
+  }
 ]
