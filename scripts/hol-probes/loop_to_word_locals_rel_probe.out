@@ -1,0 +1,6 @@
+lt_locals_rel_good_with_extra_target=T
+lt_locals_rel_odd_register=F
+lt_locals_rel_zero_register=F
+lt_locals_rel_noninjective=F
+lt_locals_rel_missing_context=F
+lt_locals_rel_wrong_value=F
