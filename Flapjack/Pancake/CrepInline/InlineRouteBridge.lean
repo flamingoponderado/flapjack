@@ -51,6 +51,28 @@ theorem compileInlTopHOL_nil [BEq FunName] [LawfulBEq FunName] [LawfulHashable F
     rw [crepInlineProgRecursive_nil]
   rw [hmap, List.map_id]
 
+/-- Production `compileInlTopHOL` is the identity whenever no function in the
+program is marked inlineable, i.e. the inlineable filter is empty.  This
+generalizes `compileInlTopHOL_nil` from an empty inline-name list to a program
+that simply contains none of the named functions. -/
+theorem compileInlTopHOL_id_of_filter_nil [BEq FunName] [LawfulBEq FunName]
+    [LawfulHashable FunName] [OfNat α 0] [OfNat α 1] (inlineNames : List FunName)
+    (functions : List (FunName × List Nat × CrepProg α))
+    (hfilter : functions.filter (fun function => inlineNames.contains function.1) = []) :
+    compileInlTopHOL inlineNames functions = functions := by
+  simp only [compileInlTopHOL]
+  rw [hfilter]
+  simp only [List.map_nil]
+  have hmap : List.map (fun x : FunName × List Nat × CrepProg α =>
+      (x.fst, x.2.fst, crepInlineProgRecursive []
+        ((crepInlineActiveNames ([] : List (CrepInlineEntry α))).erase x.fst) x.2.snd))
+      functions = List.map id functions := by
+    apply List.map_congr_left
+    intro a _
+    simp only [id_eq]
+    rw [crepInlineProgRecursive_nil]
+  rw [hmap, List.map_id]
+
 /-- On an everywhere-`none` inline map the exact recursive inliner makes no
 change. -/
 theorem inlineProgHOLCoreExact_lookup_none {width : Nat} [NeZero width]
