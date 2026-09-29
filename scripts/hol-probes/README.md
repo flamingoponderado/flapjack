@@ -622,8 +622,17 @@ HOL_PROBE_ONLY=pan_fixed_load_probeScript.sml scripts/hol-probes/regenerate.sh`
 against matching CakeML source commit `857f0d98da8f8a3580f3442338e697809308ede`.
 The `aligned_width1_address0=T` and `aligned_width1_address1=F` rows confirm
 that HOL accepts address zero and rejects address one; `byte_align_width1_address1`
-records the source `byte_align` definition at that carrier width. The tagged
-Lean `panMemLoad32HOL` states the equivalent modulo-four guard directly; the
+records the source `byte_align` definition at that carrier width and retains
+`LOG2 0` symbolically (`pan_fixed_load_probe.out:50`), direct HOL evidence
+that the source does not select Lean's `Nat.log2 0 = 0` completion. The source
+expression is emitted by `pan_fixed_load_probeScript.sml:94-95` and was
+captured with the command above. The untagged
+`CrepSem.Log2ZeroParametric` evaluator uses one explicit natural `z` at every
+recursive load; its one-bit examples show that completions 0 and 1 can differ,
+while a kernel theorem proves all expression results coincide with the current
+evaluator at widths at least 8 for every `z`. This is a model parameter, not
+reviewed production equivalence or an approved HOL qualifier. The tagged Lean
+`panMemLoad32HOL` states the equivalent modulo-four guard directly; the
 matching Lean fixture checks that address zero returns `0x00010001` and address
 one returns `none`. HOL EVAL leaves the raw width-one pack in
 `get_byte`/shift/concatenation form; a direct HOL simplifier/evaluator pass
