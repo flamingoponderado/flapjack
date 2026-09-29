@@ -102,8 +102,11 @@ theorem ncompileCorrectSkipCase {width : Nat} [NeZero width] {σ : Type}
   have hSource : (res, s1) = (none, v1) := by
     simpa only [evalCrepSemHOLProgExact_skip] using hEval.symm
   cases hSource
-  refine ⟨0, none, t, ?_, hState, hMem, hGlobals, hCode, ?_, hLocals⟩
+  rcases crepToLoopStateRelExact_clock_add_zero v1 t hState with ⟨ck, hStateClock⟩
+  refine ⟨ck, none, { t with clock := ck + t.clock }, ?_, hStateClock,
+    hMem, hGlobals, hCode, ?_, hLocals⟩
   · simp [LoopSemStateFiniteExact.evaluate, compileHOLExact]
+    omega
   · rfl
 
 /-- Genuine `Break` induction case of HOL `ncompile_correct`
@@ -145,8 +148,11 @@ theorem ncompileCorrectBreakCase {width : Nat} [NeZero width] {σ : Type}
   have hSource : (res, s1) = (some (.break label), v1) := by
     simpa only [evalCrepSemHOLProgExact_break] using hEval.symm
   cases hSource
-  refine ⟨0, some (.break label), t, ?_, hState, hMem, hGlobals, hCode, ?_, hLocals⟩
+  rcases crepToLoopStateRelExact_clock_add_zero v1 t hState with ⟨ck, hStateClock⟩
+  refine ⟨ck, some (.break label), { t with clock := ck + t.clock }, ?_, hStateClock,
+    hMem, hGlobals, hCode, ?_, hLocals⟩
   · simp [LoopSemStateFiniteExact.evaluate, compileHOLExact]
+    omega
   · rfl
 
 /-- Genuine `Continue` induction case of HOL `ncompile_correct`
@@ -188,8 +194,11 @@ theorem ncompileCorrectContinueCase {width : Nat} [NeZero width] {σ : Type}
   have hSource : (res, s1) = (some (.continue label), v1) := by
     simpa only [evalCrepSemHOLProgExact_continue] using hEval.symm
   cases hSource
-  refine ⟨0, some (.continue label), t, ?_, hState, hMem, hGlobals, hCode, ?_, hLocals⟩
+  rcases crepToLoopStateRelExact_clock_add_zero v1 t hState with ⟨ck, hStateClock⟩
+  refine ⟨ck, some (.continue label), { t with clock := ck + t.clock }, ?_, hStateClock,
+    hMem, hGlobals, hCode, ?_, hLocals⟩
   · simp [LoopSemStateFiniteExact.evaluate, compileHOLExact]
+    omega
   · rfl
 
 /-- Genuine `Tick` induction case of HOL `ncompile_correct`
