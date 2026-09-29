@@ -10953,9 +10953,20 @@
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
     "hol_name": "distinct_funcs_def",
     "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
-    "lean_name": "crepToLoopDistinctFuncs",
+    "lean_name": "crepToLoopDistinctFuncsExact",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "reviewer": "flapjack-luna-b source review (2026-09-29; bead flapjack-pxn.18.5.6.33.20.2) against crep_to_loopProofScript.sml:60-65: HOL's standalone fm binder has type 'a |-> ('b # 'c), and the full predicate quantifies x,y,n,m,rm,rm' with two FLOOKUP equalities and n=m implying x=y. Lean preserves that binder/conclusion exactly over HolFiniteMapExact, with key and both tuple components polymorphic, and records the standalone carrier using the checked parameters qualifier and holFmapAsFiniteSupportParamWitness_crepToLoopDistinctFuncsExact_functions. The prior raw FiniteMap-backed crepToLoopDistinctFuncs has no HOL tag and is documented as Flapjack-specific because α → Option admits infinite support. Existing HOL-EVAL relation fixtures remain applicable to lookup-specialized instances. No extra premise or comparison was added.",
+    "fmap_as_finite_support_parameters": [
+      "functions"
+    ]
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "distinct_make_funcs",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/MakeFuncsLemmas.lean",
+    "lean_name": "distinct_make_funcs",
     "statement_status": "reviewed_exact",
-    "reviewer": "Codex (statement compared against distinct_funcs_def at crep_to_loopProofScript.sml:60; HOL's un-annotated Definition infers 'a |-> ('b # 'c), so the port is polymorphic in the key and both tuple components; direct HOL-EVAL rows distinct_funcs_sep/collision/absent reproduced by Lean guards in Flapjack/Test/CrepToLoopParity.lean)"
+    "reviewer": "flapjack-luna-b source comparison (2026-09-29; bead flapjack-pxn.18.5.6.33.20.1) against crep_to_loopProofScript.sml:3757-3758: HOL quantifies only crep_code and concludes distinct_funcs (make_funcs crep_code). Lean has the same single outer binder, polymorphic in key α, parameter-element β, and ignored body γ, and concludes crepToLoopDistinctFuncsExact on the exact tagged crepToLoopMakeFuncsExactHOL result. The make_funcs_def dependency carries its reviewed finite-support-result translation and same-module HOL-equality lookup witness; distinct_funcs_def separately qualifies its standalone finite-map parameter. No equality typeclass, success condition, or other premise was added. The private lookup-membership and zipped-entry helpers only prove the source theorem and carry no HOL tags."
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
