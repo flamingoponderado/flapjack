@@ -127,7 +127,6 @@ import Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact
 import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOkLemmas
 import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOkEvalExact
 import Flapjack.PanObservationalSemantics
-import Flapjack.PanHHandleCallRet
 import Flapjack.PanMrec
 import Flapjack.PanHProgDec
 import Flapjack.PanHProgSeq
@@ -312,7 +311,6 @@ import Flapjack.RiscV.CorrectnessStackRemoveDynamic
 import Flapjack.RiscV.CorrectnessStackRemoveBitmap
 import Flapjack.RiscV.CorrectnessStack
 import Flapjack.RiscV.CorrectnessFfiMachine
-import Flapjack.RiscV.CorrectnessStack
 import Flapjack.RiscV.Ffi
 import Flapjack.RiscV.ExactFfi
 import Flapjack.RiscV.Link
@@ -346,6 +344,7 @@ import Flapjack.Pancake.LoopCall.IsLoad
 import Flapjack.Pancake.Proofs.LoopCall.CompileCorrect
 import Flapjack.Pancake.CrepToLoop.Proofs.MakeFuncsLemmas
 import Flapjack.Pancake.CrepToLoop.Proofs.NotMemContextAssigned
+import Flapjack.Pancake.CrepToLoop.Proofs.CallPreserveStateCodeLocalsRel
 import Flapjack.Pancake.CrepToLoop.Optimise
 import Flapjack.Pancake.CrepToLoop.StateRel
 import Flapjack.Test.CrepToLoopCompileExpExactParity
@@ -393,7 +392,6 @@ import Flapjack.RiscV.CakeAllocatorBitsBridge
 import Flapjack.StackAlloc
 import Flapjack.StackAlloc.Runtime
 import Flapjack.StackAlloc.Machine
-import Flapjack.RiscV.CorrectnessWordToStack
 import Flapjack.StackAlloc.FrameMachine
 import Flapjack.StackAlloc.CollectorSemantics
 import Flapjack.StackAlloc.Correctness

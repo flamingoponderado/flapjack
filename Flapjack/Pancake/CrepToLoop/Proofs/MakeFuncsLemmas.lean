@@ -10,8 +10,8 @@ Exact port of `cakeml/pancake/proofs/crep_to_loopProofScript.sml`'s
 
 The `distinct_make_funcs` slice (bead
 `flapjack-pxn.18.5.6.33.20.1`) uses the corrected exact finite-support
-`make_funcs` result. The remaining five `make_funcs`/`compile_prog` list lemmas
-remain on the parent bead `flapjack-pxn.18.5.6.33.20`.
+`make_funcs` result. Other `make_funcs`/`compile_prog` list lemmas are tracked
+as commit-sized children of `flapjack-pxn.18.5.6.33.20`.
 
 `compile_prog` is the tagged `compileProgHOLExact` (`compile_prog_def`) and
 `first_name` the tagged `firstLoopName` (`first_name_def`, 64).
@@ -203,6 +203,68 @@ theorem makeFuncsDomainCompileProgExact {width : Nat} [NeZero width] :
       i + firstLoopName = firstLoopName + i := Nat.add_comm _ _
       _ = lc := hlc.symm
   exact sptFromAList_mem_key (compileProgHOLExact c crep_code) lc hkey
+
+/-- Local total rendering of HOL `EL` on the exact crep program carrier. The
+    selected fallback is observable only for an out-of-range index. The exact
+    theorem below proves the index is in range, so its statement and proof use
+    this rendering only where it agrees with indexed list lookup. This helper
+    is proof infrastructure, not a separately tagged HOL declaration. -/
+private def initialProgEL {width : Nat} [NeZero width]
+    (prog : List (Basis.Pure.MlString.MlString × List Nat × CrepProgHOL width))
+    (n : Nat) : Basis.Pure.MlString.MlString × List Nat × CrepProgHOL width :=
+  (prog[n]?).getD (Basis.Pure.MlString.MlString.implode [], [], CrepProgHOL.skip)
+
+private theorem initialProgEL_eq_getElem {width : Nat} [NeZero width]
+    (prog : List (Basis.Pure.MlString.MlString × List Nat × CrepProgHOL width))
+    (n : Nat) (hn : n < prog.length) :
+    initialProgEL prog n = prog[n]'hn := by
+  simp [initialProgEL, hn]
+
+/-- Exact HOL `initial_prog_make_funcs_el`
+    (`crep_to_loopProofScript.sml:3942-3945`). It keeps HOL's binders
+    `prog, start, n`, lookup premise and conjunction order. `make_funcs` is the
+    exact finite-support result, `first_name` is the tagged `firstLoopName`,
+    and the program is the exact `MlString`/`CrepProgHOL width` carrier. HOL
+    `EL` is rendered by `initialProgEL`; the conclusion itself establishes
+    `n < prog.length`, and `initialProgEL_eq_getElem` shows the chosen fallback
+    is never observed. Only the HOL positive word width uses the reviewed
+    type-indexed BitVec qualifier. -/
+@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "initial_prog_make_funcs_el"
+  (words_as_type_indexed_bitvec)]
+theorem initialProgMakeFuncsElExact {width : Nat} [NeZero width] :
+    ∀ (prog : List (Basis.Pure.MlString.MlString × List Nat × CrepProgHOL width))
+      (start : Basis.Pure.MlString.MlString) (n : Nat),
+      (crepToLoopMakeFuncsExactHOL prog).lookup start =
+          some (n + firstLoopName, 0) →
+        (start, [], (initialProgEL prog n).2.2) = initialProgEL prog n ∧
+          n < prog.length := by
+  intro prog start n hlookup
+  letI : DecidableEq Basis.Pure.MlString.MlString :=
+    fun a b => Classical.propDecidable (a = b)
+  rw [holFmapAsFiniteSupportResultWitness_crepToLoopMakeFuncsExactHOL prog start]
+    at hlookup
+  have hentry : (start, (n + firstLoopName, 0)) ∈
+      (prog.zip (List.range prog.length)).map
+        (fun entry => (entry.1.1, (firstLoopName + entry.2,
+          entry.1.2.1.length))) :=
+    flookup_fupdateListHOL_reverse_mem _ _ _ hlookup
+  obtain ⟨i, hi, hname, hlabel, hparamsLength⟩ :=
+    makeFuncsExact_entry_mem prog start (n + firstLoopName) 0 hentry
+  have hindex : i = n := by omega
+  have hn : n < prog.length := by omega
+  have hnameN : start = (prog[n]'hn).1 := by
+    simpa [hindex] using hname
+  have hparamsLengthN : ((prog[n]'hn).2.1).length = 0 := by
+    simpa [hindex] using hparamsLength.symm
+  have hparamsN : (prog[n]'hn).2.1 = [] := List.eq_nil_of_length_eq_zero hparamsLengthN
+  have hshape : (start, [], (prog[n]'hn).2.2) = prog[n]'hn := by
+    apply Prod.ext
+    · exact hnameN
+    · apply Prod.ext
+      · exact hparamsN.symm
+      · rfl
+  rw [initialProgEL_eq_getElem prog n hn]
+  exact ⟨hshape, hn⟩
 
 /-- Exact HOL `crep_to_loop_compile_prog_lab_min` (`crep_to_loopProofScript.sml:4398-4400`):
     `crep_to_loop$compile_prog c cprog = lprog ⇒ EVERY (λprog. 60 ≤ FST prog) lprog`,
