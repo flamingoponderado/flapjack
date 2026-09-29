@@ -1603,6 +1603,13 @@ run_probe word_lang_every_var_probeScript.sml word_lang_every_var_probe.out \
   "$cake_dir/compiler/backend/wordLangScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 
+# The wordSem carrier probe observes buffer_flush/buffer_write/stack_size for
+# the exact carrier port (bead flapjack-h29l.1).
+run_probe word_sem_carriers_probeScript.sml word_sem_carriers_probe.out \
+  buffer_flush_hit stack_size_unbounded \
+  "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
 # The good_handlers probe observes the structural handler-label predicate,
 # including the NONE-ret case (handler ignored) and nested bad handlers.
 run_probe word_convs_good_handlers_probeScript.sml word_convs_good_handlers_probe.out \
