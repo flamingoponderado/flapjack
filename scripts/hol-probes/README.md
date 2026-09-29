@@ -132,6 +132,26 @@ temporaries, with a parameter already assigned, and with a fresh
 and its `compile` alias over a three-entry code list. Its kernel-checked Lean
 replay is `Flapjack.Test.LoopToWordCompFuncParity` through the tagged exact
 `loopToWordCompFuncHOL` / `loopToWordCompileProgHOL` / `loopToWordCompileHOL`.
+`loop_to_word_compile_correct_cases_probe.out` is manual HOL statement
+evidence, not an EVAL-oracle consumed by CI. It rebuilds, inside HOL, the
+`evaluate_ind` principle exactly as `loop_to_wordProofScript.sml` does
+(`loopSemTheory.evaluate_ind |> ISPEC goal |> CONV_RULE (DEPTH_CONV
+PBETA_CONV) |> REWRITE_RULE []`, with `goal` taken from `compile_correct`) and
+prints, for the constructors `Skip`, `Fail`, `Tick`, `Continue`, `Break`,
+`Mark`, `Return`, `Raise`, the antecedent conjunct that the Lean case theorems
+in `Flapjack/Pancake/LoopToWord/Proofs/CompileCorrect/` render, followed by the
+rebound `wordSem$evaluate_ind` / `evaluate_def` statements
+(`cakeml/compiler/backend/semantics/wordSemScript.sml:1367-1370`) and the
+checks `cc_ind_thm_conclusion_is_compile_correct=T` and `ws_end=T`. It is the
+source review aid for the case structure rather than a runnable oracle: the
+outputs are multi-line HOL terms whose labels are built dynamically
+(`print ("cc_case_" ^ n ^ "=")`), so `scripts/check-hol-probe-rows.py` keeps
+the captured file under the content lock but deliberately skips the
+script/out label comparison for it (see its `UNSUPPORTED` table), and no Lean
+module replays the rows. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=loop_to_word_compile_correct_cases_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
 `loop_live_comp_probe.out` records direct HOL EVAL rows for
 `loop_live$comp` at `cakeml/pancake/loop_liveScript.sml:217`; the Lean replay
 is `Flapjack.Test.LoopLiveCompParity`. `loop_live_optimise_probe.out` records
