@@ -22389,5 +22389,69 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.8.1.14): HOL loopSemScript.sml:497 rebinds evaluate_ind = REWRITE_RULE [fix_clock_evaluate] evaluate_ind. The statement is tdefn-generated and captured verbatim in scripts/hol-probes/loop_sem_evaluate_ind_probe.out (regenerate.sh row evaluate_ind). Lean evaluate_induct states the same 24 conjuncts in HOL's order: Skip, Fail, Assign, Primitive, Arith, Store, SetGlobal, Load32, LoadByte, Store32, StoreByte, Seq, If, Mark, Break, Continue, Loop, Raise, Return, ShMem, Tick, LocValue, Call, FFI. Each has the same binder list and order and the same guard equations, with the conclusion ∀ v v1. P (v, v1) over P : HolLoopProg width × LoopSemStateFiniteExact width F -> Prop. Rendering choices: /\\-chained guards are curried; lookup is sptLookup, get_var_imm getVarImm, word_cmp wordCmpHOL, and (b <=> word_cmp cmp x y) is b = wordCmpHOL cmp x y over Bool; cut_res is cutRes, get_vars getVars, find_code findCode, set_vars/set_var setVars/setVar, dec_clock decClock, ALL_DISTINCT List.Nodup, and evaluate (p, s) is evaluate p s. Seq has fix_clock already rewritten away, as in HOL. The Lean evaluator is the tagged loopSem evaluate_def. The proof is lex (clock, sizeOf) well-founded induction with the tagged evaluate_clock and cutRes_none_clock. Qualifiers: fmap_as_finite_support [globals] (the HOL |-> globals of LoopSemStateFiniteExact; locals/code are Spt), same-module witness LoopEvaluateIndFiniteSupport.holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec for BitVec width with NeZero."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_arithProofScript.sml",
+    "hol_name": "simp_prog_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrect.lean",
+    "lean_name": "simpProgCorrectSkipCase",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison (2026-09-29; bead flapjack-pxn.18.5.4.8): HOL crep_arithProofScript.sml:184-212 quantifies p,s,r,s', assumes evaluate (p,s)=(r,s') and r<>SOME Error, and concludes evaluate (simp_prog p,mapcs s)=(r,mapcs s'). This is exactly its evaluate_ind Skip leaf with p specialized to Skip and no induction hypotheses. Lean keeps both HOL premises and the complete target result/post-state equation over the tagged exact evaluator and exact crepSimpProgHOL. The Flapjack-only crepSimpMapcsHOL mirrors local HOL mapcs at line 160 (mapc/FMAP_MAP2 preserves keys and formal parameters and maps each code body with simp_prog); its exact finite-support implementation is untagged. The Skip evaluator and simplifier equations preserve the exact state. CrepSemHOLState finite-map fields locals/globals/code and BitVec word width use the reviewed qualifiers and same-module canonical witness."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_arithProofScript.sml",
+    "hol_name": "simp_prog_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrect.lean",
+    "lean_name": "simpProgCorrectBreakCase",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison (2026-09-29; bead flapjack-pxn.18.5.4.8): HOL crep_arithProofScript.sml:184-212 quantifies p,s,r,s', assumes evaluate (p,s)=(r,s') and r<>SOME Error, and concludes evaluate (simp_prog p,mapcs s)=(r,mapcs s'). This is exactly its evaluate_ind Break leaf, specializing the program to Break label; there is no induction hypothesis. Lean keeps the same evaluation and non-Error premises and complete target result/post-state equation. HOL simp_prog leaves Break unchanged, and HOL evaluate returns SOME (Break label) with the state unchanged; the Lean exact evaluator equations prove that specialization. mapcs is represented by the untagged exact finite-support code-map transformation documented beside the helper. State and word qualifiers match the exact carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_arithProofScript.sml",
+    "hol_name": "simp_prog_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrect.lean",
+    "lean_name": "simpProgCorrectContinueCase",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison (2026-09-29; bead flapjack-pxn.18.5.4.8): HOL crep_arithProofScript.sml:184-212 quantifies p,s,r,s', assumes evaluate (p,s)=(r,s') and r<>SOME Error, and concludes evaluate (simp_prog p,mapcs s)=(r,mapcs s'). This is exactly its evaluate_ind Continue leaf, specializing the program to Continue label; there is no induction hypothesis. Lean keeps the same evaluation and non-Error premises and complete target result/post-state equation. HOL simp_prog leaves Continue unchanged, and HOL evaluate returns SOME (Continue label) with the state unchanged; the Lean exact evaluator equations prove that specialization. mapcs is represented by the untagged exact finite-support code-map transformation documented beside the helper. State and word qualifiers match the exact carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_arithProofScript.sml",
+    "hol_name": "simp_prog_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrect.lean",
+    "lean_name": "simpProgCorrectTickCase",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison (2026-09-29; bead flapjack-pxn.18.5.4.8): HOL crep_arithProofScript.sml:184-212 quantifies p,s,r,s', assumes evaluate (p,s)=(r,s') and r<>SOME Error, and concludes evaluate (simp_prog p,mapcs s)=(r,mapcs s'). This is exactly its evaluate_ind Tick leaf, specializing p to Tick; no induction hypothesis is present. Lean preserves the two premises and full result/post-state equation. HOL simp_prog leaves Tick unchanged; evaluate yields TimeOut with empty_locals when the clock is zero and NONE with dec_clock otherwise (crepSemScript.sml:327-329). The Lean proof handles both exact evaluator branches and proves mapcs commutes with emptyLocals and decClock because it changes only code. State and word qualifiers match the exact carriers."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrect.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack same-module canonical finite-support witness for simp_prog_correct case qualifiers; it re-exports the existing CrepSemHOLState/CrepSemBroadState toBroad/ofBroad roundtrip and does not add a carrier or a HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrect.lean",
+    "lean_name": "crepSimpMapcsHOL_emptyLocals",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only commuting law for the proof script's local mapcs rendering with exact emptyLocals. HOL has no declaration for this helper theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrect.lean",
+    "lean_name": "crepSimpMapcsHOL_decClock",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only commuting law for the proof script's local mapcs rendering with exact decClock. HOL has no declaration for this helper theorem."
   }
 ]
