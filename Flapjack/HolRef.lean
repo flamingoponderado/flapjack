@@ -120,7 +120,8 @@ namespace Flapjack
 
 /-- Location of the original HOL4 declaration. -/
 structure HolRef where
-  /-- Repository-relative path of the HOL script, e.g.
+  /-- Repository-relative path of the HOL script (CakeML, or the explicitly
+      allowed byte-pinned external HOL4 snapshot), e.g.
       `cakeml/pancake/proofs/pan_to_crepProofScript.sml`. -/
   path : String
   /-- Exact HOL declaration name, e.g. `pc_compile_correct`. -/

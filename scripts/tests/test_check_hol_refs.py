@@ -27,6 +27,21 @@ class ExternalHolSourcesTest(unittest.TestCase):
                           for p in ["COPYRIGHT", "src/finite_maps/sptreeScript.sml"]}}
         (base / "SOURCES.json").write_text(json.dumps(lock))
 
+    def test_repository_snapshot_pin(self):
+        self.assertIsNone(CHECKER["hol_source_error"](CHECKER["ROOT"], CHECKER["EXTERNAL_HOL_PATH"]))
+
+    def test_upstream_identity_rejected(self):
+        import json
+        for field, value in [("commit", "not-a-commit"), ("repository", "https://example.com/other")]:
+            with self.subTest(field=field), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                self.fixture(root)
+                manifest = root / "hol4/SOURCES.json"
+                lock = json.loads(manifest.read_text())
+                lock[field] = value
+                manifest.write_text(json.dumps(lock))
+                self.assertIsNotNone(CHECKER["hol_source_error"](root, CHECKER["EXTERNAL_HOL_PATH"]))
+
     def test_valid_pin(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

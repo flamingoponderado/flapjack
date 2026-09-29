@@ -5,7 +5,8 @@ Every Lean declaration that ports a HOL4 declaration carries
 `@[hol "cakeml/.../fooScript.sml" "theorem_name"]` (see `Flapjack/HolRef.lean`
 and `AGENTS.md`).  This script checks, without running Lean, that
 
-* the cited file exists in the `cakeml` submodule, and
+* the cited file exists in the `cakeml` submodule or the explicitly allowed
+  byte-pinned HOL4 snapshot (including its retained license), and
 * a HOL declaration with exactly that name is declared in that file; when
   the name is duplicated, the tag must cite a matching source line
   (`Theorem`, `Triviality`, `Definition`, `Datatype`, `Inductive`,
