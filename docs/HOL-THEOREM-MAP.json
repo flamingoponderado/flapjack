@@ -11392,6 +11392,30 @@
     "reviewer": "flapjack-ds9 source comparison (2026-09-28, bead flapjack-pxn.18.5.9.2) against cakeml/pancake/loop_to_wordScript.sml:42-45. The HOL `num |-> num` spt context and `unit spt` num_set are represented by the repo's reviewed exact sptree carrier Spt (Flapjack/Misc/Sptree.lean, constructors LN/LS/BN/BS and sptree$lookup/insert/toAList), so no width-indexed BitVec carrier appears and no qualifier is used; Spt is a tree map, never an fmap_as_finite_support `|->` finite map. Direct HOL EVAL rows in scripts/hol-probes/loop_to_word_defs_probe.out are reproduced by kernel-checked guards in Flapjack/Test/LoopToWordExactParity.lean."
   },
   {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "set_fromNumSet",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "fromNumSetHOL_set",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.9.16.1) against loop_to_wordProofScript.sml:278-282. HOL set (fromNumSet t) = domain t; Lean equality is the characteristic predicate key ∈ fromNumSetHOL tree = exact sptDomain tree. fromNumSetHOL is the exact tagged loop_to_wordScript.sml:47-48 map-fst-toAList definition; Spt `domain` is exact sptMem via the reviewed domain_lookup theorem. The proof derives both inclusions over unrestricted Spt, using the checked foldi lookup membership and fromAList/toAList lookup bridge; no `sptWf` premise or finite-map/list representation qualifier applies."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "domain_toNumSet",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "sptDomain_toNumSetHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.9.16.1) against loop_to_wordProofScript.sml:284-287. HOL domain (toNumSet ps) = set ps; Lean states extensional equality between exact sptDomain and the list-membership predicate. `toNumSetHOL` is the exact tagged loop_to_wordScript.sml:42-45 recursive insertion definition, and `sptMem_sptInsert` proves membership is key equality or prior membership, preserving empty and duplicate semantics. Spt and List are constructor-for-constructor carriers; no word, array, or finite-map qualifier applies. Focused empty/nonempty/duplicate tests are in LoopToWordExactParity.lean."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "sptLookup_isSome_sptFromAList_of_mem_fst",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific private transport lemma: proves that a key in the first-component projection of an association list is present after sptFromAList. It supports the tagged set_fromNumSet proof via the external HOL fromAList/toAList lookup roundtrip; it is not a separate CakeML declaration."
+  },
+  {
     "hol_path": "cakeml/pancake/pan_commonScript.sml",
     "hol_name": "distinct_lists_def",
     "lean_path": "Flapjack/Pancake/PanCommon.lean",
