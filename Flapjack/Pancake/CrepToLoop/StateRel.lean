@@ -346,17 +346,47 @@ theorem loopMemoryTotal_eq_some {W F : Type} (default : LoopValue W)
     (h : t.memory ad = some v) : loopMemoryTotal default t ad = v := by
   simp [loopMemoryTotal, h]
 
-/-- Exact port of HOL `crep_to_loop$distinct_funcs_def`
-    (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:60-65`): distinct
-    function-map keys are separated by their target labels, so two entries with
-    equal labels must share the key.  HOL's un-annotated `Definition` infers
-    `fm : 'a |-> ('b # 'c)`, so the Lean port is polymorphic in the key and in
-    both tuple components (exactly the inferred HOL polymorphism). -/
-@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "distinct_funcs_def"]
+/-- Flapjack-specific predicate over the broad function-backed finite-map
+    representation. It is not tagged as HOL `distinct_funcs_def`: a raw
+    `κ → Option (α × β)` admits infinite support and therefore is not Cake's
+    finite-map carrier. The exact tagged predicate is
+    `crepToLoopDistinctFuncsExact` below. -/
 def crepToLoopDistinctFuncs {κ α β : Type} (functions : FiniteMap κ (α × β)) : Prop :=
   ∀ (x y : κ) (n m : α) (rm rm' : β),
     FLOOKUP functions x = some (n, rm) →
-    FLOOKUP functions y = some (m, rm') → n = m → x = y
+      FLOOKUP functions y = some (m, rm') → n = m → x = y
+
+private def distinctFuncsMaptoBroadlookup {κ β : Type}
+    (functions : HolFiniteMapExact κ β) : κ → Option β := functions.lookup
+
+private def distinctFuncsMapofBroad {κ β : Type} (lookup : κ → Option β)
+    (finiteSupport : ∃ keys : List κ, ∀ key, lookup key ≠ none → key ∈ keys) :
+    HolFiniteMapExact κ β := ⟨lookup, finiteSupport⟩
+
+/-- Canonical standalone-map witness for the exact `distinct_funcs_def`
+    parameter. It roundtrips the finite-support map through the lookup and its
+    support proof. -/
+theorem holFmapAsFiniteSupportParamWitness_crepToLoopDistinctFuncsExact_functions
+    {κ β : Type} (functions : HolFiniteMapExact κ β) :
+    distinctFuncsMapofBroad (distinctFuncsMaptoBroadlookup functions) functions.finiteSupport =
+      functions := by
+  cases functions
+  rfl
+
+/-- Exact HOL `crep_to_loop$distinct_funcs_def`
+    (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:60-65`): distinct
+    function-map keys are separated by their target labels, so two entries with
+    equal labels must share the key. HOL's un-annotated `Definition` infers
+    `fm : 'a |-> ('b # 'c)`, so the exact port is polymorphic in the key and in
+    both tuple components. Its standalone map binder uses the checked canonical
+    finite-support translation; there are no additional premises. -/
+@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "distinct_funcs_def"
+  (fmap_as_finite_support_parameters := [functions])]
+def crepToLoopDistinctFuncsExact {κ α β : Type}
+    (functions : HolFiniteMapExact κ (α × β)) : Prop :=
+  ∀ (x y : κ) (n m : α) (rm rm' : β),
+    functions.lookup x = some (n, rm) →
+    functions.lookup y = some (m, rm') → n = m → x = y
 
 /-- Untagged iff form of `crepToLoopDistinctFuncs`, kept for rewriting. -/
 theorem crepToLoopDistinctFuncs_iff {κ α β : Type} (functions : FiniteMap κ (α × β)) :

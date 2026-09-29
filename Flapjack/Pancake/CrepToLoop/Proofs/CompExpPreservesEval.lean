@@ -12,6 +12,7 @@ import Flapjack.Pancake.Semantics.CrepProps.EvalSomeVarCexp
 import Flapjack.Pancake.CrepToLoop.Proofs.CompExpTmpBound
 import Flapjack.Pancake.CrepToLoop.Proofs.CompExpLeTmpDomain
 import Flapjack.Pancake.CrepToLoop.Proofs.CompExpOutRel
+import Flapjack.Pancake.CrepToLoop.Proofs.CompExpPreservesEval.Load
 
 /-!
 # crep_to_loop `comp_exp_preserves_eval`, split by HOL's `eval_ind` cases
