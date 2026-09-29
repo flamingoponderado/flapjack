@@ -21869,6 +21869,23 @@
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
     "hol_name": "ncompile_correct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NCompileCorrect/Store32.lean",
+    "lean_name": "crepToLoop_ncompile_correct_store32",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison (2026-09-29; bead flapjack-pxn.18.5.6.52) against crep_to_loopProofScript.sml:110-154 and Resume ncompile_correct[Store32] at :1857-1965. The Store32 evaluate_ind case has no program induction hypothesis. It preserves HOL's source evaluation and non-Error premises, all five input relations, and the complete existential target clock/result/state conclusion with all six postconditions; it assumes no target evaluation/result or post relation. The source equation is evalCrepSemHOLProgExact_store32_holShape, the target is the exact LoopSemStateFiniteExact.evaluate, and compilation is compileHOLExact. The proof follows the HOL case: crep_to_loop_comp_exp_preserves_eval handles destination then source compilation; nested_seq_pure_evaluation and locals_touched_eq_eval_eq keep the destination address valid through source compilation and its address temporary; exact mem_store_32 clauses establish alignment, domain, cell and the four-byte update; the exact memory relation is preserved at the written address and elsewhere; and insert_gt_vmax plus the two exact cut-set inclusions preserve locals_rel. The finite-map qualifier names the fields traversed by the exact state/context/relation carriers with same-module roundtrip witnesses; words_as_type_indexed_bitvec records HOL's positive word dimension as BitVec width. Executable behavior is unchanged."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ncompile_correct",
     "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NCompileCorrect/Call.lean",
     "lean_name": "crepToLoop_ncompile_correct_call",
     "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",

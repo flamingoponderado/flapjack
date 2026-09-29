@@ -102,8 +102,10 @@ private theorem panSetByteHOL_eq_setByteHOL8_lt {width : Nat} [NeZero width] (h8
     exact zero_case
 
 /-- Flapjack bridge (no HOL declaration): the panSem and wordSem renderings of
-    HOL `byte$set_byte` agree at every positive width. -/
-private theorem panSetByteHOL_eq_setByteHOL8 {width : Nat} [NeZero width]
+    HOL `byte$set_byte` agree at every positive width. This public helper is
+    also used by the exact `ncompile_correct` Store32 case to compare the two
+    evaluator memory-update chains. -/
+theorem panSetByteHOL_eq_setByteHOL8 {width : Nat} [NeZero width]
     (a v : BitVec width) (b : BitVec 8) (be : Bool) :
     panSetByteHOL a (BitVec.ofNat width b.toNat) v be = setByteHOL8 a b v be := by
   by_cases h8 : 8 ≤ width
