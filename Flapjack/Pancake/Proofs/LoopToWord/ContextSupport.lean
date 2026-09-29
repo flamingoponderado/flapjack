@@ -147,7 +147,7 @@ private theorem sptInsert_preserves_bounded_lookup_injectivity
       exact ⟨hxy, by omega⟩
 
 /-- Exact HOL `make_ctxt_inj`
-(`cakeml/pancake/proofs/loop_to_wordProofScript.sml:293-296`). The incoming
+(`cakeml/pancake/proofs/loop_to_wordProofScript.sml:296-300`). The incoming
 context is injective on equal lookup results whose registers are below
 `next`; each `make_ctxt` insertion uses the fresh register `next`, then the
 bound advances by two. This is stated over the exact `Spt Nat` carrier and
@@ -169,5 +169,74 @@ theorem makeCtxtHOL_inj (names : List Nat) (context : Spt Nat) (next : Nat)
         (sptInsert_preserves_bounded_lookup_injectivity next name context hinj)
       · exact hx
       · exact hy
+
+/-- Exact local HOL `make_ctxt_APPEND`
+(`cakeml/pancake/proofs/loop_to_wordProofScript.sml:309-315`). Splitting the
+input names after `xs` advances the starting register for `ys` by exactly two
+per name in the prefix. -/
+@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "make_ctxt_APPEND" 309]
+theorem makeCtxtHOL_append (xs ys : List Nat) (next : Nat)
+    (context : Spt Nat) :
+    Flapjack.makeCtxtHOL next (xs ++ ys) context =
+      Flapjack.makeCtxtHOL (next + 2 * xs.length) ys
+        (Flapjack.makeCtxtHOL next xs context) := by
+  induction xs generalizing next context with
+  | nil => simp [Flapjack.makeCtxtHOL]
+  | cons name names ih =>
+      simp only [List.cons_append, List.length_cons, Flapjack.makeCtxtHOL]
+      rw [ih]
+      have hoffset : (next + 2) + 2 * names.length =
+          next + 2 * (names.length + 1) := by omega
+      rw [hoffset]
+
+/-- Exact local HOL `make_ctxt_NOT_MEM`
+(`cakeml/pancake/proofs/loop_to_wordProofScript.sml:317-321`). A name absent
+from the input list has the same lookup result before and after exact context
+construction. -/
+@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "make_ctxt_NOT_MEM" 317]
+theorem makeCtxtHOL_notMem (names : List Nat) (next : Nat)
+    (context : Spt Nat) (key : Nat) (hnot : key ∉ names) :
+    sptLookup key (Flapjack.makeCtxtHOL next names context) =
+      sptLookup key context := by
+  induction names generalizing next context with
+  | nil => simp [Flapjack.makeCtxtHOL]
+  | cons name names ih =>
+      have hnot' : key ≠ name ∧ key ∉ names := by
+        simpa only [List.mem_cons, not_or] using hnot
+      rcases hnot' with ⟨hne, hnotRest⟩
+      calc
+        sptLookup key (Flapjack.makeCtxtHOL next (name :: names) context) =
+            sptLookup key
+              (Flapjack.makeCtxtHOL (next + 2) names
+                (sptInsert name next context)) := rfl
+        _ = sptLookup key (sptInsert name next context) :=
+          ih (next + 2) (sptInsert name next context) hnotRest
+        _ = sptLookup key context :=
+          sptLookup_sptInsert_ne name key next context hne
+
+/-- Exact HOL `lookup_make_ctxt_range`
+(`cakeml/pancake/proofs/loop_to_wordProofScript.sml:331-339`). Any register
+found after context construction was either already present with the same
+value or lies at or above the starting register. -/
+@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "lookup_make_ctxt_range"]
+theorem makeCtxtHOL_lookupRange (names : List Nat) (next : Nat)
+    (context : Spt Nat) (key value : Nat)
+    (hlookup : sptLookup key (Flapjack.makeCtxtHOL next names context) =
+      some value) :
+    sptLookup key context = some value ∨ next ≤ value := by
+  induction names generalizing next context with
+  | nil => exact Or.inl hlookup
+  | cons name names ih =>
+      have hrec := ih (next + 2) (sptInsert name next context) hlookup
+      rcases hrec with hsource | hbound
+      · by_cases hkey : key = name
+        · subst key
+          rw [sptLookup_sptInsert_same] at hsource
+          have hvalue : value = next := (Option.some.inj hsource).symm
+          subst value
+          exact Or.inr (by omega)
+        · rw [sptLookup_sptInsert_ne name key next context hkey] at hsource
+          exact Or.inl hsource
+      · exact Or.inr (by omega)
 
 end Flapjack.LoopToWord
