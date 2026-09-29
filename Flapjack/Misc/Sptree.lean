@@ -681,6 +681,38 @@ def sptInter {α β : Type} : Spt α → Spt β → Spt α
           sptMkBS (sptInter first first') value (sptInter second second')
 termination_by left _ => sizeOf left
 
+/-- HOL `sptree$difference` (`HOL/src/finite_maps/sptreeScript.sml:319-339`):
+remove every key present in the right tree while retaining the left payloads.
+The right value type is independent because its payloads are never read. The
+recursive clauses and `sptMkBN`/`sptMkBS` collapse behavior follow the HOL
+definition exactly. The source is outside the CakeML submodule, so this is
+Flapjack infrastructure without an `@[hol]` tag. -/
+def sptDifference {α β : Type} : Spt α → Spt β → Spt α
+  | .ln, _ => .ln
+  | .ls value, right =>
+      match right with
+      | .ln => .ls value
+      | .ls _ => .ln
+      | .bn _ _ => .ls value
+      | .bs _ _ _ => .ln
+  | .bn first second, right =>
+      match right with
+      | .ln => .bn first second
+      | .ls _ => .bn first second
+      | .bn first' second' =>
+          sptMkBN (sptDifference first first') (sptDifference second second')
+      | .bs first' _ second' =>
+          sptMkBN (sptDifference first first') (sptDifference second second')
+  | .bs first value second, right =>
+      match right with
+      | .ln => .bs first value second
+      | .ls _ => .bn first second
+      | .bn first' second' =>
+          sptMkBS (sptDifference first first') value (sptDifference second second')
+      | .bs first' _ second' =>
+          sptMkBN (sptDifference first first') (sptDifference second second')
+termination_by left _ => sizeOf left
+
 /-- HOL `list_delete` (`cakeml/compiler/backend/backend_commonScript.sml:180-182`):
 delete each key (with unit value) from the tree, left to right.  HOL's declared
 type is generic in the map's value type (`num list -> 'a num_map -> 'a num_map`),
