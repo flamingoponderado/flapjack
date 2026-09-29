@@ -11449,6 +11449,15 @@
     "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.9.16.4) against the local HOL theorem at loop_to_wordProofScript.sml:309-315. HOL states that mapping xs ++ ys from n equals mapping ys from n + 2 * LENGTH xs over the context after mapping xs from n. Lean preserves xs/ys/n/context order, append orientation, the exact +2*length register offset, and equality over the same Spt Nat carrier. makeCtxtHOL is the exact tagged production-counterpart definition; no assumptions or carrier qualifiers were introduced. The regression splits [7,8] from [8,9], including a repeated name across the split, and checks the resulting register lookup."
   },
   {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "make_ctxt_NOT_MEM",
+    "hol_line": 317,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "makeCtxtHOL_notMem",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.9.16.5) against the local HOL theorem at loop_to_wordProofScript.sml:317-321. HOL states that for all xs/n/l/x, nonmembership of x in xs implies lookup x after make_ctxt equals lookup x in l. Lean keeps the same list-membership premise and Option lookup equality over exact Spt Nat, using the same tagged makeCtxtHOL and sptInsert definitions. No bounds, freshness conditions beyond the HOL nonmembership premise, or representation qualifiers are added. Focused regression checks absent key 9 through [4,6,4]."
+  },
+  {
     "hol_path": "cakeml/pancake/pan_commonScript.sml",
     "hol_name": "distinct_lists_def",
     "lean_path": "Flapjack/Pancake/PanCommon.lean",

@@ -189,4 +189,29 @@ theorem makeCtxtHOL_append (xs ys : List Nat) (next : Nat)
           next + 2 * (names.length + 1) := by omega
       rw [hoffset]
 
+/-- Exact local HOL `make_ctxt_NOT_MEM`
+(`cakeml/pancake/proofs/loop_to_wordProofScript.sml:317-321`). A name absent
+from the input list has the same lookup result before and after exact context
+construction. -/
+@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "make_ctxt_NOT_MEM" 317]
+theorem makeCtxtHOL_notMem (names : List Nat) (next : Nat)
+    (context : Spt Nat) (key : Nat) (hnot : key ∉ names) :
+    sptLookup key (Flapjack.makeCtxtHOL next names context) =
+      sptLookup key context := by
+  induction names generalizing next context with
+  | nil => simp [Flapjack.makeCtxtHOL]
+  | cons name names ih =>
+      have hnot' : key ≠ name ∧ key ∉ names := by
+        simpa only [List.mem_cons, not_or] using hnot
+      rcases hnot' with ⟨hne, hnotRest⟩
+      calc
+        sptLookup key (Flapjack.makeCtxtHOL next (name :: names) context) =
+            sptLookup key
+              (Flapjack.makeCtxtHOL (next + 2) names
+                (sptInsert name next context)) := rfl
+        _ = sptLookup key (sptInsert name next context) :=
+          ih (next + 2) (sptInsert name next context) hnotRest
+        _ = sptLookup key context :=
+          sptLookup_sptInsert_ne name key next context hne
+
 end Flapjack.LoopToWord

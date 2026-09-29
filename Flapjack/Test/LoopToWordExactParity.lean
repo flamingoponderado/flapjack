@@ -89,6 +89,11 @@ example :
 
 #guard sptLookup 8 (makeCtxtHOL 3 [7, 8, 8, 9] (.ln : Spt Nat)) == some 7
 
+example :
+    sptLookup 9 (makeCtxtHOL 2 [4, 6, 4] (.ln : Spt Nat)) =
+      sptLookup 9 (.ln : Spt Nat) := by
+  exact makeCtxtHOL_notMem [4, 6, 4] 2 (.ln : Spt Nat) 9 (by simp)
+
 /-- Probe context `insert 3 7 (insert 5 9 LN)` over `num |-> num` spt. -/
 def probeContext : Spt Nat := sptInsert 3 7 (sptInsert 5 9 .ln)
 
