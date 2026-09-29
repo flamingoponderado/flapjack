@@ -91,11 +91,31 @@ def wordSsaFfiOrderGuard : Bool :=
 
 #guard wordSsaFfiOrderGuard
 
+/-- Empty, singleton, internal, and structurally non-wf Spt constructor
+fixtures for the unrestricted `fromAList (toAList tree)` lookup bridge. -/
+def sptLookupFromToAListGuard : Bool :=
+  sptLookup 0 (sptFromAList (sptToAList (.ln : Spt Nat))) ==
+      sptLookup 0 (.ln : Spt Nat) &&
+    sptLookup 0 (sptFromAList (sptToAList (.ls 7 : Spt Nat))) ==
+      sptLookup 0 (.ls 7 : Spt Nat) &&
+    sptLookup 2 (sptFromAList (sptToAList (.bs (.ls 11) 13 (.ls 17) : Spt Nat))) ==
+      sptLookup 2 (.bs (.ls 11) 13 (.ls 17) : Spt Nat) &&
+    sptLookup 3 (sptFromAList (sptToAList (.bs (.ls 11) 13 (.ls 17) : Spt Nat))) ==
+      sptLookup 3 (.bs (.ls 11) 13 (.ls 17) : Spt Nat) &&
+    sptLookup 0 (sptFromAList (sptToAList (.bn .ln .ln : Spt Nat))) ==
+      sptLookup 0 (.bn .ln .ln : Spt Nat) &&
+    sptLookup 0 (sptFromAList (sptToAList (.bs .ln 23 .ln : Spt Nat))) ==
+      sptLookup 0 (.bs .ln 23 .ln : Spt Nat)
+
+#guard sptLookupFromToAListGuard
+#guard sptWf (.bn .ln .ln : Spt Nat) == false
+#guard sptWf (.bs .ln 23 .ln : Spt Nat) == false
+
 def parityGuard : Bool :=
   sptreeOrderGuard && collapseBranchLoopOrderGuard &&
     wordSsaReconcileOrderGuard &&
     wordSsaFixInconsistenciesOrderGuard && wordSsaLoopSetupOrderGuard &&
-    wordSsaFfiOrderGuard
+    wordSsaFfiOrderGuard && sptLookupFromToAListGuard
 
 #guard parityGuard
 
