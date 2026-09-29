@@ -1,0 +1,16 @@
+difference_ln_bs=LN
+difference_ls_ln=⦕ 0 ↦ 17 ⦖
+difference_ls_ls=LN
+difference_ls_bn=⦕ 0 ↦ 17 ⦖
+difference_ls_bs=LN
+difference_bn_ln=⦕ 1 ↦ 22; 2 ↦ 11 ⦖
+difference_bn_ls=⦕ 1 ↦ 22; 2 ↦ 11 ⦖
+difference_bn_bn=⦕ 1 ↦ 22 ⦖
+difference_bn_collapse=LN
+difference_bn_bs=⦕ 1 ↦ 22 ⦖
+difference_bs_ln=⦕ 0 ↦ 33; 1 ↦ 22; 2 ↦ 11 ⦖
+difference_bs_ls=⦕ 1 ↦ 22; 2 ↦ 11 ⦖
+difference_bs_bn_collapse=⦕ 0 ↦ 33 ⦖
+difference_bs_bn=⦕ 0 ↦ 33; 1 ↦ 22 ⦖
+difference_bs_bs=⦕ 1 ↦ 22; 2 ↦ 11 ⦖
+difference_bs_bs_collapse=LN
