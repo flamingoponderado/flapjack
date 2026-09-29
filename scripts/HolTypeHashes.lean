@@ -272,23 +272,26 @@ elab "#emit_hol_type_hashes" : command => do
     match env.find? name with
     | none => throwError "missing declaration {name}"
     | some info =>
+        let mut qualifiers : List (String × Json) := [
+          ("list_as_array", toJson ref.listAsArray),
+          ("names_as_string", toJson ref.namesAsString),
+          ("names_as_string_boundary", toJson ref.namesAsStringBoundary),
+          ("fmap_as_finite_support", toJson ref.fmapAsFiniteSupport),
+          ("fmap_as_finite_support_result", toJson ref.fmapAsFiniteSupportResult),
+          ("fmap_as_finite_support_parameters", toJson ref.fmapAsFiniteSupportParameters),
+          ("fmap_as_finite_support_existentials", toJson ref.fmapAsFiniteSupportExistentials),
+          ("fmap_as_finite_support_relation",
+            toJson (ref.fmapAsFiniteSupportRelation.map (fun entry => if entry.1.isEmpty then entry.2 else s!"{entry.1}.{entry.2}"))),
+          ("fmap_as_finite_support_equalities", toJson ref.fmapAsFiniteSupportEqualities),
+          ("words_as_type_indexed_bitvec", toJson ref.wordsAsTypeIndexedBitvec)]
+        if let some width := ref.wordDimensionAsWidth then
+          qualifiers := qualifiers ++ [("word_dimension_as_width", toJson width)]
         let mut fields : List (String × Json) := [
           ("lean_name", toJson name.toString),
           ("hol_path", toJson ref.path),
           ("hol_name", toJson ref.name),
           ("type_expr", toJson (reprStr (canonicalExpr info.type))),
-          ("qualifiers", Json.mkObj [
-            ("list_as_array", toJson ref.listAsArray),
-            ("names_as_string", toJson ref.namesAsString),
-            ("names_as_string_boundary", toJson ref.namesAsStringBoundary),
-            ("fmap_as_finite_support", toJson ref.fmapAsFiniteSupport),
-            ("fmap_as_finite_support_result", toJson ref.fmapAsFiniteSupportResult),
-            ("fmap_as_finite_support_parameters", toJson ref.fmapAsFiniteSupportParameters),
-            ("fmap_as_finite_support_existentials", toJson ref.fmapAsFiniteSupportExistentials),
-            ("fmap_as_finite_support_relation",
-              toJson (ref.fmapAsFiniteSupportRelation.map (fun entry => if entry.1.isEmpty then entry.2 else s!"{entry.1}.{entry.2}"))),
-            ("fmap_as_finite_support_equalities", toJson ref.fmapAsFiniteSupportEqualities),
-            ("words_as_type_indexed_bitvec", toJson ref.wordsAsTypeIndexedBitvec)])]
+          ("qualifiers", Json.mkObj qualifiers)]
         match definitionBody? info with
         | some body =>
             fields := fields ++ [("value_expr", toJson (reprStr (canonicalExpr body)))]

@@ -297,6 +297,24 @@ class HolTypeHashesTest(unittest.TestCase):
         lock = MODULE.expected_lock(manifest, export, "leanprover/lean4:v4")
         self.assertTrue(lock["records"][0]["qualifiers"]["words_as_type_indexed_bitvec"])
 
+    def test_word_dimension_as_width_qualifier_is_locked(self):
+        manifest = [{
+            **self.manifest[0],
+            "statement_status": "reviewed_word_dimension_as_width",
+            "word_dimension_as_width": "width",
+        }]
+        export = [{
+            **self.export[0],
+            "qualifiers": {"word_dimension_as_width": "width"},
+        }]
+        lock = MODULE.expected_lock(manifest, export, "leanprover/lean4:v4")
+        self.assertEqual(
+            lock["records"][0]["qualifiers"]["word_dimension_as_width"], "width"
+        )
+        without_dimension = [{**export[0], "qualifiers": {}}]
+        with self.assertRaisesRegex(ValueError, "manifest qualifiers differ"):
+            MODULE.lock_records(manifest, without_dimension)
+
     def test_combined_relation_words_status_is_locked(self):
         manifest = [{
             **self.manifest[0],
@@ -371,6 +389,16 @@ class HolTypeHashesTest(unittest.TestCase):
                 "lean_name": "n", "hol_path": "p", "hol_name": "h",
                 "type_expr": "t",
                 "qualifiers": {"fmap_as_finite_support_existentials": ["inl_bag"]},
+            },
+            1,
+        )
+
+    def test_word_dimension_qualifier_export_record_validates(self):
+        MODULE.validate_export_record(
+            {
+                "lean_name": "n", "hol_path": "p", "hol_name": "h",
+                "type_expr": "t",
+                "qualifiers": {"word_dimension_as_width": "width"},
             },
             1,
         )

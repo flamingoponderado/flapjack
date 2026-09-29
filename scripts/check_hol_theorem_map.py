@@ -1738,6 +1738,7 @@ VALID_STATUSES = {
     "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_equalities",
     "reviewed_words_as_type_indexed_bitvec",
+    "reviewed_word_dimension_as_width",
     "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
     "pending_statement_review",
@@ -1869,23 +1870,18 @@ def data_declarations(root: Path = ROOT) -> set[tuple[str, str]]:
 
 def tagged_declarations(
     root: Path = ROOT,
-) -> dict[tuple[str, str], tuple[str, str, tuple[str, ...], tuple[str, ...], tuple[str, ...], tuple[str, ...], bool, tuple[str, ...], bool]]:
+) -> dict[tuple[str, str], tuple]:
     """Return Lean file/name to HOL file/name for every active ``@[hol]``."""
-    tagged: dict[
-        tuple[str, str],
-        tuple[
-            str, str, tuple[str, ...], tuple[str, ...], tuple[str, ...],
-            tuple[str, ...], bool, tuple[str, ...], bool, bool,
-        ],
-    ] = {}
+    tagged: dict[tuple[str, str], tuple] = {}
     for path in REFS["lean_files"]():
         rel = path.relative_to(root).as_posix()
         lines = path.read_text(encoding="utf-8").splitlines()
         for (line, hol_path, hol_name, _hol_line, list_fields,
              names_fields, boundary_fields, fmap_fields, fmap_result,
              fmap_relation, fmap_equalities, words_bitvec,
-             fmap_parameters, fmap_existentials) in HOL_ATTRIBUTE_SITES(
-                 lines, include_fmap_existentials=True
+             fmap_parameters, fmap_existentials, dimension_width) in HOL_ATTRIBUTE_SITES(
+                 lines, include_fmap_existentials=True,
+                 include_word_dimension_width=True,
              ):
             lean_name = FIND_LEAN_DECL(lines, line - 1)
             key = (rel, lean_name)
@@ -1895,7 +1891,7 @@ def tagged_declarations(
             value = (hol_path, hol_name, list_fields, names_fields,
                      boundary_fields, fmap_fields, fmap_result, fmap_relation,
                      fmap_equalities, words_bitvec, fmap_parameters,
-                     fmap_existentials)
+                     fmap_existentials, dimension_width)
             if key in tagged and tagged[key] != value:
                 raise ValueError(f"conflicting @[hol] references for {rel}:{lean_name}")
             tagged[key] = value
@@ -1909,7 +1905,7 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
     for (lean_path, lean_name), (
         hol_path, hol_name, list_fields, names_fields, boundary_fields, fmap_fields,
         fmap_result, fmap_relation, fmap_equalities, words_bitvec, fmap_parameters,
-        fmap_existentials,
+        fmap_existentials, dimension_width,
     ) in tagged.items():
         entry = {
             "hol_path": hol_path,
@@ -1942,6 +1938,8 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
             entry["fmap_as_finite_support_equalities"] = True
         if words_bitvec:
             entry["words_as_type_indexed_bitvec"] = True
+        if dimension_width:
+            entry["word_dimension_as_width"] = dimension_width
         inventory[(lean_path, lean_name)] = entry
 
     for lean_path, lean_name in proof_theorem_declarations(root):
@@ -2213,6 +2211,7 @@ def validate_inventory(
         words_bitvec = bool(tag[9]) if tag is not None and len(tag) > 9 else False
         fmap_parameters = tag[10] if tag is not None and len(tag) > 10 else ()
         fmap_existentials = tag[11] if tag is not None and len(tag) > 11 else ()
+        dimension_width = tag[12] if tag is not None and len(tag) > 12 else None
         manifest_list_fields = tuple(record.get("list_as_array", ()))
         manifest_names_fields = tuple(record.get("names_as_string", ()))
         manifest_boundary_fields = tuple(record.get("names_as_string_boundary", ()))
@@ -2266,6 +2265,33 @@ def validate_inventory(
         if manifest_words_bitvec != words_bitvec:
             errors.append(
                 f"{key[0]}:{key[1]}: manifest words_as_type_indexed_bitvec does not match its @[hol] tag"
+            )
+        manifest_dimension_width = record.get("word_dimension_as_width")
+        if manifest_dimension_width != dimension_width:
+            errors.append(
+                f"{key[0]}:{key[1]}: manifest word_dimension_as_width does not match its @[hol] tag"
+            )
+        if dimension_width:
+            if words_bitvec:
+                errors.append(
+                    f"{key[0]}:{key[1]}: word_dimension_as_width is mutually exclusive with words_as_type_indexed_bitvec"
+                )
+            if status == "reviewed_exact":
+                errors.append(
+                    f"{key[0]}:{key[1]}: word_dimension_as_width @[hol] tag cannot have reviewed_exact status"
+                )
+            if status != "reviewed_word_dimension_as_width":
+                errors.append(
+                    f"{key[0]}:{key[1]}: word_dimension_as_width needs reviewed_word_dimension_as_width status"
+                )
+            reviewer_text = reviewer.lower() if isinstance(reviewer, str) else ""
+            if "source" not in reviewer_text or dimension_width.lower() not in reviewer_text:
+                errors.append(
+                    f"{key[0]}:{key[1]}: reviewed_word_dimension_as_width requires a source-comparison note naming `{dimension_width}`"
+                )
+        elif status == "reviewed_word_dimension_as_width":
+            errors.append(
+                f"{key[0]}:{key[1]}: reviewed_word_dimension_as_width needs a matching @[hol] qualifier"
             )
         combined_words_status = (
             "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec"
