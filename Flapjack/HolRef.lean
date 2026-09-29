@@ -447,6 +447,7 @@ private partial def widthProblemsGo (e : Expr) (ctx : Array Expr)
       let acc ← widthProblemsGo ty ctx acc
       let acc ← widthProblemsGo val ctx acc
       widthProblemsGo body (ctx.push ty) acc
+  | .proj _ _ structType => widthProblemsGo structType ctx acc
   | .app _ _ =>
       match e.getAppFn with
       | .const ``BitVec _ =>
@@ -477,7 +478,18 @@ private partial def widthProblemsGo (e : Expr) (ctx : Array Expr)
               let mut acc := acc
               for arg in e.getAppArgs do acc ← widthProblemsGo arg ctx acc
               return acc
-  | _ => return acc
+  | _ =>
+      if e.hasLooseBVars then
+        return acc
+      else
+        -- A nullary reducible abbreviation used as a type is a bare `.const`,
+        -- not an application: unfold it like the `.app` default so that
+        -- `abbrev ZeroWord := BitVec 0` cannot hide a zero-width word.
+        let unfolded ← withTransparency .reducible (whnf e)
+        if unfolded != e then
+          widthProblemsGo unfolded ctx acc
+        else
+          return acc
 
 /-- Problems with the width dimensions of an elaborated declaration type. -/
 private def widthProblems (type : Expr) : MetaM (Array String) :=

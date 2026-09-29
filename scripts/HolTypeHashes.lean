@@ -101,9 +101,12 @@ import Flapjack.Pancake.Proofs.LoopToWord.WordShiftModDimword
 import Flapjack.Pancake.Proofs.LoopToWord.CompExpPreservesEval
 import Flapjack.Pancake.Proofs.LoopToWord.CutEnvSupport
 import Flapjack.Pancake.Proofs.LoopToWord.WordToBytes
+import Flapjack.Pancake.Proofs.LoopToWord.AccVarsAcc
 import Flapjack.Pancake.Proofs.LoopToWord.TickUnfold
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Base
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.ReturnRaise
+import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Assign
+import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Arith
 import Flapjack.Pancake.LoopLang.AssignedVars
 import Flapjack.Pancake.Semantics.LoopProps.AssignedVars
 import Flapjack.Pancake.Semantics.LoopProps.CutSets
@@ -217,6 +220,7 @@ import Flapjack.Pancake.Semantics.LoopProps.UnassignedVarsExact
 import Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact
 import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOkLemmas
 import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOkEvalExact
+import Flapjack.Pancake.Semantics.LoopProps.AccVars
 import Flapjack.Pancake.Semantics.PanCommonProps
 import Flapjack.Pancake.Semantics.PanProps
 import Flapjack.Pancake.Semantics.PanProps.EvalInvariant

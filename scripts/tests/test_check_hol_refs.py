@@ -1533,6 +1533,25 @@ class WordsAsTypeIndexedBitvecQualifierTest(unittest.TestCase):
             any("NeZero 0" in e or "positive" in e for e in self.ERRORS(text, "evalProg"))
         )
 
+    def test_rejects_standalone_nezero_zero(self):
+        # `[NeZero 0]` with no surrounding width discharge must still be caught
+        # by the regex scan; the zero spelling is never a valid positivity
+        # instance, so it cannot license a `BitVec width` translation.
+        text = "\n".join(self.GOOD).replace("[NeZero width]", "[NeZero 0]")
+        self.assertTrue(
+            any("positive" in e for e in self.ERRORS(text, "evalProg")),
+            self.ERRORS(text, "evalProg"),
+        )
+
+    def test_rejects_standalone_nezero_leading_zero(self):
+        # A leading-zero literal (`00`) is the same nonpositive dimension as
+        # `0`; the regex must not let the extra digit smuggle it through.
+        text = "\n".join(self.GOOD).replace("[NeZero width]", "[NeZero 00]")
+        self.assertTrue(
+            any("positive" in e for e in self.ERRORS(text, "evalProg")),
+            self.ERRORS(text, "evalProg"),
+        )
+
     def test_rejects_parenthesized_zero_dimension(self):
         text = "\n".join(self.GOOD).replace(
             "(addr : BitVec width)", "(addr : BitVec width) (leak : BitVec (0))",
