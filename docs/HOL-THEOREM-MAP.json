@@ -19294,6 +19294,23 @@
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
     "hol_name": "comp_exp_preserves_eval",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpPreservesEval/Load.lean",
+    "lean_name": "compExpPreservesEval_load_case",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison (2026-09-29; bead flapjack-pxn.18.5.6.33.15.2): exact HOL comp_exp_preserves_eval at crep_to_loopProofScript.sml:772-782, specialized to Load e; proof case :982-995. The induction hypothesis is the same parent property specialized to e with only its source eval, relation, compile, and fresh-temporary premises. HOL eval_def at crepSemScript.sml:90-137 evaluates the address, accepts only Word, then applies mem_load; mem_load_def at :48-51 guards the total memory by memaddrs. The proof applies the exact IH for the compiled address, carries state_rel's memaddrs/mdomain equation and mem_rel's memory equality through the post-state, and derives the target Load result. No target-result premise or other condition is added. The fmap qualifier names exactly the finite-map fields in the exact Crep state, context, and Loop state carriers; same-module witnesses establish their HolFiniteMapExact translation. words_as_type_indexed_bitvec records the positive indexed word representation as BitVec width."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "comp_exp_preserves_eval",
     "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpPreservesEval/Leaf.lean",
     "lean_name": "compExpPreservesEval_baseAddr_case",
     "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
