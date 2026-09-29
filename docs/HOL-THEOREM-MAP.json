@@ -636,20 +636,32 @@
     "reviewer": "Flapjack support for HOL simp_exp_correct1 over arbitrary finite-index words and exact finite-map/set state fields, with opaque code entries. Evaluation still uses the explicit HolFiniteDimension source projection; native crepSem eval_def, HOL program/FFI carriers, and their representation relations remain unproved, so the declaration is untagged."
   },
   {
-    "hol_path": null,
-    "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
     "lean_name": "crepSimpExpCorrect1NativeVarCase",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack support case for HOL simp_exp_correct1, with the exact native evaluator, successful-evaluation premise, polymorphic unused result binder, code-only mapc update, and Option word_lab result. Kept untagged because CrepSemHOLState is declared in Semantics.CrepSem.HOLState, outside this counterpart module, and the required same-module finite-map carrier witness is unavailable; the faithful tagged case remains open (bead flapjack-pxn.18.5.4.2.19.5)."
+    "hol_path": "cakeml/pancake/proofs/crep_arithProofScript.sml",
+    "hol_name": "simp_exp_correct1",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison (2026-09-29; bead flapjack-pxn.18.5.4.2.19.5): HOL simp_exp_correct1 (crep_arithProofScript.sml:111) universally quantifies s, exp, and unused v, assumes crepSem$eval s exp <> NONE, and concludes eval (mapc f s) (simp_exp exp) = eval s exp. This Var case preserves the successful-evaluation premise, arbitrary unused result binder, full Option (word_lab) equality, and exact code-only mapc update; the Var evaluation reads locals, and simplification preserves the variable. CrepSemHOLState.locals/globals/code are HolFiniteMapExact models of the corresponding HOL |-> fields. The same-module holFmapAsFiniteSupportWitness re-exports the existing CrepSemHOLState/CrepSemBroadState toBroad/ofBroad roundtrip without duplicating the carrier. The words qualifier records the existing positive-width BitVec model; this case does not inspect word payloads."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "crepSimpExpCorrect1NativeConstCase",
+    "hol_path": "cakeml/pancake/proofs/crep_arithProofScript.sml",
+    "hol_name": "simp_exp_correct1",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison (2026-09-29; bead flapjack-pxn.18.5.4.2.19.5): HOL simp_exp_correct1 (crep_arithProofScript.sml:111) universally quantifies s, exp, and unused v, assumes crepSem$eval s exp <> NONE, and concludes eval (mapc f s) (simp_exp exp) = eval s exp. This Const case preserves the successful-evaluation premise, arbitrary unused result binder, full Option (word_lab) equality, and exact code-only mapc update; constant evaluation returns the same word after simp_exp. CrepSemHOLState.locals/globals/code are HolFiniteMapExact models of the corresponding HOL |-> fields. The same-module holFmapAsFiniteSupportWitness re-exports the existing CrepSemHOLState/CrepSemBroadState toBroad/ofBroad roundtrip without duplicating the carrier. The words qualifier records the existing positive-width BitVec model for HOL's arbitrary positive dimindex word."
   },
   {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
-    "lean_name": "crepSimpExpCorrect1NativeConstCase",
+    "lean_name": "holFmapAsFiniteSupportWitness",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack support case for HOL simp_exp_correct1, with the exact native evaluator, successful-evaluation premise, polymorphic unused result binder, code-only mapc update, and Option word_lab result. Kept untagged because CrepSemHOLState is declared in Semantics.CrepSem.HOLState, outside this counterpart module, and the required same-module finite-map carrier witness is unavailable; the faithful tagged case remains open (bead flapjack-pxn.18.5.4.2.19.5)."
+    "reviewer": "Flapjack-only same-module re-export of the existing CrepSemHOLState/CrepSemBroadState toBroad/ofBroad finite-support roundtrip, required by the finite-map qualifiers on the tagged simp_exp_correct1 Var and Const case ports. It introduces no carrier and has no separate HOL declaration."
   },
   {
     "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
