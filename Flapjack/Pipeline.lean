@@ -893,6 +893,97 @@ theorem pipelineLoopFunctionsSourceCompileProgRouted_body_rel
   rw [rebaseHOLFunctionLabels_projection]
   exact holLoopProgToExecutableCanonical_rel _
 
+/-- Indexing the parser-backed source route commutes with its exact
+`compile_prog_def` list mapping: each present row has the same rebased label
+and parameters, and its body is the structural executable projection of that
+exact row's rebased HOL body. This explicitly preserves the association
+between source-list position and emitted code-row contents; it still does not
+state a name-map or runtime-state relation. HOL `compile_prog_def` fixes the
+`first_name` label base and has no parser-backed caller-label adapter, so this
+wrapper theorem has no separate HOL original. -/
+theorem pipelineLoopFunctionsSourceCompileProgRouted_indexedExact
+    {width : Nat} [NeZero width] (architecture : RiscV.Architecture)
+    (firstLabel : Nat) (functions : List (CompiledFunction (BitVec width)))
+    (hFunctionNames : ∀ function ∈ functions, CrepNameRanged function.name)
+    (hProgramNames : ∀ function ∈ functions, CrepProgNameRanged function.body)
+    (index : Nat) :
+    (pipelineLoopFunctionsSourceCompileProgRouted architecture firstLabel functions)[index]? =
+      ((compileProgHOLExact .riscv (functions.map fun function =>
+        (Flapjack.Basis.Pure.MlString.ofString function.name, function.params,
+          crepProgToHOL function.body)))[index]?).map
+        (fun (label, parameters, body) =>
+          (rebaseHOLFunctionLabel firstLabel functions.length label, parameters,
+            rebaseHOLFunctionLabels firstLabel functions.length
+              (holLoopProgToExecutableCanonical body))) := by
+  rw [pipelineLoopFunctionsSourceCompileProgRouted_exact architecture firstLabel functions
+    hFunctionNames hProgramNames]
+  simp
+
+/-- A successful lookup in the production name-indexed function context points
+to the routed output row at the same source-list position. Its label is both
+the production `firstLabel + index` assignment and the key of that output row.
+Together with `indexedExact`, the row's body is paired position-for-position
+with the rebased exact `compile_prog_def` body. This only bridges context keys
+to the compiler's emitted list; no Spt/code-state or evaluator relation is
+asserted here. HOL `compile_prog_def` has no declaration relating its fixed
+`mlstring`/`first_name` inputs to this parser-backed String/InfoMap caller, so
+this Flapjack bridge theorem has no separate HOL original. -/
+theorem pipelineLoopFunctionsSourceCompileProgRouted_lookupRowKey
+    {width : Nat} [NeZero width] (architecture : RiscV.Architecture)
+    (firstLabel : Nat) (functions : List (CompiledFunction (BitVec width)))
+    (hFunctionNames : ∀ function ∈ functions, CrepNameRanged function.name)
+    (hProgramNames : ∀ function ∈ functions, CrepProgNameRanged function.body)
+    {name : FunName} {label arity : Nat}
+    (hlookup : lookupInfo name (pipelineFunctionInfos firstLabel functions) =
+      some (label, arity)) :
+    ∃ index, index < functions.length ∧
+      (functions[index]?).map (fun function => function.name) = some name ∧
+      label = firstLabel + index ∧
+      ((pipelineLoopFunctionsSourceCompileProgRouted architecture firstLabel functions)[index]?).map
+        Prod.fst = some label := by
+  change lookupInfo name (crepMakeFuncsAt firstLabel functions) =
+    some (label, arity) at hlookup
+  obtain ⟨index, hlabel, hname, hindex⟩ :=
+    crepMakeFuncsAt_exists_index firstLabel functions hlookup
+  refine ⟨index, hindex, hname, hlabel, ?_⟩
+  rw [pipelineLoopFunctionsSourceCompileProgRouted_rowLabel architecture firstLabel
+    functions hFunctionNames hProgramNames index hindex]
+  exact congrArg some hlabel.symm
+
+/-- A production context lookup selects the same indexed output row as exact
+`compile_prog_def`, after projecting that exact row through caller-label/body
+rebasing. The emitted list row is the production compiler's table entry at
+this boundary. The result does not introduce a synthetic Spt runtime carrier
+or claim equality with an evaluator's `code` field; the latter is a separate
+HOL state-relation obligation. This Flapjack-only bridge has no HOL original
+because HOL `compile_prog_def` has no caller `InfoMap`/label-rebase wrapper. -/
+theorem pipelineLoopFunctionsSourceCompileProgRouted_lookupExactRow
+    {width : Nat} [NeZero width] (architecture : RiscV.Architecture)
+    (firstLabel : Nat) (functions : List (CompiledFunction (BitVec width)))
+    (hFunctionNames : ∀ function ∈ functions, CrepNameRanged function.name)
+    (hProgramNames : ∀ function ∈ functions, CrepProgNameRanged function.body)
+    {name : FunName} {label arity : Nat}
+    (hlookup : lookupInfo name (pipelineFunctionInfos firstLabel functions) =
+      some (label, arity)) :
+    ∃ index, index < functions.length ∧
+      (functions[index]?).map (fun function => function.name) = some name ∧
+      label = firstLabel + index ∧
+      (pipelineLoopFunctionsSourceCompileProgRouted architecture firstLabel
+        functions)[index]? =
+        ((compileProgHOLExact .riscv (functions.map fun function =>
+          (Flapjack.Basis.Pure.MlString.ofString function.name, function.params,
+            crepProgToHOL function.body)))[index]?).map
+          (fun (exactLabel, parameters, body) =>
+            (rebaseHOLFunctionLabel firstLabel functions.length exactLabel,
+              parameters, rebaseHOLFunctionLabels firstLabel functions.length
+                (holLoopProgToExecutableCanonical body))) := by
+  obtain ⟨index, hindex, hname, hlabel, _hrouteLabel⟩ :=
+    pipelineLoopFunctionsSourceCompileProgRouted_lookupRowKey architecture firstLabel
+      functions hFunctionNames hProgramNames hlookup
+  refine ⟨index, hindex, hname, hlabel, ?_⟩
+  exact pipelineLoopFunctionsSourceCompileProgRouted_indexedExact architecture
+    firstLabel functions hFunctionNames hProgramNames index
+
 /-! ### Exact-carrier bridge for the source-routed Loop output
 
 The compiler's source route uses `crepCompFuncThroughHOLExact` when all
