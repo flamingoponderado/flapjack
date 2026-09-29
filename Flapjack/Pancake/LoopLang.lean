@@ -176,6 +176,49 @@ def holLoopLocalsTouched {width : Nat} [NeZero width] : HolLoopExp width → Lis
   | .baseAddr => []
   | .topAddr => []
 
+/-- Exact HOL `acc_vars_def` (`cakeml/pancake/loopLangScript.sml:118-155`):
+the set of local variables assigned by a Loop statement, accumulated into a
+`spt`-backed `num_set` (`NumSet = Spt Unit`).  Every clause follows the HOL
+source: `insert` is `sptInsert` and `list_insert` is `sptListInsert`.  The
+executable `loopAccVars` over `LoopProg` is a separate production helper; this
+declaration is the faithful width-indexed rendering. -/
+@[hol "cakeml/pancake/loopLangScript.sml" "acc_vars_def"
+  (words_as_type_indexed_bitvec)]
+def accVarsHOL {width : Nat} [NeZero width] : HolLoopProg width → NumSet → NumSet
+  | .seq first second, l => accVarsHOL first (accVarsHOL second l)
+  | .break _, l => l
+  | .continue _, l => l
+  | .loop _ body _, l => accVarsHOL body l
+  | .ite _ _ _ first second _, l => accVarsHOL first (accVarsHOL second l)
+  | .arith (.longMul v1 v2 _ _), l => sptInsert v1 () (sptInsert v2 () l)
+  | .arith (.longDiv v1 v2 _ _ _), l => sptInsert v1 () (sptInsert v2 () l)
+  | .arith (.div v1 _ _), l => sptInsert v1 () l
+  | .mark body, l => accVarsHOL body l
+  | .tick, l => l
+  | .skip, l => l
+  | .fail, l => l
+  | .raise _, l => l
+  | .return _, l => l
+  | .call returns _ _ handler, l =>
+      match returns with
+      | none => l
+      | some (vs, _) =>
+          let l := sptListInsert vs l
+          match handler with
+          | none => l
+          | some (n, p1, p2, _) => accVarsHOL p1 (accVarsHOL p2 (sptInsert n () l))
+  | .locValue destination _, l => sptInsert destination () l
+  | .assign name _, l => sptInsert name () l
+  | .primitive destinations _ _, l => sptListInsert destinations l
+  | .shMem _ name _, l => sptInsert name () l
+  | .store _ _, l => l
+  | .setGlobal _ _, l => l
+  | .load32 _ destination, l => sptInsert destination () l
+  | .loadByte _ destination, l => sptInsert destination () l
+  | .store32 _ _, l => l
+  | .storeByte _ _, l => l
+  | .ffi _ _ _ _ _ _, l => l
+
 /-! Faithful port of Cake `loop_seqs_def` from
     `cakeml/pancake/pan_passesScript.sml:532`: flatten only `Seq` nodes,
     preserving the left-to-right order of every other Loop statement. -/
