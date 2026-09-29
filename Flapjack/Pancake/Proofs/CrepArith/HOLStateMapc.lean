@@ -996,8 +996,8 @@ theorem crepSimpExpCorrect1NativeLoadCase
   rfl
 
 /-- Load32 case of HOL `simp_exp_correct1` (`crep_arithProofScript.sml:111`).
-    The recursive premise is generalized over the state and unused result
-    binder for the address expression. The successful full Load32 premise,
+    The recursive premise uses the current state, as in HOL `eval_ind`, and
+    retains the unused result binder. The successful full Load32 premise,
     exact code-only `mapc`, and complete optional `word_lab` result are kept. -/
 @[hol "cakeml/pancake/proofs/crep_arithProofScript.sml" "simp_exp_correct1"
   (fmap_as_finite_support := [locals, globals, code])
@@ -1009,12 +1009,11 @@ theorem crepSimpExpCorrect1NativeLoad32Case
     (state : CrepSemHOLState width σ) (address : CrepExpHOL width)
     {resultType : Type} (_result : resultType)
     (_h : evalCrepSemHOLExp state (.load32 address) ≠ none)
-    (ih : ∀ (state' : CrepSemHOLState width σ) {resultType : Type}
-      (_result : resultType),
-      evalCrepSemHOLExp state' address ≠ none →
-      evalCrepSemHOLExp (CrepSemHOLState.mapc update state')
+    (ih : ∀ {resultType : Type} (_result : resultType),
+      evalCrepSemHOLExp state address ≠ none →
+      evalCrepSemHOLExp (CrepSemHOLState.mapc update state)
           (crepSimpExpHOL address) =
-        evalCrepSemHOLExp state' address) :
+        evalCrepSemHOLExp state address) :
     evalCrepSemHOLExp (CrepSemHOLState.mapc update state)
         (crepSimpExpHOL (.load32 address)) =
       evalCrepSemHOLExp state (.load32 address) := by
@@ -1022,15 +1021,15 @@ theorem crepSimpExpCorrect1NativeLoad32Case
     intro hNone
     apply _h
     simp [evalCrepSemHOLExp, hNone]
-  have hAddressEval := ih state _result hAddress
+  have hAddressEval := ih _result hAddress
   simp only [crepSimpExpHOL]
   simp only [evalCrepSemHOLExp]
   rw [hAddressEval]
   rfl
 
 /-- LoadByte case of HOL `simp_exp_correct1` (`crep_arithProofScript.sml:111`).
-    Its recursive premise is generalized over the state and unused result
-    binder for the address expression. The full successful-load premise,
+    Its recursive premise uses the current state, as in HOL `eval_ind`, and
+    retains the unused result binder. The full successful-load premise,
     code-only `mapc`, and complete optional `word_lab` result are retained. -/
 @[hol "cakeml/pancake/proofs/crep_arithProofScript.sml" "simp_exp_correct1"
   (fmap_as_finite_support := [locals, globals, code])
@@ -1042,12 +1041,11 @@ theorem crepSimpExpCorrect1NativeLoadByteCase
     (state : CrepSemHOLState width σ) (address : CrepExpHOL width)
     {resultType : Type} (_result : resultType)
     (_h : evalCrepSemHOLExp state (.loadByte address) ≠ none)
-    (ih : ∀ (state' : CrepSemHOLState width σ) {resultType : Type}
-      (_result : resultType),
-      evalCrepSemHOLExp state' address ≠ none →
-      evalCrepSemHOLExp (CrepSemHOLState.mapc update state')
+    (ih : ∀ {resultType : Type} (_result : resultType),
+      evalCrepSemHOLExp state address ≠ none →
+      evalCrepSemHOLExp (CrepSemHOLState.mapc update state)
           (crepSimpExpHOL address) =
-        evalCrepSemHOLExp state' address) :
+        evalCrepSemHOLExp state address) :
     evalCrepSemHOLExp (CrepSemHOLState.mapc update state)
         (crepSimpExpHOL (.loadByte address)) =
       evalCrepSemHOLExp state (.loadByte address) := by
@@ -1055,16 +1053,16 @@ theorem crepSimpExpCorrect1NativeLoadByteCase
     intro hNone
     apply _h
     simp [evalCrepSemHOLExp, hNone]
-  have hAddressEval := ih state _result hAddress
+  have hAddressEval := ih _result hAddress
   simp only [crepSimpExpHOL]
   simp only [evalCrepSemHOLExp]
   rw [hAddressEval]
   rfl
 
 /-- Cmp case of HOL `simp_exp_correct1` (`crep_arithProofScript.sml:111`).
-    Both child induction hypotheses are generalized over state and the unused
-    result binder, matching HOL `eval_ind`; the successful full-Cmp premise,
-    code-only `mapc`, and complete optional result remain unchanged. -/
+    Both child induction hypotheses use the current state, as in HOL
+    `eval_ind`, while retaining the unused result binder. The successful
+    full-Cmp premise, code-only `mapc`, and complete optional result remain. -/
 @[hol "cakeml/pancake/proofs/crep_arithProofScript.sml" "simp_exp_correct1"
   (fmap_as_finite_support := [locals, globals, code])
   (words_as_type_indexed_bitvec)]
@@ -1076,16 +1074,14 @@ theorem crepSimpExpCorrect1NativeCmpCase
     (left right : CrepExpHOL width)
     {resultType : Type} (_result : resultType)
     (_h : evalCrepSemHOLExp state (.cmp operator left right) ≠ none)
-    (ihLeft : ∀ (state' : CrepSemHOLState width σ) {resultType : Type}
-      (_result : resultType),
-      evalCrepSemHOLExp state' left ≠ none →
-      evalCrepSemHOLExp (CrepSemHOLState.mapc update state')
-          (crepSimpExpHOL left) = evalCrepSemHOLExp state' left)
-    (ihRight : ∀ (state' : CrepSemHOLState width σ) {resultType : Type}
-      (_result : resultType),
-      evalCrepSemHOLExp state' right ≠ none →
-      evalCrepSemHOLExp (CrepSemHOLState.mapc update state')
-          (crepSimpExpHOL right) = evalCrepSemHOLExp state' right) :
+    (ihLeft : ∀ {resultType : Type} (_result : resultType),
+      evalCrepSemHOLExp state left ≠ none →
+      evalCrepSemHOLExp (CrepSemHOLState.mapc update state)
+          (crepSimpExpHOL left) = evalCrepSemHOLExp state left)
+    (ihRight : ∀ {resultType : Type} (_result : resultType),
+      evalCrepSemHOLExp state right ≠ none →
+      evalCrepSemHOLExp (CrepSemHOLState.mapc update state)
+          (crepSimpExpHOL right) = evalCrepSemHOLExp state right) :
     evalCrepSemHOLExp (CrepSemHOLState.mapc update state)
         (crepSimpExpHOL (.cmp operator left right)) =
       evalCrepSemHOLExp state (.cmp operator left right) := by
@@ -1097,16 +1093,16 @@ theorem crepSimpExpCorrect1NativeCmpCase
     intro hNone
     apply _h
     simp [evalCrepSemHOLExp, hNone]
-  have hLeftEval := ihLeft state _result hLeft
-  have hRightEval := ihRight state _result hRight
+  have hLeftEval := ihLeft _result hLeft
+  have hRightEval := ihRight _result hRight
   simp only [crepSimpExpHOL]
   simp only [evalCrepSemHOLExp]
   rw [hLeftEval, hRightEval]
 
 /-- Shift case of HOL `simp_exp_correct1` (`crep_arithProofScript.sml:111`).
-    The successful full-Shift premise, generalized child induction hypotheses,
-    code-only `mapc`, and complete optional `word_lab` result follow HOL's
-    `eval_ind` case without assumptions about the result of `word_sh`. -/
+    Both child induction hypotheses use the current state, as in HOL
+    `eval_ind`, while retaining the unused result binder. The successful
+    full-Shift premise, code-only `mapc`, and complete optional result remain. -/
 @[hol "cakeml/pancake/proofs/crep_arithProofScript.sml" "simp_exp_correct1"
   (fmap_as_finite_support := [locals, globals, code])
   (words_as_type_indexed_bitvec)]
@@ -1118,16 +1114,14 @@ theorem crepSimpExpCorrect1NativeShiftCase
     (left right : CrepExpHOL width)
     {resultType : Type} (_result : resultType)
     (_h : evalCrepSemHOLExp state (.shift operator left right) ≠ none)
-    (ihLeft : ∀ (state' : CrepSemHOLState width σ) {resultType : Type}
-      (_result : resultType),
-      evalCrepSemHOLExp state' left ≠ none →
-      evalCrepSemHOLExp (CrepSemHOLState.mapc update state')
-          (crepSimpExpHOL left) = evalCrepSemHOLExp state' left)
-    (ihRight : ∀ (state' : CrepSemHOLState width σ) {resultType : Type}
-      (_result : resultType),
-      evalCrepSemHOLExp state' right ≠ none →
-      evalCrepSemHOLExp (CrepSemHOLState.mapc update state')
-          (crepSimpExpHOL right) = evalCrepSemHOLExp state' right) :
+    (ihLeft : ∀ {resultType : Type} (_result : resultType),
+      evalCrepSemHOLExp state left ≠ none →
+      evalCrepSemHOLExp (CrepSemHOLState.mapc update state)
+          (crepSimpExpHOL left) = evalCrepSemHOLExp state left)
+    (ihRight : ∀ {resultType : Type} (_result : resultType),
+      evalCrepSemHOLExp state right ≠ none →
+      evalCrepSemHOLExp (CrepSemHOLState.mapc update state)
+          (crepSimpExpHOL right) = evalCrepSemHOLExp state right) :
     evalCrepSemHOLExp (CrepSemHOLState.mapc update state)
         (crepSimpExpHOL (.shift operator left right)) =
       evalCrepSemHOLExp state (.shift operator left right) := by
@@ -1139,8 +1133,8 @@ theorem crepSimpExpCorrect1NativeShiftCase
     intro hNone
     apply _h
     simp [evalCrepSemHOLExp, hNone]
-  have hLeftEval := ihLeft state _result hLeft
-  have hRightEval := ihRight state _result hRight
+  have hLeftEval := ihLeft _result hLeft
+  have hRightEval := ihRight _result hRight
   simp only [crepSimpExpHOL]
   simp only [evalCrepSemHOLExp]
   rw [hLeftEval, hRightEval]

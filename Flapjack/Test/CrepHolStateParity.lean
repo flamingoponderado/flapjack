@@ -292,8 +292,8 @@ example :
         simp [evalCrepSemHOLExp, load32State, panMemLoad32HOL,
           panByteAlignHOL, hlog])
       (by
-        intro state' resultType result hAddress
-        exact crepSimpExpCorrect1NativeConstCase sampleMapc64 state'
+        intro resultType result hAddress
+        exact crepSimpExpCorrect1NativeConstCase sampleMapc64 load32State
           (BitVec.ofNat 64 8) result (by simp [evalCrepSemHOLExp])))
 
 example :
@@ -314,8 +314,8 @@ example :
         simp [evalCrepSemHOLExp, load32State, panMemLoadByteHOL,
           panByteAlignHOL, hlog])
       (by
-        intro state' resultType result hAddress
-        exact crepSimpExpCorrect1NativeConstCase sampleMapc64 state'
+        intro resultType result hAddress
+        exact crepSimpExpCorrect1NativeConstCase sampleMapc64 load32State
           (BitVec.ofNat 64 8) result (by simp [evalCrepSemHOLExp])))
 
 example :
@@ -338,12 +338,12 @@ example :
       (by simp [evalCrepSemHOLExp, Compiler.Encoders.Asm.wordCmpResultHOL,
         Compiler.Encoders.Asm.wordCmpHOL])
       (by
-        intro state' resultType result hLeft
-        exact crepSimpExpCorrect1NativeConstCase sampleMapc64 state'
+        intro resultType result hLeft
+        exact crepSimpExpCorrect1NativeConstCase sampleMapc64 load32State
           (BitVec.ofNat 64 5) result (by simp [evalCrepSemHOLExp]))
       (by
-        intro state' resultType result hRight
-        exact crepSimpExpCorrect1NativeConstCase sampleMapc64 state'
+        intro resultType result hRight
+        exact crepSimpExpCorrect1NativeConstCase sampleMapc64 load32State
           (BitVec.ofNat 64 5) result (by simp [evalCrepSemHOLExp])))
 
 example :
@@ -365,12 +365,12 @@ example :
       (HolWordLab.word (BitVec.ofNat 64 8))
       (by simp [evalCrepSemHOLExp, wordShiftHOL])
       (by
-        intro state' resultType result hLeft
-        exact crepSimpExpCorrect1NativeConstCase sampleMapc64 state'
+        intro resultType result hLeft
+        exact crepSimpExpCorrect1NativeConstCase sampleMapc64 load32State
           (BitVec.ofNat 64 1) result (by simp [evalCrepSemHOLExp]))
       (by
-        intro state' resultType result hRight
-        exact crepSimpExpCorrect1NativeConstCase sampleMapc64 state'
+        intro resultType result hRight
+        exact crepSimpExpCorrect1NativeConstCase sampleMapc64 load32State
           (BitVec.ofNat 64 3) result (by simp [evalCrepSemHOLExp])))
 
 example :
