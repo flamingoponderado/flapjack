@@ -1,6 +1,10 @@
 import Flapjack.Pancake.PanGlobals
+import Flapjack.Pancake.PanGlobals.CompileExpExact
 
 namespace Flapjack.Test.PanGlobalsCompileParity
+
+open Flapjack.Basis.Pure.MlString
+open Flapjack.Pancake.PanLang
 
 def compileContext : GlobalPassContext Nat :=
   { globals := [("g", (.one, 8))]
@@ -63,6 +67,94 @@ def compileProgCakeOracleGuard : Bool :=
 
 #eval compileProgCakeOracleGuard
 #guard compileProgCakeOracleGuard
+
+/-- Exact `ProgHOL`/`MlS` replay of the direct `pan_globals$compile_def`
+    output rows in `pan_globals_compile_probe.out`. This complements the
+    production-carrier checks above; it does not claim the executed production
+    compiler has been textually routed through `compileProgExactHOL`. -/
+def compileProgExactContext8 : PanGlobalsContextExact 8 where
+  globals := {
+    lookup := fun name =>
+      if name = ofString "g" then some (.one, BitVec.ofNat 8 8) else none
+    finiteSupport := by
+      refine ⟨[ofString "g"], ?_⟩
+      intro name h
+      by_cases hname : name = ofString "g"
+      · simp [hname]
+      · simp [hname] at h
+  }
+  globalsSize := BitVec.ofNat 8 1
+  maxGlobalsSize := BitVec.ofNat 8 16
+
+def compileProgExactOracleGuard : Bool :=
+  (match compileProgExactHOL compileProgExactContext8
+      (.assign .local (ofString "x") (.const (BitVec.ofNat 8 7)) : ProgHOL 8) with
+  | .assign .local name (.const value) =>
+      decide (name = ofString "x") && value == BitVec.ofNat 8 7
+  | _ => false) &&
+  (match compileProgExactHOL compileProgExactContext8
+      (.assign .global (ofString "g") (.const (BitVec.ofNat 8 7)) : ProgHOL 8) with
+  | .store (.op .sub [.topAddr, .const address]) (.const value) =>
+      address == BitVec.ofNat 8 8 && value == BitVec.ofNat 8 7
+  | _ => false) &&
+  (match compileProgExactHOL compileProgExactContext8
+      (.assign .global (ofString "missing") (.const (BitVec.ofNat 8 7)) : ProgHOL 8) with
+  | .skip => true
+  | _ => false) &&
+  (match compileProgExactHOL compileProgExactContext8
+      (.seq .skip (.return (.const (BitVec.ofNat 8 7))) : ProgHOL 8) with
+  | .seq .skip (.return (.const value)) => value == BitVec.ofNat 8 7
+  | _ => false) &&
+  (match compileProgExactHOL compileProgExactContext8
+      (.call (some (some (.global, ofString "g"),
+        some (ofString "E", ofString "handler", .skip))) (ofString "f")
+        [.var .local (ofString "") ] : ProgHOL 8) with
+  | .dec resultName .one (.const zero)
+      (.dec flagName .one (.const flagZero)
+        (.seq
+          (.call
+            (some (some (.local, callResult), some (exception, handlerName,
+              .seq .skip (.assign .local assignedFlag (.const flagOne)))))
+            function [.var .local argument])
+          (.ite (.var .local guardFlag) .skip
+            (.store (.op .sub [.topAddr, .const address]) (.var .local storeResult))))) =>
+      decide (resultName = ofString "'") && decide (flagName = ofString "vn'") &&
+        zero == BitVec.ofNat 8 0 && flagZero == BitVec.ofNat 8 0 &&
+        decide (callResult = resultName) && decide (exception = ofString "E") &&
+        decide (handlerName = ofString "handler") &&
+        decide (assignedFlag = ofString "vn'") && flagOne == BitVec.ofNat 8 1 &&
+        decide (function = ofString "f") && decide (argument = ofString "") &&
+        decide (guardFlag = ofString "vn'") && address == BitVec.ofNat 8 8 &&
+        decide (storeResult = resultName)
+  | _ => false) &&
+  (match compileProgExactHOL compileProgExactContext8
+      (.return (.var .global (ofString "g")) : ProgHOL 8) with
+  | .return (.load .one (.op .sub [.topAddr, .const address])) =>
+      address == BitVec.ofNat 8 8
+  | _ => false) &&
+  (match compileProgExactHOL compileProgExactContext8
+      (.call (some (some (.global, ofString "g"),
+        some (ofString "E", ofString "handler", .skip))) (ofString "f") [] : ProgHOL 8) with
+  | .dec resultName .one (.const zero)
+      (.dec flagName .one (.const flagZero)
+        (.seq
+          (.call
+            (some (some (.local, callResult), some (exception, handlerName,
+              .seq .skip (.assign .local assignedFlag (.const flagOne)))))
+            function [])
+          (.ite (.var .local guardFlag) .skip
+            (.store (.op .sub [.topAddr, .const address]) (.var .local storeResult))))) =>
+      decide (resultName = ofString "") && decide (flagName = ofString "vn'") &&
+        zero == BitVec.ofNat 8 0 && flagZero == BitVec.ofNat 8 0 &&
+        decide (callResult = resultName) && decide (exception = ofString "E") &&
+        decide (handlerName = ofString "handler") &&
+        decide (assignedFlag = ofString "vn'") && flagOne == BitVec.ofNat 8 1 &&
+        decide (function = ofString "f") && decide (guardFlag = ofString "vn'") &&
+        address == BitVec.ofNat 8 8 && decide (storeResult = resultName)
+  | _ => false)
+
+#eval compileProgExactOracleGuard
+#guard compileProgExactOracleGuard
 
 /-! Direct parity for `pan_globals$compile_def`
     (`pan_globalsScript.sml:69`). -/
