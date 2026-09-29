@@ -1749,6 +1749,13 @@ run_probe word_sem_inst_probeScript.sml word_sem_inst_probe.out \
   "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 
+# The wordSem evaluate prerequisite probe observes misc$shift_seq and the
+# sptree domain set conditions of the Call clause (bead flapjack-h29l.8.1).
+run_probe word_sem_eval_prereq_probeScript.sml word_sem_eval_prereq_probe.out \
+  shift_seq dom_empty_one dom_union_eq dom_union_missing \
+  "$cake_dir/misc/miscScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
 # The good_handlers probe observes the structural handler-label predicate,
 # including the NONE-ret case (handler ignored) and nested bad handlers.
 run_probe word_convs_good_handlers_probeScript.sml word_convs_good_handlers_probe.out \

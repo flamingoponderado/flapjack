@@ -1,0 +1,7 @@
+shift_seq=50
+shift_seq_zero=11
+dom_empty_ln=T
+dom_empty_one=F
+dom_union_eq=T
+dom_union_extra=F
+dom_union_missing=F

@@ -7,6 +7,7 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.CallHelpers
 import Flapjack.Compiler.Backend.Semantics.WordSem.Alloc
 import Flapjack.Compiler.Backend.Semantics.WordSem.ShMem
 import Flapjack.Compiler.Backend.Semantics.WordSem.Inst
+import Flapjack.Misc.ShiftSeq
 import Flapjack.FpSemHOL
 import Flapjack.Basis.Pure.MlList
 import Flapjack.Compiler.Backend.RegAlloc
