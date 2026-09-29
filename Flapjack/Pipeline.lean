@@ -999,9 +999,10 @@ theorem pipelineLoopFunctionsSourceCompileProgRouted_indexedExact
     hFunctionNames hProgramNames]
   simp
 
-/-! ### Exact Spt code-table bridge for the source-routed rows
+/-! ### Exact Spt code-table bridge for the non-executed routed alternative
 
-The executable pipeline emits an association list, while the exact Loop state
+`pipelineLoopFunctionsSourceCompileProgRouted` is a tested alternative, not the
+executed CLI route. It emits an association list, while the exact Loop state
 uses an `Spt` code field. The declarations here build that Spt table from the
 faithful, structurally rebased `compile_prog` rows and prove both lookup
 directions needed by `LoopSemStateFiniteExact.prodRel`. They are Flapjack-only
@@ -1023,9 +1024,10 @@ def pipelineLoopFunctionsSourceCompileProgRoutedExactCodeRows
           (entry.2.1,
             rebaseHOLFunctionLabelsExact firstLabel functions.length entry.2.2))
 
-/-- Nested code-row view of the actual source-routed production list. This
-preserves the association-list order and row payload used by
-`LoopMachineState.code`; it does not construct a runtime state. -/
+/-- Nested code-row view of the non-executed routed alternative's production
+list. This preserves the association-list order and row payload suitable for
+`LoopMachineState.code`; it does not identify the executed CLI code table or
+construct a runtime state. -/
 def pipelineLoopFunctionsSourceCompileProgRoutedCodeRows
     {width : Nat} [NeZero width] (architecture : RiscV.Architecture)
     (firstLabel : Nat) (functions : List (CompiledFunction (BitVec width))) :
