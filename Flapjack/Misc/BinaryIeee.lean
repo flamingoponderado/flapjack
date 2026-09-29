@@ -153,6 +153,19 @@ def holFloatLessEqual {t w : Nat} (x y : HolFloat t w) : Bool :=
   | .eq => true
   | _ => false
 
+/-- HOL `float_greater_than_def` (`binary_ieeeScript.sml:792-795`):
+    `float_compare x y = GT`. -/
+def holFloatGreaterThan {t w : Nat} (x y : HolFloat t w) : Bool :=
+  holFloatCompare x y == .gt
+
+/-- HOL `float_greater_equal_def` (`binary_ieeeScript.sml:797-803`): `GT` or
+    `EQ`. -/
+def holFloatGreaterEqual {t w : Nat} (x y : HolFloat t w) : Bool :=
+  match holFloatCompare x y with
+  | .gt => true
+  | .eq => true
+  | _ => false
+
 /-- HOL `float_equal_def` (`binary_ieeeScript.sml:805-808`):
     `float_compare x y = EQ`. -/
 def holFloatEqual {t w : Nat} (x y : HolFloat t w) : Bool :=
