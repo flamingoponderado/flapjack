@@ -1,6 +1,8 @@
 if_true=(NONE,SOME (Word 1w),NONE,4)
 if_false=(NONE,SOME (Word 2w),NONE,4)
 if_cut_error=(SOME Error,SOME (Word 7w),5)
+if_nonword_left_error=(SOME Error,SOME (Loc 9 0),5)
+if_nonword_right_error=(SOME Error,SOME (Word 7w),SOME (Loc 8 0),5)
 loop_break0=(NONE,NONE,3)
 loop_return=(SOME (Result [Word 7w]),NONE,4)
 loop_timeout=(SOME TimeOut,NONE,0)

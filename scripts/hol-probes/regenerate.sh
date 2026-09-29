@@ -214,6 +214,7 @@ run_probe loop_to_word_comp_exp_probeScript.sml loop_to_word_comp_exp_probe.out 
 run_probe loop_to_word_comp_probeScript.sml loop_to_word_comp_probe.out \
   comp_skip comp_assign comp_addcarry_valid comp_addcarry_bad_dest_arity \
   comp_addcarry_bad_argument_arity comp_longmul comp_longdiv comp_div \
+  comp_store comp_setglobal comp_load32 comp_loadbyte comp_store32 comp_storebyte \
   "$cake_dir/pancake/loop_to_wordScript.sml"
 run_probe loop_to_word_comp_recursive_probeScript.sml loop_to_word_comp_recursive_probe.out \
   comp_seq comp_if comp_loop comp_mark \
@@ -1465,7 +1466,8 @@ run_probe loop_sem_eval_probeScript.sml loop_sem_eval_probe.out \
 run_probe loop_sem_evaluate_probeScript.sml loop_sem_evaluate_probe.out \
   skip tick_timeout "$cake_dir/pancake/semantics/loopSemScript.sml"
 run_probe loop_sem_evaluate_control_probeScript.sml loop_sem_evaluate_control_probe.out \
-  if_true if_false if_cut_error loop_break0 loop_return loop_timeout \
+  if_true if_false if_cut_error if_nonword_left_error if_nonword_right_error \
+  loop_break0 loop_return loop_timeout \
   loop_continue0_timeout loop_break_outer call_return call_return_handler \
   call_exception_handler call_exception_no_handler call_arity_error \
   tail_call_return raise primitive_add_carry loc_value loc_value_missing \

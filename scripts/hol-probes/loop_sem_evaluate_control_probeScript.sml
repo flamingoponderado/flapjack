@@ -40,6 +40,16 @@ val _ = print_eval "if_cut_error"
       (If Equal 1 (Imm 7w) Skip Skip (insert 9 () LN),
        ^s with <|locals := ^l17; clock := 5|>) of
       (res,s') => (res, lookup 1 s'.locals, s'.clock)``
+val _ = print_eval "if_nonword_left_error"
+  ``case loopSem$evaluate
+      (If Equal 1 (Imm 7w) Skip Skip (insert 1 () LN),
+       ^s with <|locals := insert 1 (Loc 9 0) LN; clock := 5|>) of
+      (res,s') => (res, lookup 1 s'.locals, s'.clock)``
+val _ = print_eval "if_nonword_right_error"
+  ``case loopSem$evaluate
+      (If Equal 1 (Reg 2) Skip Skip (insert 1 () LN),
+       ^s with <|locals := insert 2 (Loc 8 0) ^l17; clock := 5|>) of
+      (res,s') => (res, lookup 1 s'.locals, lookup 2 s'.locals, s'.clock)``
 val _ = print_eval "loop_break0"
   ``case loopSem$evaluate
       (Loop LN (Break 0) LN, ^s with <|locals := ^l17; clock := 5|>) of
