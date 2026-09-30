@@ -27,3 +27,18 @@ example : (fixClock { s with clock := 12 } (res,{ t with clock := 3 })).2.clock 
 example : (fixClock { s with clock := 0 } (res,t)).2.clock = 0 := by simp [fixClock]
 example : (fixClock s (res,t)).2.clock ≤ s.clock :=
   fixClockImp s (res,t) res (fixClock s (res,t)).2 rfl
+
+-- Independent word/code/FFI carriers exercise the HOL polymorphism that the
+-- earlier shared-carrier signature could not express.
+section IndependentCarriers
+variable {returnedWidth : Nat} [NeZero returnedWidth] {ReturnedC ReturnedF : Type}
+variable (returned : StackSemStateFiniteExact returnedWidth ReturnedC ReturnedF)
+example : fixClock s (res, returned) =
+    (res, { returned with clock := min s.clock returned.clock }) := rfl
+example : (fixClock s (res, returned)).2.code = returned.code ∧
+    (fixClock s (res, returned)).2.regs = returned.regs ∧
+    (fixClock s (res, returned)).2.ffi = returned.ffi := ⟨rfl, rfl, rfl⟩
+example (next : StackSemStateFiniteExact returnedWidth ReturnedC ReturnedF)
+    (h : fixClock s (res, returned) = (res, next)) : next.clock ≤ s.clock :=
+  fixClockImp s (res, returned) res next h
+end IndependentCarriers
