@@ -876,6 +876,71 @@ private theorem matchedScratchCall {width : Nat} {σ : Type} [NeZero width]
     callee returnShape handlerShape handlerInitializer value (ha.trans hargs) hcode hclock hbody
     hexception hhandlerShape hl hshape
 
+/-- Compose the matched Call with the flag/If continuation for every non-error
+handler result. Freshness is derived from the literal compiler names. Handler
+run/relation are internal IH outputs pending the public constructor assembly. -/
+private theorem matchedCallTail {width : Nat} {σ : Type} [NeZero width]
+    (context : PanGlobalsContextExact width)
+    (state calleePost sourcePost handlerPost : PanSemStateFiniteExact width σ)
+    (function handlerId handlerVar : MlS) (handler : ProgHOL width)
+    (arguments : List (ExpHOL width)) (values : List (ValueHOL width)) (body : ProgHOL width)
+    (callee : HolFiniteMapExact MlS (ValueHOL width)) (returnShape handlerShape : ShapeHOL)
+    (initializer handlerInitializer value : ValueHOL width) (address : BitVec width)
+    (result : Option (PanSemResultExact width))
+    (hargs : evalListHOLFinite state
+      (h := fun a => Classical.propDecidable (state.memaddrs a)) arguments = some values)
+    (hcode : lookupCodeHOLFinite state.code.lookup function values = some (body, callee, returnShape))
+    (hclock : state.clock ≠ 0)
+    (hbody : evaluateHOLFiniteState (callEntryStateHOLFinite state callee) body =
+      (some (.exception handlerId value), calleePost))
+    (hexception : state.eshapes.lookup handlerId = some handlerShape)
+    (hhandlerShape : shapeOfHOLExact value = handlerShape)
+    (hlocal : state.locals.lookup handlerVar = some handlerInitializer)
+    (hshape : shapeOfHOLExact value = shapeOfHOLExact handlerInitializer)
+    (hrun : evaluateHOLFiniteState
+      (setVarHOLFinite handlerVar value {calleePost with locals := state.locals}) handler =
+      (result, handlerPost)) (hne : result ≠ some .error)
+    (hrel : panGlobalsStateRelHOLExact (goodResHOL result) context sourcePost handlerPost) :
+    let names := handlerVar :: freeVarIdsHOL handler ++ arguments.flatMap varExpHOL
+    let resultName := freshNameMlS (ofString "") names
+    let flagName := freshNameMlS (ofString "vn'") (resultName :: names)
+    let scratch := setVarHOLFinite flagName (.val (.word (BitVec.ofNat width 0)))
+      (setVarHOLFinite resultName initializer state)
+    ∃ finalPost,
+      evaluateHOLFiniteState scratch
+        (.seq (.call (some (some (.local, resultName), some (handlerId, handlerVar,
+          .seq handler (.assign .local flagName (.const (BitVec.ofNat width 1)))))) function arguments)
+          (.ite (.var .local flagName) .skip
+            (.store (.op .sub [.topAddr, .const address]) (.var .local resultName)))) =
+        (result, finalPost) ∧
+      panGlobalsStateRelHOLExact (goodResHOL result) context sourcePost
+        {finalPost with locals := (HolFiniteMapExact.resVarEq
+          (HolFiniteMapExact.resVarEq finalPost.locals
+            (flagName, (setVarHOLFinite resultName initializer state).locals.lookup flagName))
+          (resultName, state.locals.lookup resultName))} := by
+  classical
+  dsimp only
+  let names := handlerVar :: freeVarIdsHOL handler ++ arguments.flatMap varExpHOL
+  let resultName := freshNameMlS (ofString "") names
+  let flagName := freshNameMlS (ofString "vn'") (resultName :: names)
+  obtain ⟨hr, hf, hd, hrFresh, hfFresh, _, _⟩ :=
+    PanGlobalsCallHandlerFreshNames.callHandlerScratchNamesFresh handlerVar handler arguments
+  change resultName ∉ names at hr
+  change flagName ∉ names at hf
+  have hm : handlerVar ∈ names := by simp [names]
+  have hrh : resultName ≠ handlerVar := fun he => hr (he.symm ▸ hm)
+  have hfh : flagName ≠ handlerVar := fun he => hf (he.symm ▸ hm)
+  obtain ⟨finalPost, ht, hp⟩ := handlerTail context {calleePost with locals := state.locals}
+    sourcePost handlerPost handler result resultName flagName handlerVar initializer value address
+    hd hrh hfh hrFresh hfFresh hrun hne hrel
+  refine ⟨finalPost, ?_, hp⟩
+  rw [evaluateHOLFiniteState_seq_line780,
+    matchedScratchCall state calleePost function handlerId handlerVar handler arguments values
+      body callee returnShape handlerShape initializer handlerInitializer value hargs hcode hclock
+      hbody hexception hhandlerShape hlocal hshape]
+  change _ = (result, finalPost)
+  simpa only [evaluateHOLFiniteState_seq_line780, setVarHOLFinite] using ht
+
 /-- Internal missing-context branch of the full constructor proof. The branch
 condition selects the literal compiler fallback; the callee and handler IHs
 remain those of the original evaluator. Untagged infrastructure until the full

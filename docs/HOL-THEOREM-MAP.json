@@ -35334,5 +35334,13 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Private matched-exception generated Call computation for pending33.11. Actual scratch arguments and handler binding preserved from literal names freshness, unchanged clock/code/entry/eshapes; no successful-handler premise. Full original guarded handler-IH and constructor assembly remain open; untagged infrastructure."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "matchedCallTail",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Private all-non-error matched Call/flag/If composition for pending33.11. Derives literal scratch name freshness internally; uses internal callee branch and handler IH outputs to establish generated sequence and scope-restored relation for normal/exception/return/timeout/final outcomes. No successful handler premise. Full original guarded handler-IH discharge and public constructor assembly remain unfinished; untagged infrastructure."
 }
 ]
