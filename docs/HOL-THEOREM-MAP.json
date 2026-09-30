@@ -37128,5 +37128,36 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.5.51): HOL crep_inlineProofScript.sml:2301-2319 inline_prog_correct. Binders p s r s' inl_fs s1 inl_bag in HOL order, as declared parameters. Single conjunctive hypothesis as in HOL: evaluate (p,s) = (r,s'), r <> SOME Error, inl_fs SUBMAP s.code, inl_bag SUBMAP inl_fs, state_rel_code s s1, locals_strong_rel s s1, code_inl_rel inl_fs s s1. Conclusion: exists s1'. evaluate (inline_prog inl_bag p, s1) = (r, s1') /\\ state_rel_code s' s1' /\\ code_inl_rel inl_fs s' s1' /\\ the result-indexed case (NONE/Break/Continue => locals_strong_rel; Error => F; other => T) as the displayed match. Carriers as the accepted constructor cases: evalCrepSemHOLProgExact, the tagged inline_prog_def port inlineProgHOLExact, and the exact state_rel_code/locals_strong_rel/code_inl_rel ports. No extra premise and no public IH: the untagged inlineMotive proves the evaluate_ind predicate for all p and s by the lexicographic (clock, size) induction, applying each of the 19 tagged constructor cases with its literal premises."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermSemantics.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack canonical-state representation roundtrip and private generic evaluation-pair alias elimination; no independently named HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermSemantics.lean",
+  "lean_name": "terminationWitnessReduced",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack canonical-state representation roundtrip and private generic evaluation-pair alias elimination; no independently named HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermSemantics.lean",
+  "lean_name": "semanticsFpermHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "semantics_fperm",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol source comparison22.5.20 against pan_globalsProofScript1839-1853 and panSemScript785-809: unconditional equality semantics (state with code=fperm_code f g state.code) (fperm_name f g start) = semantics state start, over arbitrary native MlS swap names/state/start. No nonFail, successful-run, target evaluation, IH, trace-prefix or result premise. Accepted evaluateFpermPrimeHOL at native Call NONE start [] gives complete pair mapping at every clock; internally projected results and FFI event lists are exactly equal. Original semantics failure test, classical holOptionSome termination predicate and entire HolLList buildLprefixLub trace-set predicate retained. Private predicate lemma only eliminates existential pair aliases, so both classical choice predicates and complete divergence sets coincide before choice/LUB; no uniqueness assumption. Canonical imported finite locals/globals/code/eshapes and same-module genuine state roundtrip reexport, native word-indexed ProgHOL/result/state and Type0 FFI host; only finite-support and positive type-indexed BitVec translations qualified. Proof-only semantic composition; no executed compiler behavior change. Independent coordinator source acceptance and merged checks pending."
 }
 ]
