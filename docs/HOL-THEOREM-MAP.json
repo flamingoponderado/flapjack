@@ -31239,5 +31239,53 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-only canonical state/context roundtrip and paired local-update algebra supporting the genuine Assign Local case; no separate HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Primitive.lean",
+  "lean_name": "compileCorrect_Primitive",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "compile_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "PanSemStateFiniteExact.locals",
+    "PanSemStateFiniteExact.globals",
+    "PanSemStateFiniteExact.code",
+    "PanSemStateFiniteExact.eshapes",
+    "PanGlobalsContextExact.globals"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source comparison2026-09-30 original gen_goal172-182/compile_correct186/Primitive592-612: original source/name/PrimOp/arguments/result/context/target/post quantification; only state_rel T and source run and nonError conjunction; existential compiled target run and full post state_rel good_res. Source success list/pan_primop/local validity derived by evaluator case analysis and original nonError premise. Full accepted OPT_MMAP_eval_correct supplies target arguments; compiler list worker proved equal literal MAP; same reviewed pure panPrimop operator/value result; original locals equality supplies target validity; paired set_var preserves all nonlocal relation conjuncts and updated local equality. No extra target eval, successful primop/args, local validity, simulation or nil-struct premise; no recursive program IH for this constructor. Exact MlS/PrimOp/ExpHOL/ValueHOL carriers, two genuine canonical carrier roundtrips, positive width NeZero/universe0 FFI. Proof-only; parent Global Assign/Dec and overall assembly open. Coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Primitive.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only canonical state/context roundtrip, paired local-update algebra and compiler list-worker MAP equation supporting the genuine Primitive case; no separate HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Primitive.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only canonical state/context roundtrip, paired local-update algebra and compiler list-worker MAP equation supporting the genuine Primitive case; no separate HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Primitive.lean",
+  "lean_name": "stateRelLocalSetVar",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only canonical state/context roundtrip, paired local-update algebra and compiler list-worker MAP equation supporting the genuine Primitive case; no separate HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Primitive.lean",
+  "lean_name": "compileList_eq_map",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only canonical state/context roundtrip, paired local-update algebra and compiler list-worker MAP equation supporting the genuine Primitive case; no separate HOL declaration."
 }
 ]
