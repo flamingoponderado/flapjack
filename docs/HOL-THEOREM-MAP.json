@@ -35652,5 +35652,23 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-sol (22.5.6) compared HOL evaluate_fperm1721-1810 and literal evaluate_ind If conjunct. Sole IH quantifies original value/wordlab/word, guarded by eval(s,condition)=SOME value, value=Val lab, lab=Word word; branch exactly if word nonzero then first else second. Original source evaluation premise and full permuted target result/post code equality unchanged; no targetrun/nonError/postrelation guard. Original panSem16-23 Word-only word_lab and Value/RStruct/NStruct carriers verified. Failed evaluation and both structured-value errors preserve original result/state with permuted code; zero/nonzero successful word branches use only actual guarded IH. Expression evaluator code-update invariance accepted, no extra assumption. Four canonical state map fields and positive words/Type0 FFI qualified; same-module genuine canonical witness. Full permutation assembly remains open, coordinator review pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+  "hol_name": "stack_names_comp_stack_asm_ok",
+  "lean_path": "Flapjack/Compiler/Backend/StackNames/AsmAdmissibility/Assembly.lean",
+  "lean_name": "stackNamesCompStackAsmOk",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol full assembly bead14: Original HOL616-653 universal names/program with stack_asm_name, names_ok(reg_count,avoid_regs), fixed_names conjunction implies stack_asm_ok(comp names program). Exact full theorem has only these guards, no constructor-selector or IH premise. Functional induction over accepted exact progCompHOL covers every constructor. Seq/If/Loop use genuine original child motives; optional Call return/handler IHs obtained from actual induction match after source option equality; indirect target check remains independent of return and handler validity under SOME return as accepted case. Untagged default helper selection internally discharged; every default source guard retained. Reviewed Spt Nat tree names (not fmap), exact HolProg/HolInst/config and positive type-indexed word translation only. Existing accepted constructor/helper definitions unchanged, no production behavior edit or full compiler equivalence claim. Coordinator review pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+  "hol_name": "stack_names_stack_asm_ok",
+  "lean_path": "Flapjack/Compiler/Backend/StackNames/AsmAdmissibility/Assembly.lean",
+  "lean_name": "stackNamesStackAsmOk",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol full assembly bead14: Original HOL655-664 whole-program EVERY(stack_asm_name) conjunction names_ok and fixed_names implies EVERY(stack_asm_ok) on compile names program. HOL EVERY rendered as universal membership over same Lean List(Nat \u00d7 HolProg width), no reordering/filtering. Exact compileHOL MAP progCompEntryHOL preserves labels; membership decomposition applies full per-program theorem with original guard from original entry. No per-entry IH or target-success premise remains. Reviewed Spt Nat tree names (not fmap), exact HolProg/HolInst/config and positive type-indexed word translation only. Existing accepted constructor/helper definitions unchanged, no production behavior edit or full compiler equivalence claim. Coordinator review pending."
 }
 ]
