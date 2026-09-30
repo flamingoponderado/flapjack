@@ -33438,6 +33438,22 @@
   "reviewer": "flapjack-luna-b source comparison2026-09-30 HOL1003-1007: all native mlstring name/list/list variables; MEM fresh_name in names prime then set-subset then False. Pointwise universal candidate membership implication is exactly HOL set subset. Uses reviewed native freshNameMlS and native fresh_name_correct993 theorem, with no codec, byte-rangedness, changed quantified carrier, or extra premise. Existing String-qualified theorem preserved; this adds missing native-carrier counterpart for global-handler proof1316/1324/1415. Proof-only; coordinator review pending."
 },
 {
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/InitGlobalsRecursiveDisjoint.lean",
+  "lean_name": "recursiveGlobalsFreeDisjoint",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific full initializer head state relation assembly (22.10.14), composing original HOL initializer hypotheses and accepted range/store/reload/map/context certificates. Derives store success and all19 state_rel conjuncts, including replacement-name updates and empty source code. No post-state relation or target evaluation premise. No independently named HOL declaration; recursive initializer correctness remains open."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/InitGlobalsState.lean",
+  "lean_name": "initializerHeadStateRel",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific full initializer head state relation assembly (22.10.14), composing original HOL initializer hypotheses and accepted range/store/reload/map/context certificates. Derives store success and all19 state_rel conjuncts, including replacement-name updates and empty source code. No post-state relation or target evaluation premise. No independently named HOL declaration; recursive initializer correctness remains open."
+},
+{
   "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallHandlerFreshNames.lean",
   "lean_name": "callHandlerScratchNamesFresh",
   "hol_path": null,
