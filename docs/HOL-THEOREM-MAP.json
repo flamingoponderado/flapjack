@@ -35164,5 +35164,28 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-b source comparison, bead .18.5.15.7.14.2: HOL616 comp_ind ShMemOp case retains stack_asm_name/names_ok/fixed_names and exact stack_asm_ok(comp f p) conclusion. Spt and native StackLang payloads; positive word-width translation only. Source stackProps812-829: ShMemOp preserves offset and ISA branches, bounds from names_ok_imp; buffer/raise/return use reg_count and avoid_regs; OpCurrHeap targets default True, guards retained but unused. No target validity premise, executed behavior change or full theorem claim; coordinator source acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/Assign.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific same-module canonical state roundtrip reexport for the relation's four map fields; no independent HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/Assign.lean",
+  "lean_name": "evaluateFperm_Assign",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_fperm",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison pan_globalsProof1721-1810 evaluate_fperm Assign case and panSem566-573: original binders and sole source-run premise, full target evaluation and unchanged result/code-permuted post retained. Original eval failure and is_valid_value guards preserved. Pointwise accepted eval_upd_code_eta proves code-independent expression evaluation; is_valid_value reads only locals/globals, and set_kvar changes only selected locals/globals field, so code update commutes for both kinds. Native MlS/ExpHOL/ProgHOL/PanSemResultExact with canonical PanSemStateFiniteExact four finite maps and positive word translation; local unconditional state roundtrip witness. No success/validity/target/post premise. Genuine constructor slice, full theorem open. Proof-only no executable change."
 }
 ]
