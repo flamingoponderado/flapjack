@@ -2,6 +2,7 @@ import Flapjack.Test.StackPropsFloatNames
 import Flapjack.Test.StackPropsAddressNames
 import Flapjack.Test.StackPropsArithmeticNames
 import Flapjack.Test.RiscVNamesExactParity
+import Flapjack.Test.StackSemFixedStackCasesParity
 import Flapjack.RiscV.Encoding
 import Flapjack.Test.DeclBridgeParity
 import Flapjack.Test.RiscVColourLivenessParity
