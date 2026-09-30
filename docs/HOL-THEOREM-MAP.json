@@ -34427,5 +34427,14 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-only same-module canonical state roundtrip re-export for relation qualifier; no independent HOL original."
-}
+},
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+    "hol_name": "stack_names_comp_stack_asm_ok",
+    "lean_path": "Flapjack/Compiler/Backend/StackNames/AsmAdmissibility/Inst.lean",
+    "lean_name": "stackNamesCompStackAsmOk_Inst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison, bead .18.5.15.7.14.1: HOL616 Inst case retains stack_asm_name, names_ok and fixed_names as conjunction and stack_asm_ok(comp f (Inst i)) conclusion. Exact Spt and HolInst/config carriers; positive type-indexed width only translation. Constructor proof unfolds the same source predicates; names_ok_imp supplies register bounds/avoidance, names_ok_imp2 distinctness; x86 shifts/multiply/divide use original fixed names. FP registers remain unchanged; no FP value or executed correctness claim. Remaining program cases and full theorem open; coordinator review required."
+  }
 ]
