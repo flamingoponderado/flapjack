@@ -1,5 +1,7 @@
 import Flapjack.HolRef
 import Flapjack.Pancake.Proofs.CrepInline.InlineProgCorrect
+import Flapjack.Pancake.CrepToLoop.Proofs.CodeRel2
+import Flapjack.Pancake.Semantics.CrepSem.CrepObservationalSemantics
 
 /-!
 # crep_inline: `state_rel_imp_semantics` group
@@ -7,8 +9,9 @@ import Flapjack.Pancake.Proofs.CrepInline.InlineProgCorrect
 Ports of the final crep_inline semantic-preservation group
 (`cakeml/pancake/proofs/crep_inlineProofScript.sml:3263-3452`, bead
 `flapjack-2de.4` and its children): `fst_map_3_f` and
-`compile_inline_distinct` (bead `.1`) and `evaluate_call_same_result_state`
-(bead `.2`).
+`compile_inline_distinct` (bead `.1`), `evaluate_call_same_result_state`
+(bead `.2`) `state_rel_imp_semantics_local` (bead `.3`) and
+`state_rel_imp_semantics` (bead `flapjack-2de.4`).
 -/
 
 namespace Flapjack
@@ -116,6 +119,170 @@ theorem evaluateCallSameResultStateExact {σ : Type}
   simp only [inlineCaltyp] at ht'
   rw [ht', hev]
   exact ⟨rfl, hrel⟩
+
+/-- Local support: `code_inl_rel` for the code maps of `compile_inl_prog`. -/
+theorem codeInl_of_alist {σ : Type} (s t : CrepSemHOLState width σ)
+    (crep_code : List (CrepInlineMapHOLName × List Nat × CrepProgHOL width))
+    (inl_fs : HolFiniteMapExact CrepInlineMapHOLName (List Nat × CrepProgHOL width))
+    (hd : (crep_code.map Prod.fst).Nodup)
+    (hs : s.code = alistToFmapCodeExact crep_code)
+    (ht : t.code = alistToFmapCodeExact (compileInlProgHOLExact inl_fs crep_code)) :
+    CrepInlineExact.crepInlineCodeInlRelExact inl_fs s t := by
+  intro fname args prog hlk
+  rw [hs] at hlk
+  have hmem : (fname, args, prog) ∈ crep_code :=
+    flookup_fupdateList_reverse_mem' crep_code fname (args, prog) hlk
+  refine ⟨inl_fs.erase fname, CrepInlineCallCase.submap_erase _ _, ?_⟩
+  rw [ht]
+  exact flookup_fupdateList_reverse_of_mem _ fname (args, inlineProgHOLExact (inl_fs.erase fname) prog)
+    (compileInlineDistinct crep_code inl_fs hd)
+    (List.mem_map.mpr ⟨(fname, args, prog), hmem, rfl⟩)
+
+/-- Local support: at every clock where the source entry call does not end in
+    `Error`, the target entry call agrees in result and FFI state. -/
+theorem entry_agree {σ : Type} (s t : CrepSemHOLState width σ) (start : Flapjack.Basis.Pure.MlString.MlString)
+    (inl_fs : HolFiniteMapExact CrepInlineMapHOLName (List Nat × CrepProgHOL width))
+    (hsr : CrepInlineExact.crepInlineStateRelCodeExact s t)
+    (hls : CrepInlineExact.crepInlineLocalsStrongRelExact s t)
+    (hsub : HolFiniteMapExact.submap inl_fs s.code)
+    (hci : CrepInlineExact.crepInlineCodeInlRelExact inl_fs s t) (k : Nat)
+    (hne : (evalCrepSemHOLProgExact { s with clock := k } (.call none start [])).1 ≠ some .error) :
+    (evalCrepSemHOLProgExact { t with clock := k } (.call none start [])).1 =
+        (evalCrepSemHOLProgExact { s with clock := k } (.call none start [])).1 ∧
+      (evalCrepSemHOLProgExact { t with clock := k } (.call none start [])).2.ffi =
+        (evalCrepSemHOLProgExact { s with clock := k } (.call none start [])).2.ffi := by
+  obtain ⟨a, b, c, d, _, f, g, h, i⟩ := hsr
+  have hsrk : CrepInlineExact.crepInlineStateRelCodeExact { s with clock := k } { t with clock := k } :=
+    ⟨a, b, c, d, rfl, f, g, h, i⟩
+  obtain ⟨h1, h2⟩ := evaluateCallSameResultStateExact start [] { s with clock := k }
+    (evalCrepSemHOLProgExact { s with clock := k } (.call none start [])).1
+    (evalCrepSemHOLProgExact { s with clock := k } (.call none start [])).2
+    { t with clock := k } inl_fs ⟨rfl, hsrk, hsub, hls, hci, hne⟩
+  exact ⟨h1, h2.2.2.2.2.2.2.1.symm⟩
+
+/-- Local support: if `semantics s start ≠ Fail` then no clock gives `Error`. -/
+theorem noError_of_notFail {σ : Type} (s : CrepSemHOLState width σ) (start : Flapjack.Basis.Pure.MlString.MlString)
+    (h : crepSemantics s start ≠ .fail) (k : Nat) :
+    (evalCrepSemHOLProgExact { s with clock := k } (.call none start [])).1 ≠ some .error := by
+  intro he
+  apply h
+  unfold crepSemantics
+  simp only [crepEntryProgram]
+  refine if_pos ?_
+  exact ⟨k, by rw [he]; trivial⟩
+
+theorem ite_fail_congr (C C' : Prop) [Decidable C] [Decidable C'] (a b : HolBehaviour)
+    (hC : C ↔ C') (hab : a = b) :
+    (if C then HolBehaviour.fail else a) = (if C' then HolBehaviour.fail else b) := by
+  subst hab
+  by_cases h : C
+  · rw [if_pos h, if_pos (hC.mp h)]
+  · rw [if_neg h, if_neg (fun h' => h (hC.mpr h'))]
+
+theorem sem_tail_congr {P Q : HolBehaviour → Prop} {x y : HolLList HolIoEvent}
+    (hPQ : P = Q) (hxy : x = y) :
+    (match holOptionSome P with
+     | some r => r
+     | none => HolBehaviour.diverge x) =
+    (match holOptionSome Q with
+     | some r => r
+     | none => HolBehaviour.diverge y) := by
+  subst hPQ; subst hxy; rfl
+
+open CrepInlineExact in
+/-- Exact HOL `state_rel_imp_semantics_local` (`crep_inlineProofScript.sml:3309-3318`).
+    `alist_to_fmap` is the reviewed `alistToFmapCodeExact` adapter and
+    `semantics` the tagged crepSem `semantics_def`.  Proof: `code_inl_rel`
+    follows from the code equations (`codeInl_of_alist`, with
+    `compile_inline_distinct`).  Because `semantics s start ≠ Fail`, no clock
+    gives `Error`, so `evaluate_call_same_result_state` equates results and FFI
+    states clock by clock.  All three branches of `semantics_def` then agree
+    pointwise. -/
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "state_rel_imp_semantics_local"
+  (fmap_as_finite_support_relation :=
+    [CrepSemHOLState.locals, CrepSemHOLState.globals, CrepSemHOLState.code, inl_fs])
+  (words_as_type_indexed_bitvec)]
+theorem stateRelImpSemanticsLocalExact {σ : Type}
+    (s t : CrepSemHOLState width σ)
+    (crep_code : List (CrepInlineMapHOLName × List Nat × CrepProgHOL width))
+    (start : Flapjack.Basis.Pure.MlString.MlString)
+    (inl_fs : HolFiniteMapExact CrepInlineMapHOLName (List Nat × CrepProgHOL width))
+    (ns : List Nat) (prog : CrepProgHOL width) :
+    crepInlineStateRelCodeExact s t ∧ crepInlineLocalsStrongRelExact s t ∧
+      (crep_code.map Prod.fst).Nodup ∧
+      s.code = alistToFmapCodeExact crep_code ∧
+      HolFiniteMapExact.submap inl_fs s.code ∧
+      t.code = alistToFmapCodeExact (compileInlProgHOLExact inl_fs crep_code) ∧
+      s.code.lookup start = some (ns, prog) ∧
+      crepSemantics s start ≠ .fail →
+    crepSemantics t start = crepSemantics s start := by
+  classical
+  rintro ⟨hsr, hls, hd, hs, hsub, ht, _, hnf⟩
+  have hci := codeInl_of_alist s t crep_code inl_fs hd hs ht
+  have hB := fun k => entry_agree s t start inl_fs hsr hls hsub hci k (noError_of_notFail s start hnf k)
+  unfold crepSemantics
+  simp only [crepEntryProgram]
+  refine ite_fail_congr _ _ _ _ ?_ (sem_tail_congr ?_ ?_)
+  · constructor
+    · rintro ⟨k, hk⟩; exact ⟨k, by rw [← (hB k).1]; exact hk⟩
+    · rintro ⟨k, hk⟩; exact ⟨k, by rw [(hB k).1]; exact hk⟩
+  · funext res
+    apply propext
+    constructor
+    · rintro ⟨k, t', r, outcome, hk, hm, hres⟩
+      obtain ⟨e1, e2⟩ := hB k
+      rw [hk] at e1 e2
+      refine ⟨k, (evalCrepSemHOLProgExact { s with clock := k } (.call none start [])).2, r,
+        outcome, Prod.ext e1.symm rfl, hm, ?_⟩
+      rw [hres]; simp only at e2; rw [e2]
+    · rintro ⟨k, t', r, outcome, hk, hm, hres⟩
+      obtain ⟨e1, e2⟩ := hB k
+      rw [hk] at e1 e2
+      refine ⟨k, (evalCrepSemHOLProgExact { t with clock := k } (.call none start [])).2, r,
+        outcome, Prod.ext e1 rfl, hm, ?_⟩
+      rw [hres]; simp only at e2; rw [e2]
+  · congr 1
+    funext l
+    apply propext
+    constructor
+    · rintro ⟨k, rfl⟩; exact ⟨k, by rw [(hB k).2]⟩
+    · rintro ⟨k, rfl⟩; exact ⟨k, by rw [(hB k).2]⟩
+
+open CrepInlineExact in
+/-- Exact HOL `state_rel_imp_semantics` (`crep_inlineProofScript.sml:3440-3448`):
+    the crep_inline pass `compile_inl_top` preserves observational semantics.
+    Proof as HOL's: unfold `compile_inl_top_def` and apply
+    `state_rel_imp_semantics_local` with
+    `inl_fs = alist_to_fmap (FILTER (λ(x,y). MEM x inl_fname) crep_code)`, whose
+    `SUBMAP` into `s.code` follows from `ALL_DISTINCT (MAP FST crep_code)`. -/
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "state_rel_imp_semantics"
+  (fmap_as_finite_support_relation :=
+    [CrepSemHOLState.locals, CrepSemHOLState.globals, CrepSemHOLState.code])
+  (words_as_type_indexed_bitvec)]
+theorem stateRelImpSemanticsExact {σ : Type}
+    (s t : CrepSemHOLState width σ)
+    (crep_code : List (CrepInlineMapHOLName × List Nat × CrepProgHOL width))
+    (start : Flapjack.Basis.Pure.MlString.MlString)
+    (inl_fname : List CrepInlineMapHOLName)
+    (ns : List Nat) (prog : CrepProgHOL width) :
+    crepInlineStateRelCodeExact s t ∧ crepInlineLocalsStrongRelExact s t ∧
+      (crep_code.map Prod.fst).Nodup ∧
+      s.code = alistToFmapCodeExact crep_code ∧
+      t.code = alistToFmapCodeExact (compileInlTopHOLExact inl_fname crep_code) ∧
+      s.code.lookup start = some (ns, prog) ∧
+      crepSemantics s start ≠ .fail →
+    crepSemantics t start = crepSemantics s start := by
+  rintro ⟨hsr, hls, hd, hs, ht, hlk, hnf⟩
+  have ht' : t.code = alistToFmapCodeExact (compileInlProgHOLExact
+      (alistToFmapHOLExact (crep_code.filter fun triple => inl_fname.contains triple.1))
+      crep_code) := by
+    rw [ht, compileInlTopHOLExact]
+    rw [compileInlProgHOLExactWithSupport_eq_compileInlProgHOLExact]
+  refine stateRelImpSemanticsLocalExact s t crep_code start _ ns prog
+    ⟨hsr, hls, hd, hs, fun k v h => ?_, ht', hlk, hnf⟩
+  rw [hs]
+  have hm := flookup_fupdateList_reverse_mem' _ k v h
+  exact flookup_fupdateList_reverse_of_mem crep_code k v hd (List.mem_filter.mp hm).1
 
 end CrepInlineStateRelImpSemantics
 
