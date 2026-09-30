@@ -1328,14 +1328,16 @@ theorem updateLocalsNotVarsEvalEqCrepHOL {width : Nat} [NeZero width] {σ : Type
 (`crepPropsScript.sml:194-200`; a `[local]` namesake at `:131` is the
 result-carrying helper): `~MEM n (var_cexp e) ==>
 eval (s with locals := s.locals |+ (n,w)) e = eval s e`.  HOL's binder list
-`∀s e v n w` includes a `v` that occurs nowhere in the statement; this
-vacuous binder is omitted.  `|+` is `updateEq` on the finite-support locals.
+`∀s e v n w` includes a `v` that occurs nowhere in the statement, so HOL
+generalizes its type to a fresh type variable; it is retained, in HOL order,
+as `(_v : α)` over an implicit `{α : Type}`.  `|+` is `updateEq` on the
+finite-support locals.
 The line qualifier disambiguates the two HOL declarations of this name. -/
 @[hol "cakeml/pancake/semantics/crepPropsScript.sml" "update_locals_not_vars_eval_eq'" 194
   (fmap_as_finite_support := [locals, globals, code])
   (words_as_type_indexed_bitvec)]
-theorem updateLocalsNotVarsEvalEq'CrepHOL {width : Nat} [NeZero width] {σ : Type}
-    (state : CrepSemHOLState width σ) (expression : CrepExpHOL width)
+theorem updateLocalsNotVarsEvalEq'CrepHOL {width : Nat} [NeZero width] {σ : Type} {α : Type}
+    (state : CrepSemHOLState width σ) (expression : CrepExpHOL width) (_v : α)
     (name : Nat) (word : HolWordLab width)
     (hfresh : name ∉ crepExpVarsHOL expression) :
     evalCrepSemHOLExp { state with locals := state.locals.updateEq (name, word) }

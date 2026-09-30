@@ -36282,7 +36282,7 @@
       "code"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.42.5) compared crepPropsScript.sml:194-200, the public update_locals_not_vars_eval_eq' (a [local] namesake at :131 is a different result-carrying helper, hence the line qualifier): forall s e v n w. ~MEM n (var_cexp e) ==> eval (s with locals := s.locals |+ (n,w)) e = eval s e. Lean: same hypothesis n NOTIN crepExpVarsHOL e and conclusion over evalCrepSemHOLExp, with |+ as the finite-support updateEq. HOL's binder v occurs nowhere in the statement, so the vacuous binder is omitted (documented beside the declaration). No extra premise. Proof: the untagged evalCrepSemHOLExp_updateLocals_eq_of_not_vars."
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.42.5) compared crepPropsScript.sml:194-200, the public update_locals_not_vars_eval_eq' (a [local] namesake at :131 is a different result-carrying helper, hence the line qualifier): forall s e v n w. ~MEM n (var_cexp e) ==> eval (s with locals := s.locals |+ (n,w)) e = eval s e. Lean: same hypothesis n NOTIN crepExpVarsHOL e and conclusion over evalCrepSemHOLExp, with |+ as the finite-support updateEq. HOL's binder v occurs nowhere in the statement (its HOL type is therefore a free type variable); it is retained in HOL order as (_v : a) over an implicit {a : Type}, per coordinator review 2026-09-30T20:08Z. No extra premise. Proof: the untagged evalCrepSemHOLExp_updateLocals_eq_of_not_vars."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/CrepInline/CallTail.lean",
