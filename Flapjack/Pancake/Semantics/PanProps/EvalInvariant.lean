@@ -7007,6 +7007,14 @@ theorem evaluateClockSubSeqCaseHOLFinite {width : Nat} {σ : Type} [NeZero width
       simp [hFirstLow', hSecondLow']
 
 set_option maxHeartbeats 4000000 in
+/-- `Dec` case of HOL `evaluate_clock_sub` (`panPropsScript.sml:724-728`).
+    `evaluate_ind` supplies exactly one guarded induction hypothesis,
+    `P (body, s with locals := s.locals⟨name ↦ value⟩)`
+    (`scripts/hol-probes/pan_sem_evaluate_ind_probe.out`).  This theorem takes
+    that literal state-pinned IH with the initializer guard bundled and runs
+    `body` at `setVarHOLFinite name value state`, with no added
+    evaluator-success premise (the earlier totality premise is retained only as
+    the theorem's own `result ≠ some .timeOut`). -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_clock_sub"
   (fmap_as_finite_support := [locals, globals, code, eshapes])
   (words_as_type_indexed_bitvec)]
@@ -7019,14 +7027,25 @@ theorem evaluateClockSubDecCaseHOLFinite {width : Nat} {σ : Type} [NeZero width
           (.dec name shape initializer body) =
         (result, { st with clock := st.clock + ck }) →
       result ≠ some .timeOut →
-      (∀ (state' : PanPropsEvalStateFiniteExact width σ)
-          (result' : Option (PanSemResultExact width))
+      (∀ (value : ValueHOL width),
+        @evalHOLExact width σ _ state.toPanSemFinite.toExact
+            (fun address => Classical.propDecidable (state.toPanSemFinite.memaddrs address))
+            initializer = some value ∧
+          shape = shapeOfHOLExact value →
+        ∀ (result' : Option (PanSemResultExact width))
           (st' : PanPropsEvalStateFiniteExact width σ) (ck' : Nat),
-        PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state' body =
+        PanPropsEvalStateFiniteExact.evaluateHOLFinitePair
+            (PanPropsEvalStateFiniteExact.ofPanSemFinite
+              (PanSemStateFiniteExact.setVarHOLFinite name value state.toPanSemFinite)) body =
           (result', { st' with clock := st'.clock + ck' }) →
         result' ≠ some .timeOut →
         PanPropsEvalStateFiniteExact.evaluateHOLFinitePair
-          { state' with clock := state'.clock - ck' } body = (result', st')) →
+          { PanPropsEvalStateFiniteExact.ofPanSemFinite
+              (PanSemStateFiniteExact.setVarHOLFinite name value state.toPanSemFinite) with
+            clock := (PanPropsEvalStateFiniteExact.ofPanSemFinite
+              (PanSemStateFiniteExact.setVarHOLFinite name value
+                state.toPanSemFinite)).clock - ck' }
+          body = (result', st')) →
       PanPropsEvalStateFiniteExact.evaluateHOLFinitePair
         { state with clock := state.clock - ck } (.dec name shape initializer body) =
           (result, st) := by
@@ -7119,7 +7138,10 @@ theorem evaluateClockSubDecCaseHOLFinite {width : Nat} {σ : Type} [NeZero width
         have hBodyNotTimeout : bodyOutputHigh.1 ≠ some .timeOut := by
           rw [hBodyResult]
           exact hne
-        have hBodyLow := ihBody bodyInputProps bodyOutputHigh.1 bodyPostLow ck
+        have hBodyLow := ihBody value
+          ⟨by simpa [highState] using hInit,
+            (shapeEqHOL_eq_true _ _).mp hshape⟩
+          bodyOutputHigh.1 bodyPostLow ck
           hBodyHigh hBodyNotTimeout
         let bodyInputLowProps : PanPropsEvalStateFiniteExact width σ :=
           { bodyInputProps with clock := bodyInputProps.clock - ck }

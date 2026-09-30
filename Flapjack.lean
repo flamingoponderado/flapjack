@@ -1,3 +1,4 @@
+import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Prime
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelImpSemantics
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Decls
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Assembly
@@ -131,6 +132,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutNames
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyRemap
 import Flapjack.Pancake.PanStructs.CompileDeclsExact
 import Flapjack.Pancake.PanStructs.CompileDeclsCorrespondence
+import Flapjack.Pancake.PanStructs.CompileProgCorrespondence
 import Flapjack.Pancake.PanStructs.CompileProgExact
 import Flapjack.Pancake.PanStructs.CompileExpExact
 import Flapjack.Pancake.PanStructs.OldExpShapeExact
@@ -162,6 +164,7 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.EventsMono
 import Flapjack.Compiler.Backend.Semantics.StackSem.State
 import Flapjack.Compiler.Backend.Semantics.StackSem.Control
 import Flapjack.Compiler.Backend.Semantics.StackSem.Measure
+import Flapjack.Compiler.Backend.Semantics.StackSem.Measure.CallSites
 import Flapjack.Compiler.Backend.Semantics.StackSem.Labels
 import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
 import Flapjack.Compiler.Backend.Semantics.StackSem.ShMem
@@ -424,6 +427,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Primitive
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Store
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.FixedStores
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.ShMemLoad
+import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Assembly
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.ClockAnnot
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Seq
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.DecCall
@@ -577,6 +581,8 @@ import Flapjack.Pancake.Proofs.CrepInline.ShMem
 import Flapjack.Pancake.Proofs.CrepInline.Call
 import Flapjack.Pancake.Proofs.CrepInline.CallTail
 import Flapjack.Pancake.Proofs.CrepInline.CallNontail
+import Flapjack.Pancake.Proofs.CrepInline.CallCase
+import Flapjack.Pancake.Proofs.CrepInline.InlineProgCorrect
 import Flapjack.Pancake.Proofs.CrepInline.FiniteMapLemmas
 import Flapjack.Pancake.Proofs.CrepInline.UpdateListLocals
 import Flapjack.Pancake.Proofs.CrepInline.UnreachElim
