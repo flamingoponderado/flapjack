@@ -13,6 +13,8 @@ import Flapjack.Pancake.Proofs.PanGlobals.ByteStore
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Leaves
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.If
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Seq
+import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.ShMemLoad
+import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.CallNoHandler
 import Flapjack.Pancake.Proofs.PanGlobals.MemoryLookup
 import Flapjack.Pancake.Proofs.PanGlobals.MemorySwap
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelationCode
