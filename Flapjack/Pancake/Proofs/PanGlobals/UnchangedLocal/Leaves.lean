@@ -18,7 +18,7 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} {σ : Type} [NeZero width] :
   (fmap_as_finite_support := [locals, globals, code, eshapes])
   (words_as_type_indexed_bitvec)]
 theorem evaluateUnchangedLocal_Skip {width : Nat} {σ : Type} [NeZero width]
-    (name : MlS) (_value : ValueHOL width) 
+    (name : MlS) (_value : ValueHOL width)
     (state : PanSemStateFiniteExact width σ)
     (result : Option (PanSemResultExact width)) (post : PanSemStateFiniteExact width σ)
     (h : name ∉ freeVarIdsHOL (.skip : ProgHOL width) ∧
@@ -36,7 +36,7 @@ theorem evaluateUnchangedLocal_Skip {width : Nat} {σ : Type} [NeZero width]
   (fmap_as_finite_support := [locals, globals, code, eshapes])
   (words_as_type_indexed_bitvec)]
 theorem evaluateUnchangedLocal_Break {width : Nat} {σ : Type} [NeZero width]
-    (name : MlS) (_value : ValueHOL width) 
+    (name : MlS) (_value : ValueHOL width)
     (state : PanSemStateFiniteExact width σ)
     (result : Option (PanSemResultExact width)) (post : PanSemStateFiniteExact width σ)
     (h : name ∉ freeVarIdsHOL (.break : ProgHOL width) ∧
@@ -54,7 +54,7 @@ theorem evaluateUnchangedLocal_Break {width : Nat} {σ : Type} [NeZero width]
   (fmap_as_finite_support := [locals, globals, code, eshapes])
   (words_as_type_indexed_bitvec)]
 theorem evaluateUnchangedLocal_Continue {width : Nat} {σ : Type} [NeZero width]
-    (name : MlS) (_value : ValueHOL width) 
+    (name : MlS) (_value : ValueHOL width)
     (state : PanSemStateFiniteExact width σ)
     (result : Option (PanSemResultExact width)) (post : PanSemStateFiniteExact width σ)
     (h : name ∉ freeVarIdsHOL (.continue : ProgHOL width) ∧
@@ -90,7 +90,7 @@ theorem evaluateUnchangedLocal_Annot {width : Nat} {σ : Type} [NeZero width]
   (fmap_as_finite_support := [locals, globals, code, eshapes])
   (words_as_type_indexed_bitvec)]
 theorem evaluateUnchangedLocal_Tick {width : Nat} {σ : Type} [NeZero width]
-    (name : MlS) (_value : ValueHOL width) 
+    (name : MlS) (_value : ValueHOL width)
     (state : PanSemStateFiniteExact width σ)
     (result : Option (PanSemResultExact width)) (post : PanSemStateFiniteExact width σ)
     (h : name ∉ freeVarIdsHOL (.tick : ProgHOL width) ∧
