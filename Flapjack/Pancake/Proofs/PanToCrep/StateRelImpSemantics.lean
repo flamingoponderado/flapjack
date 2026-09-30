@@ -53,7 +53,7 @@ private theorem getEidsEntriesHOL_mem {width : Nat} [NeZero width]
     `excp_rel_def`. -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "get_eids_imp_excp_rel"
   (fmap_as_finite_support_relation := [seids]) (words_as_type_indexed_bitvec)]
-theorem getEidsImpExcpRel {width : Nat} [NeZero width] :
+theorem getEidsImpExcpRelExact {width : Nat} [NeZero width] :
     ∀ (seids : HolFiniteMapExact MlS ShapeHOL) (pc : List (DeclHOL width)),
       sizeOfEidsHOL pc < 2 ^ width ∧
         (∀ key, (seids.lookup key).isSome = ((getEidsFromDeclsHOL pc).lookup key).isSome) →
@@ -81,7 +81,7 @@ theorem getEidsImpExcpRel {width : Nat} [NeZero width] :
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "mk_ctxt_imp_locals_rel"
   (fmap_as_finite_support_relation := [PanToCrepContextExact.vars, lcl, es])
   (words_as_type_indexed_bitvec)]
-theorem mkCtxtImpLocalsRel {width : Nat} [NeZero width] :
+theorem mkCtxtImpLocalsRelExact {width : Nat} [NeZero width] :
     ∀ (pc : List (MlS × List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))
       (lcl : HolFiniteMapExact Nat (HolWordLab width))
       (es : HolFiniteMapExact MlS (BitVec width)),

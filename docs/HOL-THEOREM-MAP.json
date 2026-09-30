@@ -25879,7 +25879,7 @@
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelImpSemantics.lean",
-    "lean_name": "getEidsImpExcpRel",
+    "lean_name": "getEidsImpExcpRelExact",
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
     "hol_name": "get_eids_imp_excp_rel",
     "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
@@ -25891,7 +25891,7 @@
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelImpSemantics.lean",
-    "lean_name": "mkCtxtImpLocalsRel",
+    "lean_name": "mkCtxtImpLocalsRelExact",
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
     "hol_name": "mk_ctxt_imp_locals_rel",
     "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
@@ -25909,7 +25909,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelImpSemantics.lean",
     "lean_name": "getEidsEntriesHOL_mem",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Untagged helper of getEidsImpExcpRel (bead flapjack-pxn.18.4.4.2): membership in the get_eids_from_decls association list gives the index and word code; no HOL declaration of its own (HOL uses MEM_ZIP inline)."
+    "reviewer": "Untagged helper of getEidsImpExcpRelExact (bead flapjack-pxn.18.4.4.2): membership in the get_eids_from_decls association list gives the index and word code; no HOL declaration of its own (HOL uses MEM_ZIP inline)."
   },
   {
     "hol_path": null,
@@ -25917,6 +25917,6 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelImpSemantics.lean",
     "lean_name": "holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on mkCtxtImpLocalsRel; forwards the imported checked roundtrip; no HOL declaration"
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on mkCtxtImpLocalsRelExact; forwards the imported checked roundtrip; no HOL declaration"
   }
 ]
