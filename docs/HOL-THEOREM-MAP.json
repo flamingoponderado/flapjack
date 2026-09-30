@@ -29347,5 +29347,38 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "Luna A compared HOL1564-1569: same original flag/context/states and arbitrary new FFI x; state_rel implies state_rel after setting ffi=x on both states. All relation conjuncts unchanged except FFI equality becomes reflexive. No new premise on FFI, target result or state. Exact reviewed HolFfiState universe0 host, positive-width state and canonical finite relation carriers; same-module roundtrip witnesses. Direct dependency of source state_rel_write_bytearray at1608 confirmed. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationCode.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanSemStateFiniteExact toExact/ofExact finite-support roundtrip; it supports the PanSemStateFiniteExact fields named by the state_rel tags."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationCode.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanGlobalsContextExact toBroad/ofBroad roundtrip; it supports PanGlobalsContextExact.globals named by the state_rel tags."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationCode.lean",
+    "lean_name": "stateRelLookupCodeHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "state_rel_lookup_code",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanGlobalsContextExact.globals",
+      "callee"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Luna A compared HOL934-941 and panSem458-467 lookup_code: original state_rel ls plus successful source lookup implies target lookup of compiled body, same locals and return shape. HOL SOME(prog,newlocals) groups tail of triple; Lean binds callee and returnShape separately. Canonical callee map qualifier names standalone callee, states/context same-module roundtrips. lookupCodeHOLFinite wraps unchanged exact raw lookup using checked finite support; canonical proof irrelevance yields identical map. Nodup parameter names, exact length+pairwise shape equality implement ALL_DISTINCT and LIST_REL; unchanged ZIP and left FUPDATE_LIST last-binding semantics. No extra premise on code/target outcome. Positive words/Type0 FFI, exact MlS keys. Calls1149/1516 verified. Coordinator source review pending."
   }
 ]
