@@ -35761,5 +35761,20 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-4ac.4.60.1.1.12): exact source shape of HOL panPropsScript.sml evaluate_clock_sub If constructor, handled in the generic final branch of the HOL induction; single guarded IH over if w <> 0 then c1 else c2 at the same state, original premisses (high-run equation to st with clock := st.clock+ck and result <> SOME TimeOut), no added premise."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "evaluate_clock_sub",
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
+    "lean_name": "evaluateClockSubWhileBreakBodyCaseHOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-4ac.4.60.1.1.9.3): Break-body sub-case of the HOL panPropsScript.sml evaluate_clock_sub While conjunct (panSemScript.sml:630). Case premises are the enclosing high While run at state (equation to st with clock := st.clock+ck) and result <> SOME TimeOut; the literal guarded body IH (only IH evaluate_ind yields here, since Break terminates the loop with no recursive While call) derives the low-clock Break body run internally; the body run returning SOME Break is the constructor split selecting this branch; no caller-supplied evaluator success premise is added."
   }
 ]
