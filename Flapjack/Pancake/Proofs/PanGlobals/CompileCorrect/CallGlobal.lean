@@ -49,6 +49,41 @@ theorem holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact
     PanGlobalsContextExact.ofBroad (PanGlobalsContextExact.toBroad context) = context :=
   PanGlobalsContextExact.holFmapAsFiniteSupportWitness context
 
+/-- Flapjack normal-return store infrastructure shared with the Global handler
+case. Source validity and the related temporary binding derive the existential
+store run and complete post relation through the accepted Assign case. These
+are internal caller obligations, not additional compiler theorem hypotheses;
+no separately named HOL declaration or exact HOL-port claim is made here. -/
+theorem evalGlobalStoreFromRelatedLocal {width : Nat} {σ : Type} [NeZero width]
+    (context : PanGlobalsContextExact width) (source target : PanSemStateFiniteExact width σ)
+    (name temporary : MlS) (value : ValueHOL width)
+    (hrel : panGlobalsStateRelHOLExact true context source target)
+    (hlocal : source.locals.lookup temporary = some value)
+    (hvalid : isValidValueHOLFinite source .global name value = true) :
+    ∃ address targetPost,
+      context.globals.lookup name = some (shapeOfHOLExact value, address) ∧
+      evaluateHOLFiniteState target
+        (.store (.op .sub [.topAddr, .const address]) (.var .local temporary)) = (none, targetPost) ∧
+      panGlobalsStateRelHOLExact true context (setGlobalHOLFinite name value source) targetPost := by
+  classical
+  cases hg : source.globals.lookup name with
+  | none => simp [isValidValueHOLFinite, lookupKvarHOLFinite, hg] at hvalid
+  | some existing =>
+    have hshape : shapeOfHOLExact value = shapeOfHOLExact existing := by
+      apply (shapeEqHOL_eq_true _ _).mp
+      simpa [isValidValueHOLFinite, lookupKvarHOLFinite, hg] using hvalid
+    obtain ⟨address, hc, _, _, _, _⟩ := hrel.2.2.2.2.2.2.2.2.1 name existing hg
+    have hsourceRun : evaluateHOLFiniteState source (.assign .global name (.var .local temporary)) =
+        (none, setKvarHOLFinite .global name value source) := by
+      simp only [evaluateHOLFiniteState_assign, evalHOLExact, hlocal, hvalid, ite_true]
+    obtain ⟨targetPost, hrun, hpost⟩ :=
+      PanGlobalsCompileCorrectAssignGlobal.compileCorrect_AssignGlobal source name
+        (.var .local temporary) none context target (setKvarHOLFinite .global name value source)
+        ⟨hrel, hsourceRun, by simp⟩
+    refine ⟨address, targetPost, ?_, ?_, hpost⟩
+    · simpa only [hshape] using hc
+    · simpa only [compileProgExactHOL, hc, compileExpExactHOL] using hrun
+
 /-- Global destination Call without handler, using only the original guarded
 callee IH. The target is the original DecCall with a scoped empty-name result
 and Store continuation. The global write is derived through the accepted Assign
@@ -147,20 +182,18 @@ theorem compileCorrect_CallGlobal {width : Nat} {σ : Type} [NeZero width]
                     simpa only [ghostSource, ghostTarget, hlocals] using
                       PanGlobalsStateRelationLocals.stateRelSetVarHOL context
                         {bs with locals := source.locals} {bt with locals := source.locals} true temporary value hrestored
-                  have hghostRun : evaluateHOLFiniteState ghostSource
-                      (.assign .global name (.var .local temporary)) =
-                      (none, setKvarHOLFinite .global name value ghostSource) := by
-                    simp [evaluateHOLFiniteState_assign, ghostSource, setVarHOLFinite, evalHOLExact,
-                      isValidValueHOLFinite,
-                      lookupKvarHOLFinite, hpostLookup, hshape, hpostShape, shapeEqHOL_eq_true, FUPDATE]
-                  obtain ⟨storePost, hstore, hstoreRel⟩ :=
-                    PanGlobalsCompileCorrectAssignGlobal.compileCorrect_AssignGlobal ghostSource name
-                      (.var .local temporary) none context ghostTarget
-                      (setKvarHOLFinite .global name value ghostSource) ⟨hghost, hghostRun, by simp⟩
-                  have hstoreRun : evaluateHOLFiniteState ghostTarget
-                      (.store (.op .sub [.topAddr, .const address]) (.var .local temporary)) =
-                      (none, storePost) := by
-                    simpa [compileProgExactHOL, hct, compileExpExactHOL] using hstore
+                  have hghostLocal : ghostSource.locals.lookup temporary = some value := by
+                    simp [ghostSource, setVarHOLFinite, FUPDATE]
+                  have hghostValid : isValidValueHOLFinite ghostSource .global name value = true := by
+                    simp [ghostSource, setVarHOLFinite, isValidValueHOLFinite, lookupKvarHOLFinite,
+                      hpostLookup, hshape, hpostShape, shapeEqHOL_eq_true]
+                  obtain ⟨storeAddress, storePost, hstoreContext, hstoreRun, hstoreRel⟩ :=
+                    evalGlobalStoreFromRelatedLocal context ghostSource ghostTarget name temporary value
+                      hghost hghostLocal hghostValid
+                  have haddress : storeAddress = address := by
+                    rw [hct] at hstoreContext
+                    exact (congrArg Prod.snd (Option.some.inj hstoreContext)).symm
+                  subst storeAddress
                   have hscope := PanGlobalsCompileCorrectResVar.stateRelResVar true context
                     (setKvarHOLFinite .global name value ghostSource) storePost source target temporary temporary
                     ⟨hstoreRel, hrel⟩
