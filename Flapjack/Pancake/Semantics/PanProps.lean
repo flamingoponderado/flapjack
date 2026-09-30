@@ -881,8 +881,10 @@ theorem panPrimopHOLExact_isWfShapeValueHOLExact {width : Nat} [NeZero width]
     context empty, `is_wf_shape` on the `shape_of` image implies
     `is_wf_shape_v` on the value.  Over the exact `ValueHOL width` and
     MlString-keyed `StructContextExact` carriers; the Bool predicate is
-    rendered as `= true`. -/
-@[hol "cakeml/pancake/semantics/panPropsScript.sml" "is_wf_shape_v_nil_step1"]
+    rendered as `= true`. The word qualifier records HOL's type-indexed
+    word payload as positive-width `BitVec`, without adding a premise. -/
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "is_wf_shape_v_nil_step1"
+  (words_as_type_indexed_bitvec)]
 theorem isWfShapeValueHOLExact_nil_step1 {width : Nat} [NeZero width]
     (context : Flapjack.Pancake.PanLang.StructContextExact) (value : ValueHOL width)
     (h : context = [] ∧
