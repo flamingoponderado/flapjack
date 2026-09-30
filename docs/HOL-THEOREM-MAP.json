@@ -27992,19 +27992,19 @@
     "reviewer": "Flapjack-specific canonical carrier roundtrip re-export; no independent HOL original."
   },
   {
-    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-    "hol_name": "evaluate_locals_same_fdom",
-    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/Call.lean",
-    "lean_name": "evaluateLocalsSameFdomCallExact",
-    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support_relation": [
-      "CrepSemHOLState.locals",
-      "CrepSemHOLState.globals",
-      "CrepSemHOLState.code"
-    ],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol (.43.4.1) compared HOL evaluate_locals_same_fdom181-191/Call221-234 and evaluate_ind Call: exact source eval/result guard/domain conclusion plus both original guarded callee and matching-exception handler IHs. CalleeIH retained unused as original proof restores caller locals; handler-only calculation is untagged callDomainFromHandler. Canonical finite-support state and positive-width Type0 word translation unchanged; no extra success/postrelation premise."
-  },
+  "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+  "hol_name": "evaluate_locals_same_fdom",
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/Call.lean",
+  "lean_name": "evaluateLocalsSameFdomCallExact",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "CrepSemHOLState.locals",
+    "CrepSemHOLState.globals",
+    "CrepSemHOLState.code"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol (.43.4.1) compared HOL evaluate_locals_same_fdom181-191/Call221-234 and evaluate_ind Call: exact source eval/result guard/domain conclusion plus both original guarded callee and matching-exception handler IHs. CalleeIH retained unused as original proof restores caller locals; handler-only calculation is untagged callDomainFromHandler. Canonical finite-support state and positive-width Type0 word translation unchanged; no extra success/postrelation premise."
+},
   {
     "hol_path": null,
     "hol_name": null,
