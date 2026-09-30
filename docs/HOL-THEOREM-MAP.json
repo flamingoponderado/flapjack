@@ -35096,5 +35096,21 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-sol (.45.4.3) compared original HOL1350-1379: all original quantified variables and eleven strong_all guards retained, followed by the original twelfth observed nested evaluation premise at result r1/state tprime. Conclusion exactly r1=r, full state_rel and source-result match with FDIFF and restored-locals submaps for NONE/Break/Continue, Error False, other True. This target-run premise belongs to HOL drule only; existential strong_all has no such premise. Proof derives independent existential run then projects deterministic pair equality to identify both result and state. Canonical locals/globals/code and standalone t maps, positive-width BitVec and Type0 FFI only; existing canonical roundtrip witness retained. Coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMemGlobal.lean",
+  "lean_name": "compileCorrect_ShMemLoad",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "compile_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "PanSemStateFiniteExact.locals",
+    "PanSemStateFiniteExact.globals",
+    "PanSemStateFiniteExact.code",
+    "PanSemStateFiniteExact.eshapes",
+    "PanGlobalsContextExact.globals"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol (bead30) source compared original pan_globalsProof Resume compile_correct[ShMemLoad]757-838 and evaluate_ind: arbitrary operator/varkind/name/address and source state; exactly original universal result/context/target/sourcepost binders, input state_rel true, faithful source evaluation and nonError, existential faithful compiled evaluation with same result and complete state_rel goodRes. This nonrecursive constructor has no child program IH. Exhaustive original Local/Global split directly applies source-reviewed accepted local/global cases; neither branch adds a premise. Canonical state locals/globals/code/eshapes and context globals maps plus positive-width words/Type0 FFI only, existing same-module canonical roundtrip witnesses retained. Full ShMemStore already accepted unchanged. Coordinator review pending."
 }
 ]

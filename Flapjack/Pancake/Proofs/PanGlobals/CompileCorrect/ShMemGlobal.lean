@@ -653,6 +653,29 @@ theorem compileCorrect_ShMemLoad_global {width : Nat} {σ : Type} [NeZero width]
                             · simp only [if_neg hmem1] at hev ⊢
                               exact absurd (Prod.mk.inj hev).1.symm hne
 
+/-- Complete HOL ShMemLoad constructor case, assembled by the original Local/Global
+case split from the accepted subcases. No induction hypothesis is needed for this
+nonrecursive constructor; all original compile_correct guards remain unchanged. -/
+@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "compile_correct"
+  (fmap_as_finite_support_relation := [PanSemStateFiniteExact.locals,
+    PanSemStateFiniteExact.globals, PanSemStateFiniteExact.code,
+    PanSemStateFiniteExact.eshapes, PanGlobalsContextExact.globals])
+  (words_as_type_indexed_bitvec)]
+theorem compileCorrect_ShMemLoad {width : Nat} {σ : Type} [NeZero width]
+    (operator : OpSize) (vk : VarKind) (name : MlS) (address : ExpHOL width)
+    (s : PanSemStateFiniteExact width σ) :
+    ∀ (res : Option (PanSemResultExact width)) (ctxt : PanGlobalsContextExact width)
+      (t s' : PanSemStateFiniteExact width σ),
+      panGlobalsStateRelHOLExact true ctxt s t ∧
+        evaluateHOLFiniteState s (.shMemLoad operator vk name address) = (res, s') ∧
+        res ≠ some .error →
+      ∃ t', evaluateHOLFiniteState t
+          (compileProgExactHOL ctxt (.shMemLoad operator vk name address)) = (res, t') ∧
+        panGlobalsStateRelHOLExact (goodResHOL res) ctxt s' t' := by
+  cases vk with
+  | «local» => exact compileCorrect_ShMemLoad_local operator name address s
+  | «global» => exact compileCorrect_ShMemLoad_global operator name address s
+
 end PanGlobalsCompileCorrect
 
 end Flapjack
