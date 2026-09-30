@@ -34200,5 +34200,13 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-only internal matched-exception branch infrastructure for actual33.11: literal Call clause retains exception shape/local validity; validity derived from actual handler binding and same shape; handler execution/result not assumed. Scratch entry algebra reorders handler binding past scratch writes at distinct keys, preserving canonical finite maps. Branch guards/freshness are internal facts, not public HOL premises. Untagged, no standalone HOL declaration; full handler transport/restoration and constructor assembly remain unfinished."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "handlerScratchRun",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only internal matched-handler transport for actual33.11. Composes accepted two-fresh-locals theorem with actual handler-entry reordering and lawful canonical equality/Boolean update agreement. Preserves all result outcomes and HOL conditional goodRes/nonError final-locals guarantee; no successful handler or target evaluation premise. Internal source handler run/freshness guards remain branch facts; not a public constructor theorem. Untagged; saved-local restoration/abnormal outcomes/full assembly remain unfinished."
 }
 ]

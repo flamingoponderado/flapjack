@@ -2,6 +2,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallGlobal
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallHandlerNoDestination
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallHandlerArguments
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallHandlerFlag
+import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.TwoLocals
 import Flapjack.Pancake.Proofs.PanGlobals.ShapeValueEval
 
 namespace Flapjack.PanGlobalsCompileCorrectCallGlobalHandler
@@ -328,6 +329,41 @@ private theorem handlerScratchEntry {width : Nat} {σ : Type} [NeZero width]
   congr 1
   rw [comm _ flagName handlerVar flagValue exceptionValue hf,
     comm _ resultName handlerVar initializer exceptionValue hr]
+
+/-- Matched-handler transport at the actual reordered entry state. Preserves
+all handler outcomes and retains HOL's conditional final-locals guarantee;
+no successful handler or target evaluation premise is added. This internal
+composition is untagged until the full constructor is assembled. -/
+private theorem handlerScratchRun {width : Nat} {σ : Type} [NeZero width]
+    (state post : PanSemStateFiniteExact width σ) (handler : ProgHOL width)
+    (result : Option (PanSemResultExact width)) (resultName flagName handlerVar : MlS)
+    (initializer flagValue exceptionValue : ValueHOL width)
+    (hr : resultName ≠ handlerVar) (hf : flagName ≠ handlerVar)
+    (hresultFresh : resultName ∉ freeVarIdsHOL handler)
+    (hflagFresh : flagName ∉ freeVarIdsHOL handler)
+    (hrun : evaluateHOLFiniteState (setVarHOLFinite handlerVar exceptionValue state) handler =
+      (result, post)) :
+    ∃ locals,
+      evaluateHOLFiniteState
+        (setVarHOLFinite handlerVar exceptionValue
+          (setVarHOLFinite flagName flagValue (setVarHOLFinite resultName initializer state)))
+        handler = (result, {post with locals := locals}) ∧
+      (goodResHOL result = true ∧ result ≠ some .error →
+        locals = (post.locals.update (resultName, initializer)).update (flagName, flagValue)) := by
+  classical
+  have updateEqEqUpdate (map : HolFiniteMapExact MlS (ValueHOL width))
+      (entry : MlS × ValueHOL width) : map.updateEq entry = map.update entry := by
+    apply HolFiniteMapExact.ext
+    exact FUPDATE_HOL_eq_FUPDATE map.lookup entry
+  obtain ⟨locals, htransport, hgood⟩ :=
+    PanGlobalsTwoFreshLocals.evaluateTwoFreshLocalsHOL resultName initializer flagName flagValue
+      handler (setVarHOLFinite handlerVar exceptionValue state) result post
+      ⟨hresultFresh, hflagFresh, hrun⟩
+  refine ⟨locals, ?_, ?_⟩
+  · rw [handlerScratchEntry state resultName flagName handlerVar initializer flagValue exceptionValue hr hf]
+    simpa only [updateEqEqUpdate, setVarHOLFinite] using htransport
+  · intro hg
+    simpa only [updateEqEqUpdate] using hgood hg
 
 /-- Internal missing-context branch of the full constructor proof. The branch
 condition selects the literal compiler fallback; the callee and handler IHs
