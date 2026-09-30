@@ -1,3 +1,5 @@
+import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Primitive
+import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Dec
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.AssignLocal
 import Flapjack.Pancake.Proofs.PanGlobals.OptMmapEvalCorrect
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.DecCall
