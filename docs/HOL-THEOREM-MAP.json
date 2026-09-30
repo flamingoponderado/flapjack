@@ -1,5 +1,18 @@
 [
   {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateIoEventsMono.lean",
+    "lean_name": "evaluate_io_events_mono",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "evaluate_io_events_mono",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; bead flapjack-pxn.18.5.9.1.2), wordPropsScript.sml:1585-1631: HOL universally binds exps s1 res s2, assumes only evaluate (exps,s1) = (res,s2), and concludes the input FFI io_events is a list prefix of the output. Lean has the same binders, sole evaluation equality premise, and List.IsPrefix conclusion over the tagged faithful wordSem evaluate (curried instead of tupled). The proof uses the reviewed 26-clause rebound evaluate_ind: straight-line updates preserve FFI, Alloc/Inst/Store/Raise use exact helper invariance, FFI/ShareInst use the exact call_FFI event-prefix fact, Seq/Loop/Call compose recursive prefixes with unchanged cut/pop/push environment FFI projections. MustTerminate timeout restores the input state; every other outcome retains body events. Call continuation premises are exactly the rebound induction guards, with no successful-target-evaluation or universal simulation assumption. Canonical finite-support translation applies only to fpRegs/store of WordSemStateFiniteExact (locals/code remain Spt); same-module WordSemEventsMonoSupport.holFmapAsFiniteSupportWitness re-exports the checked state roundtrip. HOL type-indexed words use positive BitVec width with NeZero and the FFI host uses F : Type. Kernel-checked; independent coordinator review remains required before the bead closes."
+  },
+  {
     "hol_path": "cakeml/pancake/crep_inlineScript.sml",
     "hol_name": "has_return_def",
     "lean_path": "Flapjack/Pancake/CrepInline/Pass.lean",
