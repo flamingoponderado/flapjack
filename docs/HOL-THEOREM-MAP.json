@@ -31725,6 +31725,133 @@
   "reviewer": "flapjack-luna-c source comparison2026-09-30 (.32.4): full evaluate_two_fresh_locals1087-1102. Original eight binders and two nonfree/source-run conjunction, existential locals, identical result/nonlocals and conditional good_res/non-Error ordered double FUPDATE retained. Full evaluateFreshLocalHOL applied twice exactly as HOL proof; no public IH, distinct-name premise, update commutation or extra evaluation hypothesis. Equal names preserve second-write priority. Canonical four state maps and genuine roundtrip, exact MlS/ProgHOL/ValueHOL positive width/NeZero/universe0 FFI. Proof-only, no executable change; coordinator acceptance pending; full fresh-local prerequisite accepted at c50ef83df."
 },
   {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/If.lean",
+    "lean_name": "compileCorrect_If",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison (2026-09-30; bead flapjack-pxn.18.5.2.31.3), original pan_globalsProofScript174-186 gen_goal and880-889 If branch. Canonical pan_sem_evaluate_ind_probe.out retains forall value,payload,word: eval s e=SOME value AND value=Val payload AND payload=Word word imply P(if word<>0 then c1 else c2,s). Lean retains all constructor witnesses and this selected-branch guard, with P=compileCorrectGoal, then unfolds original state_rel T/source evaluation/nonError to existential target evaluation and state_rel(good_res). Accepted full compile_exp_correct derives target condition internally. Source None/RStruct/NStruct errors are excluded by original nonError; zero/nonzero invoke only guarded selected IH. No separate all-branch/all-state IH, target-run, post-relation, or added success premise. Canonical finite owning state/context plus positive-word/Type0 FFI translation only, witnesses compared to accepted Seq/Dec counterparts. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/If.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanSemStateFiniteExact toExact/ofExact finite-support roundtrip; it supports the PanSemStateFiniteExact fields named by the compile_correct If tag."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/If.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanGlobalsContextExact toBroad/ofBroad roundtrip; it supports PanGlobalsContextExact.globals named by the compile_correct If tag."
+  },
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/InitGlobalsSimulation.lean",
+  "lean_name": "initGlobalsNil",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_decls_init_globals_lemma",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "PanSemStateFiniteExact.locals",
+    "PanSemStateFiniteExact.globals",
+    "PanSemStateFiniteExact.code",
+    "PanSemStateFiniteExact.eshapes",
+    "PanGlobalsContextExact.globals"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison (2026-09-30; .22.10.5): Original initializer theorem2126-2147, nil case of evaluate_decls induction. initGlobalsGoal packages every original hypothesis and conjunct: source declaration success, EVERY is_decl, compiler equation, state_rel F, exact free address equation, source disjointness/target inclusion, globals_size byte alignment, source code FEMPTY, old globals disjointness and numeric word-size bound. Conclusion constructs target run NONE, state_rel F, clock/ffi/locals equality and final alignment. Empty declaration/compiler clauses force unchanged states/context and empty nested_seq evaluates Skip. No added premises or weaker conclusion. Set predicates implement original membership/DISJOINT/SUBSET; Option.isSome true is IS_SOME. fmap_as_finite_support_relation names exactly state locals/globals/code/eshapes and context globals; words_as_type_indexed_bitvec standard positive-width/universe0 FFI only. Canonical roundtrip witnesses. Full recursive allocation and initializer theorem remain open; coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/InitGlobalsSimulation.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only infrastructure. Canonical state toExact/ofExact roundtrip forwarded for named state maps."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/InitGlobalsSimulation.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only infrastructure. Canonical context toBroad/ofBroad roundtrip forwarded for context globals."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/WhileInduction.lean",
+  "lean_name": "assembleWhile",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack partial induction assembly consumer. Reviewed inlineProgCorrectWhileCaseExact discharged using separately derived original guarded body and plain NONE/Continue0 reentry IHs; no extra While correctness premise. Remaining constructor obligations explicit; full inline_prog_correct remains open."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/While.lean",
+  "lean_name": "compileCorrect_While",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "compile_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "PanSemStateFiniteExact.locals",
+    "PanSemStateFiniteExact.globals",
+    "PanSemStateFiniteExact.code",
+    "PanSemStateFiniteExact.eshapes",
+    "PanGlobalsContextExact.globals"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source comparison2026-09-30: original gen_goal172-182 and While902-916, original evaluate_ind captured lines22-35. Exactly three IHs: recursive tail after Continue, recursive tail after NONE, body under condition eval Val Word/nonzero/source clock nonzero. Only redundant constructor aliases collapsed; actual semantic guards retained. Public original state_rel T/source execution/nonError imply existential compiled run/full good_res relation. Full expression theorem supplies target condition, relation supplies clock equality, state_rel_dec_clock supplies body initial relation; timeout clears locals, Break maps to NONE with goodRes true, NONE/Continue tails use guarded IH, other results preserve their goodRes flag. No extra target-run, simulation, post-state or all-state guard premises. Two canonical roundtrip witnesses; positive BitVec width and universe0 FFI. Proof-only; coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/While.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only canonical carrier roundtrip re-export for While relation qualifier; no HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/While.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only canonical carrier roundtrip re-export for While relation qualifier; no HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/TailCall.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack canonical finite-state roundtrip re-export; no standalone HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/TailCall.lean",
+  "lean_name": "evaluateUnchangedLocal_CallNone",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_unchanged_local",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison (2026-09-30;32.5.6): evaluate_unchanged_local1105-1137 tail Call NONE branch, same original unused value binder, name nonfree/source run/good_res/nonError hypotheses and identical post/source FLOOKUP conclusion. Exact total evaluateHOLFiniteState_call clauses: argument/lookup failures and malformed callee normal/break/continue produce Error, clock0 or propagated timeout/exception/return/final results fail good_res. Derives contradiction from original hypotheses only; no target-run or extra callee IH or success premise. fmap_as_finite_support translates exactly finite-state locals/globals/code/eshapes with checked canonical roundtrip; words_as_type_indexed_bitvec only positive HOL dimension and universe0 FFI. Full unchanged-local assembly remains open; coordinator review pending."
+},
+  {
     "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/Cases.lean",
     "lean_name": "transformEocCorrect_Leaf",
     "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
