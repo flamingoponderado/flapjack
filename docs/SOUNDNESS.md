@@ -74,9 +74,9 @@ The following are open review or verification obligations:
    imply soundness or semantic preservation for the whole source-to-RISC-V
    compiler.
 2. The RISC-V semantics in Flapjack have not yet been compared systematically
-   with the Sail RISC-V model. The HOL reference model is available at
-   `/home/zksecurity/HOL/examples/l3-machine-code/riscv/model/riscv.sml` in the
-   development environment, but correspondence to Sail is not claimed here.
+   with the Sail RISC-V model. The HOL reference model lives in the HOL source
+   tree at `examples/l3-machine-code/riscv/model/riscv.sml`, but correspondence
+   to Sail is not claimed here.
 3. Compiler behavior has not been tested extensively against the original
    Pancake compiler. The executable parity suite and differential fuzzer cover
    only a small corpus and do not establish equivalence for arbitrary input.
