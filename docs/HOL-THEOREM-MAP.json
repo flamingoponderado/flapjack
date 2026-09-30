@@ -37261,6 +37261,21 @@
   "reviewer": "flapjack-ds10 source comparison (bead flapjack-4ac.4.60.1.1.15): exact port of HOL panProps$evaluate_clock_sub (panPropsScript.sml:724-728), proved by the original recInduct evaluate_ind over the canonical carrier. The statement quantifies p, t, res, st, ck and the two original hypotheses (high run at clock + ck; res <> TimeOut) with conclusion at clock - ck; all 21 case IHs are discharged internally by the tagged constructor case lemmas through the field-for-field PanProps codec, and no induction hypothesis or target-run fact is a premise of the public theorem."
 },
 {
+  "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+  "hol_name": "evaluate_clock_sub1",
+  "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvaluateClockSub1.lean",
+  "lean_name": "panPropsEvaluateClockSub1HOLFinite",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (bead flapjack-4ac.4.60.1): exact port of HOL panProps$evaluate_clock_sub1 (panPropsScript.sml:1131-1138): !p t res st t' ck. evaluate (p,t) = (res,st) and res <> SOME TimeOut and evaluate (p,t with clock := ck + t.clock) = evaluate (p,t') implies evaluate (p,t) = evaluate (p,t' with clock := t'.clock - ck). The Lean statement quantifies the same p, t, res, st, t', ck over ProgHOL and PanPropsEvalStateFiniteExact, keeps the same three premises and the same conclusion over evaluateHOLFinitePair, with no added success, target-run or assembly premise. The proof uses the tagged evaluate_add_clock_eq and the assembled evaluate_clock_sub exactly as HOL. PanPropsEvalStateFiniteExact owns locals/globals/code/eshapes via HolFiniteMapExact (same-module checked witness EvaluateClockSub1Witness.holFmapAsFiniteSupportWitness) with the indexed-word translation [NeZero width]."
+},
+{
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/StateRelImpSemantics.lean",
   "lean_name": "holFmapAsFiniteSupportParamWitness_fstMap3F_inl_fs",
   "hol_path": null,
