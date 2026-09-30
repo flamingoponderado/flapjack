@@ -33430,6 +33430,14 @@
   "reviewer": "Flapjack-only local canonical state/context roundtrip or compiled argument MAP equation for the DecCall theorem; no separate HOL declaration."
 },
 {
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/DeclListLemmas.lean",
+  "lean_name": "freshNameMlS_correctSubset",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "fresh_name_correct'",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison2026-09-30 HOL1003-1007: all native mlstring name/list/list variables; MEM fresh_name in names prime then set-subset then False. Pointwise universal candidate membership implication is exactly HOL set subset. Uses reviewed native freshNameMlS and native fresh_name_correct993 theorem, with no codec, byte-rangedness, changed quantified carrier, or extra premise. Existing String-qualified theorem preserved; this adds missing native-carrier counterpart for global-handler proof1316/1324/1415. Proof-only; coordinator review pending."
+},
+{
   "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallHandlerFreshNames.lean",
   "lean_name": "callHandlerScratchNamesFresh",
   "hol_path": null,
