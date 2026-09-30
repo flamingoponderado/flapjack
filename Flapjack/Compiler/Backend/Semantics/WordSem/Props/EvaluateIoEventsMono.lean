@@ -18,7 +18,7 @@ end WordSemEventsMonoSupport
 
 namespace WordSemStateFiniteExact
 
-/-- Exact HOL event monotonicity over the faithful wordSem evaluator. The
+/-- HOL-shaped event monotonicity over the current wordSem evaluator port. The
     projection induction follows HOL's evaluator cases; there are no
     additional assumptions on the program, state, result or FFI oracle.
 
