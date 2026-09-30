@@ -37569,5 +37569,17 @@
     "lean_name": "addresses_eq_set",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.14) against cakeml/compiler/backend/proofs/stack_removeProofScript.sml:2770-2773: HOL !n a. addresses a n = { a + n2w i * bytes_in_word | i < n }. Rendered over the already-tagged addresses_def carrier as an equality of the predicate-set BitVec width -> Prop, with HOL 'a word as BitVec width and n2w i * bytes_in_word as BitVec.ofNat width i * bytesInWord width. Derived directly from the tagged IN_addresses (mem_addresses); no added premises. Consumed by the compile_top_semantics_decls proof (pan_globalsProofScript.sml:3131 simp[addresses_thm])."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_decls_append_IMP",
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileDecsStructural.lean",
+    "lean_name": "compile_decls_appendIMPHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.16): exact port of HOL pan_globalsProofScript.sml:2012-2019 compile_decls_append_IMP, the tupled corollary of compile_decls_append used inside evaluate_decls_compile_top. Same binders (decs' ctxt decs and the implicitly quantified X), same let-tuple append conclusion (decls++decls', funs++funs', exns++exns', ctxt''), no added premise; derived directly from the tagged compile_decls_appendHOL. Qualifiers cover the exact finite-map globals carrier and the positive-width BitVec word dimension."
   }
 ]
