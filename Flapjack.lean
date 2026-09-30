@@ -1,3 +1,5 @@
+import Flapjack.Compiler.Backend.StackNames.AsmAdmissibility.Recursive
+import Flapjack.Compiler.Backend.StackNames.AsmAdmissibility.RegisterLeaves
 import Flapjack.Compiler.Backend.StackNames.AsmAdmissibility.Inst
 import Flapjack.RiscV.AllocatorMemoryInvariant.Ssa
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallHandlerArguments
