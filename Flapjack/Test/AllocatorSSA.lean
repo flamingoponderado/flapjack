@@ -236,6 +236,9 @@ example :
         .seq (.seq (.seq (.inst (.const 10 0)) .skip) (.move 0 []))
           (.loop [10] (.break 0) [])) := by
   simp [wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
+    WordAlloc.applyNummapKeyExecutable, WordAlloc.numSetFromExact,
+    WordAlloc.numSetToExact, WordAlloc.applyNummapKey,
+    sptFromAList, sptToAList, sptFoldi, sptInsert, lrNext,
     wordSsaLoopSetup, wordSsaFakeMoves,
     NumSet.fromList, NumSet.toAList, NumSet.toSet, NumSet.insert, NumSet.insertFuel, NumSet.lrnext, NumSet.lrnextFuel, NumSet.insertList, wordSsaListNextVarRenameMove,
     wordSsaFreshList, wordSsaRestrict, wordSsaFresh,
