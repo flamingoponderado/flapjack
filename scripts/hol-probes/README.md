@@ -1330,3 +1330,5 @@ concrete rows (including 1-bit request/8-bit store and rollback/GC post-state
 errors). Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=stacksem_allocation_probeScript.sml scripts/hol-probes/regenerate.sh`.
 Full StackSem evaluation and production refinement remain open.
+
+`stacksem_expression_probeScript.sml` captures twenty original StackSem word_exp/assign rows: all six constructors, failed/missing/Loc lookups, domain and memory payload rejection, wraparound, invalid arithmetic arity, binary shift bounds, and destination update/failure. Kernel replay: `Flapjack/Test/StackSemExpressionParity.lean`. Full evaluator/production refinement is separate.
