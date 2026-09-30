@@ -233,6 +233,30 @@ private theorem shareInst_ioEvents_prefix {width rw : Nat} [NeZero width]
           | word w => simpa [hvar] using shMemStore32_ioEvents_prefix (rw := rw) address w state
           | loc _ _ => simp
 
+private theorem cutState_ioEvents_eq {width : Nat} [NeZero width]
+    {C F : Type} {names : WordLangCutsetsHOL}
+    {state next : WordSemStateFiniteExact width C F}
+    (h : cutState names state = some next) : next.ffi.ioEvents = state.ffi.ioEvents := by
+  unfold cutState at h
+  split at h
+  · simp at h
+  · simp only [Option.some.injEq] at h
+    cases h
+    rfl
+
+private theorem ffiStatement_ioEvents_prefix {width : Nat} [NeZero width]
+    {C F : Type} (ffiIndex : Flapjack.Basis.Pure.MlString.MlString)
+    (ptr1 len1 ptr2 len2 : Nat)
+    (names : WordLangCutsetsHOL) (state : WordSemStateFiniteExact width C F) :
+    state.ffi.ioEvents <+: (evaluate (.ffi ffiIndex ptr1 len1 ptr2 len2 names) state).2.ffi.ioEvents := by
+  unfold evaluate
+  repeat' split
+  all_goals (try exact List.prefix_refl _)
+  all_goals
+    first
+    | exact callFFIHOL_result_ioEvents_prefix _ _ _ _ _ (by assumption)
+    | (rename_i hcall; exact callFFIHOL_result_ioEvents_prefix _ _ _ _ _ hcall)
+
 end WordSemStateFiniteExact
 
 end Flapjack
