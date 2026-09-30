@@ -65,6 +65,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.CallNoHandler
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelationLocals
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsShape
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsDisjoint
+import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsSimulation
 import Flapjack.Compiler.Backend.StackProps.FloatNames
 import Flapjack.Compiler.Backend.StackProps.AddressNames
 import Flapjack.Compiler.Backend.StackProps.InstructionNames
