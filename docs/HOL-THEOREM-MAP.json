@@ -25760,5 +25760,20 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison 2026-09-30, beads .18.5.11.1.4/.4.1: literal word_allocScript593-630, all arithmetic constructor positions incl4-register carry/overflow/longdiv, six explicit mem clauses and catchall preserved. Original asm memop125-128 includes Load16/Store16 but colouring leaves both unchanged; original six-row HOL probe confirms this, offset7w preserved, FP only integer operands renamed and float indices untouched. Compared WordLangArith/WordLangInst/WordLangFp/WordLangAddr/WordRegImm constructors and field Nat/word types against asmScript85-134; positive BitVec width is sole carrier translation. Tagged port delegates generic core actually called by executed production route; distinct5-register production primitive explicitly separate Flapjack behaviour, no exact HOL claim for it. Generic core immediate case mirrors reviewed applyColourImm and has no strengthened hypothesis."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+    "hol_name": "ret_to_tail_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/RetToTailCorrect.lean",
+    "lean_name": "retToTailCorrect_dec",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-30; bead flapjack-pxn.18.5.1.3.2.2): recursive Dec case pan_simpProofScript.sml218-224 of ret_to_tail_correct190. Source non-Error premise and full evaluation-pair equality unchanged; the sole additional binder is exactly the evaluate_ind Dec body obligation under eval initializer = SOME value and shape = shape_of value, at the source state updated with the new local binding. No universal-state hypothesis, target-run premise or simulation assumption. Uses reviewed total evaluateHOLFiniteState_dec_total equation matching panSemScript558-565, including initializer failure, shape failure, total recursive body pair and res_var restoration. shapeEqHOL_eq_true discharges HOL shape equality. Exact ProgHOL/ExpHOL/ValueHOL/MlS payloads, imported PanSemStateFiniteExact with canonical four map fields and local non-vacuous codec roundtrip, positive BitVec word width and universe-0 FFI host. Remaining recursive cases and full theorem stay open.",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true
   }
 ]
