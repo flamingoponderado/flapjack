@@ -1,5 +1,15 @@
 # Original Pancake HOL probes
 
+`pan_globals_compile_top_probe.out` retains `missing_start`, `global_present`,
+and `present_start`, and adds `top_missing`, `top_function`, and
+`top_global_exception` for exact `compile_top_def`. The new 64-bit rows cover
+parameter and inline/export metadata, absent-global reads, global initializer
+address 8, and exception/new-main/function ordering. Regenerate using the built
+original theories with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=pan_globals_compile_top_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`Flapjack.Test.PanGlobalsCompileTopExactParity` replays the new rows; it does not
+claim production top-level routing or the pass semantics theorem.
+
 The repository-wide parity workflow is documented in
 [`docs/PARITY-TESTING.md`](../../docs/PARITY-TESTING.md).
 
@@ -1229,6 +1239,23 @@ while renaming both integer sources. These rows drive reconciliation of the
 executed allocator, whose previous blanket memory renaming differs at 16 bits.
 Regenerate with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=word_alloc_colour_inst_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
+
+## StackSem word bitmap codec
+
+`stacksem_word_bitmap_probeScript.sml` captures eleven original HOL `bit_length`
+and `read_bitmap` rows: zero/one/high-bit lengths, empty input, terminal zero/one,
+least-significant-first ordering, ignored terminal suffix, missing continuation,
+continuation concatenation, and width-one words. Regenerate against read-only
+prebuilt theory objects with:
+
+```sh
+CAKEML=/home/zksecurity/pancake-lean/cakeml \
+HOL_PROBE_ONLY=stacksem_word_bitmap_probeScript.sml scripts/hol-probes/regenerate.sh
+```
+
+`Flapjack/Test/StackSemWordBitmapParity.lean` kernel-checks each captured result.
+These rows exercise the HOL-shaped word/list ports; they do not establish
+Nat-utility refinement or full StackSem evaluator execution.
 
 `word_alloc_live_inst_probe.out` captures nine original `get_live_inst_def`
 observations (`word_allocScript.sml:706-752`): Load16 catchall, Load8,

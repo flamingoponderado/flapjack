@@ -1,5 +1,5 @@
 import Flapjack.Pancake.PanGlobals
-import Flapjack.Pancake.PanGlobals.CompileExpExactRoute
+import Flapjack.Pancake.PanGlobals.DeclarationProgramRoute
 import Flapjack.Pancake.PanLang.Decl
 import Flapjack.Pancake.PanLang.Prog
 
@@ -667,8 +667,12 @@ theorem globalCompileTopCake_byteRanged [LawfulBEq String]
 
 `globalCompileTopForStartSomeCakeOfExact` is the parser-proved route through
 the tagged `resortDeclsHOL`, `newMainNameHOL`, and `decShapesHOL` definitions,
-as well as `nestedSeqHOL` (via `nestedSeqCake`) and the exact declaration
-compiler. Its local codecs require the byte-range invariant supplied by the
+as well as `nestedSeqHOL` (via `nestedSeqCake`). Its declaration wrapper
+`compileDecsCakeViaProgramHOL` runs tagged `compileProgExactHOL` directly for
+function bodies and `compileExpExactHOL` for initializers; declaration metadata
+and context threading retain their production representation. This does not
+claim direct routing through the entire HOL compile_decs definition.
+Its local codecs require the byte-range invariant supplied by the
 source parser. The equality theorem below establishes that these reviewed
 definitions produce the same compiler result as the String-backed compatibility
 path. Calls without the byte-range proof retain that path. -/
@@ -696,7 +700,7 @@ def globalCompileTopForStartSomeCakeOfExact [LawfulBEq String] {width : Nat} [Ne
           maxGlobalsSize := maxGlobalsSize
           bytesInWord := cakeBytesInWord width
           fromNat := BitVec.ofNat width }
-      let compiled := compileDecsCakeOfExact initial renamed
+      let compiled := compileDecsCakeViaProgramHOL initial renamed
       let parameters := entry.params.map (fun (name, _) => Exp.var .local name)
       let newMain : Decl (BitVec width) :=
         .function
@@ -756,9 +760,10 @@ theorem globalCompileTopForStartSomeCakeOfExact_eq [LawfulBEq String]
       have hinitialShapes : GlobalContextListShapesByteRanged initial := by
         intro entry hmem
         simp [initial] at hmem
-      have hrouted : compileDecsCakeOfExact initial renamed
+      have hrouted : compileDecsCakeViaProgramHOL initial renamed
           = compileDecsCake (cakeContextOfPass initial) renamed :=
-        compileDecsCakeOfExact_eq renamed initial hcanonical hinitialShapes hrenamed
+        (compileDecsCakeViaProgramHOL_eq renamed initial hinitialShapes hrenamed).trans
+          (compileDecsCakeOfExact_eq renamed initial hcanonical hinitialShapes hrenamed)
       have hthreaded := globalCompileDecsThreaded_byteRanged initial hinitialContext renamed hrenamed
       have hcompiled :
           ∀ program ∈ (compileDecsCake (cakeContextOfPass initial) renamed).initializers,
