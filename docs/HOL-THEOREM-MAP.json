@@ -33446,5 +33446,53 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-only local canonical state/context roundtrip or compiled argument MAP equation for the DecCall theorem; no separate HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/DeclListLemmas.lean",
+  "lean_name": "freshNameMlS_correctSubset",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "fresh_name_correct'",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison2026-09-30 HOL1003-1007: all native mlstring name/list/list variables; MEM fresh_name in names prime then set-subset then False. Pointwise universal candidate membership implication is exactly HOL set subset. Uses reviewed native freshNameMlS and native fresh_name_correct993 theorem, with no codec, byte-rangedness, changed quantified carrier, or extra premise. Existing String-qualified theorem preserved; this adds missing native-carrier counterpart for global-handler proof1316/1324/1415. Proof-only; coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/InitGlobalsRecursiveDisjoint.lean",
+  "lean_name": "recursiveGlobalsFreeDisjoint",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific full initializer head state relation assembly (22.10.14), composing original HOL initializer hypotheses and accepted range/store/reload/map/context certificates. Derives store success and all19 state_rel conjuncts, including replacement-name updates and empty source code. No post-state relation or target evaluation premise. No independently named HOL declaration; recursive initializer correctness remains open."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/InitGlobalsState.lean",
+  "lean_name": "initializerHeadStateRel",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific full initializer head state relation assembly (22.10.14), composing original HOL initializer hypotheses and accepted range/store/reload/map/context certificates. Derives store success and all19 state_rel conjuncts, including replacement-name updates and empty source code. No post-state relation or target evaluation premise. No independently named HOL declaration; recursive initializer correctness remains open."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallHandlerFreshNames.lean",
+  "lean_name": "callHandlerScratchNamesFresh",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only synthesized proof-step helper for global-destination Call-with-handler lowering; literal compiler scratch-name list and native MlS freshNameMlS_correct imply both names absent from compiled handler/argument variables and distinct. HOL compile_correct proof1414-1434 derives these facts inline; no standalone original declaration or Call simulation is claimed. No freshness premise; no executable change. Coordinator classification pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallHandlerFlag.lean",
+  "lean_name": "handlerFlagNormal",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only synthesized evaluation proof step for literal global Call-with-handler Seq(handler, Assign Local flag Const1) lowering, source pan_globalsScript121-125 and proof1401-1450. Normal run plus existing word flag binding derives valid assignment and paired flag update; nonnormal run preserves arbitrary result/post without assignment. Helper run/binding premises are internal evaluation facts, not a claimed compiler-case statement or complete simulation. No standalone HOL original/tag; coordinator classification pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallHandlerFlag.lean",
+  "lean_name": "handlerFlagNonNormal",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only synthesized evaluation proof step for literal global Call-with-handler Seq(handler, Assign Local flag Const1) lowering, source pan_globalsScript121-125 and proof1401-1450. Normal run plus existing word flag binding derives valid assignment and paired flag update; nonnormal run preserves arbitrary result/post without assignment. Helper run/binding premises are internal evaluation facts, not a claimed compiler-case statement or complete simulation. No standalone HOL original/tag; coordinator classification pending."
 }
 ]

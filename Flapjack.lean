@@ -1,4 +1,7 @@
+import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallHandlerFlag
+import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallHandlerFreshNames
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.DecCall
+import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsState
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallHandlerNoDestination
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallLocalHandler
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallNoDestination
@@ -84,6 +87,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsReload
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsOldLoads
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsMapDisjoint
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsContext
+import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsRecursiveDisjoint
 import Flapjack.Compiler.Backend.Semantics.StackSem.FixedStackCases
 import Flapjack.Compiler.Backend.Semantics.StackSem.DynamicStackCases
 import Flapjack.Compiler.Backend.Semantics.StackSem.SizeBitmapCases
