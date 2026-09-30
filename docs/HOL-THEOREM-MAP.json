@@ -26982,5 +26982,21 @@
     "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-luna-b Flapjack-specific canonical state roundtrip witness re-export; no separate HOL declaration claimed."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "crepDest2ExpBitVecSpec_eq_HOL",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-sol source/proof comparison 2026-09-30 bead .18.5.4.1.2: Flapjack implementation certificate. Unconditional Boolean-test recursive specification equals reviewed crepDest2ExpHOL, all positive widths/start/input; strong induction on input.toNat, lawful BitVec comparisons and exact rightshift recurrence. No standalone HOL declaration. Exact tagged power/bound/bound-prime declarations already live in CrepArith.lean and Proofs/CrepArith/MulConst.lean; no duplicate port or withdrawn-tag reclassification."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "crepDest2Exp_eq_HOL",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-sol source/proof comparison 2026-09-30 bead .18.5.4.1.2: Flapjack implementation certificate. Unconditional actual width-bounded executable crepDest2Exp equals reviewed crepDest2ExpHOL for all positive widths/start/input; combines existing fuel/spec certificate with proved Boolean-spec/HOL equality. No standalone HOL declaration; this closes the production helper correspondence needed for old dest_2exp bounds leaf. Exact tagged power/bound/bound-prime declarations already live in CrepArith.lean and Proofs/CrepArith/MulConst.lean; no duplicate port or withdrawn-tag reclassification."
   }
 ]

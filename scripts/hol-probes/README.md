@@ -559,6 +559,10 @@ in `Flapjack.Test.CrepArithExtCallParity`. Refresh with
 `crep_arith$dest_2exp_def` at `cakeml/pancake/crep_arithScript.sml:15`, including
 the corresponding `word_lsl 1w` results for successful exponents. Its Lean
 destination, shift, and width checks live in `Flapjack.Test.CrepeDest2ExpParity`.
+Its `reviewedDefinitionParity` also compares the executable fuel-bounded helper
+directly with the reviewed `crepDest2ExpHOL` on all ten recognizer rows.
+`crepDest2Exp_eq_HOL` proves that correspondence for every positive width,
+starting exponent and input; no successful-recognition or fuel premise is needed.
 The fixture also evaluates representative instances of the proof helper
 `dest_2exp_bound` at `cakeml/pancake/proofs/crep_arithProofScript.sml:10`;
 the Lean all-dimension support theorem remains untagged until its explicit
