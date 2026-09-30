@@ -34442,5 +34442,32 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-only same-module canonical state roundtrip re-export for relation qualifier; no independent HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermCode.lean",
+  "lean_name": "lookupCodeFpermCodeHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "lookup_code_fperm_code",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "code"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol (.22.4.4) compared HOL1687-1694 and panSem lookup_code458-467. Unconditional canonical lookup of permuted code at permuted name equals Option.map of fperm on body and identity on canonical callee locals/return shape. Same arbitrary args incl structured values, count/distinctness/LIST_REL checks and ZIP update order. Canonical standalone code finite-map translation and positive-width words only; returned canonical locals are the already reviewed lookup_code carrier. Proof raw clauses preserve all guards; accepted unconditional canonical projection witness plus injectivity by HolFiniteMapExact.ext lifts equality without target-success premise. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ArgLoadStrong.lean",
+  "lean_name": "generalSimulateArgLoadStrong1Exact",
+  "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+  "hol_name": "general_simulate_arg_load_strong_1",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "CrepSemHOLState.locals",
+    "CrepSemHOLState.globals",
+    "CrepSemHOLState.code",
+    "t"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison crep_inlineProofScript1288-1319: s/es/vals/vs/t/p/r/s'/tmp_vars binders and every OPT_MMAP, lengths, distinctness, SUBMAP, source run, freshness, continuing-result, disjointness and expression-free-variable guard retained. Four-part existential target run/state_rel/FDIFF SUBMAP/FOLDL res_var SUBMAP conclusion unchanged. Same reviewed canonical CrepSemHOLState maps and standalone t, positive-width HolWordLab/native CrepExpHOL/CrepProgHOL/CrepResultHOLExact as accepted strong and preserve_locals predecessors; same-module canonical carrier roundtrip reexport. HOL proof invokes both predecessors and simplifies identical evaluations; Lean projects pair equality to identify existential target states, not an extra target-run/post-state premise. FDIFF/FOLDL order and source original locals restored exactly. Proof-only/no production behavior change; parent remains open."
 }
 ]
