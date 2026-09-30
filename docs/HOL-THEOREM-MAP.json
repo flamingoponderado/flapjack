@@ -25918,5 +25918,20 @@
     "lean_name": "holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on mkCtxtImpLocalsRelExact; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvaluateAddClockEq.lean",
+    "lean_name": "panPropsEvaluateAddClockEq",
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "evaluate_add_clock_eq",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-pxn.18.4.4.3): HOL panProps evaluate_add_clock_eq (panPropsScript.sml:698-701): !p t res st ck. evaluate (p,t) = (res,st) /\\ res <> SOME TimeOut ==> evaluate (p,t with clock := t.clock + ck) = (res,st with clock := st.clock + ck). Lean keeps the binders in HOL order, the conjunctive premise and the conclusion, over the exact finite evaluator evaluateHOLFiniteState, whose evaluate_def :780 equations are tagged. State PanSemStateFiniteExact (fmap_as_finite_support [locals, globals, code, eshapes], same-module witness PanPropsAddClockEqSupport.holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). No extra premise. The proof lifts the Flapjack broad clock-shift lemma eval_add_clock_mono_aux through the kernel-checked finite projection, as the tagged evaluate_add_clock_io_events_mono does. Kernel-checked; standard axioms. Supersedes the mismatch-only disposition of 4ac.4.45."
   }
 ]
