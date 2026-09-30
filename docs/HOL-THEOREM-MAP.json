@@ -29350,29 +29350,60 @@
     "reviewer": "Luna A compared HOL1564-1569: same original flag/context/states and arbitrary new FFI x; state_rel implies state_rel after setting ffi=x on both states. All relation conjuncts unchanged except FFI equality becomes reflexive. No new premise on FFI, target result or state. Exact reviewed HolFfiState universe0 host, positive-width state and canonical finite relation carriers; same-module roundtrip witnesses. Direct dependency of source state_rel_write_bytearray at1608 confirmed. Coordinator source review pending."
   },
   {
-    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimProgSize.lean",
-    "lean_name": "unreachElimProgSize",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ExpressionCodeAgreement.lean",
+    "lean_name": "evalStateLocalsSameCodeFdomSame",
     "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-    "hol_name": "unreach_elim_prog_size",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-opus (2026-09-30, bead flapjack-pxn.18.5.5.46.2, coordinator type-evidence review): @[hol] tag withdrawn. HOL's elaborated statement (scripts/hol-probes/crep_inline_prog_size_type_probe.out) quantifies f : 'a -> num over the same type variable 'a that indexes 'a prog/'a word; the words_as_type_indexed_bitvec translation has no Lean type for bare 'a, so the Lean {alpha : Type} (f : alpha -> Nat) is an extra independent type quantifier. The statement is kept untagged (it implies every HOL instance since prog_size never applies f); faithful carrier tracked by flapjack-pxn.18.5.5.50."
-  },
-  {
-    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimProgSize.lean",
-    "lean_name": "notHasReturnImpUnreachElim",
-    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-    "hol_name": "not_has_return_imp_unreach_elim",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "hol_name": "eval_state_locals_same_code_fdom_same",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.5.46.2; crep_inlineProofScript.sml:1765-1766): same binders p r; conjunction premise ~has_return p /\\ unreach_elim p = (p, r) (Bool has_return used as `= true`); conclusion r <> SOME Ret, over the tagged hasReturnHOLExact and unreachElimHOLExact. As in HOL the Seq-with-exit case is refuted by unreach_elim_prog_size."
+    "reviewer": "flapjack-sol source comparison (2026-09-30; jn6v), HOL1467-1503: same state/expression/value/target binders and conjunction of source successful eval, reviewed state_rel_code, reviewed locals_strong_rel, and source code-domain subset. FDOM membership represented by lookup != none (equivalent to existence of SOME lookup by Option cases, as HOL1456). Same successful target value conclusion. No target-evaluation hypothesis, extra premises or stronger public conclusion. Exact Crep carriers, canonical state maps with same-module roundtrip, positive BitVec and universe-0 FFI host. Existing untagged exact Option-equality helper is proof infrastructure only. Coordinator independent review pending."
   },
   {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ExpressionCodeAgreement.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
     "hol_path": null,
     "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimProgSize.lean",
-    "lean_name": "crepMergeExitHOL_eq_return",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.5.46.2): a merged If exit is Ret only if a branch exit is Ret; no HOL original."
+    "reviewer": "Canonical carrier roundtrip re-export, Flapjack infrastructure with no separate HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimPredicates.lean",
+    "lean_name": "unreachElimPreserveHasReturn",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "unreach_elim_preserve_has_return",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison (2026-09-30; dect), HOL2275-2300: same program/output/optional early-exit binders, conjunction of source Boolean predicate and exact unreach_elim output pair, and same output predicate. HOL no-has-return is = false; not_branch_ret is = true. Exact reviewed CrepProgHOL/unreachElimHOLExact/hasReturnHOLExact/notBranchRetHOLExact, only positive BitVec word-carrier translation. Structural predicate induction covers Seq early-exit branch and nested Call handler; second uses first for conditional/loop/handler no-return. No semantic or extra result assumptions. Coordinator independent review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimPredicates.lean",
+    "lean_name": "unreachElimPreserveNotBranchRet",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "unreach_elim_preserve_not_branch_ret",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison (2026-09-30; dect), HOL2275-2300: same program/output/optional early-exit binders, conjunction of source Boolean predicate and exact unreach_elim output pair, and same output predicate. HOL no-has-return is = false; not_branch_ret is = true. Exact reviewed CrepProgHOL/unreachElimHOLExact/hasReturnHOLExact/notBranchRetHOLExact, only positive BitVec word-carrier translation. Structural predicate induction covers Seq early-exit branch and nested Call handler; second uses first for conditional/loop/handler no-return. No semantic or extra result assumptions. Coordinator independent review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimPredicates.lean",
+    "lean_name": "noReturnOutput",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private direct-output induction factoring for dect source theorems; no separate HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimPredicates.lean",
+    "lean_name": "notBranchOutput",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private direct-output induction factoring for dect source theorems; no separate HOL original."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Base.lean",
@@ -29477,5 +29508,30 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.2.26) compared pan_globalsProofScript.sml:172-186 gen_goal pan_globals$compile at the Tick conjunct of panSem evaluate_ind: forall res ctxt t s', state_rel T ctxt s t /\\ evaluate(Tick,s)=(res,s') /\\ res<>SOME Error ==> exists t'. evaluate(compile ctxt Tick,t)=(res,t') /\\ state_rel (good_res res) ctxt s' t'. Same binders/order, no extra premise, leaf case has no IH. evaluate Tick: clock 0 gives (SOME TimeOut, empty_locals s) with state_rel F (locals conjunct vacuous), else (NONE, dec_clock s) with state_rel T via state_rel_dec_clock; target clock equal by state_rel (HOL238-242). Exact tagged evaluateHOLFiniteState, compileProgExactHOL, panGlobalsStateRelHOLExact and goodResHOL; canonical finite state/context carriers and positive-width word/Type0 FFI translation only. Assembly remains open (bead .36); coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimProgSize.lean",
+    "lean_name": "unreachElimProgSize",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "unreach_elim_prog_size",
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-opus (2026-09-30, bead flapjack-pxn.18.5.5.46.2, coordinator type-evidence review): @[hol] tag withdrawn. HOL's elaborated statement (scripts/hol-probes/crep_inline_prog_size_type_probe.out) quantifies f : 'a -> num over the same type variable 'a that indexes 'a prog/'a word; the words_as_type_indexed_bitvec translation has no Lean type for bare 'a, so the Lean {alpha : Type} (f : alpha -> Nat) is an extra independent type quantifier. The statement is kept untagged (it implies every HOL instance since prog_size never applies f); faithful carrier tracked by flapjack-pxn.18.5.5.50."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimProgSize.lean",
+    "lean_name": "notHasReturnImpUnreachElim",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "not_has_return_imp_unreach_elim",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.5.46.2; crep_inlineProofScript.sml:1765-1766): same binders p r; conjunction premise ~has_return p /\\ unreach_elim p = (p, r) (Bool has_return used as `= true`); conclusion r <> SOME Ret, over the tagged hasReturnHOLExact and unreachElimHOLExact. As in HOL the Seq-with-exit case is refuted by unreach_elim_prog_size."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimProgSize.lean",
+    "lean_name": "crepMergeExitHOL_eq_return",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.5.46.2): a merged If exit is Ret only if a branch exit is Ret; no HOL original."
   }
 ]

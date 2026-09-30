@@ -1,5 +1,6 @@
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelationFfi
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelationClock
+import Flapjack.Misc.BinaryIeeeSqrt.RealAgreement
 import Flapjack.Pancake.Proofs.PanGlobals.CompileExpLeaves
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Base
 import Flapjack.Compiler.Backend.StackProps.RemoveNames
@@ -429,8 +430,10 @@ import Flapjack.Pancake.Proofs.CrepInline.ShMem
 import Flapjack.Pancake.Proofs.CrepInline.Call
 import Flapjack.Pancake.Proofs.CrepInline.UpdateListLocals
 import Flapjack.Pancake.Proofs.CrepInline.UnreachElim
+import Flapjack.Pancake.Proofs.CrepInline.UnreachElimPredicates
 import Flapjack.Pancake.Proofs.CrepInline.NoReturn
 import Flapjack.Pancake.Proofs.CrepInline.ClockExpressions
+import Flapjack.Pancake.Proofs.CrepInline.ExpressionCodeAgreement
 import Flapjack.Pancake.Proofs.CrepInline.NotBranchReturn
 import Flapjack.Pancake.Proofs.CrepInline.UnreachElimEvaluate
 import Flapjack.Pancake.Proofs.CrepInline.UnreachElimProgSize
