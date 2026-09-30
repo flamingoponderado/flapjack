@@ -37506,4 +37506,14 @@
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Local exact complete second-program Seq congruence from accepted evaluate_def clause; no separately named HOL original and no full seq_assoc claim."
 }
+,
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "compile_prog_distinct_params",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileProgParams.lean",
+    "lean_name": "compileProgDeclsHOLW_params_nodup",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison (2026-09-30, bead flapjack-4ac.2.20.1): original4684-4691 has no hypotheses and asserts EVERY (name,params,body). ALL_DISTINCT params over compile_prog prog. Lean retains the exact DeclHOL width input and native ordered MlS x List Nat x CrepProgHOL width output; List.all of decide Nodup = true is precisely EVERY. Positive HOL word dimension translates to BitVec width with NeZero width, through reviewed exact datatype carriers. compileProgDeclsHOLW is the accepted compile_prog_def port; its native compile_to_crep assigns crepVarsHOL = List.range(sizeOfShapeHOL(Comb(MAP SND params))), distinct by nodup_range, and the reviewed exact inliner maps triples without changing parameters. No evaluator, success, input distinctness, map/BEq or IH premise is introduced. Existing full theorem name, elaborated statement and proof retained and relocated to the HOL proof counterpart; only source review caveat/tag added. Production analogue remains untagged. Proof-only change, no executable behavior change."
+  }
 ]
