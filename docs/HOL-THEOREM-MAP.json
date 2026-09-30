@@ -34586,5 +34586,13 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-only internal matched-handler continuation result assembly for33.11. Non-normal outcomes bypass flag assignment/outer If; preserves goodRes conditional locals relation including handler Return. Composes accepted fresh transport/unchanged-local scope restoration for all nonError results. Internal handler run/relation/freshness are IH/branch outputs that full constructor must derive; not public HOL premises. Untagged; callee/source-handler IH connections and other Call branches/full constructor assembly remain unfinished."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "returnedScratchCall",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only actual generated normal-return Call connection for33.11. Consumes original callee IH branch run/args/lookup/clock/shape facts; scratch arguments, unchanged code/clock and identical callee entry derived internally, as is destination binding via accepted literal-name freshness. No scratch target-run or freshness public premise. Untagged internal clause, not full constructor port; handler/source-IH connections and remaining Call clauses/assembly unfinished."
 }
 ]

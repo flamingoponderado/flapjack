@@ -588,6 +588,53 @@ private theorem handlerTail {width : Nat} {σ : Type} [NeZero width]
     exact nonNormalHandlerTail context caller sourcePost post handler result resultName flagName handlerVar
       initializer exceptionValue address hrf hr hf hrFresh hfFresh hrun hne hrel
 
+/-- Connect a returned callee IH run to the actual generated scratch Call.
+Argument transport, code/clock preservation, and callee-entry equality are
+derived internally; no scratch-state run or freshness premise is assumed.
+This is an internal normal-return clause, not the public constructor theorem. -/
+private theorem returnedScratchCall {width : Nat} {σ : Type} [NeZero width]
+    (state post : PanSemStateFiniteExact width σ) (function handlerId handlerVar : MlS)
+    (compiledHandler : ProgHOL width) (arguments : List (ExpHOL width))
+    (values : List (ValueHOL width)) (body : ProgHOL width)
+    (callee : HolFiniteMapExact MlS (ValueHOL width)) (returnShape : ShapeHOL)
+    (initializer value : ValueHOL width)
+    (hargs : evalListHOLFinite state
+      (h := fun a => Classical.propDecidable (state.memaddrs a)) arguments = some values)
+    (hcode : lookupCodeHOLFinite state.code.lookup function values = some (body, callee, returnShape))
+    (hclock : state.clock ≠ 0)
+    (hbody : evaluateHOLFiniteState (callEntryStateHOLFinite state callee) body =
+      (some (.returned value), post))
+    (hreturn : shapeOfHOLExact value = returnShape)
+    (hshape : shapeOfHOLExact value = shapeOfHOLExact initializer) :
+    let names := handlerVar :: freeVarIdsHOL compiledHandler ++ arguments.flatMap varExpHOL
+    let resultName := freshNameMlS (ofString "") names
+    let flagName := freshNameMlS (ofString "vn'") (resultName :: names)
+    let scratch := setVarHOLFinite flagName (.val (.word (BitVec.ofNat width 0)))
+      (setVarHOLFinite resultName initializer state)
+    evaluateHOLFiniteState scratch
+      (.call (some (some (.local, resultName), some (handlerId, handlerVar,
+        .seq compiledHandler (.assign .local flagName (.const (BitVec.ofNat width 1))))))
+        function arguments) = (none, setVarHOLFinite resultName value {post with locals := scratch.locals}) := by
+  classical
+  dsimp only
+  let names := handlerVar :: freeVarIdsHOL compiledHandler ++ arguments.flatMap varExpHOL
+  let resultName := freshNameMlS (ofString "") names
+  let flagName := freshNameMlS (ofString "vn'") (resultName :: names)
+  let scratch := setVarHOLFinite flagName (.val (.word (BitVec.ofNat width 0)))
+    (setVarHOLFinite resultName initializer state)
+  have htransport := PanGlobalsCallHandlerArguments.callHandlerArgumentsUnderScratchLocals state
+    handlerVar compiledHandler arguments initializer (.val (.word (BitVec.ofNat width 0)))
+  have ha : evalListHOLFinite scratch
+      (h := fun a => Classical.propDecidable (scratch.memaddrs a)) arguments = some values :=
+    htransport.trans hargs
+  obtain ⟨_, _, hdistinct, _, _, _, _⟩ :=
+    PanGlobalsCallHandlerFreshNames.callHandlerScratchNamesFresh handlerVar compiledHandler arguments
+  have hd : flagName ≠ resultName := Ne.symm hdistinct
+  have hlocal : scratch.locals.lookup resultName = some initializer := by
+    simp [scratch, setVarHOLFinite, FUPDATE, hd]
+  exact returnedLocalCall scratch post resultName function arguments values body callee returnShape
+    initializer value _ ha hcode hclock hbody hreturn hlocal hshape
+
 /-- Internal missing-context branch of the full constructor proof. The branch
 condition selects the literal compiler fallback; the callee and handler IHs
 remain those of the original evaluator. Untagged infrastructure until the full
