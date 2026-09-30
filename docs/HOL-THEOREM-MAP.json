@@ -30194,6 +30194,94 @@
     "reviewer": "Flapjack-only support (bead flapjack-pxn.18.5.2.30.2): erasing an absent finite-map key is the identity. No separate HOL declaration."
   },
   {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMemGlobal.lean",
+    "lean_name": "resVarEq_updateEq_of_lookup",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only support (bead flapjack-pxn.18.5.2.30.2.1): restoring a `BEq`-updated key whose saved binding is exactly the original `updateEq` lookup. No separate HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMemGlobal.lean",
+    "lean_name": "resVarEq_update_of_lookup",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only support (bead flapjack-pxn.18.5.2.30.2.1): the `BEq`-update form of `resVarEq_updateEq_of_lookup`. No separate HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMemGlobal.lean",
+    "lean_name": "lookup_setVarHOLFinite",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only support (bead flapjack-pxn.18.5.2.30.2.1): the pointwise lookup equation of `setVarHOLFinite`. No separate HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMemGlobal.lean",
+    "lean_name": "evalHOLExact_sub_topAddr",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only support (bead flapjack-pxn.18.5.2.30.2.1): the exact evaluation of `Op Sub [TopAddr, Const gaddr]` is `topAddr - gaddr`. No separate HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMemGlobal.lean",
+    "lean_name": "stateRelFlagFalse_changeLocals",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only support (bead flapjack-pxn.18.5.2.30.2.1): the flag-`false` pan_globals relation ignores both `locals` fields, so it is invariant under replacing them. No separate HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMemGlobal.lean",
+    "lean_name": "evalStore_globalRet",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only support (bead flapjack-pxn.18.5.2.30.2.1): the compiled global `ShMemLoad` store step on the shared-memory return branch. HOL inlines it in `Resume compile_correct[ShMemLoad]`; no separate HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMemGlobal.lean",
+    "lean_name": "localsRestoreGlobal",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only support (bead flapjack-pxn.18.5.2.30.2.1): the two compiled `Dec` restores of the global `ShMemLoad` return `locals` to the original map. No separate HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMemGlobal.lean",
+    "lean_name": "globalRetTarget_eq",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only support (bead flapjack-pxn.18.5.2.30.2.1): the compiled global `ShMemLoad` return-branch target post-state is the original target with only `memory` and `ffi` updated. No separate HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMemGlobal.lean",
+    "lean_name": "evaluateHOLFiniteState_compile_shMemLoad_global",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only support (bead flapjack-pxn.18.5.2.30.2.1): the target-evaluation computation of the compiled global `ShMemLoad` (nested `Dec`/`Dec`/`Seq`/`ShMemLoad`/`Store` lowering, including the two `Dec`-restores). No separate HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMemGlobal.lean",
+    "lean_name": "compileCorrect_ShMemLoad_global",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 (bead flapjack-pxn.18.5.2.30.2.1) compared pan_globalsProofScript.sml:757-838 Resume compile_correct[ShMemLoad], sub-case vk=Global (HOL opens the case with Cases on the varkind constructor and the non-Local arm is the Global lowering). Statement follows the printed evaluate_ind conjunct op vk v ad s. P (ShMemLoad op vk v ad,s) (scripts/hol-probes/pan_sem_evaluate_ind_probe.out:10) at vk=Global, with P unfolded exactly as in Base.lean; same binders/order, no IH and no extra premise. HOL compile Global = Dec name One (compile_exp ad) (Dec (strcat name \"'\") One (Const 0) (Seq (ShMemLoad op Local (strcat name \"'\") (Var Local name)) (Store (Op Sub [TopAddr; Const addr]) (Var Local (strcat name \"'\"))))) for FLOOKUP ctxt.globals name = SOME (One,addr) (pan_globalsScript.sml:148-155). The source evaluates ad to a word, finds the global word in s.globals, and calls sh_mem_load Global which writes the loaded word to globals and updates ffi; the target evaluates the compiled address (compile_exp_correct), loads the same shared-memory word into the temporary, stores it at target.top_addr-gaddr, and the two Dec restores return locals to t.locals. FLOOKUP_globals_val_state_rel supplies ctxt.globals name = SOME (One,gaddr) and the target memory slot top_addr-gaddr in domain; the on-FFI-return branch uses stateRelGlobalWriteHOL plus stateRelFfiUpdateHOL (flag true), the on-FFI-final branch uses stateRelFlagFalseHOL over the empty-locals post-state. Proof uses the tagged evaluateHOLFiniteState_shMemLoad_source, evaluateHOLFiniteState_dec_total, evaluateHOLFiniteState_seq_line780, evaluateHOLFiniteState_store, compileProgExactHOL and compileExpCorrectHOL. Exact tagged carriers; canonical finite state/context and positive-width word/Type0 FFI translation only. Assembly remains open (bead .36)."
+  },
+  {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMem.lean",
     "lean_name": "stateRelFlagFalseHOL",
     "hol_path": null,
