@@ -28343,5 +28343,57 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.5.46.1): exact syntactic port of HOL not_has_return_imp_not_branch_ret over the tagged exact unreachElimHOLExact/nestedDecsHOL/argLoadHOLExact/hasReturnHOLExact/notBranchRetHOLExact on CrepProgHOL; same quantified variables, LENGTH side conditions and conclusion (HOL Bool predicates used as propositions rendered `= true`). Only the BitVec word-dimension qualifier applies."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NoReturn.lean",
+    "lean_name": "notHasReturnNotEvaluateReturn",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "not_has_return_not_evaluate_return",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison (2026-09-30; flapjack-bxo2), crep_inlineProofScript663-700: same universal program/state, no-return Bool negation rendered = false. First conclusion retains existential result/state, actual faithful clocked evaluation equality and result match excluding only Return; primed statement retains source conjunction with evaluation equality and arbitrary Return payload. No extra semantic premises or fuel. CrepSemHOLState canonical locals/globals/code finite-support maps with same-module broad/exact roundtrip; positive width-indexed BitVec words and universe-0 FFI host. Lists/result constructors retained. Coordinator independent source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NoReturn.lean",
+    "lean_name": "notHasReturnNotEvaluateReturnPrime",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "not_has_return_not_evaluate_return'",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison (2026-09-30; flapjack-bxo2), crep_inlineProofScript663-700: same universal program/state, no-return Bool negation rendered = false. First conclusion retains existential result/state, actual faithful clocked evaluation equality and result match excluding only Return; primed statement retains source conjunction with evaluation equality and arbitrary Return payload. No extra semantic premises or fuel. CrepSemHOLState canonical locals/globals/code finite-support maps with same-module broad/exact roundtrip; positive width-indexed BitVec words and universe-0 FFI host. Lists/result constructors retained. Coordinator independent source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NoReturn.lean",
+    "lean_name": "shMemNoReturn",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof factoring for bxo2: internal decider-parametric induction/helper or canonical carrier roundtrip; no separate HOL original claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NoReturn.lean",
+    "lean_name": "coreNoReturn",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof factoring for bxo2: internal decider-parametric induction/helper or canonical carrier roundtrip; no separate HOL original claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NoReturn.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof factoring for bxo2: internal decider-parametric induction/helper or canonical carrier roundtrip; no separate HOL original claimed."
   }
 ]
