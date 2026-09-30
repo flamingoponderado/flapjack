@@ -5,6 +5,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.ShapeInfrastructure
 import Flapjack.Pancake.Semantics.PanSem
 import Flapjack.Pancake.Semantics.PanSem.DecExact
 import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+import Flapjack.Pancake.Semantics.PanProps.EvaluateAddClockEq
 
 namespace Flapjack
 
@@ -1977,5 +1978,69 @@ theorem resortDeclsEvaluateImp {width : Nat} {σ : Type} [NeZero width]
   intro hdecs hresort
   rw [resortDeclsEvaluate state decs hresort]
   exact hdecs
+
+/-! ## Exact ports of the `pan_globals` pure-clock and counting helpers
+
+`evaluate_two[local]` and `num_cases_lemma[local]`
+(`cakeml/pancake/proofs/pan_globalsProofScript.sml:2631-2657`) are the two
+elementary helpers used by HOL's `semantics_init_call` proof.  `evaluate_two`
+needs only the tagged `panProps$evaluate_add_clock_eq`
+(`panPropsEvaluateAddClockEq`) and no LUB, `semantics`, or `evaluate_invariants`
+machinery; `num_cases_lemma` is pure logic.  They are therefore ported here
+independently of the still-blocked `LUB_IMAGE_SUC`/`semantics_init_call` slice
+(bead `flapjack-pxn.18.5.2.22.3.2`). -/
+
+/-- Exact port of HOL `evaluate_two[local]`
+    (`cakeml/pancake/proofs/pan_globalsProofScript.sml:2631-2652`): two
+    clock-bounded runs of the same program that both finish without `TimeOut`
+    produce the same result and the same FFI event history.  The program is the
+    exact `ProgHOL` and the state the reviewed finite-support carrier; the only
+    carrier difference is the finite-map/word translation recorded by the
+    qualifiers, and no premise is added.  HOL's `evaluate` is
+    `evaluateHOLFiniteState`, and the proof is clock arithmetic through
+    `panPropsEvaluateAddClockEq`. -/
+@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "evaluate_two"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateTwo {width : Nat} {σ : Type} [NeZero width]
+    (p : ProgHOL width) (t : PanSemStateFiniteExact width σ)
+    (res : Option (PanSemResultExact width)) (st : PanSemStateFiniteExact width σ)
+    (res' : Option (PanSemResultExact width)) (st' : PanSemStateFiniteExact width σ)
+    (k k' : Nat) :
+    (PanSemStateFiniteExact.evaluateHOLFiniteState { t with clock := k } p = (res, st) ∧
+      PanSemStateFiniteExact.evaluateHOLFiniteState { t with clock := k' } p = (res', st') ∧
+      res ≠ some .timeOut ∧ res' ≠ some .timeOut) →
+    res = res' ∧ st.ffi = st'.ffi := by
+  rintro ⟨h, h', hnt, hnt'⟩
+  rcases Nat.le_total k k' with hle | hle
+  · obtain ⟨kk, hkk⟩ := Nat.le.dest hle
+    have step := panPropsEvaluateAddClockEq p { t with clock := k } res st kk ⟨h, hnt⟩
+    have hstate : ({ { t with clock := k } with clock := k + kk } :
+        PanSemStateFiniteExact width σ) = { t with clock := k' } := by rw [hkk]
+    rw [hstate] at step
+    have heq : (res, { st with clock := st.clock + kk }) = (res', st') :=
+      step.symm.trans h'
+    obtain ⟨hr, hs⟩ := Prod.mk.inj heq
+    exact ⟨hr, by rw [← hs]⟩
+  · obtain ⟨kk, hkk⟩ := Nat.le.dest hle
+    have step := panPropsEvaluateAddClockEq p { t with clock := k' } res' st' kk ⟨h', hnt'⟩
+    have hstate : ({ { t with clock := k' } with clock := k' + kk } :
+        PanSemStateFiniteExact width σ) = { t with clock := k } := by rw [hkk]
+    rw [hstate] at step
+    have heq : (res', { st' with clock := st'.clock + kk }) = (res, st) :=
+      step.symm.trans h
+    obtain ⟨hr, hs⟩ := Prod.mk.inj heq
+    exact ⟨hr.symm, by rw [← hs]⟩
+
+/-- Exact port of HOL `num_cases_lemma[local]`
+    (`cakeml/pancake/proofs/pan_globalsProofScript.sml:2654-2657`):
+    `(!P. (!x. P x) ==> P 0 /\ !x. P (SUC x))`.  The predicate is Lean
+    `Nat → Prop` (HOL `num -> bool` with the standard `bool`/`Prop`
+    translation), and the statement binds the same universally quantified
+    predicate and conclusion with no extra premise. -/
+@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "num_cases_lemma"]
+theorem numCasesLemma (P : Nat → Prop) :
+    (∀ x, P x) → P 0 ∧ ∀ x, P (Nat.succ x) :=
+  fun h => ⟨h 0, fun x => h (Nat.succ x)⟩
 
 end Flapjack

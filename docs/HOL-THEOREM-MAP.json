@@ -6349,6 +6349,29 @@
     "reviewer": "flapjack-ds9 (source comparison, bead flapjack-pxn.18.5.2.22.6): HOL resort_decls_evaluate_IMP[local] (pan_globalsProofScript.sml:1943-1950) states evaluate_decls s decs = SOME s' /\\ EVERY (\\d. is_function d \\/ is_decl d \\/ is_exn_decl d) decs ==> evaluate_decls s (resort_decls decs) = SOME s'. Lean resortDeclsEvaluateImp has the same successful-evaluation premise, the same admissibility premise (rendered via all), and the same SOME s' conclusion over the canonical tagged evaluator and resortDeclsHOL. Only carrier difference is the reviewed finite-map translation recorded by the qualifiers; no added premise. Replayed kernel-checked in Flapjack/Test/PanGlobalsResortDeclsEvaluateParity.lean. Coordinator review required. Resolution of the DecidablePred review note: the tagged statement has no decidability binder; the finite-support evaluator is called with one fixed classical DecidablePred state.memaddrs instance supplied inside the statement, so it is a Lean implementation parameter only. Since Decidable p is a subsingleton (Subsingleton (Decidable p) is available in this toolchain), the evaluator's result is independent of the chosen instance, hence no HOL side condition is added and the tags are retained."
   },
   {
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "evaluate_two",
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
+    "lean_name": "evaluateTwo",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 (source comparison, bead flapjack-pxn.18.5.2.22.3.1): HOL evaluate_two[local] (pan_globalsProofScript.sml:2631-2652) states evaluate (p,t with clock := k) = (res,st) /\\ evaluate (p,t with clock := k') = (res',st') /\\ res <> SOME TimeOut /\\ res' <> SOME TimeOut ==> res = res' /\\ st.ffi = st'.ffi. Lean evaluateTwo keeps the exact ProgHOL program, the PanSemStateFiniteExact state, both run equations and both non-TimeOut premises, and the same res = res' /\\ st.ffi = st'.ffi conclusion; evaluate is the canonical tagged PanSemStateFiniteExact.evaluateHOLFiniteState. Only carrier difference is the reviewed finite-map/word translation recorded by the qualifiers; no added premise. Proof uses the tagged panProps evaluate_add_clock_eq (panPropsEvaluateAddClockEq) and clock arithmetic, exactly as HOL. Replayed kernel-checked in Flapjack/Test/PanGlobalsEvaluateTwoParity.lean. Coordinator review required."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "num_cases_lemma",
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
+    "lean_name": "numCasesLemma",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 (source comparison, bead flapjack-pxn.18.5.2.22.3.1): HOL num_cases_lemma[local] (pan_globalsProofScript.sml:2654-2657) states !P. (!x. P x) ==> P 0 /\\ !x. P (SUC x). Lean numCasesLemma binds the same predicate P : Nat -> Prop (HOL num -> bool under the standard bool/Prop translation) and states (forall x, P x) -> P 0 /\\ forall x, P (Nat.succ x), with no extra premise. Replayed kernel-checked in Flapjack/Test/PanGlobalsEvaluateTwoParity.lean. Coordinator review required."
+  },
+  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",

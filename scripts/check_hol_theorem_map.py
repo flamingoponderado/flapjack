@@ -2052,6 +2052,7 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
          "structInfosOkHOLExact_lookup_fields_nodup"),
         ("Flapjack/Pancake/Proofs/PanGlobals.lean", "ALOOKUP_MAP3"),
         ("Flapjack/Pancake/Proofs/PanGlobals.lean", "ALOOKUP_MAP4"),
+        ("Flapjack/Pancake/Proofs/PanGlobals.lean", "numCasesLemma"),
         ("Flapjack/Pancake/PanGlobals.lean", "fpermName"),
         ("Flapjack/Pancake/PanGlobals.lean", "fpermHOL"),
         ("Flapjack/Pancake/PanGlobals.lean", "fpermDecsHOL"),
