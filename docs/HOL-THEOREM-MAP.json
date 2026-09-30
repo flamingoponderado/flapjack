@@ -31954,5 +31954,43 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-b source comparison2026-09-30 HOL1105-1135 evaluate_unchanged_local and literal evaluate_ind DecCall: unused universal value retained, freshness/source-run/good_res/nonError unchanged. Sole continuation IH includes argument SOME, code lookup SOME, clock nonzero, callee returned value and both shape equalities. No callee IH needed: only returned branch can yield good nonError result; other branches contradicted by original good_res/nonError. Original free_var_ids includes result name, so name differs bound and continuation freshness derive internally. IH proves continuation lookup; setVar and resVar restore original lookup at distinct name. Canonical finite-state witness, positive width BitVec and universe0 FFI. No extra public premise or new executable path; coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/AssignPrimitive.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only canonical finite-state roundtrip re-export for Assign/Primitive qualifiers; no separate HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/AssignPrimitive.lean",
+    "lean_name": "evaluateUnchangedLocal_Assign",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "evaluate_unchanged_local",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison2026-09-30 HOL evaluate_unchanged_local1105-1135 original unused value/nonfree/source evaluation/good_res/nonError/lookup retained. Genuine nonrecursive Assign and Primitive constructor cases, no IH or extra successful-run premise. Failed expression/list/primop/validity branches contradict original nonError. Local destination differs from queried name by original free_var_ids, FUPDATE preserves its lookup; global Assign setGlobal updates globals only. Exact finite state/MlS/ExpHOL/PrimOp/ValueHOL carriers; positive width/NeZero/universe0 FFI and canonical roundtrip witness. Proof-only; coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/AssignPrimitive.lean",
+    "lean_name": "evaluateUnchangedLocal_Primitive",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "evaluate_unchanged_local",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison2026-09-30 HOL evaluate_unchanged_local1105-1135 original unused value/nonfree/source evaluation/good_res/nonError/lookup retained. Genuine nonrecursive Assign and Primitive constructor cases, no IH or extra successful-run premise. Failed expression/list/primop/validity branches contradict original nonError. Local destination differs from queried name by original free_var_ids, FUPDATE preserves its lookup; global Assign setGlobal updates globals only. Exact finite state/MlS/ExpHOL/PrimOp/ValueHOL carriers; positive width/NeZero/universe0 FFI and canonical roundtrip witness. Proof-only; coordinator source review pending."
   }
 ]
