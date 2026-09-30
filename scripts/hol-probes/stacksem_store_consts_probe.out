@@ -1,0 +1,12 @@
+store_disabled=(SOME Error,SOME (Word 170w),SOME (Word 0w),SOME (Word 256w),
+ SOME (Word 57005w),SOME (Word 48879w),Word 0w,Word 0w,Word 0w,T,F)
+stub_alloc_disabled=(SOME Error,SOME (Word 170w),SOME (Word 0w),SOME (Word 256w),
+ SOME (Word 57005w),SOME (Word 48879w),Word 0w,Word 0w,Word 0w,F,T)
+guard_failure=(SOME Error,SOME (Word 170w),SOME (Word 0w),SOME (Word 256w),
+ SOME (Word 57005w),SOME (Word 48879w),Word 0w,Word 0w,Word 0w,T,T)
+success_stub_none_use_alloc_true=(NONE,NONE,SOME (Word 1w),SOME (Word 264w),SOME (Word 1w),SOME (Word 1w),
+ Word 101w,Word 0w,Word 0w,T,T)
+success_stub_none_use_alloc_false=(NONE,SOME (Word 170w),SOME (Word 1w),SOME (Word 264w),SOME (Word 1w),
+ SOME (Word 1w),Word 101w,Word 0w,Word 0w,F,T)
+success_stub_match_use_alloc_true=(NONE,NONE,SOME (Word 1w),SOME (Word 264w),SOME (Word 1w),SOME (Word 1w),
+ Word 101w,Word 0w,Word 0w,T,T)

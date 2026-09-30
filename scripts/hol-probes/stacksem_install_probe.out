@@ -1,0 +1,12 @@
+install_success=(NONE,[1w; 170w; 187w],SOME Skip,SOME (Return 0),SOME (Loc 3 0),NONE,
+ SOME (Word 85w),NONE,2w,2w,0,1)
+install_bytes_mismatch=(SOME Error,[1w],NONE,SOME (Return 0),SOME (Word 0w),SOME (Word 2w),
+ SOME (Word 85w),SOME 102w,0w,0w,2,0)
+install_progs_empty=(SOME Error,[1w],NONE,SOME (Return 0),SOME (Word 0w),SOME (Word 2w),
+ SOME (Word 85w),SOME 102w,0w,0w,2,0)
+install_compile_none=(SOME Error,[1w],NONE,SOME (Return 0),SOME (Word 0w),SOME (Word 2w),
+ SOME (Word 85w),SOME 102w,0w,0w,2,0)
+install_use_stack_false=(NONE,[1w; 170w; 187w],SOME Skip,SOME (Return 0),SOME (Loc 3 0),NONE,
+ SOME (Word 85w),NONE,2w,0w,2,1)
+install_non_word_operand=(SOME Error,[1w],NONE,SOME (Return 0),SOME (Loc 1 0),SOME (Word 2w),
+ SOME (Word 85w),SOME 102w,0w,0w,2,0)

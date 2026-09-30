@@ -1,0 +1,7 @@
+raw_call_success=(SOME (Result (Loc 4 5)),4,SOME (Word 3w),1)
+raw_call_timeout=(SOME TimeOut,0,NONE,0)
+raw_call_code_missing=(SOME Error,5,SOME (Word 3w),1)
+raw_call_non_seq=(SOME Error,5,SOME (Word 3w),1)
+raw_call_break_sub=(SOME Error,4,SOME (Word 3w),1)
+raw_call_continue_sub=(SOME Error,4,SOME (Word 3w),1)
+raw_call_none_sub=(SOME Error,4,SOME (Word 3w),1)

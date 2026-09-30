@@ -1,13 +1,16 @@
+import Flapjack.HolRef
 import Flapjack.Misc.LList
 
 /-!
 # HOL `lprefix_lub` (least upper bounds of lazy-list prefix chains)
 
-Untagged rendering of HOL4's `examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml`
-(HOL library, outside the CakeML submodule, so no `@[hol]` tags), plus HOL's
-option-choice binder `some` (`HOL/src/coretypes/optionScript.sml:794`).  HOL sets
-`'a llist set` are rendered as predicates `HolLList α → Prop`.  These are the
-ingredients of the Pancake observational `semantics_def`s
+Rendering of HOL4's `examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml`
+(a pinned external HOL4 snapshot at
+`hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml`, so the exact
+generic chain/equality declarations carry unqualified `@[hol]` tags), plus
+HOL's option-choice binder `some` (`HOL/src/coretypes/optionScript.sml:794`).
+HOL sets `'a llist set` are rendered as predicates `HolLList α → Prop`.  These
+are the ingredients of the Pancake observational `semantics_def`s
 (`build_lprefix_lub (IMAGE ... UNIV)`).  Noncomputable exactly where HOL uses
 Hilbert choice.
 -/
@@ -69,51 +72,6 @@ noncomputable def buildLprefixLub (ls : HolLList α → Prop) : HolLList α :=
 `HolLrepOk` makes `rep` downward-closed (a `none` persists), so `lnth` is exactly
 `rep`.  These connect the `ltl`/`lhd`-based `lnth` to the `rep` function. -/
 
-/-- A `none` at `k` forces a `none` at `k+1` (downward closure of `HolLrepOk`). -/
-theorem rep_none_succ (ll : HolLList α) {k : Nat} (h : ll.rep k = none) :
-    ll.rep (k + 1) = none := by
-  rw [Option.eq_none_iff_forall_ne_some]
-  intro v hv
-  have hk' : (ll.rep (k + 1)) ≠ none := by rw [hv]; exact Option.some_ne_none v
-  exact (Option.isSome_iff_ne_none.mp (ll.ok k (Option.isSome_iff_ne_none.mpr hk'))) h
-
-/-- A `none` in the representation persists to every larger index. -/
-theorem rep_none_of_le (ll : HolLList α) {m n : Nat} (hm : ll.rep m = none) (hle : m ≤ n) :
-    ll.rep n = none := by
-  obtain ⟨d, rfl⟩ := Nat.le.dest hle
-  clear hle
-  induction d with
-  | zero => simpa using hm
-  | succ d ih =>
-      rw [Nat.add_succ]
-      exact rep_none_succ ll ih
-
-/-- `lnth` reads the underlying representation. -/
-theorem lnth_eq_rep (n : Nat) (ll : HolLList α) : lnth n ll = ll.rep n := by
-  induction n generalizing ll with
-  | zero => rfl
-  | succ n ih =>
-      show (ll.ltl.map (lnth n)).join = ll.rep (n + 1)
-      cases h0 : ll.rep 0 with
-      | none =>
-          have hrep : ll.rep (n + 1) = none := rep_none_of_le ll h0 (Nat.zero_le _)
-          have hltl : ll.ltl = none := by simp [ltl, lhd, h0]
-          simp [hltl, hrep]
-      | some hd =>
-          have ht : ll.ltl =
-              some ⟨fun k => ll.rep (k + 1), fun k hk => ll.ok (k + 1) hk⟩ := by
-            simp [ltl, lhd, h0]
-          rw [ht]
-          simp only [Option.map_some, Option.join]
-          rw [ih]
-          rfl
-
-/-- `lnth` is `none` from `m` on whenever it is `none` at `m` and `m ≤ n`. -/
-theorem lnth_none_mono {m n : Nat} (ll : HolLList α) (h : lnth m ll = none) (hle : m ≤ n) :
-    lnth n ll = none := by
-  rw [lnth_eq_rep] at h ⊢
-  exact rep_none_of_le ll h hle
-
 /-- HOL `not_exists_lprefix_chain_nth`
     (`lprefix_lubScript.sml:215-218`), unconditional in Lean: if no member of the
     family has a value at `n`, then `lprefix_chain_nth n ls` is `none`. -/
@@ -157,175 +115,6 @@ theorem lprefixChainNth_none_mono {m n : Nat} {ls : HolLList α → Prop}
       cases hmn : lnth m l with
       | none => exact absurd hmn hmne
       | some y => exact absurd ⟨l, hl, hmn⟩ ((holOptionSome_none hm) y)
-
-/-- The tail of a cons exposes the shifted representation. Untagged Flapjack
-    infrastructure used to relate `lprefix` (defined via `toList`/`ltake`) to the
-    representation `rep`/`lnth`; HOL's `llist` library is outside the cakeml
-    submodule, so there is no taggable HOL original. -/
-theorem ltl_rep {ll tl : HolLList α} (h : ll.ltl = some tl) (j : Nat) :
-    tl.rep j = ll.rep (j + 1) := by
-  cases h0 : ll.rep 0 with
-  | none => simp [ltl, lhd, h0] at h
-  | some hd =>
-      simp only [ltl, lhd, h0] at h
-      injection h with h'
-      subst h'
-      rfl
-
-/-- `ltake` reads the representation: if `ltake k ll = some xs` then `xs` has
-    length `k` and `ll.rep i = some (xs[i])` for every in-range `i`.  Untagged
-    Flapjack infrastructure (no taggable HOL original). -/
-theorem ltake_spec (k : Nat) (ll : HolLList α) (xs : List α)
-    (h : ltake k ll = some xs) :
-    xs.length = k ∧ ∀ i (hi : i < xs.length), ll.rep i = some xs[i] := by
-  induction k generalizing ll xs with
-  | zero =>
-      simp only [ltake] at h
-      injection h with hxs
-      subst hxs
-      exact ⟨rfl, fun i hi => absurd hi (by simp)⟩
-  | succ k ih =>
-      cases h0 : ll.rep 0 with
-      | none => simp [ltake, lhd, h0] at h
-      | some hd =>
-          cases h1 : ll.ltl with
-          | none => simp [ltake, lhd, h0, h1] at h
-          | some tl =>
-              cases hrest : ltake k tl with
-              | none => simp [ltake, lhd, h0, h1, hrest] at h
-              | some rest =>
-                  simp only [ltake, lhd, h0, h1, hrest] at h
-                  injection h with hxs
-                  subst hxs
-                  obtain ⟨hlen, hrep⟩ := ih tl rest hrest
-                  refine ⟨by simp [hlen], ?_⟩
-                  intro i hi
-                  cases i with
-                  | zero => simp [h0]
-                  | succ j =>
-                      have hj : j < rest.length := by simpa [hlen] using hi
-                      rw [← ltl_rep h1 j]
-                      simpa using hrep j hj
-
-/-- Converse of `ltake_spec`: if the representation agrees with `xs` on its
-    indices, `ltake` returns `xs`. -/
-theorem ltake_of_rep (xs : List α) (ll : HolLList α)
-    (h : ∀ i (hi : i < xs.length), ll.rep i = some xs[i]) :
-    ltake xs.length ll = some xs := by
-  induction xs generalizing ll with
-  | nil => simp [ltake]
-  | cons x xs ih =>
-      rw [List.length_cons]
-      cases h0 : ll.rep 0 with
-      | none => exact absurd (h 0 (by simp)) (by simp [h0])
-      | some hd =>
-          have hhd : hd = x := by
-            have := h 0 (by simp)
-            rw [h0] at this
-            exact Option.some.inj this
-          subst hhd
-          have htl : ll.ltl =
-              some ⟨fun n => ll.rep (n + 1), fun n hk => ll.ok (n + 1) hk⟩ := by
-            simp [ltl, lhd, h0]
-          have h' : ∀ i (hi : i < xs.length),
-              (⟨fun n => ll.rep (n + 1), fun n hk => ll.ok (n + 1) hk⟩ : HolLList α).rep i =
-                some xs[i] := by
-            intro i hi
-            have hhi := h (i + 1) (by simp [hi])
-            rw [List.getElem_cons_succ] at hhi
-            exact hhi
-          simp only [ltake, lhd, h0, htl]
-          rw [ih _ h']
-
-/-- Two lazy lists with pointwise-equal representations are equal. -/
-theorem ext_of_rep {a b : HolLList α} (h : ∀ n, a.rep n = b.rep n) : a = b := by
-  have hrep : a.rep = b.rep := funext h
-  obtain ⟨ra, oka⟩ := a
-  obtain ⟨rb, okb⟩ := b
-  simp only at hrep
-  subst hrep
-  exact congrArg (fun o => (⟨ra, o⟩ : HolLList α)) (Subsingleton.elim oka okb)
-
-/-- The empty lazy list is the only one whose representation is everywhere `none`. -/
-theorem eq_lnil_of_rep_none {ll : HolLList α} (h : ∀ n, ll.rep n = none) : ll = lnil :=
-  ext_of_rep (fun n => by rw [h n]; rfl)
-
-/-- A lazy list that has a `none` in its representation is finite. -/
-theorem LFinite_of_rep_none {ll : HolLList α} {n : Nat} (h : ll.rep n = none) :
-    LFinite ll := by
-  induction n generalizing ll with
-  | zero =>
-      have hr : ∀ k, ll.rep k = none := fun k => rep_none_of_le ll h (Nat.zero_le k)
-      rw [eq_lnil_of_rep_none hr]
-      exact LFinite.lnil
-  | succ n ih =>
-      cases h0 : ll.rep 0 with
-      | none =>
-          have hr : ∀ k, ll.rep k = none := fun k => rep_none_of_le ll h0 (Nat.zero_le k)
-          rw [eq_lnil_of_rep_none hr]
-          exact LFinite.lnil
-      | some hd =>
-          have htail : (⟨fun k => ll.rep (k + 1),
-              fun k hk => ll.ok (k + 1) hk⟩ : HolLList α).rep n = none := h
-          have ihf : LFinite ⟨fun k => ll.rep (k + 1), fun k hk => ll.ok (k + 1) hk⟩ :=
-            ih htail
-          have heq : ll = lcons hd ⟨fun k => ll.rep (k + 1), fun k hk => ll.ok (k + 1) hk⟩ := by
-            apply ext_of_rep
-            intro k
-            cases k with
-            | zero => rw [h0]; rfl
-            | succ k => rfl
-          rw [heq]
-          exact LFinite.lcons hd _ ihf
-
-/-- A finite lazy list has a length relation witness. -/
-theorem exists_LLengthRel_of_LFinite {ll : HolLList α} (h : LFinite ll) :
-    ∃ n, LLengthRel ll n :=
-  LFinite.rec (motive := fun ll _ => ∃ n, LLengthRel ll n)
-    ⟨0, LLengthRel.lnil⟩
-    (fun hd t _ ih => by obtain ⟨n, hn⟩ := ih; exact ⟨n + 1, LLengthRel.lcons hd n t hn⟩)
-    h
-
-/-- For a finite lazy list, `llength` returns a length relation witness. -/
-theorem llength_spec {ll : HolLList α} (h : LFinite ll) :
-    ∃ n, llength ll = some n ∧ LLengthRel ll n := by
-  have hex : ∃ n, LLengthRel ll n := exists_LLengthRel_of_LFinite h
-  refine ⟨Classical.epsilon (fun n => LLengthRel ll n), ?_, Classical.epsilon_spec hex⟩
-  unfold llength
-  rw [if_pos h]
-
-/-- Beyond a length relation bound the representation is `none`. -/
-theorem rep_none_of_LLengthRel {ll : HolLList α} {n : Nat} (h : LLengthRel ll n) :
-    ∀ i, n ≤ i → ll.rep i = none :=
-  LLengthRel.rec (motive := fun ll n _ => ∀ i, n ≤ i → ll.rep i = none)
-    (fun i _ => rfl)
-    (fun hd k t _ ih i hi => by
-      cases i with
-      | zero => exact absurd hi (Nat.not_succ_le_zero k)
-      | succ j =>
-          have hj : k ≤ j := Nat.le_of_succ_le_succ hi
-          have hshift : (lcons hd t).rep (j + 1) = t.rep j := by simp [lcons]
-          rw [hshift]
-          exact ih j hj)
-    h
-
-/-- `toList ll = some xs` exposes the representation as `xs` with `none` beyond. -/
-theorem toList_eq_some_rep {ll : HolLList α} {xs : List α} (h : toList ll = some xs) :
-    ∀ i, ll.rep i = if hi : i < xs.length then some xs[i] else none := by
-  unfold toList at h
-  split at h
-  · rename_i hfin
-    obtain ⟨n, hnlen, hnrel⟩ := llength_spec hfin
-    rw [hnlen] at h
-    simp only [Option.getD_some] at h
-    obtain ⟨hlen, hrep⟩ := ltake_spec n ll xs h
-    intro i
-    by_cases hi : i < xs.length
-    · rw [dif_pos hi]; simpa using hrep i hi
-    · rw [dif_neg hi]
-      have hnrel' : LLengthRel ll xs.length := by rw [hlen]; exact hnrel
-      exact rep_none_of_LLengthRel hnrel' i (Nat.le_of_not_lt hi)
-  · simp at h
 
 /-- Membership is inherited along `lprefix` at the representation level: an
     `lprefix`-smaller list is `some` at `n` only where the larger one is. -/
@@ -449,53 +238,6 @@ theorem lnth_buildLprefixLub {ls : HolLList α → Prop} (hchain : lprefixChain 
 theorem unique_lprefix_lub {ls : HolLList α → Prop} {ll1 ll2 : HolLList α}
     (h1 : lprefixLub ls ll1) (h2 : lprefixLub ls ll2) : ll1 = ll2 :=
   lprefix_antisym (h1.2 ll2 h2.1) (h2.2 ll1 h1.1)
-
-/-- A cons peels its head. -/
-theorem lhd_lcons (h : α) (t : HolLList α) : lhd (lcons h t) = some h := by
-  simp [lhd, lcons]
-
-/-- The tail of a cons is the original tail. -/
-theorem ltl_lcons (h : α) (t : HolLList α) : ltl (lcons h t) = some t := by
-  have hrep : (⟨fun n => (lcons h t).rep (n + 1),
-      fun n hk => (lcons h t).ok (n + 1) hk⟩ : HolLList α) = t :=
-    ext_of_rep (fun n => by simp [lcons])
-  simp only [ltl, lhd_lcons, Option.some.injEq]
-  exact hrep
-
-/-- A finite lazy list has a `some` prefix of any length up to its length. -/
-theorem ltake_of_LLengthRel {ll : HolLList α} {n : Nat} (h : LLengthRel ll n) :
-    ∃ xs : List α, ltake n ll = some xs := by
-  induction h with
-  | lnil => exact ⟨[], rfl⟩
-  | lcons hd k t _ ih =>
-      obtain ⟨xs, hxs⟩ := ih
-      exact ⟨hd :: xs, by simp [ltake, lhd_lcons, ltl_lcons, hxs]⟩
-
-/-- A finite lazy list has a finite `toList`. -/
-theorem toList_of_LFinite {ll : HolLList α} (h : LFinite ll) :
-    ∃ xs : List α, toList ll = some xs := by
-  obtain ⟨n, hnlen, hnrel⟩ := llength_spec h
-  obtain ⟨xs, hxs⟩ := ltake_of_LLengthRel hnrel
-  refine ⟨xs, ?_⟩
-  unfold toList
-  rw [if_pos h, hnlen]
-  simp only [Option.getD_some]
-  exact hxs
-
-/-- A finite lazy list is never the `none` of `toList`. -/
-theorem toList_ne_none_of_LFinite {ll : HolLList α} (h : LFinite ll) :
-    toList ll ≠ none := by
-  obtain ⟨xs, hxs⟩ := toList_of_LFinite h
-  rw [hxs]
-  exact Option.some_ne_none xs
-
-/-- If `toList` is `none` the list is infinite and defined at every index. -/
-theorem rep_some_of_toList_none {ll : HolLList α} (h : toList ll = none) :
-    ∀ n, ∃ x, ll.rep n = some x := by
-  intro n
-  by_cases hn : ll.rep n = none
-  · exact absurd h (toList_ne_none_of_LFinite (LFinite_of_rep_none hn))
-  · exact Option.ne_none_iff_exists'.mp hn
 
 /-- Converse of `lprefix_rep`: if `b` is defined wherever `a` is, then `a` is
     an `lprefix` of `b`. -/
@@ -650,6 +392,297 @@ theorem build_prefix_lub_intro {ls : HolLList α → Prop} (hchain : lprefixChai
   · intro h
     rw [h]
     exact buildLprefixLub_thm hchain
+
+/-! ### Chain/equality lemmas
+
+HOL `equiv_lprefix_chain`, `lprefix_rel` and the derived equality facts
+(`lprefix_lubScript.sml:242-558`). -/
+
+/-- HOL `equiv_lprefix_chain ls1 ls2 ⇔
+    !n. lprefix_chain_nth n ls1 = lprefix_chain_nth n ls2`
+    (`lprefix_lubScript.sml:242-245`). -/
+@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "equiv_lprefix_chain_def"]
+def equivLprefixChain (ls1 ls2 : HolLList α → Prop) : Prop :=
+  ∀ n, lprefixChainNth n ls1 = lprefixChainNth n ls2
+
+/-- HOL `lprefix_rel s1 s2 ⇔ ∀l1. l1 IN s1 ⇒ ∃l2. l2 IN s2 ∧ LPREFIX l1 l2`
+    (`lprefix_lubScript.sml:522-523`); HOL sets `'a llist set` are predicates
+    `HolLList α → Prop`. -/
+@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "lprefix_rel_def"]
+def lprefixRel (s1 s2 : HolLList α → Prop) : Prop :=
+  ∀ l1, s1 l1 → ∃ l2, s2 l2 ∧ lprefix l1 l2
+
+/-- HOL `prefixes_lprefix_total` (`llistScript.sml:2744-2746`): two lazy lists
+    that are both `lprefix`-below a common list are `lprefix`-comparable.  This
+    is the generic `llist` helper used by `lprefix_lub_is_chain`.  It carries no
+    `@[hol]` tag: its original lives in `llistScript.sml`, which is not the
+    pinned `lprefix_lubScript.sml` snapshot, so the external-path checker would
+    reject the citation; it is Flapjack infrastructure for this port. -/
+theorem lprefix_total_of_common {a b c : HolLList α} (ha : lprefix a c) (hb : lprefix b c) :
+    lprefix a b ∨ lprefix b a := by
+  by_cases hab : lprefix a b
+  · exact Or.inl hab
+  · right
+    have hnot : ¬ ∀ n x, a.rep n = some x → b.rep n = some x :=
+      fun hall => hab (lprefix_of_rep_agree hall)
+    obtain ⟨n, hnotn⟩ : ∃ n, ¬ ∀ x, a.rep n = some x → b.rep n = some x :=
+      Classical.not_forall.mp hnot
+    obtain ⟨x, hnotx⟩ : ∃ x, ¬ (a.rep n = some x → b.rep n = some x) :=
+      Classical.not_forall.mp hnotn
+    have han : a.rep n = some x := by
+      apply Classical.byContradiction
+      intro h
+      exact hnotx (fun h' => absurd h' h)
+    have hbn : b.rep n ≠ some x := by
+      intro h'
+      exact hnotx (fun _ => h')
+    have hbnone : b.rep n = none := by
+      cases hbn' : b.rep n with
+      | none => rfl
+      | some y =>
+          exfalso
+          have hcx : c.rep n = some x := lprefix_rep ha han
+          have hcy : c.rep n = some y := lprefix_rep hb hbn'
+          rw [hcx] at hcy
+          have hxy : x = y := Option.some.inj hcy
+          exact hbn (by rw [hbn', hxy])
+    apply lprefix_of_rep_agree
+    intro m y hbm
+    have hlt : m < n := by
+      apply Classical.byContradiction
+      intro hge
+      have hmn : n ≤ m := Nat.le_of_not_lt hge
+      have hnone := rep_none_of_le b hbnone hmn
+      rw [hbm] at hnone
+      exact absurd hnone (by simp)
+    have hcy : c.rep m = some y := lprefix_rep hb hbm
+    cases ham : a.rep m with
+    | none =>
+        have hnone := rep_none_of_le a ham (Nat.le_of_lt hlt)
+        rw [han] at hnone
+        exact absurd hnone (by simp)
+    | some w =>
+        have hcw : c.rep m = some w := lprefix_rep ha ham
+        rw [hcw] at hcy
+        have hwy : w = y := Option.some.inj hcy
+        rw [← hwy]
+
+/-- HOL `lprefix_lub_is_chain` (`lprefix_lubScript.sml:312-317`). -/
+@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "lprefix_lub_is_chain"]
+theorem lprefix_lub_is_chain {ls : HolLList α → Prop} {ll : HolLList α}
+    (h : lprefixLub ls ll) : lprefixChain ls := by
+  intro a b ha hb
+  exact lprefix_total_of_common (h.1 a ha) (h.1 b hb)
+
+/-- HOL `equiv_lprefix_chain_thm` (`lprefix_lubScript.sml:247-262`). -/
+@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "equiv_lprefix_chain_thm"]
+theorem equivLprefixChain_thm {ls1 ls2 : HolLList α → Prop}
+    (h1 : lprefixChain ls1) (h2 : lprefixChain ls2) :
+    (equivLprefixChain ls1 ls2 ↔
+      (∀ ll1 n x, ls1 ll1 → lnth n ll1 = some x →
+        ∃ ll2, ls2 ll2 ∧ lnth n ll2 = some x) ∧
+      (∀ ll2 n x, ls2 ll2 → lnth n ll2 = some x →
+        ∃ ll1, ls1 ll1 ∧ lnth n ll1 = some x)) := by
+  constructor
+  · intro heq
+    refine ⟨?_, ?_⟩
+    · intro ll1 n x hl1 hln
+      have hc1 : lprefixChainNth n ls1 = some x :=
+        exists_lprefixChainNth h1 ⟨ll1, hl1, hln⟩
+      have hc2 : lprefixChainNth n ls2 = some x := by
+        rw [← heq n]; exact hc1
+      exact holOptionSome_some (P := fun z => ∃ l, ls2 l ∧ lnth n l = some z) (x := x) hc2
+    · intro ll2 n x hl2 hln
+      have hc2 : lprefixChainNth n ls2 = some x :=
+        exists_lprefixChainNth h2 ⟨ll2, hl2, hln⟩
+      have hc1 : lprefixChainNth n ls1 = some x := by
+        rw [heq n]; exact hc2
+      exact holOptionSome_some (P := fun z => ∃ l, ls1 l ∧ lnth n l = some z) (x := x) hc1
+  · intro hdir
+    rw [equivLprefixChain]
+    intro n
+    cases hc1 : lprefixChainNth n ls1 with
+    | none =>
+        symm
+        apply lprefixChainNth_eq_none
+        intro l2 hl2
+        cases hln : lnth n l2 with
+        | none => rfl
+        | some y =>
+            obtain ⟨l1, hl1, hln1⟩ := hdir.2 l2 n y hl2 hln
+            have hcontra := exists_lprefixChainNth h1 ⟨l1, hl1, hln1⟩
+            rw [hc1] at hcontra
+            exact absurd hcontra (by simp)
+    | some x =>
+        obtain ⟨l1, hl1, hln1⟩ :=
+          holOptionSome_some (P := fun z => ∃ l, ls1 l ∧ lnth n l = some z) (x := x) hc1
+        obtain ⟨l2, hl2, hln2⟩ := hdir.1 l1 n x hl1 hln1
+        exact (exists_lprefixChainNth h2 ⟨l2, hl2, hln2⟩).symm
+
+/-- HOL `llist_shorter` (`lprefix_lubScript.sml:122-129`): `ll1` is no longer
+    than `ll2`; `none` is the infinite length. -/
+@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "llist_shorter_def"]
+def llistShorter (ll1 ll2 : HolLList α) : Prop :=
+  match llength ll1, llength ll2 with
+  | none, none => True
+  | some _, none => True
+  | none, some _ => False
+  | some x, some y => x ≤ y
+
+/-- HOL `llist_shorter_fromList` (`lprefix_lubScript.sml:163-169`). -/
+@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "llist_shorter_fromList"]
+theorem llistShorter_fromList (l1 l2 : List α) :
+    llistShorter (fromList l1) (fromList l2) ↔ l1.length ≤ l2.length := by
+  simp [llistShorter, llength_fromList]
+
+/-- HOL `llist_shorter_lnth` (`lprefix_lubScript.sml:131-161`): `ll1` is no
+    longer than `ll2` exactly when `ll2` is defined wherever `ll1` is. -/
+theorem llistShorter_lnth {ll1 ll2 : HolLList α} :
+    llistShorter ll1 ll2 ↔
+      ∀ n x, lnth n ll1 = some x → ∃ y, lnth n ll2 = some y := by
+  cases h1 : llength ll1 with
+  | none =>
+      cases h2 : llength ll2 with
+      | none =>
+          simp only [llistShorter, h1, h2]
+          exact ⟨fun _ n x _ => lnth_some_of_not_LFinite (not_LFinite_of_llength_eq_none h2) n,
+                 fun _ => trivial⟩
+      | some b =>
+          simp only [llistShorter, h1, h2]
+          constructor
+          · intro h; exact h.elim
+          · intro H
+            obtain ⟨x, hx⟩ :=
+              lnth_some_of_not_LFinite (not_LFinite_of_llength_eq_none h1) b
+            obtain ⟨y, hy⟩ := H b x hx
+            rw [lnth_none_of_LLengthRel (LLengthRel_of_llength_eq_some h2)
+              (Nat.le_refl b)] at hy
+            exact Option.some_ne_none y hy.symm
+  | some a =>
+      cases h2 : llength ll2 with
+      | none =>
+          simp only [llistShorter, h1, h2]
+          exact ⟨fun _ n x _ => lnth_some_of_not_LFinite (not_LFinite_of_llength_eq_none h2) n,
+                 fun _ => trivial⟩
+      | some b =>
+          simp only [llistShorter, h1, h2]
+          constructor
+          · intro hab n x hx
+            have hnlt : n < a := by
+              by_cases hlt : n < a
+              · exact hlt
+              · exfalso
+                rw [lnth_none_of_LLengthRel (LLengthRel_of_llength_eq_some h1)
+                  (Nat.le_of_not_lt hlt)] at hx
+                exact Option.some_ne_none x hx.symm
+            exact lnth_some_of_LLengthRel (LLengthRel_of_llength_eq_some h2) n
+              (Nat.lt_of_lt_of_le hnlt hab)
+          · intro H
+            by_cases hle : a ≤ b
+            · exact hle
+            · exfalso
+              obtain ⟨x, hx⟩ := lnth_some_of_LLengthRel
+                (LLengthRel_of_llength_eq_some h1) b (Nat.lt_of_not_le hle)
+              obtain ⟨y, hy⟩ := H b x hx
+              rw [lnth_none_of_LLengthRel (LLengthRel_of_llength_eq_some h2)
+                (Nat.le_refl b)] at hy
+              exact Option.some_ne_none y hy.symm
+
+/-- HOL `equiv_lprefix_chain_thm2` (`lprefix_lubScript.sml:264-304`): with both
+    families chains and every member of `ls2` finite, `equiv_lprefix_chain`
+    equivalently says that `ls2` supplies a value wherever `ls1` does and that
+    every non-empty `ls2` member is `llist_shorter` than some `ls1` member. -/
+@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "equiv_lprefix_chain_thm2"]
+theorem equiv_lprefix_chain_thm2 {ls1 ls2 : HolLList α → Prop}
+    (h1 : lprefixChain ls1) (h2 : lprefixChain ls2)
+    (hfin : ∀ ll2, ls2 ll2 → LFinite ll2) :
+    (equivLprefixChain ls1 ls2 ↔
+      (∀ (ll1 : HolLList α) (n : Nat) (x : α), ls1 ll1 → lnth n ll1 = some x →
+        ∃ ll2, ls2 ll2 ∧ lnth n ll2 = some x) ∧
+      (∀ (ll2 : HolLList α) (_n : Nat) (_x : α), ls2 ll2 → ll2 ≠ lnil →
+        ∃ ll1, ls1 ll1 ∧ llistShorter ll2 ll1)) := by
+  rw [equivLprefixChain_thm h1 h2]
+  constructor
+  · intro ⟨hA, hB⟩
+    refine ⟨hA, ?_⟩
+    intro ll2 n x hl2 hne
+    obtain ⟨len, _, hrel⟩ := llength_spec (hfin ll2 hl2)
+    have hlen0 : len ≠ 0 := by
+      intro h0
+      exact hne (eq_lnil_of_LLengthRel_zero (h0 ▸ hrel))
+    obtain ⟨v, hv⟩ := lnth_some_of_LLengthRel hrel len.pred (Nat.pred_lt hlen0)
+    obtain ⟨ll1, hl1, hln1⟩ := hB ll2 len.pred v hl2 hv
+    refine ⟨ll1, hl1, ?_⟩
+    apply llistShorter_lnth.mpr
+    intro m y hmy
+    have hmx : m < len := by
+      by_cases hlt : m < len
+      · exact hlt
+      · exfalso
+        rw [lnth_none_of_LLengthRel hrel (Nat.le_of_not_lt hlt)] at hmy
+        exact Option.some_ne_none y hmy.symm
+    exact lnth_some_down_closed hln1 (Nat.le_pred_of_lt hmx)
+  · intro ⟨hA, hC⟩
+    refine ⟨hA, ?_⟩
+    intro ll2 n x hl2 hln
+    have hne : ll2 ≠ lnil := by
+      intro heq
+      rw [heq] at hln
+      have : lnth n (lnil : HolLList α) = none := by rw [lnth_eq_rep]; rfl
+      rw [this] at hln
+      exact Option.some_ne_none x hln.symm
+    obtain ⟨ll1, hl1, hsh⟩ := hC ll2 n x hl2 hne
+    obtain ⟨z, hz⟩ := (llistShorter_lnth.mp hsh) n x hln
+    obtain ⟨ll2', hl2', hln2'⟩ := hA ll1 n z hl1 hz
+    have hzx : z = x := lprefixChain_LNTHs_agree h2 hl2' hl2 hln2' hln
+    exact ⟨ll1, hl1, by rw [hzx] at hz; exact hz⟩
+
+/-- HOL `lprefix_rel_lnth` (`lprefix_lubScript.sml:526-538`). -/
+@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "lprefix_rel_lnth"]
+theorem lprefix_rel_lnth {ls1 ls2 : HolLList α → Prop} (h : lprefixRel ls1 ls2) :
+    ∀ ll1 n x, ls1 ll1 → lnth n ll1 = some x →
+      ∃ ll2, ls2 ll2 ∧ lnth n ll2 = some x := by
+  intro ll1 n x hl1 hln
+  obtain ⟨l2, hl2, hpre⟩ := h ll1 hl1
+  exact ⟨l2, hl2, lprefix_lnth hpre hln⟩
+
+/-- HOL `IMP_equiv_lprefix_chain` (`lprefix_lubScript.sml:540-548`). -/
+@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "IMP_equiv_lprefix_chain"]
+theorem IMP_equiv_lprefix_chain {ls1 ls2 : HolLList α → Prop}
+    (h1 : lprefixChain ls1) (h2 : lprefixChain ls2)
+    (hr12 : lprefixRel ls1 ls2) (hr21 : lprefixRel ls2 ls1) :
+    equivLprefixChain ls1 ls2 := by
+  rw [equivLprefixChain_thm h1 h2]
+  exact ⟨lprefix_rel_lnth hr12, lprefix_rel_lnth hr21⟩
+
+/-- HOL `lprefix_lub_equiv_chain2` (`lprefix_lubScript.sml:471-484`). -/
+@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "lprefix_lub_equiv_chain2"]
+theorem lprefix_lub_equiv_chain2 {ls1 ls2 : HolLList α → Prop} {ll1 ll2 : HolLList α}
+    (h1 : lprefixLub ls1 ll1) (h2 : lprefixLub ls2 ll2) :
+    (ll1 = ll2 ↔ equivLprefixChain ls1 ls2) := by
+  have hc1 := lprefix_lub_is_chain h1
+  have hc2 := lprefix_lub_is_chain h2
+  constructor
+  · intro heq
+    subst heq
+    rw [equivLprefixChain]
+    intro n
+    rw [← (lprefix_lub_nth hc1).mp h1 n, ← (lprefix_lub_nth hc2).mp h2 n]
+  · intro heq
+    apply ext_of_rep
+    intro n
+    rw [← lnth_eq_rep n ll1, ← lnth_eq_rep n ll2]
+    rw [(lprefix_lub_nth hc1).mp h1 n, (lprefix_lub_nth hc2).mp h2 n]
+    exact heq n
+
+/-- HOL `IMP_build_lprefix_lub_EQ` (`lprefix_lubScript.sml:550-558`). -/
+@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "IMP_build_lprefix_lub_EQ"]
+theorem IMP_build_lprefix_lub_EQ {ls1 ls2 : HolLList α → Prop}
+    (h1 : lprefixChain ls1) (h2 : lprefixChain ls2)
+    (hr12 : lprefixRel ls1 ls2) (hr21 : lprefixRel ls2 ls1) :
+    buildLprefixLub ls1 = buildLprefixLub ls2 :=
+  (lprefix_lub_equiv_chain2 (buildLprefixLub_thm h1) (buildLprefixLub_thm h2)).mpr
+    (IMP_equiv_lprefix_chain h1 h2 hr12 hr21)
 
 end HolLList
 
