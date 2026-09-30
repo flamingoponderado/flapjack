@@ -37259,5 +37259,68 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-ds10 source comparison (bead flapjack-4ac.4.60.1.1.15): exact port of HOL panProps$evaluate_clock_sub (panPropsScript.sml:724-728), proved by the original recInduct evaluate_ind over the canonical carrier. The statement quantifies p, t, res, st, ck and the two original hypotheses (high run at clock + ck; res <> TimeOut) with conclusion at clock - ck; all 21 case IHs are discharged internally by the tagged constructor case lemmas through the field-for-field PanProps codec, and no induction hypothesis or target-run fact is a premise of the public theorem."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/StateRelImpSemantics.lean",
+  "lean_name": "holFmapAsFiniteSupportParamWitness_fstMap3F_inl_fs",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only same-module canonical parameter witness for inl_fs (forwards the reviewed compile_inl_prog witness)."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/StateRelImpSemantics.lean",
+  "lean_name": "holFmapAsFiniteSupportParamWitness_compileInlineDistinct_inl_fs",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only same-module canonical parameter witness for inl_fs (forwards the reviewed compile_inl_prog witness)."
+},
+{
+  "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+  "hol_name": "fst_map_3_f",
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/StateRelImpSemantics.lean",
+  "lean_name": "fstMap3F",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_parameters": [
+    "inl_fs"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-2de.4.1): crep_inlineProofScript.sml:3263-3264 forall inl_fs x. FST x = (FST o (\\(name, params, body). (name, params, inline_prog (inl_fs \\\\ name) body))) x. Lean binds inl_fs and x in HOL order over the triple carrier of compile_inl_prog_def; the lambda is the same triple map as the reviewed compileInlProgHOLExact (inl_fs \\\\ name as erase, inline_prog as inlineProgHOLExact). Same equation; no premise."
+},
+{
+  "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+  "hol_name": "compile_inline_distinct",
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/StateRelImpSemantics.lean",
+  "lean_name": "compileInlineDistinct",
+  "statement_status": "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_parameters": [
+    "inl_fs"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-2de.4.1): crep_inlineProofScript.sml:3270-3272 forall crep_code inl_fs. ALL_DISTINCT (MAP FST crep_code) ==> ALL_DISTINCT (MAP FST (compile_inl_prog inl_fs crep_code)). Lean binds crep_code inl_fs in HOL order; ALL_DISTINCT is List.Nodup, MAP FST is List.map Prod.fst, and compile_inl_prog is the tagged compileInlProgHOLExact. Same premise and conclusion."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/StateRelImpSemantics.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed CrepSemHOLState toBroad/ofBroad roundtrip for the relation qualifier."
+},
+{
+  "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+  "hol_name": "evaluate_call_same_result_state",
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/StateRelImpSemantics.lean",
+  "lean_name": "evaluateCallSameResultStateExact",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "CrepSemHOLState.locals",
+    "CrepSemHOLState.globals",
+    "CrepSemHOLState.code",
+    "inl_fs"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-2de.4.2): crep_inlineProofScript.sml:3284-3294 forall e args s r s' t inl_fs. evaluate (Call NONE e args, s) = (r,s') /\\ state_rel_code s t /\\ inl_fs SUBMAP s.code /\\ locals_strong_rel s t /\\ code_inl_rel inl_fs s t /\\ r <> SOME Error ==> FST (evaluate (Call NONE e args, t)) = FST (evaluate (Call NONE e args, s)) /\\ state_rel_code (SND (evaluate (Call NONE e args, s))) (SND (evaluate (Call NONE e args, t))). Lean binds e args s r s' t inl_fs in HOL order, with the same six conjuncts and conclusion (FST/SND as .1/.2) over evalCrepSemHOLProgExact and the exact relation ports. No extra premise. Proof: inline_prog with the empty inline bag leaves Call NONE unchanged (inlineProgHOLExact_call_nonInlined), so the reviewed callNonInlined applies, with its callee-body premise from the accepted inline_prog_correct motive (inlineMotive) and its handler premise vacuous for Call NONE; this is the content of HOL's proof, which uses inline_prog_correct on the callee body."
 }
 ]
