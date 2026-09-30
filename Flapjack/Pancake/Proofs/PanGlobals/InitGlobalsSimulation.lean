@@ -1,11 +1,70 @@
 import Flapjack.Pancake.Proofs.PanGlobals.CompileDecsStructural
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsDisjoint
 import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+import Flapjack.Pancake.Proofs.PanGlobals.CompileExpCorrect
+import Flapjack.Pancake.Proofs.PanGlobals.StateRelationLocals
+import Flapjack.Pancake.Semantics.PanProps.EvalInvariant
+import Flapjack.Pancake.Proofs.PanGlobals.MemStores
 
 namespace Flapjack.PanGlobalsInitGlobalsSimulation
 open Flapjack.Pancake.PanLang
 open PanSemStateFiniteExact
 open Flapjack.Compiler.Backend.StackRemove (addresses)
+
+/-- Flapjack-specific composition of the original initializer head-expression
+proof (HOL 2149-2163). The source initializer evaluates with empty locals;
+the target store evaluates in the unchanged target state. Clearing both local
+maps establishes state_rel T, expression correctness transports the value,
+and eval_empty_locals_IMP restores the target locals. This composition has
+no independent HOL declaration and assumes no target evaluation. -/
+theorem initializerExpression {width : Nat} {σ : Type} [NeZero width]
+    (source target : PanSemStateFiniteExact width σ)
+    (context : PanGlobalsContextExact width) (expression : ExpHOL width)
+    (value : ValueHOL width)
+    (hrel : panGlobalsStateRelHOLExact false context source target)
+    (heval : @evalHOLFinite width σ _ source.emptyLocalsHOLFinite
+      (fun a => Classical.propDecidable (source.memaddrs a)) expression = some value) :
+    @evalHOLFinite width σ _ target
+      (fun a => Classical.propDecidable (target.memaddrs a))
+      (compileExpExactHOL context expression) = some value := by
+  classical
+  have hcleared :=
+    (PanGlobalsStateRelationLocals.stateRelEmptyLocalsHOL context source target true).2 hrel
+  have hcompiled := PanGlobalsCompileExpCorrect.compileExpCorrectHOL
+    source.emptyLocalsHOLFinite expression value context target.emptyLocalsHOLFinite
+    ⟨hcleared, heval⟩
+  exact PanPropsEvalStateFiniteExact.evalEmptyLocalsHOLFinite target
+    (compileExpExactHOL context expression) value hcompiled
+
+/-- Flapjack-specific address algebra for the initializer cons proof's head
+store and recursive free-range obligations (HOL source 2155-2229). This has no
+independently named HOL original; it reuses PanGlobalsMemStores.addresses_add
+with the multiplication order used by the initializer. Modular arithmetic permits wrapping;
+no numeric bound or evaluation premise is needed for range splitting. -/
+theorem initializerAddressesSplit {width : Nat} (base : BitVec width)
+    (head tail : Nat) (address : BitVec width) :
+    addresses base (head + tail) address ↔
+      addresses base head address ∨
+        addresses (base + BitVec.ofNat width head *
+          Flapjack.Compiler.Backend.StackRemove.bytesInWord width) tail address := by
+  simpa only [Flapjack.Compiler.Backend.StackRemove.bytesInWord,
+    BitVec.mul_comm] using PanGlobalsMemStores.addresses_add head tail base address
+
+/-- Prefix containment used to justify the first initializer's stores. -/
+theorem initializerAddressesPrefix {width : Nat} (base : BitVec width)
+    (head tail : Nat) (address : BitVec width)
+    (h : addresses base head address) :
+    addresses base (head + tail) address :=
+  (initializerAddressesSplit base head tail address).mpr (Or.inl h)
+
+/-- Suffix containment transports domain and disjointness premises to the
+recursive initializer. This is infrastructure, not an extra simulation premise. -/
+theorem initializerAddressesSuffix {width : Nat} (base : BitVec width)
+    (head tail : Nat) (address : BitVec width)
+    (h : addresses (base + BitVec.ofNat width head *
+      Flapjack.Compiler.Backend.StackRemove.bytesInWord width) tail address) :
+    addresses base (head + tail) address :=
+  (initializerAddressesSplit base head tail address).mpr (Or.inr h)
 
 /-- Canonical state roundtrips for the relation representation. -/
 theorem holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact
