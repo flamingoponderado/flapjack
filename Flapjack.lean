@@ -1,4 +1,5 @@
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Assembly
+import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Call
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.ExtCall
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Call
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.CallEntry
@@ -570,6 +571,8 @@ import Flapjack.Pancake.Proofs.CrepInline.ExpressionRelations
 import Flapjack.Pancake.Proofs.CrepInline.NestedDecs
 import Flapjack.Pancake.Proofs.CrepInline.ShMem
 import Flapjack.Pancake.Proofs.CrepInline.Call
+import Flapjack.Pancake.Proofs.CrepInline.CallTail
+import Flapjack.Pancake.Proofs.CrepInline.FiniteMapLemmas
 import Flapjack.Pancake.Proofs.CrepInline.UpdateListLocals
 import Flapjack.Pancake.Proofs.CrepInline.UnreachElim
 import Flapjack.Pancake.Proofs.CrepInline.UnreachElimPredicates

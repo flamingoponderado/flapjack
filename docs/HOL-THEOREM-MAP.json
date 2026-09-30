@@ -36549,6 +36549,131 @@
   "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-4ac.4.60.1.1.12): exact source shape of HOL panPropsScript.sml evaluate_clock_sub If constructor, handled in the generic final branch of the HOL induction (panSemScript.sml:630). Single literal guarded IH after the eval/Val/Word guard: forall result2 st2 ck2, source selected-branch run = (result2, st2 with clock := st2.clock + ck2) -> result2 <> SOME TimeOut -> low-clock selected-branch run = (result2, st2), exactly as the accepted Call/DecCall clockSubAt cases; original premisses (high-run equation to st with clock := st.clock+ck and result <> SOME TimeOut), no added premise and no outer-specialized IH."
 },
 {
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/Call.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Canonical imported-state roundtrip infrastructure, no separate HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/Call.lean",
+  "lean_name": "evaluateFperm_Call",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_fperm",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison evaluate_fperm1721-1810 Call1746-1775, panSem657-693 and faithful EvaluateInd105-137: original f/g/program/state/result/post equation with only literal successful-argument/code/nonzero-clock callee IH and original matched-exception handler IH. Product decomposition binders substituted by components, exception-ID equality substituted, original eshapes/shape/LOCAL validity guards retained. ALL results including body NONE/Break/Continue Error, invalid return shape/destination, invalid/missing handler and body Error; unhandled exception/timeout/finalFFI empty locals; caller locals restored before return write/handler. Existing faithful Call equation discharges fix_clock through clock bounds, no added bound premise. Canonical finite locals/globals/code/eshapes with genuine imported-owner roundtrip; native MlS/ProgHOL/ShapeHOL/ValueHOL, positive BitVec width/NeZero and Type0 FFI unchanged. No target run/postrelation/nonError/success/freshness premise. Full constructor candidate ready independent coordinator review; full theorem assembly still open. Proof-only no executed compiler change."
+},
+{
+  "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
+  "hol_name": "update_locals_not_vars_eval_eq'",
+  "hol_line": 194,
+  "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
+  "lean_name": "updateLocalsNotVarsEvalEq'CrepHOL",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.42.5) compared crepPropsScript.sml:194-200, the public update_locals_not_vars_eval_eq' (a [local] namesake at :131 is a different result-carrying helper, hence the line qualifier): forall s e v n w. ~MEM n (var_cexp e) ==> eval (s with locals := s.locals |+ (n,w)) e = eval s e. Lean: same hypothesis n NOTIN crepExpVarsHOL e and conclusion over evalCrepSemHOLExp, with |+ as the finite-support updateEq. HOL's binder v occurs nowhere in the statement (its HOL type is therefore a free type variable); it is retained in HOL order as (_v : a) over an implicit {a : Type}, per coordinator review 2026-09-30T20:08Z. No extra premise. Proof: the untagged evalCrepSemHOLExp_updateLocals_eq_of_not_vars."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/CallTail.lean",
+  "lean_name": "inlineProgHOLExact_call_tail",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack local support (bead .42.2): inline_prog_def on an inlined tail call, via inlineProgHOLCoreExact_eq_inlineProgHOLExact."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/CallTail.lean",
+  "lean_name": "submap_erase",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack local support (bead .42.2): inl_bag \\\\ fname SUBMAP inl_bag (HOL SUBMAP_DOMSUB)."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/CallTail.lean",
+  "lean_name": "submap_trans'",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack local support (bead .42.2): SUBMAP transitivity on HolFiniteMapExact (HOL SUBMAP_TRANS)."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/CallTail.lean",
+  "lean_name": "updateList_eq_updateListEq",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack local support (bead .42.2): FEMPTY |++ ZIP, BEq-based updateList equals the =-based updateListEq on Nat keys."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/CallTail.lean",
+  "lean_name": "tmpVars_facts",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack local support (bead .42.2): the GENLIST temporaries of inline_prog are distinct, have the parameter count, and are fresh for ns and the argument variables (HOL genlist_all_distinct, mem_genlist_add_suc_val, MAX_LIST_PROPERTY)."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/CallTail.lean",
+  "lean_name": "callTail",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack helper (bead .42.2) for HOL Resume inline_prog_correct[Tail] (crep_inlineProofScript.sml:2536-2575): the inlined-tail-call part of the Call case, with evaluate_ind's Call body IH at crepInlineGoal (as callNonInlined), over exact carriers; no extra premise. Proof follows HOL: callee IH, unreach_elim_correct, general_simulate_arg_load_strong_all_drule with t = FEMPTY, source result mapping. Untagged; the tagged Call case is assembled in .42.4."
+},
+{
+  "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+  "hol_name": "SUBMAP_IMP_FUPDATE_LIST_SUBMAP",
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/FiniteMapLemmas.lean",
+  "lean_name": "submapImpFupdateListSubmapExact",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": [
+    "f",
+    "g"
+  ],
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.5.42.6): compared crep_inlineProofScript.sml:143-145: forall x y f g. f SUBMAP g /\\ LENGTH x = LENGTH y ==> f |++ ZIP(x,y) SUBMAP g |++ ZIP(x,y). Lean binds x y f g in HOL order, with the same conjunctive hypothesis (length premise retained although unused, as in HOL's statement) and conclusion; SUBMAP is HolFiniteMapExact.submap, |++ ZIP is updateListEq on the zip. Both the key and value types are polymorphic, as in HOL; |++ uses classical key equality (open Classical in), so no public DecidableEq binder (repairs per coordinator 20:28Z and follow-up). f and g are bare finite-support parameters. No extra premise."
+},
+{
+  "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+  "hol_name": "opt_mmap_flookup_some_then_same_fdom",
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/FiniteMapLemmas.lean",
+  "lean_name": "optMmapFlookupSomeThenSameFdomExact",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": [
+    "fm"
+  ],
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.5.42.7): compared crep_inlineProofScript.sml:501-504: forall vs fm vals upd_vals. OPT_MMAP (FLOOKUP fm) vs = SOME vals /\\ LENGTH vs = LENGTH upd_vals ==> FDOM (fm |++ ZIP(vs,upd_vals)) = FDOM fm. Lean binds vs fm vals upd_vals in HOL order: OPT_MMAP (FLOOKUP fm) is List.mapM fm.lookup, |++ ZIP is updateListEq, and FDOM equality is equality of crepHolFdom lookups (the reviewed FDOM rendering of the crep_inline ports). Key and value types are polymorphic, as in HOL, with classical key equality and no public DecidableEq binder (repairs per coordinator 20:28Z and follow-up). fm is a bare finite-support parameter. No extra premise."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/FiniteMapLemmas.lean",
+  "lean_name": "submap_fupdateListHOL",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack local support (beads .42.6/.42.7): pointwise SUBMAP preserved by the same FUPDATE_LIST_HOL, generic in key/value types."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/FiniteMapLemmas.lean",
+  "lean_name": "dom_fupdateListHOL",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack local support (beads .42.6/.42.7): FUPDATE_LIST_HOL over keys already in the domain keeps the domain, generic in key/value types."
+},
+{
   "hol_path": null,
   "hol_name": null,
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimIndexSize.lean",
