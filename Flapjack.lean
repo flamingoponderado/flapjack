@@ -77,6 +77,8 @@ import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsShape
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsDisjoint
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsSimulation
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsRanges
+import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsReload
+import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsOldLoads
 import Flapjack.Compiler.Backend.Semantics.StackSem.FixedStackCases
 import Flapjack.Compiler.Backend.Semantics.StackSem.DynamicStackCases
 import Flapjack.Compiler.Backend.Semantics.StackSem.SizeBitmapCases
@@ -503,6 +505,7 @@ import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.While
 import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.Assembly
 import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.Call
 import Flapjack.Pancake.Proofs.CrepInline.EvaluateStateLocals.Atoms
+import Flapjack.Pancake.Proofs.CrepInline.EvaluateStateLocals.Structural
 import Flapjack.Pancake.Proofs.CrepInline.Expressions
 import Flapjack.Pancake.Proofs.CrepInline.ExpressionRelations
 import Flapjack.Pancake.Proofs.CrepInline.NestedDecs
