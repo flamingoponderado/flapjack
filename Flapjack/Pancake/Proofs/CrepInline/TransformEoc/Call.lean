@@ -8,9 +8,9 @@ import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.Call
 bead `flapjack-pxn.18.5.5.47.2.3`).  `transform_eoc` rewrites a tail call
 `Call NONE` to `Call (SOME (rts, NONE))`, leaves `Call (SOME (_, NONE))`
 unchanged and transforms the handler of `Call (SOME (_, SOME (eid, p)))`.  The
-tagged case takes both of HOL `evaluate_ind`'s guarded Call premises (callee and
-handler), specialized to `transformEocGoal` (bead `flapjack-pxn.18.5.5.47.5`);
-the proof, the untagged `callEocGoal`, uses only the handler premise.
+tagged case retains both guarded `evaluate_ind` premises at `transformEocGoal`.
+The handler-only calculation is stronger untagged support: its proof does not
+use the callee motive, but that omission is not an exact HOL case statement.
 -/
 
 namespace Flapjack
@@ -101,9 +101,8 @@ private theorem tailGoal {width : Nat} [NeZero width] {σ : Type}
             · obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
               exact ⟨_, _, rfl, ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩, rfl⟩
 
-/-- HOL `evaluate_ind`'s guarded Call callee premise, specialized to
-    `transformEocGoal`: arguments evaluate, the code lookup succeeds, the return
-    names are distinct and the clock is nonzero. -/
+/-- HOL `evaluate_ind`'s guarded Call callee premise specialized to the
+`transform_eoc_correct` motive. All successful-call guards are retained. -/
 def TransformEocCallCalleeIH {width : Nat} [NeZero width] {σ : Type}
     (s : CrepSemHOLState width σ)
     (info : Option (List Nat × Option (BitVec width × CrepProgHOL width)))
@@ -207,26 +206,40 @@ private theorem handlerGoal {width : Nat} [NeZero width] {σ : Type}
               · obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
                 exact ⟨_, _, rfl, stateRel_refl _, rfl⟩
 
-/-- Local support (untagged): the `Call` case of HOL `transform_eoc_correct`
-    for every call shape from the guarded handler premise alone.  This is not
-    HOL's case shape (the callee premise is omitted, being unused); the tagged
-    `transformEocCorrect_Call` restores it. -/
-theorem callEocGoal {width : Nat} [NeZero width] {σ : Type}
+/-- Flapjack-specific stronger handler-only calculation. This omits the
+callee IH of HOL's induction case, so it deliberately has no HOL tag. -/
+theorem transformEocCallHandlerCalculation {width : Nat} [NeZero width] {σ : Type}
     (info : Option (List Nat × Option (BitVec width × CrepProgHOL width)))
     (fname : Flapjack.Basis.Pure.MlString.MlString) (args : List (CrepExpHOL width))
     (s : CrepSemHOLState width σ)
     (ih : TransformEocCallHandlerIH s info fname args) :
-    transformEocGoal (.call info fname args) s := by
+    ∀ (r : Option (CrepResultHOLExact width)) (s' : CrepSemHOLState width σ)
+      (res : Option CrepEarlyExitHOL) (rts : List Nat),
+      evalCrepSemHOLProgExact s (.call info fname args) = (r, s') ∧
+        unreachElimHOLExact (.call info fname args) = ((.call info fname args), res) ∧
+        notBranchRetHOLExact (.call info fname args) = true ∧
+        (∀ retvs, r = some (.return retvs) → rts.length = retvs.length) ∧
+        (∀ x, x ∈ rts → x ∉ crepVarProgHOLExact (.call info fname args)) ∧
+        (∃ z, rts.mapM s.locals.lookup = some z) ∧
+        rts.Nodup ∧
+        r ≠ some .error →
+      ∃ r1 s1', evalCrepSemHOLProgExact s (transformEocHOLExact rts (.call info fname args)) = (r1, s1') ∧
+        crepInlineStateRelExact s' s1' ∧
+        match r with
+        | none => r1 = none ∧ crepInlineLocalsStrongRelExact s' s1'
+        | some (.break n) => r1 = some (.break n) ∧ crepInlineLocalsStrongRelExact s' s1'
+        | some (.continue n) => r1 = some (.continue n) ∧ crepInlineLocalsStrongRelExact s' s1'
+        | some (.return retvs) => r1 = none ∧ rts.mapM s1'.locals.lookup = some retvs
+        | some .error => False
+        | _ => r1 = r := by
   rcases info with _ | ⟨names, _ | ⟨eid, h⟩⟩
   · exact tailGoal fname args s
   · exact leafGoal _ s (fun _ => by simp [transformEocHOLExact]) (by simp [hasReturnHOLExact])
   · exact handlerGoal names eid h fname args s ih
 
-/-- `Call` case of HOL `transform_eoc_correct` (Resume at `:2024-2038`), for
-    every call shape, with exactly HOL `evaluate_ind`'s two guarded Call
-    premises: the callee premise `_ihCallee` (unused by the proof, as in HOL)
-    and the handler premise `ih`, with tuple/result aliases normalized.  The
-    assembled theorem discharges both internally. -/
+/-- Exact Call case of HOL `transform_eoc_correct`: both guarded callee and
+handler induction premises are retained. The calculation needs only the
+handler premise; the complete assembly supplies both internally. -/
 @[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "transform_eoc_correct"
   (fmap_as_finite_support := [locals, globals, code])
   (words_as_type_indexed_bitvec)]
@@ -255,7 +268,7 @@ theorem transformEocCorrect_Call {width : Nat} [NeZero width] {σ : Type}
         | some (.return retvs) => r1 = none ∧ rts.mapM s1'.locals.lookup = some retvs
         | some .error => False
         | _ => r1 = r :=
-  callEocGoal info fname args s ih
+  transformEocCallHandlerCalculation info fname args s ih
 
 end CrepInlineTransformEoc
 

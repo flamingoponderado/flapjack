@@ -145,19 +145,6 @@ theorem whileGoal {width : Nat} [NeZero width] {σ : Type}
   · obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
     exact absurd rfl hne
 
-/-- HOL `evaluate_ind`'s guarded Call callee premise, specialized to
-    `transformBranchGoal`: arguments evaluate, the code lookup succeeds, the
-    return names are distinct and the clock is nonzero. -/
-def TransformBranchCallCalleeIH {width : Nat} [NeZero width] {σ : Type}
-    (s : CrepSemHOLState width σ)
-    (info : Option (List Nat × Option (BitVec width × CrepProgHOL width)))
-    (fname : Flapjack.Basis.Pure.MlString.MlString) (args : List (CrepExpHOL width)) : Prop :=
-  ∀ values prog newlocals,
-    args.mapM (evalCrepSemHOLExp s) = some values →
-    lookupCodeFiniteHOL s.code fname values values.length = some (prog, newlocals) →
-    ¬ crepReturnInfoNodupError info → s.clock ≠ 0 →
-    transformBranchGoal prog { decClockCrepSemHOL s with locals := newlocals }
-
 /-- HOL `evaluate_ind`'s guarded Call handler premise, specialized to
     `transformBranchGoal`. -/
 def TransformBranchCallHandlerIH {width : Nat} [NeZero width] {σ : Type}
@@ -291,10 +278,9 @@ private theorem handlerGoal {width : Nat} [NeZero width] {σ : Type}
               · obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
                 exact ⟨_, _, rfl, stateRel_refl _, rfl⟩
 
-/-- Local support (untagged): the `Call` case for every call shape from the
-    guarded handler premise alone.  This is not HOL's case shape (the callee
-    premise is omitted, being unused); the tagged `transformBranchCorrect_Call`
-    restores it. -/
+/-- Flapjack-specific stronger handler-only Call calculation for every call
+shape. It omits the unused callee induction hypothesis and is deliberately
+untagged; the exact wrapper below retains both original hypotheses. -/
 theorem callGoal {width : Nat} [NeZero width] {σ : Type}
     (info : Option (List Nat × Option (BitVec width × CrepProgHOL width)))
     (fname : Flapjack.Basis.Pure.MlString.MlString) (args : List (CrepExpHOL width))
@@ -333,10 +319,11 @@ theorem transformBranchCorrect_While {width : Nat} [NeZero width] {σ : Type}
         | _ => r1 = r :=
   whileGoal e c s ih
 
-/-- `Call` case (Resume at `:2173-2184`) for every call shape, with exactly
-    HOL `evaluate_ind`'s two guarded Call premises: the callee premise
-    `_ihCallee` (unused by the proof, as in HOL) and the handler premise `ih`.
-    The assembly discharges both internally. -/
+/-- Exact `Call` induction case of `transform_branch_correct`.
+Both original guarded callee and matching-handler hypotheses are retained.
+The callee hypothesis is unused: the unchanged callee run starts from the same
+state, and caller locals are restored. The existing untagged `callGoal`
+calculation needs only the handler hypothesis. -/
 @[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "transform_branch_correct"
   (fmap_as_finite_support := [locals, globals, code])
   (words_as_type_indexed_bitvec)]
@@ -344,7 +331,11 @@ theorem transformBranchCorrect_Call {width : Nat} [NeZero width] {σ : Type}
     (info : Option (List Nat × Option (BitVec width × CrepProgHOL width)))
     (fname : Flapjack.Basis.Pure.MlString.MlString) (args : List (CrepExpHOL width))
     (s : CrepSemHOLState width σ)
-    (_ihCallee : TransformBranchCallCalleeIH s info fname args)
+    (_ihCallee : ∀ values prog newlocals,
+      args.mapM (evalCrepSemHOLExp s) = some values →
+      lookupCodeFiniteHOL s.code fname values values.length = some (prog, newlocals) →
+      ¬ crepReturnInfoNodupError info → s.clock ≠ 0 →
+      transformBranchGoal prog {decClockCrepSemHOL s with locals := newlocals})
     (ih : TransformBranchCallHandlerIH s info fname args) :
     ∀ (r : Option (CrepResultHOLExact width)) (s' : CrepSemHOLState width σ)
       (ld : Nat) (rts : List Nat),

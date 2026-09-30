@@ -5,16 +5,16 @@ import Flapjack.Pancake.Proofs.CrepInline.TransformEoc.Call
 # crep_inline: assembled `transform_eoc_correct`
 
 Assembly of HOL `transform_eoc_correct` (`cakeml/pancake/proofs/crep_inlineProofScript.sml:1893-2038`)
-from its tagged constructor cases (beads `flapjack-pxn.18.5.5.47.2.4`,
-`.47.5`).  As for the accepted `evaluate_state_locals_rel_strong` assembly, the
-`evaluate_ind` motive is established for every program and state by the
-lexicographic (clock, size) induction `evalCrepSemHOLProgExact_inductLex`,
-which supplies every tagged case's literal premises, including the Call callee
-premise at the decremented clock.  No public induction hypothesis remains.
+from its tagged constructor cases (bead `flapjack-pxn.18.5.5.47.2.4`).  As for
+the accepted `evaluate_locals_same_fdom` assembly, the `evaluate_ind` motive is
+established by clock/program-size lexicographic induction, with arbitrary
+code-map callee bodies reached at a strictly smaller clock. All guarded Call
+and While premises are discharged internally. No public induction hypothesis remains.
 
 See `EvaluateLocals/Assembly.lean` ("Induction principle and guard spellings")
-for the equations (`callGuard_args_eq`, `callGuard_lookup_eq`,
-`callGuard_nodup_iff`) relating the Call premises' guards to `evaluate_ind`'s.
+for the equivalent well-founded induction underlying this assembly, and for the equations (`callGuard_args_eq`,
+`callGuard_lookup_eq`, `callGuard_nodup_iff`) relating the Call handler
+premise's guards to `evaluate_ind`'s.
 -/
 
 namespace Flapjack
@@ -35,12 +35,9 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {σ : Type} :
   CrepSemHOLState.holFmapAsFiniteSupportWitness
 end AssemblyWitness
 
-/-- Local support: the `evaluate_ind` motive of `transform_eoc_correct` for
-    every program and state, by the lexicographic (clock, size) induction
-    `evalCrepSemHOLProgExact_inductLex`.  Each tagged case is applied with
-    exactly its `evaluate_ind` premises (including the Call callee premise at
-    the decremented clock); every premise's program/state pair is
-    lexicographically smaller. -/
+/-- Internal well-founded assembly: the exact evaluator's clock/program-size
+lexicographic induction discharges callee and handler premises, including
+calls into arbitrary code-map bodies. No public IH is assumed. -/
 private theorem eocMotive {width : Nat} [NeZero width] {σ : Type} :
     ∀ (p : CrepProgHOL width) (s : CrepSemHOLState width σ), transformEocGoal p s := by
   refine evalCrepSemHOLProgExact_inductLex (motive := transformEocGoal) ?_
@@ -63,32 +60,32 @@ private theorem eocMotive {width : Nat} [NeZero width] {σ : Type} :
       exact transformEocCorrect_Leaf _ s (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨a, b, rfl⟩)))))
   | storeByte a b =>
       exact transformEocCorrect_Leaf _ s
-          (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨a, b, rfl⟩))))))
+        (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨a, b, rfl⟩))))))
   | storeGlob a b =>
       exact transformEocCorrect_Leaf _ s
-          (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨a, b, rfl⟩)))))))
+        (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨a, b, rfl⟩)))))))
   | «break» n =>
       exact transformEocCorrect_Leaf _ s
-          (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨n, rfl⟩))))))))
+        (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨n, rfl⟩))))))))
   | «continue» n =>
       exact transformEocCorrect_Leaf _ s
-          (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨n, rfl⟩)))))))))
+        (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨n, rfl⟩)))))))))
   | raise e =>
       exact transformEocCorrect_Leaf _ s (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr
-          (Or.inr (Or.inr (Or.inl ⟨e, rfl⟩))))))))))
+        (Or.inr (Or.inr (Or.inl ⟨e, rfl⟩))))))))))
   | tick =>
       exact transformEocCorrect_Leaf _ s (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr
-          (Or.inr (Or.inr (Or.inr (Or.inl rfl)))))))))))
+        (Or.inr (Or.inr (Or.inr (Or.inl rfl)))))))))))
   | extCall f a b c d =>
       exact transformEocCorrect_Leaf _ s (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr
-          (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨f, a, b, c, d, rfl⟩))))))))))))
+        (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨f, a, b, c, d, rfl⟩))))))))))))
   | shMem op n a =>
       exact transformEocCorrect_Leaf _ s (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr
-          (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨op, n, a, rfl⟩))))))))))))
+        (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨op, n, a, rfl⟩))))))))))))
   | «return» es => exact transformEocCorrect_Return es s
   | dec v e body =>
-      exact transformEocCorrect_Dec v e body s (fun _ _ =>
-        same _ _ rfl (by simp only [CrepProgHOL.dec.sizeOf_spec]; omega))
+      exact transformEocCorrect_Dec v e body s
+        (fun _ _ => same _ _ rfl (by simp only [CrepProgHOL.dec.sizeOf_spec]; omega))
   | ite c a b =>
       refine transformEocCorrect_If c a b s (fun _ w _ _ => ?_)
       by_cases hw : w ≠ 0
@@ -110,8 +107,7 @@ private theorem eocMotive {width : Nat} [NeZero width] {σ : Type} :
         rw [← heq] at hle
         exact Nat.lt_of_le_of_lt hle (dec_lt hck)
       exact transformEocCorrect_While e c s
-        { continueCase := fun _ _ res s1 _ _ _ _ _ hck heq _ _ _ =>
-            lower _ s1 (hlt res s1 hck heq)
+        { continueCase := fun _ _ res s1 _ _ _ _ _ hck heq _ _ _ => lower _ s1 (hlt res s1 hck heq)
           normalCase := fun _ _ res s1 _ _ _ hck heq _ => lower _ s1 (hlt res s1 hck heq)
           bodyCase := fun _ _ _ _ _ hck => lower _ _ (dec_lt hck) }
   | call info f args =>
