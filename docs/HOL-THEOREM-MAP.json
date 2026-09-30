@@ -35193,5 +35193,13 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-sol (bead30) source compared original pan_globalsProof Resume compile_correct[ShMemLoad]757-838 and evaluate_ind: arbitrary operator/varkind/name/address and source state; exactly original universal result/context/target/sourcepost binders, input state_rel true, faithful source evaluation and nonError, existential faithful compiled evaluation with same result and complete state_rel goodRes. This nonrecursive constructor has no child program IH. Exhaustive original Local/Global split directly applies source-reviewed accepted local/global cases; neither branch adds a premise. Canonical state locals/globals/code/eshapes and context globals maps plus positive-width words/Type0 FFI only, existing same-module canonical roundtrip witnesses retained. Full ShMemStore already accepted unchanged. Coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/SemanticsInitCall.lean",
+  "lean_name": "lubImageSuc",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "LUB_IMAGE_SUC",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.2.22.3.2.3) compared pan_globalsProofScript.sml:2663-2665 `LUB_IMAGE_SUC[local]: (!x. LPREFIX (f x) (f (SUC x))) ==> LUB (IMAGE f UNIV(:num)) = LUB (IMAGE (f o SUC) UNIV(:num))`. HOL LUB is the lprefix_lub Overload for build_lprefix_lub (lprefix_lubScript.sml:560), rendered as HolLList.buildLprefixLub (the rendering used by the tagged IMP_build_lprefix_lub_EQ). IMAGE g UNIV is the set-as-predicate fun l => exists k, l = g k, as in the tagged panSem semantics_def. f : Nat -> HolLList a is generic, LPREFIX is HolLList.lprefix, SUC is Nat.succ, o is Function.comp. Same single hypothesis and conclusion; no extra premise. Proof follows HOL's: IMP_build_lprefix_lub_EQ with the two lprefix_chain facts (transitivity along the monotone sequence) and both lprefix_rel directions. Uses the untagged Flapjack support HolLList.lprefix_trans (Misc/LprefixLub.lean; llistScript is not pinned)."
 }
 ]
