@@ -100,4 +100,39 @@ def getLiveInst {width : Nat} [NeZero width] :
     WordLangInst (BitVec width) → NumSet → NumSet :=
   getLiveInstCore width
 
+/-- Shared removal decision with an explicit numeric word dimension.
+Flapjack implementation infrastructure; the tagged wrapper retains HOL's
+positive-width word carrier. -/
+def removeDeadInstCore {α : Type u} (width : Nat) : WordLangInst α → NumSet → Bool
+  | .skip, _ => true
+  | .const r _, live => (sptLookup r live).isNone
+  | .arith (.binop _ r _ _), live
+  | .arith (.shift _ r _ _), live
+  | .arith (.div r _ _), live => (sptLookup r live).isNone
+  | .arith (.addCarry r1 _ _ r4), live
+  | .arith (.addOverflow r1 _ _ r4), live
+  | .arith (.subOverflow r1 _ _ r4), live =>
+      (sptLookup r1 live).isNone && (sptLookup r4 live).isNone
+  | .arith (.longMul r1 r2 _ _), live
+  | .arith (.longDiv r1 r2 _ _ _), live =>
+      (sptLookup r1 live).isNone && (sptLookup r2 live).isNone
+  | .mem .load r _, live
+  | .mem .load32 r _, live
+  | .mem .load8 r _, live => (sptLookup r live).isNone
+  | .fp (.fpLess r _ _), live
+  | .fp (.fpLessEqual r _ _), live
+  | .fp (.fpEqual r _ _), live => (sptLookup r live).isNone
+  | .fp (.fpMovToReg r1 r2 _), live =>
+      if width = 64 then (sptLookup r1 live).isNone
+      else (sptLookup r1 live).isNone && (sptLookup r2 live).isNone
+  | _, _ => false
+
+/-- Exact HOL dead-instruction decision. Stores, 16-bit loads and all
+unlisted operations are retained by the literal catchall clause. -/
+@[hol "cakeml/compiler/backend/word_allocScript.sml" "remove_dead_inst_def"
+  (words_as_type_indexed_bitvec)]
+def removeDeadInst {width : Nat} [NeZero width] :
+    WordLangInst (BitVec width) → NumSet → Bool :=
+  removeDeadInstCore width
+
 end Flapjack.WordAlloc

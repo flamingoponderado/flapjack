@@ -26801,5 +26801,14 @@
     "lean_name": "op_code",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-luna-b Flapjack-only infrastructure (2026-09-30; bead flapjack-pxn.18.5.5.41): canonical carrier witness re-export or exact shared-memory code-field preservation; no separate HOL declaration claimed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "remove_dead_inst_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Instructions.lean",
+    "lean_name": "removeDeadInst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30 bead .11.1.12: literal word_allocScript854-880. All constructor clauses, output register checks and catchall F retained. sptLookup.isNone exactly renders lookup=NONE; conjunction Bool && renders HOL conjunction without equality/BEq premises. Positive width BitVec translation with NeZero, fpMovToReg distinguishes64 exactly. Numeric unit Spt tree matches HOL num_set, no finite-map qualifier. Core generic payload used by executed adapter, production constructors embedding reviewed against asm/WordLang and original; production lacks FP, so numeric64 core dimension is immaterial there. Distinct five-register Flapjack AddCarry explicitly separate. Actual wordDeadInst now uses exact decision via adapter and list-to-exact codec; retained branches use reviewed instruction liveness route. Twelve original HOL observations plus actual dead16-load and offset-store retention kernel/runtime guards, full compiler parity/source route audit reported on bead. This tags only remove_dead_inst, not whole remove_dead recursion."
   }
 ]

@@ -1320,3 +1320,17 @@ Regenerate read-only with `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=stacksem_stack_codec_probeScript.sml scripts/hol-probes/regenerate.sh`.
 `Flapjack/Test/StackSemStackCodecParity.lean` kernel-checks all26 concrete rows.
 Full GC/evaluator execution and Nat-machine refinement remain separate work.
+
+`word_alloc_remove_dead_inst_probe.out` records twelve original
+`remove_dead_inst_def` observations (`word_allocScript.sml:854-880`): Skip,
+live/dead Const, Load16/Store16/Store32 catchalls, dead Load8, live/dead
+four-register carry, a live second LongMul output, and the 32/64-bit FP move
+boundary. `CakeApplyColourParity.instructionRemovalExact` kernel-replays all
+twelve; `instructionRemovalExecuted` checks the actual retained offset stores,
+16-bit load and removable dead Load8/Const. The production decision now calls
+the reviewed core through `removeDeadInstExecutable`. This does not assert
+completion of the whole `remove_dead` program recursion.
+Regenerate read-only with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_alloc_remove_dead_inst_probeScript.sml
+scripts/hol-probes/regenerate.sh`; the original source was compared byte-for-byte
+before using the shared checkout's built objects.

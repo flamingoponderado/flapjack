@@ -121,6 +121,9 @@ run_probe word_alloc_pair_keys_probeScript.sml word_alloc_pair_keys_probe.out \
 run_probe word_sem_cut_names_type_probeScript.sml word_sem_cut_names_type_probe.out \
   cut_names_type cut_envs_type cut_env_type "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
   "$cake_dir/compiler/backend/semantics"
+run_probe word_alloc_remove_dead_inst_probeScript.sml word_alloc_remove_dead_inst_probe.out \
+  skip const_dead const_live load16 store16 store32 load8 carry_live carry_dead longmul_live to32 to64 "$cake_dir/compiler/backend/word_allocScript.sml" \
+  "$cake_dir/compiler/backend"
 run_probe word_alloc_live_inst_probeScript.sml word_alloc_live_inst_probe.out \
   load16 load8 store32 carry overflow to64 to32 from64 from32 "$cake_dir/compiler/backend/word_allocScript.sml" \
   "$cake_dir/compiler/backend"

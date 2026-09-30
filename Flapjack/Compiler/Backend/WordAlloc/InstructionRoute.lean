@@ -85,4 +85,19 @@ theorem getLiveInstExecutable_cakeAddCarry {α : Type u}
     getLiveInstExecutable (α := α) (.arith (.cakeAddCarry r1 r2 r3 r4)) live =
       sptInsert r4 () (sptInsert r3 () (sptInsert r2 () (sptDelete r1 live))) := rfl
 
+/-- Execute HOL's removal decision on shared production constructors.
+The separate five-register primitive removes only when both outputs are dead.
+Production has no FP constructors, so the core's word dimension is immaterial.
+This production codec has no separate HOL original. -/
+def removeDeadInstExecutable {α : Type u} (instruction : WordInst α) (live : NumSet) : Bool :=
+  match instruction with
+  | .const r w => removeDeadInstCore 64 (.const r w) live
+  | .arith (.addCarry r1 r2 _ _ _) =>
+      (sptLookup r1 live).isNone && (sptLookup r2 live).isNone
+  | .arith a => match arithToHOL a with
+    | some exact => removeDeadInstCore 64 (.arith exact) live
+    | none => false
+  | .mem op r a => removeDeadInstCore 64 (.mem op r (.addr a ())) live
+  | .memOffset op r a w => removeDeadInstCore 64 (.mem op r (.addr a w)) live
+
 end Flapjack.WordAlloc
