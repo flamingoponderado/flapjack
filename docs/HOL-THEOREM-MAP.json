@@ -29403,5 +29403,51 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Private direct-output induction factoring for dect source theorems; no separate HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/HasMain.lean",
+    "lean_name": "semanticsDeclsHasMainPrime",
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "semantics_decls_has_main'",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison2026-09-30,4ac.4.110: literal panProps1628-1638 has sole semantics_decls s start code != Fail premise and existential body/rshape with FLOOKUP(s.code |++ functions code) start=SOME([],body,rshape). Same binders, premise, update-list and existential conclusion in Lean. Exact semanticsDecls structural prepass/evaluator failure branches excluded internally; evaluateDecls code-update and zero-clock non-failure helper derive the entry without extra premises. PanSemStateFiniteExact canonical locals/globals/code/eshapes maps with genuine same-module roundtrip; positive BitVec width, NeZero, universe0 FFI host; exact MlS names and lists retained. Proof-only, no routing claim. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/ShapeValueEval.lean",
+    "lean_name": "evalShapeValNone",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "eval_shape_val_NONE",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison2026-09-30 (.25.1): literal HOL968-978 same universal state and conjunction of forall shape eval(shape_val)=NONE iff F and forall shapes OPT_MMAP(eval)(shape_vals)=NONE iff F. Exact finite evaluator delegates to reviewed literal eval clauses; exact shapeValHOL/shapeValsHOL retained. Mutual ShapeHOL/list induction derives successful results for zero constants and RStruct, no state restriction or evaluator-result premise. Classical memory decisions internal. Canonical locals/globals/code/eshapes finite maps with genuine same-module roundtrip, positive BitVec width with NeZero and universe0 FFI host; faithful names/lists. Proof-only; coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/ShapeValueEval.lean",
+    "lean_name": "shapeValueSuccess",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack mutual induction factoring or canonical finite-state roundtrip; no standalone HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/ShapeValueEval.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack mutual induction factoring or canonical finite-state roundtrip; no standalone HOL original."
   }
 ]
