@@ -508,8 +508,11 @@ open Flapjack.Pancake.PanLang (MlS ProgHOL DeclHOL)
     matches HOL
     `(((varkind # varname) option # ((eid # varname # prog) option)) option)`
     constructor-for-constructor.  Every expression payload is left untouched,
-    exactly as in HOL. -/
-@[hol "cakeml/pancake/pan_globalsScript.sml" "fperm_def"]
+    exactly as in HOL. The word qualifier records the positive HOL type-indexed
+    word dimension as `width` under `[NeZero width]`; native names and all
+    constructor/option/list structure are unchanged. -/
+@[hol "cakeml/pancake/pan_globalsScript.sml" "fperm_def"
+  (words_as_type_indexed_bitvec)]
 def fpermHOL {width : Nat} [NeZero width] (f g : MlS) : ProgHOL width → ProgHOL width
   | .dec name shape value body => .dec name shape value (fpermHOL f g body)
   | .seq first second => .seq (fpermHOL f g first) (fpermHOL f g second)
@@ -537,8 +540,11 @@ decreasing_by
     word-indexed `DeclHOL width` carrier.  The three equations match HOL
     clause-for-clause: `[]`, `Function fi :: decs` (renaming `fi.name` with the
     exact `fpermName` and `fi.body` with the exact `fpermHOL`), and
-    `d :: decs` leaving every other declaration in place. -/
-@[hol "cakeml/pancake/pan_globalsScript.sml" "fperm_decs_def"]
+    `d :: decs` leaving every other declaration in place. The word qualifier
+    records only the positive type-indexed word dimension of the declaration
+    and program payloads; every other function field is unchanged. -/
+@[hol "cakeml/pancake/pan_globalsScript.sml" "fperm_decs_def"
+  (words_as_type_indexed_bitvec)]
 def fpermDecsHOL {width : Nat} [NeZero width] (f g : MlS) :
     List (DeclHOL width) → List (DeclHOL width)
   | [] => []
