@@ -38,6 +38,26 @@ DATA_DECLARATION_RE = re.compile(
 # inventory small and source-reviewed; a mismatch row is not generated merely
 # because an arbitrary Lean def happens to mention a HOL name.
 WITHDRAWN_HOL_DECLARATIONS = {
+    ("Flapjack/Compiler/Backend/Semantics/WordSem/Inst.lean", "inst"): (
+        "cakeml/compiler/backend/semantics/wordSemScript.sml",
+        "inst_def",
+        "flapjack-opus source review (2026-09-30; bead flapjack-2hoy.2, coordinator decision "
+        "2026-09-30T01:04Z): @[hol] tag withdrawn. The FPSqrt clause calls holFp64Sqrt, which "
+        "replaces HOL fp64_sqrt's rounding of the real sqrt r by rational cut criteria "
+        "(Flapjack/Misc/BinaryIeeeSqrt.lean): a specification reformulation, not an admitted "
+        "carrier translation (external assumption, docs/SOUNDNESS.md item 8). All other clauses "
+        "match HOL clause by clause over the fmap/words carriers; the other FP clauses reach only "
+        "rational arguments. Preserved untagged. Faithful prerequisite: flapjack-dshl."
+    ),
+    ("Flapjack/FpSemHOL.lean", "fpSemFpUopComp"): (
+        "cakeml/semantics/fpSemScript.sml",
+        "fp_uop_comp_def",
+        "flapjack-opus source review (2026-09-30; bead flapjack-2hoy.6, coordinator decision "
+        "2026-09-30T01:04Z): @[hol] tag withdrawn. The case map matches HOL fp_uop_comp_def "
+        "(fpSemScript.sml:43-49), but FP_Sqrt calls holFp64Sqrt, the rational-cut reformulation "
+        "of HOL fp64_sqrt's real sqrt rounding (docs/SOUNDNESS.md item 8). FP_Abs/FP_Neg are "
+        "real-free. Preserved untagged. Faithful prerequisite: flapjack-dshl."
+    ),
     ("Flapjack/Pancake/CrepToLoop/StateRel.lean", "crepToLoopGlobalsRel"): (
         "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
         "globals_rel_def",
