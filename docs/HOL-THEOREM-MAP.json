@@ -32204,5 +32204,67 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-a source comparison (2026-09-30;32.5.14): Original evaluate_unchanged_local1105-1137 ExtCall constructor. Same unused value binder, nonfree/source evaluation/good_res/nonerror and post/source locals FLOOKUP conclusion retained. Explicit evaluateHOLFiniteState_extCall_source splits all four expression/value branches, both read_bytearray results, and actual callFFI result. Returning FFI only updates memory/ffi; final FFI clears locals but contradicts original good_res; errors retain source state. No source-success/FFI/target-run or recursive IH premise added. fmap_as_finite_support names exactly owning state locals/globals/code/eshapes with canonical roundtrip witness; words_as_type_indexed_bitvec standard positive dimension/universe0 FFI only. MlS identifiers exact. Full unchanged-local assembly still open; coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/ShMemLoad.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Canonical finite-state roundtrip re-export; no standalone HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/ShMemLoad.lean",
+    "lean_name": "loadUnchanged",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private shared-load lookup-preservation factoring, no standalone HOL original; original good_res/nonerror excludes final event/domain error, returning load changes only destination."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/ShMemLoad.lean",
+    "lean_name": "evaluateUnchangedLocal_ShMemLoad",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "evaluate_unchanged_local",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison2026-09-30 (.32.5.10): original evaluate_unchanged_local1105-1136 ShMemLoad constructor from panSem605-610. Original unused v, nonfree/source run/good_res/nonerror and unchanged lookup retained. Local destination differs by freshness; global writes retain locals. Width-indexed shared-domain direct/aligned address guards and original final/return FFI arms preserved; no additional domain/success premise. Exact MlS/canonical four finite maps with genuine roundtrip/positive width NeZero/universe0 FFI. Proof-only, coordinator source acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/ShMemStore.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Canonical finite-state roundtrip re-export; no standalone HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/ShMemStore.lean",
+    "lean_name": "storeLocals",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private unconditional raw store locals projection; Flapjack factoring infrastructure, no standalone HOL original. Domain and both FFI arms preserve locals."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/ShMemStore.lean",
+    "lean_name": "evaluateUnchangedLocal_ShMemStore",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "evaluate_unchanged_local",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison2026-09-30 (.32.5.13): genuine evaluate_unchanged_local1105-1136 ShMemStore constructor; literal panSem611-614 and sh_mem_store529-547, source value/address order retained. Original unused v/freshness/source run/good_res/nonerror/lookup conclusion, no additional premise or IH. Source transition preserves locals on every domain/direct-aligned/FFI final/return arm; only returning FFI changes ffi. Exact MlS/canonical four state maps/genuine roundtrip/positive width NeZero/universe0 FFI. Proof-only, coordinator acceptance pending."
   }
 ]
