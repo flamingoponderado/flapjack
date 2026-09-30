@@ -1,3 +1,5 @@
+import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Assembly
+import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Call
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.ExtCall
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Call
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.CallEntry
@@ -420,6 +422,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Store
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.FixedStores
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.ClockAnnot
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Seq
+import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.DecCall
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.If
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Dec
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.While
@@ -567,6 +570,8 @@ import Flapjack.Pancake.Proofs.CrepInline.ExpressionRelations
 import Flapjack.Pancake.Proofs.CrepInline.NestedDecs
 import Flapjack.Pancake.Proofs.CrepInline.ShMem
 import Flapjack.Pancake.Proofs.CrepInline.Call
+import Flapjack.Pancake.Proofs.CrepInline.CallTail
+import Flapjack.Pancake.Proofs.CrepInline.FiniteMapLemmas
 import Flapjack.Pancake.Proofs.CrepInline.UpdateListLocals
 import Flapjack.Pancake.Proofs.CrepInline.UnreachElim
 import Flapjack.Pancake.Proofs.CrepInline.UnreachElimPredicates

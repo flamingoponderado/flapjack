@@ -36,4 +36,23 @@ theorem unreachElimProgSize_indexed {α : Type} [Nonempty α]
     crepProgSizeHOL f q ≤ crepProgSizeHOL f p :=
   unreachElimProgSize p q r f h
 
+/-- Flapjack infrastructure: literal original finite/cardinality versus infinite/one
+equation, with the classical decision internal and no extra premise. -/
+theorem holIndexDimension_literal (α : Type) [Nonempty α] : holIndexDimension α = (by classical exact if Finite α then Nat.card α else 1) := by
+  classical
+  by_cases h : Finite α
+  · have : Finite α := h
+    rw [if_pos h, holIndexDimension_finite]
+  · have : Infinite α := not_finite_iff_infinite.mp h
+    rw [if_neg h, holIndexDimension_infinite]
+/-- Flapjack infrastructure: every positive Lean width is realized by a nonempty
+index type; this is not a replacement of arbitrary index types by Fin. -/
+theorem holIndexDimension_realizes_width (width : Nat) [NeZero width] : holIndexDimension (Fin width) = width := by
+  rw [holIndexDimension_finite]
+  simp
+/-- Flapjack infrastructure: type equivalence preserves the derived word dimension. -/
+theorem holIndexDimension_equiv {α β : Type} (e : α ≃ β) : holIndexDimension α = holIndexDimension β := by
+  unfold holIndexDimension
+  rw [Nat.card_congr e]
+
 end Flapjack.CrepInlineUnreachElimProgSize
