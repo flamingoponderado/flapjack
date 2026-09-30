@@ -71,6 +71,7 @@ import Flapjack.Compiler.Backend.Semantics.StackSem.State
 import Flapjack.Compiler.Backend.Semantics.StackSem.Control
 import Flapjack.Compiler.Backend.Semantics.StackSem.Labels
 import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+import Flapjack.Compiler.Backend.Semantics.StackSem.ShMem
 import Flapjack.Compiler.Backend.Semantics.StackSem.Expressions
 import Flapjack.Compiler.Backend.Semantics.StackSem.StoreConsts
 import Flapjack.Compiler.Backend.Semantics.StackSem.StoreConstsGuard

@@ -1489,6 +1489,24 @@ untagged; the tagged `buffer_write_def` port lives in
 `Flapjack/Compiler/Backend/Semantics/WordSem/State.lean`, and assembled full
 evaluation remains on y19g.
 
+`stacksem_sh_mem_probeScript.sml` records fifteen direct original
+`stackSem$sh_mem_op` observations for the shared-memory helpers
+(`stackSemScript.sml:194-308`) at 64-bit words. A byte-incrementing FFI oracle
+captures the exact configuration and payload bytes through `io_events`, and a
+second oracle diverges. The rows cover word/byte/16/32 store and load success,
+a plain-word address miss (`a IN sh_mdomain`), a sized-form miss on
+`byte_align a`, the guard distinction (a word load at an unaligned address the
+sized form accepts is `Error`), both `FFI_final` outcome rows (state unchanged),
+and a non-word register (`Loc`, `Error`). Kernel replay over a concrete base
+state lives in `Flapjack/Test/StackSemShMemParity.lean`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_sh_mem_probeScript.sml
+scripts/hol-probes/regenerate.sh`. The tagged ports of `sh_mem_store_def`,
+`sh_mem_load_def`, `sh_mem_store_byte_def`, `sh_mem_store16_def`,
+`sh_mem_store32_def`, `sh_mem_load_byte_def`, `sh_mem_load16_def`,
+`sh_mem_load32_def` and the `sh_mem_op_def` dispatch live in
+`Flapjack/Compiler/Backend/Semantics/StackSem/ShMem.lean`.
+
 `pan_globals_fperm_code_probeScript.sml` observes the original
 `pan_globalsProof$fperm_code` finite map using its proved
 `FLOOKUP_fperm_code'` rewrite followed by HOL EVAL (plain EVAL leaves

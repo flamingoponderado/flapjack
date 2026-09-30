@@ -151,6 +151,9 @@ run_probe stacksem_call_probeScript.sml stacksem_call_probe.out \
 run_probe stacksem_buffer_write_probeScript.sml stacksem_buffer_write_probe.out \
   code_write_success code_write_mismatch data_write_success data_write_mismatch data_write_disabled \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe stacksem_sh_mem_probeScript.sml stacksem_sh_mem_probe.out \
+  store load store8 load8 store16 load16 store32 load32 load_outside store8_outside load_word_unaligned store_word_unaligned load_final store_final store_loc \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe stacksem_expression_probeScript.sml stacksem_expression_probe.out \
   const var_word var_loc var_missing lookup_word lookup_loc lookup_missing load_word load_loc load_oob load_bad_address op_empty_and op_add_wrap op_sub_bad_arity op_bad_operand shift_valid shift_oob shift_bad_right assign_success assign_failure \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
