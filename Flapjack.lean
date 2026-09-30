@@ -473,6 +473,7 @@ import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.Primitive
 import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.ShMem
 import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.Structural
 import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.While
+import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.Assembly
 import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.Call
 import Flapjack.Pancake.Proofs.CrepInline.EvaluateStateLocals.Atoms
 import Flapjack.Pancake.Proofs.CrepInline.Expressions
