@@ -1,5 +1,32 @@
 [
   {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/StackCodec.lean",
+    "lean_name": "fullReadBitmap",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "full_read_bitmap_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.6), stackSemScript309-314: bitmap list and exact word_loc descriptor, Word0 rejected, other Word indexes DROP(w2n(w-1w)) followed by accepted read_bitmap, Loc rejected. Word subtraction occurs before unsigned projection; no Nat replacement or range assumption. Independent bitmapWidth and stack/descriptor width, each positive BitVec/WordLocW with its own NeZero; HOL lists retained. Original HOL probe exposed the independence and Lean signatures preserve it. Accepted .2/.3 prerequisites. Exact GC/full evaluator and Nat-machine refinement remain open; coordinator source review required."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/StackCodec.lean",
+    "lean_name": "encStack",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "enc_stack_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.6), stackSemScript316-334: empty stack NONE; Word0 singleton SOME[], zero with tail NONE; otherwise full bitmap/filter failures propagate, recursive remainder encoding succeeds as selected++roots. Exact WordLoc/list carriers incl data labels. Natural stack-length recursion is justified by accepted filter_bitmap_LENGTH; no fuel-bound behavior. Independent bitmapWidth and stack/descriptor width, each positive BitVec/WordLocW with its own NeZero; HOL lists retained. Original HOL probe exposed the independence and Lean signatures preserve it. Accepted .2/.3 prerequisites. Exact GC/full evaluator and Nat-machine refinement remain open; coordinator source review required."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/StackCodec.lean",
+    "lean_name": "decStack",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "dec_stack_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.6), stackSemScript336-354: empty stack NONE for arbitrary roots; Word0 succeeds iff roots and tail are both empty, returning singleton Word0. Otherwise full bitmap/map failures propagate and recursively decode remaining roots/remainder; return [header]++front++rest, retaining unselected values and headers. Termination by stack length using map_bitmap_LENGTH; no fuel cutoff. Independent bitmapWidth and stack/descriptor width, each positive BitVec/WordLocW with its own NeZero; HOL lists retained. Original HOL probe exposed the independence and Lean signatures preserve it. Accepted .2/.3 prerequisites. Exact GC/full evaluator and Nat-machine refinement remain open; coordinator source review required."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Control.lean",
     "lean_name": "findCode",
     "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
@@ -26616,14 +26643,6 @@
     "reviewer": "flapjack-ds10 Flapjack-only infrastructure (2026-09-30; bead flapjack-pxn.18.5.5.39): private identity lemma that inlineProgHOLExact leaves ExtCall unchanged (HOL inline_prog_def fall-through arm); no cakeml HOL declaration of its own."
   },
   {
-    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
-    "hol_name": "cut_names_lemma",
-    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/CutNames.lean",
-    "lean_name": "cutNamesLemma",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-sol source comparison 2026-09-30 bead .11.1.6: literal HOL277-311; independent alpha names payload and beta source/target/cut environment payloads retained, exact generic Spt carriers. All five conclusions retained: existential successful renamed target cut, full image-domain equality, strong_locals_rel restricted environments, INJ on source cut domain, source cut domain=names domain. Original INJ f domain(names) UNIV rendered pairwise equality implication on that domain (UNIV membership tautological). No global INJ, target-cut/target-result/target-domain/global relation premise. Source successful generic cut_names yields subset and source intersection; target subset follows image-domain theorem/source lookup/strong relation. Exact heterogeneous inter lookup and full domain intersection give restricted relation and absorption. No word/carrier qualifier: original helpers and relation are payload-polymorphic, prerequisite6.1 accepted after direct HOL type probes. All quantified variables, premises and conclusion conjuncts compared against HOL."
-  },
-  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelImpSemantics.lean",
@@ -26678,5 +26697,109 @@
     "lean_name": "applyNummapsKey",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol source comparison 2026-09-30 bead .11.1.9: original29-33 exact product of two fromAList/map-key/toAList operations. Independent alpha/beta Spt payloads retained, f Nat->Nat arbitrary incl collisions; existing applyNummapKey unfolds precisely to each original component. First-match reconstructed payload and mixed traversal order preserved. No word/type-width or finite-map qualifier: numeric tree carrier is exact Spt. Actual wordApplyColour Call (with/without handler), Alloc, Install and FFI paired cutsets now call applyNummapsKeyExecutable, whose numSetToExact/fromExact codecs execute this tagged definition. Universal equality to the two already reviewed single-map executable routes is rfl, no representation-validity/injection premises. Three original HOL paired observations captured; full compiler parity and source route audit reported on bead."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "cut_names_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/CutNames.lean",
+    "lean_name": "cutNamesLemma",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-09-30 bead .11.1.6: literal HOL277-311; independent alpha names payload and beta source/target/cut environment payloads retained, exact generic Spt carriers. All five conclusions retained: existential successful renamed target cut, full image-domain equality, strong_locals_rel restricted environments, INJ on source cut domain, source cut domain=names domain. Original INJ f domain(names) UNIV rendered pairwise equality implication on that domain (UNIV membership tautological). No global INJ, target-cut/target-result/target-domain/global relation premise. Source successful generic cut_names yields subset and source intersection; target subset follows image-domain theorem/source lookup/strong relation. Exact heterogeneous inter lookup and full domain intersection give restricted relation and absorption. No word/carrier qualifier: original helpers and relation are payload-polymorphic, prerequisite6.1 accepted after direct HOL type probes. All quantified variables, premises and conclusion conjuncts compared against HOL."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "same_setVar",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.5.41.1): untagged Flapjack state-transfer infrastructure for the exact shared-memory helper congruence; no HOL original (Flapjack codec/semantics transfer over CrepSemHOLState)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "same_emptyLocals",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.5.41.1): untagged Flapjack state-transfer infrastructure for the exact shared-memory helper congruence; no HOL original (Flapjack codec/semantics transfer over CrepSemHOLState)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "same_setFfi",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.5.41.1): untagged Flapjack state-transfer infrastructure for the exact shared-memory helper congruence; no HOL original (Flapjack codec/semantics transfer over CrepSemHOLState)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "crepShMemLoadExactHOL_same",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.5.41.1): untagged Flapjack state-transfer infrastructure for the exact shared-memory helper congruence; no HOL original (Flapjack codec/semantics transfer over CrepSemHOLState)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "crepShMemStoreExactHOL_same",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.5.41.1): untagged Flapjack state-transfer infrastructure for the exact shared-memory helper congruence; no HOL original (Flapjack codec/semantics transfer over CrepSemHOLState)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "crepShMemOpExactHOL_same",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.5.41.1): untagged Flapjack state-transfer infrastructure for the exact shared-memory helper congruence; no HOL original (Flapjack codec/semantics transfer over CrepSemHOLState)."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "inline_prog_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ShMem.lean",
+    "lean_name": "inlineProgCorrectShMemCaseExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "inlFs",
+      "inlBag"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; bead flapjack-pxn.18.5.5.41) against crep_inlineProofScript.sml:2301-2320 and ShMem case :2405-2406. Retains all seven original premises, existential evaluation, post-state state/code relations and result-dependent locals conclusion. ShMem is unchanged by inline_prog; evalCodeInlExact transfers its address expression. Exact load/store congruences cover all eight operators, domain/error guards and returned/final FFI states. Code preservation is proved from exact transitions; no target evaluation, post-state relation or simulation is a theorem premise. No recursive IH is needed for this atomic case."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ShMem.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-luna-b Flapjack-only infrastructure (2026-09-30; bead flapjack-pxn.18.5.5.41): canonical carrier witness re-export or exact shared-memory code-field preservation; no separate HOL declaration claimed."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ShMem.lean",
+    "lean_name": "load_code",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-luna-b Flapjack-only infrastructure (2026-09-30; bead flapjack-pxn.18.5.5.41): canonical carrier witness re-export or exact shared-memory code-field preservation; no separate HOL declaration claimed."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ShMem.lean",
+    "lean_name": "store_code",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-luna-b Flapjack-only infrastructure (2026-09-30; bead flapjack-pxn.18.5.5.41): canonical carrier witness re-export or exact shared-memory code-field preservation; no separate HOL declaration claimed."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ShMem.lean",
+    "lean_name": "op_code",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-luna-b Flapjack-only infrastructure (2026-09-30; bead flapjack-pxn.18.5.5.41): canonical carrier witness re-export or exact shared-memory code-field preservation; no separate HOL declaration claimed."
   }
 ]
