@@ -1100,7 +1100,9 @@ theorem structCompileDecls_structs {width : Nat} [BEq String]
       cases declaration <;> simp [structCompileDecls, ih]
 
 
-private theorem structCompileDecls_byteRanged {width : Nat} [BEq String]
+/-- Flapjack output range invariant for declaration compilation, used by the
+production syntax decoder. This infrastructure theorem has no HOL original. -/
+theorem structCompileDecls_byteRanged {width : Nat} [BEq String]
     (declarations : List (Decl (BitVec width))) :
     ∀ context : StructPassContext, CtxBR context.structs →
       (∀ declaration ∈ declarations, DeclByteRanged declaration) →
