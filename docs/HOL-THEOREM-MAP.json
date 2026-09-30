@@ -36388,5 +36388,29 @@
   "lean_name": "llistShorter_lnth",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-b rc27 source comparison pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae lines131-161 local val Q.prove: exact iff llist_shorter ll1 ll2 versus forall n x LNTH n ll1=SOME x implies exists y LNTH n ll2=SOME y. Same arbitrary element/list/index/payload carriers, no equality of x and y added and no chain premise. Imported llength is finite length versus NONE infinity; original option length order preserved. Proof/cases unchanged. Coordinator source acceptance pending; no executable changes."
+},
+{
+  "hol_path": null,
+  "hol_name": null,
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimIndexSize.lean",
+  "lean_name": "holIndexDimension_finite",
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only bare-index translation candidate infrastructure, bead .18.5.5.50.2. Retains arbitrary nonempty alpha itself and derives word width as max1 Nat.card alpha; kernel witnesses finite nonempty cardinal and infinite dimension1 after original fcpScript63-65 source inspection. Indexed unreach candidate uses f:alpha->Nat and that SAME alpha-derived word dimension, no independent width/domain or BitVec substitution. No exact HOL port or approved representation claim: original external fcp library source not pinned in reference catalogue and index/word qualifier/checker source review remains parent50 obligation."
+},
+{
+  "hol_path": null,
+  "hol_name": null,
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimIndexSize.lean",
+  "lean_name": "holIndexDimension_infinite",
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only bare-index translation candidate infrastructure, bead .18.5.5.50.2. Retains arbitrary nonempty alpha itself and derives word width as max1 Nat.card alpha; kernel witnesses finite nonempty cardinal and infinite dimension1 after original fcpScript63-65 source inspection. Indexed unreach candidate uses f:alpha->Nat and that SAME alpha-derived word dimension, no independent width/domain or BitVec substitution. No exact HOL port or approved representation claim: original external fcp library source not pinned in reference catalogue and index/word qualifier/checker source review remains parent50 obligation."
+},
+{
+  "hol_path": null,
+  "hol_name": null,
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimIndexSize.lean",
+  "lean_name": "unreachElimProgSize_indexed",
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only bare-index translation candidate infrastructure, bead .18.5.5.50.2. Retains arbitrary nonempty alpha itself and derives word width as max1 Nat.card alpha; kernel witnesses finite nonempty cardinal and infinite dimension1 after original fcpScript63-65 source inspection. Indexed unreach candidate uses f:alpha->Nat and that SAME alpha-derived word dimension, no independent width/domain or BitVec substitution. No exact HOL port or approved representation claim: original external fcp library source not pinned in reference catalogue and index/word qualifier/checker source review remains parent50 obligation."
 }
 ]

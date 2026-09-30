@@ -582,6 +582,7 @@ import Flapjack.Pancake.Proofs.CrepInline.WrappedTransformIf
 import Flapjack.Pancake.Proofs.CrepInline.TransformBranch.Loops
 import Flapjack.Pancake.Proofs.CrepInline.TransformBranch.Cases
 import Flapjack.Pancake.Proofs.CrepInline.UnreachElimProgSize
+import Flapjack.Pancake.Proofs.CrepInline.UnreachElimIndexSize
 import Flapjack.Pancake.CrepInline.Canonical
 import Flapjack.Pancake.CrepInline.InlineRouteBridge
 import Flapjack.CompileFunctionDistinct
