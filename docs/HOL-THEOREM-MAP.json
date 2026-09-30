@@ -35157,5 +35157,28 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-b source comparison, bead .18.5.15.7.14.2: HOL616 comp_ind ShMemOp case retains stack_asm_name/names_ok/fixed_names and exact stack_asm_ok(comp f p) conclusion. Spt and native StackLang payloads; positive word-width translation only. Source stackProps812-829: ShMemOp preserves offset and ISA branches, bounds from names_ok_imp; buffer/raise/return use reg_count and avoid_regs; OpCurrHeap targets default True, guards retained but unused. No target validity premise, executed behavior change or full theorem claim; coordinator source acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/Seq.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack representation infrastructure: canonical state toExact/ofExact roundtrip re-export, no independent HOL theorem."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/Seq.lean",
+  "lean_name": "evaluateFperm_Seq",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_fperm",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol (22.5.4) compared HOL evaluate_fperm1721-1810 and literal evaluate_ind Seq conjunct: original first-program IH and second-program IH guarded exactly by (r1,s1)=source first evaluation and r1=NONE. Each IH uses original source-run implication to exact permuted run/result/poststate code update. Arbitrary f/g/first/second/state/result/post, sole source Seq evaluation premise; no target-run, success/nonError or postrelation assumption. Exact fperm recursive Seq equation and faithful evaluator original line780 (accepted clock erasure) used. Continuing branch invokes original guarded continuation at actual source first post; abnormal branch returns first result/post exactly. Canonical locals/globals/code/eshapes maps and positive words/Type0 FFI only; genuine local canonical roundtrip witness. Full recursive permutation/assembly remains open; coordinator review pending."
 }
 ]
