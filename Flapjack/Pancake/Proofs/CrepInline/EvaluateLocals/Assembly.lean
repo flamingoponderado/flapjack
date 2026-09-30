@@ -178,15 +178,18 @@ private theorem handlerOnlyMotive {width : Nat} [NeZero width] {σ : Type} :
       split at h <;> (obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; exact hc.elim)
   | .seq a b, s => fun r s' h hc =>
       evaluateLocalsSameFdomSeqExact s s' r a b
-        (fun u t r h hc => handlerOnlyMotive a u r t h (by conv_cond))
-        (fun u t r h hc => handlerOnlyMotive b u r t h (by conv_cond)) h (by conv_cond)
+        (fun t r h hc => handlerOnlyMotive a s r t h (by conv_cond))
+        (fun r1 u _ _ t r h hc => handlerOnlyMotive b u r t h (by conv_cond)) h (by conv_cond)
   | .ite cond a b, s => fun r s' h hc =>
       evaluateLocalsSameFdomIfExact s s' r cond a b
-        (fun u t r h hc => handlerOnlyMotive a u r t h (by conv_cond))
-        (fun u t r h hc => handlerOnlyMotive b u r t h (by conv_cond)) h (by conv_cond)
+        (fun value w _ _ t r h hc => by
+          split at h
+          · exact handlerOnlyMotive a s r t h (by conv_cond)
+          · exact handlerOnlyMotive b s r t h (by conv_cond)) h (by conv_cond)
   | .dec n e body, s => fun r s' h hc =>
       evaluateLocalsSameFdomDecExact s s' r n e body
-        (fun u t r h hc => handlerOnlyMotive body u r t h (by conv_cond)) h (by conv_cond)
+        (fun val _ t r h hc => handlerOnlyMotive body (CrepSemHOLState.setVar n val s)
+          r t h (by conv_cond)) h (by conv_cond)
   | .while e c, s => whileMotive e c (fun u => handlerOnlyMotive c u) s
   | .call none f args, s => fun r s' h hc =>
       callDomainFromHandler s s' r none f args

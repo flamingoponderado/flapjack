@@ -56,7 +56,7 @@ theorem generalSimulateArgLoadStrongExact {width : Nat} [NeZero width] {σ : Typ
   intro ⟨hes, hlen, hnd, hsub, hev, hfresh, hcont, htnd, htlen, hdisj, hfree⟩
   let middle : CrepSemHOLState width σ := {s with locals := t.updateListEq (tmp_vars.zip vals)}
   have hbase : t.submap middle.locals :=
-    CrepInlineUpdateListLocals.submapDiffListExact t tmp_vars vals (by omega) htnd
+    CrepInlineUpdateListLocals.submapDiffList t tmp_vars vals (by omega) htnd
       (fun v hv => hfresh v (Or.inr hv))
   have hvals : (tmp_vars.map CrepExpHOL.var).mapM (evalCrepSemHOLExp middle) = some vals := by
     rw [← lookupLocalsEqMapVarsHOL tmp_vars middle]
@@ -190,5 +190,59 @@ theorem generalSimulateArgLoadStrongAllExact {width : Nat} [NeZero width] {σ : 
   refine ⟨u, hu, hrel, ?_⟩
   rcases r with _ | ⟨_ | _ | n | n | values | eid | event⟩ <;>
     first | exact continuing trivial | exact (hne rfl).elim | trivial
+
+/-- HOL explicitly assumes the observed target run in this drule. The independently
+proved existential strong-all run identifies both result and state by determinism. -/
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "general_simulate_arg_load_strong_all_drule"
+  (fmap_as_finite_support_relation :=
+    [CrepSemHOLState.locals, CrepSemHOLState.globals, CrepSemHOLState.code, t])
+  (words_as_type_indexed_bitvec)]
+theorem generalSimulateArgLoadStrongAllDruleExact {width : Nat} [NeZero width] {σ : Type}
+    (s : CrepSemHOLState width σ) (es : List (CrepExpHOL width))
+    (vals : List (HolWordLab width)) (vs : List Nat)
+    (t : HolFiniteMapExact Nat (HolWordLab width)) (p : CrepProgHOL width)
+    (r : Option (CrepResultHOLExact width)) (s' : CrepSemHOLState width σ)
+    (tmp_vars : List Nat) (r1 : Option (CrepResultHOLExact width))
+    (t' : CrepSemHOLState width σ) :
+      es.mapM (evalCrepSemHOLExp s) = some vals ∧
+        vs.length = vals.length ∧
+        vs.Nodup ∧
+        t.submap s.locals ∧
+        evalCrepSemHOLProgExact { s with locals := t.updateListEq (vs.zip vals) } p = (r, s') ∧
+        (∀ v, v ∈ vs ∨ v ∈ tmp_vars → crepHolFdom t.lookup v = false) ∧
+        r ≠ some .error ∧
+        tmp_vars.Nodup ∧ tmp_vars.length = vs.length ∧
+        (∀ x, x ∈ tmp_vars → x ∉ vs) ∧
+        (∀ x, x ∈ tmp_vars → x ∉ (es.map crepExpVarsHOL).flatten) ∧
+        evalCrepSemHOLProgExact s
+          (nestedDecsHOL tmp_vars es (nestedDecsHOL vs (tmp_vars.map CrepExpHOL.var) p)) =
+          (r1, t') →
+      r1 = r ∧
+        crepInlineStateRelExact s' t' ∧
+        (match (generalizing := false) r with
+         | none =>
+             crepHolSubmap (crepHolFdiff s.locals.lookup (crepHolFdom t.lookup)) t'.locals.lookup ∧
+             ((vs.zip (vs.map (fun n => s.locals.lookup n))).foldl
+               HolFiniteMapExact.resVarEq s'.locals).submap t'.locals
+         | some (.break _) =>
+             crepHolSubmap (crepHolFdiff s.locals.lookup (crepHolFdom t.lookup)) t'.locals.lookup ∧
+             ((vs.zip (vs.map (fun n => s.locals.lookup n))).foldl
+               HolFiniteMapExact.resVarEq s'.locals).submap t'.locals
+         | some (.continue _) =>
+             crepHolSubmap (crepHolFdiff s.locals.lookup (crepHolFdom t.lookup)) t'.locals.lookup ∧
+             ((vs.zip (vs.map (fun n => s.locals.lookup n))).foldl
+               HolFiniteMapExact.resVarEq s'.locals).submap t'.locals
+         | some .error => False
+         | _ => True) := by
+  intro h
+  obtain ⟨hes, hlen, hnd, hsub, hev, hfresh, hne, htnd, htlen, hdisj, hfree, hobs⟩ := h
+  obtain ⟨u, hu, hrel, hpost⟩ := generalSimulateArgLoadStrongAllExact s es vals vs t p r s' tmp_vars
+    ⟨hes, hlen, hnd, hsub, hev, hfresh, hne, htnd, htlen, hdisj, hfree⟩
+  have hp : (r, u) = (r1, t') := hu.symm.trans hobs
+  have hr := congrArg Prod.fst hp
+  have ht := congrArg Prod.snd hp
+  cases hr
+  cases ht
+  exact ⟨rfl, hrel, hpost⟩
 
 end Flapjack.CrepInlineExact
