@@ -242,6 +242,7 @@ import Flapjack.Pancake.Proofs.CrepInline.UnreachElimEvaluate
 import Flapjack.Pancake.Proofs.CrepInline.NestedDecs
 import Flapjack.Pancake.Proofs.CrepInline.ShMem
 import Flapjack.Pancake.Proofs.PanGlobals
+import Flapjack.Pancake.Proofs.PanGlobals.MemStoresAppend
 import Flapjack.Pancake.Proofs.PanGlobals.FpermCode
 import Flapjack.Pancake.Proofs.PanGlobals.DeclListLemmas
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelationExact
