@@ -35163,7 +35163,6 @@
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Source comparison evaluate_fperm1721-1810 Continue constructor case: retains f/g/state/res/post and sole original source evaluation premise, target evaluation of fperm program at code-permuted input and exact unchanged result/code-permuted post. Original fperm identity default and total evaluate_def Continue state-preserving equation give proof; no target premise, recursive callback, Option failure, clock simplification or lookup assumption. Native MlS/ProgHOL/PanSemResultExact and canonical PanSemStateFiniteExact four maps/positive word dimension use reviewed translations with same-module unconditional roundtrip witness. Genuine case only, full theorem and other constructors remain open. Proof-only/no executable behavior change."
 },
-<<<<<<< HEAD
   {
     "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
     "hol_name": "arg_load_correct",
@@ -35417,77 +35416,7 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-b repair .14.4.2 source comparison HOL616 comp_ind Halt constructor: literal stack_asm_name/names_ok/fixed_names guards only, exact stack_asm_ok(comp f constructor) conclusion. No selector premise or target validity assumption. Native Spt/HolProg payloads and positive-width translation only. HOL comp preserves constructor head and stackProps812-829 target default True; all source guards retained. Untagged selector helper discharged by True.intro internally. Coordinator acceptance pending; proof-only."
-  }
-=======
-{
-  "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
-  "hol_name": "stack_names_comp_stack_asm_ok",
-  "lean_path": "Flapjack/Compiler/Backend/StackNames/AsmAdmissibility/Inst.lean",
-  "lean_name": "stackNamesCompStackAsmOk_Inst",
-  "statement_status": "reviewed_words_as_type_indexed_bitvec",
-  "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-luna-b source comparison, bead .18.5.15.7.14.1: HOL616 Inst case retains stack_asm_name, names_ok and fixed_names as conjunction and stack_asm_ok(comp f (Inst i)) conclusion. Exact Spt and HolInst/config carriers; positive type-indexed width only translation. Constructor proof unfolds the same source predicates; names_ok_imp supplies register bounds/avoidance, names_ok_imp2 distinctness; x86 shifts/multiply/divide use original fixed names. FP registers remain unchanged; no FP value or executed correctness claim. Remaining program cases and full theorem open; coordinator review required."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
-  "hol_name": "stack_names_comp_stack_asm_ok",
-  "lean_path": "Flapjack/Compiler/Backend/StackNames/AsmAdmissibility/RegisterLeaves.lean",
-  "lean_name": "stackNamesCompStackAsmOk_OpCurrHeap",
-  "statement_status": "reviewed_words_as_type_indexed_bitvec",
-  "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-luna-b source comparison, bead .18.5.15.7.14.2: HOL616 comp_ind OpCurrHeap case retains stack_asm_name/names_ok/fixed_names and exact stack_asm_ok(comp f p) conclusion. Spt and native StackLang payloads; positive word-width translation only. Source stackProps812-829: ShMemOp preserves offset and ISA branches, bounds from names_ok_imp; buffer/raise/return use reg_count and avoid_regs; OpCurrHeap targets default True, guards retained but unused. No target validity premise, executed behavior change or full theorem claim; coordinator source acceptance pending."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
-  "hol_name": "stack_names_comp_stack_asm_ok",
-  "lean_path": "Flapjack/Compiler/Backend/StackNames/AsmAdmissibility/RegisterLeaves.lean",
-  "lean_name": "stackNamesCompStackAsmOk_CodeBufferWrite",
-  "statement_status": "reviewed_words_as_type_indexed_bitvec",
-  "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-luna-b source comparison, bead .18.5.15.7.14.2: HOL616 comp_ind CodeBufferWrite case retains stack_asm_name/names_ok/fixed_names and exact stack_asm_ok(comp f p) conclusion. Spt and native StackLang payloads; positive word-width translation only. Source stackProps812-829: ShMemOp preserves offset and ISA branches, bounds from names_ok_imp; buffer/raise/return use reg_count and avoid_regs; OpCurrHeap targets default True, guards retained but unused. No target validity premise, executed behavior change or full theorem claim; coordinator source acceptance pending."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
-  "hol_name": "stack_names_comp_stack_asm_ok",
-  "lean_path": "Flapjack/Compiler/Backend/StackNames/AsmAdmissibility/RegisterLeaves.lean",
-  "lean_name": "stackNamesCompStackAsmOk_Raise",
-  "statement_status": "reviewed_words_as_type_indexed_bitvec",
-  "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-luna-b source comparison, bead .18.5.15.7.14.2: HOL616 comp_ind Raise case retains stack_asm_name/names_ok/fixed_names and exact stack_asm_ok(comp f p) conclusion. Spt and native StackLang payloads; positive word-width translation only. Source stackProps812-829: ShMemOp preserves offset and ISA branches, bounds from names_ok_imp; buffer/raise/return use reg_count and avoid_regs; OpCurrHeap targets default True, guards retained but unused. No target validity premise, executed behavior change or full theorem claim; coordinator source acceptance pending."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
-  "hol_name": "stack_names_comp_stack_asm_ok",
-  "lean_path": "Flapjack/Compiler/Backend/StackNames/AsmAdmissibility/RegisterLeaves.lean",
-  "lean_name": "stackNamesCompStackAsmOk_Return",
-  "statement_status": "reviewed_words_as_type_indexed_bitvec",
-  "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-luna-b source comparison, bead .18.5.15.7.14.2: HOL616 comp_ind Return case retains stack_asm_name/names_ok/fixed_names and exact stack_asm_ok(comp f p) conclusion. Spt and native StackLang payloads; positive word-width translation only. Source stackProps812-829: ShMemOp preserves offset and ISA branches, bounds from names_ok_imp; buffer/raise/return use reg_count and avoid_regs; OpCurrHeap targets default True, guards retained but unused. No target validity premise, executed behavior change or full theorem claim; coordinator source acceptance pending."
-},
-{
-  "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
-  "hol_name": "stack_names_comp_stack_asm_ok",
-  "lean_path": "Flapjack/Compiler/Backend/StackNames/AsmAdmissibility/RegisterLeaves.lean",
-  "lean_name": "stackNamesCompStackAsmOk_ShMemOp",
-  "statement_status": "reviewed_words_as_type_indexed_bitvec",
-  "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-luna-b source comparison, bead .18.5.15.7.14.2: HOL616 comp_ind ShMemOp case retains stack_asm_name/names_ok/fixed_names and exact stack_asm_ok(comp f p) conclusion. Spt and native StackLang payloads; positive word-width translation only. Source stackProps812-829: ShMemOp preserves offset and ISA branches, bounds from names_ok_imp; buffer/raise/return use reg_count and avoid_regs; OpCurrHeap targets default True, guards retained but unused. No target validity premise, executed behavior change or full theorem claim; coordinator source acceptance pending."
-},
-{
-  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ArgLoadStrong.lean",
-  "lean_name": "generalSimulateArgLoadStrongAllDruleExact",
-  "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-  "hol_name": "general_simulate_arg_load_strong_all_drule",
-  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
-  "fmap_as_finite_support_relation": [
-    "CrepSemHOLState.locals",
-    "CrepSemHOLState.globals",
-    "CrepSemHOLState.code",
-    "t"
-  ],
-  "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-sol (.45.4.3) compared original HOL1350-1379: all original quantified variables and eleven strong_all guards retained, followed by the original twelfth observed nested evaluation premise at result r1/state tprime. Conclusion exactly r1=r, full state_rel and source-result match with FDIFF and restored-locals submaps for NONE/Break/Continue, Error False, other True. This target-run premise belongs to HOL drule only; existential strong_all has no such premise. Proof derives independent existential run then projects deterministic pair equality to identify both result and state. Canonical locals/globals/code and standalone t maps, positive-width BitVec and Type0 FFI only; existing canonical roundtrip witness retained. Coordinator review pending."
-},
+  },
 {
   "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMemGlobal.lean",
   "lean_name": "compileCorrect_ShMemLoad",
@@ -35512,5 +35441,4 @@
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.2.22.3.2.3) compared pan_globalsProofScript.sml:2663-2665 `LUB_IMAGE_SUC[local]: (!x. LPREFIX (f x) (f (SUC x))) ==> LUB (IMAGE f UNIV(:num)) = LUB (IMAGE (f o SUC) UNIV(:num))`. HOL LUB is the lprefix_lub Overload for build_lprefix_lub (lprefix_lubScript.sml:560), rendered as HolLList.buildLprefixLub (the rendering used by the tagged IMP_build_lprefix_lub_EQ). IMAGE g UNIV is the set-as-predicate fun l => exists k, l = g k, as in the tagged panSem semantics_def. f : Nat -> HolLList a is generic, LPREFIX is HolLList.lprefix, SUC is Nat.succ, o is Function.comp. Same single hypothesis and conclusion; no extra premise. Proof follows HOL's: IMP_build_lprefix_lub_EQ with the two lprefix_chain facts (transitivity along the monotone sequence) and both lprefix_rel directions. Uses the untagged Flapjack support HolLList.lprefix_trans (Misc/LprefixLub.lean; llistScript is not pinned)."
 }
->>>>>>> origin/fleet-integration-post-1183-stack
 ]
