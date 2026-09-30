@@ -32558,8 +32558,17 @@
   "hol_name": "res_var_FEMPTY",
   "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationLocals.lean",
   "lean_name": "resVarFEMPTYExact",
-  "statement_status": "documented_mismatch",
-  "reviewer": "flapjack-ds10 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.32.6; documented_mismatch, tag withdrawn after coordinator review). HOL res_var_FEMPTY (pan_globalsProofScript.sml:1011-1015) has elaborated type res_var FEMPTY (n,NONE) = FEMPTY over the bare polymorphic finite-map carrier 'a |-> 'b; the Lean statement renders that carrier with HolFiniteMapExact (resVarEq/empty). No existing finite-map qualifier classifies a tagged theorem whose whole content is a single map equality: fmap_as_finite_support_result is limited to defs by its lookup-target witness rule and fmap_as_finite_support_equalities requires at least two top-level conjuncts. The @[hol] tag was withdrawn rather than left as reviewed_exact; faithful classification/extending the single-map-equality qualifier+witness checks is tracked by flapjack-pxn.18.5.2.32.6.1."
+  "statement_status": "reviewed_fmap_as_finite_support_equality",
+  "fmap_as_finite_support_equality": true,
+  "reviewer": "flapjack-ds10 source comparison (2026-09-30; bead flapjack-pxn.18.5.2.32.6): HOL res_var_FEMPTY (pan_globalsProofScript.sml:1011-1015) is res_var FEMPTY (n,NONE) = FEMPTY over the bare polymorphic finite-map carrier 'a |-> 'b, rendered with the reviewed HolFiniteMapExact carrier (resVarEq/empty). Tagged with the singular fmap_as_finite_support_equality qualifier; the same-module unconditional lookup witness holFmapAsFiniteSupportEqualityWitness_resVarFEMPTYExact proves (resVarEq empty (n,none)).lookup k = empty.lookup k."
+},
+{
+  "hol_path": null,
+  "hol_name": null,
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationLocals.lean",
+  "lean_name": "holFmapAsFiniteSupportEqualityWitness_resVarFEMPTYExact",
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific lookup-level witness backing the resVarFEMPTYExact singular map-equality tag; no independent HOL original."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",

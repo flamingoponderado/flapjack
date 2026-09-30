@@ -2269,6 +2269,54 @@ def _is_proof_premise_type(type_text: str) -> bool:
     return any(op in text for op in ("\u2192", "->", "\u2194", "\u00ac", "="))
 
 
+def _declaration_premise_errors(declaration_text: str) -> list[str]:
+    """Reject arrow premises and proof-premise binders on a tagged declaration.
+
+    The singular finite-map equality qualifier asserts that the tagged theorem
+    is the unconditional HOL equality. `_statement_conclusion` strips arrow
+    premises before checking the conclusion shape, so a weakened theorem such
+    as `theorem t (h : x = y) : HolFiniteMapExact.empty = a` would otherwise
+    pass. This scans the declaration's own signature (from the `theorem`/`lemma`
+    keyword, ignoring the preceding `@[hol ...]` attribute) for both kinds of
+    premise.
+
+    Like the witness check this is a syntactic scan: a premise whose type is a
+    named `Prop` alias or predicate application may be missed, and a legitimate
+    data-level function binder such as `(f : \u03b1 \u2192 \u03b2)` may be
+    over-matched. Passing it is not a proof of unconditionality; manual source
+    review remains mandatory.
+    """
+    errors: list[str] = []
+    keyword = re.search(r"\b(?:theorem|lemma)\b", declaration_text)
+    signature = declaration_text[keyword.start():] if keyword else declaration_text
+    body = signature.split(":=", 1)[0]
+    colon = _last_top_level_colon(body)
+    if colon < 0:
+        return errors
+    binder_zone = body[:colon]
+    rest = body[colon + 1:]
+    premises = 0
+    while True:
+        split = _split_top_level(rest, ("\u2192", "->"))
+        if split is None:
+            break
+        premises += 1
+        rest = split[1]
+    if premises:
+        errors.append(
+            "fmap_as_finite_support_equality requires the tagged declaration to "
+            "be unconditional; it introduces an arrow premise"
+        )
+    for type_text in _binder_types(binder_zone):
+        if _is_proof_premise_type(type_text):
+            errors.append(
+                "fmap_as_finite_support_equality requires the tagged declaration "
+                f"to be unconditional; binder `{type_text}` is a proof premise, "
+                "not typed data"
+            )
+    return errors
+
+
 def _has_lookup_equality_witness(
     lines: list[str], witness: str, forbidden: str,
     expected: tuple[str, str] | None = None,
@@ -2475,9 +2523,11 @@ def fmap_as_finite_support_equality_errors(
 
     HOL theorems such as `res_var_FEMPTY` conclude exactly one `|->` map
     equality.  The tagged declaration must conclude exactly one whole
-    `HolFiniteMapExact` equality (no conjunction, no iff, no premises), and its
-    two sides must be witnessed at the lookup level by a same-module checked,
-    unconditional `holFmapAsFiniteSupportEqualityWitness_<decl>`: an equality
+    `HolFiniteMapExact` equality, with no conjunction, no iff, and no premise
+    (an arrow premise or proof-premise binder on the tagged declaration is
+    rejected), and its two sides must be witnessed at the lookup level by a
+    same-module checked, unconditional
+    `holFmapAsFiniteSupportEqualityWitness_<decl>`: an equality
     `<side>.lookup k = <side>.lookup k` at one universally bound key, with the
     two receivers exactly the tagged conclusion's two sides.  The witness must
     not mention the tagged theorem (rejecting the ignored-proof /
@@ -2486,7 +2536,7 @@ def fmap_as_finite_support_equality_errors(
     The checks are syntactic: they validate shape, naming, same-key
     application, a universally bound key, and side association, but they do NOT
     prove that the Lean witness corresponds to the HOL map equality.  Source
-    review must compare the witness against the HOL equality.  The
+    review must compare the witness against the HOL equality.  Premise and
     unconditional-binder rejection is likewise syntactic: `_binder_types`
     recognizes `(...)`, `{...}` and `[...]` delimiters, and
     `_is_proof_premise_type` flags only literal `False`/`True` and type text
@@ -2502,6 +2552,7 @@ def fmap_as_finite_support_equality_errors(
             "conclusion to use the approved HolFiniteMapExact translation; a raw "
             "`\u03b1 \u2192 Option \u03b2` function map is ineligible"
         )
+    errors.extend(_declaration_premise_errors(declaration_text))
     conclusion = _statement_conclusion(declaration_text)
     if _split_top_level(conclusion, ("\u2194",)) is not None:
         errors.append(
