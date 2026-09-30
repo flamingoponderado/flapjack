@@ -20,7 +20,15 @@ namespace WordSemStateFiniteExact
 
 /-- Exact HOL event monotonicity over the faithful wordSem evaluator. The
     projection induction follows HOL's evaluator cases; there are no
-    additional assumptions on the program, state, result or FFI oracle. -/
+    additional assumptions on the program, state, result or FFI oracle.
+
+    Source-assurance dependency: this theorem does not establish the
+    cross-language numerical behavior of floating-point instructions. The
+    separately audited FPSqrt behavioral mismatch remains open; the Inst
+    case here uses only successful instruction FFI preservation, which is
+    independent of the computed floating-point result. This prefix theorem
+    must not be used as evidence that the evaluator's numerical results
+    already agree with HOL. -/
 @[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "evaluate_io_events_mono"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem evaluate_io_events_mono {width : Nat} [NeZero width] {C : Type} {F : Type} :
