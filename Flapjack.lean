@@ -406,6 +406,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.FpermCode
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Leaves
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.ReturnRaise
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Assign
+import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Seq
 import Flapjack.Pancake.Proofs.PanGlobals.DeclListLemmas
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelationExact
 import Flapjack.Pancake.Proofs.PanGlobals.CompileDecsStructural

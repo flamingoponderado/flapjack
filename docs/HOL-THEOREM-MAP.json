@@ -35263,111 +35263,134 @@
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.2.22.3.2.3) compared pan_globalsProofScript.sml:2663-2665 `LUB_IMAGE_SUC[local]: (!x. LPREFIX (f x) (f (SUC x))) ==> LUB (IMAGE f UNIV(:num)) = LUB (IMAGE (f o SUC) UNIV(:num))`. HOL LUB is the lprefix_lub Overload for build_lprefix_lub (lprefix_lubScript.sml:560), rendered as HolLList.buildLprefixLub (the rendering used by the tagged IMP_build_lprefix_lub_EQ). IMAGE g UNIV is the set-as-predicate fun l => exists k, l = g k, as in the tagged panSem semantics_def. f : Nat -> HolLList a is generic, LPREFIX is HolLList.lprefix, SUC is Nat.succ, o is Function.comp. Same single hypothesis and conclusion; no extra premise. Proof follows HOL's: IMP_build_lprefix_lub_EQ with the two lprefix_chain facts (transitivity along the monotone sequence) and both lprefix_rel directions. Uses the untagged Flapjack support HolLList.lprefix_trans (Misc/LprefixLub.lean; llistScript is not pinned)."
 },
-  {
-    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
-    "hol_name": "evaluate_clock_sub",
-    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvaluateClockSubAtoms.lean",
-    "lean_name": "evaluateClockSubPrimitiveCaseHOLFinite",
-    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support": [
-      "locals",
-      "globals",
-      "code",
-      "eshapes"
-    ],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-4ac.4.60.1.1.11): HOL panPropsScript.sml:724-728 quantifies p,t,res,st,ck with the high-run equation evaluate (p,t) = (res, st with clock := st.clock + ck), the premise res <> SOME TimeOut, and the conclusion evaluate (p,t with clock := t.clock - ck) = (res,st). This is the nonrecursive Primitive (panSemScript.sml evaluate_def Primitive clause: args via OPT_MMAP eval, prim op, is_valid_value, set_var) case of recInduct evaluate_ind; the constructor has no IH and none is added. Same statement shape and carrier (PanPropsEvalStateFiniteExact, evaluateHOLFinitePair) as the accepted Assign case. Proof (untagged clockSub_of_noTimeout/pairClockSub_of_noTimeout): the clause never returns SOME TimeOut (nt_* lemmas over the tagged evaluateHOLFiniteState equations), so the tagged evaluate_add_clock_eq lifts the low-clock run by ck to t, and the tagged evaluate_clock gives ck <= t.clock; comparing with the high run yields the result. Qualifiers: owner PanPropsEvalStateFiniteExact (imported from EvalInvariant.lean, witness re-exported in-module) and the indexed-word translation. The full evaluate_clock_sub remains open (While .9, If .12, Call .13, DecCall .14, assembly .15)."
-  },
-  {
-    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
-    "hol_name": "evaluate_clock_sub",
-    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvaluateClockSubAtoms.lean",
-    "lean_name": "evaluateClockSubStoreCaseHOLFinite",
-    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support": [
-      "locals",
-      "globals",
-      "code",
-      "eshapes"
-    ],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-4ac.4.60.1.1.11): HOL panPropsScript.sml:724-728 quantifies p,t,res,st,ck with the high-run equation evaluate (p,t) = (res, st with clock := st.clock + ck), the premise res <> SOME TimeOut, and the conclusion evaluate (p,t with clock := t.clock - ck) = (res,st). This is the nonrecursive Store (eval address and value, mem_stores) case of recInduct evaluate_ind; the constructor has no IH and none is added. Same statement shape and carrier (PanPropsEvalStateFiniteExact, evaluateHOLFinitePair) as the accepted Assign case. Proof (untagged clockSub_of_noTimeout/pairClockSub_of_noTimeout): the clause never returns SOME TimeOut (nt_* lemmas over the tagged evaluateHOLFiniteState equations), so the tagged evaluate_add_clock_eq lifts the low-clock run by ck to t, and the tagged evaluate_clock gives ck <= t.clock; comparing with the high run yields the result. Qualifiers: owner PanPropsEvalStateFiniteExact (imported from EvalInvariant.lean, witness re-exported in-module) and the indexed-word translation. The full evaluate_clock_sub remains open (While .9, If .12, Call .13, DecCall .14, assembly .15)."
-  },
-  {
-    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
-    "hol_name": "evaluate_clock_sub",
-    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvaluateClockSubAtoms.lean",
-    "lean_name": "evaluateClockSubStore32CaseHOLFinite",
-    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support": [
-      "locals",
-      "globals",
-      "code",
-      "eshapes"
-    ],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-4ac.4.60.1.1.11): HOL panPropsScript.sml:724-728 quantifies p,t,res,st,ck with the high-run equation evaluate (p,t) = (res, st with clock := st.clock + ck), the premise res <> SOME TimeOut, and the conclusion evaluate (p,t with clock := t.clock - ck) = (res,st). This is the nonrecursive Store32 (mem_store32) case of recInduct evaluate_ind; the constructor has no IH and none is added. Same statement shape and carrier (PanPropsEvalStateFiniteExact, evaluateHOLFinitePair) as the accepted Assign case. Proof (untagged clockSub_of_noTimeout/pairClockSub_of_noTimeout): the clause never returns SOME TimeOut (nt_* lemmas over the tagged evaluateHOLFiniteState equations), so the tagged evaluate_add_clock_eq lifts the low-clock run by ck to t, and the tagged evaluate_clock gives ck <= t.clock; comparing with the high run yields the result. Qualifiers: owner PanPropsEvalStateFiniteExact (imported from EvalInvariant.lean, witness re-exported in-module) and the indexed-word translation. The full evaluate_clock_sub remains open (While .9, If .12, Call .13, DecCall .14, assembly .15)."
-  },
-  {
-    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
-    "hol_name": "evaluate_clock_sub",
-    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvaluateClockSubAtoms.lean",
-    "lean_name": "evaluateClockSubStoreByteCaseHOLFinite",
-    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support": [
-      "locals",
-      "globals",
-      "code",
-      "eshapes"
-    ],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-4ac.4.60.1.1.11): HOL panPropsScript.sml:724-728 quantifies p,t,res,st,ck with the high-run equation evaluate (p,t) = (res, st with clock := st.clock + ck), the premise res <> SOME TimeOut, and the conclusion evaluate (p,t with clock := t.clock - ck) = (res,st). This is the nonrecursive StoreByte (mem_store_byte) case of recInduct evaluate_ind; the constructor has no IH and none is added. Same statement shape and carrier (PanPropsEvalStateFiniteExact, evaluateHOLFinitePair) as the accepted Assign case. Proof (untagged clockSub_of_noTimeout/pairClockSub_of_noTimeout): the clause never returns SOME TimeOut (nt_* lemmas over the tagged evaluateHOLFiniteState equations), so the tagged evaluate_add_clock_eq lifts the low-clock run by ck to t, and the tagged evaluate_clock gives ck <= t.clock; comparing with the high run yields the result. Qualifiers: owner PanPropsEvalStateFiniteExact (imported from EvalInvariant.lean, witness re-exported in-module) and the indexed-word translation. The full evaluate_clock_sub remains open (While .9, If .12, Call .13, DecCall .14, assembly .15)."
-  },
-  {
-    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
-    "hol_name": "evaluate_clock_sub",
-    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvaluateClockSubAtoms.lean",
-    "lean_name": "evaluateClockSubShMemLoadCaseHOLFinite",
-    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support": [
-      "locals",
-      "globals",
-      "code",
-      "eshapes"
-    ],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-4ac.4.60.1.1.11): HOL panPropsScript.sml:724-728 quantifies p,t,res,st,ck with the high-run equation evaluate (p,t) = (res, st with clock := st.clock + ck), the premise res <> SOME TimeOut, and the conclusion evaluate (p,t with clock := t.clock - ck) = (res,st). This is the nonrecursive ShMemLoad (lookup_kvar guard, sh_mem_load via FFI) case of recInduct evaluate_ind; the constructor has no IH and none is added. Same statement shape and carrier (PanPropsEvalStateFiniteExact, evaluateHOLFinitePair) as the accepted Assign case. Proof (untagged clockSub_of_noTimeout/pairClockSub_of_noTimeout): the clause never returns SOME TimeOut (nt_* lemmas over the tagged evaluateHOLFiniteState equations), so the tagged evaluate_add_clock_eq lifts the low-clock run by ck to t, and the tagged evaluate_clock gives ck <= t.clock; comparing with the high run yields the result. Qualifiers: owner PanPropsEvalStateFiniteExact (imported from EvalInvariant.lean, witness re-exported in-module) and the indexed-word translation. The full evaluate_clock_sub remains open (While .9, If .12, Call .13, DecCall .14, assembly .15)."
-  },
-  {
-    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
-    "hol_name": "evaluate_clock_sub",
-    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvaluateClockSubAtoms.lean",
-    "lean_name": "evaluateClockSubShMemStoreCaseHOLFinite",
-    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support": [
-      "locals",
-      "globals",
-      "code",
-      "eshapes"
-    ],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-4ac.4.60.1.1.11): HOL panPropsScript.sml:724-728 quantifies p,t,res,st,ck with the high-run equation evaluate (p,t) = (res, st with clock := st.clock + ck), the premise res <> SOME TimeOut, and the conclusion evaluate (p,t with clock := t.clock - ck) = (res,st). This is the nonrecursive ShMemStore (sh_mem_store via FFI) case of recInduct evaluate_ind; the constructor has no IH and none is added. Same statement shape and carrier (PanPropsEvalStateFiniteExact, evaluateHOLFinitePair) as the accepted Assign case. Proof (untagged clockSub_of_noTimeout/pairClockSub_of_noTimeout): the clause never returns SOME TimeOut (nt_* lemmas over the tagged evaluateHOLFiniteState equations), so the tagged evaluate_add_clock_eq lifts the low-clock run by ck to t, and the tagged evaluate_clock gives ck <= t.clock; comparing with the high run yields the result. Qualifiers: owner PanPropsEvalStateFiniteExact (imported from EvalInvariant.lean, witness re-exported in-module) and the indexed-word translation. The full evaluate_clock_sub remains open (While .9, If .12, Call .13, DecCall .14, assembly .15)."
-  },
-  {
-    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
-    "hol_name": "evaluate_clock_sub",
-    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvaluateClockSubAtoms.lean",
-    "lean_name": "evaluateClockSubExtCallCaseHOLFinite",
-    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support": [
-      "locals",
-      "globals",
-      "code",
-      "eshapes"
-    ],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-4ac.4.60.1.1.11): HOL panPropsScript.sml:724-728 quantifies p,t,res,st,ck with the high-run equation evaluate (p,t) = (res, st with clock := st.clock + ck), the premise res <> SOME TimeOut, and the conclusion evaluate (p,t with clock := t.clock - ck) = (res,st). This is the nonrecursive ExtCall (read_bytearray, call_FFI, write_bytearray) case of recInduct evaluate_ind; the constructor has no IH and none is added. Same statement shape and carrier (PanPropsEvalStateFiniteExact, evaluateHOLFinitePair) as the accepted Assign case. Proof (untagged clockSub_of_noTimeout/pairClockSub_of_noTimeout): the clause never returns SOME TimeOut (nt_* lemmas over the tagged evaluateHOLFiniteState equations), so the tagged evaluate_add_clock_eq lifts the low-clock run by ck to t, and the tagged evaluate_clock gives ck <= t.clock; comparing with the high run yields the result. Qualifiers: owner PanPropsEvalStateFiniteExact (imported from EvalInvariant.lean, witness re-exported in-module) and the indexed-word translation. The full evaluate_clock_sub remains open (While .9, If .12, Call .13, DecCall .14, assembly .15)."
-  },
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/Seq.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack representation infrastructure: canonical state toExact/ofExact roundtrip re-export, no independent HOL theorem."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/Seq.lean",
+  "lean_name": "evaluateFperm_Seq",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_fperm",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol (22.5.4) compared HOL evaluate_fperm1721-1810 and literal evaluate_ind Seq conjunct: original first-program IH and second-program IH guarded exactly by (r1,s1)=source first evaluation and r1=NONE. Each IH uses original source-run implication to exact permuted run/result/poststate code update. Arbitrary f/g/first/second/state/result/post, sole source Seq evaluation premise; no target-run, success/nonError or postrelation assumption. Exact fperm recursive Seq equation and faithful evaluator original line780 (accepted clock erasure) used. Continuing branch invokes original guarded continuation at actual source first post; abnormal branch returns first result/post exactly. Canonical locals/globals/code/eshapes maps and positive words/Type0 FFI only; genuine local canonical roundtrip witness. Full recursive permutation/assembly remains open; coordinator review pending."
+},
+{
+  "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+  "hol_name": "evaluate_clock_sub",
+  "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvaluateClockSubAtoms.lean",
+  "lean_name": "evaluateClockSubPrimitiveCaseHOLFinite",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-4ac.4.60.1.1.11): HOL panPropsScript.sml:724-728 quantifies p,t,res,st,ck with the high-run equation evaluate (p,t) = (res, st with clock := st.clock + ck), the premise res <> SOME TimeOut, and the conclusion evaluate (p,t with clock := t.clock - ck) = (res,st). This is the nonrecursive Primitive (panSemScript.sml evaluate_def Primitive clause: args via OPT_MMAP eval, prim op, is_valid_value, set_var) case of recInduct evaluate_ind; the constructor has no IH and none is added. Same statement shape and carrier (PanPropsEvalStateFiniteExact, evaluateHOLFinitePair) as the accepted Assign case. Proof (untagged clockSub_of_noTimeout/pairClockSub_of_noTimeout): the clause never returns SOME TimeOut (nt_* lemmas over the tagged evaluateHOLFiniteState equations), so the tagged evaluate_add_clock_eq lifts the low-clock run by ck to t, and the tagged evaluate_clock gives ck <= t.clock; comparing with the high run yields the result. Qualifiers: owner PanPropsEvalStateFiniteExact (imported from EvalInvariant.lean, witness re-exported in-module) and the indexed-word translation. The full evaluate_clock_sub remains open (While .9, If .12, Call .13, DecCall .14, assembly .15)."
+},
+{
+  "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+  "hol_name": "evaluate_clock_sub",
+  "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvaluateClockSubAtoms.lean",
+  "lean_name": "evaluateClockSubStoreCaseHOLFinite",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-4ac.4.60.1.1.11): HOL panPropsScript.sml:724-728 quantifies p,t,res,st,ck with the high-run equation evaluate (p,t) = (res, st with clock := st.clock + ck), the premise res <> SOME TimeOut, and the conclusion evaluate (p,t with clock := t.clock - ck) = (res,st). This is the nonrecursive Store (eval address and value, mem_stores) case of recInduct evaluate_ind; the constructor has no IH and none is added. Same statement shape and carrier (PanPropsEvalStateFiniteExact, evaluateHOLFinitePair) as the accepted Assign case. Proof (untagged clockSub_of_noTimeout/pairClockSub_of_noTimeout): the clause never returns SOME TimeOut (nt_* lemmas over the tagged evaluateHOLFiniteState equations), so the tagged evaluate_add_clock_eq lifts the low-clock run by ck to t, and the tagged evaluate_clock gives ck <= t.clock; comparing with the high run yields the result. Qualifiers: owner PanPropsEvalStateFiniteExact (imported from EvalInvariant.lean, witness re-exported in-module) and the indexed-word translation. The full evaluate_clock_sub remains open (While .9, If .12, Call .13, DecCall .14, assembly .15)."
+},
+{
+  "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+  "hol_name": "evaluate_clock_sub",
+  "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvaluateClockSubAtoms.lean",
+  "lean_name": "evaluateClockSubStore32CaseHOLFinite",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-4ac.4.60.1.1.11): HOL panPropsScript.sml:724-728 quantifies p,t,res,st,ck with the high-run equation evaluate (p,t) = (res, st with clock := st.clock + ck), the premise res <> SOME TimeOut, and the conclusion evaluate (p,t with clock := t.clock - ck) = (res,st). This is the nonrecursive Store32 (mem_store32) case of recInduct evaluate_ind; the constructor has no IH and none is added. Same statement shape and carrier (PanPropsEvalStateFiniteExact, evaluateHOLFinitePair) as the accepted Assign case. Proof (untagged clockSub_of_noTimeout/pairClockSub_of_noTimeout): the clause never returns SOME TimeOut (nt_* lemmas over the tagged evaluateHOLFiniteState equations), so the tagged evaluate_add_clock_eq lifts the low-clock run by ck to t, and the tagged evaluate_clock gives ck <= t.clock; comparing with the high run yields the result. Qualifiers: owner PanPropsEvalStateFiniteExact (imported from EvalInvariant.lean, witness re-exported in-module) and the indexed-word translation. The full evaluate_clock_sub remains open (While .9, If .12, Call .13, DecCall .14, assembly .15)."
+},
+{
+  "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+  "hol_name": "evaluate_clock_sub",
+  "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvaluateClockSubAtoms.lean",
+  "lean_name": "evaluateClockSubStoreByteCaseHOLFinite",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-4ac.4.60.1.1.11): HOL panPropsScript.sml:724-728 quantifies p,t,res,st,ck with the high-run equation evaluate (p,t) = (res, st with clock := st.clock + ck), the premise res <> SOME TimeOut, and the conclusion evaluate (p,t with clock := t.clock - ck) = (res,st). This is the nonrecursive StoreByte (mem_store_byte) case of recInduct evaluate_ind; the constructor has no IH and none is added. Same statement shape and carrier (PanPropsEvalStateFiniteExact, evaluateHOLFinitePair) as the accepted Assign case. Proof (untagged clockSub_of_noTimeout/pairClockSub_of_noTimeout): the clause never returns SOME TimeOut (nt_* lemmas over the tagged evaluateHOLFiniteState equations), so the tagged evaluate_add_clock_eq lifts the low-clock run by ck to t, and the tagged evaluate_clock gives ck <= t.clock; comparing with the high run yields the result. Qualifiers: owner PanPropsEvalStateFiniteExact (imported from EvalInvariant.lean, witness re-exported in-module) and the indexed-word translation. The full evaluate_clock_sub remains open (While .9, If .12, Call .13, DecCall .14, assembly .15)."
+},
+{
+  "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+  "hol_name": "evaluate_clock_sub",
+  "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvaluateClockSubAtoms.lean",
+  "lean_name": "evaluateClockSubShMemLoadCaseHOLFinite",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-4ac.4.60.1.1.11): HOL panPropsScript.sml:724-728 quantifies p,t,res,st,ck with the high-run equation evaluate (p,t) = (res, st with clock := st.clock + ck), the premise res <> SOME TimeOut, and the conclusion evaluate (p,t with clock := t.clock - ck) = (res,st). This is the nonrecursive ShMemLoad (lookup_kvar guard, sh_mem_load via FFI) case of recInduct evaluate_ind; the constructor has no IH and none is added. Same statement shape and carrier (PanPropsEvalStateFiniteExact, evaluateHOLFinitePair) as the accepted Assign case. Proof (untagged clockSub_of_noTimeout/pairClockSub_of_noTimeout): the clause never returns SOME TimeOut (nt_* lemmas over the tagged evaluateHOLFiniteState equations), so the tagged evaluate_add_clock_eq lifts the low-clock run by ck to t, and the tagged evaluate_clock gives ck <= t.clock; comparing with the high run yields the result. Qualifiers: owner PanPropsEvalStateFiniteExact (imported from EvalInvariant.lean, witness re-exported in-module) and the indexed-word translation. The full evaluate_clock_sub remains open (While .9, If .12, Call .13, DecCall .14, assembly .15)."
+},
+{
+  "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+  "hol_name": "evaluate_clock_sub",
+  "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvaluateClockSubAtoms.lean",
+  "lean_name": "evaluateClockSubShMemStoreCaseHOLFinite",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-4ac.4.60.1.1.11): HOL panPropsScript.sml:724-728 quantifies p,t,res,st,ck with the high-run equation evaluate (p,t) = (res, st with clock := st.clock + ck), the premise res <> SOME TimeOut, and the conclusion evaluate (p,t with clock := t.clock - ck) = (res,st). This is the nonrecursive ShMemStore (sh_mem_store via FFI) case of recInduct evaluate_ind; the constructor has no IH and none is added. Same statement shape and carrier (PanPropsEvalStateFiniteExact, evaluateHOLFinitePair) as the accepted Assign case. Proof (untagged clockSub_of_noTimeout/pairClockSub_of_noTimeout): the clause never returns SOME TimeOut (nt_* lemmas over the tagged evaluateHOLFiniteState equations), so the tagged evaluate_add_clock_eq lifts the low-clock run by ck to t, and the tagged evaluate_clock gives ck <= t.clock; comparing with the high run yields the result. Qualifiers: owner PanPropsEvalStateFiniteExact (imported from EvalInvariant.lean, witness re-exported in-module) and the indexed-word translation. The full evaluate_clock_sub remains open (While .9, If .12, Call .13, DecCall .14, assembly .15)."
+},
+{
+  "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+  "hol_name": "evaluate_clock_sub",
+  "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvaluateClockSubAtoms.lean",
+  "lean_name": "evaluateClockSubExtCallCaseHOLFinite",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-4ac.4.60.1.1.11): HOL panPropsScript.sml:724-728 quantifies p,t,res,st,ck with the high-run equation evaluate (p,t) = (res, st with clock := st.clock + ck), the premise res <> SOME TimeOut, and the conclusion evaluate (p,t with clock := t.clock - ck) = (res,st). This is the nonrecursive ExtCall (read_bytearray, call_FFI, write_bytearray) case of recInduct evaluate_ind; the constructor has no IH and none is added. Same statement shape and carrier (PanPropsEvalStateFiniteExact, evaluateHOLFinitePair) as the accepted Assign case. Proof (untagged clockSub_of_noTimeout/pairClockSub_of_noTimeout): the clause never returns SOME TimeOut (nt_* lemmas over the tagged evaluateHOLFiniteState equations), so the tagged evaluate_add_clock_eq lifts the low-clock run by ck to t, and the tagged evaluate_clock gives ck <= t.clock; comparing with the high run yields the result. Qualifiers: owner PanPropsEvalStateFiniteExact (imported from EvalInvariant.lean, witness re-exported in-module) and the indexed-word translation. The full evaluate_clock_sub remains open (While .9, If .12, Call .13, DecCall .14, assembly .15)."
+},
   {
     "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
     "hol_name": "evaluate_clock_sub",
