@@ -37535,5 +37535,65 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "C source comparison pan_simpProof117-137 and seq_assoc_def18-40 DecCall recursive case: complete arbitrary-prefix result/state equality; exactly source Skip/handler-or-continuation IH and no other premise. return-shape conjunction and restoration of caller local binding preserved; every callee/control/argument/lookup/clock branch retained. Accepted exact source evaluator clauses rewritten and universal bodyIH applies at actual continuation state. Native exact carriers, canonical fourmap state fields/genuine roundtrip witness, positive BitVec width and Type0 FFI only. Genuine constructor case, full117 assembly remains open; coordinator review pending, proof-only."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SeqAssocExact.lean",
+  "lean_name": "evaluateSeqAssocSkipHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+  "hol_name": "evaluate_seq_assoc",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison pan_simpProofScript.sml117-137 and seq_assoc_def18-40: genuine Skip base case, unconditional complete exact evaluation equality for arbitrary prefix/state and source fields. No extra semantic premise or IH. Accepted exact Seq/Skip/Annot equations and literal SmartSeq semantics preserve complete post-state including errors/control flow. Native exact carriers, canonical four-map state with genuine roundtrip witness, positive BitVec width and Type0 FFI only. Full117 assembly remains open; coordinator review pending; proof-only."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SeqAssocExact.lean",
+  "lean_name": "evaluateSeqAssocAnnotHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+  "hol_name": "evaluate_seq_assoc",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison pan_simpProofScript.sml117-137 and seq_assoc_def18-40: genuine Annot base case, unconditional complete exact evaluation equality for arbitrary prefix/state and source fields. No extra semantic premise or IH. Accepted exact Seq/Skip/Annot equations and literal SmartSeq semantics preserve complete post-state including errors/control flow. Native exact carriers, canonical four-map state with genuine roundtrip witness, positive BitVec width and Type0 FFI only. Full117 assembly remains open; coordinator review pending; proof-only."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SeqAssocExact.lean",
+  "lean_name": "evaluateSeqAssocCallNoneHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+  "hol_name": "evaluate_seq_assoc",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison pan_simpProofScript.sml117-137 and seq_assoc_def18-40: genuine CallNone base case, unconditional complete exact evaluation equality for arbitrary prefix/state and source fields. No extra semantic premise or IH. Accepted exact Seq/Skip/Annot equations and literal SmartSeq semantics preserve complete post-state including errors/control flow. Native exact carriers, canonical four-map state with genuine roundtrip witness, positive BitVec width and Type0 FFI only. Full117 assembly remains open; coordinator review pending; proof-only."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SeqAssocExact.lean",
+  "lean_name": "evaluateSeqAssocCallNoHandlerHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+  "hol_name": "evaluate_seq_assoc",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison pan_simpProofScript.sml117-137 and seq_assoc_def18-40: genuine CallNoHandler base case, unconditional complete exact evaluation equality for arbitrary prefix/state and source fields. No extra semantic premise or IH. Accepted exact Seq/Skip/Annot equations and literal SmartSeq semantics preserve complete post-state including errors/control flow. Native exact carriers, canonical four-map state with genuine roundtrip witness, positive BitVec width and Type0 FFI only. Full117 assembly remains open; coordinator review pending; proof-only."
 }
 ]
