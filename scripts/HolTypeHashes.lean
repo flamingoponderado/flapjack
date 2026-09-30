@@ -1,5 +1,6 @@
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelImpSemantics
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Assembly
+import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Call
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.ExtCall
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Call
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallGlobalHandler
@@ -323,6 +324,7 @@ import Flapjack.Pancake.Proofs.CrepInline.EvaluateStateLocals.While
 import Flapjack.Pancake.Proofs.CrepInline.EvaluateStateLocals.Call
 import Flapjack.Pancake.Proofs.CrepInline.EvaluateStateLocals.Assembly
 import Flapjack.Pancake.Proofs.CrepInline.ArgLoad
+import Flapjack.Pancake.Proofs.CrepInline.FiniteMapLemmas
 import Flapjack.Pancake.Proofs.CrepInline.NestedDecsSublocals
 import Flapjack.Pancake.Proofs.CrepInline.NotVarProg
 import Flapjack.Pancake.Proofs.CrepInline.ArgLoadStrong
