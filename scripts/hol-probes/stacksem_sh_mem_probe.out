@@ -1,0 +1,51 @@
+store=(NONE,1,
+ [IO_event (SharedMem MappedWrite) [0w]
+    [(34w,35w); (17w,18w); (0w,1w); (0w,1w); (0w,1w); (0w,1w); (0w,1w);
+     (0w,1w); (8w,9w); (0w,1w); (0w,1w); (0w,1w); (0w,1w); (0w,1w); (0w,1w);
+     (0w,1w)]],SOME (Word 4386w),SOME (Loc 1 0),NONE,0)
+load=(NONE,1,
+ [IO_event (SharedMem MappedRead) [0w]
+    [(8w,9w); (0w,1w); (0w,1w); (0w,1w); (0w,1w); (0w,1w); (0w,1w); (0w,1w)]],
+ SOME (Word 4386w),SOME (Loc 1 0),SOME (Word 0x101010101010109w),0)
+store8=(NONE,1,
+ [IO_event (SharedMem MappedWrite) [1w]
+    [(34w,35w); (9w,10w); (0w,1w); (0w,1w); (0w,1w); (0w,1w); (0w,1w);
+     (0w,1w); (0w,1w)]],SOME (Word 4386w),SOME (Loc 1 0),NONE,0)
+load8=(NONE,1,
+ [IO_event (SharedMem MappedRead) [1w]
+    [(9w,10w); (0w,1w); (0w,1w); (0w,1w); (0w,1w); (0w,1w); (0w,1w); (0w,1w)]],
+ SOME (Word 4386w),SOME (Loc 1 0),SOME (Word 0x10101010101010Aw),0)
+store16=(NONE,1,
+ [IO_event (SharedMem MappedWrite) [2w]
+    [(34w,35w); (17w,18w); (10w,11w); (0w,1w); (0w,1w); (0w,1w); (0w,1w);
+     (0w,1w); (0w,1w); (0w,1w)]],SOME (Word 4386w),SOME (Loc 1 0),NONE,0)
+load16=(NONE,1,
+ [IO_event (SharedMem MappedRead) [2w]
+    [(10w,11w); (0w,1w); (0w,1w); (0w,1w); (0w,1w); (0w,1w); (0w,1w);
+     (0w,1w)]],SOME (Word 4386w),SOME (Loc 1 0),
+ SOME (Word 0x10101010101010Bw),0)
+store32=(NONE,1,
+ [IO_event (SharedMem MappedWrite) [4w]
+    [(34w,35w); (17w,18w); (0w,1w); (0w,1w); (12w,13w); (0w,1w); (0w,1w);
+     (0w,1w); (0w,1w); (0w,1w); (0w,1w); (0w,1w)]],SOME (Word 4386w),
+ SOME (Loc 1 0),NONE,0)
+load32=(NONE,1,
+ [IO_event (SharedMem MappedRead) [4w]
+    [(12w,13w); (0w,1w); (0w,1w); (0w,1w); (0w,1w); (0w,1w); (0w,1w);
+     (0w,1w)]],SOME (Word 4386w),SOME (Loc 1 0),
+ SOME (Word 0x10101010101010Dw),0)
+load_outside=(SOME Error,0,[],SOME (Word 4386w),SOME (Loc 1 0),NONE,0)
+store8_outside=(SOME Error,0,[],SOME (Word 4386w),SOME (Loc 1 0),NONE,0)
+load_word_unaligned=(SOME Error,0,[],SOME (Word 4386w),SOME (Loc 1 0),NONE,0)
+store_word_unaligned=(SOME Error,0,[],SOME (Word 4386w),SOME (Loc 1 0),NONE,0)
+load_final=(SOME
+   (FinalFFI
+      (Final_event (SharedMem MappedRead) [0w]
+         [8w; 0w; 0w; 0w; 0w; 0w; 0w; 0w] FFI_diverged)),0,[],
+ SOME (Word 4386w),SOME (Loc 1 0),NONE,0)
+store_final=(SOME
+   (FinalFFI
+      (Final_event (SharedMem MappedWrite) [0w]
+         [34w; 17w; 0w; 0w; 0w; 0w; 0w; 0w; 8w; 0w; 0w; 0w; 0w; 0w; 0w; 0w]
+         FFI_diverged)),0,[],SOME (Word 4386w),SOME (Loc 1 0),NONE,0)
+store_loc=(SOME Error,0,[],SOME (Word 4386w),SOME (Loc 1 0),NONE,0)

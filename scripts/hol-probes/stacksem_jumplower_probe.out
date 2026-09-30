@@ -1,0 +1,8 @@
+jump_lower_success=(SOME (Result (Loc 4 5)),4,SOME (Word 3w),1)
+jump_lower_timeout=(SOME TimeOut,0,NONE,0)
+jump_lower_code_missing=(SOME Error,5,SOME (Word 3w),1)
+jump_lower_comparison_false=(NONE,5,SOME (Word 3w),1)
+jump_lower_loc_operand=(SOME Error,5,SOME (Word 3w),1)
+jump_lower_break_sub=(SOME Error,4,SOME (Word 3w),1)
+jump_lower_continue_sub=(SOME Error,4,SOME (Word 3w),1)
+jump_lower_none_sub=(SOME Error,4,SOME (Word 3w),1)

@@ -1,5 +1,15 @@
 [
   {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Control.lean",
+    "lean_name": "badFunReturn",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "bad_fun_return_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-09-30; bead flapjack-y19g.13.1): HOL bad_fun_return_def (stackSemScript.sml:754-758) is the four equations bad_fun_return NONE = T; bad_fun_return (SOME (Break _)) = T; bad_fun_return (SOME (Continue _)) = T; bad_fun_return _ = F, over the exact StackSem result. Lean transcribes them one for one on Option (StackSemResult width): none/break/continue are true and every other Some result is false; no result payload is inspected, so the only carrier is the width-indexed exact StackSemResult whose word payload reaches BitVec width through the tagged WordLocW word_loc. The (words_as_type_indexed_bitvec) qualifier records the HOL 'a word/dimindex (:a) to positive-width BitVec width/[NeZero width] translation, matching the neighbouring contLoop/exitLoop ports in the same module. This is StackSem's own classifier and is distinct from WordSem's same-named bad_fun_return over a different result type. The bad/non-bad sub-result branches are exercised by the Break/Continue/Skip/Return rows of scripts/hol-probes/stacksem_jumplower_probe.out and replayed in Flapjack.Test.StackSemJumpLowerParity. Coordinator source review pending."
+  }
+,
+  {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/StackCodec.lean",
     "lean_name": "fullReadBitmap",
     "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
@@ -6318,7 +6328,7 @@
       "eshapes"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 (source comparison, bead flapjack-pxn.18.5.2.22.6): HOL evaluate_decls_one_fun_last[local] (pan_globalsProofScript.sml:1854-1872) states !s. is_function y /\\ EVERY (\\d. case d of Decl _ _ _ => T | ExnDecl _ _ => T | _ => F) xs ==> evaluate_decls s (xs ++ [y]) = evaluate_decls s (y :: xs). Lean evaluateDeclsOneFunLast keeps the explicit state binder and both hypotheses, renders EVERY as xs.all (fun d => isDeclHOL d || isExnDeclHOL d) = true and is_function y as isFunctionHOL y = true, and keeps the xs ++ [y] / y :: xs conclusion over the canonical tagged PanSemStateFiniteExact.evaluateDeclsHOLFinite. Only carrier difference is the reviewed finite-map translation recorded by the qualifiers; no added premise. Replayed kernel-checked in Flapjack/Test/PanGlobalsResortDeclsEvaluateParity.lean. Coordinator review required."
+    "reviewer": "flapjack-ds9 (source comparison, bead flapjack-pxn.18.5.2.22.6): HOL evaluate_decls_one_fun_last[local] (pan_globalsProofScript.sml:1854-1872) states !s. is_function y /\\ EVERY (\\d. case d of Decl _ _ _ => T | ExnDecl _ _ => T | _ => F) xs ==> evaluate_decls s (xs ++ [y]) = evaluate_decls s (y :: xs). Lean evaluateDeclsOneFunLast keeps the explicit state binder and both hypotheses, renders EVERY as xs.all (fun d => isDeclHOL d || isExnDeclHOL d) = true and is_function y as isFunctionHOL y = true, and keeps the xs ++ [y] / y :: xs conclusion over the canonical tagged PanSemStateFiniteExact.evaluateDeclsHOLFinite. Only carrier difference is the reviewed finite-map translation recorded by the qualifiers; no added premise. Replayed kernel-checked in Flapjack/Test/PanGlobalsResortDeclsEvaluateParity.lean. Coordinator review required. Resolution of the DecidablePred review note: the tagged statement has no decidability binder; the finite-support evaluator is called with one fixed classical DecidablePred state.memaddrs instance supplied inside the statement, so it is a Lean implementation parameter only. Since Decidable p is a subsingleton (Subsingleton (Decidable p) is available in this toolchain), the evaluator's result is independent of the chosen instance, hence no HOL side condition is added and the tags are retained."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
@@ -6333,7 +6343,7 @@
       "eshapes"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 (source comparison, bead flapjack-pxn.18.5.2.22.6): HOL resort_decls_evaluate (pan_globalsProofScript.sml:1874-1941) states !s decs. EVERY (\\d. is_function d \\/ is_decl d \\/ is_exn_decl d) decs ==> evaluate_decls s (resort_decls decs) = evaluate_decls s decs. Lean resortDeclsEvaluate has the same state and list binders with the same hypothesis (EVERY rendered as decs.all (fun d => isFunctionHOL d || isDeclHOL d || isExnDeclHOL d) = true), resort_decls as the tagged exact resortDeclsHOL, and evaluate_decls as the canonical tagged PanSemStateFiniteExact.evaluateDeclsHOLFinite. Only carrier difference is the reviewed finite-map translation recorded by the qualifiers; no added premise. Replayed kernel-checked with a concrete mixed declaration list in Flapjack/Test/PanGlobalsResortDeclsEvaluateParity.lean. Coordinator review required."
+    "reviewer": "flapjack-ds9 (source comparison, bead flapjack-pxn.18.5.2.22.6): HOL resort_decls_evaluate (pan_globalsProofScript.sml:1874-1941) states !s decs. EVERY (\\d. is_function d \\/ is_decl d \\/ is_exn_decl d) decs ==> evaluate_decls s (resort_decls decs) = evaluate_decls s decs. Lean resortDeclsEvaluate has the same state and list binders with the same hypothesis (EVERY rendered as decs.all (fun d => isFunctionHOL d || isDeclHOL d || isExnDeclHOL d) = true), resort_decls as the tagged exact resortDeclsHOL, and evaluate_decls as the canonical tagged PanSemStateFiniteExact.evaluateDeclsHOLFinite. Only carrier difference is the reviewed finite-map translation recorded by the qualifiers; no added premise. Replayed kernel-checked with a concrete mixed declaration list in Flapjack/Test/PanGlobalsResortDeclsEvaluateParity.lean. Coordinator review required. Resolution of the DecidablePred review note: the tagged statement has no decidability binder; the finite-support evaluator is called with one fixed classical DecidablePred state.memaddrs instance supplied inside the statement, so it is a Lean implementation parameter only. Since Decidable p is a subsingleton (Subsingleton (Decidable p) is available in this toolchain), the evaluator's result is independent of the chosen instance, hence no HOL side condition is added and the tags are retained."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
@@ -6348,7 +6358,30 @@
       "eshapes"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 (source comparison, bead flapjack-pxn.18.5.2.22.6): HOL resort_decls_evaluate_IMP[local] (pan_globalsProofScript.sml:1943-1950) states evaluate_decls s decs = SOME s' /\\ EVERY (\\d. is_function d \\/ is_decl d \\/ is_exn_decl d) decs ==> evaluate_decls s (resort_decls decs) = SOME s'. Lean resortDeclsEvaluateImp has the same successful-evaluation premise, the same admissibility premise (rendered via all), and the same SOME s' conclusion over the canonical tagged evaluator and resortDeclsHOL. Only carrier difference is the reviewed finite-map translation recorded by the qualifiers; no added premise. Replayed kernel-checked in Flapjack/Test/PanGlobalsResortDeclsEvaluateParity.lean. Coordinator review required."
+    "reviewer": "flapjack-ds9 (source comparison, bead flapjack-pxn.18.5.2.22.6): HOL resort_decls_evaluate_IMP[local] (pan_globalsProofScript.sml:1943-1950) states evaluate_decls s decs = SOME s' /\\ EVERY (\\d. is_function d \\/ is_decl d \\/ is_exn_decl d) decs ==> evaluate_decls s (resort_decls decs) = SOME s'. Lean resortDeclsEvaluateImp has the same successful-evaluation premise, the same admissibility premise (rendered via all), and the same SOME s' conclusion over the canonical tagged evaluator and resortDeclsHOL. Only carrier difference is the reviewed finite-map translation recorded by the qualifiers; no added premise. Replayed kernel-checked in Flapjack/Test/PanGlobalsResortDeclsEvaluateParity.lean. Coordinator review required. Resolution of the DecidablePred review note: the tagged statement has no decidability binder; the finite-support evaluator is called with one fixed classical DecidablePred state.memaddrs instance supplied inside the statement, so it is a Lean implementation parameter only. Since Decidable p is a subsingleton (Subsingleton (Decidable p) is available in this toolchain), the evaluator's result is independent of the chosen instance, hence no HOL side condition is added and the tags are retained."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "evaluate_two",
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
+    "lean_name": "evaluateTwo",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 (source comparison, bead flapjack-pxn.18.5.2.22.3.1): HOL evaluate_two[local] (pan_globalsProofScript.sml:2631-2652) states evaluate (p,t with clock := k) = (res,st) /\\ evaluate (p,t with clock := k') = (res',st') /\\ res <> SOME TimeOut /\\ res' <> SOME TimeOut ==> res = res' /\\ st.ffi = st'.ffi. Lean evaluateTwo keeps the exact ProgHOL program, the PanSemStateFiniteExact state, both run equations and both non-TimeOut premises, and the same res = res' /\\ st.ffi = st'.ffi conclusion; evaluate is the canonical tagged PanSemStateFiniteExact.evaluateHOLFiniteState. Only carrier difference is the reviewed finite-map/word translation recorded by the qualifiers; no added premise. Proof uses the tagged panProps evaluate_add_clock_eq (panPropsEvaluateAddClockEq) and clock arithmetic, exactly as HOL. Replayed kernel-checked in Flapjack/Test/PanGlobalsEvaluateTwoParity.lean. Coordinator review required."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "num_cases_lemma",
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
+    "lean_name": "numCasesLemma",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 (source comparison, bead flapjack-pxn.18.5.2.22.3.1): HOL num_cases_lemma[local] (pan_globalsProofScript.sml:2654-2657) states !P. (!x. P x) ==> P 0 /\\ !x. P (SUC x). Lean numCasesLemma binds the same predicate P : Nat -> Prop (HOL num -> bool under the standard bool/Prop translation) and states (forall x, P x) -> P 0 /\\ forall x, P (Nat.succ x), with no extra premise. Replayed kernel-checked in Flapjack/Test/PanGlobalsEvaluateTwoParity.lean. Coordinator review required."
   },
   {
     "hol_path": null,
@@ -16722,6 +16755,95 @@
     "lean_name": "optMmapCongHOL",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.10): HOL miscScript.sml:2481 `Theorem OPT_MMAP_CONG` is `!l1 l2 f f'. (l1 = l2) /\\ (!x. MEM x l2 ==> (f x = f' x)) ==> (OPT_MMAP f l1 = OPT_MMAP f' l2)`. The Lean statement `optMmapCongHOL (l1 l2 : List α) (f f' : α → Option β) (hlen : l1 = l2) (h : ∀ x, x ∈ l2 → f x = f' x) : l1.mapM f = l2.mapM f'` matches clause-for-clause: HOL `OPT_MMAP` is rendered by core `List.mapM`, `MEM x l2` by list membership, and `LENGTH`/list equality directly; no extra hypotheses or carriers."
+  },
+  {
+    "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+    "hol_name": "equiv_lprefix_chain_def",
+    "lean_path": "Flapjack/Misc/LprefixLub.lean",
+    "lean_name": "equivLprefixChain",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.2): HOL lprefix_lubScript.sml:242-245 `Definition equiv_lprefix_chain_def: equiv_lprefix_chain ls1 ls2 ⇔ !n. lprefix_chain_nth n ls1 = lprefix_chain_nth n ls2`. The Lean def equivLprefixChain (ls1 ls2 : HolLList α → Prop) : Prop := ∀ n, lprefixChainNth n ls1 = lprefixChainNth n ls2 has the same two set arguments, the same universally quantified index and the same pointwise equality of lprefix_chain_nth. HOL set `'a llist set` is rendered as the predicate HolLList α → Prop; generic in α; no width, word or finite-map carrier occurs."
+  },
+  {
+    "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+    "hol_name": "lprefix_rel_def",
+    "lean_path": "Flapjack/Misc/LprefixLub.lean",
+    "lean_name": "lprefixRel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.2): HOL lprefix_lubScript.sml:522-524 `Definition lprefix_rel_def: lprefix_rel s1 s2 ⇔ ∀l1. l1 IN s1 ⇒ ∃l2. l2 IN s2 ∧ LPREFIX l1 l2`. The Lean def lprefixRel (s1 s2 : HolLList α → Prop) : Prop := ∀ l1, s1 l1 → ∃ l2, s2 l2 ∧ lprefix l1 l2 keeps the same quantifiers and the same LPREFIX conclusion; HOL set membership is the predicate application. Generic in α; no width, word or finite-map carrier occurs."
+  },
+  {
+    "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+    "hol_name": "lprefix_lub_is_chain",
+    "lean_path": "Flapjack/Misc/LprefixLub.lean",
+    "lean_name": "lprefix_lub_is_chain",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.2): HOL lprefix_lubScript.sml:312-317 `Theorem lprefix_lub_is_chain: !ls ll. lprefix_lub ls ll ⇒ lprefix_chain ls`. The Lean theorem lprefix_lub_is_chain {ls : HolLList α → Prop} {ll : HolLList α} (h : lprefixLub ls ll) : lprefixChain ls binds the same ls and ll and states the same implication, over the untagged lprefixLub and lprefixChain renderings (Flapjack-specific renderings, not themselves HOL-tagged). Generic in α; no width, word or finite-map carrier occurs."
+  },
+  {
+    "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+    "hol_name": "equiv_lprefix_chain_thm",
+    "lean_path": "Flapjack/Misc/LprefixLub.lean",
+    "lean_name": "equivLprefixChain_thm",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.2): HOL lprefix_lubScript.sml:247-262 `Theorem equiv_lprefix_chain_thm: !ls1 ls2. lprefix_chain ls1 ∧ lprefix_chain ls2 ⇒ (equiv_lprefix_chain ls1 ls2 ⇔ (!ll1 n x. ll1 ∈ ls1 ∧ LNTH n ll1 = SOME x ⇒ ?ll2. ll2 ∈ ls2 ∧ LNTH n ll2 = SOME x) ∧ (!ll2 n x. ll2 ∈ ls2 ∧ LNTH n ll2 = SOME x ⇒ ?ll1. ll1 ∈ ls1 ∧ LNTH n ll1 = SOME x))`. The Lean theorem equivLprefixChain_thm takes the two chain hypotheses h1 h2 and states the same iff with both directions in the same order and the same binders ll1 ll2 n x; HOL conjunction of membership and LNTH is written as chained implications. Generic in α; no width, word or finite-map carrier occurs."
+  },
+  {
+    "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+    "hol_name": "lprefix_rel_lnth",
+    "lean_path": "Flapjack/Misc/LprefixLub.lean",
+    "lean_name": "lprefix_rel_lnth",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.2): HOL lprefix_lubScript.sml:526-538 `Theorem lprefix_rel_lnth: lprefix_rel ls1 ls2 ⇒ (∀ll1 n x. ll1 ∈ ls1 ∧ LNTH n ll1 = SOME x ⇒ ∃ll2. ll2 ∈ ls2 ∧ LNTH n ll2 = SOME x)`. The Lean theorem lprefix_rel_lnth {ls1 ls2 : HolLList α → Prop} (h : lprefixRel ls1 ls2) : ∀ ll1 n x, ls1 ll1 → lnth n ll1 = some x → ∃ ll2, ls2 ll2 ∧ lnth n ll2 = some x keeps the same hypothesis, binders and existential conclusion; HOL set membership is predicate application. Generic in α; no width, word or finite-map carrier occurs."
+  },
+  {
+    "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+    "hol_name": "IMP_equiv_lprefix_chain",
+    "lean_path": "Flapjack/Misc/LprefixLub.lean",
+    "lean_name": "IMP_equiv_lprefix_chain",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.2): HOL lprefix_lubScript.sml:540-548 `Theorem IMP_equiv_lprefix_chain: lprefix_chain ls1 ∧ lprefix_chain ls2 ∧ lprefix_rel ls1 ls2 ∧ lprefix_rel ls2 ls1 ⇒ equiv_lprefix_chain ls1 ls2`. The Lean theorem IMP_equiv_lprefix_chain takes h1 h2 hr12 hr21 in the same four-premise order and concludes equivLprefixChain ls1 ls2, using the tagged relations. Generic in α; no width, word or finite-map carrier occurs."
+  },
+  {
+    "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+    "hol_name": "lprefix_lub_equiv_chain2",
+    "lean_path": "Flapjack/Misc/LprefixLub.lean",
+    "lean_name": "lprefix_lub_equiv_chain2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.2): HOL lprefix_lubScript.sml:471-484 `Theorem lprefix_lub_equiv_chain2: !ls1 ls2 ll1 ll2. lprefix_lub ls1 ll1 ∧ lprefix_lub ls2 ll2 ⇒ (ll1 = ll2 ⇔ equiv_lprefix_chain ls1 ls2)`. The Lean theorem lprefix_lub_equiv_chain2 binds ls1 ls2 ll1 ll2 with the same two LUB hypotheses h1 h2 and concludes the same equality/equivalence iff with the same orientation. Generic in α; no width, word or finite-map carrier occurs."
+  },
+  {
+    "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+    "hol_name": "IMP_build_lprefix_lub_EQ",
+    "lean_path": "Flapjack/Misc/LprefixLub.lean",
+    "lean_name": "IMP_build_lprefix_lub_EQ",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.2): HOL lprefix_lubScript.sml:550-558 `Theorem IMP_build_lprefix_lub_EQ: lprefix_chain ls1 ∧ lprefix_chain ls2 ∧ lprefix_rel ls1 ls2 ∧ lprefix_rel ls2 ls1 ⇒ build_lprefix_lub ls1 = build_lprefix_lub ls2`. The Lean theorem IMP_build_lprefix_lub_EQ takes the same four premises and concludes buildLprefixLub ls1 = buildLprefixLub ls2 over the untagged buildLprefixLub rendering. Generic in α; no width, word or finite-map carrier occurs."
+  },
+  {
+    "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+    "hol_name": "equiv_lprefix_chain_thm2",
+    "lean_path": "Flapjack/Misc/LprefixLub.lean",
+    "lean_name": "equiv_lprefix_chain_thm2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.1.1): HOL lprefix_lubScript.sml:264-304 `Theorem equiv_lprefix_chain_thm2: !ls1 ls2. lprefix_chain ls1 /\\ lprefix_chain ls2 /\\ (!ll2. ll2 IN ls2 ==> LFINITE ll2) ==> (equiv_lprefix_chain ls1 ls2 <=> (\u2200ll1 n x. ll1 IN ls1 /\\ LNTH n ll1 = SOME x ==> ?ll2. ll2 IN ls2 /\\ LNTH n ll2 = SOME x) /\\ (!ll2 n x. ll2 IN ls2 /\\ ll2 <> [||] ==> ?ll1. ll1 IN ls1 /\\ llist_shorter ll2 ll1))`. The Lean theorem equiv_lprefix_chain_thm2 takes the same three hypotheses curried as h1 : lprefixChain ls1, h2 : lprefixChain ls2 and hfin : \u2200 ll2, ls2 ll2 \u2192 LFinite ll2, and states the same iff with the same two conjuncts and binder order ll1/ll2 n x; the second conjunct keeps HOL's unused universal n x binders as _n _x (names only). HOL set membership ll \u2200 ls is predicate application ls ll, HOL [||] is lnil, and llist_shorter is the same-named LList port, tagged as llist_shorter_def. Generic in \u03b1; no width, word or finite-map carrier occurs."
+  },
+
+  {
+    "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+    "hol_name": "llist_shorter_def",
+    "lean_path": "Flapjack/Misc/LprefixLub.lean",
+    "lean_name": "llistShorter",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.1.1): HOL lprefix_lubScript.sml:122-129 `Definition llist_shorter_def` declares `llist_shorter ll1 ll2` by case analysis on `(LLENGTH ll1, LLENGTH ll2)`: (NONE,NONE) and (SOME _,NONE) are true, (NONE,SOME _) is false, and (SOME x,SOME y) is x <= y. The Lean def llistShorter matches clause for clause over HolLList with llength (NONE=`none`), same constructor order. Generic in alpha; no width, word or finite-map carrier occurs."
+  },
+  {
+    "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+    "hol_name": "llist_shorter_fromList",
+    "lean_path": "Flapjack/Misc/LprefixLub.lean",
+    "lean_name": "llistShorter_fromList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.1.1): HOL lprefix_lubScript.sml:163-169 `Theorem llist_shorter_fromList: !l1 l2. llist_shorter (fromList l1) (fromList l2) <=> LENGTH l1 <= LENGTH l2`. The Lean theorem llistShorter_fromList binds l1 l2 and states the same iff with the same orientation, using the tagged llistShorter and llength_fromList. Generic in alpha; no width, word or finite-map carrier occurs."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
@@ -27748,9 +27870,9 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison 2026-09-30, y19g.11.2.1: source688-709. Same zero-failure and one-sentinel success before domain/index checks; low bit relocates only selected words, total function memory update at address, logical right shift, index increment, modular address increment. bytes_in_word compared with HOL/src/n-bit/byteScript.sml:193-195: n2w(dimindex DIV8). List EL is under identical bounds. Positive BitVec dimension is sole qualifier; domain as Prop/function set, DecidablePred supplies computation, no extra logical premise. LESS_EQ retains source final pair (address,memory), success premise and index conclusion without extra hypotheses. Numeric pattern measure proves termination. Twelve direct original HOL rows/kernel replay cover failures, sentinel bypass, modular overflow, widths16 and4 including zero-stride overwrite. No executed compiler or full evaluator completion claimed."
-  },
-  {
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileDecsStructural.lean",
+   },
+   {
+     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileDecsStructural.lean",
     "lean_name": "compileDecs_funs_proj",
     "hol_path": null,
     "hol_name": null,
@@ -29922,6 +30044,278 @@
   "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.2.31.1) compared pan_globalsProofScript.sml:172-186 gen_goal pan_globals$compile at the Seq conjunct of panSem evaluate_ind (printed: !c1 c2 s. (!res s1. (res,s1) = evaluate (c1,s) /\\ res = NONE ==> P (c2,s1)) /\\ P (c1,s) ==> P (Seq c1 c2,s)), with P = compileCorrectGoal for the IHs (same order/orientation as the reviewed tagged panSem evaluate_ind and pcCompileCorrect_Seq) and the conclusion unfolded: forall res ctxt t s', state_rel T ctxt s t /\\ evaluate(Seq c1 c2,s)=(res,s') /\\ res<>SOME Error ==> exists t'. evaluate(compile ctxt (Seq c1 c2),t)=(res,t') /\\ state_rel (good_res res) ctxt s' t'. No extra premise. Proof uses evaluate_def line-780 Seq equation (fix_clock rewritten), compile Seq = Seq of compiles, IH on c1 then IH on c2 when NONE (HOL872-878). Exact tagged carriers; canonical finite state/context and positive-width word/Type0 FFI translation only. coordinator source review accepted. Partial constructor/subcase port of compile_correct, not the whole theorem or its assembly. At frozen1182 head82658ca07, ShMemLoad/ShMemStore, Assign Global, DecCall, Call global destinations and Call handlers remain unported; assembly .36 remains open. Case acceptance evidence: coordinator-closed flapjack-pxn.18.5.2.31.1 and published/merged 7d24836d9. This acceptance covers this case only; whole-theorem assembly remains open. CI status is separate."
 },
   {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMem.lean",
+    "lean_name": "compileCorrect_ShMemStore",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 (bead flapjack-pxn.18.5.2.30) compared pan_globalsProofScript.sml:839-851 Resume compile_correct[ShMemStore] against the printed panSem evaluate_ind conjunct !op ad e s. P (ShMemStore op ad e,s) (scripts/hol-probes/pan_sem_evaluate_ind_probe.out:11). P is unfolded as in Base.lean: forall res ctxt t s', state_rel T ctxt s t and evaluate(ShMemStore op ad e,s)=(res,s') and res<>SOME Error ==> exists t'. evaluate(compile(ShMemStore op ad e),t)=(res,t') and state_rel (good_res res) ctxt s' t'. Same binders/order, no IH and no extra premise. HOL compiles to the same constructor with compiled address/value; source and target evaluate the same shMemStoreHOLExact primitive, which reads only shMemaddrs and ffi (equal by the relation) and touches only ffi, so the result and ffi agree and every other relation conjunct is preserved. Proof uses the tagged evaluateHOLFiniteState_shMemStore_total, compileProgExactHOL and compileExpCorrectHOL. Exact tagged carriers; canonical finite state/context and positive-width word/Type0 FFI translation only. Assembly remains open (bead .36)."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMem.lean",
+    "lean_name": "compileCorrect_ShMemLoad_local",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 (bead flapjack-pxn.18.5.2.30) compared pan_globalsProofScript.sml:757-838 Resume compile_correct[ShMemLoad], sub-case vk=Local (HOL opens the case with Cases on the varkind constructor). Statement follows the printed evaluate_ind conjunct !op vk v ad s. P (ShMemLoad op vk v ad,s) (scripts/hol-probes/pan_sem_evaluate_ind_probe.out:10) at vk=Local, with P unfolded exactly as in Base.lean; no IH and no extra premise. The compiler keeps the constructor and only compiles the address, so source and target evaluate the same shMemLoadHOLFiniteExact local primitive; its result agrees because shMemaddrs/ffi/locals are equal under state_rel T, and the post-state relation holds at good_res res via state_rel_empty_locals / state_rel_set_var with the matching ffi update. Proof uses the tagged evaluateHOLFiniteState_shMemLoad_source, compileProgExactHOL and compileExpCorrectHOL. The Global sub-case (nested Dec/Seq/Store lowering) is tracked by a child of flapjack-pxn.18.5.2.30 and is not claimed here. Exact tagged carriers; canonical finite state/context and positive-width word/Type0 FFI translation only. Assembly remains open (bead .36)."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMem.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanSemStateFiniteExact toExact/ofExact finite-support roundtrip; it supports the PanSemStateFiniteExact fields named by the compile_correct ShMem tags."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMem.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanGlobalsContextExact toBroad/ofBroad roundtrip; it supports PanGlobalsContextExact.globals named by the compile_correct ShMem tags."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMem.lean",
+    "lean_name": "ofExact_toExact_any",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only carrier repacking support (bead flapjack-pxn.18.5.2.30): ofExact is proof-irrelevant in its FiniteSupport argument. HOL has no separate declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMem.lean",
+    "lean_name": "ofExact_ffiUpdate",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only carrier repacking support (bead flapjack-pxn.18.5.2.30): repacking a toExact state with an ffi update recovers the finite carrier with the same update. HOL has no separate declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMem.lean",
+    "lean_name": "ofExact_proof_irrel",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only carrier repacking support (bead flapjack-pxn.18.5.2.30): ofExact ignores its FiniteSupport proof. HOL has no separate declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMem.lean",
+    "lean_name": "stateRelFfiUpdateHOL",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only relation support (bead flapjack-pxn.18.5.2.30): replacing the ffi field of both related states with the same value preserves panGlobalsStateRelHOLExact, whose only ffi occurrence is an equality conjunct. HOL has no separate declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMemGlobal.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness (bead flapjack-pxn.18.5.2.30.2) forwarding the reviewed PanSemStateFiniteExact toExact/ofExact finite-support roundtrip; it supports the PanSemStateFiniteExact fields named by the compile_correct ShMemLoad/ShMemStore case tags."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMemGlobal.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness (bead flapjack-pxn.18.5.2.30.2) forwarding the reviewed PanGlobalsContextExact ofBroad/toBroad roundtrip; it supports the PanGlobalsContextExact.globals field named by the compile_correct ShMemLoad/ShMemStore case tags."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMemGlobal.lean",
+    "lean_name": "panMemStoresHOL_singleton_apply",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only support (bead flapjack-pxn.18.5.2.30.2): applying a singleton panMemStoresHOL update exposes its pointwise result. HOL inlines this singleton case in Resume compile_correct[ShMemLoad]; it has no separate declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMemGlobal.lean",
+    "lean_name": "stateRelGlobalWriteHOL",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only relation support (bead flapjack-pxn.18.5.2.30.2): a successful ShMemLoad global-write updating the source globals map (set_global name loaded) and the target memory at top_addr - gaddr preserves panGlobalsStateRelHOLExact, using mem_stores_mem_load_back / mem_stores_load_disjoint / mem_load_disjoint / disjoint_globals. HOL proves this inline in Resume compile_correct[ShMemLoad]; it has no separate declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMemGlobal.lean",
+    "lean_name": "updateEq_eq_update",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only support (bead flapjack-pxn.18.5.2.30.2): the Boolean BEq and HOL-equality DecidableEq finite-map update interfaces agree, via FUPDATE_HOL_eq_FUPDATE. No separate HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMemGlobal.lean",
+    "lean_name": "setVarEq",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only support (bead flapjack-pxn.18.5.2.30.2): setVarHOLFinite in the HOL-equality update form. No separate HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMemGlobal.lean",
+    "lean_name": "updateSameEq",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only support (bead flapjack-pxn.18.5.2.30.2): a later finite-map update shadows an earlier one at the same key. No separate HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMemGlobal.lean",
+    "lean_name": "resVarEq_updateEq",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only support (bead flapjack-pxn.18.5.2.30.2): restoring the original binding after an update at the same key, for the local restoration algebra of the compiled global ShMemLoad. No separate HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMemGlobal.lean",
+    "lean_name": "updateEq_self",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only support (bead flapjack-pxn.18.5.2.30.2): updating a finite-map key with the value it already holds is the identity. No separate HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMemGlobal.lean",
+    "lean_name": "eraseEq_self",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only support (bead flapjack-pxn.18.5.2.30.2): erasing an absent finite-map key is the identity. No separate HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMemGlobal.lean",
+    "lean_name": "resVarEq_updateEq_of_lookup",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only support (bead flapjack-pxn.18.5.2.30.2.1): restoring a `BEq`-updated key whose saved binding is exactly the original `updateEq` lookup. No separate HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMemGlobal.lean",
+    "lean_name": "resVarEq_update_of_lookup",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only support (bead flapjack-pxn.18.5.2.30.2.1): the `BEq`-update form of `resVarEq_updateEq_of_lookup`. No separate HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMemGlobal.lean",
+    "lean_name": "lookup_setVarHOLFinite",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only support (bead flapjack-pxn.18.5.2.30.2.1): the pointwise lookup equation of `setVarHOLFinite`. No separate HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMemGlobal.lean",
+    "lean_name": "evalHOLExact_sub_topAddr",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only support (bead flapjack-pxn.18.5.2.30.2.1): the exact evaluation of `Op Sub [TopAddr, Const gaddr]` is `topAddr - gaddr`. No separate HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMemGlobal.lean",
+    "lean_name": "stateRelFlagFalse_changeLocals",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only support (bead flapjack-pxn.18.5.2.30.2.1): the flag-`false` pan_globals relation ignores both `locals` fields, so it is invariant under replacing them. No separate HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMemGlobal.lean",
+    "lean_name": "evalStore_globalRet",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only support (bead flapjack-pxn.18.5.2.30.2.1): the compiled global `ShMemLoad` store step on the shared-memory return branch. HOL inlines it in `Resume compile_correct[ShMemLoad]`; no separate HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMemGlobal.lean",
+    "lean_name": "localsRestoreGlobal",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only support (bead flapjack-pxn.18.5.2.30.2.1): the two compiled `Dec` restores of the global `ShMemLoad` return `locals` to the original map. No separate HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMemGlobal.lean",
+    "lean_name": "globalRetTarget_eq",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only support (bead flapjack-pxn.18.5.2.30.2.1): the compiled global `ShMemLoad` return-branch target post-state is the original target with only `memory` and `ffi` updated. No separate HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMemGlobal.lean",
+    "lean_name": "evaluateHOLFiniteState_compile_shMemLoad_global",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only support (bead flapjack-pxn.18.5.2.30.2.1): the target-evaluation computation of the compiled global `ShMemLoad` (nested `Dec`/`Dec`/`Seq`/`ShMemLoad`/`Store` lowering, including the two `Dec`-restores). No separate HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMemGlobal.lean",
+    "lean_name": "compileCorrect_ShMemLoad_global",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 (bead flapjack-pxn.18.5.2.30.2.1) compared pan_globalsProofScript.sml:757-838 Resume compile_correct[ShMemLoad], sub-case vk=Global (HOL opens the case with Cases on the varkind constructor and the non-Local arm is the Global lowering). Statement follows the printed evaluate_ind conjunct op vk v ad s. P (ShMemLoad op vk v ad,s) (scripts/hol-probes/pan_sem_evaluate_ind_probe.out:10) at vk=Global, with P unfolded exactly as in Base.lean; same binders/order, no IH and no extra premise. HOL compile Global = Dec name One (compile_exp ad) (Dec (strcat name \"'\") One (Const 0) (Seq (ShMemLoad op Local (strcat name \"'\") (Var Local name)) (Store (Op Sub [TopAddr; Const addr]) (Var Local (strcat name \"'\"))))) for FLOOKUP ctxt.globals name = SOME (One,addr) (pan_globalsScript.sml:148-155). The source evaluates ad to a word, finds the global word in s.globals, and calls sh_mem_load Global which writes the loaded word to globals and updates ffi; the target evaluates the compiled address (compile_exp_correct), loads the same shared-memory word into the temporary, stores it at target.top_addr-gaddr, and the two Dec restores return locals to t.locals. FLOOKUP_globals_val_state_rel supplies ctxt.globals name = SOME (One,gaddr) and the target memory slot top_addr-gaddr in domain; the on-FFI-return branch uses stateRelGlobalWriteHOL plus stateRelFfiUpdateHOL (flag true), the on-FFI-final branch uses stateRelFlagFalseHOL over the empty-locals post-state. Proof uses the tagged evaluateHOLFiniteState_shMemLoad_source, evaluateHOLFiniteState_dec_total, evaluateHOLFiniteState_seq_line780, evaluateHOLFiniteState_store, compileProgExactHOL and compileExpCorrectHOL. Exact tagged carriers; canonical finite state/context and positive-width word/Type0 FFI translation only. Assembly remains open (bead .36)."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMem.lean",
+    "lean_name": "stateRelFlagFalseHOL",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only relation support (bead flapjack-pxn.18.5.2.30): the true-flag relation implies the false-flag relation because the locals equality conjunct becomes vacuous. HOL has no separate declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMem.lean",
+    "lean_name": "shMemStoreRelationHOL",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only relation support (bead flapjack-pxn.18.5.2.30): a shMemStoreHOLExact step preserves panGlobalsStateRelHOLExact between the two states, since the store reads only shMemaddrs/ffi (equal under the relation) and updates only ffi. HOL proves this inline in compile_correct[ShMemStore]; it has no separate declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMem.lean",
+    "lean_name": "shMemLoadLocalRelationHOL",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only relation support (bead flapjack-pxn.18.5.2.30): a local shMemLoadHOLFiniteExact step preserves panGlobalsStateRelHOLExact between the two states, since the load reads only shMemaddrs/ffi/locals (equal under the relation) and writes locals/ffi. HOL proves this inline in compile_correct[ShMemLoad]; it has no separate declaration."
+  },
+  {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Seq.lean",
     "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
     "hol_path": null,
@@ -30042,6 +30436,20 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-y19g.11.2.2) against stackSemScript.sml copy_words_def: if LENGTH bs <= i then NONE else let pattern = EL i bs in case copy_words_for_pattern pattern (i+1) a off bs dm m of NONE => NONE | SOME (i1,a1,m1) => if word_msb pattern then copy_words i1 a1 off bs dm m1 else SOME (a1,m1). Lean copyWordsExact preserves the same recursive bitmap copy over the exact StackSemStateFiniteExact carriers (bitmaps : List (BitVec width), mdomain : BitVec width -> Bool, memory : BitVec width -> WordLocW width) with termination measure LENGTH bs - i discharged by copyWordsForPatternExact_least (HOL copy_words_for_pattern_LESS_EQ); word_msb renders as BitVec.msb; external HOL bytes_in_word stays untagged Flapjack infrastructure.",
     "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "store_const_sem_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/StoreConsts.lean",
+    "lean_name": "storeConstSem",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-deepseek-v41 source comparison (2026-09-30; bead flapjack-y19g.11.2.3) against stackSemScript.sml:729-741 store_const_sem_def (plus unset_var_def at :725-727): if ~ ALL_DISTINCT [0;1;2;3;t1;t2] then (SOME Error, s) else case (get_var 1 s, get_var 2 s, get_var 3 s) of (SOME (Word i), SOME (Word a), SOME (Word off)) => case copy_words (w2n i) a off s.bitmaps s.mdomain s.memory of NONE => (SOME Error, s) | SOME (a,m) => (NONE, (if s.use_alloc then unset_var 0 else I) (set_var t1 (Word 1w) (set_var t2 (Word 1w) (set_var 1 (Word 1w) (set_var 2 (Word a) (s with memory := m)))))) | _ => (SOME Error, s). Lean storeConstSem keeps the guard order, the three Word-operand reads, the w2n i as BitVec.toNat, unset_var 0 as eraseEq 0 on regs, set_var as updateEq, and the exact tagged copyWordsExact; the only translation is the reviewed regs/fpRegs/store HolFiniteMapExact codomain and the positive-width BitVec width words. Direct HOL EVAL rows guard_duplicate, non_word_operand, copy_words_none, success_use_alloc_true, success_use_alloc_false in stacksem_store_const_sem_probe.out are replayed by Flapjack.Test.StackSemStoreConstSemParity. This is the proof-side exact definition; the evaluator production route remains tracked on flapjack-y19g."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
@@ -30414,6 +30822,133 @@
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.2.29.1): EVERY is_wf_shape_nil equals the list well-formedness helper; no HOL original."
   },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/ShMem.lean",
+    "lean_name": "shMemStore",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "sh_mem_store_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-09-30; bead flapjack-y19g.14.2): HOL sh_mem_store r a s (stackSemScript.sml:194-205) = case get_var r s of SOME (Word w) => if a IN s.sh_mdomain then case call_FFI s.ffi (SharedMem MappedWrite) [0w] (word_to_bytes w F ++ word_to_bytes a F) of FFI_final outcome => (SOME (FinalFFI outcome), s) | FFI_return new_ffi new_bytes => (NONE, s with ffi := new_ffi) else (SOME Error, s) | _ => (SOME Error, s); Lean transcribes the register lookup, the guard on the unmodified address, the [0w] configuration, the little-endian word_to_bytes payload, the unchanged state on FFI_final (no flush), and both failure returns. The state is the tagged StackSemStateFiniteExact; its three |-> fields regs/fp_regs/store are recorded by fmap_as_finite_support [regs, fpRegs, store] with the same-module witness StackSemShMemSupport.holFmapAsFiniteSupportWitness. FFI uses the tagged callFFIHOL/HolFfiResult; the HOL byte helpers word_to_bytes/word_of_bytes/byte_align/get_byte are the untagged panWordToBytesHOL/panWordOfBytesHOL/riscvByteAlignHOL/getByteHOL8 renderings shared with the reviewed panSem/loopSem/wordSem ports. Words are BitVec width with [NeZero width]; word8 is BitVec 8; no other representation change. Rows store, store_outside, store_word_unaligned, store_final and store_loc of scripts/hol-probes/stacksem_sh_mem_probe.out are checked by Flapjack.Test.StackSemShMemParity (byte-incrementing and diverging oracles, payload observed through io_events)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/ShMem.lean",
+    "lean_name": "shMemLoad",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "sh_mem_load_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-09-30; bead flapjack-y19g.14.2): HOL sh_mem_load r a s (stackSemScript.sml:207-219) = if a IN s.sh_mdomain then case call_FFI s.ffi (SharedMem MappedRead) [0w] (word_to_bytes a F) of FFI_final outcome => (SOME (FinalFFI outcome), s) | FFI_return new_ffi new_bytes => (NONE, s with <| regs := s.regs |+ (r, Word (word_of_bytes F 0w new_bytes)); ffi := new_ffi |>) else (SOME Error, s); Lean transcribes the guard, the [0w] configuration and address-only payload, the unchanged state on FFI_final, the word_of_bytes install into r, and the miss return. The state is the tagged StackSemStateFiniteExact; its three |-> fields regs/fp_regs/store are recorded by fmap_as_finite_support [regs, fpRegs, store] with the same-module witness StackSemShMemSupport.holFmapAsFiniteSupportWitness. FFI uses the tagged callFFIHOL/HolFfiResult; the HOL byte helpers word_to_bytes/word_of_bytes/byte_align/get_byte are the untagged panWordToBytesHOL/panWordOfBytesHOL/riscvByteAlignHOL/getByteHOL8 renderings shared with the reviewed panSem/loopSem/wordSem ports. Words are BitVec width with [NeZero width]; word8 is BitVec 8; no other representation change. Rows load, load_outside and load_word_unaligned of scripts/hol-probes/stacksem_sh_mem_probe.out are checked by Flapjack.Test.StackSemShMemParity (byte-incrementing and diverging oracles, payload observed through io_events)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/ShMem.lean",
+    "lean_name": "shMemStoreByte",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "sh_mem_store_byte_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-09-30; bead flapjack-y19g.14.2): HOL sh_mem_store_byte r a s (stackSemScript.sml:221-232) = case get_var r s of SOME (Word w) => if byte_align a IN s.sh_mdomain then case call_FFI s.ffi (SharedMem MappedWrite) [1w] ([get_byte 0w w F] ++ word_to_bytes a F) of FFI_final outcome => (SOME (FinalFFI outcome), s) | FFI_return new_ffi new_bytes => (NONE, s with ffi := new_ffi) else (SOME Error, s) | _ => (SOME Error, s); Lean transcribes the register lookup, the byte-aligned guard, the [1w] configuration and [get_byte 0w w F] ++ word_to_bytes a F payload, the unchanged state on FFI_final, and both failure returns. The state is the tagged StackSemStateFiniteExact; its three |-> fields regs/fp_regs/store are recorded by fmap_as_finite_support [regs, fpRegs, store] with the same-module witness StackSemShMemSupport.holFmapAsFiniteSupportWitness. FFI uses the tagged callFFIHOL/HolFfiResult; the HOL byte helpers word_to_bytes/word_of_bytes/byte_align/get_byte are the untagged panWordToBytesHOL/panWordOfBytesHOL/riscvByteAlignHOL/getByteHOL8 renderings shared with the reviewed panSem/loopSem/wordSem ports. Words are BitVec width with [NeZero width]; word8 is BitVec 8; no other representation change. Rows store8 and store8_outside of scripts/hol-probes/stacksem_sh_mem_probe.out are checked by Flapjack.Test.StackSemShMemParity (byte-incrementing and diverging oracles, payload observed through io_events)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/ShMem.lean",
+    "lean_name": "shMemStore16",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "sh_mem_store16_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-09-30; bead flapjack-y19g.14.2): HOL sh_mem_store16 r a s (stackSemScript.sml:234-245) = case get_var r s of SOME (Word w) => if byte_align a IN s.sh_mdomain then case call_FFI s.ffi (SharedMem MappedWrite) [2w] (TAKE 2 (word_to_bytes w F) ++ word_to_bytes a F) of FFI_final outcome => (SOME (FinalFFI outcome), s) | FFI_return new_ffi new_bytes => (NONE, s with ffi := new_ffi) else (SOME Error, s) | _ => (SOME Error, s); Lean transcribes the register lookup, the byte-aligned guard, the [2w] configuration and TAKE 2 prefix payload, the unchanged state on FFI_final, and both failure returns. The state is the tagged StackSemStateFiniteExact; its three |-> fields regs/fp_regs/store are recorded by fmap_as_finite_support [regs, fpRegs, store] with the same-module witness StackSemShMemSupport.holFmapAsFiniteSupportWitness. FFI uses the tagged callFFIHOL/HolFfiResult; the HOL byte helpers word_to_bytes/word_of_bytes/byte_align/get_byte are the untagged panWordToBytesHOL/panWordOfBytesHOL/riscvByteAlignHOL/getByteHOL8 renderings shared with the reviewed panSem/loopSem/wordSem ports. Words are BitVec width with [NeZero width]; word8 is BitVec 8; no other representation change. Row store16 of scripts/hol-probes/stacksem_sh_mem_probe.out is checked by Flapjack.Test.StackSemShMemParity (byte-incrementing and diverging oracles, payload observed through io_events)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/ShMem.lean",
+    "lean_name": "shMemStore32",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "sh_mem_store32_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-09-30; bead flapjack-y19g.14.2): HOL sh_mem_store32 r a s (stackSemScript.sml:247-258) = case get_var r s of SOME (Word w) => if byte_align a IN s.sh_mdomain then case call_FFI s.ffi (SharedMem MappedWrite) [4w] (TAKE 4 (word_to_bytes w F) ++ word_to_bytes a F) of FFI_final outcome => (SOME (FinalFFI outcome), s) | FFI_return new_ffi new_bytes => (NONE, s with ffi := new_ffi) else (SOME Error, s) | _ => (SOME Error, s); Lean transcribes the register lookup, the byte-aligned guard, the [4w] configuration and TAKE 4 prefix payload, the unchanged state on FFI_final, and both failure returns. The state is the tagged StackSemStateFiniteExact; its three |-> fields regs/fp_regs/store are recorded by fmap_as_finite_support [regs, fpRegs, store] with the same-module witness StackSemShMemSupport.holFmapAsFiniteSupportWitness. FFI uses the tagged callFFIHOL/HolFfiResult; the HOL byte helpers word_to_bytes/word_of_bytes/byte_align/get_byte are the untagged panWordToBytesHOL/panWordOfBytesHOL/riscvByteAlignHOL/getByteHOL8 renderings shared with the reviewed panSem/loopSem/wordSem ports. Words are BitVec width with [NeZero width]; word8 is BitVec 8; no other representation change. Row store32 of scripts/hol-probes/stacksem_sh_mem_probe.out is checked by Flapjack.Test.StackSemShMemParity (byte-incrementing and diverging oracles, payload observed through io_events)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/ShMem.lean",
+    "lean_name": "shMemLoadByte",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "sh_mem_load_byte_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-09-30; bead flapjack-y19g.14.2): HOL sh_mem_load_byte r a s (stackSemScript.sml:260-271) = if byte_align a IN s.sh_mdomain then case call_FFI s.ffi (SharedMem MappedRead) [1w] (word_to_bytes a F) of FFI_final outcome => (SOME (FinalFFI outcome), s) | FFI_return new_ffi new_bytes => (NONE, s with <| regs := s.regs |+ (r, Word (word_of_bytes F 0w new_bytes)); ffi := new_ffi |>) else (SOME Error, s); Lean transcribes the byte-aligned guard, the [1w] configuration and address-only payload, the unchanged state on FFI_final, the word_of_bytes install into r, and the miss return. The state is the tagged StackSemStateFiniteExact; its three |-> fields regs/fp_regs/store are recorded by fmap_as_finite_support [regs, fpRegs, store] with the same-module witness StackSemShMemSupport.holFmapAsFiniteSupportWitness. FFI uses the tagged callFFIHOL/HolFfiResult; the HOL byte helpers word_to_bytes/word_of_bytes/byte_align/get_byte are the untagged panWordToBytesHOL/panWordOfBytesHOL/riscvByteAlignHOL/getByteHOL8 renderings shared with the reviewed panSem/loopSem/wordSem ports. Words are BitVec width with [NeZero width]; word8 is BitVec 8; no other representation change. Row load8 of scripts/hol-probes/stacksem_sh_mem_probe.out is checked by Flapjack.Test.StackSemShMemParity (byte-incrementing and diverging oracles, payload observed through io_events)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/ShMem.lean",
+    "lean_name": "shMemLoad16",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "sh_mem_load16_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-09-30; bead flapjack-y19g.14.2): HOL sh_mem_load16 r a s (stackSemScript.sml:273-284) = if byte_align a IN s.sh_mdomain then case call_FFI s.ffi (SharedMem MappedRead) [2w] (word_to_bytes a F) of FFI_final outcome => (SOME (FinalFFI outcome), s) | FFI_return new_ffi new_bytes => (NONE, s with <| regs := s.regs |+ (r, Word (word_of_bytes F 0w new_bytes)); ffi := new_ffi |>) else (SOME Error, s); Lean transcribes the byte-aligned guard, the [2w] configuration and address-only payload, the unchanged state on FFI_final, the word_of_bytes install into r, and the miss return. The state is the tagged StackSemStateFiniteExact; its three |-> fields regs/fp_regs/store are recorded by fmap_as_finite_support [regs, fpRegs, store] with the same-module witness StackSemShMemSupport.holFmapAsFiniteSupportWitness. FFI uses the tagged callFFIHOL/HolFfiResult; the HOL byte helpers word_to_bytes/word_of_bytes/byte_align/get_byte are the untagged panWordToBytesHOL/panWordOfBytesHOL/riscvByteAlignHOL/getByteHOL8 renderings shared with the reviewed panSem/loopSem/wordSem ports. Words are BitVec width with [NeZero width]; word8 is BitVec 8; no other representation change. Row load16 of scripts/hol-probes/stacksem_sh_mem_probe.out is checked by Flapjack.Test.StackSemShMemParity (byte-incrementing and diverging oracles, payload observed through io_events)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/ShMem.lean",
+    "lean_name": "shMemLoad32",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "sh_mem_load32_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-09-30; bead flapjack-y19g.14.2): HOL sh_mem_load32 r a s (stackSemScript.sml:286-297) = if byte_align a IN s.sh_mdomain then case call_FFI s.ffi (SharedMem MappedRead) [4w] (word_to_bytes a F) of FFI_final outcome => (SOME (FinalFFI outcome), s) | FFI_return new_ffi new_bytes => (NONE, s with <| regs := s.regs |+ (r, Word (word_of_bytes F 0w new_bytes)); ffi := new_ffi |>) else (SOME Error, s); Lean transcribes the byte-aligned guard, the [4w] configuration and address-only payload, the unchanged state on FFI_final, the word_of_bytes install into r, and the miss return. The state is the tagged StackSemStateFiniteExact; its three |-> fields regs/fp_regs/store are recorded by fmap_as_finite_support [regs, fpRegs, store] with the same-module witness StackSemShMemSupport.holFmapAsFiniteSupportWitness. FFI uses the tagged callFFIHOL/HolFfiResult; the HOL byte helpers word_to_bytes/word_of_bytes/byte_align/get_byte are the untagged panWordToBytesHOL/panWordOfBytesHOL/riscvByteAlignHOL/getByteHOL8 renderings shared with the reviewed panSem/loopSem/wordSem ports. Words are BitVec width with [NeZero width]; word8 is BitVec 8; no other representation change. Row load32 of scripts/hol-probes/stacksem_sh_mem_probe.out is checked by Flapjack.Test.StackSemShMemParity (byte-incrementing and diverging oracles, payload observed through io_events)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/ShMem.lean",
+    "lean_name": "shMemOp",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "sh_mem_op_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-09-30; bead flapjack-y19g.14.2): HOL sh_mem_op_def (stackSemScript.sml:299-308) is the eight equations sh_mem_op Load r ad s = sh_mem_load r ad s; Store = sh_mem_store r ad s; Load8 = sh_mem_load_byte r ad s; Store8 = sh_mem_store_byte r ad s; Load16 = sh_mem_load16 r ad s; Store16 = sh_mem_store16 r ad s; Load32 = sh_mem_load32 r ad s; Store32 = sh_mem_store32 r ad s. The Lean match dispatches the eight WordMemOp (tagged asm$memop) constructors to the corresponding exact helper, one clause per equation, with no fused byte count. The state is the tagged StackSemStateFiniteExact; its three |-> fields regs/fp_regs/store are recorded by fmap_as_finite_support [regs, fpRegs, store] with the same-module witness StackSemShMemSupport.holFmapAsFiniteSupportWitness. FFI uses the tagged callFFIHOL/HolFfiResult; the HOL byte helpers word_to_bytes/word_of_bytes/byte_align/get_byte are the untagged panWordToBytesHOL/panWordOfBytesHOL/riscvByteAlignHOL/getByteHOL8 renderings shared with the reviewed panSem/loopSem/wordSem ports. Words are BitVec width with [NeZero width]; word8 is BitVec 8; no other representation change. All 15 rows of scripts/hol-probes/stacksem_sh_mem_probe.out are checked by Flapjack.Test.StackSemShMemParity (byte-incrementing and diverging oracles, payload observed through io_events)."
+  }
+,
 {
   "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/Memory.lean",
   "lean_name": "evaluateFreshLocal_Store",

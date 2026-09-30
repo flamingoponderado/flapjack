@@ -1,0 +1,5 @@
+code_write_success=(NONE,0w,[1w; 2w; 4w],4)
+code_write_mismatch=(SOME Error,0w,[1w; 2w],5)
+data_write_success=(NONE,0w,[5w; 300w],1)
+data_write_mismatch=(SOME Error,0w,[5w],2)
+data_write_disabled=(SOME Error,0w,[5w],2)

@@ -79,6 +79,7 @@ import Flapjack.Test.PanGlobalsCompileParity
 import Flapjack.Test.PanGlobalsCompileDecsParity
 import Flapjack.Test.PanGlobalsCompileDecsExactParity
 import Flapjack.Test.PanGlobalsCompileTopExactParity
+import Flapjack.Test.PanGlobalsCompileCorrectShMemParity
 import Flapjack.Test.PanGlobalsResortDeclsParity
 import Flapjack.Test.PanGlobalsFpermNameParity
 import Flapjack.Test.PanGlobalsFpermParity
@@ -105,6 +106,7 @@ import Flapjack.Test.PanGlobalsFreshNameFilterParity
 import Flapjack.Test.PanGlobalsCompileDecsStructuralParity
 import Flapjack.Test.PanGlobalsCompileDecsThreadingParity
 import Flapjack.Test.PanGlobalsAlookupMapParity
+import Flapjack.Test.PanGlobalsEvaluateTwoParity
 import Flapjack.Test.PanLangFunctionsParity
 import Flapjack.Test.CrepeDestConstParity
 import Flapjack.Test.CrepeDest2ExpParity
@@ -354,10 +356,23 @@ import Flapjack.Test.StackSemLoopControlParity
 import Flapjack.Test.StackSemLeafTransfersParity
 import Flapjack.Test.StackSemRegisterTransfersParity
 import Flapjack.Test.StackSemPatternCopyParity
+import Flapjack.Test.StackSemCopyWordsParity
+import Flapjack.Test.StackSemStoreConstSemParity
+import Flapjack.Test.StackSemStoreConstsParity
 import Flapjack.Test.StackSemIntegerInstParity
 import Flapjack.Test.StackSemEvaluateAllocCaseParity
 import Flapjack.Test.StackSemStoreConstsGuardParity
 import Flapjack.Test.StackSemFpRegisterInstParity
+import Flapjack.Test.StackSemJumpLowerParity
+import Flapjack.Test.StackSemRawCallParity
+import Flapjack.Test.StackSemCallParity
+import Flapjack.Test.StackSemBufferWriteParity
+import Flapjack.Test.StackSemShMemParity
+import Flapjack.Test.StackSemShMemOpParity
+import Flapjack.Test.StackSemFfiParity
+import Flapjack.Test.StackSemInstallParity
+import Flapjack.Test.StackSemMeasureParity
+import Flapjack.Test.StackSemControlCasesParity
 import Flapjack.Test.PanGlobalsFpermCodeParity
 import Flapjack.Test.WordLangEveryVarParity
 import Flapjack.Test.WordSemCarriersParity
@@ -500,6 +515,7 @@ import Flapjack.Test.LoopSemWordMemExactParity
 import Flapjack.Test.LoopSemPrimopBytesExactParity
 import Flapjack.Test.LoopSemEvaluateExactParity
 import Flapjack.Test.HolLListParity
+import Flapjack.Test.LprefixLubParity
 import Flapjack.Test.LoopSemSemanticsExactParity
 import Flapjack.Test.WordSemSemanticsParity
 import Flapjack.Test.LoopPropsEvalExactParity
@@ -979,6 +995,7 @@ def main : IO Unit := do
     Flapjack.Test.PanGlobalsCompileExpExactParity.runChecks,
     Flapjack.Test.PanGlobalsCompileDecsExactParity.runChecks,
     Flapjack.Test.PanGlobalsCompileTopExactParity.runChecks,
+    Flapjack.Test.PanGlobalsCompileCorrectShMemParity.runChecks,
     Flapjack.Test.PanGlobalsDecShapesParity.runChecks,
     Flapjack.Test.PanGlobalsFpermClusterParity.runChecks,
     Flapjack.Test.PanGlobalsDecShapesClusterParity.runChecks,
@@ -988,6 +1005,7 @@ def main : IO Unit := do
     Flapjack.Test.PanGlobalsCompileDecsStructuralParity.runChecks,
     Flapjack.Test.PanGlobalsCompileDecsThreadingParity.runChecks,
     Flapjack.Test.PanGlobalsAlookupMapParity.runChecks,
+    Flapjack.Test.PanGlobalsEvaluateTwoParity.runChecks,
     Flapjack.Test.PanLangFunctionsParity.runChecks,
     Flapjack.Test.PanLangWfShapeParity.runChecks,
     Flapjack.Test.PanShapeValParity.runChecks,
@@ -1148,6 +1166,19 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.RegAllocVarParity.runChecks,
     Flapjack.Test.WordLangNotCreatedParity.runChecks,
     Flapjack.Test.StackSemLoopControlParity.runChecks,
+    Flapjack.Test.StackSemJumpLowerParity.runChecks,
+    Flapjack.Test.StackSemRawCallParity.runChecks,
+    Flapjack.Test.StackSemCallParity.runChecks,
+    Flapjack.Test.StackSemBufferWriteParity.runChecks,
+    Flapjack.Test.StackSemShMemParity.runChecks,
+    Flapjack.Test.StackSemShMemOpParity.runChecks,
+    Flapjack.Test.StackSemFfiParity.runChecks,
+    Flapjack.Test.StackSemInstallParity.runChecks,
+    Flapjack.Test.StackSemMeasureParity.runChecks,
+    Flapjack.Test.StackSemCopyWordsParity.runChecks,
+    Flapjack.Test.StackSemStoreConstSemParity.runChecks,
+    Flapjack.Test.StackSemStoreConstsParity.runChecks,
+    Flapjack.Test.StackSemControlCasesParity.runChecks,
     Flapjack.Test.PanGlobalsFpermCodeParity.runChecks,
     Flapjack.Test.WordLangEveryVarParity.runChecks,
     Flapjack.Test.WordSemCarriersParity.runChecks,
@@ -1258,6 +1289,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.CrepPrimopLoopPrimopParity.runChecks,
     Flapjack.Test.LoopSemEvaluateExactParity.runChecks,
     Flapjack.Test.HolLListParity.runChecks,
+    Flapjack.Test.LprefixLubParity.runChecks,
     Flapjack.Test.LoopSemSemanticsExactParity.runChecks,
     Flapjack.Test.WordSemSemanticsParity.runChecks,
     Flapjack.Test.LoopPropsEvalExactParity.runChecks,
