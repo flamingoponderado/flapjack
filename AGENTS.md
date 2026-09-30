@@ -349,8 +349,14 @@ signature must be one of those two slots. Raw maps and products/functions that
 merely contain a map are ineligible. The same module must provide
 `holFmapAsFiniteSupportHeterogeneousFunctionWitness_<declaration>` over exactly
 the same explicit inputs and exactly the same implicit/typeclass binders as
-the operation; extra proof premises or instances are rejected. Its unconditional
-equality must compare the tagged
+the operation; extra proof premises or instances are rejected.
+The qualifier requires self-contained declaration and witness binders in a
+module without ambient `variable`/`variables`/`include`/`omit` commands, since
+Lean can insert inherited proof premises absent from the written header.
+Bind width/type parameters and `NeZero` instances in each declaration header.
+This conservative syntax restriction does not independently prove absence of
+elaborated assumptions for arbitrary Lean syntax or replace source review.
+Its unconditional equality must compare the tagged
 operation's `Option.map` result projection (using the returned map's `.lookup`)
 with an independent raw lookup operation applied through the canonical input
 map's `.lookup`. Each complete equality side must have that application shape:

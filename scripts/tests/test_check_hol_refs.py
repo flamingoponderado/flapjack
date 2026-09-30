@@ -302,6 +302,34 @@ def lookupCodeHOLFiniteExact
         self.assertEqual(self.CHECK(self.module(source, witness).splitlines(),
                                    source, "lookupCodeHOLFiniteExact", self.POSITIONS), [])
 
+    def test_rejects_ambient_section_premises(self):
+        equality = self.WITNESS.split(" :\n", 1)[1].split(" :=", 1)[0]
+        for command in (
+            "variable {h : ∀ code fname arguments, " + equality + "}\ninclude h\n",
+            "variable {h : True}\n",
+            "variables {h : True}\n",
+            "include h in\n",
+            "omit h in\n",
+            "section Ambient variable {h : True}\n",
+        ):
+            with self.subTest(command=command):
+                module = self.SOURCE + command + self.WITNESS
+                errors = self.CHECK(module.splitlines(), self.SOURCE,
+                                    "lookupCodeHOLFiniteExact", self.POSITIONS)
+                self.assertTrue(any("without ambient" in e for e in errors))
+
+    def test_rejects_kernel_valid_inherited_premise_reproducer(self):
+        source = (Path(__file__).parent / "fixtures" /
+                  "heterogeneous_ambient_premise.lean").read_text()
+        errors = self.CHECK(source.splitlines(), source,
+                            "lookupCodeHOLFiniteExact", self.POSITIONS)
+        self.assertTrue(any("without ambient" in e for e in errors))
+
+    def test_accepts_sections_without_ambient_binders_and_commented_commands(self):
+        module = "section\n/- variable {h : True}; include h -/\n" + self.module() + "end\n"
+        self.assertEqual(self.CHECK(module.splitlines(), self.SOURCE,
+                                   "lookupCodeHOLFiniteExact", self.POSITIONS), [])
+
     def test_rejects_inert_or_embedded_raw_application(self):
         raw = "lookupCodeHOLExact code.lookup fname arguments"
         for replacement in (f"(fun _ => none) ({raw})", f"id ({raw})",

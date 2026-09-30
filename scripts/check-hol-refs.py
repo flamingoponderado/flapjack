@@ -1864,6 +1864,16 @@ def _same_module_heterogeneous_fmap_witness_errors(
         ]
     statement = match.group("statement")
     errors: list[str] = []
+    # A written header omits section variables that Lean inserts at elaboration
+    # (including proof premises forced by `include`). Do not approximate Lean's
+    # section-variable inference here. This narrow qualifier requires a module
+    # with self-contained binders and no ambient variable/context commands.
+    # Widths and NeZero instances remain supported as explicit header binders.
+    if re.search(r"\b(?:variable|variables|include|omit)\b", module_source):
+        errors.append(
+            "heterogeneous finite-map projection witness requires self-contained "
+            "binders in a module without ambient variable/include/omit commands"
+        )
     signature = _function_declaration_signature(module_source, expected)
     if signature is None:
         errors.append(
