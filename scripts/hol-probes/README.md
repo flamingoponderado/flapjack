@@ -570,6 +570,10 @@ in `Flapjack.Test.CrepArithExtCallParity`. Refresh with
 `crep_arith$dest_2exp_def` at `cakeml/pancake/crep_arithScript.sml:15`, including
 the corresponding `word_lsl 1w` results for successful exponents. Its Lean
 destination, shift, and width checks live in `Flapjack.Test.CrepeDest2ExpParity`.
+Its `reviewedDefinitionParity` also compares the executable fuel-bounded helper
+directly with the reviewed `crepDest2ExpHOL` on all ten recognizer rows.
+`crepDest2Exp_eq_HOL` proves that correspondence for every positive width,
+starting exponent and input; no successful-recognition or fuel premise is needed.
 The fixture also evaluates representative instances of the proof helper
 `dest_2exp_bound` at `cakeml/pancake/proofs/crep_arithProofScript.sml:10`;
 the Lean all-dimension support theorem remains untagged until its explicit
@@ -1284,9 +1288,14 @@ Nat-utility refinement or full StackSem evaluator execution.
 observations (`word_allocScript.sml:706-752`): Load16 catchall, Load8,
 Store32, AddCarry, AddOverflow, and FPMovToReg/FPMovFromReg at 32 and 64 bits.
 The exact tree enumeration lists are kernel-replayed and runtime-checked in
-`Flapjack.Test.CakeApplyColourParity.instructionLivenessExact`. This checks the
-exact definition; the independent production list-liveness route remains open
-on bead `.18.5.11.1.7.1`. Regenerate with
+`Flapjack.Test.CakeApplyColourParity.instructionLivenessExact`.
+`instructionLivenessExecuted` also kernel-replays the first four rows through
+the actual allocator list route. Shared production constructors execute
+`getLiveInstCore` through `getLiveInstExecutable`; production has no FP
+constructors, and its distinct five-register AddCarry retains a separate
+Flapjack route. The retained-instruction liveness of `wordDeadInst` uses this
+same route. Its keep/drop decisions remain separate work on bead `.11.1.12`.
+Regenerate with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_alloc_live_inst_probeScript.sml
 scripts/hol-probes/regenerate.sh` (the shared checkout supplies built objects;
@@ -1312,6 +1321,17 @@ HOL_PROBE_ONLY=word_sem_cut_names_type_probeScript.sml
 scripts/hol-probes/regenerate.sh`; the original wordSem source was compared
 byte-for-byte before using the shared checkout's built objects.
 
+`word_alloc_pair_keys_probe.out` records three original `apply_nummaps_key_def`
+rows (`word_allocScript.sml:29-33`): independent Boolean/numeric payloads,
+unit-map collisions, and an empty component with duplicate input keys.
+`Flapjack.Test.CakeApplyColourParity.pairedKeyMapExact` kernel-replays the
+heterogeneous exact maps and runtime-checks the actual paired allocator route
+for the unit cutsets. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_alloc_pair_keys_probeScript.sml
+scripts/hol-probes/regenerate.sh`; the original source was compared byte-for-byte
+before using the shared checkout's built objects.
+
 ## StackSem recursive stack codecs
 
 `stacksem_stack_codec_probeScript.sml` captures26 concrete original HOL
@@ -1334,14 +1354,17 @@ reduction of the executed constant-erasure wrapper. Regenerate with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_alloc_live_exp_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
-`word_alloc_pair_keys_probe.out` records three original `apply_nummaps_key_def`
-rows (`word_allocScript.sml:29-33`): independent Boolean/numeric payloads,
-unit-map collisions, and an empty component with duplicate input keys.
-`Flapjack.Test.CakeApplyColourParity.pairedKeyMapExact` kernel-replays the
-heterogeneous exact maps and runtime-checks the actual paired allocator route
-for the unit cutsets. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
-HOL_PROBE_ONLY=word_alloc_pair_keys_probeScript.sml
+`word_alloc_remove_dead_inst_probe.out` records twelve original
+`remove_dead_inst_def` observations (`word_allocScript.sml:854-880`): Skip,
+live/dead Const, Load16/Store16/Store32 catchalls, dead Load8, live/dead
+four-register carry, a live second LongMul output, and the 32/64-bit FP move
+boundary. `CakeApplyColourParity.instructionRemovalExact` kernel-replays all
+twelve; `instructionRemovalExecuted` checks the actual retained offset stores,
+16-bit load and removable dead Load8/Const. The production decision now calls
+the reviewed core through `removeDeadInstExecutable`. This does not assert
+completion of the whole `remove_dead` program recursion.
+Regenerate read-only with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_alloc_remove_dead_inst_probeScript.sml
 scripts/hol-probes/regenerate.sh`; the original source was compared byte-for-byte
 before using the shared checkout's built objects.
 
@@ -1353,4 +1376,154 @@ errors). Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=stacksem_allocation_probeScript.sml scripts/hol-probes/regenerate.sh`.
 Full StackSem evaluation and production refinement remain open.
 
+The existing `word_convs_not_created_probe.out` records 15 original HOL
+`no_alloc`/`no_install`/`no_mt`/`no_share_inst` observations.
+`Flapjack/Test/WordLangNotCreatedParity.lean` checks those rows against the
+executable Boolean definitions on `WordLangProgHOL`, both in the kernel and
+in the runtime suite. `WordConvs/NotCreated.lean` also proves agreement with
+the original inequality predicates for every possible `ARB : memop` choice;
+the choice-parametric general checker is deliberately untagged.
+
 `stacksem_expression_probeScript.sml` captures twenty original StackSem word_exp/assign rows: all six constructors, failed/missing/Loc lookups, domain and memory payload rejection, wraparound, invalid arithmetic arity, binary shift bounds, and destination update/failure. Kernel replay: `Flapjack/Test/StackSemExpressionParity.lean`. Full evaluator/production refinement is separate.
+
+`stacksem_loop_control_probeScript.sml` captures 28 direct original
+`stackSem$get_var_imm`, `cont_loop`, and `exit_loop` observations from
+`stackSemScript.sml:640-644/761-772`. They include Word/Loc/missing registers,
+unsigned immediate preservation, all control-result constructors, zero and
+positive labels, and unchanged final-event payloads. StackSem Break0 exits
+normally, unlike WordSem. Kernel replay and runtime control checks live in
+`Flapjack/Test/StackSemLoopControlParity.lean`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_loop_control_probeScript.sml
+scripts/hol-probes/regenerate.sh`. Evaluator assembly and its production
+refinement remain tracked by y19g/.12.
+
+`pan_globals_fperm_code_probeScript.sml` observes the original
+`pan_globalsProof$fperm_code` finite map using its proved
+`FLOOKUP_fperm_code'` rewrite followed by HOL EVAL (plain EVAL leaves
+FUN_FMAP/preimage finiteness symbolic): both swapped keys, another key whose
+body calls a swapped name, a missing key, and equal source/target names.
+`Flapjack/Test/PanGlobalsFpermCodeParity.lean` replays all five rows in the
+kernel and runtime. Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=pan_globals_fperm_code_probeScript.sml
+scripts/hol-probes/regenerate.sh`; original proof theory must already be built.
+Full evaluation permutation and remaining single-map equality qualification
+are tracked separately on .18.5.2.22.4/.5.
+
+`stacksem_leaf_transfers_probeScript.sml` records sixteen original
+`stackSem$evaluate` observations for Skip/Halt/Tick/Return/Raise/Break/Continue
+(774-823). Results, clocks, stack lengths and register lookups distinguish
+Halt Word/Loc cleanup, missing-register errors, timeout cleanup, successful
+Tick decrement and Loc-only Return/Raise. Kernel replay on arbitrary base
+states lives in `Flapjack/Test/StackSemLeafTransfersParity.lean`. Regenerate
+with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_leaf_transfers_probeScript.sml
+scripts/hol-probes/regenerate.sh`. The partial dispatcher is intentionally
+untagged; assembled full evaluation remains on y19g.
+
+`stacksem_register_transfers_probeScript.sml` captures thirteen direct original
+HOL Get/Set/OpCurrHeap evaluations. It checks word and location payloads,
+missing keys, disabled use_store, and arithmetic operand order (8-bit Sub
+produces 253 from 7 minus 10). The observer records result, clock, destination
+register and CurrHeap lookup. Kernel replay is in
+`Flapjack/Test/StackSemRegisterTransfersParity.lean`, over arbitrary base states.
+The syntax/state store-name codec preserves every constructor and has both
+kernel-checked roundtrips. The dispatcher is untagged assembly infrastructure;
+full evaluation remains on y19g. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_register_transfers_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
+
+`stacksem_pattern_copy_probeScript.sml` captures twelve direct original HOL
+copy_words_for_pattern results. The observer retains returned index/address
+and three memory lookups. Cases include zero failure, sentinel-one bypass of
+invalid bounds/domain, relocated and plain words, multiword copying, early
+and later failure, address/value wraparound, and widths16/4. Width4 has zero
+byte stride and overwrites the same address; both HOL and the kernel replay
+retain that behavior. `Flapjack/Test/StackSemPatternCopyParity.lean` replays
+all rows. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_pattern_copy_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
+
+`stacksem_integer_inst_probeScript.sml` records 33 original StackSem instruction
+observations, replayed in `Flapjack/Test/StackSemIntegerInstParity.lean` over
+arbitrary base states with all observed fields overridden. The observer uses
+w2n on Word payloads, preserving Loc pairs, to canonicalize modular numerals.
+The original byteTheory set_byte is nocompute outside its specialized widths;
+the probe evaluates, unfolds original set_byte_def/word_slice_alt_def, then
+evaluates again. It does not substitute a Lean implementation. Cases cover
+same-register Or copying Loc, general arithmetic rejection, signed division,
+carry/overflow and alias write order, long division bounds, all memory forms,
+64-bit successful 32-bit accesses, endian byte offsets and missing domains.
+The dispatcher is untagged assembly infrastructure, with outer NONE reserved
+for unhandled FP and inner NONE for original failures. Whole inst assembly
+remains on y19g.11.3. HOL words `/` is signed word_quot, unlike Lean BitVec `/`;
+the local quotient mirrors HOL's sign cases. Regenerate using
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_integer_inst_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
+
+The loop_sem_loop_arith probe additionally captures nine signed LDiv rows:
+250/10=0 at width8, each operand-sign combination, minimum/-1 wraparound,
+minimum/1, truncation toward zero and zero cases. These are original HOL EVAL
+outputs, kernel-replayed in LoopSemEvalExactParity. LDiv is signed word_quot;
+LLongDiv retains natural unsigned DIV/MOD and its existing rows. The driver
+now registers all seventeen arithmetic labels explicitly.
+
+## StackSem Alloc evaluator clause
+
+`stacksem_evaluate_alloc_probeScript.sml` records eight observations from the
+original `evaluate_def` Alloc equation (stackSemScript.sml:779-783): disabled
+allocation, missing and location registers, successful Word allocation, GC
+failure, missing post-GC AllocSize, location-valued NextFree, and exhausted
+space. The latter three retain the collected state; exhaustion additionally
+empties the environment and returns Halt (Word 1). GC failure returns the
+original state, including its original register and AllocSize.
+
+`Flapjack/Test/StackSemEvaluateAllocCaseParity.lean` kernel-replays all eight
+rows over arbitrary base states. The untagged evaluator-case helper includes
+four universal dispatch equations and unconditional GC/allocation/case clock
+preservation certificates. It calls the reviewed exact allocator; full
+evaluator assembly and production routing remain tracked separately. The
+initial four-row slice was recovered from released fleet WIP without changing
+its shared stash; this slice extends its original HOL failure-path coverage.
+Regenerate using the established `scripts/hol-probes/regenerate.sh` workflow.
+
+## StackSem optional StoreConsts stub guard
+
+`stacksem_store_consts_guard_probeScript.sml` captures ten original
+`check_store_consts_opt_def` rows (stackSemScript.sml:743-747). NONE
+bypasses arbitrary code; SOME requires exactly Seq (StoreConsts t1 t2 NONE)
+(Return 0) at that label. Cases distinguish missing/wrong label, each
+register mismatch, nested stub, nonzero return, a wrong outer constructor,
+and reversed sequence order. Kernel replay lives in
+`Flapjack/Test/StackSemStoreConstsGuardParity.lean`.
+
+The structural guard uses the exact shared-word HolProg and Spt code
+carriers. Two universal kernel certificates equate its structural decision
+and lookup result to actual program equality, without an opaque-payload BEq
+or DecidableEq premise. Full StoreConsts evaluation and production routing
+remain on the assembly beads. Regenerate read-only with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_store_consts_guard_probeScript.sml
+bash scripts/hol-probes/regenerate.sh`.
+
+## StackSem FP register movement and sign cases
+
+`stacksem_fpreg_inst_probeScript.sml` captures twenty original `inst_def`
+observations for FPMov, FPAbs, FPNeg, FPMovToReg and FPMovFromReg.
+The rows cover NaN payloads, signed zero, missing and location operands,
+64-bit single-register transfers, 32-bit split/concatenate, unusual 8-bit
+truncation, and aliased registers. A 64-bit FromReg ignores its second
+register; non-64-bit ToReg writes the high slice last, including aliases.
+`Flapjack/Test/StackSemFpRegisterInstParity.lean` kernel-replays every row
+over arbitrary base states. The partial case helper is untagged and keeps
+unsupported constructors distinct from an instruction failure. Universal
+certificates prove successful clock/stack/memory preservation, high-slice
+alias behavior, and the 64-bit single-source FromReg equation.
+Floating arithmetic, real conversions and complete evaluator routing remain
+on the assembling instruction/evaluator beads. Regenerate read-only using
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_fpreg_inst_probeScript.sml
+bash scripts/hol-probes/regenerate.sh`.

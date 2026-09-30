@@ -1,4 +1,5 @@
 import Flapjack.RiscV.OracleAllocator
+import Flapjack.RiscV.WordDeadCode
 
 /-! Direct HOL parity for CakeML `total_colour` followed by `apply_colour`.
     The source fixture is `scripts/hol-probes/apply_colour_probe.out`. -/
@@ -118,7 +119,7 @@ def instructionColourExact : Bool :=
 
 /-- Nine original get_live_inst EVAL rows, including the 16-bit catchall,
 output deletion order, four-register carry, and both FP word dimensions.
-These test the exact port; production list-liveness routing remains separate. -/
+The shared production instruction cases are replayed below as well. -/
 def instructionLivenessExact : Bool :=
   let live : NumSet := sptFromAList [(1, ()), (2, ()), (3, ()), (4, ()), (9, ())]
   let keys {width : Nat} [NeZero width] (inst : WordLangInst (BitVec width)) :=
@@ -137,6 +138,22 @@ example : instructionLivenessExact = true := by
   simp [instructionLivenessExact, WordAlloc.getLiveInst, WordAlloc.getLiveInstCore,
     sptToAList, sptFoldi, lrNext, sptFromAList, sptInsert, sptDelete, sptMkBS, sptMkBN]
 
+/-- First four captured HOL liveness rows through the actual allocator list
+route, including its memory-offset codec and canonical traversal order. -/
+def instructionLivenessExecuted : Bool :=
+  let live := [1, 2, 3, 4, 9]
+  wordInstLiveBefore (.memOffset .load16 3 5 (BitVec.ofNat 8 7)) live == [3, 1, 9, 4, 2] &&
+    wordInstLiveBefore (.memOffset .load8 3 5 (BitVec.ofNat 8 7)) live == [1, 9, 5, 4, 2] &&
+    wordInstLiveBefore (.memOffset .store32 3 5 (BitVec.ofNat 8 7)) live == [3, 1, 9, 5, 4, 2] &&
+    wordInstLiveBefore (α := BitVec 8) (.arith (.cakeAddCarry 1 2 3 4)) live == [3, 9, 4, 2]
+
+example : instructionLivenessExecuted = true := by
+  simp only [instructionLivenessExecuted, wordInstLiveBefore,
+    WordAlloc.getLiveInstExecutable_cakeAddCarry]
+  simp [WordAlloc.getLiveInstExecutable, WordAlloc.getLiveInstCore, WordAlloc.numSetToExact,
+    WordAlloc.numSetFromExact, sptToAList, sptFoldi, lrNext, sptFromAList,
+    sptInsert, sptDelete, sptMkBS, sptMkBN]
+
 /-- Original apply_nummaps_key rows, covering independent payload types and
 executed paired cutsets with collisions, duplicates and an empty component. -/
 def pairedKeyMapExact : Bool :=
@@ -152,10 +169,47 @@ example : pairedKeyMapExact = true := by
     WordAlloc.applyNummapsKey, WordAlloc.applyNummapKey, WordAlloc.numSetToExact,
     WordAlloc.numSetFromExact, sptToAList, sptFoldi, lrNext, sptFromAList, sptInsert]
 
+/-- Twelve original HOL removal observations, including the literal catchall
+and the word-dimension-sensitive integer FP move. -/
+def instructionRemovalExact : Bool :=
+  let remove {width : Nat} [NeZero width] (inst : WordLangInst (BitVec width))
+      (live : List Nat) := WordAlloc.removeDeadInst inst (WordAlloc.numSetToExact live)
+  [remove (.skip : WordLangInst (BitVec 8)) [],
+    remove (.const 1 7 : WordLangInst (BitVec 8)) [],
+    remove (.const 1 7 : WordLangInst (BitVec 8)) [1],
+    remove (.mem .load16 1 (.addr 2 7) : WordLangInst (BitVec 8)) [],
+    remove (.mem .store16 1 (.addr 2 7) : WordLangInst (BitVec 8)) [],
+    remove (.mem .store32 1 (.addr 2 7) : WordLangInst (BitVec 8)) [],
+    remove (.mem .load8 1 (.addr 2 7) : WordLangInst (BitVec 8)) [],
+    remove (.arith (.addCarry 1 2 3 4) : WordLangInst (BitVec 8)) [4],
+    remove (.arith (.addCarry 1 2 3 4) : WordLangInst (BitVec 8)) [],
+    remove (.arith (.longMul 1 2 3 4) : WordLangInst (BitVec 8)) [2],
+    remove (.fp (.fpMovToReg 1 2 3) : WordLangInst (BitVec 32)) [2],
+    remove (.fp (.fpMovToReg 1 2 3) : WordLangInst (BitVec 64)) [2]] ==
+    [true, true, false, false, false, false, true, false, true, false, false, true]
+
+example : instructionRemovalExact = true := by
+  simp [instructionRemovalExact, WordAlloc.removeDeadInst, WordAlloc.removeDeadInstCore,
+    WordAlloc.numSetToExact, sptFromAList, sptInsert, sptLookup]
+
+/-- Actual dead-code retention/drop boundaries guarded by the original rows.
+Offset stores and the 16-bit catchall must be retained even with no live output. -/
+def instructionRemovalExecuted : Bool :=
+  let kept (i : WordInst (BitVec 8)) := match (RiscV.wordDeadInst [] i).1 with
+    | .inst _ => true
+    | _ => false
+  kept (.memOffset .load16 1 2 7) && kept (.memOffset .store16 1 2 7) &&
+    kept (.memOffset .store32 1 2 7) && !(kept (.memOffset .load8 1 2 7)) &&
+    !(kept (.const 1 7))
+
+example : instructionRemovalExecuted = true := by
+  simp [instructionRemovalExecuted, RiscV.wordDeadInst, WordAlloc.removeDeadInstExecutable,
+    WordAlloc.removeDeadInstCore, WordAlloc.numSetToExact, sptFromAList]
+
 def parityGuard : Bool :=
   totalColourExact && assignExact && applyColourAliasedAssignExact &&
     returnRaiseExact &&
-    callHandlerExact && loopLiveExact && expressionColourExact && instructionColourExact && instructionLivenessExact && pairedKeyMapExact
+    callHandlerExact && loopLiveExact && expressionColourExact && instructionColourExact && instructionLivenessExact && instructionLivenessExecuted && pairedKeyMapExact && instructionRemovalExact && instructionRemovalExecuted
 
 #guard parityGuard
 #eval parityGuard

@@ -1,0 +1,8 @@
+evaluate_alloc_disabled=(SOME Error,SOME (Word 10w),[Word 0w],SOME (Word 4w))
+evaluate_alloc_missing=(SOME Error,NONE,[Word 0w],SOME (Word 4w))
+evaluate_alloc_location=(SOME Error,SOME (Loc 3 4),[Word 0w],SOME (Word 4w))
+evaluate_alloc_word_success=(NONE,NONE,[Word 0w],SOME (Word 10w))
+evaluate_alloc_gc_failure=(SOME Error,SOME (Word 10w),[Word 0w],SOME (Word 4w))
+evaluate_alloc_gc_missing_size=(SOME Error,NONE,[Word 0w],NONE)
+evaluate_alloc_gc_bad_space=(SOME Error,NONE,[Word 0w],SOME (Word 10w))
+evaluate_alloc_gc_exhausted=(SOME (Halt (Word 1w)),NONE,[],SOME (Word 30w))

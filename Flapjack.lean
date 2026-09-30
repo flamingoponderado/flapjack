@@ -1,5 +1,8 @@
+import Flapjack.Pancake.PanStructs.CompileExpProduction
 import Flapjack.Compiler.Backend.StackProps.FixedNames
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.InstConst
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnv
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnvs
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutNames
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyRemap
 import Flapjack.Pancake.PanStructs.CompileDeclsExact
@@ -39,6 +42,15 @@ import Flapjack.Compiler.Backend.Semantics.StackSem.Expressions
 import Flapjack.Compiler.Backend.Semantics.StackSem.Allocation
 import Flapjack.Test.StackSemExpressionParity
 import Flapjack.Test.StackSemLabelsParity
+import Flapjack.Test.StackSemLoopControlParity
+import Flapjack.Test.StackSemLeafTransfersParity
+import Flapjack.Test.StackSemRegisterTransfersParity
+import Flapjack.Test.StackSemPatternCopyParity
+import Flapjack.Test.StackSemIntegerInstParity
+import Flapjack.Test.StackSemEvaluateAllocCaseParity
+import Flapjack.Test.StackSemStoreConstsGuardParity
+import Flapjack.Test.StackSemFpRegisterInstParity
+import Flapjack.Test.PanGlobalsFpermCodeParity
 import Flapjack.Test.StackSemAllocationParity
 import Flapjack.Compiler.Backend.Semantics.StackSem.Bitmap
 import Flapjack.Compiler.Backend.Semantics.StackSem.WordBitmap
@@ -269,6 +281,7 @@ import Flapjack.Pancake.Proofs.PanStructs.CompileCorrect
 import Flapjack.Pancake.PanGlobals
 import Flapjack.Pancake.PanGlobalsByteRanged
 import Flapjack.Pancake.Proofs.PanGlobals
+import Flapjack.Pancake.Proofs.PanGlobals.FpermCode
 import Flapjack.Pancake.Proofs.PanGlobals.DeclListLemmas
 import Flapjack.Pancake.Proofs.PanGlobals.CompileDecsStructural
 import Flapjack.Pancake.Proofs.PanGlobals.CompileTopShapeWf
@@ -338,6 +351,7 @@ import Flapjack.Pancake.Semantics.CrepProps.EvaluateAddClock
 import Flapjack.Pancake.Semantics.CrepProps.EvalSomeVarCexp
 import Flapjack.Pancake.Semantics.CrepProps.EvaluateAddClockIoEventsMono
 import Flapjack.Pancake.WordConvs
+import Flapjack.Pancake.WordConvs.NotCreated
 import Flapjack.Pancake.PanToCrep
 import Flapjack.CrepeCompileExpVariables
 import Flapjack.CompileParamVarsBounds
