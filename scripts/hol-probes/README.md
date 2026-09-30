@@ -1546,3 +1546,10 @@ on the assembling instruction/evaluator beads. Regenerate read-only using
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=stacksem_fpreg_inst_probeScript.sml
 bash scripts/hol-probes/regenerate.sh`.
+
+`stack_props_inst_name_probe.out` records ten direct `inst_name_def` EVAL rows
+from original stackPropsTheory, covering every instruction constructor and
+logical-register/address, two-register arithmetic, and FP alias failures.
+Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stack_props_inst_name_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
+`Flapjack.Test.StackPropsInstructionNames` kernel-replays all ten rows.

@@ -29203,6 +29203,45 @@
     "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanGlobalsContextExact toBroad/ofBroad roundtrip; it supports PanGlobalsContextExact.globals named by the state_rel tags."
   },
   {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NotBranchReturn.lean",
+    "lean_name": "notBranchRetEvaluateReturnUnreachElim",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "not_branch_ret_evaluate_return_unreach_elim",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison2026-09-30 (.18.5.5.46.4): HOL1781-1800 retains program/state/result/post-state, conjunction of unreach_elim p=(p,NONE), not_branch_ret p and evaluation equality, then every Return payload excluded. Lean retains all premises/conclusion; structural lemma derives has_return=false internally. Reviewed exact CrepProgHOL/CrepSemHOLState/no-decider evaluator; canonical locals/globals/code maps with same-module genuine roundtrip; positive BitVec width with NeZero, universe0 FFI host, all lists retained. Proof-only, no routing claim. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NotBranchReturn.lean",
+    "lean_name": "fixedNoneNotBranch_hasNoReturn",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack syntactic factoring or canonical state roundtrip; no separate HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NotBranchReturn.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack syntactic factoring or canonical state roundtrip; no separate HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/InstructionNames.lean",
+    "lean_name": "instName",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "inst_name_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison (2026-09-30; .18.5.15.7.11), HOL930-936: same config-first instruction predicate and all5 reviewed HolInst constructors. Const checks only destination logical reg_name (payload ignored); Mem checks destination plus addr_name; Arith/FP delegate accepted exact predicates; Skip true. No hardware-register substitution or additional word checks. Only positive width-indexed BitVec translation. Original HOL10 rows and Lean kernel replay cover every constructor and failures. Coordinator independent source review pending."
+  },
+  {
     "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimProgSize.lean",
     "lean_name": "unreachElimProgSize",
     "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",

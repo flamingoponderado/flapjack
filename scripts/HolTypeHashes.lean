@@ -10,6 +10,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsShape
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsDisjoint
 import Flapjack.Compiler.Backend.StackProps.FloatNames
 import Flapjack.Compiler.Backend.StackProps.AddressNames
+import Flapjack.Compiler.Backend.StackProps.InstructionNames
 import Flapjack.Compiler.Backend.StackProps.ArithmeticNames
 import Flapjack.Compiler.Backend.RiscVConfig.RegisterNames
 import Flapjack.Compiler.Backend.StackNames.ProgramNames
@@ -227,6 +228,7 @@ import Flapjack.Pancake.Proofs.CrepInline.UpdateListLocals
 import Flapjack.Pancake.Proofs.CrepInline.UnreachElim
 import Flapjack.Pancake.Proofs.CrepInline.NoReturn
 import Flapjack.Pancake.Proofs.CrepInline.ClockExpressions
+import Flapjack.Pancake.Proofs.CrepInline.NotBranchReturn
 import Flapjack.Pancake.Proofs.CrepInline.UnreachElimEvaluate
 import Flapjack.Pancake.Proofs.CrepInline.UnreachElimProgSize
 import Flapjack.Pancake.Proofs.CrepInline.NestedDecs
