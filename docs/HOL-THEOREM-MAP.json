@@ -29069,5 +29069,101 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanGlobalsContextExact toBroad/ofBroad roundtrip; it supports PanGlobalsContextExact.globals named by the state_rel tags."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileExpLeaves.lean",
+    "lean_name": "compileExpCorrectConstHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_exp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Luna A compared pan_globalsProofScript.sml:103-163 residual Const constructor case, compile_exp and panSem eval clauses. Original state_rel T/source success imply same target value, zero extra premises. Const/BytesInWord unchanged, Local uses internally derived locals equality, BaseAddr relation equality, TopAddr actual compiled Sub [TopAddr; Const max_globals_size] evaluates by original word_op to relation adjusted source.topAddr. Canonical finite state/context carriers and positive-width word/Type0 FFI translation; internal membership decisions no premise. Full assembly remains open; coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileExpLeaves.lean",
+    "lean_name": "compileExpCorrectLocalHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_exp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Luna A compared pan_globalsProofScript.sml:103-163 residual Local constructor case, compile_exp and panSem eval clauses. Original state_rel T/source success imply same target value, zero extra premises. Const/BytesInWord unchanged, Local uses internally derived locals equality, BaseAddr relation equality, TopAddr actual compiled Sub [TopAddr; Const max_globals_size] evaluates by original word_op to relation adjusted source.topAddr. Canonical finite state/context carriers and positive-width word/Type0 FFI translation; internal membership decisions no premise. Full assembly remains open; coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileExpLeaves.lean",
+    "lean_name": "compileExpCorrectBaseAddrHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_exp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Luna A compared pan_globalsProofScript.sml:103-163 residual BaseAddr constructor case, compile_exp and panSem eval clauses. Original state_rel T/source success imply same target value, zero extra premises. Const/BytesInWord unchanged, Local uses internally derived locals equality, BaseAddr relation equality, TopAddr actual compiled Sub [TopAddr; Const max_globals_size] evaluates by original word_op to relation adjusted source.topAddr. Canonical finite state/context carriers and positive-width word/Type0 FFI translation; internal membership decisions no premise. Full assembly remains open; coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileExpLeaves.lean",
+    "lean_name": "compileExpCorrectTopAddrHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_exp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Luna A compared pan_globalsProofScript.sml:103-163 residual TopAddr constructor case, compile_exp and panSem eval clauses. Original state_rel T/source success imply same target value, zero extra premises. Const/BytesInWord unchanged, Local uses internally derived locals equality, BaseAddr relation equality, TopAddr actual compiled Sub [TopAddr; Const max_globals_size] evaluates by original word_op to relation adjusted source.topAddr. Canonical finite state/context carriers and positive-width word/Type0 FFI translation; internal membership decisions no premise. Full assembly remains open; coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileExpLeaves.lean",
+    "lean_name": "compileExpCorrectBytesInWordHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_exp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Luna A compared pan_globalsProofScript.sml:103-163 residual BytesInWord constructor case, compile_exp and panSem eval clauses. Original state_rel T/source success imply same target value, zero extra premises. Const/BytesInWord unchanged, Local uses internally derived locals equality, BaseAddr relation equality, TopAddr actual compiled Sub [TopAddr; Const max_globals_size] evaluates by original word_op to relation adjusted source.topAddr. Canonical finite state/context carriers and positive-width word/Type0 FFI translation; internal membership decisions no premise. Full assembly remains open; coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileExpLeaves.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanSemStateFiniteExact toExact/ofExact finite-support roundtrip; it supports the PanSemStateFiniteExact fields named by the state_rel tags."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileExpLeaves.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanGlobalsContextExact toBroad/ofBroad roundtrip; it supports PanGlobalsContextExact.globals named by the state_rel tags."
   }
 ]
