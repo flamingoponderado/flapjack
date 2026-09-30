@@ -12,7 +12,8 @@ Counterpart of `cakeml/pancake/proofs/crep_inlineProofScript.sml:1893-1977`
 `recInduct evaluate_ind`, suspending `While` and `Call`; this module gives the
 motive and the remaining cases: the programs `transform_eoc` leaves unchanged,
 `Return`, `Dec`, `If` and `Seq`.  Each tagged case states HOL's goal for its
-constructor; the only extra hypotheses are the motive for sub-programs.
+constructor; the only extra hypotheses are HOL `evaluate_ind`'s guarded
+premises for that constructor, at the motive `transformEocGoal`.
 Renderings are those of `NestedSeqAssign`; `unreach_elim`, `not_branch_ret`,
 `var_prog`, `transform_eoc` and `locals_strong_rel` are the tagged
 `unreachElimHOLExact`, `notBranchRetHOLExact`, `crepVarProgHOLExact`,
@@ -155,7 +156,8 @@ private theorem returnGoal {width : Nat} [NeZero width] {σ : Type}
 /-- Local support: the `Dec` case, from the motive for the body. -/
 private theorem decGoal {width : Nat} [NeZero width] {σ : Type}
     (v : Nat) (e : CrepExpHOL width) (body : CrepProgHOL width) (s : CrepSemHOLState width σ)
-    (ih : ∀ u : CrepSemHOLState width σ, transformEocGoal body u) :
+    (ih : ∀ value, crepExactEvalExpClassical s e = some value →
+      transformEocGoal body (CrepSemHOLState.setVar v value s)) :
     transformEocGoal (.dec v e body) s := by
   intro r s' res rts ⟨hev, hue, hnb, hlen, hfresh, ⟨z, hz⟩, hnd, hne⟩
   rw [evalCrepSemHOLProgExact_dec_holShape] at hev
@@ -178,7 +180,9 @@ private theorem decGoal {width : Nat} [NeZero width] {σ : Type}
         hfresh x hx (by simp [crepVarProgHOLExact, hm])
       obtain ⟨z', hz'⟩ := CrepInlineNestedSeqAssign.optMmapSomeImpFupdateExistSome rts s.locals z
         (v, val) hz
-      obtain ⟨r1, s1, hev1, hrel1, hpost1⟩ := ih su r0 st res rts
+      have hcl : crepExactEvalExpClassical s e = some val := by
+        simpa only [crepExactEvalExpClassical_eq, crepExactEvalExp_eq_eval] using hval
+      obtain ⟨r1, s1, hev1, hrel1, hpost1⟩ := ih val hcl r0 st res rts
         ⟨hbody, hue', by simpa [notBranchRetHOLExact] using hnb, hlen, hfresh', ⟨z', hz'⟩,
           hnd, hne⟩
       refine ⟨r1, { s1 with locals := s1.locals.resVarEq (v, s.locals.lookup v) }, ?_, ?_, ?_⟩
@@ -207,8 +211,8 @@ private theorem decGoal {width : Nat} [NeZero width] {σ : Type}
 /-- Local support: the `If` case, from the motive for both branches. -/
 private theorem iteGoal {width : Nat} [NeZero width] {σ : Type}
     (c : CrepExpHOL width) (c1 c2 : CrepProgHOL width) (s : CrepSemHOLState width σ)
-    (ih1 : ∀ u : CrepSemHOLState width σ, transformEocGoal c1 u)
-    (ih2 : ∀ u : CrepSemHOLState width σ, transformEocGoal c2 u) :
+    (ih : ∀ v1 w, crepExactEvalExpClassical s c = some v1 → v1 = .word w →
+      transformEocGoal (if w ≠ 0 then c1 else c2) s) :
     transformEocGoal (.ite c c1 c2) s := by
   intro r s' res rts ⟨hev, hue, hnb, hlen, hfresh, hz, hnd, hne⟩
   rcases hu1 : unreachElimHOLExact c1 with ⟨c1', x1⟩
@@ -227,19 +231,23 @@ private theorem iteGoal {width : Nat} [NeZero width] {σ : Type}
   rw [evalCrepSemHOLProgExact_ite]
   split at hev
   · rename_i w hcond
+    have hcl : crepExactEvalExpClassical s c = some (.word w) := by
+      simpa only [crepExactEvalExpClassical_eq, crepExactEvalExp_eq_eval] using hcond
+    have hsel := ih (.word w) w hcl rfl
     by_cases hw : w ≠ 0
-    · rw [if_pos hw] at hev ⊢
-      exact ih1 s r s' x1 rts ⟨hev, hu1, hnb1, hlen, hf1, hz, hnd, hne⟩
-    · rw [if_neg hw] at hev ⊢
-      exact ih2 s r s' x2 rts ⟨hev, hu2, hnb2, hlen, hf2, hz, hnd, hne⟩
+    · rw [if_pos hw] at hev hsel ⊢
+      exact hsel r s' x1 rts ⟨hev, hu1, hnb1, hlen, hf1, hz, hnd, hne⟩
+    · rw [if_neg hw] at hev hsel ⊢
+      exact hsel r s' x2 rts ⟨hev, hu2, hnb2, hlen, hf2, hz, hnd, hne⟩
   · obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
     exact absurd rfl hne
 
 /-- Local support: the `Seq` case, from the motive for both components. -/
 private theorem seqGoal {width : Nat} [NeZero width] {σ : Type}
     (c1 c2 : CrepProgHOL width) (s : CrepSemHOLState width σ)
-    (ih1 : ∀ u : CrepSemHOLState width σ, transformEocGoal c1 u)
-    (ih2 : ∀ u : CrepSemHOLState width σ, transformEocGoal c2 u) :
+    (ih2 : ∀ res s1, (res, s1) = evalCrepSemHOLProgExact s c1 → res = none →
+      transformEocGoal c2 s1)
+    (ih1 : transformEocGoal c1 s) :
     transformEocGoal (.seq c1 c2) s := by
   intro r s' res rts ⟨hev, hue, hnb, hlen, hfresh, ⟨z, hz⟩, hnd, hne⟩
   rcases hu1 : unreachElimHOLExact c1 with ⟨c1', x1⟩
@@ -271,7 +279,7 @@ private theorem seqGoal {width : Nat} [NeZero width] {σ : Type}
         ⟨hu1, hnb.1, hstep⟩
     cases r0 with
     | none =>
-        obtain ⟨ra, sa, heva, hrela, hposta⟩ := ih1 s none s1 none rts
+        obtain ⟨ra, sa, heva, hrela, hposta⟩ := ih1 none s1 none rts
           ⟨hstep, hu1, hnb.1, fun _ h => absurd h (by simp), hf1, ⟨z, hz⟩, hnd, by simp⟩
         unfold transformEocPost at hposta
         obtain ⟨rfl, hl⟩ := hposta
@@ -280,10 +288,10 @@ private theorem seqGoal {width : Nat} [NeZero width] {σ : Type}
         rw [heva]
         have hdom := evaluateLocalsSameFdom'Exact c1' s none s1 ⟨hstep, Or.inl rfl⟩
         obtain ⟨z1, hz1⟩ := mapM_some_of_fdom_eq hdom rts z hz
-        exact ih2 s1 r s' x2 rts ⟨hev, hu2, hnb.2, hlen, hf2, ⟨z1, hz1⟩, hnd, hne⟩
+        exact ih2 none s1 hstep.symm rfl r s' x2 rts ⟨hev, hu2, hnb.2, hlen, hf2, ⟨z1, hz1⟩, hnd, hne⟩
     | some x =>
         obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
-        obtain ⟨ra, sa, heva, hrela, hposta⟩ := ih1 s (some x) s1 none rts
+        obtain ⟨ra, sa, heva, hrela, hposta⟩ := ih1 (some x) s1 none rts
           ⟨hstep, hu1, hnb.1, fun vs h => absurd h (hnoret vs), hf1, ⟨z, hz⟩, hnd, hne⟩
         rw [heva]
         unfold transformEocPost at hposta ⊢
@@ -363,13 +371,15 @@ theorem transformEocCorrect_Return {width : Nat} [NeZero width] {σ : Type}
         | _ => r1 = r :=
   returnGoal es s
 
-/-- `Dec` case, with the motive for the body at every state. -/
+/-- `Dec` case, with HOL `evaluate_ind`'s guarded body premise
+    (`eval s e = SOME value ⇒ P (prog, set_var v value s)`). -/
 @[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "transform_eoc_correct"
   (fmap_as_finite_support := [locals, globals, code])
   (words_as_type_indexed_bitvec)]
 theorem transformEocCorrect_Dec {width : Nat} [NeZero width] {σ : Type}
     (v : Nat) (e : CrepExpHOL width) (body : CrepProgHOL width) (s : CrepSemHOLState width σ)
-    (ih : ∀ u : CrepSemHOLState width σ, transformEocGoal body u) :
+    (ih : ∀ value, crepExactEvalExpClassical s e = some value →
+      transformEocGoal body (CrepSemHOLState.setVar v value s)) :
     ∀ (r : Option (CrepResultHOLExact width)) (s' : CrepSemHOLState width σ)
       (res : Option CrepEarlyExitHOL) (rts : List Nat),
       evalCrepSemHOLProgExact s (.dec v e body) = (r, s') ∧
@@ -391,14 +401,15 @@ theorem transformEocCorrect_Dec {width : Nat} [NeZero width] {σ : Type}
         | _ => r1 = r :=
   decGoal v e body s ih
 
-/-- `If` case, with the motive for both branches at every state. -/
+/-- `If` case, with HOL `evaluate_ind`'s guarded premise for the selected
+    branch (`eval s e = SOME v1 ∧ v1 = Word w ⇒ P (if w ≠ 0w then c1 else c2, s)`). -/
 @[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "transform_eoc_correct"
   (fmap_as_finite_support := [locals, globals, code])
   (words_as_type_indexed_bitvec)]
 theorem transformEocCorrect_If {width : Nat} [NeZero width] {σ : Type}
     (c : CrepExpHOL width) (c1 c2 : CrepProgHOL width) (s : CrepSemHOLState width σ)
-    (ih1 : ∀ u : CrepSemHOLState width σ, transformEocGoal c1 u)
-    (ih2 : ∀ u : CrepSemHOLState width σ, transformEocGoal c2 u) :
+    (ih : ∀ v1 w, crepExactEvalExpClassical s c = some v1 → v1 = .word w →
+      transformEocGoal (if w ≠ 0 then c1 else c2) s) :
     ∀ (r : Option (CrepResultHOLExact width)) (s' : CrepSemHOLState width σ)
       (res : Option CrepEarlyExitHOL) (rts : List Nat),
       evalCrepSemHOLProgExact s (.ite c c1 c2) = (r, s') ∧
@@ -418,16 +429,18 @@ theorem transformEocCorrect_If {width : Nat} [NeZero width] {σ : Type}
         | some (.return retvs) => r1 = none ∧ rts.mapM s1'.locals.lookup = some retvs
         | some .error => False
         | _ => r1 = r :=
-  iteGoal c c1 c2 s ih1 ih2
+  iteGoal c c1 c2 s ih
 
-/-- `Seq` case, with the motive for both components at every state. -/
+/-- `Seq` case, with HOL `evaluate_ind`'s premises
+    (`(res,s1) = evaluate (c1,s) ∧ res = NONE ⇒ P (c2,s1)` and `P (c1,s)`). -/
 @[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "transform_eoc_correct"
   (fmap_as_finite_support := [locals, globals, code])
   (words_as_type_indexed_bitvec)]
 theorem transformEocCorrect_Seq {width : Nat} [NeZero width] {σ : Type}
     (c1 c2 : CrepProgHOL width) (s : CrepSemHOLState width σ)
-    (ih1 : ∀ u : CrepSemHOLState width σ, transformEocGoal c1 u)
-    (ih2 : ∀ u : CrepSemHOLState width σ, transformEocGoal c2 u) :
+    (ih2 : ∀ res s1, (res, s1) = evalCrepSemHOLProgExact s c1 → res = none →
+      transformEocGoal c2 s1)
+    (ih1 : transformEocGoal c1 s) :
     ∀ (r : Option (CrepResultHOLExact width)) (s' : CrepSemHOLState width σ)
       (res : Option CrepEarlyExitHOL) (rts : List Nat),
       evalCrepSemHOLProgExact s (.seq c1 c2) = (r, s') ∧
@@ -447,7 +460,7 @@ theorem transformEocCorrect_Seq {width : Nat} [NeZero width] {σ : Type}
         | some (.return retvs) => r1 = none ∧ rts.mapM s1'.locals.lookup = some retvs
         | some .error => False
         | _ => r1 = r :=
-  seqGoal c1 c2 s ih1 ih2
+  seqGoal c1 c2 s ih2 ih1
 
 end CrepInlineTransformEoc
 

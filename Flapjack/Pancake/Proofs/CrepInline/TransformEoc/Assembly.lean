@@ -95,9 +95,12 @@ private theorem eocMotive {width : Nat} [NeZero width] {σ : Type} :
       transformEocCorrect_Leaf _ s (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr
         (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨op, n, a, rfl⟩))))))))))))
   | .return es, s => transformEocCorrect_Return es s
-  | .dec v e body, s => transformEocCorrect_Dec v e body s (fun u => eocMotive body u)
-  | .ite c a b, s => transformEocCorrect_If c a b s (fun u => eocMotive a u) (fun u => eocMotive b u)
-  | .seq a b, s => transformEocCorrect_Seq a b s (fun u => eocMotive a u) (fun u => eocMotive b u)
+  | .dec v e body, s => transformEocCorrect_Dec v e body s (fun _ _ => eocMotive body _)
+  | .ite c a b, s => transformEocCorrect_If c a b s (fun _ w _ _ => by
+      by_cases hw : w ≠ 0
+      · rw [if_pos hw]; exact eocMotive a s
+      · rw [if_neg hw]; exact eocMotive b s)
+  | .seq a b, s => transformEocCorrect_Seq a b s (fun _ s1 _ _ => eocMotive b s1) (eocMotive a s)
   | .while e c, s => whileEocMotive e c (fun u => eocMotive c u) s
   | .call none f args, s =>
       transformEocCorrect_Call none f args s (fun _ _ _ _ _ _ _ _ _ _ _ _ hinfo => by cases hinfo)
