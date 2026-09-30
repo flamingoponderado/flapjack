@@ -101,6 +101,12 @@ run_probe() {
   done
 }
 
+run_probe stacksem_word_bitmap_probeScript.sml stacksem_word_bitmap_probe.out \
+  length_zero length_one length_high bitmap_empty bitmap_zero bitmap_one bitmap_order \
+  bitmap_trailing bitmap_missing_continuation bitmap_continuation bitmap_width_one \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
 # Run from the local HOL object directory when Holmake has populated it, so
 # HOL's ordinary theory loader finds compiled CakeML theories. Fall back to
 # the source directory for checkouts whose Holmake places objects there.

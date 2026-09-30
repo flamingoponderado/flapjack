@@ -1,0 +1,11 @@
+length_zero=0
+length_one=1
+length_high=8
+bitmap_empty=NONE
+bitmap_zero=SOME []
+bitmap_one=SOME []
+bitmap_order=SOME [T; F; T]
+bitmap_trailing=SOME [T; F; T]
+bitmap_missing_continuation=NONE
+bitmap_continuation=SOME [T; F; F; F; F; F; F; T; F]
+bitmap_width_one=SOME []

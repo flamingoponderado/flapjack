@@ -1,3 +1,4 @@
+import Flapjack.Test.StackSemWordBitmapParity
 import Flapjack.Test.Source
 import Flapjack.Test.Parser
 import Flapjack.Test.DisplayParity
