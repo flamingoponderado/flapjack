@@ -122,6 +122,7 @@ import Flapjack.Compiler.Backend.StackNames.CallLinkProjection
 import Flapjack.Compiler.Backend.StackNames.ProgramNames
 import Flapjack.Compiler.Backend.StackNames.InstructionNames
 import Flapjack.Compiler.Backend.StackNames.OperandNames
+import Flapjack.Pancake.PanStructs.CompileProgTraversal
 import Flapjack.Pancake.PanStructs.CompileExpProduction
 import Flapjack.Compiler.Backend.StackProps.FixedNames
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.InstConst
