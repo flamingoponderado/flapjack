@@ -230,6 +230,7 @@ import Flapjack.Pancake.Proofs.PanSimp.ProgOfHOL
 import Flapjack.PanLocalised
 import Flapjack.Pancake.Proofs.PanSimp.Evaluate
 import Flapjack.Pancake.Proofs.PanSimp.StateRel
+import Flapjack.Pancake.Proofs.PanSimp.RetToTailCorrect
 import Flapjack.PanSimpLocalised
 import Flapjack.Pancake.PanStructs
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrect
