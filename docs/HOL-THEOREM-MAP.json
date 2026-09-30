@@ -31168,46 +31168,141 @@
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack canonical carrier roundtrip re-export for exact list theorem representation qualifiers; no independent HOL declaration."
 },
-  {
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/WriteBytearray.lean",
-    "lean_name": "stateRelWriteBytearray",
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "state_rel_write_bytearray",
-    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support_relation": [
-      "PanSemStateFiniteExact.locals",
-      "PanSemStateFiniteExact.globals",
-      "PanSemStateFiniteExact.code",
-      "PanSemStateFiniteExact.eshapes",
-      "PanGlobalsContextExact.globals"
-    ],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-pxn.18.5.2.35) against pan_globalsProofScript.sml:1571-1593: arbitrary-flag state_rel and a successful source read_bytearray of LENGTH bytes give state_rel of the parallel write_bytearray results; BitVec8 byte list, total HolWordLab memory, exact PanSemStateFiniteExact/PanGlobalsContextExact carriers, no added target-success premise (the read supplies the source domain facts, exactly as HOL). Proven by induction on the byte list using the closed state_rel_mem_store_byte for the head byte."
-  },
-  {
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/WriteBytearray.lean",
-    "lean_name": "writeBytearray_rel",
-    "hol_path": null,
-    "hol_name": null,
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-only induction helper for the tagged state_rel_write_bytearray port; carries the same hypotheses. Untagged."
-  },
-  {
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/WriteBytearray.lean",
-    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
-    "hol_path": null,
-    "hol_name": null,
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-only canonical state roundtrip re-export used by the relation qualifier. Untagged."
-  },
-  {
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/WriteBytearray.lean",
-    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
-    "hol_path": null,
-    "hol_name": null,
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-only canonical context roundtrip re-export used by the relation qualifier. Untagged."
-  },
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/WriteBytearray.lean",
+  "lean_name": "stateRelWriteBytearrayHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "state_rel_write_bytearray",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "PanSemStateFiniteExact.locals",
+    "PanSemStateFiniteExact.globals",
+    "PanSemStateFiniteExact.code",
+    "PanSemStateFiniteExact.eshapes",
+    "PanGlobalsContextExact.globals"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.2.35.3) compared pan_globalsProofScript.sml:1571-1593: forall a ls ctxt s t sz nbw bs. state_rel ls ctxt s t /\\ read_bytearray sz (LENGTH nbw) (mem_load_byte s.memory s.memaddrs s.be) = SOME bs ==> state_rel ls ctxt (s with memory := write_bytearray sz nbw s.memory s.memaddrs s.be) (t with memory := write_bytearray sz nbw t.memory t.memaddrs t.be). HOL's leading forall a binds a variable absent from the body (arbitrary, hence inhabited, HOL type), so it is omitted; remaining binders in order; arbitrary flag ls. Exact tagged readBytearrayWordHOL (misc read_bytearray_def), panMemLoadByteWord8HOL (mem_load_byte_def), panWriteBytearrayWord8HOL (write_bytearray_def) and panGlobalsStateRelHOLExact; classical domain decisions inside the statement, no premise. Proof uses integrated state_rel_mem_store_byte; a failed head store is impossible because the read gives aligned-cell domain membership and word_lab has only Word. Canonical finite state/context witnesses; positive-width word/Type0 FFI translation only. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/WriteBytearray.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanSemStateFiniteExact toExact/ofExact finite-support roundtrip; it supports the fields named by the state_rel_write_bytearray tag."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/WriteBytearray.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanGlobalsContextExact toBroad/ofBroad roundtrip; it supports PanGlobalsContextExact.globals named by the state_rel_write_bytearray tag."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/AssignLocal.lean",
+  "lean_name": "compileCorrect_AssignLocal",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "compile_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "PanSemStateFiniteExact.locals",
+    "PanSemStateFiniteExact.globals",
+    "PanSemStateFiniteExact.code",
+    "PanSemStateFiniteExact.eshapes",
+    "PanGlobalsContextExact.globals"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source comparison2026-09-30 HOL gen_goal172-182/compile_correct186/Assign535-596: genuine Local VarKind branch, original forall source/name/expression/result/context/target/post. Only state_rel T plus source evaluation plus nonError conjunction; existential compiled target evaluation and full post state_rel(good_res res). Exact compileProg local clause retains name and compiles expression; accepted full compileExpCorrectHOL derives target initializer; original local-map equality derives same validity test; paired update preserves local equality and every nonlocal relation conjunct. No successful expression, old-binding validity, target eval, locals relation or nil-struct extra premise. Global Assign memory branch/Primitive/Dec/full theorem remain open. Two same-module genuine canonical carrier witnesses, exact MlS/expression/value carriers, positive width/universe0 FFI; proof-only. Coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/AssignLocal.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only canonical state/context roundtrip and paired local-update algebra supporting the genuine Assign Local case; no separate HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/AssignLocal.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only canonical state/context roundtrip and paired local-update algebra supporting the genuine Assign Local case; no separate HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/AssignLocal.lean",
+  "lean_name": "stateRelLocalUpdate",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only canonical state/context roundtrip and paired local-update algebra supporting the genuine Assign Local case; no separate HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/CallNoHandler.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack canonical finite-state roundtrip re-export; no standalone HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/CallNoHandler.lean",
+  "lean_name": "evaluateUnchangedLocal_CallNoHandler",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_unchanged_local",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-c source comparison2026-09-30 (.32.5.5): genuine non-tail Call SOME(target,NONE) case of evaluate_unchanged_local1104-1137; original nonfree/run/good_res/non-Error premises and unused value binder retained, exact lookup equality conclusion. panSem657-702 callee args/lookup/clock/return/error/exception clauses literal. Original good_res/non-Error excludes every result except successful normal non-tail return. Caller locals restored; local destination inequality derived from free_var_ids, update lookup preserves fresh key; global destination preserves locals. No callee IH, extra premise or executable change. Canonical four finite maps/roundtrip, exact MlS and positive width indexed carriers/universe0 FFI. Coordinator review pending; full parent still open."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Store.lean",
+  "lean_name": "compileCorrect_Store",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "compile_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "PanSemStateFiniteExact.locals",
+    "PanSemStateFiniteExact.globals",
+    "PanSemStateFiniteExact.code",
+    "PanSemStateFiniteExact.eshapes",
+    "PanGlobalsContextExact.globals"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison (2026-09-30; bead flapjack-pxn.18.5.2.29.2): HOL gen_goal at172-182 and compile_correct Store Resume692-714. Source binders Store destination value and s, then res ctxt t s'; exactly state_rel T, source evaluate equation and nonerror, existential target evaluate equation and state_rel(good_res res). Store has no recursive program IH. Internal flattened-word-list induction preserves every pointwise memory update using accepted state_rel_memory_update, derives target membership from the original relation, and constructs target memory; no domain/alignment/successful-pass/target-run/postrelation premise added. Exact ProgHOL/ExpHOL/ValueHOL, total evaluateHOLFiniteState, compileProgExactHOL, compileExpExactHOL and panGlobalsStateRelHOLExact are the reviewed carriers. Finite support translations are precisely the named state/context maps; positive width BitVec and universe0 FFI qualifier only. Canonical same-module witnesses forwarded. Coordinator source review pending; assembled compile_correct remains open."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Store.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only infrastructure. Canonical state toExact/ofExact roundtrip forwarded for named state maps."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Store.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only infrastructure. Canonical context toBroad/ofBroad roundtrip forwarded for context globals."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Store.lean",
+  "lean_name": "memStoresSimulation",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only infrastructure. Internal list induction of the Store source proof: constructs target writes from source success and original state relation. No separate HOL declaration; no new public theorem premise."
+},
   {
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
     "hol_name": "res_var_FEMPTY",
@@ -31215,28 +31310,5 @@
     "lean_name": "resVarFEMPTYExact",
     "statement_status": "documented_mismatch",
     "reviewer": "flapjack-ds10 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.32.6; documented_mismatch, tag withdrawn after coordinator review). HOL res_var_FEMPTY (pan_globalsProofScript.sml:1011-1015) has elaborated type res_var FEMPTY (n,NONE) = FEMPTY over the bare polymorphic finite-map carrier 'a |-> 'b; the Lean statement renders that carrier with HolFiniteMapExact (resVarEq/empty). No existing finite-map qualifier classifies a tagged theorem whose whole content is a single map equality: fmap_as_finite_support_result is limited to defs by its lookup-target witness rule and fmap_as_finite_support_equalities requires at least two top-level conjuncts. The @[hol] tag was withdrawn rather than left as reviewed_exact; faithful classification/extending the single-map-equality qualifier+witness checks is tracked by flapjack-pxn.18.5.2.32.6.1."
-  },
-  {
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/CallNoHandler.lean",
-    "lean_name": "holFmapAsFiniteSupportWitness",
-    "hol_path": null,
-    "hol_name": null,
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack canonical finite-state roundtrip re-export; no standalone HOL declaration."
-  },
-  {
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/CallNoHandler.lean",
-    "lean_name": "evaluateUnchangedLocal_CallNoHandler",
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "evaluate_unchanged_local",
-    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support": [
-      "locals",
-      "globals",
-      "code",
-      "eshapes"
-    ],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds10 source comparison2026-09-30 (.32.5.5): genuine non-tail Call-without-handler (Call SOME(target,NONE)) evaluate_ind case of HOL1111-1137. Original unused value binder, fresh-name/source-eval/good_res/non-Error conjunction and unchanged lookup conclusion retained. The literal evaluator clause (panSemScript.sml:780) is used; only the returned-value/valid-target branch survives good_res/non-Error; the local destination is excluded by the original free_var_ids append clause, and the global destination leaves locals untouched, so the fresh-name lookup is unchanged. No target eval, IH or extra premise added. Exact MlS/ExpHOL/ProgHOL/ValueHOL, canonical four finite-map fields with genuine roundtrip witness, positive width/NeZero. Proof-only; full assembly open and coordinator source review pending."
   }
 ]
