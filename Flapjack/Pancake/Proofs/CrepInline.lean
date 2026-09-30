@@ -3108,6 +3108,315 @@ theorem crepShMemOpExactHOL_same {width : Nat} [NeZero width] {σ : Type}
       | exact hload 0 | exact hload 1 | exact hload 2 | exact hload 4
       | exact hstore 0 | exact hstore 1 | exact hstore 2 | exact hstore 4
 
+set_option linter.unusedSimpArgs false in
+/-- HOL `inline_prog_correct` While case (`crep_inlineProofScript.sml:2326`),
+the `While` conjunct of the source-reviewed `crepSem$evaluate_ind`. The clause is
+`evalCrepSemHOLProgExact_while_holShape` (EvaluateHOL.lean:5217); the two
+induction hypotheses are the HOL case's sub-body IH (at `decClockCrepSemHOL s`)
+and its recursive while IH (at the body-result state). Flapjack-specific
+`inlineProgHOLExact` inline rendering; carriers and relation qualifiers match
+the other `inline_prog_correct` case lemmas. -/
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "inline_prog_correct"
+  (fmap_as_finite_support_relation :=
+    [CrepSemHOLState.locals, CrepSemHOLState.globals,
+      CrepSemHOLState.code, inlFs, inlBag])
+  (words_as_type_indexed_bitvec)]
+theorem inlineProgCorrectWhileCaseExact {width : Nat} [NeZero width] {σ : Type}
+    (condition : CrepExpHOL width) (body : CrepProgHOL width)
+    (s : CrepSemHOLState width σ)
+    (inlFs : HolFiniteMapExact CrepInlineMapHOLName
+      (List Nat × CrepProgHOL width))
+    (inlBag : HolFiniteMapExact CrepInlineMapHOLName
+      (List Nat × CrepProgHOL width))
+    (t : CrepSemHOLState width σ)
+    (r : Option (CrepResultHOLExact width)) (s' : CrepSemHOLState width σ)
+    (hsource : evalCrepSemHOLProgExact s (.while condition body) = (r, s'))
+    (hnotError : r ≠ some .error)
+    (hsubmap : HolFiniteMapExact.submap inlFs s.code)
+    (hbag : HolFiniteMapExact.submap inlBag inlFs)
+    (hstate : crepInlineStateRelCodeExact s t)
+    (hlocals : crepInlineLocalsStrongRelExact s t)
+    (hcode : crepInlineCodeInlRelExact inlFs s t)
+    (ihBody : ∀ (result : Option (CrepResultHOLExact width))
+        (source' : CrepSemHOLState width σ)
+        (inlFs' : HolFiniteMapExact CrepInlineMapHOLName
+          (List Nat × CrepProgHOL width))
+        (target : CrepSemHOLState width σ)
+        (inlBag' : HolFiniteMapExact CrepInlineMapHOLName
+          (List Nat × CrepProgHOL width)),
+        evalCrepSemHOLProgExact (decClockCrepSemHOL s) body = (result, source') →
+        result ≠ some .error →
+        HolFiniteMapExact.submap inlFs' (decClockCrepSemHOL s).code →
+        HolFiniteMapExact.submap inlBag' inlFs' →
+        crepInlineStateRelCodeExact (decClockCrepSemHOL s) target →
+        crepInlineLocalsStrongRelExact (decClockCrepSemHOL s) target →
+        crepInlineCodeInlRelExact inlFs' (decClockCrepSemHOL s) target →
+        ∃ target' : CrepSemHOLState width σ,
+          evalCrepSemHOLProgExact target
+              (CrepInlineCanonical.inlineProgHOLExact inlBag' body) =
+            (result, target') ∧
+          crepInlineStateRelCodeExact source' target' ∧
+          crepInlineCodeInlRelExact inlFs' source' target' ∧
+          match result with
+          | none => crepInlineLocalsStrongRelExact source' target'
+          | some (CrepResultHOLExact.break _) => crepInlineLocalsStrongRelExact source' target'
+          | some (CrepResultHOLExact.continue _) => crepInlineLocalsStrongRelExact source' target'
+          | some .error => False
+          | _ => True)
+    (ihWhile : ∀ (loopState : CrepSemHOLState width σ)
+        (result : Option (CrepResultHOLExact width))
+        (source' : CrepSemHOLState width σ)
+        (inlFs' : HolFiniteMapExact CrepInlineMapHOLName
+          (List Nat × CrepProgHOL width))
+        (target : CrepSemHOLState width σ)
+        (inlBag' : HolFiniteMapExact CrepInlineMapHOLName
+          (List Nat × CrepProgHOL width)),
+        evalCrepSemHOLProgExact loopState (.while condition body) = (result, source') →
+        result ≠ some .error →
+        HolFiniteMapExact.submap inlFs' loopState.code →
+        HolFiniteMapExact.submap inlBag' inlFs' →
+        crepInlineStateRelCodeExact loopState target →
+        crepInlineLocalsStrongRelExact loopState target →
+        crepInlineCodeInlRelExact inlFs' loopState target →
+        ∃ target' : CrepSemHOLState width σ,
+          evalCrepSemHOLProgExact target
+              (CrepInlineCanonical.inlineProgHOLExact inlBag'
+                (.while condition body)) = (result, target') ∧
+          crepInlineStateRelCodeExact source' target' ∧
+          crepInlineCodeInlRelExact inlFs' source' target' ∧
+          match result with
+          | none => crepInlineLocalsStrongRelExact source' target'
+          | some (CrepResultHOLExact.break _) => crepInlineLocalsStrongRelExact source' target'
+          | some (CrepResultHOLExact.continue _) => crepInlineLocalsStrongRelExact source' target'
+          | some .error => False
+          | _ => True) :
+    ∃ t' : CrepSemHOLState width σ,
+      evalCrepSemHOLProgExact t
+          (CrepInlineCanonical.inlineProgHOLExact inlBag (.while condition body)) =
+        (r, t') ∧
+      crepInlineStateRelCodeExact s' t' ∧
+      crepInlineCodeInlRelExact inlFs s' t' ∧
+      match r with
+      | none => crepInlineLocalsStrongRelExact s' t'
+      | some (CrepResultHOLExact.break _) => crepInlineLocalsStrongRelExact s' t'
+      | some (CrepResultHOLExact.continue _) => crepInlineLocalsStrongRelExact s' t'
+      | some .error => False
+      | _ => True := by
+  classical
+  have hinline :
+      CrepInlineCanonical.inlineProgHOLExact inlBag (.while condition body) =
+        .while condition (CrepInlineCanonical.inlineProgHOLExact inlBag body) := by
+    unfold CrepInlineCanonical.inlineProgHOLExact
+    simp only [CrepInlineCanonical.inlineProgHOLCoreExact]
+  rw [evalCrepSemHOLProgExact_while_holShape] at hsource
+  cases hcond : evalCrepSemHOLExp s condition with
+  | none =>
+      simp only [hcond] at hsource
+      exact absurd (congrArg Prod.fst hsource).symm hnotError
+  | some cval =>
+      cases cval with
+      | word w =>
+          have hcondt : evalCrepSemHOLExp t condition = some (.word w) := by
+            apply evalCodeInlExact s condition (.word w) t inlFs
+            exact ⟨hcond, hstate, hlocals, hcode⟩
+          simp only [hcond] at hsource
+          by_cases hw : w ≠ 0
+          · rw [if_pos hw] at hsource
+            by_cases hc : s.clock = 0
+            · rw [if_pos hc] at hsource
+              obtain ⟨hr, hs'⟩ := Prod.ext_iff.mp hsource
+              have hr' : r = some .timeOut := hr.symm
+              have hs'' : s' = CrepSemHOLState.emptyLocals s := hs'.symm
+              clear hsource hr
+              subst hr'
+              subst hs''
+              have hct : t.clock = 0 := by
+                obtain ⟨_, _, _, _, hcl, _, _, _, _⟩ := hstate
+                exact hcl ▸ hc
+              refine ⟨CrepSemHOLState.emptyLocals t, ?_, ?_, hcode, ?_⟩
+              · rw [hinline, evalCrepSemHOLProgExact_while_holShape, hcondt]
+                dsimp only
+                rw [if_pos hw, if_pos hct]
+              · exact srel_empty s t hstate
+              · trivial
+            · rw [if_neg hc] at hsource
+              have htargetClock' : ¬ t.clock = 0 := by
+                intro h
+                obtain ⟨_, _, _, _, hcl, _, _, _, _⟩ := hstate
+                exact hc (by exact hcl.symm ▸ h)
+
+              cases hbody : evalCrepSemHOLProgExact (decClockCrepSemHOL s) body with
+              | mk loopRes loopState =>
+                simp only [hbody] at hsource
+                by_cases hbodyErr : loopRes = some .error
+                · simp only [hbodyErr, exitLoopCrepResult] at hsource
+                  exact absurd (congrArg Prod.fst hsource).symm hnotError
+                · obtain ⟨targetLoop, htargetBody, hstateLoop, hcodeLoop, hlocalsLoop⟩ :=
+                    ihBody loopRes loopState inlFs (decClockCrepSemHOL t) inlBag hbody hbodyErr
+                      (by simpa only [decClockCrepSemHOL] using hsubmap)
+                      hbag (srel_decclock s t hstate)
+                      (by simpa only [crepInlineLocalsStrongRelExact, decClockCrepSemHOL] using hlocals)
+                      (by simpa only [crepInlineCodeInlRelExact, decClockCrepSemHOL] using hcode)
+                  have hcodeInv :=
+                    evaluateCodeInvariantHOL body (decClockCrepSemHOL s) loopRes loopState hbody
+                  have hsubmapLoop : HolFiniteMapExact.submap inlFs loopState.code := by
+                    rw [hcodeInv]; simpa only [decClockCrepSemHOL] using hsubmap
+                  cases loopRes with
+                  | none =>
+                      simp only [hbody] at hsource
+                      obtain ⟨targetFinal, htargetFinal, hstateFinal, hcodeFinal, hlocalsFinal⟩ :=
+                        ihWhile loopState r s' inlFs targetLoop inlBag hsource hnotError
+                          hsubmapLoop hbag hstateLoop hlocalsLoop hcodeLoop
+                      refine ⟨targetFinal, ?_, hstateFinal, hcodeFinal, ?_⟩
+                      · rw [hinline, evalCrepSemHOLProgExact_while_holShape, hcondt]
+                        dsimp only
+                        rw [if_pos hw, if_neg htargetClock', htargetBody]
+                        simp only [Prod.fst, Prod.snd]
+                        rw [← hinline]
+                        exact htargetFinal
+                      · cases r with
+                        | none => exact hlocalsFinal
+                        | some res => cases res <;> exact hlocalsFinal
+                  | some res =>
+                      cases res with
+                      | «continue» n =>
+                          rcases n with _ | n
+                          · simp only [hbody] at hsource
+                            obtain ⟨targetFinal, htargetFinal, hstateFinal, hcodeFinal, hlocalsFinal⟩ :=
+                              ihWhile loopState r s' inlFs targetLoop inlBag hsource hnotError
+                                hsubmapLoop hbag hstateLoop hlocalsLoop hcodeLoop
+                            refine ⟨targetFinal, ?_, hstateFinal, hcodeFinal, ?_⟩
+                            · rw [hinline, evalCrepSemHOLProgExact_while_holShape, hcondt]
+                              dsimp only
+                              rw [if_pos hw, if_neg htargetClock', htargetBody]
+                              simp only [Prod.fst, Prod.snd]
+                              rw [← hinline]
+                              exact htargetFinal
+                            · cases r with
+                              | none => exact hlocalsFinal
+                              | some res => cases res <;> exact hlocalsFinal
+                          · simp only [hbody] at hsource
+                            have h1 := congrArg Prod.fst hsource
+                            simp only [Prod.fst, exitLoopCrepResult] at h1
+                            have hr' : r = some (.continue n) := h1.symm
+                            have hs'' : s' = loopState := (congrArg Prod.snd hsource).symm
+                            subst hr'
+                            subst hs''
+                            refine ⟨targetLoop, ?_, ?_, ?_, ?_⟩
+                            · rw [hinline, evalCrepSemHOLProgExact_while_holShape, hcondt]
+                              dsimp only
+                              rw [if_pos hw, if_neg htargetClock', htargetBody]
+                              simp only [Prod.fst, Prod.snd, exitLoopCrepResult, Nat.add_sub_cancel]
+                            · exact hstateLoop
+                            · exact hcodeLoop
+                            · first | (simp only [crepInlineLocalsStrongRelExact]; exact hlocalsLoop) | trivial
+                      | «break» n =>
+                          rcases n with _ | n
+                          · simp only [hbody] at hsource
+                            have h1 := congrArg Prod.fst hsource
+                            simp only [Prod.fst, exitLoopCrepResult] at h1
+                            have hr' : r = none := h1.symm
+                            have hs'' : s' = loopState := (congrArg Prod.snd hsource).symm
+                            subst hr'
+                            subst hs''
+                            refine ⟨targetLoop, ?_, ?_, ?_, ?_⟩
+                            · rw [hinline, evalCrepSemHOLProgExact_while_holShape, hcondt]
+                              dsimp only
+                              rw [if_pos hw, if_neg htargetClock', htargetBody]
+                              simp only [Prod.fst, Prod.snd, exitLoopCrepResult, Nat.add_sub_cancel]
+                            · exact hstateLoop
+                            · exact hcodeLoop
+                            · first | (simp only [crepInlineLocalsStrongRelExact]; exact hlocalsLoop) | trivial
+                          · simp only [hbody] at hsource
+                            have h1 := congrArg Prod.fst hsource
+                            simp only [Prod.fst, exitLoopCrepResult] at h1
+                            have hr' : r = some (.break n) := h1.symm
+                            have hs'' : s' = loopState := (congrArg Prod.snd hsource).symm
+                            subst hr'
+                            subst hs''
+                            refine ⟨targetLoop, ?_, ?_, ?_, ?_⟩
+                            · rw [hinline, evalCrepSemHOLProgExact_while_holShape, hcondt]
+                              dsimp only
+                              rw [if_pos hw, if_neg htargetClock', htargetBody]
+                              simp only [Prod.fst, Prod.snd, exitLoopCrepResult, Nat.add_sub_cancel]
+                            · exact hstateLoop
+                            · exact hcodeLoop
+                            · first | (simp only [crepInlineLocalsStrongRelExact]; exact hlocalsLoop) | trivial
+                      | error => exact False.elim (absurd rfl hbodyErr)
+                      | timeOut =>
+                        have h1 := congrArg Prod.fst hsource
+                        simp only [Prod.fst, exitLoopCrepResult] at h1
+                        have hr' : r = some .timeOut := h1.symm
+                        have hs'' : s' = loopState := (congrArg Prod.snd hsource).symm
+                        subst hr'
+                        subst hs''
+                        refine ⟨targetLoop, ?_, ?_, ?_, ?_⟩
+                        · rw [hinline, evalCrepSemHOLProgExact_while_holShape, hcondt]
+                          dsimp only
+                          rw [if_pos hw, if_neg htargetClock', htargetBody]
+                          simp only [Prod.fst, Prod.snd, exitLoopCrepResult, Nat.add_sub_cancel]
+                        · exact hstateLoop
+                        · exact hcodeLoop
+                        · first | (simp only [crepInlineLocalsStrongRelExact]; exact hlocalsLoop) | trivial
+                      | «return» values =>
+                        have h1 := congrArg Prod.fst hsource
+                        simp only [Prod.fst, exitLoopCrepResult] at h1
+                        have hr' : r = some (.return values) := h1.symm
+                        have hs'' : s' = loopState := (congrArg Prod.snd hsource).symm
+                        subst hr'
+                        subst hs''
+                        refine ⟨targetLoop, ?_, ?_, ?_, ?_⟩
+                        · rw [hinline, evalCrepSemHOLProgExact_while_holShape, hcondt]
+                          dsimp only
+                          rw [if_pos hw, if_neg htargetClock', htargetBody]
+                          simp only [Prod.fst, Prod.snd, exitLoopCrepResult, Nat.add_sub_cancel]
+                        · exact hstateLoop
+                        · exact hcodeLoop
+                        · first | (simp only [crepInlineLocalsStrongRelExact]; exact hlocalsLoop) | trivial
+                      | exception value =>
+                        have h1 := congrArg Prod.fst hsource
+                        simp only [Prod.fst, exitLoopCrepResult] at h1
+                        have hr' : r = some (.exception value) := h1.symm
+                        have hs'' : s' = loopState := (congrArg Prod.snd hsource).symm
+                        subst hr'
+                        subst hs''
+                        refine ⟨targetLoop, ?_, ?_, ?_, ?_⟩
+                        · rw [hinline, evalCrepSemHOLProgExact_while_holShape, hcondt]
+                          dsimp only
+                          rw [if_pos hw, if_neg htargetClock', htargetBody]
+                          simp only [Prod.fst, Prod.snd, exitLoopCrepResult, Nat.add_sub_cancel]
+                        · exact hstateLoop
+                        · exact hcodeLoop
+                        · first | (simp only [crepInlineLocalsStrongRelExact]; exact hlocalsLoop) | trivial
+                      | finalFfi event =>
+                        have h1 := congrArg Prod.fst hsource
+                        simp only [Prod.fst, exitLoopCrepResult] at h1
+                        have hr' : r = some (.finalFfi event) := h1.symm
+                        have hs'' : s' = loopState := (congrArg Prod.snd hsource).symm
+                        subst hr'
+                        subst hs''
+                        refine ⟨targetLoop, ?_, ?_, ?_, ?_⟩
+                        · rw [hinline, evalCrepSemHOLProgExact_while_holShape, hcondt]
+                          dsimp only
+                          rw [if_pos hw, if_neg htargetClock', htargetBody]
+                          simp only [Prod.fst, Prod.snd, exitLoopCrepResult, Nat.add_sub_cancel]
+                        · exact hstateLoop
+                        · exact hcodeLoop
+                        · first | (simp only [crepInlineLocalsStrongRelExact]; exact hlocalsLoop) | trivial
+          · rw [if_neg hw] at hsource
+            obtain ⟨hr, hs'⟩ := Prod.ext_iff.mp hsource
+            have hr' : r = none := hr.symm
+            have hs'' : s' = s := hs'.symm
+            subst hr'
+            subst hs''
+            refine ⟨t, ?_, ?_, ?_, ?_⟩
+            · rw [hinline, evalCrepSemHOLProgExact_while_holShape, hcondt]
+              dsimp only
+              rw [if_neg hw]
+            · exact hstate
+            · exact hcode
+            · first | (simp only [crepInlineLocalsStrongRelExact]; exact hlocals) | trivial
+
 end CrepInlineExact
 
 end Flapjack
