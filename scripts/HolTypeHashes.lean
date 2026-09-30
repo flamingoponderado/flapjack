@@ -1,3 +1,5 @@
+import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.CallHandler
+import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.DecCall
 import Flapjack.Pancake.Proofs.CrepInline.WhileInduction
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.While
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Raise
@@ -62,6 +64,8 @@ import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.Seq
 import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.Dec
 import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.While
 import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.CallNoHandler
+import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.TailCall
+import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.Leaves
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelationLocals
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsShape
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsDisjoint
