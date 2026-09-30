@@ -241,8 +241,9 @@ def structCompileShapeExactProduction (context : StructContext) (shape : Shape) 
 /-- The callback-driven exact `pan_structs` pass, restricted to declaration
     lists that round-trip through the HOL byte-valued name and shape carriers.
     `structCompileTopExact_eq_legacyOfByteRanged` proves its output equals the
-    legacy pass on this domain. It remains preparatory infrastructure until the
-    compiler entrypoint is migrated, not itself a production entrypoint. -/
+    legacy pass on this domain. The parser-backed `compileFlapjackEntryCake`
+    route executes this pass after composing its byte-range evidence. This
+    codec wrapper has no separate HOL declaration. -/
 def structCompileTopExactOfByteRanged [BEq String] {width : Nat}
     (declarations : List (Decl (BitVec width)))
     (_hdeclarations : ∀ declaration ∈ declarations, DeclByteRanged declaration) :
