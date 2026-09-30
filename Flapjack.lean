@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.StackProps.ProgramValidity
 import Flapjack.Compiler.Backend.StackProps.ProgramNames
 import Flapjack.Compiler.Backend.StackProps.AllocArg
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelationFfi

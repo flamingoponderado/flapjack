@@ -2535,3 +2535,30 @@ run_probe stack_props_alloc_arg_probeScript.sml stack_props_alloc_arg_probe.out 
 
 run_probe stack_props_program_name_probeScript.sml stack_props_program_name_probe.out \
   inst_good inst_bad heap_alias heap_distinct code_good code_bad data_bad seq_bad if_ignored loop_bad raise_good return_bad call_direct call_indirect_bad call_none_handler_ignored call_body_bad call_handler_bad call_good alloc_default shared_good shared_register_bad shared_base_bad shared_offset_bad "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe stack_props_program_validity_probeScript.sml stack_props_program_validity_probe.out \
+  inst_good inst_avoided inst_bound code_good code_avoided code_bound data_default heap_default seq_bad if_ignored loop_bad raise_good return_bad call_direct call_indirect_avoided call_indirect_bound call_handler_ignored call_body_bad call_handler_bad call_good shared_good shared_register_bad shared_base_bad shared_offset_bad "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe word_alloc_live_exp_probeScript.sml word_alloc_live_exp_probe.out \
+  nested duplicate empty shift constant lookup \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
+run_probe crep_mem_load_probeScript.sml crep_mem_load_probe.out \
+  mem_load_valid eval_load_invalid \
+  "$cake_dir/pancake/semantics/crepSemScript.sml" \
+  "$cake_dir/pancake/semantics"
+
+run_probe pan_itree_h_prog_call_probeScript.sml \
+  pan_itree_h_prog_call_probe.out \
+  argument_failure lookup_failure \
+  "$cake_dir/pancake/semantics/pan_itreeSemScript.sml"
+
+run_probe pan_lang_size_of_sh_with_ctxt_probeScript.sml pan_lang_size_of_sh_with_ctxt_probe.out \
+  sswc_one sswc_comb_miss \
+  "$cake_dir/pancake/panLangScript.sml" \
+  "$cake_dir/pancake"
+
+run_probe pan_lang_size_of_shape_probeScript.sml pan_lang_size_of_shape_probe.out \
+  ss_one ss_eq \
+  "$cake_dir/pancake/panLangScript.sml" \
+  "$cake_dir/pancake"

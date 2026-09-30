@@ -29365,5 +29365,14 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "Luna A compared HOL1564-1569: same original flag/context/states and arbitrary new FFI x; state_rel implies state_rel after setting ffi=x on both states. All relation conjuncts unchanged except FFI equality becomes reflexive. No new premise on FFI, target result or state. Exact reviewed HolFfiState universe0 host, positive-width state and canonical finite relation carriers; same-module roundtrip witnesses. Direct dependency of source state_rel_write_bytearray at1608 confirmed. Coordinator source review pending."
-  }
+  },
+{
+  "lean_path": "Flapjack/Compiler/Backend/StackProps/ProgramValidity.lean",
+  "lean_name": "stackAsmOkExact",
+  "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+  "hol_name": "stack_asm_ok_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source comparison HOL812-829: exact asm configuration and positive-width HolProg; inst/shmem real reviewed predicates; CodeBufferWrite bounds and avoid-reg membership, DataBufferWrite default True; Seq/If/Loop recursion, Raise/Return hardware register validity; indirect Call target independently checked, handler nested under SOME return, metadata ignored. No callback abstraction or extra hypotheses. Coordinator review pending."
+}
 ]
