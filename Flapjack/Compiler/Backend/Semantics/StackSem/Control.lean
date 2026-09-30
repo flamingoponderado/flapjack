@@ -73,8 +73,15 @@ def exitLoop {width : Nat} [NeZero width] :
   | some (.continue label) => some (.continue (label - 1))
   | result => result
 
-end Flapjack.StackSemControl
-
-namespace Flapjack.StackSemControl
+/-- HOL `dest_Seq` (`cakeml/compiler/backend/semantics/stackSemScript.sml`):
+    expose a `Seq`'s two immediate sub-programs, otherwise `none`. -/
+@[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "dest_Seq_def"
+  (words_as_type_indexed_bitvec)]
+def destSeq {width : Nat} [NeZero width] :
+    Flapjack.Compiler.Backend.StackLang.HolProg width →
+      Option (Flapjack.Compiler.Backend.StackLang.HolProg width ×
+        Flapjack.Compiler.Backend.StackLang.HolProg width)
+  | .seq first second => some (first, second)
+  | _ => none
 
 end Flapjack.StackSemControl

@@ -3444,6 +3444,7 @@ theorem inlineProgCorrectWhileCaseExact {width : Nat} [NeZero width] {σ : Type}
     `Flapjack.FiniteMap.FDOM` applied to the exact carrier's `locals.lookup`
     (a `FiniteMap`); this is the HOL-shaped statement for these constructors. -/
 @[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "evaluate_locals_same_fdom"
+  (fmap_as_finite_support_relation := [CrepSemHOLState.locals])
   (words_as_type_indexed_bitvec)]
 theorem evaluateLocalsSameFdomTrivialAtomsExact {width : Nat} [NeZero width] {σ : Type}
     (s : CrepSemHOLState width σ) (r : Option (CrepResultHOLExact width))
@@ -3488,6 +3489,7 @@ for the memory- and globals-touching atomic programs `Store`/`Store32`/`StoreByt
 (rendered `FDOM s.locals.lookup = FDOM s'.locals.lookup`, since `FDOM` is the repo
 finite-map domain predicate).  An exact case slice over the faithful Crep evaluator. -/
 @[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "evaluate_locals_same_fdom"
+  (fmap_as_finite_support_relation := [CrepSemHOLState.locals])
   (words_as_type_indexed_bitvec)]
 theorem evaluateLocalsSameFdomMemoryGlobalsAtomsExact {width : Nat} [NeZero width] {σ : Type}
     (s : CrepSemHOLState width σ) (r : Option (CrepResultHOLExact width))
@@ -3608,6 +3610,7 @@ theorem fdomUpdateEqOfLookupSome {width : Nat} [NeZero width]
     fires only when the target is already bound (`crepSemScript.sml:260-266`), so
     the locals domain is preserved. -/
 @[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "evaluate_locals_same_fdom"
+  (fmap_as_finite_support_relation := [CrepSemHOLState.locals])
   (words_as_type_indexed_bitvec)]
 theorem evaluateLocalsSameFdomAssignCaseExact {width : Nat} [NeZero width] {σ : Type}
     (s : CrepSemHOLState width σ) (r : Option (CrepResultHOLExact width))

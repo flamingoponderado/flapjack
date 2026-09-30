@@ -29362,7 +29362,8 @@
     "hol_name": "evaluate_locals_same_fdom",
     "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
     "lean_name": "evaluateLocalsSameFdomTrivialAtomsExact",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["CrepSemHOLState.locals"],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-pxn.18.5.5.43.1) against crep_inlineProofScript.sml:181-191; Skip/Break/Continue/Tick cases. FDOM is Flapjack.FiniteMap.FDOM applied to locals.lookup; result condition matches HOL; no extra hypotheses."
   },
@@ -29379,7 +29380,8 @@
     "hol_name": "evaluate_locals_same_fdom",
     "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
     "lean_name": "evaluateLocalsSameFdomMemoryGlobalsAtomsExact",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["CrepSemHOLState.locals"],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-ds10 source comparison (2026-09-30; bead flapjack-pxn.18.5.5.43.1) against crep_inlineProofScript.sml:181-191 statement and the memory/globals atomic arm :246-248: HOL FDOM s.locals = FDOM s'.locals under the result condition renders exactly as FDOM s.locals.lookup = FDOM s'.locals.lookup over the faithful CrepSemHOLState (FiniteMap.FDOM). Covers Store/Store32/StoreByte/StoreGlob (locals unchanged) and Raise (result exception makes the HOL condition false, so the implication is vacuous); no extra premises."
   },
@@ -29396,7 +29398,8 @@
     "hol_name": "evaluate_locals_same_fdom",
     "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
     "lean_name": "evaluateLocalsSameFdomAssignCaseExact",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["CrepSemHOLState.locals"],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-ds10 source comparison (2026-09-30; bead flapjack-pxn.18.5.5.43.1) against crep_inlineProofScript.sml:181-191 and the guarded Assign arm (crepSemScript.sml:260-266): exact FDOM s.locals = FDOM s'.locals under the HOL result condition, rendered over CrepSemHOLState; assignment fires only when the target is already bound, so the domain is preserved; no extra premises."
   },
@@ -29412,7 +29415,7 @@
   {
     "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
     "hol_name": "dest_Seq_def",
-    "lean_path": "Flapjack/Compiler/Backend/StackLang/Prog.lean",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Control.lean",
     "lean_name": "destSeq",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
