@@ -32496,5 +32496,46 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-b source comparison2026-09-30 full HOL evaluate_unchanged_local1105-1135: original universal name/unused value/program/state/result/post binders and only nonfree/source run/good_res/nonError imply identical local lookup. No public IH or extra successful-evaluation, freshness, domain, target, or post-state premise. Internally invokes exact evaluateIndHOL over unchangedLocalGoal and discharges all21 clauses in source order: Skip,Dec,Assign,Primitive,Store,Store32,StoreByte,ShMemLoad,ShMemStore,Seq,If,Break,Continue,While,Return,Raise,Tick,Annot,Call,DecCall,ExtCall. Call dispatches NONE/non-tail-no-handler/handler; handler IH reconstructs all literal original guards/aliases. DecCall reconstructs all continuation guards/aliases, both shape equalities; unused callee IH not needed by specialized preservation cases. Original exact MlS/ProgHOL/ValueHOL/state, canonical finite-support witness and positive width/universe0 FFI. Peer case sources inspected then ordinary-merged; their beads remain pending coordinator acceptance. Proof-only; coordinator full source review pending."
-}
+},
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/TailCall.lean",
+    "lean_name": "compileCorrect_CallNone",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanGlobalsContextExact.globals",
+      "callee"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison2026-09-30 original gen_goal172-182 and compile_correct Call1138ff specialized caltyp NONE. Original source/function/args/result/context/target/post and state_rel T/source evaluation/nonError conclusion unchanged; sole actual evaluate_ind args/code lookup/nonzero clock callee IH retained. No handler IH needed for literal NONE. Accepted OPT_MMAP derives target compiled values, state_rel_lookup_code derives matching compiled body/callee/returnShape; dec_clock and change_locals derive entry state relation. Source clock0 timeout clears locals. Missing args/code, callee NONE/Break/Continue/Error or return shape mismatch excluded only by original nonError; returned/exception/timeout/finalFfi use body IH and empty_locals at good_res false. No target evaluation/post relation/freshness/global return premises. Canonical maps named state/context fields plus standalone callee IH binder, same-module roundtrip witnesses, positive BitVec width/universe0 FFI. Proof-only; full non-tail/handler/global cases remain open; coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/TailCall.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only canonical state/context roundtrip re-export for exact TailCall representation qualifiers; no separate HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/TailCall.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only canonical state/context roundtrip re-export for exact TailCall representation qualifiers; no separate HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/TailCall.lean",
+    "lean_name": "compileList_eq_map",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only equation between literal recursive compiled argument list and MAP spelling used by exact OPT_MMAP theorem; no separate HOL declaration."
+  }
 ]
