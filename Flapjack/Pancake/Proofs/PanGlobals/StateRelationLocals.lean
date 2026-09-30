@@ -54,4 +54,22 @@ theorem stateRelChangeLocalsHOL {width : Nat} {σ : Type} [NeZero width]
   constructor <;> intro hrel <;>
     exact ⟨hrel.1, (fun _ => rfl), hrel.2.2⟩
 
+/-- Source961-966: identical local updates preserve the relation, with any
+new locals flag. Equality of the original locals is derived from state_rel T. -/
+@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "state_rel_set_var"
+  (fmap_as_finite_support_relation := [PanSemStateFiniteExact.locals, PanSemStateFiniteExact.globals, PanSemStateFiniteExact.code, PanSemStateFiniteExact.eshapes, PanGlobalsContextExact.globals])
+  (words_as_type_indexed_bitvec)]
+theorem stateRelSetVarHOL {width : Nat} {σ : Type} [NeZero width]
+    (context : PanGlobalsContextExact width)
+    (source target : PanSemStateFiniteExact width σ) (newFlag : Bool)
+    (name : Flapjack.Pancake.PanLang.MlS) (value : ValueHOL width) :
+    panGlobalsStateRelHOLExact true context source target →
+      panGlobalsStateRelHOLExact newFlag context
+        (source.setVarHOLFinite name value) (target.setVarHOLFinite name value) := by
+  intro hrel
+  refine ⟨hrel.1, ?_, hrel.2.2⟩
+  intro _
+  have hl := hrel.2.1 rfl
+  simp only [PanSemStateFiniteExact.setVarHOLFinite, hl]
+
 end Flapjack.PanGlobalsStateRelationLocals

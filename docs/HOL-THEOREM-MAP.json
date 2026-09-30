@@ -29285,5 +29285,85 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-b source comparison HOL938-959: all clauses use accepted instName/regName/addrName; two-register heap alias implication; If only bodies; Call indirect target independently checked and handler nested under SOME return; metadata/defaults ignored. Positive-width faithful HolProg/AsmConfigExact. Coordinator review pending."
-}
+},
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationLocals.lean",
+    "lean_name": "stateRelSetVarHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "state_rel_set_var",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Luna A compared HOL961-966: original state_rel T implies state_rel ls after identical set_var rt retv in source and target; same universal variables, no additional premise. Exact setVarHOLFinite updates only canonical locals; old locals equality follows internally from original relation. Other relation conjuncts definitionally unchanged. Canonical state/context relation witnesses already same module; positive word/Type0 FFI translation, exact MlS keys. Direct compile_correct dependencies at1194/1398/1530 confirmed. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationClock.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanSemStateFiniteExact toExact/ofExact finite-support roundtrip; it supports the PanSemStateFiniteExact fields named by the state_rel tags."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationClock.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanGlobalsContextExact toBroad/ofBroad roundtrip; it supports PanGlobalsContextExact.globals named by the state_rel tags."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationClock.lean",
+    "lean_name": "stateRelDecClockHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "state_rel_dec_clock",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Luna A compared original HOL891-896: state_rel ls ctxt s t implies same relation after dec_clock both states, same flag, no positivity or result premise. All original conjuncts unchanged except clock equality, proved by congruence of Nat subtraction1 including zero case. Exact reviewed decClockHOLFinite and canonical finite state/context relation witnesses; positive-width words and Type0 FFI translation only. Direct source While dependency at914 verified. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationFfi.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanSemStateFiniteExact toExact/ofExact finite-support roundtrip; it supports the PanSemStateFiniteExact fields named by the state_rel tags."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationFfi.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanGlobalsContextExact toBroad/ofBroad roundtrip; it supports PanGlobalsContextExact.globals named by the state_rel tags."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationFfi.lean",
+    "lean_name": "stateRelChangeFfiHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "state_rel_change_ffi",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Luna A compared HOL1564-1569: same original flag/context/states and arbitrary new FFI x; state_rel implies state_rel after setting ffi=x on both states. All relation conjuncts unchanged except FFI equality becomes reflexive. No new premise on FFI, target result or state. Exact reviewed HolFfiState universe0 host, positive-width state and canonical finite relation carriers; same-module roundtrip witnesses. Direct dependency of source state_rel_write_bytearray at1608 confirmed. Coordinator source review pending."
+  }
 ]
