@@ -33281,5 +33281,54 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-sol source comparison, bead28.6: literal Global-variable branch of original Assign535-591 and gen_goal174-181, original state_rel T plus faithful source evaluate/nonError to existential target evaluate and full state_rel(good_res). No evaluator IH or target run/store/post-relation premise. Failed initializer/invalid global excluded by original nonError. Source validity derives existing global and exact shape equality. Reviewed full compile_exp_correct derives target initializer. Accepted arbitrary-shaped store success/reload/support/disjointness/unaffected-memory certificates derive all internal obligations from original relation; top alignment and goodDimindex/strict length not added as assumptions. Exact compile_def GlobalAssign uses context lookup and Store(Op Sub [TopAddr,Const offset], compiled value); address eval uses exact wordOp subtraction. Canonical finite-map relation carriers/witnesses and positive type-indexed BitVec/Type0 host translation only; underlying exact MlS/ShapeHOL/ValueHOL/ProgHOL carriers unchanged. Kernel source check PASS; full gates and coordinator review pending."
-}
+},
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobal.lean",
+    "lean_name": "compileList_eq_map",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only Global Call/no-handler infrastructure, bead33.8: literal recursive-list/MAP equation, canonical map scoped-write undo including absent saved lookup, canonical state/context roundtrips. No separately named HOL declaration or exact HOL-port claim for these synthesized helpers."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobal.lean",
+    "lean_name": "restore_update",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only Global Call/no-handler infrastructure, bead33.8: literal recursive-list/MAP equation, canonical map scoped-write undo including absent saved lookup, canonical state/context roundtrips. No separately named HOL declaration or exact HOL-port claim for these synthesized helpers."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobal.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only Global Call/no-handler infrastructure, bead33.8: literal recursive-list/MAP equation, canonical map scoped-write undo including absent saved lookup, canonical state/context roundtrips. No separately named HOL declaration or exact HOL-port claim for these synthesized helpers."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobal.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only Global Call/no-handler infrastructure, bead33.8: literal recursive-list/MAP equation, canonical map scoped-write undo including absent saved lookup, canonical state/context roundtrips. No separately named HOL declaration or exact HOL-port claim for these synthesized helpers."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobal.lean",
+    "lean_name": "compileCorrect_CallGlobal",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanGlobalsContextExact.globals",
+      "callee"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison, bead33.8: Global-destination Call without handler subcase of original Call1138-1312, gen_goal174-181 plus only original argument/lookup/nonzero-clock guarded callee IH. None args/code lookup and bad body/return/validity outcomes excluded original nonError; source clock zero and abnormal outcomes preserve original empty-locals relation. Successful return derives initial global/context lookup from source validity and updated same shape from accepted evaluate_global_shape_invariant. Actual target compile_def114 is DecCall emptyName shape function mapped compiled args with Store(top-offset,VarLocalempty) continuation; args evaluated before local binder, no extra freshness assumption. Target callee run from literal guarded IH, caller locals reset by reviewed relation lemma; paired temporary source/target locals permit accepted full GlobalAssign to derive store run/all post relation, then reviewed state_rel_res_var and unconditional canonical map restoration recover both original caller local maps. No target-store/run/relation/clock/alignment/length hypothesis promoted to public statement. Qualifiers name canonical state/context map fields and bare canonical callee parameter; positive BitVec width/Type0 FFI conventional translation only. Native MlS/ProgHOL/ValueHOL/ShapeHOL carriers unchanged. Kernel source check PASS; final gates/coordinator review pending."
+  }
 ]
