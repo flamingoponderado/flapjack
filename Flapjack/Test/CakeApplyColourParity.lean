@@ -137,10 +137,25 @@ example : instructionLivenessExact = true := by
   simp [instructionLivenessExact, WordAlloc.getLiveInst, WordAlloc.getLiveInstCore,
     sptToAList, sptFoldi, lrNext, sptFromAList, sptInsert, sptDelete, sptMkBS, sptMkBN]
 
+/-- Original apply_nummaps_key rows, covering independent payload types and
+executed paired cutsets with collisions, duplicates and an empty component. -/
+def pairedKeyMapExact : Bool :=
+  let mixed := WordAlloc.applyNummapsKey (fun n => n + 10)
+    (sptFromAList [(1, true), (2, false)], sptFromAList [(3, 7), (4, 8)])
+  (sptToAList mixed.1 == [(11, true), (12, false)]) &&
+    (sptToAList mixed.2 == [(13, 7), (14, 8)]) &&
+    (wordApplyColourNumSets (fun n => n % 2) ([3, 1, 2], [4, 2]) == ([1, 0], [0])) &&
+    (wordApplyColourNumSets (fun n => n + 10) ([], [3, 3, 2]) == ([], [13, 12]))
+
+example : pairedKeyMapExact = true := by
+  simp [pairedKeyMapExact, wordApplyColourNumSets, WordAlloc.applyNummapsKeyExecutable,
+    WordAlloc.applyNummapsKey, WordAlloc.applyNummapKey, WordAlloc.numSetToExact,
+    WordAlloc.numSetFromExact, sptToAList, sptFoldi, lrNext, sptFromAList, sptInsert]
+
 def parityGuard : Bool :=
   totalColourExact && assignExact && applyColourAliasedAssignExact &&
     returnRaiseExact &&
-    callHandlerExact && loopLiveExact && expressionColourExact && instructionColourExact && instructionLivenessExact
+    callHandlerExact && loopLiveExact && expressionColourExact && instructionColourExact && instructionLivenessExact && pairedKeyMapExact
 
 #guard parityGuard
 #eval parityGuard
