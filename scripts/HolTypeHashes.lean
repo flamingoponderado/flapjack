@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.StackNames.OperandNames
 import Flapjack.Compiler.Backend.StackProps.FixedNames
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutNames
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyRemap

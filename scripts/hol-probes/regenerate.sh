@@ -2473,3 +2473,6 @@ run_probe pan_word_of_bytes_overlong_probeScript.sml pan_word_of_bytes_overlong_
 
 run_probe stack_props_fixed_names_probeScript.sml stack_props_fixed_names_probe.out \
   x86_good x86_empty x86_bad_zero riscv_empty "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe stack_names_operand_probeScript.sml stack_names_operand_probe.out \
+  reg_present reg_missing imm dest_present dest_missing dest_label "$cake_dir/compiler/backend/stack_namesScript.sml" "$cake_dir/compiler/backend"

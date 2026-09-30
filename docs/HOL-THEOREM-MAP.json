@@ -27910,5 +27910,22 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-b corrective source review: find_name is misc tlookup over num num_map (Spt), not |-> finite map. Signature now Spt Nat and sptLookup projected into existing lookup helper with identity-key fallback. No finite-map qualifier; original equation/hypotheses retained, no BIJ premise. Exact positive-width AsmConfigExact uses words qualifier only. Corrects prior invalid finite-map translation."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/StackNames/OperandNames.lean",
+  "lean_name": "riFindNameHOL",
+  "hol_path": "cakeml/compiler/backend/stack_namesScript.sml",
+  "hol_name": "ri_find_name_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source comparison stack_names16-19/51-54: names is exact Spt Nat with tlookup default identity; ri operand exact HolRegImm width positive, register renamed/immediate unchanged; destination INR renamed/INL unchanged. Unconditional codec/raw-helper correspondence kernel-checked; original6HOL rows incl missing-key fallback replayed. Parent core migration remains open, no executed route completion claim."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/StackNames/OperandNames.lean",
+  "lean_name": "destFindNameHOL",
+  "hol_path": "cakeml/compiler/backend/stack_namesScript.sml",
+  "hol_name": "dest_find_name_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison stack_names16-19/51-54: names is exact Spt Nat with tlookup default identity; ri operand exact HolRegImm width positive, register renamed/immediate unchanged; destination INR renamed/INL unchanged. Unconditional codec/raw-helper correspondence kernel-checked; original6HOL rows incl missing-key fallback replayed. Parent core migration remains open, no executed route completion claim."
 }
 ]
