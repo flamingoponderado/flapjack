@@ -41,12 +41,19 @@ jobs:
       - name: Check Pan-to-Crep intermediate fixture coverage
         run: python3 scripts/pan-to-crep-coverage-report.py --check
 
-      - name: Check guest.pp.pnk exact Pancake RISC-V parity
+      - name: Check both pinned guest builds against exact Pancake output
         run: |
-          curl --fail --location --retry 3 --retry-delay 2 \
-            https://raw.githubusercontent.com/pirapira/stateless-pancaketh/84405317d6705de9df563ad2f6cdd30b459198b4/Guest/guest.pp.pnk \
-            --output "$RUNNER_TEMP/guest.pp.pnk"
-          python3 scripts/check-guest-parity.py "$RUNNER_TEMP/guest.pp.pnk"
+          python3 - <<'PYGUEST'
+          import json, os, pathlib, urllib.request
+          reference = json.loads(pathlib.Path("scripts/guest-parity.json").read_text())
+          for variant in reference["variants"].values():
+              path = variant["source_path"]
+              url = ("https://raw.githubusercontent.com/pirapira/stateless-pancaketh/"
+                     + reference["upstream_revision"] + "/" + path)
+              urllib.request.urlretrieve(url, pathlib.Path(os.environ["RUNNER_TEMP"]) / pathlib.Path(path).name)
+          PYGUEST
+          python3 scripts/check-guest-parity.py "$RUNNER_TEMP/guest.pp.pnk" --variant accelerated
+          python3 scripts/check-guest-parity.py "$RUNNER_TEMP/guest-software.pp.pnk" --variant software
 
       - name: Check exact Pancake RISC-V parity corpus
         run: python3 scripts/parity-small-corpus.py --flapjack-only
