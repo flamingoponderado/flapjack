@@ -120,6 +120,7 @@ import Flapjack.Pancake.PanStructs.CompileDeclsExact
 import Flapjack.Pancake.PanStructs.CompileDeclsCorrespondence
 import Flapjack.Pancake.PanStructs.CompileProgTraversal
 import Flapjack.Pancake.PanStructs.CompileProgCorrespondence
+import Flapjack.Pancake.PanStructs.CompileProgProduction
 import Flapjack.Pancake.PanStructs.CompileProgExact
 import Flapjack.Pancake.PanStructs.CompileExpExact
 import Flapjack.Pancake.PanStructs.OldExpShapeExact
