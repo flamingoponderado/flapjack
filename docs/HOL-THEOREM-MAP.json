@@ -1,5 +1,145 @@
 [
   {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/StateOps.lean",
+    "lean_name": "memStore",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "mem_store_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.4), stackSemScript110-115: domain membership guards SOME memory function update at the address, NONE otherwise. Exact WordLoc labels retained; no memory-domain enlargement. Accepted imported StackSemStateFiniteExact owner, canonical same-module roundtrip re-export; positive word dimension, C/F Type0. No extra semantic premise, local carrier shadow, evaluator or production routing claim. Coordinator review required."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/StateOps.lean",
+    "lean_name": "memLoad",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "mem_load_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.4), stackSemScript117-122: domain membership gives SOME(memory addr), else NONE; no Word-only restriction. Accepted imported StackSemStateFiniteExact owner, canonical same-module roundtrip re-export; positive word dimension, C/F Type0. No extra semantic premise, local carrier shadow, evaluator or production routing claim. Coordinator review required."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/StateOps.lean",
+    "lean_name": "decClock",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "dec_clock_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.4), stackSemScript124-126: update clock with natural truncated subtraction1; all other fields unchanged. Accepted imported StackSemStateFiniteExact owner, canonical same-module roundtrip re-export; positive word dimension, C/F Type0. No extra semantic premise, local carrier shadow, evaluator or production routing claim. Coordinator review required."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/StateOps.lean",
+    "lean_name": "getVar",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "get_var_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.4), stackSemScript158-160: FLOOKUP regs at numerical key, all WordLoc constructors preserved. Accepted imported StackSemStateFiniteExact owner, canonical same-module roundtrip re-export; positive word dimension, C/F Type0. No extra semantic premise, local carrier shadow, evaluator or production routing claim. Coordinator review required."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/StateOps.lean",
+    "lean_name": "getVars",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "get_vars_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.4), stackSemScript162-170: empty list SOME []; head lookup then recursive lookup, either failure NONE, successful values cons in input order. Accepted imported StackSemStateFiniteExact owner, canonical same-module roundtrip re-export; positive word dimension, C/F Type0. No extra semantic premise, local carrier shadow, evaluator or production routing claim. Coordinator review required."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/StateOps.lean",
+    "lean_name": "getFpVar",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "get_fp_var_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.4), stackSemScript172-174: FLOOKUP fp_regs, fixed word64 payload preserved. Accepted imported StackSemStateFiniteExact owner, canonical same-module roundtrip re-export; positive word dimension, C/F Type0. No extra semantic premise, local carrier shadow, evaluator or production routing claim. Coordinator review required."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/StateOps.lean",
+    "lean_name": "setVar",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "set_var_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.4), stackSemScript176-179: update regs at numerical key using canonical equality-based FUPDATE; other fields unchanged. Accepted imported StackSemStateFiniteExact owner, canonical same-module roundtrip re-export; positive word dimension, C/F Type0. No extra semantic premise, local carrier shadow, evaluator or production routing claim. Coordinator review required."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/StateOps.lean",
+    "lean_name": "setFpVar",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "set_fp_var_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.4), stackSemScript181-184: update fp_regs numerical key with fixed word64, equality-based FUPDATE. Accepted imported StackSemStateFiniteExact owner, canonical same-module roundtrip re-export; positive word dimension, C/F Type0. No extra semantic premise, local carrier shadow, evaluator or production routing claim. Coordinator review required."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/StateOps.lean",
+    "lean_name": "setStore",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "set_store_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.4), stackSemScript186-188: update store key using exact WordStoreHOL incl Temp bitvec5 and equality-based FUPDATE. Accepted imported StackSemStateFiniteExact owner, canonical same-module roundtrip re-export; positive word dimension, C/F Type0. No extra semantic premise, local carrier shadow, evaluator or production routing claim. Coordinator review required."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/StateOps.lean",
+    "lean_name": "emptyEnv",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "empty_env_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.4), stackSemScript190-192: set regs FEMPTY and stack [], retaining fp_regs/store/stack_space and every other field. Accepted imported StackSemStateFiniteExact owner, canonical same-module roundtrip re-export; positive word dimension, C/F Type0. No extra semantic premise, local carrier shadow, evaluator or production routing claim. Coordinator review required."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/WordBitmap.lean",
     "lean_name": "bitLength",
     "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
