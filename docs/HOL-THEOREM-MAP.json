@@ -36534,6 +36534,21 @@
   "reviewer": "Canonical imported state/context roundtrip reexport; Flapjack representation infrastructure without an independent HOL declaration."
 },
 {
+  "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+  "hol_name": "evaluate_clock_sub",
+  "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
+  "lean_name": "evaluateClockSubIfCaseHOLFinite",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-4ac.4.60.1.1.12): exact source shape of HOL panPropsScript.sml evaluate_clock_sub If constructor, handled in the generic final branch of the HOL induction (panSemScript.sml:630). Single literal guarded IH after the eval/Val/Word guard: forall result2 st2 ck2, source selected-branch run = (result2, st2 with clock := st2.clock + ck2) -> result2 <> SOME TimeOut -> low-clock selected-branch run = (result2, st2), exactly as the accepted Call/DecCall clockSubAt cases; original premisses (high-run equation to st with clock := st.clock+ck and result <> SOME TimeOut), no added premise and no outer-specialized IH."
+},
+{
   "hol_path": null,
   "hol_name": null,
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimIndexSize.lean",
