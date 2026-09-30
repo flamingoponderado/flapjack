@@ -37421,5 +37421,36 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-opus source comparison (bead flapjack-2de.4): crep_inlineProofScript.sml:3440-3448 forall s t crep_code start inl_fname ns prog. state_rel_code s t /\\ locals_strong_rel s t /\\ ALL_DISTINCT (MAP FST crep_code) /\\ s.code = alist_to_fmap crep_code /\\ t.code = alist_to_fmap (compile_inl_top inl_fname crep_code) /\\ FLOOKUP s.code start = SOME (ns, prog) /\\ semantics s start <> Fail ==> semantics t start = semantics s start. Lean binds them in HOL order with the same seven conjuncts over alistToFmapCodeExact, the tagged compileInlTopHOLExact (compile_inl_top_def) and crepSemantics. No extra premise. Proof as HOL: unfold compile_inl_top (compileInlProgHOLExactWithSupport_eq_compileInlProgHOLExact) and apply state_rel_imp_semantics_local with inl_fs = alist_to_fmap (FILTER (\\(x,y). MEM x inl_fname) crep_code), whose SUBMAP into s.code follows from ALL_DISTINCT."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SeqAssocExact.lean",
+  "lean_name": "evaluateSeqAssocSeqHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+  "hol_name": "evaluate_seq_assoc",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison pan_simpProofScript.sml117-137 Seq recursion and seq_assoc_def18-40: genuine Seq case of unconditional full result/state equality, arbitrary pre/first/second/state. Exactly two source functional induction hypotheses at (pre,first) and (seq_assoc pre first,second); no extra success/target-run/poststate/clock premises. Local exact Seq-association proof expands line780 source Seq and all NONE/SOME outcomes; clock rewrite justified by accepted fix_clock_evaluate. Native ProgHOL/MlS/result, canonical finite state fourmapfields with genuine owner roundtrip and positive wordwidth/Type0 FFI only. This case does not claim assembled full117; coordinator review pending. Proof-only."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SeqAssocExact.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Imported-owner canonical finite-state roundtrip; derived representation infrastructure with no separately named HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SeqAssocExact.lean",
+  "lean_name": "evaluateSeqAssociate",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Local exact Seq associativity infrastructure derived from source evaluator clause; no separately named HOL declaration. Not the full seq_assoc theorem."
 }
 ]
