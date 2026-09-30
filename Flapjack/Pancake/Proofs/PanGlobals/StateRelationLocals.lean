@@ -72,16 +72,12 @@ theorem stateRelSetVarHOL {width : Nat} {σ : Type} [NeZero width]
   have hl := hrel.2.1 rfl
   simp only [PanSemStateFiniteExact.setVarHOLFinite, hl]
 
-/-- Source comparison, flapjack-ds10 (2026-09-30, bead
-`flapjack-pxn.18.5.2.32.6`). Exact port of HOL `res_var_FEMPTY`
-(`cakeml/pancake/proofs/pan_globalsProofScript.sml:1011-1015`):
-`res_var FEMPTY (n,NONE) = FEMPTY`. HOL's bare polymorphic finite-map carrier
-`α |-> β` is rendered by the reviewed canonical `HolFiniteMapExact`
-translation (`resVarEq`, `empty`), the same carriers used by the accepted
-PanGlobals `res_var`/`state_rel_res_var` ports. The whole statement is a single
-`HolFiniteMapExact` map equality, so it carries the dedicated singular
-`(fmap_as_finite_support_equality)` qualifier, witnessed at the lookup level by
-`holFmapAsFiniteSupportEqualityWitness_resVarFEMPTYExact`. -/
+/-- Exact port of HOL `res_var_FEMPTY`
+(`cakeml/pancake/proofs/pan_globalsProofScript.sml:1011-1015`): the panic-reset
+finite map is unchanged when writing an `none` value into `FEMPTY`. The HOL
+source uses the bare `α |-> β` finite-map carrier, rendered here with
+`HolFiniteMapExact`; this is exactly the singular-map-equality qualifier's
+target shape, witnessed below at the lookup level. -/
 @[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "res_var_FEMPTY"
   (fmap_as_finite_support_equality)]
 theorem resVarFEMPTYExact {α β : Type} [DecidableEq α] (n : α) :
@@ -94,8 +90,11 @@ theorem resVarFEMPTYExact {α β : Type} [DecidableEq α] (n : α) :
   · simp [hk]
   · simp [hk]
 
-/-- Unconditional lookup-level witness for `resVarFEMPTYExact`: both sides
-agree at the same universally bound key `k`. -/
+/-- Lookup-level witness for `resVarFEMPTYExact`, required by the singular
+map-equality qualifier. The witness statement must not introduce a
+theorem-dependent premise or name the tagged theorem in its header; its proof
+body may reuse the tagged theorem's established proof, as here
+(`rw [resVarFEMPTYExact]`). -/
 theorem holFmapAsFiniteSupportEqualityWitness_resVarFEMPTYExact {α β : Type} [DecidableEq α]
     (n : α) (k : α) :
     (HolFiniteMapExact.resVarEq (HolFiniteMapExact.empty : HolFiniteMapExact α β) (n, none)).lookup k =
