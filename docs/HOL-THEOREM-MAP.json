@@ -36502,6 +36502,38 @@
   "reviewer": "Canonical imported state roundtrip reexport, Flapjack representation infrastructure without an independent HOL declaration."
 },
 {
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Assembly.lean",
+  "lean_name": "compileCorrectHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "compile_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "reviewer": "flapjack-sol source comparison36: original gen_goal172-181 and full compile_correct assembled by original panSem evaluate_ind across21 constructors (proof ends1615). Public program/source/result/context/target/post quantification and only original state_rel T, source evaluate pair and res not Error hypotheses retained. Conclusion is genuine existential target evaluation of reviewed compileProgExactHOL with same result and full good_res state relation. Imported faithful evaluateIndHOL supplies every recursive IH internally; no public IH, universally quantified context assumption, target run, pass predicate, or postrelation premise. Assign Local/Global exact native split; seven Call leaves unchanged; Dec/Seq/If guards retained, While original three guards instantiated with constructor equalities, DecCall original continuation/callee intermediate products and shape guards instantiated. Canonical imported state/context map owners and genuine roundtrip witnesses used; native complete ProgHOL/ValueHOL/ShapeHOL and MlS carriers. Positive type-indexed BitVec width and Type0 FFI conventional translation only. Executed globals route already uses reviewed compileProgExactHOL/compileTopExactHOL; no production change in this proof assembly. Focused kernel PASS; independent coordinator source acceptance and full merged-tree gates pending, not a whole compiler theorem completion.",
+  "fmap_as_finite_support_relation": [
+    "PanSemStateFiniteExact.locals",
+    "PanSemStateFiniteExact.globals",
+    "PanSemStateFiniteExact.code",
+    "PanSemStateFiniteExact.eshapes",
+    "PanGlobalsContextExact.globals"
+  ],
+  "words_as_type_indexed_bitvec": true
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Assembly.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Canonical imported state/context roundtrip reexport; Flapjack representation infrastructure without an independent HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Assembly.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Canonical imported state/context roundtrip reexport; Flapjack representation infrastructure without an independent HOL declaration."
+},
+{
   "hol_path": "hol4/src/coretypes/optionScript.sml",
   "hol_name": "some_def",
   "lean_path": "Flapjack/Misc/Option.lean",
