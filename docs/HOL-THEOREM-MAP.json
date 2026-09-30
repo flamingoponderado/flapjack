@@ -28073,5 +28073,59 @@
     "lean_name": "memLoadHOLExact_nil_mono",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.2.23): empty-struct-context mem_load/mem_loads monotonicity in the domain with memory agreement, the core of HOL state_rel_mem_load's mem_load_ind proof; no separate HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElim.lean",
+    "lean_name": "unreachElimConverge",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "unreach_elim_converge",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.5.46.1): exact syntactic port of HOL unreach_elim_converge over the tagged exact unreachElimHOLExact/nestedDecsHOL/argLoadHOLExact/hasReturnHOLExact/notBranchRetHOLExact on CrepProgHOL; same quantified variables, LENGTH side conditions and conclusion (HOL Bool predicates used as propositions rendered `= true`). Only the BitVec word-dimension qualifier applies."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElim.lean",
+    "lean_name": "unreachElimFixPoint",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "unreach_elim_fix_point",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.5.46.1): exact syntactic port of HOL unreach_elim_fix_point over the tagged exact unreachElimHOLExact/nestedDecsHOL/argLoadHOLExact/hasReturnHOLExact/notBranchRetHOLExact on CrepProgHOL; same quantified variables, LENGTH side conditions and conclusion (HOL Bool predicates used as propositions rendered `= true`). Only the BitVec word-dimension qualifier applies."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElim.lean",
+    "lean_name": "unreachElimNestedDecs",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "unreach_elim_nested_decs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.5.46.1): exact syntactic port of HOL unreach_elim_nested_decs over the tagged exact unreachElimHOLExact/nestedDecsHOL/argLoadHOLExact/hasReturnHOLExact/notBranchRetHOLExact on CrepProgHOL; same quantified variables, LENGTH side conditions and conclusion (HOL Bool predicates used as propositions rendered `= true`). Only the BitVec word-dimension qualifier applies."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElim.lean",
+    "lean_name": "unreachElimArgLoad",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "unreach_elim_arg_load",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.5.46.1): exact syntactic port of HOL unreach_elim_arg_load over the tagged exact unreachElimHOLExact/nestedDecsHOL/argLoadHOLExact/hasReturnHOLExact/notBranchRetHOLExact on CrepProgHOL; same quantified variables, LENGTH side conditions and conclusion (HOL Bool predicates used as propositions rendered `= true`). Only the BitVec word-dimension qualifier applies."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElim.lean",
+    "lean_name": "unreachElimArgLoadPerm",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "unreach_elim_arg_load_perm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.5.46.1): exact syntactic port of HOL unreach_elim_arg_load_perm over the tagged exact unreachElimHOLExact/nestedDecsHOL/argLoadHOLExact/hasReturnHOLExact/notBranchRetHOLExact on CrepProgHOL; same quantified variables, LENGTH side conditions and conclusion (HOL Bool predicates used as propositions rendered `= true`). Only the BitVec word-dimension qualifier applies."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElim.lean",
+    "lean_name": "notHasReturnImpNotBranchRet",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "not_has_return_imp_not_branch_ret",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.5.46.1): exact syntactic port of HOL not_has_return_imp_not_branch_ret over the tagged exact unreachElimHOLExact/nestedDecsHOL/argLoadHOLExact/hasReturnHOLExact/notBranchRetHOLExact on CrepProgHOL; same quantified variables, LENGTH side conditions and conclusion (HOL Bool predicates used as propositions rendered `= true`). Only the BitVec word-dimension qualifier applies."
   }
 ]
