@@ -1,0 +1,4 @@
+x86_good=T
+x86_empty=F
+x86_bad_zero=F
+riscv_empty=T

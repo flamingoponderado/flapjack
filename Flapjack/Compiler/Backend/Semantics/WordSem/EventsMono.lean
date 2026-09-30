@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.InstConst
 import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateInd
 import Flapjack.FfiHOL
 
@@ -258,20 +259,7 @@ private theorem memStore_ioEvents_eq {width : Nat} [NeZero width] {C F : Type}
 private theorem inst_ffi_of_some {width : Nat} [NeZero width] {C F : Type}
     (i : WordLangInst (BitVec width)) (state next : WordSemStateFiniteExact width C F)
     (h : inst i state = some next) : next.ffi = state.ffi := by
-  unfold inst at h
-  repeat' split at h
-  all_goals (try dsimp only at h)
-  all_goals (repeat' split at h)
-  all_goals first
-    | (simp only [reduceCtorEq] at h; done)
-    | (cases h; rfl)
-    | (simp only [Option.some.injEq] at h; subst h; rfl)
-    | (unfold assign at h; split at h
-       · cases h
-       · cases h; rfl)
-    | (rename_i heq; cases h
-       unfold memStore at heq
-       split at heq <;> cases heq <;> rfl)
+  exact (instConst i state next h).2
 
 private theorem jumpExc_ioEvents_eq_of_some {width : Nat} [NeZero width] {C F : Type}
     (state next : WordSemStateFiniteExact width C F) (l1 l2 : Nat)
