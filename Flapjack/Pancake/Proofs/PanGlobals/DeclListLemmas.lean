@@ -44,6 +44,17 @@ theorem freshNameMlS_correct :
   | case1 name _ ih => exact ih
   | case2 name hnot => exact hnot
 
+/-- Exact native `mlstring` port of HOL's subset freshness corollary.
+The subset is written pointwise as membership implication, preserving HOL's
+`set names' ⊆ set names`; no String codec or byte-range premise is needed. -/
+@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "fresh_name_correct'"]
+theorem freshNameMlS_correctSubset :
+    ∀ (name : MlS) (names names' : List MlS),
+      freshNameMlS name names ∈ names' →
+      (∀ candidate, candidate ∈ names' → candidate ∈ names) → False := by
+  intro name names names' hmem hsubset
+  exact freshNameMlS_correct name names (hsubset _ hmem)
+
 /-- Exact HOL `ALL_DISTINCT_fperm_decs` (`pan_globalsProofScript.sml:1711-1714`). -/
 @[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "ALL_DISTINCT_fperm_decs"]
 theorem ALL_DISTINCT_fperm_decsHOL {width : Nat} [NeZero width] :
