@@ -485,9 +485,14 @@ def readBytearrayWordHOL {width byteWidth : Nat} [NeZero width] [NeZero byteWidt
       pure (byte :: rest)
 
 /-- Flapjack-only support lemma: a successful `readBytearrayWordHOL` returns a
-    list whose length is the requested length (HOL `read_bytearray_LENGTH`,
-    `src/misc/miscScript.sml`). Flapjack-specific infrastructure with no
-    standalone tagged HOL declaration. -/
+    list whose length is the requested length. HOL analogue:
+    `read_bytearray_LENGTH` (`cakeml/misc/miscScript.sml:124`), whose statement
+    is `(read_bytearray a n f = SOME x) ==> (LENGTH x = n)` for a fixed
+    `word8`-valued reader `f : 'a word -> word8 option`. This lemma is NOT
+    tagged as an exact port of that declaration because `readBytearrayWordHOL`
+    generalizes HOL's fixed byte carrier to a parameterized `byteWidth` and an
+    arbitrary `getByte : Word width -> BitVec byteWidth option`; the length
+    fact is proved over that generalized interface rather than HOL's fixed one. -/
 theorem readBytearrayWordHOL_length {width byteWidth : Nat} [NeZero width] [NeZero byteWidth]
     (address : RiscV.Word width) (length : Nat)
     (getByte : RiscV.Word width → Option (BitVec byteWidth))
