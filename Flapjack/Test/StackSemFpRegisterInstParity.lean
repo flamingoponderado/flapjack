@@ -446,25 +446,25 @@ example {width : Nat} [NeZero width] {C F : Type}
     (h : getFpVar d2 s = some f) :
     instFpRegister (.fp (.fpSqrt d1 d2)) s =
       some (some (setFpVar d1 (holFp64SqrtReal .roundTiesToEven f) s)) := by
-  simp [instFpRegister, h]
+  simp [instFpRegister, instFpSqrt, h]
 
 example {width : Nat} [NeZero width] {C F : Type}
     (d1 d2 : Nat) (s : StackSemStateFiniteExact width C F)
     (h : getFpVar d2 s = none) :
     instFpRegister (.fp (.fpSqrt d1 d2)) s = some none := by
-  simp [instFpRegister, h]
+  simp [instFpRegister, instFpSqrt, h]
 
 example {width : Nat} [NeZero width] {C F : Type}
     (d1 d2 : Nat) (s : StackSemStateFiniteExact width C F)
     (h : getFpVar d2 s = none) :
     instFpRegister (.fp (.fpToInt d1 d2)) s = some none := by
-  simp [instFpRegister, h]
+  simp [instFpRegister, instFpToInt, h]
 
 example {width : Nat} [NeZero width] {C F : Type}
     (d1 d2 : Nat) (s : StackSemStateFiniteExact width C F) (f : BitVec 64)
     (h : getFpVar d2 s = some f) (hi : holFp64ToInt .roundTiesToEven f = none) :
     instFpRegister (.fp (.fpToInt d1 d2)) s = some none := by
-  simp [instFpRegister, h, hi]
+  simp [instFpRegister, instFpToInt, h, hi]
 
 example {C F : Type} (d1 d2 : Nat) (s : StackSemStateFiniteExact 64 C F)
     (f : BitVec 64) (i : Int) (h : getFpVar d2 s = some f)
@@ -472,7 +472,7 @@ example {C F : Type} (d1 d2 : Nat) (s : StackSemStateFiniteExact 64 C F)
     (hw : (BitVec.ofInt 32 i).toInt = i) :
     instFpRegister (.fp (.fpToInt d1 d2)) s =
       some (some (setFpVar d1 ((BitVec.ofInt 32 i).setWidth 64) s)) := by
-  simp only [instFpRegister, h]
+  simp only [instFpRegister, instFpToInt, h]
   rw [hi]
   simp [hw]
 
@@ -481,12 +481,12 @@ example {C F : Type} (d1 d2 : Nat) (s : StackSemStateFiniteExact 64 C F)
     instFpRegister (.fp (.fpFromInt d1 d2)) s =
       some (some (setFpVar d1 (holIntToFp64 .roundTiesToEven
         (holWordExtract 31 0 f 32).toInt) s)) := by
-  simp [instFpRegister, h]
+  simp [instFpRegister, instFpFromInt, h]
 
 example {C F : Type} (d1 d2 : Nat) (s : StackSemStateFiniteExact 64 C F)
     (h : getFpVar d2 s = none) :
     instFpRegister (.fp (.fpFromInt d1 d2)) s = some none := by
-  simp [instFpRegister, h]
+  simp [instFpRegister, instFpFromInt, h]
 
 example {width : Nat} [NeZero width] {C F : Type} (d1 d2 : Nat)
     (s : StackSemStateFiniteExact width C F) (hw : width ≠ 64) (v : BitVec 64)
@@ -495,7 +495,7 @@ example {width : Nat} [NeZero width] {C F : Type} (d1 d2 : Nat)
       some (some (setFpVar d1 (holIntToFp64 .roundTiesToEven
         (if d2 % 2 = 1 then holWordExtract 63 32 v width
           else holWordExtract 31 0 v width).toInt) s)) := by
-  simp [instFpRegister, hw, h]
+  simp [instFpRegister, instFpFromInt, hw, h]
 
 -- Closed binary64 conversion values, kernel-checked through the computable
 -- roundTiesToEven bridges where the source definition is choice-based.
@@ -539,7 +539,7 @@ example {C F : Type} (s : StackSemStateFiniteExact 64 C F) :
       (convFixture s 0x4010000000000000 0x4024000000000000) =
       some (some (setFpVar 7 (holFp64SqrtReal .roundTiesToEven 0x4010000000000000)
         (convFixture s 0x4010000000000000 0x4024000000000000))) := by
-    simp [instFpRegister, getFpVar, convFixture, FUPDATE_HOL]
+    simp [instFpRegister, instFpSqrt, getFpVar, convFixture, FUPDATE_HOL]
   rw [h, holFp64Sqrt_four]
   cbv
 example {C F : Type} (s : StackSemStateFiniteExact 64 C F) :
@@ -547,7 +547,7 @@ example {C F : Type} (s : StackSemStateFiniteExact 64 C F) :
       (convFixture s 0x4010000000000000 0x4024000000000000)) = none := by
   have h : instFpRegister (.fp (.fpSqrt 7 9))
       (convFixture s 0x4010000000000000 0x4024000000000000) = some none := by
-    simp [instFpRegister, getFpVar, convFixture, FUPDATE_HOL]
+    simp [instFpRegister, instFpSqrt, getFpVar, convFixture, FUPDATE_HOL]
   rw [h]; rfl
 example {C F : Type} (s : StackSemStateFiniteExact 64 C F) :
     observe (instFpRegister (.fp (.fpToInt 7 2))
@@ -557,7 +557,7 @@ example {C F : Type} (s : StackSemStateFiniteExact 64 C F) :
       (convFixture s 0x4000000000000000 0x4024000000000000) =
       some (some (setFpVar 7 ((BitVec.ofInt 32 2).setWidth 64)
         (convFixture s 0x4000000000000000 0x4024000000000000))) := by
-    simp [instFpRegister, getFpVar, convFixture, FUPDATE_HOL]
+    simp [instFpRegister, instFpToInt, getFpVar, convFixture, FUPDATE_HOL]
     rw [holFp64ToInt_two]
     simp
   rw [h]; cbv
@@ -566,7 +566,7 @@ example {C F : Type} (s : StackSemStateFiniteExact 64 C F) :
       (convFixture s 0x4330000000000000 0x4024000000000000)) = none := by
   have h : instFpRegister (.fp (.fpToInt 7 2))
       (convFixture s 0x4330000000000000 0x4024000000000000) = some none := by
-    simp [instFpRegister, getFpVar, convFixture, FUPDATE_HOL]
+    simp [instFpRegister, instFpToInt, getFpVar, convFixture, FUPDATE_HOL]
     rw [holFp64ToInt_big]
     simp
   rw [h]; rfl
@@ -575,7 +575,7 @@ example {C F : Type} (s : StackSemStateFiniteExact 64 C F) :
       (convFixture s 0x4000000000000000 0x4024000000000000)) = none := by
   have h : instFpRegister (.fp (.fpToInt 7 9))
       (convFixture s 0x4000000000000000 0x4024000000000000) = some none := by
-    simp [instFpRegister, getFpVar, convFixture, FUPDATE_HOL]
+    simp [instFpRegister, instFpToInt, getFpVar, convFixture, FUPDATE_HOL]
   rw [h]; rfl
 example {C F : Type} (s : StackSemStateFiniteExact 32 C F) :
     observe (instFpRegister (.fp (.fpToInt 14 2))
@@ -586,7 +586,7 @@ example {C F : Type} (s : StackSemStateFiniteExact 32 C F) :
       some (some (setFpVar 7 (holBitFieldInsert 31 0 (BitVec.ofInt 32 2)
         (BitVec.ofNat 64 0x4024000000000000))
         (convFixture s 0x4000000000000000 0x4024000000000000))) := by
-    simp [instFpRegister, getFpVar, convFixture, FUPDATE_HOL]
+    simp [instFpRegister, instFpToInt, getFpVar, convFixture, FUPDATE_HOL]
     rw [holFp64ToInt_two]
     simp
   rw [h]; cbv
@@ -599,7 +599,7 @@ example {C F : Type} (s : StackSemStateFiniteExact 32 C F) :
       some (some (setFpVar 7 (holBitFieldInsert 63 32 (BitVec.ofInt 32 2)
         (BitVec.ofNat 64 0x4024000000000000))
         (convFixture s 0x4000000000000000 0x4024000000000000))) := by
-    simp [instFpRegister, getFpVar, convFixture, FUPDATE_HOL]
+    simp [instFpRegister, instFpToInt, getFpVar, convFixture, FUPDATE_HOL]
     rw [holFp64ToInt_two]
     simp
   rw [h]; cbv
@@ -612,7 +612,7 @@ example {C F : Type} (s : StackSemStateFiniteExact 64 C F) :
       some (some (setFpVar 7 (holIntToFp64 .roundTiesToEven
         (holWordExtract 31 0 (BitVec.ofNat 64 0x0000000000000003) 32).toInt)
         (convFixture s 0x0000000000000003 0x4024000000000000))) := by
-    simp [instFpRegister, getFpVar, convFixture, FUPDATE_HOL]
+    simp [instFpRegister, instFpFromInt, getFpVar, convFixture, FUPDATE_HOL]
   rw [h, low32_int3, holIntToFp64_three]
   cbv
 example {C F : Type} (s : StackSemStateFiniteExact 64 C F) :
@@ -620,7 +620,7 @@ example {C F : Type} (s : StackSemStateFiniteExact 64 C F) :
       (convFixture s 0x0000000000000003 0x4024000000000000)) = none := by
   have h : instFpRegister (.fp (.fpFromInt 7 9))
       (convFixture s 0x0000000000000003 0x4024000000000000) = some none := by
-    simp [instFpRegister, getFpVar, convFixture, FUPDATE_HOL]
+    simp [instFpRegister, instFpFromInt, getFpVar, convFixture, FUPDATE_HOL]
   rw [h]; rfl
 example {C F : Type} (s : StackSemStateFiniteExact 32 C F) :
     observe (instFpRegister (.fp (.fpFromInt 7 14))
@@ -631,7 +631,7 @@ example {C F : Type} (s : StackSemStateFiniteExact 32 C F) :
       some (some (setFpVar 7 (holIntToFp64 .roundTiesToEven
         (holWordExtract 31 0 (BitVec.ofNat 64 0x0000000300000004) 32).toInt)
         (convFixture s 0x4000000000000000 0x0000000300000004))) := by
-    simp [instFpRegister, getFpVar, convFixture, FUPDATE_HOL]
+    simp [instFpRegister, instFpFromInt, getFpVar, convFixture, FUPDATE_HOL]
   rw [h, low32_halves, holIntToFp64_four]
   cbv
 example {C F : Type} (s : StackSemStateFiniteExact 32 C F) :
@@ -643,7 +643,7 @@ example {C F : Type} (s : StackSemStateFiniteExact 32 C F) :
       some (some (setFpVar 7 (holIntToFp64 .roundTiesToEven
         (holWordExtract 63 32 (BitVec.ofNat 64 0x0000000300000004) 32).toInt)
         (convFixture s 0x4000000000000000 0x0000000300000004))) := by
-    simp [instFpRegister, getFpVar, convFixture, FUPDATE_HOL]
+    simp [instFpRegister, instFpFromInt, getFpVar, convFixture, FUPDATE_HOL]
   rw [h, high32_halves, holIntToFp64_three]
   cbv
 
