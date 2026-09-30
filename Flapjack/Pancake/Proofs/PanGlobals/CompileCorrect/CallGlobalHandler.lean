@@ -659,6 +659,58 @@ private theorem returnedScratchState {width : Nat} {σ : Type} [NeZero width]
   simp only [setVarHOLFinite]
   rw [hm]
 
+/-- Compose the literal returned Call and Store tail using the callee IH facts.
+This private clause does not replace the full constructor theorem: its caller
+must derive these branch facts from the original guarded induction hypotheses. -/
+private theorem returnedCallStoreTail {width : Nat} {σ : Type} [NeZero width]
+    (context : PanGlobalsContextExact width)
+    (source target sourcePost targetPost : PanSemStateFiniteExact width σ)
+    (name function handlerId handlerVar : MlS) (handler : ProgHOL width)
+    (arguments : List (ExpHOL width)) (values : List (ValueHOL width))
+    (body : ProgHOL width) (callee : HolFiniteMapExact MlS (ValueHOL width))
+    (returnShape : ShapeHOL) (initializer value : ValueHOL width)
+    (hcaller : panGlobalsStateRelHOLExact true context source target)
+    (hcallee : panGlobalsStateRelHOLExact false context sourcePost targetPost)
+    (hvalid : isValidValueHOLFinite sourcePost .global name value = true)
+    (hargs : evalListHOLFinite target
+      (h := fun a => Classical.propDecidable (target.memaddrs a)) arguments = some values)
+    (hcode : lookupCodeHOLFinite target.code.lookup function values = some (body, callee, returnShape))
+    (hclock : target.clock ≠ 0)
+    (hbody : evaluateHOLFiniteState (callEntryStateHOLFinite target callee) body =
+      (some (.returned value), targetPost))
+    (hreturn : shapeOfHOLExact value = returnShape)
+    (hshape : shapeOfHOLExact value = shapeOfHOLExact initializer) :
+    let names := handlerVar :: freeVarIdsHOL handler ++ arguments.flatMap varExpHOL
+    let resultName := freshNameMlS (ofString "") names
+    let flagName := freshNameMlS (ofString "vn'") (resultName :: names)
+    let scratch := setVarHOLFinite flagName (.val (.word (BitVec.ofNat width 0)))
+      (setVarHOLFinite resultName initializer target)
+    ∃ address finalPost,
+      context.globals.lookup name = some (shapeOfHOLExact value, address) ∧
+      evaluateHOLFiniteState scratch
+        (.seq (.call (some (some (.local, resultName), some (handlerId, handlerVar,
+          .seq handler (.assign .local flagName (.const (BitVec.ofNat width 1)))))) function arguments)
+          (.ite (.var .local flagName) .skip
+            (.store (.op .sub [.topAddr, .const address]) (.var .local resultName)))) =
+        (none, finalPost) ∧
+      panGlobalsStateRelHOLExact true context
+        (setGlobalHOLFinite name value {sourcePost with locals := source.locals})
+        {finalPost with locals := (HolFiniteMapExact.resVarEq
+          (HolFiniteMapExact.resVarEq finalPost.locals
+            (flagName, (setVarHOLFinite resultName initializer target).locals.lookup flagName))
+          (resultName, target.locals.lookup resultName))} := by
+  classical
+  dsimp only
+  obtain ⟨_, _, hd, _, _, _, _⟩ :=
+    PanGlobalsCallHandlerFreshNames.callHandlerScratchNamesFresh handlerVar handler arguments
+  obtain ⟨address, finalPost, hc, ht, hr⟩ := returnedValueStoreTail context
+    source target sourcePost targetPost name _ _ initializer value hd hcaller hcallee hvalid
+  refine ⟨address, finalPost, hc, ?_, hr⟩
+  rw [evaluateHOLFiniteState_seq_line780,
+    returnedScratchCall target targetPost function handlerId handlerVar handler arguments
+      values body callee returnShape initializer value hargs hcode hclock hbody hreturn hshape]
+  simpa only [returnedScratchState target targetPost _ _ initializer value hd] using ht
+
 /-- Internal missing-context branch of the full constructor proof. The branch
 condition selects the literal compiler fallback; the callee and handler IHs
 remain those of the original evaluator. Untagged infrastructure until the full
