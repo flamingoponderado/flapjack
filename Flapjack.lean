@@ -1,3 +1,4 @@
+import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallHandlerFreshNames
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.DecCall
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsState
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallHandlerNoDestination
