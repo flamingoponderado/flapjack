@@ -30331,29 +30331,29 @@
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-specific infrastructure: Private codec transport of broad expression freshness; no separate source declaration, decision internal."
 },
-  {
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/Dec.lean",
-    "lean_name": "holFmapAsFiniteSupportWitness",
-    "hol_path": null,
-    "hol_name": null,
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack canonical finite-state roundtrip re-export; no standalone HOL declaration."
-  },
-  {
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/Dec.lean",
-    "lean_name": "evaluateUnchangedLocal_Dec",
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "evaluate_unchanged_local",
-    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support": [
-      "locals",
-      "globals",
-      "code",
-      "eshapes"
-    ],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-c source comparison2026-09-30 (.32.5.3): genuine Dec evaluate_ind case of HOL1107-1137. Original unused value binder, fresh-name/source-eval/good_res/non-Error conjunction and unchanged lookup conclusion retained. Sole body IH has original value binder and eval=SOME value plus shape=shape_of value gate, at locals FUPDATE(bound,value), with original predicate. Exact declaration evaluator restores old optional bound lookup through res_var; equal observed/bound names derive lookup by restoration, distinct names derive body freshness from original free_var_ids filter and commute lookup across the update. No body freshness, distinct-name, target eval or clock premise added. Exact MlS/ShapeHOL/ExpHOL/ProgHOL/ValueHOL, canonical four finite-map fields with genuine roundtrip, positive width/NeZero and universe0 FFI; no executable change; full assembly open and coordinator review pending."
-  },
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/Dec.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack canonical finite-state roundtrip re-export; no standalone HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/Dec.lean",
+  "lean_name": "evaluateUnchangedLocal_Dec",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_unchanged_local",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-c source comparison2026-09-30 (.32.5.3): genuine Dec evaluate_ind case of HOL1107-1137. Original unused value binder, fresh-name/source-eval/good_res/non-Error conjunction and unchanged lookup conclusion retained. Sole body IH has original value binder and eval=SOME value plus shape=shape_of value gate, at locals FUPDATE(bound,value), with original predicate. Exact declaration evaluator restores old optional bound lookup through res_var; equal observed/bound names derive lookup by restoration, distinct names derive body freshness from original free_var_ids filter and commute lookup across the update. No body freshness, distinct-name, target eval or clock premise added. Exact MlS/ShapeHOL/ExpHOL/ProgHOL/ValueHOL, canonical four finite-map fields with genuine roundtrip, positive width/NeZero and universe0 FFI; no executable change; full assembly open and coordinator review pending."
+},
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/While.lean",
     "lean_name": "holFmapAsFiniteSupportWitness",
