@@ -1,0 +1,12 @@
+load "bossLib"; load "preamble"; load "word_simpTheory"; load "wordConvsTheory";
+open bossLib HolKernel Parse preamble word_simpTheory wordConvsTheory;
+fun out label q = (print(label ^ "="); print_term(rconc(EVAL q)); print "\n");
+val skip = ``(wordLang$Skip : 8 wordLang$prog)``;
+val tick = ``(wordLang$Tick : 8 wordLang$prog)``;
+val call = ``(wordLang$Call (SOME ([], (sptree$LN,sptree$LN), wordLang$Skip,3,4)) NONE [] NONE : 8 wordLang$prog)``;
+val _ = out "skip_left" ``word_simp$SmartSeq ^skip ^tick``;
+val _ = out "skip_right" ``word_simp$SmartSeq ^tick ^skip``;
+val _ = out "labels_skip_left" ``wordConvs$extract_labels (word_simp$SmartSeq ^skip ^call)``;
+val _ = out "labels_call_left" ``wordConvs$extract_labels (word_simp$SmartSeq ^call ^skip)``;
+val _ = out "labels_both" ``wordConvs$extract_labels (word_simp$SmartSeq ^call ^call)``;
+val _ = out "labels_seq" ``wordConvs$extract_labels (word_simp$SmartSeq (wordLang$Seq ^skip ^call) ^call)``;
