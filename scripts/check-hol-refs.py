@@ -106,6 +106,9 @@ FMAP_AS_FINITE_SUPPORT_RELATION_RE = re.compile(
 FMAP_AS_FINITE_SUPPORT_EQUALITIES_RE = re.compile(
     r'\(\s*fmap_as_finite_support_equalities\s*\)'
 )
+FMAP_AS_FINITE_SUPPORT_EQUALITY_RE = re.compile(
+    r'\(\s*fmap_as_finite_support_equality\s*\)'
+)
 WORDS_AS_TYPE_INDEXED_BITVEC_RE = re.compile(
     r'\(\s*words_as_type_indexed_bitvec\s*\)'
 )
@@ -296,7 +299,8 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                         include_word_dimension_width: bool = False,
                         include_fmap_function: bool = False,
                         include_fmap_heterogeneous_function: bool = False,
-                        include_reals_as_rational_cuts: bool = False):
+                        include_reals_as_rational_cuts: bool = False,
+                        include_fmap_as_finite_support_equality: bool = False):
     """Yield HOL attributes, including attributes split across Lean lines."""
     comment_depth = 0
     start: int | None = None
@@ -374,6 +378,8 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                     site += (positions,)
                 if include_reals_as_rational_cuts:
                     site += (bool(REALS_AS_RATIONAL_CUTS_RE.search(attribute)),)
+                if include_fmap_as_finite_support_equality:
+                    site += (bool(FMAP_AS_FINITE_SUPPORT_EQUALITY_RE.search(attribute)),)
                 yield site
         start = None
         chunks = []
@@ -2392,6 +2398,68 @@ def fmap_as_finite_support_equalities_errors(
     return errors
 
 
+def fmap_as_finite_support_equality_witness_name(decl_name: str) -> str:
+    return f"holFmapAsFiniteSupportEqualityWitness_{decl_name}"
+
+
+def fmap_as_finite_support_equality_errors(
+    lines: list[str], module: str,
+    declaration_text: str, decl_name: str,
+) -> list[str]:
+    """Validate a theorem whose conclusion is a SINGLE finite-map equality.
+
+    HOL theorems such as `res_var_FEMPTY` conclude exactly one `|->` map
+    equality.  The tagged declaration must conclude exactly one whole
+    `HolFiniteMapExact` equality (no conjunction, no iff, no premises), and its
+    two sides must be witnessed at the lookup level by a same-module checked,
+    unconditional `holFmapAsFiniteSupportEqualityWitness_<decl>`: an equality
+    `<side>.lookup k = <side>.lookup k` at one universally bound key, with the
+    two receivers exactly the tagged conclusion's two sides.  The witness must
+    not mention the tagged theorem (rejecting the ignored-proof /
+    threaded-argument pattern) and must not be a self-equality.
+
+    The checks are syntactic: they validate shape, naming, same-key
+    application, a universally bound key, and side association, but they do NOT
+    prove that the Lean witness corresponds to the HOL map equality.  Source
+    review must compare the witness against the HOL equality.
+    """
+    errors: list[str] = []
+    if "HolFiniteMapExact" not in declaration_text:
+        errors.append(
+            "fmap_as_finite_support_equality requires the tagged declaration's "
+            "conclusion to use the approved HolFiniteMapExact translation; a raw "
+            "`\u03b1 \u2192 Option \u03b2` function map is ineligible"
+        )
+    conclusion = _statement_conclusion(declaration_text)
+    if _split_top_level(conclusion, ("\u2194",)) is not None:
+        errors.append(
+            "fmap_as_finite_support_equality requires a single map equality, "
+            "not an iff"
+        )
+        return errors
+    count = _count_top_level_conjuncts(conclusion)
+    if count != 1:
+        errors.append(
+            "fmap_as_finite_support_equality requires exactly one finite-map "
+            "equality in the tagged declaration's conclusion (use "
+            "fmap_as_finite_support_equalities for a conjunction)"
+        )
+        return errors
+    expected = _split_top_level(_strip_outer_parens(conclusion), ("=",))
+    if expected is None:
+        errors.append(
+            "fmap_as_finite_support_equality conclusion is not a map equality"
+        )
+        return errors
+    witness = fmap_as_finite_support_equality_witness_name(decl_name)
+    ok, message = _has_lookup_equality_witness(
+        lines, witness, decl_name, expected,
+    )
+    if not ok:
+        errors.append(f"fmap_as_finite_support_equality {message}")
+    return errors
+
+
 def has_list_array_witness(lines: list[str], field: str) -> bool:
     """Require a same-module, kernel-checked representation theorem for a field.
 
@@ -3228,12 +3296,14 @@ def main(argv: list[str]) -> int:
              names_fields, boundary_fields, fmap_fields, fmap_result,
              fmap_relation, fmap_equalities, words_bitvec,
              fmap_parameters, fmap_existentials, dimension_width,
-             fmap_function_positions, fmap_heterogeneous_function_positions, reals_cuts) in hol_attribute_sites(
+             fmap_function_positions, fmap_heterogeneous_function_positions, reals_cuts,
+             fmap_equality) in hol_attribute_sites(
                 lines, include_fmap_existentials=True,
                 include_word_dimension_width=True,
                 include_fmap_function=True,
                 include_fmap_heterogeneous_function=True,
                 include_reals_as_rational_cuts=True,
+                include_fmap_as_finite_support_equality=True,
              ):
             where = f"{rel}:{number}"
             errors.extend(
@@ -3329,6 +3399,20 @@ def main(argv: list[str]) -> int:
                 errors.extend(
                     f"{where}: {error}"
                     for error in fmap_as_finite_support_equalities_errors(
+                        lines, rel, tagged_declaration_text(lines, number), lean_decl
+                    )
+                )
+            if fmap_equality:
+                if (fmap_fields or fmap_result or fmap_parameters or fmap_existentials
+                        or fmap_relation or fmap_equalities or fmap_function_positions
+                        or fmap_heterogeneous_function_positions):
+                    errors.append(
+                        f"{where}: fmap_as_finite_support_equality is mutually "
+                        "exclusive with other finite-map qualifiers"
+                    )
+                errors.extend(
+                    f"{where}: {error}"
+                    for error in fmap_as_finite_support_equality_errors(
                         lines, rel, tagged_declaration_text(lines, number), lean_decl
                     )
                 )
