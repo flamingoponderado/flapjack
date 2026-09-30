@@ -1,3 +1,4 @@
+import Flapjack.Test.StackPropsProgramNames
 import Flapjack.Test.StackPropsAllocArg
 import Flapjack.Test.StackPropsRemoveNames
 import Flapjack.Test.WordSimpSmartSeqParity

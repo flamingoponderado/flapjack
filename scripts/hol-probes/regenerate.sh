@@ -2551,3 +2551,6 @@ run_probe stack_props_alloc_arg_probeScript.sml stack_props_alloc_arg_probe.out 
   "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe stack_props_inst_name_probeScript.sml stack_props_inst_name_probe.out \
   skip const_last const_bound mem_good mem_destination mem_base arith_good arith_bad fp_good fp_alias "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe stack_props_program_name_probeScript.sml stack_props_program_name_probe.out \
+  inst_good inst_bad heap_alias heap_distinct code_good code_bad data_bad seq_bad if_ignored loop_bad raise_good return_bad call_direct call_indirect_bad call_none_handler_ignored call_body_bad call_handler_bad call_good alloc_default shared_good shared_register_bad shared_base_bad shared_offset_bad "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"

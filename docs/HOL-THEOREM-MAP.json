@@ -29276,5 +29276,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison (2026-09-30; .18.5.15.7.11), HOL930-936: same config-first instruction predicate and all5 reviewed HolInst constructors. Const checks only destination logical reg_name (payload ignored); Mem checks destination plus addr_name; Arith/FP delegate accepted exact predicates; Skip true. No hardware-register substitution or additional word checks. Only positive width-indexed BitVec translation. Original HOL10 rows and Lean kernel replay cover every constructor and failures. Coordinator independent source review pending."
-  }
+  },
+{
+  "lean_path": "Flapjack/Compiler/Backend/StackProps/ProgramNames.lean",
+  "lean_name": "stackAsmName",
+  "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+  "hol_name": "stack_asm_name_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source comparison HOL938-959: all clauses use accepted instName/regName/addrName; two-register heap alias implication; If only bodies; Call indirect target independently checked and handler nested under SOME return; metadata/defaults ignored. Positive-width faithful HolProg/AsmConfigExact. Coordinator review pending."
+}
 ]
