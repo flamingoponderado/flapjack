@@ -26927,5 +26927,21 @@
     "lean_name": "holFmapAsFiniteSupportWitness",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack same-module canonical roundtrip witness (bead flapjack-pxn.18.5.5.48) re-exporting CrepSemHOLState.holFmapAsFiniteSupportWitness for the fmap_as_finite_support qualifier on locals/globals/code. No HOL original."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UpdateListLocals.lean",
+    "lean_name": "lookup_updateListEq_zip_not_mem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack private helper (bead flapjack-pxn.18.5.5.48): a HolFiniteMapExact.updateListEq over ZIP (zs, ys) leaves lookups at keys outside zs unchanged; reduces to FLOOKUP_FUPDATE_LIST_HOL_not_mem. No HOL original."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UpdateListLocals.lean",
+    "lean_name": "lookup_updateListEq_zip_getElem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack private helper (bead flapjack-pxn.18.5.5.48): with distinct keys and equal lengths, the updateListEq over ZIP (zs, ys) maps zs[i] to ys[i]; via FUPDATE_LIST_HOL_eq_FUPDATE_LIST and updateEqZipFlookupHOL. No HOL original."
   }
 ]
