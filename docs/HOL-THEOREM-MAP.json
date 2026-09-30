@@ -37259,5 +37259,20 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-ds10 source comparison (bead flapjack-4ac.4.60.1.1.15): exact port of HOL panProps$evaluate_clock_sub (panPropsScript.sml:724-728), proved by the original recInduct evaluate_ind over the canonical carrier. The statement quantifies p, t, res, st, ck and the two original hypotheses (high run at clock + ck; res <> TimeOut) with conclusion at clock - ck; all 21 case IHs are discharged internally by the tagged constructor case lemmas through the field-for-field PanProps codec, and no induction hypothesis or target-run fact is a premise of the public theorem."
-}
+},
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "semantics_init_call'",
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/SemanticsInitCall.lean",
+    "lean_name": "semanticsInitCall'",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.2.22.3.2.5): exact source comparison with pan_globalsProofScript.sml:2801-2820 semantics_init_call'. Same carriers and hypotheses as the accepted semantics_init_call (FLOOKUP code start/start', evaluate body from locals=FEMPTY giving NONE with s'.clock=s.clock, s'.ffi.io_events=s.ffi.io_events; conclusion semantics s start = semantics s' start'). HOL derives it from semantics_init_call by evaluate_clock_sub stripping the clock to 0 and evaluate_add_clock_eq re-adding k; Lean does the same with the tagged evaluateClockSubHOLFinite and panPropsEvaluateAddClockEq. No extra premises."
+  }
 ]
