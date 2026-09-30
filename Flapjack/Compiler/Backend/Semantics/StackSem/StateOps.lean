@@ -43,6 +43,17 @@ def getVar {width : Nat} [NeZero width] {C F : Type}
     (v : Nat) (s : StackSemStateFiniteExact width C F) : Option (WordLocW width) :=
   s.regs.lookup v
 
+/-- HOL register/immediate lookup. Register lookup preserves Word and Loc
+payloads; an immediate always becomes a Word without inspecting the state. -/
+@[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "get_var_imm_def"
+  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+def getVarImm {width : Nat} [NeZero width] {C F : Type}
+    (value : WordRegImm (BitVec width))
+    (s : StackSemStateFiniteExact width C F) : Option (WordLocW width) :=
+  match value with
+  | .reg name => getVar name s
+  | .imm word => some (.word word)
+
 /-- HOL state operation, preserving all fields except the source update. -/
 @[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "get_fp_var_def"
   (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]

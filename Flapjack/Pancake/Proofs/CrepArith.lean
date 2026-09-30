@@ -770,6 +770,39 @@ theorem crepDest2Exp_eq_bitVecSpec {n : Nat} [NeZero n]
   exact Nat.lt_trans word.isLt
     (Nat.pow_lt_pow_right (by decide) (by omega))
 
+/-- Flapjack implementation correspondence between the Boolean-test recursive
+specification and the reviewed HOL recursion. BitVec equality tests are lawful;
+well-founded induction covers every input value, including zero and odd words.
+No standalone HOL declaration is claimed for this factoring equality. -/
+theorem crepDest2ExpBitVecSpec_eq_HOL {width : Nat} [NeZero width]
+    (start : Nat) (word : BitVec width) :
+    crepDest2ExpBitVecSpec start word = crepDest2ExpHOL start word := by
+  induction word using (measure (fun w : BitVec width => w.toNat)).wf.induction generalizing start with
+  | h word ih =>
+    rw [crepDest2ExpBitVecSpec, crepDest2ExpHOL]
+    by_cases hz : word = BitVec.ofNat width 0
+    · simp [hz]
+    · by_cases ho : word = BitVec.ofNat width 1
+      · simp [ho]
+      · by_cases hb : word &&& BitVec.ofNat width 1 = BitVec.ofNat width 0
+        · have hnat : word.toNat ≠ 0 := by
+            intro hzero
+            exact hz (BitVec.eq_of_toNat_eq (by simpa using hzero))
+          have hlt : (BitVec.ushiftRight word 1).toNat < word.toNat := by
+            rw [BitVec.ushiftRight_eq, BitVec.toNat_ushiftRight]
+            exact Nat.div_lt_self (Nat.pos_of_ne_zero hnat) (by decide)
+          simpa [hz, ho, hb, AndOp.and] using ih (BitVec.ushiftRight word 1) hlt (start + 1)
+        · simp [hz, ho, hb, AndOp.and]
+
+/-- Unconditional correspondence of the actual width-bounded executable
+recognizer with the reviewed HOL definition, for every positive word width,
+starting exponent and input. This is a Flapjack implementation theorem, not
+an additional HOL port. -/
+theorem crepDest2Exp_eq_HOL {width : Nat} [NeZero width]
+    (start : Nat) (word : BitVec width) :
+    crepDest2Exp start word = crepDest2ExpHOL start word := by
+  rw [crepDest2Exp_eq_bitVecSpec, crepDest2ExpBitVecSpec_eq_HOL]
+
 /-- Width-parametric BitVec support for HOL's `dest_2exp_bound`
     (`crep_arithProofScript.sml:10`). HOL defines `word_log2 w` as
     `n2w (LOG2 (w2n w))`; `BitVec.ofNat` and `BitVec.toNat` express those
