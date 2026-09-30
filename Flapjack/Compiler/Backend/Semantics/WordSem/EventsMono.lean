@@ -244,6 +244,86 @@ private theorem cutState_ioEvents_eq {width : Nat} [NeZero width]
     cases h
     rfl
 
+private theorem memStore_ioEvents_eq {width : Nat} [NeZero width] {C F : Type}
+    (address : BitVec width) (value : WordLocW width)
+    (state : WordSemStateFiniteExact width C F) :
+    (memStore address value state).map (fun next => next.ffi.ioEvents) =
+      (memStore address value state).map (fun _ => state.ffi.ioEvents) := by
+  unfold memStore
+  split <;> rfl
+
+private theorem jumpExc_ioEvents_eq_of_some {width : Nat} [NeZero width] {C F : Type}
+    (state next : WordSemStateFiniteExact width C F) (l1 l2 : Nat)
+    (h : jumpExc state = some (next, l1, l2)) :
+    next.ffi.ioEvents = state.ffi.ioEvents := by
+  unfold jumpExc at h
+  split at h
+  · split at h
+    · cases h; rfl
+    · cases h
+  · cases h
+
+private theorem gc_ioEvents_eq {width : Nat} [NeZero width] {C F : Type}
+    (state next : WordSemStateFiniteExact width C F)
+    (h : gc state = some next) : next.ffi.ioEvents = state.ffi.ioEvents := by
+  simp only [gc] at h
+  cases hfun : state.gcFun
+      (wordSemEncStack state.stack, state.memory, state.mdomain, state.store) with
+  | none => simp [hfun] at h
+  | some result =>
+      obtain ⟨wl, memory, store⟩ := result
+      cases hdec : wordSemDecStack wl state.stack with
+      | none => simp [hfun, hdec] at h
+      | some stack =>
+          simp only [hfun, hdec, Option.some.injEq] at h
+          cases h
+          rfl
+
+private theorem popEnv_ioEvents_eq {width : Nat} [NeZero width] {C F : Type}
+    (state next : WordSemStateFiniteExact width C F)
+    (h : popEnv state = some next) : next.ffi.ioEvents = state.ffi.ioEvents := by
+  cases hstack : state.stack with
+  | nil => simp [popEnv, hstack] at h
+  | cons frame frames =>
+      cases frame with
+      | stackFrame localsSize locals0 locals handler =>
+          cases handler with
+          | none =>
+              simp [popEnv, hstack] at h
+              cases h
+              rfl
+          | some handler =>
+              simp [popEnv, hstack] at h
+              cases h
+              rfl
+
+private theorem alloc_ioEvents_eq {width : Nat} [NeZero width] {C F : Type}
+    (w : BitVec width) (names : WordLangCutsetsHOL)
+    (state : WordSemStateFiniteExact width C F) :
+    (alloc w names state).2.ffi.ioEvents = state.ffi.ioEvents := by
+  unfold alloc
+  split
+  · simp [flushState]
+  · rename_i envs hcut
+    cases hgc : gc (pushEnv envs none (setStore .allocSize (.word w) state)) with
+    | none => simp [flushState]
+    | some g =>
+      have hg := gc_ioEvents_eq _ _ hgc
+      have hgin : (pushEnv envs none (setStore .allocSize (.word w) state)).ffi.ioEvents =
+          state.ffi.ioEvents := rfl
+      rw [hgin] at hg
+      cases hp : popEnv g with
+      | none => simp [hp, hg, flushState]
+      | some p =>
+        have hpop := popEnv_ioEvents_eq _ _ hp
+        rw [hg] at hpop
+        cases hstore : getStore .allocSize p with
+        | none => simp [hp, hstore, hpop]
+        | some space =>
+          cases hspace : hasSpace space p with
+          | none => simp [hp, hstore, hspace, hpop]
+          | some fits => cases fits <;> simp [hp, hstore, hspace, hpop, flushState]
+
 private theorem ffiStatement_ioEvents_prefix {width : Nat} [NeZero width]
     {C F : Type} (ffiIndex : Flapjack.Basis.Pure.MlString.MlString)
     (ptr1 len1 ptr2 len2 : Nat)

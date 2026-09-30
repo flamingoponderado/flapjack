@@ -347,6 +347,56 @@ def expLocalVarsViaHOLWhenByteRanged {width : Nat} [NeZero width]
   | nil => rfl
   | cons expression rest ih => simp [ih]
 
+/-- Decoding exact argument-variable lists agrees with the production collector
+    on decoded exact expressions. This Flapjack codec lemma has no separate HOL
+    original; it supplies the argument component of the handled Call name list
+    at `pan_globalsScript.sml:118`, without claiming whole-pass routing. -/
+theorem exactArgumentNames_decode {width : Nat} [NeZero width]
+    (arguments : List (ExpHOL width)) :
+    (arguments.flatMap varExpHOL).map toStringOfBytes =
+      (arguments.map expOfHOL).flatMap expLocalVarsViaHOLWhenByteRanged := by
+  have hvarList (expressions : List (ExpHOL width))
+      (hvars : ∀ expression ∈ expressions,
+        (varExpHOL expression).map toStringOfBytes =
+          Flapjack.expLocalVars (expOfHOL expression)) :
+      ((expressions.map varExpHOL).flatten).map toStringOfBytes =
+        Flapjack.expLocalVars.expLocalVarsList (expressions.map expOfHOL) := by
+    induction expressions with
+    | nil => simp [Flapjack.expLocalVars.expLocalVarsList]
+    | cons head tail ih =>
+      simp only [List.map_cons, List.flatten_cons, List.map_append,
+        Flapjack.expLocalVars.expLocalVarsList.eq_2]
+      rw [hvars head (by simp), ih (fun expression hmem => hvars expression (by simp [hmem]))]
+  have hvarFieldList (fields : List (MlS × ExpHOL width))
+      (hvars : ∀ field ∈ fields,
+        (varExpHOL field.2).map toStringOfBytes =
+          Flapjack.expLocalVars (expOfHOL field.2)) :
+      ((fields.map (fun field => varExpHOL field.2)).flatten).map toStringOfBytes =
+        Flapjack.expLocalVars.expLocalVarsFieldList
+          (fields.map (fun field => (toStringOfBytes field.1, expOfHOL field.2))) := by
+    induction fields with
+    | nil => simp [Flapjack.expLocalVars.expLocalVarsFieldList]
+    | cons head tail ih =>
+      simp only [List.map_cons, List.flatten_cons, List.map_append,
+        Flapjack.expLocalVars.expLocalVarsFieldList.eq_2]
+      rw [hvars head (by simp), ih (fun field hmem => hvars field (by simp [hmem]))]
+  have hexp (expression : ExpHOL width) :
+      (varExpHOL expression).map toStringOfBytes =
+        Flapjack.expLocalVars (expOfHOL expression) := by
+    fun_induction varExpHOL expression <;>
+      simp_all [Flapjack.expLocalVars, expOfHOL, List.map_append]
+    all_goals first
+      | apply hvarList _ <;> assumption
+      | apply hvarFieldList _ <;> assumption
+  induction arguments with
+  | nil => rfl
+  | cons head tail ih =>
+      simp only [List.flatMap_cons, List.map_append, List.map_cons,
+        expLocalVarsViaHOLWhenByteRanged_eq]
+      rw [hexp head]
+      simpa only [expLocalVarsViaHOLWhenByteRanged_flatMap_eq] using
+        congrArg (fun names => Flapjack.expLocalVars (expOfHOL head) ++ names) ih
+
 /-- `MAP (compile_exp ctxt)` for the routed expression compiler.  Flapjack
     routing infrastructure (untagged). -/
 def compileExpRouteCakeArgs [BEq String] [LawfulBEq String] {width : Nat} [NeZero width]

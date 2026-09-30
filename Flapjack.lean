@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.Expressions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.LiveExpressions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.Updates
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.StateRelation
@@ -39,6 +40,7 @@ import Flapjack.Pancake.PanLang
 import Flapjack.Pancake.PanLang.Shape
 import Flapjack.Pancake.PanLang.Exp
 import Flapjack.Pancake.PanLang.Prog
+import Flapjack.Pancake.PanLang.Prog.FreeVarIdsCodec
 import Flapjack.Pancake.PanLang.Decl
 import Flapjack.Pancake.PanGlobals.CompileExpExact
 import Flapjack.Pancake.PanGlobals.CompileExpExactRoute
@@ -228,6 +230,7 @@ import Flapjack.Pancake.PanLang.ProgHOLInduction
 import Flapjack.Pancake.Proofs.PanSimp.ProgOfHOL
 import Flapjack.PanLocalised
 import Flapjack.Pancake.Proofs.PanSimp.Evaluate
+import Flapjack.Pancake.Proofs.PanSimp.StateRel
 import Flapjack.PanSimpLocalised
 import Flapjack.Pancake.PanStructs
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrect

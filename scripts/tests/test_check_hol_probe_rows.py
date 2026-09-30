@@ -39,7 +39,11 @@ class ProbeRowCheckerTest(unittest.TestCase):
 
     def test_clean_tree_passes(self):
         ROWS.check(ROWS.PROBES, ROWS.LOCK)
-        self.assertEqual(len(ROWS.expected_lock(ROWS.PROBES)), 532)
+        # New original-HOL fixtures legitimately grow this inventory. Check
+        # the complete records against the lock, not a frozen corpus size.
+        locked = json.loads(ROWS.LOCK.read_text(encoding="utf-8"))
+        self.assertTrue(locked["records"])
+        self.assertEqual(ROWS.expected_lock(ROWS.PROBES), locked["records"])
 
     def test_value_mutation_is_detected(self):
         with tempfile.TemporaryDirectory() as directory:
