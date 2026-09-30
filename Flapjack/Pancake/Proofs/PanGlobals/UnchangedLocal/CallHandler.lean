@@ -16,7 +16,10 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} {σ : Type} [NeZero width] :
 /-- Genuine Call-with-handler evaluate_unchanged_local induction case.
 Keeps the original unused value binder and literal guarded handler IH.
 The callee replaces locals; handler entry restores caller locals before binding
-the exception. No unconditional IH or extra successful-run premise is added. -/
+the exception. No unconditional IH or extra successful-run premise is added.
+This specializes the Call conjunct to a present handler and omits its unused
+callee-body IH, yielding a stronger specialized case. Administrative tuple
+equalities are normalized; all handler-entry guards are retained. -/
 @[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "evaluate_unchanged_local"
   (fmap_as_finite_support := [locals, globals, code, eshapes])
   (words_as_type_indexed_bitvec)]
