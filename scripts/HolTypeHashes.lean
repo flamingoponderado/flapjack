@@ -19,6 +19,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.CompileExpRField
 import Flapjack.Pancake.Proofs.PanGlobals.SemanticsEmptyLocals
 import Flapjack.Pancake.Proofs.PanGlobals.ShapeValueEval
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocalEval
+import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.If
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelationLocals
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsShape
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsDisjoint

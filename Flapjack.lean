@@ -326,6 +326,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.SemanticsCongruence
 import Flapjack.Pancake.Proofs.PanGlobals.SemanticsEmptyLocals
 import Flapjack.Pancake.Proofs.PanGlobals.ShapeValueEval
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocalEval
+import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.If
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsMemory
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsAlignment
 import Flapjack.Pancake.Proofs.PanToCrep.EvaluateCases
