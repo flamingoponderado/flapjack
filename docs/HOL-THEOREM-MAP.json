@@ -34176,6 +34176,21 @@
   "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.44.5) compared crep_inlineProofScript.sml:907-924: binders vs es p s r s' vals t as declared parameters in HOL order; hypotheses OPT_MMAP (eval s) es = SOME vals (List.mapM), LENGTH vs = LENGTH es, ALL_DISTINCT vs (Nodup), var_cexp freshness, v NOTIN FDOM t (crepHolFdom t.lookup v = false), evaluate (p, s with locals := t |++ ZIP (vs,vals)) = (r,s') (updateListEq), t SUBMAP s.locals (HolFiniteMapExact.submap), continuing-result case rendered as the displayed match proposition; conclusion exists t'. evaluate (nested_decs vs es p, s) = (r,t') /\\ state_rel s' t' /\\ FDIFF s.locals (FDOM t) SUBMAP t'.locals (crepHolSubmap of crepHolFdiff). No extra premise. Proof uses evaluate_state_locals_rel_strong, evaluate_nested_decs_locals_nested_res_var, evaluate_locals_same_fdom', flookup_res_var_is_mem_zip_eq, flookup_res_var_distinct_zip_eq. Coordinator source review pending."
 },
 {
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
+  "lean_name": "evalHOL_upd_code_eta",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "eval_upd_code_eta",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison pan_globalsProofScript1697-1699: eval_upd_code_eq state/expression/code quantifiers become state/code whole eval-function equality by SWAP_FORALL_CONV, GSYM FUN_EQ_THM and ETA_THM; no extra premise or changed evaluator. Same reviewed PanSemStateFiniteExact canonical locals/globals/code/eshapes, native ExpHOL/ValueHOL/MlS and positive BitVec width as original panProps654-662 pointwise invariant; decidable memory guard instance is computation evidence preserved under code update. Existing same-module canonical roundtrip witness reexports owning carrier conversion. Proof is function extensionality plus existing exact pointwise invariant. No executable behavior change; parent fperm cluster remains open."
+},
+{
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NotVarProg.lean",
   "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
   "hol_path": null,
