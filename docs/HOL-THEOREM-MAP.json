@@ -25984,5 +25984,14 @@
     "lean_name": "holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on mkCtxtImpLocalsRelExact; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "get_live_inst_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Instructions.lean",
+    "lean_name": "getLiveInst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30 bead .18.5.11.1.7: literal word_alloc706-752 constructor clauses, nested insert/delete ordering and generic exact Spt unit carrier. Reviewed WordLangInst/WordLangArith/WordRegImm/WordLangFP/WordLangMemOp carriers against asm85-134, including word-valued immediates/address offsets and all numeric FP operands. Six memory clauses only; Load16/Store16 and FP-only clauses unchanged catchall. AddCarry deletes only r1 and inserts r4, overflow deletes r4 then r1, LongMul/Div delete both output registers. FPMovToReg deletes r1 only at width64 otherwise r2 then r1; FPMovFromReg inserts r1 only at64 otherwise r1 then r2. Positive BitVec width translation retains NeZero; generic core explicit width delegates full definition. No fp real arithmetic semantics claim. Proof-side partial progress; executed list-liveness replacement tracked .7.1."
   }
 ]
