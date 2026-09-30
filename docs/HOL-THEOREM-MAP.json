@@ -37893,7 +37893,7 @@
   "lean_path": "Flapjack/Compiler/Backend/WordAlloc/ProgramLiveness.lean",
   "lean_name": "numsetListInsert",
   "statement_status": "reviewed_exact",
-  "reviewer": "flapjack-luna-c source comparison 2026-10-01, bead11.1.13.1: literal768-771 [] returns supplied NumSet, cons recurses on tail after inserting head Unit; exact List Nat/Spt Unit, no word carrier or extra premise."
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01, bead11.1.13.1: literal768-771 [] returns supplied NumSet, cons inserts head Unit into the recursively constructed tail tree; exact List Nat/Spt Unit, no word carrier or extra premise."
 },
 {
   "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
@@ -37902,6 +37902,6 @@
   "lean_name": "getLive",
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-luna-c source comparison 2026-10-01, bead11.1.13.1: compared all27 compiled HOL clauses773-850 and original word_allocTheory get_live_def. Exact WordLangProgHOL at positive BitVec/NeZero, Spt Unit live/cutsets and List of paired loop trees. Move uses FOLDR delete then left-to-right numset insertion; Seq visits second then first; If union order and Reg/Imm inserts literal; Alloc/Install/FFI/Call use source cutsets and ignore supplied live where HOL does. StoreConsts uses first source clause (delete a/delete b before c/d inserts); original generated HOL theorem omits shadowed second row, fresh direct EVAL get_live_store_consts=T confirms it. ShareInst includes allfour store widths, otherwise kills name. Loop returns entry tree without body recursion; Break/Continue use optional indexed lookup with LN fallback. Other constructors are literal source equations, no strengthened condition. Fresh original3rows captured and kernel replayed. Production route remains OPEN separately on11.1.13.2; inventory13 not completed by proof-only definition."
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01, bead11.1.13.1: compared all27 compiled HOL clauses773-850 and original word_allocTheory get_live_def. Exact WordLangProgHOL at positive BitVec/NeZero, Spt Unit live/cutsets and List of paired loop trees. Move uses FOLDR delete then literal head-after-tail numset insertion; Seq visits second then first; If union order and Reg/Imm inserts literal; Alloc/Install/FFI/Call use source cutsets and ignore supplied live where HOL does. StoreConsts uses first source clause (delete a/delete b before c/d inserts); original generated HOL theorem omits shadowed second row, fresh direct EVAL get_live_store_consts=T confirms it. ShareInst includes allfour store widths, otherwise kills name. Loop returns entry tree without body recursion; Break/Continue use optional indexed lookup with LN fallback. Other constructors are literal source equations, no strengthened condition. Fresh original3rows captured and kernel replayed. Production route remains OPEN separately on11.1.13.2; inventory13 not completed by proof-only definition."
 }
 ]

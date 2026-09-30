@@ -3,11 +3,11 @@ import Flapjack.Compiler.Backend.WordAlloc.Instructions
 
 namespace Flapjack.WordAlloc
 
-/-- Literal source left-to-right insertion of numeric names. -/
+/-- Literal source insertion of the head after recursively inserting the tail. -/
 @[hol "cakeml/compiler/backend/word_allocScript.sml" "numset_list_insert_def"]
 def numsetListInsert : List Nat → NumSet → NumSet
   | [], tree => tree
-  | name :: names, tree => numsetListInsert names (sptInsert name () tree)
+  | name :: names, tree => sptInsert name () (numsetListInsert names tree)
 
 /-- Full source program liveness over the exact syntax and numeric trees.
 All 27 compiled HOL clauses are retained. The repeated StoreConsts source
