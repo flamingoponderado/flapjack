@@ -8,14 +8,13 @@ import Flapjack.Pancake.PanLang.Decl
 import Flapjack.Pancake.PanLang.ProgHOLInduction
 
 /-!
-HOL-shaped top-level Pancake-to-Crep compiler boundary. The parser-backed
-route compiles each body through the reviewed exact `compFuncExactHOLW` and
-inlines with the production `compileInlTopHOL`;
-`compileProgTopHOLProductionExact_eq` proves it equals the generic
-compatibility route.  The variant that also inlines on exact carriers
-(`compileProgTopHOLProductionExactInline`, via `compileInlTopHOLExact`) is a
-tested alternative that is not executed, until its equality is proved. Metadata is attached only in a downstream
-adapter for Flapjack's existing pipeline representation.
+HOL-shaped top-level Pancake-to-Crep compiler boundary. The per-function
+exact adapter here retains the production inliner and is proved equal to the
+compatibility route. The parser-backed pipeline now uses
+`compileProgNativeWithMetadataRouted` in `CompileProgCorrespondence`: with
+standard BitVec literals it executes the reviewed exact whole declaration
+compiler and exact inliner, then decodes for production metadata. The separate
+`compileProgTopHOLProductionExactInline` variant remains an unused alternative.
 -/
 
 namespace Flapjack
@@ -336,9 +335,8 @@ def compileProgTopHOLWithMetadata [BEq FunName] [LawfulBEq FunName]
 carrier `DeclHOL` and converts byte-ranged names at the boundary via
 `declOfHOL`, so the exact HOL carriers are the interface type of the
 declaration-level compiler boundary. This standalone adapter is retained for
-callers that need the production projection. The parser-backed executable
-entrypoint instead passes its byte-range proof to
-`compileProgTopHOLWithMetadataOfExact`, which routes every body through the
+callers that need the production projection. The historical parser-backed adapter
+`compileProgTopHOLWithMetadataOfExact` routes every body through the
 exact compiler before decoding (output equality:
 `compileProgTopHOLWithMetadataOfExact_eq`). Remaining full compile_prog carrier
 gaps are documented above. -/

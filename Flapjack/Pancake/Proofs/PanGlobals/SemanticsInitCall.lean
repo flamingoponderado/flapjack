@@ -3,6 +3,8 @@ import Flapjack.Misc.LprefixLub
 import Flapjack.Pancake.Semantics.PanSem.Semantics
 import Flapjack.Pancake.Semantics.PanProps.EvalInvariant
 import Flapjack.Pancake.Semantics.PanProps.EvaluateAddClockIoEventsMono
+import Flapjack.Pancake.Semantics.PanProps.EvaluateClockSubAssembly
+import Flapjack.Pancake.Semantics.PanProps.EvaluateAddClockEq
 
 /-!
 # pan_globals: `LUB_IMAGE_SUC` (the `semantics_init_call` group)
@@ -326,6 +328,60 @@ theorem semanticsInitCall {width : Nat} {σ : Type} [NeZero width]
       refine ⟨k + 1, (evaluateHOLFiniteState { s with clock := k + 1 } (.call none start [])).2,
         r, outcome, Prod.ext e1 rfl, hm, ?_⟩
       rw [hres, e2]
+
+open SemInitSupport HolLList Flapjack.EvaluateClockSubCall in
+/-- Exact HOL `semantics_init_call'` (`pan_globalsProofScript.sml:2801-2820`):
+
+    ```
+    FLOOKUP s.code start = SOME ([],Seq body (TailCall start' []), rshape) ∧
+    FLOOKUP s.code start' = SOME (args', body', rshape) ∧
+    evaluate (body,s with locals := FEMPTY) = (NONE,s') ∧
+    s'.clock = s.clock ∧
+    s'.ffi.io_events = s.ffi.io_events
+    ⇒ semantics s start = semantics s' start'
+    ```
+
+    Derived from the tagged `semantics_init_call` by turning the single
+    un-ticked body run into the all-clock family it needs: `evaluate_clock_sub`
+    strips the current clock to `0`, and the tagged `evaluate_add_clock_eq`
+    re-adds an arbitrary `k`. -/
+@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "semantics_init_call'"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem semanticsInitCall' {width : Nat} {σ : Type} [NeZero width]
+    (s : PanSemStateFiniteExact width σ) (start : MlS) (body : ProgHOL width) (start' : MlS)
+    (rshape : ShapeHOL) (args' : List (MlS × ShapeHOL)) (body' : ProgHOL width)
+    (s' : PanSemStateFiniteExact width σ) :
+    s.code.lookup start = some ([], .seq body (.call none start' []), rshape) ∧
+      s.code.lookup start' = some (args', body', rshape) ∧
+      evaluateHOLFiniteState { s with locals := HolFiniteMapExact.empty } body = (none, s') ∧
+      s'.clock = s.clock ∧
+      s'.ffi.ioEvents = s.ffi.ioEvents →
+    semantics s start = semantics s' start' := by
+  classical
+  rintro ⟨h1, h2, h3, h4, h5⟩
+  let tin : PanSemStateFiniteExact width σ := { s with locals := HolFiniteMapExact.empty }
+  have hcs : Mc tin body :=
+    mc_of_pair tin body (evaluateClockSubHOLFinite body (PanPropsEvalStateFiniteExact.ofPanSemFinite tin))
+  have hzero :
+      evaluateHOLFiniteState { tin with clock := 0 } body = (none, { s' with clock := 0 }) := by
+    have hpre : evaluateHOLFiniteState tin body =
+        (none, { { s' with clock := 0 } with
+          clock := ({ s' with clock := 0 }).clock + s.clock }) := by
+      rw [show tin = { s with locals := HolFiniteMapExact.empty } from rfl, h3]
+      congr 1
+      simp only [Nat.zero_add]
+      rw [← h4]
+    have h := hcs none { s' with clock := 0 } s.clock hpre (by simp)
+    simpa only [tin, Nat.sub_self] using h
+  have hstep : ∀ k,
+      evaluateHOLFiniteState { s with locals := HolFiniteMapExact.empty, clock := k } body =
+        (none, { s' with clock := k }) := by
+    intro k
+    have h := panPropsEvaluateAddClockEq body { tin with clock := 0 } none
+      { s' with clock := 0 } k ⟨hzero, by simp⟩
+    simpa only [tin, Nat.zero_add] using h
+  exact semanticsInitCall s start body start' rshape args' body' s' ⟨h1, h2, hstep, h5⟩
 
 
 end Flapjack
