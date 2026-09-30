@@ -32417,5 +32417,133 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-b source comparison2026-09-30 HOL1105-1135 evaluate_unchanged_local and literal evaluate_ind DecCall: unused universal value retained, freshness/source-run/good_res/nonError unchanged. Sole continuation IH includes argument SOME, code lookup SOME, clock nonzero, callee returned value and both shape equalities. No callee IH needed: only returned branch can yield good nonError result; other branches contradicted by original good_res/nonError. Original free_var_ids includes result name, so name differs bound and continuation freshness derive internally. IH proves continuation lookup; setVar and resVar restore original lookup at distinct name. Canonical finite-state witness, positive width BitVec and universe0 FFI. No extra public premise or new executable path; coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/Leaves.lean",
+  "lean_name": "evaluateUnchangedLocal_Skip",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_unchanged_local",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison (2026-09-30;32.5.9): Original evaluate_unchanged_local1105-1137 Skip leaf. Original unused value binder, nonfree name/source evaluate/good_res/nonError conjunction and same post/source locals FLOOKUP conclusion retained. Exact total finite-state constructor equation split internally: Skip/Break/Continue/Annot preserve state; successful Tick decrements clock only while timeout fails original good_res; Store/Store32/StoreByte update memory only and preserve locals in both success/error clauses. No success/domain/bounds/target-run or recursive IH assumption added. fmap_as_finite_support names exactly owning state locals/globals/code/eshapes with canonical same-module roundtrip; words_as_type_indexed_bitvec positive dimension/universe0 FFI translation only. Full assembly remains open; coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/Leaves.lean",
+  "lean_name": "evaluateUnchangedLocal_Break",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_unchanged_local",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison (2026-09-30;32.5.9): Original evaluate_unchanged_local1105-1137 Break leaf. Original unused value binder, nonfree name/source evaluate/good_res/nonError conjunction and same post/source locals FLOOKUP conclusion retained. Exact total finite-state constructor equation split internally: Skip/Break/Continue/Annot preserve state; successful Tick decrements clock only while timeout fails original good_res; Store/Store32/StoreByte update memory only and preserve locals in both success/error clauses. No success/domain/bounds/target-run or recursive IH assumption added. fmap_as_finite_support names exactly owning state locals/globals/code/eshapes with canonical same-module roundtrip; words_as_type_indexed_bitvec positive dimension/universe0 FFI translation only. Full assembly remains open; coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/Leaves.lean",
+  "lean_name": "evaluateUnchangedLocal_Continue",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_unchanged_local",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison (2026-09-30;32.5.9): Original evaluate_unchanged_local1105-1137 Continue leaf. Original unused value binder, nonfree name/source evaluate/good_res/nonError conjunction and same post/source locals FLOOKUP conclusion retained. Exact total finite-state constructor equation split internally: Skip/Break/Continue/Annot preserve state; successful Tick decrements clock only while timeout fails original good_res; Store/Store32/StoreByte update memory only and preserve locals in both success/error clauses. No success/domain/bounds/target-run or recursive IH assumption added. fmap_as_finite_support names exactly owning state locals/globals/code/eshapes with canonical same-module roundtrip; words_as_type_indexed_bitvec positive dimension/universe0 FFI translation only. Full assembly remains open; coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/Leaves.lean",
+  "lean_name": "evaluateUnchangedLocal_Annot",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_unchanged_local",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison (2026-09-30;32.5.9): Original evaluate_unchanged_local1105-1137 Annot leaf. Original unused value binder, nonfree name/source evaluate/good_res/nonError conjunction and same post/source locals FLOOKUP conclusion retained. Exact total finite-state constructor equation split internally: Skip/Break/Continue/Annot preserve state; successful Tick decrements clock only while timeout fails original good_res; Store/Store32/StoreByte update memory only and preserve locals in both success/error clauses. No success/domain/bounds/target-run or recursive IH assumption added. fmap_as_finite_support names exactly owning state locals/globals/code/eshapes with canonical same-module roundtrip; words_as_type_indexed_bitvec positive dimension/universe0 FFI translation only. Full assembly remains open; coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/Leaves.lean",
+  "lean_name": "evaluateUnchangedLocal_Tick",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_unchanged_local",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison (2026-09-30;32.5.9): Original evaluate_unchanged_local1105-1137 Tick leaf. Original unused value binder, nonfree name/source evaluate/good_res/nonError conjunction and same post/source locals FLOOKUP conclusion retained. Exact total finite-state constructor equation split internally: Skip/Break/Continue/Annot preserve state; successful Tick decrements clock only while timeout fails original good_res; Store/Store32/StoreByte update memory only and preserve locals in both success/error clauses. No success/domain/bounds/target-run or recursive IH assumption added. fmap_as_finite_support names exactly owning state locals/globals/code/eshapes with canonical same-module roundtrip; words_as_type_indexed_bitvec positive dimension/universe0 FFI translation only. Full assembly remains open; coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/Leaves.lean",
+  "lean_name": "evaluateUnchangedLocal_Store",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_unchanged_local",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison (2026-09-30;32.5.9): Original evaluate_unchanged_local1105-1137 Store leaf. Original unused value binder, nonfree name/source evaluate/good_res/nonError conjunction and same post/source locals FLOOKUP conclusion retained. Exact total finite-state constructor equation split internally: Skip/Break/Continue/Annot preserve state; successful Tick decrements clock only while timeout fails original good_res; Store/Store32/StoreByte update memory only and preserve locals in both success/error clauses. No success/domain/bounds/target-run or recursive IH assumption added. fmap_as_finite_support names exactly owning state locals/globals/code/eshapes with canonical same-module roundtrip; words_as_type_indexed_bitvec positive dimension/universe0 FFI translation only. Full assembly remains open; coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/Leaves.lean",
+  "lean_name": "evaluateUnchangedLocal_Store32",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_unchanged_local",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison (2026-09-30;32.5.9): Original evaluate_unchanged_local1105-1137 Store32 leaf. Original unused value binder, nonfree name/source evaluate/good_res/nonError conjunction and same post/source locals FLOOKUP conclusion retained. Exact total finite-state constructor equation split internally: Skip/Break/Continue/Annot preserve state; successful Tick decrements clock only while timeout fails original good_res; Store/Store32/StoreByte update memory only and preserve locals in both success/error clauses. No success/domain/bounds/target-run or recursive IH assumption added. fmap_as_finite_support names exactly owning state locals/globals/code/eshapes with canonical same-module roundtrip; words_as_type_indexed_bitvec positive dimension/universe0 FFI translation only. Full assembly remains open; coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/Leaves.lean",
+  "lean_name": "evaluateUnchangedLocal_StoreByte",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_unchanged_local",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison (2026-09-30;32.5.9): Original evaluate_unchanged_local1105-1137 StoreByte leaf. Original unused value binder, nonfree name/source evaluate/good_res/nonError conjunction and same post/source locals FLOOKUP conclusion retained. Exact total finite-state constructor equation split internally: Skip/Break/Continue/Annot preserve state; successful Tick decrements clock only while timeout fails original good_res; Store/Store32/StoreByte update memory only and preserve locals in both success/error clauses. No success/domain/bounds/target-run or recursive IH assumption added. fmap_as_finite_support names exactly owning state locals/globals/code/eshapes with canonical same-module roundtrip; words_as_type_indexed_bitvec positive dimension/universe0 FFI translation only. Full assembly remains open; coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/Leaves.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack canonical finite-state roundtrip re-export; no standalone HOL declaration."
 }
 ]
