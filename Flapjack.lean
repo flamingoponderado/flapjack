@@ -6,6 +6,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.Updates
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.StateRelation
 import Flapjack.Compiler.Backend.WordAlloc.Expressions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.StrongLocalsRel
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyMaps
 import Flapjack.HolRef
 import Flapjack.AstHOL
 import Flapjack.Compiler.Backend.BackendCommon
@@ -23,6 +24,7 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.Evaluate
 import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateClock
 import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateInd
 import Flapjack.Compiler.Backend.Semantics.WordSem.EventsMono
+import Flapjack.Compiler.Backend.Semantics.StackSem.State
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateIoEventsMono
 import Flapjack.Compiler.Backend.Semantics.WordSem.Semantics
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClock
