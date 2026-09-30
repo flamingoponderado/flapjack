@@ -28811,6 +28811,24 @@
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific observational congruence, no standalone HOL original. Uses equal result-option and ffi events at every clock to equate failure, entire termination-choice predicate and divergence prefix set. Conditional assembly infrastructure, not semantics_empty_locals or a pass-correctness port."
   },
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+  "lean_name": "smartSeqHOL",
+  "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+  "hol_name": "SmartSeq_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source16-19: exact WordLangProgHOL/Spt/MlString payloads at positive width; constructor match is exactly equality to Skip because distinct constructors cannot equal Skip. All non-Skip inputs preserve Seq, even right Skip. Definition-only proof prerequisite; executed broad WordProg migration remains inventory .15.1.6."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SmartSeqLabels.lean",
+  "lean_name": "extractLabels_smartSeqHOL",
+  "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+  "hol_name": "extract_labels_SmartSeq",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source166-170: same two universally quantified program binders, no hypotheses, same unconditional equality extract_labels(SmartSeq p1 p2)=extract_labels(Seq p1 p2). Exact positive-width programs, constructor split kernel proof. Six fresh original HOL observations replay actual label lists including Call pairs and order; no target evaluation premise."
+},
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/SemanticsEmptyLocals.lean",
     "lean_name": "holFmapAsFiniteSupportWitness",
@@ -28834,6 +28852,15 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-c source comparison2026-09-30, bead .22.2: literal pan_globalsProofScript2862-2889 universally quantifies state t and start, no premises, semantics t start = semantics(t with locals:=FEMPTY) start. Lean retains both state/start binders and exact equality direction with canonical emptyLocalsHOLFinite; no observation premise in final theorem. Uses tagged exact PanSem semantics and finite evaluator; accepted unconditional Call observation at every clock plus complete semantics congruence equates failure, full classical termination-choice predicate and divergence prefix set. Source Call NONE discards caller locals on entry, retains original fix_clock and all results. PanSemStateFiniteExact owns four canonical finite maps, same-module genuine roundtrip witness re-export; positive BitVec width with NeZero and universe0 FFI host are standard word translations; faithful MlS needs no String qualifier. No changed behavior or executable routing claim; coordinator review pending."
   },
+{
+  "lean_path": "Flapjack/Compiler/Backend/StackProps/RemoveNames.lean",
+  "lean_name": "stackAsmRemove",
+  "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+  "hol_name": "stack_asm_remove_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source970-993: literal exact HolProg/AsmConfigExact recursive predicate. Fixed StackStore/StackLoad check first positional n only, Any variants check both; store field labels do not alter positions. Get/Set/Size logical bounds; OpCurrHeap/BitmapLoad/StoreConsts pair. Seq/If descend both bodies, Loop descends; If condition and operands ignored. Call ignores target/link/labels and checks handler only when return body exists, unlike alloc_arg independent optional branches. All remaining constructors true. Exact imported stack/asm/MlString carriers and positive-width qualifier only; Prop renders HOL boolean predicate.22fresh originalHOL boundaries/ignored fields/Call nesting kernel replayed, executable unchanged."
+},
   {
     "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NoReturn.lean",
     "lean_name": "notHasReturnNotEvaluateReturn",
