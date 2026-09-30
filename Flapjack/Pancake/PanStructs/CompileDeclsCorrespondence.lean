@@ -140,6 +140,31 @@ theorem structCompileDecls_encode {width : Nat} [NeZero width]
           simpa only [structCompileDecls, List.map_cons, declToHOL, compileDeclsExact]
             using ih context hc hl hg hrest
 
+/-- Top-level compilation commutes with the declaration codec. The initial
+structure context comes from the actual name collector, and its range invariant
+is derived from the input declarations. This is Flapjack codec infrastructure
+with no HOL theorem original. -/
+theorem structCompileTop_encode {width : Nat} [NeZero width]
+    (declarations : List (Decl (BitVec width)))
+    (hd : ∀ declaration ∈ declarations, DeclByteRanged declaration) :
+    (structCompileTop declarations).map declToHOL =
+      compileTopExact (declarations.map declToHOL) := by
+  let initial : StructPassContext := { structs := [], locals := [], globals := [] }
+  have hc : CtxBR (structGetNames initial declarations).structs :=
+    structGetNames_ctxBR initial declarations (by simp [initial, CtxBR]) hd
+  have hfields := structGetNames_locals_globals initial declarations
+  have hl : ListParamByteRanged (structGetNames initial declarations).locals := by
+    rw [hfields.1]
+    simp [initial, ListParamByteRanged]
+  have hg : ListParamByteRanged (structGetNames initial declarations).globals := by
+    rw [hfields.2]
+    simp [initial, ListParamByteRanged]
+  have h := congrArg Prod.fst (structCompileDecls_encode declarations
+    (structGetNames initial declarations) hc hl hg hd)
+  rw [structGetNames_encode] at h
+  simpa [structCompileTop, compileTopExact, initial, structPassContextToExact,
+    structContextToCompileShapeExact] using h
+
 private theorem declarationList_codec_roundtrip {width : Nat} [NeZero width]
     (declarations : List (Decl (BitVec width)))
     (hd : ∀ declaration ∈ declarations, DeclByteRanged declaration) :

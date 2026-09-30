@@ -37422,6 +37422,146 @@
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-opus source comparison (bead flapjack-2de.4): crep_inlineProofScript.sml:3440-3448 forall s t crep_code start inl_fname ns prog. state_rel_code s t /\\ locals_strong_rel s t /\\ ALL_DISTINCT (MAP FST crep_code) /\\ s.code = alist_to_fmap crep_code /\\ t.code = alist_to_fmap (compile_inl_top inl_fname crep_code) /\\ FLOOKUP s.code start = SOME (ns, prog) /\\ semantics s start <> Fail ==> semantics t start = semantics s start. Lean binds them in HOL order with the same seven conjuncts over alistToFmapCodeExact, the tagged compileInlTopHOLExact (compile_inl_top_def) and crepSemantics. No extra premise. Proof as HOL: unfold compile_inl_top (compileInlProgHOLExactWithSupport_eq_compileInlProgHOLExact) and apply state_rel_imp_semantics_local with inl_fs = alist_to_fmap (FILTER (\\(x,y). MEM x inl_fname) crep_code), whose SUBMAP into s.code follows from ALL_DISTINCT."
 },
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SeqAssocExact.lean",
+  "lean_name": "evaluateSeqAssocSeqHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+  "hol_name": "evaluate_seq_assoc",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison pan_simpProofScript.sml117-137 Seq recursion and seq_assoc_def18-40: genuine Seq case of unconditional full result/state equality, arbitrary pre/first/second/state. Exactly two source functional induction hypotheses at (pre,first) and (seq_assoc pre first,second); no extra success/target-run/poststate/clock premises. Local exact Seq-association proof expands line780 source Seq and all NONE/SOME outcomes; clock rewrite justified by accepted fix_clock_evaluate. Native ProgHOL/MlS/result, canonical finite state fourmapfields with genuine owner roundtrip and positive wordwidth/Type0 FFI only. This case does not claim assembled full117; coordinator review pending. Proof-only."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SeqAssocExact.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Imported-owner canonical finite-state roundtrip; derived representation infrastructure with no separately named HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SeqAssocExact.lean",
+  "lean_name": "evaluateSeqAssociate",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Local exact Seq associativity infrastructure derived from source evaluator clause; no separately named HOL declaration. Not the full seq_assoc theorem."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SeqAssocExact.lean",
+  "lean_name": "evaluateSeqAssocDecHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+  "hol_name": "evaluate_seq_assoc",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison pan_simpProof117-137 and seq_assoc_def18-40 Dec recursion case: full arbitrary-prefix result/state equality, exactly source functional body induction hypotheses, single Skip/body IH; initializer failure/shape mismatch and restoration of caller local binding exactly preserved. Local complete second-program Seq congruence expands accepted line780 Seq directly; accepted Skip/Seq helper converts source IH to body equality. Native exact carriers, canonical fourmap state fields and genuine witness, positive BitVec width and Type0 FFI only. This is a genuine case, not full117 assembly; coordinator review pending. Proof-only."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SeqAssocExact.lean",
+  "lean_name": "evaluateSeqAssocIfHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+  "hol_name": "evaluate_seq_assoc",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison pan_simpProof117-137 and seq_assoc_def18-40 If recursion case: full arbitrary-prefix result/state equality, exactly source functional body induction hypotheses, two Skip/branch IHs; all condition evaluation outcomes retained, no chosen-branch or condition-success premise. Local complete second-program Seq congruence expands accepted line780 Seq directly; accepted Skip/Seq helper converts source IH to body equality. Native exact carriers, canonical fourmap state fields and genuine witness, positive BitVec width and Type0 FFI only. This is a genuine case, not full117 assembly; coordinator review pending. Proof-only."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SeqAssocExact.lean",
+  "lean_name": "evaluateSeqAssocWhileHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+  "hol_name": "evaluate_seq_assoc",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison pan_simpProof117-137 and seq_assoc_def18-40 While recursion case: full arbitrary-prefix result/state equality, exactly source functional body induction hypotheses, single Skip/body IH; accepted full universal While congruence preserves clock/fix_clock/timeOut/Break/Continue/error cases. Local complete second-program Seq congruence expands accepted line780 Seq directly; accepted Skip/Seq helper converts source IH to body equality. Native exact carriers, canonical fourmap state fields and genuine witness, positive BitVec width and Type0 FFI only. This is a genuine case, not full117 assembly; coordinator review pending. Proof-only."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SeqAssocExact.lean",
+  "lean_name": "evaluateSeqSecondCongr",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Local exact complete second-program Seq congruence from accepted evaluate_def clause; no separately named HOL original and no full seq_assoc claim."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelImpSemanticsTop.lean",
+  "lean_name": "crepSemantics_fail_of_lookup_none",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack local support (bead .18.4.4.1): a Crep entry absent from the code map has semantics Fail (HOL fs[semantics_def, evaluate_def, lookup_code_def] branch)."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelImpSemanticsTop.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanSemStateFiniteExact roundtrip."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelImpSemanticsTop.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed CrepSemHOLState roundtrip."
+},
+{
+  "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+  "hol_name": "state_rel_imp_semantics",
+  "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelImpSemanticsTop.lean",
+  "lean_name": "stateRelImpSemanticsPanToCrep",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "PanSemStateFiniteExact.locals",
+    "PanSemStateFiniteExact.globals",
+    "PanSemStateFiniteExact.code",
+    "PanSemStateFiniteExact.eshapes",
+    "CrepSemHOLState.code"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.4.4.1): pan_to_crepProofScript.sml:5005-5016 forall s t pan_code start. state_rel s t /\\ ALL_DISTINCT (MAP FST (functions pan_code)) /\\ s.code = alist_to_fmap (functions pan_code) /\\ t.code = alist_to_fmap (compile_prog pan_code) /\\ s.locals = FEMPTY /\\ EVERY (localised_prog o FST o SND o SND) (functions pan_code) /\\ size_of_eids pan_code < dimword(:'a) /\\ FDOM s.eshapes = FDOM (get_eids_from_decls pan_code) /\\ semantics s start <> Fail ==> semantics t start = semantics s start. Same binders, nine conjuncts and conclusion. Carriers and renderings as in the accepted state_rel_imp_semantics_to_crep / _decls_to_crep ports (panToCrepStateRelFiniteExact, alist_to_fmap as HolFiniteMapExact.empty.updateList (..).reverse, functionsHOL, localisedProgHOL, sizeOfEidsHOL < 2^width for dimword, FDOM equality as lookup isSome equality), with t.code over the tagged pan_to_crep compile_prog (compileProgDeclsHOLW). No extra premise. Proof as HOL: state_rel_imp_semantics_to_crep at t with code := alist_to_fmap crep_code, then crep_inline state_rel_imp_semantics (the absent-entry case gives Fail, a contradiction)."
+},
+{
+  "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+  "hol_name": "state_rel_imp_semantics_decls",
+  "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelImpSemanticsTop.lean",
+  "lean_name": "stateRelImpSemanticsDeclsPanToCrep",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "PanSemStateFiniteExact.locals",
+    "PanSemStateFiniteExact.globals",
+    "PanSemStateFiniteExact.code",
+    "PanSemStateFiniteExact.eshapes",
+    "CrepSemHOLState.code"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.4.4.1): pan_to_crepProofScript.sml:5042-5053 forall s t pan_code start. state_rel (s with structs := []) t /\\ ALL_DISTINCT (MAP FST (functions pan_code)) /\\ s.code = FEMPTY /\\ t.code = alist_to_fmap (compile_prog pan_code) /\\ s.locals = FEMPTY /\\ s.eshapes = FEMPTY /\\ EVERY (localised_prog o ...) /\\ EVERY (\\x. is_function x \\/ is_exn_decl x) pan_code /\\ size_of_eids pan_code < dimword(:'a) /\\ semantics_decls s start pan_code <> Fail ==> semantics t start = semantics_decls s start pan_code. Same binders, ten conjuncts and conclusion. Carriers and renderings as in the accepted state_rel_imp_semantics_to_crep / _decls_to_crep ports (panToCrepStateRelFiniteExact, alist_to_fmap as HolFiniteMapExact.empty.updateList (..).reverse, functionsHOL, localisedProgHOL, sizeOfEidsHOL < 2^width for dimword, FDOM equality as lookup isSome equality), with t.code over the tagged pan_to_crep compile_prog (compileProgDeclsHOLW). No extra premise. The proof composes the accepted state_rel_imp_semantics_decls_to_crep (target code alist_to_fmap crep_code) with crep_inline state_rel_imp_semantics, rather than HOL's reduction to state_rel_imp_semantics through evaluate_decls; same statement."
+},
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
     "hol_name": "addresses_thm",
