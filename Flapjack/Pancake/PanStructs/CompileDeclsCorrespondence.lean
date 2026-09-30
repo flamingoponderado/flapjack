@@ -140,4 +140,37 @@ theorem structCompileDecls_encode {width : Nat} [NeZero width]
           simpa only [structCompileDecls, List.map_cons, declToHOL, compileDeclsExact]
             using ih context hc hl hg hrest
 
+private theorem declarationList_codec_roundtrip {width : Nat} [NeZero width]
+    (declarations : List (Decl (BitVec width)))
+    (hd : ∀ declaration ∈ declarations, DeclByteRanged declaration) :
+    (declarations.map declToHOL).map declOfHOL = declarations := by
+  rw [List.map_map]
+  calc
+    declarations.map (declOfHOL ∘ declToHOL) = declarations.map id := by
+      apply List.map_congr_left
+      intro declaration hdeclaration
+      exact declOfHOL_declToHOL declaration (hd declaration hdeclaration)
+    _ = declarations := List.map_id declarations
+
+/-- The actual declaration compiler output survives the syntax codec roundtrip.
+Output ranging is derived internally from the input/context invariants. This is
+Flapjack decoder infrastructure with no HOL theorem original. -/
+theorem structCompileDecls_codec_roundtrip {width : Nat} [NeZero width]
+    (declarations : List (Decl (BitVec width))) (context : StructPassContext)
+    (hc : CtxBR context.structs)
+    (hd : ∀ declaration ∈ declarations, DeclByteRanged declaration) :
+    ((structCompileDecls declarations context).1.map declToHOL).map declOfHOL =
+      (structCompileDecls declarations context).1 :=
+  declarationList_codec_roundtrip _ (structCompileDecls_byteRanged declarations context hc hd)
+
+/-- The actual top-level compiler output survives the syntax codec roundtrip.
+The compiler derives its structure context and output range from ranged inputs;
+no compiled-result invariant is supplied. This is Flapjack codec infrastructure. -/
+theorem structCompileTop_codec_roundtrip {width : Nat} [NeZero width]
+    (declarations : List (Decl (BitVec width)))
+    (hd : ∀ declaration ∈ declarations, DeclByteRanged declaration) :
+    ((structCompileTop declarations).map declToHOL).map declOfHOL =
+      structCompileTop declarations :=
+  declarationList_codec_roundtrip _ (structCompileTop_byteRanged declarations hd)
+
 end Flapjack
