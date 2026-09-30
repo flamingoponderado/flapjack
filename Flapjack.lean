@@ -285,6 +285,8 @@ import Flapjack.Pancake.Proofs.PanGlobals.StateRelationExact
 import Flapjack.Pancake.Proofs.PanGlobals.CompileDecsStructural
 import Flapjack.Pancake.Proofs.PanGlobals.CompileTopShapeWf
 import Flapjack.Pancake.Proofs.PanGlobals.CompileTopSemanticsExact
+import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsMemory
+import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsAlignment
 import Flapjack.Pancake.Proofs.PanToCrep.EvaluateCases
 import Flapjack.Pancake.Proofs.PanToCrep.TotalEvaluateCases
 import Flapjack.Pancake.Proofs.PanToCrep.EvaluateNestedAssign
