@@ -29233,6 +29233,15 @@
     "reviewer": "Flapjack syntactic factoring or canonical state roundtrip; no separate HOL original."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/InstructionNames.lean",
+    "lean_name": "instName",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "inst_name_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison (2026-09-30; .18.5.15.7.11), HOL930-936: same config-first instruction predicate and all5 reviewed HolInst constructors. Const checks only destination logical reg_name (payload ignored); Mem checks destination plus addr_name; Arith/FP delegate accepted exact predicates; Skip true. No hardware-register substitution or additional word checks. Only positive width-indexed BitVec translation. Original HOL10 rows and Lean kernel replay cover every constructor and failures. Coordinator independent source review pending."
+  },
+  {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationLocals.lean",
     "lean_name": "stateRelSetVarHOL",
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",

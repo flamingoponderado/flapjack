@@ -1,3 +1,4 @@
+import Flapjack.Test.StackPropsInstructionNames
 import Flapjack.Test.StackSemFixedStackCasesParity
 import Flapjack.Test.StackPropsFloatNames
 import Flapjack.Test.StackPropsAddressNames
