@@ -28833,5 +28833,57 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-c source comparison2026-09-30, bead .22.2: literal pan_globalsProofScript2862-2889 universally quantifies state t and start, no premises, semantics t start = semantics(t with locals:=FEMPTY) start. Lean retains both state/start binders and exact equality direction with canonical emptyLocalsHOLFinite; no observation premise in final theorem. Uses tagged exact PanSem semantics and finite evaluator; accepted unconditional Call observation at every clock plus complete semantics congruence equates failure, full classical termination-choice predicate and divergence prefix set. Source Call NONE discards caller locals on entry, retains original fix_clock and all results. PanSemStateFiniteExact owns four canonical finite maps, same-module genuine roundtrip witness re-export; positive BitVec width with NeZero and universe0 FFI host are standard word translations; faithful MlS needs no String qualifier. No changed behavior or executable routing claim; coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NoReturn.lean",
+    "lean_name": "notHasReturnNotEvaluateReturn",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "not_has_return_not_evaluate_return",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison (2026-09-30; flapjack-bxo2), crep_inlineProofScript663-700: same universal program/state, no-return Bool negation rendered = false. First conclusion retains existential result/state, actual faithful clocked evaluation equality and result match excluding only Return; primed statement retains source conjunction with evaluation equality and arbitrary Return payload. No extra semantic premises or fuel. CrepSemHOLState canonical locals/globals/code finite-support maps with same-module broad/exact roundtrip; positive width-indexed BitVec words and universe-0 FFI host. Lists/result constructors retained. Coordinator independent source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NoReturn.lean",
+    "lean_name": "notHasReturnNotEvaluateReturnPrime",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "not_has_return_not_evaluate_return'",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison (2026-09-30; flapjack-bxo2), crep_inlineProofScript663-700: same universal program/state, no-return Bool negation rendered = false. First conclusion retains existential result/state, actual faithful clocked evaluation equality and result match excluding only Return; primed statement retains source conjunction with evaluation equality and arbitrary Return payload. No extra semantic premises or fuel. CrepSemHOLState canonical locals/globals/code finite-support maps with same-module broad/exact roundtrip; positive width-indexed BitVec words and universe-0 FFI host. Lists/result constructors retained. Coordinator independent source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NoReturn.lean",
+    "lean_name": "shMemNoReturn",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof factoring for bxo2: internal decider-parametric induction/helper or canonical carrier roundtrip; no separate HOL original claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NoReturn.lean",
+    "lean_name": "coreNoReturn",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof factoring for bxo2: internal decider-parametric induction/helper or canonical carrier roundtrip; no separate HOL original claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NoReturn.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof factoring for bxo2: internal decider-parametric induction/helper or canonical carrier roundtrip; no separate HOL original claimed."
   }
 ]
