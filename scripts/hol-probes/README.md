@@ -1,5 +1,18 @@
 # Original Pancake HOL probes
 
+`stacksem_call_indirect_probe.out` captures ten direct original `stackSem$evaluate`
+Call INR observations (find_code645-651, returning Call861-892): indirect and
+returning success, link/target alias rejection before update, tail alias success,
+nonzero entry, Word/missing/code-missing targets, timeout, and wrong returned
+location after the link register is written. It projects result, clock, link3,
+target4 and stack length. `Flapjack.Test.StackSemCallIndirectParity` kernel- and
+runtime-replays every row with the existing source-shaped leaf evaluator for
+all actual Return3/Return4 subcalls. The test callback is not a total evaluator;
+no unsupported callback is reached, and full StackSem assembly remains open.
+Regenerate read-only with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_call_indirect_probeScript.sml scripts/hol-probes/regenerate.sh`.
+The pre-existing fourteen direct Call rows are preserved.
+
 `pan_globals_block_alignment_probe.out` records eight original
 `alignmentTheory` observations for 32/64-bit block-address subtraction:
 ordinary, wrapped, zero, and unaligned addresses. The kernel replay is

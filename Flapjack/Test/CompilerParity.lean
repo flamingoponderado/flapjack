@@ -366,6 +366,7 @@ import Flapjack.Test.StackSemFpRegisterInstParity
 import Flapjack.Test.StackSemJumpLowerParity
 import Flapjack.Test.StackSemRawCallParity
 import Flapjack.Test.StackSemCallParity
+import Flapjack.Test.StackSemCallIndirectParity
 import Flapjack.Test.StackSemBufferWriteParity
 import Flapjack.Test.StackSemShMemParity
 import Flapjack.Test.StackSemShMemOpParity
@@ -1169,6 +1170,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.StackSemJumpLowerParity.runChecks,
     Flapjack.Test.StackSemRawCallParity.runChecks,
     Flapjack.Test.StackSemCallParity.runChecks,
+    Flapjack.Test.StackSemCallIndirectParity.runChecks,
     Flapjack.Test.StackSemBufferWriteParity.runChecks,
     Flapjack.Test.StackSemShMemParity.runChecks,
     Flapjack.Test.StackSemShMemOpParity.runChecks,
