@@ -25766,5 +25766,23 @@
       "eshapes"
     ],
     "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_structsScript.sml",
+    "hol_name": "old_exp_shape_def",
+    "lean_path": "Flapjack/Pancake/PanStructs/OldExpShapeExact.lean",
+    "lean_name": "oldExpShapeExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source review 2026-09-30 bead .18.5.3.77.1.2: pan_structsScript.sml70-104 mutual expression/list clauses, ContextExact fields and ExpHOL payloads compared constructor by constructor. findSome? with propositional MlS equality implements first-match ALOOKUP; optional index implements LLOOKUP with One default. Named shape and nested struct/field lookup defaults unchanged, Load preserves source shape, all other constructors return One. Positive width-indexed exact word carrier only representation qualifier; no String names. Ten captured 8-bit HOL oracle rows replayed by kernel equality. Proof-side source dependency; production route remains open on this bead."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_structsScript.sml",
+    "hol_name": "old_exp_shape_def",
+    "lean_path": "Flapjack/Pancake/PanStructs/OldExpShapeExact.lean",
+    "lean_name": "oldExpShapesExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source review 2026-09-30 bead .18.5.3.77.1.2: pan_structsScript.sml70-104 mutual expression/list clauses, ContextExact fields and ExpHOL payloads compared constructor by constructor. findSome? with propositional MlS equality implements first-match ALOOKUP; optional index implements LLOOKUP with One default. Named shape and nested struct/field lookup defaults unchanged, Load preserves source shape, all other constructors return One. Positive width-indexed exact word carrier only representation qualifier; no String names. Ten captured 8-bit HOL oracle rows replayed by kernel equality. Proof-side source dependency; production route remains open on this bead."
   }
 ]
