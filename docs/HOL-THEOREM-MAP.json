@@ -34114,5 +34114,13 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-only private proof step in actual global-handler constructor33.11. Source compared pan_globalsScript118-125: literal fresh names/Call handler flag/If Skip Store retained. Present context and original state_rel derive initialization success and recovered shape; no extra initializer success premise. Both actual saved scratch lookups retained. Untagged: full central Call/If simulation and constructor assembly remain unfinished; not a completed HOL case port."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "returnedValueStoreTail",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only internal normal-return tail of actual global-handler constructor33.11. Derives existential literal zero-flag If/Store target run from caller/callee relation and source global validity via accepted global store theorem; restores both scratch locals using actual caller and result-initialized snapshots, including absent bindings. No target Store/run or post-relation premise. Internal branch facts are not a public HOL constructor theorem; matched-handler and full assembly remain unfinished. Untagged and no full-port claim."
 }
 ]

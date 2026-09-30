@@ -188,6 +188,66 @@ private theorem presentContextScope {width : Nat} {σ : Type} [NeZero width]
   simp only [compileProgExactHOL, hcontext]
   exact scopedHandlerPrefix target _ _ shape initializer _ hinit hshape
 
+/-- Normal-return tail of the present-global branch. Derives the Store run
+and restores both scoped locals from the callee relation and caller snapshots.
+The premises are internal branch facts, not a public constructor statement;
+no target Store execution or post-state relation is assumed. -/
+private theorem returnedValueStoreTail {width : Nat} {σ : Type} [NeZero width]
+    (context : PanGlobalsContextExact width)
+    (source target sourcePost targetPost : PanSemStateFiniteExact width σ)
+    (name resultName flagName : MlS) (initializer value : ValueHOL width)
+    (hne : resultName ≠ flagName)
+    (hcaller : panGlobalsStateRelHOLExact true context source target)
+    (hcallee : panGlobalsStateRelHOLExact false context sourcePost targetPost)
+    (hvalid : isValidValueHOLFinite sourcePost .global name value = true) :
+    let targetResult := setVarHOLFinite resultName initializer target
+    let targetScratch := setVarHOLFinite flagName (.val (.word (BitVec.ofNat width 0)))
+      (setVarHOLFinite resultName value {targetPost with locals := target.locals})
+    ∃ address storePost,
+      context.globals.lookup name = some (shapeOfHOLExact value, address) ∧
+      evaluateHOLFiniteState targetScratch
+        (.ite (.var .local flagName) .skip
+          (.store (.op .sub [.topAddr, .const address]) (.var .local resultName))) = (none, storePost) ∧
+      panGlobalsStateRelHOLExact true context
+        (setGlobalHOLFinite name value {sourcePost with locals := source.locals})
+        {storePost with locals := (HolFiniteMapExact.resVarEq
+          (HolFiniteMapExact.resVarEq storePost.locals
+            (flagName, targetResult.locals.lookup flagName))
+          (resultName, target.locals.lookup resultName))} := by
+  classical
+  dsimp only
+  have hlocals := hcaller.2.1 rfl
+  have hrestored := (PanGlobalsStateRelationLocals.stateRelChangeLocalsHOL context
+    sourcePost targetPost true source.locals).2 hcallee
+  have hpair : panGlobalsStateRelHOLExact true context
+      {sourcePost with locals := source.locals} {targetPost with locals := target.locals} := by
+    simpa only [hlocals] using hrestored
+  have hresult := PanGlobalsStateRelationLocals.stateRelSetVarHOL context _ _ true
+    resultName value hpair
+  have hscratch := PanGlobalsStateRelationLocals.stateRelSetVarHOL context _ _ true
+    flagName (.val (.word (BitVec.ofNat width 0))) hresult
+  let sourceScratch := setVarHOLFinite flagName (.val (.word (BitVec.ofNat width 0)))
+    (setVarHOLFinite resultName value {sourcePost with locals := source.locals})
+  have hlocal : sourceScratch.locals.lookup resultName = some value := by
+    simp [sourceScratch, setVarHOLFinite, FUPDATE, Ne.symm hne]
+  have hscratchValid : isValidValueHOLFinite sourceScratch .global name value = true := hvalid
+  obtain ⟨address, storePost, hcontext, hrun, hstore⟩ :=
+    PanGlobalsCompileCorrectCallGlobal.evalGlobalStoreFromRelatedLocal context sourceScratch _
+      name resultName value hscratch hlocal hscratchValid
+  have hsaved := PanGlobalsStateRelationLocals.stateRelSetVarHOL context source target true
+    resultName initializer hcaller
+  have hflag := PanGlobalsCompileCorrectResVar.stateRelResVar true context _ _
+    (setVarHOLFinite resultName initializer source) (setVarHOLFinite resultName initializer target)
+    flagName flagName ⟨hstore, hsaved⟩
+  have hscope := PanGlobalsCompileCorrectResVar.stateRelResVar true context _ _ source target
+    resultName resultName ⟨hflag, hcaller⟩
+  refine ⟨address, storePost, hcontext, ?_, ?_⟩
+  · simpa only [evaluateHOLFiniteState_ite, evalHOLExact, setVarHOLFinite,
+      HolFiniteMapExact.lookup_update_pointwise, FUPDATE, beq_self_eq_true,
+      ite_true, (show BitVec.ofNat width 0 = 0 from rfl)] using hrun
+  · simpa only [sourceScratch, setVarHOLFinite, setGlobalHOLFinite,
+      restoreTwoScratchWrites _ _ _ _ _ _ hne] using hscope
+
 /-- Internal missing-context branch of the full constructor proof. The branch
 condition selects the literal compiler fallback; the callee and handler IHs
 remain those of the original evaluator. Untagged infrastructure until the full
