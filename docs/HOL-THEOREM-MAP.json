@@ -37261,6 +37261,21 @@
   "reviewer": "flapjack-ds10 source comparison (bead flapjack-4ac.4.60.1.1.15): exact port of HOL panProps$evaluate_clock_sub (panPropsScript.sml:724-728), proved by the original recInduct evaluate_ind over the canonical carrier. The statement quantifies p, t, res, st, ck and the two original hypotheses (high run at clock + ck; res <> TimeOut) with conclusion at clock - ck; all 21 case IHs are discharged internally by the tagged constructor case lemmas through the field-for-field PanProps codec, and no induction hypothesis or target-run fact is a premise of the public theorem."
 },
 {
+  "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+  "hol_name": "evaluate_clock_sub1",
+  "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvaluateClockSub1.lean",
+  "lean_name": "panPropsEvaluateClockSub1HOLFinite",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (bead flapjack-4ac.4.60.1): exact port of HOL panProps$evaluate_clock_sub1 (panPropsScript.sml:1131-1138): !p t res st t' ck. evaluate (p,t) = (res,st) and res <> SOME TimeOut and evaluate (p,t with clock := ck + t.clock) = evaluate (p,t') implies evaluate (p,t) = evaluate (p,t' with clock := t'.clock - ck). The Lean statement quantifies the same p, t, res, st, t', ck over ProgHOL and PanPropsEvalStateFiniteExact, keeps the same three premises and the same conclusion over evaluateHOLFinitePair, with no added success, target-run or assembly premise. The proof uses the tagged evaluate_add_clock_eq and the assembled evaluate_clock_sub exactly as HOL. PanPropsEvalStateFiniteExact owns locals/globals/code/eshapes via HolFiniteMapExact (same-module checked witness EvaluateClockSub1Witness.holFmapAsFiniteSupportWitness) with the indexed-word translation [NeZero width]."
+},
+{
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/StateRelImpSemantics.lean",
   "lean_name": "holFmapAsFiniteSupportParamWitness_fstMap3F_inl_fs",
   "hol_path": null,
@@ -37562,6 +37577,106 @@
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.4.4.1): pan_to_crepProofScript.sml:5042-5053 forall s t pan_code start. state_rel (s with structs := []) t /\\ ALL_DISTINCT (MAP FST (functions pan_code)) /\\ s.code = FEMPTY /\\ t.code = alist_to_fmap (compile_prog pan_code) /\\ s.locals = FEMPTY /\\ s.eshapes = FEMPTY /\\ EVERY (localised_prog o ...) /\\ EVERY (\\x. is_function x \\/ is_exn_decl x) pan_code /\\ size_of_eids pan_code < dimword(:'a) /\\ semantics_decls s start pan_code <> Fail ==> semantics t start = semantics_decls s start pan_code. Same binders, ten conjuncts and conclusion. Carriers and renderings as in the accepted state_rel_imp_semantics_to_crep / _decls_to_crep ports (panToCrepStateRelFiniteExact, alist_to_fmap as HolFiniteMapExact.empty.updateList (..).reverse, functionsHOL, localisedProgHOL, sizeOfEidsHOL < 2^width for dimword, FDOM equality as lookup isSome equality), with t.code over the tagged pan_to_crep compile_prog (compileProgDeclsHOLW). No extra premise. The proof composes the accepted state_rel_imp_semantics_decls_to_crep (target code alist_to_fmap crep_code) with crep_inline state_rel_imp_semantics, rather than HOL's reduction to state_rel_imp_semantics through evaluate_decls; same statement."
 },
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SeqAssocExact.lean",
+  "lean_name": "evaluateSeqAssocCallHandlerHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+  "hol_name": "evaluate_seq_assoc",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison pan_simpProof117-137 and seq_assoc_def18-40 Call SOME handler recursive case: complete arbitrary-prefix result/state equality; exactly source Skip/handler-or-continuation IH and no other premise. arbitrary optional return binder, exception equality/shape/validity/binding, successful returns ignore handler; literal binder split covers every case. Accepted exact source evaluator clauses rewritten and universal bodyIH applies at actual continuation state. Native exact carriers, canonical fourmap state fields/genuine roundtrip witness, positive BitVec width and Type0 FFI only. Genuine constructor case, full117 assembly remains open; coordinator review pending, proof-only."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SeqAssocExact.lean",
+  "lean_name": "evaluateSeqAssocDecCallHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+  "hol_name": "evaluate_seq_assoc",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison pan_simpProof117-137 and seq_assoc_def18-40 DecCall recursive case: complete arbitrary-prefix result/state equality; exactly source Skip/handler-or-continuation IH and no other premise. return-shape conjunction and restoration of caller local binding preserved; every callee/control/argument/lookup/clock branch retained. Accepted exact source evaluator clauses rewritten and universal bodyIH applies at actual continuation state. Native exact carriers, canonical fourmap state fields/genuine roundtrip witness, positive BitVec width and Type0 FFI only. Genuine constructor case, full117 assembly remains open; coordinator review pending, proof-only."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SeqAssocExact.lean",
+  "lean_name": "evaluateSeqAssocSkipHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+  "hol_name": "evaluate_seq_assoc",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison pan_simpProofScript.sml117-137 and seq_assoc_def18-40: genuine Skip base case, unconditional complete exact evaluation equality for arbitrary prefix/state and source fields. No extra semantic premise or IH. Accepted exact Seq/Skip/Annot equations and literal SmartSeq semantics preserve complete post-state including errors/control flow. Native exact carriers, canonical four-map state with genuine roundtrip witness, positive BitVec width and Type0 FFI only. Full117 assembly remains open; coordinator review pending; proof-only."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SeqAssocExact.lean",
+  "lean_name": "evaluateSeqAssocAnnotHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+  "hol_name": "evaluate_seq_assoc",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison pan_simpProofScript.sml117-137 and seq_assoc_def18-40: genuine Annot base case, unconditional complete exact evaluation equality for arbitrary prefix/state and source fields. No extra semantic premise or IH. Accepted exact Seq/Skip/Annot equations and literal SmartSeq semantics preserve complete post-state including errors/control flow. Native exact carriers, canonical four-map state with genuine roundtrip witness, positive BitVec width and Type0 FFI only. Full117 assembly remains open; coordinator review pending; proof-only."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SeqAssocExact.lean",
+  "lean_name": "evaluateSeqAssocCallNoneHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+  "hol_name": "evaluate_seq_assoc",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison pan_simpProofScript.sml117-137 and seq_assoc_def18-40: genuine CallNone base case, unconditional complete exact evaluation equality for arbitrary prefix/state and source fields. No extra semantic premise or IH. Accepted exact Seq/Skip/Annot equations and literal SmartSeq semantics preserve complete post-state including errors/control flow. Native exact carriers, canonical four-map state with genuine roundtrip witness, positive BitVec width and Type0 FFI only. Full117 assembly remains open; coordinator review pending; proof-only."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SeqAssocExact.lean",
+  "lean_name": "evaluateSeqAssocCallNoHandlerHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+  "hol_name": "evaluate_seq_assoc",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison pan_simpProofScript.sml117-137 and seq_assoc_def18-40: genuine CallNoHandler base case, unconditional complete exact evaluation equality for arbitrary prefix/state and source fields. No extra semantic premise or IH. Accepted exact Seq/Skip/Annot equations and literal SmartSeq semantics preserve complete post-state including errors/control flow. Native exact carriers, canonical four-map state with genuine roundtrip witness, positive BitVec width and Type0 FFI only. Full117 assembly remains open; coordinator review pending; proof-only."
+}
+,
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "compile_prog_distinct_params",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileProgParams.lean",
+    "lean_name": "compileProgDeclsHOLW_params_nodup",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison (2026-09-30, bead flapjack-4ac.2.20.1): original4684-4691 has no hypotheses and asserts EVERY (name,params,body). ALL_DISTINCT params over compile_prog prog. Lean retains the exact DeclHOL width input and native ordered MlS x List Nat x CrepProgHOL width output; List.all of decide Nodup = true is precisely EVERY. Positive HOL word dimension translates to BitVec width with NeZero width, through reviewed exact datatype carriers. compileProgDeclsHOLW is the accepted compile_prog_def port; its native compile_to_crep assigns crepVarsHOL = List.range(sizeOfShapeHOL(Comb(MAP SND params))), distinct by nodup_range, and the reviewed exact inliner maps triples without changing parameters. No evaluator, success, input distinctness, map/BEq or IH premise is introduced. Existing full theorem name, elaborated statement and proof retained and relocated to the HOL proof counterpart; only source review caveat/tag added. Production analogue remains untagged. Proof-only change, no executable behavior change."
+  },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
     "hol_name": "addresses_thm",
