@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClock
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateIoEventsMono
 
 /-!
 # wordProps `evaluate_add_clock_io_events_mono` over the exact wordSem evaluator
@@ -20,11 +21,24 @@ hypothesis `hmono`.  Every run that does not time out is closed by the
 tagged `evaluate_add_clock`.  The timing-out paths (`Tick`, the `Seq`/`Loop`
 body, `Loop` re-entry, the `Call` callee and its return or exception
 handler) are closed by the induction hypothesis and `hmono`.  The tagged
-theorem instantiates `hmono` with the port of `evaluate_io_events_mono`
-(bead `flapjack-pxn.18.5.9.1.2`) once that port lands.
+theorem instantiates `hmono` with the tagged `evaluate_io_events_mono`
+(bead `flapjack-pxn.18.5.9.1.2`).
 -/
 
 namespace Flapjack
+
+namespace WordSemEvaluateAddClockIoEventsMonoSupport
+
+/-- Same-module canonical finite-support witness for the `fpRegs`/`store`
+    fields named by the tagged theorem of this module. -/
+theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C : Type} {F : Type} :
+    (∀ (state : WordSemStateBroad width C F) (h : state.FiniteSupport),
+        (WordSemStateBroad.ofBroad state h).toBroad = state) ∧
+    (∀ state : WordSemStateFiniteExact width C F,
+        WordSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  WordSemStateExact.holFmapAsFiniteSupportWitness
+
+end WordSemEvaluateAddClockIoEventsMonoSupport
 
 namespace WordSemStateFiniteExact
 
@@ -485,6 +499,29 @@ decreasing_by
     try simp only [decClock, callEnv, setVars, setVar, pushEnv_clock, pushEnv_termdep,
       true_and] at *
     omega
+
+/-- Exact HOL `wordProps$evaluate_add_clock_io_events_mono`
+    (`wordPropsScript.sml:1639-1642`):
+
+    ```
+    ∀exps s extra.
+      (SND(evaluate(exps,s))).ffi.io_events ≼
+      (SND(evaluate(exps,s with clock := s.clock + extra))).ffi.io_events
+    ```
+
+    HOL's `≼` is `<+:`.  The recursive core `evaluate_add_clock_io_events_mono_aux`
+    is applied to the tagged `evaluate_io_events_mono`.  Like that theorem, it
+    concerns FFI event traces only, not the numerical results of the
+    floating-point instructions (whose `FPSqrt` rendering is untagged). -/
+@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "evaluate_add_clock_io_events_mono"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem evaluate_add_clock_io_events_mono {width : Nat} [NeZero width] {C : Type} {F : Type} :
+    ∀ (exps : WordLangProgHOL (BitVec width)) (s : WordSemStateFiniteExact width C F)
+      (extra : Nat),
+      (evaluate exps s).2.ffi.ioEvents <+:
+        (evaluate exps { s with clock := s.clock + extra }).2.ffi.ioEvents :=
+  fun exps s extra =>
+    evaluate_add_clock_io_events_mono_aux evaluate_io_events_mono extra exps s
 
 end AddClockIoEventsMono
 

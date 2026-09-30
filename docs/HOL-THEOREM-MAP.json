@@ -25726,5 +25726,32 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison 2026-09-30, bead .18.5.11.1.3: word_allocProof218-226 retains original strong_locals_rel on state locals, live key condition only for Reg and True for Imm, source get_var_imm success, concluding renamed target success with same WordLocW result. No targetrun, injection or extra liveness premise. Exact Spt locals and WordRegImm over positive BitVec width; C/F universe-0 state. Only fpRegs/store canonical finite-support fields translated; existing same-module StrongLocalsWitnesses roundtrip names the evaluator owning carrier. Proof original case split and existing exact strong_locals_rel_get_var transport."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateAddClockIoEventsMono.lean",
+    "lean_name": "evaluate_add_clock_io_events_mono",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "evaluate_add_clock_io_events_mono",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-pxn.18.5.9.1.3): HOL wordProps evaluate_add_clock_io_events_mono (wordPropsScript.sml:1639-1642): ∀exps s extra. (SND(evaluate(exps,s))).ffi.io_events ≼ (SND(evaluate(exps,s with clock := s.clock + extra))).ffi.io_events. Lean keeps the binders exps s extra and the conclusion, with HOL's ≼ as <+:, over the exact wordSem evaluate and WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness WordSemEvaluateAddClockIoEventsMonoSupport.holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). No premise. The proof follows HOL's recInduct evaluate_ind: untagged evaluate_add_clock_io_events_mono_aux on HOL's termination measure. Non-timeout runs close by the tagged evaluate_add_clock; the timeout paths (Tick, Seq/Loop body, Loop re-entry, Call callee and return/exception handler) close by the IH and the tagged evaluate_io_events_mono. Kernel-checked; axioms propext/Classical.choice/Quot.sound. It concerns FFI traces only; the untagged inst's FPSqrt numerical gap (flapjack-dshl) is unaffected."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/StateRelImpSemantics.lean",
+    "lean_name": "stateRelImpSemantics",
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "state_rel_imp_semantics",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "LoopSemStateFiniteExact.globals",
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-pxn.18.5.9.1): HOL loop_to_wordProof state_rel_imp_semantics (loop_to_wordProofScript.sml:1538-1544): !s t start. state_rel s t ∧ isEmpty s.locals ∧ good_dimindex(:'a) ∧ lookup 0 t.locals = SOME (Loc 1 0) ∧ (∃prog. lookup start s.code = SOME ([], prog)) ∧ semantics s start <> Fail ⇒ semantics t start = semantics s start. Lean keeps the binders and the conjunctive premise (isEmpty as sptIsEmpty = true) over the tagged loopToWordStateRelHOLExact, goodDimindex and the tagged loopSem/wordSem semantics_def. The wordSem state has an arbitrary configuration type C and the loopSem FFI host F. No extra premise. The proof route differs from HOL's direct unfolding of both semantics_defs; it follows the tagged Crep-to-Loop port. Untagged wordSemIsWrapper rewrites wordSem semantics_def as a semantics_wrapper of its entry runs (TimeOut/Break/Continue Incomplete; Result with ret <> Loc 1 0 RunError, matching HOL's Fail test). The tagged loopSemIsWrapper and semantics_wrapper_eq then apply, with premises from the tagged compileCorrect at Call NONE (SOME start) [] NONE (HOL comp_Call; ctxt make_ctxt 2 [] LN via the tagged locals_rel_mk_ctxt_ln), the tagged word evaluate_add_clock and evaluate_add_clock_io_events_mono, and the tagged loopProps evaluate_add_clock_eq/evaluate_add_clock_io_events_mono. Same-module relation witnesses LoopToWordStateRelImpSemanticsWitnesses.*. Kernel-checked; axioms standard. Caveat: the wordSem evaluator's Inst clause runs the untagged inst (FPSqrt rational-cut gap, flapjack-dshl), so this is not evidence of HOL-faithful numerical floating-point semantics."
   }
 ]
