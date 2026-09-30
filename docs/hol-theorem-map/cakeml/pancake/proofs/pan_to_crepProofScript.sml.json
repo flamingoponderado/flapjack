@@ -1548,6 +1548,22 @@
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "state_rel_imp_semantics_decls_to_crep",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelImpSemantics.lean",
+    "lean_name": "stateRelImpSemanticsDeclsToCrep",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "CrepSemHOLState.code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-pxn.18.4.4): HOL pan_to_crepProof state_rel_imp_semantics_decls_to_crep (pan_to_crepProofScript.sml:4973-4985). Lean keeps the binders s t pan_code start and every premise conjunct: state_rel (s with structs := []) t; ALL_DISTINCT (MAP FST (functions pan_code)); s.code = FEMPTY; t.code = alist_to_fmap (compile_to_crep pan_code) (HolFiniteMapExact.empty.updateList l.reverse, as in mk_ctxt_code_imp_code_rel); s.locals = FEMPTY; s.eshapes = FEMPTY; EVERY localised function bodies; EVERY (λx. is_function x ∨ is_exn_decl x) as List.all (as in the tagged evaluate_decls_only_funs_and_exn_decls); size_of_eids < 2 ^ width; semantics_decls <> Fail. The conclusion is crep semantics t start = semantics_decls s start pan_code. No extra premise. The proof follows HOL. decs_stcnames_only_functions gives the empty struct context. evaluate_decls_only_funs_and_exn_decls (across the field-identical PanProps carrier roundtrip) gives code |++ functions and eshapes |++ exceptions. Then state_rel_imp_semantics_to_crep applies: alist_to_fmap equals |++ under distinct names, and the FDOM of eshapes equals that of get_eids_from_decls. Kernel-checked; standard axioms."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
     "hol_name": "state_rel_imp_semantics_to_crep",
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelImpSemantics.lean",
     "lean_name": "stateRelImpSemanticsToCrep",

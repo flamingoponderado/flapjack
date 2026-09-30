@@ -785,6 +785,21 @@
   },
   {
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "semantics_decls_def",
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/Semantics.lean",
+    "lean_name": "semanticsDecls",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-pxn.18.4.3.77.17.2): HOL panSem semantics_decls_def (panSemScript.sml:861-869) clause for clause: case decs_stcnames [] decls of NONE => Fail | SOME st_ctxt => case evaluate_decls (s with structs := st_ctxt) decls of NONE => Fail | SOME s' => semantics s' start. decs_stcnames is the tagged decsStcnamesHOLExact, evaluate_decls the tagged evaluateDeclsHOLFinite (its operational DecidablePred evidence chosen classically; instances are subsingletons, no premise), semantics the tagged exact semantics_def. State PanSemStateFiniteExact (fmap_as_finite_support [locals, globals, code, eshapes], same-module witness; words_as_type_indexed_bitvec)."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
     "hol_name": "semantics_def",
     "lean_path": "Flapjack/PanObservationalSemantics.lean",
     "lean_name": "panSemantics",

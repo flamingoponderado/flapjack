@@ -3,6 +3,22 @@
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelImpSemantics.lean",
+    "lean_name": "alistToFmap_eq_lookup",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private list/finite-map helper of stateRelImpSemanticsDeclsToCrep (bead flapjack-pxn.18.4.4): right-folded alist_to_fmap as List.lookup; no HOL declaration (HOL uses library lemmas inline)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelImpSemantics.lean",
+    "lean_name": "fupdateList_empty_eq_lookup",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private list/finite-map helper of stateRelImpSemanticsDeclsToCrep (bead flapjack-pxn.18.4.4): FUPDATE_LIST FEMPTY as List.lookup of the reverse; no HOL declaration (HOL uses library lemmas inline)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelImpSemantics.lean",
     "lean_name": "getEidsEntriesHOL_mem",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Untagged helper of getEidsImpExcpRelExact (bead flapjack-pxn.18.4.4.2): membership in the get_eids_from_decls association list gives the index and word code; no HOL declaration of its own (HOL uses MEM_ZIP inline)."
@@ -30,6 +46,38 @@
     "lean_name": "holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on mkCtxtImpLocalsRelExact; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelImpSemantics.lean",
+    "lean_name": "list_lookup_isSome_iff",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private list/finite-map helper of stateRelImpSemanticsDeclsToCrep (bead flapjack-pxn.18.4.4): List.lookup membership; no HOL declaration (HOL uses library lemmas inline)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelImpSemantics.lean",
+    "lean_name": "list_lookup_mem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private list/finite-map helper of stateRelImpSemanticsDeclsToCrep (bead flapjack-pxn.18.4.4): List.lookup returns a member; no HOL declaration (HOL uses library lemmas inline)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelImpSemantics.lean",
+    "lean_name": "list_lookup_of_mem_nodup",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private list/finite-map helper of stateRelImpSemanticsDeclsToCrep (bead flapjack-pxn.18.4.4): List.lookup of a member under distinct keys; no HOL declaration (HOL uses library lemmas inline)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelImpSemantics.lean",
+    "lean_name": "list_lookup_reverse_of_nodup",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private list/finite-map helper of stateRelImpSemanticsDeclsToCrep (bead flapjack-pxn.18.4.4): List.lookup order-independence under distinct keys (HOL alookup_distinct_reverse step); no HOL declaration (HOL uses library lemmas inline)."
   },
   {
     "hol_path": null,
