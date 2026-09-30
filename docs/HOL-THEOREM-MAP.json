@@ -16752,6 +16752,70 @@
     "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.10): HOL miscScript.sml:2481 `Theorem OPT_MMAP_CONG` is `!l1 l2 f f'. (l1 = l2) /\\ (!x. MEM x l2 ==> (f x = f' x)) ==> (OPT_MMAP f l1 = OPT_MMAP f' l2)`. The Lean statement `optMmapCongHOL (l1 l2 : List α) (f f' : α → Option β) (hlen : l1 = l2) (h : ∀ x, x ∈ l2 → f x = f' x) : l1.mapM f = l2.mapM f'` matches clause-for-clause: HOL `OPT_MMAP` is rendered by core `List.mapM`, `MEM x l2` by list membership, and `LENGTH`/list equality directly; no extra hypotheses or carriers."
   },
   {
+    "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+    "hol_name": "equiv_lprefix_chain_def",
+    "lean_path": "Flapjack/Misc/LprefixLub.lean",
+    "lean_name": "equivLprefixChain",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.2): HOL lprefix_lubScript.sml:242-245 `Definition equiv_lprefix_chain_def: equiv_lprefix_chain ls1 ls2 ⇔ !n. lprefix_chain_nth n ls1 = lprefix_chain_nth n ls2`. The Lean def equivLprefixChain (ls1 ls2 : HolLList α → Prop) : Prop := ∀ n, lprefixChainNth n ls1 = lprefixChainNth n ls2 has the same two set arguments, the same universally quantified index and the same pointwise equality of lprefix_chain_nth. HOL set `'a llist set` is rendered as the predicate HolLList α → Prop; generic in α; no width, word or finite-map carrier occurs."
+  },
+  {
+    "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+    "hol_name": "lprefix_rel_def",
+    "lean_path": "Flapjack/Misc/LprefixLub.lean",
+    "lean_name": "lprefixRel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.2): HOL lprefix_lubScript.sml:522-524 `Definition lprefix_rel_def: lprefix_rel s1 s2 ⇔ ∀l1. l1 IN s1 ⇒ ∃l2. l2 IN s2 ∧ LPREFIX l1 l2`. The Lean def lprefixRel (s1 s2 : HolLList α → Prop) : Prop := ∀ l1, s1 l1 → ∃ l2, s2 l2 ∧ lprefix l1 l2 keeps the same quantifiers and the same LPREFIX conclusion; HOL set membership is the predicate application. Generic in α; no width, word or finite-map carrier occurs."
+  },
+  {
+    "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+    "hol_name": "lprefix_lub_is_chain",
+    "lean_path": "Flapjack/Misc/LprefixLub.lean",
+    "lean_name": "lprefix_lub_is_chain",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.2): HOL lprefix_lubScript.sml:312-317 `Theorem lprefix_lub_is_chain: !ls ll. lprefix_lub ls ll ⇒ lprefix_chain ls`. The Lean theorem lprefix_lub_is_chain {ls : HolLList α → Prop} {ll : HolLList α} (h : lprefixLub ls ll) : lprefixChain ls binds the same ls and ll and states the same implication, over the tagged lprefixLub and lprefixChain renderings. Generic in α; no width, word or finite-map carrier occurs."
+  },
+  {
+    "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+    "hol_name": "equiv_lprefix_chain_thm",
+    "lean_path": "Flapjack/Misc/LprefixLub.lean",
+    "lean_name": "equivLprefixChain_thm",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.2): HOL lprefix_lubScript.sml:247-262 `Theorem equiv_lprefix_chain_thm: !ls1 ls2. lprefix_chain ls1 ∧ lprefix_chain ls2 ⇒ (equiv_lprefix_chain ls1 ls2 ⇔ (!ll1 n x. ll1 ∈ ls1 ∧ LNTH n ll1 = SOME x ⇒ ?ll2. ll2 ∈ ls2 ∧ LNTH n ll2 = SOME x) ∧ (!ll2 n x. ll2 ∈ ls2 ∧ LNTH n ll2 = SOME x ⇒ ?ll1. ll1 ∈ ls1 ∧ LNTH n ll1 = SOME x))`. The Lean theorem equivLprefixChain_thm takes the two chain hypotheses h1 h2 and states the same iff with both directions in the same order and the same binders ll1 ll2 n x; HOL conjunction of membership and LNTH is written as chained implications. Generic in α; no width, word or finite-map carrier occurs."
+  },
+  {
+    "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+    "hol_name": "lprefix_rel_lnth",
+    "lean_path": "Flapjack/Misc/LprefixLub.lean",
+    "lean_name": "lprefix_rel_lnth",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.2): HOL lprefix_lubScript.sml:526-538 `Theorem lprefix_rel_lnth: lprefix_rel ls1 ls2 ⇒ (∀ll1 n x. ll1 ∈ ls1 ∧ LNTH n ll1 = SOME x ⇒ ∃ll2. ll2 ∈ ls2 ∧ LNTH n ll2 = SOME x)`. The Lean theorem lprefix_rel_lnth {ls1 ls2 : HolLList α → Prop} (h : lprefixRel ls1 ls2) : ∀ ll1 n x, ls1 ll1 → lnth n ll1 = some x → ∃ ll2, ls2 ll2 ∧ lnth n ll2 = some x keeps the same hypothesis, binders and existential conclusion; HOL set membership is predicate application. Generic in α; no width, word or finite-map carrier occurs."
+  },
+  {
+    "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+    "hol_name": "IMP_equiv_lprefix_chain",
+    "lean_path": "Flapjack/Misc/LprefixLub.lean",
+    "lean_name": "IMP_equiv_lprefix_chain",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.2): HOL lprefix_lubScript.sml:540-548 `Theorem IMP_equiv_lprefix_chain: lprefix_chain ls1 ∧ lprefix_chain ls2 ∧ lprefix_rel ls1 ls2 ∧ lprefix_rel ls2 ls1 ⇒ equiv_lprefix_chain ls1 ls2`. The Lean theorem IMP_equiv_lprefix_chain takes h1 h2 hr12 hr21 in the same four-premise order and concludes equivLprefixChain ls1 ls2, using the tagged relations. Generic in α; no width, word or finite-map carrier occurs."
+  },
+  {
+    "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+    "hol_name": "lprefix_lub_equiv_chain2",
+    "lean_path": "Flapjack/Misc/LprefixLub.lean",
+    "lean_name": "lprefix_lub_equiv_chain2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.2): HOL lprefix_lubScript.sml:471-484 `Theorem lprefix_lub_equiv_chain2: !ls1 ls2 ll1 ll2. lprefix_lub ls1 ll1 ∧ lprefix_lub ls2 ll2 ⇒ (ll1 = ll2 ⇔ equiv_lprefix_chain ls1 ls2)`. The Lean theorem lprefix_lub_equiv_chain2 binds ls1 ls2 ll1 ll2 with the same two LUB hypotheses h1 h2 and concludes the same equality/equivalence iff with the same orientation. Generic in α; no width, word or finite-map carrier occurs."
+  },
+  {
+    "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+    "hol_name": "IMP_build_lprefix_lub_EQ",
+    "lean_path": "Flapjack/Misc/LprefixLub.lean",
+    "lean_name": "IMP_build_lprefix_lub_EQ",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.2): HOL lprefix_lubScript.sml:550-558 `Theorem IMP_build_lprefix_lub_EQ: lprefix_chain ls1 ∧ lprefix_chain ls2 ∧ lprefix_rel ls1 ls2 ∧ lprefix_rel ls2 ls1 ⇒ build_lprefix_lub ls1 = build_lprefix_lub ls2`. The Lean theorem IMP_build_lprefix_lub_EQ takes the same four premises and concludes buildLprefixLub ls1 = buildLprefixLub ls2 over the tagged build rendering. Generic in α; no width, word or finite-map carrier occurs."
+  },
+  {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
     "hol_name": "compile_exp_val_rel",
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",

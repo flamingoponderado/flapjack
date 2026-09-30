@@ -1,13 +1,16 @@
+import Flapjack.HolRef
 import Flapjack.Misc.LList
 
 /-!
 # HOL `lprefix_lub` (least upper bounds of lazy-list prefix chains)
 
-Untagged rendering of HOL4's `examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml`
-(HOL library, outside the CakeML submodule, so no `@[hol]` tags), plus HOL's
-option-choice binder `some` (`HOL/src/coretypes/optionScript.sml:794`).  HOL sets
-`'a llist set` are rendered as predicates `HolLList α → Prop`.  These are the
-ingredients of the Pancake observational `semantics_def`s
+Rendering of HOL4's `examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml`
+(a pinned external HOL4 snapshot at
+`hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml`, so the exact
+generic chain/equality declarations carry unqualified `@[hol]` tags), plus
+HOL's option-choice binder `some` (`HOL/src/coretypes/optionScript.sml:794`).
+HOL sets `'a llist set` are rendered as predicates `HolLList α → Prop`.  These
+are the ingredients of the Pancake observational `semantics_def`s
 (`build_lprefix_lub (IMAGE ... UNIV)`).  Noncomputable exactly where HOL uses
 Hilbert choice.
 -/
@@ -659,18 +662,23 @@ HOL `equiv_lprefix_chain`, `lprefix_rel` and the derived equality facts
 /-- HOL `equiv_lprefix_chain ls1 ls2 ⇔
     !n. lprefix_chain_nth n ls1 = lprefix_chain_nth n ls2`
     (`lprefix_lubScript.sml:242-245`). -/
+@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "equiv_lprefix_chain_def"]
 def equivLprefixChain (ls1 ls2 : HolLList α → Prop) : Prop :=
   ∀ n, lprefixChainNth n ls1 = lprefixChainNth n ls2
 
 /-- HOL `lprefix_rel s1 s2 ⇔ ∀l1. l1 IN s1 ⇒ ∃l2. l2 IN s2 ∧ LPREFIX l1 l2`
     (`lprefix_lubScript.sml:522-523`); HOL sets `'a llist set` are predicates
     `HolLList α → Prop`. -/
+@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "lprefix_rel_def"]
 def lprefixRel (s1 s2 : HolLList α → Prop) : Prop :=
   ∀ l1, s1 l1 → ∃ l2, s2 l2 ∧ lprefix l1 l2
 
 /-- HOL `prefixes_lprefix_total` (`llistScript.sml:2744-2746`): two lazy lists
     that are both `lprefix`-below a common list are `lprefix`-comparable.  This
-    is the generic `llist` helper used by `lprefix_lub_is_chain`. -/
+    is the generic `llist` helper used by `lprefix_lub_is_chain`.  It carries no
+    `@[hol]` tag: its original lives in `llistScript.sml`, which is not the
+    pinned `lprefix_lubScript.sml` snapshot, so the external-path checker would
+    reject the citation; it is Flapjack infrastructure for this port. -/
 theorem lprefix_total_of_common {a b c : HolLList α} (ha : lprefix a c) (hb : lprefix b c) :
     lprefix a b ∨ lprefix b a := by
   by_cases hab : lprefix a b
@@ -721,12 +729,14 @@ theorem lprefix_total_of_common {a b c : HolLList α} (ha : lprefix a c) (hb : l
         rw [← hwy]
 
 /-- HOL `lprefix_lub_is_chain` (`lprefix_lubScript.sml:312-317`). -/
+@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "lprefix_lub_is_chain"]
 theorem lprefix_lub_is_chain {ls : HolLList α → Prop} {ll : HolLList α}
     (h : lprefixLub ls ll) : lprefixChain ls := by
   intro a b ha hb
   exact lprefix_total_of_common (h.1 a ha) (h.1 b hb)
 
 /-- HOL `equiv_lprefix_chain_thm` (`lprefix_lubScript.sml:247-262`). -/
+@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "equiv_lprefix_chain_thm"]
 theorem equivLprefixChain_thm {ls1 ls2 : HolLList α → Prop}
     (h1 : lprefixChain ls1) (h2 : lprefixChain ls2) :
     (equivLprefixChain ls1 ls2 ↔
@@ -781,6 +791,7 @@ weakened; it needs a separate commit-sized `llist_shorter` port (child bead
 `flapjack-pxn.18.5.2.22.3.2.1.1`). -/
 
 /-- HOL `lprefix_rel_lnth` (`lprefix_lubScript.sml:526-538`). -/
+@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "lprefix_rel_lnth"]
 theorem lprefix_rel_lnth {ls1 ls2 : HolLList α → Prop} (h : lprefixRel ls1 ls2) :
     ∀ ll1 n x, ls1 ll1 → lnth n ll1 = some x →
       ∃ ll2, ls2 ll2 ∧ lnth n ll2 = some x := by
@@ -789,6 +800,7 @@ theorem lprefix_rel_lnth {ls1 ls2 : HolLList α → Prop} (h : lprefixRel ls1 ls
   exact ⟨l2, hl2, lprefix_lnth hpre hln⟩
 
 /-- HOL `IMP_equiv_lprefix_chain` (`lprefix_lubScript.sml:540-548`). -/
+@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "IMP_equiv_lprefix_chain"]
 theorem IMP_equiv_lprefix_chain {ls1 ls2 : HolLList α → Prop}
     (h1 : lprefixChain ls1) (h2 : lprefixChain ls2)
     (hr12 : lprefixRel ls1 ls2) (hr21 : lprefixRel ls2 ls1) :
@@ -797,6 +809,7 @@ theorem IMP_equiv_lprefix_chain {ls1 ls2 : HolLList α → Prop}
   exact ⟨lprefix_rel_lnth hr12, lprefix_rel_lnth hr21⟩
 
 /-- HOL `lprefix_lub_equiv_chain2` (`lprefix_lubScript.sml:471-484`). -/
+@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "lprefix_lub_equiv_chain2"]
 theorem lprefix_lub_equiv_chain2 {ls1 ls2 : HolLList α → Prop} {ll1 ll2 : HolLList α}
     (h1 : lprefixLub ls1 ll1) (h2 : lprefixLub ls2 ll2) :
     (ll1 = ll2 ↔ equivLprefixChain ls1 ls2) := by
@@ -816,6 +829,7 @@ theorem lprefix_lub_equiv_chain2 {ls1 ls2 : HolLList α → Prop} {ll1 ll2 : Hol
     exact heq n
 
 /-- HOL `IMP_build_lprefix_lub_EQ` (`lprefix_lubScript.sml:550-558`). -/
+@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "IMP_build_lprefix_lub_EQ"]
 theorem IMP_build_lprefix_lub_EQ {ls1 ls2 : HolLList α → Prop}
     (h1 : lprefixChain ls1) (h2 : lprefixChain ls2)
     (hr12 : lprefixRel ls1 ls2) (hr21 : lprefixRel ls2 ls1) :
