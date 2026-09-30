@@ -3048,7 +3048,12 @@ class FmapEqualityStrictnessTest(unittest.TestCase):
 
 
 class HolMlBindingClassificationTest(unittest.TestCase):
-    """Header declarations and ML ``val NAME =`` bindings, versus goal terms."""
+    """Header declarations and ML ``val NAME =`` bindings resolve by syntax.
+
+    The scanner accepts any ``val NAME =`` binding and does not check whether
+    the value is a proof, so these tests pin the scanner's evidence only; the
+    theorem-status rule is enforced by source review.
+    """
 
     def _fixture(self, text):
         root = Path(tempfile.mkdtemp())
@@ -3080,6 +3085,13 @@ class HolMlBindingClassificationTest(unittest.TestCase):
         self.assertEqual(
             REF_ERROR(path, "goal", None, cache), "declares no `goal`"
         )
+
+    def test_arbitrary_val_binding_resolves_syntactically(self):
+        # Scanner evidence only: every ``val NAME =`` binds the name, whether or
+        # not the value is a proof.  Theorem status is a source-review rule the
+        # checker does not enforce.
+        path, cache = self._fixture("val goal = ``!x. x = x``;\n")
+        self.assertIsNone(REF_ERROR(path, "goal", None, cache))
 
     def test_header_keyword_declaration_resolves(self):
         path, cache = self._fixture("Theorem LPREFIX_TRANS:\n  T\nProof simp[] QED\n")

@@ -202,11 +202,11 @@ theorem buildLprefixLubF_step {ls : HolLList α → Prop} (hchain : lprefixChain
 
     The HOL original is an ML `val build_lprefix_lub_lem = Q.prove (...)`
     binding: an ML-let bound theorem value, not a `Theorem`/`Definition`
-    header.  `scripts/check-hol-refs.py` registers such `val NAME =` bindings
-    as declarations (in addition to the header keywords), so citing it from
-    `@[hol]` is legitimate.  A quoted proof goal or other non-theorem ML value
-    (`gen_goal`, `goal`) is not a declaration and its Lean counterpart must
-    stay untagged. -/
+    header.  `scripts/check-hol-refs.py` resolves `val NAME =` bindings as
+    well as header declarations, so citing it from `@[hol]` is legitimate.
+    The scanner accepts any `val NAME =` line and does not verify that the
+    value is a proof, so not tagging a non-theorem ML value is a source-review
+    duty rather than an enforced check. -/
 @[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "build_lprefix_lub_lem"]
 theorem lnth_buildLprefixLub_full {ls : HolLList α → Prop} (hchain : lprefixChain ls)
     (m n : Nat) :
@@ -385,8 +385,9 @@ theorem llistShorter_fromList (l1 l2 : List α) :
 
     The HOL original is an ML `val llist_shorter_lnth = Q.prove (...)` binding
     (theorem-valued, not a header declaration); the reference checker resolves
-    `val NAME =` bindings, so the tag above is a faithful citation.  Theorem
-    values may be tagged; quoted goal terms and other ML values may not. -/
+    `val NAME =` bindings, so the tag above is a faithful citation.  The
+    scanner does not distinguish a theorem value from other ML values, so
+    avoiding tags on non-theorem ML values is a source-review duty. -/
 @[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "llist_shorter_lnth"]
 theorem llistShorter_lnth {ll1 ll2 : HolLList α} :
     llistShorter ll1 ll2 ↔

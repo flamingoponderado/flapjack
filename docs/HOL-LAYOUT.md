@@ -36,13 +36,11 @@ definition/theorem header (`Theorem`, `Triviality`, `Definition`, `Datatype`,
 `Inductive`, `CoInductive`, `Overload`, `Type`) or an ML `val NAME = ...`
 binding. A theorem-valued binding such as
 `val llist_shorter_lnth = Q.prove (...)` is a proved result, so a Lean
-counterpart may cite it from `@[hol]`. A quoted proof goal or other
-non-theorem ML value (for example `gen_goal`, or `goal`
-in `pan_globalsProofScript.sml`) has no declaration form: a reference to it is
-rejected, and its Lean rendering stays untagged with a declaration-local note.
-The scanner is syntactic, so it cannot itself tell a `Q.prove` value from an
-arbitrary `val` value; that distinction is a source-review obligation, tested in
-`scripts/tests/test_check_hol_refs.py`.
+counterpart may cite it from `@[hol]`. The scanner accepts every
+`val NAME =` line and cannot distinguish a proved binding from an arbitrary ML
+value, so it does not enforce theorem status: source review is responsible for
+never tagging a non-theorem value, and the reference checker only verifies that
+the cited name occurs in one of the two syntactic forms.
 
 | HOL script | Lean counterpart |
 | --- | --- |

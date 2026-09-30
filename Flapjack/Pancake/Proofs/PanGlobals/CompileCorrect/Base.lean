@@ -44,10 +44,11 @@ theorem holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact
     `compile_correct` case.  Untagged: HOL's `goal` is an ML value, not a
     declaration.
 
-    Policy: only HOL declarations (header keywords, or theorem-valued
-    `val NAME = Q.prove (...)` ML bindings) may be cited from `@[hol]`.  A
-    quoted goal term such as `gen_goal ...` has no declaration form, so this
-    Lean rendering is infrastructure and carries no tag. -/
+    Policy: HOL declarations (header keywords, or theorem-valued
+    `val NAME = Q.prove (...)` ML bindings) may be cited from `@[hol]`.  This
+    Lean rendering is infrastructure and carries no tag; the checker resolves
+    `val NAME =` lines syntactically and does not verify theorem status, so
+    classifying an ML value as a theorem is a source-review duty. -/
 def compileCorrectGoal {width : Nat} {σ : Type} [NeZero width]
     (p : ProgHOL width) (s : PanSemStateFiniteExact width σ) : Prop :=
   ∀ (res : Option (PanSemResultExact width)) (ctxt : PanGlobalsContextExact width)
