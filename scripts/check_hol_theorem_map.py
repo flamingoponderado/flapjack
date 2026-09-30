@@ -38,6 +38,25 @@ DATA_DECLARATION_RE = re.compile(
 # inventory small and source-reviewed; a mismatch row is not generated merely
 # because an arbitrary Lean def happens to mention a HOL name.
 WITHDRAWN_HOL_DECLARATIONS = {
+    ("Flapjack/Compiler/Backend/Semantics/WordSem/Evaluate.lean", "evaluate"): (
+        "cakeml/compiler/backend/semantics/wordSemScript.sml",
+        "evaluate_def",
+        "flapjack-opus source review (2026-09-30; bead flapjack-2hoy.2, coordinator decision "
+        "2026-09-30T01:15Z): @[hol] evaluate_def (:1016) tag withdrawn. The Inst clause delegates "
+        "to the untagged inst, whose FPSqrt clause is the rational-cut reformulation of HOL "
+        "fp64_sqrt (docs/SOUNDNESS.md item 8); every other clause follows HOL clause by clause "
+        "over the fmap/words carriers. Preserved untagged with proofs. Faithful prerequisite: "
+        "flapjack-dshl."
+    ),
+    ("Flapjack/Compiler/Backend/Semantics/WordSem/EvaluateInd.lean", "evaluate_def_rebound"): (
+        "cakeml/compiler/backend/semantics/wordSemScript.sml",
+        "evaluate_def",
+        "flapjack-opus source review (2026-09-30; bead flapjack-2hoy.2, coordinator decision "
+        "2026-09-30T01:15Z): @[hol] rebound evaluate_def (:1369) tag withdrawn with evaluate: its "
+        "Inst conjunct is over the untagged inst (FPSqrt rational-cut reformulation, "
+        "docs/SOUNDNESS.md item 8); every other conjunct is HOL's, fix_clock removed as in HOL. "
+        "Preserved untagged. Faithful prerequisite: flapjack-dshl."
+    ),
     ("Flapjack/Compiler/Backend/Semantics/WordSem/Inst.lean", "inst"): (
         "cakeml/compiler/backend/semantics/wordSemScript.sml",
         "inst_def",

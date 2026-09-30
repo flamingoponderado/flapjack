@@ -78,7 +78,7 @@ theorem wordSemLex {a b c a' b' c' : Nat}
 end Measure
 
 open Classical in
-/-- Exact HOL `evaluate_def` (`wordSemScript.sml:1016-1260`), clause by clause
+/-- Rendering of HOL `evaluate_def` (`wordSemScript.sml:1016-1260`), clause by clause
     over the tagged helpers:
     * straight-line forms: `Skip`, `Alloc`, `StoreConsts`, `Move`, `Inst`,
       `Assign`, `Get`, `Set`, `OpCurrHeap`, `Store`, and `Tick`;
@@ -89,9 +89,13 @@ open Classical in
     * `Call`: tail calls, and returning calls with their result, exception
       and handler cases.
     HOL's equality tests on results are rendered as matches, and set
-    conditions on `domain` use `sptDomainEmpty`/`sptDomainEqUnion`. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "evaluate_def" 1016
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+    conditions on `domain` use `sptDomainEmpty`/`sptDomainEqUnion`.
+
+    Not an exact port: the `@[hol]` tag is withdrawn (bead `flapjack-2hoy.2`,
+    coordinator decision 2026-09-30).  The `Inst` clause delegates to the
+    untagged `inst`, whose `FPSqrt` clause is the rational-cut reformulation
+    of HOL `fp64_sqrt` (see `inst`).  The faithful prerequisite is bead
+    `flapjack-dshl`.  Every other clause follows HOL clause by clause. -/
 noncomputable def evaluate {width : Nat} [NeZero width] {C : Type} {F : Type}
     (p : WordLangProgHOL (BitVec width)) (s : WordSemStateFiniteExact width C F) :
     Option (WordSemResult width) × WordSemStateFiniteExact width C F :=
