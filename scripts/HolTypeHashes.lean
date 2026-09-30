@@ -280,6 +280,7 @@ import Flapjack.Pancake.Proofs.CrepInline.ClockExpressions
 import Flapjack.Pancake.Proofs.CrepInline.ExpressionCodeAgreement
 import Flapjack.Pancake.Proofs.CrepInline.NotBranchReturn
 import Flapjack.Pancake.Proofs.CrepInline.UnreachElimEvaluate
+import Flapjack.Pancake.Proofs.CrepInline.NestedSeqAssign
 import Flapjack.Pancake.Proofs.CrepInline.UnreachElimProgSize
 import Flapjack.Pancake.Proofs.CrepInline.NestedDecs
 import Flapjack.Pancake.Proofs.CrepInline.ShMem
