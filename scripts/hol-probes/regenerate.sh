@@ -2533,6 +2533,9 @@ run_probe pan_word_of_bytes_overlong_probeScript.sml pan_word_of_bytes_overlong_
 run_probe stack_props_fixed_names_probeScript.sml stack_props_fixed_names_probe.out \
   x86_good x86_empty x86_bad_zero riscv_empty "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 
+run_probe stacksem_dynamic_stack_probeScript.sml stacksem_dynamic_stack_probe.out \
+  any_load_disabled any_load_loc any_load_alias any_load_missing any_load_offset_loc any_load_unaligned any_load_boundary any_load_space any_store_loc any_store_alias any_store_missing any_store_offset_missing any_store_offset_loc any_store_unaligned any_store_boundary any_store_disabled any_load_width32 any_load_width64 any_load_width1_zero any_load_width1_nonzero \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe stacksem_size_bitmap_probeScript.sml stacksem_size_bitmap_probe.out \
   size_disabled size_success size_boundary size_loc size_missing bitmap_disabled bitmap_success bitmap_boundary bitmap_loc bitmap_missing bitmap_alias \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" \
