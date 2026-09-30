@@ -1834,6 +1834,15 @@ run_probe machine_ieee_fp64_sqrt_exact_probeScript.sml machine_ieee_fp64_sqrt_ex
   "$hol_dir/src/floating-point/binary_ieeeScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 
+# Signed word quotient operator in original wordSem Div (.18.5.10.1).
+run_probe word_sem_div_signed_probeScript.sml word_sem_div_signed_probe.out \
+  positive negative_small negative_dividend negative_divisor both_negative \
+  min_overflow min_half positive_minus_one zero_divisor zero_dividend \
+  alias_dividend alias_divisor same_source missing_dividend location_divisor \
+  min64_overflow min1_overflow \
+  "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
 # The wordSem inst_def probe observes integer arithmetic, memory and
 # floating-point instructions over record updates of a free state (bead
 # flapjack-h29l.6).
