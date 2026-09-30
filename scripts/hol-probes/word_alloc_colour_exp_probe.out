@@ -1,0 +1,4 @@
+nested=Op Add
+  [Const 7w; Load (Var 13); Lookup (Temp 9w); Shift Lsl (Var 15) (Var 16)]
+duplicate=Op Sub [Var 1; Var 1; Var 0]
+empty=Op Add []
