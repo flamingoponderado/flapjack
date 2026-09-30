@@ -1,5 +1,45 @@
 [
   {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Control.lean",
+    "lean_name": "findCode",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "find_code_def",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.5), stackSemScript645-651: target num+num, regs finite map num->positive-width word_loc, code polymorphic alpha Spt tree and Option alpha result. Direct INL lookup ignores regs; INR accepts only SOME(Loc loc0), all missing/Word/nonzero Loc cases NONE. Canonical map is bare regs parameter (no owning field/witness obligation); code remains Spt and payload stays polymorphic. Accepted imported carrier with same-module canonical roundtrip re-export for state fields, no duplicate owner. No evaluator or production-path claim. Coordinator review required."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Control.lean",
+    "lean_name": "fixClock",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "fix_clock_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.5), stackSemScript653-655: arbitrary result R and exact state pair, input state and returned state have same width/C/F. Retains result, replaces only returned clock with MIN input.clock returned.clock. Accepted imported carrier with same-module canonical roundtrip re-export for state fields, no duplicate owner. No evaluator or production-path claim. Coordinator review required."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Control.lean",
+    "lean_name": "fixClockImp",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "fix_clock_IMP",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.5), stackSemScript657-661: same universally quantified s/x/res/s1, sole fix_clock s x=(res,s1) premise, s1.clock<=s.clock conclusion. No clock/evaluation assumption added; bound kernel-derived by pair clock projection and min_le_left. Accepted imported carrier with same-module canonical roundtrip re-export for state fields, no duplicate owner. No evaluator or production-path claim. Coordinator review required."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/StateOps.lean",
     "lean_name": "memStore",
     "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
