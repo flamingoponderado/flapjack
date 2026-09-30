@@ -32805,7 +32805,7 @@
     "code"
   ],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.3) compared HOL transform_branch_correct (crep_inlineProofScript.sml:2042-2059): forall p s r s' res ld rts. evaluate (p,s) = (r,s') /\\ (!retvs. r = SOME (Return retvs) ==> LENGTH rts = LENGTH retvs) /\\ (!x. MEM x rts ==> ~MEM x (var_prog p)) /\\ (exists z. OPT_MMAP (FLOOKUP s.locals) rts = SOME z) /\\ ALL_DISTINCT rts /\\ r <> SOME Error ==> exists r1 s1'. evaluate (transform_branch ld rts p, s) = (r1,s1') /\\ state_rel s' s1' /\\ case r of NONE => ... | SOME (Return retvs) => r1 = SOME (Break ld) /\\ OPT_MMAP (FLOOKUP s1'.locals) rts = SOME retvs | SOME Error => F | res => r1 = res. HOL's outer binder res occurs only as the shadowing catch-all case pattern, so the vacuous binder is omitted (documented in the module); all other binders in order. Case: Call for every caltyp (Resume :2173-2184), IH TransformBranchCallHandlerIH = the guarded evaluate_ind handler premise (callee premise unused as in HOL); tail Call NONE becomes Seq (Call (SOME (rts,NONE))) (Break ld). Exact tagged evaluator/transform_branch/var_prog/state_rel/locals_strong_rel over CrepSemHOLState; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  "reviewer": "flapjack-sol (.47.6) compared HOL transform_branch_correct2042-2058/Call2173-2184 and faithful evaluate_ind Call. Exact original goal, argument/lookup/nodup/nonzero-clock guarded callee IH at decremented-clock newlocals state, and matching-exception handler IH retained. Callee unused because run unchanged and caller locals restored; existing stronger handler-only callGoal remains untagged. Positive-width canonical state translation unchanged. No target run or extra public theorem premise."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformBranch/Assembly.lean",
@@ -32915,7 +32915,7 @@
   "hol_path": null,
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.5.47.3): transform_branch_correct motive for the named case/assembly step; no separate HOL declaration."
+  "reviewer": "Flapjack-specific stronger handler-only Call calculation, deliberately untagged because original callee induction hypothesis is unused and omitted. Exact tagged wrapper retains that hypothesis."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformBranch/Assembly.lean",
@@ -32931,7 +32931,7 @@
   "hol_path": null,
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.5.47.3): transform_branch_correct motive for the named case/assembly step; no separate HOL declaration."
+  "reviewer": "Flapjack-specific complete transformBranchGoal motive by lexicographic clock/size induction. Both exact tagged Call premises supplied at strictly smaller clocks; non-Call constructors reuse independent structural handlerOnlyBranchMotive calculation. No public theorem hypothesis."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/WrappedTransformIf.lean",
@@ -34396,5 +34396,36 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.44.5.1) compared crep_inlineProofScript.sml:814-824: binders p s r s' x as declared parameters in HOL order; hypotheses evaluate (p,s) = (r,s') (evalCrepSemHOLProgExact s p), NOT MEM x (var_prog p) (x NOTIN crepVarProgHOLExact p, the reviewed var_prog_def port), continuing-result case rendered as the displayed match proposition; conclusion FLOOKUP s'.locals x = FLOOKUP s.locals x (lookup on finite-support locals). No extra premise, no public IH: the evaluate_ind induction is discharged internally by structural recursion on p with an inner clock induction for While (private nv_* support). Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformBranch/Assembly.lean",
+  "lean_name": "handlerOnlyBranchMotive",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific structural transformBranchGoal calculation with inner While clock induction and untagged handler-only callGoal; reused internally by complete exact assembly, no independent HOL case claim."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ArgLoadStrong.lean",
+  "lean_name": "generalSimulateArgLoadStrongExact",
+  "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+  "hol_name": "general_simulate_arg_load_strong",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "CrepSemHOLState.locals",
+    "CrepSemHOLState.globals",
+    "CrepSemHOLState.code",
+    "t"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol (.45.3) source compared HOL1223-1287: same s/es/vals/vs/t/p/r/sprime/tmp_vars binders, original eleven hypotheses including continuing NONE/Break/Continue condition, faithful eval from t updated ZIP(vs,vals), freshness, disjointness and eval-variable exclusions. Exact existential nested temporary/argument declaration run, full state_rel, FDIFF original s.locals(FDOM t) SUBMAP target.locals. Canonical standalone map t and state locals/globals/code plus positive-width words/Type0 FFI only. Two accepted nested_sublocals strong theorem applications construct inner and outer run internally; fresh update submap and tmp Var values derived, state_rel composed. No additional premise; coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ArgLoadStrong.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only same-module canonical state roundtrip re-export for relation qualifier; no independent HOL original."
 }
 ]

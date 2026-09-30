@@ -310,6 +310,7 @@ import Flapjack.Pancake.Proofs.CrepInline.EvaluateStateLocals.Assembly
 import Flapjack.Pancake.Proofs.CrepInline.ArgLoad
 import Flapjack.Pancake.Proofs.CrepInline.NestedDecsSublocals
 import Flapjack.Pancake.Proofs.CrepInline.NotVarProg
+import Flapjack.Pancake.Proofs.CrepInline.ArgLoadStrong
 import Flapjack.Pancake.Proofs.CrepInline.Expressions
 import Flapjack.Pancake.Proofs.CrepInline.ExpressionRelations
 import Flapjack.Pancake.Proofs.CrepInline.UpdateListLocals
