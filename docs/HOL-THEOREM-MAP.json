@@ -36477,5 +36477,29 @@
   "lean_name": "unreachElimProgSize_indexed",
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-only bare-index translation candidate infrastructure, bead .18.5.5.50.2. Retains arbitrary nonempty alpha itself and derives word width as max1 Nat.card alpha; kernel witnesses finite nonempty cardinal and infinite dimension1 after original fcpScript63-65 source inspection. Indexed unreach candidate uses f:alpha->Nat and that SAME alpha-derived word dimension, no independent width/domain or BitVec substitution. No exact HOL port or approved representation claim: original external fcp library source now byte-pinned at existing HOL commit a390cbabd3a4521bab4ee20281e3e42933a8a3ae; index/word qualifier/checker source review remains parent50 obligation."
+},
+{
+  "hol_path": null,
+  "hol_name": null,
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimIndexSize.lean",
+  "lean_name": "holIndexDimension_literal",
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only representation-review infrastructure, bead .18.5.5.50.4. Literal Finite/card-versus-infinite1 equation corresponds to pinned fcpScript63-65, derived from existing finite/infinite branch witnesses. Positive widths are realized by Fin width, without restricting arbitrary HOL index types; Nat.card congruence establishes equivalence invariance. No HOL tag or approved bare-index/word qualifier claim; faithful translation/source review remains parent50 obligation."
+},
+{
+  "hol_path": null,
+  "hol_name": null,
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimIndexSize.lean",
+  "lean_name": "holIndexDimension_realizes_width",
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only representation-review infrastructure, bead .18.5.5.50.4. Literal Finite/card-versus-infinite1 equation corresponds to pinned fcpScript63-65, derived from existing finite/infinite branch witnesses. Positive widths are realized by Fin width, without restricting arbitrary HOL index types; Nat.card congruence establishes equivalence invariance. No HOL tag or approved bare-index/word qualifier claim; faithful translation/source review remains parent50 obligation."
+},
+{
+  "hol_path": null,
+  "hol_name": null,
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimIndexSize.lean",
+  "lean_name": "holIndexDimension_equiv",
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only representation-review infrastructure, bead .18.5.5.50.4. Literal Finite/card-versus-infinite1 equation corresponds to pinned fcpScript63-65, derived from existing finite/infinite branch witnesses. Positive widths are realized by Fin width, without restricting arbitrary HOL index types; Nat.card congruence establishes equivalence invariance. No HOL tag or approved bare-index/word qualifier claim; faithful translation/source review remains parent50 obligation."
 }
 ]
