@@ -37337,5 +37337,20 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "C source comparison pan_simpProofScript.sml69-73 and pan_simpScript.sml13-15: arbitrary first/second program/state, unconditional complete evaluate(SmartSeq p q,s)=evaluate(Seq p q,s). Exact ProgHOL constructor match realizes source p=Skip test; Skip prefix evaluation returns NONE/unchangedstate and exact line780 Seq preserves fix_clock via proved bound. Every other prefix literally Seq. No extra premises or restricted evaluator. Canonical finite state fourmap fields with genuine witness, positive wordwidth and Type0 FFI only. Coordinator review pending; proof-only no executed change."
+},
+{
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "semantics_init_call'",
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/SemanticsInitCall.lean",
+  "lean_name": "semanticsInitCall'",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.2.22.3.2.5): exact source comparison with pan_globalsProofScript.sml:2801-2820 semantics_init_call'. Same carriers and hypotheses as the accepted semantics_init_call (FLOOKUP code start/start', evaluate body from locals=FEMPTY giving NONE with s'.clock=s.clock, s'.ffi.io_events=s.ffi.io_events; conclusion semantics s start = semantics s' start'). HOL derives it from semantics_init_call by evaluate_clock_sub stripping the clock to 0 and evaluate_add_clock_eq re-adding k; Lean does the same with the tagged evaluateClockSubHOLFinite and panPropsEvaluateAddClockEq. No extra premises."
 }
 ]
