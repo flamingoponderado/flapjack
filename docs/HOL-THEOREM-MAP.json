@@ -37072,6 +37072,30 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.5.42.4): Call case of HOL inline_prog_correct (statement crep_inlineProofScript.sml:2301-2319; case Resume [Call] :2409 with suspensions [Tail] :2536 and [Nontail] :2719-3037). Statement shape as the accepted inlineProgCorrectDecCaseExact: the HOL source run of Call caltyp fname argexps, r <> SOME Error, inl_fs SUBMAP s.code, inl_bag SUBMAP inl_fs, state_rel_code, locals_strong_rel, code_inl_rel, with the existential target run of inline_prog inl_bag (Call ...), state_rel_code, code_inl_rel and the result-indexed locals_strong_rel conclusion. The only additional hypotheses are evaluate_ind's two guarded Call premises with P := the theorem predicate written out: ihExc (handler, guarded by OPT_MMAP args, lookup_code, the ALL_DISTINCT selector, clock <> 0, callee Exception eid, caltyp = SOME (_, SOME (eid', p)), eid = eid'; state st with locals := s.locals) and ihBody (callee body at dec_clock s with locals := newlocals under the same first guards). Both are in the reviewed callNonInlined spelling. No target-run or extra-context premise. The proof splits on HOL's own case analysis of inline_prog: not inlined (callNonInlined), inlined tail call (callTail), inlined distinct-return assign call (callNontail)."
+},
+{
+  "hol_path": "hol4/src/coalgebras/llistScript.sml",
+  "hol_name": "LPREFIX_ANTISYM",
+  "lean_path": "Flapjack/Misc/LList.lean",
+  "lean_name": "lprefixAntisymHOL",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b rc27.3 source comparison pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae llistScript:2713-2714: two prefix conjuncts imply equality; no finite-list/index/chain or evaluator premise. HolLList is the original Nat-to-Option invariant subtype, using source lrep_ok_alt:36-57 and llist_tydef:64; LPREFIX case split matches source2655-2662 with ordinary List/Option carriers, equality and isPREFIX. toList getD0 is guarded by LFinite and llength_spec proves SOME length, so the fallback cannot be selected there. Curried convenience APIs remain untagged; these separate exact statements preserve HOL conjunction and quantifier order. Source-reviewed this declaration individually, not blanket lazy-list library approval; coordinator acceptance pending."
+},
+{
+  "hol_path": "hol4/src/coalgebras/llistScript.sml",
+  "hol_name": "LPREFIX_TRANS",
+  "lean_path": "Flapjack/Misc/LList.lean",
+  "lean_name": "lprefixTransHOL",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b rc27.3 source comparison pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae llistScript:2722-2723: two composable prefix conjuncts imply the composed prefix; no finite-list/index/chain or evaluator premise. HolLList is the original Nat-to-Option invariant subtype, using source lrep_ok_alt:36-57 and llist_tydef:64; LPREFIX case split matches source2655-2662 with ordinary List/Option carriers, equality and isPREFIX. toList getD0 is guarded by LFinite and llength_spec proves SOME length, so the fallback cannot be selected there. Curried convenience APIs remain untagged; these separate exact statements preserve HOL conjunction and quantifier order. Source-reviewed this declaration individually, not blanket lazy-list library approval; coordinator acceptance pending."
+},
+{
+  "hol_path": "hol4/src/coalgebras/llistScript.sml",
+  "hol_name": "prefixes_lprefix_total",
+  "lean_path": "Flapjack/Misc/LList.lean",
+  "lean_name": "prefixesLprefixTotalHOL",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b rc27.3 source comparison pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae llistScript:2744-2747: universal common upper bound c then lists a,b; conjunction of prefixes of c implies their disjunctive comparability; no finite-list/index/chain or evaluator premise. HolLList is the original Nat-to-Option invariant subtype, using source lrep_ok_alt:36-57 and llist_tydef:64; LPREFIX case split matches source2655-2662 with ordinary List/Option carriers, equality and isPREFIX. toList getD0 is guarded by LFinite and llength_spec proves SOME length, so the fallback cannot be selected there. Curried convenience APIs remain untagged; these separate exact statements preserve HOL conjunction and quantifier order. Source-reviewed this declaration individually, not blanket lazy-list library approval; coordinator acceptance pending."
 }
 ,
 {

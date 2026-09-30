@@ -22,13 +22,16 @@ printf '%s\n' \
   'theorem wordsQualifierSyntax : True := trivial' \
   '@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "IMP_build_lprefix_lub_EQ"]' \
   'theorem pinnedExternalSyntax : True := trivial' \
+  '@[hol "hol4/src/coalgebras/llistScript.sml" "LPREFIX_TRANS"]' \
+  'theorem pinnedLlistSyntax : True := trivial' \
   '#hol_refs' > "$test_file"
-output=$(lake env lean "$test_file")
+output=$(lake lean "$test_file")
 [[ "$output" == *'qualifiedSyntax  cakeml/compiler/backend/reg_alloc/reg_allocScript.sml  dec_deg_def (list_as_array := [degrees])'* ]]
 [[ "$output" == *'qualifiedLineSyntax  cakeml/compiler/backend/reg_alloc/reg_allocScript.sml  dec_deg_def :252 (list_as_array := [degrees, moves])'* ]]
 [[ "$output" == *'exactSyntax  cakeml/compiler/backend/reg_alloc/reg_allocScript.sml  dec_deg_def'* ]]
 [[ "$output" == *'wordsQualifierSyntax  cakeml/compiler/backend/reg_alloc/reg_allocScript.sml  dec_deg_def (words_as_type_indexed_bitvec)'* ]]
 [[ "$output" == *'pinnedExternalSyntax  hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml  IMP_build_lprefix_lub_EQ'* ]]
+[[ "$output" == *'pinnedLlistSyntax  hol4/src/coalgebras/llistScript.sml  LPREFIX_TRANS'* ]]
 
 printf '%s\n' \
   'import Flapjack.HolRef' \

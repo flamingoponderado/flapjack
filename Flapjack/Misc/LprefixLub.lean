@@ -112,73 +112,6 @@ theorem lprefixChainNth_none_mono {m n : Nat} {ls : HolLList α → Prop}
       | none => exact absurd hmn hmne
       | some y => exact absurd ⟨l, hl, hmn⟩ ((holOptionSome_none hm) y)
 
-/-- Membership is inherited along `lprefix` at the representation level: an
-    `lprefix`-smaller list is `some` at `n` only where the larger one is. -/
-theorem lprefix_rep {a b : HolLList α} (h : lprefix a b) {n : Nat} {x : α}
-    (ha : a.rep n = some x) : b.rep n = some x := by
-  unfold lprefix at h
-  cases hta : toList a with
-  | none =>
-      rw [hta] at h
-      subst h
-      exact ha
-  | some xs =>
-      rw [hta] at h
-      have hra := toList_eq_some_rep hta n
-      rw [hra] at ha
-      by_cases hn : n < xs.length
-      · rw [dif_pos hn] at ha
-        injection ha with hx
-        cases htb : toList b with
-        | none =>
-            rw [htb] at h
-            obtain ⟨_, hrep⟩ := ltake_spec xs.length b xs h
-            rw [hrep n hn, hx]
-        | some ys =>
-            rw [htb] at h
-            have hrb := toList_eq_some_rep htb n
-            rw [hrb]
-            have hnys : n < ys.length := Nat.lt_of_lt_of_le hn h.length_le
-            rw [dif_pos hnys]
-            obtain ⟨zs, rfl⟩ := h
-            rw [List.getElem_append_left hn, hx]
-      · rw [dif_neg hn] at ha
-        exact absurd ha (by simp)
-
-/-- `lprefix` is reflexive. -/
-theorem lprefix_refl (ll : HolLList α) : lprefix ll ll := by
-  unfold lprefix
-  cases toList ll with
-  | none => rfl
-  | some xs => exact ⟨[], by simp⟩
-
-/-- Flapjack-only SOME-index corollary of prefix agreement. HOL LPREFIX_NTH
-    is an iff using less_opt and LLENGTH, so this direction-only helper does
-    not carry that theorem's tag. -/
-theorem lprefix_lnth {a b : HolLList α} (h : lprefix a b) {n : Nat} {x : α}
-    (ha : lnth n a = some x) : lnth n b = some x := by
-  rw [lnth_eq_rep] at ha ⊢
-  exact lprefix_rep h ha
-
-/-- Untagged rendering of HOL LPREFIX_ANTISYM: mutual prefixes are equal.
-    Its original llistScript is not pinned; no exact reference is claimed. -/
-theorem lprefix_antisym {a b : HolLList α} (hab : lprefix a b) (hba : lprefix b a) :
-    a = b := by
-  have hrep : a.rep = b.rep := funext fun n => by
-    cases ha : a.rep n with
-    | none =>
-        cases hb : b.rep n with
-        | none => rfl
-        | some y =>
-            have := lprefix_rep hba hb
-            rw [ha] at this
-            exact absurd this (by simp)
-    | some x => exact (lprefix_rep hab ha).symm
-  obtain ⟨ra, oka⟩ := a
-  obtain ⟨rb, okb⟩ := b
-  subst hrep
-  exact congrArg (fun o => (⟨ra, o⟩ : HolLList α)) (Subsingleton.elim oka okb)
-
 /-- HOL `lprefix_chain_LNTHs_agree` (`lprefix_lubScript.sml:182-187`): on a chain,
     any two members defined at `n` carry the same value there. -/
 @[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "lprefix_chain_LNTHs_agree"]
@@ -239,59 +172,6 @@ theorem lnth_buildLprefixLub {ls : HolLList α → Prop} (hchain : lprefixChain 
 theorem unique_lprefix_lub {ls : HolLList α → Prop} {ll1 ll2 : HolLList α}
     (h1 : lprefixLub ls ll1) (h2 : lprefixLub ls ll2) : ll1 = ll2 :=
   lprefix_antisym (h1.2 ll2 h2.1) (h2.2 ll1 h1.1)
-
-/-- Converse of `lprefix_rep`: if `b` is defined wherever `a` is, then `a` is
-    an `lprefix` of `b`. -/
-theorem lprefix_of_rep_agree {a b : HolLList α}
-    (h : ∀ n x, a.rep n = some x → b.rep n = some x) : lprefix a b := by
-  unfold lprefix
-  cases ha : toList a with
-  | none =>
-      dsimp only
-      apply ext_of_rep
-      intro n
-      obtain ⟨x, hx⟩ := rep_some_of_toList_none ha n
-      rw [hx, h n x hx]
-  | some xs =>
-      dsimp only
-      cases hb : toList b with
-      | none =>
-          dsimp only
-          apply ltake_of_rep
-          intro i hi
-          have hai : a.rep i = some xs[i] := by
-            rw [toList_eq_some_rep ha i, dif_pos hi]
-          exact h i xs[i] hai
-      | some ys =>
-          dsimp only
-          have hlt : xs.length ≤ ys.length := Nat.le_of_not_lt fun hys => by
-            have hai : a.rep ys.length = some xs[ys.length] := by
-              rw [toList_eq_some_rep ha ys.length, dif_pos hys]
-            have hbi : b.rep ys.length = some xs[ys.length] := h _ _ hai
-            have hby : b.rep ys.length = none := by
-              rw [toList_eq_some_rep hb ys.length, dif_neg (Nat.lt_irrefl ys.length)]
-            rw [hby] at hbi
-            cases hbi
-          rw [List.prefix_iff_eq_take]
-          apply List.ext_getElem
-          · simp [List.length_take, Nat.min_eq_left hlt]
-          · intro j hj1 hj2
-            rw [List.getElem_take]
-            have haj : a.rep j = some xs[j] := by
-              rw [toList_eq_some_rep ha j, dif_pos hj1]
-            have hbj : b.rep j = some xs[j] := h j _ haj
-            have hby : b.rep j = some ys[j] := by
-              rw [toList_eq_some_rep hb j, dif_pos (Nat.lt_of_lt_of_le hj1 hlt)]
-            rw [hby] at hbj
-            exact (Option.some.inj hbj).symm
-
-/-- `lprefix` is transitive (HOL `LPREFIX_TRANS`, `llistScript.sml`).  Untagged
-    Flapjack support: `llistScript.sml` is not a pinned HOL source, so this is
-    not a claimed port; it follows from the representation characterisation
-    `lprefix_rep`/`lprefix_of_rep_agree`. -/
-theorem lprefix_trans {a b c : HolLList α} (hab : lprefix a b) (hbc : lprefix b c) :
-    lprefix a c :=
-  lprefix_of_rep_agree fun _ _ h => lprefix_rep hbc (lprefix_rep hab h)
 
 /-- Flapjack-only representation-level iteration lemma for `lunfoldStep`.
     HOL's result is about LNTH of LUNFOLD, not the internal step pair; the exact
@@ -423,61 +303,6 @@ def equivLprefixChain (ls1 ls2 : HolLList α → Prop) : Prop :=
 @[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "lprefix_rel_def"]
 def lprefixRel (s1 s2 : HolLList α → Prop) : Prop :=
   ∀ l1, s1 l1 → ∃ l2, s2 l2 ∧ lprefix l1 l2
-
-/-- HOL `prefixes_lprefix_total` (`llistScript.sml:2744-2746`): two lazy lists
-    that are both `lprefix`-below a common list are `lprefix`-comparable.  This
-    is the generic `llist` helper used by `lprefix_lub_is_chain`.  It carries no
-    `@[hol]` tag: its original lives in `llistScript.sml`, which is not the
-    pinned `lprefix_lubScript.sml` snapshot, so the external-path checker would
-    reject the citation; it is Flapjack infrastructure for this port. -/
-theorem lprefix_total_of_common {a b c : HolLList α} (ha : lprefix a c) (hb : lprefix b c) :
-    lprefix a b ∨ lprefix b a := by
-  by_cases hab : lprefix a b
-  · exact Or.inl hab
-  · right
-    have hnot : ¬ ∀ n x, a.rep n = some x → b.rep n = some x :=
-      fun hall => hab (lprefix_of_rep_agree hall)
-    obtain ⟨n, hnotn⟩ : ∃ n, ¬ ∀ x, a.rep n = some x → b.rep n = some x :=
-      Classical.not_forall.mp hnot
-    obtain ⟨x, hnotx⟩ : ∃ x, ¬ (a.rep n = some x → b.rep n = some x) :=
-      Classical.not_forall.mp hnotn
-    have han : a.rep n = some x := by
-      apply Classical.byContradiction
-      intro h
-      exact hnotx (fun h' => absurd h' h)
-    have hbn : b.rep n ≠ some x := by
-      intro h'
-      exact hnotx (fun _ => h')
-    have hbnone : b.rep n = none := by
-      cases hbn' : b.rep n with
-      | none => rfl
-      | some y =>
-          exfalso
-          have hcx : c.rep n = some x := lprefix_rep ha han
-          have hcy : c.rep n = some y := lprefix_rep hb hbn'
-          rw [hcx] at hcy
-          have hxy : x = y := Option.some.inj hcy
-          exact hbn (by rw [hbn', hxy])
-    apply lprefix_of_rep_agree
-    intro m y hbm
-    have hlt : m < n := by
-      apply Classical.byContradiction
-      intro hge
-      have hmn : n ≤ m := Nat.le_of_not_lt hge
-      have hnone := rep_none_of_le b hbnone hmn
-      rw [hbm] at hnone
-      exact absurd hnone (by simp)
-    have hcy : c.rep m = some y := lprefix_rep hb hbm
-    cases ham : a.rep m with
-    | none =>
-        have hnone := rep_none_of_le a ham (Nat.le_of_lt hlt)
-        rw [han] at hnone
-        exact absurd hnone (by simp)
-    | some w =>
-        have hcw : c.rep m = some w := lprefix_rep ha ham
-        rw [hcw] at hcy
-        have hwy : w = y := Option.some.inj hcy
-        rw [← hwy]
 
 /-- HOL `lprefix_lub_is_chain` (`lprefix_lubScript.sml:312-317`). -/
 @[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "lprefix_lub_is_chain"]
