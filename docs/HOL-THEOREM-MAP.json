@@ -29488,5 +29488,43 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack mutual/list induction factoring or literal list-predicate equivalence, no standalone HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocalEval.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack canonical finite-state roundtrip re-export; no standalone HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocalEval.lean",
+    "lean_name": "evalListFreshVar",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "OPT_MMAP_eval_fresh_var",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison2026-09-30 (.32.2): HOL1020-1045 retains state/list/name/value quantifiers, absence from FLAT(MAP var_exp es), and exact OPT_MMAP(eval) equality after one/two sequential local FUPDATEs. Two-update theorem has both original freshness conjuncts and no distinct-name premise. Exact MlS/ExpHOL/ValueHOL, lists, finite-state four maps with genuine canonical roundtrip witness, positive BitVec width/NeZero and universe0 FFI. Internally chosen memory-domain decisions are unchanged by locals updates and impose no premise. Existing broad exact list freshness proof is transported by explicit canonical-to-broad state equality; second result applies first twice. Proof-only; coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocalEval.lean",
+    "lean_name": "evalListTwoFreshVars",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "OPT_MMAP_eval_two_fresh_vars",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison2026-09-30 (.32.2): HOL1020-1045 retains state/list/name/value quantifiers, absence from FLAT(MAP var_exp es), and exact OPT_MMAP(eval) equality after one/two sequential local FUPDATEs. Two-update theorem has both original freshness conjuncts and no distinct-name premise. Exact MlS/ExpHOL/ValueHOL, lists, finite-state four maps with genuine canonical roundtrip witness, positive BitVec width/NeZero and universe0 FFI. Internally chosen memory-domain decisions are unchanged by locals updates and impose no premise. Existing broad exact list freshness proof is transported by explicit canonical-to-broad state equality; second result applies first twice. Proof-only; coordinator source review pending."
   }
 ]
