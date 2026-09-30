@@ -31725,14 +31725,6 @@
   "reviewer": "flapjack-luna-c source comparison2026-09-30 (.32.4): full evaluate_two_fresh_locals1087-1102. Original eight binders and two nonfree/source-run conjunction, existential locals, identical result/nonlocals and conditional good_res/non-Error ordered double FUPDATE retained. Full evaluateFreshLocalHOL applied twice exactly as HOL proof; no public IH, distinct-name premise, update commutation or extra evaluation hypothesis. Equal names preserve second-write priority. Canonical four state maps and genuine roundtrip, exact MlS/ProgHOL/ValueHOL positive width/NeZero/universe0 FFI. Proof-only, no executable change; coordinator acceptance pending; full fresh-local prerequisite accepted at c50ef83df."
 },
   {
-<<<<<<< HEAD
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "res_var_FEMPTY",
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationLocals.lean",
-    "lean_name": "resVarFEMPTYExact",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds10 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.32.6; documented_mismatch, tag withdrawn after coordinator review). HOL res_var_FEMPTY (pan_globalsProofScript.sml:1011-1015) has elaborated type res_var FEMPTY (n,NONE) = FEMPTY over the bare polymorphic finite-map carrier 'a |-> 'b; the Lean statement renders that carrier with HolFiniteMapExact (resVarEq/empty). No existing finite-map qualifier classifies a tagged theorem whose whole content is a single map equality: fmap_as_finite_support_result is limited to defs by its lookup-target witness rule and fmap_as_finite_support_equalities requires at least two top-level conjuncts. The @[hol] tag was withdrawn rather than left as reviewed_exact; faithful classification/extending the single-map-equality qualifier+witness checks is tracked by flapjack-pxn.18.5.2.32.6.1."
-=======
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/If.lean",
     "lean_name": "compileCorrect_If",
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
@@ -31763,6 +31755,13 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanGlobalsContextExact toBroad/ofBroad roundtrip; it supports PanGlobalsContextExact.globals named by the compile_correct If tag."
->>>>>>> origin/fleet-integration-post-1181-stack
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "res_var_FEMPTY",
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationLocals.lean",
+    "lean_name": "resVarFEMPTYExact",
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-ds10 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.32.6; documented_mismatch, tag withdrawn after coordinator review). HOL res_var_FEMPTY (pan_globalsProofScript.sml:1011-1015) has elaborated type res_var FEMPTY (n,NONE) = FEMPTY over the bare polymorphic finite-map carrier 'a |-> 'b; the Lean statement renders that carrier with HolFiniteMapExact (resVarEq/empty). No existing finite-map qualifier classifies a tagged theorem whose whole content is a single map equality: fmap_as_finite_support_result is limited to defs by its lookup-target witness rule and fmap_as_finite_support_equalities requires at least two top-level conjuncts. The @[hol] tag was withdrawn rather than left as reviewed_exact; faithful classification/extending the single-map-equality qualifier+witness checks is tracked by flapjack-pxn.18.5.2.32.6.1."
   }
 ]

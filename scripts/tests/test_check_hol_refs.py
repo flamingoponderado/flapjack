@@ -2784,6 +2784,28 @@ class FmapEqualityStrictnessTest(unittest.TestCase):
         errors = self._errors(declaration, lines)
         self.assertTrue(any("unconditional" in e for e in errors), errors)
 
+    def test_rejects_implicit_proof_binder_witness(self):
+        declaration = "theorem t :\n    HolFiniteMapExact.empty = a"
+        lines = [
+            declaration + " := by rfl",
+            "theorem holFmapAsFiniteSupportEqualityWitness_t {h : False} (k : Nat) :",
+            "    (HolFiniteMapExact.empty).lookup k = a.lookup k := by",
+            "  cases h",
+        ]
+        errors = self._errors(declaration, lines)
+        self.assertTrue(any("unconditional" in e for e in errors), errors)
+
+    def test_rejects_instance_bracket_witness(self):
+        declaration = "theorem t :\n    HolFiniteMapExact.empty = a"
+        lines = [
+            declaration + " := by rfl",
+            "theorem holFmapAsFiniteSupportEqualityWitness_t [h : False] (k : Nat) :",
+            "    (HolFiniteMapExact.empty).lookup k = a.lookup k := by",
+            "  cases h",
+        ]
+        errors = self._errors(declaration, lines)
+        self.assertTrue(any("unconditional" in e for e in errors), errors)
+
     def test_accepts_data_binder_witness(self):
         declaration = "theorem t :\n    HolFiniteMapExact.empty = a"
         lines = [

@@ -2220,28 +2220,49 @@ def _statements_of_declaration(source: str, name: str) -> list[str]:
 
 
 def _binder_types(binder_zone: str) -> list[str]:
-    """Return the declared type text of each top-level `(name : type)` binder."""
+    """Return the declared type text of each top-level binder.
+
+    Recognizes round `(name : type)`, curly `{name : type}` and square
+    `[name : type]` delimiters, with balanced nesting. Binders without a `:`
+    (for example instance braces `{α}`) contribute no type text. This is a
+    syntactic scan of the source slice, not full Lean elaboration: a binder
+    whose declared type is a named `Prop` alias or a predicate application is
+    returned verbatim as its source text and may not be recognized as a proof
+    premise by `_is_proof_premise_type`.
+    """
     types: list[str] = []
-    depth = 0
+    closer = {"(": ")", "{": "}", "[": "]"}
+    stack: list[str] = []
     start = -1
     for i, ch in enumerate(binder_zone):
-        if ch == "(":
-            if depth == 0:
+        if ch in closer:
+            if not stack:
                 start = i + 1
-            depth += 1
-        elif ch == ")":
-            depth -= 1
-            if depth == 0 and start >= 0:
-                inner = binder_zone[start:i]
-                colon = _last_top_level_colon(inner)
-                if colon >= 0:
-                    types.append(inner[colon + 1:].strip())
-                start = -1
+            stack.append(ch)
+        elif ch in (")", "}", "]"):
+            if stack and closer[stack[-1]] == ch:
+                stack.pop()
+                if not stack and start >= 0:
+                    inner = binder_zone[start:i]
+                    colon = _last_top_level_colon(inner)
+                    if colon >= 0:
+                        types.append(inner[colon + 1:].strip())
+                    start = -1
     return types
 
 
 def _is_proof_premise_type(type_text: str) -> bool:
-    """Heuristically decide whether a binder type is a proposition (proof premise)."""
+    """Heuristically decide whether a binder type textually looks like a proof.
+
+    This is a SYNTACTIC heuristic over source text, not an elaborated
+    `Meta.isProp` test. It flags the literals `False`/`True` and any type text
+    containing an arrow, iff, negation or equality. Consequences the callers
+    must document: it can MISS proof premises written as a named `Prop` alias or
+    as a predicate application (e.g. `(h : myProp x)`), and it can OVER-match
+    legitimate data-level function types such as `(f : \u03b1 \u2192 \u03b2)`.
+    Therefore passing this check is not a proof that the witness is
+    unconditional; manual source review of the witness remains mandatory.
+    """
     text = type_text.strip()
     if text in {"False", "True"}:
         return True
@@ -2465,7 +2486,14 @@ def fmap_as_finite_support_equality_errors(
     The checks are syntactic: they validate shape, naming, same-key
     application, a universally bound key, and side association, but they do NOT
     prove that the Lean witness corresponds to the HOL map equality.  Source
-    review must compare the witness against the HOL equality.
+    review must compare the witness against the HOL equality.  The
+    unconditional-binder rejection is likewise syntactic: `_binder_types`
+    recognizes `(...)`, `{...}` and `[...]` delimiters, and
+    `_is_proof_premise_type` flags only literal `False`/`True` and type text
+    containing an arrow, iff, negation or equality.  It can therefore MISS a
+    proof premise written as a named `Prop` alias or predicate application, and
+    can OVER-match a legitimate data-level function binder.  Passing this gate
+    is not a proof of unconditionality; manual review is mandatory.
     """
     errors: list[str] = []
     if "HolFiniteMapExact" not in declaration_text:
