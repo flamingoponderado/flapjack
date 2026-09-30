@@ -36885,5 +36885,14 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-specific commutation bridge: the shared-memory read sh_mem_load_def is unchanged by the fpermCodeHOL code update, since it inspects only the shared-memory domain and the FFI and every branch preserves the input code field. No independent HOL declaration; HOL argues this inline (pan_globalsProofScript.sml:1798-1804)."
+},
+{
+  "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
+  "hol_name": "compile_prog_def",
+  "lean_path": "Flapjack/Pancake/PanToCrep/CompileExact.lean",
+  "lean_name": "compileProgDeclsHOLW",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol source comparison (2026-09-30, bead flapjack-4ac.2.20.2.2; pan_to_crepScript.sml:393-397): sole List (DeclHOL width) input and ordered List (MlS x List Nat x CrepProgHOL width) output, no hypotheses. HOL extracts MAP FST (functions (FILTER inlinable prog)), then compile_to_crep prog, then compile_inl_top with those two arguments. Lean uses exactly reviewed inlinableHOL/functionsHOL/compileToCrepExactHOLW/CrepInlineCanonical.compileInlTopHOLExact in the same order. The canonical wrapper uses first-binding alist lookup and DOMSUB per function, and its unconditional compileInlTopHOLExact_eq_compileInlProgHOLExact theorem removes the computational support certificate to identify the source-shaped compile_inl_prog/inline_prog composition. The finite maps are local intermediates, so no map qualifier applies to this signature. Positive type-indexed HOL words translate to BitVec width with NeZero width. Existing exact DeclHOL kernel oracle replays cover empty, inline call, duplicate-first and nested inline cases in CompileProgParity. No executed production route or performance exception is claimed: production carrier/inline replacement remains on 4ac.2.20.3/e7w.2 and the direct-oracle/production bridge child4ac.2.20.2.1 stays open."
 }
 ]
