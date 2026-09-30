@@ -160,6 +160,10 @@ run_probe stacksem_sh_mem_op_probeScript.sml stacksem_sh_mem_op_probe.out \
 run_probe stacksem_ffi_probeScript.sml stacksem_ffi_probe.out \
   ffi_return ffi_final ffi_read_failure ffi_non_word_length \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe stacksem_install_probeScript.sml stacksem_install_probe.out \
+  install_success install_bytes_mismatch install_progs_empty install_compile_none \
+  install_use_stack_false install_non_word_operand \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe stacksem_expression_probeScript.sml stacksem_expression_probe.out \
   const var_word var_loc var_missing lookup_word lookup_loc lookup_missing load_word load_loc load_oob load_bad_address op_empty_and op_add_wrap op_sub_bad_arity op_bad_operand shift_valid shift_oob shift_bad_right assign_success assign_failure \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"

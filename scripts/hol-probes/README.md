@@ -1568,6 +1568,33 @@ reuses the tagged `mem_load_byte_aux_def`, `write_bytearray_def`,
 `read_bytearray_def` and `call_FFI_def` ports, and assembled full evaluation
 remains on y19g.
 
+`stacksem_install_probeScript.sml` records six direct original
+`stackSem$evaluate` observations for the `Install` clause
+(`stackSemScript.sml:893-921`) at 8-bit words with a `num` compiler
+configuration and a `num` oracle state. Both the compiler and the compiler
+oracle are concrete closures so HOL EVAL reduces the clause: the oracle at step
+`n` returns `(n, [(3,Skip)], [0xAA;0xBB])` and the compiler returns
+`([0x11;0x22], cfg+1)`, with the code buffer holding `[0x11;0x22]` and the data
+buffer holding `[0xAA;0xBB]` at position 0 and the operand registers `1..4`
+holding `0w`, `2w`, `0w`, `2w`. `ffi_save_regs = {1; 5}` and `code` holds key 7.
+The rows cover a successful install with `use_stack = T` (the appended bitmap,
+the code union of keys 3 and 7, the `DRESTRICT` register restriction followed by
+the `FUPDATE` at register 1, the emptied `fp_regs`, both `buffer_flush`
+positions, and the advanced `shift_seq` oracle), a compiler byte mismatch
+(`SOME Error`, state unchanged), an empty `progs` list (`SOME Error`), a compiler
+`NONE` (`SOME Error`), the `use_stack = F` arm (the oracle bitmap satisfies the
+data equality and the data buffer is left unflushed), and a non-`Word` first
+operand (`SOME Error`). The probe rewrites `FLOOKUP` through
+`FLOOKUP_UPDATE`/`FLOOKUP_DRESTRICT` because the register update is
+non-computational. Kernel replay of all six rows lives in
+`Flapjack/Test/StackSemInstallParity.lean`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_install_probeScript.sml
+scripts/hol-probes/regenerate.sh`. The `evaluateInstall` fragment is untagged,
+it reuses the tagged `buffer_flush_def` and `shift_seq_def` ports and the
+untagged `sptUnion`/`sptFromAList` renderings, and assembled full evaluation
+remains on y19g.
+
 `pan_globals_fperm_code_probeScript.sml` observes the original
 `pan_globalsProof$fperm_code` finite map using its proved
 `FLOOKUP_fperm_code'` rewrite followed by HOL EVAL (plain EVAL leaves
