@@ -398,8 +398,9 @@ or reachable through its imports and that field's type must be the reviewed
 canonical `HolFiniteMapExact` translation (a raw `α → Option β` map is
 ineligible). The tagged declaration must name every entry carrier. The qualifier
 covers only the listed maps (and their HOL vs Lean representation); a bare
-entry (a name without a dot) records a standalone finite-map parameter of the
-tagged declaration, which must bind that name at the reviewed canonical
+entry (a name without a dot) records a standalone finite-map binder of the
+tagged declaration, including a universally quantified binder inside an induction
+hypothesis. The declaration must bind that name at the reviewed canonical
 `HolFiniteMapExact` translation and needs no carrier witness, while a
 `Carrier.field` entry must name one field of one carrier that is declared in the
 module or reachable through its imports with a `HolFiniteMapExact` field. The
@@ -413,6 +414,10 @@ qualifier is mutually exclusive with `fmap_as_finite_support` and
 `fmap_as_finite_support_result`, cannot use `reviewed_exact`, and requires
 manifest status `reviewed_fmap_as_finite_support_relation` with a
 source-comparison note after the reviewer compares each HOL conjunct.
+
+Unused HOL binders may be retained or omitted only when source review confirms
+that they are vacuous for the particular statement or case. Document any omission
+beside the declaration; never drop a guard, hypothesis, or conclusion dependency.
 
 **Combine multi-carrier relation and word translation.** When a HOL relation
 must be represented both through the canonical finite-support map translation
