@@ -37016,5 +37016,28 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack helper (bead .42.3) for HOL Resume inline_prog_correct[Nontail] (crep_inlineProofScript.sml:2719-3037): the inlined assign-call part of the Call case, with evaluate_ind's Call body IH at crepInlineGoal (as callNonInlined/callTail), over exact carriers; no extra premise (the path conditions ALL_DISTINCT rets and FLOOKUP inl_bag fname = SOME (ns, body) are HOL's own case split, discharged in .42.4). Proof follows HOL's lemma sequence. Untagged; the tagged Call case is assembled in .42.4."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/Assembly.lean",
+  "lean_name": "evaluateFpermHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_fperm",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison for22.5.18: original evaluate_fperm1721-1810 arbitrary f/g/program/state/result/post, sole source-run premise and exact full result/post-code-permutation equality. Same faithful total evaluator and native ProgHOL/MlS/ValueHOL; positive BitVec width and Type0 FFI translation; canonical four finite maps with same-module checked roundtrip witness. All21 evaluate_ind cases assembled internally from accepted constructor proofs, including both While backedges, guarded callees, Call handler and DecCall continuation. Literal induction tuple decompositions only; no public IH/success/nonError/target-run/post-relation premise. Proof-only change; coordinator acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/Assembly.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only canonical state representation roundtrip infrastructure; no independent HOL original."
 }
 ]
