@@ -31239,5 +31239,28 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-only canonical state/context roundtrip and paired local-update algebra supporting the genuine Assign Local case; no separate HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/CallNoHandler.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack canonical finite-state roundtrip re-export; no standalone HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/CallNoHandler.lean",
+  "lean_name": "evaluateUnchangedLocal_CallNoHandler",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_unchanged_local",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-c source comparison2026-09-30 (.32.5.5): genuine non-tail Call SOME(target,NONE) case of evaluate_unchanged_local1104-1137; original nonfree/run/good_res/non-Error premises and unused value binder retained, exact lookup equality conclusion. panSem657-702 callee args/lookup/clock/return/error/exception clauses literal. Original good_res/non-Error excludes every result except successful normal non-tail return. Caller locals restored; local destination inequality derived from free_var_ids, update lookup preserves fresh key; global destination preserves locals. No callee IH, extra premise or executable change. Canonical four finite maps/roundtrip, exact MlS and positive width indexed carriers/universe0 FFI. Coordinator review pending; full parent still open."
 }
 ]
