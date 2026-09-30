@@ -12,8 +12,8 @@ theorem holFmapAsFiniteSupportRelationWitness_CrepSemHOLState
   CrepSemHOLState.holFmapAsFiniteSupportWitness
 end StructuralLocalsSupport
 
-/-- HOL Seq constructor case; the only added premises are the two
-subprogram induction hypotheses for the same domain-preservation statement. -/
+/-- HOL Seq case with the original fixed-state first IH and continuation IH
+guarded by the source first run and NONE result. -/
 @[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "evaluate_locals_same_fdom"
   (fmap_as_finite_support_relation :=
     [CrepSemHOLState.locals, CrepSemHOLState.globals, CrepSemHOLState.code])
@@ -21,14 +21,16 @@ subprogram induction hypotheses for the same domain-preservation statement. -/
 theorem evaluateLocalsSameFdomSeqExact {width : Nat} [NeZero width] {σ : Type}
     (s s' : CrepSemHOLState width σ) (r : Option (CrepResultHOLExact width))
     (first second : CrepProgHOL width)
-    (ihFirst : ∀ (u t : CrepSemHOLState width σ) (r : Option (CrepResultHOLExact width)),
-      evalCrepSemHOLProgExact u first = (r,t) →
+    (ihFirst : ∀ (t : CrepSemHOLState width σ) (r : Option (CrepResultHOLExact width)),
+      evalCrepSemHOLProgExact s first = (r,t) →
       (match (generalizing := false) r with
       | none => True
       | some (.break _) => True
       | some (.continue _) => True
-      | _ => False) → crepHolFdom u.locals.lookup = crepHolFdom t.locals.lookup)
-    (ihSecond : ∀ (u t : CrepSemHOLState width σ) (r : Option (CrepResultHOLExact width)),
+      | _ => False) → crepHolFdom s.locals.lookup = crepHolFdom t.locals.lookup)
+    (ihSecond : ∀ (r1 : Option (CrepResultHOLExact width)) (u : CrepSemHOLState width σ),
+      (r1,u) = evalCrepSemHOLProgExact s first → r1 = none →
+      ∀ (t : CrepSemHOLState width σ) (r : Option (CrepResultHOLExact width)),
       evalCrepSemHOLProgExact u second = (r,t) →
       (match (generalizing := false) r with
       | none => True
@@ -50,15 +52,16 @@ theorem evaluateLocalsSameFdomSeqExact {width : Nat} [NeZero width] {σ : Type}
       split at heval
       · rename_i hn
         subst res
-        exact (ihFirst s t none hfirst True.intro).trans
-          (ihSecond t s' r heval hresult)
+        exact (ihFirst t none hfirst True.intro).trans
+          (ihSecond none t hfirst.symm rfl s' r heval hresult)
       · obtain ⟨hr,ht⟩ := Prod.ext_iff.mp heval
         simp only at hr ht
         subst r
         subst s'
-        exact ihFirst s t res hfirst hresult
+        exact ihFirst t res hfirst hresult
 
-/-- HOL If constructor case; retain both branch induction hypotheses. -/
+/-- HOL If case with its single original guarded selected-branch IH at the
+fixed source state, rather than hypotheses generalized over arbitrary states. -/
 @[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "evaluate_locals_same_fdom"
   (fmap_as_finite_support_relation :=
     [CrepSemHOLState.locals, CrepSemHOLState.globals, CrepSemHOLState.code])
@@ -66,20 +69,15 @@ theorem evaluateLocalsSameFdomSeqExact {width : Nat} [NeZero width] {σ : Type}
 theorem evaluateLocalsSameFdomIfExact {width : Nat} [NeZero width] {σ : Type}
     (s s' : CrepSemHOLState width σ) (r : Option (CrepResultHOLExact width))
     (condition : CrepExpHOL width) (yes no : CrepProgHOL width)
-    (ihYes : ∀ (u t : CrepSemHOLState width σ) (r : Option (CrepResultHOLExact width)),
-      evalCrepSemHOLProgExact u yes = (r,t) →
+    (ih : ∀ (value : HolWordLab width) (w : BitVec width),
+      crepExactEvalExpClassical s condition = some value → value = .word w →
+      ∀ (t : CrepSemHOLState width σ) (r : Option (CrepResultHOLExact width)),
+      evalCrepSemHOLProgExact s (if w ≠ 0 then yes else no) = (r,t) →
       (match (generalizing := false) r with
       | none => True
       | some (.break _) => True
       | some (.continue _) => True
-      | _ => False) → crepHolFdom u.locals.lookup = crepHolFdom t.locals.lookup)
-    (ihNo : ∀ (u t : CrepSemHOLState width σ) (r : Option (CrepResultHOLExact width)),
-      evalCrepSemHOLProgExact u no = (r,t) →
-      (match (generalizing := false) r with
-      | none => True
-      | some (.break _) => True
-      | some (.continue _) => True
-      | _ => False) → crepHolFdom u.locals.lookup = crepHolFdom t.locals.lookup)
+      | _ => False) → crepHolFdom s.locals.lookup = crepHolFdom t.locals.lookup)
     (heval : evalCrepSemHOLProgExact s (.ite condition yes no) = (r,s'))
     (hresult : match (generalizing := false) r with
       | none => True
@@ -88,14 +86,20 @@ theorem evaluateLocalsSameFdomIfExact {width : Nat} [NeZero width] {σ : Type}
       | _ => False) :
     crepHolFdom s.locals.lookup = crepHolFdom s'.locals.lookup := by
   rw [evalCrepSemHOLProgExact_ite_holShape] at heval
-  split at heval
-  · split at heval
-    · exact ihYes s s' r heval hresult
-    · exact ihNo s s' r heval hresult
-  · have hs := congrArg Prod.snd heval
-    simp only at hs
-    subst s'
-    rfl
+  cases hv : evalCrepSemHOLExp s condition with
+  | none =>
+      rw [hv] at heval
+      have hs := congrArg Prod.snd heval
+      simp only at hs
+      subst s'
+      rfl
+  | some value =>
+      cases value with
+      | word w =>
+          rw [hv] at heval
+          have hcl : crepExactEvalExpClassical s condition = some (.word w) := by
+            simpa only [crepExactEvalExpClassical_eq, crepExactEvalExp_eq_eval] using hv
+          exact ih (.word w) w hcl rfl s' r heval hresult
 
 /-- HOL Dec constructor case: the body IH fixes the updated domain;
 restoring the scoped key restores its original membership. -/
@@ -106,13 +110,14 @@ restoring the scoped key restores its original membership. -/
 theorem evaluateLocalsSameFdomDecExact {width : Nat} [NeZero width] {σ : Type}
     (s s' : CrepSemHOLState width σ) (r : Option (CrepResultHOLExact width))
     (name : Nat) (value : CrepExpHOL width) (body : CrepProgHOL width)
-    (ihBody : ∀ (u t : CrepSemHOLState width σ) (r : Option (CrepResultHOLExact width)),
-      evalCrepSemHOLProgExact u body = (r,t) →
+    (ihBody : ∀ val, crepExactEvalExpClassical s value = some val →
+      ∀ (t : CrepSemHOLState width σ) (r : Option (CrepResultHOLExact width)),
+      evalCrepSemHOLProgExact (CrepSemHOLState.setVar name val s) body = (r,t) →
       (match (generalizing := false) r with
       | none => True
       | some (.break _) => True
       | some (.continue _) => True
-      | _ => False) → crepHolFdom u.locals.lookup = crepHolFdom t.locals.lookup)
+      | _ => False) → crepHolFdom (CrepSemHOLState.setVar name val s).locals.lookup = crepHolFdom t.locals.lookup)
     (heval : evalCrepSemHOLProgExact s (.dec name value body) = (r,s'))
     (hresult : match (generalizing := false) r with
       | none => True
@@ -141,7 +146,10 @@ theorem evaluateLocalsSameFdomDecExact {width : Nat} [NeZero width] {σ : Type}
           simp only at hr ht
           subst r
           subst s'
-          have hd := ihBody u t res hb hresult
+          have hcl : crepExactEvalExpClassical s value = some val := by
+            simpa only [crepExactEvalExpClassical_eq, crepExactEvalExp_eq_eval] using hv
+          have hd : crepHolFdom u.locals.lookup = crepHolFdom t.locals.lookup :=
+            ihBody val hcl t res hb hresult
           funext key
           have hk := congrFun hd key
           by_cases heq : key = name
