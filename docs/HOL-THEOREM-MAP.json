@@ -30206,5 +30206,45 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.2.29.1): EVERY is_wf_shape_nil equals the list well-formedness helper; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/ShMemLoadLemmas.lean",
+    "lean_name": "vNeqV'",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "v_neq_v'",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.2.30.1) compared pan_globalsProofScript.sml:737-742 (local): v <> v ^ «'» over the exact MlS (mlstring) carrier, ^ as the untagged mlstrAppend (implode of appended explodes, as used by the tagged fresh_name_def port) and «'» as ofString \"'\"; same free variable. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/ShMemLoadLemmas.lean",
+    "lean_name": "flookupGlobalsValStateRelHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "FLOOKUP_globals_val_state_rel",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.2.30.1) compared pan_globalsProofScript.sml:744-755: FLOOKUP s.globals nm = SOME (Val v) /\\ state_rel b ctxt s t ==> exists addr_diff. FLOOKUP ctxt.globals nm = SOME (shape_of (Val v), addr_diff) /\\ mem_load (shape_of (Val v)) (t.top_addr - addr_diff) t.memaddrs t.memory [] = SOME (Val v) /\\ DISJOINT s.memaddrs (addresses ...) /\\ byte_aligned addr_diff; same free variables (flag b arbitrary), DISJOINT as forall x. s.memaddrs x ==> ~addresses .. x (state_rel's rendering), byte_aligned as the reviewed panGlobalsByteAlignedHOL, classical t.memaddrs decision inside the statement. Exact tagged panGlobalsStateRelHOLExact/memLoadHOLExact/shapeOfHOLExact; canonical finite state/context witnesses; positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/ShMemLoadLemmas.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanSemStateFiniteExact toExact/ofExact finite-support roundtrip; it supports the fields named by the FLOOKUP_globals_val_state_rel tag."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/ShMemLoadLemmas.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanGlobalsContextExact toBroad/ofBroad roundtrip; it supports PanGlobalsContextExact.globals named by the FLOOKUP_globals_val_state_rel tag."
   }
 ]
