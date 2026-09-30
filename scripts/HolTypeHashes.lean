@@ -1,11 +1,14 @@
-import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Leaves
+import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.ResVar
+import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Assign
+import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Memory
 import Flapjack.Pancake.Proofs.PanGlobals.ReadBytearray
-import Flapjack.Compiler.Backend.StackProps.ProgramValidity
-import Flapjack.Compiler.Backend.StackProps.ProgramNames
-import Flapjack.Compiler.Backend.StackProps.AllocArg
+import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Leaves
 import Flapjack.Pancake.Proofs.PanGlobals.MemoryLookup
 import Flapjack.Pancake.Proofs.PanGlobals.MemorySwap
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelationCode
+import Flapjack.Compiler.Backend.StackProps.ProgramValidity
+import Flapjack.Compiler.Backend.StackProps.ProgramNames
+import Flapjack.Compiler.Backend.StackProps.AllocArg
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelationFfi
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelationClock
 import Flapjack.Pancake.Proofs.PanGlobals.CompileExpLeaves
@@ -26,6 +29,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.ShapeValueEval
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocalEval
 import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.If
 import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.Seq
+import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.Dec
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelationLocals
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsShape
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsDisjoint
