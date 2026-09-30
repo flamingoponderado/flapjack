@@ -2479,3 +2479,6 @@ run_probe pan_word_of_bytes_overlong_probeScript.sml pan_word_of_bytes_overlong_
   w1_overlong_three w7_overlong_three w7_first_byte_truncates done \
   "$hol_dir/src/n-bit/byteScript.sml" \
   "$hol_dir/src/n-bit"
+
+run_probe stack_props_fixed_names_probeScript.sml stack_props_fixed_names_probe.out \
+  x86_good x86_empty x86_bad_zero riscv_empty "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
