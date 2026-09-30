@@ -24,6 +24,8 @@ class ExternalHolSourcesTest(unittest.TestCase):
         base = root / "hol4"
         (base / "src/finite_maps").mkdir(parents=True)
         (base / "src/n-bit").mkdir(parents=True)
+        (base / "src/coalgebras").mkdir(parents=True)
+        (base / "src/coretypes").mkdir(parents=True)
         (base / "examples/pl-semantics/lprefix_lub").mkdir(parents=True)
         (base / "COPYRIGHT").write_text("retained license")
         (base / "src/finite_maps/sptreeScript.sml").write_text("Theorem domain_union: T Proof simp[] QED")
@@ -31,6 +33,10 @@ class ExternalHolSourcesTest(unittest.TestCase):
             "Theorem IMP_build_lprefix_lub_EQ: T Proof simp[] QED")
         (base / "src/n-bit/fcpScript.sml").write_text(
             "Definition dimindex_def: dimindex = 1 End")
+        (base / "src/coalgebras/llistScript.sml").write_text(
+            "Theorem LPREFIX_TRANS: T Proof simp[] QED")
+        (base / "src/coretypes/optionScript.sml").write_text(
+            'val some_def = new_definition("some_def", ``some P = NONE``);')
         lock = {"repository": CHECKER["EXTERNAL_HOL_REPOSITORY"], "commit": "a" * 40,
                 "files": {p: hashlib.sha256((base / p).read_bytes()).hexdigest()
                           for p in sorted(CHECKER["EXTERNAL_HOL_FILES"])}}
@@ -42,6 +48,25 @@ class ExternalHolSourcesTest(unittest.TestCase):
             CHECKER["hol_source_error"](CHECKER["ROOT"], CHECKER["EXTERNAL_HOL_LPREFIX_LUB_PATH"]))
         self.assertIsNone(
             CHECKER["hol_source_error"](CHECKER["ROOT"], CHECKER["EXTERNAL_HOL_FCP_PATH"]))
+        self.assertIsNone(
+            CHECKER["hol_source_error"](CHECKER["ROOT"], CHECKER["EXTERNAL_HOL_LLIST_PATH"]))
+
+    def test_option_source_and_old_style_declaration(self):
+        path = CHECKER["EXTERNAL_HOL_OPTION_PATH"]
+        self.assertIsNone(CHECKER["hol_source_error"](CHECKER["ROOT"], path))
+        self.assertIsNone(REF_ERROR(CHECKER["ROOT"] / path, "some_def", 794, {}))
+
+    def test_missing_option_pin_rejected(self):
+        import json
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.fixture(root)
+            manifest = root / "hol4/SOURCES.json"
+            lock = json.loads(manifest.read_text())
+            del lock["files"]["src/coretypes/optionScript.sml"]
+            manifest.write_text(json.dumps(lock))
+            self.assertIsNotNone(CHECKER["hol_source_error"](
+                root, CHECKER["EXTERNAL_HOL_OPTION_PATH"]))
 
     def test_upstream_identity_rejected(self):
         import json
@@ -85,10 +110,33 @@ class ExternalHolSourcesTest(unittest.TestCase):
             self.assertIsNotNone(
                 CHECKER["hol_source_error"](root, CHECKER["EXTERNAL_HOL_FCP_PATH"]))
 
+    def test_missing_llist_pin_rejected(self):
+        import json
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.fixture(root)
+            manifest = root / "hol4/SOURCES.json"
+            lock = json.loads(manifest.read_text())
+            del lock["files"]["src/coalgebras/llistScript.sml"]
+            manifest.write_text(json.dumps(lock))
+            self.assertIsNotNone(
+                CHECKER["hol_source_error"](root, CHECKER["EXTERNAL_HOL_LLIST_PATH"]))
+
+    def test_valid_llist_pin(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.fixture(root)
+            self.assertIsNone(
+                CHECKER["hol_source_error"](root, CHECKER["EXTERNAL_HOL_LLIST_PATH"]))
+            self.assertIsNotNone(CHECKER["hol_source_error"](
+                root, "hol4/src/coalgebras/otherScript.sml"))
+
     def test_source_and_license_drift_rejected(self):
         for relative in ["COPYRIGHT", "src/finite_maps/sptreeScript.sml",
                          "examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
-                         "src/n-bit/fcpScript.sml"]:
+                         "src/n-bit/fcpScript.sml",
+                         "src/coalgebras/llistScript.sml",
+                         "src/coretypes/optionScript.sml"]:
             with self.subTest(relative=relative), tempfile.TemporaryDirectory() as tmp:
                 root = Path(tmp)
                 self.fixture(root)
