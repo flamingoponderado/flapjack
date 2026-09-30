@@ -35254,5 +35254,28 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-sol (bead30) source compared original pan_globalsProof Resume compile_correct[ShMemLoad]757-838 and evaluate_ind: arbitrary operator/varkind/name/address and source state; exactly original universal result/context/target/sourcepost binders, input state_rel true, faithful source evaluation and nonError, existential faithful compiled evaluation with same result and complete state_rel goodRes. This nonrecursive constructor has no child program IH. Exhaustive original Local/Global split directly applies source-reviewed accepted local/global cases; neither branch adds a premise. Canonical state locals/globals/code/eshapes and context globals maps plus positive-width words/Type0 FFI only, existing same-module canonical roundtrip witnesses retained. Full ShMemStore already accepted unchanged. Coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/Primitive.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific same-module canonical state roundtrip reexport for the relation's four map fields; no independent HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/Primitive.lean",
+  "lean_name": "evaluateFperm_Primitive",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_fperm",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison evaluate_fperm pan_globalsProof1721-1810 Primitive case and panSem574-584: original f/g/name/operator/arguments/state/res/post and sole source-run premise, full target evaluation and unchanged result/code-permuted post retained. Original OPT_MMAP expression evaluation, pan_primop and local validity/write clauses preserved including all failures. Unconditional list invariance by original recursive evalListHOLExact, pointwise accepted eval_upd_code_eta, independent of source-run hypothesis; operator unaffected by code; local lookup/write commute with code update. Exact native MlS/PrimOp/ExpHOL/ProgHOL/value/result carriers with canonical state four finite maps and positive-width word translation, local unconditional roundtrip witness. No extra successful list/operator/validity/target premise. Genuine constructor slice only; full theorem open, proof-only executable behavior unchanged."
 }
 ]
