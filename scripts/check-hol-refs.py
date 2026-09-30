@@ -203,6 +203,14 @@ DECL_RE = re.compile(
     r"(?:theorem|lemma|def|abbrev|instance|inductive|structure|class|opaque|axiom)\s+"
     r"([^\s:({\[]+)"
 )
+# HOL declarations are recognized in two forms: the standard header keywords
+# below (`Theorem`, `Definition`, ...) and ML `val NAME = ...` bindings.  A
+# theorem-valued binding such as `val llist_shorter_lnth = Q.prove (...)` is a
+# proved result whose name may legitimately be cited from `@[hol]`, so
+# `hol_declaration_lines` registers `val NAME =` lines too.  A quoted proof
+# goal or other non-theorem ML value (e.g. `gen_goal`, `goal`) is not a
+# declaration; a reference to it is rejected, and its Lean counterpart must stay
+# untagged with a declaration-local note.
 HOL_HEADER_KEYWORDS = (
     "Theorem",
     "Triviality",

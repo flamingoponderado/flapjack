@@ -2,6 +2,7 @@
 
 import os
 import runpy
+import shutil
 import tempfile
 import unittest
 import contextlib
@@ -3044,6 +3045,58 @@ class FmapEqualityStrictnessTest(unittest.TestCase):
             "    (HolFiniteMapExact.empty).lookup k = a.lookup k := rfl",
         ]
         self.assertEqual(self._errors(declaration, lines), [])
+
+
+class HolMlBindingClassificationTest(unittest.TestCase):
+    """Header declarations and ML ``val NAME =`` bindings, versus goal terms."""
+
+    def _fixture(self, text):
+        root = Path(tempfile.mkdtemp())
+        self.addCleanup(lambda: shutil.rmtree(root, ignore_errors=True))
+        path = root / "FixtureScript.sml"
+        path.write_text(text)
+        return path, {}
+
+    def test_theorem_valued_qprove_binding_is_a_declaration(self):
+        path, cache = self._fixture(
+            "val llist_shorter_lnth = Q.prove (\n"
+            "  ``!ll1 ll2. T``,\n"
+            "  simp[]);\n"
+        )
+        self.assertIsNone(REF_ERROR(path, "llist_shorter_lnth", None, cache))
+        self.assertIsNone(REF_ERROR(path, "llist_shorter_lnth", 1, cache))
+
+    def test_val_binding_does_not_register_quoted_goal_names(self):
+        path, cache = self._fixture(
+            "val proved_lemma = Q.prove (``!x. x = x``, simp[]);\n"
+        )
+        self.assertIsNone(REF_ERROR(path, "proved_lemma", None, cache))
+        self.assertEqual(
+            REF_ERROR(path, "goal", None, cache), "declares no `goal`"
+        )
+
+    def test_quoted_goal_term_without_binding_is_rejected(self):
+        path, cache = self._fixture("val shared = build_goal goal names;\n")
+        self.assertEqual(
+            REF_ERROR(path, "goal", None, cache), "declares no `goal`"
+        )
+
+    def test_header_keyword_declaration_resolves(self):
+        path, cache = self._fixture("Theorem LPREFIX_TRANS:\n  T\nProof simp[] QED\n")
+        self.assertIsNone(REF_ERROR(path, "LPREFIX_TRANS", None, cache))
+
+    def test_unknown_name_rejected(self):
+        path, cache = self._fixture("Theorem Known:\n  T\nProof simp[] QED\n")
+        self.assertEqual(REF_ERROR(path, "Missing", None, cache), "declares no `Missing`")
+
+    def test_wrong_source_line_rejected(self):
+        path, cache = self._fixture(
+            "val proved_lemma = Q.prove (``T``, simp[]);\n"
+        )
+        self.assertEqual(
+            REF_ERROR(path, "proved_lemma", 2, cache),
+            "declares `proved_lemma` at [1], not at line 2",
+        )
 
 
 if __name__ == "__main__":

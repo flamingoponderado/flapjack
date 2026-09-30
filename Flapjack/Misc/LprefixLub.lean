@@ -198,7 +198,15 @@ theorem buildLprefixLubF_step {ls : HolLList α → Prop} (hchain : lprefixChain
 
 /-- HOL `build_lprefix_lub_lem` (`lprefix_lubScript.sml:440-445`) in full:
     `∀ m n, lnth n (lunfold (buildLprefixLubF ls) m) = lprefixChainNth (m+n) ls`
-    on a chain. -/
+    on a chain.
+
+    The HOL original is an ML `val build_lprefix_lub_lem = Q.prove (...)`
+    binding: an ML-let bound theorem value, not a `Theorem`/`Definition`
+    header.  `scripts/check-hol-refs.py` registers such `val NAME =` bindings
+    as declarations (in addition to the header keywords), so citing it from
+    `@[hol]` is legitimate.  A quoted proof goal or other non-theorem ML value
+    (`gen_goal`, `goal`) is not a declaration and its Lean counterpart must
+    stay untagged. -/
 @[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "build_lprefix_lub_lem"]
 theorem lnth_buildLprefixLub_full {ls : HolLList α → Prop} (hchain : lprefixChain ls)
     (m n : Nat) :
@@ -373,7 +381,12 @@ theorem llistShorter_fromList (l1 l2 : List α) :
   simp [llistShorter, llength_fromList]
 
 /-- HOL `llist_shorter_lnth` (`lprefix_lubScript.sml:131-161`): `ll1` is no
-    longer than `ll2` exactly when `ll2` is defined wherever `ll1` is. -/
+    longer than `ll2` exactly when `ll2` is defined wherever `ll1` is.
+
+    The HOL original is an ML `val llist_shorter_lnth = Q.prove (...)` binding
+    (theorem-valued, not a header declaration); the reference checker resolves
+    `val NAME =` bindings, so the tag above is a faithful citation.  Theorem
+    values may be tagged; quoted goal terms and other ML values may not. -/
 @[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "llist_shorter_lnth"]
 theorem llistShorter_lnth {ll1 ll2 : HolLList α} :
     llistShorter ll1 ll2 ↔
