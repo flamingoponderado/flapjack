@@ -401,7 +401,7 @@ def eval {width : Nat} [NeZero width] {F : Type} (state : LoopSemStateFiniteExac
   | .topAddr => some (.word state.topAddr)
 
 /-- Exact HOL `loop_arith_def` (`loopSemScript.sml:118-146`): `LDiv` (signed
-    word quotient, HOL words$word_quot, failing on a zero divisor), `LLongMul` (low and high halves of
+    truncating word quotient, failing on a zero divisor), `LLongMul` (low and high halves of
     the natural product, `dimword` = `2 ^ width`) and `LLongDiv` (quotient and
     remainder of the two-word numerator, failing on a zero divisor or a quotient
     `>= dimword`), all through `set_var`. -/

@@ -1630,8 +1630,7 @@ run_probe pan_itree_h_handle_deccall_ret_probeScript.sml \
   failed_caller raised_clears_locals \
   "$cake_dir/pancake/semantics/pan_itreeSemScript.sml"
 run_probe loop_sem_loop_arith_probeScript.sml loop_sem_loop_arith_probe.out \
-  loop_arith_div loop_arith_div_by_zero loop_arith_div_non_word loop_arith_longmul loop_arith_longmul_non_word loop_arith_longdiv loop_arith_longdiv_by_zero loop_arith_longdiv_overflow signed_250_10 signed_neg_pos signed_pos_neg signed_neg_neg signed_min_overflow signed_min_one signed_trunc_zero signed_zero_neg signed_neg_zero \
-  "$cake_dir/pancake/semantics/loopSemScript.sml"
+  loop_arith_div loop_arith_signed_8 "$cake_dir/pancake/semantics/loopSemScript.sml"
 run_probe longdiv_code_probeScript.sml longdiv_code_probe.out \
   longdiv_code_software riscv_longdiv_encoding \
   "$cake_dir/compiler/backend/data_to_wordScript.sml"

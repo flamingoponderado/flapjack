@@ -4,11 +4,12 @@ import Flapjack.LoopSemantics
 namespace Flapjack
 
 /--
-Faithful port of the original CakeML Pancake `loop_arith` definition.
+Flapjack-specific broad Nat arithmetic helper, not an exact HOL port.
 
-Reference: `cakeml/pancake/semantics/loopSemScript.sml:118-145` (`loop_arith_def`).
-Word values are modelled as unbounded `Nat`s; `width` fixes the original
-`dimword (:'a) = 2 ^ width` so the word operations can be reproduced exactly.
+HOL `loop_arith_def` LDiv uses signed fixed-width word_quot; this helper uses
+unsigned unbounded Nat division and has no width binder. Its successful
+positive examples do not establish signed-word correspondence. The exact
+width-aware semantics live in Pancake/Semantics/LoopSemStateExact.lean.
 -/
 def loopArithDiv (destination dividend divisor : Nat) (locals : Nat → Option Nat) :
     Option (Nat → Option Nat) :=
@@ -19,7 +20,8 @@ def loopArithDiv (destination dividend divisor : Nat) (locals : Nat → Option N
   | _, _ => none
 
 /--
-Faithful port of the `LLongMul` branch of `loop_arith`.
+Flapjack-specific Nat implementation of the `LLongMul` arithmetic equation.
+It has no bounded-input premises, so it is not a tagged exact word-carrier port.
 
 The original writes the high word first as an inner update and the low word as
 the outer update, so the low word wins when both destinations coincide
@@ -36,7 +38,8 @@ def loopArithLongMul (width destinationLeft destinationRight sourceLeft sourceRi
   | _, _ => none
 
 /--
-Faithful port of the `LLongDiv` branch of `loop_arith`.
+Flapjack-specific Nat implementation of the `LLongDiv` arithmetic equation.
+Its unbounded inputs are not the HOL word carrier; no exact HOL tag is claimed.
 
 The original writes the remainder as the inner update and the quotient as the
 outer update, so the quotient wins when both destinations coincide.
@@ -54,7 +57,8 @@ def loopArithLongDiv (width destinationLeft destinationRight sourceLeft sourceRi
       else none
   | _, _, _ => none
 
-/-- Faithful port of `loop_arith` covering `LDiv`, `LLongMul`, and `LLongDiv`. -/
+/-- Broad Nat arithmetic dispatcher, not an exact HOL port: its `LDiv` branch
+uses unsigned Nat division rather than signed fixed-width word quotient. -/
 def loopArith (width : Nat) : LoopArith → (Nat → Option Nat) → Option (Nat → Option Nat)
   | .div destination dividend divisor, locals =>
       loopArithDiv destination dividend divisor locals
