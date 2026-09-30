@@ -28530,5 +28530,14 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-b source920-928: exact HolMemop/HolAddr and AsmConfigExact carriers; logical reg_name bound, four word-offset operations, two halfword operations with Ag32 exclusion, remaining byte operations. Existing exact offset helpers use signed comparisons and zero alignment as HOL overloads. Prop conditions render HOL booleans via equality to true. No new hypotheses; positive-width word qualifier only. Original HOL signed lower/upper/outside boundaries, ISA exclusion and reduced-register-bound rows kernel replayed; executable unchanged."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/StackProps/FloatNames.lean",
+  "lean_name": "fpName",
+  "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+  "hol_name": "fp_name_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source881-917 and asm fp datatype97-119: sixteen constructor payloads and orders match exact HolFp, positive-width AsmConfigExact retains width32 dimension guard. All clauses preserve logical reg_name vs fp_reg_ok, unequal Abs/Neg two-reg guard, equal binary destination/left guard, ARMv7 and count>2 Fma requirement, and width32 second integer-register nonalias/bound. Grouped identical clauses only. Bool register predicate rendered as equality true; no extra hypotheses. Fresh originalHOL constructor and guard/boundary rows kernel replayed. No FP value/flag/NaN or executed compiler claim."
 }
 ]

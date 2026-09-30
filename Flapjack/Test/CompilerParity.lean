@@ -1,3 +1,4 @@
+import Flapjack.Test.StackPropsFloatNames
 import Flapjack.Test.StackPropsAddressNames
 import Flapjack.Test.StackPropsArithmeticNames
 import Flapjack.Test.RiscVNamesExactParity
