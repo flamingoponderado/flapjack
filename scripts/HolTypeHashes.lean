@@ -1,3 +1,5 @@
+import Flapjack.Pancake.PanStructs.CompileDeclsExact
+import Flapjack.Pancake.PanStructs.CompileProgExact
 import Flapjack.Pancake.PanStructs.CompileExpExact
 import Flapjack.Pancake.PanStructs.OldExpShapeExact
 import Flapjack.Compiler.Backend.WordAlloc.Instructions
