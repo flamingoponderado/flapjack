@@ -357,11 +357,51 @@ def dumpLabSource (source : String) (target : Nat) : IO UInt32 := do
       dumpLinkedLab pipeline target 0 (Nat.succ 1000000000)
       return 0
 
+/-- Audit the actual runtime-image Loop-to-Word guards at the same function
+    label base and Crep-to-Loop boundary as `compilePancakeSourceArtifact`.
+    This diagnostic checks route selection, not output equality or universal
+    parser/pipeline encodability. It has no HOL original. -/
+def checkLoopToWordRoutes (source : String) : IO UInt32 := do
+  match hparse : Parser.parseTopDecs (BitVec.ofInt 64) source with
+  | .error _ =>
+      IO.eprintln "loop-to-word-routes parse failure"
+      return 1
+  | .ok declarations =>
+      match (staticCheck declarations).1 with
+      | .error _ =>
+          IO.eprintln "loop-to-word-routes static failure"
+          return 1
+      | .ok _ => pure ()
+      let parsedByteRanged := Parser.parseTopDecs_declByteRanged
+        (BitVec.ofInt 64) source false declarations hparse
+      let targetByteRanged := panTargetDeclarationsWithDefaultMain_byteRanged
+        declarations parsedByteRanged
+      let some pipeline := compileFlapjackEntryCake .rv64i (BitVec.ofNat 64 8)
+        (fun value => BitVec.ofNat 64 value) "main"
+        (panTargetDeclarationsWithDefaultMain declarations)
+        (some (.isTrue targetByteRanged))
+        | IO.eprintln "loop-to-word-routes entry failure"
+          return 1
+      let functions := pipelineLoopFunctionsSource .rv64i stackFunctionFirstLabel
+        pipeline.crepe
+      let mut bodyFallbacks := 0
+      let mut parameterFallbacks := 0
+      for (label, parameters, body) in functions do
+        let bodyExact := (loopToWordCompFuncViaHOL label parameters body).isSome
+        let parametersExact := (loopToWordCompParametersViaHOL parameters body).isSome
+        if !bodyExact then bodyFallbacks := bodyFallbacks + 1
+        if !parametersExact then parameterFallbacks := parameterFallbacks + 1
+        if !bodyExact || !parametersExact then
+          IO.println s!"loop-to-word-fallback label={label} body={bodyExact} parameters={parametersExact}"
+      IO.println s!"loop-to-word-routes functions={functions.length} body-fallbacks={bodyFallbacks} parameter-fallbacks={parameterFallbacks}"
+      return if bodyFallbacks == 0 && parameterFallbacks == 0 then 0 else 1
+
 def usage : String :=
   "Usage: lake exe flapjack-debug [SOURCE.pnk]\n" ++
   "       lake exe flapjack-debug --label LABEL [SOURCE.pnk]\n" ++
   "       lake exe flapjack-debug --function NAME [SOURCE.pnk]\n" ++
   "       lake exe flapjack-debug --lab-label LABEL [SOURCE.pnk]\n" ++
+  "       lake exe flapjack-debug --loop-to-word-routes [SOURCE.pnk]\n" ++
   "Read Pancake source from SOURCE.pnk or stdin and print intermediate stages.\n" ++
   "With --label or --function, render only the selected source Word function.\n" ++
   "With --lab-label, render compact linked-Lab lines for one section."
@@ -371,6 +411,11 @@ def main (arguments : List String) : IO UInt32 := do
   | [] =>
       let stdin ← IO.getStdin
       dumpSource (← stdin.readToEnd)
+  | ["--loop-to-word-routes"] =>
+      let stdin ← IO.getStdin
+      checkLoopToWordRoutes (← stdin.readToEnd)
+  | ["--loop-to-word-routes", path] =>
+      checkLoopToWordRoutes (← IO.FS.readFile path)
   | ["--help"] | ["-h"] =>
       IO.println usage
       return 0

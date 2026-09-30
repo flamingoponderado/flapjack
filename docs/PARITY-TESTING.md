@@ -253,3 +253,24 @@ This workflow concerns implementation parity and regression evidence. The
 validity and implications of theorems, including the still-parameterized
 top-level compiler-correctness boundary, are documented separately in
 [`SOUNDNESS.md`](SOUNDNESS.md).
+
+### Loop-to-Word route selection
+
+Output parity alone does not prove that the exact HOL route was selected. Run
+this finite route audit on the original-accepted extracted corpus and the pinned
+guest source:
+
+```sh
+python3 scripts/check-loop-to-word-routes.py --guest /path/to/guest.pp.pnk \
+  --out /tmp/loop-to-word-routes
+```
+
+Build `flapjack-debug` first. Its `--loop-to-word-routes` mode uses the same
+Crep-to-Loop runtime-image boundary and label base as the artifact compiler,
+then checks the actual `loopToWordCompFuncViaHOL` and
+`loopToWordCompParametersViaHOL` guards for every function. A failed guard
+prints its function label and fails the command. The runner records source
+hashes and per-program results in `results.json`, verifies the pinned guest
+source hash, and filters corpus programs using the original Cake compiler's
+acceptance. This evidence covers those concrete programs; universal
+parser/pipeline encodability remains a separate proof obligation.
