@@ -95,6 +95,15 @@ theorem mem_addresses {width : Nat} (n : Nat) (address x : BitVec width) :
             simp only [BitVec.one_mul, BitVec.add_mul]
             ac_rfl
 
+/-- HOL `addresses_thm` (`cakeml/compiler/backend/proofs/stack_removeProofScript.sml:2770-2773`):
+the address set is exactly the range `{a + n2w i * bytes_in_word | i < n}`. -/
+@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "addresses_thm"]
+theorem addresses_eq_set {width : Nat} (n : Nat) (address : BitVec width) :
+    addresses address n =
+      (fun x => ∃ i, i < n ∧ x = address + BitVec.ofNat width i * bytesInWord width) := by
+  funext x
+  exact propext (mem_addresses n address x)
+
 /-! ## Value helpers from the `stack_remove` compiler script
 
 `cakeml/compiler/backend/stack_removeScript.sml` drives the stack operations

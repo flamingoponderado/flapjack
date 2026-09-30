@@ -37421,5 +37421,13 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-opus source comparison (bead flapjack-2de.4): crep_inlineProofScript.sml:3440-3448 forall s t crep_code start inl_fname ns prog. state_rel_code s t /\\ locals_strong_rel s t /\\ ALL_DISTINCT (MAP FST crep_code) /\\ s.code = alist_to_fmap crep_code /\\ t.code = alist_to_fmap (compile_inl_top inl_fname crep_code) /\\ FLOOKUP s.code start = SOME (ns, prog) /\\ semantics s start <> Fail ==> semantics t start = semantics s start. Lean binds them in HOL order with the same seven conjuncts over alistToFmapCodeExact, the tagged compileInlTopHOLExact (compile_inl_top_def) and crepSemantics. No extra premise. Proof as HOL: unfold compile_inl_top (compileInlProgHOLExactWithSupport_eq_compileInlProgHOLExact) and apply state_rel_imp_semantics_local with inl_fs = alist_to_fmap (FILTER (\\(x,y). MEM x inl_fname) crep_code), whose SUBMAP into s.code follows from ALL_DISTINCT."
-}
+},
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "addresses_thm",
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove.lean",
+    "lean_name": "addresses_eq_set",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.14) against cakeml/compiler/backend/proofs/stack_removeProofScript.sml:2770-2773: HOL !n a. addresses a n = { a + n2w i * bytes_in_word | i < n }. Rendered over the already-tagged addresses_def carrier as an equality of the predicate-set BitVec width -> Prop, with HOL 'a word as BitVec width and n2w i * bytes_in_word as BitVec.ofNat width i * bytesInWord width. Derived directly from the tagged IN_addresses (mem_addresses); no added premises. Consumed by the compile_top_semantics_decls proof (pan_globalsProofScript.sml:3131 simp[addresses_thm])."
+  }
 ]
