@@ -25909,5 +25909,62 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-a source review 2026-09-30 bead .18.5.3.77.1.2: pan_structsScript.sml70-104 mutual expression/list clauses, ContextExact fields and ExpHOL payloads compared constructor by constructor. findSome? with propositional MlS equality implements first-match ALOOKUP; optional index implements LLOOKUP with One default. Named shape and nested struct/field lookup defaults unchanged, Load preserves source shape, all other constructors return One. Positive width-indexed exact word carrier only representation qualifier; no String names. Ten captured 8-bit HOL oracle rows replayed by kernel equality. Proof-side source dependency; production route remains open on this bead."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/Semantics.lean",
+    "lean_name": "semantics",
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "semantics_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-pxn.18.4.3.77.17.1): HOL panSem semantics_def (panSemScript.sml:785-809) transcribed clause for clause. prog = Call NONE start [] is .call none start [] with start : MlS (HOL mlstring). The Fail test is ∃k with case FST(evaluate (prog, s with clock := k)) of SOME TimeOut/SOME (FinalFFI _)/SOME (Return _) => F | _ => T (Lean returned is HOL Return). The termination choice is some res. ∃k t r outcome, with evaluate = (r,t), the FinalFFI e => FFI_outcome e and Return _ => Success outcome map, and res = Terminate outcome t.ffi.io_events. The some case returns res; the NONE case is Diverge (build_lprefix_lub (IMAGE (λk. fromList (SND (evaluate ...)).ffi.io_events) UNIV)). evaluate is the exact evaluateHOLFiniteState, whose evaluate_def (:780) equations are tagged; state PanSemStateFiniteExact (fmap_as_finite_support [locals, globals, code, eshapes], same-module witness PanSemStateFiniteExact.PanSemanticsFiniteSupport.holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). some is holOptionSome, build_lprefix_lub/fromList are the HolLList renderings, and IMAGE f UNIV is fun l => ∃k, l = f k, exactly as in the tagged loopSem/crepSem/wordSem semantics_def. HOL @ is translated as Classical.choose on the same formula."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelImpSemantics.lean",
+    "lean_name": "getEidsImpExcpRelExact",
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "get_eids_imp_excp_rel",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "seids"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-pxn.18.4.4.2): HOL get_eids_imp_excp_rel (pan_to_crepProofScript.sml:4656-4660): !seids pc. size_of_eids pc < dimword (:'a) /\\ FDOM seids = FDOM (get_eids_from_decls pc) ==> excp_rel (get_eids_from_decls pc) seids. Lean keeps the binders seids pc and the conjunctive premise, over the tagged sizeOfEidsHOL, getEidsFromDeclsHOL and panToCrepExcpRelFiniteExact. dimword (:'a) is 2 ^ width. FDOM equality is pointwise definedness of the canonical lookups, as in the tagged excp_rel_def. seids is a standalone HolFiniteMapExact parameter (bare relation entry); getEidsFromDeclsHOL's result is its own tagged fmap_as_finite_support_result carrier. No extra premise. The proof follows HOL: injectivity of the codes n2w i for indices below size_of_eids < dimword. Kernel-checked."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelImpSemantics.lean",
+    "lean_name": "mkCtxtImpLocalsRelExact",
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "mk_ctxt_imp_locals_rel",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanToCrepContextExact.vars",
+      "lcl",
+      "es"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-pxn.18.4.4.2): HOL mk_ctxt_imp_locals_rel (pan_to_crepProofScript.sml:4677-4679): !pc lcl es. locals_rel (mk_ctxt FEMPTY (make_funcs pc) 0 es) FEMPTY lcl. Lean keeps the binders pc lcl es over the tagged mkCtxtExactHOL, makeFuncsExactHOL and panToCrepLocalsRelFiniteExact. FEMPTY is HolFiniteMapExact.empty. pc has make_funcs' input type (name, params, body, return shape). lcl and es are standalone finite-map parameters, and vars is the context field locals_rel traverses (same-module witness PanToCrepStateRelImpSemanticsWitnesses). No premise. Kernel-checked."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelImpSemantics.lean",
+    "lean_name": "getEidsEntriesHOL_mem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Untagged helper of getEidsImpExcpRelExact (bead flapjack-pxn.18.4.4.2): membership in the get_eids_from_decls association list gives the index and word code; no HOL declaration of its own (HOL uses MEM_ZIP inline)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelImpSemantics.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on mkCtxtImpLocalsRelExact; forwards the imported checked roundtrip; no HOL declaration"
   }
 ]
