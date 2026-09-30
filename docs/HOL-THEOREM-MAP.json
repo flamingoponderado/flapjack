@@ -31910,6 +31910,29 @@
     "reviewer": "Flapjack-only canonical carrier roundtrip re-export for While relation qualifier; no HOL original."
   },
   {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/TailCall.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack canonical finite-state roundtrip re-export; no standalone HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/TailCall.lean",
+    "lean_name": "evaluateUnchangedLocal_CallNone",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "evaluate_unchanged_local",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-30;32.5.6): evaluate_unchanged_local1105-1137 tail Call NONE branch, same original unused value binder, name nonfree/source run/good_res/nonError hypotheses and identical post/source FLOOKUP conclusion. Exact total evaluateHOLFiniteState_call clauses: argument/lookup failures and malformed callee normal/break/continue produce Error, clock0 or propagated timeout/exception/return/final results fail good_res. Derives contradiction from original hypotheses only; no target-run or extra callee IH or success premise. fmap_as_finite_support translates exactly finite-state locals/globals/code/eshapes with checked canonical roundtrip; words_as_type_indexed_bitvec only positive HOL dimension and universe0 FFI. Full unchanged-local assembly remains open; coordinator review pending."
+  },
+  {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/DecCall.lean",
     "lean_name": "holFmapAsFiniteSupportWitness",
     "hol_path": null,
