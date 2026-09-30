@@ -6304,6 +6304,155 @@
     "reviewer": "Codex (source comparison; key-polymorphic lookupInfo == alist$ALOOKUP under LawfulBEq)"
   },
   {
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "evaluate_decls_one_fun_last",
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
+    "lean_name": "evaluateDeclsOneFunLast",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 (source comparison, bead flapjack-pxn.18.5.2.22.6): HOL evaluate_decls_one_fun_last[local] (pan_globalsProofScript.sml:1854-1872) states !s. is_function y /\\ EVERY (\\d. case d of Decl _ _ _ => T | ExnDecl _ _ => T | _ => F) xs ==> evaluate_decls s (xs ++ [y]) = evaluate_decls s (y :: xs). Lean evaluateDeclsOneFunLast keeps the explicit state binder and both hypotheses, renders EVERY as xs.all (fun d => isDeclHOL d || isExnDeclHOL d) = true and is_function y as isFunctionHOL y = true, and keeps the xs ++ [y] / y :: xs conclusion over the canonical tagged PanSemStateFiniteExact.evaluateDeclsHOLFinite. Only carrier difference is the reviewed finite-map translation recorded by the qualifiers; no added premise. Replayed kernel-checked in Flapjack/Test/PanGlobalsResortDeclsEvaluateParity.lean. Coordinator review required."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "resort_decls_evaluate",
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
+    "lean_name": "resortDeclsEvaluate",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 (source comparison, bead flapjack-pxn.18.5.2.22.6): HOL resort_decls_evaluate (pan_globalsProofScript.sml:1874-1941) states !s decs. EVERY (\\d. is_function d \\/ is_decl d \\/ is_exn_decl d) decs ==> evaluate_decls s (resort_decls decs) = evaluate_decls s decs. Lean resortDeclsEvaluate has the same state and list binders with the same hypothesis (EVERY rendered as decs.all (fun d => isFunctionHOL d || isDeclHOL d || isExnDeclHOL d) = true), resort_decls as the tagged exact resortDeclsHOL, and evaluate_decls as the canonical tagged PanSemStateFiniteExact.evaluateDeclsHOLFinite. Only carrier difference is the reviewed finite-map translation recorded by the qualifiers; no added premise. Replayed kernel-checked with a concrete mixed declaration list in Flapjack/Test/PanGlobalsResortDeclsEvaluateParity.lean. Coordinator review required."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "resort_decls_evaluate_IMP",
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
+    "lean_name": "resortDeclsEvaluateImp",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 (source comparison, bead flapjack-pxn.18.5.2.22.6): HOL resort_decls_evaluate_IMP[local] (pan_globalsProofScript.sml:1943-1950) states evaluate_decls s decs = SOME s' /\\ EVERY (\\d. is_function d \\/ is_decl d \\/ is_exn_decl d) decs ==> evaluate_decls s (resort_decls decs) = SOME s'. Lean resortDeclsEvaluateImp has the same successful-evaluation premise, the same admissibility premise (rendered via all), and the same SOME s' conclusion over the canonical tagged evaluator and resortDeclsHOL. Only carrier difference is the reviewed finite-map translation recorded by the qualifiers; no added premise. Replayed kernel-checked in Flapjack/Test/PanGlobalsResortDeclsEvaluateParity.lean. Coordinator review required."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
+    "lean_name": "evaluateDeclsHOLFinite_append",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific finite-support append fact for the evaluator, counterpart of panProps$evaluate_decls_append; the PanProps-tagged port lives in PanProps.EvalInvariant and this local copy supports the resort commutations."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
+    "lean_name": "evalHOLFinite_emptyLocals_eshapes",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific: expression evaluation under emptyLocalsHOLFinite ignores the eshapes field; support for the ExnDecl/Decl commutation, no standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
+    "lean_name": "evaluateDeclsHOLFinite_exnDeclDeclCommute",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific: adjacent ExnDecl/Decl swap leaves the evaluator unchanged; HOL proves the Function/Decl analogue inline, this case has no standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
+    "lean_name": "evaluateDeclsHOLFinite_functionExnDeclCommute",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific: adjacent Function/ExnDecl swap leaves the evaluator unchanged; no standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
+    "lean_name": "filter_all_self",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific list support: a filtered list satisfies its own predicate."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
+    "lean_name": "filter_exn_all_or",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific list support: every ExnDecl satisfies the resort disjunction."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
+    "lean_name": "filter_decl_all_or",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific list support: every Decl satisfies the resort disjunction."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
+    "lean_name": "filter_isName_eq_nil",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific list support: under the resort admissibility predicate filter is_name is empty."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
+    "lean_name": "evaluateDeclsHOLFinite_moveDeclLeft",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific: a Decl commutes leftwards past a run of ExnDecls; internal to the resort_decls_evaluate port."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
+    "lean_name": "evaluateDeclsHOLFinite_moveFunctionRight",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific: a Function commutes rightwards past Decl/ExnDecl declarations; tail form of evaluate_decls_one_fun_last."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
+    "lean_name": "evaluateDeclsHOLFinite_nf",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific inductive normal-form lemma: filter is_exn_decl ++ filter is_decl ++ filter is_function preserves the evaluator result; core of resort_decls_evaluate."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
+    "lean_name": "resortDeclsHOL_eq_filter",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific: under the resort admissibility predicate resortDeclsHOL is its normal form because filter is_name is empty."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module re-export of the canonical PanSemStateFiniteExact finite-map roundtrip witness required by the fmap_as_finite_support qualifier."
+  },
+  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
