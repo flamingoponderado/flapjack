@@ -25,7 +25,7 @@ end ExpressionRelationsSupport
 
 /-- Local support: `state_rel s t` gives `s with locals := t.locals = t`
     (HOL `state_component_equality`). -/
-private theorem withLocals_eq_of_stateRel {width : Nat} [NeZero width] {σ : Type}
+theorem withLocals_eq_of_stateRel {width : Nat} [NeZero width] {σ : Type}
     {s t : CrepSemHOLState width σ} (h : crepInlineStateRelExact s t) :
     ({ s with locals := t.locals } : CrepSemHOLState width σ) = t := by
   obtain ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10⟩ := h
