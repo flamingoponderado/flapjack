@@ -81,6 +81,7 @@ import Flapjack.Test.PanGlobalsExceptionsFilterIsFunctionParity
 import Flapjack.Test.PanGlobalsDeclPredicateParity
 import Flapjack.Test.PanGlobalsFunctionsFilterNilParity
 import Flapjack.Test.PanGlobalsMemFunctionsHOLParity
+import Flapjack.Test.PanGlobalsResortDeclsEvaluateParity
 import Flapjack.Test.PanGlobalsFpermClusterParity
 import Flapjack.Test.PanGlobalsDecShapesClusterParity
 import Flapjack.Test.PanGlobalsFunctionPreservationParity
@@ -455,6 +456,7 @@ import Flapjack.Test.CakeSsaControlParity
 import Flapjack.Test.CakeSsaCallParity
 import Flapjack.Test.CakeSsaInstParity
 import Flapjack.Test.CakeWordAllocParity
+import Flapjack.Test.WordAllocLiveExpressionParity
 import Flapjack.Test.CakeSsaSharedParity
 import Flapjack.Test.CakeSsaMemoryParity
 import Flapjack.Test.CakeSsaLeafParity
@@ -944,6 +946,7 @@ def main : IO Unit := do
     Flapjack.Test.PanGlobalsDeclPredicateParity.runChecks,
     Flapjack.Test.PanGlobalsFunctionsFilterNilParity.runChecks,
     Flapjack.Test.PanGlobalsMemFunctionsHOLParity.runChecks,
+    Flapjack.Test.PanGlobalsResortDeclsEvaluateParity.runChecks,
     Flapjack.Test.PanGlobalsFpermNameParity.runChecks,
     Flapjack.Test.PanGlobalsFpermParity.runChecks,
     Flapjack.Test.PanGlobalsFpermDecsParity.runChecks,
@@ -1010,6 +1013,7 @@ def main : IO Unit := do
     Flapjack.Test.CrepToLoopCodeRelParity.runChecks,
     Flapjack.Test.CakeRegAlloc.runChecks,
     Flapjack.Test.CakeWordAllocParity.runChecks,
+    Flapjack.WordAlloc.runChecks,
     Flapjack.Test.CrepeNestedSeqParity.runChecks,
     Flapjack.Test.CrepeStoresParity.runChecks,
     Flapjack.Test.CrepeNestedDecsParity.runChecks,

@@ -1209,7 +1209,9 @@ def panCompileTap [CakeDisplayWord α]
     direct output of Cake's tagged `compile_top`. Parser-backed production
     entrypoints provide the byte-range proof composed through the earlier
     passes, selecting `structCompileTopExactOfByteRanged` (which executes the
-    reviewed exact shape compiler), and `compileProgTopHOLWithMetadataOfExact` at the
+    reviewed exact shape compiler), `globalCompileTopCakeRouted` (which executes
+    the reviewed exact `compileTopExactHOL` for a byte-ranged start name), and
+    `compileProgTopHOLWithMetadataOfExact` at the
     declaration-to-Crep boundary. That branch executes the exact per-function
     compiler and decodes for the existing production metadata representation;
     `compileFlapjackEntryCake_ofExact_eq` below proves the whole pipeline result
@@ -1247,8 +1249,8 @@ def compileFlapjackEntryCake {width : Nat} [NeZero width]
         let hstructured : ∀ declaration ∈ structured, DeclByteRanged declaration := by
           simpa only [structured, hproof, structCompileTopExact_eq_legacyOfByteRanged]
             using structCompileTop_byteRanged simplified hsimplified
-        let cakeDeclarations := globalCompileTopCakeOfExact structured start hstructured
-        let hcake := globalCompileTopCakeOfExact_byteRanged structured start hstructured
+        let cakeDeclarations := globalCompileTopCakeRouted structured start hstructured
+        let hcake := globalCompileTopCakeRouted_byteRanged structured start hstructured
         (cakeDeclarations, compileProgTopHOLWithMetadataOfExact cakeDeclarations hcake)
     | _ =>
         let cakeDeclarations := globalCompileTopCake structured start
@@ -1284,7 +1286,7 @@ theorem compileFlapjackEntryCake_ofExact_eq {width : Nat} [NeZero width]
         (some (.isTrue h)) =
       compileFlapjackEntryCake architecture bytesInWord fromNat start declarations none := by
   unfold compileFlapjackEntryCake
-  simp only [structCompileTopExact_eq_legacyOfByteRanged, globalCompileTopCakeOfExact_eq,
+  simp only [structCompileTopExact_eq_legacyOfByteRanged, globalCompileTopCakeRouted_eq,
     compileProgTopHOLWithMetadataOfExact_eq]
 
 /-! Executable mirror of the missing-`main` branch of `pan_to_target_all`

@@ -32,6 +32,10 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.EventsMono
 import Flapjack.Compiler.Backend.Semantics.StackSem.State
 import Flapjack.Compiler.Backend.Semantics.StackSem.Control
 import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+import Flapjack.Compiler.Backend.Semantics.StackSem.Expressions
+import Flapjack.Compiler.Backend.Semantics.StackSem.Allocation
+import Flapjack.Test.StackSemExpressionParity
+import Flapjack.Test.StackSemAllocationParity
 import Flapjack.Compiler.Backend.Semantics.StackSem.Bitmap
 import Flapjack.Compiler.Backend.Semantics.StackSem.WordBitmap
 import Flapjack.Compiler.Backend.Semantics.StackSem.StackCodec
@@ -261,6 +265,9 @@ import Flapjack.Pancake.Proofs.PanStructs.CompileCorrect
 import Flapjack.Pancake.PanGlobals
 import Flapjack.Pancake.PanGlobalsByteRanged
 import Flapjack.Pancake.Proofs.PanGlobals
+import Flapjack.Pancake.Proofs.PanGlobals.DeclListLemmas
+import Flapjack.Pancake.Proofs.PanGlobals.CompileDecsStructural
+import Flapjack.Pancake.Proofs.PanGlobals.CompileTopShapeWf
 import Flapjack.Pancake.Proofs.PanToCrep.EvaluateCases
 import Flapjack.Pancake.Proofs.PanToCrep.TotalEvaluateCases
 import Flapjack.Pancake.Proofs.PanToCrep.EvaluateNestedAssign
@@ -359,6 +366,15 @@ import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectStore32
 import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectStoreByte
 import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectExtCall
 import Flapjack.Pancake.Proofs.CrepInline
+import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.ExtCall
+import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.Primitive
+import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.ShMem
+import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.Structural
+import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.While
+import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.Call
+import Flapjack.Pancake.Proofs.CrepInline.EvaluateStateLocals.Atoms
+import Flapjack.Pancake.Proofs.CrepInline.Expressions
+import Flapjack.Pancake.Proofs.CrepInline.NestedDecs
 import Flapjack.Pancake.Proofs.CrepInline.ShMem
 import Flapjack.Pancake.Proofs.CrepInline.Call
 import Flapjack.Pancake.Proofs.CrepInline.UpdateListLocals
@@ -506,6 +522,7 @@ import Flapjack.Pancake.CrepToLoop.Proofs.WriteBytearrayMemRel
 import Flapjack.Pancake.CrepToLoop.Proofs.CallPreserveStateCodeLocalsRel
 import Flapjack.Pancake.CrepToLoop.Optimise
 import Flapjack.Pancake.CrepToLoop.StateRel
+import Flapjack.Test.WordAllocLiveExpressionParity
 import Flapjack.Test.CrepToLoopCompileExpExactParity
 import Flapjack.Test.CrepToLoopCompileExactParity
 import Flapjack.Test.CrepToLoopCompFuncParity
@@ -559,6 +576,8 @@ import Flapjack.Compiler.Backend.LabLang
 import Flapjack.Compiler.Backend.LabSem
 import Flapjack.Compiler.Backend.LabProps
 import Flapjack.Compiler.Backend.StackNames
+import Flapjack.Compiler.Backend.StackNames.NamesOk
+import Flapjack.Compiler.Backend.StackNames.Labels
 import Flapjack.Compiler.Backend.StackRemove
 import Flapjack.Compiler.Backend.StackAlloc
 import Flapjack.Compiler.Backend.WordToStack
