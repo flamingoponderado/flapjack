@@ -50,7 +50,9 @@ def findName (names : FiniteMap Nat Nat) (register : Nat) : Nat :=
 
 /-- HOL `ri_find_name_def` (`stack_namesScript.sml:16-19`), polymorphic in the
 word type as in HOL (width-indexed, since HOL's `'a` is an actual word): rename the register of a register-immediate. -/
-@[hol "cakeml/compiler/backend/stack_namesScript.sml" "ri_find_name_def"]
+/- Untagged Flapjack rendering: HOL names uses Spt Nat, while this API
+accepts an unrestricted lookup function. Exact carrier migration remains open
+under flapjack-pxn.18.5.15.7.7; matching clauses do not justify an exact tag. -/
 def riFindName {width : Nat} [NeZero width] (names : FiniteMap Nat Nat) :
     WordRegImm (BitVec width) → WordRegImm (BitVec width)
   | .reg register => .reg (findName names register)
@@ -58,7 +60,9 @@ def riFindName {width : Nat} [NeZero width] (names : FiniteMap Nat Nat) :
 
 /-- HOL `inst_find_name_def` (`stack_namesScript.sml:21-49`), polymorphic in
 the word type as in HOL (width-indexed, since HOL's `'a` is an actual word): rename every register of an instruction. -/
-@[hol "cakeml/compiler/backend/stack_namesScript.sml" "inst_find_name_def"]
+/- Untagged Flapjack rendering: HOL names uses Spt Nat, while this API
+accepts an unrestricted lookup function. Exact carrier migration remains open
+under flapjack-pxn.18.5.15.7.7; matching clauses do not justify an exact tag. -/
 def instFindName {width : Nat} [NeZero width] (names : FiniteMap Nat Nat) :
     WordLangInst (BitVec width) → WordLangInst (BitVec width)
   | .skip => .skip
@@ -89,7 +93,9 @@ def instFindName {width : Nat} [NeZero width] (names : FiniteMap Nat Nat) :
   | instruction => instruction
 
 /-- HOL `dest_find_name_def` (`stack_namesScript.sml:51-54`). -/
-@[hol "cakeml/compiler/backend/stack_namesScript.sml" "dest_find_name_def"]
+/- Untagged Flapjack rendering: HOL names uses Spt Nat, while this API
+accepts an unrestricted lookup function. Exact carrier migration remains open
+under flapjack-pxn.18.5.15.7.7; matching clauses do not justify an exact tag. -/
 def destFindName (names : FiniteMap Nat Nat) : Sum Nat Nat → Sum Nat Nat
   | .inr register => .inr (findName names register)
   | other => other
@@ -97,7 +103,9 @@ def destFindName (names : FiniteMap Nat Nat) : Sum Nat Nat → Sum Nat Nat
 /-- HOL `comp_def` (`stack_namesScript.sml:56-99`) over the exact
 width-indexed `HolProg` carrier: rename every register of every instruction,
 leaving the `mlstring` FFI name untouched. -/
-@[hol "cakeml/compiler/backend/stack_namesScript.sml" "comp_def"]
+/- Untagged Flapjack rendering: HOL names uses Spt Nat, while this API
+accepts an unrestricted lookup function. Exact carrier migration remains open
+under flapjack-pxn.18.5.15.7.7; matching clauses do not justify an exact tag. -/
 def progComp {width : Nat} [NeZero width] (names : FiniteMap Nat Nat) :
     HolProg width → HolProg width
   | .halt register => .halt (findName names register)
@@ -136,20 +144,26 @@ def progComp {width : Nat} [NeZero width] (names : FiniteMap Nat Nat) :
   | program => program
 
 /-- HOL `prog_comp_def` (`stack_namesScript.sml:101-103`). -/
-@[hol "cakeml/compiler/backend/stack_namesScript.sml" "prog_comp_def"]
+/- Untagged Flapjack rendering: HOL names uses Spt Nat, while this API
+accepts an unrestricted lookup function. Exact carrier migration remains open
+under flapjack-pxn.18.5.15.7.7; matching clauses do not justify an exact tag. -/
 def progCompEntry {width : Nat} [NeZero width] (names : FiniteMap Nat Nat)
     (entry : Nat × HolProg width) : Nat × HolProg width :=
   (entry.1, progComp names entry.2)
 
 /-- HOL `compile_def` (`stack_namesScript.sml:105-107`). -/
-@[hol "cakeml/compiler/backend/stack_namesScript.sml" "compile_def"]
+/- Untagged Flapjack rendering: HOL names uses Spt Nat, while this API
+accepts an unrestricted lookup function. Exact carrier migration remains open
+under flapjack-pxn.18.5.15.7.7; matching clauses do not justify an exact tag. -/
 def compile {width : Nat} [NeZero width] (names : FiniteMap Nat Nat)
     (program : List (Nat × HolProg width)) : List (Nat × HolProg width) :=
   program.map (progCompEntry names)
 
 /-- HOL `MAP_FST_compile` (`stack_namesProofScript.sml:268-272`): renaming
 preserves function identifiers. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml" "MAP_FST_compile"]
+/- Untagged Flapjack rendering: HOL names uses Spt Nat, while this API
+accepts an unrestricted lookup function. Exact carrier migration remains open
+under flapjack-pxn.18.5.15.7.7; matching clauses do not justify an exact tag. -/
 theorem map_fst_compile {width : Nat} [NeZero width] (names : FiniteMap Nat Nat)
     (program : List (Nat × HolProg width)) :
     (compile names program).map Prod.fst = program.map Prod.fst := by
@@ -168,7 +182,9 @@ def namesOk (names : FiniteMap Nat Nat) (regCount : Nat) (avoidRegs : List Nat) 
 /-- Exact proposition-shaped port of HOL `names_ok_def`
 (`stack_namesScript.sml:111-116`): generated names are distinct, below the
 register bound, and disjoint from the avoided registers. -/
-@[hol "cakeml/compiler/backend/stack_namesScript.sml" "names_ok_def"]
+/- Untagged Flapjack rendering: HOL names uses Spt Nat, while this API
+accepts an unrestricted lookup function. Exact carrier migration remains open
+under flapjack-pxn.18.5.15.7.7; matching clauses do not justify an exact tag. -/
 def namesOkHOL (names : FiniteMap Nat Nat) (regCount : Nat)
     (avoidRegs : List Nat) : Prop :=
   let xs := (List.range (regCount - avoidRegs.length)).map (findName names)

@@ -12477,21 +12477,21 @@
     "reviewer": "Codex (labPropsScript.sml:81 is a HOL predicate, not a Boolean result; the tagged Lean declaration returns Prop with nonempty and final-label conditions, while secEndsWithLabel is an untagged executable Bool counterpart)"
   },
   {
-    "hol_path": "cakeml/compiler/backend/stack_namesScript.sml",
-    "hol_name": "dest_find_name_def",
-    "lean_path": "Flapjack/Compiler/Backend/StackNames.lean",
-    "lean_name": "destFindName",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Codex (stack_namesScript.sml:51-54 INR register renamed, other destination unchanged)"
-  },
+  "hol_path": "cakeml/compiler/backend/stack_namesScript.sml",
+  "hol_name": "dest_find_name_def",
+  "lean_path": "Flapjack/Compiler/Backend/StackNames.lean",
+  "lean_name": "destFindName",
+  "statement_status": "documented_mismatch",
+  "reviewer": "flapjack-luna-b source-carrier HOLD: HOL stack_names find_name overload uses misc tlookup521-523 on num num_map Spt; unrestricted function-backed FiniteMap names is not that carrier. Tag withdrawn; useful clauses preserved untagged. Exact Spt/instruction-carrier migration and executed relationship remain open under .18.5.15.7.7. Withdrawal is not port completion."
+},
   {
-    "hol_path": "cakeml/compiler/backend/stack_namesScript.sml",
-    "hol_name": "names_ok_def",
-    "lean_path": "Flapjack/Compiler/Backend/StackNames.lean",
-    "lean_name": "namesOkHOL",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Codex (stack_namesScript.sml:111-116 names_ok is a HOL predicate; tagged Lean declaration returns Prop with ALL_DISTINCT/Nodup and EVERY/all-members conditions, while namesOk is an untagged executable Bool counterpart)"
-  },
+  "hol_path": "cakeml/compiler/backend/stack_namesScript.sml",
+  "hol_name": "names_ok_def",
+  "lean_path": "Flapjack/Compiler/Backend/StackNames.lean",
+  "lean_name": "namesOkHOL",
+  "statement_status": "documented_mismatch",
+  "reviewer": "flapjack-luna-b source-carrier HOLD: HOL stack_names find_name overload uses misc tlookup521-523 on num num_map Spt; unrestricted function-backed FiniteMap names is not that carrier. Tag withdrawn; useful clauses preserved untagged. Exact Spt/instruction-carrier migration and executed relationship remain open under .18.5.15.7.7. Withdrawal is not port completion."
+},
   {
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
     "hol_name": "mem_store_def",
@@ -12552,21 +12552,21 @@
     "reviewer": "flapjack-luna-b source comparison (2026-09-29; bead flapjack-pxn.18.5.6.33.20.5) against crep_to_loopProofScript.sml:3942-3945. HOL binds prog, start, n; assumes FLOOKUP (make_funcs prog) start = SOME (n + first_name,0); and concludes (start,[],(SND o SND) (EL n prog)) = EL n prog /\\ n < LENGTH prog. Lean keeps that binder order, lookup equality and conclusion order over List (MlString × List Nat × CrepProgHOL width), using the tagged exact finite-support make_funcs_def carrier and firstLoopName for first_name. `initialProgEL` chooses an explicit fallback for an out-of-range list index, but the theorem's conclusion establishes n < prog.length; the helper equality proves that fallback is not observed. The exact zipped-entry lemma shows the successful lookup's label fixes index n and its zero arity fixes the parameter list to []. No evaluator, extra hypothesis or conclusion is introduced. The only direct representation qualifier is HOL's positive type-indexed word width mapped to BitVec width. Proof-only; no production-path change."
   },
   {
-    "hol_path": "cakeml/compiler/backend/stack_namesScript.sml",
-    "hol_name": "ri_find_name_def",
-    "lean_path": "Flapjack/Compiler/Backend/StackNames.lean",
-    "lean_name": "riFindName",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-deepseek (stack_namesScript.sml:16-19 ri_find_name renames only the register payload (Reg r -> Reg (find_name f r)); Imm unchanged. HOL payload is an actual 'a word; Lean width-indexed at BitVec width with [NeZero width].)"
-  },
+  "hol_path": "cakeml/compiler/backend/stack_namesScript.sml",
+  "hol_name": "ri_find_name_def",
+  "lean_path": "Flapjack/Compiler/Backend/StackNames.lean",
+  "lean_name": "riFindName",
+  "statement_status": "documented_mismatch",
+  "reviewer": "flapjack-luna-b source-carrier HOLD: HOL stack_names find_name overload uses misc tlookup521-523 on num num_map Spt; unrestricted function-backed FiniteMap names is not that carrier. Tag withdrawn; useful clauses preserved untagged. Exact Spt/instruction-carrier migration and executed relationship remain open under .18.5.15.7.7. Withdrawal is not port completion."
+},
   {
-    "hol_path": "cakeml/compiler/backend/stack_namesScript.sml",
-    "hol_name": "inst_find_name_def",
-    "lean_path": "Flapjack/Compiler/Backend/StackNames.lean",
-    "lean_name": "instFindName",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-deepseek (stack_namesScript.sml:21-49 one clause per asm inst constructor with catch-all; only register fields renamed via find_name. Width-indexed at BitVec width.)"
-  },
+  "hol_path": "cakeml/compiler/backend/stack_namesScript.sml",
+  "hol_name": "inst_find_name_def",
+  "lean_path": "Flapjack/Compiler/Backend/StackNames.lean",
+  "lean_name": "instFindName",
+  "statement_status": "documented_mismatch",
+  "reviewer": "flapjack-luna-b source-carrier HOLD: HOL stack_names find_name overload uses misc tlookup521-523 on num num_map Spt; unrestricted function-backed FiniteMap names is not that carrier. Tag withdrawn; useful clauses preserved untagged. Exact Spt/instruction-carrier migration and executed relationship remain open under .18.5.15.7.7. Withdrawal is not port completion."
+},
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
     "hol_name": "is_SOME_Word_def",
@@ -13347,37 +13347,37 @@
     "reviewer": "flapjack-ds8 (bead flapjack-j815): exact. HOL stack_removeScript.sml:58-60 halt_inst w = Seq (const_inst 1 w) (Halt 1); Lean haltInst value = .seq (.inst (.const 1 value)) (.halt 1) over the exact HolProg carrier, using the reviewed const_inst overload. No extra hypotheses beyond [NeZero width]."
   },
   {
-    "hol_path": "cakeml/compiler/backend/stack_namesScript.sml",
-    "hol_name": "comp_def",
-    "lean_path": "Flapjack/Compiler/Backend/StackNames.lean",
-    "lean_name": "progComp",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds8 (bead flapjack-arzk): exact. HOL stack_namesScript.sml:56-99 comp renaming of register ids; Lean progComp matches clause-for-clause (Halt/Raise/Break/Continue/Return/Inst/LocValue/Seq/If/Loop/Call/Install/ShMemOp/CodeBufferWrite/FFI/JumpLower + catch-all). The Inst case uses the kernel-checked HolInst.ofWordLangInst/toWordLangInst codec (inverses by HolInst.of_to), so it is HOL's Inst (inst_find_name f i); the If case likewise via HolRegImm.ofWordRegImm/toWordRegImm over the reviewed ri_find_name. Only side condition [NeZero width] (HOL word dim nonzero). FFI field is MlString."
-  },
+  "hol_path": "cakeml/compiler/backend/stack_namesScript.sml",
+  "hol_name": "comp_def",
+  "lean_path": "Flapjack/Compiler/Backend/StackNames.lean",
+  "lean_name": "progComp",
+  "statement_status": "documented_mismatch",
+  "reviewer": "flapjack-luna-b source-carrier HOLD: HOL stack_names find_name overload uses misc tlookup521-523 on num num_map Spt; unrestricted function-backed FiniteMap names is not that carrier. Tag withdrawn; useful clauses preserved untagged. Exact Spt/instruction-carrier migration and executed relationship remain open under .18.5.15.7.7. Withdrawal is not port completion."
+},
   {
-    "hol_path": "cakeml/compiler/backend/stack_namesScript.sml",
-    "hol_name": "prog_comp_def",
-    "lean_path": "Flapjack/Compiler/Backend/StackNames.lean",
-    "lean_name": "progCompEntry",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds8 (bead flapjack-arzk): exact. HOL stack_namesScript.sml:101-103 prog_comp f (n,p) = (n, comp f p); Lean progCompEntry names entry = (entry.1, progComp names entry.2) over Nat x HolProg width. No extra hypotheses beyond [NeZero width]."
-  },
+  "hol_path": "cakeml/compiler/backend/stack_namesScript.sml",
+  "hol_name": "prog_comp_def",
+  "lean_path": "Flapjack/Compiler/Backend/StackNames.lean",
+  "lean_name": "progCompEntry",
+  "statement_status": "documented_mismatch",
+  "reviewer": "flapjack-luna-b source-carrier HOLD: HOL stack_names find_name overload uses misc tlookup521-523 on num num_map Spt; unrestricted function-backed FiniteMap names is not that carrier. Tag withdrawn; useful clauses preserved untagged. Exact Spt/instruction-carrier migration and executed relationship remain open under .18.5.15.7.7. Withdrawal is not port completion."
+},
   {
-    "hol_path": "cakeml/compiler/backend/stack_namesScript.sml",
-    "hol_name": "compile_def",
-    "lean_path": "Flapjack/Compiler/Backend/StackNames.lean",
-    "lean_name": "compile",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds8 (bead flapjack-arzk): exact. HOL stack_namesScript.sml:105-107 compile f prog = MAP (prog_comp f) prog; Lean compile names program = program.map (progCompEntry names). List.map renders HOL MAP. No extra hypotheses beyond [NeZero width]."
-  },
+  "hol_path": "cakeml/compiler/backend/stack_namesScript.sml",
+  "hol_name": "compile_def",
+  "lean_path": "Flapjack/Compiler/Backend/StackNames.lean",
+  "lean_name": "compile",
+  "statement_status": "documented_mismatch",
+  "reviewer": "flapjack-luna-b source-carrier HOLD: HOL stack_names find_name overload uses misc tlookup521-523 on num num_map Spt; unrestricted function-backed FiniteMap names is not that carrier. Tag withdrawn; useful clauses preserved untagged. Exact Spt/instruction-carrier migration and executed relationship remain open under .18.5.15.7.7. Withdrawal is not port completion."
+},
   {
-    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
-    "hol_name": "MAP_FST_compile",
-    "lean_path": "Flapjack/Compiler/Backend/StackNames.lean",
-    "lean_name": "map_fst_compile",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds8 (bead flapjack-arzk): exact. HOL stack_namesProofScript.sml:268-272 MAP FST (compile f c) = MAP FST c; Lean map_fst_compile states (compile names program).map Prod.fst = program.map Prod.fst over List (Nat x HolProg width). Same quantifiers (names, program), no extra hypotheses beyond [NeZero width]."
-  },
+  "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+  "hol_name": "MAP_FST_compile",
+  "lean_path": "Flapjack/Compiler/Backend/StackNames.lean",
+  "lean_name": "map_fst_compile",
+  "statement_status": "documented_mismatch",
+  "reviewer": "flapjack-luna-b source-carrier HOLD: HOL stack_names find_name overload uses misc tlookup521-523 on num num_map Spt; unrestricted function-backed FiniteMap names is not that carrier. Tag withdrawn; useful clauses preserved untagged. Exact Spt/instruction-carrier migration and executed relationship remain open under .18.5.15.7.7. Withdrawal is not port completion."
+},
   {
     "hol_path": "cakeml/semantics/ffi/ffiScript.sml",
     "hol_name": "ffi_outcome",
@@ -27876,27 +27876,39 @@
     "reviewer": "flapjack-luna-b source comparison (2026-09-30; .18.5.15.7.4): stackProps832-835 bound n < c.reg_count - LENGTH c.avoid_regs retains Nat subtraction/list length. stack_namesProof598-614 original names_ok premise implies reg_ok for every in-range register; distinct two source names remain distinct under rename. Exact AsmConfigExact positive-width word fields; bare names is canonical HolFiniteMapExact, existing findName/namesOkHOL applied to its lookup projection (HOL FLOOKUP/tlookup behavior). ALL_DISTINCT mapped range injectivity and EVERY range validity, no extra bijection/success premise, no executable route claim. Coordinator review pending."
   },
   {
-    "lean_path": "Flapjack/Compiler/Backend/StackNames/NamesOk.lean",
-    "lean_name": "namesOkImp",
-    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
-    "hol_name": "names_ok_imp",
-    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-b source comparison (2026-09-30; .18.5.15.7.4): stackProps832-835 bound n < c.reg_count - LENGTH c.avoid_regs retains Nat subtraction/list length. stack_namesProof598-614 original names_ok premise implies reg_ok for every in-range register; distinct two source names remain distinct under rename. Exact AsmConfigExact positive-width word fields; bare names is canonical HolFiniteMapExact, existing findName/namesOkHOL applied to its lookup projection (HOL FLOOKUP/tlookup behavior). ALL_DISTINCT mapped range injectivity and EVERY range validity, no extra bijection/success premise, no executable route claim. Coordinator review pending.",
-    "fmap_as_finite_support_relation": [
-      "names"
-    ]
-  },
+  "lean_path": "Flapjack/Compiler/Backend/StackNames/NamesOk.lean",
+  "lean_name": "namesOkImp",
+  "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+  "hol_name": "names_ok_imp",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b corrective source review: find_name is misc tlookup over num num_map (Spt), not |-> finite map. Signature now Spt Nat and sptLookup projected into existing lookup helper with identity-key fallback. No finite-map qualifier; original equation/hypotheses retained, no BIJ premise. Exact positive-width AsmConfigExact uses words qualifier only. Corrects prior invalid finite-map translation."
+},
   {
-    "lean_path": "Flapjack/Compiler/Backend/StackNames/NamesOk.lean",
-    "lean_name": "namesOkImp2",
-    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
-    "hol_name": "names_ok_imp2",
-    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-b source comparison (2026-09-30; .18.5.15.7.4): stackProps832-835 bound n < c.reg_count - LENGTH c.avoid_regs retains Nat subtraction/list length. stack_namesProof598-614 original names_ok premise implies reg_ok for every in-range register; distinct two source names remain distinct under rename. Exact AsmConfigExact positive-width word fields; bare names is canonical HolFiniteMapExact, existing findName/namesOkHOL applied to its lookup projection (HOL FLOOKUP/tlookup behavior). ALL_DISTINCT mapped range injectivity and EVERY range validity, no extra bijection/success premise, no executable route claim. Coordinator review pending.",
-    "fmap_as_finite_support_relation": [
-      "names"
-    ]
-  }
+  "lean_path": "Flapjack/Compiler/Backend/StackNames/NamesOk.lean",
+  "lean_name": "namesOkImp2",
+  "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+  "hol_name": "names_ok_imp2",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b corrective source review: find_name is misc tlookup over num num_map (Spt), not |-> finite map. Signature now Spt Nat and sptLookup projected into existing lookup helper with identity-key fallback. No finite-map qualifier; original equation/hypotheses retained, no BIJ premise. Exact positive-width AsmConfigExact uses words qualifier only. Corrects prior invalid finite-map translation."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/StackProps/RegisterNames.lean",
+  "lean_name": "regImmName",
+  "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+  "hol_name": "reg_imm_name_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source comparison against stackPropsScript.sml:839-842: exact positive-width HolRegImm reg Nat / imm BitVec width, operator Sum BinOp Cmp and AsmConfigExact. Reg invokes reduced logical regName; Imm invokes validImm exactly, no asm reg_imm_ok xor-minus-one exception. Prop is logical HOL Bool rendering. No extra hypothesis or altered carrier. Kernel clauses tested; compiler route unchanged."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/StackProps/FixedNames.lean",
+  "lean_name": "fixedNames",
+  "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+  "hol_name": "fixed_names_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b corrective source review: find_name is misc tlookup over num num_map (Spt), not |-> finite map. Signature now Spt Nat and sptLookup projected into existing lookup helper with identity-key fallback. No finite-map qualifier; original equation/hypotheses retained, no BIJ premise. Exact positive-width AsmConfigExact uses words qualifier only. Corrects prior invalid finite-map translation."
+}
 ]
