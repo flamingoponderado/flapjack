@@ -31838,6 +31838,46 @@
     "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanGlobalsContextExact toBroad/ofBroad roundtrip; it supports PanGlobalsContextExact.globals named by the compile_correct If tag."
   },
   {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/InitGlobalsSimulation.lean",
+    "lean_name": "initGlobalsNil",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "evaluate_decls_init_globals_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-30; .22.10.5): Original initializer theorem2126-2147, nil case of evaluate_decls induction. initGlobalsGoal packages every original hypothesis and conjunct: source declaration success, EVERY is_decl, compiler equation, state_rel F, exact free address equation, source disjointness/target inclusion, globals_size byte alignment, source code FEMPTY, old globals disjointness and numeric word-size bound. Conclusion constructs target run NONE, state_rel F, clock/ffi/locals equality and final alignment. Empty declaration/compiler clauses force unchanged states/context and empty nested_seq evaluates Skip. No added premises or weaker conclusion. Set predicates implement original membership/DISJOINT/SUBSET; Option.isSome true is IS_SOME. fmap_as_finite_support_relation names exactly state locals/globals/code/eshapes and context globals; words_as_type_indexed_bitvec standard positive-width/universe0 FFI only. Canonical roundtrip witnesses. Full recursive allocation and initializer theorem remain open; coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/InitGlobalsSimulation.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only infrastructure. Canonical state toExact/ofExact roundtrip forwarded for named state maps."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/InitGlobalsSimulation.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only infrastructure. Canonical context toBroad/ofBroad roundtrip forwarded for context globals."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/WhileInduction.lean",
+    "lean_name": "assembleWhile",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack partial induction assembly consumer. Reviewed inlineProgCorrectWhileCaseExact discharged using separately derived original guarded body and plain NONE/Continue0 reentry IHs; no extra While correctness premise. Remaining constructor obligations explicit; full inline_prog_correct remains open."
+  },
+  {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/While.lean",
     "lean_name": "compileCorrect_While",
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
