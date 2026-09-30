@@ -1879,3 +1879,10 @@ logical-register/address, two-register arithmetic, and FP alias failures.
 Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=stack_props_inst_name_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
 `Flapjack.Test.StackPropsInstructionNames` kernel-replays all ten rows.
+
+`word_to_stack_stack_size_rel_probe.out` records six original frame-size relation
+observations (absent/present maximum, failed bound, absent local/frame sizes,
+and frame guard) from `word_to_stackProofTheory`. The exact kernel replay is
+`Flapjack.Test.WordToStackStackSizeParity`. Regenerate read-only with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_to_stack_stack_size_rel_probeScript.sml scripts/hol-probes/regenerate.sh`.
