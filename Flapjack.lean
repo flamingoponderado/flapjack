@@ -365,6 +365,7 @@ import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectExtCall
 import Flapjack.Pancake.Proofs.CrepInline
 import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.ExtCall
 import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.Primitive
+import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.ShMem
 import Flapjack.Pancake.Proofs.CrepInline.NestedDecs
 import Flapjack.Pancake.Proofs.CrepInline.ShMem
 import Flapjack.Pancake.Proofs.CrepInline.Call

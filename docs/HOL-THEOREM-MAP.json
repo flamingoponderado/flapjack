@@ -27138,5 +27138,27 @@
     "lean_name": "updateListEqIsSomeOfPresent",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific infrastructure. Canonical map infrastructure: all updated keys present implies query domain unchanged; no independent HOL original."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "evaluate_locals_same_fdom",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/ShMem.lean",
+    "lean_name": "evaluateLocalsSameFdomShMemExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; .43.1.3), evaluate_locals_same_fdom181-191 ShMem arm and exact crepSem ShMem/load/store definitions. Same source eval and normal/Break/Continue result guard/domain equality, specialized only to ShMem. All8 operators covered: successful loads update existing key guaranteed by outer evaluator lookup; stores leave locals unchanged. Final load clears locals but finalFfi is excluded by original guard. Domain failures also excluded or unchanged. Exact imported canonical state, same-module roundtrip, positive-width and FFI Type0. No extra success assumption, target relation or semantic premise. Full theorem stays open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/ShMem.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific canonical carrier roundtrip re-export; no independent HOL original."
   }
 ]
