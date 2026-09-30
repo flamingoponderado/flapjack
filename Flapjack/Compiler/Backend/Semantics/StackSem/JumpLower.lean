@@ -13,7 +13,7 @@ namespace Flapjack.StackSemJumpLower
 open StackSemControl StackSemStateOps Compiler.Backend.StackLang
 
 /-- The HOL `evaluate (JumpLower r1 r2 dest, s)` branch
-(`cakeml/compiler/backend/semantics/stackSemScript.sml:838-848`): read two Word
+(`cakeml/compiler/backend/semantics/stackSemScript.sml:838-849`): read two Word
 registers, compare them with the unsigned assembler `Lower` comparison, look the
 target up with `INL find_code`, time out on a zero clock, and otherwise recurse
 on the found program with a decremented clock, mapping a bad function return to
