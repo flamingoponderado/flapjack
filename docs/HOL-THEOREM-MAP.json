@@ -26709,10 +26709,26 @@
   {
     "hol_path": null,
     "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/Call.lean",
+    "lean_name": "codeInl_of_code_eq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper of the inline_prog_correct Call case (bead flapjack-pxn.18.5.5.42.1): code_inl_rel reads only the two code maps; no HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
     "lean_name": "same_emptyLocals",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.5.41.1): untagged Flapjack state-transfer infrastructure for the exact shared-memory helper congruence; no HOL original (Flapjack codec/semantics transfer over CrepSemHOLState)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/Call.lean",
+    "lean_name": "nodupError_inlineCaltyp",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper (bead flapjack-pxn.18.5.5.42.1): inlining a handler body does not change the ALL_DISTINCT return-name guard; no HOL declaration."
   },
   {
     "hol_path": null,
@@ -26725,10 +26741,26 @@
   {
     "hol_path": null,
     "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/Call.lean",
+    "lean_name": "lookupCodeFiniteHOL_eq_holFinite",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack bridge (bead flapjack-pxn.18.5.5.42.1) between the HOL-shaped Call clause's finite code lookup and the lookupCodeHOLFinite wrapper of the tagged evaluate_ind; no HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
     "lean_name": "crepShMemLoadExactHOL_same",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.5.41.1): untagged Flapjack state-transfer infrastructure for the exact shared-memory helper congruence; no HOL original (Flapjack codec/semantics transfer over CrepSemHOLState)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/Call.lean",
+    "lean_name": "inlineProgHOLExact_call_nonInlined",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper (bead flapjack-pxn.18.5.5.42.1): the tagged inline_prog_def on a call it does not expand only inlines the handler body (HOL inline_prog_def Call clauses); no separate HOL declaration."
   },
   {
     "hol_path": null,
@@ -26793,5 +26825,13 @@
     "lean_name": "op_code",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-luna-b Flapjack-only infrastructure (2026-09-30; bead flapjack-pxn.18.5.5.41): canonical carrier witness re-export or exact shared-memory code-field preservation; no separate HOL declaration claimed."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/Call.lean",
+    "lean_name": "callNonInlined",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper (bead flapjack-pxn.18.5.5.42.1) proving HOL inline_prog_correct's Call case (crep_inlineProofScript.sml:2409-2534) for every call inline_prog leaves as a Call (non-distinct return names, callee outside inl_bag, handler call), from the two tagged evaluate_ind Call IHs with P := crepInlineGoal. The HOL-only-suspended inlined Tail/Nontail paths are .42.2/.42.3; the tagged Call case is assembled in .42.4. Kernel-checked; standard axioms."
   }
 ]
