@@ -28696,5 +28696,21 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanGlobalsContextExact toBroad/ofBroad roundtrip; it supports PanGlobalsContextExact.globals named by the state_rel tags."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CallObservation.lean",
+    "lean_name": "panGlobals_call_emptyLocals_observation",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific premise-free evaluator observation used to assemble semantics_empty_locals; no standalone HOL original. Source review pan_globalsProofScript2862-2889 and panSem Call clause: callee entry overwrites caller locals, all body results retain literal fix_clock, failure/timeout preserve FFI events. Exact full semantics theorem remains separate."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/SemanticsCongruence.lean",
+    "lean_name": "panGlobals_semantics_of_clock_observations",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific observational congruence, no standalone HOL original. Uses equal result-option and ffi events at every clock to equate failure, entire termination-choice predicate and divergence prefix set. Conditional assembly infrastructure, not semantics_empty_locals or a pass-correctness port."
   }
 ]
