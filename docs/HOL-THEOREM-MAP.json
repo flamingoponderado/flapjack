@@ -27144,5 +27144,37 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-b source comparison (2026-09-30; bead flapjack-pxn.18.5.5.44.3), crep_inlineProofScript.sml:761-777: same six premises including observed nested evaluation; conclusion same result equality, state_rel and exact locals fold. Follows from existential theorem and deterministic pair equality. Observed eval premise is part of original HOL corollary only, never assumed by existential theorem. Canonical finite-support carrier/updateEq/updateListEq/resVarEq with positive width and universe0 FFI; no additional simulation or post-state relation premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "get_var_imm_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/StateOps.lean",
+    "lean_name": "getVarImm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-y19g.16, stackSemScript.sml:640-644/761-772. Accepted exact StackSemStateFiniteExact and StackSemResult carriers; canonical state map witness in StateOps; word width positive. Register lookup preserves Word/Loc payloads and missing keys, immediate wraps the unchanged word. cont_loop reenters on NONE or Continue0 only. exit_loop maps Break0 to NONE (unlike WordSem), decrements positive Break and all Continue labels by natural monus, propagates every other result including final-event payload unchanged. Direct original HOL capture28 rows and kernel replay, runtime control checks. No evaluator or production refinement claimed; parent y19g and dependent .12 remain open until assembly acceptance."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "cont_loop_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Control.lean",
+    "lean_name": "contLoop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-y19g.16, stackSemScript.sml:640-644/761-772. Accepted exact StackSemStateFiniteExact and StackSemResult carriers; canonical state map witness in StateOps; word width positive. Register lookup preserves Word/Loc payloads and missing keys, immediate wraps the unchanged word. cont_loop reenters on NONE or Continue0 only. exit_loop maps Break0 to NONE (unlike WordSem), decrements positive Break and all Continue labels by natural monus, propagates every other result including final-event payload unchanged. Direct original HOL capture28 rows and kernel replay, runtime control checks. No evaluator or production refinement claimed; parent y19g and dependent .12 remain open until assembly acceptance."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "exit_loop_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Control.lean",
+    "lean_name": "exitLoop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-y19g.16, stackSemScript.sml:640-644/761-772. Accepted exact StackSemStateFiniteExact and StackSemResult carriers; canonical state map witness in StateOps; word width positive. Register lookup preserves Word/Loc payloads and missing keys, immediate wraps the unchanged word. cont_loop reenters on NONE or Continue0 only. exit_loop maps Break0 to NONE (unlike WordSem), decrements positive Break and all Continue labels by natural monus, propagates every other result including final-event payload unchanged. Direct original HOL capture28 rows and kernel replay, runtime control checks. No evaluator or production refinement claimed; parent y19g and dependent .12 remain open until assembly acceptance."
   }
 ]

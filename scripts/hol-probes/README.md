@@ -1374,3 +1374,15 @@ the original inequality predicates for every possible `ARB : memop` choice;
 the choice-parametric general checker is deliberately untagged.
 
 `stacksem_expression_probeScript.sml` captures twenty original StackSem word_exp/assign rows: all six constructors, failed/missing/Loc lookups, domain and memory payload rejection, wraparound, invalid arithmetic arity, binary shift bounds, and destination update/failure. Kernel replay: `Flapjack/Test/StackSemExpressionParity.lean`. Full evaluator/production refinement is separate.
+
+`stacksem_loop_control_probeScript.sml` captures 28 direct original
+`stackSem$get_var_imm`, `cont_loop`, and `exit_loop` observations from
+`stackSemScript.sml:640-644/761-772`. They include Word/Loc/missing registers,
+unsigned immediate preservation, all control-result constructors, zero and
+positive labels, and unchanged final-event payloads. StackSem Break0 exits
+normally, unlike WordSem. Kernel replay and runtime control checks live in
+`Flapjack/Test/StackSemLoopControlParity.lean`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_loop_control_probeScript.sml
+scripts/hol-probes/regenerate.sh`. Evaluator assembly and its production
+refinement remain tracked by y19g/.12.

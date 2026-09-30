@@ -483,6 +483,7 @@
     {"bytes": 1043, "out": "stack_to_lab_flatten_probe.out", "rows": 32, "sha256": "54a79a9880ec84098f8719f8bff7c2e57ec163f7cda13f55a2118269c2d81382"},
     {"bytes": 744, "out": "stacksem_allocation_probe.out", "rows": 19, "sha256": "d0a5fe7c5ce0595e0464b2ac55e5e62fed26f59a6184cc8581b20f2732cf4d2f"},
     {"bytes": 403, "out": "stacksem_expression_probe.out", "rows": 20, "sha256": "63736bfa2da639485c0726818c8dac39733e40eb6a201be9995b685d230d8a9a"},
+    {"bytes": 628, "out": "stacksem_loop_control_probe.out", "rows": 28, "sha256": "768c7b662944dace225885eb5c71c860fe2963206d24243a76012f910da7828d"},
     {"bytes": 852, "out": "stacksem_stack_codec_probe.out", "rows": 29, "sha256": "6ddeca4e46f0b1a0e521b6cac7f36f05f8fe5e35e416acbcc294e3cad502d9f6"},
     {"bytes": 268, "out": "stacksem_word_bitmap_probe.out", "rows": 11, "sha256": "2bccd8807cc28a4cc17ec6a92d04822083c8949ea97ec1cf5bdab9b2476addaf"},
     {"bytes": 327, "out": "try_ProgNT_probe.out", "rows": 1, "sha256": "d014b3d6330bcb3a87d9557af3b376904c972664ce15feabe8e01adb55fbe0a5"},

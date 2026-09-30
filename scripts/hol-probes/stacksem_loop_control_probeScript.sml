@@ -1,0 +1,35 @@
+(* Original StackSem register/immediate and loop control observations. *)
+load "bossLib";
+load "preamble";
+load "stackSemTheory";
+open bossLib HolKernel Parse preamble stackSemTheory;
+fun observe label q = let val th = EVAL q in
+  (print (label ^ "="); print_term (rconc th); print "\n") end;
+val _ = observe "reg_word" ``stackSem$get_var_imm (Reg 1) ((ARB : (8,unit,unit) stackSem$state) with regs := FEMPTY |+ (1,Word 7w) |+ (2,Loc 4 5))``;
+val _ = observe "reg_loc" ``stackSem$get_var_imm (Reg 2) ((ARB : (8,unit,unit) stackSem$state) with regs := FEMPTY |+ (1,Word 7w) |+ (2,Loc 4 5))``;
+val _ = observe "reg_missing" ``stackSem$get_var_imm (Reg 3) ((ARB : (8,unit,unit) stackSem$state) with regs := FEMPTY |+ (1,Word 7w) |+ (2,Loc 4 5))``;
+val _ = observe "immediate" ``stackSem$get_var_imm (Imm 255w) ((ARB : (8,unit,unit) stackSem$state) with regs := FEMPTY |+ (1,Word 7w) |+ (2,Loc 4 5))``;
+val _ = observe "cont_none" ``stackSem$cont_loop (NONE : 8 stackSem$result option)``;
+val _ = observe "cont_continue_zero" ``stackSem$cont_loop (SOME (Continue 0) : 8 stackSem$result option)``;
+val _ = observe "cont_continue_three" ``stackSem$cont_loop (SOME (Continue 3) : 8 stackSem$result option)``;
+val _ = observe "cont_break_zero" ``stackSem$cont_loop (SOME (Break 0) : 8 stackSem$result option)``;
+val _ = observe "cont_break_one" ``stackSem$cont_loop (SOME (Break 1) : 8 stackSem$result option)``;
+val _ = observe "cont_break_three" ``stackSem$cont_loop (SOME (Break 3) : 8 stackSem$result option)``;
+val _ = observe "cont_result" ``stackSem$cont_loop (SOME (Result (Loc 4 5)) : 8 stackSem$result option)``;
+val _ = observe "cont_exception" ``stackSem$cont_loop (SOME (Exception (Loc 4 5)) : 8 stackSem$result option)``;
+val _ = observe "cont_halt" ``stackSem$cont_loop (SOME (Halt (Word 7w)) : 8 stackSem$result option)``;
+val _ = observe "cont_timeout" ``stackSem$cont_loop (SOME TimeOut : 8 stackSem$result option)``;
+val _ = observe "cont_error" ``stackSem$cont_loop (SOME Error : 8 stackSem$result option)``;
+val _ = observe "cont_final" ``stackSem$cont_loop (SOME (FinalFFI ARB) : 8 stackSem$result option)``;
+val _ = observe "exit_none" ``stackSem$exit_loop (NONE : 8 stackSem$result option)``;
+val _ = observe "exit_continue_zero" ``stackSem$exit_loop (SOME (Continue 0) : 8 stackSem$result option)``;
+val _ = observe "exit_continue_three" ``stackSem$exit_loop (SOME (Continue 3) : 8 stackSem$result option)``;
+val _ = observe "exit_break_zero" ``stackSem$exit_loop (SOME (Break 0) : 8 stackSem$result option)``;
+val _ = observe "exit_break_one" ``stackSem$exit_loop (SOME (Break 1) : 8 stackSem$result option)``;
+val _ = observe "exit_break_three" ``stackSem$exit_loop (SOME (Break 3) : 8 stackSem$result option)``;
+val _ = observe "exit_result" ``stackSem$exit_loop (SOME (Result (Loc 4 5)) : 8 stackSem$result option)``;
+val _ = observe "exit_exception" ``stackSem$exit_loop (SOME (Exception (Loc 4 5)) : 8 stackSem$result option)``;
+val _ = observe "exit_halt" ``stackSem$exit_loop (SOME (Halt (Word 7w)) : 8 stackSem$result option)``;
+val _ = observe "exit_timeout" ``stackSem$exit_loop (SOME TimeOut : 8 stackSem$result option)``;
+val _ = observe "exit_error" ``stackSem$exit_loop (SOME Error : 8 stackSem$result option)``;
+val _ = observe "exit_final" ``stackSem$exit_loop (SOME (FinalFFI ARB) : 8 stackSem$result option) = (SOME (FinalFFI ARB) : 8 stackSem$result option)``;
