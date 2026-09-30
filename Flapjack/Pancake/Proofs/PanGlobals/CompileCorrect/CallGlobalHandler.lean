@@ -941,6 +941,54 @@ private theorem matchedCallTail {width : Nat} {σ : Type} [NeZero width]
   change _ = (result, finalPost)
   simpa only [evaluateHOLFiniteState_seq_line780, setVarHOLFinite] using ht
 
+/-- Matched-handler branch through the literal compiled outer scopes. The
+initializer and destination scope execution follow from the caller relation;
+callee and handler computations are internal IH outputs. This private branch
+is untagged until original guarded-IH/all-outcome assembly is complete. -/
+private theorem matchedScopedCorrect {width : Nat} {σ : Type} [NeZero width]
+    (context : PanGlobalsContextExact width)
+    (source target calleePost sourcePost handlerPost : PanSemStateFiniteExact width σ)
+    (name function handlerId handlerVar : MlS) (handler body : ProgHOL width)
+    (arguments : List (ExpHOL width)) (values : List (ValueHOL width))
+    (callee : HolFiniteMapExact MlS (ValueHOL width)) (returnShape handlerShape shape : ShapeHOL)
+    (handlerInitializer value : ValueHOL width) (address : BitVec width)
+    (result : Option (PanSemResultExact width))
+    (hcaller : panGlobalsStateRelHOLExact true context source target)
+    (hcontext : context.globals.lookup name = some (shape, address))
+    (hargs : evalListHOLFinite target
+      (h := fun a => Classical.propDecidable (target.memaddrs a))
+      (compileExpExactHOLList context arguments) = some values)
+    (hcode : lookupCodeHOLFinite target.code.lookup function values =
+      some (compileProgExactHOL context body, callee, returnShape))
+    (hclock : target.clock ≠ 0)
+    (hbody : evaluateHOLFiniteState (callEntryStateHOLFinite target callee)
+      (compileProgExactHOL context body) = (some (.exception handlerId value), calleePost))
+    (hexception : target.eshapes.lookup handlerId = some handlerShape)
+    (hhandlerShape : shapeOfHOLExact value = handlerShape)
+    (hlocal : target.locals.lookup handlerVar = some handlerInitializer)
+    (hshape : shapeOfHOLExact value = shapeOfHOLExact handlerInitializer)
+    (hrun : evaluateHOLFiniteState
+      (setVarHOLFinite handlerVar value {calleePost with locals := target.locals})
+      (compileProgExactHOL context handler) = (result, handlerPost))
+    (hne : result ≠ some .error)
+    (hrel : panGlobalsStateRelHOLExact (goodResHOL result) context sourcePost handlerPost) :
+    ∃ finalPost,
+      evaluateHOLFiniteState target (compileProgExactHOL context
+        (.call (some (some (.global, name), some (handlerId, handlerVar, handler)))
+          function arguments)) = (result, finalPost) ∧
+      panGlobalsStateRelHOLExact (goodResHOL result) context sourcePost finalPost := by
+  classical
+  obtain ⟨initializer, _, hscope⟩ := presentContextScope context source target name
+    function handlerId handlerVar arguments handler shape address hcaller hcontext
+  obtain ⟨finalPost, ht, hr⟩ := matchedCallTail context target calleePost sourcePost handlerPost
+    function handlerId handlerVar (compileProgExactHOL context handler)
+    (compileExpExactHOLList context arguments) values (compileProgExactHOL context body)
+    callee returnShape handlerShape initializer handlerInitializer value address result
+    hargs hcode hclock hbody hexception hhandlerShape hlocal hshape hrun hne hrel
+  refine ⟨_, ?_, hr⟩
+  rw [hscope]
+  simp only [ht]
+
 /-- Internal missing-context branch of the full constructor proof. The branch
 condition selects the literal compiler fallback; the callee and handler IHs
 remain those of the original evaluator. Untagged infrastructure until the full

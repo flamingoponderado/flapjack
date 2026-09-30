@@ -35394,5 +35394,13 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Private all-non-error matched Call/flag/If composition for pending33.11. Derives literal scratch name freshness internally; uses internal callee branch and handler IH outputs to establish generated sequence and scope-restored relation for normal/exception/return/timeout/final outcomes. No successful handler premise. Full original guarded handler-IH discharge and public constructor assembly remain unfinished; untagged infrastructure."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "matchedScopedCorrect",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Private matched-handler literal compiler outer-scope branch for pending33.11. Initializer/scopes derived from caller relation/context branch, combines internal callee and handler IH outputs for all nonError handler results and scoped goodRes relation. Full original guarded IH discharge/all Call outcomes remain unfinished; no tag or completed port claim."
 }
 ]
