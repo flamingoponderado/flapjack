@@ -1,3 +1,4 @@
+import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallGlobalHandler
 import Flapjack.Pancake.Proofs.CrepInline.ArgLoadCorrect
 import Flapjack.Pancake.Proofs.CrepInline.ArgLoadStronger
 import Flapjack.Compiler.Backend.StackNames.AsmAdmissibility.Defaults
