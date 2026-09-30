@@ -45,14 +45,15 @@ theorem dom_fupdateListHOL {α β : Type} [DecidableEq α] :
         · simp [hke]
         · simp only [hke, if_false]; exact h e' (List.mem_cons_of_mem _ he')
 
+open Classical in
 /-- Exact HOL `SUBMAP_IMP_FUPDATE_LIST_SUBMAP` (`crep_inlineProofScript.sml:143-145`):
     `f SUBMAP g ∧ LENGTH x = LENGTH y ⇒ f |++ ZIP(x, y) SUBMAP g |++ ZIP(x, y)`,
-    polymorphic in the key and value types as in HOL.  `DecidableEq α` is the
-    Lean encoding of HOL key equality in `|++`.  The length hypothesis is kept
+    polymorphic in the key and value types as in HOL; `|++` uses HOL's
+    (classical) key equality, so no decidability binder is exposed.  The length hypothesis is kept
     as in HOL, although the proof does not need it. -/
 @[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "SUBMAP_IMP_FUPDATE_LIST_SUBMAP"
   (fmap_as_finite_support_relation := [f, g])]
-theorem submapImpFupdateListSubmapExact {α β : Type} [DecidableEq α]
+theorem submapImpFupdateListSubmapExact {α β : Type}
     (x : List α) (y : List β) (f : HolFiniteMapExact α β) (g : HolFiniteMapExact α β) :
     f.submap g ∧ x.length = y.length →
       (f.updateListEq (x.zip y)).submap (g.updateListEq (x.zip y)) := by
@@ -60,14 +61,15 @@ theorem submapImpFupdateListSubmapExact {α β : Type} [DecidableEq α]
   simp only [HolFiniteMapExact.lookup_updateListEq] at hk ⊢
   exact submap_fupdateListHOL _ _ _ h k v hk
 
+open Classical in
 /-- Exact HOL `opt_mmap_flookup_some_then_same_fdom`
     (`crep_inlineProofScript.sml:501-504`):
     `OPT_MMAP (FLOOKUP fm) vs = SOME vals ∧ LENGTH vs = LENGTH upd_vals ⇒
      FDOM (fm |++ ZIP(vs, upd_vals)) = FDOM fm`, polymorphic in the key and
-    value types as in HOL. -/
+    value types as in HOL, with classical key equality in `|++`. -/
 @[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "opt_mmap_flookup_some_then_same_fdom"
   (fmap_as_finite_support_relation := [fm])]
-theorem optMmapFlookupSomeThenSameFdomExact {α β : Type} [DecidableEq α]
+theorem optMmapFlookupSomeThenSameFdomExact {α β : Type}
     (vs : List α) (fm : HolFiniteMapExact α β) (vals upd_vals : List β) :
     vs.mapM fm.lookup = some vals ∧ vs.length = upd_vals.length →
       crepHolFdom (fm.updateListEq (vs.zip upd_vals)).lookup = crepHolFdom fm.lookup := by
