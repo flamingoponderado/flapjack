@@ -238,6 +238,25 @@ theorem compile_decls_appendHOL {width : Nat} [NeZero width] :
       | exnDecl name shape => simp only [List.cons_append, compileDecsExactHOL, ih]
       | name name fields => simp only [List.cons_append, compileDecsExactHOL, ih]
 
+/-- Exact HOL `compile_decls_append_IMP` (`pan_globalsProofScript.sml:2012-2019`),
+the tupling corollary of `compile_decls_append` used inside
+`evaluate_decls_compile_top`. -/
+@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "compile_decls_append_IMP"
+  (fmap_as_finite_support := [globals])
+  (words_as_type_indexed_bitvec)]
+theorem compile_decls_appendIMPHOL {width : Nat} [NeZero width]
+    (decs' : List (DeclHOL width)) (ctxt : PanGlobalsContextExact width)
+    (decs : List (DeclHOL width))
+    (X : List (ProgHOL width) × List (DeclHOL width) × List (DeclHOL width) ×
+      PanGlobalsContextExact width) :
+    compileDecsExactHOL ctxt (decs ++ decs') = X →
+      (let (decls, funs, exns, ctxt') := compileDecsExactHOL ctxt decs
+       let (decls', funs', exns', ctxt'') := compileDecsExactHOL ctxt' decs'
+       (decls ++ decls', funs ++ funs', exns ++ exns', ctxt'')) = X := by
+  intro h
+  rw [compile_decls_appendHOL] at h
+  exact h
+
 /-- Exact HOL `compile_decs_preserve_functions` (`pan_globalsProofScript.sml:2062-2065`). -/
 @[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "compile_decs_preserve_functions"
   (fmap_as_finite_support := [globals])
