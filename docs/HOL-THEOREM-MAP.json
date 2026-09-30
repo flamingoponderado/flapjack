@@ -1,5 +1,32 @@
 [
   {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/StackCodec.lean",
+    "lean_name": "fullReadBitmap",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "full_read_bitmap_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.6), stackSemScript309-314: bitmap list and exact word_loc descriptor, Word0 rejected, other Word indexes DROP(w2n(w-1w)) followed by accepted read_bitmap, Loc rejected. Word subtraction occurs before unsigned projection; no Nat replacement or range assumption. Independent bitmapWidth and stack/descriptor width, each positive BitVec/WordLocW with its own NeZero; HOL lists retained. Original HOL probe exposed the independence and Lean signatures preserve it. Accepted .2/.3 prerequisites. Exact GC/full evaluator and Nat-machine refinement remain open; coordinator source review required."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/StackCodec.lean",
+    "lean_name": "encStack",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "enc_stack_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.6), stackSemScript316-334: empty stack NONE; Word0 singleton SOME[], zero with tail NONE; otherwise full bitmap/filter failures propagate, recursive remainder encoding succeeds as selected++roots. Exact WordLoc/list carriers incl data labels. Natural stack-length recursion is justified by accepted filter_bitmap_LENGTH; no fuel-bound behavior. Independent bitmapWidth and stack/descriptor width, each positive BitVec/WordLocW with its own NeZero; HOL lists retained. Original HOL probe exposed the independence and Lean signatures preserve it. Accepted .2/.3 prerequisites. Exact GC/full evaluator and Nat-machine refinement remain open; coordinator source review required."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/StackCodec.lean",
+    "lean_name": "decStack",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "dec_stack_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.6), stackSemScript336-354: empty stack NONE for arbitrary roots; Word0 succeeds iff roots and tail are both empty, returning singleton Word0. Otherwise full bitmap/map failures propagate and recursively decode remaining roots/remainder; return [header]++front++rest, retaining unselected values and headers. Termination by stack length using map_bitmap_LENGTH; no fuel cutoff. Independent bitmapWidth and stack/descriptor width, each positive BitVec/WordLocW with its own NeZero; HOL lists retained. Original HOL probe exposed the independence and Lean signatures preserve it. Accepted .2/.3 prerequisites. Exact GC/full evaluator and Nat-machine refinement remain open; coordinator source review required."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Control.lean",
     "lean_name": "findCode",
     "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",

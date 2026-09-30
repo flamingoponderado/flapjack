@@ -2,6 +2,7 @@ import Flapjack.Pancake.PanStructs
 import Flapjack.Pancake.PanLang.Decl
 import Flapjack.Pancake.PanLang.Prog
 import Flapjack.Pancake.PanStructs.CompileShapeExact
+import Flapjack.Pancake.PanStructs.OldExpShapeExact
 
 /-!
 Byte-rangedness preservation for the named-structure elimination pass
@@ -1267,5 +1268,201 @@ theorem encodedShapeContextLookup_roundtrip (name : String)
       by_cases hmatch : candidate = name
       · simp [lookupInfo, hmatch, shapeOfHOL_shapeToHOL shape hhead.2]
       · simpa [lookupInfo, hmatch] using ih htail
+
+/-- Flapjack range infrastructure: any selected association-list payload
+satisfies an invariant held by all source entries. No HOL theorem is claimed. -/
+private theorem lookupInfo_payload_invariant {α : Type} (property : α → Prop)
+    (key : String) (entries : List (String × α))
+    (hall : ∀ p ∈ entries, property p.2) (value : α)
+    (hlookup : lookupInfo key entries = some value) : property value := by
+  induction entries with
+  | nil => simp [lookupInfo] at hlookup
+  | cons entry entries ih =>
+      rcases entry with ⟨candidate, payload⟩
+      by_cases hmatch : candidate == key
+      · simp only [lookupInfo, hmatch] at hlookup
+        cases hlookup
+        exact hall (candidate, value) (by simp)
+      · simp only [lookupInfo, hmatch] at hlookup
+        exact ih (fun p hp => hall p (by simp [hp])) hlookup
+
+private theorem lookupShape_default_byteRanged (name : String) (entries : List (String × Shape))
+    (hall : ListParamByteRanged entries) :
+    ShapeByteRanged ((lookupInfo name entries).getD .one) := by
+  cases hlookup : lookupInfo name entries with
+  | none => simp [ShapeByteRanged]
+  | some shape =>
+      exact lookupInfo_payload_invariant ShapeByteRanged name entries
+        (fun p hp => (hall p hp).2) shape hlookup
+
+mutual
+  /-- Flapjack codec prerequisite, not a HOL theorem. Derives the range of the
+  computed source shape from real source input/context invariants; in particular
+  a computed Named name can safely be used by the exact lookup correspondence. -/
+  theorem structOldExpShape_byteRanged {width : Nat} (context : StructPassContext)
+      (hc : CtxBR context.structs) (hl : ListParamByteRanged context.locals)
+      (hg : ListParamByteRanged context.globals) (expression : Exp (BitVec width))
+      (he : ExpByteRanged expression) : ShapeByteRanged (structOldExpShape context expression) := by
+    cases hexpression : expression with
+    | var kind name =>
+        cases kind
+        · simpa only [structOldExpShape] using lookupShape_default_byteRanged name context.locals hl
+        · simpa only [structOldExpShape] using lookupShape_default_byteRanged name context.globals hg
+    | rStruct fields =>
+        simp only [hexpression, ExpByteRanged] at he
+        simpa only [structOldExpShape, ShapeByteRanged] using
+          structOldExpShapes_byteRanged context hc hl hg fields ((listExpByteRanged_iff fields).mp he)
+    | rField index value =>
+        simp only [hexpression, ExpByteRanged] at he
+        have hshape := structOldExpShape_byteRanged context hc hl hg value he
+        cases hvalue : structOldExpShape context value with
+        | one => simp [structOldExpShape, hvalue, ShapeByteRanged]
+        | named name => simp [structOldExpShape, hvalue, ShapeByteRanged]
+        | comb shapes =>
+            simp only [hvalue, ShapeByteRanged] at hshape
+            simp only [structOldExpShape, hvalue]
+            cases hindex : shapes[index]? with
+            | none => simp [List.getD, hindex, ShapeByteRanged]
+            | some shape =>
+                have hmem : shape ∈ shapes := List.mem_of_getElem? hindex
+                simpa [List.getD, hindex] using hshape shape hmem
+    | nStruct name fields =>
+        simp only [hexpression, ExpByteRanged] at he
+        simpa only [structOldExpShape, ShapeByteRanged] using he.1
+    | nField field value =>
+        cases hvalue : structOldExpShape context value with
+        | one => simp [structOldExpShape, hvalue, ShapeByteRanged]
+        | comb shapes => simp [structOldExpShape, hvalue, ShapeByteRanged]
+        | named name =>
+            simp only [structOldExpShape, hvalue]
+            cases hlookup : lookupInfo name context.structs with
+            | none => simp [ShapeByteRanged]
+            | some info =>
+                have hfields : ListParamByteRanged info.fields :=
+                  lookupInfo_payload_invariant (fun info : StructInfo => ListParamByteRanged info.fields)
+                    name context.structs (fun p hp => (hc p hp).2) info hlookup
+                have hr := lookupShape_default_byteRanged field info.fields hfields
+                cases hf : lookupInfo field info.fields <;> simpa [hf] using hr
+    | load shape address =>
+        simp only [hexpression, ExpByteRanged] at he
+        simpa only [structOldExpShape] using he.1
+    | const value => simp [structOldExpShape, ShapeByteRanged]
+    | load32 address => simp [structOldExpShape, ShapeByteRanged]
+    | loadByte address => simp [structOldExpShape, ShapeByteRanged]
+    | op operator args => simp [structOldExpShape, ShapeByteRanged]
+    | panOp operator args => simp [structOldExpShape, ShapeByteRanged]
+    | cmp operator left right => simp [structOldExpShape, ShapeByteRanged]
+    | shift operator left right => simp [structOldExpShape, ShapeByteRanged]
+    | baseAddr => simp [structOldExpShape, ShapeByteRanged]
+    | topAddr => simp [structOldExpShape, ShapeByteRanged]
+    | bytesInWord => simp [structOldExpShape, ShapeByteRanged]
+  termination_by sizeOf expression
+  decreasing_by all_goals simp_all; all_goals omega
+
+  /-- Flapjack range infrastructure for the mutual expression-list worker. -/
+  theorem structOldExpShapes_byteRanged {width : Nat} (context : StructPassContext)
+      (hc : CtxBR context.structs) (hl : ListParamByteRanged context.locals)
+      (hg : ListParamByteRanged context.globals) (expressions : List (Exp (BitVec width)))
+      (he : ∀ e ∈ expressions, ExpByteRanged e) :
+      ∀ shape ∈ structOldExpShape.structOldExpShapes context expressions, ShapeByteRanged shape := by
+    cases hexpressions : expressions with
+    | nil => simp [structOldExpShape.structOldExpShapes]
+    | cons expression expressions =>
+        rw [hexpressions] at he
+        intro shape hmem
+        simp only [structOldExpShape.structOldExpShapes] at hmem
+        rcases List.mem_cons.mp hmem with rfl | htail
+        · exact structOldExpShape_byteRanged context hc hl hg expression (he expression (by simp))
+        · exact structOldExpShapes_byteRanged context hc hl hg expressions
+            (fun e h => he e (by simp [h])) shape htail
+  termination_by sizeOf expressions
+  decreasing_by all_goals simp_all; all_goals omega
+end
+
+/-- Flapjack codec infrastructure for raw field selection. Encoding commutes
+with indexed selection and the defensive One default, including out-of-range
+indices. This representation lemma has no HOL theorem original. -/
+theorem shapeToHOL_getD (shapes : List Shape) (index : Nat) :
+    shapeToHOL (shapes.getD index .one) =
+      (shapes.map shapeToHOL)[index]?.getD .one := by
+  induction shapes generalizing index with
+  | nil => simp [List.getD, shapeToHOL]
+  | cons shape shapes ih =>
+      cases index with
+      | zero => simp [List.getD]
+      | succ index => simpa [List.getD] using ih index
+
+/-- Flapjack cross-carrier infrastructure: both source variable kinds retain
+first-match lookup and the One default. The source name is actually ranged;
+no successful lookup or computed result is assumed. No HOL theorem original. -/
+theorem oldExpShapeExact_var_encode {width : Nat} [NeZero width]
+    (context : StructPassContext) (kind : VarKind) (name : String)
+    (hn : NameRanged name) (hl : ListParamByteRanged context.locals)
+    (hg : ListParamByteRanged context.globals) :
+    Pancake.PanStructs.CompileShapeExact.oldExpShapeExact
+      (structPassContextToExact context) (expToHOL (Exp.var kind name : Exp (BitVec width))) =
+        shapeToHOL (structOldExpShape context (Exp.var kind name : Exp (BitVec width))) := by
+  cases kind
+  · simp only [expToHOL, Pancake.PanStructs.CompileShapeExact.oldExpShapeExact,
+      structOldExpShape]
+    rw [structPassContextToExact_locals context name hn hl]
+    cases lookupInfo name context.locals <;> simp [shapeToHOL]
+  · simp only [expToHOL, Pancake.PanStructs.CompileShapeExact.oldExpShapeExact,
+      structOldExpShape]
+    rw [structPassContextToExact_globals context name hn hg]
+    cases lookupInfo name context.globals <;> simp [shapeToHOL]
+
+/-- Flapjack codec equation for the source Named constructor. Its payload
+expressions do not affect the old shape; no HOL theorem original. -/
+theorem oldExpShapeExact_nStruct_encode {width : Nat} [NeZero width]
+    (context : StructPassContext) (name : String)
+    (fields : List (String × Exp (BitVec width))) :
+    Pancake.PanStructs.CompileShapeExact.oldExpShapeExact
+      (structPassContextToExact context) (expToHOL (.nStruct name fields)) =
+        shapeToHOL (structOldExpShape context (.nStruct name fields)) := by
+  simp only [expToHOL, Pancake.PanStructs.CompileShapeExact.oldExpShapeExact,
+    structOldExpShape, shapeToHOL]
+
+/-- Flapjack codec equation for the source Load constructor: its explicit
+shape is retained without evaluating the address; no HOL theorem original. -/
+theorem oldExpShapeExact_load_encode {width : Nat} [NeZero width]
+    (context : StructPassContext) (shape : Shape) (address : Exp (BitVec width)) :
+    Pancake.PanStructs.CompileShapeExact.oldExpShapeExact
+      (structPassContextToExact context) (expToHOL (.load shape address)) =
+        shapeToHOL (structOldExpShape context (.load shape address)) := by
+  simp only [expToHOL, Pancake.PanStructs.CompileShapeExact.oldExpShapeExact,
+    structOldExpShape]
+
+/-- Flapjack codec infrastructure for compile_exp named-field indexing.
+Actual byte-ranged query and stored names make equality injective through the
+name codec. Both operations retain the first duplicate match and absent fields;
+this cross-carrier lemma has no HOL theorem original. -/
+theorem encodedFieldIndexLookup (field : String) (fields : List (String × Shape))
+    (hfield : NameRanged field) (hfields : ListParamByteRanged fields) :
+    afindi (ofString field) (fields.map fun p => (ofString p.1, shapeToHOL p.2)) =
+      structFindFieldIndex field fields := by
+  induction fields with
+  | nil => simp [afindi, structFindFieldIndex]
+  | cons entry fields ih =>
+      rcases entry with ⟨candidate, shape⟩
+      have hhead := hfields (candidate, shape) (by simp)
+      have htail : ListParamByteRanged fields := fun p hp => hfields p (by simp [hp])
+      by_cases hmatch : candidate = field
+      · subst candidate
+        simp [afindi, structFindFieldIndex]
+      · have hexact : ofString field ≠ ofString candidate :=
+          fun h => hmatch (ofString_injective_of_ranged_local hhead.1 hfield h.symm)
+        simp only [List.map_cons, afindi_cons, hexact, ↓reduceIte,
+          structFindFieldIndex, beq_iff_eq, hmatch, ↓reduceIte]
+        rw [ih htail]
+        cases structFindFieldIndex field fields <;> rfl
+
+/-- Flapjack codec corollary retaining the source zero default for missing
+named fields. No target lookup success or index bounds are assumed. -/
+theorem encodedFieldIndexLookup_default (field : String) (fields : List (String × Shape))
+    (hfield : NameRanged field) (hfields : ListParamByteRanged fields) :
+    (afindi (ofString field) (fields.map fun p => (ofString p.1, shapeToHOL p.2))).getD 0 =
+      (structFindFieldIndex field fields).getD 0 := by
+  rw [encodedFieldIndexLookup field fields hfield hfields]
 
 end Flapjack
