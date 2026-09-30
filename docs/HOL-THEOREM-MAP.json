@@ -32738,5 +32738,46 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-only infrastructure; no separate HOL declaration. Literal recursive compiled expression list equals MAP spelling of existing OPT_MMAP theorem."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallHandlerNoDestination.lean",
+  "lean_name": "compileCorrect_CallHandlerNoDestination",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "compile_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "PanSemStateFiniteExact.locals",
+    "PanSemStateFiniteExact.globals",
+    "PanSemStateFiniteExact.code",
+    "PanSemStateFiniteExact.eshapes",
+    "PanGlobalsContextExact.globals",
+    "callee"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-c source comparison2026-09-30: gen_goal172-182, compile_correct Call1138ff, panSem658-697/line780 rewrite and original evaluate_ind handler conjunct (captured original oracle, EvaluateInd.lean105-137). Literal caltyp SOME(NONE,SOME(handlerId,handlerVar,handlerBody)); compiler preserves handler identifiers and compiles its body. Same original stateRel T/source evaluation/nonError -> existential target evaluation and good_res relation. Only original guarded callee IH and handler IH: args SOME/code lookup SOME/nonzero clock, body yields matching exception/post, caller eshapes success, structural shape equality and local validity. Administrative intermediate option/product names eliminated, no semantic guard removed; fixed-clock body rewritten using accepted fix_clock_evaluate. Evaluator Boolean shape test is converted to literal structural equality via reviewed shapeEqHOL_eq_true. Initial relation derives eshapes and caller locals equality, hence identical target handler tests; body relation F plus change_locals and set_var gives handler entry relation T. Matching-return, mismatched exception, timeout/finalFfi and invalid-result behavior retained. No target run/post relation/shape transport/freshness/global-destination assumptions. Canonical state/context maps and standalone callee IH binder explicitly qualified; local genuine roundtrip witnesses; positive words/universe0 FFI and exact MlS identifiers. Proof-only; complete Call and full compiler remain open, coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallHandlerNoDestination.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only infrastructure, no separately named HOL original. Canonical state/context roundtrip re-export or compile-list MAP equation for this exact handler case."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallHandlerNoDestination.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only infrastructure, no separately named HOL original. Canonical state/context roundtrip re-export or compile-list MAP equation for this exact handler case."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallHandlerNoDestination.lean",
+  "lean_name": "compileList_eq_map",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only infrastructure, no separately named HOL original. Canonical state/context roundtrip re-export or compile-list MAP equation for this exact handler case."
 }
 ]
