@@ -27160,5 +27160,55 @@
     "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific canonical carrier roundtrip re-export; no independent HOL original."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "evaluate_locals_same_fdom",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/Structural.lean",
+    "lean_name": "evaluateLocalsSameFdomSeqExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; .43.3), HOL evaluate_locals_same_fdom:181-191 and structural cases:206-230. Original evaluation, NONE/Continue/Break guard and domain equality specialized to Seq. Only subprogram domain-preservation induction hypotheses added. Seq composes normal first-run IH with second or propagates guarded result; If selects corresponding branch; Dec uses body IH on the updated state and restores original key membership for both absent/present bindings. Imported exact evaluator/state with canonical finite-map roundtrip and positive-width Type0 translation. No extra success/post-state relation premise; full induction assembly remains open."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "evaluate_locals_same_fdom",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/Structural.lean",
+    "lean_name": "evaluateLocalsSameFdomIfExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; .43.3), HOL evaluate_locals_same_fdom:181-191 and structural cases:206-230. Original evaluation, NONE/Continue/Break guard and domain equality specialized to If. Only subprogram domain-preservation induction hypotheses added. Seq composes normal first-run IH with second or propagates guarded result; If selects corresponding branch; Dec uses body IH on the updated state and restores original key membership for both absent/present bindings. Imported exact evaluator/state with canonical finite-map roundtrip and positive-width Type0 translation. No extra success/post-state relation premise; full induction assembly remains open."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "evaluate_locals_same_fdom",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/Structural.lean",
+    "lean_name": "evaluateLocalsSameFdomDecExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; .43.3), HOL evaluate_locals_same_fdom:181-191 and structural cases:206-230. Original evaluation, NONE/Continue/Break guard and domain equality specialized to Dec. Only subprogram domain-preservation induction hypotheses added. Seq composes normal first-run IH with second or propagates guarded result; If selects corresponding branch; Dec uses body IH on the updated state and restores original key membership for both absent/present bindings. Imported exact evaluator/state with canonical finite-map roundtrip and positive-width Type0 translation. No extra success/post-state relation premise; full induction assembly remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/Structural.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific canonical carrier roundtrip re-export; no independent HOL original."
   }
 ]
