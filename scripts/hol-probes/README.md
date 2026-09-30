@@ -1,5 +1,15 @@
 # Original Pancake HOL probes
 
+`pan_globals_compile_top_probe.out` retains `missing_start`, `global_present`,
+and `present_start`, and adds `top_missing`, `top_function`, and
+`top_global_exception` for exact `compile_top_def`. The new 64-bit rows cover
+parameter and inline/export metadata, absent-global reads, global initializer
+address 8, and exception/new-main/function ordering. Regenerate using the built
+original theories with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=pan_globals_compile_top_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`Flapjack.Test.PanGlobalsCompileTopExactParity` replays the new rows; it does not
+claim production top-level routing or the pass semantics theorem.
+
 The repository-wide parity workflow is documented in
 [`docs/PARITY-TESTING.md`](../../docs/PARITY-TESTING.md).
 
