@@ -31949,5 +31949,43 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack local support (bead .47.2.3): the motive for a handler Call from the handler IH."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/Assembly.lean",
+    "lean_name": "transformEocCorrect",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "transform_eoc_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.2.4) compared crep_inlineProofScript.sml:1893-1913: the full HOL statement forall p s r s' res rts. <eight hypotheses> ==> exists r1 s1'. evaluate (transform_eoc rts p, s) = (r1,s1') /\\ state_rel s' s1' /\\ case r of ..., binders in HOL order, no extra premise and no public IH. Assembled from the tagged cases (Leaf, Return, Dec, If, Seq, While, Call) by structural recursion on the program for all states (handler a structural subterm of Call) and an inner clock induction constructing exactly TransformEocWhileIH; the same induction principle as the accepted evaluate_locals_same_fdom assembly, not inductHOL (cf. lkme). Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/Assembly.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module canonical witness forwarding the reviewed CrepSemHOLState toBroad/ofBroad roundtrip for the locals/globals/code finite-map qualifier."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/Assembly.lean",
+    "lean_name": "whileEocMotive",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead .47.2.4): the While motive for all states by clock induction providing TransformEocWhileIH; no separate HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/Assembly.lean",
+    "lean_name": "eocMotive",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead .47.2.4): the evaluate_ind motive of transform_eoc_correct for every program and state by structural recursion over the tagged cases; no separate HOL declaration."
   }
 ]

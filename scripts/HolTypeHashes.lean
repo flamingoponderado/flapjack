@@ -291,6 +291,7 @@ import Flapjack.Pancake.Proofs.CrepInline.NestedSeqAssign
 import Flapjack.Pancake.Proofs.CrepInline.TransformEoc.Cases
 import Flapjack.Pancake.Proofs.CrepInline.TransformEoc.While
 import Flapjack.Pancake.Proofs.CrepInline.TransformEoc.Call
+import Flapjack.Pancake.Proofs.CrepInline.TransformEoc.Assembly
 import Flapjack.Pancake.Proofs.CrepInline.UnreachElimProgSize
 import Flapjack.Pancake.Proofs.CrepInline.NestedDecs
 import Flapjack.Pancake.Proofs.CrepInline.ShMem
