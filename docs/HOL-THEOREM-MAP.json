@@ -37221,5 +37221,43 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-sol source comparison22.5.20 against pan_globalsProofScript1839-1853 and panSemScript785-809: unconditional equality semantics (state with code=fperm_code f g state.code) (fperm_name f g start) = semantics state start, over arbitrary native MlS swap names/state/start. No nonFail, successful-run, target evaluation, IH, trace-prefix or result premise. Accepted evaluateFpermPrimeHOL at native Call NONE start [] gives complete pair mapping at every clock; internally projected results and FFI event lists are exactly equal. Original semantics failure test, classical holOptionSome termination predicate and entire HolLList buildLprefixLub trace-set predicate retained. Private predicate lemma only eliminates existential pair aliases, so both classical choice predicates and complete divergence sets coincide before choice/LUB; no uniqueness assumption. Canonical imported finite locals/globals/code/eshapes and same-module genuine state roundtrip reexport, native word-indexed ProgHOL/result/state and Type0 FFI host; only finite-support and positive type-indexed BitVec translations qualified. Proof-only semantic composition; no executed compiler behavior change. Independent coordinator source acceptance and merged checks pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/WhileBodyExact.lean",
+  "lean_name": "evaluateWhileBodySameHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+  "hol_name": "evaluate_while_body_same",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison pan_simpProofScript.sml90-106: universal equality of complete body evaluations implies universal equality of While evaluations for arbitrary condition/state. Exactly source premise; no success/fuel/syntax/target-run guards. Strong induction on entry clock: exact While equation rewrites source fix_clock via unconditional bound; NONE and Continue recurse at postclock at most entryclock-1, Break yields NONE/post, all other results propagate, false condition/zero clock/invalid expression unchanged. Native exact carriers with canonical finite-map locals/globals/code/eshapes genuine owner roundtrip, positive BitVec width and Type0 FFI only. Coordinator review pending, proof-only."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/WhileBodyExact.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Imported-owner canonical finite-state roundtrip; derived representation infrastructure with no separately named HOL original."
+},
+{
+  "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+  "hol_name": "evaluate_clock_sub",
+  "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvaluateClockSubAssembly.lean",
+  "lean_name": "evaluateClockSubHOLFinite",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds10 source comparison (bead flapjack-4ac.4.60.1.1.15): exact port of HOL panProps$evaluate_clock_sub (panPropsScript.sml:724-728), proved by the original recInduct evaluate_ind over the canonical carrier. The statement quantifies p, t, res, st, ck and the two original hypotheses (high run at clock + ck; res <> TimeOut) with conclusion at clock - ck; all 21 case IHs are discharged internally by the tagged constructor case lemmas through the field-for-field PanProps codec, and no induction hypothesis or target-run fact is a premise of the public theorem."
 }
 ]
