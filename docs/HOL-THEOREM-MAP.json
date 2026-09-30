@@ -36421,5 +36421,37 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Canonical imported state/context roundtrip reexport; Flapjack representation infrastructure, no independent HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/CallEntry.lean",
+  "lean_name": "arguments",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific derived finite Call entry transport; no independent HOL declaration. Supports original evaluate_fperm Call1746-1758 using accepted eta/lookup facts. Nonrecursive helper explicitly limited to missing arguments/code or zero clock; not a tagged full constructor port. Full recursive callee/handler parent22.5.12 remains open."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/CallEntry.lean",
+  "lean_name": "lookup",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific derived finite Call entry transport; no independent HOL declaration. Supports original evaluate_fperm Call1746-1758 using accepted eta/lookup facts. Nonrecursive helper explicitly limited to missing arguments/code or zero clock; not a tagged full constructor port. Full recursive callee/handler parent22.5.12 remains open."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/CallEntry.lean",
+  "lean_name": "entry",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific derived finite Call entry transport; no independent HOL declaration. Supports original evaluate_fperm Call1746-1758 using accepted eta/lookup facts. Nonrecursive helper explicitly limited to missing arguments/code or zero clock; not a tagged full constructor port. Full recursive callee/handler parent22.5.12 remains open."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/CallEntry.lean",
+  "lean_name": "nonrecursive",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific derived finite Call entry transport; no independent HOL declaration. Supports original evaluate_fperm Call1746-1758 using accepted eta/lookup facts. Nonrecursive helper explicitly limited to missing arguments/code or zero clock; not a tagged full constructor port. Full recursive callee/handler parent22.5.12 remains open."
 }
 ]
