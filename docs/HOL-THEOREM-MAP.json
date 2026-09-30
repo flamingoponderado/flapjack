@@ -26835,20 +26835,12 @@
     "reviewer": "Flapjack helper (bead flapjack-pxn.18.5.5.42.1) proving HOL inline_prog_correct's Call case (crep_inlineProofScript.sml:2409-2534) for every call inline_prog leaves as a Call (non-distinct return names, callee outside inl_bag, handler call), from the two tagged evaluate_ind Call IHs with P := crepInlineGoal. The HOL-only-suspended inlined Tail/Nontail paths are .42.2/.42.3; the tagged Call case is assembled in .42.4. Kernel-checked; standard axioms."
   },
   {
-    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-    "hol_name": "inline_prog_correct",
-    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
-    "lean_name": "inlineProgCorrectWhileCaseExact",
-    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support_relation": [
-      "CrepSemHOLState.locals",
-      "CrepSemHOLState.globals",
-      "CrepSemHOLState.code",
-      "inlFs",
-      "inlBag"
-    ],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-pxn.18.5.5.40) against crep_inlineProofScript.sml:2301-2315 (statement) and the While case at :2326, matching the crepSem$evaluate_ind While conjunct over the exact crepSemScript.sml:285-300 evaluator clause (Lean evalCrepSemHOLProgExact_while_holShape). The two premises are the HOL case's sub-body and recursive-while induction hypotheses; no premise is strengthened and no conclusion weakened. Carriers are the reviewed exact CrepSemHOLState/CrepProgHOL/CrepExpHOL and both inline maps."
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "apply_nummaps_key_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/KeyMaps.lean",
+    "lean_name": "applyNummapsKey",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-09-30 bead .11.1.9: original29-33 exact product of two fromAList/map-key/toAList operations. Independent alpha/beta Spt payloads retained, f Nat->Nat arbitrary incl collisions; existing applyNummapKey unfolds precisely to each original component. First-match reconstructed payload and mixed traversal order preserved. No word/type-width or finite-map qualifier: numeric tree carrier is exact Spt. Actual wordApplyColour Call (with/without handler), Alloc, Install and FFI paired cutsets now call applyNummapsKeyExecutable, whose numSetToExact/fromExact codecs execute this tagged definition. Universal equality to the two already reviewed single-map executable routes is rfl, no representation-validity/injection premises. Three original HOL paired observations captured; full compiler parity and source route audit reported on bead."
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
@@ -26856,6 +26848,6 @@
     "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
     "lean_name": "evaluateLocalsSameFdomTrivialAtomsExact",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-pxn.18.5.5.43.1) against crep_inlineProofScript.sml:181-191; Skip/Break/Continue/Tick cases of the induction. FDOM is Flapjack.FiniteMap.FDOM applied to the exact carrier's locals.lookup (a FiniteMap); result condition matches HOL case r of NONE/SOME(Break n)/SOME(Continue n)/_; no extra hypotheses."
+    "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-pxn.18.5.5.43.1) against crep_inlineProofScript.sml:181-191; Skip/Break/Continue/Tick cases. FDOM is Flapjack.FiniteMap.FDOM applied to locals.lookup; result condition matches HOL; no extra hypotheses."
   }
 ]
