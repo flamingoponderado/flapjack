@@ -1,3 +1,4 @@
+import Flapjack.Test.StackSemFixedStackCasesParity
 import Flapjack.RiscV.Encoding
 import Flapjack.Test.DeclBridgeParity
 import Flapjack.Test.RiscVColourLivenessParity
