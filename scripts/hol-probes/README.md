@@ -1459,3 +1459,22 @@ minimum/1, truncation toward zero and zero cases. These are original HOL EVAL
 outputs, kernel-replayed in LoopSemEvalExactParity. LDiv is signed word_quot;
 LLongDiv retains natural unsigned DIV/MOD and its existing rows. The driver
 now registers all seventeen arithmetic labels explicitly.
+
+## StackSem Alloc evaluator clause
+
+`stacksem_evaluate_alloc_probeScript.sml` records eight observations from the
+original `evaluate_def` Alloc equation (stackSemScript.sml:779-783): disabled
+allocation, missing and location registers, successful Word allocation, GC
+failure, missing post-GC AllocSize, location-valued NextFree, and exhausted
+space. The latter three retain the collected state; exhaustion additionally
+empties the environment and returns Halt (Word 1). GC failure returns the
+original state, including its original register and AllocSize.
+
+`Flapjack/Test/StackSemEvaluateAllocCaseParity.lean` kernel-replays all eight
+rows over arbitrary base states. The untagged evaluator-case helper includes
+four universal dispatch equations and unconditional GC/allocation/case clock
+preservation certificates. It calls the reviewed exact allocator; full
+evaluator assembly and production routing remain tracked separately. The
+initial four-row slice was recovered from released fleet WIP without changing
+its shared stash; this slice extends its original HOL failure-path coverage.
+Regenerate using the established `scripts/hol-probes/regenerate.sh` workflow.
