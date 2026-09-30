@@ -7,23 +7,8 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-ds9 source comparison (2026-09-30; bead flapjack-y19g.13.1): HOL bad_fun_return_def (stackSemScript.sml:754-758) is the four equations bad_fun_return NONE = T; bad_fun_return (SOME (Break _)) = T; bad_fun_return (SOME (Continue _)) = T; bad_fun_return _ = F, over the exact StackSem result. Lean transcribes them one for one on Option (StackSemResult width): none/break/continue are true and every other Some result is false; no result payload is inspected, so the only carrier is the width-indexed exact StackSemResult whose word payload reaches BitVec width through the tagged WordLocW word_loc. The (words_as_type_indexed_bitvec) qualifier records the HOL 'a word/dimindex (:a) to positive-width BitVec width/[NeZero width] translation, matching the neighbouring contLoop/exitLoop ports in the same module. This is StackSem's own classifier and is distinct from WordSem's same-named bad_fun_return over a different result type. The bad/non-bad sub-result branches are exercised by the Break/Continue/Skip/Return rows of scripts/hol-probes/stacksem_jumplower_probe.out and replayed in Flapjack.Test.StackSemJumpLowerParity. Coordinator source review pending."
-  },
-    {
-    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Labels.lean",
-    "lean_name": "getLabels",
-    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
-    "hol_name": "get_labels_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-luna-c source comparison (2026-09-30; y19g.15.1), stackSemScript.sml:667-680: Seq and If union branch labels; Loop recurses; Call inserts the return continuation label and its nested labels, with handler labels included only under SOME return continuation as HOL's clause parenthesization specifies; Halt and all remaining constructors yield the empty label set. Lean uses ProgM α, the exact generic stackLang prog carrier at arbitrary HOL word type α, and predicate membership for HOL set operations. Direct original HOL EVAL replay: scripts/hol-probes/stacksem_labels_probe.out. This is proof-side prerequisite only; no production evaluator route change. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Labels.lean",
-    "lean_name": "locCheck",
-    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
-    "hol_name": "loc_check_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-luna-c source comparison (2026-09-30; y19g.15.1), stackSemScript.sml:682-686: source condition is (l2=0 and l1 in domain code) or exists n e, lookup n code=SOME e and (l1,l2) in get_labels e. Lean preserves that disjunction, exact Spt num_map lookup/domain carrier, arbitrary HOL word type α via ProgM α, and predicate rendering of HOL sets. Probe EVAL covers the zero-offset present key; the nonzero label witness is kernel-proved in the original HOL probe because EVAL leaves its unbounded existential symbolic. Lean replay: Flapjack.Test.StackSemLabelsParity. Proof-side prerequisite only; no production evaluator route change. Coordinator source review pending."
-  },
+  }
+,
   {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/StackCodec.lean",
     "lean_name": "fullReadBitmap",
