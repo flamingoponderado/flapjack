@@ -75,7 +75,7 @@ val _ = row "fptoint_result" (st64 base64) iToInt72;
 val _ = row "fptoint_out_of_range" (st64 big64) iToInt72;
 val _ = row "fptoint_missing" (st64 base64) iToInt79;
 
-(* 32-bit FPToInt writes the low (d1=14) or high (d1=15) half of fp3. *)
+(* 32-bit FPToInt writes the low (d1=14) or high (d1=15) half of fp7 (register index d1 DIV 2). *)
 val _ = row "fptoint32_even" (st32 base64) iToInt14;
 val _ = row "fptoint32_odd" (st32 base64) iToInt15;
 
