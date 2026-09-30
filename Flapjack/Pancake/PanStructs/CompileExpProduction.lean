@@ -75,6 +75,28 @@ where
 termination_by expressions => sizeOf expressions
   decreasing_by all_goals first | sizeOf_list_dec | decreasing_trivial
 
+/-- Flapjack codec infrastructure for the production program compiler's
+Primitive, Call and DecCall argument lists. It has no HOL theorem original:
+the list induction connects the executed traversal to `compileExpsExact`,
+using only the input context and expression range invariants. Order and
+multiplicity are preserved, and no compiled-output premise is assumed. -/
+theorem structCompileProgExactProduction_exps_encode {width : Nat} [NeZero width]
+    (context : StructPassContext) (hc : CtxBR context.structs)
+    (hl : ListParamByteRanged context.locals) (hg : ListParamByteRanged context.globals)
+    (expressions : List (Exp (BitVec width))) (he : ∀ e ∈ expressions, ExpByteRanged e) :
+    (structCompileProgExactProduction.structCompileExps context expressions).map expToHOL =
+      Pancake.PanStructs.CompileShapeExact.compileExpsExact
+        (structPassContextToExact context) (expressions.map expToHOL) := by
+  induction expressions with
+  | nil => simp [structCompileProgExactProduction.structCompileExps,
+      Pancake.PanStructs.CompileShapeExact.compileExpsExact]
+  | cons expression expressions ih =>
+      simp only [List.mem_cons, forall_eq_or_imp] at he
+      simp only [structCompileProgExactProduction.structCompileExps, List.map_cons,
+        Pancake.PanStructs.CompileShapeExact.compileExpsExact]
+      rw [structCompileExpExactProduction_eq_legacy context hc hl hg expression he.1,
+        ← compileExpExact_encode context hc hl hg expression he.1, ih he.2]
+
 /-- Flapjack expression argument-list equality on genuine ranged inputs. -/
 theorem structCompileProgExactProduction_exps_eq_legacy {width : Nat} [NeZero width]
     (context : StructPassContext) (hc : CtxBR context.structs)
