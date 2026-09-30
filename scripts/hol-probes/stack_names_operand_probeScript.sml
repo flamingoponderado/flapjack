@@ -1,0 +1,10 @@
+load "preamble"; load "stack_namesTheory";
+open bossLib HolKernel Parse preamble stack_namesTheory;
+fun out label q = (print(label ^ "="); print_term(rconc(EVAL q)); print "\n");
+val names = ``sptree$insert 3 7 sptree$LN : num num_map``;
+val _ = out "reg_present" ``ri_find_name ^names (Reg 3 : 8 asm$reg_imm)``;
+val _ = out "reg_missing" ``ri_find_name ^names (Reg 4 : 8 asm$reg_imm)``;
+val _ = out "imm" ``ri_find_name ^names (Imm (255w:8 word))``;
+val _ = out "dest_present" ``dest_find_name ^names (INR 3)``;
+val _ = out "dest_missing" ``dest_find_name ^names (INR 4)``;
+val _ = out "dest_label" ``dest_find_name ^names (INL 3)``;
