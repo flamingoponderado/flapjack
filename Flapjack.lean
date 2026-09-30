@@ -1,3 +1,4 @@
+import Flapjack.Pancake.Proofs.WordConvs.SmartSeqLabels
 import Flapjack.Pancake.WordLang.OccurrenceCorrespondence
 import Flapjack.Compiler.Backend.StackProps.FloatNames
 import Flapjack.Compiler.Backend.StackProps.AddressNames

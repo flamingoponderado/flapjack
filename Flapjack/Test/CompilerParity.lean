@@ -1,3 +1,4 @@
+import Flapjack.Test.WordSimpSmartSeqParity
 import Flapjack.Test.StackPropsFloatNames
 import Flapjack.Test.StackPropsAddressNames
 import Flapjack.Test.StackPropsArithmeticNames

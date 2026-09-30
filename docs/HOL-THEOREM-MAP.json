@@ -28810,5 +28810,23 @@
     "lean_name": "panGlobals_semantics_of_clock_observations",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific observational congruence, no standalone HOL original. Uses equal result-option and ffi events at every clock to equate failure, entire termination-choice predicate and divergence prefix set. Conditional assembly infrastructure, not semantics_empty_locals or a pass-correctness port."
-  }
+  },
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+  "lean_name": "smartSeqHOL",
+  "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+  "hol_name": "SmartSeq_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source16-19: exact WordLangProgHOL/Spt/MlString payloads at positive width; constructor match is exactly equality to Skip because distinct constructors cannot equal Skip. All non-Skip inputs preserve Seq, even right Skip. Definition-only proof prerequisite; executed broad WordProg migration remains inventory .15.1.6."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SmartSeqLabels.lean",
+  "lean_name": "extractLabels_smartSeqHOL",
+  "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+  "hol_name": "extract_labels_SmartSeq",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source166-170: same two universally quantified program binders, no hypotheses, same unconditional equality extract_labels(SmartSeq p1 p2)=extract_labels(Seq p1 p2). Exact positive-width programs, constructor split kernel proof. Six fresh original HOL observations replay actual label lists including Call pairs and order; no target evaluation premise."
+}
 ]
