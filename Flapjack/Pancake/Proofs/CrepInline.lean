@@ -2327,6 +2327,16 @@ private theorem inline_primitive {width : Nat} [NeZero width]
   unfold CrepInlineCanonical.inlineProgHOLExact
   simp only [CrepInlineCanonical.inlineProgHOLCoreExact]
 
+private theorem inline_extCall {width : Nat} [NeZero width]
+    (inlBag : HolFiniteMapExact CrepInlineMapHOLName (List Nat × CrepProgHOL width))
+    (function : Flapjack.Basis.Pure.MlString.MlString)
+    (configuration configurationLength array arrayLength : Nat) :
+    CrepInlineCanonical.inlineProgHOLExact inlBag
+        (.extCall function configuration configurationLength array arrayLength : CrepProgHOL width) =
+      .extCall function configuration configurationLength array arrayLength := by
+  unfold CrepInlineCanonical.inlineProgHOLExact
+  simp only [CrepInlineCanonical.inlineProgHOLCoreExact]
+
 @[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "inline_prog_correct"
   (fmap_as_finite_support_relation :=
     [CrepSemHOLState.locals, CrepSemHOLState.globals,
@@ -2772,6 +2782,163 @@ theorem inlineProgCorrectPrimitiveCaseExact {width : Nat} [NeZero width] {σ : T
               rw [hlocals]
           · rw [if_neg hg] at hsource
             exact absurd (congrArg Prod.fst hsource).symm hnotError
+
+set_option maxHeartbeats 1000000 in
+/-- HOL `inline_prog_correct` ExtCall case
+    (`crep_inlineProofScript.sml:2301-2309`, atomic catch-all `:2401`). -/
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "inline_prog_correct"
+  (fmap_as_finite_support_relation :=
+    [CrepSemHOLState.locals, CrepSemHOLState.globals,
+      CrepSemHOLState.code, inlFs, inlBag])
+  (words_as_type_indexed_bitvec)]
+theorem inlineProgCorrectExtCallCaseExact {width : Nat} [NeZero width] {σ : Type}
+    (s : CrepSemHOLState width σ)
+    (inlFs : HolFiniteMapExact CrepInlineMapHOLName (List Nat × CrepProgHOL width))
+    (inlBag : HolFiniteMapExact CrepInlineMapHOLName (List Nat × CrepProgHOL width))
+    (t : CrepSemHOLState width σ)
+    (function : Flapjack.Basis.Pure.MlString.MlString)
+    (configuration configurationLength array arrayLength : Nat)
+    (r : Option (CrepResultHOLExact width)) (s' : CrepSemHOLState width σ)
+    (hsource : evalCrepSemHOLProgExact s
+        (.extCall function configuration configurationLength array arrayLength : CrepProgHOL width) = (r, s'))
+    (hnotError : r ≠ some .error)
+    (_hsubmap : HolFiniteMapExact.submap inlFs s.code)
+    (_hbag : HolFiniteMapExact.submap inlBag inlFs)
+    (hstate : crepInlineStateRelCodeExact s t)
+    (hlocals : crepInlineLocalsStrongRelExact s t)
+    (hcode : crepInlineCodeInlRelExact inlFs s t) :
+    ∃ t' : CrepSemHOLState width σ,
+      evalCrepSemHOLProgExact t
+          (CrepInlineCanonical.inlineProgHOLExact inlBag
+            (.extCall function configuration configurationLength array arrayLength : CrepProgHOL width)) =
+            (r, t') ∧
+      crepInlineStateRelCodeExact s' t' ∧
+      crepInlineCodeInlRelExact inlFs s' t' ∧
+      match r with
+      | none => crepInlineLocalsStrongRelExact s' t'
+      | some (CrepResultHOLExact.break _) => crepInlineLocalsStrongRelExact s' t'
+      | some (CrepResultHOLExact.continue _) => crepInlineLocalsStrongRelExact s' t'
+      | some .error => False
+      | _ => True := by
+  classical
+  simp only [crepInlineLocalsStrongRelExact] at hlocals
+  obtain ⟨hg, hmem, hma, hshm, hcl, hbe, hffi, hba, hta⟩ := hstate
+  rw [evalCrepSemHOLProgExact_extCall_holShape] at hsource
+  cases h1 : s.locals.lookup configurationLength with
+  | none => simp only [h1] at hsource; exact absurd (congrArg Prod.fst hsource).symm hnotError
+  | some v1 =>
+    cases v1 with
+    | word configLength =>
+      cases h2 : s.locals.lookup configuration with
+      | none => simp only [h1, h2] at hsource; exact absurd (congrArg Prod.fst hsource).symm hnotError
+      | some v2 =>
+        cases v2 with
+        | word configAddress =>
+          cases h3 : s.locals.lookup arrayLength with
+          | none => simp only [h1, h2, h3] at hsource; exact absurd (congrArg Prod.fst hsource).symm hnotError
+          | some v3 =>
+            cases v3 with
+            | word arrayLengthValue =>
+              cases h4 : s.locals.lookup array with
+              | none => simp only [h1, h2, h3, h4] at hsource; exact absurd (congrArg Prod.fst hsource).symm hnotError
+              | some v4 =>
+                cases v4 with
+                | word arrayAddress =>
+                  simp only [h1, h2, h3, h4] at hsource
+                  cases hr1 : readBytearrayWordHOL (byteWidth := 8) configAddress configLength.toNat
+                      (panMemLoadByteWord8HOL s.memory s.memaddrs s.be) with
+                  | none => simp only [hr1] at hsource; exact absurd (congrArg Prod.fst hsource).symm hnotError
+                  | some configBytes =>
+                    simp only [hr1] at hsource
+                    cases hr2 : readBytearrayWordHOL (byteWidth := 8) arrayAddress arrayLengthValue.toNat
+                        (panMemLoadByteWord8HOL s.memory s.memaddrs s.be) with
+                    | none => simp only [hr2] at hsource; exact absurd (congrArg Prod.fst hsource).symm hnotError
+                    | some arrayBytes =>
+                      simp only [hr2] at hsource
+                      cases hcall : callFFIHOL s.ffi (.extCall function) configBytes arrayBytes with
+                      | final event =>
+                          simp only [hcall] at hsource
+                          obtain ⟨hr, hs'⟩ := Prod.ext_iff.mp hsource
+                          have hr' : r = some (.finalFfi event) := hr.symm
+                          have hs'' : s' = s := hs'.symm
+                          subst hr'
+                          subst s'
+                          have ht1 : t.locals.lookup configurationLength = some (.word configLength) := by
+                            rw [← hlocals]; exact h1
+                          have ht2 : t.locals.lookup configuration = some (.word configAddress) := by
+                            rw [← hlocals]; exact h2
+                          have ht3 : t.locals.lookup arrayLength = some (.word arrayLengthValue) := by
+                            rw [← hlocals]; exact h3
+                          have ht4 : t.locals.lookup array = some (.word arrayAddress) := by
+                            rw [← hlocals]; exact h4
+                          have hload_t : panMemLoadByteWord8HOL t.memory t.memaddrs t.be =
+                              panMemLoadByteWord8HOL s.memory s.memaddrs s.be := by
+                            rw [← hmem, ← hma, ← hbe]
+                          have hr1t : readBytearrayWordHOL (byteWidth := 8) configAddress configLength.toNat
+                              (panMemLoadByteWord8HOL t.memory t.memaddrs t.be) = some configBytes := by
+                            rw [hload_t]; exact hr1
+                          have hr2t : readBytearrayWordHOL (byteWidth := 8) arrayAddress arrayLengthValue.toNat
+                              (panMemLoadByteWord8HOL t.memory t.memaddrs t.be) = some arrayBytes := by
+                            rw [hload_t]; exact hr2
+                          have hcallt : callFFIHOL t.ffi (.extCall function) configBytes arrayBytes = .final event := by
+                            rw [← hffi]; exact hcall
+                          have hgoal : evalCrepSemHOLProgExact t
+                              (.extCall function configuration configurationLength array arrayLength : CrepProgHOL width) =
+                              (some (.finalFfi event), t) := by
+                            rw [evalCrepSemHOLProgExact_extCall_holShape]
+                            simp only [ht1, ht2, ht3, ht4, hr1t, hr2t, hcallt]
+                          refine ⟨t, ?_, ⟨hg, hmem, hma, hshm, hcl, hbe, hffi, hba, hta⟩, hcode, ?_⟩
+                          · rw [inline_extCall]
+                            exact hgoal
+                          · trivial
+                      | «ret» newFfi newBytes =>
+                          simp only [hcall] at hsource
+                          obtain ⟨hr, hs'⟩ := Prod.ext_iff.mp hsource
+                          have hr' : r = none := hr.symm
+                          have hs'' : s' = { s with
+                              memory := panWriteBytearrayWord8HOL arrayAddress newBytes s.memory s.memaddrs s.be,
+                              ffi := newFfi } := hs'.symm
+                          subst hr'
+                          subst hs''
+                          have ht1 : t.locals.lookup configurationLength = some (.word configLength) := by
+                            rw [← hlocals]; exact h1
+                          have ht2 : t.locals.lookup configuration = some (.word configAddress) := by
+                            rw [← hlocals]; exact h2
+                          have ht3 : t.locals.lookup arrayLength = some (.word arrayLengthValue) := by
+                            rw [← hlocals]; exact h3
+                          have ht4 : t.locals.lookup array = some (.word arrayAddress) := by
+                            rw [← hlocals]; exact h4
+                          have hload_t : panMemLoadByteWord8HOL t.memory t.memaddrs t.be =
+                              panMemLoadByteWord8HOL s.memory s.memaddrs s.be := by
+                            rw [← hmem, ← hma, ← hbe]
+                          have hr1t : readBytearrayWordHOL (byteWidth := 8) configAddress configLength.toNat
+                              (panMemLoadByteWord8HOL t.memory t.memaddrs t.be) = some configBytes := by
+                            rw [hload_t]; exact hr1
+                          have hr2t : readBytearrayWordHOL (byteWidth := 8) arrayAddress arrayLengthValue.toNat
+                              (panMemLoadByteWord8HOL t.memory t.memaddrs t.be) = some arrayBytes := by
+                            rw [hload_t]; exact hr2
+                          have hcallt : callFFIHOL t.ffi (.extCall function) configBytes arrayBytes =
+                              .ret newFfi newBytes := by
+                            rw [← hffi]; exact hcall
+                          have hwrite_t : panWriteBytearrayWord8HOL arrayAddress newBytes t.memory t.memaddrs t.be =
+                              panWriteBytearrayWord8HOL arrayAddress newBytes s.memory s.memaddrs s.be := by
+                            rw [← hmem, ← hma, ← hbe]
+                          have hgoal : evalCrepSemHOLProgExact t
+                              (.extCall function configuration configurationLength array arrayLength : CrepProgHOL width) =
+                              (none, { t with
+                                memory := panWriteBytearrayWord8HOL arrayAddress newBytes t.memory t.memaddrs t.be,
+                                ffi := newFfi }) := by
+                            rw [evalCrepSemHOLProgExact_extCall_holShape]
+                            simp only [ht1, ht2, ht3, ht4, hr1t, hr2t, hcallt]
+                          refine ⟨{ t with
+                              memory := panWriteBytearrayWord8HOL arrayAddress newBytes t.memory t.memaddrs t.be,
+                              ffi := newFfi }, ?_, ?_, hcode, ?_⟩
+                          · rw [inline_extCall]
+                            exact hgoal
+                          · rw [hwrite_t]
+                            exact ⟨hg, rfl, hma, hshm, hcl, hbe, rfl, hba, hta⟩
+                          · simp only [crepInlineLocalsStrongRelExact]
+                            rw [hlocals]
 
 end CrepInlineExact
 
