@@ -31262,5 +31262,45 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-c source comparison2026-09-30 (.32.5.5): genuine non-tail Call SOME(target,NONE) case of evaluate_unchanged_local1104-1137; original nonfree/run/good_res/non-Error premises and unused value binder retained, exact lookup equality conclusion. panSem657-702 callee args/lookup/clock/return/error/exception clauses literal. Original good_res/non-Error excludes every result except successful normal non-tail return. Caller locals restored; local destination inequality derived from free_var_ids, update lookup preserves fresh key; global destination preserves locals. No callee IH, extra premise or executable change. Canonical four finite maps/roundtrip, exact MlS and positive width indexed carriers/universe0 FFI. Coordinator review pending; full parent still open."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Store.lean",
+  "lean_name": "compileCorrect_Store",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "compile_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "PanSemStateFiniteExact.locals",
+    "PanSemStateFiniteExact.globals",
+    "PanSemStateFiniteExact.code",
+    "PanSemStateFiniteExact.eshapes",
+    "PanGlobalsContextExact.globals"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison (2026-09-30; bead flapjack-pxn.18.5.2.29.2): HOL gen_goal at172-182 and compile_correct Store Resume692-714. Source binders Store destination value and s, then res ctxt t s'; exactly state_rel T, source evaluate equation and nonerror, existential target evaluate equation and state_rel(good_res res). Store has no recursive program IH. Internal flattened-word-list induction preserves every pointwise memory update using accepted state_rel_memory_update, derives target membership from the original relation, and constructs target memory; no domain/alignment/successful-pass/target-run/postrelation premise added. Exact ProgHOL/ExpHOL/ValueHOL, total evaluateHOLFiniteState, compileProgExactHOL, compileExpExactHOL and panGlobalsStateRelHOLExact are the reviewed carriers. Finite support translations are precisely the named state/context maps; positive width BitVec and universe0 FFI qualifier only. Canonical same-module witnesses forwarded. Coordinator source review pending; assembled compile_correct remains open."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Store.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only infrastructure. Canonical state toExact/ofExact roundtrip forwarded for named state maps."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Store.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only infrastructure. Canonical context toBroad/ofBroad roundtrip forwarded for context globals."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Store.lean",
+  "lean_name": "memStoresSimulation",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only infrastructure. Internal list induction of the Store source proof: constructs target writes from source success and original state relation. No separate HOL declaration; no new public theorem premise."
 }
 ]
