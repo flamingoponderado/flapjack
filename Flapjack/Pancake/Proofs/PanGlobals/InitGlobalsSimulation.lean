@@ -4,6 +4,7 @@ import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
 import Flapjack.Pancake.Proofs.PanGlobals.CompileExpCorrect
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelationLocals
 import Flapjack.Pancake.Semantics.PanProps.EvalInvariant
+import Flapjack.Pancake.Proofs.PanGlobals.MemStores
 
 namespace Flapjack.PanGlobalsInitGlobalsSimulation
 open Flapjack.Pancake.PanLang
@@ -37,7 +38,8 @@ theorem initializerExpression {width : Nat} {σ : Type} [NeZero width]
 
 /-- Flapjack-specific address algebra for the initializer cons proof's head
 store and recursive free-range obligations (HOL source 2155-2229). This has no
-independently named HOL original. Modular word arithmetic permits wrapping;
+independently named HOL original; it reuses PanGlobalsMemStores.addresses_add
+with the multiplication order used by the initializer. Modular arithmetic permits wrapping;
 no numeric bound or evaluation premise is needed for range splitting. -/
 theorem initializerAddressesSplit {width : Nat} (base : BitVec width)
     (head tail : Nat) (address : BitVec width) :
@@ -45,21 +47,8 @@ theorem initializerAddressesSplit {width : Nat} (base : BitVec width)
       addresses base head address ∨
         addresses (base + BitVec.ofNat width head *
           Flapjack.Compiler.Backend.StackRemove.bytesInWord width) tail address := by
-  induction head generalizing base with
-  | zero => simp [addresses]
-  | succ head ih =>
-      simp only [Nat.succ_add, addresses, ih]
-      have hbase :
-          base + Flapjack.Compiler.Backend.StackRemove.bytesInWord width +
-              BitVec.ofNat width head *
-                Flapjack.Compiler.Backend.StackRemove.bytesInWord width =
-            base + BitVec.ofNat width (head + 1) *
-              Flapjack.Compiler.Backend.StackRemove.bytesInWord width := by
-        rw [BitVec.ofNat_add, BitVec.add_mul]
-        simp only [BitVec.one_mul]
-        ac_rfl
-      rw [hbase]
-      exact or_assoc.symm
+  simpa only [Flapjack.Compiler.Backend.StackRemove.bytesInWord,
+    BitVec.mul_comm] using PanGlobalsMemStores.addresses_add head tail base address
 
 /-- Prefix containment used to justify the first initializer's stores. -/
 theorem initializerAddressesPrefix {width : Nat} (base : BitVec width)
