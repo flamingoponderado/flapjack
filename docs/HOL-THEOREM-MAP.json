@@ -25706,5 +25706,50 @@
     "lean_name": "holFmapAsFiniteSupportWitness",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only canonical finite-state codec roundtrip, forwarding the imported PanSemStateFiniteExact witness. HOL has no separate theorem about the Lean representation."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+    "hol_name": "compile_eval_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/CompileEvalCorrect.lean",
+    "lean_name": "compileEvalCorrect",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-30; bead flapjack-pxn.18.5.1.2.1) against pan_simpProofScript.sml403-497. Same s/e/v/t binders, conjunction eval s e = SOME v and state_rel s t t.code, and eval t e = SOME v conclusion. Exact imported stateRel preserves the state update and both code-lookup conjuncts. PanSemStateFiniteExact, ExpHOL and ValueHOL have the reviewed HOL payloads, including exact MlS names and positive type-indexed words. evalHOLFinite is the reviewed eval_def; classical domain-membership decision procedures add no logical premise. The proof rewrites only the relation state update and applies unconditional finite code-update evaluation invariance, which holds for every expression constructor because eval does not observe code. No production functions-list/common-fuel evaluator, target run, simulation assumption, byte-name premise or weakened conclusion is used. Four canonical state-map fields use the local imported-carrier roundtrip witness; width and FFI host follow the standard positive BitVec/universe-0 translation.",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/CompileEvalCorrect.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only canonical state representation roundtrip; forwards the imported PanSemStateFiniteExact witness and has no separate HOL declaration."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "apply_colour_imm_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Instructions.lean",
+    "lean_name": "applyColourImm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead .18.5.11.1.3: word_allocScript588-591 exact Reg renamed by f, Imm unchanged. WordRegImm reviewed constructor carrier over positive-width BitVec; no injection assumption or extra operand case."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "strong_locals_rel_get_var_imm",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/StrongLocalsRel.lean",
+    "lean_name": "strongLocalsRelGetVarImm",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead .18.5.11.1.3: word_allocProof218-226 retains original strong_locals_rel on state locals, live key condition only for Reg and True for Imm, source get_var_imm success, concluding renamed target success with same WordLocW result. No targetrun, injection or extra liveness premise. Exact Spt locals and WordRegImm over positive BitVec width; C/F universe-0 state. Only fpRegs/store canonical finite-support fields translated; existing same-module StrongLocalsWitnesses roundtrip names the evaluator owning carrier. Proof original case split and existing exact strong_locals_rel_get_var transport."
   }
 ]
