@@ -65,11 +65,15 @@ theorem flookupFpermCodeHOL {width : Nat} [NeZero width] (f g : MlS)
         (entry.1, fpermHOL f g entry.2.1, entry.2.2)) := by
   simp only [flookupFpermCodeHOL', fpermName_cancel]
 
-/-- Flapjack finite-map equality corresponding to HOL fperm_code_FEMPTY.
-The single map-equality conclusion currently has no supported qualifier:
-fmap_as_finite_support_equalities requires at least two conjuncts, while the
-result qualifier requires a lookup witness on the tagged declaration itself.
-Keep this untagged until a single-equality representation rule is reviewed. -/
+/-- Source comparison, flapjack-ds10 (2026-09-30, bead
+`flapjack-pxn.18.5.2.22.4.3`). Exact port of HOL `fperm_code_FEMPTY`
+(`cakeml/pancake/proofs/pan_globalsProofScript.sml:1657`):
+`fperm_code f g FEMPTY = FEMPTY`. The whole statement is a single
+`HolFiniteMapExact` map equality, so it carries the dedicated singular
+`(fmap_as_finite_support_equality)` qualifier, witnessed at the lookup level by
+`holFmapAsFiniteSupportEqualityWitness_fpermCodeHOL_empty`. -/
+@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "fperm_code_FEMPTY"
+  (fmap_as_finite_support_equality) (words_as_type_indexed_bitvec)]
 theorem fpermCodeHOL_empty {width : Nat} [NeZero width] (f g : MlS) :
     fpermCodeHOL f g
       (HolFiniteMapExact.empty : HolFiniteMapExact MlS
@@ -77,6 +81,16 @@ theorem fpermCodeHOL_empty {width : Nat} [NeZero width] (f g : MlS) :
   apply HolFiniteMapExact.ext
   funext name
   rfl
+
+/-- Unconditional lookup-level witness for `fpermCodeHOL_empty`: both sides
+agree at the same universally bound key `name`. -/
+theorem holFmapAsFiniteSupportEqualityWitness_fpermCodeHOL_empty
+    {width : Nat} [NeZero width] (f g : MlS) (name : MlS) :
+    (fpermCodeHOL f g
+      (HolFiniteMapExact.empty : HolFiniteMapExact MlS
+        (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))).lookup name =
+      HolFiniteMapExact.empty.lookup name := by
+  rw [fpermCodeHOL_empty]
 
 @[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "fperm_decs_append"
   (words_as_type_indexed_bitvec)]

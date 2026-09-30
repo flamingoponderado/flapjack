@@ -1787,6 +1787,7 @@ VALID_STATUSES = {
     "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_equalities",
     "reviewed_fmap_as_finite_support_equality",
+    "reviewed_fmap_as_finite_support_equality_words_as_type_indexed_bitvec",
     "reviewed_words_as_type_indexed_bitvec",
     "reviewed_word_dimension_as_width",
     "reviewed_reals_as_rational_cuts",
@@ -2376,17 +2377,33 @@ def validate_inventory(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support_equality (single map "
                 "equality) is mutually exclusive with other finite-map qualifiers"
             )
+        combined_equality_words_status = (
+            "reviewed_fmap_as_finite_support_equality_words_as_type_indexed_bitvec"
+        )
         if fmap_equality and status == "reviewed_exact":
             errors.append(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support_equality @[hol] tag cannot have "
                 "reviewed_exact status; use reviewed_fmap_as_finite_support_equality after source comparison"
             )
-        if fmap_equality and status != "reviewed_fmap_as_finite_support_equality":
+        if fmap_equality and words_bitvec and status != combined_equality_words_status:
+            errors.append(
+                f"{key[0]}:{key[1]}: fmap_as_finite_support_equality combined with "
+                "words_as_type_indexed_bitvec requires the combined review status "
+                "reviewed_fmap_as_finite_support_equality_words_as_type_indexed_bitvec"
+            )
+        if (
+            fmap_equality
+            and not words_bitvec
+            and status != "reviewed_fmap_as_finite_support_equality"
+        ):
             errors.append(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support_equality @[hol] tag needs a reviewed "
                 "source classification (reviewed_fmap_as_finite_support_equality)"
             )
-        if not fmap_equality and status == "reviewed_fmap_as_finite_support_equality":
+        if not fmap_equality and status in {
+            "reviewed_fmap_as_finite_support_equality",
+            combined_equality_words_status,
+        }:
             errors.append(
                 f"{key[0]}:{key[1]}: reviewed_fmap_as_finite_support_equality needs a "
                 "fmap_as_finite_support_equality @[hol] tag"
@@ -2617,6 +2634,7 @@ def validate_inventory(
             combined_parameter_words_status,
             combined_existential_words_status,
             combined_relation_existential_words_status,
+            combined_equality_words_status,
         }:
             errors.append(
                 f"{key[0]}:{key[1]}: words_as_type_indexed_bitvec @[hol] tag needs a reviewed "

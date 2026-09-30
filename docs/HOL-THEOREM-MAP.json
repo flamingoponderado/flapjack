@@ -27820,12 +27820,22 @@
     "reviewer": "Flapjack support (bead flapjack-pxn.18.5.2.22.8): local proof factoring for the exact compile_decs/compile_top ports; no HOL original."
   },
   {
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "fperm_code_FEMPTY",
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermCode.lean",
+    "lean_name": "fpermCodeHOL_empty",
+    "statement_status": "reviewed_fmap_as_finite_support_equality_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_equality": true,
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.4.3): exact port of HOL fperm_code_FEMPTY (pan_globalsProofScript.sml:1657), fperm_code f g FEMPTY = FEMPTY, over the reviewed canonical HolFiniteMapExact rendering of the code map (the same carrier as the accepted fperm_code_def port fpermCodeHOL). The whole statement is a single finite-map equality, so it carries the dedicated fmap_as_finite_support_equality qualifier and is witnessed at the lookup level by holFmapAsFiniteSupportEqualityWitness_fpermCodeHOL_empty. Source comparison against the original HOL statement; unconditional, no added assumptions."
+  },
+  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermCode.lean",
-    "lean_name": "fpermCodeHOL_empty",
+    "lean_name": "holFmapAsFiniteSupportEqualityWitness_fpermCodeHOL_empty",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "flapjack-sol2026-09-30 .22.4.1: Flapjack canonical finite-map implementation/codec factoring, localized provenance in docstring. Single-update and arbitrary-entry list-update lemmas are not standalone HOL declarations; source restricts update list to functions. FEMPTY kernel equality remains untagged because a supported single-equality representation rule is absent (tracked .4.3), not a completed HOL port. Codec witness compares tagged lookup to independent raw FUN_FMAP rendering without assuming target equality."
+    "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.2.22.4.3): unconditional same-module lookup-level witness for the single finite-map equality fpermCodeHOL_empty, required by the fmap_as_finite_support_equality qualifier. It states both sides agree at the same universally bound key and has no HOL original."
   },
   {
     "hol_path": null,
@@ -28114,19 +28124,19 @@
     "reviewer": "Flapjack-specific canonical carrier roundtrip re-export; no independent HOL original."
   },
   {
-    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-    "hol_name": "evaluate_locals_same_fdom",
-    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/Call.lean",
-    "lean_name": "evaluateLocalsSameFdomCallExact",
-    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support_relation": [
-      "CrepSemHOLState.locals",
-      "CrepSemHOLState.globals",
-      "CrepSemHOLState.code"
-    ],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-b source comparison (2026-09-30; .43.4), HOL evaluate_locals_same_fdom181-191/Call221-234 and evaluate_ind Call440. Original eval/result guard/domain equality specialized to Call. Only used handler recursion IH retained, with actual argument eval/code lookup/nodup/clock/callee exception/matching handler guards; reduced bindings equivalent to HOL conjunct. Callee IH unused: returns restore caller locals via checked existing-destination zip update; matching exceptions restore caller locals before handler. All other outcomes excluded by original guard. Exact imported finite-support state and positive-width Type0 word carrier, local canonical roundtrip. No extra success/post-state relation premise. Full induction theorem remains open."
-  },
+  "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+  "hol_name": "evaluate_locals_same_fdom",
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/Call.lean",
+  "lean_name": "evaluateLocalsSameFdomCallExact",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "CrepSemHOLState.locals",
+    "CrepSemHOLState.globals",
+    "CrepSemHOLState.code"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol (.43.4.1) compared HOL evaluate_locals_same_fdom181-191/Call221-234 and evaluate_ind Call: exact source eval/result guard/domain conclusion plus both original guarded callee and matching-exception handler IHs. CalleeIH retained unused as original proof restores caller locals; handler-only calculation is untagged callDomainFromHandler. Canonical finite-support state and positive-width Type0 word translation unchanged; no extra success/postrelation premise."
+},
   {
     "hol_path": null,
     "hol_name": null,
@@ -32170,7 +32180,7 @@
   "hol_path": null,
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.5.43.7): the evaluate_ind motive of evaluate_locals_same_fdom for every program and state by structural recursion over the tagged cases; no separate HOL declaration."
+  "reviewer": "Flapjack-specific complete domain motive by lexicographic clock/size induction: exact tagged Call wrapper callee and handler premises supplied at decremented clock and clock-bounded callee poststate. Other constructors reuse independent structural handlerOnlyMotive calculation. No public full-theorem induction premise or separate HOL original."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Return.lean",
@@ -34647,5 +34657,44 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.45.2) compared crep_inlineProofScript.sml:1062-1082: binders s es vals vs t p r s' tmp_vars as declared parameters in HOL order; hypotheses as general_simulate_arg_load_correct except r <> SOME Error replaced, as in HOL, by the continuing-result condition (case r of NONE/Break/Continue => T | _ => F) = T rendered as the displayed match proposition; conclusion exists t'. evaluate (nested_decs tmp_vars es (nested_decs vs (MAP Var tmp_vars) p), s) = (r,t') /\\ state_rel s' t' /\\ FOLDL res_var s'.locals (ZIP (vs, MAP (FLOOKUP s.locals) vs)) SUBMAP t'.locals (left fold of resVarEq, as in tagged evaluate_nested_decs_locals_nested_res_var; SUBMAP as HolFiniteMapExact.submap). No extra premise. Proof: pointwise version of HOL's using the same lemmas (evaluate_state_locals_rel_strong, evaluate_nested_decs_locals_nested_res_var x2, evaluate_locals_same_fdom', flookup_res_var_is_mem_zip_eq, flookup_res_var_distinct_zip_eq). Coordinator source review pending."
-  }
+  },
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/Call.lean",
+  "lean_name": "callDomainFromHandler",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific stronger handler-only domain calculation; deliberately untagged because it omits original callee induction hypothesis."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/Assembly.lean",
+  "lean_name": "handlerOnlyMotive",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific structural domain calculation with inner While clock induction; uses untagged handler-only Call calculation. Reused internally by complete exact theorem; no independent HOL case claim."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NestedDecsSublocals.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed CrepSemHOLState toBroad/ofBroad roundtrip for the relation qualifier."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NestedDecsSublocals.lean",
+  "lean_name": "nestedDecsEvaluateSublocalsStrongExact",
+  "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+  "hol_name": "nested_decs_evaluate_sublocals_strong",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "CrepSemHOLState.locals",
+    "CrepSemHOLState.globals",
+    "CrepSemHOLState.code",
+    "t"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.44.5) compared crep_inlineProofScript.sml:907-924: binders vs es p s r s' vals t as declared parameters in HOL order; hypotheses OPT_MMAP (eval s) es = SOME vals (List.mapM), LENGTH vs = LENGTH es, ALL_DISTINCT vs (Nodup), var_cexp freshness, v NOTIN FDOM t (crepHolFdom t.lookup v = false), evaluate (p, s with locals := t |++ ZIP (vs,vals)) = (r,s') (updateListEq), t SUBMAP s.locals (HolFiniteMapExact.submap), continuing-result case rendered as the displayed match proposition; conclusion exists t'. evaluate (nested_decs vs es p, s) = (r,t') /\\ state_rel s' t' /\\ FDIFF s.locals (FDOM t) SUBMAP t'.locals (crepHolSubmap of crepHolFdiff). No extra premise. Proof uses evaluate_state_locals_rel_strong, evaluate_nested_decs_locals_nested_res_var, evaluate_locals_same_fdom', flookup_res_var_is_mem_zip_eq, flookup_res_var_distinct_zip_eq. Coordinator source review pending."
+}
 ]

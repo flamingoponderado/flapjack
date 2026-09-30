@@ -47,13 +47,11 @@ theorem holFmapAsFiniteSupportRelationWitness_CrepSemHOLState
   CrepSemHOLState.holFmapAsFiniteSupportWitness
 end CallLocalsSupport
 
-/-- Call constructor domain case, using only the guarded handler recursion
-hypothesis. The callee domain IH is unused because caller locals are restored. -/
-@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "evaluate_locals_same_fdom"
-  (fmap_as_finite_support_relation :=
-    [CrepSemHOLState.locals, CrepSemHOLState.globals, CrepSemHOLState.code])
-  (words_as_type_indexed_bitvec)]
-theorem evaluateLocalsSameFdomCallExact {width : Nat} [NeZero width] {σ : Type}
+/-- Flapjack-specific stronger Call calculation using only handler recursion.
+Caller locals are restored after the callee, so callee domain preservation is
+not needed by this calculation. The exact HOL case wrapper below retains both
+original induction hypotheses. -/
+theorem callDomainFromHandler {width : Nat} [NeZero width] {σ : Type}
     (s s' : CrepSemHOLState width σ) (r : Option (CrepResultHOLExact width))
     (info : Option (List Nat × Option (BitVec width × CrepProgHOL width)))
     (fname : Flapjack.Basis.Pure.MlString.MlString) (args : List (CrepExpHOL width))
@@ -111,5 +109,37 @@ theorem evaluateLocalsSameFdomCallExact {width : Nat} [NeZero width] {σ : Type}
         | exact False.elim hresult
         | exact False.elim (hbreak _ rfl)
         | exact False.elim (hcontinue _ rfl)
+
+/-- Exact Call induction case of HOL `evaluate_locals_same_fdom`.
+Both original guarded induction hypotheses are retained. The callee hypothesis
+is unused because the operational Call restores the caller's locals; the
+handler-only calculation is deliberately untagged. -/
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "evaluate_locals_same_fdom"
+  (fmap_as_finite_support_relation :=
+    [CrepSemHOLState.locals, CrepSemHOLState.globals, CrepSemHOLState.code])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateLocalsSameFdomCallExact {width : Nat} [NeZero width] {σ : Type}
+    (s s' : CrepSemHOLState width σ) (r : Option (CrepResultHOLExact width))
+    (info : Option (List Nat × Option (BitVec width × CrepProgHOL width)))
+    (fname : Flapjack.Basis.Pure.MlString.MlString) (args : List (CrepExpHOL width))
+    (_ihCallee : ∀ values prog newlocals,
+      args.mapM (evalCrepSemHOLExp s) = some values →
+      lookupCodeFiniteHOL s.code fname values values.length = some (prog,newlocals) →
+      ¬ crepReturnInfoNodupError info → s.clock ≠ 0 →
+      localsDomainMotive prog {decClockCrepSemHOL s with locals := newlocals})
+    (ihHandler : ∀ values prog newlocals rts eid handler st,
+      args.mapM (evalCrepSemHOLExp s) = some values →
+      lookupCodeFiniteHOL s.code fname values values.length = some (prog,newlocals) →
+      ¬ crepReturnInfoNodupError info → s.clock ≠ 0 →
+      evalCrepSemHOLProgExact {decClockCrepSemHOL s with locals := newlocals} prog =
+        (some (.exception eid),st) →
+      info = some (rts,some (eid,handler)) →
+      localsDomainMotive handler {st with locals := s.locals})
+    (heval : evalCrepSemHOLProgExact s (.call info fname args) = (r,s'))
+    (hresult : match (generalizing := false) r with
+      | none => True | some (.continue _) => True | some (.break _) => True
+      | _ => False) :
+    crepHolFdom s.locals.lookup = crepHolFdom s'.locals.lookup :=
+  callDomainFromHandler s s' r info fname args ihHandler heval hresult
 
 end Flapjack.CrepInlineExact
