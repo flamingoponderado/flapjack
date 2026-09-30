@@ -3686,8 +3686,9 @@
     "hol_name": "functions_fperm_decs",
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
     "lean_name": "functionsFpermDecsHOL",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds9 (source comparison, bead flapjack-pxn.18.3.5.8.24) HOL functions_fperm_decs (pan_globalsProofScript.sml:1701-1708) states forall x y code, functions (fperm_decs x y code) = MAP (lambda (a,b,c,d). (fperm_name x y a, b, fperm x y c, d)) (functions code). The exact Lean port is over List (DeclHOL width) with the reviewed functionsHOL, fpermDecsHOL, fpermName, and fpermHOL; List.map is HOL MAP, the quadruple lambda is rendered with the right-nested projections entry.1/entry.2.1/entry.2.2.1/entry.2.2.2, and [NeZero width] matches HOL's positive word type. No extra hypotheses, no weakened conclusion, no qualifier."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "C source comparison pan_globalsProof1701-1708, functions/fperm_decs definitions and native DeclHOL/FunDeclHOL/ProgHOL carriers: same universal x/y/declaration list, original functions list MAP with name/body permutation and unchanged parameters/return shape; all four declaration constructors and list order retained. Only standard positive type-indexed HOL word to BitVec width under NeZero translation, explicit words_as_type_indexed_bitvec; native MlS list carriers unchanged, no FFI host or extra premise. Proof and elaborated type unchanged; independent coordinator review pending.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
