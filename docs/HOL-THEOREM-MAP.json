@@ -30407,5 +30407,36 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific infrastructure: Private codec transport of broad expression freshness; no separate source declaration, decision internal."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/ExtCall.lean",
+    "lean_name": "evaluateFreshLocal_ExtCall",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "evaluate_fresh_local",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Luna A source comparison (.32.3.8), pan_globalsProofScript1045-1091 genuine ExtCall case and panSem711-726. Original name/value/state/result/poststate quantifiers, freshness/source evaluation, existential locals and conditional good_res/non-Error FUPDATE retained. No added success, bounds, byte-read, FFI-result or target evaluation premise; no recursive IH. Four expression freshness facts derive internally from free_var_ids; same broad expression codec transport. Preserves four ordered word-valued expression checks, both read_bytearray results, call_FFI final versus return split, final empty_locals, returning write_bytearray/memory and new FFI updates, and all error state branches. Existential locals choose original postlocals when not good_res and their fresh update otherwise; conditional implication follows literal good_res. Canonical finite carrier repack reduced internally; same-module state roundtrip, reviewed four finite maps and positive width/Type0 FFI translation. Kernel checked; independent coordinator review pending; full induction .32.3 open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/ExtCall.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific infrastructure: Canonical state roundtrip re-export; representation infrastructure, no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/ExtCall.lean",
+    "lean_name": "evalFreshUpdate",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific infrastructure: Private codec transport of broad expression freshness; no separate source declaration, decision internal."
   }
 ]
