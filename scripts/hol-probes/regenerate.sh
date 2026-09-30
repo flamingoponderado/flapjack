@@ -110,6 +110,9 @@ run_probe stacksem_word_bitmap_probeScript.sml stacksem_word_bitmap_probe.out \
 # Run from the local HOL object directory when Holmake has populated it, so
 # HOL's ordinary theory loader finds compiled CakeML theories. Fall back to
 # the source directory for checkouts whose Holmake places objects there.
+run_probe word_alloc_live_inst_probeScript.sml word_alloc_live_inst_probe.out \
+  load16 load8 store32 carry overflow to64 to32 from64 from32 "$cake_dir/compiler/backend/word_allocScript.sml" \
+  "$cake_dir/compiler/backend"
 run_probe word_alloc_colour_inst_probeScript.sml word_alloc_colour_inst_probe.out \
   load16 store16 load8 store32 carry fp_move "$cake_dir/compiler/backend/word_allocScript.sml" \
   "$cake_dir/compiler/backend"
