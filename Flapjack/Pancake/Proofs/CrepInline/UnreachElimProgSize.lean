@@ -21,9 +21,16 @@ open Flapjack.CrepLangGeneratedSize
 
 namespace CrepInlineUnreachElimProgSize
 
-/-- Exact HOL `unreach_elim_prog_size` (`crep_inlineProofScript.sml:1730-1733`). -/
-@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "unreach_elim_prog_size"
-  (words_as_type_indexed_bitvec)]
+/-- Flapjack rendering of HOL `unreach_elim_prog_size`
+    (`crep_inlineProofScript.sml:1730-1733`); NOT an exact tagged port.  HOL's
+    elaborated statement (`scripts/hol-probes/crep_inline_prog_size_type_probe.out`)
+    is `∀(p q : α prog) (r : early_exit option) (f : α -> num). ...`: the size
+    function's domain is the same type variable `α` that indexes `α word`.
+    The `words_as_type_indexed_bitvec` translation renders `α word` as
+    `BitVec width` but has no Lean type for bare `α`, so this statement's
+    independent `{α : Type} (f : α → Nat)` is an extra type quantifier (it
+    implies every HOL instance, since `prog_size` never applies `f`).  The
+    faithful carrier is tracked by bead `flapjack-pxn.18.5.5.50`. -/
 theorem unreachElimProgSize {width : Nat} [NeZero width] {α : Type} :
     ∀ (p q : CrepProgHOL width) (r : Option CrepEarlyExitHOL) (f : α → Nat),
       unreachElimHOLExact p = (q, r) → crepProgSizeHOL f q ≤ crepProgSizeHOL f p := by

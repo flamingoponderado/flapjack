@@ -28507,9 +28507,8 @@
     "lean_name": "unreachElimProgSize",
     "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
     "hol_name": "unreach_elim_prog_size",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.5.46.2; crep_inlineProofScript.sml:1730-1733): same binders p q r f; premise unreach_elim p = (q, r); conclusion prog_size f q <= prog_size f p, over the tagged unreachElimHOLExact and HOL's Datatype-generated crepLang prog_size transcribed untagged as crepProgSizeHOL (Flapjack/Pancake/CrepLang/GeneratedSize.lean; equations and concrete EVAL rows pinned by scripts/hol-probes/crep_lang_size_probe.out, replayed in Flapjack.Test.CrepLangGeneratedSizeParity). HOL's f : 'a -> num is over the word-index type; as in the panLang expSizeHOL precedent it is a free {alpha : Type} (f : alpha -> Nat), unused by every clause (words sized by w2n)."
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-opus (2026-09-30, bead flapjack-pxn.18.5.5.46.2, coordinator type-evidence review): @[hol] tag withdrawn. HOL's elaborated statement (scripts/hol-probes/crep_inline_prog_size_type_probe.out) quantifies f : 'a -> num over the same type variable 'a that indexes 'a prog/'a word; the words_as_type_indexed_bitvec translation has no Lean type for bare 'a, so the Lean {alpha : Type} (f : alpha -> Nat) is an extra independent type quantifier. The statement is kept untagged (it implies every HOL instance since prog_size never applies f); faithful carrier tracked by flapjack-pxn.18.5.5.50."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimProgSize.lean",

@@ -1,0 +1,4 @@
+prog_size_type=:(α -> num) -> α crepLang$prog -> num
+exp_size_type=:(α -> num) -> α crepLang$exp -> num
+unreach_elim_prog_size_typed=∀(p :α crepLang$prog) (q :α crepLang$prog) (r :early_exit option)
+    (f :α -> num). unreach_elim p = (q,r) ⇒ prog_size f q ≤ prog_size f p
