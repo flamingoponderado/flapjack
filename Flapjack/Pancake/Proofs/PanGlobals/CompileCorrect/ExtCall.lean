@@ -13,7 +13,12 @@ bead `flapjack-pxn.18.5.2.35`).  The case uses the established theorem
 `compile_exp_correct` for the four compiled arguments, the byte-array
 read transport `state_rel_read_bytearray`, the `call_FFI` split with
 `state_rel_change_ffi` and `state_rel_write_bytearray`, and the empty-locals
-transport `state_rel_empty_locals`.  Source evaluator is the tagged
+transport `state_rel_empty_locals`. These are established support theorems,
+not additional `evaluate_ind` hypotheses. The return-length step uses
+tagged `StackRemove.callFFILengthHOL` (`call_FFI_LENGTH`), whose proof uses
+the shared `callFFIHOL_ret_length` helper. Its dependency direction is helper
+to tagged wrapper; the case consumes the tagged theorem directly.
+Source evaluator is the tagged
 `evaluateHOLFiniteState` (`panSem$evaluate_def`), the compiler the tagged
 `compileProgExactHOL` (`pan_globals$compile_def`) and the relation the tagged
 `panGlobalsStateRelHOLExact` (`state_rel_def`).
@@ -172,7 +177,7 @@ theorem compileCorrect_ExtCall {width : Nat} {σ : Type} [NeZero width]
                                                               have hr' : res = none := hr.symm
                                                               subst hr'
                                                               have hlen : newBytes.length = l2.toNat :=
-                                                                (callFFIHOL_ret_length target.ffi (.extCall function)
+                                                                (Flapjack.Compiler.Backend.StackRemove.callFFILengthHOL target.ffi (.extCall function)
                                                                   bytes1 bytes2 newBytes newFfi hcall).trans
                                                                   (readBytearrayWordHOL_length a2 l2.toNat
                                                                     (@panMemLoadByteWord8HOL width _ source.memory
