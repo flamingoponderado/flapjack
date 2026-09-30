@@ -27088,5 +27088,61 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-pxn.18.5.15.1.3: wordConvsScript.sml:536-616 and exact WordLangProgHOL carrier. Bool conjunction order, both optional Call bodies/handler probe, Loop/If/MustTerminate recursion, Alloc/Install LN pairs, LocValue label, and all catchalls match. Constructor rejection is justified by the kernel-checked noShareInstSubprogsHOL_eq_choice certificate against HOL's original inequality predicate for every program and every ARB memop representative. Positive BitVec dimension is the only carrier translation. General extra-choice-parameter checker remains untagged. Original 15 captured HOL rows replayed by kernel and executable Bool checks; whole convention theorem and compiler routing remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Expressions.lean",
+    "lean_name": "wordExp",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "word_exp_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.8), stackSemScript128-158: Const, Word-only register/store lookup, recursive Load with domain/Word-only memory read, MAP/all-SOME/THE Op operands and word_op, binary Shift with w2n right operand and word_sh. attach preserves MAP order; getD0 is used only under all-isSome, so no NONE payload is observable. Accepted imported exact state owner, canonical same-module roundtrip, positive width and C/F Type0. Proof-side definition only; full evaluate and production refinement remain open. Twenty original HOL observations replayed in StackSemExpressionParity."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Expressions.lean",
+    "lean_name": "assign",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "assign_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.8), stackSemScript402-407: successful word_exp updates reg to Word via exact set_var, NONE preserves failure; no additional guard. Accepted imported exact state owner, canonical same-module roundtrip, positive width and C/F Type0. Proof-side definition only; full evaluate and production refinement remain open. Twenty original HOL observations replayed in StackSemExpressionParity."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "evaluate_nested_decs_locals_nested_res_var",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NestedDecs.lean",
+    "lean_name": "evaluateNestedDecsLocalsNestedResVarExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; bead flapjack-pxn.18.5.5.44.3), crep_inlineProofScript.sml:716-759: same five premises (successful map, equal lengths, distinct names, all-name/all-expression freshness, updated-locals body eval), no non-Error premise. Constructs existential nested eval and state_rel plus exact ordered FOLDL res_var locals. Exact Dec induction transfers tail expression map, distinctness preserves tail original lookups, reviewed fold commutation puts head restore before tail. All ten non-local state fields preserved. Canonical finite-support carrier/updateEq/updateListEq/resVarEq with positive width and universe0 FFI; no additional simulation or post-state relation premise."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "evaluate_nested_decs_locals_nested_res_var_drule",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NestedDecs.lean",
+    "lean_name": "evaluateNestedDecsLocalsNestedResVarDruleExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; bead flapjack-pxn.18.5.5.44.3), crep_inlineProofScript.sml:761-777: same six premises including observed nested evaluation; conclusion same result equality, state_rel and exact locals fold. Follows from existential theorem and deterministic pair equality. Observed eval premise is part of original HOL corollary only, never assumed by existential theorem. Canonical finite-support carrier/updateEq/updateListEq/resVarEq with positive width and universe0 FFI; no additional simulation or post-state relation premise."
   }
 ]

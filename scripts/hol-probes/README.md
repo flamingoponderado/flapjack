@@ -1372,3 +1372,5 @@ executable Boolean definitions on `WordLangProgHOL`, both in the kernel and
 in the runtime suite. `WordConvs/NotCreated.lean` also proves agreement with
 the original inequality predicates for every possible `ARB : memop` choice;
 the choice-parametric general checker is deliberately untagged.
+
+`stacksem_expression_probeScript.sml` captures twenty original StackSem word_exp/assign rows: all six constructors, failed/missing/Loc lookups, domain and memory payload rejection, wraparound, invalid arithmetic arity, binary shift bounds, and destination update/failure. Kernel replay: `Flapjack/Test/StackSemExpressionParity.lean`. Full evaluator/production refinement is separate.
