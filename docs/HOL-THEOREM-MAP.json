@@ -35856,5 +35856,35 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-4ac.4.60.1.1.14): HOL panPropsScript.sml:724-728 evaluate_clock_sub, DecCall case of recInduct evaluate_ind. Same statement shape and carrier as the accepted cases: high run evaluate (DecCall rt shape fname argexps prog1, s) = (res, st with clock := st.clock + ck), res <> SOME TimeOut, conclusion on s with clock := s.clock - ck. The only additional hypotheses are evaluate_ind's two guarded DecCall premises at the clock-sub motive: clockSubDecCallContIH (P (prog1, set_var rt retv (st with locals := s.locals)) under args/lookup_code/clock guards, a callee Return retv and both shape checks) and clockSubDecCallCalleeIH (P (prog, dec_clock s with locals := newlocals)). Both are copied verbatim from the reviewed evaluate_invariants DecCall spelling (EvalInvariant.lean), with the motive replaced by clockSubAtHOLFinite. No other premise. Proof: the untagged canonical core decCallCore shows the low run cannot time out (callee IH aligns the callee run, continuation IH the continuation run, evaluate_clock bounds ck); then clockSub_of_lowNoTimeout lifts it via the tagged evaluate_add_clock_eq. The full evaluate_clock_sub remains open (While .9, If .12, assembly .15)."
-}
+},
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "evaluate_clock_sub",
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
+    "lean_name": "evaluateClockSubIfCaseHOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-4ac.4.60.1.1.12): exact source shape of HOL panPropsScript.sml evaluate_clock_sub If constructor, handled in the generic final branch of the HOL induction (panSemScript.sml:630). Single literal guarded IH after the eval/Val/Word guard: forall result2 st2 ck2, source selected-branch run = (result2, st2 with clock := st2.clock + ck2) -> result2 <> SOME TimeOut -> low-clock selected-branch run = (result2, st2), exactly as the accepted Call/DecCall clockSubAt cases; original premisses (high-run equation to st with clock := st.clock+ck and result <> SOME TimeOut), no added premise and no outer-specialized IH."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "evaluate_clock_sub",
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
+    "lean_name": "evaluateClockSubWhileBreakBodyCaseHOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-4ac.4.60.1.1.9.3): Break-body sub-case of the HOL panPropsScript.sml evaluate_clock_sub While conjunct (panSemScript.sml:630). Case premises are the enclosing high While run at state (equation to st with clock := st.clock+ck) and result <> SOME TimeOut; the literal guarded body IH (only IH evaluate_ind yields here, since Break terminates the loop with no recursive While call) derives the low-clock Break body run internally; the body run returning SOME Break is the constructor split selecting this branch; no caller-supplied evaluator success premise is added."
+  }
 ]
