@@ -1,3 +1,4 @@
+import Flapjack.Pancake.PanStructs.CompileExpExact
 import Flapjack.Pancake.PanStructs
 import Flapjack.Pancake.Proofs.PanStructs
 
@@ -130,3 +131,68 @@ theorem structOldExpShapes_eq_map_fixture :
   simp [structOldExpShape, structOldExpShape.structOldExpShapes, context, lookupInfo]
 
 end Flapjack.Test.PanStructsCompileExpParity
+
+namespace Flapjack.Test.PanStructsCompileExpExactParity
+open Flapjack.Pancake.PanLang
+open Flapjack.Pancake.PanStructs.CompileShapeExact
+open Flapjack.Basis.Pure.MlString
+private def exactContext : ContextExact :=
+  { structs := [(ofString "Pair", [(ofString "left", .one),
+      (ofString "right", .comb [.one, .one])])]
+    locals := [(ofString "local", .comb [.one, .one])]
+    globals := [(ofString "global", .named (ofString "Pair"))] }
+
+-- Exact 8-bit inputs from pan_structs_compile_exp_probe.out.
+example : compileExpExact exactContext (.rstruct [.const 1, .const 2] : ExpHOL 8) =
+    .rstruct [.const 1, .const 2] := by simp +decide [compileExpExact, compileExpsExact, exactContext]
+example : compileExpExact exactContext
+    (.rfield 1 (.rstruct [.const 1, .const 2]) : ExpHOL 8) =
+    .rfield 1 (.rstruct [.const 1, .const 2]) := by simp +decide [compileExpExact, compileExpsExact, exactContext]
+example : compileExpExact exactContext
+    (.nstruct (ofString "Pair") [(ofString "right", .const 2),
+      (ofString "left", .const 1)] : ExpHOL 8) = .rstruct [.const 1, .const 2] := by simp +decide [compileExpExact, compileFieldsExact, exactContext, List.findSome?]
+example : compileExpExact exactContext
+    (.nfield (ofString "right") (.nstruct (ofString "Pair") []) : ExpHOL 8) =
+    .rfield 1 (.rstruct []) := by simp +decide [compileExpExact, compileFieldsExact, oldExpShapeExact, exactContext, Flapjack.afindi, List.findSome?]
+example : compileExpExact exactContext
+    (.load (.named (ofString "Pair")) (.const 0) : ExpHOL 8) =
+    .load (.comb [.one, .comb [.one, .one]]) (.const 0) := by
+  simp only [compileExpExact, exactContext]
+  rw [compileShapeExact]
+  have hdrop : List.dropWhile (fun entry : MlS × List (MlS × ShapeHOL) =>
+      !decide (entry.1 = ofString "Pair"))
+      [(ofString "Pair", [(ofString "left", ShapeHOL.one),
+        (ofString "right", ShapeHOL.comb [.one, .one])])] =
+      [(ofString "Pair", [(ofString "left", ShapeHOL.one),
+        (ofString "right", ShapeHOL.comb [.one, .one])])] := by rfl
+  rw [hdrop]
+  simp [compileShapesExact, compileShapeExact]
+example : compileExpExact exactContext (.load32 (.const 0) : ExpHOL 8) =
+    .load32 (.const 0) := by simp +decide [compileExpExact, exactContext]
+example : compileExpExact exactContext (.loadByte (.const 0) : ExpHOL 8) =
+    .loadByte (.const 0) := by simp +decide [compileExpExact, exactContext]
+example : compileExpExact exactContext (.const 0 : ExpHOL 8) = .const 0 := by simp +decide [compileExpExact, exactContext]
+example : compileExpsExact exactContext
+    ([.nstruct (ofString "Pair") [(ofString "right", .const 2),
+        (ofString "left", .const 1)], .const 3] : List (ExpHOL 8)) =
+    ([.nstruct (ofString "Pair") [(ofString "right", .const 2),
+        (ofString "left", .const 1)], .const 3] : List (ExpHOL 8)).map
+      (compileExpExact exactContext) := by simp +decide [compileExpExact, compileExpsExact, compileFieldsExact, exactContext, List.findSome?]
+example : oldExpShapesExact exactContext
+    ([.var .local (ofString "local"), .var .global (ofString "global"),
+      .nstruct (ofString "Pair") [], .rstruct [.const 2,
+        .var .global (ofString "global"), .var .local (ofString "local")]] : List (ExpHOL 8)) =
+    ([.var .local (ofString "local"), .var .global (ofString "global"),
+      .nstruct (ofString "Pair") [], .rstruct [.const 2,
+        .var .global (ofString "global"), .var .local (ofString "local")]] : List (ExpHOL 8)).map
+      (oldExpShapeExact exactContext) := by simp +decide [oldExpShapeExact, oldExpShapesExact, exactContext, List.findSome?]
+-- Defensive defaults and first-match field selection, beyond captured rows.
+example : compileExpExact exactContext
+    (.nstruct (ofString "missing") [] : ExpHOL 8) = .rstruct [] := by simp +decide [compileExpExact, exactContext, List.findSome?]
+example : compileExpExact exactContext
+    (.nstruct (ofString "Pair") [(ofString "left", .const 1),
+      (ofString "left", .const 2)] : ExpHOL 8) = .rstruct [.const 1] := by simp +decide [compileExpExact, compileFieldsExact, exactContext, List.findSome?]
+example : compileExpExact exactContext
+    (.nfield (ofString "missing") (.nstruct (ofString "Pair") []) : ExpHOL 8) =
+    .rfield 0 (.rstruct []) := by simp +decide [compileExpExact, compileFieldsExact, oldExpShapeExact, exactContext, Flapjack.afindi, List.findSome?]
+end Flapjack.Test.PanStructsCompileExpExactParity
