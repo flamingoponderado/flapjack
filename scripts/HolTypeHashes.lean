@@ -1,5 +1,6 @@
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Leaves
 import Flapjack.Pancake.Proofs.PanGlobals.ReadBytearray
+import Flapjack.Pancake.Proofs.PanGlobals.ByteStore
 import Flapjack.Compiler.Backend.StackProps.ProgramValidity
 import Flapjack.Compiler.Backend.StackProps.ProgramNames
 import Flapjack.Compiler.Backend.StackProps.AllocArg
