@@ -31190,5 +31190,36 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-c source comparison2026-09-30 (.32.5.5): genuine non-tail Call SOME(target,NONE) case of evaluate_unchanged_local1104-1137; original nonfree/run/good_res/non-Error premises and unused value binder retained, exact lookup equality conclusion. panSem657-702 callee args/lookup/clock/return/error/exception clauses literal. Original good_res/non-Error excludes every result except successful normal non-tail return. Caller locals restored; local destination inequality derived from free_var_ids, update lookup preserves fresh key; global destination preserves locals. No callee IH, extra premise or executable change. Canonical four finite maps/roundtrip, exact MlS and positive width indexed carriers/universe0 FFI. Coordinator review pending; full parent still open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/Assembly.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack canonical finite-state roundtrip re-export; no standalone HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/Assembly.lean",
+    "lean_name": "evaluateFreshLocalHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "evaluate_fresh_local",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison2026-09-30 (.32.3.17): full evaluate_fresh_local1045-1091, original name/value/program/state/result/post binders, nonfree/source-run conjunction, existential locals and conditional good_res/non-Error FUPDATE conclusion. Literal evaluate_ind777 used with exactly the original fresh-local predicate. All21 constructor cases assembled from accepted counterpart modules. Recursive Dec/Seq/If/While/handler/DecCall hypotheses discharged internally; redundant Call/DecCall tuple witnesses supplied explicitly to source induction. No public IH or extra run/clock/freshness/shape/target-result assumption. Callee-entry overwrite handled by accepted exact Call cases; no fresh premise added to callee bodies. Canonical finite-map updateEq/update equality proved pointwise for Dec induction transport; exact four finite state maps and genuine roundtrip, MlS/ProgHOL/ValueHOL positive width/NeZero and universe0 FFI. Full theorem port, proof-only; downstream compile_correct and production routing remain open. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/Assembly.lean",
+    "lean_name": "updateEq_eq_update",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local proof factoring; no standalone HOL original. Preserves exact update/FFI clauses."
   }
 ]
