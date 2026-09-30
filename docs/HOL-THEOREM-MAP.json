@@ -32378,6 +32378,14 @@
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/Call.lean",
+  "lean_name": "transformEocCallHandlerCalculation",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack stronger support calculation: retains only handler IH; unlike the exact HOL evaluate_ind Call case it omits callee IH, so it is untagged. Preserved original calculation, used by the full-premise tagged wrapper."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/Call.lean",
   "lean_name": "transformEocCorrect_Call",
   "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
   "hol_name": "transform_eoc_correct",
@@ -32388,7 +32396,7 @@
     "code"
   ],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.2.3) compared crep_inlineProofScript.sml:1893-1913 (statement) and Resume transform_eoc_correct[Call] :2024-2038: HOL's goal at p = Call caltyp fname args for every caltyp, with all quantifiers, hypotheses and the case conclusion written out; the only extra hypothesis is TransformEocCallHandlerIH, the guarded evaluate_ind handler premise (argument eval, lookup_code, ALL_DISTINCT selector, clock, callee Exception eid, caltyp = SOME (rts,SOME (eid,p))) at motive transformEocGoal, mirroring the accepted ihHandler of evaluate_locals_same_fdom's Call case; HOL's callee premise is not used. Tail Call NONE: transformed to Call (SOME (rts,NONE)); a callee Return retvs gives NONE with rts read back (opt_mmap_some_eq_zip_flookup on the finite-support carrier), other outcomes coincide. Call (SOME (_,NONE)): unchanged, no Return (not_has_return_not_evaluate_return). Handler: identical except the matching-exception branch, discharged by the handler IH. Exact tagged carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  "reviewer": "flapjack-luna-b source comparison (bead .18.5.5.47.5): crep_inlineProofScript1893-1913 and Resume Call2024-2038, with evaluate_ind Call guards. Restored both guarded callee and handler motives: arguments OPT_MMAP success, lookup_code success, distinct return destinations, nonzero clock; handler also requires callee Exception eid and matching return-info handler. Original goal hypotheses and result alternatives unchanged. Callee premise deliberately retained even though the handler-only calculation does not use it. Finite-support maps and positive word/Type0 FFI translations unchanged. Corrected statement kernel-checked; coordinator acceptance pending."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/Call.lean",
@@ -32434,7 +32442,7 @@
     "code"
   ],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.2.4) compared crep_inlineProofScript.sml:1893-1913: the full HOL statement forall p s r s' res rts. <eight hypotheses> ==> exists r1 s1'. evaluate (transform_eoc rts p, s) = (r1,s1') /\\ state_rel s' s1' /\\ case r of ..., binders in HOL order, no extra premise and no public IH. Assembled from the tagged cases (Leaf, Return, Dec, If, Seq, While, Call) by structural recursion on the program for all states (handler a structural subterm of Call) and an inner clock induction constructing exactly TransformEocWhileIH; the same induction principle as the accepted evaluate_locals_same_fdom assembly, not inductHOL (cf. lkme). Coordinator source review pending."
+  "reviewer": "flapjack-luna-b source comparison (bead .18.5.5.47.5): full HOL transform_eoc_correct1893-1913 statement unchanged, no public IH or added assumption. Internal clock/program-size lexicographic induction now discharges both original guarded Call premises. Arbitrary code-map callee motive follows strictly decremented clock; matching exception handler clock follows evaluator clock_le. While re-entry/body likewise decrease clock; Dec/If/Seq use smaller program at equal clock or lower clock. All original goal hypotheses/conclusions retained. Coordinator acceptance pending."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/Assembly.lean",
@@ -32446,19 +32454,11 @@
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/Assembly.lean",
-  "lean_name": "whileEocMotive",
-  "hol_path": null,
-  "hol_name": null,
-  "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Flapjack local support (bead .47.2.4): the While motive for all states by clock induction providing TransformEocWhileIH; no separate HOL declaration."
-},
-{
-  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/Assembly.lean",
   "lean_name": "eocMotive",
   "hol_path": null,
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Flapjack local support (bead .47.2.4): the evaluate_ind motive of transform_eoc_correct for every program and state by structural recursion over the tagged cases; no separate HOL declaration."
+  "reviewer": "Flapjack internal assembly support: native clock/program-size lexicographic induction establishes transformEocGoal for every program/state and discharges guarded callee/handler/While premises. No separate HOL declaration or public IH."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/GlobalBlockAlignment.lean",
