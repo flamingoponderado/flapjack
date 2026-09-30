@@ -66,7 +66,7 @@ inductive FpTop where
       rationals rendered as `Rat`.
     Agreement with HOL rests only on `ℚ → ℝ` being an ordered-field embedding
     (external assumption, `docs/SOUNDNESS.md` item 8). -/
-@[hol "cakeml/semantics/fpSemScript.sml" "fp_cmp_comp_def"]
+@[hol "cakeml/semantics/fpSemScript.sml" "fp_cmp_comp_def" (reals_as_rational_cuts)]
 noncomputable def fpSemFpCmpComp : FpCmp → BitVec 64 → BitVec 64 → Bool
   | .less => holFp64LessThan
   | .lessEqual => holFp64LessEqual
@@ -89,7 +89,7 @@ noncomputable def fpSemFpCmpComp : FpCmp → BitVec 64 → BitVec 64 → Bool
       rationals rendered as `Rat`.
     Agreement with HOL rests only on `ℚ → ℝ` being an ordered-field embedding
     (external assumption, `docs/SOUNDNESS.md` item 8). -/
-@[hol "cakeml/semantics/fpSemScript.sml" "fp_cmp_def"]
+@[hol "cakeml/semantics/fpSemScript.sml" "fp_cmp_def" (reals_as_rational_cuts)]
 noncomputable def fpSemFpCmp : Opb → BitVec 64 → BitVec 64 → Bool
   | .lt => holFp64LessThan
   | .leq => holFp64LessEqual
@@ -98,14 +98,13 @@ noncomputable def fpSemFpCmp : Opb → BitVec 64 → BitVec 64 → Bool
 
 /-- Rendering of HOL `fp_uop_comp_def` (`fpSemScript.sml:43-49`), with the
     same case map: `FP_Abs => fp64_abs`, `FP_Neg => fp64_negate`,
-    `FP_Sqrt => fp64_sqrt roundTiesToEven`.  Not an exact port: the `@[hol]`
-    tag is withdrawn (bead `flapjack-2hoy.6`).  HOL `fp64_sqrt` rounds the
-    real `sqrt r`, but `holFp64Sqrt` replaces each comparison against
-    `sqrt r` with a rational cut criterion (`BinaryIeeeSqrt`).  That is a
-    reformulation of the specification whose agreement with HOL is the
-    external assumption of `docs/SOUNDNESS.md` item 8.  The faithful rendering
-    is bead `flapjack-dshl`.  The `abs`/`neg` clauses are real-free sign-bit
-    operations. -/
+    `FP_Sqrt => fp64_sqrt roundTiesToEven`.  Qualified port
+    (`reals_as_rational_cuts`, bead `flapjack-qfld`): `holFp64Sqrt` decides
+    each comparison against the real `sqrt r` by its rational cut
+    (`BinaryIeeeSqrt`), the reviewed representation of that HOL real; its
+    agreement with HOL is the external assumption of `docs/SOUNDNESS.md`
+    item 8.  The `abs`/`neg` clauses are real-free sign-bit operations. -/
+@[hol "cakeml/semantics/fpSemScript.sml" "fp_uop_comp_def" (reals_as_rational_cuts)]
 noncomputable def fpSemFpUopComp : FpUop → BitVec 64 → BitVec 64
   | .abs => holFp64Abs
   | .neg => holFp64Negate
@@ -137,7 +136,7 @@ noncomputable def fpSemFpUopComp : FpUop → BitVec 64 → BitVec 64
     External assumptions: `ℚ → ℝ` is an ordered-field embedding
     (`docs/SOUNDNESS.md` item 8), and HOL `@` is translated as
     `Classical.epsilon`. -/
-@[hol "cakeml/semantics/fpSemScript.sml" "fp_bop_comp_def"]
+@[hol "cakeml/semantics/fpSemScript.sml" "fp_bop_comp_def" (reals_as_rational_cuts)]
 noncomputable def fpSemFpBopComp : FpBop → BitVec 64 → BitVec 64 → BitVec 64
   | .add => holFp64Add .roundTiesToEven
   | .sub => holFp64Sub .roundTiesToEven
@@ -171,7 +170,7 @@ noncomputable def fpSemFpBopComp : FpBop → BitVec 64 → BitVec 64 → BitVec 
     External assumptions: `ℚ → ℝ` is an ordered-field embedding
     (`docs/SOUNDNESS.md` item 8), and HOL `@` is translated as
     `Classical.epsilon`. -/
-@[hol "cakeml/semantics/fpSemScript.sml" "fpfma_def"]
+@[hol "cakeml/semantics/fpSemScript.sml" "fpfma_def" (reals_as_rational_cuts)]
 noncomputable def fpSemFpfma (v1 v2 v3 : BitVec 64) : BitVec 64 :=
   holFp64MulAdd .roundTiesToEven v2 v3 v1
 

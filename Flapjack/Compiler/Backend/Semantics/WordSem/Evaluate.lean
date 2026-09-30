@@ -91,11 +91,14 @@ open Classical in
     HOL's equality tests on results are rendered as matches, and set
     conditions on `domain` use `sptDomainEmpty`/`sptDomainEqUnion`.
 
-    Not an exact port: the `@[hol]` tag is withdrawn (bead `flapjack-2hoy.2`,
-    coordinator decision 2026-09-30).  The `Inst` clause delegates to the
-    untagged `inst`, whose `FPSqrt` clause is the rational-cut reformulation
-    of HOL `fp64_sqrt` (see `inst`).  The faithful prerequisite is bead
-    `flapjack-dshl`.  Every other clause follows HOL clause by clause. -/
+    Exact port with an inherited assumption (PR #1179 review, bead
+    `flapjack-qfld`): the `Inst` clause calls the tagged `inst`, which carries
+    `(reals_as_rational_cuts)` for its `FPSqrt` rendering; this declaration
+    does not use a real rendering itself and records the inherited
+    `docs/SOUNDNESS.md` item 8 assumption in the theorem map.  Every other clause
+    follows HOL clause by clause. -/
+@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "evaluate_def" 1016
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 noncomputable def evaluate {width : Nat} [NeZero width] {C : Type} {F : Type}
     (p : WordLangProgHOL (BitVec width)) (s : WordSemStateFiniteExact width C F) :
     Option (WordSemResult width) × WordSemStateFiniteExact width C F :=
