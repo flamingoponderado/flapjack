@@ -37368,5 +37368,58 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Local exact Seq associativity infrastructure derived from source evaluator clause; no separately named HOL declaration. Not the full seq_assoc theorem."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SeqAssocExact.lean",
+  "lean_name": "evaluateSeqAssocDecHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+  "hol_name": "evaluate_seq_assoc",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison pan_simpProof117-137 and seq_assoc_def18-40 Dec recursion case: full arbitrary-prefix result/state equality, exactly source functional body induction hypotheses, single Skip/body IH; initializer failure/shape mismatch and restoration of caller local binding exactly preserved. Local complete second-program Seq congruence expands accepted line780 Seq directly; accepted Skip/Seq helper converts source IH to body equality. Native exact carriers, canonical fourmap state fields and genuine witness, positive BitVec width and Type0 FFI only. This is a genuine case, not full117 assembly; coordinator review pending. Proof-only."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SeqAssocExact.lean",
+  "lean_name": "evaluateSeqAssocIfHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+  "hol_name": "evaluate_seq_assoc",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison pan_simpProof117-137 and seq_assoc_def18-40 If recursion case: full arbitrary-prefix result/state equality, exactly source functional body induction hypotheses, two Skip/branch IHs; all condition evaluation outcomes retained, no chosen-branch or condition-success premise. Local complete second-program Seq congruence expands accepted line780 Seq directly; accepted Skip/Seq helper converts source IH to body equality. Native exact carriers, canonical fourmap state fields and genuine witness, positive BitVec width and Type0 FFI only. This is a genuine case, not full117 assembly; coordinator review pending. Proof-only."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SeqAssocExact.lean",
+  "lean_name": "evaluateSeqAssocWhileHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+  "hol_name": "evaluate_seq_assoc",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison pan_simpProof117-137 and seq_assoc_def18-40 While recursion case: full arbitrary-prefix result/state equality, exactly source functional body induction hypotheses, single Skip/body IH; accepted full universal While congruence preserves clock/fix_clock/timeOut/Break/Continue/error cases. Local complete second-program Seq congruence expands accepted line780 Seq directly; accepted Skip/Seq helper converts source IH to body equality. Native exact carriers, canonical fourmap state fields and genuine witness, positive BitVec width and Type0 FFI only. This is a genuine case, not full117 assembly; coordinator review pending. Proof-only."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SeqAssocExact.lean",
+  "lean_name": "evaluateSeqSecondCongr",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Local exact complete second-program Seq congruence from accepted evaluate_def clause; no separately named HOL original and no full seq_assoc claim."
 }
 ]
