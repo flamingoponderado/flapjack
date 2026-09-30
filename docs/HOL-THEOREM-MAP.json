@@ -29445,5 +29445,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "Luna A compared original HOL257-264: all original address/value/domain/initial memory/replacement memory/result quantifiers; original source store success implies existential replacement store result, no added premise. Exact panMemStoresHOL and panMemStoreHOL preserve domain failure and recursive word stride; domain membership is decided internally with no class or coverage hypothesis. Words-only conventional positive-width BitVec/HolWordLab translation, memory remains HOL function. Nil, successful head/tail and failed-domain clauses compared. No executable change. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/MemoryLookup.lean",
+    "lean_name": "memStoresLookupHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "mem_stores_lookup",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Luna A compared HOL310-321: original quantified addr,vs,addrs,memory,m,query, conjunction source mem_stores success and query not in addresses addr LENGTH vs imply identical lookup. Exact panMemStoresHOL and addresses word stride, no added wrapping/alignment/distinctness/coverage premise. Query exclusion splits into head inequality and tail exclusion; store recursion leaves query unchanged. Classical domain decisions internal, no class premise. Positive-width words conventional translation only, memory HOL function. Constructor/word carriers and successful/failed domain branches source-reviewed; coordinator review pending."
   }
 ]
