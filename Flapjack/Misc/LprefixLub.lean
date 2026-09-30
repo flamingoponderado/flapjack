@@ -284,6 +284,14 @@ theorem lprefix_of_rep_agree {a b : HolLList α}
             rw [hby] at hbj
             exact (Option.some.inj hbj).symm
 
+/-- `lprefix` is transitive (HOL `LPREFIX_TRANS`, `llistScript.sml`).  Untagged
+    Flapjack support: `llistScript.sml` is not a pinned HOL source, so this is
+    not a claimed port; it follows from the representation characterisation
+    `lprefix_rep`/`lprefix_of_rep_agree`. -/
+theorem lprefix_trans {a b c : HolLList α} (hab : lprefix a b) (hbc : lprefix b c) :
+    lprefix a c :=
+  lprefix_of_rep_agree fun _ _ h => lprefix_rep hbc (lprefix_rep hab h)
+
 /-- Exact full form of HOL `build_lprefix_lub_lem`
     (`lprefix_lubScript.sml:440-445`): on a chain, the `m`-th `LUNFOLD` step
     carries the `(m+n)`-th chain value.  This is the general `m` companion of

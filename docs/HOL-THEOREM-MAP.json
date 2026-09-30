@@ -35277,5 +35277,13 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Source comparison evaluate_fperm pan_globalsProof1721-1810 Primitive case and panSem574-584: original f/g/name/operator/arguments/state/res/post and sole source-run premise, full target evaluation and unchanged result/code-permuted post retained. Original OPT_MMAP expression evaluation, pan_primop and local validity/write clauses preserved including all failures. Unconditional list invariance by original recursive evalListHOLExact, pointwise accepted eval_upd_code_eta, independent of source-run hypothesis; operator unaffected by code; local lookup/write commute with code update. Exact native MlS/PrimOp/ExpHOL/ProgHOL/value/result carriers with canonical state four finite maps and positive-width word translation, local unconditional roundtrip witness. No extra successful list/operator/validity/target premise. Genuine constructor slice only; full theorem open, proof-only executable behavior unchanged."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/SemanticsInitCall.lean",
+  "lean_name": "lubImageSuc",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "LUB_IMAGE_SUC",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.2.22.3.2.3) compared pan_globalsProofScript.sml:2663-2665 `LUB_IMAGE_SUC[local]: (!x. LPREFIX (f x) (f (SUC x))) ==> LUB (IMAGE f UNIV(:num)) = LUB (IMAGE (f o SUC) UNIV(:num))`. HOL LUB is the lprefix_lub Overload for build_lprefix_lub (lprefix_lubScript.sml:560), rendered as HolLList.buildLprefixLub (the rendering used by the tagged IMP_build_lprefix_lub_EQ). IMAGE g UNIV is the set-as-predicate fun l => exists k, l = g k, as in the tagged panSem semantics_def. f : Nat -> HolLList a is generic, LPREFIX is HolLList.lprefix, SUC is Nat.succ, o is Function.comp. Same single hypothesis and conclusion; no extra premise. Proof follows HOL's: IMP_build_lprefix_lub_EQ with the two lprefix_chain facts (transitivity along the monotone sequence) and both lprefix_rel directions. Uses the untagged Flapjack support HolLList.lprefix_trans (Misc/LprefixLub.lean; llistScript is not pinned)."
 }
 ]
