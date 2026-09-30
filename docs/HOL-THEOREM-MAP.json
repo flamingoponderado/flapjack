@@ -34058,5 +34058,59 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack local support (beads .43.5.8/.43.5.7.1): evaluate_ind motive of evaluate_state_locals_rel_strong for every program and state by evalCrepSemHOLProgExact_inductLex over the tagged cases."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ArgLoad.lean",
+    "lean_name": "generalSimulateArgLoadCorrectExact",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "general_simulate_arg_load_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "t"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.45.1) compared crep_inlineProofScript.sml:985-1000: forall s es vals vs t p r s' tmp_vars (as declared parameters in HOL order, t the bare finite-support map parameter). Hypotheses: OPT_MMAP (eval s) es = SOME vals, LENGTH vs = LENGTH vals, ALL_DISTINCT vs (Nodup), t SUBMAP s.locals (HolFiniteMapExact.submap), evaluate (p, s with locals := t |++ ZIP (vs,vals)) = (r,s'), (!v. MEM v vs \\/ MEM v tmp_vars ==> v NOTIN FDOM t) (crepHolFdom t.lookup v = false, as in tagged SUBMAP_DIFF_LIST), r <> SOME Error, ALL_DISTINCT tmp_vars, LENGTH tmp_vars = LENGTH vs, (!x. MEM x tmp_vars ==> ~MEM x vs), (!x. MEM x tmp_vars ==> ~MEM x (FLAT (MAP var_cexp es))); conclusion exists t'. evaluate (nested_decs tmp_vars es (nested_decs vs (MAP Var tmp_vars) p), s) = (r,t') /\\ state_rel s' t'. No extra premise. Proof as in HOL: evaluate_state_locals_rel twice (SUBMAP_DIFF_LIST, FUPDATE_LIST monotonicity), lookup_locals_eq_map_vars with opt_mmap_some_eq_zip_flookup, nested_decs_evaluate twice. Canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ArgLoad.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed CrepSemHOLState toBroad/ofBroad roundtrip for the relation qualifier."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ArgLoad.lean",
+    "lean_name": "stateRel_trans",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead .45.1): crep_inline state_rel is transitive; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ArgLoad.lean",
+    "lean_name": "stateRel_withLocals",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead .45.1): states differing only in locals are state_rel-related; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ArgLoad.lean",
+    "lean_name": "generalSimulateArgLoadPreserveLocalsExact",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "general_simulate_arg_load_preserve_locals",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "t"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.45.2) compared crep_inlineProofScript.sml:1062-1082: binders s es vals vs t p r s' tmp_vars as declared parameters in HOL order; hypotheses as general_simulate_arg_load_correct except r <> SOME Error replaced, as in HOL, by the continuing-result condition (case r of NONE/Break/Continue => T | _ => F) = T rendered as the displayed match proposition; conclusion exists t'. evaluate (nested_decs tmp_vars es (nested_decs vs (MAP Var tmp_vars) p), s) = (r,t') /\\ state_rel s' t' /\\ FOLDL res_var s'.locals (ZIP (vs, MAP (FLOOKUP s.locals) vs)) SUBMAP t'.locals (left fold of resVarEq, as in tagged evaluate_nested_decs_locals_nested_res_var; SUBMAP as HolFiniteMapExact.submap). No extra premise. Proof: pointwise version of HOL's using the same lemmas (evaluate_state_locals_rel_strong, evaluate_nested_decs_locals_nested_res_var x2, evaluate_locals_same_fdom', flookup_res_var_is_mem_zip_eq, flookup_res_var_distinct_zip_eq). Coordinator source review pending."
   }
 ]
