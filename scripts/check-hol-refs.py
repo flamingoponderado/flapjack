@@ -1038,6 +1038,58 @@ def fmap_as_finite_support_errors(
     return errors
 
 
+def _active_ambient_witness_commands(source: str, position: int) -> tuple[str, ...]:
+    """Conservatively reject section-inferred witness binders at this position.
+
+    Written signatures omit variables that Lean inserts from a surrounding
+    section/namespace (including proof premises inferred from the body or forced
+    by `include`). These witnesses require self-contained binders; do not infer
+    whether an ambient declaration is harmless from its written type. Track
+    namespace/section/mutual boundaries so a closed helper scope does not poison
+    later independent witnesses. Comments and strings/quoted identifiers are
+    masked before scanning. This is a syntactic guard, not Lean elaboration;
+    custom command macros and named-proposition premises still need source review.
+    """
+    prefix = strip_lean_comments(source[:position])
+    prefix = re.sub(r'"(?:\\.|[^"\\])*"|«[^»]*»',
+                    lambda match: _NOT_NEWLINE_RE.sub(" ", match.group()), prefix)
+    scopes: list[list[str]] = [[]]
+    delimiters: list[str] = []
+    # `variables` is also a legitimate ordinary Lean identifier (for example
+    # a list parameter). Recognize the legacy command spelling only at the
+    # start of a line and before binder syntax, never as an arbitrary token.
+    tokens = re.compile(
+        r"[()\[\]{}]|\b(namespace|section|mutual|end|variable|include|omit)\b|"
+        r"(?m:^[ \t]*(variables)(?=\s*[({\[]))"
+    )
+    for match in tokens.finditer(prefix):
+        token = match.group()
+        if token in "([{":
+            delimiters.append(token)
+            continue
+        if token in ")]}":
+            if delimiters:
+                delimiters.pop()
+            continue
+        if delimiters or (match.start() > 0 and prefix[match.start() - 1] == "."):
+            continue
+        command = match.group(1) or match.group(2)
+        if command in {"namespace", "section", "mutual"}:
+            scopes.append([])
+        elif command == "end":
+            if len(scopes) > 1:
+                scopes.pop()
+        else:
+            scopes[-1].append(command)
+    return tuple(command for scope in scopes for command in scope)
+
+
+def _witness_has_ambient_context(source: str, name: str) -> bool:
+    return any(_active_ambient_witness_commands(source, match.start())
+               for match in re.finditer(
+                   rf"\b(?:theorem|lemma)\s+{re.escape(name)}\b", source))
+
+
 def has_fmap_relation_witness(lines: list[str], carrier: str) -> bool:
     """Require a per-carrier canonical finite-map relation witness in this module.
 
@@ -1059,6 +1111,8 @@ def has_fmap_relation_witness(lines: list[str], carrier: str) -> bool:
         re.M,
     )
     for match in pattern.finditer(source):
+        if _active_ambient_witness_commands(source, match.start()):
+            continue
         statement = match.group("statement")
         if not identifier_token_occurs(statement, carrier):
             continue
@@ -2370,6 +2424,10 @@ def _has_lookup_equality_witness(
     statements = _statements_of_declaration(source, witness)
     if not statements:
         return (False, f"has no same-module checked witness `{witness}`")
+    if _witness_has_ambient_context(source, witness):
+        return (False, f"witness `{witness}` requires self-contained binders; "
+                "active ambient variable/include/omit commands can introduce "
+                "inherited proof premises")
     for statement in statements:
         if forbidden and identifier_token_occurs(statement, forbidden):
             return (
