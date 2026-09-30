@@ -10,27 +10,14 @@ import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.ShMem
 Assembly of HOL `evaluate_locals_same_fdom` (`cakeml/pancake/proofs/crep_inlineProofScript.sml:181-260`)
 from its reviewed constructor cases, and the corollary
 `evaluate_locals_same_fdom'` (`:262-270`); bead `flapjack-pxn.18.5.5.43.7`.
-HOL proves the theorem by `recInduct evaluate_ind`.  Here the motive
-`localsDomainMotive p s` is established for every state by structural recursion
-on the program; the `While` case adds an inner induction on the clock, whose
-recursive premises are exactly the guarded `WhileDomainIH` of `evaluate_ind`.
-`FDOM` is rendered by `crepHolFdom` of the finite-support lookup, as in the
-case theorems.
-
-## Induction principle and guard spellings (review item 4, PR #1182)
-
-The crep_inline assemblies in this directory (`evaluate_locals_same_fdom`
-here, `transform_eoc_correct` in `TransformEoc/Assembly.lean` and
-`transform_branch_correct` in `TransformBranch/Assembly.lean`) do not apply the
-tagged Crep `evaluate_ind` (`evalCrepSemHOLProgExact_induct`,
-`Semantics/CrepSem/EvaluateInd.lean`).  Each proves its motive for every
-program and state by structural recursion on the program (a `Call` handler is
-a structural subterm of the call), plus, in the `While` case, an inner
-induction on `s.clock` using `evalCrepSemHOLProgExact_clock_le`.  Every tagged
-case theorem is applied with exactly its own premise, which is `evaluate_ind`'s
-premise for that constructor, so the public statements are unchanged: this is
-a different proof of the same induction step, not a stronger or weaker
-theorem.  None of these cases uses `evaluate_ind`'s callee premise.
+HOL proves the theorem by `recInduct evaluate_ind`. The untagged
+`handlerOnlyMotive` first establishes the domain calculation by structural
+recursion, with inner clock induction for While. The complete `localsMotive`
+uses `evalCrepSemHOLProgExact_inductLex`: its Call case supplies the tagged
+wrapper's original callee and handler premises at smaller clocks internally;
+other constructors reuse the established structural calculation. Neither
+public theorem has an additional induction hypothesis. The stronger
+handler-only Call calculation is untagged, rather than claimed as a HOL case.
 
 The Call handler premises (`ihHandler` here, `TransformEocCallHandlerIH`,
 `TransformBranchCallHandlerIH`) state their guards with `args.mapM
@@ -144,13 +131,13 @@ private theorem whileMotive {width : Nat} [NeZero width] {σ : Type}
 -- case theorems, for the result `r`, evaluation `h` and condition `hc` in scope.
 set_option hygiene false in
 local macro "conv_cond" : tactic =>
-  `(tactic| (clear localsMotive; revert hc h; cases r with
+  `(tactic| (clear handlerOnlyMotive; revert hc h; cases r with
       | none => simp
       | some x => cases x <;> simp))
 
 /-- Local support: the `evaluate_ind` motive of `evaluate_locals_same_fdom`
     for every program and state. -/
-private theorem localsMotive {width : Nat} [NeZero width] {σ : Type} :
+private theorem handlerOnlyMotive {width : Nat} [NeZero width] {σ : Type} :
     ∀ (p : CrepProgHOL width) (s : CrepSemHOLState width σ), localsDomainMotive p s
   | .skip, s => fun r s' h hc =>
       crepHolFdom_of_FDOM (evaluateLocalsSameFdomTrivialAtomsExact s r s' _ (Or.inl rfl) h (by conv_cond))
@@ -191,29 +178,54 @@ private theorem localsMotive {width : Nat} [NeZero width] {σ : Type} :
       split at h <;> (obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; exact hc.elim)
   | .seq a b, s => fun r s' h hc =>
       evaluateLocalsSameFdomSeqExact s s' r a b
-        (fun u t r h hc => localsMotive a u r t h (by conv_cond))
-        (fun u t r h hc => localsMotive b u r t h (by conv_cond)) h (by conv_cond)
+        (fun u t r h hc => handlerOnlyMotive a u r t h (by conv_cond))
+        (fun u t r h hc => handlerOnlyMotive b u r t h (by conv_cond)) h (by conv_cond)
   | .ite cond a b, s => fun r s' h hc =>
       evaluateLocalsSameFdomIfExact s s' r cond a b
-        (fun u t r h hc => localsMotive a u r t h (by conv_cond))
-        (fun u t r h hc => localsMotive b u r t h (by conv_cond)) h (by conv_cond)
+        (fun u t r h hc => handlerOnlyMotive a u r t h (by conv_cond))
+        (fun u t r h hc => handlerOnlyMotive b u r t h (by conv_cond)) h (by conv_cond)
   | .dec n e body, s => fun r s' h hc =>
       evaluateLocalsSameFdomDecExact s s' r n e body
-        (fun u t r h hc => localsMotive body u r t h (by conv_cond)) h (by conv_cond)
-  | .while e c, s => whileMotive e c (fun u => localsMotive c u) s
+        (fun u t r h hc => handlerOnlyMotive body u r t h (by conv_cond)) h (by conv_cond)
+  | .while e c, s => whileMotive e c (fun u => handlerOnlyMotive c u) s
   | .call none f args, s => fun r s' h hc =>
-      evaluateLocalsSameFdomCallExact s s' r none f args
+      callDomainFromHandler s s' r none f args
         (fun _ _ _ _ _ _ _ _ _ _ _ _ hinfo => by cases hinfo) h (by conv_cond)
   | .call (some (rts, none)) f args, s => fun r s' h hc =>
-      evaluateLocalsSameFdomCallExact s s' r (some (rts, none)) f args
+      callDomainFromHandler s s' r (some (rts, none)) f args
         (fun _ _ _ _ _ _ _ _ _ _ _ _ hinfo => by simp at hinfo) h (by conv_cond)
   | .call (some (rts, some (eid, handler))) f args, s => fun r s' h hc =>
-      evaluateLocalsSameFdomCallExact s s' r (some (rts, some (eid, handler))) f args
+      callDomainFromHandler s s' r (some (rts, some (eid, handler))) f args
         (fun _ _ _ _ _ handler' st _ _ _ _ _ hinfo => by
           simp only [Option.some.injEq, Prod.mk.injEq] at hinfo
           obtain ⟨_, _, rfl⟩ := hinfo
-          exact localsMotive handler _) h (by conv_cond)
+          exact handlerOnlyMotive handler _) h (by conv_cond)
 termination_by p => sizeOf p
+
+/-- Complete motive with the exact Call wrapper's callee and handler premises
+supplied internally by lexicographic clock/size induction. Non-Call cases reuse
+the independently established structural calculation above. -/
+private theorem localsMotive {width : Nat} [NeZero width] {σ : Type} :
+    ∀ (p : CrepProgHOL width) (s : CrepSemHOLState width σ), localsDomainMotive p s := by
+  refine evalCrepSemHOLProgExact_inductLex (motive := localsDomainMotive) ?_
+  intro p s ih
+  have lower : ∀ (q : CrepProgHOL width) (u : CrepSemHOLState width σ),
+      u.clock < s.clock → localsDomainMotive q u :=
+    fun q u hc => ih q u (Prod.Lex.left _ _ hc)
+  have dec_lt : s.clock ≠ 0 → (decClockCrepSemHOL s).clock < s.clock := by
+    intro h; simp only [decClockCrepSemHOL_clock']; omega
+  cases hp : p with
+  | call info fname args =>
+      exact fun r s' h hc => evaluateLocalsSameFdomCallExact s s' r info fname args
+        (fun _ _ newlocals _ _ _ hck =>
+          lower _ {decClockCrepSemHOL s with locals := newlocals} (dec_lt hck))
+        (fun _ prog newlocals _ _ _ st _ _ _ hck hb _ => by
+          have hle := evalCrepSemHOLProgExact_clock_le
+            {decClockCrepSemHOL s with locals := newlocals} prog
+          rw [hb] at hle
+          exact lower _ {st with locals := s.locals} (Nat.lt_of_le_of_lt hle (dec_lt hck)))
+        h hc
+  | _ => exact handlerOnlyMotive _ s
 
 /-- Exact HOL `evaluate_locals_same_fdom` (`crep_inlineProofScript.sml:181-260`),
     assembled from the reviewed constructor cases.  HOL's `(case r of ...) = T`

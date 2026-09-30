@@ -28003,7 +28003,7 @@
       "CrepSemHOLState.code"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-b source comparison (2026-09-30; .43.4), HOL evaluate_locals_same_fdom181-191/Call221-234 and evaluate_ind Call440. Original eval/result guard/domain equality specialized to Call. Only used handler recursion IH retained, with actual argument eval/code lookup/nodup/clock/callee exception/matching handler guards; reduced bindings equivalent to HOL conjunct. Callee IH unused: returns restore caller locals via checked existing-destination zip update; matching exceptions restore caller locals before handler. All other outcomes excluded by original guard. Exact imported finite-support state and positive-width Type0 word carrier, local canonical roundtrip. No extra success/post-state relation premise. Full induction theorem remains open."
+    "reviewer": "flapjack-sol (.43.4.1) compared HOL evaluate_locals_same_fdom181-191/Call221-234 and evaluate_ind Call: exact source eval/result guard/domain conclusion plus both original guarded callee and matching-exception handler IHs. CalleeIH retained unused as original proof restores caller locals; handler-only calculation is untagged callDomainFromHandler. Canonical finite-support state and positive-width Type0 word translation unchanged; no extra success/postrelation premise."
   },
   {
     "hol_path": null,
@@ -31635,7 +31635,7 @@
   "hol_path": null,
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.5.43.7): the evaluate_ind motive of evaluate_locals_same_fdom for every program and state by structural recursion over the tagged cases; no separate HOL declaration."
+  "reviewer": "Flapjack-specific complete domain motive by lexicographic clock/size induction: exact tagged Call wrapper callee and handler premises supplied at decremented clock and clock-bounded callee poststate. Other constructors reuse independent structural handlerOnlyMotive calculation. No public full-theorem induction premise or separate HOL original."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Return.lean",
@@ -34097,5 +34097,21 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack local support (bead .45.1): states differing only in locals are state_rel-related; no HOL original."
-  }
+  },
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/Call.lean",
+  "lean_name": "callDomainFromHandler",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific stronger handler-only domain calculation; deliberately untagged because it omits original callee induction hypothesis."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/Assembly.lean",
+  "lean_name": "handlerOnlyMotive",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific structural domain calculation with inner While clock induction; uses untagged handler-only Call calculation. Reused internally by complete exact theorem; no independent HOL case claim."
+}
 ]
