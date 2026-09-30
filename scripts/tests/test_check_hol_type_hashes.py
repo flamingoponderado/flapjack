@@ -315,6 +315,45 @@ class HolTypeHashesTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "manifest qualifiers differ"):
             MODULE.lock_records(manifest, without_dimension)
 
+    def test_reals_as_rational_cuts_qualifier_is_locked(self):
+        manifest = [{
+            **self.manifest[0],
+            "statement_status": "reviewed_reals_as_rational_cuts",
+            "reals_as_rational_cuts": True,
+        }]
+        export = [{
+            **self.export[0],
+            "qualifiers": {"reals_as_rational_cuts": True},
+        }]
+        lock = MODULE.expected_lock(manifest, export, "leanprover/lean4:v4")
+        self.assertTrue(lock["records"][0]["qualifiers"]["reals_as_rational_cuts"])
+        without_reals = [{**export[0], "qualifiers": {}}]
+        with self.assertRaisesRegex(ValueError, "manifest qualifiers differ"):
+            MODULE.lock_records(manifest, without_reals)
+
+    def test_reals_as_rational_cuts_export_without_manifest_is_rejected(self):
+        export = [{
+            **self.export[0],
+            "qualifiers": {"reals_as_rational_cuts": True},
+        }]
+        with self.assertRaisesRegex(ValueError, "carries reals_as_rational_cuts"):
+            MODULE.lock_records(self.manifest, export)
+
+    def test_inherited_reals_assumption_must_match_the_closure_export(self):
+        manifest = [{**self.manifest[0], "inherits_reals_as_rational_cuts": True}]
+        export = [{**self.export[0], "inherits_reals_as_rational_cuts": True}]
+        lock = MODULE.expected_lock(manifest, export, "leanprover/lean4:v4")
+        self.assertTrue(lock["records"][0]["inherits_reals_as_rational_cuts"])
+        with self.assertRaisesRegex(ValueError, "declaration closure gives True"):
+            MODULE.lock_records(self.manifest, export)
+        with self.assertRaisesRegex(ValueError, "declaration closure gives False"):
+            MODULE.lock_records(manifest, self.export)
+
+    def test_inherited_reals_export_field_is_boolean(self):
+        record = {**self.export[0], "inherits_reals_as_rational_cuts": "yes"}
+        with self.assertRaisesRegex(ValueError, "non-boolean inherits_reals_as_rational_cuts"):
+            MODULE.validate_export_record(record, 1)
+
     def test_combined_relation_words_status_is_locked(self):
         manifest = [{
             **self.manifest[0],
