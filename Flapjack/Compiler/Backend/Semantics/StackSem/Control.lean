@@ -84,4 +84,17 @@ def destSeq {width : Nat} [NeZero width] :
   | .seq first second => some (first, second)
   | _ => none
 
+/-- HOL `bad_fun_return_def` (`cakeml/compiler/backend/semantics/stackSemScript.sml:754-758`):
+a call/jump sub-evaluation is a bad function return when it produced `NONE` or
+a `Break`/`Continue`; every other result propagates. Exact StackSem
+`StackSemResult` classifier, distinct from WordSem's same-named definition over
+its different result type. -/
+@[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "bad_fun_return_def"
+  (words_as_type_indexed_bitvec)]
+def badFunReturn {width : Nat} [NeZero width] : Option (StackSemResult width) → Bool
+  | none => true
+  | some (.break _) => true
+  | some (.continue _) => true
+  | _ => false
+
 end Flapjack.StackSemControl

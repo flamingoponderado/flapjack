@@ -69,6 +69,8 @@ import Flapjack.Misc.BinaryIeeeSqrt.RealAgreement
 import Flapjack.Pancake.Proofs.PanGlobals.CompileExpLeaves
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Base
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Seq
+import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.ShMem
+import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.ShMemGlobal
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Store
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Return
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Store32
@@ -144,10 +146,15 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateInd
 import Flapjack.Compiler.Backend.Semantics.WordSem.EventsMono
 import Flapjack.Compiler.Backend.Semantics.StackSem.State
 import Flapjack.Compiler.Backend.Semantics.StackSem.Control
+import Flapjack.Compiler.Backend.Semantics.StackSem.Measure
 import Flapjack.Compiler.Backend.Semantics.StackSem.Labels
 import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+import Flapjack.Compiler.Backend.Semantics.StackSem.ShMem
 import Flapjack.Compiler.Backend.Semantics.StackSem.Expressions
 import Flapjack.Compiler.Backend.Semantics.StackSem.Allocation
+import Flapjack.Compiler.Backend.Semantics.StackSem.JumpLower
+import Flapjack.Compiler.Backend.Semantics.StackSem.StoreConstsCase
+import Flapjack.Compiler.Backend.Semantics.StackSem.ControlCases
 import Flapjack.Test.StackSemExpressionParity
 import Flapjack.Test.StackSemLabelsParity
 import Flapjack.Test.StackSemLoopControlParity
@@ -158,6 +165,7 @@ import Flapjack.Test.StackSemIntegerInstParity
 import Flapjack.Test.StackSemEvaluateAllocCaseParity
 import Flapjack.Test.StackSemStoreConstsGuardParity
 import Flapjack.Test.StackSemFpRegisterInstParity
+import Flapjack.Test.StackSemJumpLowerParity
 import Flapjack.Test.PanGlobalsFpermCodeParity
 import Flapjack.Test.StackSemAllocationParity
 import Flapjack.Compiler.Backend.Semantics.StackSem.Bitmap
