@@ -1,5 +1,6 @@
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Primitive
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Results
+import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Dec
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Assign
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Memory
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.ResVar
