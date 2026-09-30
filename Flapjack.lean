@@ -582,6 +582,7 @@ import Flapjack.Pancake.Proofs.CrepInline.Call
 import Flapjack.Pancake.Proofs.CrepInline.CallTail
 import Flapjack.Pancake.Proofs.CrepInline.CallNontail
 import Flapjack.Pancake.Proofs.CrepInline.CallCase
+import Flapjack.Pancake.Proofs.CrepInline.InlineProgCorrect
 import Flapjack.Pancake.Proofs.CrepInline.FiniteMapLemmas
 import Flapjack.Pancake.Proofs.CrepInline.UpdateListLocals
 import Flapjack.Pancake.Proofs.CrepInline.UnreachElim
