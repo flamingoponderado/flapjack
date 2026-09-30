@@ -28063,7 +28063,7 @@
       "CrepSemHOLState.code"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-b source comparison (2026-09-30; .43.3), HOL evaluate_locals_same_fdom:181-191 and structural cases:206-230. Original evaluation, NONE/Continue/Break guard and domain equality specialized to Seq. Only subprogram domain-preservation induction hypotheses added. Seq composes normal first-run IH with second or propagates guarded result; If selects corresponding branch; Dec uses body IH on the updated state and restores original key membership for both absent/present bindings. Imported exact evaluator/state with canonical finite-map roundtrip and positive-width Type0 translation. No extra success/post-state relation premise; full induction assembly remains open."
+    "reviewer": "flapjack-sol source repair0sl5 compared original crep_inlineProof181-191/206-230 and literal crepSem evaluate_ind structural clauses: fixed source state retained, no universally generalized source-state IH. Seq first IH at s, second guarded by (res,s1)=evaluate(first,s) and res=NONE at actual s1; If single quantified value/word IH guarded by original expression evaluation and value=Word w at selected branch/fixed s; Dec value-guarded body IH at original set_var state. Original source evaluation/continuing result/domain equality and canonical-map/positive-width/Type0 qualifiers unchanged. Full assembly supplies these exact IHs through private genuine recursion; full theorem/corollary pinned types preserved. Replaces earlier generalized case-shape claim. Coordinator review pending."
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
@@ -28077,7 +28077,7 @@
       "CrepSemHOLState.code"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-b source comparison (2026-09-30; .43.3), HOL evaluate_locals_same_fdom:181-191 and structural cases:206-230. Original evaluation, NONE/Continue/Break guard and domain equality specialized to If. Only subprogram domain-preservation induction hypotheses added. Seq composes normal first-run IH with second or propagates guarded result; If selects corresponding branch; Dec uses body IH on the updated state and restores original key membership for both absent/present bindings. Imported exact evaluator/state with canonical finite-map roundtrip and positive-width Type0 translation. No extra success/post-state relation premise; full induction assembly remains open."
+    "reviewer": "flapjack-sol source repair0sl5 compared original crep_inlineProof181-191/206-230 and literal crepSem evaluate_ind structural clauses: fixed source state retained, no universally generalized source-state IH. Seq first IH at s, second guarded by (res,s1)=evaluate(first,s) and res=NONE at actual s1; If single quantified value/word IH guarded by original expression evaluation and value=Word w at selected branch/fixed s; Dec value-guarded body IH at original set_var state. Original source evaluation/continuing result/domain equality and canonical-map/positive-width/Type0 qualifiers unchanged. Full assembly supplies these exact IHs through private genuine recursion; full theorem/corollary pinned types preserved. Replaces earlier generalized case-shape claim. Coordinator review pending."
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
@@ -28091,7 +28091,7 @@
       "CrepSemHOLState.code"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-b source comparison (2026-09-30; .43.3), HOL evaluate_locals_same_fdom:181-191 and structural cases:206-230. Original evaluation, NONE/Continue/Break guard and domain equality specialized to Dec. Only subprogram domain-preservation induction hypotheses added. Seq composes normal first-run IH with second or propagates guarded result; If selects corresponding branch; Dec uses body IH on the updated state and restores original key membership for both absent/present bindings. Imported exact evaluator/state with canonical finite-map roundtrip and positive-width Type0 translation. No extra success/post-state relation premise; full induction assembly remains open."
+    "reviewer": "flapjack-sol source repair0sl5 compared original crep_inlineProof181-191/206-230 and literal crepSem evaluate_ind structural clauses: fixed source state retained, no universally generalized source-state IH. Seq first IH at s, second guarded by (res,s1)=evaluate(first,s) and res=NONE at actual s1; If single quantified value/word IH guarded by original expression evaluation and value=Word w at selected branch/fixed s; Dec value-guarded body IH at original set_var state. Original source evaluation/continuing result/domain equality and canonical-map/positive-width/Type0 qualifiers unchanged. Full assembly supplies these exact IHs through private genuine recursion; full theorem/corollary pinned types preserved. Replaces earlier generalized case-shape claim. Coordinator review pending."
   },
   {
     "hol_path": null,
