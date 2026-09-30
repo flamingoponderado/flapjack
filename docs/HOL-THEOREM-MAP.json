@@ -34523,5 +34523,49 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Source comparison crep_inlineProofScript1288-1319: s/es/vals/vs/t/p/r/s'/tmp_vars binders and every OPT_MMAP, lengths, distinctness, SUBMAP, source run, freshness, continuing-result, disjointness and expression-free-variable guard retained. Four-part existential target run/state_rel/FDIFF SUBMAP/FOLDL res_var SUBMAP conclusion unchanged. Same reviewed canonical CrepSemHOLState maps and standalone t, positive-width HolWordLab/native CrepExpHOL/CrepProgHOL/CrepResultHOLExact as accepted strong and preserve_locals predecessors; same-module canonical carrier roundtrip reexport. HOL proof invokes both predecessors and simplifies identical evaluations; Lean projects pair equality to identify existential target states, not an extra target-run/post-state premise. FDIFF/FOLDL order and source original locals restored exactly. Proof-only/no production behavior change; parent remains open."
-}
+},
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+    "hol_name": "stack_names_comp_stack_asm_ok",
+    "lean_path": "Flapjack/Compiler/Backend/StackNames/AsmAdmissibility/Recursive.lean",
+    "lean_name": "stackNamesCompStackAsmOk_Seq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison .18.5.15.7.14.3: HOL616 comp_ind Seq case, original stack_asm_name/names_ok/fixed_names guards and stack_asm_ok(comp f p) conclusion unfolded through local stackNamesAsmGoal; only structural child induction hypotheses added. Exact Spt/HolProg/config, positive word width only translation. Call return/handler bodies match original comp option traversal; indirect target bound independent of return option, handler validity nested under SOME return as stackProps812-829. No successful target assumption, simulation premise or full theorem claim. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+    "hol_name": "stack_names_comp_stack_asm_ok",
+    "lean_path": "Flapjack/Compiler/Backend/StackNames/AsmAdmissibility/Recursive.lean",
+    "lean_name": "stackNamesCompStackAsmOk_If",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison .18.5.15.7.14.3: HOL616 comp_ind If case, original stack_asm_name/names_ok/fixed_names guards and stack_asm_ok(comp f p) conclusion unfolded through local stackNamesAsmGoal; only structural child induction hypotheses added. Exact Spt/HolProg/config, positive word width only translation. Call return/handler bodies match original comp option traversal; indirect target bound independent of return option, handler validity nested under SOME return as stackProps812-829. No successful target assumption, simulation premise or full theorem claim. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+    "hol_name": "stack_names_comp_stack_asm_ok",
+    "lean_path": "Flapjack/Compiler/Backend/StackNames/AsmAdmissibility/Recursive.lean",
+    "lean_name": "stackNamesCompStackAsmOk_Loop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison .18.5.15.7.14.3: HOL616 comp_ind Loop case, original stack_asm_name/names_ok/fixed_names guards and stack_asm_ok(comp f p) conclusion unfolded through local stackNamesAsmGoal; only structural child induction hypotheses added. Exact Spt/HolProg/config, positive word width only translation. Call return/handler bodies match original comp option traversal; indirect target bound independent of return option, handler validity nested under SOME return as stackProps812-829. No successful target assumption, simulation premise or full theorem claim. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+    "hol_name": "stack_names_comp_stack_asm_ok",
+    "lean_path": "Flapjack/Compiler/Backend/StackNames/AsmAdmissibility/Recursive.lean",
+    "lean_name": "stackNamesCompStackAsmOk_Call",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison .18.5.15.7.14.3: HOL616 comp_ind Call case, original stack_asm_name/names_ok/fixed_names guards and stack_asm_ok(comp f p) conclusion unfolded through local stackNamesAsmGoal; only structural child induction hypotheses added. Exact Spt/HolProg/config, positive word width only translation. Call return/handler bodies match original comp option traversal; indirect target bound independent of return option, handler validity nested under SOME return as stackProps812-829. No successful target assumption, simulation premise or full theorem claim. Coordinator source acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackNames/AsmAdmissibility/Recursive.lean",
+    "lean_name": "stackNamesAsmGoal",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only local structural induction motive abbreviating the exact three source guards and result validity; no independent HOL original, no target validity premise."
+  }
 ]
