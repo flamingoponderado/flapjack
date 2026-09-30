@@ -1,9 +1,11 @@
 import Flapjack.Pancake.CrepToLoop.ContextExact
 
 /-!
-Kernel-checked replay of the six `crep_to_loop$ocompile_def` direct HOL EVAL
-rows in `scripts/hol-probes/crep_to_loop_ocompile_probe.out` against the exact
-Lean port `ocompileHOLExact` (`Flapjack.Pancake.CrepToLoop.ContextExact`).
+Build-time replay of the six `crep_to_loop$ocompile_def` direct HOL EVAL rows
+in `scripts/hol-probes/crep_to_loop_ocompile_probe.out` against the exact Lean
+port `ocompileHOLExact` (`Flapjack.Pancake.CrepToLoop.ContextExact`). The rows
+are replayed by `#guard`, so they are evaluated during Lean elaboration (build
+and test execution); they are not kernel-checked theorems.
 
 The expected shapes are the unwrapped original-HOL terms: `LN` is `Spt.ln`,
 `NotEqual` is `Cmp.notEqual`, `Imm 3w` is `RegImm.imm (3 : BitVec 8)`, and
@@ -66,10 +68,10 @@ def ocompileGuard : Bool :=
 
 def runChecks : IO Bool := do
   if ocompileGuard then
-    IO.println "PASS exact ocompileHOL matches all 6 crep_to_loop ocompile HOL rows"
+    IO.println "PASS exact ocompileHOL matches all 6 crep_to_loop ocompile HOL rows (#guard build-time replay)"
     pure true
   else
-    IO.println "FAIL exact ocompileHOL does not match the crep_to_loop ocompile HOL rows"
+    IO.println "FAIL exact ocompileHOL does not match the crep_to_loop ocompile HOL rows (#guard build-time replay)"
     pure false
 
 end Flapjack.Test.CrepToLoopOcompileHOLParity

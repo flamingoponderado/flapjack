@@ -79,6 +79,73 @@ class HolAttributeSitesTest(unittest.TestCase):
         self.assertEqual(sites[0][-1], "width")
         self.assertEqual(sites[0][-2], ())
 
+    def test_nested_fmap_function_qualifier(self):
+        sites = list(SITES([
+            '@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "gc_fun_type"',
+            '  (fmap_as_finite_support_function := [argument_4, result_3])]',
+        ], include_fmap_function=True))
+        self.assertEqual(sites[0][-1], ("argument_4", "result_3"))
+
+
+class FmapFunctionQualifierTest(unittest.TestCase):
+    CHECK = staticmethod(CHECKER["fmap_as_finite_support_function_errors"])
+    POSITIONS = ("argument_4", "result_3")
+    SOURCE = """/-- HOL gc function type. -/
+abbrev WordSemGcFun (width : Nat) : Type :=
+  (List Nat × (Nat → Nat) × (Nat → Bool) × HolFiniteMapExact Nat Nat) →
+    Option (List Nat × (Nat → Nat) × HolFiniteMapExact Nat Nat)
+"""
+    MODULE = SOURCE + """
+theorem holFmapAsFiniteSupportWitness : True := by trivial
+"""
+
+    def test_accepts_exact_argument_and_result_product_slots(self):
+        self.assertEqual(
+            self.CHECK(self.MODULE.splitlines(), self.SOURCE,
+                       "WordSemGcFun", self.POSITIONS),
+            [],
+        )
+
+    def test_rejects_missing_argument_or_result_position(self):
+        errors = self.CHECK(self.MODULE.splitlines(), self.SOURCE,
+                            "WordSemGcFun", ("argument_4",))
+        self.assertTrue(any("requires both argument_N and result_N" in error
+                            for error in errors))
+
+    def test_rejects_wrong_slot_and_raw_function_map(self):
+        wrong_slot = self.CHECK(self.MODULE.splitlines(), self.SOURCE,
+                                "WordSemGcFun", ("argument_3", "result_3"))
+        self.assertTrue(any("argument_3 must use HolFiniteMapExact" in error
+                            for error in wrong_slot))
+        raw = self.SOURCE.replace("HolFiniteMapExact Nat Nat", "Nat → Option Nat")
+        raw_errors = self.CHECK((self.MODULE.replace(self.SOURCE, raw)).splitlines(),
+                                raw, "WordSemGcFun", self.POSITIONS)
+        self.assertTrue(any("must use HolFiniteMapExact" in error
+                            for error in raw_errors))
+
+    def test_requires_same_map_type_and_canonical_witness(self):
+        changed = self.SOURCE.replace(
+            "HolFiniteMapExact Nat Nat)", "HolFiniteMapExact Nat Bool)", 1
+        )
+        changed_module = self.MODULE.replace(self.SOURCE, changed)
+        errors = self.CHECK(changed_module.splitlines(), changed,
+                            "WordSemGcFun", self.POSITIONS)
+        self.assertTrue(any("same exact type" in error for error in errors))
+        witness_errors = self.CHECK(self.SOURCE.splitlines(), self.SOURCE,
+                                    "WordSemGcFun", self.POSITIONS)
+        self.assertTrue(any("requires same-module canonical" in error
+                            for error in witness_errors))
+
+    def test_word_qualifier_checks_type_alias_body(self):
+        check = CHECKER["words_as_type_indexed_bitvec_errors"]
+        alias = """abbrev Words (width : Nat) [NeZero width] : Type :=
+  BitVec width → BitVec width
+"""
+        self.assertEqual(check(alias, "Words"), [])
+        missing_positive = alias.replace(" [NeZero width]", "")
+        self.assertTrue(any("[NeZero width]" in error
+                            for error in check(missing_positive, "Words")))
+
     def test_word_dimension_as_width_requires_its_nat_and_nezero_binders(self):
         check = CHECKER["word_dimension_as_width_errors"]
         valid = "def example (width : Nat) [NeZero width] : Nat := width"
@@ -1530,6 +1597,25 @@ class WordsAsTypeIndexedBitvecQualifierTest(unittest.TestCase):
         )
         self.assertTrue(
             any("NeZero 0" in e or "positive" in e for e in self.ERRORS(text, "evalProg"))
+        )
+
+    def test_rejects_standalone_nezero_zero(self):
+        # `[NeZero 0]` with no surrounding width discharge must still be caught
+        # by the regex scan; the zero spelling is never a valid positivity
+        # instance, so it cannot license a `BitVec width` translation.
+        text = "\n".join(self.GOOD).replace("[NeZero width]", "[NeZero 0]")
+        self.assertTrue(
+            any("positive" in e for e in self.ERRORS(text, "evalProg")),
+            self.ERRORS(text, "evalProg"),
+        )
+
+    def test_rejects_standalone_nezero_leading_zero(self):
+        # A leading-zero literal (`00`) is the same nonpositive dimension as
+        # `0`; the regex must not let the extra digit smuggle it through.
+        text = "\n".join(self.GOOD).replace("[NeZero width]", "[NeZero 00]")
+        self.assertTrue(
+            any("positive" in e for e in self.ERRORS(text, "evalProg")),
+            self.ERRORS(text, "evalProg"),
         )
 
     def test_rejects_parenthesized_zero_dimension(self):

@@ -47,6 +47,9 @@ NAMES_AS_STRING_BOUNDARY_RE = re.compile(
 FMAP_AS_FINITE_SUPPORT_RE = re.compile(
     r'\(\s*fmap_as_finite_support\s*:=\s*\[([^]]*)\]\s*\)'
 )
+FMAP_AS_FINITE_SUPPORT_FUNCTION_RE = re.compile(
+    r'\(\s*fmap_as_finite_support_function\s*:=\s*\[([^]]*)\]\s*\)'
+)
 FMAP_AS_FINITE_SUPPORT_RESULT_RE = re.compile(
     r'\(\s*fmap_as_finite_support_result\s*\)'
 )
@@ -236,7 +239,8 @@ def find_lean_decl(lines: list[str], start: int) -> str:
 
 
 def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = False,
-                        include_word_dimension_width: bool = False):
+                        include_word_dimension_width: bool = False,
+                        include_fmap_function: bool = False):
     """Yield HOL attributes, including attributes split across Lean lines."""
     comment_depth = 0
     start: int | None = None
@@ -302,6 +306,8 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                 if include_word_dimension_width:
                     width = WORD_DIMENSION_AS_WIDTH_RE.search(attribute)
                     site += (width.group(1) if width else None,)
+                if include_fmap_function:
+                    site += (fields_for(FMAP_AS_FINITE_SUPPORT_FUNCTION_RE),)
                 yield site
         start = None
         chunks = []
@@ -1415,6 +1421,177 @@ def fmap_as_finite_support_parameters_errors(
     return errors
 
 
+def _strip_outer_parens(text: str) -> str:
+    """Strip one pair of parentheses only when it encloses the whole string."""
+    text = text.strip()
+    while text.startswith("(") and text.endswith(")"):
+        depth = 0
+        enclosed = True
+        for index, char in enumerate(text):
+            if char == "(":
+                depth += 1
+            elif char == ")":
+                depth -= 1
+                if depth == 0 and index != len(text) - 1:
+                    enclosed = False
+                    break
+        if not enclosed or depth != 0:
+            break
+        text = text[1:-1].strip()
+    return text
+
+
+def _split_type_top_level(text: str, delimiters: tuple[str, ...]) -> list[str]:
+    """Split Lean type notation outside balanced parenthesized/bracketed terms."""
+    parts: list[str] = []
+    start = 0
+    parens = brackets = 0
+    index = 0
+    while index < len(text):
+        char = text[index]
+        if char == "(":
+            parens += 1
+        elif char == ")":
+            parens -= 1
+        elif char == "[":
+            brackets += 1
+        elif char == "]":
+            brackets -= 1
+        if parens == 0 and brackets == 0:
+            delimiter = next(
+                (item for item in delimiters if text.startswith(item, index)), None
+            )
+            if delimiter is not None:
+                parts.append(text[start:index].strip())
+                index += len(delimiter)
+                start = index
+                continue
+        index += 1
+    parts.append(text[start:].strip())
+    return parts
+
+
+def _tuple_type_components(text: str) -> list[str] | None:
+    inner = _strip_outer_parens(text)
+    components = _split_type_top_level(inner, ("×",))
+    return components if len(components) > 1 else None
+
+
+def fmap_as_finite_support_function_errors(
+    lines: list[str], declaration_source: str, decl_name: str,
+    positions: tuple[str, ...],
+) -> list[str]:
+    """Validate the exact nested finite-map slots of a function type alias.
+
+    This qualifier is intentionally limited to a type abbreviation with one
+    top-level arrow, a tuple argument, and an Option-wrapped tuple result. The
+    position names are one-based (`argument_N`, `result_N`). It verifies both
+    carrier slots are `HolFiniteMapExact`, contain identical canonical map
+    types, and account for every such occurrence in the abbreviation.
+    """
+    errors: list[str] = []
+    if not positions:
+        return ["fmap_as_finite_support_function requires named map positions"]
+    if len(set(positions)) != len(positions):
+        errors.append("fmap_as_finite_support_function has duplicate positions")
+    parsed: dict[str, int] = {}
+    for position in positions:
+        match = re.fullmatch(r"(argument|result)_([1-9][0-9]*)", position)
+        if match is None:
+            errors.append(
+                "fmap_as_finite_support_function positions must be one-based "
+                "`argument_N` or `result_N` entries"
+            )
+            continue
+        key = match.group(1)
+        if key in parsed:
+            errors.append(
+                "fmap_as_finite_support_function requires exactly one argument "
+                "position and one result position"
+            )
+        parsed[key] = int(match.group(2))
+    if set(parsed) != {"argument", "result"}:
+        errors.append(
+            "fmap_as_finite_support_function requires both argument_N and result_N"
+        )
+
+    source = strip_lean_comments(declaration_source)
+    module_source = strip_lean_comments("\n".join(lines))
+    if re.search(
+        r"^\s*(?:private\s+|protected\s+)?theorem\s+"
+        r"holFmapAsFiniteSupportWitness\b",
+        module_source, re.M,
+    ) is None:
+        errors.append(
+            "fmap_as_finite_support_function requires same-module canonical "
+            "holFmapAsFiniteSupportWitness"
+        )
+    alias_start = re.search(rf"\babbrev\s+{re.escape(decl_name)}\b", source)
+    if alias_start is None:
+        errors.append(
+            "fmap_as_finite_support_function applies only to a type abbreviation"
+        )
+        return errors
+    alias_source = source[alias_start.start():]
+    assign = alias_source.find(":=")
+    if assign < 0:
+        errors.append("fmap_as_finite_support_function cannot find the alias body")
+        return errors
+    body = alias_source[assign + 2:].strip()
+    arrow = _split_type_top_level(body, ("→", "->"))
+    if len(arrow) != 2:
+        errors.append(
+            "fmap_as_finite_support_function requires exactly one top-level function arrow"
+        )
+        return errors
+    argument_parts = _tuple_type_components(arrow[0])
+    if argument_parts is None:
+        errors.append("fmap_as_finite_support_function argument must be a product")
+    result_text = _strip_outer_parens(arrow[1])
+    option = re.match(r"Option\s+(.+)$", result_text, re.S)
+    result_parts = _tuple_type_components(option.group(1)) if option else None
+    if result_parts is None:
+        errors.append(
+            "fmap_as_finite_support_function result must be Option of a product"
+        )
+
+    selected: list[str] = []
+    for side, components in (("argument", argument_parts), ("result", result_parts)):
+        if components is None or side not in parsed:
+            continue
+        index = parsed[side] - 1
+        if index >= len(components):
+            errors.append(
+                f"fmap_as_finite_support_function {side}_{index + 1} is outside "
+                f"the {len(components)}-component product"
+            )
+            continue
+        component = components[index]
+        if "HolFiniteMapExact" not in component:
+            errors.append(
+                f"fmap_as_finite_support_function {side}_{index + 1} must use "
+                "HolFiniteMapExact; raw function maps are ineligible"
+            )
+        selected.append(re.sub(r"\s+", "", component))
+        for other_index, other in enumerate(components):
+            if other_index != index and "HolFiniteMapExact" in other:
+                errors.append(
+                    "fmap_as_finite_support_function positions omit another "
+                    f"HolFiniteMapExact at {side}_{other_index + 1}"
+                )
+    if selected and len(set(selected)) != 1:
+        errors.append(
+            "fmap_as_finite_support_function argument and result map carriers "
+            "must have the same exact type"
+        )
+    if source.count("HolFiniteMapExact") != 2:
+        errors.append(
+            "fmap_as_finite_support_function must account for exactly two "
+            "HolFiniteMapExact occurrences in the alias"
+        )
+    return errors
+
+
 def fmap_as_finite_support_existentials_errors(
     lines: list[str], module: str, declaration_text: str, decl_name: str,
     binders: tuple[str, ...],
@@ -2043,12 +2220,17 @@ def words_as_type_indexed_bitvec_errors(
     )
     if decl_start is not None:
         stripped = stripped[decl_start.start():]
-    signature = stripped.split(":=", 1)[0]
+    has_body = ":=" in stripped
+    signature, body = stripped.split(":=", 1) if has_body else (stripped, "")
     if not signature.strip():
         signature = stripped
+    # For a type abbreviation, the words occur in its RHS, while Lean's
+    # elaborated declaration type is only `Nat → Type`. Check the body for
+    # carriers and the signature for the matching Nat/[NeZero] binders.
+    word_scope = signature + ("\n" + body if re.search(r"\babbrev\s", signature) else "")
 
-    errors.extend(word_dimension_errors(signature))
-    direct_ids = set(word_dimension_identifier_atoms(signature))
+    errors.extend(word_dimension_errors(word_scope))
+    direct_ids = set(word_dimension_identifier_atoms(word_scope))
     # A literal dimension such as `BitVec 5` (the `5 word` globals key type, say)
     # is not itself the `dimindex (:α)` translation; only an identifier dimension
     # takes the direct route. A literal-only signature still has to resolve a
@@ -2089,7 +2271,7 @@ def words_as_type_indexed_bitvec_errors(
             all_owners_by_name[name] = owners
         owners_by_name = {
             name: owners for name, owners in all_owners_by_name.items()
-            if identifier_token_occurs(signature, name)
+            if identifier_token_occurs(word_scope, name)
         }
         ambiguous = [
             name for name, owners in owners_by_name.items() if len(owners) != 1
@@ -2433,9 +2615,11 @@ def main(argv: list[str]) -> int:
         for (number, hol_path, hol_name, hol_line, list_fields,
              names_fields, boundary_fields, fmap_fields, fmap_result,
              fmap_relation, fmap_equalities, words_bitvec,
-             fmap_parameters, fmap_existentials, dimension_width) in hol_attribute_sites(
+             fmap_parameters, fmap_existentials, dimension_width,
+             fmap_function_positions) in hol_attribute_sites(
                 lines, include_fmap_existentials=True,
                 include_word_dimension_width=True,
+                include_fmap_function=True,
              ):
             where = f"{rel}:{number}"
             lean_decl = find_lean_decl(lines, number - 1)
@@ -2486,6 +2670,20 @@ def main(argv: list[str]) -> int:
                         lines, rel, tagged_declaration_text(lines, number), lean_decl
                     )
                 )
+            if fmap_function_positions:
+                if (fmap_fields or fmap_result or fmap_parameters or fmap_existentials
+                        or fmap_relation or fmap_equalities):
+                    errors.append(
+                        f"{where}: fmap_as_finite_support_function is mutually "
+                        "exclusive with other finite-map qualifiers"
+                    )
+                errors.extend(
+                    f"{where}: {error}"
+                    for error in fmap_as_finite_support_function_errors(
+                        lines, tagged_declaration_source(lines, number), lean_decl,
+                        fmap_function_positions,
+                    )
+                )
             if fmap_relation:
                 errors.extend(
                     f"{where}: {error}"
@@ -2511,7 +2709,7 @@ def main(argv: list[str]) -> int:
                 errors.extend(
                     f"{where}: {error}"
                     for error in words_as_type_indexed_bitvec_errors(
-                        tagged_declaration_text(lines, number),
+                        tagged_declaration_source(lines, number),
                         lean_decl,
                         module=module,
                         root=str(ROOT),

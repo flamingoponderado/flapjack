@@ -1728,6 +1728,8 @@ VALID_STATUSES = {
     "reviewed_names_as_string",
     "reviewed_list_as_array_names_as_string",
     "reviewed_fmap_as_finite_support",
+    "reviewed_fmap_as_finite_support_function",
+    "reviewed_fmap_as_finite_support_function_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_result",
     "reviewed_fmap_as_finite_support_parameters",
     "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
@@ -1879,9 +1881,11 @@ def tagged_declarations(
         for (line, hol_path, hol_name, _hol_line, list_fields,
              names_fields, boundary_fields, fmap_fields, fmap_result,
              fmap_relation, fmap_equalities, words_bitvec,
-             fmap_parameters, fmap_existentials, dimension_width) in HOL_ATTRIBUTE_SITES(
+             fmap_parameters, fmap_existentials, dimension_width,
+             fmap_function_positions) in HOL_ATTRIBUTE_SITES(
                  lines, include_fmap_existentials=True,
                  include_word_dimension_width=True,
+                 include_fmap_function=True,
              ):
             lean_name = FIND_LEAN_DECL(lines, line - 1)
             key = (rel, lean_name)
@@ -1891,7 +1895,7 @@ def tagged_declarations(
             value = (hol_path, hol_name, list_fields, names_fields,
                      boundary_fields, fmap_fields, fmap_result, fmap_relation,
                      fmap_equalities, words_bitvec, fmap_parameters,
-                     fmap_existentials, dimension_width)
+                     fmap_existentials, dimension_width, fmap_function_positions)
             if key in tagged and tagged[key] != value:
                 raise ValueError(f"conflicting @[hol] references for {rel}:{lean_name}")
             tagged[key] = value
@@ -1906,6 +1910,7 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         hol_path, hol_name, list_fields, names_fields, boundary_fields, fmap_fields,
         fmap_result, fmap_relation, fmap_equalities, words_bitvec, fmap_parameters,
         fmap_existentials, dimension_width,
+        fmap_function_positions,
     ) in tagged.items():
         entry = {
             "hol_path": hol_path,
@@ -1925,6 +1930,8 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
             entry["fmap_as_finite_support"] = list(fmap_fields)
         if fmap_result:
             entry["fmap_as_finite_support_result"] = True
+        if fmap_function_positions:
+            entry["fmap_as_finite_support_function"] = list(fmap_function_positions)
         if fmap_parameters:
             entry["fmap_as_finite_support_parameters"] = list(fmap_parameters)
         if fmap_existentials:
@@ -2212,11 +2219,13 @@ def validate_inventory(
         fmap_parameters = tag[10] if tag is not None and len(tag) > 10 else ()
         fmap_existentials = tag[11] if tag is not None and len(tag) > 11 else ()
         dimension_width = tag[12] if tag is not None and len(tag) > 12 else None
+        fmap_function_positions = tag[13] if tag is not None and len(tag) > 13 else ()
         manifest_list_fields = tuple(record.get("list_as_array", ()))
         manifest_names_fields = tuple(record.get("names_as_string", ()))
         manifest_boundary_fields = tuple(record.get("names_as_string_boundary", ()))
         manifest_fmap_fields = tuple(record.get("fmap_as_finite_support", ()))
         manifest_fmap_result = bool(record.get("fmap_as_finite_support_result", False))
+        manifest_fmap_function = tuple(record.get("fmap_as_finite_support_function", ()))
         manifest_fmap_parameters = tuple(record.get("fmap_as_finite_support_parameters", ()))
         manifest_fmap_existentials = tuple(record.get("fmap_as_finite_support_existentials", ()))
         manifest_fmap_relation = tuple(record.get("fmap_as_finite_support_relation", ()))
@@ -2244,6 +2253,10 @@ def validate_inventory(
         if manifest_fmap_result != fmap_result:
             errors.append(
                 f"{key[0]}:{key[1]}: manifest fmap_as_finite_support_result does not match its @[hol] tag"
+            )
+        if manifest_fmap_function != fmap_function_positions:
+            errors.append(
+                f"{key[0]}:{key[1]}: manifest fmap_as_finite_support_function positions do not match its @[hol] tag"
             )
         if manifest_fmap_parameters != fmap_parameters:
             errors.append(
@@ -2296,6 +2309,9 @@ def validate_inventory(
         combined_words_status = (
             "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec"
         )
+        combined_function_words_status = (
+            "reviewed_fmap_as_finite_support_function_words_as_type_indexed_bitvec"
+        )
         combined_relation_words_status = (
             "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec"
         )
@@ -2313,6 +2329,12 @@ def validate_inventory(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support combined with "
                 "words_as_type_indexed_bitvec requires the combined review status "
                 "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec"
+            )
+        if words_bitvec and fmap_function_positions and status != combined_function_words_status:
+            errors.append(
+                f"{key[0]}:{key[1]}: fmap_as_finite_support_function combined with "
+                "words_as_type_indexed_bitvec requires the combined review status "
+                "reviewed_fmap_as_finite_support_function_words_as_type_indexed_bitvec"
             )
         if words_bitvec and fmap_relation and status not in {
             combined_relation_words_status,
@@ -2343,6 +2365,14 @@ def validate_inventory(
                 f"{key[0]}:{key[1]}: "
                 "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec needs "
                 "both the fmap_as_finite_support and words_as_type_indexed_bitvec @[hol] qualifiers"
+            )
+        if status == combined_function_words_status and not (
+            words_bitvec and fmap_function_positions
+        ):
+            errors.append(
+                f"{key[0]}:{key[1]}: "
+                "reviewed_fmap_as_finite_support_function_words_as_type_indexed_bitvec needs "
+                "both fmap_as_finite_support_function and words_as_type_indexed_bitvec qualifiers"
             )
         if status == combined_relation_words_status and not (
             words_bitvec and fmap_relation
@@ -2385,6 +2415,7 @@ def validate_inventory(
         if words_bitvec and status not in {
             "reviewed_words_as_type_indexed_bitvec",
             combined_words_status,
+            "reviewed_fmap_as_finite_support_function_words_as_type_indexed_bitvec",
             combined_relation_words_status,
             combined_parameter_words_status,
             combined_existential_words_status,
@@ -2547,6 +2578,14 @@ def validate_inventory(
                     f"{key[0]}:{key[1]}: reviewed_fmap_as_finite_support_equalities requires a "
                     "source-comparison note in the reviewer field"
                 )
+        if fmap_function_positions and (
+            fmap_fields or fmap_result or fmap_parameters or fmap_existentials
+            or fmap_relation or fmap_equalities
+        ):
+            errors.append(
+                f"{key[0]}:{key[1]}: fmap_as_finite_support_function is mutually "
+                "exclusive with other finite-map qualifiers"
+            )
         if not set(boundary_fields) <= set(names_fields):
             errors.append(
                 f"{key[0]}:{key[1]}: names_as_string_boundary must be a subset of names_as_string"
@@ -2581,6 +2620,30 @@ def validate_inventory(
             errors.append(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support @[hol] tag cannot have reviewed_exact "
                 "status; use reviewed_fmap_as_finite_support after source comparison"
+            )
+        function_fmap_status = "reviewed_fmap_as_finite_support_function"
+        if fmap_function_positions:
+            expected_function_status = (
+                combined_function_words_status if words_bitvec else function_fmap_status
+            )
+            if status != expected_function_status:
+                errors.append(
+                    f"{key[0]}:{key[1]}: fmap_as_finite_support_function needs "
+                    f"{expected_function_status} after source comparison"
+                )
+            reviewer_text = reviewer.lower() if isinstance(reviewer, str) else ""
+            if "source" not in reviewer_text or any(
+                position.lower() not in reviewer_text
+                for position in fmap_function_positions
+            ):
+                errors.append(
+                    f"{key[0]}:{key[1]}: {status} needs a source-review note that "
+                    "names every nested finite-map function position"
+                )
+        elif status in {function_fmap_status, combined_function_words_status}:
+            errors.append(
+                f"{key[0]}:{key[1]}: {status} needs a matching "
+                "fmap_as_finite_support_function @[hol] tag"
             )
         if fmap_fields and status != "reviewed_fmap_as_finite_support" and status != combined_words_status and status != combined_relation_words_status:
             errors.append(

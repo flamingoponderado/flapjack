@@ -157,6 +157,15 @@ structure HolRef where
       it does not authorize changed hypotheses, results, `BEq` side conditions,
       or word-model differences. -/
   fmapAsFiniteSupport : Array String := #[]
+  /-- A type abbreviation for a HOL function type whose argument and result
+      contain canonical `HolFiniteMapExact` carriers at the named product
+      positions (`argument_N` / `result_N`, one-based). The checker verifies
+      the complete function/product shape, both selected carriers, and that no
+      other finite-map carrier occurs in the alias. This records the pointwise
+      canonical finite-map translation under the function space; source review
+      must still compare the surrounding HOL function domain/codomain and all
+      other type components. -/
+  fmapAsFiniteSupportFunction : Array String := #[]
   /-- Standalone declarations (definitions or theorems) whose own input or
       result carrier is the reviewed canonical `HolFiniteMapExact` translation,
       rather than a structure field. Distinct from `fmapAsFiniteSupport`, which
@@ -231,6 +240,7 @@ syntax "(" "list_as_array" ":=" "[" ident,+ "]" ")" : holQualifier
 syntax "(" "names_as_string" ":=" "[" ident,+ "]" ")" : holQualifier
 syntax "(" "names_as_string_boundary" ":=" "[" ident,+ "]" ")" : holQualifier
 syntax "(" "fmap_as_finite_support" ":=" "[" ident,+ "]" ")" : holQualifier
+syntax "(" "fmap_as_finite_support_function" ":=" "[" ident,+ "]" ")" : holQualifier
 syntax "(" "fmap_as_finite_support_result" ")" : holQualifier
 syntax "(" "fmap_as_finite_support_parameters" ":=" "[" ident,+ "]" ")" : holQualifier
 syntax "(" "fmap_as_finite_support_existentials" ":=" "[" ident,+ "]" ")" : holQualifier
@@ -243,6 +253,7 @@ syntax (name := hol) "hol " str str (num)? holQualifier* : attr
 private def checkedHolRef (path name : String) (line? : Option Nat := none)
     (listAsArray namesAsString namesAsStringBoundary fmapAsFiniteSupport : Array String := #[])
     (fmapAsFiniteSupportResult : Bool := false)
+    (fmapAsFiniteSupportFunction : Array String := #[])
     (fmapAsFiniteSupportParameters : Array String := #[])
     (fmapAsFiniteSupportExistentials : Array String := #[])
     (fmapAsFiniteSupportRelation : Array (String × String) := #[])
@@ -263,6 +274,8 @@ private def checkedHolRef (path name : String) (line? : Option Nat := none)
     throwError "@[hol]: names_as_string_boundary identifiers must also appear in names_as_string"
   if fmapAsFiniteSupport.toList.eraseDups.length != fmapAsFiniteSupport.size then
     throwError "@[hol]: fmap_as_finite_support fields must be distinct"
+  if fmapAsFiniteSupportFunction.toList.eraseDups.length != fmapAsFiniteSupportFunction.size then
+    throwError "@[hol]: fmap_as_finite_support_function positions must be distinct"
   if fmapAsFiniteSupportParameters.toList.eraseDups.length != fmapAsFiniteSupportParameters.size then
     throwError "@[hol]: fmap_as_finite_support_parameters binders must be distinct"
   if fmapAsFiniteSupportExistentials.toList.eraseDups.length != fmapAsFiniteSupportExistentials.size then
@@ -271,7 +284,7 @@ private def checkedHolRef (path name : String) (line? : Option Nat := none)
     throwError "@[hol]: fmap_as_finite_support_relation entries must be distinct"
   if wordDimensionAsWidth.isSome && wordsAsTypeIndexedBitvec then
     throwError "@[hol]: word_dimension_as_width is mutually exclusive with words_as_type_indexed_bitvec"
-  pure { path, name, line?, listAsArray, namesAsString, namesAsStringBoundary, fmapAsFiniteSupport, fmapAsFiniteSupportResult, fmapAsFiniteSupportParameters, fmapAsFiniteSupportExistentials, fmapAsFiniteSupportRelation, fmapAsFiniteSupportEqualities, wordsAsTypeIndexedBitvec, wordDimensionAsWidth }
+  pure { path, name, line?, listAsArray, namesAsString, namesAsStringBoundary, fmapAsFiniteSupport, fmapAsFiniteSupportResult, fmapAsFiniteSupportFunction, fmapAsFiniteSupportParameters, fmapAsFiniteSupportExistentials, fmapAsFiniteSupportRelation, fmapAsFiniteSupportEqualities, wordsAsTypeIndexedBitvec, wordDimensionAsWidth }
 
 private def parseHolQualifier (stx : Syntax) : CoreM (String × Array String × Bool × Array (String × String)) := do
   match stx with
@@ -283,6 +296,8 @@ private def parseHolQualifier (stx : Syntax) : CoreM (String × Array String × 
       pure ("names_as_string_boundary", names.getElems.map (fun name => name.getId.eraseMacroScopes.toString), false, #[])
   | `(holQualifier| (fmap_as_finite_support := [$fields:ident,*])) =>
       pure ("fmap_as_finite_support", fields.getElems.map (fun field => field.getId.eraseMacroScopes.toString), false, #[])
+  | `(holQualifier| (fmap_as_finite_support_function := [$positions:ident,*])) =>
+      pure ("fmap_as_finite_support_function", positions.getElems.map (fun position => position.getId.eraseMacroScopes.toString), false, #[])
   | `(holQualifier| (fmap_as_finite_support_result)) =>
       pure ("fmap_as_finite_support_result", #[], true, #[])
   | `(holQualifier| (fmap_as_finite_support_parameters := [$parameters:ident,*])) =>
@@ -315,6 +330,7 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
     let mut namesAsString : Array String := #[]
     let mut namesAsStringBoundary : Array String := #[]
     let mut fmapAsFiniteSupport : Array String := #[]
+    let mut fmapAsFiniteSupportFunction : Array String := #[]
     let mut fmapAsFiniteSupportResult : Bool := false
     let mut fmapAsFiniteSupportParameters : Array String := #[]
     let mut fmapAsFiniteSupportExistentials : Array String := #[]
@@ -328,6 +344,7 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
       else if kind == "names_as_string" then namesAsString := namesAsString ++ fields
       else if kind == "names_as_string_boundary" then namesAsStringBoundary := namesAsStringBoundary ++ fields
       else if kind == "fmap_as_finite_support_result" then fmapAsFiniteSupportResult := isResult
+      else if kind == "fmap_as_finite_support_function" then fmapAsFiniteSupportFunction := fmapAsFiniteSupportFunction ++ fields
       else if kind == "fmap_as_finite_support_parameters" then fmapAsFiniteSupportParameters := fmapAsFiniteSupportParameters ++ fields
       else if kind == "fmap_as_finite_support_existentials" then fmapAsFiniteSupportExistentials := fmapAsFiniteSupportExistentials ++ fields
       else if kind == "fmap_as_finite_support_relation" then fmapAsFiniteSupportRelation := fmapAsFiniteSupportRelation ++ pairs
@@ -338,7 +355,7 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
           throwError "@[hol]: word_dimension_as_width may appear only once"
         wordDimensionAsWidth := fields[0]!
       else fmapAsFiniteSupport := fmapAsFiniteSupport ++ fields
-    checkedHolRef path name line? listAsArray namesAsString namesAsStringBoundary fmapAsFiniteSupport fmapAsFiniteSupportResult fmapAsFiniteSupportParameters fmapAsFiniteSupportExistentials fmapAsFiniteSupportRelation fmapAsFiniteSupportEqualities wordsAsTypeIndexedBitvec wordDimensionAsWidth
+    checkedHolRef path name line? listAsArray namesAsString namesAsStringBoundary fmapAsFiniteSupport fmapAsFiniteSupportResult fmapAsFiniteSupportFunction fmapAsFiniteSupportParameters fmapAsFiniteSupportExistentials fmapAsFiniteSupportRelation fmapAsFiniteSupportEqualities wordsAsTypeIndexedBitvec wordDimensionAsWidth
   match stx with
   | `(attr| hol $path:str $name:str $line:num $qualifiers:holQualifier*) =>
       parse path.getString name.getString (some line.getNat) qualifiers
@@ -430,6 +447,7 @@ private partial def widthProblemsGo (e : Expr) (ctx : Array Expr)
       let acc ← widthProblemsGo ty ctx acc
       let acc ← widthProblemsGo val ctx acc
       widthProblemsGo body (ctx.push ty) acc
+  | .proj _ _ structType => widthProblemsGo structType ctx acc
   | .app _ _ =>
       match e.getAppFn with
       | .const ``BitVec _ =>
@@ -460,7 +478,18 @@ private partial def widthProblemsGo (e : Expr) (ctx : Array Expr)
               let mut acc := acc
               for arg in e.getAppArgs do acc ← widthProblemsGo arg ctx acc
               return acc
-  | _ => return acc
+  | _ =>
+      if e.hasLooseBVars then
+        return acc
+      else
+        -- A nullary reducible abbreviation used as a type is a bare `.const`,
+        -- not an application: unfold it like the `.app` default so that
+        -- `abbrev ZeroWord := BitVec 0` cannot hide a zero-width word.
+        let unfolded ← withTransparency .reducible (whnf e)
+        if unfolded != e then
+          widthProblemsGo unfolded ctx acc
+        else
+          return acc
 
 /-- Problems with the width dimensions of an elaborated declaration type. -/
 private def widthProblems (type : Expr) : MetaM (Array String) :=
@@ -493,6 +522,8 @@ private def HolRef.qualifierSuffix (ref : HolRef) : String :=
     s!" (fmap_as_finite_support := [{String.intercalate ", " ref.fmapAsFiniteSupport.toList}])"
   let fmapAsFiniteSupportResult := if ref.fmapAsFiniteSupportResult then
     " (fmap_as_finite_support_result)" else ""
+  let fmapAsFiniteSupportFunction := if ref.fmapAsFiniteSupportFunction.isEmpty then "" else
+    s!" (fmap_as_finite_support_function := [{String.intercalate ", " ref.fmapAsFiniteSupportFunction.toList}])"
   let fmapAsFiniteSupportParameters := if ref.fmapAsFiniteSupportParameters.isEmpty then "" else
     s!" (fmap_as_finite_support_parameters := [{String.intercalate ", " ref.fmapAsFiniteSupportParameters.toList}])"
   let fmapAsFiniteSupportExistentials := if ref.fmapAsFiniteSupportExistentials.isEmpty then "" else
@@ -505,7 +536,7 @@ private def HolRef.qualifierSuffix (ref : HolRef) : String :=
     " (words_as_type_indexed_bitvec)" else ""
   let wordDimensionAsWidth := ref.wordDimensionAsWidth.map
     (fun width => s!" (word_dimension_as_width := {width})") |>.getD ""
-  listAsArray ++ namesAsString ++ namesAsStringBoundary ++ fmapAsFiniteSupport ++ fmapAsFiniteSupportResult ++ fmapAsFiniteSupportParameters ++ fmapAsFiniteSupportExistentials ++ fmapAsFiniteSupportRelation ++ fmapAsFiniteSupportEqualities ++ wordsAsTypeIndexedBitvec ++ wordDimensionAsWidth
+  listAsArray ++ namesAsString ++ namesAsStringBoundary ++ fmapAsFiniteSupport ++ fmapAsFiniteSupportResult ++ fmapAsFiniteSupportFunction ++ fmapAsFiniteSupportParameters ++ fmapAsFiniteSupportExistentials ++ fmapAsFiniteSupportRelation ++ fmapAsFiniteSupportEqualities ++ wordsAsTypeIndexedBitvec ++ wordDimensionAsWidth
 
 /-! Parser regressions for the original syntax, each qualifier alone, and both
 qualifiers together. These elaborate temporary syntax values only; they do not
@@ -592,6 +623,22 @@ run_cmd do
       HolRef.qualifierSuffix fmapRef ==
         " (fmap_as_finite_support := [locals, globals])" do
     throwError "@[hol] fmap_as_finite_support syntax regression"
+  let fmapFunctionSyntax ← `(attr| hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "gc_fun_type"
+    (fmap_as_finite_support_function := [argument_4, result_3]))
+  let fmapFunctionRef ← Lean.Elab.Command.liftCoreM (parseHolRefAttribute fmapFunctionSyntax)
+  unless fmapFunctionRef.fmapAsFiniteSupportFunction == #["argument_4", "result_3"] &&
+      HolRef.qualifierSuffix fmapFunctionRef ==
+        " (fmap_as_finite_support_function := [argument_4, result_3])" do
+    throwError "@[hol] fmap_as_finite_support_function syntax regression"
+  let fmapFunctionDuplicateSyntax ← `(attr| hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "gc_fun_type"
+    (fmap_as_finite_support_function := [argument_4, argument_4]))
+  let fmapFunctionDuplicateRejected ← Lean.Elab.Command.liftCoreM do
+    try
+      let _ ← parseHolRefAttribute fmapFunctionDuplicateSyntax
+      pure false
+    catch _ => pure true
+  unless fmapFunctionDuplicateRejected do
+    throwError "@[hol] duplicate fmap_as_finite_support_function positions must be rejected"
   let fmapParametersSyntax ← `(attr| hol "cakeml/pancake/semantics/panSemScript.sml" "set_var_def"
     (fmap_as_finite_support_parameters := [fm, fm2]))
   let fmapParametersRef ← Lean.Elab.Command.liftCoreM

@@ -94,7 +94,13 @@ domains, clock, endianness and FFI state; the target `store`'s `CurrHeap` and
 top-address equation `top_addr = base_addr + 2w*len`; and the exact
 `globals_rel`/`code_rel` relations. Only the eligible finite-map fields
 `LoopSemStateFiniteExact.globals` and `WordSemStateFiniteExact.store` are named
-by the qualifier; `code` is an `Spt` tree map, not a `|->` finite map. -/
+by the qualifier; `code` is an `Spt` tree map, not a `|->` finite map.
+
+The existential length is transcribed as `∃ len : Nat` with `BitVec.ofNat width len`
+instead of HOL's `∃ len : 'a word`. `BitVec.ofNat width` is surjective at every
+positive width, so both binders range over the same set of lengths; the Lean form
+is chosen because `BitVec.ofNat` is the concrete renderer used by the rest of the
+port and it keeps the equation `top_addr = base_addr + 2w*len` typable. -/
 @[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "state_rel_def"
   (fmap_as_finite_support_relation :=
     [LoopSemStateFiniteExact.globals, WordSemStateFiniteExact.store])

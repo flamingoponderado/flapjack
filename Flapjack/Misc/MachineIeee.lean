@@ -34,6 +34,16 @@ def holFp64LessThan (a b : BitVec 64) : Bool :=
 def holFp64LessEqual (a b : BitVec 64) : Bool :=
   holFloatLessEqual (holFp64ToFloat a) (holFp64ToFloat b)
 
+/-- HOL `fp64_greaterThan a b = float_greater_than (fp64_to_float a)
+    (fp64_to_float b)`. -/
+def holFp64GreaterThan (a b : BitVec 64) : Bool :=
+  holFloatGreaterThan (holFp64ToFloat a) (holFp64ToFloat b)
+
+/-- HOL `fp64_greaterEqual a b = float_greater_equal (fp64_to_float a)
+    (fp64_to_float b)`. -/
+def holFp64GreaterEqual (a b : BitVec 64) : Bool :=
+  holFloatGreaterEqual (holFp64ToFloat a) (holFp64ToFloat b)
+
 /-- HOL `fp64_equal a b = float_equal (fp64_to_float a) (fp64_to_float b)`. -/
 def holFp64Equal (a b : BitVec 64) : Bool :=
   holFloatEqual (holFp64ToFloat a) (holFp64ToFloat b)

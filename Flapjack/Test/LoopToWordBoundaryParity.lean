@@ -218,7 +218,9 @@ def sourceMkCtxtOracle : Bool :=
     next local label and advances once more after both bodies.  This guard
     keeps the source-shaped label state visible independently of final bytes. -/
 def handledCallLabelShape : Bool :=
-  match loopToWordProgWithLabels ({ vars := [] } : WordContext) (66, 2)
+  let context : WordContext :=
+    { vars := [(2, 2), (7, 7), (8, 8), (9, 9), (11, 11)] }
+  match loopToWordProgWithLabels context (66, 2)
       (.call (some ([7], [8])) (some 11) [2]
         (some (9, .assign 8 (.const 1), .assign 7 (.const 2), []))) with
   | (.seq

@@ -10,6 +10,7 @@ import Flapjack.Pancake.CrepArith
 import Flapjack.Pancake.CrepToLoop
 import Flapjack.Pancake.CrepToLoop.Optimise
 import Flapjack.Pancake.LoopToWord
+import Flapjack.Pancake.LoopToWord.CompFuncProductionRoute
 import Flapjack.Word
 import Flapjack.RiscV.Allocator
 import Flapjack.RiscV.WordExpressionFlatten
@@ -1087,6 +1088,17 @@ def pipelineWordFunctionsSource [OfNat α 1]
     (label, LoopToWord.loopToWordCompParameters parameters body,
       wordProgDCE (LoopToWord.loopToWordCompFunc label parameters body)))
 
+/-- Fixed-width production source route for `compile_prog`. Encodable Loop
+    syntax with byte-ranged FFI names uses exact HOL `comp_func` followed by
+    the reviewed WordProg projection; executable-only `crepOp`/`cmp` syntax or
+    non-byte FFI names retain the compatibility implementation. -/
+def pipelineWordFunctionsSourceRouted {width : Nat} [NeZero width]
+    (functions : List (Nat × List Nat × LoopProg (BitVec width))) :
+    List (Nat × List Nat × WordProg (BitVec width)) :=
+  functions.map (fun (label, parameters, body) =>
+    (label, loopToWordCompParametersRouted parameters body,
+      wordProgDCE (loopToWordCompFuncRouted label parameters body)))
+
 /-! Source-shaped `loop_to_word$compile_prog` output.  The ordinary pipeline
     keeps parameter names for later register allocation; `pan_to_word` instead
     exposes each function's source label, arity (including the entry slot), and
@@ -1096,10 +1108,24 @@ def pipelineWordCompileProg [OfNat α 1]
     List (Nat × Nat × WordProg α) :=
   LoopToWord.loopToWordCompileProg functions
 
-def panToWordCompileProg [OfNat α 1]
+def panToWordCompileProgCompat [OfNat α 1]
     (functions : List (Nat × List Nat × LoopProg α)) :
     List (Nat × Nat × WordProg α) :=
   pipelineWordCompileProg functions
+
+/-- Fixed-width `pan_to_word$compile_prog` production route. -/
+def panToWordCompileProgRouted {width : Nat} [NeZero width]
+    (functions : List (Nat × List Nat × LoopProg (BitVec width))) :
+    List (Nat × Nat × WordProg (BitVec width)) :=
+  functions.map (fun (label, parameters, body) =>
+    (label, parameters.length + 1, loopToWordCompFuncRouted label parameters body))
+
+/-- The executed fixed-width `pan_to_word$compile_prog` route. The generic
+    compatibility helper remains available for non-word carrier experiments. -/
+def panToWordCompileProg {width : Nat} [NeZero width]
+    (functions : List (Nat × List Nat × LoopProg (BitVec width))) :
+    List (Nat × Nat × WordProg (BitVec width)) :=
+  panToWordCompileProgRouted functions
 
 /-! Full-SSA Lab sections use label 0 for their public entry and label 1 for
     the tail-sequence entry marker.  Handler labels are function-specific, so
@@ -1228,7 +1254,7 @@ def compileFlapjackEntryCake {width : Nat} [NeZero width]
       let globals := { metadata with declarations := cakeDeclarations }
       let crepe := crepSimpFunctions fromNat compiled.2
       let loop := pipelineLoopFunctionsSource architecture 1 crepe
-      let word := pipelineWordFunctionsSource loop
+      let word := pipelineWordFunctionsSourceRouted loop
       some (FlapjackPipelineResult.mk simplified structured globals crepe loop word)
 
 /-- The parser-proved exact-carrier route returns the same entire pipeline

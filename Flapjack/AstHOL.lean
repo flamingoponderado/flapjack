@@ -5,7 +5,8 @@ Primary Lean counterpart of `cakeml/semantics/astScript.sml` (the CakeML
 abstract syntax).
 
 Only the exact `ast$shift` carrier used by the Pancake source syntax and the
-assembly/wordLang shift operations is ported here so far. The remaining
+assembly/wordLang shift operations, and the exact `ast$opb` comparison carrier
+consumed by `fpSem`'s `fp_cmp_def`, are ported here so far. The remaining
 declarations of the script (`lit`, `arith`, `exp`, `dec`, ...) are an open
 inventory item and are not modelled by this module.
 -/
@@ -25,6 +26,19 @@ inductive Shift where
   | lsr
   | asr
   | ror
+  deriving DecidableEq, Repr
+
+/-- Exact port of HOL `ast$opb` (`cakeml/semantics/astScript.sml:59`):
+`Datatype opb = Lt | Gt | Leq | Geq`. The four nullary constructors and their
+order match; there is no payload, width parameter, or side condition. This is
+the source-level comparison datatype that `ast$test` wraps (`Equal | Compare
+opb | AltCompare opb`) and that `fpSemScript.sml:24-31` `fp_cmp_def` consumes. -/
+@[hol "cakeml/semantics/astScript.sml" "opb"]
+inductive Opb where
+  | lt
+  | gt
+  | leq
+  | geq
   deriving DecidableEq, Repr
 
 end Flapjack

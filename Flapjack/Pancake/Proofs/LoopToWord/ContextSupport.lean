@@ -1,5 +1,6 @@
 import Flapjack.Pancake.LoopToWord
 import Flapjack.Pancake.LoopToWord.MakeCtxtExact
+import Flapjack.Pancake.Proofs.LoopToWord.LocalsRel
 import Flapjack.Compiler.Backend.Semantics.WordSem.EnvListSupport
 import Flapjack.Pancake.Semantics.LoopProps.UnassignedVarsExact
 
@@ -222,6 +223,127 @@ theorem wordSemCutEnvMkNewCutsetIMPHOL {width : Nat} [NeZero width]
       change (sptLookup 0 (mkNewCutsetHOL context live)).isSome at hzero
       simp [hzero]
 
+/-- Flapjack-specific proof infrastructure for `cut_env_mk_new_cutset`:
+HOL proves this subset fact inline rather than declaring it as a separate
+theorem. The context relation maps every live source name to a target register
+present in the target locals; the generated cutset also contains register 0. -/
+private theorem mkNewCutsetHOL_subsetTarget {width : Nat} [NeZero width]
+    (context : Spt Nat) (live : WordLangNumSetHOL)
+    (sourceLocals targetLocals : Spt (WordLocW width)) (zeroValue : WordLocW width)
+    (hrel : localsRelHOL context sourceLocals targetLocals)
+    (hdomain : ∀ name, sptMem name live → sptMem name sourceLocals)
+    (hzero : sptLookup 0 targetLocals = some zeroValue) :
+    LoopSemStateFiniteExact.sptSubsetLive (mkNewCutsetHOL context live) targetLocals := by
+  intro key hmem
+  change sptMem key (sptInsert 0 ()
+    (toNumSetHOL ((fromNumSetHOL live).map (findVarHOL context)))) at hmem
+  rw [sptMem_sptInsert] at hmem
+  rcases hmem with hkeyZero | hkeyLive
+  · subst key
+    exact (sptMem_iff_lookup 0 targetLocals).mpr ⟨zeroValue, hzero⟩
+  · have hkeyList : key ∈ (fromNumSetHOL live).map (findVarHOL context) := by
+      have hdomainTree := congrFun
+        (sptDomain_toNumSetHOL ((fromNumSetHOL live).map (findVarHOL context))) key
+      change sptDomain
+        (toNumSetHOL ((fromNumSetHOL live).map (findVarHOL context))) key at hkeyLive
+      rw [hdomainTree] at hkeyLive
+      exact hkeyLive
+    obtain ⟨name, hnameList, hfind⟩ := List.mem_map.mp hkeyList
+    have hnameLive : sptMem name live := by
+      have hdomainNames := congrFun (fromNumSetHOL_set live) name
+      change sptDomain live name
+      rw [← hdomainNames]
+      exact hnameList
+    obtain ⟨value, hsource⟩ := (sptMem_iff_lookup name sourceLocals).mp
+      (hdomain name hnameLive)
+    obtain ⟨register, hcontext, htarget⟩ := hrel.2.2 name value hsource
+    have hregisterFind : findVarHOL context name = register := by
+      simp [findVarHOL, hcontext]
+    have hregisterKey : register = key := hregisterFind.symm.trans hfind
+    apply (sptMem_iff_lookup key targetLocals).mpr
+    refine ⟨value, ?_⟩
+    rw [← hregisterKey]
+    exact htarget
+
+/-- Exact HOL `cut_env_mk_new_cutset` from
+`cakeml/pancake/proofs/loop_to_wordProofScript.sml:395-408`. The premise
+retains the source locals relation, live-domain subset and target register-zero
+lookup; the conclusion keeps the existential cut result and its relation to
+the intersection of source locals with the live set. The only representation
+qualification is HOL's polymorphic word payload represented by
+`WordLocW width` (`BitVec width`). -/
+@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "cut_env_mk_new_cutset"
+  (words_as_type_indexed_bitvec)]
+theorem wordSemCutEnvMkNewCutsetHOL {width : Nat} [NeZero width]
+    (context : Spt Nat) (live : WordLangNumSetHOL)
+    (sourceLocals targetLocals : Spt (WordLocW width)) (zeroValue : WordLocW width)
+    (hpremises : localsRelHOL context sourceLocals targetLocals ∧
+      (∀ name, sptMem name live → sptMem name sourceLocals) ∧
+      sptLookup 0 targetLocals = some zeroValue) :
+    ∃ result,
+      wordSemCutEnv (mkNewCutsetHOL context live, (Spt.ln : WordLangNumSetHOL))
+        targetLocals = some result ∧
+      localsRelHOL context (sptInter sourceLocals live) result := by
+  rcases hpremises with ⟨hrel, hdomain, hzero⟩
+  have hsubset := mkNewCutsetHOL_subsetTarget context live sourceLocals
+    targetLocals zeroValue hrel hdomain hzero
+  have hempty : wordSemCutNames (Spt.ln : WordLangNumSetHOL) targetLocals =
+      some (Spt.ln : Spt (WordLocW width)) := by
+    have hinter : sptInter targetLocals (Spt.ln : WordLangNumSetHOL) = Spt.ln := by
+      cases targetLocals <;> simp [sptInter]
+    simp [wordSemCutNames, LoopSemStateFiniteExact.sptSubsetLive, hinter]
+  refine ⟨sptInter targetLocals (mkNewCutsetHOL context live), ?_, ?_⟩
+  · unfold wordSemCutEnv
+    change (match wordSemCutEnvs
+        (mkNewCutsetHOL context live, (Spt.ln : WordLangNumSetHOL)) targetLocals with
+      | some (first, second) => some (sptUnion second first)
+      | result => none) = some (sptInter targetLocals (mkNewCutsetHOL context live)
+        )
+    rw [wordSemCutEnvs, hempty]
+    simp only [wordSemCutNames, if_pos hsubset, sptUnion]
+  · rcases hrel with ⟨hinjective, heven, hlookups⟩
+    refine ⟨hinjective, heven, ?_⟩
+    intro name value hsourceCut
+    rw [Flapjack.sptLookup_sptInter] at hsourceCut
+    by_cases hlive : (sptLookup name live).isSome
+    · have hsource : sptLookup name sourceLocals = some value := by
+        simpa [hlive] using hsourceCut
+      obtain ⟨register, hcontext, htarget⟩ := hlookups name value hsource
+      have hnameLive : sptMem name live := by
+        change (sptLookup name live).isSome
+        exact hlive
+      have hnameList : name ∈ fromNumSetHOL live := by
+        have hdomainNames := congrFun (fromNumSetHOL_set live) name
+        change sptDomain live name at hnameLive
+        rw [← hdomainNames] at hnameLive
+        exact hnameLive
+      have hregisterFind : findVarHOL context name = register := by
+        simp [findVarHOL, hcontext]
+      have hregisterTree : sptMem register
+          (toNumSetHOL ((fromNumSetHOL live).map (findVarHOL context))) := by
+        have hregisterList : register ∈
+            (fromNumSetHOL live).map (findVarHOL context) :=
+          List.mem_map.mpr ⟨name, hnameList, hregisterFind⟩
+        have hdomainTree := congrFun
+          (sptDomain_toNumSetHOL
+            ((fromNumSetHOL live).map (findVarHOL context))) register
+        change sptDomain
+          (toNumSetHOL ((fromNumSetHOL live).map (findVarHOL context))) register
+        rw [hdomainTree]
+        exact hregisterList
+      have hregisterCut : sptMem register (mkNewCutsetHOL context live) := by
+        change sptMem register (sptInsert 0 ()
+          (toNumSetHOL ((fromNumSetHOL live).map (findVarHOL context))))
+        rw [sptMem_sptInsert]
+        exact Or.inr hregisterTree
+      have htargetCut : sptLookup register
+          (sptInter targetLocals (mkNewCutsetHOL context live)) = some value := by
+        rw [Flapjack.sptLookup_sptInter]
+        change (sptLookup register (mkNewCutsetHOL context live)).isSome at hregisterCut
+        simp [hregisterCut, htarget]
+      exact ⟨register, hcontext, htargetCut⟩
+    · simp [hlive] at hsourceCut
+
 /-- Flapjack-specific induction strengthening for `make_ctxt_inj`: adding a
 fresh register preserves lookup injectivity while advancing its value bound.
 HOL proves this fact inside the `make_ctxt_inj` proof rather than declaring it
@@ -412,5 +534,186 @@ theorem makeCtxtHOL_lookupEven (names : List Nat) (start : Nat)
           exact hcontext k v hlookup'
       apply ih (start + 2) (sptInsert name start context) hstart' hcontext'
       exact hlookup
+
+/-- Auxiliary recursive form of the exact external HOL `fromList2` fold.
+This helper is Flapjack proof infrastructure; the tagged source definition is
+`Flapjack.sptFromList2`. -/
+private def sptFromList2At {α : Type} (next : Nat) (values : List α)
+    (context : Spt α) : Spt α :=
+  match values with
+  | [] => context
+  | value :: rest => sptFromList2At (next + 2) rest (sptInsert next value context)
+
+private theorem sptFromList2At_eq_foldl {α : Type} (next : Nat)
+    (values : List α) (context : Spt α) :
+    sptFromList2At next values context =
+      (values.foldl (fun (acc : Nat × Spt α) value =>
+        (acc.1 + 2, sptInsert acc.1 value acc.2)) (next, context)).2 := by
+  induction values generalizing next context with
+  | nil => rfl
+  | cons value values ih =>
+      simp only [sptFromList2At, List.foldl_cons]
+      exact ih (next + 2) (sptInsert next value context)
+
+/-- Later `fromList2` entries have larger keys and preserve every lookup below
+the next insertion key. -/
+private theorem sptLookup_sptFromList2At_below {α : Type} (key next : Nat)
+    (values : List α) (context : Spt α) (hkey : key < next) :
+    sptLookup key (sptFromList2At next values context) = sptLookup key context := by
+  induction values generalizing next context with
+  | nil => rfl
+  | cons value values ih =>
+      change sptLookup key
+        (sptFromList2At (next + 2) values (sptInsert next value context)) =
+        sptLookup key context
+      rw [ih (next + 2) (sptInsert next value context) (by omega)]
+      exact sptLookup_sptInsert_ne next key value context (by omega)
+
+/-- A valid index in the local sequence maps to its even `fromList2` key. -/
+private theorem sptLookup_sptFromList2At_get {α : Type} (next : Nat)
+    (values : List α) (context : Spt α) (index : Nat)
+    (hindex : index < values.length) :
+    sptLookup (next + 2 * index) (sptFromList2At next values context) =
+      some values[index] := by
+  induction values generalizing next context index with
+  | nil => simp at hindex
+  | cons value values ih =>
+      cases index with
+      | zero =>
+          change sptLookup next
+            (sptFromList2At (next + 2) values (sptInsert next value context)) =
+            some value
+          rw [sptLookup_sptFromList2At_below next (next + 2) values
+            (sptInsert next value context) (by omega)]
+          exact sptLookup_sptInsert_same next value context
+      | succ index =>
+          have hindex' : index < values.length := by simp at hindex; omega
+          change sptLookup (next + 2 * (index + 1))
+            (sptFromList2At (next + 2) values (sptInsert next value context)) =
+            some values[index]
+          have hkey : next + 2 * (index + 1) = (next + 2) + 2 * index := by omega
+          rw [hkey]
+          exact ih (next + 2) (sptInsert next value context) index hindex'
+
+/-- Unqualified support for exact HOL `misc$fromList2_def`: an in-range
+sequence element is found at twice its zero-based index. -/
+theorem sptLookup_sptFromList2_get {α : Type} (values : List α)
+    (index : Nat) (hindex : index < values.length) :
+    sptLookup (2 * index) (sptFromList2 values) = some values[index] := by
+  change sptLookup (2 * index)
+    (values.foldl (fun (acc : Nat × Spt α) value =>
+      (acc.1 + 2, sptInsert acc.1 value acc.2)) (0, .ln)).2 = _
+  rw [← sptFromList2At_eq_foldl]
+  simpa using sptLookup_sptFromList2At_get 0 values .ln index hindex
+
+/-- Exact HOL `locals_rel_make_ctxt` (`cakeml/pancake/proofs/loop_to_wordProofScript.sml:356-384`).
+The context, local maps, and `make_ctxt` use exact `Spt` carriers; source
+`fromAList (ZIP ...)` is represented by `sptFromAList`, and result locals by
+the exact external `fromList2` port `sptFromList2`. `ALL_DISTINCT` is
+`List.Nodup`, `DISJOINT (set params) (set xs)` is the stated membership
+implication, and `EVEN` is `% 2 = 0`. The sole representation qualifier is
+HOL words to the width-indexed `WordLocW` translation. -/
+@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "locals_rel_make_ctxt"
+  (words_as_type_indexed_bitvec)]
+theorem localsRelHOLMakeCtxt {width : Nat} [NeZero width]
+    (params xs : List Nat) (values : List (WordLocW width))
+    (retv : WordLocW width)
+    (hpremises : params.Nodup ∧
+      (∀ name, name ∈ params → name ∉ xs) ∧ params.length = values.length) :
+    localsRelHOL (Flapjack.makeCtxtHOL 2 (params ++ xs) (.ln : Spt Nat))
+      (sptFromAList (params.zip values)) (sptFromList2 (retv :: values)) := by
+  rcases hpremises with ⟨hdistinct, hdisjoint, hlength⟩
+  refine ⟨?_, ?_, ?_⟩
+  · intro left right hleft hright hfind
+    obtain ⟨leftValue, hleftLookup⟩ := (sptMem_iff_lookup left
+      (Flapjack.makeCtxtHOL 2 (params ++ xs) (.ln : Spt Nat))).mp hleft
+    obtain ⟨rightValue, hrightLookup⟩ := (sptMem_iff_lookup right
+      (Flapjack.makeCtxtHOL 2 (params ++ xs) (.ln : Spt Nat))).mp hright
+    have hequal : leftValue = rightValue := by
+      simp [findVarHOL, hleftLookup, hrightLookup] at hfind
+      exact hfind
+    have hbase : ∀ x y v, sptLookup x (.ln : Spt Nat) = some v →
+        sptLookup y (.ln : Spt Nat) = some v → x = y ∧ v < 2 := by
+      intro x y v hx _
+      simp at hx
+    have hinj := makeCtxtHOL_inj (params ++ xs) (.ln : Spt Nat) 2 hbase
+    exact hinj left right leftValue hleftLookup (by simpa [hequal] using hrightLookup)
+  · intro name register hlookup
+    have heven := makeCtxtHOL_lookupEven (params ++ xs) 2 (.ln : Spt Nat)
+      name register (by decide) (by intro key value h; simp at h) hlookup
+    have hrange := makeCtxtHOL_lookupRange (params ++ xs) 2 (.ln : Spt Nat)
+      name register hlookup
+    rcases hrange with hnone | hbound
+    · simp at hnone
+    · exact ⟨by omega, heven⟩
+  · intro name value hsource
+    rw [sptLookup_sptFromAList] at hsource
+    have hpair := sptAListLookup_mem name (params.zip values) value hsource
+    obtain ⟨index, hindexParams, hindexValues, hname, hvalue⟩ :=
+      mem_zip_getElem params values (name, value) hpair
+    have hname' : params[index]'hindexParams = name := by simpa using hname
+    have hvalue' : values[index]'hindexValues = value := by simpa using hvalue
+    have hparamMem : params[index]'hindexParams ∈ params := List.getElem_mem _
+    have hnotXs : name ∉ xs := by simpa [hname'] using hdisjoint _ hparamMem
+    have hcontext : sptLookup name
+        (Flapjack.makeCtxtHOL 2 (params ++ xs) (.ln : Spt Nat)) =
+        some (2 * index + 2) := by
+      rw [makeCtxtHOL_append params xs 2 (.ln : Spt Nat)]
+      rw [makeCtxtHOL_notMem xs (2 + 2 * params.length)
+        (Flapjack.makeCtxtHOL 2 params (.ln : Spt Nat)) name hnotXs]
+      rw [← hname']
+      have hlookup := makeCtxtHOL_lookupEL params index 2 (.ln : Spt Nat)
+        hindexParams hdistinct
+      simpa [Nat.mul_add, Nat.add_comm, Nat.add_left_comm, Nat.add_assoc] using hlookup
+    refine ⟨2 * index + 2, hcontext, ?_⟩
+    have htargetBound : index + 1 < (retv :: values).length := by
+      simp only [List.length_cons]
+      omega
+    have htarget : sptLookup (2 * (index + 1)) (sptFromList2 (retv :: values)) =
+        some (retv :: values)[index + 1] :=
+      sptLookup_sptFromList2_get (retv :: values) (index + 1) htargetBound
+    have htarget' : sptLookup (2 * index + 2) (sptFromList2 (retv :: values)) =
+        some values[index] := by
+      simpa [hvalue', Nat.mul_add] using htarget
+    simpa [hvalue, Nat.mul_add] using htarget'
+
+/-- Exact HOL `locals_rel_mk_ctxt_ln`
+(`cakeml/pancake/proofs/loop_to_wordProofScript.sml:1505-1525`). A positive
+even initial register keeps every `make_ctxt` assignment positive and even;
+the input local tree is empty, so its lookup-simulation clause is vacuous.
+The sole representation qualifier is HOL words to width-indexed `WordLocW`. -/
+@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "locals_rel_mk_ctxt_ln"
+  (words_as_type_indexed_bitvec)]
+theorem localsRelHOLMkCtxtLn {width : Nat} [NeZero width]
+    (next : Nat) (names : List Nat) (targetLocals : Spt (WordLocW width))
+    (hpremises : 0 < next ∧ next % 2 = 0) :
+    localsRelHOL (Flapjack.makeCtxtHOL next names (.ln : Spt Nat))
+      (.ln : Spt (WordLocW width)) targetLocals := by
+  rcases hpremises with ⟨hpositive, hevenStart⟩
+  refine ⟨?_, ?_, ?_⟩
+  · intro left right hleft hright hfind
+    obtain ⟨leftValue, hleftLookup⟩ := (sptMem_iff_lookup left
+      (Flapjack.makeCtxtHOL next names (.ln : Spt Nat))).mp hleft
+    obtain ⟨rightValue, hrightLookup⟩ := (sptMem_iff_lookup right
+      (Flapjack.makeCtxtHOL next names (.ln : Spt Nat))).mp hright
+    have hequal : leftValue = rightValue := by
+      simp [findVarHOL, hleftLookup, hrightLookup] at hfind
+      exact hfind
+    have hbase : ∀ x y v, sptLookup x (.ln : Spt Nat) = some v →
+        sptLookup y (.ln : Spt Nat) = some v → x = y ∧ v < next := by
+      intro x y v hx _
+      simp at hx
+    have hinj := makeCtxtHOL_inj names (.ln : Spt Nat) next hbase
+    exact hinj left right leftValue hleftLookup (by simpa [hequal] using hrightLookup)
+  · intro name register hlookup
+    have heven := makeCtxtHOL_lookupEven names next (.ln : Spt Nat)
+      name register hevenStart (by intro key value h; simp at h) hlookup
+    have hrange := makeCtxtHOL_lookupRange names next (.ln : Spt Nat)
+      name register hlookup
+    rcases hrange with hnone | hbound
+    · simp at hnone
+    · exact ⟨by omega, heven⟩
+  · intro name value hsource
+    simp at hsource
 
 end Flapjack.LoopToWord

@@ -81,6 +81,18 @@ at the 32- and 64-bit dimensions admitted by `good_dimindex`; both sides agree
 on every row. The theorem port is `takeOneWordToBytesHOL` in
 `Flapjack.Pancake.Proofs.LoopToWord.WordToBytes`; the kernel-checked replay is
 `Flapjack.Test.LoopToWordTakeWordToBytesParity`.
+`loop_to_word_acc_vars_acc_prime_probe.out` records direct HOL EVAL rows for the
+specialisation `acc_vars_acc'`
+(`cakeml/pancake/proofs/loop_to_wordProofScript.sml:979-980`) of
+`loopProps$acc_vars_acc`
+(`cakeml/pancake/semantics/loopPropsScript.sml:89`). Each row prints two
+booleans for a concrete variable: membership in `domain (acc_vars p (acc_vars q
+LN))` and in `domain (acc_vars p LN) UNION domain (acc_vars q LN)`; they agree
+on every row for programs exercising Assign, Seq, If, Loop and Call. The
+theorem ports are `accVarsAccHOL` in
+`Flapjack.Pancake.Semantics.LoopProps.AccVars` and `accVarsAccPrimeHOL` in
+`Flapjack.Pancake.Proofs.LoopToWord.AccVarsAcc`; the kernel-checked replay is
+`Flapjack.Test.LoopToWordAccVarsAccParity`.
 `loop_to_word_comp_exp_probe.out` records direct HOL EVAL rows for the exact
 loopLang-to-wordLang expression compiler `comp_exp_def` at
 `cakeml/pancake/loop_to_wordScript.sml:22-40`; its kernel-checked Lean replay
@@ -101,6 +113,15 @@ recursive Seq, If, Loop, and Mark clauses of `comp_def` at
 label pair, If/Loop Tick placement, and Loop live cutsets. Its kernel-checked
 Lean replay is `Flapjack.Test.LoopToWordRecursiveParity`; the partial helper
 remains untagged until the other `comp_def` clauses are ported and assembled.
+`loop_to_word_compile_correct_cases_probe.out` rebuilds the specialized
+`loopSem$evaluate_ind` used by `loop_to_wordProof$compile_correct` and records
+the exact case conjuncts at `cakeml/pancake/proofs/loop_to_wordProofScript.sml`.
+The probe now includes Seq, whose two hypotheses are the first-command case
+and the second-command case conditional on the first returning `NONE`; its
+conclusion retains the complete existential target run and `resultCase`.
+Regenerate it with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=loop_to_word_compile_correct_cases_probeScript.sml
+bash scripts/hol-probes/regenerate.sh`.
 `loop_to_word_globals_rel_probe.out` records direct HOL EVAL rows for
 `globals_rel_def` at `cakeml/pancake/proofs/loop_to_wordProofScript.sml:27-30`:
 a matching `Temp` value, value/key mismatches, and the one-way empty-source
@@ -1173,3 +1194,18 @@ trees; it loads only `bossLib`/`sptreeTheory` (no CakeML `preamble`), so it runs
 in a bare HOL session.  `Flapjack.Test.SptreeSetOpsParity.sptreeInterMixedGuard`
 checks the Lean `sptInter` against every row.  Refresh with
 `HOL_PROBE_ONLY=sptree_inter_mixed_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`word_sem_evaluate_probe.out` records 36 direct HOL `EVAL` rows for
+`wordSem$evaluate_def` (`cakeml/compiler/backend/semantics/wordSemScript.sml:
+1016-1260`) at 64-bit words, over record updates of a free state: the
+straight-line and control clauses plus `Alloc`, `Store`, `OpCurrHeap`,
+`ShareInst`, `CodeBufferWrite`, `DataBufferWrite`, `Install`, and the
+returning-`Call` caught-handler exception path (a handler is installed, the
+callee `Raise`s with the handler's labels, and the handler body runs).
+Rows print `(result, toAList locals, clock)` unless the clause updates another
+field, in which case the projection adds the affected field (memory/buffer
+contents, code map, `stack_max`/`stack_size`). The kernel-checked Lean replay
+is `Flapjack.Test.WordSemEvaluateParity`. Refresh with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_sem_evaluate_probeScript.sml
+bash scripts/hol-probes/regenerate.sh`.

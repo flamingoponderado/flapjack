@@ -62,6 +62,7 @@ import Flapjack.Test.PanGlobalsCompileExpExactParity
 import Flapjack.Test.PanGlobalsFreshNameParity
 import Flapjack.Test.PanGlobalsCompileParity
 import Flapjack.Test.PanGlobalsCompileDecsParity
+import Flapjack.Test.PanGlobalsCompileDecsExactParity
 import Flapjack.Test.PanGlobalsResortDeclsParity
 import Flapjack.Test.PanGlobalsFpermNameParity
 import Flapjack.Test.PanGlobalsFpermParity
@@ -114,8 +115,13 @@ import Flapjack.Test.LoopToWordLastNParity
 import Flapjack.Test.LoopToWordWordShiftModDimwordParity
 import Flapjack.Test.LoopToWordLocalsRelIntroParity
 import Flapjack.Test.LoopToWordTakeWordToBytesParity
+import Flapjack.Test.LoopToWordAccVarsAccParity
 import Flapjack.Test.LoopToWordExpCarrierCodecParity
 import Flapjack.Test.WordExpCarrierCodecParity
+import Flapjack.Test.WordContextCodecParity
+import Flapjack.Test.WordCompileExpExactParity
+import Flapjack.Test.LoopProgCarrierCodecParity
+import Flapjack.Test.WordProgCarrierCodecParity
 import Flapjack.Test.LoopDecClockParity
 import Flapjack.Test.LoopFixClockParity
 import Flapjack.Test.LoopPropsSurvivesParity
@@ -337,6 +343,8 @@ import Flapjack.Test.WordSemShMemParity
 import Flapjack.Test.MachineIeeeCompareParity
 import Flapjack.Test.BinaryIeeeRoundParity
 import Flapjack.Test.MachineIeeeArithSpecialParity
+import Flapjack.Test.FpSemOpsParity
+import Flapjack.Test.Fp64NanRefinementParity
 import Flapjack.Test.BinaryIeeeRoundFp64Parity
 import Flapjack.Test.MachineIeeeArithRoundParity
 import Flapjack.Test.MachineIeeeArithNaNParity
@@ -883,8 +891,13 @@ def main : IO Unit := do
     Flapjack.Test.LoopToWordWordShiftModDimwordParity.runChecks,
     Flapjack.Test.LoopToWordLocalsRelIntroParity.runChecks,
     Flapjack.Test.LoopToWordTakeWordToBytesParity.runChecks,
+    Flapjack.Test.LoopToWordAccVarsAccParity.runChecks,
     Flapjack.Test.LoopToWordExpCarrierCodecParity.runChecks,
     Flapjack.Test.WordExpCarrierCodecParity.runChecks,
+    Flapjack.Test.WordContextCodecParity.runChecks,
+    Flapjack.Test.WordCompileExpExactParity.runChecks,
+    Flapjack.Test.LoopProgCarrierCodecParity.runChecks,
+    Flapjack.Test.WordProgCarrierCodecParity.runChecks,
     Flapjack.Test.LoopDecClockParity.runChecks,
     Flapjack.Test.LoopFixClockParity.runChecks,
     Flapjack.Test.LoopPropsSurvivesParity.runChecks,
@@ -937,6 +950,7 @@ def main : IO Unit := do
     Flapjack.Test.PanGlobalsNewMainNameExactParity.runChecks,
     Flapjack.Test.PanGlobalsTransformsExactParity.runChecks,
     Flapjack.Test.PanGlobalsCompileExpExactParity.runChecks,
+    Flapjack.Test.PanGlobalsCompileDecsExactParity.runChecks,
     Flapjack.Test.PanGlobalsDecShapesParity.runChecks,
     Flapjack.Test.PanGlobalsFpermClusterParity.runChecks,
     Flapjack.Test.PanGlobalsDecShapesClusterParity.runChecks,
@@ -1114,6 +1128,8 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.MachineIeeeCompareParity.runChecks,
     Flapjack.Test.BinaryIeeeRoundParity.runChecks,
     Flapjack.Test.MachineIeeeArithSpecialParity.runChecks,
+    Flapjack.Test.FpSemOpsParity.runChecks,
+    Flapjack.Test.Fp64NanRefinementParity.runChecks,
     Flapjack.Test.BinaryIeeeRoundFp64Parity.runChecks,
     Flapjack.Test.MachineIeeeArithRoundParity.runChecks,
     Flapjack.Test.MachineIeeeArithNaNParity.runChecks,

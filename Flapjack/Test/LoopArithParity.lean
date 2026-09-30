@@ -23,7 +23,7 @@ namespace Flapjack.Test.LoopArithParity
 open Flapjack
 
 def sourceWordContext : WordContext :=
-  { vars := [] }
+  { vars := [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5)] }
 
 example (operation : LoopArith) :
     wordArithIsLoopGenerated (α := Nat)

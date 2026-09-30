@@ -1,3 +1,6 @@
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.StateRelation
+import Flapjack.Compiler.Backend.WordAlloc.Expressions
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.StrongLocalsRel
 import Flapjack.Compiler.Backend.BackendCommon
 import Flapjack.Compiler.Backend.Semantics.WordSem
 import Flapjack.Compiler.Backend.Semantics.WordSem.State
@@ -98,11 +101,28 @@ import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelIntro
 import Flapjack.Pancake.Proofs.LoopToWord.CutsetDomain
 import Flapjack.Pancake.Proofs.LoopToWord.LastNAddCons
 import Flapjack.Pancake.Proofs.LoopToWord.WordShiftModDimword
+import Flapjack.Pancake.Proofs.LoopToWord.CompExpPreservesEval
 import Flapjack.Pancake.Proofs.LoopToWord.CutEnvSupport
 import Flapjack.Pancake.Proofs.LoopToWord.WordToBytes
+import Flapjack.Pancake.Proofs.LoopToWord.AccVarsAcc
 import Flapjack.Pancake.Proofs.LoopToWord.TickUnfold
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Base
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.ReturnRaise
+import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Assign
+import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Arith
+import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Seq
+import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.If
+import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Memory
+import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.ShMem
+import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.FFI
+import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Loop
+import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call.Support
+import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call.TailCall
+import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call.NoHandler
+import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call.HandlerTail
+import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call.SomeHandler
+import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call
+import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Assembly
 import Flapjack.Pancake.LoopLang.AssignedVars
 import Flapjack.Pancake.Semantics.LoopProps.AssignedVars
 import Flapjack.Pancake.Semantics.LoopProps.CutSets
@@ -216,6 +236,7 @@ import Flapjack.Pancake.Semantics.LoopProps.UnassignedVarsExact
 import Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact
 import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOkLemmas
 import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOkEvalExact
+import Flapjack.Pancake.Semantics.LoopProps.AccVars
 import Flapjack.Pancake.Semantics.PanCommonProps
 import Flapjack.Pancake.Semantics.PanProps
 import Flapjack.Pancake.Semantics.PanProps.EvalInvariant
@@ -233,6 +254,7 @@ import Flapjack.Pancake.Semantics.PanSem.MemLoad32Alt
 import Flapjack.Pancake.Semantics.PanSem.MemStore32Alt
 import Flapjack.Pancake.Semantics.PanSem.ByteRoundtrip
 import Flapjack.Misc.GoodDimindex
+import Flapjack.Misc.Fp64NanRefinement
 import Flapjack.Pancake.Semantics.PanSem.TotalSteps
 import Flapjack.Pancake.Semantics.PanSem.ValueHOL
 import Flapjack.Pancake.Semantics.PanSem.StateExact
@@ -301,6 +323,7 @@ elab "#emit_hol_type_hashes" : command => do
           ("names_as_string_boundary", toJson ref.namesAsStringBoundary),
           ("fmap_as_finite_support", toJson ref.fmapAsFiniteSupport),
           ("fmap_as_finite_support_result", toJson ref.fmapAsFiniteSupportResult),
+          ("fmap_as_finite_support_function", toJson ref.fmapAsFiniteSupportFunction),
           ("fmap_as_finite_support_parameters", toJson ref.fmapAsFiniteSupportParameters),
           ("fmap_as_finite_support_existentials", toJson ref.fmapAsFiniteSupportExistentials),
           ("fmap_as_finite_support_relation",

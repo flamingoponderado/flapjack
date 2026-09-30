@@ -223,7 +223,7 @@ run_probe loop_to_word_locals_rel_probeScript.sml loop_to_word_locals_rel_probe.
 # flapjack-pxn.18.5.9.21/.24, flapjack-h29l.9.2).
 run_probe loop_to_word_compile_correct_cases_probeScript.sml \
   loop_to_word_compile_correct_cases_probe.out \
-  cc_ind_thm_conclusion_is_compile_correct cc_case_Skip cc_case_Fail cc_case_Mark \
+  cc_ind_thm_conclusion_is_compile_correct cc_case_Skip cc_case_Fail cc_case_Mark cc_case_Seq \
   cc_case_Break cc_case_Continue cc_case_Raise cc_case_Return cc_case_Tick \
   ws_evaluate_ind ws_evaluate_def ws_end \
   "$cake_dir/pancake/proofs/loop_to_wordProofScript.sml" \
@@ -257,6 +257,15 @@ run_probe loop_to_word_take_word_to_bytes_probeScript.sml \
   loop_to_word_take_word_to_bytes_probe.out \
   take1_statement twb32_0 twb32_1 twb32_hi gb32_0 gb32_1 gb32_hi \
   twb64_0 twb64_1 twb64_hi gb64_0 gb64_1 gb64_hi \
+  "$cake_dir/pancake/proofs/loop_to_wordProofScript.sml" \
+  "$cake_dir/pancake/proofs"
+run_probe loop_to_word_acc_vars_acc_prime_probeScript.sml \
+  loop_to_word_acc_vars_acc_prime_probe.out \
+  assign_lhs_key assign_q_key assign_absent_key \
+  seq_p_first seq_p_second seq_q_key \
+  if_then_key if_else_key if_absent_key \
+  loop_p_key loop_q_key \
+  call_return_first call_return_second call_q_key \
   "$cake_dir/pancake/proofs/loop_to_wordProofScript.sml" \
   "$cake_dir/pancake/proofs"
 # The get_stack_only probe observes the allocator driver's stack-only
@@ -1709,6 +1718,14 @@ run_probe machine_ieee_fp64_compare_probeScript.sml machine_ieee_fp64_compare_pr
   "$hol_dir/src/floating-point/binary_ieeeScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 
+# The fpSem ``fp_cmp`` probe observes the ast$opb comparison selector of
+# ``fp_cmp_def`` at binary64 values (bead flapjack-h29l.6.2.7).
+run_probe fp_sem_fp_cmp_probeScript.sml fp_sem_fp_cmp_probe.out \
+  fp_cmp_lt_one_two fp_cmp_leq_two_one fp_cmp_gt_two_one \
+  fp_cmp_geq_one_one fp_cmp_lt_qnan_one fp_cmp_gt_pinf_one \
+  "$cake_dir/semantics/fpSemScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
 # The binary_ieee rounding-constant probe observes largest and threshold at
 # binary64 and float_top's value (bead flapjack-h29l.6.2.1).
 run_probe binary_ieee_round_constants_probeScript.sml binary_ieee_round_constants_probe.out \
@@ -1790,11 +1807,14 @@ run_probe word_sem_eval_prereq_probeScript.sml word_sem_eval_prereq_probe.out \
   "$cake_dir/compiler/backend/semantics"
 
 # The wordSem evaluate probe observes evaluate_def on straight-line, control,
-# loop, raise/return, MustTerminate, Move/Get/Set/LocValue/StoreConsts, tail and
-# returning calls, and FFI over record updates of a free state (bead
-# flapjack-h29l.8.2).
+# loop, raise/return, MustTerminate, Move/Get/Set/LocValue/StoreConsts, Alloc,
+# Store, OpCurrHeap, ShareInst, CodeBufferWrite, DataBufferWrite, Install, tail
+# and returning calls (including the caught-handler exception path), and FFI
+# over record updates of a free state (bead flapjack-h29l.8.2).
 run_probe word_sem_evaluate_probeScript.sml word_sem_evaluate_probe.out \
   skip loop_timeout raise_handler must_terminate call_ret ffi_ok \
+  alloc_ok store_ok op_curr_heap share_inst_load code_buffer_write \
+  data_buffer_write install_ok call_handler_exception \
   "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 

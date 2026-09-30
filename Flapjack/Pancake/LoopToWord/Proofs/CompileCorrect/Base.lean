@@ -143,7 +143,7 @@ theorem compileCorrect_Tick {width : Nat} [NeZero width] {C F : Type}
         simp_all [WordSemStateFiniteExact.decClock, LoopSemStateFiniteExact.decClock]
 
 /-- Genuine `Continue` case of HOL `compile_correct`
-    (`loop_to_wordProofScript.sml:57-97`, resumed at `:558-562`). There is no induction hypothesis. -/
+    (`loop_to_wordProofScript.sml:57-97`, resumed at `:559-562`). There is no induction hypothesis. -/
 @[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "compile_correct"
   (fmap_as_finite_support_relation :=
     [LoopSemStateFiniteExact.globals, WordSemStateFiniteExact.fpRegs,
@@ -159,7 +159,7 @@ theorem compileCorrect_Continue {width : Nat} [NeZero width] {C F : Type}
         sptLookup 0 t.locals = some retv ∧
         goodDimindex width ∧
         ¬ wordSemIsWordLoc retv = true ∧
-        (∀ k, sptMem k (accVarsHOL (width := width) (.continue k) .ln) → sptMem k ctxt) →
+        (∀ n, sptMem n (accVarsHOL (width := width) (.continue k) .ln) → sptMem n ctxt) →
       ∃ t1 res1,
         WordSemStateFiniteExact.evaluate (LoopToWord.compHOL ctxt (.continue k) l).1 t = (res1, t1) ∧
           t1.ffi = s1.ffi ∧
@@ -172,7 +172,7 @@ theorem compileCorrect_Continue {width : Nat} [NeZero width] {C F : Type}
   · exact ⟨hState, rfl, hRetv, hLocals, rfl, rfl⟩
 
 /-- Genuine `Break` case of HOL `compile_correct`
-    (`loop_to_wordProofScript.sml:57-97`, resumed at `:564-568`). There is no induction hypothesis. -/
+    (`loop_to_wordProofScript.sml:57-97`, resumed at `:565-568`). There is no induction hypothesis. -/
 @[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "compile_correct"
   (fmap_as_finite_support_relation :=
     [LoopSemStateFiniteExact.globals, WordSemStateFiniteExact.fpRegs,
@@ -188,7 +188,7 @@ theorem compileCorrect_Break {width : Nat} [NeZero width] {C F : Type}
         sptLookup 0 t.locals = some retv ∧
         goodDimindex width ∧
         ¬ wordSemIsWordLoc retv = true ∧
-        (∀ k, sptMem k (accVarsHOL (width := width) (.break k) .ln) → sptMem k ctxt) →
+        (∀ n, sptMem n (accVarsHOL (width := width) (.break k) .ln) → sptMem n ctxt) →
       ∃ t1 res1,
         WordSemStateFiniteExact.evaluate (LoopToWord.compHOL ctxt (.break k) l).1 t = (res1, t1) ∧
           t1.ffi = s1.ffi ∧
