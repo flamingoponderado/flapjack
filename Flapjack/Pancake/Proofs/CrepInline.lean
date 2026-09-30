@@ -3564,6 +3564,61 @@ theorem evaluateLocalsSameFdomMemoryGlobalsAtomsExact {width : Nat} [NeZero widt
       | exception ex => exact absurd hcond (by simp)
       | finalFfi ev => cases hsource
 
+/-- Domain preservation for the exact finite-map `updateEq` when the key is
+    already present: `FUPDATE_HOL` only changes the value of an existing key, so
+    the domain is unchanged.  Flapjack support for the exact
+    `evaluate_locals_same_fdom` Assign case; no separate HOL original. -/
+theorem fdomUpdateEqOfLookupSome {width : Nat} [NeZero width]
+    (m : HolFiniteMapExact Nat (HolWordLab width)) (name : Nat) (w : HolWordLab width)
+    (h : m.lookup name ≠ none) :
+    FDOM (m.updateEq (name, w)).lookup = FDOM m.lookup := by
+  funext k
+  unfold FDOM
+  rw [HolFiniteMapExact.lookup_updateEq]
+  unfold FUPDATE_HOL
+  by_cases hk : k = name
+  · subst hk
+    rw [if_pos rfl]
+    exact propext ⟨fun _ => h, fun _ => Option.some_ne_none w⟩
+  · rw [if_neg hk]
+
+/-- Exact case slice of HOL `evaluate_locals_same_fdom`
+    (`crep_inlineProofScript.sml:181-191`) for `Assign`: the guarded assignment
+    fires only when the target is already bound (`crepSemScript.sml:260-266`), so
+    the locals domain is preserved. -/
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "evaluate_locals_same_fdom"
+  (words_as_type_indexed_bitvec)]
+theorem evaluateLocalsSameFdomAssignCaseExact {width : Nat} [NeZero width] {σ : Type}
+    (s : CrepSemHOLState width σ) (r : Option (CrepResultHOLExact width))
+    (s' : CrepSemHOLState width σ) (p : CrepProgHOL width)
+    (hp : ∃ name src, p = .assign name src)
+    (hsource : evalCrepSemHOLProgExact s p = (r, s'))
+    (hcond : (match r with
+      | none => True | some (.break _) => True | some (.continue _) => True | _ => False)) :
+    FDOM s.locals.lookup = FDOM s'.locals.lookup := by
+  obtain ⟨name, src, rfl⟩ := hp
+  rw [evalCrepSemHOLProgExact_assign_holShape] at hsource
+  cases hexp : evalCrepSemHOLExp s src with
+  | none =>
+      simp only [hexp] at hsource
+      cases hsource
+      rfl
+  | some w =>
+      simp only [hexp] at hsource
+      cases hl : s.locals.lookup name with
+      | none =>
+          simp only [hl] at hsource
+          cases hsource
+          rfl
+      | some old =>
+          simp only [hl] at hsource
+          have hs' : s' = { s with locals := s.locals.updateEq (name, w) } :=
+            (congrArg Prod.snd hsource).symm
+          rw [hs']
+          exact (fdomUpdateEqOfLookupSome s.locals name w
+            (by rw [hl]; exact Option.some_ne_none old)).symm
+
+
 end CrepInlineExact
 
 end Flapjack
