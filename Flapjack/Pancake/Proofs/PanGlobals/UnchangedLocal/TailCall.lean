@@ -14,7 +14,10 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} {σ : Type} [NeZero width] :
   PanSemStateFiniteExact.holFmapAsFiniteSupportWitness
 
 /-- Original tail Call NONE case of evaluate_unchanged_local. The total
-source tail-call clauses admit no good nonerror result; no callee IH is added. -/
+source tail-call clauses admit no good nonerror result. This specializes
+HOL's Call conjunct to caltyp = NONE and omits the unused callee-body IH;
+it is therefore a stronger specialized case lemma, not the literal full Call
+conjunct. The original public evaluation/good-result premises are retained. -/
 @[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "evaluate_unchanged_local"
   (fmap_as_finite_support := [locals, globals, code, eshapes])
   (words_as_type_indexed_bitvec)]
