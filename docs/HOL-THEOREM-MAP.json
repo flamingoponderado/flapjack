@@ -27975,7 +27975,7 @@
     "fmap_as_finite_support_relation": [
       "l"
     ],
-    "reviewer": "flapjack-luna-b source comparison (2026-09-30; .18.5.5.44.4), HOL882-906. Same universally quantified finite map, name/value lists; same equal length, ALL_DISTINCT/Pairwise inequality and every new name outside FDOM premises. Same SUBMAP into FUPDATE_LIST ZIP conclusion. Canonical HolFiniteMapExact/updateListEq with DecidableEq implements HOL equality, no BEq side conditions. Domain absence is lookup.isSome=false; lookup proof excludes all existing-binding keys from update names, preserving every binding by exact FUPDATE_LIST not-member lemma. No target equality or submap assumption; length/distinctness retained though freshness suffices for this proof."
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; .18.5.5.44.4), HOL882-906. Same universally quantified finite map, name/value lists; same equal length, ALL_DISTINCT/Pairwise inequality and every new name outside FDOM premises. Same SUBMAP into FUPDATE_LIST ZIP conclusion. Canonical HolFiniteMapExact/updateListEq with DecidableEq implements HOL equality, no BEq side conditions. Domain absence is lookup.isSome=false; lookup proof excludes all existing-binding keys from update names, preserving every binding by exact FUPDATE_LIST not-member lemma. No target equality or submap assumption; length/distinctness retained though freshness suffices for this proof. Interface repair (flapjack-opus, bead .44.4, per coordinator 20:47Z): the tagged statement quantifies arbitrary key/value types with classical key equality (open Classical in), no public DecidableEq binder; proof via the untagged class-parameterized submapDiffList."
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
@@ -36719,6 +36719,54 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-specific canonical state roundtrip representation witness; no separately named HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelImpSemantics.lean",
+  "lean_name": "stateRelImpSemanticsHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "state_rel_imp_semantics",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "reviewer": "flapjack-sol source comparison22.11: original state_rel_imp_semantics2891-2966 and faithful panSem semantics_def785-809. Exactly context/source/target/start quantification, state_rel T and source semantics not Fail imply target semantics = source semantics. Original native semantics Fail test, holOptionSome termination outcome and full HolLList buildLprefixLub trace-set divergence retained. Accepted full compileCorrectHOL gives result and unconditional FFI equality at every clock; nonFail derives source nonError without an extra premise. Exact TailCall compiler identity and simultaneous clock relation established internally. Private pair-witness reduction eliminates only existential evaluation pair aliases, so original termination predicates and complete trace sets are equal before choice/LUB; no targetrun, prefix, uniqueness, pass predicate or postrelation assumption. Proof uses pointwise extensional equality and needs no additional evaluate_two premise. Canonical imported state/context maps and genuine roundtrip witnesses; native MlS/ProgHOL and original behaviour/event/llist carriers from reviewed semantics. Positive type-indexed BitVec width and Type0 FFI conventional translation only. Proof-side composition, executable compiler unchanged. Independent coordinator source acceptance and merged gates pending.",
+  "fmap_as_finite_support_relation": [
+    "PanSemStateFiniteExact.locals",
+    "PanSemStateFiniteExact.globals",
+    "PanSemStateFiniteExact.code",
+    "PanSemStateFiniteExact.eshapes",
+    "PanGlobalsContextExact.globals"
+  ],
+  "words_as_type_indexed_bitvec": true
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelImpSemantics.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack representation or statement infrastructure: imported genuine carrier roundtrip reexports and private generic pair-witness elimination, no independently named HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelImpSemantics.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack representation or statement infrastructure: imported genuine carrier roundtrip reexports and private generic pair-witness elimination, no independently named HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelImpSemantics.lean",
+  "lean_name": "terminationWitnessReduced",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack representation or statement infrastructure: imported genuine carrier roundtrip reexports and private generic pair-witness elimination, no independently named HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UpdateListLocals.lean",
+  "lean_name": "submapDiffList",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack local support (bead .44.4): class-parameterized SUBMAP_DIFF_LIST proof used at concrete keys (Nat) by the arg_load ports; the tagged submapDiffListExact instantiates it with classical equality."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/ShMemStore.lean",
