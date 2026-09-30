@@ -1,11 +1,39 @@
 import Flapjack.Pancake.Proofs.PanGlobals.CompileDecsStructural
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsDisjoint
 import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+import Flapjack.Pancake.Proofs.PanGlobals.CompileExpCorrect
+import Flapjack.Pancake.Proofs.PanGlobals.StateRelationLocals
+import Flapjack.Pancake.Semantics.PanProps.EvalInvariant
 
 namespace Flapjack.PanGlobalsInitGlobalsSimulation
 open Flapjack.Pancake.PanLang
 open PanSemStateFiniteExact
 open Flapjack.Compiler.Backend.StackRemove (addresses)
+
+/-- Flapjack-specific composition of the original initializer head-expression
+proof (HOL 2149-2163). The source initializer evaluates with empty locals;
+the target store evaluates in the unchanged target state. Clearing both local
+maps establishes state_rel T, expression correctness transports the value,
+and eval_empty_locals_IMP restores the target locals. This composition has
+no independent HOL declaration and assumes no target evaluation. -/
+theorem initializerExpression {width : Nat} {σ : Type} [NeZero width]
+    (source target : PanSemStateFiniteExact width σ)
+    (context : PanGlobalsContextExact width) (expression : ExpHOL width)
+    (value : ValueHOL width)
+    (hrel : panGlobalsStateRelHOLExact false context source target)
+    (heval : @evalHOLFinite width σ _ source.emptyLocalsHOLFinite
+      (fun a => Classical.propDecidable (source.memaddrs a)) expression = some value) :
+    @evalHOLFinite width σ _ target
+      (fun a => Classical.propDecidable (target.memaddrs a))
+      (compileExpExactHOL context expression) = some value := by
+  classical
+  have hcleared :=
+    (PanGlobalsStateRelationLocals.stateRelEmptyLocalsHOL context source target true).2 hrel
+  have hcompiled := PanGlobalsCompileExpCorrect.compileExpCorrectHOL
+    source.emptyLocalsHOLFinite expression value context target.emptyLocalsHOLFinite
+    ⟨hcleared, heval⟩
+  exact PanPropsEvalStateFiniteExact.evalEmptyLocalsHOLFinite target
+    (compileExpExactHOL context expression) value hcompiled
 
 /-- Flapjack-specific address algebra for the initializer cons proof's head
 store and recursive free-range obligations (HOL source 2155-2229). This has no

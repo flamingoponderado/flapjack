@@ -32497,5 +32497,13 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-specific initializer cons algebra (.22.10.6). Suffix containment derived from universal split. No independently named HOL original; directly supports original initializer proof2155-2229 range inclusion and disjointness obligations. Full initializer simulation remains open."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/InitGlobalsSimulation.lean",
+  "lean_name": "initializerExpression",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific composition of initializer head expression proof2149-2163 (.22.10.7). Original state_rel F and source successful empty-locals evaluation derive unchanged-target compiled evaluation using accepted state_rel_empty_locals, compile_exp_correct and eval_empty_locals_IMP. No target success assumption, extra shape or alignment assumption, or new named HOL theorem. Full recursive initializer remains open."
 }
 ]
