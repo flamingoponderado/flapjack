@@ -26583,5 +26583,13 @@
     "lean_name": "inline_extCall",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-ds10 Flapjack-only infrastructure (2026-09-30; bead flapjack-pxn.18.5.5.39): private identity lemma that inlineProgHOLExact leaves ExtCall unchanged (HOL inline_prog_def fall-through arm); no cakeml HOL declaration of its own."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "cut_names_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/CutNames.lean",
+    "lean_name": "cutNamesLemma",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-09-30 bead .11.1.6: literal HOL277-311; independent alpha names payload and beta source/target/cut environment payloads retained, exact generic Spt carriers. All five conclusions retained: existential successful renamed target cut, full image-domain equality, strong_locals_rel restricted environments, INJ on source cut domain, source cut domain=names domain. Original INJ f domain(names) UNIV rendered pairwise equality implication on that domain (UNIV membership tautological). No global INJ, target-cut/target-result/target-domain/global relation premise. Source successful generic cut_names yields subset and source intersection; target subset follows image-domain theorem/source lookup/strong relation. Exact heterogeneous inter lookup and full domain intersection give restricted relation and absorption. No word/carrier qualifier: original helpers and relation are payload-polymorphic, prerequisite6.1 accepted after direct HOL type probes. All quantified variables, premises and conclusion conjuncts compared against HOL."
   }
 ]
