@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.StackProps.AllocArg
 import Flapjack.Compiler.Backend.StackProps.RemoveNames
 import Flapjack.Pancake.Proofs.WordConvs.SmartSeqLabels
 import Flapjack.Pancake.WordLang.OccurrenceCorrespondence

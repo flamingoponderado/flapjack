@@ -29132,5 +29132,14 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Canonical broad/exact state roundtrip re-export; Flapjack representation infrastructure without a separate HOL original."
-  }
+  },
+{
+  "lean_path": "Flapjack/Compiler/Backend/StackProps/AllocArg.lean",
+  "lean_name": "allocArg",
+  "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+  "hol_name": "alloc_arg_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source comparison HOL1004-1017: literal Nat allocation argument equals one; Seq/If conjunction, Loop recursion, independent optional return/handler Call bodies including handler with return NONE; default True. Faithful positive-width HolProg carrier. Coordinator independent review pending."
+}
 ]

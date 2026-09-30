@@ -1,3 +1,4 @@
+import Flapjack.Test.StackPropsAllocArg
 import Flapjack.Test.StackPropsRemoveNames
 import Flapjack.Test.WordSimpSmartSeqParity
 import Flapjack.Test.StackSemFixedStackCasesParity
