@@ -1,4 +1,4 @@
-import Flapjack.Compiler.Backend.Semantics.StackSem.Measure
+import Flapjack.Compiler.Backend.Semantics.StackSem.Measure.CallSites
 
 /-! Kernel replay of the untagged recursion/clock certificate for the
 forthcoming total StackSem `evaluate_def` dispatcher
@@ -46,8 +46,34 @@ example {width : Nat} [NeZero width] {C F : Type}
     LexNat ((StackSemStateOps.decClock s).clock, 7) (s.clock, 0) :=
   lexNat_decClock s 7 0 h
 
+/-- Concrete call sites discharge constructor sizes internally, including an
+arbitrary callback result and arbitrary continuation program.
+-/
+example {width : Nat} [NeZero width] {C F : Type}
+    (a b : Compiler.Backend.StackLang.HolProg width)
+    (s : StackSemStateFiniteExact width C F)
+    (returned : Option (StackSemResult width) × StackSemStateFiniteExact width C F) :
+    LexNat (stackSemMeasure b (StackSemControl.fixClock s returned).2)
+      (stackSemMeasure (.seq a b) s) := seq_second_measure_lt a b s returned
+
+example {width : Nat} [NeZero width] {C F : Type}
+    (body : Compiler.Backend.StackLang.HolProg width)
+    (s : StackSemStateFiniteExact width C F) :
+    LexNat (stackSemMeasure body s) (stackSemMeasure (.loop body) s) :=
+  loop_body_measure_lt body s
+
+example {width : Nat} [NeZero width] {C F : Type}
+    (a b : Compiler.Backend.StackLang.HolProg width)
+    (s : StackSemStateFiniteExact width C F)
+    (returned : Option (StackSemResult width) × StackSemStateFiniteExact width C F)
+    (hne : s.clock ≠ 0) :
+    LexNat (stackSemMeasure a
+      (StackSemControl.fixClock (StackSemStateOps.decClock
+        (StackSemStateOps.setVar 99 (.loc 7 4) s)) returned).2)
+      (stackSemMeasure b s) := call_continuation_measure_lt a b s 99 7 4 returned hne
+
 def runChecks : IO Bool := do
-  IO.println "PASS StackSem recursion/clock certificate lemmas (untagged)"
+  IO.println "PASS StackSem recursion/clock and concrete call-site certificates (untagged)"
   return true
 
 end Flapjack.Test.StackSemMeasureParity
