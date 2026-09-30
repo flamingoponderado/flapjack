@@ -2089,5 +2089,103 @@ class WordDimensionAsWidthStatusTest(unittest.TestCase):
         self.assertTrue(any("mutually exclusive" in error for error in errors))
 
 
+class Binary64NonexactStatusTest(unittest.TestCase):
+    """The reviewed non-exact binary64 classification (bead flapjack-2hoy.1)."""
+
+    def setUp(self):
+        self.path = "Flapjack/Example.lean"
+        self.key = (self.path, "exampleFpBop")
+        self.hol = ("cakeml/semantics/fpSemScript.sml", "fp_bop_comp_def")
+        self.tag = {
+            self.key: (*self.hol, (), (), (), (), False, (), False, False, (), (), None)
+        }
+        self.calls = {self.key: frozenset({"holFp64Add", "holFp64Sqrt"})}
+
+    def record(self, **overrides):
+        record = {
+            "hol_path": self.hol[0],
+            "hol_name": self.hol[1],
+            "lean_path": self.path,
+            "lean_name": self.key[1],
+            "statement_status": "reviewed_nonexact_binary64",
+            "binary64_renderings": {"holFp64Add": "rat_domain", "holFp64Sqrt": "sqrt_cut"},
+            "reviewer": "source comparison; rests on docs/SOUNDNESS.md item 8",
+        }
+        record.update(overrides)
+        return {key: value for key, value in record.items() if value is not None}
+
+    def errors(self, record, tagged=None, calls=None):
+        return MAP["validate_inventory"](
+            [record], {self.key}, self.tag if tagged is None else tagged, set(),
+            self.calls if calls is None else calls,
+        )
+
+    def assertError(self, fragment, errors):
+        self.assertTrue(any(fragment in error for error in errors), errors)
+
+    def test_accepts_classified_nonexact_status(self):
+        self.assertEqual(self.errors(self.record()), [])
+
+    def test_suffix_keeps_the_qualifier_derived_base_status(self):
+        words_tag = {self.key: (*self.tag[self.key][:9], True, *self.tag[self.key][10:])}
+        self.assertEqual(self.errors(self.record(
+            statement_status="reviewed_words_as_type_indexed_bitvec_nonexact_binary64",
+            words_as_type_indexed_bitvec=True), words_tag), [])
+        self.assertError("words_as_type_indexed_bitvec", self.errors(self.record(), words_tag))
+
+    def test_rejects_exact_status_for_a_body_calling_renderings(self):
+        self.assertError("body calls untagged binary64 renderings", self.errors(
+            self.record(statement_status="reviewed_exact", binary64_renderings=None)))
+
+    def test_requires_a_complete_correct_rendering_map(self):
+        self.assertError("non-empty binary64_renderings", self.errors(
+            self.record(binary64_renderings=None)))
+        self.assertError("unknown rendering", self.errors(self.record(
+            binary64_renderings={"holFp64Add": "rat_domain", "holFp64Sqrt": "sqrt_cut",
+                                 "holFp64Abs": "rat_domain"})))
+        self.assertError("classifies holFp64Sqrt as 'rat_domain'", self.errors(self.record(
+            binary64_renderings={"holFp64Add": "rat_domain", "holFp64Sqrt": "rat_domain"})))
+        self.assertError("missing ['holFp64Sqrt']", self.errors(self.record(
+            binary64_renderings={"holFp64Add": "rat_domain"})))
+        self.assertError("not called ['holFp64Add']", self.errors(
+            self.record(), calls={self.key: frozenset({"holFp64Sqrt"})}))
+
+    def test_requires_soundness_citation_tag_and_reviewed_base(self):
+        self.assertError("citing docs/SOUNDNESS.md item 8", self.errors(
+            self.record(reviewer="source comparison")))
+        self.assertError("needs an @[hol] tag", self.errors(self.record(), tagged={}))
+        self.assertError("extends only a qualified reviewed_* status", self.errors(
+            self.record(statement_status="documented_mismatch_nonexact_binary64")))
+        self.assertError("extends only a qualified reviewed_* status", self.errors(
+            self.record(statement_status="reviewed_exact_nonexact_binary64")))
+
+    def test_rendering_map_requires_the_suffix(self):
+        self.assertError("requires a _nonexact_binary64 status", self.errors(
+            self.record(statement_status="reviewed_exact"), calls={self.key: frozenset()}))
+
+    def test_pending_allowlist_and_stale_entries(self):
+        pending = MAP["BINARY64_PENDING_CLASSIFICATION"]
+        key = next(iter(pending))
+        record = self.record(lean_path=key[0], lean_name=key[1],
+                             statement_status="reviewed_exact", binary64_renderings=None)
+        tag = {key: self.tag[self.key]}
+        run = lambda calls: MAP["validate_inventory"]([record], {key}, tag, set(), calls)
+        self.assertEqual(run({key: frozenset({"holFp64Add"})}), [])
+        self.assertTrue(any("stale BINARY64_PENDING_CLASSIFICATION" in error
+                            for error in run({})))
+
+    def test_body_scan_ignores_comments_and_stops_at_next_command(self):
+        lines = [
+            '@[hol "cakeml/semantics/fpSemScript.sml" "fp_bop_comp_def"]',
+            "noncomputable def exampleFpBop : Nat → Nat",
+            "  | 0 => holFp64Add -- holFp64Sqrt only in a comment",
+            "  | _ => 0",
+            "",
+            "/-- holFp64Mul in the next docstring. -/",
+            "def other := holFp64Mul",
+        ]
+        self.assertEqual(MAP["declaration_body_calls"](lines, 1), frozenset({"holFp64Add"}))
+
+
 if __name__ == "__main__":
     unittest.main()

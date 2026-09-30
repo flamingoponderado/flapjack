@@ -130,7 +130,12 @@ def lock_records(
     """
     result = []
     for record in manifest:
-        if record.get("statement_status") not in {
+        # A `_nonexact_binary64` status (see check_hol_theorem_map.py) keeps its
+        # qualifier-derived base status, and its declaration stays pinned.
+        base_status = str(record.get("statement_status", "")).removesuffix("_nonexact_binary64")
+        if base_status == "reviewed":
+            base_status = "reviewed_exact"
+        if base_status not in {
             "reviewed_exact",
             "reviewed_list_as_array",
             "reviewed_names_as_string",

@@ -135,6 +135,13 @@ The following are open review or verification obligations:
    computable binary64 sqrt equals the cut specification for every rational
    `r ≥ 0` (`holFloatRoundSqrt_rte_fp64`).
 
+   Tagged declarations whose bodies call these renderings carry a
+   `_nonexact_binary64` manifest status. That status lists each rendering as
+   `rat_domain` or `sqrt_cut`, and `scripts/check_hol_theorem_map.py` checks the
+   list against the declaration body. Declarations not yet reclassified are
+   listed in the checker's `BINARY64_PENDING_CLASSIFICATION`. Every theorem over
+   the tagged wordSem evaluator inherits this assumption through `inst_def`.
+
 ## Trust and reproducibility notes
 
 The normal Lean kernel checks theorem elaboration. Some existing concrete

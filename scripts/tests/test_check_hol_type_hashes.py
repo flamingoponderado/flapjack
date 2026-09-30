@@ -47,6 +47,15 @@ class HolTypeHashesTest(unittest.TestCase):
         pending = [{**self.manifest[0], "statement_status": "pending_statement_review"}]
         self.assertEqual(MODULE.lock_records(pending, self.export), [])
 
+    def test_nonexact_binary64_status_stays_locked(self):
+        exact = MODULE.lock_records(self.manifest, self.export)
+        for status in ("reviewed_nonexact_binary64",
+                       "reviewed_words_as_type_indexed_bitvec_nonexact_binary64"):
+            nonexact = [{**self.manifest[0], "statement_status": status}]
+            self.assertEqual(MODULE.lock_records(nonexact, self.export), exact)
+        bogus = [{**self.manifest[0], "statement_status": "pending_statement_review_nonexact_binary64"}]
+        self.assertEqual(MODULE.lock_records(bogus, self.export), [])
+
     def test_definition_body_change_changes_review_lock(self):
         definition_export = [{
             **self.export[0],
