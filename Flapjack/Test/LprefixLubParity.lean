@@ -5,8 +5,15 @@ import Flapjack.Misc.LprefixLub
 
 Kernel-checked examples over small concrete prefix chains for the generic
 `equiv_lprefix_chain` / `lprefix_rel` slice of `Flapjack/Misc/LprefixLub.lean`
-(HOL `examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml`).
-Bead `flapjack-pxn.18.5.2.22.3.2.1`.
+(HOL `examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml`), together with
+the `llist_shorter` relation from `Flapjack/Misc/LList.lean` and the tagged
+`equiv_lprefix_chain_thm2`.
+Bead `flapjack-pxn.18.5.2.22.3.2.1` / `flapjack-pxn.18.5.2.22.3.2.1.1`.
+No direct HOL `EVAL` oracle is captured for this slice: the declarations here
+are generic theorems over possibly infinite lazy lists (`llist_shorter`,
+`llist_shorter_lnth`, `equiv_lprefix_chain_thm2`), not executable definitions
+with a finite closed input, so there is no meaningful `EVAL` result to record;
+the examples below are Lean-side kernel checks instead.
 -/
 
 namespace Flapjack.Test.LprefixLubParity
@@ -66,8 +73,51 @@ example : ∀ ll n x, chainA ll → lnth n ll = some x →
     ∃ ll', chainB ll' ∧ lnth n ll' = some x :=
   lprefix_rel_lnth relAB
 
+private theorem chainA_fin : ∀ ll, chainA ll → LFinite ll := by
+  intro ll hl
+  rcases hl with rfl | rfl
+  · exact lfinite_fromList [0]
+  · exact lfinite_fromList [0, 1, 2]
+
+private theorem chainB_fin : ∀ ll, chainB ll → LFinite ll := by
+  intro ll hl
+  rcases hl with rfl | rfl
+  · exact lfinite_fromList [0, 1]
+  · exact lfinite_fromList [0, 1, 2]
+
+-- `llist_shorter_fromList` on concrete finite lists.
+example : llistShorter (fromList [0, 1]) (fromList [0, 1, 2]) :=
+  (llistShorter_fromList _ _).2 (by decide)
+
+-- `llist_shorter_lnth`: shorter means the longer list is defined wherever it is.
+example : llistShorter (fromList [0]) (fromList [0, 1]) ↔
+    ∀ n x, lnth n (fromList [0]) = some x →
+      ∃ y, lnth n (fromList [0, 1]) = some y :=
+  llistShorter_lnth
+
+-- `lnth_some_down_closed`: a defined index transports downward.
+example : ∃ y, lnth 1 (fromList [0, 1, 2]) = some y :=
+  lnth_some_down_closed (ll := fromList [0, 1, 2]) (x := 2) (n1 := 2) (n2 := 1)
+    (by rw [lnth_eq_rep]; simp [fromList, lcons]) (by decide)
+
+-- `equiv_lprefix_chain_thm2` at the concrete chains: the equivalence is exactly
+-- the `ls2`-covers-`ls1` conjunct together with the `llist_shorter` conjunct.
+example : (equivLprefixChain chainA chainB ↔
+    (∀ (ll1 : HolLList Nat) (n : Nat) (x : Nat), chainA ll1 → lnth n ll1 = some x →
+      ∃ ll2, chainB ll2 ∧ lnth n ll2 = some x) ∧
+    (∀ (ll2 : HolLList Nat) (_n : Nat) (_x : Nat), chainB ll2 → ll2 ≠ lnil →
+      ∃ ll1, chainA ll1 ∧ llistShorter ll2 ll1)) :=
+  equiv_lprefix_chain_thm2 chainA_chain chainB_chain chainB_fin
+
+-- The `llist_shorter` conjunct extracted from a concrete `equiv_lprefix_chain`.
+example : ∀ (ll2 : HolLList Nat) (_n : Nat) (_x : Nat), chainB ll2 → ll2 ≠ lnil →
+    ∃ ll1, chainA ll1 ∧ llistShorter ll2 ll1 :=
+  ((equiv_lprefix_chain_thm2 chainA_chain chainB_chain chainB_fin).mp
+    (IMP_equiv_lprefix_chain chainA_chain chainB_chain relAB relBA)).2
+
 def runChecks : IO Bool := do
   IO.println "PASS lprefix_lub chain/equality lemmas (equiv_lprefix_chain/lprefix_rel)"
+  IO.println "PASS llist_shorter + equiv_lprefix_chain_thm2 (llistShorter/equiv_lprefix_chain_thm2)"
   pure true
 
 end Flapjack.Test.LprefixLubParity

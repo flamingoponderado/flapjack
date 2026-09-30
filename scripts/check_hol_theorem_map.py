@@ -2069,6 +2069,7 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         ("Flapjack/Misc/LprefixLub.lean", "lprefixRel"),
         ("Flapjack/Misc/LprefixLub.lean", "lprefix_lub_is_chain"),
         ("Flapjack/Misc/LprefixLub.lean", "equivLprefixChain_thm"),
+        ("Flapjack/Misc/LprefixLub.lean", "equiv_lprefix_chain_thm2"),
         ("Flapjack/Misc/LprefixLub.lean", "lprefix_rel_lnth"),
         ("Flapjack/Misc/LprefixLub.lean", "IMP_equiv_lprefix_chain"),
         ("Flapjack/Misc/LprefixLub.lean", "lprefix_lub_equiv_chain2"),
