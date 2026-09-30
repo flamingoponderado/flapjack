@@ -30,7 +30,7 @@ theorem holFmapAsFiniteSupportRelationWitness_CrepSemHOLState
 end ArgLoadSupport
 
 /-- Local support: `state_rel` is transitive. -/
-private theorem stateRel_trans {width : Nat} [NeZero width] {σ : Type}
+theorem stateRel_trans {width : Nat} [NeZero width] {σ : Type}
     {a b c : CrepSemHOLState width σ} (h1 : crepInlineStateRelExact a b)
     (h2 : crepInlineStateRelExact b c) : crepInlineStateRelExact a c := by
   obtain ⟨a1, a2, a3, a4, a5, a6, a7, a8, a9, a10⟩ := h1
