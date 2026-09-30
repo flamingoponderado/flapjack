@@ -13,7 +13,7 @@ Bead `flapjack-pxn.18.5.9.25`.  The statements take the same form as the
 cases in `CompileCorrect/Base.lean`: HOL's goal written out for the
 constructor, with no induction hypothesis.  `Store` compiles to wordSem
 `Store`.  The other four compile to wordSem `Inst (Mem op r (Addr a 0w))`,
-run through the tagged `inst`, whose address `a + 0w` is the source
+run through `inst`, whose address `a + 0w` is the source
 address.
 -/
 
