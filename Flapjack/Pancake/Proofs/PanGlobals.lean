@@ -4,6 +4,7 @@ import Flapjack.Pancake.PanLang.Decl
 import Flapjack.Pancake.Proofs.PanGlobals.ShapeInfrastructure
 import Flapjack.Pancake.Semantics.PanSem
 import Flapjack.Pancake.Semantics.PanSem.DecExact
+import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
 
 namespace Flapjack
 
@@ -1509,5 +1510,472 @@ theorem ALOOKUP_MAP4 [BEq κ] [LawfulBEq κ] (f : γ → δ)
       (fun name => (lookupInfo name entries).map (fun value => (value.1, f value.2.1, value.2.2))) := by
   funext name
   exact lookupInfo_map4 f name entries
+
+/-! ## Exact ports of `pan_globals` declaration resorting
+
+These are the three HOL declarations of
+`cakeml/pancake/proofs/pan_globalsProofScript.sml:1854-1950` that justify the
+`resort_decls` pass: moving a function declaration to the end of a list of
+`Decl`/`ExnDecl` declarations, and reordering a mixed declaration list by
+`resort_decls`, both preserve the result of `evaluate_decls`.  The evaluator is
+the reviewed canonical finite-support `PanSemStateFiniteExact.evaluateDeclsHOLFinite`
+and the resorting function is the reviewed `resortDeclsHOL`; the carrier's four
+`|->` fields (`locals`, `globals`, `code`, `eshapes`) are recorded by the
+`fmap_as_finite_support` qualifier.  The supporting commutation lemmas below are
+Flapjack-specific infrastructure with no separate HOL declaration: HOL proves
+the same facts inline (`eval_upd_eshapes_eq`, `eval_upd_code_eq`, the
+`evaluate_decls_append`/`evaluate_decl_commute` rewrites). -/
+
+namespace PanGlobalsResortDeclsWitnesses
+
+/-- Same-module canonical finite-map witness for the `fmap_as_finite_support`
+    qualifier on the imported `PanSemStateFiniteExact` carrier.  It re-exports
+    the canonical `toExact`/`ofExact` roundtrip from the carrier's own module so
+    that the `@[hol]` tags in this module have the checked witness beside them. -/
+theorem holFmapAsFiniteSupportWitness {width : Nat} {σ : Type} [NeZero width] :
+    (∀ (state : PanSemStateExact width σ) (h : state.FiniteSupport),
+        (PanSemStateFiniteExact.ofExact state h).toExact = state) ∧
+    (∀ state : PanSemStateFiniteExact width σ,
+        PanSemStateFiniteExact.ofExact state.toExact state.toExact_finiteSupport = state) :=
+  PanSemStateFiniteExact.holFmapAsFiniteSupportWitness
+
+end PanGlobalsResortDeclsWitnesses
+
+section
+open Classical
+
+/-- Finite-support counterpart of HOL `panProps$evaluate_decls_append`
+    (`cakeml/pancake/semantics/panPropsScript.sml:1540`): evaluating `ds1 ++ ds2`
+    is the monadic bind of evaluating `ds1` and then `ds2` in the resulting
+    state.  Untagged support lemma (the PanProps-tagged port lives in
+    `PanProps.EvalInvariant`); it is the local append fact the commutation and
+    resort proofs need over `PanSemStateFiniteExact`. -/
+theorem evaluateDeclsHOLFinite_append {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (state : PanSemStateFiniteExact width σ) [_hdec : DecidablePred state.memaddrs]
+      (ds1 ds2 : List (DeclHOL width)),
+      PanSemStateFiniteExact.evaluateDeclsHOLFinite state (ds1 ++ ds2) =
+        Option.bind (PanSemStateFiniteExact.evaluateDeclsHOLFinite state ds1)
+          (fun state' => PanSemStateFiniteExact.evaluateDeclsHOLFinite state' ds2) := by
+  intro state _hdec ds1
+  induction ds1 generalizing state with
+  | nil =>
+      intro ds2
+      simp only [List.nil_append, PanSemStateFiniteExact.evaluateDeclsHOLFinite]
+      have hdecEq : _hdec = (fun address => Classical.propDecidable (state.memaddrs address)) :=
+        Subsingleton.elim _ _
+      rw [hdecEq]
+      rfl
+  | cons declaration rest ih =>
+      intro ds2
+      cases declaration with
+      | name name fields =>
+          simpa [List.cons_append, PanSemStateFiniteExact.evaluateDeclsHOLFinite]
+            using ih state ds2
+      | decl shape name expression =>
+          letI : DecidablePred
+              (PanSemStateFiniteExact.emptyLocalsHOLFinite state).memaddrs := by
+            simpa [PanSemStateFiniteExact.emptyLocalsHOLFinite] using _hdec
+          simp only [List.cons_append, PanSemStateFiniteExact.evaluateDeclsHOLFinite]
+          cases heval : PanSemStateFiniteExact.evalHOLFinite
+              (PanSemStateFiniteExact.emptyLocalsHOLFinite state) expression with
+          | none => simp
+          | some value =>
+              by_cases hshape : shapeEqHOL shape (shapeOfHOLExact value)
+              · simp only [if_pos hshape]
+                exact ih (PanSemStateFiniteExact.setGlobalHOLFinite name value state)
+                  (_hdec := _hdec) ds2
+              · simp [hshape]
+      | function declaration =>
+          simp only [List.cons_append, PanSemStateFiniteExact.evaluateDeclsHOLFinite]
+          let condition := declaration.params.all
+              (fun parameter => isWfShapeExactHOL state.structs parameter.2) &&
+            isWfShapeExactHOL state.structs declaration.returnShape
+          by_cases hcondition : condition = true
+          · simp only [condition, hcondition, if_pos]
+            exact ih
+              { state with code := state.code.update (declaration.name,
+                (declaration.params, declaration.body, declaration.returnShape)) }
+              (_hdec := _hdec) ds2
+          · have hconditionFalse : condition = false := by
+              cases hcond : condition with
+              | false => rfl
+              | true => exact False.elim (hcondition hcond)
+            simp [condition, hconditionFalse]
+      | exnDecl exceptionName shape =>
+          simp only [List.cons_append, PanSemStateFiniteExact.evaluateDeclsHOLFinite]
+          let condition := (state.eshapes.lookup exceptionName).isNone &&
+            isWfShapeExactHOL state.structs shape
+          by_cases hcondition : condition = true
+          · simp only [condition, hcondition, if_pos]
+            exact ih
+              { state with eshapes := state.eshapes.update (exceptionName, shape) }
+              (_hdec := _hdec) ds2
+          · have hconditionFalse : condition = false := by
+              cases hcond : condition with
+              | false => rfl
+              | true => exact False.elim (hcondition hcond)
+            simp [condition, hconditionFalse]
+
+/-- Flapjack-specific: expression evaluation under `emptyLocalsHOLFinite` is
+    unchanged when only the `eshapes` field of the source state changes
+    (`evalHOLFinite_upd_eshapes_eq` under `emptyLocalsHOLFinite`).  Support for
+    the `ExnDecl`/`Decl` commutation; not a separate HOL declaration. -/
+private theorem evalHOLFinite_emptyLocals_eshapes {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) [h : DecidablePred state.memaddrs]
+    (es : HolFiniteMapExact MlS ShapeHOL) (e : ExpHOL width) :
+    @PanSemStateFiniteExact.evalHOLFinite width σ _
+        (PanSemStateFiniteExact.emptyLocalsHOLFinite { state with eshapes := es }) h e
+      = @PanSemStateFiniteExact.evalHOLFinite width σ _
+          (PanSemStateFiniteExact.emptyLocalsHOLFinite state) h e :=
+  @PanSemStateFiniteExact.evalHOLFinite_upd_eshapes_eq width σ _
+    (PanSemStateFiniteExact.emptyLocalsHOLFinite state) h es e
+
+/-- Flapjack-specific commutation used by `resort_decls_evaluate`: swapping an
+    adjacent `ExnDecl` and `Decl` leaves the evaluator unchanged, because the
+    exception table and the global table are updated independently and the
+    `Decl` initialiser is evaluated under cleared locals without reading
+    `eshapes`.  HOL proves the analogous `Function`/`Decl` case inline as
+    `evaluate_decl_commute`; this `ExnDecl`/`Decl` case has no standalone HOL
+    declaration. -/
+private theorem evaluateDeclsHOLFinite_exnDeclDeclCommute {width : Nat} {σ : Type}
+    [NeZero width]
+    (state : PanSemStateFiniteExact width σ) [h : DecidablePred state.memaddrs]
+    (eid : MlS) (shape : ShapeHOL) (sh : ShapeHOL) (v' : MlS) (e : ExpHOL width)
+    (ds : List (DeclHOL width)) :
+    PanSemStateFiniteExact.evaluateDeclsHOLFinite state (.exnDecl eid shape :: .decl sh v' e :: ds)
+      = PanSemStateFiniteExact.evaluateDeclsHOLFinite state
+          (.decl sh v' e :: .exnDecl eid shape :: ds) := by
+  simp only [PanSemStateFiniteExact.evaluateDeclsHOLFinite]
+  rw [evalHOLFinite_emptyLocals_eshapes]
+  letI : DecidablePred state.emptyLocalsHOLFinite.memaddrs := h
+  by_cases hcond : ((state.eshapes.lookup eid).isNone && isWfShapeExactHOL state.structs shape) = true
+  · rw [if_pos hcond]
+    cases hev : state.emptyLocalsHOLFinite.evalHOLFinite e with
+    | none => simp
+    | some value =>
+        by_cases hshape : shapeEqHOL sh (shapeOfHOLExact value) = true
+        · simp [hshape, hcond, PanSemStateFiniteExact.setGlobalHOLFinite]
+        · simp [hshape]
+  · rw [if_neg hcond]
+    cases hev : state.emptyLocalsHOLFinite.evalHOLFinite e with
+    | none => simp
+    | some value =>
+        by_cases hshape : shapeEqHOL sh (shapeOfHOLExact value) = true
+        · simp [hshape, hcond, PanSemStateFiniteExact.setGlobalHOLFinite]
+        · simp [hshape]
+
+/-- Flapjack-specific commutation used when moving a `Function` past an
+    `ExnDecl`: the function update touches only `code` and the exception check
+    touches only `eshapes`/`structs`, so the two updates commute.  No standalone
+    HOL declaration. -/
+private theorem evaluateDeclsHOLFinite_functionExnDeclCommute {width : Nat} {σ : Type}
+    [NeZero width]
+    (state : PanSemStateFiniteExact width σ) [h : DecidablePred state.memaddrs]
+    (f : FunDeclHOL width) (eid : MlS) (shape : ShapeHOL) (ds : List (DeclHOL width)) :
+    PanSemStateFiniteExact.evaluateDeclsHOLFinite state (.function f :: .exnDecl eid shape :: ds)
+      = PanSemStateFiniteExact.evaluateDeclsHOLFinite state
+          (.exnDecl eid shape :: .function f :: ds) := by
+  simp only [PanSemStateFiniteExact.evaluateDeclsHOLFinite]
+  by_cases hwf : (f.params.all (fun parameter => isWfShapeExactHOL state.structs parameter.snd) &&
+      isWfShapeExactHOL state.structs f.returnShape) = true
+  <;> by_cases hfresh : ((state.eshapes.lookup eid).isNone &&
+      isWfShapeExactHOL state.structs shape) = true
+  <;> simp [hwf, hfresh]
+
+/-- Flapjack-specific list support: a filtered list satisfies its own predicate. -/
+private theorem filter_all_self {width : Nat} [NeZero width]
+    (p : DeclHOL width → Bool) (l : List (DeclHOL width)) :
+    (l.filter p).all p = true := by
+  induction l with
+  | nil => rfl
+  | cons a l ih =>
+      rw [List.filter_cons]
+      by_cases ha : p a = true
+      · simp [ha, ih]
+      · simp [ha]
+
+/-- Flapjack-specific list support: every `ExnDecl` satisfies the resort
+    disjunction. -/
+private theorem filter_exn_all_or {width : Nat} [NeZero width]
+    (l : List (DeclHOL width)) :
+    (l.filter isExnDeclHOL).all (fun d => isDeclHOL d || isExnDeclHOL d) = true := by
+  induction l with
+  | nil => rfl
+  | cons a l ih =>
+      rw [List.filter_cons]
+      by_cases ha : isExnDeclHOL a = true
+      · simp [ha, ih]
+      · rw [if_neg ha]
+        exact ih
+
+/-- Flapjack-specific list support: every `Decl` satisfies the resort
+    disjunction. -/
+private theorem filter_decl_all_or {width : Nat} [NeZero width]
+    (l : List (DeclHOL width)) :
+    (l.filter isDeclHOL).all (fun d => isDeclHOL d || isExnDeclHOL d) = true := by
+  induction l with
+  | nil => rfl
+  | cons a l ih =>
+      rw [List.filter_cons]
+      by_cases ha : isDeclHOL a = true
+      · simp [ha, ih]
+      · rw [if_neg ha]
+        exact ih
+
+/-- Flapjack-specific list support: under the resort admissibility predicate no
+    declaration is a `Name`, so `filter is_name` is empty. -/
+private theorem filter_isName_eq_nil {width : Nat} [NeZero width]
+    {l : List (DeclHOL width)}
+    (h : l.all (fun d => isFunctionHOL d || isDeclHOL d || isExnDeclHOL d) = true) :
+    l.filter isNameHOL = [] := by
+  induction l with
+  | nil => rfl
+  | cons a l ih =>
+      rw [List.all_cons, Bool.and_eq_true] at h
+      obtain ⟨ha, hl⟩ := h
+      rw [List.filter_cons]
+      have hname : isNameHOL a = false := by
+        cases a <;> simp_all [isNameHOL, isFunctionHOL, isDeclHOL, isExnDeclHOL]
+      simp [hname, ih hl]
+
+/-- Flapjack-specific: a `Decl` commutes leftwards past a run of `ExnDecl`s,
+    used in the `Decl` case of `resort_decls_evaluate`. -/
+private theorem evaluateDeclsHOLFinite_moveDeclLeft {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (exns : List (DeclHOL width)),
+      exns.all isExnDeclHOL = true →
+      ∀ (sh : ShapeHOL) (v' : MlS) (e : ExpHOL width) (rest : List (DeclHOL width))
+        (state : PanSemStateFiniteExact width σ) [DecidablePred state.memaddrs],
+        PanSemStateFiniteExact.evaluateDeclsHOLFinite state (exns ++ (.decl sh v' e :: rest))
+          = PanSemStateFiniteExact.evaluateDeclsHOLFinite state
+              (.decl sh v' e :: (exns ++ rest)) := by
+  intro exns
+  induction exns with
+  | nil => intro _ sh v' e rest state _; rfl
+  | cons a exns ih =>
+      intro hall sh v' e rest state hdec
+      rw [List.all_cons, Bool.and_eq_true] at hall
+      obtain ⟨ha, hExns⟩ := hall
+      cases a with
+      | exnDecl eid shp =>
+          simp only [List.cons_append]
+          rw [← evaluateDeclsHOLFinite_exnDeclDeclCommute state eid shp sh v' e (exns ++ rest)]
+          simp only [PanSemStateFiniteExact.evaluateDeclsHOLFinite]
+          by_cases hcond : ((state.eshapes.lookup eid).isNone &&
+              isWfShapeExactHOL state.structs shp) = true
+          · rw [if_pos hcond, if_pos hcond]
+            exact ih hExns sh v' e rest { state with eshapes := state.eshapes.update (eid, shp) }
+          · rw [if_neg hcond, if_neg hcond]
+      | name _ _ => simp [isExnDeclHOL] at ha
+      | decl _ _ _ => simp [isExnDeclHOL] at ha
+      | function _ => simp [isExnDeclHOL] at ha
+
+/-- Flapjack-specific: a `Function` commutes rightwards past a run of
+    `Decl`/`ExnDecl` declarations, the content of `evaluate_decls_one_fun_last`
+    in tail form. -/
+private theorem evaluateDeclsHOLFinite_moveFunctionRight {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (X : List (DeclHOL width)),
+      X.all (fun d => isDeclHOL d || isExnDeclHOL d) = true →
+      ∀ (f : FunDeclHOL width) (rest : List (DeclHOL width))
+        (state : PanSemStateFiniteExact width σ) [DecidablePred state.memaddrs],
+        PanSemStateFiniteExact.evaluateDeclsHOLFinite state (.function f :: (X ++ rest))
+          = PanSemStateFiniteExact.evaluateDeclsHOLFinite state (X ++ (.function f :: rest)) := by
+  intro X
+  induction X with
+  | nil => intro _ f rest state _; rfl
+  | cons a X ih =>
+      intro hall f rest state hdec
+      rw [List.all_cons, Bool.and_eq_true] at hall
+      obtain ⟨ha, hX⟩ := hall
+      cases a with
+      | decl sh v' e =>
+          simp only [List.cons_append]
+          rw [PanSemStateFiniteExact.evaluateDeclsHOLFinite_declCommute state f sh v' e (X ++ rest)]
+          simp only [PanSemStateFiniteExact.evaluateDeclsHOLFinite]
+          letI : DecidablePred state.emptyLocalsHOLFinite.memaddrs := hdec
+          cases heval : state.emptyLocalsHOLFinite.evalHOLFinite e with
+          | none => simp
+          | some value =>
+              letI : DecidablePred
+                  (PanSemStateFiniteExact.setGlobalHOLFinite v' value state).memaddrs := hdec
+              by_cases hshape : shapeEqHOL sh (shapeOfHOLExact value) = true
+              · simp only [hshape, if_pos]
+                exact ih hX f rest (PanSemStateFiniteExact.setGlobalHOLFinite v' value state)
+              · simp [hshape]
+      | exnDecl eid shp =>
+          simp only [List.cons_append]
+          rw [evaluateDeclsHOLFinite_functionExnDeclCommute state f eid shp (X ++ rest)]
+          simp only [PanSemStateFiniteExact.evaluateDeclsHOLFinite]
+          by_cases hcond : ((state.eshapes.lookup eid).isNone &&
+              isWfShapeExactHOL state.structs shp) = true
+          · rw [if_pos hcond, if_pos hcond]
+            exact ih hX f rest { state with eshapes := state.eshapes.update (eid, shp) }
+          · rw [if_neg hcond, if_neg hcond]
+      | name _ _ => simp [isDeclHOL, isExnDeclHOL] at ha
+      | function _ => simp [isDeclHOL, isExnDeclHOL] at ha
+
+/-- Flapjack-specific normal-form lemma: under the resort admissibility
+    predicate, evaluating `filter is_exn_decl ++ filter is_decl ++ filter
+    is_function` agrees with evaluating the original list.  This is the
+    inductive core of `resort_decls_evaluate`. -/
+private theorem evaluateDeclsHOLFinite_nf {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (decs : List (DeclHOL width)),
+      decs.all (fun d => isFunctionHOL d || isDeclHOL d || isExnDeclHOL d) = true →
+      ∀ (state : PanSemStateFiniteExact width σ) [DecidablePred state.memaddrs],
+      PanSemStateFiniteExact.evaluateDeclsHOLFinite state
+          ((decs.filter isExnDeclHOL) ++ (decs.filter isDeclHOL) ++ (decs.filter isFunctionHOL))
+        = PanSemStateFiniteExact.evaluateDeclsHOLFinite state decs := by
+  intro decs
+  induction decs with
+  | nil => intro _ state _; rfl
+  | cons x decs ih =>
+      intro hall state hdec
+      rw [List.all_cons, Bool.and_eq_true] at hall
+      obtain ⟨hx, hdecs⟩ := hall
+      cases x with
+      | exnDecl eid shp =>
+          rw [List.filter_cons_of_pos (by simp [isExnDeclHOL]),
+              List.filter_cons_of_neg (by simp [isDeclHOL]),
+              List.filter_cons_of_neg (by simp [isFunctionHOL])]
+          simp only [List.cons_append]
+          simp only [PanSemStateFiniteExact.evaluateDeclsHOLFinite]
+          by_cases hcond : ((state.eshapes.lookup eid).isNone &&
+              isWfShapeExactHOL state.structs shp) = true
+          · rw [if_pos hcond, if_pos hcond]
+            exact ih hdecs { state with eshapes := state.eshapes.update (eid, shp) }
+          · rw [if_neg hcond, if_neg hcond]
+      | decl sh v' e =>
+          rw [List.filter_cons_of_neg (by simp [isExnDeclHOL]),
+              List.filter_cons_of_pos (by simp [isDeclHOL]),
+              List.filter_cons_of_neg (by simp [isFunctionHOL])]
+          rw [List.append_assoc, List.cons_append]
+          rw [evaluateDeclsHOLFinite_moveDeclLeft (decs.filter isExnDeclHOL)
+            (filter_all_self isExnDeclHOL decs) sh v' e
+            ((decs.filter isDeclHOL) ++ (decs.filter isFunctionHOL)) state]
+          rw [← List.append_assoc]
+          simp only [PanSemStateFiniteExact.evaluateDeclsHOLFinite]
+          letI : DecidablePred state.emptyLocalsHOLFinite.memaddrs := hdec
+          cases heval : state.emptyLocalsHOLFinite.evalHOLFinite e with
+          | none => simp
+          | some value =>
+              letI : DecidablePred
+                  (PanSemStateFiniteExact.setGlobalHOLFinite v' value state).memaddrs := hdec
+              by_cases hshape : shapeEqHOL sh (shapeOfHOLExact value) = true
+              · simp only [hshape, if_pos]
+                exact ih hdecs (PanSemStateFiniteExact.setGlobalHOLFinite v' value state)
+              · simp [hshape]
+      | function f =>
+          rw [List.filter_cons_of_neg (by simp [isExnDeclHOL]),
+              List.filter_cons_of_neg (by simp [isDeclHOL]),
+              List.filter_cons_of_pos (by simp [isFunctionHOL])]
+          have hX : ((decs.filter isExnDeclHOL) ++ (decs.filter isDeclHOL)).all
+              (fun d => isDeclHOL d || isExnDeclHOL d) = true := by
+            rw [List.all_append, filter_exn_all_or, filter_decl_all_or]
+            rfl
+          rw [← evaluateDeclsHOLFinite_moveFunctionRight
+            ((decs.filter isExnDeclHOL) ++ (decs.filter isDeclHOL)) hX f
+            (decs.filter isFunctionHOL) state]
+          simp only [PanSemStateFiniteExact.evaluateDeclsHOLFinite]
+          by_cases hcond : (f.params.all (fun parameter => isWfShapeExactHOL state.structs parameter.snd) &&
+              isWfShapeExactHOL state.structs f.returnShape) = true
+          · rw [if_pos hcond, if_pos hcond]
+            exact ih hdecs
+              { state with code := state.code.update (f.name, (f.params, f.body, f.returnShape)) }
+          · rw [if_neg hcond, if_neg hcond]
+      | name _ _ => simp [isFunctionHOL, isDeclHOL, isExnDeclHOL] at hx
+
+end
+
+/-- Flapjack-specific: `resortDeclsHOL` under the resort admissibility
+    predicate is the normal form `filter is_exn_decl ++ filter is_decl ++
+    filter is_function`, because no declaration is a `Name` and the leading
+    `filter is_name` is empty. -/
+theorem resortDeclsHOL_eq_filter {width : Nat} [NeZero width] (decs : List (DeclHOL width))
+    (h : decs.all (fun d => isFunctionHOL d || isDeclHOL d || isExnDeclHOL d) = true) :
+    resortDeclsHOL decs =
+      (decs.filter isExnDeclHOL) ++ (decs.filter isDeclHOL) ++ (decs.filter isFunctionHOL) := by
+  unfold resortDeclsHOL
+  rw [filter_isName_eq_nil h, List.nil_append]
+
+/-- Exact port of HOL `evaluate_decls_one_fun_last[local]`
+    (`cakeml/pancake/proofs/pan_globalsProofScript.sml:1854-1872`): when `y` is a
+    `Function` and `xs` consists only of `Decl`/`ExnDecl` declarations, moving
+    `y` from the end to the front of the declaration list leaves
+    `evaluate_decls` unchanged.  HOL's `EVERY` over the `Decl`/`ExnDecl` case
+    split is rendered as `xs.all (fun d => is_decl d || is_exn_decl d) = true`.
+
+    The finite-support evaluator is called with the classical `DecidablePred
+    state.memaddrs` instance supplied internally, so the statement quantifies only
+    over the state (and declarations) exactly as the HOL statement does and carries
+    no decidability-instance parameter. -/
+@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "evaluate_decls_one_fun_last"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateDeclsOneFunLast {width : Nat} {σ : Type} [NeZero width]
+    (y : DeclHOL width) (xs : List (DeclHOL width))
+    (state : PanSemStateFiniteExact width σ) :
+    isFunctionHOL y = true →
+    xs.all (fun d => isDeclHOL d || isExnDeclHOL d) = true →
+    PanSemStateFiniteExact.evaluateDeclsHOLFinite
+        (h := (fun a => Classical.propDecidable (state.memaddrs a))) state (xs ++ [y]) =
+      PanSemStateFiniteExact.evaluateDeclsHOLFinite
+        (h := (fun a => Classical.propDecidable (state.memaddrs a))) state (y :: xs) := by
+  intro hy hxs
+  letI : DecidablePred state.memaddrs := (fun a => Classical.propDecidable (state.memaddrs a))
+  cases y with
+  | function f =>
+      have h := evaluateDeclsHOLFinite_moveFunctionRight xs hxs f [] state
+      simpa using h.symm
+  | name _ _ => simp [isFunctionHOL] at hy
+  | decl _ _ _ => simp [isFunctionHOL] at hy
+  | exnDecl _ _ => simp [isFunctionHOL] at hy
+
+/-- Exact port of HOL `resort_decls_evaluate`
+    (`cakeml/pancake/proofs/pan_globalsProofScript.sml:1874-1941`): if every
+    declaration of `decs` is a `Function`, `Decl`, or `ExnDecl`, then evaluating
+    the resorted list and the original list agree.
+
+    The finite-support evaluator is called with the classical `DecidablePred
+    state.memaddrs` instance supplied internally, so the statement quantifies only
+    over the state (and declarations) exactly as the HOL statement does and carries
+    no decidability-instance parameter. -/
+@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "resort_decls_evaluate"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem resortDeclsEvaluate {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ)
+    (decs : List (DeclHOL width)) :
+    decs.all (fun d => isFunctionHOL d || isDeclHOL d || isExnDeclHOL d) = true →
+    PanSemStateFiniteExact.evaluateDeclsHOLFinite
+        (h := (fun a => Classical.propDecidable (state.memaddrs a))) state (resortDeclsHOL decs) =
+      PanSemStateFiniteExact.evaluateDeclsHOLFinite
+        (h := (fun a => Classical.propDecidable (state.memaddrs a))) state decs := by
+  intro h
+  letI : DecidablePred state.memaddrs := (fun a => Classical.propDecidable (state.memaddrs a))
+  rw [resortDeclsHOL_eq_filter decs h]
+  exact evaluateDeclsHOLFinite_nf decs h state
+
+/-- Exact port of HOL `resort_decls_evaluate_IMP[local]`
+    (`cakeml/pancake/proofs/pan_globalsProofScript.sml:1943-1950`): a successful
+    evaluation of `decs` and the resort admissibility predicate imply a
+    successful evaluation of `resort_decls decs` to the same state.
+
+    The finite-support evaluator is called with the classical `DecidablePred
+    state.memaddrs` instance supplied internally, so the statement quantifies only
+    over the state (and declarations) exactly as the HOL statement does and carries
+    no decidability-instance parameter. -/
+@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "resort_decls_evaluate_IMP"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem resortDeclsEvaluateImp {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ)
+    (decs : List (DeclHOL width)) (state' : PanSemStateFiniteExact width σ) :
+    PanSemStateFiniteExact.evaluateDeclsHOLFinite
+        (h := (fun a => Classical.propDecidable (state.memaddrs a))) state decs = some state' →
+    decs.all (fun d => isFunctionHOL d || isDeclHOL d || isExnDeclHOL d) = true →
+    PanSemStateFiniteExact.evaluateDeclsHOLFinite
+        (h := (fun a => Classical.propDecidable (state.memaddrs a))) state (resortDeclsHOL decs) = some state' := by
+  intro hdecs hresort
+  rw [resortDeclsEvaluate state decs hresort]
+  exact hdecs
 
 end Flapjack
