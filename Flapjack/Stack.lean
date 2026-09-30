@@ -177,11 +177,11 @@ def stackMapRegisters (map : Nat → Nat) : StackProg α → StackProg α
       .call none (stackMapCallTarget map target)
         (some (stackMapRegisters map program, exceptionLabel, handlerLabel))
   | .call (some (program, link, returnLabel, entryLabel)) target none =>
-      .call (some (stackMapRegisters map program, link, returnLabel, entryLabel))
+      .call (some (stackMapRegisters map program, map link, returnLabel, entryLabel))
         (stackMapCallTarget map target) none
   | .call (some (program, link, returnLabel, entryLabel)) target
       (some (handlerProgram, exceptionLabel, handlerLabel)) =>
-      .call (some (stackMapRegisters map program, link, returnLabel, entryLabel))
+      .call (some (stackMapRegisters map program, map link, returnLabel, entryLabel))
         (stackMapCallTarget map target)
         (some (stackMapRegisters map handlerProgram, exceptionLabel, handlerLabel))
   | .seq first second => .seq (stackMapRegisters map first) (stackMapRegisters map second)

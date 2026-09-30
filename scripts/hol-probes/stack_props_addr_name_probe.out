@@ -1,0 +1,12 @@
+word_min=T
+word_max=T
+word_low=F
+word_high=F
+half_min=T
+half_max=T
+half_high=F
+half_ag32=F
+byte_zero=T
+byte_high=F
+reg_last=T
+reg_bound=F

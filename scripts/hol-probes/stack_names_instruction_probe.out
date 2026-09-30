@@ -1,0 +1,17 @@
+skip=Skip
+const=Const 7 255w
+binop=Arith (Binop Add 7 4 (Reg 7))
+shift=Arith (Shift Lsl 7 4 (Imm 2w))
+div=Arith (Div 7 4 7)
+longmul=Arith (LongMul 7 4 7 4)
+longdiv=Arith (LongDiv 7 4 7 4 7)
+addcarry=Arith (AddCarry 7 4 7 4)
+addoverflow=Arith (AddOverflow 7 4 7 4)
+suboverflow=Arith (SubOverflow 7 4 7 4)
+mem=Mem Load 7 (Addr 7 255w)
+fpless=FP (FPLess 7 3 4)
+fplesseq=FP (FPLessEqual 7 3 4)
+fpeq=FP (FPEqual 7 3 4)
+fptoreg=FP (FPMovToReg 7 4 3)
+fpfromreg=FP (FPMovFromReg 3 7 4)
+fpdefault=FP (FPAdd 3 3 4)
