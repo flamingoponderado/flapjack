@@ -28186,7 +28186,7 @@
   "hol_name": "riscv_names_def",
   "hol_line": 10,
   "statement_status": "reviewed_exact",
-  "reviewer": "flapjack-luna-b source comparison riscv_config10-43: exact Spt Nat (num num_map), thirteen inserts in identical outer-to-inner order and values on LN; no finite-map qualifier. Universal kernel lookup/getD theorem matches existing production mapper for all Nat, including missing/out-of-range identity default. Actual RiscV/Lab five naming sites routed to exact map lookup. Original HOL table/default row replayed; full StackProg/HolProg carrier relation remains open."
+  "reviewer": "flapjack-luna-b source comparison riscv_config10-43: exact Spt Nat (num num_map), thirteen inserts in identical outer-to-inner order and values on LN; no finite-map qualifier. Universal kernel lookup/getD theorem matches existing production mapper for all Nat, including missing/out-of-range identity default. Actual RiscV/Lab five and LabDiagnostics six checked source-facing naming sites routed to exact map lookup. Original HOL table/default row replayed; full StackProg/HolProg carrier relation remains open."
 },
   {
     "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",

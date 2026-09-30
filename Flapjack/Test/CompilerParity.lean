@@ -1,3 +1,4 @@
+import Flapjack.Test.RiscVNamesExactParity
 import Flapjack.RiscV.Encoding
 import Flapjack.Test.DeclBridgeParity
 import Flapjack.Test.RiscVColourLivenessParity
