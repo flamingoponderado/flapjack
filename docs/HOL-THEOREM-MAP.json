@@ -25824,5 +25824,157 @@
     "words_as_type_indexed_bitvec": true,
     "lean_name": "inlineProgCorrectRaiseCaseExact",
     "reviewer": "flapjack-ds10 source comparison (2026-09-30; bead flapjack-pxn.18.5.5.39) against crep_inlineProofScript.sml:2301-2309 and the Raise atomic case of the catch-all at 2401. HOL inline_prog_def's generic unchanged-program clause leaves Raise unchanged; crepSemScript.sml evaluates (Raise eid, s) to (SOME (Exception eid), empty_locals s). The statement preserves all HOL premises (source run, non-Error, both SUBMAP, state_rel_code, locals_strong_rel, code_inl_rel), the existential target run, post-state/code relations, and the result-dependent local relation (Exception falls under HOL's default _ => T branch, so no local relation is required). Lean uses exact CrepProgHOL raise, evalCrepSemHOLProgExact_raise, emptyLocals, and inlineProgHOLExact identity. Carriers are the reviewed HolFiniteMapExact and positive-width BitVec word."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "inline_prog_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "inlineProgCorrectStoreCaseExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "inlFs",
+      "inlBag"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-pxn.18.5.5.39) against crep_inlineProofScript.sml:2301-2309 and the atomic catch-all at :2401; this is an atomic arm of HOL inline_prog_correct whose inline_prog_def leaves it unchanged."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "inline_prog_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "inlineProgCorrectStoreGlobCaseExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "inlFs",
+      "inlBag"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-pxn.18.5.5.39) against crep_inlineProofScript.sml:2301-2309 and the atomic catch-all at :2401; this is an atomic arm of HOL inline_prog_correct whose inline_prog_def leaves it unchanged."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "inline_prog_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "inlineProgCorrectStore32CaseExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "inlFs",
+      "inlBag"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-pxn.18.5.5.39) against crep_inlineProofScript.sml:2301-2309 and the atomic catch-all at :2401; this is an atomic arm of HOL inline_prog_correct whose inline_prog_def leaves it unchanged."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "inline_prog_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "inlineProgCorrectStoreByteCaseExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "inlFs",
+      "inlBag"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-pxn.18.5.5.39) against crep_inlineProofScript.sml:2301-2309 and the atomic catch-all at :2401; this is an atomic arm of HOL inline_prog_correct whose inline_prog_def leaves it unchanged."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "inline_prog_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "inlineProgCorrectTickCaseExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "inlFs",
+      "inlBag"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-pxn.18.5.5.39) against crep_inlineProofScript.sml:2301-2309 and the atomic catch-all at :2401; this is an atomic arm of HOL inline_prog_correct whose inline_prog_def leaves it unchanged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "srel_mem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 (2026-09-30, bead flapjack-pxn.18.5.5.39): Flapjack-specific private helper for the exact inline_prog_correct atomic memory/tick cases; no HOL declaration of its own."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "srel_glob",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 (2026-09-30, bead flapjack-pxn.18.5.5.39): Flapjack-specific private helper for the exact inline_prog_correct atomic memory/tick cases; no HOL declaration of its own."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "srel_empty",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 (2026-09-30, bead flapjack-pxn.18.5.5.39): Flapjack-specific private helper for the exact inline_prog_correct atomic memory/tick cases; no HOL declaration of its own."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "srel_decclock",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 (2026-09-30, bead flapjack-pxn.18.5.5.39): Flapjack-specific private helper for the exact inline_prog_correct atomic memory/tick cases; no HOL declaration of its own."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "inline_store",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 (2026-09-30, bead flapjack-pxn.18.5.5.39): Flapjack-specific private helper for the exact inline_prog_correct atomic memory/tick cases; no HOL declaration of its own."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "inline_store32",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 (2026-09-30, bead flapjack-pxn.18.5.5.39): Flapjack-specific private helper for the exact inline_prog_correct atomic memory/tick cases; no HOL declaration of its own."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "inline_storeByte",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 (2026-09-30, bead flapjack-pxn.18.5.5.39): Flapjack-specific private helper for the exact inline_prog_correct atomic memory/tick cases; no HOL declaration of its own."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "inline_storeGlob",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 (2026-09-30, bead flapjack-pxn.18.5.5.39): Flapjack-specific private helper for the exact inline_prog_correct atomic memory/tick cases; no HOL declaration of its own."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "inline_tick",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 (2026-09-30, bead flapjack-pxn.18.5.5.39): Flapjack-specific private helper for the exact inline_prog_correct atomic memory/tick cases; no HOL declaration of its own."
   }
 ]
