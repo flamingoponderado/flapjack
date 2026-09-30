@@ -28,18 +28,6 @@
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Control.lean",
-    "lean_name": "findCode",
-    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
-    "hol_name": "find_code_def",
-    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support_relation": [
-      "regs"
-    ],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.5), stackSemScript645-651: target num+num, regs finite map num->positive-width word_loc, code polymorphic alpha Spt tree and Option alpha result. Direct INL lookup ignores regs; INR accepts only SOME(Loc loc0), all missing/Word/nonzero Loc cases NONE. Canonical map is bare regs parameter (no owning field/witness obligation); code remains Spt and payload stays polymorphic. Accepted imported carrier with same-module canonical roundtrip re-export for state fields, no duplicate owner. No evaluator or production-path claim. Coordinator review required."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Control.lean",
     "lean_name": "fixClock",
     "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
     "hol_name": "fix_clock_def",
