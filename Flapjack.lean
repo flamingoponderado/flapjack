@@ -494,6 +494,7 @@ import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.Assembly
 import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.Call
 import Flapjack.Pancake.Proofs.CrepInline.EvaluateStateLocals.Atoms
 import Flapjack.Pancake.Proofs.CrepInline.Expressions
+import Flapjack.Pancake.Proofs.CrepInline.ExpressionRelations
 import Flapjack.Pancake.Proofs.CrepInline.NestedDecs
 import Flapjack.Pancake.Proofs.CrepInline.ShMem
 import Flapjack.Pancake.Proofs.CrepInline.Call

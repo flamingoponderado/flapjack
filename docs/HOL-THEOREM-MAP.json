@@ -32794,5 +32794,63 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack local support (bead .47.4): var_prog of the nested MAP2 Assign sequence of both transformations' Return clause; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ExpressionRelations.lean",
+    "lean_name": "evalOriginalExtendLocalsRelExact",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "eval_original_extend_locals_rel",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.3) compared crep_inlineProofScript.sml:78-91: forall s e wl t. eval s e = SOME wl ==> locals_rel s t /\\ state_rel s t ==> eval t e = SOME wl (curried as in HOL). Same binders and order, no extra premise; eval = tagged evalCrepSemHOLExp, locals_rel = tagged crepInlineLocalsRelExact (SUBMAP), state_rel = tagged crepInlineStateRelExact. Derived as in HOL from the ported eval_original_extend_locals and s with locals := t.locals = t from the ten state_rel fields. Canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ExpressionRelations.lean",
+    "lean_name": "evalStateLocalsRelExact",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "eval_state_locals_rel",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.3) compared crep_inlineProofScript.sml:93-102: forall s e wl t. eval s e = SOME wl /\\ state_rel s t /\\ locals_rel s t ==> eval t e = SOME wl. Same binders and order, no extra premise; eval = tagged evalCrepSemHOLExp, locals_rel = tagged crepInlineLocalsRelExact (SUBMAP), state_rel = tagged crepInlineStateRelExact. Derived as in HOL from the ported eval_original_extend_locals and s with locals := t.locals = t from the ten state_rel fields. Canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ExpressionRelations.lean",
+    "lean_name": "evalOptmmapStateLocalsRelExact",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "eval_optmmap_state_locals_rel",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.3) compared crep_inlineProofScript.sml:105-116: forall s es ws t. OPT_MMAP (eval s) es = SOME ws /\\ state_rel s t /\\ locals_rel s t ==> OPT_MMAP (eval t) es = SOME ws; OPT_MMAP as List.mapM. Same binders and order, no extra premise; eval = tagged evalCrepSemHOLExp, locals_rel = tagged crepInlineLocalsRelExact (SUBMAP), state_rel = tagged crepInlineStateRelExact. Derived as in HOL from the ported eval_original_extend_locals and s with locals := t.locals = t from the ten state_rel fields. Canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ExpressionRelations.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed CrepSemHOLState toBroad/ofBroad roundtrip for the relation qualifier."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ExpressionRelations.lean",
+    "lean_name": "withLocals_eq_of_stateRel",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead .43.5.3): state_rel s t gives s with locals := t.locals = t (HOL state_component_equality); no HOL original."
   }
 ]
