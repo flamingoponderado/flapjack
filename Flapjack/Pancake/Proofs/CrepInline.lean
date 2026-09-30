@@ -3459,6 +3459,109 @@ theorem evaluateLocalsSameFdomTrivialAtomsExact {width : Nat} [NeZero width] {σ
       cases hsource
       rfl
 
+/-- HOL `evaluate_locals_same_fdom` (`cakeml/pancake/proofs/crep_inlineProofScript.sml:181`)
+for the memory- and globals-touching atomic programs `Store`/`Store32`/`StoreByte`/
+`StoreGlob` and the locals-clearing `Raise`: under the HOL result condition
+(`none`/`break`/`continue`) the source and final `locals` have the same finite domain
+(rendered `FDOM s.locals.lookup = FDOM s'.locals.lookup`, since `FDOM` is the repo
+finite-map domain predicate).  An exact case slice over the faithful Crep evaluator. -/
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "evaluate_locals_same_fdom"]
+theorem evaluateLocalsSameFdomMemoryGlobalsAtomsExact {width : Nat} [NeZero width] {σ : Type}
+    (s : CrepSemHOLState width σ) (r : Option (CrepResultHOLExact width))
+    (s' : CrepSemHOLState width σ) (p : CrepProgHOL width)
+    (hp : (∃ dst src, p = .store dst src) ∨ (∃ dst src, p = .store32 dst src) ∨
+          (∃ dst src, p = .storeByte dst src) ∨ (∃ dst src, p = .storeGlob dst src) ∨
+          (∃ e, p = .raise e))
+    (hsource : evalCrepSemHOLProgExact s p = (r, s'))
+    (hcond : (match r with | none => True | some (.break _) => True | some (.continue _) => True | _ => False)) :
+    FDOM s.locals.lookup = FDOM s'.locals.lookup := by
+  rcases hp with ⟨dst, src, hp⟩ | ⟨dst, src, hp⟩ | ⟨dst, src, hp⟩ | ⟨dst, src, hp⟩ | ⟨e, hp⟩
+  · subst hp
+    rw [evalCrepSemHOLProgExact_store_holShape] at hsource
+    cases hd : evalCrepSemHOLExp s dst with
+    | none =>
+        simp only [hd] at hsource
+        have hs' : s' = s := by simpa using (congrArg Prod.snd hsource).symm
+        rw [hs']
+    | some dv => cases dv with
+      | word adr =>
+        cases hs : evalCrepSemHOLExp s src with
+        | none =>
+            simp only [hd, hs] at hsource
+            have hs' : s' = s := by simpa using (congrArg Prod.snd hsource).symm
+            rw [hs']
+        | some wv =>
+            simp only [hd, hs] at hsource
+            split at hsource <;>
+              (injection hsource with _ hs'
+               rw [← hs'])
+  · subst hp
+    rw [evalCrepSemHOLProgExact_store32_holShape] at hsource
+    cases hd : evalCrepSemHOLExp s dst with
+    | none =>
+        simp only [hd] at hsource
+        have hs' : s' = s := by simpa using (congrArg Prod.snd hsource).symm
+        rw [hs']
+    | some dv => cases dv with
+      | word adr =>
+        cases hs : evalCrepSemHOLExp s src with
+        | none =>
+            simp only [hd, hs] at hsource
+            have hs' : s' = s := by simpa using (congrArg Prod.snd hsource).symm
+            rw [hs']
+        | some wv => cases wv with
+          | word w =>
+            simp only [hd, hs] at hsource
+            split at hsource <;>
+              (injection hsource with _ hs'
+               rw [← hs'])
+  · subst hp
+    rw [evalCrepSemHOLProgExact_storeByte_holShape] at hsource
+    cases hd : evalCrepSemHOLExp s dst with
+    | none =>
+        simp only [hd] at hsource
+        have hs' : s' = s := by simpa using (congrArg Prod.snd hsource).symm
+        rw [hs']
+    | some dv => cases dv with
+      | word adr =>
+        cases hs : evalCrepSemHOLExp s src with
+        | none =>
+            simp only [hd, hs] at hsource
+            have hs' : s' = s := by simpa using (congrArg Prod.snd hsource).symm
+            rw [hs']
+        | some wv => cases wv with
+          | word w =>
+            simp only [hd, hs] at hsource
+            split at hsource <;>
+              (injection hsource with _ hs'
+               rw [← hs'])
+  · subst hp
+    rw [evalCrepSemHOLProgExact_storeGlob_holShape] at hsource
+    cases hs : evalCrepSemHOLExp s src with
+    | none =>
+        simp only [hs] at hsource
+        have hs' : s' = s := by simpa using (congrArg Prod.snd hsource).symm
+        rw [hs']
+    | some wv =>
+        simp only [hs] at hsource
+        have hs' : s' = CrepSemHOLState.setGlobals dst wv s := by
+          simpa using (congrArg Prod.snd hsource).symm
+        rw [hs']
+        rfl
+  · subst hp
+    rw [evalCrepSemHOLProgExact_raise] at hsource
+    cases r with
+    | none => simp at hsource
+    | some res =>
+      cases res with
+      | error => cases hsource
+      | timeOut => cases hsource
+      | «break» n => cases hsource
+      | «continue» n => cases hsource
+      | «return» vs => cases hsource
+      | exception ex => exact absurd hcond (by simp)
+      | finalFfi ev => cases hsource
+
 end CrepInlineExact
 
 end Flapjack
