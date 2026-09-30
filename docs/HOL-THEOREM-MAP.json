@@ -31786,5 +31786,35 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack local support (bead .47.2.1): motive for Seq from the component IHs."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/While.lean",
+    "lean_name": "transformEocCorrect_While",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "transform_eoc_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.2.2) compared crep_inlineProofScript.sml:1893-1913 (statement) and Resume transform_eoc_correct[While] :1979-2022: the HOL goal at p = While e c with all quantifiers, hypotheses and the full case conclusion written out; the only extra hypothesis is TransformEocWhileIH, exactly the three guarded evaluate_ind While premises (body at dec_clock when the guard is a nonzero word and the clock is nonzero; loop re-entry after NONE and after Continue 0), mirroring the accepted WhileDomainIH. Proof: timeout/zero-guard/error branches directly; body IH; NONE and Continue 0 re-enter via state equality from state_rel+locals_strong_rel and FDOM preservation (evaluate_locals_same_fdom'); Break 0 and nested labels via exit_loop; Return excluded by not_has_return_not_evaluate_return. Exact tagged carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/While.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module canonical witness forwarding the reviewed CrepSemHOLState toBroad/ofBroad roundtrip for the locals/globals/code finite-map qualifier."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/While.lean",
+    "lean_name": "whileGoal",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead .47.2.2): the transform_eoc_correct motive for While from TransformEocWhileIH."
   }
 ]

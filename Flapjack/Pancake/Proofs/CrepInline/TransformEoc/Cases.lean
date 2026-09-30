@@ -74,7 +74,7 @@ private theorem stateRel_refl {width : Nat} [NeZero width] {σ : Type}
 
 /-- Local support: `state_rel` with equal locals is state equality
     (HOL `state_component_equality`). -/
-private theorem eq_of_stateRel_localsStrongRel {width : Nat} [NeZero width] {σ : Type}
+theorem eq_of_stateRel_localsStrongRel {width : Nat} [NeZero width] {σ : Type}
     {s t : CrepSemHOLState width σ} (h : crepInlineStateRelExact s t)
     (hl : crepInlineLocalsStrongRelExact s t) : s = t := by
   obtain ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10⟩ := h
@@ -91,7 +91,7 @@ private theorem panMap2_eq_zipWith {α β γ : Type} (f : α → β → γ) :
 
 /-- Local support: equal `FDOM`s transfer a successful `OPT_MMAP FLOOKUP`
     (HOL `fdoms_eq_opt_mmap_flookup_some` on the finite-support carrier). -/
-private theorem mapM_some_of_fdom_eq {β : Type} {f g : Nat → Option β}
+theorem mapM_some_of_fdom_eq {β : Type} {f g : Nat → Option β}
     (h : crepHolFdom f = crepHolFdom g) :
     ∀ (vs : List Nat) (vals : List β), vs.mapM f = some vals → ∃ z, vs.mapM g = some z
   | [], _, _ => ⟨[], rfl⟩
