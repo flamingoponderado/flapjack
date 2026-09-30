@@ -6364,6 +6364,130 @@ theorem evaluateClockSubWhileBreakBodyCaseHOLFinite {width : Nat} {σ : Type}
   evaluateClockSubWhileBreakBodyProjection condition body state result st ck
     hWhileRun hNotTimeout ihBody word hGuard hWord hClock bodyPost hBody
 
+/-- Flapjack-specific projection of the condition-failure (error) branch of the
+    exact source While clause (`panSemScript.sml:630`) through the PanProps pair
+    codec: when the condition does not evaluate to a word value, both the source
+    and clock-subtracted runs return `(some .error, state)`. HOL has no separate
+    pair-wrapper theorem. This helper only exposes that equation; it does not
+    establish the `evaluate_clock_sub` induction case. -/
+private theorem evaluateClockSubWhileCondFailProjection {width : Nat} {σ : Type} [NeZero width]
+    (condition : ExpHOL width) (body : ProgHOL width)
+    (state : PanPropsEvalStateFiniteExact width σ)
+    (result : Option (PanSemResultExact width))
+    (st : PanPropsEvalStateFiniteExact width σ) (ck : Nat)
+    (hWhileRun : PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state
+        (.while condition body : ProgHOL width) =
+      (result, { st with clock := st.clock + ck }))
+    (hFail : ∀ (w : BitVec width),
+      @PanSemStateFiniteExact.evalHOLFinite width σ _ state.toPanSemFinite
+        (fun address => Classical.propDecidable (state.toPanSemFinite.memaddrs address))
+        condition ≠ some (.val (.word w))) :
+    PanPropsEvalStateFiniteExact.evaluateHOLFinitePair
+      { state with clock := state.clock - ck } (.while condition body) = (result, st) := by
+  classical
+  rw [evaluateHOLFinitePair_while] at hWhileRun
+  rw [evaluateHOLFinitePair_while]
+  dsimp only
+  have hLowCondEq :
+      @PanSemStateFiniteExact.evalHOLFinite width σ _
+          ({ state with clock := state.clock - ck }.toPanSemFinite)
+          (fun address => Classical.propDecidable
+            (({ state with clock := state.clock - ck }.toPanSemFinite).memaddrs address))
+          condition =
+        @PanSemStateFiniteExact.evalHOLFinite width σ _ state.toPanSemFinite
+          (fun address => Classical.propDecidable (state.toPanSemFinite.memaddrs address))
+          condition := by
+    rw [PanSemStateFiniteExact.evalHOLFinite_eq_toExact,
+        PanSemStateFiniteExact.evalHOLFinite_eq_toExact]
+    exact evalHOLExact_upd_clock_eq state.toPanSemFinite.toExact condition (state.clock - ck)
+  rw [hLowCondEq]
+  cases hC : @PanSemStateFiniteExact.evalHOLFinite width σ _ state.toPanSemFinite
+      (fun address => Classical.propDecidable (state.toPanSemFinite.memaddrs address))
+      condition with
+  | none =>
+      simp only [hC] at hWhileRun
+      simp only [PanPropsEvalStateFiniteExact.ofPanSemFinite_toPanSemFinite] at hWhileRun
+      obtain ⟨hresult, hpost⟩ := Prod.mk.inj hWhileRun
+      subst hresult
+      have hst : st = { state with clock := state.clock - ck } := by
+        cases st; cases state; simp_all [PanPropsEvalStateFiniteExact.toPanSemFinite] <;> omega
+      subst hst
+      rfl
+  | some value =>
+      cases value with
+      | val payload =>
+          cases payload with
+          | word word => exact absurd hC (hFail word)
+      | rStruct f =>
+          simp only [hC] at hWhileRun
+          simp only [PanPropsEvalStateFiniteExact.ofPanSemFinite_toPanSemFinite] at hWhileRun
+          obtain ⟨hresult, hpost⟩ := Prod.mk.inj hWhileRun
+          subst hresult
+          have hst : st = { state with clock := state.clock - ck } := by
+            cases st; cases state; simp_all [PanPropsEvalStateFiniteExact.toPanSemFinite] <;> omega
+          subst hst
+          rfl
+      | nStruct n f =>
+          simp only [hC] at hWhileRun
+          simp only [PanPropsEvalStateFiniteExact.ofPanSemFinite_toPanSemFinite] at hWhileRun
+          obtain ⟨hresult, hpost⟩ := Prod.mk.inj hWhileRun
+          subst hresult
+          have hst : st = { state with clock := state.clock - ck } := by
+            cases st; cases state; simp_all [PanPropsEvalStateFiniteExact.toPanSemFinite] <;> omega
+          subst hst
+          rfl
+
+/-- Flapjack-specific projection of the word-zero branch of the exact source
+    While clause (`panSemScript.sml:630`) through the PanProps pair codec: a
+    word-`0` condition returns `(none, state)` without entering the body. HOL has
+    no separate pair-wrapper theorem. This helper only exposes that equation; it
+    does not establish the `evaluate_clock_sub` induction case. -/
+private theorem evaluateClockSubWhileCondZeroProjection {width : Nat} {σ : Type} [NeZero width]
+    (condition : ExpHOL width) (body : ProgHOL width)
+    (state : PanPropsEvalStateFiniteExact width σ)
+    (result : Option (PanSemResultExact width))
+    (st : PanPropsEvalStateFiniteExact width σ) (ck : Nat)
+    (hWhileRun : PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state
+        (.while condition body) = (result, { st with clock := st.clock + ck }))
+    (hZero : @PanSemStateFiniteExact.evalHOLFinite width σ _ state.toPanSemFinite
+        (fun address => Classical.propDecidable (state.toPanSemFinite.memaddrs address))
+        condition = some (.val (.word 0))) :
+    PanPropsEvalStateFiniteExact.evaluateHOLFinitePair
+        { state with clock := state.clock - ck } (.while condition body) = (result, st) := by
+  classical
+  rw [evaluateHOLFinitePair_while] at hWhileRun
+  rw [evaluateHOLFinitePair_while]
+  dsimp only
+  have hLowCondEq :
+      @PanSemStateFiniteExact.evalHOLFinite width σ _
+          ({ state with clock := state.clock - ck }).toPanSemFinite
+          (fun address => Classical.propDecidable
+            (({ state with clock := state.clock - ck }).toPanSemFinite.memaddrs address))
+          condition =
+        @PanSemStateFiniteExact.evalHOLFinite width σ _
+          state.toPanSemFinite
+          (fun address => Classical.propDecidable (state.toPanSemFinite.memaddrs address))
+          condition := by
+    change @PanSemStateFiniteExact.evalHOLFinite width σ _
+      ({ state.toPanSemFinite with clock := state.clock - ck })
+      (fun address => Classical.propDecidable
+        (({ state.toPanSemFinite with clock := state.clock - ck }).memaddrs address))
+      condition = _
+    exact evalHOLExact_upd_clock_eq state.toPanSemFinite.toExact condition (state.clock - ck)
+  rw [hLowCondEq]
+  simp only [hZero]
+  simp only [hZero] at hWhileRun
+  obtain ⟨hresult, hpost⟩ := Prod.mk.inj hWhileRun
+  subst hresult
+  have hpostClock : state.clock = st.clock + ck := by
+    have h := congrArg (fun s : PanPropsEvalStateFiniteExact width σ => s.clock) hpost
+    exact h
+  have hst : st = { state with clock := state.clock - ck } := by
+    cases st; cases state
+    simp_all <;> omega
+  subst hst
+  rfl
+
 /-- Genuine recursive-induction `Seq` case of HOL `evaluate_clock_sub`. The
     hypotheses are exactly the generated `evaluate_ind` IHs after instantiating
     its motive with the clock-subtraction property: the first-program IH is
