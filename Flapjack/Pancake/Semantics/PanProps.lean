@@ -2158,6 +2158,10 @@ open Flapjack.Pancake.PanLang
 def isWfShapeNilHOL (shape : ShapeHOL) : Bool :=
   isWfShapeExactHOL ([] : StructContextExact) shape
 
+/-! The exact general `is_wf_shape_v_nil_step1` port already exists in this module
+    as `isWfShapeValueHOLExact_nil_step1` (see above); no specialized duplicate is kept. -/
+
+
 /- Untagged support: context-free well-formed shapes have the same
     with-context size as their plain `size_of_shape` size, for every context. -/
 mutual
