@@ -1046,11 +1046,23 @@ theorem crepInlineActiveNames_erase_codec {width : Nat} [NeZero width] {α : Typ
       FLOOKUP_domsub, beq_ofString_eq_ofString hname hs]
   cases hb : (name == s) <;> simp_all [FLOOKUP]
 
+/-- Flapjack codec infrastructure: decode the exact (MlString-named) inline
+    alist into the executable `CrepInlineEntry` list, reversing the
+    `toStringOfBytes` name codec and the `crepProgToHOL` body codec.  There is no
+    HOL original for this cross-representation bridge; it is the decoding half of
+    the executed-vs-exact inline route relation, used only by the untagged
+    `crepProgToHOL_crepInlineProgRecursive` theorem. -/
 def crepInlineCodecEntries {width : Nat} [NeZero width]
     (entries : List (CrepInlineMapHOLName × (List Nat × CrepProgHOL width))) :
     List (CrepInlineEntry (BitVec width)) :=
   entries.map fun e => (toStringOfBytes e.1, (e.2.1, crepProgOfHOL e.2.2))
 
+/-- Flapjack codec infrastructure, not a HOL original: every function or
+    external-call name occurring in the program is byte-ranged (`CrepNameRanged`),
+    recursing through `dec`/`seq`/`ite`/`while` and call-handler bodies.  This is
+    exactly the range needed to invert the `toStringOfBytes`/`ofString` name codec
+    in the recursive inline-route relation; it says nothing about evaluation and
+    is used only by `crepProgToHOL_crepInlineProgRecursive`. -/
 def crepProgNameRanged {width : Nat} [NeZero width] : CrepProg (BitVec width) → Prop
   | .skip => True
   | .dec _ _ body => crepProgNameRanged body
