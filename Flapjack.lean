@@ -272,6 +272,7 @@ import Flapjack.Pancake.Semantics.PanSem.ClockTimeout
 import Flapjack.Pancake.Semantics.PanProps.EvaluateAddClockIoEventsMono
 import Flapjack.Pancake.Semantics.PanProps.EvaluateAddClockEq
 import Flapjack.Pancake.Semantics.PanProps.EvaluateClockSubAtoms
+import Flapjack.Pancake.Semantics.PanProps.EvaluateClockSubCall
 import Flapjack.Pancake.Semantics.PanSem.ShMemLoadCase
 import Flapjack.Pancake.Semantics.PanSem.ExtCallCase
 import Flapjack.Pancake.Semantics.PanSem.LocalUpdatesExact
@@ -411,6 +412,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Assign
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Primitive
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Store
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Seq
+import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.If
 import Flapjack.Pancake.Proofs.PanGlobals.DeclListLemmas
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelationExact
 import Flapjack.Pancake.Proofs.PanGlobals.CompileDecsStructural

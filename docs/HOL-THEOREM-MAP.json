@@ -35706,5 +35706,122 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-specific private pointwise restriction helper over raw lookup functions and Boolean mask; specialization used internally, not claimed as full HOL EQ_FDOM_SUBMAP declaration. Proves map-restriction equality from submap plus equal domains; no external assumption."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/If.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack representation infrastructure: canonical state toExact/ofExact roundtrip re-export, no separate HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/If.lean",
+  "lean_name": "evaluateFperm_If",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_fperm",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol (22.5.6) compared HOL evaluate_fperm1721-1810 and literal evaluate_ind If conjunct. Sole IH quantifies original value/wordlab/word, guarded by eval(s,condition)=SOME value, value=Val lab, lab=Word word; branch exactly if word nonzero then first else second. Original source evaluation premise and full permuted target result/post code equality unchanged; no targetrun/nonError/postrelation guard. Original panSem16-23 Word-only word_lab and Value/RStruct/NStruct carriers verified. Failed evaluation and both structured-value errors preserve original result/state with permuted code; zero/nonzero successful word branches use only actual guarded IH. Expression evaluator code-update invariance accepted, no extra assumption. Four canonical state map fields and positive words/Type0 FFI qualified; same-module genuine canonical witness. Full permutation assembly remains open, coordinator review pending."
+},
+{
+  "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+  "hol_name": "evaluate_clock_sub",
+  "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvaluateClockSubCall.lean",
+  "lean_name": "evaluateClockSubCallCaseHOLFinite",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-4ac.4.60.1.1.13): HOL panPropsScript.sml:724-728 evaluate_clock_sub, Call case of recInduct evaluate_ind. Same statement shape and carrier as the accepted Seq/Assign cases: high-run equation evaluate (Call caltyp fname argexps, t) = (res, st with clock := st.clock + ck), res <> SOME TimeOut, conclusion evaluate (Call .., t with clock := t.clock - ck) = (res, st). The only additional hypotheses are evaluate_ind's two guarded Call premises at the clock-sub motive, clockSubCallHandlerIH and clockSubCallCalleeIH. These are copied verbatim from the reviewed binder-aligned evaluate_invariants Call premises (EvalInvariant.lean, OPT_MMAP as List.mapM, lookup_code triple, clock <> 0, callee Exception eid exn, caltyp = SOME (_, SOME (eid', evar, p)), eid = eid', FLOOKUP eshapes, shape_of, is_valid_value), with the motive replaced by clockSubAtHOLFinite. No other premise. Proof: the untagged canonical core callCore shows the clock-subtracted run does not end in TimeOut (callee IH aligns the callee run at dec_clock with the new locals, handler IH the matched handler run, and evaluate_clock bounds ck); then clockSub_of_lowNoTimeout uses the tagged evaluate_add_clock_eq to lift the low run to the given one. The full evaluate_clock_sub remains open (While .9, If .12, DecCall .14, assembly .15)."
+},
+{
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "semantics_init_call",
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/SemanticsInitCall.lean",
+  "lean_name": "semanticsInitCall",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.2.22.3.2.4) compared pan_globalsProofScript.sml:2712-2718. The HOL free variables s start body start' rshape args' body' s' are bound in order of occurrence. Hypotheses, as a conjunction as in HOL: FLOOKUP s.code start = SOME ([], Seq body (TailCall start' []), rshape), with FLOOKUP as .lookup on the finite-support code and TailCall = Call NONE (panLangScript.sml:127 Overload); FLOOKUP s.code start' = SOME (args', body', rshape); !k. evaluate (body, s with <|locals := FEMPTY; clock := k|>) = (NONE, s' with clock := k), with FEMPTY as HolFiniteMapExact.empty and evaluate as evaluateHOLFiniteState; s'.ffi.io_events = s.ffi.io_events. Conclusion: semantics s start = semantics s' start', over the tagged panSem semantics_def (PanSem/Semantics.lean). No extra premise. Proof: untagged SemInitSupport.step (clock k+1 from s agrees in result and ffi with clock k from s'; via tagged evaluate_def Call/Seq equations, evaluate_invariants code preservation, and a tail call never ending NONE/Break/Continue), step0, then the Fail/Terminate/Diverge branches, the last using tagged LUB_IMAGE_SUC and evaluate_add_clock_io_events_mono. The io_events hypothesis is retained; the Lean proof does not use it."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/SemanticsInitCall.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only same-module canonical witness forwarding the reviewed PanSemStateFiniteExact toExact/ofExact roundtrip for the finite-map qualifier."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/SemanticsInitCall.lean",
+  "lean_name": "finmap_ext",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack local support (bead .22.3.2.4): HolFiniteMapExact extensionality on lookup."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/SemanticsInitCall.lean",
+  "lean_name": "eval_code",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack local support (bead .22.3.2.4): evaluate preserves code, projected from the tagged evaluateInvariantsHOLFinite."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/SemanticsInitCall.lean",
+  "lean_name": "callNone_result",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack local support (bead .22.3.2.4): a tail call never ends in NONE/Break/Continue, and a Return has the callee's declared shape."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/SemanticsInitCall.lean",
+  "lean_name": "lookup_init",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack local support (bead .22.3.2.4): lookup_code of a parameterless function yields FEMPTY locals."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/SemanticsInitCall.lean",
+  "lean_name": "step",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack local support (bead .22.3.2.4): clock-shift step of semantics_init_call (clock k+1 from s vs k from s', result and ffi)."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/SemanticsInitCall.lean",
+  "lean_name": "step0",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack local support (bead .22.3.2.4): at clock 0 the initial call times out with the initial ffi."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/SemanticsInitCall.lean",
+  "lean_name": "sem_tail_congr",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack local support (bead .22.3.2.4): congruence of the terminate/diverge tail of semantics_def."
 }
 ]
