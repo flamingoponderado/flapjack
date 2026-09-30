@@ -3460,8 +3460,9 @@
     "hol_name": "fperm_def",
     "lean_path": "Flapjack/Pancake/PanGlobals.lean",
     "lean_name": "fpermHOL",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds9 (source comparison, bead flapjack-pxn.18.3.5.8.20) HOL fperm_def (pan_globalsScript.sml:191-214) has seven equations (Dec, Seq, If, While, Call with optional rtyp/handler, DecCall, default). The exact Lean port fpermHOL is over the reviewed word-indexed ProgHOL width carrier with MlS identifiers; the Call metadata nesting Option (Option (VarKind × MlS) × Option (MlS × MlS × ProgHOL width)) matches HOL (((varkind # varname) option # ((eid # varname # prog) option)) option) constructor-for-constructor, the call/decCall names use the reviewed exact polymorphic fpermName, and every expression payload is left untouched. No qualifier applies. Direct HOL rows in scripts/hol-probes/pan_globals_fperm_probe.out."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "C source comparison literal pan_globalsScript191-214 fperm and216-221 fperm_decs, native ProgHOL/DeclHOL/FunDeclHOL with positive-width expression/value carriers: standard words_as_type_indexed_bitvec translation under NeZero width only. fperm preserves every expression payload, optional return destination and exception identifiers/binding; renames Call/DecCall function names and recursively traverses exactly original Dec/Seq/If/While/call-handler/DecCall children, identity catchall. fperm_decs changes only Function name/body, preserves inline/exported/params/returnShape and other declarations/list order. Native MlS and option/list/constructor structure unchanged, no new hypothesis. Entire definition signature/body byte-identical; explicit qualifier/classification repair, independent coordinator review pending.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "cakeml/pancake/pan_globalsScript.sml",
@@ -3476,8 +3477,9 @@
     "hol_name": "fperm_decs_def",
     "lean_path": "Flapjack/Pancake/PanGlobals.lean",
     "lean_name": "fpermDecsHOL",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds9 (source comparison, bead flapjack-pxn.18.3.5.8.20) HOL fperm_decs_def (pan_globalsScript.sml:216-221) has three equations ([], Function fi::decs renaming fi.name via fperm_name and fi.body via fperm, other d::decs unchanged). The exact Lean port fpermDecsHOL is over List (DeclHOL width) with MlString identifiers, uses the reviewed exact fpermName/fpermHOL, and matches clause-for-clause. No qualifier applies."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "C source comparison literal pan_globalsScript191-214 fperm and216-221 fperm_decs, native ProgHOL/DeclHOL/FunDeclHOL with positive-width expression/value carriers: standard words_as_type_indexed_bitvec translation under NeZero width only. fperm preserves every expression payload, optional return destination and exception identifiers/binding; renames Call/DecCall function names and recursively traverses exactly original Dec/Seq/If/While/call-handler/DecCall children, identity catchall. fperm_decs changes only Function name/body, preserves inline/exported/params/returnShape and other declarations/list order. Native MlS and option/list/constructor structure unchanged, no new hypothesis. Entire definition signature/body byte-identical; explicit qualifier/classification repair, independent coordinator review pending.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "cakeml/pancake/pan_globalsScript.sml",
@@ -3686,8 +3688,9 @@
     "hol_name": "functions_fperm_decs",
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
     "lean_name": "functionsFpermDecsHOL",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds9 (source comparison, bead flapjack-pxn.18.3.5.8.24) HOL functions_fperm_decs (pan_globalsProofScript.sml:1701-1708) states forall x y code, functions (fperm_decs x y code) = MAP (lambda (a,b,c,d). (fperm_name x y a, b, fperm x y c, d)) (functions code). The exact Lean port is over List (DeclHOL width) with the reviewed functionsHOL, fpermDecsHOL, fpermName, and fpermHOL; List.map is HOL MAP, the quadruple lambda is rendered with the right-nested projections entry.1/entry.2.1/entry.2.2.1/entry.2.2.2, and [NeZero width] matches HOL's positive word type. No extra hypotheses, no weakened conclusion, no qualifier."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "C source comparison pan_globalsProof1701-1708, functions/fperm_decs definitions and native DeclHOL/FunDeclHOL/ProgHOL carriers: same universal x/y/declaration list, original functions list MAP with name/body permutation and unchanged parameters/return shape; all four declaration constructors and list order retained. Only standard positive type-indexed HOL word to BitVec width under NeZero translation, explicit words_as_type_indexed_bitvec; native MlS list carriers unchanged, no FFI host or extra premise. Proof and elaborated type unchanged; independent coordinator review pending.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
@@ -37069,39 +37072,63 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.5.42.4): Call case of HOL inline_prog_correct (statement crep_inlineProofScript.sml:2301-2319; case Resume [Call] :2409 with suspensions [Tail] :2536 and [Nontail] :2719-3037). Statement shape as the accepted inlineProgCorrectDecCaseExact: the HOL source run of Call caltyp fname argexps, r <> SOME Error, inl_fs SUBMAP s.code, inl_bag SUBMAP inl_fs, state_rel_code, locals_strong_rel, code_inl_rel, with the existential target run of inline_prog inl_bag (Call ...), state_rel_code, code_inl_rel and the result-indexed locals_strong_rel conclusion. The only additional hypotheses are evaluate_ind's two guarded Call premises with P := the theorem predicate written out: ihExc (handler, guarded by OPT_MMAP args, lookup_code, the ALL_DISTINCT selector, clock <> 0, callee Exception eid, caltyp = SOME (_, SOME (eid', p)), eid = eid'; state st with locals := s.locals) and ihBody (callee body at dec_clock s with locals := newlocals under the same first guards). Both are in the reviewed callNonInlined spelling. No target-run or extra-context premise. The proof splits on HOL's own case analysis of inline_prog: not inlined (callNonInlined), inlined tail call (callTail), inlined distinct-return assign call (callNontail)."
+}
+,
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/Prime.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Imported-owner canonical finite-state roundtrip; derived representation infrastructure with no separately named HOL original."
 },
-  {
-    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/InlineProgCorrect.lean",
-    "lean_name": "inlineMotive",
-    "hol_path": null,
-    "hol_name": null,
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack local support (bead .18.5.5.51): the inline_prog_correct predicate (crepInlineGoal) for every program and state by evalCrepSemHOLProgExact_inductLex over the 19 tagged constructor cases, discharging every evaluate_ind premise internally."
-  },
-  {
-    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/InlineProgCorrect.lean",
-    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
-    "hol_path": null,
-    "hol_name": null,
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed CrepSemHOLState toBroad/ofBroad roundtrip for the relation qualifier."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-    "hol_name": "inline_prog_correct",
-    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/InlineProgCorrect.lean",
-    "lean_name": "inlineProgCorrectExact",
-    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support_relation": [
-      "CrepSemHOLState.locals",
-      "CrepSemHOLState.globals",
-      "CrepSemHOLState.code",
-      "inlFs",
-      "inlBag"
-    ],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.5.51): HOL crep_inlineProofScript.sml:2301-2319 inline_prog_correct. Binders p s r s' inl_fs s1 inl_bag in HOL order, as declared parameters. Single conjunctive hypothesis as in HOL: evaluate (p,s) = (r,s'), r <> SOME Error, inl_fs SUBMAP s.code, inl_bag SUBMAP inl_fs, state_rel_code s s1, locals_strong_rel s s1, code_inl_rel inl_fs s s1. Conclusion: exists s1'. evaluate (inline_prog inl_bag p, s1) = (r, s1') /\\ state_rel_code s' s1' /\\ code_inl_rel inl_fs s' s1' /\\ the result-indexed case (NONE/Break/Continue => locals_strong_rel; Error => F; other => T) as the displayed match. Carriers as the accepted constructor cases: evalCrepSemHOLProgExact, the tagged inline_prog_def port inlineProgHOLExact, and the exact state_rel_code/locals_strong_rel/code_inl_rel ports. No extra premise and no public IH: the untagged inlineMotive proves the evaluate_ind predicate for all p and s by the lexicographic (clock, size) induction, applying each of the 19 tagged constructor cases with its literal premises."
-  },
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/Prime.lean",
+  "lean_name": "evaluateFpermPrimeHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_fperm'",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison pan_globalsProof1811-1818 and accepted evaluate_fperm1721-1810: unconditional arbitrary f/g/program/source/clock equation, full result and complete post-state pair mapping, target simultaneous code+clock update equals source clock reset then code permutation. Derives source run pair internally by generalization and pair decomposition; no success/nonError/target-run/induction hypothesis or postrelation premise. Native MlS/ProgHOL/result carriers unchanged; canonical finite locals/globals/code/eshapes with genuine imported-owner roundtrip, positive BitVec width under NeZero and Type0 FFI host translations only. Independent coordinator source acceptance pending; proof-only no executed compiler change."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/InlineProgCorrect.lean",
+  "lean_name": "inlineMotive",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack local support (bead .18.5.5.51): the inline_prog_correct predicate (crepInlineGoal) for every program and state by evalCrepSemHOLProgExact_inductLex over the 19 tagged constructor cases, discharging every evaluate_ind premise internally."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/InlineProgCorrect.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed CrepSemHOLState toBroad/ofBroad roundtrip for the relation qualifier."
+},
+{
+  "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+  "hol_name": "inline_prog_correct",
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/InlineProgCorrect.lean",
+  "lean_name": "inlineProgCorrectExact",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "CrepSemHOLState.locals",
+    "CrepSemHOLState.globals",
+    "CrepSemHOLState.code",
+    "inlFs",
+    "inlBag"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.5.51): HOL crep_inlineProofScript.sml:2301-2319 inline_prog_correct. Binders p s r s' inl_fs s1 inl_bag in HOL order, as declared parameters. Single conjunctive hypothesis as in HOL: evaluate (p,s) = (r,s'), r <> SOME Error, inl_fs SUBMAP s.code, inl_bag SUBMAP inl_fs, state_rel_code s s1, locals_strong_rel s s1, code_inl_rel inl_fs s s1. Conclusion: exists s1'. evaluate (inline_prog inl_bag p, s1) = (r, s1') /\\ state_rel_code s' s1' /\\ code_inl_rel inl_fs s' s1' /\\ the result-indexed case (NONE/Break/Continue => locals_strong_rel; Error => F; other => T) as the displayed match. Carriers as the accepted constructor cases: evalCrepSemHOLProgExact, the tagged inline_prog_def port inlineProgHOLExact, and the exact state_rel_code/locals_strong_rel/code_inl_rel ports. No extra premise and no public IH: the untagged inlineMotive proves the evaluate_ind predicate for all p and s by the lexicographic (clock, size) induction, applying each of the 19 tagged constructor cases with its literal premises."
+},
   {
     "lean_path": "Flapjack/Pancake/Proofs/CrepInline/StateRelImpSemantics.lean",
     "lean_name": "holFmapAsFiniteSupportParamWitness_fstMap3F_inl_fs",
