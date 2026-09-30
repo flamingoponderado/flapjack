@@ -1,3 +1,4 @@
+import Flapjack.Pancake.Proofs.PanGlobals.CompileExpOperators
 import Flapjack.Pancake.Proofs.PanGlobals.CompileExpNamed
 import Flapjack.Pancake.Proofs.PanGlobals.CompileExpCmpShift
 import Flapjack.Pancake.Proofs.PanGlobals.CompileExpRStruct

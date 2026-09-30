@@ -28946,5 +28946,53 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanGlobalsContextExact toBroad/ofBroad roundtrip; it supports PanGlobalsContextExact.globals named by the state_rel tags."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileExpOperators.lean",
+    "lean_name": "compileExpCorrectOpHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_exp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Luna A compared pan_globalsProofScript.sml:103-163 Op eval_ind case, compile_exp clauses, and panSemScript.sml:263-277 eval: original relation T/source eval only plus per-member successful recursive expression IH. Actual exact evaluation list is preserved, including order/failure; unchanged EVERY ValWord check and word_op/pan_op OPTION_MAP result. BinOp/PanOp constructor carriers unchanged; canonical finite state/context relation and positive word/Type0 FFI translation, internal membership decisions no premise. No target evaluation or bound assumption. Full assembly remains open; coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileExpOperators.lean",
+    "lean_name": "compileExpCorrectPanopHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_exp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Luna A compared pan_globalsProofScript.sml:103-163 Panop eval_ind case, compile_exp clauses, and panSemScript.sml:263-277 eval: original relation T/source eval only plus per-member successful recursive expression IH. Actual exact evaluation list is preserved, including order/failure; unchanged EVERY ValWord check and word_op/pan_op OPTION_MAP result. BinOp/PanOp constructor carriers unchanged; canonical finite state/context relation and positive word/Type0 FFI translation, internal membership decisions no premise. No target evaluation or bound assumption. Full assembly remains open; coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileExpOperators.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanSemStateFiniteExact toExact/ofExact finite-support roundtrip; it supports the PanSemStateFiniteExact fields named by the state_rel tags."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileExpOperators.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanGlobalsContextExact toBroad/ofBroad roundtrip; it supports PanGlobalsContextExact.globals named by the state_rel tags."
   }
 ]
