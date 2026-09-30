@@ -362,6 +362,7 @@ import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectExtCall
 import Flapjack.Pancake.Proofs.CrepInline
 import Flapjack.Pancake.Proofs.CrepInline.ShMem
 import Flapjack.Pancake.Proofs.CrepInline.Call
+import Flapjack.Pancake.Proofs.CrepInline.UpdateListLocals
 import Flapjack.Pancake.CrepInline.Canonical
 import Flapjack.Pancake.CrepInline.InlineRouteBridge
 import Flapjack.CompileFunctionDistinct
