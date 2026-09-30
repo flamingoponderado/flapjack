@@ -1539,6 +1539,25 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} {σ : Type} [NeZero width] :
 
 end PanGlobalsResortDeclsWitnesses
 
+/-- Function-extensional code-update invariant. HOL obtains this equation by
+swapping the expression/code quantifiers of `eval_upd_code_eq` and rewriting
+with function equality and eta conversion (pan_globalsProofScript:1697-1699).
+The canonical state, four finite-map fields, native expression carrier and
+positive word dimension are the same as the reviewed pointwise invariant.
+The decidable memory-domain instance is computation evidence, not a semantic
+premise; updating code preserves that domain. -/
+@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "eval_upd_code_eta"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evalHOL_upd_code_eta {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) [h : DecidablePred state.memaddrs]
+    (code : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL)) :
+    @PanSemStateFiniteExact.evalHOLFinite width σ _ { state with code := code } h =
+      @PanSemStateFiniteExact.evalHOLFinite width σ _ state h := by
+  funext expression
+  exact @PanSemStateFiniteExact.evalHOLFinite_upd_code_eq width σ _ state h code expression
+
+
 section
 open Classical
 

@@ -659,7 +659,7 @@ theorem evaluateHOLFiniteState_call_clock_zero {width : Nat} {σ : Type} [NeZero
     dsimp only
     rw [hargsContext]
     dsimp only
-    rw [hlookupContext]
+    rw [lookupCodeCanonicalHOL, hlookupContext]
     dsimp only
     rw [if_pos hclockContext]
   rw [evaluateHOLFiniteState_eq_withDeciders state (.call info function arguments)]

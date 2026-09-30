@@ -2630,6 +2630,7 @@ def validate_inventory(
             combined_words_status,
             "reviewed_fmap_as_finite_support_function_words_as_type_indexed_bitvec",
             "reviewed_fmap_as_finite_support_result_words_as_type_indexed_bitvec",
+            combined_heterogeneous_function_words_status,
             combined_relation_words_status,
             combined_parameter_words_status,
             combined_existential_words_status,
