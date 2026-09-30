@@ -30987,5 +30987,36 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack canonical carrier roundtrip re-export for the full expression theorem representation qualifiers; no separate HOL original."
-  }
+  },
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/TailCall.lean",
+  "lean_name": "evaluateFreshLocal_CallNone",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_fresh_local",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Luna A source comparison (.32.3.13), pan_globalsProofScript1045-1091 Call case specialized along panSem657-687 caltyp NONE source branch. Original fresh name/value/state/result/poststate, freshness/source evaluation, existential locals and conditional good_res/non-Error FUPDATE retained. No added success, target-run, body outcome, shape, clock or lookup premise. Argument-list freshness derives internally from free_var_ids. Call entry overwrites caller locals with newlocals, so updated/source callee states are definitionally equal and body evaluation is the identical total pair; no body IH needed. Literal argument/lookup/clock gates, fix-clock evaluator equation, all body outcomes, return-shape comparison, empty_locals for successful tail return/unhandled exception/fallback, and all error states preserved. Existential locals selected from actual updated evaluation; no result assumption. Same-module canonical roundtrip and reviewed finite-map/positive width/Type0 FFI translations. Kernel checked; coordinator review pending. Non-tail Call and DecCall plus full fresh-local induction remain open."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/TailCall.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific canonical state codec/fresh argument-list transport infrastructure; no separate HOL original. Domain decisions internal."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/TailCall.lean",
+  "lean_name": "evalFreshUpdate",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific canonical state codec/fresh argument-list transport infrastructure; no separate HOL original. Domain decisions internal."
+}
 ]
