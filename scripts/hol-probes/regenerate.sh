@@ -101,6 +101,10 @@ run_probe() {
   done
 }
 
+run_probe stacksem_allocation_probeScript.sml stacksem_allocation_probe.out \
+  space_true space_false space_wrap space_loc space_missing space_next_loc \
+  gc_short gc_bad_stack gc_none gc_decode_fail gc_success space_mixed type_space alloc_success alloc_halt alloc_gc_failure alloc_missing alloc_bad_amount alloc_bad_space \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe stacksem_stack_codec_probeScript.sml stacksem_stack_codec_probe.out \
   full_zero full_one full_two full_oob full_loc enc_empty enc_zero enc_zero_extra enc_loc enc_true enc_false enc_two enc_short enc_missing_sentinel enc_bad_continuation dec_empty dec_zero dec_true dec_false dec_short_roots dec_extra_roots dec_two dec_zero_extra full_mixed enc_mixed dec_mixed type_full type_enc type_dec \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" \
@@ -124,9 +128,15 @@ run_probe word_sem_cut_names_type_probeScript.sml word_sem_cut_names_type_probe.
 run_probe word_alloc_live_inst_probeScript.sml word_alloc_live_inst_probe.out \
   load16 load8 store32 carry overflow to64 to32 from64 from32 "$cake_dir/compiler/backend/word_allocScript.sml" \
   "$cake_dir/compiler/backend"
+run_probe word_alloc_live_exp_probeScript.sml word_alloc_live_exp_probe.out \
+  nested duplicate empty shift constant lookup \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
 run_probe word_alloc_colour_inst_probeScript.sml word_alloc_colour_inst_probe.out \
   load16 store16 load8 store32 carry fp_move "$cake_dir/compiler/backend/word_allocScript.sml" \
   "$cake_dir/compiler/backend"
+run_probe word_alloc_live_exp_probeScript.sml word_alloc_live_exp_probe.out \
+  nested duplicate empty shift constant lookup \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
 run_probe word_alloc_colour_exp_probeScript.sml word_alloc_colour_exp_probe.out \
   nested duplicate empty "$cake_dir/compiler/backend/word_allocScript.sml" \
   "$cake_dir/compiler/backend"

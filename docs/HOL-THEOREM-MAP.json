@@ -26921,6 +26921,20 @@
     "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.5.48; crep_inlineProofScript.sml:2693-2699): same binders fm q l fm' ns; hypotheses outside-q-and-ns lookup transfer, q/ns disjointness, ALL_DISTINCT q (List.Nodup), OPT_MMAP (FLOOKUP fm') q = SOME l; conclusion fm |++ ZIP (q,l) SUBMAP FOLDL res_var fm' (ZIP (ns, MAP (FLOOKUP fm) ns)) with SUBMAP = HolFiniteMapExact.submap and res_var = the tagged resVarEq. No extra hypotheses."
   },
   {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "single_dec_evaluate",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NestedDecs.lean",
+    "lean_name": "singleDecEvaluateExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; bead flapjack-pxn.18.5.5.44.1) against crep_inlineProofScript.sml:587-595 and exact crepSem evaluate Dec equation. Same successful expression, updated-locals body evaluation and non-Error premises; same existential Dec evaluation and state_rel conclusion. Restoration uses exact resVarEq and alters only locals; all ten state_rel fields remain equal. No target evaluation or post-state relation assumed."
+  },
+  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UpdateListLocals.lean",
@@ -26943,5 +26957,67 @@
     "lean_name": "lookup_updateListEq_zip_getElem",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack private helper (bead flapjack-pxn.18.5.5.48): with distinct keys and equal lengths, the updateListEq over ZIP (zs, ys) maps zs[i] to ys[i]; via FUPDATE_LIST_HOL_eq_FUPDATE_LIST and updateEqZipFlookupHOL. No HOL original."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NestedDecs.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-luna-b Flapjack-specific canonical state roundtrip witness re-export; no separate HOL declaration claimed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "gc_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Allocation.lean",
+    "lean_name": "gc",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; bead flapjack-y19g.7) against stackSemScript.sml:356-400. Accepted exact owning state and GC function carrier. GC preserves unused prefix, encodes active stack, passes roots/memory/domain/store, decodes against old stack, updates only stack/store/regs/memory. All NONE exits preserved. Allocation writes AllocSize before GC, returns original state on GC failure, retains collected state on later errors, returns NONE on sufficient space and Halt Word1/empty_env on insufficient space. Direct original HOL rows cover all branches, replayed by kernel cbv. Exact evaluator and production refinement remain open on parent y19g."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "alloc_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Allocation.lean",
+    "lean_name": "alloc",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; bead flapjack-y19g.7) against stackSemScript.sml:356-400. Accepted exact owning state and GC function carrier. GC preserves unused prefix, encodes active stack, passes roots/memory/domain/store, decodes against old stack, updates only stack/store/regs/memory. All NONE exits preserved. Allocation writes AllocSize before GC, returns original state on GC failure, retains collected state on later errors, returns NONE on sufficient space and Halt Word1/empty_env on insufficient space. Direct original HOL rows cover all branches, replayed by kernel cbv. Exact evaluator and production refinement remain open on parent y19g."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "has_space_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Allocation.lean",
+    "lean_name": "hasSpace",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; bead flapjack-y19g.7) against stackSemScript.sml:376-381. HOL type probe confirms independently quantified request/store word dimensions; Lean retains both NeZero dimensions. Canonical standalone store map. Exactly Word/SOME Word/SOME Word pattern then unsigned w2n request <= w2n modular difference; all other patterns NONE. Direct original true/false/wrap/nonword/missing/mixed-width rows kernel replay."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "nested_decs_evaluate",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NestedDecs.lean",
+    "lean_name": "nestedDecsEvaluateExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; bead flapjack-pxn.18.5.5.44.2) against crep_inlineProofScript.sml:597-634. Same six premises: successful OPT_MMAP/List.mapM, equal lengths, ALL_DISTINCT/Pairwise inequality, freshness for every name/expression, exact updated-locals body evaluation and non-Error. Same existential nested_decs evaluation/state_rel. Induction transfers tail map through exact irrelevant-local expression equality, applies reviewed single_dec_evaluate, and composes all ten state_rel fields. Canonical updateListEq implements FUPDATE_LIST and zip order. No target evaluation, simulation, or post-state relation premise."
   }
 ]

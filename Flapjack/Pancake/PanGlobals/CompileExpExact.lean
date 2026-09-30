@@ -305,6 +305,14 @@ private def compileDecsGlobalAddressExact {width : Nat} [NeZero width]
     (context : PanGlobalsContextExact width) (shape : ShapeHOL) : BitVec width :=
   context.globalsSize + cakeBytesInWord width * BitVec.ofNat width (sizeOfShapeHOL shape)
 
+/-- Rewrite factoring for the local declaration-address helper. This equation
+has no separate HOL declaration; it exposes the literal arithmetic for codec
+proofs without changing the reviewed compiler body. -/
+theorem compileDecsGlobalAddressExact_eq {width : Nat} [NeZero width]
+    (context : PanGlobalsContextExact width) (shape : ShapeHOL) :
+    compileDecsGlobalAddressExact context shape =
+      context.globalsSize + cakeBytesInWord width * BitVec.ofNat width (sizeOfShapeHOL shape) := rfl
+
 /- Exact port of HOL `pan_globals$compile_decs_def`
    (`pan_globalsScript.sml:160-176`) over the reviewed exact carriers.  The
    `words_as_type_indexed_bitvec` qualifier records HOL's positive-dimensional
