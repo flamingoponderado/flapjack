@@ -25353,5 +25353,18 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-pxn.18.5.9.32): the full HOL loop_to_wordProof compile_correct (loop_to_wordProofScript.sml:57-97), stated in HOL as the conclusion of loopSemTheory.evaluate_ind specialised to goal, after PBETA_CONV. Lean states that conclusion: ∀prog s res s1 t ctxt retv l. evaluate (prog,s) = (res,s1) ∧ res ≠ SOME Error ∧ state_rel s t ∧ locals_rel ctxt s.locals t.locals ∧ lookup 0 t.locals = SOME retv ∧ good_dimindex(:'a) ∧ ¬isWord retv ∧ domain (acc_vars prog LN) ⊆ domain ctxt ⇒ ∃t1 res1. evaluate (FST (comp ctxt prog l),t) = (res1,t1) ∧ t1.ffi = s1.ffi ∧ case res of ..., with the case rendered by the untagged resultCase (each arm as in HOL, the catch-all _ => F as the Error arm False). Binder types are the exact carriers used by the reviewed case slices (LoopSemStateFiniteExact, WordSemStateFiniteExact with an arbitrary configuration type C and the source FFI host F). No extra premise, no target-run or post-state assumption. Proof mirrors HOL's match_mp_tac ind_thm: the tagged LoopSemStateFiniteExact.evaluate_induct (evaluate_ind) with P := PropertyAt C, discharged by the 24 tagged compileCorrect_<Case> theorems of this directory; Seq, Loop and Call take their IH premise sets as a conjunction and are applied through curried-to-conjunction adapters. Kernel-checked. Same-module witnesses LoopToWordCompileCorrectAssemblyWitnesses.*. This assembles compile_correct only: it depends on the faithfulness of the tagged loopSem/wordSem evaluators, comp and state_rel ports, whose upstream obligations are tracked separately; it is not an end-to-end compiler correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateAddClock.lean",
+    "lean_name": "evaluate_add_clock",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "evaluate_add_clock",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-pxn.18.5.9.1.1): HOL evaluate_add_clock (wordPropsScript.sml:1383-1386): ∀p s r s'. evaluate (p,s) = (r,s') ∧ r ≠ SOME TimeOut ⇒ evaluate (p,s with clock := s.clock + extra) = (r,s' with clock := s'.clock + extra). HOL's free variable extra is the outermost explicit binder; p s r s', the conjunctive premise and the conclusion are as in HOL, over the tagged exact wordSem evaluate and WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness WordSemEvaluateAddClockSupport.holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). No extra premise. Proof follows HOL's recInduct evaluate_ind: untagged evaluate_add_clock_aux recurses on HOL's termination measure (termdep, clock, size); Tick/MustTerminate/Seq/If/Loop/Call are handled by their evaluate_def clauses, with a zero clock excluded by the non-TimeOut premise, and every other constructor by the untagged clock-constancy lemmas (HOL's CONST lemmas, evaluate_clock_const). Kernel-checked."
   }
 ]
