@@ -1,3 +1,4 @@
+import Flapjack.Pancake.PanStructs.CompileExpExact
 import Flapjack.Pancake.PanStructs.OldExpShapeExact
 import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.RoundTrip
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.Expressions
@@ -25,7 +26,10 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateClock
 import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateInd
 import Flapjack.Compiler.Backend.Semantics.WordSem.EventsMono
 import Flapjack.Compiler.Backend.Semantics.StackSem.State
+import Flapjack.Compiler.Backend.Semantics.StackSem.Control
+import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
 import Flapjack.Compiler.Backend.Semantics.StackSem.Bitmap
+import Flapjack.Compiler.Backend.Semantics.StackSem.WordBitmap
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateIoEventsMono
 import Flapjack.Compiler.Backend.Semantics.WordSem.Semantics
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClock
@@ -50,6 +54,7 @@ import Flapjack.Pancake.PanLang.Prog.FreeVarIdsCodec
 import Flapjack.Pancake.PanGlobals.CallHandlerExact
 import Flapjack.Pancake.PanGlobals.ProgramExactRoute
 import Flapjack.Pancake.PanGlobals.DeclarationProgramRoute
+import Flapjack.Pancake.PanGlobals.CompileTopExact
 import Flapjack.Pancake.PanLang.Decl
 import Flapjack.Pancake.PanGlobals.CompileExpExact
 import Flapjack.Pancake.PanGlobals.CompileExpExactRoute
