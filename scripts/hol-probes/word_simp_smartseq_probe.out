@@ -1,0 +1,6 @@
+skip_left=Tick
+skip_right=Seq Tick Skip
+labels_skip_left=[(3,4)]
+labels_call_left=[(3,4)]
+labels_both=[(3,4); (3,4)]
+labels_seq=[(3,4); (3,4)]
