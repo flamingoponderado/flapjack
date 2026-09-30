@@ -1324,6 +1324,24 @@ theorem updateLocalsNotVarsEvalEqCrepHOL {width : Nat} [NeZero width] {σ : Type
         expression = some value := by
   rw [evalCrepSemHOLExp_updateLocals_eq_of_not_vars state expression name word hfresh, heval]
 
+/-- Exact port of the public HOL `crepProps$update_locals_not_vars_eval_eq'`
+(`crepPropsScript.sml:194-200`; a `[local]` namesake at `:131` is the
+result-carrying helper): `~MEM n (var_cexp e) ==>
+eval (s with locals := s.locals |+ (n,w)) e = eval s e`.  HOL's binder list
+`∀s e v n w` includes a `v` that occurs nowhere in the statement; this
+vacuous binder is omitted.  `|+` is `updateEq` on the finite-support locals.
+The line qualifier disambiguates the two HOL declarations of this name. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "update_locals_not_vars_eval_eq'" 194
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
+theorem updateLocalsNotVarsEvalEq'CrepHOL {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) (expression : CrepExpHOL width)
+    (name : Nat) (word : HolWordLab width)
+    (hfresh : name ∉ crepExpVarsHOL expression) :
+    evalCrepSemHOLExp { state with locals := state.locals.updateEq (name, word) }
+        expression = evalCrepSemHOLExp state expression :=
+  evalCrepSemHOLExp_updateLocals_eq_of_not_vars state expression name word hfresh
+
 /-- Exact port of HOL `flookup_res_var_diff_eq`
     (`cakeml/pancake/semantics/crepPropsScript.sml:249-255`):
     `n <> m ==> FLOOKUP (res_var l (m, v)) n = FLOOKUP l n`.
