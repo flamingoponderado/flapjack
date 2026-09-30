@@ -29674,5 +29674,53 @@
     "lean_name": "crepMergeExitHOL_eq_return",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.5.46.2): a merged If exit is Ret only if a branch exit is Ret; no HOL original."
-  }
+  },
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/ReadBytearray.lean",
+  "lean_name": "stateRelReadBytearray",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "state_rel_read_bytearray",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "PanSemStateFiniteExact.locals",
+    "PanSemStateFiniteExact.globals",
+    "PanSemStateFiniteExact.code",
+    "PanSemStateFiniteExact.eshapes",
+    "PanGlobalsContextExact.globals"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source comparison HOL1534-1546: original flag/context/source/target/bytes/address/count binders, conjunction of state_rel and successful source read, same-byte successful target conclusion. Exact BitVec8 bytes and positive-width words; aligned byte-load/domain guard/get-byte, target endianness/domain/memory agreement derived from state_rel. Faithful read_bytearray recurrence increments word address with overflow, all lengths including zero. Canonical state/context maps and roundtrip witnesses. No extra target result or caller premise. Coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/ReadBytearray.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack proof/representation infrastructure with no independent HOL declaration; successful byte/array monotonicity and canonical map roundtrip support exact original state relation theorem."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/ReadBytearray.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack proof/representation infrastructure with no independent HOL declaration; successful byte/array monotonicity and canonical map roundtrip support exact original state relation theorem."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/ReadBytearray.lean",
+  "lean_name": "byteLoad_mono",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack proof/representation infrastructure with no independent HOL declaration; successful byte/array monotonicity and canonical map roundtrip support exact original state relation theorem."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/ReadBytearray.lean",
+  "lean_name": "readArray_mono",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack proof/representation infrastructure with no independent HOL declaration; successful byte/array monotonicity and canonical map roundtrip support exact original state relation theorem."
+}
 ]
