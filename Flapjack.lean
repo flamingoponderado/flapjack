@@ -356,6 +356,8 @@ import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.Ffi
 import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.CutState
 import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.FfiHook
 import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.SetGlobal
+import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.Store
+import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.Loads
 import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.If
 import Flapjack.Pancake.Semantics.LoopSemStateExact.ProductionExtCall
 import Flapjack.Pancake.Semantics.LoopSemStateExact.ProductionEvalHook
@@ -800,6 +802,7 @@ import Flapjack.Compiler.Backend.StackLang
 import Flapjack.Compiler.Backend.StackLang.Prog
 import Flapjack.Compiler.Backend.StackLang.ProductionCodec
 import Flapjack.Compiler.Backend.StackLang.WordPayloads.InstructionBoundary
+import Flapjack.Compiler.Backend.StackLang.MacroLeaves
 import Flapjack.Compiler.Backend.StackCarrier
 import Flapjack.Basis.Pure.MlString
 import Flapjack.Compiler.Backend.MlStringBridge
