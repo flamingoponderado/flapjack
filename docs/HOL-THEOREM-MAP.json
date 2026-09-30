@@ -36192,5 +36192,38 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-sol (22.5.11) compared original evaluate_fperm1721 While arm and literal faithful evaluate_ind While conjunct: all THREE original guarded IHs retained with original value/wordlab/word/body result/post and continue-result variables. Body IH at decClock s guarded by actual successful nonzero word condition and nonzero source clock; distinct NONE and Continue backedges additionally require original source body-pair equality and exact result guards. Full original motive is same source-run implication to target equality/same result/post code permutation, no targetrun/nonError/postrelation premise. Accepted faithful while clock rewrite and unconditional expression/code invariance used. Missing/structured condition Error, zero condition, timeout with cleared locals, normal/continue recursion, Break-to-NONE, returned/exception/error/timeout/finalFFI outcomes all proved. Clock decrement/code update and locals clearing/code update transported internally, not assumed. Exact canonical4state maps, MlString/ValueHOL/word carrier and positive words/Type0 FFI qualifiers only; genuine local canonical witness. fpermEvaluateGoal is untagged statement infrastructure spelling original motive, no independent HOL declaration. Full permutation assembly remains open; coordinator review pending."
-}
+},
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Call.lean",
+    "lean_name": "compileCorrect_Call",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol source comparison33.16: original gen_goal172-181 and complete Call proof1138-1510, against literal faithful evaluate_ind Call conjunct. Public handler and callee IHs preserve every original quantified intermediate, argument/code lookup, product equalities, nonzero-clock, actual exceptional callee run, caltyp/handler projections, matching exception identifier, eshapes lookup, shape equality and local-value validity guard. Exhaustive tail plus NONE/Local/Global destination crossed with NONE/SOME handler invokes seven accepted leaves; adapters instantiate intermediate witnesses and derive guards without strengthening public premises. compileCorrectGoal retains original source nonError, existential faithful compiled target evaluation and complete goodRes postrelation. Canonical state/context finite maps use genuine imported roundtrips; bare newlocals covers the original nested map binders. Native MlS and complete ProgHOL/ValueHOL/ShapeHOL carriers; positive type-indexed BitVec width and Type0 FFI conventional translation only. Proof-side assembly uses reviewed executed compiler definition; no executable change. Coordinator independent acceptance remains pending.",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanGlobalsContextExact.globals",
+      "newlocals"
+    ],
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Call.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Canonical imported state/context roundtrip reexport; Flapjack representation infrastructure, no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Call.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Canonical imported state/context roundtrip reexport; Flapjack representation infrastructure, no independent HOL declaration."
+  }
 ]
