@@ -1548,6 +1548,22 @@
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "state_rel_imp_semantics_to_crep",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelImpSemantics.lean",
+    "lean_name": "stateRelImpSemanticsToCrep",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "CrepSemHOLState.code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-pxn.18.4.4): HOL pan_to_crepProof state_rel_imp_semantics_to_crep (pan_to_crepProofScript.sml:4694-4705). Lean keeps the binders s t pan_code start (panSem/crepSem states share the FFI host σ) and every premise conjunct: state_rel; ALL_DISTINCT (MAP FST (functions pan_code)); s.code and t.code = alist_to_fmap of functions / compile_to_crep (rendered HolFiniteMapExact.empty.updateList l.reverse, as in the tagged mk_ctxt_code_imp_code_rel); s.locals = FEMPTY; EVERY (localised_prog ∘ FST o SND ∘ SND) as each function body; size_of_eids < dimword (2 ^ width); FDOM equality as pointwise lookup definedness; semantics s start <> Fail. The conclusion is crepSem semantics t start = panSem semantics s start, over the tagged crepSemantics and panSem semantics_def. No extra premise. The proof route differs from HOL's direct unfolding of both semantics_defs. The untagged panSemIsWrapper and the tagged crep_sem_is_wrapper rewrite both sides as semantics_wrapper, and the tagged semantics_wrapper_eq applies. Premises come from the tagged pc_compile_correct at Call NONE start [] with ctxt mk_ctxt FEMPTY (make_funcs (functions pan_code)) 0 (get_eids_from_decls pan_code) (code_rel via mk_ctxt_code_imp_code_rel, excp_rel via get_eids_imp_excp_rel, locals_rel via mk_ctxt_imp_locals_rel), the tagged crepProps/panProps evaluate_add_clock_eq and the evaluate_add_clock_io_events_mono pair. Same-module relation witnesses. Kernel-checked; standard axioms."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
     "hol_name": "state_rel_structs",
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
     "lean_name": "stateRel_structs",

@@ -11,8 +11,40 @@
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelImpSemantics.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on stateRelImpSemanticsToCrep; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelImpSemantics.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on stateRelImpSemanticsToCrep; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelImpSemantics.lean",
     "lean_name": "holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on mkCtxtImpLocalsRelExact; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelImpSemantics.lean",
+    "lean_name": "panSemIsWrapper",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific support for stateRelImpSemanticsToCrep (bead flapjack-pxn.18.4.4): panSem semantics_def rewritten as the semantics_wrapper of its entry runs (TimeOut Incomplete; FinalFFI/Return CompleteResult; else RunError, matching HOL's Fail test). HOL states no panSem analogue of crep_sem_is_wrapper."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelImpSemantics.lean",
+    "lean_name": "panSemIsWrapper_aux",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private helper of panSemIsWrapper (bead flapjack-pxn.18.4.4); no HOL declaration."
   }
 ]

@@ -454,9 +454,8 @@
     "hol_name": "cut_env_LN_IMP",
     "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
     "lean_name": "wordSemCutEnvLNIMPHOL",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-c source comparison (2026-09-29; bead flapjack-pxn.18.5.9.17.4) against loop_to_wordProofScript.sml:419-424. HOL states cut_env (s,LN) l = SOME env ==> cut_envs (s,LN) l = SOME (env,LN). Lean retains the same two inputs, success premise, and pair conclusion using WordLangCutsetsHOL = Spt Unit × Spt Unit and exact Spt locals/outputs; no logical premise was added. The tagged wordSem cut_envs/cut_names/cut_env definitions match HOL: the empty second num_set succeeds and intersects to LN, while cut_env unions that second result on the left of e1, so union LN e1 is e1. The only representation qualification is the polymorphic HOL word value model as width-indexed BitVec; the Lean positive-width instance is the carrier constraint."
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-09-30 bead .11.1.6.1: original loop_to_wordProof419-425 is environment-payload-polymorphic, and does not bind a word type. Restores arbitrary beta Spt environment/result to match HOL, removes inapplicable word qualifier. Retains exactly source cut_env (s,LN) success premise and same pair (env,LN) cut_envs conclusion. Generic cut_env helpers specialize identically at all word-valued callers; proof uses literal empty cut/subset/inter/union branches without extra premises."
   },
   {
     "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
@@ -465,16 +464,15 @@
     "lean_name": "wordSemCutEnvMkNewCutsetHOL",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-c source comparison (2026-09-29; bead flapjack-pxn.18.5.9.17.7) against loop_to_wordProofScript.sml:395-408. HOL's single premise is the conjunction of locals_rel ctxt l1 l2, domain x1 SUBSET domain l1, and lookup 0 l2 = SOME y. Lean retains that same conjunction over exact Spt and localsRelHOL carriers. Both conclusions existentially return env1/result, assert the same successful cut_env (mk_new_cutset ctxt x1,LN) on l2, and relate the same inter l1 x1 source locals to that result; there are no extra hypotheses. The proof follows the HOL definitions: mk_new_cutset maps the live-domain enumeration through find_var and inserts zero; the subset guard follows from locals_rel and the source-domain premise; cut_env unions the empty second cut on the left; and lookup_inter preserves the mapped locals relation. The only representation qualification is HOL's polymorphic word payload represented by positive-width WordLocW width (BitVec)."
+    "reviewer": "flapjack-luna-c source comparison (2026-09-29; bead flapjack-pxn.18.5.9.17.7) against loop_to_wordProofScript.sml:395-408. HOL's single premise is the conjunction of locals_rel ctxt l1 l2, domain x1 SUBSET domain l1, and lookup 0 l2 = SOME y. Lean retains that same conjunction over exact Spt and localsRelHOL carriers. Both conclusions existentially return env1/result, assert the same successful cut_env (mk_new_cutset ctxt x1,LN) on l2, and relate the same inter l1 x1 source locals to that result; there are no extra hypotheses. The proof follows the HOL definitions: mk_new_cutset maps the live-domain enumeration through find_var and inserts zero; the subset guard follows from locals_rel and the source-domain premise; cut_env unions the empty second cut on the left; and lookup_inter preserves the mapped locals relation. The only representation qualification is HOL's polymorphic word payload represented by positive-width WordLocW width (BitVec). Source re-review 2026-09-30 .11.1.6.1: HOL loop_to_wordProof394-410 retains locals_rel word-local carriers, domain subset and lookup0 premise, existential target cut and source inter relation. Generic cut_env specializes beta to WordLocW; no statement hypothesis/result change. One proof-step rewrite avoids obsolete specialized matcher."
   },
   {
     "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
     "hol_name": "cut_env_mk_new_cutset_IMP",
     "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
     "lean_name": "wordSemCutEnvMkNewCutsetIMPHOL",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-c source comparison (2026-09-29; bead flapjack-pxn.18.5.9.17.6) against loop_to_wordProofScript.sml:438-444. HOL states the exact implication cut_env (mk_new_cutset ctxt x1,LN) l1 = SOME l2 ==> lookup 0 l2 = lookup 0 l1. Lean retains context, live num_set, locals and result carriers, the same successful cut premise, and the same key-0 lookup conclusion with no extra logical premise. mkNewCutsetHOL is the tagged definition port of mk_new_cutset_def over Spt; wordSemCutEnv/wordSemCutEnvs/wordSemCutNames are the tagged cut_env definitions over the same Spt carrier. The proof extracts the first cut's subset guard and inter result, uses that the generated set inserts key 0 and the empty second cut is LN, then matches HOL's left-empty union and intersection lookup clauses. The only representation qualification is HOL's polymorphic word payload represented by positive-width WordLocW width (BitVec); there is no map, list, state, or evaluator translation."
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-09-30 bead .11.1.6.1: original loop_to_wordProof438-445 is environment-payload-polymorphic, and does not bind a word type. Restores arbitrary beta Spt environment/result to match HOL, removes inapplicable word qualifier. Retains exactly cut_env(mk_new_cutset ctxt x1,LN) success and lookup0 result=lookup0 source conclusion; context exact Spt Nat and unit live num_set unchanged. Generic cut_env helpers specialize identically at all word-valued callers; proof uses literal empty cut/subset/inter/union branches without extra premises."
   },
   {
     "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
