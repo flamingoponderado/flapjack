@@ -28505,5 +28505,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-a source comparison against pan_globalsProofScript.sml:2088-2096. Original implicit word binder x is explicit word:BitVec width with NeZero width, sole good_dimindex premise remains existing tagged goodDimindex (width=32 or64). bytes_in_word is canonical panBytesInWord n2w(width DIV8); byte_aligned is existing source-shaped panGlobalsByteAlignedHOL, fixed point of panByteAlignHOL clearing LOG2(width DIV8) low bits, exactly2/3 at allowed dimensions. Conclusion preserves modular word multiplication, no no-wrap bound or extra alignment assumption. Kernel proof considers exactly source good dimensions and derives divisibility after reduction modulo2^width. StateRelationExact imported read-only for the existing alignment predicate; no relation theorem assumed. Source used at2211 and3126. Coordinator review pending."
-  }
+  },
+{
+  "lean_path": "Flapjack/Compiler/Backend/StackProps/AddressNames.lean",
+  "lean_name": "addrName",
+  "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+  "hol_name": "addr_name_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source920-928: exact HolMemop/HolAddr and AsmConfigExact carriers; logical reg_name bound, four word-offset operations, two halfword operations with Ag32 exclusion, remaining byte operations. Existing exact offset helpers use signed comparisons and zero alignment as HOL overloads. Prop conditions render HOL booleans via equality to true. No new hypotheses; positive-width word qualifier only. Original HOL signed lower/upper/outside boundaries, ISA exclusion and reduced-register-bound rows kernel replayed; executable unchanged."
+}
 ]
