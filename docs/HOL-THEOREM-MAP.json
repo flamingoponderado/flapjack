@@ -31668,5 +31668,37 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-only infrastructure. Canonical context toBroad/ofBroad roundtrip forwarded for context globals."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Raise.lean",
+  "lean_name": "compileCorrect_Raise",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "compile_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "PanSemStateFiniteExact.locals",
+    "PanSemStateFiniteExact.globals",
+    "PanSemStateFiniteExact.code",
+    "PanSemStateFiniteExact.eshapes",
+    "PanGlobalsContextExact.globals"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source comparison2026-09-30 original gen_goal172-182/compile_correct186/Raise866-870: original source/eid/expression/result/context/target/post binders and only state_rel T/source evaluation/nonError conjunction; existential compiled target run and full post state_rel good_res retained. Missing exception lookup, failed expression or invalid shape/size branches excluded by original nonError; successful source supplies shapeOf=value shape and size<=32. Accepted full expression theorem derives target value; original state_rel eshapes equality supplies target exception lookup; source/target struct contexts both empty by original relation, so target shape-size validity follows internally. Accepted state_rel_empty_locals establishes full post relation at original good_res flag. No extra exception lookup, successful value, shape, size bound, target evaluation, simulation or post-relation premise; no program IH for Raise. Exact MlS/ExpHOL/ValueHOL/state carriers, two same-module genuine canonical carrier roundtrips and positive word width/NeZero/universe0 FFI. Proof-only; other pass cases/full mission open. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Raise.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only canonical state/context carrier roundtrip re-export for the genuine Raise compiler case representation qualifiers; no separate HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Raise.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only canonical state/context carrier roundtrip re-export for the genuine Raise compiler case representation qualifiers; no separate HOL declaration."
 }
 ]
