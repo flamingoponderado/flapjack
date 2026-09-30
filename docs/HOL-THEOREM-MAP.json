@@ -27635,6 +27635,8 @@
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileDecsStructural.lean",
     "lean_name": "compileDecs_exns_proj",
+    "hol_path": null,
+    "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack support (bead flapjack-pxn.18.5.2.22.8): local proof factoring for the exact compile_decs/compile_top ports; no HOL original."
   },
@@ -27683,6 +27685,8 @@
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileDecsStructural.lean",
     "lean_name": "compileDecs_funs_proj",
+    "hol_path": null,
+    "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack support (bead flapjack-pxn.18.5.2.22.8): local proof factoring for the exact compile_decs/compile_top ports; no HOL original."
   },
