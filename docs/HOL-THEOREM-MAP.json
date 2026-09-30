@@ -29777,5 +29777,28 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-b P0 0r2k source comparison HOL667-686: literal Seq/If unions, Loop, return+handler labels under SOME return, default empty; location zero-offset domain or existential successful Spt lookup and exact label membership. Faithful positive-width HolProg/config carrier. Generic helper observation correspondence kernel checked, no full carrier claim. Exact replay uses HolProg. No evaluator call to helpers found; no executed-path change claim. Coordinator review pending."
-}
+},
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/Seq.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack canonical finite-state roundtrip re-export; no standalone HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/Seq.lean",
+    "lean_name": "evaluateUnchangedLocal_Seq",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "evaluate_unchanged_local",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison2026-09-30 (.32.5.2): genuine Seq evaluate_ind case of HOL1107-1137. Original unused value binder retained; original fresh-name/source-eval/good_res/non-Error conjunction implies unchanged lookup. Sole added IH conjunction is literal generated Seq premise: forall firstResult,middle, (firstResult,middle)=evaluate(first,state) and firstResult=NONE implies original predicate at second,middle; original predicate at first,state. No all-state or unconditional second-child IH added. List append freshness derives both child premises. Accepted line780 Seq equation derives fix_clock removal from reviewed fix_clock_evaluate; no clock bound assumed. NONE result composes both lookup equalities; SOME result uses first-child IH. Exact MlS/ProgHOL/ValueHOL, canonical four-map state with genuine roundtrip, positive width/NeZero and universe0 FFI; proof-only, assembly remains open, coordinator review pending."
+  }
 ]
