@@ -393,6 +393,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.Leaves
 import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.Results
 import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.ExtCall
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsMemory
+import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsStore
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsAlignment
 import Flapjack.Pancake.Proofs.PanToCrep.EvaluateCases
 import Flapjack.Pancake.Proofs.PanToCrep.TotalEvaluateCases
