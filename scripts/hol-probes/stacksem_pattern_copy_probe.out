@@ -1,0 +1,12 @@
+zero=NONE
+one_bypass=SOME (9,10w,Loc 9 9,Loc 9 9,Loc 9 9)
+even=SOME (1,11w,Word 7w,Loc 9 9,Loc 9 9)
+odd=SOME (1,11w,Word 10w,Loc 9 9,Loc 9 9)
+multi=SOME (2,12w,Word 7w,Word 11w,Loc 9 9)
+missing_bitmap=NONE
+missing_domain=NONE
+later_domain=NONE
+address_wrap=SOME (2,1w,Word 7w,Word 11w,Loc 9 9)
+value_wrap=SOME (1,11w,Word 1w,Loc 9 9,Loc 9 9)
+stride16=SOME (2,14w,Word 7w,Word 11w,Loc 9 9)
+stride4=SOME (2,10w,Word 11w,Word 11w,Word 11w)

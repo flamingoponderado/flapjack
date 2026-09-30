@@ -78,9 +78,10 @@ def crepDest2Exp [PanShiftWidth α] [BEq α] [OfNat α 0] [OfNat α 1]
 
 /-! A value-recursive specification support for `dest_2exp`. Unlike the
     executable recognizer above, this follows the source recursion until the
-    word is zero, one, or odd. It is currently untagged because it is stated on
-    Lean `BitVec`; the HOL `finite_index` word carrier and source definition
-    still need to be related. -/
+    word is zero, one, or odd. This Flapjack Boolean-test helper is untagged;
+    the source-shaped positive-width port is `crepDest2ExpHOL` below. The
+    unconditional equality `crepDest2ExpBitVecSpec_eq_HOL` in the proof
+    counterpart relates this helper to that reviewed definition. -/
 def crepDest2ExpBitVecSpec {width : Nat} [NeZero width] (exponent : Nat)
     (word : BitVec width) : Option Nat :=
   if word == 0 then none

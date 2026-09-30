@@ -323,7 +323,13 @@ field but whose own input or result carrier is the reviewed canonical
 `HolFiniteMapExact` translation (for example a HOL definition that returns a
 finite map directly, such as `get_eids_from_decls_def`). This is distinct from
 `fmap_as_finite_support`, which names the fields of an owning carrier; the two
-qualifiers are mutually exclusive. The tagged declaration's own signature must
+qualifiers are mutually exclusive. When the same declaration also translates
+HOL words to positive-width BitVecs, include `words_as_type_indexed_bitvec`
+and use manifest status
+`reviewed_fmap_as_finite_support_result_words_as_type_indexed_bitvec`.
+Both qualifiers and the existing lookup witness remain mandatory; their
+combination permits no additional statement or semantic difference.
+The tagged declaration's own signature must
 mention `HolFiniteMapExact`; a raw function-backed `α → Option β` map is
 ineligible. The module must contain a checked canonical witness named
 `holFmapAsFiniteSupportResultWitness_<declaration>`, whose final equality/iff
