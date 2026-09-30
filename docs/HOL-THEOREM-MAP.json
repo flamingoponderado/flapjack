@@ -27698,12 +27698,21 @@
     "reviewer": "Flapjack support (bead flapjack-pxn.18.5.2.22.8): local proof factoring for the exact compile_decs/compile_top ports; no HOL original."
   },
   {
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "fperm_code_FEMPTY",
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermCode.lean",
+    "lean_name": "fpermCodeHOL_empty",
+    "statement_status": "reviewed_fmap_as_finite_support_equality",
+    "fmap_as_finite_support_equality": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.4.3): exact port of HOL fperm_code_FEMPTY (pan_globalsProofScript.sml:1657), fperm_code f g FEMPTY = FEMPTY, over the reviewed canonical HolFiniteMapExact rendering of the code map (the same carrier as the accepted fperm_code_def port fpermCodeHOL). The whole statement is a single finite-map equality, so it carries the dedicated fmap_as_finite_support_equality qualifier and is witnessed at the lookup level by holFmapAsFiniteSupportEqualityWitness_fpermCodeHOL_empty. Source comparison against the original HOL statement; unconditional, no added assumptions."
+  },
+  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermCode.lean",
-    "lean_name": "fpermCodeHOL_empty",
+    "lean_name": "holFmapAsFiniteSupportEqualityWitness_fpermCodeHOL_empty",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "flapjack-sol2026-09-30 .22.4.1: Flapjack canonical finite-map implementation/codec factoring, localized provenance in docstring. Single-update and arbitrary-entry list-update lemmas are not standalone HOL declarations; source restricts update list to functions. FEMPTY kernel equality remains untagged because a supported single-equality representation rule is absent (tracked .4.3), not a completed HOL port. Codec witness compares tagged lookup to independent raw FUN_FMAP rendering without assuming target equality."
+    "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.2.22.4.3): unconditional same-module lookup-level witness for the single finite-map equality fpermCodeHOL_empty, required by the fmap_as_finite_support_equality qualifier. It states both sides agree at the same universally bound key and has no HOL original."
   },
   {
     "hol_path": null,
