@@ -37894,7 +37894,7 @@
   "hol_name": "write_bitmap_def",
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-luna-b source comparison 2026-10-01, bead15.3.24: Source240-244: live is actual Spt Unit; sptToAList enumeration, MAP pair keys with truncating ((frame-1)-(r DIV2-k)), GENLIST membership plus true, word_list width-1. No wf or extra bounds; BitVec positive width records only word translation. Existing seven HOL captured bitmap rows replayed on Spt. Full comp/compile_prog/pass proof and production routing remain open; coordinator acceptance pending."
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01, bead15.3.24: Source240-244: Original HOL kernel type probe confirms alpha sptree$num_map -> num -> num -> beta word list; live is arbitrary-payload Spt alpha (not restricted to Unit); sptToAList enumeration, MAP pair keys with truncating ((frame-1)-(r DIV2-k)), GENLIST membership plus true, word_list width-1. No wf or extra bounds; BitVec positive width records only word translation. Existing seven HOL captured bitmap rows replayed on Spt. Full comp/compile_prog/pass proof and production routing remain open; coordinator acceptance pending."
 },
 {
   "lean_path": "Flapjack/Compiler/Backend/WordToStack/LiveBitmap.lean",

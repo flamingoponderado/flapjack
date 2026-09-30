@@ -8,21 +8,23 @@ HOL ports; the equations below connect them to the literal source carriers. -/
 namespace Flapjack.Compiler.Backend.WordToStack
 open Flapjack Flapjack.Compiler.Backend.StackLang
 
-/-- Source write_bitmap: enumerate the actual unit Spt, map its register keys
+/-- Source write_bitmap: enumerate the actual payload-polymorphic Spt, map its register keys
 with truncating subtraction, append the terminal bit, then pack width-1 chunks.
-The payload is ignored exactly as in HOL; no wf/domain-order premise is added. -/
+Original constant type is α num_map → num → num → β word list
+(kernel query in scripts/hol-probes/word_to_stack_write_bitmap_type.sml).
+The arbitrary payload is ignored exactly as in HOL; no wf/domain-order premise is added. -/
 @[hol "cakeml/compiler/backend/word_to_stackScript.sml" "write_bitmap_def"
   (words_as_type_indexed_bitvec)]
-def writeBitmapExact {width : Nat} [NeZero width]
-    (live : Spt Unit) (k frame : Nat) : List (BitVec width) :=
+def writeBitmapExact {width : Nat} [NeZero width] {α : Type}
+    (live : Spt α) (k frame : Nat) : List (BitVec width) :=
   let names := (sptToAList live).map (fun (register, _) =>
     (frame - 1) - (register / 2 - k))
   wordListW ((List.range frame).map (fun x => decide (x ∈ names)) ++ [true]) (width - 1)
 
 /-- Native infrastructure: exact enumeration's keys instantiate the existing
 list-domain helper; this is not an additional HOL theorem port. -/
-theorem writeBitmapExact_eq_domain {width : Nat} [NeZero width]
-    (live : Spt Unit) (k frame : Nat) :
+theorem writeBitmapExact_eq_domain {width : Nat} [NeZero width] {α : Type}
+    (live : Spt α) (k frame : Nat) :
     writeBitmapExact (width := width) live k frame =
       writeBitmapHOL ((sptToAList live).map Prod.fst) k frame := by
   unfold writeBitmapExact writeBitmapHOL

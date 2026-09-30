@@ -625,7 +625,7 @@ run_probe word_to_stack_chunk_to_bitmap_probeScript.sml word_to_stack_chunk_to_b
   cbm_empty cwb_split8 "$cake_dir/compiler/backend/word_to_stackScript.sml" \
   "$cake_dir/compiler/backend"
 run_probe word_to_stack_write_bitmap_probeScript.sml word_to_stack_write_bitmap_probe.out \
-  wb_empty wb_order_eq "$cake_dir/compiler/backend/word_to_stackScript.sml" \
+  wb_empty wb_single wb_two wb_offset wb_boundary wb_order_a wb_order_b wb_order_eq wb_payload_nat wb_payload_bool "$cake_dir/compiler/backend/word_to_stackScript.sml" \
   "$cake_dir/compiler/backend"
 run_probe word_to_stack_insert_bitmap_probeScript.sml word_to_stack_insert_bitmap_probe.out \
   ib_empty ib_new_len "$cake_dir/compiler/backend/word_to_stackScript.sml" \

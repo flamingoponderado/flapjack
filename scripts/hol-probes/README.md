@@ -1,3 +1,11 @@
+`word_to_stack_write_bitmap_type.sml` queries the original HOL constant type
+(`α sptree$num_map -> num -> num -> β word list`) from the prebuilt
+`word_to_stackTheory`; run `HOL/bin/hol run <absolute script path>` from the
+original `cakeml/compiler/backend` theory directory. The payload is generic;
+only wLive specializes it to unit cutsets. `word_to_stack_write_bitmap_probe`
+also captures `wb_payload_nat` and `wb_payload_bool`, replayed by
+`WordToStackLiveBitmapParity`. Existing unit bitmap rows are preserved.
+
 `loop_sem_store_narrow_probe.out` captures sixteen direct original Loop
 Store32/StoreByte `evaluate_def` observations at width64 (clauses325-337).
 It registers the original recursive theorem with the HOL compset, without a

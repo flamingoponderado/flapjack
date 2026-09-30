@@ -14,6 +14,11 @@ private def live (keys : List Nat) : Spt Unit := sptFromAList (keys.map (fun k =
 #guard writeBitmapExact (width := 8) (live [0,1,2]) 0 8 == [192,3]
 #guard writeBitmapExact (width := 8) (live [2,0,1]) 0 8 == [192,3]
 
+-- Original wb_payload_nat
+#guard writeBitmapExact (width := 8) (sptFromAList [(0,37), (2,99)] : Spt Nat) 0 8 == [192,3]
+-- Original wb_payload_bool
+#guard writeBitmapExact (width := 8) (sptFromAList [(0,true), (2,false)] : Spt Bool) 0 8 == [192,3]
+
 example (a b : Spt Unit) (bm : AppList (BitVec 64) × Nat) (k f' : Nat) :
     wLiveExact (a,b) bm (k,0,f') = (.skip,bm) := by simp [wLiveExact]
 #guard (wLiveExact (width := 8) (live [0],live []) (.nil,255) (3,1,4)).2.2 == 256
@@ -24,7 +29,7 @@ example (a b : Spt Unit) (bm : AppList (BitVec 64) × Nat) (k f' : Nat) :
 #guard match (wLiveExact (width := 8) (live [0],live []) (.list [9],7) (3,1,4)).1 with
   | .seq (.inst (.const k v)) (.stackStore r offset) => k == 3 && v == 8 && r == 3 && offset == 0
   | _ => false
-example {width : Nat} [NeZero width] (tree : Spt Unit) (k f : Nat) :
+example {width : Nat} [NeZero width] {α : Type} (tree : Spt α) (k f : Nat) :
     writeBitmapExact (width := width) tree k f =
       writeBitmapHOL ((sptToAList tree).map Prod.fst) k f := writeBitmapExact_eq_domain tree k f
 example {width : Nat} [NeZero width] (cuts : Spt Unit × Spt Unit)
