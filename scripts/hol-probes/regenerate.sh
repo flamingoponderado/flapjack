@@ -157,6 +157,9 @@ run_probe stacksem_sh_mem_probeScript.sml stacksem_sh_mem_probe.out \
 run_probe stacksem_sh_mem_op_probeScript.sml stacksem_sh_mem_op_probe.out \
   sh_mem_op_success sh_mem_op_word_exp_none sh_mem_op_missing_register sh_mem_op_timeout \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe stacksem_ffi_probeScript.sml stacksem_ffi_probe.out \
+  ffi_return ffi_final ffi_read_failure ffi_non_word_length \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe stacksem_expression_probeScript.sml stacksem_expression_probe.out \
   const var_word var_loc var_missing lookup_word lookup_loc lookup_missing load_word load_loc load_oob load_bad_address op_empty_and op_add_wrap op_sub_bad_arity op_bad_operand shift_valid shift_oob shift_bad_right assign_success assign_failure \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"

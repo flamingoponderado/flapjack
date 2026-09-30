@@ -1546,6 +1546,28 @@ the tagged `word_exp_def`, `sh_mem_op_def`, `dec_clock_def` and `empty_env_def`
 ports live in `StackSem/Expressions.lean`, `StackSem/ShMem.lean` and
 `StackSem/StateOps.lean`, and assembled full evaluation remains on y19g.
 
+`stacksem_ffi_probeScript.sml` records four direct original `stackSem$evaluate`
+observations for the `FFI` clause (`stackSemScript.sml:951-971`) at 64-bit words.
+The state type is `(64,'c,num)`; `ffi_save_regs = {1; 6}`, `mdomain = {0w}` with
+word 0 holding `0xAABBCCDDEEFF0011w`, and the operand registers hold
+`configurationLength = 2w`, `configuration = 2w`, `arrayLength = 3w`,
+`array = 4w`. The successful oracle returns three constant bytes so the length
+check against the three-byte array read passes; a second oracle diverges. The
+rows cover `FFI_return` (result `NONE`, `write_bytearray` writes the returned
+bytes into word 0, `DRESTRICT` keeps exactly the `ffi_save_regs` keys 1 and 6
+and drops 2 and 7, `fp_regs` is emptied, and the FFI state advances with one
+`io_event`), `FFI_final` (state unchanged), a byte read outside `mdomain`
+(`SOME Error`, state unchanged), and a non-`Word` length register (`SOME
+Error`). The probe rewrites `FLOOKUP (DRESTRICT ...)` with `FLOOKUP_DRESTRICT`
+because `DRESTRICT` is a non-computational finite-map specification. Kernel
+replay of all four rows lives in `Flapjack/Test/StackSemFfiParity.lean`.
+Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_ffi_probeScript.sml
+scripts/hol-probes/regenerate.sh`. The `evaluateFfi` fragment is untagged, it
+reuses the tagged `mem_load_byte_aux_def`, `write_bytearray_def`,
+`read_bytearray_def` and `call_FFI_def` ports, and assembled full evaluation
+remains on y19g.
+
 `pan_globals_fperm_code_probeScript.sml` observes the original
 `pan_globalsProof$fperm_code` finite map using its proved
 `FLOOKUP_fperm_code'` rewrite followed by HOL EVAL (plain EVAL leaves
