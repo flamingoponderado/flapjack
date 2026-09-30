@@ -770,6 +770,60 @@ private theorem returnedScopedCorrect {width : Nat} {σ : Type} [NeZero width]
     rw [hscope]
     simp only [ht]
 
+/-- Discharge the normal-return branch directly from the original guarded
+callee IH. No target execution or post-relation premise is supplied. This is
+private branch infrastructure until all Call outcomes are assembled. -/
+private theorem returnedFromIH {width : Nat} {σ : Type} [NeZero width]
+    (source : PanSemStateFiniteExact width σ) (name function handlerId handlerVar : MlS)
+    (arguments : List (ExpHOL width)) (handler : ProgHOL width)
+    (ih : ∀ (args : List (ValueHOL width)) (body : ProgHOL width)
+      (callee : HolFiniteMapExact MlS (ValueHOL width)) (returnShape : ShapeHOL),
+      evalListHOLFinite source (h := fun a => Classical.propDecidable (source.memaddrs a)) arguments = some args ∧
+      lookupCodeHOLFinite source.code.lookup function args = some (body, callee, returnShape) ∧
+      source.clock ≠ 0 → compileCorrectGoal body (callEntryStateHOLFinite source callee))
+    (context : PanGlobalsContextExact width) (target post : PanSemStateFiniteExact width σ)
+    (values : List (ValueHOL width)) (body : ProgHOL width)
+    (callee : HolFiniteMapExact MlS (ValueHOL width)) (returnShape : ShapeHOL)
+    (value : ValueHOL width)
+    (hrel : panGlobalsStateRelHOLExact true context source target)
+    (hargs : evalListHOLFinite source
+      (h := fun a => Classical.propDecidable (source.memaddrs a)) arguments = some values)
+    (hcode : lookupCodeHOLFinite source.code.lookup function values = some (body, callee, returnShape))
+    (hclock : source.clock ≠ 0)
+    (hbody : evaluateHOLFiniteState (callEntryStateHOLFinite source callee) body =
+      (some (.returned value), post))
+    (hreturn : shapeOfHOLExact value = returnShape)
+    (hvalid : isValidValueHOLExact source.toExact .global name value = true) :
+    ∃ finalPost,
+      evaluateHOLFiniteState target (compileProgExactHOL context
+        (.call (some (some (.global, name), some (handlerId, handlerVar, handler)))
+          function arguments)) = (none, finalPost) ∧
+      panGlobalsStateRelHOLExact true context
+        (setGlobalHOLFinite name value {post with locals := source.locals}) finalPost := by
+  classical
+  have hta := PanGlobalsOptMmapEvalCorrect.optMmapEvalCorrectHOL context source target
+    arguments values ⟨hrel, hargs⟩
+  have hlist : ∀ es : List (ExpHOL width),
+      compileExpExactHOLList context es = es.map (compileExpExactHOL context) := by
+    intro es
+    induction es with
+    | nil => simp only [compileExpExactHOLList, List.map_nil]
+    | cons e es hrec => simp only [compileExpExactHOLList, List.map_cons, hrec]
+  rw [← hlist arguments] at hta
+  have htl := PanGlobalsStateRelationCode.stateRelLookupCodeHOL context source target true
+    function values body callee returnShape ⟨hrel, hcode⟩
+  have htz : target.clock ≠ 0 := hrel.2.2.2.2.2.1 ▸ hclock
+  have hd := PanGlobalsStateRelationClock.stateRelDecClockHOL context source target true hrel
+  have he := (PanGlobalsStateRelationLocals.stateRelChangeLocalsHOL context
+    (decClockHOLFinite source) (decClockHOLFinite target) true callee).1 hd
+  change panGlobalsStateRelHOLExact true context
+    (callEntryStateHOLFinite source callee) (callEntryStateHOLFinite target callee) at he
+  obtain ⟨targetPost, ht, hr⟩ := ih values body callee returnShape ⟨hargs, hcode, hclock⟩
+    (some (.returned value)) context (callEntryStateHOLFinite target callee) post
+    ⟨he, hbody, by simp⟩
+  exact returnedScopedCorrect context source target post targetPost name function handlerId handlerVar
+    handler body arguments values callee returnShape value hrel hr hvalid hbody hta htl htz ht hreturn
+
 /-- Internal missing-context branch of the full constructor proof. The branch
 condition selects the literal compiler fallback; the callee and handler IHs
 remain those of the original evaluator. Untagged infrastructure until the full

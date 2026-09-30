@@ -35258,5 +35258,13 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Private normal-return literal compiler scoped branch for pending33.11. Derives initializer shape from caller globals relation, post global validity from original callee shape invariant, generated Call/Store execution and saved scope restoration internally. Callee IH run/relation remain internal assembly facts; full constructor guarded IH discharge and other outcomes unfinished. No HOL tag or completed port claim."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "returnedFromIH",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Private normal-return branch of pending33.11, deriving target callee execution and post relation from original guarded callee IH, argument/code/clock transport and callee entry relation. No target run/post relation premise. Full constructor including handler and other outcomes remains unfinished; untagged infrastructure."
 }
 ]
