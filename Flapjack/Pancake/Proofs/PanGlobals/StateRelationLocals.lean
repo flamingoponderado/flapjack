@@ -72,16 +72,18 @@ theorem stateRelSetVarHOL {width : Nat} {σ : Type} [NeZero width]
   have hl := hrel.2.1 rfl
   simp only [PanSemStateFiniteExact.setVarHOLFinite, hl]
 
-/-- Untagged: the panic-reset finite map is unchanged when writing an `none`
-value into `FEMPTY`, matching the shape of HOL `res_var_FEMPTY`
-(`cakeml/pancake/proofs/pan_globalsProofScript.sml:1011-1015`). The HOL source
-uses the bare `α |-> β` finite-map carrier, which this statement renders with
-`HolFiniteMapExact`; no existing finite-map qualifier classifies a tagged
-*theorem* whose whole content is a single map equality (`_result` is restricted
-to defs by its lookup-target witness rule and `_equalities` requires at least
-two top-level conjuncts), so the `@[hol]` tag is deliberately withdrawn rather
-than left untagged-exact. Faithful classification is tracked by
-`flapjack-pxn.18.5.2.32.6.1`. -/
+/-- Source comparison, flapjack-ds10 (2026-09-30, bead
+`flapjack-pxn.18.5.2.32.6`). Exact port of HOL `res_var_FEMPTY`
+(`cakeml/pancake/proofs/pan_globalsProofScript.sml:1011-1015`):
+`res_var FEMPTY (n,NONE) = FEMPTY`. HOL's bare polymorphic finite-map carrier
+`α |-> β` is rendered by the reviewed canonical `HolFiniteMapExact`
+translation (`resVarEq`, `empty`), the same carriers used by the accepted
+PanGlobals `res_var`/`state_rel_res_var` ports. The whole statement is a single
+`HolFiniteMapExact` map equality, so it carries the dedicated singular
+`(fmap_as_finite_support_equality)` qualifier, witnessed at the lookup level by
+`holFmapAsFiniteSupportEqualityWitness_resVarFEMPTYExact`. -/
+@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "res_var_FEMPTY"
+  (fmap_as_finite_support_equality)]
 theorem resVarFEMPTYExact {α β : Type} [DecidableEq α] (n : α) :
     HolFiniteMapExact.resVarEq (HolFiniteMapExact.empty : HolFiniteMapExact α β) (n, none) =
       (HolFiniteMapExact.empty : HolFiniteMapExact α β) := by
@@ -91,5 +93,13 @@ theorem resVarFEMPTYExact {α β : Type} [DecidableEq α] (n : α) :
   by_cases hk : k = n
   · simp [hk]
   · simp [hk]
+
+/-- Unconditional lookup-level witness for `resVarFEMPTYExact`: both sides
+agree at the same universally bound key `k`. -/
+theorem holFmapAsFiniteSupportEqualityWitness_resVarFEMPTYExact {α β : Type} [DecidableEq α]
+    (n : α) (k : α) :
+    (HolFiniteMapExact.resVarEq (HolFiniteMapExact.empty : HolFiniteMapExact α β) (n, none)).lookup k =
+      (HolFiniteMapExact.empty : HolFiniteMapExact α β).lookup k := by
+  rw [resVarFEMPTYExact]
 
 end Flapjack.PanGlobalsStateRelationLocals
