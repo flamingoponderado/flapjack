@@ -1,25 +1,32 @@
 import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
 import Flapjack.Misc.MachineIeee
 import Flapjack.Misc.BinaryIeeeArith
+import Flapjack.Misc.BinaryIeeeSqrt
+import Flapjack.Misc.BinaryIeeeConvert
+import Flapjack.Compiler.Backend.Semantics.WordSem.Inst
 
-/-! StackSem inst_def FP movement/sign and FP comparison/arithmetic case
-fragment. Outer NONE means an unhandled constructor; inner NONE is HOL
-instruction failure. This is untagged Flapjack assembly infrastructure, not a
-port of the whole inst_def. The comparison cases follow HOL `inst_def`
+/-! StackSem inst_def FP movement/sign, FP comparison/arithmetic and FP real
+conversion case fragment. Outer NONE means an unhandled constructor; inner NONE
+is HOL instruction failure. This is untagged Flapjack assembly infrastructure,
+not a port of the whole inst_def. The comparison cases follow HOL `inst_def`
 (`cakeml/compiler/backend/semantics/stackSemScript.sml:519-542`); the
 arithmetic cases follow `:563-587`, with the `FPFma` fused multiply-add
-permutation of `fpSem$fpfma` (`cakeml/semantics/fpSemScript.sml:60-62`).
-Real conversions (FPSqrt/FPToInt/FPFromInt) and whole evaluator routing remain
-separate. -/
+permutation of `fpSem$fpfma` (`cakeml/semantics/fpSemScript.sml:60-62`); the
+conversions follow `FPSqrt` `:559-562`, `FPToInt` `:605-624` and `FPFromInt`
+`:625-640`. Whole evaluator routing remains separate. -/
 namespace Flapjack.StackSemFpRegisterInstructions
 open StackSemStateOps Compiler.Encoders.Asm
 
 /-- Exact-state case dispatch for FPLess/FPLessEqual/FPEqual, FPAdd/FPSub/
-FPMul/FPDiv, FPFma, FPMov, FPAbs, FPNeg and the two FP/general register
-transfers. Missing FP operands yield the inner HOL instruction failure. The
-64-bit transfer path ignores the second register; other widths use low/high
-extraction and high@@low concatenation, even at unusual widths. Nested setVar
-order preserves HOL's behavior when destinations coincide. -/
+FPMul/FPDiv, FPFma, FPMov, FPAbs, FPNeg, FPSqrt, FPToInt, FPFromInt and the two
+FP/general register transfers. Missing FP operands yield the inner HOL
+instruction failure. The 64-bit transfer path ignores the second register;
+other widths use low/high extraction and high@@low concatenation, even at
+unusual widths. FPToInt stores the `word32` directly at 64 bits and otherwise
+splices it into the low/high half of register `d1 DIV 2` (`ODD d1` selects the
+high half); FPFromInt reads the low 32 bits at 64 bits and otherwise reads the
+selected half of register `d2 DIV 2`. Nested setVar order preserves HOL's
+behavior when destinations coincide. -/
 noncomputable def instFpRegister {width : Nat} [NeZero width] {C F : Type}
     (instruction : HolInst width) (s : StackSemStateFiniteExact width C F) :
     Option (Option (StackSemStateFiniteExact width C F)) :=
@@ -35,6 +42,10 @@ noncomputable def instFpRegister {width : Nat} [NeZero width] {C F : Type}
   | .fp (.fpNeg destination source) => some (
       match getFpVar source s with
       | some word => some (setFpVar destination (holFp64Negate word) s)
+      | none => none)
+  | .fp (.fpSqrt d1 d2) => some (
+      match getFpVar d2 s with
+      | some f => some (setFpVar d1 (holFp64Sqrt .roundTiesToEven f) s)
       | none => none)
   | .fp (.fpLess r d1 d2) => some (
       match getFpVar d1 s, getFpVar d2 s with
@@ -92,6 +103,37 @@ noncomputable def instFpRegister {width : Nat} [NeZero width] {C F : Type}
         | some (.word low), some (.word high) =>
             some (setFpVar destination ((high ++ low).setWidth 64) s)
         | _, _ => none)
+  | .fp (.fpToInt d1 d2) => some (
+      match getFpVar d2 s with
+      | none => none
+      | some f =>
+          match holFp64ToInt .roundTiesToEven f with
+          | none => none
+          | some i =>
+              let w : BitVec 32 := BitVec.ofInt 32 i
+              if w.toInt = i then
+                (if width = 64 then some (setFpVar d1 (w.setWidth 64) s)
+                 else
+                  match getFpVar (d1 / 2) s with
+                  | none => none
+                  | some f =>
+                      let (h, l) := if d1 % 2 = 1 then (63, 32) else (31, 0)
+                      some (setFpVar (d1 / 2) (holBitFieldInsert h l w f) s))
+              else none)
+  | .fp (.fpFromInt d1 d2) => some (
+      if width = 64 then
+        match getFpVar d2 s with
+        | some f =>
+            let i := (holWordExtract 31 0 f 32).toInt
+            some (setFpVar d1 (holIntToFp64 .roundTiesToEven i) s)
+        | none => none
+      else
+        match getFpVar (d2 / 2) s with
+        | some v =>
+            let i := (if d2 % 2 = 1 then holWordExtract 63 32 v width
+              else holWordExtract 31 0 v width).toInt
+            some (setFpVar d1 (holIntToFp64 .roundTiesToEven i) s)
+        | none => none)
   | _ => none
 
 /-- Flapjack assembly certificate: every successful register/sign case

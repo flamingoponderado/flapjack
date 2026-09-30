@@ -112,6 +112,10 @@ run_probe stacksem_fp_arith_probeScript.sml stacksem_fp_arith_probe.out \
   fpless_true fpless_false fpless_equal fpless_missing fplessequal_true fplessequal_false fpequal_true fpequal_false fpadd_result fpadd_missing fpsub_result fpmul_result fpdiv_result fpfma_order \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
+run_probe stacksem_fp_convert_probeScript.sml stacksem_fp_convert_probe.out \
+  fpsqrt_result fpsqrt_missing fptoint_result fptoint_out_of_range fptoint_missing fptoint32_even fptoint32_odd fpfromint_result fpfromint_missing fpfromint32_even fpfromint32_odd \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
 run_probe stacksem_store_consts_guard_probeScript.sml stacksem_store_consts_guard_probe.out \
   guard_none guard_missing guard_match guard_wrong_label guard_wrong_first_register guard_wrong_second_register guard_recursive_stub guard_return_nonzero guard_wrong_constructor guard_reversed_sequence \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"

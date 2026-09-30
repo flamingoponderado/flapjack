@@ -1,19 +1,23 @@
 import Flapjack.Compiler.Backend.Semantics.StackSem.FpRegisterInstructions
 import Flapjack.Misc.BinaryIeeeArithFp64
+import Flapjack.Misc.BinaryIeeeSqrtFp64
 
-/-! Kernel replay of twenty original HOL FP register/sign observations, plus
-all fourteen rows of `stacksem_fp_arith_probe.out` for the FP comparison and
-arithmetic cases of `inst_def`
+/-! Kernel replay of twenty original HOL FP register/sign observations, all
+fourteen rows of `stacksem_fp_arith_probe.out` for the FP comparison and
+arithmetic cases of `inst_def`, and all eleven rows of
+`stacksem_fp_convert_probe.out` for the FPSqrt/FPToInt/FPFromInt cases
 (`cakeml/compiler/backend/semantics/stackSemScript.sml:519-542` for
-FPLess/FPLessEqual/FPEqual and `:563-587` for FPAdd/FPSub/FPMul/FPDiv/FPFma).
+FPLess/FPLessEqual/FPEqual, `:563-587` for FPAdd/FPSub/FPMul/FPDiv/FPFma, and
+`:559-562`/`:605-624`/`:625-640` for FPSqrt/FPToInt/FPFromInt).
 The fragment is an untagged partial case dispatcher; the whole `inst_def`
 assembly is tracked separately. The comparison rows evaluate the computable
 HOL comparison renderings directly; the arithmetic and FMA rows replay through
 the proven computable-rounding equivalences of
-`Flapjack.Misc.BinaryIeeeArithFp64`, so the noncomputable `holFp64Add` and the
-`fpSem$fpfma` permutation are kernel-checked rather than probe-only. Structural
-examples below prove the exact returned expression of every new case,
-including the `FPFma` addend permutation. -/
+`Flapjack.Misc.BinaryIeeeArithFp64`; the FPSqrt row uses `holFp64Sqrt_rte`
+(`Flapjack.Misc.BinaryIeeeSqrtFp64`), the FPFromInt rows use `holIntToFp64_rte`
+(`Flapjack.Misc.BinaryIeeeConvert`), and the FPToInt rows use the computable
+`holFp64ToInt`. Structural examples below prove the exact returned expression
+of every new case, including the `FPFma` addend permutation. -/
 namespace Flapjack.Test.StackSemFpRegisterInstParity
 open StackSemFpRegisterInstructions StackSemStateOps
 private def fixture {width : Nat} [NeZero width] {C F : Type}
@@ -419,6 +423,226 @@ example {C F : Type} (s : StackSemStateFiniteExact 64 C F) :
       some (some (setFpVar 7 (holFp64MulAdd .roundTiesToEven two three ten) (arithFixture s))) := by
     simp [instFpRegister, getFpVar, setFpVar, arithFixture, FUPDATE_HOL]
   rw [h, holFp64MulAddOrdered]
+  cbv
+
+-- FP real-conversion fixture: clock 6, general registers as in `arithFixture`,
+-- and two chosen FP values. The rows read fp7 and may read fp2; the 32-bit
+-- FPToInt/FPFromInt rows read fp7 (d1 DIV 2 = 7 or d2 DIV 2 = 7).
+private def convFixture {width : Nat} [NeZero width] {C F : Type}
+    (s : StackSemStateFiniteExact width C F) (f2 f7 : BitVec 64) :=
+  { s with
+    clock := 6
+    regs := (((((HolFiniteMapExact.empty : HolFiniteMapExact Nat (WordLocW width)).updateEq (1, .word 10)).updateEq
+      (2, .word 20)).updateEq (3, .loc 1 2)).updateEq (4, .word 77)).updateEq (5, .loc 4 5)
+    fpRegs := ((HolFiniteMapExact.empty : HolFiniteMapExact Nat (BitVec 64)).updateEq (2, f2)).updateEq
+      (7, f7) }
+
+-- Structural kernel checks of the exact returned expression for each new case,
+-- given the FP lookups. HOL stackSemScript.sml:559-562, :605-624, :625-640.
+example {width : Nat} [NeZero width] {C F : Type}
+    (d1 d2 : Nat) (s : StackSemStateFiniteExact width C F) (f : BitVec 64)
+    (h : getFpVar d2 s = some f) :
+    instFpRegister (.fp (.fpSqrt d1 d2)) s =
+      some (some (setFpVar d1 (holFp64Sqrt .roundTiesToEven f) s)) := by
+  simp [instFpRegister, h]
+
+example {width : Nat} [NeZero width] {C F : Type}
+    (d1 d2 : Nat) (s : StackSemStateFiniteExact width C F)
+    (h : getFpVar d2 s = none) :
+    instFpRegister (.fp (.fpSqrt d1 d2)) s = some none := by
+  simp [instFpRegister, h]
+
+example {width : Nat} [NeZero width] {C F : Type}
+    (d1 d2 : Nat) (s : StackSemStateFiniteExact width C F)
+    (h : getFpVar d2 s = none) :
+    instFpRegister (.fp (.fpToInt d1 d2)) s = some none := by
+  simp [instFpRegister, h]
+
+example {width : Nat} [NeZero width] {C F : Type}
+    (d1 d2 : Nat) (s : StackSemStateFiniteExact width C F) (f : BitVec 64)
+    (h : getFpVar d2 s = some f) (hi : holFp64ToInt .roundTiesToEven f = none) :
+    instFpRegister (.fp (.fpToInt d1 d2)) s = some none := by
+  simp [instFpRegister, h, hi]
+
+example {C F : Type} (d1 d2 : Nat) (s : StackSemStateFiniteExact 64 C F)
+    (f : BitVec 64) (i : Int) (h : getFpVar d2 s = some f)
+    (hi : holFp64ToInt .roundTiesToEven f = some i)
+    (hw : (BitVec.ofInt 32 i).toInt = i) :
+    instFpRegister (.fp (.fpToInt d1 d2)) s =
+      some (some (setFpVar d1 ((BitVec.ofInt 32 i).setWidth 64) s)) := by
+  simp only [instFpRegister, h]
+  rw [hi]
+  simp [hw]
+
+example {C F : Type} (d1 d2 : Nat) (s : StackSemStateFiniteExact 64 C F)
+    (f : BitVec 64) (h : getFpVar d2 s = some f) :
+    instFpRegister (.fp (.fpFromInt d1 d2)) s =
+      some (some (setFpVar d1 (holIntToFp64 .roundTiesToEven
+        (holWordExtract 31 0 f 32).toInt) s)) := by
+  simp [instFpRegister, h]
+
+example {C F : Type} (d1 d2 : Nat) (s : StackSemStateFiniteExact 64 C F)
+    (h : getFpVar d2 s = none) :
+    instFpRegister (.fp (.fpFromInt d1 d2)) s = some none := by
+  simp [instFpRegister, h]
+
+example {width : Nat} [NeZero width] {C F : Type} (d1 d2 : Nat)
+    (s : StackSemStateFiniteExact width C F) (hw : width ≠ 64) (v : BitVec 64)
+    (h : getFpVar (d2 / 2) s = some v) :
+    instFpRegister (.fp (.fpFromInt d1 d2)) s =
+      some (some (setFpVar d1 (holIntToFp64 .roundTiesToEven
+        (if d2 % 2 = 1 then holWordExtract 63 32 v width
+          else holWordExtract 31 0 v width).toInt) s)) := by
+  simp [instFpRegister, hw, h]
+
+-- Closed binary64 conversion values, kernel-checked through the computable
+-- roundTiesToEven bridges where the source definition is choice-based.
+private theorem holFp64Sqrt_four :
+    holFp64Sqrt .roundTiesToEven 0x4010000000000000 = 0x4000000000000000 := by
+  rw [holFp64Sqrt_rte]; decide +kernel
+private theorem holFp64ToInt_two :
+    holFp64ToInt .roundTiesToEven (BitVec.ofNat 64 0x4000000000000000) = some (2 : Int) := by
+  decide +kernel
+private theorem holFp64ToInt_big :
+    holFp64ToInt .roundTiesToEven (BitVec.ofNat 64 0x4330000000000000) =
+      some (4503599627370496 : Int) := by
+  decide +kernel
+private theorem holIntToFp64_three :
+    holIntToFp64 .roundTiesToEven (3 : Int) = 0x4008000000000000 := by
+  rw [holIntToFp64_rte]; decide +kernel
+private theorem holIntToFp64_four :
+    holIntToFp64 .roundTiesToEven (4 : Int) = 0x4010000000000000 := by
+  rw [holIntToFp64_rte]; decide +kernel
+private theorem low32_int3 :
+    (holWordExtract 31 0 (BitVec.ofNat 64 0x0000000000000003) 32).toInt = 3 := by
+  decide +kernel
+private theorem low32_halves :
+    (holWordExtract 31 0 (BitVec.ofNat 64 0x0000000300000004) 32).toInt = 4 := by
+  decide +kernel
+private theorem high32_halves :
+    (holWordExtract 63 32 (BitVec.ofNat 64 0x0000000300000004) 32).toInt = 3 := by
+  decide +kernel
+
+-- Concrete replay of the FPSqrt/FPToInt/FPFromInt rows. Probe rows
+-- fpsqrt_result/fpsqrt_missing/fptoint_result/fptoint_out_of_range/
+-- fptoint_missing/fptoint32_even/fptoint32_odd/fpfromint_result/
+-- fpfromint_missing/fpfromint32_even/fpfromint32_odd. Each row fixes the
+-- exact returned expression, rewrites the closed conversion value, and
+-- evaluates the finite-map update.
+example {C F : Type} (s : StackSemStateFiniteExact 64 C F) :
+    observe (instFpRegister (.fp (.fpSqrt 7 2))
+      (convFixture s 0x4010000000000000 0x4024000000000000)) =
+      some (6,some 4611686018427387904,some (.inl 77),some (.inr (4,5))) := by
+  have h : instFpRegister (.fp (.fpSqrt 7 2))
+      (convFixture s 0x4010000000000000 0x4024000000000000) =
+      some (some (setFpVar 7 (holFp64Sqrt .roundTiesToEven 0x4010000000000000)
+        (convFixture s 0x4010000000000000 0x4024000000000000))) := by
+    simp [instFpRegister, getFpVar, convFixture, FUPDATE_HOL]
+  rw [h, holFp64Sqrt_four]
+  cbv
+example {C F : Type} (s : StackSemStateFiniteExact 64 C F) :
+    observe (instFpRegister (.fp (.fpSqrt 7 9))
+      (convFixture s 0x4010000000000000 0x4024000000000000)) = none := by
+  have h : instFpRegister (.fp (.fpSqrt 7 9))
+      (convFixture s 0x4010000000000000 0x4024000000000000) = some none := by
+    simp [instFpRegister, getFpVar, convFixture, FUPDATE_HOL]
+  rw [h]; rfl
+example {C F : Type} (s : StackSemStateFiniteExact 64 C F) :
+    observe (instFpRegister (.fp (.fpToInt 7 2))
+      (convFixture s 0x4000000000000000 0x4024000000000000)) =
+      some (6,some 2,some (.inl 77),some (.inr (4,5))) := by
+  have h : instFpRegister (.fp (.fpToInt 7 2))
+      (convFixture s 0x4000000000000000 0x4024000000000000) =
+      some (some (setFpVar 7 ((BitVec.ofInt 32 2).setWidth 64)
+        (convFixture s 0x4000000000000000 0x4024000000000000))) := by
+    simp [instFpRegister, getFpVar, convFixture, FUPDATE_HOL]
+    rw [holFp64ToInt_two]
+    simp
+  rw [h]; cbv
+example {C F : Type} (s : StackSemStateFiniteExact 64 C F) :
+    observe (instFpRegister (.fp (.fpToInt 7 2))
+      (convFixture s 0x4330000000000000 0x4024000000000000)) = none := by
+  have h : instFpRegister (.fp (.fpToInt 7 2))
+      (convFixture s 0x4330000000000000 0x4024000000000000) = some none := by
+    simp [instFpRegister, getFpVar, convFixture, FUPDATE_HOL]
+    rw [holFp64ToInt_big]
+    simp
+  rw [h]; rfl
+example {C F : Type} (s : StackSemStateFiniteExact 64 C F) :
+    observe (instFpRegister (.fp (.fpToInt 7 9))
+      (convFixture s 0x4000000000000000 0x4024000000000000)) = none := by
+  have h : instFpRegister (.fp (.fpToInt 7 9))
+      (convFixture s 0x4000000000000000 0x4024000000000000) = some none := by
+    simp [instFpRegister, getFpVar, convFixture, FUPDATE_HOL]
+  rw [h]; rfl
+example {C F : Type} (s : StackSemStateFiniteExact 32 C F) :
+    observe (instFpRegister (.fp (.fpToInt 14 2))
+      (convFixture s 0x4000000000000000 0x4024000000000000)) =
+      some (6,some 4621819117588971522,some (.inl 77),some (.inr (4,5))) := by
+  have h : instFpRegister (.fp (.fpToInt 14 2))
+      (convFixture s 0x4000000000000000 0x4024000000000000) =
+      some (some (setFpVar 7 (holBitFieldInsert 31 0 (BitVec.ofInt 32 2)
+        (BitVec.ofNat 64 0x4024000000000000))
+        (convFixture s 0x4000000000000000 0x4024000000000000))) := by
+    simp [instFpRegister, getFpVar, convFixture, FUPDATE_HOL]
+    rw [holFp64ToInt_two]
+    simp
+  rw [h]; cbv
+example {C F : Type} (s : StackSemStateFiniteExact 32 C F) :
+    observe (instFpRegister (.fp (.fpToInt 15 2))
+      (convFixture s 0x4000000000000000 0x4024000000000000)) =
+      some (6,some 8589934592,some (.inl 77),some (.inr (4,5))) := by
+  have h : instFpRegister (.fp (.fpToInt 15 2))
+      (convFixture s 0x4000000000000000 0x4024000000000000) =
+      some (some (setFpVar 7 (holBitFieldInsert 63 32 (BitVec.ofInt 32 2)
+        (BitVec.ofNat 64 0x4024000000000000))
+        (convFixture s 0x4000000000000000 0x4024000000000000))) := by
+    simp [instFpRegister, getFpVar, convFixture, FUPDATE_HOL]
+    rw [holFp64ToInt_two]
+    simp
+  rw [h]; cbv
+example {C F : Type} (s : StackSemStateFiniteExact 64 C F) :
+    observe (instFpRegister (.fp (.fpFromInt 7 2))
+      (convFixture s 0x0000000000000003 0x4024000000000000)) =
+      some (6,some 4613937818241073152,some (.inl 77),some (.inr (4,5))) := by
+  have h : instFpRegister (.fp (.fpFromInt 7 2))
+      (convFixture s 0x0000000000000003 0x4024000000000000) =
+      some (some (setFpVar 7 (holIntToFp64 .roundTiesToEven
+        (holWordExtract 31 0 (BitVec.ofNat 64 0x0000000000000003) 32).toInt)
+        (convFixture s 0x0000000000000003 0x4024000000000000))) := by
+    simp [instFpRegister, getFpVar, convFixture, FUPDATE_HOL]
+  rw [h, low32_int3, holIntToFp64_three]
+  cbv
+example {C F : Type} (s : StackSemStateFiniteExact 64 C F) :
+    observe (instFpRegister (.fp (.fpFromInt 7 9))
+      (convFixture s 0x0000000000000003 0x4024000000000000)) = none := by
+  have h : instFpRegister (.fp (.fpFromInt 7 9))
+      (convFixture s 0x0000000000000003 0x4024000000000000) = some none := by
+    simp [instFpRegister, getFpVar, convFixture, FUPDATE_HOL]
+  rw [h]; rfl
+example {C F : Type} (s : StackSemStateFiniteExact 32 C F) :
+    observe (instFpRegister (.fp (.fpFromInt 7 14))
+      (convFixture s 0x4000000000000000 0x0000000300000004)) =
+      some (6,some 4616189618054758400,some (.inl 77),some (.inr (4,5))) := by
+  have h : instFpRegister (.fp (.fpFromInt 7 14))
+      (convFixture s 0x4000000000000000 0x0000000300000004) =
+      some (some (setFpVar 7 (holIntToFp64 .roundTiesToEven
+        (holWordExtract 31 0 (BitVec.ofNat 64 0x0000000300000004) 32).toInt)
+        (convFixture s 0x4000000000000000 0x0000000300000004))) := by
+    simp [instFpRegister, getFpVar, convFixture, FUPDATE_HOL]
+  rw [h, low32_halves, holIntToFp64_four]
+  cbv
+example {C F : Type} (s : StackSemStateFiniteExact 32 C F) :
+    observe (instFpRegister (.fp (.fpFromInt 7 15))
+      (convFixture s 0x4000000000000000 0x0000000300000004)) =
+      some (6,some 4613937818241073152,some (.inl 77),some (.inr (4,5))) := by
+  have h : instFpRegister (.fp (.fpFromInt 7 15))
+      (convFixture s 0x4000000000000000 0x0000000300000004) =
+      some (some (setFpVar 7 (holIntToFp64 .roundTiesToEven
+        (holWordExtract 63 32 (BitVec.ofNat 64 0x0000000300000004) 32).toInt)
+        (convFixture s 0x4000000000000000 0x0000000300000004))) := by
+    simp [instFpRegister, getFpVar, convFixture, FUPDATE_HOL]
+  rw [h, high32_halves, holIntToFp64_three]
   cbv
 
 end Flapjack.Test.StackSemFpRegisterInstParity
