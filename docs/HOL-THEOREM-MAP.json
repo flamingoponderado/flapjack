@@ -31353,5 +31353,65 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.5.47.1): a successful mapM transfers to any pointwise-total map; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/Assembly.lean",
+    "lean_name": "evaluateLocalsSameFdomExact",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "evaluate_locals_same_fdom",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.7) compared crep_inlineProofScript.sml:181-260: the full theorem forall p s r s'. evaluate (p,s) = (r,s') /\\ (case r of NONE => T | SOME (Continue n) => T | SOME (Break n) => T | _ => F) = T ==> FDOM s.locals = FDOM s'.locals, same binders, no extra premise; the case expression as the displayed match proposition and FDOM equality as crepHolFdom equality of the finite-support lookups (as in the tagged case theorems). Assembled from the integrated tagged constructor cases (trivial/memory/Assign atoms, Primitive, ExtCall, ShMem, Seq/If/Dec, While, Call); Return is discharged directly (its results fail the condition). All IHs are discharged internally: structural recursion on the program for all states, and an inner clock induction supplying exactly the guarded WhileDomainIH premises of evaluate_ind. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/Assembly.lean",
+    "lean_name": "evaluateLocalsSameFdom'Exact",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "evaluate_locals_same_fdom'",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.7) compared crep_inlineProofScript.sml:262-270: forall p s r s'. evaluate (p,s) = (r,s') /\\ (r = NONE \\/ (exists n. r = SOME (Break n)) \\/ (exists n. r = SOME (Continue n))) ==> FDOM s.locals = FDOM s'.locals; same binders and disjunction, no extra premise; proved from evaluate_locals_same_fdom as in HOL. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/Assembly.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed CrepSemHOLState toBroad/ofBroad roundtrip for the relation qualifier of the evaluate_locals_same_fdom tags."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/Assembly.lean",
+    "lean_name": "crepHolFdom_of_FDOM",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.5.43.7): the FDOM rendering of the atom cases implies the crepHolFdom rendering; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/Assembly.lean",
+    "lean_name": "whileMotive",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.5.43.7): the While case of the evaluate_ind motive for all states, by clock induction providing WhileDomainIH; no separate HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/Assembly.lean",
+    "lean_name": "localsMotive",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.5.43.7): the evaluate_ind motive of evaluate_locals_same_fdom for every program and state by structural recursion over the tagged cases; no separate HOL declaration."
   }
 ]
