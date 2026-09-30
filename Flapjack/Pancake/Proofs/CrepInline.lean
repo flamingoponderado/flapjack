@@ -3651,59 +3651,6 @@ theorem evaluateLocalsSameFdomAssignCaseExact {width : Nat} [NeZero width] {σ :
 
 
 
-/-- Exact HOL `evaluate_locals_same_fdom`
-    (`cakeml/pancake/proofs/crep_inlineProofScript.sml:181-191`) for the `ExtCall`
-    constructor: the evaluator touches only `memory`/`ffi` and the FFI result is
-    not `SOME Error`, so the locals domain is unchanged. Source comparison with the
-    atomic arm at `:246-248`; the `words_as_type_indexed_bitvec` qualifier records
-    the standard HOL `'a word` to `BitVec width` translation. -/
-@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "evaluate_locals_same_fdom"
-  (words_as_type_indexed_bitvec)]
-theorem evaluateLocalsSameFdomExtCallCaseExact {width : Nat} [NeZero width] {σ : Type}
-    (s : CrepSemHOLState width σ) (r : Option (CrepResultHOLExact width))
-    (s' : CrepSemHOLState width σ) (p : CrepProgHOL width)
-    (hp : ∃ (function : Flapjack.Basis.Pure.MlString.MlString)
-            (configuration configurationLength array arrayLength : Nat),
-        p = .extCall function configuration configurationLength array arrayLength)
-    (hsource : evalCrepSemHOLProgExact s p = (r, s'))
-    (hcond : match r with | none => True | some (.break _) => True | some (.continue _) => True | _ => False) :
-    FDOM s.locals.lookup = FDOM s'.locals.lookup := by
-  classical
-  obtain ⟨function, configuration, configurationLength, array, arrayLength, rfl⟩ := hp
-  rw [evalCrepSemHOLProgExact_extCall_holShape] at hsource
-  cases h1 : s.locals.lookup configurationLength with
-  | none => simp only [h1] at hsource; have hr' : r = some .error := (congrArg Prod.fst hsource).symm; subst hr'; simp at hcond
-  | some v1 => cases v1 with
-    | word cl =>
-      cases h2 : s.locals.lookup configuration with
-      | none => simp only [h1, h2] at hsource; have hr' : r = some .error := (congrArg Prod.fst hsource).symm; subst hr'; simp at hcond
-      | some v2 => cases v2 with
-        | word ca =>
-          cases h3 : s.locals.lookup arrayLength with
-          | none => simp only [h1, h2, h3] at hsource; have hr' : r = some .error := (congrArg Prod.fst hsource).symm; subst hr'; simp at hcond
-          | some v3 => cases v3 with
-            | word al =>
-              cases h4 : s.locals.lookup array with
-              | none => simp only [h1, h2, h3, h4] at hsource; have hr' : r = some .error := (congrArg Prod.fst hsource).symm; subst hr'; simp at hcond
-              | some v4 => cases v4 with
-                | word aa =>
-                  cases hr1 : readBytearrayWordHOL (byteWidth := 8) ca cl.toNat (panMemLoadByteWord8HOL s.memory s.memaddrs s.be) with
-                  | none => simp only [h1, h2, h3, h4, hr1] at hsource; have hr' : r = some .error := (congrArg Prod.fst hsource).symm; subst hr'; simp at hcond
-                  | some cb =>
-                    cases hr2 : readBytearrayWordHOL (byteWidth := 8) aa al.toNat (panMemLoadByteWord8HOL s.memory s.memaddrs s.be) with
-                    | none => simp only [h1, h2, h3, h4, hr1, hr2] at hsource; have hr' : r = some .error := (congrArg Prod.fst hsource).symm; subst hr'; simp at hcond
-                    | some ab =>
-                      cases hcall : callFFIHOL s.ffi (.extCall function) cb ab with
-                      | final event =>
-                          simp only [h1, h2, h3, h4, hr1, hr2, hcall] at hsource
-                          have hr' : r = some (.finalFfi event) := (congrArg Prod.fst hsource).symm
-                          subst hr'
-                          simp at hcond
-                      | ret newFfi newBytes =>
-                          simp only [h1, h2, h3, h4, hr1, hr2, hcall] at hsource
-                          injection hsource with _ hs'
-                          rw [← hs']
-
 end CrepInlineExact
 
 end Flapjack

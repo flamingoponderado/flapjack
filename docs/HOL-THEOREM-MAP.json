@@ -29474,15 +29474,6 @@
     "reviewer": "flapjack-ds10 source comparison (2026-09-30; bead flapjack-pxn.18.5.5.43.1) against crep_inlineProofScript.sml:181-191 and the guarded Assign arm (crepSemScript.sml:260-266): exact FDOM s.locals = FDOM s'.locals under the HOL result condition, rendered over CrepSemHOLState; assignment fires only when the target is already bound, so the domain is preserved; no extra premises."
   },
   {
-    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-    "hol_name": "evaluate_locals_same_fdom",
-    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
-    "lean_name": "evaluateLocalsSameFdomExtCallCaseExact",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds10 source comparison (bead flapjack-pxn.18.5.5.43.1) against crep_inlineProofScript.sml:181-191 statement and the ExtCall atomic arm at :246-248; exact HOL hypotheses (evaluator equation plus the result condition allowing NONE/Break/Continue) and conclusion FDOM s.locals = FDOM s'.locals rendered as FDOM s.locals.lookup = FDOM s'.locals.lookup over the exact CrepSemHOLState carrier; ExtCall changes only memory/ffi so the locals domain is preserved; (words_as_type_indexed_bitvec) records the standard 'a word -> BitVec width translation; no extra premises."
-  },
-  {
     "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
     "hol_name": "dest_Seq_def",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Control.lean",
