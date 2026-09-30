@@ -448,6 +448,29 @@ the Lean witnesses and conjuncts correspond to the HOL map equalities, so source
 review must still compare each numbered witness against the
 HOL equality and record that comparison in the reviewer note.
 
+**Qualify a single theorem-level finite-map equality.** Use
+`(fmap_as_finite_support_equality)` when the tagged declaration is a theorem
+whose entire conclusion is exactly one `HolFiniteMapExact` map *equality* (for
+example HOL `res_var_FEMPTY` or numeric `fperm_code` empty), rather than a
+conjunction of equalities. The checker requires the conclusion to contain
+exactly one top-level conjunct, splits the stripped conclusion on `=`, and
+requires, in the same module, one checked witness
+`holFmapAsFiniteSupportEqualityWitness_<declaration>` whose two sides are shaped
+precisely as `<map expression>.lookup <key>` (only safe outer parentheses),
+applied at the same universally bound key, unconditional, not a self-equality,
+not mentioning the tagged theorem, and with no premise assuming the relation.
+A conjunction must use the plural `(fmap_as_finite_support_equalities)` instead,
+and a raw `alpha -> Option beta` map is rejected (the canonical carrier is
+`HolFiniteMapExact`). The qualifier is mutually exclusive with
+`fmap_as_finite_support`, `fmap_as_finite_support_result`,
+`fmap_as_finite_support_relation`, `fmap_as_finite_support_equalities`, and the
+function/heterogeneous-function qualifiers, cannot use `reviewed_exact`, and
+requires manifest status `reviewed_fmap_as_finite_support_equality` with a
+reviewer note containing both `source` and `fmap_as_finite_support_equality`.
+The checker is syntactic and does not prove the Lean witness equals the HOL
+equality, so source review must compare the single witness against the HOL
+equality and record the comparison in the reviewer note.
+
 **Qualify the HOL word-dimension and FFI-universe translation.** Use
 `(words_as_type_indexed_bitvec)` when the only carrier difference from the HOL
 declaration is the standard translation of HOL's type-indexed `'a word`

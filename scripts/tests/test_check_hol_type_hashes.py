@@ -246,6 +246,38 @@ class HolTypeHashesTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "manifest qualifiers differ"):
             MODULE.lock_records(manifest, without_equalities)
 
+    def test_fmap_as_finite_support_equality_qualifier_is_locked(self):
+        manifest = [{
+            **self.manifest[0],
+            "statement_status": "reviewed_fmap_as_finite_support_equality",
+            "fmap_as_finite_support_equality": True,
+        }]
+        export = [{
+            **self.export[0],
+            "qualifiers": {
+                "list_as_array": [],
+                "names_as_string": [],
+                "names_as_string_boundary": [],
+                "fmap_as_finite_support": [],
+                "fmap_as_finite_support_equality": True,
+            },
+        }]
+        lock = MODULE.expected_lock(manifest, export, "leanprover/lean4:v4")
+        self.assertTrue(
+            lock["records"][0]["qualifiers"]["fmap_as_finite_support_equality"]
+        )
+        without_equality = [{
+            **export[0],
+            "qualifiers": {
+                "list_as_array": [],
+                "names_as_string": [],
+                "names_as_string_boundary": [],
+                "fmap_as_finite_support": [],
+            },
+        }]
+        with self.assertRaisesRegex(ValueError, "manifest qualifiers differ"):
+            MODULE.lock_records(manifest, without_equality)
+
     def test_fmap_as_finite_support_parameters_qualifier_is_locked(self):
         manifest = [{
             **self.manifest[0],
