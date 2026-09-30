@@ -21,6 +21,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Seq
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.ShMemLoad
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.CallNoHandler
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.CallHandler
+import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Assembly
 import Flapjack.Pancake.Proofs.PanGlobals.MemoryLookup
 import Flapjack.Pancake.Proofs.PanGlobals.MemorySwap
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelationCode
@@ -278,6 +279,7 @@ import Flapjack.Pancake.Proofs.CrepInline.ClockExpressions
 import Flapjack.Pancake.Proofs.CrepInline.ExpressionCodeAgreement
 import Flapjack.Pancake.Proofs.CrepInline.NotBranchReturn
 import Flapjack.Pancake.Proofs.CrepInline.UnreachElimEvaluate
+import Flapjack.Pancake.Proofs.CrepInline.NestedSeqAssign
 import Flapjack.Pancake.Proofs.CrepInline.UnreachElimProgSize
 import Flapjack.Pancake.Proofs.CrepInline.NestedDecs
 import Flapjack.Pancake.Proofs.CrepInline.ShMem

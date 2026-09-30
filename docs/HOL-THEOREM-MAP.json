@@ -29981,7 +29981,7 @@
       "inlBag"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-pxn.18.5.5.40.1): exact While case slice of HOL inline_prog_correct (crep_inlineProofScript.sml:2326). The recursive hypothesis ihWhile is the inductHOL hwhile_none/hwhile_continue handler hypothesis transported to the plain body-result state: fixClockCrepSemHOL_evalCrepSemHOLProgExact (EvaluateHOL.lean:4851, HOL fix_clock_evaluate crepSemScript.sml:432-437) removes the fixClockCrepSemHOL wrapper on the body run and crepStampExactDomains_fixClock_body shows crepStampExactDomains state loopState = loopState, so the handler's stamped state is the plain state. Same evaluator clause and NONE/continue-0 guard, same conclusion, no extra premise. The finite-map relation entries are the Crep evaluator state carriers touched by the While clause and inlFs/inlBag; same-module CrepSemHOLState relation witness exists in the file. Words qualifier covers the width-indexed carriers."
+    "reviewer": "Coordinator PR1181 review repair: statement compared with original HOL evaluate_ind and inline_prog_correct2301-2319; ihBody retains literal condition/word/nonzero-clock guards and ihWhile combines the NONE/Continue0 guarded re-entry IHs equivalently. This is not justified by inductHOL handlers: they require a body motive and do not supply a separate body IH. State-stamp transport cannot discharge this premise. Full source-shaped induction assembly remains tracked by flapjack-lkme. Same reviewed finite-map relation carriers and indexed word qualifier; no statement or proof change."
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
@@ -30946,7 +30946,7 @@
       "eshapes"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-c source comparison2026-09-30 (.32.3.14): genuine Call SOME(returnTarget,NONE) source subcase of evaluate_fresh_local1045-1091, original nonfree/source-evaluation premises, existential post locals and conditional good_res/non-Error FUPDATE retained. Literal panSem657-702 args/lookup/clock/callee result/return shape/target validation branches preserved. Caller locals overwritten at callee entry, so exact argument freshness gives identical callee run without IH or run-outcome premise. Return target local inequality derived from original free_var_ids; validation invariant derived from unchanged lookup, successful local target update commutes with fresh binding; caller-local restore/no target and clearing/error branches retained. Exact MlS/ValueHOL/ProgHOL/canonical four state maps and roundtrip, positive width/NeZero and universe0 FFI. No extra assumption or executable change; handlers/full assembly remain open, coordinator review pending."
+    "reviewer": "flapjack-luna-c source comparison2026-09-30 (.32.3.14): genuine Call SOME(returnTarget,NONE) source subcase of evaluate_fresh_local1045-1091, original nonfree/source-evaluation premises, existential post locals and conditional good_res/non-Error FUPDATE retained. Literal panSem657-702 args/lookup/clock/callee result/return shape/target validation branches preserved. Caller locals overwritten at callee entry, so exact argument freshness gives identical callee run without IH or run-outcome premise. Return target local inequality derived from original free_var_ids; validation invariant derived from unchanged lookup, successful local target update commutes with fresh binding; caller-local restore/no target and clearing/error branches retained. Exact MlS/ValueHOL/ProgHOL/canonical four state maps and roundtrip, positive width/NeZero and universe0 FFI. No extra assumption or executable change; handlers/full assembly remain open, coordinator review pending. SPECIALISED SHAPE: Call is split along caltyp NONE, returning without handler, and returning with handler; DecCall is its own constructor. These pieces omit HOL evaluate_ind unused callee-body IH because overwritten entry locals prove identical body runs internally. They are stronger case lemmas, not the literal full IH set; retained handler/continuation IHs preserve original guards."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/CallNoHandler.lean",
@@ -31001,7 +31001,7 @@
     "eshapes"
   ],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "Luna A source comparison (.32.3.13), pan_globalsProofScript1045-1091 Call case specialized along panSem657-687 caltyp NONE source branch. Original fresh name/value/state/result/poststate, freshness/source evaluation, existential locals and conditional good_res/non-Error FUPDATE retained. No added success, target-run, body outcome, shape, clock or lookup premise. Argument-list freshness derives internally from free_var_ids. Call entry overwrites caller locals with newlocals, so updated/source callee states are definitionally equal and body evaluation is the identical total pair; no body IH needed. Literal argument/lookup/clock gates, fix-clock evaluator equation, all body outcomes, return-shape comparison, empty_locals for successful tail return/unhandled exception/fallback, and all error states preserved. Existential locals selected from actual updated evaluation; no result assumption. Same-module canonical roundtrip and reviewed finite-map/positive width/Type0 FFI translations. Kernel checked; coordinator review pending. Non-tail Call and DecCall plus full fresh-local induction remain open."
+  "reviewer": "Luna A source comparison (.32.3.13), pan_globalsProofScript1045-1091 Call case specialized along panSem657-687 caltyp NONE source branch. Original fresh name/value/state/result/poststate, freshness/source evaluation, existential locals and conditional good_res/non-Error FUPDATE retained. No added success, target-run, body outcome, shape, clock or lookup premise. Argument-list freshness derives internally from free_var_ids. Call entry overwrites caller locals with newlocals, so updated/source callee states are definitionally equal and body evaluation is the identical total pair; no body IH needed. Literal argument/lookup/clock gates, fix-clock evaluator equation, all body outcomes, return-shape comparison, empty_locals for successful tail return/unhandled exception/fallback, and all error states preserved. Existential locals selected from actual updated evaluation; no result assumption. Same-module canonical roundtrip and reviewed finite-map/positive width/Type0 FFI translations. Kernel checked; coordinator review pending. Non-tail Call and DecCall plus full fresh-local induction remain open. SPECIALISED SHAPE: Call is split along caltyp NONE, returning without handler, and returning with handler; DecCall is its own constructor. These pieces omit HOL evaluate_ind unused callee-body IH because overwritten entry locals prove identical body runs internally. They are stronger case lemmas, not the literal full IH set; retained handler/continuation IHs preserve original guards."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/TailCall.lean",
@@ -31063,7 +31063,7 @@
       "eshapes"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-b source comparison2026-09-30 HOL1045-1091 and original pan_sem_evaluate_ind_probe DecCall: original freshness/source evaluation conjunction, existential locals and good_res nonError post-update retained. Only continuation IH is original source argument SOME, lookup SOME(body,newlocals,return_sh), nonzero clock, exact body Return output and shape_of retv equal declaration and callee return shapes; generated alias binders collapsed, all semantic guards retained. Callee entry overwrites caller locals so identical run proved internally and callee IH not needed. Bound distinctness, argument and continuation freshness derived from free_var_ids; restoration commutes only after this derivation. Accepted line780 clock rewrite removes fix_clock with its checked evaluation clock theorem. All argument/lookup/timeOut/body-result/shape/continuation branches; no target-run or success premise. Same exact carriers/canonical maps with local roundtrip and positive width/universe0 FFI; proof-only. Coordinator review pending."
+    "reviewer": "flapjack-luna-b source comparison2026-09-30 HOL1045-1091 and original pan_sem_evaluate_ind_probe DecCall: original freshness/source evaluation conjunction, existential locals and good_res nonError post-update retained. Only continuation IH is original source argument SOME, lookup SOME(body,newlocals,return_sh), nonzero clock, exact body Return output and shape_of retv equal declaration and callee return shapes; generated alias binders collapsed, all semantic guards retained. Callee entry overwrites caller locals so identical run proved internally and callee IH not needed. Bound distinctness, argument and continuation freshness derived from free_var_ids; restoration commutes only after this derivation. Accepted line780 clock rewrite removes fix_clock with its checked evaluation clock theorem. All argument/lookup/timeOut/body-result/shape/continuation branches; no target-run or success premise. Same exact carriers/canonical maps with local roundtrip and positive width/universe0 FFI; proof-only. Coordinator review pending. SPECIALISED SHAPE: Call is split along caltyp NONE, returning without handler, and returning with handler; DecCall is its own constructor. These pieces omit HOL evaluate_ind unused callee-body IH because overwritten entry locals prove identical body runs internally. They are stronger case lemmas, not the literal full IH set; retained handler/continuation IHs preserve original guards."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/DecCall.lean",
@@ -31126,7 +31126,7 @@
     "eshapes"
   ],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-luna-c source comparison2026-09-30 (.32.3.16): genuine handler-present non-tail Call subcase of evaluate_fresh_local1045-1091. Original nonfree/run premise and existential post locals plus conditional good_res/non-Error update retained. HOL panSem657-702 handler matched-ID/eshapes/shape/is_valid_value guard preserved. Only handler evaluate_ind IH retained: redundant product decomposition binders/equalities eliminated by substitution; every args/lookup/positive-clock/callee-exception/ID/shape/validation conjunct remains. Callee entry overwrites caller locals so callee run identical; handler freshness and variable inequality derived from free_var_ids. Restored caller-local exception update commutes with fresh update, validation lookup unchanged. Remaining return/error/clearing paths literal. Exact MlS/ProgHOL/ValueHOL/canonical four maps, genuine roundtrip, NeZero width and universe0 FFI. Proof-only; full assembly open, coordinator review pending."
+  "reviewer": "flapjack-luna-c source comparison2026-09-30 (.32.3.16): genuine handler-present non-tail Call subcase of evaluate_fresh_local1045-1091. Original nonfree/run premise and existential post locals plus conditional good_res/non-Error update retained. HOL panSem657-702 handler matched-ID/eshapes/shape/is_valid_value guard preserved. Only handler evaluate_ind IH retained: redundant product decomposition binders/equalities eliminated by substitution; every args/lookup/positive-clock/callee-exception/ID/shape/validation conjunct remains. Callee entry overwrites caller locals so callee run identical; handler freshness and variable inequality derived from free_var_ids. Restored caller-local exception update commutes with fresh update, validation lookup unchanged. Remaining return/error/clearing paths literal. Exact MlS/ProgHOL/ValueHOL/canonical four maps, genuine roundtrip, NeZero width and universe0 FFI. Proof-only; full assembly open, coordinator review pending. SPECIALISED SHAPE: Call is split along caltyp NONE, returning without handler, and returning with handler; DecCall is its own constructor. These pieces omit HOL evaluate_ind unused callee-body IH because overwritten entry locals prove identical body runs internally. They are stronger case lemmas, not the literal full IH set; retained handler/continuation IHs preserve original guards."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/CallHandler.lean",
@@ -31302,6 +31302,128 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-only infrastructure. Internal list induction of the Store source proof: constructs target writes from source success and original state relation. No separate HOL declaration; no new public theorem premise."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NestedSeqAssign.lean",
+  "lean_name": "optMmapSomeImpFupdateExistSome",
+  "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+  "hol_name": "opt_mmap_some_imp_fupdate_exist_some",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": [
+    "fm"
+  ],
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.1) compared crep_inlineProofScript.sml:1802-1812: forall vs fm vals nv. OPT_MMAP (FLOOKUP fm) vs = SOME vals ==> exists z. OPT_MMAP (FLOOKUP (fm |+ nv)) vs = SOME z; same binders and order; OPT_MMAP as List.mapM, FLOOKUP as .lookup, |+ as HolFiniteMapExact.updateEq (HOL = via DecidableEq). The bare polymorphic finite map fm is recorded as a standalone finite-support relation entry. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NestedSeqAssign.lean",
+  "lean_name": "optMmapSomeImpFupdateListExistSome",
+  "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+  "hol_name": "opt_mmap_some_imp_fupdate_list_exist_some",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": [
+    "fm"
+  ],
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.1) compared crep_inlineProofScript.sml:1814-1823: forall xs ys vs fm vals. OPT_MMAP (FLOOKUP fm) vs = SOME vals /\\ LENGTH xs = LENGTH ys ==> exists z. OPT_MMAP (FLOOKUP (fm |++ ZIP (xs,ys))) vs = SOME z; |++ as updateListEq, ZIP as List.zip (equal lengths assumed as in HOL). The bare polymorphic finite map fm is recorded as a standalone finite-support relation entry. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NestedSeqAssign.lean",
+  "lean_name": "optMmapFlookupNotMemDomsub",
+  "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+  "hol_name": "opt_mmap_flookup_not_mem_domsub",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": [
+    "fm"
+  ],
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.1) compared crep_inlineProofScript.sml:1825-1831: forall vs fm vals x. OPT_MMAP (FLOOKUP fm) vs = SOME vals /\\ ~MEM x vs ==> OPT_MMAP (FLOOKUP (fm \\\\ x)) vs = SOME vals; \\\\ as eraseEq. The bare polymorphic finite map fm is recorded as a standalone finite-support relation entry. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NestedSeqAssign.lean",
+  "lean_name": "optMmapUpdateLocalsNotVarsEvalEq",
+  "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+  "hol_name": "opt_mmap_update_locals_not_vars_eval_eq",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.1) compared crep_inlineProofScript.sml:1843-1849: forall es n vs w s. ~MEM n (FLAT (MAP var_cexp es)) /\\ OPT_MMAP (eval s) es = SOME vs ==> OPT_MMAP (eval (s with locals := s.locals |+ (n,w))) es = SOME vs; eval as tagged evalCrepSemHOLExp, var_cexp as crepExpVarsHOL. Same binders, no extra premise; canonical CrepSemHOLState finite-support carrier and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NestedSeqAssign.lean",
+  "lean_name": "evaluateNestedSeqAssign",
+  "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+  "hol_name": "evaluate_nested_seq_assign",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.1) compared crep_inlineProofScript.sml:1851-1873: forall ns s es ws vals. OPT_MMAP (eval s) es = SOME ws /\\ (!x. MEM x ns ==> ~MEM x (FLAT (MAP var_cexp es))) /\\ OPT_MMAP (FLOOKUP s.locals) ns = SOME vals /\\ LENGTH ns = LENGTH ws /\\ ALL_DISTINCT ns ==> exists s'. evaluate (nested_seq (MAP2 Assign ns es), s) = (NONE, s') /\\ state_rel s s' /\\ (!x. ~MEM x ns ==> FLOOKUP s'.locals x = FLOOKUP s.locals x) /\\ OPT_MMAP (FLOOKUP s'.locals) ns = SOME ws; evaluate as tagged evalCrepSemHOLProgExact, nested_seq as crepNestedSeqHOL, MAP2 as panMap2, ALL_DISTINCT as List.Nodup, state_rel as tagged crepInlineStateRelExact. Same binders, no extra premise; canonical CrepSemHOLState finite-support carrier and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NestedSeqAssign.lean",
+  "lean_name": "evaluateNestedSeqAssignDrule",
+  "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+  "hol_name": "evaluate_nested_seq_assign_drule",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.1) compared crep_inlineProofScript.sml:1875-1891: same hypotheses plus evaluate (nested_seq (MAP2 Assign ns es), s) = (r, s') ==> r = NONE /\\ state_rel s s' /\\ frame /\\ OPT_MMAP (FLOOKUP s'.locals) ns = SOME ws; binders ns s es ws vals r s' in order. Same binders, no extra premise; canonical CrepSemHOLState finite-support carrier and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NestedSeqAssign.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only same-module canonical witness forwarding the reviewed CrepSemHOLState toBroad/ofBroad roundtrip for the locals/globals/code finite-map qualifier."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NestedSeqAssign.lean",
+  "lean_name": "mapM_some_of_pointwise",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.5.47.1): a successful mapM transfers to any pointwise-total map; no HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/Assembly.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack canonical finite-state roundtrip re-export; no standalone HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/Assembly.lean",
+  "lean_name": "evaluateFreshLocalHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_fresh_local",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-c source comparison2026-09-30 (.32.3.17): full evaluate_fresh_local1045-1091, original name/value/program/state/result/post binders, nonfree/source-run conjunction, existential locals and conditional good_res/non-Error FUPDATE conclusion. Literal evaluate_ind777 used with exactly the original fresh-local predicate. All21 constructor cases assembled from accepted counterpart modules. Recursive Dec/Seq/If/While/handler/DecCall hypotheses discharged internally; redundant Call/DecCall tuple witnesses supplied explicitly to source induction. No public IH or extra run/clock/freshness/shape/target-result assumption. Callee-entry overwrite handled by accepted exact Call cases; no fresh premise added to callee bodies. Canonical finite-map updateEq/update equality proved pointwise for Dec induction transport; exact four finite state maps and genuine roundtrip, MlS/ProgHOL/ValueHOL positive width/NeZero and universe0 FFI. Full theorem port, proof-only; downstream compile_correct and production routing remain open. Coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/Assembly.lean",
+  "lean_name": "updateEq_eq_update",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack local proof factoring; no standalone HOL original. Preserves exact update/FFI clauses."
 },
   {
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
