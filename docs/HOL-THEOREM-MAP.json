@@ -37045,5 +37045,29 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-sol source comparison (2026-09-30, bead flapjack-4ac.2.20.2.2; pan_to_crepScript.sml:393-397): sole List (DeclHOL width) input and ordered List (MlS x List Nat x CrepProgHOL width) output, no hypotheses. HOL extracts MAP FST (functions (FILTER inlinable prog)), then compile_to_crep prog, then compile_inl_top with those two arguments. Lean uses exactly reviewed inlinableHOL/functionsHOL/compileToCrepExactHOLW/CrepInlineCanonical.compileInlTopHOLExact in the same order. The canonical wrapper uses first-binding alist lookup and DOMSUB per function, and its unconditional compileInlTopHOLExact_eq_compileInlProgHOLExact theorem removes the computational support certificate to identify the source-shaped compile_inl_prog/inline_prog composition. The finite maps are local intermediates, so no map qualifier applies to this signature. Positive type-indexed HOL words translate to BitVec width with NeZero width. Existing exact DeclHOL kernel oracle replays cover empty, inline call, duplicate-first and nested inline cases in CompileProgParity. No executed production route or performance exception is claimed: production carrier/inline replacement remains on 4ac.2.20.3/e7w.2 and the direct-oracle/production bridge child4ac.2.20.2.1 stays open."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/CallCase.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed CrepSemHOLState toBroad/ofBroad roundtrip for the relation qualifier."
+},
+{
+  "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+  "hol_name": "inline_prog_correct",
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/CallCase.lean",
+  "lean_name": "inlineProgCorrectCallCaseExact",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "CrepSemHOLState.locals",
+    "CrepSemHOLState.globals",
+    "CrepSemHOLState.code",
+    "inlFs",
+    "inlBag"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.5.42.4): Call case of HOL inline_prog_correct (statement crep_inlineProofScript.sml:2301-2319; case Resume [Call] :2409 with suspensions [Tail] :2536 and [Nontail] :2719-3037). Statement shape as the accepted inlineProgCorrectDecCaseExact: the HOL source run of Call caltyp fname argexps, r <> SOME Error, inl_fs SUBMAP s.code, inl_bag SUBMAP inl_fs, state_rel_code, locals_strong_rel, code_inl_rel, with the existential target run of inline_prog inl_bag (Call ...), state_rel_code, code_inl_rel and the result-indexed locals_strong_rel conclusion. The only additional hypotheses are evaluate_ind's two guarded Call premises with P := the theorem predicate written out: ihExc (handler, guarded by OPT_MMAP args, lookup_code, the ALL_DISTINCT selector, clock <> 0, callee Exception eid, caltyp = SOME (_, SOME (eid', p)), eid = eid'; state st with locals := s.locals) and ihBody (callee body at dec_clock s with locals := newlocals under the same first guards). Both are in the reviewed callNonInlined spelling. No target-run or extra-context premise. The proof splits on HOL's own case analysis of inline_prog: not inlined (callNonInlined), inlined tail call (callTail), inlined distinct-return assign call (callNontail)."
 }
 ]
