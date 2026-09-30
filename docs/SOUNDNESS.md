@@ -67,11 +67,6 @@ The following are open review or verification obligations:
    state and selected regressions. It does not review the mathematical
    adequacy of the specifications or prove untested source programs compile
    identically to CakeML.
-7. HOL's `panSem$evaluate_decls` now has a faithful Lean definition,
-   `evaluateDecls`, checked against direct HOL probes. The distinct
-   `evalPanValueDeclarationsWithStructs` remains Flapjack-specific and is not
-   used as evidence for the exact `compile_top_shape_wf` port. This work does
-   not claim a cross-prover equivalence proof.
 8. HOL's floating-point library specifies rounding over real numbers. The
    current Lean binary64 arithmetic rendering uses `Rat` for finite float
    values and rational operation inputs. Lean proves its computable
