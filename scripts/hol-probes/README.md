@@ -1333,3 +1333,11 @@ for the unit cutsets. Regenerate with
 HOL_PROBE_ONLY=word_alloc_pair_keys_probeScript.sml
 scripts/hol-probes/regenerate.sh`; the original source was compared byte-for-byte
 before using the shared checkout's built objects.
+
+`stacksem_allocation_probe.out` captures eighteen concrete original GC,
+unsigned-space and allocation observations plus the independent-dimension
+`has_space` type. `Flapjack.Test.StackSemAllocationParity` kernel-replays all
+concrete rows (including 1-bit request/8-bit store and rollback/GC post-state
+errors). Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_allocation_probeScript.sml scripts/hol-probes/regenerate.sh`.
+Full StackSem evaluation and production refinement remain open.

@@ -28,6 +28,7 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateInd
 import Flapjack.Compiler.Backend.Semantics.StackSem.State
 import Flapjack.Compiler.Backend.Semantics.StackSem.Control
 import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+import Flapjack.Compiler.Backend.Semantics.StackSem.Allocation
 import Flapjack.Compiler.Backend.Semantics.StackSem.Bitmap
 import Flapjack.Compiler.Backend.Semantics.StackSem.WordBitmap
 import Flapjack.Compiler.Backend.Semantics.StackSem.StackCodec

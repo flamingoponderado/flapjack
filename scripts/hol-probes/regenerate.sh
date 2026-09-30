@@ -101,6 +101,10 @@ run_probe() {
   done
 }
 
+run_probe stacksem_allocation_probeScript.sml stacksem_allocation_probe.out \
+  space_true space_false space_wrap space_loc space_missing space_next_loc \
+  gc_short gc_bad_stack gc_none gc_decode_fail gc_success space_mixed type_space alloc_success alloc_halt alloc_gc_failure alloc_missing alloc_bad_amount alloc_bad_space \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe stacksem_stack_codec_probeScript.sml stacksem_stack_codec_probe.out \
   full_zero full_one full_two full_oob full_loc enc_empty enc_zero enc_zero_extra enc_loc enc_true enc_false enc_two enc_short enc_missing_sentinel enc_bad_continuation dec_empty dec_zero dec_true dec_false dec_short_roots dec_extra_roots dec_two dec_zero_extra full_mixed enc_mixed dec_mixed type_full type_enc type_dec \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" \
