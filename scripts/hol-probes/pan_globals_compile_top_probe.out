@@ -8,3 +8,25 @@ global_present=[Function
    <|name := «main'»; inline := F; export := F; params := []; body := Skip;
      return := One|>]
 present_start=[Function
+   <|name := «main»; inline := F; export := F; params := [];
+     body := Seq Skip (TailCall «main'» []); return := One|>;
+ Function
+   <|name := «main'»; inline := F; export := F; params := []; body := Skip;
+     return := One|>]
+top_missing=[]
+top_function=[Function
+   <|name := «main»; inline := F; export := F; params := [(«x»,One)];
+     body := Seq Skip (TailCall «main'» [Var Local «x»]); return := One|>;
+ Function
+   <|name := «main'»; inline := T; export := T; params := [(«x»,One)];
+     body := Return (Const 0w); return := One|>]
+top_global_exception=[ExnDecl «E» One;
+ Function
+   <|name := «main»; inline := F; export := F; params := [(«x»,One)];
+     body :=
+       Seq (Seq (Store (Op Sub [TopAddr; Const 8w]) (Const 7w)) Skip)
+         (TailCall «main'» [Var Local «x»]); return := One|>;
+ Function
+   <|name := «main'»; inline := T; export := T; params := [(«x»,One)];
+     body := Return (Load One (Op Sub [TopAddr; Const 8w])); return := One|>]
+compile_top_probe_done=T

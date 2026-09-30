@@ -18,6 +18,15 @@
     "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.3): stackSemScript73-83: positive-width word List -> Option Bool List. Empty list gives NONE; word_msb continuation decodes suffix and propagates NONE, then appends GENLIST bit projections of width-1. Terminal gives GENLIST projections of bit_length-1. List.range/map retains index0-first order and Nat subtraction truncation, width1 included; trailing words ignored exactly in terminal clause. Existing unbounded Nat utility is separate; no utility refinement or executed full evaluator claim. Coordinator source review required."
   },
   {
+    "lean_path": "Flapjack/Pancake/PanGlobals/CompileTopExact.lean",
+    "lean_name": "compileTopExactHOL",
+    "hol_path": "cakeml/pancake/pan_globalsScript.sml",
+    "hol_name": "compile_top_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c literal source comparison (2026-09-30; bead flapjack-k00m), pan_globalsScript.sml236-256: exact DeclHOL/ProgHOL/ShapeHOL/MlS carriers, universally bound declaration list and start, first-match ALOOKUP(functions) via local structural helper, NONE yields empty list. SOME retains args/return shape, resort_decls then new_main_name from original declarations, fperm_decs, empty context with zero globals_size and bytes_in_word*n2w(SUM(MAP size_of_shape(dec_shapes renamed))) max size. Calls accepted qualified compileDecsExactHOL; initial finite map is the reviewed canonical empty map internal to the body, with no finite-map input or output requiring an owning-field qualifier. Generated function uses start, false inline/export, original parameters, Seq(nested_seq initializers)(Call NONE fresh-start mapped local parameter Vars), original return shape. Output order is exceptions ++ newMain::functions. NeZero positive BitVec width is the conventional HOL dimension translation. Direct original HOL EVAL capture retains three old sentinels and adds metadata/global/exception observations; exact executable Lean guards cover each full constructor/order/word and metadata field. Kernel checks definition and missing-entry equation; guards use executable evaluation, not a cross-assistant equivalence theorem. Production top-definition routing and compile_top_semantics are not claimed complete. Independent coordinator review pending."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Bitmap.lean",
     "lean_name": "filterBitmap",
     "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",

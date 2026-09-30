@@ -144,6 +144,7 @@ import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOk
 import Flapjack.Pancake.PanCommon
 import Flapjack.Pancake.PanGlobals
 import Flapjack.Pancake.PanGlobals.CompileExpExact
+import Flapjack.Pancake.PanGlobals.CompileTopExact
 import Flapjack.Pancake.PanLang
 import Flapjack.Pancake.PanLang.Shape
 import Flapjack.Pancake.PanLang.Exp
