@@ -31168,6 +31168,38 @@
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack canonical carrier roundtrip re-export for exact list theorem representation qualifiers; no independent HOL declaration."
 },
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/WriteBytearray.lean",
+  "lean_name": "stateRelWriteBytearrayHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "state_rel_write_bytearray",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "PanSemStateFiniteExact.locals",
+    "PanSemStateFiniteExact.globals",
+    "PanSemStateFiniteExact.code",
+    "PanSemStateFiniteExact.eshapes",
+    "PanGlobalsContextExact.globals"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.2.35.3) compared pan_globalsProofScript.sml:1571-1593: forall a ls ctxt s t sz nbw bs. state_rel ls ctxt s t /\\ read_bytearray sz (LENGTH nbw) (mem_load_byte s.memory s.memaddrs s.be) = SOME bs ==> state_rel ls ctxt (s with memory := write_bytearray sz nbw s.memory s.memaddrs s.be) (t with memory := write_bytearray sz nbw t.memory t.memaddrs t.be). HOL's leading forall a binds a variable absent from the body (arbitrary, hence inhabited, HOL type), so it is omitted; remaining binders in order; arbitrary flag ls. Exact tagged readBytearrayWordHOL (misc read_bytearray_def), panMemLoadByteWord8HOL (mem_load_byte_def), panWriteBytearrayWord8HOL (write_bytearray_def) and panGlobalsStateRelHOLExact; classical domain decisions inside the statement, no premise. Proof uses integrated state_rel_mem_store_byte; a failed head store is impossible because the read gives aligned-cell domain membership and word_lab has only Word. Canonical finite state/context witnesses; positive-width word/Type0 FFI translation only. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/WriteBytearray.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanSemStateFiniteExact toExact/ofExact finite-support roundtrip; it supports the fields named by the state_rel_write_bytearray tag."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/WriteBytearray.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanGlobalsContextExact toBroad/ofBroad roundtrip; it supports PanGlobalsContextExact.globals named by the state_rel_write_bytearray tag."
+},
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Store.lean",
     "lean_name": "compileCorrect_Store",
