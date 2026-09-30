@@ -123,4 +123,3 @@ val _ = observe "any_load_width1_nonzero" ``let s = ((ARB : (1,unit,unit) stackS
  regs := FEMPTY |+ (8,Word 1w); clock := 17; memory := (\a. Word 23w)|>) in
  let (r,s1) = stackSem$evaluate (StackLoadAny 7 8,s) in
  (r,FLOOKUP s1.regs 7,s1.stack,s1.stack_space,s1.clock,s1.memory 0w)``;
-
