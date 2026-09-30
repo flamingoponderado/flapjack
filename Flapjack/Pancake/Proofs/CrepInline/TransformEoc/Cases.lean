@@ -84,7 +84,7 @@ theorem eq_of_stateRel_localsStrongRel {width : Nat} [NeZero width] {σ : Type}
   simp_all
 
 /-- Local support: `MAP2` as `List.zipWith`. -/
-private theorem panMap2_eq_zipWith {α β γ : Type} (f : α → β → γ) :
+theorem panMap2_eq_zipWith {α β γ : Type} (f : α → β → γ) :
     ∀ (xs : List α) (ys : List β), panMap2 f xs ys = List.zipWith f xs ys
   | [], _ => by simp [panMap2]
   | _ :: _, [] => by simp [panMap2]
