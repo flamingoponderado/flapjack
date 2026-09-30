@@ -20,7 +20,8 @@ def loopArithDiv (destination dividend divisor : Nat) (locals : Nat → Option N
   | _, _ => none
 
 /--
-Faithful port of the `LLongMul` branch of `loop_arith`.
+Flapjack-specific Nat implementation of the `LLongMul` arithmetic equation.
+It has no bounded-input premises, so it is not a tagged exact word-carrier port.
 
 The original writes the high word first as an inner update and the low word as
 the outer update, so the low word wins when both destinations coincide
@@ -37,7 +38,8 @@ def loopArithLongMul (width destinationLeft destinationRight sourceLeft sourceRi
   | _, _ => none
 
 /--
-Faithful port of the `LLongDiv` branch of `loop_arith`.
+Flapjack-specific Nat implementation of the `LLongDiv` arithmetic equation.
+Its unbounded inputs are not the HOL word carrier; no exact HOL tag is claimed.
 
 The original writes the remainder as the inner update and the quotient as the
 outer update, so the quotient wins when both destinations coincide.
@@ -55,7 +57,8 @@ def loopArithLongDiv (width destinationLeft destinationRight sourceLeft sourceRi
       else none
   | _, _, _ => none
 
-/-- Faithful port of `loop_arith` covering `LDiv`, `LLongMul`, and `LLongDiv`. -/
+/-- Broad Nat arithmetic dispatcher, not an exact HOL port: its `LDiv` branch
+uses unsigned Nat division rather than signed fixed-width word quotient. -/
 def loopArith (width : Nat) : LoopArith → (Nat → Option Nat) → Option (Nat → Option Nat)
   | .div destination dividend divisor, locals =>
       loopArithDiv destination dividend divisor locals
