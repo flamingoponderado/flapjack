@@ -3300,6 +3300,13 @@ def main(argv: list[str]) -> int:
                     )
                 )
             if fmap_function_positions:
+                errors.extend(
+                    f"{where}: {error}"
+                    for error in fmap_as_finite_support_function_errors(
+                        lines, tagged_declaration_source(lines, number), lean_decl,
+                        fmap_function_positions,
+                    )
+                )
                 if (fmap_fields or fmap_result or fmap_parameters or fmap_existentials
                         or fmap_relation or fmap_equalities):
                     errors.append(

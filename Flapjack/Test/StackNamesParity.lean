@@ -1,4 +1,4 @@
-import Flapjack.Compiler.Backend.StackNames
+import Flapjack.Compiler.Backend.StackNames.NamesOk
 
 namespace Flapjack.Test.StackNamesParity
 
@@ -121,3 +121,15 @@ def runChecks : IO Bool := do
   pure parityGuard
 
 end Flapjack.Test.StackNamesParity
+
+-- Canonical Spt API replays: absent entries retain their original registers;
+-- a collision in the generated names violates ALL_DISTINCT.
+example : Flapjack.Compiler.Backend.StackNames.namesOkSptHOL .ln 8 [] := by
+  simp [Flapjack.Compiler.Backend.StackNames.namesOkSptHOL,
+    Flapjack.Compiler.Backend.StackNames.findName, Flapjack.sptLookup,
+    Flapjack.FLOOKUP, List.range_succ]
+example : ¬ Flapjack.Compiler.Backend.StackNames.namesOkSptHOL
+    (Flapjack.sptInsert 0 1 .ln) 2 [] := by
+  simp [Flapjack.Compiler.Backend.StackNames.namesOkSptHOL,
+    Flapjack.Compiler.Backend.StackNames.findName, Flapjack.sptLookup,
+    Flapjack.FLOOKUP, List.range_succ]
