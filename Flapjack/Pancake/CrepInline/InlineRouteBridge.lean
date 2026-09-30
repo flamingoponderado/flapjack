@@ -507,5 +507,544 @@ theorem crepProgToHOL_crepTransformBranch {width : Nat} [NeZero width] (loopDept
             · exact absurd rfl (hcs names handler body nm ar)
       | _ => simp_all [transformBranchHOLExact, crepProgToHOL]
 
+/-- `nestedDecs` over a constant-zero value list maps to `List.replicate` of the
+    exact constant under the codec. -/
+private theorem crepExpMap_const_replicate {width : Nat} [NeZero width] (l : List Nat) :
+    (l.map (fun _ => CrepExp.const (0 : BitVec width))).map crepExpToHOL =
+      List.replicate l.length (CrepExpHOL.const 0) := by
+  induction l with
+  | nil => rfl
+  | cons n t ih =>
+      have h : crepExpToHOL (CrepExp.const (0 : BitVec width)) = CrepExpHOL.const 0 := by
+        simp [crepExpToHOL]
+      simp only [List.map_cons]
+      rw [ih, h]
+      rfl
+
+/-- Executed `crepInlineNontail` lifts to the exact `inlineNontailHOLExact`
+    under the `crepProgToHOL` codec. -/
+theorem crepProgToHOL_crepInlineNontail {width : Nat} [NeZero width]
+    (program : CrepProg (BitVec width))
+    (returnNames temporaryReturns temporaryNames : List Nat)
+    (arguments : List (CrepExp (BitVec width))) (argumentNames : List Nat) :
+    crepProgToHOL (crepInlineNontail program returnNames temporaryReturns temporaryNames
+        arguments argumentNames) =
+      inlineNontailHOLExact (crepProgToHOL program) returnNames temporaryReturns temporaryNames
+        (arguments.map crepExpToHOL) argumentNames := by
+  unfold crepInlineNontail inlineNontailHOLExact
+  rw [crepProgToHOL_nestedDecs]
+  congr 1
+  · exact crepExpMap_const_replicate temporaryReturns
+  · simp only [crepProgToHOL, crepProgToHOL_crepArgLoad, crepProgToHOL_crepNestedSeqHOL]
+    rw [List.map_zipWith]
+    have hfun : (fun x y => crepProgToHOL (CrepProg.assign (α := BitVec width) x
+        (CrepExp.var (α := BitVec width) y))) =
+        (fun name temporary => CrepProgHOL.assign name (CrepExpHOL.var temporary)) := by
+      funext name temporary
+      simp [crepProgToHOL, crepExpToHOL]
+    rw [hfun]
+
+def crepEarlyExitToHOL : CrepEarlyExit → CrepEarlyExitHOL
+  | .exception => .exception
+  | .return => .return
+  | .loopExit => .loopExit
+
+/-- `crepMergeExit` agrees with the exact `crepMergeExitHOL` under
+    `crepEarlyExitToHOL`. -/
+theorem crepMergeExit_map (a b : Option CrepEarlyExit) :
+    (crepMergeExit a b).map crepEarlyExitToHOL =
+      crepMergeExitHOL (a.map crepEarlyExitToHOL) (b.map crepEarlyExitToHOL) := by
+  cases a with
+  | none => cases b with
+    | none => rfl
+    | some eb => cases eb <;> rfl
+  | some ea => cases ea with
+    | «return» => cases b with
+      | none => rfl
+      | some eb => cases eb <;> rfl
+    | «exception» => cases b with
+      | none => rfl
+      | some eb => cases eb <;> rfl
+    | «loopExit» => cases b with
+      | none => rfl
+      | some eb => cases eb <;> rfl
+
+/-- The executed unreachability pass `crepUnreachElim` (`CrepInline.lean:340`)
+    agrees with the exact tagged `unreachElimHOLExact`
+    (`CrepInline.lean:189`) under `crepProgToHOL`.  The stored early-exit is
+    related by `crepEarlyExitToHOL`.  Untagged Flapjack-specific infrastructure
+    (there is no HOL declaration of this cross-representation relation). -/
+theorem crepProgToHOL_crepUnreachElim {width : Nat} [NeZero width] (program : CrepProg (BitVec width)) :
+    (crepProgToHOL (crepUnreachElim program).1,
+        (crepUnreachElim program).2.map crepEarlyExitToHOL) =
+      unreachElimHOLExact (crepProgToHOL program) := by
+  apply crepUnreachElim.induct (motive := fun program =>
+    ∀ (q : CrepProg (BitVec width)) (r : Option CrepEarlyExit),
+      crepUnreachElim program = (q, r) →
+      (crepProgToHOL q, r.map crepEarlyExitToHOL) =
+        unreachElimHOLExact (crepProgToHOL program))
+  · intro values q r h
+    rw [crepUnreachElim.eq_def] at h
+    cases h
+    simp [crepProgToHOL, unreachElimHOLExact, crepEarlyExitToHOL]
+  · intro exception q r h
+    rw [crepUnreachElim.eq_def] at h
+    cases h
+    simp [crepProgToHOL, unreachElimHOLExact, crepEarlyExitToHOL]
+  · intro label q r h
+    rw [crepUnreachElim.eq_def] at h
+    cases h
+    simp [crepProgToHOL, unreachElimHOLExact, crepEarlyExitToHOL]
+  · intro label q r h
+    rw [crepUnreachElim.eq_def] at h
+    cases h
+    simp [crepProgToHOL, unreachElimHOLExact, crepEarlyExitToHOL]
+  · intro first second second' secondExit hfirst hsome ihFirst q r h
+    have hunf : crepUnreachElim (.seq first second) = (second', secondExit) := by
+      rw [crepUnreachElim.eq_def]
+      dsimp only
+      rw [hfirst]
+      simp [hsome]
+    rw [hunf] at h
+    cases h
+    simp only [crepProgToHOL, unreachElimHOLExact]
+    rw [← ihFirst second' secondExit hfirst]
+    simp only [Option.isSome_map, hsome, if_true]
+  · intro first second second' secondExit hfirst hnotsome second'' secondExit' hsecond ihFirst ihSecond q r h
+    have hunf : crepUnreachElim (.seq first second) = (.seq second' second'', secondExit') := by
+      rw [crepUnreachElim.eq_def]
+      dsimp only
+      rw [hfirst]
+      simp [hnotsome, hsecond]
+    rw [hunf] at h
+    cases h
+    simp only [crepProgToHOL, unreachElimHOLExact]
+    rw [← ihFirst second' secondExit hfirst, ← ihSecond second'' secondExit' hsecond]
+    simp only [Option.isSome_map, hnotsome, Bool.false_eq_true, if_false]
+  · intro name value body body' bodyExit hbody ih q r h
+    have hunf : crepUnreachElim (.dec name value body) = (.dec name value body', bodyExit) := by
+      rw [crepUnreachElim.eq_def]
+      dsimp only
+      rw [hbody]
+    rw [hunf] at h
+    cases h
+    simp only [crepProgToHOL, unreachElimHOLExact]
+    rw [← ih body' bodyExit hbody]
+  · intro condition thenBranch elseBranch then' thenExit hthen then'' elseExit helse ihThen ihElse q r h
+    have hunf : crepUnreachElim (.ite condition thenBranch elseBranch) =
+        (.ite condition then' then'', crepMergeExit thenExit elseExit) := by
+      rw [crepUnreachElim.eq_def]
+      dsimp only
+      rw [hthen]
+      dsimp only
+      rw [helse]
+    rw [hunf] at h
+    cases h
+    simp only [crepProgToHOL, unreachElimHOLExact]
+    rw [← ihThen then' thenExit hthen, ← ihElse then'' elseExit helse,
+      ← crepMergeExit_map thenExit elseExit]
+  · intro condition body body' bodyExit hbody ih q r h
+    have hunf : crepUnreachElim (.while condition body) = (.while condition body', none) := by
+      rw [crepUnreachElim.eq_def]
+      dsimp only
+      rw [hbody]
+    rw [hunf] at h
+    cases h
+    simp only [crepProgToHOL, unreachElimHOLExact]
+    rw [← ih body' bodyExit hbody]
+    simp only [Option.map_none]
+  · intro name arguments q r h
+    rw [crepUnreachElim.eq_def] at h
+    cases h
+    simp [crepProgToHOL, unreachElimHOLExact, crepEarlyExitToHOL]
+  · intro names name arguments q r h
+    rw [crepUnreachElim.eq_def] at h
+    cases h
+    simp [crepProgToHOL, unreachElimHOLExact]
+  · intro names handler body name arguments second' secondExit hbody ih q r h
+    have hunf : crepUnreachElim (.call (some (names, some (handler, body))) name arguments) =
+        (.call (some (names, some (handler, second'))) name arguments, none) := by
+      rw [crepUnreachElim.eq_def]
+      dsimp only
+      rw [hbody]
+    rw [hunf] at h
+    cases h
+    simp only [crepProgToHOL, unreachElimHOLExact]
+    rw [← ih second' secondExit hbody]
+    simp only [Option.map_none]
+  · intro program hret hraise hbreak hcontinue hseq hdec hite hwhile hcallnone hcallsomenone hcallsomesome q r h
+    cases program with
+    | skip =>
+        rw [crepUnreachElim.eq_def] at h; cases h
+        simp [crepProgToHOL, unreachElimHOLExact]
+    | assign name value =>
+        rw [crepUnreachElim.eq_def] at h; cases h
+        simp [crepProgToHOL, unreachElimHOLExact]
+    | primitive names operator args =>
+        rw [crepUnreachElim.eq_def] at h; cases h
+        simp [crepProgToHOL, unreachElimHOLExact]
+    | store address value =>
+        rw [crepUnreachElim.eq_def] at h; cases h
+        simp [crepProgToHOL, unreachElimHOLExact]
+    | store32 address value =>
+        rw [crepUnreachElim.eq_def] at h; cases h
+        simp [crepProgToHOL, unreachElimHOLExact]
+    | storeByte address value =>
+        rw [crepUnreachElim.eq_def] at h; cases h
+        simp [crepProgToHOL, unreachElimHOLExact]
+    | storeGlob address value =>
+        rw [crepUnreachElim.eq_def] at h; cases h
+        simp [crepProgToHOL, unreachElimHOLExact]
+    | extCall function configuration configurationLength array arrayLength =>
+        rw [crepUnreachElim.eq_def] at h; cases h
+        simp [crepProgToHOL, unreachElimHOLExact]
+    | shMem operator name address =>
+        rw [crepUnreachElim.eq_def] at h; cases h
+        simp [crepProgToHOL, unreachElimHOLExact]
+    | tick =>
+        rw [crepUnreachElim.eq_def] at h; cases h
+        simp [crepProgToHOL, unreachElimHOLExact]
+    | «return» values => exact absurd rfl (hret values)
+    | «raise» exception => exact absurd rfl (hraise exception)
+    | «break» label => exact absurd rfl (hbreak label)
+    | «continue» label => exact absurd rfl (hcontinue label)
+    | «seq» first second => exact absurd rfl (hseq first second)
+    | «dec» name value body => exact absurd rfl (hdec name value body)
+    | «ite» condition thenBranch elseBranch => exact absurd rfl (hite condition thenBranch elseBranch)
+    | «while» condition body => exact absurd rfl (hwhile condition body)
+    | «call» ret nm ar =>
+        cases ret with
+        | none => exact absurd rfl (hcallnone nm ar)
+        | some pair =>
+            obtain ⟨names, rest⟩ := pair
+            cases rest with
+            | none => exact absurd rfl (hcallsomenone names nm ar)
+            | some hr =>
+                obtain ⟨handler, body⟩ := hr
+                exact absurd rfl (hcallsomesome names handler body nm ar)
+  · obtain ⟨a, b⟩ := crepUnreachElim program
+    rfl
+
+private theorem crepInlineActiveNames_contains_any_go [BEq FunName] [LawfulBEq FunName]
+    [LawfulHashable FunName] {α : Type} (inlineable : List (CrepInlineEntry α))
+    (name : FunName) (s : Std.HashSet FunName) :
+    (inlineable.foldl (fun names entry => names.insert entry.1) s).contains name =
+      (s.contains name || inlineable.any (fun entry => entry.1 == name)) := by
+  induction inlineable generalizing s with
+  | nil => simp
+  | cons entry rest ih =>
+      simp only [List.foldl_cons, List.any_cons]
+      rw [ih (s.insert entry.1), Std.HashSet.contains_insert]
+      rw [Bool.or_comm (entry.1 == name) (s.contains name), Bool.or_assoc]
+
+/-- Membership in the production active-name set (`crepInlineActiveNames`) is
+    first-match lookup success in the inline-candidate list.  Untagged
+    Flapjack-specific infrastructure. -/
+theorem crepInlineActiveNames_contains_any [BEq FunName] [LawfulBEq FunName]
+    [LawfulHashable FunName] {α : Type} (inlineable : List (CrepInlineEntry α))
+    (name : FunName) :
+    (crepInlineActiveNames inlineable).contains name =
+      inlineable.any (fun entry => entry.1 == name) := by
+  unfold crepInlineActiveNames
+  rw [crepInlineActiveNames_contains_any_go inlineable name ∅,
+    Std.HashSet.contains_empty, Bool.false_or]
+
+/-- First-match lookup success is the same `any` used for active-name
+    membership.  Untagged Flapjack-specific infrastructure. -/
+theorem crepInlineLookup_isSome_any [BEq FunName] [LawfulBEq FunName]
+    {α : Type} (name : FunName) (inlineable : List (CrepInlineEntry α)) :
+    (crepInlineLookup name inlineable).isSome =
+      inlineable.any (fun entry => entry.1 == name) := by
+  induction inlineable with
+  | nil => rfl
+  | cons entry rest ih =>
+      simp only [crepInlineLookup, List.any_cons]
+      by_cases h : (name == entry.1) = true
+      · have h' : (entry.1 == name) = true := by rw [beq_comm entry.1 name]; exact h
+        rw [if_pos h, h', Bool.true_or]
+        rfl
+      · have hnf : (name == entry.1) = false := by
+          cases hv : (name == entry.1) <;> simp_all
+        have h' : (entry.1 == name) = false := by rw [beq_comm entry.1 name]; exact hnf
+        rw [if_neg h, ih, h', Bool.false_or]
+
+/-- The executable active-name guard equals the exact finite-map lookup used by
+    `inlineProgHOLCoreExact`.  Untagged Flapjack-specific infrastructure. -/
+theorem crepInlineActiveNames_contains_eq [BEq FunName] [LawfulBEq FunName]
+    [LawfulHashable FunName] {α : Type} (inlineable : List (CrepInlineEntry α))
+    (name : FunName) :
+    (crepInlineActiveNames inlineable).contains name =
+      (crepInlineLookup name inlineable).isSome := by
+  rw [crepInlineActiveNames_contains_any inlineable name,
+    ← crepInlineLookup_isSome_any name inlineable]
+
+/-- The executed `crepExpVars` family over a list of production expressions
+    agrees with the exact `crepExpVarsHOL` read through `crepExpToHOL`.
+    Untagged Flapjack-specific infrastructure. -/
+theorem crepExpVars_flatMap_codec {width : Nat} [NeZero width]
+    (arguments : List (CrepExp (BitVec width))) :
+    arguments.flatMap crepExpVars =
+      (arguments.map crepExpToHOL).flatMap crepExpVarsHOL := by
+  induction arguments with
+  | nil => rfl
+  | cons a as ih =>
+      simp only [List.map_cons, List.flatMap_cons, ih]
+      exact congrArg (fun x => x ++ (as.map crepExpToHOL).flatMap crepExpVarsHOL)
+        (crepExpVarsW_eq_crepExpVarsHOL_crepExpToHOL (width := width) a)
+
+/-- The executed temporary-name generator `crepInlineTmpNames` equals the exact
+    `genlistSuccAddHOLExact` at the folded maxima of the argument variables.
+    Untagged Flapjack-specific infrastructure. -/
+theorem crepInlineTmpNames_codec {width : Nat} [NeZero width]
+    (arguments : List (CrepExp (BitVec width))) (argumentNames : List Nat) :
+    crepInlineTmpNames (arguments.flatMap crepExpVars) argumentNames =
+      genlistSuccAddHOLExact
+        (max (((arguments.map crepExpToHOL).flatMap crepExpVarsHOL).foldl max 0)
+          (argumentNames.foldl max 0))
+        argumentNames.length := by
+  unfold crepInlineTmpNames genlistSuccAddHOLExact
+  rw [crepExpVars_flatMap_codec]
+
+/-- The executed `crepInlineCallBody` at `none` return info lifts to the exact
+    `.call none` arm of `inlineProgHOLCoreExact` under `crepProgToHOL`.
+    Untagged Flapjack-specific infrastructure. -/
+theorem crepProgToHOL_crepInlineCallBody_none {width : Nat} [NeZero width]
+    (name : FunName) (arguments : List (CrepExp (BitVec width)))
+    (argumentNames : List Nat) (body : CrepProg (BitVec width)) :
+    crepProgToHOL (crepInlineCallBody none name arguments argumentNames body) =
+      inlineTailHOLExact
+        (argLoadHOLExact
+          (genlistSuccAddHOLExact
+            (max (((arguments.map crepExpToHOL).flatMap crepExpVarsHOL).foldl max 0)
+              (argumentNames.foldl max 0))
+            argumentNames.length)
+          (arguments.map crepExpToHOL) argumentNames (crepProgToHOL body)) := by
+  unfold crepInlineCallBody
+  rw [crepProgToHOL_crepInlineTail, crepProgToHOL_crepArgLoad, crepInlineTmpNames_codec]
+
+/-! ## Variable-occurrence and branch-return codec bridges
+
+The executed inliner consults the variable-occurrence analysis `crepVarProg`,
+its maximum `crepVmaxProg`, and the branch-return predicates `crepHasReturn`
+and `crepNotBranchRet` on the production `CrepProg` carrier.  The exact
+`inlineProgHOLCoreExact` instead consults the tagged exact ports
+`crepVarProgHOLExact`, `crepVmaxProgHOLExact`, `hasReturnHOLExact` and
+`notBranchRetHOLExact` on `CrepProgHOL`.  These helper declarations prove that
+the executed analyses are the `crepProgToHOL` images of the exact ones, so the
+call-arm guard and maximum computations agree under the codec.  They are
+Flapjack-specific cross-representation facts with no cakeml HOL original, so
+they carry no `@[hol]` tag. -/
+
+/-- `crepExpVars` agrees with the exact `crepExpVarsHOL` under `crepExpToHOL`:
+    a form of `crepExpVarsW_eq_crepExpVarsHOL_crepExpToHOL` with the production
+    delegating definition on the left. -/
+theorem crepExpVars_codec {width : Nat} [NeZero width] (expression : CrepExp (BitVec width)) :
+    crepExpVars expression = crepExpVarsHOL (crepExpToHOL expression) :=
+  crepExpVarsW_eq_crepExpVarsHOL_crepExpToHOL expression
+
+/-- Executed `crepVarProg` agrees with the exact `crepVarProgHOLExact` under the
+    `crepProgToHOL` codec. -/
+theorem crepVarProg_codec {width : Nat} [NeZero width] (program : CrepProg (BitVec width)) :
+    crepVarProg program = crepVarProgHOLExact (crepProgToHOL program) := by
+  fun_induction crepVarProg program with
+  | case1 name value body ih =>
+      simp only [crepProgToHOL, crepVarProgHOLExact, crepExpVars_codec, ih]
+  | case2 name value =>
+      simp only [crepProgToHOL, crepVarProgHOLExact, crepExpVars_codec]
+  | case3 names op arguments =>
+      simp only [crepProgToHOL, crepVarProgHOLExact]
+  | case4 address value =>
+      simp only [crepProgToHOL, crepVarProgHOLExact, crepExpVars_codec]
+  | case5 address value =>
+      simp only [crepProgToHOL, crepVarProgHOLExact, crepExpVars_codec]
+  | case6 address value =>
+      simp only [crepProgToHOL, crepVarProgHOLExact, crepExpVars_codec]
+  | case7 address value =>
+      simp only [crepProgToHOL, crepVarProgHOLExact, crepExpVars_codec]
+  | case8 first second ih1 ih2 =>
+      simp only [crepProgToHOL, crepVarProgHOLExact, ih1, ih2]
+  | case9 condition thenBranch elseBranch ih1 ih2 =>
+      simp only [crepProgToHOL, crepVarProgHOLExact, crepExpVars_codec, ih1, ih2]
+  | case10 condition body ih =>
+      simp only [crepProgToHOL, crepVarProgHOLExact, crepExpVars_codec, ih]
+  | case11 name arguments =>
+      simp only [crepProgToHOL, crepVarProgHOLExact, crepExpVars_flatMap_codec]
+  | case12 names name arguments =>
+      simp only [crepProgToHOL, crepVarProgHOLExact, crepExpVars_flatMap_codec]
+  | case13 names handler body name arguments ih =>
+      simp only [crepProgToHOL, crepVarProgHOLExact, crepExpVars_flatMap_codec, ih]
+  | case14 function configuration configurationLength array arrayLength =>
+      simp only [crepProgToHOL, crepVarProgHOLExact]
+  | case15 values =>
+      simp only [crepProgToHOL, crepVarProgHOLExact, crepExpVars_flatMap_codec]
+  | case16 operator name address =>
+      simp only [crepProgToHOL, crepVarProgHOLExact, crepExpVars_codec]
+  | case17 => simp only [crepProgToHOL, crepVarProgHOLExact]
+  | case18 label => simp only [crepProgToHOL, crepVarProgHOLExact]
+  | case19 label => simp only [crepProgToHOL, crepVarProgHOLExact]
+  | case20 exception => simp only [crepProgToHOL, crepVarProgHOLExact]
+  | case21 => simp only [crepProgToHOL, crepVarProgHOLExact]
+
+/-- Executed `crepVmaxProg` agrees with the exact `crepVmaxProgHOLExact` under
+    the codec. -/
+theorem crepVmaxProg_codec {width : Nat} [NeZero width] (program : CrepProg (BitVec width)) :
+    crepVmaxProg program = crepVmaxProgHOLExact (crepProgToHOL program) := by
+  unfold crepVmaxProg crepVmaxProgHOLExact
+  rw [crepVarProg_codec]
+
+/-- Executed `crepHasReturn` agrees with the exact `hasReturnHOLExact` under the
+    codec. -/
+theorem crepHasReturn_codec {width : Nat} [NeZero width] :
+    (program : CrepProg (BitVec width)) →
+      crepHasReturn program = hasReturnHOLExact (crepProgToHOL program)
+  | .skip => by simp only [crepHasReturn, crepProgToHOL, hasReturnHOLExact]
+  | .dec name value body => by
+      simp only [crepHasReturn, crepProgToHOL, hasReturnHOLExact]
+      exact crepHasReturn_codec body
+  | .assign name value => by simp only [crepHasReturn, crepProgToHOL, hasReturnHOLExact]
+  | .primitive names operator args => by simp only [crepHasReturn, crepProgToHOL, hasReturnHOLExact]
+  | .store address value => by simp only [crepHasReturn, crepProgToHOL, hasReturnHOLExact]
+  | .store32 address value => by simp only [crepHasReturn, crepProgToHOL, hasReturnHOLExact]
+  | .storeByte address value => by simp only [crepHasReturn, crepProgToHOL, hasReturnHOLExact]
+  | .storeGlob address value => by simp only [crepHasReturn, crepProgToHOL, hasReturnHOLExact]
+  | .seq first second => by
+      simp only [crepHasReturn, crepProgToHOL, hasReturnHOLExact]
+      rw [crepHasReturn_codec first, crepHasReturn_codec second]
+  | .ite condition thenBranch elseBranch => by
+      simp only [crepHasReturn, crepProgToHOL, hasReturnHOLExact]
+      rw [crepHasReturn_codec thenBranch, crepHasReturn_codec elseBranch]
+  | .while condition body => by
+      simp only [crepHasReturn, crepProgToHOL, hasReturnHOLExact]
+      exact crepHasReturn_codec body
+  | .break label => by simp only [crepHasReturn, crepProgToHOL, hasReturnHOLExact]
+  | .continue label => by simp only [crepHasReturn, crepProgToHOL, hasReturnHOLExact]
+  | .call none _ _ => by simp only [crepHasReturn, crepProgToHOL, hasReturnHOLExact]
+  | .call (some (_, none)) _ _ => by simp only [crepHasReturn, crepProgToHOL, hasReturnHOLExact]
+  | .call (some (_, some (_, handler))) _ _ => by
+      simp only [crepHasReturn, crepProgToHOL, hasReturnHOLExact]
+      exact crepHasReturn_codec handler
+  | .extCall function configuration configurationLength array arrayLength =>
+      by simp only [crepHasReturn, crepProgToHOL, hasReturnHOLExact]
+  | .raise exception => by simp only [crepHasReturn, crepProgToHOL, hasReturnHOLExact]
+  | .return values => by simp only [crepHasReturn, crepProgToHOL, hasReturnHOLExact]
+  | .shMem operator name address => by simp only [crepHasReturn, crepProgToHOL, hasReturnHOLExact]
+  | .tick => by simp only [crepHasReturn, crepProgToHOL, hasReturnHOLExact]
+
+/-- Executed `crepNotBranchRet` agrees with the exact `notBranchRetHOLExact`
+    under the codec. -/
+theorem crepNotBranchRet_codec {width : Nat} [NeZero width] :
+    (program : CrepProg (BitVec width)) →
+      crepNotBranchRet program = notBranchRetHOLExact (crepProgToHOL program)
+  | .skip => by simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
+  | .dec _ _ body => by
+      simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
+      exact crepNotBranchRet_codec body
+  | .assign name value => by simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
+  | .primitive names operator args => by simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
+  | .store address value => by simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
+  | .store32 address value => by simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
+  | .storeByte address value => by simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
+  | .storeGlob address value => by simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
+  | .seq first second => by
+      simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
+      rw [crepNotBranchRet_codec first, crepNotBranchRet_codec second]
+  | .ite _ thenBranch elseBranch => by
+      simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
+      rw [crepHasReturn_codec thenBranch, crepHasReturn_codec elseBranch]
+  | .while _ body => by
+      simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
+      rw [crepHasReturn_codec body]
+  | .break label => by simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
+  | .continue label => by simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
+  | .call none _ _ => by simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
+  | .call (some (_, none)) _ _ => by simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
+  | .call (some (_, some (_, handler))) _ _ => by
+      simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
+      rw [crepHasReturn_codec handler]
+  | .extCall function configuration configurationLength array arrayLength =>
+      by simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
+  | .raise exception => by simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
+  | .return values => by simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
+  | .shMem operator name address => by simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
+  | .tick => by simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
+
+/-- Executed inline call body with a `some (returnNames, none)` return shape lifts
+    to the exact `some (returnNames, none)` arm computation under `crepProgToHOL`.
+    Here the argument `body` plays the role of the exact `inlinedCallee` that the
+    caller supplies (in the production recursion it is the `crepUnreachElim` result
+    of the recursive inlining of the callee). -/
+theorem crepProgToHOL_crepInlineCallBody_some_none {width : Nat} [NeZero width]
+    (returnNames : List Nat) (name : FunName)
+    (arguments : List (CrepExp (BitVec width)))
+    (argumentNames : List Nat) (body : CrepProg (BitVec width)) :
+    crepProgToHOL (crepInlineCallBody (some (returnNames, none)) name arguments
+        argumentNames body) =
+      (if !crepAllDistinct returnNames then
+        CrepProgHOL.call (some (returnNames, none)) (ofString name)
+          (arguments.map crepExpToHOL)
+      else
+        let maxArguments :=
+          ((arguments.map crepExpToHOL).flatMap crepExpVarsHOL).foldl max 0
+        let maxArgumentNames := argumentNames.foldl max 0
+        let temporaryNames :=
+          genlistSuccAddHOLExact (max maxArguments maxArgumentNames)
+            argumentNames.length
+        let maxReturnNames := returnNames.foldl max 0
+        let maxInlinedCallee := crepVmaxProgHOLExact (crepProgToHOL body)
+        let maxTemporaryNames := temporaryNames.foldl max 0
+        let temporaryReturns :=
+          genlistSuccAddHOLExact
+            (max maxReturnNames (max maxInlinedCallee maxTemporaryNames))
+            returnNames.length
+        let transformedCallee :=
+          if notBranchRetHOLExact (crepProgToHOL body) then
+            .seq .tick (transformEocHOLExact temporaryReturns (crepProgToHOL body))
+          else
+            .while (.const 1)
+              (transformBranchHOLExact 0 temporaryReturns (crepProgToHOL body))
+        inlineNontailHOLExact transformedCallee returnNames temporaryReturns
+          temporaryNames (arguments.map crepExpToHOL) argumentNames) := by
+  simp only [crepInlineCallBody]
+  by_cases hd : (!crepAllDistinct returnNames) = true
+  · rw [if_pos hd, if_pos hd]
+    simp only [crepProgToHOL]
+  · rw [if_neg hd, if_neg hd]
+    rw [crepInlineTmpNames_codec, crepVmaxProg_codec, crepNotBranchRet_codec]
+    by_cases hbr : notBranchRetHOLExact (crepProgToHOL body) = true
+    · rw [if_pos hbr, if_pos hbr]
+      simp only [crepProgToHOL, crepProgToHOL_crepTransformEoc,
+        crepProgToHOL_crepInlineNontail, genlistSuccAddHOLExact, Nat.add_assoc]
+    · rw [if_neg hbr, if_neg hbr]
+      simp only [crepProgToHOL, crepExpToHOL, crepProgToHOL_crepTransformBranch,
+        crepProgToHOL_crepInlineNontail, genlistSuccAddHOLExact, Nat.add_assoc]
+
+/-- The `ofString`/`toStringOfBytes` codec preserves Bool equality on
+    byte-ranged names. -/
+theorem beq_ofString_eq_ofString {s t : String}
+    (hs : CrepNameRanged s) (ht : CrepNameRanged t) :
+    (ofString s == ofString t) = (s == t) := by
+  rw [beq_comm (ofString s) (ofString t), beq_ofString_eq ht,
+      toStringOfBytes_ofString_of_bytes s hs, beq_comm t s]
+
+/-- Production active-name membership after erasing `name` matches the exact
+    finite-map lookup guarded by the same erase, under the `toStringOfBytes`
+    codec. Introduced for the pending inline body-recursion relation, where the
+    executable pass carries a list of inlineable entries together with an active
+    name set while the exact core carries the `alistToFmapHOLExact` finite map. -/
+theorem crepInlineActiveNames_erase_codec {width : Nat} [NeZero width] {α : Type}
+    (bodyDecode : CrepProgHOL width → CrepProg α)
+    (entries : List (CrepInlineMapHOLName × (List Nat × CrepProgHOL width)))
+    (name : FunName) (s : String) (hs : CrepNameRanged s) (hname : CrepNameRanged name) :
+    ((crepInlineActiveNames (entries.map (fun e =>
+        (toStringOfBytes e.1, (e.2.1, bodyDecode e.2.2))))).erase name).contains s =
+      (((alistToFmapHOLExact entries).erase (ofString name)).lookup (ofString s)).isSome := by
+  rw [Std.HashSet.contains_erase, crepInlineActiveNames_contains_eq,
+      crepInlineLookup_codec bodyDecode entries s hs, Option.isSome_map,
+      HolFiniteMapExact.lookup_erase,
+      show (FDOMSUB (alistToFmapHOLExact entries).lookup (ofString name) (ofString s)) =
+        FLOOKUP (FDOMSUB (alistToFmapHOLExact entries).lookup (ofString name)) (ofString s) from rfl,
+      FLOOKUP_domsub, beq_ofString_eq_ofString hname hs]
+  cases hb : (name == s) <;> simp_all [FLOOKUP]
+
 end CrepInlineRoute
 end Flapjack

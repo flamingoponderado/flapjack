@@ -9,9 +9,10 @@ This module proves a Flapjack-specific bridge fact: every exact HOL-shaped
 production `WordProg` carrier. The theorem is untagged because there is no HOL
 declaration relating these two Lean carrier instances. It rules out production
 projection failures caused by `Inst Skip`, FP instructions, or add/sub overflow
-instructions in exact compiler output. It does not state that the production
-compiler calls `compHOL`; that executed-path migration remains tracked by the
-parent routing bead.
+instructions in exact compiler output. The fixed-width production path now
+calls `compHOL` through `CompFuncProductionRoute` when its source codec and
+FFI byte-range guard succeed; this image theorem discharges projection
+failure on that path.
 -/
 
 namespace Flapjack
