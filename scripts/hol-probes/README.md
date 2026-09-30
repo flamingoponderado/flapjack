@@ -1386,3 +1386,15 @@ normally, unlike WordSem. Kernel replay and runtime control checks live in
 HOL_PROBE_ONLY=stacksem_loop_control_probeScript.sml
 scripts/hol-probes/regenerate.sh`. Evaluator assembly and its production
 refinement remain tracked by y19g/.12.
+
+`pan_globals_fperm_code_probeScript.sml` observes the original
+`pan_globalsProof$fperm_code` finite map using its proved
+`FLOOKUP_fperm_code'` rewrite followed by HOL EVAL (plain EVAL leaves
+FUN_FMAP/preimage finiteness symbolic): both swapped keys, another key whose
+body calls a swapped name, a missing key, and equal source/target names.
+`Flapjack/Test/PanGlobalsFpermCodeParity.lean` replays all five rows in the
+kernel and runtime. Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=pan_globals_fperm_code_probeScript.sml
+scripts/hol-probes/regenerate.sh`; original proof theory must already be built.
+Full evaluation permutation and remaining single-map equality qualification
+are tracked separately on .18.5.2.22.4/.5.

@@ -27320,5 +27320,87 @@
     "hol_name": "functions_filter_nil",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.7): exact DeclHOL/MlS/ShapeHOL re-port of HOL functions_filter_nil over the tagged exact functionsHOL/exceptionsHOL/decShapesHOL/fpermDecsHOL/resortDeclsHOL/newMainNameHOL/freshNameMlS and Bool-valued is_* predicates; same binders, hypotheses and conclusion (FILTER=List.filter, MAP FST=map Prod.fst, ALL_DISTINCT=Nodup, EVERY over Bool predicate = membership-quantified `= true`, unused HOL binders kept as free-typed binders). Supersedes the production-carrier documented_mismatch declaration of the same HOL name in Proofs/PanGlobals.lean, which stays untagged-by-status."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "fperm_code_def",
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermCode.lean",
+    "lean_name": "fpermCodeHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_result",
+    "fmap_as_finite_support_result": true,
+    "reviewer": "flapjack-sol source comparison2026-09-30 bead .18.5.2.22.4.1 against pan_globalsProof1617-1685. Uses accepted exact MlS/ProgHOL/ShapeHOL and exact fpermName/fpermHOL/fpermDecsHOL/functionsHOL. FUN_FMAP preimage domain is exactly swapped source domain; absent source key yields NONE, present payload preserves parameters and return shape and permutes body. Finite support via swapped witness list and name involution. Both full Option lookup equations preserve arbitrary key/code; declaration append is structural; update-list theorem proved universally from canonical FUPDATE_LIST order, no success/disjointness/distinctness premises, duplicate keys preserved. Result codec witness is independent raw lookup operation; relation bare map parameters are canonical input maps. FEMPTY single-map equality and canonical lookup_code theorem remain tracked .4.3/.4.2, not claimed ported here. Production/evaluation permutation theorem remains on parent .4/.5."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "FLOOKUP_fperm_code",
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermCode.lean",
+    "lean_name": "flookupFpermCodeHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "code"
+    ],
+    "reviewer": "flapjack-sol source comparison2026-09-30 bead .18.5.2.22.4.1 against pan_globalsProof1617-1685. Uses accepted exact MlS/ProgHOL/ShapeHOL and exact fpermName/fpermHOL/fpermDecsHOL/functionsHOL. FUN_FMAP preimage domain is exactly swapped source domain; absent source key yields NONE, present payload preserves parameters and return shape and permutes body. Finite support via swapped witness list and name involution. Both full Option lookup equations preserve arbitrary key/code; declaration append is structural; update-list theorem proved universally from canonical FUPDATE_LIST order, no success/disjointness/distinctness premises, duplicate keys preserved. Result codec witness is independent raw lookup operation; relation bare map parameters are canonical input maps. FEMPTY single-map equality and canonical lookup_code theorem remain tracked .4.3/.4.2, not claimed ported here. Production/evaluation permutation theorem remains on parent .4/.5."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "FLOOKUP_fperm_code'",
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermCode.lean",
+    "lean_name": "flookupFpermCodeHOL'",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "code"
+    ],
+    "reviewer": "flapjack-sol source comparison2026-09-30 bead .18.5.2.22.4.1 against pan_globalsProof1617-1685. Uses accepted exact MlS/ProgHOL/ShapeHOL and exact fpermName/fpermHOL/fpermDecsHOL/functionsHOL. FUN_FMAP preimage domain is exactly swapped source domain; absent source key yields NONE, present payload preserves parameters and return shape and permutes body. Finite support via swapped witness list and name involution. Both full Option lookup equations preserve arbitrary key/code; declaration append is structural; update-list theorem proved universally from canonical FUPDATE_LIST order, no success/disjointness/distinctness premises, duplicate keys preserved. Result codec witness is independent raw lookup operation; relation bare map parameters are canonical input maps. FEMPTY single-map equality and canonical lookup_code theorem remain tracked .4.3/.4.2, not claimed ported here. Production/evaluation permutation theorem remains on parent .4/.5."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "fperm_decs_append",
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermCode.lean",
+    "lean_name": "fpermDecsHOL_append",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison2026-09-30 bead .18.5.2.22.4.1 against pan_globalsProof1617-1685. Uses accepted exact MlS/ProgHOL/ShapeHOL and exact fpermName/fpermHOL/fpermDecsHOL/functionsHOL. FUN_FMAP preimage domain is exactly swapped source domain; absent source key yields NONE, present payload preserves parameters and return shape and permutes body. Finite support via swapped witness list and name involution. Both full Option lookup equations preserve arbitrary key/code; declaration append is structural; update-list theorem proved universally from canonical FUPDATE_LIST order, no success/disjointness/distinctness premises, duplicate keys preserved. Result codec witness is independent raw lookup operation; relation bare map parameters are canonical input maps. FEMPTY single-map equality and canonical lookup_code theorem remain tracked .4.3/.4.2, not claimed ported here. Production/evaluation permutation theorem remains on parent .4/.5."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "fperm_code_FUPDATE_LIST_functions",
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermCode.lean",
+    "lean_name": "fpermCodeHOL_updateList_functions",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "fm"
+    ],
+    "reviewer": "flapjack-sol source comparison2026-09-30 bead .18.5.2.22.4.1 against pan_globalsProof1617-1685. Uses accepted exact MlS/ProgHOL/ShapeHOL and exact fpermName/fpermHOL/fpermDecsHOL/functionsHOL. FUN_FMAP preimage domain is exactly swapped source domain; absent source key yields NONE, present payload preserves parameters and return shape and permutes body. Finite support via swapped witness list and name involution. Both full Option lookup equations preserve arbitrary key/code; declaration append is structural; update-list theorem proved universally from canonical FUPDATE_LIST order, no success/disjointness/distinctness premises, duplicate keys preserved. Result codec witness is independent raw lookup operation; relation bare map parameters are canonical input maps. FEMPTY single-map equality and canonical lookup_code theorem remain tracked .4.3/.4.2, not claimed ported here. Production/evaluation permutation theorem remains on parent .4/.5."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermCode.lean",
+    "lean_name": "holFmapAsFiniteSupportResultWitness_fpermCodeHOL",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-sol2026-09-30 .22.4.1: Flapjack canonical finite-map implementation/codec factoring, localized provenance in docstring. Single-update and arbitrary-entry list-update lemmas are not standalone HOL declarations; source restricts update list to functions. FEMPTY kernel equality remains untagged because a supported single-equality representation rule is absent (tracked .4.3), not a completed HOL port. Codec witness compares tagged lookup to independent raw FUN_FMAP rendering without assuming target equality."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermCode.lean",
+    "lean_name": "fpermCodeHOL_empty",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-sol2026-09-30 .22.4.1: Flapjack canonical finite-map implementation/codec factoring, localized provenance in docstring. Single-update and arbitrary-entry list-update lemmas are not standalone HOL declarations; source restricts update list to functions. FEMPTY kernel equality remains untagged because a supported single-equality representation rule is absent (tracked .4.3), not a completed HOL port. Codec witness compares tagged lookup to independent raw FUN_FMAP rendering without assuming target equality."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermCode.lean",
+    "lean_name": "fpermCodeHOL_updateEq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-sol2026-09-30 .22.4.1: Flapjack canonical finite-map implementation/codec factoring, localized provenance in docstring. Single-update and arbitrary-entry list-update lemmas are not standalone HOL declarations; source restricts update list to functions. FEMPTY kernel equality remains untagged because a supported single-equality representation rule is absent (tracked .4.3), not a completed HOL port. Codec witness compares tagged lookup to independent raw FUN_FMAP rendering without assuming target equality."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermCode.lean",
+    "lean_name": "fpermCodeHOL_updateListEq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-sol2026-09-30 .22.4.1: Flapjack canonical finite-map implementation/codec factoring, localized provenance in docstring. Single-update and arbitrary-entry list-update lemmas are not standalone HOL declarations; source restricts update list to functions. FEMPTY kernel equality remains untagged because a supported single-equality representation rule is absent (tracked .4.3), not a completed HOL port. Codec witness compares tagged lookup to independent raw FUN_FMAP rendering without assuming target equality."
   }
 ]

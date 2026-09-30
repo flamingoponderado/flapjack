@@ -1,0 +1,137 @@
+import Flapjack.Pancake.Proofs.PanGlobals
+import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+
+/-! Code-map permutation prerequisites of the PanGlobals semantics proof.
+The code map is canonical finite-support; declaration and program payloads
+use the already reviewed MlS/ProgHOL/ShapeHOL carriers. -/
+
+namespace Flapjack
+
+open Pancake.PanLang
+
+/-- Independent raw lookup rendering of HOL's FUN_FMAP equation: its domain
+is the preimage of the source domain, and each defined payload keeps its
+parameters/return shape while renaming the body. Flapjack codec infrastructure,
+not an independently tagged HOL declaration over unrestricted maps. -/
+def fpermCodeRaw {width : Nat} [NeZero width] (f g : MlS)
+    (code : MlS → Option (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))
+    (name : MlS) : Option (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL) :=
+  (code (fpermName f g name)).map fun entry =>
+    (entry.1, fpermHOL f g entry.2.1, entry.2.2)
+
+/-- HOL fperm_code: involutive key swap and body renaming on the canonical
+finite-map carrier. Mapping the finite source support through the same swap
+establishes precisely the finite preimage used by HOL's FUN_FMAP. -/
+@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "fperm_code_def"
+  (fmap_as_finite_support_result)]
+def fpermCodeHOL {width : Nat} [NeZero width] (f g : MlS)
+    (code : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL)) :
+    HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL) where
+  lookup name := (code.lookup (fpermName f g name)).map fun entry =>
+    (entry.1, fpermHOL f g entry.2.1, entry.2.2)
+  finiteSupport := by
+    obtain ⟨keys, hkeys⟩ := code.finiteSupport
+    refine ⟨keys.map (fpermName f g), ?_⟩
+    intro name h
+    have hs : code.lookup (fpermName f g name) ≠ none := by
+      intro hn
+      simp [hn] at h
+    exact List.mem_map.mpr ⟨fpermName f g name, hkeys _ hs, fpermName_cancel f g name⟩
+
+/-- Flapjack-specific lookup codec witness against the independent raw HOL
+FUN_FMAP rendering. Neither a target correspondence premise nor a self-equality. -/
+theorem holFmapAsFiniteSupportResultWitness_fpermCodeHOL
+    {width : Nat} [NeZero width] (f g : MlS)
+    (code : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))
+    (name : MlS) :
+    (fpermCodeHOL f g code).lookup name = fpermCodeRaw f g code.lookup name := rfl
+
+@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "FLOOKUP_fperm_code'"
+  (fmap_as_finite_support_relation := [code])]
+theorem flookupFpermCodeHOL' {width : Nat} [NeZero width] (f g : MlS)
+    (code : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))
+    (name : MlS) :
+    (fpermCodeHOL f g code).lookup name =
+      (code.lookup (fpermName f g name)).map (fun entry =>
+        (entry.1, fpermHOL f g entry.2.1, entry.2.2)) := rfl
+
+@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "FLOOKUP_fperm_code"
+  (fmap_as_finite_support_relation := [code])]
+theorem flookupFpermCodeHOL {width : Nat} [NeZero width] (f g : MlS)
+    (code : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))
+    (name : MlS) :
+    (fpermCodeHOL f g code).lookup (fpermName f g name) =
+      (code.lookup name).map (fun entry =>
+        (entry.1, fpermHOL f g entry.2.1, entry.2.2)) := by
+  simp only [flookupFpermCodeHOL', fpermName_cancel]
+
+/-- Flapjack finite-map equality corresponding to HOL fperm_code_FEMPTY.
+The single map-equality conclusion currently has no supported qualifier:
+fmap_as_finite_support_equalities requires at least two conjuncts, while the
+result qualifier requires a lookup witness on the tagged declaration itself.
+Keep this untagged until a single-equality representation rule is reviewed. -/
+theorem fpermCodeHOL_empty {width : Nat} [NeZero width] (f g : MlS) :
+    fpermCodeHOL f g
+      (HolFiniteMapExact.empty : HolFiniteMapExact MlS
+        (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL)) = HolFiniteMapExact.empty := by
+  apply HolFiniteMapExact.ext
+  funext name
+  rfl
+
+@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "fperm_decs_append"]
+theorem fpermDecsHOL_append {width : Nat} [NeZero width] (f g : MlS)
+    (xs ys : List (DeclHOL width)) :
+    fpermDecsHOL f g (xs ++ ys) = fpermDecsHOL f g xs ++ fpermDecsHOL f g ys := by
+  induction xs with
+  | nil => simp [fpermDecsHOL]
+  | cons d ds ih => cases d <;> simp [fpermDecsHOL, ih]
+
+/-- Flapjack-specific update factoring for the universal update-list proof.
+HOL has no standalone declaration for this single-update helper. -/
+theorem fpermCodeHOL_updateEq {width : Nat} [NeZero width] (f g : MlS)
+    (code : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))
+    (entry : MlS × List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL) :
+    fpermCodeHOL f g (code.updateEq entry) =
+      (fpermCodeHOL f g code).updateEq
+        (fpermName f g entry.1, entry.2.1, fpermHOL f g entry.2.2.1, entry.2.2.2) := by
+  apply HolFiniteMapExact.ext
+  funext name
+  by_cases h : name = fpermName f g entry.1
+  · subst name
+    simp [fpermCodeHOL, HolFiniteMapExact.updateEq, FUPDATE_HOL, fpermName_cancel]
+  · have hn : fpermName f g name ≠ entry.1 := by
+      intro heq
+      apply h
+      have hc := congrArg (fpermName f g) heq
+      simpa only [fpermName_cancel] using hc
+    simp [fpermCodeHOL, HolFiniteMapExact.updateEq, FUPDATE_HOL, h, hn]
+
+/-- Flapjack-specific list-update factoring, stronger than HOL's
+functions-only instance. No HOL tag: the source theorem restricts entries to
+the function table of a declaration list. -/
+theorem fpermCodeHOL_updateListEq {width : Nat} [NeZero width] (f g : MlS)
+    (fm : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))
+    (entries : List (MlS × List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL)) :
+    fpermCodeHOL f g (fm.updateListEq entries) =
+      (fpermCodeHOL f g fm).updateListEq
+        (entries.map fun entry =>
+          (fpermName f g entry.1, entry.2.1, fpermHOL f g entry.2.2.1, entry.2.2.2)) := by
+  induction entries generalizing fm with
+  | nil => rfl
+  | cons entry entries ih =>
+      change fpermCodeHOL f g ((fm.updateEq entry).updateListEq entries) =
+        ((fpermCodeHOL f g fm).updateEq
+          (fpermName f g entry.1, entry.2.1, fpermHOL f g entry.2.2.1, entry.2.2.2)).updateListEq _
+      rw [ih, fpermCodeHOL_updateEq]
+
+@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "fperm_code_FUPDATE_LIST_functions"
+  (fmap_as_finite_support_relation := [fm])]
+theorem fpermCodeHOL_updateList_functions {width : Nat} [NeZero width] (f g : MlS)
+    (fm : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))
+    (code : List (DeclHOL width)) :
+    fpermCodeHOL f g (fm.updateListEq (functionsHOL code)) =
+      (fpermCodeHOL f g fm).updateListEq (functionsHOL (fpermDecsHOL f g code)) := by
+  rw [functionsFpermDecsHOL]
+  exact fpermCodeHOL_updateListEq f g fm (functionsHOL code)
+
+end Flapjack
