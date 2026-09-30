@@ -196,127 +196,138 @@ def structSelectFields [BEq String] (fields : List (FieldName × Shape))
       | none => structSelectFields fields compiled
 
 def structCompileExp [BEq String] (context : StructPassContext) :
-    Exp α → (compileShape : StructContext → Shape → Shape := structCompileShape) → Exp α
-  | .rStruct fields, compileShape => .rStruct (structCompileExps context fields compileShape)
-  | .rField index value, compileShape => .rField index (structCompileExp context value compileShape)
-  | .nStruct name fields, compileShape =>
-      let compiledFields := structCompileFields context fields compileShape
+    Exp α → (compileShape : StructContext → Shape → Shape := structCompileShape) →
+      (oldExpShape : StructPassContext → Exp α → Shape := structOldExpShape) → Exp α
+  | .rStruct fields, compileShape, oldExpShape =>
+      .rStruct (structCompileExps context fields compileShape oldExpShape)
+  | .rField index value, compileShape, oldExpShape =>
+      .rField index (structCompileExp context value compileShape oldExpShape)
+  | .nStruct name fields, compileShape, oldExpShape =>
+      let compiledFields := structCompileFields context fields compileShape oldExpShape
       match lookupInfo name context.structs with
       | some info => .rStruct (structSelectFields info.fields compiledFields)
       | none => .rStruct []
-  | .nField field value, compileShape =>
-      let compiledValue := structCompileExp context value compileShape
+  | .nField field value, compileShape, oldExpShape =>
+      let compiledValue := structCompileExp context value compileShape oldExpShape
       let index :=
-        match structOldExpShape context value with
+        match oldExpShape context value with
         | .named name =>
             match lookupInfo name context.structs with
             | some info => (structFindFieldIndex field info.fields).getD 0
             | none => 0
         | _ => 0
       .rField index compiledValue
-  | .load shape address, compileShape =>
-      .load (compileShape context.structs shape) (structCompileExp context address compileShape)
-  | .load32 address, compileShape => .load32 (structCompileExp context address compileShape)
-  | .loadByte address, compileShape => .loadByte (structCompileExp context address compileShape)
-  | .op operator arguments, compileShape =>
-      .op operator (structCompileExps context arguments compileShape)
-  | .panOp operator arguments, compileShape =>
-      .panOp operator (structCompileExps context arguments compileShape)
-  | .cmp operator left right, compileShape =>
-      .cmp operator (structCompileExp context left compileShape)
-        (structCompileExp context right compileShape)
-  | .shift operator left right, compileShape =>
-      .shift operator (structCompileExp context left compileShape)
-        (structCompileExp context right compileShape)
-  | expression, _ => expression
+  | .load shape address, compileShape, oldExpShape =>
+      .load (compileShape context.structs shape)
+        (structCompileExp context address compileShape oldExpShape)
+  | .load32 address, compileShape, oldExpShape =>
+      .load32 (structCompileExp context address compileShape oldExpShape)
+  | .loadByte address, compileShape, oldExpShape =>
+      .loadByte (structCompileExp context address compileShape oldExpShape)
+  | .op operator arguments, compileShape, oldExpShape =>
+      .op operator (structCompileExps context arguments compileShape oldExpShape)
+  | .panOp operator arguments, compileShape, oldExpShape =>
+      .panOp operator (structCompileExps context arguments compileShape oldExpShape)
+  | .cmp operator left right, compileShape, oldExpShape =>
+      .cmp operator (structCompileExp context left compileShape oldExpShape)
+        (structCompileExp context right compileShape oldExpShape)
+  | .shift operator left right, compileShape, oldExpShape =>
+      .shift operator (structCompileExp context left compileShape oldExpShape)
+        (structCompileExp context right compileShape oldExpShape)
+  | expression, _, _ => expression
 termination_by expression => sizeOf expression
 where
   structCompileExps [BEq String] (context : StructPassContext) :
       List (Exp α) → (compileShape : StructContext → Shape → Shape := structCompileShape) →
+        (oldExpShape : StructPassContext → Exp α → Shape := structOldExpShape) →
         List (Exp α)
-    | [], _ => []
-    | expression :: expressions, compileShape =>
-        structCompileExp context expression compileShape ::
-          structCompileExps context expressions compileShape
+    | [], _, _ => []
+    | expression :: expressions, compileShape, oldExpShape =>
+        structCompileExp context expression compileShape oldExpShape ::
+          structCompileExps context expressions compileShape oldExpShape
   termination_by expressions => sizeOf expressions
   decreasing_by all_goals first | sizeOf_list_dec | decreasing_trivial
 
   structCompileFields [BEq String] (context : StructPassContext) :
       List (FieldName × Exp α) → (compileShape : StructContext → Shape → Shape := structCompileShape) →
+        (oldExpShape : StructPassContext → Exp α → Shape := structOldExpShape) →
         InfoMap (Exp α)
-    | [], _ => []
-    | (field, expression) :: fields, compileShape =>
-        (field, structCompileExp context expression compileShape) ::
-          structCompileFields context fields compileShape
+    | [], _, _ => []
+    | (field, expression) :: fields, compileShape, oldExpShape =>
+        (field, structCompileExp context expression compileShape oldExpShape) ::
+          structCompileFields context fields compileShape oldExpShape
   termination_by fields => sizeOf fields
   decreasing_by all_goals first | sizeOf_list_dec | decreasing_trivial
 
 def structCompileProg [BEq String] (context : StructPassContext) :
-    Prog α → (compileShape : StructContext → Shape → Shape := structCompileShape) → Prog α
-  | .dec name shape value body, compileShape =>
+    Prog α → (compileShape : StructContext → Shape → Shape := structCompileShape) →
+      (oldExpShape : StructPassContext → Exp α → Shape := structOldExpShape) → Prog α
+  | .dec name shape value body, compileShape, oldExpShape =>
       .dec name (compileShape context.structs shape)
-        (structCompileExp context value compileShape)
+        (structCompileExp context value compileShape oldExpShape)
         (structCompileProg { context with locals := (name, shape) :: context.locals }
-          body compileShape)
-  | .assign kind name value, compileShape =>
-      .assign kind name (structCompileExp context value compileShape)
-  | .primitive name operator arguments, compileShape =>
-      .primitive name operator (structCompileExps context arguments compileShape)
-  | .store address value, compileShape =>
-      .store (structCompileExp context address compileShape)
-        (structCompileExp context value compileShape)
-  | .store32 address value, compileShape =>
-      .store32 (structCompileExp context address compileShape)
-        (structCompileExp context value compileShape)
-  | .storeByte address value, compileShape =>
-      .storeByte (structCompileExp context address compileShape)
-        (structCompileExp context value compileShape)
-  | .seq first second, compileShape =>
-      .seq (structCompileProg context first compileShape)
-        (structCompileProg context second compileShape)
-  | .ite condition thenBranch elseBranch, compileShape =>
-      .ite (structCompileExp context condition compileShape)
-        (structCompileProg context thenBranch compileShape)
-        (structCompileProg context elseBranch compileShape)
-  | .while condition body, compileShape =>
-      .while (structCompileExp context condition compileShape)
-        (structCompileProg context body compileShape)
-  | .call info function arguments, compileShape =>
+          body compileShape oldExpShape)
+  | .assign kind name value, compileShape, oldExpShape =>
+      .assign kind name (structCompileExp context value compileShape oldExpShape)
+  | .primitive name operator arguments, compileShape, oldExpShape =>
+      .primitive name operator (structCompileExps context arguments compileShape oldExpShape)
+  | .store address value, compileShape, oldExpShape =>
+      .store (structCompileExp context address compileShape oldExpShape)
+        (structCompileExp context value compileShape oldExpShape)
+  | .store32 address value, compileShape, oldExpShape =>
+      .store32 (structCompileExp context address compileShape oldExpShape)
+        (structCompileExp context value compileShape oldExpShape)
+  | .storeByte address value, compileShape, oldExpShape =>
+      .storeByte (structCompileExp context address compileShape oldExpShape)
+        (structCompileExp context value compileShape oldExpShape)
+  | .seq first second, compileShape, oldExpShape =>
+      .seq (structCompileProg context first compileShape oldExpShape)
+        (structCompileProg context second compileShape oldExpShape)
+  | .ite condition thenBranch elseBranch, compileShape, oldExpShape =>
+      .ite (structCompileExp context condition compileShape oldExpShape)
+        (structCompileProg context thenBranch compileShape oldExpShape)
+        (structCompileProg context elseBranch compileShape oldExpShape)
+  | .while condition body, compileShape, oldExpShape =>
+      .while (structCompileExp context condition compileShape oldExpShape)
+        (structCompileProg context body compileShape oldExpShape)
+  | .call info function arguments, compileShape, oldExpShape =>
       let compiledInfo := match info with
         | none => none
         | some (returns, none) => some (returns, none)
         | some (returns, some (exception, handlerVar, handler)) =>
             some (returns, some (exception, handlerVar,
-              structCompileProg context handler compileShape))
-      .call compiledInfo function (structCompileExps context arguments compileShape)
-  | .decCall name shape function arguments body, compileShape =>
+              structCompileProg context handler compileShape oldExpShape))
+      .call compiledInfo function (structCompileExps context arguments compileShape oldExpShape)
+  | .decCall name shape function arguments body, compileShape, oldExpShape =>
       .decCall name (compileShape context.structs shape) function
-        (structCompileExps context arguments compileShape)
+        (structCompileExps context arguments compileShape oldExpShape)
         (structCompileProg { context with locals := (name, shape) :: context.locals }
-          body compileShape)
-  | .extCall function configuration configurationLength array arrayLength, compileShape =>
-      .extCall function (structCompileExp context configuration compileShape)
-        (structCompileExp context configurationLength compileShape)
-        (structCompileExp context array compileShape)
-        (structCompileExp context arrayLength compileShape)
-  | .raise exception value, compileShape =>
-      .raise exception (structCompileExp context value compileShape)
-  | .return value, compileShape => .return (structCompileExp context value compileShape)
-  | .shMemLoad size kind name address, compileShape =>
-      .shMemLoad size kind name (structCompileExp context address compileShape)
-  | .shMemStore size address value, compileShape =>
-      .shMemStore size (structCompileExp context address compileShape)
-        (structCompileExp context value compileShape)
-  | program, _ => program
+          body compileShape oldExpShape)
+  | .extCall function configuration configurationLength array arrayLength, compileShape, oldExpShape =>
+      .extCall function (structCompileExp context configuration compileShape oldExpShape)
+        (structCompileExp context configurationLength compileShape oldExpShape)
+        (structCompileExp context array compileShape oldExpShape)
+        (structCompileExp context arrayLength compileShape oldExpShape)
+  | .raise exception value, compileShape, oldExpShape =>
+      .raise exception (structCompileExp context value compileShape oldExpShape)
+  | .return value, compileShape, oldExpShape =>
+      .return (structCompileExp context value compileShape oldExpShape)
+  | .shMemLoad size kind name address, compileShape, oldExpShape =>
+      .shMemLoad size kind name (structCompileExp context address compileShape oldExpShape)
+  | .shMemStore size address value, compileShape, oldExpShape =>
+      .shMemStore size (structCompileExp context address compileShape oldExpShape)
+        (structCompileExp context value compileShape oldExpShape)
+  | program, _, _ => program
 termination_by program => sizeOf program
 where
   structCompileExps [BEq String] (context : StructPassContext) :
       List (Exp α) → (compileShape : StructContext → Shape → Shape := structCompileShape) →
+        (oldExpShape : StructPassContext → Exp α → Shape := structOldExpShape) →
         List (Exp α)
-    | [], _ => []
-    | expression :: expressions, compileShape =>
-        structCompileExp context expression compileShape ::
-          structCompileExps context expressions compileShape
+    | [], _, _ => []
+    | expression :: expressions, compileShape, oldExpShape =>
+        structCompileExp context expression compileShape oldExpShape ::
+          structCompileExps context expressions compileShape oldExpShape
 termination_by expressions => sizeOf expressions
   decreasing_by all_goals first | sizeOf_list_dec | decreasing_trivial
 
@@ -331,35 +342,37 @@ def structGetNames (context : StructPassContext) (declarations : List (Decl α))
 def structCompileDecls [BEq String] :
     List (Decl α) → StructPassContext →
       (compileShape : StructContext → Shape → Shape := structCompileShape) →
+        (oldExpShape : StructPassContext → Exp α → Shape := structOldExpShape) →
         List (Decl α) × StructPassContext
-  | [], context, _ => ([], context)
-  | .decl shape name value :: declarations, context, compileShape =>
+  | [], context, _, _ => ([], context)
+  | .decl shape name value :: declarations, context, compileShape, oldExpShape =>
       let nextContext := { context with globals := (name, shape) :: context.globals }
-      let (compiled, finalContext) := structCompileDecls declarations nextContext compileShape
+      let (compiled, finalContext) := structCompileDecls declarations nextContext compileShape oldExpShape
       (.decl (compileShape context.structs shape) name
-        (structCompileExp context value compileShape) :: compiled,
+        (structCompileExp context value compileShape oldExpShape) :: compiled,
         finalContext)
-  | .function declaration :: declarations, context, compileShape =>
-      let (compiled, finalContext) := structCompileDecls declarations context compileShape
+  | .function declaration :: declarations, context, compileShape, oldExpShape =>
+      let (compiled, finalContext) := structCompileDecls declarations context compileShape oldExpShape
       let parameters := declaration.params.map
         (fun (name, shape) => (name, compileShape context.structs shape))
       let functionContext := { finalContext with locals := declaration.params }
       let compiledDeclaration := { declaration with
         params := parameters
-        body := structCompileProg functionContext declaration.body compileShape
+        body := structCompileProg functionContext declaration.body compileShape oldExpShape
         returnShape := compileShape context.structs declaration.returnShape }
       (.function compiledDeclaration :: compiled, finalContext)
-  | .exnDecl exception shape :: declarations, context, compileShape =>
-      let (compiled, finalContext) := structCompileDecls declarations context compileShape
+  | .exnDecl exception shape :: declarations, context, compileShape, oldExpShape =>
+      let (compiled, finalContext) := structCompileDecls declarations context compileShape oldExpShape
       (.exnDecl exception (compileShape context.structs shape) :: compiled, finalContext)
-  | .name _ _ :: declarations, context, compileShape =>
-      structCompileDecls declarations context compileShape
+  | .name _ _ :: declarations, context, compileShape, oldExpShape =>
+      structCompileDecls declarations context compileShape oldExpShape
 
 def structCompileTop (declarations : List (Decl α))
-    (compileShape : StructContext → Shape → Shape := structCompileShape) : List (Decl α) :=
+    (compileShape : StructContext → Shape → Shape := structCompileShape)
+    (oldExpShape : StructPassContext → Exp α → Shape := structOldExpShape) : List (Decl α) :=
   let initial : StructPassContext :=
     { structs := [], locals := [], globals := [] }
-  (structCompileDecls declarations (structGetNames initial declarations) compileShape).1
+  (structCompileDecls declarations (structGetNames initial declarations) compileShape oldExpShape).1
 
 @[simp] theorem structCompileShape_one (context : StructContext) :
     structCompileShape context .one = .one := by
