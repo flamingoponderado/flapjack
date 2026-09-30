@@ -36767,5 +36767,28 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack local support (bead .44.4): class-parameterized SUBMAP_DIFF_LIST proof used at concrete keys (Nat) by the arg_load ports; the tagged submapDiffListExact instantiates it with classical equality."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/ShMemStore.lean",
+  "lean_name": "evaluateFperm_ShMemStore",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_fperm",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison for22.5.17: original evaluate_fperm1721-1810 default ShMemStore proof and panSem evaluate_def611-614/sh_mem_store528-550. Same arbitrary f/g/state/operator/address/value/result/post and sole source-run premise; full permuted result/post-code equation, no success/nonError/target-run premise. Both operands evaluated in original state; all missing/nonword values Error; zero-byte original address vs nonzero aligned address domain guards retained. Original mappedWrite FFI uses count byte, little-endian word bytes (TAKE only nonzero) plus full address bytes; final FFI retains state, returned FFI updates only ffi, domain rejection Error. Native MlS and positive words/Type0 FFI; canonical four maps with real same-module roundtrip witness. Proof splits explicit total evaluator, no hidden clause in statement. No executed behavior change; coordinator review pending and full permutation assembly OPEN."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/ShMemStore.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only canonical state roundtrip infrastructure; no independent HOL declaration."
 }
 ]
