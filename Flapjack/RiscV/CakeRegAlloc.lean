@@ -1,3 +1,4 @@
+import Flapjack.RiscV.AllocatorMemoryInvariant
 import Flapjack.RiscV.CakeAllocatorCore
 import Flapjack.RiscV.Allocator
 import Flapjack.RiscV.SpillCosts
@@ -2527,8 +2528,10 @@ theorem cakeColourWordSpillState_allocated_stack_slot_lt_frame
 def cakeAllocateWordFunction [OfNat α 0] (parameters : List Nat) (program : WordProg α)
     (currentFunction : Nat) (k : Nat) :
     Option (WordSsaState × List Nat × WordProg α × WordSpillState) :=
+  if !allocatorMemorySupported program then none else
   let (state, renamedParameters, ssaProgram) :=
     wordFullSsaCcTrans parameters.length program
+  if !allocatorMemorySupported ssaProgram then none else
   let tree := wordClashTree ssaProgram []
   let fs := cakeGetStackOnly ssaProgram
   let forced := cakeGetForced ssaProgram

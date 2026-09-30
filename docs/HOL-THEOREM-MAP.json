@@ -13653,14 +13653,7 @@
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds4 (source comparison, bead flapjack-4ac.4.14; exact HOL panProps$pan_primop_is_wf_shape_v (panPropsScript.sml:162): !sctxt pop args value. pan_primop pop args = SOME value ==> is_wf_shape_v sctxt value. Lean `{width : Nat} [NeZero width] (context : StructContextExact) (operator : PrimOp) (values : List (ValueHOL width)) (value : ValueHOL width) (h : panPrimopHOLExact operator values = some value) : isWfShapeValueHOLExact context value = true`; BOTH pan_primop and is_wf_shape_v are the already-reviewed exact ports panPrimopHOLExact (panSemScript.sml:196) and isWfShapeValueHOLExact (panPropsScript.sml:24), the Bool predicate rendered as = true, no extra hypotheses; [NeZero width] models HOL's positive word dimension. Proof by case analysis on the pan_primop match. Direct HOL rows pan_primop_* in pan_sem_pan_primop_probe.out; parity examples in Flapjack/Test/PanStructsValueValidityParity.lean)"
   },
-  {
-    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
-    "hol_name": "is_wf_shape_v_nil_step1",
-    "lean_path": "Flapjack/Pancake/Semantics/PanProps.lean",
-    "lean_name": "isWfShapeValueHOLExact_nil_step1",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds4 (source comparison, bead flapjack-4ac.4.7; exact HOL panProps$is_wf_shape_v_nil_step1 (panPropsScript.sml:48): !sctxt v. sctxt = [] /\\ is_wf_shape sctxt (shape_of v) ==> is_wf_shape_v sctxt v. Lean `{width : Nat} [NeZero width] (context : StructContextExact) (value : ValueHOL width) (h : context = [] /\\ Flapjack.Pancake.PanLang.isWfShapeExactHOL context (shapeOfHOLExact value) = true) : isWfShapeValueHOLExact context value = true` renders the conjunction with /\\ and the Bool predicates with `= true`; carriers are the already-reviewed exact StructContextExact/ValueHOL/isWfShapeExactHOL/shapeOfHOLExact. No extra hypotheses; [NeZero width] models HOL's positive word dimension. Proof by induction on the value with the context substituted to []. Direct HOL rows is_wf_shape_v_* in pan_structs_value_validity_probe.out; parity example in Flapjack/Test/PanStructsValueValidityParity.lean)"
-  },
+  {"hol_path":"cakeml/pancake/semantics/panPropsScript.sml","hol_name":"is_wf_shape_v_nil_step1","lean_path":"Flapjack/Pancake/Semantics/PanProps.lean","lean_name":"isWfShapeValueHOLExact_nil_step1","statement_status":"reviewed_words_as_type_indexed_bitvec","words_as_type_indexed_bitvec":true,"reviewer":"flapjack-ds4 (source comparison, bead flapjack-4ac.4.7; exact HOL panProps$is_wf_shape_v_nil_step1 (panPropsScript.sml:48): !sctxt v. sctxt = [] /\\ is_wf_shape sctxt (shape_of v) ==> is_wf_shape_v sctxt v. Lean `{width : Nat} [NeZero width] (context : StructContextExact) (value : ValueHOL width) (h : context = [] /\\ Flapjack.Pancake.PanLang.isWfShapeExactHOL context (shapeOfHOLExact value) = true) : isWfShapeValueHOLExact context value = true` renders the conjunction with /\\ and the Bool predicates with `= true`; carriers are the already-reviewed exact StructContextExact/ValueHOL/isWfShapeExactHOL/shapeOfHOLExact. No extra hypotheses; [NeZero width] models HOL's positive word dimension. Proof by induction on the value with the context substituted to []. Direct HOL rows is_wf_shape_v_* in pan_structs_value_validity_probe.out; parity example in Flapjack/Test/PanStructsValueValidityParity.lean)"},
   {
     "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
     "hol_name": "is_wf_shape_v_nil",
@@ -30002,4 +29995,98 @@
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack canonical representation roundtrip re-export; no independent HOL original."
 }
+,
+  
+  
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/Leaves.lean",
+    "lean_name": "evaluateFreshLocal_Skip",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "evaluate_fresh_local",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Luna A source comparison (.32.3.1), HOL1045-1091 genuine Skip evaluate_ind case: original fresh-name/value/state/result/poststate binders, fresh-name and source-evaluation conjunction, existential locals preserving result/all nonlocals, and good_res/non-Error conditional post-local FUPDATE. Constructor specialization only, no recursive IH for these leaves and no added premise/target-run assumption. Exact ProgHOL/MlS/ValueHOL/PanSemResultExact carriers and total finite evaluator; canonical state finite-map roundtrip witness in same module, positive BitVec width and Type0 FFI translation. Updates use equality-based updateEq, no validity/bound/clock premise. Tick handles both clock-zero timeout clearing locals (conditional false) and nonzero decrement preserving update. Kernel checked; coordinator independent review pending. Full evaluate_fresh_local remains open on .32.3."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/Leaves.lean",
+    "lean_name": "evaluateFreshLocal_Break",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "evaluate_fresh_local",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Luna A source comparison (.32.3.1), HOL1045-1091 genuine Break evaluate_ind case: original fresh-name/value/state/result/poststate binders, fresh-name and source-evaluation conjunction, existential locals preserving result/all nonlocals, and good_res/non-Error conditional post-local FUPDATE. Constructor specialization only, no recursive IH for these leaves and no added premise/target-run assumption. Exact ProgHOL/MlS/ValueHOL/PanSemResultExact carriers and total finite evaluator; canonical state finite-map roundtrip witness in same module, positive BitVec width and Type0 FFI translation. Updates use equality-based updateEq, no validity/bound/clock premise. Tick handles both clock-zero timeout clearing locals (conditional false) and nonzero decrement preserving update. Kernel checked; coordinator independent review pending. Full evaluate_fresh_local remains open on .32.3."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/Leaves.lean",
+    "lean_name": "evaluateFreshLocal_Continue",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "evaluate_fresh_local",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Luna A source comparison (.32.3.1), HOL1045-1091 genuine Continue evaluate_ind case: original fresh-name/value/state/result/poststate binders, fresh-name and source-evaluation conjunction, existential locals preserving result/all nonlocals, and good_res/non-Error conditional post-local FUPDATE. Constructor specialization only, no recursive IH for these leaves and no added premise/target-run assumption. Exact ProgHOL/MlS/ValueHOL/PanSemResultExact carriers and total finite evaluator; canonical state finite-map roundtrip witness in same module, positive BitVec width and Type0 FFI translation. Updates use equality-based updateEq, no validity/bound/clock premise. Tick handles both clock-zero timeout clearing locals (conditional false) and nonzero decrement preserving update. Kernel checked; coordinator independent review pending. Full evaluate_fresh_local remains open on .32.3."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/Leaves.lean",
+    "lean_name": "evaluateFreshLocal_Annot",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "evaluate_fresh_local",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Luna A source comparison (.32.3.1), HOL1045-1091 genuine Annot evaluate_ind case: original fresh-name/value/state/result/poststate binders, fresh-name and source-evaluation conjunction, existential locals preserving result/all nonlocals, and good_res/non-Error conditional post-local FUPDATE. Constructor specialization only, no recursive IH for these leaves and no added premise/target-run assumption. Exact ProgHOL/MlS/ValueHOL/PanSemResultExact carriers and total finite evaluator; canonical state finite-map roundtrip witness in same module, positive BitVec width and Type0 FFI translation. Updates use equality-based updateEq, no validity/bound/clock premise. Tick handles both clock-zero timeout clearing locals (conditional false) and nonzero decrement preserving update. Kernel checked; coordinator independent review pending. Full evaluate_fresh_local remains open on .32.3."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/Leaves.lean",
+    "lean_name": "evaluateFreshLocal_Tick",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "evaluate_fresh_local",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Luna A source comparison (.32.3.1), HOL1045-1091 genuine Tick evaluate_ind case: original fresh-name/value/state/result/poststate binders, fresh-name and source-evaluation conjunction, existential locals preserving result/all nonlocals, and good_res/non-Error conditional post-local FUPDATE. Constructor specialization only, no recursive IH for these leaves and no added premise/target-run assumption. Exact ProgHOL/MlS/ValueHOL/PanSemResultExact carriers and total finite evaluator; canonical state finite-map roundtrip witness in same module, positive BitVec width and Type0 FFI translation. Updates use equality-based updateEq, no validity/bound/clock premise. Tick handles both clock-zero timeout clearing locals (conditional false) and nonzero decrement preserving update. Kernel checked; coordinator independent review pending. Full evaluate_fresh_local remains open on .32.3."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/Leaves.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific infrastructure: Canonical state roundtrip re-export for the finite-map qualifier; representation infrastructure has no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/Leaves.lean",
+    "lean_name": "unchangedLeaf",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific infrastructure: Private proof factoring of actual state-preserving constructor equations; extra equation parameter is internal support discharged by each genuine case, not a HOL theorem port."
+  }
 ]
