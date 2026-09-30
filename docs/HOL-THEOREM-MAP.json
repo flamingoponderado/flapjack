@@ -28006,5 +28006,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-y19g.11.2.1) against stackSemScript.sml:684-700: HOL copy_words_for_pattern pattern i a off bs dm m = if pattern=0w then NONE else if pattern=1w then SOME (i,a,m) else if a IN dm /\\ i < LENGTH bs then (let b = pattern ' 0 in let w = EL i bs in let m = (a =+ Word (if b then w+off else w)) m in copy_words_for_pattern (pattern>>>1) (i+1) (a + bytes_in_word) off bs dm m) else NONE. Lean copies the same control flow with pattern=0/1 BitVec tests, pattern.getLsbD 0 for HOL bit 0, bs[i]! for EL i bs under the i < bs.length guard, WordLocW.word for the Word payload, and BitVec width carriers under [NeZero width]. The bytes_in_word external HOL library helper (hol/src/n-bit/byteScript.sml:193) is rendered by the untagged bytesInWord; it is outside the cakeml sources so it cannot carry a tag."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "copy_words_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/StateOps.lean",
+    "lean_name": "copyWordsExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-y19g.11.2.2) against stackSemScript.sml copy_words_def: if LENGTH bs <= i then NONE else let pattern = EL i bs in case copy_words_for_pattern pattern (i+1) a off bs dm m of NONE => NONE | SOME (i1,a1,m1) => if word_msb pattern then copy_words i1 a1 off bs dm m1 else SOME (a1,m1). Lean copyWordsExact preserves the same recursive bitmap copy over the exact StackSemStateFiniteExact carriers (bitmaps : List (BitVec width), mdomain : BitVec width -> Bool, memory : BitVec width -> WordLocW width) with termination measure LENGTH bs - i discharged by copyWordsForPatternExact_least (HOL copy_words_for_pattern_LESS_EQ); word_msb renders as BitVec.msb; external HOL bytes_in_word stays untagged Flapjack infrastructure.",
+    "words_as_type_indexed_bitvec": true
   }
 ]

@@ -123,4 +123,61 @@ decreasing_by
   simp_wf
   omega
 
+set_option maxHeartbeats 800000 in
+set_option linter.unusedSimpArgs false in
+/-- HOL `copy_words_for_pattern_LESS_EQ` (stackSemScript.sml, immediately after
+`copy_words_for_pattern_def`): the copy cursor never decreases.  Untagged
+Flapjack infrastructure: the HOL original is a proof-side bound for the same
+external-library helper and has no separate cakeml declaration to cite. -/
+theorem copyWordsForPatternExact_least {width : Nat} [NeZero width] (off : BitVec width)
+    (bs : List (BitVec width)) (dm : BitVec width → Bool) :
+    ∀ (pattern : BitVec width) (i : Nat) (a : BitVec width) (m : BitVec width → WordLocW width)
+      {j : Nat} {a' : BitVec width} {m' : BitVec width → WordLocW width},
+      copyWordsForPatternExact pattern i a off bs dm m = some (j, a', m') → i ≤ j := by
+  apply copyWordsForPatternExact.induct off bs dm
+  case case1 =>
+    intro i a m j a' m' h
+    rw [copyWordsForPatternExact.eq_def] at h
+    simp only [if_pos rfl] at h
+    cases h
+  case case2 =>
+    intro i a m _ j a' m' h
+    rw [copyWordsForPatternExact.eq_def] at h
+    by_cases h10 : (1 : BitVec width) = 0
+    · rw [if_pos h10] at h; cases h
+    · rw [if_neg h10, if_pos rfl] at h
+      injection h with hpair
+      injection hpair with hji _
+      omega
+  case case3 =>
+    intro pattern i a m h0 h1 hcond b w mNew ihR j a' m' h
+    rw [copyWordsForPatternExact.eq_def] at h
+    rw [if_neg h0, if_neg h1, if_pos hcond] at h
+    exact Nat.le_trans (Nat.le_succ i) (ihR h)
+  case case4 =>
+    intro pattern i a m h0 h1 hnc j a' m' h
+    rw [copyWordsForPatternExact.eq_def] at h
+    rw [if_neg h0, if_neg h1, if_neg hnc] at h
+    cases h
+
+set_option maxHeartbeats 800000 in
+set_option linter.unusedSimpArgs false in
+@[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "copy_words_def"
+  (words_as_type_indexed_bitvec)]
+def copyWordsExact {width : Nat} [NeZero width] (i : Nat) (a off : BitVec width)
+    (bs : List (BitVec width)) (dm : BitVec width → Bool) (m : BitVec width → WordLocW width) :
+    Option (BitVec width × (BitVec width → WordLocW width)) :=
+  if _h : bs.length ≤ i then none
+  else
+    let pattern := bs[i]!
+    match _hcp : copyWordsForPatternExact pattern (i + 1) a off bs dm m with
+    | none => none
+    | some (i1, a1, m1) =>
+        if pattern.msb then copyWordsExact i1 a1 off bs dm m1 else some (a1, m1)
+termination_by bs.length - i
+decreasing_by
+  simp_wf
+  have hle : i + 1 ≤ i1 := copyWordsForPatternExact_least off bs dm pattern (i + 1) a m _hcp
+  omega
+
 end Flapjack.StackSemStateOps
