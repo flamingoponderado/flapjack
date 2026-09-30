@@ -35,6 +35,25 @@ protected theorem actualProof : True := by trivial
 
 
 class HeterogeneousFmapQualifierInventoryTest(unittest.TestCase):
+    def test_combined_heterogeneous_words_status_is_accepted_only_with_both_tags(self):
+        record = {
+            "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+            "hol_name": "lookup_code_def",
+            "lean_path": "Flapjack/Example.lean",
+            "lean_name": "lookupCodeCanonicalHOL",
+            "statement_status": "reviewed_fmap_as_finite_support_heterogeneous_function_words_as_type_indexed_bitvec",
+            "reviewer": "source comparison of heterogeneous finite-map argument_1/result_2 and word carriers",
+            "fmap_as_finite_support_heterogeneous_function": ["argument_1", "result_2"],
+            "words_as_type_indexed_bitvec": True,
+        }
+        key = (record["lean_path"], record["lean_name"])
+        def tagged(words=True, positions=("argument_1", "result_2")):
+            return {key: (record["hol_path"], record["hol_name"], (), (), (), (),
+                          False, (), False, words, (), (), None, (), positions)}
+        self.assertEqual(MAP["validate_inventory"]([record], set(), tagged(), set()), [])
+        for tags in (tagged(words=False), tagged(positions=())):
+            self.assertTrue(MAP["validate_inventory"]([record], set(), tags, set()))
+
     def test_new_status_and_manifest_field_are_registered(self):
         self.assertIn(
             "reviewed_fmap_as_finite_support_heterogeneous_function",
