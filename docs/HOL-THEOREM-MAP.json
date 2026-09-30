@@ -32147,5 +32147,37 @@
     "lean_name": "callFFILengthHOL",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead pxn.18.5.2.35.5 followup): HOL call_FFI_LENGTH (stack_removeProofScript.sml:67) is (call_FFI s i conf xs = FFI_return n ys) ==> LENGTH ys = LENGTH xs. Carriers/naming render through the already reviewed call_FFI_def tag on callFFIHOL (ffiScript.sml, reviewed_exact): call_FFI->callFFIHOL, FFI_return->HolFfiResult.ret, ffi_state->HolFfiState, LENGTH ys = LENGTH xs -> nextBytes.length = bytes.length; no semantic difference. Proven by the FfiHOL local corollary callFFIHOL_ret_length."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ExtCall.lean",
+    "lean_name": "compileCorrect_ExtCall",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-pxn.18.5.2.35) of cakeml/pancake/proofs/pan_globalsProofScript.sml:1595-1613 Resume compile_correct[ExtCall]: the HOL case holds the original state relation, source run and non-Error premises only; it uses the evaluate_ind expression hypothesis compile_exp_correct for the four compiled argument evaluations, state_rel_read_bytearray for the two byte-array reads, and state_rel_change_ffi with state_rel_write_bytearray for the call_FFI return branch, plus state_rel_empty_locals for the FinalFFI branch; concluded with good_res_def. Source evaluator is the tagged evaluateHOLFiniteState (panSem$evaluate_def), compiler the tagged compileProgExactHOL (pan_globals$compile_def), relation the tagged panGlobalsStateRelHOLExact (state_rel_def). No extra hypothesis added."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ExtCall.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.2.35): same-module canonical roundtrip witness re-exported for the relation qualifier; infrastructure, no HOL original."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ExtCall.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.2.35): same-module canonical roundtrip witness re-exported for the relation qualifier; infrastructure, no HOL original."
   }
 ]
