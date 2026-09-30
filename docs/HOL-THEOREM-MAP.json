@@ -33054,6 +33054,47 @@
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack local support (bead .43.5.3): state_rel s t gives s with locals := t.locals = t (HOL state_component_equality); no HOL original."
 },
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallNoDestination.lean",
+  "lean_name": "compileCorrect_CallNoDestination",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "compile_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "PanSemStateFiniteExact.locals",
+    "PanSemStateFiniteExact.globals",
+    "PanSemStateFiniteExact.code",
+    "PanSemStateFiniteExact.eshapes",
+    "PanGlobalsContextExact.globals",
+    "callee"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-c source comparison 2026-09-30: original gen_goal172-182, compile_correct Call1138ff, panSem658-697 and pan_globals compile_def specialized to caltyp SOME(NONE,NONE). Original source/function/arguments/result/context/target/post and source state_rel T/evaluation/nonError hypotheses and target existential/post state_rel conclusion retained. Only actual evaluate_ind argument-SOME/code-lookup-SOME/nonzero-clock callee IH; no handler IH for absent handler. OPT_MMAP and state_rel_lookup_code derive compiled arguments and matching body/locals/return shape; clock and locals relation derive callee entry. Source clock zero clears locals on timeout. Body NONE/Break/Continue/Error or mismatched return shape excluded solely by original nonError. Matching Returned yields NONE and restores original caller locals in both states: initial state_rel T proves caller-local equality; state_rel_change_locals turns body relation F into result relation T. Unhandled exception/timeOut/finalFfi clear locals using original good_res F. No target run, post relation, freshness, handler or global-result premise. Exact MlS keys, canonical four state maps/context globals and standalone callee map translated with local nonvacuous roundtrip witnesses; positive-width words and universe0 FFI. Full Call/whole compiler assembly remains open, pending coordinator review."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallNoDestination.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only infrastructure; no separate HOL declaration. Canonical exact state roundtrip re-export."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallNoDestination.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only infrastructure; no separate HOL declaration. Canonical exact context roundtrip re-export."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallNoDestination.lean",
+  "lean_name": "compileList_eq_map",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only infrastructure; no separate HOL declaration. Literal recursive compiled expression list equals MAP spelling of existing OPT_MMAP theorem."
+},
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallLocal.lean",
     "lean_name": "compileCorrect_CallLocal",
