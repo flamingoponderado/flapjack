@@ -25324,7 +25324,7 @@
     "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Expressions.lean",
     "lean_name": "getLiveExp",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-cveo: compared word_allocScript.sml:580-586 and 755-769. Exact WordLangExpHOL at positive BitVec width (NeZero) retains Const/Var/Lookup/Load/Op and binary expression-valued Shift. apply_colour_exp renames Var only, recursively maps lists and both Shift operands; Const and fixed store names are unchanged. get_live_exp uses exact Spt insertion/union and big_union right fold with LN seed. No changed side conditions. Proof-side executable definitions are partial progress; production routing remains tracked by flapjack-7c9s, and cveo inventory stays open until that requirement is met.",
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-cveo: compared word_allocScript.sml:580-586 and 755-769. Exact WordLangExpHOL at positive BitVec width (NeZero) retains Const/Var/Lookup/Load/Op and binary expression-valued Shift. apply_colour_exp renames Var only, recursively maps lists and both Shift operands; Const and fixed store names are unchanged. get_live_exp uses exact Spt insertion/union and big_union right fold with LN seed. No changed side conditions. Proof-side executable definitions are partial progress; production routing remains tracked by flapjack-7c9s, and cveo inventory stays open until that requirement is met. Precise elaboration evidence: source snapshots before70f42b65c and after6f57f751c were re-elaborated via lake lean with the identical original module root and pp.all. Printed getLiveExp bodies are identical except Flapjack.WordAlloc.applyColourExp.match_1 became Flapjack.WordAlloc.getLiveExp.match_1. The elaborator previously reused the preceding width-specific matcher; generic core factoring makes getLiveExp generate its own matcher. Both matcher constructor-selection bodies are identical casesOn applications (only input binder alpha-names differ). Captures /tmp/flap-sol-getLiveExp-before.txt and /tmp/flap-sol-getLiveExp-after.txt, source snapshots under matching Flapjack/Compiler/Backend/WordAlloc/Expressions.lean roots. This attributes the regenerated hash to a changed generated constant reference, not a live-set behavior change.",
     "words_as_type_indexed_bitvec": true
   },
   {
@@ -25408,5 +25408,14 @@
     "lean_name": "sptDomain_sptUnion",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-r7ou: pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae src/finite_maps/sptreeScript.sml:643. Full characteristic-predicate set equality, not merely pointwise membership. Generic payload and both tree parameters retained; membership helper is untagged infrastructure. Compared Spt LN/LS/BN/BS payloads and numeric lookup branches against pinned source; no assumptions or carrier qualifiers added. Kernel checked, prerequisite to allocation live sets only."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "domain_big_union_subset",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/LiveExpressions.lean",
+    "lean_name": "domainBigUnionSubset",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-94m6: compared HOL word_allocProof255-264, preserving forall ls a, MEM a ls implies domain(get_live_exp a) subset domain(big_union(MAP get_live_exp ls)). HOL sets are characteristic Nat predicates; subset is forall key membership implication. Exact positive-width word expression carrier and reviewed getLiveExp/bigUnion retain both Shift operands and right-fold left-biased Spt union. Proof mirrors list induction and uses reviewed external domain_union full equality, with no wf/injectivity or stronger membership premise. This is the live-set prerequisite explicitly used in apply_colour_exp_lemma Op case, not allocation simulation."
   }
 ]
