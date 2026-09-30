@@ -25775,5 +25775,21 @@
       "eshapes"
     ],
     "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "strong_locals_rel_subset",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/StrongLocalsRel.lean",
+    "lean_name": "strongLocalsRelSubset",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead .18.5.11.1.5: HOL word_allocProof659-667. Retains subset s into larger and generic strong_locals_rel on larger, concludes same source/target relation on s. Payload-polymorphic Spt alpha (not WordLoc-specialized), HOL set inclusion rendered characteristic-predicate implication; arbitrary f, no injection/target-success/global relation premise. Exact existing generic relation definition and lookup-domain equivalence used; no representation qualifier needed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "strong_locals_rel_extend_aux",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/StrongLocalsRel.lean",
+    "lean_name": "strongLocalsRelExtendAux",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead .18.5.11.1.5: HOL word_allocProof922-929. Retains domain source subset s and strong_locals_rel on s, concludes arbitrary t relation; existing successful source lookup establishes domain membership. Payload-polymorphic Spt alpha (not WordLoc-specialized), HOL set inclusion rendered characteristic-predicate implication; arbitrary f, no injection/target-success/global relation premise. Exact existing generic relation definition and lookup-domain equivalence used; no representation qualifier needed."
   }
 ]
