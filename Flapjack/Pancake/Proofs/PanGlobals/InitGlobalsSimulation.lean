@@ -7,6 +7,48 @@ open Flapjack.Pancake.PanLang
 open PanSemStateFiniteExact
 open Flapjack.Compiler.Backend.StackRemove (addresses)
 
+/-- Flapjack-specific address algebra for the initializer cons proof's head
+store and recursive free-range obligations (HOL source 2155-2229). This has no
+independently named HOL original. Modular word arithmetic permits wrapping;
+no numeric bound or evaluation premise is needed for range splitting. -/
+theorem initializerAddressesSplit {width : Nat} (base : BitVec width)
+    (head tail : Nat) (address : BitVec width) :
+    addresses base (head + tail) address ↔
+      addresses base head address ∨
+        addresses (base + BitVec.ofNat width head *
+          Flapjack.Compiler.Backend.StackRemove.bytesInWord width) tail address := by
+  induction head generalizing base with
+  | zero => simp [addresses]
+  | succ head ih =>
+      simp only [Nat.succ_add, addresses, ih]
+      have hbase :
+          base + Flapjack.Compiler.Backend.StackRemove.bytesInWord width +
+              BitVec.ofNat width head *
+                Flapjack.Compiler.Backend.StackRemove.bytesInWord width =
+            base + BitVec.ofNat width (head + 1) *
+              Flapjack.Compiler.Backend.StackRemove.bytesInWord width := by
+        rw [BitVec.ofNat_add, BitVec.add_mul]
+        simp only [BitVec.one_mul]
+        ac_rfl
+      rw [hbase]
+      exact or_assoc.symm
+
+/-- Prefix containment used to justify the first initializer's stores. -/
+theorem initializerAddressesPrefix {width : Nat} (base : BitVec width)
+    (head tail : Nat) (address : BitVec width)
+    (h : addresses base head address) :
+    addresses base (head + tail) address :=
+  (initializerAddressesSplit base head tail address).mpr (Or.inl h)
+
+/-- Suffix containment transports domain and disjointness premises to the
+recursive initializer. This is infrastructure, not an extra simulation premise. -/
+theorem initializerAddressesSuffix {width : Nat} (base : BitVec width)
+    (head tail : Nat) (address : BitVec width)
+    (h : addresses (base + BitVec.ofNat width head *
+      Flapjack.Compiler.Backend.StackRemove.bytesInWord width) tail address) :
+    addresses base (head + tail) address :=
+  (initializerAddressesSplit base head tail address).mpr (Or.inr h)
+
 /-- Canonical state roundtrips for the relation representation. -/
 theorem holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact
     {width : Nat} {σ : Type} [NeZero width] :
