@@ -1692,6 +1692,13 @@ DOCUMENTED_MISMATCHES = {
 # Proofs/ and are inventoried automatically; counterpart-side witnesses and
 # induction helpers belong beside their semantic definitions instead.
 INFRASTRUCTURE_THEOREMS = {
+    ("Flapjack/Pancake/Semantics/CrepSem/EvaluateIndWhile.lean", "evalCrepSemHOLProgExact_inductWhile"): (
+        "Flapjack-specific well-founded clock/sizeOf induction interface, no standalone "
+        "HOL declaration. Derives guarded While body and plain-state NONE/Continue0 "
+        "reentry IHs using evaluator clock monotonicity; other constructors retain "
+        "the induction step. This is not the full HOL evaluate_ind port. Consumed by "
+        "CrepInline/WhileInduction.lean assembleWhile without an extra correctness premise."
+    ),
     ("Flapjack/Pancake/Proofs/CrepInline.lean", "holFmapAsFiniteSupportWitness"): (
         "Same-module canonical finite-support roundtrip witness for the exact "
         "CrepInline relation qualifiers. It reuses CrepSemHOLState's reviewed "

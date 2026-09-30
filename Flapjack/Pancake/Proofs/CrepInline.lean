@@ -3115,15 +3115,14 @@ the `While` conjunct of the source-reviewed `crepSem$evaluate_ind`. The clause i
 induction hypotheses are the HOL case's sub-body IH (at `decClockCrepSemHOL s`)
 and its recursive while IH (at the body-result state).
 
-ASSEMBLY LIMITATION: faithfulness of this case follows from HOL's source
-`evaluate_ind`, not from `evalCrepSemHOLProg.inductHOL`. The latter's
-`hwhile_none` / `hwhile_continue` handlers require a body motive as an extra
-premise and do not themselves supply a separate body IH. The unused
-`crepStampExactDomains_handler_motive` helper transports a stamped state; it
-does not discharge that premise or establish correspondence of the induction
-principles. Full assembly must use a principle supplying HOL's guarded body
-and re-entry IHs, or repair the current handlers first. This case alone does
-not establish that assembly.
+WHILE ASSEMBLY: `evalCrepSemHOLProgExact_inductWhile` in
+`CrepSem/EvaluateIndWhile.lean` now supplies the separate guarded body IH and
+plain-state NONE/Continue-0 re-entry IHs by well-founded (clock, sizeOf)
+induction. `CrepInline/WhileInduction.lean`'s `assembleWhile` consumes this
+principle without an extra body-correctness premise. The old `inductHOL`
+handlers and state-stamp helper are not the justification for that assembly.
+The While assembly gap is closed; the complete `inline_prog_correct`
+assembly still requires its other constructor obligations.
 
 SOURCE-GUARD CORRESPONDENCE: the printed Crep `evaluate_ind` While conjunct
 (`scripts/hol-probes/crep_sem_evaluate_ind_probe.out`) guards every recursive
