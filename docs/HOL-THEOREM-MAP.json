@@ -27232,5 +27232,43 @@
     "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific canonical carrier roundtrip re-export; no independent HOL original."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "evaluate_locals_same_fdom",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/Call.lean",
+    "lean_name": "evaluateLocalsSameFdomCallExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; .43.4), HOL evaluate_locals_same_fdom181-191/Call221-234 and evaluate_ind Call440. Original eval/result guard/domain equality specialized to Call. Only used handler recursion IH retained, with actual argument eval/code lookup/nodup/clock/callee exception/matching handler guards; reduced bindings equivalent to HOL conjunct. Callee IH unused: returns restore caller locals via checked existing-destination zip update; matching exceptions restore caller locals before handler. All other outcomes excluded by original guard. Exact imported finite-support state and positive-width Type0 word carrier, local canonical roundtrip. No extra success/post-state relation premise. Full induction theorem remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/Call.lean",
+    "lean_name": "lookupMapMSomeIsSome",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific map lookup/update domain infrastructure or canonical roundtrip; no independent HOL port claim."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/Call.lean",
+    "lean_name": "callReturnUpdateDomain",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific map lookup/update domain infrastructure or canonical roundtrip; no independent HOL port claim."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/Call.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific map lookup/update domain infrastructure or canonical roundtrip; no independent HOL port claim."
   }
 ]
