@@ -25859,5 +25859,23 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-pxn.18.5.9.1): HOL loop_to_wordProof state_rel_imp_semantics (loop_to_wordProofScript.sml:1538-1544): !s t start. state_rel s t ∧ isEmpty s.locals ∧ good_dimindex(:'a) ∧ lookup 0 t.locals = SOME (Loc 1 0) ∧ (∃prog. lookup start s.code = SOME ([], prog)) ∧ semantics s start <> Fail ⇒ semantics t start = semantics s start. Lean keeps the binders and the conjunctive premise (isEmpty as sptIsEmpty = true) over the tagged loopToWordStateRelHOLExact, goodDimindex and the tagged loopSem/wordSem semantics_def. The wordSem state has an arbitrary configuration type C and the loopSem FFI host F. No extra premise. The proof route differs from HOL's direct unfolding of both semantics_defs; it follows the tagged Crep-to-Loop port. Untagged wordSemIsWrapper rewrites wordSem semantics_def as a semantics_wrapper of its entry runs (TimeOut/Break/Continue Incomplete; Result with ret <> Loc 1 0 RunError, matching HOL's Fail test). The tagged loopSemIsWrapper and semantics_wrapper_eq then apply, with premises from the tagged compileCorrect at Call NONE (SOME start) [] NONE (HOL comp_Call; ctxt make_ctxt 2 [] LN via the tagged locals_rel_mk_ctxt_ln), the tagged word evaluate_add_clock and evaluate_add_clock_io_events_mono, and the tagged loopProps evaluate_add_clock_eq/evaluate_add_clock_io_events_mono. Same-module relation witnesses LoopToWordStateRelImpSemanticsWitnesses.*. Kernel-checked; axioms standard. Caveat: the wordSem evaluator's Inst clause runs the untagged inst (FPSqrt rational-cut gap, flapjack-dshl), so this is not evidence of HOL-faithful numerical floating-point semantics."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_structsScript.sml",
+    "hol_name": "old_exp_shape_def",
+    "lean_path": "Flapjack/Pancake/PanStructs/OldExpShapeExact.lean",
+    "lean_name": "oldExpShapeExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source review 2026-09-30 bead .18.5.3.77.1.2: pan_structsScript.sml70-104 mutual expression/list clauses, ContextExact fields and ExpHOL payloads compared constructor by constructor. findSome? with propositional MlS equality implements first-match ALOOKUP; optional index implements LLOOKUP with One default. Named shape and nested struct/field lookup defaults unchanged, Load preserves source shape, all other constructors return One. Positive width-indexed exact word carrier only representation qualifier; no String names. Ten captured 8-bit HOL oracle rows replayed by kernel equality. Proof-side source dependency; production route remains open on this bead."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_structsScript.sml",
+    "hol_name": "old_exp_shape_def",
+    "lean_path": "Flapjack/Pancake/PanStructs/OldExpShapeExact.lean",
+    "lean_name": "oldExpShapesExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source review 2026-09-30 bead .18.5.3.77.1.2: pan_structsScript.sml70-104 mutual expression/list clauses, ContextExact fields and ExpHOL payloads compared constructor by constructor. findSome? with propositional MlS equality implements first-match ALOOKUP; optional index implements LLOOKUP with One default. Named shape and nested struct/field lookup defaults unchanged, Load preserves source shape, all other constructors return One. Positive width-indexed exact word carrier only representation qualifier; no String names. Ten captured 8-bit HOL oracle rows replayed by kernel equality. Proof-side source dependency; production route remains open on this bead."
   }
 ]
