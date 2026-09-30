@@ -40,3 +40,7 @@ val _ = print_eval "llist_shorter_nil_nonempty"
   ``llist_shorter (llist$fromList ([] : num list)) (llist$fromList [1])``;
 val _ = print_eval "llist_shorter_nonempty_nil"
   ``llist_shorter (llist$fromList [1]) (llist$fromList ([] : num list))``;
+val _ = print_eval "llist_shorter_reverse_longer"
+  ``llist_shorter (llist$fromList [3;2;1]) (llist$fromList [1;2])``;
+val _ = print_eval "llist_shorter_equal_nonempty"
+  ``llist_shorter (llist$fromList [7;8]) (llist$fromList [8;7])``;

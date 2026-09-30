@@ -119,7 +119,7 @@ example : ∀ (ll2 : HolLList Nat) (_n : Nat) (_x : Nat), chainB ll2 → ll2 ≠
 
 -- Finite instances of `llist_shorter` from the captured original-HOL probe
 -- `scripts/hol-probes/lprefix_lub_llist_shorter_probe.out` (rows
--- `llist_shorter_{shorter,equal_length,longer,two_empty,nil_nonempty,nonempty_nil}`).
+-- `llist_shorter_{shorter,equal_length,longer,two_empty,nil_nonempty,nonempty_nil,reverse_longer,equal_nonempty}`).
 example : llistShorter (fromList [1, 2]) (fromList [1, 2, 3]) := by
   rw [llistShorter_fromList]; decide
 example : llistShorter (fromList [1, 2, 3]) (fromList [4, 5, 6]) := by
@@ -132,11 +132,15 @@ example : llistShorter (fromList ([] : List Nat)) (fromList [1]) := by
   rw [llistShorter_fromList]; decide
 example : ¬ llistShorter (fromList [1]) (fromList ([] : List Nat)) := by
   rw [llistShorter_fromList]; decide
+example : ¬ llistShorter (fromList [3, 2, 1]) (fromList [1, 2]) := by
+  rw [llistShorter_fromList]; decide
+example : llistShorter (fromList [7, 8]) (fromList [8, 7]) := by
+  rw [llistShorter_fromList]; decide
 
 def runChecks : IO Bool := do
   IO.println "PASS lprefix_lub chain/equality lemmas (equiv_lprefix_chain/lprefix_rel)"
   IO.println "PASS llist_shorter + equiv_lprefix_chain_thm2 (llistShorter/equiv_lprefix_chain_thm2)"
-  IO.println "PASS llist_shorter finite instances replay lprefix_lub_llist_shorter_probe (6 rows)"
+  IO.println "PASS llist_shorter finite instances replay lprefix_lub_llist_shorter_probe (8 rows)"
   pure true
 
 end Flapjack.Test.LprefixLubParity

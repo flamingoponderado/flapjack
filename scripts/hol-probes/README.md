@@ -1137,7 +1137,8 @@ scripts/hol-probes/regenerate.sh`.
 `llist_shorter` from the pinned external script
 `examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml` (`llist_shorter_def`
 :122-129, `llist_shorter_fromList` :163-169): shorter/equal/longer finite lists,
-the two-empty case, and the nil/non-nil directions. `llist_shorter` matches on
+the two-empty case, the nil/non-nil directions, and the reverse-order and
+equal-length-different-content cases. `llist_shorter` matches on
 `(LLENGTH ll1, LLENGTH ll2)`, so the source definition is reduced with the
 companion library theorem `LLENGTH_fromList` and the resulting length comparison
 is `EVAL`-evaluated. Refresh it with
