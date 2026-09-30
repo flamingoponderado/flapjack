@@ -1,3 +1,5 @@
+import Flapjack.Compiler.Backend.StackProps.FixedNames
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.InstConst
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutNames
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyRemap
 import Flapjack.Pancake.PanStructs.CompileDeclsExact
