@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordAlloc.LivenessRoute
 import Flapjack.NatDedup
 import Flapjack.RiscV.CakeRegAlloc
 import Flapjack.RiscV.WordCse
@@ -86,7 +87,7 @@ def wordDeadCodeAuxWithLabels : WordProg α → List Nat → List (List Nat × L
       if destination ∈ live then
         (.assign destination value,
           wordDeadAddReads (wordDeadRemoveWrites live [destination])
-            (wordExpReadVars value))
+            (WordAlloc.liveExpressionKeys value))
       else
         (.skip, live)
   | .inst instruction, live, _, _ => wordDeadInst live instruction
@@ -98,9 +99,9 @@ def wordDeadCodeAuxWithLabels : WordProg α → List Nat → List (List Nat × L
         (.skip, live)
   | .store address value, live, _, _ =>
       (.store address value,
-        wordDeadAddReads live (wordExpReadVars address ++ [value]))
+        wordDeadAddReads live (WordAlloc.liveExpressionKeys address ++ [value]))
   | .set store value, live, _, _ =>
-      (.set store value, wordDeadAddReads live (wordExpReadVars value))
+      (.set store value, wordDeadAddReads live (WordAlloc.liveExpressionKeys value))
   | .seq first second, live, frames, returnLabels =>
       let (second', live) := wordDeadCodeAuxWithLabels second live frames returnLabels
       let (first', live) := wordDeadCodeAuxWithLabels first live frames returnLabels
@@ -206,11 +207,11 @@ def wordDeadCodeAuxWithLabels : WordProg α → List Nat → List (List Nat × L
              emits the observable shared-memory event used by the FFI model. -/
           (.shareInst operator name address,
             wordDeadAddReads (wordDeadRemoveWrites live [name])
-              (wordExpReadVars address))
+              (WordAlloc.liveExpressionKeys address))
       | .store | .store8 | .store16 | .store32 =>
           (.shareInst operator name address,
             wordDeadAddReads live
-              ([name] ++ wordExpReadVars address))
+              ([name] ++ WordAlloc.liveExpressionKeys address))
 termination_by program => sizeOf program
 decreasing_by
   all_goals simp_wf
@@ -263,17 +264,17 @@ def wordDeadCodeWithStores [WordCseHash α] : WordProg α → List Nat →
         (.skip, live, nlive)
   | .store address value, live, _, _, nlive =>
       (.store address value,
-        wordDeadAddReads live (wordExpReadVars address ++ [value]), nlive)
+        wordDeadAddReads live (WordAlloc.liveExpressionKeys address ++ [value]), nlive)
   | .set store value, live, _, _, nlive =>
       match value with
-      | .var source =>
+      | .var _ =>
           if wordDeadStoreKey store ∈ nlive then
             (.skip, live, nlive)
           else
-            (.set store value, wordDeadAddReads live [source],
+            (.set store value, wordDeadAddReads live (WordAlloc.liveExpressionKeys value),
               wordDeadStoreKey store :: nlive)
       | _ =>
-          (.set store value, wordDeadAddReads live (wordExpReadVars value), [])
+          (.set store value, wordDeadAddReads live (WordAlloc.liveExpressionKeys value), [])
   | .seq first second, live, frames, returnLabels, nlive =>
       let (second', secondLive, secondNLive) := wordDeadCodeWithStores
         second live frames returnLabels nlive
@@ -369,10 +370,10 @@ def wordDeadCodeWithStores [WordCseHash α] : WordProg α → List Nat →
       | .load | .load8 | .load16 | .load32 =>
           (.shareInst operator name address,
             wordDeadAddReads (wordDeadRemoveWrites live [name])
-              (wordExpReadVars address), nlive)
+              (WordAlloc.liveExpressionKeys address), nlive)
       | .store | .store8 | .store16 | .store32 =>
           (.shareInst operator name address,
-            wordDeadAddReads live ([name] ++ wordExpReadVars address), nlive)
+            wordDeadAddReads live ([name] ++ WordAlloc.liveExpressionKeys address), nlive)
 def wordRemoveDeadProgram [WordCseHash α] (program : WordProg α) : WordProg α :=
   (wordDeadCodeWithStores program [] [] (wordDeadReturnLabels program) []).1
 

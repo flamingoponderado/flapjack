@@ -1281,6 +1281,17 @@ HOL_PROBE_ONLY=word_alloc_live_inst_probeScript.sml
 scripts/hol-probes/regenerate.sh` (the shared checkout supplies built objects;
 its original word_alloc source was compared byte-for-byte).
 
+`word_alloc_live_exp_probe.out` records direct original `get_live_exp_def`
+observations for nested expressions, duplicate variables, empty operators,
+both Shift operands, constants, and lookups. The captured mixed-tree key order
+is kernel-replayed through `getLiveExpExecutable` in
+`Flapjack.Test.WordAllocLiveExpressionParity`. The executed dead-code set
+boundary calls reviewed `getLiveExp`; duplicate-sensitive occurrence lists
+used by clash construction retain their separate representation. Regenerate
+with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_alloc_live_exp_probeScript.sml
+scripts/hol-probes/regenerate.sh` after building original CakeML theories.
+
 `word_sem_cut_names_type_probe.out` prints the original HOL `cut_names`
 constant types for `cut_names`, `cut_envs`, and `cut_env` from `wordSemTheory`: independent name-map and environment-map
 payload parameters in the first, and generic environment payloads in the latter two. It guards the carrier review of `wordSemCutNames` against

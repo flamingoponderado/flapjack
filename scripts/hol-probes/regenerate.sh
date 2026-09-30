@@ -124,6 +124,9 @@ run_probe word_sem_cut_names_type_probeScript.sml word_sem_cut_names_type_probe.
 run_probe word_alloc_live_inst_probeScript.sml word_alloc_live_inst_probe.out \
   load16 load8 store32 carry overflow to64 to32 from64 from32 "$cake_dir/compiler/backend/word_allocScript.sml" \
   "$cake_dir/compiler/backend"
+run_probe word_alloc_live_exp_probeScript.sml word_alloc_live_exp_probe.out \
+  nested duplicate empty shift constant lookup \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
 run_probe word_alloc_colour_inst_probeScript.sml word_alloc_colour_inst_probe.out \
   load16 store16 load8 store32 carry fp_move "$cake_dir/compiler/backend/word_allocScript.sml" \
   "$cake_dir/compiler/backend"
