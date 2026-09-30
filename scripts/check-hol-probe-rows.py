@@ -8,7 +8,7 @@ directly:
 
     python3 scripts/check-hol-probe-rows.py
 
-The checker has two independent, deterministic parts.
+The checker has three independent, deterministic parts.
 
 1. Structural coverage. Every ``scripts/hol-probes/<name>.out`` is parsed into
    rows of the form ``label=value`` (the value may span continuation lines; a
@@ -28,18 +28,30 @@ The checker has two independent, deterministic parts.
    label, or a row addition/removal, fails until the lock is regenerated with
    ``--update`` after review.
 
+3. Generated Lean expectations. ``Flapjack/Test`` replays some captured rows in
+   kernel-checked tests and marks them with ``-- <label>=...`` oracle comments.
+   ``scripts/hol-probes/lean_expectations.json`` is generated from the
+   authoritative ``.out`` files and records the captured ``label``/``value``
+   for every such replayed label that is owned by exactly one captured output.
+   The artifact is never hand-edited: ``--update`` regenerates it, and a stale
+   generation (a mutated value, a removed row, or a newly replayed label)
+   fails the check until regenerated after review. The ``.out`` files remain
+   the single authority; the JSON only materialises their values for the Lean
+   replay so expectations are not hand-copied. Labels that occur in more than
+   one ``.out`` (for example a bare ``skip``) or that have no captured row are
+   skipped deterministically rather than guessed. The artifact is JSON rather
+   than a generated Lean module: the replay set spans many probes and a Lean
+   module would keep growing with every probe, so the small JSON keeps the
+   generated file scoped while remaining machine-consumable.
+
 This gate does not evaluate HOL. The probe scripts and ``.out`` files are
-committed artifacts, so the checker compares them against each other and
-against the lock; it does not prove that the captured values are correct. The
-per-row Lean transcriptions cannot be cross-checked mechanically: no
-``Flapjack/Test`` module stores a probe row as a ``"label=value"`` string
-literal, and the few ``-- label=value`` comment rows are partial, annotated
-(for example ``crep_invalid_four=NONE`` with a trailing explanation), or split
-across several probes, so there is no deterministic textual key to match
-against. Tightening the gate to the Lean expectations would require adding a
-machine-readable row mapping to each test, which is out of scope here; the
-content lock plus the script/out label comparison is the deterministic
-equivalent.
+committed artifacts, so the checker compares them against each other, against
+the lock, and against the generated expectations; it does not prove that the
+captured values are correct or that the ``-- label=...`` comments agree with
+the generated values (those comments are annotated prose, not a machine-readable
+key). The point of the generated artifact is that the Lean-facing expectations
+are derived from the captured outputs, so a ``.out`` change cannot leave a stale
+hand-copied value behind without the check requiring regeneration.
 """
 
 from __future__ import annotations
@@ -55,8 +67,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 PROBES = ROOT / "scripts" / "hol-probes"
 LOCK = PROBES / "rows.lock.json"
+EXPECTATIONS = PROBES / "lean_expectations.json"
+LEAN_TESTS = ROOT / "Flapjack" / "Test"
 
 LABEL_RE = re.compile(r"^([A-Za-z][A-Za-z0-9_]*)=(.*)$")
+# A Lean parity test marks a replayed captured row with ``-- <label>=...``.
+ORACLE_COMMENT_RE = re.compile(r"--\s*([A-Za-z][A-Za-z0-9_]*)=")
 DEF_RE = re.compile(r"(?m)^(?:fun|val)\s+([A-Za-z][A-Za-z0-9_]*)[^\n]*?=")
 NEXT_DEF_RE = re.compile(r"(?m)^(fun|val|local|end)\b")
 
@@ -220,6 +236,96 @@ def render_lock(records: list[dict[str, object]]) -> str:
     return "\n".join(lines) + "\n"
 
 
+def replayed_labels(lean_dir: Path) -> list[str]:
+    """Labels that a Lean parity test replays through a ``-- <label>=`` comment."""
+    labels: set[str] = set()
+    for path in sorted(lean_dir.rglob("*.lean")):
+        labels.update(ORACLE_COMMENT_RE.findall(read_text(path)))
+    return sorted(labels)
+
+
+def label_owners(probes_dir: Path) -> dict[str, list[tuple[str, str]]]:
+    """Map ``label`` to the ``(out_name, value)`` rows that define it."""
+    owners: dict[str, list[tuple[str, str]]] = {}
+    for out in out_files(probes_dir):
+        for label, value in parse_rows(read_text(out)):
+            owners.setdefault(label, []).append((out.name, value))
+    return owners
+
+
+def expected_expectations(probes_dir: Path, lean_dir: Path) -> dict[str, object]:
+    """Derive the generated Lean-expectation artifact from the captured rows.
+
+    Only labels replayed by a Lean test and owned by exactly one captured output
+    are emitted; ambiguous or absent labels are skipped deterministically.
+    """
+    owners = label_owners(probes_dir)
+    rows: list[dict[str, str]] = []
+    for label in replayed_labels(lean_dir):
+        candidates = owners.get(label, [])
+        if len(candidates) != 1:
+            continue
+        out_name, value = candidates[0]
+        rows.append({"label": label, "out": out_name, "value": value})
+    return {
+        "version": 1,
+        "generated_by": "python3 scripts/check-hol-probe-rows.py --update",
+        "authority": "scripts/hol-probes/*.out (captured HOL outputs)",
+        "rows": rows,
+    }
+
+
+def render_expectations(data: dict[str, object]) -> str:
+    lines = [
+        "{",
+        '  "version": 1,',
+        '  "generated_by": ' + json.dumps(data["generated_by"]) + ",",
+        '  "authority": ' + json.dumps(data["authority"]) + ",",
+        '  "rows": [',
+    ]
+    rows = data["rows"]
+    assert isinstance(rows, list)
+    for index, row in enumerate(rows):
+        comma = "," if index + 1 < len(rows) else ""
+        lines.append("    " + json.dumps(row, sort_keys=True) + comma)
+    lines.extend(["  ]", "}"])
+    return "\n".join(lines) + "\n"
+
+
+def check_expectations(probes_dir: Path, lean_dir: Path, path: Path) -> None:
+    expected = expected_expectations(probes_dir, lean_dir)
+    if not path.is_file():
+        raise ValueError(
+            f"{path}: missing generated Lean expectations; run --update to "
+            "create it"
+        )
+    committed = json.loads(read_text(path))
+    expected_rows = {row["label"]: row for row in expected["rows"]}  # type: ignore[index]
+    committed_rows = {
+        row["label"]: row for row in committed.get("rows", [])
+    }
+    mutated = sorted(
+        label
+        for label in expected_rows.keys() & committed_rows.keys()
+        if expected_rows[label] != committed_rows[label]
+    )
+    missing = sorted(expected_rows.keys() - committed_rows.keys())
+    extra = sorted(committed_rows.keys() - expected_rows.keys())
+    if not (mutated or missing or extra):
+        return
+    detail = []
+    if mutated:
+        detail.append(f"mutated {mutated[:8]}")
+    if missing:
+        detail.append(f"missing {missing[:8]}")
+    if extra:
+        detail.append(f"extra {extra[:8]}")
+    raise ValueError(
+        f"{path}: generated Lean expectations are stale ({', '.join(detail)}); "
+        "review the captured rows, migrate the Lean replay, then run --update"
+    )
+
+
 def check_structural(probes_dir: Path) -> list[str]:
     errors: list[str] = []
     for out in out_files(probes_dir):
@@ -301,21 +407,39 @@ def main() -> int:
     parser.add_argument(
         "--update",
         action="store_true",
-        help="rewrite the captured-.out content lock after review",
+        help="rewrite the captured-.out content lock and generated expectations "
+        "after review",
+    )
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help="explicitly run the read-only checks (the default; the documented "
+        "CI invocation)",
     )
     args = parser.parse_args()
     try:
         if args.update:
             records = expected_lock(PROBES)
             LOCK.write_text(render_lock(records), encoding="utf-8")
-            print(f"wrote {len(records)} captured-.out hashes to {LOCK}")
+            expectations = expected_expectations(PROBES, LEAN_TESTS)
+            EXPECTATIONS.write_text(
+                render_expectations(expectations), encoding="utf-8"
+            )
+            print(
+                f"wrote {len(records)} captured-.out hashes to {LOCK} and "
+                f"{len(expectations['rows'])} generated Lean expectations to "
+                f"{EXPECTATIONS}"
+            )
             return 0
         check(PROBES, LOCK)
+        check_expectations(PROBES, LEAN_TESTS, EXPECTATIONS)
         supported = len(out_files(PROBES)) - len(UNSUPPORTED)
         skipped = ", ".join(sorted(UNSUPPORTED))
+        expectations = expected_expectations(PROBES, LEAN_TESTS)
         print(
             f"hol-probe rows OK: {len(out_files(PROBES))} captured outputs "
-            f"locked, {supported} label-checked"
+            f"locked, {supported} label-checked, "
+            f"{len(expectations['rows'])} generated Lean expectations current"
         )
         if skipped:
             print(f"label check skipped (documented): {skipped}")

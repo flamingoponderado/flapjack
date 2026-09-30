@@ -13,6 +13,26 @@ claim production top-level routing or the pass semantics theorem.
 The repository-wide parity workflow is documented in
 [`docs/PARITY-TESTING.md`](../../docs/PARITY-TESTING.md).
 
+## Generated row lock and Lean expectations
+
+The captured `.out` files are the single authority for probe values. The check
+`python3 scripts/check-hol-probe-rows.py` parses them and enforces, in addition
+to the structural and duplicate-label checks:
+
+* `scripts/hol-probes/rows.lock.json` byte-locks every `.out` file.
+* `scripts/hol-probes/lean_expectations.json` is generated from the `.out`
+  rows and records the captured `label`/`value` for each label that a Lean
+  parity test replays via a `-- <label>=...` oracle comment and that is owned by
+  exactly one captured output. It is derived, never hand-edited. A mutated
+  value, a removed row, or a newly replayed label fails the check as a stale
+  generation until `--update` regenerates it after review.
+
+Use `python3 scripts/check-hol-probe-rows.py --update` to refresh both
+artifacts after reviewing a captured change. The CI step runs
+`python3 scripts/check-hol-probe-rows.py --check`, and the same check runs in
+`scripts/tests/test_check_hol_probe_rows.py` under
+`python3 -m unittest discover -s scripts/tests`.
+
 The files in this directory execute definitions from the CakeML Pancake HOL
 development and the HOL4 floating-point library. They are test-data
 generators, not independent Lean reference implementations. A parity fixture
