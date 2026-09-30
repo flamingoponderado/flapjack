@@ -1,0 +1,6 @@
+loc_zero_present=(NONE,SOME (Loc 3 0),[Word 11w; Loc 3 4],1,17,Word 23w)
+loc_zero_absent=(SOME Error,SOME (Word 9w),[Word 11w; Loc 3 4],1,17,Word 23w)
+loc_nonzero_present=(NONE,SOME (Loc 4 5),[Word 11w; Loc 3 4],1,17,Word 23w)
+loc_handler_present=(NONE,SOME (Loc 14 15),[Word 11w; Loc 3 4],1,17,Word 23w)
+loc_handler_no_return=(SOME Error,SOME (Word 9w),[Word 11w; Loc 3 4],1,17,Word 23w)
+loc_disabled_stack=(NONE,SOME (Loc 4 5),[Word 11w; Loc 3 4],1,17,Word 23w)
