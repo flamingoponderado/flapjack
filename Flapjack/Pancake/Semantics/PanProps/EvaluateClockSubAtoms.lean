@@ -31,20 +31,20 @@ theorem with_clock_inj {width : Nat} {σ : Type} [NeZero width]
   simp only [PanSemStateFiniteExact.mk.injEq, Nat.add_right_cancel_iff] at h ⊢
   exact h
 
-/-- A program that never ends in `TimeOut` satisfies HOL `evaluate_clock_sub`
-    over the canonical carrier: shift the low-clock run up with
-    `evaluate_add_clock_eq` and compare with the high run. -/
-theorem clockSub_of_noTimeout {width : Nat} {σ : Type} [NeZero width] (p : ProgHOL width)
-    (hnt : ∀ u : PanSemStateFiniteExact width σ, (evaluateHOLFiniteState u p).1 ≠ some .timeOut)
+/-- HOL `evaluate_clock_sub` for one run, given that the low-clock run does not
+    end in `TimeOut`: lift the low run by `ck` with `evaluate_add_clock_eq` and
+    compare it with the high run. -/
+theorem clockSub_of_lowNoTimeout {width : Nat} {σ : Type} [NeZero width] (p : ProgHOL width)
     (t : PanSemStateFiniteExact width σ) (res : Option (PanSemResultExact width))
     (st : PanSemStateFiniteExact width σ) (ck : Nat)
-    (h : evaluateHOLFiniteState t p = (res, { st with clock := st.clock + ck })) :
+    (h : evaluateHOLFiniteState t p = (res, { st with clock := st.clock + ck }))
+    (hlow : (evaluateHOLFiniteState { t with clock := t.clock - ck } p).1 ≠ some .timeOut) :
     evaluateHOLFiniteState { t with clock := t.clock - ck } p = (res, st) := by
   have hle := evaluateHOLFiniteState_clock_le_result t p _ _ h
   simp only at hle
-  rcases hlow : evaluateHOLFiniteState { t with clock := t.clock - ck } p with ⟨r', st'⟩
+  rcases hl : evaluateHOLFiniteState { t with clock := t.clock - ck } p with ⟨r', st'⟩
   have hup := panPropsEvaluateAddClockEq p { t with clock := t.clock - ck } r' st' ck
-    ⟨hlow, by have := hnt { t with clock := t.clock - ck }; rw [hlow] at this; exact this⟩
+    ⟨hl, by rw [hl] at hlow; exact hlow⟩
   have ht : ({ { t with clock := t.clock - ck } with clock := t.clock - ck + ck } :
       PanSemStateFiniteExact width σ) = t := by
     have hck : ck ≤ t.clock := by omega
@@ -56,6 +56,16 @@ theorem clockSub_of_noTimeout {width : Nat} {σ : Type} [NeZero width] (p : Prog
   rw [ht, h] at hup
   obtain ⟨h1, h2⟩ := Prod.mk.inj hup
   rw [← h1, with_clock_inj h2.symm rfl]
+
+/-- A program that never ends in `TimeOut` satisfies HOL `evaluate_clock_sub`
+    over the canonical carrier. -/
+theorem clockSub_of_noTimeout {width : Nat} {σ : Type} [NeZero width] (p : ProgHOL width)
+    (hnt : ∀ u : PanSemStateFiniteExact width σ, (evaluateHOLFiniteState u p).1 ≠ some .timeOut)
+    (t : PanSemStateFiniteExact width σ) (res : Option (PanSemResultExact width))
+    (st : PanSemStateFiniteExact width σ) (ck : Nat)
+    (h : evaluateHOLFiniteState t p = (res, { st with clock := st.clock + ck })) :
+    evaluateHOLFiniteState { t with clock := t.clock - ck } p = (res, st) :=
+  clockSub_of_lowNoTimeout p t res st ck h (hnt _)
 
 /-- `clockSub_of_noTimeout` over the `PanPropsEvalStateFiniteExact` pair
     carrier of the tagged `evaluate_clock_sub` cases. -/
