@@ -33,7 +33,7 @@ end CallWitness
 
 /-- Local support: distinct keys updated by `ZIP` read back their values
     (HOL `opt_mmap_some_eq_zip_flookup` on the finite-support carrier). -/
-private theorem mapM_updateListEq_zip {β : Type} (m : HolFiniteMapExact Nat β) :
+theorem mapM_updateListEq_zip {β : Type} (m : HolFiniteMapExact Nat β) :
     ∀ (xs : List Nat) (ys : List β), xs.Nodup → xs.length = ys.length →
       xs.mapM (m.updateListEq (xs.zip ys)).lookup = some ys
   | [], [], _, _ => rfl

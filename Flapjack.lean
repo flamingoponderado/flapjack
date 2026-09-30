@@ -500,6 +500,9 @@ import Flapjack.Pancake.Proofs.CrepInline.TransformEoc.Cases
 import Flapjack.Pancake.Proofs.CrepInline.TransformEoc.While
 import Flapjack.Pancake.Proofs.CrepInline.TransformEoc.Call
 import Flapjack.Pancake.Proofs.CrepInline.TransformEoc.Assembly
+import Flapjack.Pancake.Proofs.CrepInline.TransformBranch.Assembly
+import Flapjack.Pancake.Proofs.CrepInline.TransformBranch.Loops
+import Flapjack.Pancake.Proofs.CrepInline.TransformBranch.Cases
 import Flapjack.Pancake.Proofs.CrepInline.UnreachElimProgSize
 import Flapjack.Pancake.CrepInline.Canonical
 import Flapjack.Pancake.CrepInline.InlineRouteBridge
