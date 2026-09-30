@@ -8,6 +8,7 @@
   `deccall_clause_missing_function`).
 -/
 import Flapjack.Pancake.Semantics.PanSem.DecCallExact
+import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
 
 namespace Flapjack.Test.PanSemDecCallExactParity
 
@@ -30,6 +31,26 @@ def duplicateCodeMap : MlS → Option (List (MlS × ShapeHOL) × ProgHOL 8 × Sh
     if name = ml "f" then
       some ([(ml "a", ShapeHOL.one), (ml "a", ShapeHOL.one)], ProgHOL.skip, ShapeHOL.one)
     else none
+
+/-- Canonical input for the original lookup rows; no successful lookup is
+assumed by the finite-support certificate. -/
+def canonicalCodeMap : HolFiniteMapExact MlS
+    (List (MlS × ShapeHOL) × ProgHOL 8 × ShapeHOL) where
+  lookup := codeMap
+  finiteSupport := ⟨[ml "f"], by
+    intro name h
+    by_cases hn : name = ml "f"
+    · simp [hn]
+    · simp [codeMap, hn] at h⟩
+
+def canonicalDuplicateCodeMap : HolFiniteMapExact MlS
+    (List (MlS × ShapeHOL) × ProgHOL 8 × ShapeHOL) where
+  lookup := duplicateCodeMap
+  finiteSupport := ⟨[ml "f"], by
+    intro name h
+    by_cases hn : name = ml "f"
+    · simp [hn]
+    · simp [duplicateCodeMap, hn] at h⟩
 
 abbrev baseState (clock : Nat) : PanSemStateExact 8 Unit :=
   { locals := fun name => if name = ml "r" then some (.val (.word 0)) else none
@@ -88,16 +109,17 @@ def localsWord (state : PanSemStateExact 8 Unit) (name : MlS) : Option Nat :=
 
 /-- `lookup_code_ok=(T,SOME (ValWord 3w))`. -/
 def lookupOkGuard : Bool :=
-  match lookupCodeHOLExact codeMap (ml "f") [.val (.word 3)] with
-  | some (_, locals, _) => localsWordOf locals (ml "a") == some 3
+  match PanSemStateFiniteExact.lookupCodeCanonicalHOL canonicalCodeMap (ml "f") [.val (.word 3)] with
+  | some (_, locals, _) => localsWordOf locals.lookup (ml "a") == some 3
   | none => false
 
 /-- `lookup_code_bad_arg=(F,NONE)`. -/
-def lookupBadArgGuard : Bool := (lookupCodeHOLExact codeMap (ml "f") [.rStruct []]).isNone
+def lookupBadArgGuard : Bool :=
+  (PanSemStateFiniteExact.lookupCodeCanonicalHOL canonicalCodeMap (ml "f") [.rStruct []]).isNone
 
 /-- `lookup_code_dup_param=(F,NONE)`. -/
 def lookupDupParamGuard : Bool :=
-  (lookupCodeHOLExact duplicateCodeMap (ml "f") [.val (.word 3)]).isNone
+  (PanSemStateFiniteExact.lookupCodeCanonicalHOL canonicalDuplicateCodeMap (ml "f") [.val (.word 3)]).isNone
 
 /-- `deccall_clause_ok=(SOME (Return (ValWord 3w)),SOME (ValWord 0w),NONE)`. -/
 def decCallOkGuard : Bool :=
