@@ -51,8 +51,10 @@ theorem compileTopFunctionLookup_decode {width : Nat} [NeZero width]
 
 /-- Literal exact-carrier top compiler. The internally created finite map is
 the reviewed empty canonical map consumed by compileDecsExactHOL; the public
-input/output contain no finite-map field. Executed top-level routing remains
-separately tracked. -/
+input/output contain no finite-map field. The parser-path production route
+`globalCompileTopCakeRouted` (`Flapjack.Pancake.PanGlobalsByteRanged`) executes
+this definition and decodes its output; `compileTopExactHOL_decode` proves that
+equal to the compatibility `globalCompileTopCake`. -/
 @[hol "cakeml/pancake/pan_globalsScript.sml" "compile_top_def"
   (words_as_type_indexed_bitvec)]
 def compileTopExactHOL {width : Nat} [NeZero width]
