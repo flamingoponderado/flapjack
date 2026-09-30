@@ -32552,5 +32552,37 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-specific composition of initializer head expression proof2149-2163 (.22.10.7). Original state_rel F and source successful empty-locals evaluation derive unchanged-target compiled evaluation using accepted state_rel_empty_locals, compile_exp_correct and eval_empty_locals_IMP. No target success assumption, extra shape or alignment assumption, or new named HOL theorem. Full recursive initializer remains open."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/InitGlobalsRanges.lean",
+  "lean_name": "recursiveFreeBase",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific original initializer cons algebra composition (.22.10.9), HOL2182-2235. Exact compiler globalsSize advancement and modular free-base equality; accepted addresses_add/DISJOINT_addresses_lemma derive partition and recursive domain/disjointness using original goodDimindex and combined-size bound. No store/evaluation premise or independently named HOL theorem; full initializer state relation and recursion remain open."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/InitGlobalsRanges.lean",
+  "lean_name": "headAllocationBase",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific original initializer cons algebra composition (.22.10.9), HOL2182-2235. Exact compiler globalsSize advancement and modular free-base equality; accepted addresses_add/DISJOINT_addresses_lemma derive partition and recursive domain/disjointness using original goodDimindex and combined-size bound. No store/evaluation premise or independently named HOL theorem; full initializer state relation and recursion remain open."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/InitGlobalsRanges.lean",
+  "lean_name": "allocationPartition",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific original initializer cons algebra composition (.22.10.9), HOL2182-2235. Exact compiler globalsSize advancement and modular free-base equality; accepted addresses_add/DISJOINT_addresses_lemma derive partition and recursive domain/disjointness using original goodDimindex and combined-size bound. No store/evaluation premise or independently named HOL theorem; full initializer state relation and recursion remain open."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/InitGlobalsRanges.lean",
+  "lean_name": "recursiveFreeRangePremises",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific original initializer cons algebra composition (.22.10.9), HOL2182-2235. Exact compiler globalsSize advancement and modular free-base equality; accepted addresses_add/DISJOINT_addresses_lemma derive partition and recursive domain/disjointness using original goodDimindex and combined-size bound. No store/evaluation premise or independently named HOL theorem; full initializer state relation and recursion remain open."
 }
 ]
