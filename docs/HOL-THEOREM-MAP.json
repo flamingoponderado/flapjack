@@ -35629,5 +35629,28 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-b repair .14.4.2 source comparison HOL616 comp_ind Halt constructor: literal stack_asm_name/names_ok/fixed_names guards only, exact stack_asm_ok(comp f constructor) conclusion. No selector premise or target validity assumption. Native Spt/HolProg payloads and positive-width translation only. HOL comp preserves constructor head and stackProps812-829 target default True; all source guards retained. Untagged selector helper discharged by True.intro internally. Coordinator acceptance pending; proof-only."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/If.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack representation infrastructure: canonical state toExact/ofExact roundtrip re-export, no separate HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/If.lean",
+  "lean_name": "evaluateFperm_If",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_fperm",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol (22.5.6) compared HOL evaluate_fperm1721-1810 and literal evaluate_ind If conjunct. Sole IH quantifies original value/wordlab/word, guarded by eval(s,condition)=SOME value, value=Val lab, lab=Word word; branch exactly if word nonzero then first else second. Original source evaluation premise and full permuted target result/post code equality unchanged; no targetrun/nonError/postrelation guard. Original panSem16-23 Word-only word_lab and Value/RStruct/NStruct carriers verified. Failed evaluation and both structured-value errors preserve original result/state with permuted code; zero/nonzero successful word branches use only actual guarded IH. Expression evaluator code-update invariance accepted, no extra assumption. Four canonical state map fields and positive words/Type0 FFI qualified; same-module genuine canonical witness. Full permutation assembly remains open, coordinator review pending."
 }
 ]
