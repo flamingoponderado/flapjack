@@ -64,7 +64,7 @@ private theorem fupdateListHOL_eq {α β : Type} [DecidableEq α] [BEq α]
     FUPDATE_LIST_HOL f entries = FUPDATE_LIST f entries :=
   FUPDATE_LIST_HOL_eq_FUPDATE_LIST f entries
 
-private theorem flookup_fupdateList_reverse_of_mem
+theorem flookup_fupdateList_reverse_of_mem
     {α β : Type} [BEq α] [LawfulBEq α] :
     ∀ (entries : List (α × β)) (key : α) (value : β),
       (entries.map Prod.fst).Nodup → (key, value) ∈ entries →
@@ -91,7 +91,7 @@ private theorem flookup_fupdateList_reverse_of_mem
         simp only [hbeq, Bool.false_eq_true, if_false]
         exact flookup_fupdateList_reverse_of_mem entries key value hparts.2 htail
 
-private theorem flookup_fupdateList_reverse_mem'
+theorem flookup_fupdateList_reverse_mem'
     {α β : Type} [BEq α] [LawfulBEq α] :
     ∀ (entries : List (α × β)) (key : α) (value : β),
       FLOOKUP (FUPDATE_LIST FEMPTY entries.reverse) key = some value →

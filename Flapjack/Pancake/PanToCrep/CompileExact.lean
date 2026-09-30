@@ -861,21 +861,23 @@ theorem loadShapeBytesW_map_crepExpToHOL {width : Nat} [NeZero width]
       loadShapeBytesHOLW address count (crepExpToHOL value) :=
   loadShapeBytes_map_crepExpToHOL address count value
 
-/-- Flapjack-specific analogue of HOL `compile_prog_def` (`pan_to_crepScript.sml:393-397`):
-`compile_prog prog = compile_inl_top (MAP FST (functions (FILTER inlinable prog)))
-(compile_to_crep prog)`. The declaration-only `compile_to_crep` half is the tagged
-`compileToCrepExactHOLW`; the inline half uses `compileInlTopHOLExact` over
-`MlS` names and `CrepProgHOL`. Both are over the exact carriers
-(`DeclHOL width`, `ShapeHOL`/`ExpHOL` values, `MlS` identifiers), with the only
-outer translation being HOL's positive type-indexed word to `BitVec width`
-(hence the `words_as_type_indexed_bitvec` qualifier; the finite maps used inside
-are local intermediates and do not occur in this declaration's input or output
-type). No extra hypotheses.  The definition is computable: the inline map's
-finite support is derived from the filtered alist's keys
-(`supportKeys_alistToFmapHOLExact`), so it never invokes `Classical.choose` and
-the executable compiler can run it. This declaration remains untagged because
-the recursive inline core underlying `compileInlTopHOLExact` has not yet been
-reviewed as equivalent to HOL `inline_prog` (`flapjack-e7w.2.1.13`). -/
+/-- HOL `compile_prog_def`: extract inlineable function names from the original
+ordered declarations, compile every function to exact Crep, then inline the
+selected names. Both input and output use the reviewed exact carriers; only
+HOL's positive type-indexed word is translated to `BitVec width`.
+
+The canonical inline wrapper derives its finite-support certificate from the
+filtered alist. Its unconditional theorem
+`compileInlTopHOLExact_eq_compileInlProgHOLExact` identifies this computable
+implementation with the source-shaped wrapper using `inlineProgHOLExact`.
+No certificate or successful-pass premise is added to this declaration.
+
+This is the exact declaration-level compiler, separate from the executed
+production carrier bridge. That remaining route is tracked by
+`flapjack-4ac.2.20.3` and `flapjack-e7w.2`; tagging this definition does not
+establish that production route. -/
+@[hol "cakeml/pancake/pan_to_crepScript.sml" "compile_prog_def"
+  (words_as_type_indexed_bitvec)]
 def compileProgDeclsHOLW {width : Nat} [NeZero width]
     (prog : List (DeclHOL width)) :
     List (MlS × List Nat × CrepProgHOL width) :=
@@ -919,18 +921,5 @@ theorem compileInlProgHOLExactWithSupport_params_nodup {width : Nat} [NeZero wid
   simp only [List.all_map]
   rfl
 
-/-- Exact port of HOL `compile_prog_distinct_params`
-    (`pan_to_crepProofScript.sml:4684-4691`): every parameter list in the
-    `compile_prog` output is `Nodup`.  Follows from the `compile_to_crep` half
-    (`compileToCrepExactHOLW_params_nodup`) and definitional parameter
-    preservation by the inline pass.  Untagged until the recursive inline core
-    `flapjack-e7w.2.1.13` is reviewed. -/
-theorem compileProgDeclsHOLW_params_nodup {width : Nat} [NeZero width]
-    (prog : List (DeclHOL width)) :
-    (compileProgDeclsHOLW prog).all (fun triple => triple.2.1.Nodup) = true := by
-  unfold compileProgDeclsHOLW
-  simp only [CrepInlineCanonical.compileInlTopHOLExact,
-    CrepInlineCanonical.compileInlProgHOLExactWithSupport, List.all_map]
-  exact compileToCrepExactHOLW_params_nodup prog
 
 end Flapjack

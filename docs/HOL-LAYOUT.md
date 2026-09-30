@@ -107,3 +107,7 @@ layout guide.
 
 The pinned external `hol4/src/coretypes/optionScript.sml` counterpart is
 `Flapjack/Misc/Option.lean`.
+
+The pinned external `hol4/src/coalgebras/llistScript.sml` counterpart is
+`Flapjack/Misc/LList.lean`; `lprefix_lubScript.sml` chain and least-upper-bound
+declarations remain in `Flapjack/Misc/LprefixLub.lean`.

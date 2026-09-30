@@ -2054,6 +2054,9 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
     # These source/theorem pairs were checked against their HOL declaration
     # statements in the active review task, not merely copied from attributes.
     reviewed_exact = {
+        ("Flapjack/Misc/LList.lean", "lprefixAntisymHOL"),
+        ("Flapjack/Misc/LList.lean", "lprefixTransHOL"),
+        ("Flapjack/Misc/LList.lean", "prefixesLprefixTotalHOL"),
         ("Flapjack/Compiler/Backend/RegAlloc.lean", "isStackVar"),
         ("Flapjack/Compiler/Backend/RegAlloc.lean", "isPhyVar"),
         ("Flapjack/Compiler/Backend/RegAlloc.lean", "isAllocVar"),
@@ -2091,8 +2094,6 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         ("Flapjack/Pancake/Proofs/PanGlobals.lean", "ALOOKUP_MAP4"),
         ("Flapjack/Pancake/Proofs/PanGlobals.lean", "numCasesLemma"),
         ("Flapjack/Pancake/PanGlobals.lean", "fpermName"),
-        ("Flapjack/Pancake/PanGlobals.lean", "fpermHOL"),
-        ("Flapjack/Pancake/PanGlobals.lean", "fpermDecsHOL"),
         ("Flapjack/Pancake/PanGlobals.lean", "resortDeclsHOL"),
         ("Flapjack/Pancake/PanGlobals.lean", "decShapesHOL"),
         ("Flapjack/Pancake/PanGlobals.lean", "freshNameMlS"),
@@ -2101,7 +2102,6 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         ("Flapjack/Pancake/Proofs/PanGlobals.lean", "fpermName_cong"),
         ("Flapjack/Pancake/Proofs/PanGlobals.lean", "EVERY_fperm_decsHOL"),
         ("Flapjack/Pancake/Proofs/PanGlobals.lean", "FILTER_decs_fperm_decsHOL"),
-        ("Flapjack/Pancake/Proofs/PanGlobals.lean", "functionsFpermDecsHOL"),
         ("Flapjack/Pancake/Proofs/PanToCrep.lean", "mod_eq_of_lt_eq"),
         ("Flapjack/Pancake/Proofs/PanToCrep.lean", "option_ne_none_iff_exists"),
         ("Flapjack/Pancake/Proofs/PanToCrep.lean", "prod_mk_pair_eq_id"),
