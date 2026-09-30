@@ -700,15 +700,16 @@ theorem functions_fperm_decs [BEq String] (source target : FunName)
      MAP (λ(a,b,c,d). (fperm_name x y a, b, fperm x y c, d)) (functions code)`.
 
     Over the reviewed word-indexed `DeclHOL width` carrier, `functionsHOL`,
-    `fpermDecsHOL`, `fpermName`, and `fpermHOL` are all exact tagged ports, so
-    the only difference from HOL is the already-reviewed `MlS`/`DeclHOL` carrier
-    (the same carrier as the sibling exact ports `EVERY_fperm_decs` and
-    `FILTER_decs_fperm_decs`), with `[NeZero width]` matching HOL's positive
-    word type.  Renaming a declaration list renames each function-table entry's
+    `fpermDecsHOL`, `fpermName`, and `fpermHOL` use native MlS identifiers
+    and the source list/constructor structure. `[NeZero width]` matches HOL's
+    positive word dimension.  Renaming a declaration list renames each function-table entry's
     name via `fpermName` and its body via `fpermHOL`, leaving the parameter
-    shapes and return shape untouched, exactly as in HOL.  No qualifier
-    applies. -/
-@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "functions_fperm_decs"]
+    shapes and return shape untouched, exactly as in HOL. The
+    `words_as_type_indexed_bitvec` qualifier records only HOL's positive
+    type-indexed word dimension as Lean's positive `width`; the native MlS,
+    list, declaration and program constructor structure is unchanged. -/
+@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "functions_fperm_decs"
+  (words_as_type_indexed_bitvec)]
 theorem functionsFpermDecsHOL {width : Nat} [NeZero width] (x y : MlS)
     (code : List (DeclHOL width)) :
     functionsHOL (fpermDecsHOL x y code) =
