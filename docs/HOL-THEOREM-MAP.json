@@ -30399,5 +30399,28 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-c source comparison2026-09-30 (.32.3.7): genuine If evaluate_ind case of pan_globalsProof1045-1091; literal value/payload/word guard IH and original fresh-local predicate, existential post locals and conditional good_res/non-Error FUPDATE retained. No extra premise. Source panSem If selects else on zero, then on nonzero; failed guard returns Error preserving updated state. Guard invariant follows exact eval fresh-local theorem at canonical toExact update. Exact MlS/ValueHOL/ExpHOL/ProgHOL carriers, four canonical finite-map fields and genuine roundtrip, positive width/NeZero and universe0 FFI. No executable behavior change; parent assembly open and coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/Seq.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack canonical finite-state roundtrip re-export; no standalone HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/Seq.lean",
+    "lean_name": "evaluateFreshLocal_Seq",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "evaluate_fresh_local",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison2026-09-30 (.32.3.9): genuine Seq case of evaluate_fresh_local1045-1091. Literal evaluate_ind NONE-gated second-child then unconditional first-child IH conjunction. Original nonfree/source-evaluation predicate and existential post-locals plus conditional good_res/non-Error FUPDATE preserved. Source Seq/fix_clock behavior via accepted line780 rewrite, with no clock premise. NONE first output conditional update establishes exact intermediate fresh binding before second-child IH; SOME first result propagates original existential unchanged. Exact MlS/ValueHOL/ProgHOL, four canonical finite maps with roundtrip, positive word width/NeZero and universe0 FFI. No extra assumption and no executable change; full parent remains open; coordinator review pending."
   }
 ]
