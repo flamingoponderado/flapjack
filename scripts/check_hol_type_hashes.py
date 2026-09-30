@@ -160,6 +160,7 @@ def lock_records(
             "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
             "reviewed_fmap_as_finite_support_equalities",
             "reviewed_fmap_as_finite_support_equality",
+            "reviewed_fmap_as_finite_support_equality_words_as_type_indexed_bitvec",
             "reviewed_words_as_type_indexed_bitvec",
             "reviewed_word_dimension_as_width",
             "reviewed_reals_as_rational_cuts",
