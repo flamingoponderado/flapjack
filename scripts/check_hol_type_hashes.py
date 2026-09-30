@@ -36,14 +36,19 @@ def validate_export_record(record: Any, line_number: int) -> dict[str, Any]:
     if not isinstance(record, dict):
         raise ValueError(f"Lean export line {line_number} is not an object")
     required = {"lean_name", "hol_path", "hol_name", "type_expr"}
-    allowed = required | {"value_expr", "qualifiers"}
+    allowed = required | {"value_expr", "qualifiers", "inherits_reals_as_rational_cuts"}
     if not required.issubset(record) or not set(record) <= allowed:
         raise ValueError(f"Lean export line {line_number} has invalid fields")
     if not all(isinstance(record[key], str) for key in record):
         non_string = [key for key, value in record.items()
-                      if key != "qualifiers" and not isinstance(value, str)]
+                      if key not in ("qualifiers", "inherits_reals_as_rational_cuts")
+                      and not isinstance(value, str)]
         if non_string:
             raise ValueError(f"Lean export line {line_number} has non-string fields {non_string}")
+    if not isinstance(record.get("inherits_reals_as_rational_cuts", False), bool):
+        raise ValueError(
+            f"Lean export line {line_number} has a non-boolean inherits_reals_as_rational_cuts"
+        )
     qualifiers = record.get("qualifiers", {})
     allowed_qualifiers = {
         "list_as_array", "names_as_string", "names_as_string_boundary",
@@ -55,6 +60,7 @@ def validate_export_record(record: Any, line_number: int) -> dict[str, Any]:
         "fmap_as_finite_support_relation", "fmap_as_finite_support_equalities",
         "words_as_type_indexed_bitvec",
         "word_dimension_as_width",
+        "reals_as_rational_cuts",
     }
     if not isinstance(qualifiers, dict) or not set(qualifiers) <= allowed_qualifiers:
         raise ValueError(f"Lean export line {line_number} has invalid qualifiers")
@@ -62,7 +68,7 @@ def validate_export_record(record: Any, line_number: int) -> dict[str, Any]:
         (
             not isinstance(qualifiers.get(key), bool)
             if key in ("fmap_as_finite_support_result", "fmap_as_finite_support_equalities",
-                       "words_as_type_indexed_bitvec")
+                       "words_as_type_indexed_bitvec", "reals_as_rational_cuts")
             else not isinstance(value, str)
             if key == "word_dimension_as_width"
             else not isinstance(value, list) or not all(isinstance(field, str) for field in value)
@@ -153,6 +159,7 @@ def lock_records(
             "reviewed_fmap_as_finite_support_equalities",
             "reviewed_words_as_type_indexed_bitvec",
             "reviewed_word_dimension_as_width",
+            "reviewed_reals_as_rational_cuts",
             "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
             "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
         }:
@@ -203,12 +210,28 @@ def lock_records(
             qualifiers["words_as_type_indexed_bitvec"] = True
         if record.get("word_dimension_as_width") is not None:
             qualifiers["word_dimension_as_width"] = record["word_dimension_as_width"]
+        if record.get("reals_as_rational_cuts", False):
+            qualifiers["reals_as_rational_cuts"] = True
         exported_qualifiers = item.get("qualifiers", {})
         if any(exported_qualifiers.get(key, []) != value
                for key, value in qualifiers.items()):
             raise ValueError(
                 f"{record['lean_path']}:{record['lean_name']}: manifest qualifiers "
                 "differ from elaborated @[hol] exporter"
+            )
+        if (exported_qualifiers.get("reals_as_rational_cuts", False)
+                and not qualifiers.get("reals_as_rational_cuts", False)):
+            raise ValueError(
+                f"{record['lean_path']}:{record['lean_name']}: elaborated @[hol] carries "
+                "reals_as_rational_cuts but the manifest record does not"
+            )
+        exported_inherits = bool(item.get("inherits_reals_as_rational_cuts", False))
+        manifest_inherits = bool(record.get("inherits_reals_as_rational_cuts", False))
+        if exported_inherits != manifest_inherits:
+            raise ValueError(
+                f"{record['lean_path']}:{record['lean_name']}: manifest "
+                f"inherits_reals_as_rational_cuts={manifest_inherits} but the elaborated "
+                f"declaration closure gives {exported_inherits}"
             )
         lock_record: dict[str, Any] = {
                 "lean_path": record["lean_path"],
@@ -222,6 +245,8 @@ def lock_records(
         }
         if any(qualifiers.values()):
             lock_record["qualifiers"] = qualifiers
+        if manifest_inherits:
+            lock_record["inherits_reals_as_rational_cuts"] = True
         result.append(lock_record)
     return sorted(result, key=lambda item: (item["lean_path"], item["lean_name"]))
 
