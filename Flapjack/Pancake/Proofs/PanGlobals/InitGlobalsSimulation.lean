@@ -83,7 +83,9 @@ theorem holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact
 
 /-- Flapjack assembly predicate for the complete original initializer lemma.
 This is not a separately named HOL declaration: it packages all original
-premises and conclusions so the recursive cases share one fixed target. -/
+premises and conclusions at the supplied context. This predicate does not
+prove recursive cases: a cons-case induction motive must quantify over contexts
+so the recursive hypothesis can be instantiated at the updated context. -/
 def initGlobalsGoal {width : Nat} {σ : Type} [NeZero width]
     (s : PanSemStateFiniteExact width σ) (decls : List (DeclHOL width))
     (ctxt : PanGlobalsContextExact width) : Prop :=
@@ -114,7 +116,9 @@ def initGlobalsGoal {width : Nat} {σ : Type} [NeZero width]
       panGlobalsByteAlignedHOL ctxt'.globalsSize
 
 /-- Original empty declaration case of the initializer lemma. All original
-premises are retained in initGlobalsGoal; recursive allocation is still open. -/
+premises are retained in initGlobalsGoal. This is a partial nil-case port,
+not the assembled initializer theorem; the cons cases, recursive allocation
+and a context-general induction assembly remain open. -/
 @[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "evaluate_decls_init_globals_lemma"
   (fmap_as_finite_support_relation := [PanSemStateFiniteExact.locals,
     PanSemStateFiniteExact.globals, PanSemStateFiniteExact.code,

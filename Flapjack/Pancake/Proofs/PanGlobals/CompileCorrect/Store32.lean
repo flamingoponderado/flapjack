@@ -3,7 +3,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.CompileExpCorrect
 import Flapjack.Pancake.Proofs.PanGlobals.MemoryUpdate
 import Flapjack.Pancake.Semantics.PanSem.MemStore32Alt
 
-/-! The Store32 case at pan_globalsProofScript.sml:714-724. The source proof
+/-! The Store32 case at pan_globalsProofScript.sml:715-724. The source proof
 uses expression correctness and the successful aligned memory update; no recursive program induction hypothesis is needed. -/
 namespace Flapjack.PanGlobalsCompileCorrectStore32
 open Flapjack.Pancake.PanLang
