@@ -37591,5 +37591,172 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "C source comparison pan_simpProof117-137 and seq_assoc_def18-40 DecCall recursive case: complete arbitrary-prefix result/state equality; exactly source Skip/handler-or-continuation IH and no other premise. return-shape conjunction and restoration of caller local binding preserved; every callee/control/argument/lookup/clock branch retained. Accepted exact source evaluator clauses rewritten and universal bodyIH applies at actual continuation state. Native exact carriers, canonical fourmap state fields/genuine roundtrip witness, positive BitVec width and Type0 FFI only. Genuine constructor case, full117 assembly remains open; coordinator review pending, proof-only."
-}
+},
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsDecls.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module canonical finite-support roundtrip witness forwarding PanSemStateFiniteExact.holFmapAsFiniteSupportWitness for the exact evaluator carrier; no HOL declaration claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsDecls.lean",
+    "lean_name": "lookupAppend",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private Flapjack association-list helper (ALOOKUP over append) for the compile_top_semantics_decls assembly; HOL list-library fact, no CakeML declaration claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsDecls.lean",
+    "lean_name": "fupdateListLookup",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack finite-map helper: FUPDATE_LIST lookup is ALOOKUP of the reversed update list, falling back to the base map; HOL finite_map library fact, no CakeML declaration claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsDecls.lean",
+    "lean_name": "lookupOfMemNodup",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack association-list helper: with distinct keys, membership determines ALOOKUP (HOL ALOOKUP_ALL_DISTINCT_MEM); library fact, no CakeML declaration claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsDecls.lean",
+    "lean_name": "lookupMem",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack association-list helper: ALOOKUP returns a member (HOL ALOOKUP_MEM); library fact, no CakeML declaration claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsDecls.lean",
+    "lean_name": "lookupNoneOfNotMem",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack association-list helper: a key absent from MAP FST has ALOOKUP NONE (HOL ALOOKUP_NONE); library fact, no CakeML declaration claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsDecls.lean",
+    "lean_name": "lookupReverseOfNodup",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack association-list helper: with distinct keys ALOOKUP is invariant under REVERSE (HOL alookup_distinct_reverse); library fact, no CakeML declaration claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsDecls.lean",
+    "lean_name": "emptyUpdateListLookup",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack finite-map helper: FEMPTY |++ l over distinct keys is ALOOKUP l (HOL FLOOKUP_FUPDATE_LIST + alookup_distinct_reverse); no CakeML declaration claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsDecls.lean",
+    "lean_name": "updateListCons'",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private Flapjack proof helper for the canonical finite-map updateList cons equation; no independent HOL declaration claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsDecls.lean",
+    "lean_name": "evalExnsForm",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack evaluator helper: a successful exact evaluate_decls run over exception declarations only extends eshapes by exceptions (the evaluate_decls_only_exn_decls shape at the PanSem carrier); used internally by compile_top_semantics_decls, no separate HOL declaration claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsDecls.lean",
+    "lean_name": "evalFunsForm",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack evaluator helper: a successful exact evaluate_decls run over function declarations only extends code by functions (the evaluate_decls_only_functions shape at the PanSem carrier); used internally, no separate HOL declaration claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsDecls.lean",
+    "lean_name": "alignedAdd",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack rendering of HOL word-library byte_aligned_add at the two good_dimindex widths over the reviewed panGlobalsByteAlignedHOL predicate; used by the compile_top_semantics_decls byte_aligned_add step, no CakeML declaration claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsDecls.lean",
+    "lean_name": "alignedZero",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper: byte_aligned 0w over the reviewed alignment rendering (HOL EVAL_TAC step); no CakeML declaration claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsDecls.lean",
+    "lean_name": "topNotInAddresses",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper for the intLib.COOPER_TAC step of compile_top_semantics_decls: under HOL's no-wrap bound the first address past an n-word block is not in addresses a n; uses tagged mem_addresses, no CakeML declaration claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsDecls.lean",
+    "lean_name": "bvSubZero",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private Flapjack BitVec helper x - 0w = x; no HOL declaration claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsDecls.lean",
+    "lean_name": "filterDeclFperm",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack list helper: FILTER is_decl commutes with fperm_decs (declarations are unchanged by renaming); used with compile_decs_FILTER_decs, no separate HOL declaration claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsDecls.lean",
+    "lean_name": "filterDeclResort",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack list helper: FILTER is_decl (resort_decls decs) = FILTER is_decl decs, from resort_decls_def; no separate HOL declaration claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsDecls.lean",
+    "lean_name": "exceptionsFilterExn",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack list helper: exceptions (FILTER is_exn_decl decs) = exceptions decs; no separate HOL declaration claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsDecls.lean",
+    "lean_name": "evaluateCompileTopOfSource",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack assembly lemma generalising the private target-state lemma of CompileTopSemanticsExact: compile_top output (functions/exceptions only) evaluates from any state with the same structs/eshapes as a state from which the source declarations evaluate; composed from tagged evaluate_decls_only_functions_and_exns_SOME, compile_top_shape_wf, evaluate_decls_exns_wf, exceptions_compile_top. No separate HOL declaration claimed."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_top_semantics_decls",
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsDecls.lean",
+    "lean_name": "compileTopSemanticsDeclsHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.2.22.15): exact source comparison with pan_globalsProofScript.sml:3010-3029 compile_top_semantics_decls. Fourteen HOL conjuncts kept in order: ALL_DISTINCT (MAP FST (functions code)); t = s with top_addr/memaddrs (s.memaddrs UNION free_addrs as pointwise disjunction)/memory := tmem/locals := tlocals; s.code = FEMPTY; s.globals = FEMPTY; byte_aligned s.top_addr; good_dimindex; mgs = bytes_in_word * n2w (SUM (MAP size_of_shape (dec_shapes code))); free_addrs = addresses s.top_addr (SUM ...); DISJOINT s.memaddrs free_addrs (pointwise); memory agreement on s.memaddrs; s.top_addr + mgs NOTIN s.memaddrs; w2n bytes_in_word * SUM < dimword (2^width); EVERY is_function/is_decl/is_exn_decl; semantics_decls s start code <> Fail. Conclusion exact semantics_decls s start code = semantics_decls t start (compile_top code start). No target-run, success or post-state premise; proof composes tagged has_main', evaluate_decls_compile_top, resort_decls_evaluate, evaluate_decls_init_globals_lemma, semantics_init_call', semantics_fperm, semantics_empty_locals, evaluate_invariants and pan_globals state_rel_imp_semantics. HOL finite maps via fmap_as_finite_support, word dimension via words_as_type_indexed_bitvec; addresses_thm rewrite replaced by tagged mem_addresses."
+  }
 ]
