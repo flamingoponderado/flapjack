@@ -26850,5 +26850,13 @@
     "lean_name": "applyNummapsKey",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol source comparison 2026-09-30 bead .11.1.9: original29-33 exact product of two fromAList/map-key/toAList operations. Independent alpha/beta Spt payloads retained, f Nat->Nat arbitrary incl collisions; existing applyNummapKey unfolds precisely to each original component. First-match reconstructed payload and mixed traversal order preserved. No word/type-width or finite-map qualifier: numeric tree carrier is exact Spt. Actual wordApplyColour Call (with/without handler), Alloc, Install and FFI paired cutsets now call applyNummapsKeyExecutable, whose numSetToExact/fromExact codecs execute this tagged definition. Universal equality to the two already reviewed single-map executable routes is rfl, no representation-validity/injection premises. Three original HOL paired observations captured; full compiler parity and source route audit reported on bead."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "cut_envs_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/CutEnvs.lean",
+    "lean_name": "cutEnvsLemma",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-09-30 bead .11.1.10: original313-338. Unit numeric name-set pair matches cut_envs exact type, generic beta environment payload retained. All five input conjuncts retained (two domain-scoped INJ, successful source pair cut, two strong_locals_rel). All nine output conjuncts retained: existential successful renamed target pair cut, both full image domains of original name sets, both restricted relations on original domains, both inherited injections on source cuts, both source-cut domain equalities. INJ to UNIV rendered pairwise equality implication on its original domain; no extra target success or global injection. Proof decomposes source cut_envs into exact cut_names successes, invokes reviewed generic cutNamesLemma twice, substitutes proved source domain equalities and reconstructs pair using reviewed applyNummapsKey and wordSemCutEnvs. Exact Spt tree/Unit/generic beta carriers, no representation qualifier. Statement, quantified carriers, each premise and conclusion compared with HOL; accepted prerequisites6/9."
   }
 ]
