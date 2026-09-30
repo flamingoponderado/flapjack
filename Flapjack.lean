@@ -5,6 +5,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Memory
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.ResVar
 import Flapjack.Pancake.Proofs.PanGlobals.ReadBytearray
 import Flapjack.Pancake.Proofs.PanGlobals.ByteStore
+import Flapjack.Pancake.Proofs.PanGlobals.WriteBytearray
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Leaves
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.If
 import Flapjack.Pancake.Proofs.PanGlobals.MemoryLookup

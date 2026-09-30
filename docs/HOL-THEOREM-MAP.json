@@ -30721,5 +30721,45 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanGlobalsContextExact toBroad/ofBroad roundtrip; it supports PanGlobalsContextExact.globals named by the FLOOKUP_globals_val_state_rel tag."
-}
+},
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/WriteBytearray.lean",
+    "lean_name": "stateRelWriteBytearray",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "state_rel_write_bytearray",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-pxn.18.5.2.35) against pan_globalsProofScript.sml:1571-1593: arbitrary-flag state_rel and a successful source read_bytearray of LENGTH bytes give state_rel of the parallel write_bytearray results; BitVec8 byte list, total HolWordLab memory, exact PanSemStateFiniteExact/PanGlobalsContextExact carriers, no added target-success premise (the read supplies the source domain facts, exactly as HOL). Proven by induction on the byte list using the closed state_rel_mem_store_byte for the head byte."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/WriteBytearray.lean",
+    "lean_name": "writeBytearray_rel",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only induction helper for the tagged state_rel_write_bytearray port; carries the same hypotheses. Untagged."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/WriteBytearray.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only canonical state roundtrip re-export used by the relation qualifier. Untagged."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/WriteBytearray.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only canonical context roundtrip re-export used by the relation qualifier. Untagged."
+  }
 ]
