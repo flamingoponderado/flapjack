@@ -26863,5 +26863,45 @@
     "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-luna-b Flapjack-specific canonical state roundtrip witness re-export; no separate HOL declaration claimed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "gc_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Allocation.lean",
+    "lean_name": "gc",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; bead flapjack-y19g.7) against stackSemScript.sml:356-400. Accepted exact owning state and GC function carrier. GC preserves unused prefix, encodes active stack, passes roots/memory/domain/store, decodes against old stack, updates only stack/store/regs/memory. All NONE exits preserved. Allocation writes AllocSize before GC, returns original state on GC failure, retains collected state on later errors, returns NONE on sufficient space and Halt Word1/empty_env on insufficient space. Direct original HOL rows cover all branches, replayed by kernel cbv. Exact evaluator and production refinement remain open on parent y19g."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "alloc_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Allocation.lean",
+    "lean_name": "alloc",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; bead flapjack-y19g.7) against stackSemScript.sml:356-400. Accepted exact owning state and GC function carrier. GC preserves unused prefix, encodes active stack, passes roots/memory/domain/store, decodes against old stack, updates only stack/store/regs/memory. All NONE exits preserved. Allocation writes AllocSize before GC, returns original state on GC failure, retains collected state on later errors, returns NONE on sufficient space and Halt Word1/empty_env on insufficient space. Direct original HOL rows cover all branches, replayed by kernel cbv. Exact evaluator and production refinement remain open on parent y19g."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "has_space_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Allocation.lean",
+    "lean_name": "hasSpace",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; bead flapjack-y19g.7) against stackSemScript.sml:376-381. HOL type probe confirms independently quantified request/store word dimensions; Lean retains both NeZero dimensions. Canonical standalone store map. Exactly Word/SOME Word/SOME Word pattern then unsigned w2n request <= w2n modular difference; all other patterns NONE. Direct original true/false/wrap/nonword/missing/mixed-width rows kernel replay."
   }
 ]
