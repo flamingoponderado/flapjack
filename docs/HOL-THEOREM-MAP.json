@@ -37337,5 +37337,89 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "C source comparison pan_simpProofScript.sml69-73 and pan_simpScript.sml13-15: arbitrary first/second program/state, unconditional complete evaluate(SmartSeq p q,s)=evaluate(Seq p q,s). Exact ProgHOL constructor match realizes source p=Skip test; Skip prefix evaluation returns NONE/unchangedstate and exact line780 Seq preserves fix_clock via proved bound. Every other prefix literally Seq. No extra premises or restricted evaluator. Canonical finite state fourmap fields with genuine witness, positive wordwidth and Type0 FFI only. Coordinator review pending; proof-only no executed change."
+},
+{
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "semantics_init_call'",
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/SemanticsInitCall.lean",
+  "lean_name": "semanticsInitCall'",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.2.22.3.2.5): exact source comparison with pan_globalsProofScript.sml:2801-2820 semantics_init_call'. Same carriers and hypotheses as the accepted semantics_init_call (FLOOKUP code start/start', evaluate body from locals=FEMPTY giving NONE with s'.clock=s.clock, s'.ffi.io_events=s.ffi.io_events; conclusion semantics s start = semantics s' start'). HOL derives it from semantics_init_call by evaluate_clock_sub stripping the clock to 0 and evaluate_add_clock_eq re-adding k; Lean does the same with the tagged evaluateClockSubHOLFinite and panPropsEvaluateAddClockEq. No extra premises."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/StateRelImpSemantics.lean",
+  "lean_name": "codeInl_of_alist",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack local support (bead 2de.4.3): code_inl_rel inl_fs s t from s.code = alist_to_fmap crep_code and t.code = alist_to_fmap (compile_inl_prog inl_fs crep_code) with distinct names (the subgoal of HOL state_rel_imp_semantics_local :3320-3333)."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/StateRelImpSemantics.lean",
+  "lean_name": "entry_agree",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack local support (bead 2de.4.3): per-clock agreement of the entry call's result and FFI state via evaluate_call_same_result_state."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/StateRelImpSemantics.lean",
+  "lean_name": "noError_of_notFail",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack local support (bead 2de.4.3): semantics s start <> Fail implies no clock gives Error."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/StateRelImpSemantics.lean",
+  "lean_name": "ite_fail_congr",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack local support (bead 2de.4.3): congruence of semantics_def's Fail test."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/StateRelImpSemantics.lean",
+  "lean_name": "sem_tail_congr",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack local support (bead 2de.4.3): congruence of semantics_def's Terminate/Diverge tail."
+},
+{
+  "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+  "hol_name": "state_rel_imp_semantics_local",
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/StateRelImpSemantics.lean",
+  "lean_name": "stateRelImpSemanticsLocalExact",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "CrepSemHOLState.locals",
+    "CrepSemHOLState.globals",
+    "CrepSemHOLState.code",
+    "inl_fs"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-2de.4.3): crep_inlineProofScript.sml:3309-3318 forall s t crep_code start inl_fs ns prog. state_rel_code s t /\\ locals_strong_rel s t /\\ ALL_DISTINCT (MAP FST crep_code) /\\ s.code = alist_to_fmap crep_code /\\ inl_fs SUBMAP s.code /\\ t.code = alist_to_fmap (compile_inl_prog inl_fs crep_code) /\\ FLOOKUP s.code start = SOME (ns, prog) /\\ semantics s start <> Fail ==> semantics t start = semantics s start. Lean binds them in HOL order with the same eight conjuncts. alist_to_fmap is the reviewed alistToFmapCodeExact adapter (as in the accepted crep_to_loop state_rel_imp_semantics), compile_inl_prog the tagged compileInlProgHOLExact, and semantics the tagged crepSemantics (semantics_def). No extra premise. The proof is simpler than HOL's but proves the same statement: code_inl_rel from the code equations; no-Error at every clock from semantics <> Fail; evaluate_call_same_result_state gives per-clock equality of result and FFI state, so all three semantics_def branches agree pointwise (no add-clock argument needed)."
+},
+{
+  "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+  "hol_name": "state_rel_imp_semantics",
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/StateRelImpSemantics.lean",
+  "lean_name": "stateRelImpSemanticsExact",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "CrepSemHOLState.locals",
+    "CrepSemHOLState.globals",
+    "CrepSemHOLState.code"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-2de.4): crep_inlineProofScript.sml:3440-3448 forall s t crep_code start inl_fname ns prog. state_rel_code s t /\\ locals_strong_rel s t /\\ ALL_DISTINCT (MAP FST crep_code) /\\ s.code = alist_to_fmap crep_code /\\ t.code = alist_to_fmap (compile_inl_top inl_fname crep_code) /\\ FLOOKUP s.code start = SOME (ns, prog) /\\ semantics s start <> Fail ==> semantics t start = semantics s start. Lean binds them in HOL order with the same seven conjuncts over alistToFmapCodeExact, the tagged compileInlTopHOLExact (compile_inl_top_def) and crepSemantics. No extra premise. Proof as HOL: unfold compile_inl_top (compileInlProgHOLExactWithSupport_eq_compileInlProgHOLExact) and apply state_rel_imp_semantics_local with inl_fs = alist_to_fmap (FILTER (\\(x,y). MEM x inl_fname) crep_code), whose SUBMAP into s.code follows from ALL_DISTINCT."
 }
 ]
