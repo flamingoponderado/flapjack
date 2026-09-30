@@ -215,4 +215,47 @@ theorem evaluateSeqAssocDecCallHOL {width : Nat} {σ : Type} [NeZero width]
     evaluateHOLFiniteState_decCall_fixClockRewrite]
   simp only [hc]
 
+/-- Genuine source Skip case; full equality with no extra premise. -/
+@[hol "cakeml/pancake/proofs/pan_simpProofScript.sml" "evaluate_seq_assoc"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateSeqAssocSkipHOL {width : Nat} {σ : Type} [NeZero width]
+    (pre : ProgHOL width)  (state : PanSemStateFiniteExact width σ) :
+    evaluateHOLFiniteState state (seqAssocHOL pre .skip) =
+      evaluateHOLFiniteState state (.seq pre .skip) := by
+  rw [seqAssocHOL.eq_1, evaluateSeqSkipHOL]
+
+/-- Genuine source Annot case; full equality with no extra premise. -/
+@[hol "cakeml/pancake/proofs/pan_simpProofScript.sml" "evaluate_seq_assoc"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateSeqAssocAnnotHOL {width : Nat} {σ : Type} [NeZero width]
+    (pre : ProgHOL width) (tag text : MlS) (state : PanSemStateFiniteExact width σ) :
+    evaluateHOLFiniteState state (seqAssocHOL pre (.annot tag text)) =
+      evaluateHOLFiniteState state (.seq pre (.annot tag text)) := by
+  rw [seqAssocHOL.eq_10, evaluateHOLFiniteState_seq_line780]
+  generalize evaluateHOLFiniteState state pre = outcome
+  rcases outcome with ⟨result, post⟩
+  cases result <;> simp [evaluateHOLFiniteState_annot]
+
+/-- Genuine source CallNone case; full equality with no extra premise. -/
+@[hol "cakeml/pancake/proofs/pan_simpProofScript.sml" "evaluate_seq_assoc"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateSeqAssocCallNoneHOL {width : Nat} {σ : Type} [NeZero width]
+    (pre : ProgHOL width) (function : MlS) (arguments : List (ExpHOL width)) (state : PanSemStateFiniteExact width σ) :
+    evaluateHOLFiniteState state (seqAssocHOL pre (.call none function arguments)) =
+      evaluateHOLFiniteState state (.seq pre (.call none function arguments)) := by
+  rw [seqAssocHOL.eq_6, evaluateSmartSeqHOL]
+
+/-- Genuine source CallNoHandler case; full equality with no extra premise. -/
+@[hol "cakeml/pancake/proofs/pan_simpProofScript.sml" "evaluate_seq_assoc"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateSeqAssocCallNoHandlerHOL {width : Nat} {σ : Type} [NeZero width]
+    (pre : ProgHOL width) (returns : Option (VarKind × MlS)) (function : MlS) (arguments : List (ExpHOL width)) (state : PanSemStateFiniteExact width σ) :
+    evaluateHOLFiniteState state (seqAssocHOL pre (.call (some (returns, none)) function arguments)) =
+      evaluateHOLFiniteState state (.seq pre (.call (some (returns, none)) function arguments)) := by
+  rw [seqAssocHOL.eq_7, evaluateSmartSeqHOL]
+
 end Flapjack
