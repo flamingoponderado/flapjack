@@ -36501,6 +36501,53 @@
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Canonical imported state roundtrip reexport, Flapjack representation infrastructure without an independent HOL declaration."
 },
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Assembly.lean",
+  "lean_name": "compileCorrectHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "compile_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "reviewer": "flapjack-sol source comparison36: original gen_goal172-181 and full compile_correct assembled by original panSem evaluate_ind across21 constructors (proof ends1615). Public program/source/result/context/target/post quantification and only original state_rel T, source evaluate pair and res not Error hypotheses retained. Conclusion is genuine existential target evaluation of reviewed compileProgExactHOL with same result and full good_res state relation. Imported faithful evaluateIndHOL supplies every recursive IH internally; no public IH, universally quantified context assumption, target run, pass predicate, or postrelation premise. Assign Local/Global exact native split; seven Call leaves unchanged; Dec/Seq/If guards retained, While original three guards instantiated with constructor equalities, DecCall original continuation/callee intermediate products and shape guards instantiated. Canonical imported state/context map owners and genuine roundtrip witnesses used; native complete ProgHOL/ValueHOL/ShapeHOL and MlS carriers. Positive type-indexed BitVec width and Type0 FFI conventional translation only. Executed globals route already uses reviewed compileProgExactHOL/compileTopExactHOL; no production change in this proof assembly. Focused kernel PASS; independent coordinator source acceptance and full merged-tree gates pending, not a whole compiler theorem completion.",
+  "fmap_as_finite_support_relation": [
+    "PanSemStateFiniteExact.locals",
+    "PanSemStateFiniteExact.globals",
+    "PanSemStateFiniteExact.code",
+    "PanSemStateFiniteExact.eshapes",
+    "PanGlobalsContextExact.globals"
+  ],
+  "words_as_type_indexed_bitvec": true
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Assembly.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Canonical imported state/context roundtrip reexport; Flapjack representation infrastructure without an independent HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Assembly.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Canonical imported state/context roundtrip reexport; Flapjack representation infrastructure without an independent HOL declaration."
+},
+{
+  "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+  "hol_name": "evaluate_clock_sub",
+  "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
+  "lean_name": "evaluateClockSubIfCaseHOLFinite",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-4ac.4.60.1.1.12): exact source shape of HOL panPropsScript.sml evaluate_clock_sub If constructor, handled in the generic final branch of the HOL induction (panSemScript.sml:630). Single literal guarded IH after the eval/Val/Word guard: forall result2 st2 ck2, source selected-branch run = (result2, st2 with clock := st2.clock + ck2) -> result2 <> SOME TimeOut -> low-clock selected-branch run = (result2, st2), exactly as the accepted Call/DecCall clockSubAt cases; original premisses (high-run equation to st with clock := st.clock+ck and result <> SOME TimeOut), no added premise and no outer-specialized IH."
+},
   {
     "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
     "hol_name": "update_locals_not_vars_eval_eq'",
