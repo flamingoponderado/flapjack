@@ -1,0 +1,18 @@
+load "bossLib"; load "preamble"; load "stackPropsTheory";
+open bossLib HolKernel Parse preamble stackPropsTheory;
+fun out label q = (print(label ^ "="); print_term(rconc(EVAL q)); print "\n");
+val _ = out "one" ``alloc_arg (Alloc 1 : 8 stackLang$prog)``;
+val _ = out "zero" ``alloc_arg (Alloc 0 : 8 stackLang$prog)``;
+val _ = out "two" ``alloc_arg (Alloc 2 : 8 stackLang$prog)``;
+val _ = out "seq_good" ``alloc_arg (Seq (Alloc 1) Skip : 8 stackLang$prog)``;
+val _ = out "seq_bad" ``alloc_arg (Seq Skip (Alloc 2) : 8 stackLang$prog)``;
+val _ = out "if_good" ``alloc_arg (If Equal 99 (Reg 99) Skip (Alloc 1) : 8 stackLang$prog)``;
+val _ = out "if_bad" ``alloc_arg (If Equal 0 (Reg 0) (Alloc 0) Skip : 8 stackLang$prog)``;
+val _ = out "loop_good" ``alloc_arg (Loop (Alloc 1) : 8 stackLang$prog)``;
+val _ = out "loop_bad" ``alloc_arg (Loop (Alloc 2) : 8 stackLang$prog)``;
+val _ = out "call_none" ``alloc_arg (Call NONE (INR 99) NONE : 8 stackLang$prog)``;
+val _ = out "call_none_handler_bad" ``alloc_arg (Call NONE (INR 99) (SOME (Alloc 2,3,4)) : 8 stackLang$prog)``;
+val _ = out "call_return_bad" ``alloc_arg (Call (SOME (Alloc 0,99,1,2)) (INR 99) NONE : 8 stackLang$prog)``;
+val _ = out "call_handler_bad" ``alloc_arg (Call (SOME (Skip,99,1,2)) (INR 99) (SOME (Alloc 2,3,4)) : 8 stackLang$prog)``;
+val _ = out "call_good" ``alloc_arg (Call (SOME (Alloc 1,99,1,2)) (INR 99) (SOME (Alloc 1,3,4)) : 8 stackLang$prog)``;
+val _ = out "inst_default" ``alloc_arg (Inst (Const 99 0w) : 8 stackLang$prog)``;
