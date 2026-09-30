@@ -44,13 +44,15 @@ jobs:
       - name: Check both pinned guest builds against exact Pancake output
         run: |
           python3 - <<'PYGUEST'
-          import json, os, pathlib, urllib.request
+          import json, os, pathlib, subprocess
           reference = json.loads(pathlib.Path("scripts/guest-parity.json").read_text())
           for variant in reference["variants"].values():
               path = variant["source_path"]
               url = ("https://raw.githubusercontent.com/pirapira/stateless-pancaketh/"
                      + reference["upstream_revision"] + "/" + path)
-              urllib.request.urlretrieve(url, pathlib.Path(os.environ["RUNNER_TEMP"]) / pathlib.Path(path).name)
+              output = pathlib.Path(os.environ["RUNNER_TEMP"]) / pathlib.Path(path).name
+              subprocess.run(["curl", "--fail", "--location", "--retry", "3",
+                              "--retry-delay", "2", url, "--output", str(output)], check=True)
           PYGUEST
           python3 scripts/check-guest-parity.py "$RUNNER_TEMP/guest.pp.pnk" --variant accelerated
           python3 scripts/check-guest-parity.py "$RUNNER_TEMP/guest-software.pp.pnk" --variant software
