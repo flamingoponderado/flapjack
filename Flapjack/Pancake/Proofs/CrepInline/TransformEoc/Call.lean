@@ -195,7 +195,10 @@ private theorem handlerGoal {width : Nat} [NeZero width] {σ : Type}
                 exact ⟨_, _, rfl, stateRel_refl _, rfl⟩
 
 /-- `Call` case of HOL `transform_eoc_correct` (Resume at `:2024-2038`), for
-    every call shape, with only the guarded `evaluate_ind` handler premise. -/
+    every call shape, with only the guarded `evaluate_ind` handler premise.
+    Specialized stronger case: HOL's unused callee-body IH is omitted;
+    the handler guards are retained, with tuple/result aliases normalized.
+    The assembled theorem discharges this premise internally. -/
 @[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "transform_eoc_correct"
   (fmap_as_finite_support := [locals, globals, code])
   (words_as_type_indexed_bitvec)]
