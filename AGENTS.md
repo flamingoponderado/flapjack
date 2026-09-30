@@ -58,6 +58,10 @@ Keep the CakeML/HOL submodule read-only. Put HOL probes and captured oracle
 outputs on the Flapjack side under `scripts/hol-probes/`; follow that directory's
 README and `docs/PARITY-TESTING.md` for the detailed procedure.
 
+Before closing a porting bead backed by a HOL probe, regenerate its captured
+outputs from the original CakeML/HOL source. Probes provide regression evidence,
+not a HOL-to-Lean equivalence proof.
+
 Claim a commit-sized bead before starting work. Record the pushed branch and
 commit, verification results, or exact blocked reason on the bead, and notify
 the coordinator. Keep dependency beads open until their own acceptance criteria
@@ -215,6 +219,11 @@ does not prove HOL-to-Lean equivalence or replace source-level review.
 After rebuilding a tagged declaration, run `lake build Flapjack` before the
 type-hash check: it refreshes `.lake/build/ir/Flapjack.setup.json`, which can
 otherwise still point at an older cached OLean even when `lake test` passes.
+
+Entries marked `pending_statement_review` or
+`no_hol_reference_pending_classification` must not be described as exact HOL
+ports. A reference tag or a successful build does not substitute for the
+required source review and manifest classification.
 
 **A matching name is not enough.** Before adding `@[hol]`, compare the HOL and
 Lean declarations' definitions, quantified variables, hypotheses, side
