@@ -1,3 +1,4 @@
+import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Prime
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelImpSemantics
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Decls
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Assembly
@@ -117,6 +118,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutNames
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyRemap
 import Flapjack.Pancake.PanStructs.CompileDeclsExact
 import Flapjack.Pancake.PanStructs.CompileDeclsCorrespondence
+import Flapjack.Pancake.PanStructs.CompileProgCorrespondence
 import Flapjack.Pancake.PanStructs.CompileProgExact
 import Flapjack.Pancake.PanStructs.CompileExpExact
 import Flapjack.Pancake.PanStructs.OldExpShapeExact
@@ -327,6 +329,7 @@ import Flapjack.Pancake.Proofs.CrepInline.EvaluateStateLocals.Call
 import Flapjack.Pancake.Proofs.CrepInline.EvaluateStateLocals.Assembly
 import Flapjack.Pancake.Proofs.CrepInline.ArgLoad
 import Flapjack.Pancake.Proofs.CrepInline.CallCase
+import Flapjack.Pancake.Proofs.CrepInline.InlineProgCorrect
 import Flapjack.Pancake.Proofs.CrepInline.FiniteMapLemmas
 import Flapjack.Pancake.Proofs.CrepInline.NestedDecsSublocals
 import Flapjack.Pancake.Proofs.CrepInline.NotVarProg
