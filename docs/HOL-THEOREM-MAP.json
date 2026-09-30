@@ -34496,5 +34496,17 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-b source comparison, bead .18.5.15.7.14.2: HOL616 comp_ind ShMemOp case retains stack_asm_name/names_ok/fixed_names and exact stack_asm_ok(comp f p) conclusion. Spt and native StackLang payloads; positive word-width translation only. Source stackProps812-829: ShMemOp preserves offset and ISA branches, bounds from names_ok_imp; buffer/raise/return use reg_count and avoid_regs; OpCurrHeap targets default True, guards retained but unused. No target validity premise, executed behavior change or full theorem claim; coordinator source acceptance pending."
-  }
+  },
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermCode.lean",
+  "lean_name": "lookupCodeFpermCodeHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "lookup_code_fperm_code",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "code"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol (.22.4.4) compared HOL1687-1694 and panSem lookup_code458-467. Unconditional canonical lookup of permuted code at permuted name equals Option.map of fperm on body and identity on canonical callee locals/return shape. Same arbitrary args incl structured values, count/distinctness/LIST_REL checks and ZIP update order. Canonical standalone code finite-map translation and positive-width words only; returned canonical locals are the already reviewed lookup_code carrier. Proof raw clauses preserve all guards; accepted unconditional canonical projection witness plus injectivity by HolFiniteMapExact.ext lifts equality without target-success premise. Coordinator source review pending."
+}
 ]
