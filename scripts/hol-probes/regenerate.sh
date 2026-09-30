@@ -101,6 +101,11 @@ run_probe() {
   done
 }
 
+run_probe stacksem_stack_codec_probeScript.sml stacksem_stack_codec_probe.out \
+  full_zero full_one full_two full_oob full_loc enc_empty enc_zero enc_zero_extra enc_loc enc_true enc_false enc_two enc_short enc_missing_sentinel enc_bad_continuation dec_empty dec_zero dec_true dec_false dec_short_roots dec_extra_roots dec_two dec_zero_extra full_mixed enc_mixed dec_mixed type_full type_enc type_dec \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
 run_probe stacksem_word_bitmap_probeScript.sml stacksem_word_bitmap_probe.out \
   length_zero length_one length_high bitmap_empty bitmap_zero bitmap_one bitmap_order \
   bitmap_trailing bitmap_missing_continuation bitmap_continuation bitmap_width_one \
