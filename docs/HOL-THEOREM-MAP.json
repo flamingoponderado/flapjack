@@ -25776,5 +25776,53 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-ds10 source comparison (2026-09-30; bead flapjack-pxn.18.5.5.39) against crep_inlineProofScript.sml:2301-2309 and the Assign atomic case of the catch-all at 2401. HOL inline_prog_def's generic unchanged-program clause at crep_inlineScript.sml:249 leaves Assign unchanged, and crepSemScript.sml:282-286 defines evaluate(Assign name src, s): on SOME value it updates locals name to value when the local exists, else Error. The statement preserves the source run, non-Error condition, both SUBMAP premises, state_rel_code, locals_strong_rel and code_inl_rel premises, existential target run, post-state/code relations, and result-dependent local relation; Assign has no recursive evaluate_ind IH. Lean uses exact CrepProgHOL assign, evalCrepSemHOLProgExact_assign_holShape, evalCodeInlExact for the target expression, and flips the local via hlocals. State maps and both inline maps use the reviewed HolFiniteMapExact carrier with same-module witnesses; BitVec width models the positive-width HOL word."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "inline_prog_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "inlFs",
+      "inlBag"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "lean_name": "inlineProgCorrectBreakCaseExact",
+    "reviewer": "flapjack-ds10 source comparison (2026-09-30; bead flapjack-pxn.18.5.5.39) against crep_inlineProofScript.sml:2301-2309 and the Break atomic case of the catch-all at 2401. HOL inline_prog_def's generic unchanged-program clause leaves Break unchanged; crepSemScript.sml evaluates (Break n, s) to (SOME (Break n), s). The statement preserves all HOL premises (source run, non-Error, both SUBMAP, state_rel_code, locals_strong_rel, code_inl_rel), the existential target run, post-state/code relations, and the result-dependent local relation (Break requires locals_strong_rel, matching HOL's case). Lean uses exact CrepProgHOL break, evalCrepSemHOLProgExact_break, and inlineProgHOLExact identity. Carriers are the reviewed HolFiniteMapExact and positive-width BitVec word."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "inline_prog_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "inlFs",
+      "inlBag"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "lean_name": "inlineProgCorrectContinueCaseExact",
+    "reviewer": "flapjack-ds10 source comparison (2026-09-30; bead flapjack-pxn.18.5.5.39) against crep_inlineProofScript.sml:2301-2309 and the Continue atomic case of the catch-all at 2401. HOL inline_prog_def's generic unchanged-program clause leaves Continue unchanged; crepSemScript.sml evaluates (Continue n, s) to (SOME (Continue n), s). The statement preserves all HOL premises (source run, non-Error, both SUBMAP, state_rel_code, locals_strong_rel, code_inl_rel), the existential target run, post-state/code relations, and the result-dependent local relation (Continue requires locals_strong_rel, matching HOL's case). Lean uses exact CrepProgHOL continue, evalCrepSemHOLProgExact_continue, and inlineProgHOLExact identity. Carriers are the reviewed HolFiniteMapExact and positive-width BitVec word."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "inline_prog_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "inlFs",
+      "inlBag"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "lean_name": "inlineProgCorrectRaiseCaseExact",
+    "reviewer": "flapjack-ds10 source comparison (2026-09-30; bead flapjack-pxn.18.5.5.39) against crep_inlineProofScript.sml:2301-2309 and the Raise atomic case of the catch-all at 2401. HOL inline_prog_def's generic unchanged-program clause leaves Raise unchanged; crepSemScript.sml evaluates (Raise eid, s) to (SOME (Exception eid), empty_locals s). The statement preserves all HOL premises (source run, non-Error, both SUBMAP, state_rel_code, locals_strong_rel, code_inl_rel), the existential target run, post-state/code relations, and the result-dependent local relation (Exception falls under HOL's default _ => T branch, so no local relation is required). Lean uses exact CrepProgHOL raise, evalCrepSemHOLProgExact_raise, emptyLocals, and inlineProgHOLExact identity. Carriers are the reviewed HolFiniteMapExact and positive-width BitVec word."
   }
 ]
