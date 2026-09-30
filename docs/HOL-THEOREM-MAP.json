@@ -25897,5 +25897,32 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-a source/carrier review 2026-09-30 bead .18.5.3.77.1.4: original157-210 compile_def constructor cases compared with ContextExact/ProgHOL. Dec and DecCall emit compiled shape but bind original source shape to body locals; exact expression/list calls throughout. Call retains target flags, name, arguments and option/product payloads, recursively compiles only handler body at unchanged context. Seq/If/While recurse normally; stores and shared stores preserve source payload order, shared load destination untouched. ExtCall preserves all four expression positions, Return/Raise preserve identifiers; Skip/Break/Continue/Tick/Annot unchanged. Positive width-indexed BitVec payloads only qualifier. Original HOL six-row compile_prog probe newly captured and kernel-replayed, including body-local source shape and optional handler. Production routing remains linked open work; not an executed-path completion claim."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_structsScript.sml",
+    "hol_name": "compile_decs_def",
+    "lean_path": "Flapjack/Pancake/PanStructs/CompileDeclsExact.lean",
+    "lean_name": "compileDeclsExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source/carrier review 2026-09-30 bead .18.5.3.77.1.5: source213-247 compared clause-by-clause with exact DeclHOL/FunDeclHOL/ContextExact. Reverse compile_decs recursion retains source global shapes in final context; Decl initializer uses initial context. Function preserves name/inline/export, compiles params/return against initial structs, body against final tail context with original params replacing locals. Name removed, ExnDecl retained with compiled shape. get_names prepends source names in traversal order, ignores non-Name constructors; compile_top starts all three context lists empty, collects names then takes first pair component. Exact MlS names and positive word-indexed syntax; no other representation differences. New original five-row HOL EVAL probe/kernel replay checks full output+context, function forward global reference, flags/params, Name removal, reverse name order and duplicate struct shadow. Source definitions only; production routing remains on parent acceptance graph."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_structsScript.sml",
+    "hol_name": "get_names_def",
+    "lean_path": "Flapjack/Pancake/PanStructs/CompileDeclsExact.lean",
+    "lean_name": "getNamesExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source/carrier review 2026-09-30 bead .18.5.3.77.1.5: source213-247 compared clause-by-clause with exact DeclHOL/FunDeclHOL/ContextExact. Reverse compile_decs recursion retains source global shapes in final context; Decl initializer uses initial context. Function preserves name/inline/export, compiles params/return against initial structs, body against final tail context with original params replacing locals. Name removed, ExnDecl retained with compiled shape. get_names prepends source names in traversal order, ignores non-Name constructors; compile_top starts all three context lists empty, collects names then takes first pair component. Exact MlS names and positive word-indexed syntax; no other representation differences. New original five-row HOL EVAL probe/kernel replay checks full output+context, function forward global reference, flags/params, Name removal, reverse name order and duplicate struct shadow. Source definitions only; production routing remains on parent acceptance graph."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_structsScript.sml",
+    "hol_name": "compile_top_def",
+    "lean_path": "Flapjack/Pancake/PanStructs/CompileDeclsExact.lean",
+    "lean_name": "compileTopExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source/carrier review 2026-09-30 bead .18.5.3.77.1.5: source213-247 compared clause-by-clause with exact DeclHOL/FunDeclHOL/ContextExact. Reverse compile_decs recursion retains source global shapes in final context; Decl initializer uses initial context. Function preserves name/inline/export, compiles params/return against initial structs, body against final tail context with original params replacing locals. Name removed, ExnDecl retained with compiled shape. get_names prepends source names in traversal order, ignores non-Name constructors; compile_top starts all three context lists empty, collects names then takes first pair component. Exact MlS names and positive word-indexed syntax; no other representation differences. New original five-row HOL EVAL probe/kernel replay checks full output+context, function forward global reference, flags/params, Name removal, reverse name order and duplicate struct shadow. Source definitions only; production routing remains on parent acceptance graph."
   }
 ]

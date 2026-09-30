@@ -1,0 +1,25 @@
+empty=([],
+ <|structs := [(«Pair»,[(«left»,One); («right»,Comb [One; One])])];
+   locals := []; globals := []|>)
+decs=([Function
+    <|name := «read»; inline := T; export := T;
+      params := [(«p»,Comb [One; Comb [One; One]])];
+      body := Return (RField 1 (Var Global «g»));
+      return := Comb [One; Comb [One; One]]|>;
+  Decl (Comb [One; Comb [One; One]]) «g» (RStruct [Const 1w; Const 2w]);
+  ExnDecl «E» (Comb [One; Comb [One; One]])],
+ <|structs := [(«Pair»,[(«left»,One); («right»,Comb [One; One])])];
+   locals := []; globals := [(«g»,Named «Pair»)]|>)
+names=<|structs :=
+    [(«Ignored»,[]); («Pair»,[(«left»,One); («right»,Comb [One; One])])];
+  locals := []; globals := []|>
+top=[Function
+   <|name := «read»; inline := T; export := T;
+     params := [(«p»,Comb [One; Comb [One; One]])];
+     body := Return (RField 1 (Var Global «g»));
+     return := Comb [One; Comb [One; One]]|>;
+ Decl (Comb [One; Comb [One; One]]) «g» (RStruct [Const 1w; Const 2w]);
+ ExnDecl «E» (Comb [One; Comb [One; One]])]
+shadow=<|structs :=
+    [(«Pair»,[]); («Pair»,[(«left»,One); («right»,Comb [One; One])])];
+  locals := []; globals := []|>
