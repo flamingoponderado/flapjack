@@ -168,10 +168,121 @@ theorem panGlobalsStateRelStructsHOLExact {width : Nat} {σ : Type}
 theorem panGlobalsStateRelGlobalsWfHOLExact {width : Nat} {σ : Type}
     [NeZero width] (localsEqual : Bool) (context : PanGlobalsContextExact width)
     (source target : PanSemStateFiniteExact width σ)
-    (name : MlS) (entry : ShapeHOL × BitVec width)
-    (hlookup : context.globals.lookup name = some entry)
-    (hrel : panGlobalsStateRelHOLExact localsEqual context source target) :
+    (name : MlS) (entry : ShapeHOL × BitVec width) :
+    context.globals.lookup name = some entry ∧
+      panGlobalsStateRelHOLExact localsEqual context source target →
     isWfShapeNilHOL entry.1 = true := by
+  intro ⟨hlookup, hrel⟩
   exact hrel.2.2.2.2.2.2.2.2.2.1 name entry.1 entry.2 hlookup
+
+/-- Local support for `state_rel_mem_load`: with the empty structure context,
+    a load succeeds on any larger domain whose memory agrees on the smaller
+    domain.  This is the `mem_load`/`mem_loads` part of HOL's `mem_load_ind`
+    proof (named shapes fail in the empty context); no separate HOL
+    declaration. -/
+private theorem memLoadHOLExact_nil_mono {width : Nat} [NeZero width]
+    (domain domain' : BitVec width → Prop) [DecidablePred domain] [DecidablePred domain']
+    (memory memory' : BitVec width → HolWordLab width)
+    (hdomain : ∀ address, domain address → domain' address)
+    (hmemory : ∀ address, domain address → memory address = memory' address) :
+    (∀ (shape : ShapeHOL) (address : BitVec width) (value : ValueHOL width),
+      memLoadHOLExact shape address domain memory [] = some value →
+        memLoadHOLExact shape address domain' memory' [] = some value) ∧
+    (∀ (shapes : List ShapeHOL) (address : BitVec width) (values : List (ValueHOL width)),
+      memLoadsHOLExact shapes address domain memory [] = some values →
+        memLoadsHOLExact shapes address domain' memory' [] = some values) := by
+  have hcons : ∀ (shape : ShapeHOL) (rest : List ShapeHOL),
+      (∀ (address : BitVec width) (value : ValueHOL width),
+        memLoadHOLExact shape address domain memory [] = some value →
+          memLoadHOLExact shape address domain' memory' [] = some value) →
+      (∀ (address : BitVec width) (values : List (ValueHOL width)),
+        memLoadsHOLExact rest address domain memory [] = some values →
+          memLoadsHOLExact rest address domain' memory' [] = some values) →
+      ∀ (address : BitVec width) (values : List (ValueHOL width)),
+        memLoadsHOLExact (shape :: rest) address domain memory [] = some values →
+          memLoadsHOLExact (shape :: rest) address domain' memory' [] = some values := by
+    intro shape rest ihShape ihRest address values h
+    rw [memLoadsHOLExact] at h ⊢
+    cases h1 : memLoadHOLExact shape address domain memory [] with
+    | none => rw [h1] at h; cases h
+    | some value =>
+        cases h2 : memLoadsHOLExact rest
+            (address + bytesInWordHOL width *
+              BitVec.ofNat width (Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL [] shape))
+            domain memory [] with
+        | none => rw [h1, h2] at h; cases h
+        | some vs =>
+            rw [h1, h2] at h
+            rw [ihShape address value h1, ihRest _ vs h2]
+            exact h
+  have hnil : ∀ (address : BitVec width) (values : List (ValueHOL width)),
+      memLoadsHOLExact [] address domain memory [] = some values →
+        memLoadsHOLExact [] address domain' memory' [] = some values := by
+    intro address values h
+    rw [memLoadsHOLExact] at h ⊢
+    exact h
+  have hshape : ∀ (shape : ShapeHOL) (address : BitVec width) (value : ValueHOL width),
+      memLoadHOLExact shape address domain memory [] = some value →
+        memLoadHOLExact shape address domain' memory' [] = some value := by
+    intro shape
+    induction shape using ShapeHOL.rec (motive_2 := fun shapes =>
+        ∀ (address : BitVec width) (values : List (ValueHOL width)),
+          memLoadsHOLExact shapes address domain memory [] = some values →
+            memLoadsHOLExact shapes address domain' memory' [] = some values) with
+    | one =>
+        intro address value h
+        rw [memLoadHOLExact] at h ⊢
+        by_cases hd : domain address
+        · rw [if_pos hd] at h
+          rw [if_pos (hdomain address hd), ← hmemory address hd]
+          exact h
+        · rw [if_neg hd] at h
+          cases h
+    | comb shapes ih =>
+        intro address value h
+        rw [memLoadHOLExact] at h ⊢
+        cases hs : memLoadsHOLExact shapes address domain memory [] with
+        | none => rw [hs] at h; cases h
+        | some values =>
+            rw [hs] at h
+            rw [ih address values hs]
+            exact h
+    | named name =>
+        intro address value h
+        rw [memLoadHOLExact] at h
+        cases h
+    | nil => rename_i address values h; exact hnil address values h
+    | cons shape rest ihShape ihRest =>
+        rename_i address values h; exact hcons shape rest ihShape ihRest address values h
+  refine ⟨hshape, fun shapes => ?_⟩
+  induction shapes with
+  | nil => exact hnil
+  | cons shape rest ihRest => exact hcons shape rest (hshape shape) ihRest
+
+/-- HOL `state_rel_mem_load` (`pan_globalsProofScript.sml:67-70`).  Both
+    loads use the empty structure context, as in HOL, and classical
+    decidability of the memory domains is fixed internally (no binder). -/
+@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "state_rel_mem_load"
+  (fmap_as_finite_support_relation :=
+    [PanSemStateFiniteExact.locals, PanSemStateFiniteExact.globals,
+     PanSemStateFiniteExact.code, PanSemStateFiniteExact.eshapes,
+     PanGlobalsContextExact.globals])
+  (words_as_type_indexed_bitvec)]
+theorem panGlobalsStateRelMemLoadHOLExact {width : Nat} {σ : Type}
+    [NeZero width] (localsEqual : Bool) (context : PanGlobalsContextExact width)
+    (source target : PanSemStateFiniteExact width σ)
+    (shape : ShapeHOL) (address : BitVec width) (value : ValueHOL width) :
+    panGlobalsStateRelHOLExact localsEqual context source target ∧
+      @memLoadHOLExact width _ shape address source.memaddrs
+        (fun a => Classical.propDecidable (source.memaddrs a)) source.memory [] = some value →
+    @memLoadHOLExact width _ shape address target.memaddrs
+        (fun a => Classical.propDecidable (target.memaddrs a)) target.memory [] = some value := by
+  intro ⟨hrel, hload⟩
+  have hsub := hrel.2.2.2.2.2.2.2.2.2.2.1
+  have hmem := hrel.2.2.2.2.2.2.2.2.2.2.2.2.1
+  exact (@memLoadHOLExact_nil_mono width _ source.memaddrs target.memaddrs
+    (fun a => Classical.propDecidable (source.memaddrs a))
+    (fun a => Classical.propDecidable (target.memaddrs a))
+    source.memory target.memory hsub hmem).1 shape address value hload
 
 end Flapjack

@@ -27970,7 +27970,7 @@
       "PanGlobalsContextExact.globals"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-a source comparison (2026-09-30; bead flapjack-pxn.18.5.2.23) against pan_globalsProofScript.sml:57-63. HOL premises are FLOOKUP ctxt.globals nm = SOME x and state_rel ls ctxt s t, concluding is_wf_shape_nil (FST x). Lean preserves the same lookup and relation premises and the corresponding first pair projection. Carrier/field translation and positive word dimension are the same reviewed translations as state_rel_def; no premise or conclusion change. Coordinator review required."
+    "reviewer": "flapjack-luna-a source comparison (2026-09-30; bead flapjack-pxn.18.5.2.23) against pan_globalsProofScript.sml:57-63. HOL premises are FLOOKUP ctxt.globals nm = SOME x and state_rel ls ctxt s t, concluding is_wf_shape_nil (FST x). Lean preserves the same lookup and relation premises and the corresponding first pair projection. Carrier/field translation and positive word dimension are the same reviewed translations as state_rel_def; no premise or conclusion change. Coordinator review required. flapjack-opus follow-up (bead flapjack-pxn.18.5.2.23): antecedent restored to HOL's single conjunction FLOOKUP ctxt.globals nm = SOME x /\\ state_rel ls ctxt s t (previously two curried hypotheses)."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationExact.lean",
@@ -28049,5 +28049,29 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-a source comparison against pan_globalsProofScript.sml:2404-2435. Lean preserves HOL's universal state/declaration binders, function-or-exception declaration condition, nested function shape condition, exception-id ALL_DISTINCT, original-state exception-map freshness, well-formed exception shapes, and exact simultaneous code/eshapes FUPDATE_LIST result. The proof discharges evaluator membership decidability internally via Classical.propDecidable, not as a theorem hypothesis. The four named fields are the exact PanSemStateFiniteExact canonical maps; BitVec width and NeZero are the standard word translation. No target-evaluation premise or conclusion weakening. Coordinator review required."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationExact.lean",
+    "lean_name": "panGlobalsStateRelMemLoadHOLExact",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "state_rel_mem_load",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.23): exact HOL state_rel_mem_load (pan_globalsProofScript.sml:67-70): free ls ctxt s t shape w v; single conjunction premise state_rel ls ctxt s t /\\ mem_load shape w s.memaddrs s.memory [] = SOME v; conclusion mem_load shape w t.memaddrs t.memory [] = SOME v, over the tagged exact memLoadHOLExact with empty struct context []; classical decidability of the memory domains fixed internally at both calls (no binder). Proof mirrors HOL mem_load_ind via the state_rel subset and memory-agreement conjuncts (untagged local memLoadHOLExact_nil_mono)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationExact.lean",
+    "lean_name": "memLoadHOLExact_nil_mono",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.2.23): empty-struct-context mem_load/mem_loads monotonicity in the domain with memory agreement, the core of HOL state_rel_mem_load's mem_load_ind proof; no separate HOL declaration."
   }
 ]
