@@ -292,11 +292,14 @@ open Classical in
     `Call` clauses.  There is one conjunct per clause, in HOL order, with
     HOL's binder order.
 
-    Not an exact port: the `@[hol]` tag is withdrawn (bead `flapjack-2hoy.2`,
-    coordinator decision 2026-09-30).  The `Inst` conjunct delegates to the
-    untagged `inst`, whose `FPSqrt` clause is the rational-cut reformulation
-    of HOL `fp64_sqrt` (see `inst`).  The faithful prerequisite is bead
-    `flapjack-dshl`.  Every other conjunct follows HOL clause by clause. -/
+    Exact port with an inherited assumption (PR #1179 review, bead
+    `flapjack-qfld`): the `Inst` conjunct calls the tagged `inst`, which carries
+    `(reals_as_rational_cuts)` for its `FPSqrt` rendering; this declaration
+    does not use a real rendering itself and records the inherited
+    `docs/SOUNDNESS.md` item 8 assumption in the theorem map.  Every other
+    conjunct follows HOL clause by clause. -/
+@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "evaluate_def" 1369
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem evaluate_def_rebound {width : Nat} [NeZero width] {C : Type} {F : Type} :
     (∀ (s : WordSemStateFiniteExact width C F), evaluate (.skip) s =
       (
