@@ -363,6 +363,7 @@ import Flapjack.Test.MachineIeeeConvertParity
 import Flapjack.Test.MachineIeeeSqrtSpecialParity
 import Flapjack.Test.MachineIeeeSqrtExactParity
 import Flapjack.Test.WordSemInstParity
+import Flapjack.Test.WordSemDivSignedParity
 import Flapjack.Test.WordSemEvalPrereqParity
 import Flapjack.Test.WordSemEvaluateParity
 import Flapjack.Test.WordLangGoodHandlersParity

@@ -1,0 +1,21 @@
+locvalue_label=F
+seq_left=T
+seq_right=T
+if_right=T
+loop_body=T
+call_return_direct=T
+call_return_nested=T
+call_handler_direct=T
+call_handler_nested=T
+call_empty=F
+call_handler_without_return=F
+halt_empty=F
+loccheck_zero_present=T
+loccheck_zero_absent=∃n e. lookup n LN = SOME e ∧ (3,0) ∈ get_labels e
+loccheck_label_present=∃n e.
+  lookup n ⦕ 3 ↦ Call (SOME (LocValue 1 4 5,13,4,5)) (INL 0) NONE ⦖ = SOME e ∧
+  (4,5) ∈ get_labels e
+loccheck_label_absent=∃n e.
+  lookup n ⦕ 3 ↦ Call (SOME (LocValue 1 4 5,13,4,5)) (INL 0) NONE ⦖ = SOME e ∧
+  (8,5) ∈ get_labels e
+loccheck_label_witness=T

@@ -72,6 +72,17 @@ respectively
 additionally probes `pan_op_def` at lines 191--193.
 `Flapjack.Test.LoopSetVarParity` probes `set_var_def` at
 `cakeml/pancake/semantics/loopSemScript.sml:108-110`.
+`stacksem_labels_probe.out` records direct HOL EVAL observations for
+`get_labels_def` and `loc_check_def` from
+`cakeml/compiler/backend/semantics/stackSemScript.sml:667-686`. It covers the
+empty LocValue/Halt cases, Seq/If/Loop propagation, direct and nested Call
+return/handler labels, the source behavior that ignores a handler when the
+return continuation is `NONE`, and the zero-offset domain-key case. HOL EVAL
+leaves the nonzero code-lookup existential symbolic, so the probe also records
+a kernel-proved witness for that alternative. The Lean replay is
+`Flapjack.Test.StackSemLabelsParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_labels_probeScript.sml scripts/hol-probes/regenerate.sh`.
 `loop_to_word_defs_probe.out` records direct HOL EVAL rows for the exact
 `spt`-carrier loop_to_word context definitions `find_var_def`,
 `find_reg_imm_def`, `toNumSet_def`, `fromNumSet_def`, and

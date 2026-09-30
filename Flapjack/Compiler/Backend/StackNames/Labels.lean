@@ -15,21 +15,27 @@ theorem getLabelsComp {width : Nat} [NeZero width]
     (names : Flapjack.FiniteMap Nat Nat) (p : HolProg width) :
     getLabels (progComp names p) = getLabels p := by
   induction p using progComp.induct <;>
-    try simp_all [progComp, getLabels]
+    try simp_all [progComp, getLabels, labelsProgram, Flapjack.StackSem.getLabels]
   case case11 rh target handler ihHandler ihReturn =>
     cases rh with
     | none =>
-      cases handler with
-      | none => rfl
-      | some h =>
-        obtain ⟨body, l1, l2⟩ := h
-        rfl
+        cases handler with
+        | none =>
+            simp only [progComp]
+            rw [labelsProgram.eq_4]
+            rw [labelsProgram.eq_4]
+        | some h =>
+            obtain ⟨handlerBody, handlerFirst, handlerSecond⟩ := h
+            simp only [progComp]
+            rw [labelsProgram.eq_5]
+            rw [labelsProgram.eq_5]
+            simp [Flapjack.StackSem.getLabels]
     | some ret =>
-      obtain ⟨body, reg, l1, l2⟩ := ret
-      cases handler with
-      | none => simp_all [progComp, getLabels]
-      | some h =>
-        obtain ⟨body, l1, l2⟩ := h
-        simp_all [progComp, getLabels]
+        obtain ⟨body, reg, l1, l2⟩ := ret
+        cases handler with
+        | none => simp_all [progComp, labelsProgram, Flapjack.StackSem.getLabels]
+        | some h =>
+            obtain ⟨handlerBody, h1, h2⟩ := h
+            simp_all [progComp, labelsProgram, Flapjack.StackSem.getLabels]
 
 end Flapjack.Compiler.Backend.StackNames
