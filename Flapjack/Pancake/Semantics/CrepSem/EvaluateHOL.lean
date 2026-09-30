@@ -2844,6 +2844,36 @@ theorem crepStampExactDomains_evalCrepSemHOLProg {width : Nat} [NeZero width] {�
     (evalCrepSemHOLProg_preserves_memaddrs state memDec shMemDec program)
     (evalCrepSemHOLProg_preserves_shMemaddrs state memDec shMemDec program)
 
+/-- The `crepStampExactDomains` state that the `evalCrepSemHOLProg.inductHOL`
+    `While` handlers (`hwhile_none`/`hwhile_continue`) hand back for the
+    recursive motive is the plain body-result state itself: the body run at
+    `decClockCrepSemHOL state` preserves both domain fields, and
+    `fixClockCrepSemHOL` changes only the clock, so stamping the base state's
+    domains onto that result is the identity. This is the precise
+    stamp/`fix_clock` correspondence the faithful tagged `While` case needs in
+    order to read the handler's recursive hypothesis at the plain state. -/
+theorem crepStampExactDomains_fixClock_body {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (body : CrepProgHOL width) (res : Option (CrepResultHOLExact width))
+    (loopState : CrepSemHOLState width σ)
+    (h : fixClockCrepSemHOL (decClockCrepSemHOL state)
+        (evalCrepSemHOLProg (decClockCrepSemHOL state) memDec shMemDec body) =
+      (res, loopState)) :
+    crepStampExactDomains state loopState = loopState := by
+  obtain ⟨hfixMem, hfixSh⟩ :=
+    fixClock_result_domains (decClockCrepSemHOL state)
+      (evalCrepSemHOLProg (decClockCrepSemHOL state) memDec shMemDec body)
+      res loopState h
+  obtain ⟨hevalMem, hevalSh⟩ :=
+    evalCrepSemHOLProg_preserves_domains (decClockCrepSemHOL state) memDec shMemDec body
+  exact crepStampExactDomains_eq_self state loopState
+    (by rw [hfixMem, hevalMem, decClockCrepSemHOL_memaddrs])
+    (by rw [hfixSh, hevalSh, decClockCrepSemHOL_shMemaddrs])
+
+
+
 /-! ## Observational inertness of `crepStampExactDomains` at every stamping site
 
 Source check (bead `flapjack-4ac.5.16.5.32`) of HOL `cakeml/pancake/semantics/crepSemScript.sml`
