@@ -25808,5 +25808,20 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-pxn.18.5.9.1): HOL loop_to_wordProof state_rel_imp_semantics (loop_to_wordProofScript.sml:1538-1544): !s t start. state_rel s t ∧ isEmpty s.locals ∧ good_dimindex(:'a) ∧ lookup 0 t.locals = SOME (Loc 1 0) ∧ (∃prog. lookup start s.code = SOME ([], prog)) ∧ semantics s start <> Fail ⇒ semantics t start = semantics s start. Lean keeps the binders and the conjunctive premise (isEmpty as sptIsEmpty = true) over the tagged loopToWordStateRelHOLExact, goodDimindex and the tagged loopSem/wordSem semantics_def. The wordSem state has an arbitrary configuration type C and the loopSem FFI host F. No extra premise. The proof route differs from HOL's direct unfolding of both semantics_defs; it follows the tagged Crep-to-Loop port. Untagged wordSemIsWrapper rewrites wordSem semantics_def as a semantics_wrapper of its entry runs (TimeOut/Break/Continue Incomplete; Result with ret <> Loc 1 0 RunError, matching HOL's Fail test). The tagged loopSemIsWrapper and semantics_wrapper_eq then apply, with premises from the tagged compileCorrect at Call NONE (SOME start) [] NONE (HOL comp_Call; ctxt make_ctxt 2 [] LN via the tagged locals_rel_mk_ctxt_ln), the tagged word evaluate_add_clock and evaluate_add_clock_io_events_mono, and the tagged loopProps evaluate_add_clock_eq/evaluate_add_clock_io_events_mono. Same-module relation witnesses LoopToWordStateRelImpSemanticsWitnesses.*. Kernel-checked; axioms standard. Caveat: the wordSem evaluator's Inst clause runs the untagged inst (FPSqrt rational-cut gap, flapjack-dshl), so this is not evidence of HOL-faithful numerical floating-point semantics."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/Semantics.lean",
+    "lean_name": "semantics",
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "semantics_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-pxn.18.4.3.77.17.1): HOL panSem semantics_def (panSemScript.sml:785-809) transcribed clause for clause. prog = Call NONE start [] is .call none start [] with start : MlS (HOL mlstring). The Fail test is ∃k with case FST(evaluate (prog, s with clock := k)) of SOME TimeOut/SOME (FinalFFI _)/SOME (Return _) => F | _ => T (Lean returned is HOL Return). The termination choice is some res. ∃k t r outcome, with evaluate = (r,t), the FinalFFI e => FFI_outcome e and Return _ => Success outcome map, and res = Terminate outcome t.ffi.io_events. The some case returns res; the NONE case is Diverge (build_lprefix_lub (IMAGE (λk. fromList (SND (evaluate ...)).ffi.io_events) UNIV)). evaluate is the exact evaluateHOLFiniteState, whose evaluate_def (:780) equations are tagged; state PanSemStateFiniteExact (fmap_as_finite_support [locals, globals, code, eshapes], same-module witness PanSemStateFiniteExact.PanSemanticsFiniteSupport.holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). some is holOptionSome, build_lprefix_lub/fromList are the HolLList renderings, and IMAGE f UNIV is fun l => ∃k, l = f k, exactly as in the tagged loopSem/crepSem/wordSem semantics_def. HOL @ is translated as Classical.choose on the same formula."
   }
 ]
