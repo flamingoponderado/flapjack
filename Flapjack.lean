@@ -606,6 +606,7 @@ import Flapjack.Pancake.Proofs.CrepInline.UnreachElimProgSize
 import Flapjack.Pancake.Proofs.CrepInline.UnreachElimIndexSize
 import Flapjack.Pancake.CrepInline.Canonical
 import Flapjack.Pancake.CrepInline.InlineRouteBridge
+import Flapjack.Pancake.CrepInline.InlineRouteNames
 import Flapjack.CompileFunctionDistinct
 import Flapjack.Semantics
 import Flapjack.CrepeSemantics
