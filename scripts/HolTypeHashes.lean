@@ -205,8 +205,10 @@ import Flapjack.Pancake.Proofs.CrepInline.NestedDecs
 import Flapjack.Pancake.Proofs.CrepInline.ShMem
 import Flapjack.Pancake.Proofs.PanGlobals
 import Flapjack.Pancake.Proofs.PanGlobals.DeclListLemmas
+import Flapjack.Pancake.Proofs.PanGlobals.StateRelationExact
 import Flapjack.Pancake.Proofs.PanGlobals.CompileDecsStructural
 import Flapjack.Pancake.Proofs.PanGlobals.CompileTopShapeWf
+import Flapjack.Pancake.Proofs.PanGlobals.CompileTopSemanticsExact
 import Flapjack.Pancake.Proofs.PanStructs
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrect
 import Flapjack.Pancake.Proofs.PanToCrep
@@ -378,6 +380,10 @@ elab "#emit_hol_type_hashes" : command => do
             toJson (ref.fmapAsFiniteSupportRelation.map (fun entry => if entry.1.isEmpty then entry.2 else s!"{entry.1}.{entry.2}"))),
           ("fmap_as_finite_support_equalities", toJson ref.fmapAsFiniteSupportEqualities),
           ("words_as_type_indexed_bitvec", toJson ref.wordsAsTypeIndexedBitvec)]
+        if !ref.fmapAsFiniteSupportHeterogeneousFunction.isEmpty then
+          qualifiers := qualifiers ++ [
+            ("fmap_as_finite_support_heterogeneous_function",
+              toJson ref.fmapAsFiniteSupportHeterogeneousFunction)]
         if let some width := ref.wordDimensionAsWidth then
           qualifiers := qualifiers ++ [("word_dimension_as_width", toJson width)]
         let mut fields : List (String × Json) := [

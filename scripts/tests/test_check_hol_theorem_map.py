@@ -9,6 +9,9 @@ from pathlib import Path
 MAP = runpy.run_path(
     str(Path(__file__).resolve().parents[1] / "check_hol_theorem_map.py")
 )
+MANIFEST = runpy.run_path(
+    str(Path(__file__).resolve().parents[1] / "hol_theorem_map.py")
+)
 
 
 class ProofDeclarationScanTest(unittest.TestCase):
@@ -29,6 +32,22 @@ protected theorem actualProof : True := by trivial
             if (match := MAP["THEOREM_RE"].match(line))
         }
         self.assertEqual(names, {"actualProof"})
+
+
+class HeterogeneousFmapQualifierInventoryTest(unittest.TestCase):
+    def test_new_status_and_manifest_field_are_registered(self):
+        self.assertIn(
+            "reviewed_fmap_as_finite_support_heterogeneous_function",
+            MAP["VALID_STATUSES"],
+        )
+        self.assertIn(
+            "reviewed_fmap_as_finite_support_heterogeneous_function_words_as_type_indexed_bitvec",
+            MAP["VALID_STATUSES"],
+        )
+        self.assertIn(
+            "fmap_as_finite_support_heterogeneous_function",
+            MANIFEST["OPTIONAL_FIELDS"],
+        )
 
 
 class ReviewedSourceComparisonTest(unittest.TestCase):

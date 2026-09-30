@@ -27910,5 +27910,144 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-b corrective source review: find_name is misc tlookup over num num_map (Spt), not |-> finite map. Signature now Spt Nat and sptLookup projected into existing lookup helper with identity-key fallback. No finite-map qualifier; original equation/hypotheses retained, no BIJ premise. Exact positive-width AsmConfigExact uses words qualifier only. Corrects prior invalid finite-map translation."
-}
+},
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationExact.lean",
+    "lean_name": "disjointGlobalsHOLExact",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "disjoint_globals_def",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "cglobals",
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-30; bead flapjack-pxn.18.5.2.23) against pan_globalsProofScript.sml:12-16. HOL quantifies two distinct names/shapes/addresses and one slot; name inequality, presence of both globals, both context lookups, and absence of any slot in both addresses sets are preserved clause-for-clause. Lean's pointwise not (addresses ... slot and addresses ... slot) is exactly HOL DISJOINT; lookup operations are the canonical finite-map translation, names are MlS, shapes ShapeHOL, addresses positive-width BitVec. cglobals/globals are the two bare map parameters and the word dimension has its standard NeZero translation. No extra hypothesis or weaker conclusion; coordinator review required."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationExact.lean",
+    "lean_name": "panGlobalsStateRelHOLExact",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "state_rel_def",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-30; bead flapjack-pxn.18.5.2.23) against pan_globalsProofScript.sml:18-42. HOL state_rel relates two panSem states to pan_globals context, retaining the ordered conjuncts: adjusted top address; conditional locals equality; base address, endianness, exception-shape map, clock; empty source/target struct contexts; each source global maps to shape/address with well-formed shape, successful target mem_load, disjoint source memory addresses and byte_aligned address; FEVERY context shape well-formedness; memory-domain inclusion; shared-memory-domain equality; memory equality on source addresses; FFI equality; compiled code lookup; disjoint globals; target-top exclusion and alignment; good_dimindex. Lean states these clauses in the same order over reviewed PanSemStateFiniteExact and PanGlobalsContextExact carriers. Finite-set membership/subset and FEVERY are rendered by predicate/lookup implications; mem_load uses the exact helper; byte_aligned is the HOL fixed-point condition panByteAlignHOL address = address, whose width/log2 byte alignment is source-rendered and independently probed. All five listed fields are the canonical HolFiniteMapExact translations actually traversed; same-module witnesses forward each owning carrier roundtrip. MlS, ShapeHOL, ProgHOL, ValueHOL and BitVec width retain their reviewed carriers; [NeZero width] and σ : Type are the standard word/FFI translation. No premise, order, side condition, or conclusion is added, changed, or weakened. Coordinator review required."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationExact.lean",
+    "lean_name": "panGlobalsStateRelStructsHOLExact",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "state_rel_structs",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-30; bead flapjack-pxn.18.5.2.23) against pan_globalsProofScript.sml:50-54. The local HOL theorem has sole premise state_rel ls ctxt s t and concludes s.structs = [] and t.structs = []. Lean keeps the same relation premise and conjunction, projecting exactly the 7th and 8th state_rel_def conjuncts from the exact finite-carrier relation. State/context carriers, five map-field representation qualifier, and positive BitVec width match the relation definition; no extra premise or changed result. Coordinator review required."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationExact.lean",
+    "lean_name": "panGlobalsStateRelGlobalsWfHOLExact",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "state_rel_globals_wf",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-30; bead flapjack-pxn.18.5.2.23) against pan_globalsProofScript.sml:57-63. HOL premises are FLOOKUP ctxt.globals nm = SOME x and state_rel ls ctxt s t, concluding is_wf_shape_nil (FST x). Lean preserves the same lookup and relation premises and the corresponding first pair projection. Carrier/field translation and positive word dimension are the same reviewed translations as state_rel_def; no premise or conclusion change. Coordinator review required."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationExact.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanSemStateFiniteExact toExact/ofExact finite-support roundtrip; it supports the PanSemStateFiniteExact fields named by the state_rel tags."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationExact.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanGlobalsContextExact toBroad/ofBroad roundtrip; it supports PanGlobalsContextExact.globals named by the state_rel tags."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsExact.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only canonical finite-support roundtrip witness forwarding PanSemStateFiniteExact.holFmapAsFiniteSupportWitness for the exact evaluator carrier; no HOL declaration claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsExact.lean",
+    "lean_name": "updateListCons",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private Flapjack proof helper for the canonical finite-map updateList equation used by evaluate_decls ports; no independent HOL declaration claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsExact.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module finite-support roundtrip witness forwarding the imported PanSemStateFiniteExact carrier witness; no HOL theorem claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsExact.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module finite-support roundtrip witness forwarding the imported PanGlobalsContextExact carrier witness; no HOL theorem claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsExact.lean",
+    "lean_name": "evaluateDeclsOnlyFunctionsSOMEHOLFinite",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "evaluate_decls_only_functions_SOME",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison against pan_globalsProofScript.sml:2390-2403. Lean preserves HOL's universal state/declaration binders, EVERY is_function condition, nested per-function parameter/return is_wf_shape conditions, successful evaluate_decls result, and exact code FUPDATE_LIST functions pan_code result. The canonical evaluator's membership decidability is supplied internally by Classical.propDecidable and adds no theorem premise. locals/globals/code/eshapes are exactly PanSemStateFiniteExact's HolFiniteMapExact fields; BitVec width and NeZero are the standard HOL word translation. No target-evaluation premise or conclusion weakening. Coordinator review required."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsExact.lean",
+    "lean_name": "evaluateDeclsOnlyFunctionsAndExnsSOMEHOLFinite",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "evaluate_decls_only_functions_and_exns_SOME",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison against pan_globalsProofScript.sml:2404-2435. Lean preserves HOL's universal state/declaration binders, function-or-exception declaration condition, nested function shape condition, exception-id ALL_DISTINCT, original-state exception-map freshness, well-formed exception shapes, and exact simultaneous code/eshapes FUPDATE_LIST result. The proof discharges evaluator membership decidability internally via Classical.propDecidable, not as a theorem hypothesis. The four named fields are the exact PanSemStateFiniteExact canonical maps; BitVec width and NeZero are the standard word translation. No target-evaluation premise or conclusion weakening. Coordinator review required."
+  }
 ]
