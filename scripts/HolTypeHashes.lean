@@ -1,5 +1,6 @@
 import Flapjack.Pancake.Proofs.PanSimp.WhileBodyExact
 import Flapjack.Pancake.Proofs.PanSimp.SkipSeqExact
+import Flapjack.Pancake.Proofs.PanGlobals.FpermSemantics
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Prime
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelImpSemantics
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Decls
@@ -122,6 +123,7 @@ import Flapjack.Pancake.PanStructs.CompileDeclsExact
 import Flapjack.Pancake.PanStructs.CompileDeclsCorrespondence
 import Flapjack.Pancake.PanStructs.CompileProgTraversal
 import Flapjack.Pancake.PanStructs.CompileProgCorrespondence
+import Flapjack.Pancake.PanStructs.CompileProgProduction
 import Flapjack.Pancake.PanStructs.CompileProgExact
 import Flapjack.Pancake.PanStructs.CompileExpExact
 import Flapjack.Pancake.PanStructs.OldExpShapeExact
