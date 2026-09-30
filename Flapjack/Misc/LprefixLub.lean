@@ -519,6 +519,75 @@ theorem equivLprefixChain_thm {ls1 ls2 : HolLList α → Prop}
         obtain ⟨l2, hl2, hln2⟩ := hdir.1 l1 n x hl1 hln1
         exact (exists_lprefixChainNth h2 ⟨l2, hl2, hln2⟩).symm
 
+/-- HOL `llist_shorter` (`lprefix_lubScript.sml:122-129`): `ll1` is no longer
+    than `ll2`; `none` is the infinite length. -/
+@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "llist_shorter_def"]
+def llistShorter (ll1 ll2 : HolLList α) : Prop :=
+  match llength ll1, llength ll2 with
+  | none, none => True
+  | some _, none => True
+  | none, some _ => False
+  | some x, some y => x ≤ y
+
+/-- HOL `llist_shorter_fromList` (`lprefix_lubScript.sml:163-169`). -/
+@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "llist_shorter_fromList"]
+theorem llistShorter_fromList (l1 l2 : List α) :
+    llistShorter (fromList l1) (fromList l2) ↔ l1.length ≤ l2.length := by
+  simp [llistShorter, llength_fromList]
+
+/-- HOL `llist_shorter_lnth` (`lprefix_lubScript.sml:131-161`): `ll1` is no
+    longer than `ll2` exactly when `ll2` is defined wherever `ll1` is. -/
+theorem llistShorter_lnth {ll1 ll2 : HolLList α} :
+    llistShorter ll1 ll2 ↔
+      ∀ n x, lnth n ll1 = some x → ∃ y, lnth n ll2 = some y := by
+  cases h1 : llength ll1 with
+  | none =>
+      cases h2 : llength ll2 with
+      | none =>
+          simp only [llistShorter, h1, h2]
+          exact ⟨fun _ n x _ => lnth_some_of_not_LFinite (not_LFinite_of_llength_eq_none h2) n,
+                 fun _ => trivial⟩
+      | some b =>
+          simp only [llistShorter, h1, h2]
+          constructor
+          · intro h; exact h.elim
+          · intro H
+            obtain ⟨x, hx⟩ :=
+              lnth_some_of_not_LFinite (not_LFinite_of_llength_eq_none h1) b
+            obtain ⟨y, hy⟩ := H b x hx
+            rw [lnth_none_of_LLengthRel (LLengthRel_of_llength_eq_some h2)
+              (Nat.le_refl b)] at hy
+            exact Option.some_ne_none y hy.symm
+  | some a =>
+      cases h2 : llength ll2 with
+      | none =>
+          simp only [llistShorter, h1, h2]
+          exact ⟨fun _ n x _ => lnth_some_of_not_LFinite (not_LFinite_of_llength_eq_none h2) n,
+                 fun _ => trivial⟩
+      | some b =>
+          simp only [llistShorter, h1, h2]
+          constructor
+          · intro hab n x hx
+            have hnlt : n < a := by
+              by_cases hlt : n < a
+              · exact hlt
+              · exfalso
+                rw [lnth_none_of_LLengthRel (LLengthRel_of_llength_eq_some h1)
+                  (Nat.le_of_not_lt hlt)] at hx
+                exact Option.some_ne_none x hx.symm
+            exact lnth_some_of_LLengthRel (LLengthRel_of_llength_eq_some h2) n
+              (Nat.lt_of_lt_of_le hnlt hab)
+          · intro H
+            by_cases hle : a ≤ b
+            · exact hle
+            · exfalso
+              obtain ⟨x, hx⟩ := lnth_some_of_LLengthRel
+                (LLengthRel_of_llength_eq_some h1) b (Nat.lt_of_not_le hle)
+              obtain ⟨y, hy⟩ := H b x hx
+              rw [lnth_none_of_LLengthRel (LLengthRel_of_llength_eq_some h2)
+                (Nat.le_refl b)] at hy
+              exact Option.some_ne_none y hy.symm
+
 /-- HOL `equiv_lprefix_chain_thm2` (`lprefix_lubScript.sml:264-304`): with both
     families chains and every member of `ls2` finite, `equiv_lprefix_chain`
     equivalently says that `ls2` supplies a value wherever `ls1` does and that

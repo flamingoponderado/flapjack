@@ -1,0 +1,6 @@
+llist_shorter_shorter=T
+llist_shorter_equal_length=T
+llist_shorter_longer=F
+llist_shorter_two_empty=T
+llist_shorter_nil_nonempty=T
+llist_shorter_nonempty_nil=F

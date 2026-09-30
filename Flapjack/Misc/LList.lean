@@ -488,18 +488,15 @@ theorem rep_some_of_toList_none {ll : HolLList α} (h : toList ll = none) :
   · exact absurd h (toList_ne_none_of_LFinite (LFinite_of_rep_none hn))
   · exact Option.ne_none_iff_exists'.mp hn
 
-/-! ### `llist_shorter` and the `llist`-library helpers
+/-! ### `llist`-library helper lemmas
 
-HOL `llist_shorter_def` (`:122-129`) and `llist_shorter_fromList` (`:163-169`)
-are declared in the pinned external source `lprefix_lubScript.sml`, so those two
-ports carry exact `@[hol]` tags citing that pinned path.  `llist_shorter_lnth`
-(`:131-161`) is a HOL `val ... Q.prove` (not a `Theorem`/`Definition`), which the
-external-path checker does not recognise as a declaration, so it stays untagged.
-`LTAKE_LLENGTH_SOME`, `LTAKE_LNTH_EL` and `lnth_some_down_closed` come from the
-external lazy-list library (`HOL/src/coalgebras/llistScript.sml`), whose snapshot
-is not one of the pinned external sources, so they likewise stay untagged.  All
-six keep HOL's names and statements and are the prerequisites for the exact
-`equiv_lprefix_chain_thm2` port. -/
+The `llist_shorter` ports (`llist_shorter_def`, `llist_shorter_fromList`,
+`llist_shorter_lnth`) live in `Flapjack/Misc/LprefixLub.lean`, the primary Lean
+counterpart of the pinned HOL script `lprefix_lubScript.sml`.  The helper
+lemmas they depend on -- `LTAKE_LLENGTH_SOME`, `LTAKE_LNTH_EL` and
+`lnth_some_down_closed` -- come from the external lazy-list library
+(`HOL/src/coalgebras/llistScript.sml`), whose snapshot is not one of the pinned
+external sources, so they stay here and are untagged. -/
 
 /-- A `some` length forces finiteness. -/
 theorem LFinite_of_llength_eq_some {ll : HolLList α} {n : Nat} (h : llength ll = some n) :
@@ -584,75 +581,6 @@ theorem lnth_some_down_closed {ll : HolLList α} {x : α} {n1 n2 : Nat}
   · rw [lnth_none_mono ll hnone hle] at h
     exact absurd h (by simp)
   · exact Option.ne_none_iff_exists'.mp hnone
-
-/-- HOL `llist_shorter` (`lprefix_lubScript.sml:122-129`): `ll1` is no longer
-    than `ll2`; `none` is the infinite length. -/
-@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "llist_shorter_def"]
-def llistShorter (ll1 ll2 : HolLList α) : Prop :=
-  match llength ll1, llength ll2 with
-  | none, none => True
-  | some _, none => True
-  | none, some _ => False
-  | some x, some y => x ≤ y
-
-/-- HOL `llist_shorter_fromList` (`lprefix_lubScript.sml:163-169`). -/
-@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "llist_shorter_fromList"]
-theorem llistShorter_fromList (l1 l2 : List α) :
-    llistShorter (fromList l1) (fromList l2) ↔ l1.length ≤ l2.length := by
-  simp [llistShorter, llength_fromList]
-
-/-- HOL `llist_shorter_lnth` (`lprefix_lubScript.sml:131-161`): `ll1` is no
-    longer than `ll2` exactly when `ll2` is defined wherever `ll1` is. -/
-theorem llistShorter_lnth {ll1 ll2 : HolLList α} :
-    llistShorter ll1 ll2 ↔
-      ∀ n x, lnth n ll1 = some x → ∃ y, lnth n ll2 = some y := by
-  cases h1 : llength ll1 with
-  | none =>
-      cases h2 : llength ll2 with
-      | none =>
-          simp only [llistShorter, h1, h2]
-          exact ⟨fun _ n x _ => lnth_some_of_not_LFinite (not_LFinite_of_llength_eq_none h2) n,
-                 fun _ => trivial⟩
-      | some b =>
-          simp only [llistShorter, h1, h2]
-          constructor
-          · intro h; exact h.elim
-          · intro H
-            obtain ⟨x, hx⟩ :=
-              lnth_some_of_not_LFinite (not_LFinite_of_llength_eq_none h1) b
-            obtain ⟨y, hy⟩ := H b x hx
-            rw [lnth_none_of_LLengthRel (LLengthRel_of_llength_eq_some h2)
-              (Nat.le_refl b)] at hy
-            exact Option.some_ne_none y hy.symm
-  | some a =>
-      cases h2 : llength ll2 with
-      | none =>
-          simp only [llistShorter, h1, h2]
-          exact ⟨fun _ n x _ => lnth_some_of_not_LFinite (not_LFinite_of_llength_eq_none h2) n,
-                 fun _ => trivial⟩
-      | some b =>
-          simp only [llistShorter, h1, h2]
-          constructor
-          · intro hab n x hx
-            have hnlt : n < a := by
-              by_cases hlt : n < a
-              · exact hlt
-              · exfalso
-                rw [lnth_none_of_LLengthRel (LLengthRel_of_llength_eq_some h1)
-                  (Nat.le_of_not_lt hlt)] at hx
-                exact Option.some_ne_none x hx.symm
-            exact lnth_some_of_LLengthRel (LLengthRel_of_llength_eq_some h2) n
-              (Nat.lt_of_lt_of_le hnlt hab)
-          · intro H
-            by_cases hle : a ≤ b
-            · exact hle
-            · exfalso
-              obtain ⟨x, hx⟩ := lnth_some_of_LLengthRel
-                (LLengthRel_of_llength_eq_some h1) b (Nat.lt_of_not_le hle)
-              obtain ⟨y, hy⟩ := H b x hx
-              rw [lnth_none_of_LLengthRel (LLengthRel_of_llength_eq_some h2)
-                (Nat.le_refl b)] at hy
-              exact Option.some_ne_none y hy.symm
 
 end HolLList
 

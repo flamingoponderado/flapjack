@@ -6,14 +6,16 @@ import Flapjack.Misc.LprefixLub
 Kernel-checked examples over small concrete prefix chains for the generic
 `equiv_lprefix_chain` / `lprefix_rel` slice of `Flapjack/Misc/LprefixLub.lean`
 (HOL `examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml`), together with
-the `llist_shorter` relation from `Flapjack/Misc/LList.lean` and the tagged
+the `llist_shorter` relation from `Flapjack/Misc/LprefixLub.lean` and the tagged
 `equiv_lprefix_chain_thm2`.
 Bead `flapjack-pxn.18.5.2.22.3.2.1` / `flapjack-pxn.18.5.2.22.3.2.1.1`.
-No direct HOL `EVAL` oracle is captured for this slice: the declarations here
-are generic theorems over possibly infinite lazy lists (`llist_shorter`,
-`llist_shorter_lnth`, `equiv_lprefix_chain_thm2`), not executable definitions
-with a finite closed input, so there is no meaningful `EVAL` result to record;
-the examples below are Lean-side kernel checks instead.
+No direct HOL `EVAL` oracle is captured for the generic chain/LUB theorems
+here (`equiv_lprefix_chain_thm2` and the `equiv_lprefix_chain`/`lprefix_rel`
+family): they quantify over possibly infinite lazy lists, so there is no
+finite closed input with a meaningful `EVAL` result; the examples below are
+Lean-side kernel checks instead.  The `llist_shorter` relation itself does have
+finite closed instances and is covered by a captured original-HOL probe
+(`scripts/hol-probes/lprefix_lub_llist_shorter_probe.out`).
 -/
 
 namespace Flapjack.Test.LprefixLubParity
@@ -115,9 +117,26 @@ example : ∀ (ll2 : HolLList Nat) (_n : Nat) (_x : Nat), chainB ll2 → ll2 ≠
   ((equiv_lprefix_chain_thm2 chainA_chain chainB_chain chainB_fin).mp
     (IMP_equiv_lprefix_chain chainA_chain chainB_chain relAB relBA)).2
 
+-- Finite instances of `llist_shorter` from the captured original-HOL probe
+-- `scripts/hol-probes/lprefix_lub_llist_shorter_probe.out` (rows
+-- `llist_shorter_{shorter,equal_length,longer,two_empty,nil_nonempty,nonempty_nil}`).
+example : llistShorter (fromList [1, 2]) (fromList [1, 2, 3]) := by
+  rw [llistShorter_fromList]; decide
+example : llistShorter (fromList [1, 2, 3]) (fromList [4, 5, 6]) := by
+  rw [llistShorter_fromList]; decide
+example : ¬ llistShorter (fromList [1, 2, 3]) (fromList [1, 2]) := by
+  rw [llistShorter_fromList]; decide
+example : llistShorter (fromList ([] : List Nat)) (fromList ([] : List Nat)) := by
+  rw [llistShorter_fromList]; decide
+example : llistShorter (fromList ([] : List Nat)) (fromList [1]) := by
+  rw [llistShorter_fromList]; decide
+example : ¬ llistShorter (fromList [1]) (fromList ([] : List Nat)) := by
+  rw [llistShorter_fromList]; decide
+
 def runChecks : IO Bool := do
   IO.println "PASS lprefix_lub chain/equality lemmas (equiv_lprefix_chain/lprefix_rel)"
   IO.println "PASS llist_shorter + equiv_lprefix_chain_thm2 (llistShorter/equiv_lprefix_chain_thm2)"
+  IO.println "PASS llist_shorter finite instances replay lprefix_lub_llist_shorter_probe (6 rows)"
   pure true
 
 end Flapjack.Test.LprefixLubParity

@@ -1133,6 +1133,17 @@ the LUB when the input is an `lprefix_chain`. The matching source review is besi
 with `HOL_PROBE_ONLY=loop_sem_lprefix_lub_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
 
+`lprefix_lub_llist_shorter_probe.out` records original-HOL finite instances of
+`llist_shorter` from the pinned external script
+`examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml` (`llist_shorter_def`
+:122-129, `llist_shorter_fromList` :163-169): shorter/equal/longer finite lists,
+the two-empty case, and the nil/non-nil directions. `llist_shorter` matches on
+`(LLENGTH ll1, LLENGTH ll2)`, so the source definition is reduced with the
+companion library theorem `LLENGTH_fromList` and the resulting length comparison
+is `EVAL`-evaluated. Refresh it with
+`HOL_PROBE_ONLY=lprefix_lub_llist_shorter_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
+
 `crep_inline_relations_probe.out` records direct HOL simplification/evaluation
 of `state_rel_def` and `locals_rel_def` at
 `crep_inlineProofScript.sml:12-29`: a nonempty locals map is a submap of an

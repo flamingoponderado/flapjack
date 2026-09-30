@@ -1674,6 +1674,10 @@ run_probe loop_sem_lprefix_lub_probeScript.sml loop_sem_lprefix_lub_probe.out \
   conflicting_prefixes_lub_0 conflicting_prefixes_lub_1 \
   conflicting_suffixes_lub_0 conflicting_suffixes_lub_1 \
   "$cake_dir/pancake/semantics/loopSemScript.sml"
+run_probe lprefix_lub_llist_shorter_probeScript.sml lprefix_lub_llist_shorter_probe.out \
+  llist_shorter_shorter llist_shorter_equal_length llist_shorter_longer \
+  llist_shorter_two_empty llist_shorter_nil_nonempty llist_shorter_nonempty_nil \
+  "$cake_dir/pancake/semantics/loopSemScript.sml"
 run_probe loop_sem_cut_state_probeScript.sml loop_sem_cut_state_probe.out \
   hit_first loc_preserved "$cake_dir/pancake/semantics/loopSemScript.sml"
 run_probe loop_sem_cut_res_probeScript.sml loop_sem_cut_res_probe.out \

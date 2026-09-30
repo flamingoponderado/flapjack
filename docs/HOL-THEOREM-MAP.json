@@ -16778,7 +16778,7 @@
     "lean_path": "Flapjack/Misc/LprefixLub.lean",
     "lean_name": "lprefix_lub_is_chain",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.2): HOL lprefix_lubScript.sml:312-317 `Theorem lprefix_lub_is_chain: !ls ll. lprefix_lub ls ll ⇒ lprefix_chain ls`. The Lean theorem lprefix_lub_is_chain {ls : HolLList α → Prop} {ll : HolLList α} (h : lprefixLub ls ll) : lprefixChain ls binds the same ls and ll and states the same implication, over the tagged lprefixLub and lprefixChain renderings. Generic in α; no width, word or finite-map carrier occurs."
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.2): HOL lprefix_lubScript.sml:312-317 `Theorem lprefix_lub_is_chain: !ls ll. lprefix_lub ls ll ⇒ lprefix_chain ls`. The Lean theorem lprefix_lub_is_chain {ls : HolLList α → Prop} {ll : HolLList α} (h : lprefixLub ls ll) : lprefixChain ls binds the same ls and ll and states the same implication, over the untagged lprefixLub and lprefixChain renderings (Flapjack-specific renderings, not themselves HOL-tagged). Generic in α; no width, word or finite-map carrier occurs."
   },
   {
     "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
@@ -16818,7 +16818,7 @@
     "lean_path": "Flapjack/Misc/LprefixLub.lean",
     "lean_name": "IMP_build_lprefix_lub_EQ",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.2): HOL lprefix_lubScript.sml:550-558 `Theorem IMP_build_lprefix_lub_EQ: lprefix_chain ls1 ∧ lprefix_chain ls2 ∧ lprefix_rel ls1 ls2 ∧ lprefix_rel ls2 ls1 ⇒ build_lprefix_lub ls1 = build_lprefix_lub ls2`. The Lean theorem IMP_build_lprefix_lub_EQ takes the same four premises and concludes buildLprefixLub ls1 = buildLprefixLub ls2 over the tagged build rendering. Generic in α; no width, word or finite-map carrier occurs."
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.2): HOL lprefix_lubScript.sml:550-558 `Theorem IMP_build_lprefix_lub_EQ: lprefix_chain ls1 ∧ lprefix_chain ls2 ∧ lprefix_rel ls1 ls2 ∧ lprefix_rel ls2 ls1 ⇒ build_lprefix_lub ls1 = build_lprefix_lub ls2`. The Lean theorem IMP_build_lprefix_lub_EQ takes the same four premises and concludes buildLprefixLub ls1 = buildLprefixLub ls2 over the untagged buildLprefixLub rendering. Generic in α; no width, word or finite-map carrier occurs."
   },
   {
     "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
@@ -16832,7 +16832,7 @@
   {
     "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
     "hol_name": "llist_shorter_def",
-    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_path": "Flapjack/Misc/LprefixLub.lean",
     "lean_name": "llistShorter",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.1.1): HOL lprefix_lubScript.sml:122-129 `Definition llist_shorter_def` declares `llist_shorter ll1 ll2` by case analysis on `(LLENGTH ll1, LLENGTH ll2)`: (NONE,NONE) and (SOME _,NONE) are true, (NONE,SOME _) is false, and (SOME x,SOME y) is x <= y. The Lean def llistShorter matches clause for clause over HolLList with llength (NONE=`none`), same constructor order. Generic in alpha; no width, word or finite-map carrier occurs."
@@ -16840,7 +16840,7 @@
   {
     "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
     "hol_name": "llist_shorter_fromList",
-    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_path": "Flapjack/Misc/LprefixLub.lean",
     "lean_name": "llistShorter_fromList",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.1.1): HOL lprefix_lubScript.sml:163-169 `Theorem llist_shorter_fromList: !l1 l2. llist_shorter (fromList l1) (fromList l2) <=> LENGTH l1 <= LENGTH l2`. The Lean theorem llistShorter_fromList binds l1 l2 and states the same iff with the same orientation, using the tagged llistShorter and llength_fromList. Generic in alpha; no width, word or finite-map carrier occurs."
