@@ -35776,5 +35776,53 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.42.5) compared crepPropsScript.sml:194-200, the public update_locals_not_vars_eval_eq' (a [local] namesake at :131 is a different result-carrying helper, hence the line qualifier): forall s e v n w. ~MEM n (var_cexp e) ==> eval (s with locals := s.locals |+ (n,w)) e = eval s e. Lean: same hypothesis n NOTIN crepExpVarsHOL e and conclusion over evalCrepSemHOLExp, with |+ as the finite-support updateEq. HOL's binder v occurs nowhere in the statement, so the vacuous binder is omitted (documented beside the declaration). No extra premise. Proof: the untagged evalCrepSemHOLExp_updateLocals_eq_of_not_vars."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/CallTail.lean",
+    "lean_name": "inlineProgHOLExact_call_tail",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead .42.2): inline_prog_def on an inlined tail call, via inlineProgHOLCoreExact_eq_inlineProgHOLExact."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/CallTail.lean",
+    "lean_name": "submap_erase",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead .42.2): inl_bag \\\\ fname SUBMAP inl_bag (HOL SUBMAP_DOMSUB)."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/CallTail.lean",
+    "lean_name": "submap_trans'",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead .42.2): SUBMAP transitivity on HolFiniteMapExact (HOL SUBMAP_TRANS)."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/CallTail.lean",
+    "lean_name": "updateList_eq_updateListEq",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead .42.2): FEMPTY |++ ZIP, BEq-based updateList equals the =-based updateListEq on Nat keys."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/CallTail.lean",
+    "lean_name": "tmpVars_facts",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead .42.2): the GENLIST temporaries of inline_prog are distinct, have the parameter count, and are fresh for ns and the argument variables (HOL genlist_all_distinct, mem_genlist_add_suc_val, MAX_LIST_PROPERTY)."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/CallTail.lean",
+    "lean_name": "callTail",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper (bead .42.2) for HOL Resume inline_prog_correct[Tail] (crep_inlineProofScript.sml:2536-2575): the inlined-tail-call part of the Call case, with evaluate_ind's Call body IH at crepInlineGoal (as callNonInlined), over exact carriers; no extra premise. Proof follows HOL: callee IH, unreach_elim_correct, general_simulate_arg_load_strong_all_drule with t = FEMPTY, source result mapping. Untagged; the tagged Call case is assembled in .42.4."
   }
 ]
