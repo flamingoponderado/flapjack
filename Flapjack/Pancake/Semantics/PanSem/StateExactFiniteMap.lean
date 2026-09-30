@@ -900,6 +900,38 @@ def lookupCodeHOLFinite {width : Nat} [NeZero width]
             code fname values body calleeLocals returnShape h },
         returnShape)
 
+/-- Canonical finite-map rendering of lookup_code. Source458-467 retains
+FLOOKUP, ALL_DISTINCT, LIST_REL and ordered FUPDATE_LIST over ZIP. LIST_REL is
+rendered by equal lengths and zipped shapeEqHOL; shapeEqHOL_eq_true supplies
+structural equality. Both code and callee locals use canonical finite support;
+MlS, ProgHOL, ShapeHOL and ValueHOL retain the reviewed source carriers.
+The recursive finite evaluator uses this entry point in Call and DecCall. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "lookup_code_def"
+  (fmap_as_finite_support_heterogeneous_function := [argument_1, result_2])
+  (words_as_type_indexed_bitvec)]
+def lookupCodeCanonicalHOL {width : Nat} [NeZero width]
+    (code : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))
+    (fname : MlS) (arguments : List (ValueHOL width)) :
+    Option (ProgHOL width × HolFiniteMapExact MlS (ValueHOL width) × ShapeHOL) :=
+  lookupCodeHOLFinite code.lookup fname arguments
+
+attribute [reducible] lookupCodeCanonicalHOL
+
+/-- Unconditional input/output projection certificate against the independent
+raw lookup operation. Both failure and successful structured callee maps are
+covered; no success equation is assumed. This is representation infrastructure
+with no independently named HOL declaration. -/
+theorem holFmapAsFiniteSupportHeterogeneousFunctionWitness_lookupCodeCanonicalHOL
+    {width : Nat} [NeZero width]
+    (code : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))
+    (fname : MlS) (arguments : List (ValueHOL width)) :
+    (lookupCodeCanonicalHOL code fname arguments).map
+      (fun (body, locals, shape) => (body, locals.lookup, shape)) =
+      lookupCodeHOLExact code.lookup fname arguments := by
+  unfold lookupCodeCanonicalHOL lookupCodeHOLFinite
+  split <;> simp_all
+
+
 /-- `lookupCodeHOLFinite` fails exactly when the underlying HOL lookup fails. -/
 theorem lookupCodeHOLFinite_eq_none_iff {width : Nat} [NeZero width]
     (code : MlS → Option (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))
@@ -1410,7 +1442,7 @@ def evalPanSemRecursiveCallFiniteContext {width : Nat} {σ : Type} [NeZero width
           match evalListHOLFinite state arguments with
           | none => some (some .error, context)
           | some values =>
-              match lookupCodeHOLFinite state.code.lookup function values with
+              match lookupCodeCanonicalHOL state.code function values with
               | none => some (some .error, context)
               | some (body, callee, returnShape) =>
                   if state.clock = 0 then
@@ -1475,7 +1507,7 @@ def evalPanSemRecursiveCallFiniteContext {width : Nat} {σ : Type} [NeZero width
           match evalListHOLFinite state arguments with
           | none => some (some .error, context)
           | some values =>
-              match lookupCodeHOLFinite state.code.lookup function values with
+              match lookupCodeCanonicalHOL state.code function values with
               | none => some (some .error, context)
               | some (body, callee, returnShape) =>
                   if state.clock = 0 then
@@ -1970,7 +2002,7 @@ theorem evalPanSemRecursiveCallFiniteContext_decCall_body_none
       _ = _ := hbody
   rw [evalPanSemRecursiveCallFiniteContext.eq_6]
   simp only [hargs]
-  rw [hlookup]
+  rw [lookupCodeCanonicalHOL, hlookup]
   simp only [if_neg hclock, hbodyGenerated]
 
 /-- FLAPJACK-SPECIFIC DecCall body-`Break` case for the finite context
@@ -2007,7 +2039,7 @@ theorem evalPanSemRecursiveCallFiniteContext_decCall_body_break
       _ = _ := hbody
   rw [evalPanSemRecursiveCallFiniteContext.eq_6]
   simp only [hargs]
-  rw [hlookup]
+  rw [lookupCodeCanonicalHOL, hlookup]
   simp only [if_neg hclock, hbodyGenerated]
 
 /-- FLAPJACK-SPECIFIC DecCall body-`Continue` case for the finite context
@@ -2044,7 +2076,7 @@ theorem evalPanSemRecursiveCallFiniteContext_decCall_body_continue
       _ = _ := hbody
   rw [evalPanSemRecursiveCallFiniteContext.eq_6]
   simp only [hargs]
-  rw [hlookup]
+  rw [lookupCodeCanonicalHOL, hlookup]
   simp only [if_neg hclock, hbodyGenerated]
 
 /-- FLAPJACK-SPECIFIC specialization for the fixed callee context in the
@@ -4581,14 +4613,14 @@ theorem globalsShapes_call_arm {width : Nat} {σ : Type} [NeZero width]
   try simp only [] at heval
   cases hcode : lookupCodeHOLFinite context.state.code.lookup function values with
   | none =>
-      rw [hcode] at heval
+      rw [lookupCodeCanonicalHOL, hcode] at heval
       try simp only [] at heval
       simp only [Option.some.injEq, Prod.mk.injEq] at heval
       rcases heval with ⟨_, rfl⟩
       rfl
   | some triple =>
       obtain ⟨body, callee, returnShape⟩ := triple
-      rw [hcode] at heval
+      rw [lookupCodeCanonicalHOL, hcode] at heval
       try simp only [] at heval
       by_cases hclock : context.state.clock = 0
       · rw [if_pos hclock] at heval
@@ -4795,14 +4827,14 @@ theorem globalsShapes_decCall_arm {width : Nat} {σ : Type} [NeZero width]
   try simp only [] at heval
   cases hcode : lookupCodeHOLFinite context.state.code.lookup function values with
   | none =>
-      rw [hcode] at heval
+      rw [lookupCodeCanonicalHOL, hcode] at heval
       try simp only [] at heval
       simp only [Option.some.injEq, Prod.mk.injEq] at heval
       rcases heval with ⟨_, rfl⟩
       rfl
   | some triple =>
       obtain ⟨body, callee, returnShape⟩ := triple
-      rw [hcode] at heval
+      rw [lookupCodeCanonicalHOL, hcode] at heval
       try simp only [] at heval
       by_cases hclock : context.state.clock = 0
       · rw [if_pos hclock] at heval

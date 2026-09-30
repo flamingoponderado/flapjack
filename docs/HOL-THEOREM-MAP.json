@@ -34108,6 +34108,19 @@
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack local support (bead .45.1): states differing only in locals are state_rel-related; no HOL original."
   },
+{
+  "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
+  "lean_name": "lookupCodeCanonicalHOL",
+  "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+  "hol_name": "lookup_code_def",
+  "statement_status": "reviewed_fmap_as_finite_support_heterogeneous_function_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_heterogeneous_function": [
+    "argument_1",
+    "result_2"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison panSemScript458-467: canonical code input and optional callee-local result have distinct HolFiniteMapExact value types at argument_1/result_2. FLOOKUP, ALL_DISTINCT(MAP FST), LIST_REL shape equality and ordered FEMPTY FUPDATE_LIST ZIP clauses retained through reviewed raw helper; length equality plus zipped shapeEqHOL_eq_true renders LIST_REL including empty/mismatched lengths. Native MlS/ShapeHOL/ProgHOL/ValueHOL and positive word dimension reviewed. Same-module unconditional tuple-pattern Option.map witness projects only locals.lookup and preserves body/return shape, both failures and successes, no ambient/extra assumptions. Actual recursive Call/DecCall evaluator sites consume canonical code directly; theorem statements unchanged and raw helper remains untagged. Qualifier and conservative witness syntax source-reviewed under closed .22.4.2.1; no whole compiler completion claim."
+},
   {
     "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ArgLoad.lean",
     "lean_name": "generalSimulateArgLoadPreserveLocalsExact",
