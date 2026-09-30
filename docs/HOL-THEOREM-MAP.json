@@ -30148,7 +30148,7 @@
     "PanGlobalsContextExact.globals"
   ],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-luna-b source comparison HOL609-615: identical two-state relation conjunction, original flag and true saved-state flag, paired res_var restoring same name using saved FLOOKUP at same savedName. Canonical finite-support maps and positive-width words are the only representation translations. Proof derives both local equalities from original relations; no added premise. Coordinator review pending."
+  "reviewer": "flapjack-luna-b source comparison HOL613-621: identical two-state relation conjunction, original flag and true saved-state flag, paired res_var restoring same name using saved FLOOKUP at same savedName. Canonical finite-support maps and positive-width words are the only representation translations. Proof derives both local equalities from original relations; no added premise. Coordinator review pending."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ResVar.lean",
