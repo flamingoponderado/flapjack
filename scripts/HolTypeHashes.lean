@@ -185,6 +185,7 @@ import Flapjack.Pancake.Proofs.PanToCrep.CompileExpValRel
 import Flapjack.Pancake.Proofs.PanToWord
 import Flapjack.Pancake.Proofs.PanToCrep.Primop
 import Flapjack.Pancake.Proofs.PanToCrep.StateRelFiniteSupport
+import Flapjack.Pancake.Proofs.PanToCrep.StateRelImpSemantics
 import Flapjack.Pancake.Proofs.PanToCrep.TotalEvaluateCases
 import Flapjack.Pancake.Proofs.PanToCrep.EvaluateNestedAssign
 import Flapjack.Pancake.Proofs.PanToCrep.EvaluateNestedDecs
