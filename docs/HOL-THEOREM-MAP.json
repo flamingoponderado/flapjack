@@ -35747,21 +35747,116 @@
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack local support (bead .22.3.2.4): congruence of the terminate/diverge tail of semantics_def."
 },
-  {
-    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
-    "hol_name": "evaluate_clock_sub",
-    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvaluateClockSubDecCall.lean",
-    "lean_name": "evaluateClockSubDecCallCaseHOLFinite",
-    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support": [
-      "locals",
-      "globals",
-      "code",
-      "eshapes"
-    ],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-4ac.4.60.1.1.14): HOL panPropsScript.sml:724-728 evaluate_clock_sub, DecCall case of recInduct evaluate_ind. Same statement shape and carrier as the accepted cases: high run evaluate (DecCall rt shape fname argexps prog1, s) = (res, st with clock := st.clock + ck), res <> SOME TimeOut, conclusion on s with clock := s.clock - ck. The only additional hypotheses are evaluate_ind's two guarded DecCall premises at the clock-sub motive: clockSubDecCallContIH (P (prog1, set_var rt retv (st with locals := s.locals)) under args/lookup_code/clock guards, a callee Return retv and both shape checks) and clockSubDecCallCalleeIH (P (prog, dec_clock s with locals := newlocals)). Both are copied verbatim from the reviewed evaluate_invariants DecCall spelling (EvalInvariant.lean), with the motive replaced by clockSubAtHOLFinite. No other premise. Proof: the untagged canonical core decCallCore shows the low run cannot time out (callee IH aligns the callee run, continuation IH the continuation run, evaluate_clock bounds ck); then clockSub_of_lowNoTimeout lifts it via the tagged evaluate_add_clock_eq. The full evaluate_clock_sub remains open (While .9, If .12, assembly .15)."
-  },
+{
+  "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+  "hol_name": "stack_names_comp_stack_asm_ok",
+  "lean_path": "Flapjack/Compiler/Backend/StackNames/AsmAdmissibility/Assembly.lean",
+  "lean_name": "stackNamesCompStackAsmOk",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol full assembly bead14: Original HOL616-653 universal names/program with stack_asm_name, names_ok(reg_count,avoid_regs), fixed_names conjunction implies stack_asm_ok(comp names program). Exact full theorem has only these guards, no constructor-selector or IH premise. Functional induction over accepted exact progCompHOL covers every constructor. Seq/If/Loop use genuine original child motives; optional Call return/handler IHs obtained from actual induction match after source option equality; indirect target check remains independent of return and handler validity under SOME return as accepted case. Untagged default helper selection internally discharged; every default source guard retained. Reviewed Spt Nat tree names (not fmap), exact HolProg/HolInst/config and positive type-indexed word translation only. Existing accepted constructor/helper definitions unchanged, no production behavior edit or full compiler equivalence claim. Coordinator review pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+  "hol_name": "stack_names_stack_asm_ok",
+  "lean_path": "Flapjack/Compiler/Backend/StackNames/AsmAdmissibility/Assembly.lean",
+  "lean_name": "stackNamesStackAsmOk",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol full assembly bead14: Original HOL655-664 whole-program EVERY(stack_asm_name) conjunction names_ok and fixed_names implies EVERY(stack_asm_ok) on compile names program. HOL EVERY rendered as universal membership over same Lean List(Nat × HolProg width), no reordering/filtering. Exact compileHOL MAP progCompEntryHOL preserves labels; membership decomposition applies full per-program theorem with original guard from original entry. No per-entry IH or target-success premise remains. Reviewed Spt Nat tree names (not fmap), exact HolProg/HolInst/config and positive type-indexed word translation only. Existing accepted constructor/helper definitions unchanged, no production behavior edit or full compiler equivalence claim. Coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/Primitive.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific same-module canonical state roundtrip reexport for the relation's four map fields; no independent HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/Primitive.lean",
+  "lean_name": "evaluateFperm_Primitive",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_fperm",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison evaluate_fperm pan_globalsProof1721-1810 Primitive case and panSem574-584: original f/g/name/operator/arguments/state/res/post and sole source-run premise, full target evaluation and unchanged result/code-permuted post retained. Original OPT_MMAP expression evaluation, pan_primop and local validity/write clauses preserved including all failures. Unconditional list invariance by original recursive evalListHOLExact, pointwise accepted eval_upd_code_eta, independent of source-run hypothesis; operator unaffected by code; local lookup/write commute with code update. Exact native MlS/PrimOp/ExpHOL/ProgHOL/value/result carriers with canonical state four finite maps and positive-width word translation, local unconditional roundtrip witness. No extra successful list/operator/validity/target premise. Genuine constructor slice only; full theorem open, proof-only executable behavior unchanged."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/Store.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific same-module canonical state roundtrip reexport for the relation's four map fields; no independent HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/Store.lean",
+  "lean_name": "evaluateFperm_Store",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_fperm",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison evaluate_fperm1721-1810 Store case and panSem585-592: original f/g/destination/source/state/res/post binders and sole source-run premise, full target evaluation and unchanged result/code-permuted post retained. Both operand evaluations unchanged via accepted eval_upd_code_eta; original ValWord address guard, flatten and mem_stores memaddrs/memory operation retained with all expression/nonword/memory failures. Only memory field is updated on success, commuting with code update. Native MlS/ExpHOL/ProgHOL/ValueHOL/result with canonical four state finite maps and positive word translation; same-module unconditional roundtrip witness. No target-success/valid-address/memory-operation premise. Genuine constructor only, full theorem open. Proof-only/no executable change."
+},
+{
+  "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+  "hol_name": "arg_load_stronger",
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ArgLoadStronger.lean",
+  "lean_name": "argLoadStrongerExact",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "CrepSemHOLState.locals",
+    "CrepSemHOLState.globals",
+    "CrepSemHOLState.code",
+    "t"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison crep_inlineProof1410-1439 arg_load_stronger: all original variables and eleven conjunctive guards identical to accepted arg_load_correct. Conclusion retains independent existential target run/full state_rel; NONE/Break/Continue outside FDOM t restricted-map equality and original restored-local submap; Error False and other results True. Accepted arg_load_correct constructs run, accepted evaluate_locals_same_fdom_prime applied to that actual run proves full caller/target locals domains equal for original continuing results. Internal pointwise restriction proof follows EQ_FDOM_SUBMAP/FDIFF lookup argument without a public extra premise or changed domain theorem. Canonical CrepSemHOLState locals/globals/code and standalone t map plus positive type-indexed words/Type0 FFI only, same-module canonical roundtrip. No target/poststate assumption. Full original theorem, proof-only executable behavior unchanged; coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ArgLoadStronger.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only same-module canonical roundtrip reexport for the relation qualifier, no independent HOL original; owning CrepSemHOLState imported, no local duplicate carrier."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ArgLoadStronger.lean",
+  "lean_name": "restrictedEqOfSubmapFdom",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific private pointwise restriction helper over raw lookup functions and Boolean mask; specialization used internally, not claimed as full HOL EQ_FDOM_SUBMAP declaration. Proves map-restriction equality from submap plus equal domains; no external assumption."
+},
+{
+  "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+  "hol_name": "evaluate_clock_sub",
+  "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvaluateClockSubDecCall.lean",
+  "lean_name": "evaluateClockSubDecCallCaseHOLFinite",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-4ac.4.60.1.1.14): HOL panPropsScript.sml:724-728 evaluate_clock_sub, DecCall case of recInduct evaluate_ind. Same statement shape and carrier as the accepted cases: high run evaluate (DecCall rt shape fname argexps prog1, s) = (res, st with clock := st.clock + ck), res <> SOME TimeOut, conclusion on s with clock := s.clock - ck. The only additional hypotheses are evaluate_ind's two guarded DecCall premises at the clock-sub motive: clockSubDecCallContIH (P (prog1, set_var rt retv (st with locals := s.locals)) under args/lookup_code/clock guards, a callee Return retv and both shape checks) and clockSubDecCallCalleeIH (P (prog, dec_clock s with locals := newlocals)). Both are copied verbatim from the reviewed evaluate_invariants DecCall spelling (EvalInvariant.lean), with the motive replaced by clockSubAtHOLFinite. No other premise. Proof: the untagged canonical core decCallCore shows the low run cannot time out (callee IH aligns the callee run, continuation IH the continuation run, evaluate_clock bounds ck); then clockSub_of_lowNoTimeout lifts it via the tagged evaluate_add_clock_eq. The full evaluate_clock_sub remains open (While .9, If .12, assembly .15)."
+},
   {
     "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
     "hol_name": "update_locals_not_vars_eval_eq'",
