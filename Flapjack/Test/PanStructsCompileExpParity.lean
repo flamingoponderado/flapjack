@@ -109,9 +109,14 @@ theorem structCompileExps_eq_map_fixture :
     structCompileExp.structCompileExps context
         ([.nStruct "Pair" [("right", .const 2), ("left", .const 1)]] : List (Exp Nat)) =
       [.rStruct [.const 1, .const 2]] := by
-  rw [structCompileExps_eq_map]
-  simp [structCompileExp, structCompileExp.structCompileFields,
-    structSelectFields, context, lookupInfo]
+  calc
+    _ = List.map (structCompileExp context)
+        ([.nStruct "Pair" [("right", .const 2), ("left", .const 1)]] : List (Exp Nat)) :=
+      congrFun (structCompileExps_eq_map context)
+        ([.nStruct "Pair" [("right", .const 2), ("left", .const 1)]] : List (Exp Nat))
+    _ = [.rStruct [.const 1, .const 2]] := by
+      simp [structCompileExp, structCompileExp.structCompileFields,
+        structSelectFields, context, lookupInfo]
 
 /- Cake `old_exp_shapes_eq` (`pan_structsProofScript.sml:679`): the production
    old-shape list helper maps nontrivial source expressions pointwise. -/

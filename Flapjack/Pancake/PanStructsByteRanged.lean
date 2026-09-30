@@ -230,6 +230,25 @@ theorem structCompileShapeWF_eq_compileShapeExact
       rw [hdropNone]
       simp [shapeOfHOL]
 
+/-- Exact HOL-shape callback for the parser-proved struct pass. This function
+    is only exported through `structCompileTopExactOfByteRanged` below, whose
+    source premise is required because the total String-to-MlString codec is
+    lossy outside `NameRanged`. -/
+def structCompileShapeExactProduction (context : StructContext) (shape : Shape) : Shape :=
+  shapeOfHOL (Flapjack.Pancake.PanStructs.CompileShapeExact.compileShapeExact
+    (structContextToCompileShapeExact context) (shapeToHOL shape))
+
+/-- The callback-driven exact `pan_structs` pass, restricted to declaration
+    lists that round-trip through the HOL byte-valued name and shape carriers.
+    Its output equality with `structCompileTop` is the next proof obligation;
+    until that theorem is completed this helper is preparatory infrastructure,
+    not a production entrypoint. -/
+def structCompileTopExactOfByteRanged [BEq String] {width : Nat}
+    (declarations : List (Decl (BitVec width)))
+    (_hdeclarations : ∀ declaration ∈ declarations, DeclByteRanged declaration) :
+    List (Decl (BitVec width)) :=
+  structCompileTop declarations structCompileShapeExactProduction
+
 theorem structCompileShape_byteRanged (context : StructContext) (shape : Shape)
     (hc : CtxBR context) (hs : ShapeByteRanged shape) :
     ShapeByteRanged (structCompileShape context shape) :=
@@ -313,88 +332,115 @@ theorem structSelectFields_byteRanged [BEq String]
 theorem structCompileExp_byteRanged {width : Nat} [BEq String] (context : StructPassContext)
     (hc : CtxBR context.structs) :
     ∀ e : Exp (BitVec width), ExpByteRanged e → ExpByteRanged (structCompileExp context e) := by
-  refine (structCompileExp.induct (α := BitVec width) context
-    (motive1 := fun l => (∀ e ∈ l, ExpByteRanged e) →
-        ∀ e ∈ structCompileExp.structCompileExps context l, ExpByteRanged e)
-    (motive2 := fun e => ExpByteRanged e → ExpByteRanged (structCompileExp context e))
-    (motive3 := fun l => (∀ p ∈ l, ExpByteRanged p.2) →
-        ∀ p ∈ structCompileExp.structCompileFields context l, ExpByteRanged p.2)
-    ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_)
-  · intro _ e he
-    simp [structCompileExp.structCompileExps] at he
-  · intro e es ihe ihes hall x hx
+  have hgeneral : ∀ (e : Exp (BitVec width))
+      (compileShape : StructContext → Shape → Shape),
+      compileShape = structCompileShape → ExpByteRanged e →
+        ExpByteRanged (structCompileExp context e compileShape) := by
+    exact (structCompileExp.induct (α := BitVec width) context
+    (motive1 := fun l compileShape => compileShape = structCompileShape →
+        (∀ e ∈ l, ExpByteRanged e) →
+          ∀ e ∈ structCompileExp.structCompileExps context l compileShape, ExpByteRanged e)
+    (motive2 := fun e compileShape => compileShape = structCompileShape →
+        ExpByteRanged e → ExpByteRanged (structCompileExp context e compileShape))
+    (motive3 := fun l compileShape => compileShape = structCompileShape →
+        (∀ p ∈ l, ExpByteRanged p.2) →
+          ∀ p ∈ structCompileExp.structCompileFields context l compileShape, ExpByteRanged p.2)
+    (by
+      intro compileShape hcb hall e he
+      simp [structCompileExp.structCompileExps] at he)
+    (by
+    intro e es compileShape ihe ihes hcb hall x hx
     simp only [structCompileExp.structCompileExps] at hx
     rcases List.mem_cons.mp hx with rfl | hx'
-    · exact ihe (hall e (by simp))
-    · exact ihes (fun y hy => hall y (by simp [hy])) x hx'
-  · intro fields ih hv
-    rw [structCompileExp]
-    exact (listExpByteRanged_iff _).mpr (ih ((listExpByteRanged_iff _).mp hv))
-  · intro index value ih hv
-    rw [structCompileExp]
-    simp only [ExpByteRanged] at hv ⊢
-    exact ih hv
-  · intro name fields info hlookup ihfields hv
-    rw [structCompileExp]
-    simp only [hlookup]
-    exact (listExpByteRanged_iff _).mpr
-      (structSelectFields_byteRanged info.fields _
-        (ihfields (fun p hp => ((listFieldByteRanged_iff fields).mp hv.2 p hp).2)))
-  · intro name fields hlookup _hv
-    rw [structCompileExp]
-    simp only [hlookup]
-    simp [ExpByteRanged, ListExpByteRanged]
-  · intro field value ih hv
-    rw [structCompileExp]
-    simp only [ExpByteRanged] at hv ⊢
-    exact ih hv.2
-  · intro shape address ih hv
-    rw [structCompileExp]
-    exact ⟨structCompileShape_byteRanged context.structs shape hc hv.1, ih hv.2⟩
-  · intro address ih hv
-    rw [structCompileExp]
-    exact ih hv
-  · intro address ih hv
-    rw [structCompileExp]
-    exact ih hv
-  · intro operator arguments ih hv
-    rw [structCompileExp]
-    exact (listExpByteRanged_iff _).mpr (ih ((listExpByteRanged_iff _).mp hv))
-  · intro operator arguments ih hv
-    rw [structCompileExp]
-    exact (listExpByteRanged_iff _).mpr (ih ((listExpByteRanged_iff _).mp hv))
-  · intro operator left right ihl ihr hv
-    rw [structCompileExp]
-    exact ⟨ihl hv.1, ihr hv.2⟩
-  · intro operator left right ihl ihr hv
-    rw [structCompileExp]
-    exact ⟨ihl hv.1, ihr hv.2⟩
-  · intro expression h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 h11 hv
-    cases expression with
-    | const v => simp [ExpByteRanged]
-    | var k name => simpa [structCompileExp] using hv
-    | baseAddr => simp [structCompileExp, ExpByteRanged]
-    | topAddr => simp [structCompileExp, ExpByteRanged]
-    | bytesInWord => simp [structCompileExp, ExpByteRanged]
-    | rStruct fs => exact (h1 fs rfl).elim
-    | rField i v => exact (h2 i v rfl).elim
-    | nStruct nm fs => exact (h3 nm fs rfl).elim
-    | nField f v => exact (h4 f v rfl).elim
-    | load sh a => exact (h5 sh a rfl).elim
-    | load32 a => exact (h6 a rfl).elim
-    | loadByte a => exact (h7 a rfl).elim
-    | op o args => exact (h8 o args rfl).elim
-    | panOp o args => exact (h9 o args rfl).elim
-    | cmp o l r => exact (h10 o l r rfl).elim
-    | shift o l r => exact (h11 o l r rfl).elim
-  · intro _ p hp
-    simp [structCompileExp.structCompileFields] at hp
-  · intro field expression fields ihe ih hall p hp
-    simp only [structCompileExp.structCompileFields] at hp
-    rw [List.mem_cons] at hp
-    rcases hp with rfl | hp'
-    · exact ihe (hall (field, expression) (by simp))
-    · exact ih (fun q hq => hall q (by simp [hq])) p hp'
+    · exact ihe hcb (hall e (by simp))
+    · exact ihes hcb (fun y hy => hall y (by simp [hy])) x hx')
+    (by
+      intro fields compileShape ih hcb hv
+      rw [structCompileExp]
+      exact (listExpByteRanged_iff _).mpr (ih hcb ((listExpByteRanged_iff _).mp hv)))
+    (by
+      intro index value compileShape ih hcb hv
+      rw [structCompileExp]
+      simp only [ExpByteRanged] at hv ⊢
+      exact ih hcb hv)
+    (by
+      intro name fields compileShape info hlookup ihfields hcb hv
+      rw [structCompileExp]
+      simp only [hlookup]
+      exact (listExpByteRanged_iff _).mpr
+        (structSelectFields_byteRanged info.fields _
+          (ihfields hcb (fun p hp => ((listFieldByteRanged_iff fields).mp hv.2 p hp).2))))
+    (by
+      intro name fields compileShape hlookup ihfields hcb _hv
+      rw [structCompileExp]
+      simp only [hlookup]
+      simp [ExpByteRanged, ListExpByteRanged])
+    (by
+      intro field value compileShape ih hcb hv
+      rw [structCompileExp]
+      simp only [ExpByteRanged] at hv ⊢
+      exact ih hcb hv.2)
+    (by
+      intro shape address compileShape ih hcb hv
+      rw [structCompileExp]
+      subst compileShape
+      exact ⟨structCompileShape_byteRanged context.structs shape hc hv.1, ih rfl hv.2⟩)
+    (by
+      intro address compileShape ih hcb hv
+      rw [structCompileExp]
+      exact ih hcb hv)
+    (by
+      intro address compileShape ih hcb hv
+      rw [structCompileExp]
+      exact ih hcb hv)
+    (by
+      intro operator arguments compileShape ih hcb hv
+      rw [structCompileExp]
+      exact (listExpByteRanged_iff _).mpr (ih hcb ((listExpByteRanged_iff _).mp hv)))
+    (by
+      intro operator arguments compileShape ih hcb hv
+      rw [structCompileExp]
+      exact (listExpByteRanged_iff _).mpr (ih hcb ((listExpByteRanged_iff _).mp hv)))
+    (by
+      intro operator left right compileShape ihl ihr hcb hv
+      rw [structCompileExp]
+      exact ⟨ihl hcb hv.1, ihr hcb hv.2⟩)
+    (by
+      intro operator left right compileShape ihl ihr hcb hv
+      rw [structCompileExp]
+      exact ⟨ihl hcb hv.1, ihr hcb hv.2⟩)
+    (by
+      intro compileShape expression h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 h11 hcb hv
+      subst compileShape
+      cases expression with
+      | const v => simp [ExpByteRanged]
+      | var k name => simpa [structCompileExp] using hv
+      | baseAddr => simp [structCompileExp, ExpByteRanged]
+      | topAddr => simp [structCompileExp, ExpByteRanged]
+      | bytesInWord => simp [structCompileExp, ExpByteRanged]
+      | rStruct fs => exact (h1 fs rfl).elim
+      | rField i v => exact (h2 i v rfl).elim
+      | nStruct nm fs => exact (h3 nm fs rfl).elim
+      | nField f v => exact (h4 f v rfl).elim
+      | load sh a => exact (h5 sh a rfl).elim
+      | load32 a => exact (h6 a rfl).elim
+      | loadByte a => exact (h7 a rfl).elim
+      | op o args => exact (h8 o args rfl).elim
+      | panOp o args => exact (h9 o args rfl).elim
+      | cmp o l r => exact (h10 o l r rfl).elim
+      | shift o l r => exact (h11 o l r rfl).elim)
+    (by
+      intro compileShape hcb _ p hp
+      simp [structCompileExp.structCompileFields] at hp)
+    (by
+      intro field expression fields compileShape ihe ih hcb hall p hp
+      simp only [structCompileExp.structCompileFields] at hp
+      rw [List.mem_cons] at hp
+      rcases hp with rfl | hp'
+      · exact ihe hcb (hall (field, expression) (by simp))
+      · exact ih hcb (fun q hq => hall q (by simp [hq])) p hp'))
+  intro e he
+  exact hgeneral e structCompileShape rfl he
 
 private theorem structCompileExps_byteRanged {width : Nat} [BEq String]
     (context : StructPassContext) (hc : CtxBR context.structs) :
