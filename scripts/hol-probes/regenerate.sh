@@ -1300,6 +1300,10 @@ run_probe afindi_probeScript.sml afindi_probe.out \
   opt_mmap_eq_every alookup_drop_helper map_fst_eq_alookup \
   map_fst_eq_alookup_different_value_types map_fst_eq_alookup_inferred_types \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml"
+run_probe pan_structs_compile_decls_probeScript.sml pan_structs_compile_decls_probe.out \
+  empty decs names top shadow "$cake_dir/pancake/pan_structsScript.sml"
+run_probe pan_structs_compile_prog_probeScript.sml pan_structs_compile_prog_probe.out \
+  dec deccall handler callnone callnohandler fallback "$cake_dir/pancake/pan_structsScript.sml"
 run_probe pan_structs_compile_exp_probeScript.sml pan_structs_compile_exp_probe.out \
   rstruct old_shapes_map "$cake_dir/pancake/pan_structsScript.sml"
 run_probe crep_semantics_probeScript.sml crep_semantics_probe.out \
@@ -2415,6 +2419,10 @@ run_probe loop_sem_evaluate_ind_probeScript.sml loop_sem_evaluate_ind_probe.out 
 run_probe pan_sem_evaluate_ind_probeScript.sml pan_sem_evaluate_ind_probe.out \
   evaluate_ind "$cake_dir/pancake/semantics/panSemScript.sml" \
   "$cake_dir/pancake/semantics"
+
+run_probe word_alloc_key_map_probeScript.sml word_alloc_key_map_probe.out \
+  key_map_mixed key_map_collision key_map_done \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
 
 # HOL's byte decoder `word_of_bytes` (HOL/src/n-bit/byteScript.sml:197) is the
 # function installed by the exact shared-memory loads (panSemScript.sml:517/524,
