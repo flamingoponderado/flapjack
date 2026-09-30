@@ -12,8 +12,9 @@ finite-support `evaluateDeclsHOLFinite` (`evaluate_decls_def`) on
 port; well-formedness is the tagged `isWfShapeExactHOL` (`is_wf_shape_def`)
 and `isWfShapeNilHOL` (`is_wf_shape_nil`).  HOL `EVERY (is_wf_shape c ∘ SND)
 ps` is `∀ p ∈ ps, isWfShapeExactHOL c p.2 = true`.  The evaluator's memory
-domain decidability is an instance binder, as for the other exact
-`evaluate_decls` theorems.
+domain decidability is not a binder: HOL membership in `s.memaddrs` is
+classical, so every evaluator call (in hypotheses and conclusions) uses
+`Classical.propDecidable`, as in the tagged `semantics_decls` port.
 -/
 
 namespace Flapjack
@@ -42,13 +43,12 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} {σ : Type} [NeZero width] :
   (words_as_type_indexed_bitvec)]
 theorem evaluate_decls_functions_wfHOL {width : Nat} {σ : Type} [NeZero width]
     (s' : PanSemStateFiniteExact width σ) (fi : FunDeclHOL width) :
-    ∀ (s : PanSemStateFiniteExact width σ) [DecidablePred s.memaddrs]
-      (decs : List (DeclHOL width)),
-      evaluateDeclsHOLFinite s decs = some s' ∧ (.function fi : DeclHOL width) ∈ decs ∧
+    ∀ (s : PanSemStateFiniteExact width σ) (decs : List (DeclHOL width)),
+      @evaluateDeclsHOLFinite width σ _ s (fun a => Classical.propDecidable (s.memaddrs a)) decs = some s' ∧ (.function fi : DeclHOL width) ∈ decs ∧
         (∀ d ∈ decs, isFunctionHOL d = true ∨ isDeclHOL d = true ∨ isExnDeclHOL d = true) →
       (∀ p ∈ fi.params, isWfShapeExactHOL s.structs p.2 = true) ∧
         isWfShapeExactHOL s.structs fi.returnShape = true := by
-  intro s hdec decs
+  intro s decs
   induction decs generalizing s with
   | nil => intro ⟨_, hmem, _⟩; simp at hmem
   | cons d ds ih =>
@@ -64,8 +64,8 @@ theorem evaluate_decls_functions_wfHOL {width : Nat} {σ : Type} [NeZero width]
             rcases List.mem_cons.mp hmem with heq | hmem
             · cases heq
               exact ⟨fun p hp => hwf.1 p hp, hwf.2⟩
-            · exact @ih { s with code := s.code.update (fj.name, fj.params, fj.body, fj.returnShape) }
-                hdec ⟨hev, hmem, htail⟩
+            · exact ih { s with code := s.code.update (fj.name, fj.params, fj.body, fj.returnShape) }
+                ⟨hev, hmem, htail⟩
           next => simp at hev
       | decl shape name value =>
           have hmem' : (.function fi : DeclHOL width) ∈ ds := by simpa using hmem
@@ -73,14 +73,14 @@ theorem evaluate_decls_functions_wfHOL {width : Nat} {σ : Type} [NeZero width]
           split at hev
           next value' _ =>
             split at hev
-            next => exact @ih (setGlobalHOLFinite name value' s) hdec ⟨hev, hmem', htail⟩
+            next => exact ih (setGlobalHOLFinite name value' s) ⟨hev, hmem', htail⟩
             next => simp at hev
           next => simp at hev
       | exnDecl name shape =>
           have hmem' : (.function fi : DeclHOL width) ∈ ds := by simpa using hmem
           simp only [evaluateDeclsHOLFinite] at hev
           split at hev
-          next => exact @ih { s with eshapes := s.eshapes.update (name, shape) } hdec
+          next => exact ih { s with eshapes := s.eshapes.update (name, shape) }
                     ⟨hev, hmem', htail⟩
           next => simp at hev
       | name name fields => simpa using hall (.name name fields) (by simp)
@@ -90,9 +90,9 @@ theorem evaluate_decls_functions_wfHOL {width : Nat} {σ : Type} [NeZero width]
   (fmap_as_finite_support := [locals, globals, code, eshapes])
   (words_as_type_indexed_bitvec)]
 theorem compile_top_shape_wfHOL {width : Nat} {σ : Type} [NeZero width]
-    (s s' : PanSemStateFiniteExact width σ) [DecidablePred s.memaddrs]
+    (s s' : PanSemStateFiniteExact width σ)
     (code : List (DeclHOL width)) (start : MlS) :
-    evaluateDeclsHOLFinite s code = some s' ∧
+    @evaluateDeclsHOLFinite width σ _ s (fun a => Classical.propDecidable (s.memaddrs a)) code = some s' ∧
       (∀ d ∈ code, isFunctionHOL d = true ∨ isDeclHOL d = true ∨ isExnDeclHOL d = true) →
     ∀ d ∈ compileTopExactHOL code start, ∀ fi : FunDeclHOL width, d = .function fi →
       (∀ p ∈ fi.params, isWfShapeExactHOL s.structs p.2 = true) ∧
@@ -154,9 +154,9 @@ theorem compile_top_shape_wfHOL {width : Nat} {σ : Type} [NeZero width]
   (fmap_as_finite_support := [locals, globals, code, eshapes])
   (words_as_type_indexed_bitvec)]
 theorem compile_top_shape_wf_nilHOL {width : Nat} {σ : Type} [NeZero width]
-    (s s' : PanSemStateFiniteExact width σ) [DecidablePred s.memaddrs]
+    (s s' : PanSemStateFiniteExact width σ)
     (code : List (DeclHOL width)) (start : MlS) :
-    evaluateDeclsHOLFinite s code = some s' ∧ s.structs = [] ∧
+    @evaluateDeclsHOLFinite width σ _ s (fun a => Classical.propDecidable (s.memaddrs a)) code = some s' ∧ s.structs = [] ∧
       (∀ d ∈ code, isFunctionHOL d = true ∨ isDeclHOL d = true ∨ isExnDeclHOL d = true) →
     ∀ d ∈ compileTopExactHOL code start, ∀ fi : FunDeclHOL width, d = .function fi →
       (∀ p ∈ fi.params, isWfShapeNilHOL p.2 = true) ∧ isWfShapeNilHOL fi.returnShape = true := by
