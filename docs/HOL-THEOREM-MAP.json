@@ -29231,5 +29231,20 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack syntactic factoring or canonical state roundtrip; no separate HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/HasMain.lean",
+    "lean_name": "semanticsDeclsHasMainPrime",
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "semantics_decls_has_main'",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison2026-09-30,4ac.4.110: literal panProps1628-1638 has sole semantics_decls s start code != Fail premise and existential body/rshape with FLOOKUP(s.code |++ functions code) start=SOME([],body,rshape). Same binders, premise, update-list and existential conclusion in Lean. Exact semanticsDecls structural prepass/evaluator failure branches excluded internally; evaluateDecls code-update and zero-clock non-failure helper derive the entry without extra premises. PanSemStateFiniteExact canonical locals/globals/code/eshapes maps with genuine same-module roundtrip; positive BitVec width, NeZero, universe0 FFI host; exact MlS names and lists retained. Proof-only, no routing claim. Coordinator source review pending."
   }
 ]

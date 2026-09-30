@@ -12,7 +12,7 @@ Flapjack-specific proof infrastructure and have no standalone HOL declaration.
 
 namespace Flapjack
 
-open Flapjack.Pancake.PanLang (MlS ProgHOL)
+open Flapjack.Pancake.PanLang (MlS ProgHOL DeclHOL functionsHOL)
 open PanSemStateFiniteExact
 
 /-- First Call case for the HOL `semantics_decls_has_main` proof: after
@@ -82,5 +82,48 @@ theorem semanticsNonFail_has_zeroArgCodeEntry
   dsimp only
   rw [if_pos]
   exact ⟨0, by rw [herror]; trivial⟩
+
+namespace PanPropsHasMain
+
+/-- Canonical finite-support roundtrip for the state fields named below. -/
+theorem holFmapAsFiniteSupportWitness {width : Nat} {σ : Type} [NeZero width] :
+    (∀ (state : PanSemStateExact width σ) (h : state.FiniteSupport),
+        (ofExact state h).toExact = state) ∧
+    (∀ state : PanSemStateFiniteExact width σ,
+        ofExact state.toExact state.toExact_finiteSupport = state) :=
+  PanSemStateFiniteExact.holFmapAsFiniteSupportWitness
+
+/-- HOL `panPropsScript.sml:1628-1638`: non-failing declaration semantics
+    requires a zero-argument entry in the original code updated with the
+    declaration functions. The structural-context prepass and declaration
+    evaluation are the exact source operations; their failure branches are
+    excluded by the original premise, with no successful-evaluation premise
+    added. The zero-clock Call argument is factored through the helper above. -/
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "semantics_decls_has_main'"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem semanticsDeclsHasMainPrime {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (start : MlS) (code : List (DeclHOL width))
+    (h : semanticsDecls state start code ≠ .fail) :
+    ∃ body returnShape,
+      (state.code.updateList (functionsHOL code)).lookup start =
+        some ([], body, returnShape) := by
+  classical
+  unfold semanticsDecls at h
+  cases hstructs : decsStcnamesHOLExact [] code with
+  | none => simp [hstructs] at h
+  | some structs =>
+    cases heval : evaluateDeclsHOLFinite { state with structs := structs } code with
+    | none => simp [hstructs, heval] at h
+    | some finalState =>
+      have hsem : semantics finalState start ≠ .fail := by
+        simpa [hstructs, heval] using h
+      obtain ⟨body, shape, hentry⟩ := semanticsNonFail_has_zeroArgCodeEntry finalState start hsem
+      have hcode := evaluateDeclsHOLFinite_functions
+        { state with structs := structs } code finalState heval
+      rw [hcode] at hentry
+      exact ⟨body, shape, hentry⟩
+
+end PanPropsHasMain
 
 end Flapjack
