@@ -46,10 +46,8 @@ assurance does not automatically transfer to Flapjack.
 The following are open review or verification obligations:
 
 1. Compiler-correctness theorem porting is in progress.
-2. The RISC-V semantics in Flapjack have not yet been compared systematically
-   with the Sail RISC-V model. The HOL reference model lives in the HOL source
-   tree at `examples/l3-machine-code/riscv/model/riscv.sml`, but correspondence
-   to Sail is not claimed here.
+2. The RISC-V semantics in Flapjack have not been proven equivalent to a Lean
+   extraction of the authoritative Sail RISC-V model.
 3. Compiler behavior has not been tested extensively against the original
    Pancake compiler. The executable parity suite and differential fuzzer cover
    only a small corpus and do not establish equivalence for arbitrary input.
