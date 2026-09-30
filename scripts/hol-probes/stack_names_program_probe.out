@@ -1,0 +1,15 @@
+seq=Seq (Halt 7) (Return 4)
+if=If Equal 7 (Reg 7) (Raise 7) (Break 3)
+loop=Loop (const_inst 7 255w)
+call_none=Call NONE (INR 7) NONE
+call_ret=Call (SOME (Return 7,7,8,9)) (INL 3) NONE
+call_exc=Call NONE (INR 4) (SOME (Raise 7,8,9))
+call_both=Call (SOME (Return 7,7,8,9)) (INR 7) (SOME (Raise 7,6,7))
+install=Install 7 4 7 4 7
+shared=ShMemOp Load 7 (Addr 7 255w)
+buffer=CodeBufferWrite 7 4
+jump=JumpLower 7 4 3
+loc=LocValue 7 3 4
+continue=Continue 3
+default=Tick
+compile=[(8,Halt 7); (9,Return 4)]
