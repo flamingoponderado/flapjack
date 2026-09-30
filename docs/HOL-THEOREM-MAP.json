@@ -33879,5 +33879,13 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-only shared normal-return store certificate, bead33.8. Original state relation T, source-local temporary lookup and source Global validity internally derive existential context offset/target Store run/full post relation through accepted GlobalAssign. The caller discharges these memory-stage premises; none are added to the original Call theorem. Intended reuse by global-handler owner C; no separately named HOL declaration or exact HOL-port claim for this synthesized infrastructure. Kernel checked; coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallHandlerArguments.lean",
+  "lean_name": "callHandlerArgumentsUnderScratchLocals",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only synthesized argument evaluation transport for literal global Call handler scratch locals. Composes accepted generated-name freshness33.10 and exact OPT_MMAP_eval_two_fresh_vars. Arbitrary result/flag values; unconditional equality including failed argument evaluation; no freshness, distinctness, byte-range, successful evaluation or simulation premise. Original proof1313/1412 applies the generic lemma inline; no standalone HOL theorem/tag or completed Call simulation claimed. Coordinator classification pending."
 }
 ]
