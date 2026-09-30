@@ -129,8 +129,10 @@ The following are open review or verification obligations:
      `B < A ∧ (A+B)/2 ≤ s`;
    - `|s| = s`.
 
-   These are standard real-analysis facts, but their agreement with HOL's
-   real specification is a further external assurance assumption, and this
+   `Misc/BinaryIeeeSqrt/RealAgreement.lean` now kernel-checks the rational-cut
+   comparisons against Mathlib's `Real.sqrt`, including distance comparisons.
+   The agreement of that Lean real specification with HOL's
+   real specification remains an external assurance assumption, and this
    sqrt specification is not an exact `@[hol]` port. Lean proves that the
    computable binary64 sqrt equals the cut specification for every rational
    `r ≥ 0` (`holFloatRoundSqrt_rte_fp64`).
