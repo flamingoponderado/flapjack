@@ -25760,5 +25760,21 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison 2026-09-30, beads .18.5.11.1.4/.4.1: literal word_allocScript593-630, all arithmetic constructor positions incl4-register carry/overflow/longdiv, six explicit mem clauses and catchall preserved. Original asm memop125-128 includes Load16/Store16 but colouring leaves both unchanged; original six-row HOL probe confirms this, offset7w preserved, FP only integer operands renamed and float indices untouched. Compared WordLangArith/WordLangInst/WordLangFp/WordLangAddr/WordRegImm constructors and field Nat/word types against asmScript85-134; positive BitVec width is sole carrier translation. Tagged port delegates generic core actually called by executed production route; distinct5-register production primitive explicitly separate Flapjack behaviour, no exact HOL claim for it. Generic core immediate case mirrors reviewed applyColourImm and has no strengthened hypothesis."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "inline_prog_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "inlineProgCorrectAssignCaseExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "inlFs",
+      "inlBag"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-09-30; bead flapjack-pxn.18.5.5.39) against crep_inlineProofScript.sml:2301-2309 and the Assign atomic case of the catch-all at 2401. HOL inline_prog_def's generic unchanged-program clause at crep_inlineScript.sml:249 leaves Assign unchanged, and crepSemScript.sml:282-286 defines evaluate(Assign name src, s): on SOME value it updates locals name to value when the local exists, else Error. The statement preserves the source run, non-Error condition, both SUBMAP premises, state_rel_code, locals_strong_rel and code_inl_rel premises, existential target run, post-state/code relations, and result-dependent local relation; Assign has no recursive evaluate_ind IH. Lean uses exact CrepProgHOL assign, evalCrepSemHOLProgExact_assign_holShape, evalCodeInlExact for the target expression, and flips the local via hlocals. State maps and both inline maps use the reviewed HolFiniteMapExact carrier with same-module witnesses; BitVec width models the positive-width HOL word."
   }
 ]
