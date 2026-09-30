@@ -137,6 +137,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutNames
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyRemap
 import Flapjack.Pancake.PanStructs.CompileDeclsExact
 import Flapjack.Pancake.PanStructs.CompileDeclsCorrespondence
+import Flapjack.Pancake.PanStructs.CompileTopProduction
 import Flapjack.Pancake.PanStructs.CompileProgCorrespondence
 import Flapjack.Pancake.PanStructs.CompileProgProduction
 import Flapjack.Pancake.PanStructs.CompileProgExact
@@ -796,6 +797,7 @@ import Flapjack.Word
 import Flapjack.Stack
 import Flapjack.Compiler.Backend.StackLang
 import Flapjack.Compiler.Backend.StackLang.Prog
+import Flapjack.Compiler.Backend.StackLang.ProductionCodec
 import Flapjack.Compiler.Backend.StackCarrier
 import Flapjack.Basis.Pure.MlString
 import Flapjack.Compiler.Backend.MlStringBridge
