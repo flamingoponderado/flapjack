@@ -30087,22 +30087,6 @@
   "reviewer": "flapjack-luna-c source comparison2026-09-30 (.32.5.2): genuine Seq evaluate_ind case of HOL1107-1137. Original unused value binder retained; original fresh-name/source-eval/good_res/non-Error conjunction implies unchanged lookup. Sole added IH conjunction is literal generated Seq premise: forall firstResult,middle, (firstResult,middle)=evaluate(first,state) and firstResult=NONE implies original predicate at second,middle; original predicate at first,state. No all-state or unconditional second-child IH added. List append freshness derives both child premises. Accepted line780 Seq equation derives fix_clock removal from reviewed fix_clock_evaluate; no clock bound assumed. NONE result composes both lookup equalities; SOME result uses first-child IH. Exact MlS/ProgHOL/ValueHOL, canonical four-map state with genuine roundtrip, positive width/NeZero and universe0 FFI; proof-only, assembly remains open, coordinator review pending."
 },
 {
-  "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Labels.lean",
-  "lean_name": "getLabels",
-  "hol_path": null,
-  "hol_name": null,
-  "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Flapjack-only generic ProgM label observation helper. Its arbitrary payload carrier is not the faithful HOL program carrier. PR1180 repair withdrew the tag; getLabelsExact is the reviewed port, with a kernel-checked label-observation correspondence only. No full carrier codec or executed evaluator routing claim."
-},
-{
-  "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Labels.lean",
-  "lean_name": "locCheck",
-  "hol_path": null,
-  "hol_name": null,
-  "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Flapjack-only generic ProgM location observation helper. PR1180 repair withdrew the tag for the arbitrary payload carrier; locCheckExact is the reviewed positive-width HOL program port. Kernel correspondence preserves projected sparse-tree lookup/domain and labels, not full program semantics."
-},
-{
   "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/ReadBytearray.lean",
   "lean_name": "stateRelReadBytearray",
   "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
