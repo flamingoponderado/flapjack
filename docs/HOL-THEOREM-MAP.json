@@ -27975,7 +27975,7 @@
     "fmap_as_finite_support_relation": [
       "l"
     ],
-    "reviewer": "flapjack-luna-b source comparison (2026-09-30; .18.5.5.44.4), HOL882-906. Same universally quantified finite map, name/value lists; same equal length, ALL_DISTINCT/Pairwise inequality and every new name outside FDOM premises. Same SUBMAP into FUPDATE_LIST ZIP conclusion. Canonical HolFiniteMapExact/updateListEq with DecidableEq implements HOL equality, no BEq side conditions. Domain absence is lookup.isSome=false; lookup proof excludes all existing-binding keys from update names, preserving every binding by exact FUPDATE_LIST not-member lemma. No target equality or submap assumption; length/distinctness retained though freshness suffices for this proof."
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; .18.5.5.44.4), HOL882-906. Same universally quantified finite map, name/value lists; same equal length, ALL_DISTINCT/Pairwise inequality and every new name outside FDOM premises. Same SUBMAP into FUPDATE_LIST ZIP conclusion. Canonical HolFiniteMapExact/updateListEq with DecidableEq implements HOL equality, no BEq side conditions. Domain absence is lookup.isSome=false; lookup proof excludes all existing-binding keys from update names, preserving every binding by exact FUPDATE_LIST not-member lemma. No target equality or submap assumption; length/distinctness retained though freshness suffices for this proof. Interface repair (flapjack-opus, bead .44.4, per coordinator 20:47Z): the tagged statement quantifies arbitrary key/value types with classical key equality (open Classical in), no public DecidableEq binder; proof via the untagged class-parameterized submapDiffList."
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
@@ -36759,5 +36759,13 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack representation or statement infrastructure: imported genuine carrier roundtrip reexports and private generic pair-witness elimination, no independently named HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UpdateListLocals.lean",
+  "lean_name": "submapDiffList",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack local support (bead .44.4): class-parameterized SUBMAP_DIFF_LIST proof used at concrete keys (Nat) by the arg_load ports; the tagged submapDiffListExact instantiates it with classical equality."
 }
 ]
