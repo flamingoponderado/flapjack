@@ -106,6 +106,9 @@ FMAP_AS_FINITE_SUPPORT_RELATION_RE = re.compile(
 FMAP_AS_FINITE_SUPPORT_EQUALITIES_RE = re.compile(
     r'\(\s*fmap_as_finite_support_equalities\s*\)'
 )
+FMAP_AS_FINITE_SUPPORT_EQUALITY_RE = re.compile(
+    r'\(\s*fmap_as_finite_support_equality\s*\)'
+)
 WORDS_AS_TYPE_INDEXED_BITVEC_RE = re.compile(
     r'\(\s*words_as_type_indexed_bitvec\s*\)'
 )
@@ -296,7 +299,8 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                         include_word_dimension_width: bool = False,
                         include_fmap_function: bool = False,
                         include_fmap_heterogeneous_function: bool = False,
-                        include_reals_as_rational_cuts: bool = False):
+                        include_reals_as_rational_cuts: bool = False,
+                        include_fmap_as_finite_support_equality: bool = False):
     """Yield HOL attributes, including attributes split across Lean lines."""
     comment_depth = 0
     start: int | None = None
@@ -374,6 +378,8 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                     site += (positions,)
                 if include_reals_as_rational_cuts:
                     site += (bool(REALS_AS_RATIONAL_CUTS_RE.search(attribute)),)
+                if include_fmap_as_finite_support_equality:
+                    site += (bool(FMAP_AS_FINITE_SUPPORT_EQUALITY_RE.search(attribute)),)
                 yield site
         start = None
         chunks = []
@@ -2213,9 +2219,108 @@ def _statements_of_declaration(source: str, name: str) -> list[str]:
     return results
 
 
+def _binder_types(binder_zone: str) -> list[str]:
+    """Return the declared type text of each top-level binder.
+
+    Recognizes round `(name : type)`, curly `{name : type}` and square
+    `[name : type]` delimiters, with balanced nesting. Binders without a `:`
+    (for example instance braces `{α}`) contribute no type text. This is a
+    syntactic scan of the source slice, not full Lean elaboration: a binder
+    whose declared type is a named `Prop` alias or a predicate application is
+    returned verbatim as its source text and may not be recognized as a proof
+    premise by `_is_proof_premise_type`.
+    """
+    types: list[str] = []
+    closer = {"(": ")", "{": "}", "[": "]"}
+    stack: list[str] = []
+    start = -1
+    for i, ch in enumerate(binder_zone):
+        if ch in closer:
+            if not stack:
+                start = i + 1
+            stack.append(ch)
+        elif ch in (")", "}", "]"):
+            if stack and closer[stack[-1]] == ch:
+                stack.pop()
+                if not stack and start >= 0:
+                    inner = binder_zone[start:i]
+                    colon = _last_top_level_colon(inner)
+                    if colon >= 0:
+                        types.append(inner[colon + 1:].strip())
+                    start = -1
+    return types
+
+
+def _is_proof_premise_type(type_text: str) -> bool:
+    """Heuristically decide whether a binder type textually looks like a proof.
+
+    This is a SYNTACTIC heuristic over source text, not an elaborated
+    `Meta.isProp` test. It flags the literals `False`/`True` and any type text
+    containing an arrow, iff, negation or equality. Consequences the callers
+    must document: it can MISS proof premises written as a named `Prop` alias or
+    as a predicate application (e.g. `(h : myProp x)`), and it can OVER-match
+    legitimate data-level function types such as `(f : \u03b1 \u2192 \u03b2)`.
+    Therefore passing this check is not a proof that the witness is
+    unconditional; manual source review of the witness remains mandatory.
+    """
+    text = type_text.strip()
+    if text in {"False", "True"}:
+        return True
+    return any(op in text for op in ("\u2192", "->", "\u2194", "\u00ac", "="))
+
+
+def _declaration_premise_errors(declaration_text: str) -> list[str]:
+    """Reject arrow premises and proof-premise binders on a tagged declaration.
+
+    The singular finite-map equality qualifier asserts that the tagged theorem
+    is the unconditional HOL equality. `_statement_conclusion` strips arrow
+    premises before checking the conclusion shape, so a weakened theorem such
+    as `theorem t (h : x = y) : HolFiniteMapExact.empty = a` would otherwise
+    pass. This scans the declaration's own signature (from the `theorem`/`lemma`
+    keyword, ignoring the preceding `@[hol ...]` attribute) for both kinds of
+    premise.
+
+    Like the witness check this is a syntactic scan: a premise whose type is a
+    named `Prop` alias or predicate application may be missed, and a legitimate
+    data-level function binder such as `(f : \u03b1 \u2192 \u03b2)` may be
+    over-matched. Passing it is not a proof of unconditionality; manual source
+    review remains mandatory.
+    """
+    errors: list[str] = []
+    keyword = re.search(r"\b(?:theorem|lemma)\b", declaration_text)
+    signature = declaration_text[keyword.start():] if keyword else declaration_text
+    body = signature.split(":=", 1)[0]
+    colon = _last_top_level_colon(body)
+    if colon < 0:
+        return errors
+    binder_zone = body[:colon]
+    rest = body[colon + 1:]
+    premises = 0
+    while True:
+        split = _split_top_level(rest, ("\u2192", "->"))
+        if split is None:
+            break
+        premises += 1
+        rest = split[1]
+    if premises:
+        errors.append(
+            "fmap_as_finite_support_equality requires the tagged declaration to "
+            "be unconditional; it introduces an arrow premise"
+        )
+    for type_text in _binder_types(binder_zone):
+        if _is_proof_premise_type(type_text):
+            errors.append(
+                "fmap_as_finite_support_equality requires the tagged declaration "
+                f"to be unconditional; binder `{type_text}` is a proof premise, "
+                "not typed data"
+            )
+    return errors
+
+
 def _has_lookup_equality_witness(
     lines: list[str], witness: str, forbidden: str,
     expected: tuple[str, str] | None = None,
+    unconditional: bool = False,
 ) -> tuple[bool, str]:
     source = strip_lean_comments("\n".join(lines))
     statements = _statements_of_declaration(source, witness)
@@ -2241,6 +2346,20 @@ def _has_lookup_equality_witness(
             rest = split[1]
         premises, final = segments[:-1], segments[-1]
         binder_zone = statement[:colon] if colon >= 0 else ""
+        if unconditional:
+            if premises:
+                return (
+                    False,
+                    f"witness `{witness}` must be unconditional; it introduces "
+                    "an arrow premise",
+                )
+            for type_text in _binder_types(binder_zone):
+                if _is_proof_premise_type(type_text):
+                    return (
+                        False,
+                        f"witness `{witness}` must be unconditional; binder "
+                        f"`{type_text}` is a proof premise, not typed data",
+                    )
         if re.search(r"(?i)\b(?:lookup|flookup)\b", binder_zone) and (
             "=" in binder_zone or "\u2194" in binder_zone
         ):
@@ -2389,6 +2508,88 @@ def fmap_as_finite_support_equalities_errors(
             errors.append(
                 f"fmap_as_finite_support_equalities conjunct {index} {message}"
             )
+    return errors
+
+
+def fmap_as_finite_support_equality_witness_name(decl_name: str) -> str:
+    return f"holFmapAsFiniteSupportEqualityWitness_{decl_name}"
+
+
+def fmap_as_finite_support_equality_errors(
+    lines: list[str], module: str,
+    declaration_text: str, decl_name: str,
+) -> list[str]:
+    """Validate a theorem whose conclusion is a SINGLE finite-map equality.
+
+    HOL theorems such as `res_var_FEMPTY` conclude exactly one `|->` map
+    equality.  The tagged declaration must conclude exactly one whole
+    `HolFiniteMapExact` equality, with no conjunction, no iff, and no premise
+    (an arrow premise or proof-premise binder on the tagged declaration is
+    rejected), and its two sides must be witnessed at the lookup level by a
+    same-module checked, unconditional
+    `holFmapAsFiniteSupportEqualityWitness_<decl>`: an equality
+    `<side>.lookup k = <side>.lookup k` at one universally bound key, with the
+    two receivers exactly the tagged conclusion's two sides.  The witness must
+    not mention the tagged theorem in its statement/header (rejecting the
+    ignored-proof / threaded-argument pattern), but its proof body may reuse the
+    tagged theorem's established proof; it must not be a self-equality.
+
+    The checks are syntactic: they validate shape, naming, same-key
+    application, a universally bound key, and side association, but they do NOT
+    prove that the Lean witness corresponds to the HOL map equality.  Source
+    review must compare the witness against the HOL equality.  Premise and
+    unconditional-binder rejection is likewise syntactic: `_binder_types`
+    recognizes `(...)`, `{...}` and `[...]` delimiters, and
+    `_is_proof_premise_type` flags only literal `False`/`True` and type text
+    containing an arrow, iff, negation or equality.  It can therefore MISS a
+    proof premise written as a named `Prop` alias or predicate application, and
+    can OVER-match a legitimate data-level function binder.  Passing this gate
+    is not a proof of unconditionality; manual review is mandatory.
+    """
+    errors: list[str] = []
+    if "HolFiniteMapExact" not in declaration_text:
+        errors.append(
+            "fmap_as_finite_support_equality requires the tagged declaration's "
+            "conclusion to use the approved HolFiniteMapExact translation; a raw "
+            "`\u03b1 \u2192 Option \u03b2` function map is ineligible"
+        )
+    errors.extend(_declaration_premise_errors(declaration_text))
+    conclusion = _statement_conclusion(declaration_text)
+    if _split_top_level(conclusion, ("\u2194",)) is not None:
+        errors.append(
+            "fmap_as_finite_support_equality requires a single map equality, "
+            "not an iff"
+        )
+        return errors
+    count = _count_top_level_conjuncts(conclusion)
+    if count != 1:
+        errors.append(
+            "fmap_as_finite_support_equality requires exactly one finite-map "
+            "equality in the tagged declaration's conclusion (use "
+            "fmap_as_finite_support_equalities for a conjunction)"
+        )
+        return errors
+    expected = _split_top_level(_strip_outer_parens(conclusion), ("=",))
+    if expected is None:
+        errors.append(
+            "fmap_as_finite_support_equality conclusion is not a map equality"
+        )
+        return errors
+    kind = re.search(
+        r"\b(theorem|lemma|example|def|abbrev|opaque|instance|structure|inductive)\b",
+        declaration_text,
+    )
+    if kind is not None and kind.group(1) not in {"theorem", "lemma"}:
+        errors.append(
+            "fmap_as_finite_support_equality may tag only a theorem or lemma; "
+            f"found `{kind.group(1)}`"
+        )
+    witness = fmap_as_finite_support_equality_witness_name(decl_name)
+    ok, message = _has_lookup_equality_witness(
+        lines, witness, decl_name, expected, unconditional=True,
+    )
+    if not ok:
+        errors.append(f"fmap_as_finite_support_equality {message}")
     return errors
 
 
@@ -3228,12 +3429,14 @@ def main(argv: list[str]) -> int:
              names_fields, boundary_fields, fmap_fields, fmap_result,
              fmap_relation, fmap_equalities, words_bitvec,
              fmap_parameters, fmap_existentials, dimension_width,
-             fmap_function_positions, fmap_heterogeneous_function_positions, reals_cuts) in hol_attribute_sites(
+             fmap_function_positions, fmap_heterogeneous_function_positions, reals_cuts,
+             fmap_equality) in hol_attribute_sites(
                 lines, include_fmap_existentials=True,
                 include_word_dimension_width=True,
                 include_fmap_function=True,
                 include_fmap_heterogeneous_function=True,
                 include_reals_as_rational_cuts=True,
+                include_fmap_as_finite_support_equality=True,
              ):
             where = f"{rel}:{number}"
             errors.extend(
@@ -3329,6 +3532,20 @@ def main(argv: list[str]) -> int:
                 errors.extend(
                     f"{where}: {error}"
                     for error in fmap_as_finite_support_equalities_errors(
+                        lines, rel, tagged_declaration_text(lines, number), lean_decl
+                    )
+                )
+            if fmap_equality:
+                if (fmap_fields or fmap_result or fmap_parameters or fmap_existentials
+                        or fmap_relation or fmap_equalities or fmap_function_positions
+                        or fmap_heterogeneous_function_positions):
+                    errors.append(
+                        f"{where}: fmap_as_finite_support_equality is mutually "
+                        "exclusive with other finite-map qualifiers"
+                    )
+                errors.extend(
+                    f"{where}: {error}"
+                    for error in fmap_as_finite_support_equality_errors(
                         lines, rel, tagged_declaration_text(lines, number), lean_decl
                     )
                 )

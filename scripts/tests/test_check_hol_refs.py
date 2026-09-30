@@ -2663,5 +2663,237 @@ class RealCrepPropsWordCarrierResolutionTest(unittest.TestCase):
             )
 
 
+
+class FmapEqualityQualifierTest(unittest.TestCase):
+    """Single finite-map equality qualifier shape checks."""
+
+    SITES_FLAG = dict(include_fmap_as_finite_support_equality=True)
+
+    def test_qualifier_site_flag(self):
+        sites = list(SITES(
+            ['@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "res_var_FEMPTY"',
+             '  (fmap_as_finite_support_equality)]'],
+            **self.SITES_FLAG,
+        ))
+        self.assertEqual(len(sites), 1)
+        self.assertEqual(sites[0][-1], True)
+
+    def test_accepts_single_witness(self):
+        declaration = (
+            "theorem resVarFEMPTYExact :\n"
+            "    HolFiniteMapExact.empty = a"
+        )
+        lines = [
+            declaration + " := by rfl",
+            "",
+            "theorem holFmapAsFiniteSupportEqualityWitness_resVarFEMPTYExact (k : Nat) :",
+            "    (HolFiniteMapExact.empty).lookup k = a.lookup k := rfl",
+        ]
+        errors = CHECKER["fmap_as_finite_support_equality_errors"](
+            lines, "Example.lean", declaration, "resVarFEMPTYExact")
+        self.assertEqual(errors, [])
+
+    def test_rejects_conjunction(self):
+        declaration = (
+            "theorem t :\n"
+            "    (HolFiniteMapExact.empty = a) \u2227 (HolFiniteMapExact.empty = b)"
+        )
+        lines = [declaration + " := by constructor <;> rfl"]
+        errors = CHECKER["fmap_as_finite_support_equality_errors"](
+            lines, "Example.lean", declaration, "t")
+        self.assertTrue(any("exactly one" in e for e in errors), errors)
+
+    def test_rejects_missing_witness(self):
+        declaration = "theorem t :\n    HolFiniteMapExact.empty = a"
+        lines = [declaration + " := by rfl"]
+        errors = CHECKER["fmap_as_finite_support_equality_errors"](
+            lines, "Example.lean", declaration, "t")
+        self.assertTrue(
+            any("has no same-module checked witness" in e for e in errors), errors)
+
+    def test_rejects_raw_map(self):
+        declaration = "theorem t :\n    (f : Nat \u2192 Option Nat) = f"
+        lines = [declaration + " := by rfl"]
+        errors = CHECKER["fmap_as_finite_support_equality_errors"](
+            lines, "Example.lean", declaration, "t")
+        self.assertTrue(any("HolFiniteMapExact" in e for e in errors), errors)
+
+    def test_rejects_self_equality_witness(self):
+        declaration = "theorem t :\n    HolFiniteMapExact.empty = a"
+        lines = [
+            declaration + " := by rfl",
+            "theorem holFmapAsFiniteSupportEqualityWitness_t (k : Nat) :",
+            "    a.lookup k = a.lookup k := rfl",
+        ]
+        errors = CHECKER["fmap_as_finite_support_equality_errors"](
+            lines, "Example.lean", declaration, "t")
+        self.assertTrue(
+            any("self-equality" in e for e in errors), errors)
+
+    def test_rejects_fixed_key(self):
+        declaration = "theorem t :\n    HolFiniteMapExact.empty = a"
+        lines = [
+            declaration + " := by rfl",
+            "theorem holFmapAsFiniteSupportEqualityWitness_t :",
+            "    (HolFiniteMapExact.empty).lookup 3 = a.lookup 3 := rfl",
+        ]
+        errors = CHECKER["fmap_as_finite_support_equality_errors"](
+            lines, "Example.lean", declaration, "t")
+        self.assertTrue(
+            any("universally" in e for e in errors), errors)
+
+    def test_rejects_witness_mentioning_tagged_theorem(self):
+        declaration = "theorem t :\n    HolFiniteMapExact.empty = a"
+        lines = [
+            declaration + " := by rfl",
+            "theorem holFmapAsFiniteSupportEqualityWitness_t (k : Nat) :",
+            "    (fun _ => a.lookup k) t = a.lookup k := rfl",
+        ]
+        errors = CHECKER["fmap_as_finite_support_equality_errors"](
+            lines, "Example.lean", declaration, "t")
+        self.assertTrue(
+            any("ignored-proof" in e for e in errors), errors)
+
+
+class FmapEqualityStrictnessTest(unittest.TestCase):
+    """Singular qualifier: unconditional witness, theorem-only, data binders."""
+
+    def _errors(self, declaration, lines):
+        return CHECKER["fmap_as_finite_support_equality_errors"](
+            lines, "Example.lean", declaration, "t")
+
+    def test_rejects_arrow_premise_witness(self):
+        declaration = "theorem t :\n    HolFiniteMapExact.empty = a"
+        lines = [
+            declaration + " := by rfl",
+            "theorem holFmapAsFiniteSupportEqualityWitness_t (k : Nat) :",
+            "    False \u2192 (HolFiniteMapExact.empty).lookup k = a.lookup k := by",
+            "  intro _; rfl",
+        ]
+        errors = self._errors(declaration, lines)
+        self.assertTrue(any("unconditional" in e for e in errors), errors)
+
+    def test_rejects_proof_binder_witness(self):
+        declaration = "theorem t :\n    HolFiniteMapExact.empty = a"
+        lines = [
+            declaration + " := by rfl",
+            "theorem holFmapAsFiniteSupportEqualityWitness_t (h : False) (k : Nat) :",
+            "    (HolFiniteMapExact.empty).lookup k = a.lookup k := by",
+            "  cases h",
+        ]
+        errors = self._errors(declaration, lines)
+        self.assertTrue(any("unconditional" in e for e in errors), errors)
+
+    def test_rejects_implicit_proof_binder_witness(self):
+        declaration = "theorem t :\n    HolFiniteMapExact.empty = a"
+        lines = [
+            declaration + " := by rfl",
+            "theorem holFmapAsFiniteSupportEqualityWitness_t {h : False} (k : Nat) :",
+            "    (HolFiniteMapExact.empty).lookup k = a.lookup k := by",
+            "  cases h",
+        ]
+        errors = self._errors(declaration, lines)
+        self.assertTrue(any("unconditional" in e for e in errors), errors)
+
+    def test_rejects_instance_bracket_witness(self):
+        declaration = "theorem t :\n    HolFiniteMapExact.empty = a"
+        lines = [
+            declaration + " := by rfl",
+            "theorem holFmapAsFiniteSupportEqualityWitness_t [h : False] (k : Nat) :",
+            "    (HolFiniteMapExact.empty).lookup k = a.lookup k := by",
+            "  cases h",
+        ]
+        errors = self._errors(declaration, lines)
+        self.assertTrue(any("unconditional" in e for e in errors), errors)
+
+    def test_accepts_data_binder_witness(self):
+        declaration = "theorem t :\n    HolFiniteMapExact.empty = a"
+        lines = [
+            declaration + " := by rfl",
+            "theorem holFmapAsFiniteSupportEqualityWitness_t (k : Nat) :",
+            "    (HolFiniteMapExact.empty).lookup k = a.lookup k := rfl",
+        ]
+        self.assertEqual(self._errors(declaration, lines), [])
+
+    def test_rejects_def_tagged(self):
+        declaration = "def t :\n    HolFiniteMapExact.empty = a"
+        lines = [declaration + " := by rfl"]
+        errors = self._errors(declaration, lines)
+        self.assertTrue(any("theorem or lemma" in e for e in errors), errors)
+
+    def test_rejects_opaque_tagged(self):
+        declaration = "opaque t :\n    HolFiniteMapExact.empty = a"
+        lines = [declaration + " := by rfl"]
+        errors = self._errors(declaration, lines)
+        self.assertTrue(any("theorem or lemma" in e for e in errors), errors)
+
+    def test_rejects_tagged_arrow_premise(self):
+        declaration = (
+            "theorem t :\n    False \u2192 HolFiniteMapExact.empty = a"
+        )
+        lines = [
+            declaration + " := by rfl",
+            "theorem holFmapAsFiniteSupportEqualityWitness_t (k : Nat) :",
+            "    (HolFiniteMapExact.empty).lookup k = a.lookup k := rfl",
+        ]
+        errors = self._errors(declaration, lines)
+        self.assertTrue(any("unconditional" in e for e in errors), errors)
+
+    def test_rejects_tagged_quantified_arrow_premise(self):
+        declaration = (
+            "theorem t :\n"
+            "    \u2200 n, (n = n) \u2192 HolFiniteMapExact.empty = a"
+        )
+        lines = [
+            declaration + " := by rfl",
+            "theorem holFmapAsFiniteSupportEqualityWitness_t (k : Nat) :",
+            "    (HolFiniteMapExact.empty).lookup k = a.lookup k := rfl",
+        ]
+        errors = self._errors(declaration, lines)
+        self.assertTrue(any("unconditional" in e for e in errors), errors)
+
+    def test_rejects_tagged_equality_binder(self):
+        declaration = "theorem t (h : x = y) :\n    HolFiniteMapExact.empty = a"
+        lines = [
+            declaration + " := by rfl",
+            "theorem holFmapAsFiniteSupportEqualityWitness_t (k : Nat) :",
+            "    (HolFiniteMapExact.empty).lookup k = a.lookup k := rfl",
+        ]
+        errors = self._errors(declaration, lines)
+        self.assertTrue(any("unconditional" in e for e in errors), errors)
+
+    def test_rejects_tagged_forall_conclusion(self):
+        declaration = "theorem t :\n    \u2200 n, HolFiniteMapExact.empty = a"
+        lines = [
+            declaration + " := by rfl",
+            "theorem holFmapAsFiniteSupportEqualityWitness_t (k : Nat) :",
+            "    (HolFiniteMapExact.empty).lookup k = a.lookup k := rfl",
+        ]
+        errors = self._errors(declaration, lines)
+        self.assertTrue(errors, errors)
+
+    def test_rejects_tagged_proof_binder(self):
+        declaration = "theorem t (h : False) :\n    HolFiniteMapExact.empty = a"
+        lines = [
+            declaration + " := by rfl",
+            "theorem holFmapAsFiniteSupportEqualityWitness_t (k : Nat) :",
+            "    (HolFiniteMapExact.empty).lookup k = a.lookup k := rfl",
+        ]
+        errors = self._errors(declaration, lines)
+        self.assertTrue(any("unconditional" in e for e in errors), errors)
+
+    def test_accepts_tagged_data_and_typeclass_binders(self):
+        declaration = (
+            "theorem t {ex : Type} [DecidableEq ex] (n : ex) :\n"
+            "    HolFiniteMapExact.empty = a"
+        )
+        lines = [
+            declaration + " := by rfl",
+            "theorem holFmapAsFiniteSupportEqualityWitness_t (k : Nat) :",
+            "    (HolFiniteMapExact.empty).lookup k = a.lookup k := rfl",
+        ]
+        self.assertEqual(self._errors(declaration, lines), [])
+
+
 if __name__ == "__main__":
     unittest.main()

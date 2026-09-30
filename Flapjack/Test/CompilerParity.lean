@@ -1,3 +1,5 @@
+import Flapjack.Test.PanGlobalsBlockAlignmentParity
+import Flapjack.Test.StackSemLocValueParity
 import Flapjack.Test.StackPropsProgramValidity
 import Flapjack.Test.StackPropsProgramNames
 import Flapjack.Test.StackPropsAllocArg

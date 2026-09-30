@@ -2218,5 +2218,70 @@ class RealsAsRationalCutsStatusTest(unittest.TestCase):
                             for error in self.errors(wrong, self.words_tag)))
 
 
+
+class FmapEqualityStatusTest(unittest.TestCase):
+    """A single theorem-level map equality needs its own reviewed status."""
+
+    STATUS = "reviewed_fmap_as_finite_support_equality"
+
+    def _record(self, **overrides):
+        record = {
+            "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+            "hol_name": "res_var_FEMPTY",
+            "lean_path": "Flapjack/Example.lean",
+            "lean_name": "resVarFEMPTYExact",
+            "statement_status": self.STATUS,
+            "reviewer": "source comparison of the single HOL map equality "
+                        "fmap_as_finite_support_equality",
+            "fmap_as_finite_support_equality": True,
+        }
+        record.update(overrides)
+        return record
+
+    def _tag(self, equality=True, equalities=False, fmap_fields=()):
+        # 0..8 then padding to index 16 for the singular flag.
+        head = (
+            "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+            "res_var_FEMPTY",
+            (), (), (), fmap_fields, False, (), equalities,
+        )
+        tail = ((), (), (), None, (), (), False, equality)
+        return {("Flapjack/Example.lean", "resVarFEMPTYExact"): head + tail}
+
+    def _errors(self, record, tagged):
+        return MAP["validate_inventory"]([record], set(), tagged, set())
+
+    def test_accepts_equality_status(self):
+        self.assertEqual(self._errors(self._record(), self._tag()), [])
+
+    def test_rejects_equality_status_without_qualifier(self):
+        errors = self._errors(self._record(), self._tag(equality=False))
+        self.assertTrue(
+            any("needs a fmap_as_finite_support_equality" in e for e in errors),
+            errors,
+        )
+
+    def test_rejects_equality_tag_without_status(self):
+        errors = self._errors(
+            self._record(statement_status="pending_statement_review",
+                         fmap_as_finite_support_equality=False),
+            self._tag(),
+        )
+        self.assertTrue(
+            any("needs a reviewed source classification" in e for e in errors),
+            errors,
+        )
+
+    def test_rejects_equality_tag_with_reviewed_exact(self):
+        errors = self._errors(
+            self._record(statement_status="reviewed_exact"), self._tag())
+        self.assertTrue(any("reviewed_exact" in e for e in errors), errors)
+
+    def test_rejects_equality_with_other_fmap_fields(self):
+        errors = self._errors(
+            self._record(), self._tag(fmap_fields=("locals",)))
+        self.assertTrue(any("mutually exclusive" in e for e in errors), errors)
+
+
 if __name__ == "__main__":
     unittest.main()

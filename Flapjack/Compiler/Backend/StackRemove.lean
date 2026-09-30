@@ -3,6 +3,7 @@ import Flapjack.Compiler.Backend.StackLang
 import Flapjack.Compiler.Backend.StackLang.Prog
 import Flapjack.Pancake.WordLang
 import Flapjack.HolRef
+import Flapjack.FfiHOL
 
 /-!
 # Stack-remove / stack-alloc `make_init` prerequisites
@@ -209,5 +210,19 @@ def storeInst {width : Nat} [NeZero width] (register address : Nat) :
 def haltInst {width : Nat} [NeZero width] (value : BitVec width) :
     Flapjack.Compiler.Backend.StackLang.HolProg width :=
   .seq (.inst (.const 1 value)) (.halt 1)
+
+
+/-- HOL `call_FFI_LENGTH` (`cakeml/compiler/backend/proofs/stack_removeProofScript.sml`):
+a successful returning FFI call preserves the byte-list length.  This is the source
+statement over the already-reviewed `callFFIHOL` rendering of `call_FFI_def`
+(`ffiScript.sml`): `call_FFI`/`FFI_return`/`ffi_state` render as `callFFIHOL`/
+`HolFfiResult.ret`/`HolFfiState` (the rendering tagged `reviewed_exact` on
+`call_FFI_def`), and `LENGTH ys = LENGTH xs` as list-length equality. -/
+@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "call_FFI_LENGTH"]
+theorem callFFILengthHOL {σ : Type u} (state : HolFfiState σ) (name : HolFfiName)
+    (configuration bytes nextBytes : List (BitVec 8)) (nextState : HolFfiState σ)
+    (h : callFFIHOL state name configuration bytes = .ret nextState nextBytes) :
+    nextBytes.length = bytes.length :=
+  callFFIHOL_ret_length state name configuration bytes nextBytes nextState h
 
 end Flapjack.Compiler.Backend.StackRemove

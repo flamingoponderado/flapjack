@@ -499,6 +499,19 @@ theorem shMemLoadHOLFiniteExact_repack {width : Nat} {σ : Type} [NeZero width]
       (shMemLoadHOLExact_finiteSupport state.toExact kind name address nb
         state.toExact_finiteSupport)
 
+/-- Flapjack-specific repack bridge for the ExtCall return state: rebuilding the
+broad carrier after updating only `memory` and `ffi` with a finite-support proof
+gives the direct finite-carrier record update. HOL has no declaration for this
+representation plumbing (the two carriers are the same underlying data). -/
+theorem ofExact_update_memory_ffi {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ)
+    (memory : RiscV.Word width → HolWordLab width) (ffi : HolFfiState σ)
+    (support :
+      ({ state.toExact with memory := memory, ffi := ffi } : PanSemStateExact width σ).FiniteSupport) :
+    PanSemStateFiniteExact.ofExact { state.toExact with memory := memory, ffi := ffi } support =
+      { state with memory := memory, ffi := ffi } :=
+  ofExact_eq_finite_of_toExact_eq _ _ (by rfl) support
+
 /-- The finite-support local write is compatible with the broad exact one. -/
 @[simp] theorem toExact_setVarHOLFinite {width : Nat} {σ : Type} [NeZero width]
     (name : MlS) (value : ValueHOL width) (state : PanSemStateFiniteExact width σ) :

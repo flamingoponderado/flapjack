@@ -72,4 +72,33 @@ theorem stateRelSetVarHOL {width : Nat} {σ : Type} [NeZero width]
   have hl := hrel.2.1 rfl
   simp only [PanSemStateFiniteExact.setVarHOLFinite, hl]
 
+/-- Exact port of HOL `res_var_FEMPTY`
+(`cakeml/pancake/proofs/pan_globalsProofScript.sml:1011-1015`): the panic-reset
+finite map is unchanged when writing an `none` value into `FEMPTY`. The HOL
+source uses the bare `α |-> β` finite-map carrier, rendered here with
+`HolFiniteMapExact`; this is exactly the singular-map-equality qualifier's
+target shape, witnessed below at the lookup level. -/
+@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "res_var_FEMPTY"
+  (fmap_as_finite_support_equality)]
+theorem resVarFEMPTYExact {α β : Type} [DecidableEq α] (n : α) :
+    HolFiniteMapExact.resVarEq (HolFiniteMapExact.empty : HolFiniteMapExact α β) (n, none) =
+      (HolFiniteMapExact.empty : HolFiniteMapExact α β) := by
+  apply HolFiniteMapExact.ext
+  funext k
+  simp only [HolFiniteMapExact.lookup_resVarEq_none, HolFiniteMapExact.lookup_empty, FDOMSUB_HOL]
+  by_cases hk : k = n
+  · simp [hk]
+  · simp [hk]
+
+/-- Lookup-level witness for `resVarFEMPTYExact`, required by the singular
+map-equality qualifier. The witness statement must not introduce a
+theorem-dependent premise or name the tagged theorem in its header; its proof
+body may reuse the tagged theorem's established proof, as here
+(`rw [resVarFEMPTYExact]`). -/
+theorem holFmapAsFiniteSupportEqualityWitness_resVarFEMPTYExact {α β : Type} [DecidableEq α]
+    (n : α) (k : α) :
+    (HolFiniteMapExact.resVarEq (HolFiniteMapExact.empty : HolFiniteMapExact α β) (n, none)).lookup k =
+      (HolFiniteMapExact.empty : HolFiniteMapExact α β).lookup k := by
+  rw [resVarFEMPTYExact]
+
 end Flapjack.PanGlobalsStateRelationLocals

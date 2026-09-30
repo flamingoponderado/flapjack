@@ -1,5 +1,28 @@
 # Original Pancake HOL probes
 
+`pan_globals_block_alignment_probe.out` records eight original
+`alignmentTheory` observations for 32/64-bit block-address subtraction:
+ordinary, wrapped, zero, and unaligned addresses. The kernel replay is
+`Flapjack.Test.PanGlobalsBlockAlignmentParity`. The supporting theorem is
+untagged synthesized GlobalAssign proof infrastructure at the dimensions
+already required by `state_rel`; it does not claim a generic external
+`byte_aligned_add` port. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=pan_globals_block_alignment_probeScript.sml
+scripts/hol-probes/regenerate.sh`. The runner reads original
+`HOL/src/n-bit/alignmentScript.sml` and loads the standard CakeML preamble.
+
+`stacksem_loc_value_probe.out` records six original LocValue observations from
+`stackSem$evaluate`961-964: zero-offset code membership, missing code, nonzero
+return and handler labels, absent return continuation, and a disabled stack.
+The probe proves the nonzero label predicates in HOL, then uses those proofs
+to reduce the original evaluator. Its code is typed at the actual state word
+dimension (`8 stackLang$prog`). `Flapjack.Test.StackSemLocValueParity` proves
+the corresponding predicates and replays the state observations in Lean.
+Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_loc_value_probeScript.sml
+scripts/hol-probes/regenerate.sh`. Total evaluator assembly remains open.
+
 `stacksem_dynamic_stack_probe.out` captures twenty original `stackSem$evaluate`
 observations for StackLoadAny and StackStoreAny (evaluate_def978-1007): disabled
 operations, missing and Loc offsets, exact bounds, unaligned Words, nonzero

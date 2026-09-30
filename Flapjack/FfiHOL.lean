@@ -197,6 +197,36 @@ theorem callFFIHOL_ret {σ : Type u} (state : HolFfiState σ) (name : HolFfiName
   unfold callFFIHOL
   rw [if_neg hne, h]
 
+/-- Flapjack-only helper used to prove the canonical tagged port
+`Flapjack.Compiler.Backend.StackRemove.callFFILengthHOL` (HOL `call_FFI_LENGTH`).
+The tagged theorem is a direct wrapper around this helper, not its premise:
+a returning (non-final) `callFFIHOL` preserves
+    the byte-list length.  On the identity call it returns the input bytes; on
+    any other call the returning branch is guarded by `nextBytes.length = bytes.length`.
+    Used to feed `stateRelWriteBytearrayHOL` in the `ExtCall` `compile_correct` case. -/
+theorem callFFIHOL_ret_length {σ : Type u} (state : HolFfiState σ) (name : HolFfiName)
+    (configuration bytes nextBytes : List (BitVec 8)) (nextState : HolFfiState σ)
+    (h : callFFIHOL state name configuration bytes = .ret nextState nextBytes) :
+    nextBytes.length = bytes.length := by
+  unfold callFFIHOL at h
+  by_cases hid : name = .extCall (Flapjack.Basis.Pure.MlString.MlString.implode [])
+  · rw [if_pos hid] at h
+    injection h with _ hbytes
+    rw [← hbytes]
+  · rw [if_neg hid] at h
+    cases hor : state.oracle name state.ffiState configuration bytes with
+    | ret ns nb =>
+        simp only [hor] at h
+        by_cases hl : nb.length = bytes.length
+        · rw [if_pos hl] at h
+          injection h with _ hb
+          rw [← hb]; exact hl
+        · rw [if_neg hl] at h
+          exact absurd h (by simp)
+    | final outcome =>
+        simp only [hor] at h
+        exact absurd h (by simp)
+
 /-- Flapjack-specific call lemma (no standalone HOL declaration): when a
     successful non-identity FFI call leaves the observable event log
     unchanged, it also leaves the complete FFI state unchanged. A successful
