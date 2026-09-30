@@ -31200,6 +31200,69 @@
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanGlobalsContextExact toBroad/ofBroad roundtrip; it supports PanGlobalsContextExact.globals named by the state_rel_write_bytearray tag."
 },
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/AssignLocal.lean",
+  "lean_name": "compileCorrect_AssignLocal",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "compile_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "PanSemStateFiniteExact.locals",
+    "PanSemStateFiniteExact.globals",
+    "PanSemStateFiniteExact.code",
+    "PanSemStateFiniteExact.eshapes",
+    "PanGlobalsContextExact.globals"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source comparison2026-09-30 HOL gen_goal172-182/compile_correct186/Assign535-596: genuine Local VarKind branch, original forall source/name/expression/result/context/target/post. Only state_rel T plus source evaluation plus nonError conjunction; existential compiled target evaluation and full post state_rel(good_res res). Exact compileProg local clause retains name and compiles expression; accepted full compileExpCorrectHOL derives target initializer; original local-map equality derives same validity test; paired update preserves local equality and every nonlocal relation conjunct. No successful expression, old-binding validity, target eval, locals relation or nil-struct extra premise. Global Assign memory branch/Primitive/Dec/full theorem remain open. Two same-module genuine canonical carrier witnesses, exact MlS/expression/value carriers, positive width/universe0 FFI; proof-only. Coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/AssignLocal.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only canonical state/context roundtrip and paired local-update algebra supporting the genuine Assign Local case; no separate HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/AssignLocal.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only canonical state/context roundtrip and paired local-update algebra supporting the genuine Assign Local case; no separate HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/AssignLocal.lean",
+  "lean_name": "stateRelLocalUpdate",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only canonical state/context roundtrip and paired local-update algebra supporting the genuine Assign Local case; no separate HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/CallNoHandler.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack canonical finite-state roundtrip re-export; no standalone HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/CallNoHandler.lean",
+  "lean_name": "evaluateUnchangedLocal_CallNoHandler",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_unchanged_local",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-c source comparison2026-09-30 (.32.5.5): genuine non-tail Call SOME(target,NONE) case of evaluate_unchanged_local1104-1137; original nonfree/run/good_res/non-Error premises and unused value binder retained, exact lookup equality conclusion. panSem657-702 callee args/lookup/clock/return/error/exception clauses literal. Original good_res/non-Error excludes every result except successful normal non-tail return. Caller locals restored; local destination inequality derived from free_var_ids, update lookup preserves fresh key; global destination preserves locals. No callee IH, extra premise or executable change. Canonical four finite maps/roundtrip, exact MlS and positive width indexed carriers/universe0 FFI. Coordinator review pending; full parent still open."
+},
     {
       "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Dec.lean",
       "lean_name": "compileCorrect_Dec",

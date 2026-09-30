@@ -1,0 +1,12 @@
+size_disabled=(SOME Error,SOME (Word 1w),NONE,[Word 11w; Loc 3 4],5,17,Word 23w,[13w; 29w])
+size_success=(NONE,SOME (Word 8w),NONE,[Word 11w; Loc 3 4],1,17,Word 23w,[13w; 29w])
+size_boundary=(SOME Error,NONE,NONE,[],5,17,Word 23w,[13w; 29w])
+size_loc=(SOME Error,SOME (Loc 3 4),NONE,[Word 11w; Loc 3 4],5,17,Word 23w,[13w; 29w])
+size_missing=(SOME Error,NONE,NONE,[Word 11w; Loc 3 4],5,17,Word 23w,[13w; 29w])
+bitmap_disabled=(SOME Error,NONE,SOME (Word 1w),[Word 11w; Loc 3 4],5,17,Word 23w,[13w; 29w])
+bitmap_success=(NONE,SOME (Word 29w),SOME (Word 1w),[Word 11w; Loc 3 4],5,17,Word 23w,
+ [13w; 29w])
+bitmap_boundary=(SOME Error,NONE,SOME (Word 2w),[Word 11w; Loc 3 4],5,17,Word 23w,[13w; 29w])
+bitmap_loc=(SOME Error,NONE,SOME (Loc 3 4),[Word 11w; Loc 3 4],5,17,Word 23w,[13w; 29w])
+bitmap_missing=(SOME Error,NONE,NONE,[Word 11w; Loc 3 4],5,17,Word 23w,[13w; 29w])
+bitmap_alias=(SOME Error,NONE,SOME (Word 1w),[Word 11w; Loc 3 4],5,17,Word 23w,[13w; 29w])
