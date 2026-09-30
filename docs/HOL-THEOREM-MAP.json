@@ -32129,5 +32129,29 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only source-derived GlobalAssign alignment infrastructure (bead28.6.1). Original Assign559-568 combines external alignment byte_aligned_add/aligned_add_sub_cor; no single CakeML declaration has this synthesized statement. Uses actual original state_rel goodDimindex32/64 and byte-align fixed points; no generic external alignment port or extra compiler assumption claimed. Kernel arithmetic includes modular underflow; state relation corollary derives block alignment and context lookup internally. External HOL8rows independently captured and kernel replayed; coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/GlobalUpdateSupport.lean",
+    "lean_name": "lookupSupport_update",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only synthesized structural prerequisite for original Global Assign575-590 (bead28.6.2), no single HOL declaration. Existing-key replacement preserves lookup support, so original disjoint_globals is preserved for arbitrary values. Same-shape update reuses exact evaluator globalsShapes theorem. No scalar restriction, alternate relation, or target-evaluation premise. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/GlobalUpdateSupport.lean",
+    "lean_name": "disjointGlobals_update",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only synthesized structural prerequisite for original Global Assign575-590 (bead28.6.2), no single HOL declaration. Existing-key replacement preserves lookup support, so original disjoint_globals is preserved for arbitrary values. Same-shape update reuses exact evaluator globalsShapes theorem. No scalar restriction, alternate relation, or target-evaluation premise. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/GlobalUpdateSupport.lean",
+    "lean_name": "globalUpdate_invariants",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only synthesized structural prerequisite for original Global Assign575-590 (bead28.6.2), no single HOL declaration. Existing-key replacement preserves lookup support, so original disjoint_globals is preserved for arbitrary values. Same-shape update reuses exact evaluator globalsShapes theorem. No scalar restriction, alternate relation, or target-evaluation premise. Coordinator review pending."
   }
 ]
