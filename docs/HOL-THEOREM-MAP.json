@@ -25366,5 +25366,47 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-pxn.18.5.9.1.1): HOL evaluate_add_clock (wordPropsScript.sml:1383-1386): ∀p s r s'. evaluate (p,s) = (r,s') ∧ r ≠ SOME TimeOut ⇒ evaluate (p,s with clock := s.clock + extra) = (r,s' with clock := s'.clock + extra). HOL's free variable extra is the outermost explicit binder; p s r s', the conjunctive premise and the conclusion are as in HOL, over the tagged exact wordSem evaluate and WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness WordSemEvaluateAddClockSupport.holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). No extra premise. Proof follows HOL's recInduct evaluate_ind: untagged evaluate_add_clock_aux recurses on HOL's termination measure (termdep, clock, size); Tick/MustTerminate/Seq/If/Loop/Call are handled by their evaluate_def clauses, with a zero clock excluded by the non-TimeOut premise, and every other constructor by the untagged clock-constancy lemmas (HOL's CONST lemmas, evaluate_clock_const). Kernel-checked."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "strong_locals_rel_set_vars_dom",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/Updates.lean",
+    "lean_name": "strongLocalsRelSetVarsDom",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-g56n: compared word_allocProof865-890 and906-920. HOL INJ f X UNIV is injection restricted to X (UNIV output membership tautological), source locals domain subset X and set ns subset X are predicate implications. The list theorem retains original LENGTH ns = LENGTH ls even though internal exact alist-insert induction proves a stronger helper. The single theorem retains X n. Original strong_locals_rel live set d and post-update relation are unchanged. Exact alist_insert is head insertion after tail, preserving first occurrence on duplicate names; proof propagates domain containment and applies scoped lookup injection at each update. Actual imported exact WordSem state, canonical fpRegs/store map witness, positive BitVec/NeZero widths. No global injection, target evaluation, or stronger live-domain premise. These are allocation update prerequisites, not full allocator simulation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "strong_locals_rel_set_var_dom",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/Updates.lean",
+    "lean_name": "strongLocalsRelSetVarDom",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-g56n: compared word_allocProof865-890 and906-920. HOL INJ f X UNIV is injection restricted to X (UNIV output membership tautological), source locals domain subset X and set ns subset X are predicate implications. The list theorem retains original LENGTH ns = LENGTH ls even though internal exact alist-insert induction proves a stronger helper. The single theorem retains X n. Original strong_locals_rel live set d and post-update relation are unchanged. Exact alist_insert is head insertion after tail, preserving first occurrence on duplicate names; proof propagates domain containment and applies scoped lookup injection at each update. Actual imported exact WordSem state, canonical fpRegs/store map witness, positive BitVec/NeZero widths. No global injection, target evaluation, or stronger live-domain premise. These are allocation update prerequisites, not full allocator simulation."
+  },
+  {
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "lookup_union",
+    "lean_path": "Flapjack/Misc/Sptree.lean",
+    "lean_name": "sptLookup_sptUnion",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-r7ou: pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae src/finite_maps/sptreeScript.sml:261. Original universal m1 m2 k order, generic payload, exact lookup of left-biased union, original NONE/SOME case equation. Compared Spt LN/LS/BN/BS payloads and numeric lookup branches against pinned source; no assumptions or carrier qualifiers added. Kernel checked, prerequisite to allocation live sets only."
+  },
+  {
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "domain_union",
+    "lean_path": "Flapjack/Misc/Sptree.lean",
+    "lean_name": "sptDomain_sptUnion",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-r7ou: pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae src/finite_maps/sptreeScript.sml:643. Full characteristic-predicate set equality, not merely pointwise membership. Generic payload and both tree parameters retained; membership helper is untagged infrastructure. Compared Spt LN/LS/BN/BS payloads and numeric lookup branches against pinned source; no assumptions or carrier qualifiers added. Kernel checked, prerequisite to allocation live sets only."
   }
 ]
