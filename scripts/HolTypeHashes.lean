@@ -1,5 +1,6 @@
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallHandlerNoDestination
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallNoDestination
+import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallLocal
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.TailCall
 import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.Assemble
 import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.AssignPrimitive
