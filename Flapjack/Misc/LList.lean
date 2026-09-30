@@ -1,5 +1,3 @@
-import Flapjack.HolRef
-
 /-!
 # HOL `llist` (possibly infinite lists)
 

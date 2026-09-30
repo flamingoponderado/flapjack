@@ -151,6 +151,31 @@ mutual
     | (exception, body) => 1 + (exception.toNat + crepProgSizeHOL f body)
 end
 
+/-! Flapjack-only independence witnesses for the generated size family. The
+HOL datatype equations never apply their index-size parameter. These lemmas
+compare arbitrary parameter domains; they do not authorize replacing HOL's
+bare word-index carrier or omitting a quantified binder in a tagged theorem.
+The faithful translation review remains tracked by bead .18.5.5.50. -/
+mutual
+ theorem crepExpSizeHOL_parameter_independent {width : Nat} [NeZero width] {α β : Type} (f : α → Nat) (g : β → Nat) (e : CrepExpHOL width) : crepExpSizeHOL f e = crepExpSizeHOL g e := by
+  cases e <;> simp only [crepExpSizeHOL, crepExpSizeHOL_parameter_independent f g, crepExp1SizeHOL_parameter_independent f g]
+ theorem crepExp1SizeHOL_parameter_independent {width : Nat} [NeZero width] {α β : Type} (f : α → Nat) (g : β → Nat) (es : List (CrepExpHOL width)) : crepExp1SizeHOL f es = crepExp1SizeHOL g es := by
+  cases es <;> simp only [crepExp1SizeHOL, crepExpSizeHOL_parameter_independent f g, crepExp1SizeHOL_parameter_independent f g]
+end
+mutual
+ theorem crepProgSizeHOL_parameter_independent {width : Nat} [NeZero width] {α β : Type} (f : α → Nat) (g : β → Nat) (p : CrepProgHOL width) : crepProgSizeHOL f p = crepProgSizeHOL g p := by
+  have he : crepExpSizeHOL (width := width) f = crepExpSizeHOL (width := width) g := funext (crepExpSizeHOL_parameter_independent f g)
+  cases p <;> simp only [crepProgSizeHOL, he, crepProgSizeHOL_parameter_independent f g, crepProg1SizeHOL_parameter_independent f g]
+ theorem crepProg1SizeHOL_parameter_independent {width : Nat} [NeZero width] {α β : Type} (f : α → Nat) (g : β → Nat) (p : Option (List Nat × Option (BitVec width × CrepProgHOL width))) : crepProg1SizeHOL f p = crepProg1SizeHOL g p := by
+  cases p <;> simp only [crepProg1SizeHOL, crepProg2SizeHOL_parameter_independent f g]
+ theorem crepProg2SizeHOL_parameter_independent {width : Nat} [NeZero width] {α β : Type} (f : α → Nat) (g : β → Nat) (p : List Nat × Option (BitVec width × CrepProgHOL width)) : crepProg2SizeHOL f p = crepProg2SizeHOL g p := by
+  cases p <;> simp only [crepProg2SizeHOL, crepProg3SizeHOL_parameter_independent f g]
+ theorem crepProg3SizeHOL_parameter_independent {width : Nat} [NeZero width] {α β : Type} (f : α → Nat) (g : β → Nat) (p : Option (BitVec width × CrepProgHOL width)) : crepProg3SizeHOL f p = crepProg3SizeHOL g p := by
+  cases p <;> simp only [crepProg3SizeHOL, crepProg4SizeHOL_parameter_independent f g]
+ theorem crepProg4SizeHOL_parameter_independent {width : Nat} [NeZero width] {α β : Type} (f : α → Nat) (g : β → Nat) (p : BitVec width × CrepProgHOL width) : crepProg4SizeHOL f p = crepProg4SizeHOL g p := by
+  cases p <;> simp only [crepProg4SizeHOL, crepProgSizeHOL_parameter_independent f g]
+end
+
 end CrepLangGeneratedSize
 
 end Flapjack

@@ -28052,47 +28052,47 @@
     "reviewer": "Flapjack-specific canonical carrier roundtrip re-export; no independent HOL original."
   },
   {
-    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-    "hol_name": "evaluate_locals_same_fdom",
-    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/Structural.lean",
-    "lean_name": "evaluateLocalsSameFdomSeqExact",
-    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support_relation": [
-      "CrepSemHOLState.locals",
-      "CrepSemHOLState.globals",
-      "CrepSemHOLState.code"
-    ],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol source repair0sl5 compared original crep_inlineProof181-191/206-230 and literal crepSem evaluate_ind structural clauses: fixed source state retained, no universally generalized source-state IH. Seq first IH at s, second guarded by (res,s1)=evaluate(first,s) and res=NONE at actual s1; If single quantified value/word IH guarded by original expression evaluation and value=Word w at selected branch/fixed s; Dec value-guarded body IH at original set_var state. Original source evaluation/continuing result/domain equality and canonical-map/positive-width/Type0 qualifiers unchanged. Full assembly supplies these exact IHs through private genuine recursion; full theorem/corollary pinned types preserved. Replaces earlier generalized case-shape claim. Coordinator review pending."
-  },
+  "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+  "hol_name": "evaluate_locals_same_fdom",
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/Structural.lean",
+  "lean_name": "evaluateLocalsSameFdomSeqExact",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "CrepSemHOLState.locals",
+    "CrepSemHOLState.globals",
+    "CrepSemHOLState.code"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol source repair0sl5 compared original crep_inlineProof181-191/206-230 and literal crepSem evaluate_ind structural clauses: fixed source state retained, no universally generalized source-state IH. Seq first IH at s, second guarded by (res,s1)=evaluate(first,s) and res=NONE at actual s1; If single quantified value/word IH guarded by original expression evaluation and value=Word w at selected branch/fixed s; Dec value-guarded body IH at original set_var state. Original source evaluation/continuing result/domain equality and canonical-map/positive-width/Type0 qualifiers unchanged. Full assembly supplies these exact IHs through private genuine recursion; full theorem/corollary pinned types preserved. Replaces earlier generalized case-shape claim. Coordinator source acceptance evidence: closed source-review bead/integration 0sl5/db272/0dfc66765; original statement and repaired IHs reviewed, kernel and full unified build/test/refs/map/type locks/warnings passed."
+},
   {
-    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-    "hol_name": "evaluate_locals_same_fdom",
-    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/Structural.lean",
-    "lean_name": "evaluateLocalsSameFdomIfExact",
-    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support_relation": [
-      "CrepSemHOLState.locals",
-      "CrepSemHOLState.globals",
-      "CrepSemHOLState.code"
-    ],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol source repair0sl5 compared original crep_inlineProof181-191/206-230 and literal crepSem evaluate_ind structural clauses: fixed source state retained, no universally generalized source-state IH. Seq first IH at s, second guarded by (res,s1)=evaluate(first,s) and res=NONE at actual s1; If single quantified value/word IH guarded by original expression evaluation and value=Word w at selected branch/fixed s; Dec value-guarded body IH at original set_var state. Original source evaluation/continuing result/domain equality and canonical-map/positive-width/Type0 qualifiers unchanged. Full assembly supplies these exact IHs through private genuine recursion; full theorem/corollary pinned types preserved. Replaces earlier generalized case-shape claim. Coordinator review pending."
-  },
+  "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+  "hol_name": "evaluate_locals_same_fdom",
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/Structural.lean",
+  "lean_name": "evaluateLocalsSameFdomIfExact",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "CrepSemHOLState.locals",
+    "CrepSemHOLState.globals",
+    "CrepSemHOLState.code"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol source repair0sl5 compared original crep_inlineProof181-191/206-230 and literal crepSem evaluate_ind structural clauses: fixed source state retained, no universally generalized source-state IH. Seq first IH at s, second guarded by (res,s1)=evaluate(first,s) and res=NONE at actual s1; If single quantified value/word IH guarded by original expression evaluation and value=Word w at selected branch/fixed s; Dec value-guarded body IH at original set_var state. Original source evaluation/continuing result/domain equality and canonical-map/positive-width/Type0 qualifiers unchanged. Full assembly supplies these exact IHs through private genuine recursion; full theorem/corollary pinned types preserved. Replaces earlier generalized case-shape claim. Coordinator source acceptance evidence: closed source-review bead/integration 0sl5/db272/0dfc66765; original statement and repaired IHs reviewed, kernel and full unified build/test/refs/map/type locks/warnings passed."
+},
   {
-    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-    "hol_name": "evaluate_locals_same_fdom",
-    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/Structural.lean",
-    "lean_name": "evaluateLocalsSameFdomDecExact",
-    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support_relation": [
-      "CrepSemHOLState.locals",
-      "CrepSemHOLState.globals",
-      "CrepSemHOLState.code"
-    ],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol source repair0sl5 compared original crep_inlineProof181-191/206-230 and literal crepSem evaluate_ind structural clauses: fixed source state retained, no universally generalized source-state IH. Seq first IH at s, second guarded by (res,s1)=evaluate(first,s) and res=NONE at actual s1; If single quantified value/word IH guarded by original expression evaluation and value=Word w at selected branch/fixed s; Dec value-guarded body IH at original set_var state. Original source evaluation/continuing result/domain equality and canonical-map/positive-width/Type0 qualifiers unchanged. Full assembly supplies these exact IHs through private genuine recursion; full theorem/corollary pinned types preserved. Replaces earlier generalized case-shape claim. Coordinator review pending."
-  },
+  "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+  "hol_name": "evaluate_locals_same_fdom",
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/Structural.lean",
+  "lean_name": "evaluateLocalsSameFdomDecExact",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "CrepSemHOLState.locals",
+    "CrepSemHOLState.globals",
+    "CrepSemHOLState.code"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol source repair0sl5 compared original crep_inlineProof181-191/206-230 and literal crepSem evaluate_ind structural clauses: fixed source state retained, no universally generalized source-state IH. Seq first IH at s, second guarded by (res,s1)=evaluate(first,s) and res=NONE at actual s1; If single quantified value/word IH guarded by original expression evaluation and value=Word w at selected branch/fixed s; Dec value-guarded body IH at original set_var state. Original source evaluation/continuing result/domain equality and canonical-map/positive-width/Type0 qualifiers unchanged. Full assembly supplies these exact IHs through private genuine recursion; full theorem/corollary pinned types preserved. Replaces earlier generalized case-shape claim. Coordinator source acceptance evidence: closed source-review bead/integration 0sl5/db272/0dfc66765; original statement and repaired IHs reviewed, kernel and full unified build/test/refs/map/type locks/warnings passed."
+},
   {
     "hol_path": null,
     "hol_name": null,
@@ -32134,7 +32134,7 @@
     "CrepSemHOLState.code"
   ],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.7) compared crep_inlineProofScript.sml:181-260: the full theorem forall p s r s'. evaluate (p,s) = (r,s') /\\ (case r of NONE => T | SOME (Continue n) => T | SOME (Break n) => T | _ => F) = T ==> FDOM s.locals = FDOM s'.locals, same binders, no extra premise; the case expression as the displayed match proposition and FDOM equality as crepHolFdom equality of the finite-support lookups (as in the tagged case theorems). Assembled from the integrated tagged constructor cases (trivial/memory/Assign atoms, Primitive, ExtCall, ShMem, Seq/If/Dec, While, Call); Return is discharged directly (its results fail the condition). All IHs are discharged internally: structural recursion on the program for all states, and an inner clock induction supplying exactly the guarded WhileDomainIH premises of evaluate_ind. Coordinator source review pending."
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.7) compared crep_inlineProofScript.sml:181-260: the full theorem forall p s r s'. evaluate (p,s) = (r,s') /\\ (case r of NONE => T | SOME (Continue n) => T | SOME (Break n) => T | _ => F) = T ==> FDOM s.locals = FDOM s'.locals, same binders, no extra premise; the case expression as the displayed match proposition and FDOM equality as crepHolFdom equality of the finite-support lookups (as in the tagged case theorems). Assembled from the integrated tagged constructor cases (trivial/memory/Assign atoms, Primitive, ExtCall, ShMem, Seq/If/Dec, While, Call); Return is discharged directly (its results fail the condition). All IHs are discharged internally: structural recursion on the program for all states, and an inner clock induction supplying exactly the guarded WhileDomainIH premises of evaluate_ind. Coordinator source acceptance evidence: closed .43.7, unified85d8f1068; structural IH repair0sl5 preserves full theorem types; kernel/full unified gates passed."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/Assembly.lean",
@@ -32148,7 +32148,7 @@
     "CrepSemHOLState.code"
   ],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.7) compared crep_inlineProofScript.sml:262-270: forall p s r s'. evaluate (p,s) = (r,s') /\\ (r = NONE \\/ (exists n. r = SOME (Break n)) \\/ (exists n. r = SOME (Continue n))) ==> FDOM s.locals = FDOM s'.locals; same binders and disjunction, no extra premise; proved from evaluate_locals_same_fdom as in HOL. Coordinator source review pending."
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.7) compared crep_inlineProofScript.sml:262-270: forall p s r s'. evaluate (p,s) = (r,s') /\\ (r = NONE \\/ (exists n. r = SOME (Break n)) \\/ (exists n. r = SOME (Continue n))) ==> FDOM s.locals = FDOM s'.locals; same binders and disjunction, no extra premise; proved from evaluate_locals_same_fdom as in HOL. Coordinator source acceptance evidence: closed .43.7, unified85d8f1068; structural IH repair0sl5 preserves full theorem types; kernel/full unified gates passed."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/Assembly.lean",
@@ -32743,7 +32743,7 @@
     "code"
   ],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.2.1): HOL transform_eoc_correct (crep_inlineProofScript.sml:1893-1913): forall p s r s' res rts. evaluate (p,s) = (r,s') /\\ unreach_elim p = (p,res) /\\ not_branch_ret p /\\ (!retvs. r = SOME (Return retvs) ==> LENGTH rts = LENGTH retvs) /\\ (!x. MEM x rts ==> ~MEM x (var_prog p)) /\\ (exists z. OPT_MMAP (FLOOKUP s.locals) rts = SOME z) /\\ ALL_DISTINCT rts /\\ r <> SOME Error ==> exists r1 s1'. evaluate (transform_eoc rts p, s) = (r1,s1') /\\ state_rel s' s1' /\\ case r of NONE => r1 = NONE /\\ locals_strong_rel s' s1' | SOME (Break n) => ... | SOME (Continue n) => ... | SOME (Return retvs) => r1 = NONE /\\ OPT_MMAP (FLOOKUP s1'.locals) rts = SOME retvs | SOME Error => F | res => r1 = res; the statement is instantiated at p = each program left unchanged by transform_eoc (Skip, Assign, Primitive, Store, Store32, StoreByte, StoreGlob, Break, Continue, Raise, Tick, ExtCall, ShMem; the final rw of HOL's proof), stated through a constructor disjunction as for the accepted evaluate_locals_same_fdom atom cases; no IH; Return excluded by the tagged not_has_return_not_evaluate_return with HOL's quantifiers, hypotheses and full case conclusion written out; the only extra hypotheses are the evaluate_ind motive (untagged transformEocGoal) for sub-programs at every state. Exact tagged evaluator/unreach_elim/not_branch_ret/var_prog/transform_eoc/state_rel/locals_strong_rel over CrepSemHOLState; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.2.1): HOL transform_eoc_correct (crep_inlineProofScript.sml:1893-1913): forall p s r s' res rts. evaluate (p,s) = (r,s') /\\ unreach_elim p = (p,res) /\\ not_branch_ret p /\\ (!retvs. r = SOME (Return retvs) ==> LENGTH rts = LENGTH retvs) /\\ (!x. MEM x rts ==> ~MEM x (var_prog p)) /\\ (exists z. OPT_MMAP (FLOOKUP s.locals) rts = SOME z) /\\ ALL_DISTINCT rts /\\ r <> SOME Error ==> exists r1 s1'. evaluate (transform_eoc rts p, s) = (r1,s1') /\\ state_rel s' s1' /\\ case r of NONE => r1 = NONE /\\ locals_strong_rel s' s1' | SOME (Break n) => ... | SOME (Continue n) => ... | SOME (Return retvs) => r1 = NONE /\\ OPT_MMAP (FLOOKUP s1'.locals) rts = SOME retvs | SOME Error => F | res => r1 = res; the statement is instantiated at p = each program left unchanged by transform_eoc (Skip, Assign, Primitive, Store, Store32, StoreByte, StoreGlob, Break, Continue, Raise, Tick, ExtCall, ShMem; the final rw of HOL's proof), stated through a constructor disjunction as for the accepted evaluate_locals_same_fdom atom cases; no IH; Return excluded by the tagged not_has_return_not_evaluate_return with HOL's quantifiers, hypotheses and full case conclusion written out; the only extra hypotheses are the evaluate_ind motive (untagged transformEocGoal) for sub-programs at every state. Exact tagged evaluator/unreach_elim/not_branch_ret/var_prog/transform_eoc/state_rel/locals_strong_rel over CrepSemHOLState; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source acceptance evidence: closed .47.2.4, unified4b50eea8a; Call IH review repair .47.5 unified7ca4d782e; kernel/full unified gates passed."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/Cases.lean",
@@ -32757,7 +32757,7 @@
     "code"
   ],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.2.1): HOL transform_eoc_correct (crep_inlineProofScript.sml:1893-1913): forall p s r s' res rts. evaluate (p,s) = (r,s') /\\ unreach_elim p = (p,res) /\\ not_branch_ret p /\\ (!retvs. r = SOME (Return retvs) ==> LENGTH rts = LENGTH retvs) /\\ (!x. MEM x rts ==> ~MEM x (var_prog p)) /\\ (exists z. OPT_MMAP (FLOOKUP s.locals) rts = SOME z) /\\ ALL_DISTINCT rts /\\ r <> SOME Error ==> exists r1 s1'. evaluate (transform_eoc rts p, s) = (r1,s1') /\\ state_rel s' s1' /\\ case r of NONE => r1 = NONE /\\ locals_strong_rel s' s1' | SOME (Break n) => ... | SOME (Continue n) => ... | SOME (Return retvs) => r1 = NONE /\\ OPT_MMAP (FLOOKUP s1'.locals) rts = SOME retvs | SOME Error => F | res => r1 = res; the statement is instantiated at p = Return es (HOL :1966-1970, evaluate_nested_seq_assign); no IH with HOL's quantifiers, hypotheses and full case conclusion written out; the only extra hypotheses are the evaluate_ind motive (untagged transformEocGoal) for sub-programs at every state. Exact tagged evaluator/unreach_elim/not_branch_ret/var_prog/transform_eoc/state_rel/locals_strong_rel over CrepSemHOLState; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.2.1): HOL transform_eoc_correct (crep_inlineProofScript.sml:1893-1913): forall p s r s' res rts. evaluate (p,s) = (r,s') /\\ unreach_elim p = (p,res) /\\ not_branch_ret p /\\ (!retvs. r = SOME (Return retvs) ==> LENGTH rts = LENGTH retvs) /\\ (!x. MEM x rts ==> ~MEM x (var_prog p)) /\\ (exists z. OPT_MMAP (FLOOKUP s.locals) rts = SOME z) /\\ ALL_DISTINCT rts /\\ r <> SOME Error ==> exists r1 s1'. evaluate (transform_eoc rts p, s) = (r1,s1') /\\ state_rel s' s1' /\\ case r of NONE => r1 = NONE /\\ locals_strong_rel s' s1' | SOME (Break n) => ... | SOME (Continue n) => ... | SOME (Return retvs) => r1 = NONE /\\ OPT_MMAP (FLOOKUP s1'.locals) rts = SOME retvs | SOME Error => F | res => r1 = res; the statement is instantiated at p = Return es (HOL :1966-1970, evaluate_nested_seq_assign); no IH with HOL's quantifiers, hypotheses and full case conclusion written out; the only extra hypotheses are the evaluate_ind motive (untagged transformEocGoal) for sub-programs at every state. Exact tagged evaluator/unreach_elim/not_branch_ret/var_prog/transform_eoc/state_rel/locals_strong_rel over CrepSemHOLState; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source acceptance evidence: closed .47.2.4, unified4b50eea8a; Call IH review repair .47.5 unified7ca4d782e; kernel/full unified gates passed."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/Cases.lean",
@@ -32771,7 +32771,7 @@
     "code"
   ],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.2.1): HOL transform_eoc_correct (crep_inlineProofScript.sml:1893-1913): forall p s r s' res rts. evaluate (p,s) = (r,s') /\\ unreach_elim p = (p,res) /\\ not_branch_ret p /\\ (!retvs. r = SOME (Return retvs) ==> LENGTH rts = LENGTH retvs) /\\ (!x. MEM x rts ==> ~MEM x (var_prog p)) /\\ (exists z. OPT_MMAP (FLOOKUP s.locals) rts = SOME z) /\\ ALL_DISTINCT rts /\\ r <> SOME Error ==> exists r1 s1'. evaluate (transform_eoc rts p, s) = (r1,s1') /\\ state_rel s' s1' /\\ case r of NONE => r1 = NONE /\\ locals_strong_rel s' s1' | SOME (Break n) => ... | SOME (Continue n) => ... | SOME (Return retvs) => r1 = NONE /\\ OPT_MMAP (FLOOKUP s1'.locals) rts = SOME retvs | SOME Error => F | res => r1 = res; the statement is instantiated at p = Dec v e body (HOL :1919-1934), IH for body with HOL's quantifiers, hypotheses and full case conclusion written out; the only extra hypotheses are HOL's literal guarded evaluate_ind premises for this constructor at the motive (untagged transformEocGoal): IH exactly HOL evaluate_ind's guarded Dec premise: forall value. eval s e = SOME value ==> P (prog, set_var v value s) (tagged evaluate_ind line-440 spelling with crepExactEvalExpClassical and CrepSemHOLState.setVar) (repaired after coordinator source review of d900f26bf). Exact tagged evaluator/unreach_elim/not_branch_ret/var_prog/transform_eoc/state_rel/locals_strong_rel over CrepSemHOLState; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.2.1): HOL transform_eoc_correct (crep_inlineProofScript.sml:1893-1913): forall p s r s' res rts. evaluate (p,s) = (r,s') /\\ unreach_elim p = (p,res) /\\ not_branch_ret p /\\ (!retvs. r = SOME (Return retvs) ==> LENGTH rts = LENGTH retvs) /\\ (!x. MEM x rts ==> ~MEM x (var_prog p)) /\\ (exists z. OPT_MMAP (FLOOKUP s.locals) rts = SOME z) /\\ ALL_DISTINCT rts /\\ r <> SOME Error ==> exists r1 s1'. evaluate (transform_eoc rts p, s) = (r1,s1') /\\ state_rel s' s1' /\\ case r of NONE => r1 = NONE /\\ locals_strong_rel s' s1' | SOME (Break n) => ... | SOME (Continue n) => ... | SOME (Return retvs) => r1 = NONE /\\ OPT_MMAP (FLOOKUP s1'.locals) rts = SOME retvs | SOME Error => F | res => r1 = res; the statement is instantiated at p = Dec v e body (HOL :1919-1934), IH for body with HOL's quantifiers, hypotheses and full case conclusion written out; the only extra hypotheses are HOL's literal guarded evaluate_ind premises for this constructor at the motive (untagged transformEocGoal): IH exactly HOL evaluate_ind's guarded Dec premise: forall value. eval s e = SOME value ==> P (prog, set_var v value s) (tagged evaluate_ind line-440 spelling with crepExactEvalExpClassical and CrepSemHOLState.setVar) (repaired after coordinator source review of d900f26bf). Exact tagged evaluator/unreach_elim/not_branch_ret/var_prog/transform_eoc/state_rel/locals_strong_rel over CrepSemHOLState; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source acceptance evidence: closed .47.2.4, unified4b50eea8a; Call IH review repair .47.5 unified7ca4d782e; kernel/full unified gates passed."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/Cases.lean",
@@ -32785,7 +32785,7 @@
     "code"
   ],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.2.1): HOL transform_eoc_correct (crep_inlineProofScript.sml:1893-1913): forall p s r s' res rts. evaluate (p,s) = (r,s') /\\ unreach_elim p = (p,res) /\\ not_branch_ret p /\\ (!retvs. r = SOME (Return retvs) ==> LENGTH rts = LENGTH retvs) /\\ (!x. MEM x rts ==> ~MEM x (var_prog p)) /\\ (exists z. OPT_MMAP (FLOOKUP s.locals) rts = SOME z) /\\ ALL_DISTINCT rts /\\ r <> SOME Error ==> exists r1 s1'. evaluate (transform_eoc rts p, s) = (r1,s1') /\\ state_rel s' s1' /\\ case r of NONE => r1 = NONE /\\ locals_strong_rel s' s1' | SOME (Break n) => ... | SOME (Continue n) => ... | SOME (Return retvs) => r1 = NONE /\\ OPT_MMAP (FLOOKUP s1'.locals) rts = SOME retvs | SOME Error => F | res => r1 = res; the statement is instantiated at p = If c c1 c2 (HOL :1936-1942), IHs for both branches; branch not_branch_ret from not_has_return_imp_not_branch_ret with HOL's quantifiers, hypotheses and full case conclusion written out; the only extra hypotheses are HOL's literal guarded evaluate_ind premises for this constructor at the motive (untagged transformEocGoal): IH exactly HOL evaluate_ind's guarded If premise: forall v1 w. eval s e = SOME v1 /\\ v1 = Word w ==> P (if w <> 0w then c1 else c2, s), at the fixed state s (repaired after coordinator source review of d900f26bf). Exact tagged evaluator/unreach_elim/not_branch_ret/var_prog/transform_eoc/state_rel/locals_strong_rel over CrepSemHOLState; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.2.1): HOL transform_eoc_correct (crep_inlineProofScript.sml:1893-1913): forall p s r s' res rts. evaluate (p,s) = (r,s') /\\ unreach_elim p = (p,res) /\\ not_branch_ret p /\\ (!retvs. r = SOME (Return retvs) ==> LENGTH rts = LENGTH retvs) /\\ (!x. MEM x rts ==> ~MEM x (var_prog p)) /\\ (exists z. OPT_MMAP (FLOOKUP s.locals) rts = SOME z) /\\ ALL_DISTINCT rts /\\ r <> SOME Error ==> exists r1 s1'. evaluate (transform_eoc rts p, s) = (r1,s1') /\\ state_rel s' s1' /\\ case r of NONE => r1 = NONE /\\ locals_strong_rel s' s1' | SOME (Break n) => ... | SOME (Continue n) => ... | SOME (Return retvs) => r1 = NONE /\\ OPT_MMAP (FLOOKUP s1'.locals) rts = SOME retvs | SOME Error => F | res => r1 = res; the statement is instantiated at p = If c c1 c2 (HOL :1936-1942), IHs for both branches; branch not_branch_ret from not_has_return_imp_not_branch_ret with HOL's quantifiers, hypotheses and full case conclusion written out; the only extra hypotheses are HOL's literal guarded evaluate_ind premises for this constructor at the motive (untagged transformEocGoal): IH exactly HOL evaluate_ind's guarded If premise: forall v1 w. eval s e = SOME v1 /\\ v1 = Word w ==> P (if w <> 0w then c1 else c2, s), at the fixed state s (repaired after coordinator source review of d900f26bf). Exact tagged evaluator/unreach_elim/not_branch_ret/var_prog/transform_eoc/state_rel/locals_strong_rel over CrepSemHOLState; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source acceptance evidence: closed .47.2.4, unified4b50eea8a; Call IH review repair .47.5 unified7ca4d782e; kernel/full unified gates passed."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/Cases.lean",
@@ -32799,7 +32799,7 @@
     "code"
   ],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.2.1): HOL transform_eoc_correct (crep_inlineProofScript.sml:1893-1913): forall p s r s' res rts. evaluate (p,s) = (r,s') /\\ unreach_elim p = (p,res) /\\ not_branch_ret p /\\ (!retvs. r = SOME (Return retvs) ==> LENGTH rts = LENGTH retvs) /\\ (!x. MEM x rts ==> ~MEM x (var_prog p)) /\\ (exists z. OPT_MMAP (FLOOKUP s.locals) rts = SOME z) /\\ ALL_DISTINCT rts /\\ r <> SOME Error ==> exists r1 s1'. evaluate (transform_eoc rts p, s) = (r1,s1') /\\ state_rel s' s1' /\\ case r of NONE => r1 = NONE /\\ locals_strong_rel s' s1' | SOME (Break n) => ... | SOME (Continue n) => ... | SOME (Return retvs) => r1 = NONE /\\ OPT_MMAP (FLOOKUP s1'.locals) rts = SOME retvs | SOME Error => F | res => r1 = res; the statement is instantiated at p = Seq c1 c2 (HOL :1944-1964), IHs for both components; the isSome branch is refuted by the untagged proven unreach_elim_prog_size (documented carrier mismatch .50), FDOM preservation by the assembled evaluate_locals_same_fdom', Return from c1 excluded by not_branch_ret_evaluate_return_unreach_elim with HOL's quantifiers, hypotheses and full case conclusion written out; the only extra hypotheses are HOL's literal guarded evaluate_ind premises for this constructor at the motive (untagged transformEocGoal): IHs exactly HOL evaluate_ind's Seq premises: (forall res s1. (res,s1) = evaluate (c1,s) /\\ res = NONE ==> P (c2,s1)) and P (c1,s) (repaired after coordinator source review of d900f26bf). Exact tagged evaluator/unreach_elim/not_branch_ret/var_prog/transform_eoc/state_rel/locals_strong_rel over CrepSemHOLState; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.2.1): HOL transform_eoc_correct (crep_inlineProofScript.sml:1893-1913): forall p s r s' res rts. evaluate (p,s) = (r,s') /\\ unreach_elim p = (p,res) /\\ not_branch_ret p /\\ (!retvs. r = SOME (Return retvs) ==> LENGTH rts = LENGTH retvs) /\\ (!x. MEM x rts ==> ~MEM x (var_prog p)) /\\ (exists z. OPT_MMAP (FLOOKUP s.locals) rts = SOME z) /\\ ALL_DISTINCT rts /\\ r <> SOME Error ==> exists r1 s1'. evaluate (transform_eoc rts p, s) = (r1,s1') /\\ state_rel s' s1' /\\ case r of NONE => r1 = NONE /\\ locals_strong_rel s' s1' | SOME (Break n) => ... | SOME (Continue n) => ... | SOME (Return retvs) => r1 = NONE /\\ OPT_MMAP (FLOOKUP s1'.locals) rts = SOME retvs | SOME Error => F | res => r1 = res; the statement is instantiated at p = Seq c1 c2 (HOL :1944-1964), IHs for both components; the isSome branch is refuted by the untagged proven unreach_elim_prog_size (documented carrier mismatch .50), FDOM preservation by the assembled evaluate_locals_same_fdom', Return from c1 excluded by not_branch_ret_evaluate_return_unreach_elim with HOL's quantifiers, hypotheses and full case conclusion written out; the only extra hypotheses are HOL's literal guarded evaluate_ind premises for this constructor at the motive (untagged transformEocGoal): IHs exactly HOL evaluate_ind's Seq premises: (forall res s1. (res,s1) = evaluate (c1,s) /\\ res = NONE ==> P (c2,s1)) and P (c1,s) (repaired after coordinator source review of d900f26bf). Exact tagged evaluator/unreach_elim/not_branch_ret/var_prog/transform_eoc/state_rel/locals_strong_rel over CrepSemHOLState; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source acceptance evidence: closed .47.2.4, unified4b50eea8a; Call IH review repair .47.5 unified7ca4d782e; kernel/full unified gates passed."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/Cases.lean",
@@ -32893,7 +32893,7 @@
     "code"
   ],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.2.2) compared crep_inlineProofScript.sml:1893-1913 (statement) and Resume transform_eoc_correct[While] :1979-2022: the HOL goal at p = While e c with all quantifiers, hypotheses and the full case conclusion written out; the only extra hypothesis is TransformEocWhileIH, exactly the three guarded evaluate_ind While premises (body at dec_clock when the guard is a nonzero word and the clock is nonzero; loop re-entry after NONE and after Continue 0), mirroring the accepted WhileDomainIH. Proof: timeout/zero-guard/error branches directly; body IH; NONE and Continue 0 re-enter via state equality from state_rel+locals_strong_rel and FDOM preservation (evaluate_locals_same_fdom'); Break 0 and nested labels via exit_loop; Return excluded by not_has_return_not_evaluate_return. Exact tagged carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.2.2) compared crep_inlineProofScript.sml:1893-1913 (statement) and Resume transform_eoc_correct[While] :1979-2022: the HOL goal at p = While e c with all quantifiers, hypotheses and the full case conclusion written out; the only extra hypothesis is TransformEocWhileIH, exactly the three guarded evaluate_ind While premises (body at dec_clock when the guard is a nonzero word and the clock is nonzero; loop re-entry after NONE and after Continue 0), mirroring the accepted WhileDomainIH. Proof: timeout/zero-guard/error branches directly; body IH; NONE and Continue 0 re-enter via state equality from state_rel+locals_strong_rel and FDOM preservation (evaluate_locals_same_fdom'); Break 0 and nested labels via exit_loop; Return excluded by not_has_return_not_evaluate_return. Exact tagged carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source acceptance evidence: closed .47.2.4, unified4b50eea8a; Call IH review repair .47.5 unified7ca4d782e; kernel/full unified gates passed."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/While.lean",
@@ -32931,7 +32931,7 @@
     "code"
   ],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-luna-b source comparison (bead .18.5.5.47.5): crep_inlineProofScript1893-1913 and Resume Call2024-2038, with evaluate_ind Call guards. Restored both guarded callee and handler motives: arguments OPT_MMAP success, lookup_code success, distinct return destinations, nonzero clock; handler also requires callee Exception eid and matching return-info handler. Original goal hypotheses and result alternatives unchanged. Callee premise deliberately retained even though the handler-only calculation does not use it. Finite-support maps and positive word/Type0 FFI translations unchanged. Corrected statement kernel-checked; coordinator acceptance pending."
+  "reviewer": "flapjack-luna-b source comparison (bead .18.5.5.47.5): crep_inlineProofScript1893-1913 and Resume Call2024-2038, with evaluate_ind Call guards. Restored both guarded callee and handler motives: arguments OPT_MMAP success, lookup_code success, distinct return destinations, nonzero clock; handler also requires callee Exception eid and matching return-info handler. Original goal hypotheses and result alternatives unchanged. Callee premise deliberately retained even though the handler-only calculation does not use it. Finite-support maps and positive word/Type0 FFI translations unchanged. Corrected statement kernel-checked; Coordinator source acceptance evidence: closed source-review bead/integration .47.5/7ca4d782e; original statement and repaired IHs reviewed, kernel and full unified build/test/refs/map/type locks/warnings passed."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/Call.lean",
@@ -32977,7 +32977,7 @@
     "code"
   ],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-luna-b source comparison (bead .18.5.5.47.5): full HOL transform_eoc_correct1893-1913 statement unchanged, no public IH or added assumption. Internal clock/program-size lexicographic induction now discharges both original guarded Call premises. Arbitrary code-map callee motive follows strictly decremented clock; matching exception handler clock follows evaluator clock_le. While re-entry/body likewise decrease clock; Dec/If/Seq use smaller program at equal clock or lower clock. All original goal hypotheses/conclusions retained. Coordinator acceptance pending."
+  "reviewer": "flapjack-luna-b source comparison (bead .18.5.5.47.5): full HOL transform_eoc_correct1893-1913 statement unchanged, no public IH or added assumption. Internal clock/program-size lexicographic induction now discharges both original guarded Call premises. Arbitrary code-map callee motive follows strictly decremented clock; matching exception handler clock follows evaluator clock_le. While re-entry/body likewise decrease clock; Dec/If/Seq use smaller program at equal clock or lower clock. All original goal hypotheses/conclusions retained. Coordinator source acceptance evidence: closed .47.2.4, unified4b50eea8a; Call IH review repair .47.5 unified7ca4d782e; kernel/full unified gates passed."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/Assembly.lean",
@@ -33256,7 +33256,7 @@
     "code"
   ],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.3) compared HOL transform_branch_correct (crep_inlineProofScript.sml:2042-2059): forall p s r s' res ld rts. evaluate (p,s) = (r,s') /\\ (!retvs. r = SOME (Return retvs) ==> LENGTH rts = LENGTH retvs) /\\ (!x. MEM x rts ==> ~MEM x (var_prog p)) /\\ (exists z. OPT_MMAP (FLOOKUP s.locals) rts = SOME z) /\\ ALL_DISTINCT rts /\\ r <> SOME Error ==> exists r1 s1'. evaluate (transform_branch ld rts p, s) = (r1,s1') /\\ state_rel s' s1' /\\ case r of NONE => ... | SOME (Return retvs) => r1 = SOME (Break ld) /\\ OPT_MMAP (FLOOKUP s1'.locals) rts = SOME retvs | SOME Error => F | res => r1 = res. HOL's outer binder res occurs only as the shadowing catch-all case pattern, so the vacuous binder is omitted (documented in the module); all other binders in order. Case: programs left unchanged by transform_branch (Skip, Assign, Primitive, Store, Store32, StoreByte, StoreGlob, Break, Continue, Raise, Tick, ExtCall, ShMem; HOL's final rw), constructor disjunction as the accepted atom cases; no IH. Exact tagged evaluator/transform_branch/var_prog/state_rel/locals_strong_rel over CrepSemHOLState; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.3) compared HOL transform_branch_correct (crep_inlineProofScript.sml:2042-2059): forall p s r s' res ld rts. evaluate (p,s) = (r,s') /\\ (!retvs. r = SOME (Return retvs) ==> LENGTH rts = LENGTH retvs) /\\ (!x. MEM x rts ==> ~MEM x (var_prog p)) /\\ (exists z. OPT_MMAP (FLOOKUP s.locals) rts = SOME z) /\\ ALL_DISTINCT rts /\\ r <> SOME Error ==> exists r1 s1'. evaluate (transform_branch ld rts p, s) = (r1,s1') /\\ state_rel s' s1' /\\ case r of NONE => ... | SOME (Return retvs) => r1 = SOME (Break ld) /\\ OPT_MMAP (FLOOKUP s1'.locals) rts = SOME retvs | SOME Error => F | res => r1 = res. HOL's outer binder res occurs only as the shadowing catch-all case pattern, so the vacuous binder is omitted (documented in the module); all other binders in order. Case: programs left unchanged by transform_branch (Skip, Assign, Primitive, Store, Store32, StoreByte, StoreGlob, Break, Continue, Raise, Tick, ExtCall, ShMem; HOL's final rw), constructor disjunction as the accepted atom cases; no IH. Exact tagged evaluator/transform_branch/var_prog/state_rel/locals_strong_rel over CrepSemHOLState; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source acceptance evidence: closed .47.3 unified92eec8453; Call IH review repair .47.6 unified2f1dfb16e; kernel/full unified gates passed."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformBranch/Cases.lean",
@@ -33270,7 +33270,7 @@
     "code"
   ],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.3) compared HOL transform_branch_correct (crep_inlineProofScript.sml:2042-2059): forall p s r s' res ld rts. evaluate (p,s) = (r,s') /\\ (!retvs. r = SOME (Return retvs) ==> LENGTH rts = LENGTH retvs) /\\ (!x. MEM x rts ==> ~MEM x (var_prog p)) /\\ (exists z. OPT_MMAP (FLOOKUP s.locals) rts = SOME z) /\\ ALL_DISTINCT rts /\\ r <> SOME Error ==> exists r1 s1'. evaluate (transform_branch ld rts p, s) = (r1,s1') /\\ state_rel s' s1' /\\ case r of NONE => ... | SOME (Return retvs) => r1 = SOME (Break ld) /\\ OPT_MMAP (FLOOKUP s1'.locals) rts = SOME retvs | SOME Error => F | res => r1 = res. HOL's outer binder res occurs only as the shadowing catch-all case pattern, so the vacuous binder is omitted (documented in the module); all other binders in order. Case: Return es (HOL :2105-2109), no IH; nested_seq assignments then Break ld. Exact tagged evaluator/transform_branch/var_prog/state_rel/locals_strong_rel over CrepSemHOLState; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.3) compared HOL transform_branch_correct (crep_inlineProofScript.sml:2042-2059): forall p s r s' res ld rts. evaluate (p,s) = (r,s') /\\ (!retvs. r = SOME (Return retvs) ==> LENGTH rts = LENGTH retvs) /\\ (!x. MEM x rts ==> ~MEM x (var_prog p)) /\\ (exists z. OPT_MMAP (FLOOKUP s.locals) rts = SOME z) /\\ ALL_DISTINCT rts /\\ r <> SOME Error ==> exists r1 s1'. evaluate (transform_branch ld rts p, s) = (r1,s1') /\\ state_rel s' s1' /\\ case r of NONE => ... | SOME (Return retvs) => r1 = SOME (Break ld) /\\ OPT_MMAP (FLOOKUP s1'.locals) rts = SOME retvs | SOME Error => F | res => r1 = res. HOL's outer binder res occurs only as the shadowing catch-all case pattern, so the vacuous binder is omitted (documented in the module); all other binders in order. Case: Return es (HOL :2105-2109), no IH; nested_seq assignments then Break ld. Exact tagged evaluator/transform_branch/var_prog/state_rel/locals_strong_rel over CrepSemHOLState; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source acceptance evidence: closed .47.3 unified92eec8453; Call IH review repair .47.6 unified2f1dfb16e; kernel/full unified gates passed."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformBranch/Cases.lean",
@@ -33284,7 +33284,7 @@
     "code"
   ],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.3) compared HOL transform_branch_correct (crep_inlineProofScript.sml:2042-2059): forall p s r s' res ld rts. evaluate (p,s) = (r,s') /\\ (!retvs. r = SOME (Return retvs) ==> LENGTH rts = LENGTH retvs) /\\ (!x. MEM x rts ==> ~MEM x (var_prog p)) /\\ (exists z. OPT_MMAP (FLOOKUP s.locals) rts = SOME z) /\\ ALL_DISTINCT rts /\\ r <> SOME Error ==> exists r1 s1'. evaluate (transform_branch ld rts p, s) = (r1,s1') /\\ state_rel s' s1' /\\ case r of NONE => ... | SOME (Return retvs) => r1 = SOME (Break ld) /\\ OPT_MMAP (FLOOKUP s1'.locals) rts = SOME retvs | SOME Error => F | res => r1 = res. HOL's outer binder res occurs only as the shadowing catch-all case pattern, so the vacuous binder is omitted (documented in the module); all other binders in order. Case: Dec (HOL :2066-2081), IH exactly the guarded evaluate_ind Dec premise (forall value. eval s e = SOME value ==> P (prog, set_var v value s)). Exact tagged evaluator/transform_branch/var_prog/state_rel/locals_strong_rel over CrepSemHOLState; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.3) compared HOL transform_branch_correct (crep_inlineProofScript.sml:2042-2059): forall p s r s' res ld rts. evaluate (p,s) = (r,s') /\\ (!retvs. r = SOME (Return retvs) ==> LENGTH rts = LENGTH retvs) /\\ (!x. MEM x rts ==> ~MEM x (var_prog p)) /\\ (exists z. OPT_MMAP (FLOOKUP s.locals) rts = SOME z) /\\ ALL_DISTINCT rts /\\ r <> SOME Error ==> exists r1 s1'. evaluate (transform_branch ld rts p, s) = (r1,s1') /\\ state_rel s' s1' /\\ case r of NONE => ... | SOME (Return retvs) => r1 = SOME (Break ld) /\\ OPT_MMAP (FLOOKUP s1'.locals) rts = SOME retvs | SOME Error => F | res => r1 = res. HOL's outer binder res occurs only as the shadowing catch-all case pattern, so the vacuous binder is omitted (documented in the module); all other binders in order. Case: Dec (HOL :2066-2081), IH exactly the guarded evaluate_ind Dec premise (forall value. eval s e = SOME value ==> P (prog, set_var v value s)). Exact tagged evaluator/transform_branch/var_prog/state_rel/locals_strong_rel over CrepSemHOLState; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source acceptance evidence: closed .47.3 unified92eec8453; Call IH review repair .47.6 unified2f1dfb16e; kernel/full unified gates passed."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformBranch/Cases.lean",
@@ -33298,7 +33298,7 @@
     "code"
   ],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.3) compared HOL transform_branch_correct (crep_inlineProofScript.sml:2042-2059): forall p s r s' res ld rts. evaluate (p,s) = (r,s') /\\ (!retvs. r = SOME (Return retvs) ==> LENGTH rts = LENGTH retvs) /\\ (!x. MEM x rts ==> ~MEM x (var_prog p)) /\\ (exists z. OPT_MMAP (FLOOKUP s.locals) rts = SOME z) /\\ ALL_DISTINCT rts /\\ r <> SOME Error ==> exists r1 s1'. evaluate (transform_branch ld rts p, s) = (r1,s1') /\\ state_rel s' s1' /\\ case r of NONE => ... | SOME (Return retvs) => r1 = SOME (Break ld) /\\ OPT_MMAP (FLOOKUP s1'.locals) rts = SOME retvs | SOME Error => F | res => r1 = res. HOL's outer binder res occurs only as the shadowing catch-all case pattern, so the vacuous binder is omitted (documented in the module); all other binders in order. Case: If (HOL :2083-2088), IH exactly the guarded selected-branch premise (forall v1 w. eval s e = SOME v1 /\\ v1 = Word w ==> P (if w <> 0w then c1 else c2, s)). Exact tagged evaluator/transform_branch/var_prog/state_rel/locals_strong_rel over CrepSemHOLState; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.3) compared HOL transform_branch_correct (crep_inlineProofScript.sml:2042-2059): forall p s r s' res ld rts. evaluate (p,s) = (r,s') /\\ (!retvs. r = SOME (Return retvs) ==> LENGTH rts = LENGTH retvs) /\\ (!x. MEM x rts ==> ~MEM x (var_prog p)) /\\ (exists z. OPT_MMAP (FLOOKUP s.locals) rts = SOME z) /\\ ALL_DISTINCT rts /\\ r <> SOME Error ==> exists r1 s1'. evaluate (transform_branch ld rts p, s) = (r1,s1') /\\ state_rel s' s1' /\\ case r of NONE => ... | SOME (Return retvs) => r1 = SOME (Break ld) /\\ OPT_MMAP (FLOOKUP s1'.locals) rts = SOME retvs | SOME Error => F | res => r1 = res. HOL's outer binder res occurs only as the shadowing catch-all case pattern, so the vacuous binder is omitted (documented in the module); all other binders in order. Case: If (HOL :2083-2088), IH exactly the guarded selected-branch premise (forall v1 w. eval s e = SOME v1 /\\ v1 = Word w ==> P (if w <> 0w then c1 else c2, s)). Exact tagged evaluator/transform_branch/var_prog/state_rel/locals_strong_rel over CrepSemHOLState; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source acceptance evidence: closed .47.3 unified92eec8453; Call IH review repair .47.6 unified2f1dfb16e; kernel/full unified gates passed."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformBranch/Cases.lean",
@@ -33312,7 +33312,7 @@
     "code"
   ],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.3) compared HOL transform_branch_correct (crep_inlineProofScript.sml:2042-2059): forall p s r s' res ld rts. evaluate (p,s) = (r,s') /\\ (!retvs. r = SOME (Return retvs) ==> LENGTH rts = LENGTH retvs) /\\ (!x. MEM x rts ==> ~MEM x (var_prog p)) /\\ (exists z. OPT_MMAP (FLOOKUP s.locals) rts = SOME z) /\\ ALL_DISTINCT rts /\\ r <> SOME Error ==> exists r1 s1'. evaluate (transform_branch ld rts p, s) = (r1,s1') /\\ state_rel s' s1' /\\ case r of NONE => ... | SOME (Return retvs) => r1 = SOME (Break ld) /\\ OPT_MMAP (FLOOKUP s1'.locals) rts = SOME retvs | SOME Error => F | res => r1 = res. HOL's outer binder res occurs only as the shadowing catch-all case pattern, so the vacuous binder is omitted (documented in the module); all other binders in order. Case: Seq (HOL :2090-2103), IHs exactly the evaluate_ind Seq premises ((res,s1) = evaluate (c1,s) /\\ res = NONE ==> P (c2,s1); P (c1,s)); FDOM preservation by evaluate_locals_same_fdom'. Exact tagged evaluator/transform_branch/var_prog/state_rel/locals_strong_rel over CrepSemHOLState; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.3) compared HOL transform_branch_correct (crep_inlineProofScript.sml:2042-2059): forall p s r s' res ld rts. evaluate (p,s) = (r,s') /\\ (!retvs. r = SOME (Return retvs) ==> LENGTH rts = LENGTH retvs) /\\ (!x. MEM x rts ==> ~MEM x (var_prog p)) /\\ (exists z. OPT_MMAP (FLOOKUP s.locals) rts = SOME z) /\\ ALL_DISTINCT rts /\\ r <> SOME Error ==> exists r1 s1'. evaluate (transform_branch ld rts p, s) = (r1,s1') /\\ state_rel s' s1' /\\ case r of NONE => ... | SOME (Return retvs) => r1 = SOME (Break ld) /\\ OPT_MMAP (FLOOKUP s1'.locals) rts = SOME retvs | SOME Error => F | res => r1 = res. HOL's outer binder res occurs only as the shadowing catch-all case pattern, so the vacuous binder is omitted (documented in the module); all other binders in order. Case: Seq (HOL :2090-2103), IHs exactly the evaluate_ind Seq premises ((res,s1) = evaluate (c1,s) /\\ res = NONE ==> P (c2,s1); P (c1,s)); FDOM preservation by evaluate_locals_same_fdom'. Exact tagged evaluator/transform_branch/var_prog/state_rel/locals_strong_rel over CrepSemHOLState; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source acceptance evidence: closed .47.3 unified92eec8453; Call IH review repair .47.6 unified2f1dfb16e; kernel/full unified gates passed."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformBranch/Loops.lean",
@@ -33326,7 +33326,7 @@
     "code"
   ],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.3) compared HOL transform_branch_correct (crep_inlineProofScript.sml:2042-2059): forall p s r s' res ld rts. evaluate (p,s) = (r,s') /\\ (!retvs. r = SOME (Return retvs) ==> LENGTH rts = LENGTH retvs) /\\ (!x. MEM x rts ==> ~MEM x (var_prog p)) /\\ (exists z. OPT_MMAP (FLOOKUP s.locals) rts = SOME z) /\\ ALL_DISTINCT rts /\\ r <> SOME Error ==> exists r1 s1'. evaluate (transform_branch ld rts p, s) = (r1,s1') /\\ state_rel s' s1' /\\ case r of NONE => ... | SOME (Return retvs) => r1 = SOME (Break ld) /\\ OPT_MMAP (FLOOKUP s1'.locals) rts = SOME retvs | SOME Error => F | res => r1 = res. HOL's outer binder res occurs only as the shadowing catch-all case pattern, so the vacuous binder is omitted (documented in the module); all other binders in order. Case: While (Resume :2124-2165), IH TransformBranchWhileIH = exactly the three guarded evaluate_ind While premises; body at depth ld+1, whose Break (ld+1) exits as Break ld for a source Return. Exact tagged evaluator/transform_branch/var_prog/state_rel/locals_strong_rel over CrepSemHOLState; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.3) compared HOL transform_branch_correct (crep_inlineProofScript.sml:2042-2059): forall p s r s' res ld rts. evaluate (p,s) = (r,s') /\\ (!retvs. r = SOME (Return retvs) ==> LENGTH rts = LENGTH retvs) /\\ (!x. MEM x rts ==> ~MEM x (var_prog p)) /\\ (exists z. OPT_MMAP (FLOOKUP s.locals) rts = SOME z) /\\ ALL_DISTINCT rts /\\ r <> SOME Error ==> exists r1 s1'. evaluate (transform_branch ld rts p, s) = (r1,s1') /\\ state_rel s' s1' /\\ case r of NONE => ... | SOME (Return retvs) => r1 = SOME (Break ld) /\\ OPT_MMAP (FLOOKUP s1'.locals) rts = SOME retvs | SOME Error => F | res => r1 = res. HOL's outer binder res occurs only as the shadowing catch-all case pattern, so the vacuous binder is omitted (documented in the module); all other binders in order. Case: While (Resume :2124-2165), IH TransformBranchWhileIH = exactly the three guarded evaluate_ind While premises; body at depth ld+1, whose Break (ld+1) exits as Break ld for a source Return. Exact tagged evaluator/transform_branch/var_prog/state_rel/locals_strong_rel over CrepSemHOLState; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source acceptance evidence: closed .47.3 unified92eec8453; Call IH review repair .47.6 unified2f1dfb16e; kernel/full unified gates passed."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformBranch/Loops.lean",
@@ -33354,7 +33354,7 @@
     "code"
   ],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.3) compared HOL transform_branch_correct (crep_inlineProofScript.sml:2042-2059): forall p s r s' res ld rts. evaluate (p,s) = (r,s') /\\ (!retvs. r = SOME (Return retvs) ==> LENGTH rts = LENGTH retvs) /\\ (!x. MEM x rts ==> ~MEM x (var_prog p)) /\\ (exists z. OPT_MMAP (FLOOKUP s.locals) rts = SOME z) /\\ ALL_DISTINCT rts /\\ r <> SOME Error ==> exists r1 s1'. evaluate (transform_branch ld rts p, s) = (r1,s1') /\\ state_rel s' s1' /\\ case r of NONE => ... | SOME (Return retvs) => r1 = SOME (Break ld) /\\ OPT_MMAP (FLOOKUP s1'.locals) rts = SOME retvs | SOME Error => F | res => r1 = res. HOL's outer binder res occurs only as the shadowing catch-all case pattern, so the vacuous binder is omitted (documented in the module); all other binders in order. Full theorem assembled from the tagged cases with no public IH: structural recursion on the program for all states supplying each case's literal guarded premises, plus an inner clock induction constructing TransformBranchWhileIH (same principle as accepted .43.7; not inductHOL). Exact tagged evaluator/transform_branch/var_prog/state_rel/locals_strong_rel over CrepSemHOLState; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.3) compared HOL transform_branch_correct (crep_inlineProofScript.sml:2042-2059): forall p s r s' res ld rts. evaluate (p,s) = (r,s') /\\ (!retvs. r = SOME (Return retvs) ==> LENGTH rts = LENGTH retvs) /\\ (!x. MEM x rts ==> ~MEM x (var_prog p)) /\\ (exists z. OPT_MMAP (FLOOKUP s.locals) rts = SOME z) /\\ ALL_DISTINCT rts /\\ r <> SOME Error ==> exists r1 s1'. evaluate (transform_branch ld rts p, s) = (r1,s1') /\\ state_rel s' s1' /\\ case r of NONE => ... | SOME (Return retvs) => r1 = SOME (Break ld) /\\ OPT_MMAP (FLOOKUP s1'.locals) rts = SOME retvs | SOME Error => F | res => r1 = res. HOL's outer binder res occurs only as the shadowing catch-all case pattern, so the vacuous binder is omitted (documented in the module); all other binders in order. Full theorem assembled from the tagged cases with no public IH: structural recursion on the program for all states supplying each case's literal guarded premises, plus an inner clock induction constructing TransformBranchWhileIH (same principle as accepted .43.7; not inductHOL). Exact tagged evaluator/transform_branch/var_prog/state_rel/locals_strong_rel over CrepSemHOLState; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source acceptance evidence: closed .47.3 unified92eec8453; Call IH review repair .47.6 unified2f1dfb16e; kernel/full unified gates passed."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformBranch/Cases.lean",
@@ -33475,7 +33475,7 @@
   "hol_name": "cont_res_def",
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.4) compared crep_inlineProofScript.sml:2168-2171: cont_res NONE = T, SOME (Break n) = T, SOME (Continue n) = T, SOME Error = T, _ = F, clause for clause over the width-indexed exact carrier CrepResultHOLExact width of the exact Crep evaluator (the existing reviewed contResHOL port is over the production CrepResultHOL carrier and cannot be applied to the exact evaluator's results). Positive-width word translation only. Coordinator source review pending."
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.4) compared crep_inlineProofScript.sml:2168-2171: cont_res NONE = T, SOME (Break n) = T, SOME (Continue n) = T, SOME Error = T, _ = F, clause for clause over the width-indexed exact carrier CrepResultHOLExact width of the exact Crep evaluator (the existing reviewed contResHOL port is over the production CrepResultHOL carrier and cannot be applied to the exact evaluator's results). Positive-width word translation only. Coordinator source acceptance evidence: closed .47.4, source-reviewed unified92eec8453; kernel/full unified gates passed."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/WrappedTransformIf.lean",
@@ -33489,7 +33489,7 @@
     "code"
   ],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.4) compared crep_inlineProofScript.sml:2188-2224: forall p s r s' res rts loc. evaluate (p, dec_clock s with locals := loc) = (r,s') /\\ unreach_elim p = (p,res) /\\ (!retvs. ...) /\\ (!x. MEM x rts ==> ~MEM x (var_prog p)) /\\ (exists z. OPT_MMAP (FLOOKUP loc) rts = SOME z) /\\ ALL_DISTINCT rts /\\ ~cont_res r /\\ s.clock <> 0 /\\ r <> SOME Error ==> exists r1 s1'. evaluate (if not_branch_ret p then Seq Tick (transform_eoc rts p) else While (Const 1w) (transform_branch 0 rts p), s with locals := loc) = (r1,s1') /\\ state_rel s' s1' /\\ case r of SOME (Return retvs) => r1 = NONE /\\ OPT_MMAP (FLOOKUP s1'.locals) rts = SOME retvs | SOME (Exception eid) => ... | SOME TimeOut => ... | SOME (FinalFFI ffi) => ... | res => F; same binders and hypotheses (loc on the finite-support carrier, ~cont_res r as contResHOLExact r = false, Const 1w as .const 1), no extra premise. Proof from the assembled tagged transform_eoc_correct and transform_branch_correct (ld = 0) as in HOL. Exact carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.4) compared crep_inlineProofScript.sml:2188-2224: forall p s r s' res rts loc. evaluate (p, dec_clock s with locals := loc) = (r,s') /\\ unreach_elim p = (p,res) /\\ (!retvs. ...) /\\ (!x. MEM x rts ==> ~MEM x (var_prog p)) /\\ (exists z. OPT_MMAP (FLOOKUP loc) rts = SOME z) /\\ ALL_DISTINCT rts /\\ ~cont_res r /\\ s.clock <> 0 /\\ r <> SOME Error ==> exists r1 s1'. evaluate (if not_branch_ret p then Seq Tick (transform_eoc rts p) else While (Const 1w) (transform_branch 0 rts p), s with locals := loc) = (r1,s1') /\\ state_rel s' s1' /\\ case r of SOME (Return retvs) => r1 = NONE /\\ OPT_MMAP (FLOOKUP s1'.locals) rts = SOME retvs | SOME (Exception eid) => ... | SOME TimeOut => ... | SOME (FinalFFI ffi) => ... | res => F; same binders and hypotheses (loc on the finite-support carrier, ~cont_res r as contResHOLExact r = false, Const 1w as .const 1), no extra premise. Proof from the assembled tagged transform_eoc_correct and transform_branch_correct (ld = 0) as in HOL. Exact carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source acceptance evidence: closed .47.4, source-reviewed unified92eec8453; kernel/full unified gates passed."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/WrappedTransformIf.lean",
@@ -33498,7 +33498,7 @@
   "hol_name": "mem_var_prog_nested_seq",
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.4) compared crep_inlineProofScript.sml:2226-2231: forall ps x. MEM x (var_prog (nested_seq ps)) = MEM x (FLAT (MAP var_prog ps)) as a Prop equality of list memberships; same binders. Coordinator source review pending."
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.4) compared crep_inlineProofScript.sml:2226-2231: forall ps x. MEM x (var_prog (nested_seq ps)) = MEM x (FLAT (MAP var_prog ps)) as a Prop equality of list memberships; same binders. Coordinator source acceptance evidence: closed .47.4, source-reviewed unified92eec8453; kernel/full unified gates passed."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/WrappedTransformIf.lean",
@@ -33507,7 +33507,7 @@
   "hol_name": "mem_var_prog_transform_eoc",
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.4) compared crep_inlineProofScript.sml:2241-2256: forall rts p x. MEM x (var_prog (transform_eoc rts p)) ==> MEM x (var_prog p) \\/ MEM x rts; same binders; proof by the functional induction of the tagged transformEocHOLExact, Return clause via MEM_MAP2_IMP (panMap2_mem). Coordinator source review pending."
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.4) compared crep_inlineProofScript.sml:2241-2256: forall rts p x. MEM x (var_prog (transform_eoc rts p)) ==> MEM x (var_prog p) \\/ MEM x rts; same binders; proof by the functional induction of the tagged transformEocHOLExact, Return clause via MEM_MAP2_IMP (panMap2_mem). Coordinator source acceptance evidence: closed .47.4, source-reviewed unified92eec8453; kernel/full unified gates passed."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/WrappedTransformIf.lean",
@@ -33516,7 +33516,7 @@
   "hol_name": "mem_var_prog_transform_branch",
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.4) compared crep_inlineProofScript.sml:2258-2273: forall ld rts p x. MEM x (var_prog (transform_branch ld rts p)) ==> MEM x (var_prog p) \\/ MEM x rts; same binders; proof by functional induction of the tagged transformBranchHOLExact. Coordinator source review pending."
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.4) compared crep_inlineProofScript.sml:2258-2273: forall ld rts p x. MEM x (var_prog (transform_branch ld rts p)) ==> MEM x (var_prog p) \\/ MEM x rts; same binders; proof by functional induction of the tagged transformBranchHOLExact. Coordinator source acceptance evidence: closed .47.4, source-reviewed unified92eec8453; kernel/full unified gates passed."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/WrappedTransformIf.lean",
@@ -33710,7 +33710,7 @@
     "CrepSemHOLState.code"
   ],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.4) compared HOL evaluate_state_locals_rel_strong (crep_inlineProofScript.sml:273-285): forall p s r s' t. evaluate (p,s) = (r,s') /\\ r <> SOME Error /\\ locals_rel s t /\\ state_rel s t ==> exists t'. evaluate (p,t) = (r,t') /\\ state_rel s' t' /\\ case r of NONE/Break/Continue => locals_rel s' t' /\\ locals_ext_rel s s' t t' | SOME Error => F | _ => T; stated for this constructor in the curried form of the accepted leaf cases (Atoms.lean), with only HOL evaluate_ind's guarded Dec premise (forall value. eval s e = SOME value ==> P (prog, set_var v value s)). Dec (HOL :328-380): target value by eval_state_locals_rel; locals_rel/locals_ext_rel through res_var pointwise, FDOM preservation from evaluate_locals_same_fdom'. at the untagged motive strongLocalsGoal. Exact tagged evaluator/state_rel/locals_rel/locals_ext_rel (HOL argument order a b a' b'); canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.4) compared HOL evaluate_state_locals_rel_strong (crep_inlineProofScript.sml:273-285): forall p s r s' t. evaluate (p,s) = (r,s') /\\ r <> SOME Error /\\ locals_rel s t /\\ state_rel s t ==> exists t'. evaluate (p,t) = (r,t') /\\ state_rel s' t' /\\ case r of NONE/Break/Continue => locals_rel s' t' /\\ locals_ext_rel s s' t t' | SOME Error => F | _ => T; stated for this constructor in the curried form of the accepted leaf cases (Atoms.lean), with only HOL evaluate_ind's guarded Dec premise (forall value. eval s e = SOME value ==> P (prog, set_var v value s)). Dec (HOL :328-380): target value by eval_state_locals_rel; locals_rel/locals_ext_rel through res_var pointwise, FDOM preservation from evaluate_locals_same_fdom'. at the untagged motive strongLocalsGoal. Exact tagged evaluator/state_rel/locals_rel/locals_ext_rel (HOL argument order a b a' b'); canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source acceptance evidence: closed source-review bead/integration .43.5.8/30612dcfd; original statement and repaired IHs reviewed, kernel and full unified build/test/refs/map/type locks/warnings passed."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/Structural.lean",
@@ -33724,7 +33724,7 @@
     "CrepSemHOLState.code"
   ],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.4) compared HOL evaluate_state_locals_rel_strong (crep_inlineProofScript.sml:273-285): forall p s r s' t. evaluate (p,s) = (r,s') /\\ r <> SOME Error /\\ locals_rel s t /\\ state_rel s t ==> exists t'. evaluate (p,t) = (r,t') /\\ state_rel s' t' /\\ case r of NONE/Break/Continue => locals_rel s' t' /\\ locals_ext_rel s s' t t' | SOME Error => F | _ => T; stated for this constructor in the curried form of the accepted leaf cases (Atoms.lean), with only HOL evaluate_ind's two Seq premises ((res,s1) = evaluate (c1,s) /\\ res = NONE ==> P (c2,s1); P (c1,s)). Seq (HOL :381-390): locals_ext_rel composes by transitivity. at the untagged motive strongLocalsGoal. Exact tagged evaluator/state_rel/locals_rel/locals_ext_rel (HOL argument order a b a' b'); canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.4) compared HOL evaluate_state_locals_rel_strong (crep_inlineProofScript.sml:273-285): forall p s r s' t. evaluate (p,s) = (r,s') /\\ r <> SOME Error /\\ locals_rel s t /\\ state_rel s t ==> exists t'. evaluate (p,t) = (r,t') /\\ state_rel s' t' /\\ case r of NONE/Break/Continue => locals_rel s' t' /\\ locals_ext_rel s s' t t' | SOME Error => F | _ => T; stated for this constructor in the curried form of the accepted leaf cases (Atoms.lean), with only HOL evaluate_ind's two Seq premises ((res,s1) = evaluate (c1,s) /\\ res = NONE ==> P (c2,s1); P (c1,s)). Seq (HOL :381-390): locals_ext_rel composes by transitivity. at the untagged motive strongLocalsGoal. Exact tagged evaluator/state_rel/locals_rel/locals_ext_rel (HOL argument order a b a' b'); canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source acceptance evidence: closed .43.5.8 and all constructor children, unified30612dcfd; kernel/full unified gates passed."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/Structural.lean",
@@ -33738,7 +33738,7 @@
     "CrepSemHOLState.code"
   ],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.4) compared HOL evaluate_state_locals_rel_strong (crep_inlineProofScript.sml:273-285): forall p s r s' t. evaluate (p,s) = (r,s') /\\ r <> SOME Error /\\ locals_rel s t /\\ state_rel s t ==> exists t'. evaluate (p,t) = (r,t') /\\ state_rel s' t' /\\ case r of NONE/Break/Continue => locals_rel s' t' /\\ locals_ext_rel s s' t t' | SOME Error => F | _ => T; stated for this constructor in the curried form of the accepted leaf cases (Atoms.lean), with only HOL evaluate_ind's guarded If premise (forall v1 w. eval s e = SOME v1 /\\ v1 = Word w ==> P (if w <> 0w then c1 else c2, s)). If (HOL :391-397): target guard by eval_state_locals_rel. at the untagged motive strongLocalsGoal. Exact tagged evaluator/state_rel/locals_rel/locals_ext_rel (HOL argument order a b a' b'); canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.4) compared HOL evaluate_state_locals_rel_strong (crep_inlineProofScript.sml:273-285): forall p s r s' t. evaluate (p,s) = (r,s') /\\ r <> SOME Error /\\ locals_rel s t /\\ state_rel s t ==> exists t'. evaluate (p,t) = (r,t') /\\ state_rel s' t' /\\ case r of NONE/Break/Continue => locals_rel s' t' /\\ locals_ext_rel s s' t t' | SOME Error => F | _ => T; stated for this constructor in the curried form of the accepted leaf cases (Atoms.lean), with only HOL evaluate_ind's guarded If premise (forall v1 w. eval s e = SOME v1 /\\ v1 = Word w ==> P (if w <> 0w then c1 else c2, s)). If (HOL :391-397): target guard by eval_state_locals_rel. at the untagged motive strongLocalsGoal. Exact tagged evaluator/state_rel/locals_rel/locals_ext_rel (HOL argument order a b a' b'); canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source acceptance evidence: closed .43.5.8 and all constructor children, unified30612dcfd; kernel/full unified gates passed."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/Structural.lean",
@@ -33981,7 +33981,7 @@
   "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
   "hol_name": "fresh_name_correct'",
   "statement_status": "reviewed_exact",
-  "reviewer": "flapjack-luna-b source comparison2026-09-30 HOL1003-1007: all native mlstring name/list/list variables; MEM fresh_name in names prime then set-subset then False. Pointwise universal candidate membership implication is exactly HOL set subset. Uses reviewed native freshNameMlS and native fresh_name_correct993 theorem, with no codec, byte-rangedness, changed quantified carrier, or extra premise. Existing String-qualified theorem preserved; this adds missing native-carrier counterpart for global-handler proof1316/1324/1415. Proof-only; coordinator review pending."
+  "reviewer": "flapjack-luna-b source comparison2026-09-30 HOL1003-1007: all native mlstring name/list/list variables; MEM fresh_name in names prime then set-subset then False. Pointwise universal candidate membership implication is exactly HOL set subset. Uses reviewed native freshNameMlS and native fresh_name_correct993 theorem, with no codec, byte-rangedness, changed quantified carrier, or extra premise. Existing String-qualified theorem preserved; this adds missing native-carrier counterpart for global-handler proof1316/1324/1415. Proof-only; Coordinator source acceptance evidence: closed .2.33.7, native HOL1003-1007 source review, unified6b0c77502; kernel/full unified gates passed."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/InitGlobalsRecursiveDisjoint.lean",
@@ -34035,7 +34035,7 @@
     "CrepSemHOLState.code"
   ],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.5) compared HOL evaluate_state_locals_rel_strong (crep_inlineProofScript.sml:273-285): forall p s r s' t. evaluate (p,s) = (r,s') /\\ r <> SOME Error /\\ locals_rel s t /\\ state_rel s t ==> exists t'. evaluate (p,t) = (r,t') /\\ state_rel s' t' /\\ case r of NONE/Break/Continue => locals_rel s' t' /\\ locals_ext_rel s s' t t' | SOME Error => F | _ => T; stated for the constructor Assign n e (existing local overwritten on both sides) in the curried form of the accepted leaf cases, no induction hypothesis and no extra premise (HOL :400-498). Proof: state_rel makes t = s with locals := t.locals, so the target run repeats the source run; expression values via eval_original_extend_locals, local lookups via locals_rel. Exact tagged carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.5) compared HOL evaluate_state_locals_rel_strong (crep_inlineProofScript.sml:273-285): forall p s r s' t. evaluate (p,s) = (r,s') /\\ r <> SOME Error /\\ locals_rel s t /\\ state_rel s t ==> exists t'. evaluate (p,t) = (r,t') /\\ state_rel s' t' /\\ case r of NONE/Break/Continue => locals_rel s' t' /\\ locals_ext_rel s s' t t' | SOME Error => F | _ => T; stated for the constructor Assign n e (existing local overwritten on both sides) in the curried form of the accepted leaf cases, no induction hypothesis and no extra premise (HOL :400-498). Proof: state_rel makes t = s with locals := t.locals, so the target run repeats the source run; expression values via eval_original_extend_locals, local lookups via locals_rel. Exact tagged carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source acceptance evidence: closed .43.5.8 and all constructor children, unified30612dcfd; kernel/full unified gates passed."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/MoreAtoms.lean",
@@ -34049,7 +34049,7 @@
     "CrepSemHOLState.code"
   ],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.5) compared HOL evaluate_state_locals_rel_strong (crep_inlineProofScript.sml:273-285): forall p s r s' t. evaluate (p,s) = (r,s') /\\ r <> SOME Error /\\ locals_rel s t /\\ state_rel s t ==> exists t'. evaluate (p,t) = (r,t') /\\ state_rel s' t' /\\ case r of NONE/Break/Continue => locals_rel s' t' /\\ locals_ext_rel s s' t t' | SOME Error => F | _ => T; stated for the constructor Store dst src in the curried form of the accepted leaf cases, no induction hypothesis and no extra premise (HOL :400-498). Proof: state_rel makes t = s with locals := t.locals, so the target run repeats the source run; expression values via eval_original_extend_locals, local lookups via locals_rel. Exact tagged carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.5) compared HOL evaluate_state_locals_rel_strong (crep_inlineProofScript.sml:273-285): forall p s r s' t. evaluate (p,s) = (r,s') /\\ r <> SOME Error /\\ locals_rel s t /\\ state_rel s t ==> exists t'. evaluate (p,t) = (r,t') /\\ state_rel s' t' /\\ case r of NONE/Break/Continue => locals_rel s' t' /\\ locals_ext_rel s s' t t' | SOME Error => F | _ => T; stated for the constructor Store dst src in the curried form of the accepted leaf cases, no induction hypothesis and no extra premise (HOL :400-498). Proof: state_rel makes t = s with locals := t.locals, so the target run repeats the source run; expression values via eval_original_extend_locals, local lookups via locals_rel. Exact tagged carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source acceptance evidence: closed .43.5.8 and all constructor children, unified30612dcfd; kernel/full unified gates passed."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/MoreAtoms.lean",
@@ -34063,7 +34063,7 @@
     "CrepSemHOLState.code"
   ],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.5) compared HOL evaluate_state_locals_rel_strong (crep_inlineProofScript.sml:273-285): forall p s r s' t. evaluate (p,s) = (r,s') /\\ r <> SOME Error /\\ locals_rel s t /\\ state_rel s t ==> exists t'. evaluate (p,t) = (r,t') /\\ state_rel s' t' /\\ case r of NONE/Break/Continue => locals_rel s' t' /\\ locals_ext_rel s s' t t' | SOME Error => F | _ => T; stated for the constructor Store32 dst src in the curried form of the accepted leaf cases, no induction hypothesis and no extra premise (HOL :400-498). Proof: state_rel makes t = s with locals := t.locals, so the target run repeats the source run; expression values via eval_original_extend_locals, local lookups via locals_rel. Exact tagged carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.5) compared HOL evaluate_state_locals_rel_strong (crep_inlineProofScript.sml:273-285): forall p s r s' t. evaluate (p,s) = (r,s') /\\ r <> SOME Error /\\ locals_rel s t /\\ state_rel s t ==> exists t'. evaluate (p,t) = (r,t') /\\ state_rel s' t' /\\ case r of NONE/Break/Continue => locals_rel s' t' /\\ locals_ext_rel s s' t t' | SOME Error => F | _ => T; stated for the constructor Store32 dst src in the curried form of the accepted leaf cases, no induction hypothesis and no extra premise (HOL :400-498). Proof: state_rel makes t = s with locals := t.locals, so the target run repeats the source run; expression values via eval_original_extend_locals, local lookups via locals_rel. Exact tagged carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source acceptance evidence: closed .43.5.8 and all constructor children, unified30612dcfd; kernel/full unified gates passed."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/MoreAtoms.lean",
@@ -34077,7 +34077,7 @@
     "CrepSemHOLState.code"
   ],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.5) compared HOL evaluate_state_locals_rel_strong (crep_inlineProofScript.sml:273-285): forall p s r s' t. evaluate (p,s) = (r,s') /\\ r <> SOME Error /\\ locals_rel s t /\\ state_rel s t ==> exists t'. evaluate (p,t) = (r,t') /\\ state_rel s' t' /\\ case r of NONE/Break/Continue => locals_rel s' t' /\\ locals_ext_rel s s' t t' | SOME Error => F | _ => T; stated for the constructor StoreByte dst src in the curried form of the accepted leaf cases, no induction hypothesis and no extra premise (HOL :400-498). Proof: state_rel makes t = s with locals := t.locals, so the target run repeats the source run; expression values via eval_original_extend_locals, local lookups via locals_rel. Exact tagged carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.5) compared HOL evaluate_state_locals_rel_strong (crep_inlineProofScript.sml:273-285): forall p s r s' t. evaluate (p,s) = (r,s') /\\ r <> SOME Error /\\ locals_rel s t /\\ state_rel s t ==> exists t'. evaluate (p,t) = (r,t') /\\ state_rel s' t' /\\ case r of NONE/Break/Continue => locals_rel s' t' /\\ locals_ext_rel s s' t t' | SOME Error => F | _ => T; stated for the constructor StoreByte dst src in the curried form of the accepted leaf cases, no induction hypothesis and no extra premise (HOL :400-498). Proof: state_rel makes t = s with locals := t.locals, so the target run repeats the source run; expression values via eval_original_extend_locals, local lookups via locals_rel. Exact tagged carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source acceptance evidence: closed .43.5.8 and all constructor children, unified30612dcfd; kernel/full unified gates passed."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/MoreAtoms.lean",
@@ -34091,7 +34091,7 @@
     "CrepSemHOLState.code"
   ],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.5) compared HOL evaluate_state_locals_rel_strong (crep_inlineProofScript.sml:273-285): forall p s r s' t. evaluate (p,s) = (r,s') /\\ r <> SOME Error /\\ locals_rel s t /\\ state_rel s t ==> exists t'. evaluate (p,t) = (r,t') /\\ state_rel s' t' /\\ case r of NONE/Break/Continue => locals_rel s' t' /\\ locals_ext_rel s s' t t' | SOME Error => F | _ => T; stated for the constructor StoreGlob dst src in the curried form of the accepted leaf cases, no induction hypothesis and no extra premise (HOL :400-498). Proof: state_rel makes t = s with locals := t.locals, so the target run repeats the source run; expression values via eval_original_extend_locals, local lookups via locals_rel. Exact tagged carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.5) compared HOL evaluate_state_locals_rel_strong (crep_inlineProofScript.sml:273-285): forall p s r s' t. evaluate (p,s) = (r,s') /\\ r <> SOME Error /\\ locals_rel s t /\\ state_rel s t ==> exists t'. evaluate (p,t) = (r,t') /\\ state_rel s' t' /\\ case r of NONE/Break/Continue => locals_rel s' t' /\\ locals_ext_rel s s' t t' | SOME Error => F | _ => T; stated for the constructor StoreGlob dst src in the curried form of the accepted leaf cases, no induction hypothesis and no extra premise (HOL :400-498). Proof: state_rel makes t = s with locals := t.locals, so the target run repeats the source run; expression values via eval_original_extend_locals, local lookups via locals_rel. Exact tagged carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source acceptance evidence: closed .43.5.8 and all constructor children, unified30612dcfd; kernel/full unified gates passed."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/MoreAtoms.lean",
@@ -34105,7 +34105,7 @@
     "CrepSemHOLState.code"
   ],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.5) compared HOL evaluate_state_locals_rel_strong (crep_inlineProofScript.sml:273-285): forall p s r s' t. evaluate (p,s) = (r,s') /\\ r <> SOME Error /\\ locals_rel s t /\\ state_rel s t ==> exists t'. evaluate (p,t) = (r,t') /\\ state_rel s' t' /\\ case r of NONE/Break/Continue => locals_rel s' t' /\\ locals_ext_rel s s' t t' | SOME Error => F | _ => T; stated for the constructor Raise eid in the curried form of the accepted leaf cases, no induction hypothesis and no extra premise (HOL :400-498). Proof: state_rel makes t = s with locals := t.locals, so the target run repeats the source run; expression values via eval_original_extend_locals, local lookups via locals_rel. Exact tagged carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.5) compared HOL evaluate_state_locals_rel_strong (crep_inlineProofScript.sml:273-285): forall p s r s' t. evaluate (p,s) = (r,s') /\\ r <> SOME Error /\\ locals_rel s t /\\ state_rel s t ==> exists t'. evaluate (p,t) = (r,t') /\\ state_rel s' t' /\\ case r of NONE/Break/Continue => locals_rel s' t' /\\ locals_ext_rel s s' t t' | SOME Error => F | _ => T; stated for the constructor Raise eid in the curried form of the accepted leaf cases, no induction hypothesis and no extra premise (HOL :400-498). Proof: state_rel makes t = s with locals := t.locals, so the target run repeats the source run; expression values via eval_original_extend_locals, local lookups via locals_rel. Exact tagged carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source acceptance evidence: closed .43.5.8 and all constructor children, unified30612dcfd; kernel/full unified gates passed."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/MoreAtoms.lean",
@@ -34119,7 +34119,7 @@
     "CrepSemHOLState.code"
   ],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.5) compared HOL evaluate_state_locals_rel_strong (crep_inlineProofScript.sml:273-285): forall p s r s' t. evaluate (p,s) = (r,s') /\\ r <> SOME Error /\\ locals_rel s t /\\ state_rel s t ==> exists t'. evaluate (p,t) = (r,t') /\\ state_rel s' t' /\\ case r of NONE/Break/Continue => locals_rel s' t' /\\ locals_ext_rel s s' t t' | SOME Error => F | _ => T; stated for the constructor Return es (via eval_optmmap_state_locals_rel) in the curried form of the accepted leaf cases, no induction hypothesis and no extra premise (HOL :400-498). Proof: state_rel makes t = s with locals := t.locals, so the target run repeats the source run; expression values via eval_original_extend_locals, local lookups via locals_rel. Exact tagged carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.5) compared HOL evaluate_state_locals_rel_strong (crep_inlineProofScript.sml:273-285): forall p s r s' t. evaluate (p,s) = (r,s') /\\ r <> SOME Error /\\ locals_rel s t /\\ state_rel s t ==> exists t'. evaluate (p,t) = (r,t') /\\ state_rel s' t' /\\ case r of NONE/Break/Continue => locals_rel s' t' /\\ locals_ext_rel s s' t t' | SOME Error => F | _ => T; stated for the constructor Return es (via eval_optmmap_state_locals_rel) in the curried form of the accepted leaf cases, no induction hypothesis and no extra premise (HOL :400-498). Proof: state_rel makes t = s with locals := t.locals, so the target run repeats the source run; expression values via eval_original_extend_locals, local lookups via locals_rel. Exact tagged carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source acceptance evidence: closed .43.5.8 and all constructor children, unified30612dcfd; kernel/full unified gates passed."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/MoreAtoms.lean",
@@ -34133,7 +34133,7 @@
     "CrepSemHOLState.code"
   ],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.5) compared HOL evaluate_state_locals_rel_strong (crep_inlineProofScript.sml:273-285): forall p s r s' t. evaluate (p,s) = (r,s') /\\ r <> SOME Error /\\ locals_rel s t /\\ state_rel s t ==> exists t'. evaluate (p,t) = (r,t') /\\ state_rel s' t' /\\ case r of NONE/Break/Continue => locals_rel s' t' /\\ locals_ext_rel s s' t t' | SOME Error => F | _ => T; stated for the constructor Primitive lhss op rhss (FUPDATE_LIST over existing keys) in the curried form of the accepted leaf cases, no induction hypothesis and no extra premise (HOL :400-498). Proof: state_rel makes t = s with locals := t.locals, so the target run repeats the source run; expression values via eval_original_extend_locals, local lookups via locals_rel. Exact tagged carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.5) compared HOL evaluate_state_locals_rel_strong (crep_inlineProofScript.sml:273-285): forall p s r s' t. evaluate (p,s) = (r,s') /\\ r <> SOME Error /\\ locals_rel s t /\\ state_rel s t ==> exists t'. evaluate (p,t) = (r,t') /\\ state_rel s' t' /\\ case r of NONE/Break/Continue => locals_rel s' t' /\\ locals_ext_rel s s' t t' | SOME Error => F | _ => T; stated for the constructor Primitive lhss op rhss (FUPDATE_LIST over existing keys) in the curried form of the accepted leaf cases, no induction hypothesis and no extra premise (HOL :400-498). Proof: state_rel makes t = s with locals := t.locals, so the target run repeats the source run; expression values via eval_original_extend_locals, local lookups via locals_rel. Exact tagged carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source acceptance evidence: closed .43.5.8 and all constructor children, unified30612dcfd; kernel/full unified gates passed."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/MoreAtoms.lean",
@@ -34147,7 +34147,7 @@
     "CrepSemHOLState.code"
   ],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.5) compared HOL evaluate_state_locals_rel_strong (crep_inlineProofScript.sml:273-285): forall p s r s' t. evaluate (p,s) = (r,s') /\\ r <> SOME Error /\\ locals_rel s t /\\ state_rel s t ==> exists t'. evaluate (p,t) = (r,t') /\\ state_rel s' t' /\\ case r of NONE/Break/Continue => locals_rel s' t' /\\ locals_ext_rel s s' t t' | SOME Error => F | _ => T; stated for the constructor ExtCall in the curried form of the accepted leaf cases, no induction hypothesis and no extra premise (HOL :400-498). Proof: state_rel makes t = s with locals := t.locals, so the target run repeats the source run; expression values via eval_original_extend_locals, local lookups via locals_rel. Exact tagged carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.5) compared HOL evaluate_state_locals_rel_strong (crep_inlineProofScript.sml:273-285): forall p s r s' t. evaluate (p,s) = (r,s') /\\ r <> SOME Error /\\ locals_rel s t /\\ state_rel s t ==> exists t'. evaluate (p,t) = (r,t') /\\ state_rel s' t' /\\ case r of NONE/Break/Continue => locals_rel s' t' /\\ locals_ext_rel s s' t t' | SOME Error => F | _ => T; stated for the constructor ExtCall in the curried form of the accepted leaf cases, no induction hypothesis and no extra premise (HOL :400-498). Proof: state_rel makes t = s with locals := t.locals, so the target run repeats the source run; expression values via eval_original_extend_locals, local lookups via locals_rel. Exact tagged carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source acceptance evidence: closed .43.5.8 and all constructor children, unified30612dcfd; kernel/full unified gates passed."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/MoreAtoms.lean",
@@ -34161,7 +34161,7 @@
     "CrepSemHOLState.code"
   ],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.5) compared HOL evaluate_state_locals_rel_strong (crep_inlineProofScript.sml:273-285): forall p s r s' t. evaluate (p,s) = (r,s') /\\ r <> SOME Error /\\ locals_rel s t /\\ state_rel s t ==> exists t'. evaluate (p,t) = (r,t') /\\ state_rel s' t' /\\ case r of NONE/Break/Continue => locals_rel s' t' /\\ locals_ext_rel s s' t t' | SOME Error => F | _ => T; stated for the constructor ShMem op v ad (all eight operators) in the curried form of the accepted leaf cases, no induction hypothesis and no extra premise (HOL :400-498). Proof: state_rel makes t = s with locals := t.locals, so the target run repeats the source run; expression values via eval_original_extend_locals, local lookups via locals_rel. Exact tagged carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.5) compared HOL evaluate_state_locals_rel_strong (crep_inlineProofScript.sml:273-285): forall p s r s' t. evaluate (p,s) = (r,s') /\\ r <> SOME Error /\\ locals_rel s t /\\ state_rel s t ==> exists t'. evaluate (p,t) = (r,t') /\\ state_rel s' t' /\\ case r of NONE/Break/Continue => locals_rel s' t' /\\ locals_ext_rel s s' t t' | SOME Error => F | _ => T; stated for the constructor ShMem op v ad (all eight operators) in the curried form of the accepted leaf cases, no induction hypothesis and no extra premise (HOL :400-498). Proof: state_rel makes t = s with locals := t.locals, so the target run repeats the source run; expression values via eval_original_extend_locals, local lookups via locals_rel. Exact tagged carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source acceptance evidence: closed .43.5.8 and all constructor children, unified30612dcfd; kernel/full unified gates passed."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/MoreAtoms.lean",
@@ -34351,7 +34351,7 @@
     "CrepSemHOLState.code"
   ],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.6) compared HOL evaluate_state_locals_rel_strong (crep_inlineProofScript.sml:273-285) at p = While e c, curried as the accepted leaf cases, with the While proof block :289-327. The only extra hypothesis is StrongLocalsWhileIH = exactly the three guarded evaluate_ind While premises (body at dec_clock s under nonzero word guard and nonzero clock; loop re-entry after NONE and after Continue 0), mirroring accepted WhileDomainIH; HOL's inner completeInduct_on s.clock is supplied by the assembly. locals_ext_rel composes through the body step by transitivity; dec_clock preserves locals_rel/state_rel (locals_rel_dec_clock). Exact tagged carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.6) compared HOL evaluate_state_locals_rel_strong (crep_inlineProofScript.sml:273-285) at p = While e c, curried as the accepted leaf cases, with the While proof block :289-327. The only extra hypothesis is StrongLocalsWhileIH = exactly the three guarded evaluate_ind While premises (body at dec_clock s under nonzero word guard and nonzero clock; loop re-entry after NONE and after Continue 0), mirroring accepted WhileDomainIH; HOL's inner completeInduct_on s.clock is supplied by the assembly. locals_ext_rel composes through the body step by transitivity; dec_clock preserves locals_rel/state_rel (locals_rel_dec_clock). Exact tagged carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source acceptance evidence: closed .43.5.8 and all constructor children, unified30612dcfd; kernel/full unified gates passed."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/While.lean",
@@ -34523,19 +34523,19 @@
   "reviewer": "Source comparison HOL2126-2327: initGlobalsGoal retains all original hypotheses, total finite-state evaluate and existential target run/full stateRel/clock/ffi/locals/finalalignment. Recursive cons adds only source evaluate_decls_ind guarded tailIH at setGlobal state, shapeEq guard and arbitrary nextcontext; assembled list induction discharges it, nonDecl cases impossible by original EVERY is_decl. Head expression/store/stateRel/tailcoverage/disjointness derived internally with replacement names allowed; no new targetrun/postrelation premise. Native MlS, canonical map relation ownership and words_as_type_indexed_bitvec reviewed; production behavior unchanged."
 },
   {
-    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/Call.lean",
-    "lean_name": "evaluateStateLocalsRelStrongCallExact",
-    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-    "hol_name": "evaluate_state_locals_rel_strong",
-    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support_relation": [
-      "CrepSemHOLState.locals",
-      "CrepSemHOLState.globals",
-      "CrepSemHOLState.code"
-    ],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus (beads flapjack-pxn.18.5.5.43.5.7 and review fix .43.5.7.1) compared HOL evaluate_state_locals_rel_strong (crep_inlineProofScript.sml:273-285) at p = Call caltyp fname argexps (curried leaf shape) with Resume [Call] :511-562. The tagged case takes BOTH of HOL evaluate_ind's guarded Call premises: StrongLocalsCallCalleeIH (arguments evaluate, lookup_code succeeds, ALL_DISTINCT selector, clock <> 0 ==> P (prog, dec_clock s with locals := newlocals)) and StrongLocalsCallHandlerIH (callee raises Exception eid, caltyp = SOME (rts, SOME (eid, p)) ==> P (p, st with locals := s.locals)), spelled with the accepted evaluate_locals_same_fdom Call guard spellings (equivalence recorded in EvaluateLocals/Assembly.lean callGuard_*). It is NOT a stronger case: the proof (untagged callStrongGoal) merely does not use the callee premise, since state_rel makes both callee start states equal. Return write-back keeps locals_rel/locals_ext_rel. Exact tagged carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Type-hash change: one added premise. Coordinator source review pending."
-  },
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/Call.lean",
+  "lean_name": "evaluateStateLocalsRelStrongCallExact",
+  "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+  "hol_name": "evaluate_state_locals_rel_strong",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "CrepSemHOLState.locals",
+    "CrepSemHOLState.globals",
+    "CrepSemHOLState.code"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus (beads flapjack-pxn.18.5.5.43.5.7 and review fix .43.5.7.1) compared HOL evaluate_state_locals_rel_strong (crep_inlineProofScript.sml:273-285) at p = Call caltyp fname argexps (curried leaf shape) with Resume [Call] :511-562. The tagged case takes BOTH of HOL evaluate_ind's guarded Call premises: StrongLocalsCallCalleeIH (arguments evaluate, lookup_code succeeds, ALL_DISTINCT selector, clock <> 0 ==> P (prog, dec_clock s with locals := newlocals)) and StrongLocalsCallHandlerIH (callee raises Exception eid, caltyp = SOME (rts, SOME (eid, p)) ==> P (p, st with locals := s.locals)), spelled with the accepted evaluate_locals_same_fdom Call guard spellings (equivalence recorded in EvaluateLocals/Assembly.lean callGuard_*). It is NOT a stronger case: the proof (untagged callStrongGoal) merely does not use the callee premise, since state_rel makes both callee start states equal. Return write-back keeps locals_rel/locals_ext_rel. Exact tagged carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Type-hash change: one added premise. Coordinator source acceptance evidence: closed source-review bead/integration .43.5.7/30612dcfd; original statement and repaired IHs reviewed, kernel and full unified build/test/refs/map/type locks/warnings passed."
+},
   {
     "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/Call.lean",
     "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
@@ -34561,19 +34561,19 @@
     "reviewer": "Flapjack local support (bead .43.5.7): the evaluate_state_locals_rel_strong motive for Call from the handler IH."
   },
   {
-    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/Assembly.lean",
-    "lean_name": "evaluateStateLocalsRelStrongExact",
-    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-    "hol_name": "evaluate_state_locals_rel_strong",
-    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support_relation": [
-      "CrepSemHOLState.locals",
-      "CrepSemHOLState.globals",
-      "CrepSemHOLState.code"
-    ],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.8) compared crep_inlineProofScript.sml:273-285: the full HOL statement forall p s r s' t. evaluate (p,s) = (r,s') /\\ r <> SOME Error /\\ locals_rel s t /\\ state_rel s t ==> exists t'. evaluate (p,t) = (r,t') /\\ state_rel s' t' /\\ case r of NONE/Break/Continue => locals_rel s' t' /\\ locals_ext_rel s s' t t' | SOME Error => F | _ => T; HOL binders and conjunction, no extra premise and no public IH. Assembled from all tagged cases (Skip/Break/Continue/Tick, Assign/Store*/StoreGlob/Raise/Return/Primitive/ExtCall/ShMem, Dec/Seq/If, While, Call) by the lexicographic (clock, size) induction evalCrepSemHOLProgExact_inductLex, supplying every tagged case's literal guarded evaluate_ind premises, including the Call callee premise at the decremented clock and StrongLocalsWhileIH (review fix .43.5.7.1). Coordinator source review pending."
-  },
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/Assembly.lean",
+  "lean_name": "evaluateStateLocalsRelStrongExact",
+  "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+  "hol_name": "evaluate_state_locals_rel_strong",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "CrepSemHOLState.locals",
+    "CrepSemHOLState.globals",
+    "CrepSemHOLState.code"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.8) compared crep_inlineProofScript.sml:273-285: the full HOL statement forall p s r s' t. evaluate (p,s) = (r,s') /\\ r <> SOME Error /\\ locals_rel s t /\\ state_rel s t ==> exists t'. evaluate (p,t) = (r,t') /\\ state_rel s' t' /\\ case r of NONE/Break/Continue => locals_rel s' t' /\\ locals_ext_rel s s' t t' | SOME Error => F | _ => T; HOL binders and conjunction, no extra premise and no public IH. Assembled from all tagged cases (Skip/Break/Continue/Tick, Assign/Store*/StoreGlob/Raise/Return/Primitive/ExtCall/ShMem, Dec/Seq/If, While, Call) by the lexicographic (clock, size) induction evalCrepSemHOLProgExact_inductLex, supplying every tagged case's literal guarded evaluate_ind premises, including the Call callee premise at the decremented clock and StrongLocalsWhileIH (review fix .43.5.7.1). Coordinator source acceptance evidence: closed .43.5.8 and all constructor children, unified30612dcfd; kernel/full unified gates passed."
+},
   {
     "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/Assembly.lean",
     "lean_name": "evaluateStateLocalsRelExact",
@@ -34605,20 +34605,20 @@
     "reviewer": "Flapjack local support (beads .43.5.8/.43.5.7.1): evaluate_ind motive of evaluate_state_locals_rel_strong for every program and state by evalCrepSemHOLProgExact_inductLex over the tagged cases."
   },
   {
-    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ArgLoad.lean",
-    "lean_name": "generalSimulateArgLoadCorrectExact",
-    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-    "hol_name": "general_simulate_arg_load_correct",
-    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support_relation": [
-      "CrepSemHOLState.locals",
-      "CrepSemHOLState.globals",
-      "CrepSemHOLState.code",
-      "t"
-    ],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.45.1) compared crep_inlineProofScript.sml:985-1000: forall s es vals vs t p r s' tmp_vars (as declared parameters in HOL order, t the bare finite-support map parameter). Hypotheses: OPT_MMAP (eval s) es = SOME vals, LENGTH vs = LENGTH vals, ALL_DISTINCT vs (Nodup), t SUBMAP s.locals (HolFiniteMapExact.submap), evaluate (p, s with locals := t |++ ZIP (vs,vals)) = (r,s'), (!v. MEM v vs \\/ MEM v tmp_vars ==> v NOTIN FDOM t) (crepHolFdom t.lookup v = false, as in tagged SUBMAP_DIFF_LIST), r <> SOME Error, ALL_DISTINCT tmp_vars, LENGTH tmp_vars = LENGTH vs, (!x. MEM x tmp_vars ==> ~MEM x vs), (!x. MEM x tmp_vars ==> ~MEM x (FLAT (MAP var_cexp es))); conclusion exists t'. evaluate (nested_decs tmp_vars es (nested_decs vs (MAP Var tmp_vars) p), s) = (r,t') /\\ state_rel s' t'. No extra premise. Proof as in HOL: evaluate_state_locals_rel twice (SUBMAP_DIFF_LIST, FUPDATE_LIST monotonicity), lookup_locals_eq_map_vars with opt_mmap_some_eq_zip_flookup, nested_decs_evaluate twice. Canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
-  },
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ArgLoad.lean",
+  "lean_name": "generalSimulateArgLoadCorrectExact",
+  "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+  "hol_name": "general_simulate_arg_load_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "CrepSemHOLState.locals",
+    "CrepSemHOLState.globals",
+    "CrepSemHOLState.code",
+    "t"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.45.1) compared crep_inlineProofScript.sml:985-1000: forall s es vals vs t p r s' tmp_vars (as declared parameters in HOL order, t the bare finite-support map parameter). Hypotheses: OPT_MMAP (eval s) es = SOME vals, LENGTH vs = LENGTH vals, ALL_DISTINCT vs (Nodup), t SUBMAP s.locals (HolFiniteMapExact.submap), evaluate (p, s with locals := t |++ ZIP (vs,vals)) = (r,s'), (!v. MEM v vs \\/ MEM v tmp_vars ==> v NOTIN FDOM t) (crepHolFdom t.lookup v = false, as in tagged SUBMAP_DIFF_LIST), r <> SOME Error, ALL_DISTINCT tmp_vars, LENGTH tmp_vars = LENGTH vs, (!x. MEM x tmp_vars ==> ~MEM x vs), (!x. MEM x tmp_vars ==> ~MEM x (FLAT (MAP var_cexp es))); conclusion exists t'. evaluate (nested_decs tmp_vars es (nested_decs vs (MAP Var tmp_vars) p), s) = (r,t') /\\ state_rel s' t'. No extra premise. Proof as in HOL: evaluate_state_locals_rel twice (SUBMAP_DIFF_LIST, FUPDATE_LIST monotonicity), lookup_locals_eq_map_vars with opt_mmap_some_eq_zip_flookup, nested_decs_evaluate twice. Canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source acceptance evidence: closed .45.1, main and Sol independent source/kernel review, unified35c82b50c; kernel/full unified gates passed."
+},
   {
     "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ArgLoad.lean",
     "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
@@ -34657,20 +34657,20 @@
   "reviewer": "Source comparison panSemScript458-467: canonical code input and optional callee-local result have distinct HolFiniteMapExact value types at argument_1/result_2. FLOOKUP, ALL_DISTINCT(MAP FST), LIST_REL shape equality and ordered FEMPTY FUPDATE_LIST ZIP clauses retained through reviewed raw helper; length equality plus zipped shapeEqHOL_eq_true renders LIST_REL including empty/mismatched lengths. Native MlS/ShapeHOL/ProgHOL/ValueHOL and positive word dimension reviewed. Same-module unconditional tuple-pattern Option.map witness projects only locals.lookup and preserves body/return shape, both failures and successes, no ambient/extra assumptions. Actual recursive Call/DecCall evaluator sites consume canonical code directly; theorem statements unchanged and raw helper remains untagged. Qualifier and conservative witness syntax source-reviewed under closed .22.4.2.1; no whole compiler completion claim."
 },
   {
-    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ArgLoad.lean",
-    "lean_name": "generalSimulateArgLoadPreserveLocalsExact",
-    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-    "hol_name": "general_simulate_arg_load_preserve_locals",
-    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support_relation": [
-      "CrepSemHOLState.locals",
-      "CrepSemHOLState.globals",
-      "CrepSemHOLState.code",
-      "t"
-    ],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.45.2) compared crep_inlineProofScript.sml:1062-1082: binders s es vals vs t p r s' tmp_vars as declared parameters in HOL order; hypotheses as general_simulate_arg_load_correct except r <> SOME Error replaced, as in HOL, by the continuing-result condition (case r of NONE/Break/Continue => T | _ => F) = T rendered as the displayed match proposition; conclusion exists t'. evaluate (nested_decs tmp_vars es (nested_decs vs (MAP Var tmp_vars) p), s) = (r,t') /\\ state_rel s' t' /\\ FOLDL res_var s'.locals (ZIP (vs, MAP (FLOOKUP s.locals) vs)) SUBMAP t'.locals (left fold of resVarEq, as in tagged evaluate_nested_decs_locals_nested_res_var; SUBMAP as HolFiniteMapExact.submap). No extra premise. Proof: pointwise version of HOL's using the same lemmas (evaluate_state_locals_rel_strong, evaluate_nested_decs_locals_nested_res_var x2, evaluate_locals_same_fdom', flookup_res_var_is_mem_zip_eq, flookup_res_var_distinct_zip_eq). Coordinator source review pending."
-  },
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ArgLoad.lean",
+  "lean_name": "generalSimulateArgLoadPreserveLocalsExact",
+  "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+  "hol_name": "general_simulate_arg_load_preserve_locals",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "CrepSemHOLState.locals",
+    "CrepSemHOLState.globals",
+    "CrepSemHOLState.code",
+    "t"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.45.2) compared crep_inlineProofScript.sml:1062-1082: binders s es vals vs t p r s' tmp_vars as declared parameters in HOL order; hypotheses as general_simulate_arg_load_correct except r <> SOME Error replaced, as in HOL, by the continuing-result condition (case r of NONE/Break/Continue => T | _ => F) = T rendered as the displayed match proposition; conclusion exists t'. evaluate (nested_decs tmp_vars es (nested_decs vs (MAP Var tmp_vars) p), s) = (r,t') /\\ state_rel s' t' /\\ FOLDL res_var s'.locals (ZIP (vs, MAP (FLOOKUP s.locals) vs)) SUBMAP t'.locals (left fold of resVarEq, as in tagged evaluate_nested_decs_locals_nested_res_var; SUBMAP as HolFiniteMapExact.submap). No extra premise. Proof: pointwise version of HOL's using the same lemmas (evaluate_state_locals_rel_strong, evaluate_nested_decs_locals_nested_res_var x2, evaluate_locals_same_fdom', flookup_res_var_is_mem_zip_eq, flookup_res_var_distinct_zip_eq). Coordinator source acceptance evidence: closed .45.2, original HOL1062-1222 reviewed and unified full gates passed; kernel/full unified gates passed."
+},
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/Call.lean",
   "lean_name": "callDomainFromHandler",
@@ -34708,7 +34708,7 @@
     "t"
   ],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.44.5) compared crep_inlineProofScript.sml:907-924: binders vs es p s r s' vals t as declared parameters in HOL order; hypotheses OPT_MMAP (eval s) es = SOME vals (List.mapM), LENGTH vs = LENGTH es, ALL_DISTINCT vs (Nodup), var_cexp freshness, v NOTIN FDOM t (crepHolFdom t.lookup v = false), evaluate (p, s with locals := t |++ ZIP (vs,vals)) = (r,s') (updateListEq), t SUBMAP s.locals (HolFiniteMapExact.submap), continuing-result case rendered as the displayed match proposition; conclusion exists t'. evaluate (nested_decs vs es p, s) = (r,t') /\\ state_rel s' t' /\\ FDIFF s.locals (FDOM t) SUBMAP t'.locals (crepHolSubmap of crepHolFdiff). No extra premise. Proof uses evaluate_state_locals_rel_strong, evaluate_nested_decs_locals_nested_res_var, evaluate_locals_same_fdom', flookup_res_var_is_mem_zip_eq, flookup_res_var_distinct_zip_eq. Coordinator source review pending."
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.44.5) compared crep_inlineProofScript.sml:907-924: binders vs es p s r s' vals t as declared parameters in HOL order; hypotheses OPT_MMAP (eval s) es = SOME vals (List.mapM), LENGTH vs = LENGTH es, ALL_DISTINCT vs (Nodup), var_cexp freshness, v NOTIN FDOM t (crepHolFdom t.lookup v = false), evaluate (p, s with locals := t |++ ZIP (vs,vals)) = (r,s') (updateListEq), t SUBMAP s.locals (HolFiniteMapExact.submap), continuing-result case rendered as the displayed match proposition; conclusion exists t'. evaluate (nested_decs vs es p, s) = (r,t') /\\ state_rel s' t' /\\ FDIFF s.locals (FDOM t) SUBMAP t'.locals (crepHolSubmap of crepHolFdiff). No extra premise. Proof uses evaluate_state_locals_rel_strong, evaluate_nested_decs_locals_nested_res_var, evaluate_locals_same_fdom', flookup_res_var_is_mem_zip_eq, flookup_res_var_distinct_zip_eq. Coordinator source acceptance evidence: closed source-review bead/integration .44.5.2/272a4240a; original statement and repaired IHs reviewed, kernel and full unified build/test/refs/map/type locks/warnings passed."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
@@ -34945,7 +34945,7 @@
     "CrepSemHOLState.code"
   ],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.44.5.1) compared crep_inlineProofScript.sml:814-824: binders p s r s' x as declared parameters in HOL order; hypotheses evaluate (p,s) = (r,s') (evalCrepSemHOLProgExact s p), NOT MEM x (var_prog p) (x NOTIN crepVarProgHOLExact p, the reviewed var_prog_def port), continuing-result case rendered as the displayed match proposition; conclusion FLOOKUP s'.locals x = FLOOKUP s.locals x (lookup on finite-support locals). No extra premise, no public IH: the evaluate_ind induction is discharged internally by structural recursion on p with an inner clock induction for While (private nv_* support). Coordinator source review pending."
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.44.5.1) compared crep_inlineProofScript.sml:814-824: binders p s r s' x as declared parameters in HOL order; hypotheses evaluate (p,s) = (r,s') (evalCrepSemHOLProgExact s p), NOT MEM x (var_prog p) (x NOTIN crepVarProgHOLExact p, the reviewed var_prog_def port), continuing-result case rendered as the displayed match proposition; conclusion FLOOKUP s'.locals x = FLOOKUP s.locals x (lookup on finite-support locals). No extra premise, no public IH: the evaluate_ind induction is discharged internally by structural recursion on p with an inner clock induction for While (private nv_* support). Coordinator source acceptance evidence: closed source-review bead/integration .44.5.1/bdea0b1df; original statement and repaired IHs reviewed, kernel and full unified build/test/refs/map/type locks/warnings passed."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformBranch/Assembly.lean",
@@ -34968,7 +34968,7 @@
     "t"
   ],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-sol (.45.3) source compared HOL1223-1287: same s/es/vals/vs/t/p/r/sprime/tmp_vars binders, original eleven hypotheses including continuing NONE/Break/Continue condition, faithful eval from t updated ZIP(vs,vals), freshness, disjointness and eval-variable exclusions. Exact existential nested temporary/argument declaration run, full state_rel, FDIFF original s.locals(FDOM t) SUBMAP target.locals. Canonical standalone map t and state locals/globals/code plus positive-width words/Type0 FFI only. Two accepted nested_sublocals strong theorem applications construct inner and outer run internally; fresh update submap and tmp Var values derived, state_rel composed. No additional premise; coordinator review pending."
+  "reviewer": "flapjack-sol (.45.3) source compared HOL1223-1287: same s/es/vals/vs/t/p/r/sprime/tmp_vars binders, original eleven hypotheses including continuing NONE/Break/Continue condition, faithful eval from t updated ZIP(vs,vals), freshness, disjointness and eval-variable exclusions. Exact existential nested temporary/argument declaration run, full state_rel, FDIFF original s.locals(FDOM t) SUBMAP target.locals. Canonical standalone map t and state locals/globals/code plus positive-width words/Type0 FFI only. Two accepted nested_sublocals strong theorem applications construct inner and outer run internally; fresh update submap and tmp Var values derived, state_rel composed. No additional premise; Coordinator source acceptance evidence: closed .45.3, original eleven guards reviewed, unified2f1dfb16e; kernel/full unified gates passed."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ArgLoadStrong.lean",
@@ -35154,7 +35154,7 @@
   "lean_name": "stackNamesCompStackAsmOk_Inst",
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-luna-b source comparison, bead .18.5.15.7.14.1: HOL616 Inst case retains stack_asm_name, names_ok and fixed_names as conjunction and stack_asm_ok(comp f (Inst i)) conclusion. Exact Spt and HolInst/config carriers; positive type-indexed width only translation. Constructor proof unfolds the same source predicates; names_ok_imp supplies register bounds/avoidance, names_ok_imp2 distinctness; x86 shifts/multiply/divide use original fixed names. FP registers remain unchanged; no FP value or executed correctness claim. Remaining program cases and full theorem open; coordinator review required."
+  "reviewer": "flapjack-luna-b source comparison, bead .18.5.15.7.14.1: HOL616 Inst case retains stack_asm_name, names_ok and fixed_names as conjunction and stack_asm_ok(comp f (Inst i)) conclusion. Exact Spt and HolInst/config carriers; positive type-indexed width only translation. Constructor proof unfolds the same source predicates; names_ok_imp supplies register bounds/avoidance, names_ok_imp2 distinctness; x86 shifts/multiply/divide use original fixed names. FP registers remain unchanged; no FP value or executed correctness claim. Coordinator source acceptance evidence: closed .15.7.14.1, main and DS10 independent review, unified8b50fe858; kernel/full unified gates passed."
 },
 {
   "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
@@ -36268,6 +36268,215 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Source comparison evaluate_fperm1721-1810 Tick case and panSem653-656: original f/g/state/res/post and sole source evaluation premise, full target evaluation with fperm program/code-permuted input and unchanged result/code-permuted post. Native MlS annotation payload binders retained for Annot; original NONE/state equation. Tick retains clock=0 TimeOut/empty_locals versus nonzero NONE/dec_clock; code update commutes with original locals/clock record updates, no clock-success assumption. Reviewed native ProgHOL/PanSemResultExact/PanSemStateFiniteExact with canonical locals/globals/code/eshapes and positive word/Type0 FFI translations only; local unconditional roundtrip witness. No target/post premise or changed clock semantics. Genuine constructor slice, full theorem open. Proof-only no executable change."
+},
+{
+  "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+  "hol_name": "lprefix_chain_def",
+  "lean_path": "Flapjack/Misc/LprefixLub.lean",
+  "lean_name": "lprefixChain",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison rc27, pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae: 171-174: same two-member prefix comparability; HOL set membership as predicate application, conjunction curried without changing guards. Generic Type0 element/HolLList and natural index, no word/fmap/list-as-array translation; no axioms added or executable changes. Source acceptance pending coordinator review."
+},
+{
+  "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+  "hol_name": "lprefix_chain_nth_def",
+  "lean_path": "Flapjack/Misc/LprefixLub.lean",
+  "lean_name": "lprefixChainNth",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison rc27, pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae: 200-203: same guarded option Hilbert choice of a member LNTH witness; holOptionSome implements exists guard and Classical.choose. Arbitrary choice is unspecified off-chain in each logic; this is definition-shape review, not equality of cross-assistant choice functions. Generic Type0 element/HolLList and natural index, no word/fmap/list-as-array translation; no axioms added or executable changes. Source acceptance pending coordinator review."
+},
+{
+  "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+  "hol_name": "lprefix_lub_def",
+  "lean_path": "Flapjack/Misc/LprefixLub.lean",
+  "lean_name": "lprefixLub",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison rc27, pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae: 306-310: same upper-bound and leastness conjunction with all family members and all upper bounds. Generic Type0 element/HolLList and natural index, no word/fmap/list-as-array translation; no axioms added or executable changes. Source acceptance pending coordinator review."
+},
+{
+  "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+  "hol_name": "build_lprefix_lub_f_def",
+  "lean_path": "Flapjack/Misc/LprefixLub.lean",
+  "lean_name": "buildLprefixLubF",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison rc27, pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae: 430-433: same OPTION_MAP successor-index/value pair, n+1 order retained. Generic Type0 element/HolLList and natural index, no word/fmap/list-as-array translation; no axioms added or executable changes. Source acceptance pending coordinator review."
+},
+{
+  "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+  "hol_name": "build_lprefix_lub_def",
+  "lean_path": "Flapjack/Misc/LprefixLub.lean",
+  "lean_name": "buildLprefixLub",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison rc27, pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae: 435-438: same LUNFOLD of step function with initial numeric index zero; imported HolLList subtype/LUNFOLD representation inspected. No chain premise added to definition. Generic Type0 element/HolLList and natural index, no word/fmap/list-as-array translation; no axioms added or executable changes. Source acceptance pending coordinator review."
+},
+{
+  "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+  "hol_name": "lprefix_chain_nth_none_mono",
+  "lean_path": "Flapjack/Misc/LprefixLub.lean",
+  "lean_name": "lprefixChainNth_none_mono",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison rc27, pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae: 225-231: retains chain, m<=n, nth m NONE, conclusion nth n NONE; unused chain guard preserved. Generic Type0 element/HolLList and natural index, no word/fmap/list-as-array translation; no axioms added or executable changes. Source acceptance pending coordinator review."
+},
+{
+  "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+  "hol_name": "lprefix_chain_LNTHs_agree",
+  "lean_path": "Flapjack/Misc/LprefixLub.lean",
+  "lean_name": "lprefixChain_LNTHs_agree",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison rc27, pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae: 182-188: retains chain, both memberships and both SAME-index SOME observations; conclusion x1=x2, no distinctness or ordering premise. Generic Type0 element/HolLList and natural index, no word/fmap/list-as-array translation; no axioms added or executable changes. Source acceptance pending coordinator review."
+},
+{
+  "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+  "hol_name": "exists_lprefix_chain_nth",
+  "lean_path": "Flapjack/Misc/LprefixLub.lean",
+  "lean_name": "exists_lprefixChainNth",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison rc27, pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae: 205-211: same chain and existential member SOME observation imply selected SAME value. Generic Type0 element/HolLList and natural index, no word/fmap/list-as-array translation; no axioms added or executable changes. Source acceptance pending coordinator review."
+},
+{
+  "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+  "hol_name": "unique_lprefix_lub",
+  "lean_path": "Flapjack/Misc/LprefixLub.lean",
+  "lean_name": "unique_lprefix_lub",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison rc27, pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae: 419-425: same arbitrary family and two LUB premises imply equality; no chain premise added. Generic Type0 element/HolLList and natural index, no word/fmap/list-as-array translation; no axioms added or executable changes. Source acceptance pending coordinator review."
+},
+{
+  "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+  "hol_name": "build_lprefix_lub_lem",
+  "lean_path": "Flapjack/Misc/LprefixLub.lean",
+  "lean_name": "lnth_buildLprefixLub_full",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison rc27, pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae: 440-449: local val build_lprefix_lub_lem Q.prove has chain guard and arbitrary initial m/read n; same LNTH LUNFOLD = chain nth(m+n). Internal pair-step helper and m=0 corollary deliberately untagged. Generic Type0 element/HolLList and natural index, no word/fmap/list-as-array translation; no axioms added or executable changes. Source acceptance pending coordinator review."
+},
+{
+  "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+  "hol_name": "build_lprefix_lub_thm",
+  "lean_path": "Flapjack/Misc/LprefixLub.lean",
+  "lean_name": "buildLprefixLub_thm",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison rc27, pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae: 451-455: same sole chain premise, least-upper-bound of full build result. Generic Type0 element/HolLList and natural index, no word/fmap/list-as-array translation; no axioms added or executable changes. Source acceptance pending coordinator review."
+},
+{
+  "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+  "hol_name": "lprefix_lub_nth",
+  "lean_path": "Flapjack/Misc/LprefixLub.lean",
+  "lean_name": "lprefix_lub_nth",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison rc27, pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae: 319-323: same chain guard and iff LUB versus universal index equality. Generic Type0 element/HolLList and natural index, no word/fmap/list-as-array translation; no axioms added or executable changes. Source acceptance pending coordinator review."
+},
+{
+  "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+  "hol_name": "build_prefix_lub_intro",
+  "lean_path": "Flapjack/Misc/LprefixLub.lean",
+  "lean_name": "build_prefix_lub_intro",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison rc27, pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae: 515-520: same chain guard and iff LUB versus lub=build result; equality orientation retained. Generic Type0 element/HolLList and natural index, no word/fmap/list-as-array translation; no axioms added or executable changes. Source acceptance pending coordinator review."
+},
+{
+  "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+  "hol_name": "not_exists_lprefix_chain_nth",
+  "lean_path": "Flapjack/Misc/LprefixLub.lean",
+  "lean_name": "not_exists_lprefix_chain_nth",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison rc27, pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae: 215-219: exact wrapper retains original chain and every-member NONE guards; stronger untagged helper discharges proof, no dropped premise on tagged statement. Generic Type0 element/HolLList and natural index, no word/fmap/list-as-array translation; no axioms added or executable changes. Source acceptance pending coordinator review."
+},
+{
+  "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+  "hol_name": "llist_shorter_lnth",
+  "lean_path": "Flapjack/Misc/LprefixLub.lean",
+  "lean_name": "llistShorter_lnth",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b rc27 source comparison pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae lines131-161 local val Q.prove: exact iff llist_shorter ll1 ll2 versus forall n x LNTH n ll1=SOME x implies exists y LNTH n ll2=SOME y. Same arbitrary element/list/index/payload carriers, no equality of x and y added and no chain premise. Imported llength is finite length versus NONE infinity; original option length order preserved. Proof/cases unchanged. Coordinator source acceptance pending; no executable changes."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Call.lean",
+  "lean_name": "compileCorrect_Call",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "compile_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "reviewer": "flapjack-sol source comparison33.16: original gen_goal172-181 and complete Call proof1138-1510, against literal faithful evaluate_ind Call conjunct. Public handler and callee IHs preserve every original quantified intermediate, argument/code lookup, product equalities, nonzero-clock, actual exceptional callee run, caltyp/handler projections, matching exception identifier, eshapes lookup, shape equality and local-value validity guard. Exhaustive tail plus NONE/Local/Global destination crossed with NONE/SOME handler invokes seven accepted leaves; adapters instantiate intermediate witnesses and derive guards without strengthening public premises. compileCorrectGoal retains original source nonError, existential faithful compiled target evaluation and complete goodRes postrelation. Canonical state/context finite maps use genuine imported roundtrips; bare newlocals covers the original nested map binders. Native MlS and complete ProgHOL/ValueHOL/ShapeHOL carriers; positive type-indexed BitVec width and Type0 FFI conventional translation only. Proof-side assembly uses reviewed executed compiler definition; no executable change. Coordinator independent acceptance remains pending.",
+  "fmap_as_finite_support_relation": [
+    "PanSemStateFiniteExact.locals",
+    "PanSemStateFiniteExact.globals",
+    "PanSemStateFiniteExact.code",
+    "PanSemStateFiniteExact.eshapes",
+    "PanGlobalsContextExact.globals",
+    "newlocals"
+  ],
+  "words_as_type_indexed_bitvec": true
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Call.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Canonical imported state/context roundtrip reexport; Flapjack representation infrastructure, no independent HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Call.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Canonical imported state/context roundtrip reexport; Flapjack representation infrastructure, no independent HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/CallEntry.lean",
+  "lean_name": "arguments",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific derived finite Call entry transport; no independent HOL declaration. Supports original evaluate_fperm Call1746-1758 using accepted eta/lookup facts. Nonrecursive helper explicitly limited to missing arguments/code or zero clock; not a tagged full constructor port. Full recursive callee/handler parent22.5.12 remains open."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/CallEntry.lean",
+  "lean_name": "lookup",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific derived finite Call entry transport; no independent HOL declaration. Supports original evaluate_fperm Call1746-1758 using accepted eta/lookup facts. Nonrecursive helper explicitly limited to missing arguments/code or zero clock; not a tagged full constructor port. Full recursive callee/handler parent22.5.12 remains open."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/CallEntry.lean",
+  "lean_name": "entry",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific derived finite Call entry transport; no independent HOL declaration. Supports original evaluate_fperm Call1746-1758 using accepted eta/lookup facts. Nonrecursive helper explicitly limited to missing arguments/code or zero clock; not a tagged full constructor port. Full recursive callee/handler parent22.5.12 remains open."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/CallEntry.lean",
+  "lean_name": "nonrecursive",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific derived finite Call entry transport; no independent HOL declaration. Supports original evaluate_fperm Call1746-1758 using accepted eta/lookup facts. Nonrecursive helper explicitly limited to missing arguments/code or zero clock; not a tagged full constructor port. Full recursive callee/handler parent22.5.12 remains open."
+},
+{
+  "hol_path": null,
+  "hol_name": null,
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimIndexSize.lean",
+  "lean_name": "holIndexDimension_finite",
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only bare-index translation candidate infrastructure, bead .18.5.5.50.2. Retains arbitrary nonempty alpha itself and derives word width as max1 Nat.card alpha; kernel witnesses finite nonempty cardinal and infinite dimension1 after original fcpScript63-65 source inspection. Indexed unreach candidate uses f:alpha->Nat and that SAME alpha-derived word dimension, no independent width/domain or BitVec substitution. No exact HOL port or approved representation claim: original external fcp library source now byte-pinned at existing HOL commit a390cbabd3a4521bab4ee20281e3e42933a8a3ae; index/word qualifier/checker source review remains parent50 obligation."
+},
+{
+  "hol_path": null,
+  "hol_name": null,
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimIndexSize.lean",
+  "lean_name": "holIndexDimension_infinite",
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only bare-index translation candidate infrastructure, bead .18.5.5.50.2. Retains arbitrary nonempty alpha itself and derives word width as max1 Nat.card alpha; kernel witnesses finite nonempty cardinal and infinite dimension1 after original fcpScript63-65 source inspection. Indexed unreach candidate uses f:alpha->Nat and that SAME alpha-derived word dimension, no independent width/domain or BitVec substitution. No exact HOL port or approved representation claim: original external fcp library source now byte-pinned at existing HOL commit a390cbabd3a4521bab4ee20281e3e42933a8a3ae; index/word qualifier/checker source review remains parent50 obligation."
+},
+{
+  "hol_path": null,
+  "hol_name": null,
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimIndexSize.lean",
+  "lean_name": "unreachElimProgSize_indexed",
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only bare-index translation candidate infrastructure, bead .18.5.5.50.2. Retains arbitrary nonempty alpha itself and derives word width as max1 Nat.card alpha; kernel witnesses finite nonempty cardinal and infinite dimension1 after original fcpScript63-65 source inspection. Indexed unreach candidate uses f:alpha->Nat and that SAME alpha-derived word dimension, no independent width/domain or BitVec substitution. No exact HOL port or approved representation claim: original external fcp library source now byte-pinned at existing HOL commit a390cbabd3a4521bab4ee20281e3e42933a8a3ae; index/word qualifier/checker source review remains parent50 obligation."
 },
   {
     "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
