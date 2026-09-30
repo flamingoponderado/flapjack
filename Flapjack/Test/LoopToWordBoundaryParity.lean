@@ -24,8 +24,7 @@ def p9Source : String :=
     "fun 1 main() { var S s = mks(1,2); var 1 t = id(5); " ++
       "return s.f + s.g; }"
 
-/-- Compile `p1` to its source-shaped loop-level functions, then lower each
-    function through the source-facing pipeline boundary. -/
+/-- Read the executed routed Word result of the parser-backed `p1` pipeline. -/
 def p1WordBoundaries :
     Option (List (Nat × List Nat × WordProg (RiscV.Word 64))) :=
   match hparse : Parser.parseTopDecs (BitVec.ofInt 64) p1Source with
@@ -37,7 +36,7 @@ def p1WordBoundaries :
       (compileFlapjackEntryCake .rv64i (BitVec.ofNat 64 8)
         (fun value => BitVec.ofNat 64 value) "main"
         (panTargetDeclarationsWithDefaultMain declarations) (some (.isTrue htarget))).map
-        (fun pipeline => pipelineWordFunctionsSource pipeline.loop)
+        (fun pipeline => pipeline.word)
 
 /-- The Word-space names of every lowered `p1` function. -/
 def p1WordVariableNames : Option (List (List Nat)) :=
@@ -85,7 +84,7 @@ def p9WordBoundaries :
       (compileFlapjackEntryCake .rv64i (BitVec.ofNat 64 8)
         (fun value => BitVec.ofNat 64 value) "main"
         (panTargetDeclarationsWithDefaultMain declarations) (some (.isTrue htarget))).map
-        (fun pipeline => pipelineWordFunctionsSource pipeline.loop)
+        (fun pipeline => pipeline.word)
 
 def p9CallCutsets : Option (List (List (List Nat))) :=
   p9WordBoundaries.map (fun functions =>
@@ -93,12 +92,48 @@ def p9CallCutsets : Option (List (List (List Nat))) :=
       (collectCallCutsets body).map
         (fun live => live.mergeSort (fun a b => a < b))))
 
+/- Direct original HOL EVAL rows: `loop_to_word_probe.out` records
+   find_var_ctxt_10/11/12 = 2/4/6 for make_ctxt 2 [10;11;12] LN.
+   `loop_to_word_comp_func_probe.out` records comp_func_param_assign =
+   Assign 2 (Var 2), comp_func_new_temp = Assign 2 (Var 2), and
+   compile_prog_code arities 3/2/1 for [4;5]/[7]/[]. Regenerate with
+   HOL_PROBE_ONLY=loop_to_word_probeScript.sml scripts/hol-probes/regenerate.sh
+   and HOL_PROBE_ONLY=loop_to_word_comp_func_probeScript.sml respectively.
+   These guards exercise the production formal-name projection and require
+   successful HOL encoding, so matching fallback output cannot satisfy them. -/
+def routedParameterOracle : Bool :=
+  let skipBody : LoopProg (BitVec 8) := .skip
+  let assignedParameter : LoopProg (BitVec 8) := .assign 7 (.var 7)
+  let freshTemporary : LoopProg (BitVec 8) := .assign 9 (.var 9)
+  loopToWordCompParametersViaHOL [10, 11, 12] skipBody == some [2, 4, 6] &&
+    loopToWordCompParametersRouted [10, 11, 12] skipBody == [2, 4, 6] &&
+    loopToWordCompParametersViaHOL [4, 5] skipBody == some [2, 4] &&
+    loopToWordCompParametersRouted [4, 5] skipBody == [2, 4] &&
+    loopToWordCompParametersViaHOL [7] assignedParameter == some [2] &&
+    loopToWordCompParametersRouted [7] assignedParameter == [2] &&
+    loopToWordCompParametersViaHOL [] freshTemporary == some [] &&
+    loopToWordCompParametersRouted [] freshTemporary == []
+
+#guard routedParameterOracle
+
+#guard match loopToWordCompFuncViaHOL 6 [7]
+    (.assign 7 (.var 7) : LoopProg (BitVec 8)) with
+  | some (.assign 2 (.var 2)) => true
+  | _ => false
+
+#guard match loopToWordCompFuncRouted 6 [7]
+    (.assign 7 (.var 7) : LoopProg (BitVec 8)) with
+  | .assign 2 (.var 2) => true
+  | _ => false
+
 def runChecks : IO Bool := do
   let expected : Option (List (List Nat)) := some [[0], [0, 2, 4], [0, 2, 4]]
   let cutsetsExpected : Option (List (List (List Nat))) :=
     some [[], [[0]], []]
   let ok₁ := p1WordVariableNames == expected
   let ok₂ := p1CallCutsets == cutsetsExpected
+  let ok₃ := p9CallCutsets == some [[], [[0], [0, 4, 8]], [], []]
+  let ok₄ := routedParameterOracle
   if ok₁ then
     IO.println "PASS loop_to_word p1 boundary uses dense even Word names"
   else
@@ -107,7 +142,15 @@ def runChecks : IO Bool := do
     IO.println "PASS loop_to_word p1 call cut sets retain register zero"
   else
     IO.println s!"FAIL loop_to_word p1 call cut sets: expected {cutsetsExpected}, got {p1CallCutsets}"
-  pure (ok₁ && ok₂)
+  if ok₃ then
+    IO.println "PASS routed loop_to_word p9 live struct call cut sets"
+  else
+    IO.println s!"FAIL routed loop_to_word p9 call cut sets: {p9CallCutsets}"
+  if ok₄ then
+    IO.println "PASS routed loop_to_word formal parameters match original HOL oracles"
+  else
+    IO.println "FAIL routed loop_to_word formal parameter oracle"
+  pure (ok₁ && ok₂ && ok₃ && ok₄)
 
 #guard p1WordVariableNames == some [[0], [0, 2, 4], [0, 2, 4]]
 #guard p1CallCutsets == some [[], [[0]], []]
@@ -136,6 +179,7 @@ def p1EntryUsesSourceLoop : Bool :=
           (panTargetDeclarationsWithDefaultMain declarations) (some (.isTrue htarget)) with
       | none => false
       | some pipeline =>
+          reprStr pipeline.word == reprStr (pipelineWordFunctionsSourceRouted pipeline.loop) &&
           pipeline.loop.map (fun (_, parameters, _) => parameters) ==
             (pipelineLoopFunctionsSource .rv64i 1 pipeline.crepe).map
               (fun (_, parameters, _) => parameters)

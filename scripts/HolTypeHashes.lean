@@ -141,6 +141,7 @@ import Flapjack.Pancake.PanLang.Prog
 import Flapjack.Pancake.PanLang.Decl
 import Flapjack.Pancake.PanSimp
 import Flapjack.Pancake.Proofs.PanSimp.StateRel
+import Flapjack.Pancake.Proofs.PanSimp.RetToTailCorrect
 import Flapjack.Pancake.PanToCrep
 import Flapjack.Pancake.PanToCrep.Compile
 import Flapjack.Pancake.PanToCrep.CompileExact
