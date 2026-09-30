@@ -1,24 +1,27 @@
 #!/usr/bin/env python3
-"""Load and write the reviewed HOL-tag manifest as deterministic shards.
+"""Load and write the reviewed HOL-tag manifest in a deterministic shard layout.
 
-The manifest started as a single ``docs/HOL-THEOREM-MAP.json`` array. It is
-large enough that concurrent fleet merges conflict at the monolithic tail, so
-it is now stored as one JSON array per HOL script under
-``docs/hol-theorem-map/``. Records whose ``hol_path`` is null (Flapjack-only
-classifications such as ``no_hol_reference_pending_classification``) are
-grouped by their Lean module under ``docs/hol-theorem-map/no-hol/``.
+The manifest currently lives in the centralized ``docs/HOL-THEOREM-MAP.json``
+array. It is large enough that concurrent fleet merges conflict at the
+monolithic tail, so this module prepares a per-HOL-script shard layout under
+``docs/hol-theorem-map/``: one JSON array per HOL script, and records whose
+``hol_path`` is null (Flapjack-only classifications such as
+``no_hol_reference_pending_classification``) grouped by their Lean module under
+``docs/hol-theorem-map/no-hol/``.
 
-This module is shared infrastructure: it only derives shard paths, loads and
-validates records, and renders byte-stable shard text. It does not change any
-review status or source-review semantics; the gates in
-``scripts/check_hol_theorem_map.py`` and ``scripts/check_hol_type_hashes.py``
-remain authoritative.
+The shards are not canonical yet: during the migration the centralized
+``docs/HOL-THEOREM-MAP.json`` remains the authoritative compatibility view, and
+a later step switches the gates to the shards with a round-trip/drift check.
+This module only derives shard paths, loads and validates records, and renders
+byte-stable shard text. It does not change any review status or source-review
+semantics; the gates in ``scripts/check_hol_theorem_map.py`` and
+``scripts/check_hol_type_hashes.py`` remain authoritative.
 """
 
 from __future__ import annotations
 
+import ast
 import json
-import runpy
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -27,7 +30,39 @@ SHARD_DIR = ROOT / "docs" / "hol-theorem-map"
 LEGACY_MANIFEST = ROOT / "docs" / "HOL-THEOREM-MAP.json"
 NO_HOL_DIRNAME = "no-hol"
 
-_STATUS_MODULE = runpy.run_path(str(ROOT / "scripts" / "check_hol_theorem_map.py"))
+_STATUS_DEFINING_MODULE = ROOT / "scripts" / "check_hol_theorem_map.py"
+
+
+def _extract_valid_statuses(source_path: Path) -> frozenset[str]:
+    """Read ``VALID_STATUSES`` from the checker source without executing it.
+
+    ``check_hol_theorem_map.py`` is expected to import this module once the
+    migration lands, so executing it here via ``runpy`` would risk circular
+    execution. Instead the literal assignment is extracted from the AST and
+    must still be a literal collection of strings.
+    """
+    tree = ast.parse(
+        source_path.read_text(encoding="utf-8"), filename=str(source_path)
+    )
+    for node in tree.body:
+        if isinstance(node, ast.Assign):
+            targets = list(node.targets)
+        elif isinstance(node, ast.AnnAssign) and node.value is not None:
+            targets = [node.target]
+        else:
+            continue
+        for target in targets:
+            if isinstance(target, ast.Name) and target.id == "VALID_STATUSES":
+                value = ast.literal_eval(node.value)
+                if not isinstance(value, (set, frozenset, tuple, list)):
+                    raise ValueError("VALID_STATUSES must be a literal collection")
+                statuses = frozenset(value)
+                if not statuses or not all(isinstance(s, str) for s in statuses):
+                    raise ValueError("VALID_STATUSES must be literal strings")
+                return statuses
+    raise ValueError(f"VALID_STATUSES literal not found in {source_path}")
+
+
 REQUIRED_FIELDS: tuple[str, ...] = (
     "hol_path",
     "hol_name",
@@ -38,7 +73,7 @@ REQUIRED_FIELDS: tuple[str, ...] = (
 )
 # Fields other than reviewer kept in a fixed order for byte-stable output.
 STATUS_FIELDS: tuple[str, ...] = REQUIRED_FIELDS[:5]
-VALID_STATUSES: frozenset[str] = frozenset(_STATUS_MODULE["VALID_STATUSES"])
+VALID_STATUSES: frozenset[str] = _extract_valid_statuses(_STATUS_DEFINING_MODULE)
 
 # Optional qualifier / line metadata observed in reviewed records.
 OPTIONAL_FIELDS: frozenset[str] = frozenset(
@@ -65,12 +100,30 @@ def record_key(record: dict[str, Any]) -> tuple[str, str]:
     return (str(record.get("lean_path")), str(record.get("lean_name")))
 
 
+def _check_safe_relpath(relpath: str) -> str:
+    """Reject shard paths that could escape the shard directory.
+
+    A shard path must be a repo-relative POSIX path: no absolute prefix, no
+    backslash, no drive/scheme prefix, and no empty, ``.`` or ``..`` component.
+    """
+    if not relpath or relpath.startswith("/") or "\\" in relpath:
+        raise ValueError(f"shard path must be a repo-relative POSIX path: {relpath!r}")
+    parts = relpath.split("/")
+    if any(part in ("", ".", "..") for part in parts):
+        raise ValueError(
+            f"shard path must not contain empty, '.' or '..' components: {relpath!r}"
+        )
+    if ":" in parts[0]:
+        raise ValueError(f"shard path must not contain a drive/scheme prefix: {relpath!r}")
+    return relpath
+
+
 def shard_relpath(record: dict[str, Any]) -> str:
     """Return the deterministic shard path (POSIX, relative) for a record."""
     hol_path = record.get("hol_path")
     if hol_path:
-        return f"{hol_path}.json"
-    return f"{NO_HOL_DIRNAME}/{record['lean_path']}.json"
+        return _check_safe_relpath(f"{hol_path}.json")
+    return _check_safe_relpath(f"{NO_HOL_DIRNAME}/{record['lean_path']}.json")
 
 
 def shard_sort_key(record: dict[str, Any]) -> tuple[str, str, str, str]:
@@ -192,9 +245,15 @@ def render_shards(records: Iterable[dict[str, Any]]) -> dict[str, str]:
 def write_shards(
     root: Path | str, records: Iterable[dict[str, Any]]
 ) -> list[str]:
-    """Write shards under ``root`` and return the relative paths written."""
+    """Write shards under ``root`` and return the relative paths written.
+
+    Records are validated (shape, duplicates, statuses) and every shard path is
+    checked as repo-relative before any file is created, so an invalid record
+    cannot cause a write outside ``root``.
+    """
     root = Path(root)
-    rendered = render_shards(records)
+    validated = validate_records(list(records))
+    rendered = render_shards(validated)
     for relpath, text in rendered.items():
         target = root / relpath
         target.parent.mkdir(parents=True, exist_ok=True)

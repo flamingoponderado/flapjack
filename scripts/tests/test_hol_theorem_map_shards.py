@@ -236,5 +236,56 @@ class RenderTest(unittest.TestCase):
         )
 
 
+class PathSafetyTest(unittest.TestCase):
+    def test_rejects_absolute_hol_path(self) -> None:
+        item = record("Flapjack/A.lean", "aHOL", "/etc/passwd", "x")
+        with self.assertRaises(ValueError):
+            MODULE.shard_relpath(item)
+
+    def test_rejects_traversal_hol_path(self) -> None:
+        item = record("Flapjack/A.lean", "aHOL", "../../etc/passwd", "x")
+        with self.assertRaises(ValueError):
+            MODULE.shard_relpath(item)
+
+    def test_rejects_backslash_hol_path(self) -> None:
+        item = record("Flapjack/A.lean", "aHOL", "cakeml\\x.sml", "x")
+        with self.assertRaises(ValueError):
+            MODULE.shard_relpath(item)
+
+    def test_rejects_traversal_lean_path_for_no_hol_record(self) -> None:
+        item = record(
+            "../Flapjack/A.lean",
+            "aHOL",
+            None,
+            None,
+            status="no_hol_reference_pending_classification",
+        )
+        with self.assertRaises(ValueError):
+            MODULE.shard_relpath(item)
+
+    def test_write_shards_rejects_before_creating_any_file(self) -> None:
+        unsafe = record("Flapjack/A.lean", "aHOL", "/etc/passwd", "x")
+        duplicate = record("Flapjack/A.lean", "aHOL", "cakeml/a.sml", "x")
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "shards"
+            with self.assertRaises(ValueError):
+                MODULE.write_shards(root, [unsafe])
+            self.assertFalse(root.exists())
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "shards"
+            with self.assertRaises(ValueError):
+                MODULE.write_shards(root, [duplicate, duplicate])
+            self.assertFalse(root.exists())
+
+    def test_valid_statuses_extracted_without_executing_checker(self) -> None:
+        self.assertIn("reviewed_exact", MODULE.VALID_STATUSES)
+        self.assertIn(
+            "no_hol_reference_pending_classification", MODULE.VALID_STATUSES
+        )
+        # The checker is parsed, not executed (no circular runpy import).
+        self.assertFalse(hasattr(MODULE, "runpy"))
+        self.assertFalse(hasattr(MODULE, "_STATUS_MODULE"))
+
+
 if __name__ == "__main__":
     unittest.main()
