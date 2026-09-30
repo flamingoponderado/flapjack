@@ -5,6 +5,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Memory
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.ResVar
 import Flapjack.Pancake.Proofs.PanGlobals.ReadBytearray
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Leaves
+import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.If
 import Flapjack.Pancake.Proofs.PanGlobals.MemoryLookup
 import Flapjack.Pancake.Proofs.PanGlobals.MemorySwap
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelationCode
@@ -338,6 +339,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.FreshLocalEval
 import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.If
 import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.Seq
 import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.Dec
+import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.While
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsMemory
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsAlignment
 import Flapjack.Pancake.Proofs.PanToCrep.EvaluateCases

@@ -30430,5 +30430,51 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-specific infrastructure: Private codec transport of broad expression freshness; no separate source declaration, decision internal."
-}
+},
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/While.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack canonical finite-state roundtrip re-export; no standalone HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/While.lean",
+    "lean_name": "evaluateUnchangedLocal_While",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "evaluate_unchanged_local",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison 2026-09-30 (.32.5.4): HOL pan_globalsProofScript1107-1137 While case and literal evaluate_ind three IHs (Continue reentry, NONE reentry, body at dec_clock). Original unused value binder, nonfree name, source evaluation, good_res/non-Error premises and unchanged lookup conclusion retained. Predicate factored without changing content. Source panSem625-637 guard/nonzero/clock/body result clauses retained; reviewed fix_clock rewrite supplies removal without extra clock premise. Body/reentry lookup equalities compose; Break maps to NONE; timeout/exceptional results excluded by original good_res, Error by original non-Error. Exact MlS/ValueHOL/ProgHOL carriers, canonical four state maps and roundtrip, positive BitVec width/NeZero and universe0 FFI. No executable change; assembly remains open; coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/If.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack canonical finite-state roundtrip re-export; no standalone HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/If.lean",
+    "lean_name": "evaluateFreshLocal_If",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "evaluate_fresh_local",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison2026-09-30 (.32.3.7): genuine If evaluate_ind case of pan_globalsProof1045-1091; literal value/payload/word guard IH and original fresh-local predicate, existential post locals and conditional good_res/non-Error FUPDATE retained. No extra premise. Source panSem If selects else on zero, then on nonzero; failed guard returns Error preserving updated state. Guard invariant follows exact eval fresh-local theorem at canonical toExact update. Exact MlS/ValueHOL/ExpHOL/ProgHOL carriers, four canonical finite-map fields and genuine roundtrip, positive width/NeZero and universe0 FFI. No executable behavior change; parent assembly open and coordinator review pending."
+  }
 ]
