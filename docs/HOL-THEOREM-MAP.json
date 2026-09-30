@@ -32233,5 +32233,13 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only synthesized structural prerequisite for original Global Assign575-590 (bead28.6.2), no single HOL declaration. Existing-key replacement preserves lookup support, so original disjoint_globals is preserved for arbitrary values. Same-shape update reuses exact evaluator globalsShapes theorem. No scalar restriction, alternate relation, or target-evaluation premise. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/GlobalStoreReload.lean",
+    "lean_name": "stateRel_storeReload",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only synthesized certificate for original Assign543-568, bead28.6.3. Original state relation and global lookup plus same-shape replacement internally imply existential successful arbitrary-shaped store and exact reload, using reviewed MemStores and accepted alignment prerequisite. Top non-domain derives strict nonwrapping length. No target-store/alignment/length compiler premise or scalar restriction. No single HOL declaration has this combined statement; coordinator review pending."
   }
 ]
