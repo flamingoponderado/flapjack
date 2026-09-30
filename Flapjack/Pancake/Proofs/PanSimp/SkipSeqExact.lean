@@ -25,4 +25,20 @@ theorem evaluateSkipSeqHOL {width : Nat} {σ : Type} [NeZero width]
       evaluateHOLFiniteState state program := by
   rw [evaluateHOLFiniteState_seq_line780, evaluateHOLFiniteState_skip]
 
+/-- Appending Skip preserves the complete result and post-state for every source
+program. HOL75-81 uses evaluate_def; here the reviewed line780 Seq equation
+already rewrites fix_clock by the unconditional clock bound. All result cases
+are retained, including errors and exceptional control flow. -/
+@[hol "cakeml/pancake/proofs/pan_simpProofScript.sml" "evaluate_seq_skip"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateSeqSkipHOL {width : Nat} {σ : Type} [NeZero width]
+    (program : ProgHOL width) (state : PanSemStateFiniteExact width σ) :
+    evaluateHOLFiniteState state (.seq program .skip) =
+      evaluateHOLFiniteState state program := by
+  rw [evaluateHOLFiniteState_seq_line780]
+  generalize evaluateHOLFiniteState state program = outcome
+  rcases outcome with ⟨result, post⟩
+  cases result <;> simp [evaluateHOLFiniteState_skip]
+
 end Flapjack

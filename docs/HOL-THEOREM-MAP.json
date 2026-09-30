@@ -37151,5 +37151,20 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Imported-owner canonical finite-state roundtrip; derived representation infrastructure with no separately named HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SkipSeqExact.lean",
+  "lean_name": "evaluateSeqSkipHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+  "hol_name": "evaluate_seq_skip",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison pan_simpProofScript.sml75-81: unconditional complete evaluate(Seq p Skip,s)=evaluate(p,s), arbitrary exact program/state, no extra hypotheses. Reviewed line780 Seq uses source fix_clock_evaluate; source clock bound discharges clamp for every run. NONE runs execute Skip preserving post-state; every SOME result propagates unchanged, including errors/exceptional control. Native syntax/result/MlS, canonical finite-map fields with genuine imported-owner roundtrip, positive width and Type0 FFI only. Coordinator review pending; proof-only no executed compiler change."
 }
 ]
