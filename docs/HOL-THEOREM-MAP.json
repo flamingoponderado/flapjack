@@ -28485,5 +28485,31 @@
     "lean_name": "clockLeOfEval",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack support (bead flapjack-pxn.18.5.5.46.3): local clock-monotonicity helper read off an evaluation equation; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimProgSize.lean",
+    "lean_name": "unreachElimProgSize",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "unreach_elim_prog_size",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.5.46.2; crep_inlineProofScript.sml:1730-1733): same binders p q r f; premise unreach_elim p = (q, r); conclusion prog_size f q <= prog_size f p, over the tagged unreachElimHOLExact and HOL's Datatype-generated crepLang prog_size transcribed untagged as crepProgSizeHOL (Flapjack/Pancake/CrepLang/GeneratedSize.lean; equations and concrete EVAL rows pinned by scripts/hol-probes/crep_lang_size_probe.out, replayed in Flapjack.Test.CrepLangGeneratedSizeParity). HOL's f : 'a -> num is over the word-index type; as in the panLang expSizeHOL precedent it is a free {alpha : Type} (f : alpha -> Nat), unused by every clause (words sized by w2n)."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimProgSize.lean",
+    "lean_name": "notHasReturnImpUnreachElim",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "not_has_return_imp_unreach_elim",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.5.46.2; crep_inlineProofScript.sml:1765-1766): same binders p r; conjunction premise ~has_return p /\\ unreach_elim p = (p, r) (Bool has_return used as `= true`); conclusion r <> SOME Ret, over the tagged hasReturnHOLExact and unreachElimHOLExact. As in HOL the Seq-with-exit case is refuted by unreach_elim_prog_size."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimProgSize.lean",
+    "lean_name": "crepMergeExitHOL_eq_return",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.5.46.2): a merged If exit is Ret only if a branch exit is Ret; no HOL original."
   }
 ]

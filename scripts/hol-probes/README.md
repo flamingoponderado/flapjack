@@ -10,6 +10,14 @@ HOL_PROBE_ONLY=pan_globals_compile_top_probeScript.sml scripts/hol-probes/regene
 `Flapjack.Test.PanGlobalsCompileTopExactParity` replays the new rows; it does not
 claim production top-level routing or the pass semantics theorem.
 
+`crep_lang_size_probe.out` prints HOL's Datatype-generated crepLang
+`exp_size_def` and `prog_size_def` from the real `crepLangTheory`, plus five
+concrete `prog_size (K 0)` `EVAL` rows at 8-bit words. They pin the untagged
+transcription `Flapjack.CrepLangGeneratedSize.crepProgSizeHOL` used by the
+tagged `unreach_elim_prog_size`; `Flapjack.Test.CrepLangGeneratedSizeParity`
+replays the rows. Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=crep_lang_size_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 The repository-wide parity workflow is documented in
 [`docs/PARITY-TESTING.md`](../../docs/PARITY-TESTING.md).
 

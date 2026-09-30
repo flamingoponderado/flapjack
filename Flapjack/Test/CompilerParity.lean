@@ -513,6 +513,7 @@ import Flapjack.Test.PanSemMemLoadBridgeParity
 import Flapjack.Test.PanSemEvaluateDeclsFiniteParity
 import Flapjack.Test.PanToCrepMakeVmapParity
 import Flapjack.Test.PanLangGeneratedSizeParity
+import Flapjack.Test.CrepLangGeneratedSizeParity
 import Flapjack.Test.PanSimpProgBridgeParity
 
 /-!
@@ -1276,6 +1277,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.PanSemEvaluateDeclsFiniteParity.runChecks,
     Flapjack.Test.PanToCrepMakeVmapParity.runChecks,
     Flapjack.Test.PanLangGeneratedSizeParity.runChecks,
+    Flapjack.Test.CrepLangGeneratedSizeParity.runChecks,
     Flapjack.Test.PanSimpProgBridgeParity.runChecks,
     Flapjack.Test.CrepSemTotalExtCallParity.runChecks,
     Flapjack.Test.CrepSemIoEventsMonoParity.runChecks
