@@ -3417,6 +3417,48 @@ theorem inlineProgCorrectWhileCaseExact {width : Nat} [NeZero width] {σ : Type}
             · exact hcode
             · first | (simp only [crepInlineLocalsStrongRelExact]; exact hlocals) | trivial
 
+/-- Case of HOL `evaluate_locals_same_fdom` (`crep_inlineProofScript.sml:181`)
+    for the atomic programs `Skip`, `Break`, `Continue`, and `Tick`: under the
+    HOL result condition the local finite-map domain is preserved.  `FDOM` is
+    `Flapjack.FiniteMap.FDOM` applied to the exact carrier's `locals.lookup`
+    (a `FiniteMap`); this is the HOL-shaped statement for these constructors. -/
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "evaluate_locals_same_fdom"]
+theorem evaluateLocalsSameFdomTrivialAtomsExact {width : Nat} [NeZero width] {σ : Type}
+    (s : CrepSemHOLState width σ) (r : Option (CrepResultHOLExact width))
+    (s' : CrepSemHOLState width σ) (p : CrepProgHOL width)
+    (hp : p = .skip ∨ (∃ n, p = .break n) ∨ (∃ n, p = .continue n) ∨ p = .tick)
+    (hsource : evalCrepSemHOLProgExact s p = (r, s'))
+    (hcond : (match r with
+      | none => True
+      | some (.break _) => True
+      | some (.continue _) => True
+      | _ => False)) :
+    FDOM s.locals.lookup = FDOM s'.locals.lookup := by
+  rcases hp with hp | hp | hp | hp
+  · subst hp
+    rw [evalCrepSemHOLProgExact_skip] at hsource
+    cases hsource
+    rfl
+  · obtain ⟨n, hn⟩ := hp
+    subst hn
+    rw [evalCrepSemHOLProgExact_break] at hsource
+    cases hsource
+    rfl
+  · obtain ⟨n, hn⟩ := hp
+    subst hn
+    rw [evalCrepSemHOLProgExact_continue] at hsource
+    cases hsource
+    rfl
+  · subst hp
+    rw [evalCrepSemHOLProgExact_tick] at hsource
+    by_cases hc : s.clock = 0
+    · rw [if_pos hc] at hsource
+      cases hsource
+      exact absurd hcond (by simp)
+    · rw [if_neg hc] at hsource
+      cases hsource
+      rfl
+
 end CrepInlineExact
 
 end Flapjack
