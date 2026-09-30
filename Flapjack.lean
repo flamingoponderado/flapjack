@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.Semantics.StackSem.FixedStackCases
 import Flapjack.Pancake.PanStructs.CompileExpProduction
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnv
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnvs
