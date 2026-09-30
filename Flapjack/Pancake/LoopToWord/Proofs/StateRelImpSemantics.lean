@@ -2,6 +2,7 @@ import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Assembly
 import Flapjack.Pancake.CrepToLoop.Proofs.SemanticsWrapper
 import Flapjack.Compiler.Backend.Semantics.WordSem.Semantics
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClock
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClockIoEventsMono
 import Flapjack.Pancake.Semantics.LoopProps.EvaluateIoEventsExact
 import Flapjack.Pancake.Semantics.LoopProps.EvaluateClockExact
 
@@ -21,9 +22,15 @@ follows from the tagged `semantics_wrapper_eq`.  Its premises come from:
 
 HOL proves the theorem by unfolding both `semantics_def`s directly.  This
 module keeps HOL's statement and takes the proof route that the Crep-to-Loop
-`state_rel_imp_semantics` port uses.  The wordSem
-`evaluate_add_clock_io_events_mono` (bead `flapjack-pxn.18.5.9.1.3`) is
-still the hypothesis `hwmono` here.
+`state_rel_imp_semantics` port uses.  The recursive argument takes the wordSem
+`evaluate_add_clock_io_events_mono` as the hypothesis `hwmono`.  The tagged
+theorem supplies it from the tagged port (bead `flapjack-pxn.18.5.9.1.3`).
+
+The theorem relates the observational semantics of the loopSem and wordSem
+evaluator ports.  The wordSem evaluator's `Inst` clause runs the untagged
+`inst` rendering, whose `FPSqrt` clause is the rational-cut reformulation of
+HOL `fp64_sqrt` (bead `flapjack-dshl`).  So this theorem does not by itself
+establish agreement with HOL's numerical floating-point semantics.
 -/
 
 namespace Flapjack
@@ -155,9 +162,8 @@ theorem wordSemIsWrapper {width : Nat} [NeZero width] {C F : Type}
 
 /-- HOL `state_rel_imp_semantics` (`loop_to_wordProofScript.sml:1538-1544`),
     with the wordSem `evaluate_add_clock_io_events_mono` statement as the
-    hypothesis `hwmono`.  The tagged theorem instantiates `hwmono` once bead
-    `flapjack-pxn.18.5.9.1.3` lands.  Untagged for that reason only: the
-    remaining binders, premises and conclusion are HOL's. -/
+    hypothesis `hwmono`; the tagged `stateRelImpSemantics` below discharges it.
+    The binders, premises and conclusion are HOL's. -/
 theorem stateRelImpSemantics_of_addClockIoEventsMono {width : Nat} [NeZero width] {C F : Type}
     (hwmono : ∀ (p : WordLangProgHOL (BitVec width)) (s : WordSemStateFiniteExact width C F)
       (extra : Nat),
@@ -264,5 +270,58 @@ theorem stateRelImpSemantics_of_addClockIoEventsMono {width : Nat} [NeZero width
     exact hwmono (.call none (some start) [0] none) { t with clock := k } k'
 
 end LoopToWordStateRelImpSemanticsSupport
+
+namespace LoopToWordStateRelImpSemanticsWitnesses
+
+/-- Same-module roundtrip for the relation qualifier's loopSem state fields. -/
+theorem holFmapAsFiniteSupportRelationWitness_LoopSemStateFiniteExact
+    {width : Nat} [NeZero width] {F : Type} :
+    (∀ (state : LoopSemStateBroad width F) (h : state.FiniteSupport),
+        (LoopSemStateBroad.ofBroad state h).toBroad = state) ∧
+      (∀ state : LoopSemStateFiniteExact width F,
+        LoopSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  LoopSemStateFiniteExact.holFmapAsFiniteSupportWitness
+
+/-- Same-module roundtrip for the relation qualifier's wordSem state fields. -/
+theorem holFmapAsFiniteSupportRelationWitness_WordSemStateFiniteExact
+    {width : Nat} [NeZero width] {C F : Type} :
+    (∀ (state : WordSemStateBroad width C F) (h : state.FiniteSupport),
+        (WordSemStateBroad.ofBroad state h).toBroad = state) ∧
+      (∀ state : WordSemStateFiniteExact width C F,
+        WordSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  WordSemStateExact.holFmapAsFiniteSupportWitness
+
+end LoopToWordStateRelImpSemanticsWitnesses
+
+open LoopToWordStateRelImpSemanticsSupport in
+/-- Exact HOL `state_rel_imp_semantics` (`loop_to_wordProofScript.sml:1538-1544`):
+
+    ```
+    !s t start. state_rel s t ∧ isEmpty s.locals /\ good_dimindex(:'a) ∧
+      lookup 0 t.locals = SOME (Loc 1 0) /\
+      (∃(prog:'a loopLang$prog). lookup start s.code = SOME ([], prog)) /\
+      semantics s start <> Fail ==>
+      semantics t start = semantics s start
+    ```
+
+    HOL's `isEmpty` is `sptIsEmpty … = true`.  The wordSem state has an
+    arbitrary configuration type `C` and the loopSem FFI host `F`.  There is
+    no additional premise.  See the module docstring for the proof route and
+    for the `FPSqrt` caveat on the wordSem evaluator it relates. -/
+@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "state_rel_imp_semantics"
+  (fmap_as_finite_support_relation :=
+    [LoopSemStateFiniteExact.globals, WordSemStateFiniteExact.fpRegs,
+      WordSemStateFiniteExact.store])
+  (words_as_type_indexed_bitvec)]
+theorem stateRelImpSemantics {width : Nat} [NeZero width] {C F : Type} :
+    ∀ (s : LoopSemStateFiniteExact width F) (t : WordSemStateFiniteExact width C F)
+      (start : Nat),
+      loopToWordStateRelHOLExact s t ∧ sptIsEmpty s.locals = true ∧ goodDimindex width ∧
+        sptLookup 0 t.locals = some (WordLocW.loc 1 0) ∧
+        (∃ prog : HolLoopProg width, sptLookup start s.code = some ([], prog)) ∧
+        LoopSemStateFiniteExact.semantics s start ≠ .fail →
+      WordSemStateFiniteExact.semantics t start = LoopSemStateFiniteExact.semantics s start :=
+  stateRelImpSemantics_of_addClockIoEventsMono
+    WordSemStateFiniteExact.evaluate_add_clock_io_events_mono
 
 end Flapjack

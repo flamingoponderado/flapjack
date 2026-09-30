@@ -5,8 +5,8 @@ import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
 Nonrecursive constructor cases of HOL `ret_to_tail_correct` (the theorem at
 pan_simpProofScript.sml:190, with suspended cases at 285-341). Each statement
 retains the theorem's source non-Error hypothesis and entire evaluation pair.
-The exact syntax compiler leaves these constructors unchanged. This does not
-assemble the recursive Dec/Seq/If/While/Call/DecCall cases.
+The exact syntax compiler leaves these constructors unchanged. The recursive
+Dec case follows below; Seq/If/While/Call/DecCall and full assembly remain open.
 -/
 
 namespace Flapjack.PanSimp.RetToTailCorrect
@@ -204,5 +204,41 @@ theorem retToTailCorrect_extCall {width : Nat} {σ : Type} [NeZero width]
         evaluateHOLFiniteState s (.extCall function configuration configurationLength array arrayLength : ProgHOL width) := by
   intro _h
   simp only [retToTailHOL]
+
+/-- HOL's recursive Dec case. The body induction hypothesis is the literal
+evaluate_ind obligation under successful initialization and shape equality.
+Initializer/shape failure preserves HOL Error; successful evaluation restores
+the original local binding on both equal body-output states. -/
+@[hol "cakeml/pancake/proofs/pan_simpProofScript.sml" "ret_to_tail_correct"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem retToTailCorrect_dec {width : Nat} {σ : Type} [NeZero width]
+    (s : PanSemStateFiniteExact width σ) (name : MlS) (shape : ShapeHOL)
+    (initializer : ExpHOL width) (body : ProgHOL width)
+    (bodyIH : ∀ value : ValueHOL width,
+      @evalHOLExact width σ _ s.toExact
+          (fun address => Classical.propDecidable (s.memaddrs address)) initializer = some value ∧
+        shape = shapeOfHOLExact value →
+      (evaluateHOLFiniteState (setVarHOLFinite name value s) body).1 ≠ some .error →
+        evaluateHOLFiniteState (setVarHOLFinite name value s) (retToTailHOL body) =
+          evaluateHOLFiniteState (setVarHOLFinite name value s) body) :
+    (evaluateHOLFiniteState s (.dec name shape initializer body)).1 ≠ some .error →
+      evaluateHOLFiniteState s (retToTailHOL (.dec name shape initializer body)) =
+        evaluateHOLFiniteState s (.dec name shape initializer body) := by
+  classical
+  intro hsource
+  simp only [retToTailHOL, evaluateHOLFiniteState_dec_total] at hsource ⊢
+  cases hinit : @evalHOLExact width σ _ s.toExact
+      (fun address => Classical.propDecidable (s.memaddrs address)) initializer with
+  | none =>
+      simp only [hinit] at hsource
+      exact False.elim (hsource rfl)
+  | some value =>
+      simp only [hinit] at hsource ⊢
+      by_cases hshape : shapeEqHOL shape (shapeOfHOLExact value) = true
+      · simp only [hshape, if_true] at hsource ⊢
+        rw [bodyIH value ⟨hinit, (shapeEqHOL_eq_true _ _).mp hshape⟩ hsource]
+      · simp only [hshape, Bool.false_eq_true, if_false] at hsource
+        exact False.elim (hsource rfl)
 
 end Flapjack.PanSimp.RetToTailCorrect
