@@ -1,0 +1,8 @@
+{
+  "repository": "https://github.com/HOL-Theorem-Prover/HOL",
+  "commit": "a390cbabd3a4521bab4ee20281e3e42933a8a3ae",
+  "files": {
+    "COPYRIGHT": "d071146fd9b5870fb76918eee569c105c84bea875ac302c55246a0904e27d1a4",
+    "src/finite_maps/sptreeScript.sml": "97791ac7f3f7b0de823afb00f6f1fbd18cd158b9fe8a818a272b39daa0e49b71"
+  }
+}
