@@ -1,3 +1,4 @@
+import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.ShMemStore
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.ExtCall
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Primitive
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Results
