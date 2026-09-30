@@ -1751,6 +1751,24 @@ Regenerate read-only with
 HOL_PROBE_ONLY=stacksem_store_const_sem_probeScript.sml
 bash scripts/hol-probes/regenerate.sh`.
 
+## StackSem evaluate_def StoreConsts clause
+
+`stacksem_store_consts_probeScript.sml` captures six direct original
+`evaluate_def` observations for the `StoreConsts` clause
+(stackSemScript.sml:784-788) at width 64. The program is `StoreConsts 4 5 stub`
+and the base state is the `store_const_sem` fixture. The rows cover all four
+guard outcomes and both success arms: `use_store = F -> Error`; `use_alloc = F`
+with a `SOME` stub `-> Error`; the exact `check_store_consts_opt` stub guard
+failing on empty code `-> Error`; and the `store_const_sem` success reached via
+`NONE` stubs with `use_alloc = T`/`F` and via a matching `SOME` stub inserted at
+label 7 with `use_alloc = T`. `Flapjack/Test/StackSemStoreConstsParity.lean`
+kernel-replays every row; the untagged partial case helper
+`Flapjack/StackSemStoreConsts.evaluateStoreConsts` is not the total HOL
+`evaluate`. Regenerate read-only with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_store_consts_probeScript.sml
+bash scripts/hol-probes/regenerate.sh`.
+
 ## StackSem FP register movement and sign cases
 
 `stacksem_fpreg_inst_probeScript.sml` captures twenty original `inst_def`
