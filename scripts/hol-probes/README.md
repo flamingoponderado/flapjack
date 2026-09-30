@@ -1434,3 +1434,21 @@ all rows. Regenerate with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=stacksem_pattern_copy_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
+
+`stacksem_integer_inst_probeScript.sml` records 33 original StackSem instruction
+observations, replayed in `Flapjack/Test/StackSemIntegerInstParity.lean` over
+arbitrary base states with all observed fields overridden. The observer uses
+w2n on Word payloads, preserving Loc pairs, to canonicalize modular numerals.
+The original byteTheory set_byte is nocompute outside its specialized widths;
+the probe evaluates, unfolds original set_byte_def/word_slice_alt_def, then
+evaluates again. It does not substitute a Lean implementation. Cases cover
+same-register Or copying Loc, general arithmetic rejection, signed division,
+carry/overflow and alias write order, long division bounds, all memory forms,
+64-bit successful 32-bit accesses, endian byte offsets and missing domains.
+The dispatcher is untagged assembly infrastructure, with outer NONE reserved
+for unhandled FP and inner NONE for original failures. Whole inst assembly
+remains on y19g.11.3. HOL words `/` is signed word_quot, unlike Lean BitVec `/`;
+the local quotient mirrors HOL's sign cases. Regenerate using
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_integer_inst_probeScript.sml
+scripts/hol-probes/regenerate.sh`.

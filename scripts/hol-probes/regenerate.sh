@@ -104,6 +104,9 @@ run_probe() {
 run_probe pan_globals_fperm_code_probeScript.sml pan_globals_fperm_code_probe.out \
   swap_f swap_g other missing equal_names \
   "$cake_dir/pancake/proofs/pan_globalsProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe stacksem_integer_inst_probeScript.sml stacksem_integer_inst_probe.out \
+  skip const or_loc or_missing or_loc_general add shift div div_zero carry carry_alias add_overflow sub_overflow long_mul long_div long_div_overflow load load8 load16 load32 store_loc store8 store16 store32 store8_loc load32_64 store32_64 load32_64_be store32_64_be store8_64_offset store8_64_offset_be load8_no_domain store32_no_domain \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe stacksem_pattern_copy_probeScript.sml stacksem_pattern_copy_probe.out \
   zero one_bypass even odd multi missing_bitmap missing_domain later_domain address_wrap value_wrap stride16 stride4 \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
