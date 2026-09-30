@@ -26594,5 +26594,53 @@
     "lean_name": "inline_extCall",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-ds10 Flapjack-only infrastructure (2026-09-30; bead flapjack-pxn.18.5.5.39): private identity lemma that inlineProgHOLExact leaves ExtCall unchanged (HOL inline_prog_def fall-through arm); no cakeml HOL declaration of its own."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "same_setVar",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.5.41.1): untagged Flapjack state-transfer infrastructure for the exact shared-memory helper congruence; no HOL original (Flapjack codec/semantics transfer over CrepSemHOLState)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "same_emptyLocals",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.5.41.1): untagged Flapjack state-transfer infrastructure for the exact shared-memory helper congruence; no HOL original (Flapjack codec/semantics transfer over CrepSemHOLState)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "same_setFfi",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.5.41.1): untagged Flapjack state-transfer infrastructure for the exact shared-memory helper congruence; no HOL original (Flapjack codec/semantics transfer over CrepSemHOLState)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "crepShMemLoadExactHOL_same",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.5.41.1): untagged Flapjack state-transfer infrastructure for the exact shared-memory helper congruence; no HOL original (Flapjack codec/semantics transfer over CrepSemHOLState)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "crepShMemStoreExactHOL_same",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.5.41.1): untagged Flapjack state-transfer infrastructure for the exact shared-memory helper congruence; no HOL original (Flapjack codec/semantics transfer over CrepSemHOLState)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "crepShMemOpExactHOL_same",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.5.41.1): untagged Flapjack state-transfer infrastructure for the exact shared-memory helper congruence; no HOL original (Flapjack codec/semantics transfer over CrepSemHOLState)."
   }
 ]
