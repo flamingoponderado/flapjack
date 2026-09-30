@@ -33771,5 +33771,57 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack local support (bead .43.5.7): the evaluate_state_locals_rel_strong motive for Call from the handler IH."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/Assembly.lean",
+    "lean_name": "evaluateStateLocalsRelStrongExact",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "evaluate_state_locals_rel_strong",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.8) compared crep_inlineProofScript.sml:273-285: the full HOL statement forall p s r s' t. evaluate (p,s) = (r,s') /\\ r <> SOME Error /\\ locals_rel s t /\\ state_rel s t ==> exists t'. evaluate (p,t) = (r,t') /\\ state_rel s' t' /\\ case r of NONE/Break/Continue => locals_rel s' t' /\\ locals_ext_rel s s' t t' | SOME Error => F | _ => T; HOL binders and conjunction, no extra premise and no public IH. Assembled from all tagged cases (Skip/Break/Continue/Tick, Assign/Store*/StoreGlob/Raise/Return/Primitive/ExtCall/ShMem, Dec/Seq/If, While, Call) by structural recursion on the program for all states supplying the literal guarded premises (handler a structural subterm) plus an inner clock induction constructing StrongLocalsWhileIH (HOL's completeInduct_on s.clock); same principle as accepted .43.7. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/Assembly.lean",
+    "lean_name": "evaluateStateLocalsRelExact",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "evaluate_state_locals_rel",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.6) compared crep_inlineProofScript.sml:567-585: forall p s r s' t. evaluate (p,s) = (r,s') ==> r <> SOME Error ==> locals_rel s t /\\ state_rel s t ==> exists t'. evaluate (p,t) = (r,t') /\\ state_rel s' t' /\\ case r of NONE/Break/Continue => locals_rel s' t' | SOME Error => F | _ => T; curried exactly as in HOL; proved from evaluate_state_locals_rel_strong as in HOL. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/Assembly.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed CrepSemHOLState toBroad/ofBroad roundtrip for the relation qualifier."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/Assembly.lean",
+    "lean_name": "whileStrongMotive",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead .43.5.8): While motive for all states by clock induction providing StrongLocalsWhileIH."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/Assembly.lean",
+    "lean_name": "strongMotive",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead .43.5.8): evaluate_ind motive of evaluate_state_locals_rel_strong for every program and state by structural recursion over the tagged cases."
   }
 ]
