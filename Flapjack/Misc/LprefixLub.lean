@@ -651,6 +651,178 @@ theorem build_prefix_lub_intro {ls : HolLList α → Prop} (hchain : lprefixChai
     rw [h]
     exact buildLprefixLub_thm hchain
 
+/-! ### Chain/equality lemmas
+
+HOL `equiv_lprefix_chain`, `lprefix_rel` and the derived equality facts
+(`lprefix_lubScript.sml:242-558`). -/
+
+/-- HOL `equiv_lprefix_chain ls1 ls2 ⇔
+    !n. lprefix_chain_nth n ls1 = lprefix_chain_nth n ls2`
+    (`lprefix_lubScript.sml:242-245`). -/
+def equivLprefixChain (ls1 ls2 : HolLList α → Prop) : Prop :=
+  ∀ n, lprefixChainNth n ls1 = lprefixChainNth n ls2
+
+/-- HOL `lprefix_rel s1 s2 ⇔ ∀l1. l1 IN s1 ⇒ ∃l2. l2 IN s2 ∧ LPREFIX l1 l2`
+    (`lprefix_lubScript.sml:522-523`); HOL sets `'a llist set` are predicates
+    `HolLList α → Prop`. -/
+def lprefixRel (s1 s2 : HolLList α → Prop) : Prop :=
+  ∀ l1, s1 l1 → ∃ l2, s2 l2 ∧ lprefix l1 l2
+
+/-- HOL `prefixes_lprefix_total` (`llistScript.sml:2744-2746`): two lazy lists
+    that are both `lprefix`-below a common list are `lprefix`-comparable.  This
+    is the generic `llist` helper used by `lprefix_lub_is_chain`. -/
+theorem lprefix_total_of_common {a b c : HolLList α} (ha : lprefix a c) (hb : lprefix b c) :
+    lprefix a b ∨ lprefix b a := by
+  by_cases hab : lprefix a b
+  · exact Or.inl hab
+  · right
+    have hnot : ¬ ∀ n x, a.rep n = some x → b.rep n = some x :=
+      fun hall => hab (lprefix_of_rep_agree hall)
+    obtain ⟨n, hnotn⟩ : ∃ n, ¬ ∀ x, a.rep n = some x → b.rep n = some x :=
+      Classical.not_forall.mp hnot
+    obtain ⟨x, hnotx⟩ : ∃ x, ¬ (a.rep n = some x → b.rep n = some x) :=
+      Classical.not_forall.mp hnotn
+    have han : a.rep n = some x := by
+      apply Classical.byContradiction
+      intro h
+      exact hnotx (fun h' => absurd h' h)
+    have hbn : b.rep n ≠ some x := by
+      intro h'
+      exact hnotx (fun _ => h')
+    have hbnone : b.rep n = none := by
+      cases hbn' : b.rep n with
+      | none => rfl
+      | some y =>
+          exfalso
+          have hcx : c.rep n = some x := lprefix_rep ha han
+          have hcy : c.rep n = some y := lprefix_rep hb hbn'
+          rw [hcx] at hcy
+          have hxy : x = y := Option.some.inj hcy
+          exact hbn (by rw [hbn', hxy])
+    apply lprefix_of_rep_agree
+    intro m y hbm
+    have hlt : m < n := by
+      apply Classical.byContradiction
+      intro hge
+      have hmn : n ≤ m := Nat.le_of_not_lt hge
+      have hnone := rep_none_of_le b hbnone hmn
+      rw [hbm] at hnone
+      exact absurd hnone (by simp)
+    have hcy : c.rep m = some y := lprefix_rep hb hbm
+    cases ham : a.rep m with
+    | none =>
+        have hnone := rep_none_of_le a ham (Nat.le_of_lt hlt)
+        rw [han] at hnone
+        exact absurd hnone (by simp)
+    | some w =>
+        have hcw : c.rep m = some w := lprefix_rep ha ham
+        rw [hcw] at hcy
+        have hwy : w = y := Option.some.inj hcy
+        rw [← hwy]
+
+/-- HOL `lprefix_lub_is_chain` (`lprefix_lubScript.sml:312-317`). -/
+theorem lprefix_lub_is_chain {ls : HolLList α → Prop} {ll : HolLList α}
+    (h : lprefixLub ls ll) : lprefixChain ls := by
+  intro a b ha hb
+  exact lprefix_total_of_common (h.1 a ha) (h.1 b hb)
+
+/-- HOL `equiv_lprefix_chain_thm` (`lprefix_lubScript.sml:247-262`). -/
+theorem equivLprefixChain_thm {ls1 ls2 : HolLList α → Prop}
+    (h1 : lprefixChain ls1) (h2 : lprefixChain ls2) :
+    (equivLprefixChain ls1 ls2 ↔
+      (∀ ll1 n x, ls1 ll1 → lnth n ll1 = some x →
+        ∃ ll2, ls2 ll2 ∧ lnth n ll2 = some x) ∧
+      (∀ ll2 n x, ls2 ll2 → lnth n ll2 = some x →
+        ∃ ll1, ls1 ll1 ∧ lnth n ll1 = some x)) := by
+  constructor
+  · intro heq
+    refine ⟨?_, ?_⟩
+    · intro ll1 n x hl1 hln
+      have hc1 : lprefixChainNth n ls1 = some x :=
+        exists_lprefixChainNth h1 ⟨ll1, hl1, hln⟩
+      have hc2 : lprefixChainNth n ls2 = some x := by
+        rw [← heq n]; exact hc1
+      exact holOptionSome_some (P := fun z => ∃ l, ls2 l ∧ lnth n l = some z) (x := x) hc2
+    · intro ll2 n x hl2 hln
+      have hc2 : lprefixChainNth n ls2 = some x :=
+        exists_lprefixChainNth h2 ⟨ll2, hl2, hln⟩
+      have hc1 : lprefixChainNth n ls1 = some x := by
+        rw [heq n]; exact hc2
+      exact holOptionSome_some (P := fun z => ∃ l, ls1 l ∧ lnth n l = some z) (x := x) hc1
+  · intro hdir
+    rw [equivLprefixChain]
+    intro n
+    cases hc1 : lprefixChainNth n ls1 with
+    | none =>
+        symm
+        apply lprefixChainNth_eq_none
+        intro l2 hl2
+        cases hln : lnth n l2 with
+        | none => rfl
+        | some y =>
+            obtain ⟨l1, hl1, hln1⟩ := hdir.2 l2 n y hl2 hln
+            have hcontra := exists_lprefixChainNth h1 ⟨l1, hl1, hln1⟩
+            rw [hc1] at hcontra
+            exact absurd hcontra (by simp)
+    | some x =>
+        obtain ⟨l1, hl1, hln1⟩ :=
+          holOptionSome_some (P := fun z => ∃ l, ls1 l ∧ lnth n l = some z) (x := x) hc1
+        obtain ⟨l2, hl2, hln2⟩ := hdir.1 l1 n x hl1 hln1
+        exact (exists_lprefixChainNth h2 ⟨l2, hl2, hln2⟩).symm
+
+/-! ### Deferred: HOL `equiv_lprefix_chain_thm2` (`lprefix_lubScript.sml:264-304`)
+
+HOL's `equiv_lprefix_chain_thm2` is stated entirely over the `llist_shorter`
+relation (`llistScript.sml:122-129`) with its characterisation
+`llist_shorter_lnth`, and its proof uses `LTAKE_LLENGTH_SOME`,
+`LTAKE_LNTH_EL` and `lnth_some_down_closed`.  None of these are ported in
+`Flapjack/Misc/LList.lean`, so the theorem is not stated here rather than
+weakened; it needs a separate commit-sized `llist_shorter` port (child bead
+`flapjack-pxn.18.5.2.22.3.2.1.1`). -/
+
+/-- HOL `lprefix_rel_lnth` (`lprefix_lubScript.sml:526-538`). -/
+theorem lprefix_rel_lnth {ls1 ls2 : HolLList α → Prop} (h : lprefixRel ls1 ls2) :
+    ∀ ll1 n x, ls1 ll1 → lnth n ll1 = some x →
+      ∃ ll2, ls2 ll2 ∧ lnth n ll2 = some x := by
+  intro ll1 n x hl1 hln
+  obtain ⟨l2, hl2, hpre⟩ := h ll1 hl1
+  exact ⟨l2, hl2, lprefix_lnth hpre hln⟩
+
+/-- HOL `IMP_equiv_lprefix_chain` (`lprefix_lubScript.sml:540-548`). -/
+theorem IMP_equiv_lprefix_chain {ls1 ls2 : HolLList α → Prop}
+    (h1 : lprefixChain ls1) (h2 : lprefixChain ls2)
+    (hr12 : lprefixRel ls1 ls2) (hr21 : lprefixRel ls2 ls1) :
+    equivLprefixChain ls1 ls2 := by
+  rw [equivLprefixChain_thm h1 h2]
+  exact ⟨lprefix_rel_lnth hr12, lprefix_rel_lnth hr21⟩
+
+/-- HOL `lprefix_lub_equiv_chain2` (`lprefix_lubScript.sml:471-484`). -/
+theorem lprefix_lub_equiv_chain2 {ls1 ls2 : HolLList α → Prop} {ll1 ll2 : HolLList α}
+    (h1 : lprefixLub ls1 ll1) (h2 : lprefixLub ls2 ll2) :
+    (ll1 = ll2 ↔ equivLprefixChain ls1 ls2) := by
+  have hc1 := lprefix_lub_is_chain h1
+  have hc2 := lprefix_lub_is_chain h2
+  constructor
+  · intro heq
+    subst heq
+    rw [equivLprefixChain]
+    intro n
+    rw [← (lprefix_lub_nth hc1).mp h1 n, ← (lprefix_lub_nth hc2).mp h2 n]
+  · intro heq
+    apply ext_of_rep
+    intro n
+    rw [← lnth_eq_rep n ll1, ← lnth_eq_rep n ll2]
+    rw [(lprefix_lub_nth hc1).mp h1 n, (lprefix_lub_nth hc2).mp h2 n]
+    exact heq n
+
+/-- HOL `IMP_build_lprefix_lub_EQ` (`lprefix_lubScript.sml:550-558`). -/
+theorem IMP_build_lprefix_lub_EQ {ls1 ls2 : HolLList α → Prop}
+    (h1 : lprefixChain ls1) (h2 : lprefixChain ls2)
+    (hr12 : lprefixRel ls1 ls2) (hr21 : lprefixRel ls2 ls1) :
+    buildLprefixLub ls1 = buildLprefixLub ls2 :=
+  (lprefix_lub_equiv_chain2 (buildLprefixLub_thm h1) (buildLprefixLub_thm h2)).mpr
+    (IMP_equiv_lprefix_chain h1 h2 hr12 hr21)
+
 end HolLList
 
 end Flapjack

@@ -479,6 +479,7 @@ import Flapjack.Test.LoopSemWordMemExactParity
 import Flapjack.Test.LoopSemPrimopBytesExactParity
 import Flapjack.Test.LoopSemEvaluateExactParity
 import Flapjack.Test.HolLListParity
+import Flapjack.Test.LprefixLubParity
 import Flapjack.Test.LoopSemSemanticsExactParity
 import Flapjack.Test.WordSemSemanticsParity
 import Flapjack.Test.LoopPropsEvalExactParity
@@ -1235,6 +1236,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.CrepPrimopLoopPrimopParity.runChecks,
     Flapjack.Test.LoopSemEvaluateExactParity.runChecks,
     Flapjack.Test.HolLListParity.runChecks,
+    Flapjack.Test.LprefixLubParity.runChecks,
     Flapjack.Test.LoopSemSemanticsExactParity.runChecks,
     Flapjack.Test.WordSemSemanticsParity.runChecks,
     Flapjack.Test.LoopPropsEvalExactParity.runChecks,
