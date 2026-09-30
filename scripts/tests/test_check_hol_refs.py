@@ -284,6 +284,73 @@ def lookupCodeHOLFiniteExact
             [],
         )
 
+    def test_rejects_extra_implicit_proof_and_instance_binders(self):
+        equality = self.WITNESS.split(" :\n", 1)[1].split(" :=", 1)[0]
+        for binder in ("{h : True}", "[h : Inhabited Value]",
+                       "{h : lookupCodeHOLExact code.lookup fname arguments = none}",
+                       "{h : " + equality + "}"):
+            witness = self.WITNESS.replace("(arguments : List Value) :",
+                                          f"(arguments : List Value) {binder} :")
+            with self.subTest(binder=binder):
+                errors = self.CHECK(self.module(witness=witness).splitlines(),
+                                    self.SOURCE, "lookupCodeHOLFiniteExact", self.POSITIONS)
+                self.assertTrue(any("extra implicit premises" in e for e in errors))
+
+    def test_accepts_matching_implicit_width_parameters(self):
+        source = self.SOURCE.replace("    (code :", "    {width : Nat} [NeZero width] (code :", 1)
+        witness = self.WITNESS.replace("    (code :", "    {width : Nat} [NeZero width] (code :", 1)
+        self.assertEqual(self.CHECK(self.module(source, witness).splitlines(),
+                                   source, "lookupCodeHOLFiniteExact", self.POSITIONS), [])
+
+    def test_rejects_ambient_section_premises(self):
+        equality = self.WITNESS.split(" :\n", 1)[1].split(" :=", 1)[0]
+        for command in (
+            "variable {h : ∀ code fname arguments, " + equality + "}\ninclude h\n",
+            "variable {h : True}\n",
+            "variables {h : True}\n",
+            "include h in\n",
+            "omit h in\n",
+            "section Ambient variable {h : True}\n",
+        ):
+            with self.subTest(command=command):
+                module = self.SOURCE + command + self.WITNESS
+                errors = self.CHECK(module.splitlines(), self.SOURCE,
+                                    "lookupCodeHOLFiniteExact", self.POSITIONS)
+                self.assertTrue(any("without ambient" in e for e in errors))
+
+    def test_rejects_kernel_valid_inherited_premise_reproducer(self):
+        source = (Path(__file__).parent / "fixtures" /
+                  "heterogeneous_ambient_premise.lean").read_text()
+        errors = self.CHECK(source.splitlines(), source,
+                            "lookupCodeHOLFiniteExact", self.POSITIONS)
+        self.assertTrue(any("without ambient" in e for e in errors))
+
+    def test_accepts_sections_without_ambient_binders_and_commented_commands(self):
+        module = "section\n/- variable {h : True}; include h -/\n" + self.module() + "end\n"
+        self.assertEqual(self.CHECK(module.splitlines(), self.SOURCE,
+                                   "lookupCodeHOLFiniteExact", self.POSITIONS), [])
+
+    def test_rejects_inert_or_embedded_raw_application(self):
+        raw = "lookupCodeHOLExact code.lookup fname arguments"
+        for replacement in (f"(fun _ => none) ({raw})", f"id ({raw})",
+                            f"({raw}) extra", f"(let discarded := {raw}; none)"):
+            witness = self.WITNESS.replace(raw, replacement)
+            with self.subTest(replacement=replacement):
+                errors = self.CHECK(self.module(witness=witness).splitlines(),
+                                    self.SOURCE, "lookupCodeHOLFiniteExact", self.POSITIONS)
+                self.assertTrue(any("independent raw lookup" in e for e in errors))
+
+    def test_rejects_inert_or_trailing_canonical_projection(self):
+        projection = "(lookupCodeHOLFiniteExact code fname arguments).map\n      (fun (body, locals, shape) => (body, locals.lookup, shape))"
+        for replacement in (f"(fun _ => none) ({projection})",
+                            f"id ({projection})", f"{projection} extra",
+                            projection.replace("(body, locals.lookup, shape))",
+                                               "(body, locals.lookup, shape) extra)")):
+            witness = self.WITNESS.replace(projection, replacement)
+            with self.subTest(replacement=replacement):
+                self.assertTrue(self.CHECK(self.module(witness=witness).splitlines(),
+                                          self.SOURCE, "lookupCodeHOLFiniteExact", self.POSITIONS))
+
     def test_rejects_raw_map_in_either_position(self):
         raw_input = self.SOURCE.replace(
             "HolFiniteMapExact MlS CodeEntry", "MlS → Option CodeEntry", 1
