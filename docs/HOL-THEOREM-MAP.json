@@ -35241,5 +35241,13 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Private normal-return composition for pending full global handler Call case33.11. Derives actual generated Call/If Store sequence and scope-restored relation from internal callee IH branch facts using accepted scratch arguments and Store API; no completed full constructor or HOL port claim. Original source IH discharge and remaining clauses still required."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "returnedScopedCorrect",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Private normal-return literal compiler scoped branch for pending33.11. Derives initializer shape from caller globals relation, post global validity from original callee shape invariant, generated Call/Store execution and saved scope restoration internally. Callee IH run/relation remain internal assembly facts; full constructor guarded IH discharge and other outcomes unfinished. No HOL tag or completed port claim."
 }
 ]

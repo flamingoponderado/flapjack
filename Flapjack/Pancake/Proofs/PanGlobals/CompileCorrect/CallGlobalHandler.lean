@@ -711,6 +711,65 @@ private theorem returnedCallStoreTail {width : Nat} {σ : Type} [NeZero width]
       values body callee returnShape initializer value hargs hcode hclock hbody hreturn hshape]
   simpa only [returnedScratchState target targetPost _ _ initializer value hd] using ht
 
+/-- Normal-return branch with the literal compiled outer scopes. Initializer
+shape and post-callee global validity are derived from the original caller and
+callee run. Untagged private infrastructure pending full guarded-IH assembly. -/
+private theorem returnedScopedCorrect {width : Nat} {σ : Type} [NeZero width]
+    (context : PanGlobalsContextExact width)
+    (source target sourcePost targetPost : PanSemStateFiniteExact width σ)
+    (name function handlerId handlerVar : MlS) (handler body : ProgHOL width)
+    (arguments : List (ExpHOL width)) (values : List (ValueHOL width))
+    (callee : HolFiniteMapExact MlS (ValueHOL width)) (returnShape : ShapeHOL)
+    (value : ValueHOL width)
+    (hcaller : panGlobalsStateRelHOLExact true context source target)
+    (hcallee : panGlobalsStateRelHOLExact false context sourcePost targetPost)
+    (hvalid : isValidValueHOLExact source.toExact .global name value = true)
+    (hsourceBody : evaluateHOLFiniteState (callEntryStateHOLFinite source callee) body =
+      (some (.returned value), sourcePost))
+    (hargs : evalListHOLFinite target
+      (h := fun a => Classical.propDecidable (target.memaddrs a))
+      (compileExpExactHOLList context arguments) = some values)
+    (hcode : lookupCodeHOLFinite target.code.lookup function values =
+      some (compileProgExactHOL context body, callee, returnShape))
+    (hclock : target.clock ≠ 0)
+    (hbody : evaluateHOLFiniteState (callEntryStateHOLFinite target callee)
+      (compileProgExactHOL context body) = (some (.returned value), targetPost))
+    (hreturn : shapeOfHOLExact value = returnShape) :
+    ∃ finalPost,
+      evaluateHOLFiniteState target (compileProgExactHOL context
+        (.call (some (some (.global, name), some (handlerId, handlerVar, handler)))
+          function arguments)) = (none, finalPost) ∧
+      panGlobalsStateRelHOLExact true context
+        (setGlobalHOLFinite name value {sourcePost with locals := source.locals}) finalPost := by
+  classical
+  cases hg : source.globals.lookup name with
+  | none => simp [isValidValueHOLExact, lookupKvarHOLExact, hg] at hvalid
+  | some oldValue =>
+    have hshape : shapeOfHOLExact value = shapeOfHOLExact oldValue := by
+      apply (shapeEqHOL_eq_true _ _).mp
+      simpa [isValidValueHOLExact, lookupKvarHOLExact, toExact, hg] using hvalid
+    obtain ⟨address, hcontext, _, _, _, _⟩ := hcaller.2.2.2.2.2.2.2.2.1 name oldValue hg
+    obtain ⟨initializer, hiShape, hscope⟩ := presentContextScope context source target name
+      function handlerId handlerVar arguments handler _ address hcaller hcontext
+    obtain ⟨postValue, hpLookup, hpShape⟩ := evaluateHOLFiniteState_global_shape_invariant
+      (callEntryStateHOLFinite source callee) body (some (.returned value)) sourcePost
+      name oldValue hsourceBody hg
+    have hpValid : isValidValueHOLFinite sourcePost .global name value = true := by
+      simp [isValidValueHOLFinite, lookupKvarHOLFinite, hpLookup, hshape, hpShape,
+        shapeEqHOL_eq_true]
+    obtain ⟨storeAddress, storePost, hc, ht, hr⟩ := returnedCallStoreTail context source target
+      sourcePost targetPost name function handlerId handlerVar (compileProgExactHOL context handler)
+      (compileExpExactHOLList context arguments) values (compileProgExactHOL context body)
+      callee returnShape initializer value hcaller hcallee hpValid hargs hcode hclock hbody
+      hreturn (hshape.trans hiShape)
+    have ha : storeAddress = address := by
+      rw [hcontext] at hc
+      exact (congrArg Prod.snd (Option.some.inj hc)).symm
+    subst storeAddress
+    refine ⟨_, ?_, hr⟩
+    rw [hscope]
+    simp only [ht]
+
 /-- Internal missing-context branch of the full constructor proof. The branch
 condition selects the literal compiler fallback; the callee and handler IHs
 remain those of the original evaluator. Untagged infrastructure until the full
