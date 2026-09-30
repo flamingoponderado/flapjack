@@ -1378,4 +1378,17 @@ mutual
   decreasing_by all_goals simp_all; all_goals omega
 end
 
+/-- Flapjack codec infrastructure for raw field selection. Encoding commutes
+with indexed selection and the defensive One default, including out-of-range
+indices. This representation lemma has no HOL theorem original. -/
+theorem shapeToHOL_getD (shapes : List Shape) (index : Nat) :
+    shapeToHOL (shapes.getD index .one) =
+      (shapes.map shapeToHOL)[index]?.getD .one := by
+  induction shapes generalizing index with
+  | nil => simp [List.getD, shapeToHOL]
+  | cons shape shapes ih =>
+      cases index with
+      | zero => simp [List.getD]
+      | succ index => simpa [List.getD] using ih index
+
 end Flapjack
