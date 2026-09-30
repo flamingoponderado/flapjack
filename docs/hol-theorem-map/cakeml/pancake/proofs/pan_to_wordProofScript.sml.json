@@ -1,0 +1,10 @@
+[
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "pan_exps_of_nested_seq",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "panExpsOfNestedSeqHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-c (direct source comparison, 2026-09-26; pan_to_wordProofScript.sml:1018-1025): HOL universally quantifies a list of PanLang programs and states exps_of (panLang$nested_seq es) = FLAT (MAP exps_of es). Lean quantifies List (ProgHOL width), uses the exact nestedSeqHOL and expsOfHOL ports, and states the same flattened mapped list. [NeZero width] represents HOL's positive word dimension; no extra hypothesis or representation qualifier is added. This theorem is the named proof consumer of expsOfHOL requested by bead flapjack-p12."
+  }
+]

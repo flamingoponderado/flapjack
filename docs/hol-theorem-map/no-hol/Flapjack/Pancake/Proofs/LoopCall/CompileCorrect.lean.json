@@ -1,0 +1,306 @@
+[
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
+    "lean_name": "comp_two_dests",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper for the loop_call compile_correct proof; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
+    "lean_name": "evaluate_shMem_cases",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper for the loop_call compile_correct proof; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
+    "lean_name": "findCode_front",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper for the loop_call compile_correct proof; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
+    "lean_name": "getVars_eq_mapM",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper for the loop_call compile_correct proof; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
+    "lean_name": "getVars_ne_nil",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper: a successful get_vars on a non-empty list returns a non-empty list (the proof term used for LAST ys in get_vars_last); no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
+    "lean_name": "holAlookup_zip_not_mem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper for the loop_call compile_correct proof; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper for the loop_call compile_correct proof; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
+    "lean_name": "labelsIn_ln",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper for the loop_call compile_correct proof; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
+    "lean_name": "labelsIn_mono",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper for the loop_call compile_correct proof; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
+    "lean_name": "labelsIn_set_del",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper for the loop_call compile_correct proof; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
+    "lean_name": "loopCall_compile_correct_arith",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
+    "lean_name": "loopCall_compile_correct_assign",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
+    "lean_name": "loopCall_compile_correct_at",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
+    "lean_name": "loopCall_compile_correct_break",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
+    "lean_name": "loopCall_compile_correct_call",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
+    "lean_name": "loopCall_compile_correct_continue",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
+    "lean_name": "loopCall_compile_correct_fail",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
+    "lean_name": "loopCall_compile_correct_ffi",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
+    "lean_name": "loopCall_compile_correct_if",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
+    "lean_name": "loopCall_compile_correct_load32",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
+    "lean_name": "loopCall_compile_correct_loadByte",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
+    "lean_name": "loopCall_compile_correct_locValue",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
+    "lean_name": "loopCall_compile_correct_loop",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
+    "lean_name": "loopCall_compile_correct_mark",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
+    "lean_name": "loopCall_compile_correct_primitive",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
+    "lean_name": "loopCall_compile_correct_raise",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
+    "lean_name": "loopCall_compile_correct_return",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
+    "lean_name": "loopCall_compile_correct_seq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
+    "lean_name": "loopCall_compile_correct_setGlobal",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
+    "lean_name": "loopCall_compile_correct_shMem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
+    "lean_name": "loopCall_compile_correct_skip",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
+    "lean_name": "loopCall_compile_correct_store",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
+    "lean_name": "loopCall_compile_correct_store32",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
+    "lean_name": "loopCall_compile_correct_storeByte",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
+    "lean_name": "loopCall_compile_correct_tick",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopCall_compile_correct (HOL compile_correct, loop_callProofScript.sml:16-20); no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
+    "lean_name": "mapM_dropLast",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper for the loop_call compile_correct proof; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
+    "lean_name": "mapM_getLast",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper for the loop_call compile_correct proof; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
+    "lean_name": "shMemOp_locals",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper for the loop_call compile_correct proof; no separate CakeML declaration"
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrectExtCall.lean",
+    "lean_name": "crepSimpMapcsHOL_withMemoryFfi",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific commuting law (no HOL declaration): the code-only mapcs rendering commutes with the memory/FFI update installed by the ExtCall FFI-return branch (bead flapjack-pxn.18.5.4.25)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrectExtCall.lean",
+    "lean_name": "evalCrepSemHOLProgExact_extCall_mapcs",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific commutation of the code-only mapcs rendering with the exact ExtCall clause (no HOL declaration); the clause reads only locals/memory/memaddrs/be/ffi, all preserved by mapcs (bead flapjack-pxn.18.5.4.25)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrectExtCall.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific same-module canonical finite-support witness for the CrepSemHOLState carrier (bead flapjack-pxn.18.5.4.25); no HOL declaration of its own."
+  }
+]

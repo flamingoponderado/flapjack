@@ -1,0 +1,42 @@
+[
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/StructInfosOkExact.lean",
+    "lean_name": "isWfShapesExactHOL_drop",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private list support lemma for isWfShapeExactHOL_drop; no independent HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/StructInfosOkExact.lean",
+    "lean_name": "structInfosOkExact_lookup_drop",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private support lemma for the exact struct_infos_ok_cons size proof; no independent HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/StructInfosOkExact.lean",
+    "lean_name": "structInfosOkExact_lookup_isSome_drop",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private support lemma for the exact is_wf_shape_drop proof; no independent HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/StructInfosOkExact.lean",
+    "lean_name": "structInfosOkExact_lookup_mem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private support lemma for the exact struct_infos_ok_cons size proof; no independent HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/StructInfosOkExact.lean",
+    "lean_name": "structInfosOkExact_sizeDrop",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Local specialization used only inside the exact struct_infos_ok_cons proof; the independently tagged size_of_sh_with_ctxt_drop port remains in PanStructs/CompileCorrect.lean."
+  }
+]

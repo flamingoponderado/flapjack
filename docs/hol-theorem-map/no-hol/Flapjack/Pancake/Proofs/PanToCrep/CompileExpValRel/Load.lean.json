@@ -1,0 +1,10 @@
+[
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel/Load.lean",
+    "lean_name": "compileExpValRelHOL_load_ofProductionRV64",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific all-Shape Load bridge; no standalone HOL declaration exists. It composes the executable RV64 source evaluator agreement with the exact-carrier staged case `compileExpValRelHOL_load` from pan_to_crepProofScript.sml:130-396. The bridge has production/exact representation premises and so is infrastructure, not a direct port of the source-only HOL case."
+  }
+]

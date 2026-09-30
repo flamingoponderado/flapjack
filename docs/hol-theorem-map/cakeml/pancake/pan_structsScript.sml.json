@@ -1,0 +1,79 @@
+[
+  {
+    "hol_path": "cakeml/pancake/pan_structsScript.sml",
+    "hol_name": "afindi_def",
+    "lean_path": "Flapjack/Pancake/PanStructs.lean",
+    "lean_name": "afindi",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (bead flapjack-5ldn): clause-for-clause exact vs pan_structsScript.sml:25-34: nil -> none; matching head key -> some 0; otherwise recurse and add 1 to some index. Polymorphic over (alpha x beta) as in HOL; Lean DecidableEq alpha is HOL's computable equality. No extra hypotheses or side conditions."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_structsScript.sml",
+    "hol_name": "compile_exp_def",
+    "lean_path": "Flapjack/Pancake/PanStructs/CompileExpExact.lean",
+    "lean_name": "compileExpExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison 2026-09-30 bead .18.5.3.77.1.3: source107-155 mutual expression/list/field definitions, ContextExact and positive-width ExpHOL carriers compared. Recursive RStruct/RField, Load/LoadByte/Load32, Op/Panop/Cmp/Shift preserved and all other constructors unchanged. Named struct first-match propositional MlS lookups; flatMap is source FLAT MAP, declared field order, missing supplied fields omitted, first duplicate supplied field selected. Named field uses exact old_exp_shape on source expression, exact source afindi with MlS equality, defensive index0 defaults; Load uses exact compile_shape. All original ten PanStructs oracle rows and three defensive cases replayed by kernel proofs. Exact source dependencies only; production expression routing and correspondence remain open."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_structsScript.sml",
+    "hol_name": "compile_exp_def",
+    "lean_path": "Flapjack/Pancake/PanStructs/CompileExpExact.lean",
+    "lean_name": "compileExpsExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison 2026-09-30 bead .18.5.3.77.1.3: source107-155 mutual expression/list/field definitions, ContextExact and positive-width ExpHOL carriers compared. Recursive RStruct/RField, Load/LoadByte/Load32, Op/Panop/Cmp/Shift preserved and all other constructors unchanged. Named struct first-match propositional MlS lookups; flatMap is source FLAT MAP, declared field order, missing supplied fields omitted, first duplicate supplied field selected. Named field uses exact old_exp_shape on source expression, exact source afindi with MlS equality, defensive index0 defaults; Load uses exact compile_shape. All original ten PanStructs oracle rows and three defensive cases replayed by kernel proofs. Exact source dependencies only; production expression routing and correspondence remain open."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_structsScript.sml",
+    "hol_name": "compile_exp_def",
+    "lean_path": "Flapjack/Pancake/PanStructs/CompileExpExact.lean",
+    "lean_name": "compileFieldsExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison 2026-09-30 bead .18.5.3.77.1.3: source107-155 mutual expression/list/field definitions, ContextExact and positive-width ExpHOL carriers compared. Recursive RStruct/RField, Load/LoadByte/Load32, Op/Panop/Cmp/Shift preserved and all other constructors unchanged. Named struct first-match propositional MlS lookups; flatMap is source FLAT MAP, declared field order, missing supplied fields omitted, first duplicate supplied field selected. Named field uses exact old_exp_shape on source expression, exact source afindi with MlS equality, defensive index0 defaults; Load uses exact compile_shape. All original ten PanStructs oracle rows and three defensive cases replayed by kernel proofs. Exact source dependencies only; production expression routing and correspondence remain open."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_structsScript.sml",
+    "hol_name": "compile_shape_def",
+    "lean_path": "Flapjack/Pancake/PanStructs/CompileShapeExact.lean",
+    "lean_name": "compileShapeExact",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a clause comparison (2026-09-29; bead flapjack-pxn.18.5.3.77.1.1) against pan_structsScript.sml:37-67. One returns One; Comb maps the mutually recursive compile_shapes over its children; Named uses HOL first-match dropWhile by structural MlString equality, compiles the selected fields in the returned suffix context, and returns One on no match. The List.dropWhile expression is direct; dropWhile_suffix_length_lt is termination evidence only. Inputs/results use the exact MlString and ShapeHOL carriers. Direct HOL rows One, Comb, forward nested lookup, backward suffix, and missing-name fallback are replayed under #guard and kernel-checked in Test/PanStructsCompileShapeParity. This tagged definition now lives in the Pancake PanStructs source counterpart and does not claim production structCompileShapeWF routing."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_structsScript.sml",
+    "hol_name": "compile_shape_def",
+    "lean_path": "Flapjack/Pancake/PanStructs/CompileShapeExact.lean",
+    "lean_name": "compileShapesExact",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a clause comparison (2026-09-29; bead flapjack-pxn.18.5.3.77.1.1) against pan_structsScript.sml:44-46. Nil returns nil; cons compiles the head with exact compileShapeExact and recursively compiles the tail with the same fields-only context, preserving list order and the exact MlString/ShapeHOL carriers. This mutual definition is tagged at the source Definition declaration line 37. Direct HOL compile_shape rows are replayed under #guard in Test/PanStructsCompileShapeParity."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_structsScript.sml",
+    "hol_name": "context",
+    "lean_path": "Flapjack/Pancake/PanStructs/CompileShapeExact.lean",
+    "lean_name": "ContextExact",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.3.77.1.1) against pan_structsScript.sml:15-21. The record fields and order match: structs is a list of (MlString × list (MlString × ShapeHOL)); locals and globals are lists of (MlString × ShapeHOL). Cake aliases stcname, fldname, varname, and shape to these exact carriers. This is a source carrier only; production StructPassContext remains separate."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_structsScript.sml",
+    "hol_name": "old_exp_shape_def",
+    "lean_path": "Flapjack/Pancake/PanStructs/OldExpShapeExact.lean",
+    "lean_name": "oldExpShapeExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source review 2026-09-30 bead .18.5.3.77.1.2: pan_structsScript.sml70-104 mutual expression/list clauses, ContextExact fields and ExpHOL payloads compared constructor by constructor. findSome? with propositional MlS equality implements first-match ALOOKUP; optional index implements LLOOKUP with One default. Named shape and nested struct/field lookup defaults unchanged, Load preserves source shape, all other constructors return One. Positive width-indexed exact word carrier only representation qualifier; no String names. Ten captured 8-bit HOL oracle rows replayed by kernel equality. Proof-side source dependency; production route remains open on this bead."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_structsScript.sml",
+    "hol_name": "old_exp_shape_def",
+    "lean_path": "Flapjack/Pancake/PanStructs/OldExpShapeExact.lean",
+    "lean_name": "oldExpShapesExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source review 2026-09-30 bead .18.5.3.77.1.2: pan_structsScript.sml70-104 mutual expression/list clauses, ContextExact fields and ExpHOL payloads compared constructor by constructor. findSome? with propositional MlS equality implements first-match ALOOKUP; optional index implements LLOOKUP with One default. Named shape and nested struct/field lookup defaults unchanged, Load preserves source shape, all other constructors return One. Positive width-indexed exact word carrier only representation qualifier; no String names. Ten captured 8-bit HOL oracle rows replayed by kernel equality. Proof-side source dependency; production route remains open on this bead."
+  }
+]

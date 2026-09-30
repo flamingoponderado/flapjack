@@ -1,0 +1,10 @@
+[
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+    "hol_name": "is_Label_def",
+    "lean_path": "Flapjack/Compiler/Backend/LabSem.lean",
+    "lean_name": "isLabel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex (labSemScript.sml:47 is_Label returns T exactly on Label, F otherwise; Lean pattern match preserves all constructors)"
+  }
+]

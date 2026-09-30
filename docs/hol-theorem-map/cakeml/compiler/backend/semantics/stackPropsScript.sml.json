@@ -1,0 +1,18 @@
+[
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "addr_ok_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackProps.lean",
+    "lean_name": "asmAddrOk",
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.6): non-exact source review of the held reviewed_exact promotion for HOL addr_ok_def (cakeml/compiler/backend/semantics/stackPropsScript.sml). HOL addr_ok_def uses a positive-dimensional word type; the Lean declaration quantifies width : Nat with no [NeZero width] binder, so BitVec 0 is admitted. The HOL tag was withdrawn; faithful width-restricted restatement tracked separately."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "addr_ok_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackProps.lean",
+    "lean_name": "asmAddrOkExact",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.6.1.2): exact clause-for-clause port of HOL addr_ok_def (stackPropsScript.sml:801-810) over the exact asm carriers HolMemop/HolAddr and the exact AsmConfigExact, using the exact offset helpers asmAddrOffsetOkExact/asmHwOffsetOkExact/asmByteOffsetOkExact. The width-general production asmAddrOk remains documented_mismatch."
+  }
+]

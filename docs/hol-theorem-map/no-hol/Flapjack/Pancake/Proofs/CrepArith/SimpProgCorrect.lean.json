@@ -1,0 +1,26 @@
+[
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrect.lean",
+    "lean_name": "crepSimpMapcsHOL_decClock",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only commuting law for the proof script's local mapcs rendering with exact decClock. HOL has no declaration for this helper theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrect.lean",
+    "lean_name": "crepSimpMapcsHOL_emptyLocals",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only commuting law for the proof script's local mapcs rendering with exact emptyLocals. HOL has no declaration for this helper theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrect.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack same-module canonical finite-support witness for simp_prog_correct case qualifiers; it re-exports the existing CrepSemHOLState/CrepSemBroadState toBroad/ofBroad roundtrip and does not add a carrier or a HOL declaration."
+  }
+]

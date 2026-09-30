@@ -1,0 +1,82 @@
+[
+  {
+    "hol_path": "cakeml/semantics/fpSemScript.sml",
+    "hol_name": "fp_bop",
+    "lean_path": "Flapjack/FpSemHOL.lean",
+    "lean_name": "FpBop",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds5 source comparison (2026-09-29; bead flapjack-h29l.6.2.6): HOL Datatype fp_bop = FP_Add | FP_Sub | FP_Mul | FP_Div (fpSemScript.sml:16-18); Lean FpBop mirrors the four constructors in order. No qualifier applies."
+  },
+  {
+    "hol_path": "cakeml/semantics/fpSemScript.sml",
+    "hol_name": "fp_bop_comp_def",
+    "lean_path": "Flapjack/FpSemHOL.lean",
+    "lean_name": "fpSemFpBopComp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds5 source comparison (2026-09-29; bead flapjack-h29l.6.2.6): HOL fp_bop_comp fop = case fop of FP_Add => fp64_add roundTiesToEven | FP_Sub => fp64_sub roundTiesToEven | FP_Mul => fp64_mul roundTiesToEven | FP_Div => fp64_div roundTiesToEven (fpSemScript.sml:51-58). The four clauses match in order over the fixed BitVec 64. fp64_add/sub/mul/div are the untagged binary_ieee renderings holFp64Add/Sub/Mul/Div (Flapjack/Misc/BinaryIeeeArith.lean) whose rounded finite results are covered by the kernel-verified computable roundTiesToEven conformance of flapjack-h29l.6.2.3/.4. Binary64 dependency review (flapjack-opus, 2026-09-30, bead flapjack-2hoy.7): HOL float_to_fp64 (SND (float_op roundTiesToEven ...)) (binary_ieeeScript.sml:587-722) rendered clause for clause: real-free NaN/infinity/invalid/divide-by-zero branches in HOL order; zero-sign toneg choices as in HOL; the only real is the rounded argument, a rational combination of dyadic float values; round/closest_such quantify over floats with ties to even and the +-0 choice in float_round; holFloatRound_rte_fp64 determines the rounded value for every rational argument, so HOL @ and Lean Classical.epsilon agree; flags dropped as HOL's SND; NaN results are float_some_qnan under the standard @/epsilon translation. External assumptions: ordered-field embedding Q -> R (docs/SOUNDNESS.md item 8) and the @/epsilon translation."
+  },
+  {
+    "hol_path": "cakeml/semantics/fpSemScript.sml",
+    "hol_name": "fp_cmp",
+    "lean_path": "Flapjack/FpSemHOL.lean",
+    "lean_name": "FpCmp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds5 source comparison (2026-09-29; bead flapjack-h29l.6.2.6): HOL Datatype fp_cmp = FP_Less | FP_LessEqual | FP_Greater | FP_GreaterEqual | FP_Equal (fpSemScript.sml:8-10); Lean FpCmp has the same five constructors in the same order. No word dimension in the datatype, so no qualifier applies. Flapjack.Test.FpSemOpsParity cites the selector table built on this carrier."
+  },
+  {
+    "hol_path": "cakeml/semantics/fpSemScript.sml",
+    "hol_name": "fp_cmp_comp_def",
+    "lean_path": "Flapjack/FpSemHOL.lean",
+    "lean_name": "fpSemFpCmpComp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds5 source comparison (2026-09-29; bead flapjack-h29l.6.2.6): HOL fp_cmp_comp fop = case fop of FP_Less => fp64_lessThan | FP_LessEqual => fp64_lessEqual | FP_Greater => fp64_greaterThan | FP_GreaterEqual => fp64_greaterEqual | FP_Equal => fp64_equal (fpSemScript.sml:33-41). The five clauses match in order. HOL word64 is the fixed BitVec 64 (no width qualifier). fp64_lessThan/lessEqual/equal are the untagged machine_ieee renderings holFp64* (HOL standard library outside cakeml); fp64_greaterThan/greaterEqual were the only missing ones and are now rendered untagged as holFp64GreaterThan/GreaterEqual from binary_ieeeScript.sml:792-803 (float_greater_than = float_compare = GT; float_greater_equal = GT or EQ). Flapjack.Test.FpSemOpsParity kernel-checks every clause definitional equality and Boolean rows. Binary64 dependency review (flapjack-opus, 2026-09-30, bead flapjack-2hoy.4): the fp64 comparisons are HOL float_compare (binary_ieeeScript.sml:758-808) on fp64_to_float, rendered clause for clause (NaN unordered, infinities by sign, +-0 equal, finite values compared as dyadic rationals over Rat); the sole external assumption is the ordered-field embedding Q -> R (docs/SOUNDNESS.md item 8)."
+  },
+  {
+    "hol_path": "cakeml/semantics/fpSemScript.sml",
+    "hol_name": "fp_cmp_def",
+    "lean_path": "Flapjack/FpSemHOL.lean",
+    "lean_name": "fpSemFpCmp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-29; bead flapjack-h29l.6.2.7). HOL `fp_cmp cmp = case cmp of Lt => fp64_lessThan | Leq => fp64_lessEqual | Gt => fp64_greaterThan | Geq => fp64_greaterEqual` (fpSemScript.sml:24-31). The argument carrier is the exact ast `opb` port `Flapjack.Opb` (tagged above against astScript.sml:59); the four clauses match HOL's clause set. HOL `word64` is the fixed `BitVec 64` and the result is `bool`, so no width qualifier applies. `fp64_lessThan/lessEqual/greaterThan/greaterEqual` are the untagged machine_ieee/binary_ieee renderings `holFp64*` already used by `fpSemFpCmpComp`. `Flapjack.Test.FpSemOpsParity` kernel-checks every clause definitional equality and concrete Boolean rows. Binary64 dependency review (flapjack-opus, 2026-09-30, bead flapjack-2hoy.5): the fp64 comparisons are HOL float_compare (binary_ieeeScript.sml:758-808) on fp64_to_float, rendered clause for clause (NaN unordered, infinities by sign, +-0 equal, finite values compared as dyadic rationals over Rat); the sole external assumption is the ordered-field embedding Q -> R (docs/SOUNDNESS.md item 8)."
+  },
+  {
+    "hol_path": "cakeml/semantics/fpSemScript.sml",
+    "hol_name": "fp_top",
+    "lean_path": "Flapjack/FpSemHOL.lean",
+    "lean_name": "FpTop",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds5 source comparison (2026-09-29; bead flapjack-h29l.6.2.6): HOL Datatype fp_top = FP_Fma (fpSemScript.sml:20-22); Lean FpTop has the single fma constructor. No qualifier applies."
+  },
+  {
+    "hol_path": "cakeml/semantics/fpSemScript.sml",
+    "hol_name": "fp_top_comp_def",
+    "lean_path": "Flapjack/FpSemHOL.lean",
+    "lean_name": "fpSemFpTopComp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds5 source comparison (2026-09-29; bead flapjack-h29l.6.2.6): HOL fp_top_comp fop = fpfma (fpSemScript.sml:64-66): the selector ignores its argument and returns the fpfma function. Lean fpSemFpTopComp is fun _ => fpSemFpfma, so definitionally equal; the tagged fpfma_def port (fpSemFpfma) is already reviewed under flapjack-h29l.6.2.2. Flapjack.Test.FpSemOpsParity checks fpSemFpTopComp .fma = fpSemFpfma by rfl."
+  },
+  {
+    "hol_path": "cakeml/semantics/fpSemScript.sml",
+    "hol_name": "fp_uop",
+    "lean_path": "Flapjack/FpSemHOL.lean",
+    "lean_name": "FpUop",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds5 source comparison (2026-09-29; bead flapjack-h29l.6.2.6): HOL Datatype fp_uop = FP_Abs | FP_Neg | FP_Sqrt (fpSemScript.sml:12-14); Lean FpUop mirrors the three constructors in order. No qualifier applies."
+  },
+  {
+    "hol_path": "cakeml/semantics/fpSemScript.sml",
+    "hol_name": "fp_uop_comp_def",
+    "lean_path": "Flapjack/FpSemHOL.lean",
+    "lean_name": "fpSemFpUopComp",
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-opus source review (2026-09-30; bead flapjack-2hoy.6, coordinator decision 2026-09-30T01:04Z): @[hol] tag withdrawn. The case map matches HOL fp_uop_comp_def (fpSemScript.sml:43-49), but FP_Sqrt calls holFp64Sqrt, the rational-cut reformulation of HOL fp64_sqrt's real sqrt rounding (docs/SOUNDNESS.md item 8). FP_Abs/FP_Neg are real-free. Preserved untagged. Faithful prerequisite: flapjack-dshl."
+  },
+  {
+    "hol_path": "cakeml/semantics/fpSemScript.sml",
+    "hol_name": "fpfma_def",
+    "lean_path": "Flapjack/FpSemHOL.lean",
+    "lean_name": "fpSemFpfma",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.6.2.2): HOL fpfma v1 v2 v3 = fp64_mul_add roundTiesToEven v2 v3 v1 (fpSemScript.sml:60-62), argument order preserved (v1 is the addend). HOL word64 is the fixed BitVec 64 and needs no width qualifier. fp64_mul_add is the untagged HOL standard-library rendering holFp64MulAdd = float_to_fp64 o SND o float_mul_add over fp64_to_float (machine_ieeeLib lift3). float_mul_add renders binary_ieeeScript.sml:692-722 clause for clause, including flags and the zero-sign rule, over the Classical.epsilon rendering of HOL's choice-based rounding and float_some_qnan, so the definition is noncomputable. Rows fma_pinf_product/fma_ninf_addend/fma_neg_inf_product and the argument-order-distinguishing row fma_order_inf (fpfma one ninf pinf = -inf, whereas a product/addend swap would give qNaN) of scripts/hol-probes/machine_ieee_fp64_arith_special_probe.out are kernel-checked in Flapjack.Test.MachineIeeeArithSpecialParity. Rounded finite results await the computable agreement of flapjack-h29l.6.2.3. Binary64 dependency review (flapjack-opus, 2026-09-30, bead flapjack-2hoy.3): HOL float_to_fp64 (SND (float_op roundTiesToEven ...)) (binary_ieeeScript.sml:587-722) rendered clause for clause: real-free NaN/infinity/invalid/divide-by-zero branches in HOL order; zero-sign toneg choices as in HOL; the only real is the rounded argument, a rational combination of dyadic float values; round/closest_such quantify over floats with ties to even and the +-0 choice in float_round; holFloatRound_rte_fp64 determines the rounded value for every rational argument, so HOL @ and Lean Classical.epsilon agree; flags dropped as HOL's SND; NaN results are float_some_qnan under the standard @/epsilon translation. External assumptions: ordered-field embedding Q -> R (docs/SOUNDNESS.md item 8) and the @/epsilon translation."
+  }
+]

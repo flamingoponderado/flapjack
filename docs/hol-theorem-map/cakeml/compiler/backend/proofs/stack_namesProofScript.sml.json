@@ -1,0 +1,10 @@
+[
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+    "hol_name": "MAP_FST_compile",
+    "lean_path": "Flapjack/Compiler/Backend/StackNames.lean",
+    "lean_name": "map_fst_compile",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (bead flapjack-arzk): exact. HOL stack_namesProofScript.sml:268-272 MAP FST (compile f c) = MAP FST c; Lean map_fst_compile states (compile names program).map Prod.fst = program.map Prod.fst over List (Nat x HolProg width). Same quantifiers (names, program), no extra hypotheses beyond [NeZero width]."
+  }
+]

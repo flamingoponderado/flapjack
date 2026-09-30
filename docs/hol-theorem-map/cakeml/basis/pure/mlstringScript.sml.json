@@ -1,0 +1,10 @@
+[
+  {
+    "hol_path": "cakeml/basis/pure/mlstringScript.sml",
+    "hol_name": "mlstring",
+    "lean_path": "Flapjack/Basis/Pure/MlString.lean",
+    "lean_name": "MlString",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-deepseek-three (2026-09-24: exact Datatype port of HOL `mlstring` at cakeml/basis/pure/mlstringScript.sml:19-21 - Datatype: mlstring = implode string, where HOL string = char list. HOL char is the canonical 256-element type (bijection CHR/ORD with num, HOL/src/string/stringScript.sml:29); Flapjack models it by HolChar = BitVec 8, the canonical 256-element carrier, exactly as HOL word types are modeled by BitVec width. The Lean inductive MlString = implode (List HolChar) is a single-constructor datatype with the same field, no width index and no typeclass side condition. Direct HOL-EVAL rows ml_strlen=3/ml_ord0=0/ml_ord255=255/ml_chr_ord=T/ml_explode_len=2/ml_implode_explode=T/ml_explode_implode=T/ml_concat_len=3 in scripts/hol-probes/mlstring_carrier_probe.out are reproduced by Lean guards in Flapjack/Test/MlStringParity.lean. This carrier is the prerequisite for the exact shared-word stackLang program theorems; see flapjack-pxn.18.5.15.3.11.2)"
+  }
+]

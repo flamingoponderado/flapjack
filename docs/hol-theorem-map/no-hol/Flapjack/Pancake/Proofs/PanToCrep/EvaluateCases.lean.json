@@ -1,0 +1,1370 @@
+[
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "allocatedNamesHOL_nodup",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private Lean support: the compiler's allocatedNamesHOL maps an injective Nat successor offset over List.range, so the generated local indices have no duplicates. No matching standalone HOL theorem claim."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "bindPanValueParameters_of_lookup_success",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private Flapjack projection of successful state-owned code lookup to its actual source parameter binder result; feeds the callee-entry locals_rel bridge, not a standalone HOL theorem"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileArgConstLocalAddressOrStruct_localized",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only helper proving the supported Const/Local/address, one-level RStruct, and constant-address one-word Load argument grammar has no global variables."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileArgConstLocalAddress_localized",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only helper proving the supported Const/Local/address argument grammar has no global variables."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileArgConstLocalStructAddressOrRFieldInnerIH_eval_flatten",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only induction over restricted Call-argument evidence; composes Const/Local/address/local-RField, recursively nested RStruct, source-impossible Global/NStruct/NField, baseAddr/topAddr/bytesInWord, PanOp.mul over supported operands, constant-address one-word flat Load/LoadByte/Load32, one-word Local LoadByte/Load32, LoadByte/Load32 of recursively supported addresses with an explicit One compile shape, and a two-word flat Load at a constant address, all under the canonical RISC-V target invariant where required. It is not the full HOL compile_exp_val_rel relation."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileArgsHOL_constLocalAddressOrStruct_ofHOLIH",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only full localized Call-argument IH for Const/Local/address leaves, one-level RStructs over those leaves, and one-word Loads from constant addresses. It derives target argument evaluation and per-expression shape facts; arbitrary nested structs and other constructors remain open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileArgsHOL_constLocalAddress_ofHOLIH",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only full localized Call-argument IH for Const, Local, baseAddr, topAddr, and bytesInWord. It derives production target argument evaluation plus expression length, shape, and well-formedness; other constructors and the complete HOL expression theorem remain open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileArgsHOL_constLocalOrStruct_eval_flatten",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Proves compiled results for argument lists whose members are Const, Local, or one-level RStruct with Const/Local fields; it remains a strict subset of HOL eval_map_comp_exp_flat_eq."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileArgsHOL_constLocalStructAddressOrRFieldInnerIH_eval_flatten",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only mixed Call argument list theorem over the restricted evaluator evidence, including Const/Local/RStruct/address/RField, PanOp.mul over supported operands, and constant-address LoadByte with an explicit canonical target invariant; it is not the full compile_exp_val_rel list theorem and other constructors remain open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileArgsHOL_constLocalStructAddress_eval_flatten",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only Call-argument evaluation result composing Const/Local/RStruct support with HOL baseAddr, topAddr, and bytesInWord expression cases under stateRel; it does not claim the complete eval_map_comp_exp_flat_eq theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileArgsHOL_constOrLocal_eval_flatten",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Proves compiled target words equal flattened source results for argument lists containing only Const and Local expressions. This is a strict subset of HOL eval_map_comp_exp_flat_eq; other expression constructors and the full Call case remain open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileArgsHOL_constOrLocal_ofHOLIH",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only Const/Local list step toward HOL eval_map_comp_exp_flat_eq. Composes four-part per-expression evaluation, length, shape, and well-formedness facts from state_rel/code_rel/locals_rel; other constructors and the full Call case remain open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileArgsHOL_constOrRFieldInnerIH_eval_flatten",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only nested compile_args helper for Const/Local and arbitrary-inner RField fields; it does not port the full HOL expression induction."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileArgsHOL_eval_flatten_of_compileExpRel",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only list adapter, not HOL compile_exp_val_rel. Source review of pan_to_crepProofScript.sml:130-395 records the mismatch: HOL is width-polymorphic over ExpHOL/word_lab values/ShapeHOL and HOL panSem/crepSem states with mlstring finite-map relations; this helper uses production String/Shape/Exp/PanValue and RV64 PanSemState/CrepRuntimeState/CrepExp carriers. It also consumes a stronger four-part per-expression heach premise and proves only the list-evaluation conclusion, while existing case lemmas are constructor subsets. No HOL tag is claimed. Faithful replacement flapjack-4ac.5.81 depends on exact compiler/context beads flapjack-pxn.18.3.5.8.8/.13 and exact state relation flapjack-pxn.18.3.7.1.3.1. compile_exp direct-output probes do not cover this evaluation theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileArgsHOL_eval_flatten_of_each",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only generic HOL compile_args list induction over state-owned PanSem source evaluation and production Crep evaluation. Consumes the per-expression compiled-evaluation relation corresponding to compile_exp_val_rel as an explicit premise; it does not prove that relation for unsupported constructors or claim the enclosing Call theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileArgsHOL_localCases_eval_flatten",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only compile_args result for lists of Local expressions, using the HOL-shaped Local expression case and locals_rel; no general mixed-constructor expression induction is claimed."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileArgsHOL_rFieldInnerIH_eval_flatten",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only compile_args list lifting for RField arguments with arbitrary inner expressions, using the source result and explicit compile_exp_val_rel-shaped inner IH; only RField arguments are covered, not the full expression theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileExpHOL_baseAddr_ofHOLIH",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only full localized-expression IH constructor case for BaseAddr at fixed RV64 width. It uses stateRel for source/target address equality and proves target evaluation, compiled length/shape agreement, source shape, and shape well-formedness; not a standalone HOL theorem statement."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileExpHOL_bytesInWord_ofHOLIH",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only full localized-expression IH constructor case for RV64 BytesInWord. It proves target evaluation, compiled length/shape agreement, source shape, and shape well-formedness over the fixed 64-bit word size; not a standalone HOL theorem statement."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileExpHOL_cmp_ofHOLIH",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only RISC-V-specialized Cmp constructor case for the full compile_exp_val_rel induction hypotheses. It consumes full left/right relation hypotheses and proves evaluation, length, shape, and well-formedness, but has a canonical-target premise and is not a standalone HOL declaration or complete expression induction; no @[hol] tag claimed. The matching direct compile_exp Cmp output is covered by the cmp_shift row in scripts/hol-probes/compile_exp_probe.out and CompileExpParity.holCmpShiftOK."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileExpHOL_constLocalAddressOrStruct_ofHOLIH",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only full expression IH for Const/Local/address leaves, a one-level RStruct built from them, and one-word Loads from constant addresses. It composes the HOL-shaped RStruct and Load proofs with leaf IHs; general nested expressions remain open and no HOL tag is claimed."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileExpHOL_constLocalAddress_ofHOLIH",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only single-expression adapter extracting the full four-part Call argument IH from the Const/Local/address list proof."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileExpHOL_constLocalStructAddress_eval_flatten",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only per-expression evaluator support composing the existing Const/Local/RStruct/address and local-RField cases for state-owned Call arguments."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileExpHOL_constOrRFieldInnerIH_eval_flatten",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only per-expression helper for Const/Local or arbitrary-inner RField fields in a constructed RStruct argument; this remains a constructor subset of HOL compile_exp_val_rel."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileExpHOL_const_eval_flatten",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Constant constructor case for HOL compile_exp_val_rel: the state-owned source evaluator and production Crep compiler/evaluator both flatten the word constant; general expression and Call argument theorem remain open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileExpHOL_const_ofHOLIH",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only Const base case for the localized four-part expression relation used toward Call argument induction. It proves evaluation, length, shape, and well-formedness for the constant constructor, but does not establish the general HOL compile_exp_val_rel induction; no @[hol] tag claimed."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileExpHOL_global_ofHOLIH",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only full localized-expression Global Var case. Under stateRel, the source globals map is empty, so successful source evaluation is impossible; the target compiler's Const 0 fallback is not treated as semantic translation. This is an induction case, not a standalone HOL theorem port."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileExpHOL_load32_ofHOLIH",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only full four-conclusion Load32 constructor step for localized Call arguments. It consumes the full address IH and RISC-V state relation to prove target evaluation, shape-size, source shape, and well-formedness; it is not tagged as a standalone HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileExpHOL_loadByte_ofHOLIH",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only fixed-RV64 specialization of the HOL compile_exp_val_rel LoadByte constructor: consumes the full four-part per-expression IH for its address plus state_rel/code_rel/locals_rel and localization premises, and proves production target LoadByte evaluation and shape/length/well-formedness facts. It requires the canonical RISC-V target invariant, so it is not tagged as the general HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileExpHOL_loadOne_localAddress_ofHOLIH",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only corollary composing the generic Load One full IH with a state-owned local variable address. It adds no standalone HOL theorem claim; the underlying Load One constructor mapping is tracked by compile_exp_val_rel and remains part of the open expression-induction proof."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileExpHOL_loadOne_ofHOLIH",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only full localized-expression IH case for Load One at fixed RV64 width. It consumes the address full IH and uses stateRel to relate the source word-cell load to production Crep Load; arbitrary shapes remain unproved."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileExpHOL_loadTwo_localAddress_ofHOLIH",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only corollary composing the generic two-word Load full IH with a state-owned local variable address under the fixed RV64 target invariant. It adds no standalone HOL theorem claim; arbitrary flattened shapes and the full expression-induction proof remain open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileExpHOL_loadTwo_ofHOLIH",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only full localized-expression IH case for a two-word flat Load at fixed RV64 width. It consumes the address full IH and stateRel to relate both source word-cell loads to production Crep Loads at offsets 0 and 8; arbitrary shape lists remain unproved. The matching compile_exp output is pinned by direct HOL-EVAL row load_two and CompileExpParity.holLoadTwoOK; this is induction support, not a standalone HOL theorem or a complete expression induction."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileExpHOL_local_case_of_relations",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only HOL-shaped Local constructor case for compile_exp_val_rel. Under state_rel, code_rel, locals_rel, and localised_exp it proves all four conclusions for the compiler's actual output; the target evaluation follows from locals_rel, with no target-evaluation premise. It is not the complete expression induction or a tagged HOL port."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileExpHOL_local_eval_flatten",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Local-variable constructor case for HOL compile_exp_val_rel: from state-owned source local evaluation and locals_rel, production Crep evaluation of the compiled slots returns the flattened PanValue. The general expression and Call argument theorem remain open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileExpHOL_local_ofHOLIH",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only Local base case for the localized four-part expression relation used toward Call argument induction. It derives target evaluation, length, source shape, and shape well-formedness from locals_rel; the full HOL expression and Call theorems remain open, with no @[hol] tag claimed."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileExpHOL_nField_ofHOLIH",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only full localized-expression case for NField. It derives contradiction from stateRel's empty source struct table and PanSem lookupInfo semantics; it does not claim the target compiler's fallback is a semantic translation or port standalone HOL theorem text."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileExpHOL_nStruct_ofHOLIH",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only full localized-expression case for NStruct. It derives contradiction from stateRel's empty source struct table and PanSem lookupInfo semantics; it does not claim the target compiler's fallback is a semantic translation or port standalone HOL theorem text."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileExpHOL_op2_ofHOLIH",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only two-argument Op constructor case for localized Call arguments. It consumes full operand IHs, derives singleton compiled operands, and proves production Crep word_op evaluation plus the four compile_exp_val_rel conclusions; general arity remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileExpHOL_op_ofHOLIH",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only arbitrary-arity Op induction case for compile_exp_val_rel. It consumes full operand IHs and state-owned source evaluation to prove target RISC-V Op evaluation and shape conclusions; the assumptions and conclusion are not the standalone HOL theorem statement."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileExpHOL_panOpMul_ofHOLIH",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only binary PanOp Mul constructor case for localized Call arguments. It consumes full operand IHs and source evaluation, proves production Crep operation evaluation, shape-size, source shape, and well-formedness; it is not tagged as a standalone HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileExpHOL_rFieldLocal_eval_flatten",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only local RField constructor bridge for arbitrary valid field indices, deriving the compiled inner-record evaluation from locals_rel; the general compile_exp_val_rel and Call argument theorem remain open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileExpHOL_rField_eval_flatten_ofHOLIH",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only case composition with the inner compile_exp_val_rel IH, carrying state_rel/code_rel/locals_rel, source evaluation, a localised-expression condition, compiled tuple, and IH shape facts; the enclosing expression induction and full theorem remain open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileExpHOL_rField_eval_flatten_ofInnerIH",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only arbitrary-expression RField constructor step consuming the inner compiled-evaluation IH, shape alignment, and well-formedness facts; this helper does not prove the enclosing compile_exp_val_rel theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileExpHOL_rField_ofHOLIH",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only full four-conclusion RField constructor step for the HOL-shaped expression induction. It derives target evaluation, shape-size equality, source shape, and well-formedness from the inner full IH and source field evaluation; it is not tagged as a standalone HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileExpHOL_rStruct_constOrLocal_eval_flatten",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Proves the RStruct constructor case of compiled expression evaluation when every field is Const or Local, by composing the nested compile_args result. Nested structs and other expression constructors remain open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileExpHOL_rStruct_constOrRFieldInnerIH_eval_flatten",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only RStruct evaluator proof for fields supported by Const/Local or arbitrary-inner RField IH; other field constructors and full Call induction remain open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileExpHOL_rStruct_ofHOLIH",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only RStruct constructor case supporting the HOL-shaped compile_exp_val_rel induction. It derives target evaluation, shape-size equality, source shape, and well-formedness from per-field induction hypotheses; it is not a standalone HOL declaration or complete expression theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileExpHOL_shift_ofHOLIH",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only RISC-V-specialized Shift constructor case for the full compile_exp_val_rel induction hypotheses. It consumes full left/right relation hypotheses and proves evaluation, length, shape, and well-formedness using the source and canonical-target RISC-V shift bridges, but it is not a standalone HOL declaration or complete expression induction; no @[hol] tag claimed. The matching direct compile_exp Shift output is covered by the cmp_shift row in scripts/hol-probes/compile_exp_probe.out and CompileExpParity.holCmpShiftOK."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileExpHOL_topAddr_ofHOLIH",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only full localized-expression IH constructor case for TopAddr at fixed RV64 width. It uses stateRel for source/target address equality and proves target evaluation, compiled length/shape agreement, source shape, and shape well-formedness; not a standalone HOL theorem statement."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileExpListHOL_flatMap_eq_compileArgsHOL",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only equation identifying compiled expression-list concatenation with compile_args output; used to compose the RStruct constructor case."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileExpListHOL_heads_eq_compileArgs_of_singleton",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only list representation bridge: if every expression compiles to one word expression, cexpHeads over mapped compileExpHOL results equals compileArgsHOL. This is reusable induction infrastructure, not a standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileExpListHOL_map_fst_eq_map_compileExp",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only compile_exp_list projection lemma used by the Op induction case; it relates the generated recursive list compiler to mapping the single-expression compiler."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileExpListHOL_map_snd_eq_map_compileExp_shape",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only list-shape projection helper for compileExpHOL results; it introduces no HOL theorem correspondence."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileField_shape_eq_panValueField",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only helper showing compileField preserves the selected PanValue field shape under an in-range index; no separate HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileProgHOL_controlLeaves",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (proof inventory)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "compileProgHOL_skip",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (proof inventory)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "crepBreakEvaluationEquation",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (proof inventory)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "crepContinueEvaluationEquation",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (proof inventory)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "crepRuntimeCallInfoValid_functionReturnNamesHOL",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only bridge deriving the target runtime duplicate-destination guard from compiler-generated function return names; used by the fixed-RV64 Call exception induction case. It is not a standalone HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "crepRuntimeExpHdlFiniteMapWords",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only arbitrary-list production target exp_hdl execution over FLOOKUP slots and related state-owned globals; Call_Ret_Exception composition remains open"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "crepRuntimeExpHdlFiniteMapWords_handlerPrestateRelations",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only arbitrary-payload actual-state handler-entry boundary carrying state_rel/code_rel/excp_rel/locals_rel; recursive body IH composition and pc_compile_correct Call_Ret_Exception remain open"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "crepRuntimeExpHdlFiniteMapWords_localsRel",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only arbitrary-payload exp_hdl/local-map relation support for the handler-body IH; does not prove the enclosing HOL Call_Ret_Exception simulation"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "crepRuntimeExpHdlNestedWords",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only recursive production evaluator proof for a nested exp_hdl assignment list; not an enclosing HOL Call theorem"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "crepRuntimeExpHdlOneWord",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only actual target exp_hdl execution for a one-word payload loaded from globals_lookup slot 0 into an existing handler local; induction support, not the enclosing Call_Ret_Exception theorem"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "crepRuntimeExpHdlOneWord_handlerPrestateRelations",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only composition of one-word exp_hdl with state_rel, code_rel, excp_rel, and locals_rel at the matching handler-body entry, using the source updatePanValueMap assignment; callee post-state relation and payload global remain premises, so this is not pc_compile_correct[Call_Ret_Exception]"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "crepRuntimeExpHdlOneWord_localsRel",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only composition of actual exp_hdl payload write with the HOL-shaped locals_rel update needed by the handler-body induction hypothesis; enclosing Call_Ret_Exception proof remains open"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "crepRuntimeExpHdlReturnOneWord",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only target handler-continuation execution: exp_hdl reads the one-word payload via loadGlob, then Return yields it; induction support, not the full Call_Ret_Exception correctness case"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "crepRuntimeExpHdlTwoWords",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only production target exp_hdl execution for a two-word exception payload; no standalone HOL theorem declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "crepRuntimeExpHdlTwoWords_handlerPrestateRelations",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only composition of two-word exp_hdl with state_rel, code_rel, excp_rel, and locals_rel at the matching handler-body entry; the callee post-state relations and two payload globals remain premises, so this is not pc_compile_correct[Call_Ret_Exception]"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "crepRuntimeExpHdlTwoWords_localsRel",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only two-word handler setup bridge producing the locals_rel premise for Call handler-body induction; not the enclosing HOL theorem"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "crepRuntimeGlobalWordsRel_length",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only consequence of the Flapjack global-word relation: each related destination slot has exactly one corresponding loaded word; no standalone HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "crepRuntimeGlobalWordsRel_updateLocal",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only proof that changing locals preserves the recursive state-owned global-read condition; no standalone HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "crepRuntimeLocals_zip_eq_fupdateList",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only equality between the production target local assignment fold and its finite-map FUPDATE_LIST view"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "crepSkipEvaluationEquation",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (proof inventory)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "crepTickEvaluationEquation",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (proof inventory)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "eraseDups_eq_self_of_nodup",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only list utility proving eraseDups preserves a nodup natural-number list; used to discharge the target runtime's distinct parameter-slot guard"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "evalCrepCompileField_panValueField",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only arbitrary-index RField evaluator bridge for compiled field slices; it is one constructor-specific support lemma, not the complete HOL compile_exp_val_rel theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "evalCrepRuntimeCall_catchesRaisedHandlerBody_ofHOLIH",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only arbitrary-payload target Call dispatcher deriving compiled arguments and state-owned callee lookup, then composing the finite-map exp_hdl state_rel/code_rel/excp_rel/locals_rel boundary with the handler-body IH. The recursive callee and handler simulations remain premises; this is not pc_compile_correct[Call_Ret_Exception]."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "evalCrepRuntimeCall_catchesRaisedOneWordHandler",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only composition of target Call exception dispatch with actual exp_hdl/Return evaluation, given target code lookup and callee-body IH; full source/target state relation composition remains open"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "evalCrepRuntimeCall_catchesRaisedOneWordHandlerBody",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only target Call dispatch for an arbitrary handler body: composes an explicit one-word exp_hdl evaluator result with the handler-body evaluator induction hypothesis and code-map-derived callee body hypothesis; source/target body-state relations remain open, so not pc_compile_correct"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "evalCrepRuntimeCall_catchesRaisedOneWordHandlerBody_ofCodeRelArgs",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only composition deriving actual target Call arguments and callee lookup from supported source argument evaluation/state_rel/code_rel/locals_rel, then applying arbitrary-handler target Call dispatch under callee, exp_hdl, and handler-body evaluator hypotheses; source result and post-state relations remain open, so not pc_compile_correct"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "evalCrepRuntimeCall_catchesRaisedOneWordHandlerBody_ofCodeRelArgs_postRelations",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only fixed-fuel target Call composition carrying a related handler-body post-state through production dispatch; its source post-state is supplied by the caller and is not itself connected to source evaluation, so this is not pc_compile_correct[Call_Ret_Exception]"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "evalCrepRuntimeCall_catchesRaisedOneWordHandlerBody_ofCodeRelArgs_relations",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only fixed-fuel target Call composition: derives the exp_hdl payload state and state_rel/code_rel/excp_rel/locals_rel from related source/target callee post-states, then applies a relation-aware handler-body IH; source Call result and final post-state relation remain open, so not pc_compile_correct"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "evalCrepRuntimeCall_catchesRaisedOneWordHandlerBody_ofHOLIH",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only actual target Call_Ret_Exception dispatcher using a full compile_exp_val_rel-shaped expression IH to derive compile_args evaluation and state-owned code lookup, then composing the one-word exp_hdl relation and handler-body IH. It derives flattened parameter length from the successful source Call match and argument well-formedness; the target callee-body IH, source Call/post-state composition, and full pc_compile_correct theorem remain open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "evalCrepRuntimeCall_catchesRaisedOneWordHandler_ofCodeRelArgs",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only composition deriving actual target argument words and code-map lookup from supported source argument evaluation plus state_rel/code_rel/locals_rel, then applying the target one-word exp_hdl/Return Call proof; source Call result and post-state relations remain open, so this is not the HOL pc_compile_correct case"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "evalCrepRuntimeCall_catchesRaisedTwoWordsHandlerBody_ofHOLIH",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only target Call_Ret_Exception dispatcher for a two-word payload using a full expression IH to derive compiled arguments and the state-owned callee lookup, then composing two-word exp_hdl state_rel/code_rel/excp_rel/locals_rel with the handler-body IH. The callee and handler simulations remain premises; this is not the full pc_compile_correct case."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "evalCrepRuntimeExps_append",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only list evaluator append lemma for production Crep expression results; supports the HOL compile_args list induction."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "evalCrepRuntimeExps_eq_mapM",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only equation relating the target expression-list evaluator to List.mapM; used to project field-sized prefixes and suffixes from successful compiled-record evaluation."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "evalCrepRuntimeExps_length_of_some",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only production Crep list-evaluator fact: successful evaluation preserves list length; used to show a scalar compiled PanOp operand has exactly one target expression."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "evalCrepRuntimeExps_vars_eq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only evaluator adapter equating compiled local-slot variables with target locals mapM evaluation; utility for compiling the HOL local-expression case."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "evalPanSemStateExp_load32_const_riscvTarget",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only bridge showing the state-owned PanSem Load32 evaluator agrees with production Crep Load32 on riscvCrepWordTarget under stateRel; this preserves the target-model invariant explicitly and makes no standalone HOL theorem claim."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "evalPanSemStateExp_loadByte_const_riscvTarget",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only bridge showing the state-owned PanSem LoadByte evaluator agrees with production Crep LoadByte on riscvCrepWordTarget under stateRel; this preserves the target-model invariant explicitly and makes no standalone HOL theorem claim."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "evalPanSemStateExp_loadOne_const_stateRel",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private Flapjack-only evaluator bridge equating source state-owned Load One at a constant address with production target Crep Load under stateRel; a prerequisite for the untagged full-IH constructor case, not a standalone HOL theorem port."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "evalPanSemStateExp_loadTwo_const_stateRel",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private Flapjack-only evaluator bridge equating source state-owned two-word flat Load at a constant address with the two production target Crep Loads at offsets 0 and 8 under stateRel. It is a prerequisite for the untagged full-IH constructor case, not a standalone HOL theorem port."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "evalPanSemStateExp_op2_inv",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only inversion helper for the two-argument source Op evaluator: successful evaluation forces word operands and yields the HOL word_op result."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "evalPanSemStateExp_op_inv",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only source Op inversion helper over PanSemState: successful evaluation yields source word operands and the matching HOL word_op result, but is not a standalone HOL theorem port."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "evalPanSemStateExp_panOpMul_inv",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only source evaluator inversion helper: successful PanOp Mul evaluation forces two source expressions to yield words and returns their product; no separate HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "evalPanSemStateExps_cons",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only source state evaluator equation decomposing a successful expression list result into head and tail evaluations."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "evalPanSemStateExps_member_word",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only source list-evaluation helper deriving a successful word value for each member of an argument list whose evaluation is word-valued."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "list_mapM_some_lookup_of_mem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only finite-list utility: a successful mapM lookup implies that every member key has a successful lookup. Used to derive handler target-slot presence from locals_rel; no standalone HOL theorem port."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "lookupCrepRuntimeCode_callEntryLocalsRel",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only actual source and target Call-entry locals_rel derived from successful state-owned lookups, evaluator argument well-formedness, and exact tlcWordLab target locals; supplies one recursive Call IH boundary but not the full pc_compile_correct case"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "lookupCrepRuntimeCode_callEntryLocalsRel_constLocalAddressOrStructOfHOLIH",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only actual Call-entry specialization for Const/Local/address leaves, one-level RStructs over them, and one-word Loads from constant addresses. It derives the expression IHs and proves production target code lookup plus callee locals_rel; arbitrary nested expression constructors and recursive Call body/handler composition remain open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "lookupCrepRuntimeCode_callEntryLocalsRel_constOrLocalOfHOLIH",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only actual Call-entry specialization for Const/Local argument lists. It derives the full per-expression IH from the dedicated four-conclusion argument-list proof, then uses production source/target code maps to derive target lookup and callee locals_rel. Other expression constructors and recursive body/handler Call composition remain open; no @[hol] tag claimed."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "lookupCrepRuntimeCode_callEntryLocalsRel_ofHOLIH",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only actual Call-entry locals_rel composition for arbitrary full expression IHs: uses source lookup/bindPanValueParameters, production target code lookup, and code_rel to derive callee locals_rel. It derives the flattened argument-length equality internally from the successful source parameter match and source-value well-formedness; the expression induction and recursive body/handler Call_Ret_Exception composition remain open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "lookupCrepRuntimeCode_ofCodeRel",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only actual-state Call support: derives production target code lookup and parameter locals from code_rel for arbitrary argument words with an explicit flattened parameter-length premise; compiled argument evaluation bridge and enclosing Call relation remain open"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "lookupCrepRuntimeCode_ofCodeRel_compiledArgs",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only composition deriving target code-map lookup from code_rel and the proved restricted source-to-target Call-argument evaluator cases; keeps the flattened parameter-length obligation explicit and does not claim the full Call theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "lookupCrepRuntimeCode_ofCodeRel_compiledArgsOfHOLIH",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only actual source/target Call code-lookup bridge: derives target compile_args evaluation from a full expression IH, then uses code_rel for production Crep lookup. It retains the flattened parameter-length premise and does not prove body/handler IHs or full pc_compile_correct."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "mapM_drop_of_success",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only list evaluator lemma projecting a successful mapM result after dropping an input prefix; supports generic RField evaluation."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "mapM_panTheWord_of_wordLab",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only word_lab projection lemma translating locals_rel target cells into evaluated target words; no standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "mapM_take_of_success",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only Option mapM list infrastructure: successful lookup/evaluation on a flattened local slice is preserved for matching prefixes; no separate HOL theorem"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panAnnotEvaluationEquation",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (proof inventory)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panBreakEvaluationEquation",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (proof inventory)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panContinueEvaluationEquation",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (proof inventory)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panSemCallCalleeEntryStateCodeExcpRel",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only Call-entry preservation helper: derives state_rel across source/target local replacement and matching clock decrement, and carries the state-owned code_rel and source excp_rel into HOL's ctxt_fc function context. It does not derive the function-context locals_rel for bound arguments or prove the Call induction case."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panSemCodeArgumentsMatch_flattenLength",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only consequence deriving the flattened source argument length from successful shape-aware code-parameter matching and well-formed values; no standalone HOL theorem statement is claimed."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panSemCodeArgumentsMatch_length",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only list-length projection of the successful source argument matcher; no separate HOL theorem declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panSemCodeArgumentsMatch_of_lookup_success",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only extraction of the shape-matching condition from successful state-owned source code lookup; no standalone HOL theorem statement is claimed."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panSemCodeArgumentsMatch_shapeMapEq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only projection of the successful source argument matcher to a formal/argument shape map; no separate HOL theorem declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panSemEvaluateCodeState_annot",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (proof inventory)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panSemEvaluateCodeState_break",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (proof inventory)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panSemEvaluateCodeState_callReturnParameter_ofEntry",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (state-owned Call evaluator equation; untagged infrastructure)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panSemEvaluateCodeState_call_return_const_of_entry",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (bounded actual-state Call case infrastructure; untagged)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panSemEvaluateCodeState_call_zero_clock_timeout_of_entry",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (bounded actual-state Call case infrastructure; untagged)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panSemEvaluateCodeState_continue",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (proof inventory)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panSemEvaluateCodeState_decCallSkip_ofEntry",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (state-owned DecCall evaluator case infrastructure; untagged)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panSemEvaluateCodeState_decCallTick_ofEntry",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (state-owned nonempty-code DecCall/Tick source equation; untagged evaluator-case infrastructure)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panSemEvaluateCodeState_skip",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (proof inventory)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panSemEvaluateCodeState_tick",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (proof inventory)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panSemEvaluateRiscV64CodeCall_catchesRaisedBody_ofState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only fixed-RV64 source Call induction step: arbitrary callee/body/arguments and raised-payload source IH are evaluated through the finite state-owned code map and memory domains derived from PanSemState; does not prove the target relation or full pc_compile_correct Call case"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panSemEvaluateRiscV64CodeState_callAssignParameter_ofEntry",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (fixed-RV64 state-owned assigned Call evaluator case; untagged)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panSemEvaluateRiscV64CodeState_callCatchRaiseOneWord_ofEntry",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only fixed-RV64 source-state Call exception dispatch helper: state-owned callee raises a one-word payload and a preexisting matching handler local returns it; induction support, not full pc_compile_correct case"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panSemEvaluateRiscV64CodeState_callRaiseOneWordException_ofEntry",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (fixed-RV64 source-state Call exception equation; untagged induction support)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panSemEvaluateRiscV64CodeState_callReturnParameter_ofEntry",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (fixed-RV64 state-owned Call evaluator specialization; untagged)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panSemEvaluateRiscV64CodeState_call_catchesRaisedBody_ofState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only source Call result lifted to the production PanSemState evaluator when its code-map-derived fuel is exactly bodyFuel+2; recursively evaluates callee and handler body through state.code and preserves state-owned code in the post-state projection, but does not prove target simulation or pc_compile_correct"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panSemEvaluateRiscV64CodeState_decCallSkip_ofEntry",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (fixed-RV64 DecCall evaluator specialization; untagged)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panSemEvaluateRiscV64CodeState_decCallTick_ofEntry",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (fixed-RV64 specialization of the state-owned DecCall/Tick source equation; untagged)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panSemSourceCall_and_crepTargetCall_catchesRaisedOneWord_postRelations",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only composition deriving an actual state-owned source Call run from source callee/handler body premises, then carrying its projected result through production target Call dispatch. The premise hcalleeTargetBodyIH assumes the target callee-body evaluator run plus callee state_rel/code_rel/excp_rel and the word payload in target global cell zero needed by exp_hdl; this helper consumes that target-body induction premise and does not prove the callee simulation. The handler relation IH also remains a premise. This is not the full compiled-program Call_Ret_Exception case"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panSemSourceCall_and_crepTargetCall_catchesRaisedPayload_postRelations",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only arbitrary-payload source/target Call composition deriving the source Call run from source callee/handler premises, then carrying its projected result and panToCrepClockResultRel through production target dispatch. The target callee-body IH supplies its evaluator run, state_rel/code_rel/excp_rel, and the state-owned global-word relation consumed by arbitrary finite-map exp_hdl; the handler relation IH remains a premise. Recursive body simulations are unproved, so this is not pc_compile_correct[Call_Ret_Exception]."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panShapeListMatches_self_forSourceCall",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only list-recursive reflexivity helper for the executable shape matcher; no standalone HOL theorem port"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panShapeListMatches_shapeSize_eq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only structural consequence of the recursive shape matcher on lists; it supports argument-length derivation and carries no HOL tag."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panShapeMatches_self_forSourceCall",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only structural reflexivity helper for the executable shape matcher; used to derive the source exception handler shape premise from state_rel's empty struct context"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panShapeMatches_shapeSize_eq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only structural consequence of the recursive shape matcher; Named shapes are covered because each has size one. No standalone HOL theorem statement is claimed."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panSkipEvaluationEquation",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (proof inventory)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panTickEvaluationEquation",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (proof inventory)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panToCrepDecCallReturnParameterPrefixFromCodeRel",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (untagged actual target Call prefix for the one-word return-parameter DecCall slice; derives the compiled code lookup and continuation-entry state/code/exception/local relations from the initial relations, but is not the full HOL DecCall induction case)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panToCrepDecCallTickContinuationSeqOfSourceRunIH",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (untagged DecCall continuation composition helper; consumes state/code/exception/local relations and a source Tick run through a recursive IH, but does not establish the enclosing HOL pc_compile_correct case)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panToCrepDecCallTickFromInitialCodeRel",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (untagged actual-state DecCall/Tick composition for a one-word return-parameter code entry; derives the target Call prefix and uses the recursive Tick simulation, while outer local restoration and the full HOL pc_compile_correct DecCall case remain open)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panToCrepDecCallTickSourceRunComposeWithTickIH",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (untagged DecCall/Tick source-run and target continuation-IH composition before the target Dec local restoration wrapper; the separate target callee-prefix IH and continuation-entry relations remain premises)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panToCrepPcCompileCorrectAnnotCodeState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (proof inventory)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panToCrepPcCompileCorrectAnnotCodeStateRiscV64",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (fixed-RV64 actual-state Annot case specialization; untagged)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panToCrepPcCompileCorrectBreakCodeState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (proof inventory)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panToCrepPcCompileCorrectBreakCodeStateRiscV64",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (fixed-RV64 actual-state Break case specialization; untagged)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panToCrepPcCompileCorrectCallAssignParameterCodeStateRiscV64",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (fixed-RV64 actual-state assigned Call induction case; untagged)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panToCrepPcCompileCorrectCallCatchRaiseOneWordCodeStateRiscV64",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only fixed-RV64 actual-state matching Call exception case for one-word payload: derives source callee from PanSemState.code and target callee from code_rel, maps handler via excp_rel/context, executes exp_hdl payload load and Return, and proves state_rel/code_rel/excp_rel/global lookup/clock; not a direct HOL theorem port"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panToCrepPcCompileCorrectCallRaiseOneWordExceptionCodeStateRiscV64",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (fixed-RV64 actual-state Call exception case; untagged induction support)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panToCrepPcCompileCorrectCallReturnConstCodeState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (bounded actual-state Call case infrastructure; untagged)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panToCrepPcCompileCorrectCallReturnConstCodeStateRiscV64",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (fixed-RV64 actual-state Call case specialization; untagged)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panToCrepPcCompileCorrectCallReturnParameterCodeStateRiscV64",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (fixed-RV64 actual-state Call induction case; untagged)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panToCrepPcCompileCorrectCallTimeoutCodeState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (bounded actual-state Call case infrastructure; untagged)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panToCrepPcCompileCorrectCallTimeoutCodeStateRiscV64",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (fixed-RV64 actual-state Call case specialization; untagged)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panToCrepPcCompileCorrectContinueCodeState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (proof inventory)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panToCrepPcCompileCorrectContinueCodeStateRiscV64",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (fixed-RV64 actual-state Continue case specialization; untagged)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panToCrepPcCompileCorrectDecCallWordSkipCodeStateRiscV64",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (fixed-RV64 actual-state DecCall induction case; untagged)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panToCrepPcCompileCorrectSkipCodeState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Generic evaluator-level support for the HOL pan_to_crepProofScript.sml:493 pc_compile_correct[Skip] branch. It proves source/target runs, post-state_rel, generic codeRel, excp_rel, normal result, and locals_rel, but its generic alpha code relation is not the word-indexed HOL boundary; see panToCrepPcCompileCorrectSkipFuelBoundedBridgeW for the width-indexed, fuel-bounded specialization."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panToCrepPcCompileCorrectSkipCodeStateRiscV64",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (fixed-RV64 actual-state Skip case specialization; untagged)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panToCrepPcCompileCorrectSkipFuelBoundedBridgeW",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Width-indexed, fuel-bounded Option evaluator bridge for the HOL pc_compile_correct[Skip] proof branch (pan_to_crepProofScript.sml:493), not the full HOL case. Preserves state_rel, codeRelW before and after, excp_rel, and locals_rel, and derives both evaluator runs with existential target fuel. HOL panSem$evaluate and crepSem$evaluate are total functions returning (result,state); the Lean evaluators here are fuel-indexed Option functions, and target .normal is not itself HOL NONE. A faithful total-evaluator interface plus result/state correspondence is a prerequisite for the full boundary. Kept untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panToCrepPcCompileCorrectTickCodeState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (proof inventory)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panToCrepPcCompileCorrectTickCodeStateRiscV64",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (fixed-RV64 actual-state Tick case specialization; untagged)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panValueFlatten_wordList",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only flattening identity for lists of source words; reusable list proof infrastructure, not a standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
+    "lean_name": "panValues_eq_words_map_of_wordProjection",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only list inversion helper: successful word projection of source PanValues implies the list consists exactly of the corresponding PanValue.word entries."
+  }
+]

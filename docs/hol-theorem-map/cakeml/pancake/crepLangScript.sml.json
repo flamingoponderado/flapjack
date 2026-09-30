@@ -1,0 +1,155 @@
+[
+  {
+    "hol_path": "cakeml/pancake/crepLangScript.sml",
+    "hol_name": "assign_ret_def",
+    "lean_path": "Flapjack/Pancake/CrepLang.lean",
+    "lean_name": "assignRetW",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex (statement compared against assign_ret_def; width-indexed exact wrapper over CrepProg/CrepExp (BitVec width) with [NeZero width] because HOL word types have positive dimindex; generic helper kept untagged as FLAPJACK-SPECIFIC; clauses/side conditions reviewed clause-by-clause)"
+  },
+  {
+    "hol_path": "cakeml/pancake/crepLangScript.sml",
+    "hol_name": "assigned_free_vars_def",
+    "lean_path": "Flapjack/Pancake/CrepLang.lean",
+    "lean_name": "crepAssignedFreeVarsW",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex (statement compared against assigned_free_vars_def in crepLangScript.sml; HOL prog/exp are indexed by the word length, so the exact tag is on the width-indexed wrapper over CrepProg/CrepExp (BitVec width); the generic crepLang helper remains untagged Flapjack infrastructure; carrier `BitVec width` with `[NeZero width]` because HOL word types have positive dimindex; parity tests and HOL probes as cited)."
+  },
+  {
+    "hol_path": "cakeml/pancake/crepLangScript.sml",
+    "hol_name": "assigned_free_vars_def",
+    "lean_path": "Flapjack/Pancake/CrepLang/Prog.lean",
+    "lean_name": "crepAssignedFreeVarsHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds5 (source comparison, bead flapjack-pxn.18.3.5.8.8.1): HOL assigned_free_vars_def (cakeml/pancake/crepLangScript.sml:149-162) has clauses Skip=[], Dec n e p=FILTER ($≠ n) (assigned_free_vars p), Assign n e=[n], Primitive lhss pop rhss=lhss, Seq/If=append, While=body, Call (SOME (rts, SOME (_, p)))=rts ++ assigned_free_vars p, Call (SOME (rts, NONE))=rts, ShMem op r ad=[r], and _=[]. crepAssignedFreeVarsHOL matches clause-for-clause over the exact width-indexed CrepProgHOL carrier (funname MlString, varname Nat, [NeZero width]); the Dec filter and ShMem result variable are the only observed names, all num varnames. Kernel bridge crepProgToHOL_crepAssignedFreeVars relates production crepAssignedFreeVars over crepProgToHOL. Direct HOL row nested_afv=[1; 2] in crep_assigned_vars_probe.out; the production-carrier tag on crepAssignedFreeVarsW is unchanged."
+  },
+  {
+    "hol_path": "cakeml/pancake/crepLangScript.sml",
+    "hol_name": "assigned_vars_def",
+    "lean_path": "Flapjack/Pancake/CrepLang.lean",
+    "lean_name": "crepAssignedVarsW",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex (statement compared against assigned_vars_def in crepLangScript.sml; HOL prog/exp are indexed by the word length, so the exact tag is on the width-indexed wrapper over CrepProg/CrepExp (BitVec width); the generic crepLang helper remains untagged Flapjack infrastructure; carrier `BitVec width` with `[NeZero width]` because HOL word types have positive dimindex; parity tests and HOL probes as cited)."
+  },
+  {
+    "hol_path": "cakeml/pancake/crepLangScript.sml",
+    "hol_name": "assigned_vars_def",
+    "lean_path": "Flapjack/Pancake/CrepLang/Prog.lean",
+    "lean_name": "crepAssignedVarsHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds5 (source comparison, bead flapjack-pxn.18.3.5.8.8.1): HOL assigned_vars_def (cakeml/pancake/crepLangScript.sml:164-177) has clauses Skip=[], Dec n e p=n::assigned_vars p, Assign n e=[n], Primitive lhss pop rhss=lhss, Seq/If=append, While=body, Call (SOME (rts, SOME (_, p)))=rts ++ assigned_vars p, Call (SOME (rts, NONE))=rts, ShMem op r ad=[r], and _=[]. crepAssignedVarsHOL matches clause-for-clause over the exact width-indexed CrepProgHOL carrier; all observed names are num varnames. Kernel bridge crepProgToHOL_crepAssignedVars relates production crepAssignedVars over crepProgToHOL. Direct HOL rows in crep_assigned_vars_probe.out; the production-carrier tag on crepAssignedVarsW is unchanged."
+  },
+  {
+    "hol_path": "cakeml/pancake/crepLangScript.sml",
+    "hol_name": "exp",
+    "lean_path": "Flapjack/Pancake/CrepLang/Exp.lean",
+    "lean_name": "CrepExpHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-deepseek-three (inductive compared constructor-by-constructor against the Datatype exp at crepLangScript.sml:26-37: all 12 constructors and field types match, the `'a word` payloads are carried by BitVec width with [NeZero width], and LoadGlob keeps the fixed 5-word address; the generic production CrepExp (alpha) stays untagged; total kernel isomorphisms crepExpToHOL/crepExpOfHOL with @[simp] roundtrips live in Flapjack/Pancake/CrepLang/Exp.lean; direct HOL oracle scripts/hol-probes/crep_lang_exp_probe.{sml,out} and guards in Flapjack/Test/CrepExpHOLParity.lean)"
+  },
+  {
+    "hol_path": "cakeml/pancake/crepLangScript.sml",
+    "hol_name": "exps_def",
+    "lean_path": "Flapjack/Pancake/CrepLang.lean",
+    "lean_name": "crepExpsW",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex (statement compared against exps_def in crepLangScript.sml; HOL prog/exp are indexed by the word length, so the exact tag is on the width-indexed wrapper over CrepProg/CrepExp (BitVec width); the generic crepLang helper remains untagged Flapjack infrastructure; carrier `BitVec width` with `[NeZero width]` because HOL word types have positive dimindex; parity tests and HOL probes as cited)."
+  },
+  {
+    "hol_path": "cakeml/pancake/crepLangScript.sml",
+    "hol_name": "load_globals_def",
+    "lean_path": "Flapjack/Pancake/CrepLang.lean",
+    "lean_name": "loadGlobalsW",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex (statement compared against load_globals_def; width-indexed exact wrapper over CrepProg/CrepExp (BitVec width) with [NeZero width] because HOL word types have positive dimindex; generic helper kept untagged as FLAPJACK-SPECIFIC; clauses/side conditions reviewed clause-by-clause)"
+  },
+  {
+    "hol_path": "cakeml/pancake/crepLangScript.sml",
+    "hol_name": "load_globals_def",
+    "lean_path": "Flapjack/Pancake/CrepLang/Prog.lean",
+    "lean_name": "loadGlobalsHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds3 (source comparison, bead flapjack-pxn.18.3.5.8.13.1): HOL load_globals_def (cakeml/pancake/crepLangScript.sml:115-119) is load_globals _ 0 = [] and load_globals ad (SUC n) = LoadGlob ad :: load_globals (ad+1w) n. loadGlobalsHOL matches both clauses with address : BitVec 5 and result List (CrepExpHOL width) over the exact carrier. Kernel bridges crepExpMapToHOL_loadGlobals / crepExpMapOfHOL_loadGlobals relate the production loadGlobals over the codecs. The existing production-carrier tag on loadGlobalsW is unchanged."
+  },
+  {
+    "hol_path": "cakeml/pancake/crepLangScript.sml",
+    "hol_name": "load_shape_def",
+    "lean_path": "Flapjack/Pancake/CrepLang/Exp.lean",
+    "lean_name": "loadShapeBytesHOLW",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source-reviewed against crepLangScript.sml:82-86 for the HOL word-dimension/FFI translation and finite-map policy. HOL load_shape operates on the type-indexed 'a word (dimension dimindex (:a) >= 1); the Lean declaration retains [NeZero width] as the discharge and uses the standard BitVec width translation (address : BitVec width; stride BitVec.ofNat width (width / 8) = byte$bytes_in_word = n2w (dimindex DIV 8), byteScript.sml:193). No HOL finite-map (|-> or sptree num_map) carrier is traversed: the carrier is the datatype CrepExpHOL width, so no fmap qualifier applies. Qualifiers: (words_as_type_indexed_bitvec). Statement/proof correspond clause-for-clause (address=0w -> Load e; else Load (Op Add [e; Const address]); count=0 -> []). The production loadShapeBytesW adapter remains untagged and loadShapeBytesHOLW_toProduction proves the width wrapper agrees after decoding; direct HOL rows in scripts/hol-probes/crep_load_shape_probe.out are exercised in Flapjack/Test/CrepeLoadShapeParity.lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/crepLangScript.sml",
+    "hol_name": "nested_decs_def",
+    "lean_path": "Flapjack/Pancake/CrepLang.lean",
+    "lean_name": "nestedDecsW",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex (statement compared against nested_decs_def in crepLangScript.sml; HOL prog/exp are indexed by the word length, so the exact tag is on the width-indexed wrapper over CrepProg/CrepExp (BitVec width); the generic crepLang helper remains untagged Flapjack infrastructure; carrier `BitVec width` with `[NeZero width]` because HOL word types have positive dimindex; parity tests and HOL probes as cited)."
+  },
+  {
+    "hol_path": "cakeml/pancake/crepLangScript.sml",
+    "hol_name": "nested_decs_def",
+    "lean_path": "Flapjack/Pancake/CrepLang/Prog.lean",
+    "lean_name": "nestedDecsHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-pxn.18.3.5.8.8.4): exact port of HOL nested_decs_def (cakeml/pancake/crepLangScript.sml:102-107) over the exact CrepProgHOL carrier: nestedDecsHOL [] [] body = body, nestedDecsHOL (name::names) (value::values) body = Dec name value (nestedDecsHOL names values body), and both length-mismatch cases are Skip, clause-for-clause. Only Nat var names and CrepExpHOL/width-indexed words are inspected; the MlString function names of CrepProgHOL are carried but never inspected. Kernel bridge crepProgToHOL_nestedDecs transports it across crepProgToHOL; the generic production nestedDecs and its width wrapper nestedDecsW keep their separate tags."
+  },
+  {
+    "hol_path": "cakeml/pancake/crepLangScript.sml",
+    "hol_name": "nested_seq_def",
+    "lean_path": "Flapjack/Pancake/CrepLang.lean",
+    "lean_name": "crepNestedSeqW",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex (statement compared against nested_seq_def in crepLangScript.sml; HOL prog/exp are indexed by the word length, so the exact tag is on the width-indexed wrapper over CrepProg/CrepExp (BitVec width); the generic crepLang helper remains untagged Flapjack infrastructure; carrier `BitVec width` with `[NeZero width]` because HOL word types have positive dimindex; parity tests and HOL probes as cited)."
+  },
+  {
+    "hol_path": "cakeml/pancake/crepLangScript.sml",
+    "hol_name": "nested_seq_def",
+    "lean_path": "Flapjack/Pancake/CrepLang/Prog.lean",
+    "lean_name": "crepNestedSeqHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds3 (source comparison, bead flapjack-pxn.18.3.5.8.13.1): HOL nested_seq_def (cakeml/pancake/crepLangScript.sml:89) is nested_seq [] = Skip and nested_seq (e::es) = Seq e (nested_seq es). crepNestedSeqHOL has the identical two clauses over the exact width-indexed CrepProgHOL carrier (funname as MlString, [NeZero width]); constructor arities and field types match. Kernel bridges crepProgToHOL_crepNestedSeqHOL / crepProgOfHOL_crepNestedSeqHOL relate the production crepNestedSeq over the codecs. The existing production-carrier tag on crepNestedSeqW (Flapjack/Pancake/CrepLang.lean) is unchanged; this is the exact-carrier declaration needed by the exact pan_to_crep path."
+  },
+  {
+    "hol_path": "cakeml/pancake/crepLangScript.sml",
+    "hol_name": "prog",
+    "lean_path": "Flapjack/Pancake/CrepLang/Prog.lean",
+    "lean_name": "CrepProgHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-deepseek-three (inductive compared constructor-by-constructor against the Datatype prog at crepLangScript.sml:41-66: all 19 constructors and field types match, the `'a word` payloads are carried by BitVec width with [NeZero width], StoreGlob keeps the fixed 5-word address, Call/ExtCall names are MlString (HOL funname=mlstring), and varnames/Break/Continue stay num; the generic production CrepProg (alpha) with String function names stays untagged; total kernel isomorphisms crepProgToHOL/crepProgOfHOL with @[simp] forward roundtrip and a byte-ranged reverse roundtrip live in Flapjack/Pancake/CrepLang/Prog.lean; direct HOL oracle scripts/hol-probes/crep_lang_prog_probe.{sml,out} and guards in Flapjack/Test/CrepProgHOLParity.lean)"
+  },
+  {
+    "hol_path": "cakeml/pancake/crepLangScript.sml",
+    "hol_name": "store_globals_def",
+    "lean_path": "Flapjack/Pancake/CrepLang.lean",
+    "lean_name": "storeGlobalsW",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex (statement compared against store_globals_def; width-indexed exact wrapper over CrepProg/CrepExp (BitVec width) with [NeZero width] because HOL word types have positive dimindex; generic helper kept untagged as FLAPJACK-SPECIFIC; clauses/side conditions reviewed clause-by-clause)"
+  },
+  {
+    "hol_path": "cakeml/pancake/crepLangScript.sml",
+    "hol_name": "stores_def",
+    "lean_path": "Flapjack/Pancake/CrepLang.lean",
+    "lean_name": "storesW",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex (statement compared against stores_def at crepLangScript.sml:95-100; HOL address/offset are 'a word and the stride is the fixed byte$bytes_in_word (BitVec.ofNat width (width/8) here); clause-for-clause identical to the untagged stride-parametric stores, with the untagged bridge storesW_eq_stores; direct HOL-EVAL rows empty/zero_two/nonzero_two in scripts/hol-probes/crep_stores_probe.out reproduced by guards in Flapjack/Test/CrepeStoresParity.lean; carrier `BitVec width` with `[NeZero width]` because HOL word types have positive dimindex)."
+  },
+  {
+    "hol_path": "cakeml/pancake/crepLangScript.sml",
+    "hol_name": "var_cexp_def",
+    "lean_path": "Flapjack/Pancake/CrepLang.lean",
+    "lean_name": "crepExpVarsW",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex (statement compared against var_cexp_def in crepLangScript.sml; HOL prog/exp are indexed by the word length, so the exact tag is on the width-indexed wrapper over CrepProg/CrepExp (BitVec width); the generic crepLang helper remains untagged Flapjack infrastructure; carrier `BitVec width` with `[NeZero width]` because HOL word types have positive dimindex; parity tests and HOL probes as cited)."
+  },
+  {
+    "hol_path": "cakeml/pancake/crepLangScript.sml",
+    "hol_name": "var_cexp_def",
+    "lean_path": "Flapjack/Pancake/CrepLang/Exp.lean",
+    "lean_name": "crepExpVarsHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-c (source comparison, 2026-09-27; crepLangScript.sml:128-130): exact `CrepExpHOL` port of var_cexp. Const/LoadGlob/BaseAddr/TopAddr produce []; Var produces its singleton; Load/Load32/LoadByte recurse; Op/Crepop flatten mapped variable lists; Cmp/Shift concatenate left then right. The constructor arities and Nat variable names match the exact CrepExpHOL carrier. The pre-existing crepExpVarsW tag is on the width-indexed production expression isomorph; this declaration ports the source over the exact CrepExpHOL carrier needed by the faithful evaluator theorem."
+  }
+]

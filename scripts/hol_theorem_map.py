@@ -1,27 +1,27 @@
 #!/usr/bin/env python3
 """Load and write the reviewed HOL-tag manifest in a deterministic shard layout.
 
-The manifest currently lives in the centralized ``docs/HOL-THEOREM-MAP.json``
-array. It is large enough that concurrent fleet merges conflict at the
-monolithic tail, so this module prepares a per-HOL-script shard layout under
-``docs/hol-theorem-map/``: one JSON array per HOL script, and records whose
-``hol_path`` is null (Flapjack-only classifications such as
-``no_hol_reference_pending_classification``) grouped by their Lean module under
-``docs/hol-theorem-map/no-hol/``.
+The record store lives under ``docs/hol-theorem-map/``: one JSON array per HOL
+script, and records whose ``hol_path`` is null (Flapjack-only classifications
+such as ``no_hol_reference_pending_classification``) grouped by their Lean
+module under ``docs/hol-theorem-map/no-hol/``. This per-script layout avoids the
+large monolithic tail where concurrent fleet merges conflict.
 
-The shards are not canonical yet: during the migration the centralized
-``docs/HOL-THEOREM-MAP.json`` remains the authoritative compatibility view, and
-a later step switches the gates to the shards with a round-trip/drift check.
-This module only derives shard paths, loads and validates records, and renders
-byte-stable shard text. It does not change any review status or source-review
-semantics; the gates in ``scripts/check_hol_theorem_map.py`` and
-``scripts/check_hol_type_hashes.py`` remain authoritative.
+During the migration ``docs/HOL-THEOREM-MAP.json`` is kept as a byte-stable
+generated compatibility view, written outside this module's normal path so its
+mixed literal-unicode/``\\u`` escapes are not reformatted. The shards are read
+through ``load_manifest``; ``check_drift`` compares them against the monolith
+field-for-field and flags missing/changed rows, duplicate keys, and stale or
+extra shard files, and ``sync_shards`` regenerates the shards deterministically
+with stale-shard cleanup. This module does not change any review status or
+source-review semantics.
 """
 
 from __future__ import annotations
 
 import ast
 import json
+from dataclasses import dataclass, field as dataclass_field
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -201,10 +201,13 @@ def _canonical_records(records: Iterable[dict[str, Any]]) -> list[dict[str, Any]
     ]
 
 
-def load_manifest(path: Path | str = LEGACY_MANIFEST) -> list[dict[str, Any]]:
-    """Load the manifest from a shard directory or a legacy JSON array file.
+def _read_records(path: Path | str) -> list[dict[str, Any]]:
+    """Read raw records from a shard directory or a legacy JSON array file.
 
-    Records are returned in deterministic order with canonical key order.
+    This is the non-validating primitive shared by ``load_manifest`` and the
+    drift checker. Reading a directory concatenates every ``*.json`` shard in
+    sorted order; reading a file expects a JSON array. No shape, status or
+    duplicate validation happens here.
     """
     path = Path(path)
     if path.is_dir():
@@ -214,11 +217,20 @@ def load_manifest(path: Path | str = LEGACY_MANIFEST) -> list[dict[str, Any]]:
             if not isinstance(payload, list):
                 raise ValueError(f"{shard}: shard root must be a JSON array")
             records.extend(payload)
-    else:
-        payload = json.loads(path.read_text(encoding="utf-8"))
-        if not isinstance(payload, list):
-            raise ValueError("manifest root must be a JSON array")
-        records = payload
+        return records
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, list):
+        raise ValueError("manifest root must be a JSON array")
+    return payload
+
+
+def load_manifest(path: Path | str = LEGACY_MANIFEST) -> list[dict[str, Any]]:
+    """Load the manifest from a shard directory or a legacy JSON array file.
+
+    Records are validated (shape, statuses, duplicates) and returned in
+    deterministic order with canonical key order.
+    """
+    records = _read_records(path)
     validate_records(records)
     return _canonical_records(records)
 
@@ -243,17 +255,28 @@ def render_shards(records: Iterable[dict[str, Any]]) -> dict[str, str]:
 
 
 def write_shards(
-    root: Path | str, records: Iterable[dict[str, Any]]
+    root: Path | str,
+    records: Iterable[dict[str, Any]],
+    *,
+    cleanup: bool = False,
 ) -> list[str]:
     """Write shards under ``root`` and return the relative paths written.
 
     Records are validated (shape, duplicates, statuses) and every shard path is
     checked as repo-relative before any file is created, so an invalid record
     cannot cause a write outside ``root``.
+
+    When ``cleanup`` is true, shard ``*.json`` files that the current records no
+    longer produce are removed first (see ``remove_stale_shards``), so a record
+    that moves between shards does not leave a duplicate leftover behind. The
+    migration/sync path passes ``cleanup=True``; the default is a non-destructive
+    write so callers that only append do not have to reason about deletion.
     """
     root = Path(root)
     validated = validate_records(list(records))
     rendered = render_shards(validated)
+    if cleanup:
+        remove_stale_shards(root, validated)
     for relpath, text in rendered.items():
         target = root / relpath
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -261,8 +284,222 @@ def write_shards(
     return sorted(rendered)
 
 
+def _ensure_within(root: Path, candidate: Path) -> Path:
+    """Resolve ``candidate`` and reject any path that escapes ``root``.
+
+    Guards against symlinked shard files or directories pointing outside the
+    shard root before the cleanup path deletes anything.
+    """
+    root_resolved = root.resolve()
+    candidate_resolved = candidate.resolve()
+    if candidate_resolved != root_resolved and root_resolved not in candidate_resolved.parents:
+        raise ValueError(
+            f"refusing to touch path outside shard root: {candidate} -> {candidate_resolved}"
+        )
+    return candidate_resolved
+
+
 def shard_files(root: Path | str = SHARD_DIR) -> list[Path]:
     root = Path(root)
     if not root.exists():
         return []
     return sorted(root.rglob("*.json"))
+
+
+def stale_shard_files(
+    root: Path | str, records: Iterable[dict[str, Any]]
+) -> list[str]:
+    """Return shard-relative paths of ``*.json`` files no longer produced.
+
+    ``records`` is the authoritative set (normally the legacy monolith).
+    Every existing shard path is validated as a safe repo-relative path that
+    resolves inside ``root``; an unsafe/escaping path raises ``ValueError``
+    instead of being silently ignored.
+    """
+    root = Path(root)
+    if not root.exists():
+        return []
+    produced = set(render_shards(list(records)))
+    stale: list[str] = []
+    for shard in sorted(root.rglob("*.json")):
+        relpath = _check_safe_relpath(shard.relative_to(root).as_posix())
+        _ensure_within(root, shard)
+        if relpath not in produced:
+            stale.append(relpath)
+    return stale
+
+
+def _prune_empty_dirs(root: Path) -> None:
+    """Remove now-empty directories beneath ``root`` (never ``root`` itself)."""
+    if not root.exists():
+        return
+    for path in sorted(root.rglob("*"), key=lambda p: len(p.parts), reverse=True):
+        if path.is_dir() and path != root:
+            try:
+                path.rmdir()
+            except OSError:
+                pass
+
+
+def remove_stale_shards(
+    root: Path | str, records: Iterable[dict[str, Any]]
+) -> list[str]:
+    """Delete shard files no longer produced by ``records``; return their paths.
+
+    Rejects unsafe or escaping paths before deleting anything, then prunes any
+    directories left empty by the removals.
+    """
+    root = Path(root)
+    stale = stale_shard_files(root, records)
+    for relpath in stale:
+        target = _ensure_within(root, root / relpath)
+        if target.is_symlink() or target.is_file():
+            target.unlink()
+    _prune_empty_dirs(root)
+    return stale
+
+
+def sync_shards(root: Path | str, records: Iterable[dict[str, Any]]) -> list[str]:
+    """Deterministically write shards and remove stale leftovers.
+
+    The one-time migration and any resync command use this entry point so the
+    shard tree always equals exactly the rendered output of ``records``.
+    """
+    return write_shards(root, records, cleanup=True)
+
+
+def _record_identity(record: dict[str, Any]) -> str:
+    return json.dumps(canonical_record(record), sort_keys=True, ensure_ascii=False)
+
+
+@dataclass
+class ManifestDiff:
+    """Structured result of comparing shard records with the legacy monolith."""
+
+    missing_from_shards: list[str] = dataclass_field(default_factory=list)
+    missing_from_monolith: list[str] = dataclass_field(default_factory=list)
+    changed: list[str] = dataclass_field(default_factory=list)
+    duplicates_in_shards: list[str] = dataclass_field(default_factory=list)
+    duplicates_in_monolith: list[str] = dataclass_field(default_factory=list)
+    stale_shard_files: list[str] = dataclass_field(default_factory=list)
+    invalid_shards: list[str] = dataclass_field(default_factory=list)
+    invalid_monolith: list[str] = dataclass_field(default_factory=list)
+
+    def ok(self) -> bool:
+        return not any(
+            (
+                self.missing_from_shards,
+                self.missing_from_monolith,
+                self.changed,
+                self.duplicates_in_shards,
+                self.duplicates_in_monolith,
+                self.stale_shard_files,
+                self.invalid_shards,
+                self.invalid_monolith,
+            )
+        )
+
+    def messages(self) -> list[str]:
+        messages: list[str] = []
+        for key in self.missing_from_monolith:
+            messages.append(f"record present in shards but missing from monolith: {key}")
+        for key in self.missing_from_shards:
+            messages.append(f"record present in monolith but missing from shards: {key}")
+        for key in self.changed:
+            messages.append(f"record differs between shards and monolith: {key}")
+        for key in self.duplicates_in_shards:
+            messages.append(f"duplicate shard entry: {key}")
+        for key in self.duplicates_in_monolith:
+            messages.append(f"duplicate monolith entry: {key}")
+        for relpath in self.stale_shard_files:
+            messages.append(f"stale/extra shard file: {relpath}")
+        for message in self.invalid_shards:
+            messages.append(f"invalid shard records: {message}")
+        for message in self.invalid_monolith:
+            messages.append(f"invalid monolith records: {message}")
+        return messages
+
+
+def _key_string(key: tuple[str, str]) -> str:
+    return f"{key[0]}:{key[1]}"
+
+
+def _group_by_key(
+    records: Iterable[dict[str, Any]],
+) -> tuple[dict[tuple[str, str], list[dict[str, Any]]], list[str]]:
+    """Group records by ``record_key``; return groups plus malformed messages."""
+    groups: dict[tuple[str, str], list[dict[str, Any]]] = {}
+    malformed: list[str] = []
+    for index, record in enumerate(records, start=1):
+        if not isinstance(record, dict):
+            malformed.append(f"entry {index} is not an object")
+            continue
+        try:
+            key = record_key(record)
+            canonical_record(record)
+        except (KeyError, TypeError) as exc:
+            malformed.append(f"entry {index} is missing required fields ({exc})")
+            continue
+        groups.setdefault(key, []).append(record)
+    return groups, malformed
+
+
+def compare_records(
+    shard_records: Iterable[dict[str, Any]],
+    monolith_records: Iterable[dict[str, Any]],
+) -> ManifestDiff:
+    """Compare shard and monolith records as canonical records.
+
+    Equality is exact and field-for-field over canonical records (key order
+    does not matter). The comparison is order-insensitive and detects duplicate
+    keys on either side. It returns structured diagnostics; it never raises for
+    a mere disagreement.
+    """
+    diff = ManifestDiff()
+    shard_groups, shard_malformed = _group_by_key(shard_records)
+    mono_groups, mono_malformed = _group_by_key(monolith_records)
+    diff.invalid_shards.extend(shard_malformed)
+    diff.invalid_monolith.extend(mono_malformed)
+    for key, group in shard_groups.items():
+        if len(group) > 1:
+            diff.duplicates_in_shards.append(_key_string(key))
+    for key, group in mono_groups.items():
+        if len(group) > 1:
+            diff.duplicates_in_monolith.append(_key_string(key))
+    shard_keys = set(shard_groups)
+    mono_keys = set(mono_groups)
+    for key in sorted(mono_keys - shard_keys):
+        diff.missing_from_shards.append(_key_string(key))
+    for key in sorted(shard_keys - mono_keys):
+        diff.missing_from_monolith.append(_key_string(key))
+    for key in sorted(shard_keys & mono_keys):
+        shard_identities = {_record_identity(r) for r in shard_groups[key]}
+        mono_identities = {_record_identity(r) for r in mono_groups[key]}
+        if shard_identities != mono_identities:
+            diff.changed.append(_key_string(key))
+    return diff
+
+
+def check_drift(
+    shard_root: Path | str = SHARD_DIR,
+    monolith_path: Path | str = LEGACY_MANIFEST,
+) -> ManifestDiff:
+    """Fail-worthy drift report for shards versus the authoritative monolith.
+
+    Reports record-level disagreements, duplicate keys on either side, invalid
+    records, and stale/extra shard files (shards the monolith no longer
+    produces). The legacy monolith is the reference for the produced shard set.
+    """
+    shard_records = _read_records(shard_root)
+    monolith_records = _read_records(monolith_path)
+    diff = compare_records(shard_records, monolith_records)
+    try:
+        validate_records(shard_records)
+    except ValueError as exc:
+        diff.invalid_shards.append(str(exc))
+    try:
+        validate_records(monolith_records)
+    except ValueError as exc:
+        diff.invalid_monolith.append(str(exc))
+    diff.stale_shard_files = stale_shard_files(shard_root, monolith_records)
+    return diff

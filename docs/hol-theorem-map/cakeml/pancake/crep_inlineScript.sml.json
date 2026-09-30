@@ -1,0 +1,133 @@
+[
+  {
+    "hol_path": "cakeml/pancake/crep_inlineScript.sml",
+    "hol_name": "arg_load_def",
+    "lean_path": "Flapjack/Pancake/CrepInline/Pass.lean",
+    "lean_name": "argLoadHOLExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison (2026-09-28; bead flapjack-e7w.2.1.4) against crep_inlineScript.sml:59-63. HOL states arg_load tmp_vars args args_vname p = nested_decs tmp_vars args (nested_decs args_vname (MAP Var tmp_vars) p). Lean has the same four inputs/output over CrepProgHOL/CrepExpHOL width, and uses nestedDecsHOL twice with the same lists and mapping; its unequal-list Skip behavior agrees with the tagged nested_decs_def port. [NeZero width] retains the positive HOL word dimension; words_as_type_indexed_bitvec resolves through the same-owner indexed CrepProgHOL constructor payloads. The direct original HOL EVAL row argload_p=T is in scripts/hol-probes/crep_inline_helper_probe.out; helperArgLoadExactP checks the same width-8 arguments/body/output in Flapjack/Test/CrepInlineFmapParity.lean. This is the helper definition only; production inline_prog routing is not claimed."
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_inlineScript.sml",
+    "hol_name": "compile_inl_prog_def",
+    "lean_path": "Flapjack/Pancake/CrepInline/Canonical.lean",
+    "lean_name": "compileInlProgHOLExact",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_parameters": [
+      "inl_fs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.5.7) against cakeml/pancake/crep_inlineScript.sml:259-262. HOL MAPs each (name, params, body) triple to the same name and params with inline_prog (inl_fs \\ name) body. Lean maps over the same List triple carrier, uses HolFiniteMapExact.erase for DOMSUB and the tagged inlineProgHOLExact; the standalone inl_fs parameter has a same-module lookup/finite-support roundtrip witness. MlString is the exact tagged HOL mlstring carrier, and the word-indexed program carrier uses words_as_type_indexed_bitvec. No BEq/LawfulBEq binders remain on the tagged declaration. Direct HOL output rows for inlining are replayed by canonicalOracleGuard. The executed parser-backed path still uses String-backed `compileInlTopHOL`; this tagged wrapper is used by the tested `compileProgTopHOLProductionExactInline` alternative. Production routing remains open under flapjack-e7w.2."
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_inlineScript.sml",
+    "hol_name": "compile_inl_top_def",
+    "lean_path": "Flapjack/Pancake/CrepInline/Canonical.lean",
+    "lean_name": "compileInlTopHOLExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.5.7) against cakeml/pancake/crep_inlineScript.sml:264-269. HOL filters prog by membership of each function name in inl_fname, creates alist_to_fmap over the selected triples, and calls compile_inl_prog on the original prog. Lean uses List.filter with MlString's fixed lawful equality, alistToFmapHOLExact whose lookup rows match HOL's first-occurrence-wins alist_to_fmap, then the support-certified executable inline pass over the original prog. The function signature has the same two list inputs and triple-list output with exact MlString names and width-indexed CrepProgHOL; words_as_type_indexed_bitvec records the positive word model. Direct HOL inline/alist rows are replayed by canonicalOracleGuard. The executed parser-backed path still uses String-backed `compileInlTopHOL`; this tagged wrapper is used by the tested `compileProgTopHOLProductionExactInline` alternative. Production routing remains open under flapjack-e7w.2."
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_inlineScript.sml",
+    "hol_name": "early_exit",
+    "lean_path": "Flapjack/Pancake/CrepInline.lean",
+    "lean_name": "CrepEarlyExitHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-b (source comparison, flapjack-e7w.2.1.1): exact three-constructor port of the early_exit datatype at crep_inlineScript.sml:87-89; Exn, Ret, Loop_exit map in order to exception, return, loopExit, with no payloads or extra cases."
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_inlineScript.sml",
+    "hol_name": "has_return_def",
+    "lean_path": "Flapjack/Pancake/CrepInline/Pass.lean",
+    "lean_name": "hasReturnHOLExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-e7w.2.1) against crep_inlineScript.sml:43-57. Compared Dec, Seq, If, While, Call NONE/SOME handler cases, Return, and identity fallback clause by clause. Uses the exact CrepProgHOL carrier, with the same fixed positive word dimension qualifier; Bool and Nat-list tests implement HOL's truth-valued distinct control logic. Direct HOL EVAL rows and matching Lean guards are in scripts/hol-probes/crep_inline_has_return_probe.out and Flapjack/Test/CrepInlineHasReturnParity.lean; helperHasReturnHOLExact also checks the If/Return case. This helper alone does not port inline_prog or its finite-map argument."
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_inlineScript.sml",
+    "hol_name": "inline_nontail_def",
+    "lean_path": "Flapjack/Pancake/CrepInline/Pass.lean",
+    "lean_name": "inlineNontailHOLExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-e7w.2.1) against crep_inlineScript.sml:191-203. Lean has the same six inputs, result carrier and equation: nested_decs temporaryReturns (REPLICATE (LENGTH temporaryReturns) (Const 0)) (Seq (arg_load temporaryNames arguments argumentNames program) (nested_seq (MAP2 Assign returnNames (MAP Var temporaryReturns))). `nestedDecsHOL`, `argLoadHOLExact`, `List.replicate`, `List.zipWith`, and `crepNestedSeqHOL` retain source list order and truncation behavior. Direct HOL EVAL rows and matching Lean guards are in scripts/hol-probes/crep_inline_nontail_probe.out and Flapjack/Test/CrepInlineNontailParity.lean; helperInlineNontailHOLExact checks a representative equation in Flapjack/Test/CrepInlineFmapParity.lean. This helper alone does not port inline_prog or its finite-map argument."
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_inlineScript.sml",
+    "hol_name": "inline_prog_def",
+    "lean_path": "Flapjack/Pancake/CrepInline/Canonical.lean",
+    "lean_name": "inlineProgHOLExact",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_parameters": [
+      "inlineable"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.5.7) against cakeml/pancake/crep_inlineScript.sml:203-257. Compared the standalone inlineable finite-map parameter and Crep program input/output; HOL's map has type mlstring |-> (num list # prog), Lean uses HolFiniteMapExact MlString (List Nat × CrepProgHOL width), and the same-module holFmapAsFiniteSupportParamWitness_inlineProgHOLExact_inlineable proves lookup and finite-support roundtrips. MlString is the exact tagged HOL mlstring carrier, so its map-key equality is HOL equality; the wrapper fixes the global lawful equality and adds no generic BEq/LawfulBEq assumptions. words_as_type_indexed_bitvec records HOL's positive word dimension as BitVec width under [NeZero width]. Reviewed all source clauses: Call handler recursion uses the unchanged inline map; return non-distinctness returns the call; FLOOKUP miss preserves it; a hit recurses after DOMSUB of the callee; tail and non-tail paths preserve the HOL MAX_LIST/GENLIST/arg_load/transform sequence; Dec, Seq, If, While recurse structurally and the catch-all is identity. The support list/proof are confined to an untagged termination core and the wrapper's result is proved support-independent. Direct HOL rows are replayed by canonicalOracleGuard. Production `compileProgTopHOLWithMetadataOfExact` currently calls `compileProgTopHOLProductionExact`, whose inline stage is the String-backed `compileInlTopHOL`; the tagged exact wrapper is used by the tested alternative `compileProgTopHOLProductionExactInline`, not the executed pipeline. Production routing remains open under flapjack-e7w.2."
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_inlineScript.sml",
+    "hol_name": "inline_tail_def",
+    "lean_path": "Flapjack/Pancake/CrepInline/Pass.lean",
+    "lean_name": "inlineTailHOLExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison (2026-09-28; bead flapjack-e7w.2.1.3) against crep_inlineScript.sml:171-172. HOL states inline_tail p = Seq Tick p with no additional premise. Lean inlineTailHOLExact has the same one-program input and Crep program output over the exact CrepProgHOL width carrier and the same Seq Tick equation; [NeZero width] retains the positive HOL word dimension. words_as_type_indexed_bitvec records the standard HOL 'a word to BitVec width translation, resolved through the indexed CrepProgHOL inductive's same-owner constructor payloads. The direct original HOL EVAL row tail_p=T is scripts/hol-probes/crep_inline_helper_probe.out; helperTailExactP checks the same width-8 input/output in Flapjack/Test/CrepInlineFmapParity.lean. This is the helper definition only; production inline_prog routing is not claimed."
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_inlineScript.sml",
+    "hol_name": "not_branch_ret_def",
+    "lean_path": "Flapjack/Pancake/CrepInline/Pass.lean",
+    "lean_name": "notBranchRetHOLExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-e7w.2.1) against crep_inlineScript.sml:70-85. Dec and Seq recurse as HOL; If and While negate exact has_return results; Call NONE and Call with no return handler return T; a handler call negates has_return on the handler; all other clauses return T. Inputs and outputs retain HOL's indexed Crep syntax and positive-width translation. helperNotBranchRetHOLExact checks an If with a returning branch in Flapjack/Test/CrepInlineFmapParity.lean. This helper alone does not port inline_prog or its finite-map argument."
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_inlineScript.sml",
+    "hol_name": "transform_branch_def",
+    "lean_path": "Flapjack/Pancake/CrepInline/Pass.lean",
+    "lean_name": "transformBranchHOLExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-e7w.2.1) against crep_inlineScript.sml:156-169. Return uses nested_seq (MAP2 Assign returnNames values) followed by Break depth; Call NONE inserts return metadata and Break; Call SOME(_,NONE) is preserved; a Call handler recursively transforms only its handler; Dec, Seq, and If recurse at the same depth; While increments depth; remaining constructors are unchanged. `List.zipWith` and `crepNestedSeqHOL` match HOL MAP2 and nested_seq, and the `CrepProgHOL` indexed payloads use words_as_type_indexed_bitvec. Direct HOL EVAL rows and matching Lean guards are in scripts/hol-probes/crep_inline_transform_branch_probe.out and Flapjack/Test/CrepInlineTransformBranchParity.lean; helperTransformBranchHOLExact also checks the Return clause in Flapjack/Test/CrepInlineFmapParity.lean. This helper alone does not port inline_prog or its finite-map argument."
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_inlineScript.sml",
+    "hol_name": "transform_eoc_def",
+    "lean_path": "Flapjack/Pancake/CrepInline/Pass.lean",
+    "lean_name": "transformEocHOLExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison (2026-09-27; bead flapjack-e7w.2.1.6) against crep_inlineScript.sml:137-145. Return maps to crepNestedSeqHOL of returnNames.zipWith Assign values; List.zipWith has HOL MAP2's truncation, and crepNestedSeqHOL is separately tagged for nested_seq_def. Call NONE adds SOME (returnNames, NONE); Call SOME (names, NONE) is preserved; Call SOME (names, SOME (word, handler)) preserves all metadata and recursively transforms only the handler. Dec, While, Seq, and If recurse in source order, and the catch-all is identity. Inputs/outputs use CrepProgHOL/CrepExpHOL, MlString, Nat variable identifiers and BitVec width words, matching the HOL carriers under words_as_type_indexed_bitvec; [NeZero width] retains the positive word dimension. Direct HOL EVAL rows for all branches are in scripts/hol-probes/crep_inline_transform_eoc_probe.out and Lean guard transformEocGuard checks them in Flapjack/Test/CrepInlineTransformEocParity.lean. This exact helper does not establish or claim production inline_prog routing."
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_inlineScript.sml",
+    "hol_name": "unreach_elim_def",
+    "lean_path": "Flapjack/Pancake/CrepInline.lean",
+    "lean_name": "unreachElimHOLExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b (source comparison, flapjack-e7w.2.1.1): compared every equation in crep_inlineScript.sml:90-135. Return/Raise/Break/Continue report their corresponding exit; Seq returns the transformed first clause immediately when its exit is non-NONE, otherwise transforms the second; Dec propagates; If transforms both branches and uses HOL's ordered Ret/Exn/Loop_exit merge; While transforms the body but always returns NONE; Call NONE reports Ret, SOME (rts,NONE) reports NONE, and SOME (rts,SOME (w,hdl)) transforms hdl but returns NONE; all other clauses preserve the program and return NONE. The exact CrepProgHOL width-indexed carrier and result type match all HOL constructors; words_as_type_indexed_bitvec records HOL's arbitrary positive word dimension as BitVec width under the retained [NeZero width]. No evaluator, pass simulation, or helper-agreement premise is added. Structural Lean regression cases cover the Skip, Return, Seq short-circuit, While, and If priority cases. This tag covers unreach_elim_def only, not inline_prog_def."
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_inlineScript.sml",
+    "hol_name": "var_prog_def",
+    "lean_path": "Flapjack/Pancake/CrepInline.lean",
+    "lean_name": "crepVarProgHOLExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-27; bead flapjack-e7w.2.1.2) against crep_inlineScript.sml:11-33. All 19 CrepProgHOL constructors match var_prog_def: Dec and Assign destinations precede expression vars; Primitive emits lhs then rhs; Store/Store32/StoreByte concatenate both expressions; StoreGlob ignores its address; Seq and If preserve HOL concatenation order; While prepends condition vars; Call emits flattened arguments then return vars then handler vars when present, and ignores exception labels/function names; ExtCall emits all four numeric vars; Return flattens value vars; ShMem emits its var then address; Skip/Break/Continue/Raise/Tick return empty. Exp variables use the exact crepExpVarsHOL port. The carrier is width-indexed CrepProgHOL with [NeZero width] and BitVec width words, recorded by the words_as_type_indexed_bitvec qualifier; no names, maps, or theorem premises differ. Direct HOL rows var_prog_call_handler_extcall, var_prog_skip_empty, and var_prog_storeglob_ignores_address are in scripts/hol-probes/crep_inline_helper_probe.out and matched by CrepeInline.lean exact-carrier guards."
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_inlineScript.sml",
+    "hol_name": "vmax_prog_def",
+    "lean_path": "Flapjack/Pancake/CrepInline.lean",
+    "lean_name": "crepVmaxProgHOLExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-27; bead flapjack-e7w.2.1.2) against crep_inlineScript.sml:36-38. The equation is MAX_LIST (var_prog p); Lean folds max from 0 over crepVarProgHOLExact p, which matches HOL MAX_LIST including the empty-list result. The exact width-indexed carrier translation is the same positive-width BitVec mapping as CrepProgHOL. Direct HOL rows vmax_prog_call_handler_extcall and vmax_prog_skip_zero are in scripts/hol-probes/crep_inline_helper_probe.out and matched by CrepeInline.lean exact-carrier guards."
+  }
+]

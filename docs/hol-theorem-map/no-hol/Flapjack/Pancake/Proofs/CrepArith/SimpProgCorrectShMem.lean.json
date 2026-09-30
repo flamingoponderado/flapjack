@@ -1,0 +1,10 @@
+[
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrectShMem.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack same-module canonical finite-support witness for the ShMem simp_prog_correct case qualifiers; it restates the CrepSemHOLState roundtrip so the state and word qualifiers on simpProgCorrectShMemCase resolve to a single owning structure. Not a HOL declaration, so no @[hol] tag."
+  }
+]

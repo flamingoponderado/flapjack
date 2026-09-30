@@ -1,0 +1,1642 @@
+[
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ALOOKUP_EQ_EL",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/LocalListHelpers.lean",
+    "lean_name": "ALOOKUP_EQ_EL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.33.10): HOL ALOOKUP_EQ_EL (crep_to_loopProofScript.sml:3847-3852, [local]) `n < LENGTH xs ==> FST (EL n xs) = nm ==> ALL_DISTINCT (MAP FST xs) ==> y = SND (EL n xs) ==> ALOOKUP xs nm = SOME y`; EL n xs under the first premise as the bounds-checked xs[n] (the premise supplies the bound), ALL_DISTINCT as Nodup, ALOOKUP as the literal untagged rendering holAlookup; same curried premises and conclusion. Free variables are universally quantified; generic types as in HOL."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "OPT_MMAP_APPEND",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/LocalListHelpers.lean",
+    "lean_name": "OPT_MMAP_APPEND",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.33.10): HOL OPT_MMAP_APPEND (crep_to_loopProofScript.sml:3278-3280, [local]) `OPT_MMAP f (xs ++ ys) = OPTION_BIND (OPT_MMAP f xs) (\\xsv. OPTION_BIND (OPT_MMAP f ys) (\\ysv. SOME (xsv ++ ysv)))`; OPT_MMAP as List.mapM (as for the tagged OPT_MMAP_CONG) and OPTION_BIND as Option.bind; same equation. Free variables are universally quantified; generic types as in HOL."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "PAIR_MAP_EQ_UNCURRY",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/LocalListHelpers.lean",
+    "lean_name": "PAIR_MAP_EQ_UNCURRY",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.33.10): HOL PAIR_MAP_EQ_UNCURRY (crep_to_loopProofScript.sml:4314-4315, [local]) `(f ## g) = (\\(x, y). (f x, g y))`; ## (PAIR_MAP) as Prod.map and the paired lambda as a pattern-matching lambda; same function equation. Free variables are universally quantified; generic types as in HOL."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "UNCURRY_eq_case",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/LocalListHelpers.lean",
+    "lean_name": "UNCURRY_eq_case",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.33.10): HOL UNCURRY_eq_case (crep_to_loopProofScript.sml:3307-3308, [local]) `UNCURRY f x = (case x of (a, b) => f a b)`; UNCURRY as Function.uncurry; same equation. Free variables are universally quantified; generic types as in HOL."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "all_distinct_ctxt_lookup_all_distinct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_name": "allDistinctCtxtLookupAllDistinctExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars"
+    ],
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; bead flapjack-pxn.18.5.6.33.12): HOL all_distinct_ctxt_lookup_all_distinct (crep_to_loopProofScript.sml:3345-3349) concludes ALL_DISTINCT (rt_vars ctxt.vars rts n) from ALL_DISTINCT rts and distinct_vars ctxt.vars. The exact Lean statement keeps HOL quantifiers/hypotheses/conclusion over the exact Nat-keyed carrier (CrepToLoopContextExact.vars : HolFiniteMapExact Nat Nat, matching HOL num |-> num), with rtVars (rt_vars_def) applied to ctxt.vars.lookup, crepToLoopDistinctVarsExact ctxt.vars (distinct_vars_def), and List.Nodup for ALL_DISTINCT. The traversed finite-map carrier field CrepToLoopContextExact.vars is the single entry of the relation qualifier, validated by the same-module holFmapAsFiniteSupportRelationWitness_CrepToLoopContextExact. Direct original-HOL EVAL rows in scripts/hol-probes/crep_to_loop_rt_vars_distinct_probe.out (acd_distinct=T, acd_single=T, acd_missing=T) are replayed on the exact carrier in Flapjack/Test/CrepToLoopParity.lean. No word dimension occurs, so no words qualifier."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "alookup_el_pair_eq_el",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_name": "alookupElPairEqEl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex (statement compared against alookup_el_pair_eq_el at crep_to_loopProofScript.sml:3921; HOL EL n prog = (start,[],SND(SND(EL n prog))) rendered literally as prog[n]'hn = (start,[],(prog[n]'hn).2.2) over the right-associated triple, ALOOKUP as List.lookup, ALL_DISTINCT (MAP FST prog) as (prog.map Prod.fst).Nodup; the proof delegates to the untagged PanLang counterpart getElem_eq_of_lookup_eq; direct HOL-EVAL rows ael_shape_0/ael_shape_1/ael_distinct/ael_lookup/ael_result=T reproduced by the Lean guard in Flapjack/Test/CrepToLoopParity.lean)"
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "assigned_vars_MAPi_Assign",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/AssignedVars.lean",
+    "lean_name": "holAssignedVarsMapiAssign",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-28, bead flapjack-pxn.18.5.17.1.1.2) against crep_to_loopProofScript.sml:355-362. les then offset binders, indexed Assign name n+offset, nested_seq, and generated name list are exact. List.mapIdx mirrors MAPi, while List.map over List.range les.length renders GENLIST; only word width is translated. Declaration relocated to a submodule of its HOL source counterpart after coordinator placement HOLD."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "assigned_vars_nested_seq_assign",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpSyntaxHelpers.lean",
+    "lean_name": "assigned_vars_nested_seq_assign",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.33.5): HOL assigned_vars_nested_seq_assign (crep_to_loopProofScript.sml:1562-1564) `!vs es. LENGTH vs = LENGTH es ⇒ assigned_vars (nested_seq (MAP2 Assign vs es)) = vs`; same variables and premise, MAP2 Assign as List.zipWith .assign, over holLoopAssignedVars/loopNestedSeqHOL. (words_as_type_indexed_bitvec): width-indexed Loop carriers with [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "call_preserve_state_code_locals_rel",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CallPreserveStateCodeLocalsRel.lean",
+    "lean_name": "crepToLoopCallPreserveStateCodeLocalsRelExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b exact source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.17): HOL crep_to_loopProofScript.sml:3133-3175 quantifies ns, lns, args, s, st, ctxt, nl, fname, argexps, prog, loc in this order. The Lean theorem preserves both ALL_DISTINCT premises, LENGTH ns = LENGTH lns, LENGTH args = LENGTH lns, the exact pre-call state_rel/mem_rel/globals_rel/code_rel/locals_rel premises, both lookup premises, and MAP (eval s) argexps = MAP SOME args (through the locally classical instance of the same exact evaluator). Conclusion is the exact ctxt_fc context with state_rel on the two post-call states (locals installed by FEMPTY |++ ZIP and fromAList, clocks decremented), code_rel under the new context, and locals_rel under list_to_num_set lns between those new maps; no new lookup, argument-shape, or wellformedness premises. Its proof derives distinct_vars, ctxt_max, domain inclusion, and per-key local correspondence from HOL's equal-length/distinct zips and fromAList lookup. Carrier qualifiers identify the six finite-map fields traversed in the exact state/context types; CrepToLoopContextExact, CrepSemHOLState, and LoopSemStateFiniteExact have same-module toBroad/ofBroad roundtrip witnesses. HolWordLab/WordLocW are the positive-width BitVec renderings of HOL 'a word; fname is already exact MlString. Restated by flapjack-opus (2026-09-29; bead flapjack-pxn.18.5.6.33.17) after the decider-free exact evaluator landed (.33.15.9): the argument premise is now MAP (evalCrepSemHOLExp s) argexps = MAP SOME args directly (the local classical wrapper crepToLoopEvalClassical is deleted), and MAP wlab_wloc args uses the tagged wlabWlocExact (definitionally equal to the wlabWlocHOL inside the tagged locals_rel). All twelve HOL binders are in order; the thirteen premises and the let-bound three-part conclusion are unchanged; no lookup consequences of code_rel are added as premises."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "case_le",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/LocalListHelpers.lean",
+    "lean_name": "case_le",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.33.10): HOL case_le (crep_to_loopProofScript.sml:3289-3290, [local]) `(case dest of NONE => 1 | SOME v1 => 0) <= 1n`; same statement for a generic option dest. Free variables are universally quantified; generic types as in HOL."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "code_rel2_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CodeRel2.lean",
+    "lean_name": "crepToLoopCodeRel2Exact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.funcs",
+      "s_code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.6.33.22) against crep_to_loopProofScript.sml:3842-3845. HOL defines `code_rel2 ctxt s_code t_code` as `code_rel ctxt (FMAP_MAP2 (\\(s,n,p). (n,crep_arith$simp_prog p)) s_code)`. Lean keeps ctxt, s_code, and t_code in the same positions and uses crepToLoopCodeRelExact over the same mapped entries. The owned funcs field and standalone s_code binder are the two traversed finite maps, with the exact finite-support relation qualifier and same-module roundtrip witness; the width-indexed CrepProgHOL/LoopProg carriers use the approved words qualifier. No hypotheses or result cases are added."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "code_rel_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_name": "crepToLoopCodeRelExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.funcs",
+      "s_code"
+    ],
+    "hol_line": 76,
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; bead flapjack-pxn.18.5.6.31.2.3) against code_rel_def at crep_to_loopProofScript.sml:76-88. HOL: code_rel ctxt s_code t_code iff distinct_funcs ctxt.funcs and, for every f ns prog, FLOOKUP s_code f = SOME (ns,prog) implies existing loc and len with FLOOKUP ctxt.funcs f = SOME (loc,len), LENGTH ns = len, and (with args = GENLIST I len and nctxt = ctxt_fc ctxt.target ctxt.funcs ns args) lookup loc t_code = SOME (args, ocompile nctxt (list_to_num_set args) prog). Every component is the reviewed exact translation: distinct_funcs is the tagged crepToLoopDistinctFuncs (distinct_funcs_def), both FLOOKUPs are HolFiniteMapExact.lookup, lookup loc t_code is sptLookup on the exact Spt target carrier, GENLIST I len is List.range len, and ctxt_fc/ocompile/list_to_num_set are the tagged exact ctxtFcExact, ocompileHOLExact and the untagged listToNumSetHOLExact. Binders, order, the existential witnesses loc/len, the length side condition and the let-bound context all match HOL; no clause, quantifier or side condition is added. The standalone s_code finite-map parameter (HOL crepSem$state.code is funname to (varname list, prog), i.e. mlstring keyed) is one of the two traversed finite-map carriers recorded by the relation qualifier (the other being the owned CrepToLoopContextExact.funcs field); the same-module holFmapAsFiniteSupportRelationWitness_CrepToLoopContextExact validates the context carrier, while s_code is validated directly at its HolFiniteMapExact binder; the word-indexed CrepProgHOL/HolLoopProg carriers carry the words qualifier. Direct original-HOL EVAL rows for the concrete instance (component lookups, GENLIST I 2 = [0;1], the compiled Skip = Mark Skip, the instantiated existential witness = T, and the missing-func/length-mismatch negatives = F) are in scripts/hol-probes/crep_to_loop_code_rel_probe.out and replayed by Flapjack.Test.CrepToLoopCodeRelParity."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "code_rel_evaluate_call_correct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CodeRelEvaluateCallCorrect.lean",
+    "lean_name": "crepToLoopCodeRelEvaluateCallCorrect",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals",
+      "s_code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.6.57): HOL code_rel_evaluate_call_correct (crep_to_loopProofScript.sml:4072-4108). Free variables nctxt s_code t_code start s res s' t crep_code lc prog become explicit binders. The curried premises are the same, in the same order: code_rel2 nctxt s_code t_code (tagged crepToLoopCodeRel2Exact); evaluate (Call NONE start [], s) = (res, s') (tagged evalCrepSemHOLProgExact); then the conjunction s.be = t.be, s.sh_memaddrs = t.sh_mdomain, s.memaddrs = t.mdomain (both domain equalities in the reviewed set-as-Bool rendering used by the tagged state_rel), s.clock = t.clock, s.ffi = t.ffi, base_addr, top_addr, mem_rel, globals_rel, s.locals = FEMPTY, s.code = s_code, t.code = t_code; FLOOKUP (make_funcs crep_code) start = SOME (find_lab nctxt start, 0) (tagged crepToLoopMakeFuncsExactHOL/findLabExact); the conjunction find_lab nctxt start = lc, s.code = alist_to_fmap crep_code (alistToFmapCodeExact), nctxt.funcs = make_funcs crep_code, ALOOKUP crep_code start = SOME ([], prog) (holAlookup), distinct_vars nctxt.vars and ctxt_max nctxt.vmax nctxt.vars; and res <> SOME Error. Conclusion: ∃ k res' t'. evaluate (Call NONE (SOME (find_lab nctxt start)) [] NONE, t with clock := t.clock + k) = (res', t') (tagged loopSem evaluate) ∧ state_rel s' t' ∧ res' = the eight-way result case, rendered by the canonical resultToLoop exactly as in the tagged ncompile_correct. There is no target-run, post-state or other premise. The proof follows HOL: tagged simp_prog_correct (crepArithSimpProgCorrect) on the entry call, simp_prog (Call NONE start []) = Call NONE start [], code_rel2 unfolded to code_rel on the mapcs-mapped code (crepSimpMapcsHOL), tagged ncompile_correct at live set LN with locals_rel from distinct_vars/ctxt_max and empty locals, compile (Call NONE start []) = Seq (Call NONE (SOME (find_lab ..)) [] NONE) Skip, and the tagged evaluate_Seq_Skip. The make_funcs/find_lab/alist_to_fmap/ALOOKUP premises are retained as in HOL, though the proof does not need them. Qualifiers: the traversed finite-map carrier fields as in ncompile_correct plus the standalone s_code binder, with same-module relation witnesses; words for BitVec width. Axioms: propext, Classical.choice, Quot.sound."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "code_rel_intro",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_name": "crepToLoopCodeRelExact_intro",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.funcs",
+      "s_code"
+    ],
+    "hol_line": 187,
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.16) against code_rel_intro at crep_to_loopProofScript.sml:187-200. HOL assumes code_rel ctxt s_code t_code and concludes distinct_funcs ctxt.funcs plus the universally quantified per-source-function implication whose existential witnesses loc/len, with target lookup, length equality, GENLIST I len arguments, ctxt_fc and ocompile. Lean keeps that premise, binder order, and conclusion exactly over the existing exact carriers; crepToLoopCodeRelExact unfolds to precisely that conclusion, so the proof only eliminates the relation. The relation qualifier records the traversed CrepToLoopContextExact.funcs field and standalone s_code HolFiniteMapExact parameter; the former uses holFmapAsFiniteSupportRelationWitness_CrepToLoopContextExact and the latter is checked at its binder. HolLoopProg/CrepProgHOL retain their reviewed positive width-indexed BitVec representation. A direct kernel-checked instance of the intro theorem over the positive original-HOL code_rel probe is in Flapjack/Test/CrepToLoopCodeRelParity."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "comp_exp_assigned_vars_tmp_bound",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpTmpBound.lean",
+    "lean_name": "comp_exp_assigned_vars_tmp_bound",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.32.1): HOL comp_exp_assigned_vars_tmp_bound (crep_to_loopProofScript.sml:679) is `comp_exp_assigned_vars_tmp_bound_cases |> CONJUNCT1`; Lean is the first conjunct with the same statement. fmap_as_finite_support [vars, funcs]: the statement quantifies over the exact crep_to_loop context CrepToLoopContextExact, whose HOL |-> vars/funcs fields are the canonical HolFiniteMapExact carriers used by compile_exp (find_var); same-module re-exported canonical witness holFmapAsFiniteSupportWitness. (words_as_type_indexed_bitvec): Crep/Loop exp/prog as width-indexed CrepExpHOL/HolLoopProg with [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "comp_exp_assigned_vars_tmp_bound_cases",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpTmpBound.lean",
+    "lean_name": "comp_exp_assigned_vars_tmp_bound_cases",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.32.1): HOL comp_exp_assigned_vars_tmp_bound_cases (crep_to_loopProofScript.sml:593-599) is the conjunction `(!ct tmp l e p le ntmp nl n. compile_exp ct tmp l e = (p,le,ntmp,nl) /\\ MEM n (assigned_vars (nested_seq p)) ==> tmp <= n /\\ n < ntmp) /\\ (!ct tmp l es p le ntmp nl n. compile_exps ct tmp l es = (p,le,ntmp,nl) /\\ MEM n (assigned_vars (nested_seq p)) ==> tmp <= n /\\ n < ntmp)`; Lean states both conjuncts with the same nine variables in HOL order over the tagged exact compileExpHOLExact and its mutual list half compileExpsHOLExact (HOL's compile_exps clause of compile_exp_def), holLoopAssignedVars and loopNestedSeqHOL. Proved by mutual well-founded recursion; the tmp <= ntmp fact that HOL takes from compile_exp_out_rel is proved directly (untagged compileExpHOLExact_tmp_le) since comp_syntax_ok is not needed here. fmap_as_finite_support [vars, funcs]: the statement quantifies over the exact crep_to_loop context CrepToLoopContextExact, whose HOL |-> vars/funcs fields are the canonical HolFiniteMapExact carriers used by compile_exp (find_var); same-module re-exported canonical witness holFmapAsFiniteSupportWitness. (words_as_type_indexed_bitvec): Crep/Loop exp/prog as width-indexed CrepExpHOL/HolLoopProg with [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "comp_exp_preserves_eval",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpPreservesEval.lean",
+    "lean_name": "crepToLoop_comp_exp_preserves_eval",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.6.33.15.8) against comp_exp_preserves_eval at crep_to_loopProofScript.sml:772-786: `∀s e v t ctxt tmp l p le ntmp nl. eval s e = SOME v ∧ state_rel s t ∧ mem_rel s.memory t.memory s.memaddrs ∧ globals_rel s.globals t.globals ∧ code_rel ctxt s.code t.code ∧ locals_rel ctxt l s.locals t.locals ∧ compile_exp ctxt tmp l e = (p,le,ntmp,nl) ∧ ctxt.vmax < tmp ⇒ ∃ck st. evaluate (nested_seq p,t with clock := t.clock + ck) = (NONE,st) ∧ eval st le = SOME (wlab_wloc v) ∧ state_rel s st ∧ mem_rel s.memory st.memory s.memaddrs ∧ globals_rel s.globals st.globals ∧ code_rel ctxt s.code st.code ∧ locals_rel ctxt nl s.locals st.locals`. Binders in HOL order; eval is the decider-free exact evalCrepSemHOLExp, compile_exp is the tagged compileExpHOLExact, nested_seq is loopNestedSeqHOL, evaluate/eval are the exact LoopSemStateFiniteExact ones, wlab_wloc is wlabWlocExact, and the five relations are the tagged exact ones; no extra hypotheses. The proof assembles all twelve eval_ind case pieces (Luna C's Const/Var/LoadGlob/BaseAddr/TopAddr/Load plus LoadByte/Load32/Op/Crepop/Cmp/Shift) by strong induction on sizeOf e (untagged crepToLoopCompExpPreservesEvalOfOp), mirroring ho_match_mp_tac crepSemTheory.eval_ind. Qualifiers as for the case pieces. Typing note as for the Shift piece: the single shared σ on s and t is HOL's typing (state_rel_def's s.ffi = t.ffi)."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "comp_exp_preserves_eval",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpPreservesEval.lean",
+    "lean_name": "crepToLoop_comp_exp_preserves_eval_cmp",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.6.33.15.5): case piece `Cmp cmp e1 e2` of comp_exp_preserves_eval (crep_to_loopProofScript.sml:772-786 statement, case proof at 1128-1233; HOL proves the theorem by ho_match_mp_tac crepSemTheory.eval_ind with >~ case markers). The piece's only extra antecedents are the eval_ind induction hypotheses for both operands e1, e2 at the same state s (crepSem eval evaluates both operands at s), stated by the untagged crepToLoopCompExpPreservesEvalAt s e1 / s e2, each of which unfolds to exactly the HOL statement at (s, e_i). After them the piece keeps HOL's quantifier order ∀v t ctxt tmp l p le ntmp nl, all eight HOL premises with e := Cmp cmp e1 e2 (cmp : Cmp, asm$cmp carrier), and the full HOL existential conclusion over the same exact carriers and tagged relations as the other pieces. compile_exp's Cmp clause is the tagged compileExpHOLExact .cmp branch through the tagged progIfHOLExact (prog_if_def). Proof follows HOL: IH on e1, then on e2; evaluate_add_clock_eq lifts both evaluations; the clock witness is ck1 + ck2 + 1 because the If consumes one tick in cut_res; nested_seq_pure_evaluation preserves the left operand; locals_touched_eq_eval_eq via setVar preserves the right operand; the result is read from inter s4.locals (list_insert [tmp'+1; tmp'+2] l'); and locals_rel is re-established from lookup_inter/lookup_insert with n ≤ vmax < tmp'. Qualifiers as for the other comp_exp_preserves_eval pieces. Typing note as for the Shift piece: one shared σ is HOL's typing."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "comp_exp_preserves_eval",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpPreservesEval.lean",
+    "lean_name": "crepToLoop_comp_exp_preserves_eval_crepOp",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.6.33.15.7): case piece `Crepop bop es` of comp_exp_preserves_eval (crep_to_loopProofScript.sml:772-786 statement; case proof at 889-972). Its only extra antecedent is eval_ind's hypothesis for every argument expression e ∈ es at the same state s (untagged crepToLoopCompExpPreservesEvalAt s e, which unfolds to the HOL statement at (s, e)). HOL quantifier order ∀v t ctxt tmp l p le ntmp nl, the eight premises with e := Crepop bop es and the full HOL existential conclusion over the tagged decider-free evalCrepSemHOLExp, compileExpHOLExact, LoopSemStateFiniteExact.evaluate/eval, loopNestedSeqHOL, wlabWlocExact and the exact relations. Proof follows HOL: crep_op Mul forces two word arguments; IH on both operands, evaluate_add_clock_eq, nested_seq_pure_evaluation, the two Assigns and compile_crepop's LongMul (armv7 and other target register layouts), locals_rel via fresh temporaries above vmax. Typing: one shared σ (t : ('a,'b) loopSem$state and state_rel's s.ffi = t.ffi)."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "comp_exp_preserves_eval",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpPreservesEval.lean",
+    "lean_name": "crepToLoop_comp_exp_preserves_eval_load32",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.15.3): case piece `Load32 e` of comp_exp_preserves_eval (crep_to_loopProofScript.sml:772-786 statement, case proof at 1036-1074; HOL proves the theorem by ho_match_mp_tac crepSemTheory.eval_ind with >~ case markers). The piece's only extra antecedent is the eval_ind induction hypothesis for the address sub-expression e, stated by the untagged crepToLoopCompExpPreservesEvalAt s e, which unfolds to exactly the HOL statement at (s, e). After it the piece keeps HOL's quantifier order ∀v t ctxt tmp l p le ntmp nl, all eight HOL premises (eval s e = SOME v, state_rel s t, mem_rel s.memory t.memory s.memaddrs, globals_rel s.globals t.globals, code_rel ctxt s.code t.code, locals_rel ctxt l s.locals t.locals, compile_exp ctxt tmp l e = (p,le,ntmp,nl), ctxt.vmax < tmp) with e := Load32 e, and the full HOL existential conclusion. Carriers: CrepSemHOLState width σ and LoopSemStateFiniteExact width σ (shared 'b), the tagged decider-free evalCrepSemHOLExp, compileExpHOLExact, LoopSemStateFiniteExact.evaluate/eval, loopNestedSeqHOL, wlabWlocExact and the tagged exact relations. Proof: compile_exp appends [Assign tmp' le'; Load32 tmp' tmp'] and returns Var tmp' with insert tmp' () nl'; ck from the IH, the word32 from mem_rel/state_rel through the untagged memLoad32_bridge (panSem mem_load_32_alt plus the wordSem mem_load_32_alt shift/OR form), locals_rel as for LoadByte. The relation qualifier lists the HOL |-> maps traversed by the statement's relations and evaluators; HolWordLab/WordLocW/BitVec are the reviewed width-indexed `'a word` carriers. Typing note: HOL annotates only t : ('a,'b) loopSem$state; state_rel_def's conjunct s.ffi = t.ffi forces s : ('a,'b) crepSem$state, so the single shared σ on s and t is HOL's typing, not a strengthening. Restated (2026-09-29) without the former [DecidablePred s.memaddrs] binder after the decider-free evalCrepSemHOLExp interface (bead flapjack-pxn.18.5.6.33.15.9) landed; the case's only extra antecedents are eval_ind's sub-expression hypotheses at the same state s."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "comp_exp_preserves_eval",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpPreservesEval.lean",
+    "lean_name": "crepToLoop_comp_exp_preserves_eval_loadByte",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.15.3): case piece `LoadByte e` of comp_exp_preserves_eval (crep_to_loopProofScript.sml:772-786 statement, case proof at 996-1035; HOL proves the theorem by ho_match_mp_tac crepSemTheory.eval_ind with >~ case markers). The piece's only extra antecedent is the eval_ind induction hypothesis for the address sub-expression e, stated by the untagged crepToLoopCompExpPreservesEvalAt s e, which unfolds to exactly the HOL statement at (s, e). After it the piece keeps HOL's quantifier order ∀v t ctxt tmp l p le ntmp nl, all eight HOL premises (eval s e = SOME v, state_rel s t, mem_rel s.memory t.memory s.memaddrs, globals_rel s.globals t.globals, code_rel ctxt s.code t.code, locals_rel ctxt l s.locals t.locals, compile_exp ctxt tmp l e = (p,le,ntmp,nl), ctxt.vmax < tmp) with e := LoadByte e, and the full HOL existential conclusion. Carriers: CrepSemHOLState width σ and LoopSemStateFiniteExact width σ (shared 'b), the tagged decider-free evalCrepSemHOLExp, compileExpHOLExact, LoopSemStateFiniteExact.evaluate/eval, loopNestedSeqHOL, wlabWlocExact and the tagged exact relations. Proof: compile_exp appends [Assign tmp' le'; LoadByte tmp' tmp'] and returns Var tmp' with insert tmp' () nl'; ck from the IH, the byte from mem_rel/state_rel through the untagged memLoadByte_bridge, locals_rel via locals_rel_insert_gt_vmax (tmp' > vmax by compile_exp_out_rel) and SUBSET_INSERT_RIGHT. The relation qualifier lists the HOL |-> maps traversed by the statement's relations and evaluators; HolWordLab/WordLocW/BitVec are the reviewed width-indexed `'a word` carriers. Typing note: HOL annotates only t : ('a,'b) loopSem$state; state_rel_def's conjunct s.ffi = t.ffi forces s : ('a,'b) crepSem$state, so the single shared σ on s and t is HOL's typing, not a strengthening. Restated (2026-09-29) without the former [DecidablePred s.memaddrs] binder after the decider-free evalCrepSemHOLExp interface (bead flapjack-pxn.18.5.6.33.15.9) landed; the case's only extra antecedents are eval_ind's sub-expression hypotheses at the same state s."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "comp_exp_preserves_eval",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpPreservesEval.lean",
+    "lean_name": "crepToLoop_comp_exp_preserves_eval_op",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.6.33.15.6): case piece `Op bop es` of comp_exp_preserves_eval (crep_to_loopProofScript.sml:772-786 statement, case proof at 790-888; HOL proves the theorem by ho_match_mp_tac crepSemTheory.eval_ind with >~ case markers). The piece's only extra antecedent is eval_ind's hypothesis for every argument, ∀ e ∈ es, crepToLoopCompExpPreservesEvalAt s e (the untagged abbreviation unfolds to exactly the HOL statement at (s, e)), in the same shape as the Crepop piece. After it the piece keeps HOL's quantifier order ∀v t ctxt tmp l p le ntmp nl, all eight HOL premises with e := Op bop es (bop : BinOp, crepLang binop carrier) and the full HOL existential conclusion over the same exact carriers and tagged relations as the other pieces. Proof follows HOL: the inner Induct over es (qsuff_tac on the_words of MAP eval) is the untagged list helper crepToLoopCompExpsPreservesEvalOfAt, and the the_words/OPT_MMAP bridge is a private list lemma; eval_def's Op clauses are Luna C's untagged clause projections. Qualifiers as for the other pieces. Typing note as for the Shift piece: the single shared σ on s and t is HOL's typing (state_rel_def's s.ffi = t.ffi)."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "comp_exp_preserves_eval",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpPreservesEval.lean",
+    "lean_name": "crepToLoop_comp_exp_preserves_eval_shift",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.15.4): case piece `Shift sh e1 e2` of comp_exp_preserves_eval (crep_to_loopProofScript.sml:772-786 statement, case proof at 1084-1127; HOL proves the theorem by ho_match_mp_tac crepSemTheory.eval_ind with >~ case markers). The piece's only extra antecedents are the eval_ind induction hypotheses for the two operands e1, e2, stated by the untagged crepToLoopCompExpPreservesEvalAt s e1 / s e2, each unfolding to exactly the HOL statement at (s, e_i). After them the piece keeps HOL's quantifier order ∀v t ctxt tmp l p le ntmp nl, all eight HOL premises with e := Shift sh e1 e2 (sh : Shift, crepLang$shift carrier) and the full HOL existential conclusion over the same exact carriers and tagged relations as the other pieces. Proof follows HOL: IH on e1 then on e2 (tmp' > vmax by compile_exp_out_rel), evaluate_add_clock_eq to lift the first evaluation, evaluate_nested_seq_append_none, and nested_seq_pure_evaluation (side conditions from compile_exp_out_rel, comp_exp_assigned_vars_tmp_bound, compile_exp_le_tmp_domain and eval_some_var_cexp_local_lookup) to keep eval of the left operand. Qualifiers as for the other comp_exp_preserves_eval pieces. Typing note: HOL annotates only t : ('a,'b) loopSem$state; state_rel_def's conjunct s.ffi = t.ffi forces s : ('a,'b) crepSem$state, so the single shared σ on s and t is HOL's typing, not a strengthening. Restated (2026-09-29) without the former [DecidablePred s.memaddrs] binder after the decider-free evalCrepSemHOLExp interface (bead flapjack-pxn.18.5.6.33.15.9) landed; the case's only extra antecedents are eval_ind's sub-expression hypotheses at the same state s."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "comp_exp_preserves_eval",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpPreservesEval/Leaf.lean",
+    "lean_name": "compExpPreservesEval_baseAddr_case",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison (2026-09-29; bead flapjack-pxn.18.5.6.33.15.1) against comp_exp_preserves_eval at crep_to_loopProofScript.sml:772-782, specializing e to BaseAddr; HOL eval_def is :134-135 and its final generic induction branch is :1217-1225. Lean keeps all original premises and result relations; the target value follows from the exact base_addr field of state_rel, without a new premise. The proof unfolds source/target eval and compile_exp and projects state_rel. fmap_as_finite_support_relation lists precisely the finite-map fields traversed by this statement in the exact Crep state, context, and Loop state carriers; same-module canonical witnesses establish their HolFiniteMapExact translation. words_as_type_indexed_bitvec records HOL's positive indexed word width as BitVec width."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "comp_exp_preserves_eval",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpPreservesEval/Leaf.lean",
+    "lean_name": "compExpPreservesEval_const_case",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison (2026-09-29; bead flapjack-pxn.18.5.6.33.15.1) against comp_exp_preserves_eval at crep_to_loopProofScript.sml:772-782, specializing e to Const w; exact HOL Const induction case at :973-976. Lean keeps the successful Crep eval, state_rel, mem_rel, globals_rel, code_rel, locals_rel, compile_exp equation, and ctxt.vmax < tmp premises, and the HOL existential target evaluation plus all post-relations; no extra premise or weakened result. The proof follows the HOL case by unfolding the source evaluator/compiler and target nested_seq/evaluate/eval and wlab_wloc clauses. fmap_as_finite_support_relation lists precisely the finite-map fields traversed by this statement in the exact Crep state, context, and Loop state carriers; same-module canonical witnesses establish their HolFiniteMapExact translation. words_as_type_indexed_bitvec records HOL's positive indexed word width as BitVec width."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "comp_exp_preserves_eval",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpPreservesEval/Leaf.lean",
+    "lean_name": "compExpPreservesEval_loadGlob_case",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison (2026-09-29; bead flapjack-pxn.18.5.6.33.15.1) against comp_exp_preserves_eval at crep_to_loopProofScript.sml:772-782, specializing e to LoadGlob gadr; HOL's LoadGlob branch is :1075-1084. Lean keeps all original premises and result relations; the conclusion follows from the exact globals_rel implication for the same address and value, with no added premise. The proof unfolds source eval, compile_exp, target nested_seq/evaluate/eval and applies globals_rel_intro. fmap_as_finite_support_relation lists precisely the finite-map fields traversed by this statement in the exact Crep state, context, and Loop state carriers; same-module canonical witnesses establish their HolFiniteMapExact translation. words_as_type_indexed_bitvec records HOL's positive indexed word width as BitVec width."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "comp_exp_preserves_eval",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpPreservesEval/Leaf.lean",
+    "lean_name": "compExpPreservesEval_topAddr_case",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison (2026-09-29; bead flapjack-pxn.18.5.6.33.15.1) against comp_exp_preserves_eval at crep_to_loopProofScript.sml:772-782, specializing e to TopAddr; HOL eval_def is :136-137 and its final generic induction branch is :1217-1225. Lean keeps all original premises and result relations; the target value follows from the exact top_addr field of state_rel, without a new premise. The proof unfolds source/target eval and compile_exp and projects state_rel. fmap_as_finite_support_relation lists precisely the finite-map fields traversed by this statement in the exact Crep state, context, and Loop state carriers; same-module canonical witnesses establish their HolFiniteMapExact translation. words_as_type_indexed_bitvec records HOL's positive indexed word width as BitVec width."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "comp_exp_preserves_eval",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpPreservesEval/Leaf.lean",
+    "lean_name": "compExpPreservesEval_var_case",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison (2026-09-29; bead flapjack-pxn.18.5.6.33.15.1) against comp_exp_preserves_eval at crep_to_loopProofScript.sml:772-782, specializing e to Var vname; HOL's Var branch is :977-981. Lean keeps all original premises and result relations; `locals_rel` supplies the same mapped target-local lookup used by compile_exp, with no added premise. The case is proved by unfolding eval/compile_exp/nested_seq/evaluate and using locals_rel_intro. fmap_as_finite_support_relation lists precisely the finite-map fields traversed by this statement in the exact Crep state, context, and Loop state carriers; same-module canonical witnesses establish their HolFiniteMapExact translation. words_as_type_indexed_bitvec records HOL's positive indexed word width as BitVec width."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "comp_exp_preserves_eval",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpPreservesEval/Load.lean",
+    "lean_name": "compExpPreservesEval_load_case",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison (2026-09-29; bead flapjack-pxn.18.5.6.33.15.2): exact HOL comp_exp_preserves_eval at crep_to_loopProofScript.sml:772-782, specialized to Load e; proof case :982-995. The induction hypothesis is the same parent property specialized to e with only its source eval, relation, compile, and fresh-temporary premises. HOL eval_def at crepSemScript.sml:90-137 evaluates the address, accepts only Word, then applies mem_load; mem_load_def at :48-51 guards the total memory by memaddrs. The proof applies the exact IH for the compiled address, carries state_rel's memaddrs/mdomain equation and mem_rel's memory equality through the post-state, and derives the target Load result. No target-result premise or other condition is added. The fmap qualifier names exactly the finite-map fields in the exact Crep state, context, and Loop state carriers; same-module witnesses establish their HolFiniteMapExact translation. words_as_type_indexed_bitvec records the positive indexed word representation as BitVec width."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "comp_exps_assigned_vars_tmp_bound",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpTmpBound.lean",
+    "lean_name": "comp_exps_assigned_vars_tmp_bound",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.32.1): HOL comp_exps_assigned_vars_tmp_bound (crep_to_loopProofScript.sml:680) is `comp_exp_assigned_vars_tmp_bound_cases |> CONJUNCT2`; Lean is the second conjunct with the same statement. fmap_as_finite_support [vars, funcs]: the statement quantifies over the exact crep_to_loop context CrepToLoopContextExact, whose HOL |-> vars/funcs fields are the canonical HolFiniteMapExact carriers used by compile_exp (find_var); same-module re-exported canonical witness holFmapAsFiniteSupportWitness. (words_as_type_indexed_bitvec): Crep/Loop exp/prog as width-indexed CrepExpHOL/HolLoopProg with [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "comp_exps_preserves_eval",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpPreservesEval.lean",
+    "lean_name": "crepToLoop_comp_exps_preserves_eval",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.6.33.15.8) against comp_exps_preserves_eval at crep_to_loopProofScript.sml:1241-1254: `∀es s vs t ctxt tmp l p les ntmp nl. OPT_MMAP (eval s) es = SOME vs ∧ state_rel s t ∧ mem_rel s.memory t.memory s.memaddrs ∧ globals_rel s.globals t.globals ∧ code_rel ctxt s.code t.code ∧ locals_rel ctxt l s.locals t.locals ∧ compile_exps ctxt tmp l es = (p,les,ntmp,nl) ∧ ctxt.vmax < tmp ⇒ ∃ck st. evaluate (nested_seq p,t with clock := t.clock + ck) = (NONE,st) ∧ OPT_MMAP (eval st) les = SOME (MAP wlab_wloc vs) ∧ state_rel s st ∧ mem_rel s.memory st.memory s.memaddrs ∧ globals_rel s.globals st.globals ∧ code_rel ctxt s.code st.code ∧ locals_rel ctxt nl s.locals st.locals`. Binders in HOL order (es first). OPT_MMAP is List.mapM (constructor-for-constructor), MAP wlab_wloc is List.map wlabWlocExact, and compile_exps is compileExpsHOLExact (the list half of the tagged mutual compile_exp_def); other carriers and relations as for comp_exp_preserves_eval, with no extra hypotheses. The proof follows HOL's Induct on es (untagged crepToLoopCompExpsPreservesEvalOfAt), with comp_exp_preserves_eval (the tagged assembled theorem) for each member. Qualifiers as for comp_exp_preserves_eval. Typing note as for the Shift piece: the single shared σ on s and t is HOL's typing (state_rel_def's s.ffi = t.ffi)."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "compile_exp_le_tmp_domain",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpLeTmpDomain.lean",
+    "lean_name": "compile_exp_le_tmp_domain",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.32.2): HOL compile_exp_le_tmp_domain (crep_to_loopProofScript.sml:769) is `compile_exp_le_tmp_domain_cases |> CONJUNCT1`; Lean is the first conjunct with the same statement. Carrier renderings: ctxt_max ct.vmax ct.vars as the tagged crepToLoopCtxtMaxExact over ct.vars, FLOOKUP as HolFiniteMapExact.lookup, m ∈ domain l as (sptLookup m l).isSome, var_cexp/locals_touched as the tagged crepExpVarsHOL/holLoopLocalsTouched, FLAT/MAP as List.flatten/map. fmap_as_finite_support [vars, funcs]: quantifies over the exact context CrepToLoopContextExact whose HOL |-> vars/funcs are canonical HolFiniteMapExact carriers; same-module re-exported canonical witness. (words_as_type_indexed_bitvec): width-indexed Crep/Loop carriers with [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "compile_exp_le_tmp_domain_cases",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpLeTmpDomain.lean",
+    "lean_name": "compile_exp_le_tmp_domain_cases",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.32.2): HOL compile_exp_le_tmp_domain_cases (crep_to_loopProofScript.sml:682-692) is the conjunction over compile_exp and compile_exps of `ctxt_max ct.vmax ct.vars /\\ compile_exp ct tmp l e = (p,le,tmp',l') /\\ ct.vmax < tmp /\\ (!n. MEM n (var_cexp e) ==> ?m. FLOOKUP ct.vars n = SOME m /\\ m ∈ domain l) /\\ MEM n (locals_touched le) ==> n < tmp' /\\ n ∈ domain l'` (the list half with FLAT (MAP var_cexp es) and FLAT (MAP locals_touched les)); Lean states both conjuncts with the same nine variables in HOL order and the same five-conjunct premises and conclusion over the tagged exact compileExpHOLExact/compileExpsHOLExact. Carrier renderings: ctxt_max ct.vmax ct.vars as the tagged crepToLoopCtxtMaxExact over ct.vars, FLOOKUP as HolFiniteMapExact.lookup, m ∈ domain l as (sptLookup m l).isSome, var_cexp/locals_touched as the tagged crepExpVarsHOL/holLoopLocalsTouched, FLAT/MAP as List.flatten/map. fmap_as_finite_support [vars, funcs]: quantifies over the exact context CrepToLoopContextExact whose HOL |-> vars/funcs are canonical HolFiniteMapExact carriers; same-module re-exported canonical witness. (words_as_type_indexed_bitvec): width-indexed Crep/Loop carriers with [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "compile_exp_out_rel",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpOutRel.lean",
+    "lean_name": "compile_exp_out_rel",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.32.3): HOL compile_exp_out_rel (crep_to_loopProofScript.sml:589) is `compile_exp_out_rel_cases |> CONJUNCT1`; Lean is that conjunct. Over the tagged exact compileExpHOLExact/compileExpsHOLExact, compSyntaxOkHOL (HOL bool as = true), cutSetsHOL and loopNestedSeqHOL; nl = cut_sets l (nested_seq p) is the structural NumSet equality (proved with sptree insert idempotence/commutation). fmap_as_finite_support [vars, funcs]: exact context carrier; same-module re-exported canonical witness. (words_as_type_indexed_bitvec): width-indexed Crep/Loop carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "compile_exp_out_rel_cases",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpOutRel.lean",
+    "lean_name": "compile_exp_out_rel_cases",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.32.3): HOL compile_exp_out_rel_cases (crep_to_loopProofScript.sml:420-427) is `(!ct tmp l e p le ntmp nl. compile_exp ct tmp l e = (p,le,ntmp,nl) ==> comp_syntax_ok l (nested_seq p) /\\ tmp <= ntmp /\\ nl = cut_sets l (nested_seq p)) /\\ (!ct tmp l e p le ntmp nl. compile_exps ct tmp l e = (p,le,ntmp,nl) ==> comp_syntax_ok l (nested_seq p) /\\ tmp <= ntmp /\\ nl = cut_sets l (nested_seq p) /\\ LENGTH le = LENGTH e)`; Lean states both conjuncts with the same variables in HOL order, premises and conclusions. Over the tagged exact compileExpHOLExact/compileExpsHOLExact, compSyntaxOkHOL (HOL bool as = true), cutSetsHOL and loopNestedSeqHOL; nl = cut_sets l (nested_seq p) is the structural NumSet equality (proved with sptree insert idempotence/commutation). fmap_as_finite_support [vars, funcs]: exact context carrier; same-module re-exported canonical witness. (words_as_type_indexed_bitvec): width-indexed Crep/Loop carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "compile_exps_alt",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpSyntaxHelpers.lean",
+    "lean_name": "compile_exps_alt",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.33.5): HOL compile_exps_alt (crep_to_loopProofScript.sml:394-402) states the two equations `compile_exps ctxt tmp l [] = ([],[],tmp,l)` and `compile_exps ctxt tmp l (e::es) = let (p,le,tmp',l') = compile_exp ctxt tmp l e; (p1,les,tmp'',l'') = compile_exps ctxt tmp' l' es in (p ++ p1,le::les,tmp'',l'')` with free ctxt tmp l e es; Lean states the same conjunction over the tagged compileExpHOLExact and its list half compileExpsHOLExact. fmap_as_finite_support [vars, funcs]: quantifies over the exact context CrepToLoopContextExact whose HOL |-> vars/funcs are canonical HolFiniteMapExact carriers; same-module re-exported canonical witness. (words_as_type_indexed_bitvec): width-indexed Crep/Loop carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "compile_exps_le_tmp_domain",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpLeTmpDomain.lean",
+    "lean_name": "compile_exps_le_tmp_domain",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.32.2): HOL compile_exps_le_tmp_domain (crep_to_loopProofScript.sml:770) is `compile_exp_le_tmp_domain_cases |> CONJUNCT2`; Lean is the second conjunct with the same statement. Carrier renderings: ctxt_max ct.vmax ct.vars as the tagged crepToLoopCtxtMaxExact over ct.vars, FLOOKUP as HolFiniteMapExact.lookup, m ∈ domain l as (sptLookup m l).isSome, var_cexp/locals_touched as the tagged crepExpVarsHOL/holLoopLocalsTouched, FLAT/MAP as List.flatten/map. fmap_as_finite_support [vars, funcs]: quantifies over the exact context CrepToLoopContextExact whose HOL |-> vars/funcs are canonical HolFiniteMapExact carriers; same-module re-exported canonical witness. (words_as_type_indexed_bitvec): width-indexed Crep/Loop carriers with [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "compile_exps_out_rel",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpOutRel.lean",
+    "lean_name": "compile_exps_out_rel",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.32.3): HOL compile_exps_out_rel (crep_to_loopProofScript.sml:590) is `compile_exp_out_rel_cases |> CONJUNCT2`; Lean is that conjunct. Over the tagged exact compileExpHOLExact/compileExpsHOLExact, compSyntaxOkHOL (HOL bool as = true), cutSetsHOL and loopNestedSeqHOL; nl = cut_sets l (nested_seq p) is the structural NumSet equality (proved with sptree insert idempotence/commutation). fmap_as_finite_support [vars, funcs]: exact context carrier; same-module re-exported canonical witness. (words_as_type_indexed_bitvec): width-indexed Crep/Loop carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "compile_prog_distinct_params",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_name": "crepToLoopCompileProgDistinctParamsHOLExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "hol_line": 3987,
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.24) against compile_prog_distinct_params at crep_to_loopProofScript.sml:3987-4008. HOL's binders are prog then c and statement is EVERY (lambda (name,params,body). ALL_DISTINCT params) prog implies the same EVERY on compile_prog c prog. Lean retains binder order, input premise, and full output statement: EVERY is List.all with = true, ALL_DISTINCT is List.Nodup, and exact carriers are List (MlString × List Nat × CrepProgHOL width) to List (Nat × List Nat × HolLoopProg width), the source/result carriers of compileProgHOLExact. The output params are List.range params.length, exactly GENLIST I (LENGTH params), and List.nodup_range discharges output distinctness; retaining the HOL premise despite not needing it in the proof does not strengthen or weaken the statement. The only representation qualifier is the reviewed positive word-width translation (words_as_type_indexed_bitvec). This proof theorem is distinct from the same-named Pan-to-Crep theorem because its HOL path is crep_to_loopProofScript.sml. Direct kernel-checked instantiation over the compile_prog fixture is in Flapjack/Test/CrepToLoopCompileProgParity."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "crep_eval_upd_clock",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CrepEvalHelpers.lean",
+    "lean_name": "crep_eval_upd_clock",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.33.10): HOL crep_eval_upd_clock (crep_to_loopProofScript.sml:3295-3296, [local]) `crepSem$eval (s with clock := v) = crepSem$eval s` (free s v): an equation between curried eval functions; Lean states the same function equation over the tagged exact evalCrepSemHOLExp, whose public type has no DecidablePred binder, matching the HOL state/expression quantifiers; the Prop-valued set test is decided internally using Classical.propDecidable. fmap_as_finite_support [locals, globals, code] as for the tagged crepSem eval_def (CrepSemHOLState |-> fields); same-module re-exported canonical witness."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "crep_primop_loop_primop",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/Primop.lean",
+    "lean_name": "crepPrimopLoopPrimopHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "deepseek source comparison (bead flapjack-pxn.18.5.6.33.8) against crep_primop_loop_primop at crep_to_loopProofScript.sml:2337-2355. HOL quantifies pop over panLang$primop, ws : 'a word_lab list, res_ws : 'a word_lab list with the single premise crep_primop pop ws = SOME res_ws, concluding loop_primop pop (MAP wlab_wloc ws) = SOME (MAP wlab_wloc res_ws). Clause case review: pop is the single AddCarry constructor; crep_primop and loop_primop share the identical LENGTH args = 3 /\\ EVERY isWord guard and the same word_add_carry payload computation, so the only content is the word_lab -> word_loc constructor correspondence: wlab_wloc (panSem$Word w) = wordLang$Word w. Lean uses the exact reviewed crepPrimopHOLExact (HolWordLab, tagged crep_primop_def) and the exact WordLocW-valued loop_primop port LoopSemStateFiniteExact.loopPrimop (tagged loop_primop_def), bridged by the exact wlabWlocHOL (HolWordLab.word v -> WordLocW.word v). The exact word_loc carrier requires the WordLocW-valued loop_primop; the Flapjack LoopValue-valued loopPrimopHOL is a different carrier and is deliberately not used. The words_as_type_indexed_bitvec qualifier records the type-indexed BitVec rendering of HOL polymorphic word_lab and word_loc carriers; HolWordLab and WordLocW are otherwise reviewed exact carriers. Direct HOL EVAL rows crep_valid/loop_valid_mapped/preserve_valid/crep_overflow/loop_overflow_mapped/preserve_overflow/crep_nonzero_carry/loop_nonzero_carry_mapped/preserve_nonzero_carry/crep_invalid_two/preserve_invalid_two/crep_invalid_four/preserve_invalid_four in scripts/hol-probes/crep_primop_loop_primop_probe.out are replayed by Flapjack.Test.CrepPrimopLoopPrimopParity (#guards plus kernel-checked examples applying crepPrimopLoopPrimopHOL)."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "crep_sem_is_wrapper",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/SemanticsWrapper.lean",
+    "lean_name": "crepSemIsWrapper",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.34.7): HOL crep_to_loopProofScript.sml:4138-4147 crep_sem_is_wrapper, with free s and start, states crepSem$semantics s start = let prog = crepLang$Call NONE start [] in semantics_wrapper (((\\res. case res of SOME TimeOut => Incomplete | SOME (FinalFFI e) => CompleteResult (FFI_outcome e) | SOME (Return _) => CompleteResult Success | _ => RunError) ## (\\s. s.ffi.io_events)) o (\\k. crepSem$evaluate (prog, s with clock := k))). Lean crepSemIsWrapper binds s : CrepSemHOLState width σ and start : MlString, the same carriers as the tagged crepSem semantics_def crepSemantics. It states crepSemantics s start = let prog : CrepProgHOL width := .call none start []; crepToLoopSemanticsWrapper ((Prod.map (the same four-way match over Option CrepResultHOLExact) (fun t => t.ffi.ioEvents)) ∘ (fun k => evalCrepSemHOLProgExact {s with clock := k} prog)), over the tagged exact semantics_def, evaluate and semantics_wrapper_def. The Lean evaluator's argument order (state, prog) is the same rendering accepted for crepSemantics; HOL ## is Prod.map and o is ∘; there are no extra hypotheses. The private proof helper crepSemWrapperClass and the abstract-E lemma are proof-only. The qualifiers match crepSemantics: fmap_as_finite_support [locals, globals, code] for CrepSemHOLState's canonical HolFiniteMapExact fields, with the same-module re-exported witness CrepSemIsWrapperFiniteSupport.holFmapAsFiniteSupportWitness; and words_as_type_indexed_bitvec for the positive-width words and universe-0 σ. start is already the exact MlString carrier, so there is no names_as_string qualifier. Axioms: propext, Classical.choice, Quot.sound."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "crep_to_loop_compile_prog_lab_min",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/MakeFuncsLemmas.lean",
+    "lean_name": "crep_to_loop_compile_prog_lab_min",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.21) against crep_to_loop_compile_prog_lab_min at crep_to_loopProofScript.sml:4398-4400. HOL `crep_to_loop$compile_prog c cprog = lprog ⇒ EVERY (λprog. 60 ≤ FST prog) lprog` with free variables c, cprog, lprog (implicitly universal); Lean quantifies them in order of occurrence (c as the AsmArchitecture carrier of the tagged compileProgHOLExact, cprog at its argument type, lprog at its result type), keeps the equation premise, and renders EVERY as ∀ prog ∈ lprog with FST as .1. Words qualifier for the width-indexed Crep/Loop program carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ctxt_fc_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_name": "ctxtFcExact",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "cvs"
+    ],
+    "reviewer": "flapjack-ds10 source comparison (2026-09-28; bead flapjack-pxn.18.5.6.31.2) against ctxt_fc_def at crep_to_loopProofScript.sml:73-81. HOL: ctxt_fc c cvs ns args = <| vars := FEMPTY |++ ZIP (ns,args); funcs := cvs; vmax := MAX_LIST args; target := c |>. The Lean definition builds the separately reviewed exact CrepToLoopContextExact carrier: vars from HolFiniteMapExact.updateList HolFiniteMapExact.empty (ns.zip args) (HOL FUPDATE_LIST), funcs passed through unchanged, vmax as args.foldr max 0 (HOL MAX_LIST), and target unchanged. The qualifier is for the cvs finite-map parameter, supported by the same-module holFmapAsFiniteSupportParamWitness_ctxtFcExact_cvs. Direct HOL probe rows for ctxt_fc are in scripts/hol-probes/crep_to_loop_ctxt_fc_probe.out and guarded in Flapjack/Test/CrepToLoopParity.lean; no clause, quantifier or side condition differs from HOL."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ctxt_max_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_name": "crepToLoopCtxtMaxExact",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "fm"
+    ],
+    "reviewer": "flapjack-luna-b source review (2026-09-29; bead flapjack-pxn.18.5.6.33.26) against crep_to_loopProofScript.sml:90-93: HOL's standalone fm binder is 'a |-> num, and ctxt_max n fm quantifies v,m with FLOOKUP fm v = SOME m implying m <= n. Lean preserves polymorphic keys, Nat values, the lookup premise and inequality conclusion over HolFiniteMapExact, with the canonical lookup/support roundtrip witness holFmapAsFiniteSupportParamWitness_crepToLoopCtxtMaxExact_fm. The prior raw FiniteMap helper crepToLoopCtxtMax is now untagged Flapjack infrastructure; it admits function-backed infinite support. Concrete lookup rows remain covered by the exact-carrier tests. No additional premise was added."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "cut_sets_MAPi_Assign",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpSyntaxHelpers.lean",
+    "lean_name": "cut_sets_MAPi_Assign",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.33.5): HOL cut_sets_MAPi_Assign (crep_to_loopProofScript.sml:342-345) `∀les cs offset. cut_sets cs (nested_seq (MAPi (λn. Assign (n + offset)) les)) = list_insert (GENLIST ($+ offset) (LENGTH les)) cs`; same variables and equation with MAPi as List.mapIdx (as in the tagged assigned_vars_MAPi_Assign), GENLIST ($+ offset) n as (List.range n).map (offset + ·), list_insert as sptListInsert, cut_sets as the tagged cutSetsHOL. (words_as_type_indexed_bitvec): width-indexed Loop carriers with [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "distinct_funcs_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_name": "crepToLoopDistinctFuncsExact",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "functions"
+    ],
+    "reviewer": "flapjack-luna-b source review (2026-09-29; bead flapjack-pxn.18.5.6.33.20.2) against crep_to_loopProofScript.sml:60-65: HOL's standalone fm binder has type 'a |-> ('b # 'c), and the full predicate quantifies x,y,n,m,rm,rm' with two FLOOKUP equalities and n=m implying x=y. Lean preserves that binder/conclusion exactly over HolFiniteMapExact, with key and both tuple components polymorphic, and records the standalone carrier using the checked parameters qualifier and holFmapAsFiniteSupportParamWitness_crepToLoopDistinctFuncsExact_functions. The prior raw FiniteMap-backed crepToLoopDistinctFuncs has no HOL tag and is documented as Flapjack-specific because α → Option admits infinite support. Existing HOL-EVAL relation fixtures remain applicable to lookup-specialized instances. No extra premise or comparison was added."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "distinct_make_funcs",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/MakeFuncsLemmas.lean",
+    "lean_name": "distinct_make_funcs",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-b source comparison (2026-09-29; bead flapjack-pxn.18.5.6.33.20.1) against crep_to_loopProofScript.sml:3757-3758: HOL quantifies only crep_code and concludes distinct_funcs (make_funcs crep_code). Lean has the same single outer binder, polymorphic in key α, parameter-element β, and ignored body γ, and concludes crepToLoopDistinctFuncsExact on the exact tagged crepToLoopMakeFuncsExactHOL result. The make_funcs_def dependency carries its reviewed finite-support-result translation and same-module HOL-equality lookup witness; distinct_funcs_def separately qualifies its standalone finite-map parameter. No equality typeclass, success condition, or other premise was added. The private lookup-membership and zipped-entry helpers only prove the source theorem and carry no HOL tags."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "distinct_vars_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_name": "crepToLoopDistinctVarsExact",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "vars"
+    ],
+    "reviewer": "flapjack-luna-b source review (2026-09-29; bead flapjack-pxn.18.5.6.33.25) against crep_to_loopProofScript.sml:95-99: HOL's standalone fm binder has type 'a |-> 'b; the statement universally quantifies x,y,n,m, assumes FLOOKUP fm x = SOME n and FLOOKUP fm y = SOME m and n=m, and concludes x=y. Lean preserves the polymorphic key/value binders and every premise/conclusion over HolFiniteMapExact, with the canonical lookup/support roundtrip witness holFmapAsFiniteSupportParamWitness_crepToLoopDistinctVarsExact_vars. The former raw-function helper crepToLoopDistinctVars remains untagged and documented Flapjack-specific because functions may have infinite support. Existing HOL-EVAL guards continue exercising lookup-specialized instances; no extra premise or comparison was introduced."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "evaluate_Seq_Skip",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/LoopEvaluateHelpers.lean",
+    "lean_name": "evaluate_Seq_Skip",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.33.4): HOL evaluate_Seq_Skip (crep_to_loopProofScript.sml:4010-4011) `loopSem$evaluate (Seq prog Skip, s) = evaluate (prog, s)` ([local], free prog s); same equation. Over the tagged exact loopSem evaluate/eval and loopNestedSeqHOL (the nested_seq rendering used by the exact compile_def). fmap_as_finite_support [globals]: quantifies over LoopSemStateFiniteExact whose HOL |-> globals is the canonical HolFiniteMapExact carrier; locals/code are Spt num_maps and not named; same-module re-exported canonical witness. HOL [local] theorems keep their free variables universally quantified in Lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "evaluate_comb_seq",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/LoopEvaluateHelpers.lean",
+    "lean_name": "evaluate_comb_seq",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.33.4): HOL evaluate_comb_seq (crep_to_loopProofScript.sml:333-336) `!p s t q r. evaluate (p,s) = (NONE, t) /\\ evaluate (q,t) = (NONE,r) ==> evaluate (Seq p q,s) = (NONE,r)`; same variables, premise and conclusion. Over the tagged exact loopSem evaluate/eval and loopNestedSeqHOL (the nested_seq rendering used by the exact compile_def). fmap_as_finite_support [globals]: quantifies over LoopSemStateFiniteExact whose HOL |-> globals is the canonical HolFiniteMapExact carrier; locals/code are Spt num_maps and not named; same-module re-exported canonical witness. HOL [local] theorems keep their free variables universally quantified in Lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "evaluate_io_mono_rephrases",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_name": "evaluateIOMonoRephrases",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "ds10 (bead flapjack-pxn.18.5.6.34.3): exact port of HOL evaluate_io_mono_rephrases[local] (crep_to_loopProofScript.sml:4066-4070), the LIST_CONJ of crepPropsTheory.evaluate_add_clock_io_events_mono and loopPropsTheory.evaluate_add_clock_io_events_mono each specialized at `s with clock := k` via the source SIMP_RULE (srw_ss()) []. Lean keeps the two exact state carriers separate (CrepSemHOLState and LoopSemStateFiniteExact); each conjunct keeps its own `!extra` (k bound once), matching the source LIST_CONJ binder shape. The exact evaluators consume finite-map fields, so the relation qualifier records CrepSemHOLState.locals/globals/code and LoopSemStateFiniteExact.globals, validated by the same-module witnesses holFmapAsFiniteSupportRelationWitness_CrepSemHOLState and holFmapAsFiniteSupportRelationWitness_LoopSemStateFiniteExact; words_as_type_indexed_bitvec records the two width-indexed carriers. Both conjuncts are the already-tagged one-carrier monotonicity theorems Flapjack.crepPropsEvaluateAddClockIoEventsMono and Flapjack.LoopSemStateFiniteExact.evaluate_add_clock_io_events_mono. No extra side conditions. Replayed by the evaluate_io_mono example and evaluateIOMonoGuard in Flapjack/Test/CrepToLoopParity.lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "evaluate_less_clock_cases",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/LoopEvaluateHelpers.lean",
+    "lean_name": "evaluate_less_clock_cases",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.33.4): HOL evaluate_less_clock_cases (crep_to_loopProofScript.sml:4018-4024) `evaluate (prog, s) = (res, s2) ==> ck <= s.clock ==> ?res2 s3. evaluate (prog, s with clock := ck) = (res2, s3) /\\ ((res = res2 /\\ (?ck2. s3 = (s2 with clock := ck2))) \\/ (res2 = SOME TimeOut))` ([local]); same curried premises, existential and disjunction. Over the tagged exact loopSem evaluate/eval and loopNestedSeqHOL (the nested_seq rendering used by the exact compile_def). fmap_as_finite_support [globals]: quantifies over LoopSemStateFiniteExact whose HOL |-> globals is the canonical HolFiniteMapExact carrier; locals/code are Spt num_maps and not named; same-module re-exported canonical witness. HOL [local] theorems keep their free variables universally quantified in Lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "evaluate_nested_seq_append_first",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/LoopEvaluateHelpers.lean",
+    "lean_name": "evaluate_nested_seq_append_first",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.33.4): HOL evaluate_nested_seq_append_first (crep_to_loopProofScript.sml:17-18) is `evaluate_nested_seq_cases |> CONJUNCT1`; Lean states that conjunct (same variables/premises/conclusion) and proves it as the first projection of the tagged loopProps evaluate_nested_seq_cases. Over the tagged exact loopSem evaluate/eval and loopNestedSeqHOL (the nested_seq rendering used by the exact compile_def). fmap_as_finite_support [globals]: quantifies over LoopSemStateFiniteExact whose HOL |-> globals is the canonical HolFiniteMapExact carrier; locals/code are Spt num_maps and not named; same-module re-exported canonical witness. HOL [local] theorems keep their free variables universally quantified in Lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "evaluate_none_nested_seq_append",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/LoopEvaluateHelpers.lean",
+    "lean_name": "evaluate_none_nested_seq_append",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.33.4): HOL evaluate_none_nested_seq_append (crep_to_loopProofScript.sml:19-20) is `evaluate_nested_seq_cases |> CONJUNCT2 |> CONJUNCT1`; Lean states that conjunct. Over the tagged exact loopSem evaluate/eval and loopNestedSeqHOL (the nested_seq rendering used by the exact compile_def). fmap_as_finite_support [globals]: quantifies over LoopSemStateFiniteExact whose HOL |-> globals is the canonical HolFiniteMapExact carrier; locals/code are Spt num_maps and not named; same-module re-exported canonical witness. HOL [local] theorems keep their free variables universally quantified in Lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "evaluate_none_nested_seq_append_eq",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/LoopEvaluateHelpers.lean",
+    "lean_name": "evaluate_none_nested_seq_append_eq",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.33.4): HOL evaluate_none_nested_seq_append_eq (crep_to_loopProofScript.sml:3256-3259) `evaluate (nested_seq p, s) = (NONE, s1) /\\ evaluate (nested_seq q, s1) = res_s ==> evaluate (nested_seq (p ++ q), s) = res_s` ([local], free p q s s1 res_s); same statement. Over the tagged exact loopSem evaluate/eval and loopNestedSeqHOL (the nested_seq rendering used by the exact compile_def). fmap_as_finite_support [globals]: quantifies over LoopSemStateFiniteExact whose HOL |-> globals is the canonical HolFiniteMapExact carrier; locals/code are Spt num_maps and not named; same-module re-exported canonical witness. HOL [local] theorems keep their free variables universally quantified in Lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "evaluate_not_none_nested_seq_append",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/LoopEvaluateHelpers.lean",
+    "lean_name": "evaluate_not_none_nested_seq_append",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.33.4): HOL evaluate_not_none_nested_seq_append (crep_to_loopProofScript.sml:21-22) is `evaluate_nested_seq_cases |> CONJUNCT2 |> CONJUNCT2`; Lean states that conjunct. Over the tagged exact loopSem evaluate/eval and loopNestedSeqHOL (the nested_seq rendering used by the exact compile_def). fmap_as_finite_support [globals]: quantifies over LoopSemStateFiniteExact whose HOL |-> globals is the canonical HolFiniteMapExact carrier; locals/code are Spt num_maps and not named; same-module re-exported canonical witness. HOL [local] theorems keep their free variables universally quantified in Lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "evaluate_twice_cases",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/LoopEvaluateHelpers.lean",
+    "lean_name": "evaluate_twice_cases",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.33.4): HOL evaluate_twice_cases (crep_to_loopProofScript.sml:4036-4044) `evaluate (prog, s) = (res, s2) ==> evaluate (prog, s3) = (res2, s4) ==> (s with clock := 0) = (s3 with clock := 0) ==> (s.clock <= s3.clock /\\ (res = SOME TimeOut \\/ (res = res2 /\\ (?ck. s2 = (s4 with clock := ck))))) \\/ (s3.clock <= s.clock /\\ (res2 = SOME TimeOut \\/ (res2 = res /\\ (?ck. s4 = (s2 with clock := ck)))))` ([local]); same premises and conclusion. Over the tagged exact loopSem evaluate/eval and loopNestedSeqHOL (the nested_seq rendering used by the exact compile_def). fmap_as_finite_support [globals]: quantifies over LoopSemStateFiniteExact whose HOL |-> globals is the canonical HolFiniteMapExact carrier; locals/code are Spt num_maps and not named; same-module re-exported canonical witness. HOL [local] theorems keep their free variables universally quantified in Lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "find_code_collapse_cases",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/LoopEvaluateHelpers.lean",
+    "lean_name": "find_code_collapse_cases",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.33.10): HOL find_code_collapse_cases (crep_to_loopProofScript.sml:3264-3272, [local]) `(dest <> NONE ==> dest = SOME loc) ==> find_code dest (args1 ++ TAKE (case dest of NONE => 1 | SOME _ => 0) [Loc loc 0]) st.code = (case lookup loc st.code of NONE => NONE | SOME (params,exp) => if LENGTH args1 = LENGTH params then SOME (fromAList (ZIP (params,args1)),exp) else NONE)` (free dest loc args1 st); Lean states the same premise and equation over the tagged findCode, sptLookup, sptFromAList and List.zip/take. fmap_as_finite_support [globals]: quantifies over LoopSemStateFiniteExact; same-module re-exported canonical witness."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "first_compile_prog_all_distinct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/MakeFuncsLemmas.lean",
+    "lean_name": "firstCompileProgAllDistinctExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-29; bead flapjack-pxn.18.5.6.33.20.4) against crep_to_loopProofScript.sml:3832-3838: HOL universally quantifies c then crep_code and states ALL_DISTINCT (MAP FST (compile_prog c crep_code)) with no premises. Lean preserves that binder order and conclusion using the exact AsmArchitecture, MlString/parameter-list/CrepProgHOL width input, and List.Nodup over map Prod.fst; only the positive word width uses words_as_type_indexed_bitvec. The exact compileProgHOLExact body uses the reviewed GENLIST/range labels and MAP2/zipWith carrier; the private injective-map Nodup helper only proves the theorem. No finite-map qualifier is needed on this theorem signature because its only map uses are local intermediates in compile_prog_def."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "globals_rel_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/RelationsExact.lean",
+    "lean_name": "crepToLoopGlobalsRelHOLExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "sglobals",
+      "tglobals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.31.3): HOL globals_rel_def (crep_to_loopProofScript.sml:54-58) `globals_rel sglobals tglobals <=> !ad v. FLOOKUP sglobals ad = SOME v ==> FLOOKUP tglobals ad = SOME (wlab_wloc v)`; same quantifiers and implication. fmap_as_finite_support_relation [sglobals, tglobals]: both parameters are standalone HOL |-> finite maps (5 word |-> 'a word_lab / 'a word_loc) bound at the canonical HolFiniteMapExact translation, FLOOKUP as .lookup. Exact-carrier port alongside the production-carrier StateRel rendering (PanWordLab/LoopValue), so exact CrepSemHOLState/LoopSemStateFiniteExact fields can be related. (words_as_type_indexed_bitvec): HOL 'a word as BitVec width with [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "globals_rel_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_name": "crepToLoopGlobalsRel",
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-luna-a source review (2026-09-28; bead flapjack-pxn.18.5.6.33.18): tag withdrawn. This production helper takes raw option-valued functions rather than HOL |-> finite maps and uses PanWordLab/LoopValue rather than HolWordLab/WordLocW, so it is not an exact port of globals_rel_def. Preserve it as executable bridge infrastructure. Exact-carrier port: crepToLoopGlobalsRelHOLExact in Flapjack/Pancake/CrepToLoop/Proofs/RelationsExact.lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "globals_rel_intro",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/RelationsExact.lean",
+    "lean_name": "crepToLoopGlobalsRelHOLExact_intro",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "sglobals",
+      "tglobals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.31.3): HOL globals_rel_intro (crep_to_loopProofScript.sml:211-214) `globals_rel sglobals tglobals ==> !ad v. FLOOKUP sglobals ad = SOME v ==> FLOOKUP tglobals ad = SOME (wlab_wloc v)`; same statement over crepToLoopGlobalsRelHOLExact. fmap_as_finite_support_relation [sglobals, tglobals]: both parameters are standalone HOL |-> finite maps (5 word |-> 'a word_lab / 'a word_loc) bound at the canonical HolFiniteMapExact translation, FLOOKUP as .lookup. Exact-carrier port alongside the production-carrier StateRel rendering (PanWordLab/LoopValue), so exact CrepSemHOLState/LoopSemStateFiniteExact fields can be related. (words_as_type_indexed_bitvec): HOL 'a word as BitVec width with [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "globals_rel_intro",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_name": "crepToLoopGlobalsRel_intro",
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-luna-a source review (2026-09-28; bead flapjack-pxn.18.5.6.33.18): tag withdrawn with its production relation because it inherits the raw option-function and PanWordLab/LoopValue carrier mismatch documented for crepToLoopGlobalsRel. Preserve this implication helper for the executable bridge. Exact-carrier port: crepToLoopGlobalsRelHOLExact_intro in Flapjack/Pancake/CrepToLoop/Proofs/RelationsExact.lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "initial_prog_make_funcs_el",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/MakeFuncsLemmas.lean",
+    "lean_name": "initialProgMakeFuncsElExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-29; bead flapjack-pxn.18.5.6.33.20.5) against crep_to_loopProofScript.sml:3942-3945. HOL binds prog, start, n; assumes FLOOKUP (make_funcs prog) start = SOME (n + first_name,0); and concludes (start,[],(SND o SND) (EL n prog)) = EL n prog /\\ n < LENGTH prog. Lean keeps that binder order, lookup equality and conclusion order over List (MlString × List Nat × CrepProgHOL width), using the tagged exact finite-support make_funcs_def carrier and firstLoopName for first_name. `initialProgEL` chooses an explicit fallback for an out-of-range list index, but the theorem's conclusion establishes n < prog.length; the helper equality proves that fallback is not observed. The exact zipped-entry lemma shows the successful lookup's label fixes index n and its zero arity fixes the parameter list to []. No evaluator, extra hypothesis or conclusion is introduced. The only direct representation qualifier is HOL's positive type-indexed word width mapped to BitVec width. Proof-only; no production-path change."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "insert_insert_eq",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_name": "sptInsert_insert_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex (statement compared against insert_insert_eq at crep_to_loopProofScript.sml:380: HOL insert a b (insert a b c) = insert a b c with a:num key, b:'a value, c:'a spt tree; insert rendered as the untagged sptInsert of HOL src/finite_maps/sptreeScript.sml insert; direct HOL-EVAL rows iie_hit/iie_hit_deep/iie_other/iie_absent/iie_agrees_empty/iie_agrees_deep in scripts/hol-probes/crep_to_loop_insert_insert_probe.out reproduced by Lean guards in Flapjack/Test/CrepToLoopParity.lean)"
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "list_insert_SNOC",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_name": "sptListInsert_snoc",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex (statement compared against list_insert_SNOC at crep_to_loopProofScript.sml:386: HOL list_insert (SNOC x y) l = insert x () (list_insert y l); SNOC x y rendered as y ++ [x], list_insert/insert as the untagged sptListInsert/sptInsert renderings of HOL src/finite_maps/sptreeScript.sml list_insert/insert; direct HOL-EVAL rows li_mem_3/li_mem_4/li_absent_5/li_snoc_mem_5/li_snoc_agrees in scripts/hol-probes/crep_to_loop_list_insert_probe.out reproduced by Lean guards in Flapjack/Test/CrepToLoopParity.lean)"
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "list_insert_append",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_name": "sptListInsert_append",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex (statement compared against list_insert_append at crep_to_loopProofScript.sml:414: HOL !xs ys l. list_insert (xs ++ ys) l = list_insert xs (list_insert ys l); list_insert rendered as the untagged sptListInsert of HOL src/finite_maps/sptreeScript.sml list_insert; the proof reuses the reviewed_exact sptListInsert_insert; direct HOL-EVAL rows lia_ty/lia_lookup_new/lia_lookup_first/lia_absent in scripts/hol-probes/crep_to_loop_list_insert2_probe.out reproduced by Lean guards in Flapjack/Test/CrepToLoopParity.lean)"
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "list_insert_insert",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_name": "sptListInsert_insert",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex (statement compared against list_insert_insert at crep_to_loopProofScript.sml:406: HOL !x xs l. insert x () (list_insert xs l) = list_insert xs (insert x () l); list_insert/insert rendered as the untagged sptListInsert/sptInsert of HOL src/finite_maps/sptreeScript.sml, with the x=y case discharged by the untagged sptInsert_insert_shadow port of HOL insert_shadow at sptreeScript.sml:1641 and the x<>y case by the untagged sptInsert_swap port of HOL insert_swap at sptreeScript.sml:2214; direct HOL-EVAL rows lii_ty_nonmember/lii_ty_member/lii_lookup_new/lii_lookup_mem/lii_absent in scripts/hol-probes/crep_to_loop_list_insert2_probe.out reproduced by Lean guards in Flapjack/Test/CrepToLoopParity.lean)"
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "locals_rel_cutset_prop",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_name": "crepToLoopLocalsRelExact_cutset_prop",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "lcl"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.2) against locals_rel_cutset_prop at crep_to_loopProofScript.sml:239-249. HOL states `locals_rel ct cset lcl lcl' /\\ locals_rel ct cset' lcl lcl'' /\\ subspt cset cset' ==> locals_rel ct cset lcl lcl''` (proved via rw [locals_rel_def], subspt_domain, SUBSET_TRANS, and res_tac on the per-name obligation). The Lean source comparison keeps the same three-premise implication over the exact carriers: CrepToLoopContextExact (tags context), cset/cset' : NumSet, lcl : HolFiniteMapExact Nat (HolWordLab width), lcl'/lcl'' : Spt (WordLocW width); the HOL `subspt` premise is rendered by the untagged sptSubspt (HOL subspt_def, HOL/src/finite_maps/sptreeScript.sml:1737-1741, with sptMem for `k IN domain`). distinct_vars/ctxt_max are inherited from the first relation, the num_set-domain conjunct follows from sptSubspt and the second relation, and the per-name lookup conjunct from the second relation plus uniqueness of FLOOKUP ct.vars vname. Direct HOL oracle rows appear in scripts/hol-probes/crep_to_loop_locals_rel_probe.out and the lemma is exercised by Flapjack/Test/CrepToLoopParity.lean. Qualifiers: only ctxt.vars is an exact finite-map field and HolWordLab/WordLocW are the reviewed width-indexed `'a word` carriers. The shared standalone HOL input map is explicitly qualified as parameter `lcl`, with a same-module canonical lookup/finiteSupport roundtrip witness. The field qualifier retains only `ctxt.vars`; `funcs` is unused. The mixed relation qualifier names `CrepToLoopContextExact.vars` and the shared standalone parameter `lcl` (`HolFiniteMapExact`). The same-module roundtrip witnesses the context field, while the bare parameter needs no owner witness; `funcs` is unused."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "locals_rel_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_name": "crepToLoopLocalsRelExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "sLocals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-09-28; bead flapjack-pxn.18.5.6.31.2) against locals_rel_def at crep_to_loopProofScript.sml:101-108. The four carriers are the reviewed exact renderings: the mlstring-keyed CrepToLoopContextExact context (tagged context); l : NumSet (exact sptree$num_set) with sptMem for `domain l`/`n IN domain l` (HOL sptree domain_lookup); tLocals : Spt (WordLocW width) for the sptree$num_map `lookup`; and sLocals : HolFiniteMapExact Nat (HolWordLab width) for `num |-> 'a word_lab`, with the exact word_lab/word_loc bridge wlabWlocHOL. distinct_vars is crepToLoopDistinctVarsExact ctxt.vars over the exact finite-support carrier; ctxt_max remains crepToLoopCtxtMaxExact ctxt.vmax ctxt.vars. Clause-for-clause: distinct_vars ctxt.vars / ctxt_max ctxt.vmax ctxt.vars / domain l SUBSET domain t_locals / the per-name FLOOKUP obligation with n IN domain l and lookup n t_locals = SOME (wlab_wloc v). Direct HOL oracle rows in scripts/hol-probes/crep_to_loop_locals_rel_probe.out (ctxt_vars_lookup, distinct_component, ctxt_max_component, set_domain_mem, map_lookup, subset_domain_component); exercised by Flapjack/Test/CrepToLoopParity.lean exact-carrier fixtures. The earlier String/Boolean/Option renderings remain untagged in the same module. code_rel_def (which also needs exact ocompile) is tracked separately. The mixed relation qualifier names the exact context field `CrepToLoopContextExact.vars` plus standalone parameter `sLocals` (whose binder is `HolFiniteMapExact`). The same-module context roundtrip witness covers the owned field; the bare parameter needs no owner witness. `funcs` is omitted because this definition does not observe it."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "locals_rel_insert_gt_vmax",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_name": "crepToLoopLocalsRelExact_insert_gt_vmax",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "lcl"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison (2026-09-28; bead flapjack-58bb), exact port of HOL locals_rel_insert_gt_vmax (crep_to_loopProofScript.sml:228-237). HOL inserts an arbitrary word_loc at a fresh index n above ct.vmax; the Lean statement inserts a WordLocW at n : Nat into the Spt (WordLocW width) target locals and keeps cset/lcl/ctxt fixed, with the same ct.vmax < n premise and no extra hypothesis. The sptree$insert is rendered by the exact sptInsert on Spt (new untagged support sptLookup_sptInsert_ne / sptMem_sptInsert in Flapjack/Misc/Sptree.lean); the domain conjunct uses sptMem_sptInsert and the per-name conjunct uses sptLookup_sptInsert_ne with n' < n forced by ctxt_max (n' <= ctxt.vmax < n). Direct HOL oracle rows: scripts/hol-probes/crep_to_loop_locals_insert_probe.out (insert_same, insert_other_unchanged, gt_vmax_bounded_survives, subset_preserved) and crep_to_loop_locals_rel_probe.out (locals_rel_insert_after_true, insert_gt_vmax_lookup_unchanged); matching Lean checks in Flapjack/Test/CrepToLoopParity.lean. The mixed relation qualifier names `CrepToLoopContextExact.vars` and standalone parameter `lcl` (`HolFiniteMapExact`). The context roundtrip witness covers the owned field; the bare parameter needs no owner witness. `funcs` is unused."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "locals_rel_inter_helper",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/LocalsRelHelpers.lean",
+    "lean_name": "crepToLoopLocalsRelExact_inter_helper",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "locs1"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.13) against locals_rel_inter_helper at crep_to_loopProofScript.sml:3322-3343 ([local]). HOL states `locals_rel ctxt l locs1 locs2 ==> EVERY (\\i. lookup i l = NONE) xs ==> LENGTH xs = LENGTH ys ==> locals_rel ctxt l locs1 (inter (alist_insert xs ys locs2) l)`. Lean keeps the three premises (EVERY rendered as `∀ i ∈ xs, sptLookup i l = none`; LENGTH premise retained as `xs.length = ys.length` although the Lean proof does not need it) and the conclusion with sptInter (sptree inter, heterogeneous as in HOL) and LoopSemStateFiniteExact.sptAlistInsert (sptree alist_insert) over the exact carriers CrepToLoopContextExact, NumSet, HolFiniteMapExact Nat (HolWordLab width), Spt (WordLocW width), ys : List (WordLocW width). Qualifiers: the relation qualifier lists the traversed HOL |-> maps ctxt.vars (CrepToLoopContextExact.vars) and the standalone source-locals parameter locs1; HolWordLab/WordLocW are the reviewed width-indexed `'a word` carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "locals_rel_intro",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_name": "crepToLoopLocalsRelExact_intro",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "sLocals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.1) against locals_rel_intro at crep_to_loopProofScript.sml:176-185. HOL states `locals_rel ctxt l s_locals t_locals ==> distinct_vars ctxt.vars /\\ ctxt_max ctxt.vmax ctxt.vars /\\ domain l SUBSET domain t_locals /\\ per-name FLOOKUP obligation`; the Lean source comparison keeps the same implication shape (not an iff) over the exact carriers: CrepToLoopContextExact (tags context), l : NumSet (exact sptree$num_set) with sptMem for domain membership, sLocals : HolFiniteMapExact Nat (HolWordLab width) for `num |-> 'a word_lab`, and tLocals : Spt (WordLocW width) for the sptree$num_map `lookup`, with the exact wlabWlocHOL word_lab/word_loc bridge. The four conjuncts match clause-for-clause; the distinct_vars conjunct is crepToLoopDistinctVarsExact ctxt.vars, and the relation is mediated by the tagged crepToLoopLocalsRelExact definition. Qualifiers: only ctxt.vars is an exact finite-map field traversed by this statement, and the width-indexed word carriers HolWordLab/WordLocW are the reviewed `'a word` translation. Direct HOL oracle rows appear in scripts/hol-probes/crep_to_loop_locals_rel_probe.out and the lemma is exercised by Flapjack/Test/CrepToLoopParity.lean. code_rel_intro is tracked separately because it needs exact ocompile. The mixed relation qualifier names `CrepToLoopContextExact.vars` and the standalone `sLocals` parameter (`HolFiniteMapExact`). The same-module roundtrip witnesses the owned field; the bare parameter needs no owner witness. `funcs` is unused."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "locals_rel_lookup_same",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/LocalsRelHelpers.lean",
+    "lean_name": "crepToLoopLocalsRelExact_lookup_same",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "locs1"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.13) against locals_rel_lookup_same at crep_to_loopProofScript.sml:3313-3320 ([local]). HOL states `locals_rel ctxt l locs1 locs2 ==> (!n. lookup n locs2 = lookup n locs3) ==> locals_rel ctxt l locs1 locs3`. Lean keeps the same two premises and conclusion over the exact carriers: CrepToLoopContextExact, l : NumSet (sptree$num_set), locs1 : HolFiniteMapExact Nat (HolWordLab width), locs2/locs3 : Spt (WordLocW width), with the tagged crepToLoopLocalsRelExact (locals_rel_def) and sptLookup (sptree lookup). No extra hypotheses. Qualifiers: the relation qualifier lists the traversed HOL |-> maps ctxt.vars (CrepToLoopContextExact.vars) and the standalone source-locals parameter locs1; HolWordLab/WordLocW are the reviewed width-indexed `'a word` carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "loop_eval_upd_clock",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/LoopEvaluateHelpers.lean",
+    "lean_name": "loop_eval_upd_clock",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.33.4): HOL loop_eval_upd_clock (crep_to_loopProofScript.sml:3301-3302) `loopSem$eval (s with clock := v) = eval s` ([local], free s v): an equation between the curried eval functions; Lean states the same function equation. Over the tagged exact loopSem evaluate/eval and loopNestedSeqHOL (the nested_seq rendering used by the exact compile_def). fmap_as_finite_support [globals]: quantifies over LoopSemStateFiniteExact whose HOL |-> globals is the canonical HolFiniteMapExact carrier; locals/code are Spt num_maps and not named; same-module re-exported canonical witness. HOL [local] theorems keep their free variables universally quantified in Lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "loop_sem_is_wrapper",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/SemanticsWrapper.lean",
+    "lean_name": "loopSemIsWrapper",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.34.8): HOL crep_to_loopProofScript.sml:4178-4185 loop_sem_is_wrapper, with free s and start, states loopSem$semantics s start = let prog = Call NONE (SOME start) [] NONE in semantics_wrapper (((\\res. case res of SOME TimeOut => Incomplete | SOME (FinalFFI e) => CompleteResult (FFI_outcome e) | SOME (Result _) => CompleteResult Success | _ => RunError) ## (\\s. s.ffi.io_events)) o (\\k. loopSem$evaluate (prog, s with clock := k))). Lean loopSemIsWrapper binds s : LoopSemStateFiniteExact width F and start : Nat, the same carriers as the tagged loopSem semantics_def. It states LoopSemStateFiniteExact.semantics s start = let prog : HolLoopProg width := .call none (some start) [] none; crepToLoopSemanticsWrapper ((Prod.map (the same four-way match over Option LoopResultExact) (fun t => t.ffi.ioEvents)) ∘ (fun k => evaluate prog {s with clock := k})), over the tagged exact semantics_def, evaluate and semantics_wrapper_def. HOL ## is Prod.map and o is ∘; there are no extra hypotheses. The private proof helper loopSemWrapperClass and the abstract-E lemma are proof-only and not in the statement. The qualifiers match the tagged loopSem semantics_def: fmap_as_finite_support [globals], since LoopSemStateFiniteExact's HOL |-> globals is the canonical HolFiniteMapExact carrier while locals/code are sptree Spt fields and are not named, with the same-module re-exported witness LoopSemIsWrapperFiniteSupport.holFmapAsFiniteSupportWitness; and words_as_type_indexed_bitvec for the positive-width word and universe-0 FFI carrier. Axioms: propext, Classical.choice, Quot.sound."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "make_funcs_domain_compile_prog",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/MakeFuncsLemmas.lean",
+    "lean_name": "makeFuncsDomainCompileProgExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-29; bead flapjack-dq51) against crep_to_loopProofScript.sml:3908-3918: preserves HOL binders start, lc, crep_code, c and the premise FLOOKUP (make_funcs crep_code) start = SOME (lc,0), concluding lc ∈ domain (fromAList (compile_prog c crep_code)). Lean uses MlString for mlstring, Nat for labels, exact CrepProgHOL width input, and the actual AsmArchitecture target; the only direct qualifier is HOL positive word width mapped to BitVec width. The map lookup in the premise is the canonical HolFiniteMapExact result of the separately tagged make_funcs_def port, justified by holFmapAsFiniteSupportResultWitness_crepToLoopMakeFuncsExactHOL; compile_prog is compileProgHOLExact. HOL sptree domain/fromAList are represented by sptMem/sptFromAList, and the private membership helper only proves the theorem. No distinctness, success, or other hypothesis was added. Proof-only, no executable path change."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "map_map2_fst",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/MakeFuncsLemmas.lean",
+    "lean_name": "mapMap2FstHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pybd) against crep_to_loopProofScript.sml:3799-3803: preserves HOL binder order xs, ys, h, exact LENGTH premise, concrete MAP2 lambda including GENLIST I (LENGTH p) and h p b, and MAP FST conclusion. Generalizes the first ys component as arbitrary 'b and p elements as arbitrary 'c (only p is constrained to be a list); h has type 'c list -> 'd -> 'e. Lean's right-associated product is the HOL triple and panMap2 preserves MAP2 truncation. No representation qualifier or extra typeclass is used. The theorem stays in the crep_to_loop proof counterpart; untagged panMap2_fst_eq only discharges the proof. Existing direct HOL EVAL rows remain exercised by Flapjack/Test/CrepToLoopParity.lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "mem_lookup_fromalist_some",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_name": "memLookupFromAListSomeExact",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex (compared with mem_lookup_fromalist_some at crep_to_loopProofScript.sml:3813-3827: HOL !xs n x. ALL_DISTINCT (MAP FST xs) ∧ MEM (n,x) xs ==> lookup n (fromAList xs) = SOME x; Lean uses (xs.map Prod.fst).Nodup, pair membership, and sptLookup n (sptFromAList xs) = some x over Nat keys and polymorphic values. Spt matches the exact HOL spt constructor arity. sptFromAList matches external HOL/src/finite_maps/sptreeScript.sml:1478-1480 recursive head insertion; lookup/insert mirror that same Spt carrier. Direct HOL EVAL rows ml_hit/ml_miss/ml_distinct in scripts/hol-probes/crep_to_loop_mem_lookup_probe.out are reproduced in Flapjack/Test/CrepToLoopParity.lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "mem_rel_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/RelationsExact.lean",
+    "lean_name": "crepToLoopMemRelHOLExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.31.3): HOL mem_rel_def (crep_to_loopProofScript.sml:49-52) `mem_rel smem tmem dom <=> !ad. ad ∈ dom ⇒ wlab_wloc (smem ad) = tmem ad`; smem/tmem as the exact total memories BitVec width -> HolWordLab/WordLocW and dom : 'a word set as the predicate BitVec width -> Prop (the carrier of the exact crepSem memaddrs). Exact-carrier port alongside the production-carrier StateRel rendering (PanWordLab/LoopValue), so exact CrepSemHOLState/LoopSemStateFiniteExact fields can be related. (words_as_type_indexed_bitvec): HOL 'a word as BitVec width with [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "mem_rel_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_name": "crepToLoopMemRel",
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-luna-a source review (2026-09-28; bead flapjack-pxn.18.5.6.33.18): tag withdrawn. This production analogue uses PanWordLab/LoopValue rather than HolWordLab/WordLocW, and a Bool domain rather than HOL set membership (Prop); its bridge also adapts production Option-valued loop memory to a total view. These are representation/carrier differences, not authorized by an exact tag. Preserve the helper for production. Exact total-memory, Prop-domain port: crepToLoopMemRelHOLExact in Flapjack/Pancake/CrepToLoop/Proofs/RelationsExact.lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "mem_rel_intro",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/RelationsExact.lean",
+    "lean_name": "crepToLoopMemRelHOLExact_intro",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.31.3): HOL mem_rel_intro (crep_to_loopProofScript.sml:203-205) `mem_rel smem tmem dm ==> !ad. ad ∈ dm ⇒ wlab_wloc (smem ad) = tmem ad` (free smem tmem dm); same statement over crepToLoopMemRelHOLExact. Exact-carrier port alongside the production-carrier StateRel rendering (PanWordLab/LoopValue), so exact CrepSemHOLState/LoopSemStateFiniteExact fields can be related. (words_as_type_indexed_bitvec): HOL 'a word as BitVec width with [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "mem_rel_intro",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_name": "crepToLoopMemRel_intro",
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-luna-a source review (2026-09-28; bead flapjack-pxn.18.5.6.33.18): tag withdrawn with its production relation because it inherits the Bool-domain and PanWordLab/LoopValue carrier mismatch documented for crepToLoopMemRel. Preserve the implication helper for the executable bridge. Exact-carrier port: crepToLoopMemRelHOLExact_intro in Flapjack/Pancake/CrepToLoop/Proofs/RelationsExact.lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "member_cutset_survives_comp_exp",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpSurvives.lean",
+    "lean_name": "member_cutset_survives_comp_exp",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.33.6): HOL member_cutset_survives_comp_exp (crep_to_loopProofScript.sml:1426) is `member_cutset_survives_comp_exp_cases |> CONJUNCT1`; Lean is that conjunct. Over the tagged exact compileExpHOLExact/compileExpsHOLExact, survivesHOLExact (HOL bool as = true) and loopNestedSeqHOL; n ∈ domain l as (sptLookup n l).isSome. fmap_as_finite_support [vars, funcs]: quantifies over the exact context whose HOL |-> vars/funcs are canonical HolFiniteMapExact carriers; same-module re-exported canonical witness. (words_as_type_indexed_bitvec): width-indexed Crep/Loop carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "member_cutset_survives_comp_exp_cases",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpSurvives.lean",
+    "lean_name": "member_cutset_survives_comp_exp_cases",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.33.6): HOL member_cutset_survives_comp_exp_cases (crep_to_loopProofScript.sml:1321-1329) is the conjunction over compile_exp/compile_exps of `n ∈ domain l /\\ compile_exp ct tmp l e = (p,le,ntmp,nl) ==> survives n (nested_seq p)`; Lean states both conjuncts with the same nine variables in HOL order. Over the tagged exact compileExpHOLExact/compileExpsHOLExact, survivesHOLExact (HOL bool as = true) and loopNestedSeqHOL; n ∈ domain l as (sptLookup n l).isSome. fmap_as_finite_support [vars, funcs]: quantifies over the exact context whose HOL |-> vars/funcs are canonical HolFiniteMapExact carriers; same-module re-exported canonical witness. (words_as_type_indexed_bitvec): width-indexed Crep/Loop carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "member_cutset_survives_comp_exp_flip",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpSurvives.lean",
+    "lean_name": "member_cutset_survives_comp_exp_flip",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.33.6): HOL member_cutset_survives_comp_exp_flip (crep_to_loopProofScript.sml:1432-1433) is `member_cutset_survives_comp_exp |> ONCE_REWRITE_RULE [CONJ_COMM]` ([local]): the same theorem with the two premise conjuncts swapped; Lean states exactly that swapped premise. Over the tagged exact compileExpHOLExact/compileExpsHOLExact, survivesHOLExact (HOL bool as = true) and loopNestedSeqHOL; n ∈ domain l as (sptLookup n l).isSome. fmap_as_finite_support [vars, funcs]: quantifies over the exact context whose HOL |-> vars/funcs are canonical HolFiniteMapExact carriers; same-module re-exported canonical witness. (words_as_type_indexed_bitvec): width-indexed Crep/Loop carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "member_cutset_survives_comp_exps",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpSurvives.lean",
+    "lean_name": "member_cutset_survives_comp_exps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.33.6): HOL member_cutset_survives_comp_exps (crep_to_loopProofScript.sml:1428) is `member_cutset_survives_comp_exp_cases |> CONJUNCT2`; Lean is that conjunct. Over the tagged exact compileExpHOLExact/compileExpsHOLExact, survivesHOLExact (HOL bool as = true) and loopNestedSeqHOL; n ∈ domain l as (sptLookup n l).isSome. fmap_as_finite_support [vars, funcs]: quantifies over the exact context whose HOL |-> vars/funcs are canonical HolFiniteMapExact carriers; same-module re-exported canonical witness. (words_as_type_indexed_bitvec): width-indexed Crep/Loop carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "member_cutset_survives_comp_exps_flip",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpSurvives.lean",
+    "lean_name": "member_cutset_survives_comp_exps_flip",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.33.6): HOL member_cutset_survives_comp_exps_flip (crep_to_loopProofScript.sml:1434-1435) is `member_cutset_survives_comp_exps |> ONCE_REWRITE_RULE [CONJ_COMM]` ([local]); Lean states the swapped premise. Over the tagged exact compileExpHOLExact/compileExpsHOLExact, survivesHOLExact (HOL bool as = true) and loopNestedSeqHOL; n ∈ domain l as (sptLookup n l).isSome. fmap_as_finite_support [vars, funcs]: quantifies over the exact context whose HOL |-> vars/funcs are canonical HolFiniteMapExact carriers; same-module re-exported canonical witness. (words_as_type_indexed_bitvec): width-indexed Crep/Loop carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "member_cutset_survives_comp_prog",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpSurvives.lean",
+    "lean_name": "member_cutset_survives_comp_prog",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.33.6): HOL member_cutset_survives_comp_prog (crep_to_loopProofScript.sml:1439-1442) `!ctxt l p n. n ∈ domain l ==> survives n (compile ctxt l p)`; Lean quantifies ctxt l p n in HOL order over the tagged exact compileHOLExact (compile_def) and survivesHOLExact (= true), n ∈ domain l as (sptLookup n l).isSome. Proved for all 19 Crep constructors (incl. dec with the extended live set, while, call with handler) by well-founded recursion on the program. fmap_as_finite_support [vars, funcs]: exact context carrier; same-module re-exported canonical witness. (words_as_type_indexed_bitvec): width-indexed Crep/Loop carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "mk_ctxt_code_imp_code_rel2",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CodeRel2.lean",
+    "lean_name": "mkCtxtCodeImpCodeRel2Exact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.6.33.22) against crep_to_loopProofScript.sml:3861-3886. HOL states that distinct source function names and ALOOKUP crep_code start = SOME ([], np) imply code_rel2 (mk_ctxt c FEMPTY (make_funcs crep_code) 0) (alist_to_fmap crep_code) (fromAList (compile_prog c crep_code)). Lean preserves c, crep_code, start, and np as target/program/assumption binders, both premises, and the same conclusion through the tagged exact mkCtxtExact, make_funcs carrier, compileProgHOLExact, code_rel2 relation, and sptFromAList. Fmap values arise only from those exact definitions, not from this theorem's own map binders. The width-indexed word translation is the only qualifier. No target-success premise or extra context fact is assumed."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ncompile_correct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NCompileCorrect/Assembly.lean",
+    "lean_name": "crepToLoop_ncompile_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.6.24) against ncompile_correct at crep_to_loopProofScript.sml:110-134: `∀v v1 res s1 t ctxt l. evaluate (v,v1) = (res,s1) ∧ res ≠ SOME Error ∧ state_rel v1 t ∧ mem_rel v1.memory t.memory v1.memaddrs ∧ globals_rel v1.globals t.globals ∧ code_rel ctxt v1.code t.code ∧ locals_rel ctxt l v1.locals t.locals ⇒ ∃ck res1 t1. evaluate (compile ctxt l v,t with clock := t.clock + ck) = (res1,t1) ∧ state_rel s1 t1 ∧ mem_rel s1.memory t1.memory s1.memaddrs ∧ globals_rel s1.globals t1.globals ∧ code_rel ctxt s1.code t1.code ∧ (res1 = case res of ...) ∧ case res of ...`. All seven binders in HOL order, the seven premises, and the full existential conclusion over the tagged exact evalCrepSemHOLProgExact (crepSem evaluate_def), LoopSemStateFiniteExact.evaluate (loopSem evaluate_def), compileHOLExact (compile_def) and the tagged relations. HOL's two inline `case res` expressions are the canonical untagged NCompileCorrect.resultToLoop (NONE/Break/Continue/Return with MAP wlab_wloc/Exception with Word/TimeOut/FinalFFI/Error, clause for clause) and NCompileCorrect.localsResultRel (locals_rel for NONE/Break/Continue, F for Error, T otherwise), the same helpers every case piece uses. No extra hypotheses. The proof is HOL's recInduct crepSemTheory.evaluate_ind: the tagged evaluate_ind port evalCrepSemHOLProgExact_induct dispatches all nineteen tagged case pieces (untagged assembly helper crepToLoopNcompileCorrectOf in the same module). #print axioms: [propext, Classical.choice, Quot.sound]. Qualifiers as for the case pieces."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ncompile_correct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NCompileCorrect/Call.lean",
+    "lean_name": "crepToLoop_ncompile_correct_call",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.6.56): case piece `Call caltyp fname argexps` of ncompile_correct (crep_to_loopProofScript.sml:110-134 statement; Resume ncompile_correct[Call] at 3364-3715). The piece's only extra antecedents are exactly the two Call conjuncts of crepSemTheory.evaluate_ind, printed from the built HOL theory: the handler hypothesis (OPT_MMAP (eval s) argexps = SOME args ∧ lookup_code s.code fname args (LENGTH args) = SOME (prog,newlocals) ∧ ¬(case caltyp of NONE => F | SOME (rts,_) => ¬ALL_DISTINCT rts) ∧ s.clock ≠ 0 ∧ evaluate (prog, dec_clock s with locals := newlocals) = (SOME (Exception eid), st) ∧ caltyp = SOME (_, SOME (eid, p)) ⇒ P (p, st with locals := s.locals)) and the callee hypothesis (same guards ⇒ P (prog, dec_clock s with locals := newlocals)); the defining equalities v6 = (prog,newlocals), v4 = SOME v7, v7 = Exception eid, v = (v1,v2), v2 = SOME v3, v3 = (eid',p), eid = eid' are substituted, lookup_code is the evaluator's lookupCodeFiniteHOL (equal on lookups to the tagged lookupCodeHOL), and P is the untagged NCompileCorrect.PropertyAt. After them the piece keeps HOL's ∀res s1 t ctxt l, all seven premises and the full ∃ck res1 t1 conclusion as in the If piece, over the tagged compileHOLExact Call clause (compile_exps at vmax+1, MAP2 Assign gen_temps, Call with rt_vars returns, find_lab, and the handler Raise / If NotEqual ... (Seq Tick (compile p)) ...). The proof follows HOL: comp_exps_preserves_eval, loop_eval_nested_assign_distinct_eq and get_vars_local_update_some_eq for the arguments; lookup_code and code_rel_intro/find_code/find_lab for the callee; call_preserve_state_code_locals_rel for the callee state; the callee IH then loop_live optimise_correct for ocompile; the tail call (TimeOut / result passthrough); the returning call with cut_res entry (TimeOut at clock 0, all_distinct_ctxt_lookup_all_distinct for the return names), Return with opt_mmap_rhss_locals_rel and the set_vars/Skip/cut_res exit (clock +1) and the locals_rel reconstruction (update_eq_zip_flookup / flookup_fupdate_zip_not_mem / ALOOKUP over ZIP), Exception without handler or with a non-matching eid (Raise passthrough), the caught exception through Tick and the handler IH with locals_rel_insert_gt_vmax (clock +1, +2 more when the handler returns NONE for the two cut_res), and the remaining TimeOut/FinalFFI results. #print axioms: [propext, Classical.choice, Quot.sound]. Qualifiers as for the other ncompile_correct pieces. [flapjack-pxn.18.5.6.24.1, 2026-09-29: the result map, result-dependent locals relation and evaluate_ind property are the canonical NCompileCorrect.resultToLoop / localsResultRel / PropertyAt (NCompileCorrect/Property.lean) shared by all ncompile_correct pieces; statements relocked, content unchanged.]"
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ncompile_correct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NCompileCorrect/Dec.lean",
+    "lean_name": "crepToLoop_ncompile_correct_dec",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-29; bead flapjack-pxn.18.5.6.50) against crep_to_loopProofScript.sml:110-154 and Resume ncompile_correct[Dec] at 2408-2584. The payload order is name/e/body/v1 and the sole induction hypothesis is exactly ∀value. eval v1 e = SOME value ⇒ P(body, v1 with locals := v1.locals |+ (name,value)); the case retains all seven HOL premises and the full existential ∃ck res1 t1 conclusion, with no extra target result, successful-pass, or context premise. Source review checked crepSemScript's Dec equation: evaluate the body after the local update, then apply res_var to the body's final locals using the caller's pre-Dec lookup. The tagged compileHOLExact Dec clause compiles e at vmax+1, updates only name→temporary in the body context, inserts that temporary into bodyLive, then runs expression code, assigns its value to the temporary, and compiles the body. The proof constructs the IH's updated source/target relation, preserves any old caller slot using not_mem_context_assigned_mem_gt, member_cutset_survives_comp_prog and unassigned_vars_evaluate_same, and restores the source local with resVarEq; all target/state/memory/globals/code postconditions and the HOL result/locals cases are retained. The six finite-map relation fields and positive-width BitVec translation match adjacent exact cases; executable behavior is unchanged. [flapjack-pxn.18.5.6.24.1, 2026-09-29: the result map, result-dependent locals relation and evaluate_ind property are the canonical NCompileCorrect.resultToLoop / localsResultRel / PropertyAt (NCompileCorrect/Property.lean) shared by all ncompile_correct pieces; statements relocked, content unchanged.]"
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ncompile_correct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NCompileCorrect/Leaf.lean",
+    "lean_name": "ncompileCorrectBreakCase",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-29; bead flapjack-pxn.18.5.6.41) against ncompile_correct at crep_to_loopProofScript.sml:110-154 and Break Resume case :1655-1660. This is the genuine Break n evaluate_ind case, retaining the source evaluation equation, non-Error premise, pre-state state_rel/mem_rel/globals_rel/code_rel/locals_rel, existential clock/result/target-state conclusion, target evaluation, all post relations, HOL result mapping, and result-indexed locals_rel. No target result, target evaluation, or post relation is assumed. Exact source/target evaluators, compiler, and relations are used. The source and target return the same leaf result and preserve their input states. The finite-map qualifier names the maps traversed by the state, context, and relation carriers; words_as_type_indexed_bitvec records the positive HOL word dimension as BitVec width. [flapjack-pxn.18.5.6.24.1, 2026-09-29: the result map, result-dependent locals relation and evaluate_ind property are the canonical NCompileCorrect.resultToLoop / localsResultRel / PropertyAt (NCompileCorrect/Property.lean) shared by all ncompile_correct pieces; statements relocked, content unchanged.]"
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ncompile_correct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NCompileCorrect/Leaf.lean",
+    "lean_name": "ncompileCorrectContinueCase",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-29; bead flapjack-pxn.18.5.6.41) against ncompile_correct at crep_to_loopProofScript.sml:110-154 and Continue Resume case :1662-1667. This is the genuine Continue n evaluate_ind case, retaining the source evaluation equation, non-Error premise, pre-state state_rel/mem_rel/globals_rel/code_rel/locals_rel, existential clock/result/target-state conclusion, target evaluation, all post relations, HOL result mapping, and result-indexed locals_rel. No target result, target evaluation, or post relation is assumed. Exact source/target evaluators, compiler, and relations are used. The source and target return the same leaf result and preserve their input states. The finite-map qualifier names the maps traversed by the state, context, and relation carriers; words_as_type_indexed_bitvec records the positive HOL word dimension as BitVec width. [flapjack-pxn.18.5.6.24.1, 2026-09-29: the result map, result-dependent locals relation and evaluate_ind property are the canonical NCompileCorrect.resultToLoop / localsResultRel / PropertyAt (NCompileCorrect/Property.lean) shared by all ncompile_correct pieces; statements relocked, content unchanged.]"
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ncompile_correct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NCompileCorrect/Leaf.lean",
+    "lean_name": "ncompileCorrectSkipCase",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-29; bead flapjack-pxn.18.5.6.41) against ncompile_correct at crep_to_loopProofScript.sml:110-154 and Skip Resume case :1648-1653. This is the genuine Skip evaluate_ind case, retaining the source evaluation equation, non-Error premise, pre-state state_rel/mem_rel/globals_rel/code_rel/locals_rel, existential clock/result/target-state conclusion, target evaluation, all post relations, HOL result mapping, and result-indexed locals_rel. No target result, target evaluation, or post relation is assumed. Exact source/target evaluators, compiler, and relations are used. The source and target return the same leaf result and preserve their input states. The finite-map qualifier names the maps traversed by the state, context, and relation carriers; words_as_type_indexed_bitvec records the positive HOL word dimension as BitVec width. [flapjack-pxn.18.5.6.24.1, 2026-09-29: the result map, result-dependent locals relation and evaluate_ind property are the canonical NCompileCorrect.resultToLoop / localsResultRel / PropertyAt (NCompileCorrect/Property.lean) shared by all ncompile_correct pieces; statements relocked, content unchanged.]"
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ncompile_correct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NCompileCorrect/Leaf.lean",
+    "lean_name": "ncompileCorrectTickCase",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-29; bead flapjack-pxn.18.5.6.41) against ncompile_correct at crep_to_loopProofScript.sml:110-154 and Tick Resume case :1669-1677. This is the genuine Tick evaluate_ind case, retaining the source evaluation equation, non-Error premise, pre-state state_rel/mem_rel/globals_rel/code_rel/locals_rel, existential clock/result/target-state conclusion, target evaluation, all post relations, HOL result mapping, and result-indexed locals_rel. No target result, target evaluation, or post relation is assumed. Exact source/target evaluators, compiler, and relations are used. The zero-clock branch clears locals on both sides and produces TimeOut; the positive branch decrements both clocks and preserves locals_rel. The finite-map qualifier names the maps traversed by the state, context, and relation carriers; words_as_type_indexed_bitvec records the positive HOL word dimension as BitVec width. [flapjack-pxn.18.5.6.24.1, 2026-09-29: the result map, result-dependent locals relation and evaluate_ind property are the canonical NCompileCorrect.resultToLoop / localsResultRel / PropertyAt (NCompileCorrect/Property.lean) shared by all ncompile_correct pieces; statements relocked, content unchanged.]"
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ncompile_correct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NCompileCorrect/Primitive.lean",
+    "lean_name": "crepToLoop_ncompile_correct_primitive",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison (2026-09-29; bead flapjack-pxn.18.5.6.49) against ncompile_correct at crep_to_loopProofScript.sml:110-154 and Resume ncompile_correct[Primitive] at :2357-2407. The Primitive case has no induction hypotheses. The theorem quantifies the constructor payload (lhss, operator, rhss) and source state, then retains all seven HOL premises (source evaluation, non-Error result, state_rel, mem_rel, globals_rel, code_rel, locals_rel) and the full existential target evaluation/result/state conclusion with the mapped result and conditional locals postcondition. No target result, target evaluation, or post-relation is assumed. The source clause is evalCrepSemHOLProgExact_primitive_holShape; the target is exact LoopSemStateFiniteExact.evaluate of compileHOLExact. The proof follows the HOL case: opt_mmap_lhss/rhss_locals_rel establish mappings, crepPrimopLoopPrimopHOL transports the primitive, and updateListEq/FUPDATE_LIST_HOL plus setVars/sptAlistInsert preserve the exact locals relation for mapped assigned keys and untouched keys. The named finite-map relation fields are precisely the context vars/functions, source locals/globals/code, and target globals traversed by the five HOL relations; same-module finite-support roundtrip witnesses are supplied. words_as_type_indexed_bitvec records the width-indexed word carrier."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ncompile_correct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NCompileCorrect/Seq.lean",
+    "lean_name": "crepToLoop_ncompile_correct_seq",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison (2026-09-29; bead flapjack-pxn.18.5.6.43) against ncompile_correct at crep_to_loopProofScript.sml:110-154 and Resume ncompile_correct[Seq] at :1679-1703. Coordinator correction (2026-09-29; bead flapjack-pxn.18.5.6.24.1.1): crepSemTheory.evaluate_ind Seq gives exactly P(c1,s) and ∀res s1, (res,s1)=evaluate(c1,s) ⇒ res=NONE ⇒ P(c2,s1), in that HOL order. The Lean premises use PropertyAt at the fixed source and conditional first-run post-state, each still universally quantifying the HOL res, s1, t, ctxt, and l binders in order; the theorem keeps the source evaluation and non-Error premises, all five input relations, and the HOL existential target clock/result/state and six postconditions. No target evaluation/result or post-relation is assumed. Exact evalCrepSemHOLProgExact, LoopSemStateFiniteExact.evaluate, compileHOLExact and exact relations are used. The source Seq equation is the line-443 fix-clock-free evaluate_def form: run c1, run c2 from its state iff the first result is NONE, otherwise retain its pair. When the first source result is NONE, the proof lifts the first target run by the second clock extension using evaluate_add_clock_eq, then composes the second induction hypothesis; for a non-NONE result, the target Seq short-circuits after the first run. The finite-map relation qualifier names the exact fields traversed by state_rel, mem_rel/globals_rel/code_rel/locals_rel carriers and their context, with same-module roundtrip witnesses; words_as_type_indexed_bitvec records HOL's positive type-indexed word dimension as BitVec width."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ncompile_correct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NCompileCorrect/ShMem.lean",
+    "lean_name": "crepToLoop_ncompile_correct_shMem",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.6.54): case piece `ShMem op v e` of ncompile_correct (crep_to_loopProofScript.sml:110-134 statement; Resume ncompile_correct[ShMem] at 2106-2239; evaluate_ind's ShMem case has no induction hypothesis). No extra antecedent: payload (op : memop as the shared asm$memop carrier WordMemOp, v : varname, e) and v1, then HOL's ∀res s1 t ctxt l, all seven premises and the full ∃ck res1 t1 conclusion as in the other pieces. compile (ShMem op v e) = nested_seq (p ++ [ShMem op (vars v) le]) when v is mapped (tagged compileHOLExact; the unmapped Skip branch cannot follow a non-Error source run because locals_rel maps every present local). The proof follows HOL: comp_exp_preserves_eval on the address; locals_rel_cutset_prop with comp_syn_impl_cut_sets_subspt; locals_rel_intro for the mapped variable's value; then sh_mem_op by operator: the four loads and four stores each correspond via private lemmas (same call_FFI SharedMem request: panWordToBytesHOL = map toBitVec crepClockWordToBytes, same FFI state and shared domain by state_rel, byte_align bridge), FFI_final giving SOME (FinalFFI) on both sides (source empty_locals / unchanged locals vs target call_env []: state_rel is locals-free, locals case T), FFI_return giving NONE with the same new ffi and, for loads, the same decoded word (panWordOfBytesHOL_eq_crepClockWordOfBytes) written to v and vars v (the lookup_insert / FLOOKUP_UPDATE / distinct_vars locals_rel step). #print axioms: [propext, Classical.choice, Quot.sound]. Qualifiers as for the other ncompile_correct pieces. [flapjack-pxn.18.5.6.24.1, 2026-09-29: the result map, result-dependent locals relation and evaluate_ind property are the canonical NCompileCorrect.resultToLoop / localsResultRel / PropertyAt (NCompileCorrect/Property.lean) shared by all ncompile_correct pieces; statements relocked, content unchanged.]"
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ncompile_correct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NCompileCorrect/Store.lean",
+    "lean_name": "crepToLoop_ncompile_correct_store",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.6.51) against crep_to_loopProofScript.sml:110-154 and Resume ncompile_correct[Store] at :1758-1856. This Store evaluate_ind case has no induction hypothesis. It preserves the source evaluation and non-Error premises, all five pre-state relations, and the complete existential clock/result/target-state conclusion with all six postconditions; it assumes no target evaluation/result or post relation. It uses the exact Crep and Loop evaluators, compileHOLExact, and exact relations. The proof follows HOL: compile/evaluate destination then source expressions, preserve the destination address across source compilation, assign the source value to its fresh temporary, and store to the destination. The memory relation handles the written address separately from other in-domain addresses; locals_rel follows insert_gt_vmax, cutset propagation, and the compiled-code subspt fact. The finite-map qualifier names the fields traversed by the exact state/context/relation carriers with same-module roundtrip witnesses; words_as_type_indexed_bitvec records HOL's positive word dimension as BitVec width."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ncompile_correct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NCompileCorrect/Store32.lean",
+    "lean_name": "crepToLoop_ncompile_correct_store32",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison (2026-09-29; bead flapjack-pxn.18.5.6.52) against crep_to_loopProofScript.sml:110-154 and Resume ncompile_correct[Store32] at :1857-1965. The Store32 evaluate_ind case has no program induction hypothesis. It preserves HOL's source evaluation and non-Error premises, all five input relations, and the complete existential target clock/result/state conclusion with all six postconditions; it assumes no target evaluation/result or post relation. The source equation is evalCrepSemHOLProgExact_store32_holShape, the target is the exact LoopSemStateFiniteExact.evaluate, and compilation is compileHOLExact. The proof follows the HOL case: crep_to_loop_comp_exp_preserves_eval handles destination then source compilation; nested_seq_pure_evaluation and locals_touched_eq_eval_eq keep the destination address valid through source compilation and its address temporary; exact mem_store_32 clauses establish alignment, domain, cell and the four-byte update; the exact memory relation is preserved at the written address and elsewhere; and insert_gt_vmax plus the two exact cut-set inclusions preserve locals_rel. The finite-map qualifier names the fields traversed by the exact state/context/relation carriers with same-module roundtrip witnesses; words_as_type_indexed_bitvec records HOL's positive word dimension as BitVec width. Executable behavior is unchanged."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ncompile_correct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NCompileCorrect/StoreByte.lean",
+    "lean_name": "crepToLoop_ncompile_correct_storeByte",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.6.53) against ncompile_correct at crep_to_loopProofScript.sml:110-154 and Resume ncompile_correct[StoreByte] at :1966-2074. This StoreByte evaluate_ind case has no induction hypothesis. It retains the source evaluation and non-Error premises, all five pre-state relations, and the complete existential clock/result/target-state conclusion with all six postconditions; no target evaluation/result or post relation is assumed. The source clause is the exact evalCrepSemHOLProgExact_storeByte_holShape: destination and source expression evaluation followed by panMemStoreByteWord8HOL with the source address-domain and HOL byte-width operation. The target is LoopSemStateFiniteExact.evaluate of compileHOLExact: assign the destination address and source value to adjacent fresh temporaries, then execute StoreByte using memStoreByteAuxExact. The proof checks the source/target word8 conversion and carries memory_rel at every in-domain address, with the aligned cell handled by the exact one-byte write relation; locals_rel follows temporary freshness, insert_gt_vmax, cutset propagation, and the compiled-code subspt fact. Constructor carriers and quantified statement match the cited HOL case; the finite-map qualifier names fields traversed by the exact state/context/relation carriers with same-module roundtrip witnesses, and words_as_type_indexed_bitvec records HOL's positive word dimension as BitVec width."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ncompile_correct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NCompileCorrect/While.lean",
+    "lean_name": "crepToLoop_ncompile_correct_while",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.6.55): case piece `While e c` of ncompile_correct (crep_to_loopProofScript.sml:110-134 statement; Resume ncompile_correct[While] at 2717-3130). The piece's only extra antecedents are exactly the three While conjuncts of crepSemTheory.evaluate_ind, as printed from the built HOL theory: (∀v2 w res s1 v1 v8. eval s e = SOME v2 ∧ v2 = Word w ∧ w ≠ 0w ∧ s.clock ≠ 0 ∧ (res,s1) = evaluate (c,dec_clock s) ∧ res = SOME v1 ∧ v1 = Continue v8 ∧ v8 = 0 ⇒ P (While e c,s1)), the same with res = NONE, and (∀v2 w. eval s e = SOME v2 ∧ v2 = Word w ∧ w ≠ 0w ∧ s.clock ≠ 0 ⇒ P (c,dec_clock s)). The Lean hypotheses substitute the defining equalities v2 = Word w, v1 = Continue v8, v8 = 0 and state P via the untagged NCompileCorrect.PropertyAt. After them the piece keeps HOL's ∀res s1 t ctxt l, all seven premises and the full ∃ck res1 t1 conclusion as in the If piece. compile (While e c) = Loop l (nested_seq (np ++ [Assign tmp le; If NotEqual tmp (Imm 0w) (Seq (compile c) (Continue 0)) (Break 0) l])) l (tagged compileHOLExact). The proof follows HOL's case structure: the false case with ck+2 (entry cut_res and exit Break cut_res ticks); the TimeOut case (t.clock = 0 by state_rel, entry cut_res gives TimeOut with locals LN); otherwise comp_exp_preserves_eval from dec_clock s at t with locals := inter t.locals l and clock t.clock-1, then the body IH at insert tmp (Word w), splitting on the body result: NONE and Continue 0 re-enter via the While IHs (ck+ck'+ck''), Break 0 exits with one cut_res tick (ck+ck'+1), and other results exit through exit_loop, which commutes with the result correspondence. Review note: HOL's exported line-443 evaluate_def is rebound through fix_clock_evaluate, so its While equation and evaluate_ind are fix-clock-free, matching the tagged Lean equation. #print axioms: [propext, Classical.choice, Quot.sound]. Qualifiers as for the If piece. [flapjack-pxn.18.5.6.24.1, 2026-09-29: the result map, result-dependent locals relation and evaluate_ind property are the canonical NCompileCorrect.resultToLoop / localsResultRel / PropertyAt (NCompileCorrect/Property.lean) shared by all ncompile_correct pieces; statements relocked, content unchanged.]"
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ncompile_correct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NcompileCorrect.lean",
+    "lean_name": "crepToLoop_ncompile_correct_assign",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-29; bead flapjack-pxn.18.5.6.48) against crep_to_loopProofScript.sml:110-134 and Resume ncompile_correct[Assign] at 2241-2277. evaluate_ind's Assign case has no induction hypothesis. With payload n/e then v1 and ∀res s1 t ctxt l, the Lean case keeps all seven HOL premises (source evaluate, res ≠ SOME Error, state_rel, mem_rel, globals_rel, code_rel, locals_rel) and the full existential ∃ck res1 t1 result with the same result conversion and locals postcondition; no target-success, pass-success, or extra context premise is introduced. Source review checked crepSemScript.sml:257-262: successful Assign requires the source local already be present, yielding the target register from locals_rel; compile_exp preserves e's value, and compile assigns the mapped target register. The proof mirrors HOL's comp_exp_preserves_eval, compile_exp_out_rel live-domain inclusion, final target assignment, and distinct_vars preservation of all other mapped locals. State/memory/globals/code facts are unchanged by the two local-only updates. Carriers and six finite-map fields use the same qualifiers as adjacent exact ncompile_correct cases; Crep and Loop words use the reviewed positive-width BitVec translation. [flapjack-pxn.18.5.6.24.1, 2026-09-29: the result map, result-dependent locals relation and evaluate_ind property are the canonical NCompileCorrect.resultToLoop / localsResultRel / PropertyAt (NCompileCorrect/Property.lean) shared by all ncompile_correct pieces; statements relocked, content unchanged.]"
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ncompile_correct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NcompileCorrect.lean",
+    "lean_name": "crepToLoop_ncompile_correct_extCall",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.6.46): case piece `ExtCall f c cl a al` of ncompile_correct (crep_to_loopProofScript.sml:110-134 statement; Resume ncompile_correct[ExtCall] at 2682-2714; evaluate_ind's ExtCall case has no induction hypothesis). No extra antecedent: the payload (f : mlstring as the reviewed MlString carrier; c cl a al : varname) and v1, then HOL's ∀res s1 t ctxt l, all seven premises with v := ExtCall f c cl a al, and the full ∃ck res1 t1 conclusion as in the If piece. compile (ExtCall ...) = FFI f (ctxt.vars c) (ctxt.vars cl) (ctxt.vars a) (ctxt.vars al) l when all four names map (tagged compileHOLExact; otherwise Skip, which cannot follow a non-Error source run because locals_rel maps every present local). The proof follows HOL: locals_rel_intro gives the four word locals at the mapped names and domain l ⊆ domain t.locals (so cut_state l t succeeds); the HOL mem_load_byte_aux t = mem_load_byte s extensionality step is the private panMemLoadByteWord8HOL_eq_memLoadByteAuxExact (with the width-free get_byte bridge), so both read_bytearray calls agree; call_FFI is the same exact callFFIHOL on s.ffi = t.ffi; FFI_final gives SOME (FinalFFI f) with call_env [] on the target (locals case T); FFI_return gives NONE with mem_rel from the tagged write_bytearray_mem_rel (via a private wrapper that accepts the source domain's decision procedure) and locals_rel ctxt l on inter t.locals l. ck = 0. Qualifiers as for the If piece. [flapjack-pxn.18.5.6.24.1, 2026-09-29: the result map, result-dependent locals relation and evaluate_ind property are the canonical NCompileCorrect.resultToLoop / localsResultRel / PropertyAt (NCompileCorrect/Property.lean) shared by all ncompile_correct pieces; statements relocked, content unchanged.]"
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ncompile_correct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NcompileCorrect.lean",
+    "lean_name": "crepToLoop_ncompile_correct_if",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.6.42): case piece `If e c1 c2` of ncompile_correct (crep_to_loopProofScript.sml:110-134 statement; Resume ncompile_correct[If] at 2585-2681; HOL proves the theorem by recInduct crepSemTheory.evaluate_ind with suspend/Resume cases). The piece's only extra antecedent is evaluate_ind's If hypothesis `∀w. eval s e = SOME (Word w) ⇒ P (if w ≠ 0w then c1 else c2, s)`, stated with the untagged NCompileCorrect.PropertyAt (which unfolds to exactly the HOL statement at that program and state). After it the piece keeps HOL's quantifier order ∀res s1 t ctxt l, all seven HOL premises (evaluate (If e c1 c2, v1) = (res,s1), res ≠ SOME Error, state_rel, mem_rel, globals_rel, code_rel, locals_rel), and the full existential conclusion ∃ck res1 t1. evaluate (compile ctxt l (If e c1 c2), t with clock := t.clock + ck) = (res1,t1) ∧ state_rel/mem_rel/globals_rel/code_rel on (s1,t1) ∧ res1 = <HOL result case> ∧ <HOL locals case>. The two HOL case expressions are the untagged NCompileCorrect.resultToLoop (NONE, Break, Continue, Return (MAP wlab_wloc), Exception (Word eid), TimeOut, FinalFFI, Error clause for clause) and NCompileCorrect.localsResultRel (locals_rel for NONE/Break/Continue, T for Return, F for Error, T otherwise). evaluate is the tagged exact evalCrepSemHOLProgExact (via evalCrepSemHOLProgExact_eq_evaluate_def) and LoopSemStateFiniteExact.evaluate; compile is the tagged compileHOLExact. The proof follows HOL: comp_exp_preserves_eval on e at tmp = vmax+1; the IH at st with locals := insert tmp (Word w) (locals_rel via cut_sets_union_domain_subset and ctxt_max); for res = NONE the clock witness is ck + ck' + 1 (the If's cut_res tick) and locals_rel ctxt l on inter t1.locals l; otherwise ck + ck' and cut_res passes the result through. Qualifiers as for the comp_exp_preserves_eval pieces; the single shared σ on the Crep and Loop states is HOL's typing (state_rel_def's s.ffi = t.ffi). [flapjack-pxn.18.5.6.24.1, 2026-09-29: the result map, result-dependent locals relation and evaluate_ind property are the canonical NCompileCorrect.resultToLoop / localsResultRel / PropertyAt (NCompileCorrect/Property.lean) shared by all ncompile_correct pieces; statements relocked, content unchanged.]"
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ncompile_correct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NcompileCorrect.lean",
+    "lean_name": "crepToLoop_ncompile_correct_raise",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.6.44): case piece `Raise eid` of ncompile_correct (crep_to_loopProofScript.sml:110-134 statement; Resume ncompile_correct[Raise] at 1750-1756; evaluate_ind's Raise case has no induction hypothesis). No extra antecedent: the payload eid (the crepLang 'a word) and v1, then HOL's ∀res s1 t ctxt l, all seven premises with v := Raise eid, and the full ∃ck res1 t1 conclusion as in the If piece. compile (Raise eid) = Seq (Assign (vmax+1) (Const eid)) (Raise (vmax+1)) (tagged compileHOLExact). The proof follows HOL: ck = 0; the source gives (SOME (Exception eid), empty_locals s); the target gives (SOME (Exception (Word eid)), call_env [] (set_var ...)), matching the result case; state/mem/globals/code relations carry over (locals-only updates); the locals case is T. Qualifiers as for the If piece. [flapjack-pxn.18.5.6.24.1, 2026-09-29: the result map, result-dependent locals relation and evaluate_ind property are the canonical NCompileCorrect.resultToLoop / localsResultRel / PropertyAt (NCompileCorrect/Property.lean) shared by all ncompile_correct pieces; statements relocked, content unchanged.]"
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ncompile_correct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NcompileCorrect.lean",
+    "lean_name": "crepToLoop_ncompile_correct_return",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.6.45): case piece `Return es` of ncompile_correct (crep_to_loopProofScript.sml:110-134 statement; Resume ncompile_correct[Return] at 1704-1749; recInduct crepSemTheory.evaluate_ind, whose Return case has no induction hypothesis). The piece has no extra antecedent: HOL's quantifier order with the payload es and state v1 first, then ∀res s1 t ctxt l, all seven HOL premises with v := Return es, and the full ∃ck res1 t1 conclusion as in the If piece (res1 = NCompileCorrect.resultToLoop res; final NCompileCorrect.localsResultRel case), over the tagged evalCrepSemHOLProgExact, LoopSemStateFiniteExact.evaluate and compileHOLExact (Return clause: nested_seq (p ++ MAP2 Assign (gen_temps ntmp (LENGTH les)) les ++ [Return temps]) with compile_exps at vmax+1). The proof follows HOL: comp_exps_preserves_eval (tagged) gives ck and st; opt_mmap_eq_some; loop_eval_nested_assign_distinct_eq with the temporaries disjoint from the touched locals (compile_exps_le_tmp_domain, opt_mmap_eval_some_var_cexp_local_lookup) and ALL_DISTINCT gen_temps; get_vars_local_update_some_eq for the Return; the post states are empty_locals s and call_env [] (locals-only updates), so state/mem/globals/code relations carry over and the Return locals case is T. Qualifiers as for the If piece. [flapjack-pxn.18.5.6.24.1, 2026-09-29: the result map, result-dependent locals relation and evaluate_ind property are the canonical NCompileCorrect.resultToLoop / localsResultRel / PropertyAt (NCompileCorrect/Property.lean) shared by all ncompile_correct pieces; statements relocked, content unchanged.]"
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ncompile_correct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NcompileCorrect.lean",
+    "lean_name": "crepToLoop_ncompile_correct_storeGlob",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.6.47): case piece `StoreGlob dst e` of ncompile_correct (crep_to_loopProofScript.sml:110-134 statement; Resume ncompile_correct[StoreGlob] at 2075-2104; evaluate_ind's StoreGlob case has no induction hypothesis). No extra antecedent: the payload (dst : 5 word, e) and v1, then HOL's ∀res s1 t ctxt l, all seven premises with v := StoreGlob dst e, and the full ∃ck res1 t1 conclusion as in the If piece. compile (StoreGlob dst e) = nested_seq (p ++ [SetGlobal dst le]) with compile_exp at vmax+1 (tagged compileHOLExact). The proof follows HOL: comp_exp_preserves_eval gives ck and st; evaluate_none_nested_seq_append; the target SetGlobal gives set_globals dst (wlab_wloc w) st; globals_rel after FLOOKUP_UPDATE on both sides (source updateEq / FUPDATE_HOL, target update / FUPDATE); locals_rel ctxt l by locals_rel_cutset_prop with subspt l l' from compile_exp_out_rel and comp_syn_impl_cut_sets_subspt. Qualifiers as for the If piece. [flapjack-pxn.18.5.6.24.1, 2026-09-29: the result map, result-dependent locals relation and evaluate_ind property are the canonical NCompileCorrect.resultToLoop / localsResultRel / PropertyAt (NCompileCorrect/Property.lean) shared by all ncompile_correct pieces; statements relocked, content unchanged.]"
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "not_mem_assigned_mem_gt_comp_exp",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpSyntaxHelpers.lean",
+    "lean_name": "not_mem_assigned_mem_gt_comp_exp",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.33.5): HOL not_mem_assigned_mem_gt_comp_exp (crep_to_loopProofScript.sml:1557) is `not_mem_assigned_mem_gt_comp_exp_cases |> CONJUNCT1`; Lean is that conjunct. fmap_as_finite_support [vars, funcs]: quantifies over the exact context CrepToLoopContextExact whose HOL |-> vars/funcs are canonical HolFiniteMapExact carriers; same-module re-exported canonical witness. (words_as_type_indexed_bitvec): width-indexed Crep/Loop carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "not_mem_assigned_mem_gt_comp_exp_cases",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpSyntaxHelpers.lean",
+    "lean_name": "not_mem_assigned_mem_gt_comp_exp_cases",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.33.5): HOL not_mem_assigned_mem_gt_comp_exp_cases (crep_to_loopProofScript.sml:1466-1476) is the conjunction over compile_exp/compile_exps of `compile_exp ctxt tmp l e = (p,le,ntmp,nl) /\\ ctxt_max ctxt.vmax ctxt.vars /\\ (!v m. FLOOKUP ctxt.vars v = SOME m ==> n <> m) ∧ n < tmp ==> ~MEM n (assigned_vars (nested_seq p))`; Lean states both conjuncts with the same variables and four-conjunct premise (ctxt_max as the tagged crepToLoopCtxtMaxExact over ctxt.vars.lookup, FLOOKUP as .lookup) over compileExpHOLExact/compileExpsHOLExact, holLoopAssignedVars, loopNestedSeqHOL; proved from the tagged comp_exp(s)_assigned_vars_tmp_bound. fmap_as_finite_support [vars, funcs]: quantifies over the exact context CrepToLoopContextExact whose HOL |-> vars/funcs are canonical HolFiniteMapExact carriers; same-module re-exported canonical witness. (words_as_type_indexed_bitvec): width-indexed Crep/Loop carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "not_mem_assigned_mem_gt_comp_exps",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpSyntaxHelpers.lean",
+    "lean_name": "not_mem_assigned_mem_gt_comp_exps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.33.5): HOL not_mem_assigned_mem_gt_comp_exps (crep_to_loopProofScript.sml:1559) is `not_mem_assigned_mem_gt_comp_exp_cases |> CONJUNCT2`; Lean is that conjunct. fmap_as_finite_support [vars, funcs]: quantifies over the exact context CrepToLoopContextExact whose HOL |-> vars/funcs are canonical HolFiniteMapExact carriers; same-module re-exported canonical witness. (words_as_type_indexed_bitvec): width-indexed Crep/Loop carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "not_mem_context_assigned_mem_gt",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NotMemContextAssigned.lean",
+    "lean_name": "not_mem_context_assigned_mem_gt",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.19) against not_mem_context_assigned_mem_gt at crep_to_loopProofScript.sml:1570-1575. HOL `!ctxt l p n. ctxt_max ctxt.vmax ctxt.vars /\\ (!v m. FLOOKUP ctxt.vars v = SOME m ==> n <> m) ∧ n <= ctxt.vmax ==> ~MEM n (assigned_vars (compile ctxt l p))`. Lean keeps the binders in order (ctxt : CrepToLoopContextExact, l : NumSet, p : CrepProgHOL width, n : Nat), the same three-conjunct premise (tagged crepToLoopCtxtMaxExact over ctxt.vars.lookup, FLOOKUP as HolFiniteMapExact.lookup) and conclusion over the tagged compileHOLExact (compile_def) and holLoopAssignedVars (assigned_vars_def). No Crep evaluator occurs, so no DecidablePred binder. Proof: well-founded recursion on the source program mirroring compile_ind, using the tagged not_mem_assigned_mem_gt_comp_exp(s), compile_exp(s)_out_rel, assigned_vars_nested_seq_split and assigned_vars_nested_seq_assign. Qualifiers: ctxt's HOL |-> vars/funcs as canonical HolFiniteMapExact; width-indexed Crep/Loop program carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "not_mem_nlhss_lemma",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/LocalsRelOptMmap.lean",
+    "lean_name": "crepToLoop_not_mem_nlhss_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "vars"
+    ],
+    "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.14) against not_mem_nlhss_lemma at crep_to_loopProofScript.sml:2322-2334 ([local]). HOL `∀ctxt vname lhss n nlhss. distinct_vars ctxt.vars ∧ ¬MEM vname lhss ∧ FLOOKUP ctxt.vars vname = SOME n ∧ OPT_MMAP (FLOOKUP ctxt.vars) lhss = SOME nlhss ⇒ ¬MEM n nlhss`. Lean keeps the same binders (crepLang$varname = num, so Nat) in order, the same four-conjunct premise and conclusion over the exact CrepToLoopContextExact; distinct_vars is the tagged crepToLoopDistinctVarsExact on ctxt.vars and OPT_MMAP is List.mapM in Option (as for the tagged OPT_MMAP_APPEND). Only ctxt.vars is a translated finite map; no word carrier occurs."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ocompile_correct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NCompileCorrect/Assembly.lean",
+    "lean_name": "crepToLoop_ocompile_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; beads flapjack-pxn.18.5.6.24/.25) against ocompile_correct at crep_to_loopProofScript.sml:3720-3750: `evaluate (p,s) = (res,s1) ∧ state_rel s t ∧ mem_rel s.memory t.memory s.memaddrs ∧ globals_rel s.globals t.globals ∧ code_rel ctxt s.code t.code ∧ locals_rel ctxt l s.locals t.locals ∧ res ≠ SOME Error ∧ (!n. res ≠ SOME (Break n)) ∧ (!n. res ≠ SOME (Continue n)) ∧ res ≠ NONE ⇒ ∃ck res1 t1. evaluate (ocompile ctxt l p,t with clock := t.clock + ck) = (res1,t1) ∧ state_rel s1 t1 ∧ mem_rel s1.memory t1.memory s1.memaddrs ∧ globals_rel s1.globals t1.globals ∧ code_rel ctxt s1.code t1.code ∧ case res of NONE => F | SOME Error => F | SOME TimeOut => res1 = SOME TimeOut | SOME (Break n) => F | SOME (Continue n) => F | SOME (Return v) => res1 = SOME (Result (MAP wlab_wloc v)) | SOME (Exception eid) => res1 = SOME (Exception (Word eid)) | SOME (FinalFFI f) => res1 = SOME (FinalFFI f)`. HOL's free variables are universally quantified in order of first occurrence (p s res s1 t ctxt l); all ten premises in order, the existential, the four relations and the result case (as an inline match, clause for clause, with MAP wlab_wloc as List.map wlabWlocExact) over the tagged ocompileHOLExact (ocompile_def). No extra hypotheses. The proof is HOL's: the tagged crepToLoop_ncompile_correct, then loop_liveProof optimise_correct (via the untagged helper crepToLoopOcompileCorrectOf). #print axioms: [propext, Classical.choice, Quot.sound]. Qualifiers as for ncompile_correct."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "opt_mmap_lhss_locals_rel",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/LocalsRelOptMmap.lean",
+    "lean_name": "crepToLoop_opt_mmap_lhss_locals_rel",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepSemHOLState.locals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.14) against opt_mmap_lhss_locals_rel at crep_to_loopProofScript.sml:2300-2320 ([local]). HOL `∀lhss (s:('a,'b) crepSem$state) (t:('a,'c) loopSem$state) ctxt l. EVERY (λv. IS_SOME (FLOOKUP s.locals v)) lhss ∧ ALL_DISTINCT lhss ∧ locals_rel ctxt l s.locals t.locals ⇒ ∃nlhss. OPT_MMAP (FLOOKUP ctxt.vars) lhss = SOME nlhss ∧ LENGTH nlhss = LENGTH lhss ∧ EVERY (λn. n ∈ domain l) nlhss ∧ ALL_DISTINCT nlhss`. Lean keeps binders in order over CrepSemHOLState width σ, LoopSemStateFiniteExact width F, CrepToLoopContextExact, NumSet; the same three-conjunct premise (EVERY as ∀ v ∈ lhss, IS_SOME as Option.isSome, ALL_DISTINCT as List.Nodup) and four-conjunct existential conclusion (OPT_MMAP as List.mapM, domain as sptMem). The relation qualifier lists the traversed HOL |-> maps ctxt.vars and s.locals; HolWordLab/WordLocW are the reviewed width-indexed `'a word` carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "opt_mmap_rhss_locals_rel",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/LocalsRelOptMmap.lean",
+    "lean_name": "crepToLoop_opt_mmap_rhss_locals_rel",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepSemHOLState.locals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.14) against opt_mmap_rhss_locals_rel at crep_to_loopProofScript.sml:2282-2298 ([local]). HOL `∀rhss ws (s:('a,'b) crepSem$state) (t:('a,'c) loopSem$state) ctxt l. OPT_MMAP (FLOOKUP s.locals) rhss = SOME ws ∧ locals_rel ctxt l s.locals t.locals ⇒ ∃nrhss. OPT_MMAP (FLOOKUP ctxt.vars) rhss = SOME nrhss ∧ LENGTH nrhss = LENGTH rhss ∧ EVERY (λn. n ∈ domain l) nrhss ∧ get_vars nrhss t = SOME (MAP wlab_wloc ws)`. Lean keeps binders in order over the exact carriers CrepSemHOLState width σ ('b), LoopSemStateFiniteExact width F ('c), CrepToLoopContextExact, NumSet; the same two-conjunct premise and four-conjunct existential conclusion, with OPT_MMAP as List.mapM, EVERY as ∀ n ∈ nrhss, domain membership as sptMem, the tagged getVars (get_vars_def) and wlabWlocHOL (wlab_wloc). The relation qualifier lists the traversed HOL |-> maps ctxt.vars and s.locals (t.locals is an sptree num_map carried by Spt); HolWordLab/WordLocW are the reviewed width-indexed `'a word` carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "semantics_run_res",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/SemanticsWrapper.lean",
+    "lean_name": "CrepToLoopSemanticsRunRes",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex (source comparison with crep_to_loopProofScript.sml:4127-4130: HOL `Datatype: semantics_run_res = RunError | CompleteResult 'a | Incomplete` has constructors RunError (nullary), CompleteResult (one payload of the arbitrary type 'a) and Incomplete (nullary), in that order. Lean CrepToLoopSemanticsRunRes α reproduces the same three constructors, payload arity/type and order. This is the crep_to_loop theory's own type constant; it is textually identical to but a distinct HOL type from the panPropsScript.sml:1818 declaration ported separately as SemanticsRunResHOL, so a separate Lean inductive (not an alias) is used. Constructor names are Lean-qualified by this type only; no carrier qualifier is required.)"
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "semantics_wrapper_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/SemanticsWrapper.lean",
+    "lean_name": "crepToLoopSemanticsWrapper",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.34.6): HOL crep_to_loopProofScript.sml:4132-4136 semantics_wrapper f = if ?k v. f k = (RunError, v) then Fail else case some res. ?k r ev. f k = (CompleteResult r, ev) /\\ res = Terminate r ev of SOME res => res | NONE => Diverge (LUB (IMAGE (fromList o SND o f) UNIV)). Lean crepToLoopSemanticsWrapper takes the same arbitrary f : Nat -> CrepToLoopSemanticsRunRes HolOutcome x List HolIoEvent (the tagged crep_to_loop semantics_run_res at HOL's outcome instance, which Terminate forces) with no chain, LUB or witness premise; same guard, same some-predicate (binder order k r ev, conjunct order), same branches. HOL option some is holOptionSome (@ as Classical.choose under the guard) and LUB (overload of build_lprefix_lub) is the total chain-free HolLList.buildLprefixLub over the exact lrep_ok llist subtype HolLList, fromList is HolLList.fromList, IMAGE g UNIV is fun l => exists k, l = g k -- the same renderings accepted for the tagged loopSem/crepSem semantics_def. Noncomputable as HOL's classical definition. No finite-map or word carriers occur in the signature, so no qualifier. Caveat (coordinator review, 2026-09-29): HOL @ and Lean Classical.choose are the standard translation and the Lean definition states the same choice formula, but their arbitrarily selected values (buildLprefixLub per-index choice on non-chain families, holOptionSome among several completed runs) are not proved cross-language equal; that is out of scope per docs/SOUNDNESS.md. The generic carrier 4ac.4.105.2 is resolved as a representation port (HolLList = exact lrep_ok subtype; buildLprefixLub unfolds build_lprefix_lub_f, lprefix_lubScript.sml:200-203,430-438), not as a proved choice correspondence; on lprefixChain families buildLprefixLub_thm characterises the LUB uniquely."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "semantics_wrapper_eq",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/SemanticsWrapper.lean",
+    "lean_name": "crepToLoopSemanticsWrapper_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.34.9): HOL crep_to_loopProofScript.sml:4214-4228 semantics_wrapper_eq has free absf, concf and six curried premises: (1) semantics_wrapper absf <> Fail; (2) !k r ev. absf k = (r, ev) /\\ r <> RunError ==> ?k'. concf (k + k') = (r, ev); (3) !k k' r ev. concf k = (r, ev) ==> r <> Incomplete ==> concf (k + k') = (r, ev); (4) the same for absf; (5) !k k' ev. absf (k + k') = (Incomplete, ev) ==> ?r' ev'. absf k = (r', ev') /\\ IS_PREFIX ev ev'; (6) the same for concf; conclusion semantics_wrapper concf = semantics_wrapper absf. Lean crepToLoopSemanticsWrapper_eq binds absf, concf explicitly at the wrapper's input type and states the same six premises in the same order as curried arrows with the same binders and the same conclusion, over the tagged crepToLoopSemanticsWrapper. The conjunction in (2) is curried (absf k = (r, ev) -> r <> RunError -> ...), which is logically identical. HOL IS_PREFIX ev ev' (ev' is a prefix of ev) is Lean ev' <+: ev. No chain, LUB or result premise is added: both prefix chains are derived in the proof, as in HOL, via buildLprefixLub_thm/lnth_buildLprefixLub. The equality compares two instances of the same wrapper formula, so it does not rely on any cross-language agreement of HOL @ and Lean Classical.choose selections (see the semantics_wrapper_def caveat). Axioms: propext, Classical.choice, Quot.sound."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "state_rel_clock_add_zero",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_name": "crepToLoopStateRelExact_clock_add_zero",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-09-28; bead flapjack-pxn.18.5.6.31.1) against state_rel_clock_add_zero at crep_to_loopProofScript.sml:219-223. HOL: for every related pair there is ck with state_rel s (t with clock := ck + t.clock); the Lean theorem states the existential over the exact carriers (LoopSemStateFiniteExact clock field) and uses the witness 0, preserving the other six fields. A kernel-checked example in Flapjack/Test/CrepToLoopParity.lean exercises it on the 64-bit fixtures. Same word-dimension/FFI translation and set-as-Bool domain rendering as state_rel_def; no extra hypothesis."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "state_rel_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_name": "crepToLoopStateRelExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-09-28; bead flapjack-pxn.18.5.6.31.1) against state_rel_def at crep_to_loopProofScript.sml:31-41. The seven HOL field equations (memaddrs = mdomain, sh_memaddrs = sh_mdomain, clock, be, ffi, base_addr, top_addr) are stated verbatim over the exact crepSem$state/loopSem$state ports (CrepSemHOLState / LoopSemStateFiniteExact). The two domain fields use the same set-as-Bool membership rendering already tagged for mem_rel_def (HOL ad IN dom reads as dom ad = true); the word fields use the standard BitVec width translation with the [NeZero width] discharge of the positive dimindex (:l); the FFI host is the universe-0 type sigma. Direct HOL-EVAL rows memaddrs_mdomain_mem/sh_memaddrs_sh_mdomain_mem/clock_eq/be_eq/base_eq/top_eq/clock_mismatch in scripts/hol-probes/crep_to_loop_state_rel_probe.out are reproduced by the kernel-checked fixtures and stateRelExactGuard in Flapjack/Test/CrepToLoopParity.lean. The untagged production analogue crepToLoopStateRel stays withdrawn for its different carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "state_rel_imp_semantics",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/StateRelImpSemantics.lean",
+    "lean_name": "crepToLoopStateRelImpSemantics",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.6.26): HOL crep_to_loop state_rel_imp_semantics (crep_to_loopProofScript.sml:4320-4332): ∀ s t crep_code start lc c. s.memaddrs = t.mdomain ∧ s.be = t.be ∧ s.sh_memaddrs = t.sh_mdomain ∧ s.ffi = t.ffi ∧ s.base_addr = t.base_addr ∧ s.top_addr = t.top_addr ∧ mem_rel s.memory t.memory s.memaddrs ∧ globals_rel s.globals t.globals ∧ ALL_DISTINCT (MAP FST crep_code) ∧ s.code = alist_to_fmap crep_code ∧ t.code = fromAList (compile_prog c crep_code) ∧ s.locals = FEMPTY ∧ FLOOKUP (make_funcs crep_code) start = SOME (lc, 0) ∧ semantics s start <> Fail ==> semantics t lc = semantics s start. Lean crepToLoopStateRelImpSemantics has the same binders in HOL order (c is the target architecture consumed by the tagged compile_prog_def port compileProgHOLExact), the same fourteen conjoined premises in the same order, and the same conclusion. The two domain equalities use the reviewed set-as-Bool rendering of the tagged state_rel; ALL_DISTINCT is List.Nodup, alist_to_fmap is alistToFmapCodeExact, fromAList is sptFromAList, make_funcs is crepToLoopMakeFuncsExactHOL, and the semantics are the tagged crepSem semantics_def (crepSemantics) and loopSem semantics_def. There is no other premise. The proof follows HOL: crep_sem_is_wrapper and loop_sem_is_wrapper; the start entry ALOOKUP crep_code start = SOME ([], prog) from the non-Fail premise (crepSemantics_ne_fail_imp_holAlookup); then the tagged semantics_wrapper_eq, whose premises are discharged by mk_ctxt_code_imp_code_rel2 with code_rel_evaluate_call_correct (at clock k, for source-to-target runs, with the ncompile result mapping preserving the wrapper classification), loopProps and crepProps evaluate_add_clock_eq, and evaluate_io_mono_rephrases. Qualifiers cover the finite-map carrier fields traversed, with same-module relation witnesses; words for BitVec width. Axioms: propext, Classical.choice, Quot.sound."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "state_rel_intro",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_name": "crepToLoopStateRelExact_intro",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-09-28; bead flapjack-pxn.18.5.6.31.1) against state_rel_intro at crep_to_loopProofScript.sml:163-172. HOL proves the same seven-field conjunction expansion by rw [state_rel_def]; the Lean theorem states the iff of crepToLoopStateRelExact with exactly those seven conjuncts over the exact carriers and closes by Iff.rfl. Same word-dimension/FFI translation and same set-as-Bool domain rendering as state_rel_def; the oracle row and fixture evidence recorded for that declaration applies verbatim. No extra hypothesis and no weakened conclusion."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "survives_MAPi_Assign",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/SurvivesMapiAssign.lean",
+    "lean_name": "holSurvivesMapiAssign",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison (2026-09-28, bead flapjack-pxn.18.5.6.40) against crep_to_loopProofScript.sml:368-379. Binder order n, les, offset is preserved; les is exactly the HOL list of loopLang exp values and the Lean carrier is List (HolLoopExp width). The MAPi lambda assigns each expression to variable index+offset; List.mapIdx uses the same zero-based element index, and loopNestedSeqHOL matches nested_seq. Both statements conclude the HOL Boolean T/Lean true with no hypotheses or extra premises. The only translation is the reviewed positive indexed word representation from HOL 'a word to BitVec width; the expression, program, Bool, Nat, and list carriers preserve their constructors/types. Direct HOL EVAL rows for empty, singleton, three-expression, and zero-offset lists are in scripts/hol-probes/crep_to_loop_survives_mapi_assign_probe.out, with matching exact-carrier Lean fixtures in Flapjack/Test/CrepToLoopSurvivesMapiAssignParity. This is a proof-side theorem port, not a production-routing claim."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "wlab_wloc_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/RelationsExact.lean",
+    "lean_name": "wlabWlocExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.31.3): HOL wlab_wloc_def (crep_to_loopProofScript.sml:45-47) `wlab_wloc (panSem$Word w) = wordLang$Word w`; Lean maps the exact HolWordLab.word to WordLocW.word, the single clause. Exact-carrier port alongside the production-carrier StateRel rendering (PanWordLab/LoopValue), so exact CrepSemHOLState/LoopSemStateFiniteExact fields can be related. (words_as_type_indexed_bitvec): HOL 'a word as BitVec width with [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "write_bytearray_mem_rel",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/WriteBytearrayMemRel.lean",
+    "lean_name": "write_bytearray_mem_rel",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.6.17.1.3) against write_bytearray_mem_rel at crep_to_loopProofScript.sml:251-256. HOL `!nb sm tm w dm be. mem_rel sm tm dm ==> mem_rel (write_bytearray w nb sm dm be) (write_bytearray w nb tm dm be) dm` (panSem write_bytearray on the source, wordSem write_bytearray on the target). Lean keeps the binders in order (nb : List (BitVec 8) = word8 list, sm total HolWordLab memory, tm total WordLocW memory, w, dm, be), the single premise and the conclusion, over the tagged crepToLoopMemRelHOLExact (mem_rel_def), panWriteBytearrayWord8HOL (panSem write_bytearray_def) and writeBytearrayExact (wordSem write_bytearray_def). HOL's one address set dm is dm : BitVec width -> Bool, passed as-is to the Bool-domain wordSem port and as the Prop view (fun a => dm a = true) to the panSem port and mem_rel: the set-as-Bool rendering of the tagged exact state_rel. The panSem port's DecidablePred is the concrete instance of that view, not a hypothesis. There is NO width premise, unlike the withdrawn writeBytearrayMemRel (hdiv): the untagged panSetByteHOL_eq_setByteHOL8 bridge holds at every positive width (existing panSetByteHOL_eq_riscvSetByteHOL for 8 <= width, direct arithmetic for width < 8)."
+  }
+]

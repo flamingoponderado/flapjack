@@ -1,0 +1,10 @@
+[
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/TickUnfold.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module re-export of the existing WordSemStateExact toBroad/ofBroad finite-support roundtrip. The finite-map qualifiers on the tagged evaluate_tick_unfold and evaluate_tick_loop_tick_unfold ports require it. It introduces no carrier and has no separate HOL declaration."
+  }
+]

@@ -2,6 +2,7 @@
 
 import importlib.util
 import json
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -11,6 +12,7 @@ SCRIPT = Path(__file__).resolve().parents[1] / "hol_theorem_map.py"
 SPEC = importlib.util.spec_from_file_location("hol_theorem_map", SCRIPT)
 MODULE = importlib.util.module_from_spec(SPEC)
 assert SPEC.loader is not None
+sys.modules["hol_theorem_map"] = MODULE
 SPEC.loader.exec_module(MODULE)
 
 

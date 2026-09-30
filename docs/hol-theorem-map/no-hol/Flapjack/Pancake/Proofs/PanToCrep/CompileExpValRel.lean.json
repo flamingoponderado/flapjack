@@ -1,0 +1,226 @@
+[
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "cexpHeads_compileExpListValRelHOL",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.10.2): Flapjack-specific list-level heads-correspondence infrastructure used by the exact compile_exp_val_rel Op/Panop cases; no HOL declaration corresponds directly."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "cexpHeads_cons_singleton",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.10.2): Flapjack-specific list-level heads-correspondence infrastructure used by the exact compile_exp_val_rel Op/Panop cases; no HOL declaration corresponds directly."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "cexpHeads_map_singleton",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.10.2): Flapjack-specific list-level heads-correspondence infrastructure used by the exact compile_exp_val_rel Op/Panop cases; no HOL declaration corresponds directly."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "compFieldHOL_slice",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.7.1): private Flapjack-specific helper for the exact `compile_exp_val_rel` RField case. It relates `compFieldHOL index (values.map shapeOfHOLExact) cexp` to the flattened slice `flattenHOL (values[index])` using the flattened sub-expression list, with no standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "compileExpListValRelHOL",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.4.1): list-level companion of HOL pan_to_crepProofScript.sml:171-198 (the RStruct eval_ind induction step); Flapjack-specific helper, no standalone HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "compileExpValRelHOL_baseAddr",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.81.5): Flapjack-specific staged constructor lemma for the `BaseAddr` leaf of HOL `pan_to_crepProofScript.sml:130-396` `compile_exp_val_rel`; not a standalone HOL declaration (no `@[hol]` tag). The HOL theorem's `localised_exp`/`code_rel`/`locals_rel` hypotheses are unnecessary in this leaf proof (only `state_rel`, to equate the base addresses), so the staged statement omits them; the full `compile_exp_val_rel` theorem remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "compileExpValRelHOL_bytesInWord",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.81.5): Flapjack-specific staged constructor lemma for the `BytesInWord` leaf of HOL `pan_to_crepProofScript.sml:130-396` `compile_exp_val_rel`; not a standalone HOL declaration (no `@[hol]` tag). The HOL theorem's `localised_exp`/`code_rel`/`locals_rel` (and even `state_rel`) hypotheses are unnecessary here because the witness constant `bytesInWord` is identical on both sides, so the staged statement omits them; the full `compile_exp_val_rel` theorem remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "compileExpValRelHOL_cmp",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.9): Flapjack-specific staged constructor lemma for the exact-carrier `compile_exp_val_rel` case; HOL proves this case inside `compile_exp_val_rel` and exports no standalone declaration, so no `@[hol]` tag is attached."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "compileExpValRelHOL_const",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81): Flapjack proof infrastructure. HOL proves the `Const` case inside `compile_exp_val_rel` (pan_to_crepProofScript.sml:143-150) and exports no standalone case declaration, so this lemma has no HOL declaration to cite. It is the exact-carrier `Const` constructor case over ExpHOL/ValueHOL/ShapeHOL/CrepExpHOL with the finite-support source evaluator `evalHOLFinite` and target evaluator `evalCrepSemHOLExp`."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "compileExpValRelHOL_load",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (source comparison with cakeml/pancake/proofs/pan_to_crepProofScript.sml:217-256; bead flapjack-4ac.5.81.11): exact-carrier staged Load case of compile_exp_val_rel. HOL proves Load inside the parent theorem using the address eval_ind hypothesis and composes mem_load_flat_rel with eval_load_shape_el_rel; it exports no standalone case declaration, so this case lemma is Flapjack-specific infrastructure and carries no @[hol] tag."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "compileExpValRelHOL_load32",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific staged Load32 constructor lemma for the exact-carrier compile_exp_val_rel (HOL pan_to_crepProofScript.sml Load32 case), consuming the sub-expression induction hypothesis; no standalone HOL declaration, so no @[hol] tag (bead flapjack-4ac.5.81.8)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "compileExpValRelHOL_loadByte",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific staged LoadByte constructor lemma for the exact-carrier compile_exp_val_rel (HOL pan_to_crepProofScript.sml LoadByte case), consuming the sub-expression induction hypothesis; no standalone HOL declaration, so no @[hol] tag (bead flapjack-4ac.5.81.8)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "compileExpValRelHOL_nfield",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.81.6): Flapjack-specific staged constructor lemma for the `NField` leaf of HOL `pan_to_crepProofScript.sml:130-396` `compile_exp_val_rel`; not a standalone HOL declaration (no `@[hol]` tag). The leaf is vacuous under the exact `state_rel` because the source structure context is forced empty, so `structContextLookupHOL` always fails; the full `compile_exp_val_rel` theorem remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "compileExpValRelHOL_nstruct",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.81.6): Flapjack-specific staged constructor lemma for the `NStruct` leaf of HOL `pan_to_crepProofScript.sml:130-396` `compile_exp_val_rel`; not a standalone HOL declaration (no `@[hol]` tag). The leaf is vacuous under the exact `state_rel` because the source structure context is forced empty, so `structContextLookupHOL` always fails; the full `compile_exp_val_rel` theorem remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "compileExpValRelHOL_op",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.10): exact-carrier staged constructor lemma for the Op case of HOL compile_exp_val_rel (proved inside compile_exp_val_rel, so no standalone exported HOL case declaration to tag). Flapjack-specific infrastructure."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "compileExpValRelHOL_panop",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.12): staged case lemma for the Panop arm of HOL compile_exp_val_rel; HOL proves it inside compile_exp_val_rel, no standalone case declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "compileExpValRelHOL_rfield",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.7): Flapjack-specific staged constructor lemma for the `RField` leaf of HOL `pan_to_crepProofScript.sml:187-214` `compile_exp_val_rel`; not a standalone HOL declaration (no `@[hol]` tag). It consumes the induction hypothesis `hsub` for the sub-expression (the relation at the sub-expression only) and the private `compFieldHOL_slice` helper; the full `compile_exp_val_rel` theorem remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "compileExpValRelHOL_rstruct",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.4): exact RStruct case of HOL pan_to_crepProofScript.sml:171-198; Flapjack-specific case lemma, no standalone HOL declaration (HOL proves it inside compile_exp_val_rel)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "compileExpValRelHOL_shift",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.9): Flapjack-specific staged constructor lemma for the exact-carrier `compile_exp_val_rel` case; HOL proves this case inside `compile_exp_val_rel` and exports no standalone declaration, so no `@[hol]` tag is attached."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "compileExpValRelHOL_topAddr",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.81.5): Flapjack-specific staged constructor lemma for the `TopAddr` leaf of HOL `pan_to_crepProofScript.sml:130-396` `compile_exp_val_rel`; not a standalone HOL declaration (no `@[hol]` tag). The HOL theorem's `localised_exp`/`code_rel`/`locals_rel` hypotheses are unnecessary in this leaf proof (only `state_rel`, to equate the top addresses), so the staged statement omits them; the full `compile_exp_val_rel` theorem remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "compileExpValRelHOL_var_global",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.3): faithful Var Global case of HOL compile_exp_val_rel (pan_to_crepProofScript.sml:166-168), proved vacuously because localised_exp rejects global variables. Flapjack-specific staged case lemma; full theorem ports the HOL statement over the exact carriers."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "compileExpValRelHOL_var_local",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.2): faithful Var Local constructor case of HOL compile_exp_val_rel (pan_to_crepProofScript.sml:151-165) over the exact MlString/word_lab carriers; HOL proves this inside compile_exp_val_rel and exports no standalone case, so no @[hol] tag."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "crepOpCrepWord_compilePanOp",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.12): private Flapjack-specific helper relating the executed crep Op to the exact pan Op; no HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "evalCrepSemHOLExp_var",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.2): private equation lemma for the exact target evaluator on a local variable, matching the Var clause of crepSemScript.sml; Flapjack proof infrastructure with no standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 (bead flapjack-4ac.5.81.14): Flapjack representation infrastructure for the combined fmap_as_finite_support_relation + words_as_type_indexed_bitvec qualifier on compileExpValRelHOL. Same-module canonical relation witness for the imported CrepSemHOLState carrier; forwards the canonical toBroad/ofBroad roundtrip with the broad CrepSemBroadState counterpart. Declared in namespace CompileExpValRelRelationWitnesses. No standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 (bead flapjack-4ac.5.81.14): Flapjack representation infrastructure for the combined fmap_as_finite_support_relation + words_as_type_indexed_bitvec qualifier on compileExpValRelHOL. Same-module canonical relation witness for the imported PanSemStateFiniteExact carrier; forwards its canonical toExact/ofExact roundtrip with the broad PanSemStateExact counterpart. Declared in namespace CompileExpValRelRelationWitnesses to avoid clashing with the identically named witness in the imported state-relation modules. No standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 (bead flapjack-4ac.5.81.14): Flapjack representation infrastructure for the combined fmap_as_finite_support_relation + words_as_type_indexed_bitvec qualifier on compileExpValRelHOL. Same-module canonical relation witness for the imported PanToCrepContextExact carrier; forwards the canonical toBroad/ofBroad roundtrip with the broad PanToCrepContextBroad counterpart. Declared in namespace CompileExpValRelRelationWitnesses. No standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "valueIsWord_eq_true_iff",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.10.2): Flapjack-specific list-level heads-correspondence infrastructure used by the exact compile_exp_val_rel Op/Panop cases; no HOL declaration corresponds directly."
+  }
+]

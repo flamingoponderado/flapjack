@@ -1,0 +1,82 @@
+[
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateNestedDecs.lean",
+    "lean_name": "evalCrepSemHOLProgDecAfterSetVar",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only evaluator equation exposing Lean's Dec case with the explicit domain-decider transport; it is not a separate HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateNestedDecs.lean",
+    "lean_name": "evalNestedDecsSeqResVarEqCrepHOLWithDeciders",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only proof helper whose explicit DecidablePred parameters are operational Lean evaluator inputs; the public tagged theorem hides them behind classical wrappers, and HOL has no corresponding explicit arguments."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateNestedDecs.lean",
+    "lean_name": "foldlResVarEqCommutesAtFreshKey",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only fold consequence of the map algebra helper; HOL has no separate declaration commuting one restoration past a fresh-key fold."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateNestedDecs.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module carrier witness required by the fmap_as_finite_support qualifier; it proves the CrepSemHOLState/CrepSemBroadState roundtrip, not a separate HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateNestedDecs.lean",
+    "lean_name": "loadGlobalsHOL_length",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only helper proving the length of the exact loadGlobalsHOL recursive list; the HOL script has no separate theorem for this proof fact."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateNestedDecs.lean",
+    "lean_name": "loadGlobalsHOL_zero_eq_range",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only helper expanding exact loadGlobalsHOL from zero to its GENLIST-compatible indexed form; the HOL script has no separate theorem for this proof fact."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateNestedDecs.lean",
+    "lean_name": "nestedDecsMemDecNil",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only empty-list equation for transporting Lean's operational memory Decidable argument; HOL set membership has no such explicit parameter."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateNestedDecs.lean",
+    "lean_name": "nestedDecsShMemDecNil",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only empty-list equation for transporting Lean's operational shared-memory Decidable argument; HOL set membership has no such explicit parameter."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateNestedDecs.lean",
+    "lean_name": "nestedDecsUpdatedInput_eq_updateListEq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only bridge equating the induction helper's recursive setVar sequence with the HOL-shaped FUPDATE_LIST ZIP input; HOL uses that input directly and has no separate bridge declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateNestedDecs.lean",
+    "lean_name": "resVarEqCommutesAtDistinctKeys",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only finite-map algebra helper for the induction proof; HOL has no separate declaration commuting two res_var updates at distinct keys."
+  }
+]

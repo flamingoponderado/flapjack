@@ -1,0 +1,26 @@
+[
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/MulConst.lean",
+    "lean_name": "crepDest2ExpHOL_ne_zero",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper: a successful dest_2exp has a nonzero argument (the first dest_2exp_def clause); no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/MulConst.lean",
+    "lean_name": "crepDest2ExpHOL_value",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper: dest_2exp_lemma restated with the width bound and the natural-number value 2 ^ (n - i), used by dest_2exp_bound/dest_2exp_bound'/eval_mul_const; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/MulConst.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack same-module canonical finite-support witness for the eval_mul_const qualifier (re-export of CrepSemHOLState.holFmapAsFiniteSupportWitness); no CakeML declaration"
+  }
+]

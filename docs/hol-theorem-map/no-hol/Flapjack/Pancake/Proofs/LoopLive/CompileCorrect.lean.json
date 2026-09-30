@@ -1,0 +1,274 @@
+[
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "cutRes_none_of_cut",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper: cut_res on a NONE result after a successful cut_state; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "eval_some_touched_defined",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper for eval_lemma/eval_lemma' (HOL proves them by eval_ind directly): a successful loopSem eval reads only defined locals; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "getVars_locals_agree",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper for the loop_live compile_correct Return case (HOL proves it inline by induction on ns with get_vars_def): get_vars is unchanged by a locals map agreeing on the looked-up names; no separate HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "holAlookup_zip_none",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper (HOL ALOOKUP_NONE + MAP_ZIP): ALOOKUP of an equal-length ZIP is NONE only off the key list; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module re-export of the canonical loopSem$state finite-support witness required by the fmap_as_finite_support := [globals] qualifier on the compile_correct pieces; no HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "lookup_of_subspt",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack sptree helper (HOL subspt_lookup + lookup_inter_alt): read a live, defined key through subspt (inter a l) b; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "loopLive_break_tail",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper: the Break 0 exit of HOL's Resume compile_correct[Loop] (cut_res live_out vs the shrunk inter live_out l0); no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "loopLive_compile_correct_at",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper: the lexicographic (clock, size) induction assembling the compile_correct auxiliary per-constructor lemmas (mirrors loopSemTheory.evaluate_ind); no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "loopLive_cutRes_tail",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper: shared cut_res step after a sub-program run in HOL's Resume compile_correct[If]/[Call]; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "loopLive_if_branch",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper: the branch-independent cut_res tail of HOL's Resume compile_correct[If]; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "loopLive_loop_core",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper: the body of HOL's Resume compile_correct[Loop] for the shrunk loop, shared by shrink's fixed-point and no-fixed-point branches; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "loopLive_post_weaken",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper: the compile_correct postcondition for live set l0 implies it for inter l0 lo; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "mem_insert_of'",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack sptree helper (HOL domain_insert): insert preserves membership; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "mem_insert_self'",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack sptree helper (HOL domain_insert): the inserted key is a member; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "mem_inter_iff",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack sptree helper (HOL domain_inter): membership in inter; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "mem_varsOfExpList_of_mem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper: a variable of one list element is in vars_of_exp_list; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "numSet_lookup_of_mem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack sptree helper: a num_set member looks up to SOME (); no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "post_none_same",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper for the loop_live compile_correct NONE postcondition when locals are unchanged and l0 ⊆ l1; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "post_setVar",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper for the loop_live compile_correct NONE postcondition after set_var y on both sides; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "shMemLoad_frame",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper: loopSem sh_mem_load behaves identically up to locals when only locals differ (success sets the destination, final FFI uses call_env []); no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "shMemStore_frame",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper: loopSem sh_mem_store behaves identically up to locals when the stored register agrees; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "sptLookup_sptDelete'",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack sptree helper (HOL lookup_delete): lookup after delete; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "sptLookup_sptListDelete",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack sptree helper (HOL lookup_list_delete-style): lookup after list_delete; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "sptLookup_sptUnion'",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack sptree helper (HOL lookup_union, HOL/src sptree library): lookup in union is the left lookup, else the right one; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "sptMem_fromAList_args",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack sptree helper (HOL domain_fromAList): argument names are in the domain of fromAList (MAP (λx. (x,())) args); no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "sptMem_sptListInsert_of_mem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack sptree helper (HOL domain_list_insert, HOL/src sptree library): members of the key list are in the domain of list_insert; no CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "sptMem_sptUnion'",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack sptree helper (HOL domain_union): domain of union is the union of domains; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "sptSubspt_inter_lookup",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack sptree helper (HOL subspt/lookup_inter reasoning inline in the loop_live compile_correct Return/Raise cases): a key of the live set present in a is present with the same value in b when subspt (inter a l) b; no separate HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "subspt_inter_apply",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack sptree helper (HOL subspt_lookup + lookup_inter_alt): apply subspt (inter a l) b at a key in both a and l; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "subspt_of_lookup",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack sptree helper: subspt from pointwise lookup agreement on the left domain (HOL subspt_lookup direction); no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "theWords_some_mem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper: the_words succeeding means every entry is SOME (Word _); no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "touched_mem_varsOfExp",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper for eval_lemma: every touched local is in the domain of vars_of_exp; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "varsOfExpList_mem_iff",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper: list half of HOL vars_of_exp_acc's internal mutual statement (Resume vars_of_exp_acc[list_case]); no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "varsOfExp_mem_iff",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper: membership form of the tagged vars_of_exp_acc, the expression half of HOL's internal mutual qsuff_tac statement; no separate CakeML declaration"
+  }
+]

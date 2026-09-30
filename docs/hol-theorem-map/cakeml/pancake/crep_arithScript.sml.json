@@ -1,0 +1,80 @@
+[
+  {
+    "hol_path": "cakeml/pancake/crep_arithScript.sml",
+    "hol_name": "dest_2exp_def",
+    "lean_path": "Flapjack/Pancake/CrepArith.lean",
+    "lean_name": "crepDest2ExpHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 (source comparison; bead flapjack-pxn.18.5.6.30.2): HOL dest_2exp_def (crep_arithScript.sml:15-19) is the four-step recursion dest_2exp n w = if w = 0w then NONE else if w = 1w then SOME n else if (w && 1w) <> 0w then NONE else dest_2exp (n + 1n) (word_lsr w 1n). The Lean declaration matches clause-for-clause over the exact width-indexed word carrier: BitVec width for 'a word with [NeZero width], Prop equality = for =, BitVec.and &&& for &&, BitVec.ushiftRight for word_lsr; recursion is well-founded on word.toNat. The tag carries (words_as_type_indexed_bitvec)."
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_arithScript.sml",
+    "hol_name": "dest_2exp_lemma",
+    "lean_path": "Flapjack/Pancake/CrepArith.lean",
+    "lean_name": "crepDest2ExpHOL_lemma",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.4.6) against the [local] dest_2exp_lemma at crep_arithScript.sml:22-41: `!i w n. dest_2exp i w = SOME n ==> i <= n /\\ w = word_lsl 1w (n - i)`; same binders over the tagged crepDest2ExpHOL (dest_2exp_def), word_lsl 1w k as (1 : BitVec width) <<< k, 'a word as BitVec width. Proof by strong induction on the word value (the definition's own measure) in place of HOL's dest_2exp_ind."
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_arithScript.sml",
+    "hol_name": "dest_2exp_thm",
+    "lean_path": "Flapjack/Pancake/CrepArith.lean",
+    "lean_name": "crepDest2ExpHOL_thm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.4.6) against dest_2exp_thm at crep_arithScript.sml:43-48: `dest_2exp 0n w = SOME n2 ==> w = word_lsl 1w n2`; free variables w n2 universally quantified in order; from dest_2exp_lemma at i = 0 as in HOL."
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_arithScript.sml",
+    "hol_name": "dest_2exp_thm",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "crepDest2ExpHolWordBits_eq_lsl_support",
+    "statement_status": "documented_mismatch",
+    "reviewer": "All-positive-width support over Fin width -> Bool; kept untagged because HOL uses its implicit finite_index carrier and the explicit Fin representation has not been identified with that instance."
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_arithScript.sml",
+    "hol_name": "dest_2exp_thm",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "crepDest2Exp_eq_shift",
+    "statement_status": "documented_mismatch",
+    "reviewer": "All-positive-width support now also covers the canonical Fin width -> Bool carrier and natural-exponent shift. Still documented_mismatch: Lean uses an explicit Fin index, while HOL uses its implicit finite_index type/instance; no @[hol] tag until that carrier correspondence is established."
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_arithScript.sml",
+    "hol_name": "dest_const_def",
+    "lean_path": "Flapjack/Pancake/CrepArith.lean",
+    "lean_name": "crepDestConstHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Exact width-indexed definition over CrepExpHOL, whose Const carries BitVec width; the generic-alpha production extractor remains untagged."
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_arithScript.sml",
+    "hol_name": "mul_const_def",
+    "lean_path": "Flapjack/Pancake/CrepArith.lean",
+    "lean_name": "crepMulConstHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 (source comparison; bead flapjack-pxn.18.5.6.30.2): HOL mul_const_def (crep_arithScript.sml:50-57) is mul_const exp c = if c = 0w then Const 0w else if c = 1w then exp else case dest_2exp 0n c of NONE => Crepop Mul [exp; Const c] | SOME i => Shift Lsl exp (Const (n2w i)). The Lean declaration matches clause-for-clause over CrepExpHOL/BitVec width (crepDestConstHOL for dest_const is the tagged dest_const_def). n2w i is rendered as BitVec.ofNat width i. The tag carries words_as_type_indexed_bitvec."
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_arithScript.sml",
+    "hol_name": "simp_exp_def",
+    "lean_path": "Flapjack/Pancake/CrepArith.lean",
+    "lean_name": "crepSimpExpHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 (source comparison; bead flapjack-pxn.18.5.6.30.2): HOL simp_exp_def (crep_arithScript.sml:59-81) simplifies bottom-up: the Crepop clause maps simp_exp over the args and, for Mul with two args, dispatches on dest_const of the simplified args (both const -> Const (c*c2); one const -> mul_const of the other; otherwise rebuild); Load32/LoadByte/Load map over the address; Op maps over args; Cmp/Shift recurse; all other constructors are the identity. The Lean declaration matches clause-for-clause over exact CrepExpHOL width (crepOp/op/cmp/shift/load/load32/loadByte carriers; .crepOp .mul for Crepop Mul; .shift .lsl for Shift Lsl) and is well-founded on sizeOf. Tag: words_as_type_indexed_bitvec."
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_arithScript.sml",
+    "hol_name": "simp_prog_def",
+    "lean_path": "Flapjack/Pancake/CrepArith.lean",
+    "lean_name": "crepSimpProgHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 (source comparison; bead flapjack-pxn.18.5.6.30.2): HOL simp_prog_def (crep_arithScript.sml:83-105) recurses through Dec/Seq/If/While/Call(nested handler)/Return and simplifies each embedded expression (Assign/Store*/StoreGlob/ShMem), leaving every other constructor unchanged. The Lean declaration matches clause-for-clause over exact CrepProgHOL width, with the nested Call handler body recursively simplified exactly as in HOL. Tag: words_as_type_indexed_bitvec."
+  }
+]

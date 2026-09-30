@@ -1,0 +1,10 @@
+[
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/PanLang/Exp.lean",
+    "lean_name": "expOfHOL_expToHOL_nStruct",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only constructor refinement for panLang exp NStruct (panLangScript.sml:53-69): states the exact production-to-ExpHOL-to-production roundtrip under the byte-range premises required to convert the String structure/field names to HOL mlstring. It is a specialization of the codec, not a separately declared HOL theorem, and does not tag production Exp or claim arbitrary String correspondence. The direct HOL constructor observation and ordered field payload are replayed in pan_lang_exp_probe.out by PanLangExpHOLParity."
+  }
+]

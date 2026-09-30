@@ -1,0 +1,10 @@
+[
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrectPrimitiveRaise.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module canonical finite-support witness re-export for the CrepSemHOLState carrier used by the Primitive/Raise case tags; no separate HOL declaration."
+  }
+]

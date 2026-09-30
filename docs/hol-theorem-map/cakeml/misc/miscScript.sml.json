@@ -1,0 +1,122 @@
+[
+  {
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "FLAT_REPLICATE_NIL",
+    "lean_path": "Flapjack/Misc/FlatReplicate.lean",
+    "lean_name": "flatReplicateNilHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.16.23): HOL miscScript.sml:2120 `!n. FLAT (REPLICATE n []) = []` matches clause-for-clause; HOL FLAT=List.flatten, REPLICATE=List.replicate, element type implicit as in HOL. Direct dependency of pan_to_crepProofScript.sml pc_compile_correct (12 uses)."
+  },
+  {
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "FOLDR_MAX_0_MAX_LIST",
+    "lean_path": "Flapjack/Misc/FoldrMaxList.lean",
+    "lean_name": "foldrMaxZeroMaxListHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.16.24): HOL miscScript.sml:630 'Theorem FOLDR_MAX_0_MAX_LIST: !ls. FOLDR MAX 0 ls = MAX_LIST ls'. Clause-for-clause over num: FOLDR MAX 0 -> List.foldr max 0; MAX_LIST (HOL rich_list, MAX_LIST [] = 0 / MAX_LIST (h::t) = MAX h (MAX_LIST t)) -> the reviewed executable maxList at Flapjack/PanToCrepMaxList.lean:29. No extra hypotheses or side conditions; direct proof dependency of pc_compile_correct (pan_to_crepProofScript.sml:1998 and :4501-4532)."
+  },
+  {
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "IMP_OPT_MMAP_EQ",
+    "lean_path": "Flapjack/Misc/OptMmapCong.lean",
+    "lean_name": "impOptMmapEq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.81.10.1): HOL miscScript.sml:2491 IMP_OPT_MMAP_EQ quantifies only l1/l2 and leaves f1/f2 free (schematic, implicitly universal on instantiation); the Lean statement binds all four explicitly. MAP = List.map, OPT_MMAP = List.mapM, no side conditions or carrier differences."
+  },
+  {
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "OPT_MMAP_CONG",
+    "lean_path": "Flapjack/Misc/OptMmapCong.lean",
+    "lean_name": "optMmapCongHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.10): HOL miscScript.sml:2481 `Theorem OPT_MMAP_CONG` is `!l1 l2 f f'. (l1 = l2) /\\ (!x. MEM x l2 ==> (f x = f' x)) ==> (OPT_MMAP f l1 = OPT_MMAP f' l2)`. The Lean statement `optMmapCongHOL (l1 l2 : List α) (f f' : α → Option β) (hlen : l1 = l2) (h : ∀ x, x ∈ l2 → f x = f' x) : l1.mapM f = l2.mapM f'` matches clause-for-clause: HOL `OPT_MMAP` is rendered by core `List.mapM`, `MEM x l2` by list membership, and `LENGTH`/list equality directly; no extra hypotheses or carriers."
+  },
+  {
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "UNCURRY_eq_pair",
+    "lean_path": "Flapjack/Misc/Uncurry.lean",
+    "lean_name": "uncurryEqPairHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.9): exact port of miscScript.sml:2271 `UNCURRY f v = z <=> ?a b. v = (a,b) /\\ f a b = z`. HOL UNCURRY is Function.uncurry, the product type 'a # 'b is Lean α × β; clause-for-clause match, no side conditions."
+  },
+  {
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "app_list",
+    "lean_path": "Flapjack/Misc/AppList.lean",
+    "lean_name": "AppList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-main (2026-09-24: constructors List/Append/Nil and recursive type arguments match miscScript.sml:198-200; Lean constructor casing differs only)"
+  },
+  {
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "append_aux_def",
+    "lean_path": "Flapjack/Misc/AppList.lean",
+    "lean_name": "appendAux",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-main (2026-09-24: all three Nil/List/Append equations match miscScript.sml:202-206, including right-then-left accumulator order)"
+  },
+  {
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "append_aux_thm",
+    "lean_path": "Flapjack/Misc/AppList.lean",
+    "lean_name": "appendAux_thm",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-main (2026-09-24: universally quantified l/xs and append_aux l xs = append_aux l [] ++ xs match miscScript.sml:212-216)"
+  },
+  {
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "append_def",
+    "lean_path": "Flapjack/Misc/AppList.lean",
+    "lean_name": "appListAppend",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-main (2026-09-24: append l = append_aux l [] matches miscScript.sml:208-210)"
+  },
+  {
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "append_thm",
+    "lean_path": "Flapjack/Misc/AppList.lean",
+    "lean_name": "appListAppend_thm",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-main (2026-09-24: Append/List/Nil conjunction and universal variables match miscScript.sml:218-224)"
+  },
+  {
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "fromList2_def",
+    "lean_path": "Flapjack/Misc/Sptree.lean",
+    "lean_name": "sptFromList2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.4): HOL misc$fromList2 l = SND (FOLDL (\\(i,t) a. (i + 2, insert i a t)) (0,LN) l) (miscScript.sml:351-353); Lean the same foldl over the exact Spt with sptInsert, polymorphic in the value type as HOL. Rows from_list2 of scripts/hol-probes/word_sem_env_probe.out are checked by Flapjack.Test.WordSemEnvParity."
+  },
+  {
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "good_dimindex_def",
+    "lean_path": "Flapjack/Misc/GoodDimindex.lean",
+    "lean_name": "goodDimindex",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison, 2026-09-26; bead flapjack-4ac.4.59.1). HOL miscScript.sml:4315 defines good_dimindex (:'a) as dimindex (:'a) = 32 \\/ dimindex (:'a) = 64. Lean goodDimindex takes the word width (the HOL dimindex) and is exactly width = 32 \\/ width = 64. No extra cases or side conditions."
+  },
+  {
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "num_set",
+    "lean_path": "Flapjack/Misc/Sptree.lean",
+    "lean_name": "NumSet",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (bead flapjack-5ldn): exact alias match: HOL `Type num_set = ``:unit spt``` (miscScript.sml:787) is Lean `abbrev NumSet := Spt Unit` over the exact spt datatype. No extra hypotheses."
+  },
+  {
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "read_bytearray_def",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopSem.lean",
+    "lean_name": "readBytearrayWordHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Flapjack source comparison (2026-09-27; flapjack-4ac.5.16.5.4): HOL miscScript.sml:113-121 gives the zero equation SOME [] and successor equation that reads get_byte a, recursively reads at a+1, and propagates either NONE. Lean has the same two equations, with independent positive BitVec widths for HOL address words and returned byte words; [NeZero width] and [NeZero byteWidth] encode HOL's positive dimindex for both word types. Direct evaluator tests replay the HOL read-byte rows in pan_sem_state_eval_probe.out using the byteWidth=8 instance."
+  },
+  {
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "shift_seq_def",
+    "lean_path": "Flapjack/Misc/ShiftSeq.lean",
+    "lean_name": "holShiftSeq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.8.1): HOL shift_seq k s = \\i. s (i + k:num) (miscScript.sml:132-134); Lean fun i => s (i + k), polymorphic in the value type as HOL. Rows shift_seq/shift_seq_zero of scripts/hol-probes/word_sem_eval_prereq_probe.out are kernel-checked in Flapjack.Test.WordSemEvalPrereqParity."
+  }
+]

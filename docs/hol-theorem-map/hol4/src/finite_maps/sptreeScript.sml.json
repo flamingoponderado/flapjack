@@ -1,0 +1,34 @@
+[
+  {
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "domain_inter",
+    "lean_path": "Flapjack/Misc/Sptree.lean",
+    "lean_name": "sptDomain_sptInter",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead txo5: pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae sptreeScript650-656. Full set equality retained as characteristic-predicate conjunction; derived by both lookup cases, not merely a one-way membership inclusion. Reviewed exact LN/LS/BN/BS and heterogeneous inter definition. Independent alpha/beta payloads, arbitrary trees/keys, no wf or injection assumption. Existing pinned external source/license SHA provenance unchanged. Private canonical-collapse helpers are Flapjack proof infrastructure."
+  },
+  {
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "domain_union",
+    "lean_path": "Flapjack/Misc/Sptree.lean",
+    "lean_name": "sptDomain_sptUnion",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-r7ou: pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae src/finite_maps/sptreeScript.sml:643. Full characteristic-predicate set equality, not merely pointwise membership. Generic payload and both tree parameters retained; membership helper is untagged infrastructure. Compared Spt LN/LS/BN/BS payloads and numeric lookup branches against pinned source; no assumptions or carrier qualifiers added. Kernel checked, prerequisite to allocation live sets only."
+  },
+  {
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "lookup_inter",
+    "lean_path": "Flapjack/Misc/Sptree.lean",
+    "lean_name": "sptLookup_sptInterCases",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead txo5: pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae sptreeScript372-381. Full lookup equation retains left payload exactly when both lookups are SOME, otherwise NONE; source tree induction and canonical mkBN/mkBS lookup collapse are mirrored. Reviewed exact LN/LS/BN/BS and heterogeneous inter definition. Independent alpha/beta payloads, arbitrary trees/keys, no wf or injection assumption. Existing pinned external source/license SHA provenance unchanged. Private canonical-collapse helpers are Flapjack proof infrastructure."
+  },
+  {
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "lookup_union",
+    "lean_path": "Flapjack/Misc/Sptree.lean",
+    "lean_name": "sptLookup_sptUnion",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-r7ou: pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae src/finite_maps/sptreeScript.sml:261. Original universal m1 m2 k order, generic payload, exact lookup of left-biased union, original NONE/SOME case equation. Compared Spt LN/LS/BN/BS payloads and numeric lookup branches against pinned source; no assumptions or carrier qualifiers added. Kernel checked, prerequisite to allocation live sets only."
+  }
+]

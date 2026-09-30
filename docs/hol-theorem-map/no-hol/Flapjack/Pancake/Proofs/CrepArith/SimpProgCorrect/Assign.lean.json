@@ -1,0 +1,10 @@
+[
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrect/Assign.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module canonical finite-support witness for simpProgCorrectAssignCase: the exact state and broad counterpart roundtrip through toBroad/ofBroad; this is Flapjack representation infrastructure, not a HOL declaration."
+  }
+]

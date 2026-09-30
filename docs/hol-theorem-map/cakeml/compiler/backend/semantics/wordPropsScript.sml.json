@@ -1,0 +1,50 @@
+[
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "env_to_list_lookup_equiv",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/EnvListSupport.lean",
+    "lean_name": "wordSemEnvToListLookupEquiv",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison (2026-09-29; bead flapjack-pxn.18.5.9.17.1) against wordPropsScript.sml:4636-4663. HOL has exactly the premise env_to_list y f = (q,r) and concludes both (!n. ALOOKUP q n = lookup n y) and (!x1 x2. MEM (x1,x2) q ==> lookup x1 y = SOME x2); Lean retains the same result equation, tuple/list carriers, two conjuncts, key/value quantifiers, and no extra premise. Spt ALOOKUP uses the untagged first-match sptAListLookup rendering; the proof uses the exact env_to_list sort/rearrange entry-preservation lemmas and Spt toAList membership/lookup support, deriving uniqueness from functional Spt lookup. WordLocW's type-indexed words use words_as_type_indexed_bitvec; no state, evaluator, map-carrier, or list-to-array translation is introduced."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "evaluate_add_clock",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateAddClock.lean",
+    "lean_name": "evaluate_add_clock",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-pxn.18.5.9.1.1): HOL evaluate_add_clock (wordPropsScript.sml:1383-1386): ∀p s r s'. evaluate (p,s) = (r,s') ∧ r ≠ SOME TimeOut ⇒ evaluate (p,s with clock := s.clock + extra) = (r,s' with clock := s'.clock + extra). HOL's free variable extra is the outermost explicit binder; p s r s', the conjunctive premise and the conclusion are as in HOL, over the tagged exact wordSem evaluate and WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness WordSemEvaluateAddClockSupport.holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). No extra premise. Proof follows HOL's recInduct evaluate_ind: untagged evaluate_add_clock_aux recurses on HOL's termination measure (termdep, clock, size); Tick/MustTerminate/Seq/If/Loop/Call are handled by their evaluate_def clauses, with a zero clock excluded by the non-TimeOut premise, and every other constructor by the untagged clock-constancy lemmas (HOL's CONST lemmas, evaluate_clock_const). Kernel-checked."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "evaluate_add_clock_io_events_mono",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateAddClockIoEventsMono.lean",
+    "lean_name": "evaluate_add_clock_io_events_mono",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-pxn.18.5.9.1.3): HOL wordProps evaluate_add_clock_io_events_mono (wordPropsScript.sml:1639-1642): ∀exps s extra. (SND(evaluate(exps,s))).ffi.io_events ≼ (SND(evaluate(exps,s with clock := s.clock + extra))).ffi.io_events. Lean keeps the binders exps s extra and the conclusion, with HOL's ≼ as <+:, over the exact wordSem evaluate and WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness WordSemEvaluateAddClockIoEventsMonoSupport.holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). No premise. The proof follows HOL's recInduct evaluate_ind: untagged evaluate_add_clock_io_events_mono_aux on HOL's termination measure. Non-timeout runs close by the tagged evaluate_add_clock; the timeout paths (Tick, Seq/Loop body, Loop re-entry, Call callee and return/exception handler) close by the IH and the tagged evaluate_io_events_mono. Kernel-checked; axioms propext/Classical.choice/Quot.sound. It concerns FFI traces only; the untagged inst's FPSqrt numerical gap (flapjack-dshl) is unaffected."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "evaluate_io_events_mono",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateIoEventsMono.lean",
+    "lean_name": "evaluate_io_events_mono",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; bead flapjack-pxn.18.5.9.1.2), wordPropsScript.sml:1585-1631: HOL universally binds exps s1 res s2, assumes only evaluate (exps,s1) = (res,s2), and concludes the input FFI io_events is a list prefix of the output. Lean has the same binders, sole evaluation equality premise, and List.IsPrefix conclusion over the tagged faithful wordSem evaluate (curried instead of tupled). The proof uses the reviewed 26-clause rebound evaluate_ind: straight-line updates preserve FFI, Alloc/Inst/Store/Raise use exact helper invariance, FFI/ShareInst use the exact call_FFI event-prefix fact, Seq/Loop/Call compose recursive prefixes with unchanged cut/pop/push environment FFI projections. MustTerminate timeout restores the input state; every other outcome retains body events. Call continuation premises are exactly the rebound induction guards, with no successful-target-evaluation or universal simulation assumption. Canonical finite-support translation applies only to fpRegs/store of WordSemStateFiniteExact (locals/code remain Spt); same-module WordSemEventsMonoSupport.holFmapAsFiniteSupportWitness re-exports the checked state roundtrip. HOL type-indexed words use positive BitVec width with NeZero and the FFI host uses F : Type. Kernel-checked; independent coordinator review remains required before the bead closes."
+  }
+]

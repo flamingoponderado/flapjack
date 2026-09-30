@@ -1,0 +1,71 @@
+[
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_callProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
+    "lean_name": "loopCall_compile_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.7) against compile_correct at loop_callProofScript.sml:16-20: `∀v v1 res s1 l p nl. evaluate (v,v1) = (res,s1) ∧ res ≠ SOME Error ∧ comp l v = (p,nl) ∧ labels_in l v1.locals ⇒ evaluate (p,v1) = (res,s1) ∧ labels_in nl s1.locals`. Lean keeps the seven binders in order, the four premises and both conclusion conjuncts over the exact LoopSemStateFiniteExact.evaluate (evaluate_def), the tagged loopCallCompHOL (loop_call comp_def; num |-> num label map as Spt Nat) and the tagged labelsInHOL (labels_in_def). No extra hypothesis. Proof: lexicographic (clock, size) induction mirroring evaluate_ind over untagged case pieces (one per Resume block)."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_callProofScript.sml",
+    "hol_name": "evaluate_ShMem_neq_locals",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
+    "lean_name": "evaluate_ShMem_neq_locals",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.7) against evaluate_ShMem_neq_locals at loop_callProofScript.sml:412-415: `evaluate (ShMem op v ad, s) = (res, s') ∧ v ≠ n ∧ ¬ (∃x. res = SOME (FinalFFI x)) ∧ lookup n s.locals = x ⇒ lookup n s'.locals = x`; free variables quantified in order of occurrence (x at the Option word_loc type), premises and conclusion kept."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_callProofScript.sml",
+    "hol_name": "evaluate_ShMem_not_load_locals",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
+    "lean_name": "evaluate_ShMem_not_load_locals",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.7) against evaluate_ShMem_not_load_locals at loop_callProofScript.sml:424-427: `evaluate (ShMem op v ad, s) = (res, s') ∧ ¬is_load op ∧ ¬ (∃x. res = SOME (FinalFFI x)) ⇒ s.locals = s'.locals`; free variables in order of occurrence; loop_call$is_load is the tagged loopCallIsLoadHOL (is_load_def, Flapjack/Pancake/LoopCall/IsLoad.lean), proved equal to crepIsLoadMemOp and hence (crepIsLoadMemOp_eq_asmIsLoad) to the loop evaluator's tagged asmIsLoad (restated per coordinator review, 2026-09-29; bead flapjack-pxn.18.5.7.3.1)."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_callProofScript.sml",
+    "hol_name": "get_vars_front",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
+    "lean_name": "get_vars_front",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.7) against get_vars_front at loop_callProofScript.sml:273-275: `!xs ys s. get_vars xs s = SOME ys /\\ xs <> [] ==> get_vars (FRONT xs) s = SOME (FRONT ys)`; binders in order, get_vars the tagged getVars, FRONT on the (necessarily non-empty) lists as List.dropLast."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_callProofScript.sml",
+    "hol_name": "get_vars_last",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
+    "lean_name": "get_vars_last",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.7) against get_vars_last at loop_callProofScript.sml:300-302: `!xs ys s. get_vars xs s = SOME ys /\\ xs <> [] ==> lookup (LAST xs) s.locals = SOME (LAST ys)`; binders in order with the premise bound as h, LAST xs as xs.getLast h.2 and SOME (LAST ys) as some (ys.getLast (getVars_ne_nil h.1 h.2)), the non-emptiness of ys being derived from the successful get_vars on non-empty xs (restated per coordinator review, 2026-09-29)."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_callProofScript.sml",
+    "hol_name": "labels_in_def",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean",
+    "lean_name": "labelsInHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.7) against labels_in_def at loop_callProofScript.sml:11-14: `labels_in l locals = !n x. lookup n l = SOME x ==> lookup n locals = SOME (Loc x 0)`; l the num |-> num label map as Spt Nat (as in the tagged loopCallCompHOL), locals the word_loc num_map, Loc x 0 as WordLocW.loc x 0."
+  }
+]

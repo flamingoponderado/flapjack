@@ -1,0 +1,402 @@
+[
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "bitVec_even_shiftRight_one_double",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only generic BitVec arithmetic helper; no CakeML HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "bitVec_even_shift_double",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only generic BitVec arithmetic helper; no CakeML HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "bitVec_lowBit_zero_even",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only generic BitVec arithmetic helper; no CakeML HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "bitVec_one_toNat",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only generic BitVec arithmetic helper; no CakeML HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "crepArithHolFiniteDimensionMapCode_runtime",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only commuting equation for the source code-map update and its finite-dimension production runtime projection"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "crepArithHolFiniteDimensionSourceMapCode_runtime",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only commuting equation for code-map update and source-shaped finite-word runtime projection"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "crepArithHolMapCode_target",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only commuting equation between the fixed-width HOL-shaped state adapter and production code-map update."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "crepArithHolWordBitsMapCode_toBitVecState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only state projection equation showing the arbitrary code-map update is erased by the source-to-BitVec evaluator adapter"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "crepDest2ExpFuel_eq_bitVecSpec",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only implementation/spec bridge: production fuel-bounded recognition agrees with a value-recursive BitVec specification under a numeric bound. It does not identify either BitVec definition with HOL's implicit finite_index word carrier, so it is not a port of dest_2exp_def."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "crepDest2ExpFuel_holFiniteDimension",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only all-fuel transport of the power-of-two recognizer through an explicit arbitrary finite dimension enumeration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "crepDest2ExpFuel_holWordBits",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only finite-index word to BitVec transport for the executable recognizer; HOL applies dest_2exp directly to its polymorphic word carrier"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "crepDest2ExpFuel_sound",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only recursive soundness helper; HOL exposes only the public destination theorems"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "crepDest2ExpHolFiniteDimension_eq_lsl",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Untagged all-dimension transported dest_2exp support with HOL's natural-exponent lsl shape encoded by BitVec; no @[hol] claim pending exact finite_index representation review."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "crepDest2ExpHolFiniteDimension_eq_shift",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Finite-dimension support for dest_2exp_thm after transporting word_lsl through an explicit Lean enumeration; no HOL tag until that enumeration is related to finite_index"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "crepDest2ExpHolFiniteDimension_lt_width",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Finite-dimension support for the polymorphic dest_2exp bound; remains untagged because HolFiniteDimension is an explicit Lean enumeration and is not yet identified with HOL finite_index"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "crepDest2Exp_eq_bitVecSpec",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only RISC-V-width corollary of the fuel/spec bridge, using the width-derived production fuel bound. The recursive specification and recognizer are both BitVec-based, so this does not port HOL's polymorphic word-valued dest_2exp definition."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "crepDest2Exp_holFiniteDimension",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only width-bounded recognizer transport for arbitrary explicitly enumerated finite dimensions"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "crepDest2Exp_holWordBits",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only width-bounded wrapper around finite-index recognizer transport; no separate HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "crepDestConst_mapCrepExpWord",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only transport of the constant destination test through a word-carrier expression map"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "crepEvalCodeMapIrrel",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (Flapjack-only evaluator infrastructure; supports the local mapc update in simp_exp_correct1)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "crepEvalMulConstFiniteWordForModel",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack support lemma over explicit finite Boolean-index words. It isolates a runtime shift-law premise and is not an unrestricted HOL eval_mul_const port."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "crepEvalMulConstForModel",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack support lemma parameterized by a target-model shift law; its explicit operation premise and RiscV.Word carrier make it no generic HOL eval_mul_const port"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "crepEvalMulConstHolFiniteDimension",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only transport of constant-multiplication preservation across an explicit HolFiniteDimension representation; not a port of polymorphic HOL eval_mul_const"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "crepEvalMulConstHolFiniteWordSource",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only eval_mul_const support for the source-shaped finite-word runtime. It retains the explicit HolFiniteDimension carrier and is untagged pending exact evaluator correspondence."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "crepEvalMulConstRaw",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only adapter removing the one-constructor PanWordLab wrapper from the untagged target-specific support lemma"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "crepMulConst_holFiniteDimension",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only multiplication rewrite naturality across an arbitrary explicit finite dimension enumeration and BitVec conversion"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "crepMulConst_holWordBits",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only finite-index/BitVec naturality for the arithmetic multiplier rewrite; required for a generic word-carrier evaluator proof and has no standalone HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "crepSimpExpCorrect1",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Untagged all-width RISC-V production evaluator support theorem; it does not state the arbitrary source word-carrier theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "crepSimpExpCorrect1HolWordBits",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only all-width production evaluator result over canonical Fin width -> Bool numeric bit positions; the source-shaped counterpart is separately inventoried as a documented mismatch because evaluator operations still route through BitVec/RISC-V."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "crepSimpExpEvalPreserves",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only all-width RISC-V production-evaluator induction helper underlying the documented simp_exp_correct1 specialization; not the polymorphic HOL evaluator theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "crepSimpExpEvalPreservesHolFiniteDimension",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only all-constructor production evaluator preservation helper using an explicit finite-dimension RISC-V/BitVec interpretation"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "crepSimpExpEvalPreservesHolFiniteDimensionWithRuntime",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private Flapjack-only structural induction parameterized over a runtime and multiplication helper; it supplies support for the finite-word source-runtime preservation theorem but is not itself an HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "crepSimpExpEvalPreservesHolFiniteWordSource",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only recursive simplifier preservation over the source-shaped finite-word memory runtime; the carrier enumeration and transported word operations remain outside a proved HOL correspondence"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "crepSimpExpEvalPreservesHolWordBits",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only all-width evaluator preservation theorem over the canonical Fin-index word carrier; arbitrary finite dimension carriers remain open"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "crepSimpExpEvalPreservesHolWordBitsWordLab",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only Option/PanWordLab wrapper for finite-index evaluator preservation; it does not establish the arbitrary-carrier HOL result"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "crepSimpExp_holWordBits",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only all-constructor bottom-up simplifier naturality under the canonical Fin-index word/BitVec equivalence"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "crepSimpMulEval",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Target-specific recursive simp multiplication case; consumes only the documented untagged RISC-V evaluator support lemma"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "crepSimpMulEvalHolFiniteDimension",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private Flapjack-only proof of the CrepOp.mul simplifier case under an explicit finite-dimension RISC-V/BitVec evaluator interpretation"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "crepSimpMul_holWordBits",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only proof that the binary multiplication simplifier commutes with finite-index-to-BitVec conversion"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "evalCrepHolFiniteWordSourceExpWordLab_cmp_eq_wordCmpHOL",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only complete-result Cmp adapter: the source Option word_lab clause, transported to BitVec, is the tagged HOL word_cmp result wrapped in Word. The enclosing evaluator/state relation remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "evalCrepHolFiniteWordSourceExpWordLab_load32_eq_panMemLoad32HOL",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only complete-result Load32 adapter equation: after successful address evaluation, it transports Option word_lab through BitVec and matches the tagged HOL mem_load_32 result including w2w. The enclosing recursive evaluator/state encoding remains unproved against native HOL eval_def."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "evalCrepHolFiniteWordSourceExpWordLab_shift_eq_wordShiftHOL",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only complete-result Shift adapter: tagged HOL word_sh Option success/failure is preserved through the source Word wrapper and BitVec transport. The enclosing evaluator/state relation remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "evalCrepHolFiniteWordSourceExp_cmp_eq_wordCmpHOL",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only Cmp adapter equation: after successful child evaluations, the explicit finite-dimension Crep source evaluator returns the word embedding of tagged HOL word_cmp. No standalone HOL declaration states this representation bridge; full crepSem eval/state correspondence remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "evalCrepHolFiniteWordSourceExp_load32_eq_panMemLoad32HOL",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only Load32 adapter equation: after successful source address evaluation, it connects the explicit finite-dimension Crep source evaluator to the imported panMemLoad32HOL primitive. No standalone HOL theorem states this representation bridge; full crepSem eval/state correspondence remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "evalCrepHolFiniteWordSourceExp_loadGlob_eq_finiteDimension",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only adapter bridge for the LoadGlob evaluator case between the source-shaped finite-word equations and canonical finite-dimension evaluator"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "evalCrepHolFiniteWordSourceExp_op_eq_wordOpHOL",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only Op adapter equation: a successful mapped child-list evaluation is followed by tagged HOL word_op over the entire list; its Option arity failure is retained. No standalone HOL declaration states this representation bridge; full crepSem eval/state correspondence remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "evalCrepHolFiniteWordSourceExp_shift_eq_wordShiftHOL",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only Shift adapter equation: after successful child evaluations, it exposes tagged HOL word_sh with its Option failure and transports the result to the explicit finite-dimension carrier. No standalone HOL declaration states this representation bridge; full crepSem eval/state correspondence remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "holFiniteDimension_wordLsl_toBitVec",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only adapter from word-valued ShiftLeft amounts to natural-exponent BitVec.shiftLeft; finite_index representation relation remains open, so this is untagged support."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "holFiniteWord_mul_comm",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private Flapjack-only multiplication commutativity transport through the explicit finite-dimension BitVec model"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "one_lt_pow_two",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only generic BitVec arithmetic helper; no CakeML HOL declaration"
+  }
+]

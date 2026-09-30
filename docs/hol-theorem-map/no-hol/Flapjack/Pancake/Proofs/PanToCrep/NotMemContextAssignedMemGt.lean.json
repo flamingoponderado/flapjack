@@ -1,0 +1,106 @@
+[
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/NotMemContextAssignedMemGt.lean",
+    "lean_name": "afv_expHdl",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only private helper for the not_mem_context_assigned_mem_gt port over the exact compiler (bead flapjack-pxn.18.4.3.95.4); no separate CakeML HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/NotMemContextAssignedMemGt.lean",
+    "lean_name": "afv_nestedDecs_sub",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only private helper for the not_mem_context_assigned_mem_gt port over the exact compiler (bead flapjack-pxn.18.4.3.95.4); no separate CakeML HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/NotMemContextAssignedMemGt.lean",
+    "lean_name": "afv_nestedSeq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only private helper for the not_mem_context_assigned_mem_gt port over the exact compiler (bead flapjack-pxn.18.4.3.95.4); no separate CakeML HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/NotMemContextAssignedMemGt.lean",
+    "lean_name": "afv_panMap2_assign",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only private helper for the not_mem_context_assigned_mem_gt port over the exact compiler (bead flapjack-pxn.18.4.3.95.4); no separate CakeML HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/NotMemContextAssignedMemGt.lean",
+    "lean_name": "afv_storeGlobals",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only private helper for the not_mem_context_assigned_mem_gt port over the exact compiler (bead flapjack-pxn.18.4.3.95.4); no separate CakeML HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/NotMemContextAssignedMemGt.lean",
+    "lean_name": "afv_stores",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only private helper for the not_mem_context_assigned_mem_gt port over the exact compiler (bead flapjack-pxn.18.4.3.95.4); no separate CakeML HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/NotMemContextAssignedMemGt.lean",
+    "lean_name": "afv_zipWith_assign",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only private helper for the not_mem_context_assigned_mem_gt port over the exact compiler (bead flapjack-pxn.18.4.3.95.4); no separate CakeML HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/NotMemContextAssignedMemGt.lean",
+    "lean_name": "compileAfvOK",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only private helper for the not_mem_context_assigned_mem_gt port over the exact compiler (bead flapjack-pxn.18.4.3.95.4); no separate CakeML HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/NotMemContextAssignedMemGt.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier; forwards the PanToCrepContextExact roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/NotMemContextAssignedMemGt.lean",
+    "lean_name": "mem_retNames",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only private helper for the not_mem_context_assigned_mem_gt port over the exact compiler (bead flapjack-pxn.18.4.3.95.4); no separate CakeML HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/NotMemContextAssignedMemGt.lean",
+    "lean_name": "mem_vmaxNames",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only private helper for the not_mem_context_assigned_mem_gt port over the exact compiler (bead flapjack-pxn.18.4.3.95.4); no separate CakeML HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/NotMemContextAssignedMemGt.lean",
+    "lean_name": "okOfExtend",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only private helper for the not_mem_context_assigned_mem_gt port over the exact compiler (bead flapjack-pxn.18.4.3.95.4); no separate CakeML HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/NotMemContextAssignedMemGt.lean",
+    "lean_name": "wrapRtHOL_some",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only private helper for the not_mem_context_assigned_mem_gt port over the exact compiler (bead flapjack-pxn.18.4.3.95.4); no separate CakeML HOL declaration"
+  }
+]

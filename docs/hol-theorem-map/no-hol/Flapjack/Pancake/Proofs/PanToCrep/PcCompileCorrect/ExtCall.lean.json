@@ -1,0 +1,58 @@
+[
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/ExtCall.lean",
+    "lean_name": "compileExpWord",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only extraction of a single compiled/evaluated word expression from compile_exp_val_rel for ExtCall. HOL reasons inline; no standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/ExtCall.lean",
+    "lean_name": "extCall_foldl_max_ge",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only Nat fold maximum lower-bound helper for fresh ExtCall temporaries. HOL proves the analogous MAX_LIST arithmetic inline; no standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/ExtCall.lean",
+    "lean_name": "extCall_foldl_max_mono",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only Nat fold maximum monotonicity helper for fresh ExtCall temporaries. HOL proves the analogous MAX_LIST arithmetic inline; no standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/ExtCall.lean",
+    "lean_name": "extCall_mem_le_foldl_max",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only list-member bound helper for fresh ExtCall temporaries. HOL proves the analogous MAX_LIST_NOT_MEM fact inline; no standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/ExtCall.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module canonical finite-support relation witness required by the pcCompileCorrect_ExtCall qualifier; delegates to the checked roundtrip; no HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/ExtCall.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module canonical finite-support relation witness required by the pcCompileCorrect_ExtCall qualifier; delegates to the checked roundtrip; no HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/ExtCall.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module canonical finite-support relation witness required by the pcCompileCorrect_ExtCall qualifier; delegates to the checked roundtrip; no HOL declaration."
+  }
+]

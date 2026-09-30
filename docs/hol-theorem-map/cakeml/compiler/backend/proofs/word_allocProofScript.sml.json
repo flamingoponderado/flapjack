@@ -1,0 +1,158 @@
+[
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "apply_colour_exp_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/Expressions.lean",
+    "lean_name": "applyColourExpLemma",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-p3sk: compared word_allocProofScript.sml:744-782 and original word_exp_ind proof. Retains forall st w cst f res, source word_exp success, all 21 word_state_eq_rel field equalities, and strong_locals_rel only on domain(get_live_exp w), concluding target word_exp of apply_colour_exp succeeds with the same res. No target success, global injectivity, or extra post-state premise. Reviewed WordLangExpHOL constructors, fixed 5-bit Store Temp payload, both expression-valued Shift operands, exact Spt locals, positive BitVec width and universe-0 C/F carriers. Only fpRegs/store HOL finite maps use canonical finite-support representation; local imported-owner roundtrip witness is non-vacuous. Recursive proof follows original cases, transporting only successful Op argument values using domain_big_union_subset and restricting Shift live union separately; memory/domain/store are original state-relation projections."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "apply_nummap_key_domain",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/KeyMaps.lean",
+    "lean_name": "applyNummapKeyDomain",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-c source comparison (2026-09-30; bead flapjack-bqzw), word_allocProofScript.sml:267-275: universally binds arbitrary f and payload-polymorphic names, concludes full domain equality to IMAGE f (domain names), with no hypotheses. Lean predicate set equality expands IMAGE into existence of a source domain key whose f image equals the queried key. Proof uses unconditional exact fromAList key membership and toAList/lookup support, covering collisions and unrestricted Spt trees; no injection, target lookup, or well-formedness premise. Independent coordinator review remains required."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "domain_big_union_subset",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/LiveExpressions.lean",
+    "lean_name": "domainBigUnionSubset",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-94m6: compared HOL word_allocProof255-264, preserving forall ls a, MEM a ls implies domain(get_live_exp a) subset domain(big_union(MAP get_live_exp ls)). HOL sets are characteristic Nat predicates; subset is forall key membership implication. Exact positive-width word expression carrier and reviewed getLiveExp/bigUnion retain both Shift operands and right-fold left-biased Spt union. Proof mirrors list induction and uses reviewed external domain_union full equality, with no wf/injectivity or stronger membership premise. This is the live-set prerequisite explicitly used in apply_colour_exp_lemma Op case, not allocation simulation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "strong_locals_rel_UNION",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/StrongLocalsRel.lean",
+    "lean_name": "strongLocalsRelUnion",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-09-30, review repair flapjack-suav: re-compared HOL word_allocProof177-198,248-253,785-796. This declaration is payload-polymorphic over HOL num_map; Lean now binds alpha : Type and uses Spt alpha, with no word width/NeZero constraint. Removed previous incorrect word-only specialization and words qualifier. All quantified colours/live sets/trees/values and original lookup, subset, union or insertion conclusions retained. Insert keeps injection only on n INSERT live and relation on live DELETE n, not global injection. Generic proof kernel checked; state accessor/update callers still specialize the generic relation to WordLocW and retain their own word and canonical finite-map qualifiers. No runtime compiler implementation changed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "strong_locals_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/StrongLocalsRel.lean",
+    "lean_name": "strongLocalsRel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-09-30, review repair flapjack-suav: re-compared HOL word_allocProof177-198,248-253,785-796. This declaration is payload-polymorphic over HOL num_map; Lean now binds alpha : Type and uses Spt alpha, with no word width/NeZero constraint. Removed previous incorrect word-only specialization and words qualifier. All quantified colours/live sets/trees/values and original lookup, subset, union or insertion conclusions retained. Insert keeps injection only on n INSERT live and relation on live DELETE n, not global injection. Generic proof kernel checked; state accessor/update callers still specialize the generic relation to WordLocW and retain their own word and canonical finite-map qualifiers. No runtime compiler implementation changed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "strong_locals_rel_extend_aux",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/StrongLocalsRel.lean",
+    "lean_name": "strongLocalsRelExtendAux",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead .18.5.11.1.5: HOL word_allocProof922-929. Retains domain source subset s and strong_locals_rel on s, concludes arbitrary t relation; existing successful source lookup establishes domain membership. Payload-polymorphic Spt alpha (not WordLoc-specialized), HOL set inclusion rendered characteristic-predicate implication; arbitrary f, no injection/target-success/global relation premise. Exact existing generic relation definition and lookup-domain equivalence used; no representation qualifier needed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "strong_locals_rel_get_var",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/StrongLocalsRel.lean",
+    "lean_name": "strongLocalsRelGetVar",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-pxn.18.5.11.1.1: compared word_allocProofScript.sml:177-253. HOL live sets are predicates Nat -> Prop, union is pointwise disjunction and subset is universal implication. Source/target locals are exact Spt WordLocW maps. All quantified variables, conjunctive premises and lookup/list/domain conclusions match HOL; no injectivity or stronger live-set premise is added. get_vars preserves source argument order and repeated arguments by list induction. Positive HOL word dimension is BitVec width with NeZero; WordSemStateFiniteExact is the actual exact evaluator state, globals are absent, fpRegs/store use the canonical finite-support carrier with imported roundtrip witness, locals/code remain Spt. This establishes lookup transport prerequisites, not evaluate_apply_colour or allocator correctness. Polymorphism repair source review 2026-09-30, bead flapjack-suav: the unchanged state theorem now instantiates generic strongLocalsRel at alpha = WordLocW width; its elaborated relation application no longer supplies width/NeZero directly. Re-compared original state accessor premises (206-245) or scoped update premises (865-890,906-920), preserving all state carriers, source-success conditions, lengths and scoped injection/domain side conditions. The theorem remains word-state-specific and retains its existing positive-width and canonical finite-map qualifiers; only the relation definition is generalized. Refreshed this changed elaborated type hash with no statement strengthening."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "strong_locals_rel_get_var_imm",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/StrongLocalsRel.lean",
+    "lean_name": "strongLocalsRelGetVarImm",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead .18.5.11.1.3: word_allocProof218-226 retains original strong_locals_rel on state locals, live key condition only for Reg and True for Imm, source get_var_imm success, concluding renamed target success with same WordLocW result. No targetrun, injection or extra liveness premise. Exact Spt locals and WordRegImm over positive BitVec width; C/F universe-0 state. Only fpRegs/store canonical finite-support fields translated; existing same-module StrongLocalsWitnesses roundtrip names the evaluator owning carrier. Proof original case split and existing exact strong_locals_rel_get_var transport."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "strong_locals_rel_get_vars",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/StrongLocalsRel.lean",
+    "lean_name": "strongLocalsRelGetVars",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-pxn.18.5.11.1.1: compared word_allocProofScript.sml:177-253. HOL live sets are predicates Nat -> Prop, union is pointwise disjunction and subset is universal implication. Source/target locals are exact Spt WordLocW maps. All quantified variables, conjunctive premises and lookup/list/domain conclusions match HOL; no injectivity or stronger live-set premise is added. get_vars preserves source argument order and repeated arguments by list induction. Positive HOL word dimension is BitVec width with NeZero; WordSemStateFiniteExact is the actual exact evaluator state, globals are absent, fpRegs/store use the canonical finite-support carrier with imported roundtrip witness, locals/code remain Spt. This establishes lookup transport prerequisites, not evaluate_apply_colour or allocator correctness. Polymorphism repair source review 2026-09-30, bead flapjack-suav: the unchanged state theorem now instantiates generic strongLocalsRel at alpha = WordLocW width; its elaborated relation application no longer supplies width/NeZero directly. Re-compared original state accessor premises (206-245) or scoped update premises (865-890,906-920), preserving all state carriers, source-success conditions, lengths and scoped injection/domain side conditions. The theorem remains word-state-specific and retains its existing positive-width and canonical finite-map qualifiers; only the relation definition is generalized. Refreshed this changed elaborated type hash with no statement strengthening."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "strong_locals_rel_insert",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/StrongLocalsRel.lean",
+    "lean_name": "strongLocalsRelInsert",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-09-30, review repair flapjack-suav: re-compared HOL word_allocProof177-198,248-253,785-796. This declaration is payload-polymorphic over HOL num_map; Lean now binds alpha : Type and uses Spt alpha, with no word width/NeZero constraint. Removed previous incorrect word-only specialization and words qualifier. All quantified colours/live sets/trees/values and original lookup, subset, union or insertion conclusions retained. Insert keeps injection only on n INSERT live and relation on live DELETE n, not global injection. Generic proof kernel checked; state accessor/update callers still specialize the generic relation to WordLocW and retain their own word and canonical finite-map qualifiers. No runtime compiler implementation changed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "strong_locals_rel_set_var_dom",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/Updates.lean",
+    "lean_name": "strongLocalsRelSetVarDom",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-g56n: compared word_allocProof865-890 and906-920. HOL INJ f X UNIV is injection restricted to X (UNIV output membership tautological), source locals domain subset X and set ns subset X are predicate implications. The list theorem retains original LENGTH ns = LENGTH ls even though internal exact alist-insert induction proves a stronger helper. The single theorem retains X n. Original strong_locals_rel live set d and post-update relation are unchanged. Exact alist_insert is head insertion after tail, preserving first occurrence on duplicate names; proof propagates domain containment and applies scoped lookup injection at each update. Actual imported exact WordSem state, canonical fpRegs/store map witness, positive BitVec/NeZero widths. No global injection, target evaluation, or stronger live-domain premise. These are allocation update prerequisites, not full allocator simulation. Polymorphism repair source review 2026-09-30, bead flapjack-suav: the unchanged state theorem now instantiates generic strongLocalsRel at alpha = WordLocW width; its elaborated relation application no longer supplies width/NeZero directly. Re-compared original state accessor premises (206-245) or scoped update premises (865-890,906-920), preserving all state carriers, source-success conditions, lengths and scoped injection/domain side conditions. The theorem remains word-state-specific and retains its existing positive-width and canonical finite-map qualifiers; only the relation definition is generalized. Refreshed this changed elaborated type hash with no statement strengthening."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "strong_locals_rel_set_vars_dom",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/Updates.lean",
+    "lean_name": "strongLocalsRelSetVarsDom",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-g56n: compared word_allocProof865-890 and906-920. HOL INJ f X UNIV is injection restricted to X (UNIV output membership tautological), source locals domain subset X and set ns subset X are predicate implications. The list theorem retains original LENGTH ns = LENGTH ls even though internal exact alist-insert induction proves a stronger helper. The single theorem retains X n. Original strong_locals_rel live set d and post-update relation are unchanged. Exact alist_insert is head insertion after tail, preserving first occurrence on duplicate names; proof propagates domain containment and applies scoped lookup injection at each update. Actual imported exact WordSem state, canonical fpRegs/store map witness, positive BitVec/NeZero widths. No global injection, target evaluation, or stronger live-domain premise. These are allocation update prerequisites, not full allocator simulation. Polymorphism repair source review 2026-09-30, bead flapjack-suav: the unchanged state theorem now instantiates generic strongLocalsRel at alpha = WordLocW width; its elaborated relation application no longer supplies width/NeZero directly. Re-compared original state accessor premises (206-245) or scoped update premises (865-890,906-920), preserving all state carriers, source-success conditions, lengths and scoped injection/domain side conditions. The theorem remains word-state-specific and retains its existing positive-width and canonical finite-map qualifiers; only the relation definition is generalized. Refreshed this changed elaborated type hash with no statement strengthening."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "strong_locals_rel_subset",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/StrongLocalsRel.lean",
+    "lean_name": "strongLocalsRelSubset",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead .18.5.11.1.5: HOL word_allocProof659-667. Retains subset s into larger and generic strong_locals_rel on larger, concludes same source/target relation on s. Payload-polymorphic Spt alpha (not WordLoc-specialized), HOL set inclusion rendered characteristic-predicate implication; arbitrary f, no injection/target-success/global relation premise. Exact existing generic relation definition and lookup-domain equivalence used; no representation qualifier needed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "strong_locals_rel_subset_domain",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/StrongLocalsRel.lean",
+    "lean_name": "strongLocalsRelSubsetDomain",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-09-30, review repair flapjack-suav: re-compared HOL word_allocProof177-198,248-253,785-796. This declaration is payload-polymorphic over HOL num_map; Lean now binds alpha : Type and uses Spt alpha, with no word width/NeZero constraint. Removed previous incorrect word-only specialization and words qualifier. All quantified colours/live sets/trees/values and original lookup, subset, union or insertion conclusions retained. Insert keeps injection only on n INSERT live and relation on live DELETE n, not global injection. Generic proof kernel checked; state accessor/update callers still specialize the generic relation to WordLocW and retain their own word and canonical finite-map qualifiers. No runtime compiler implementation changed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "word_state_eq_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/StateRelation.lean",
+    "lean_name": "wordStateEqRel",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-v5vz: compared word_allocProofScript.sml:148-170 field by field, all21 equalities in original target=source order. Includes locals_size, stack_limit/max/size, memory/domains, gc_fun, handler, clock, code, ffi, be, termdep, compile/oracle and buffers; omits precisely locals and permute. No relation strengthening. Uses the actual imported exact WordSemStateFiniteExact owner with canonical fpRegs/store finite maps and checked imported roundtrip witness; locals/code/stackSize retain Spt. Positive word dimension and universe0 host types are retained. Definition-body lock records the full field conjunction. This is a prerequisite relation, not allocator correctness."
+  }
+]

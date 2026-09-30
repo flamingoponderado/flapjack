@@ -1,0 +1,10 @@
+[
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect.lean",
+    "lean_name": "pcCompileCorrectAt_skip",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.4.3.94): the Skip case of HOL pc_compile_correct (pan_to_crepProofScript.sml:442-468, resumed at :493-497), stated against pcCompileCorrectAt, the HOL induction predicate P (v, v1) over the tagged total evaluateHOLFiniteState / evalCrepSemHOLProgExact, the tagged compileProgExactHOLW, and the tagged exact state_rel/code_rel/excp_rel/locals_rel/globals_lookup/localised_prog. It has all HOL hypotheses and conclusion conjuncts, an existential target run, and no target-run or post-state premise. Untagged because it is one constructor case; the assembled pc_compile_correct remains open."
+  }
+]

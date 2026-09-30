@@ -1,0 +1,194 @@
+[
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "CrepSemHOLFiniteState.toSourceEvaluatorState_mapc",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only projection equation: expression evaluation ignores the arbitrary code-entry map, so the exact finite-map map2 update projects to the same source evaluator state."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "CrepSemHOLState.FLOOKUP_mapc",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only lookup equation for the CrepArith-local mapc support; the helper mirrors HOL FMAP_MAP2, but native evaluator correspondence remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "CrepSemHOLState.toBitVecEvaluatorState_mapc",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only equality for the direct BitVec expression-evaluator projection under CrepArith mapc; it is not an eval_def correspondence."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "CrepSemHOLState.toExpressionEvaluatorState_mapc",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only projection equation for CrepArith-local mapc support; it concerns the source evaluator projection and is not an eval_def port."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "CrepSemHOLState.toExpressionEvaluatorState_toHolFiniteBitVecState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only full evaluator-state equality for the exact finite-map carrier through canonical Fin width to the direct BitVec view. It does not establish arbitrary HOL finite_index or native eval_def correspondence."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "CrepSemHOLState.toExpressionEvaluatorState_toHolFiniteBitVecState_baseAddress",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only base-address word conversion equation for the exact HOL-shaped state under the canonical BitVec view; no native eval_def correspondence is asserted."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "CrepSemHOLState.toExpressionEvaluatorState_toHolFiniteBitVecState_globals",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only finite-map lookup projection equation for exact globals through Fin width to the direct BitVec view; arbitrary HOL finite_index remains separate."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "CrepSemHOLState.toExpressionEvaluatorState_toHolFiniteBitVecState_locals",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only finite-map lookup projection equation for exact locals through Fin width to the direct BitVec view; arbitrary HOL finite_index remains separate."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "CrepSemHOLState.toExpressionEvaluatorState_toHolFiniteBitVecState_memaddrs",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only representation equation connecting the exact HOL-shaped address-domain projection through Fin width to the direct BitVec view; it does not identify arbitrary HOL finite_index."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "CrepSemHOLState.toExpressionEvaluatorState_toHolFiniteBitVecState_memory",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only representation equation connecting the exact HOL-shaped state memory projection through Fin width to the direct BitVec view; it does not identify arbitrary HOL finite_index."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "CrepSemHOLState.toExpressionEvaluatorState_toHolFiniteBitVecState_shMemaddrs",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only representation equation connecting the exact HOL-shaped shared-memory domain through Fin width to the direct BitVec view; arbitrary HOL finite_index remains separate."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "CrepSemHOLState.toExpressionEvaluatorState_toHolFiniteBitVecState_topAddress",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only top-address word conversion equation for the exact HOL-shaped state under the canonical BitVec view; no native eval_def correspondence is asserted."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "CrepSemHOLState.toHolFiniteWordRuntime_instFin_eq_toHolWordBitsRuntime",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only definitional equality between the canonical Fin width runtime adapter and existing word-bits runtime adapter."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "crepArithLookupCodeHOLFinite_mapcs",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only companion (bead flapjack-pxn.18.5.4.12) of the tagged crepArithLookupCodeNativeHOL (HOL local lookup_code, crep_arithProofScript.sml:162). It restates that lemma at the untagged finite-support wrapper lookupCodeHOLFinite that the tagged Crep evaluator's Call clause applies to (mapcs s).code: the simp_prog-mapped lookup returns the simplified body with the same callee locals. It is not a HOL declaration; it is stated with the shared mapcs renderer crepSimpMapcsHOL and bridges the wrapper for native simp_prog_correct Call/DecCall cases."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "crepDestConstHOL_eq_some_implies",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only constructor inversion helper for tagged dest_const_def. HOL uses ordinary datatype equality reasoning here; no separate HOL declaration is being ported."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "crepHolState_eq_of_fields",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only record extensionality helper for CrepHolState; it has no HOL theorem counterpart."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "crepShMemLoadExactHOL_mapc",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific kernel helper for the HOL crep_arithProofScript.sml:173-180 Cases_on op step: the exact sh_mem_load instance of the mapc code-commutation. It has no separate HOL original."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "crepShMemStoreExactHOL_mapc",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific kernel helper for the HOL crep_arithProofScript.sml:173-180 Cases_on op step: the exact sh_mem_store instance of the mapc code-commutation. It has no separate HOL original."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "crepSimpExpHOL_mul_eq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only equation view of the generated Mul branch of tagged simp_exp_def; HOL has the equation as part of that function definition, not as a separate theorem declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "crepSimpMapcsHOL_eq_mapc",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only rfl bridge (bead flapjack-pxn.18.5.4.12): the shared mapcs renderer crepSimpMapcsHOL (SimpProgCorrect.lean) equals CrepSemHOLState.mapc applied to the proof script's mapcs lambda (\\(s,n,p). (n, simp_prog p)), crep_arithProofScript.sml:160. This keeps a single mapped-state predicate for the simp_prog_correct assembly. It is not a HOL declaration (HOL mapcs is an Overload)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "evalCrepHolFiniteWordSourceExp_mapc_projection",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only source evaluator invariance under the CrepArith-local mapc projection; native HOL eval correspondence remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "evalCrepRuntimeExp_exactCrepSemHOLState_projection",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only all-constructor evaluator transport from the exact-state expression projection to the direct BitVec-state evaluator. The bridge still specializes the HOL finite_index carrier to canonical Fin width."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "evalCrepSemHOLStateSource_load32_eq_memLoad32HOL",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only Load32 clause transport for the all-width source evaluator to the tagged mem_load_32_def port over the direct BitVec projection; the enclosing recursive eval_def relation remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module re-export of the existing CrepSemHOLState/CrepSemBroadState toBroad/ofBroad finite-support roundtrip, required by the finite-map qualifiers on the tagged simp_exp_correct1 Var, Const, LoadGlob, BaseAddr, TopAddr, Load, Load32, LoadByte, Cmp, and Shift case ports. It introduces no carrier and has no separate HOL declaration."
+  }
+]

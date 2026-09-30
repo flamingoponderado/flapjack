@@ -1,0 +1,26 @@
+[
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrect/Assembly.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module canonical finite-support witness for crepArithSimpProgCorrect: the exact state and broad counterpart roundtrip through toBroad/ofBroad; this is Flapjack representation infrastructure, not a HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrect/Assembly.lean",
+    "lean_name": "simpProgCorrectOfExtCall",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only preparation for bead flapjack-pxn.18.5.4.26 (untagged, no HOL claim): assembles all tagged simp_prog_correct constructor cases via the tagged Crep evaluate_ind port evalCrepSemHOLProgExact_induct into ∀ p s, simpProgCorrectAt p s, taking the ExtCall case as an explicit hypothesis. The Call IHs are bridged from the induction principle's un-normalized form, as in the reviewed ncompile assembly. The tagged HOL simp_prog_correct (crepArithSimpProgCorrect) is this assembly applied to the tagged simpProgCorrectExtCallCase."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrect/Assembly.lean",
+    "lean_name": "simpProgLookupCodeFinite_eq_HOLFinite",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only bridge between the evaluator's lookupCodeFiniteHOL and the induction principle's lookupCodeHOLFinite on a finite-support code map (copy of the private ncompile assembly helper); used to discharge the Call IH bridging in simpProgCorrectOfExtCall."
+  }
+]

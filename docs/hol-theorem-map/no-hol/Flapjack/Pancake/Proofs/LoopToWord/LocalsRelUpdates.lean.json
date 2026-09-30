@@ -1,0 +1,10 @@
+[
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/LocalsRelUpdates.lean",
+    "lean_name": "localsRelHOLFromAListToAList",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific private transport lemma for localsRelHOLAlistInsertToAList: replaces the target Spt by fromAList (toAList env) in localsRelHOL and lifts the relation using the unrestricted external HOL lookup_fromAList_toAList fact. There is no separate CakeML declaration for this helper; it is proof infrastructure for tagged locals_rel_alist_insert_toAList, not an exact HOL port."
+  }
+]

@@ -1,0 +1,50 @@
+[
+  {
+    "hol_path": "cakeml/compiler/backend/stack_removeScript.sml",
+    "hol_name": "halt_inst_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove.lean",
+    "lean_name": "haltInst",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (bead flapjack-j815): exact. HOL stack_removeScript.sml:58-60 halt_inst w = Seq (const_inst 1 w) (Halt 1); Lean haltInst value = .seq (.inst (.const 1 value)) (.halt 1) over the exact HolProg carrier, using the reviewed const_inst overload. No extra hypotheses beyond [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_removeScript.sml",
+    "hol_name": "max_stack_alloc_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove.lean",
+    "lean_name": "maxStackAlloc",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-main (HOL/Lean source comparison: both are the constant 255)"
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_removeScript.sml",
+    "hol_name": "stack_err_lab_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove.lean",
+    "lean_name": "stackErrLab",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-main (HOL/Lean source comparison: both are the constant 2)"
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_removeScript.sml",
+    "hol_name": "store_length_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove.lean",
+    "lean_name": "storeLength",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-main (HOL/Lean source comparison: EVEN-rounded LENGTH store_list, even so equals 48)"
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_removeScript.sml",
+    "hol_name": "store_list_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove.lean",
+    "lean_name": "storeList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-main (HOL/Lean source comparison: same 16 base store names followed by Temp 00w..Temp 31w, 48 entries)"
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/stack_removeScript.sml",
+    "hol_name": "word_offset_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove.lean",
+    "lean_name": "wordOffset",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-main (HOL/Lean source comparison: n2w (dimindex(:'a) DIV 8 * n); Lean width-indexed BitVec.ofNat width (width/8 * n) with [NeZero width] matching HOL's nonzero dimension)"
+  }
+]

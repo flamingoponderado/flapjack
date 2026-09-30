@@ -1,0 +1,74 @@
+[
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Assign.lean",
+    "lean_name": "compileLocalAssignTarget",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only helper for the pc_compile_correct Assign case (bead flapjack-pxn.18.4.3.105); HOL proves this reasoning inline in the Assign Resume block (eval_nested_assign_distinct_eq, eval_nested_decs_seq_res_var_eq, FUPDATE_LIST_APPEND_COMMUTES), so there is no separate CakeML HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Assign.lean",
+    "lean_name": "fupdListZipMemIndep",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only helper for the pc_compile_correct Assign case (bead flapjack-pxn.18.4.3.105); HOL proves this reasoning inline in the Assign Resume block (eval_nested_assign_distinct_eq, eval_nested_decs_seq_res_var_eq, FUPDATE_LIST_APPEND_COMMUTES), so there is no separate CakeML HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Assign.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_Assign; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Assign.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_Assign; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Assign.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_Assign; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Assign.lean",
+    "lean_name": "mapM_congr_mem''",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only helper for the pc_compile_correct Assign case (bead flapjack-pxn.18.4.3.105); HOL proves this reasoning inline in the Assign Resume block (eval_nested_assign_distinct_eq, eval_nested_decs_seq_res_var_eq, FUPDATE_LIST_APPEND_COMMUTES), so there is no separate CakeML HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Assign.lean",
+    "lean_name": "map_eq_of_mapM_eq_some",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only helper for the pc_compile_correct Assign case (bead flapjack-pxn.18.4.3.105); HOL proves this reasoning inline in the Assign Resume block (eval_nested_assign_distinct_eq, eval_nested_decs_seq_res_var_eq, FUPDATE_LIST_APPEND_COMMUTES), so there is no separate CakeML HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Assign.lean",
+    "lean_name": "pcCompileCorrectAt_assign",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only curried form of the pc_compile_correct Assign case against pcCompileCorrectAt (bead flapjack-pxn.18.4.3.105); the HOL-shaped statement is the tagged pcCompileCorrect_Assign"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Assign.lean",
+    "lean_name": "updateListEq_zip_comm",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only helper for the pc_compile_correct Assign case (bead flapjack-pxn.18.4.3.105); HOL proves this reasoning inline in the Assign Resume block (eval_nested_assign_distinct_eq, eval_nested_decs_seq_res_var_eq, FUPDATE_LIST_APPEND_COMMUTES), so there is no separate CakeML HOL declaration"
+  }
+]

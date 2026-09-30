@@ -1,0 +1,172 @@
+[
+  {
+    "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
+    "hol_name": "comp_func_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/ContextExact.lean",
+    "lean_name": "compFuncHOLExact",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_parameters": [
+      "fs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-09-28, bead flapjack-pxn.18.5.6.30) against crep_to_loopScript.sml:235-241: comp_func target fs params body = let vmap = make_vmap params; vmax = LENGTH params - 1; l = list_to_num_set (GENLIST I (LENGTH params)) in compile (mk_ctxt target vmap fs vmax) l body. Lean keeps HOL's target/fs/params/body binder order and the same let order: make_vmap is the exact-carrier makeVmapExact (FEMPTY |++ ZIP (params, GENLIST I (LENGTH params)) rendered as HolFiniteMapExact.updateListEq empty (params.zip (List.range params.length)), so a later duplicate parameter shadows an earlier one), vmax is params.length - 1, the live set list_to_num_set (GENLIST I (LENGTH params)) is built by the untagged source-shaped right-recursive helper listToNumSetHOLExact (List.range params.length) (listToNumSetHOLExact [] = LN and listToNumSetHOLExact (k :: ks) = sptInsert k () (listToNumSetHOLExact ks), matching HOL sptree$list_to_num_set_def rather than a left fold; the earlier sptListInsert left-fold rendering was repaired on 2026-09-28 under bead flapjack-pxn.18.5.6.30.2), and compile is the tagged compileHOLExact with the tagged mkCtxtExact. The standalone fs finite-map parameter is a same-module HolFiniteMapExact binder with checked parameter witness holFmapAsFiniteSupportParamWitness_compFuncHOLExact_fs; the words qualifier records the indexed CrepProgHOL/HolLoopProg word translation. This is proof-side exact infrastructure; production compileCrepToLoop does not route through it (tracked separately). No executable behavior or performance exception is claimed."
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
+    "hol_name": "compile_crepop_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/ContextExact.lean",
+    "lean_name": "compileCrepopHOLExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison (2026-09-28, bead flapjack-pxn.18.5.6.27) against crep_to_loopScript.sml:42-48. The sole CrepOp constructor Mul follows both source architecture branches: ARMv7 returns LLongMul tmp (tmp+1) x y and tmp+1; every other exact asm architecture returns LLongMul tmp tmp x y and tmp. The live-set parameter is unused in HOL and Lean. The indexed HolLoopProg result is the exact program carrier; word qualification records the standard indexed word translation. The RISC-V direct original row is scripts/hol-probes/compile_crepop_probe.out; the exact RISC-V case is covered through the compile_exp crepop_mul row in Flapjack.Test.CrepToLoopCompileExpExactParity. No production route is claimed."
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
+    "hol_name": "compile_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/ContextExact.lean",
+    "lean_name": "compileHOLExact",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison (2026-09-28, bead flapjack-pxn.18.5.6.28) against crep_to_loopScript.sml:120-213. Compared all 19 source equations: Skip/Break/Continue/Tick; Return's compile_exps, fresh destinations, MAP2 assignments and nested_seq; Raise's vmax+1 assignment; ShMem's mapped-name guard; Store/Store32/StoreByte temporary sequencing; StoreGlob; recursive Seq; mapped Assign and Primitive with skip on missing vars; Dec's FUPDATE of vars/vmax and insert into the incoming live set; If's two recursive branches and original live set; While's Loop and Continue/Break structure; Call's find_lab, argument temps, rt_vars sentinel, return set, exception/handler branch; and ExtCall's four-name guard. The carriers are CrepProgHOL width/HolLoopProg width and CrepToLoopContextExact; vars/funcs are the checked same-module HolFiniteMapExact fields and the two qualifiers record exactly that finite-map translation and the positive indexed BitVec word translation. Direct HOL rows for all 19 constructors plus nested_seq empty/one/two are in scripts/hol-probes/crep_to_loop_compile_probe.out; exact Lean equations are checked in Flapjack.Test.CrepToLoopCompileExactParity. This is proof-side infrastructure only: production compileCrepToLoop still consumes generic CrepProg/LoopProg (String names and list live sets) and does not route through this definition. The production bridge is tracked by a linked bead; no executable behavior or performance exception is claimed."
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
+    "hol_name": "compile_exp_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/ContextExact.lean",
+    "lean_name": "compileExpHOLExact",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison (2026-09-28, bead flapjack-pxn.18.5.6.27) against crep_to_loopScript.sml:50-95. Compared BaseAddr/TopAddr/Const, vars FLOOKUP with 0 fallback, recursive Load/Load32/LoadByte, LoadGlob to Lookup, mapped Op, Crepop temporary assignments and target-specific long multiply, Cmp's two recursive calls and prog_if temporaries, and Shift's ordered recursive calls. The exact carriers are CrepExpHOL width, HolLoopExp/HolLoopProg, and CrepToLoopContextExact; vars/funcs use its checked finite-support witness and the word qualifier records the positive indexed BitVec translation. Direct EVAL rows base, var_hit, load32, op_nary, crepop_mul, cmp, shift, compile_exps are captured in scripts/hol-probes/crep_to_loop_compile_exp_probe.out and checked by Flapjack.Test.CrepToLoopCompileExpExactParity. `compile_exps` is a local source helper with no separate HOL declaration. This is proof-side exact infrastructure: generic production loopCompileExp does not route through it. The exact `compile_def` port is now `compileHOLExact`; routing production through it is tracked by flapjack-pxn.18.5.6.28.1, and the dependent exact `comp_func_def` port remains tracked by flapjack-pxn.18.5.6.35."
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
+    "hol_name": "compile_prog_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/ContextExact.lean",
+    "lean_name": "compileProgHOLExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-09-28, bead flapjack-pxn.18.5.6.30.1; crep_to_loopScript.sml:257-265): the HOL definition has two curried binders target and prog with no premises. Let fnums = GENLIST (n. n + first_name) (LENGTH prog); comp = comp_func target (make_funcs prog) in MAP2 (n (name,params,body). (n, (GENLIST I o LENGTH) params, loop_live$optimise (comp params (crep_arith$simp_prog body)))) fnums prog. compileProgHOLExact has the same binders/order and body, using tagged compFuncHOLExact, crepSimpProgHOL, optimiseHOL and firstLoopName plus the lawful-equality executable companion crepToLoopMakeFuncsExactExecutable. Its lookup is kernel-proved equal to the generic tagged make_funcs_def port crepToLoopMakeFuncsExactHOL by crepToLoopMakeFuncsExactExecutable_lookup_eq_HOL; this computational specialization preserves the exact HOL lookup. The input carrier is List (MlString x List Nat x CrepProgHOL width), matching HOL (mlstring # num list # 'a crepLang$prog) list; the result is List (Nat x List Nat x HolLoopProg width), matching HOL (num # num list # 'a loopLang$prog) list. List.zipWith models HOL MAP2 (both truncate to the shorter list; here the two lists have equal length). List.range n models GENLIST I n. The maps built by make_funcs and comp_func are local intermediates, not binders of compile_prog_def, so no finite-map qualifier applies to compileProgHOLExact. The generic make_funcs_def port carries fmap_as_finite_support_result and its same-module lookup witness; HOL alist_to_fmap first-inserted-wins is restored by reversing before the update fold. The only outer type translation is HOL's positive type-indexed 'a word to BitVec width with [NeZero width], recorded by words_as_type_indexed_bitvec. No premise, success condition, or output case is added. Direct original HOL EVAL rows cp_fnums/cp_params/cp_body/cp_length/cp_call_fnums/cp_call_params/cp_call_body are in scripts/hol-probes/crep_to_loop_compile_prog_probe.out and replayed by Flapjack.Test.CrepToLoopCompileProgParity. The parser-backed byte/image/runtime-image entry points invoke compileProgHOLExact after executable checks establish byte-ranged function and nested Crep names. The canonical HolLoopProg projection is followed by an untagged source-pipeline label rebase from HOL firstLoopName+n (64+n) to the caller-selected production label base. It rewrites emitted function-row labels, direct function-call targets, and locValue code sources in that generated interval; it leaves Loop break/continue labels and other local identifiers intact. The 166-program original Pancake corpus and routed fixtures are regression evidence for observed outputs, not a kernel-checked whole-program execution-equivalence proof. The exact remaining code-table key and runtime WordLoc/state relation is tracked separately and remains open. The generic non-byte-name fallback remains available; no performance exception is claimed."
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
+    "hol_name": "context",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/ContextExact.lean",
+    "lean_name": "CrepToLoopContextExact",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs"
+    ],
+    "reviewer": "flapjack-luna-b source comparison (2026-09-28, bead flapjack-pxn.18.5.6.27.1) against crep_to_loopScript.sml:11-18 and crepLangScript.sml:19-21. The record preserves field order and types: vars num |-> num; funcs mlstring |-> num # num; vmax num; target asm$architecture. Lean uses HolFiniteMapExact for both finite maps, MlString for the HOL funname key, Nat for num, and the exact AsmArchitecture carrier. The canonical same-module toBroad/ofBroad roundtrip witness is kernel checked. Production LoopContext remains a separate list/String representation."
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
+    "hol_name": "find_lab_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/ContextExact.lean",
+    "lean_name": "findLabExact",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "funcs"
+    ],
+    "reviewer": "flapjack-luna-b source comparison (2026-09-28, bead flapjack-pxn.18.5.6.27.1) against crep_to_loopScript.sml:27-32. The function looks up the MlString key in context.funcs, returns the first tuple component on SOME, and 0 on NONE, matching HOL find_lab. The direct original HOL rows find_lab_hit=T and find_lab_miss=T are in scripts/hol-probes/crep_to_loop_context_defs_probe.out and are guarded for both production and exact-carrier paths in Flapjack/Test/CrepFindLabParity.lean. This exact helper does not claim production String-key routing."
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
+    "hol_name": "find_var_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_name": "findVarHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Exact port over the exact finite-map context carrier CrepToLoopFiniteMapContext (vars : FiniteMap Nat Nat, funcs : FiniteMap FunName (Nat × Nat)), matching HOL crep_to_loop$context fields (crepLang$varname = num, crepLang$funname = mlstring); default 0 on lookup miss; word-length independent so no width-indexing. Direct HOL oracle rows find_var_hit/find_var_miss/find_lab_hit/find_lab_miss in scripts/hol-probes/crep_to_loop_context_defs_probe.out reproduced by Lean guards in Flapjack/Test/CrepToLoopParity.lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
+    "hol_name": "first_name_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop.lean",
+    "lean_name": "firstLoopName",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex (statement compared against first_name_def at crep_to_loopScript.sml:243; HOL first_name = 64 rendered as the Nat definition 64; direct HOL-EVAL row first_name=64 reproduced by a Lean guard)"
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
+    "hol_name": "gen_temps_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop.lean",
+    "lean_name": "genTemps",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex (statement compared against gen_temps_def at crep_to_loopScript.sml:101; HOL GENLIST (\\x. n + x) l rendered as (List.range l).map (fun x => n + x); direct HOL-EVAL row gen_temps_3=[5;6;7] reproduced by a Lean guard in Flapjack/Test/CrepToLoopParity.lean)"
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
+    "hol_name": "make_funcs_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/ContextExact.lean",
+    "lean_name": "crepToLoopMakeFuncsExactHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_result",
+    "fmap_as_finite_support_result": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-29; bead flapjack-pxn.18.5.6.33.22.1) against crep_to_loopScript.sml:247-255: HOL make_funcs has one prog binder, polymorphic in all three triple components (key type α, parameter-element type β, ignored body type γ), and returns alist_to_fmap fs after computing MAP FST prog, GENLIST (n. n + first_name) (LENGTH prog), MAP (LENGTH o FST o SND) prog and the two MAP2 associations. Lean preserves that full generic shape as List (α × List β × γ) → HolFiniteMapExact α (Nat × Nat), with no typeclass binder; Classical.propDecidable is local to the definition body solely to interpret HOL equality. It zips with List.range, maps each entry to (name, (firstLoopName + index, parameter-count)), and reverses before FUPDATE_LIST_HOL so the first duplicate name wins as in FOLDR FUPDATE FEMPTY. HolFiniteMapExact is the canonical finite-support result carrier, recorded by fmap_as_finite_support_result and the same-module holFmapAsFiniteSupportResultWitness_crepToLoopMakeFuncsExactHOL proves lookup equality to the generic HOL-equality update fold. The direct original HOL EVAL rows mkf_f/mkf_g/mkf_absent/mkf_dup_first in scripts/hol-probes/crep_to_loop_make_funcs_probe.out are replayed in Flapjack/Test/CrepToLoopParity using the proved executable-specialization lookup bridge. The raw-map crepToLoopMakeFuncsHOL remains Flapjack-specific and untagged because FiniteMap is α → Option β, which admits infinite support; the lawful executable companion also stays untagged and is proved lookup-equal to this generic port."
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
+    "hol_name": "make_vmap_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_name": "makeVmapHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex (statement compared against make_vmap_def at crep_to_loopScript.sml:230; HOL FEMPTY |++ ZIP (params, GENLIST I (LENGTH params)) rendered as FUPDATE_LIST FEMPTY (params.zip (List.range params.length)); direct HOL-EVAL rows make_vmap_single_hit/make_vmap_two_second/make_vmap_empty_miss=T reproduced by Lean guards in Flapjack/Test/CrepToLoopParity.lean)"
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
+    "hol_name": "mk_ctxt_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/ContextExact.lean",
+    "lean_name": "mkCtxtExact",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "vmap",
+      "fs"
+    ],
+    "reviewer": "flapjack-luna-b source comparison (2026-09-28, bead flapjack-pxn.18.5.6.27.1) against crep_to_loopScript.sml:221-228. Binder order target, vmap, fs, vmax is preserved; the body assigns vars=vmap, funcs=fs, vmax=vmax, target=target with no extra premise. vmap and fs use HolFiniteMapExact with same-module lookup/finiteSupport toBroad/ofBroad witnesses. Result is the separately reviewed exact context carrier. This does not claim the String/list-backed production context is definitionally identical."
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
+    "hol_name": "ocompile_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/ContextExact.lean",
+    "lean_name": "ocompileHOLExact",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; bead flapjack-pxn.18.5.6.29): HOL ocompile_def (crep_to_loopScript.sml:216-219) is the composition loop_live$optimise o compile; this Lean definition composes the reviewed exact compileHOLExact (crep_to_loopScript.sml compile_def) with the reviewed exact optimiseHOL (loop_liveScript.sml optimise_def) over CrepToLoopContextExact/NumSet/CrepProgHOL width/HolLoopProg width with [NeZero width]; no fresh EVAL row is generated because crep_to_loopTheory is not loadable in this worktree, so the composition inherits the direct oracle rows of its two tagged components. fmap_as_finite_support records the context vars/funcs canonical finite-map translation."
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
+    "hol_name": "prog_if_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/ContextExact.lean",
+    "lean_name": "progIfHOLExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison against crep_to_loopScript.sml:34-40. The exact width-indexed HolLoopProg result uses the same argument order and list concatenation: first ++ second ++ [Assign condition left; Assign rightRegister right; If operator condition (Reg rightRegister) (Assign condition (Const 1w)) (Assign condition (Const 0w)) (list_insert [condition; rightRegister] live)]. `sptListInsert` implements the source `list_insert` over NumSet, and the only carrier translation is the reviewed positive-width BitVec word representation. A direct `prog_if` EVAL row and the matching `cmp` compile_exp row in scripts/hol-probes/crep_to_loop_compile_exp_probe.out use these exact inputs; `compileExpHOLExact` calls this tagged helper in that comparison case. This helper is proof-side infrastructure, not a production routing claim."
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
+    "hol_name": "rt_var_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop.lean",
+    "lean_name": "rtVar",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex (statement compared against rt_var_def at crep_to_loopScript.sml:105; HOL 'a |-> num FLOOKUP resolver with mx+1 sentinel; key polymorphic exactly as HOL infers; direct HOL-EVAL rows rt_var_some=7/none=9/absent=100 reproduced by Lean guards)"
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
+    "hol_name": "rt_vars_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop.lean",
+    "lean_name": "rtVars",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex (statement compared against rt_vars_def at crep_to_loopScript.sml:113; HOL OPT_MMAP (FLOOKUP fm) vs with [mx+1] sentinel rendered as vs.mapM (FLOOKUP fm); key polymorphic exactly as HOL infers; direct HOL-EVAL rows rt_vars_some=[10;7]/absent=[100] reproduced by Lean guards)"
+  }
+]

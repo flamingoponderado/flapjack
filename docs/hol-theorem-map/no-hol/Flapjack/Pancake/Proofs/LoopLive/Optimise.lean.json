@@ -1,0 +1,18 @@
+[
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/Optimise.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module re-export of the canonical loopSem$state finite-support witness required by the fmap_as_finite_support := [globals] qualifier on mark_correct/comp_correct; no HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/Optimise.lean",
+    "lean_name": "markAll_evaluate_eq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper: equational form of HOL mark_correct (evaluate (FST (mark_all prog)) s = evaluate prog s), proved by the evaluate_ind-shaped lexicographic induction; no separate CakeML declaration"
+  }
+]

@@ -1,0 +1,18 @@
+[
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Semantics/CrepProps/MemLoadFlatRel.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific same-module canonical finite-support witness for the CrepSemHOLState locals/globals/code fields used by memLoadFlatRelHOLExact; it restates the imported CrepSemHOLState/CrepSemBroadState roundtrip and is not a separate HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Semantics/CrepProps/MemLoadFlatRel.lean",
+    "lean_name": "memLoadHOLExact_flatRead_mutual",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific mutual evaluator-induction helper for the strided mem_load_flat_rel analogue. HOL has no standalone declaration with this helper statement; its internal list cases are part of mem_loads_flat_rel."
+  }
+]

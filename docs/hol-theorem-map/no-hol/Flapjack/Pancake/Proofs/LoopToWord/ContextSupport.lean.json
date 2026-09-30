@@ -1,0 +1,66 @@
+[
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_WordSemStateFiniteExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only qualifier witness: names WordSemStateFiniteExact and its WordSemStateBroad toBroad/ofBroad roundtrip; supports the relation finite-map qualifier of envToListIMPHOL and is not a HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "mkNewCutsetHOL_subsetTarget",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only private helper for the tagged cut_env_mk_new_cutset proof. HOL derives this subset implication inline from locals_rel and the source live-domain premise; there is no separate HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "sptFromList2At_eq_foldl",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific private proof helper equating the recursive accumulator used to prove fromList2 lookup facts with the exact tagged sptFromList2 fold. It is not a separate CakeML declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "sptInsert_preserves_bounded_lookup_injectivity",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific private induction strengthening used to port make_ctxt_inj: insertion of the next fresh register preserves uniqueness and advances the bound by two. HOL proves this obligation inside make_ctxt_inj rather than declaring a separate theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "sptLookup_isSome_sptFromAList_of_mem_fst",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific private transport lemma: proves that a key in the first-component projection of an association list is present after sptFromAList. It supports the tagged set_fromNumSet proof via the external HOL fromAList/toAList lookup roundtrip; it is not a separate CakeML declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "sptLookup_sptFromList2At_below",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific private proof helper showing that later even-key insertions preserve a lookup below the next fromList2 key. It supports localsRelHOLMakeCtxt and is not a separate CakeML declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "sptLookup_sptFromList2At_get",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific private proof helper for lookup at an index in the recursive fromList2 accumulator; it supports the exact tagged fromList2 definition and is not a distinct CakeML theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "sptLookup_sptFromList2_get",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific private support lemma deriving indexed lookup from the tagged misc$fromList2_def; it is not a distinct CakeML declaration."
+  }
+]

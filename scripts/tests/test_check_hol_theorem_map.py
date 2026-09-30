@@ -1,7 +1,6 @@
 """Regression tests for HOL theorem-map coverage and metadata validation."""
 
 import runpy
-import json
 import unittest
 from pathlib import Path
 
@@ -90,7 +89,7 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
                 self.assertNotIn(key, tagged)
 
     def test_pan_globals_exception_carrier_mismatches_are_documented(self):
-        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
+        manifest = MAP["hol_theorem_map"].load_manifest(MAP["DEFAULT_SHARDS"])
         manifest_by_key = {
             (record["lean_path"], record["lean_name"]): record
             for record in manifest
@@ -123,7 +122,7 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
                 self.assertIn(bead, record["reviewer"])
                 self.assertNotIn(key, tagged)
         tagged = MAP["tagged_declarations"]()
-        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
+        manifest = MAP["hol_theorem_map"].load_manifest(MAP["DEFAULT_SHARDS"])
         manifest_by_key = {
             (record["lean_path"], record["lean_name"]): record
             for record in manifest
@@ -179,7 +178,7 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
 
     def test_pan_globals_fresh_name_exact_ports_and_production_forms(self):
         tagged = MAP["tagged_declarations"]()
-        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
+        manifest = MAP["hol_theorem_map"].load_manifest(MAP["DEFAULT_SHARDS"])
         manifest_by_key = {
             (record["lean_path"], record["lean_name"]): record
             for record in manifest
@@ -240,7 +239,7 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
 
     def test_crep_evaluate_ind_exact_tag(self):
         tagged = MAP["tagged_declarations"]()
-        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
+        manifest = MAP["hol_theorem_map"].load_manifest(MAP["DEFAULT_SHARDS"])
         manifest_by_key = {
             (record["lean_path"], record["lean_name"]): record
             for record in manifest
@@ -266,7 +265,7 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
 
     def test_crep_sem_state_exact_helpers_have_combined_carrier_qualifiers(self):
         tagged = MAP["tagged_declarations"]()
-        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
+        manifest = MAP["hol_theorem_map"].load_manifest(MAP["DEFAULT_SHARDS"])
         manifest_by_key = {
             (record["lean_path"], record["lean_name"]): record
             for record in manifest
@@ -295,7 +294,7 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
 
     def test_crep_sem_holstate_update_helpers_have_combined_carrier_qualifiers(self):
         tagged = MAP["tagged_declarations"]()
-        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
+        manifest = MAP["hol_theorem_map"].load_manifest(MAP["DEFAULT_SHARDS"])
         manifest_by_key = {
             (record["lean_path"], record["lean_name"]): record
             for record in manifest
@@ -339,7 +338,7 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
 
     def test_standalone_map_parameter_qualifiers_preserve_named_binders(self):
         tagged = MAP["tagged_declarations"]()
-        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
+        manifest = MAP["hol_theorem_map"].load_manifest(MAP["DEFAULT_SHARDS"])
         by_key = {(r["lean_path"], r["lean_name"]): r for r in manifest}
         exact_key = ("Flapjack/Pancake/PanToCrep/ExpHdlExact.lean", "expHdlExact")
         props_key = (
@@ -811,7 +810,7 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
                     "no_hol_reference_pending_classification",
                 )
 
-        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
+        manifest = MAP["hol_theorem_map"].load_manifest(MAP["DEFAULT_SHARDS"])
         manifest_by_key = {
             (record["lean_path"], record["lean_name"]): record
             for record in manifest
@@ -840,7 +839,7 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
             "no_hol_reference_pending_classification",
         )
 
-        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
+        manifest = MAP["hol_theorem_map"].load_manifest(MAP["DEFAULT_SHARDS"])
         manifest_by_key = {
             (record["lean_path"], record["lean_name"]): record
             for record in manifest
@@ -890,7 +889,7 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
         self.assertIsNone(inventory[key]["hol_name"])
         self.assertEqual(inventory[key]["statement_status"],
                          "no_hol_reference_pending_classification")
-        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
+        manifest = MAP["hol_theorem_map"].load_manifest(MAP["DEFAULT_SHARDS"])
         record = next(record for record in manifest if
                       (record["lean_path"], record["lean_name"]) == key)
         self.assertEqual(record["hol_name"], "locals_rel_lookup_ctxt")
@@ -905,7 +904,7 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
         self.assertIsNone(inventory[key]["hol_name"])
         self.assertEqual(inventory[key]["statement_status"],
                          "no_hol_reference_pending_classification")
-        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
+        manifest = MAP["hol_theorem_map"].load_manifest(MAP["DEFAULT_SHARDS"])
         record = next(record for record in manifest if
                       (record["lean_path"], record["lean_name"]) == key)
         self.assertEqual(record["hol_name"], "compile_exp_not_mem_load_glob")
@@ -926,7 +925,7 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
         self.assertEqual(inventory[production_key]["statement_status"],
                          "documented_mismatch")
 
-        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
+        manifest = MAP["hol_theorem_map"].load_manifest(MAP["DEFAULT_SHARDS"])
         exact_record = next(record for record in manifest if
                             (record["lean_path"], record["lean_name"]) == exact_key)
         self.assertEqual(exact_record["hol_name"], "is_wf_shape_drop")
@@ -946,7 +945,7 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
         self.assertEqual(inventory[key]["hol_name"], "old_exp_shapes_eq")
         self.assertEqual(inventory[key]["statement_status"], "documented_mismatch")
 
-        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
+        manifest = MAP["hol_theorem_map"].load_manifest(MAP["DEFAULT_SHARDS"])
         record = next(record for record in manifest if
                       (record["lean_path"], record["lean_name"]) == key)
         self.assertEqual(record["hol_name"], "old_exp_shapes_eq")
@@ -964,7 +963,7 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
         self.assertEqual(inventory[key]["statement_status"], "documented_mismatch")
         self.assertNotIn(key, MAP["tagged_declarations"]())
 
-        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
+        manifest = MAP["hol_theorem_map"].load_manifest(MAP["DEFAULT_SHARDS"])
         record = next(record for record in manifest if
                       (record["lean_path"], record["lean_name"]) == key)
         self.assertEqual(record["hol_name"], "fperm_decs_decls")
@@ -985,7 +984,7 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
         self.assertEqual(inventory[key]["hol_name"], "fields_in_order_reorder_noop")
         self.assertEqual(inventory[key]["statement_status"], "documented_mismatch")
 
-        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
+        manifest = MAP["hol_theorem_map"].load_manifest(MAP["DEFAULT_SHARDS"])
         record = next(record for record in manifest if
                       (record["lean_path"], record["lean_name"]) == key)
         self.assertEqual(record["hol_name"], "fields_in_order_reorder_noop")
@@ -1252,7 +1251,7 @@ class ValidateInventoryTest(unittest.TestCase):
         self.assertTrue(any("must not carry an @[hol] tag" in error for error in errors))
 
     def test_res_var_hol_equality_forms_are_documented_mismatch(self):
-        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
+        manifest = MAP["hol_theorem_map"].load_manifest(MAP["DEFAULT_SHARDS"])
         by_key = {
             (record["lean_path"], record["lean_name"]): record for record in manifest
         }
@@ -1357,7 +1356,7 @@ class ValidateInventoryTest(unittest.TestCase):
     def test_pansem_word_lab_carrier_is_reviewed_exact(self):
         key = ("Flapjack/Pancake/Semantics/PanSem.lean", "HolWordLab")
         self.assertNotIn(key, MAP["DOCUMENTED_MISMATCHES"])
-        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
+        manifest = MAP["hol_theorem_map"].load_manifest(MAP["DEFAULT_SHARDS"])
         by_key = {
             (record["lean_path"], record["lean_name"]): record for record in manifest
         }
@@ -1369,7 +1368,7 @@ class ValidateInventoryTest(unittest.TestCase):
 
 
     def test_panprops_decs_stcnames_only_functions_exact_ports(self):
-        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
+        manifest = MAP["hol_theorem_map"].load_manifest(MAP["DEFAULT_SHARDS"])
         by_key = {
             (record["lean_path"], record["lean_name"]): record for record in manifest
         }
@@ -1399,7 +1398,7 @@ class ValidateInventoryTest(unittest.TestCase):
         self.assertEqual(hol_path, "cakeml/pancake/semantics/panSemScript.sml")
         self.assertEqual(hol_name, "theValWord_def")
         self.assertIn("flapjack-0lj.5", reviewer)
-        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
+        manifest = MAP["hol_theorem_map"].load_manifest(MAP["DEFAULT_SHARDS"])
         by_key = {
             (record["lean_path"], record["lean_name"]): record for record in manifest
         }
@@ -1409,7 +1408,7 @@ class ValidateInventoryTest(unittest.TestCase):
 
 
     def test_pansem_set_var_set_global_finite_ports(self):
-        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
+        manifest = MAP["hol_theorem_map"].load_manifest(MAP["DEFAULT_SHARDS"])
         by_key = {
             (record["lean_path"], record["lean_name"]): record for record in manifest
         }
@@ -1433,7 +1432,7 @@ class ValidateInventoryTest(unittest.TestCase):
 
 
     def test_panlang_functions_append_filter_exact_ports(self):
-        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
+        manifest = MAP["hol_theorem_map"].load_manifest(MAP["DEFAULT_SHARDS"])
         by_key = {
             (record["lean_path"], record["lean_name"]): record for record in manifest
         }
@@ -1466,7 +1465,7 @@ class ValidateInventoryTest(unittest.TestCase):
         self.assertNotIn(eq_filter, by_key)
 
     def test_panprops_is_wf_shape_of_v_exact_port(self):
-        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
+        manifest = MAP["hol_theorem_map"].load_manifest(MAP["DEFAULT_SHARDS"])
         key = ("Flapjack/Pancake/Semantics/PanProps.lean",
                "isWfShapeValueHOLExact_shapeOfHOLExact")
         record = next(
@@ -1480,7 +1479,7 @@ class ValidateInventoryTest(unittest.TestCase):
         self.assertIn(key, MAP["tagged_declarations"]())
 
     def test_panprops_pan_primop_is_wf_shape_v_exact_port(self):
-        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
+        manifest = MAP["hol_theorem_map"].load_manifest(MAP["DEFAULT_SHARDS"])
         key = ("Flapjack/Pancake/Semantics/PanProps.lean",
                "panPrimopHOLExact_isWfShapeValueHOLExact")
         record = next(
@@ -1495,7 +1494,7 @@ class ValidateInventoryTest(unittest.TestCase):
         self.assertIn(key, MAP["tagged_declarations"]())
 
     def test_panprops_shape_wf_nil_and_drop_exact_ports(self):
-        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
+        manifest = MAP["hol_theorem_map"].load_manifest(MAP["DEFAULT_SHARDS"])
         by_key = {
             (record["lean_path"], record["lean_name"]): record for record in manifest
         }
@@ -1522,7 +1521,7 @@ class ValidateInventoryTest(unittest.TestCase):
                 self.assertIn(key, MAP["tagged_declarations"]())
 
     def test_panprops_mem_load_is_wf_shape_v_exact_port(self):
-        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
+        manifest = MAP["hol_theorem_map"].load_manifest(MAP["DEFAULT_SHARDS"])
         key = ("Flapjack/Pancake/Semantics/PanProps.lean",
                "memLoadHOLExact_isWfShapeValueHOLExact")
         record = next(
@@ -1537,7 +1536,7 @@ class ValidateInventoryTest(unittest.TestCase):
         self.assertIn(key, MAP["tagged_declarations"]())
 
     def test_panprops_mem_load_shape_eq_exact_ports(self):
-        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
+        manifest = MAP["hol_theorem_map"].load_manifest(MAP["DEFAULT_SHARDS"])
         by_key = {
             (record["lean_path"], record["lean_name"]): record for record in manifest
         }
@@ -1560,7 +1559,7 @@ class ValidateInventoryTest(unittest.TestCase):
                 self.assertIn(key, MAP["tagged_declarations"]())
 
     def test_panprops_every_exp_and_exps_of_exact_ports(self):
-        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
+        manifest = MAP["hol_theorem_map"].load_manifest(MAP["DEFAULT_SHARDS"])
         by_key = {
             (record["lean_path"], record["lean_name"]): record for record in manifest
         }
@@ -1580,7 +1579,7 @@ class ValidateInventoryTest(unittest.TestCase):
 
 
     def test_panprops_localised_and_mmap_exact_ports(self):
-        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
+        manifest = MAP["hol_theorem_map"].load_manifest(MAP["DEFAULT_SHARDS"])
         by_key = {
             (record["lean_path"], record["lean_name"]): record for record in manifest
         }

@@ -1,0 +1,618 @@
+[
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "boolAndRearr",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only Bool rearrangement helper ((l && s && (n && m)) = ((l && n) && (s && m))); no standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "convertV_toPanValue",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific production bridge: the exact HOL convert_v (convertV over ValueHOL, see above) transported through the name-forgetful ValueHOL.toPanValue map (MlStringHOL -> String via toStringOfBytes) equals production panStructConvertValue. No HOL declaration corresponds to the String-keyed bridge; HOL's convert_v already has an exact port (convertV)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "lookupInfoDefaultPanPropsNStruct",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only equality-instance adapter for the NStruct lookup; no standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "lookupInfoStringDefault_eq_panPropsALookupEq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private lookup bridge from the production default String BEq instance to the explicit equality-based alist lookup adapter; it is a Lean implementation helper, not a standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "lookupInfoWithRest_context_shape_view",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private context-view transport helper used to compare named-structure lookup and suffix field views; no standalone HOL theorem is claimed."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "lookupInfoWithRest_fields_wf_for_load",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only consequence of structInfosOk that a selected declaration's field shapes are well formed in its lookup suffix; support for named Load conversion."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "lookupInfoWithRest_lookupInfo_for_load",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private adapter from production lookupInfoWithRest success to lookupInfo success, used by named Load; no standalone HOL theorem declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "lookupInfoWithRest_suffix_drop_for_load",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only support identifying the suffix returned by lookupInfoWithRest as a drop of the source context for named Load conversion."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "lookupInfo_append_eq_of_some",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only lookup preservation helper under nodup appended keys, used in the exact panValueFldsOk_append port."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "lookupInfo_append_eq_of_some_context",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private lookup support showing a successful suffix lookup is preserved when a disjoint structure-context prefix is added; no standalone HOL theorem declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "lookupInfo_mapValues",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Finite-map lookup adapter lemma used to connect HOL FMAP_MAP2 results with explicit InfoMap entries; support for the open convert_s/compile_correct port."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "lookupInfo_mapValuesNStruct",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only lookup/map commutation for the NStruct case; no standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "lookupInfo_mem_of_some",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Generic Lean membership consequence of successful first-match lookup; used to show that a disjoint appended prefix cannot shadow a successful HOL context lookup."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "lookupPanValueField_eq_lookupInfo",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lawful-BEq adapter identifying named-value field lookup with InfoMap lookup; NField proof support only."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panFieldsFldsOk_toHOL",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Field-list-level companion of panValueFldsOk_toHOL; no standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panSemCodeRanged_panStructConvertState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack plumbing (bead flapjack-pxn.18.4.3.77.2.15.5): instantiates PanSemCodeRanged at panStructConvertState via PanSemCodeRanged.map_structCompile, from byte-ranged source entries and a CtxBR structure context. No HOL declaration; not a port claim."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panSemCodeRanged_panStructConvertState_of_functionEntries",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack plumbing (bead flapjack-pxn.18.4.3.77.2.15.5): derives ranged code after panStructConvertState from DeclByteRanged declarations through functionEntries_panLangEntryByteRanged and a CtxBR structure context. No HOL declaration; not a port claim."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panSemCodeRanged_panStructFiniteStateFromMaps",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack plumbing (bead flapjack-pxn.18.4.3.77.2.15.5): instantiates PanSemCodeRanged at panStructFiniteStateFromMaps.runtime from byte-ranged code entries. No HOL declaration; not a port claim."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panSemExceptionShapesRanged_panStructConvertState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack plumbing: instantiates the untagged PanSemExceptionShapesRanged predicate at panStructConvertState, discharging the Raise agreement's hexnRanged premise from the source predicate and CtxBR context.structs. No HOL declaration; not a port claim."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panSemExceptionShapesRanged_panStructFiniteStateFromMaps",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack plumbing: instantiates the untagged PanSemExceptionShapesRanged predicate at panStructFiniteStateFromMaps' panPropsALookupEq runtime view from a byte-ranged exception-shape InfoMap. No HOL declaration; not a port claim."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panSemStateRelExecRanged_panStructConvertState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack plumbing (bead flapjack-pxn.18.4.3.77.2.15.6): assembles the initial-state locals/globals/struct-context rangedness of the pan_structs-converted production state; structs := [] makes the StructContextByteRanged conjunct trivial. No HOL declaration; not a port claim."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panShapeListMatches_eq_panStructShapeListEqBool",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only list-level companion of panShapeMatches_eq_panStructShapeEqBool; no standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panShapeListMatches_self",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private reflexivity support for the production shape-list matcher; no standalone HOL theorem declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panShapeMatches_eq_panStructShapeEqBool",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only adapter equating the production panShapeMatches with panStructShapeEqBool (decide of structural Shape equality) under lawful String equality; no standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panShapeMatches_self",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private reflexivity support for production panShapeMatches; no standalone HOL theorem declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panStructAll_map",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Generic map over the local PanStructAll induction-hypothesis list; no standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panStructAll_mem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Generic membership eliminator for the local PanStructAll induction-hypothesis list; no standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panStructBreakEvaluatorProjection",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Production source/converted evaluator projection used by the Break case; distinct from the full compile_correct specialization and has no standalone HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panStructCompileBreak_eq_break",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Production compiler support equation for Break; no standalone HOL theorem declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panStructCompileContinue_eq_continue",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Production compiler support equation for Continue; no standalone HOL theorem declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panStructCompileCorrectSkipCase",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Full translated Skip specialization with every compile_correct postcondition and its original invariant premises, using the production evaluator and finite-map state wrapper. Kept untagged: HOL has one quantified compile_correct theorem rather than a named Skip theorem, and its NONE result is encoded as Lean normal clock outcome."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panStructCompileCorrectTickCase",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Full translated Tick specialization with zero-clock timeout and positive-clock continuation, all compile_correct invariant premises and postconditions, production evaluator and finite-map state. Kept untagged: HOL has one quantified compile_correct theorem rather than a named Tick case, and represents outcomes as TimeOut/NONE plus state while Lean uses clock outcomes."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panStructCompileSkip_eq_skip",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Production compiler support equation; no standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panStructCompileTick_eq_tick",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Production compiler support equation; no standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panStructContinueEvaluatorProjection",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Production source/converted evaluator projection used by the Continue case; distinct from the full compile_correct specialization and has no standalone HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panStructConvertFieldValues_eq_map",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only equation relating named-field conversion to List.map for the NStruct case; no standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panStructConvertFiniteState_code_support",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Proves `convert_code_def` conversion preserves unique function-code map support; depends on LawfulBEq String so production lookup coincides with HOL equality, and is support rather than a compile_correct case."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panStructConvertFiniteState_exceptionShapes_support",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Proves `FMAP_MAP2` conversion preserves exception-shape map support in the explicit Nodup list representation; projection support for convert_s, not a standalone HOL theorem or compile_correct case."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panStructConvertFiniteState_globals_support",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Proves `FMAP_MAP2` conversion preserves global finite-map support in the explicit Nodup list representation; projection support for convert_s, not a standalone HOL theorem or compile_correct case."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panStructConvertFiniteState_locals_support",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Proves `FMAP_MAP2` conversion preserves local finite-map support in the explicit Nodup list representation; projection support for convert_s, not a standalone HOL theorem or compile_correct case."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panStructConvertState_code",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Projection helper for the untagged PanSemState convert_s adapter; total function maps do not preserve HOL finite-map support."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panStructConvertValues_eq_map",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Executable list conversion equals List.map of the production value converter; support for the RStruct case only, with no standalone HOL theorem declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panStructFieldValuesFieldsOkBool_append",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private field-list validity context-extension lemma under distinct structure names; no standalone HOL theorem declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panStructFieldValuesFieldsOkBool_lookup",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Projects Bool field-validity across a named record to the value selected by lookupPanValueField; NField proof support only."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panStructFiniteMapSkipEvaluationProjection",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Kernel-checked production-evaluator projection for finite-map state under Skip; supports, but is not, the HOL compile_correct induction case."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panStructRStructListShapeFields",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private list induction support that derives old-shape map equality and recursive field validity from the per-field compile_exp_correct induction hypotheses. It supports, but is not itself, the RStruct case."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panStructSkipEvaluatorSupport",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Paired production evaluator equation only; omits compile_correct premises and invariant/shape-map/result postconditions. Full Skip port tracked by flapjack-pxn.18.5.3.29."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panStructSkipFiniteMapEvaluatorSupport",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Paired Skip evaluator support for a finite-map-backed source-state wrapper; omits the full compile_correct premises and invariant/shape-map/result postconditions."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panStructSourceBreakEvaluation",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Untagged production source evaluator equation for Break; HOL's evaluator equation is present in panSemScript but there is no standalone Lean theorem port identifier for the full state/result pair."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panStructSourceContinueEvaluation",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Untagged production source evaluator equation for Continue; the HOL evaluator clause is a definition equation and not a standalone named Lean theorem port."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panStructTickEvaluatorSupport",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Paired Tick evaluator support only; omits compile_correct premises and invariant/shape-map/result postconditions; not an exact theorem case."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panStructValueFieldsOkBool_append",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private production field-validity context-extension lemma under distinct structure names; no standalone HOL theorem declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panStructValuesFieldsOkBool_getElem?",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Projects pointwise Bool value-validity across an RStruct list to the selected element; RField case support only, with no standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panStruct_mapKeys_preserved",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Generic key-preservation lemma for list-backed finite-map entries; no standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panValueByteRanged_of_globals_panStructConvertState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack plumbing (bead flapjack-pxn.18.4.3.77.2.15.6): the globals conjunct of PanSemStateRelExecRanged instantiated at panStructConvertState, by cases on the source global lookup plus the converted-value lemma. No HOL declaration; not a port claim."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panValueByteRanged_of_locals_panStructConvertState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack plumbing (bead flapjack-pxn.18.4.3.77.2.15.6): the locals conjunct of PanSemStateRelExecRanged instantiated at panStructConvertState, by cases on the source local lookup plus the converted-value lemma. No HOL declaration; not a port claim."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panValueByteRanged_panStructConvertValue",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack plumbing (bead flapjack-pxn.18.4.3.77.2.15.6): panStructConvertValue rewrites every .nStruct into .rStruct and drops all record and field names, so a converted production value is name-free and PanValueByteRanged holds unconditionally; proved by the generated mutual induction. No HOL declaration; not a port claim."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panValueFieldsHaveShapesNames",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only consequence that successful named-field shape matching preserves field names; no standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panValueFieldsHaveShapes_context_irrel",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private context-independence lemma for field shape comparisons; no standalone HOL theorem declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panValueFieldsHaveShapes_eq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only adapter rewriting panValueFieldsHaveShapes as HOL v_flds_ok's MAP FST / MAP (shape_of o SND) equalities over the panSemShapeOf port; no standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panValueFieldsHaveShapes_lookup",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Projects field shape matching to the selected field's declared shape; helper for the NField case, with no separate HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panValueFieldsHaveShapes_of_maps",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private implication from exact field-name and panSemShapeOf list equalities to production panValueFieldsHaveShapes; no standalone HOL theorem declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panValueFlatContextFuel_lookup_ge",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only fuel bound showing a context suffix plus the selected declaration's fields fits within the original context fuel; support for named Load conversion, not a standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panValueFlatFieldsFuel_eq_shapeListFuel",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only representation bridge equating named-field loader fuel to the corresponding shape-list fuel; support for the untagged mem_load_conversion loader correspondence, not a standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panValueFldsOk_toHOL",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Clause-by-clause adapter from the exact HOL-shaped panValueFldsOk over StructContextHOL to the production panStructValueFieldsOkBool over the cache-augmented StructContext under StructContext.toHOL; no standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panValueShapeList_eq_panSemShapeOf",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "List form of the runtime/semantic shape correspondence; NField proof support only."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panValueShapeList_matches_eq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "List form of the shape-match reflection helper; supports field-shape lookup and is not a standalone HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panValueShape_eq_panSemShapeOf",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Relates runtime matching shapes to the context-free semantic shape function; helper for NField shape preservation, not a separate HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panValueShape_matches_eq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Bool shape-match reflection helper for nested PanValue shapes; NField proof support only, with no standalone HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panValuesFldsOk_toHOL",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "List-level companion of panValueFldsOk_toHOL; no standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "string_beq_comm",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only commutativity of String BEq used to align helper argument order; no standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "structCompileShapeWF_context_shape_view",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private proof that production shape compilation is invariant under equal projected context views; no standalone HOL theorem is claimed."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "structContextLookupHOL_append_eq_of_some",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only first-match lookup preservation under a distinct-key prefix; internal support for the exact v_flds_ok_append port, with no claimed standalone HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "structContextLookupHOL_drop_eq_of_some",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only specialization of exact context lookup preservation under a prefix drop; internal support for sizeOfShapeWithContextHOL_drop, with no claimed standalone HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "structContextLookupHOL_mem_of_some",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only helper: a successful first-match lookup implies membership of the key in the exact struct-context list; used by the append proof, with no claimed standalone HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "structFindFieldIndex_lookupAligned",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Connects the production first-match structFindFieldIndex to the selected value at the same list index; helper for the NField proof, not a HOL theorem port."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "structInfosOk_suffix_for_load",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only support transporting structInfosOk to a lookup suffix for named Load conversion; no separate HOL theorem declaration."
+  }
+]

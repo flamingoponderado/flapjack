@@ -1,0 +1,250 @@
+[
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
+    "hol_name": "addr",
+    "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
+    "lean_name": "HolAddr",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-deepseek-three (2026-09-24: exact Datatype port of HOL `addr` at asmScript.sml:121-123 - Addr reg ('a word). The width-indexed Lean HolAddr width (addr Nat (BitVec width)) matches with base = num and the offset the width word; it backs stackLang prog's ShMemOp. Kernel isomorphisms HolAddr.toWordLangAddr/ofWordLangAddr with roundtrip lemmas connect it to the production generic WordLangAddr. Direct HOL-EVAL rows aa_base=3/aa_off=5 at the numeral word type 64 in scripts/hol-probes/asm_inst_fragment_probe.out are reproduced by Lean guards/kernel examples in Flapjack/Test/AsmConfigChecksParity.lean)"
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
+    "hol_name": "architecture",
+    "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
+    "lean_name": "AsmArchitecture",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-b source comparison (2026-09-28, bead flapjack-pxn.18.5.6.27.1) against asmScript.sml:150-151. Lean has the same six nullary constructors ARMv7, ARMv8, MIPS, RISC_V, Ag32, and x86_64, with only Lean casing changes."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
+    "hol_name": "arith",
+    "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
+    "lean_name": "HolArith",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.6.1.2.2): repaired to a genuinely exact port. HolArith is now a real inductive over the exact HolRegImm carrier (Binop/Shift carry 'a reg_imm as HolRegImm), matching HOL `arith` at asmScript.sml:86-95 constructor-for-constructor; checked codecs HolArith.toWordLangArith/ofWordLangArith with of_to/to_of connect it to the production WordLangArith mirror. Direct HOL-EVAL rows aa_div_arity=6/aa_longDiv_arity=15 in scripts/hol-probes/asm_inst_fragment_probe.out are reproduced by arithDivSum/arithLongDivSum in Flapjack/Test/AsmConfigChecksParity.lean. Source comparison by flapjack-ds8."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
+    "hol_name": "arith_ok_def",
+    "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
+    "lean_name": "asmArithOk",
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.6): non-exact source review of the held reviewed_exact promotion for HOL arith_ok_def (cakeml/compiler/encoders/asm/asmScript.sml). HOL arith_ok_def uses a positive-dimensional word type; the Lean declaration quantifies width : Nat with no [NeZero width] binder, so BitVec 0 is admitted. The HOL tag was withdrawn; faithful width-restricted restatement tracked separately."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
+    "hol_name": "arith_ok_def",
+    "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
+    "lean_name": "asmArithOkExact",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.6.1.2): exact clause-for-clause port of HOL arith_ok_def at asmScript.sml:191-229 over the exact AsmConfigExact carrier and the exact HolArith/HolRegImm (Binop/Shift stay 4-field with a reg_imm right operand; INL b = Sum.inl; dimindex(:'a) = width). reg_ok/reg_imm_ok become asmRegOkExact/asmRegImmOkExact; the width-general executed asmArithOk remains the untagged production form. Source comparison by flapjack-ds8."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
+    "hol_name": "asm",
+    "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
+    "lean_name": "HolAsm",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-deepseek-three (2026-09-24: exact Datatype port of HOL `asm` at asmScript.sml:138-145 - Inst ('a inst) | Jump ('a word) | JumpCmp cmp reg ('a reg_imm) ('a word) | Call ('a word) | JumpReg reg | Loc reg ('a word). The width-indexed Lean HolAsm width matches constructor-for-constructor: inst (HolInst width); jump/call/loc over BitVec width; jumpCmp HolCmp Nat (HolRegImm width) (BitVec width); jumpReg Nat. The production generic-field rendering AsmData width is kept untagged (same arity, fields at the generic WordLangInst/WordRegImm/Cmp carriers). Direct HOL-EVAL rows as_jump=9/as_jumpCmp=1/as_jumpReg=7/as_loc=14 at the numeral word type 64 in scripts/hol-probes/asm_inst_fragment_probe.out are reproduced by asmJumpTarget/asmJumpCmpReg/asmJumpRegTarget/asmLocSum in Flapjack/Test/AsmConfigChecksParity.lean)"
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
+    "hol_name": "asm_config",
+    "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
+    "lean_name": "AsmConfigExact",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.6.1.2.1): exact HOL asmScript.sml:153-172 asm_config record; field-for-field correspondence, with encode : HolAsm width -> List (BitVec 8) matching HOL's 'a asm -> word8 list and every remaining field identical to the production AsmConfig. Reviewed_exact at [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
+    "hol_name": "asm_ok_def",
+    "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
+    "lean_name": "asmOk",
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.6): non-exact source review of the held reviewed_exact promotion for HOL asm_ok_def (cakeml/compiler/encoders/asm/asmScript.sml). HOL asm_ok_def uses a positive-dimensional word type; the Lean declaration quantifies width : Nat with no [NeZero width] binder, so BitVec 0 is admitted. The HOL tag was withdrawn; faithful width-restricted restatement tracked separately."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
+    "hol_name": "asm_ok_def",
+    "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
+    "lean_name": "asmOkExact",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.6.1.2): exact positive-width port of HOL asm_ok_def over the exact HolAsm carrier and the exact AsmConfigExact; jump/cjump/loc offset overloads built on the exact asmOffsetOkExact, instruction payload via exact asmInstOkExact, cmp_ok via exact asmCmpOkExact over HolRegImm; the production asmOk uses the generic AsmData/AsmConfig carriers and is documented_mismatch."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
+    "hol_name": "binop",
+    "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
+    "lean_name": "HolBinop",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-deepseek-three (2026-09-24: exact port of HOL `binop` at asmScript.sml:78-80 - Add | Sub | And | Or | Xor. Monomorphic and width-independent; HolBinop is the alias of the faithful Flapjack.BinOp inductive with the same five nullary constructors. Direct HOL-EVAL row ab_add=1 in scripts/hol-probes/asm_inst_fragment_probe.out is reproduced by binopTag in Flapjack/Test/AsmConfigChecksParity.lean)"
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
+    "hol_name": "cmp",
+    "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
+    "lean_name": "HolCmp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-deepseek-three (2026-09-24: exact port of HOL `cmp` at asmScript.sml:82-84 - Equal | Lower | Less | Test | NotEqual | NotLower | NotLess | NotTest. Monomorphic and width-independent; HolCmp is the alias of the faithful Flapjack.Cmp inductive with the same eight nullary constructors. Direct HOL-EVAL row ac_notTest=7 in scripts/hol-probes/asm_inst_fragment_probe.out is reproduced by cmpTag in Flapjack/Test/AsmConfigChecksParity.lean)"
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
+    "hol_name": "cmp_ok_def",
+    "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
+    "lean_name": "asmCmpOk",
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.6): non-exact source review of the held reviewed_exact promotion for HOL cmp_ok_def (cakeml/compiler/encoders/asm/asmScript.sml). HOL cmp_ok_def uses a positive-dimensional word type; the Lean declaration quantifies width : Nat with no [NeZero width] binder, so BitVec 0 is admitted. The HOL tag was withdrawn; faithful width-restricted restatement tracked separately."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
+    "hol_name": "cmp_ok_def",
+    "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
+    "lean_name": "asmCmpOkExact",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.6.1.2): HOL asmScript.sml:270-272 cmp_ok cmp r ri c <=> reg_ok r c /\\ reg_imm_ok (INR cmp) ri c, ported clause-for-clause over the exact AsmConfigExact carrier and the exact HolRegImm ('a reg_imm) with asmRegOkExact/asmRegImmOkExact; Sum.inr operator renders INR cmp."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
+    "hol_name": "fp",
+    "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
+    "lean_name": "HolFp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-deepseek-three (2026-09-24: exact port of HOL `fp` at asmScript.sml:97-119, 16 constructors over reg/fp_reg (num): FPLess/FPLessEqual/FPEqual (3 regs), FPAbs/FPNeg/FPSqrt (2), FPAdd/FPSub/FPMul/FPDiv (3), FPFma (3), FPMov (2), FPMovToReg (reg reg fp_reg), FPMovFromReg (fp_reg reg reg), FPToInt (2), FPFromInt (2). Monomorphic and width-independent; HolFp is the alias of the faithful Flapjack.WordLangFp inductive with the same 16 constructors and arities. Direct HOL-EVAL rows af_fpMovToReg=6/af_fpFromInt=9 in scripts/hol-probes/asm_inst_fragment_probe.out are reproduced by fpMovToRegSum/fpFromIntSum in Flapjack/Test/AsmConfigChecksParity.lean)"
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
+    "hol_name": "fp_ok_def",
+    "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
+    "lean_name": "asmFpOk",
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.6): non-exact source review of the held reviewed_exact promotion for HOL fp_ok_def (cakeml/compiler/encoders/asm/asmScript.sml). HOL fp_ok_def uses a positive-dimensional word type; the Lean declaration quantifies width : Nat with no [NeZero width] binder, so BitVec 0 is admitted. The HOL tag was withdrawn; faithful width-restricted restatement tracked separately."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
+    "hol_name": "fp_ok_def",
+    "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
+    "lean_name": "asmFpOkExact",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.6.1.2): exact clause-for-clause port of HOL fp_ok_def (asmScript.sml:231-268) over the exact AsmConfigExact carrier (HolAsm encode, BitVec8 output) and the exact HolFp carrier; reg_ok/fp_reg_ok render as asmRegOkExact/asmFpRegOkExact, dimindex(:'a)=32 as width==32, ISA equality as AsmArchitecture equality; no extra hypotheses or side conditions beyond [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
+    "hol_name": "fp_reg_ok_def",
+    "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
+    "lean_name": "asmFpRegOk",
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.6): non-exact source review of the held reviewed_exact promotion for HOL fp_reg_ok_def (cakeml/compiler/encoders/asm/asmScript.sml). HOL fp_reg_ok_def uses a positive-dimensional word type; the Lean declaration quantifies width : Nat with no [NeZero width] binder, so BitVec 0 is admitted. The HOL tag was withdrawn; faithful width-restricted restatement tracked separately."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
+    "hol_name": "fp_reg_ok_def",
+    "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
+    "lean_name": "asmFpRegOkExact",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.6.1.2): exact HOL asmScript.sml:178-179 fp_reg_ok_def over the exact AsmConfigExact carrier with HOL argument order fp_reg_ok d c; d < c.fp_reg_count rendered as register < config.fpRegCount. Reviewed_exact at [NeZero width]; the width-general executed asmFpRegOk stays documented_mismatch."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
+    "hol_name": "inst",
+    "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
+    "lean_name": "HolInst",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.6.1.2.2): exact Datatype port of HOL `inst` at asmScript.sml:130-136 - Skip | Const reg ('a word) | Arith ('a arith) | Mem memop reg ('a addr) | FP fp. Constructor-for-constructor match with the now-exact HolArith (reg_imm payload), HolMemop, HolAddr and HolFp carriers; checked codecs HolInst.toWordLangInst/ofWordLangInst with of_to/to_of connect to the production generic WordLangInst. Direct HOL-EVAL rows ai_skip=1/ai_const_reg=2/ai_const_val=7/ai_mem_reg=2/ai_mem_base=3 at word type 64 in scripts/hol-probes/asm_inst_fragment_probe.out are reproduced in Flapjack/Test/AsmConfigChecksParity.lean. Source comparison by flapjack-ds8."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
+    "hol_name": "inst_ok_def",
+    "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
+    "lean_name": "asmInstOk",
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.6): non-exact source review of the held reviewed_exact promotion for HOL inst_ok_def (cakeml/compiler/encoders/asm/asmScript.sml). HOL inst_ok_def uses a positive-dimensional word type; the Lean declaration quantifies width : Nat with no [NeZero width] binder, so BitVec 0 is admitted. The HOL tag was withdrawn; faithful width-restricted restatement tracked separately."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
+    "hol_name": "inst_ok_def",
+    "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
+    "lean_name": "asmInstOkExact",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.6.1.2): exact positive-width port of HOL asmScript.sml:286-299 over the exact HolInst/HolArith/HolFp/HolRegImm carriers and exact AsmConfigExact; the mem case reads the exact offset_ok-based addr/hw/byte offset helpers. The production asmInstOk remains the untagged width-general executed form with generic WordLangInst/AsmConfig carriers."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
+    "hol_name": "is_load_def",
+    "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
+    "lean_name": "asmIsLoad",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.16.22): exact clause-for-clause port of HOL asmScript.sml:324-330 is_load_def (Load/Load8/Load16/Load32 = T, all others F) over the reviewed exact asm carrier HolMemop (alias of Flapjack.WordMemOp, tagged 'memop'), monomorphic and width-independent with no side conditions."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
+    "hol_name": "memop",
+    "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
+    "lean_name": "HolMemop",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-deepseek-three (2026-09-24: exact port of HOL `memop` at asmScript.sml:125-128 - Load | Load8 | Load16 | Load32 | Store | Store8 | Store16 | Store32. Monomorphic and width-independent; HolMemop is the alias of the faithful Flapjack.WordMemOp inductive with the same eight nullary constructors. Direct HOL-EVAL row am_store32=7 in scripts/hol-probes/asm_inst_fragment_probe.out is reproduced by memopTag in Flapjack/Test/AsmConfigChecksParity.lean)"
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
+    "hol_name": "offset_ok_def",
+    "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
+    "lean_name": "asmOffsetOk",
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.6): non-exact source review of the held reviewed_exact promotion for HOL offset_ok_def (cakeml/compiler/encoders/asm/asmScript.sml). HOL offset_ok_def uses a positive-dimensional word type; the Lean declaration quantifies width : Nat with no [NeZero width] binder, so BitVec 0 is admitted. The HOL tag was withdrawn; faithful width-restricted restatement tracked separately."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
+    "hol_name": "offset_ok_def",
+    "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
+    "lean_name": "asmOffsetOkExact",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.6.1.2.1): HOL asmScript$offset_ok_def takes no asm_config and uses only num/word bounds/offset; the positive-width Lean form asmOffsetOkExact matches clause-for-clause (signed word <= as toInt, aligned as asmAligned). Coordinator source review confirmed the tag is exact."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
+    "hol_name": "reg_imm",
+    "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
+    "lean_name": "HolRegImm",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-deepseek-three (2026-09-24: exact Datatype port of HOL `reg_imm` at asmScript.sml:74-76 - Reg reg | Imm ('a imm) with imm = 'a word. HOL is indexed by the word dimension 'a, so the width-indexed Lean HolRegImm width (reg Nat | imm (BitVec width)) matches constructor-for-constructor with reg = num and the Imm payload the width word; it backs stackLang prog's If. Kernel isomorphisms HolRegImm.toWordRegImm/ofWordRegImm with roundtrip lemmas connect it to the production generic WordRegImm. Direct HOL-EVAL rows ar_reg=3/ar_imm=5 at the numeral word type 64 in scripts/hol-probes/asm_inst_fragment_probe.out are reproduced by Lean guards/kernel examples in Flapjack/Test/AsmConfigChecksParity.lean)"
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
+    "hol_name": "reg_imm_ok_def",
+    "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
+    "lean_name": "asmRegImmOk",
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.6): non-exact source review of the held reviewed_exact promotion for HOL reg_imm_ok_def (cakeml/compiler/encoders/asm/asmScript.sml). HOL reg_imm_ok_def uses a positive-dimensional word type; the Lean declaration quantifies width : Nat with no [NeZero width] binder, so BitVec 0 is admitted. The HOL tag was withdrawn; faithful width-restricted restatement tracked separately."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
+    "hol_name": "reg_imm_ok_def",
+    "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
+    "lean_name": "asmRegImmOkExact",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.6.1.2): exact HOL asmScript.sml:182-187 reg_imm_ok_def over the exact AsmConfigExact carrier and exact HolRegImm ('a reg_imm); Reg r case delegates to asmRegOkExact, Imm w case uses ((b = INL Xor) /\\ (w = -1w) \\/ c.valid_imm b w) rendered as (operator == .inl .xor && value == -1) || config.validImm operator value. Reviewed_exact at [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
+    "hol_name": "reg_ok_def",
+    "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
+    "lean_name": "asmRegOk",
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.6): non-exact source review of the held reviewed_exact promotion for HOL reg_ok_def (cakeml/compiler/encoders/asm/asmScript.sml). HOL reg_ok_def uses a positive-dimensional word type; the Lean declaration quantifies width : Nat with no [NeZero width] binder, so BitVec 0 is admitted. The HOL tag was withdrawn; faithful width-restricted restatement tracked separately."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
+    "hol_name": "reg_ok_def",
+    "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
+    "lean_name": "asmRegOkExact",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.6.1.2): exact HOL asmScript.sml:174-176 reg_ok_def over the exact AsmConfigExact carrier (encode : HolAsm width -> word8 list); HOL argument order reg_ok r c, r < c.reg_count and ~MEM r c.avoid_regs rendered as register < config.regCount && !config.avoidRegs.contains register. Reviewed_exact at [NeZero width]; the width-general executed asmRegOk stays documented_mismatch."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
+    "hol_name": "word_cmp_def",
+    "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
+    "lean_name": "wordCmpHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex (placed in the asm counterpart; compared all eight source constructors, signed and unsigned order, tests, and negations against word_cmp_def and crep_eval_cmp_rv64_probe.out)"
+  }
+]

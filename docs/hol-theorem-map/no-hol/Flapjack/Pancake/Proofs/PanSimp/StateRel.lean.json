@@ -1,0 +1,10 @@
+[
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/StateRel.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only canonical qualifier witness, forwarding the imported PanSemStateFiniteExact toExact/ofExact roundtrip. HOL has no separate Lean carrier codec theorem; this supports the code-field representation qualifier on the pan_simp state relation."
+  }
+]

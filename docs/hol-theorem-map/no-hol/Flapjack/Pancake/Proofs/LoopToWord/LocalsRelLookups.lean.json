@@ -1,0 +1,18 @@
+[
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/LocalsRelLookups.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_LoopSemStateFiniteExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only qualifier witness: names LoopSemStateFiniteExact and its LoopSemStateBroad toBroad/ofBroad roundtrip; supports the relation finite-map qualifier and is not a HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/LocalsRelLookups.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_WordSemStateFiniteExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only qualifier witness: names WordSemStateFiniteExact and its WordSemStateBroad toBroad/ofBroad roundtrip; supports the relation finite-map qualifier and is not a HOL declaration."
+  }
+]

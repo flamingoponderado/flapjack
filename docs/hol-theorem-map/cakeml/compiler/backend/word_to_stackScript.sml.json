@@ -1,0 +1,266 @@
+[
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "PopHandler_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStackRegFormat.lean",
+    "lean_name": "popHandler",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-deepseek-three (2026-09-25: matches HOL `PopHandler_def` at word_to_stackScript.sml:378 - Seq (StackLoad k 2) (Seq (Set Handler k) (Seq (StackFree (handler_slots perf)) prog)). `'a` arbitrary in HOL, so exact over ProgM alpha; HOL-EVAL row pop_eq=T reproduced by handlerParityGuard.)"
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "PushHandler_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStackRegFormat.lean",
+    "lean_name": "pushHandlerW",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-deepseek-three (2026-09-25: matches HOL `PushHandler_def` at word_to_stackScript.sml:355 - StackAlloc (handler_slots perf) then Const k 1w, StackStore k 0, LocValue k l1 l2, StackStore k 1, Get k Handler, StackStore k 2, the perf list_Seq [Or k perf_rsp (Reg perf_rsp); StackStore k 3; Or k perf_rbp (Reg perf_rbp); StackStore k 4] (or Skip), StackGetSize k, Set Handler k. HOL `Const k 1w` is word-indexed, so the exact statement is width-indexed ProgM (BitVec width) with [NeZero width]; HOL-EVAL rows phF_top=T/phT_top=T/phF_eq=T plus the full perf=T structural row phT_eq=T reproduced by handlerParityGuard.)"
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "StackArgs_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStackRegFormat.lean",
+    "lean_name": "stackArgs",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-deepseek-three (2026-09-25: matches HOL `StackArgs_def` at word_to_stackScript.sml:293-297 - StackArgs dest arg_count (k,f,f') = let n = stack_arg_count dest arg_count k in stack_move n 0 f k (StackAlloc n). Uses the tagged stackArgCount and stackMove over the exact carrier ProgM gamma; HOL-EVAL rows sa_inr=T/sa_inl=T reproduced by stackMoveParityGuard.)"
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "StackHandlerArgs_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStackRegFormat.lean",
+    "lean_name": "stackHandlerArgs",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-deepseek-three (2026-09-25: matches HOL `StackHandlerArgs_def` at word_to_stackScript.sml:350 - StackArgs dest arg_count (k, f + handler_slots perf, f' + handler_slots perf). `'a` is arbitrary in HOL and only num/sum/list are touched, so the generic-alpha statement over the exact shared-word carrier ProgM is exact; HOL-EVAL rows shaF=T/shaT=T reproduced by handlerParityGuard in Flapjack/Test/WordToStackBitsParity.lean.)"
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "bits_to_word_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack.lean",
+    "lean_name": "bitsToWordW",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-deepseek-three (2026-09-24: the three HOL equations at word_to_stackScript.sml:225-229 — bits_to_word [] = 0w, true-cons = bits_to_word xs << 1 || 1w, false-cons = bits_to_word xs << 1 — are matched exactly by the BitVec width + [NeZero width] recursion; HOL is polymorphic over 'a word while the Lean faithful counterpart must fix the carrier width per the loadShapeBytes/loadShapeBytesW standard, with the untagged Flapjack.RiscV.CakeAlloc.bitsToWord kept as the executable Nat form; direct HOL-EVAL rows bits_empty=0w/bits_true=1w/bits_false=0w/bits_true_false_true=5w/bits_all_true_3=7w/bits_pattern=18w/bits_equation=T in scripts/hol-probes/word_to_stack_bits_to_word_probe.out are reproduced by Lean guards in Flapjack/Test/WordToStackBitsParity.lean)"
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "call_dest_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStackRegFormat.lean",
+    "lean_name": "callDest",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-deepseek-three (source comparison): HOL call_dest SOME pos args kf = (Skip, INL pos); NONE with LENGTH args = 0 gives (Skip, INL raise_stub_location) and otherwise takes LAST args through wReg2 then wStackLoad; the argument type is monomorphic num (LAST args is fed to wReg2), rendered as List Nat; Lean callDest matches on Option and on args.getLast? (none iff empty) so the empty branch is exactly HOL's, and uses the ported wReg2/wStackLoad/raiseStubLocation; HOL is polymorphic in the stack-program word type, so the exact statement returns ProgM alpha for an arbitrary alpha (Lean callDest is `{alpha : Type} ... : ProgM alpha x Sum Nat Nat`); the argument list alone is monomorphic num; no word operation and no dimindex; HOL rows cd_some/cd_none_reg/cd_none_stack/cd_empty in scripts/hol-probes/word_to_stack_call_dest_probe.out, reproduced by callDestParityGuard in Flapjack/Test/WordToStackBitsParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "chunk_to_bitmap_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack.lean",
+    "lean_name": "chunkToBitmapW",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-deepseek-three (2026-09-24: matches the HOL `chunk_to_bitmap_def` equation at word_to_stackScript.sml:393-395 — chunk_to_bitmap ws = chunk_to_bits ws :: MAP SND ws — with the same chunk word prepended to the payload words; HOL is polymorphic over 'a word while the Lean faithful counterpart fixes the carrier to BitVec width + [NeZero width] per the loadShapeBytes/loadShapeBytesW standard, using the tagged chunkToBitsW; direct HOL-EVAL rows cbm_empty=[1w]/cbm_two=[5w; 0w; 9w]/cbm_payload=[3w; 7w] in scripts/hol-probes/word_to_stack_chunk_to_bitmap_probe.out are reproduced by Lean guards in Flapjack/Test/WordToStackBitsParity.lean)"
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "chunk_to_bits_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack.lean",
+    "lean_name": "chunkToBitsW",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-deepseek-three (2026-09-24: matches the HOL `chunk_to_bits_def` equations at word_to_stackScript.sml:386-391 — chunk_to_bits [] = 1w and chunk_to_bits ((b,w)::ws) = let res = chunk_to_bits ws << 1 in if b then res + 1w else res — with the same base word, shift/conditional-add recursion and word payload ignored; HOL is polymorphic over 'a word while the Lean faithful counterpart fixes the carrier to BitVec width + [NeZero width] per the loadShapeBytes/loadShapeBytesW standard; direct HOL-EVAL rows cb_empty=1w/cb_single_true=3w/cb_single_false=2w/cb_true_false=5w/cb_false_true=6w/cb_three=11w/cb_ignores_word=T in scripts/hol-probes/word_to_stack_chunk_to_bits_probe.out are reproduced by Lean guards in Flapjack/Test/WordToStackBitsParity.lean)"
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "const_words_to_bitmap_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack.lean",
+    "lean_name": "constWordsToBitmapW",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-deepseek-three (2026-09-24: matches the HOL `const_words_to_bitmap_def` at word_to_stackScript.sml:397-405 — if ws_len < dimindex (:'a) - 1 \\/ dimindex (:'a) - 1 = 0 then chunk_to_bitmap ws else chunk_to_bitmap (TAKE (dimindex-1) ws) ++ const_words_to_bitmap (DROP (dimindex-1) ws) (ws_len - (dimindex-1)) — with dimindex (:'a) rendered as the fixed Lean width, the strict `<` boundary and the (=0) escape kept verbatim, and termination measured by ws_len as in HOL; HOL is polymorphic over 'a word while the Lean faithful counterpart fixes the carrier to BitVec width + [NeZero width] per the loadShapeBytes/loadShapeBytesW standard; direct HOL-EVAL rows cwb_empty=[1w]/cwb_short=[5w; 0w; 9w]/cwb_boundary8=[213w; 1w; 2w; 3w; 4w; 5w; 6w; 7w; 1w]/cwb_split8=[213w; 1w; 2w; 3w; 4w; 5w; 6w; 7w; 2w; 8w] in scripts/hol-probes/word_to_stack_chunk_to_bitmap_probe.out are reproduced by Lean guards in Flapjack/Test/WordToStackBitsParity.lean)"
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "copy_ret_aux_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStackRegFormat.lean",
+    "lean_name": "copyRetAux",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-deepseek-three (2026-09-25: matches HOL `copy_ret_aux_def` at word_to_stackScript.sml:429-441 - n=0 -> Skip else list_Seq [StackLoad k (n-1); StackStore k ((n-1)+f); copy_ret_aux k f (n-1)]. Word-independent (only Seq/StackLoad/StackStore/list_Seq with num fields), so exact over the shared-word carrier ProgM alpha; HOL-EVAL rows cra_zero=T/cra_one=T/cra_two=T reproduced by copyRetParityGuard.)"
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "copy_ret_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStackRegFormat.lean",
+    "lean_name": "copyRet",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-deepseek-three (2026-09-25: matches HOL `copy_ret_def` at word_to_stackScript.sml:443-451 - let n = num_stack_ret k vs; n=0 -> kont else Seq (copy_ret_aux k (if is_handle then f + handler_slots perf else f) n) (SeqStackFree n kont). Uses the already-ported num_stack_ret/handler_slots/seqStackFree. Corrected 2026-09-25 by flapjack-deepseek-two (bead flapjack-pxn.18.5.15.3.17): HOL `copy_ret` keeps the return-value list `vs` as an independent `num list` carrier (only `LENGTH vs` is used), so the Lean signature is now `{α β : Type} ... (vs : List β) (kont : ProgM α)`. HOL-EVAL rows cr_zero=T/cr_plain=T/cr_handle=T (with vs=[10;20;30] : num list against a 64-bit prog) reproduced by copyRetParityGuard and the β=Nat independent-carrier fixture copyRetIndependentGuard.)"
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "format_var_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStackRegFormat.lean",
+    "lean_name": "formatVar",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-deepseek-three (2026-09-24: matches HOL `format_var_def` at word_to_stackScript.sml:78-80 - format_var k NONE = INL (k+1) /\\ format_var k (SOME x) = if x < k then INL x else INR x - pure num/option/sum, no word operation or dimindex, exact with no width index; HOL-EVAL rows rf_format_var_none=INL 6/rf_format_var_some_reg=INL 2/rf_format_var_some_frame=INR 7 in scripts/hol-probes/word_to_stack_reg_format_probe.out reproduced by Lean guards in Flapjack/Test/WordToStackBitsParity.lean)"
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "handler_slots_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack.lean",
+    "lean_name": "handlerSlots",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-deepseek-three (2026-09-24: matches HOL `handler_slots_def` at word_to_stackScript.sml:346-348 - handler_slots perf = if perf then 5n else 3n - pure bool/num sizing of exception-handler stack slots used by raise_stub/PushHandler/StackHandlerArgs/copy_ret, with no word operation or dimindex, so the monomorphic Lean port is exact; direct HOL-EVAL rows ps_handler_slots_true=5/ps_handler_slots_false=3 in scripts/hol-probes/word_to_stack_perf_slots_probe.out are reproduced by Lean guards/kernel examples in Flapjack/Test/WordToStackBitsParity.lean)"
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "insert_bitmap_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack.lean",
+    "lean_name": "insertBitmap",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-deepseek-three (2026-09-24: matches HOL `insert_bitmap_def` at word_to_stackScript.sml:246-250 — insert_bitmap ws (data,data_len) = let l = LENGTH ws in ((Append data (List ws), data_len + l), data_len) — with Append/List the misc$app_list constructors and the same length/data_len arithmetic; HOL is fully polymorphic in the word element type 'a and insert_bitmap uses no word operation or dimindex, so the generic-α Lean port introduces no side condition, matching the reviewed generic app_list/append_aux/append tags in Flapjack/Misc/AppList.lean; direct HOL-EVAL rows ib_empty=((Append Nil (List []),0),0)/ib_flat=((Append (List [9; 8]) (List [1; 2; 3]),8),5)/ib_nested=((Append (Append (List [1]) (List [2])) (List [4]),8),7)/ib_data_len=5/ib_new_len=8 in scripts/hol-probes/word_to_stack_insert_bitmap_probe.out are reproduced by Lean guards in Flapjack/Test/WordToStackBitsParity.lean)"
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "num_stack_ret_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack.lean",
+    "lean_name": "numStackRet",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-deepseek-three (2026-09-24: matches HOL `num_stack_ret_def` at word_to_stackScript.sml:417-420 - num_stack_ret k vs = LENGTH vs + 1 - k - with the same LENGTH-based list length and HOL num truncating subtraction (Lean Nat subtraction); HOL is polymorphic in the value type and only measures LENGTH, so the generic-alpha Lean port introduces no side condition; direct HOL-EVAL rows ss_num_stack_ret_pair=2/ss_num_stack_ret_three=1 in scripts/hol-probes/word_to_stack_stack_slots_probe.out are reproduced by Lean guards in Flapjack/Test/WordToStackBitsParity.lean)"
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "perf_call_prefix_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStackRegFormat.lean",
+    "lean_name": "perfCallPrefixW",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-deepseek-three (source comparison): HOL perf_call_prefix l1 l2 k = list_Seq [LocValue k l1 l2; Inst (Mem Store k (Addr perf_rsp (-8w))); Inst (Mem Store perf_rbp (Addr perf_rsp (-16w))); Inst (Arith (Binop Sub perf_rsp perf_rsp (Imm 16w))); Inst (Arith (Binop Or perf_rbp perf_rsp (Reg perf_rsp)))]; Lean perfCallPrefixW {width} [NeZero width] builds the same list_Seq over ProgM (BitVec width) with perfRsp/perfRbp and BitVec immediates; width-indexed because of the concrete -8w/-16w/16w words; HOL row pcp_eq=T in scripts/hol-probes/word_to_stack_stub_probe.out, reproduced by stubParityGuard in Flapjack/Test/WordToStackBitsParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "perf_call_suffix_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStackRegFormat.lean",
+    "lean_name": "perfCallSuffixW",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-deepseek-three (source comparison): HOL perf_call_suffix = list_Seq [Inst (Mem Load perf_rbp (Addr perf_rsp 0w)); Inst (Arith (Binop Add perf_rsp perf_rsp (Imm 16w)))]; Lean perfCallSuffixW {width} [NeZero width] mirrors it over ProgM (BitVec width); width-indexed because of the 0w/16w words; HOL row pcs_eq=T in scripts/hol-probes/word_to_stack_stub_probe.out, reproduced by stubParityGuard."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "perf_rbp_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack.lean",
+    "lean_name": "perfRbp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-deepseek-three (2026-09-24: matches HOL `perf_rbp_def` at word_to_stackScript.sml:315-317 - perf_rbp = 15n - the x64 RBP register number used by the unverified perf-mode instrumentation; a pure num constant with no word operation or dimindex, so the monomorphic Lean port is exact; direct HOL-EVAL row ps_perf_rbp=15 in scripts/hol-probes/word_to_stack_perf_slots_probe.out is reproduced by a Lean guard/kernel example in Flapjack/Test/WordToStackBitsParity.lean)"
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "perf_rsp_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack.lean",
+    "lean_name": "perfRsp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-deepseek-three (2026-09-24: matches HOL `perf_rsp_def` at word_to_stackScript.sml:310-312 - perf_rsp = 14n - the x64 RSP register number used by the unverified perf-mode instrumentation; a pure num constant with no word operation or dimindex, so the monomorphic Lean port is exact; direct HOL-EVAL row ps_perf_rsp=14 in scripts/hol-probes/word_to_stack_perf_slots_probe.out is reproduced by a Lean guard/kernel example in Flapjack/Test/WordToStackBitsParity.lean)"
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "raise_stub_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStackRegFormat.lean",
+    "lean_name": "raiseStub",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-deepseek-three (source comparison): HOL raise_stub perf k = Seq (Get k Handler) (Seq (StackSetSize k) (Seq (if perf then list_Seq [StackLoad k 3; Inst (Arith (Binop Or perf_rsp k (Reg k))); StackLoad k 4; Inst (Arith (Binop Or perf_rbp k (Reg k)))] else Skip) (Seq (StackLoad k 2) (Seq (Set Handler k) (Seq (StackLoad k 1) (Seq (StackFree (handler_slots perf)) (Raise k))))))); the body contains no word literal and HOL is polymorphic in the word type, so the exact Lean raiseStub {alpha} is generic over the carrier parameter; uses the ported handlerSlots/perfRsp/perfRbp; HOL rows rs_eq_f=T and rs_eq_t=T in scripts/hol-probes/word_to_stack_stub_probe.out, reproduced by stubParityGuard and the rfl example in Flapjack/Test/WordToStackBitsParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "skip_free_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack.lean",
+    "lean_name": "skipFree",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-deepseek-three (2026-09-24: matches HOL `skip_free_def` at word_to_stackScript.sml:423-426 - skip_free (k,f,f') vs = f - num_stack_ret k vs - with the (k,f,f') triple kept as three Nat arguments, f' unused as in HOL, and the tagged numStackRet; pure num arithmetic with no word operation, so the generic-alpha Lean port introduces no side condition; direct HOL-EVAL row ss_skip_free_pair=5 in scripts/hol-probes/word_to_stack_stack_slots_probe.out is reproduced by a Lean guard in Flapjack/Test/WordToStackBitsParity.lean)"
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "stack_arg_count_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack.lean",
+    "lean_name": "stackArgCount",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-deepseek-three (2026-09-24: matches HOL `stack_arg_count_def` at word_to_stackScript.sml:274-279 - case dest of INL _ => (arg_count - k:num) | INR _ => ((arg_count - 1) - k:num) - with HOL's ('a,'b) sum rendered as Lean Sum alpha beta and only the constructor inspected; pure num arithmetic, so the generic Lean port introduces no side condition; direct HOL-EVAL rows ss_arg_count_inl=5/ss_arg_count_inr=4 in scripts/hol-probes/word_to_stack_stack_slots_probe.out are reproduced by Lean guards in Flapjack/Test/WordToStackBitsParity.lean)"
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "stack_free_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack.lean",
+    "lean_name": "stackFree",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-deepseek-three (2026-09-24: matches HOL `stack_free_def` at word_to_stackScript.sml:281-284 - stack_free dest arg_count (k,f,f') = f - stack_arg_count dest arg_count k - with the (k,f,f') triple kept as four Nat arguments (f' unused as in HOL), HOL's ('a,'b) sum rendered as Lean Sum alpha beta, and the tagged stackArgCount; pure num arithmetic, so the generic Lean port introduces no side condition; direct HOL-EVAL rows ss_stack_free_inr=3/ss_stack_free_inl=2 in scripts/hol-probes/word_to_stack_stack_slots_probe.out are reproduced by Lean guards in Flapjack/Test/WordToStackBitsParity.lean)"
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "stack_move_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStackRegFormat.lean",
+    "lean_name": "stackMove",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-deepseek-three (2026-09-25: matches HOL `stack_move_def` at word_to_stackScript.sml:288-291 - recursion over n with base p and step Seq (stack_move n (start+1) offset i p) (Seq (StackLoad i (start+offset)) (StackStore i start)). Stated over the exact shared-word carrier ProgM alpha; HOL-EVAL rows sm_zero=T/sm_one=T/sm_two=T in scripts/hol-probes/word_to_stack_reg_format_probe.out reproduced by stackMoveParityGuard in Flapjack/Test/WordToStackBitsParity.lean.)"
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "store_consts_stub_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStackRegFormat.lean",
+    "lean_name": "storeConstsStub",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-deepseek-three (source comparison): HOL store_consts_stub k = Seq (StoreConsts k (k+1) NONE) (Return 0); word-independent, so the exact Lean storeConstsStub {alpha} : ProgM alpha is generic in the carrier parameter; HOL row scs_eq=T in scripts/hol-probes/word_to_stack_stub_probe.out, reproduced by stubParityGuard and the rfl example in Flapjack/Test/WordToStackBitsParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "wMoveAux_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStackRegFormat.lean",
+    "lean_name": "wMoveAux",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-deepseek-three (2026-09-25: matches HOL `wMoveAux_def` at word_to_stackScript.sml:71-76 - [] -> Skip; [xy] -> wMoveSingle xy kf; xy::xys -> Seq (wMoveSingle xy kf) (wMoveAux xys kf), over the exact carrier ProgM alpha; HOL-EVAL rows wma_empty=T/wma_two=T reproduced by wMoveParityGuard.)"
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "wMoveSingle_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStackRegFormat.lean",
+    "lean_name": "wMoveSingle",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-deepseek-three (2026-09-25: matches HOL `wMoveSingle_def` at word_to_stackScript.sml:62-69 - four-way case producing Inst (Arith (Binop Or r1 r2 (Reg r2))) or StackLoad/StackStore fragments. Stated over the exact shared-word carrier ProgM alpha; HOL-EVAL rows wms_reg_reg=T/wms_reg_frame=T/wms_frame_reg=T/wms_frame_frame=T reproduced by wMoveParityGuard.)"
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "wReg1_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStackRegFormat.lean",
+    "lean_name": "wReg1",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-deepseek-three (2026-09-24: matches HOL `wReg1_def` at word_to_stackScript.sml:28-31 - wReg1 r (k,f,f') = let r = r DIV 2 in if r < k then ([],r) else ([(k,f-1-(r-k))],k) - touches only num/bool/list with no word operation or dimindex, so the word-independent Lean port is exact with no width index; direct HOL-EVAL rows rf_reg1_high=([(3,8)],3)/rf_reg1_low=([],1) in scripts/hol-probes/word_to_stack_reg_format_probe.out reproduced by Lean guards/kernel examples in Flapjack/Test/WordToStackBitsParity.lean)"
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "wReg2_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStackRegFormat.lean",
+    "lean_name": "wReg2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-deepseek-three (2026-09-24: matches HOL `wReg2_def` at word_to_stackScript.sml:34-37 - wReg2 r (k,f,f') = let r = r DIV 2 in if r < k then ([],r) else ([(k+1,f-1-(r-k))],k+1) - pure num/bool/list, no word operation or dimindex, exact with no width index; HOL-EVAL rows rf_reg2_high=([(4,8)],4)/rf_reg2_low=([],2) in scripts/hol-probes/word_to_stack_reg_format_probe.out reproduced by Lean guards in Flapjack/Test/WordToStackBitsParity.lean)"
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "wRegWrite1_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStackRegFormat.lean",
+    "lean_name": "wRegWrite1",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-deepseek-three (2026-09-25: matches HOL `wRegWrite1_def` at word_to_stackScript.sml:40-44 - wRegWrite1 g r (k,f,f') = let r = r DIV 2 in if r < k then g r else Seq (g k) (StackStore k (f-1 - (r - k))). Stated over the exact shared-word carrier ProgM alpha (single word type parameter, faithful MlString FFI field), so the conclusion carrier is exact. Reproduced by the reg-format oracle rows sm_zero/sm_one/sm_two and wms_* in scripts/hol-probes/word_to_stack_reg_format_probe.out and by the guards in Flapjack/Test/WordToStackBitsParity.lean.)"
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "wRegWrite2_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStackRegFormat.lean",
+    "lean_name": "wRegWrite2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-deepseek-three (2026-09-25: matches HOL `wRegWrite2_def` at word_to_stackScript.sml:46-50 - biased to the k+1 frame slot, same exact ProgM alpha carrier. Reproduced by the reg-format oracle rows in scripts/hol-probes/word_to_stack_reg_format_probe.out.)"
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "wShareInst_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStackRegFormat.lean",
+    "lean_name": "wShareInst",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-deepseek-three (source comparison): HOL wShareInst (word_to_stackScript.sml:186-224) is polymorphic in the stack word type `'a` and has the load forms wShareInst Load/Load8/Load16/Load32 v (Addr ad offset) kf = let (l,n2) = wReg1 ad kf in wStackLoad l (wRegWrite1 (\\r. ShMemOp <op> r (Addr n2 offset)) v kf) and the store forms wShareInst Store/Store8/Store16/Store32 v (Addr ad offset) kf = let (l1,n2) = wReg1 ad kf; let (l2,n1) = wReg2 v kf in wStackLoad (l1 ++ l2) (ShMemOp <op> n1 (Addr n2 offset)). Lean wShareInst {alpha} : WordMemOp -> Nat -> WordLangAddr alpha -> Nat x Nat x Nat -> ProgM alpha matches all eight clauses over the exact shared-word carrier ProgM alpha (single word type, faithful MlString FFI). Direct HOL rows ws_load..ws_store32=T in scripts/hol-probes/word_to_stack_wshareinst_probe.out, reproduced by wShareInstParityGuard and rfl examples in Flapjack/Test/WordToStackBitsParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "word_list_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack.lean",
+    "lean_name": "wordListW",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-deepseek-three (2026-09-24: matches the HOL `word_list_def` equations at word_to_stackScript.sml:231-238 — if LENGTH xs <= d \\/ d = 0 then [bits_to_word xs] else bits_to_word (TAKE d xs ++ [T]) :: word_list (DROP d xs) d — with the same if-condition, chunking and recursion; HOL is polymorphic over 'a word while the Lean faithful counterpart fixes the carrier to BitVec width + [NeZero width] per the loadShapeBytes/loadShapeBytesW standard, using the tagged bitsToWordW; direct HOL-EVAL rows wl_empty_d3=[0w]/wl_empty_d0=[0w]/wl_d0=[5w]/wl_short=[5w]/wl_split=[5w; 3w]/wl_twostep=[7w; 7w; 1w] in scripts/hol-probes/word_to_stack_word_list_probe.out are reproduced by Lean guards in Flapjack/Test/WordToStackBitsParity.lean)"
+  }
+]

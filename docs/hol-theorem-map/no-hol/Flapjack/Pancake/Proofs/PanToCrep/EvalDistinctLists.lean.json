@@ -1,0 +1,26 @@
+[
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvalDistinctLists.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.4.3.94.2): Flapjack-only helper (finite-map ZIP cons update, OPT_MMAP congruence, or the same-module canonical carrier witness) for the tagged distinct_lists eval ports; HOL uses FUPDATE_LIST_THM/OPT_MMAP_CONG inline. Untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvalDistinctLists.lean",
+    "lean_name": "mapM_congr_mem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.4.3.94.2): Flapjack-only helper (finite-map ZIP cons update, OPT_MMAP congruence, or the same-module canonical carrier witness) for the tagged distinct_lists eval ports; HOL uses FUPDATE_LIST_THM/OPT_MMAP_CONG inline. Untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvalDistinctLists.lean",
+    "lean_name": "updateListEq_zip_cons",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.4.3.94.2): Flapjack-only helper (finite-map ZIP cons update, OPT_MMAP congruence, or the same-module canonical carrier witness) for the tagged distinct_lists eval ports; HOL uses FUPDATE_LIST_THM/OPT_MMAP_CONG inline. Untagged."
+  }
+]

@@ -1,0 +1,706 @@
+[
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "FLOOKUP_FUPDATE_LIST_reverse_eq_lookup",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific finite-map support: FLOOKUP after FUPDATE_LIST of a reversed association list equals List.lookup on the original list (first occurrence wins), matching HOL alist_to_fmap/ALOOKUP. Not a standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "alookupCompileToCrepCodeGeneral",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Parameter-general companion of the tagged alookupCompileToCrepCode: a source entry with arbitrary parameters compiles to the entry with crep_vars slots and comp_func body. HOL discharges it inside mk_ctxt_code_imp_code_rel; not a standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "bindPanValueParametersLocalsRelOfPanSem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only callee-entry locals_rel bridge from the successful source evaluator binder to actual target word_lab locals; derives the relation through slc, not the enclosing Call preservation theorem"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "bindPanValueParameters_eq_slc",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only bridge from successful state evaluator parameter binding to HOL slc; supports Call argument locals_rel, not itself an exact HOL theorem"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "bitVecOfNat_inj",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific support: BitVec.ofNat width is injective below 2^width (HOL's LESS_MOD step). No HOL original declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "callParameterShapeMapEqPanSem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack indexed-list bridge from pointwise formal/argument shape equality to map equality, matching the shape content of the HOL Call LIST_REL premise; not a port of the complete HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "codeRelW_iff_codeRel",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (Flapjack-only bridge: the width-indexed codeRelW is definitionally the generic codeRel at BitVec width)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "codeRel_of_codeRelW",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (Flapjack bridge lemma for the width-indexed codeRelW exact HOL code_rel_def boundary; no standalone HOL original)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "compFieldHOL_mem_of_index_lt",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only proof helper for exact-carrier memCompFieldHOLExact; no separate HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "compileCodeRelProg_eq_compileProgRiscV",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only bridge proving compileCodeRelProg is the compile_def-shaped helper (compileProgRiscV; not tagged due to the documented exact-carrier mismatch) on the bridged context for every proof context; this does not make a HOL compile_def tag eligible."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "compileField_mem_of_index_lt",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (Flapjack support: excludes unreachable zero fallback for valid field index)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "compileParamVars_range_withShape",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific bridge for HOL mk_ctxt_code_imp_code_rel. No HOL original declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "compileProgHOL_call_destNone_handlerNone",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific concrete call-form / strong-induction helper for the exact HOL not_mem_context_assigned_mem_gt port; no standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "compileProgHOL_call_destNone_handlerSome_eidsNone",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific concrete call-form / strong-induction helper for the exact HOL not_mem_context_assigned_mem_gt port; no standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "compileProgHOL_call_destNone_handlerSome_eidsSome",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific concrete call-form / strong-induction helper for the exact HOL not_mem_context_assigned_mem_gt port; no standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "compileProgHOL_call_destSome_nocall_handlerNone",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific concrete call-form / strong-induction helper for the exact HOL not_mem_context_assigned_mem_gt port; no standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "compileProgHOL_call_destSome_nocall_handlerSome_eidsNone",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific concrete call-form / strong-induction helper for the exact HOL not_mem_context_assigned_mem_gt port; no standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "compileProgHOL_call_destSome_nocall_handlerSome_eidsSome",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific concrete call-form / strong-induction helper for the exact HOL not_mem_context_assigned_mem_gt port; no standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "compileProgHOL_call_destSome_somecall_handlerNone",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific concrete call-form / strong-induction helper for the exact HOL not_mem_context_assigned_mem_gt port; no standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "compileProgHOL_call_destSome_somecall_handlerSome_eidsNone",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific concrete call-form / strong-induction helper for the exact HOL not_mem_context_assigned_mem_gt port; no standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "compileProgHOL_call_destSome_somecall_handlerSome_eidsSome",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific concrete call-form / strong-induction helper for the exact HOL not_mem_context_assigned_mem_gt port; no standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "compileProgHOL_call_none",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific concrete call-form / strong-induction helper for the exact HOL not_mem_context_assigned_mem_gt port; no standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "compileProgHOL_not_mem_assignedFreeVars",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific concrete call-form / strong-induction helper for the exact HOL not_mem_context_assigned_mem_gt port; no standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "compileToCrepHOL_eq_map",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only helper: compileToCrepHOL is the source function list mapped through comp_func/crep_vars with the context built from the same declarations; used to move ALOOKUP over compile_to_crep onto the source table."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "crepMemoryRel_store",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-deepseek (source comparison)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "crepRuntimeExtCallValues_stateRel_dispatch",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only source/target ExtCall simulation step following call_FFI (FFI_return/FFI_final) with state_rel; assembles the proven canonical-target branches; no single HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "crepRuntimeExtCallValues_stateRel_dispatch_final",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only non-returned companion of crepRuntimeExtCallValues_stateRel_dispatch_returned: when the call_FFI handler reports a final event, the canonical-target ExtCall step is FinalFFI with the target state unchanged and the source/target states remain the related pre-states (HOL FFI_final, (SOME (FinalFFI outcome), s))."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "crepRuntimeExtCallValues_stateRel_dispatch_returned",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly of the dispatched Crep ExtCall FFI_return step with its post-state stateRel; connects crepRuntimeExtCallValues_target_returned to crepRuntimeExtCallValues_stateRel_returned; no single HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "crepRuntimeExtCallValues_stateRel_error",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only source/target failing-read ExtCall step returning Error; assembles the proven canonical-target error branch with state_rel; no single HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "crepRuntimeExtCallValues_stateRel_returned",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only source/target post-state stateRel for the Crep ExtCall FFI_return write-back branch on every memory domain (both successful and failed byte stores, matching HOL write_bytearray's fallback); assembles panSemWriteBytearray and riscv64WriteState through stateRel; no single HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "crepRuntimeExtCall_dispatch",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (Flapjack-only assembly: four-local wrapper one-shot dispatch; reduces to crepRuntimeExtCallValues_target_dispatch_any, no HOL original)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "crepRuntimeExtCall_stateRel_dispatch",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (Flapjack-only assembly: packages the returned/final/error four-local stateRel branches; source post-state built, no HOL original)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "crepRuntimeExtCall_stateRel_dispatch_final",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only four-local companion of crepRuntimeExtCallValues_stateRel_dispatch_final: the production crepRuntimeExtCall wrapper resolves its four locals, the reads succeed and the handler reports a final event, so the step is FinalFFI with the target state unchanged and the source/target states stay related."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "crepRuntimeExtCall_stateRel_dispatch_returned",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only four-local companion of crepRuntimeExtCallValues_stateRel_dispatch_returned: resolves the actual Nat-indexed production crepRuntimeExtCall wrapper to the canonical-target ExtCall dispatch and builds the source panSemWriteBytearray post-state for the FFI_return branch; no single HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "crepRuntimeExtCall_stateRel_error",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only four-local wrapper failing-read branch (HOL _ => (SOME Error, s)): the Nat-indexed production crepRuntimeExtCall resolves its four locals, the configuration or array read fails, and the step is Error with the target state unchanged and the source/target states still related."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "crepRuntimeLoad_eq_none_of_memaddrs_false",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-deepseek (source comparison)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "crepRuntimeLoad_eq_some_of_crepMemoryRel",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-deepseek (source comparison)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "crepRuntimeStore_eq_none_of_memaddrs_false",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-deepseek (source comparison)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "crepRuntimeStore_eq_some_of_memaddrs_true",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-deepseek (source comparison)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "ctxtFcCtxtMaxOfSlots",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof support deriving the HOL ctxt_max bound for ctxtFc from maxList slots and exact withShape slices; not tagged as a separate HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "ctxtFcNoOverlapOfDistinctSlots",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof support for HOL no_overlap on ctxtFc: relies on distinct flat slots and the source theorem’s exact withShape partition; not tagged as a separate HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "ctxtFcVarsLookupGetElem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only indexed lookup into the ctxtFc formal parameter slots, exposing the matching withShape slot group; support for the full Call locals_rel proof, not an independent HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "distinctLists_eq_true_iff",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper: characterises distinctLists as set-disjointness (no HOL declaration)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "drop_range_map",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific list support. No HOL original declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "evaluateReplicateConst",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only word_lab-core analogue over evalCrepRuntimeExpsWordLab (bare-runtime evaluator delegating to arbitrary memoryModel hooks), not kernel-checked equal to crepSem$eval; specifically not a HOL port, hence no @[hol] tag. The faithful exact port is evaluateReplicateConstHOL. Production evaluator/projection tracked by flapjack-pxn.18.4.3.48.1."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "exceptionEntries_length_le_sizeOfEids",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific support lemma bounding the exception table length by sizeOfEids. No HOL original declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "globalsLookup_wordCell",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only pointwise projection from successful state-owned globalsLookup; supports multiword exp_hdl reasoning and is not a separate HOL theorem"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only canonical finite-map representation witness (bead flapjack-4ac.5.85), required by the fmap_as_finite_support qualifier on ctxtFcExactHOL. It states PanToCrepContextExact.ofBroad (PanToCrepContextExact.toBroad context) = context for the imported exact carrier, whose toBroad/ofBroad are defined in Flapjack/Pancake/PanToCrep/ContextExact.lean. This is representation infrastructure, not a port of a HOL declaration in pan_to_crepProofScript.sml."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "loadShapeBytes_getElemOpt_rel",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (Lean indexing bridge)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "loadShapeBytes_length",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (Lean indexing bridge)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "localsRelUpdateExistingValue",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only local-map lemma deriving the flattened target-slot update from locals_rel lookup and shape preservation; arbitrary-width finite-map exp_hdl execution, its locals_rel update, and actual-state matching-handler prestate composition are available as untagged induction support in EvaluateCases; the recursive callee/handler induction hypotheses are not yet composed into the source/target Call theorem"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "lookup_map_preserveFst",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific list fact: a key-preserving projection commutes with List.lookup (HOL ALOOKUP_MAP analogue used inside mk_ctxt_code_imp_code_rel). Not a standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "makeFuncsHOL_lookup_of_lookup",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific lookup link for HOL make_funcs: a source function entry is visible in the make_funcs finite map with its parameter list and return shape. HOL discharges this inside mk_ctxt_code_imp_code_rel; not a standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "mapFlattenMemSomeSupport",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (proof inventory)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "mem_zip_getElem?",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific list support (HOL MEM_ZIP analogue): membership in a zip yields aligned indices with l[i]? = some value. No HOL original declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "mkCtxtCodeImpCodeRelW",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (Flapjack bridge lemma for the width-indexed codeRelW exact HOL code_rel_def boundary; no standalone HOL original)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "panSemShapeOfMapPanValueShapeNil",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack bridge identifying the exact source panSem shape_of list with the empty-struct proof-context shape list; supports translating the HOL is_wf_shape_v_nil Call premise."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "panSemShapeOf_eq_panValueShape_nil",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (source comparison)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "panShapeListMatches_eq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only list recursion supporting panShapeMatches_eq; no separate HOL theorem declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "panShapeMatches_eq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only support showing successful panShapeMatches is exact structural shape equality; no separate HOL theorem declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "panToCrepCompFuncRiscV_eq_compileCodeRelProg",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific bridge: the production per-function compiler panToCrepCompFuncRiscV equals the codeRel proof-context compilation compileCodeRelProg at the ctxtFc context. Vars agree by panToCrepMakeVmapHOL_eq_ctxtFcVars, vmax by maxList_range; funcs/eids are the same finite maps. No separate HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "panToCrepGetEidsFromDeclsHOL_eq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific unfolding of the tagged get_eids_from_decls port into its zip/FUPDATE_LIST form. No HOL original declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "panToCrepGetEidsFromDeclsHOL_lookup_mem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific inverse lookup fact for the get_eids_from_decls port (ALOOKUP_MEM analogue). No HOL original declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "panToCrepMakeVmapHOL_eq_ctxtFcVars",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific bridge for HOL mk_ctxt_code_imp_code_rel (HOL discharges inside gvs[ctxt_fc_def, make_vmap_def]); direct probe scripts/hol-probes/crep_vmap_ctxtfc_probe.out."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "panToCrepSourceLoad32HOLCase",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (Flapjack-specific RISC-V source evaluator case under stateRel: reduces source Load32 to existing panMemLoad32HOL using source memaddrs/be and target word memory; not a standalone HOL theorem or pc_compile_correct case proof. Direct HOL EVAL row state_rel_source_word32_little and state_rel_source_word32_misaligned in pan_sem_state_eval_probe.out.)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "panToCrepSourceLoadByteHOLCase",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (Flapjack-specific RISC-V source evaluator case under stateRel: reduces source LoadByte to existing panMemLoadByteHOL using source memaddrs/be and target word memory; not a standalone HOL theorem or pc_compile_correct case proof. Direct HOL EVAL rows state_rel_source_byte_little and state_rel_source_byte_domain_failure in pan_sem_state_eval_probe.out.)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "panValueFfiExtCall_stateRel_target",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (Flapjack-only: derives the target Crep ExtCall dispatch and post-state stateRel from a source panValueFfiExtCall returned-evaluator outcome plus stateRel, using the source/target read-write bridges; hypothesis is the source evaluator result, not the target result or post-relation)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "panValueFfiSharedLoad_stateRel_final",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "deepseek-two: Flapjack-only source-to-target shared-memory FFI_final step; HOL sh_mem_load FFI_final maps to target FinalFFI with cleared locals; oracle row load_final in scripts/hol-probes/crep_runtime_shared_mem_probe.out"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "panValueFfiSharedLoad_stateRel_target",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only: a source panValueFfiSharedLoad `.loaded` outcome (HOL sh_mem_load FFI_return) drives the target crepRuntimeSharedMem MappedRead dispatch and the ffi-only stateRel post-state; direct oracle scripts/hol-probes/crep_runtime_shared_mem_probe.out (load_returned)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "panValueFfiSharedStore_stateRel_final",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "deepseek-two: Flapjack-only source-to-target shared-memory FFI_final step; HOL sh_mem_store FFI_final maps to target FinalFFI with unchanged state; oracle row store_final in scripts/hol-probes/crep_runtime_shared_mem_probe.out"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "panValueFfiSharedStore_stateRel_target",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only: a source panValueFfiSharedStore `.stored` outcome (HOL sh_mem_store FFI_return) drives the target crepRuntimeSharedMem MappedWrite dispatch and the ffi-only stateRel post-state; direct oracle scripts/hol-probes/crep_runtime_shared_mem_probe.out (store_returned)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "slcLookupGetElem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only support deriving the indexed formal/argument pair responsible for a successful slc lookup; used by the Call callee-entry locals_rel proof. It does not claim call_preserve_state_code_locals_rel."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "slcTlcWordLabLocalsRelMemberOfPanSem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack support deriving the locals_rel member clause from a successful slc lookup, formal/context shape lookup, and the target word_lab slot projection; not tagged as the enclosing HOL Call theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "slcTlcWordLabLocalsRelOfIndexedPanSem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack composition from the indexed formal/argument shape form of HOL LIST_REL_EL_EQN to the expanded Call locals_rel_def body; enclosing state/code/excp preservation remains unproved."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "slcTlcWordLabLocalsRelOfIndexedPanSem_exact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only literal localsRel wrapper for the indexed source-shape bridge; still untagged and not yet tied to the production source/target Call entry maps"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "slcTlcWordLabLocalsRelOfPanSem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack Call-entry proof of the expanded locals_rel_def body for slc parameters and the actual word_lab target tlc map under source panSem shape_of/is_wf_shape_v_nil premises; does not claim state/code/excp preservation or an exact theorem port."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "stateRel_ffiUpdate",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only preservation lemma: installing the same call_FFI result on both sides keeps state_rel; no single CakeML HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "stateRel_riscv64CrepRuntimeTarget_iff",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "deepseek-two: Flapjack-only canonicalization lemma; riscv64CrepRuntimeTarget edits bytesInWord/memoryModel/ffiContext (not constrained by state_rel) and bigEndian, so stateRel source base and stateRel source (riscv64CrepRuntimeTarget base) coincide when base.bigEndian = false"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "tlcWithShapeGetElemMap",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only lookup lemma showing that tlc maps the ctxtFc withShape slot group for an indexed argument to that argument's flattened words; support for the full Call locals_rel proof."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "tlcWithShapeGetElemMapOfPanSem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack source-facing tlc slot projection at panSem shape_of under the Call theorem's empty-context argument well-formedness premise; no arbitrary-struct generalization claimed."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "tlcWordLabWithShapeGetElemMapOfPanSem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack source-facing projection showing ctxtFc withShape slots map through the actual word_lab tlc target map to a single argument’s flattened word_lab values; no HOL theorem tag."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "updatePanValueMap_eq_FUPDATE",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private Flapjack finite-map support equating one source-local update with HOL-shaped FUPDATE; no standalone HOL theorem"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "updatePanValueMap_fold_eq_FUPDATE_LIST",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private Flapjack finite-map support equating folded source-local updates with FUPDATE_LIST; no standalone HOL theorem"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "withShapeGetElemMemOfSlotsMem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack finite-list support: each withShape component contains only slots from the flat target slot list; used for generated ctxtFc ctxt_max."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "withShapeGetElemNodupOfSlotsNodup",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack finite-list support: each withShape component inherits Nodup from the flat target slot list; used for generated ctxtFc no_overlap."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "withShapeMap",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack list support proving withShape commutes with mapping each flattened word into HOL word_lab cells."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "withShape_mapPanValueFlatten",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only partition lemma showing that splitting concatenated argument flattenings by the corresponding source value shapes returns each argument flattening; support for the Call function-context locals_rel proof."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "withShape_mapPanValueFlattenOfPanSem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack bridge applying the partition lemma at HOL panSem shape_of with the exact empty-context is_wf_shape_v_nil premise; it does not cover arbitrary struct contexts."
+  }
+]

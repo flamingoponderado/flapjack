@@ -1,0 +1,18 @@
+[
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrectStoreGlob.lean",
+    "lean_name": "crepSimpMapcsHOL_setGlobals",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only commuting law for the local simp_prog_correct mapcs rendering and exact setGlobals; HOL has no standalone declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrectStoreGlob.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module canonical finite-support witness re-export for the CrepSemHOLState carrier used by the StoreGlob case tag; no separate HOL declaration."
+  }
+]

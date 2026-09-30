@@ -1,0 +1,96 @@
+[
+  {
+    "hol_path": "cakeml/pancake/loop_liveScript.sml",
+    "hol_name": "arith_vars",
+    "lean_path": "Flapjack/Pancake/LoopLive.lean",
+    "lean_name": "arithVarsHOL",
+    "statement_status": "reviewed_exact",
+    "hol_line": 50,
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; bead flapjack-pxn.18.5.6.29.1.3): exact port of HOL arith_vars (loop_liveScript.sml:50-58) over LoopArith/NumSet; insert/delete are the exact spt-tree operations (sptInsert/sptDelete); clause order longMul/longDiv/div and register roles match HOL name-for-name; direct oracle rows replay arith_vars_probe.out (long_mul=3;4;6, div=2;3;5, long_div=3;4;5;8) in Test/LoopArithVarsParity.lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/loop_liveScript.sml",
+    "hol_name": "comp_def",
+    "lean_path": "Flapjack/Pancake/LoopLive.lean",
+    "lean_name": "compHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "hol_line": 217,
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; bead flapjack-pxn.18.5.6.29.1.7): exact port of HOL comp_def (loop_liveScript.sml:217-219) `comp prog = FST (mark_all (FST (shrink [] prog LN)))` over HolLoopProg width: compHOL prog = (markAllHOL (shrinkHOL [] prog .ln).1).1, composing the tagged shrinkHOL (shrink_def) and markAllHOL (mark_all_def). words_as_type_indexed_bitvec because HOL is polymorphic in the type-indexed word/label type while Lean fixes BitVec width under [NeZero width] via the reviewed HolLoopProg carrier; no other differences, no extra hypotheses. Representative direct original-HOL rows are the committed loop_live_comp_probe.out suite (comp composed from shrink+mark_all)."
+  },
+  {
+    "hol_path": "cakeml/pancake/loop_liveScript.sml",
+    "hol_name": "fixedpoint_thm",
+    "lean_path": "Flapjack/Pancake/LoopLive/Fixedpoint.lean",
+    "lean_name": "fixedpoint_thm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.10) against fixedpoint_thm at loop_liveScript.sml:167-170: `∀lt live_in l1 l2 (body:'a loopLang$prog) l0 b. fixedpoint lt live_in l1 l2 body = SOME (b, l0) ⇒ shrink ((inter live_in l0, l2)::lt) body l2 = (b, l0)`. Lean keeps the binders in order and the implication over the tagged shrinkHOL (shrink_def) and its untagged mutual half fixedpointHOL (HOL declares fixedpoint inside shrink_def); inter is sptInter. The proof follows fixedpoint's recursion (measure size live_in - size l1); the fixed-point branch needs inter live_in (inter live_in l0) = inter live_in l0 structurally (HOL: inter_assoc and lookup_inter_alt inline), proved by the private sptInter_idem_left."
+  },
+  {
+    "hol_path": "cakeml/pancake/loop_liveScript.sml",
+    "hol_name": "mark_all_def",
+    "lean_path": "Flapjack/Pancake/LoopLive.lean",
+    "lean_name": "markAllHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "hol_line": 189,
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; bead flapjack-pxn.18.5.6.29.1.5): exact port of HOL mark_all_def (loop_liveScript.sml:189-215) over HolLoopProg width. Clause-for-clause: Seq/If recurse both children and wrap in Mark iff both children are marked; Loop recurses the body and returns false; Mark unwraps; Call with no handler becomes Mark of itself with true, and with a handler recurses handler/normal then wraps iff both marked; catch-all wraps in Mark with true. words_as_type_indexed_bitvec because HOL is polymorphic in the type-indexed word/label type while Lean fixes BitVec width under [NeZero width] via the reviewed HolLoopProg carrier; no other differences. Representative direct original-HOL rows in scripts/hol-probes/mark_all_probe.out, plus the loop_live_comp/loop_live_optimise probe suites that compose shrink+mark_all."
+  },
+  {
+    "hol_path": "cakeml/pancake/loop_liveScript.sml",
+    "hol_name": "optimise_def",
+    "lean_path": "Flapjack/Pancake/LoopLive.lean",
+    "lean_name": "optimiseHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "hol_line": 221,
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; bead flapjack-pxn.18.5.6.29.1.7): exact port of HOL optimise_def (loop_liveScript.sml:221-223) `optimise prog = (comp o FST o loop_call$comp LN) prog` over HolLoopProg width: optimiseHOL prog = compHOL (loopCallCompHOL (.ln : Spt Nat) prog).1, composing the tagged compHOL (loop_live comp_def) and loopCallCompHOL (loop_call comp_def). words_as_type_indexed_bitvec because HOL is polymorphic in the type-indexed word/label type while Lean fixes BitVec width under [NeZero width] via the reviewed HolLoopProg carrier; no other differences, no extra hypotheses. All 4 direct original-HOL rows in scripts/hol-probes/loop_live_optimise_probe.out are replayed by Flapjack/Test/LoopCallCompHOLParity.lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/loop_liveScript.sml",
+    "hol_name": "shrink_def",
+    "lean_path": "Flapjack/Pancake/LoopLive.lean",
+    "lean_name": "shrinkHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "hol_line": 62,
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; bead flapjack-pxn.18.5.6.29.1.4): HOL declares shrink and fixedpoint in ONE mutual definition shrink_def (loop_liveScript.sml:62-160), with no separate fixedpoint_def; Lean reproduces the mutual block over the faithful HolLoopProg width / NumSet carrier (words_as_type_indexed_bitvec: HOL is polymorphic in the type-indexed word/label type, Lean fixes it to BitVec width under [NeZero width] via the reviewed HolLoopProg carrier). shrinkHOL is the tagged half and fixedpointHOL is the untagged mutual half, analogous to varsOfExpListHOL/vars_of_exp_list. Clause-for-clause match verified against the HOL equations (Seq shrinks p2 then p1; Loop/If recompute cut-sets via inter/union; Call handler uses l2 from shrinking r and l3 from h). Representative direct HOL observations are the committed original-HOL EVAL rows in scripts/hol-probes/shrink_leaf_probe.out (shrink) plus the indirect mark_all_probe.out / loop_live_comp_probe.out / loop_live_optimise_probe.out suites (mark_all/comp/optimise composed from shrink). Termination measure mirrors HOL (prog_size (K 0) body, 0/1, size live_in - size l1) with sizeOf and sptSize, using sptSize_inter_le for size_inter."
+  },
+  {
+    "hol_path": "cakeml/pancake/loop_liveScript.sml",
+    "hol_name": "size_inter",
+    "lean_path": "Flapjack/Pancake/LoopLive.lean",
+    "lean_name": "sptSize_inter_le",
+    "statement_status": "reviewed_exact",
+    "hol_line": 40,
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; bead flapjack-pxn.18.5.6.29.1.4.1): exact port of HOL loop_liveScript.sml:40-48 size_inter `size (inter l1 l2) <= size l1`; Lean `sptSize (sptInter l1 l2) <= sptSize l1` over the heterogeneous sptInter carrier matching HOL inter's `'a num_map -> 'b num_map -> 'a num_map`. No width or finite-map fields; no hypotheses beyond the carrier. This is the measure lemma fixedpoint termination uses."
+  },
+  {
+    "hol_path": "cakeml/pancake/loop_liveScript.sml",
+    "hol_name": "size_mk_BN",
+    "lean_path": "Flapjack/Pancake/LoopLive.lean",
+    "lean_name": "sptSize_mkBN",
+    "statement_status": "reviewed_exact",
+    "hol_line": 28,
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; bead flapjack-pxn.18.5.6.29.1.4.1): exact port of HOL loop_liveScript.sml:28-31 size_mk_BN `size (mk_BN t1 t2) = size (BN t1 t2)`; Lean `sptSize (sptMkBN t1 t2) = sptSize (.bn t1 t2)` preserves HOL's constructor right-hand side `size (BN t1 t2)` verbatim (the expanded arithmetic form `size t1 + size t2` is only an untagged simp corollary, deliberately not the tagged statement). No width or finite-map fields; no hypotheses."
+  },
+  {
+    "hol_path": "cakeml/pancake/loop_liveScript.sml",
+    "hol_name": "size_mk_BS",
+    "lean_path": "Flapjack/Pancake/LoopLive.lean",
+    "lean_name": "sptSize_mkBS",
+    "statement_status": "reviewed_exact",
+    "hol_line": 34,
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; bead flapjack-pxn.18.5.6.29.1.4.1): exact port of HOL loop_liveScript.sml:34-36 size_mk_BS `size (mk_BS t1 x t2) = size (BS t1 x t2)`; Lean `sptSize (sptMkBS t1 x t2) = sptSize (.bs t1 x t2)` preserves HOL's constructor right-hand side `size (BS t1 x t2)` verbatim (the expanded arithmetic form `size t1 + size t2 + 1` is only an untagged simp corollary, deliberately not the tagged statement). No width or finite-map fields; no hypotheses."
+  },
+  {
+    "hol_path": "cakeml/pancake/loop_liveScript.sml",
+    "hol_name": "vars_of_exp_def",
+    "lean_path": "Flapjack/Pancake/LoopLive.lean",
+    "lean_name": "varsOfExpHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; bead flapjack-pxn.18.5.6.29.1.1): exact port of HOL loop_liveScript.sml:10-21 vars_of_exp_def (the mutual vars_of_exp / vars_of_exp_list) over the faithful width-indexed HolLoopExp carrier and the exact NumSet = Spt Unit with sptInsert for HOL insert. Clause-for-clause: Var = sptInsert name () live; Const/Lookup/BaseAddr/TopAddr leave live unchanged; Load recurses; Op dispatches to the vars_of_exp_list half (varsOfExpListHOL, untagged because HOL declares it inside the single vars_of_exp_def); Shift recurses right-then-left. The only carrier difference is HOL's type-indexed 'a word rendered as BitVec width with [NeZero width] (words qualifier); no finite-map fields. Direct oracle: scripts/hol-probes/vars_of_exp_probe.out (5 rows) replayed by Flapjack/Test/LoopVarsOfExpParity.lean holVarsGuard. The executable LoopProg/List Nat analogue varsOfExp stays untagged; the executable/faithful carrier bridge is tracked by flapjack-pxn.18.5.17.1.1."
+  }
+]

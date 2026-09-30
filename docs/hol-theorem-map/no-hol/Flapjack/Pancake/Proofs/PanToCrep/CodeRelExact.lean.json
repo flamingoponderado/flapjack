@@ -1,0 +1,42 @@
+[
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CodeRelExact.lean",
+    "lean_name": "compFuncExactHOLW_ctxtFcExactHOL",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific private bridge between the tagged comp_func body and the per-entry ctxt_fc context; no separate HOL declaration is claimed."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CodeRelExact.lean",
+    "lean_name": "flookup_alistToFmap_eq_lookup",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific private helper proving the finite-map representation of HOL alist_to_fmap has first-occurrence lookup; no separate HOL declaration is claimed."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CodeRelExact.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only qualifier witness: names CrepSemHOLState as owner and proves its toBroad/ofBroad finite-support roundtrip; required by the exact code_rel_empty_locals theorem's CrepSemHOLState.code qualifier. It is not a port of a HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CodeRelExact.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only qualifier witness: names PanSemStateFiniteExact as owner and proves its toExact/ofExact finite-support roundtrip; required by the exact code_rel_empty_locals theorem's PanSemStateFiniteExact.code qualifier. It is not a port of a HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CodeRelExact.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific same-module finite-map relation witness forwarding the canonical ofBroad/toBroad roundtrip of PanToCrepContextExact for the codeRelExactHOLW relation qualifier; it has no HOL theorem original."
+  }
+]

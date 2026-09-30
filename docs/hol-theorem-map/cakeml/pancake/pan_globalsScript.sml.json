@@ -1,0 +1,186 @@
+[
+  {
+    "hol_path": "cakeml/pancake/pan_globalsScript.sml",
+    "hol_name": "compile_decs_def",
+    "lean_path": "Flapjack/Pancake/PanGlobals/CompileExpExact.lean",
+    "lean_name": "compileDecsExactHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c (source comparison, bead flapjack-zaxu) against pan_globalsScript.sml:160-176: exact four-result tuple over DeclHOL/ProgHOL and PanGlobalsContextExact, with no extra premise or changed result. Empty input returns empty initializer/function/exception lists and the original context. Decl computes globals_size + bytes_in_word * n2w(size_of_shape shape) using the exact ShapeHOL size and width-indexed word, FUPDATEs globals for the suffix, and prepends the compiled TopAddr-relative Store using the pre-update context for compile_exp. Function compiles its body with the context at its source position and prepends the updated Function to the function list; ExnDecl prepends only to exceptions; Name recurses unchanged. Thus each output category preserves source order and the context is threaded only from earlier Decl rows. The only representation translations are globals as canonical HolFiniteMapExact with the same-module holFmapAsFiniteSupportWitness, and HOL type-indexed words as BitVec width with [NeZero width]; MlS/ShapeHOL/ExpHOL/ProgHOL/DeclHOL fields otherwise retain the exact carriers. Direct original HOL EVAL rows empty/decl/exception/name/function_before_decl/function_after_decl are captured in pan_globals_compile_decs_probe.out and replayed by PanGlobalsCompileDecsExactParity. The String-backed compileDecsCake remains a separate production route; this tag makes no routing claim."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_globalsScript.sml",
+    "hol_name": "compile_def",
+    "lean_path": "Flapjack/Pancake/PanGlobals.lean",
+    "lean_name": "compileProgCake",
+    "statement_status": "documented_mismatch",
+    "reviewer": "Codex (source comparison with pan_globalsScript.sml:69-149: the constructor equations, including the global Call/DecCall lowering, were compared branch-by-branch. The Lean definition consumes and returns production Prog (BitVec width) with String identifiers and CakeContext.globals : FiniteMap String (Shape × BitVec width); HOL compile consumes/returns ProgHOL width with MlString identifiers and context.globals : mlstring |-> shape # word. No byte-range premise constrains the arbitrary String inputs, and names_as_string cannot bridge the program/context carriers. Direct HOL rows in pan_globals_compile_probe.out cover local/global/missing assignments, seq, global load, and handled global destination. Keep this useful source analogue untagged pending the exact-carrier compile port (flapjack-pxn.18.3.5.8)."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_globalsScript.sml",
+    "hol_name": "compile_def",
+    "lean_path": "Flapjack/Pancake/PanGlobals/CompileExpExact.lean",
+    "lean_name": "compileProgExactHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c (source comparison, bead flapjack-pxn.18.5.2.22.1.1) against pan_globalsScript.sml:69-149: the Lean function takes the exact positive-width ProgHOL input and PanGlobalsContextExact context and returns the recursively compiled ProgHOL, with no extra premise or altered result. Clause review: Dec; Assign Global lookup success Store/failure Skip and Local fallback; Primitive; Store/Store32/StoreByte; Return/Raise; Seq/If/While; Call's no-result/local destination, global destination success (plain DecCall; handled result/flag Dec/Seq/If/Store path) and missing-global fallbacks; DecCall; ExtCall; ShMemStore; local ShMemLoad; global ShMemLoad only when FLOOKUP yields (One,addr), otherwise Skip; the source's final identity catch-all. The nested fresh-name list order uses the already-reviewed exact `freshNameMlS`; shape_val result, address expression and flags were compared literally with `compile_def`. The only Lean carrier translations are PanGlobalsContextExact.globals from HOL finite map to canonical HolFiniteMapExact and HOL type-indexed word to BitVec width, recorded by the two qualifiers; ProgHOL, ExpHOL, ShapeHOL and MlS retain their exact constructors/carriers. Direct original HOL EVAL rows for local/global/missing Assign, Seq, global Return and both handled global-destination Call cases are captured in pan_globals_compile_probe.out; PanGlobalsCompileParity replays them on the exact carriers. This is a proof-side exact port: `compileProgCake` remains the executed String-backed route and no production-routing claim is made."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_globalsScript.sml",
+    "hol_name": "compile_exp_def",
+    "lean_path": "Flapjack/Pancake/PanGlobals/CompileExpExact.lean",
+    "lean_name": "compileExpExactHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 (source comparison, bead flapjack-pxn.18.3.5.8.27; pan_globalsScript.sml:18-46): checked every clause of compile_exp_def against direct EVAL rows in scripts/hol-probes/pan_globals_compile_exp_probe.out. Var Local identity; Var Global FLOOKUP on ctxt.globals, SOME (sh,addr) -> Load sh (Op Sub [TopAddr; Const addr]) and NONE -> Const 0w; RStruct/RField recursion over exact ExpHOL; NStruct/NField -> Const 0w; Load/LoadByte/Load32 address recursion; Op/Panop MAP recursion; Cmp/Shift two-operand recursion; TopAddr -> Op Sub [TopAddr; Const max_globals_size]; catch-all compile_exp ctxt e = e for Const/BaseAddr/BytesInWord. Carriers ExpHOL width/ShapeHOL/MlS and the PanGlobalsContextExact finite-map field are exact: the sole representation difference is ctxt.globals, the HOL varname |-> shape # 'a word finite map rendered by the canonical HolFiniteMapExact (same-module holFmapAsFiniteSupportWitness proves the broad roundtrip), plus the type-indexed 'a word -> BitVec width translation recorded by words_as_type_indexed_bitvec. No quantifier, hypothesis, side condition, or conclusion is changed. The direct String-backed production globalCompileExp remains an untagged compatibility path with its compileExpCake adapter in PanGlobals.lean; routing the executed compiler through this exact definition remains tracked by flapjack-pxn.18.3.5.8. Direct HOL rows local/global_hit/global_miss/top_addr/nested are replayed by Flapjack.Test.PanGlobalsCompileExpExactParity."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_globalsScript.sml",
+    "hol_name": "compile_top_def",
+    "lean_path": "Flapjack/Pancake/PanGlobals/CompileTopExact.lean",
+    "lean_name": "compileTopExactHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c literal source comparison (2026-09-30; bead flapjack-k00m), pan_globalsScript.sml236-256: exact DeclHOL/ProgHOL/ShapeHOL/MlS carriers, universally bound declaration list and start, first-match ALOOKUP(functions) via local structural helper, NONE yields empty list. SOME retains args/return shape, resort_decls then new_main_name from original declarations, fperm_decs, empty context with zero globals_size and bytes_in_word*n2w(SUM(MAP size_of_shape(dec_shapes renamed))) max size. Calls accepted qualified compileDecsExactHOL; initial finite map is the reviewed canonical empty map internal to the body, with no finite-map input or output requiring an owning-field qualifier. Generated function uses start, false inline/export, original parameters, Seq(nested_seq initializers)(Call NONE fresh-start mapped local parameter Vars), original return shape. Output order is exceptions ++ newMain::functions. NeZero positive BitVec width is the conventional HOL dimension translation. Direct original HOL EVAL capture retains three old sentinels and adds metadata/global/exception observations; exact executable Lean guards cover each full constructor/order/word and metadata field. Kernel checks definition and missing-entry equation; guards use executable evaluation, not a cross-assistant equivalence theorem. Production top-definition routing and compile_top_semantics are not claimed complete. Independent coordinator review pending."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_globalsScript.sml",
+    "hol_name": "context",
+    "lean_path": "Flapjack/Pancake/PanGlobals/CompileExpExact.lean",
+    "lean_name": "PanGlobalsContextExact",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 (source comparison, bead flapjack-pxn.18.3.5.8.27): HOL context (pan_globalsScript.sml:10-16) context = <| globals : varname |-> shape # 'a word; globals_size : 'a word; max_globals_size : 'a word |>. The exact carrier PanGlobalsContextExact width reproduces the three fields: globals is the reviewed canonical HolFiniteMapExact MlS (ShapeHOL × BitVec width) translation of the HOL varname |-> shape # 'a word finite map (MlS = mlstring varname keys, ShapeHOL payload, BitVec width = 'a word), and globalsSize/maxGlobalsSize are BitVec width. The same-module holFmapAsFiniteSupportWitness proves the ofBroad/toBroad roundtrip. fmap_as_finite_support records only the finite-support map representation of globals and words_as_type_indexed_bitvec only the type-indexed 'a word -> BitVec width translation; no field, quantifier, or side condition is changed."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_globalsScript.sml",
+    "hol_name": "dec_shapes_def",
+    "lean_path": "Flapjack/Pancake/PanGlobals.lean",
+    "lean_name": "decShapesHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 (source comparison, bead flapjack-pxn.18.3.5.8.21) HOL dec_shapes_def (pan_globalsScript.sml:228-234) is the five-clause projection Function _::ds |-> dec_shapes ds, Decl sh _ _::ds |-> sh::dec_shapes ds, Name _ _::ds |-> dec_shapes ds, ExnDecl _ _::ds |-> dec_shapes ds, [] |-> []. The exact Lean port decShapesHOL over the reviewed word-indexed List (DeclHOL width) matches the clause order and shape selection exactly and returns List ShapeHOL. No qualifier applies."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_globalsScript.sml",
+    "hol_name": "dec_shapes_def",
+    "lean_path": "Flapjack/Pancake/PanGlobals.lean",
+    "lean_name": "globalDeclShapes",
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-ds4 (source comparison, bead flapjack-dlc.12) against pan_globalsScript.sml:228-234: HOL dec_shapes is the five-clause projection Function _::ds |-> dec_shapes ds, Decl sh _ _::ds |-> sh::dec_shapes ds, Name _ _::ds |-> dec_shapes ds, ExnDecl _ _::ds |-> dec_shapes ds, [] |-> []; the Lean globalDeclShapes clauses match this order and shape selection clause-for-clause. The mismatch is the imported declaration carrier: the executed function consumes production Decl α whose Exp α.Const payload is a generic word α (not HOL's fixed-width ExpHOL width.Const : 'a word) and whose identifiers/Shape are String (not mlstring), so the statement ranges over inputs HOL cannot represent. names_as_string cannot authorize a whole declaration carrier and no byte witness applies, so the tag remains withdrawn pending the exact-carrier replacement flapjack-6nn.3.1 / flapjack-pxn.18.3.5.8. Direct HOL rows empty=[] / mixed=[Comb [One; Named «S»]; One] / functions_only=[] are in pan_globals_dec_shapes_probe.out and sampled by Flapjack/Test/PanGlobalsDecShapesParity.lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_globalsScript.sml",
+    "hol_name": "fperm_decs_def",
+    "lean_path": "Flapjack/Pancake/PanGlobals.lean",
+    "lean_name": "fpermDecsHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 (source comparison, bead flapjack-pxn.18.3.5.8.20) HOL fperm_decs_def (pan_globalsScript.sml:216-221) has three equations ([], Function fi::decs renaming fi.name via fperm_name and fi.body via fperm, other d::decs unchanged). The exact Lean port fpermDecsHOL is over List (DeclHOL width) with MlString identifiers, uses the reviewed exact fpermName/fpermHOL, and matches clause-for-clause. No qualifier applies."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_globalsScript.sml",
+    "hol_name": "fperm_decs_def",
+    "lean_path": "Flapjack/Pancake/PanGlobals.lean",
+    "lean_name": "globalRenameDecls",
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-ds4 (source comparison, bead flapjack-dlc.13) against pan_globalsScript.sml:216-221: the three fperm_decs equations ([], Function fi::decs renaming fi.name via fperm_name and fi.body via fperm, other d::decs unchanged) match globalRenameDecls clause-for-clause. The mismatch is the imported declaration carrier: production Decl α contains Prog α/Exp α (Const : α, String identifiers) and Shape (Named : String), while HOL decl carries word-valued expressions with mlstring identifiers and shape (PanLang.lean:14-28, 226-269). names_as_string cannot repair the expression/Shape carrier difference, so the tag remains withdrawn pending the exact-carrier transformation flapjack-6nn.3.1 / flapjack-pxn.18.3.5.8. Direct HOL rows mixed / empty / singleton_nonfunction are in pan_globals_fperm_decs_probe.out and sampled by Flapjack/Test/PanGlobalsFpermDecsParity.lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_globalsScript.sml",
+    "hol_name": "fperm_def",
+    "lean_path": "Flapjack/Pancake/PanGlobals.lean",
+    "lean_name": "fpermHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 (source comparison, bead flapjack-pxn.18.3.5.8.20) HOL fperm_def (pan_globalsScript.sml:191-214) has seven equations (Dec, Seq, If, While, Call with optional rtyp/handler, DecCall, default). The exact Lean port fpermHOL is over the reviewed word-indexed ProgHOL width carrier with MlS identifiers; the Call metadata nesting Option (Option (VarKind × MlS) × Option (MlS × MlS × ProgHOL width)) matches HOL (((varkind # varname) option # ((eid # varname # prog) option)) option) constructor-for-constructor, the call/decCall names use the reviewed exact polymorphic fpermName, and every expression payload is left untouched. No qualifier applies. Direct HOL rows in scripts/hol-probes/pan_globals_fperm_probe.out."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_globalsScript.sml",
+    "hol_name": "fperm_def",
+    "lean_path": "Flapjack/Pancake/PanGlobals.lean",
+    "lean_name": "globalRenameProg",
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-ds4 (source comparison, bead flapjack-dlc.14) against pan_globalsScript.sml:191-214: the seven fperm equations (Dec, Seq, If, While, Call with optional rtyp/handler, DecCall, default) match globalRenameProg clause-for-clause; fperm recurses only on program structure and leaves expression payloads untouched. The mismatch is the imported program/expression carrier: HOL fperm maps 'a prog with Const : 'a word and mlstring identifiers, while Lean ranges over generic Prog α with Exp α.Const : α, Shape.Named : String and String identifiers (PanLang.lean:14-28, 226-269). names_as_string can only classify the call/decCall FunName arguments (equality/map-key-only); it cannot authorize the program carrier, so the tag remains withdrawn pending the exact-carrier transformation flapjack-6nn.3.1 / flapjack-pxn.18.3.5.8. Direct HOL rows recursive_control / handler / deccall / unchanged / fperm_done are in pan_globals_fperm_probe.out and sampled by Flapjack/Test/PanGlobalsFpermParity.lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_globalsScript.sml",
+    "hol_name": "fperm_name_def",
+    "lean_path": "Flapjack/Pancake/PanGlobals.lean",
+    "lean_name": "fpermName",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds4 (source comparison, bead flapjack-dlc.52) HOL fperm_name_def (pan_globalsScript.sml:184-189) carries no type annotation, so HOL generalizes it to the polymorphic 'a -> 'a -> 'a -> 'a (HOL equality is defined on every type, with no typeclass side condition). The exact Lean port fpermName is generic in alpha with [DecidableEq alpha] (the afindi_def/distinct_lists_def generic-alpha convention); the clauses, branch order, comparison = and result names match HOL exactly with no side condition. The String-specialized globalRenameFunctionName is recorded separately as a documented mismatch and retained as production infrastructure. Direct HOL rows in pan_globals_fperm_name_probe.out."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_globalsScript.sml",
+    "hol_name": "fperm_name_def",
+    "lean_path": "Flapjack/Pancake/PanGlobals.lean",
+    "lean_name": "globalRenameFunctionName",
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-25; tag withdrawn on flapjack-main coordinator request; classified jointly with flapjack-ds4 under bead flapjack-dlc.52): String-specialized production form of HOL's polymorphic fperm_name_def (pan_globalsScript.sml:184). HOL carries no type annotation and generalizes the constant to 'a -> 'a -> 'a -> 'a, while this definition instantiates alpha := String (FunName); it is a specialization of the HOL constant, so the names_as_string qualifier does not authorize a tag. Exact polymorphic port: fpermName (reviewed_exact, above). Retained as production infrastructure. Direct HOL rows in pan_globals_fperm_name_probe.out; Lean fixture Flapjack.Test.PanGlobalsFpermNameParity covers 7 HOL rows. Faithful-port dependency flapjack-pxn.18.3.5.8 (parent flapjack-pxn.18.3.5.7.2)."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_globalsScript.sml",
+    "hol_name": "fresh_name_def",
+    "lean_path": "Flapjack/Pancake/PanGlobals.lean",
+    "lean_name": "freshNameHOL",
+    "statement_status": "reviewed_names_as_string",
+    "names_as_string": [
+      "name",
+      "names"
+    ],
+    "names_as_string_boundary": [
+      "name"
+    ],
+    "reviewer": "flapjack-deepseek-three (source comparison, bead flapjack-6nn.4) HOL fresh_name_def (pan_globalsScript.sml:55): fresh_name name names = if MEM name names then fresh_name (strcat name «'») names else name. Lean freshNameHOL has the same clauses (∈ = list/String equality, ++ = strcat one-character append); HOL's strlen/MAX_SET termination measure versus Lean maxNameLength is non-operational and String.length occurs only there, so the sole operational difference is the String/mlstring carrier. Reviewed under names_as_string: name: byte-observable (the generated name crosses the compiler boundary; the same-module holMlStringWitness_freshNameHOL gives NameRanged (freshNameHOL name names) from the NameRanged name premise, and the executed path seeds are the empty string, vn' and main). names: equality/map-key-only (represented by Lean `List String`, the HOL `mlstring list` used only for membership equality, never inspected and never byte-observable), while name: byte-observable remains the only byte-observable identifier, with the same-module witness holMlStringWitness_freshNameHOL. This classification was requested by Luna-C and the coordinator (bead flapjack-pxn.18.3.5.8.21) and matches the names classification already reviewed for freshNameHOL_not_mem_hol/freshNameHOL_not_mem_of_subset_hol. Direct HOL rows in pan_globals_fresh_name_probe.out."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_globalsScript.sml",
+    "hol_name": "fresh_name_def",
+    "lean_path": "Flapjack/Pancake/PanGlobals.lean",
+    "lean_name": "freshNameMlS",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 (source comparison, bead flapjack-pxn.18.3.5.8.21): HOL fresh_name_def (pan_globalsScript.sml:55) fresh_name name names = if MEM name names then fresh_name (strcat name «'») names else name is ported clause for clause over the exact mlstring carrier MlS: MEM is list membership, strcat name «'» is mlstrAppend name (ofString \"'\"), and the recursion is well founded with the non-operational maxMlsLength measure in place of HOL strlen/MAX_SET. This is the unqualified exact restatement of the same HOL declaration as the String-backed freshNameHOL (reviewed_names_as_string above); the byte codec bridge toStringOfBytes_freshNameMlS relates the two. Direct HOL rows in pan_globals_fresh_name_probe.out."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_globalsScript.sml",
+    "hol_name": "new_main_name_def",
+    "lean_path": "Flapjack/Pancake/PanGlobals.lean",
+    "lean_name": "globalNewMainName",
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-ds4 (source comparison, bead flapjack-dlc.15) against pan_globalsScript.sml:224: new_main_name decls = fresh_name «main» (MAP FST (functions decls)) matches freshNameHOL \"main\" (globalFunctionNames declarations) once the production projections stand for HOL functions/fresh_name. The mismatch is the input carrier: this consumes generic production List (Decl α) with Const : α and String identifiers/Shape, while HOL consumes word-valued declarations with Const : 'a word and mlstring identifiers. names_as_string and the generated-name boundary witness only address the name difference, not this input carrier, so the tag remains withdrawn pending the exact-carrier replacement flapjack-6nn.3.1 / flapjack-pxn.18.3.5.8. Direct HOL rows empty / two_collisions / mixed / absent are in pan_globals_new_main_name_probe.out and sampled by Flapjack/Test/PanGlobalsNewMainNameParity.lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_globalsScript.sml",
+    "hol_name": "new_main_name_def",
+    "lean_path": "Flapjack/Pancake/PanGlobals.lean",
+    "lean_name": "newMainNameHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 (source comparison, bead flapjack-pxn.18.3.5.8.21): HOL new_main_name_def (pan_globalsScript.sml:224) new_main_name decls = fresh_name «main» (MAP FST (functions decls)) is ported exactly over the exact List (DeclHOL width) carrier: functionsHOL is the tagged mlstring-keyed functions port, so (functionsHOL decls).map Prod.fst is MAP FST (functions decls); the seed is ofString \"main\" and the search is the tagged exact freshNameMlS. No qualifier applies. The production String-carrier globalNewMainName remains a separately recorded documented mismatch. Direct HOL rows empty/two_collisions/mixed/absent in pan_globals_new_main_name_probe.out are replayed by Flapjack.Test.PanGlobalsNewMainNameExactParity."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_globalsScript.sml",
+    "hol_name": "resort_decls_def",
+    "lean_path": "Flapjack/Pancake/PanGlobals.lean",
+    "lean_name": "globalResortDecls",
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-ds4 (source comparison, bead flapjack-dlc.16) against pan_globalsScript.sml:179: the filter order FILTER is_name ++ FILTER is_exn_decl ++ FILTER is_decl ++ FILTER is_function matches globalResortDecls, and globalDeclIsName/globalDeclIsException/globalDeclIsGlobal/globalDeclIsFunction are the HOL predicates. The mismatch is the executed Decl α carrier, which is not DeclHOL width: production Exp α stores α in Const, HOL ExpHOL width stores BitVec width ('a word), and names/Shape use String instead of mlstring. names_as_string only accounts for the name difference, so the tag remains withdrawn pending the exact-carrier transformation flapjack-6nn.3.1 / flapjack-pxn.18.3.5.8. Direct HOL rows mixed / stable_groups / empty are in pan_globals_resort_decls_probe.out and sampled by Flapjack/Test/PanGlobalsResortDeclsParity.lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_globalsScript.sml",
+    "hol_name": "resort_decls_def",
+    "lean_path": "Flapjack/Pancake/PanGlobals.lean",
+    "lean_name": "resortDeclsHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 (source comparison, bead flapjack-pxn.18.3.5.8.21) HOL resort_decls_def (pan_globalsScript.sml:179): resort_decls decs = FILTER is_name decs ++ FILTER is_exn_decl decs ++ FILTER is_decl decs ++ FILTER is_function decs. The exact Lean port resortDeclsHOL runs over the reviewed word-indexed List (DeclHOL width) carrier, applies the tagged isNameHOL/isExnDeclHOL/isDeclHOL/isFunctionHOL predicates to the same argument, and concatenates the four filters left-to-right in exactly HOL order. No qualifier applies."
+  }
+]

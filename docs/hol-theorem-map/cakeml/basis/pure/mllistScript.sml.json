@@ -1,0 +1,10 @@
+[
+  {
+    "hol_path": "cakeml/basis/pure/mllistScript.sml",
+    "hol_name": "sort_def",
+    "lean_path": "Flapjack/Basis/Pure/MlList.lean",
+    "lean_name": "sort",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.4): HOL mllist$sort = mergesort$mergesort_tail (mllistScript.sml:287-289). Lean sort r l = mergesortTail r l, where mergesortTail/mergesortNTail/mergeTail/sort2Tail/sort3Tail render HOL/src/sort/mergesortScript.sml:101-159 clause for clause (REV l acc = l.reverse ++ acc, DIV2 n = n / 2, the negate toggle and DROP split kept literal); HOL R : 'a -> 'a -> bool is Lean α → α → Bool. Rows sort_kvc/env_to_list of scripts/hol-probes/word_sem_env_probe.out are checked by Flapjack.Test.WordSemEnvParity."
+  }
+]

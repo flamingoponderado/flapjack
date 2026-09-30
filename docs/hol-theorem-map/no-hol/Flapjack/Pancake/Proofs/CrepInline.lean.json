@@ -1,0 +1,154 @@
+[
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "crepHolFdiff_fdom_self",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only helper for the extensional FDOM/FDIFF rendering used by the exact crepInlineLocalsExtRel port; no HOL declaration of this name"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "crepHolFdom_subset_flookup",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex: untagged; extensional-FDOM form of HOL fdom_subset_flookup_thm (crep_inlineProofScript.sml:1456); FDOM is a Bool key predicate here, not a HOL finite set, so no @[hol] tag."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "crepInlineCodeInlRel_fdom_subset",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex: untagged helper extracting the FDOM-subset hypothesis from the finite-map code_inl_rel carrier; used by crepInlineEvalCodeInl."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "crepInlineCodeInlRel_of_code",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only introduction rule for the finite-map code_inl_rel relation over CrepInlineFmap; no HOL original (HOL code_inl_rel_def is the relation, ported untagged)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "crepInlineEvalCodeInl",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex: untagged counterpart of eval_code_inl (crep_inlineProofScript.sml:1513); statement follows the family but the Lean evaluator and FDOM rendering are not definitionally HOL's, so no @[hol] tag."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "crepInlineLocalsExtRel_self",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only helper for the extensional FDOM/FDIFF rendering used by the exact crepInlineLocalsExtRel port; no HOL declaration of this name"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "crepInlineLocalsRel_decClock",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only generic-α helper (untagged): the exact width-indexed tag is on crepInlineLocalsRel_decClockW."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "crepInlineOptMmapEvalCodeInl",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only untagged list-level opt-mmap correspondence (opt_mmap_eval_code_inl, cakeml/pancake/proofs/crep_inlineProofScript.sml:1530); untagged because the Lean evaluator is the fixed-width evalCrepHolExp and the carrier is List.mapM rather than HOL OPT_MMAP. HOL oracle: scripts/hol-probes/crep_inline_eval_probe.{sml,out}."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "crepInlineRuntimeSkip",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Runtime Skip constructor case toward HOL inline_prog_correct (crep_inlineProofScript.sml:2301): from a source evalCrepRuntimeResult Skip run and the runtime relations, derives an existential target run on crepInlineProgFmap and preserves the postrelations. Untagged: Lean uses the fuel-bounded evalCrepRuntimeResult, not HOL's clock-based evaluate."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "crepOptMmapEvalCongr",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only untagged list-level opt-mmap correspondence (OPT_MMAP_CONG (l1=l2 pointwise case), cakeml/misc/miscScript.sml:2481); untagged because the Lean evaluator is the fixed-width evalCrepHolExp and the carrier is List.mapM rather than HOL OPT_MMAP. HOL oracle: scripts/hol-probes/crep_inline_eval_probe.{sml,out}."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "crepOptMmapMemFunc",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only untagged list-level opt-mmap correspondence (opt_mmap_mem_func, cakeml/pancake/semantics/pan_commonPropsScript.sml:49); untagged because the Lean evaluator is the fixed-width evalCrepHolExp and the carrier is List.mapM rather than HOL OPT_MMAP. HOL oracle: scripts/hol-probes/crep_inline_eval_probe.{sml,out}."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "evalCrepHolExp_state_rel_code",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex: untagged counterpart of eval_state_locals_same_code_fdom_same (crep_inlineProofScript.sml:1467); Lean evalCrepHolExp is fixed-width ([NeZero width]) and the FDOM hypothesis is extensional, so no @[hol] tag."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "evalCrepSemHOLExp_state_rel_code_exact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only evaluator congruence helper on CrepSemHOLState; it supports the exact eval_code_inl proof while retaining code-domain inclusion as an unused premise, and has no standalone CakeML HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "foldl_resVarEq_lookup",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only bridge: folding the exact HolFiniteMapExact resVarEq over a list of entries equals folding HOL's raw-map res_var over the underlying lookup; no CakeML HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "holFmapAsFiniteSupportExistentialWitness_crepInlineCodeInlRelExact_inl_bag",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only canonical lookup/support and CrepInlineMapBroad roundtrip witness for the qualified code_inl_rel_def existential carrier; no CakeML HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only carrier-named alias of CrepSemHOLState's reviewed finite-support roundtrip witness for multi-map relation qualifiers; no CakeML HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only canonical finite-support roundtrip witness required for the exact relation qualifiers; no CakeML HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "not_crepInlineCodeInlRel_of_target_none",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only refutation rule for the finite-map code_inl_rel relation; no HOL original."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "resVarEq_lookup",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only bridge: the lookup of the exact HolFiniteMapExact resVarEq is HOL's raw-map res_var applied to the underlying lookup function; no CakeML HOL declaration."
+  }
+]

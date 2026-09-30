@@ -1,0 +1,18 @@
+[
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateNestedAssign.lean",
+    "lean_name": "evalNestedAssignDistinctEqCrepHOLWithDeciders",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only inductive proof infrastructure for eval_nested_assign_distinct_eq. The explicit memory-domain Decidable arguments are Lean evaluator implementation details; the public tagged theorem hides them behind classical wrappers. This internal lemma has no HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateNestedAssign.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module carrier evidence required by scripts/check-hol-refs.py for the tagged theorem's fmap_as_finite_support qualifier. It restates the CrepSemHOLState/CrepSemBroadState roundtrip in the Pan-to-Crep theorem counterpart file; it has no HOL declaration."
+  }
+]

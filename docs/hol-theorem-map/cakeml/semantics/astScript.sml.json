@@ -1,0 +1,18 @@
+[
+  {
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "opb",
+    "lean_path": "Flapjack/AstHOL.lean",
+    "lean_name": "Opb",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-29; bead flapjack-h29l.6.2.7). HOL `Datatype opb = Lt | Gt | Leq | Geq` (cakeml/semantics/astScript.sml:59) has four nullary constructors in that order. Lean `Flapjack.Opb` (Flapjack/AstHOL.lean, the primary counterpart of astScript.sml) has exactly the constructors `lt | gt | leq | geq` in the same order, no payload, width parameter, or side condition. Exact carrier and constructor correspondence; it is the argument carrier of HOL fpSem `fp_cmp_def`."
+  },
+  {
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "shift",
+    "lean_path": "Flapjack/AstHOL.lean",
+    "lean_name": "Shift",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison, 2026-09-26; bead flapjack-afa). HOL `Datatype shift = Lsl | Lsr | Asr | Ror` (cakeml/semantics/astScript.sml:21) has four nullary constructors in that order. Lean `Flapjack.Shift` (Flapjack/AstHOL.lean) has exactly the constructors `lsl | lsr | asr | ror` in the same order, no payload, width parameter, or side condition; the module is the primary counterpart of cakeml/semantics/astScript.sml. Exact carrier and constructor correspondence."
+  }
+]

@@ -1,0 +1,42 @@
+[
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/ShMemStore.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_ShMemStore; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/ShMemStore.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_ShMemStore; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/ShMemStore.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_ShMemStore; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/ShMemStore.lean",
+    "lean_name": "mem_lt_succ_foldr_max",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only arithmetic helper proving every member of a variable list is below its foldr-max successor; used to establish freshness of the HOL ShMemStore temporary; no standalone HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/ShMemStore.lean",
+    "lean_name": "pcCompileCorrectAt_shMemStore",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only proof of the HOL evaluate_ind ShMemStore conjunct against pcCompileCorrectAt; the exact HOL-shaped assembled case is the separately tagged pcCompileCorrect_ShMemStore; this helper has no standalone HOL declaration"
+  }
+]

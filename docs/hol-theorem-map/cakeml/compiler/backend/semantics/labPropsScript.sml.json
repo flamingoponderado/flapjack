@@ -1,0 +1,10 @@
+[
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "sec_ends_with_label_def",
+    "lean_path": "Flapjack/Compiler/Backend/LabProps.lean",
+    "lean_name": "secEndsWithLabelHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex (labPropsScript.sml:81 is a HOL predicate, not a Boolean result; the tagged Lean declaration returns Prop with nonempty and final-label conditions, while secEndsWithLabel is an untagged executable Bool counterpart)"
+  }
+]

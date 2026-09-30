@@ -1,0 +1,50 @@
+[
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/ExactStateProjection.lean",
+    "lean_name": "crepSourceEvalStateOfHOLFields_codeFfiIrrel",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only equality for the expression-observation projection, which deliberately erases code and FFI. It is not a port of the HOL state datatype or an eval theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/ExactStateProjection.lean",
+    "lean_name": "crepSourceEvalStateOfHOLFields_globals",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only projection equation for global lookup from the named lookup-function carrier; no standalone HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/ExactStateProjection.lean",
+    "lean_name": "crepSourceEvalStateOfHOLFields_locals",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only projection equation for local lookup from the named lookup-function carrier; no standalone HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/ExactStateProjection.lean",
+    "lean_name": "crepSourceEvalStateOfHOLFields_memaddrs",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only conversion of a word-set predicate to the source evaluator's Bool membership test; no standalone HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/ExactStateProjection.lean",
+    "lean_name": "crepSourceEvalStateOfHOLFields_memory",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only projection equation for the total memory field; no standalone HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/ExactStateProjection.lean",
+    "lean_name": "panWordLabWord_panTheWord_holWordLabToCrepSourceWordLab",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only wrapper round trip for the canonical Fin-index projection; no standalone HOL declaration."
+  }
+]

@@ -1,0 +1,50 @@
+[
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Dec.lean",
+    "lean_name": "decCallCtxtContinuationSame",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only helper shared by the pc_compile_correct Dec and DecCall cases (bead flapjack-pxn.18.4.3.99); HOL proves this reasoning inline in each case, so there is no separate CakeML HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Dec.lean",
+    "lean_name": "decCallCtxtResultRestore",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only helper shared by the pc_compile_correct Dec and DecCall cases (bead flapjack-pxn.18.4.3.99); HOL proves this reasoning inline in each case, so there is no separate CakeML HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Dec.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_Dec; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Dec.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_Dec; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Dec.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_Dec; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Dec.lean",
+    "lean_name": "pcCompileCorrectAt_dec",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only curried form of the pc_compile_correct Dec case against pcCompileCorrectAt (bead flapjack-pxn.18.4.3.99); the HOL-shaped statement is the tagged pcCompileCorrect_Dec"
+  }
+]

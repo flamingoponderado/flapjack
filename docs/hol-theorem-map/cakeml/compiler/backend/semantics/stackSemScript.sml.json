@@ -1,0 +1,75 @@
+[
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "bit_length_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/WordBitmap.lean",
+    "lean_name": "bitLength",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.3): stackSemScript23-25: positive-width word -> Nat, zero gives0; nonzero recurses on logical right shift by1 and adds1. Decreasing proof uses unsigned word value division by2; no fuel cutoff or added semantic assumption. Existing unbounded Nat utility is separate; no utility refinement or executed full evaluator claim. Coordinator source review required."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "filter_bitmap_LENGTH",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Bitmap.lean",
+    "lean_name": "filterBitmapLength",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.2), stackSemScript50-58: same universal bs/xs/x/y order, sole filter_bitmap bs xs = SOME(x,y) premise, and LENGTH y <= LENGTH xs conclusion. Polymorphic List alpha carrier; no validity or success premise beyond the original result equality. Kernel proof by source bitmap/input cases and transitivity. Coordinator review required."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "filter_bitmap_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Bitmap.lean",
+    "lean_name": "filterBitmap",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.2), stackSemScript27-35: generic List Bool x List alpha -> Option(List alpha x List alpha). Empty bitmap returns empty selection and all remaining values; false consumes one input without selection; true recursively selects the tail then prepends the current value; malformed remaining bitmap/input returns none. Every clause and recursive failure matches HOL. No array/word/map/name translation, no validity premise. Old stackGcNatFilterBitmap is proved equal for all inputs by stackGcNatFilterBitmap_eq_exact, without changing that implementation. Exact evaluator/GC wiring remains on open y19g; independent coordinator source review required."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "map_bitmap_LENGTH",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Bitmap.lean",
+    "lean_name": "mapBitmapLength",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.2), stackSemScript60-71: same universal t1/t2/t3/x/y/z order, sole map_bitmap t1 t2 t3 = SOME(x,y,z) premise, and conjunction LENGTH y <= LENGTH t2 /\\ LENGTH z <= LENGTH t3. Generic lists, no extra conditions; all false/true/empty/truncated-input cases kernel-proved. Coordinator review required."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "map_bitmap_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Bitmap.lean",
+    "lean_name": "mapBitmap",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.2), stackSemScript37-48: generic bitmap/moved/original lists to optional right-associated triple. Empty bitmap returns empty rebuilt prefix and both unconsumed lists; false copies and consumes one original value without consuming moved; true consumes both lists and inserts the moved head; recursive failure and missing required heads return none. HOL list carriers, tuple order, recursion and wildcard rejection are preserved. Old stackGcNatMapBitmap is proved equal on all inputs by stackGcNatMapBitmap_eq_exact, no bitmap-validity assumption or implementation change. Exact evaluator/GC wiring remains open under y19g; coordinator review required."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "read_bitmap_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/WordBitmap.lean",
+    "lean_name": "readBitmap",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.3): stackSemScript73-83: positive-width word List -> Option Bool List. Empty list gives NONE; word_msb continuation decodes suffix and propagates NONE, then appends GENLIST bit projections of width-1. Terminal gives GENLIST projections of bit_length-1. List.range/map retains index0-first order and Nat subtraction truncation, width1 included; trailing words ignored exactly in terminal clause. Existing unbounded Nat utility is separate; no utility refinement or executed full evaluator claim. Coordinator source review required."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "result",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/State.lean",
+    "lean_name": "StackSemResult",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.1): stackSemScript.sml:12-21 has eight constructors: Result/Exception/Halt each one word_loc; Break/Continue each num; TimeOut/Error no payload; FinalFFI one final_event. StackSemResult preserves that order and every arity/payload, using reviewed WordLocW width and HolFinalEvent, Nat for num, positive BitVec dimension with NeZero width. Unlike WordSemResult, Result has no extra value list. Carrier only, no evaluator claim; independent coordinator review required."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "state",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/State.lean",
+    "lean_name": "StackSemStateFiniteExact",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.1): stackSemScript.sml state datatype has22 fields in source order, all preserved. regs is num|->word_loc, fp_regs num|->word64, store store_name|->word_loc: exactly the three canonical finite-map translations named in the qualifier. stack and bitmaps remain List; stack_space and clock are Nat. memory is total word-to-word_loc, mdomain/sh_mdomain and ffi_save_regs are reviewed Bool-predicate set renderings (no extra finite-support assumption). compile takes C and List(Nat x HolProg width), returns Option(List(BitVec8) x C); compile_oracle returns C x that program list x List(BitVec width), matching the HOL right-associated products. code is Spt HolProg, not a finite map. use_stack/use_store/use_alloc/be are Bool. HolProg uses the reviewed exact asm fields, one shared positive word width, and MlString FFI names. WordLocW, WordStoreHOL (all18 store_name constructors including Temp(BitVec5)), WordSemBuffer width8/widthwidth, WordSemGcFun width and HolFfiState F reuse the same exact shared carriers as WordSem: the GC callback domain is roots/memory/domain/store and optional result roots/memory/store, with canonical store at both positions as reviewed by its own function qualifier. The owning state retains NeZero width, C/F universe0 types, and same-module StackSemStateSupport.holFmapAsFiniteSupportWitness gives both non-vacuous roundtrips. This is a carrier prerequisite only; exact evaluator, numerical instruction semantics and executed-path refinement remain open. Coordinator independent review required."
+  }
+]

@@ -1,0 +1,42 @@
+[
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/CompExpPreservesEval.lean",
+    "lean_name": "attachMap_eq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only private list lemma: mapping over List.attach with a function of the underlying value equals List.map. It reconciles the attach-based Op clauses of the Lean eval/wordExp with plain maps. There is no HOL counterpart; HOL uses MAP directly."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/CompExpPreservesEval.lean",
+    "lean_name": "compExpPreservesEvalAux",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only private recursive core of the tagged compExpPreservesEval, with the four premises as separate hypotheses and recursion on the expression in place of HOL's eval_ind. It has no separate HOL declaration; the tagged theorem restates HOL's exact shape."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/CompExpPreservesEval.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_LoopSemStateFiniteExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module re-export of the existing canonical LoopSemStateFiniteExact toBroad/ofBroad finite-support roundtrip. The relation qualifier on the tagged compExpPreservesEval requires it. It introduces no carrier and has no separate HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/CompExpPreservesEval.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_WordSemStateFiniteExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module re-export of the existing canonical WordSemStateExact toBroad/ofBroad finite-support roundtrip. The relation qualifier on the tagged compExpPreservesEval requires it. It introduces no carrier and has no separate HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/CompExpPreservesEval.lean",
+    "lean_name": "theWords_map_of",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only private lemma: if every f a = SOME v implies g a = SOME v on the list, then the_words (MAP f l) = SOME ws implies the_words (MAP g l) = SOME ws. It is the inner list induction of HOL's Op step (loop_to_wordProofScript.sml:484-498), stated generically. There is no separate HOL declaration."
+  }
+]

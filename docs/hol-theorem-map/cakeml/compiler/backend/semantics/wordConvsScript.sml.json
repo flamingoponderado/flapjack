@@ -1,0 +1,162 @@
+[
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "PERM_IMP_labels_rel",
+    "lean_path": "Flapjack/Pancake/WordConvs.lean",
+    "lean_name": "labelsRel_of_perm",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-main (HOL/Lean statement comparison)"
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "call_arg_convention_def",
+    "lean_path": "Flapjack/Pancake/WordConvs.lean",
+    "lean_name": "callArgConventionHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source review against wordConvsScript.sml:391-423: each scalar, list GENLIST, Inst, Call, and recursive constructor clause matches; the function uses exact WordLangProgHOL fields and remains Bool-valued like HOL. All 23 direct rows in word_convs_call_arg_probe.out are reproduced in WordLangCallArgParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "distinct_tar_reg_def",
+    "lean_path": "Flapjack/Pancake/WordConvs.lean",
+    "lean_name": "distinctTarReg",
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.6): non-exact source review of the held reviewed_exact promotion for HOL distinct_tar_reg_def (cakeml/compiler/backend/semantics/wordConvsScript.sml). HOL distinct_tar_reg_def uses a positive-dimensional word type; the Lean declaration quantifies width : Nat with no [NeZero width] binder, so BitVec 0 is admitted. The HOL tag was withdrawn; faithful width-restricted restatement tracked separately."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "distinct_tar_reg_def",
+    "lean_path": "Flapjack/Pancake/WordConvs.lean",
+    "lean_name": "distinctTarRegExact",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.6.1, coordinator review): HOL's declaration uses the exact `'a inst` carrier and introduces no configuration; the positive-width Lean restatement matches clause-for-clause, so this is an exact HOL port over the matching carrier and datatype widths (no mlstring/word-width translation). The Lean declaration is stated over the exact `HolInst` carrier with a checked `HolInst.toWordLangInst` bridge to the width-general executed form."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "every_inst_def",
+    "lean_path": "Flapjack/Pancake/WordConvs.lean",
+    "lean_name": "everyInst",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source review against wordConvsScript.sml:299-315: Inst uses P; Seq/Loop/If/MustTerminate recurse; OpCurrHeap synthesizes the Add instruction with the second register as right operand; Call NONE returns T without inspecting its handler, while SOME checks both handler bodies. Input uses exact WordLangProgHOL; direct rows in word_convs_inst_preds_probe.out are reproduced in WordLangInstPredsParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "extract_labels_def",
+    "lean_path": "Flapjack/Pancake/WordConvs.lean",
+    "lean_name": "extractLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source review against wordConvsScript.sml:440-459: Call NONE=>[], Call SOME ret with no handler => [(l1,l2)]++ret_rest, with handler => [(l1,l2);(l1',l2')]++ret_rest++h_rest, MustTerminate/Seq/Loop/If descend, catch-all []; uses exact WordLangProgHOL including HOL num_set and mlstring fields; direct HOL oracle rows in scripts/hol-probes/word_convs_extract_labels_probe.out are reproduced by WordLangExtractLabelsParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "flat_exp_conventions_def",
+    "lean_path": "Flapjack/Pancake/WordConvs.lean",
+    "lean_name": "flatExpConventions",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source review against wordConvsScript.sml:179-205: Assign/Store are rejected; Set and ShareInst accept only the stated flat expression forms; Seq/Loop/If/MustTerminate recurse; Call checks return and handler independently; catch-all accepts. Uses exact WordLangProgHOL/WordLangExpHOL; direct rows in word_convs_flat_exp_probe.out are reproduced in WordLangFlatExpParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "full_inst_ok_less_def",
+    "lean_path": "Flapjack/Pancake/WordConvs.lean",
+    "lean_name": "fullInstOkLess",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source review against wordConvsScript.sml:318-345: Inst delegates to inst_ok_less; recursive clauses and Call NONE behavior match; ShareInst uses exact expToAddrHOL then the matching address-offset class for each memop. Uses exact WordLangProgHOL/WordLangExpHOL and the checked AsmConfig width; all direct fiol_* rows in word_convs_full_inst_ok_less_probe.out are reproduced in WordLangFullInstOkLessParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "good_handlers_def",
+    "lean_path": "Flapjack/Pancake/WordConvs.lean",
+    "lean_name": "goodHandlersHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source review against wordConvsScript.sml:512-520: Call ret=NONE returns true without inspecting its handler; ret=SOME checks the return-handler program and, when present, requires its label equal n and checks that body; Seq and If conjoin recursive checks; Loop and MustTerminate recurse on their body; every remaining constructor is true. Lean uses the exact WordLangProgHOL carrier with positive BitVec word width corresponding to HOL words, exact spt num_set and mlstring fields, so there are no added predicates or altered clauses. All 12 direct HOL EVAL rows gh_call_none through gh_other in scripts/hol-probes/word_convs_good_handlers_probe.out are reproduced by Flapjack/Test/WordLangGoodHandlersParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "inst_arg_convention_def",
+    "lean_path": "Flapjack/Pancake/WordConvs.lean",
+    "lean_name": "instArgConvention",
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.6): non-exact source review of the held reviewed_exact promotion for HOL inst_arg_convention_def (cakeml/compiler/backend/semantics/wordConvsScript.sml). HOL inst_arg_convention_def uses a positive-dimensional word type; the Lean declaration quantifies width : Nat with no [NeZero width] binder, so BitVec 0 is admitted. The HOL tag was withdrawn; faithful width-restricted restatement tracked separately."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "inst_arg_convention_def",
+    "lean_path": "Flapjack/Pancake/WordConvs.lean",
+    "lean_name": "instArgConventionExact",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.6.1, coordinator review): HOL's declaration uses the exact `'a inst` carrier and introduces no configuration; the positive-width Lean restatement matches clause-for-clause, so this is an exact HOL port over the matching carrier and datatype widths (no mlstring/word-width translation). The Lean declaration is stated over the exact `HolInst` carrier with a checked `HolInst.toWordLangInst` bridge to the width-general executed form."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "inst_ok_less_def",
+    "lean_path": "Flapjack/Pancake/WordConvs.lean",
+    "lean_name": "instOkLess",
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.6): non-exact source review of the held reviewed_exact promotion for HOL inst_ok_less_def (cakeml/compiler/backend/semantics/wordConvsScript.sml). HOL inst_ok_less_def uses a positive-dimensional word type; the Lean declaration quantifies width : Nat with no [NeZero width] binder, so BitVec 0 is admitted. The HOL tag was withdrawn; faithful width-restricted restatement tracked separately."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "inst_ok_less_def",
+    "lean_path": "Flapjack/Pancake/WordConvs.lean",
+    "lean_name": "instOkLessExact",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.6.1.2): exact clause-for-clause port of HOL wordConvs$inst_ok_less_def (wordConvsScript.sml:208-264) over the exact positive-dimension AsmConfigExact/HolInst carriers (HOL 'a asm_config/'a inst) with an explicit [NeZero width] binder, matching HOL's config-first argument order. All arith/mem/fp clauses, the unreachable Load16/Store16 hw_offset case, dimindex(:'a)=32 guards as width==32, ISA membership as disjunctions, and the catch-all are transcribed exactly."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "labels_rel_APPEND",
+    "lean_path": "Flapjack/Pancake/WordConvs.lean",
+    "lean_name": "labelsRel_append",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-main (HOL/Lean statement comparison)"
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "labels_rel_CONS",
+    "lean_path": "Flapjack/Pancake/WordConvs.lean",
+    "lean_name": "labelsRel_cons",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-main (HOL/Lean statement comparison)"
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "labels_rel_TRANS",
+    "lean_path": "Flapjack/Pancake/WordConvs.lean",
+    "lean_name": "labelsRel_trans",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-main (HOL/Lean statement comparison)"
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "labels_rel_def",
+    "lean_path": "Flapjack/Pancake/WordConvs.lean",
+    "lean_name": "labelsRel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-main (HOL/Lean statement comparison)"
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "labels_rel_refl",
+    "lean_path": "Flapjack/Pancake/WordConvs.lean",
+    "lean_name": "labelsRel_refl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-main (HOL/Lean statement comparison)"
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "two_reg_inst_def",
+    "lean_path": "Flapjack/Pancake/WordConvs.lean",
+    "lean_name": "twoRegInst",
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.6): non-exact source review of the held reviewed_exact promotion for HOL two_reg_inst_def (cakeml/compiler/backend/semantics/wordConvsScript.sml). HOL two_reg_inst_def uses a positive-dimensional word type; the Lean declaration quantifies width : Nat with no [NeZero width] binder, so BitVec 0 is admitted. The HOL tag was withdrawn; faithful width-restricted restatement tracked separately."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "two_reg_inst_def",
+    "lean_path": "Flapjack/Pancake/WordConvs.lean",
+    "lean_name": "twoRegInstExact",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.6.1, coordinator review): HOL's declaration uses the exact `'a inst` carrier and introduces no configuration; the positive-width Lean restatement matches clause-for-clause, so this is an exact HOL port over the matching carrier and datatype widths (no mlstring/word-width translation). The Lean declaration is stated over the exact `HolInst` carrier with a checked `HolInst.toWordLangInst` bridge to the width-general executed form."
+  }
+]

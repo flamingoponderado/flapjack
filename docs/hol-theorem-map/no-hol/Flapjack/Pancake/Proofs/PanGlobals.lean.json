@@ -1,0 +1,34 @@
+[
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
+    "lean_name": "globalCompileTopForStart_all_function_or_exception",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (proof inventory)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
+    "lean_name": "globalCompileTopForStart_shapes_wf",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (proof inventory)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
+    "lean_name": "holMlStringWitness_freshNameHOL_not_mem_hol",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only same-module NameRanged witness for the tagged fresh_name_correct port freshNameHOL_not_mem_hol; no CakeML HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
+    "lean_name": "holMlStringWitness_freshNameHOL_not_mem_of_subset_hol",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only same-module NameRanged witness for the tagged fresh_name_correct' port freshNameHOL_not_mem_of_subset_hol; no CakeML HOL declaration."
+  }
+]

@@ -1,0 +1,146 @@
+[
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
+    "lean_name": "afindi_eq_of_map_fst_eq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (proof inventory)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
+    "lean_name": "isWfShapeList_of_all",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean support lemma for the struct_infos_ok_drop proof"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
+    "lean_name": "isWfShape_drop",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Production String/cache-backed analogue; the exact MlString/ShapeHOL source port is isWfShapeExactHOL_drop in StructInfosOkExact.lean."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
+    "lean_name": "isWfShape_of_mem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean support lemma used by PanStructs shape-size proof"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
+    "lean_name": "lookupInfoWithRest_fields_wf",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only field-well-formedness helper for the size_of_compile_shape proof"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
+    "lean_name": "lookupInfoWithRest_lookupInfo",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only lookup bridge helper for the size_of_compile_shape proof"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
+    "lean_name": "lookupInfoWithRest_mem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only membership helper for the size_of_compile_shape proof"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
+    "lean_name": "lookupInfoWithRest_none_lookupInfo_none",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only absent-lookup bridge helper for the size_of_compile_shape proof"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
+    "lean_name": "lookupInfoWithRest_suffix_drop",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only suffix-extraction helper for the size_of_compile_shape proof"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
+    "lean_name": "lookupInfo_drop_helper",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean specialization of local alookup_drop_helper; no separate HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
+    "lean_name": "lookupInfo_eq_lookup",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean support lemma for lookupInfo_drop_helper; no separate HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
+    "lean_name": "lookupInfo_isSome_drop",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Support lemma used by isWfShape_drop and PanValues; not a ported HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
+    "lean_name": "shapeSizeWithContext_drop",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only production-carrier analogue of size_of_sh_with_ctxt_drop; kept as useful String-backed infrastructure beside the exact MlString/ShapeHOL port."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
+    "lean_name": "shapeSizeWithContext_fold_drop",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only fold-size context-suffix helper for the size_of_compile_shape proof"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
+    "lean_name": "structCompileShapesFuel_eq_map",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (fuel parameter differs from no-fuel HOL compile_shapes_eq_map; see theorem docstring)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
+    "lean_name": "structInfosOk_append",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Production String/cache-backed analogue; the exact fields/size-only source port is structInfosOkHOLExact_append in StructInfosOkExact.lean."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
+    "lean_name": "structInfosOk_cons",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Production String/cache-backed analogue only; its precise carrier mismatch and the exact MlS/ShapeHOL port are documented beside the declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
+    "lean_name": "structInfosOk_drop",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Production String/cache-backed analogue; the exact fields/size-only source port is structInfosOkHOLExact_drop in StructInfosOkExact.lean."
+  }
+]

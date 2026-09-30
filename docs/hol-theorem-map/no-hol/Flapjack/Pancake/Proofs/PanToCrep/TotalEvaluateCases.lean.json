@@ -1,0 +1,194 @@
+[
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "evalCrepSemHOLProg_assign_success",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific exact Assign evaluator leaf supporting HOL eval_nested_assign_distinct_eq (pan_to_crepProofScript.sml:540): under exact expression success and existing-local premises, proves normal completion and the set_var local update over CrepProgHOL/CrepSemHOLState. It does not establish nested Seq composition or the full five-premise list theorem and has no @[hol] tag."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific same-module canonical finite-support roundtrip witness required by the full Call theorem's named CrepSemHOLState map-field qualifier; no separate HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific same-module canonical finite-support roundtrip witness required by the full Call theorem's named PanSemStateFiniteExact map-field qualifier; no separate HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific same-module canonical finite-support roundtrip witness required by the full Call theorem's named PanToCrepContextExact map-field qualifier; no separate HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "listRelGetElemExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private Flapjack-specific indexed projection from ListRel; used to preserve the HOL LIST_REL formal/argument premise in the exact Call theorem. It is not a separate HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "panToCrepCallCodeRelExactContextUpdate",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific projection of only the code_rel conjunct in HOL call_preserve_state_code_locals_rel (pan_to_crepProofScript.sml:2355). ctxt_fc preserves ctxt.funcs/eids and Pan/Crep dec_clock preserve the source/target code maps, so the exact codeRelExactHOLW relation is unchanged. This is not the full Call theorem and has no HOL declaration original."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "panToCrepCallContextNoOverlapMaxExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific exact call-context infrastructure for the no_overlap and ctxt_max conjuncts of HOL locals_rel in call_preserve_state_code_locals_rel (pan_to_crepProofScript.sml:2355). It proves these ctxt_fc invariants from distinct flat target slots and the combined shape-size premise; the source theorem's exact argument-binding locals_rel conjunct is not established by this helper."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "panToCrepCallExcpRelFiniteExactContextUpdate",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific projection of only the excp_rel conjunct in HOL call_preserve_state_code_locals_rel (pan_to_crepProofScript.sml:2355). The exact ctxt_fc context preserves ctxt.eids and Pan dec_clock preserves s.eshapes, so the exact relation is unchanged. This is not the full Call theorem and has no HOL declaration original."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "panToCrepCallLocalsRelArgumentBindingsExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific projection of the third locals_rel conjunct of HOL call_preserve_state_code_locals_rel (pan_to_crepProofScript.sml:2355), proved over exact slcHOL/tlcHOL, MlS, ShapeHOL, ValueHOL, and finite-support maps. The helper omits irrelevant full-theorem premises and is not the full theorem or a HOL-tagged declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "panToCrepExactAnnotTransition",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific prerequisite for HOL pc_compile_correct[Annot]: over exact ProgHOL/MlS carriers, records the Pan Annot result/state, compile_def erasure to Crep Skip, target Skip result/state, and preservation of exact state_rel/code_rel/locals_rel/excp_rel using codeRelExactHOLW. It does not assemble the full existential conclusion and is not a standalone HOL declaration; no @[hol] tag is claimed."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "panToCrepExactBreakTransition",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific prerequisite for HOL pc_compile_correct[Break]: records the finite-context Pan Break result/state, exact compiler Break 0 output, and Crep Break 0 result/state, preserving exact state and locals relations. It does not assemble code_rel/excp_rel or the full existential conclusion and is not a standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "panToCrepExactContinueTransition",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific prerequisite for HOL pc_compile_correct[Continue]: records the finite-context Pan Continue result/state, exact compiler Continue 0 output, and Crep Continue 0 result/state, preserving exact state and locals relations. It does not assemble code_rel/excp_rel or the full existential conclusion and is not a standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "panToCrepExactSkipTransition",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific exact-carrier prerequisite for HOL pc_compile_correct[Skip]: over ProgHOL/CrepProgHOL and finite-exact Pan/Crep states, proves the source Skip result/state, exact compile_def output, and target Skip result/state, carrying state_rel/code_rel/locals_rel/excp_rel unchanged without a target-run premise. It is distinct from production-carrier panToCrepTotalSkipStateCase, is not the full theorem, and has no @[hol] tag."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "panToCrepExactTickTransition",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific prerequisite for HOL pc_compile_correct[Tick]: records the exact Pan/Crep Tick results in both zero and nonzero clock branches, exact compiler Tick output, and post-state state_rel/locals_rel. It does not assemble code_rel/excp_rel or the full existential conclusion and is not a standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "panToCrepTotalSkipStateCase",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only total Skip induction-case support: uses the total measured PanSem Skip clause and total Crep HOL-state Skip clause, then carries state_rel, state-owned code_rel, excp_rel, and locals_rel to the unchanged runtime post-state. This is not a standalone HOL declaration or the full pc_compile_correct theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "shapeSizeCombHOL_eq_flattenHOL_length",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private Flapjack-specific exact-carrier support for the Call locals_rel proof. Relates exact ShapeHOL size to exact ValueHOL flatten lengths from the pointwise HOL shape relation and is_wf_shape_v_nil premise; it is not a separately claimed HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "shapeSizeCombShapeOfHOLExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private Flapjack-only list shape-size bridge used to compare exact ShapeHOL grouping with the production Shape helper lemmas. It has no separate HOL declaration and does not claim a shape-size HOL port."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "shapeSizeShapeOfHOLExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private Flapjack-only shape-size bridge used to compare exact ShapeHOL grouping with the production Shape helper lemmas. It has no separate HOL declaration and does not claim a shape-size HOL port."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "tlcHOLWithShapeMapM",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private Flapjack-specific exact-carrier proof support establishing the per-argument target mapM flatten clause used by HOL locals_rel. It is not the full call_preserve_state_code_locals_rel theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "tlcHOL_lookup_getElem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private Flapjack-specific lookup projection for the exact tlcHOL finite-support carrier. It uses the reviewed tlc_def finite-support witness and list update facts; it is not a separate HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "withShapeHOL_eq_withShapeShapeOfHOL",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private Flapjack-only representation bridge between exact withShapeHOL and the production withShape helper after shapeOfHOL conversion. It has no separate HOL declaration; the exact with_shape_def port remains withShapeHOL."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "withShapeHOL_getElem_eq_take_drop",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private Flapjack-specific exact-carrier bridge for the with_shape take/drop window. It reuses the exact with_shape_def port through the proved production-shape representation equality; it is not a separate HOL theorem port."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "withShapeHOL_getElem_length_exact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private Flapjack-specific exact-carrier support showing a withShapeHOL argument group has the exact flatten length under the HOL shape and well-formedness premises. It is not a separately claimed HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "withShapeHOL_mapFlatten",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private Flapjack-specific exact-carrier partition lemma showing that withShapeHOL partitions flattened exact arguments by their source shapes under is_wf_shape_v_nil. It is proof support, not a separate HOL declaration."
+  }
+]

@@ -1,0 +1,63 @@
+[
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "apply_colour_exp_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Expressions.lean",
+    "lean_name": "applyColourExp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-cveo: compared word_allocScript.sml:580-586 and 755-769. Exact WordLangExpHOL at positive BitVec width (NeZero) retains Const/Var/Lookup/Load/Op and binary expression-valued Shift. apply_colour_exp renames Var only, recursively maps lists and both Shift operands; Const and fixed store names are unchanged. get_live_exp uses exact Spt insertion/union and big_union right fold with LN seed. No changed side conditions. Proof-side executable definitions are partial progress; production routing remains tracked by flapjack-7c9s, and cveo inventory stays open until that requirement is met. Production route source review 2026-09-30, bead flapjack-7c9s: compared all six shared applyColourExpCore clauses with original580-587; exact wrapper retains BitVec width/NeZero, generic helper is untagged infrastructure. Compiled wordApplyColourExpRoute decodes this same recursion through constructor-matching codecs; fixed Temp BitVec5 names and binary Shift operands retained. Generic kernel wordApplyColourExp_route_eq covers all alpha/f/expression parameters; width-specialized wordApplyColourExp_toHOL connects reviewed definition. The kernel-proved csimp equality wordApplyColourExp_eq_route rewrites compiled callers to that route; generated C calls and original HOL fixtures validate the runtime boundary. Original HOL nested/duplicate/empty observations run through compiled test executable; no alternate performance implementation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "apply_colour_imm_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Instructions.lean",
+    "lean_name": "applyColourImm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead .18.5.11.1.3: word_allocScript588-591 exact Reg renamed by f, Imm unchanged. WordRegImm reviewed constructor carrier over positive-width BitVec; no injection assumption or extra operand case."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "apply_colour_inst_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Instructions.lean",
+    "lean_name": "applyColourInst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30, beads .18.5.11.1.4/.4.1: literal word_allocScript593-630, all arithmetic constructor positions incl4-register carry/overflow/longdiv, six explicit mem clauses and catchall preserved. Original asm memop125-128 includes Load16/Store16 but colouring leaves both unchanged; original six-row HOL probe confirms this, offset7w preserved, FP only integer operands renamed and float indices untouched. Compared WordLangArith/WordLangInst/WordLangFp/WordLangAddr/WordRegImm constructors and field Nat/word types against asmScript85-134; positive BitVec width is sole carrier translation. Tagged port delegates generic core actually called by executed production route; distinct5-register production primitive explicitly separate Flapjack behaviour, no exact HOL claim for it. Generic core immediate case mirrors reviewed applyColourImm and has no strengthened hypothesis."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "apply_nummap_key_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/KeyMaps.lean",
+    "lean_name": "applyNummapKey",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-c source comparison (2026-09-30; bead flapjack-bqzw), literal word_allocScript.sml:23-26: payload-polymorphic numeric Spt map, arbitrary Nat-to-Nat function, fromAList of MAP (key,value) to (f key,value) over exact toAList enumeration. No injection or well-formedness condition. Exact Spt constructors, unrestricted mixed HOL foldi enumeration, head-over-tail fromAList insertion and first-match collision behavior are preserved. This definition alone does not establish executed allocator routing; that obligation remains open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "big_union_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Expressions.lean",
+    "lean_name": "bigUnion",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-cveo: compared word_allocScript.sml:580-586 and 755-769. Exact WordLangExpHOL at positive BitVec width (NeZero) retains Const/Var/Lookup/Load/Op and binary expression-valued Shift. apply_colour_exp renames Var only, recursively maps lists and both Shift operands; Const and fixed store names are unchanged. get_live_exp uses exact Spt insertion/union and big_union right fold with LN seed. No changed side conditions. Proof-side executable definitions are partial progress; production routing remains tracked by flapjack-7c9s, and cveo inventory stays open until that requirement is met. Body-lock refresh source review 2026-09-30, bead flapjack-7c9s: getLiveExp source and positive-width signature are unchanged by factoring preceding colouring recursion, but its elaborated body hash regenerated. Re-compared every clause with HOL word_allocScript760-766: singleton Var insertion, recursive Load, right-fold union over mapped Op arguments, binary Shift union in operand order, and LN for Const/Lookup. No live-set behavior or premise change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "get_live_exp_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Expressions.lean",
+    "lean_name": "getLiveExp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-cveo: compared word_allocScript.sml:580-586 and 755-769. Exact WordLangExpHOL at positive BitVec width (NeZero) retains Const/Var/Lookup/Load/Op and binary expression-valued Shift. apply_colour_exp renames Var only, recursively maps lists and both Shift operands; Const and fixed store names are unchanged. get_live_exp uses exact Spt insertion/union and big_union right fold with LN seed. No changed side conditions. Proof-side executable definitions are partial progress; production routing remains tracked by flapjack-7c9s, and cveo inventory stays open until that requirement is met. Precise elaboration evidence: source snapshots before70f42b65c and after6f57f751c were re-elaborated via lake lean with the identical original module root and pp.all. Printed getLiveExp bodies are identical except Flapjack.WordAlloc.applyColourExp.match_1 became Flapjack.WordAlloc.getLiveExp.match_1. The elaborator previously reused the preceding width-specific matcher; generic core factoring makes getLiveExp generate its own matcher. Both matcher constructor-selection bodies are identical casesOn applications (only input binder alpha-names differ). Captures /tmp/flap-sol-getLiveExp-before.txt and /tmp/flap-sol-getLiveExp-after.txt, source snapshots under matching Flapjack/Compiler/Backend/WordAlloc/Expressions.lean roots. This attributes the regenerated hash to a changed generated constant reference, not a live-set behavior change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "get_live_inst_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Instructions.lean",
+    "lean_name": "getLiveInst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30 bead .18.5.11.1.7: literal word_alloc706-752 constructor clauses, nested insert/delete ordering and generic exact Spt unit carrier. Reviewed WordLangInst/WordLangArith/WordRegImm/WordLangFP/WordLangMemOp carriers against asm85-134, including word-valued immediates/address offsets and all numeric FP operands. Six memory clauses only; Load16/Store16 and FP-only clauses unchanged catchall. AddCarry deletes only r1 and inserts r4, overflow deletes r4 then r1, LongMul/Div delete both output registers. FPMovToReg deletes r1 only at width64 otherwise r2 then r1; FPMovFromReg inserts r1 only at64 otherwise r1 then r2. Positive BitVec width translation retains NeZero; generic core explicit width delegates full definition. No fp real arithmetic semantics claim. Proof-side partial progress; executed list-liveness replacement tracked .7.1."
+  }
+]

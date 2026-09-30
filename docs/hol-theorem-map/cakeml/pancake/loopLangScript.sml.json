@@ -1,0 +1,62 @@
+[
+  {
+    "hol_path": "cakeml/pancake/loopLangScript.sml",
+    "hol_name": "acc_vars_def",
+    "lean_path": "Flapjack/Pancake/LoopLang.lean",
+    "lean_name": "accVarsHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.9.8.4): exact port of HOL loopLangScript.sml:118-155 acc_vars_def. All clauses reproduced over the reviewed HolLoopProg width carrier ([NeZero width]) and NumSet = Spt Unit: Seq/Break/Continue/Loop/If; Arith longMul/longDiv insert the first two vars and div the first; Mark/Tick/Skip/Fail/Raise/Return return l; Call with SOME (vs,_) does sptListInsert vs l and recurses into handler p1/p2 with sptInsert n () l; LocValue/Assign/ShMem/Load32/LoadByte sptInsert their destination; Primitive sptListInsert destinations; Store/SetGlobal/Store32/StoreByte/FFI return l. HOL insert is sptInsert and list_insert is sptListInsert. No fmap qualifier: NumSet is Spt Unit, not HolFiniteMapExact. Production loopAccVars over LoopProg is a separate executable helper and is not this declaration."
+  },
+  {
+    "hol_path": "cakeml/pancake/loopLangScript.sml",
+    "hol_name": "assigned_vars_def",
+    "lean_path": "Flapjack/Pancake/LoopLang/AssignedVars.lean",
+    "lean_name": "holLoopAssignedVars",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-28, bead flapjack-pxn.18.5.17.1.1.2) against loopLangScript.sml:94-111. All HOL prog constructors match HolLoopProg; the definition preserves each assigned_vars clause, including Call return/exception-handler ordering and the empty default. BitVec width is the reviewed type-indexed word translation. Declaration relocated to a submodule of its HOL source counterpart after coordinator placement HOLD."
+  },
+  {
+    "hol_path": "cakeml/pancake/loopLangScript.sml",
+    "hol_name": "exp",
+    "lean_path": "Flapjack/Pancake/LoopLang.lean",
+    "lean_name": "HolLoopExp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a (direct comparison with loopLangScript.sml:19-28 and imported carriers: 8 exp ctors Const/Var/Lookup/Load/Op/Shift/BaseAddr/TopAddr; Const is BitVec width, Lookup is literal BitVec 5, BinOp has the same five HOL asm$binop constructors, and Shift is the tagged ast$shift carrier)"
+  },
+  {
+    "hol_path": "cakeml/pancake/loopLangScript.sml",
+    "hol_name": "locals_touched_def",
+    "lean_path": "Flapjack/Pancake/LoopLang.lean",
+    "lean_name": "holLoopLocalsTouched",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.11): HOL locals_touched_def (loopLangScript.sml:77-85) over the width-indexed HolLoopExp carrier: Const -> [], Var v -> [v], Lookup -> [], Load addr -> locals_touched addr, Op op wexps -> FLAT (MAP locals_touched wexps) (rendered via List.attach for well-founded recursion, equal to the plain map by List.attach_map_val), Shift sh e1 e2 -> locals_touched e1 ++ locals_touched e2, BaseAddr/TopAddr -> []. All five rows of loop_lang_locals_touched_probe.out are checked by Flapjack.Test.LoopPropsEvalExactParity. (words_as_type_indexed_bitvec): 'a exp as HolLoopExp width with [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/loopLangScript.sml",
+    "hol_name": "loop_arith",
+    "lean_path": "Flapjack/Pancake/LoopLang.lean",
+    "lean_name": "LoopArith",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-main (HOL/Lean source comparison: 3 arith ctors and field shapes match LLongMul/LLongDiv/LDiv)"
+  },
+  {
+    "hol_path": "cakeml/pancake/loopLangScript.sml",
+    "hol_name": "nested_seq_def",
+    "lean_path": "Flapjack/Pancake/LoopLang.lean",
+    "lean_name": "loopNestedSeqHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-28, bead flapjack-bseq) against loopLangScript.sml:72-75. The sole tagged declaration preserves both HOL clauses: empty list yields Skip; cons yields Seq head (nested_seq tail). Its type is List (HolLoopProg width) to HolLoopProg width, and the only representation qualifier is HOL's positive indexed word dimension as BitVec width. Direct EVAL rows empty/one/two remain checked in Flapjack.Test.CrepToLoopCompileExactParity. The duplicate exact declaration was removed; downstream LoopProps and proof consumers now use this canonical definition."
+  },
+  {
+    "hol_path": "cakeml/pancake/loopLangScript.sml",
+    "hol_name": "prog",
+    "lean_path": "Flapjack/Pancake/LoopLang.lean",
+    "lean_name": "HolLoopProg",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a (direct comparison with loopLangScript.sml:30-60 and imported carriers: all 24 constructors and fields match; words are fixed BitVec width and literal BitVec 5; num_set is exact Spt Unit; BinOp/Cmp have the same asm constructors; RegImm maps HOL Reg/Imm to Lean .reg/.imm with matching Nat/word payloads; memop is WordMemOp, the single tagged asm$memop carrier (HolMemop) [flapjack-pxgp.20, 2026-09-29: the duplicate CrepMemOp datatype is removed; every Crep/Loop/Word memop now uses the single tagged asm$memop carrier WordMemOp (HolMemop), moved to Flapjack/MemOp.lean]; PrimOp, LoopArith and Shift are exact tagged carriers; FFI uses exact MlString. This is a datatype shape review, not a claim that arbitrary MlString names roundtrip to String; the executable bridge is partial on that codec boundary.)"
+  }
+]

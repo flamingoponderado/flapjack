@@ -17,9 +17,18 @@ import sys
 from pathlib import Path
 from typing import Any
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+import hol_theorem_map  # noqa: E402
+
 ROOT = Path(__file__).resolve().parent.parent
 PROOFS_DIR = ROOT / "Flapjack" / "Pancake" / "Proofs"
+# ``docs/HOL-THEOREM-MAP.json`` is kept as the byte-stable compatibility view;
+# the canonical record store is the per-HOL-script shard tree, read through the
+# loader. ``DEFAULT_MANIFEST`` remains the monolith path for legacy callers.
 DEFAULT_MANIFEST = ROOT / "docs" / "HOL-THEOREM-MAP.json"
+DEFAULT_SHARDS = ROOT / "docs" / "hol-theorem-map"
+DEFAULT_RECORDS = DEFAULT_SHARDS
 REFS = runpy.run_path(str(ROOT / "scripts" / "check-hol-refs.py"))
 HOL_ATTRIBUTE_SITES = REFS["hol_attribute_sites"]
 FIND_LEAN_DECL = REFS["find_lean_decl"]
@@ -2785,11 +2794,19 @@ def validate_inventory(
 
 def main(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
+    parser.add_argument(
+        "--manifest",
+        type=Path,
+        default=DEFAULT_RECORDS,
+        help=(
+            "shard directory (canonical) or legacy JSON array file to read; "
+            "defaults to the per-HOL-script shard tree"
+        ),
+    )
     parser.add_argument(
         "--bootstrap",
         action="store_true",
-        help="write an initial inventory template and exit (will not overwrite)",
+        help="write an initial shard tree deterministically and exit (will not overwrite)",
     )
     args = parser.parse_args(argv)
 
@@ -2797,17 +2814,17 @@ def main(argv: list[str]) -> int:
         if args.manifest.exists():
             print(f"error: refusing to overwrite {args.manifest}", file=sys.stderr)
             return 1
-        args.manifest.parent.mkdir(parents=True, exist_ok=True)
-        args.manifest.write_text(
-            json.dumps(build_inventory(), indent=2) + "\n", encoding="utf-8"
-        )
-        print(f"wrote {args.manifest.relative_to(ROOT)}")
+        records = build_inventory()
+        written = hol_theorem_map.write_shards(args.manifest, records, cleanup=True)
+        try:
+            shown = args.manifest.resolve().relative_to(ROOT)
+        except ValueError:
+            shown = args.manifest
+        print(f"wrote {len(written)} shard files under {shown}")
         return 0
 
     try:
-        records = json.loads(args.manifest.read_text(encoding="utf-8"))
-        if not isinstance(records, list):
-            raise ValueError("manifest root must be a JSON array")
+        records = hol_theorem_map.load_manifest(args.manifest)
         errors = validate_inventory(
             records,
             proof_theorem_declarations(),

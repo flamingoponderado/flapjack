@@ -1,0 +1,213 @@
+[
+  {
+    "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
+    "hol_name": "cexp_heads_def",
+    "lean_path": "Flapjack/Pancake/PanToCrep.lean",
+    "lean_name": "cexpHeads",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex (direct HOL type probe and source comparison at pan_to_crepScript.sml:19-26): HOL infers cexp_heads as α list list -> α list option because the definition only inspects lists. Lean cexpHeads has the same arbitrary-element type; production uses it at β := CrepExp α. Inferred type is recorded in scripts/hol-probes/cexp_heads_probe.out; direct HOL-EVAL list rows are checked in CexpHeadsParity.lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
+    "hol_name": "comp_field_def",
+    "lean_path": "Flapjack/Pancake/PanToCrep.lean",
+    "lean_name": "compFieldHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-deepseek-three (source comparison, bead flapjack-pxn.18.3.5.8.11): comp_field's two clauses (pan_to_crepScript.sml:28-32) are comp_field i [] es = ([Const 0w], One) and comp_field i (sh::shs) es = if i = 0 then (TAKE (size_of_shape sh) es, sh) else comp_field (i-1) shs (DROP (size_of_shape sh) es). compFieldHOL is stated over the exact MlString-backed ShapeHOL carrier and the positive-width CrepExpHOL (BitVec width, [NeZero width]); sizeOfShapeHOL is the tagged size_of_shape_def over ShapeHOL and the zero literal is CrepExpHOL.const 0. All constructor arities and field types match. Direct HOL-EVAL rows for first/second/fallback/empty/short are in scripts/hol-probes/comp_field_probe.out, reproduced over the exact carrier in Flapjack/Test/CompFieldParity.lean. Production compileField stays untagged; compileField_map_codecs is the kernel bridge mapping its result into the exact carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
+    "hol_name": "comp_func_def",
+    "lean_path": "Flapjack/Pancake/PanToCrep/CompileExact.lean",
+    "lean_name": "compFuncExactHOLW",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "fs",
+      "eids"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-27, bead flapjack-4ac.2.14.1; pan_to_crepScript.sml:337-343): the HOL definition has four curried binders fs, eids, params, body and no premises; it defines vmap = make_vmap params, shapes = MAP SND params, vmax = size_of_shape (Comb shapes) - 1, then returns compile (mk_ctxt vmap fs vmax eids) body. compFuncExactHOLW has the same binders/order and body, using tagged panToCrepMakeVmapHOLExact, sizeOfShapeHOL, mkCtxtExactHOL, and compileProgExactHOLW. The input fs/eids finite maps are the only finite-support translations, listed as standalone exact HolFiniteMapExact parameters; MlS/ShapeHOL/ProgHOL/CrepProgHOL are the reviewed exact syntax/name/program carriers. HOL's type-indexed word is represented by BitVec width with [NeZero width], recorded by words_as_type_indexed_bitvec. No premise, success condition, or output case is added. Direct original HOL EVAL rows are in scripts/hol-probes/pan_to_crep_comp_func_probe.out and checked by Flapjack.Test.PanToCrepCompFuncExactParity. The existing String-backed compFuncHOL stays untagged; production routing remains tracked by flapjack-pxn.18.3.5.8."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
+    "hol_name": "compile_def",
+    "lean_path": "Flapjack/Pancake/PanToCrep/CompileExact.lean",
+    "lean_name": "compileProgExactHOLW",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs",
+      "eids"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b (source comparison, bead flapjack-pxn.18.3.5.8.13.29; pan_to_crepScript.sml:139-307): compared every Prog constructor equation and recursive context update against compile_def and its direct EVAL rows in scripts/hol-probes/compile_def_probe.out. Skip, Dec (declared shape ignored, extended vars store compile_exp shape/names, vmax update and shape-length fallback), local/global Assign, Primitive, Store, Store32/StoreByte, Return, Raise, Seq, If/While, Break/Continue, all Call rtyp/wrap_rt/handler/eid branches, DecCall, ExtCall, ShMemStore, local/global ShMemLoad, Tick, and Annot match. The compiled-shape update was re-reviewed against pan_to_crepScript.sml:141-152 after fixing an earlier declared-shape mismatch; direct HOL row dec_declared_shape_ignored in compile_def_probe.out and the matching exact-compiler guard pin the difference. An additional exactDecClauseParity guard covers declared size two versus compiled size one. The exact syntax and word carriers are ProgHOL width/ExpHOL width/ShapeHOL/MlS and CrepProgHOL width with [NeZero width]. PanToCrepContextExact's vars/funcs/eids are the only representation difference, using HolFiniteMapExact; the same-module holFmapAsFiniteSupportWitness proves its toBroad/ofBroad roundtrip. The parser-backed executed body path calls this definition through compileProgTopHOLProductionExact after exactifying the production context; compileFunctionExactProductionBridge and compileProgTopHOLProductionExact_eq establish the per-function bridge and output preservation. String-backed helpers remain compatibility paths for inputs without DeclByteRanged evidence. The broader exact compile_prog/inliner carrier gap remains tracked under flapjack-e7w.2 and is not closed by this definition. flapjack-ds5 review (2026-09-27, bead flapjack-pxn.18.3.5.8.13.31): HOL pan_to_crep$compile_def is polymorphic in the type-indexed 'a word (compile _ (Skip:'a panLang$prog) = (Skip:'a crepLang$prog) and every expression/state clause), while the Lean carrier fixes the dimension at ProgHOL width/CrepProgHOL width with [NeZero width]; the words_as_type_indexed_bitvec qualifier is therefore required alongside fmap_as_finite_support (combined status). The width-indexed carrier resolves through PanToCrepContextExact width (header [NeZero width], field eids : HolFiniteMapExact MlS (BitVec width)); no quantifier, hypothesis, side condition, or conclusion changes."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
+    "hol_name": "compile_def",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "compileProgRiscV_eq_compileProgHOL",
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-luna-c (source comparison, bead flapjack-4ac.2.10, 2026-09-26): compared HOL pan_to_crepScript.sml:139-307 constructor equations and fallbacks with the structurally corresponding compileProgHOL/compileProgRiscV definitions. This bridge is Flapjack-specific, not an exact HOL compile_def port: it uses production Prog/CrepProg/Exp/Shape with String identifiers and permits width 0, while HOL uses positive-width ProgHOL/CrepProgHOL/ExpHOL/ShapeHOL with mlstring identifiers. The names_as_string qualifier does not authorize those carrier and width differences; no NameRanged witness applies because the output is CrepProg. Direct HOL-EVAL rows are in scripts/hol-probes/compile_def_probe.out and reproduced by Flapjack/Test/CompileDefParity.lean. Keep the tag withdrawn; exact-carrier replacement is flapjack-pxn.18.3.5.8.13. No claim is made that this proof-side helper is the executed compiler route."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
+    "hol_name": "compile_exp_def",
+    "lean_path": "Flapjack/Pancake/PanToCrep/CompileExact.lean",
+    "lean_name": "compileExpExactHOLW",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs",
+      "eids"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b (source comparison, bead flapjack-pxn.18.3.5.8.13.4; pan_to_crepScript.sml:39-101): checked every compile_exp equation against direct EVAL rows in scripts/hol-probes/compile_exp_probe.out. Const and address leaves, Local FLOOKUP, Global/missing-local zero fallback, RStruct flattening, RField Comb selection and non-Comb fallback, NStruct/NField fallbacks, Load/load_shape, Load32/LoadByte One-shape side conditions and fallback, Op/Panop cexp_heads behavior, Cmp/Shift nonempty-head behavior, and BytesInWord n2w (width DIV 8) match. ExpHOL width/ShapeHOL/MlS and CrepExpHOL width are exact with [NeZero width] for positive word dimensions. Context maps are the sole representation difference: CompileExpContextExact owns vars/funcs/eids as HolFiniteMapExact and same-module holFmapAsFiniteSupportWitness proves the toBroad/ofBroad roundtrip. The qualifier records only finite-support map representation. The direct String-backed production compileExp helper remains untagged; with parser-proved DeclByteRanged evidence, compileProgTopHOLProductionExact executes compileProgExactHOLW and this exact compile_exp dependency. compileProgTopHOLProductionExact_eq records output preservation for that parser-backed route, while callers without the evidence use the compatibility path. The exact compile_inl_top carrier and full compile_prog theorem remain separate gaps tracked under flapjack-e7w.2. flapjack-ds5 review (2026-09-27, bead flapjack-pxn.18.3.5.8.13.31): HOL pan_to_crep$compile_exp_def is polymorphic in the type-indexed 'a word (compile_exp returns Const ('a word) etc.), while the Lean carrier fixes the dimension at ExpHOL width/CrepExpHOL width with [NeZero width]; the words_as_type_indexed_bitvec qualifier is therefore required alongside fmap_as_finite_support (combined status). The width-indexed carrier resolves through PanToCrepContextExact width (header [NeZero width], field eids : HolFiniteMapExact MlS (BitVec width)); no quantifier, hypothesis, side condition, or conclusion changes."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
+    "hol_name": "compile_panop_def",
+    "lean_path": "Flapjack/Pancake/PanToCrep.lean",
+    "lean_name": "compilePanOp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex (source comparison against pan_to_crepScript.sml:35-37): maps the sole panLang Mul constructor to the sole crepLang Mul constructor, matching compile_panop_def exactly; neither type carries String-backed names."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
+    "hol_name": "compile_prog_def",
+    "lean_path": "Flapjack/Pancake/PanToCrep/CompileProg.lean",
+    "lean_name": "compileProgTopHOL",
+    "statement_status": "documented_mismatch",
+    "reviewer": "Codex (source review of HOL Definition compile_prog_def at pan_to_crepScript.sml:393-397): HOL's equation is compile_inl_top (MAP FST (functions (FILTER inlinable prog))) (compile_to_crep prog), with input 'a prog and result (mlstring # num list # 'a crepLang$prog) list, and no hypotheses or side conditions. Lean compileProgTopHOL remains an untagged production-carrier analogue: it takes production Decl (BitVec width), String FunName and production Shape/CrepProg carriers, and has extra typeclass binders. Neither names_as_string nor a byte-range bridge makes that declaration an exact port. Separately, the parser-backed production adapter now calls compileProgExactHOLW and the reviewed compileInlTopHOLExact on MlString names and CrepProgHOL bodies, decoding only at its production metadata boundary. It does not claim output equality with the generic compatibility route. Exact direct HOL compile_prog rows and original Pancake parity guard the parser-backed route; the complete compile_prog carrier theorem and end-to-end bridge remain open."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
+    "hol_name": "compile_to_crep_def",
+    "lean_path": "Flapjack/Pancake/PanToCrep/CompileExact.lean",
+    "lean_name": "compileToCrepExactHOLW",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-27, bead flapjack-4ac.2.19.1; pan_to_crepScript.sml:383-391): the unconditionally declared result is an ordered list of triples (mlstring, num list, Crep program), computed by projecting functions decls, constructing make_funcs from that ordered projection and get_eids_from_decls from the original declarations, then mapping (name, params, body, return) to (name, crep_vars params, comp params body). compileToCrepExactHOLW has the same sole declaration-list input and triple-list output over DeclHOL width/MlS/List Nat/CrepProgHOL width; it uses exactly the tagged functionsHOL, makeFuncsExactHOL, getEidsFromDeclsHOL, crepVarsHOL and compFuncExactHOLW helpers and deliberately ignores the projected return field in the final mapping just as HOL does. List.map preserves output order and duplicate function declarations. makeFuncsExactHOL uses the reviewed HOL alist_to_fmap right-fold behavior: the first duplicate name wins for callees, while every function row is still emitted; direct HOL row duplicate_function_names and its exact DeclHOL regression demonstrate both behaviors. The direct raise_const EVAL row also checks exception-ID derivation through getEidsFromDeclsHOL. Maps are local intermediate values, not fields or binders of this declaration, so no finite-map representation qualifier applies; their helper declarations record their standalone map result translations. The positive width-indexed HOL word carrier is represented by BitVec width with [NeZero width], recorded by words_as_type_indexed_bitvec. Original rows are in scripts/hol-probes/compile_to_crep_probe.out and exact-carrier Lean checks are in Flapjack/Test/CompileToCrepeParity.lean. This is a tagged proof-side declaration only: the production String-backed compileToCrepHOL path is not routed through it; that executable gap is tracked by flapjack-pxn.18.3.1.3, and the larger exact compile_prog boundary by flapjack-4ac.2.20.2."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
+    "hol_name": "context",
+    "lean_path": "Flapjack/Pancake/PanToCrep/ContextExact.lean",
+    "lean_name": "PanToCrepContextExact",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs",
+      "eids"
+    ],
+    "reviewer": "flapjack-luna-b (source comparison, beads flapjack-4ac.2.1 and .2.1.1; pan_to_crepScript.sml:10-16): the record fields match: vars maps MlString/varname to ShapeHOL and List Nat; funcs maps MlString/funname to List (MlString × ShapeHOL) × ShapeHOL; eids maps MlString/eid to BitVec width for HOL 'a word; vmax is Nat. Lean uses the canonical HolFiniteMapExact carrier for HOL fmap fields, with same-module toBroad/ofBroad roundtrip witness holFmapAsFiniteSupportWitness. The qualifier records only this finite-support representation. The field values are checked against the direct HOL `mk_ctxt_fields` record row from `mk_ctxt_def` in scripts/hol-probes/compile_to_crep_probe.out by Flapjack.Test.PanToCrepContextExactParity."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
+    "hol_name": "crep_vars_def",
+    "lean_path": "Flapjack/Pancake/PanToCrep/Compile.lean",
+    "lean_name": "crepVarsHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 (source comparison, bead flapjack-4ac.2.18): HOL crep_vars_def (cakeml/pancake/pan_to_crepScript.sml:376-381) is `crep_vars params = let shapes = MAP SND params; len = size_of_shape (Comb shapes) in GENLIST I len`, polymorphic in the first component of each parameter pair. crepVarsHOL {α} params = List.range (sizeOfShapeHOL (.comb (params.map Prod.snd))) matches clause-for-clause: MAP SND -> List.map Prod.snd, Comb -> .comb, size_of_shape -> the tagged exact sizeOfShapeHOL, GENLIST I len -> List.range len (List.range n = [0,1,...,n-1]). The parameter name component is never inspected, so no names_as_string qualifier applies. Production panToCrepVars is routed through crepVarsHOL (compileFunDeclSource/compileToCrepHOL), so the executed compiler uses the reviewed definition. Direct HOL-EVAL rows crep_vars_empty/crep_vars_nested in scripts/hol-probes/compile_to_crep_probe.out are replayed by crepVarsOracle in Flapjack/Test/CompileToCrepeParity.lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
+    "hol_name": "exp_hdl_def",
+    "lean_path": "Flapjack/Pancake/PanToCrep.lean",
+    "lean_name": "expHdlHOL",
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-ds3 (source review, bead flapjack-2s5): HOL exp_hdl_def (pan_to_crepScript.sml:106-112) quantifies over a finite map varname |-> (shape # num list), but expHdlHOL takes a raw MlString -> Option (ShapeHOL × List Nat) function admitting infinite support. The tag is withdrawn; the field-based fmap_as_finite_support qualifier cannot cover a bare parameter. The raw-map helper and its production bridge remain untagged. Faithful finite-map replacement is tracked by flapjack-pxn.18.3.5.8.13.2; direct HOL rows remain in scripts/hol-probes/exp_hdl_probe.out and Flapjack/Test/ExpHdlHOLParity.lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
+    "hol_name": "exp_hdl_def",
+    "lean_path": "Flapjack/Pancake/PanToCrep/ExpHdlExact.lean",
+    "lean_name": "expHdlExact",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_parameters": [
+      "fm"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison against pan_to_crepScript.sml:106-112 and crepLangScript.sml:33,116-118: Lean keeps HOL's direct fm then v binder order; HolFiniteMapExact MlS (ShapeHOL × List Nat) is the canonical translation of the finite map and its checked parameter witness roundtrips lookup/support. On lookup miss both return Skip. On hit both discard vshp and form nested_seq (MAP2 Assign ns (load_globals 0w (LENGTH ns)); Lean's crepNestedSeqHOL/panMap2/loadGlobalsHOL clauses match. HOL crepLang's LoadGlob field is fixed 5 word, which Lean represents as BitVec 5; the result program's generic word parameter is CrepProgHOL width with [NeZero width], the standard positive-dimensional word translation. Probe rows remain checked by ExpHdlHOLParity. The two qualifiers authorize only these map and word-carrier translations; no extra premise or changed result."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
+    "hol_name": "get_eids_from_decls_def",
+    "lean_path": "Flapjack/Pancake/PanToCrep/ContextExact.lean",
+    "lean_name": "getEidsFromDeclsHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_result",
+    "fmap_as_finite_support_result": true,
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.2.16): HOL pan_to_crepScript.sml:356-364 defines get_eids_from_decls decls = let eids = MAP FST (exceptions decls); ns = GENLIST (fun x => (n2w x):'a word) (LENGTH eids); es = MAP2 (fun x y => (x,y)) eids ns in alist_to_fmap es, where alist_to_fmap is the right fold FOLDR FUPDATE FEMPTY (first entry wins on a duplicate key). Lean quantifies the same word-indexed decl list over the exact DeclHOL carrier and returns the reviewed canonical finite-support map HolFiniteMapExact MlS (BitVec width), with lookup exactly Flapjack.alistToFmap (getEidsEntriesHOL decls) where getEidsEntriesHOL is the literal MAP FST/zip-GENLIST rendering of HOL's let-bound es and Flapjack.alistToFmap is the untagged alist_to_fmap right fold. exceptions is the tagged exceptionsHOL port; n2w is BitVec.ofNat width. The standalone-result qualifier records only that MlS/BitVec-keyed fmap representation; the same-module witness holFmapAsFiniteSupportResultWitness_getEidsFromDeclsHOL states the unconditional lookup-level equation against the raw alistToFmap operation. No extra hypotheses or side conditions."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
+    "hol_name": "make_funcs_def",
+    "lean_path": "Flapjack/Pancake/PanToCrep/Compile.lean",
+    "lean_name": "makeFuncsHOL",
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-ds9 (source comparison, bead flapjack-4ac.2.17): FLAPJACK-SPECIFIC / not an exact HOL port, @[hol] tag withdrawn. HOL make_funcs_def (pan_to_crepScript.sml:366-373) is `make_funcs prog = alist_to_fmap (MAP3 (λx y z. (x,y,z)) (MAP FST prog) (MAP (FST o SND) prog) (MAP (SND o SND o SND) prog))` keyed by funname = mlstring and valued by (varname # shape) list # shape, with alist_to_fmap a right fold of FUPDATE (first duplicate name wins). Lean makeFuncsHOL keys by FunName = String and stores production VarName = String and Shape (named : StructName = String), not HOL's mlstring carriers; its input also mentions the production Prog α body carrier even though make_funcs ignores bodies; and its result is a FiniteMap function (raw α → Option β, admitting infinite support) rather than HOL's fmap, built by FUPDATE_LIST FEMPTY over the reversed association list. The names_as_string qualifier cannot authorize the Shape and Prog carriers or the FiniteMap-vs-fmap representation, and no NameRanged byte witness applies because the output is a finite map of function signatures, not a name. The theorem-map make_funcs_def -> crepToLoopMakeFuncsHOL entry is the exact port of the different crep_to_loopScript.sml declaration, not this one. Direct HOL-EVAL rows make_funcs_empty_params/make_funcs_param_entry/make_funcs_absent/make_funcs_duplicate_first_wins are in scripts/hol-probes/crep_make_funcs_probe.out and exercised by makeFuncsGuard (Flapjack/Test/PanToCrepCodeRelParity.lean) and makeFuncsOracle (Flapjack/Test/CompileToCrepeParity.lean). The faithful exact-carrier port is tracked by flapjack-pxn.18.3.5.8 (parent flapjack-pxn.18.3.5.7.2)."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
+    "hol_name": "make_funcs_def",
+    "lean_path": "Flapjack/Pancake/PanToCrep/ContextExact.lean",
+    "lean_name": "makeFuncsExactHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_result",
+    "fmap_as_finite_support_result": true,
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.2.17): HOL pan_to_crepScript.sml:366-374 defines make_funcs prog = let fnames = MAP FST prog; params = MAP (FST o SND) prog; returns = MAP (SND o SND o SND) prog; fs = MAP3 (fun x y z => (x,y,z)) fnames params returns in alist_to_fmap fs, where alist_to_fmap is the right fold FOLDR FUPDATE FEMPTY (first entry wins on a duplicate key). Lean quantifies the same program list (the output of the tagged functionsHOL, entries (name, params, body, return)) and returns the reviewed canonical finite-support map HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ShapeHOL), with lookup exactly Flapjack.alistToFmap (makeFuncsEntriesHOL prog) where makeFuncsEntriesHOL is the literal MAP3 rendering of HOL's let-bound fs and Flapjack.alistToFmap is the untagged alist_to_fmap right fold. The standalone-result qualifier records only that MlS-keyed fmap representation; the same-module witness holFmapAsFiniteSupportResultWitness_makeFuncsExactHOL states the unconditional lookup-level equation against the raw alistToFmap operation. No extra hypotheses or side conditions."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
+    "hol_name": "make_vmap_def",
+    "lean_path": "Flapjack/Pancake/PanToCrep/MakeVmapHOL.lean",
+    "lean_name": "panToCrepMakeVmapHOLExact",
+    "statement_status": "reviewed_fmap_as_finite_support_result",
+    "fmap_as_finite_support_result": true,
+    "reviewer": "flapjack-ds10 (source comparison, bead flapjack-4ac.2.13): HOL make_vmap_def (pan_to_crepScript.sml:327-334) returns the finite map FEMPTY |++ ZIP (pvars, ZIP (shs, with_shape shs (GENLIST I (size_of_shape (Comb shs))))) directly. panToCrepMakeVmapHOLExact reproduces the construction clause-for-clause over the canonical carrier HolFiniteMapExact MlS (ShapeHOL × List Nat): MAP FST/SND = List.map Prod.fst/snd, GENLIST I = List.range, with_shape = tagged withShapeHOL, size_of_shape = tagged sizeOfShapeHOL, and |++ = HolFiniteMapExact.updateList (the FUPDATE_LIST fold, later duplicates winning). The standalone qualifier is justified by the same-module lookup witness holFmapAsFiniteSupportResultWitness_panToCrepMakeVmapHOLExact: (panToCrepMakeVmapHOLExact params).lookup key = panToCrepMakeVmapRaw params key, the raw FUPDATE_LIST-backed HOL map. Direct HOL-EVAL rows make_vmap_shaped/make_vmap_duplicate_lookup from scripts/hol-probes/compile_to_crep_probe.out are replayed by Flapjack/Test/PanToCrepMakeVmapParity.lean. The production String/Shape-keyed panToCrepMakeVmapHOL remains untagged; its exact-carrier replacement is tracked by flapjack-pxn.18.3.5.8. The qualifier is representation-only and does not change the quantifiers, side conditions, or result."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
+    "hol_name": "mk_ctxt_def",
+    "lean_path": "Flapjack/Pancake/PanToCrep.lean",
+    "lean_name": "panToCrepMkCtxtHOL",
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-ds9 (source comparison, bead flapjack-4ac.2.11): FLAPJACK-SPECIFIC / not an exact HOL port, @[hol] tag withdrawn. HOL mk_ctxt_def (pan_to_crepScript.sml:310-316) is `mk_ctxt vmap fs m (es:eid |-> 'a word) = <|vars := vmap; funcs := fs; eids := es; vmax := m|>` over context fields vars : varname |-> shape # num list, funcs : funname |-> ((varname # shape) list # shape), eids : eid |-> 'a word, vmax : num, where varname/funname/eid are mlstring (panLangScript.sml:24-28) and shape.named is mlstring (panLangScript.sml:36-38). Lean panToCrepMkCtxtHOL instead takes production VarName/FunName/ExceptionId = String keys, the production Shape (named : String) in the vars/funcs values, a generic α for the eids value instead of HOL's word-length-indexed 'a word, and the extensional FiniteMap α β := α → Option β encoding of fmap rather than the literal HOL carrier. The names_as_string qualifier cannot authorize the Shape value carrier or the changed α/'a word eids type, and no NameRanged byte witness applies because this constructor produces a context, not a name. The exact MlString/ShapeHOL/BitVec context carrier replacement is now landed as PanToCrepContextExact (bead flapjack-4ac.2.1.1) and its exact constructor mkCtxtExactHOL is tagged (bead flapjack-4ac.2.11); the exact compile_def consumer remains tracked by flapjack-pxn.18.3.5.8.13 (under flapjack-pxn.18.3.5.8, parent flapjack-pxn.18.3.5.7.2). The executable routing of the production context construction remains that Flapjack-specific definition."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
+    "hol_name": "mk_ctxt_def",
+    "lean_path": "Flapjack/Pancake/PanToCrep/ContextExact.lean",
+    "lean_name": "mkCtxtExactHOL",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs",
+      "eids"
+    ],
+    "reviewer": "flapjack-ds9 (source comparison, bead flapjack-4ac.2.11): HOL mk_ctxt_def (pan_to_crepScript.sml:310-316) is `mk_ctxt vmap fs m (es:eid |-> 'a word) = <|vars := vmap; funcs := fs; eids := es; vmax := m|>`. mkCtxtExactHOL matches clause for clause: argument order (vmap, fs, m, es) and field assignment (vars/funcs/eids/vmax) are identical, and the record carrier is the reviewed exact PanToCrepContextExact, whose vars/funcs/eids fields use the canonical HolFiniteMapExact translation of HOL `|->` (MlString keys, ShapeHOL values, BitVec width exception codes) with same-module roundtrip witness holFmapAsFiniteSupportWitness. The fmap_as_finite_support qualifier records only that finite-support representation; it authorizes no change to the quantifier, argument order, or resulting record. Direct HOL mk_ctxt_fields rows are in scripts/hol-probes/compile_to_crep_probe.out and are replayed by Flapjack.Test.PanToCrepContextExactParity."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
+    "hol_name": "ret_hdl_def",
+    "lean_path": "Flapjack/Pancake/PanToCrep.lean",
+    "lean_name": "retHdlHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-pxn.18.3.5.8.8.2): the three clauses of ret_hdl_def (pan_to_crepScript.sml:122-127) are ret_hdl One ns = Skip, ret_hdl (Comb sh) ns = if 1 < size_of_shape (Comb sh) then assign_ret ns else Skip, and ret_hdl (Named sh) ns = Skip. retHdlHOL has the identical clauses over the exact MlString-backed ShapeHOL carrier (constructor arities 0/1/1, field types List ShapeHOL and MlS match HOL shape) with sizeOfShapeHOL the tagged size_of_shape_def and assignRetHOL the CrepProgHOL counterpart of the tagged assignRetW; the Named name is carried exactly and discarded. The kernel-checked bridge crepProgToHOL_retHdl relates production retHdl to retHdlHOL through shapeToHOL. Direct HOL rows one/comb_empty/comb_one/comb_two/named in scripts/hol-probes/ret_hdl_probe.out; replayed on the exact carrier and through the bridge in Flapjack/Test/RetHdlParity.lean. Production retHdl stays untagged until the executable path runs over the exact carriers, tracked by flapjack-pxn.18.3.5.8."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
+    "hol_name": "ret_var_def",
+    "lean_path": "Flapjack/Pancake/PanToCrep.lean",
+    "lean_name": "retVarHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-deepseek-three (source comparison, bead flapjack-pxn.18.3.5.8.9): ret_var's three clauses (pan_to_crepScript.sml:114-119) are ret_var One ns = oHD ns, ret_var (Comb sh) ns = if size_of_shape (Comb sh) = 1 then oHD ns else NONE, and ret_var (Named sh) ns = NONE. HOL oHD (HOL/src/list/src/listScript.sml:5474) is exactly List.head?, and Lean sizeOfShapeHOL is the tagged size_of_shape_def over ShapeHOL (panLangScript.sml:174). retVarHOL is stated over the exact MlString-backed ShapeHOL carrier with matching constructor arities and field types; the Named name is carried exactly as an MlString and then discarded by the function. Direct HOL rows are in scripts/hol-probes/ret_var_probe.out; Lean exact-carrier rows and the retVarHOL_shapeToHOL kernel bridge to production retVar are checked in Flapjack/Test/RetVarParity.lean. Production retVar stays untagged."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
+    "hol_name": "wrap_rt_def",
+    "lean_path": "Flapjack/Pancake/PanToCrep.lean",
+    "lean_name": "wrapRtHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex (source comparison at pan_to_crepScript.sml:131-136): HOL wrap_rt n = case n of NONE => NONE | SOME (One,[]) => NONE | m => m over the mlstring-named shape; Lean wrapRtHOL has the identical three clauses over the exact MlString-backed ShapeHOL carrier. Narrow codec bridge wrapRtHOL_map_shapeToHOL relates production wrapRt. Direct HOL rows none/empty_one/one_word/comb_empty/named in scripts/hol-probes/wrap_rt_probe.out; replayed on ShapeHOL and production in Flapjack/Test/WrapRtParity.lean."
+  }
+]

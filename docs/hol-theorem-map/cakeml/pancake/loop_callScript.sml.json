@@ -1,0 +1,20 @@
+[
+  {
+    "hol_path": "cakeml/pancake/loop_callScript.sml",
+    "hol_name": "comp_def",
+    "lean_path": "Flapjack/Pancake/LoopCall.lean",
+    "lean_name": "loopCallCompHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "hol_line": 18,
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; bead flapjack-pxn.18.5.6.29.1.7): exact port of HOL loop_call$comp (loop_callScript.sml:18-98) `comp l prog` returning `(prog, num |-> num)` over HolLoopProg width, with the live map carried as `Spt Nat` (HOL LocValue inserts a number value, so the map value type is num, not the unrelated unit spt num_set). Clause-for-clause: Skip; Call (SOME target kept; NONE with [] -> Skip; NONE nonempty -> lookup LAST, keeping full args or replacing with SOME n and BUTLAST); LocValue inserts destination->source; Assign(Var m) four-way lookup case; general Assign delete; ShMem clears to LN; Load32/LoadByte delete destination; Seq threads the map then returns LN; If/Loop clear to LN; Mark keeps; FFI/Tick/Raise/Return clear; Primitive list_deletes destinations; Arith LLongMul/LLongDiv delete r1/r2 per the four-way lookup and LDiv deletes r1; catch-all keeps. words_as_type_indexed_bitvec because HOL is polymorphic in the type-indexed word/label type while Lean fixes BitVec width under [NeZero width] via the reviewed HolLoopProg carrier; no other differences, no extra hypotheses. All 21 direct original-HOL rows in scripts/hol-probes/loop_call_comp_probe.out are replayed by Flapjack/Test/LoopCallCompHOLParity.lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/loop_callScript.sml",
+    "hol_name": "is_load_def",
+    "lean_path": "Flapjack/Pancake/LoopCall/IsLoad.lean",
+    "lean_name": "loopCallIsLoadHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.7.3.1) against is_load_def at loop_callScript.sml:10-15: `is_load Load = T ∧ is_load Load8 = T ∧ is_load Load16 = T ∧ is_load Load32 = T ∧ is_load _ = F`; over WordMemOp (the tagged asm$memop carrier, HolMemop), the memop carrier of the tagged HolLoopProg.shMem (constructor-for-constructor Load/Load8/Load16/Load32/Store/Store8/Store16/Store32), same five clauses. Proved equal to the evaluator's untagged crepIsLoadMemOp."
+  }
+]

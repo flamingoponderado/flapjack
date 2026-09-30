@@ -1,0 +1,10 @@
+[
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/Primop.lean",
+    "lean_name": "panPrimopCrepPrimopHOLExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.16.9): exact-carrier counterpart of HOL pan_primop_crep_primop; untagged pending coordinator source review of the HolWordLab->PanWordLab cross-carrier map used by the reviewed crep_primop_def port."
+  }
+]
