@@ -296,6 +296,7 @@ import Flapjack.Pancake.Semantics.PanProps.EvaluateClockSubCall
 import Flapjack.Pancake.Semantics.PanProps.EvaluateClockSubDecCall
 import Flapjack.Pancake.Semantics.PanProps.EvaluateClockSubAssembly
 import Flapjack.Pancake.Semantics.PanProps.EvaluateClockSub1
+import Flapjack.Pancake.Semantics.PanProps.EvaluateMinClock
 import Flapjack.Pancake.Semantics.PanSem.ShMemLoadCase
 import Flapjack.Pancake.Semantics.PanSem.ExtCallCase
 import Flapjack.Pancake.Semantics.PanSem.LocalUpdatesExact
@@ -802,6 +803,7 @@ import Flapjack.Compiler.Backend.StackLang
 import Flapjack.Compiler.Backend.StackLang.Prog
 import Flapjack.Compiler.Backend.StackLang.ProductionCodec
 import Flapjack.Compiler.Backend.StackLang.WordPayloads.InstructionBoundary
+import Flapjack.Compiler.Backend.StackLang.MacroLeaves
 import Flapjack.Compiler.Backend.StackCarrier
 import Flapjack.Basis.Pure.MlString
 import Flapjack.Compiler.Backend.MlStringBridge
