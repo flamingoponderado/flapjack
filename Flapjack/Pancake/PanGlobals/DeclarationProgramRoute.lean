@@ -4,6 +4,35 @@ namespace Flapjack
 
 open Flapjack.Pancake.PanLang
 
+/-- Complete HOL-observable context correspondence. HOL names are `MlS`, so
+the production map is observed at decoded HOL keys. Equality on arbitrary
+Unicode String keys would be false: `ofString` truncates character codes to
+bytes. This Flapjack cross-carrier relation has no separate HOL original. -/
+def GlobalDeclarationContextRel {width : Nat} [NeZero width]
+    (production : CakeContext width) (exactContext : PanGlobalsContextExact width) : Prop :=
+  production.globalsSize = exactContext.globalsSize ∧
+  production.maxGlobalsSize = exactContext.maxGlobalsSize ∧
+  ∀ key : MlS,
+    production.globals (Flapjack.Basis.Pure.MlString.toStringOfBytes key) =
+      (exactContext.globals.lookup key).map (fun value => (shapeOfHOL value.1, value.2))
+
+/-- Encoding a production context preserves every HOL key observation and
+both layout sizes. Only payload shapes require a byte-range premise; all
+queries in the relation are exact HOL names. Untagged codec infrastructure. -/
+theorem globalDeclarationContextRel_ofPass [LawfulBEq String]
+    {width : Nat} [NeZero width] (context : GlobalPassContext (BitVec width))
+    (hshapes : GlobalContextListShapesByteRanged context) :
+    GlobalDeclarationContextRel (cakeContextOfPass context)
+      (PanGlobalsContextExact.ofPass context) := by
+  refine ⟨rfl, rfl, ?_⟩
+  intro key
+  change lookupInfo (Flapjack.Basis.Pure.MlString.toStringOfBytes key) context.globals =
+    ((lookupInfo (Flapjack.Basis.Pure.MlString.toStringOfBytes key) context.globals).map
+      (fun entry => (shapeToHOL entry.1, entry.2))).map
+      (fun entry => (shapeOfHOL entry.1, entry.2))
+  rw [Option.map_map]
+  exact (lookupInfo_decode_shape_eq _ _ hshapes).symm
+
 /-- Local proof-irrelevance factoring for the context codec; no HOL original. -/
 private theorem contextCodecMapExt {α β : Type} {left right : HolFiniteMapExact α β}
     (h : left.lookup = right.lookup) : left = right := by
@@ -117,5 +146,91 @@ theorem compileDecsCakeViaProgramHOL_eq [LawfulBEq String]
             (cakeAddress (cakeContextOfPass context) shape) hshapes hshape
           simp only [compileDecsCakeViaProgramHOL, compileDecsCakeOfExact]
           rw [ih _ hnext htail]
+
+/-- The complete declaration result under the two carriers: all output lists
+agree, and the final context agrees at every HOL name and both layout sizes.
+This relation is Flapjack codec infrastructure with no HOL original. -/
+def CompileDecsResultRel {width : Nat} [NeZero width]
+    (production : CakeCompileDecsResult width)
+    (exactResult : List (ProgHOL width) × List (DeclHOL width) ×
+      List (DeclHOL width) × PanGlobalsContextExact width) : Prop :=
+  production.initializers = exactResult.1.map progOfHOL ∧
+  production.functions = exactResult.2.1.map declOfHOL ∧
+  production.exceptions = exactResult.2.2.1.map declOfHOL ∧
+  GlobalDeclarationContextRel production.context exactResult.2.2.2
+
+/-- Complete recursive declaration compiler correspondence, including the
+final context's entire HOL-observable map. Input range facts are supplied by
+the parser/context invariant; no successful evaluation or target result is
+assumed. This paired-carrier theorem has no separate HOL original. -/
+theorem compileDecsCakeViaProgramHOL_exact [LawfulBEq String]
+    {width : Nat} [NeZero width] (declarations : List (Decl (BitVec width))) :
+    ∀ (context : GlobalPassContext (BitVec width)),
+      GlobalContextListShapesByteRanged context →
+      (∀ declaration ∈ declarations, DeclByteRanged declaration) →
+      CompileDecsResultRel (compileDecsCakeViaProgramHOL context declarations)
+        (compileDecsExactHOL (PanGlobalsContextExact.ofPass context)
+          (declarations.map declToHOL)) := by
+  induction declarations with
+  | nil =>
+      intro context hshapes _
+      simpa [CompileDecsResultRel, compileDecsCakeViaProgramHOL, compileDecsExactHOL]
+        using globalDeclarationContextRel_ofPass context hshapes
+  | cons declaration declarations ih =>
+      intro context hshapes hdecl
+      have htail : ∀ d ∈ declarations, DeclByteRanged d :=
+        fun d hd => hdecl d (by simp [hd])
+      cases declaration with
+      | function function =>
+          have hfunction := hdecl (.function function) (by simp)
+          have hdecoded :
+              declOfHOL (.function { funDeclToHOL function with
+                body := compileProgExactHOL (PanGlobalsContextExact.ofPass context)
+                  (progToHOL function.body) }) =
+                .function { function with
+                  body := progOfHOL (compileProgExactHOL
+                    (PanGlobalsContextExact.ofPass context) (progToHOL function.body)) } := by
+            change Decl.function { funDeclOfHOL (funDeclToHOL function) with
+              body := progOfHOL (compileProgExactHOL
+                (PanGlobalsContextExact.ofPass context) (progToHOL function.body)) } = _
+            rw [funDeclOfHOL_funDeclToHOL function hfunction]
+          simp only [funDeclToHOL] at hdecoded
+          rcases ih context hshapes htail with ⟨hi, hf, he, hc⟩
+          simpa only [CompileDecsResultRel, compileDecsCakeViaProgramHOL,
+            compileDecsExactHOL, List.map_cons, declToHOL, funDeclToHOL,
+            hdecoded, hi, hf, he, and_self, true_and] using hc
+      | exnDecl name shape =>
+          have hentry := hdecl (.exnDecl name shape) (by simp)
+          rcases ih context hshapes htail with ⟨hi, hf, he, hc⟩
+          simpa [CompileDecsResultRel, compileDecsCakeViaProgramHOL,
+            compileDecsExactHOL, declToHOL, declOfHOL, hi, hf, he,
+            Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes name hentry.1,
+            shapeOfHOL_shapeToHOL shape hentry.2] using hc
+      | name name fields =>
+          simpa only [CompileDecsResultRel, compileDecsCakeViaProgramHOL,
+            compileDecsExactHOL, List.map_cons, declToHOL] using
+              ih context hshapes htail
+      | decl shape name value =>
+          have hentry := hdecl (.decl shape name value) (by simp)
+          let address := cakeAddress (cakeContextOfPass context) shape
+          let next := { context with
+            globals := (name, (shape, address)) :: context.globals
+            globalsSize := address }
+          have hnext := globalContextListShapesByteRanged_update context name shape
+            address hshapes hentry.1
+          have hcodec := PanGlobalsContextExact.ofPass_globalUpdate
+            context name shape address hentry.2.1
+          have haddress :
+              (PanGlobalsContextExact.ofPass context).globalsSize +
+                cakeBytesInWord width * BitVec.ofNat width (sizeOfShapeHOL (shapeToHOL shape)) =
+                  address := by
+            simp [address, cakeAddress, cakeContextOfPass, PanGlobalsContextExact.ofPass,
+              sizeOfShapeHOL_shapeToHOL]
+          rcases ih next hnext htail with ⟨hi, hf, he, hc⟩
+          simp only [CompileDecsResultRel, compileDecsCakeViaProgramHOL,
+            compileDecsExactHOL, List.map_cons, declToHOL, compileDecsGlobalAddressExact_eq]
+          rw [haddress, ← hcodec]
+          simpa [next, address, compileExpRouteCake, progOfHOL, expOfHOL,
+            hi, hf, he] using hc
 
 end Flapjack
