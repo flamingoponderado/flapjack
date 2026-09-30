@@ -1,5 +1,32 @@
 [
   {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/WordBitmap.lean",
+    "lean_name": "bitLength",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "bit_length_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.3): stackSemScript23-25: positive-width word -> Nat, zero gives0; nonzero recurses on logical right shift by1 and adds1. Decreasing proof uses unsigned word value division by2; no fuel cutoff or added semantic assumption. Existing unbounded Nat utility is separate; no utility refinement or executed full evaluator claim. Coordinator source review required."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/WordBitmap.lean",
+    "lean_name": "readBitmap",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "read_bitmap_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.3): stackSemScript73-83: positive-width word List -> Option Bool List. Empty list gives NONE; word_msb continuation decodes suffix and propagates NONE, then appends GENLIST bit projections of width-1. Terminal gives GENLIST projections of bit_length-1. List.range/map retains index0-first order and Nat subtraction truncation, width1 included; trailing words ignored exactly in terminal clause. Existing unbounded Nat utility is separate; no utility refinement or executed full evaluator claim. Coordinator source review required."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/PanGlobals/CompileTopExact.lean",
+    "lean_name": "compileTopExactHOL",
+    "hol_path": "cakeml/pancake/pan_globalsScript.sml",
+    "hol_name": "compile_top_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c literal source comparison (2026-09-30; bead flapjack-k00m), pan_globalsScript.sml236-256: exact DeclHOL/ProgHOL/ShapeHOL/MlS carriers, universally bound declaration list and start, first-match ALOOKUP(functions) via local structural helper, NONE yields empty list. SOME retains args/return shape, resort_decls then new_main_name from original declarations, fperm_decs, empty context with zero globals_size and bytes_in_word*n2w(SUM(MAP size_of_shape(dec_shapes renamed))) max size. Calls accepted qualified compileDecsExactHOL; initial finite map is the reviewed canonical empty map internal to the body, with no finite-map input or output requiring an owning-field qualifier. Generated function uses start, false inline/export, original parameters, Seq(nested_seq initializers)(Call NONE fresh-start mapped local parameter Vars), original return shape. Output order is exceptions ++ newMain::functions. NeZero positive BitVec width is the conventional HOL dimension translation. Direct original HOL EVAL capture retains three old sentinels and adds metadata/global/exception observations; exact executable Lean guards cover each full constructor/order/word and metadata field. Kernel checks definition and missing-entry equation; guards use executable evaluation, not a cross-assistant equivalence theorem. Production top-definition routing and compile_top_semantics are not claimed complete. Independent coordinator review pending."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Bitmap.lean",
     "lean_name": "filterBitmap",
     "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
@@ -25966,5 +25993,41 @@
     "lean_name": "holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on mkCtxtImpLocalsRelExact; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "get_live_inst_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Instructions.lean",
+    "lean_name": "getLiveInst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30 bead .18.5.11.1.7: literal word_alloc706-752 constructor clauses, nested insert/delete ordering and generic exact Spt unit carrier. Reviewed WordLangInst/WordLangArith/WordRegImm/WordLangFP/WordLangMemOp carriers against asm85-134, including word-valued immediates/address offsets and all numeric FP operands. Six memory clauses only; Load16/Store16 and FP-only clauses unchanged catchall. AddCarry deletes only r1 and inserts r4, overflow deletes r4 then r1, LongMul/Div delete both output registers. FPMovToReg deletes r1 only at width64 otherwise r2 then r1; FPMovFromReg inserts r1 only at64 otherwise r1 then r2. Positive BitVec width translation retains NeZero; generic core explicit width delegates full definition. No fp real arithmetic semantics claim. Proof-side partial progress; executed list-liveness replacement tracked .7.1."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_structsScript.sml",
+    "hol_name": "compile_exp_def",
+    "lean_path": "Flapjack/Pancake/PanStructs/CompileExpExact.lean",
+    "lean_name": "compileExpExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison 2026-09-30 bead .18.5.3.77.1.3: source107-155 mutual expression/list/field definitions, ContextExact and positive-width ExpHOL carriers compared. Recursive RStruct/RField, Load/LoadByte/Load32, Op/Panop/Cmp/Shift preserved and all other constructors unchanged. Named struct first-match propositional MlS lookups; flatMap is source FLAT MAP, declared field order, missing supplied fields omitted, first duplicate supplied field selected. Named field uses exact old_exp_shape on source expression, exact source afindi with MlS equality, defensive index0 defaults; Load uses exact compile_shape. All original ten PanStructs oracle rows and three defensive cases replayed by kernel proofs. Exact source dependencies only; production expression routing and correspondence remain open."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_structsScript.sml",
+    "hol_name": "compile_exp_def",
+    "lean_path": "Flapjack/Pancake/PanStructs/CompileExpExact.lean",
+    "lean_name": "compileExpsExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison 2026-09-30 bead .18.5.3.77.1.3: source107-155 mutual expression/list/field definitions, ContextExact and positive-width ExpHOL carriers compared. Recursive RStruct/RField, Load/LoadByte/Load32, Op/Panop/Cmp/Shift preserved and all other constructors unchanged. Named struct first-match propositional MlS lookups; flatMap is source FLAT MAP, declared field order, missing supplied fields omitted, first duplicate supplied field selected. Named field uses exact old_exp_shape on source expression, exact source afindi with MlS equality, defensive index0 defaults; Load uses exact compile_shape. All original ten PanStructs oracle rows and three defensive cases replayed by kernel proofs. Exact source dependencies only; production expression routing and correspondence remain open."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_structsScript.sml",
+    "hol_name": "compile_exp_def",
+    "lean_path": "Flapjack/Pancake/PanStructs/CompileExpExact.lean",
+    "lean_name": "compileFieldsExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison 2026-09-30 bead .18.5.3.77.1.3: source107-155 mutual expression/list/field definitions, ContextExact and positive-width ExpHOL carriers compared. Recursive RStruct/RField, Load/LoadByte/Load32, Op/Panop/Cmp/Shift preserved and all other constructors unchanged. Named struct first-match propositional MlS lookups; flatMap is source FLAT MAP, declared field order, missing supplied fields omitted, first duplicate supplied field selected. Named field uses exact old_exp_shape on source expression, exact source afindi with MlS equality, defensive index0 defaults; Load uses exact compile_shape. All original ten PanStructs oracle rows and three defensive cases replayed by kernel proofs. Exact source dependencies only; production expression routing and correspondence remain open."
   }
 ]
