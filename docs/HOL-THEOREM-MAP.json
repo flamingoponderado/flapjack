@@ -36750,5 +36750,105 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Canonical imported state roundtrip reexport; Flapjack representation infrastructure without an independent HOL declaration."
-}
+},
+{
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/FpRegisterInstructions.lean",
+    "lean_name": "instFpSqrt",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "inst_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-09-30; bead flapjack-y19g.11.3.3): HOL inst_def FPSqrt clause (cakeml/compiler/backend/semantics/stackSemScript.sml:558-562) = case get_fp_var d2 s of SOME f => SOME (set_fp_var d1 (fp64_sqrt roundTiesToEven f) s) | _ => NONE, split out as the exact FPSqrt constructor case of HOL inst_def (a split along HOL's own case structure). The stated result is exactly the clause's Option state value, with no dispatcher outer some. The owning carrier is the tagged StackSemStateFiniteExact; its three |-> fields regs/fp_regs/store are recorded by fmap_as_finite_support [regs, fpRegs, store] with the same-module witness Flapjack.StackSemFpRegisterInstructions.FiniteSupport.holFmapAsFiniteSupportWitness (forwarding StackSemStateOps.holFmapAsFiniteSupportWitness). The words qualifier records the HOL 'a word/dimindex (:a) to positive-width BitVec width/[NeZero width] translation; fp64_sqrt roundTiesToEven is the faithful real-sqrt rendering holFp64SqrtReal (Flapjack/Misc/BinaryIeeeSqrt/RoundAgreement.lean), proven equal to the rational-cut holFp64Sqrt by holFp64Sqrt_tiesToEven_agreement. No quantifier, hypothesis, side condition or conclusion differs. Rows fpsqrt_result and fpsqrt_missing of scripts/hol-probes/stacksem_fp_convert_probe.out are replayed by Flapjack.Test.StackSemFpRegisterInstParity."
+  },
+{
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/FpRegisterInstructions.lean",
+    "lean_name": "instFpToInt",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "inst_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-09-30; bead flapjack-y19g.11.3.3): HOL inst_def FPToInt clause (cakeml/compiler/backend/semantics/stackSemScript.sml:605-624) = case get_fp_var d2 s of NONE => NONE | SOME f => case fp64_to_int roundTiesToEven f of NONE => NONE | SOME i => let w = i2w i : word32 in if w2i w = i then (if dimindex(:a) = 64 then SOME (set_fp_var d1 (w2w w) s) else case get_fp_var (d1 DIV 2) s of NONE => NONE | SOME f => let (h,l) = if ODD d1 then (63,32) else (31,0) in SOME (set_fp_var (d1 DIV 2) (bit_field_insert h l w f) s)) else NONE, split out as the exact FPToInt constructor case of HOL inst_def (a split along HOL's own case structure). The stated result is exactly the clause's Option state value, with no dispatcher outer some; i2w/w2i are BitVec.ofInt/toInt, w2w is setWidth 64, bit_field_insert is holBitFieldInsert, and ODD d1 / d1 DIV 2 select the low/high half. The owning carrier is the tagged StackSemStateFiniteExact; its three |-> fields regs/fp_regs/store are recorded by fmap_as_finite_support [regs, fpRegs, store] with the same-module witness Flapjack.StackSemFpRegisterInstructions.FiniteSupport.holFmapAsFiniteSupportWitness. The words qualifier records the HOL 'a word/dimindex (:a) to positive-width BitVec width/[NeZero width] translation; the clause's own source uses the reviewed binary64 real rendering holFp64ToInt (Flapjack/Misc/BinaryIeeeConvert.lean), so the declaration carries (reals_as_rational_cuts): HOL fp64_to_int inspects its argument through the real-to-Rat rendering, and agreement with HOL's real-number specification remains the external assumption of docs/SOUNDNESS.md item 8 (source review names the qualifier reals_as_rational_cuts and Soundness item 8). No quantifier, hypothesis, side condition or conclusion differs. Rows fptoint_result, fptoint_out_of_range, fptoint_missing, fptoint32_even and fptoint32_odd of scripts/hol-probes/stacksem_fp_convert_probe.out are replayed by Flapjack.Test.StackSemFpRegisterInstParity."
+  },
+{
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/FpRegisterInstructions.lean",
+    "lean_name": "instFpFromInt",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "inst_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-09-30; bead flapjack-y19g.11.3.3): HOL inst_def FPFromInt clause (cakeml/compiler/backend/semantics/stackSemScript.sml:625-640) = if dimindex(:a) = 64 then case get_fp_var d2 s of SOME f => let i = w2i ((31 >< 0) f : word32) in SOME (set_fp_var d1 (int_to_fp64 roundTiesToEven i) s) | NONE => NONE else case get_fp_var (d2 DIV 2) s of SOME v => let i = w2i (if ODD d2 then (63 >< 32) v else (31 >< 0) v : 'a word) in SOME (set_fp_var d1 (int_to_fp64 roundTiesToEven i) s) | NONE => NONE, split out as the exact FPFromInt constructor case of HOL inst_def (a split along HOL's own case structure). The stated result is exactly the clause's Option state value, with no dispatcher outer some; (31 >< 0)/(63 >< 32) are holWordExtract and w2i is BitVec.toInt. The owning carrier is the tagged StackSemStateFiniteExact; its three |-> fields regs/fp_regs/store are recorded by fmap_as_finite_support [regs, fpRegs, store] with the same-module witness Flapjack.StackSemFpRegisterInstructions.FiniteSupport.holFmapAsFiniteSupportWitness. The words qualifier records the positive-width BitVec width translation; the clause's own source uses the reviewed binary64 real rendering holIntToFp64 (Flapjack/Misc/BinaryIeeeConvert.lean), so the declaration carries (reals_as_rational_cuts): agreement with HOL's real-number specification remains the external assumption of docs/SOUNDNESS.md item 8 (source review names the qualifier reals_as_rational_cuts and Soundness item 8). No quantifier, hypothesis, side condition or conclusion differs. Rows fpfromint_result, fpfromint_missing, fpfromint32_even and fpfromint32_odd of scripts/hol-probes/stacksem_fp_convert_probe.out are replayed by Flapjack.Test.StackSemFpRegisterInstParity."
+  },
+{
+    "lean_path": "Flapjack/Compiler/Backend/WordDepth.lean",
+    "lean_name": "CallTree",
+    "hol_path": "cakeml/compiler/backend/word_depthScript.sml",
+    "hol_name": "call_tree",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 source comparison (2026-09-30; bead flapjack-28je.1): HOL Datatype call_tree (word_depthScript.sml:20-27) is Leaf | Unknown | Const num call_tree | Call num call_tree | Branch call_tree call_tree. Lean CallTree reproduces the five constructors in order with Nat for num and recursive self-arguments; no word, finite-map, or other carrier appears. Reviewed exact; coordinator source review required."
+  },
+{
+    "lean_path": "Flapjack/Compiler/Backend/WordDepth.lean",
+    "lean_name": "maxDepth",
+    "hol_path": "cakeml/compiler/backend/word_depthScript.sml",
+    "hol_name": "max_depth_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 source comparison (2026-09-30; bead flapjack-28je.1): HOL max_depth (word_depthScript.sml:24-35) has five clauses: Leaf = SOME 0; Unknown = NONE; Const n t = OPTION_MAP ((+) n) (max_depth t); Branch = OPTION_MAP2 MAX; Call n t = OPTION_MAP2 (+) (lookup n frame_sizes) (max_depth t). Lean maxDepth over CallTree and Option Nat transcribes each clause one for one; OPTION_MAP is Option.map with (fun d => n + d), OPTION_MAP2 is the untagged optionMap2 helper, MAX is max. The frame_sizes num_map (num spt) is the exact Spt Nat carrier and lookup is Flapjack.sptLookup, so a missing/spt-absent frame yields NONE with no invented bound. No word carrier occurs. Kernel replay of Leaf/Unknown/Const/Branch/Call hit/miss/nested rows is in Flapjack.Test.WordDepthParity. The original-HOL oracle (scripts/hol-probes/word_depth_probeScript.sml) is registered but could not be captured in this checkout because word_depthTheory/preamble are not built in cakeml/; documented in the test docstring. Coordinator source review required."
+  },
+{
+    "lean_path": "Flapjack/Compiler/Backend/WordDepth.lean",
+    "lean_name": "mkBranch",
+    "hol_path": "cakeml/compiler/backend/word_depthScript.sml",
+    "hol_name": "mk_Branch_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 source comparison (2026-09-30; bead flapjack-28je.2): HOL mk_Branch (word_depthScript.sml:37-45) is the nested if-then-else t1=t2 -> t1; t1=Leaf -> t2; t2=Leaf -> t1; t1=Unknown -> t1; t2=Unknown -> t2; else Branch t1 t2. Lean mkBranch over the exact CallTree reproduces the five guards in order using the derived decidable equality and the exact constructors; no carrier difference. Kernel replay of every case is in Flapjack.Test.WordDepthParity.wordDepthGraphGuard_proof. The original-HOL oracle is infeasible in this checkout (word_depthTheory/preamble unbuilt), documented in the test docstring. Coordinator source review required."
+  },
+{
+    "lean_path": "Flapjack/Compiler/Backend/WordDepth.lean",
+    "lean_name": "callGraph",
+    "hol_path": "cakeml/compiler/backend/word_depthScript.sml",
+    "hol_name": "call_graph_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 source comparison (2026-09-30; bead flapjack-28je.2): HOL call_graph (word_depthScript.sml:47-86) has Seq/If -> mk_Branch; Call with dest NONE -> Unknown, MEM d ns and ret=NONE -> Leaf, lookup miss -> Unknown, ret=NONE with LENGTH ns < total -> mk_Branch (Call d Leaf) (recursive body with d::ns) else Leaf, and ret=SOME -> Branch with delete d funs for the callee body plus the handler/return programs; MustTerminate/Loop descend; Alloc -> Call n Leaf; Install -> Unknown; default -> Leaf. Lean callGraph transcribes each clause one for one over the exact WordLangProgHOL program carrier at a fixed width (the carrier used by the reviewed wordConvs extract_labels/every_inst ports) and the exact Spt (Nat x prog) code map (num_map = 'a spt, not a |-> finite map), with sptLookup/sptDelete/sptSize for lookup/delete/size and the exact CallTree. HOL terminates by (size funs, total - LENGTH ns, prog_size (K 0) p); Lean uses the same lexicographic structure (sptSize funs, total - ns.length, sizeOf p), justified by the untagged sptSize_sptDelete_lt and the repo's documented sizeOf stand-in for the generated prog_size (K 0). Kernel replay of the structural, lookup-hit/miss, short-circuit, guard, returning, handler, tail-recursive and mutual rows is in wordDepthGraphGuard_proof. The original-HOL oracle is infeasible here. Coordinator source review required."
+  },
+{
+    "lean_path": "Flapjack/Compiler/Backend/WordDepth.lean",
+    "lean_name": "fullCallGraph",
+    "hol_path": "cakeml/compiler/backend/word_depthScript.sml",
+    "hol_name": "full_call_graph_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 source comparison (2026-09-30; bead flapjack-28je.2): HOL full_call_graph (word_depthScript.sml:88-94) is Unknown on lookup miss and Branch (Call n Leaf) (call_graph funs n [n] (size funs) prog) on a hit. Lean fullCallGraph matches clause for clause over the exact carriers, with sptLookup/sptSize for lookup and size. Kernel replay of the miss/hit/tail-recursive/return-recursive/mutual rows is in wordDepthGraphGuard_proof. Coordinator source review required."
+  },
+{
+    "lean_path": "Flapjack/Compiler/Backend/WordDepth.lean",
+    "lean_name": "maxDepthGraphs",
+    "hol_path": "cakeml/compiler/backend/word_depthScript.sml",
+    "hol_name": "max_depth_graphs_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 source comparison (2026-09-30; bead flapjack-28je.2): HOL max_depth_graphs (word_depthScript.sml:96-105) is SOME 0 on [], and on n::ns is NONE on a lookup miss in all_funs, otherwise OPTION_MAP2 MAX (lookup n ss) (OPTION_MAP2 MAX (max_depth ss (call_graph funs n all (size all_funs) body)) (max_depth_graphs ss ns all funs all_funs)). Lean maxDepthGraphs matches clause for clause over the exact Spt Nat frame map, Spt (Nat x prog) code maps and CallTree, preserving the argument order and using optionMap2 for OPTION_MAP2 and maxDepth for max_depth. Kernel replay of the empty/frame-hit/frame-miss/code-miss/recursive rows is in wordDepthGraphGuard_proof. Coordinator source review required."
+  },
+{
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget.lean",
+    "lean_name": "optionLt",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "option_lt_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 source comparison (2026-09-30; bead flapjack-28je.1): HOL option_lt_def (pan_to_targetProofScript.sml:1157-1159) fixes option_lt n0 NONE = T, option_lt NONE (SOME n1) = F, option_lt (SOME n1) (SOME n2) = n1 < n2 on num option. Lean optionLt over Option Nat returns Bool (the canonical HOL bool rendering, matching the reviewed isSomeWord precedent) with the same three clauses; NONE/NONE is true by the first clause, SOME/NONE is true, and the SOME/SOME comparison is the Nat less-than. No other carrier occurs. Kernel replay in Flapjack.Test.WordDepthParity. Coordinator source review required."
+  }
 ]
