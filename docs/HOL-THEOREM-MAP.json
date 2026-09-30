@@ -29895,6 +29895,38 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.2.27): successful mem_stores covers its addresses by the domain; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Seq.lean",
+    "lean_name": "compileCorrect_Seq",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.2.31.1) compared pan_globalsProofScript.sml:172-186 gen_goal pan_globals$compile at the Seq conjunct of panSem evaluate_ind (printed: !c1 c2 s. (!res s1. (res,s1) = evaluate (c1,s) /\\ res = NONE ==> P (c2,s1)) /\\ P (c1,s) ==> P (Seq c1 c2,s)), with P = compileCorrectGoal for the IHs (same order/orientation as the reviewed tagged panSem evaluate_ind and pcCompileCorrect_Seq) and the conclusion unfolded: forall res ctxt t s', state_rel T ctxt s t /\\ evaluate(Seq c1 c2,s)=(res,s') /\\ res<>SOME Error ==> exists t'. evaluate(compile ctxt (Seq c1 c2),t)=(res,t') /\\ state_rel (good_res res) ctxt s' t'. No extra premise. Proof uses evaluate_def line-780 Seq equation (fix_clock rewritten), compile Seq = Seq of compiles, IH on c1 then IH on c2 when NONE (HOL872-878). Exact tagged carriers; canonical finite state/context and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Seq.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanSemStateFiniteExact toExact/ofExact finite-support roundtrip; it supports the PanSemStateFiniteExact fields named by the compile_correct Seq tag."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Seq.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanGlobalsContextExact toBroad/ofBroad roundtrip; it supports PanGlobalsContextExact.globals named by the compile_correct Seq tag."
   }
 ,
 {
