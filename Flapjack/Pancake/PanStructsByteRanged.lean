@@ -2,6 +2,7 @@ import Flapjack.Pancake.PanStructs
 import Flapjack.Pancake.PanLang.Decl
 import Flapjack.Pancake.PanLang.Prog
 import Flapjack.Pancake.PanStructs.CompileShapeExact
+import Flapjack.Pancake.PanStructs.OldExpShapeExact
 
 /-!
 Byte-rangedness preservation for the named-structure elimination pass
@@ -1390,5 +1391,46 @@ theorem shapeToHOL_getD (shapes : List Shape) (index : Nat) :
       cases index with
       | zero => simp [List.getD]
       | succ index => simpa [List.getD] using ih index
+
+/-- Flapjack cross-carrier infrastructure: both source variable kinds retain
+first-match lookup and the One default. The source name is actually ranged;
+no successful lookup or computed result is assumed. No HOL theorem original. -/
+theorem oldExpShapeExact_var_encode {width : Nat} [NeZero width]
+    (context : StructPassContext) (kind : VarKind) (name : String)
+    (hn : NameRanged name) (hl : ListParamByteRanged context.locals)
+    (hg : ListParamByteRanged context.globals) :
+    Pancake.PanStructs.CompileShapeExact.oldExpShapeExact
+      (structPassContextToExact context) (expToHOL (Exp.var kind name : Exp (BitVec width))) =
+        shapeToHOL (structOldExpShape context (Exp.var kind name : Exp (BitVec width))) := by
+  cases kind
+  · simp only [expToHOL, Pancake.PanStructs.CompileShapeExact.oldExpShapeExact,
+      structOldExpShape]
+    rw [structPassContextToExact_locals context name hn hl]
+    cases lookupInfo name context.locals <;> simp [shapeToHOL]
+  · simp only [expToHOL, Pancake.PanStructs.CompileShapeExact.oldExpShapeExact,
+      structOldExpShape]
+    rw [structPassContextToExact_globals context name hn hg]
+    cases lookupInfo name context.globals <;> simp [shapeToHOL]
+
+/-- Flapjack codec equation for the source Named constructor. Its payload
+expressions do not affect the old shape; no HOL theorem original. -/
+theorem oldExpShapeExact_nStruct_encode {width : Nat} [NeZero width]
+    (context : StructPassContext) (name : String)
+    (fields : List (String × Exp (BitVec width))) :
+    Pancake.PanStructs.CompileShapeExact.oldExpShapeExact
+      (structPassContextToExact context) (expToHOL (.nStruct name fields)) =
+        shapeToHOL (structOldExpShape context (.nStruct name fields)) := by
+  simp only [expToHOL, Pancake.PanStructs.CompileShapeExact.oldExpShapeExact,
+    structOldExpShape, shapeToHOL]
+
+/-- Flapjack codec equation for the source Load constructor: its explicit
+shape is retained without evaluating the address; no HOL theorem original. -/
+theorem oldExpShapeExact_load_encode {width : Nat} [NeZero width]
+    (context : StructPassContext) (shape : Shape) (address : Exp (BitVec width)) :
+    Pancake.PanStructs.CompileShapeExact.oldExpShapeExact
+      (structPassContextToExact context) (expToHOL (.load shape address)) =
+        shapeToHOL (structOldExpShape context (.load shape address)) := by
+  simp only [expToHOL, Pancake.PanStructs.CompileShapeExact.oldExpShapeExact,
+    structOldExpShape]
 
 end Flapjack
