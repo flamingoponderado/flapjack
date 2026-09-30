@@ -1498,7 +1498,7 @@ theorem loopLive_compile_correct_arith {width : Nat} [NeZero width] {F : Type} :
         subst hA
         have h3' := lookup_of_subspt hsub (mem_insert_of' r2 (mem_insert_self' r3 _)) h3
         have h2' := lookup_of_subspt hsub (mem_insert_self' r2 _) h2
-        refine ⟨sptInsert r1 (.word (w2 / q)) locals,
+        refine ⟨sptInsert r1 (.word (w2.sdiv q)) locals,
           by
             have hq0' : ¬ q = 0#width := hq0
             simp [evaluate, LoopSemStateFiniteExact.loopArith, h3', h2', hq0', setVar], ?_⟩

@@ -1,0 +1,17 @@
+positive=SOME [SOME (Word 3w); SOME (Word 17w); SOME (Word 5w)]
+negative_small=SOME [SOME (Word 0w); SOME (Word 250w); SOME (Word 10w)]
+negative_dividend=SOME [SOME (Word 253w); SOME (Word 239w); SOME (Word 5w)]
+negative_divisor=SOME [SOME (Word 253w); SOME (Word 17w); SOME (Word 251w)]
+both_negative=SOME [SOME (Word 3w); SOME (Word 239w); SOME (Word 251w)]
+min_overflow=SOME [SOME (Word 128w); SOME (Word 128w); SOME (Word 255w)]
+min_half=SOME [SOME (Word 192w); SOME (Word 128w); SOME (Word 2w)]
+positive_minus_one=SOME [SOME (Word 129w); SOME (Word 127w); SOME (Word 255w)]
+zero_divisor=NONE
+zero_dividend=SOME [SOME (Word 0w); SOME (Word 0w); SOME (Word 251w)]
+alias_dividend=SOME [NONE; SOME (Word 253w); SOME (Word 5w)]
+alias_divisor=SOME [NONE; SOME (Word 239w); SOME (Word 253w)]
+same_source=SOME [SOME (Word 1w); SOME (Word 239w); SOME (Word 5w)]
+missing_dividend=T
+location_divisor=T
+min64_overflow=SOME (SOME (Word 0x8000000000000000w))
+min1_overflow=SOME (SOME (Word 1w))
