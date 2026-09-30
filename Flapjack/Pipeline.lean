@@ -1208,7 +1208,8 @@ def panCompileTap [CakeDisplayWord α]
     intermediate pipeline record; the declarations sent into Crep are the
     direct output of Cake's tagged `compile_top`. Parser-backed production
     entrypoints provide the byte-range proof composed through the earlier
-    passes, selecting `compileProgTopHOLWithMetadataOfExact` at the
+    passes, selecting `structCompileTopExactOfByteRanged` (which executes the
+    reviewed exact shape compiler), and `compileProgTopHOLWithMetadataOfExact` at the
     declaration-to-Crep boundary. That branch executes the exact per-function
     compiler and decodes for the existing production metadata representation;
     `compileFlapjackEntryCake_ofExact_eq` below proves the whole pipeline result
@@ -1231,13 +1232,21 @@ def compileFlapjackEntryCake {width : Nat} [NeZero width]
     Option (FlapjackPipelineResult (BitVec width)) :=
   let moved := panTargetMoveStartToFront start declarations
   let simplified := panSimpDecls moved
-  let structured := structCompileTop simplified
-  let compiled :=
+  let structured :=
     match hdeclarations with
     | some (.isTrue hinput) =>
         let hmoved := panTargetMoveStartToFront_byteRanged start declarations hinput
         let hsimplified := panSimpDecls_byteRanged moved hmoved
-        let hstructured := structCompileTop_byteRanged simplified hsimplified
+        structCompileTopExactOfByteRanged simplified hsimplified
+    | _ => structCompileTop simplified
+  let compiled :=
+    match hproof : hdeclarations with
+    | some (.isTrue hinput) =>
+        let hmoved := panTargetMoveStartToFront_byteRanged start declarations hinput
+        let hsimplified := panSimpDecls_byteRanged moved hmoved
+        let hstructured : ∀ declaration ∈ structured, DeclByteRanged declaration := by
+          simpa only [structured, hproof, structCompileTopExact_eq_legacyOfByteRanged]
+            using structCompileTop_byteRanged simplified hsimplified
         let cakeDeclarations := globalCompileTopCakeOfExact structured start hstructured
         let hcake := globalCompileTopCakeOfExact_byteRanged structured start hstructured
         (cakeDeclarations, compileProgTopHOLWithMetadataOfExact cakeDeclarations hcake)
@@ -1258,7 +1267,8 @@ def compileFlapjackEntryCake {width : Nat} [NeZero width]
       some (FlapjackPipelineResult.mk simplified structured globals crepe loop word)
 
 /-- The parser-proved exact-carrier route returns the same entire pipeline
-    result as the compatibility route. This composes the two reviewed pass
+    result as the compatibility route. This composes the reviewed struct,
+    global and declaration-to-Crep pass
     equalities at the entrypoint, so the optional proof changes which tagged
     definitions execute, not the compiler output. -/
 theorem compileFlapjackEntryCake_ofExact_eq {width : Nat} [NeZero width]
@@ -1274,7 +1284,7 @@ theorem compileFlapjackEntryCake_ofExact_eq {width : Nat} [NeZero width]
         (some (.isTrue h)) =
       compileFlapjackEntryCake architecture bytesInWord fromNat start declarations none := by
   unfold compileFlapjackEntryCake
-  simp only [globalCompileTopCakeOfExact_eq,
+  simp only [structCompileTopExact_eq_legacyOfByteRanged, globalCompileTopCakeOfExact_eq,
     compileProgTopHOLWithMetadataOfExact_eq]
 
 /-! Executable mirror of the missing-`main` branch of `pan_to_target_all`

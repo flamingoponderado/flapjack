@@ -1219,3 +1219,13 @@ rows through the production function in the compiled `lake test` executable.
 Refresh with `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_alloc_colour_exp_probeScript.sml
 bash scripts/hol-probes/regenerate.sh`.
+
+`word_alloc_colour_inst_probe.out` records direct original
+`word_alloc$apply_colour_inst_def` observations at 8-bit words. Under
+`n + 10`, Load16/Store16 retain registers 3/5 through the catchall, whereas
+Load8/Store32 rename them to 13/15 and preserve offset 7w. AddCarry retains
+all four operand positions, and FPMovFromReg preserves its float destination
+while renaming both integer sources. These rows drive reconciliation of the
+executed allocator, whose previous blanket memory renaming differs at 16 bits.
+Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=word_alloc_colour_inst_probeScript.sml bash scripts/hol-probes/regenerate.sh`.

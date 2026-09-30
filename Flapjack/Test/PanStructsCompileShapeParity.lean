@@ -41,6 +41,12 @@ example : ∀ declaration ∈ structCompileTop byteRangedStructCompileInput,
     DeclByteRanged declaration :=
   structCompileTop_byteRanged byteRangedStructCompileInput byteRangedStructCompileInput_ok
 
+theorem structCompileTopExact_byteRanged_fixture :
+    structCompileTopExactOfByteRanged byteRangedStructCompileInput
+      byteRangedStructCompileInput_ok = structCompileTop byteRangedStructCompileInput :=
+  structCompileTopExact_eq_legacyOfByteRanged byteRangedStructCompileInput
+    byteRangedStructCompileInput_ok
+
 /-! Direct replay of the source HOL-EVAL rows in
     `scripts/hol-probes/compile_shape_probe.out` using the exact
     `MlString`/`ShapeHOL` carrier. -/
@@ -216,6 +222,30 @@ def compileTopParityGuard : Bool :=
 
 #eval compileTopParityGuard
 #guard compileTopParityGuard
+
+/- The optional shape callback is threaded through declaration shapes,
+   expressions, and function bodies while the default `structCompileTop` call
+   above continues to use the production `structCompileShape`. -/
+def compileTopCallbackGuard : Bool :=
+  let callback : StructContext → Shape → Shape := fun _ _ => .comb [.one]
+  match structCompileTop
+      [.name "S" [],
+       .decl (.named "S") "g" (.load (.named "S") (.const (0 : BitVec 8))),
+       .function
+         { name := "read", inline := false, exported := false,
+           params := [("p", .named "S")],
+           body := .return (.load (.named "S") (.var .local "p")),
+           returnShape := .named "S" }] callback with
+  | [.decl (.comb [.one]) "g" (.load (.comb [.one]) (.const _)),
+     .function declaration] =>
+      match declaration.params, declaration.returnShape, declaration.body with
+      | [("p", .comb [.one])], .comb [.one],
+          .return (.load (.comb [.one]) (.var .local "p")) => true
+      | _, _, _ => false
+  | _ => false
+
+#eval compileTopCallbackGuard
+#guard compileTopCallbackGuard
 
 /-! Cake's `function_names_structs_compile_top`
     (`cakeml/pancake/proofs/pan_to_wordProofScript.sml:313`). -/

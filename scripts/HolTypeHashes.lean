@@ -1,3 +1,5 @@
+import Flapjack.Compiler.Backend.WordAlloc.Instructions
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.Expressions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.LiveExpressions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.Updates
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.StateRelation
@@ -16,6 +18,7 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.Inst
 import Flapjack.Compiler.Backend.Semantics.WordSem.Evaluate
 import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateClock
 import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateInd
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateIoEventsMono
 import Flapjack.Compiler.Backend.Semantics.WordSem.Semantics
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClock
 import Flapjack.Misc.ShiftSeq
@@ -139,6 +142,9 @@ import Flapjack.Pancake.PanLang.Exp
 import Flapjack.Pancake.PanLang.Prog
 import Flapjack.Pancake.PanLang.Decl
 import Flapjack.Pancake.PanSimp
+import Flapjack.Pancake.Proofs.PanSimp.StateRel
+import Flapjack.Pancake.Proofs.PanSimp.CompileEvalCorrect
+import Flapjack.Pancake.Proofs.PanSimp.RetToTailCorrect
 import Flapjack.Pancake.PanToCrep
 import Flapjack.Pancake.PanToCrep.Compile
 import Flapjack.Pancake.PanToCrep.CompileExact

@@ -1,0 +1,6 @@
+load16=Mem Load16 3 (Addr 5 7w)
+store16=Mem Store16 3 (Addr 5 7w)
+load8=Mem Load8 13 (Addr 15 7w)
+store32=Mem Store32 13 (Addr 15 7w)
+carry=Arith (AddCarry 11 12 13 14)
+fp_move=FP (FPMovFromReg 1 12 13)
