@@ -33476,5 +33476,13 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-only synthesized evaluation proof step for literal global Call-with-handler Seq(handler, Assign Local flag Const1) lowering, source pan_globalsScript121-125 and proof1401-1450. Normal run plus existing word flag binding derives valid assignment and paired flag update; nonnormal run preserves arbitrary result/post without assignment. Helper run/binding premises are internal evaluation facts, not a claimed compiler-case statement or complete simulation. No standalone HOL original/tag; coordinator classification pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallHandlerArguments.lean",
+  "lean_name": "callHandlerArgumentsUnderScratchLocals",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only synthesized argument evaluation transport for literal global Call handler scratch locals. Composes accepted generated-name freshness33.10 and exact OPT_MMAP_eval_two_fresh_vars. Arbitrary result/flag values; unconditional equality including failed argument evaluation; no freshness, distinctness, byte-range, successful evaluation or simulation premise. Original proof1313/1412 applies the generic lemma inline; no standalone HOL theorem/tag or completed Call simulation claimed. Coordinator classification pending."
 }
 ]
