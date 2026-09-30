@@ -25716,5 +25716,20 @@
     "lean_name": "holFmapAsFiniteSupportWitness",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only canonical state representation roundtrip; forwards the imported PanSemStateFiniteExact witness and has no separate HOL declaration."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+    "hol_name": "ret_to_tail_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/RetToTailCorrect.lean",
+    "lean_name": "retToTailCorrect_dec",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-30; bead flapjack-pxn.18.5.1.3.2.2): recursive Dec case pan_simpProofScript.sml218-224 of ret_to_tail_correct190. Source non-Error premise and full evaluation-pair equality unchanged; the sole additional binder is exactly the evaluate_ind Dec body obligation under eval initializer = SOME value and shape = shape_of value, at the source state updated with the new local binding. No universal-state hypothesis, target-run premise or simulation assumption. Uses reviewed total evaluateHOLFiniteState_dec_total equation matching panSemScript558-565, including initializer failure, shape failure, total recursive body pair and res_var restoration. shapeEqHOL_eq_true discharges HOL shape equality. Exact ProgHOL/ExpHOL/ValueHOL/MlS payloads, imported PanSemStateFiniteExact with canonical four map fields and local non-vacuous codec roundtrip, positive BitVec word width and universe-0 FFI host. Remaining recursive cases and full theorem stay open.",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true
   }
 ]
