@@ -91,7 +91,10 @@ theorem resVarFEMPTYExact {α β : Type} [DecidableEq α] (n : α) :
   · simp [hk]
 
 /-- Lookup-level witness for `resVarFEMPTYExact`, required by the singular
-map-equality qualifier. -/
+map-equality qualifier. The witness statement must not introduce a
+theorem-dependent premise or name the tagged theorem in its header; its proof
+body may reuse the tagged theorem's established proof, as here
+(`rw [resVarFEMPTYExact]`). -/
 theorem holFmapAsFiniteSupportEqualityWitness_resVarFEMPTYExact {α β : Type} [DecidableEq α]
     (n : α) (k : α) :
     (HolFiniteMapExact.resVarEq (HolFiniteMapExact.empty : HolFiniteMapExact α β) (n, none)).lookup k =

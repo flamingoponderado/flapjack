@@ -2530,8 +2530,9 @@ def fmap_as_finite_support_equality_errors(
     `holFmapAsFiniteSupportEqualityWitness_<decl>`: an equality
     `<side>.lookup k = <side>.lookup k` at one universally bound key, with the
     two receivers exactly the tagged conclusion's two sides.  The witness must
-    not mention the tagged theorem (rejecting the ignored-proof /
-    threaded-argument pattern) and must not be a self-equality.
+    not mention the tagged theorem in its statement/header (rejecting the
+    ignored-proof / threaded-argument pattern), but its proof body may reuse the
+    tagged theorem's established proof; it must not be a self-equality.
 
     The checks are syntactic: they validate shape, naming, same-key
     application, a universally bound key, and side association, but they do NOT
