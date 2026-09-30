@@ -3164,13 +3164,17 @@ theorem inlineProgCorrectWhileCaseExact {width : Nat} [NeZero width] {σ : Type}
           | some .error => False
           | _ => True)
     (ihWhile : ∀ (loopState : CrepSemHOLState width σ)
-        (result : Option (CrepResultHOLExact width))
-        (source' : CrepSemHOLState width σ)
-        (inlFs' : HolFiniteMapExact CrepInlineMapHOLName
-          (List Nat × CrepProgHOL width))
-        (target : CrepSemHOLState width σ)
-        (inlBag' : HolFiniteMapExact CrepInlineMapHOLName
-          (List Nat × CrepProgHOL width)),
+        (loopResult : Option (CrepResultHOLExact width)),
+        evalCrepSemHOLProgExact (decClockCrepSemHOL s) body = (loopResult, loopState) →
+        (loopResult = none ∨
+          ∃ n, loopResult = some (CrepResultHOLExact.continue n)) →
+        ∀ (result : Option (CrepResultHOLExact width))
+          (source' : CrepSemHOLState width σ)
+          (inlFs' : HolFiniteMapExact CrepInlineMapHOLName
+            (List Nat × CrepProgHOL width))
+          (target : CrepSemHOLState width σ)
+          (inlBag' : HolFiniteMapExact CrepInlineMapHOLName
+            (List Nat × CrepProgHOL width)),
         evalCrepSemHOLProgExact loopState (.while condition body) = (result, source') →
         result ≠ some .error →
         HolFiniteMapExact.submap inlFs' loopState.code →
@@ -3265,7 +3269,8 @@ theorem inlineProgCorrectWhileCaseExact {width : Nat} [NeZero width] {σ : Type}
                   | none =>
                       simp only [hbody] at hsource
                       obtain ⟨targetFinal, htargetFinal, hstateFinal, hcodeFinal, hlocalsFinal⟩ :=
-                        ihWhile loopState r s' inlFs targetLoop inlBag hsource hnotError
+                        ihWhile loopState none hbody (Or.inl rfl)
+                          r s' inlFs targetLoop inlBag hsource hnotError
                           hsubmapLoop hbag hstateLoop hlocalsLoop hcodeLoop
                       refine ⟨targetFinal, ?_, hstateFinal, hcodeFinal, ?_⟩
                       · rw [hinline, evalCrepSemHOLProgExact_while_holShape, hcondt]
@@ -3283,7 +3288,8 @@ theorem inlineProgCorrectWhileCaseExact {width : Nat} [NeZero width] {σ : Type}
                           rcases n with _ | n
                           · simp only [hbody] at hsource
                             obtain ⟨targetFinal, htargetFinal, hstateFinal, hcodeFinal, hlocalsFinal⟩ :=
-                              ihWhile loopState r s' inlFs targetLoop inlBag hsource hnotError
+                              ihWhile loopState (some (.continue 0)) hbody (Or.inr ⟨0, rfl⟩)
+                                r s' inlFs targetLoop inlBag hsource hnotError
                                 hsubmapLoop hbag hstateLoop hlocalsLoop hcodeLoop
                             refine ⟨targetFinal, ?_, hstateFinal, hcodeFinal, ?_⟩
                             · rw [hinline, evalCrepSemHOLProgExact_while_holShape, hcondt]

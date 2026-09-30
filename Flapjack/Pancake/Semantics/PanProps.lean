@@ -2166,50 +2166,9 @@ open Flapjack.Pancake.PanLang
 def isWfShapeNilHOL (shape : ShapeHOL) : Bool :=
   isWfShapeExactHOL ([] : StructContextExact) shape
 
-/-! Exact `is_wf_shape_v_nil_step1` over the exact carriers
+/-! The exact general `is_wf_shape_v_nil_step1` port already exists in this module
+    as `isWfShapeValueHOLExact_nil_step1` (see above); no specialized duplicate is kept. -/
 
-`panPropsScript.sml:48-54` states the converse direction of the value-level
-well-formedness predicate at the empty struct context: a value whose `shape_of`
-is well formed under the empty context is itself well formed
-(`is_wf_shape_v_nil_step1: !sctxt v. sctxt = [] /\ is_wf_shape sctxt (shape_of v)
-==> is_wf_shape_v sctxt v`).  The Lean rendering uses the literal empty
-`StructContextExact` and the Bool predicates `isWfShapeExactHOL` /
-`isWfShapeValueHOLExact`; no extra premise beyond the empty context. -/
-
-/- Untagged support: mutual recursion mirroring the `is_wf_shape_v` structure
-    (the `RStruct` case defers to the `EVERY` fold over the field values). -/
-mutual
-  private theorem isWfShapeValueHOLExact.nilStep {width : Nat} [NeZero width]
-      : ∀ (v : ValueHOL width),
-        isWfShapeExactHOL ([] : StructContextExact) (shapeOfHOLExact v) = true →
-        isWfShapeValueHOLExact ([] : StructContextExact) v = true
-    | .val w, _ => by simp [isWfShapeValueHOLExact]
-    | .rStruct fields, h => by
-        simp only [shapeOfHOLExact, isWfShapeExactHOL_comb] at h
-        simpa only [isWfShapeValueHOLExact] using
-          isWfShapeValuesHOLExact.nilStepShapes fields h
-    | .nStruct name fields, h => by
-        simp [shapeOfHOLExact, isWfShapeExactHOL_named, structContextLookupHOL_nil] at h
-  private theorem isWfShapeValuesHOLExact.nilStepShapes {width : Nat} [NeZero width]
-      : ∀ (vs : List (ValueHOL width)),
-        isWfShapesExactHOL ([] : StructContextExact) (vs.map shapeOfHOLExact) = true →
-        isWfShapeValuesHOLExact ([] : StructContextExact) vs = true
-    | [], _ => by simp [isWfShapeValuesHOLExact]
-    | v :: vs, h => by
-        simp only [List.map_cons, isWfShapesExactHOL_cons, Bool.and_eq_true] at h
-        have h1 := isWfShapeValueHOLExact.nilStep v h.1
-        have h2 := isWfShapeValuesHOLExact.nilStepShapes vs h.2
-        simp [isWfShapeValuesHOLExact, h1, h2]
-end
-
-/-- Exact port of HOL `panProps$is_wf_shape_v_nil_step1`
-    (`panPropsScript.sml:48-54`). -/
-@[hol "cakeml/pancake/semantics/panPropsScript.sml" "is_wf_shape_v_nil_step1"]
-theorem isWfShapeValueHOLExact_of_nil_shape {width : Nat} [NeZero width]
-    (v : ValueHOL width)
-    (h : isWfShapeExactHOL ([] : StructContextExact) (shapeOfHOLExact v) = true) :
-    isWfShapeValueHOLExact ([] : StructContextExact) v = true :=
-  isWfShapeValueHOLExact.nilStep v h
 
 /- Untagged support: context-free well-formed shapes have the same
     with-context size as their plain `size_of_shape` size, for every context. -/
