@@ -6,32 +6,18 @@ import Flapjack.FiniteMap.Basic
 import Flapjack.HolRef
 
 /-!
-# Faithful Cake `stack_names` renaming transformation
+# StackNames compatibility helpers
 
-Counterpart of `cakeml/compiler/backend/stack_namesScript.sml`.  This module
-ports the pure register-renaming transformation used by the `stack_names`
-backend phase:
+Counterpart of `cakeml/compiler/backend/stack_namesScript.sml`. This module
+retains untagged lookup-function compatibility APIs. HOL names is `num_map`
+(`Spt Nat`), and its `find_name` overload is `misc$tlookup`, with the original
+register as the missing-key default. An unrestricted `FiniteMap` lookup function
+is not the HOL carrier and matching clauses alone do not justify exact tags.
 
-* `ri_find_name_def`, `inst_find_name_def`, `dest_find_name_def`,
-* `comp_def` (HOL defines `comp` through a quotation; the Lean name is
-  `progComp`), `prog_comp_def`, `compile_def`,
-* `names_ok_def`.
-
-HOL's `find_name` is the `misc$tlookup` overload, i.e.
-`find_name f r = (FLOOKUP f r).getD r`, here `findName`.  The register map is
-`Nat |-> Nat`.
-
-HOL's transformations are polymorphic in `'a`, but `'a` is an actual word type
-carried by `Reg`/`Imm`/`inst`/`addr`; the tagged ports are therefore
-width-indexed at `BitVec width` (with `[NeZero width]`), and the
-program-level transformations use the exact width-indexed `HolProg width`
-carrier (namespace `Flapjack.Compiler.Backend.StackLang`), whose FFI field is
-the faithful `MlString` carrier, so those tags are exact. The earlier
-`StackCarrier.ProgW` (`String` FFI) versions are superseded; the kernel-checked
-`String`<->`MlString` bridge for the executable representation lives in
-`Flapjack/Compiler/Backend/MlStringBridge.lean`. The executable Boolean
-`namesOk` remains untagged, with the tagged proposition-valued `namesOkHOL`
-beside it.
+Reviewed Spt definitions and width-indexed exact operand/instruction/program
+ports live in the `StackNames` submodules. `NamesOk.lean` owns the canonical
+Spt predicate `namesOkSptHOL` and its source-shaped implication theorems.
+The Boolean `namesOk` and function-backed `namesOkHOL` here remain untagged.
 -/
 
 namespace Flapjack.Compiler.Backend.StackNames
@@ -173,13 +159,12 @@ theorem map_fst_compile {width : Nat} [NeZero width] (names : FiniteMap Nat Nat)
       obtain ⟨n, p⟩ := head
       simp [compile, progCompEntry]
 
-/-- Executable Boolean counterpart of HOL `names_ok`; the tagged predicate
-below retains HOL's proposition-valued result. -/
+/-- Executable Boolean compatibility check over a lookup-function map. -/
 def namesOk (names : FiniteMap Nat Nat) (regCount : Nat) (avoidRegs : List Nat) : Bool :=
   let xs := (List.range (regCount - avoidRegs.length)).map (findName names)
   decide xs.Nodup && xs.all (fun x => x < regCount && !(avoidRegs.contains x))
 
-/-- Exact proposition-shaped port of HOL `names_ok_def`
+/-- Untagged proposition-shaped compatibility rendering of HOL `names_ok_def`
 (`stack_namesScript.sml:111-116`): generated names are distinct, below the
 register bound, and disjoint from the avoided registers. -/
 /- Untagged Flapjack rendering: HOL names uses Spt Nat, while this API
