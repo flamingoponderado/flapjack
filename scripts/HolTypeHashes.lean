@@ -1,6 +1,24 @@
+import Flapjack.Pancake.Proofs.PanGlobals.CompileExpLeaves
+import Flapjack.Pancake.Proofs.PanGlobals.CompileExpOperators
+import Flapjack.Pancake.Proofs.PanGlobals.CompileExpNamed
+import Flapjack.Pancake.Proofs.PanGlobals.CompileExpCmpShift
+import Flapjack.Pancake.Proofs.PanGlobals.CompileExpRStruct
+import Flapjack.Pancake.Proofs.PanGlobals.CompileExpRField
+import Flapjack.Pancake.Proofs.PanGlobals.SemanticsEmptyLocals
+import Flapjack.Pancake.Proofs.PanGlobals.StateRelationLocals
+import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsShape
+import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsDisjoint
+import Flapjack.Compiler.Backend.StackProps.FloatNames
+import Flapjack.Compiler.Backend.StackProps.AddressNames
+import Flapjack.Compiler.Backend.StackProps.ArithmeticNames
+import Flapjack.Compiler.Backend.RiscVConfig.RegisterNames
+import Flapjack.Compiler.Backend.StackNames.ProgramNames
+import Flapjack.Compiler.Backend.StackNames.InstructionNames
+import Flapjack.Compiler.Backend.StackNames.OperandNames
 import Flapjack.Compiler.Backend.StackProps.FixedNames
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnv
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnvs
+import Flapjack.Compiler.Backend.StackProps.FixedNames
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutNames
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyRemap
 import Flapjack.Pancake.PanStructs.CompileDeclsExact
@@ -207,6 +225,8 @@ import Flapjack.Pancake.Proofs.CrepInline.EvaluateStateLocals.Atoms
 import Flapjack.Pancake.Proofs.CrepInline.Expressions
 import Flapjack.Pancake.Proofs.CrepInline.UpdateListLocals
 import Flapjack.Pancake.Proofs.CrepInline.UnreachElim
+import Flapjack.Pancake.Proofs.CrepInline.NoReturn
+import Flapjack.Pancake.Proofs.CrepInline.ClockExpressions
 import Flapjack.Pancake.Proofs.CrepInline.UnreachElimEvaluate
 import Flapjack.Pancake.Proofs.CrepInline.UnreachElimProgSize
 import Flapjack.Pancake.Proofs.CrepInline.NestedDecs
@@ -373,8 +393,60 @@ private def definitionBody? : ConstantInfo → Option Expr
   | .opaqueInfo value => some value.value
   | _ => none
 
+/-- Constants mentioned by a declaration for the inherited-assumption closure:
+    its type, and its body when it is a definition. Theorem proofs are not
+    followed. -/
+private def closureEdges (info : ConstantInfo) : Array Name :=
+  let fromType := info.type.getUsedConstants
+  match definitionBody? info with
+  | some body => fromType ++ body.getUsedConstants
+  | none => fromType
+
+/-- Whether a declaration's type (and body, for a definition) transitively
+    reaches a `(reals_as_rational_cuts)`-tagged declaration through Flapjack
+    definitions and datatypes. `known` caches both outcomes soundly: a `true`
+    result is cached when found, and when a traversal is exhausted without a
+    hit every visited constant is cached as `false` (its closure lies inside
+    the visited set). -/
+private def reachesRealsCuts (env : Environment) (realsTagged : NameSet)
+    (known : Std.HashMap Name Bool) (root : Name) : Bool × Std.HashMap Name Bool := Id.run do
+  let flapjackModule (constName : Name) : Bool :=
+    match env.getModuleIdxFor? constName with
+    | some idx => (env.header.moduleNames[idx.toNat]!).getRoot == `Flapjack
+    | none => true
+  let mut known := known
+  let mut visited : NameSet := {}
+  let mut stack : Array Name :=
+    match env.find? root with
+    | some info => closureEdges info
+    | none => #[]
+  while !stack.isEmpty do
+    let current := stack.back!
+    stack := stack.pop
+    if visited.contains current then continue
+    visited := visited.insert current
+    if realsTagged.contains current then
+      return (true, known.insert root true)
+    match known.get? current with
+    | some true => return (true, known.insert root true)
+    | some false => continue
+    | none => pure ()
+    if !flapjackModule current then continue
+    match env.find? current with
+    | some info =>
+        match info with
+        | .thmInfo _ => pure ()
+        | _ => stack := stack ++ closureEdges info
+    | none => pure ()
+  for constName in visited.toList do
+    known := known.insert constName false
+  return (false, known.insert root false)
+
 elab "#emit_hol_type_hashes" : command => do
   let env ← getEnv
+  let realsTagged : NameSet := (HolRef.all env).foldl
+    (fun acc (entry : Name × HolRef) => if entry.2.realsAsRationalCuts then acc.insert entry.1 else acc) {}
+  let mut known : Std.HashMap Name Bool := {}
   for (name, ref) in HolRef.all env do
     match env.find? name with
     | none => throwError "missing declaration {name}"
@@ -398,6 +470,8 @@ elab "#emit_hol_type_hashes" : command => do
               toJson ref.fmapAsFiniteSupportHeterogeneousFunction)]
         if let some width := ref.wordDimensionAsWidth then
           qualifiers := qualifiers ++ [("word_dimension_as_width", toJson width)]
+        if ref.realsAsRationalCuts then
+          qualifiers := qualifiers ++ [("reals_as_rational_cuts", toJson true)]
         let mut fields : List (String × Json) := [
           ("lean_name", toJson name.toString),
           ("hol_path", toJson ref.path),
@@ -408,6 +482,11 @@ elab "#emit_hol_type_hashes" : command => do
         | some body =>
             fields := fields ++ [("value_expr", toJson (reprStr (canonicalExpr body)))]
         | none => pure ()
+        if !ref.realsAsRationalCuts then
+          let (reaches, known') := reachesRealsCuts env realsTagged known name
+          known := known'
+          if reaches then
+            fields := fields ++ [("inherits_reals_as_rational_cuts", toJson true)]
         liftIO <| IO.println (Json.mkObj fields).compress
 
 #emit_hol_type_hashes

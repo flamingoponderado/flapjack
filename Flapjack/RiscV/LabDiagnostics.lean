@@ -294,11 +294,11 @@ def compileStackProgramNatListWithRaiseStubToRiscVCakeChecked [NeZero width]
           if sectionId = cakeLongDiv1Location ||
               sectionId = cakeLongDivLocation then
             labProgramToEntrySection sectionId 0 initialLabel
-              (stackMapRegisters riscvRegisterName
+              (stackMapRegisters Flapjack.Compiler.Backend.RiscVConfig.riscvNameLookup
                 (stackRemoveComplete config program))
           else
             labProgramToEntrySection sectionId entryLabel initialLabel
-              (stackMapRegisters riscvRegisterName
+              (stackMapRegisters Flapjack.Compiler.Backend.RiscVConfig.riscvNameLookup
                 (stackRemoveComplete config program)))).map labSectionNatToWord)
 
 def compileStackProgramNatListLinkedWithRaiseStubToRiscVCakeChecked [NeZero width]
@@ -319,11 +319,11 @@ def compileStackProgramNatListLinkedWithRaiseStubToRiscVCakeChecked [NeZero widt
           if sectionId = cakeLongDiv1Location ||
               sectionId = cakeLongDivLocation then
             labProgramToEntrySection sectionId 0 initialLabel
-              (stackMapRegisters riscvRegisterName
+              (stackMapRegisters Flapjack.Compiler.Backend.RiscVConfig.riscvNameLookup
                 (stackRemoveComplete config program))
           else
             labProgramToEntrySection sectionId entryLabel initialLabel
-              (stackMapRegisters riscvRegisterName
+              (stackMapRegisters Flapjack.Compiler.Backend.RiscVConfig.riscvNameLookup
                 (stackRemoveComplete config program)))).map labSectionNatToWord)
 
 def compileStackProgramNatListLinkedWithSimpleGcAndStoreConstsToRiscVChecked
@@ -375,11 +375,11 @@ def compileStackProgramNatListLinkedWithSimpleGcAndStoreConstsToRiscVCakeChecked
             if sectionId = cakeLongDiv1Location ||
                 sectionId = cakeLongDivLocation then
               labProgramToEntrySection sectionId 0 initialLabel
-                (stackMapRegisters riscvRegisterName
+                (stackMapRegisters Flapjack.Compiler.Backend.RiscVConfig.riscvNameLookup
                   (stackRemoveComplete removeConfig program))
             else
               labProgramToEntrySection sectionId entryLabel initialLabel
-                (stackMapRegisters riscvRegisterName
+                (stackMapRegisters Flapjack.Compiler.Backend.RiscVConfig.riscvNameLookup
                   (stackRemoveComplete removeConfig program)))).map labSectionNatToWord)) with
       | some sections => .ok sections
       | none => .error { sectionId := 0, position := 0, feature := .loweringFailure }
