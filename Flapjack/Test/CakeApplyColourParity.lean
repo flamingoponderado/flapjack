@@ -93,10 +93,33 @@ def expressionColourExact : Bool :=
 
 #guard expressionColourExact
 
+/-- Original rows from word_alloc_colour_inst_probe.out: the executed allocator
+must retain both 16-bit memory instructions, rename 8/32-bit registers, and
+preserve four-register AddCarry operand order. -/
+def instructionColourExact : Bool :=
+  let f := fun n => n + 10
+  let memoryOK (op : WordMemOp) (expectedR expectedA : Nat) :=
+    match wordApplyColour f (.inst (.memOffset op 3 5 (BitVec.ofNat 8 7)) : WordProg (BitVec 8)) with
+    | .inst (.memOffset actual r a w) =>
+        actual == op && r == expectedR && a == expectedA && w == BitVec.ofNat 8 7
+    | _ => false
+  let carryOK := match wordApplyColour f
+      (.inst (.arith (.cakeAddCarry 1 2 3 4)) : WordProg (BitVec 8)) with
+    | .inst (.arith (.cakeAddCarry a b c d)) => a == 11 && b == 12 && c == 13 && d == 14
+    | _ => false
+  let fpOK := match WordAlloc.applyColourInst f
+      (.fp (.fpMovFromReg 1 2 3) : WordLangInst (BitVec 8)) with
+    | .fp (.fpMovFromReg a b c) => a == 1 && b == 12 && c == 13
+    | _ => false
+  memoryOK .load16 3 5 && memoryOK .store16 3 5 &&
+    memoryOK .load8 13 15 && memoryOK .store32 13 15 && carryOK && fpOK
+
+#guard instructionColourExact
+
 def parityGuard : Bool :=
   totalColourExact && assignExact && applyColourAliasedAssignExact &&
     returnRaiseExact &&
-    callHandlerExact && loopLiveExact && expressionColourExact
+    callHandlerExact && loopLiveExact && expressionColourExact && instructionColourExact
 
 #guard parityGuard
 #eval parityGuard
