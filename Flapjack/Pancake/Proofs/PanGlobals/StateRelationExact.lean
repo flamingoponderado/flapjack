@@ -405,8 +405,11 @@ theorem panMemLoadByteHOL_mono {width : Nat} [NeZero width]
     the `Load` conjunct as `∀s shape addr. (is_wf_shape s.structs shape ⇒
     P s addr) ⇒ P s (Load shape addr)`, so the address IH is guarded by
     `is_wf_shape s.structs shape`; `Load32`/`LoadByte` carry no such guard.
-    The carried IH keeps that guard (and the state relation/evaluation premise
-    and conclusion keep HOL's shape) and adds no stronger premise. -/
+    The exported address IH is the full original `P s addr`
+    (`∀value ctxt target, state_rel T ctxt s target ∧ eval s addr = SOME value
+    ⇒ eval target (compile_exp ctxt addr) = SOME value`) so the premise's state
+    relation is retained and the assembly can use it directly; no stronger
+    premise is added. -/
 @[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "compile_exp_correct"
   (fmap_as_finite_support_relation :=
     [PanSemStateFiniteExact.locals, PanSemStateFiniteExact.globals,
@@ -419,12 +422,14 @@ theorem panGlobalsCompileExpCorrectLoadCaseExact {width : Nat} {σ : Type}
     (context : PanGlobalsContextExact width)
     (shape : ShapeHOL) (address : ExpHOL width) (value : ValueHOL width)
     (addressIH : isWfShapeExactHOL source.structs shape = true →
-      ∀ (addressValue : ValueHOL width),
+      ∀ (addressValue : ValueHOL width) (ctxt : PanGlobalsContextExact width)
+        (tgt : PanSemStateFiniteExact width σ),
+        panGlobalsStateRelHOLExact true ctxt source tgt ∧
         @PanSemStateFiniteExact.evalHOLFinite width σ _ source
           (fun a => Classical.propDecidable (source.memaddrs a)) address = some addressValue →
-        @PanSemStateFiniteExact.evalHOLFinite width σ _ target
-          (fun a => Classical.propDecidable (target.memaddrs a))
-          (compileExpExactHOL context address) = some addressValue)
+        @PanSemStateFiniteExact.evalHOLFinite width σ _ tgt
+          (fun a => Classical.propDecidable (tgt.memaddrs a))
+          (compileExpExactHOL ctxt address) = some addressValue)
     (h : panGlobalsStateRelHOLExact true context source target ∧
       @PanSemStateFiniteExact.evalHOLFinite width σ _ source
         (fun a => Classical.propDecidable (source.memaddrs a))
@@ -433,6 +438,7 @@ theorem panGlobalsCompileExpCorrectLoadCaseExact {width : Nat} {σ : Type}
       (fun a => Classical.propDecidable (target.memaddrs a))
       (compileExpExactHOL context (.load shape address)) = some value := by
   obtain ⟨hrel, heval⟩ := h
+  have hrelCopy := hrel
   obtain ⟨hstructsS, hstructsT⟩ := panGlobalsStateRelStructsHOLExact true context source target hrel
   simp only [compileExpExactHOL, PanSemStateFiniteExact.evalHOLFinite_load] at heval ⊢
   rw [hstructsS] at heval
@@ -450,7 +456,7 @@ theorem panGlobalsCompileExpCorrectLoadCaseExact {width : Nat} {σ : Type}
                 simp only [haddr] at heval
                 have hguard : isWfShapeExactHOL source.structs shape = true := by
                   rw [hstructsS]; exact hwf
-                have haddrT := addressIH hguard (.val (.word word)) (by rw [haddr])
+                have haddrT := addressIH hguard (.val (.word word)) context target ⟨hrelCopy, by rw [haddr]⟩
                 simp only [haddrT]
                 exact panGlobalsStateRelMemLoadHOLExact true context source target
                   shape word value ⟨hrel, heval⟩
@@ -472,12 +478,14 @@ theorem panGlobalsCompileExpCorrectLoad32CaseExact {width : Nat} {σ : Type}
     (source target : PanSemStateFiniteExact width σ)
     (context : PanGlobalsContextExact width)
     (address : ExpHOL width) (value : ValueHOL width)
-    (addressIH : ∀ (addressValue : ValueHOL width),
-      @PanSemStateFiniteExact.evalHOLFinite width σ _ source
-        (fun a => Classical.propDecidable (source.memaddrs a)) address = some addressValue →
-      @PanSemStateFiniteExact.evalHOLFinite width σ _ target
-        (fun a => Classical.propDecidable (target.memaddrs a))
-        (compileExpExactHOL context address) = some addressValue)
+    (addressIH : ∀ (addressValue : ValueHOL width) (ctxt : PanGlobalsContextExact width)
+        (tgt : PanSemStateFiniteExact width σ),
+        panGlobalsStateRelHOLExact true ctxt source tgt ∧
+        @PanSemStateFiniteExact.evalHOLFinite width σ _ source
+          (fun a => Classical.propDecidable (source.memaddrs a)) address = some addressValue →
+        @PanSemStateFiniteExact.evalHOLFinite width σ _ tgt
+          (fun a => Classical.propDecidable (tgt.memaddrs a))
+          (compileExpExactHOL ctxt address) = some addressValue)
     (h : panGlobalsStateRelHOLExact true context source target ∧
       @PanSemStateFiniteExact.evalHOLFinite width σ _ source
         (fun a => Classical.propDecidable (source.memaddrs a))
@@ -486,6 +494,7 @@ theorem panGlobalsCompileExpCorrectLoad32CaseExact {width : Nat} {σ : Type}
       (fun a => Classical.propDecidable (target.memaddrs a))
       (compileExpExactHOL context (.load32 address)) = some value := by
   obtain ⟨hrel, heval⟩ := h
+  have hrelCopy := hrel
   obtain ⟨_hTop, _hloc, _hbase, hbe, _heshapes, _hclock, _hstructsS, _hstructsT, _hglob, _hwf,
     hsub, _hshmem, hmem, _hffi, _hcode, _hdis, _htopmem, _halign, _hgood⟩ := hrel
   simp only [compileExpExactHOL, PanSemStateFiniteExact.evalHOLFinite_load32] at heval ⊢
@@ -499,7 +508,7 @@ theorem panGlobalsCompileExpCorrectLoad32CaseExact {width : Nat} {σ : Type}
           cases wv with
           | word word =>
               simp only [haddr] at heval
-              have haddrT := addressIH (.val (.word word)) (by rw [haddr])
+              have haddrT := addressIH (.val (.word word)) context target ⟨hrelCopy, by rw [haddr]⟩
               cases h32 : @panMemLoad32HOL width _ source.memory source.memaddrs
                   (fun a => Classical.propDecidable (source.memaddrs a)) source.be word with
               | none => simp only [h32] at heval; simp at heval
@@ -527,12 +536,14 @@ theorem panGlobalsCompileExpCorrectLoadByteCaseExact {width : Nat} {σ : Type}
     (source target : PanSemStateFiniteExact width σ)
     (context : PanGlobalsContextExact width)
     (address : ExpHOL width) (value : ValueHOL width)
-    (addressIH : ∀ (addressValue : ValueHOL width),
-      @PanSemStateFiniteExact.evalHOLFinite width σ _ source
-        (fun a => Classical.propDecidable (source.memaddrs a)) address = some addressValue →
-      @PanSemStateFiniteExact.evalHOLFinite width σ _ target
-        (fun a => Classical.propDecidable (target.memaddrs a))
-        (compileExpExactHOL context address) = some addressValue)
+    (addressIH : ∀ (addressValue : ValueHOL width) (ctxt : PanGlobalsContextExact width)
+        (tgt : PanSemStateFiniteExact width σ),
+        panGlobalsStateRelHOLExact true ctxt source tgt ∧
+        @PanSemStateFiniteExact.evalHOLFinite width σ _ source
+          (fun a => Classical.propDecidable (source.memaddrs a)) address = some addressValue →
+        @PanSemStateFiniteExact.evalHOLFinite width σ _ tgt
+          (fun a => Classical.propDecidable (tgt.memaddrs a))
+          (compileExpExactHOL ctxt address) = some addressValue)
     (h : panGlobalsStateRelHOLExact true context source target ∧
       @PanSemStateFiniteExact.evalHOLFinite width σ _ source
         (fun a => Classical.propDecidable (source.memaddrs a))
@@ -541,6 +552,7 @@ theorem panGlobalsCompileExpCorrectLoadByteCaseExact {width : Nat} {σ : Type}
       (fun a => Classical.propDecidable (target.memaddrs a))
       (compileExpExactHOL context (.loadByte address)) = some value := by
   obtain ⟨hrel, heval⟩ := h
+  have hrelCopy := hrel
   obtain ⟨_hTop, _hloc, _hbase, hbe, _heshapes, _hclock, _hstructsS, _hstructsT, _hglob, _hwf,
     hsub, _hshmem, hmem, _hffi, _hcode, _hdis, _htopmem, _halign, _hgood⟩ := hrel
   simp only [compileExpExactHOL, PanSemStateFiniteExact.evalHOLFinite_loadByte] at heval ⊢
@@ -554,7 +566,7 @@ theorem panGlobalsCompileExpCorrectLoadByteCaseExact {width : Nat} {σ : Type}
           cases wv with
           | word word =>
               simp only [haddr] at heval
-              have haddrT := addressIH (.val (.word word)) (by rw [haddr])
+              have haddrT := addressIH (.val (.word word)) context target ⟨hrelCopy, by rw [haddr]⟩
               cases h8 : @panMemLoadByteHOL width _ source.memory source.memaddrs
                   (fun a => Classical.propDecidable (source.memaddrs a)) source.be word with
               | none => simp only [h8] at heval; simp at heval
