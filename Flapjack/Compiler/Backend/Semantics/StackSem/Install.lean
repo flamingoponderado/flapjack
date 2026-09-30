@@ -33,24 +33,12 @@ namespace Flapjack.StackSemInstall
 
 open StackSemStateOps Compiler.Backend.StackLang
 
-/-- Flapjack-only helper for HOL `DRESTRICT fm keep`
-(`finite_mapScript.sml:715`): `DRESTRICT` keeps exactly the keys in its set
-argument, so a key survives when the membership predicate holds and is dropped
-otherwise. This is not a tagged HOL declaration; it renders the finite-map
-restriction `s.regs` uses to install HOL `DRESTRICT s.regs s.ffi_save_regs`. The
-support of the result is a subset of the source support, so the original
-witness still covers it. -/
-def restrictIn {α β : Type} (m : HolFiniteMapExact α β) (keep : α → Bool) :
-    HolFiniteMapExact α β where
-  lookup key := if keep key then m.lookup key else none
-  finiteSupport := by
-    obtain ⟨keys, hkeys⟩ := m.finiteSupport
-    refine ⟨keys, ?_⟩
-    intro key hkey
-    apply hkeys key
-    by_cases h : keep key
-    · simpa [h] using hkey
-    · simp [h] at hkey
+/-- Compatibility name for the shared saved-register restriction. Both FFI
+    and Install use the same implementation in StackSemStateOps; this alias is
+    Flapjack infrastructure and has no independent HOL declaration. -/
+abbrev restrictIn {α β : Type} (m : HolFiniteMapExact α β) (keep : α → Bool) :
+    HolFiniteMapExact α β := StackSemStateOps.restrictIn m keep
+
 
 /-- The HOL `evaluate (Install ptr len dptr dlen ret, s)` branch
 (`cakeml/compiler/backend/semantics/stackSemScript.sml:893-921`; the Lean

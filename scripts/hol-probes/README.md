@@ -1498,7 +1498,7 @@ evaluation remains on `y19g`/`y19g.18`.
 
 `stacksem_jumplower_probeScript.sml` records eight direct original
 `stackSem$evaluate` observations for the `JumpLower` clause
-(`stackSemScript.sml:838-848`): a successful unsigned `Lower` comparison whose
+(`stackSemScript.sml:838-849`): a successful unsigned `Lower` comparison whose
 `INL` code lookup finds a `Return` sub-program (the non-bad result propagates
 with the decremented clock), a zero-clock timeout that empties the environment,
 a missing code target, a false comparison (`NONE` with the state unchanged), a
@@ -1515,7 +1515,7 @@ untagged; the tagged port of `bad_fun_return_def` lives in
 
 `stacksem_rawcall_probeScript.sml` records seven direct original
 `stackSem$evaluate` observations for the `RawCall` clause
-(`stackSemScript.sml:849-861`): a successful `Seq` code entry whose second
+(`stackSemScript.sml:850-860`): a successful `Seq` code entry whose second
 component is a `Return` (the non-bad result propagates with the decremented
 clock), a zero-clock timeout that empties the environment, a missing code
 target (`Error`), a non-`Seq` code entry (`dest_Seq` returns `NONE`, hence
@@ -1605,7 +1605,7 @@ ports live in `StackSem/Expressions.lean`, `StackSem/ShMem.lean` and
 `StackSem/StateOps.lean`, and assembled full evaluation remains on y19g.
 
 `stacksem_ffi_probeScript.sml` records four direct original `stackSem$evaluate`
-observations for the `FFI` clause (`stackSemScript.sml:951-971`) at 64-bit words.
+observations for the `FFI` clause (`stackSemScript.sml:945-960`) at 64-bit words.
 The state type is `(64,'c,num)`; `ffi_save_regs = {1; 6}`, `mdomain = {0w}` with
 word 0 holding `0xAABBCCDDEEFF0011w`, and the operand registers hold
 `configurationLength = 2w`, `configuration = 2w`, `arrayLength = 3w`,

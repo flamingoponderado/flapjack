@@ -1,6 +1,6 @@
 (*
   Direct HOL-EVAL fixture for the StackSem evaluate_def FFI clause.
-  Reference: cakeml/compiler/backend/semantics/stackSemScript.sml:951-971.
+  Reference: cakeml/compiler/backend/semantics/stackSemScript.sml:945-960.
 
   The observations cover a successful ExtCall whose returned bytes are written
   back with write_bytearray while regs is DRESTRICTed by ffi_save_regs and
