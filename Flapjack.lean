@@ -1,3 +1,4 @@
+import Flapjack.Pancake.Proofs.PanGlobals.StateRelationClock
 import Flapjack.Pancake.Proofs.PanGlobals.CompileExpLeaves
 import Flapjack.Pancake.Proofs.PanGlobals.CompileExpOperators
 import Flapjack.Pancake.Proofs.PanGlobals.CompileExpNamed
