@@ -33638,5 +33638,35 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.5.43.5.5) for the evaluate_state_locals_rel_strong atom cases; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/While.lean",
+    "lean_name": "evaluateStateLocalsRelStrongWhileExact",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "evaluate_state_locals_rel_strong",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.6) compared HOL evaluate_state_locals_rel_strong (crep_inlineProofScript.sml:273-285) at p = While e c, curried as the accepted leaf cases, with the While proof block :289-327. The only extra hypothesis is StrongLocalsWhileIH = exactly the three guarded evaluate_ind While premises (body at dec_clock s under nonzero word guard and nonzero clock; loop re-entry after NONE and after Continue 0), mirroring accepted WhileDomainIH; HOL's inner completeInduct_on s.clock is supplied by the assembly. locals_ext_rel composes through the body step by transitivity; dec_clock preserves locals_rel/state_rel (locals_rel_dec_clock). Exact tagged carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/While.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed CrepSemHOLState toBroad/ofBroad roundtrip for the relation qualifier."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/While.lean",
+    "lean_name": "whileStrongGoal",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead .43.5.6): the evaluate_state_locals_rel_strong motive for While from StrongLocalsWhileIH."
   }
 ]
