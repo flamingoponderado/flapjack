@@ -35110,6 +35110,44 @@
   "reviewer": "Source comparison evaluate_fperm1721-1810 Continue constructor case: retains f/g/state/res/post and sole original source evaluation premise, target evaluation of fperm program at code-permuted input and exact unchanged result/code-permuted post. Original fperm identity default and total evaluate_def Continue state-preserving equation give proof; no target premise, recursive callback, Option failure, clock simplification or lookup assumption. Native MlS/ProgHOL/PanSemResultExact and canonical PanSemStateFiniteExact four maps/positive word dimension use reviewed translations with same-module unconditional roundtrip witness. Genuine case only, full theorem and other constructors remain open. Proof-only/no executable behavior change."
 },
 {
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/ReturnRaise.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific same-module canonical state roundtrip reexport for the relation's four map fields; no independent HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/ReturnRaise.lean",
+  "lean_name": "evaluateFperm_Return",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_fperm",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison pan_globalsProof1721-1810 Return case and panSem evaluate_def639-652: original f/g/program payload/state/res/post binders, sole source run and full target run/code-permuted post equality retained. Native MlS/ExpHOL/ProgHOL/PanSemResultExact and canonical PanSemStateFiniteExact four maps/positive word dimensions unchanged; local unconditional state roundtrip witness. Accepted eval_upd_code_eta instantiated pointwise proves expression update invariance as HOL eval_upd_code_eq; all expression failure/size<=32 branches and Raise eshapes lookup/shape equality retained, successful empty_locals commutes with code field update by original record fields. No extra successful eval, shape/size, target run or poststate hypothesis; total evaluator/classical deciders internal. Genuine case only, full permutation theorem remains open. Proof-only/no executable behavior change."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/ReturnRaise.lean",
+  "lean_name": "evaluateFperm_Raise",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_fperm",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison pan_globalsProof1721-1810 Raise case and panSem evaluate_def639-652: original f/g/program payload/state/res/post binders, sole source run and full target run/code-permuted post equality retained. Native MlS/ExpHOL/ProgHOL/PanSemResultExact and canonical PanSemStateFiniteExact four maps/positive word dimensions unchanged; local unconditional state roundtrip witness. Accepted eval_upd_code_eta instantiated pointwise proves expression update invariance as HOL eval_upd_code_eq; all expression failure/size<=32 branches and Raise eshapes lookup/shape equality retained, successful empty_locals commutes with code field update by original record fields. No extra successful eval, shape/size, target run or poststate hypothesis; total evaluator/classical deciders internal. Genuine case only, full permutation theorem remains open. Proof-only/no executable behavior change."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
   "hol_name": "stack_names_comp_stack_asm_ok",
   "lean_path": "Flapjack/Compiler/Backend/StackNames/AsmAdmissibility/Inst.lean",
@@ -35164,6 +35202,29 @@
   "reviewer": "flapjack-luna-b source comparison, bead .18.5.15.7.14.2: HOL616 comp_ind ShMemOp case retains stack_asm_name/names_ok/fixed_names and exact stack_asm_ok(comp f p) conclusion. Spt and native StackLang payloads; positive word-width translation only. Source stackProps812-829: ShMemOp preserves offset and ISA branches, bounds from names_ok_imp; buffer/raise/return use reg_count and avoid_regs; OpCurrHeap targets default True, guards retained but unused. No target validity premise, executed behavior change or full theorem claim; coordinator source acceptance pending."
 },
 {
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/Assign.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific same-module canonical state roundtrip reexport for the relation's four map fields; no independent HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/Assign.lean",
+  "lean_name": "evaluateFperm_Assign",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_fperm",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison pan_globalsProof1721-1810 evaluate_fperm Assign case and panSem566-573: original binders and sole source-run premise, full target evaluation and unchanged result/code-permuted post retained. Original eval failure and is_valid_value guards preserved. Pointwise accepted eval_upd_code_eta proves code-independent expression evaluation; is_valid_value reads only locals/globals, and set_kvar changes only selected locals/globals field, so code update commutes for both kinds. Native MlS/ExpHOL/ProgHOL/PanSemResultExact with canonical PanSemStateFiniteExact four finite maps and positive word translation; local unconditional state roundtrip witness. No success/validity/target/post premise. Genuine constructor slice, full theorem open. Proof-only no executable change."
+},
+{
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ArgLoadStrong.lean",
   "lean_name": "generalSimulateArgLoadStrongAllDruleExact",
   "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
@@ -35178,14 +35239,30 @@
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-sol (.45.4.3) compared original HOL1350-1379: all original quantified variables and eleven strong_all guards retained, followed by the original twelfth observed nested evaluation premise at result r1/state tprime. Conclusion exactly r1=r, full state_rel and source-result match with FDIFF and restored-locals submaps for NONE/Break/Continue, Error False, other True. This target-run premise belongs to HOL drule only; existential strong_all has no such premise. Proof derives independent existential run then projects deterministic pair equality to identify both result and state. Canonical locals/globals/code and standalone t maps, positive-width BitVec and Type0 FFI only; existing canonical roundtrip witness retained. Coordinator review pending."
 },
-  {
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/SemanticsInitCall.lean",
-    "lean_name": "lubImageSuc",
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "LUB_IMAGE_SUC",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.2.22.3.2.3) compared pan_globalsProofScript.sml:2663-2665 `LUB_IMAGE_SUC[local]: (!x. LPREFIX (f x) (f (SUC x))) ==> LUB (IMAGE f UNIV(:num)) = LUB (IMAGE (f o SUC) UNIV(:num))`. HOL LUB is the lprefix_lub Overload for build_lprefix_lub (lprefix_lubScript.sml:560), rendered as HolLList.buildLprefixLub (the rendering used by the tagged IMP_build_lprefix_lub_EQ). IMAGE g UNIV is the set-as-predicate fun l => exists k, l = g k, as in the tagged panSem semantics_def. f : Nat -> HolLList a is generic, LPREFIX is HolLList.lprefix, SUC is Nat.succ, o is Function.comp. Same single hypothesis and conclusion; no extra premise. Proof follows HOL's: IMP_build_lprefix_lub_EQ with the two lprefix_chain facts (transitivity along the monotone sequence) and both lprefix_rel directions. Uses the untagged Flapjack support HolLList.lprefix_trans (Misc/LprefixLub.lean; llistScript is not pinned)."
-  },
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMemGlobal.lean",
+  "lean_name": "compileCorrect_ShMemLoad",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "compile_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "PanSemStateFiniteExact.locals",
+    "PanSemStateFiniteExact.globals",
+    "PanSemStateFiniteExact.code",
+    "PanSemStateFiniteExact.eshapes",
+    "PanGlobalsContextExact.globals"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol (bead30) source compared original pan_globalsProof Resume compile_correct[ShMemLoad]757-838 and evaluate_ind: arbitrary operator/varkind/name/address and source state; exactly original universal result/context/target/sourcepost binders, input state_rel true, faithful source evaluation and nonError, existential faithful compiled evaluation with same result and complete state_rel goodRes. This nonrecursive constructor has no child program IH. Exhaustive original Local/Global split directly applies source-reviewed accepted local/global cases; neither branch adds a premise. Canonical state locals/globals/code/eshapes and context globals maps plus positive-width words/Type0 FFI only, existing same-module canonical roundtrip witnesses retained. Full ShMemStore already accepted unchanged. Coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/SemanticsInitCall.lean",
+  "lean_name": "lubImageSuc",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "LUB_IMAGE_SUC",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.2.22.3.2.3) compared pan_globalsProofScript.sml:2663-2665 `LUB_IMAGE_SUC[local]: (!x. LPREFIX (f x) (f (SUC x))) ==> LUB (IMAGE f UNIV(:num)) = LUB (IMAGE (f o SUC) UNIV(:num))`. HOL LUB is the lprefix_lub Overload for build_lprefix_lub (lprefix_lubScript.sml:560), rendered as HolLList.buildLprefixLub (the rendering used by the tagged IMP_build_lprefix_lub_EQ). IMAGE g UNIV is the set-as-predicate fun l => exists k, l = g k, as in the tagged panSem semantics_def. f : Nat -> HolLList a is generic, LPREFIX is HolLList.lprefix, SUC is Nat.succ, o is Function.comp. Same single hypothesis and conclusion; no extra premise. Proof follows HOL's: IMP_build_lprefix_lub_EQ with the two lprefix_chain facts (transitivity along the monotone sequence) and both lprefix_rel directions. Uses the untagged Flapjack support HolLList.lprefix_trans (Misc/LprefixLub.lean; llistScript is not pinned)."
+},
   {
     "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
     "hol_name": "evaluate_clock_sub",

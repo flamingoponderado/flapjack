@@ -25,9 +25,8 @@ address/value evaluations are lifted by the tagged `compileExpCorrectHOL`
 (`compile_exp_correct`).
 
 This module ports `ShMemStore` and the `ShMemLoad` `Local` sub-case.  The
-`ShMemLoad` `Global` sub-case (the nested `Dec`/`Seq`/`Store` lowering and its
-local restoration) is tracked by a child of `flapjack-pxn.18.5.2.30`; its
-target-evaluation computation is not yet in the tree.
+`ShMemLoad` `Global` sub-case and the complete Local/Global case assembly live
+in the sibling `ShMemGlobal` module.
 -/
 
 namespace Flapjack
