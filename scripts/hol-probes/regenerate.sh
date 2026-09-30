@@ -112,6 +112,10 @@ run_probe stacksem_store_consts_guard_probeScript.sml stacksem_store_consts_guar
   guard_none guard_missing guard_match guard_wrong_label guard_wrong_first_register guard_wrong_second_register guard_recursive_stub guard_return_nonzero guard_wrong_constructor guard_reversed_sequence \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
+run_probe stacksem_store_const_sem_probeScript.sml stacksem_store_const_sem_probe.out \
+  guard_duplicate non_word_operand copy_words_none success_use_alloc_true success_use_alloc_false \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
 run_probe stacksem_evaluate_alloc_probeScript.sml stacksem_evaluate_alloc_probe.out \
   evaluate_alloc_disabled evaluate_alloc_missing evaluate_alloc_location evaluate_alloc_word_success evaluate_alloc_gc_failure evaluate_alloc_gc_missing_size evaluate_alloc_gc_bad_space evaluate_alloc_gc_exhausted \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"

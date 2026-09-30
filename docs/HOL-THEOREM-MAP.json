@@ -30428,6 +30428,20 @@
     "words_as_type_indexed_bitvec": true
   },
   {
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "store_const_sem_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/StoreConsts.lean",
+    "lean_name": "storeConstSem",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-deepseek-v41 source comparison (2026-09-30; bead flapjack-y19g.11.2.3) against stackSemScript.sml:729-741 store_const_sem_def (plus unset_var_def at :725-727): if ~ ALL_DISTINCT [0;1;2;3;t1;t2] then (SOME Error, s) else case (get_var 1 s, get_var 2 s, get_var 3 s) of (SOME (Word i), SOME (Word a), SOME (Word off)) => case copy_words (w2n i) a off s.bitmaps s.mdomain s.memory of NONE => (SOME Error, s) | SOME (a,m) => (NONE, (if s.use_alloc then unset_var 0 else I) (set_var t1 (Word 1w) (set_var t2 (Word 1w) (set_var 1 (Word 1w) (set_var 2 (Word a) (s with memory := m)))))) | _ => (SOME Error, s). Lean storeConstSem keeps the guard order, the three Word-operand reads, the w2n i as BitVec.toNat, unset_var 0 as eraseEq 0 on regs, set_var as updateEq, and the exact tagged copyWordsExact; the only translation is the reviewed regs/fpRegs/store HolFiniteMapExact codomain and the positive-width BitVec width words. Direct HOL EVAL rows guard_duplicate, non_word_operand, copy_words_none, success_use_alloc_true, success_use_alloc_false in stacksem_store_const_sem_probe.out are replayed by Flapjack.Test.StackSemStoreConstSemParity. This is the proof-side exact definition; the evaluator production route remains tracked on flapjack-y19g."
+  },
+  {
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
     "hol_name": "compile_exp_correct",
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationExact.lean",

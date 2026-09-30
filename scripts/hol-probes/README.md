@@ -1732,6 +1732,25 @@ remain on the assembly beads. Regenerate read-only with
 HOL_PROBE_ONLY=stacksem_store_consts_guard_probeScript.sml
 bash scripts/hol-probes/regenerate.sh`.
 
+## StackSem store_const_sem definition
+
+`stacksem_store_const_sem_probeScript.sml` captures five direct original
+`store_const_sem_def` observations (stackSemScript.sml:729-741, including
+`unset_var_def` at :725-727) at width 64. The base state fixes registers
+`0 -> 0xAAw`, `1 -> 0w` (copy index), `2 -> 0x100w` (destination),
+`3 -> 0x10w` (offset), `4 -> 0xDEADw`, `5 -> 0xBEEFw`, `mdomain = UNIV`,
+memory default `Word 0w`, and bitmaps `[0x03w; 0x55w]`. The successful rows
+relocate `0x100w` to `bitmaps[1] + off = 0x65w`, return `0x100w + bytes_in_word
+= 0x108w`, store `1` into `t1`, `t2` and register `1`, store the returned
+address into register `2`, and show the `unset_var 0` arm: `use_alloc = T`
+removes register `0`, `use_alloc = F` keeps it. The other rows cover the
+duplicate-register guard, a non-word operand, and the `copy_words` `NONE` arm.
+`Flapjack/Test/StackSemStoreConstSemParity.lean` kernel-replays all rows.
+Regenerate read-only with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_store_const_sem_probeScript.sml
+bash scripts/hol-probes/regenerate.sh`.
+
 ## StackSem FP register movement and sign cases
 
 `stacksem_fpreg_inst_probeScript.sml` captures twenty original `inst_def`
