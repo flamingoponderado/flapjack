@@ -1,4 +1,5 @@
 import Flapjack.HolRef
+import Flapjack.Misc.Option
 import Flapjack.Misc.LList
 
 /-!
@@ -8,7 +9,8 @@ Rendering of HOL4's `examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml`
 (a pinned external HOL4 snapshot at
 `hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml`, so the exact
 generic chain/equality declarations carry unqualified `@[hol]` tags), plus
-HOL's option-choice binder `some` (`HOL/src/coretypes/optionScript.sml:794`).
+HOL's option-choice binder `some` from `Flapjack.Misc.Option`
+(`hol4/src/coretypes/optionScript.sml:794`).
 HOL sets `'a llist set` are rendered as predicates `HolLList α → Prop`.  These
 are the ingredients of the Pancake observational `semantics_def`s
 (`build_lprefix_lub (IMAGE ... UNIV)`).  Noncomputable exactly where HOL uses
@@ -16,30 +18,6 @@ Hilbert choice.
 -/
 
 namespace Flapjack
-
-open Classical in
-/-- HOL `some P = if ?x. P x then SOME (@x. P x) else NONE`
-    (`optionScript.sml:794-796`); under the guard, `Classical.choose` is a
-    witness of `P` exactly as HOL's `@x. P x`. This rendering remains
-    untagged because optionScript is not pinned; follow-up bead rc27.1 tracks
-    that source prerequisite. No cross-assistant agreement of nonunique choices
-    is asserted. -/
-noncomputable def holOptionSome {α : Type} (P : α → Prop) : Option α :=
-  if h : ∃ x, P x then some (Classical.choose h) else none
-
-theorem holOptionSome_some {α : Type} {P : α → Prop} {x : α}
-    (h : holOptionSome P = some x) : P x := by
-  unfold holOptionSome at h
-  split at h
-  · rename_i hex; cases h; exact Classical.choose_spec hex
-  · cases h
-
-theorem holOptionSome_none {α : Type} {P : α → Prop}
-    (h : holOptionSome P = none) : ∀ x, ¬ P x := by
-  unfold holOptionSome at h
-  split at h
-  · cases h
-  · rename_i hn; exact fun x hx => hn ⟨x, hx⟩
 
 namespace HolLList
 

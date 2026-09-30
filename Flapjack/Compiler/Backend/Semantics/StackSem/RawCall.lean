@@ -13,7 +13,7 @@ namespace Flapjack.StackSemRawCall
 open StackSemControl StackSemStateOps Compiler.Backend.StackLang
 
 /-- The HOL `evaluate (RawCall dest, s)` branch
-(`cakeml/compiler/backend/semantics/stackSemScript.sml:849-861`): look `dest` up
+(`cakeml/compiler/backend/semantics/stackSemScript.sml:850-860`): look `dest` up
 directly in `s.code` with the sptree lookup (`none` -> `Error`), decompose the
 found program with `dest_Seq` (`none` -> `Error`), time out on a zero clock with
 an emptied environment, and otherwise recurse on the body with a decremented
