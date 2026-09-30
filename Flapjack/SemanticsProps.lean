@@ -1,4 +1,5 @@
 import Flapjack.Ffi
+import Flapjack.Misc.LList
 
 /-!
 # CakeML generic behavior semantics
@@ -193,5 +194,103 @@ theorem cakeImplements'_trans {compiled intermediate source : CakeBehaviourSet}
     (hcompiledSubset result hresult)
   exact cakeExtendWithResourceLimit'_idempotent precise source
     result hcompiledExtended
+
+/-! ## Representation bridge to HOL `llist`
+
+The Cake generic behavior carrier `CakeLazyList` reads through its `get?`
+function with a downward-closed `none` suffix. HOL's `llist` carrier
+(`Flapjack.HolLList`, the `llist_abs` subtype with the `lrep_ok` invariant)
+reads through its `rep` function with the same downward-closed `none` property
+`HolLrepOk`. The two carriers are therefore isomorphic under the identity on
+reads (`CakeLazyListRepresents`), and `cakeLprefix` is exactly HOL
+`LPREFIX (fromList events)` on the related representation. These declarations
+remain untagged: HOL `llist`/`LPREFIX`/`fromList` live in the external HOL
+list library `hol4/src/coalgebras/llistScript.sml`, and the mapping of the
+`FfiEvent` carrier still awaits review (tracked by `flapjack-pxn.18.5.15.10.1`). -/
+
+/-- The reviewed representation relation: a `CakeLazyList` represents a HOL
+    `llist` when both read the same values at every index. -/
+def CakeLazyListRepresents (t : CakeLazyList α) (ll : HolLList α) : Prop :=
+  t.get? = ll.rep
+
+/-- A `CakeLazyList` viewed as the HOL `llist` subtype: its `get?` function is
+    `HolLrepOk` (downward-closed `none` reads). -/
+def CakeLazyList.toHolLList (t : CakeLazyList α) : HolLList α :=
+  ⟨t.get?, fun n h => by
+    rw [Option.isSome_iff_ne_none] at h ⊢
+    intro hnone
+    exact h (t.none_suffix n hnone (n + 1) (Nat.le_succ n))⟩
+
+/-- A HOL `llist` viewed as a `CakeLazyList`. -/
+def cakeLazyListOfHolLList (ll : HolLList α) : CakeLazyList α :=
+  ⟨ll.rep, fun _i h _later hle => HolLList.rep_none_of_le ll h hle⟩
+
+/-- `CakeLazyList` extensionality: equal reads give equal carriers. -/
+theorem CakeLazyList.ext {a b : CakeLazyList α} (h : a.get? = b.get?) : a = b := by
+  cases a with
+  | mk ga pa =>
+    cases b with
+    | mk gb pb =>
+      simp only at h
+      subst h
+      exact congrArg (fun p => (⟨ga, p⟩ : CakeLazyList α)) (Subsingleton.elim pa pb)
+
+theorem cakeLazyListRepresents_toHolLList (t : CakeLazyList α) :
+    CakeLazyListRepresents t t.toHolLList := rfl
+
+theorem cakeLazyListRepresents_ofHolLList (ll : HolLList α) :
+    CakeLazyListRepresents (cakeLazyListOfHolLList ll) ll := rfl
+
+theorem cakeLazyListOfHolLList_toHolLList (ll : HolLList α) :
+    (cakeLazyListOfHolLList ll).toHolLList = ll :=
+  HolLList.ext_of_rep (fun _ => rfl)
+
+theorem toHolLList_cakeLazyListOfHolLList (t : CakeLazyList α) :
+    cakeLazyListOfHolLList t.toHolLList = t :=
+  CakeLazyList.ext rfl
+
+/-- `CakeLazyList` is a total, functional representation of HOL `llist`. -/
+theorem cakeLazyListRepresents_iff_eq (t : CakeLazyList α) (ll : HolLList α) :
+    CakeLazyListRepresents t ll ↔ t = cakeLazyListOfHolLList ll := by
+  constructor
+  · intro h
+    apply CakeLazyList.ext
+    exact h
+  · intro h
+    rw [h]
+    exact cakeLazyListRepresents_ofHolLList ll
+
+/-- HOL `LPREFIX (fromList xs)` correspondence: `cakeLprefix xs t` holds
+    exactly when `fromList xs` is the HOL `LPREFIX` of the related lazy list
+    (`llistScript.sml:2655-2662`, used by `extend_with_resource_limit`). -/
+theorem cakeLprefix_iff_lprefix {xs : List α} {t : CakeLazyList α} :
+    cakeLprefix xs t ↔ HolLList.lprefix (HolLList.fromList xs) t.toHolLList := by
+  constructor
+  · intro h
+    refine HolLList.lprefix_of_rep_agree (fun n x hx => ?_)
+    have hn : n < xs.length := HolLList.fromList_rep_lt hx
+    rw [HolLList.fromList_rep] at hx
+    show t.get? n = some x
+    rw [h n hn, hx]
+  · intro h i hi
+    have hrep : (HolLList.fromList xs).rep i = some xs[i] := by
+      rw [HolLList.fromList_rep, List.getElem?_eq_getElem hi]
+    have hreads := HolLList.lprefix_rep h hrep
+    show t.get? i = xs[i]?
+    rw [List.getElem?_eq_getElem hi]
+    exact hreads
+
+/-- The finite-list prefix relation `cakeListPrefix` is HOL's `isPREFIX`
+    (`≼` on event lists in `extend_with_resource_limit`). -/
+theorem cakeListPrefix_iff_prefix {xs ys : List α} :
+    cakeListPrefix xs ys ↔ xs <+: ys := by
+  constructor
+  · intro h
+    rw [List.prefix_iff_getElem?]
+    intro i hi
+    rw [← h.2 i hi, List.getElem?_eq_getElem hi]
+  · intro h
+    refine ⟨h.length_le, fun i hi => ?_⟩
+    rw [List.getElem?_eq_getElem hi, (List.prefix_iff_getElem?.mp h) i hi]
 
 end Flapjack

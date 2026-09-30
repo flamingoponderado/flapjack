@@ -208,6 +208,30 @@ theorem lprefix_fromList (xs ys : List α) :
     lprefix (fromList xs) (fromList ys) ↔ xs <+: ys := by
   unfold lprefix; rw [toList_fromList, toList_fromList]
 
+/-- HOL `LNTH (fromList l) n = if n < LENGTH l then SOME (EL n l) else NONE`
+    (`llistScript.sml:1154-1156` `fromList_LNTH`), i.e. the representation of
+    `fromList` reads the list and is absent beyond its end. -/
+theorem fromList_rep (l : List α) (n : Nat) : (fromList l).rep n = l[n]? := by
+  induction l generalizing n with
+  | nil => rfl
+  | cons h t ih =>
+      cases n with
+      | zero => rfl
+      | succ k =>
+          show (if k + 1 = 0 then some h else (fromList t).rep (k + 1 - 1)) = (h :: t)[k + 1]?
+          rw [if_neg (Nat.succ_ne_zero k), Nat.add_sub_cancel, ih k]
+          rfl
+
+/-- A present read of `fromList l` is within the list. -/
+theorem fromList_rep_lt {l : List α} {n : Nat} {x : α}
+    (h : (fromList l).rep n = some x) : n < l.length := by
+  rw [fromList_rep] at h
+  by_cases hn : n < l.length
+  · exact hn
+  · exfalso
+    rw [List.getElem?_eq_none_iff.mpr (by omega)] at h
+    exact absurd h (by simp)
+
 /-- A `none` at `k` forces a `none` at `k+1` (downward closure of `HolLrepOk`). -/
 theorem rep_none_succ (ll : HolLList α) {k : Nat} (h : ll.rep k = none) :
     ll.rep (k + 1) = none := by
