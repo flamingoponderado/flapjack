@@ -1273,9 +1273,14 @@ Nat-utility refinement or full StackSem evaluator execution.
 observations (`word_allocScript.sml:706-752`): Load16 catchall, Load8,
 Store32, AddCarry, AddOverflow, and FPMovToReg/FPMovFromReg at 32 and 64 bits.
 The exact tree enumeration lists are kernel-replayed and runtime-checked in
-`Flapjack.Test.CakeApplyColourParity.instructionLivenessExact`. This checks the
-exact definition; the independent production list-liveness route remains open
-on bead `.18.5.11.1.7.1`. Regenerate with
+`Flapjack.Test.CakeApplyColourParity.instructionLivenessExact`.
+`instructionLivenessExecuted` also kernel-replays the first four rows through
+the actual allocator list route. Shared production constructors execute
+`getLiveInstCore` through `getLiveInstExecutable`; production has no FP
+constructors, and its distinct five-register AddCarry retains a separate
+Flapjack route. The retained-instruction liveness of `wordDeadInst` uses this
+same route. Its keep/drop decisions remain separate work on bead `.11.1.12`.
+Regenerate with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_alloc_live_inst_probeScript.sml
 scripts/hol-probes/regenerate.sh` (the shared checkout supplies built objects;

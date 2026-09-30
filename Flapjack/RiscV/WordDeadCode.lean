@@ -50,16 +50,14 @@ def wordDeadMove (priority : Nat) (live : List Nat) (moves : List (Nat × Nat)) 
 def wordDeadInst {α : Type} (live : List Nat) (instruction : WordInst α) :
     WordProg α × List Nat :=
   let writes := wordInstWriteVars instruction
-  let reads := wordInstReadVars instruction
   if writes.any (fun name => name ∈ live) then
-    (.inst instruction,
-      wordDeadAddReads (wordDeadRemoveWrites live writes) reads)
+    (.inst instruction, wordInstLiveBefore instruction live)
   else
     match instruction with
     | .mem operator _ _ =>
         match operator with
         | .store | .store8 | .store16 | .store32 =>
-            (.inst instruction, wordDeadAddReads live reads)
+            (.inst instruction, wordInstLiveBefore instruction live)
         | _ => (.skip, live)
     | _ => (.skip, live)
 

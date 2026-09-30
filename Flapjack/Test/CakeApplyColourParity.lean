@@ -118,7 +118,7 @@ def instructionColourExact : Bool :=
 
 /-- Nine original get_live_inst EVAL rows, including the 16-bit catchall,
 output deletion order, four-register carry, and both FP word dimensions.
-These test the exact port; production list-liveness routing remains separate. -/
+The shared production instruction cases are replayed below as well. -/
 def instructionLivenessExact : Bool :=
   let live : NumSet := sptFromAList [(1, ()), (2, ()), (3, ()), (4, ()), (9, ())]
   let keys {width : Nat} [NeZero width] (inst : WordLangInst (BitVec width)) :=
@@ -136,6 +136,22 @@ def instructionLivenessExact : Bool :=
 example : instructionLivenessExact = true := by
   simp [instructionLivenessExact, WordAlloc.getLiveInst, WordAlloc.getLiveInstCore,
     sptToAList, sptFoldi, lrNext, sptFromAList, sptInsert, sptDelete, sptMkBS, sptMkBN]
+
+/-- First four captured HOL liveness rows through the actual allocator list
+route, including its memory-offset codec and canonical traversal order. -/
+def instructionLivenessExecuted : Bool :=
+  let live := [1, 2, 3, 4, 9]
+  wordInstLiveBefore (.memOffset .load16 3 5 (BitVec.ofNat 8 7)) live == [3, 1, 9, 4, 2] &&
+    wordInstLiveBefore (.memOffset .load8 3 5 (BitVec.ofNat 8 7)) live == [1, 9, 5, 4, 2] &&
+    wordInstLiveBefore (.memOffset .store32 3 5 (BitVec.ofNat 8 7)) live == [3, 1, 9, 5, 4, 2] &&
+    wordInstLiveBefore (α := BitVec 8) (.arith (.cakeAddCarry 1 2 3 4)) live == [3, 9, 4, 2]
+
+example : instructionLivenessExecuted = true := by
+  simp only [instructionLivenessExecuted, wordInstLiveBefore,
+    WordAlloc.getLiveInstExecutable_cakeAddCarry]
+  simp [WordAlloc.getLiveInstExecutable, WordAlloc.getLiveInstCore, WordAlloc.numSetToExact,
+    WordAlloc.numSetFromExact, sptToAList, sptFoldi, lrNext, sptFromAList,
+    sptInsert, sptDelete, sptMkBS, sptMkBN]
 
 /-- Original apply_nummaps_key rows, covering independent payload types and
 executed paired cutsets with collisions, duplicates and an empty component. -/
@@ -155,7 +171,7 @@ example : pairedKeyMapExact = true := by
 def parityGuard : Bool :=
   totalColourExact && assignExact && applyColourAliasedAssignExact &&
     returnRaiseExact &&
-    callHandlerExact && loopLiveExact && expressionColourExact && instructionColourExact && instructionLivenessExact && pairedKeyMapExact
+    callHandlerExact && loopLiveExact && expressionColourExact && instructionColourExact && instructionLivenessExact && instructionLivenessExecuted && pairedKeyMapExact
 
 #guard parityGuard
 #eval parityGuard
