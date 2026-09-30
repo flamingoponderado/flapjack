@@ -36269,6 +36269,159 @@
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Source comparison evaluate_fperm1721-1810 Tick case and panSem653-656: original f/g/state/res/post and sole source evaluation premise, full target evaluation with fperm program/code-permuted input and unchanged result/code-permuted post. Native MlS annotation payload binders retained for Annot; original NONE/state equation. Tick retains clock=0 TimeOut/empty_locals versus nonzero NONE/dec_clock; code update commutes with original locals/clock record updates, no clock-success assumption. Reviewed native ProgHOL/PanSemResultExact/PanSemStateFiniteExact with canonical locals/globals/code/eshapes and positive word/Type0 FFI translations only; local unconditional roundtrip witness. No target/post premise or changed clock semantics. Genuine constructor slice, full theorem open. Proof-only no executable change."
 },
+{
+  "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+  "hol_name": "lprefix_chain_def",
+  "lean_path": "Flapjack/Misc/LprefixLub.lean",
+  "lean_name": "lprefixChain",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison rc27, pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae: 171-174: same two-member prefix comparability; HOL set membership as predicate application, conjunction curried without changing guards. Generic Type0 element/HolLList and natural index, no word/fmap/list-as-array translation; no axioms added or executable changes. Source acceptance pending coordinator review."
+},
+{
+  "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+  "hol_name": "lprefix_chain_nth_def",
+  "lean_path": "Flapjack/Misc/LprefixLub.lean",
+  "lean_name": "lprefixChainNth",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison rc27, pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae: 200-203: same guarded option Hilbert choice of a member LNTH witness; holOptionSome implements exists guard and Classical.choose. Arbitrary choice is unspecified off-chain in each logic; this is definition-shape review, not equality of cross-assistant choice functions. Generic Type0 element/HolLList and natural index, no word/fmap/list-as-array translation; no axioms added or executable changes. Source acceptance pending coordinator review."
+},
+{
+  "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+  "hol_name": "lprefix_lub_def",
+  "lean_path": "Flapjack/Misc/LprefixLub.lean",
+  "lean_name": "lprefixLub",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison rc27, pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae: 306-310: same upper-bound and leastness conjunction with all family members and all upper bounds. Generic Type0 element/HolLList and natural index, no word/fmap/list-as-array translation; no axioms added or executable changes. Source acceptance pending coordinator review."
+},
+{
+  "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+  "hol_name": "build_lprefix_lub_f_def",
+  "lean_path": "Flapjack/Misc/LprefixLub.lean",
+  "lean_name": "buildLprefixLubF",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison rc27, pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae: 430-433: same OPTION_MAP successor-index/value pair, n+1 order retained. Generic Type0 element/HolLList and natural index, no word/fmap/list-as-array translation; no axioms added or executable changes. Source acceptance pending coordinator review."
+},
+{
+  "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+  "hol_name": "build_lprefix_lub_def",
+  "lean_path": "Flapjack/Misc/LprefixLub.lean",
+  "lean_name": "buildLprefixLub",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison rc27, pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae: 435-438: same LUNFOLD of step function with initial numeric index zero; imported HolLList subtype/LUNFOLD representation inspected. No chain premise added to definition. Generic Type0 element/HolLList and natural index, no word/fmap/list-as-array translation; no axioms added or executable changes. Source acceptance pending coordinator review."
+},
+{
+  "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+  "hol_name": "lprefix_chain_nth_none_mono",
+  "lean_path": "Flapjack/Misc/LprefixLub.lean",
+  "lean_name": "lprefixChainNth_none_mono",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison rc27, pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae: 225-231: retains chain, m<=n, nth m NONE, conclusion nth n NONE; unused chain guard preserved. Generic Type0 element/HolLList and natural index, no word/fmap/list-as-array translation; no axioms added or executable changes. Source acceptance pending coordinator review."
+},
+{
+  "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+  "hol_name": "lprefix_chain_LNTHs_agree",
+  "lean_path": "Flapjack/Misc/LprefixLub.lean",
+  "lean_name": "lprefixChain_LNTHs_agree",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison rc27, pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae: 182-188: retains chain, both memberships and both SAME-index SOME observations; conclusion x1=x2, no distinctness or ordering premise. Generic Type0 element/HolLList and natural index, no word/fmap/list-as-array translation; no axioms added or executable changes. Source acceptance pending coordinator review."
+},
+{
+  "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+  "hol_name": "exists_lprefix_chain_nth",
+  "lean_path": "Flapjack/Misc/LprefixLub.lean",
+  "lean_name": "exists_lprefixChainNth",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison rc27, pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae: 205-211: same chain and existential member SOME observation imply selected SAME value. Generic Type0 element/HolLList and natural index, no word/fmap/list-as-array translation; no axioms added or executable changes. Source acceptance pending coordinator review."
+},
+{
+  "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+  "hol_name": "unique_lprefix_lub",
+  "lean_path": "Flapjack/Misc/LprefixLub.lean",
+  "lean_name": "unique_lprefix_lub",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison rc27, pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae: 419-425: same arbitrary family and two LUB premises imply equality; no chain premise added. Generic Type0 element/HolLList and natural index, no word/fmap/list-as-array translation; no axioms added or executable changes. Source acceptance pending coordinator review."
+},
+{
+  "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+  "hol_name": "build_lprefix_lub_lem",
+  "lean_path": "Flapjack/Misc/LprefixLub.lean",
+  "lean_name": "lnth_buildLprefixLub_full",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison rc27, pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae: 440-449: local val build_lprefix_lub_lem Q.prove has chain guard and arbitrary initial m/read n; same LNTH LUNFOLD = chain nth(m+n). Internal pair-step helper and m=0 corollary deliberately untagged. Generic Type0 element/HolLList and natural index, no word/fmap/list-as-array translation; no axioms added or executable changes. Source acceptance pending coordinator review."
+},
+{
+  "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+  "hol_name": "build_lprefix_lub_thm",
+  "lean_path": "Flapjack/Misc/LprefixLub.lean",
+  "lean_name": "buildLprefixLub_thm",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison rc27, pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae: 451-455: same sole chain premise, least-upper-bound of full build result. Generic Type0 element/HolLList and natural index, no word/fmap/list-as-array translation; no axioms added or executable changes. Source acceptance pending coordinator review."
+},
+{
+  "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+  "hol_name": "lprefix_lub_nth",
+  "lean_path": "Flapjack/Misc/LprefixLub.lean",
+  "lean_name": "lprefix_lub_nth",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison rc27, pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae: 319-323: same chain guard and iff LUB versus universal index equality. Generic Type0 element/HolLList and natural index, no word/fmap/list-as-array translation; no axioms added or executable changes. Source acceptance pending coordinator review."
+},
+{
+  "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+  "hol_name": "build_prefix_lub_intro",
+  "lean_path": "Flapjack/Misc/LprefixLub.lean",
+  "lean_name": "build_prefix_lub_intro",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison rc27, pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae: 515-520: same chain guard and iff LUB versus lub=build result; equality orientation retained. Generic Type0 element/HolLList and natural index, no word/fmap/list-as-array translation; no axioms added or executable changes. Source acceptance pending coordinator review."
+},
+{
+  "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+  "hol_name": "not_exists_lprefix_chain_nth",
+  "lean_path": "Flapjack/Misc/LprefixLub.lean",
+  "lean_name": "not_exists_lprefix_chain_nth",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison rc27, pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae: 215-219: exact wrapper retains original chain and every-member NONE guards; stronger untagged helper discharges proof, no dropped premise on tagged statement. Generic Type0 element/HolLList and natural index, no word/fmap/list-as-array translation; no axioms added or executable changes. Source acceptance pending coordinator review."
+},
+{
+  "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+  "hol_name": "llist_shorter_lnth",
+  "lean_path": "Flapjack/Misc/LprefixLub.lean",
+  "lean_name": "llistShorter_lnth",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b rc27 source comparison pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae lines131-161 local val Q.prove: exact iff llist_shorter ll1 ll2 versus forall n x LNTH n ll1=SOME x implies exists y LNTH n ll2=SOME y. Same arbitrary element/list/index/payload carriers, no equality of x and y added and no chain premise. Imported llength is finite length versus NONE infinity; original option length order preserved. Proof/cases unchanged. Coordinator source acceptance pending; no executable changes."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Call.lean",
+  "lean_name": "compileCorrect_Call",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "compile_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "reviewer": "flapjack-sol source comparison33.16: original gen_goal172-181 and complete Call proof1138-1510, against literal faithful evaluate_ind Call conjunct. Public handler and callee IHs preserve every original quantified intermediate, argument/code lookup, product equalities, nonzero-clock, actual exceptional callee run, caltyp/handler projections, matching exception identifier, eshapes lookup, shape equality and local-value validity guard. Exhaustive tail plus NONE/Local/Global destination crossed with NONE/SOME handler invokes seven accepted leaves; adapters instantiate intermediate witnesses and derive guards without strengthening public premises. compileCorrectGoal retains original source nonError, existential faithful compiled target evaluation and complete goodRes postrelation. Canonical state/context finite maps use genuine imported roundtrips; bare newlocals covers the original nested map binders. Native MlS and complete ProgHOL/ValueHOL/ShapeHOL carriers; positive type-indexed BitVec width and Type0 FFI conventional translation only. Proof-side assembly uses reviewed executed compiler definition; no executable change. Coordinator independent acceptance remains pending.",
+  "fmap_as_finite_support_relation": [
+    "PanSemStateFiniteExact.locals",
+    "PanSemStateFiniteExact.globals",
+    "PanSemStateFiniteExact.code",
+    "PanSemStateFiniteExact.eshapes",
+    "PanGlobalsContextExact.globals",
+    "newlocals"
+  ],
+  "words_as_type_indexed_bitvec": true
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Call.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Canonical imported state/context roundtrip reexport; Flapjack representation infrastructure, no independent HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Call.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Canonical imported state/context roundtrip reexport; Flapjack representation infrastructure, no independent HOL declaration."
+},
   {
     "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
     "hol_name": "update_locals_not_vars_eval_eq'",
