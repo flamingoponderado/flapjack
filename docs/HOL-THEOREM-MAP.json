@@ -37871,5 +37871,20 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "C source comparison pan_simpProof117-137 and literal seq_assoc_def18-40 otherwise Tick arm: full arbitrary-prefix program/state result equality, no extra premise or IH. Source syntax remains this same constructor under SmartSeq; accepted evaluate_SmartSeq gives complete evaluation equality with Seq. Exact fixed-width/native MlS carriers and canonical finite-map state fields with genuine witness; positive BitVec/Type0 FFI translation only. Genuine case, full117 assembly stillopen; coordinator review pending, proof-only."
+},
+{
+  "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+  "hol_name": "evaluate_min_clock",
+  "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvaluateMinClock.lean",
+  "lean_name": "evaluateMinClockHOLFinite",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01, bead flapjack-4ac.4.47.1: literal HOL822-830 quantifies arbitrary program/input state/result/post-state and assumes only full evaluation pair equality and non-TimeOut. Lean retains both conjuncts and existential input clock with complete result and non-clock post-state preservation. Proof follows HOL: zero post.clock, reconstruct original post by adding remaining clock, invoke accepted evaluate_clock_sub724. No successful-option marker, target-evaluation assumption, extra dimension premise or public IH. Canonical finite support translates locals/globals/code/eshapes with same-module checked roundtrip witness; positive BitVec width with NeZero and universe0 host retains reviewed evaluator carriers.",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true
 }
 ]
