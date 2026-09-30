@@ -1,11 +1,13 @@
 import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
 import Flapjack.Misc.LprefixLub
+import Flapjack.Pancake.Semantics.PanSem.DeclContextExact
 
 /-!
 # HOL `panSem` observational semantics
 
 Counterpart of `cakeml/pancake/semantics/panSemScript.sml:785-809`
-(`semantics_def`, bead `flapjack-pxn.18.4.3.77.17.1`), over the exact
+(`semantics_def`, bead `flapjack-pxn.18.4.3.77.17.1`) and `:861-869`
+(`semantics_decls_def`, bead `flapjack-pxn.18.4.3.77.17.2`), over the exact
 finite-map evaluator `evaluateHOLFiniteState`, whose `evaluate_def` equations
 are tagged.  It uses the same `holOptionSome` and `HolLList` renderings as the
 tagged loopSem, crepSem and wordSem `semantics_def` ports.
@@ -13,7 +15,7 @@ tagged loopSem, crepSem and wordSem `semantics_def` ports.
 
 namespace Flapjack
 
-open Flapjack.Pancake.PanLang (MlS ProgHOL)
+open Flapjack.Pancake.PanLang (MlS ProgHOL DeclHOL)
 
 namespace PanSemStateFiniteExact
 
@@ -88,6 +90,37 @@ noncomputable def semantics {width : Nat} {σ : Type} [NeZero width]
     | some res => res
     | none => .diverge (HolLList.buildLprefixLub (fun l => ∃ k,
         l = HolLList.fromList (evaluateHOLFiniteState { s with clock := k } prog).2.ffi.ioEvents))
+
+/-- Exact HOL `panSem$semantics_decls_def` (`panSemScript.sml:861-869`):
+
+    ```
+    semantics_decls s start decls =
+      case decs_stcnames [] decls of
+      | NONE => Fail
+      | SOME st_ctxt =>
+        case evaluate_decls (s with structs := st_ctxt) decls of
+        | NONE => Fail
+        | SOME s' => semantics s' start
+    ```
+
+    `decs_stcnames` is the tagged `decsStcnamesHOLExact` and `evaluate_decls`
+    the tagged `evaluateDeclsHOLFinite`.  The latter takes Lean's operational
+    `DecidablePred` evidence for the memory domain.  That evidence is chosen
+    classically here, which adds no premise, since `DecidablePred` instances
+    are subsingletons. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "semantics_decls_def"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+noncomputable def semanticsDecls {width : Nat} {σ : Type} [NeZero width]
+    (s : PanSemStateFiniteExact width σ) (start : MlS) (decls : List (DeclHOL width)) :
+    HolBehaviour :=
+  match decsStcnamesHOLExact [] decls with
+  | none => .fail
+  | some stCtxt =>
+    open Classical in
+    match evaluateDeclsHOLFinite { s with structs := stCtxt } decls with
+    | none => .fail
+    | some s' => semantics s' start
 
 end PanSemStateFiniteExact
 

@@ -2938,10 +2938,25 @@ theorem inlineProgCorrectExtCallCaseExact {width : Nat} [NeZero width] {σ : Typ
                           · simp only [crepInlineLocalsStrongRelExact]
                             rw [hlocals]
 
+/-! ## Shared-memory state-transfer helpers
+
+Flapjack-specific infrastructure with no HOL original: these lemmas transport the
+exact `sh_mem_load`/`sh_mem_store`/`sh_mem_op` results across two exact Crep
+states that differ only in their code and locals. HOL's `sh_mem_op` proof operates
+on one state and never needs this cross-state congruence, so no `@[hol]` tag
+applies; the declarations are support for the tagged `inline_prog_correct` ShMem
+case. -/
+
+/-- Two exact Crep states agree on every field `state_rel_code` inspects (i.e.
+    all but code) and on their locals.  This is the precondition under which the
+    shared-memory helpers return the same result on both states.  Flapjack
+    infrastructure with no HOL original. -/
 def SameExceptCode {width : Nat} [NeZero width] {σ : Type}
     (s t : CrepSemHOLState width σ) : Prop :=
   crepInlineStateRelCodeExact s t ∧ s.locals = t.locals
 
+/-- `SameExceptCode` is preserved by `setVar`.  Flapjack infrastructure with no
+    HOL original. -/
 theorem same_setVar {width : Nat} [NeZero width] {σ : Type} (name : Nat)
     (value : HolWordLab width) (s t : CrepSemHOLState width σ) (h : SameExceptCode s t) :
     SameExceptCode (CrepSemHOLState.setVar name value s)
@@ -2953,6 +2968,7 @@ theorem same_setVar {width : Nat} [NeZero width] {σ : Type} (name : Nat)
     (CrepSemHOLState.setVar name value t).locals
   simp only [CrepSemHOLState.setVar, hl]
 
+/-- `SameExceptCode` is preserved by `emptyLocals`.  Flapjack infrastructure with no HOL original. -/
 theorem same_emptyLocals {width : Nat} [NeZero width] {σ : Type}
     (s t : CrepSemHOLState width σ) (h : SameExceptCode s t) :
     SameExceptCode (CrepSemHOLState.emptyLocals s) (CrepSemHOLState.emptyLocals t) := by
@@ -2962,6 +2978,7 @@ theorem same_emptyLocals {width : Nat} [NeZero width] {σ : Type}
   show (CrepSemHOLState.emptyLocals s).locals = (CrepSemHOLState.emptyLocals t).locals
   simp only [CrepSemHOLState.emptyLocals]
 
+/-- `SameExceptCode` is preserved by updating the FFI field.  Flapjack infrastructure with no HOL original. -/
 theorem same_setFfi {width : Nat} [NeZero width] {σ : Type} (newFfi : HolFfiState σ)
     (s t : CrepSemHOLState width σ) (h : SameExceptCode s t) :
     SameExceptCode { s with ffi := newFfi } { t with ffi := newFfi } := by
@@ -2972,6 +2989,9 @@ theorem same_setFfi {width : Nat} [NeZero width] {σ : Type} (newFfi : HolFfiSta
     ({ t with ffi := newFfi } : CrepSemHOLState width σ).locals
   simp only [hl]
 
+/-- Cross-state congruence for `crepShMemLoadExactHOL`: on `SameExceptCode` states the
+    load returns the same result and the post-states are again `SameExceptCode`.
+    Flapjack infrastructure with no HOL original. -/
 theorem crepShMemLoadExactHOL_same {width : Nat} [NeZero width] {σ : Type}
     (name : Nat) (addr : BitVec width) (nb : Nat)
     (s t : CrepSemHOLState width σ) (h : SameExceptCode s t) :
@@ -3010,6 +3030,9 @@ theorem crepShMemLoadExactHOL_same {width : Nat} [NeZero width] {σ : Type}
     · rw [if_neg hc, if_neg (fun ht => hc (hB ▸ ht))]
       exact ⟨rfl, hbase⟩
 
+/-- Cross-state congruence for `crepShMemStoreExactHOL`: on `SameExceptCode` states
+    the store returns the same result and the post-states are again `SameExceptCode`.
+    Flapjack infrastructure with no HOL original. -/
 theorem crepShMemStoreExactHOL_same {width : Nat} [NeZero width] {σ : Type}
     (name : Nat) (addr : BitVec width) (nb : Nat)
     (s t : CrepSemHOLState width σ) (h : SameExceptCode s t) :
@@ -3063,6 +3086,9 @@ theorem crepShMemStoreExactHOL_same {width : Nat} [NeZero width] {σ : Type}
             · rw [if_neg hc, if_neg (fun ht => hc (hB ▸ ht))]
               exact ⟨rfl, hbase⟩
 
+/-- Cross-state congruence for `crepShMemOpExactHOL` over all eight operators,
+    obtained by dispatching to the load/store congruences.  Flapjack infrastructure
+    with no HOL original. -/
 theorem crepShMemOpExactHOL_same {width : Nat} [NeZero width] {σ : Type}
     (op : WordMemOp) (name : Nat) (addr : BitVec width)
     (s t : CrepSemHOLState width σ) (h : SameExceptCode s t) :
