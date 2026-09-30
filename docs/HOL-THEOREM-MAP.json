@@ -28193,15 +28193,7 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-pxn.18.5.12.1) against stackSemScript.sml dest_Seq_def: dest_Seq (Seq p1 p2) = SOME (p1,p2) and dest_Seq _ = NONE; Lean destSeq over the exact width-indexed HolProg width with `some (first, second)` / `none`. The tag carries the words qualifier because HolProg width is width-indexed."
   },
-  {
-    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
-    "hol_name": "check_store_consts_opt_def",
-    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Control.lean",
-    "lean_name": "checkStoreConstsOpt",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-pxn.18.5.12.1) against stackSemScript.sml:743-745 check_store_consts_opt_def: the NONE stub is T; the SOME n stub is `lookup n c = SOME (Seq (StoreConsts t1 t2 NONE) (Return 0))`. Lean checkStoreConstsOpt over exact Spt (HolProg width) with sptLookup and exact constructors .seq/.storeConsts/.ret 0. Words qualifier for the width-indexed program carrier."
-  },
+  
   {
     "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
     "hol_name": "copy_words_for_pattern_def",
