@@ -1,3 +1,6 @@
+import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Primitive
+import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Dec
+import Flapjack.Compiler.Backend.Semantics.StackSem.LocValueCase
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.AssignLocal
 import Flapjack.Pancake.Proofs.PanGlobals.OptMmapEvalCorrect
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.DecCall
@@ -21,6 +24,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Seq
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.ShMemLoad
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.CallNoHandler
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.CallHandler
+import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Assembly
 import Flapjack.Pancake.Proofs.PanGlobals.MemoryLookup
 import Flapjack.Pancake.Proofs.PanGlobals.MemorySwap
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelationCode
@@ -34,6 +38,8 @@ import Flapjack.Pancake.Proofs.PanGlobals.CompileExpLeaves
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Base
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Seq
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Store
+import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Store32
+import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.StoreByte
 import Flapjack.Pancake.Proofs.PanGlobals.MemStores
 import Flapjack.Pancake.Proofs.PanGlobals.MemoryUpdate
 import Flapjack.Pancake.Proofs.PanGlobals.ShMemLoadLemmas
