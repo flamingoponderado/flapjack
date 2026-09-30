@@ -72,4 +72,20 @@ theorem stateRelSetVarHOL {width : Nat} {σ : Type} [NeZero width]
   have hl := hrel.2.1 rfl
   simp only [PanSemStateFiniteExact.setVarHOLFinite, hl]
 
+/-- Source1011-1015: the panic-reset finite map is unchanged when writing an
+`none` value into `FEMPTY`. This is the exact HOL `res_var_FEMPTY` equality
+over the reviewed finite-map carrier (`HolFiniteMapExact`), stated for the
+canonical `resVarEq`/`empty` renderings already reviewed under
+`(fmap_as_finite_support_result)`; no new carrier translation is introduced. -/
+@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "res_var_FEMPTY"]
+theorem resVarFEMPTYExact {α β : Type} [DecidableEq α] (n : α) :
+    HolFiniteMapExact.resVarEq (HolFiniteMapExact.empty : HolFiniteMapExact α β) (n, none) =
+      (HolFiniteMapExact.empty : HolFiniteMapExact α β) := by
+  apply HolFiniteMapExact.ext
+  funext k
+  simp only [HolFiniteMapExact.lookup_resVarEq_none, HolFiniteMapExact.lookup_empty, FDOMSUB_HOL]
+  by_cases hk : k = n
+  · simp [hk]
+  · simp [hk]
+
 end Flapjack.PanGlobalsStateRelationLocals

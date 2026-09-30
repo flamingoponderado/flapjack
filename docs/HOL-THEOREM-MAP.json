@@ -30761,5 +30761,13 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only canonical context roundtrip re-export used by the relation qualifier. Untagged."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "res_var_FEMPTY",
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationLocals.lean",
+    "lean_name": "resVarFEMPTYExact",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds10 source comparison (2026-09-30; bead flapjack-pxn.18.5.2.32.6): HOL pan_globalsProofScript.sml:1011-1015 `res_var FEMPTY (n,NONE) = FEMPTY` (polymorphic 'a |-> 'b, unconditional) is rendered verbatim over the reviewed finite-map translation: `HolFiniteMapExact.resVarEq HolFiniteMapExact.empty (n,none) = HolFiniteMapExact.empty` with the same polymorphic binders and a DecidableEq instance for the HOL '=' on keys. resVarEq/empty are the already-tagged `(fmap_as_finite_support_result)` renderings of res_var/FEMPTY, so no new carrier translation is introduced; a single-conjunct map-equality theorem is not covered by any finite-map qualifier (result is def-only, equalities needs >=2 conjuncts), which is reported to the coordinator."
   }
 ]
