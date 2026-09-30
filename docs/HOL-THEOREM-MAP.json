@@ -36330,6 +36330,38 @@
     "reviewer": "flapjack-ds9 source comparison (2026-09-30; bead flapjack-28je.1): HOL max_depth (word_depthScript.sml:24-35) has five clauses: Leaf = SOME 0; Unknown = NONE; Const n t = OPTION_MAP ((+) n) (max_depth t); Branch = OPTION_MAP2 MAX; Call n t = OPTION_MAP2 (+) (lookup n frame_sizes) (max_depth t). Lean maxDepth over CallTree and Option Nat transcribes each clause one for one; OPTION_MAP is Option.map with (fun d => n + d), OPTION_MAP2 is the untagged optionMap2 helper, MAX is max. The frame_sizes num_map (num spt) is the exact Spt Nat carrier and lookup is Flapjack.sptLookup, so a missing/spt-absent frame yields NONE with no invented bound. No word carrier occurs. Kernel replay of Leaf/Unknown/Const/Branch/Call hit/miss/nested rows is in Flapjack.Test.WordDepthParity. The original-HOL oracle (scripts/hol-probes/word_depth_probeScript.sml) is registered but could not be captured in this checkout because word_depthTheory/preamble are not built in cakeml/; documented in the test docstring. Coordinator source review required."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepth.lean",
+    "lean_name": "mkBranch",
+    "hol_path": "cakeml/compiler/backend/word_depthScript.sml",
+    "hol_name": "mk_Branch_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 source comparison (2026-09-30; bead flapjack-28je.2): HOL mk_Branch (word_depthScript.sml:37-45) is the nested if-then-else t1=t2 -> t1; t1=Leaf -> t2; t2=Leaf -> t1; t1=Unknown -> t1; t2=Unknown -> t2; else Branch t1 t2. Lean mkBranch over the exact CallTree reproduces the five guards in order using the derived decidable equality and the exact constructors; no carrier difference. Kernel replay of every case is in Flapjack.Test.WordDepthParity.wordDepthGraphGuard_proof. The original-HOL oracle is infeasible in this checkout (word_depthTheory/preamble unbuilt), documented in the test docstring. Coordinator source review required."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepth.lean",
+    "lean_name": "callGraph",
+    "hol_path": "cakeml/compiler/backend/word_depthScript.sml",
+    "hol_name": "call_graph_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 source comparison (2026-09-30; bead flapjack-28je.2): HOL call_graph (word_depthScript.sml:47-86) has Seq/If -> mk_Branch; Call with dest NONE -> Unknown, MEM d ns and ret=NONE -> Leaf, lookup miss -> Unknown, ret=NONE with LENGTH ns < total -> mk_Branch (Call d Leaf) (recursive body with d::ns) else Leaf, and ret=SOME -> Branch with delete d funs for the callee body plus the handler/return programs; MustTerminate/Loop descend; Alloc -> Call n Leaf; Install -> Unknown; default -> Leaf. Lean callGraph transcribes each clause one for one over the exact WordLangProgHOL program carrier at a fixed width (the carrier used by the reviewed wordConvs extract_labels/every_inst ports) and the exact Spt (Nat x prog) code map (num_map = 'a spt, not a |-> finite map), with sptLookup/sptDelete/sptSize for lookup/delete/size and the exact CallTree. HOL terminates by (size funs, total - LENGTH ns, prog_size (K 0) p); Lean uses the same lexicographic structure (sptSize funs, total - ns.length, sizeOf p), justified by the untagged sptSize_sptDelete_lt and the repo's documented sizeOf stand-in for the generated prog_size (K 0). Kernel replay of the structural, lookup-hit/miss, short-circuit, guard, returning, handler, tail-recursive and mutual rows is in wordDepthGraphGuard_proof. The original-HOL oracle is infeasible here. Coordinator source review required."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepth.lean",
+    "lean_name": "fullCallGraph",
+    "hol_path": "cakeml/compiler/backend/word_depthScript.sml",
+    "hol_name": "full_call_graph_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 source comparison (2026-09-30; bead flapjack-28je.2): HOL full_call_graph (word_depthScript.sml:88-94) is Unknown on lookup miss and Branch (Call n Leaf) (call_graph funs n [n] (size funs) prog) on a hit. Lean fullCallGraph matches clause for clause over the exact carriers, with sptLookup/sptSize for lookup and size. Kernel replay of the miss/hit/tail-recursive/return-recursive/mutual rows is in wordDepthGraphGuard_proof. Coordinator source review required."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepth.lean",
+    "lean_name": "maxDepthGraphs",
+    "hol_path": "cakeml/compiler/backend/word_depthScript.sml",
+    "hol_name": "max_depth_graphs_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 source comparison (2026-09-30; bead flapjack-28je.2): HOL max_depth_graphs (word_depthScript.sml:96-105) is SOME 0 on [], and on n::ns is NONE on a lookup miss in all_funs, otherwise OPTION_MAP2 MAX (lookup n ss) (OPTION_MAP2 MAX (max_depth ss (call_graph funs n all (size all_funs) body)) (max_depth_graphs ss ns all funs all_funs)). Lean maxDepthGraphs matches clause for clause over the exact Spt Nat frame map, Spt (Nat x prog) code maps and CallTree, preserving the argument order and using optionMap2 for OPTION_MAP2 and maxDepth for max_depth. Kernel replay of the empty/frame-hit/frame-miss/code-miss/recursive rows is in wordDepthGraphGuard_proof. Coordinator source review required."
+  },
+  {
     "lean_path": "Flapjack/Pancake/Proofs/PanToTarget.lean",
     "lean_name": "optionLt",
     "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",

@@ -2234,6 +2234,10 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         ("Flapjack/Pancake/LoopToWord.lean", "mkNewCutsetHOL"),
         ("Flapjack/Compiler/Backend/WordDepth.lean", "CallTree"),
         ("Flapjack/Compiler/Backend/WordDepth.lean", "maxDepth"),
+        ("Flapjack/Compiler/Backend/WordDepth.lean", "mkBranch"),
+        ("Flapjack/Compiler/Backend/WordDepth.lean", "callGraph"),
+        ("Flapjack/Compiler/Backend/WordDepth.lean", "fullCallGraph"),
+        ("Flapjack/Compiler/Backend/WordDepth.lean", "maxDepthGraphs"),
         ("Flapjack/Pancake/Proofs/PanToTarget.lean", "optionLt"),
     }
     for key in reviewed_exact:
