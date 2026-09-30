@@ -35402,5 +35402,13 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Private matched-handler literal compiler outer-scope branch for pending33.11. Initializer/scopes derived from caller relation/context branch, combines internal callee and handler IH outputs for all nonError handler results and scoped goodRes relation. Full original guarded IH discharge/all Call outcomes remain unfinished; no tag or completed port claim."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "matchedFromIH",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Private matched exception branch of pending33.11 with ORIGINAL guarded callee/handler IHs; derives target args/code/clock/entry, callee and handler executions, handler entry relation and binding validity internally. No target run/postrelation premise. Remaining Call outcomes/full public constructor assembly unfinished; untagged infrastructure."
 }
 ]

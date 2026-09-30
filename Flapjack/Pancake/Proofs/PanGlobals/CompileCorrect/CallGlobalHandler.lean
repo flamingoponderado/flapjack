@@ -989,6 +989,89 @@ private theorem matchedScopedCorrect {width : Nat} {σ : Type} [NeZero width]
   rw [hscope]
   simp only [ht]
 
+/-- Matched exception branch discharged from the original guarded callee and
+handler IHs, without target-run or post-relation premises. Private infrastructure
+until the remaining Call outcomes and public constructor are assembled. -/
+private theorem matchedFromIH {width : Nat} {σ : Type} [NeZero width]
+    (source : PanSemStateFiniteExact width σ) (name function : MlS)
+    (arguments : List (ExpHOL width)) (handlerId handlerVar : MlS)
+    (handlerBody : ProgHOL width)
+    (ih : ∀ (args : List (ValueHOL width)) (body : ProgHOL width)
+      (callee : HolFiniteMapExact MlS (ValueHOL width)) (returnShape : ShapeHOL),
+      evalListHOLFinite source (h := fun a => Classical.propDecidable (source.memaddrs a)) arguments = some args ∧
+      lookupCodeHOLFinite source.code.lookup function args = some (body,callee,returnShape) ∧ source.clock ≠ 0 →
+      compileCorrectGoal body (callEntryStateHOLFinite source callee))
+    (ihHandler : ∀ (args : List (ValueHOL width)) (body : ProgHOL width)
+      (callee : HolFiniteMapExact MlS (ValueHOL width)) (returnShape : ShapeHOL)
+      (value : ValueHOL width) (calleePost : PanSemStateFiniteExact width σ) (handlerShape : ShapeHOL),
+      evalListHOLFinite source (h := fun a => Classical.propDecidable (source.memaddrs a)) arguments = some args ∧
+      lookupCodeHOLFinite source.code.lookup function args = some (body, callee, returnShape) ∧
+      source.clock ≠ 0 ∧
+      evaluateHOLFiniteState (callEntryStateHOLFinite source callee) body =
+        (some (.exception handlerId value), calleePost) ∧
+      source.eshapes.lookup handlerId = some handlerShape ∧
+      shapeOfHOLExact value = handlerShape ∧
+      isValidValueHOLExact source.toExact .local handlerVar value = true →
+      compileCorrectGoal handlerBody
+        (setVarHOLFinite handlerVar value {calleePost with locals := source.locals}))
+    (context : PanGlobalsContextExact width) (target calleePost post : PanSemStateFiniteExact width σ)
+    (args : List (ValueHOL width)) (body : ProgHOL width)
+    (callee : HolFiniteMapExact MlS (ValueHOL width)) (returnShape handlerShape shape : ShapeHOL)
+    (value : ValueHOL width) (address : BitVec width) (res : Option (PanSemResultExact width))
+    (hrel : panGlobalsStateRelHOLExact true context source target)
+    (hcontext : context.globals.lookup name = some (shape, address))
+    (ha : evalListHOLFinite source (h := fun a => Classical.propDecidable (source.memaddrs a)) arguments = some args)
+    (hl : lookupCodeHOLFinite source.code.lookup function args = some (body, callee, returnShape))
+    (hz : source.clock ≠ 0)
+    (hb : evaluateHOLFiniteState (callEntryStateHOLFinite source callee) body =
+      (some (.exception handlerId value), calleePost))
+    (hs : source.eshapes.lookup handlerId = some handlerShape)
+    (hshape : shapeOfHOLExact value = handlerShape)
+    (hv : isValidValueHOLExact source.toExact .local handlerVar value = true)
+    (hev : evaluateHOLFiniteState
+      (setVarHOLFinite handlerVar value {calleePost with locals := source.locals}) handlerBody = (res, post))
+    (hne : res ≠ some .error) :
+    ∃ targetPost,
+      evaluateHOLFiniteState target (compileProgExactHOL context
+        (.call (some (some (.global, name), some (handlerId, handlerVar, handlerBody)))
+          function arguments)) = (res, targetPost) ∧
+      panGlobalsStateRelHOLExact (goodResHOL res) context post targetPost := by
+  classical
+  have hta := PanGlobalsOptMmapEvalCorrect.optMmapEvalCorrectHOL context source target arguments args ⟨hrel, ha⟩
+  have hlist : ∀ es : List (ExpHOL width), compileExpExactHOLList context es = es.map (compileExpExactHOL context) := by
+    intro es
+    induction es with
+    | nil => simp only [compileExpExactHOLList, List.map_nil]
+    | cons e es hrec => simp only [compileExpExactHOLList, List.map_cons, hrec]
+  rw [← hlist arguments] at hta
+  have htl := PanGlobalsStateRelationCode.stateRelLookupCodeHOL context source target true function args body callee returnShape ⟨hrel, hl⟩
+  have htz : target.clock ≠ 0 := hrel.2.2.2.2.2.1 ▸ hz
+  have hd := PanGlobalsStateRelationClock.stateRelDecClockHOL context source target true hrel
+  have he := (PanGlobalsStateRelationLocals.stateRelChangeLocalsHOL context
+    (decClockHOLFinite source) (decClockHOLFinite target) true callee).1 hd
+  change panGlobalsStateRelHOLExact true context (callEntryStateHOLFinite source callee) (callEntryStateHOLFinite target callee) at he
+  obtain ⟨bt, hbt, hr⟩ := ih args body callee returnShape ⟨ha, hl, hz⟩
+    (some (.exception handlerId value)) context (callEntryStateHOLFinite target callee) calleePost ⟨he, hb, by simp⟩
+  have hlocals : source.locals = target.locals := hrel.2.1 rfl
+  have hrestored := (PanGlobalsStateRelationLocals.stateRelChangeLocalsHOL context calleePost bt true source.locals).2 hr
+  have hentry := PanGlobalsStateRelationLocals.stateRelSetVarHOL context
+    {calleePost with locals := source.locals} {bt with locals := source.locals} true handlerVar value hrestored
+  obtain ⟨handlerPost, hrun, hpost⟩ := ihHandler args body callee returnShape value calleePost handlerShape
+    ⟨ha, hl, hz, hb, hs, hshape, hv⟩ res context
+    (setVarHOLFinite handlerVar value {bt with locals := target.locals}) post
+    ⟨by simpa only [hlocals] using hentry, hev, hne⟩
+  have htsh : target.eshapes.lookup handlerId = some handlerShape := hrel.2.2.2.2.1 ▸ hs
+  cases hlookup : source.locals.lookup handlerVar with
+  | none => simp [isValidValueHOLExact, lookupKvarHOLExact, hlookup] at hv
+  | some initializer =>
+    have hi : shapeOfHOLExact value = shapeOfHOLExact initializer := by
+      apply (shapeEqHOL_eq_true _ _).mp
+      simpa [isValidValueHOLExact, lookupKvarHOLExact, hlookup] using hv
+    have htlookup : target.locals.lookup handlerVar = some initializer := hlocals ▸ hlookup
+    exact matchedScopedCorrect context source target bt post handlerPost name function handlerId handlerVar
+      handlerBody body arguments args callee returnShape handlerShape shape initializer value address res
+      hrel hcontext hta htl htz hbt htsh hshape htlookup hi hrun hne hpost
+
 /-- Internal missing-context branch of the full constructor proof. The branch
 condition selects the literal compiler fallback; the callee and handler IHs
 remain those of the original evaluator. Untagged infrastructure until the full
