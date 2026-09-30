@@ -65,3 +65,32 @@ val ldivLongOverflow =
   ``(^s with locals := insert 3 (Word (1w:8 word)) (insert 4 (Word (0w:8 word)) (insert 5 (Word (1w:8 word)) LN)))``;
 val _ = print_eval "loop_arith_longdiv_overflow"
   ``(case loop_arith ^ldivLongOverflow (LLongDiv 1 2 3 4 5) of NONE => NONE | SOME s' => OPTION_MAP (MAP ^toNum) (get_vars [1;2] s'))``
+
+val _ = print_eval "signed_250_10"
+  ``case loop_arith (^s with locals := insert 2 (Word (250w:8 word)) (insert 3 (Word (10w:8 word)) LN)) (LDiv 1 2 3) of NONE => NONE | SOME s' => OPTION_MAP (MAP ^toNum) (get_vars [1] s')``;
+
+val _ = print_eval "signed_neg_pos"
+  ``case loop_arith (^s with locals := insert 2 (Word (250w:8 word)) (insert 3 (Word (2w:8 word)) LN)) (LDiv 1 2 3) of NONE => NONE | SOME s' => OPTION_MAP (MAP ^toNum) (get_vars [1] s')``;
+
+val _ = print_eval "signed_pos_neg"
+  ``case loop_arith (^s with locals := insert 2 (Word (6w:8 word)) (insert 3 (Word (254w:8 word)) LN)) (LDiv 1 2 3) of NONE => NONE | SOME s' => OPTION_MAP (MAP ^toNum) (get_vars [1] s')``;
+
+val _ = print_eval "signed_neg_neg"
+  ``case loop_arith (^s with locals := insert 2 (Word (250w:8 word)) (insert 3 (Word (254w:8 word)) LN)) (LDiv 1 2 3) of NONE => NONE | SOME s' => OPTION_MAP (MAP ^toNum) (get_vars [1] s')``;
+
+val _ = print_eval "signed_min_overflow"
+  ``case loop_arith (^s with locals := insert 2 (Word (128w:8 word)) (insert 3 (Word (255w:8 word)) LN)) (LDiv 1 2 3) of NONE => NONE | SOME s' => OPTION_MAP (MAP ^toNum) (get_vars [1] s')``;
+
+val _ = print_eval "signed_min_one"
+  ``case loop_arith (^s with locals := insert 2 (Word (128w:8 word)) (insert 3 (Word (1w:8 word)) LN)) (LDiv 1 2 3) of NONE => NONE | SOME s' => OPTION_MAP (MAP ^toNum) (get_vars [1] s')``;
+
+val _ = print_eval "signed_trunc_zero"
+  ``case loop_arith (^s with locals := insert 2 (Word (255w:8 word)) (insert 3 (Word (2w:8 word)) LN)) (LDiv 1 2 3) of NONE => NONE | SOME s' => OPTION_MAP (MAP ^toNum) (get_vars [1] s')``;
+
+val _ = print_eval "signed_zero_neg"
+  ``case loop_arith (^s with locals := insert 2 (Word (0w:8 word)) (insert 3 (Word (254w:8 word)) LN)) (LDiv 1 2 3) of NONE => NONE | SOME s' => OPTION_MAP (MAP ^toNum) (get_vars [1] s')``;
+
+val _ = print_eval "signed_neg_zero"
+  ``case loop_arith (^s with locals := insert 2 (Word (250w:8 word)) (insert 3 (Word (0w:8 word)) LN)) (LDiv 1 2 3) of NONE => NONE | SOME s' => OPTION_MAP (MAP ^toNum) (get_vars [1] s')``;
+
+(* All signedness labels are registered in the regeneration driver. *)

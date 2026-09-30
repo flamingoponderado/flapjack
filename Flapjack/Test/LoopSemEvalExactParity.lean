@@ -51,6 +51,24 @@ private def withLocals (l : List (Nat × WordLocW 8)) : LoopSemStateFiniteExact 
 #guard arithRes (LoopSemStateFiniteExact.loopArith (withLocals [(3, w 1), (4, w 3), (5, w 2)]) (.longDiv 1 2 3 4 5)) [1, 2] == some [129, 1]
 #guard arithRes (LoopSemStateFiniteExact.loopArith (withLocals [(3, w 1), (4, w 3), (5, w 0)]) (.longDiv 1 2 3 4 5)) [1, 2] == none
 #guard arithRes (LoopSemStateFiniteExact.loopArith (withLocals [(3, w 1), (4, w 0), (5, w 1)]) (.longDiv 1 2 3 4 5)) [1, 2] == none
+-- Original HOL signed_250_10: signed word_quot, canonical w2n result.
+example : arithRes (LoopSemStateFiniteExact.loopArith (withLocals [(2, w 250), (3, w 10)]) (.div 1 2 3)) [1] = some [0] := by cbv
+-- Original HOL signed_neg_pos: signed word_quot, canonical w2n result.
+example : arithRes (LoopSemStateFiniteExact.loopArith (withLocals [(2, w 250), (3, w 2)]) (.div 1 2 3)) [1] = some [253] := by cbv
+-- Original HOL signed_pos_neg: signed word_quot, canonical w2n result.
+example : arithRes (LoopSemStateFiniteExact.loopArith (withLocals [(2, w 6), (3, w 254)]) (.div 1 2 3)) [1] = some [253] := by cbv
+-- Original HOL signed_neg_neg: signed word_quot, canonical w2n result.
+example : arithRes (LoopSemStateFiniteExact.loopArith (withLocals [(2, w 250), (3, w 254)]) (.div 1 2 3)) [1] = some [3] := by cbv
+-- Original HOL signed_min_overflow: signed word_quot, canonical w2n result.
+example : arithRes (LoopSemStateFiniteExact.loopArith (withLocals [(2, w 128), (3, w 255)]) (.div 1 2 3)) [1] = some [128] := by cbv
+-- Original HOL signed_min_one: signed word_quot, canonical w2n result.
+example : arithRes (LoopSemStateFiniteExact.loopArith (withLocals [(2, w 128), (3, w 1)]) (.div 1 2 3)) [1] = some [128] := by cbv
+-- Original HOL signed_trunc_zero: signed word_quot, canonical w2n result.
+example : arithRes (LoopSemStateFiniteExact.loopArith (withLocals [(2, w 255), (3, w 2)]) (.div 1 2 3)) [1] = some [0] := by cbv
+-- Original HOL signed_zero_neg: signed word_quot, canonical w2n result.
+example : arithRes (LoopSemStateFiniteExact.loopArith (withLocals [(2, w 0), (3, w 254)]) (.div 1 2 3)) [1] = some [0] := by cbv
+-- Original HOL signed_neg_zero: signed word_quot, canonical w2n result.
+example : arithRes (LoopSemStateFiniteExact.loopArith (withLocals [(2, w 250), (3, w 0)]) (.div 1 2 3)) [1] = none := by cbv
 private def mem3 : LoopSemStateFiniteExact 8 Unit :=
   { base with mdomain := fun a => a == 3, memory := fun a => if a = 3 then w 7 else base.memory a }
 #guard isW (memLoad 3 mem3) 7

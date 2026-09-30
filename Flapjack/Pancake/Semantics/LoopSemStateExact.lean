@@ -400,8 +400,8 @@ def eval {width : Nat} [NeZero width] {F : Type} (state : LoopSemStateFiniteExac
   | .baseAddr => some (.word state.baseAddr)
   | .topAddr => some (.word state.topAddr)
 
-/-- Exact HOL `loop_arith_def` (`loopSemScript.sml:118-146`): `LDiv` (unsigned
-    word division, failing on a zero divisor), `LLongMul` (low and high halves of
+/-- Exact HOL `loop_arith_def` (`loopSemScript.sml:118-146`): `LDiv` (signed
+    word quotient, HOL words$word_quot, failing on a zero divisor), `LLongMul` (low and high halves of
     the natural product, `dimword` = `2 ^ width`) and `LLongDiv` (quotient and
     remainder of the two-word numerator, failing on a zero divisor or a quotient
     `>= dimword`), all through `set_var`. -/
@@ -411,7 +411,7 @@ def loopArith {width : Nat} [NeZero width] {F : Type} (state : LoopSemStateFinit
   | .div r1 r2 r3 =>
       match sptLookup r3 state.locals, sptLookup r2 state.locals with
       | some (.word q), some (.word w2) =>
-          if q ≠ 0 then some (setVar r1 (.word (w2 / q)) state) else none
+          if q ≠ 0 then some (setVar r1 (.word (w2.sdiv q)) state) else none
       | _, _ => none
   | .longMul r1 r2 r3 r4 =>
       match sptLookup r3 state.locals, sptLookup r4 state.locals with

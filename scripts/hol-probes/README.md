@@ -1452,3 +1452,10 @@ the local quotient mirrors HOL's sign cases. Regenerate using
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=stacksem_integer_inst_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
+
+The loop_sem_loop_arith probe additionally captures nine signed LDiv rows:
+250/10=0 at width8, each operand-sign combination, minimum/-1 wraparound,
+minimum/1, truncation toward zero and zero cases. These are original HOL EVAL
+outputs, kernel-replayed in LoopSemEvalExactParity. LDiv is signed word_quot;
+LLongDiv retains natural unsigned DIV/MOD and its existing rows. The driver
+now registers all seventeen arithmetic labels explicitly.
