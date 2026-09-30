@@ -72,12 +72,16 @@ theorem stateRelSetVarHOL {width : Nat} {σ : Type} [NeZero width]
   have hl := hrel.2.1 rfl
   simp only [PanSemStateFiniteExact.setVarHOLFinite, hl]
 
-/-- Source1011-1015: the panic-reset finite map is unchanged when writing an
-`none` value into `FEMPTY`. This is the exact HOL `res_var_FEMPTY` equality
-over the reviewed finite-map carrier (`HolFiniteMapExact`), stated for the
-canonical `resVarEq`/`empty` renderings already reviewed under
-`(fmap_as_finite_support_result)`; no new carrier translation is introduced. -/
-@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "res_var_FEMPTY"]
+/-- Untagged: the panic-reset finite map is unchanged when writing an `none`
+value into `FEMPTY`, matching the shape of HOL `res_var_FEMPTY`
+(`cakeml/pancake/proofs/pan_globalsProofScript.sml:1011-1015`). The HOL source
+uses the bare `α |-> β` finite-map carrier, which this statement renders with
+`HolFiniteMapExact`; no existing finite-map qualifier classifies a tagged
+*theorem* whose whole content is a single map equality (`_result` is restricted
+to defs by its lookup-target witness rule and `_equalities` requires at least
+two top-level conjuncts), so the `@[hol]` tag is deliberately withdrawn rather
+than left untagged-exact. Faithful classification is tracked by
+`flapjack-pxn.18.5.2.32.6.1`. -/
 theorem resVarFEMPTYExact {α β : Type} [DecidableEq α] (n : α) :
     HolFiniteMapExact.resVarEq (HolFiniteMapExact.empty : HolFiniteMapExact α β) (n, none) =
       (HolFiniteMapExact.empty : HolFiniteMapExact α β) := by
