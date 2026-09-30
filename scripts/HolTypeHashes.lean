@@ -499,6 +499,7 @@ import Flapjack.Pancake.Semantics.PanProps.EvaluateClockSubAtoms
 import Flapjack.Pancake.Semantics.PanProps.EvaluateClockSubCall
 import Flapjack.Pancake.Semantics.PanProps.EvaluateClockSubDecCall
 import Flapjack.Pancake.Semantics.PanProps.EvaluateClockSubAssembly
+import Flapjack.Pancake.Semantics.PanProps.EvaluateClockSub1
 import Flapjack.Pancake.Semantics.PanSem.ShMemLoadCase
 import Flapjack.Pancake.Semantics.PanSem.ExtCallCase
 import Flapjack.Pancake.Semantics.PanSem.LocalUpdatesExact
