@@ -1229,3 +1229,20 @@ while renaming both integer sources. These rows drive reconciliation of the
 executed allocator, whose previous blanket memory renaming differs at 16 bits.
 Regenerate with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=word_alloc_colour_inst_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
+
+## StackSem word bitmap codec
+
+`stacksem_word_bitmap_probeScript.sml` captures eleven original HOL `bit_length`
+and `read_bitmap` rows: zero/one/high-bit lengths, empty input, terminal zero/one,
+least-significant-first ordering, ignored terminal suffix, missing continuation,
+continuation concatenation, and width-one words. Regenerate against read-only
+prebuilt theory objects with:
+
+```sh
+CAKEML=/home/zksecurity/pancake-lean/cakeml \
+HOL_PROBE_ONLY=stacksem_word_bitmap_probeScript.sml scripts/hol-probes/regenerate.sh
+```
+
+`Flapjack/Test/StackSemWordBitmapParity.lean` kernel-checks each captured result.
+These rows exercise the HOL-shaped word/list ports; they do not establish
+Nat-utility refinement or full StackSem evaluator execution.
