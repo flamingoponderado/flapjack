@@ -1,4 +1,6 @@
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsCons
+import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallHandlerFlag
+import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallHandlerFreshNames
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.DecCall
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsState
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallHandlerNoDestination
@@ -514,6 +516,8 @@ import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.Assembly
 import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.Call
 import Flapjack.Pancake.Proofs.CrepInline.EvaluateStateLocals.Atoms
 import Flapjack.Pancake.Proofs.CrepInline.EvaluateStateLocals.Structural
+import Flapjack.Pancake.Proofs.CrepInline.EvaluateStateLocals.MoreAtoms
+import Flapjack.Pancake.Proofs.CrepInline.EvaluateStateLocals.While
 import Flapjack.Pancake.Proofs.CrepInline.Expressions
 import Flapjack.Pancake.Proofs.CrepInline.ExpressionRelations
 import Flapjack.Pancake.Proofs.CrepInline.NestedDecs
