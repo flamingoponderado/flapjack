@@ -9,6 +9,40 @@ open Flapjack.Pancake.PanLang
 open Flapjack.PanSemStateFiniteExact
 open Flapjack.PanGlobalsCompileCorrect
 
+/-- Flapjack map infrastructure: undo a scoped write with its original lookup,
+including an absent original binding. No separately named HOL declaration. -/
+private theorem restoreUpdate {width : Nat} [NeZero width]
+    (locals : HolFiniteMapExact MlS (ValueHOL width)) (name : MlS) (value : ValueHOL width) :
+    HolFiniteMapExact.resVarEq (locals.update (name, value)) (name, locals.lookup name) = locals := by
+  classical
+  apply HolFiniteMapExact.ext
+  funext key
+  cases hl : locals.lookup name with
+  | none =>
+    simp only [HolFiniteMapExact.resVarEq, HolFiniteMapExact.lookup_eraseEq,
+      HolFiniteMapExact.lookup_update_pointwise, FDOMSUB_HOL]
+    by_cases hk : key = name <;> simp [hk, hl]
+  | some oldValue =>
+    simp only [HolFiniteMapExact.resVarEq, HolFiniteMapExact.lookup_updateEq,
+      HolFiniteMapExact.lookup_update_pointwise, FUPDATE_HOL]
+    by_cases hk : key = name <;> simp [hk, hl]
+
+/-- Internal restoration algebra for the two generated scratch locals. The
+initializer and final result values may differ, and either original binding
+may be absent. No standalone HOL declaration corresponds to this composition. -/
+private theorem restoreTwoScratchWrites {width : Nat} [NeZero width]
+    (locals : HolFiniteMapExact MlS (ValueHOL width)) (resultName flagName : MlS)
+    (initializer resultValue flagValue : ValueHOL width) (hne : resultName ≠ flagName) :
+    HolFiniteMapExact.resVarEq
+      (HolFiniteMapExact.resVarEq
+        ((locals.update (resultName, resultValue)).update (flagName, flagValue))
+        (flagName, (locals.update (resultName, initializer)).lookup flagName))
+      (resultName, locals.lookup resultName) = locals := by
+  have hlookup : (locals.update (resultName, initializer)).lookup flagName =
+      (locals.update (resultName, resultValue)).lookup flagName := by
+    simp [FUPDATE, hne]
+  rw [hlookup, restoreUpdate, restoreUpdate]
+
 /-- Internal normalization of the two scoped declarations in the literal
 Global-with-handler compile_def lowering (pan_globalsScript.sml:121-125).
 Both restoration lookups are taken at the actual corresponding caller states;
