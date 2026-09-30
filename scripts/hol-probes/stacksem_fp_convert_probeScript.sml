@@ -1,4 +1,10 @@
 (*
+  Regeneration provenance: produced 2026-10-01 in the flapjack-ds9 checkout with
+  `HOL4=/home/zksecurity/HOL CAKEML=/home/zksecurity/pancake-lean/cakeml
+  HOL_PROBE_ONLY=stacksem_fp_convert_probeScript.sml scripts/hol-probes/regenerate.sh`
+  (exit 0); the shared CakeML checkout is READ-ONLY and was not modified.  The
+  regenerated output is byte-identical to the locked 11-row fixture
+  (sha256 4512fb6bff67a930718051464b903145593e59a24ca8723059d35e1473b32bd1).
   Original StackSem inst_def FP real-conversion observations from
   cakeml/compiler/backend/semantics/stackSemScript.sml: FPSqrt :559-562,
   FPToInt :605-624 and FPFromInt :625-640.  The 64-bit rows use a
