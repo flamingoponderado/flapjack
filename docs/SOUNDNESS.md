@@ -167,6 +167,27 @@ The following are open review or verification obligations:
    in both systems, and this choice rendering is not covered by the
    qualifier.
 
+## Stack bounds and liveness
+
+Compiler correctness does not unconditionally preserve source liveness on a
+finite-memory RISC-V machine. HOL's `pan_to_target_compile_semantics`
+(`cakeml/pancake/proofs/pan_to_targetProofScript.sml`) gives a precise
+source-behavior guarantee only when the statically computed `stack_max` is
+known and strictly below the available stack limit. `compile_prog_max` computes
+that bound from frame sizes and the call graph; an unknown bound (`NONE`)
+does not satisfy the condition.
+
+Otherwise, the theorem uses `extend_with_resource_limit'`: the target may
+terminate with `Resource_limit_hit` after a prefix of the source's I/O trace,
+even when the source would continue or terminate normally. In particular,
+recursive Pancake programs whose stack usage cannot be statically bounded can
+exhaust the target stack. The theorem is therefore not an exact liveness or
+complete-trace preservation guarantee for such programs; it permits RISC-V
+resource exhaustion. Recursion alone is not a proof of exhaustion, and a known
+bound must also fit the configured stack. A faithful Lean port must retain
+this distinction, not silently strengthen the theorem to exclude out-of-memory
+behavior. Flapjack's assembled end-to-end theorem is still unfinished.
+
 ## Trust and reproducibility notes
 
 The normal Lean kernel checks theorem elaboration. Some existing concrete
