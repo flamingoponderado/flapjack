@@ -492,7 +492,10 @@ and a note naming the inherited assumption in the theorem map.
 `check_hol_type_hashes.py` compares that field, in both directions, with the
 constant closure computed by `scripts/HolTypeHashes.lean` (types, and bodies
 of definitions, through Flapjack definitions and datatypes; theorem proofs are
-not followed). The status is `reviewed_reals_as_rational_cuts` when no other qualifier
+not followed). The inherited marker propagates the assumption only; it is
+not a review of the untagged definitions on the path. NaN results
+(`float_some_qnan`, HOL choice rendered by `Classical.epsilon`) are outside
+the qualifier. The status is `reviewed_reals_as_rational_cuts` when no other qualifier
 applies; otherwise the status the other qualifiers require is kept and the
 manifest records `"reals_as_rational_cuts": true`. The manifest note must
 name the qualifier and SOUNDNESS item 8, and it can never be `reviewed_exact`.

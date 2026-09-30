@@ -146,8 +146,24 @@ The following are open review or verification obligations:
    `inst_def` and the `fpSem` `fp_uop_comp_def`, `fp_bop_comp_def`,
    `fpfma_def`, `fp_cmp_comp_def` and `fp_cmp_def` renderings.
    Declarations stated over those, such as the wordSem `evaluate_def` and
-   its theorems, record the inherited assumption in the theorem map. The
-   qualifier does not remove the external assumption stated above.
+   its theorems, record the inherited assumption in the theorem map
+   (`inherits_reals_as_rational_cuts`, checked against a constant-closure
+   export). That marker propagates the assumption only; it does not review
+   the untagged definitions on the path. The qualifier is a reviewed
+   representation, not an equivalence theorem, and does not remove the
+   external assumption stated above.
+
+   Every real value these renderings reach is rational except `sqrt r`:
+   finite comparisons, the sum, difference, product and nonzero quotient of
+   two float values, the fused `x * y + z`, `float_to_int`'s floor, ceiling
+   and comparison with `1/2`, and `int_to_fp64` of an integer. Subnormal
+   values are dyadic rationals, signed zeros and infinities are decided by
+   sign bits and case splits without reals, the value-level `fp64_*`
+   operations discard the flags, and no transcendental function is reached.
+   NaN results are HOL's choice `float_some_qnan`, rendered by
+   `Classical.epsilon` over the same predicate; their payload is unspecified
+   in both systems, and this choice rendering is not covered by the
+   qualifier.
 
 ## Trust and reproducibility notes
 
