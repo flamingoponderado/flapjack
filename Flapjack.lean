@@ -1,3 +1,6 @@
+import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.AssignPrimitive
+import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.ShMemStore
+import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.ShMemLoad
 import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.CallHandler
 import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.DecCall
 import Flapjack.Pancake.Proofs.CrepInline.WhileInduction
@@ -382,6 +385,8 @@ import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.While
 import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.CallNoHandler
 import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.TailCall
 import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.Leaves
+import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.Results
+import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.ExtCall
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsMemory
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsAlignment
 import Flapjack.Pancake.Proofs.PanToCrep.EvaluateCases
