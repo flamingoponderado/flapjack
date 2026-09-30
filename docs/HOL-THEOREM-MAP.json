@@ -37072,6 +37072,30 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.5.42.4): Call case of HOL inline_prog_correct (statement crep_inlineProofScript.sml:2301-2319; case Resume [Call] :2409 with suspensions [Tail] :2536 and [Nontail] :2719-3037). Statement shape as the accepted inlineProgCorrectDecCaseExact: the HOL source run of Call caltyp fname argexps, r <> SOME Error, inl_fs SUBMAP s.code, inl_bag SUBMAP inl_fs, state_rel_code, locals_strong_rel, code_inl_rel, with the existential target run of inline_prog inl_bag (Call ...), state_rel_code, code_inl_rel and the result-indexed locals_strong_rel conclusion. The only additional hypotheses are evaluate_ind's two guarded Call premises with P := the theorem predicate written out: ihExc (handler, guarded by OPT_MMAP args, lookup_code, the ALL_DISTINCT selector, clock <> 0, callee Exception eid, caltyp = SOME (_, SOME (eid', p)), eid = eid'; state st with locals := s.locals) and ihBody (callee body at dec_clock s with locals := newlocals under the same first guards). Both are in the reviewed callNonInlined spelling. No target-run or extra-context premise. The proof splits on HOL's own case analysis of inline_prog: not inlined (callNonInlined), inlined tail call (callTail), inlined distinct-return assign call (callNontail)."
+},
+{
+  "hol_path": "hol4/src/coalgebras/llistScript.sml",
+  "hol_name": "LPREFIX_ANTISYM",
+  "lean_path": "Flapjack/Misc/LList.lean",
+  "lean_name": "lprefixAntisymHOL",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b rc27.3 source comparison pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae llistScript:2713-2714: two prefix conjuncts imply equality; no finite-list/index/chain or evaluator premise. HolLList is the original Nat-to-Option invariant subtype, using source lrep_ok_alt:36-57 and llist_tydef:64; LPREFIX case split matches source2655-2662 with ordinary List/Option carriers, equality and isPREFIX. toList getD0 is guarded by LFinite and llength_spec proves SOME length, so the fallback cannot be selected there. Curried convenience APIs remain untagged; these separate exact statements preserve HOL conjunction and quantifier order. Source-reviewed this declaration individually, not blanket lazy-list library approval; coordinator acceptance pending."
+},
+{
+  "hol_path": "hol4/src/coalgebras/llistScript.sml",
+  "hol_name": "LPREFIX_TRANS",
+  "lean_path": "Flapjack/Misc/LList.lean",
+  "lean_name": "lprefixTransHOL",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b rc27.3 source comparison pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae llistScript:2722-2723: two composable prefix conjuncts imply the composed prefix; no finite-list/index/chain or evaluator premise. HolLList is the original Nat-to-Option invariant subtype, using source lrep_ok_alt:36-57 and llist_tydef:64; LPREFIX case split matches source2655-2662 with ordinary List/Option carriers, equality and isPREFIX. toList getD0 is guarded by LFinite and llength_spec proves SOME length, so the fallback cannot be selected there. Curried convenience APIs remain untagged; these separate exact statements preserve HOL conjunction and quantifier order. Source-reviewed this declaration individually, not blanket lazy-list library approval; coordinator acceptance pending."
+},
+{
+  "hol_path": "hol4/src/coalgebras/llistScript.sml",
+  "hol_name": "prefixes_lprefix_total",
+  "lean_path": "Flapjack/Misc/LList.lean",
+  "lean_name": "prefixesLprefixTotalHOL",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b rc27.3 source comparison pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae llistScript:2744-2747: universal common upper bound c then lists a,b; conjunction of prefixes of c implies their disjunctive comparability; no finite-list/index/chain or evaluator premise. HolLList is the original Nat-to-Option invariant subtype, using source lrep_ok_alt:36-57 and llist_tydef:64; LPREFIX case split matches source2655-2662 with ordinary List/Option carriers, equality and isPREFIX. toList getD0 is guarded by LFinite and llength_spec proves SOME length, so the fallback cannot be selected there. Curried convenience APIs remain untagged; these separate exact statements preserve HOL conjunction and quantifier order. Source-reviewed this declaration individually, not blanket lazy-list library approval; coordinator acceptance pending."
 }
 ,
 {
@@ -37128,5 +37152,74 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.5.51): HOL crep_inlineProofScript.sml:2301-2319 inline_prog_correct. Binders p s r s' inl_fs s1 inl_bag in HOL order, as declared parameters. Single conjunctive hypothesis as in HOL: evaluate (p,s) = (r,s'), r <> SOME Error, inl_fs SUBMAP s.code, inl_bag SUBMAP inl_fs, state_rel_code s s1, locals_strong_rel s s1, code_inl_rel inl_fs s s1. Conclusion: exists s1'. evaluate (inline_prog inl_bag p, s1) = (r, s1') /\\ state_rel_code s' s1' /\\ code_inl_rel inl_fs s' s1' /\\ the result-indexed case (NONE/Break/Continue => locals_strong_rel; Error => F; other => T) as the displayed match. Carriers as the accepted constructor cases: evalCrepSemHOLProgExact, the tagged inline_prog_def port inlineProgHOLExact, and the exact state_rel_code/locals_strong_rel/code_inl_rel ports. No extra premise and no public IH: the untagged inlineMotive proves the evaluate_ind predicate for all p and s by the lexicographic (clock, size) induction, applying each of the 19 tagged constructor cases with its literal premises."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SkipSeqExact.lean",
+  "lean_name": "evaluateSkipSeqHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+  "hol_name": "evaluate_skip_seq",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison pan_simpProofScript.sml84-87: unconditional complete evaluate(Seq Skip p,s)=evaluate(p,s), arbitrary exact program/state, no additional premise. Skip returns NONE and unchanged state; source Seq clause uses fix_clock_evaluate rewrite exactly as finite line780 equation. Native ProgHOL/MlS/result carriers, canonical finite locals/globals/code/eshapes and genuine imported-owner codec roundtrip, positive BitVec width and Type0 FFI host only. Coordinator acceptance pending; proof-only no executable change."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SkipSeqExact.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Imported-owner canonical finite-state roundtrip; derived representation infrastructure with no separately named HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SkipSeqExact.lean",
+  "lean_name": "evaluateSeqSkipHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+  "hol_name": "evaluate_seq_skip",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison pan_simpProofScript.sml75-81: unconditional complete evaluate(Seq p Skip,s)=evaluate(p,s), arbitrary exact program/state, no extra hypotheses. Reviewed line780 Seq uses source fix_clock_evaluate; source clock bound discharges clamp for every run. NONE runs execute Skip preserving post-state; every SOME result propagates unchanged, including errors/exceptional control. Native syntax/result/MlS, canonical finite-map fields with genuine imported-owner roundtrip, positive width and Type0 FFI only. Coordinator review pending; proof-only no executed compiler change."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermSemantics.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack canonical-state representation roundtrip and private generic evaluation-pair alias elimination; no independently named HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermSemantics.lean",
+  "lean_name": "terminationWitnessReduced",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack canonical-state representation roundtrip and private generic evaluation-pair alias elimination; no independently named HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermSemantics.lean",
+  "lean_name": "semanticsFpermHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "semantics_fperm",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol source comparison22.5.20 against pan_globalsProofScript1839-1853 and panSemScript785-809: unconditional equality semantics (state with code=fperm_code f g state.code) (fperm_name f g start) = semantics state start, over arbitrary native MlS swap names/state/start. No nonFail, successful-run, target evaluation, IH, trace-prefix or result premise. Accepted evaluateFpermPrimeHOL at native Call NONE start [] gives complete pair mapping at every clock; internally projected results and FFI event lists are exactly equal. Original semantics failure test, classical holOptionSome termination predicate and entire HolLList buildLprefixLub trace-set predicate retained. Private predicate lemma only eliminates existential pair aliases, so both classical choice predicates and complete divergence sets coincide before choice/LUB; no uniqueness assumption. Canonical imported finite locals/globals/code/eshapes and same-module genuine state roundtrip reexport, native word-indexed ProgHOL/result/state and Type0 FFI host; only finite-support and positive type-indexed BitVec translations qualified. Proof-only semantic composition; no executed compiler behavior change. Independent coordinator source acceptance and merged checks pending."
 }
 ]
