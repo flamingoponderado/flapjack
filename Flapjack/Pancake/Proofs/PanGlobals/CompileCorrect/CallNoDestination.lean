@@ -43,7 +43,10 @@ HOL panSem658-697 restores caller locals on a shape-matching return and clears
 locals for unhandled exceptions, timeouts and final FFI outcomes; no handler
 IH is required for this literal caltyp specialization. The compiler preserves
 this no-destination/no-handler case (pan_globalsScript compile_def), so fresh
-locals and global destination machinery are absent. No extra public premise. -/
+locals and global destination machinery are absent. No extra public premise.
+The bare finite-map qualifier entry `callee` names the standalone map
+universally bound inside the original callee IH. It is not an extra outer
+map parameter or premise; the reviewed map translation applies at that binder. -/
 @[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "compile_correct"
   (fmap_as_finite_support_relation := [PanSemStateFiniteExact.locals, PanSemStateFiniteExact.globals, PanSemStateFiniteExact.code, PanSemStateFiniteExact.eshapes, PanGlobalsContextExact.globals, callee])
   (words_as_type_indexed_bitvec)]
