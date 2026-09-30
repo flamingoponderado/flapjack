@@ -191,8 +191,10 @@ not ports of HOL theorems about the faithful semantics and must not carry
 the tag of one.
 
 **Reviewed statements are pinned.** `docs/HOL-TYPE-HASHES.json` records the
-elaborated Lean type of each `reviewed_exact` entry in
-`docs/HOL-THEOREM-MAP.json`; for tagged definitions and `opaque` declarations it
+elaborated Lean type of each `reviewed_exact` entry in the theorem map
+(`docs/HOL-THEOREM-MAP.json`, a deterministic compatibility view generated from
+the canonical per-script shards under `docs/hol-theorem-map/`); for tagged
+definitions and `opaque` declarations it
 also records the elaborated body. CI runs `scripts/check_hol_type_hashes.py` and
 rejects statement or definition-body drift. After comparing a changed Lean
 statement (or definition body) with its HOL source, run
@@ -203,6 +205,16 @@ does not prove HOL-to-Lean equivalence or replace source-level review.
 After rebuilding a tagged declaration, run `lake build Flapjack` before the
 type-hash check: it refreshes `.lake/build/ir/Flapjack.setup.json`, which can
 otherwise still point at an older cached OLean even when `lake test` passes.
+
+**Update the theorem map by editing shards, not the compatibility view.** The
+canonical theorem-map records are the per-script JSON arrays under
+`docs/hol-theorem-map/`; `docs/HOL-THEOREM-MAP.json` is a generated compatibility
+view. Add or edit a record in its shard, then regenerate the view with
+`python3 scripts/check-hol-theorem-map-shards.py --sync-compat`. The CI gate
+`python3 scripts/check-hol-theorem-map-shards.py` fails when the shards and the
+compatibility view disagree in either direction (missing, changed, duplicate, or
+stale records), and `python3 scripts/check_hol_theorem_map.py` validates the
+canonical shards. Do not hand-edit `docs/HOL-THEOREM-MAP.json`.
 
 **A matching name is not enough.** Before adding `@[hol]`, compare the HOL and
 Lean declarations' definitions, quantified variables, hypotheses, side

@@ -4,11 +4,16 @@ The primary Pancake modules now use the paths and names of the corresponding
 scripts under `cakeml/pancake`. This is a location guide, not a claim that
 every definition or theorem in a script has been ported. Declaration-level
 provenance is recorded by `@[hol ...]` and checked by
-`scripts/check-hol-refs.py --mapping`. The declaration inventory is in
-[`HOL-THEOREM-MAP.json`](HOL-THEOREM-MAP.json); CI checks that every tagged
+`scripts/check-hol-refs.py --mapping`. The declaration inventory lives in the
+canonical per-script shards under `docs/hol-theorem-map/`, with
+[`HOL-THEOREM-MAP.json`](HOL-THEOREM-MAP.json) kept as a deterministic
+compatibility view generated from those shards. CI checks that every tagged
 declaration and every theorem or lemma under `Flapjack/Pancake/Proofs` has an
 entry, its HOL tag matches the entry, and reviewer and statement-status fields
-are present. `pending_statement_review` and
+are present. To update the inventory, edit the shards and regenerate the view
+with `python3 scripts/check-hol-theorem-map-shards.py --sync-compat`; the gate
+`python3 scripts/check-hol-theorem-map-shards.py` fails if the two views
+disagree. `pending_statement_review` and
 `no_hol_reference_pending_classification` entries are open review work, not
 claims of HOL correspondence. `documented_mismatch` records a known source
 candidate whose Lean analogue remains untagged because its statement differs;

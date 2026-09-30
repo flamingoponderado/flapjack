@@ -238,6 +238,61 @@ class RenderTest(unittest.TestCase):
         )
 
 
+class CompatViewTest(unittest.TestCase):
+    def _records(self) -> list[dict]:
+        return [
+            record(
+                "Flapjack/B.lean",
+                "bHOL",
+                "cakeml/pancake/aScript.sml",
+                "z_def",
+                status="reviewed_words_as_type_indexed_bitvec",
+                words_as_type_indexed_bitvec=True,
+            ),
+            record(
+                "Flapjack/A.lean",
+                "aHOL",
+                "cakeml/pancake/aScript.sml",
+                "a_def",
+                words_as_type_indexed_bitvec=True,
+            ),
+            record(
+                "Flapjack/C.lean",
+                "cHOL",
+                None,
+                None,
+                status="documented_mismatch",
+            ),
+        ]
+
+    def test_render_compat_is_deterministic_and_order_insensitive(self) -> None:
+        records = self._records()
+        first = MODULE.render_compat(records)
+        self.assertEqual(MODULE.render_compat(records), first)
+        self.assertEqual(MODULE.render_compat(list(reversed(records))), first)
+        payload = json.loads(first)
+        self.assertEqual(len(payload), 3)
+        self.assertTrue(first.endswith("\n"))
+
+    def test_write_compat_round_trips_all_records(self) -> None:
+        records = self._records()
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "HOL-THEOREM-MAP.json"
+            MODULE.write_compat(path, records)
+            first = path.read_bytes()
+            MODULE.write_compat(path, list(reversed(records)))
+            self.assertEqual(path.read_bytes(), first)
+            reloaded = MODULE.load_manifest(path)
+        self.assertEqual(
+            {item["lean_name"] for item in reloaded},
+            {item["lean_name"] for item in records},
+        )
+        self.assertEqual(
+            {item["statement_status"] for item in reloaded},
+            {"reviewed_exact", "reviewed_words_as_type_indexed_bitvec", "documented_mismatch"},
+        )
+
+
 class PathSafetyTest(unittest.TestCase):
     def test_rejects_absolute_hol_path(self) -> None:
         item = record("Flapjack/A.lean", "aHOL", "/etc/passwd", "x")
@@ -287,6 +342,43 @@ class PathSafetyTest(unittest.TestCase):
         # The checker is parsed, not executed (no circular runpy import).
         self.assertFalse(hasattr(MODULE, "runpy"))
         self.assertFalse(hasattr(MODULE, "_STATUS_MODULE"))
+
+    def test_write_shards_rejects_escaping_symlink_and_writes_nothing(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "shards"
+            root.mkdir()
+            outside = Path(tmp) / "outside"
+            outside.mkdir()
+            (root / "cakeml").symlink_to(outside, target_is_directory=True)
+            item = record("Flapjack/A.lean", "aHOL", "cakeml/aScript.sml", "a_def")
+            with self.assertRaises(ValueError):
+                MODULE.write_shards(root, [item])
+            self.assertEqual(list(outside.iterdir()), [])
+
+    def test_write_shards_rejects_escaping_file_symlink(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "shards"
+            (root / "cakeml").mkdir(parents=True)
+            outside = Path(tmp) / "outside.json"
+            outside.write_text("ORIGINAL", encoding="utf-8")
+            (root / "cakeml" / "aScript.sml.json").symlink_to(outside)
+            item = record("Flapjack/A.lean", "aHOL", "cakeml/aScript.sml", "a_def")
+            with self.assertRaises(ValueError):
+                MODULE.write_shards(root, [item])
+            self.assertEqual(outside.read_text(encoding="utf-8"), "ORIGINAL")
+
+    def test_write_compat_rejects_escaping_symlink(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            parent = Path(tmp) / "docs"
+            parent.mkdir()
+            outside = Path(tmp) / "outside.json"
+            outside.write_text("[]", encoding="utf-8")
+            link = parent / "HOL-THEOREM-MAP.json"
+            link.symlink_to(outside)
+            item = record("Flapjack/A.lean", "aHOL", "cakeml/aScript.sml", "a_def")
+            with self.assertRaises(ValueError):
+                MODULE.write_compat(link, [item])
+            self.assertEqual(outside.read_text(encoding="utf-8"), "[]")
 
 
 if __name__ == "__main__":

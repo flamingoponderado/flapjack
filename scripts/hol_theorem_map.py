@@ -1,19 +1,30 @@
 #!/usr/bin/env python3
 """Load and write the reviewed HOL-tag manifest in a deterministic shard layout.
 
-The record store lives under ``docs/hol-theorem-map/``: one JSON array per HOL
-script, and records whose ``hol_path`` is null (Flapjack-only classifications
-such as ``no_hol_reference_pending_classification``) grouped by their Lean
-module under ``docs/hol-theorem-map/no-hol/``. This per-script layout avoids the
-large monolithic tail where concurrent fleet merges conflict.
+The canonical record store lives under ``docs/hol-theorem-map/``: one JSON array
+per HOL script, and records whose ``hol_path`` is null (Flapjack-only
+classifications such as ``no_hol_reference_pending_classification``) grouped by
+their Lean module under ``docs/hol-theorem-map/no-hol/``. This per-script layout
+avoids the large monolithic tail where concurrent fleet merges conflict.
 
-During the migration ``docs/HOL-THEOREM-MAP.json`` is kept as a byte-stable
-generated compatibility view, written outside this module's normal path so its
-mixed literal-unicode/``\\u`` escapes are not reformatted. The shards are read
-through ``load_manifest``; ``check_drift`` compares them against the monolith
-field-for-field and flags missing/changed rows, duplicate keys, and stale or
-extra shard files, and ``sync_shards`` regenerates the shards deterministically
-with stale-shard cleanup. This module does not change any review status or
+``docs/HOL-THEOREM-MAP.json`` is a *generated compatibility view* of the
+canonical shards, not an independent source of truth. It is produced
+deterministically by ``render_compat`` / ``write_compat`` as
+``json.dumps(canonical_sorted_records, indent=2, ensure_ascii=False) + "\\n"``
+and regenerated with
+``python3 scripts/check-hol-theorem-map-shards.py --sync-compat``. The generated
+format uses literal Unicode rather than the mixed literal/``\\uXXXX`` escapes the
+pre-migration monolith happened to contain; every record's semantic content is
+preserved, and the drift checker compares records field-for-field rather than
+byte-for-byte, so the generated view is deterministic and byte-stable for a
+fixed shard set. Do not hand-edit the compatibility view; edit the shards.
+
+Contributor workflow: edit the per-script shards (or expand a batch JSON array
+into shards with ``sync_shards``), then regenerate the compatibility view with
+``write_compat`` / ``--sync-compat`` so the two stay in sync. ``load_manifest``
+reads either a shard directory or a JSON array file; ``check_drift`` compares
+them in both directions and flags missing/changed rows, duplicate keys, and
+stale or extra shard files. This module does not change any review status or
 source-review semantics.
 """
 
@@ -224,11 +235,13 @@ def _read_records(path: Path | str) -> list[dict[str, Any]]:
     return payload
 
 
-def load_manifest(path: Path | str = LEGACY_MANIFEST) -> list[dict[str, Any]]:
-    """Load the manifest from a shard directory or a legacy JSON array file.
+def load_manifest(path: Path | str = SHARD_DIR) -> list[dict[str, Any]]:
+    """Load records from a shard directory or a JSON array compatibility view.
 
     Records are validated (shape, statuses, duplicates) and returned in
-    deterministic order with canonical key order.
+    deterministic order with canonical key order. The default is the canonical
+    shard tree; a JSON array file (the generated compatibility view) may also be
+    read for batch distribution.
     """
     records = _read_records(path)
     validate_records(records)
@@ -264,24 +277,61 @@ def write_shards(
 
     Records are validated (shape, duplicates, statuses) and every shard path is
     checked as repo-relative before any file is created, so an invalid record
-    cannot cause a write outside ``root``.
+    cannot cause a write outside ``root``. Every resolved target is additionally
+    checked against ``root`` before any file is created or written, so a
+    pre-existing symlink inside the shard tree cannot redirect a write outside
+    the root.
 
     When ``cleanup`` is true, shard ``*.json`` files that the current records no
     longer produce are removed first (see ``remove_stale_shards``), so a record
     that moves between shards does not leave a duplicate leftover behind. The
-    migration/sync path passes ``cleanup=True``; the default is a non-destructive
-    write so callers that only append do not have to reason about deletion.
+    batch-expansion path passes ``cleanup=True``; the default is a
+    non-destructive write so callers that only append do not have to reason
+    about deletion.
     """
     root = Path(root)
     validated = validate_records(list(records))
     rendered = render_shards(validated)
+    # Reject any escaping target before creating or writing any file, so a
+    # symlinked shard directory/file cannot redirect a write outside ``root``.
+    for relpath in rendered:
+        _ensure_within(root, root / relpath)
     if cleanup:
         remove_stale_shards(root, validated)
     for relpath, text in rendered.items():
         target = root / relpath
         target.parent.mkdir(parents=True, exist_ok=True)
+        # Re-check after mkdir in case a parent symlink was introduced.
+        _ensure_within(root, target)
         target.write_text(text, encoding="utf-8")
     return sorted(rendered)
+
+
+def render_compat(records: Iterable[dict[str, Any]]) -> str:
+    """Render the generated compatibility view text from ``records``.
+
+    The view (``docs/HOL-THEOREM-MAP.json``) is a single JSON array of every
+    record in deterministic ``shard_sort_key`` order with canonical key order.
+    Output is byte-stable for a fixed record set. It is generated from the
+    canonical shards and must not be hand-edited.
+    """
+    validated = validate_records(list(records))
+    ordered = _canonical_records(validated)
+    return json.dumps(ordered, indent=2, ensure_ascii=False) + "\n"
+
+
+def write_compat(path: Path | str, records: Iterable[dict[str, Any]]) -> Path:
+    """Write the generated compatibility view to ``path``; return the path.
+
+    The target is resolved against its parent directory before writing, so a
+    pre-existing symlink at ``path`` cannot redirect the write outside the
+    intended directory.
+    """
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    _ensure_within(path.parent, path)
+    path.write_text(render_compat(records), encoding="utf-8")
+    return path
 
 
 def _ensure_within(root: Path, candidate: Path) -> Path:
@@ -311,9 +361,10 @@ def stale_shard_files(
 ) -> list[str]:
     """Return shard-relative paths of ``*.json`` files no longer produced.
 
-    ``records`` is the authoritative set (normally the legacy monolith).
-    Every existing shard path is validated as a safe repo-relative path that
-    resolves inside ``root``; an unsafe/escaping path raises ``ValueError``
+    ``records`` is the record set to test against (the canonical shard records
+    when checking internal consistency, or an expanded batch when distributing
+    one). Every existing shard path is validated as a safe repo-relative path
+    that resolves inside ``root``; an unsafe/escaping path raises ``ValueError``
     instead of being silently ignored.
     """
     root = Path(root)
@@ -362,8 +413,12 @@ def remove_stale_shards(
 def sync_shards(root: Path | str, records: Iterable[dict[str, Any]]) -> list[str]:
     """Deterministically write shards and remove stale leftovers.
 
-    The one-time migration and any resync command use this entry point so the
-    shard tree always equals exactly the rendered output of ``records``.
+    This is the batch-expansion helper: it distributes an edited JSON array
+    (the compatibility view or any equivalent record list) into the canonical
+    shard tree, removing leftovers, so the shard tree equals exactly the
+    rendered output of ``records``. After expanding a batch change this way,
+    regenerate the compatibility view from the shards so the generated view
+    reflects the canonical tree.
     """
     return write_shards(root, records, cleanup=True)
 
@@ -374,7 +429,7 @@ def _record_identity(record: dict[str, Any]) -> str:
 
 @dataclass
 class ManifestDiff:
-    """Structured result of comparing shard records with the legacy monolith."""
+    """Structured result of comparing canonical shard records with the compat view."""
 
     missing_from_shards: list[str] = dataclass_field(default_factory=list)
     missing_from_monolith: list[str] = dataclass_field(default_factory=list)
@@ -484,11 +539,14 @@ def check_drift(
     shard_root: Path | str = SHARD_DIR,
     monolith_path: Path | str = LEGACY_MANIFEST,
 ) -> ManifestDiff:
-    """Fail-worthy drift report for shards versus the authoritative monolith.
+    """Fail-worthy drift report for the canonical shards versus the compat view.
 
-    Reports record-level disagreements, duplicate keys on either side, invalid
-    records, and stale/extra shard files (shards the monolith no longer
-    produces). The legacy monolith is the reference for the produced shard set.
+    The shard tree is canonical and ``docs/HOL-THEOREM-MAP.json`` is its
+    generated compatibility view. The comparison is bidirectional and
+    content-level (order-insensitive, duplicate-detecting): it reports
+    record-level disagreements in either direction, duplicate keys on either
+    side, invalid records, and stale/extra shard files (shard files that the
+    canonical record set does not produce).
     """
     shard_records = _read_records(shard_root)
     monolith_records = _read_records(monolith_path)
@@ -501,5 +559,5 @@ def check_drift(
         validate_records(monolith_records)
     except ValueError as exc:
         diff.invalid_monolith.append(str(exc))
-    diff.stale_shard_files = stale_shard_files(shard_root, monolith_records)
+    diff.stale_shard_files = stale_shard_files(shard_root, shard_records)
     return diff

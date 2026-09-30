@@ -222,5 +222,108 @@ class DriftGateTest(unittest.TestCase):
             self.assertIn("stale/extra shard file", result.stderr)
 
 
+class CompatWorkflowTest(unittest.TestCase):
+    def _seed(self) -> list[dict]:
+        return [
+            record("Flapjack/A.lean", "aHOL", "cakeml/aScript.sml", "a_def"),
+            record("Flapjack/B.lean", "bHOL", "cakeml/bScript.sml", "b_def"),
+        ]
+
+    def _run(self, *extra: str) -> subprocess.CompletedProcess:
+        return subprocess.run(
+            [sys.executable, str(GATE), *extra],
+            capture_output=True,
+            text=True,
+            cwd=str(SCRIPTS.parent),
+        )
+
+    def test_sync_compat_generates_view_from_canonical_shards(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            shard_root = Path(tmp) / "shards"
+            compat = Path(tmp) / "HOL-THEOREM-MAP.json"
+            MODULE.sync_shards(shard_root, self._seed())
+            self.assertFalse(compat.exists())
+            result = self._run(
+                "--shard-dir", str(shard_root), "--manifest", str(compat),
+                "--sync-compat",
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertTrue(compat.exists())
+            result = self._run("--shard-dir", str(shard_root), "--manifest", str(compat))
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertIn("match", result.stdout)
+
+    def test_gate_fails_when_compat_view_is_mutated(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            shard_root = Path(tmp) / "shards"
+            compat = Path(tmp) / "HOL-THEOREM-MAP.json"
+            MODULE.sync_shards(shard_root, self._seed())
+            result = self._run(
+                "--shard-dir", str(shard_root), "--manifest", str(compat),
+                "--sync-compat",
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            payload = json.loads(compat.read_text(encoding="utf-8"))
+            payload[0]["reviewer"] = payload[0]["reviewer"] + " PERTURBED"
+            compat.write_text(
+                json.dumps(payload, indent=2, ensure_ascii=False) + "\n",
+                encoding="utf-8",
+            )
+            result = self._run("--shard-dir", str(shard_root), "--manifest", str(compat))
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("differs", result.stderr)
+
+    def test_contributor_edit_shard_then_regenerate_compat(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            shard_root = Path(tmp) / "shards"
+            compat = Path(tmp) / "HOL-THEOREM-MAP.json"
+            MODULE.sync_shards(shard_root, self._seed())
+            self.assertEqual(
+                self._run(
+                    "--shard-dir", str(shard_root), "--manifest", str(compat),
+                    "--sync-compat",
+                ).returncode,
+                0,
+            )
+            # A contributor edits a canonical shard record.
+            target = shard_root / "cakeml" / "aScript.sml.json"
+            payload = json.loads(target.read_text(encoding="utf-8"))
+            payload[0]["hol_line"] = 42
+            target.write_text(
+                json.dumps(payload, indent=2, ensure_ascii=False) + "\n",
+                encoding="utf-8",
+            )
+            drift = self._run("--shard-dir", str(shard_root), "--manifest", str(compat))
+            self.assertNotEqual(drift.returncode, 0)
+            self.assertIn("differs", drift.stderr)
+            # Regenerating the compatibility view from the shards clears drift.
+            self.assertEqual(
+                self._run(
+                    "--shard-dir", str(shard_root), "--manifest", str(compat),
+                    "--sync-compat",
+                ).returncode,
+                0,
+            )
+            self.assertEqual(
+                self._run(
+                    "--shard-dir", str(shard_root), "--manifest", str(compat)
+                ).returncode,
+                0,
+            )
+
+    def test_skip_compat_checks_only_shard_internals(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            shard_root = Path(tmp) / "shards"
+            MODULE.sync_shards(shard_root, self._seed())
+            result = self._run("--shard-dir", str(shard_root), "--skip-compat")
+            self.assertEqual(result.returncode, 0, result.stderr)
+            stale = shard_root / "no-hol" / "Ghost.lean.json"
+            stale.parent.mkdir(parents=True, exist_ok=True)
+            stale.write_text("[]", encoding="utf-8")
+            result = self._run("--shard-dir", str(shard_root), "--skip-compat")
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("stale/extra shard file", result.stderr)
+
+
 if __name__ == "__main__":
     unittest.main()

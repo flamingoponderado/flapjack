@@ -44,7 +44,9 @@ translation comes from line-by-line review of definitions and theorem shapes,
 direct HOL probes compared with Lean results, and differential compiler tests.
 Those checks are valuable but finite and do not close this trust boundary.
 
-`HOL-THEOREM-MAP.json` records each tagged declaration and every theorem or
+The theorem map (the canonical per-script shards under
+`docs/hol-theorem-map/`, with `HOL-THEOREM-MAP.json` as a generated
+compatibility view of them) records each tagged declaration and every theorem or
 lemma under `Flapjack/Pancake/Proofs`, including statement-review status and a
 reviewer field. The CI gate checks inventory coverage and metadata consistency;
 it does not perform statement review. Entries marked

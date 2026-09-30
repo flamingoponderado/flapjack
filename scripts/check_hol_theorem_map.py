@@ -23,9 +23,12 @@ import hol_theorem_map  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 PROOFS_DIR = ROOT / "Flapjack" / "Pancake" / "Proofs"
-# ``docs/HOL-THEOREM-MAP.json`` is kept as the byte-stable compatibility view;
-# the canonical record store is the per-HOL-script shard tree, read through the
-# loader. ``DEFAULT_MANIFEST`` remains the monolith path for legacy callers.
+# The canonical record store is the per-HOL-script shard tree. The
+# ``docs/HOL-THEOREM-MAP.json`` compatibility view is generated from those
+# shards (see ``scripts/hol_theorem_map.py`` and
+# ``scripts/check-hol-theorem-map-shards.py --sync-compat``) and is not an
+# independent source of truth. ``DEFAULT_MANIFEST`` is the generated view path
+# for callers that still read it.
 DEFAULT_MANIFEST = ROOT / "docs" / "HOL-THEOREM-MAP.json"
 DEFAULT_SHARDS = ROOT / "docs" / "hol-theorem-map"
 DEFAULT_RECORDS = DEFAULT_SHARDS
@@ -2799,14 +2802,18 @@ def main(argv: list[str]) -> int:
         type=Path,
         default=DEFAULT_RECORDS,
         help=(
-            "shard directory (canonical) or legacy JSON array file to read; "
-            "defaults to the per-HOL-script shard tree"
+            "canonical shard directory to read (defaults to docs/hol-theorem-map); "
+            "a JSON array compatibility view may also be read for batch distribution"
         ),
     )
     parser.add_argument(
         "--bootstrap",
         action="store_true",
-        help="write an initial shard tree deterministically and exit (will not overwrite)",
+        help=(
+            "write an initial shard tree deterministically and exit (will not "
+            "overwrite); then regenerate the compatibility view with "
+            "scripts/check-hol-theorem-map-shards.py --sync-compat"
+        ),
     )
     args = parser.parse_args(argv)
 
