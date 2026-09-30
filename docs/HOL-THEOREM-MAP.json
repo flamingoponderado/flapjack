@@ -30034,6 +30034,110 @@
     "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.2.31.1) compared pan_globalsProofScript.sml:172-186 gen_goal pan_globals$compile at the Seq conjunct of panSem evaluate_ind (printed: !c1 c2 s. (!res s1. (res,s1) = evaluate (c1,s) /\\ res = NONE ==> P (c2,s1)) /\\ P (c1,s) ==> P (Seq c1 c2,s)), with P = compileCorrectGoal for the IHs (same order/orientation as the reviewed tagged panSem evaluate_ind and pcCompileCorrect_Seq) and the conclusion unfolded: forall res ctxt t s', state_rel T ctxt s t /\\ evaluate(Seq c1 c2,s)=(res,s') /\\ res<>SOME Error ==> exists t'. evaluate(compile ctxt (Seq c1 c2),t)=(res,t') /\\ state_rel (good_res res) ctxt s' t'. No extra premise. Proof uses evaluate_def line-780 Seq equation (fix_clock rewritten), compile Seq = Seq of compiles, IH on c1 then IH on c2 when NONE (HOL872-878). Exact tagged carriers; canonical finite state/context and positive-width word/Type0 FFI translation only. Coordinator source review pending."
   },
   {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMem.lean",
+    "lean_name": "compileCorrect_ShMemStore",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 (bead flapjack-pxn.18.5.2.30) compared pan_globalsProofScript.sml:839-851 Resume compile_correct[ShMemStore] against the printed panSem evaluate_ind conjunct !op ad e s. P (ShMemStore op ad e,s) (scripts/hol-probes/pan_sem_evaluate_ind_probe.out:11). P is unfolded as in Base.lean: forall res ctxt t s', state_rel T ctxt s t and evaluate(ShMemStore op ad e,s)=(res,s') and res<>SOME Error ==> exists t'. evaluate(compile(ShMemStore op ad e),t)=(res,t') and state_rel (good_res res) ctxt s' t'. Same binders/order, no IH and no extra premise. HOL compiles to the same constructor with compiled address/value; source and target evaluate the same shMemStoreHOLExact primitive, which reads only shMemaddrs and ffi (equal by the relation) and touches only ffi, so the result and ffi agree and every other relation conjunct is preserved. Proof uses the tagged evaluateHOLFiniteState_shMemStore_total, compileProgExactHOL and compileExpCorrectHOL. Exact tagged carriers; canonical finite state/context and positive-width word/Type0 FFI translation only. Assembly remains open (bead .36)."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMem.lean",
+    "lean_name": "compileCorrect_ShMemLoad_local",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 (bead flapjack-pxn.18.5.2.30) compared pan_globalsProofScript.sml:757-838 Resume compile_correct[ShMemLoad], sub-case vk=Local (HOL opens the case with Cases on the varkind constructor). Statement follows the printed evaluate_ind conjunct !op vk v ad s. P (ShMemLoad op vk v ad,s) (scripts/hol-probes/pan_sem_evaluate_ind_probe.out:10) at vk=Local, with P unfolded exactly as in Base.lean; no IH and no extra premise. The compiler keeps the constructor and only compiles the address, so source and target evaluate the same shMemLoadHOLFiniteExact local primitive; its result agrees because shMemaddrs/ffi/locals are equal under state_rel T, and the post-state relation holds at good_res res via state_rel_empty_locals / state_rel_set_var with the matching ffi update. Proof uses the tagged evaluateHOLFiniteState_shMemLoad_source, compileProgExactHOL and compileExpCorrectHOL. The Global sub-case (nested Dec/Seq/Store lowering) is tracked by a child of flapjack-pxn.18.5.2.30 and is not claimed here. Exact tagged carriers; canonical finite state/context and positive-width word/Type0 FFI translation only. Assembly remains open (bead .36)."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMem.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanSemStateFiniteExact toExact/ofExact finite-support roundtrip; it supports the PanSemStateFiniteExact fields named by the compile_correct ShMem tags."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMem.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanGlobalsContextExact toBroad/ofBroad roundtrip; it supports PanGlobalsContextExact.globals named by the compile_correct ShMem tags."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMem.lean",
+    "lean_name": "ofExact_toExact_any",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only carrier repacking support (bead flapjack-pxn.18.5.2.30): ofExact is proof-irrelevant in its FiniteSupport argument. HOL has no separate declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMem.lean",
+    "lean_name": "ofExact_ffiUpdate",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only carrier repacking support (bead flapjack-pxn.18.5.2.30): repacking a toExact state with an ffi update recovers the finite carrier with the same update. HOL has no separate declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMem.lean",
+    "lean_name": "ofExact_proof_irrel",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only carrier repacking support (bead flapjack-pxn.18.5.2.30): ofExact ignores its FiniteSupport proof. HOL has no separate declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMem.lean",
+    "lean_name": "stateRelFfiUpdateHOL",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only relation support (bead flapjack-pxn.18.5.2.30): replacing the ffi field of both related states with the same value preserves panGlobalsStateRelHOLExact, whose only ffi occurrence is an equality conjunct. HOL has no separate declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMem.lean",
+    "lean_name": "stateRelFlagFalseHOL",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only relation support (bead flapjack-pxn.18.5.2.30): the true-flag relation implies the false-flag relation because the locals equality conjunct becomes vacuous. HOL has no separate declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMem.lean",
+    "lean_name": "shMemStoreRelationHOL",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only relation support (bead flapjack-pxn.18.5.2.30): a shMemStoreHOLExact step preserves panGlobalsStateRelHOLExact between the two states, since the store reads only shMemaddrs/ffi (equal under the relation) and updates only ffi. HOL proves this inline in compile_correct[ShMemStore]; it has no separate declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMem.lean",
+    "lean_name": "shMemLoadLocalRelationHOL",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only relation support (bead flapjack-pxn.18.5.2.30): a local shMemLoadHOLFiniteExact step preserves panGlobalsStateRelHOLExact between the two states, since the load reads only shMemaddrs/ffi/locals (equal under the relation) and writes locals/ffi. HOL proves this inline in compile_correct[ShMemLoad]; it has no separate declaration."
+  },
+  {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Seq.lean",
     "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
     "hol_path": null,
