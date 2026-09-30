@@ -82,6 +82,8 @@ import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsSimulation
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsRanges
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsReload
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsOldLoads
+import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsMapDisjoint
+import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsContext
 import Flapjack.Compiler.Backend.Semantics.StackSem.FixedStackCases
 import Flapjack.Compiler.Backend.Semantics.StackSem.DynamicStackCases
 import Flapjack.Compiler.Backend.Semantics.StackSem.SizeBitmapCases

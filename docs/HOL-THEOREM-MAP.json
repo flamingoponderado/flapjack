@@ -33365,6 +33365,30 @@
   "reviewer": "Flapjack-only equation between literal recursive compiled argument list and MAP spelling used by exact OPT_MMAP theorem; no separate HOL declaration."
 },
 {
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/InitGlobalsMapDisjoint.lean",
+  "lean_name": "initializerMapsDisjoint",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific original initializer simultaneous-map update certificate (.22.10.12), HOL2300-2327. Original state_rel supplies old disjointGlobals; original oldglobal/free disjointness plus accepted headAllocationBase/addresses_add yields head-vs-old separation both ways. Exact context updateEq and executed source setGlobalHOLFinite/update lookup semantics used. Exhaustive key=initializer-name cases preserve old-vs-old and exclude both-new using key inequality. Arbitrary replacement name/value, no freshness/scalar/target-evaluation premise or independently named HOL declaration. Full initializer relation/cons assembly remains open."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/InitGlobalsContext.lean",
+  "lean_name": "byteAlignedAdd",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific initializer context certificate (.22.10.13), original2189-2195 and state_rel context FEVERY conjunct. Source empty-locals evaluation/stateRel F derive declared shape validity. Original globalsSize alignment plus relation goodDimindex/top alignment derive new offset and headblock alignment using accepted stride/subtraction. Addition factors through zero and double subtraction. Exact context updateEq preserves original entries and allows replacement. No fresh-name/store/evaluation result/newalignment premise; no independently named CakeML HOL declaration. Full state relation/cons assembly remains open."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/InitGlobalsContext.lean",
+  "lean_name": "initializerContext",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific initializer context certificate (.22.10.13), original2189-2195 and state_rel context FEVERY conjunct. Source empty-locals evaluation/stateRel F derive declared shape validity. Original globalsSize alignment plus relation goodDimindex/top alignment derive new offset and headblock alignment using accepted stride/subtraction. Addition factors through zero and double subtraction. Exact context updateEq preserves original entries and allows replacement. No fresh-name/store/evaluation result/newalignment premise; no independently named CakeML HOL declaration. Full state relation/cons assembly remains open."
+},
+{
   "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/DecCall.lean",
   "lean_name": "compileCorrect_DecCall",
   "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
