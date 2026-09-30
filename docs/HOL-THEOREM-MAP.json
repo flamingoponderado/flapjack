@@ -9,6 +9,57 @@
     "reviewer": "flapjack-luna-c literal source comparison (2026-09-30; bead flapjack-k00m), pan_globalsScript.sml236-256: exact DeclHOL/ProgHOL/ShapeHOL/MlS carriers, universally bound declaration list and start, first-match ALOOKUP(functions) via local structural helper, NONE yields empty list. SOME retains args/return shape, resort_decls then new_main_name from original declarations, fperm_decs, empty context with zero globals_size and bytes_in_word*n2w(SUM(MAP size_of_shape(dec_shapes renamed))) max size. Calls accepted qualified compileDecsExactHOL; initial finite map is the reviewed canonical empty map internal to the body, with no finite-map input or output requiring an owning-field qualifier. Generated function uses start, false inline/export, original parameters, Seq(nested_seq initializers)(Call NONE fresh-start mapped local parameter Vars), original return shape. Output order is exceptions ++ newMain::functions. NeZero positive BitVec width is the conventional HOL dimension translation. Direct original HOL EVAL capture retains three old sentinels and adds metadata/global/exception observations; exact executable Lean guards cover each full constructor/order/word and metadata field. Kernel checks definition and missing-entry equation; guards use executable evaluation, not a cross-assistant equivalence theorem. Production top-definition routing and compile_top_semantics are not claimed complete. Independent coordinator review pending."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Bitmap.lean",
+    "lean_name": "filterBitmap",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "filter_bitmap_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.2), stackSemScript27-35: generic List Bool x List alpha -> Option(List alpha x List alpha). Empty bitmap returns empty selection and all remaining values; false consumes one input without selection; true recursively selects the tail then prepends the current value; malformed remaining bitmap/input returns none. Every clause and recursive failure matches HOL. No array/word/map/name translation, no validity premise. Old stackGcNatFilterBitmap is proved equal for all inputs by stackGcNatFilterBitmap_eq_exact, without changing that implementation. Exact evaluator/GC wiring remains on open y19g; independent coordinator source review required."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Bitmap.lean",
+    "lean_name": "mapBitmap",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "map_bitmap_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.2), stackSemScript37-48: generic bitmap/moved/original lists to optional right-associated triple. Empty bitmap returns empty rebuilt prefix and both unconsumed lists; false copies and consumes one original value without consuming moved; true consumes both lists and inserts the moved head; recursive failure and missing required heads return none. HOL list carriers, tuple order, recursion and wildcard rejection are preserved. Old stackGcNatMapBitmap is proved equal on all inputs by stackGcNatMapBitmap_eq_exact, no bitmap-validity assumption or implementation change. Exact evaluator/GC wiring remains open under y19g; coordinator review required."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Bitmap.lean",
+    "lean_name": "filterBitmapLength",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "filter_bitmap_LENGTH",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.2), stackSemScript50-58: same universal bs/xs/x/y order, sole filter_bitmap bs xs = SOME(x,y) premise, and LENGTH y <= LENGTH xs conclusion. Polymorphic List alpha carrier; no validity or success premise beyond the original result equality. Kernel proof by source bitmap/input cases and transitivity. Coordinator review required."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Bitmap.lean",
+    "lean_name": "mapBitmapLength",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "map_bitmap_LENGTH",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.2), stackSemScript60-71: same universal t1/t2/t3/x/y/z order, sole map_bitmap t1 t2 t3 = SOME(x,y,z) premise, and conjunction LENGTH y <= LENGTH t2 /\\ LENGTH z <= LENGTH t3. Generic lists, no extra conditions; all false/true/empty/truncated-input cases kernel-proved. Coordinator review required."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/State.lean",
+    "lean_name": "StackSemStateFiniteExact",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "state",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["regs", "fpRegs", "store"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.1): stackSemScript.sml state datatype has22 fields in source order, all preserved. regs is num|->word_loc, fp_regs num|->word64, store store_name|->word_loc: exactly the three canonical finite-map translations named in the qualifier. stack and bitmaps remain List; stack_space and clock are Nat. memory is total word-to-word_loc, mdomain/sh_mdomain and ffi_save_regs are reviewed Bool-predicate set renderings (no extra finite-support assumption). compile takes C and List(Nat x HolProg width), returns Option(List(BitVec8) x C); compile_oracle returns C x that program list x List(BitVec width), matching the HOL right-associated products. code is Spt HolProg, not a finite map. use_stack/use_store/use_alloc/be are Bool. HolProg uses the reviewed exact asm fields, one shared positive word width, and MlString FFI names. WordLocW, WordStoreHOL (all18 store_name constructors including Temp(BitVec5)), WordSemBuffer width8/widthwidth, WordSemGcFun width and HolFfiState F reuse the same exact shared carriers as WordSem: the GC callback domain is roots/memory/domain/store and optional result roots/memory/store, with canonical store at both positions as reviewed by its own function qualifier. The owning state retains NeZero width, C/F universe0 types, and same-module StackSemStateSupport.holFmapAsFiniteSupportWitness gives both non-vacuous roundtrips. This is a carrier prerequisite only; exact evaluator, numerical instruction semantics and executed-path refinement remain open. Coordinator independent review required."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/State.lean",
+    "lean_name": "StackSemResult",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "result",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.1): stackSemScript.sml:12-21 has eight constructors: Result/Exception/Halt each one word_loc; Break/Continue each num; TimeOut/Error no payload; FinalFFI one final_event. StackSemResult preserves that order and every arity/payload, using reviewed WordLocW width and HolFinalEvent, Nat for num, positive BitVec dimension with NeZero width. Unlike WordSemResult, Result has no extra value list. Carrier only, no evaluator claim; independent coordinator review required."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/WordAlloc/KeyMaps.lean",
     "lean_name": "applyNummapKey",
     "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
@@ -25806,6 +25857,22 @@
     "lean_name": "strongLocalsRelExtendAux",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol source comparison 2026-09-30, bead .18.5.11.1.5: HOL word_allocProof922-929. Retains domain source subset s and strong_locals_rel on s, concludes arbitrary t relation; existing successful source lookup establishes domain membership. Payload-polymorphic Spt alpha (not WordLoc-specialized), HOL set inclusion rendered characteristic-predicate implication; arbitrary f, no injection/target-success/global relation premise. Exact existing generic relation definition and lookup-domain equivalence used; no representation qualifier needed."
+  },
+  {
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "lookup_inter",
+    "lean_path": "Flapjack/Misc/Sptree.lean",
+    "lean_name": "sptLookup_sptInterCases",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead txo5: pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae sptreeScript372-381. Full lookup equation retains left payload exactly when both lookups are SOME, otherwise NONE; source tree induction and canonical mkBN/mkBS lookup collapse are mirrored. Reviewed exact LN/LS/BN/BS and heterogeneous inter definition. Independent alpha/beta payloads, arbitrary trees/keys, no wf or injection assumption. Existing pinned external source/license SHA provenance unchanged. Private canonical-collapse helpers are Flapjack proof infrastructure."
+  },
+  {
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "domain_inter",
+    "lean_path": "Flapjack/Misc/Sptree.lean",
+    "lean_name": "sptDomain_sptInter",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead txo5: pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae sptreeScript650-656. Full set equality retained as characteristic-predicate conjunction; derived by both lookup cases, not merely a one-way membership inclusion. Reviewed exact LN/LS/BN/BS and heterogeneous inter definition. Independent alpha/beta payloads, arbitrary trees/keys, no wf or injection assumption. Existing pinned external source/license SHA provenance unchanged. Private canonical-collapse helpers are Flapjack proof infrastructure."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateAddClockIoEventsMono.lean",

@@ -1,4 +1,5 @@
 import Flapjack.StackAlloc.Machine
+import Flapjack.Compiler.Backend.Semantics.StackSem.Bitmap
 
 /-
   The HOL source for this specification is
@@ -89,6 +90,29 @@ def stackGcNatMapBitmap :
         stackGcNatMapBitmap bits moved values
       pure (movedValue :: mapped, restMoved, restValues)
   | _, _, _ => none
+
+/-- Flapjack-specific utility correspondence to the reviewed generic list
+    definition. This does not refine the fuel-bounded Stack machine evaluator. -/
+theorem stackGcNatFilterBitmap_eq_exact (bits : List Bool) (values : List StackGcNatValue) :
+    stackGcNatFilterBitmap bits values = StackSem.filterBitmap bits values := by
+  induction bits generalizing values with
+  | nil => rfl
+  | cons b bits ih =>
+      cases values <;> cases b <;>
+        simp [stackGcNatFilterBitmap, StackSem.filterBitmap, ih]
+      all_goals split <;> (rename_i heq; rw [heq]; rfl)
+
+/-- Flapjack-specific utility correspondence on all inputs, including missing
+    moved roots and truncated stacks; no bitmap-validity premise is assumed. -/
+theorem stackGcNatMapBitmap_eq_exact (bits : List Bool)
+    (moved values : List StackGcNatValue) :
+    stackGcNatMapBitmap bits moved values = StackSem.mapBitmap bits moved values := by
+  induction bits generalizing moved values with
+  | nil => rfl
+  | cons b bits ih =>
+      cases values <;> cases b <;> cases moved <;>
+        simp [stackGcNatMapBitmap, StackSem.mapBitmap, ih]
+      all_goals split <;> (rename_i heq; rw [heq]; rfl)
 
 theorem stackGcNatFilterBitmap_nil (values : List StackGcNatValue) :
     stackGcNatFilterBitmap [] values = some ([], values) := by
