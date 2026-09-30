@@ -37189,5 +37189,20 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Imported-owner canonical finite-state roundtrip; derived representation infrastructure with no separately named HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SkipSeqExact.lean",
+  "lean_name": "evaluateSmartSeqHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+  "hol_name": "evaluate_SmartSeq",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison pan_simpProofScript.sml69-73 and pan_simpScript.sml13-15: arbitrary first/second program/state, unconditional complete evaluate(SmartSeq p q,s)=evaluate(Seq p q,s). Exact ProgHOL constructor match realizes source p=Skip test; Skip prefix evaluation returns NONE/unchangedstate and exact line780 Seq preserves fix_clock via proved bound. Every other prefix literally Seq. No extra premises or restricted evaluator. Canonical finite state fourmap fields with genuine witness, positive wordwidth and Type0 FFI only. Coordinator review pending; proof-only no executed change."
 }
 ]

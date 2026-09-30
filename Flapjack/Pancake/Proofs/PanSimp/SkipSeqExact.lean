@@ -1,3 +1,4 @@
+import Flapjack.Pancake.PanSimp
 import Flapjack.Pancake.Semantics.PanSem.EvaluateClock
 
 namespace Flapjack
@@ -40,5 +41,18 @@ theorem evaluateSeqSkipHOL {width : Nat} {σ : Type} [NeZero width]
   generalize evaluateHOLFiniteState state program = outcome
   rcases outcome with ⟨result, post⟩
   cases result <;> simp [evaluateHOLFiniteState_skip]
+
+/-- SmartSeq has the full semantics of Seq: the Skip prefix branch is justified
+by the exact Skip/Seq equation, and all other prefixes retain Seq literally. -/
+@[hol "cakeml/pancake/proofs/pan_simpProofScript.sml" "evaluate_SmartSeq"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateSmartSeqHOL {width : Nat} {σ : Type} [NeZero width]
+    (first second : ProgHOL width) (state : PanSemStateFiniteExact width σ) :
+    evaluateHOLFiniteState state (smartSeqHOL first second) =
+      evaluateHOLFiniteState state (.seq first second) := by
+  cases first <;> simp only [smartSeqHOL]
+  symm
+  rw [evaluateHOLFiniteState_seq_line780, evaluateHOLFiniteState_skip]
 
 end Flapjack
