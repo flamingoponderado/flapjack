@@ -76,15 +76,15 @@ def exitLoop {width : Nat} [NeZero width] :
   | some (.continue label) => some (.continue (label - 1))
   | result => result
 
-/-- HOL `dest_Seq_def` (`cakeml/compiler/backend/semantics/stackSemScript.sml:749-751`):
-decompose a program into its two components exactly on `Seq`, and `none`
-otherwise. This is the RawCall entry-point decomposition of the called code.
-HOL is polymorphic in the word type `'a` and inspects only the word-independent
-`Seq` constructor; the Lean statement is over the width-indexed exact `HolProg`
-carrier (the only representation difference is the reviewed type-indexed word
-translation of that carrier). -/
-@[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "dest_Seq_def"
-  (words_as_type_indexed_bitvec)]
+/-- Untagged local alias for the RawCall entry-point decomposition of
+`cakeml/compiler/backend/semantics/stackSemScript.sml:749-751` `dest_Seq_def`:
+split a program on its two `Seq` components and return `none` otherwise.
+
+The single canonical tagged port of HOL `dest_Seq_def` is `destSeq`
+(added to this module by the companion exact-decoder change); this alias is
+retained only so the untagged RawCall slice compiles independently and should
+be deleted in favour of `destSeq` once that canonical definition lands. No
+`@[hol]` tag is carried here, to avoid two tags on the same HOL declaration. -/
 def destSeqHOL {width : Nat} [NeZero width] :
     HolProg width → Option (HolProg width × HolProg width)
   | .seq first second => some (first, second)

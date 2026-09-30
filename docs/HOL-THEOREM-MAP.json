@@ -8,16 +8,7 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-ds9 source comparison (2026-09-30; bead flapjack-y19g.13.1): HOL bad_fun_return_def (stackSemScript.sml:754-758) is the four equations bad_fun_return NONE = T; bad_fun_return (SOME (Break _)) = T; bad_fun_return (SOME (Continue _)) = T; bad_fun_return _ = F, over the exact StackSem result. Lean transcribes them one for one on Option (StackSemResult width): none/break/continue are true and every other Some result is false; no result payload is inspected, so the only carrier is the width-indexed exact StackSemResult whose word payload reaches BitVec width through the tagged WordLocW word_loc. The (words_as_type_indexed_bitvec) qualifier records the HOL 'a word/dimindex (:a) to positive-width BitVec width/[NeZero width] translation, matching the neighbouring contLoop/exitLoop ports in the same module. This is StackSem's own classifier and is distinct from WordSem's same-named bad_fun_return over a different result type. The bad/non-bad sub-result branches are exercised by the Break/Continue/Skip/Return rows of scripts/hol-probes/stacksem_jumplower_probe.out and replayed in Flapjack.Test.StackSemJumpLowerParity. Coordinator source review pending."
   },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Control.lean",
-    "lean_name": "destSeqHOL",
-    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
-    "hol_name": "dest_Seq_def",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 source comparison (2026-09-30; bead flapjack-y19g.13.2): HOL dest_Seq_def (stackSemScript.sml:749-751) is the two equations dest_Seq (Seq p1 p2) = SOME (p1,p2) and dest_Seq _ = NONE, polymorphic in the word type 'a and inspecting only the word-independent Seq constructor. Lean transcribes both clauses one for one over the width-indexed exact HolProg carrier; the only representation difference is the HOL 'a word/dimindex (:a) to positive-width BitVec width/[NeZero width] translation of that carrier, recorded by the (words_as_type_indexed_bitvec) qualifier (no finite map is traversed). This is the RawCall entry-point decomposition; the missing-code/non-Seq/recursive branches are exercised by the non_seq and success/break/continue/skip rows of scripts/hol-probes/stacksem_rawcall_probe.out and replayed in Flapjack.Test.StackSemRawCallParity. Coordinator source review pending."
-  },
-  {
+    {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Labels.lean",
     "lean_name": "getLabels",
     "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
