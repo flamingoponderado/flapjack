@@ -25417,5 +25417,39 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-94m6: compared HOL word_allocProof255-264, preserving forall ls a, MEM a ls implies domain(get_live_exp a) subset domain(big_union(MAP get_live_exp ls)). HOL sets are characteristic Nat predicates; subset is forall key membership implication. Exact positive-width word expression carrier and reviewed getLiveExp/bigUnion retain both Shift operands and right-fold left-biased Spt union. Proof mirrors list induction and uses reviewed external domain_union full equality, with no wf/injectivity or stronger membership premise. This is the live-set prerequisite explicitly used in apply_colour_exp_lemma Op case, not allocation simulation."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+    "hol_name": "state_rel_def",
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/StateRel.lean",
+    "lean_name": "stateRel",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-30; bead flapjack-cixp) against pan_simpProofScript.sml:365-384. The state update t = s with code := c and successful lookup implication preserve every parameter, body and return-shape quantifier. The definition additionally retains the absent-lookup implication; the intro theorem projects exactly the two HOL conjuncts. PanSemStateFiniteExact is the imported reviewed panSem state; c and its code field use canonical HolFiniteMapExact, with the same-module non-vacuous state codec roundtrip. MlS names and ShapeHOL/ProgHOL payloads are constructor-exact, panSimpCompileHOL is the reviewed compile_def, and positive BitVec width with universe-0 FFI host is the standard word translation. Only code is traversed; other finite maps remain untouched by the state update. No target evaluation, extra simulation, or byte-name premise is introduced.",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.code",
+      "c"
+    ]
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+    "hol_name": "state_rel_intro",
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/StateRel.lean",
+    "lean_name": "stateRel_intro",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-30; bead flapjack-cixp) against pan_simpProofScript.sml:365-384. The state update t = s with code := c and successful lookup implication preserve every parameter, body and return-shape quantifier. The definition additionally retains the absent-lookup implication; the intro theorem projects exactly the two HOL conjuncts. PanSemStateFiniteExact is the imported reviewed panSem state; c and its code field use canonical HolFiniteMapExact, with the same-module non-vacuous state codec roundtrip. MlS names and ShapeHOL/ProgHOL payloads are constructor-exact, panSimpCompileHOL is the reviewed compile_def, and positive BitVec width with universe-0 FFI host is the standard word translation. Only code is traversed; other finite maps remain untouched by the state update. No target evaluation, extra simulation, or byte-name premise is introduced.",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.code",
+      "c"
+    ]
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/StateRel.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only canonical qualifier witness, forwarding the imported PanSemStateFiniteExact toExact/ofExact roundtrip. HOL has no separate Lean carrier codec theorem; this supports the code-field representation qualifier on the pan_simp state relation."
   }
 ]
