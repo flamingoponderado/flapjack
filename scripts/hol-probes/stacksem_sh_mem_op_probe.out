@@ -1,0 +1,4 @@
+sh_mem_op_success=(NONE,4,1,SOME (Word 0w),1)
+sh_mem_op_word_exp_none=(SOME Error,5,0,SOME (Loc 1 0),1)
+sh_mem_op_missing_register=(SOME Error,5,0,NONE,1)
+sh_mem_op_timeout=(SOME TimeOut,0,0,NONE,0)

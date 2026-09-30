@@ -1,0 +1,10 @@
+guard_duplicate=(SOME Error,SOME (Word 170w),SOME (Word 0w),SOME (Word 256w),
+ SOME (Word 57005w),SOME (Word 48879w),Word 0w,Word 0w,Word 0w,T)
+non_word_operand=(SOME Error,SOME (Word 170w),SOME (Loc 9 9),SOME (Word 256w),
+ SOME (Word 57005w),SOME (Word 48879w),Word 0w,Word 0w,Word 0w,T)
+copy_words_none=(SOME Error,SOME (Word 170w),SOME (Word 0w),SOME (Word 256w),
+ SOME (Word 57005w),SOME (Word 48879w),Word 0w,Word 0w,Word 0w,T)
+success_use_alloc_true=(NONE,NONE,SOME (Word 1w),SOME (Word 264w),SOME (Word 1w),SOME (Word 1w),
+ Word 101w,Word 0w,Word 0w,T)
+success_use_alloc_false=(NONE,SOME (Word 170w),SOME (Word 1w),SOME (Word 264w),SOME (Word 1w),
+ SOME (Word 1w),Word 101w,Word 0w,Word 0w,F)

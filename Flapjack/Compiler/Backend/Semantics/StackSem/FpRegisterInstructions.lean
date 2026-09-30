@@ -1,18 +1,26 @@
 import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
 import Flapjack.Misc.MachineIeee
+import Flapjack.Misc.BinaryIeeeArith
 
-/-! StackSem inst_def FP movement/sign case fragment. Outer NONE means an
-unhandled constructor; inner NONE is HOL instruction failure. This is untagged
-Flapjack assembly infrastructure, not a port of the whole inst_def. Floating
-arithmetic, real conversions, and whole evaluator routing remain separate. -/
+/-! StackSem inst_def FP movement/sign and FP comparison/arithmetic case
+fragment. Outer NONE means an unhandled constructor; inner NONE is HOL
+instruction failure. This is untagged Flapjack assembly infrastructure, not a
+port of the whole inst_def. The comparison cases follow HOL `inst_def`
+(`cakeml/compiler/backend/semantics/stackSemScript.sml:519-542`); the
+arithmetic cases follow `:563-587`, with the `FPFma` fused multiply-add
+permutation of `fpSem$fpfma` (`cakeml/semantics/fpSemScript.sml:60-62`).
+Real conversions (FPSqrt/FPToInt/FPFromInt) and whole evaluator routing remain
+separate. -/
 namespace Flapjack.StackSemFpRegisterInstructions
 open StackSemStateOps Compiler.Encoders.Asm
 
-/-- Exact-state case dispatch for FPMov, FPAbs, FPNeg and the two FP/general
-register transfers. The 64-bit path ignores the second register; other widths
-use low/high extraction and high@@low concatenation, even at unusual widths.
-Nested setVar order preserves HOL's behavior when destinations coincide. -/
-def instFpRegister {width : Nat} [NeZero width] {C F : Type}
+/-- Exact-state case dispatch for FPLess/FPLessEqual/FPEqual, FPAdd/FPSub/
+FPMul/FPDiv, FPFma, FPMov, FPAbs, FPNeg and the two FP/general register
+transfers. Missing FP operands yield the inner HOL instruction failure. The
+64-bit transfer path ignores the second register; other widths use low/high
+extraction and high@@low concatenation, even at unusual widths. Nested setVar
+order preserves HOL's behavior when destinations coincide. -/
+noncomputable def instFpRegister {width : Nat} [NeZero width] {C F : Type}
     (instruction : HolInst width) (s : StackSemStateFiniteExact width C F) :
     Option (Option (StackSemStateFiniteExact width C F)) :=
   match instruction with
@@ -28,6 +36,45 @@ def instFpRegister {width : Nat} [NeZero width] {C F : Type}
       match getFpVar source s with
       | some word => some (setFpVar destination (holFp64Negate word) s)
       | none => none)
+  | .fp (.fpLess r d1 d2) => some (
+      match getFpVar d1 s, getFpVar d2 s with
+      | some f1, some f2 =>
+          some (setVar r (.word (if holFp64LessThan f1 f2
+            then BitVec.ofNat width 1 else BitVec.ofNat width 0)) s)
+      | _, _ => none)
+  | .fp (.fpLessEqual r d1 d2) => some (
+      match getFpVar d1 s, getFpVar d2 s with
+      | some f1, some f2 =>
+          some (setVar r (.word (if holFp64LessEqual f1 f2
+            then BitVec.ofNat width 1 else BitVec.ofNat width 0)) s)
+      | _, _ => none)
+  | .fp (.fpEqual r d1 d2) => some (
+      match getFpVar d1 s, getFpVar d2 s with
+      | some f1, some f2 =>
+          some (setVar r (.word (if holFp64Equal f1 f2
+            then BitVec.ofNat width 1 else BitVec.ofNat width 0)) s)
+      | _, _ => none)
+  | .fp (.fpAdd d1 d2 d3) => some (
+      match getFpVar d2 s, getFpVar d3 s with
+      | some f1, some f2 => some (setFpVar d1 (holFp64Add .roundTiesToEven f1 f2) s)
+      | _, _ => none)
+  | .fp (.fpSub d1 d2 d3) => some (
+      match getFpVar d2 s, getFpVar d3 s with
+      | some f1, some f2 => some (setFpVar d1 (holFp64Sub .roundTiesToEven f1 f2) s)
+      | _, _ => none)
+  | .fp (.fpMul d1 d2 d3) => some (
+      match getFpVar d2 s, getFpVar d3 s with
+      | some f1, some f2 => some (setFpVar d1 (holFp64Mul .roundTiesToEven f1 f2) s)
+      | _, _ => none)
+  | .fp (.fpDiv d1 d2 d3) => some (
+      match getFpVar d2 s, getFpVar d3 s with
+      | some f1, some f2 => some (setFpVar d1 (holFp64Div .roundTiesToEven f1 f2) s)
+      | _, _ => none)
+  | .fp (.fpFma d1 d2 d3) => some (
+      match getFpVar d1 s, getFpVar d2 s, getFpVar d3 s with
+      | some f1, some f2, some f3 =>
+          some (setFpVar d1 (holFp64MulAdd .roundTiesToEven f2 f3 f1) s)
+      | _, _, _ => none)
   | .fp (.fpMovToReg r1 r2 source) => some (
       match getFpVar source s with
       | none => none

@@ -41,8 +41,17 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 LEAN_DIRS = [ROOT / "Flapjack", ROOT / "Flapjack.lean"]
 
-# External sources are deliberately restricted to the reviewed snapshot.
+# External sources are deliberately restricted to the reviewed snapshots.
 EXTERNAL_HOL_PATH = "hol4/src/finite_maps/sptreeScript.sml"
+EXTERNAL_HOL_LPREFIX_LUB_PATH = (
+    "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml"
+)
+EXTERNAL_HOL_PATHS = frozenset({EXTERNAL_HOL_PATH, EXTERNAL_HOL_LPREFIX_LUB_PATH})
+EXTERNAL_HOL_FILES = frozenset({
+    "COPYRIGHT",
+    "src/finite_maps/sptreeScript.sml",
+    "examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+})
 EXTERNAL_HOL_REPOSITORY = "https://github.com/HOL-Theorem-Prover/HOL"
 
 
@@ -53,7 +62,7 @@ def hol_source_error(root: Path, path: str) -> str | None:
         return "invalid repository-relative HOL source path"
     if path.startswith("cakeml/"):
         return None
-    if path != EXTERNAL_HOL_PATH:
+    if path not in EXTERNAL_HOL_PATHS:
         return "HOL source is not a supported pinned external path"
     try:
         lock = json.loads((root / "hol4/SOURCES.json").read_text())
@@ -62,7 +71,7 @@ def hol_source_error(root: Path, path: str) -> str | None:
                 or not isinstance(lock["commit"], str)
                 or not re.fullmatch(r"[0-9a-f]{40}", lock["commit"])
                 or not isinstance(lock["files"], dict)
-                or set(lock["files"]) != {"COPYRIGHT", "src/finite_maps/sptreeScript.sml"}):
+                or set(lock["files"]) != EXTERNAL_HOL_FILES):
             return "invalid pinned external HOL source manifest"
         for relative, digest in lock["files"].items():
             target = root / "hol4" / relative

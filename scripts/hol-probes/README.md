@@ -1133,6 +1133,18 @@ the LUB when the input is an `lprefix_chain`. The matching source review is besi
 with `HOL_PROBE_ONLY=loop_sem_lprefix_lub_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
 
+`lprefix_lub_llist_shorter_probe.out` records original-HOL finite instances of
+`llist_shorter` from the pinned external script
+`examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml` (`llist_shorter_def`
+:122-129, `llist_shorter_fromList` :163-169): shorter/equal/longer finite lists,
+the two-empty case, the nil/non-nil directions, and the reverse-order and
+equal-length-different-content cases. `llist_shorter` matches on
+`(LLENGTH ll1, LLENGTH ll2)`, so the source definition is reduced with the
+companion library theorem `LLENGTH_fromList` and the resulting length comparison
+is `EVAL`-evaluated. Refresh it with
+`HOL_PROBE_ONLY=lprefix_lub_llist_shorter_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
+
 `crep_inline_relations_probe.out` records direct HOL simplification/evaluation
 of `state_rel_def` and `locals_rel_def` at
 `crep_inlineProofScript.sml:12-29`: a nonempty locals map is a submap of an
@@ -1450,6 +1462,184 @@ HOL_PROBE_ONLY=stacksem_loop_control_probeScript.sml
 scripts/hol-probes/regenerate.sh`. Evaluator assembly and its production
 refinement remain tracked by y19g/.12.
 
+`stacksem_control_probeScript.sml` captures eleven direct original
+`stackSem$evaluate` observations for the structured-control clauses `Seq`, `If`,
+and `Loop` (`stackSemScript.sml:811-837`). The `Seq` rows cover a non-`NONE`
+first result propagated without running the second program, a `NONE` first
+result falling through to the second program, and the `fix_clock` clamp when the
+first program is a `Tick`. The `If` rows cover `SOME T` (then-branch), `SOME F`
+(else-branch), option-valued `word_cmp = NONE` for a `Loc` operand, and a
+missing register lookup (`Error`). The `Loop` rows cover a `Continue 0` re-entry
+with a nonzero clock that times out with the emptied environment, a zero-clock
+body result that times out immediately, and `Break 1`/`Continue 1` exits that
+decrement through `exit_loop`. The observer records result, clock, register 1
+and stack length. Kernel replay over a concrete `evaluate` stub lives in
+`Flapjack/Test/StackSemControlCasesParity.lean`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_control_probeScript.sml
+scripts/hol-probes/regenerate.sh`. The `evaluateSeq`/`evaluateIf`/`evaluateLoop`
+fragments are untagged; the tagged ports of `fix_clock_def`, `cont_loop_def`,
+`exit_loop_def`, `get_var_imm_def`, `empty_env_def` and `dec_clock_def` live in
+`StackSem/Control.lean` and `StackSem/StateOps.lean`, and assembled full
+evaluation remains on `y19g`/`y19g.18`.
+
+`stacksem_jumplower_probeScript.sml` records eight direct original
+`stackSem$evaluate` observations for the `JumpLower` clause
+(`stackSemScript.sml:838-848`): a successful unsigned `Lower` comparison whose
+`INL` code lookup finds a `Return` sub-program (the non-bad result propagates
+with the decremented clock), a zero-clock timeout that empties the environment,
+a missing code target, a false comparison (`NONE` with the state unchanged), a
+`Loc` operand (`Error`), and `Break`/`Continue`/`Skip` sub-results
+(`bad_fun_return` maps each to `Error` with the recursed state). The observer
+records result, clock, register 1 and stack length. Kernel replay over a
+concrete `evaluate` stub lives in
+`Flapjack/Test/StackSemJumpLowerParity.lean`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_jumplower_probeScript.sml
+scripts/hol-probes/regenerate.sh`. The `evaluateJumpLower` fragment is
+untagged; the tagged port of `bad_fun_return_def` lives in
+`StackSem/Control.lean`, and assembled full evaluation remains on y19g.
+
+`stacksem_rawcall_probeScript.sml` records seven direct original
+`stackSem$evaluate` observations for the `RawCall` clause
+(`stackSemScript.sml:849-861`): a successful `Seq` code entry whose second
+component is a `Return` (the non-bad result propagates with the decremented
+clock), a zero-clock timeout that empties the environment, a missing code
+target (`Error`), a non-`Seq` code entry (`dest_Seq` returns `NONE`, hence
+`Error`), and `Break`/`Continue`/`Skip` sub-results (`bad_fun_return` maps each
+to `Error` with the recursed state). The observer records result, clock,
+register 1 and stack length. Kernel replay over a concrete `evaluate` stub lives
+in `Flapjack/Test/StackSemRawCallParity.lean`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_rawcall_probeScript.sml
+scripts/hol-probes/regenerate.sh`. The `evaluateRawCall` fragment is untagged;
+the tagged ports of `dest_Seq_def` and `bad_fun_return_def` live in
+`StackSem/Control.lean`, and assembled full evaluation remains on y19g.
+
+`stacksem_call_probeScript.sml` records fourteen direct original
+`stackSem$evaluate` observations for the `Call` clause
+(`stackSemScript.sml:861-892`). The `NONE` tail-call rows cover a successful
+`Return` result with the decremented/clamped clock, a present handler rejected
+with `Error`, a missing code target (`Error`), and a zero-clock timeout that
+empties the environment. The `SOME` returning rows cover a successful result
+with the handler absent and present (the `Result` location matches the return
+`Loc` and dispatches to `ret_handler`), a mismatched return location (`Error`),
+a missing code target (`Error`), a zero-clock timeout, an exception handled at
+the matching handler location, an unhandled exception propagated verbatim, an
+exception whose location mismatches the handler (`Error`), and `Break`/`Continue`
+sub-results (`bad_fun_return` maps each to `Error` with the recursed state). The
+observer records result, clock, register 1 and stack length. Kernel replay over a
+concrete `evaluate` stub lives in `Flapjack/Test/StackSemCallParity.lean`.
+Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_call_probeScript.sml
+scripts/hol-probes/regenerate.sh`. The `evaluateCall` fragment is untagged; the
+tagged ports of `find_code_def`, `fix_clock_def`, `set_var_def`,
+`bad_fun_return_def` and `dest_Seq_def` live in `StackSem/Control.lean` and
+`StackSem/StateOps.lean`, and assembled full evaluation remains on y19g.
+
+`stacksem_buffer_write_probeScript.sml` records five direct original
+`stackSem$evaluate` observations for the `CodeBufferWrite` and
+`DataBufferWrite` clauses (`stackSemScript.sml:928-944`). The rows cover a
+code-buffer write that succeeds through the exact `buffer_write` port with the
+byte truncated by `w2w` (260w becomes 4w), a code-buffer write whose address
+mismatches the next position (`Error`), a full-width data-buffer write that
+succeeds through the 64-bit dimension factor, a data-buffer address mismatch
+(`Error`), and `use_stack = F` (`Error` before any register read); the observer
+records result plus the affected buffer's position, buffer and space_left.
+Kernel replay over concrete `WordSemBuffer` fixtures lives in
+`Flapjack/Test/StackSemBufferWriteParity.lean`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_buffer_write_probeScript.sml
+scripts/hol-probes/regenerate.sh`. The `evaluateBufferWrite` fragment is
+untagged; the tagged `buffer_write_def` port lives in
+`Flapjack/Compiler/Backend/Semantics/WordSem/State.lean`, and assembled full
+evaluation remains on y19g.
+
+`stacksem_sh_mem_probeScript.sml` records fifteen direct original
+`stackSem$sh_mem_op` observations for the shared-memory helpers
+(`stackSemScript.sml:194-308`) at 64-bit words. A byte-incrementing FFI oracle
+captures the exact configuration and payload bytes through `io_events`, and a
+second oracle diverges. The rows cover word/byte/16/32 store and load success,
+a plain-word address miss (`a IN sh_mdomain`), a sized-form miss on
+`byte_align a`, the guard distinction (a word load at an unaligned address the
+sized form accepts is `Error`), both `FFI_final` outcome rows (state unchanged),
+and a non-word register (`Loc`, `Error`). Kernel replay over a concrete base
+state lives in `Flapjack/Test/StackSemShMemParity.lean`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_sh_mem_probeScript.sml
+scripts/hol-probes/regenerate.sh`. The tagged ports of `sh_mem_store_def`,
+`sh_mem_load_def`, `sh_mem_store_byte_def`, `sh_mem_store16_def`,
+`sh_mem_store32_def`, `sh_mem_load_byte_def`, `sh_mem_load16_def`,
+`sh_mem_load32_def` and the `sh_mem_op_def` dispatch live in
+`Flapjack/Compiler/Backend/Semantics/StackSem/ShMem.lean`.
+
+`stacksem_sh_mem_op_probeScript.sml` records four direct original
+`stackSem$evaluate` observations for the `ShMemOp` clause
+(`stackSemScript.sml:922-927`). The effective address is
+`word_exp s (Op Add [Var a; Const w])`; a byte-incrementing FFI oracle makes the
+successful row observable through the recorded FFI state. The rows cover a
+`ShMemOp Load` success with `word_exp` yielding `0w + 8w` and a positive clock
+(result `NONE`, clock decremented to 4, FFI state incremented), a `word_exp`
+miss on a `Loc` operand (`SOME Error`, state unchanged), a miss on a missing
+register (same), and `clock = 0` (`SOME TimeOut`, `empty_env` clearing regs and
+the stack). Kernel replay of all four rows lives in
+`Flapjack/Test/StackSemShMemOpParity.lean`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_sh_mem_op_probeScript.sml
+scripts/hol-probes/regenerate.sh`. The `evaluateShMemOp` fragment is untagged;
+the tagged `word_exp_def`, `sh_mem_op_def`, `dec_clock_def` and `empty_env_def`
+ports live in `StackSem/Expressions.lean`, `StackSem/ShMem.lean` and
+`StackSem/StateOps.lean`, and assembled full evaluation remains on y19g.
+
+`stacksem_ffi_probeScript.sml` records four direct original `stackSem$evaluate`
+observations for the `FFI` clause (`stackSemScript.sml:951-971`) at 64-bit words.
+The state type is `(64,'c,num)`; `ffi_save_regs = {1; 6}`, `mdomain = {0w}` with
+word 0 holding `0xAABBCCDDEEFF0011w`, and the operand registers hold
+`configurationLength = 2w`, `configuration = 2w`, `arrayLength = 3w`,
+`array = 4w`. The successful oracle returns three constant bytes so the length
+check against the three-byte array read passes; a second oracle diverges. The
+rows cover `FFI_return` (result `NONE`, `write_bytearray` writes the returned
+bytes into word 0, `DRESTRICT` keeps exactly the `ffi_save_regs` keys 1 and 6
+and drops 2 and 7, `fp_regs` is emptied, and the FFI state advances with one
+`io_event`), `FFI_final` (state unchanged), a byte read outside `mdomain`
+(`SOME Error`, state unchanged), and a non-`Word` length register (`SOME
+Error`). The probe rewrites `FLOOKUP (DRESTRICT ...)` with `FLOOKUP_DRESTRICT`
+because `DRESTRICT` is a non-computational finite-map specification. Kernel
+replay of all four rows lives in `Flapjack/Test/StackSemFfiParity.lean`.
+Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_ffi_probeScript.sml
+scripts/hol-probes/regenerate.sh`. The `evaluateFfi` fragment is untagged, it
+reuses the tagged `mem_load_byte_aux_def`, `write_bytearray_def`,
+`read_bytearray_def` and `call_FFI_def` ports, and assembled full evaluation
+remains on y19g.
+
+`stacksem_install_probeScript.sml` records six direct original
+`stackSem$evaluate` observations for the `Install` clause
+(`stackSemScript.sml:893-921`) at 8-bit words with a `num` compiler
+configuration and a `num` oracle state. Both the compiler and the compiler
+oracle are concrete closures so HOL EVAL reduces the clause: the oracle at step
+`n` returns `(n, [(3,Skip)], [0xAA;0xBB])` and the compiler returns
+`([0x11;0x22], cfg+1)`, with the code buffer holding `[0x11;0x22]` and the data
+buffer holding `[0xAA;0xBB]` at position 0 and the operand registers `1..4`
+holding `0w`, `2w`, `0w`, `2w`. `ffi_save_regs = {1; 5}` and `code` holds key 7.
+The rows cover a successful install with `use_stack = T` (the appended bitmap,
+the code union of keys 3 and 7, the `DRESTRICT` register restriction followed by
+the `FUPDATE` at register 1, the emptied `fp_regs`, both `buffer_flush`
+positions, and the advanced `shift_seq` oracle), a compiler byte mismatch
+(`SOME Error`, state unchanged), an empty `progs` list (`SOME Error`), a compiler
+`NONE` (`SOME Error`), the `use_stack = F` arm (the oracle bitmap satisfies the
+data equality and the data buffer is left unflushed), and a non-`Word` first
+operand (`SOME Error`). The probe rewrites `FLOOKUP` through
+`FLOOKUP_UPDATE`/`FLOOKUP_DRESTRICT` because the register update is
+non-computational. Kernel replay of all six rows lives in
+`Flapjack/Test/StackSemInstallParity.lean`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_install_probeScript.sml
+scripts/hol-probes/regenerate.sh`. The `evaluateInstall` fragment is untagged,
+it reuses the tagged `buffer_flush_def` and `shift_seq_def` ports and the
+untagged `sptUnion`/`sptFromAList` renderings, and assembled full evaluation
+remains on y19g.
+
 `pan_globals_fperm_code_probeScript.sml` observes the original
 `pan_globalsProof$fperm_code` finite map using its proved
 `FLOOKUP_fperm_code'` rewrite followed by HOL EVAL (plain EVAL leaves
@@ -1496,6 +1686,20 @@ retain that behavior. `Flapjack/Test/StackSemPatternCopyParity.lean` replays
 all rows. Regenerate with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=stacksem_pattern_copy_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
+
+`stacksem_copy_words_probeScript.sml` captures four direct original HOL
+`copy_words_def` observations (stackSemScript.sml:711-722) at width 8. The
+observer retains the final address and selected memory lookups. Rows cover a
+normal relocation whose leading high bit set keeps the loop going
+(`normal_continue`, final address `7w` with relocated and plain cells), an
+early stop after six writes when the pattern high bit is clear (`stops_early`),
+a zero pattern reached during the loop (`zero_pattern`, `NONE`), and an
+out-of-range start index (`out_of_range`, `NONE`).
+`Flapjack/Test/StackSemCopyWordsParity.lean` replays all rows as kernel-checked
+examples and prints a PASS line. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_copy_words_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
 
 `stacksem_integer_inst_probeScript.sml` records 33 original StackSem instruction
@@ -1561,6 +1765,43 @@ remain on the assembly beads. Regenerate read-only with
 HOL_PROBE_ONLY=stacksem_store_consts_guard_probeScript.sml
 bash scripts/hol-probes/regenerate.sh`.
 
+## StackSem store_const_sem definition
+
+`stacksem_store_const_sem_probeScript.sml` captures five direct original
+`store_const_sem_def` observations (stackSemScript.sml:729-741, including
+`unset_var_def` at :725-727) at width 64. The base state fixes registers
+`0 -> 0xAAw`, `1 -> 0w` (copy index), `2 -> 0x100w` (destination),
+`3 -> 0x10w` (offset), `4 -> 0xDEADw`, `5 -> 0xBEEFw`, `mdomain = UNIV`,
+memory default `Word 0w`, and bitmaps `[0x03w; 0x55w]`. The successful rows
+relocate `0x100w` to `bitmaps[1] + off = 0x65w`, return `0x100w + bytes_in_word
+= 0x108w`, store `1` into `t1`, `t2` and register `1`, store the returned
+address into register `2`, and show the `unset_var 0` arm: `use_alloc = T`
+removes register `0`, `use_alloc = F` keeps it. The other rows cover the
+duplicate-register guard, a non-word operand, and the `copy_words` `NONE` arm.
+`Flapjack/Test/StackSemStoreConstSemParity.lean` kernel-replays all rows.
+Regenerate read-only with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_store_const_sem_probeScript.sml
+bash scripts/hol-probes/regenerate.sh`.
+
+## StackSem evaluate_def StoreConsts clause
+
+`stacksem_store_consts_probeScript.sml` captures six direct original
+`evaluate_def` observations for the `StoreConsts` clause
+(stackSemScript.sml:784-788) at width 64. The program is `StoreConsts 4 5 stub`
+and the base state is the `store_const_sem` fixture. The rows cover all four
+guard outcomes and both success arms: `use_store = F -> Error`; `use_alloc = F`
+with a `SOME` stub `-> Error`; the exact `check_store_consts_opt` stub guard
+failing on empty code `-> Error`; and the `store_const_sem` success reached via
+`NONE` stubs with `use_alloc = T`/`F` and via a matching `SOME` stub inserted at
+label 7 with `use_alloc = T`. `Flapjack/Test/StackSemStoreConstsParity.lean`
+kernel-replays every row; the untagged partial case helper
+`Flapjack/StackSemStoreConsts.evaluateStoreConsts` is not the total HOL
+`evaluate`. Regenerate read-only with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_store_consts_probeScript.sml
+bash scripts/hol-probes/regenerate.sh`.
+
 ## StackSem FP register movement and sign cases
 
 `stacksem_fpreg_inst_probeScript.sml` captures twenty original `inst_def`
@@ -1578,6 +1819,32 @@ Floating arithmetic, real conversions and complete evaluator routing remain
 on the assembling instruction/evaluator beads. Regenerate read-only using
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=stacksem_fpreg_inst_probeScript.sml
+bash scripts/hol-probes/regenerate.sh`.
+
+## StackSem FP comparison and arithmetic cases
+
+`stacksem_fp_arith_probeScript.sml` captures fourteen original `inst_def`
+observations for FPLess, FPLessEqual, FPEqual, FPAdd, FPSub, FPMul, FPDiv and
+FPFma (`cakeml/compiler/backend/semantics/stackSemScript.sml:519-542` for the
+comparisons and `:563-587` for the arithmetic). The rows cover true/false
+comparisons, a missing FP operand failure, a missing arithmetic operand
+failure, and the binary64 results (1+2=3, 3-1=2, 2*3=6, 6/2=3). The FPFma row
+is `FPFma 7 2 3` with addend fp7 = 10.0, f2 = fp2 = 2.0 and f3 = fp3 = 3.0:
+HOL `fpfma v1 v2 v3 = fp64_mul_add roundTiesToEven v2 v3 v1`
+(`fpSemScript.sml:60-62`) permutes the addend to the last slot, so the observed
+result is `mul_add 2 3 10 = 16.0` (`0x4030000000000000`), not the
+wrongly-ordered `mul_add 10 2 3 = 23.0` (`0x4037000000000000`).
+`Flapjack/Test/StackSemFpRegisterInstParity.lean` kernel-replays every row:
+structural examples fix each case's exact returned expression, comparison rows
+evaluate the computable comparison renderings, and the arithmetic/FMA rows use
+the proven computable-rounding bridges of
+`Flapjack/Misc/BinaryIeeeArithFp64.lean`. FPMov, FPAbs, FPNeg, FPMovToReg and
+FPMovFromReg are already covered by `stacksem_fpreg_inst_probeScript.sml`. The
+untagged partial case helper
+`Flapjack/Compiler/Backend/Semantics/StackSem/FpRegisterInstructions.lean` is
+not the whole HOL `inst_def`. Regenerate read-only using
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_fp_arith_probeScript.sml
 bash scripts/hol-probes/regenerate.sh`.
 
 `stack_props_inst_name_probe.out` records ten direct `inst_name_def` EVAL rows

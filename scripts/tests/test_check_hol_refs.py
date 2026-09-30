@@ -23,15 +23,20 @@ class ExternalHolSourcesTest(unittest.TestCase):
         import json
         base = root / "hol4"
         (base / "src/finite_maps").mkdir(parents=True)
+        (base / "examples/pl-semantics/lprefix_lub").mkdir(parents=True)
         (base / "COPYRIGHT").write_text("retained license")
         (base / "src/finite_maps/sptreeScript.sml").write_text("Theorem domain_union: T Proof simp[] QED")
+        (base / "examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml").write_text(
+            "Theorem IMP_build_lprefix_lub_EQ: T Proof simp[] QED")
         lock = {"repository": CHECKER["EXTERNAL_HOL_REPOSITORY"], "commit": "a" * 40,
                 "files": {p: hashlib.sha256((base / p).read_bytes()).hexdigest()
-                          for p in ["COPYRIGHT", "src/finite_maps/sptreeScript.sml"]}}
+                          for p in sorted(CHECKER["EXTERNAL_HOL_FILES"])}}
         (base / "SOURCES.json").write_text(json.dumps(lock))
 
     def test_repository_snapshot_pin(self):
         self.assertIsNone(CHECKER["hol_source_error"](CHECKER["ROOT"], CHECKER["EXTERNAL_HOL_PATH"]))
+        self.assertIsNone(
+            CHECKER["hol_source_error"](CHECKER["ROOT"], CHECKER["EXTERNAL_HOL_LPREFIX_LUB_PATH"]))
 
     def test_upstream_identity_rejected(self):
         import json
@@ -51,8 +56,21 @@ class ExternalHolSourcesTest(unittest.TestCase):
             self.fixture(root)
             self.assertIsNone(CHECKER["hol_source_error"](root, CHECKER["EXTERNAL_HOL_PATH"]))
 
+    def test_missing_lprefix_pin_rejected(self):
+        import json
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.fixture(root)
+            manifest = root / "hol4/SOURCES.json"
+            lock = json.loads(manifest.read_text())
+            del lock["files"]["examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml"]
+            manifest.write_text(json.dumps(lock))
+            self.assertIsNotNone(
+                CHECKER["hol_source_error"](root, CHECKER["EXTERNAL_HOL_LPREFIX_LUB_PATH"]))
+
     def test_source_and_license_drift_rejected(self):
-        for relative in ["COPYRIGHT", "src/finite_maps/sptreeScript.sml"]:
+        for relative in ["COPYRIGHT", "src/finite_maps/sptreeScript.sml",
+                         "examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml"]:
             with self.subTest(relative=relative), tempfile.TemporaryDirectory() as tmp:
                 root = Path(tmp)
                 self.fixture(root)
