@@ -31927,5 +31927,36 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-c source comparison2026-09-30 (.32.5.10): original evaluate_unchanged_local1105-1136 ShMemLoad constructor from panSem605-610. Original unused v, nonfree/source run/good_res/nonerror and unchanged lookup retained. Local destination differs by freshness; global writes retain locals. Width-indexed shared-domain direct/aligned address guards and original final/return FFI arms preserved; no additional domain/success premise. Exact MlS/canonical four finite maps with genuine roundtrip/positive width NeZero/universe0 FFI. Proof-only, coordinator source acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/ShMemStore.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Canonical finite-state roundtrip re-export; no standalone HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/ShMemStore.lean",
+    "lean_name": "storeLocals",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private unconditional raw store locals projection; Flapjack factoring infrastructure, no standalone HOL original. Domain and both FFI arms preserve locals."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/ShMemStore.lean",
+    "lean_name": "evaluateUnchangedLocal_ShMemStore",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "evaluate_unchanged_local",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison2026-09-30 (.32.5.13): genuine evaluate_unchanged_local1105-1136 ShMemStore constructor; literal panSem611-614 and sh_mem_store529-547, source value/address order retained. Original unused v/freshness/source run/good_res/nonerror/lookup conclusion, no additional premise or IH. Source transition preserves locals on every domain/direct-aligned/FFI final/return arm; only returning FFI changes ffi. Exact MlS/canonical four state maps/genuine roundtrip/positive width NeZero/universe0 FFI. Proof-only, coordinator acceptance pending."
   }
 ]
