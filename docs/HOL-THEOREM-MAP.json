@@ -1,5 +1,21 @@
 [
   {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/KeyMaps.lean",
+    "lean_name": "applyNummapKey",
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "apply_nummap_key_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-c source comparison (2026-09-30; bead flapjack-bqzw), literal word_allocScript.sml:23-26: payload-polymorphic numeric Spt map, arbitrary Nat-to-Nat function, fromAList of MAP (key,value) to (f key,value) over exact toAList enumeration. No injection or well-formedness condition. Exact Spt constructors, unrestricted mixed HOL foldi enumeration, head-over-tail fromAList insertion and first-match collision behavior are preserved. This definition alone does not establish executed allocator routing; that obligation remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/KeyMaps.lean",
+    "lean_name": "applyNummapKeyDomain",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "apply_nummap_key_domain",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-c source comparison (2026-09-30; bead flapjack-bqzw), word_allocProofScript.sml:267-275: universally binds arbitrary f and payload-polymorphic names, concludes full domain equality to IMAGE f (domain names), with no hypotheses. Lean predicate set equality expands IMAGE into existence of a source domain key whose f image equals the queried key. Proof uses unconditional exact fromAList key membership and toAList/lookup support, covering collisions and unrestricted Spt trees; no injection, target lookup, or well-formedness premise. Independent coordinator review remains required."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateIoEventsMono.lean",
     "lean_name": "evaluate_io_events_mono",
     "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
