@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.Updates
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.StateRelation
 import Flapjack.Compiler.Backend.WordAlloc.Expressions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.StrongLocalsRel
@@ -15,6 +16,7 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.Evaluate
 import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateClock
 import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateInd
 import Flapjack.Compiler.Backend.Semantics.WordSem.Semantics
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClock
 import Flapjack.Misc.ShiftSeq
 import Flapjack.FpSemHOL
 import Flapjack.Basis.Pure.MlList

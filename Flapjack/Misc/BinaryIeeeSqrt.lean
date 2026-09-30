@@ -29,7 +29,9 @@ rendering is not an exact `@[hol]` port.  Everything else follows HOL clause
 for clause: the Hilbert choice (as `Classical.epsilon`), the tie-to-even
 preference, the flags, and the NaN, `-0` and negative cases.  A computable
 binary64 algorithm with a kernel conformance proof against this specification
-is bead `flapjack-h29l.6.3.2.2`.  HOL standard library, so untagged.
+is bead `flapjack-h29l.6.3.2.2`.  These declarations are untagged because
+the rational-cut rendering changes HOL's real-number domain, not because
+their originals are in the HOL standard library rather than CakeML.
 -/
 
 namespace Flapjack
