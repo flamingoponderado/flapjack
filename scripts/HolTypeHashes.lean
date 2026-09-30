@@ -1,3 +1,5 @@
+import Flapjack.Pancake.Proofs.CrepInline.WhileInduction
+import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.While
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Raise
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Primitive
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Dec
@@ -39,9 +41,9 @@ import Flapjack.Pancake.Proofs.PanGlobals.CompileExpLeaves
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Base
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Seq
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Store
+import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Return
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Store32
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.StoreByte
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Return
 import Flapjack.Pancake.Proofs.PanGlobals.MemStores
 import Flapjack.Pancake.Proofs.PanGlobals.MemoryUpdate
 import Flapjack.Pancake.Proofs.PanGlobals.ShMemLoadLemmas
