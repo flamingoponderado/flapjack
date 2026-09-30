@@ -143,6 +143,7 @@ import Flapjack.Compiler.Backend.Semantics.StackSem.Expressions
 import Flapjack.Compiler.Backend.Semantics.StackSem.Allocation
 import Flapjack.Compiler.Backend.Semantics.StackSem.JumpLower
 import Flapjack.Compiler.Backend.Semantics.StackSem.StoreConstsCase
+import Flapjack.Compiler.Backend.Semantics.StackSem.ControlCases
 import Flapjack.Test.StackSemExpressionParity
 import Flapjack.Test.StackSemLabelsParity
 import Flapjack.Test.StackSemLoopControlParity

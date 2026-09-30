@@ -1450,6 +1450,27 @@ HOL_PROBE_ONLY=stacksem_loop_control_probeScript.sml
 scripts/hol-probes/regenerate.sh`. Evaluator assembly and its production
 refinement remain tracked by y19g/.12.
 
+`stacksem_control_probeScript.sml` captures eleven direct original
+`stackSem$evaluate` observations for the structured-control clauses `Seq`, `If`,
+and `Loop` (`stackSemScript.sml:811-837`). The `Seq` rows cover a non-`NONE`
+first result propagated without running the second program, a `NONE` first
+result falling through to the second program, and the `fix_clock` clamp when the
+first program is a `Tick`. The `If` rows cover `SOME T` (then-branch), `SOME F`
+(else-branch), option-valued `word_cmp = NONE` for a `Loc` operand, and a
+missing register lookup (`Error`). The `Loop` rows cover a `Continue 0` re-entry
+with a nonzero clock that times out with the emptied environment, a zero-clock
+body result that times out immediately, and `Break 1`/`Continue 1` exits that
+decrement through `exit_loop`. The observer records result, clock, register 1
+and stack length. Kernel replay over a concrete `evaluate` stub lives in
+`Flapjack/Test/StackSemControlCasesParity.lean`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_control_probeScript.sml
+scripts/hol-probes/regenerate.sh`. The `evaluateSeq`/`evaluateIf`/`evaluateLoop`
+fragments are untagged; the tagged ports of `fix_clock_def`, `cont_loop_def`,
+`exit_loop_def`, `get_var_imm_def`, `empty_env_def` and `dec_clock_def` live in
+`StackSem/Control.lean` and `StackSem/StateOps.lean`, and assembled full
+evaluation remains on `y19g`/`y19g.18`.
+
 `stacksem_jumplower_probeScript.sml` records eight direct original
 `stackSem$evaluate` observations for the `JumpLower` clause
 (`stackSemScript.sml:838-848`): a successful unsigned `Lower` comparison whose

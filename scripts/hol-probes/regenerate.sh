@@ -141,6 +141,9 @@ run_probe stacksem_leaf_transfers_probeScript.sml stacksem_leaf_transfers_probe.
 run_probe stacksem_loop_control_probeScript.sml stacksem_loop_control_probe.out \
   reg_word reg_loc reg_missing immediate cont_none cont_continue_zero cont_continue_three cont_break_zero cont_break_one cont_break_three cont_result cont_exception cont_halt cont_timeout cont_error cont_final exit_none exit_continue_zero exit_continue_three exit_break_zero exit_break_one exit_break_three exit_result exit_exception exit_halt exit_timeout exit_error exit_final \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe stacksem_control_probeScript.sml stacksem_control_probe.out \
+  seq_normal seq_fallthrough seq_tick_clamp if_true if_false if_cmp_none if_operand_missing loop_recurse loop_timeout loop_exit_break loop_exit_continue \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe stacksem_jumplower_probeScript.sml stacksem_jumplower_probe.out \
   jump_lower_success jump_lower_timeout jump_lower_code_missing \
   jump_lower_comparison_false jump_lower_loc_operand jump_lower_break_sub \
