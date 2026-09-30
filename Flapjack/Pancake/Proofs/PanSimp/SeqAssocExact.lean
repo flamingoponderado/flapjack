@@ -152,4 +152,67 @@ theorem evaluateSeqAssocWhileHOL {width : Nat} {σ : Type} [NeZero width]
   exact evaluateSeqSecondCongr pre _ _
     (evaluateWhileBodySameHOL _ _ condition hb) state
 
+/-- Genuine Call-handler source case with only the handler IH. Exception
+selection, shape checks and caller local binding remain literal. -/
+@[hol "cakeml/pancake/proofs/pan_simpProofScript.sml" "evaluate_seq_assoc"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateSeqAssocCallHandlerHOL {width : Nat} {σ : Type} [NeZero width]
+    (pre handler : ProgHOL width) (returns : Option (VarKind × MlS))
+    (exception handlerVar function : MlS) (arguments : List (ExpHOL width))
+    (hhandler : ∀ state : PanSemStateFiniteExact width σ,
+      evaluateHOLFiniteState state (seqAssocHOL .skip handler) =
+        evaluateHOLFiniteState state (.seq .skip handler)) :
+    ∀ state : PanSemStateFiniteExact width σ,
+      evaluateHOLFiniteState state
+        (seqAssocHOL pre (.call (some (returns, some (exception, handlerVar, handler)))
+          function arguments)) =
+        evaluateHOLFiniteState state (.seq pre
+          (.call (some (returns, some (exception, handlerVar, handler))) function arguments)) := by
+  have hh : ∀ state : PanSemStateFiniteExact width σ,
+      evaluateHOLFiniteState state (seqAssocHOL .skip handler) =
+        evaluateHOLFiniteState state handler := by
+    intro state
+    rw [hhandler, evaluateSkipSeqHOL]
+  intro state
+  rw [seqAssocHOL.eq_8]
+  rw [evaluateSmartSeqHOL]
+  apply evaluateSeqSecondCongr
+  intro post
+  rw [evaluateHOLFiniteState_call, evaluateHOLFiniteState_call]
+  cases returns with
+  | none => simp only [hh]
+  | some resultVar =>
+    rcases resultVar with ⟨kind, name⟩
+    simp only [hh]
+
+/-- Genuine DecCall source case with only its continuation IH. Return-shape
+checks and complete local restoration remain literal. -/
+@[hol "cakeml/pancake/proofs/pan_simpProofScript.sml" "evaluate_seq_assoc"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateSeqAssocDecCallHOL {width : Nat} {σ : Type} [NeZero width]
+    (pre continuation : ProgHOL width) (name : MlS) (shape : ShapeHOL)
+    (function : MlS) (arguments : List (ExpHOL width))
+    (hcontinuation : ∀ state : PanSemStateFiniteExact width σ,
+      evaluateHOLFiniteState state (seqAssocHOL .skip continuation) =
+        evaluateHOLFiniteState state (.seq .skip continuation)) :
+    ∀ state : PanSemStateFiniteExact width σ,
+      evaluateHOLFiniteState state
+        (seqAssocHOL pre (.decCall name shape function arguments continuation)) =
+        evaluateHOLFiniteState state (.seq pre
+          (.decCall name shape function arguments continuation)) := by
+  have hc : ∀ state : PanSemStateFiniteExact width σ,
+      evaluateHOLFiniteState state (seqAssocHOL .skip continuation) =
+        evaluateHOLFiniteState state continuation := by
+    intro state
+    rw [hcontinuation, evaluateSkipSeqHOL]
+  intro state
+  rw [seqAssocHOL.eq_9, evaluateSmartSeqHOL]
+  apply evaluateSeqSecondCongr
+  intro post
+  rw [evaluateHOLFiniteState_decCall_fixClockRewrite,
+    evaluateHOLFiniteState_decCall_fixClockRewrite]
+  simp only [hc]
+
 end Flapjack

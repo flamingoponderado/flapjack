@@ -37421,5 +37421,35 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Local exact complete second-program Seq congruence from accepted evaluate_def clause; no separately named HOL original and no full seq_assoc claim."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SeqAssocExact.lean",
+  "lean_name": "evaluateSeqAssocCallHandlerHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+  "hol_name": "evaluate_seq_assoc",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison pan_simpProof117-137 and seq_assoc_def18-40 Call SOME handler recursive case: complete arbitrary-prefix result/state equality; exactly source Skip/handler-or-continuation IH and no other premise. arbitrary optional return binder, exception equality/shape/validity/binding, successful returns ignore handler; literal binder split covers every case. Accepted exact source evaluator clauses rewritten and universal bodyIH applies at actual continuation state. Native exact carriers, canonical fourmap state fields/genuine roundtrip witness, positive BitVec width and Type0 FFI only. Genuine constructor case, full117 assembly remains open; coordinator review pending, proof-only."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SeqAssocExact.lean",
+  "lean_name": "evaluateSeqAssocDecCallHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+  "hol_name": "evaluate_seq_assoc",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison pan_simpProof117-137 and seq_assoc_def18-40 DecCall recursive case: complete arbitrary-prefix result/state equality; exactly source Skip/handler-or-continuation IH and no other premise. return-shape conjunction and restoration of caller local binding preserved; every callee/control/argument/lookup/clock branch retained. Accepted exact source evaluator clauses rewritten and universal bodyIH applies at actual continuation state. Native exact carriers, canonical fourmap state fields/genuine roundtrip witness, positive BitVec width and Type0 FFI only. Genuine constructor case, full117 assembly remains open; coordinator review pending, proof-only."
 }
 ]
