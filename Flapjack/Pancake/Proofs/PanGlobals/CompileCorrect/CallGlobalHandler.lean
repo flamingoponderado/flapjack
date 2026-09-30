@@ -1072,6 +1072,32 @@ private theorem matchedFromIH {width : Nat} {σ : Type} [NeZero width]
       handlerBody body arguments args callee returnShape handlerShape shape initializer value address res
       hrel hcontext hta htl htz hbt htsh hshape htlookup hi hrun hne hpost
 
+/-- Non-good Call outcomes bypass the Store continuation and the relation
+ignores restored scoped locals. This private algebraic branch is used for
+unmatched exceptions, timeout and final FFI; the full constructor must derive
+the central Call run and relation from its original callee IH. -/
+private theorem nonGoodCallTail {width : Nat} {σ : Type} [NeZero width]
+    (context : PanGlobalsContextExact width)
+    (caller scratch sourcePost targetPost : PanSemStateFiniteExact width σ)
+    (call : ProgHOL width) (result : PanSemResultExact width)
+    (resultName flagName : MlS) (initializer : ValueHOL width) (address : BitVec width)
+    (hrun : evaluateHOLFiniteState scratch call = (some result, targetPost))
+    (hgood : goodResHOL (some result) = false)
+    (hrel : panGlobalsStateRelHOLExact false context sourcePost targetPost) :
+    evaluateHOLFiniteState scratch
+      (.seq call (.ite (.var .local flagName) .skip
+        (.store (.op .sub [.topAddr, .const address]) (.var .local resultName)))) =
+      (some result, targetPost) ∧
+    panGlobalsStateRelHOLExact (goodResHOL (some result)) context sourcePost
+      {targetPost with locals := (HolFiniteMapExact.resVarEq
+        (HolFiniteMapExact.resVarEq targetPost.locals
+          (flagName, (setVarHOLFinite resultName initializer caller).locals.lookup flagName))
+        (resultName, caller.locals.lookup resultName))} := by
+  constructor
+  · simp only [evaluateHOLFiniteState_seq_line780, hrun]
+  · rw [hgood]
+    simpa only [panGlobalsStateRelHOLExact, Bool.false_eq_true, false_implies] using hrel
+
 /-- Internal missing-context branch of the full constructor proof. The branch
 condition selects the literal compiler fallback; the callee and handler IHs
 remain those of the original evaluator. Untagged infrastructure until the full

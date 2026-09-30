@@ -35479,5 +35479,13 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Private matched exception branch of pending33.11 with ORIGINAL guarded callee/handler IHs; derives target args/code/clock/entry, callee and handler executions, handler entry relation and binding validity internally. No target run/postrelation premise. Remaining Call outcomes/full public constructor assembly unfinished; untagged infrastructure."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "nonGoodCallTail",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Private non-good Call continuation/scoped relation algebra for pending33.11. Non-good result bypasses If Store and relation ignores restored locals. Central target Call run and relation are internal original callee IH obligations, not public constructor premises. Full all-case assembly remains unfinished; untagged infrastructure."
 }
 ]
