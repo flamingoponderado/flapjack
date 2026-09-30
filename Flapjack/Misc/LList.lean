@@ -1,3 +1,5 @@
+import Flapjack.HolRef
+
 /-!
 # HOL `llist` (possibly infinite lists)
 
@@ -165,6 +167,10 @@ theorem llengthRel_lcons_inv {x : α} {t : HolLList α} {m : Nat}
     obtain ⟨-, rfl⟩ := lcons_inj e
     exact ⟨k, rfl, hk⟩
 
+theorem eq_lnil_of_LLengthRel_zero {ll : HolLList α} (h : LLengthRel ll 0) : ll = lnil := by
+  cases h with
+  | lnil => rfl
+
 theorem llengthRel_unique {ll : HolLList α} {n m : Nat} (hn : LLengthRel ll n) :
     LLengthRel ll m → n = m := by
   induction hn generalizing m with
@@ -201,6 +207,380 @@ theorem toList_fromList (l : List α) : toList (fromList l) = some l := by
 theorem lprefix_fromList (xs ys : List α) :
     lprefix (fromList xs) (fromList ys) ↔ xs <+: ys := by
   unfold lprefix; rw [toList_fromList, toList_fromList]
+
+/-- A `none` at `k` forces a `none` at `k+1` (downward closure of `HolLrepOk`). -/
+theorem rep_none_succ (ll : HolLList α) {k : Nat} (h : ll.rep k = none) :
+    ll.rep (k + 1) = none := by
+  rw [Option.eq_none_iff_forall_ne_some]
+  intro v hv
+  have hk' : (ll.rep (k + 1)) ≠ none := by rw [hv]; exact Option.some_ne_none v
+  exact (Option.isSome_iff_ne_none.mp (ll.ok k (Option.isSome_iff_ne_none.mpr hk'))) h
+
+
+/-- A `none` in the representation persists to every larger index. -/
+theorem rep_none_of_le (ll : HolLList α) {m n : Nat} (hm : ll.rep m = none) (hle : m ≤ n) :
+    ll.rep n = none := by
+  obtain ⟨d, rfl⟩ := Nat.le.dest hle
+  clear hle
+  induction d with
+  | zero => simpa using hm
+  | succ d ih =>
+      rw [Nat.add_succ]
+      exact rep_none_succ ll ih
+
+
+/-- `lnth` reads the underlying representation. -/
+theorem lnth_eq_rep (n : Nat) (ll : HolLList α) : lnth n ll = ll.rep n := by
+  induction n generalizing ll with
+  | zero => rfl
+  | succ n ih =>
+      show (ll.ltl.map (lnth n)).join = ll.rep (n + 1)
+      cases h0 : ll.rep 0 with
+      | none =>
+          have hrep : ll.rep (n + 1) = none := rep_none_of_le ll h0 (Nat.zero_le _)
+          have hltl : ll.ltl = none := by simp [ltl, lhd, h0]
+          simp [hltl, hrep]
+      | some hd =>
+          have ht : ll.ltl =
+              some ⟨fun k => ll.rep (k + 1), fun k hk => ll.ok (k + 1) hk⟩ := by
+            simp [ltl, lhd, h0]
+          rw [ht]
+          simp only [Option.map_some, Option.join]
+          rw [ih]
+          rfl
+
+
+/-- `lnth` is `none` from `m` on whenever it is `none` at `m` and `m ≤ n`. -/
+theorem lnth_none_mono {m n : Nat} (ll : HolLList α) (h : lnth m ll = none) (hle : m ≤ n) :
+    lnth n ll = none := by
+  rw [lnth_eq_rep] at h ⊢
+  exact rep_none_of_le ll h hle
+
+
+/-- The tail of a cons exposes the shifted representation. Untagged Flapjack
+    infrastructure used to relate `lprefix` (defined via `toList`/`ltake`) to the
+    representation `rep`/`lnth`; HOL's `llist` library is outside the cakeml
+    submodule, so there is no taggable HOL original. -/
+theorem ltl_rep {ll tl : HolLList α} (h : ll.ltl = some tl) (j : Nat) :
+    tl.rep j = ll.rep (j + 1) := by
+  cases h0 : ll.rep 0 with
+  | none => simp [ltl, lhd, h0] at h
+  | some hd =>
+      simp only [ltl, lhd, h0] at h
+      injection h with h'
+      subst h'
+      rfl
+
+
+/-- `ltake` reads the representation: if `ltake k ll = some xs` then `xs` has
+    length `k` and `ll.rep i = some (xs[i])` for every in-range `i`.  Untagged
+    Flapjack infrastructure (no taggable HOL original). -/
+theorem ltake_spec (k : Nat) (ll : HolLList α) (xs : List α)
+    (h : ltake k ll = some xs) :
+    xs.length = k ∧ ∀ i (hi : i < xs.length), ll.rep i = some xs[i] := by
+  induction k generalizing ll xs with
+  | zero =>
+      simp only [ltake] at h
+      injection h with hxs
+      subst hxs
+      exact ⟨rfl, fun i hi => absurd hi (by simp)⟩
+  | succ k ih =>
+      cases h0 : ll.rep 0 with
+      | none => simp [ltake, lhd, h0] at h
+      | some hd =>
+          cases h1 : ll.ltl with
+          | none => simp [ltake, lhd, h0, h1] at h
+          | some tl =>
+              cases hrest : ltake k tl with
+              | none => simp [ltake, lhd, h0, h1, hrest] at h
+              | some rest =>
+                  simp only [ltake, lhd, h0, h1, hrest] at h
+                  injection h with hxs
+                  subst hxs
+                  obtain ⟨hlen, hrep⟩ := ih tl rest hrest
+                  refine ⟨by simp [hlen], ?_⟩
+                  intro i hi
+                  cases i with
+                  | zero => simp [h0]
+                  | succ j =>
+                      have hj : j < rest.length := by simpa [hlen] using hi
+                      rw [← ltl_rep h1 j]
+                      simpa using hrep j hj
+
+
+/-- Converse of `ltake_spec`: if the representation agrees with `xs` on its
+    indices, `ltake` returns `xs`. -/
+theorem ltake_of_rep (xs : List α) (ll : HolLList α)
+    (h : ∀ i (hi : i < xs.length), ll.rep i = some xs[i]) :
+    ltake xs.length ll = some xs := by
+  induction xs generalizing ll with
+  | nil => simp [ltake]
+  | cons x xs ih =>
+      rw [List.length_cons]
+      cases h0 : ll.rep 0 with
+      | none => exact absurd (h 0 (by simp)) (by simp [h0])
+      | some hd =>
+          have hhd : hd = x := by
+            have := h 0 (by simp)
+            rw [h0] at this
+            exact Option.some.inj this
+          subst hhd
+          have htl : ll.ltl =
+              some ⟨fun n => ll.rep (n + 1), fun n hk => ll.ok (n + 1) hk⟩ := by
+            simp [ltl, lhd, h0]
+          have h' : ∀ i (hi : i < xs.length),
+              (⟨fun n => ll.rep (n + 1), fun n hk => ll.ok (n + 1) hk⟩ : HolLList α).rep i =
+                some xs[i] := by
+            intro i hi
+            have hhi := h (i + 1) (by simp [hi])
+            rw [List.getElem_cons_succ] at hhi
+            exact hhi
+          simp only [ltake, lhd, h0, htl]
+          rw [ih _ h']
+
+
+/-- Two lazy lists with pointwise-equal representations are equal. -/
+theorem ext_of_rep {a b : HolLList α} (h : ∀ n, a.rep n = b.rep n) : a = b := by
+  have hrep : a.rep = b.rep := funext h
+  obtain ⟨ra, oka⟩ := a
+  obtain ⟨rb, okb⟩ := b
+  simp only at hrep
+  subst hrep
+  exact congrArg (fun o => (⟨ra, o⟩ : HolLList α)) (Subsingleton.elim oka okb)
+
+
+/-- The empty lazy list is the only one whose representation is everywhere `none`. -/
+theorem eq_lnil_of_rep_none {ll : HolLList α} (h : ∀ n, ll.rep n = none) : ll = lnil :=
+  ext_of_rep (fun n => by rw [h n]; rfl)
+
+
+/-- A lazy list that has a `none` in its representation is finite. -/
+theorem LFinite_of_rep_none {ll : HolLList α} {n : Nat} (h : ll.rep n = none) :
+    LFinite ll := by
+  induction n generalizing ll with
+  | zero =>
+      have hr : ∀ k, ll.rep k = none := fun k => rep_none_of_le ll h (Nat.zero_le k)
+      rw [eq_lnil_of_rep_none hr]
+      exact LFinite.lnil
+  | succ n ih =>
+      cases h0 : ll.rep 0 with
+      | none =>
+          have hr : ∀ k, ll.rep k = none := fun k => rep_none_of_le ll h0 (Nat.zero_le k)
+          rw [eq_lnil_of_rep_none hr]
+          exact LFinite.lnil
+      | some hd =>
+          have htail : (⟨fun k => ll.rep (k + 1),
+              fun k hk => ll.ok (k + 1) hk⟩ : HolLList α).rep n = none := h
+          have ihf : LFinite ⟨fun k => ll.rep (k + 1), fun k hk => ll.ok (k + 1) hk⟩ :=
+            ih htail
+          have heq : ll = lcons hd ⟨fun k => ll.rep (k + 1), fun k hk => ll.ok (k + 1) hk⟩ := by
+            apply ext_of_rep
+            intro k
+            cases k with
+            | zero => rw [h0]; rfl
+            | succ k => rfl
+          rw [heq]
+          exact LFinite.lcons hd _ ihf
+
+
+/-- A finite lazy list has a length relation witness. -/
+theorem exists_LLengthRel_of_LFinite {ll : HolLList α} (h : LFinite ll) :
+    ∃ n, LLengthRel ll n :=
+  LFinite.rec (motive := fun ll _ => ∃ n, LLengthRel ll n)
+    ⟨0, LLengthRel.lnil⟩
+    (fun hd t _ ih => by obtain ⟨n, hn⟩ := ih; exact ⟨n + 1, LLengthRel.lcons hd n t hn⟩)
+    h
+
+
+/-- For a finite lazy list, `llength` returns a length relation witness. -/
+theorem llength_spec {ll : HolLList α} (h : LFinite ll) :
+    ∃ n, llength ll = some n ∧ LLengthRel ll n := by
+  have hex : ∃ n, LLengthRel ll n := exists_LLengthRel_of_LFinite h
+  refine ⟨Classical.epsilon (fun n => LLengthRel ll n), ?_, Classical.epsilon_spec hex⟩
+  unfold llength
+  rw [if_pos h]
+
+
+/-- Beyond a length relation bound the representation is `none`. -/
+theorem rep_none_of_LLengthRel {ll : HolLList α} {n : Nat} (h : LLengthRel ll n) :
+    ∀ i, n ≤ i → ll.rep i = none :=
+  LLengthRel.rec (motive := fun ll n _ => ∀ i, n ≤ i → ll.rep i = none)
+    (fun i _ => rfl)
+    (fun hd k t _ ih i hi => by
+      cases i with
+      | zero => exact absurd hi (Nat.not_succ_le_zero k)
+      | succ j =>
+          have hj : k ≤ j := Nat.le_of_succ_le_succ hi
+          have hshift : (lcons hd t).rep (j + 1) = t.rep j := by simp [lcons]
+          rw [hshift]
+          exact ih j hj)
+    h
+
+
+/-- `toList ll = some xs` exposes the representation as `xs` with `none` beyond. -/
+theorem toList_eq_some_rep {ll : HolLList α} {xs : List α} (h : toList ll = some xs) :
+    ∀ i, ll.rep i = if hi : i < xs.length then some xs[i] else none := by
+  unfold toList at h
+  split at h
+  · rename_i hfin
+    obtain ⟨n, hnlen, hnrel⟩ := llength_spec hfin
+    rw [hnlen] at h
+    simp only [Option.getD_some] at h
+    obtain ⟨hlen, hrep⟩ := ltake_spec n ll xs h
+    intro i
+    by_cases hi : i < xs.length
+    · rw [dif_pos hi]; simpa using hrep i hi
+    · rw [dif_neg hi]
+      have hnrel' : LLengthRel ll xs.length := by rw [hlen]; exact hnrel
+      exact rep_none_of_LLengthRel hnrel' i (Nat.le_of_not_lt hi)
+  · simp at h
+
+
+/-- A cons peels its head. -/
+theorem lhd_lcons (h : α) (t : HolLList α) : lhd (lcons h t) = some h := by
+  simp [lhd, lcons]
+
+
+/-- The tail of a cons is the original tail. -/
+theorem ltl_lcons (h : α) (t : HolLList α) : ltl (lcons h t) = some t := by
+  have hrep : (⟨fun n => (lcons h t).rep (n + 1),
+      fun n hk => (lcons h t).ok (n + 1) hk⟩ : HolLList α) = t :=
+    ext_of_rep (fun n => by simp [lcons])
+  simp only [ltl, lhd_lcons, Option.some.injEq]
+  exact hrep
+
+
+/-- A finite lazy list has a `some` prefix of any length up to its length. -/
+theorem ltake_of_LLengthRel {ll : HolLList α} {n : Nat} (h : LLengthRel ll n) :
+    ∃ xs : List α, ltake n ll = some xs := by
+  induction h with
+  | lnil => exact ⟨[], rfl⟩
+  | lcons hd k t _ ih =>
+      obtain ⟨xs, hxs⟩ := ih
+      exact ⟨hd :: xs, by simp [ltake, lhd_lcons, ltl_lcons, hxs]⟩
+
+
+/-- A finite lazy list has a finite `toList`. -/
+theorem toList_of_LFinite {ll : HolLList α} (h : LFinite ll) :
+    ∃ xs : List α, toList ll = some xs := by
+  obtain ⟨n, hnlen, hnrel⟩ := llength_spec h
+  obtain ⟨xs, hxs⟩ := ltake_of_LLengthRel hnrel
+  refine ⟨xs, ?_⟩
+  unfold toList
+  rw [if_pos h, hnlen]
+  simp only [Option.getD_some]
+  exact hxs
+
+
+/-- A finite lazy list is never the `none` of `toList`. -/
+theorem toList_ne_none_of_LFinite {ll : HolLList α} (h : LFinite ll) :
+    toList ll ≠ none := by
+  obtain ⟨xs, hxs⟩ := toList_of_LFinite h
+  rw [hxs]
+  exact Option.some_ne_none xs
+
+
+/-- If `toList` is `none` the list is infinite and defined at every index. -/
+theorem rep_some_of_toList_none {ll : HolLList α} (h : toList ll = none) :
+    ∀ n, ∃ x, ll.rep n = some x := by
+  intro n
+  by_cases hn : ll.rep n = none
+  · exact absurd h (toList_ne_none_of_LFinite (LFinite_of_rep_none hn))
+  · exact Option.ne_none_iff_exists'.mp hn
+
+/-! ### `llist`-library helper lemmas
+
+The `llist_shorter` ports (`llist_shorter_def`, `llist_shorter_fromList`,
+`llist_shorter_lnth`) live in `Flapjack/Misc/LprefixLub.lean`, the primary Lean
+counterpart of the pinned HOL script `lprefix_lubScript.sml`.  The helper
+lemmas they depend on -- `LTAKE_LLENGTH_SOME`, `LTAKE_LNTH_EL` and
+`lnth_some_down_closed` -- come from the external lazy-list library
+(`HOL/src/coalgebras/llistScript.sml`), whose snapshot is not one of the pinned
+external sources, so they stay here and are untagged. -/
+
+/-- A `some` length forces finiteness. -/
+theorem LFinite_of_llength_eq_some {ll : HolLList α} {n : Nat} (h : llength ll = some n) :
+    LFinite ll := by
+  by_cases hfin : LFinite ll
+  · exact hfin
+  · unfold llength at h
+    rw [if_neg hfin] at h
+    exact (Option.some_ne_none n h.symm).elim
+
+/-- A `some` length is exactly the (unique) `LLengthRel` witness. -/
+theorem LLengthRel_of_llength_eq_some {ll : HolLList α} {n : Nat}
+    (h : llength ll = some n) : LLengthRel ll n := by
+  obtain ⟨m, hm, hrel⟩ := llength_spec (LFinite_of_llength_eq_some h)
+  rw [Option.some.inj (hm.symm.trans h)] at hrel
+  exact hrel
+
+/-- A `none` length means the list is infinite. -/
+theorem not_LFinite_of_llength_eq_none {ll : HolLList α} (h : llength ll = none) :
+    ¬ LFinite ll := by
+  intro hfin
+  unfold llength at h
+  rw [if_pos hfin] at h
+  exact Option.some_ne_none _ h
+
+/-- A `LLengthRel` bound makes the representation defined at every earlier
+    index. -/
+theorem lnth_some_of_LLengthRel {ll : HolLList α} {n : Nat} (h : LLengthRel ll n) :
+    ∀ k, k < n → ∃ x, lnth k ll = some x := by
+  induction h with
+  | lnil => intro k hk; exact absurd hk (Nat.not_lt_zero k)
+  | lcons hd m t _ ih =>
+      intro k hk
+      cases k with
+      | zero => exact ⟨hd, by rw [lnth_eq_rep]; simp [lcons]⟩
+      | succ j =>
+          have hj : j < m := Nat.lt_of_succ_lt_succ hk
+          obtain ⟨x, hx⟩ := ih j hj
+          exact ⟨x, by rw [lnth_eq_rep] at hx ⊢; simpa [lcons] using hx⟩
+
+/-- A `LLengthRel` bound makes the representation `none` from that bound on. -/
+theorem lnth_none_of_LLengthRel {ll : HolLList α} {n k : Nat} (h : LLengthRel ll n)
+    (hk : n ≤ k) : lnth k ll = none := by
+  rw [lnth_eq_rep]
+  exact rep_none_of_LLengthRel h k hk
+
+/-- An infinite lazy list is defined at every index. -/
+theorem lnth_some_of_not_LFinite {ll : HolLList α} (h : ¬ LFinite ll) (n : Nat) :
+    ∃ x, lnth n ll = some x := by
+  rw [lnth_eq_rep]
+  exact Option.ne_none_iff_exists'.mp fun hn => h (LFinite_of_rep_none hn)
+
+/-- `ltake` returns a list of exactly its first argument's length. -/
+theorem ltake_length {n : Nat} {ll : HolLList α} {l : List α}
+    (h : ltake n ll = some l) : l.length = n :=
+  (ltake_spec n ll l h).1
+
+/-- HOL `LTAKE_LLENGTH_SOME` (`llistScript.sml:2260-2262`). -/
+theorem LTAKE_LLENGTH_SOME {ll : HolLList α} {n : Nat} (h : llength ll = some n) :
+    ∃ l, ltake n ll = some l ∧ toList ll = some l := by
+  have hfin := LFinite_of_llength_eq_some h
+  obtain ⟨l, hl⟩ := ltake_of_LLengthRel (LLengthRel_of_llength_eq_some h)
+  refine ⟨l, hl, ?_⟩
+  unfold toList
+  rw [if_pos hfin, h]
+  simpa using hl
+
+/-- HOL `LTAKE_LNTH_EL` (`llistScript.sml:1067-1075`); HOL's total `EL m l` is
+    rendered as `l.get ⟨m, _⟩` under the length fact `l.length = n` supplied by
+    `ltake n ll = some l`, so the index bound is discharged rather than total. -/
+theorem LTAKE_LNTH_EL {n : Nat} {ll : HolLList α} {m : Nat} {l : List α}
+    (h : ltake n ll = some l) (hm : m < n) :
+    lnth m ll = some (l.get ⟨m, by rw [ltake_length h]; exact hm⟩) := by
+  rw [lnth_eq_rep]
+  exact (ltake_spec n ll l h).2 m (by rw [ltake_length h]; exact hm)
+
+/-- HOL `lnth_some_down_closed` (`llistScript.sml:1478-1485`): a value at `n1`
+    is witnessed at every smaller index by some (possibly different) value. -/
+theorem lnth_some_down_closed {ll : HolLList α} {x : α} {n1 n2 : Nat}
+    (h : lnth n1 ll = some x) (hle : n2 ≤ n1) : ∃ y, lnth n2 ll = some y := by
+  by_cases hnone : lnth n2 ll = none
+  · rw [lnth_none_mono ll hnone hle] at h
+    exact absurd h (by simp)
+  · exact Option.ne_none_iff_exists'.mp hnone
 
 end HolLList
 

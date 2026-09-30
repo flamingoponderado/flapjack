@@ -108,8 +108,20 @@ run_probe stacksem_fpreg_inst_probeScript.sml stacksem_fpreg_inst_probe.out \
   fpreg_mov_nan fpreg_mov_missing fpreg_abs_nan fpreg_abs_zero fpreg_neg_nan fpreg_neg_zero fpreg_abs_missing fpreg_neg_missing fpreg_to64 fpreg_to32 fpreg_to8 fpreg_to32_alias fpreg_to_missing fpreg_from64_ignore fpreg_from64_loc fpreg_from32 fpreg_from8 fpreg_from32_missing fpreg_from32_loc fpreg_from32_alias \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
+run_probe stacksem_fp_arith_probeScript.sml stacksem_fp_arith_probe.out \
+  fpless_true fpless_false fpless_equal fpless_missing fplessequal_true fplessequal_false fpequal_true fpequal_false fpadd_result fpadd_missing fpsub_result fpmul_result fpdiv_result fpfma_order \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
 run_probe stacksem_store_consts_guard_probeScript.sml stacksem_store_consts_guard_probe.out \
   guard_none guard_missing guard_match guard_wrong_label guard_wrong_first_register guard_wrong_second_register guard_recursive_stub guard_return_nonzero guard_wrong_constructor guard_reversed_sequence \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe stacksem_store_const_sem_probeScript.sml stacksem_store_const_sem_probe.out \
+  guard_duplicate non_word_operand copy_words_none success_use_alloc_true success_use_alloc_false \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe stacksem_store_consts_probeScript.sml stacksem_store_consts_probe.out \
+  store_disabled stub_alloc_disabled guard_failure success_stub_none_use_alloc_true success_stub_none_use_alloc_false success_stub_match_use_alloc_true \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe stacksem_evaluate_alloc_probeScript.sml stacksem_evaluate_alloc_probe.out \
@@ -121,6 +133,9 @@ run_probe stacksem_integer_inst_probeScript.sml stacksem_integer_inst_probe.out 
 run_probe stacksem_pattern_copy_probeScript.sml stacksem_pattern_copy_probe.out \
   zero one_bypass even odd multi missing_bitmap missing_domain later_domain address_wrap value_wrap stride16 stride4 \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe stacksem_copy_words_probeScript.sml stacksem_copy_words_probe.out \
+  normal_continue stops_early zero_pattern out_of_range \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe stacksem_register_transfers_probeScript.sml stacksem_register_transfers_probe.out \
   get_word get_loc get_missing get_disabled set_word set_loc set_missing set_disabled op_add op_sub op_loc op_missing op_disabled \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
@@ -129,6 +144,40 @@ run_probe stacksem_leaf_transfers_probeScript.sml stacksem_leaf_transfers_probe.
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe stacksem_loop_control_probeScript.sml stacksem_loop_control_probe.out \
   reg_word reg_loc reg_missing immediate cont_none cont_continue_zero cont_continue_three cont_break_zero cont_break_one cont_break_three cont_result cont_exception cont_halt cont_timeout cont_error cont_final exit_none exit_continue_zero exit_continue_three exit_break_zero exit_break_one exit_break_three exit_result exit_exception exit_halt exit_timeout exit_error exit_final \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe stacksem_control_probeScript.sml stacksem_control_probe.out \
+  seq_normal seq_fallthrough seq_tick_clamp if_true if_false if_cmp_none if_operand_missing loop_recurse loop_timeout loop_exit_break loop_exit_continue \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe stacksem_jumplower_probeScript.sml stacksem_jumplower_probe.out \
+  jump_lower_success jump_lower_timeout jump_lower_code_missing \
+  jump_lower_comparison_false jump_lower_loc_operand jump_lower_break_sub \
+  jump_lower_continue_sub jump_lower_none_sub \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe stacksem_rawcall_probeScript.sml stacksem_rawcall_probe.out \
+  raw_call_success raw_call_timeout raw_call_code_missing raw_call_non_seq \
+  raw_call_break_sub raw_call_continue_sub raw_call_none_sub \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe stacksem_call_probeScript.sml stacksem_call_probe.out \
+  call_tail_success call_tail_handler_error call_tail_code_missing call_tail_timeout \
+  call_return_success call_return_success_handler call_return_wrong_loc \
+  call_return_code_missing call_return_timeout call_exception_handled \
+  call_exception_unhandled call_exception_wrong_loc call_return_break call_return_continue \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe stacksem_buffer_write_probeScript.sml stacksem_buffer_write_probe.out \
+  code_write_success code_write_mismatch data_write_success data_write_mismatch data_write_disabled \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe stacksem_sh_mem_probeScript.sml stacksem_sh_mem_probe.out \
+  store load store8 load8 store16 load16 store32 load32 load_outside store8_outside load_word_unaligned store_word_unaligned load_final store_final store_loc \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe stacksem_sh_mem_op_probeScript.sml stacksem_sh_mem_op_probe.out \
+  sh_mem_op_success sh_mem_op_word_exp_none sh_mem_op_missing_register sh_mem_op_timeout \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe stacksem_ffi_probeScript.sml stacksem_ffi_probe.out \
+  ffi_return ffi_final ffi_read_failure ffi_non_word_length \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe stacksem_install_probeScript.sml stacksem_install_probe.out \
+  install_success install_bytes_mismatch install_progs_empty install_compile_none \
+  install_use_stack_false install_non_word_operand \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe stacksem_expression_probeScript.sml stacksem_expression_probe.out \
   const var_word var_loc var_missing lookup_word lookup_loc lookup_missing load_word load_loc load_oob load_bad_address op_empty_and op_add_wrap op_sub_bad_arity op_bad_operand shift_valid shift_oob shift_bad_right assign_success assign_failure \
@@ -1624,6 +1673,11 @@ run_probe loop_sem_lprefix_lub_probeScript.sml loop_sem_lprefix_lub_probe.out \
   prefix_chain_lub_0 prefix_chain_lub_1 \
   conflicting_prefixes_lub_0 conflicting_prefixes_lub_1 \
   conflicting_suffixes_lub_0 conflicting_suffixes_lub_1 \
+  "$cake_dir/pancake/semantics/loopSemScript.sml"
+run_probe lprefix_lub_llist_shorter_probeScript.sml lprefix_lub_llist_shorter_probe.out \
+  llist_shorter_shorter llist_shorter_equal_length llist_shorter_longer \
+  llist_shorter_two_empty llist_shorter_nil_nonempty llist_shorter_nonempty_nil \
+  llist_shorter_reverse_longer llist_shorter_equal_nonempty \
   "$cake_dir/pancake/semantics/loopSemScript.sml"
 run_probe loop_sem_cut_state_probeScript.sml loop_sem_cut_state_probe.out \
   hit_first loc_preserved "$cake_dir/pancake/semantics/loopSemScript.sml"
