@@ -55,3 +55,15 @@ abbrev HolProg (width : Nat) [NeZero width] :=
     HolBinop HolMemop (HolAddr width) Flapjack.Basis.Pure.MlString.MlString
 
 end Flapjack.Compiler.Backend.StackLang
+namespace Flapjack.Compiler.Backend.StackLang
+
+/-- HOL `dest_Seq` (`cakeml/compiler/backend/stackLangScript.sml`): expose a
+    `Seq`'s two immediate sub-programs, otherwise `none`. -/
+@[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "dest_Seq_def"
+  (words_as_type_indexed_bitvec)]
+def destSeq {width : Nat} [NeZero width] :
+    HolProg width → Option (HolProg width × HolProg width)
+  | .seq first second => some (first, second)
+  | _ => none
+
+end Flapjack.Compiler.Backend.StackLang

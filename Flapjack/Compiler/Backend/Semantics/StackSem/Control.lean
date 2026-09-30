@@ -49,3 +49,20 @@ theorem fixClockImp {width : Nat} [NeZero width] {C F R : Type}
   exact Nat.min_le_left _ _
 
 end Flapjack.StackSemControl
+
+namespace Flapjack.StackSemControl
+
+/-- HOL `check_store_consts_opt` (`cakeml/compiler/backend/semantics/stackSemScript.sml:743`):
+    the `None` stub is always admissible, and a `some n` stub demands that label
+    `n` names exactly `Seq (StoreConsts t1 t2 NONE) (Return 0)`. -/
+@[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "check_store_consts_opt_def"
+  (words_as_type_indexed_bitvec)]
+def checkStoreConstsOpt {width : Nat} [NeZero width] (t1 t2 : Nat)
+    (stub : Option Nat) (code : Spt (Compiler.Backend.StackLang.HolProg width)) : Prop :=
+  match stub with
+  | none => True
+  | some n =>
+      sptLookup n code =
+        some (.seq (.storeConsts t1 t2 none) (.ret 0))
+
+end Flapjack.StackSemControl
