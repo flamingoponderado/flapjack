@@ -140,32 +140,32 @@ private abbrev Expected :=
 /-- All six rows of the probe output, in order. -/
 def rows : List (String × Bool) :=
   [("install_success",
-    proj (evaluateInstall (.install 1 2 3 4 5) s0) ==
+    proj (evaluateInstallWithDecidableEq (.install 1 2 3 4 5) s0) ==
       some (.none, [w8 0x01, w8 0xAA, w8 0xBB], some .skip, some (.ret 0),
         some (.loc 3 0), none, some (.word (w8 0x55)), none,
         w8 2, w8 2, 0, 1)),
    ("install_bytes_mismatch",
-    proj (evaluateInstall (.install 1 2 3 4 5) { s0 with compile := compBad }) ==
+    proj (evaluateInstallWithDecidableEq (.install 1 2 3 4 5) { s0 with compile := compBad }) ==
       some (.error, [w8 0x01], none, some (.ret 0),
         some (.word (w8 0)), some (.word (w8 2)), some (.word (w8 0x55)),
         some (w64 0x66), w8 0, w8 0, 2, 0)),
    ("install_progs_empty",
-    proj (evaluateInstall (.install 1 2 3 4 5) { s0 with compileOracle := oracEmpty }) ==
+    proj (evaluateInstallWithDecidableEq (.install 1 2 3 4 5) { s0 with compileOracle := oracEmpty }) ==
       some (.error, [w8 0x01], none, some (.ret 0),
         some (.word (w8 0)), some (.word (w8 2)), some (.word (w8 0x55)),
         some (w64 0x66), w8 0, w8 0, 2, 0)),
    ("install_compile_none",
-    proj (evaluateInstall (.install 1 2 3 4 5) { s0 with compile := compNone }) ==
+    proj (evaluateInstallWithDecidableEq (.install 1 2 3 4 5) { s0 with compile := compNone }) ==
       some (.error, [w8 0x01], none, some (.ret 0),
         some (.word (w8 0)), some (.word (w8 2)), some (.word (w8 0x55)),
         some (w64 0x66), w8 0, w8 0, 2, 0)),
    ("install_use_stack_false",
-    proj (evaluateInstall (.install 1 2 3 4 5) { s0 with useStack := false }) ==
+    proj (evaluateInstallWithDecidableEq (.install 1 2 3 4 5) { s0 with useStack := false }) ==
       some (.none, [w8 0x01, w8 0xAA, w8 0xBB], some .skip, some (.ret 0),
         some (.loc 3 0), none, some (.word (w8 0x55)), none,
         w8 2, w8 0, 2, 1)),
    ("install_non_word_operand",
-    proj (evaluateInstall (.install 1 2 3 4 5)
+    proj (evaluateInstallWithDecidableEq (.install 1 2 3 4 5)
       { s0 with regs := s0.regs.updateEq (1, .loc 1 0) }) ==
       some (.error, [w8 0x01], none, some (.ret 0),
         some (.loc 1 0), some (.word (w8 2)), some (.word (w8 0x55)),
@@ -178,6 +178,7 @@ def rows : List (String × Bool) :=
 example : proj (evaluateInstall (.install 1 2 3 4 5) s0) =
     some (.none, [w8 0x01, w8 0xAA, w8 0xBB], some .skip, some (.ret 0),
       some (.loc 3 0), none, some (.word (w8 0x55)), none, w8 2, w8 2, 0, 1) := by
+  rw [evaluateInstall_eq_withDecidableEq]
   cbv
 
 /-- Kernel regression pin of the `use_stack = F` row, whose data buffer is not
@@ -185,6 +186,7 @@ example : proj (evaluateInstall (.install 1 2 3 4 5) s0) =
 example : proj (evaluateInstall (.install 1 2 3 4 5) { s0 with useStack := false }) =
     some (.none, [w8 0x01, w8 0xAA, w8 0xBB], some .skip, some (.ret 0),
       some (.loc 3 0), none, some (.word (w8 0x55)), none, w8 2, w8 0, 2, 1) := by
+  rw [evaluateInstall_eq_withDecidableEq]
   cbv
 
 def runChecks : IO Bool := do

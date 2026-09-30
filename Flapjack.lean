@@ -130,6 +130,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnvs
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutNames
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyRemap
 import Flapjack.Pancake.PanStructs.CompileDeclsExact
+import Flapjack.Pancake.PanStructs.CompileDeclsCorrespondence
 import Flapjack.Pancake.PanStructs.CompileProgExact
 import Flapjack.Pancake.PanStructs.CompileExpExact
 import Flapjack.Pancake.PanStructs.OldExpShapeExact
@@ -422,6 +423,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Assign
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Primitive
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Store
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.FixedStores
+import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.ShMemLoad
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.ClockAnnot
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Seq
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.DecCall
@@ -574,6 +576,7 @@ import Flapjack.Pancake.Proofs.CrepInline.NestedDecs
 import Flapjack.Pancake.Proofs.CrepInline.ShMem
 import Flapjack.Pancake.Proofs.CrepInline.Call
 import Flapjack.Pancake.Proofs.CrepInline.CallTail
+import Flapjack.Pancake.Proofs.CrepInline.CallNontail
 import Flapjack.Pancake.Proofs.CrepInline.FiniteMapLemmas
 import Flapjack.Pancake.Proofs.CrepInline.UpdateListLocals
 import Flapjack.Pancake.Proofs.CrepInline.UnreachElim
