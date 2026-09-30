@@ -11,6 +11,12 @@ established for every state by structural recursion on the program (the
 handler of a call being a structural subterm), with an inner clock induction
 supplying exactly the guarded While premises.  No public induction hypothesis
 remains.
+
+See `EvaluateLocals/Assembly.lean` ("Induction principle and guard spellings")
+for why this assembly uses structural recursion plus a clock induction instead
+of the tagged Crep `evaluate_ind`, and for the equations (`callGuard_args_eq`,
+`callGuard_lookup_eq`, `callGuard_nodup_iff`) relating the Call handler
+premise's guards to `evaluate_ind`'s.
 -/
 
 namespace Flapjack
