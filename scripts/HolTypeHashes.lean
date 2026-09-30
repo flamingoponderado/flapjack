@@ -10,6 +10,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.CompileExpLeaves
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Base
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Seq
 import Flapjack.Pancake.Proofs.PanGlobals.MemStores
+import Flapjack.Pancake.Proofs.PanGlobals.MemoryUpdate
 import Flapjack.Compiler.Backend.StackProps.RemoveNames
 import Flapjack.Pancake.Proofs.WordConvs.SmartSeqLabels
 import Flapjack.Pancake.Proofs.PanGlobals.CompileExpLeaves
