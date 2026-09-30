@@ -28049,5 +28049,69 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-a source comparison against pan_globalsProofScript.sml:2404-2435. Lean preserves HOL's universal state/declaration binders, function-or-exception declaration condition, nested function shape condition, exception-id ALL_DISTINCT, original-state exception-map freshness, well-formed exception shapes, and exact simultaneous code/eshapes FUPDATE_LIST result. The proof discharges evaluator membership decidability internally via Classical.propDecidable, not as a theorem hypothesis. The four named fields are the exact PanSemStateFiniteExact canonical maps; BitVec width and NeZero are the standard word translation. No target-evaluation premise or conclusion weakening. Coordinator review required."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsExact.lean",
+    "lean_name": "fpermDecsHOL_append",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only private assembly infrastructure for evaluate_decls_compile_top; derives structural tables and evaluation from source premises, no independent HOL declaration claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsExact.lean",
+    "lean_name": "resortDeclsHOL_filter_partition",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only private assembly infrastructure for evaluate_decls_compile_top; derives structural tables and evaluation from source premises, no independent HOL declaration claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsExact.lean",
+    "lean_name": "functionsHOL_map_compile",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only private assembly infrastructure for evaluate_decls_compile_top; derives structural tables and evaluation from source premises, no independent HOL declaration claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsExact.lean",
+    "lean_name": "compileDecsHOL_function_suffix",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only private assembly infrastructure for evaluate_decls_compile_top; derives structural tables and evaluation from source premises, no independent HOL declaration claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsExact.lean",
+    "lean_name": "compileDecsHOL_resorted_functions",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only private assembly infrastructure for evaluate_decls_compile_top; derives structural tables and evaluation from source premises, no independent HOL declaration claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsExact.lean",
+    "lean_name": "evaluateDeclsCompileTopUpdates",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only private assembly infrastructure for evaluate_decls_compile_top; derives structural tables and evaluation from source premises, no independent HOL declaration claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsExact.lean",
+    "lean_name": "evaluateDeclsCompileTopHOLFinite",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "evaluate_decls_compile_top",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison against pan_globalsProofScript.sml:2543-2610 and panLangScript.sml:127: preserves the four conjuncts (successful source evaluate_decls, first-match ALOOKUP, Function/Decl/Exn restriction, compile_decs equation with empty globals/zero size/source shape budget), and explicit compiled evaluate_decls result with main code update then MAP body compilation at final context, plus compiled exception updates. TailCall is Call NONE; Local/FST argument map, parameter/return shapes and nested_seq match. Named canonical finite maps belong to imported PanSemStateFiniteExact and PanGlobalsContextExact, each with same-module roundtrip witness; positive BitVec width and universe-0 FFI translation are the only other carrier differences. No extra hypotheses, target evaluation assumption or post-state assumption. Source success premise is explicitly HOL original. Coordinator review pending."
   }
 ]
