@@ -7,7 +7,7 @@ import Flapjack.Misc.BinaryIeeeSqrtFp64
 For every `HolRounding` mode, `holFp64Sqrt_agreement` states that the
 rational-cut rendering `holFp64Sqrt` of HOL `fp64_sqrt` equals the
 real-distance rendering `holFp64SqrtReal` from
-`Flapjack.Misc.BinaryIeeeSqrt.RoundAgreement`.  Each `roundTiesToEven` row
+`Flapjack.Misc.BinaryIeeeSqrt.RoundAgreement`.  Each row
 below instantiates that agreement on a concrete input and then kernel-evaluates
 the computable cut algorithm `holFp64Sqrt_rte`
 (`Flapjack.Misc.BinaryIeeeSqrtFp64`), so the real-rendering result is

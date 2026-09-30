@@ -27,9 +27,11 @@ abbreviation for the `roundTiesToEven` specialization.
 
 These declarations are Flapjack-specific infrastructure. They are not an exact
 `@[hol]` port: the real-sqrt rounder is a Lean-side reference rendering, and
-the cut renderer stays the definition used by the compiler. The remaining
-external assumption (agreement with HOL `real`) is recorded in
-`docs/SOUNDNESS.md`.
+the cut renderer stays the definition used by the compiler. The theorems here
+are purely Lean-side: they relate the cut rendering to the real rendering
+built on Mathlib's `Real.sqrt`. No HOL-to-Lean equivalence is claimed or
+assumed; the Lean statements and definitions above should be reviewed on their
+own terms (a separate review covers the full `fpSem` target).
 -/
 
 namespace Flapjack
