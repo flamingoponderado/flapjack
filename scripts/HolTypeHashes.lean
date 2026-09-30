@@ -351,6 +351,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Assign
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Seq
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.If
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Dec
+import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.While
 import Flapjack.Pancake.Proofs.PanGlobals.DeclListLemmas
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelationExact
 import Flapjack.Pancake.Proofs.PanGlobals.CompileDecsStructural
