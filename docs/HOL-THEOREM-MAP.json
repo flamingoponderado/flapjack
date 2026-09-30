@@ -28153,7 +28153,7 @@
     "hol_name": "reg_name_def",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-b source comparison (2026-09-30; .18.5.15.7.4): stackProps832-835 bound n < c.reg_count - LENGTH c.avoid_regs retains Nat subtraction/list length. stack_namesProof598-614 original names_ok premise implies reg_ok for every in-range register; distinct two source names remain distinct under rename. Exact AsmConfigExact positive-width word fields; bare names is canonical HolFiniteMapExact, existing findName/namesOkHOL applied to its lookup projection (HOL FLOOKUP/tlookup behavior). ALL_DISTINCT mapped range injectivity and EVERY range validity, no extra bijection/success premise, no executable route claim. Coordinator review pending."
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; .18.5.15.7.4): stackProps832-835 bound n < c.reg_count - LENGTH c.avoid_regs retains Nat subtraction/list length. stack_namesProof598-614 original names_ok premise implies reg_ok for every in-range register; distinct two source names remain distinct under rename. Exact AsmConfigExact positive-width word fields; names is the literal Spt Nat num_map; namesOkSptHOL uses range/map of findName(sptLookup), with original-register missing-key default (misc tlookup). Tagged implications consume the canonical Spt predicate directly. ALL_DISTINCT mapped range injectivity and EVERY range validity, no extra bijection/success premise, no executable route claim. Coordinator review pending."
   },
   {
   "lean_path": "Flapjack/Compiler/Backend/StackNames/NamesOk.lean",
@@ -29201,5 +29201,13 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanGlobalsContextExact toBroad/ofBroad roundtrip; it supports PanGlobalsContextExact.globals named by the state_rel tags."
-  }
+  },
+{
+  "lean_path": "Flapjack/Compiler/Backend/StackNames/NamesOk.lean",
+  "lean_name": "namesOkSptHOL",
+  "hol_path": "cakeml/compiler/backend/stack_namesScript.sml",
+  "hol_name": "names_ok_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b PR1180 source review HOL111-116: actual Spt Nat num_map, findName(sptLookup) is misc tlookup missing-key identity; GENLIST range/map of truncated reg_count-LENGTH avoid_regs; ALL_DISTINCT Nodup and EVERY Bool all hardware bound/nonmembership. No word carrier or representation exception. Implication premises now use this canonical predicate directly. Coordinator review pending."
+}
 ]
