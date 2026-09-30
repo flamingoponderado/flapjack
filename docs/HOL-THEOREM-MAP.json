@@ -27702,8 +27702,9 @@
     "hol_name": "fperm_code_FEMPTY",
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermCode.lean",
     "lean_name": "fpermCodeHOL_empty",
-    "statement_status": "reviewed_fmap_as_finite_support_equality",
+    "statement_status": "reviewed_fmap_as_finite_support_equality_words_as_type_indexed_bitvec",
     "fmap_as_finite_support_equality": true,
+    "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.4.3): exact port of HOL fperm_code_FEMPTY (pan_globalsProofScript.sml:1657), fperm_code f g FEMPTY = FEMPTY, over the reviewed canonical HolFiniteMapExact rendering of the code map (the same carrier as the accepted fperm_code_def port fpermCodeHOL). The whole statement is a single finite-map equality, so it carries the dedicated fmap_as_finite_support_equality qualifier and is witnessed at the lookup level by holFmapAsFiniteSupportEqualityWitness_fpermCodeHOL_empty. Source comparison against the original HOL statement; unconditional, no added assumptions."
   },
   {

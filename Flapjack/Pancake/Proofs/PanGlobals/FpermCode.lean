@@ -73,7 +73,7 @@ theorem flookupFpermCodeHOL {width : Nat} [NeZero width] (f g : MlS)
 `(fmap_as_finite_support_equality)` qualifier, witnessed at the lookup level by
 `holFmapAsFiniteSupportEqualityWitness_fpermCodeHOL_empty`. -/
 @[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "fperm_code_FEMPTY"
-  (fmap_as_finite_support_equality)]
+  (fmap_as_finite_support_equality) (words_as_type_indexed_bitvec)]
 theorem fpermCodeHOL_empty {width : Nat} [NeZero width] (f g : MlS) :
     fpermCodeHOL f g
       (HolFiniteMapExact.empty : HolFiniteMapExact MlS
