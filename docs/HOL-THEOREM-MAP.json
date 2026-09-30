@@ -28441,5 +28441,13 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-a source comparison against pan_globalsProofScript.sml:2088-2096. Original implicit word binder x is explicit word:BitVec width with NeZero width, sole good_dimindex premise remains existing tagged goodDimindex (width=32 or64). bytes_in_word is canonical panBytesInWord n2w(width DIV8); byte_aligned is existing source-shaped panGlobalsByteAlignedHOL, fixed point of panByteAlignHOL clearing LOG2(width DIV8) low bits, exactly2/3 at allowed dimensions. Conclusion preserves modular word multiplication, no no-wrap bound or extra alignment assumption. Kernel proof considers exactly source good dimensions and derives divisibility after reduction modulo2^width. StateRelationExact imported read-only for the existing alignment predicate; no relation theorem assumed. Source used at2211 and3126. Coordinator review pending."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CallObservation.lean",
+    "lean_name": "panGlobals_call_emptyLocals_observation",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific premise-free evaluator observation used to assemble semantics_empty_locals; no standalone HOL original. Source review pan_globalsProofScript2862-2889 and panSem Call clause: callee entry overwrites caller locals, all body results retain literal fix_clock, failure/timeout preserve FFI events. Exact full semantics theorem remains separate."
   }
 ]
