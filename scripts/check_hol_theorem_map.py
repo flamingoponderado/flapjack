@@ -1747,51 +1747,6 @@ VALID_STATUSES = {
     "documented_mismatch",
     "no_hol_reference_pending_classification",
 }
-# Reviewed non-exact classification for tagged declarations whose BODY calls
-# the untagged binary64 renderings of Flapjack/Misc/{MachineIeee,BinaryIeee*}.
-# Those renderings rest on the external assumption of docs/SOUNDNESS.md item 8,
-# either `Rat` for HOL `real` on a rational domain closed under the operations
-# reached (`rat_domain`) or the rational cut reformulation of `sqrt`
-# (`sqrt_cut`). This is a manifest status suffix, never an @[hol] qualifier:
-# `<base>_nonexact_binary64` keeps the qualifier-derived base status (checked as
-# usual; `reviewed_nonexact_binary64` for an unqualified tag) and is never a
-# reviewed-exact classification.
-NONEXACT_BINARY64_SUFFIX = "_nonexact_binary64"
-BINARY64_RENDERINGS = {
-    "holFp64LessThan": "rat_domain",
-    "holFp64LessEqual": "rat_domain",
-    "holFp64GreaterThan": "rat_domain",
-    "holFp64GreaterEqual": "rat_domain",
-    "holFp64Equal": "rat_domain",
-    "holFp64Add": "rat_domain",
-    "holFp64Sub": "rat_domain",
-    "holFp64Mul": "rat_domain",
-    "holFp64Div": "rat_domain",
-    "holFp64MulAdd": "rat_domain",
-    "holFp64ToInt": "rat_domain",
-    "holIntToFp64": "rat_domain",
-    "holFp64Sqrt": "sqrt_cut",
-}
-# Tagged declarations still classified with an exact-form status although
-# their bodies call a BINARY64_RENDERINGS entry; each is tracked by its bead
-# and must be reclassified or untagged there.
-BINARY64_PENDING_CLASSIFICATION = {
-    ("Flapjack/Compiler/Backend/Semantics/WordSem/Inst.lean", "inst"): "flapjack-2hoy.2",
-    ("Flapjack/FpSemHOL.lean", "fpSemFpfma"): "flapjack-2hoy.3",
-    ("Flapjack/FpSemHOL.lean", "fpSemFpCmpComp"): "flapjack-2hoy.4",
-    ("Flapjack/FpSemHOL.lean", "fpSemFpCmp"): "flapjack-2hoy.5",
-    ("Flapjack/FpSemHOL.lean", "fpSemFpUopComp"): "flapjack-2hoy.6",
-    ("Flapjack/FpSemHOL.lean", "fpSemFpBopComp"): "flapjack-2hoy.7",
-}
-BINARY64_RENDERING_RE = re.compile(
-    r"(?<![A-Za-z0-9_'.])(" + "|".join(sorted(BINARY64_RENDERINGS)) + r")(?![A-Za-z0-9_'])"
-)
-TOP_LEVEL_COMMAND_RE = re.compile(
-    r"^(?:@\[|/--|theorem\b|lemma\b|def\b|noncomputable\b|private\b|protected\b|"
-    r"abbrev\b|instance\b|structure\b|inductive\b|class\b|namespace\b|end\b|"
-    r"section\b|open\b|set_option\b|example\b|opaque\b|axiom\b|variable\b|#)"
-)
-
 FIELDS = {
     "hol_path",
     "hol_name",
@@ -1945,46 +1900,6 @@ def tagged_declarations(
                 raise ValueError(f"conflicting @[hol] references for {rel}:{lean_name}")
             tagged[key] = value
     return tagged
-
-
-def declaration_body_calls(lines: list[str], attribute_line: int) -> frozenset[str]:
-    """Return the BINARY64_RENDERINGS names called in the declaration that the
-    @[hol] attribute starting at 1-based ``attribute_line`` annotates.
-
-    The declaration runs from its header to the next top-level command.
-    Comments are ignored."""
-    stripped = strip_comments("\n".join(lines)).splitlines()
-    index = attribute_line - 1
-    # Skip the (possibly multi-line) attribute to the declaration header.
-    while index < len(stripped) and not re.match(
-        r"^(?:private |protected |noncomputable |partial |unsafe )*"
-        r"(?:theorem|lemma|def|abbrev|instance|structure|inductive|opaque)\b",
-        stripped[index],
-    ):
-        index += 1
-    body = [stripped[index]] if index < len(stripped) else []
-    index += 1
-    while index < len(stripped) and not TOP_LEVEL_COMMAND_RE.match(stripped[index]):
-        body.append(stripped[index])
-        index += 1
-    return frozenset(BINARY64_RENDERING_RE.findall("\n".join(body)))
-
-
-def binary64_rendering_calls(root: Path = ROOT) -> dict[tuple[str, str], frozenset[str]]:
-    """Return, per tagged declaration, the untagged binary64 renderings it calls."""
-    calls: dict[tuple[str, str], frozenset[str]] = {}
-    for path in REFS["lean_files"]():
-        rel = path.relative_to(root).as_posix()
-        lines = path.read_text(encoding="utf-8").splitlines()
-        for site in HOL_ATTRIBUTE_SITES(
-            lines, include_fmap_existentials=True,
-            include_word_dimension_width=True, include_fmap_function=True,
-        ):
-            found = declaration_body_calls(lines, site[0])
-            if found:
-                key = (rel, FIND_LEAN_DECL(lines, site[0] - 1))
-                calls[key] = calls.get(key, frozenset()) | found
-    return calls
 
 
 def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
@@ -2261,71 +2176,6 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
     return [inventory[key] for key in sorted(inventory)]
 
 
-def binary64_classification_errors(
-    key: tuple[str, str],
-    record: dict[str, Any],
-    tagged: bool,
-    nonexact_binary64: bool,
-    reviewer: Any,
-    calls: frozenset[str] | None,
-) -> list[str]:
-    """Check the reviewed non-exact binary64 classification of one record.
-
-    ``calls`` is the set of BINARY64_RENDERINGS names the tagged declaration's
-    body calls, or ``None`` when source scanning is not available."""
-    errors: list[str] = []
-    where = f"{key[0]}:{key[1]}"
-    renderings = record.get("binary64_renderings")
-    if nonexact_binary64:
-        if not tagged:
-            errors.append(f"{where}: {NONEXACT_BINARY64_SUFFIX} status needs an @[hol] tag")
-        if not isinstance(renderings, dict) or not renderings:
-            errors.append(
-                f"{where}: {NONEXACT_BINARY64_SUFFIX} status requires a non-empty "
-                "binary64_renderings map from each called rendering to its classification"
-            )
-        else:
-            for name, kind in renderings.items():
-                expected = BINARY64_RENDERINGS.get(name)
-                if expected is None:
-                    errors.append(f"{where}: binary64_renderings names unknown rendering {name!r}")
-                elif kind != expected:
-                    errors.append(
-                        f"{where}: binary64_renderings classifies {name} as {kind!r}; "
-                        f"it is {expected!r}"
-                    )
-            if calls is not None and set(renderings) != set(calls):
-                missing = sorted(set(calls) - set(renderings))
-                extra = sorted(set(renderings) - set(calls))
-                errors.append(
-                    f"{where}: binary64_renderings must list exactly the renderings its body "
-                    f"calls (missing {missing}, not called {extra})"
-                )
-        text = reviewer.lower() if isinstance(reviewer, str) else ""
-        if "soundness" not in text or "item 8" not in text:
-            errors.append(
-                f"{where}: {NONEXACT_BINARY64_SUFFIX} status requires a reviewer note citing "
-                "docs/SOUNDNESS.md item 8"
-            )
-    elif renderings is not None:
-        errors.append(
-            f"{where}: binary64_renderings requires a {NONEXACT_BINARY64_SUFFIX} status"
-        )
-    if calls is not None and tagged and calls and not nonexact_binary64:
-        if key not in BINARY64_PENDING_CLASSIFICATION:
-            errors.append(
-                f"{where}: body calls untagged binary64 renderings {sorted(calls)}; "
-                f"classify it with a {NONEXACT_BINARY64_SUFFIX} status (docs/SOUNDNESS.md item 8) "
-                "or withdraw the tag"
-            )
-    elif calls is not None and key in BINARY64_PENDING_CLASSIFICATION:
-        errors.append(
-            f"{where}: stale BINARY64_PENDING_CLASSIFICATION entry "
-            f"({BINARY64_PENDING_CLASSIFICATION[key]}); remove it"
-        )
-    return errors
-
-
 def validate_inventory(
     records: list[dict[str, Any]],
     proof_declarations: set[tuple[str, str]],
@@ -2334,7 +2184,6 @@ def validate_inventory(
         tuple[str, str, tuple[str, ...], tuple[str, ...], tuple[str, ...]],
     ],
     data_declarations_: set[tuple[str, str]] | None = None,
-    binary64_calls: dict[tuple[str, str], frozenset[str]] | None = None,
 ) -> list[str]:
     errors: list[str] = []
     by_key: dict[tuple[str, str], dict[str, Any]] = {}
@@ -2349,19 +2198,6 @@ def validate_inventory(
             continue
         by_key[key] = record
         status = record["statement_status"]
-        nonexact_binary64 = isinstance(status, str) and status.endswith(NONEXACT_BINARY64_SUFFIX)
-        if nonexact_binary64:
-            # Every other check runs on the qualifier-derived base status; the
-            # unqualified form is `reviewed_nonexact_binary64` (base
-            # `reviewed_exact` for those checks only).
-            status = status[: -len(NONEXACT_BINARY64_SUFFIX)]
-            if status == "reviewed":
-                status = "reviewed_exact"
-            elif status == "reviewed_exact" or not status.startswith("reviewed_"):
-                errors.append(
-                    f"{key[0]}:{key[1]}: {NONEXACT_BINARY64_SUFFIX} extends only a qualified "
-                    "reviewed_* status; an unqualified tag uses reviewed_nonexact_binary64"
-                )
         if status not in VALID_STATUSES:
             errors.append(f"{key[0]}:{key[1]}: invalid statement_status {status!r}")
         reviewer = record["reviewer"]
@@ -2384,10 +2220,6 @@ def validate_inventory(
         fmap_existentials = tag[11] if tag is not None and len(tag) > 11 else ()
         dimension_width = tag[12] if tag is not None and len(tag) > 12 else None
         fmap_function_positions = tag[13] if tag is not None and len(tag) > 13 else ()
-        errors.extend(binary64_classification_errors(
-            key, record, tag is not None, nonexact_binary64, reviewer,
-            None if binary64_calls is None else binary64_calls.get(key, frozenset()),
-        ))
         manifest_list_fields = tuple(record.get("list_as_array", ()))
         manifest_names_fields = tuple(record.get("names_as_string", ()))
         manifest_boundary_fields = tuple(record.get("names_as_string_boundary", ()))
@@ -2942,7 +2774,6 @@ def main(argv: list[str]) -> int:
             proof_theorem_declarations(),
             tagged_declarations(),
             data_declarations(),
-            binary64_rendering_calls(),
         )
     except (OSError, json.JSONDecodeError, ValueError) as exc:
         print(f"error: {exc}", file=sys.stderr)

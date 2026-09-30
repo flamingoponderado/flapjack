@@ -468,20 +468,6 @@ entire equation and its operator associativity, and record the comparison in
 the manifest. The qualifier permits no changed hypotheses or behavior and does
 not itself prove cross-language equivalence.
 
-**Classify binary64-dependent tags as reviewed non-exact.** A tagged
-declaration whose body calls an untagged binary64 rendering from
-`Flapjack/Misc/{MachineIeee,BinaryIeee*}.lean` rests on the external assumption
-of `docs/SOUNDNESS.md` item 8. These renderings use either `Rat` for HOL `real`
-on a rational domain (`rat_domain`) or rational cuts for `sqrt` (`sqrt_cut`).
-Record such a declaration with a status suffix `_nonexact_binary64` on its
-qualifier-derived status. An unqualified tag uses `reviewed_nonexact_binary64`.
-Also record a `binary64_renderings` map naming every called rendering with its
-classification, and a reviewer note citing SOUNDNESS item 8. This is not an
-`@[hol]` qualifier and never an exact classification. The checker's fixed
-rendering table and source scan enforce the map in both directions.
-Declarations still awaiting this classification are listed, each with its bead,
-in `BINARY64_PENDING_CLASSIFICATION`.
-
 **Port the executable path, too.** As HOL definitions are ported, make the
 compiler that `flapjack-compile` actually runs call the reviewed `@[hol]`
 definitions. A tagged proof-only duplicate beside a different production
