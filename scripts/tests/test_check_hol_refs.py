@@ -3099,5 +3099,21 @@ class HolMlBindingClassificationTest(unittest.TestCase):
         )
 
 
+class PinnedPathAllowlistAlignmentTest(unittest.TestCase):
+    """The Lean tag elaborator and the Python checker must allow the same pins."""
+
+    def test_lean_allowlist_matches_python_pins(self):
+        import re
+        holref = (CHECKER["ROOT"] / "Flapjack/HolRef.lean").read_text()
+        lean_paths = set(
+            re.findall(r'path == "(hol4/[^"]+\.sml)"', holref)
+        )
+        self.assertEqual(lean_paths, set(CHECKER["EXTERNAL_HOL_PATHS"]))
+
+    def test_every_python_pin_is_snapshotted(self):
+        for path in CHECKER["EXTERNAL_HOL_PATHS"]:
+            self.assertTrue((CHECKER["ROOT"] / path).is_file(), path)
+
+
 if __name__ == "__main__":
     unittest.main()
