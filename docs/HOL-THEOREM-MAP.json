@@ -30278,5 +30278,36 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only canonical map roundtrip or arbitrary-locals-flag singleton memory-update infrastructure. The update helper differs from HOL state_rel_memory_update by retaining any input flag and has no tag; the exact byte-store theorem below retains its original HOL hypotheses and existential conclusion."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/While.lean",
+    "lean_name": "evaluateFreshLocal_While",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "evaluate_fresh_local",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol: compared original evaluate_fresh_local1045-1091 and canonical pan_sem_evaluate_ind_probe.out While conjunct. Fixed name/value selected before recInduct. Three literal guarded IHs retain condition/Val/Word witnesses, nonzero word/clock, actual body evaluation and NONE or SOME-Continue witnesses. Original freshness/source evaluation, existential post locals and conditional good_res/nonerror update retained. Proved fix_clock_evaluate rewrite removes clamp exactly as original source theorem780; no added target result or strengthened all-state IH. All condition/error/timeout/Break/Continue/terminal-result branches proved over canonical finite state and positive word width."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/While.lean",
+    "lean_name": "evalFresh",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only finite local-update lookup bridge or canonical state roundtrip supporting original While case, without a separate HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/While.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only finite local-update lookup bridge or canonical state roundtrip supporting original While case, without a separate HOL declaration."
   }
 ]

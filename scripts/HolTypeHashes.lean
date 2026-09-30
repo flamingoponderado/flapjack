@@ -2,6 +2,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.ResVar
 import Flapjack.Pancake.Proofs.PanGlobals.ReadBytearray
 import Flapjack.Pancake.Proofs.PanGlobals.ByteStore
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Leaves
+import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.While
 import Flapjack.Pancake.Proofs.PanGlobals.MemoryLookup
 import Flapjack.Pancake.Proofs.PanGlobals.MemorySwap
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelationCode
