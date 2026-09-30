@@ -3115,20 +3115,24 @@ the `While` conjunct of the source-reviewed `crepSem$evaluate_ind`. The clause i
 induction hypotheses are the HOL case's sub-body IH (at `decClockCrepSemHOL s`)
 and its recursive while IH (at the body-result state).
 
-`ihWhile` is exactly the recursive-call hypothesis of the exact evaluator's
+`ihWhile` mirrors the recursive-call hypothesis of the exact evaluator's
 induction principle: `evalCrepSemHOLProg.inductHOL`'s `hwhile_none` /
 `hwhile_continue` handlers (EvaluateHOL.lean:4011/4022) hand the recursive
-motive at the body-result state `loopState` reached by running `body` at
-`decClockCrepSemHOL s`. Consequently `ihWhile` is path-guarded: its first
-argument is the body-result state linked by that run and its guard restricts the
-body result to `none` or `continue`, so it never instantiates at the original
-state `s` (the `While` clause only runs the body when `s.clock ≠ 0`, and
-`decClockCrepSemHOL` strictly decreases the clock there). The parent assembly
-supplies this hypothesis directly from `inductHOL`, matching the HOL
-`evaluate_ind` recursive hypothesis; no arbitrary-state or target-result
-assumption is made. Flapjack-specific `inlineProgHOLExact` inline rendering;
-carriers and relation qualifiers match the other `inline_prog_correct` case
-lemmas. -/
+motive back only for a body result of `none` or `continue 0`. Accordingly the
+guard below is exactly `loopResult = none ∨ loopResult = some (.continue 0)`
+(any other `continue n` exits the loop in the `While` clause and receives no
+recursive motive), so `ihWhile` cannot be instantiated at the original state
+`s`; the `While` clause runs the body only when `s.clock ≠ 0` and
+`decClockCrepSemHOL` strictly decreases the clock there.
+
+ON HOLD: the `@[hol]` tag above is not yet accepted. The parent assembly must
+supply this hypothesis literally from `inductHOL`, including the
+`crepStampExactDomains`/`fixClockCrepSemHOL` correspondence between the
+handler's stamped body-result state and the plain body-result state used here;
+that correspondence is not assumed in the statement but remains to be proved
+before the tag can be reviewed. Flapjack-specific `inlineProgHOLExact` inline
+rendering; carriers and relation qualifiers match the other
+`inline_prog_correct` case lemmas. -/
 @[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "inline_prog_correct"
   (fmap_as_finite_support_relation :=
     [CrepSemHOLState.locals, CrepSemHOLState.globals,
@@ -3180,7 +3184,7 @@ theorem inlineProgCorrectWhileCaseExact {width : Nat} [NeZero width] {σ : Type}
         (loopResult : Option (CrepResultHOLExact width)),
         evalCrepSemHOLProgExact (decClockCrepSemHOL s) body = (loopResult, loopState) →
         (loopResult = none ∨
-          ∃ n, loopResult = some (CrepResultHOLExact.continue n)) →
+          loopResult = some (CrepResultHOLExact.continue 0)) →
         ∀ (result : Option (CrepResultHOLExact width))
           (source' : CrepSemHOLState width σ)
           (inlFs' : HolFiniteMapExact CrepInlineMapHOLName
@@ -3301,7 +3305,7 @@ theorem inlineProgCorrectWhileCaseExact {width : Nat} [NeZero width] {σ : Type}
                           rcases n with _ | n
                           · simp only [hbody] at hsource
                             obtain ⟨targetFinal, htargetFinal, hstateFinal, hcodeFinal, hlocalsFinal⟩ :=
-                              ihWhile loopState (some (.continue 0)) hbody (Or.inr ⟨0, rfl⟩)
+                              ihWhile loopState (some (.continue 0)) hbody (Or.inr rfl)
                                 r s' inlFs targetLoop inlBag hsource hnotError
                                 hsubmapLoop hbag hstateLoop hlocalsLoop hcodeLoop
                             refine ⟨targetFinal, ?_, hstateFinal, hcodeFinal, ?_⟩
