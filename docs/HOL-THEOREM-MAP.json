@@ -50,7 +50,7 @@
       "store"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.5), stackSemScript653-655: arbitrary result R and exact state pair, input state and returned state have same width/C/F. Retains result, replaces only returned clock with MIN input.clock returned.clock. Accepted imported carrier with same-module canonical roundtrip re-export for state fields, no duplicate owner. No evaluator or production-path claim. Coordinator review required."
+    "reviewer": "flapjack-luna-a corrective source review (2026-09-30; yov4), stackSemScript653-661: HOL input s and returned s1 share only Nat clock observations, so width/returnedWidth, C/ReturnedC and F/ReturnedF are independently quantified. Each positive word width retains its own NeZero and both FFI carriers are universe-0 Type. fixClock preserves the result and every returned-state field except clock, replacing it by MIN input.clock returned.clock; fixClockImp retains only the original pair-equality premise and clock bound conclusion. Canonical regs/fpRegs/store belong to the single imported StackSemStateFiniteExact owner at either instantiation, with existing same-module polymorphic roundtrip witness. Generalization removes the previous extra same-carrier restriction; no evaluator or production-route claim. Independent-carrier kernel examples verify actual distinct state types. Coordinator review pending."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Control.lean",
@@ -64,7 +64,7 @@
       "store"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.5), stackSemScript657-661: same universally quantified s/x/res/s1, sole fix_clock s x=(res,s1) premise, s1.clock<=s.clock conclusion. No clock/evaluation assumption added; bound kernel-derived by pair clock projection and min_le_left. Accepted imported carrier with same-module canonical roundtrip re-export for state fields, no duplicate owner. No evaluator or production-path claim. Coordinator review required."
+    "reviewer": "flapjack-luna-a corrective source review (2026-09-30; yov4), stackSemScript653-661: HOL input s and returned s1 share only Nat clock observations, so width/returnedWidth, C/ReturnedC and F/ReturnedF are independently quantified. Each positive word width retains its own NeZero and both FFI carriers are universe-0 Type. fixClock preserves the result and every returned-state field except clock, replacing it by MIN input.clock returned.clock; fixClockImp retains only the original pair-equality premise and clock bound conclusion. Canonical regs/fpRegs/store belong to the single imported StackSemStateFiniteExact owner at either instantiation, with existing same-module polymorphic roundtrip witness. Generalization removes the previous extra same-carrier restriction; no evaluator or production-route claim. Independent-carrier kernel examples verify actual distinct state types. Coordinator review pending."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/StateOps.lean",
