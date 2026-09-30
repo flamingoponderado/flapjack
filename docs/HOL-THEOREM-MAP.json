@@ -30715,6 +30715,53 @@
   "reviewer": "Flapjack-specific infrastructure: Private transport of broad expression freshness through canonical finite locals lookup; no standalone HOL declaration, internal domain decision adds no premise."
 },
 {
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/ShMemLoad.lean",
+  "lean_name": "evaluateFreshLocal_ShMemLoad",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_fresh_local",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-09-30; bead flapjack-pxn.18.5.2.32.3.12): HOL pan_globalsProofScript.sml:1045-1091 genuine ShMemLoad evaluate_ind case. Original fresh-name/value/state/result/poststate binders, fresh-name and source-evaluation conjunction, existential post-locals and good_res/non-Error conditional FUPDATE retained. No success, address-validity, bound or target-evaluation premise is added. The address expression is evaluated first (unchanged by the fresh local), then lookup_kvar gates the load, then exact sh_mem_load runs at nb_op; the fresh local differs from a local constructor name by the original free_var_ids premise, and the keyed write commutes at that internally derived distinct name. Every failed address/lookup match returns Error with the updated state; the FFI_final event clears locals and is not good_res, so its post-state is unchanged. Exact ProgHOL/MlS/ValueHOL/VarKind/OpSize/PanSemResultExact carriers, tagged total finite evaluator source equation; canonical state finite-map roundtrip witness in same module, positive BitVec width and Type0 FFI translation. Kernel checked; coordinator independent review pending. Full evaluate_fresh_local remains open on .32.3."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/ShMemLoad.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific infrastructure: Canonical state roundtrip re-export; representation infrastructure, no HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/ShMemLoad.lean",
+  "lean_name": "evalFreshUpdate",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific infrastructure: Private codec transport of broad expression freshness; no separate source declaration, decision internal."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/ShMemLoad.lean",
+  "lean_name": "setKvarFfiHOLFinite_freshUpdate",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific infrastructure: Private commutation of the keyed shared-memory write with a fresh local binding; no standalone HOL declaration, it only packages set_kvar and the ffi update."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/ShMemLoad.lean",
+  "lean_name": "shMemLoadHOLFiniteExact_freshUpdate",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific infrastructure: Private branch analysis relating the finite sh_mem_load under a fresh local binding, distinguishing the Error/none result from the FFI_final event, where the FFI_final event clears locals; no standalone HOL declaration."
+},
+{
   "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/Assign.lean",
   "lean_name": "evaluateFreshLocal_Assign",
   "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
