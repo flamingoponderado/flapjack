@@ -14,6 +14,29 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} 
         StackSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
   StackSemStateSupport.holFmapAsFiniteSupportWitness
 
+/-- Flapjack-only shared restriction of canonical finite-support maps by the
+    executable Bool mask used by StackSem's saved-register field. Its lookup
+    equation follows the original FLOOKUP_DRESTRICT1127-1131, but this is
+    infrastructure for the two untagged clause fragments, not a tagged port
+    of generic HOL set restriction. The result keeps the original support
+    witness because every surviving binding was already in the input map. -/
+def restrictIn {α β : Type} (m : HolFiniteMapExact α β) (keep : α → Bool) :
+    HolFiniteMapExact α β where
+  lookup key := if keep key then m.lookup key else none
+  finiteSupport := by
+    obtain ⟨keys, hkeys⟩ := m.finiteSupport
+    refine ⟨keys, ?_⟩
+    intro key hkey
+    apply hkeys key
+    by_cases h : keep key
+    · simpa [h] using hkey
+    · simp [h] at hkey
+
+/-- Flapjack lookup equation for the shared saved-register mask operation. -/
+theorem restrictIn_lookup {α β : Type} (m : HolFiniteMapExact α β)
+    (keep : α → Bool) (key : α) :
+    (restrictIn m keep).lookup key = if keep key then m.lookup key else none := rfl
+
 /-- HOL domain-checked memory update. Equality implements addr =+ value;
     the update preserves the domain and every other state field. -/
 @[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "mem_store_def"
