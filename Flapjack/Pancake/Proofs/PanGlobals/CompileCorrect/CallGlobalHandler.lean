@@ -410,6 +410,41 @@ private theorem restoreHandlerScopes {width : Nat} {σ : Type} [NeZero width]
   rw [hupdated hg, savedFlag, ← kf, ← kr, ← flagLookup, restoreUpdate, restoreUpdate]
   exact hrel.2.1 hg
 
+/-- Normal matched-handler computation including the generated flag write.
+The flag binding required by the assignment is derived from fresh-local
+transport, and its final value is one. Internal composition, not a public
+constructor theorem or a successful-target-execution assumption. -/
+private theorem normalHandlerFlagRun {width : Nat} {σ : Type} [NeZero width]
+    (caller post : PanSemStateFiniteExact width σ) (handler : ProgHOL width)
+    (resultName flagName handlerVar : MlS) (initializer exceptionValue : ValueHOL width)
+    (hr : resultName ≠ handlerVar) (hf : flagName ≠ handlerVar)
+    (hrFresh : resultName ∉ freeVarIdsHOL handler) (hfFresh : flagName ∉ freeVarIdsHOL handler)
+    (hrun : evaluateHOLFiniteState (setVarHOLFinite handlerVar exceptionValue caller) handler =
+      (none, post)) :
+    ∃ finalPost,
+      evaluateHOLFiniteState
+        (setVarHOLFinite handlerVar exceptionValue
+          (setVarHOLFinite flagName (.val (.word (BitVec.ofNat width 0)))
+            (setVarHOLFinite resultName initializer caller)))
+        (.seq handler (.assign .local flagName (.const (BitVec.ofNat width 1)))) = (none, finalPost) ∧
+      finalPost = {post with locals := ((post.locals.update (resultName, initializer)).update
+        (flagName, .val (.word (BitVec.ofNat width 1))))} := by
+  obtain ⟨locals, htransport, hgood⟩ := handlerScratchRun caller post handler none
+    resultName flagName handlerVar initializer (.val (.word (BitVec.ofNat width 0))) exceptionValue
+    hr hf hrFresh hfFresh hrun
+  have hmap := hgood ⟨rfl, by simp⟩
+  have hbinding : ({post with locals := locals} : PanSemStateFiniteExact width σ).locals.lookup flagName =
+      some (.val (.word (BitVec.ofNat width 0))) := by
+    simp [hmap, FUPDATE]
+  have hflag := PanGlobalsCallHandlerFlag.handlerFlagNormal _ {post with locals := locals}
+    handler flagName (BitVec.ofNat width 0) htransport hbinding
+  refine ⟨_, hflag, ?_⟩
+  simp only [setVarHOLFinite, hmap]
+  congr 1
+  apply HolFiniteMapExact.ext
+  funext key
+  by_cases hk : flagName = key <;> simp [FUPDATE, hk]
+
 /-- Internal missing-context branch of the full constructor proof. The branch
 condition selects the literal compiler fallback; the callee and handler IHs
 remain those of the original evaluator. Untagged infrastructure until the full

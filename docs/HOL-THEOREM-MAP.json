@@ -34255,5 +34255,13 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-only internal matched-handler restoration for actual33.11. Uses reviewed evaluate_unchanged_local to recover both caller lookups for original goodRes/nonError outcomes, then canonical scope restoration algebra; other outcomes use relation false locals flag. Conditional transported scratch-map fact is internal branch data, not public HOL-case premise. Both actual saved snapshots and possibly absent originals preserved. Untagged; full constructor assembly and normal/abnormal branch connections still unfinished."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "normalHandlerFlagRun",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only actual normal matched-handler composition for33.11. Derives flag binding from accepted fresh-local transport, applies accepted handlerFlagNormal, and proves exact final map with flag one/result initializer. No successful target handler or assignment-validity premise; source handler run remains internal branch/IH data. Untagged, no completed public constructor claim; outer If and full branch assembly remain unfinished."
 }
 ]
