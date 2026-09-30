@@ -4,18 +4,17 @@ import Flapjack.Pancake.Proofs.CrepInline.TransformBranch.Loops
 # crep_inline: assembled `transform_branch_correct`
 
 Assembly of HOL `transform_branch_correct` (`cakeml/pancake/proofs/crep_inlineProofScript.sml:2042-2186`)
-from its tagged constructor cases (bead `flapjack-pxn.18.5.5.47.3`).  As for
-the accepted `evaluate_locals_same_fdom` assembly, the `evaluate_ind` motive is
-established for every state by structural recursion on the program (the
-handler of a call being a structural subterm), with an inner clock induction
-supplying exactly the guarded While premises.  No public induction hypothesis
-remains.
+from its constructor calculations. The untagged `handlerOnlyBranchMotive`
+establishes the structural calculation, with inner clock induction for While,
+and uses the existing untagged handler-only `callGoal`. The complete
+`branchMotive` uses lexicographic clock/size induction to supply both original
+Call hypotheses to the exact tagged wrapper internally. Its callee clock is
+strictly decremented; its matching handler clock is bounded by the callee
+poststate clock. The public theorem has no additional induction hypothesis.
 
-See `EvaluateLocals/Assembly.lean` ("Induction principle and guard spellings")
-for why this assembly uses structural recursion plus a clock induction instead
-of the tagged Crep `evaluate_ind`, and for the equations (`callGuard_args_eq`,
-`callGuard_lookup_eq`, `callGuard_nodup_iff`) relating the Call handler
-premise's guards to `evaluate_ind`'s.
+The untagged equations `callGuard_args_eq`, `callGuard_lookup_eq` and
+`callGuard_nodup_iff` in `EvaluateLocals/Assembly.lean` relate the normalized
+argument, lookup and nodup guards to the literal faithful `evaluate_ind` guards.
 -/
 
 namespace Flapjack
@@ -66,7 +65,7 @@ private theorem whileBranchMotive {width : Nat} [NeZero width] {σ : Type}
 
 /-- Local support: the `evaluate_ind` motive of `transform_branch_correct` for
     every program and state. -/
-private theorem branchMotive {width : Nat} [NeZero width] {σ : Type} :
+private theorem handlerOnlyBranchMotive {width : Nat} [NeZero width] {σ : Type} :
     ∀ (p : CrepProgHOL width) (s : CrepSemHOLState width σ), transformBranchGoal p s
   | .skip, s => transformBranchCorrect_Leaf _ s (Or.inl rfl)
   | .assign n e, s => transformBranchCorrect_Leaf _ s (Or.inr (Or.inl ⟨n, e, rfl⟩))
@@ -100,23 +99,46 @@ private theorem branchMotive {width : Nat} [NeZero width] {σ : Type} :
       transformBranchCorrect_Leaf _ s (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr
         (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨op, n, a, rfl⟩))))))))))))
   | .return es, s => transformBranchCorrect_Return es s
-  | .dec v e body, s => transformBranchCorrect_Dec v e body s (fun _ _ => branchMotive body _)
+  | .dec v e body, s => transformBranchCorrect_Dec v e body s (fun _ _ => handlerOnlyBranchMotive body _)
   | .ite c a b, s => transformBranchCorrect_If c a b s (fun _ w _ _ => by
       by_cases hw : w ≠ 0
-      · rw [if_pos hw]; exact branchMotive a s
-      · rw [if_neg hw]; exact branchMotive b s)
-  | .seq a b, s => transformBranchCorrect_Seq a b s (fun _ s1 _ _ => branchMotive b s1) (branchMotive a s)
-  | .while e c, s => whileBranchMotive e c (fun u => branchMotive c u) s
+      · rw [if_pos hw]; exact handlerOnlyBranchMotive a s
+      · rw [if_neg hw]; exact handlerOnlyBranchMotive b s)
+  | .seq a b, s => transformBranchCorrect_Seq a b s (fun _ s1 _ _ => handlerOnlyBranchMotive b s1) (handlerOnlyBranchMotive a s)
+  | .while e c, s => whileBranchMotive e c (fun u => handlerOnlyBranchMotive c u) s
   | .call none f args, s =>
-      transformBranchCorrect_Call none f args s (fun _ _ _ _ _ _ _ _ _ _ _ _ hinfo => by cases hinfo)
+      callGoal none f args s (fun _ _ _ _ _ _ _ _ _ _ _ _ hinfo => by cases hinfo)
   | .call (some (names, none)) f args, s =>
-      transformBranchCorrect_Call _ f args s (fun _ _ _ _ _ _ _ _ _ _ _ _ hinfo => by simp at hinfo)
+      callGoal _ f args s (fun _ _ _ _ _ _ _ _ _ _ _ _ hinfo => by simp at hinfo)
   | .call (some (names, some (eid, handler))) f args, s =>
-      transformBranchCorrect_Call _ f args s (fun _ _ _ _ _ handler' st _ _ _ _ _ hinfo => by
+      callGoal _ f args s (fun _ _ _ _ _ handler' st _ _ _ _ _ hinfo => by
         simp only [Option.some.injEq, Prod.mk.injEq] at hinfo
         obtain ⟨_, _, rfl⟩ := hinfo
-        exact branchMotive handler _)
+        exact handlerOnlyBranchMotive handler _)
 termination_by p => sizeOf p
+
+/-- Complete motive with both exact Call induction premises supplied internally.
+Non-Call constructors reuse the independent structural calculation above. -/
+private theorem branchMotive {width : Nat} [NeZero width] {σ : Type} :
+    ∀ (p : CrepProgHOL width) (s : CrepSemHOLState width σ), transformBranchGoal p s := by
+  refine evalCrepSemHOLProgExact_inductLex (motive := transformBranchGoal) ?_
+  intro p s ih
+  have lower : ∀ (q : CrepProgHOL width) (u : CrepSemHOLState width σ),
+      u.clock < s.clock → transformBranchGoal q u :=
+    fun q u hc => ih q u (Prod.Lex.left _ _ hc)
+  have dec_lt : s.clock ≠ 0 → (decClockCrepSemHOL s).clock < s.clock := by
+    intro h; simp only [decClockCrepSemHOL_clock']; omega
+  cases p with
+  | call info fname args =>
+      exact transformBranchCorrect_Call info fname args s
+        (fun _ _ newlocals _ _ _ hck =>
+          lower _ {decClockCrepSemHOL s with locals := newlocals} (dec_lt hck))
+        (fun _ prog newlocals _ _ _ st _ _ _ hck hb _ => by
+          have hle := evalCrepSemHOLProgExact_clock_le
+            {decClockCrepSemHOL s with locals := newlocals} prog
+          rw [hb] at hle
+          exact lower _ {st with locals := s.locals} (Nat.lt_of_le_of_lt hle (dec_lt hck)))
+  | _ => exact handlerOnlyBranchMotive _ s
 
 /-- Exact HOL `transform_branch_correct` (`crep_inlineProofScript.sml:2042-2186`),
     assembled from the tagged constructor cases with every `evaluate_ind`
