@@ -277,6 +277,7 @@
     {"bytes": 136, "out": "pan_fixed_store_probe.out", "rows": 4, "sha256": "2489cc6892ccf72dddf4b75abcc124c765028ca5a92a6f84f967934c96bd4712"},
     {"bytes": 98, "out": "pan_flat_store_probe.out", "rows": 4, "sha256": "f13a8d01c5e5b4e8dc29faa7d139119c7313720d943cafe515610bef4362f464"},
     {"bytes": 86, "out": "pan_flatten_probe.out", "rows": 3, "sha256": "45f4c20d880dd78665dd3856109bb70d267f3baaee1bee917605c7182bcd7af2"},
+    {"bytes": 177, "out": "pan_globals_block_alignment_probe.out", "rows": 8, "sha256": "38625d335f3135a4ceaff87a8c2d9967655a17a092285c97e40be162774ccfd5"},
     {"bytes": 3330, "out": "pan_globals_compile_decs_probe.out", "rows": 18, "sha256": "c8ff2fc34c1a2e292f61277d0ca097a8440db8a09d1da2e8ee6658cf62c1fbf3"},
     {"bytes": 216, "out": "pan_globals_compile_exp_probe.out", "rows": 5, "sha256": "b4ebd6b67ba695c136c1dc4678f1aca3cd6f45be066f81ab54c9510b8fcb80e4"},
     {"bytes": 918, "out": "pan_globals_compile_probe.out", "rows": 7, "sha256": "ee876a1f70ae0285c7c168158c126c58e046ee59f02191fe5725ae5bc2c16030"},
