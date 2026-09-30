@@ -187,6 +187,10 @@ run_probe word_alloc_colour_exp_probeScript.sml word_alloc_colour_exp_probe.out 
 run_probe word_add_carry_probeScript.sml word_add_carry_probe.out \
   ordinary carry_overflow "$cake_dir/compiler/backend/backend_commonScript.sml" \
   "$cake_dir/compiler/backend"
+run_probe backend_common_word_shift_probeScript.sml backend_common_word_shift_probe.out \
+  ws1 ws4 ws8 ws16 ws32 ws64 ws128 \
+  "$cake_dir/compiler/backend/backend_commonScript.sml" \
+  "$cake_dir/compiler/backend"
 run_probe riscv_word_extract_6_probeScript.sml riscv_word_extract_6_probe.out \
   word_extract_6_zero word_extract_6_63 word_extract_6_64_premise \
   "$cake_dir/compiler/encoders/riscv/riscv_targetScript.sml" \
@@ -663,6 +667,14 @@ run_probe pan_lang_size_probeScript.sml pan_lang_size_probe.out \
   mlstring_size_def shape_size_def exp_size_def MEM_IMP_shape_size \
   MEM_IMP_exp_size exp_size_base \
   "$cake_dir/pancake/panLangScript.sml" \
+  "$cake_dir/pancake"
+run_probe crep_inline_prog_size_type_probeScript.sml crep_inline_prog_size_type_probe.out \
+  prog_size_type exp_size_type unreach_elim_prog_size_typed \
+  "$cake_dir/pancake/proofs/crep_inlineProofScript.sml" \
+  "$cake_dir/pancake/proofs"
+run_probe crep_lang_size_probeScript.sml crep_lang_size_probe.out \
+  exp_size_def prog_size_def prog_size_seq prog_size_call prog_size_dec prog_size_ext prog_size_raise \
+  "$cake_dir/pancake/crepLangScript.sml" \
   "$cake_dir/pancake"
 run_probe pan_lang_decl_predicates_probeScript.sml pan_lang_decl_predicates_probe.out \
   is_decl_decl is_decl_exception is_exn_decl_exception is_exn_decl_decl \
@@ -2491,6 +2503,12 @@ run_probe pan_sem_evaluate_ind_probeScript.sml pan_sem_evaluate_ind_probe.out \
   evaluate_ind "$cake_dir/pancake/semantics/panSemScript.sml" \
   "$cake_dir/pancake/semantics"
 
+# The expression-level panSem eval_ind principle is tdefn-generated; capture its
+# exact recursive IH binders (e.g. the Load shape-wf guard) for source review.
+run_probe pan_sem_eval_ind_probeScript.sml pan_sem_eval_ind_probe.out \
+  eval_ind "$cake_dir/pancake/semantics/panSemScript.sml" \
+  "$cake_dir/pancake/semantics"
+
 run_probe word_alloc_key_map_probeScript.sml word_alloc_key_map_probe.out \
   key_map_mixed key_map_collision key_map_done \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
@@ -2514,6 +2532,14 @@ run_probe pan_word_of_bytes_overlong_probeScript.sml pan_word_of_bytes_overlong_
 
 run_probe stack_props_fixed_names_probeScript.sml stack_props_fixed_names_probe.out \
   x86_good x86_empty x86_bad_zero riscv_empty "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe stacksem_dynamic_stack_probeScript.sml stacksem_dynamic_stack_probe.out \
+  any_load_disabled any_load_loc any_load_alias any_load_missing any_load_offset_loc any_load_unaligned any_load_boundary any_load_space any_store_loc any_store_alias any_store_missing any_store_offset_missing any_store_offset_loc any_store_unaligned any_store_boundary any_store_disabled any_load_width32 any_load_width64 any_load_width1_zero any_load_width1_nonzero \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe stacksem_size_bitmap_probeScript.sml stacksem_size_bitmap_probe.out \
+  size_disabled size_success size_boundary size_loc size_missing bitmap_disabled bitmap_success bitmap_boundary bitmap_loc bitmap_missing bitmap_alias \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
 
 run_probe stacksem_fixed_stack_probeScript.sml stacksem_fixed_stack_probe.out \
   stack_alloc_disabled stack_alloc_success stack_alloc_boundary stack_alloc_exhausted stack_free_boundary stack_free_excess stack_free_disabled stack_load_loc stack_load_boundary stack_load_disabled stack_store_loc stack_store_missing stack_store_boundary stack_store_disabled stack_size_modular stack_size_disabled stack_size_unsigned \
@@ -2539,3 +2565,21 @@ run_probe stack_props_addr_name_probeScript.sml stack_props_addr_name_probe.out 
 
 run_probe stack_props_fp_name_probeScript.sml stack_props_fp_name_probe.out \
   fpLess fpLessEqual fpEqual fpAbs fpAbs_alias fpNeg fpNeg_alias fpSqrt fpMov fpToInt fpFromInt fpAdd fpSub fpMul fpDiv binary_mismatch binary_three_reg fma_arm fma_riscv fma_count2 fpMovToReg_32 fpMovFromReg_32 move32_alias move32_bound move64_ignored fp_bound logical_bound "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe stack_props_inst_name_probeScript.sml stack_props_inst_name_probe.out \
+  skip const_last const_bound mem_good mem_destination mem_base arith_good arith_bad fp_good fp_alias "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe word_simp_smartseq_probeScript.sml word_simp_smartseq_probe.out \
+  skip_left skip_right labels_skip_left labels_call_left labels_both labels_seq "$cake_dir/compiler/backend/word_simpScript.sml" "$cake_dir/compiler/backend"
+
+run_probe stack_props_remove_name_probeScript.sml stack_props_remove_name_probe.out \
+  get_last get_bound set store_ignored_second store_first_bad load_ignored_second load_first_bad get_size set_size_bad heap store_any_bad load_any bitmap_bad consts seq_bad if_ignored_condition loop_bad call_none_ignored call_body_bad call_handler_bad call_both_good inst_ignored "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe stack_props_alloc_arg_probeScript.sml stack_props_alloc_arg_probe.out \
+  one zero two seq_good seq_bad if_good if_bad loop_good loop_bad call_none call_none_handler_bad call_return_bad call_handler_bad call_good inst_default \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe stack_props_program_name_probeScript.sml stack_props_program_name_probe.out \
+  inst_good inst_bad heap_alias heap_distinct code_good code_bad data_bad seq_bad if_ignored loop_bad raise_good return_bad call_direct call_indirect_bad call_none_handler_ignored call_body_bad call_handler_bad call_good alloc_default shared_good shared_register_bad shared_base_bad shared_offset_bad "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe stack_props_program_validity_probeScript.sml stack_props_program_validity_probe.out \
+  inst_good inst_avoided inst_bound code_good code_avoided code_bound data_default heap_default seq_bad if_ignored loop_bad raise_good return_bad call_direct call_indirect_avoided call_indirect_bound call_handler_ignored call_body_bad call_handler_bad call_good shared_good shared_register_bad shared_base_bad shared_offset_bad "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"

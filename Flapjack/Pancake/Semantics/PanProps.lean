@@ -196,23 +196,13 @@ clock-increase event-prefix proof are tracked by `flapjack-4ac.4.50.1`, which
 depends on `flapjack-qj5`; keep inventory bead `flapjack-4ac.4.50` open until
 that theorem is kernel-checked over the accepted exact evaluator. -/
 
-/-! Source review for HOL `semantics_decls_has_main'`
-(`panPropsScript.sml:1628-1638`): HOL assumes
-`semantics_decls s start code <> Fail` and proves that
-`FLOOKUP (s.code |++ functions code) start` contains a zero-argument function
-body and return shape. `PanSem/EntryState.lean` now composes the exact
-`decs_stcnames` prepass with production `evaluate_decls` and a clocked entry
-run, and proves its result agrees with the exact finite-map path under the
-state relation. Flapjack still has no full HOL `semantics_decls` observation
-composition or clocked `semantics` result over that carrier. The existing
-`PanObservationalSemantics.panSemantics` takes arbitrary hooks and a
-caller-supplied prefix-chain/LUB contract; it does not implement HOL's
-`Fail`/termination/divergence choice in `semantics_def`. Consequently there is
-no exact Lean theorem to tag here: adding the desired implication over that
-different wrapper would change the source semantics. The faithful theorem
-replacement is tracked by `flapjack-4ac.4.110`, depending on exact
-`evaluate_def`, `evaluate_decls_def`, and wrapper/LUB carrier ports
-(`flapjack-4ac.3.45`, `.3.53`, `.4.105.1`). -/
+/-! The exact finite-state port of HOL `semantics_decls_has_main'`
+(`panPropsScript.sml:1628-1638`) now lives in `PanProps/HasMain.lean` as
+`PanPropsHasMain.semanticsDeclsHasMainPrime`. It retains the sole non-Fail
+premise and existential zero-argument code entry conclusion, using the exact
+`semanticsDecls`, declaration code update and zero-clock Call fact. It does
+not use the legacy hook-based observational API. Bead `flapjack-4ac.4.110`
+tracks coordinator source review and acceptance. -/
 
 /-! Source review for HOL `eval_swap_memory`
 (`panPropsScript.sml:1734-1742`): the exact theorem quantifies `s`, `exp`, `v`,
@@ -891,8 +881,10 @@ theorem panPrimopHOLExact_isWfShapeValueHOLExact {width : Nat} [NeZero width]
     context empty, `is_wf_shape` on the `shape_of` image implies
     `is_wf_shape_v` on the value.  Over the exact `ValueHOL width` and
     MlString-keyed `StructContextExact` carriers; the Bool predicate is
-    rendered as `= true`. -/
-@[hol "cakeml/pancake/semantics/panPropsScript.sml" "is_wf_shape_v_nil_step1"]
+    rendered as `= true`. The word qualifier records HOL's type-indexed
+    word payload as positive-width `BitVec`, without adding a premise. -/
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "is_wf_shape_v_nil_step1"
+  (words_as_type_indexed_bitvec)]
 theorem isWfShapeValueHOLExact_nil_step1 {width : Nat} [NeZero width]
     (context : Flapjack.Pancake.PanLang.StructContextExact) (value : ValueHOL width)
     (h : context = [] ∧
@@ -2165,6 +2157,10 @@ open Flapjack.Pancake.PanLang
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "is_wf_shape_nil"]
 def isWfShapeNilHOL (shape : ShapeHOL) : Bool :=
   isWfShapeExactHOL ([] : StructContextExact) shape
+
+/-! The exact general `is_wf_shape_v_nil_step1` port already exists in this module
+    as `isWfShapeValueHOLExact_nil_step1` (see above); no specialized duplicate is kept. -/
+
 
 /- Untagged support: context-free well-formed shapes have the same
     with-context size as their plain `size_of_shape` size, for every context. -/

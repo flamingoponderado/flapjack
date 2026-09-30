@@ -1,0 +1,15 @@
+one=T
+zero=F
+two=F
+seq_good=T
+seq_bad=F
+if_good=T
+if_bad=F
+loop_good=T
+loop_bad=F
+call_none=T
+call_none_handler_bad=F
+call_return_bad=F
+call_handler_bad=F
+call_good=T
+inst_default=T

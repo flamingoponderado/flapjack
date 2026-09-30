@@ -1,4 +1,12 @@
+import Flapjack.Test.StackPropsProgramValidity
+import Flapjack.Test.StackPropsProgramNames
+import Flapjack.Test.StackPropsAllocArg
+import Flapjack.Test.StackPropsRemoveNames
+import Flapjack.Test.WordSimpSmartSeqParity
+import Flapjack.Test.StackPropsInstructionNames
 import Flapjack.Test.StackSemFixedStackCasesParity
+import Flapjack.Test.StackSemDynamicStackCasesParity
+import Flapjack.Test.StackSemSizeBitmapCasesParity
 import Flapjack.Test.StackPropsFloatNames
 import Flapjack.Test.StackPropsAddressNames
 import Flapjack.Test.StackPropsArithmeticNames
@@ -417,7 +425,6 @@ import Flapjack.Test.ParserByteRangedParity
 import Flapjack.Test.ParserKeywordParity
 import Flapjack.Test.PanLangWfShapeParity
 import Flapjack.Test.PanLangWfFieldsContextParity
-import Flapjack.Test.PanHHandleCallRetParity
 import Flapjack.Test.PanMrecParity
 import Flapjack.Test.PanHProgDecParity
 import Flapjack.Test.PanHProgSeqParity
@@ -449,7 +456,6 @@ import Flapjack.Test.RiscVArtifactParity
 import Flapjack.Test.RiscVWordExtract6Parity
 import Flapjack.Test.RiscVEncodeLengthParity
 import Flapjack.Test.WordColourLivenessParity
-import Flapjack.Test.RiscVMemOpParity
 import Flapjack.Test.RiscVRegisterMapParity
 import Flapjack.Test.CakeAllocatorCore
 import Flapjack.Test.CakeFramePolicy
@@ -478,7 +484,6 @@ import Flapjack.Test.CakeSsaLeafParity
 import Flapjack.Test.CakeDeadCodeStateParity
 import Flapjack.Test.CakeReturnSoundness
 import Flapjack.Test.CakeCompileSingleCorrectness
-import Flapjack.Test.CakeApplyColourParity
 import Flapjack.Test.CakeSpillCostParity
 import Flapjack.Test.CakeFrameVectorParity
 import Flapjack.Test.WordFuseConditions
@@ -519,6 +524,7 @@ import Flapjack.Test.PanSemMemLoadBridgeParity
 import Flapjack.Test.PanSemEvaluateDeclsFiniteParity
 import Flapjack.Test.PanToCrepMakeVmapParity
 import Flapjack.Test.PanLangGeneratedSizeParity
+import Flapjack.Test.CrepLangGeneratedSizeParity
 import Flapjack.Test.PanSimpProgBridgeParity
 
 /-!
@@ -1282,6 +1288,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.PanSemEvaluateDeclsFiniteParity.runChecks,
     Flapjack.Test.PanToCrepMakeVmapParity.runChecks,
     Flapjack.Test.PanLangGeneratedSizeParity.runChecks,
+    Flapjack.Test.CrepLangGeneratedSizeParity.runChecks,
     Flapjack.Test.PanSimpProgBridgeParity.runChecks,
     Flapjack.Test.CrepSemTotalExtCallParity.runChecks,
     Flapjack.Test.CrepSemIoEventsMonoParity.runChecks
