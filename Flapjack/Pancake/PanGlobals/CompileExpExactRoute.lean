@@ -778,6 +778,44 @@ theorem compileProgCakeOfExact_decCall_exact_bridge [LawfulBEq String]
     Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes function hfunction,
     hbody, compileExpRouteCakeArgs_eq_exact]
 
+/-- Global return calls without handlers commute for both production lookup
+    outcomes.  The `One`-independent shape binder is recovered from the
+    parser-backed context shape invariant; call arguments themselves require
+    no byte-range premise because both paths pass through `expToHOL`.  This is
+    Flapjack routing infrastructure, not a distinct HOL declaration. -/
+theorem compileProgCakeOfExact_call_global_return_no_handler_exact_bridge
+    [LawfulBEq String] {width : Nat} [NeZero width]
+    (context : GlobalPassContext (BitVec width)) (name function : String)
+    (arguments : List (Exp (BitVec width)))
+    (hname : NameRanged name) (hfunction : NameRanged function)
+    (hshapes : GlobalContextListShapesByteRanged context) :
+    compileProgCakeOfExact context
+        (.call (some (some (.global, name), none)) function arguments) =
+      progOfHOL (compileProgExactHOL (PanGlobalsContextExact.ofPass context)
+        (progToHOL (.call (some (some (.global, name), none)) function arguments))) := by
+  have hnameDecode : toStringOfBytes (ofString name) = name :=
+    Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes name hname
+  have hempty : toStringOfBytes (ofString "") = "" :=
+    Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes "" (by decide)
+  cases hlookup : lookupInfo name context.globals with
+  | none =>
+      simp [compileProgCakeOfExact, compileProgExactHOL, progToHOL,
+        PanGlobalsContextExact.ofPass_globals_lookup, FLOOKUP,
+        FLOOKUP_cakeContextOfPass_globals, hlookup, progOfHOL, hnameDecode,
+        Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes function hfunction,
+        compileExpRouteCakeArgs_eq_exact]
+  | some entry =>
+      obtain ⟨shape, address⟩ := entry
+      have hshape : ShapeByteRanged shape :=
+        hshapes (name, (shape, address))
+          (lookupInfo_eq_some_mem name context.globals hlookup)
+      simp [compileProgCakeOfExact, compileProgExactHOL, progToHOL,
+        PanGlobalsContextExact.ofPass_globals_lookup, FLOOKUP,
+        FLOOKUP_cakeContextOfPass_globals, hlookup, progOfHOL, hnameDecode,
+        hshape,
+        Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes function hfunction,
+        hempty, expOfHOL, compileExpRouteCakeArgs_eq_exact]
+
 /-- The local `.shMemLoad` commute is exact under the byte-string premise for
     its binder; its address uses the same exact expression route on both sides.
     Flapjack routing infrastructure (untagged). -/
