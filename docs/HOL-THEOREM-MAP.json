@@ -35308,5 +35308,28 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Source comparison evaluate_fperm1721-1810 Store case and panSem585-592: original f/g/destination/source/state/res/post binders and sole source-run premise, full target evaluation and unchanged result/code-permuted post retained. Both operand evaluations unchanged via accepted eval_upd_code_eta; original ValWord address guard, flatten and mem_stores memaddrs/memory operation retained with all expression/nonword/memory failures. Only memory field is updated on success, commuting with code update. Native MlS/ExpHOL/ProgHOL/ValueHOL/result with canonical four state finite maps and positive word translation; same-module unconditional roundtrip witness. No target-success/valid-address/memory-operation premise. Genuine constructor only, full theorem open. Proof-only/no executable change."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/Seq.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack representation infrastructure: canonical state toExact/ofExact roundtrip re-export, no independent HOL theorem."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/Seq.lean",
+  "lean_name": "evaluateFperm_Seq",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_fperm",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol (22.5.4) compared HOL evaluate_fperm1721-1810 and literal evaluate_ind Seq conjunct: original first-program IH and second-program IH guarded exactly by (r1,s1)=source first evaluation and r1=NONE. Each IH uses original source-run implication to exact permuted run/result/poststate code update. Arbitrary f/g/first/second/state/result/post, sole source Seq evaluation premise; no target-run, success/nonError or postrelation assumption. Exact fperm recursive Seq equation and faithful evaluator original line780 (accepted clock erasure) used. Continuing branch invokes original guarded continuation at actual source first post; abnormal branch returns first result/post exactly. Canonical locals/globals/code/eshapes maps and positive words/Type0 FFI only; genuine local canonical roundtrip witness. Full recursive permutation/assembly remains open; coordinator review pending."
 }
 ]
