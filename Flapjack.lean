@@ -1,3 +1,4 @@
+import Flapjack.Pancake.PanStructs.CompileExpProduction
 import Flapjack.Compiler.Backend.StackProps.FixedNames
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.InstConst
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnv
