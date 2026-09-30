@@ -1304,3 +1304,10 @@ Regenerate read-only with `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=stacksem_stack_codec_probeScript.sml scripts/hol-probes/regenerate.sh`.
 `Flapjack/Test/StackSemStackCodecParity.lean` kernel-checks all26 concrete rows.
 Full GC/evaluator execution and Nat-machine refinement remain separate work.
+
+`word_alloc_live_exp_probe.out` captures six original `get_live_exp` key
+traversals (nested, duplicate, empty, binary Shift, constant, lookup).
+`Flapjack.Test.WordAllocLiveExpressionParity` replays all six with kernel
+reduction of the executed constant-erasure wrapper. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_alloc_live_exp_probeScript.sml scripts/hol-probes/regenerate.sh`.
