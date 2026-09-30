@@ -26737,5 +26737,91 @@
     "lean_name": "callNonInlined",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack helper (bead flapjack-pxn.18.5.5.42.1) proving HOL inline_prog_correct's Call case (crep_inlineProofScript.sml:2409-2534) for every call inline_prog leaves as a Call (non-distinct return names, callee outside inl_bag, handler call), from the two tagged evaluate_ind Call IHs with P := crepInlineGoal. The HOL-only-suspended inlined Tail/Nontail paths are .42.2/.42.3; the tagged Call case is assembled in .42.4. Kernel-checked; standard axioms."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UpdateListLocals.lean",
+    "lean_name": "updateListLocalsNotVarsEvalEq",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "update_list_locals_not_vars_eval_eq",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.5.48; crep_inlineProofScript.sml:2586-2589): same binders vs s res e vals; hypotheses (!x. MEM x vs ==> ~MEM x (var_cexp e)), eval s e = res, LENGTH vs = LENGTH vals; conclusion eval (s with locals := s.locals |++ ZIP (vs,vals)) e = res, with eval = evalCrepSemHOLExp over the reviewed CrepSemHOLState carrier, var_cexp = crepExpVarsHOL, |++ = HolFiniteMapExact.updateListEq (FUPDATE_LIST). No extra hypotheses."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UpdateListLocals.lean",
+    "lean_name": "optMmapUpdateListLocalsNotVarsEvalEq",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "opt_mmap_update_list_locals_not_vars_eval_eq",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.5.48; crep_inlineProofScript.sml:2601-2604): same binders es vs vals s res; hypotheses freshness against FLAT (MAP var_cexp es), OPT_MMAP (eval s) es = res, LENGTH vs = LENGTH vals; conclusion OPT_MMAP over the updated-locals state = res, with OPT_MMAP = List.mapM. No extra hypotheses."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UpdateListLocals.lean",
+    "lean_name": "optMmapUpdateListLocalsNotVarsEvalEq'",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "opt_mmap_update_list_locals_not_vars_eval_eq'",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.5.48; crep_inlineProofScript.sml:2611-2614): same binders es vs ws vals s locs (HOL's unused ws is a free-type binder _ws : delta, as in HOL where its type is unconstrained); hypotheses freshness and LENGTH vs = LENGTH vals; conclusion equality of OPT_MMAP over s with locals := locs |++ ZIP (vs,vals) and over s with locals := locs. No extra hypotheses."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UpdateListLocals.lean",
+    "lean_name": "fdiffFupdateListEmptyFlookupVar",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "FDIFF_fupdate_list_empty_flookup_var",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "fm",
+      "fm'"
+    ],
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.5.48; crep_inlineProofScript.sml:2622-2628): same binders fm zs val val2 fm' x v with HOL-equality DecidableEq keys; FDIFF f s SUBMAP g rendered at lookup level as crepHolSubmap (holFdiff f.lookup (crepHolFdom m.lookup)) g.lookup, where FEMPTY |++ ZIP (zs, REPLICATE (LENGTH zs) val2) is HolFiniteMapExact.empty.updateListEq; FLOOKUP fm x = SOME v and ~MEM x zs; conclusion FLOOKUP fm' x = SOME v. The FDIFF/FDOM/SUBMAP lookup-level renderings are exact on the finite-support carriers fm/fm' (relation qualifier covers only these two maps)."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UpdateListLocals.lean",
+    "lean_name": "fdiffFupdateListEmptyFlookup",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "FDIFF_fupdate_list_empty_flookup",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "fm",
+      "fm'"
+    ],
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.5.48; crep_inlineProofScript.sml:2639-2645): same binders xs fm zs val val2 fm' vs; same FDIFF SUBMAP premise rendering as the _var lemma; OPT_MMAP (FLOOKUP fm) xs = SOME vs and (!x. MEM x xs ==> ~MEM x zs); conclusion OPT_MMAP (FLOOKUP fm') xs = SOME vs (List.mapM of .lookup). No extra hypotheses."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UpdateListLocals.lean",
+    "lean_name": "submapFinishFlookup",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "submap_finish_flookup",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "fm",
+      "fm'"
+    ],
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.5.48; crep_inlineProofScript.sml:2693-2699): same binders fm q l fm' ns; hypotheses outside-q-and-ns lookup transfer, q/ns disjointness, ALL_DISTINCT q (List.Nodup), OPT_MMAP (FLOOKUP fm') q = SOME l; conclusion fm |++ ZIP (q,l) SUBMAP FOLDL res_var fm' (ZIP (ns, MAP (FLOOKUP fm) ns)) with SUBMAP = HolFiniteMapExact.submap and res_var = the tagged resVarEq. No extra hypotheses."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UpdateListLocals.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack same-module canonical roundtrip witness (bead flapjack-pxn.18.5.5.48) re-exporting CrepSemHOLState.holFmapAsFiniteSupportWitness for the fmap_as_finite_support qualifier on locals/globals/code. No HOL original."
   }
 ]
