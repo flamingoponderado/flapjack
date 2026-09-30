@@ -2649,3 +2649,7 @@ run_probe stack_props_program_name_probeScript.sml stack_props_program_name_prob
 
 run_probe stack_props_program_validity_probeScript.sml stack_props_program_validity_probe.out \
   inst_good inst_avoided inst_bound code_good code_avoided code_bound data_default heap_default seq_bad if_ignored loop_bad raise_good return_bad call_direct call_indirect_avoided call_indirect_bound call_handler_ignored call_body_bad call_handler_bad call_good shared_good shared_register_bad shared_base_bad shared_offset_bad "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe word_depth_probeScript.sml word_depth_probe.out \
+  leaf unknown const_leaf nested_const branch_max branch_unknown call_hit call_miss call_hit_nested deep_calls branch_call unknown_deep \
+  "$cake_dir/compiler/backend/word_depthScript.sml" "$cake_dir/compiler/backend"

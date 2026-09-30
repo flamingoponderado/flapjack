@@ -1878,3 +1878,21 @@ logical-register/address, two-register arithmetic, and FP alias failures.
 Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=stack_props_inst_name_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
 `Flapjack.Test.StackPropsInstructionNames` kernel-replays all ten rows.
+
+`word_depth_probeScript.sml` is the original-HOL oracle for
+`cakeml/compiler/backend/word_depthScript.sml`: twelve `max_depth` EVAL rows
+over the `Leaf`/`Unknown`/`Const`/`Branch`/`Call` constructors, including a
+frame `lookup` hit, a miss (no invented bound), nesting, and a branch that
+propagates `NONE`. It is registered in `regenerate.sh` and would be regenerated
+read-only with `HOL4=/home/zksecurity/HOL
+CAKEML=/home/zksecurity/flap-ds9/cakeml
+HOL_PROBE_ONLY=word_depth_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
+That command is currently blocked in this checkout: the `cakeml/` submodule has
+no built `.hol/objs`, so loading the original `preamble`/`word_depthTheory`
+fails (`Cannot find file preamble.ui`) and no `.out` fixture is committed.
+Until a built `word_depthTheory` is available, `Flapjack.Test.WordDepthParity`
+kernel-replays the same tree shapes directly against the Lean `maxDepth` port
+and also checks the four `option_lt` clauses
+(`cakeml/pancake/proofs/pan_to_targetProofScript.sml:1157-1159`); the test
+docstring records the infeasibility. `option_lt` lives in the root
+`pan_to_targetProofTheory`, which this harness does not build.

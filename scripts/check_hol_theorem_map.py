@@ -2232,6 +2232,9 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         ("Flapjack/Pancake/LoopToWord.lean", "toNumSetHOL"),
         ("Flapjack/Pancake/LoopToWord.lean", "fromNumSetHOL"),
         ("Flapjack/Pancake/LoopToWord.lean", "mkNewCutsetHOL"),
+        ("Flapjack/Compiler/Backend/WordDepth.lean", "CallTree"),
+        ("Flapjack/Compiler/Backend/WordDepth.lean", "maxDepth"),
+        ("Flapjack/Pancake/Proofs/PanToTarget.lean", "optionLt"),
     }
     for key in reviewed_exact:
         # A source comparison cannot claim an exact HOL port after its tag is

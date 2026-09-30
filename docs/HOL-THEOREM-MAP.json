@@ -36312,5 +36312,29 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Source comparison evaluate_fperm1721-1810 Tick case and panSem653-656: original f/g/state/res/post and sole source evaluation premise, full target evaluation with fperm program/code-permuted input and unchanged result/code-permuted post. Native MlS annotation payload binders retained for Annot; original NONE/state equation. Tick retains clock=0 TimeOut/empty_locals versus nonzero NONE/dec_clock; code update commutes with original locals/clock record updates, no clock-success assumption. Reviewed native ProgHOL/PanSemResultExact/PanSemStateFiniteExact with canonical locals/globals/code/eshapes and positive word/Type0 FFI translations only; local unconditional roundtrip witness. No target/post premise or changed clock semantics. Genuine constructor slice, full theorem open. Proof-only no executable change."
-}
+},
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepth.lean",
+    "lean_name": "CallTree",
+    "hol_path": "cakeml/compiler/backend/word_depthScript.sml",
+    "hol_name": "call_tree",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 source comparison (2026-09-30; bead flapjack-28je.1): HOL Datatype call_tree (word_depthScript.sml:20-27) is Leaf | Unknown | Const num call_tree | Call num call_tree | Branch call_tree call_tree. Lean CallTree reproduces the five constructors in order with Nat for num and recursive self-arguments; no word, finite-map, or other carrier appears. Reviewed exact; coordinator source review required."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepth.lean",
+    "lean_name": "maxDepth",
+    "hol_path": "cakeml/compiler/backend/word_depthScript.sml",
+    "hol_name": "max_depth_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 source comparison (2026-09-30; bead flapjack-28je.1): HOL max_depth (word_depthScript.sml:24-35) has five clauses: Leaf = SOME 0; Unknown = NONE; Const n t = OPTION_MAP ((+) n) (max_depth t); Branch = OPTION_MAP2 MAX; Call n t = OPTION_MAP2 (+) (lookup n frame_sizes) (max_depth t). Lean maxDepth over CallTree and Option Nat transcribes each clause one for one; OPTION_MAP is Option.map with (fun d => n + d), OPTION_MAP2 is the untagged optionMap2 helper, MAX is max. The frame_sizes num_map (num spt) is the exact Spt Nat carrier and lookup is Flapjack.sptLookup, so a missing/spt-absent frame yields NONE with no invented bound. No word carrier occurs. Kernel replay of Leaf/Unknown/Const/Branch/Call hit/miss/nested rows is in Flapjack.Test.WordDepthParity. The original-HOL oracle (scripts/hol-probes/word_depth_probeScript.sml) is registered but could not be captured in this checkout because word_depthTheory/preamble are not built in cakeml/; documented in the test docstring. Coordinator source review required."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget.lean",
+    "lean_name": "optionLt",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "option_lt_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 source comparison (2026-09-30; bead flapjack-28je.1): HOL option_lt_def (pan_to_targetProofScript.sml:1157-1159) fixes option_lt n0 NONE = T, option_lt NONE (SOME n1) = F, option_lt (SOME n1) (SOME n2) = n1 < n2 on num option. Lean optionLt over Option Nat returns Bool (the canonical HOL bool rendering, matching the reviewed isSomeWord precedent) with the same three clauses; NONE/NONE is true by the first clause, SOME/NONE is true, and the SOME/SOME comparison is the Nat less-than. No other carrier occurs. Kernel replay in Flapjack.Test.WordDepthParity. Coordinator source review required."
+  }
 ]
