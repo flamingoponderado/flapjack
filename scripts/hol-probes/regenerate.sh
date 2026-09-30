@@ -187,6 +187,10 @@ run_probe word_alloc_colour_exp_probeScript.sml word_alloc_colour_exp_probe.out 
 run_probe word_add_carry_probeScript.sml word_add_carry_probe.out \
   ordinary carry_overflow "$cake_dir/compiler/backend/backend_commonScript.sml" \
   "$cake_dir/compiler/backend"
+run_probe backend_common_word_shift_probeScript.sml backend_common_word_shift_probe.out \
+  ws1 ws4 ws8 ws16 ws32 ws64 ws128 \
+  "$cake_dir/compiler/backend/backend_commonScript.sml" \
+  "$cake_dir/compiler/backend"
 run_probe riscv_word_extract_6_probeScript.sml riscv_word_extract_6_probe.out \
   word_extract_6_zero word_extract_6_63 word_extract_6_64_premise \
   "$cake_dir/compiler/encoders/riscv/riscv_targetScript.sml" \
@@ -2497,6 +2501,12 @@ run_probe loop_sem_evaluate_ind_probeScript.sml loop_sem_evaluate_ind_probe.out 
 # its exact recursive IH binders and side conditions for source review.
 run_probe pan_sem_evaluate_ind_probeScript.sml pan_sem_evaluate_ind_probe.out \
   evaluate_ind "$cake_dir/pancake/semantics/panSemScript.sml" \
+  "$cake_dir/pancake/semantics"
+
+# The expression-level panSem eval_ind principle is tdefn-generated; capture its
+# exact recursive IH binders (e.g. the Load shape-wf guard) for source review.
+run_probe pan_sem_eval_ind_probeScript.sml pan_sem_eval_ind_probe.out \
+  eval_ind "$cake_dir/pancake/semantics/panSemScript.sml" \
   "$cake_dir/pancake/semantics"
 
 run_probe word_alloc_key_map_probeScript.sml word_alloc_key_map_probe.out \
