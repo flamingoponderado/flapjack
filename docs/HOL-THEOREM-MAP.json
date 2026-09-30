@@ -31105,38 +31105,101 @@
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only canonical carrier roundtrip and local-update/restoration algebra supporting the genuine DecCall case; no separate HOL declaration."
   },
-  {
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/WriteBytearray.lean",
-    "lean_name": "stateRelWriteBytearrayHOL",
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "state_rel_write_bytearray",
-    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support_relation": [
-      "PanSemStateFiniteExact.locals",
-      "PanSemStateFiniteExact.globals",
-      "PanSemStateFiniteExact.code",
-      "PanSemStateFiniteExact.eshapes",
-      "PanGlobalsContextExact.globals"
-    ],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.2.35.3) compared pan_globalsProofScript.sml:1571-1593: forall a ls ctxt s t sz nbw bs. state_rel ls ctxt s t /\\ read_bytearray sz (LENGTH nbw) (mem_load_byte s.memory s.memaddrs s.be) = SOME bs ==> state_rel ls ctxt (s with memory := write_bytearray sz nbw s.memory s.memaddrs s.be) (t with memory := write_bytearray sz nbw t.memory t.memaddrs t.be). HOL's leading forall a binds a variable absent from the body (arbitrary, hence inhabited, HOL type), so it is omitted; remaining binders in order; arbitrary flag ls. Exact tagged readBytearrayWordHOL (misc read_bytearray_def), panMemLoadByteWord8HOL (mem_load_byte_def), panWriteBytearrayWord8HOL (write_bytearray_def) and panGlobalsStateRelHOLExact; classical domain decisions inside the statement, no premise. Proof uses integrated state_rel_mem_store_byte; a failed head store is impossible because the read gives aligned-cell domain membership and word_lab has only Word. Canonical finite state/context witnesses; positive-width word/Type0 FFI translation only. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/WriteBytearray.lean",
-    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
-    "hol_path": null,
-    "hol_name": null,
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanSemStateFiniteExact toExact/ofExact finite-support roundtrip; it supports the fields named by the state_rel_write_bytearray tag."
-  },
-  {
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/WriteBytearray.lean",
-    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
-    "hol_path": null,
-    "hol_name": null,
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanGlobalsContextExact toBroad/ofBroad roundtrip; it supports PanGlobalsContextExact.globals named by the state_rel_write_bytearray tag."
-  },
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/CallHandler.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack canonical finite-state roundtrip re-export; no standalone HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/CallHandler.lean",
+  "lean_name": "evaluateFreshLocal_CallHandler",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_fresh_local",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-c source comparison2026-09-30 (.32.3.16): genuine handler-present non-tail Call subcase of evaluate_fresh_local1045-1091. Original nonfree/run premise and existential post locals plus conditional good_res/non-Error update retained. HOL panSem657-702 handler matched-ID/eshapes/shape/is_valid_value guard preserved. Only handler evaluate_ind IH retained: redundant product decomposition binders/equalities eliminated by substitution; every args/lookup/positive-clock/callee-exception/ID/shape/validation conjunct remains. Callee entry overwrites caller locals so callee run identical; handler freshness and variable inequality derived from free_var_ids. Restored caller-local exception update commutes with fresh update, validation lookup unchanged. Remaining return/error/clearing paths literal. Exact MlS/ProgHOL/ValueHOL/canonical four maps, genuine roundtrip, NeZero width and universe0 FFI. Proof-only; full assembly open, coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/CallHandler.lean",
+  "lean_name": "updateMixed",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack local proof factoring; no standalone HOL original. Preserves exact update/FFI clauses."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/OptMmapEvalCorrect.lean",
+  "lean_name": "optMmapEvalCorrectHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "OPT_MMAP_eval_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "PanSemStateFiniteExact.locals",
+    "PanSemStateFiniteExact.globals",
+    "PanSemStateFiniteExact.code",
+    "PanSemStateFiniteExact.eshapes",
+    "PanGlobalsContextExact.globals"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source comparison2026-09-30 HOL919-932: original state_rel T ctxt source target conjunction OPT_MMAP(eval source)argexps=SOME args implies OPT_MMAP(eval target)(MAP(compile_exp ctxt)argexps)=SOME args. Both OPT_MMAP evaluators are explicit reviewed PanSemStateFiniteExact.evalListHOLFinite; argument MAP is literal List.map of reviewed compileExpExactHOL. Successful list recursion derives each source element and recursively same source values; full accepted compileExpCorrectHOL supplies target head. No public pointwise IH, target evaluation, nil-struct or compile-success premise. Exact name/shape/expression/value carriers; canonical state locals/globals/code/eshapes and context globals with two same-module genuine roundtrip witnesses; positive width NeZero and universe0 FFI. No executable change. Coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/OptMmapEvalCorrect.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack canonical carrier roundtrip re-export for exact list theorem representation qualifiers; no independent HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/OptMmapEvalCorrect.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack canonical carrier roundtrip re-export for exact list theorem representation qualifiers; no independent HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/WriteBytearray.lean",
+  "lean_name": "stateRelWriteBytearrayHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "state_rel_write_bytearray",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "PanSemStateFiniteExact.locals",
+    "PanSemStateFiniteExact.globals",
+    "PanSemStateFiniteExact.code",
+    "PanSemStateFiniteExact.eshapes",
+    "PanGlobalsContextExact.globals"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.2.35.3) compared pan_globalsProofScript.sml:1571-1593: forall a ls ctxt s t sz nbw bs. state_rel ls ctxt s t /\\ read_bytearray sz (LENGTH nbw) (mem_load_byte s.memory s.memaddrs s.be) = SOME bs ==> state_rel ls ctxt (s with memory := write_bytearray sz nbw s.memory s.memaddrs s.be) (t with memory := write_bytearray sz nbw t.memory t.memaddrs t.be). HOL's leading forall a binds a variable absent from the body (arbitrary, hence inhabited, HOL type), so it is omitted; remaining binders in order; arbitrary flag ls. Exact tagged readBytearrayWordHOL (misc read_bytearray_def), panMemLoadByteWord8HOL (mem_load_byte_def), panWriteBytearrayWord8HOL (write_bytearray_def) and panGlobalsStateRelHOLExact; classical domain decisions inside the statement, no premise. Proof uses integrated state_rel_mem_store_byte; a failed head store is impossible because the read gives aligned-cell domain membership and word_lab has only Word. Canonical finite state/context witnesses; positive-width word/Type0 FFI translation only. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/WriteBytearray.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanSemStateFiniteExact toExact/ofExact finite-support roundtrip; it supports the fields named by the state_rel_write_bytearray tag."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/WriteBytearray.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanGlobalsContextExact toBroad/ofBroad roundtrip; it supports PanGlobalsContextExact.globals named by the state_rel_write_bytearray tag."
+},
   {
     "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NestedSeqAssign.lean",
     "lean_name": "optMmapSomeImpFupdateExistSome",
