@@ -67,4 +67,17 @@ theorem mem_applyNummapKeyExecutable (f : Nat → Nat) (names : List Nat) (key :
   rw [applyNummapKeyExecutable, mem_numSetFromExact, applyNummapKeyDomain]
   simp only [domain_numSetToExact]
 
+/-- Executed list-pair codec for the exact paired operation. Flapjack boundary
+infrastructure; the compiler uses this for return, allocation and FFI cutsets. -/
+def applyNummapsKeyExecutable (f : Nat → Nat) (names : List Nat × List Nat) :
+    List Nat × List Nat :=
+  let mapped := applyNummapsKey f (numSetToExact names.1, numSetToExact names.2)
+  (numSetFromExact mapped.1, numSetFromExact mapped.2)
+
+/-- Unconditional whole-result equivalence with the two reviewed single-tree
+routes. This Flapjack codec law has no separate HOL original. -/
+theorem applyNummapsKeyExecutable_eq (f : Nat → Nat) (names : List Nat × List Nat) :
+    applyNummapsKeyExecutable f names =
+      (applyNummapKeyExecutable f names.1, applyNummapKeyExecutable f names.2) := rfl
+
 end Flapjack.WordAlloc

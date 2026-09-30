@@ -2329,6 +2329,11 @@ def wordApplyColourInst (colour : Nat → Nat) : WordInst α → WordInst α :=
 def wordApplyColourNumSet (colour : Nat → Nat) (names : List Nat) : List Nat :=
   WordAlloc.applyNummapKeyExecutable colour names
 
+/-- Paired cutsets use the reviewed HOL pair operation through its list codec. -/
+def wordApplyColourNumSets (colour : Nat → Nat) (names : List Nat × List Nat) :
+    List Nat × List Nat :=
+  WordAlloc.applyNummapsKeyExecutable colour names
+
 def wordApplyColour (colour : Nat → Nat) : WordProg α → WordProg α
   | .skip => .skip
   | .move priority moves =>
@@ -2362,8 +2367,7 @@ def wordApplyColour (colour : Nat → Nat) : WordProg α → WordProg α
       target arguments none =>
       .call
         (some (values.map colour,
-          (wordApplyColourNumSet colour cutsets.1,
-            wordApplyColourNumSet colour cutsets.2),
+          wordApplyColourNumSets colour cutsets,
           wordApplyColour colour returnCode, returnLabel, entryLabel))
         target (arguments.map colour) none
   | .call none target arguments
@@ -2376,15 +2380,14 @@ def wordApplyColour (colour : Nat → Nat) : WordProg α → WordProg α
       (some (exception, body, handlerLabel, handlerEntryLabel)) =>
       .call
         (some (values.map colour,
-          (wordApplyColourNumSet colour cutsets.1,
-            wordApplyColourNumSet colour cutsets.2),
+          wordApplyColourNumSets colour cutsets,
           wordApplyColour colour returnCode, returnLabel, entryLabel))
         target (arguments.map colour)
         (some (colour exception, wordApplyColour colour body,
           handlerLabel, handlerEntryLabel))
   | .alloc destination (nonGc, gc) =>
       .alloc (colour destination)
-        (wordApplyColourNumSet colour nonGc, wordApplyColourNumSet colour gc)
+        (wordApplyColourNumSets colour (nonGc, gc))
   | .storeConsts source bitmap codeLength dataLength constants =>
       .storeConsts (colour source) (colour bitmap) (colour codeLength)
         (colour dataLength) constants
@@ -2393,7 +2396,7 @@ def wordApplyColour (colour : Nat → Nat) : WordProg α → WordProg α
   | .install codeBuffer codeLength dataBuffer dataLength (nonGc, gc) =>
       .install (colour codeBuffer) (colour codeLength) (colour dataBuffer)
         (colour dataLength)
-        (wordApplyColourNumSet colour nonGc, wordApplyColourNumSet colour gc)
+        (wordApplyColourNumSets colour (nonGc, gc))
   | .codeBufferWrite address value =>
       .codeBufferWrite (colour address) (colour value)
   | .dataBufferWrite address value =>
@@ -2401,8 +2404,7 @@ def wordApplyColour (colour : Nat → Nat) : WordProg α → WordProg α
   | .ffi function configuration configurationLength array arrayLength live =>
       .ffi function (colour configuration) (colour configurationLength)
         (colour array) (colour arrayLength)
-        (wordApplyColourNumSet colour live.1,
-          wordApplyColourNumSet colour live.2)
+        (wordApplyColourNumSets colour live)
   | .shareInst operator name address =>
       .shareInst operator (colour name) (wordApplyColourExp colour address)
 termination_by program => sizeOf program
