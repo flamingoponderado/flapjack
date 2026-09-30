@@ -36767,5 +36767,36 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack local support (bead .44.4): class-parameterized SUBMAP_DIFF_LIST proof used at concrete keys (Nat) by the arg_load ports; the tagged submapDiffListExact instantiates it with classical equality."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/ShMemLoad.lean",
+  "lean_name": "evaluateFperm_ShMemLoad",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_fperm",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "reviewer": "flapjack-ds9 source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.5.16): original evaluate_fperm (pan_globalsProofScript.sml:1721-1731) full source-run implication specialized to the faithful evaluate_def ShMemLoad conjunct (panSemScript.sml:604-610), a non-recursive HOL generic-arm case needing no sub-program IH. fperm leaves the .shMemLoad operator/kind/name/address payload unchanged. The exact finite evaluator retains the address evaluation, the lookup_kvar keyed-variable guard, nb_op sizing and the shared-memory FFI MappedRead final/return/error outcomes; only the code field is permuted, on the loaded state exactly as HOL. Complete arbitrary result/post quantification and exact target post-state equality preserved, no successful read/FFI/target-run premise. Canonical finite-support state reconstructed via the imported genuine roundtrip witness; native MlS identifiers, reviewed positive-width word carriers and Type0 FFI. Proof-only constructor; production evaluator unchanged; independent coordinator source acceptance pending.",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/ShMemLoad.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Canonical imported state roundtrip reexport; Flapjack representation infrastructure without an independent HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/ShMemLoad.lean",
+  "lean_name": "shMemLoadHOLFiniteExact_permCode",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific commutation bridge: the shared-memory read sh_mem_load_def is unchanged by the fpermCodeHOL code update, since it inspects only the shared-memory domain and the FFI and every branch preserves the input code field. No independent HOL declaration; HOL argues this inline (pan_globalsProofScript.sml:1798-1804)."
 }
 ]
