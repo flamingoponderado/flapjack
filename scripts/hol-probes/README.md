@@ -1398,3 +1398,14 @@ HOL_PROBE_ONLY=pan_globals_fperm_code_probeScript.sml
 scripts/hol-probes/regenerate.sh`; original proof theory must already be built.
 Full evaluation permutation and remaining single-map equality qualification
 are tracked separately on .18.5.2.22.4/.5.
+
+`stacksem_leaf_transfers_probeScript.sml` records sixteen original
+`stackSem$evaluate` observations for Skip/Halt/Tick/Return/Raise/Break/Continue
+(774-823). Results, clocks, stack lengths and register lookups distinguish
+Halt Word/Loc cleanup, missing-register errors, timeout cleanup, successful
+Tick decrement and Loc-only Return/Raise. Kernel replay on arbitrary base
+states lives in `Flapjack/Test/StackSemLeafTransfersParity.lean`. Regenerate
+with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_leaf_transfers_probeScript.sml
+scripts/hol-probes/regenerate.sh`. The partial dispatcher is intentionally
+untagged; assembled full evaluation remains on y19g.
