@@ -101,6 +101,9 @@ run_probe() {
   done
 }
 
+run_probe stacksem_expression_probeScript.sml stacksem_expression_probe.out \
+  const var_word var_loc var_missing lookup_word lookup_loc lookup_missing load_word load_loc load_oob load_bad_address op_empty_and op_add_wrap op_sub_bad_arity op_bad_operand shift_valid shift_oob shift_bad_right assign_success assign_failure \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe stacksem_allocation_probeScript.sml stacksem_allocation_probe.out \
   space_true space_false space_wrap space_loc space_missing space_next_loc \
   gc_short gc_bad_stack gc_none gc_decode_fail gc_success space_mixed type_space alloc_success alloc_halt alloc_gc_failure alloc_missing alloc_bad_amount alloc_bad_space \
