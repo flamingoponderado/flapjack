@@ -31787,5 +31787,13 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-only infrastructure. Canonical context toBroad/ofBroad roundtrip forwarded for context globals."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/WhileInduction.lean",
+  "lean_name": "assembleWhile",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack partial induction assembly consumer. Reviewed inlineProgCorrectWhileCaseExact discharged using separately derived original guarded body and plain NONE/Continue0 reentry IHs; no extra While correctness premise. Remaining constructor obligations explicit; full inline_prog_correct remains open."
 }
 ]
