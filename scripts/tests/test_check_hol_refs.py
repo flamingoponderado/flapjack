@@ -1726,6 +1726,94 @@ class HolDatatypeDeclarationsTest(unittest.TestCase):
         self.assertNotIn("field", names)
 
 
+class HolProgWordAliasTest(unittest.TestCase):
+    SIGNATURE = "theorem example {width : Nat} [NeZero width] (p : HolProg width) : True := by trivial"
+    MODULE = "Flapjack.AliasProbe"
+
+    def fixture(self, root):
+        for module in ("Flapjack.Compiler.Backend.StackLang.Prog",
+                       "Flapjack.Compiler.Backend.StackLang",
+                       "Flapjack.Compiler.Encoders.Asm"):
+            relative = Path(module.replace(".", "/") + ".lean")
+            destination = root / relative
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            destination.write_text((CHECKER["ROOT"] / relative).read_text())
+        (root / "Flapjack/AliasProbe.lean").write_text(
+            "import Flapjack.Compiler.Backend.StackLang.Prog\n" + self.SIGNATURE)
+
+    def errors(self, root, signature=None):
+        signature = signature or self.SIGNATURE
+        return CHECKER["words_as_type_indexed_bitvec_errors"](
+            signature, "example", module=self.MODULE, root=str(root), lines=signature.splitlines())
+
+    def test_exact_alias(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.fixture(root)
+            for name in ("HolProg", "StackLang.HolProg", "Compiler.Backend.StackLang.HolProg",
+                         "Flapjack.Compiler.Backend.StackLang.HolProg"):
+                self.assertEqual(self.errors(root, self.SIGNATURE.replace("HolProg", name)), [])
+
+    def test_rejects_source_drift(self):
+        for old, new in (("[NeZero width]", ""),
+                         ("(HolAddr width)", "(HolAddr 64)"),
+                         ("HolRegImm width", "HolRegImm 0"),
+                         ("HolCmp", "Nat")):
+            with self.subTest(change=new), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                self.fixture(root)
+                path = root / "Flapjack/Compiler/Backend/StackLang/Prog.lean"
+                path.write_text(path.read_text().replace(old, new))
+                self.assertTrue(self.errors(root))
+
+    def test_rejects_shadow_and_unimported_alias(self):
+        for declaration in ("abbrev HolProg (width : Nat) := Nat",
+                            "abbrev Evil.HolProg (width : Nat) := Nat",
+                            "inductive HolInst (width : Nat) [NeZero width] where | fake"):
+            with self.subTest(shadow=declaration), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                self.fixture(root)
+                path = root / "Flapjack/AliasProbe.lean"
+                path.write_text(path.read_text() + "\n" + declaration)
+                self.assertTrue(self.errors(root))
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.fixture(root)
+            (root / "Flapjack/AliasProbe.lean").write_text(self.SIGNATURE)
+            self.assertTrue(self.errors(root))
+
+    def test_rejects_imported_payload_alias_shadow(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.fixture(root)
+            (root / "Flapjack/Shadow.lean").write_text("abbrev HolInst (width : Nat) := Nat")
+            path = root / "Flapjack/AliasProbe.lean"
+            path.write_text("import Flapjack.Shadow\n" + path.read_text())
+            self.assertTrue(self.errors(root))
+
+    def test_rejects_missing_or_wrong_positive_width(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.fixture(root)
+            for signature in (self.SIGNATURE.replace("[NeZero width]", ""),
+                              self.SIGNATURE.replace("[NeZero width]", "[NeZero other]"),
+                              self.SIGNATURE.replace("HolProg width", "HolProg 0"),
+                              self.SIGNATURE.replace("HolProg width", "Evil.HolProg width"),
+                              self.SIGNATURE.replace("(p : HolProg width)",
+                                  "(p : Evil.HolProg width) (unrelated : BitVec width)")):
+                self.assertTrue(self.errors(root, signature))
+
+    def test_rejects_payload_without_own_word_and_positive_width(self):
+        for old, new in (("(value : BitVec width)", "(value : Nat)"),
+                         ("inductive HolInst (width : Nat) [NeZero width]", "inductive HolInst (width : Nat)")):
+            with self.subTest(change=new), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                self.fixture(root)
+                path = root / "Flapjack/Compiler/Encoders/Asm.lean"
+                path.write_text(path.read_text().replace(old, new))
+                self.assertTrue(self.errors(root))
+
+
 class WordsAsTypeIndexedBitvecQualifierTest(unittest.TestCase):
     """The word-dimension / FFI-universe translation qualifier."""
 
