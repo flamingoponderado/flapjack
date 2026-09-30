@@ -825,6 +825,7 @@ import Flapjack.Compiler.Backend.StackNames.Labels
 import Flapjack.Compiler.Backend.StackRemove
 import Flapjack.Compiler.Backend.StackAlloc
 import Flapjack.Compiler.Backend.WordToStack
+import Flapjack.Compiler.Backend.WordToStack.LiveBitmap
 import Flapjack.Compiler.Backend.WordToStackRegFormat
 import Flapjack.RiscV.CakeAllocatorBitsBridge
 import Flapjack.StackAlloc

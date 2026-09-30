@@ -37871,5 +37871,23 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "C source comparison pan_simpProof117-137 and literal seq_assoc_def18-40 otherwise Tick arm: full arbitrary-prefix program/state result equality, no extra premise or IH. Source syntax remains this same constructor under SmartSeq; accepted evaluate_SmartSeq gives complete evaluation equality with Seq. Exact fixed-width/native MlS carriers and canonical finite-map state fields with genuine witness; positive BitVec/Type0 FFI translation only. Genuine case, full117 assembly stillopen; coordinator review pending, proof-only."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/LiveBitmap.lean",
+  "lean_name": "writeBitmapExact",
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "write_bitmap_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01, bead15.3.24: Source240-244: live is actual Spt Unit; sptToAList enumeration, MAP pair keys with truncating ((frame-1)-(r DIV2-k)), GENLIST membership plus true, word_list width-1. No wf or extra bounds; BitVec positive width records only word translation. Existing seven HOL captured bitmap rows replayed on Spt. Full comp/compile_prog/pass proof and production routing remain open; coordinator acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/LiveBitmap.lean",
+  "lean_name": "wLiveExact",
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "wLive_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01, bead15.3.24: Source252-258: full cutsets=Spt Unit pair and (k,f,fprime) triple retained. f=0 leaves bitmaps unchanged; otherwise exact write_bitmap of SND live, insert_bitmap, Const k (n2w(i+1)), StackStore k0. Shared-word ProgM uses exact MlString constructor carrier, untouched here. No dropped inputs/convenience domain-list signature or extra hypotheses. Full comp/compile_prog/pass proof and production routing remain open; coordinator acceptance pending."
 }
 ]
