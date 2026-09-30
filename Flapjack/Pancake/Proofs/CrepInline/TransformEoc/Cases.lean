@@ -189,7 +189,7 @@ private theorem decGoal {width : Nat} [NeZero width] {σ : Type}
       · simp only [transformEocHOLExact]
         rw [evalCrepSemHOLProgExact_dec_holShape, hval]
         dsimp only
-        simp only [su] at hev1
+        simp only [CrepSemHOLState.setVar] at hev1
         rw [hev1]
       · obtain ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10⟩ := hrel1
         exact ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10⟩
