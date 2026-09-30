@@ -1,0 +1,58 @@
+exp_size_def=(∀f a. exp_size f (Const a) = 1 + w2n a) ∧
+(∀f a. exp_size f (Var a) = 1 + a) ∧
+(∀f a. exp_size f (Load a) = 1 + exp_size f a) ∧
+(∀f a. exp_size f (Load32 a) = 1 + exp_size f a) ∧
+(∀f a. exp_size f (LoadByte a) = 1 + exp_size f a) ∧
+(∀f a. exp_size f (LoadGlob a) = 1 + w2n a) ∧
+(∀f a0 a1. exp_size f (Op a0 a1) = 1 + (binop_size a0 + exp1_size f a1)) ∧
+(∀f a0 a1. exp_size f (Crepop a0 a1) = 1 + (crepop_size a0 + exp1_size f a1)) ∧
+(∀f a0 a1 a2.
+   exp_size f (Cmp a0 a1 a2) =
+   1 + (cmp_size a0 + (exp_size f a1 + exp_size f a2))) ∧
+(∀f a0 a1 a2.
+   exp_size f (Shift a0 a1 a2) =
+   1 + (shift_size a0 + (exp_size f a1 + exp_size f a2))) ∧
+(∀f. exp_size f BaseAddr = 0) ∧ (∀f. exp_size f TopAddr = 0) ∧
+(∀f. exp1_size f [] = 0) ∧
+∀f a0 a1. exp1_size f (a0::a1) = 1 + (exp_size f a0 + exp1_size f a1)
+prog_size_def=(∀f. prog_size f Skip = 0) ∧
+(∀f a0 a1 a2.
+   prog_size f (Dec a0 a1 a2) = 1 + (a0 + (exp_size f a1 + prog_size f a2))) ∧
+(∀f a0 a1. prog_size f (Assign a0 a1) = 1 + (a0 + exp_size f a1)) ∧
+(∀f a0 a1 a2.
+   prog_size f (Primitive a0 a1 a2) =
+   1 + (list_size (λx. x) a0 + (primop_size a1 + list_size (λx. x) a2))) ∧
+(∀f a0 a1. prog_size f (Store a0 a1) = 1 + (exp_size f a0 + exp_size f a1)) ∧
+(∀f a0 a1. prog_size f (Store32 a0 a1) = 1 + (exp_size f a0 + exp_size f a1)) ∧
+(∀f a0 a1.
+   prog_size f (StoreByte a0 a1) = 1 + (exp_size f a0 + exp_size f a1)) ∧
+(∀f a0 a1. prog_size f (StoreGlob a0 a1) = 1 + (w2n a0 + exp_size f a1)) ∧
+(∀f a0 a1. prog_size f (Seq a0 a1) = 1 + (prog_size f a0 + prog_size f a1)) ∧
+(∀f a0 a1 a2.
+   prog_size f (If a0 a1 a2) =
+   1 + (exp_size f a0 + (prog_size f a1 + prog_size f a2))) ∧
+(∀f a0 a1. prog_size f (While a0 a1) = 1 + (exp_size f a0 + prog_size f a1)) ∧
+(∀f a. prog_size f (Break a) = 1 + a) ∧
+(∀f a. prog_size f (Continue a) = 1 + a) ∧
+(∀f a0 a1 a2.
+   prog_size f (Call a0 a1 a2) =
+   1 + (prog1_size f a0 + (mlstring_size a1 + list_size (exp_size f) a2))) ∧
+(∀f a0 a1 a2 a3 a4.
+   prog_size f (ExtCall a0 a1 a2 a3 a4) =
+   1 + (mlstring_size a0 + (a1 + (a2 + (a3 + a4))))) ∧
+(∀f a. prog_size f (Raise a) = 1 + w2n a) ∧
+(∀f a. prog_size f (Return a) = 1 + list_size (exp_size f) a) ∧
+(∀f a0 a1 a2.
+   prog_size f (ShMem a0 a1 a2) = 1 + (memop_size a0 + (a1 + exp_size f a2))) ∧
+(∀f. prog_size f Tick = 0) ∧ (∀f. prog1_size f NONE = 0) ∧
+(∀f a. prog1_size f (SOME a) = 1 + prog2_size f a) ∧
+(∀f a0 a1.
+   prog2_size f (a0,a1) = 1 + (list_size (λx. x) a0 + prog3_size f a1)) ∧
+(∀f. prog3_size f NONE = 0) ∧
+(∀f a. prog3_size f (SOME a) = 1 + prog4_size f a) ∧
+∀f a0 a1. prog4_size f (a0,a1) = 1 + (w2n a0 + prog_size f a1)
+prog_size_seq=16
+prog_size_call=16
+prog_size_dec=19
+prog_size_ext=13
+prog_size_raise=6
