@@ -1,3 +1,4 @@
+import Flapjack.Pancake.Proofs.PanSimp.WhileBodyExact
 import Flapjack.Pancake.Proofs.PanSimp.SkipSeqExact
 import Flapjack.Pancake.Proofs.PanGlobals.FpermSemantics
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Prime
