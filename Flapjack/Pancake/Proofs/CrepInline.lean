@@ -3125,17 +3125,24 @@ recursive motive), so `ihWhile` cannot be instantiated at the original state
 `s`; the `While` clause runs the body only when `s.clock ≠ 0` and
 `decClockCrepSemHOL` strictly decreases the clock there.
 
-TAG WITHDRAWN (mismatch): the `@[hol]` tag is deliberately absent. The
-induction principle supplies the recursive `While` motive at
-`crepStampExactDomains state loopState` (with the body result fed through
-`fixClockCrepSemHOL (decClockCrepSemHOL state)`), not at the plain
-body-result state `loopState` used by `ihWhile` here. So this plain-state
-form is not an instance of the `inductHOL` recursive hypothesis (the missing
-`crepStampExactDomains`/`fixClockCrepSemHOL` correspondence is not proved),
-and this declaration must not carry the HOL tag. The statement/proof here is
-useful Flapjack infrastructure; the faithful tagged replacement (handler-shaped
-recursive hypothesis plus the stamp/fixClock correspondence) is tracked as an
-open dependency. Flapjack-specific `inlineProgHOLExact` inline rendering. -/
+HANDLER CORRESPONDENCE: the induction principle supplies the recursive `While`
+motive with the body result fed through `fixClockCrepSemHOL (decClockCrepSemHOL
+state)` and the motive stated at `crepStampExactDomains state loopState`
+(`EvaluateHOL.lean:4011`/`:4022`). That form is exactly this plain-state
+`ihWhile`: `fixClockCrepSemHOL_evalCrepSemHOLProgExact` (EvaluateHOL.lean:4851,
+HOL `fix_clock_evaluate`, crepSemScript.sml:432-437) drops the `fixClockCrepSemHOL`
+wrapper on any exact-evaluator result, and `crepStampExactDomains_fixClock_body`
+(EvaluateHOL.lean, this branch) shows `crepStampExactDomains state loopState =
+loopState` for the body-result state, so the stamped state and the plain
+body-result state coincide. Hence `ihWhile` is the `inductHOL`
+`hwhile_none`/`hwhile_continue` recursive hypothesis transported to the plain
+state used by the `While` clause, and the parent assembly supplies it by those
+two identities. Flapjack-specific `inlineProgHOLExact` inline rendering. -/
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "inline_prog_correct"
+  (fmap_as_finite_support_relation :=
+    [CrepSemHOLState.locals, CrepSemHOLState.globals, CrepSemHOLState.code,
+      inlFs, inlBag])
+  (words_as_type_indexed_bitvec)]
 theorem inlineProgCorrectWhileCaseExact {width : Nat} [NeZero width] {σ : Type}
     (condition : CrepExpHOL width) (body : CrepProgHOL width)
     (s : CrepSemHOLState width σ)

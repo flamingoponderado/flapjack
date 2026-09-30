@@ -396,18 +396,6 @@ DEFINITION_RE = re.compile(
     r"(?:def|abbrev|opaque|theorem|lemma)\s+([^\s:({\[]+)"
 )
 DOCUMENTED_MISMATCHES = {
-    ("Flapjack/Pancake/Proofs/CrepInline.lean", "inlineProgCorrectWhileCaseExact"): (
-        "cakeml/pancake/proofs/crep_inlineProofScript.sml",
-        "inline_prog_correct",
-        "flapjack-ds10 source HOLD (2026-09-30; bead flapjack-pxn.18.5.5.40): tag withdrawn. "
-        "HOL inline_prog_correct's While case is proved under crepSem$evaluate_ind, whose "
-        "recursive while motive is handed back at crepStampExactDomains state loopState with the "
-        "body result routed through fixClockCrepSemHOL (decClockCrepSemHOL state) "
-        "(EvaluateHOL.lean hwhile_none/hwhile_continue). This declaration assumes the recursive "
-        "hypothesis at the plain body-result state and does not prove the stamp/fixClock "
-        "correspondence, so it is not an instance of the HOL recursive hypothesis. Faithful "
-        "tagged replacement remains open."
-    ),
     ("Flapjack/Compiler/Backend/StackNames.lean", "riFindName"): (
         "cakeml/compiler/backend/stack_namesScript.sml", "ri_find_name_def",
         "flapjack-luna-b .15.7.7 source review: HOL tlookup names is Spt num, not unrestricted function-backed map; tag withdrawn, exact migration remains open."

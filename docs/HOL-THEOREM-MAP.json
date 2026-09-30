@@ -29430,8 +29430,16 @@
     "hol_name": "inline_prog_correct",
     "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
     "lean_name": "inlineProgCorrectWhileCaseExact",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds10 source HOLD (2026-09-30, bead flapjack-pxn.18.5.5.40): tag withdrawn. HOL inline_prog_correct's While case (crep_inlineProofScript.sml:2326) is proved under crepSem$evaluate_ind, whose recursive while motive is handed back at crepStampExactDomains state loopState with the body result routed through fixClockCrepSemHOL (decClockCrepSemHOL state) (EvaluateHOL.lean:4011/4022, hwhile_none/hwhile_continue). This declaration instead states the recursive hypothesis at the plain body-result state loopState and does not prove the crepStampExactDomains/fixClockCrepSemHOL correspondence, so it is not an instance of the HOL recursive hypothesis and must not carry the HOL tag despite matching the evaluator clause and the NONE/continue-0 guard. The untagged statement is useful Flapjack infrastructure; the faithful tagged replacement (handler-shaped recursive hypothesis plus the stamp/fixClock correspondence) remains open."
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "inlFs",
+      "inlBag"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-pxn.18.5.5.40.1): exact While case slice of HOL inline_prog_correct (crep_inlineProofScript.sml:2326). The recursive hypothesis ihWhile is the inductHOL hwhile_none/hwhile_continue handler hypothesis transported to the plain body-result state: fixClockCrepSemHOL_evalCrepSemHOLProgExact (EvaluateHOL.lean:4851, HOL fix_clock_evaluate crepSemScript.sml:432-437) removes the fixClockCrepSemHOL wrapper on the body run and crepStampExactDomains_fixClock_body shows crepStampExactDomains state loopState = loopState, so the handler's stamped state is the plain state. Same evaluator clause and NONE/continue-0 guard, same conclusion, no extra premise. The finite-map relation entries are the Crep evaluator state carriers touched by the While clause and inlFs/inlBag; same-module CrepSemHOLState relation witness exists in the file. Words qualifier covers the width-indexed carriers."
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
