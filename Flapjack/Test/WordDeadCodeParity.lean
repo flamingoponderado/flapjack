@@ -1,4 +1,5 @@
 import Flapjack.RiscV.WordDeadCode
+import Flapjack.RiscV.WordInstSelect
 
 namespace Flapjack.Test.WordDeadCodeParity
 
@@ -50,5 +51,43 @@ def deadGlobalOverwriteGuard : Bool :=
   | _ => false
 
 #guard deadGlobalOverwriteGuard
+
+/- The actual allocator rejects unsupported instructions before dead-code
+removal can erase a dead load. Both call continuations are checked. -/
+#guard CakeRegAlloc.cakeAllocateWordFunctionAfterDead 0 []
+  (.inst (.mem .load16 2 4) : WordProg Nat) |>.isNone
+#guard CakeRegAlloc.cakeAllocateWordFunctionAfterDead 0 []
+  (.inst (.memOffset .store16 2 4 8) : WordProg Nat) |>.isNone
+#guard CakeRegAlloc.cakeAllocateWordFunctionAfterDead 0 []
+  (.call (some ([], ([], []), .inst (.memOffset .load16 2 4 8), 0, 0))
+    none [] none : WordProg Nat) |>.isNone
+#guard CakeRegAlloc.cakeAllocateWordFunctionAfterDead 0 []
+  (.call none none [] (some (2, .inst (.mem .store16 2 4), 0, 0)) : WordProg Nat) |>.isNone
+#guard CakeRegAlloc.cakeAllocateWordFunctionAfterDead 0 []
+  (.seq (.inst (.mem .store 2 4)) (.return 0 []) : WordProg Nat) |>.isSome
+
+/- The production address selector keeps the store opcode in the negative
+memOffset route. This is the actual selector, not its proof-side helper. -/
+def selectedNegativeStore : WordProg (BitVec 64) :=
+  wordInstSelectProgram 100 (.store
+    (.op .add [.var 4, .const (BitVec.ofInt 64 (-8))]) 2)
+
+#guard match selectedNegativeStore with
+  | .seq (.move 0 [(100, 4)]) (.inst (.memOffset .store 2 100 offset)) =>
+      offset == BitVec.ofInt 64 (-8)
+  | _ => false
+#guard allocatorMemorySupported selectedNegativeStore
+
+/-- Universal equation for the actual production negative-offset Store branch.
+This is Flapjack-specific selection infrastructure, not a tagged HOL port. -/
+theorem selectedStoreOpcode (temp address value : Nat)
+    (expression : WordExp (BitVec 64)) (prelude : WordProg (BitVec 64))
+    (offset : BitVec 64)
+    (selected : wordInstSelectAddressAtom temp (wordInstNormalizeExp expression) =
+      (prelude, .op .add [.var address, .const offset]))
+    (negative : WordInstSelectImmediate.negativeAddressOffset offset = true) :
+    wordInstSelectProgram temp (.store expression value) =
+      wordDeadSelectSeq prelude (.inst (.memOffset .store value address offset)) := by
+  simp [wordInstSelectProgram, selected, negative]
 
 end Flapjack.Test.WordDeadCodeParity
