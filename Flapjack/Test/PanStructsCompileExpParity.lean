@@ -1,3 +1,4 @@
+import Flapjack.Pancake.PanStructs.CompileProgExact
 import Flapjack.Pancake.PanStructs.CompileExpExact
 import Flapjack.Pancake.PanStructs
 import Flapjack.Pancake.Proofs.PanStructs
@@ -195,4 +196,63 @@ example : compileExpExact exactContext
 example : compileExpExact exactContext
     (.nfield (ofString "missing") (.nstruct (ofString "Pair") []) : ExpHOL 8) =
     .rfield 0 (.rstruct []) := by simp +decide [compileExpExact, compileFieldsExact, oldExpShapeExact, exactContext, Flapjack.afindi, List.findSome?]
+end Flapjack.Test.PanStructsCompileExpExactParity
+
+namespace Flapjack.Test.PanStructsCompileExpExactParity
+open Flapjack.Pancake.PanLang
+open Flapjack.Pancake.PanStructs.CompileShapeExact
+open Flapjack.Basis.Pure.MlString
+private def progContext : ContextExact :=
+  { structs := exactContext.structs, locals := [], globals := [] }
+private theorem progPairShape :
+    compileShapeExact progContext.structs (.named (ofString "Pair")) =
+      .comb [.one, .comb [.one, .one]] := by
+  simp only [progContext, exactContext]
+  rw [compileShapeExact]
+  have hdrop : List.dropWhile (fun entry : MlS × List (MlS × ShapeHOL) =>
+      !decide (entry.1 = ofString "Pair"))
+      [(ofString "Pair", [(ofString "left", ShapeHOL.one),
+        (ofString "right", ShapeHOL.comb [.one, .one])])] =
+      [(ofString "Pair", [(ofString "left", ShapeHOL.one),
+        (ofString "right", ShapeHOL.comb [.one, .one])])] := by rfl
+  rw [hdrop]
+  simp [compileShapesExact, compileShapeExact]
+
+-- Exact inputs of the direct six-row original compile_def probe.
+example : compileProgExact progContext
+    (.dec (ofString "v") (.named (ofString "Pair"))
+      (.nstruct (ofString "Pair") [(ofString "left", .const 1),
+        (ofString "right", .const 2)])
+      (.return (.nfield (ofString "right") (.var .local (ofString "v")))) : ProgHOL 8) =
+    .dec (ofString "v") (.comb [.one, .comb [.one, .one]]) (.rstruct [.const 1, .const 2])
+      (.return (.rfield 1 (.var .local (ofString "v")))) := by
+  simp only [compileProgExact, progPairShape]
+  simp +decide [compileExpExact, compileFieldsExact, oldExpShapeExact, progContext, exactContext, Flapjack.afindi, List.findSome?]
+example : compileProgExact progContext
+    (.decCall (ofString "v") (.named (ofString "Pair")) (ofString "f") []
+      (.return (.nfield (ofString "right") (.var .local (ofString "v")))) : ProgHOL 8) =
+    .decCall (ofString "v") (.comb [.one, .comb [.one, .one]]) (ofString "f") []
+      (.return (.rfield 1 (.var .local (ofString "v")))) := by
+  simp only [compileProgExact, progPairShape]
+  simp +decide [compileExpExact, compileExpsExact, oldExpShapeExact, progContext, exactContext, Flapjack.afindi, List.findSome?]
+example : compileProgExact progContext
+    (.call (some (none, some (ofString "E", ofString "v",
+      .return (.nfield (ofString "right") (.nstruct (ofString "Pair") [])))))
+      (ofString "f") [] : ProgHOL 8) =
+    .call (some (none, some (ofString "E", ofString "v", .return (.rfield 1 (.rstruct [])))))
+      (ofString "f") [] := by
+  simp only [compileProgExact]
+  simp +decide [compileExpExact, compileExpsExact, compileFieldsExact, oldExpShapeExact, progContext, exactContext, Flapjack.afindi, List.findSome?]
+example : compileProgExact progContext (.call none (ofString "f") [] : ProgHOL 8) =
+    .call none (ofString "f") [] := by
+  simp only [compileProgExact]
+  simp +decide [compileExpsExact, progContext, exactContext]
+example : compileProgExact progContext
+    (.call (some (some (.local, ofString "v"), none)) (ofString "f") [] : ProgHOL 8) =
+    .call (some (some (.local, ofString "v"), none)) (ofString "f") [] := by
+  simp only [compileProgExact]
+  simp +decide [compileExpsExact, progContext, exactContext]
+example : compileProgExact progContext (.tick : ProgHOL 8) = .tick := by
+  simp only [compileProgExact]
+
 end Flapjack.Test.PanStructsCompileExpExactParity

@@ -25888,5 +25888,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-a source comparison 2026-09-30 bead .18.5.3.77.1.3: source107-155 mutual expression/list/field definitions, ContextExact and positive-width ExpHOL carriers compared. Recursive RStruct/RField, Load/LoadByte/Load32, Op/Panop/Cmp/Shift preserved and all other constructors unchanged. Named struct first-match propositional MlS lookups; flatMap is source FLAT MAP, declared field order, missing supplied fields omitted, first duplicate supplied field selected. Named field uses exact old_exp_shape on source expression, exact source afindi with MlS equality, defensive index0 defaults; Load uses exact compile_shape. All original ten PanStructs oracle rows and three defensive cases replayed by kernel proofs. Exact source dependencies only; production expression routing and correspondence remain open."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_structsScript.sml",
+    "hol_name": "compile_def",
+    "lean_path": "Flapjack/Pancake/PanStructs/CompileProgExact.lean",
+    "lean_name": "compileProgExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source/carrier review 2026-09-30 bead .18.5.3.77.1.4: original157-210 compile_def constructor cases compared with ContextExact/ProgHOL. Dec and DecCall emit compiled shape but bind original source shape to body locals; exact expression/list calls throughout. Call retains target flags, name, arguments and option/product payloads, recursively compiles only handler body at unchanged context. Seq/If/While recurse normally; stores and shared stores preserve source payload order, shared load destination untouched. ExtCall preserves all four expression positions, Return/Raise preserve identifiers; Skip/Break/Continue/Tick/Annot unchanged. Positive width-indexed BitVec payloads only qualifier. Original HOL six-row compile_prog probe newly captured and kernel-replayed, including body-local source shape and optional handler. Production routing remains linked open work; not an executed-path completion claim."
   }
 ]
