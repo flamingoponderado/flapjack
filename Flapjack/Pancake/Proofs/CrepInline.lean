@@ -2318,6 +2318,15 @@ private theorem inline_tick {width : Nat} [NeZero width] (inlBag) :
   unfold CrepInlineCanonical.inlineProgHOLExact
   simp only [CrepInlineCanonical.inlineProgHOLCoreExact]
 
+private theorem inline_primitive {width : Nat} [NeZero width]
+    (inlBag : HolFiniteMapExact CrepInlineMapHOLName (List Nat × CrepProgHOL width))
+    (names : List Nat) (operator : PrimOp) (args : List Nat) :
+    CrepInlineCanonical.inlineProgHOLExact inlBag
+        (.primitive names operator args : CrepProgHOL width) =
+      .primitive names operator args := by
+  unfold CrepInlineCanonical.inlineProgHOLExact
+  simp only [CrepInlineCanonical.inlineProgHOLCoreExact]
+
 @[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "inline_prog_correct"
   (fmap_as_finite_support_relation :=
     [CrepSemHOLState.locals, CrepSemHOLState.globals,
@@ -2683,6 +2692,86 @@ private theorem inlineProgCorrectTickCaseExact {width : Nat} [NeZero width] {σ 
     · simp only [crepInlineLocalsStrongRelExact]
       exact hlocals
 
+set_option maxHeartbeats 1000000 in
+/-- HOL `inline_prog_correct` Primitive case
+    (`crep_inlineProofScript.sml:2301-2309`, atomic catch-all `:2401`). -/
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "inline_prog_correct"
+  (fmap_as_finite_support_relation :=
+    [CrepSemHOLState.locals, CrepSemHOLState.globals,
+      CrepSemHOLState.code, inlFs, inlBag])
+  (words_as_type_indexed_bitvec)]
+theorem inlineProgCorrectPrimitiveCaseExact {width : Nat} [NeZero width] {σ : Type}
+    (s : CrepSemHOLState width σ)
+    (inlFs : HolFiniteMapExact CrepInlineMapHOLName (List Nat × CrepProgHOL width))
+    (inlBag : HolFiniteMapExact CrepInlineMapHOLName (List Nat × CrepProgHOL width))
+    (t : CrepSemHOLState width σ)
+    (names : List Nat) (operator : PrimOp) (args : List Nat)
+    (r : Option (CrepResultHOLExact width)) (s' : CrepSemHOLState width σ)
+    (hsource : evalCrepSemHOLProgExact s (.primitive names operator args : CrepProgHOL width) = (r, s'))
+    (hnotError : r ≠ some .error)
+    (_hsubmap : HolFiniteMapExact.submap inlFs s.code)
+    (_hbag : HolFiniteMapExact.submap inlBag inlFs)
+    (hstate : crepInlineStateRelCodeExact s t)
+    (hlocals : crepInlineLocalsStrongRelExact s t)
+    (hcode : crepInlineCodeInlRelExact inlFs s t) :
+    ∃ t' : CrepSemHOLState width σ,
+      evalCrepSemHOLProgExact t
+          (CrepInlineCanonical.inlineProgHOLExact inlBag
+            (.primitive names operator args : CrepProgHOL width)) = (r, t') ∧
+      crepInlineStateRelCodeExact s' t' ∧
+      crepInlineCodeInlRelExact inlFs s' t' ∧
+      match r with
+      | none => crepInlineLocalsStrongRelExact s' t'
+      | some (CrepResultHOLExact.break _) => crepInlineLocalsStrongRelExact s' t'
+      | some (CrepResultHOLExact.continue _) => crepInlineLocalsStrongRelExact s' t'
+      | some .error => False
+      | _ => True := by
+  classical
+  simp only [crepInlineLocalsStrongRelExact] at hlocals
+  rw [evalCrepSemHOLProgExact_primitive_holShape] at hsource
+  cases hargs : args.mapM s.locals.lookup with
+  | none =>
+      simp only [hargs] at hsource
+      exact absurd (congrArg Prod.fst hsource).symm hnotError
+  | some ws =>
+      simp only [hargs] at hsource
+      cases hop : crepPrimopHOLExact operator ws with
+      | none =>
+          simp only [hop] at hsource
+          exact absurd (congrArg Prod.fst hsource).symm hnotError
+      | some results =>
+          simp only [hop] at hsource
+          by_cases hg : names.length = results.length ∧
+              (∀ v ∈ names, (s.locals.lookup v).isSome) ∧ names.Nodup
+          · rw [if_pos hg] at hsource
+            obtain ⟨hr, hs'⟩ := Prod.ext_iff.mp hsource
+            have hr' : r = none := hr.symm
+            have hs'' : s' = { s with locals := s.locals.updateListEq (names.zip results) } :=
+              hs'.symm
+            subst hr'
+            subst hs''
+            have hargs_t : args.mapM t.locals.lookup = some ws := by
+              rw [← hlocals]
+              exact hargs
+            have hg_t : names.length = results.length ∧
+                (∀ v ∈ names, (t.locals.lookup v).isSome) ∧ names.Nodup := by
+              refine ⟨hg.1, ?_, hg.2.2⟩
+              intro v hv
+              have hv' := hg.2.1 v hv
+              rwa [← hlocals]
+            have hgoal : evalCrepSemHOLProgExact t
+                (.primitive names operator args : CrepProgHOL width) =
+                (none, { t with locals := t.locals.updateListEq (names.zip results) }) := by
+              rw [evalCrepSemHOLProgExact_primitive_holShape]
+              simp only [hargs_t, hop, if_pos hg_t]
+            refine ⟨{ t with locals := t.locals.updateListEq (names.zip results) },
+              ?_, hstate, hcode, ?_⟩
+            · rw [inline_primitive]
+              exact hgoal
+            · simp only [crepInlineLocalsStrongRelExact]
+              rw [hlocals]
+          · rw [if_neg hg] at hsource
+            exact absurd (congrArg Prod.fst hsource).symm hnotError
 
 end CrepInlineExact
 

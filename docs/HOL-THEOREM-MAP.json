@@ -25976,5 +25976,29 @@
     "lean_name": "inline_tick",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-ds10 (2026-09-30, bead flapjack-pxn.18.5.5.39): Flapjack-specific private helper for the exact inline_prog_correct atomic memory/tick cases; no HOL declaration of its own."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "inline_prog_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "inlineProgCorrectPrimitiveCaseExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "inlFs",
+      "inlBag"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-09-30; bead flapjack-pxn.18.5.5.39) against crep_inlineProofScript.sml:2301-2309 and the atomic catch-all :2401 with HOL inline_prog_def (crep_inlineScript.sml:203-249) leaving Primitive unchanged. The Lean statement preserves HOL's evaluator equation (crepSemScript.sml:248-259): OPT_MMAP locals lookups, crep_primop, and the LENGTH/EVERY IS_SOME/ALL_DISTINCT guard as a proposition, with the same non-Error premise and post-state (locals updateListEq, code untouched). Tagged with the shared case qualifiers; direct oracle rows cover the primitive evaluator in the exact Crep suite."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "inline_primitive",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 Flapjack-only infrastructure (2026-09-30; bead flapjack-pxn.18.5.5.39): private identity lemma that inlineProgHOLExact leaves Primitive unchanged (HOL inline_prog_def fall-through arm); no cakeml HOL declaration of its own."
   }
 ]
