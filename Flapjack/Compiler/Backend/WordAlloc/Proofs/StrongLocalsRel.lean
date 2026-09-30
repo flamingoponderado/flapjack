@@ -29,6 +29,26 @@ theorem strongLocalsRelSubsetDomain {α : Type}
   obtain ⟨value, hvalue⟩ := (sptMem_iff_lookup v l1).mp (h.2 v hv)
   exact (sptMem_iff_lookup (f v) l2).mpr ⟨value, h.1 v value ⟨hv, hvalue⟩⟩
 
+/-- Exact HOL subset restriction of the generic live-scoped local relation. -/
+@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "strong_locals_rel_subset"]
+theorem strongLocalsRelSubset {α : Type} (f : Nat → Nat) (s larger : Nat → Prop)
+    (source target : Spt α)
+    (h : (∀ key, s key → larger key) ∧ strongLocalsRel f larger source target) :
+    strongLocalsRel f s source target := by
+  intro key value hk
+  exact h.2 key value ⟨h.1 key hk.1, hk.2⟩
+
+/-- Exact HOL extension when the original live set covers the entire source
+map domain. The new live set is arbitrary; no subset restriction is needed. -/
+@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "strong_locals_rel_extend_aux"]
+theorem strongLocalsRelExtendAux {α : Type} (f : Nat → Nat) (s t : Nat → Prop)
+    (source target : Spt α)
+    (h : (∀ key, sptDomain source key → s key) ∧ strongLocalsRel f s source target) :
+    strongLocalsRel f t source target := by
+  intro key value hk
+  have hmem : sptMem key source := (sptMem_iff_lookup key source).mpr ⟨value, hk.2⟩
+  exact h.2 key value ⟨h.1 key hmem, hk.2⟩
+
 namespace StrongLocalsWitnesses
 
 /-- Canonical imported WordSem carrier roundtrip for the local lookup ports. -/

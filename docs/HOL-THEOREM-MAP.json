@@ -25760,5 +25760,21 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison 2026-09-30, beads .18.5.11.1.4/.4.1: literal word_allocScript593-630, all arithmetic constructor positions incl4-register carry/overflow/longdiv, six explicit mem clauses and catchall preserved. Original asm memop125-128 includes Load16/Store16 but colouring leaves both unchanged; original six-row HOL probe confirms this, offset7w preserved, FP only integer operands renamed and float indices untouched. Compared WordLangArith/WordLangInst/WordLangFp/WordLangAddr/WordRegImm constructors and field Nat/word types against asmScript85-134; positive BitVec width is sole carrier translation. Tagged port delegates generic core actually called by executed production route; distinct5-register production primitive explicitly separate Flapjack behaviour, no exact HOL claim for it. Generic core immediate case mirrors reviewed applyColourImm and has no strengthened hypothesis."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "strong_locals_rel_subset",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/StrongLocalsRel.lean",
+    "lean_name": "strongLocalsRelSubset",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead .18.5.11.1.5: HOL word_allocProof659-667. Retains subset s into larger and generic strong_locals_rel on larger, concludes same source/target relation on s. Payload-polymorphic Spt alpha (not WordLoc-specialized), HOL set inclusion rendered characteristic-predicate implication; arbitrary f, no injection/target-success/global relation premise. Exact existing generic relation definition and lookup-domain equivalence used; no representation qualifier needed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "strong_locals_rel_extend_aux",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/StrongLocalsRel.lean",
+    "lean_name": "strongLocalsRelExtendAux",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead .18.5.11.1.5: HOL word_allocProof922-929. Retains domain source subset s and strong_locals_rel on s, concludes arbitrary t relation; existing successful source lookup establishes domain membership. Payload-polymorphic Spt alpha (not WordLoc-specialized), HOL set inclusion rendered characteristic-predicate implication; arbitrary f, no injection/target-success/global relation premise. Exact existing generic relation definition and lookup-domain equivalence used; no representation qualifier needed."
   }
 ]
