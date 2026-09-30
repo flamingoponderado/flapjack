@@ -61,7 +61,7 @@ private theorem stride_succ {width : Nat} (a : BitVec width) (n : Nat) :
 
 /-- Local support: `addresses a (n + k)` splits at the `n`-th stride.  No HOL
     original (HOL's proof uses `addresses_thm`). -/
-private theorem addresses_add {width : Nat} (n k : Nat) :
+theorem addresses_add {width : Nat} (n k : Nat) :
     ∀ (a x : BitVec width), addresses a (n + k) x ↔
       addresses a n x ∨
         addresses (a + BitVec.ofNat width (width / 8) * BitVec.ofNat width n) k x := by
