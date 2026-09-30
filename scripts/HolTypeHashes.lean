@@ -1,4 +1,5 @@
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelImpSemantics
+import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Decls
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Assembly
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Call
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.ExtCall
@@ -363,6 +364,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.ShMemLoad
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.ClockAnnot
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Seq
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.DecCall
+import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.ShMemStore
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.If
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Dec
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.While
