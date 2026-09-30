@@ -202,17 +202,7 @@ theorem callFFIHOL_ret {σ : Type u} (state : HolFfiState σ) (name : HolFfiName
 a returning (non-final) `callFFIHOL` preserves
     the byte-list length.  On the identity call it returns the input bytes; on
     any other call the returning branch is guarded by `nextBytes.length = bytes.length`.
-    Used to feed `stateRelWriteBytearrayHOL` in the `ExtCall` `compile_correct` case.
-
-    HOL analogue: `call_FFI_LENGTH` (`cakeml/compiler/backend/proofs/stack_removeProofScript.sml:67`;
-    also `cakeml/semantics/proofs/evaluatePropsScript.sml:13`), whose statement is
-    `(call_FFI s i conf xs = FFI_return n ys) ==> (LENGTH ys = LENGTH xs)`.
-    This lemma is NOT tagged as that declaration: it is phrased over the Flapjack
-    `callFFIHOL` rendering of `call_FFI_def` (already tagged `reviewed_exact` as
-    `call_FFI_def` in `cakeml/semantics/ffi/ffiScript.sml`), which carries a
-    `HolFfiState σ` and logs `ioEvents` and has an `.extCall`-identity branch that
-    the raw HOL `call_FFI` transition does not expose, so the interface differs
-    from the stack_removeProofScript statement. -/
+    Used to feed `stateRelWriteBytearrayHOL` in the `ExtCall` `compile_correct` case. -/
 theorem callFFIHOL_ret_length {σ : Type u} (state : HolFfiState σ) (name : HolFfiName)
     (configuration bytes nextBytes : List (BitVec 8)) (nextState : HolFfiState σ)
     (h : callFFIHOL state name configuration bytes = .ret nextState nextBytes) :
