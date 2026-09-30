@@ -137,6 +137,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.Updates
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.StateRelation
 import Flapjack.Compiler.Backend.WordAlloc.Expressions
 import Flapjack.Compiler.Backend.WordAlloc.ProgramLiveness
+import Flapjack.Compiler.Backend.WordAlloc.InstructionWrites
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.StrongLocalsRel
 import Flapjack.Compiler.Backend.BackendCommon
 import Flapjack.Compiler.Backend.Semantics.WordSem

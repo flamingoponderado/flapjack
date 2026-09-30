@@ -1,0 +1,7 @@
+writes_const=T
+writes_add_carry=T
+writes_long_div=T
+writes_load16_catchall=T
+writes_fp_move64=T
+writes_fp_move32=T
+writes_fp_from_reg_catchall=T

@@ -2657,3 +2657,7 @@ run_probe stack_props_program_validity_probeScript.sml stack_props_program_valid
 run_probe word_alloc_get_live_probeScript.sml word_alloc_get_live_probe.out \
   get_live_store_consts get_live_break_outside get_live_return \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_alloc_get_writes_inst_probeScript.sml word_alloc_get_writes_inst_probe.out \
+  writes_const writes_add_carry writes_long_div writes_load16_catchall writes_fp_move64 writes_fp_move32 writes_fp_from_reg_catchall \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"

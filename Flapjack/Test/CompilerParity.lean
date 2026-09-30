@@ -503,6 +503,7 @@ import Flapjack.Test.CakeSsaInstParity
 import Flapjack.Test.CakeWordAllocParity
 import Flapjack.Test.WordAllocLiveExpressionParity
 import Flapjack.Test.WordAllocProgramLivenessParity
+import Flapjack.Test.WordAllocInstructionWritesParity
 import Flapjack.Test.CakeSsaSharedParity
 import Flapjack.Test.CakeSsaMemoryParity
 import Flapjack.Test.CakeSsaLeafParity

@@ -37903,5 +37903,14 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-c source comparison 2026-10-01, bead11.1.13.1: compared all27 compiled HOL clauses773-850 and original word_allocTheory get_live_def. Exact WordLangProgHOL at positive BitVec/NeZero, Spt Unit live/cutsets and List of paired loop trees. Move uses FOLDR delete then literal head-after-tail numset insertion; Seq visits second then first; If union order and Reg/Imm inserts literal; Alloc/Install/FFI/Call use source cutsets and ignore supplied live where HOL does. StoreConsts uses first source clause (delete a/delete b before c/d inserts); original generated HOL theorem omits shadowed second row, fresh direct EVAL get_live_store_consts=T confirms it. ShareInst includes allfour store widths, otherwise kills name. Loop returns entry tree without body recursion; Break/Continue use optional indexed lookup with LN fallback. Other constructors are literal source equations, no strengthened condition. Fresh original3rows captured and kernel replayed. Production route remains OPEN separately on11.1.13.2; inventory13 not completed by proof-only definition."
+},
+{
+  "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+  "hol_name": "get_writes_inst_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/InstructionWrites.lean",
+  "lean_name": "getWritesInst",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01, bead11.1.16.1: literal681-703 on exact WordLangInst at positive BitVec/NeZero and NumSet Spt Unit. Const/Binop/Shift/Div write destination; AddCarry/AddOverflow/SubOverflow insert r4 outside r1; LongMul/LongDiv insert r2 outside r1; only Load/Load32/Load8 write target (Load16 falls through to LN). FPLess/FPLessEqual/FPEqual write integer result; FPMovToReg writes r1 only at64, else r2 outside r1. Every unlisted instruction gives LN, no extra premise. Same imported constructor carriers as reviewed instruction liveness. Seven fresh direct original HOL full-tree equalities kernel replayed; production route remains separate OPEN16.2."
 }
 ]
