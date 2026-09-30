@@ -2,6 +2,7 @@ import Flapjack.Pancake.Semantics.PanSem.LookupCodeFinite
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsCons
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallHandlerFlag
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallHandlerFreshNames
+import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallGlobal
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.DecCall
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsState
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallHandlerNoDestination
