@@ -1,0 +1,5 @@
+swap_f=SOME ([],Skip,One)
+swap_g=SOME ([],TailCall «g» [],One)
+other=SOME ([],TailCall «f» [],One)
+missing=NONE
+equal_names=SOME ([],TailCall «f» [],One)

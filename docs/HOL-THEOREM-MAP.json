@@ -26976,6 +26976,15 @@
     "reviewer": "flapjack-luna-b Flapjack-only infrastructure (2026-09-30; bead flapjack-pxn.18.5.5.41): canonical carrier witness re-export or exact shared-memory code-field preservation; no separate HOL declaration claimed."
   },
   {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "remove_dead_inst_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Instructions.lean",
+    "lean_name": "removeDeadInst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30 bead .11.1.12: literal word_allocScript854-880. All constructor clauses, output register checks and catchall F retained. sptLookup.isNone exactly renders lookup=NONE; conjunction Bool && renders HOL conjunction without equality/BEq premises. Positive width BitVec translation with NeZero, fpMovToReg distinguishes64 exactly. Numeric unit Spt tree matches HOL num_set, no finite-map qualifier. Core generic payload used by executed adapter, production constructors embedding reviewed against asm/WordLang and original; production lacks FP, so numeric64 core dimension is immaterial there. Distinct five-register Flapjack AddCarry explicitly separate. Actual wordDeadInst now uses exact decision via adapter and list-to-exact codec; retained branches use reviewed instruction liveness route. Twelve original HOL observations plus actual dead16-load and offset-store retention kernel/runtime guards, full compiler parity/source route audit reported on bead. This tags only remove_dead_inst, not whole remove_dead recursion."
+  },
+  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/CrepInline/Call.lean",
@@ -26990,6 +26999,14 @@
     "lean_name": "applyNummapsKey",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol source comparison 2026-09-30 bead .11.1.9: original29-33 exact product of two fromAList/map-key/toAList operations. Independent alpha/beta Spt payloads retained, f Nat->Nat arbitrary incl collisions; existing applyNummapKey unfolds precisely to each original component. First-match reconstructed payload and mixed traversal order preserved. No word/type-width or finite-map qualifier: numeric tree carrier is exact Spt. Actual wordApplyColour Call (with/without handler), Alloc, Install and FFI paired cutsets now call applyNummapsKeyExecutable, whose numSetToExact/fromExact codecs execute this tagged definition. Universal equality to the two already reviewed single-map executable routes is rfl, no representation-validity/injection premises. Three original HOL paired observations captured; full compiler parity and source route audit reported on bead."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "cut_envs_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/CutEnvs.lean",
+    "lean_name": "cutEnvsLemma",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-09-30 bead .11.1.10: original313-338. Unit numeric name-set pair matches cut_envs exact type, generic beta environment payload retained. All five input conjuncts retained (two domain-scoped INJ, successful source pair cut, two strong_locals_rel). All nine output conjuncts retained: existential successful renamed target pair cut, both full image domains of original name sets, both restricted relations on original domains, both inherited injections on source cuts, both source-cut domain equalities. INJ to UNIV rendered pairwise equality implication on its original domain; no extra target success or global injection. Proof decomposes source cut_envs into exact cut_names successes, invokes reviewed generic cutNamesLemma twice, substitutes proved source domain equalities and reconstructs pair using reviewed applyNummapsKey and wordSemCutEnvs. Exact Spt tree/Unit/generic beta carriers, no representation qualifier. Statement, quantified carriers, each premise and conclusion compared with HOL; accepted prerequisites6/9."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UpdateListLocals.lean",
@@ -27116,6 +27133,22 @@
     "reviewer": "flapjack-luna-b Flapjack-specific canonical state roundtrip witness re-export; no separate HOL declaration claimed."
   },
   {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "crepDest2ExpBitVecSpec_eq_HOL",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-sol source/proof comparison 2026-09-30 bead .18.5.4.1.2: Flapjack implementation certificate. Unconditional Boolean-test recursive specification equals reviewed crepDest2ExpHOL, all positive widths/start/input; strong induction on input.toNat, lawful BitVec comparisons and exact rightshift recurrence. No standalone HOL declaration. Exact tagged power/bound/bound-prime declarations already live in CrepArith.lean and Proofs/CrepArith/MulConst.lean; no duplicate port or withdrawn-tag reclassification."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
+    "lean_name": "crepDest2Exp_eq_HOL",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-sol source/proof comparison 2026-09-30 bead .18.5.4.1.2: Flapjack implementation certificate. Unconditional actual width-bounded executable crepDest2Exp equals reviewed crepDest2ExpHOL for all positive widths/start/input; combines existing fuel/spec certificate with proved Boolean-spec/HOL equality. No standalone HOL declaration; this closes the production helper correspondence needed for old dest_2exp bounds leaf. Exact tagged power/bound/bound-prime declarations already live in CrepArith.lean and Proofs/CrepArith/MulConst.lean; no duplicate port or withdrawn-tag reclassification."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
     "hol_name": "gc_def",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Allocation.lean",
@@ -27168,6 +27201,42 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-b source comparison (2026-09-30; bead flapjack-pxn.18.5.5.44.2) against crep_inlineProofScript.sml:597-634. Same six premises: successful OPT_MMAP/List.mapM, equal lengths, ALL_DISTINCT/Pairwise inequality, freshness for every name/expression, exact updated-locals body evaluation and non-Error. Same existential nested_decs evaluation/state_rel. Induction transfers tail map through exact irrelevant-local expression equality, applies reviewed single_dec_evaluate, and composes all ten state_rel fields. Canonical updateListEq implements FUPDATE_LIST and zip order. No target evaluation, simulation, or post-state relation premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "no_alloc_subprogs_def",
+    "lean_path": "Flapjack/Pancake/WordConvs/NotCreated.lean",
+    "lean_name": "noAllocSubprogsHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-pxn.18.5.15.1.3: wordConvsScript.sml:536-616 and exact WordLangProgHOL carrier. Bool conjunction order, both optional Call bodies/handler probe, Loop/If/MustTerminate recursion, Alloc/Install LN pairs, LocValue label, and all catchalls match. Constructor rejection is justified by the kernel-checked noAllocSubprogsHOL_eq_choice certificate against HOL's original inequality predicate for every program and every ARB memop representative. Positive BitVec dimension is the only carrier translation. General extra-choice-parameter checker remains untagged. Original 15 captured HOL rows replayed by kernel and executable Bool checks; whole convention theorem and compiler routing remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "no_install_subprogs_def",
+    "lean_path": "Flapjack/Pancake/WordConvs/NotCreated.lean",
+    "lean_name": "noInstallSubprogsHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-pxn.18.5.15.1.3: wordConvsScript.sml:536-616 and exact WordLangProgHOL carrier. Bool conjunction order, both optional Call bodies/handler probe, Loop/If/MustTerminate recursion, Alloc/Install LN pairs, LocValue label, and all catchalls match. Constructor rejection is justified by the kernel-checked noInstallSubprogsHOL_eq_choice certificate against HOL's original inequality predicate for every program and every ARB memop representative. Positive BitVec dimension is the only carrier translation. General extra-choice-parameter checker remains untagged. Original 15 captured HOL rows replayed by kernel and executable Bool checks; whole convention theorem and compiler routing remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "no_mt_subprogs_def",
+    "lean_path": "Flapjack/Pancake/WordConvs/NotCreated.lean",
+    "lean_name": "noMtSubprogsHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-pxn.18.5.15.1.3: wordConvsScript.sml:536-616 and exact WordLangProgHOL carrier. Bool conjunction order, both optional Call bodies/handler probe, Loop/If/MustTerminate recursion, Alloc/Install LN pairs, LocValue label, and all catchalls match. Constructor rejection is justified by the kernel-checked noMtSubprogsHOL_eq_choice certificate against HOL's original inequality predicate for every program and every ARB memop representative. Positive BitVec dimension is the only carrier translation. General extra-choice-parameter checker remains untagged. Original 15 captured HOL rows replayed by kernel and executable Bool checks; whole convention theorem and compiler routing remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "no_share_inst_subprogs_def",
+    "lean_path": "Flapjack/Pancake/WordConvs/NotCreated.lean",
+    "lean_name": "noShareInstSubprogsHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-pxn.18.5.15.1.3: wordConvsScript.sml:536-616 and exact WordLangProgHOL carrier. Bool conjunction order, both optional Call bodies/handler probe, Loop/If/MustTerminate recursion, Alloc/Install LN pairs, LocValue label, and all catchalls match. Constructor rejection is justified by the kernel-checked noShareInstSubprogsHOL_eq_choice certificate against HOL's original inequality predicate for every program and every ARB memop representative. Positive BitVec dimension is the only carrier translation. General extra-choice-parameter checker remains untagged. Original 15 captured HOL rows replayed by kernel and executable Bool checks; whole convention theorem and compiler routing remain open."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Expressions.lean",
@@ -27224,6 +27293,38 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-b source comparison (2026-09-30; bead flapjack-pxn.18.5.5.44.3), crep_inlineProofScript.sml:761-777: same six premises including observed nested evaluation; conclusion same result equality, state_rel and exact locals fold. Follows from existential theorem and deterministic pair equality. Observed eval premise is part of original HOL corollary only, never assumed by existential theorem. Canonical finite-support carrier/updateEq/updateListEq/resVarEq with positive width and universe0 FFI; no additional simulation or post-state relation premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "get_var_imm_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/StateOps.lean",
+    "lean_name": "getVarImm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-y19g.16, stackSemScript.sml:640-644/761-772. Accepted exact StackSemStateFiniteExact and StackSemResult carriers; canonical state map witness in StateOps; word width positive. Register lookup preserves Word/Loc payloads and missing keys, immediate wraps the unchanged word. cont_loop reenters on NONE or Continue0 only. exit_loop maps Break0 to NONE (unlike WordSem), decrements positive Break and all Continue labels by natural monus, propagates every other result including final-event payload unchanged. Direct original HOL capture28 rows and kernel replay, runtime control checks. No evaluator or production refinement claimed; parent y19g and dependent .12 remain open until assembly acceptance."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "cont_loop_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Control.lean",
+    "lean_name": "contLoop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-y19g.16, stackSemScript.sml:640-644/761-772. Accepted exact StackSemStateFiniteExact and StackSemResult carriers; canonical state map witness in StateOps; word width positive. Register lookup preserves Word/Loc payloads and missing keys, immediate wraps the unchanged word. cont_loop reenters on NONE or Continue0 only. exit_loop maps Break0 to NONE (unlike WordSem), decrements positive Break and all Continue labels by natural monus, propagates every other result including final-event payload unchanged. Direct original HOL capture28 rows and kernel replay, runtime control checks. No evaluator or production refinement claimed; parent y19g and dependent .12 remain open until assembly acceptance."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "exit_loop_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Control.lean",
+    "lean_name": "exitLoop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-y19g.16, stackSemScript.sml:640-644/761-772. Accepted exact StackSemStateFiniteExact and StackSemResult carriers; canonical state map witness in StateOps; word width positive. Register lookup preserves Word/Loc payloads and missing keys, immediate wraps the unchanged word. cont_loop reenters on NONE or Continue0 only. exit_loop maps Break0 to NONE (unlike WordSem), decrements positive Break and all Continue labels by natural monus, propagates every other result including final-event payload unchanged. Direct original HOL capture28 rows and kernel replay, runtime control checks. No evaluator or production refinement claimed; parent y19g and dependent .12 remain open until assembly acceptance."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/DeclListLemmas.lean",
@@ -27370,6 +27471,61 @@
     "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.7): exact DeclHOL/MlS/ShapeHOL re-port of HOL functions_filter_nil over the tagged exact functionsHOL/exceptionsHOL/decShapesHOL/fpermDecsHOL/resortDeclsHOL/newMainNameHOL/freshNameMlS and Bool-valued is_* predicates; same binders, hypotheses and conclusion (FILTER=List.filter, MAP FST=map Prod.fst, ALL_DISTINCT=Nodup, EVERY over Bool predicate = membership-quantified `= true`, unused HOL binders kept as free-typed binders). Supersedes the production-carrier documented_mismatch declaration of the same HOL name in Proofs/PanGlobals.lean, which stays untagged-by-status."
   },
   {
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "fperm_code_def",
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermCode.lean",
+    "lean_name": "fpermCodeHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_result_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_result": true,
+    "reviewer": "flapjack-sol source comparison2026-09-30 bead .18.5.2.22.4.1 against pan_globalsProof1617-1685. Uses accepted exact MlS/ProgHOL/ShapeHOL and exact fpermName/fpermHOL/fpermDecsHOL/functionsHOL. FUN_FMAP preimage domain is exactly swapped source domain; absent source key yields NONE, present payload preserves parameters and return shape and permutes body. Finite support via swapped witness list and name involution. Both full Option lookup equations preserve arbitrary key/code; declaration append is structural; update-list theorem proved universally from canonical FUPDATE_LIST order, no success/disjointness/distinctness premises, duplicate keys preserved. Result codec witness is independent raw lookup operation; relation bare map parameters are canonical input maps. FEMPTY single-map equality and canonical lookup_code theorem remain tracked .4.3/.4.2, not claimed ported here. Production/evaluation permutation theorem remains on parent .4/.5."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "FLOOKUP_fperm_code",
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermCode.lean",
+    "lean_name": "flookupFpermCodeHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "code"
+    ],
+    "reviewer": "flapjack-sol source comparison2026-09-30 bead .18.5.2.22.4.1 against pan_globalsProof1617-1685. Uses accepted exact MlS/ProgHOL/ShapeHOL and exact fpermName/fpermHOL/fpermDecsHOL/functionsHOL. FUN_FMAP preimage domain is exactly swapped source domain; absent source key yields NONE, present payload preserves parameters and return shape and permutes body. Finite support via swapped witness list and name involution. Both full Option lookup equations preserve arbitrary key/code; declaration append is structural; update-list theorem proved universally from canonical FUPDATE_LIST order, no success/disjointness/distinctness premises, duplicate keys preserved. Result codec witness is independent raw lookup operation; relation bare map parameters are canonical input maps. FEMPTY single-map equality and canonical lookup_code theorem remain tracked .4.3/.4.2, not claimed ported here. Production/evaluation permutation theorem remains on parent .4/.5."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "FLOOKUP_fperm_code'",
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermCode.lean",
+    "lean_name": "flookupFpermCodeHOL'",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "code"
+    ],
+    "reviewer": "flapjack-sol source comparison2026-09-30 bead .18.5.2.22.4.1 against pan_globalsProof1617-1685. Uses accepted exact MlS/ProgHOL/ShapeHOL and exact fpermName/fpermHOL/fpermDecsHOL/functionsHOL. FUN_FMAP preimage domain is exactly swapped source domain; absent source key yields NONE, present payload preserves parameters and return shape and permutes body. Finite support via swapped witness list and name involution. Both full Option lookup equations preserve arbitrary key/code; declaration append is structural; update-list theorem proved universally from canonical FUPDATE_LIST order, no success/disjointness/distinctness premises, duplicate keys preserved. Result codec witness is independent raw lookup operation; relation bare map parameters are canonical input maps. FEMPTY single-map equality and canonical lookup_code theorem remain tracked .4.3/.4.2, not claimed ported here. Production/evaluation permutation theorem remains on parent .4/.5."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "fperm_decs_append",
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermCode.lean",
+    "lean_name": "fpermDecsHOL_append",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-09-30 bead .18.5.2.22.4.1 against pan_globalsProof1617-1685. Uses accepted exact MlS/ProgHOL/ShapeHOL and exact fpermName/fpermHOL/fpermDecsHOL/functionsHOL. FUN_FMAP preimage domain is exactly swapped source domain; absent source key yields NONE, present payload preserves parameters and return shape and permutes body. Finite support via swapped witness list and name involution. Both full Option lookup equations preserve arbitrary key/code; declaration append is structural; update-list theorem proved universally from canonical FUPDATE_LIST order, no success/disjointness/distinctness premises, duplicate keys preserved. Result codec witness is independent raw lookup operation; relation bare map parameters are canonical input maps. FEMPTY single-map equality and canonical lookup_code theorem remain tracked .4.3/.4.2, not claimed ported here. Production/evaluation permutation theorem remains on parent .4/.5."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "fperm_code_FUPDATE_LIST_functions",
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermCode.lean",
+    "lean_name": "fpermCodeHOL_updateList_functions",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "fm"
+    ],
+    "reviewer": "flapjack-sol source comparison2026-09-30 bead .18.5.2.22.4.1 against pan_globalsProof1617-1685. Uses accepted exact MlS/ProgHOL/ShapeHOL and exact fpermName/fpermHOL/fpermDecsHOL/functionsHOL. FUN_FMAP preimage domain is exactly swapped source domain; absent source key yields NONE, present payload preserves parameters and return shape and permutes body. Finite support via swapped witness list and name involution. Both full Option lookup equations preserve arbitrary key/code; declaration append is structural; update-list theorem proved universally from canonical FUPDATE_LIST order, no success/disjointness/distinctness premises, duplicate keys preserved. Result codec witness is independent raw lookup operation; relation bare map parameters are canonical input maps. FEMPTY single-map equality and canonical lookup_code theorem remain tracked .4.3/.4.2, not claimed ported here. Production/evaluation permutation theorem remains on parent .4/.5."
+  },
+  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileDecsStructural.lean",
@@ -27476,16 +27632,66 @@
   {
     "hol_path": null,
     "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermCode.lean",
+    "lean_name": "holFmapAsFiniteSupportResultWitness_fpermCodeHOL",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-sol2026-09-30 .22.4.1: Flapjack canonical finite-map implementation/codec factoring, localized provenance in docstring. Single-update and arbitrary-entry list-update lemmas are not standalone HOL declarations; source restricts update list to functions. FEMPTY kernel equality remains untagged because a supported single-equality representation rule is absent (tracked .4.3), not a completed HOL port. Codec witness compares tagged lookup to independent raw FUN_FMAP rendering without assuming target equality."
+  },
+  {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileDecsStructural.lean",
     "lean_name": "compileDecs_exns_proj",
+    "hol_path": null,
+    "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack support (bead flapjack-pxn.18.5.2.22.8): local proof factoring for the exact compile_decs/compile_top ports; no HOL original."
   },
   {
     "hol_path": null,
     "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermCode.lean",
+    "lean_name": "fpermCodeHOL_empty",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-sol2026-09-30 .22.4.1: Flapjack canonical finite-map implementation/codec factoring, localized provenance in docstring. Single-update and arbitrary-entry list-update lemmas are not standalone HOL declarations; source restricts update list to functions. FEMPTY kernel equality remains untagged because a supported single-equality representation rule is absent (tracked .4.3), not a completed HOL port. Codec witness compares tagged lookup to independent raw FUN_FMAP rendering without assuming target equality."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermCode.lean",
+    "lean_name": "fpermCodeHOL_updateEq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-sol2026-09-30 .22.4.1: Flapjack canonical finite-map implementation/codec factoring, localized provenance in docstring. Single-update and arbitrary-entry list-update lemmas are not standalone HOL declarations; source restricts update list to functions. FEMPTY kernel equality remains untagged because a supported single-equality representation rule is absent (tracked .4.3), not a completed HOL port. Codec witness compares tagged lookup to independent raw FUN_FMAP rendering without assuming target equality."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermCode.lean",
+    "lean_name": "fpermCodeHOL_updateListEq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-sol2026-09-30 .22.4.1: Flapjack canonical finite-map implementation/codec factoring, localized provenance in docstring. Single-update and arbitrary-entry list-update lemmas are not standalone HOL declarations; source restricts update list to functions. FEMPTY kernel equality remains untagged because a supported single-equality representation rule is absent (tracked .4.3), not a completed HOL port. Codec witness compares tagged lookup to independent raw FUN_FMAP rendering without assuming target equality."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "copy_words_for_pattern_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/StoreConsts.lean",
+    "lean_name": "copyWordsForPattern",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30, y19g.11.2.1: source688-709. Same zero-failure and one-sentinel success before domain/index checks; low bit relocates only selected words, total function memory update at address, logical right shift, index increment, modular address increment. bytes_in_word compared with HOL/src/n-bit/byteScript.sml:193-195: n2w(dimindex DIV8). List EL is under identical bounds. Positive BitVec dimension is sole qualifier; domain as Prop/function set, DecidablePred supplies computation, no extra logical premise. LESS_EQ retains source final pair (address,memory), success premise and index conclusion without extra hypotheses. Numeric pattern measure proves termination. Twelve direct original HOL rows/kernel replay cover failures, sentinel bypass, modular overflow, widths16 and4 including zero-stride overwrite. No executed compiler or full evaluator completion claimed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "copy_words_for_pattern_LESS_EQ",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/StoreConsts.lean",
+    "lean_name": "copyWordsForPattern_index_le",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30, y19g.11.2.1: source688-709. Same zero-failure and one-sentinel success before domain/index checks; low bit relocates only selected words, total function memory update at address, logical right shift, index increment, modular address increment. bytes_in_word compared with HOL/src/n-bit/byteScript.sml:193-195: n2w(dimindex DIV8). List EL is under identical bounds. Positive BitVec dimension is sole qualifier; domain as Prop/function set, DecidablePred supplies computation, no extra logical premise. LESS_EQ retains source final pair (address,memory), success premise and index conclusion without extra hypotheses. Numeric pattern measure proves termination. Twelve direct original HOL rows/kernel replay cover failures, sentinel bypass, modular overflow, widths16 and4 including zero-stride overwrite. No executed compiler or full evaluator completion claimed."
+  },
+  {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileDecsStructural.lean",
     "lean_name": "compileDecs_funs_proj",
+    "hol_path": null,
+    "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack support (bead flapjack-pxn.18.5.2.22.8): local proof factoring for the exact compile_decs/compile_top ports; no HOL original."
   },
@@ -27911,6 +28117,16 @@
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-b corrective source review: find_name is misc tlookup over num num_map (Spt), not |-> finite map. Signature now Spt Nat and sptLookup projected into existing lookup helper with identity-key fallback. No finite-map qualifier; original equation/hypotheses retained, no BIJ premise. Exact positive-width AsmConfigExact uses words qualifier only. Corrects prior invalid finite-map translation."
 },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "check_store_consts_opt_def",
+    "hol_kind": "Definition",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/StoreConstsGuard.lean",
+    "lean_name": "checkStoreConstsOpt",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30 bead .18.5.12.1: stackSemScript743-747 has NONE=True and SOME n iff sptree lookup n code equals SOME (Seq (StoreConsts t1 t2 NONE) (Return 0)). Exact shared-word HolProg width retains all constructors and opaque MlString payload; reviewed positive-width word translation is sole qualifier. Structural isStoreConstsStub checks both Nat registers, NONE inner stub and Return0 in this exact sequence order. Kernel theorem isStoreConstsStub_iff proves equivalence to actual program equality for every program; checkStoreConstsOpt_some_iff lifts it through lookup, without BEq/equality-class assumptions or extra semantic premises. Code is Spt, not a finite-support map. Ten fresh original HOL rows/kernel replay cover bypass, matching, missing/wrong label, each register, recursive stub, nonzero Return, wrong constructor and reversed order. Proof-side guard only; evaluator production assembly remains tracked on .y19g.11.2.3/.11.4."
+  },
   {
     "hol_path": "cakeml/compiler/backend/backend_commonScript.sml",
     "hol_name": "word_shift_def",

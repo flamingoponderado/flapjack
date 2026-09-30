@@ -27,26 +27,51 @@ def findCode {width : Nat} [NeZero width] {α : Type}
       | some (.loc label 0) => sptLookup label code
       | _ => none
 
-/-- Clamp only the returned state's clock to the input/returned minimum. -/
+/-- Clamp only the returned state's clock to the input/returned minimum.
+HOL's two states have independent word, code, and FFI carriers: only their
+natural-number clocks are related. -/
 @[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "fix_clock_def"
   (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
-def fixClock {width : Nat} [NeZero width] {C F R : Type}
+def fixClock {width returnedWidth : Nat} [NeZero width] [NeZero returnedWidth]
+    {C F ReturnedC ReturnedF R : Type}
     (s : StackSemStateFiniteExact width C F)
-    (x : R × StackSemStateFiniteExact width C F) : R × StackSemStateFiniteExact width C F :=
+    (x : R × StackSemStateFiniteExact returnedWidth ReturnedC ReturnedF) :
+    R × StackSemStateFiniteExact returnedWidth ReturnedC ReturnedF :=
   (x.1, { x.2 with clock := min s.clock x.2.clock })
 
 /-- HOL's local clock bound, retaining its sole successful-pair equality premise. -/
 @[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "fix_clock_IMP"
   (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem fixClockImp {width : Nat} [NeZero width] {C F R : Type}
+theorem fixClockImp {width returnedWidth : Nat} [NeZero width] [NeZero returnedWidth]
+    {C F ReturnedC ReturnedF R : Type}
     (s : StackSemStateFiniteExact width C F)
-    (x : R × StackSemStateFiniteExact width C F) (res : R)
-    (s1 : StackSemStateFiniteExact width C F)
+    (x : R × StackSemStateFiniteExact returnedWidth ReturnedC ReturnedF) (res : R)
+    (s1 : StackSemStateFiniteExact returnedWidth ReturnedC ReturnedF)
     (h : fixClock s x = (res, s1)) : s1.clock ≤ s.clock := by
   have hc := congrArg (fun pair => pair.2.clock) h
   change min s.clock x.2.clock = s1.clock at hc
   rw [← hc]
   exact Nat.min_le_left _ _
+
+/-- HOL loop reentry: normal completion and Continue 0 reenter; every other
+control result leaves the current loop. -/
+@[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "cont_loop_def"
+  (words_as_type_indexed_bitvec)]
+def contLoop {width : Nat} [NeZero width] : Option (StackSemResult width) → Bool
+  | none => true
+  | some (.continue label) => decide (label = 0)
+  | _ => false
+
+/-- HOL loop exit: Break 0 becomes normal completion, positive Break labels
+and all Continue labels decrement by natural monus, other results propagate.
+In evaluate's Loop clause, Continue 0 takes contLoop's reentry branch first. -/
+@[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "exit_loop_def"
+  (words_as_type_indexed_bitvec)]
+def exitLoop {width : Nat} [NeZero width] :
+    Option (StackSemResult width) → Option (StackSemResult width)
+  | some (.break label) => if label = 0 then none else some (.break (label - 1))
+  | some (.continue label) => some (.continue (label - 1))
+  | result => result
 
 end Flapjack.StackSemControl
 

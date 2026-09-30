@@ -32,24 +32,24 @@ def parityGuard : Bool :=
 #eval parityGuard
 #guard parityGuard
 
-/-! The bounded production helper agrees with the unbounded recursive spec
-    on every direct HOL-EVAL row above, including the rejected odd values and
-    the width-boundary all-ones value. The theorem is generic in the BitVec
-    width; these observations keep the fixture tied to the direct HOL rows. -/
-def recursiveSpecParity : Bool :=
-  (crepDest2Exp 0 (word 0) == crepDest2ExpBitVecSpec 0 (word 0)) &&
-  (crepDest2Exp 3 (word 1) == crepDest2ExpBitVecSpec 3 (word 1)) &&
-  (crepDest2Exp 0 (word 1) == crepDest2ExpBitVecSpec 0 (word 1)) &&
-  (crepDest2Exp 0 (word 2) == crepDest2ExpBitVecSpec 0 (word 2)) &&
-  (crepDest2Exp 4 (word 4) == crepDest2ExpBitVecSpec 4 (word 4)) &&
-  (crepDest2Exp 0 (word 4) == crepDest2ExpBitVecSpec 0 (word 4)) &&
-  (crepDest2Exp 0 (word 8) == crepDest2ExpBitVecSpec 0 (word 8)) &&
-  (crepDest2Exp 0 (word 3) == crepDest2ExpBitVecSpec 0 (word 3)) &&
-  (crepDest2Exp 0 (word 6) == crepDest2ExpBitVecSpec 0 (word 6)) &&
-  (crepDest2Exp 0 (word 255) == crepDest2ExpBitVecSpec 0 (word 255))
+/-! The bounded production helper agrees with the reviewed HOL definition
+    on every direct HOL-EVAL row above, including rejected odd values and the
+    all-ones boundary. The unconditional `crepDest2Exp_eq_HOL` theorem covers
+    all positive widths and inputs; these rows also exercise the runtime path. -/
+def reviewedDefinitionParity : Bool :=
+  (crepDest2Exp 0 (word 0) == crepDest2ExpHOL 0 (word 0)) &&
+  (crepDest2Exp 3 (word 1) == crepDest2ExpHOL 3 (word 1)) &&
+  (crepDest2Exp 0 (word 1) == crepDest2ExpHOL 0 (word 1)) &&
+  (crepDest2Exp 0 (word 2) == crepDest2ExpHOL 0 (word 2)) &&
+  (crepDest2Exp 4 (word 4) == crepDest2ExpHOL 4 (word 4)) &&
+  (crepDest2Exp 0 (word 4) == crepDest2ExpHOL 0 (word 4)) &&
+  (crepDest2Exp 0 (word 8) == crepDest2ExpHOL 0 (word 8)) &&
+  (crepDest2Exp 0 (word 3) == crepDest2ExpHOL 0 (word 3)) &&
+  (crepDest2Exp 0 (word 6) == crepDest2ExpHOL 0 (word 6)) &&
+  (crepDest2Exp 0 (word 255) == crepDest2ExpHOL 0 (word 255))
 
-#eval recursiveSpecParity
-#guard recursiveSpecParity
+#eval reviewedDefinitionParity
+#guard reviewedDefinitionParity
 
 /-! These are the three successful input/exponent rows also recorded by the
     direct HOL destination-recognizer probe above. They exercise the wrapped
