@@ -27975,5 +27975,67 @@
     "fmap_as_finite_support_relation": [
       "names"
     ]
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsExact.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only canonical finite-support roundtrip witness forwarding PanSemStateFiniteExact.holFmapAsFiniteSupportWitness for the exact evaluator carrier; no HOL declaration claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsExact.lean",
+    "lean_name": "updateListCons",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private Flapjack proof helper for the canonical finite-map updateList equation used by evaluate_decls ports; no independent HOL declaration claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsExact.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module finite-support roundtrip witness forwarding the imported PanSemStateFiniteExact carrier witness; no HOL theorem claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsExact.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module finite-support roundtrip witness forwarding the imported PanGlobalsContextExact carrier witness; no HOL theorem claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsExact.lean",
+    "lean_name": "evaluateDeclsOnlyFunctionsSOMEHOLFinite",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "evaluate_decls_only_functions_SOME",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison against pan_globalsProofScript.sml:2390-2403. Lean preserves HOL's universal state/declaration binders, EVERY is_function condition, nested per-function parameter/return is_wf_shape conditions, successful evaluate_decls result, and exact code FUPDATE_LIST functions pan_code result. The canonical evaluator's membership decidability is supplied internally by Classical.propDecidable and adds no theorem premise. locals/globals/code/eshapes are exactly PanSemStateFiniteExact's HolFiniteMapExact fields; BitVec width and NeZero are the standard HOL word translation. No target-evaluation premise or conclusion weakening. Coordinator review required."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsExact.lean",
+    "lean_name": "evaluateDeclsOnlyFunctionsAndExnsSOMEHOLFinite",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "evaluate_decls_only_functions_and_exns_SOME",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison against pan_globalsProofScript.sml:2404-2435. Lean preserves HOL's universal state/declaration binders, function-or-exception declaration condition, nested function shape condition, exception-id ALL_DISTINCT, original-state exception-map freshness, well-formed exception shapes, and exact simultaneous code/eshapes FUPDATE_LIST result. The proof discharges evaluator membership decidability internally via Classical.propDecidable, not as a theorem hypothesis. The four named fields are the exact PanSemStateFiniteExact canonical maps; BitVec width and NeZero are the standard word translation. No target-evaluation premise or conclusion weakening. Coordinator review required."
   }
 ]
