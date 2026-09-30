@@ -59,6 +59,8 @@ import Flapjack.Pancake.Proofs.PanGlobals.StateRelationClock
 import Flapjack.Pancake.Proofs.PanGlobals.CompileExpLeaves
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Base
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Seq
+import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.ShMem
+import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.ShMemGlobal
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Store
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Return
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Store32
@@ -132,6 +134,7 @@ import Flapjack.Compiler.Backend.Semantics.StackSem.SizeBitmapCases
 import Flapjack.Compiler.Backend.Semantics.StackSem.Control
 import Flapjack.Compiler.Backend.Semantics.StackSem.Labels
 import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+import Flapjack.Compiler.Backend.Semantics.StackSem.ShMem
 import Flapjack.Compiler.Backend.Semantics.StackSem.Expressions
 import Flapjack.Compiler.Backend.Semantics.StackSem.StoreConsts
 import Flapjack.Compiler.Backend.Semantics.StackSem.StoreConstsGuard

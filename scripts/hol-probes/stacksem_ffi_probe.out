@@ -1,0 +1,12 @@
+ffi_return=(NONE,Word 0xAA332211EEFF0011w,SOME (Word 2w),NONE,SOME (Word 153w),NONE,
+ NONE,1,
+ [IO_event (ExtCall «x») [255w; 238w] [(221w,17w); (204w,34w); (187w,51w)]],5)
+ffi_final=(SOME
+   (FinalFFI
+      (Final_event (ExtCall «x») [255w; 238w] [221w; 204w; 187w] FFI_diverged)),
+ Word 0xAABBCCDDEEFF0011w,SOME (Word 2w),SOME (Word 2w),SOME (Word 153w),
+ SOME (Word 119w),SOME 102w,0,[],5)
+ffi_read_failure=(SOME Error,Word 0xAABBCCDDEEFF0011w,SOME (Word 2w),SOME (Word 2w),
+ SOME (Word 153w),SOME (Word 119w),SOME 102w,0,[],5)
+ffi_non_word_length=(SOME Error,Word 0xAABBCCDDEEFF0011w,SOME (Loc 1 0),SOME (Word 2w),
+ SOME (Word 153w),SOME (Word 119w),SOME 102w,0,[],5)
