@@ -178,6 +178,9 @@ run_probe word_alloc_live_exp_probeScript.sml word_alloc_live_exp_probe.out \
 run_probe word_alloc_colour_inst_probeScript.sml word_alloc_colour_inst_probe.out \
   load16 store16 load8 store32 carry fp_move "$cake_dir/compiler/backend/word_allocScript.sml" \
   "$cake_dir/compiler/backend"
+run_probe word_alloc_live_exp_probeScript.sml word_alloc_live_exp_probe.out \
+  nested duplicate empty shift constant lookup \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
 run_probe word_alloc_colour_exp_probeScript.sml word_alloc_colour_exp_probe.out \
   nested duplicate empty "$cake_dir/compiler/backend/word_allocScript.sml" \
   "$cake_dir/compiler/backend"
@@ -1390,6 +1393,10 @@ run_probe crep_replicate_const_probeScript.sml crep_replicate_const_probe.out \
   "$cake_dir/pancake/semantics"
 # The mem_load probe observes the total word -> word_lab memory function and the
 # memaddrs guard on both mem_load and eval (Load ...).
+run_probe crep_mem_load_probeScript.sml crep_mem_load_probe.out \
+  mem_load_valid eval_load_invalid \
+  "$cake_dir/pancake/semantics/crepSemScript.sml" \
+  "$cake_dir/pancake/semantics"
 run_probe crep_mem_store_probeScript.sml crep_mem_store_probe.out \
   mem_store_valid_lookup mem_store_invalid \
   "$cake_dir/pancake/semantics/crepSemScript.sml" \
@@ -1649,6 +1656,10 @@ run_probe longdiv_code_probeScript.sml longdiv_code_probe.out \
   "$cake_dir/compiler/backend/data_to_wordScript.sml"
 run_probe pan_itree_h_prog_deccall_probeScript.sml \
   pan_itree_h_prog_deccall_probe.out \
+  argument_failure lookup_failure \
+  "$cake_dir/pancake/semantics/pan_itreeSemScript.sml"
+run_probe pan_itree_h_prog_call_probeScript.sml \
+  pan_itree_h_prog_call_probe.out \
   argument_failure lookup_failure \
   "$cake_dir/pancake/semantics/pan_itreeSemScript.sml"
 run_probe word_byte_memory_probeScript.sml word_byte_memory_probe.out \
@@ -2151,6 +2162,10 @@ run_probe crep_lang_prog_probeScript.sml crep_lang_prog_probe.out \
   "$cake_dir/pancake/crepLangScript.sml" \
   "$cake_dir/pancake"
 
+run_probe pan_lang_size_of_sh_with_ctxt_probeScript.sml pan_lang_size_of_sh_with_ctxt_probe.out \
+  sswc_one sswc_comb_miss \
+  "$cake_dir/pancake/panLangScript.sml" \
+  "$cake_dir/pancake"
 
 # The mem_load probe observes the exact HOL mem_load over the faithful carriers.
 run_probe pan_sem_mem_load_exact_probeScript.sml pan_sem_mem_load_exact_probe.out \
@@ -2158,6 +2173,10 @@ run_probe pan_sem_mem_load_exact_probeScript.sml pan_sem_mem_load_exact_probe.ou
   "$cake_dir/pancake/semantics/panSemScript.sml"
 
 # The size_of_shape probe observes the exact context-free HOL size_of_shape.
+run_probe pan_lang_size_of_shape_probeScript.sml pan_lang_size_of_shape_probe.out \
+  ss_one ss_eq \
+  "$cake_dir/pancake/panLangScript.sml" \
+  "$cake_dir/pancake"
 
 # The is_wf_shape probe observes is_wf_shape/is_wf_flds/is_wf_ctxt over the
 # exact MlString-keyed context, including the duplicate-name and missing-field
@@ -2538,27 +2557,3 @@ run_probe stack_props_program_name_probeScript.sml stack_props_program_name_prob
 
 run_probe stack_props_program_validity_probeScript.sml stack_props_program_validity_probe.out \
   inst_good inst_avoided inst_bound code_good code_avoided code_bound data_default heap_default seq_bad if_ignored loop_bad raise_good return_bad call_direct call_indirect_avoided call_indirect_bound call_handler_ignored call_body_bad call_handler_bad call_good shared_good shared_register_bad shared_base_bad shared_offset_bad "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
-
-run_probe word_alloc_live_exp_probeScript.sml word_alloc_live_exp_probe.out \
-  nested duplicate empty shift constant lookup \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
-
-run_probe crep_mem_load_probeScript.sml crep_mem_load_probe.out \
-  mem_load_valid eval_load_invalid \
-  "$cake_dir/pancake/semantics/crepSemScript.sml" \
-  "$cake_dir/pancake/semantics"
-
-run_probe pan_itree_h_prog_call_probeScript.sml \
-  pan_itree_h_prog_call_probe.out \
-  argument_failure lookup_failure \
-  "$cake_dir/pancake/semantics/pan_itreeSemScript.sml"
-
-run_probe pan_lang_size_of_sh_with_ctxt_probeScript.sml pan_lang_size_of_sh_with_ctxt_probe.out \
-  sswc_one sswc_comb_miss \
-  "$cake_dir/pancake/panLangScript.sml" \
-  "$cake_dir/pancake"
-
-run_probe pan_lang_size_of_shape_probeScript.sml pan_lang_size_of_shape_probe.out \
-  ss_one ss_eq \
-  "$cake_dir/pancake/panLangScript.sml" \
-  "$cake_dir/pancake"
