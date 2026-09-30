@@ -1,3 +1,6 @@
+import Flapjack.Pancake.Proofs.PanSimp.WhileBodyExact
+import Flapjack.Pancake.Proofs.PanSimp.SkipSeqExact
+import Flapjack.Pancake.Proofs.PanGlobals.FpermSemantics
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Prime
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelImpSemantics
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Decls
@@ -134,6 +137,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyRemap
 import Flapjack.Pancake.PanStructs.CompileDeclsExact
 import Flapjack.Pancake.PanStructs.CompileDeclsCorrespondence
 import Flapjack.Pancake.PanStructs.CompileProgCorrespondence
+import Flapjack.Pancake.PanStructs.CompileProgProduction
 import Flapjack.Pancake.PanStructs.CompileProgExact
 import Flapjack.Pancake.PanStructs.CompileExpExact
 import Flapjack.Pancake.PanStructs.OldExpShapeExact
@@ -288,6 +292,7 @@ import Flapjack.Pancake.Semantics.PanProps.EvaluateAddClockEq
 import Flapjack.Pancake.Semantics.PanProps.EvaluateClockSubAtoms
 import Flapjack.Pancake.Semantics.PanProps.EvaluateClockSubCall
 import Flapjack.Pancake.Semantics.PanProps.EvaluateClockSubDecCall
+import Flapjack.Pancake.Semantics.PanProps.EvaluateClockSubAssembly
 import Flapjack.Pancake.Semantics.PanSem.ShMemLoadCase
 import Flapjack.Pancake.Semantics.PanSem.ExtCallCase
 import Flapjack.Pancake.Semantics.PanSem.LocalUpdatesExact
@@ -607,6 +612,7 @@ import Flapjack.Pancake.Proofs.CrepInline.UnreachElimProgSize
 import Flapjack.Pancake.Proofs.CrepInline.UnreachElimIndexSize
 import Flapjack.Pancake.CrepInline.Canonical
 import Flapjack.Pancake.CrepInline.InlineRouteBridge
+import Flapjack.Pancake.CrepInline.InlineRouteNames
 import Flapjack.CompileFunctionDistinct
 import Flapjack.Semantics
 import Flapjack.CrepeSemantics
