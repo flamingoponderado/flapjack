@@ -1,5 +1,18 @@
 [
   {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateIoEventsMono.lean",
+    "lean_name": "evaluate_io_events_mono",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "evaluate_io_events_mono",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; bead flapjack-pxn.18.5.9.1.2), wordPropsScript.sml:1585-1631: HOL universally binds exps s1 res s2, assumes only evaluate (exps,s1) = (res,s2), and concludes the input FFI io_events is a list prefix of the output. Lean has the same binders, sole evaluation equality premise, and List.IsPrefix conclusion over the tagged faithful wordSem evaluate (curried instead of tupled). The proof uses the reviewed 26-clause rebound evaluate_ind: straight-line updates preserve FFI, Alloc/Inst/Store/Raise use exact helper invariance, FFI/ShareInst use the exact call_FFI event-prefix fact, Seq/Loop/Call compose recursive prefixes with unchanged cut/pop/push environment FFI projections. MustTerminate timeout restores the input state; every other outcome retains body events. Call continuation premises are exactly the rebound induction guards, with no successful-target-evaluation or universal simulation assumption. Canonical finite-support translation applies only to fpRegs/store of WordSemStateFiniteExact (locals/code remain Spt); same-module WordSemEventsMonoSupport.holFmapAsFiniteSupportWitness re-exports the checked state roundtrip. HOL type-indexed words use positive BitVec width with NeZero and the FFI host uses F : Type. Kernel-checked; independent coordinator review remains required before the bead closes."
+  },
+  {
     "hol_path": "cakeml/pancake/crep_inlineScript.sml",
     "hol_name": "has_return_def",
     "lean_path": "Flapjack/Pancake/CrepInline/Pass.lean",
@@ -25738,5 +25751,14 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison 2026-09-30, bead .18.5.11.1.3: word_allocProof218-226 retains original strong_locals_rel on state locals, live key condition only for Reg and True for Imm, source get_var_imm success, concluding renamed target success with same WordLocW result. No targetrun, injection or extra liveness premise. Exact Spt locals and WordRegImm over positive BitVec width; C/F universe-0 state. Only fpRegs/store canonical finite-support fields translated; existing same-module StrongLocalsWitnesses roundtrip names the evaluator owning carrier. Proof original case split and existing exact strong_locals_rel_get_var transport."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "apply_colour_inst_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Instructions.lean",
+    "lean_name": "applyColourInst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30, beads .18.5.11.1.4/.4.1: literal word_allocScript593-630, all arithmetic constructor positions incl4-register carry/overflow/longdiv, six explicit mem clauses and catchall preserved. Original asm memop125-128 includes Load16/Store16 but colouring leaves both unchanged; original six-row HOL probe confirms this, offset7w preserved, FP only integer operands renamed and float indices untouched. Compared WordLangArith/WordLangInst/WordLangFp/WordLangAddr/WordRegImm constructors and field Nat/word types against asmScript85-134; positive BitVec width is sole carrier translation. Tagged port delegates generic core actually called by executed production route; distinct5-register production primitive explicitly separate Flapjack behaviour, no exact HOL claim for it. Generic core immediate case mirrors reviewed applyColourImm and has no strengthened hypothesis."
   }
 ]

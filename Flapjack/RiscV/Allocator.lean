@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordAlloc.InstructionRoute
 import Flapjack.Word
 import Flapjack.Compiler.Backend.WordAlloc.ExpressionRoute
 import Flapjack.NumSet
@@ -2318,13 +2319,8 @@ def wordApplyColourArith (colour : Nat → Nat) : WordArith α → WordArith α
       .shift operator (colour destination) (colour sourceLeft)
         (wordApplyColourRegImm colour sourceRight)
 
-def wordApplyColourInst (colour : Nat → Nat) : WordInst α → WordInst α
-  | .const destination value => .const (colour destination) value
-  | .arith operation => .arith (wordApplyColourArith colour operation)
-  | .mem operator destination address =>
-      .mem operator (colour destination) (colour address)
-  | .memOffset operator destination address offset =>
-      .memOffset operator (colour destination) (colour address) offset
+def wordApplyColourInst (colour : Nat → Nat) : WordInst α → WordInst α :=
+  WordAlloc.applyColourInstExecutable colour
 
 /-! Cake's `num_set` fields are represented by lists in Flapjack.  The source
     `apply_nummap_key` rebuilds those sets through `fromAList`, so the result is
