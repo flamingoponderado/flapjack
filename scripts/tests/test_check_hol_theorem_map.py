@@ -2282,6 +2282,39 @@ class FmapEqualityStatusTest(unittest.TestCase):
             self._record(), self._tag(fmap_fields=("locals",)))
         self.assertTrue(any("mutually exclusive" in e for e in errors), errors)
 
+    # Combined single map equality + type-indexed word carrier.
+    COMBINED = (
+        "reviewed_fmap_as_finite_support_equality_words_as_type_indexed_bitvec"
+    )
+
+    def _words_tag(self):
+        tag = self._tag()
+        key = ("Flapjack/Example.lean", "resVarFEMPTYExact")
+        tup = list(tag[key])
+        tup[9] = True
+        return {key: tuple(tup)}
+
+    def test_accepts_combined_equality_words_status(self):
+        record = self._record(
+            statement_status=self.COMBINED,
+            words_as_type_indexed_bitvec=True,
+        )
+        self.assertEqual(self._errors(record, self._words_tag()), [])
+
+    def test_rejects_singular_status_with_words_qualifier(self):
+        record = self._record(words_as_type_indexed_bitvec=True)
+        errors = self._errors(record, self._words_tag())
+        self.assertTrue(
+            any("combined review status" in e for e in errors), errors)
+
+    def test_rejects_combined_status_without_words_qualifier(self):
+        record = self._record(statement_status=self.COMBINED)
+        errors = self._errors(record, self._tag())
+        self.assertTrue(
+            any("needs a reviewed source classification" in e for e in errors),
+            errors,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
