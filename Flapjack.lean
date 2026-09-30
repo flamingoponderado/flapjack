@@ -538,6 +538,7 @@ import Flapjack.CrepeContextBounds
 import Flapjack.Pancake.PanToCrep.Compile
 import Flapjack.Pancake.PanToCrep.CompileExact
 import Flapjack.Pancake.PanToCrep.CompileToCrepBridge
+import Flapjack.Pancake.PanToCrep.CompileProgCorrespondence
 import Flapjack.Pancake.PanToCrep.CompileExpBridge
 import Flapjack.Pancake.PanToCrep.ExpHdlExact
 import Flapjack.Pancake.PanToCrep.MakeVmapHOL
