@@ -31933,6 +31933,29 @@
     "reviewer": "flapjack-luna-a source comparison (2026-09-30;32.5.6): evaluate_unchanged_local1105-1137 tail Call NONE branch, same original unused value binder, name nonfree/source run/good_res/nonError hypotheses and identical post/source FLOOKUP conclusion. Exact total evaluateHOLFiniteState_call clauses: argument/lookup failures and malformed callee normal/break/continue produce Error, clock0 or propagated timeout/exception/return/final results fail good_res. Derives contradiction from original hypotheses only; no target-run or extra callee IH or success premise. fmap_as_finite_support translates exactly finite-state locals/globals/code/eshapes with checked canonical roundtrip; words_as_type_indexed_bitvec only positive HOL dimension and universe0 FFI. Full unchanged-local assembly remains open; coordinator review pending."
   },
   {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/CallHandler.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack canonical finite-state roundtrip re-export; no standalone HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/CallHandler.lean",
+    "lean_name": "evaluateUnchangedLocal_CallHandler",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "evaluate_unchanged_local",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison2026-09-30 (.32.5.7): evaluate_unchanged_local1105-1136 genuine non-tail Call with handler source subcase; original unused universal v retained, freshness/source run/good_res/nonerror premises and lookup conclusion. Literal evaluate_ind handler guard retains args/lookup/callee exception/id/eshapes/shape/local validity; redundant tuple binders eliminated only. Handler IH has exact unchanged-local conclusion, no unconditional IH/extra run/target premise. Exact MlS/positive width/NeZero/universe0 FFI/canonical four maps with genuine roundtrip witness. Compiler behavior unchanged; coordinator review pending."
+  },
+  {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/DecCall.lean",
     "lean_name": "holFmapAsFiniteSupportWitness",
     "hol_path": null,

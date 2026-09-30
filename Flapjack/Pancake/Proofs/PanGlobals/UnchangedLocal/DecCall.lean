@@ -14,7 +14,9 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} {σ : Type} [NeZero width] :
   PanSemStateFiniteExact.holFmapAsFiniteSupportWitness
 
 /-- Original unchanged-local DecCall case. The unused value binder is retained;
-    the sole continuation IH has all original evaluate_ind source guards. -/
+    the sole continuation IH has all original evaluate_ind source guards.
+    The unused callee-body IH is omitted, so this is a stronger specialized
+    case rather than the literal complete DecCall induction conjunct. -/
 @[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "evaluate_unchanged_local"
   (fmap_as_finite_support := [locals, globals, code, eshapes])
   (words_as_type_indexed_bitvec)]
