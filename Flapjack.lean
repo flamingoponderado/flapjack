@@ -1,5 +1,7 @@
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallLocal
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.TailCall
+import Flapjack.Pancake.Proofs.PanGlobals.GlobalStorePreservation
+import Flapjack.Pancake.Proofs.PanGlobals.GlobalStoreReload
 import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.Assemble
 import Flapjack.Pancake.Proofs.PanGlobals.GlobalUpdateSupport
 import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.AssignPrimitive
