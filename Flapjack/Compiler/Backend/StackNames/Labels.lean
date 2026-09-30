@@ -14,8 +14,10 @@ renaming bijection, evaluation, or target-label premise. -/
 theorem getLabelsComp {width : Nat} [NeZero width]
     (names : Flapjack.FiniteMap Nat Nat) (p : HolProg width) :
     getLabels (progComp names p) = getLabels p := by
+  change Flapjack.StackSem.getLabelsExact (progComp names p) = Flapjack.StackSem.getLabelsExact p
+  rw [getLabelsExact_eq_generic, getLabelsExact_eq_generic]
   induction p using progComp.induct <;>
-    try simp_all [progComp, getLabels, labelsProgram, Flapjack.StackSem.getLabels]
+    try simp_all [progComp, labelsProgram, Flapjack.StackSem.getLabels]
   case case11 rh target handler ihHandler ihReturn =>
     cases rh with
     | none =>
