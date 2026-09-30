@@ -29403,5 +29403,14 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Private direct-output induction factoring for dect source theorems; no separate HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/MemStoresAppend.lean",
+    "lean_name": "memStoresAppend",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "mem_stores_append",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison (2026-09-30; .18.5.2.27.2), HOL245-255: same addr/values/domain/memory/suffix binders and unconditional concatenation equation. Match retains NONE failure and SOME updated memory; continuation uses addr + bytes_in_word * n2w LENGTH values, with original fixed stride width DIV8 and modular BitVec multiplication/addition. Total HolWordLab function memory and Prop domain retain original carriers; decidable domain is computation infrastructure, no success/positivity/bounds assumption. Positive word qualifier only. Kernel list induction covers failed/successful store; source review pending coordinator."
   }
 ]
