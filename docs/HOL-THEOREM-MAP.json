@@ -1,21 +1,5 @@
 [
   {
-    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Labels.lean",
-    "lean_name": "getLabels",
-    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
-    "hol_name": "get_labels_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-luna-c source comparison (2026-09-30; y19g.15.1), stackSemScript.sml:667-680: Seq and If union branch labels; Loop recurses; Call inserts the return continuation label and its nested labels, with handler labels included only under SOME return continuation as HOL's clause parenthesization specifies; Halt and all remaining constructors yield the empty label set. Lean uses ProgM α, the exact generic stackLang prog carrier at arbitrary HOL word type α, and predicate membership for HOL set operations. Direct original HOL EVAL replay: scripts/hol-probes/stacksem_labels_probe.out. This is proof-side prerequisite only; no production evaluator route change. Coordinator acceptance evidence: flapjack-y19g.15.1 — Source-reviewed cumulative delivery ordinarily integrated8cc7d1b3a to1180. Build3914 incl standalone real agreement, lake test, refs1439/map3015/all1834Proofs/hash1439/warnings0/inventory/diff pass. Exact labels and original17-row replay; unconditional Arith/Mem and noFP image; untagged kernel sqrt foundation; normalized finite Call consumers preserve original update semantics. Broader correctness theorem not claimed. Subsequent PR1180 review HOLD: flapjack-0r2k remains open for the ProgM/HolProg carrier projection and actual state-consumer correspondence; the earlier coordinator acceptance above does not discharge this new review obligation."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Labels.lean",
-    "lean_name": "locCheck",
-    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
-    "hol_name": "loc_check_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-luna-c source comparison (2026-09-30; y19g.15.1), stackSemScript.sml:682-686: source condition is (l2=0 and l1 in domain code) or exists n e, lookup n code=SOME e and (l1,l2) in get_labels e. Lean preserves that disjunction, exact Spt num_map lookup/domain carrier, arbitrary HOL word type α via ProgM α, and predicate rendering of HOL sets. Probe EVAL covers the zero-offset present key; the nonzero label witness is kernel-proved in the original HOL probe because EVAL leaves its unbounded existential symbolic. Lean replay: Flapjack.Test.StackSemLabelsParity. Proof-side prerequisite only; no production evaluator route change. Coordinator acceptance evidence: flapjack-y19g.15.1 — Source-reviewed cumulative delivery ordinarily integrated8cc7d1b3a to1180. Build3914 incl standalone real agreement, lake test, refs1439/map3015/all1834Proofs/hash1439/warnings0/inventory/diff pass. Exact labels and original17-row replay; unconditional Arith/Mem and noFP image; untagged kernel sqrt foundation; normalized finite Call consumers preserve original update semantics. Broader correctness theorem not claimed. Subsequent PR1180 review HOLD: flapjack-0r2k remains open for the ProgM/HolProg carrier projection and actual state-consumer correspondence; the earlier coordinator acceptance above does not discharge this new review obligation."
-  },
-  {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/StackCodec.lean",
     "lean_name": "fullReadBitmap",
     "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
@@ -29209,5 +29193,23 @@
   "hol_name": "names_ok_def",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-b PR1180 source review HOL111-116: actual Spt Nat num_map, findName(sptLookup) is misc tlookup missing-key identity; GENLIST range/map of truncated reg_count-LENGTH avoid_regs; ALL_DISTINCT Nodup and EVERY Bool all hardware bound/nonmembership. No word carrier or representation exception. Implication premises now use this canonical predicate directly. Coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Labels.lean",
+  "lean_name": "getLabelsExact",
+  "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+  "hol_name": "get_labels_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b P0 0r2k source comparison HOL667-686: literal Seq/If unions, Loop, return+handler labels under SOME return, default empty; location zero-offset domain or existential successful Spt lookup and exact label membership. Faithful positive-width HolProg/config carrier. Generic helper observation correspondence kernel checked, no full carrier claim. Exact replay uses HolProg. No evaluator call to helpers found; no executed-path change claim. Coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Labels.lean",
+  "lean_name": "locCheckExact",
+  "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+  "hol_name": "loc_check_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b P0 0r2k source comparison HOL667-686: literal Seq/If unions, Loop, return+handler labels under SOME return, default empty; location zero-offset domain or existential successful Spt lookup and exact label membership. Faithful positive-width HolProg/config carrier. Generic helper observation correspondence kernel checked, no full carrier claim. Exact replay uses HolProg. No evaluator call to helpers found; no executed-path change claim. Coordinator review pending."
 }
 ]
