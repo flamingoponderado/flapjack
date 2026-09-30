@@ -348,10 +348,14 @@ be distinct, but every `HolFiniteMapExact` occurrence in the declaration
 signature must be one of those two slots. Raw maps and products/functions that
 merely contain a map are ineligible. The same module must provide
 `holFmapAsFiniteSupportHeterogeneousFunctionWitness_<declaration>` over exactly
-the same explicit inputs. Its unconditional equality must compare the tagged
+the same explicit inputs and exactly the same implicit/typeclass binders as
+the operation; extra proof premises or instances are rejected. Its unconditional
+equality must compare the tagged
 operation's `Option.map` result projection (using the returned map's `.lookup`)
 with an independent raw lookup operation applied through the canonical input
-map's `.lookup`. This narrowly permits different input/result map types; it
+map's `.lookup`. Each complete equality side must have that application shape:
+embedded mentions, discarded arguments, inert wrappers, and trailing terms do
+not qualify. This narrowly permits different input/result map types; it
 does not authorize changes to the HOL function's clauses or any other carriers.
 Use manifest status `reviewed_fmap_as_finite_support_heterogeneous_function`
 (or its `_words_as_type_indexed_bitvec` combination) only after source review
