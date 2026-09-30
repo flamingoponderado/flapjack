@@ -33394,6 +33394,14 @@
   "hol_path": null,
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Flapjack-specific original initializer induction premise (22.10.15), HOL2182-2191. Actual context updateEq and source setGlobal/update are split at initializername inclreplacement. Newblock disjointtail follows accepted .9 allocationPartition with gooddimension from original stateRel and original combinedsize bound; oldblocks inherit original free disjointness through prefix containment. Recursive base equality uses accepted .9. No freshness/newdisjointness/store/target-run premise. No independently named HOL theorem. Remaining work is full stateRel and recursivecons assembly, not further convenience factoring."
+  "reviewer": "Flapjack-specific full initializer head state relation assembly (22.10.14), composing original HOL initializer hypotheses and accepted range/store/reload/map/context certificates. Derives store success and all19 state_rel conjuncts, including replacement-name updates and empty source code. No post-state relation or target evaluation premise. No independently named HOL declaration; recursive initializer correctness remains open."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/InitGlobalsState.lean",
+  "lean_name": "initializerHeadStateRel",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific full initializer head state relation assembly (22.10.14), composing original HOL initializer hypotheses and accepted range/store/reload/map/context certificates. Derives store success and all19 state_rel conjuncts, including replacement-name updates and empty source code. No post-state relation or target evaluation premise. No independently named HOL declaration; recursive initializer correctness remains open."
 }
 ]
