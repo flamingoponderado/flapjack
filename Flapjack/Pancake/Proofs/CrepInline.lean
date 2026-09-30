@@ -3113,9 +3113,22 @@ set_option linter.unusedSimpArgs false in
 the `While` conjunct of the source-reviewed `crepSem$evaluate_ind`. The clause is
 `evalCrepSemHOLProgExact_while_holShape` (EvaluateHOL.lean:5217); the two
 induction hypotheses are the HOL case's sub-body IH (at `decClockCrepSemHOL s`)
-and its recursive while IH (at the body-result state). Flapjack-specific
-`inlineProgHOLExact` inline rendering; carriers and relation qualifiers match
-the other `inline_prog_correct` case lemmas. -/
+and its recursive while IH (at the body-result state).
+
+`ihWhile` is exactly the recursive-call hypothesis of the exact evaluator's
+induction principle: `evalCrepSemHOLProg.inductHOL`'s `hwhile_none` /
+`hwhile_continue` handlers (EvaluateHOL.lean:4011/4022) hand the recursive
+motive at the body-result state `loopState` reached by running `body` at
+`decClockCrepSemHOL s`. Consequently `ihWhile` is path-guarded: its first
+argument is the body-result state linked by that run and its guard restricts the
+body result to `none` or `continue`, so it never instantiates at the original
+state `s` (the `While` clause only runs the body when `s.clock ≠ 0`, and
+`decClockCrepSemHOL` strictly decreases the clock there). The parent assembly
+supplies this hypothesis directly from `inductHOL`, matching the HOL
+`evaluate_ind` recursive hypothesis; no arbitrary-state or target-result
+assumption is made. Flapjack-specific `inlineProgHOLExact` inline rendering;
+carriers and relation qualifiers match the other `inline_prog_correct` case
+lemmas. -/
 @[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "inline_prog_correct"
   (fmap_as_finite_support_relation :=
     [CrepSemHOLState.locals, CrepSemHOLState.globals,
