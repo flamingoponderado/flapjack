@@ -46,10 +46,8 @@ assurance does not automatically transfer to Flapjack.
 The following are open review or verification obligations:
 
 1. Compiler-correctness theorem porting is in progress.
-2. The RISC-V semantics in Flapjack have not yet been compared systematically
-   with the Sail RISC-V model. The HOL reference model lives in the HOL source
-   tree at `examples/l3-machine-code/riscv/model/riscv.sml`, but correspondence
-   to Sail is not claimed here.
+2. The RISC-V semantics in Flapjack have not been proven equivalent to a Lean
+   extraction of the authoritative Sail RISC-V model.
 3. Compiler behavior has not been tested extensively against the original
    Pancake compiler. The executable parity suite and differential fuzzer cover
    only a small corpus and do not establish equivalence for arbitrary input.
@@ -69,11 +67,6 @@ The following are open review or verification obligations:
    state and selected regressions. It does not review the mathematical
    adequacy of the specifications or prove untested source programs compile
    identically to CakeML.
-7. HOL's `panSem$evaluate_decls` now has a faithful Lean definition,
-   `evaluateDecls`, checked against direct HOL probes. The distinct
-   `evalPanValueDeclarationsWithStructs` remains Flapjack-specific and is not
-   used as evidence for the exact `compile_top_shape_wf` port. This work does
-   not claim a cross-prover equivalence proof.
 8. HOL's floating-point library specifies rounding over real numbers. The
    current Lean binary64 arithmetic rendering uses `Rat` for finite float
    values and rational operation inputs. Lean proves its computable
@@ -163,24 +156,14 @@ behavior. Flapjack's assembled end-to-end theorem is still unfinished.
 
 ## Trust and reproducibility notes
 
-The normal Lean kernel checks theorem elaboration. Some existing concrete
+The Lean kernel checks elaborated theorem statements and proof terms.
+Elaboration adds implicit arguments, inferred types, and resolved notation
+not explicit in the source; the resulting statement may differ from what
+the author intended. Some existing concrete
 regressions use `native_decide`; their locations are audited by
 `scripts/check-native-decide.sh` and the allowlist. This is a repository
 engineering policy and should not be confused with an independent review of
 the theorem statements or a proof of semantic equivalence to HOL.
-
-The authoritative reference sources remain under `cakeml/pancake`, including
-`pan_to_targetScript.sml` and its proof files. When adding a parity fixture,
-record the source program, the exact reference command/output boundary, and
-any normalization of labels or names. A fixture that fails against CakeML is a
-compiler-parity bug and must remain tracked as high-priority work until fixed
-or its reference interpretation is corrected.
-
-The checked-in HOL probes under `scripts/hol-probes` provide the same evidence
-for intermediate definitions that cannot be observed through the source
-compiler command. They are optional for normal Lean builds, but their outputs
-must be regenerated from the original CakeML/HOL source before the associated
-porting bead is closed.
 
 ## Required next evidence for a stronger claim
 
