@@ -49,6 +49,7 @@ def validate_export_record(record: Any, line_number: int) -> dict[str, Any]:
         "list_as_array", "names_as_string", "names_as_string_boundary",
         "fmap_as_finite_support", "fmap_as_finite_support_result",
         "fmap_as_finite_support_function",
+        "fmap_as_finite_support_heterogeneous_function",
         "fmap_as_finite_support_parameters",
         "fmap_as_finite_support_existentials",
         "fmap_as_finite_support_relation", "fmap_as_finite_support_equalities",
@@ -138,6 +139,8 @@ def lock_records(
             "reviewed_fmap_as_finite_support",
             "reviewed_fmap_as_finite_support_function",
             "reviewed_fmap_as_finite_support_function_words_as_type_indexed_bitvec",
+            "reviewed_fmap_as_finite_support_heterogeneous_function",
+            "reviewed_fmap_as_finite_support_heterogeneous_function_words_as_type_indexed_bitvec",
             "reviewed_fmap_as_finite_support_result",
             "reviewed_fmap_as_finite_support_result_words_as_type_indexed_bitvec",
             "reviewed_fmap_as_finite_support_parameters",
@@ -181,6 +184,10 @@ def lock_records(
         if record.get("fmap_as_finite_support_function", ()):
             qualifiers["fmap_as_finite_support_function"] = list(
                 record.get("fmap_as_finite_support_function", ())
+            )
+        if record.get("fmap_as_finite_support_heterogeneous_function", ()):
+            qualifiers["fmap_as_finite_support_heterogeneous_function"] = list(
+                record.get("fmap_as_finite_support_heterogeneous_function", ())
             )
         if record.get("fmap_as_finite_support_parameters", ()):
             qualifiers["fmap_as_finite_support_parameters"] = list(
