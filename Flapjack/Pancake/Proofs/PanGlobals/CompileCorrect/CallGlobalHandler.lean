@@ -2,6 +2,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallGlobal
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallHandlerNoDestination
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallHandlerArguments
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallHandlerFlag
+import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.Assemble
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.TwoLocals
 import Flapjack.Pancake.Proofs.PanGlobals.ShapeValueEval
 
@@ -364,6 +365,50 @@ private theorem handlerScratchRun {width : Nat} {σ : Type} [NeZero width]
     simpa only [updateEqEqUpdate, setVarHOLFinite] using htransport
   · intro hg
     simpa only [updateEqEqUpdate] using hgood hg
+
+/-- Restore both matched-handler scopes. For good results, unchanged-local
+preservation recovers the actual caller snapshots; for other results the
+relation ignores locals. The conditional scratch-map fact comes from internal
+handler transport, not an assumption on the public correctness theorem. -/
+private theorem restoreHandlerScopes {width : Nat} {σ : Type} [NeZero width]
+    (context : PanGlobalsContextExact width)
+    (caller sourcePost targetPost : PanSemStateFiniteExact width σ)
+    (handler : ProgHOL width) (result : Option (PanSemResultExact width))
+    (resultName flagName handlerVar : MlS) (initializer flagValue exceptionValue : ValueHOL width)
+    (locals : HolFiniteMapExact MlS (ValueHOL width))
+    (hrf : resultName ≠ flagName) (hrh : resultName ≠ handlerVar) (hfh : flagName ≠ handlerVar)
+    (hrFresh : resultName ∉ freeVarIdsHOL handler) (hfFresh : flagName ∉ freeVarIdsHOL handler)
+    (hrun : evaluateHOLFiniteState (setVarHOLFinite handlerVar exceptionValue caller) handler =
+      (result, targetPost)) (hne : result ≠ some .error)
+    (hrel : panGlobalsStateRelHOLExact (goodResHOL result) context sourcePost targetPost)
+    (hupdated : goodResHOL result = true →
+      locals = (targetPost.locals.update (resultName, initializer)).update (flagName, flagValue)) :
+    panGlobalsStateRelHOLExact (goodResHOL result) context sourcePost
+      {targetPost with locals := (HolFiniteMapExact.resVarEq
+        (HolFiniteMapExact.resVarEq locals
+          (flagName, (setVarHOLFinite resultName initializer caller).locals.lookup flagName))
+        (resultName, caller.locals.lookup resultName))} := by
+  refine ⟨hrel.1, ?_, hrel.2.2⟩
+  intro hg
+  have keepResult := PanGlobalsUnchangedLocal.evaluateUnchangedLocalHOL resultName initializer
+    handler (setVarHOLFinite handlerVar exceptionValue caller) result targetPost
+    ⟨hrFresh, hrun, hg, hne⟩
+  have keepFlag := PanGlobalsUnchangedLocal.evaluateUnchangedLocalHOL flagName flagValue
+    handler (setVarHOLFinite handlerVar exceptionValue caller) result targetPost
+    ⟨hfFresh, hrun, hg, hne⟩
+  have kr : targetPost.locals.lookup resultName = caller.locals.lookup resultName := by
+    simpa [setVarHOLFinite, FUPDATE, Ne.symm hrh] using keepResult
+  have kf : targetPost.locals.lookup flagName = caller.locals.lookup flagName := by
+    simpa [setVarHOLFinite, FUPDATE, Ne.symm hfh] using keepFlag
+  have savedFlag : (setVarHOLFinite resultName initializer caller).locals.lookup flagName =
+      caller.locals.lookup flagName := by
+    simp [setVarHOLFinite, FUPDATE, hrf]
+  change sourcePost.locals = _
+  have flagLookup : (targetPost.locals.update (resultName, initializer)).lookup flagName =
+      targetPost.locals.lookup flagName := by
+    simp [FUPDATE, hrf]
+  rw [hupdated hg, savedFlag, ← kf, ← kr, ← flagLookup, restoreUpdate, restoreUpdate]
+  exact hrel.2.1 hg
 
 /-- Internal missing-context branch of the full constructor proof. The branch
 condition selects the literal compiler fallback; the callee and handler IHs

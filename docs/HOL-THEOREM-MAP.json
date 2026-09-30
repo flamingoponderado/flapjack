@@ -34208,5 +34208,13 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-only internal matched-handler transport for actual33.11. Composes accepted two-fresh-locals theorem with actual handler-entry reordering and lawful canonical equality/Boolean update agreement. Preserves all result outcomes and HOL conditional goodRes/nonError final-locals guarantee; no successful handler or target evaluation premise. Internal source handler run/freshness guards remain branch facts; not a public constructor theorem. Untagged; saved-local restoration/abnormal outcomes/full assembly remain unfinished."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "restoreHandlerScopes",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only internal matched-handler restoration for actual33.11. Uses reviewed evaluate_unchanged_local to recover both caller lookups for original goodRes/nonError outcomes, then canonical scope restoration algebra; other outcomes use relation false locals flag. Conditional transported scratch-map fact is internal branch data, not public HOL-case premise. Both actual saved snapshots and possibly absent originals preserved. Untagged; full constructor assembly and normal/abnormal branch connections still unfinished."
 }
 ]
