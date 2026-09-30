@@ -35675,5 +35675,36 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-b repair .14.4.2 source comparison HOL616 comp_ind Halt constructor: literal stack_asm_name/names_ok/fixed_names guards only, exact stack_asm_ok(comp f constructor) conclusion. No selector premise or target validity assumption. Native Spt/HolProg payloads and positive-width translation only. HOL comp preserves constructor head and stackProps812-829 target default True; all source guards retained. Untagged selector helper discharged by True.intro internally. Coordinator acceptance pending; proof-only."
+},
+{
+  "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+  "hol_name": "arg_load_stronger",
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ArgLoadStronger.lean",
+  "lean_name": "argLoadStrongerExact",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "CrepSemHOLState.locals",
+    "CrepSemHOLState.globals",
+    "CrepSemHOLState.code",
+    "t"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison crep_inlineProof1410-1439 arg_load_stronger: all original variables and eleven conjunctive guards identical to accepted arg_load_correct. Conclusion retains independent existential target run/full state_rel; NONE/Break/Continue outside FDOM t restricted-map equality and original restored-local submap; Error False and other results True. Accepted arg_load_correct constructs run, accepted evaluate_locals_same_fdom_prime applied to that actual run proves full caller/target locals domains equal for original continuing results. Internal pointwise restriction proof follows EQ_FDOM_SUBMAP/FDIFF lookup argument without a public extra premise or changed domain theorem. Canonical CrepSemHOLState locals/globals/code and standalone t map plus positive type-indexed words/Type0 FFI only, same-module canonical roundtrip. No target/poststate assumption. Full original theorem, proof-only executable behavior unchanged; coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ArgLoadStronger.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only same-module canonical roundtrip reexport for the relation qualifier, no independent HOL original; owning CrepSemHOLState imported, no local duplicate carrier."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ArgLoadStronger.lean",
+  "lean_name": "restrictedEqOfSubmapFdom",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific private pointwise restriction helper over raw lookup functions and Boolean mask; specialization used internally, not claimed as full HOL EQ_FDOM_SUBMAP declaration. Proves map-restriction equality from submap plus equal domains; no external assumption."
 }
 ]
