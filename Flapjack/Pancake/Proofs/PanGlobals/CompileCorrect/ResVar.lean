@@ -19,7 +19,7 @@ theorem holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact
     PanGlobalsContextExact.ofBroad (PanGlobalsContextExact.toBroad context) = context :=
   PanGlobalsContextExact.holFmapAsFiniteSupportWitness context
 
-/-- HOL609-615: restore the same local name using bindings saved from states
+/-- HOL613-621: restore the same local name using bindings saved from states
 related with the true locals flag. The current states retain their original flag;
 all non-local relation conjuncts remain those of the current states. -/
 @[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "state_rel_res_var"
