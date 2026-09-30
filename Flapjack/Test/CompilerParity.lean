@@ -6,6 +6,7 @@ import Flapjack.Test.WordSimpSmartSeqParity
 import Flapjack.Test.StackPropsInstructionNames
 import Flapjack.Test.StackSemFixedStackCasesParity
 import Flapjack.Test.StackSemDynamicStackCasesParity
+import Flapjack.Test.StackSemSizeBitmapCasesParity
 import Flapjack.Test.StackPropsFloatNames
 import Flapjack.Test.StackPropsAddressNames
 import Flapjack.Test.StackPropsArithmeticNames
