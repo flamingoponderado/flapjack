@@ -799,6 +799,7 @@ import Flapjack.Compiler.Backend.StackLang
 import Flapjack.Compiler.Backend.StackLang.Prog
 import Flapjack.Compiler.Backend.StackLang.ProductionCodec
 import Flapjack.Compiler.Backend.StackLang.WordPayloads.InstructionBoundary
+import Flapjack.Compiler.Backend.StackLang.MacroLeaves
 import Flapjack.Compiler.Backend.StackCarrier
 import Flapjack.Basis.Pure.MlString
 import Flapjack.Compiler.Backend.MlStringBridge
@@ -845,5 +846,3 @@ The library currently contains the first Lean representation of Flapjack's
 front-end language. The source of truth used while porting is the CakeML HOL
 development in `cakeml/pancake`.
 -/
-
-import Flapjack.Compiler.Backend.StackLang.MacroLeaves
