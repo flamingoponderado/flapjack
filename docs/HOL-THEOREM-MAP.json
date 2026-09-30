@@ -33904,5 +33904,29 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-specific well-founded clock/sizeOf induction interface, no standalone HOL declaration. Kernel proof derives the actual guarded While body IH at decClock and plain-state NONE/Continue0 reentry IHs using evaluator clock monotonicity; other constructors retain the induction step. It is not the complete HOL evaluate_ind port. Consumed by CrepInline/WhileInduction.lean assembleWhile, closing the prior While assembly gap without a public correctness premise."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "scopedHandlerPrefix",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only private proof step for in-progress global-handler constructor33.11. Scope equation preserves actual saved lookups of both Dec binders, including absent bindings. Missing global/source and missing context/compiler branches retain original guarded callee/handler IHs; nonError excludes return to absent global. No full global-handler theorem exists yet; present-context normal-return and matched-handler branches plus final assembly remain open. No standalone HOL declaration/tag or complete constructor-port claim; coordinator classification pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "missingGlobalCallRun",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only private proof step for in-progress global-handler constructor33.11. Scope equation preserves actual saved lookups of both Dec binders, including absent bindings. Missing global/source and missing context/compiler branches retain original guarded callee/handler IHs; nonError excludes return to absent global. No full global-handler theorem exists yet; present-context normal-return and matched-handler branches plus final assembly remain open. No standalone HOL declaration/tag or complete constructor-port claim; coordinator classification pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "missingContextCorrect",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only private proof step for in-progress global-handler constructor33.11. Scope equation preserves actual saved lookups of both Dec binders, including absent bindings. Missing global/source and missing context/compiler branches retain original guarded callee/handler IHs; nonError excludes return to absent global. No full global-handler theorem exists yet; present-context normal-return and matched-handler branches plus final assembly remain open. No standalone HOL declaration/tag or complete constructor-port claim; coordinator classification pending."
 }
 ]
