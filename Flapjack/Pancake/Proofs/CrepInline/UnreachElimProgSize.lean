@@ -13,9 +13,8 @@ Counterpart and explicitly untagged support for
 `crepLang$prog_size`, transcribed untagged as `crepProgSizeHOL`
 (`Flapjack.Pancake.CrepLang.GeneratedSize`, pinned by
 `scripts/hol-probes/crep_lang_size_probe.out`).  HOL's size parameter
-`f : 'a -> num` has the same type index as the program's words; the reviewed
-rendering below carries that index as the word carrier `BitVec width`, exactly
-as the `words_as_type_indexed_bitvec` translation renders `'a word`.
+`f : 'a -> num` shares the program's HOL type index; the untagged size
+rendering below has an independent Lean parameter, as its local caveat explains.
 -/
 
 namespace Flapjack
@@ -24,21 +23,18 @@ open Flapjack.CrepLangGeneratedSize
 
 namespace CrepInlineUnreachElimProgSize
 
-/-- Exact HOL `unreach_elim_prog_size` (`crep_inlineProofScript.sml:1730-1733`).
-
-    HOL's elaborated statement (`scripts/hol-probes/crep_inline_prog_size_type_probe.out`)
+/-- Flapjack rendering of HOL `unreach_elim_prog_size`
+    (`crep_inlineProofScript.sml:1730-1733`); NOT an exact tagged port.  HOL's
+    elaborated statement (`scripts/hol-probes/crep_inline_prog_size_type_probe.out`)
     is `∀(p q : α prog) (r : early_exit option) (f : α -> num). ...`: the size
-    function's domain is the type index `α` of the program's words.  The reviewed
-    `words_as_type_indexed_bitvec` rendering carries that index as `BitVec width`,
-    the same carrier used for `α word`; there is no bare Lean type for `α` (an
-    infinite `'a` has `dimindex 1`, so `Fin width` would not be faithful).  The
-    parameter `f` is never applied by any `crepProgSizeHOL` clause (words are
-    sized through `toNat`), so no size value depends on it and the rendering adds
-    no assumption: every HOL instance is the image of this statement. -/
-@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "unreach_elim_prog_size"
-  (words_as_type_indexed_bitvec)]
-theorem unreachElimProgSize {width : Nat} [NeZero width] :
-    ∀ (p q : CrepProgHOL width) (r : Option CrepEarlyExitHOL) (f : BitVec width → Nat),
+    function's domain is the same type variable `α` that indexes `α word`.
+    The `words_as_type_indexed_bitvec` translation renders `α word` as
+    `BitVec width` but has no Lean type for bare `α`, so this statement's
+    independent `{α : Type} (f : α → Nat)` is an extra type quantifier (it
+    implies every HOL instance, since `prog_size` never applies `f`).  The
+    faithful carrier is tracked by bead `flapjack-pxn.18.5.5.50`. -/
+theorem unreachElimProgSize {width : Nat} [NeZero width] {α : Type} :
+    ∀ (p q : CrepProgHOL width) (r : Option CrepEarlyExitHOL) (f : α → Nat),
       unreachElimHOLExact p = (q, r) → crepProgSizeHOL f q ≤ crepProgSizeHOL f p := by
   intro p
   fun_induction unreachElimHOLExact p <;> intro q r f h <;>
@@ -113,7 +109,7 @@ theorem notHasReturnImpUnreachElim {width : Nat} [NeZero width] :
   -- result is no larger than the first component.
   · rename_i first second first' firstExit hfirst _ _ hp
     exfalso
-    have hsize := unreachElimProgSize first first' firstExit (fun (_ : BitVec width) => 0) hfirst
+    have hsize := unreachElimProgSize first first' firstExit (fun (_ : Unit) => 0) hfirst
     rw [hp] at hsize
     simp only [crepProgSizeHOL] at hsize
     omega

@@ -29633,15 +29633,13 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.2.26) compared pan_globalsProofScript.sml:172-186 gen_goal pan_globals$compile at the Tick conjunct of panSem evaluate_ind: forall res ctxt t s', state_rel T ctxt s t /\\ evaluate(Tick,s)=(res,s') /\\ res<>SOME Error ==> exists t'. evaluate(compile ctxt Tick,t)=(res,t') /\\ state_rel (good_res res) ctxt s' t'. Same binders/order, no extra premise, leaf case has no IH. evaluate Tick: clock 0 gives (SOME TimeOut, empty_locals s) with state_rel F (locals conjunct vacuous), else (NONE, dec_clock s) with state_rel T via state_rel_dec_clock; target clock equal by state_rel (HOL238-242). Exact tagged evaluateHOLFiniteState, compileProgExactHOL, panGlobalsStateRelHOLExact and goodResHOL; canonical finite state/context carriers and positive-width word/Type0 FFI translation only. Assembly remains open (bead .36); coordinator source review pending."
-  },
-  {
+  },  {
     "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
     "hol_name": "unreach_elim_prog_size",
     "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimProgSize.lean",
     "lean_name": "unreachElimProgSize",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-pxn.18.5.5.50) against crep_inlineProofScript.sml:1730-1733 and the elaborated HOL type in scripts/hol-probes/crep_inline_prog_size_type_probe.out (prog_size : ('a -> num) -> 'a crepLang$prog -> num; statement forall p q r f : 'a -> num). The size function's domain is the same index that indexes 'a word, which the words_as_type_indexed_bitvec translation renders as BitVec width; the Lean statement therefore quantifies f over BitVec width instead of the unrepresentable bare 'a (an infinite 'a has dimindex 1, so Fin width is not faithful). No clause of crepProgSizeHOL applies f (words are sized via toNat), so no size value depends on f and no instance is lost; conclusion shape (q.size <= p.size over unreachElimHOLExact) is HOL's, matching the original equality premise and output pair."
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-ds10 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.5.50; documented_mismatch). HOL unreach_elim_prog_size (crep_inlineProofScript.sml:1730-1733), elaborated type in scripts/hol-probes/crep_inline_prog_size_type_probe.out, is forall (p q : 'a crepLang$prog) (r : early_exit option) (f : 'a -> num). unreach_elim p = (q,r) ==> prog_size f q <= prog_size f p, where 'a is the same bare HOL type index that indexes 'a word. The untagged Lean declaration quantifies an independent {alpha : Type} (f : alpha -> Nat), an extra type quantifier: it is implied by each HOL instance only because prog_size never applies f, which does not license replacing the bare index carrier. A BitVec-width-domain rendering was attempted and rejected by coordinator review (words_as_type_indexed_bitvec licenses HOL word values, not arbitrary bare alpha; checker-green is not review acceptance). Faithful translation/review of the bare index carrier, or a reviewed size-family translation removing the irrelevant function uniformly, remains open."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimProgSize.lean",
