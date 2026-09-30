@@ -76,6 +76,12 @@ temporary strategic focus here or claim a blocked parent merely because it is
 high priority. The coordinator keeps bead priorities aligned with the current
 goal.
 
+Persistent agent goals describe the overall fleet mission, not a particular
+bead or temporary assignment. Send individual assignments as ordinary messages
+and use the shared database to choose subsequent work. Completing a bead is a
+checkpoint, not completion of the persistent goal; continue with the next ready
+task. Keep wake-up prompts generic for the same reason.
+
 Keep one explicit correctness critical path in the shared bead dependency
 graph, from faithful source semantics through each required compiler pass to
 the RISC-V result. Give every missing HOL declaration a bead; split a large
