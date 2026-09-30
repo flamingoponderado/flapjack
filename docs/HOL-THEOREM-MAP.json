@@ -36575,6 +36575,8 @@
 {
   "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/DecCall.lean",
   "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-specific canonical state roundtrip representation witness; no separately named HOL declaration."
 }
