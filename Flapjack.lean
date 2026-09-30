@@ -1,5 +1,10 @@
 import Flapjack.Pancake.Proofs.WordConvs.SmartSeqLabels
 import Flapjack.Pancake.WordLang.OccurrenceCorrespondence
+import Flapjack.Pancake.Proofs.PanGlobals.CompileExpRField
+import Flapjack.Pancake.Proofs.PanGlobals.StateRelationLocals
+import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsShape
+import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsDisjoint
+import Flapjack.Compiler.Backend.Semantics.StackSem.FixedStackCases
 import Flapjack.Compiler.Backend.StackProps.FloatNames
 import Flapjack.Compiler.Backend.StackProps.AddressNames
 import Flapjack.Compiler.Backend.StackProps.ArithmeticNames
@@ -8,11 +13,6 @@ import Flapjack.Compiler.Backend.StackNames.CallLinkProjection
 import Flapjack.Compiler.Backend.StackNames.ProgramNames
 import Flapjack.Compiler.Backend.StackNames.InstructionNames
 import Flapjack.Compiler.Backend.StackNames.OperandNames
-import Flapjack.Pancake.Proofs.PanGlobals.CompileExpRField
-import Flapjack.Pancake.Proofs.PanGlobals.StateRelationLocals
-import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsShape
-import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsDisjoint
-import Flapjack.Compiler.Backend.Semantics.StackSem.FixedStackCases
 import Flapjack.Pancake.PanStructs.CompileExpProduction
 import Flapjack.Compiler.Backend.StackProps.FixedNames
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.InstConst

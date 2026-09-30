@@ -2515,6 +2515,9 @@ run_probe pan_word_of_bytes_overlong_probeScript.sml pan_word_of_bytes_overlong_
 run_probe stack_props_fixed_names_probeScript.sml stack_props_fixed_names_probe.out \
   x86_good x86_empty x86_bad_zero riscv_empty "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 
+run_probe stacksem_fixed_stack_probeScript.sml stacksem_fixed_stack_probe.out \
+  stack_alloc_disabled stack_alloc_success stack_alloc_boundary stack_alloc_exhausted stack_free_boundary stack_free_excess stack_free_disabled stack_load_loc stack_load_boundary stack_load_disabled stack_store_loc stack_store_missing stack_store_boundary stack_store_disabled stack_size_modular stack_size_disabled stack_size_unsigned \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe stack_names_operand_probeScript.sml stack_names_operand_probe.out \
   reg_present reg_missing imm dest_present dest_missing dest_label "$cake_dir/compiler/backend/stack_namesScript.sml" "$cake_dir/compiler/backend"
 
@@ -2536,9 +2539,6 @@ run_probe stack_props_addr_name_probeScript.sml stack_props_addr_name_probe.out 
 
 run_probe stack_props_fp_name_probeScript.sml stack_props_fp_name_probe.out \
   fpLess fpLessEqual fpEqual fpAbs fpAbs_alias fpNeg fpNeg_alias fpSqrt fpMov fpToInt fpFromInt fpAdd fpSub fpMul fpDiv binary_mismatch binary_three_reg fma_arm fma_riscv fma_count2 fpMovToReg_32 fpMovFromReg_32 move32_alias move32_bound move64_ignored fp_bound logical_bound "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
-run_probe stacksem_fixed_stack_probeScript.sml stacksem_fixed_stack_probe.out \
-  stack_alloc_disabled stack_alloc_success stack_alloc_boundary stack_alloc_exhausted stack_free_boundary stack_free_excess stack_free_disabled stack_load_loc stack_load_boundary stack_load_disabled stack_store_loc stack_store_missing stack_store_boundary stack_store_disabled stack_size_modular stack_size_disabled stack_size_unsigned \
-  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe word_simp_smartseq_probeScript.sml word_simp_smartseq_probe.out \
   skip_left skip_right labels_skip_left labels_call_left labels_both labels_seq "$cake_dir/compiler/backend/word_simpScript.sml" "$cake_dir/compiler/backend"
