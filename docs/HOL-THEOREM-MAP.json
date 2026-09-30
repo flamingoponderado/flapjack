@@ -36982,5 +36982,29 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack helper (bead .42.3) for HOL Resume inline_prog_correct[Nontail] (crep_inlineProofScript.sml:2719-3037): the inlined assign-call part of the Call case, with evaluate_ind's Call body IH at crepInlineGoal (as callNonInlined/callTail), over exact carriers; no extra premise (the path conditions ALL_DISTINCT rets and FLOOKUP inl_bag fname = SOME (ns, body) are HOL's own case split, discharged in .42.4). Proof follows HOL's lemma sequence. Untagged; the tagged Call case is assembled in .42.4."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/CallCase.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed CrepSemHOLState toBroad/ofBroad roundtrip for the relation qualifier."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "inline_prog_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/CallCase.lean",
+    "lean_name": "inlineProgCorrectCallCaseExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "inlFs",
+      "inlBag"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.5.42.4): Call case of HOL inline_prog_correct (statement crep_inlineProofScript.sml:2301-2319; case Resume [Call] :2409 with suspensions [Tail] :2536 and [Nontail] :2719-3037). Statement shape as the accepted inlineProgCorrectDecCaseExact: the HOL source run of Call caltyp fname argexps, r <> SOME Error, inl_fs SUBMAP s.code, inl_bag SUBMAP inl_fs, state_rel_code, locals_strong_rel, code_inl_rel, with the existential target run of inline_prog inl_bag (Call ...), state_rel_code, code_inl_rel and the result-indexed locals_strong_rel conclusion. The only additional hypotheses are evaluate_ind's two guarded Call premises with P := the theorem predicate written out: ihExc (handler, guarded by OPT_MMAP args, lookup_code, the ALL_DISTINCT selector, clock <> 0, callee Exception eid, caltyp = SOME (_, SOME (eid', p)), eid = eid'; state st with locals := s.locals) and ihBody (callee body at dec_clock s with locals := newlocals under the same first guards). Both are in the reviewed callNonInlined spelling. No target-run or extra-context premise. The proof splits on HOL's own case analysis of inline_prog: not inlined (callNonInlined), inlined tail call (callTail), inlined distinct-return assign call (callNontail)."
   }
 ]
