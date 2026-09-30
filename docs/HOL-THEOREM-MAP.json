@@ -37040,4 +37040,28 @@
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-only canonical state representation roundtrip infrastructure; no independent HOL original."
 }
+,
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/Prime.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Imported-owner canonical finite-state roundtrip; derived representation infrastructure with no separately named HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/Prime.lean",
+  "lean_name": "evaluateFpermPrimeHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_fperm'",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison pan_globalsProof1811-1818 and accepted evaluate_fperm1721-1810: unconditional arbitrary f/g/program/source/clock equation, full result and complete post-state pair mapping, target simultaneous code+clock update equals source clock reset then code permutation. Derives source run pair internally by generalization and pair decomposition; no success/nonError/target-run/induction hypothesis or postrelation premise. Native MlS/ProgHOL/result carriers unchanged; canonical finite locals/globals/code/eshapes with genuine imported-owner roundtrip, positive BitVec width under NeZero and Type0 FFI host translations only. Independent coordinator source acceptance pending; proof-only no executed compiler change."
+}
 ]
