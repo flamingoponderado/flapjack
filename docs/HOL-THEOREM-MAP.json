@@ -31795,5 +31795,37 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack partial induction assembly consumer. Reviewed inlineProgCorrectWhileCaseExact discharged using separately derived original guarded body and plain NONE/Continue0 reentry IHs; no extra While correctness premise. Remaining constructor obligations explicit; full inline_prog_correct remains open."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/While.lean",
+  "lean_name": "compileCorrect_While",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "compile_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "PanSemStateFiniteExact.locals",
+    "PanSemStateFiniteExact.globals",
+    "PanSemStateFiniteExact.code",
+    "PanSemStateFiniteExact.eshapes",
+    "PanGlobalsContextExact.globals"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source comparison2026-09-30: original gen_goal172-182 and While902-916, original evaluate_ind captured lines22-35. Exactly three IHs: recursive tail after Continue, recursive tail after NONE, body under condition eval Val Word/nonzero/source clock nonzero. Only redundant constructor aliases collapsed; actual semantic guards retained. Public original state_rel T/source execution/nonError imply existential compiled run/full good_res relation. Full expression theorem supplies target condition, relation supplies clock equality, state_rel_dec_clock supplies body initial relation; timeout clears locals, Break maps to NONE with goodRes true, NONE/Continue tails use guarded IH, other results preserve their goodRes flag. No extra target-run, simulation, post-state or all-state guard premises. Two canonical roundtrip witnesses; positive BitVec width and universe0 FFI. Proof-only; coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/While.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only canonical carrier roundtrip re-export for While relation qualifier; no HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/While.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only canonical carrier roundtrip re-export for While relation qualifier; no HOL original."
 }
 ]
