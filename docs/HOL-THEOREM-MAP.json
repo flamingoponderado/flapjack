@@ -31136,5 +31136,96 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanGlobalsContextExact toBroad/ofBroad roundtrip; it supports PanGlobalsContextExact.globals named by the state_rel_write_bytearray tag."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NestedSeqAssign.lean",
+    "lean_name": "optMmapSomeImpFupdateExistSome",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "opt_mmap_some_imp_fupdate_exist_some",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "fm"
+    ],
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.1) compared crep_inlineProofScript.sml:1802-1812: forall vs fm vals nv. OPT_MMAP (FLOOKUP fm) vs = SOME vals ==> exists z. OPT_MMAP (FLOOKUP (fm |+ nv)) vs = SOME z; same binders and order; OPT_MMAP as List.mapM, FLOOKUP as .lookup, |+ as HolFiniteMapExact.updateEq (HOL = via DecidableEq). The bare polymorphic finite map fm is recorded as a standalone finite-support relation entry. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NestedSeqAssign.lean",
+    "lean_name": "optMmapSomeImpFupdateListExistSome",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "opt_mmap_some_imp_fupdate_list_exist_some",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "fm"
+    ],
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.1) compared crep_inlineProofScript.sml:1814-1823: forall xs ys vs fm vals. OPT_MMAP (FLOOKUP fm) vs = SOME vals /\\ LENGTH xs = LENGTH ys ==> exists z. OPT_MMAP (FLOOKUP (fm |++ ZIP (xs,ys))) vs = SOME z; |++ as updateListEq, ZIP as List.zip (equal lengths assumed as in HOL). The bare polymorphic finite map fm is recorded as a standalone finite-support relation entry. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NestedSeqAssign.lean",
+    "lean_name": "optMmapFlookupNotMemDomsub",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "opt_mmap_flookup_not_mem_domsub",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "fm"
+    ],
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.1) compared crep_inlineProofScript.sml:1825-1831: forall vs fm vals x. OPT_MMAP (FLOOKUP fm) vs = SOME vals /\\ ~MEM x vs ==> OPT_MMAP (FLOOKUP (fm \\\\ x)) vs = SOME vals; \\\\ as eraseEq. The bare polymorphic finite map fm is recorded as a standalone finite-support relation entry. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NestedSeqAssign.lean",
+    "lean_name": "optMmapUpdateLocalsNotVarsEvalEq",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "opt_mmap_update_locals_not_vars_eval_eq",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.1) compared crep_inlineProofScript.sml:1843-1849: forall es n vs w s. ~MEM n (FLAT (MAP var_cexp es)) /\\ OPT_MMAP (eval s) es = SOME vs ==> OPT_MMAP (eval (s with locals := s.locals |+ (n,w))) es = SOME vs; eval as tagged evalCrepSemHOLExp, var_cexp as crepExpVarsHOL. Same binders, no extra premise; canonical CrepSemHOLState finite-support carrier and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NestedSeqAssign.lean",
+    "lean_name": "evaluateNestedSeqAssign",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "evaluate_nested_seq_assign",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.1) compared crep_inlineProofScript.sml:1851-1873: forall ns s es ws vals. OPT_MMAP (eval s) es = SOME ws /\\ (!x. MEM x ns ==> ~MEM x (FLAT (MAP var_cexp es))) /\\ OPT_MMAP (FLOOKUP s.locals) ns = SOME vals /\\ LENGTH ns = LENGTH ws /\\ ALL_DISTINCT ns ==> exists s'. evaluate (nested_seq (MAP2 Assign ns es), s) = (NONE, s') /\\ state_rel s s' /\\ (!x. ~MEM x ns ==> FLOOKUP s'.locals x = FLOOKUP s.locals x) /\\ OPT_MMAP (FLOOKUP s'.locals) ns = SOME ws; evaluate as tagged evalCrepSemHOLProgExact, nested_seq as crepNestedSeqHOL, MAP2 as panMap2, ALL_DISTINCT as List.Nodup, state_rel as tagged crepInlineStateRelExact. Same binders, no extra premise; canonical CrepSemHOLState finite-support carrier and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NestedSeqAssign.lean",
+    "lean_name": "evaluateNestedSeqAssignDrule",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "evaluate_nested_seq_assign_drule",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.1) compared crep_inlineProofScript.sml:1875-1891: same hypotheses plus evaluate (nested_seq (MAP2 Assign ns es), s) = (r, s') ==> r = NONE /\\ state_rel s s' /\\ frame /\\ OPT_MMAP (FLOOKUP s'.locals) ns = SOME ws; binders ns s es ws vals r s' in order. Same binders, no extra premise; canonical CrepSemHOLState finite-support carrier and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NestedSeqAssign.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module canonical witness forwarding the reviewed CrepSemHOLState toBroad/ofBroad roundtrip for the locals/globals/code finite-map qualifier."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NestedSeqAssign.lean",
+    "lean_name": "mapM_some_of_pointwise",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.5.47.1): a successful mapM transfers to any pointwise-total map; no HOL original."
   }
 ]
