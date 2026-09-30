@@ -286,13 +286,17 @@ theorem evaluate_ind {width : Nat} [NeZero width] {C : Type} {F : Type} :
       hInstall hCodeBufferWrite hDataBufferWrite hFfi hShareInst hCall v v1
 
 open Classical in
-/-- Exact HOL rebound `evaluate_def` (`wordSemScript.sml:1369-1370`,
+/-- Rendering of HOL rebound `evaluate_def` (`wordSemScript.sml:1369-1370`,
     `REWRITE_RULE [fix_clock_evaluate] evaluate_def`): the `evaluate`
     equations with `fix_clock` removed from the `Seq`, `Loop` and returning
     `Call` clauses.  There is one conjunct per clause, in HOL order, with
-    HOL's binder order. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "evaluate_def" 1369
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+    HOL's binder order.
+
+    Not an exact port: the `@[hol]` tag is withdrawn (bead `flapjack-2hoy.2`,
+    coordinator decision 2026-09-30).  The `Inst` conjunct delegates to the
+    untagged `inst`, whose `FPSqrt` clause is the rational-cut reformulation
+    of HOL `fp64_sqrt` (see `inst`).  The faithful prerequisite is bead
+    `flapjack-dshl`.  Every other conjunct follows HOL clause by clause. -/
 theorem evaluate_def_rebound {width : Nat} [NeZero width] {C : Type} {F : Type} :
     (∀ (s : WordSemStateFiniteExact width C F), evaluate (.skip) s =
       (
