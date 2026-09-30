@@ -25426,5 +25426,285 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-94m6: compared HOL word_allocProof255-264, preserving forall ls a, MEM a ls implies domain(get_live_exp a) subset domain(big_union(MAP get_live_exp ls)). HOL sets are characteristic Nat predicates; subset is forall key membership implication. Exact positive-width word expression carrier and reviewed getLiveExp/bigUnion retain both Shift operands and right-fold left-biased Spt union. Proof mirrors list induction and uses reviewed external domain_union full equality, with no wf/injectivity or stronger membership premise. This is the live-set prerequisite explicitly used in apply_colour_exp_lemma Op case, not allocation simulation."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+    "hol_name": "state_rel_def",
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/StateRel.lean",
+    "lean_name": "stateRel",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-30; bead flapjack-cixp) against pan_simpProofScript.sml:365-384. The state update t = s with code := c and successful lookup implication preserve every parameter, body and return-shape quantifier. The definition additionally retains the absent-lookup implication; the intro theorem projects exactly the two HOL conjuncts. PanSemStateFiniteExact is the imported reviewed panSem state; c and its code field use canonical HolFiniteMapExact, with the same-module non-vacuous state codec roundtrip. MlS names and ShapeHOL/ProgHOL payloads are constructor-exact, panSimpCompileHOL is the reviewed compile_def, and positive BitVec width with universe-0 FFI host is the standard word translation. Only code is traversed; other finite maps remain untouched by the state update. No target evaluation, extra simulation, or byte-name premise is introduced.",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.code",
+      "c"
+    ]
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+    "hol_name": "state_rel_intro",
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/StateRel.lean",
+    "lean_name": "stateRel_intro",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-30; bead flapjack-cixp) against pan_simpProofScript.sml:365-384. The state update t = s with code := c and successful lookup implication preserve every parameter, body and return-shape quantifier. The definition additionally retains the absent-lookup implication; the intro theorem projects exactly the two HOL conjuncts. PanSemStateFiniteExact is the imported reviewed panSem state; c and its code field use canonical HolFiniteMapExact, with the same-module non-vacuous state codec roundtrip. MlS names and ShapeHOL/ProgHOL payloads are constructor-exact, panSimpCompileHOL is the reviewed compile_def, and positive BitVec width with universe-0 FFI host is the standard word translation. Only code is traversed; other finite maps remain untouched by the state update. No target evaluation, extra simulation, or byte-name premise is introduced.",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.code",
+      "c"
+    ]
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/StateRel.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only canonical qualifier witness, forwarding the imported PanSemStateFiniteExact toExact/ofExact roundtrip. HOL has no separate Lean carrier codec theorem; this supports the code-field representation qualifier on the pan_simp state relation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "apply_colour_exp_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/Expressions.lean",
+    "lean_name": "applyColourExpLemma",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-p3sk: compared word_allocProofScript.sml:744-782 and original word_exp_ind proof. Retains forall st w cst f res, source word_exp success, all 21 word_state_eq_rel field equalities, and strong_locals_rel only on domain(get_live_exp w), concluding target word_exp of apply_colour_exp succeeds with the same res. No target success, global injectivity, or extra post-state premise. Reviewed WordLangExpHOL constructors, fixed 5-bit Store Temp payload, both expression-valued Shift operands, exact Spt locals, positive BitVec width and universe-0 C/F carriers. Only fpRegs/store HOL finite maps use canonical finite-support representation; local imported-owner roundtrip witness is non-vacuous. Recursive proof follows original cases, transporting only successful Op argument values using domain_big_union_subset and restricting Shift live union separately; memory/domain/store are original state-relation projections."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+    "hol_name": "ret_to_tail_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/RetToTailCorrect.lean",
+    "lean_name": "retToTailCorrect_skip",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-30; bead flapjack-pxn.18.5.1.3.2.1): exact skip constructor case of the theorem at pan_simpProofScript.sml190 and suspended nonrecursive cases285-341. Retains FST(evaluate(p,s)) != SOME Error as the sole logical premise and equality of the entire result-option/state pair after ret_to_tail. The reviewed retToTailHOL compiler leaves this exact ProgHOL constructor unchanged, so its defining equation proves equality without inspecting or simplifying the evaluator. evaluateHOLFiniteState is the faithful total pair-shaped finite-state evaluator with the internal assembly marker proved inert; no fuel, target result, state relation, simulation premise or evaluator restriction is added. MlS names, ShapeHOL/ExpHOL and constructor payload arities match panLang. Imported PanSemStateFiniteExact owns the four canonical finite-map fields, with a same-module non-vacuous toExact/ofExact roundtrip witness, and positive BitVec width/universe-0 FFI host are the standard word translation. Recursive cases and full assembly remain open.",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+    "hol_name": "ret_to_tail_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/RetToTailCorrect.lean",
+    "lean_name": "retToTailCorrect_break",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-30; bead flapjack-pxn.18.5.1.3.2.1): exact break constructor case of the theorem at pan_simpProofScript.sml190 and suspended nonrecursive cases285-341. Retains FST(evaluate(p,s)) != SOME Error as the sole logical premise and equality of the entire result-option/state pair after ret_to_tail. The reviewed retToTailHOL compiler leaves this exact ProgHOL constructor unchanged, so its defining equation proves equality without inspecting or simplifying the evaluator. evaluateHOLFiniteState is the faithful total pair-shaped finite-state evaluator with the internal assembly marker proved inert; no fuel, target result, state relation, simulation premise or evaluator restriction is added. MlS names, ShapeHOL/ExpHOL and constructor payload arities match panLang. Imported PanSemStateFiniteExact owns the four canonical finite-map fields, with a same-module non-vacuous toExact/ofExact roundtrip witness, and positive BitVec width/universe-0 FFI host are the standard word translation. Recursive cases and full assembly remain open.",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+    "hol_name": "ret_to_tail_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/RetToTailCorrect.lean",
+    "lean_name": "retToTailCorrect_continue",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-30; bead flapjack-pxn.18.5.1.3.2.1): exact continue constructor case of the theorem at pan_simpProofScript.sml190 and suspended nonrecursive cases285-341. Retains FST(evaluate(p,s)) != SOME Error as the sole logical premise and equality of the entire result-option/state pair after ret_to_tail. The reviewed retToTailHOL compiler leaves this exact ProgHOL constructor unchanged, so its defining equation proves equality without inspecting or simplifying the evaluator. evaluateHOLFiniteState is the faithful total pair-shaped finite-state evaluator with the internal assembly marker proved inert; no fuel, target result, state relation, simulation premise or evaluator restriction is added. MlS names, ShapeHOL/ExpHOL and constructor payload arities match panLang. Imported PanSemStateFiniteExact owns the four canonical finite-map fields, with a same-module non-vacuous toExact/ofExact roundtrip witness, and positive BitVec width/universe-0 FFI host are the standard word translation. Recursive cases and full assembly remain open.",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+    "hol_name": "ret_to_tail_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/RetToTailCorrect.lean",
+    "lean_name": "retToTailCorrect_annot",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-30; bead flapjack-pxn.18.5.1.3.2.1): exact annot constructor case of the theorem at pan_simpProofScript.sml190 and suspended nonrecursive cases285-341. Retains FST(evaluate(p,s)) != SOME Error as the sole logical premise and equality of the entire result-option/state pair after ret_to_tail. The reviewed retToTailHOL compiler leaves this exact ProgHOL constructor unchanged, so its defining equation proves equality without inspecting or simplifying the evaluator. evaluateHOLFiniteState is the faithful total pair-shaped finite-state evaluator with the internal assembly marker proved inert; no fuel, target result, state relation, simulation premise or evaluator restriction is added. MlS names, ShapeHOL/ExpHOL and constructor payload arities match panLang. Imported PanSemStateFiniteExact owns the four canonical finite-map fields, with a same-module non-vacuous toExact/ofExact roundtrip witness, and positive BitVec width/universe-0 FFI host are the standard word translation. Recursive cases and full assembly remain open.",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+    "hol_name": "ret_to_tail_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/RetToTailCorrect.lean",
+    "lean_name": "retToTailCorrect_tick",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-30; bead flapjack-pxn.18.5.1.3.2.1): exact tick constructor case of the theorem at pan_simpProofScript.sml190 and suspended nonrecursive cases285-341. Retains FST(evaluate(p,s)) != SOME Error as the sole logical premise and equality of the entire result-option/state pair after ret_to_tail. The reviewed retToTailHOL compiler leaves this exact ProgHOL constructor unchanged, so its defining equation proves equality without inspecting or simplifying the evaluator. evaluateHOLFiniteState is the faithful total pair-shaped finite-state evaluator with the internal assembly marker proved inert; no fuel, target result, state relation, simulation premise or evaluator restriction is added. MlS names, ShapeHOL/ExpHOL and constructor payload arities match panLang. Imported PanSemStateFiniteExact owns the four canonical finite-map fields, with a same-module non-vacuous toExact/ofExact roundtrip witness, and positive BitVec width/universe-0 FFI host are the standard word translation. Recursive cases and full assembly remain open.",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+    "hol_name": "ret_to_tail_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/RetToTailCorrect.lean",
+    "lean_name": "retToTailCorrect_assign",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-30; bead flapjack-pxn.18.5.1.3.2.1): exact assign constructor case of the theorem at pan_simpProofScript.sml190 and suspended nonrecursive cases285-341. Retains FST(evaluate(p,s)) != SOME Error as the sole logical premise and equality of the entire result-option/state pair after ret_to_tail. The reviewed retToTailHOL compiler leaves this exact ProgHOL constructor unchanged, so its defining equation proves equality without inspecting or simplifying the evaluator. evaluateHOLFiniteState is the faithful total pair-shaped finite-state evaluator with the internal assembly marker proved inert; no fuel, target result, state relation, simulation premise or evaluator restriction is added. MlS names, ShapeHOL/ExpHOL and constructor payload arities match panLang. Imported PanSemStateFiniteExact owns the four canonical finite-map fields, with a same-module non-vacuous toExact/ofExact roundtrip witness, and positive BitVec width/universe-0 FFI host are the standard word translation. Recursive cases and full assembly remain open.",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+    "hol_name": "ret_to_tail_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/RetToTailCorrect.lean",
+    "lean_name": "retToTailCorrect_primitive",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-30; bead flapjack-pxn.18.5.1.3.2.1): exact primitive constructor case of the theorem at pan_simpProofScript.sml190 and suspended nonrecursive cases285-341. Retains FST(evaluate(p,s)) != SOME Error as the sole logical premise and equality of the entire result-option/state pair after ret_to_tail. The reviewed retToTailHOL compiler leaves this exact ProgHOL constructor unchanged, so its defining equation proves equality without inspecting or simplifying the evaluator. evaluateHOLFiniteState is the faithful total pair-shaped finite-state evaluator with the internal assembly marker proved inert; no fuel, target result, state relation, simulation premise or evaluator restriction is added. MlS names, ShapeHOL/ExpHOL and constructor payload arities match panLang. Imported PanSemStateFiniteExact owns the four canonical finite-map fields, with a same-module non-vacuous toExact/ofExact roundtrip witness, and positive BitVec width/universe-0 FFI host are the standard word translation. Recursive cases and full assembly remain open.",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+    "hol_name": "ret_to_tail_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/RetToTailCorrect.lean",
+    "lean_name": "retToTailCorrect_store",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-30; bead flapjack-pxn.18.5.1.3.2.1): exact store constructor case of the theorem at pan_simpProofScript.sml190 and suspended nonrecursive cases285-341. Retains FST(evaluate(p,s)) != SOME Error as the sole logical premise and equality of the entire result-option/state pair after ret_to_tail. The reviewed retToTailHOL compiler leaves this exact ProgHOL constructor unchanged, so its defining equation proves equality without inspecting or simplifying the evaluator. evaluateHOLFiniteState is the faithful total pair-shaped finite-state evaluator with the internal assembly marker proved inert; no fuel, target result, state relation, simulation premise or evaluator restriction is added. MlS names, ShapeHOL/ExpHOL and constructor payload arities match panLang. Imported PanSemStateFiniteExact owns the four canonical finite-map fields, with a same-module non-vacuous toExact/ofExact roundtrip witness, and positive BitVec width/universe-0 FFI host are the standard word translation. Recursive cases and full assembly remain open.",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+    "hol_name": "ret_to_tail_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/RetToTailCorrect.lean",
+    "lean_name": "retToTailCorrect_store32",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-30; bead flapjack-pxn.18.5.1.3.2.1): exact store32 constructor case of the theorem at pan_simpProofScript.sml190 and suspended nonrecursive cases285-341. Retains FST(evaluate(p,s)) != SOME Error as the sole logical premise and equality of the entire result-option/state pair after ret_to_tail. The reviewed retToTailHOL compiler leaves this exact ProgHOL constructor unchanged, so its defining equation proves equality without inspecting or simplifying the evaluator. evaluateHOLFiniteState is the faithful total pair-shaped finite-state evaluator with the internal assembly marker proved inert; no fuel, target result, state relation, simulation premise or evaluator restriction is added. MlS names, ShapeHOL/ExpHOL and constructor payload arities match panLang. Imported PanSemStateFiniteExact owns the four canonical finite-map fields, with a same-module non-vacuous toExact/ofExact roundtrip witness, and positive BitVec width/universe-0 FFI host are the standard word translation. Recursive cases and full assembly remain open.",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+    "hol_name": "ret_to_tail_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/RetToTailCorrect.lean",
+    "lean_name": "retToTailCorrect_storeByte",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-30; bead flapjack-pxn.18.5.1.3.2.1): exact storeByte constructor case of the theorem at pan_simpProofScript.sml190 and suspended nonrecursive cases285-341. Retains FST(evaluate(p,s)) != SOME Error as the sole logical premise and equality of the entire result-option/state pair after ret_to_tail. The reviewed retToTailHOL compiler leaves this exact ProgHOL constructor unchanged, so its defining equation proves equality without inspecting or simplifying the evaluator. evaluateHOLFiniteState is the faithful total pair-shaped finite-state evaluator with the internal assembly marker proved inert; no fuel, target result, state relation, simulation premise or evaluator restriction is added. MlS names, ShapeHOL/ExpHOL and constructor payload arities match panLang. Imported PanSemStateFiniteExact owns the four canonical finite-map fields, with a same-module non-vacuous toExact/ofExact roundtrip witness, and positive BitVec width/universe-0 FFI host are the standard word translation. Recursive cases and full assembly remain open.",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+    "hol_name": "ret_to_tail_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/RetToTailCorrect.lean",
+    "lean_name": "retToTailCorrect_shMemLoad",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-30; bead flapjack-pxn.18.5.1.3.2.1): exact shMemLoad constructor case of the theorem at pan_simpProofScript.sml190 and suspended nonrecursive cases285-341. Retains FST(evaluate(p,s)) != SOME Error as the sole logical premise and equality of the entire result-option/state pair after ret_to_tail. The reviewed retToTailHOL compiler leaves this exact ProgHOL constructor unchanged, so its defining equation proves equality without inspecting or simplifying the evaluator. evaluateHOLFiniteState is the faithful total pair-shaped finite-state evaluator with the internal assembly marker proved inert; no fuel, target result, state relation, simulation premise or evaluator restriction is added. MlS names, ShapeHOL/ExpHOL and constructor payload arities match panLang. Imported PanSemStateFiniteExact owns the four canonical finite-map fields, with a same-module non-vacuous toExact/ofExact roundtrip witness, and positive BitVec width/universe-0 FFI host are the standard word translation. Recursive cases and full assembly remain open.",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+    "hol_name": "ret_to_tail_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/RetToTailCorrect.lean",
+    "lean_name": "retToTailCorrect_shMemStore",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-30; bead flapjack-pxn.18.5.1.3.2.1): exact shMemStore constructor case of the theorem at pan_simpProofScript.sml190 and suspended nonrecursive cases285-341. Retains FST(evaluate(p,s)) != SOME Error as the sole logical premise and equality of the entire result-option/state pair after ret_to_tail. The reviewed retToTailHOL compiler leaves this exact ProgHOL constructor unchanged, so its defining equation proves equality without inspecting or simplifying the evaluator. evaluateHOLFiniteState is the faithful total pair-shaped finite-state evaluator with the internal assembly marker proved inert; no fuel, target result, state relation, simulation premise or evaluator restriction is added. MlS names, ShapeHOL/ExpHOL and constructor payload arities match panLang. Imported PanSemStateFiniteExact owns the four canonical finite-map fields, with a same-module non-vacuous toExact/ofExact roundtrip witness, and positive BitVec width/universe-0 FFI host are the standard word translation. Recursive cases and full assembly remain open.",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+    "hol_name": "ret_to_tail_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/RetToTailCorrect.lean",
+    "lean_name": "retToTailCorrect_return",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-30; bead flapjack-pxn.18.5.1.3.2.1): exact return constructor case of the theorem at pan_simpProofScript.sml190 and suspended nonrecursive cases285-341. Retains FST(evaluate(p,s)) != SOME Error as the sole logical premise and equality of the entire result-option/state pair after ret_to_tail. The reviewed retToTailHOL compiler leaves this exact ProgHOL constructor unchanged, so its defining equation proves equality without inspecting or simplifying the evaluator. evaluateHOLFiniteState is the faithful total pair-shaped finite-state evaluator with the internal assembly marker proved inert; no fuel, target result, state relation, simulation premise or evaluator restriction is added. MlS names, ShapeHOL/ExpHOL and constructor payload arities match panLang. Imported PanSemStateFiniteExact owns the four canonical finite-map fields, with a same-module non-vacuous toExact/ofExact roundtrip witness, and positive BitVec width/universe-0 FFI host are the standard word translation. Recursive cases and full assembly remain open.",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+    "hol_name": "ret_to_tail_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/RetToTailCorrect.lean",
+    "lean_name": "retToTailCorrect_raise",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-30; bead flapjack-pxn.18.5.1.3.2.1): exact raise constructor case of the theorem at pan_simpProofScript.sml190 and suspended nonrecursive cases285-341. Retains FST(evaluate(p,s)) != SOME Error as the sole logical premise and equality of the entire result-option/state pair after ret_to_tail. The reviewed retToTailHOL compiler leaves this exact ProgHOL constructor unchanged, so its defining equation proves equality without inspecting or simplifying the evaluator. evaluateHOLFiniteState is the faithful total pair-shaped finite-state evaluator with the internal assembly marker proved inert; no fuel, target result, state relation, simulation premise or evaluator restriction is added. MlS names, ShapeHOL/ExpHOL and constructor payload arities match panLang. Imported PanSemStateFiniteExact owns the four canonical finite-map fields, with a same-module non-vacuous toExact/ofExact roundtrip witness, and positive BitVec width/universe-0 FFI host are the standard word translation. Recursive cases and full assembly remain open.",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+    "hol_name": "ret_to_tail_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/RetToTailCorrect.lean",
+    "lean_name": "retToTailCorrect_extCall",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-30; bead flapjack-pxn.18.5.1.3.2.1): exact extCall constructor case of the theorem at pan_simpProofScript.sml190 and suspended nonrecursive cases285-341. Retains FST(evaluate(p,s)) != SOME Error as the sole logical premise and equality of the entire result-option/state pair after ret_to_tail. The reviewed retToTailHOL compiler leaves this exact ProgHOL constructor unchanged, so its defining equation proves equality without inspecting or simplifying the evaluator. evaluateHOLFiniteState is the faithful total pair-shaped finite-state evaluator with the internal assembly marker proved inert; no fuel, target result, state relation, simulation premise or evaluator restriction is added. MlS names, ShapeHOL/ExpHOL and constructor payload arities match panLang. Imported PanSemStateFiniteExact owns the four canonical finite-map fields, with a same-module non-vacuous toExact/ofExact roundtrip witness, and positive BitVec width/universe-0 FFI host are the standard word translation. Recursive cases and full assembly remain open.",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/RetToTailCorrect.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only canonical finite-state codec roundtrip, forwarding the imported PanSemStateFiniteExact witness. HOL has no separate theorem about the Lean representation."
   }
 ]

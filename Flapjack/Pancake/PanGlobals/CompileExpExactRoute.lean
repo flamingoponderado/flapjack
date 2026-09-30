@@ -347,6 +347,56 @@ def expLocalVarsViaHOLWhenByteRanged {width : Nat} [NeZero width]
   | nil => rfl
   | cons expression rest ih => simp [ih]
 
+/-- Decoding exact argument-variable lists agrees with the production collector
+    on decoded exact expressions. This Flapjack codec lemma has no separate HOL
+    original; it supplies the argument component of the handled Call name list
+    at `pan_globalsScript.sml:118`, without claiming whole-pass routing. -/
+theorem exactArgumentNames_decode {width : Nat} [NeZero width]
+    (arguments : List (ExpHOL width)) :
+    (arguments.flatMap varExpHOL).map toStringOfBytes =
+      (arguments.map expOfHOL).flatMap expLocalVarsViaHOLWhenByteRanged := by
+  have hvarList (expressions : List (ExpHOL width))
+      (hvars : ∀ expression ∈ expressions,
+        (varExpHOL expression).map toStringOfBytes =
+          Flapjack.expLocalVars (expOfHOL expression)) :
+      ((expressions.map varExpHOL).flatten).map toStringOfBytes =
+        Flapjack.expLocalVars.expLocalVarsList (expressions.map expOfHOL) := by
+    induction expressions with
+    | nil => simp [Flapjack.expLocalVars.expLocalVarsList]
+    | cons head tail ih =>
+      simp only [List.map_cons, List.flatten_cons, List.map_append,
+        Flapjack.expLocalVars.expLocalVarsList.eq_2]
+      rw [hvars head (by simp), ih (fun expression hmem => hvars expression (by simp [hmem]))]
+  have hvarFieldList (fields : List (MlS × ExpHOL width))
+      (hvars : ∀ field ∈ fields,
+        (varExpHOL field.2).map toStringOfBytes =
+          Flapjack.expLocalVars (expOfHOL field.2)) :
+      ((fields.map (fun field => varExpHOL field.2)).flatten).map toStringOfBytes =
+        Flapjack.expLocalVars.expLocalVarsFieldList
+          (fields.map (fun field => (toStringOfBytes field.1, expOfHOL field.2))) := by
+    induction fields with
+    | nil => simp [Flapjack.expLocalVars.expLocalVarsFieldList]
+    | cons head tail ih =>
+      simp only [List.map_cons, List.flatten_cons, List.map_append,
+        Flapjack.expLocalVars.expLocalVarsFieldList.eq_2]
+      rw [hvars head (by simp), ih (fun field hmem => hvars field (by simp [hmem]))]
+  have hexp (expression : ExpHOL width) :
+      (varExpHOL expression).map toStringOfBytes =
+        Flapjack.expLocalVars (expOfHOL expression) := by
+    fun_induction varExpHOL expression <;>
+      simp_all [Flapjack.expLocalVars, expOfHOL, List.map_append]
+    all_goals first
+      | apply hvarList _ <;> assumption
+      | apply hvarFieldList _ <;> assumption
+  induction arguments with
+  | nil => rfl
+  | cons head tail ih =>
+      simp only [List.flatMap_cons, List.map_append, List.map_cons,
+        expLocalVarsViaHOLWhenByteRanged_eq]
+      rw [hexp head]
+      simpa only [expLocalVarsViaHOLWhenByteRanged_flatMap_eq] using
+        congrArg (fun names => Flapjack.expLocalVars (expOfHOL head) ++ names) ih
+
 /-- `MAP (compile_exp ctxt)` for the routed expression compiler.  Flapjack
     routing infrastructure (untagged). -/
 def compileExpRouteCakeArgs [BEq String] [LawfulBEq String] {width : Nat} [NeZero width]
@@ -777,6 +827,77 @@ theorem compileProgCakeOfExact_decCall_exact_bridge [LawfulBEq String]
     Flapjack.Pancake.PanLang.shapeOfHOL_shapeToHOL shape hshape,
     Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes function hfunction,
     hbody, compileExpRouteCakeArgs_eq_exact]
+
+/-- Tail, empty-info, and local-return Calls without handlers commute through
+    the byte codec. This is Flapjack-specific route infrastructure, with no
+    separate HOL original. -/
+theorem compileProgCakeOfExact_call_non_global_no_handler_exact_bridge
+    [LawfulBEq String] {width : Nat} [NeZero width]
+    (context : GlobalPassContext (BitVec width)) (destination : Option (Option String))
+    (function : String) (arguments : List (Exp (BitVec width)))
+    (hdestination : ∀ entry ∈ destination, ∀ name ∈ entry, NameRanged name)
+    (hfunction : NameRanged function) :
+    compileProgCakeOfExact context
+        (.call (destination.map (fun entry =>
+          (entry.map (fun name => (.local, name)), none))) function arguments) =
+      progOfHOL (compileProgExactHOL (PanGlobalsContextExact.ofPass context)
+        (progToHOL (.call (destination.map (fun entry =>
+          (entry.map (fun name => (.local, name)), none))) function arguments))) := by
+  cases destination with
+  | none =>
+      simp [compileProgCakeOfExact, compileProgExactHOL, progToHOL, progOfHOL,
+        compileExpRouteCakeArgs_eq_exact,
+        Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes function hfunction]
+  | some entry =>
+      cases entry with
+      | none =>
+          simp [compileProgCakeOfExact, compileProgExactHOL, progToHOL, progOfHOL,
+            compileExpRouteCakeArgs_eq_exact,
+            Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes function hfunction]
+      | some name =>
+          have hname : NameRanged name :=
+            hdestination (some name) (by simp) name (by simp)
+          simp [compileProgCakeOfExact, compileProgExactHOL, progToHOL, progOfHOL,
+            compileExpRouteCakeArgs_eq_exact,
+            Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes function hfunction,
+            Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes name hname]
+
+/-- Non-global handled Calls commute under the genuine recursive handler
+    equality. This Flapjack cross-carrier infrastructure has no HOL original;
+    it compares the unchanged handler branch at pan_globalsScript.sml:129-137.
+    Both absent and local return destinations are covered. -/
+theorem compileProgCakeOfExact_call_non_global_handler_exact_bridge
+    [LawfulBEq String] {width : Nat} [NeZero width]
+    (context : GlobalPassContext (BitVec width)) (destination : Option String)
+    (function exception handlerVar : String) (arguments : List (Exp (BitVec width)))
+    (handler : Prog (BitVec width))
+    (hdestination : ∀ name ∈ destination, NameRanged name)
+    (hfunction : NameRanged function) (hexception : NameRanged exception)
+    (hhandlerVar : NameRanged handlerVar)
+    (hhandler : compileProgCakeOfExact context handler =
+      progOfHOL (compileProgExactHOL (PanGlobalsContextExact.ofPass context)
+        (progToHOL handler))) :
+    compileProgCakeOfExact context
+        (.call (some (destination.map (fun name => (.local, name)),
+          some (exception, handlerVar, handler))) function arguments) =
+      progOfHOL (compileProgExactHOL (PanGlobalsContextExact.ofPass context)
+        (progToHOL (.call (some (destination.map (fun name => (.local, name)),
+          some (exception, handlerVar, handler))) function arguments))) := by
+  cases destination with
+  | none =>
+      simp [compileProgCakeOfExact, compileProgExactHOL, progToHOL, progOfHOL,
+        compileExpRouteCakeArgs_eq_exact, hhandler,
+        Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes function hfunction,
+        Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes exception hexception,
+        Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes handlerVar hhandlerVar]
+  | some name =>
+      have hname : NameRanged name := hdestination name (by simp)
+      simp [compileProgCakeOfExact, compileProgExactHOL, progToHOL, progOfHOL,
+        compileExpRouteCakeArgs_eq_exact, hhandler,
+        Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes function hfunction,
+        Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes exception hexception,
+        Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes handlerVar hhandlerVar,
+        Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes name hname]
 
 /-- Global return calls without handlers commute for both production lookup
     outcomes.  The `One`-independent shape binder is recovered from the

@@ -1,3 +1,5 @@
+import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.RoundTrip
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.Expressions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.LiveExpressions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.Updates
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.StateRelation
@@ -230,6 +232,8 @@ import Flapjack.Pancake.PanLang.ProgHOLInduction
 import Flapjack.Pancake.Proofs.PanSimp.ProgOfHOL
 import Flapjack.PanLocalised
 import Flapjack.Pancake.Proofs.PanSimp.Evaluate
+import Flapjack.Pancake.Proofs.PanSimp.StateRel
+import Flapjack.Pancake.Proofs.PanSimp.RetToTailCorrect
 import Flapjack.PanSimpLocalised
 import Flapjack.Pancake.PanStructs
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrect

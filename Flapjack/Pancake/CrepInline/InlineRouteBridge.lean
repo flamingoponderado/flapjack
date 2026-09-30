@@ -1360,5 +1360,99 @@ theorem crepProgToHOL_crepInlineProgRecursive {width : Nat} [NeZero width]
                       exact absurd rfl (h7 returnNames handler body name arguments)
       | _ => simp only [crepInlineProgRecursive, crepProgToHOL, inlineProgHOLCoreExact]
 
+/-- `FUPDATE_LIST` can only return a value that is either in the entries or in the
+    base map. Flapjack codec infrastructure with no HOL original. -/
+theorem flookup_fupdateList_exists {α β : Type} [BEq α] [LawfulBEq α]
+    (f : FiniteMap α β) (entries : List (α × β)) (k : α) (v : β)
+    (h : FLOOKUP (FUPDATE_LIST f entries) k = some v) :
+    (∃ t ∈ entries, t.1 = k ∧ t.2 = v) ∨ FLOOKUP f k = some v := by
+  induction entries generalizing f with
+  | nil => exact Or.inr h
+  | cons entry rest ih =>
+      rw [FUPDATE_LIST_cons] at h
+      rcases ih (FUPDATE f entry) h with ⟨t, ht, h1, h2⟩ | hrest
+      · exact Or.inl ⟨t, by simp [ht], h1, h2⟩
+      · rw [FLOOKUP_update] at hrest
+        by_cases hb : (entry.1 == k) = true
+        · rw [if_pos hb] at hrest
+          exact Or.inl ⟨entry, by simp, beq_iff_eq.mp hb, Option.some.inj hrest⟩
+        · rw [if_neg hb] at hrest
+          exact Or.inr hrest
+
+/-- Any successful lookup in an exact alist map is witnessed by one of the entries.
+    Flapjack codec infrastructure with no HOL original. -/
+theorem alistToFmapHOLExact_lookup_exists {width : Nat} [NeZero width]
+    [BEq CrepInlineMapHOLName] [LawfulBEq CrepInlineMapHOLName]
+    {entries : List (CrepInlineMapHOLName × (List Nat × CrepProgHOL width))}
+    {k : CrepInlineMapHOLName} {v : List Nat × CrepProgHOL width}
+    (h : (alistToFmapHOLExact entries).lookup k = some v) :
+    ∃ t ∈ entries, t.1 = k ∧ t.2 = v := by
+  have h' : FLOOKUP (FUPDATE_LIST
+      (FEMPTY : FiniteMap CrepInlineMapHOLName (List Nat × CrepProgHOL width))
+      entries.reverse) k = some v := by
+    change (FUPDATE_LIST (FEMPTY : FiniteMap CrepInlineMapHOLName
+      (List Nat × CrepProgHOL width)) entries.reverse) k = some v
+    rw [← lookup_alistToFmapHOLExact]
+    exact h
+  rcases flookup_fupdateList_exists
+      (FEMPTY : FiniteMap CrepInlineMapHOLName (List Nat × CrepProgHOL width))
+      entries.reverse k v h' with ⟨t, ht, h1, h2⟩ | hnone
+  · exact ⟨t, List.mem_reverse.mp ht, h1, h2⟩
+  · simp at hnone
+
+/-- Base invariants for the top-level route: over the filtered codec entries, the
+    executed active-name set matches the exact alist map, and the executed
+    first-match lookup is the exact map lookup. Flapjack codec infrastructure
+    with no HOL original. -/
+theorem crepInlineCodecEntries_active_lookup {width : Nat} [NeZero width]
+    (inl_fname : List CrepInlineMapHOLName)
+    (functions : List (FunName × List Nat × CrepProg (BitVec width))) :
+    (∀ s, CrepNameRanged s →
+        (crepInlineActiveNames (crepInlineCodecEntries
+          ((functions.map (fun t => (ofString t.1, t.2.1, crepProgToHOL t.2.2))).filter
+            (fun triple => inl_fname.contains triple.1)))).contains s =
+          ((alistToFmapHOLExact
+            ((functions.map (fun t => (ofString t.1, t.2.1, crepProgToHOL t.2.2))).filter
+              (fun triple => inl_fname.contains triple.1))).lookup (ofString s)).isSome) ∧
+    (∀ s, CrepNameRanged s →
+        (crepInlineActiveNames (crepInlineCodecEntries
+          ((functions.map (fun t => (ofString t.1, t.2.1, crepProgToHOL t.2.2))).filter
+            (fun triple => inl_fname.contains triple.1)))).contains s = true →
+        crepInlineLookup s (crepInlineCodecEntries
+          ((functions.map (fun t => (ofString t.1, t.2.1, crepProgToHOL t.2.2))).filter
+            (fun triple => inl_fname.contains triple.1))) =
+          ((alistToFmapHOLExact
+            ((functions.map (fun t => (ofString t.1, t.2.1, crepProgToHOL t.2.2))).filter
+              (fun triple => inl_fname.contains triple.1))).lookup (ofString s)).map
+            (fun e => (e.1, crepProgOfHOL e.2))) := by
+  refine ⟨?_, ?_⟩
+  · intro s hs
+    rw [crepInlineActiveNames_contains_eq]
+    simp only [crepInlineCodecEntries]
+    rw [crepInlineLookup_codec crepProgOfHOL _ s hs, Option.isSome_map]
+  · intro s hs _
+    simp only [crepInlineCodecEntries]
+    exact crepInlineLookup_codec crepProgOfHOL _ s hs
+
+/-- Base range invariant for the top-level route: a successful exact-map lookup
+    yields a program whose decoded form is name-ranged. Flapjack codec
+    infrastructure with no HOL original. -/
+theorem crepInlineCodecEntries_range {width : Nat} [NeZero width]
+    (inl_fname : List CrepInlineMapHOLName)
+    (functions : List (FunName × List Nat × CrepProg (BitVec width)))
+    (hprog : ∀ t ∈ functions, CrepProgNameRanged t.2.2) :
+    ∀ k v, (alistToFmapHOLExact
+        ((functions.map (fun t => (ofString t.1, t.2.1, crepProgToHOL t.2.2))).filter
+          (fun triple => inl_fname.contains triple.1))).lookup k = some v →
+      CrepProgNameRanged (crepProgOfHOL v.2) := by
+  intro k v h
+  obtain ⟨t, ht, h1, h2⟩ := alistToFmapHOLExact_lookup_exists h
+  rw [List.mem_filter] at ht
+  obtain ⟨htmap, _⟩ := ht
+  obtain ⟨f, hf, hft⟩ := List.mem_map.mp htmap
+  have hv : v.2 = crepProgToHOL f.2.2 := by rw [← h2, ← hft]
+  rw [hv, crepProgOfHOL_crepProgToHOL f.2.2 (hprog f hf)]
+  exact hprog f hf
+
 end CrepInlineRoute
 end Flapjack
