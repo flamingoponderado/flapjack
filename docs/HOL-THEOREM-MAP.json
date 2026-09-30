@@ -31049,5 +31049,60 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only finite local-update lookup bridge or canonical state roundtrip supporting original While case, without a separate HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/DecCall.lean",
+    "lean_name": "evaluateFreshLocal_DecCall",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "evaluate_fresh_local",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison2026-09-30 HOL1045-1091 and original pan_sem_evaluate_ind_probe DecCall: original freshness/source evaluation conjunction, existential locals and good_res nonError post-update retained. Only continuation IH is original source argument SOME, lookup SOME(body,newlocals,return_sh), nonzero clock, exact body Return output and shape_of retv equal declaration and callee return shapes; generated alias binders collapsed, all semantic guards retained. Callee entry overwrites caller locals so identical run proved internally and callee IH not needed. Bound distinctness, argument and continuation freshness derived from free_var_ids; restoration commutes only after this derivation. Accepted line780 clock rewrite removes fix_clock with its checked evaluation clock theorem. All argument/lookup/timeOut/body-result/shape/continuation branches; no target-run or success premise. Same exact carriers/canonical maps with local roundtrip and positive width/universe0 FFI; proof-only. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/DecCall.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only canonical carrier roundtrip and local-update/restoration algebra supporting the genuine DecCall case; no separate HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/DecCall.lean",
+    "lean_name": "updateEq_eq_update",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only canonical carrier roundtrip and local-update/restoration algebra supporting the genuine DecCall case; no separate HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/DecCall.lean",
+    "lean_name": "setVarEq",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only canonical carrier roundtrip and local-update/restoration algebra supporting the genuine DecCall case; no separate HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/DecCall.lean",
+    "lean_name": "updateCommute",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only canonical carrier roundtrip and local-update/restoration algebra supporting the genuine DecCall case; no separate HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/DecCall.lean",
+    "lean_name": "restoreCommute",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only canonical carrier roundtrip and local-update/restoration algebra supporting the genuine DecCall case; no separate HOL declaration."
   }
 ]
