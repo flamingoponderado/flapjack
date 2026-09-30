@@ -56,4 +56,29 @@ theorem copyWordsForPattern_index_le {width : Nat} [NeZero width]
     exact Nat.le_trans (Nat.le_succ index) (ih h)
   case case4 => contradiction
 
+set_option maxHeartbeats 800000 in
+set_option linter.unusedSimpArgs false in
+/-- HOL `copy_words_def` (`cakeml/compiler/backend/semantics/stackSemScript.sml`):
+the outer bitmap copy over the exact StackSem bitmap/memory carriers.  Reuses the
+accepted tagged `copyWordsForPattern` and its index bound. -/
+@[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "copy_words_def"
+  (words_as_type_indexed_bitvec)]
+def copyWordsExact {width : Nat} [NeZero width] (i : Nat) (a off : BitVec width)
+    (bs : List (BitVec width)) (domain : BitVec width → Prop) [DecidablePred domain]
+    (memory : BitVec width → WordLocW width) :
+    Option (BitVec width × (BitVec width → WordLocW width)) :=
+  if _h : bs.length ≤ i then none
+  else
+    let pattern := bs[i]!
+    match _hcp : copyWordsForPattern pattern (i + 1) a off bs domain memory with
+    | none => none
+    | some (i1, a1, m1) =>
+        if pattern.msb then copyWordsExact i1 a1 off bs domain m1 else some (a1, m1)
+termination_by bs.length - i
+decreasing_by
+  simp_wf
+  have hle : i + 1 ≤ i1 :=
+    copyWordsForPattern_index_le pattern (i + 1) a off bs domain memory i1 (a1, m1) _hcp
+  omega
+
 end Flapjack.StackSemStoreConsts
