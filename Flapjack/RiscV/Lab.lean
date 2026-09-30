@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.RiscVConfig.RegisterNames
 import Flapjack.Lab
 import Flapjack.StackAlloc
 import Flapjack.StackAlloc.Runtime
@@ -1796,7 +1797,7 @@ def compileStackProgramNatListWithRaiseStubToRiscV [NeZero width]
     exactly once to the completed StackProg before entering it. -/
 def stackRemoveCakeProgram (config : StackRemoveConfig) (program : StackProg Nat) :
     StackProg Nat :=
-  stackMapRegisters riscvRegisterName
+  stackMapRegisters Flapjack.Compiler.Backend.RiscVConfig.riscvNameLookup
     (stackRemoveComplete (cakeStackRemoveConfig config) program)
 
 def compileStackProgramNatListWithRaiseStubToRiscVCake [NeZero width]
@@ -1816,11 +1817,11 @@ def compileStackProgramNatListWithRaiseStubToRiscVCake [NeZero width]
           if sectionId = cakeLongDiv1Location ||
               sectionId = cakeLongDivLocation then
             labProgramToEntrySection sectionId 0 initialLabel
-              (stackMapRegisters riscvRegisterName
+              (stackMapRegisters Flapjack.Compiler.Backend.RiscVConfig.riscvNameLookup
                 (stackRemoveComplete config program))
           else
             labProgramToEntrySection sectionId entryLabel initialLabel
-              (stackMapRegisters riscvRegisterName
+              (stackMapRegisters Flapjack.Compiler.Backend.RiscVConfig.riscvNameLookup
                 (stackRemoveComplete config program)))).map labSectionNatToWord)
 
 def compileStackProgramNatListLinkedWithRaiseStubToRiscVCake [NeZero width]
@@ -1840,11 +1841,11 @@ def compileStackProgramNatListLinkedWithRaiseStubToRiscVCake [NeZero width]
           if sectionId = cakeLongDiv1Location ||
               sectionId = cakeLongDivLocation then
             labProgramToEntrySection sectionId 0 initialLabel
-              (stackMapRegisters riscvRegisterName
+              (stackMapRegisters Flapjack.Compiler.Backend.RiscVConfig.riscvNameLookup
                 (stackRemoveComplete config program))
           else
             labProgramToEntrySection sectionId entryLabel initialLabel
-              (stackMapRegisters riscvRegisterName
+              (stackMapRegisters Flapjack.Compiler.Backend.RiscVConfig.riscvNameLookup
                 (stackRemoveComplete config program)))).map labSectionNatToWord)
 
 def compileStackProgramNatListWithHaltToRiscV [NeZero width]

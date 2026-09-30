@@ -983,6 +983,15 @@ def toExact {width : Nat} {σ : Type} [NeZero width]
     memaddrsDecidable := context.memaddrsDecidable
     shMemaddrsDecidable := context.shMemaddrsDecidable }
 
+@[simp] theorem toExact_emptyLocalsContextHOLFinite {width : Nat} {σ : Type}
+    [NeZero width] (context : FiniteEvalContext width σ) :
+    (emptyLocalsContextHOLFinite context).toExact =
+      PanSemExactEvalContext.emptyLocalsContextHOLExact context.toExact := by
+  apply PanSemExactEvalContext.ext
+  change (emptyLocalsHOLFinite context.state).toExact =
+    emptyLocalsHOLExact context.state.toExact
+  exact toExact_emptyLocalsHOLFinite context.state
+
 /-- `toExact` commutes with `withState`. -/
 @[simp] theorem toExact_withState {width : Nat} {σ : Type} [NeZero width]
     (context : FiniteEvalContext width σ) (state : PanSemStateFiniteExact width σ)
@@ -1207,6 +1216,51 @@ theorem callFixedContextHOLFinite_normalize {width : Nat} {σ : Type} [NeZero wi
   exact FiniteEvalContext.withState_congr bodyContext
     (fixClockHOLFinite entry (bodyResult, bodyContext.state)).2 hmem rfl hshared rfl
 
+/-- FLAPJACK-SPECIFIC (not a HOL declaration): restore a finite Call's caller
+    locals after a handler-free result. This names the dependent context update
+    used by the evaluator equation. -/
+def callRestoreLocalsContextHOLFinite {width : Nat} {σ : Type} [NeZero width]
+    (caller fixedContext : FiniteEvalContext width σ) : FiniteEvalContext width σ :=
+  fixedContext.withState { fixedContext.state with locals := caller.state.locals } rfl rfl
+
+/-- FLAPJACK-SPECIFIC (not a HOL declaration): install a finite Call result
+    after restoring caller locals, naming the dependent context update. -/
+def callSetKvarContextHOLFinite {width : Nat} {σ : Type} [NeZero width]
+    (caller fixedContext : FiniteEvalContext width σ)
+    (kind : VarKind) (name : MlS) (value : ValueHOL width) : FiniteEvalContext width σ :=
+  fixedContext.withState
+    (setKvarHOLFinite kind name value
+      { fixedContext.state with locals := caller.state.locals })
+    (by cases kind <;> rfl) (by cases kind <;> rfl)
+
+/-- FLAPJACK-SPECIFIC projection bridge for a handler-free Call's restored
+    caller-locals context. -/
+@[simp] theorem toExact_callRestoreLocalsContextHOLFinite {width : Nat} {σ : Type}
+    [NeZero width] (caller fixedContext : FiniteEvalContext width σ) :
+    (callRestoreLocalsContextHOLFinite caller fixedContext).toExact =
+      fixedContext.toExact.withState
+        { fixedContext.toExact.state with locals := caller.toExact.state.locals } rfl rfl := by
+  apply PanSemExactEvalContext.ext
+  rfl
+
+/-- FLAPJACK-SPECIFIC projection bridge for a Call result installed after
+    restoring caller locals. -/
+@[simp] theorem toExact_callSetKvarContextHOLFinite {width : Nat} {σ : Type}
+    [NeZero width] (caller fixedContext : FiniteEvalContext width σ)
+    (kind : VarKind) (name : MlS) (value : ValueHOL width) :
+    (callSetKvarContextHOLFinite caller fixedContext kind name value).toExact =
+      fixedContext.toExact.withState
+        (setKvarHOLExact kind name value
+          { fixedContext.toExact.state with locals := caller.toExact.state.locals })
+        (by cases kind <;> rfl) (by cases kind <;> rfl) := by
+  apply PanSemExactEvalContext.ext
+  change (setKvarHOLFinite kind name value
+      { fixedContext.state with locals := caller.state.locals }).toExact =
+    setKvarHOLExact kind name value
+      { fixedContext.toExact.state with locals := caller.toExact.state.locals }
+  rw [toExact_setKvarHOLFinite, toExact_setLocals]
+  rfl
+
 /-- FLAPJACK-SPECIFIC (not a HOL declaration): the named finite fixed context
     projects to the broad named fixed context. -/
 theorem toExact_callFixedContextHOLFinite {width : Nat} {σ : Type} [NeZero width]
@@ -1348,10 +1402,10 @@ def evalPanSemRecursiveCallFiniteContext {width : Nat} {σ : Type} [NeZero width
               | some (body, callee, returnShape) =>
                   if state.clock = 0 then
                     some (some .timeOut,
-                      context.withState (emptyLocalsHOLFinite state) rfl rfl)
+                      FiniteEvalContext.emptyLocalsContextHOLFinite context)
                   else
                     let entry : PanSemStateFiniteExact width σ := callEntryStateHOLFinite state callee
-                    let entryContext := context.withState entry rfl rfl
+                    let entryContext := callEntryContextHOLFinite context callee
                     match evalPanSemRecursiveCallFiniteContext body entryContext with
                     | none => none
                     | some (bodyResult, bodyContext) =>
@@ -1366,29 +1420,24 @@ def evalPanSemRecursiveCallFiniteContext {width : Nat} {σ : Type} [NeZero width
                               match info with
                               | none =>
                                   some (some (.returned value),
-                                    fixedContext.withState
-                                      (emptyLocalsHOLFinite fixedContext.state) rfl rfl)
+                                    FiniteEvalContext.emptyLocalsContextHOLFinite fixedContext)
                               | some (none, _) =>
-                                  some (none, fixedContext.withState
-                                    { fixedContext.state with locals := state.locals } rfl rfl)
+                                  some (none,
+                                    callRestoreLocalsContextHOLFinite context fixedContext)
                               | some (some (kind, name), _) =>
                                   if isValidValueHOLExact state.toExact kind name value then
-                                    some (none, fixedContext.withState
-                                      (setKvarHOLFinite kind name value
-                                        { fixedContext.state with locals := state.locals })
-                                      (by cases kind <;> rfl) (by cases kind <;> rfl))
+                                    some (none, callSetKvarContextHOLFinite context fixedContext
+                                      kind name value)
                                   else some (some .error, fixedContext)
                             else some (some .error, fixedContext)
                         | some (.exception exceptionId value) =>
                             match info with
                             | none =>
                                 some (some (.exception exceptionId value),
-                                  fixedContext.withState
-                                    (emptyLocalsHOLFinite fixedContext.state) rfl rfl)
+                                  FiniteEvalContext.emptyLocalsContextHOLFinite fixedContext)
                             | some (_, none) =>
                                 some (some (.exception exceptionId value),
-                                  fixedContext.withState
-                                    (emptyLocalsHOLFinite fixedContext.state) rfl rfl)
+                                  FiniteEvalContext.emptyLocalsContextHOLFinite fixedContext)
                             | some (_, some (handlerId, handlerVar, handlerProgram)) =>
                                 if exceptionId = handlerId then
                                   match state.eshapes.lookup exceptionId with
@@ -1396,19 +1445,19 @@ def evalPanSemRecursiveCallFiniteContext {width : Nat} {σ : Type} [NeZero width
                                       if shapeEqHOL (shapeOfHOLExact value) shape &&
                                           isValidValueHOLExact state.toExact .local handlerVar value then
                                         let handlerState := handlerStateHOLFinite context fixedContext handlerVar value
-                                        let handlerContext := fixedContext.withState
-                                          handlerState rfl rfl
+                                        let handlerContext :=
+                                          callContinuationContextHOLFinite context fixedContext
+                                            handlerVar value
                                         evalPanSemRecursiveCallFiniteContext handlerProgram
                                           handlerContext
                                       else some (some .error, fixedContext)
                                   | none => some (some .error, fixedContext)
                                 else
                                   some (some (.exception exceptionId value),
-                                    fixedContext.withState
-                                      (emptyLocalsHOLFinite fixedContext.state) rfl rfl)
+                                    FiniteEvalContext.emptyLocalsContextHOLFinite fixedContext)
                         | some other =>
-                            some (some other, fixedContext.withState
-                              (emptyLocalsHOLFinite fixedContext.state) rfl rfl)
+                            some (some other,
+                              FiniteEvalContext.emptyLocalsContextHOLFinite fixedContext)
       | .decCall resultName shape function arguments continuation =>
           match evalListHOLFinite state arguments with
           | none => some (some .error, context)
@@ -1558,10 +1607,10 @@ decreasing_by
     exact Nat.lt_of_le_of_lt
       (fixClockHOLFinite_clock_le entry (bodyResult, bodyContext.state))
       (Nat.sub_lt (Nat.pos_of_ne_zero (by omega)) (by decide))
-  · simp only [FiniteEvalContext.withState]
+  · try simp only [FiniteEvalContext.withState]
     apply Prod.Lex.left
     exact Nat.sub_lt (Nat.pos_of_ne_zero (by omega)) (by decide)
-  · simp only [FiniteEvalContext.withState]
+  · try simp only [FiniteEvalContext.withState]
     apply Prod.Lex.left
     exact Nat.lt_of_le_of_lt
       (fixClockHOLFinite_clock_le entry (bodyResult, bodyContext.state))
@@ -4499,15 +4548,14 @@ theorem globalsShapes_call_arm {width : Nat} {σ : Type} [NeZero width]
         lookupCodeHOLFinite context.state.code.lookup function values =
           some (body, callee, returnShape) →
         evalPanSemRecursiveCallFiniteContext body
-          (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl) =
-            some (bodyResult, bodyContext) →
+          (callEntryContextHOLFinite context callee) = some (bodyResult, bodyContext) →
         globalsShapes bodyContext.state = globalsShapes context.state)
     (hhandlerInv : ∀ (handlerVar : MlS) (value : ValueHOL width) (handlerProgram : ProgHOL width)
         (fixedContext : FiniteEvalContext width σ)
         (result : Option (PanSemResultExact width)) (output : FiniteEvalContext width σ),
         evalPanSemRecursiveCallFiniteContext handlerProgram
-          (fixedContext.withState (handlerStateHOLFinite context fixedContext handlerVar value)
-            rfl rfl) = some (result, output) →
+          (callContinuationContextHOLFinite context fixedContext handlerVar value) =
+            some (result, output) →
         globalsShapes output.state = globalsShapes context.state) :
     ∀ result output,
       evalPanSemRecursiveCallFiniteContext (.call info function arguments) context =
@@ -4539,7 +4587,7 @@ theorem globalsShapes_call_arm {width : Nat} {σ : Type} [NeZero width]
       · rw [if_neg hclock] at heval
         try simp only [] at heval
         cases hbody : evalPanSemRecursiveCallFiniteContext body
-            (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl) with
+            (callEntryContextHOLFinite context callee) with
         | none =>
             rw [hbody] at heval
             simp at heval
@@ -4875,7 +4923,7 @@ theorem evalPanSemRecursiveCallFiniteContext_globalsShapesInvariant {width : Nat
     (try (simp only [FiniteEvalContext.withState_state] at *))
     (try (rename_i ihA; simp only [ihA _ _ (by assumption)] at *))
     (try (rename_i ihB; simp only [ihB _ _ (by assumption)] at *))
-    (try (simp only [globalsShapes_setLocals, globalsShapes_emptyLocalsHOLFinite,
+    (try (simp only [globalsShapes_emptyLocalsHOLFinite,
       globalsShapes_decClockHOLFinite] at *))
     (try rfl)
     (try assumption)
@@ -4910,7 +4958,9 @@ theorem evalPanSemRecursiveCallFiniteContext_globalsShapesInvariant {width : Nat
     cases kind
     · change globalsShapesExact postContext.state.toExact = globalsShapesExact context.state.toExact
       exact ih1
-    · funext key
+    · simp only [callSetKvarContextHOLFinite, FiniteEvalContext.withState_state,
+        toExact_setKvarHOLFinite]
+      funext key
       by_cases hk : key = name
       · have hshapeVal := isValidValueHOLExact_global_shape state.toExact name value hvalid
         simp only [globalsShapesExact, setKvarHOLExact, if_true, hk, Option.map_some]

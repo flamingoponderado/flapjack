@@ -88,6 +88,9 @@ FMAP_AS_FINITE_SUPPORT_RE = re.compile(
 FMAP_AS_FINITE_SUPPORT_FUNCTION_RE = re.compile(
     r'\(\s*fmap_as_finite_support_function\s*:=\s*\[([^]]*)\]\s*\)'
 )
+FMAP_AS_FINITE_SUPPORT_HETEROGENEOUS_FUNCTION_RE = re.compile(
+    r'\(\s*fmap_as_finite_support_heterogeneous_function\s*:=\s*\[([^]]*)\]\s*\)'
+)
 FMAP_AS_FINITE_SUPPORT_RESULT_RE = re.compile(
     r'\(\s*fmap_as_finite_support_result\s*\)'
 )
@@ -292,6 +295,7 @@ def find_lean_decl(lines: list[str], start: int) -> str:
 def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = False,
                         include_word_dimension_width: bool = False,
                         include_fmap_function: bool = False,
+                        include_fmap_heterogeneous_function: bool = False,
                         include_reals_as_rational_cuts: bool = False):
     """Yield HOL attributes, including attributes split across Lean lines."""
     comment_depth = 0
@@ -360,6 +364,14 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                     site += (width.group(1) if width else None,)
                 if include_fmap_function:
                     site += (fields_for(FMAP_AS_FINITE_SUPPORT_FUNCTION_RE),)
+                if include_fmap_heterogeneous_function:
+                    heterogeneous = FMAP_AS_FINITE_SUPPORT_HETEROGENEOUS_FUNCTION_RE.search(attribute)
+                    positions = fields_for(FMAP_AS_FINITE_SUPPORT_HETEROGENEOUS_FUNCTION_RE)
+                    # Preserve presence of a malformed empty qualifier so the
+                    # checker rejects it instead of silently treating it as absent.
+                    if heterogeneous and not positions:
+                        positions = ("",)
+                    site += (positions,)
                 if include_reals_as_rational_cuts:
                     site += (bool(REALS_AS_RATIONAL_CUTS_RE.search(attribute)),)
                 yield site
@@ -1531,6 +1543,135 @@ def _tuple_type_components(text: str) -> list[str] | None:
     return components if len(components) > 1 else None
 
 
+def _is_top_level_hol_finite_map_type(type_text: str) -> bool:
+    """Whether a slot itself is one canonical finite-map carrier.
+
+    Merely mentioning `HolFiniteMapExact` in a product or function type does
+    not make that whole product/function a qualified map slot.
+    """
+    text = _strip_outer_parens(type_text)
+    if not re.match(r"HolFiniteMapExact\b", text):
+        return False
+    if len(re.findall(r"\bHolFiniteMapExact\b", text)) != 1:
+        return False
+    return len(_split_type_top_level(
+        text, ("→", "->", "×", "+", "∧", "∨", "=", "↔")
+    )) == 1
+
+
+def _target_is_postfix_option_mapped(text: str, decl_name: str) -> bool:
+    """Check the projection witness's canonical `(target ...).map` shape."""
+    target = re.search(rf"\b{re.escape(decl_name)}\b", text)
+    if target is None:
+        return False
+    # The witness form deliberately keeps the target call parenthesized before
+    # Option.map's method notation. Find the nearest unmatched opening paren,
+    # then its matching close, and require `.map` immediately afterwards.
+    depth = 0
+    opening = None
+    for index, char in enumerate(text[:target.start()]):
+        if char == "(":
+            depth += 1
+            opening = index
+        elif char == ")":
+            depth -= 1
+            if depth == 0:
+                opening = None
+    if opening is None:
+        return False
+    depth = 0
+    closing = None
+    for index in range(opening, len(text)):
+        if text[index] == "(":
+            depth += 1
+        elif text[index] == ")":
+            depth -= 1
+            if depth == 0:
+                closing = index
+                break
+    if closing is None or target.start() >= closing:
+        return False
+    return re.match(r"\s*\.map\b", text[closing + 1:]) is not None
+
+
+def _parenthesized_content(text: str, start: int) -> tuple[str, int] | None:
+    """Content and exclusive end of a balanced parenthesized term."""
+    if start >= len(text) or text[start] != "(":
+        return None
+    depth = 0
+    for index in range(start, len(text)):
+        if text[index] == "(":
+            depth += 1
+        elif text[index] == ")":
+            depth -= 1
+            if depth == 0:
+                return text[start + 1:index], index + 1
+    return None
+
+
+def _option_map_projects_result_slot(
+    target_side: str, decl_name: str, result_position: int,
+    result_component_count: int,
+) -> bool:
+    """Whether `(decl ...).map` projects precisely its named result map slot."""
+    target = re.search(rf"\b{re.escape(decl_name)}\b", target_side)
+    if target is None:
+        return False
+    depth = 0
+    opening = None
+    for index, char in enumerate(target_side[:target.start()]):
+        if char == "(":
+            depth += 1
+            opening = index
+        elif char == ")":
+            depth -= 1
+            if depth == 0:
+                opening = None
+    if opening is None:
+        return False
+    call = _parenthesized_content(target_side, opening)
+    if call is None:
+        return False
+    _call_text, call_end = call
+    map_match = re.match(r"\s*\.map\b", target_side[call_end:])
+    if map_match is None:
+        return False
+    after_map = target_side[call_end + map_match.end():]
+    lambda_match = re.search(r"\bfun\b", after_map)
+    if lambda_match is None:
+        return False
+    cursor = lambda_match.end()
+    while cursor < len(after_map) and after_map[cursor].isspace():
+        cursor += 1
+    binders = _parenthesized_content(after_map, cursor)
+    if binders is None:
+        return False
+    binder_names = [part.strip() for part in _split_type_top_level(binders[0], (",",))]
+    if (len(binder_names) != result_component_count or
+            any(not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_']*", name)
+                for name in binder_names)):
+        return False
+    cursor = binders[1]
+    while cursor < len(after_map) and after_map[cursor].isspace():
+        cursor += 1
+    if not after_map.startswith("=>", cursor):
+        return False
+    cursor += 2
+    while cursor < len(after_map) and after_map[cursor].isspace():
+        cursor += 1
+    projected = _parenthesized_content(after_map, cursor)
+    if projected is None:
+        return False
+    components = [part.strip() for part in _split_type_top_level(projected[0], (",",))]
+    if len(components) != result_component_count:
+        return False
+    for index, (component, binder) in enumerate(zip(components, binder_names)):
+        expected = f"{binder}.lookup" if index == result_position else binder
+        if _strip_outer_parens(component) != expected:
+            return False
+    return True
+
+
 def fmap_as_finite_support_function_errors(
     lines: list[str], declaration_source: str, decl_name: str,
     positions: tuple[str, ...],
@@ -1643,6 +1784,286 @@ def fmap_as_finite_support_function_errors(
             "fmap_as_finite_support_function must account for exactly two "
             "HolFiniteMapExact occurrences in the alias"
         )
+    return errors
+
+
+def _function_declaration_signature(source: str, decl_name: str):
+    """Return explicit argument binder types and result type for a def/theorem."""
+    declaration = re.search(
+        rf"\b(?:def|theorem|lemma)\s+{re.escape(decl_name)}\b", source
+    )
+    if declaration is None:
+        return None
+    end = source.find(":=", declaration.end())
+    if end < 0:
+        return None
+    header = source[declaration.end():end]
+    groups: list[tuple[str, str]] = []
+    result_start: int | None = None
+    index = 0
+    while index < len(header):
+        char = header[index]
+        if char.isspace():
+            index += 1
+            continue
+        if char == ":":
+            result_start = index + 1
+            break
+        if char in "({[":
+            close = {"(": ")", "{": "}", "[": "]"}[char]
+            depth = 1
+            cursor = index + 1
+            while cursor < len(header) and depth:
+                if header[cursor] == char:
+                    depth += 1
+                elif header[cursor] == close:
+                    depth -= 1
+                cursor += 1
+            if depth:
+                return None
+            inner = header[index + 1:cursor - 1].strip()
+            if char == "(":
+                binder = _split_type_top_level(inner, (":",))
+                if len(binder) == 2:
+                    groups.append((binder[0], binder[1]))
+            index = cursor
+            continue
+        return None
+    if result_start is None:
+        return None
+    return groups, header[result_start:].strip()
+
+
+def _same_module_heterogeneous_fmap_witness_errors(
+    lines: list[str], decl_name: str,
+    target_arguments: list[tuple[str, str]], input_position: int,
+    result_position: int, result_component_count: int,
+) -> list[str]:
+    """Require an unconditional, same-input raw/canonical projection theorem."""
+    expected = f"holFmapAsFiniteSupportHeterogeneousFunctionWitness_{decl_name}"
+    module_source = strip_lean_comments("\n".join(lines))
+    pattern = re.compile(
+        rf"^\s*(?:private\s+|protected\s+)?(?:theorem|lemma)\s+"
+        rf"{re.escape(expected)}\b(?P<statement>[\s\S]*?):=",
+        re.M,
+    )
+    match = pattern.search(module_source)
+    if match is None:
+        return [
+            "fmap_as_finite_support_heterogeneous_function requires same-module "
+            f"projection theorem `{expected}`"
+        ]
+    statement = match.group("statement")
+    errors: list[str] = []
+    signature = _function_declaration_signature(module_source, expected)
+    if signature is None:
+        errors.append(
+            "heterogeneous finite-map projection witness must have a typed theorem signature"
+        )
+        witness_arguments: list[tuple[str, str]] = []
+        proposition = ""
+    else:
+        witness_arguments, proposition = signature
+        normalize = lambda text: re.sub(r"\s+", "", text)
+        if [(name.strip(), normalize(type_)) for name, type_ in witness_arguments] != [
+            (name.strip(), normalize(type_)) for name, type_ in target_arguments
+        ]:
+            errors.append(
+                "heterogeneous finite-map projection witness must quantify exactly "
+                "the tagged operation's explicit inputs"
+            )
+    if "↔" in proposition:
+        errors.append(
+            "heterogeneous finite-map projection witness must conclude an equality, not iff"
+        )
+    equality = _split_type_top_level(_strip_outer_parens(proposition), ("=",))
+    if len(equality) != 2:
+        errors.append(
+            "heterogeneous finite-map projection witness must be an unconditional equality"
+        )
+    else:
+        left, right = (part.strip() for part in equality)
+        left_has = identifier_token_occurs(left, decl_name)
+        right_has = identifier_token_occurs(right, decl_name)
+        if left_has == right_has:
+            errors.append(
+                "heterogeneous finite-map projection witness must mention the tagged "
+                "operation on exactly one equality side"
+            )
+        target_side, raw_side = (left, right) if left_has else (right, left)
+        if not _target_is_postfix_option_mapped(target_side, decl_name):
+            errors.append(
+                "heterogeneous finite-map projection witness must apply `.map` to "
+                "the tagged operation's Option result"
+            )
+        if not _option_map_projects_result_slot(
+            target_side, decl_name, result_position, result_component_count
+        ):
+            errors.append(
+                "heterogeneous finite-map projection witness must project exactly "
+                "the selected result_N map slot and preserve the other tuple slots"
+            )
+        target_lookups = re.findall(r"\b([A-Za-z_][A-Za-z0-9_']*)\.lookup\b", target_side)
+        raw_lookups = re.findall(r"\b([A-Za-z_][A-Za-z0-9_']*)\.lookup\b", raw_side)
+        if "fun" not in target_side or len(target_lookups) != 1:
+            errors.append(
+                "heterogeneous finite-map projection witness must project exactly "
+                "one returned map through `.lookup` in its Option.map function"
+            )
+        input_name = (
+            target_arguments[input_position][0].strip()
+            if input_position < len(target_arguments) else ""
+        )
+        if (len(raw_lookups) != 1 or not input_name
+                or raw_lookups[0] != input_name):
+            errors.append(
+                "heterogeneous finite-map projection witness must use the tagged "
+                "canonical input's `.lookup` on the raw counterpart side"
+            )
+        if not re.search(r"\blookup[A-Za-z0-9_']*\b", raw_side):
+            errors.append(
+                "heterogeneous finite-map projection witness must compare with an "
+                "independent raw lookup operation"
+            )
+        names = [name.strip() for name, _type in target_arguments]
+        if all(re.fullmatch(r"[A-Za-z_][A-Za-z0-9_']*", name) for name in names):
+            target_call = re.compile(
+                r"\b" + re.escape(decl_name) + r"\s+" +
+                r"\s+".join(re.escape(name) for name in names) + r"\b"
+            )
+            if target_call.search(target_side) is None:
+                errors.append(
+                    "heterogeneous finite-map projection witness must apply the "
+                    "tagged operation to its explicit inputs in declaration order"
+                )
+            raw_arguments = [
+                f"{name}.lookup" if index == input_position else name
+                for index, name in enumerate(names)
+            ]
+            raw_call = re.compile(
+                r"\b(lookup[A-Za-z0-9_']*)\s+" +
+                r"\s+".join(re.escape(name) for name in raw_arguments) + r"\b"
+            )
+            raw_match = raw_call.search(raw_side)
+            if raw_match is None or raw_match.group(1) == decl_name:
+                errors.append(
+                    "heterogeneous finite-map projection witness must apply an "
+                    "independent raw lookup to the same explicit inputs in order"
+                )
+        for name, _type in target_arguments:
+            name = name.strip()
+            if (not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_']*", name)
+                    or not identifier_token_occurs(target_side, name)
+                    or not identifier_token_occurs(raw_side, name)):
+                errors.append(
+                    "heterogeneous finite-map projection witness must compare both "
+                    "routes on every explicit operation input"
+                )
+                break
+    return errors
+
+
+def fmap_as_finite_support_heterogeneous_function_errors(
+    lines: list[str], declaration_source: str, decl_name: str,
+    positions: tuple[str, ...],
+) -> list[str]:
+    """Validate a direct lookup function with distinct canonical input/output maps.
+
+    Unlike the existing abbreviation-only function qualifier, this models a
+    definition whose code-map input and callee-locals result are both finite
+    maps but have different value types. The same-module projection theorem is
+    required because the output map is nested in an optional product.
+    """
+    errors: list[str] = []
+    if len(positions) != 2 or len(set(positions)) != 2:
+        return [
+            "fmap_as_finite_support_heterogeneous_function requires exactly "
+            "one argument_N and one result_N position"
+        ]
+    parsed: dict[str, int] = {}
+    for position in positions:
+        match = re.fullmatch(r"(argument|result)_([1-9][0-9]*)", position)
+        if match is None or match.group(1) in parsed:
+            errors.append(
+                "fmap_as_finite_support_heterogeneous_function positions must be "
+                "one-based argument_N/result_N with one of each"
+            )
+            continue
+        parsed[match.group(1)] = int(match.group(2))
+    if set(parsed) != {"argument", "result"}:
+        return errors + [
+            "fmap_as_finite_support_heterogeneous_function requires both argument_N and result_N"
+        ]
+
+    source = strip_lean_comments(declaration_source)
+    signature = _function_declaration_signature(source, decl_name)
+    if signature is None:
+        errors.append(
+            "fmap_as_finite_support_heterogeneous_function applies only to a "
+            "direct function definition with a typed result"
+        )
+        return errors
+    arguments, result = signature
+    arg_index = parsed["argument"] - 1
+    if arg_index >= len(arguments):
+        errors.append(
+            f"fmap_as_finite_support_heterogeneous_function argument_{arg_index + 1} "
+            f"is outside the {len(arguments)} explicit function binders"
+        )
+        argument_type = ""
+    else:
+        argument_type = arguments[arg_index][1]
+        if not _is_top_level_hol_finite_map_type(argument_type):
+            errors.append(
+                f"fmap_as_finite_support_heterogeneous_function argument_{arg_index + 1} "
+                "must itself be HolFiniteMapExact; raw and product-wrapped maps are ineligible"
+            )
+
+    result_text = _strip_outer_parens(result)
+    option = re.match(r"Option\s+(.+)$", result_text, re.S)
+    result_parts = _tuple_type_components(option.group(1)) if option else None
+    result_index = parsed["result"] - 1
+    if result_parts is None:
+        errors.append(
+            "fmap_as_finite_support_heterogeneous_function result must be Option of a product"
+        )
+        result_type = ""
+    else:
+        if result_index >= len(result_parts):
+            errors.append(
+                f"fmap_as_finite_support_heterogeneous_function result_{result_index + 1} "
+                f"is outside the {len(result_parts)} result components"
+            )
+            result_type = ""
+        else:
+            result_type = result_parts[result_index]
+            if not _is_top_level_hol_finite_map_type(result_type):
+                errors.append(
+                    f"fmap_as_finite_support_heterogeneous_function result_{result_index + 1} "
+                    "must itself be HolFiniteMapExact; raw and product-wrapped maps are ineligible"
+                )
+
+    declaration = re.search(rf"\bdef\s+{re.escape(decl_name)}\b", source)
+    signature_source = source[declaration.start():] if declaration else source
+    signature_source = signature_source.split(":=", 1)[0]
+    map_occurrences = len(re.findall(r"\bHolFiniteMapExact\b", signature_source))
+    if map_occurrences != 2:
+        errors.append(
+            "fmap_as_finite_support_heterogeneous_function must account for exactly "
+            "the two selected HolFiniteMapExact carriers"
+        )
+    normalize = lambda text: re.sub(r"\s+", "", text)
+    if argument_type and result_type and normalize(argument_type) == normalize(result_type):
+        errors.append(
+            "heterogeneous function qualifier requires distinct input and result map types; "
+            "use fmap_as_finite_support_function when they are identical"
+        )
+    errors.extend(
+        _same_module_heterogeneous_fmap_witness_errors(
+            lines, decl_name, arguments, arg_index, result_index,
+            len(result_parts) if result_parts is not None else 0,
+        )
+    )
     return errors
 
 
@@ -2807,10 +3228,11 @@ def main(argv: list[str]) -> int:
              names_fields, boundary_fields, fmap_fields, fmap_result,
              fmap_relation, fmap_equalities, words_bitvec,
              fmap_parameters, fmap_existentials, dimension_width,
-             fmap_function_positions, reals_cuts) in hol_attribute_sites(
+             fmap_function_positions, fmap_heterogeneous_function_positions, reals_cuts) in hol_attribute_sites(
                 lines, include_fmap_existentials=True,
                 include_word_dimension_width=True,
                 include_fmap_function=True,
+                include_fmap_heterogeneous_function=True,
                 include_reals_as_rational_cuts=True,
              ):
             where = f"{rel}:{number}"
@@ -2869,17 +3291,31 @@ def main(argv: list[str]) -> int:
                     )
                 )
             if fmap_function_positions:
+                errors.extend(
+                    f"{where}: {error}"
+                    for error in fmap_as_finite_support_function_errors(
+                        lines, tagged_declaration_source(lines, number), lean_decl,
+                        fmap_function_positions,
+                    )
+                )
                 if (fmap_fields or fmap_result or fmap_parameters or fmap_existentials
                         or fmap_relation or fmap_equalities):
                     errors.append(
                         f"{where}: fmap_as_finite_support_function is mutually "
                         "exclusive with other finite-map qualifiers"
                     )
+            if fmap_heterogeneous_function_positions:
+                if (fmap_fields or fmap_result or fmap_parameters or fmap_existentials
+                        or fmap_relation or fmap_equalities or fmap_function_positions):
+                    errors.append(
+                        f"{where}: fmap_as_finite_support_heterogeneous_function is mutually "
+                        "exclusive with other finite-map qualifiers"
+                    )
                 errors.extend(
                     f"{where}: {error}"
-                    for error in fmap_as_finite_support_function_errors(
+                    for error in fmap_as_finite_support_heterogeneous_function_errors(
                         lines, tagged_declaration_source(lines, number), lean_decl,
-                        fmap_function_positions,
+                        fmap_heterogeneous_function_positions,
                     )
                 )
             if fmap_relation:

@@ -370,7 +370,7 @@ theorem evalPanSemRecursiveCallFiniteContext_clock_le_aux {width : Nat} {σ : Ty
   case case33 =>
     rename_i inst context state function arguments values x3 body callee returnShape x2 hclock entry
       entryContext postContext value fst handlerId handlerVar handlerProgram shape hshape
-      xeshapes xrec fixedContext handlerState handlerContext ih2 ih1
+      xeshapes xrec fixedContext handlerContext ih2 ih1
     intro result hres
     exact Nat.le_trans (ih1 result hres)
       (Nat.le_trans (Nat.le_of_eq (handlerStateHOLFinite_clock context fixedContext handlerVar value))
@@ -654,7 +654,7 @@ theorem evaluateHOLFiniteState_call_clock_zero {width : Nat} {σ : Type} [NeZero
   have hclockContext : context.state.clock = 0 := by
     simpa only [context] using hclock
   have htimeout : evalPanSemRecursiveCallFiniteContext (.call info function arguments) context =
-      some (some .timeOut, context.withState (emptyLocalsHOLFinite context.state) rfl rfl) := by
+      some (some .timeOut, FiniteEvalContext.emptyLocalsContextHOLFinite context) := by
     rw [evalPanSemRecursiveCallFiniteContext.eq_def]
     dsimp only
     rw [hargsContext]
@@ -710,7 +710,7 @@ theorem evaluateHOLFiniteState_call_body_error {width : Nat} {σ : Type} [NeZero
   obtain ⟨postContext, hbodyInternal, hpostContext⟩ :=
     evalPanSemRecursiveCallFiniteContext_of_evaluateHOLFiniteState
       (callEntryStateHOLFinite state callee) body
-      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl)
+      (callEntryContextHOLFinite context callee)
       (by rfl) (none, postState) hbody
   have hfixed :
       callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
@@ -765,7 +765,7 @@ theorem evaluateHOLFiniteState_call_body_break {width : Nat} {σ : Type} [NeZero
   obtain ⟨postContext, hbodyInternal, hpostContext⟩ :=
     evalPanSemRecursiveCallFiniteContext_of_evaluateHOLFiniteState
       (callEntryStateHOLFinite state callee) body
-      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl)
+      (callEntryContextHOLFinite context callee)
       (by rfl) (some .break, postState) hbody
   have hfixed :
       callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
@@ -819,7 +819,7 @@ theorem evaluateHOLFiniteState_call_body_continue {width : Nat} {σ : Type} [NeZ
   obtain ⟨postContext, hbodyInternal, hpostContext⟩ :=
     evalPanSemRecursiveCallFiniteContext_of_evaluateHOLFiniteState
       (callEntryStateHOLFinite state callee) body
-      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl)
+      (callEntryContextHOLFinite context callee)
       (by rfl) (some .continue, postState) hbody
   have hfixed :
       callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
@@ -875,7 +875,7 @@ theorem evaluateHOLFiniteState_call_return_none {width : Nat} {σ : Type} [NeZer
   obtain ⟨postContext, hbodyInternal, hpostContext⟩ :=
     evalPanSemRecursiveCallFiniteContext_of_evaluateHOLFiniteState
       (callEntryStateHOLFinite state callee) body
-      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl)
+      (callEntryContextHOLFinite context callee)
       (by rfl) (some (.returned value), postState) hbody
   have hfixed :
       callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
@@ -892,7 +892,7 @@ theorem evaluateHOLFiniteState_call_return_none {width : Nat} {σ : Type} [NeZer
         fun address => Classical.propDecidable (state.shMemaddrs address)⟩ :
         FiniteEvalContext width σ) = context from rfl]
   rw [hcall]
-  simp only [FiniteEvalContext.withState_state, hpostContext]
+  simp only [FiniteEvalContext.emptyLocalsContextHOLFinite_state, hpostContext]
 
 /-- HOL `evaluate_def` line-780 `Call` unhandled-exception branch with
     `caltyp = NONE` (`panSemScript.sml:683-684`): the exception propagates at
@@ -930,7 +930,7 @@ theorem evaluateHOLFiniteState_call_exception_unhandled {width : Nat} {σ : Type
   obtain ⟨postContext, hbodyInternal, hpostContext⟩ :=
     evalPanSemRecursiveCallFiniteContext_of_evaluateHOLFiniteState
       (callEntryStateHOLFinite state callee) body
-      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl)
+      (callEntryContextHOLFinite context callee)
       (by rfl) (some (.exception exceptionId value), postState) hbody
   have hfixed :
       callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
@@ -947,7 +947,7 @@ theorem evaluateHOLFiniteState_call_exception_unhandled {width : Nat} {σ : Type
         fun address => Classical.propDecidable (state.shMemaddrs address)⟩ :
         FiniteEvalContext width σ) = context from rfl]
   rw [hcall]
-  simp only [FiniteEvalContext.withState_state, hpostContext]
+  simp only [FiniteEvalContext.emptyLocalsContextHOLFinite_state, hpostContext]
 
 /-- Flapjack-specific `Call` returned-value shape-mismatch helper for the HOL
     conjunct at `panSemScript.sml:780`. Its branch selectors are absent from the
@@ -985,7 +985,7 @@ theorem evaluateHOLFiniteState_call_return_shape_mismatch {width : Nat} {σ : Ty
   obtain ⟨postContext, hbodyInternal, hpostContext⟩ :=
     evalPanSemRecursiveCallFiniteContext_of_evaluateHOLFiniteState
       (callEntryStateHOLFinite state callee) body
-      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl)
+      (callEntryContextHOLFinite context callee)
       (by rfl) (some (.returned value), postState) hbody
   have hfixed :
       callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
@@ -1037,7 +1037,7 @@ theorem evaluateHOLFiniteState_call_return_caller_locals {width : Nat} {σ : Typ
   obtain ⟨postContext, hbodyInternal, hpostContext⟩ :=
     evalPanSemRecursiveCallFiniteContext_of_evaluateHOLFiniteState
       (callEntryStateHOLFinite state callee) body
-      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl)
+      (callEntryContextHOLFinite context callee)
       (by rfl) (some (.returned value), postState) hbody
   have hfixed :
       callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
@@ -1052,7 +1052,8 @@ theorem evaluateHOLFiniteState_call_return_caller_locals {width : Nat} {σ : Typ
         fun address => Classical.propDecidable (state.shMemaddrs address)⟩ :
         FiniteEvalContext width σ) = context from rfl]
   rw [hcall]
-  simp only [FiniteEvalContext.withState_state, hpostContext, context]
+  simp only [FiniteEvalContext.withState_state, callRestoreLocalsContextHOLFinite,
+    hpostContext, context]
 
 /-- Flapjack-specific `Call` wrapped-result valid-target helper for HOL
     `panSemScript.sml:780`; not tagged (branch selectors absent). -/
@@ -1091,7 +1092,7 @@ theorem evaluateHOLFiniteState_call_return_set_kvar {width : Nat} {σ : Type} [N
   obtain ⟨postContext, hbodyInternal, hpostContext⟩ :=
     evalPanSemRecursiveCallFiniteContext_of_evaluateHOLFiniteState
       (callEntryStateHOLFinite state callee) body
-      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl)
+      (callEntryContextHOLFinite context callee)
       (by rfl) (some (.returned value), postState) hbody
   have hfixed :
       callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
@@ -1106,7 +1107,8 @@ theorem evaluateHOLFiniteState_call_return_set_kvar {width : Nat} {σ : Type} [N
         fun address => Classical.propDecidable (state.shMemaddrs address)⟩ :
         FiniteEvalContext width σ) = context from rfl]
   rw [hcall]
-  simp only [FiniteEvalContext.withState_state, hpostContext, context]
+  simp only [FiniteEvalContext.withState_state, callSetKvarContextHOLFinite,
+    hpostContext, context]
 
 /-- Flapjack-specific `Call` wrapped-result invalid-target helper for HOL
     `panSemScript.sml:780`; not tagged (branch selectors absent). -/
@@ -1145,7 +1147,7 @@ theorem evaluateHOLFiniteState_call_return_kvar_invalid {width : Nat} {σ : Type
   obtain ⟨postContext, hbodyInternal, hpostContext⟩ :=
     evalPanSemRecursiveCallFiniteContext_of_evaluateHOLFiniteState
       (callEntryStateHOLFinite state callee) body
-      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl)
+      (callEntryContextHOLFinite context callee)
       (by rfl) (some (.returned value), postState) hbody
   have hfixed :
       callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
@@ -1198,7 +1200,7 @@ theorem evaluateHOLFiniteState_call_exception_no_handler {width : Nat} {σ : Typ
   obtain ⟨postContext, hbodyInternal, hpostContext⟩ :=
     evalPanSemRecursiveCallFiniteContext_of_evaluateHOLFiniteState
       (callEntryStateHOLFinite state callee) body
-      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl)
+      (callEntryContextHOLFinite context callee)
       (by rfl) (some (.exception exceptionId value), postState) hbody
   have hfixed :
       callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
@@ -1213,7 +1215,7 @@ theorem evaluateHOLFiniteState_call_exception_no_handler {width : Nat} {σ : Typ
         fun address => Classical.propDecidable (state.shMemaddrs address)⟩ :
         FiniteEvalContext width σ) = context from rfl]
   rw [hcall]
-  simp only [FiniteEvalContext.withState_state, hpostContext]
+  simp only [FiniteEvalContext.emptyLocalsContextHOLFinite_state, hpostContext]
 
 /-- Flapjack-specific `Call` non-matching-handler helper for HOL
     `panSemScript.sml:780`; not tagged (branch selectors absent). -/
@@ -1254,7 +1256,7 @@ theorem evaluateHOLFiniteState_call_exception_mismatch {width : Nat} {σ : Type}
   obtain ⟨postContext, hbodyInternal, hpostContext⟩ :=
     evalPanSemRecursiveCallFiniteContext_of_evaluateHOLFiniteState
       (callEntryStateHOLFinite state callee) body
-      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl)
+      (callEntryContextHOLFinite context callee)
       (by rfl) (some (.exception exceptionId value), postState) hbody
   have hfixed :
       callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
@@ -1269,7 +1271,7 @@ theorem evaluateHOLFiniteState_call_exception_mismatch {width : Nat} {σ : Type}
         fun address => Classical.propDecidable (state.shMemaddrs address)⟩ :
         FiniteEvalContext width σ) = context from rfl]
   rw [hcall]
-  simp only [FiniteEvalContext.withState_state, hpostContext]
+  simp only [FiniteEvalContext.emptyLocalsContextHOLFinite_state, hpostContext]
 
 /-- Flapjack-specific `Call` matching-handler missing-shape helper for HOL
     `panSemScript.sml:780`; not tagged (branch selectors absent). -/
@@ -1311,7 +1313,7 @@ theorem evaluateHOLFiniteState_call_exception_missing_shape {width : Nat} {σ : 
   obtain ⟨postContext, hbodyInternal, hpostContext⟩ :=
     evalPanSemRecursiveCallFiniteContext_of_evaluateHOLFiniteState
       (callEntryStateHOLFinite state callee) body
-      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl)
+      (callEntryContextHOLFinite context callee)
       (by rfl) (some (.exception exceptionId value), postState) hbody
   have hfixed :
       callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
@@ -1370,7 +1372,7 @@ theorem evaluateHOLFiniteState_call_exception_invalid {width : Nat} {σ : Type} 
   obtain ⟨postContext, hbodyInternal, hpostContext⟩ :=
     evalPanSemRecursiveCallFiniteContext_of_evaluateHOLFiniteState
       (callEntryStateHOLFinite state callee) body
-      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl)
+      (callEntryContextHOLFinite context callee)
       (by rfl) (some (.exception exceptionId value), postState) hbody
   have hfixed :
       callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
@@ -1430,7 +1432,7 @@ theorem evaluateHOLFiniteState_call_matched_exception_handler {width : Nat} {σ 
   obtain ⟨postContext, hbodyInternal, hpostContext⟩ :=
     evalPanSemRecursiveCallFiniteContext_of_evaluateHOLFiniteState
       (callEntryStateHOLFinite state callee) body
-      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl)
+      (callEntryContextHOLFinite context callee)
       (by rfl) (some (.exception handlerId value), postState) hbody
   have hfixed :
       callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
@@ -1461,8 +1463,13 @@ theorem evaluateHOLFiniteState_call_matched_exception_handler {width : Nat} {σ 
     apply FiniteEvalContext.ext
     simp only [FiniteEvalContext.withState_state, handlerStateHOLFinite, hpostContext, context]]
   dsimp only
+  have hcontinuationContext :
+      callContinuationContextHOLFinite context postContext handlerVar value =
+        postContext.withState (handlerStateHOLFinite context postContext handlerVar value)
+          rfl rfl := rfl
+  rw [← hcontinuationContext]
   obtain ⟨output, houtput⟩ := evalPanSemRecursiveCallFiniteContext_total handlerProgram
-    (postContext.withState (handlerStateHOLFinite context postContext handlerVar value) rfl rfl)
+    (callContinuationContextHOLFinite context postContext handlerVar value)
   rw [houtput]
 
 /-- Flapjack-specific `Call` fallback result helper (error / timeout / final FFI)
@@ -1501,7 +1508,7 @@ theorem evaluateHOLFiniteState_call_body_fallback {width : Nat} {σ : Type} [NeZ
   obtain ⟨postContext, hbodyInternal, hpostContext⟩ :=
     evalPanSemRecursiveCallFiniteContext_of_evaluateHOLFiniteState
       (callEntryStateHOLFinite state callee) body
-      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl)
+      (callEntryContextHOLFinite context callee)
       (by rfl) (some other, postState) hbody
   have hfixed :
       callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)

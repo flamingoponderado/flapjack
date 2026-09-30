@@ -4,6 +4,9 @@ import os
 import runpy
 import tempfile
 import unittest
+import contextlib
+import io
+from unittest.mock import patch
 from pathlib import Path
 
 
@@ -152,6 +155,20 @@ class HolAttributeSitesTest(unittest.TestCase):
         ], include_fmap_function=True))
         self.assertEqual(sites[0][-1], ("argument_4", "result_3"))
 
+    def test_heterogeneous_nested_fmap_function_qualifier(self):
+        sites = list(SITES([
+            '@[hol "cakeml/pancake/semantics/panSemScript.sml" "lookup_code_def"',
+            '  (fmap_as_finite_support_heterogeneous_function := [argument_1, result_2])]',
+        ], include_fmap_heterogeneous_function=True))
+        self.assertEqual(sites[0][-1], ("argument_1", "result_2"))
+
+    def test_empty_heterogeneous_fmap_qualifier_is_not_silently_ignored(self):
+        sites = list(SITES([
+            '@[hol "cakeml/pancake/semantics/panSemScript.sml" "lookup_code_def"',
+            '  (fmap_as_finite_support_heterogeneous_function := [])]',
+        ], include_fmap_heterogeneous_function=True))
+        self.assertEqual(sites[0][-1], ("",))
+
 
 class FmapFunctionQualifierTest(unittest.TestCase):
     CHECK = staticmethod(CHECKER["fmap_as_finite_support_function_errors"])
@@ -164,6 +181,29 @@ abbrev WordSemGcFun (width : Nat) : Type :=
     MODULE = SOURCE + """
 theorem holFmapAsFiniteSupportWitness : True := by trivial
 """
+
+    def test_main_rejects_out_of_range_function_position(self):
+        main = CHECKER["main"]
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "cakeml/pancake").mkdir(parents=True)
+            hol = root / "cakeml/pancake/fixtureScript.sml"
+            hol.write_text("Definition gc_fun_def: gc_fun = T End\n")
+            lean = root / "Fixture.lean"
+            lean.write_text(
+                '@[hol "cakeml/pancake/fixtureScript.sml" "gc_fun_def" '
+                '(fmap_as_finite_support_function := [argument_9, result_3])]\n'
+                + self.MODULE
+            )
+            output = io.StringIO()
+            with patch.dict(main.__globals__, {
+                "ROOT": root,
+                "lean_files": lambda: [lean],
+                "reachable_modules": lambda: {"Fixture"},
+                "reals_rendering_names": lambda _: set(),
+            }), contextlib.redirect_stderr(output), contextlib.redirect_stdout(output):
+                self.assertEqual(main([]), 1)
+            self.assertIn("argument_9 is outside the 4-component product", output.getvalue())
 
     def test_accepts_exact_argument_and_result_product_slots(self):
         self.assertEqual(
@@ -211,6 +251,187 @@ theorem holFmapAsFiniteSupportWitness : True := by trivial
         missing_positive = alias.replace(" [NeZero width]", "")
         self.assertTrue(any("[NeZero width]" in error
                             for error in check(missing_positive, "Words")))
+
+
+class HeterogeneousFmapFunctionQualifierTest(unittest.TestCase):
+    CHECK = staticmethod(
+        CHECKER["fmap_as_finite_support_heterogeneous_function_errors"]
+    )
+    POSITIONS = ("argument_1", "result_2")
+    SOURCE = """@[hol "cakeml/pancake/semantics/panSemScript.sml" "lookup_code_def"
+  (fmap_as_finite_support_heterogeneous_function := [argument_1, result_2])]
+def lookupCodeHOLFiniteExact
+    (code : HolFiniteMapExact MlS CodeEntry)
+    (fname : MlS) (arguments : List Value) :
+    Option (Prog × HolFiniteMapExact MlS Value × Shape) := none
+"""
+    WITNESS = """theorem holFmapAsFiniteSupportHeterogeneousFunctionWitness_lookupCodeHOLFiniteExact
+    (code : HolFiniteMapExact MlS CodeEntry) (fname : MlS) (arguments : List Value) :
+    (lookupCodeHOLFiniteExact code fname arguments).map
+      (fun (body, locals, shape) => (body, locals.lookup, shape)) =
+      lookupCodeHOLExact code.lookup fname arguments := by sorry
+"""
+
+    def module(self, source=None, witness=None):
+        return (self.SOURCE if source is None else source) + (
+            self.WITNESS if witness is None else witness
+        )
+
+    def test_accepts_distinct_canonical_input_and_result_maps(self):
+        self.assertEqual(
+            self.CHECK(self.module().splitlines(), self.SOURCE,
+                       "lookupCodeHOLFiniteExact", self.POSITIONS),
+            [],
+        )
+
+    def test_rejects_raw_map_in_either_position(self):
+        raw_input = self.SOURCE.replace(
+            "HolFiniteMapExact MlS CodeEntry", "MlS → Option CodeEntry", 1
+        )
+        input_errors = self.CHECK(self.module(raw_input).splitlines(),
+                                  raw_input,
+                                  "lookupCodeHOLFiniteExact", self.POSITIONS)
+        self.assertTrue(any("argument_1 must itself be HolFiniteMapExact" in e
+                            for e in input_errors))
+        raw_result = self.SOURCE.replace(
+            "HolFiniteMapExact MlS Value", "MlS → Option Value", 1
+        )
+        result_errors = self.CHECK(self.module(raw_result).splitlines(),
+                                   raw_result,
+                                   "lookupCodeHOLFiniteExact", self.POSITIONS)
+        self.assertTrue(any("result_2 must itself be HolFiniteMapExact" in e
+                            for e in result_errors))
+
+    def test_rejects_omitted_map_occurrences_and_missing_witness(self):
+        omitted = self.SOURCE.replace(
+            "argument_1, result_2", "argument_1, result_1"
+        )
+        errors = self.CHECK(self.module(omitted).splitlines(), omitted,
+                            "lookupCodeHOLFiniteExact",
+                            ("argument_1", "result_1"))
+        self.assertTrue(any("result_1 must itself be HolFiniteMapExact" in e
+                            for e in errors))
+        no_witness = self.CHECK(self.SOURCE.splitlines(), self.SOURCE,
+                                "lookupCodeHOLFiniteExact", self.POSITIONS)
+        self.assertTrue(any("requires same-module projection theorem" in e
+                            for e in no_witness))
+
+    def test_rejects_vacuous_projection_witness(self):
+        witness = self.WITNESS.replace(
+            "lookupCodeHOLExact code.lookup fname arguments",
+            "lookupCodeHOLFiniteExact code fname arguments",
+        )
+        errors = self.CHECK(self.module(witness=witness).splitlines(),
+                            self.SOURCE,
+                            "lookupCodeHOLFiniteExact", self.POSITIONS)
+        self.assertTrue(any("exactly one equality side" in e for e in errors))
+
+    def test_rejects_wrong_argument_order_and_wrong_result_projection_slot(self):
+        wrong_target_order = self.WITNESS.replace(
+            "lookupCodeHOLFiniteExact code fname arguments",
+            "lookupCodeHOLFiniteExact code arguments fname",
+        )
+        errors = self.CHECK(
+            self.module(witness=wrong_target_order).splitlines(),
+            self.SOURCE, "lookupCodeHOLFiniteExact", self.POSITIONS,
+        )
+        self.assertTrue(any("tagged operation to its explicit inputs" in e
+                            for e in errors))
+
+        wrong_raw_order = self.WITNESS.replace(
+            "lookupCodeHOLExact code.lookup fname arguments",
+            "lookupCodeHOLExact code.lookup arguments fname",
+        )
+        errors = self.CHECK(
+            self.module(witness=wrong_raw_order).splitlines(),
+            self.SOURCE, "lookupCodeHOLFiniteExact", self.POSITIONS,
+        )
+        self.assertTrue(any("independent raw lookup" in e for e in errors))
+
+        wrong_projection = self.WITNESS.replace(
+            "(body, locals.lookup, shape)", "(body, shape, locals.lookup)"
+        )
+        errors = self.CHECK(
+            self.module(witness=wrong_projection).splitlines(),
+            self.SOURCE, "lookupCodeHOLFiniteExact", self.POSITIONS,
+        )
+        self.assertTrue(any("selected result_N map slot" in e for e in errors))
+
+    def test_rejects_extra_or_malformed_positions(self):
+        for positions in (
+            ("argument_1",),
+            ("argument_1", "result_2", "result_3"),
+            ("argument_1", "argument_2"),
+            ("argument_0", "result_2"),
+        ):
+            with self.subTest(positions=positions):
+                errors = self.CHECK(
+                    self.module().splitlines(), self.SOURCE,
+                    "lookupCodeHOLFiniteExact", positions,
+                )
+                self.assertTrue(errors)
+
+    def test_requires_the_input_lookup_and_output_projection(self):
+        missing_input_projection = self.WITNESS.replace(
+            "lookupCodeHOLExact code.lookup fname arguments",
+            "lookupCodeHOLExact code fname arguments",
+        )
+        errors = self.CHECK(
+            self.module(witness=missing_input_projection).splitlines(),
+            self.SOURCE, "lookupCodeHOLFiniteExact", self.POSITIONS,
+        )
+        self.assertTrue(any("canonical input's `.lookup`" in error for error in errors))
+
+        missing_output_projection = self.WITNESS.replace("locals.lookup", "locals")
+        errors = self.CHECK(
+            self.module(witness=missing_output_projection).splitlines(),
+            self.SOURCE, "lookupCodeHOLFiniteExact", self.POSITIONS,
+        )
+        self.assertTrue(any("project exactly one returned map" in error for error in errors))
+
+    def test_projection_witness_has_no_extra_hypothesis_or_changed_inputs(self):
+        for witness in (
+            self.WITNESS.replace(
+                "(arguments : List Value) :", "(arguments : List Value) (h : True) :"
+            ),
+            self.WITNESS.replace(
+                "lookupCodeHOLExact code.lookup fname arguments",
+                "lookupCodeHOLExact code.lookup arguments",
+            ),
+        ):
+            with self.subTest(witness=witness):
+                errors = self.CHECK(
+                    self.module(witness=witness).splitlines(),
+                    self.SOURCE, "lookupCodeHOLFiniteExact", self.POSITIONS,
+                )
+                self.assertTrue(any("quantify exactly" in e or "every explicit" in e
+                                    for e in errors))
+
+    def test_requires_selected_slots_to_be_the_map_carriers(self):
+        wrapped = self.SOURCE.replace(
+            "(code : HolFiniteMapExact MlS CodeEntry)",
+            "(code : HolFiniteMapExact MlS CodeEntry × Nat)",
+        )
+        errors = self.CHECK(self.module(wrapped).splitlines(), wrapped,
+                            "lookupCodeHOLFiniteExact", self.POSITIONS)
+        self.assertTrue(any("must itself be HolFiniteMapExact" in e for e in errors))
+
+    def test_rejects_extra_map_slot_but_not_body_implementation_mentions(self):
+        extra_binder = self.SOURCE.replace(
+            "(fname : MlS)", "(fname : MlS) (other : HolFiniteMapExact MlS Bool)"
+        )
+        errors = self.CHECK(self.module(extra_binder).splitlines(), extra_binder,
+                            "lookupCodeHOLFiniteExact", self.POSITIONS)
+        self.assertTrue(any("exactly the two selected" in e for e in errors))
+
+        body_map = self.SOURCE.replace(
+            ":= none", ":= let _ : HolFiniteMapExact MlS Bool := sorry; none"
+        )
+        self.assertEqual(
+            self.CHECK(self.module(body_map).splitlines(), body_map,
+                       "lookupCodeHOLFiniteExact", self.POSITIONS),
+            [],
+        )
 
     def test_word_dimension_as_width_requires_its_nat_and_nezero_binders(self):
         check = CHECKER["word_dimension_as_width_errors"]

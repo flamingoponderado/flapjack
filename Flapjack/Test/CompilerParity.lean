@@ -1,3 +1,8 @@
+import Flapjack.Test.StackSemFixedStackCasesParity
+import Flapjack.Test.StackPropsFloatNames
+import Flapjack.Test.StackPropsAddressNames
+import Flapjack.Test.StackPropsArithmeticNames
+import Flapjack.Test.RiscVNamesExactParity
 import Flapjack.RiscV.Encoding
 import Flapjack.Test.DeclBridgeParity
 import Flapjack.Test.RiscVColourLivenessParity
@@ -335,6 +340,15 @@ import Flapjack.Test.WordLangFullInstOkLessParity
 import Flapjack.Test.WordLangCallArgParity
 import Flapjack.Test.RegAllocVarParity
 import Flapjack.Test.WordLangNotCreatedParity
+import Flapjack.Test.StackSemLoopControlParity
+import Flapjack.Test.StackSemLeafTransfersParity
+import Flapjack.Test.StackSemRegisterTransfersParity
+import Flapjack.Test.StackSemPatternCopyParity
+import Flapjack.Test.StackSemIntegerInstParity
+import Flapjack.Test.StackSemEvaluateAllocCaseParity
+import Flapjack.Test.StackSemStoreConstsGuardParity
+import Flapjack.Test.StackSemFpRegisterInstParity
+import Flapjack.Test.PanGlobalsFpermCodeParity
 import Flapjack.Test.WordLangEveryVarParity
 import Flapjack.Test.WordSemCarriersParity
 import Flapjack.Test.WordSemAccessorsParity
@@ -1125,6 +1139,8 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.WordLangCallArgParity.runChecks,
     Flapjack.Test.RegAllocVarParity.runChecks,
     Flapjack.Test.WordLangNotCreatedParity.runChecks,
+    Flapjack.Test.StackSemLoopControlParity.runChecks,
+    Flapjack.Test.PanGlobalsFpermCodeParity.runChecks,
     Flapjack.Test.WordLangEveryVarParity.runChecks,
     Flapjack.Test.WordSemCarriersParity.runChecks,
     Flapjack.Test.WordSemAccessorsParity.runChecks,

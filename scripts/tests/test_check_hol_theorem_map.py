@@ -9,6 +9,9 @@ from pathlib import Path
 MAP = runpy.run_path(
     str(Path(__file__).resolve().parents[1] / "check_hol_theorem_map.py")
 )
+MANIFEST = runpy.run_path(
+    str(Path(__file__).resolve().parents[1] / "hol_theorem_map.py")
+)
 
 
 class ProofDeclarationScanTest(unittest.TestCase):
@@ -29,6 +32,22 @@ protected theorem actualProof : True := by trivial
             if (match := MAP["THEOREM_RE"].match(line))
         }
         self.assertEqual(names, {"actualProof"})
+
+
+class HeterogeneousFmapQualifierInventoryTest(unittest.TestCase):
+    def test_new_status_and_manifest_field_are_registered(self):
+        self.assertIn(
+            "reviewed_fmap_as_finite_support_heterogeneous_function",
+            MAP["VALID_STATUSES"],
+        )
+        self.assertIn(
+            "reviewed_fmap_as_finite_support_heterogeneous_function_words_as_type_indexed_bitvec",
+            MAP["VALID_STATUSES"],
+        )
+        self.assertIn(
+            "fmap_as_finite_support_heterogeneous_function",
+            MANIFEST["OPTIONAL_FIELDS"],
+        )
 
 
 class ReviewedSourceComparisonTest(unittest.TestCase):
@@ -1710,6 +1729,28 @@ class StandaloneFmapResultStatusTest(unittest.TestCase):
     def test_accepts_standalone_result_status(self):
         self.assertEqual(self._errors(self._record(), self._tag()), [])
 
+    def test_accepts_result_and_word_carrier_composition(self):
+        record = self._record(
+            statement_status="reviewed_fmap_as_finite_support_result_words_as_type_indexed_bitvec",
+            words_as_type_indexed_bitvec=True,
+        )
+        tagged = self._tag()
+        key = next(iter(tagged))
+        tagged[key] += ((), False, True)
+        self.assertEqual(self._errors(record, tagged), [])
+
+    def test_result_word_composition_requires_both_qualifiers(self):
+        status = "reviewed_fmap_as_finite_support_result_words_as_type_indexed_bitvec"
+        for has_result, has_words in [(False, True), (True, False), (False, False)]:
+            record = self._record(statement_status=status,
+                fmap_as_finite_support_result=has_result,
+                words_as_type_indexed_bitvec=has_words)
+            tagged = self._tag(fmap_result=has_result)
+            key = next(iter(tagged))
+            tagged[key] += ((), False, has_words)
+            errors = self._errors(record, tagged)
+            self.assertTrue(any("needs both" in error for error in errors), errors)
+
     def test_rejects_reviewed_exact_for_result_qualifier(self):
         errors = self._errors(
             self._record(statement_status="reviewed_exact"), self._tag())
@@ -2096,11 +2137,11 @@ class RealsAsRationalCutsStatusTest(unittest.TestCase):
         self.key = (self.path, "fpSemFpUopComp")
         self.hol = ("cakeml/semantics/fpSemScript.sml", "fp_uop_comp_def")
         base = (*self.hol, (), (), (), (), False, (), False, False, (), (), None, ())
-        self.tag = {self.key: (*base, True)}
-        self.untagged = {self.key: (*base, False)}
+        self.tag = {self.key: (*base, (), True)}
+        self.untagged = {self.key: (*base, (), False)}
         words = (*self.hol, (), (), (), ("fpRegs", "store"), False, (), False, True,
                  (), (), None, ())
-        self.words_tag = {self.key: (*words, True)}
+        self.words_tag = {self.key: (*words, (), True)}
 
     def record(self, **overrides):
         record = {
@@ -2144,7 +2185,7 @@ class RealsAsRationalCutsStatusTest(unittest.TestCase):
 
     def test_inherited_assumption_needs_note_and_excludes_the_qualifier(self):
         base = (*self.hol, (), (), (), (), False, (), False, False, (), (), None, ())
-        dependent_tag = {self.key: (*base, False)}
+        dependent_tag = {self.key: (*base, (), False)}
         dependent = self.record(
             statement_status="reviewed_exact", reals_as_rational_cuts=None,
             inherits_reals_as_rational_cuts=True,

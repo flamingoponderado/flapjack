@@ -7,6 +7,15 @@ namespace Flapjack.Compiler.Backend.StackNames
 open Flapjack.Compiler.Encoders.Asm
 open Flapjack.Compiler.Backend.StackProps
 
+/-- HOL names_ok over its actual num_map carrier. GENLIST is range/map;
+tlookup uses tree lookup with the original register as the missing-key default. -/
+@[hol "cakeml/compiler/backend/stack_namesScript.sml" "names_ok_def"]
+def namesOkSptHOL (names : Flapjack.Spt Nat) (regCount : Nat)
+    (avoidRegs : List Nat) : Prop :=
+  let xs := (List.range (regCount - avoidRegs.length)).map
+    (findName (fun key => Flapjack.sptLookup key names))
+  xs.Nodup ∧ xs.all (fun x => x < regCount && !(avoidRegs.contains x)) = true
+
 /-- Flapjack list infrastructure: distinct mapped outputs are injective on the
 original list. This factors HOL's ALL_DISTINCT_GENLIST reasoning; no HOL
 original is claimed for the helper. -/
@@ -28,18 +37,18 @@ theorem mappedNodupNe {α β : Type} (f : α → β) (xs : List α)
       · exact ih h.2 hat hbt
 
 /-- HOL names_ok_imp: the renamed register satisfies the assembler's original
-bound and avoided-register conditions. No bijection premise is added. The canonical finite-support map is passed to
-the existing lookup-function helper through its lookup field, matching HOL
-tlookup without assuming support of an arbitrary function map. -/
+bound and avoided-register conditions. No bijection premise is added. The exact sparse tree is passed to
+the existing lookup-function helper through its tree lookup, matching HOL
+tlookup without assuming a representation exception. -/
 @[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml" "names_ok_imp"
-  (fmap_as_finite_support_relation := [names]) (words_as_type_indexed_bitvec)]
+  (words_as_type_indexed_bitvec)]
 theorem namesOkImp {width : Nat} [NeZero width]
-    (names : Flapjack.HolFiniteMapExact Nat Nat) (config : AsmConfigExact width)
-    (h : namesOkHOL names.lookup config.regCount config.avoidRegs) :
-    ∀ register, regName register config → asmRegOkExact (findName names.lookup register) config = true := by
+    (names : Flapjack.Spt Nat) (config : AsmConfigExact width)
+    (h : namesOkSptHOL names config.regCount config.avoidRegs) :
+    ∀ register, regName register config → asmRegOkExact (findName (fun key => Flapjack.sptLookup key names) register) config = true := by
   intro register hr
-  have hm : findName names.lookup register ∈
-      (List.range (config.regCount - config.avoidRegs.length)).map (findName names.lookup) :=
+  have hm : findName (fun key => Flapjack.sptLookup key names) register ∈
+      (List.range (config.regCount - config.avoidRegs.length)).map (findName (fun key => Flapjack.sptLookup key names)) :=
     List.mem_map.mpr ⟨register, List.mem_range.mpr hr, rfl⟩
   have hall := h.2
   simp only [List.all_eq_true] at hall
@@ -48,13 +57,13 @@ theorem namesOkImp {width : Nat} [NeZero width]
 /-- HOL names_ok_imp2: distinct logical registers below the source name bound
 remain distinct under renaming. The sole source antecedent is retained. -/
 @[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml" "names_ok_imp2"
-  (fmap_as_finite_support_relation := [names]) (words_as_type_indexed_bitvec)]
+  (words_as_type_indexed_bitvec)]
 theorem namesOkImp2 {width : Nat} [NeZero width]
-    (names : Flapjack.HolFiniteMapExact Nat Nat) (config : AsmConfigExact width)
+    (names : Flapjack.Spt Nat) (config : AsmConfigExact width)
     (register other : Nat)
-    (h : namesOkHOL names.lookup config.regCount config.avoidRegs ∧ register ≠ other ∧
+    (h : namesOkSptHOL names config.regCount config.avoidRegs ∧ register ≠ other ∧
       regName register config ∧ regName other config) :
-    findName names.lookup register ≠ findName names.lookup other := by
+    findName (fun key => Flapjack.sptLookup key names) register ≠ findName (fun key => Flapjack.sptLookup key names) other := by
   exact mappedNodupNe _ _ h.1.1 _ _ (List.mem_range.mpr h.2.2.1)
     (List.mem_range.mpr h.2.2.2) h.2.1
 
