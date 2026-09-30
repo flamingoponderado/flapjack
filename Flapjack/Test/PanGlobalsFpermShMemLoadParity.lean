@@ -4,14 +4,18 @@ Kernel replay for the port `Flapjack.evaluateFperm_ShMemLoad`
 `ShMemLoad` conjunct of `panSemScript.sml` `evaluate_def`).
 
 `evaluate_fperm` is a conditional implication over an arbitrary program whose
-premise is a run of the classical noncomputable `evaluateHOLFiniteState`, so no
-concrete original-HOL `EVAL` oracle row applies here (the CakeML/HOL theories
-are not built in this checkout) and `#guard` cannot compute either side.  As in
-the sibling `PanGlobalsEvaluateTwoParity`, this module therefore replays the HOL
-statement kernel-checked with concrete carriers: the `example`s apply the
-ported theorem at a concrete `ShMemLoad` program and concrete finite state,
-checking the code-permuted target/post-state equality.  No oracle row is
-fabricated.
+premise is a run of the classical noncomputable `evaluateHOLFiniteState`, so a
+fresh original-HOL `EVAL` oracle row for this exact statement is not available
+in this checkout (the CakeML/HOL theories are not built here) and `#guard`
+cannot compute either side.  Concrete `ShMemLoad` execution is in principle
+`EVAL`-able in a built CakeML/HOL tree; it is this conditional theorem replay
+that lacks a fresh oracle row.  As in the sibling
+`PanGlobalsEvaluateTwoParity`, this module therefore checks the HOL statement by
+kernel instantiation with concrete carriers: the `example`s apply the ported
+theorem at a concrete `ShMemLoad` program and concrete finite state, checking
+the code-permuted target/post-state equality.  This is a kernel proof-term
+instantiation, not a runtime comparison and not a parity experiment, and no
+oracle row is fabricated.
 -/
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.ShMemLoad
 
