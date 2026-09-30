@@ -35392,6 +35392,245 @@
   "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-4ac.4.60.1.1.11): HOL panPropsScript.sml:724-728 quantifies p,t,res,st,ck with the high-run equation evaluate (p,t) = (res, st with clock := st.clock + ck), the premise res <> SOME TimeOut, and the conclusion evaluate (p,t with clock := t.clock - ck) = (res,st). This is the nonrecursive ExtCall (read_bytearray, call_FFI, write_bytearray) case of recInduct evaluate_ind; the constructor has no IH and none is added. Same statement shape and carrier (PanPropsEvalStateFiniteExact, evaluateHOLFinitePair) as the accepted Assign case. Proof (untagged clockSub_of_noTimeout/pairClockSub_of_noTimeout): the clause never returns SOME TimeOut (nt_* lemmas over the tagged evaluateHOLFiniteState equations), so the tagged evaluate_add_clock_eq lifts the low-clock run by ck to t, and the tagged evaluate_clock gives ck <= t.clock; comparing with the high run yields the result. Qualifiers: owner PanPropsEvalStateFiniteExact (imported from EvalInvariant.lean, witness re-exported in-module) and the indexed-word translation. The full evaluate_clock_sub remains open (While .9, If .12, Call .13, DecCall .14, assembly .15)."
 },
 {
+  "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+  "hol_name": "arg_load_correct",
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ArgLoadCorrect.lean",
+  "lean_name": "argLoadCorrectExact",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "CrepSemHOLState.locals",
+    "CrepSemHOLState.globals",
+    "CrepSemHOLState.code",
+    "t"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source comparison .45.4.4, HOL1379-1408 and arg_load_def59-62: exact s/es/vals/vs/t/p/r/s_prime/tmp_vars binders, all eleven original hypotheses incl nonError, lengths/Nodup, t SUBMAP original locals, source evaluation and original freshness/disjoint/free-variable guards. Target existential uses original arg_load (reviewed argLoadHOLExact two nested_decs blocks), state_rel, NONE/Break/Continue FDIFF originalcaller(FDOM t) SUBMAP targetlocals plus exact FOLDL res_var sourcepostlocals ZIP(vs, MAP originalcallerlookup vs) SUBMAP targetlocals; Error False and other results True. Canonical state and standalone t finite maps, positive HOL word width and Type0 FFI only translations. Same-module unconditional canonical roundtrip. Accepted strong_all derives target run internally; only definition unfolding and result cases, no target-success/postrelation premise. Proof-only; coordinator source acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ArgLoadCorrect.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only same-module canonical roundtrip reexport for the relation qualifier, no independent HOL original; owning CrepSemHOLState imported, no local duplicate carrier."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+  "hol_name": "stack_names_comp_stack_asm_ok",
+  "lean_path": "Flapjack/Compiler/Backend/StackNames/AsmAdmissibility/Defaults.lean",
+  "lean_name": "stackNamesCompStackAsmOk_Skip",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b repair .14.4.2 source comparison HOL616 comp_ind Skip constructor: literal stack_asm_name/names_ok/fixed_names guards only, exact stack_asm_ok(comp f constructor) conclusion. No selector premise or target validity assumption. Native Spt/HolProg payloads and positive-width translation only. HOL comp preserves constructor head and stackProps812-829 target default True; all source guards retained. Untagged selector helper discharged by True.intro internally. Coordinator acceptance pending; proof-only."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+  "hol_name": "stack_names_comp_stack_asm_ok",
+  "lean_path": "Flapjack/Compiler/Backend/StackNames/AsmAdmissibility/Defaults.lean",
+  "lean_name": "stackNamesCompStackAsmOk_Get",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b repair .14.4.2 source comparison HOL616 comp_ind Get constructor: literal stack_asm_name/names_ok/fixed_names guards only, exact stack_asm_ok(comp f constructor) conclusion. No selector premise or target validity assumption. Native Spt/HolProg payloads and positive-width translation only. HOL comp preserves constructor head and stackProps812-829 target default True; all source guards retained. Untagged selector helper discharged by True.intro internally. Coordinator acceptance pending; proof-only."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+  "hol_name": "stack_names_comp_stack_asm_ok",
+  "lean_path": "Flapjack/Compiler/Backend/StackNames/AsmAdmissibility/Defaults.lean",
+  "lean_name": "stackNamesCompStackAsmOk_Set",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b repair .14.4.2 source comparison HOL616 comp_ind Set constructor: literal stack_asm_name/names_ok/fixed_names guards only, exact stack_asm_ok(comp f constructor) conclusion. No selector premise or target validity assumption. Native Spt/HolProg payloads and positive-width translation only. HOL comp preserves constructor head and stackProps812-829 target default True; all source guards retained. Untagged selector helper discharged by True.intro internally. Coordinator acceptance pending; proof-only."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+  "hol_name": "stack_names_comp_stack_asm_ok",
+  "lean_path": "Flapjack/Compiler/Backend/StackNames/AsmAdmissibility/Defaults.lean",
+  "lean_name": "stackNamesCompStackAsmOk_JumpLower",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b repair .14.4.2 source comparison HOL616 comp_ind JumpLower constructor: literal stack_asm_name/names_ok/fixed_names guards only, exact stack_asm_ok(comp f constructor) conclusion. No selector premise or target validity assumption. Native Spt/HolProg payloads and positive-width translation only. HOL comp preserves constructor head and stackProps812-829 target default True; all source guards retained. Untagged selector helper discharged by True.intro internally. Coordinator acceptance pending; proof-only."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+  "hol_name": "stack_names_comp_stack_asm_ok",
+  "lean_path": "Flapjack/Compiler/Backend/StackNames/AsmAdmissibility/Defaults.lean",
+  "lean_name": "stackNamesCompStackAsmOk_Alloc",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b repair .14.4.2 source comparison HOL616 comp_ind Alloc constructor: literal stack_asm_name/names_ok/fixed_names guards only, exact stack_asm_ok(comp f constructor) conclusion. No selector premise or target validity assumption. Native Spt/HolProg payloads and positive-width translation only. HOL comp preserves constructor head and stackProps812-829 target default True; all source guards retained. Untagged selector helper discharged by True.intro internally. Coordinator acceptance pending; proof-only."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+  "hol_name": "stack_names_comp_stack_asm_ok",
+  "lean_path": "Flapjack/Compiler/Backend/StackNames/AsmAdmissibility/Defaults.lean",
+  "lean_name": "stackNamesCompStackAsmOk_StoreConsts",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b repair .14.4.2 source comparison HOL616 comp_ind StoreConsts constructor: literal stack_asm_name/names_ok/fixed_names guards only, exact stack_asm_ok(comp f constructor) conclusion. No selector premise or target validity assumption. Native Spt/HolProg payloads and positive-width translation only. HOL comp preserves constructor head and stackProps812-829 target default True; all source guards retained. Untagged selector helper discharged by True.intro internally. Coordinator acceptance pending; proof-only."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+  "hol_name": "stack_names_comp_stack_asm_ok",
+  "lean_path": "Flapjack/Compiler/Backend/StackNames/AsmAdmissibility/Defaults.lean",
+  "lean_name": "stackNamesCompStackAsmOk_Break",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b repair .14.4.2 source comparison HOL616 comp_ind Break constructor: literal stack_asm_name/names_ok/fixed_names guards only, exact stack_asm_ok(comp f constructor) conclusion. No selector premise or target validity assumption. Native Spt/HolProg payloads and positive-width translation only. HOL comp preserves constructor head and stackProps812-829 target default True; all source guards retained. Untagged selector helper discharged by True.intro internally. Coordinator acceptance pending; proof-only."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+  "hol_name": "stack_names_comp_stack_asm_ok",
+  "lean_path": "Flapjack/Compiler/Backend/StackNames/AsmAdmissibility/Defaults.lean",
+  "lean_name": "stackNamesCompStackAsmOk_Continue",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b repair .14.4.2 source comparison HOL616 comp_ind Continue constructor: literal stack_asm_name/names_ok/fixed_names guards only, exact stack_asm_ok(comp f constructor) conclusion. No selector premise or target validity assumption. Native Spt/HolProg payloads and positive-width translation only. HOL comp preserves constructor head and stackProps812-829 target default True; all source guards retained. Untagged selector helper discharged by True.intro internally. Coordinator acceptance pending; proof-only."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+  "hol_name": "stack_names_comp_stack_asm_ok",
+  "lean_path": "Flapjack/Compiler/Backend/StackNames/AsmAdmissibility/Defaults.lean",
+  "lean_name": "stackNamesCompStackAsmOk_FFI",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b repair .14.4.2 source comparison HOL616 comp_ind FFI constructor: literal stack_asm_name/names_ok/fixed_names guards only, exact stack_asm_ok(comp f constructor) conclusion. No selector premise or target validity assumption. Native Spt/HolProg payloads and positive-width translation only. HOL comp preserves constructor head and stackProps812-829 target default True; all source guards retained. Untagged selector helper discharged by True.intro internally. Coordinator acceptance pending; proof-only."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+  "hol_name": "stack_names_comp_stack_asm_ok",
+  "lean_path": "Flapjack/Compiler/Backend/StackNames/AsmAdmissibility/Defaults.lean",
+  "lean_name": "stackNamesCompStackAsmOk_Tick",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b repair .14.4.2 source comparison HOL616 comp_ind Tick constructor: literal stack_asm_name/names_ok/fixed_names guards only, exact stack_asm_ok(comp f constructor) conclusion. No selector premise or target validity assumption. Native Spt/HolProg payloads and positive-width translation only. HOL comp preserves constructor head and stackProps812-829 target default True; all source guards retained. Untagged selector helper discharged by True.intro internally. Coordinator acceptance pending; proof-only."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+  "hol_name": "stack_names_comp_stack_asm_ok",
+  "lean_path": "Flapjack/Compiler/Backend/StackNames/AsmAdmissibility/Defaults.lean",
+  "lean_name": "stackNamesCompStackAsmOk_LocValue",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b repair .14.4.2 source comparison HOL616 comp_ind LocValue constructor: literal stack_asm_name/names_ok/fixed_names guards only, exact stack_asm_ok(comp f constructor) conclusion. No selector premise or target validity assumption. Native Spt/HolProg payloads and positive-width translation only. HOL comp preserves constructor head and stackProps812-829 target default True; all source guards retained. Untagged selector helper discharged by True.intro internally. Coordinator acceptance pending; proof-only."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+  "hol_name": "stack_names_comp_stack_asm_ok",
+  "lean_path": "Flapjack/Compiler/Backend/StackNames/AsmAdmissibility/Defaults.lean",
+  "lean_name": "stackNamesCompStackAsmOk_Install",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b repair .14.4.2 source comparison HOL616 comp_ind Install constructor: literal stack_asm_name/names_ok/fixed_names guards only, exact stack_asm_ok(comp f constructor) conclusion. No selector premise or target validity assumption. Native Spt/HolProg payloads and positive-width translation only. HOL comp preserves constructor head and stackProps812-829 target default True; all source guards retained. Untagged selector helper discharged by True.intro internally. Coordinator acceptance pending; proof-only."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+  "hol_name": "stack_names_comp_stack_asm_ok",
+  "lean_path": "Flapjack/Compiler/Backend/StackNames/AsmAdmissibility/Defaults.lean",
+  "lean_name": "stackNamesCompStackAsmOk_DataBufferWrite",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b repair .14.4.2 source comparison HOL616 comp_ind DataBufferWrite constructor: literal stack_asm_name/names_ok/fixed_names guards only, exact stack_asm_ok(comp f constructor) conclusion. No selector premise or target validity assumption. Native Spt/HolProg payloads and positive-width translation only. HOL comp preserves constructor head and stackProps812-829 target default True; all source guards retained. Untagged selector helper discharged by True.intro internally. Coordinator acceptance pending; proof-only."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+  "hol_name": "stack_names_comp_stack_asm_ok",
+  "lean_path": "Flapjack/Compiler/Backend/StackNames/AsmAdmissibility/Defaults.lean",
+  "lean_name": "stackNamesCompStackAsmOk_RawCall",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b repair .14.4.2 source comparison HOL616 comp_ind RawCall constructor: literal stack_asm_name/names_ok/fixed_names guards only, exact stack_asm_ok(comp f constructor) conclusion. No selector premise or target validity assumption. Native Spt/HolProg payloads and positive-width translation only. HOL comp preserves constructor head and stackProps812-829 target default True; all source guards retained. Untagged selector helper discharged by True.intro internally. Coordinator acceptance pending; proof-only."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+  "hol_name": "stack_names_comp_stack_asm_ok",
+  "lean_path": "Flapjack/Compiler/Backend/StackNames/AsmAdmissibility/Defaults.lean",
+  "lean_name": "stackNamesCompStackAsmOk_StackAlloc",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b repair .14.4.2 source comparison HOL616 comp_ind StackAlloc constructor: literal stack_asm_name/names_ok/fixed_names guards only, exact stack_asm_ok(comp f constructor) conclusion. No selector premise or target validity assumption. Native Spt/HolProg payloads and positive-width translation only. HOL comp preserves constructor head and stackProps812-829 target default True; all source guards retained. Untagged selector helper discharged by True.intro internally. Coordinator acceptance pending; proof-only."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+  "hol_name": "stack_names_comp_stack_asm_ok",
+  "lean_path": "Flapjack/Compiler/Backend/StackNames/AsmAdmissibility/Defaults.lean",
+  "lean_name": "stackNamesCompStackAsmOk_StackFree",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b repair .14.4.2 source comparison HOL616 comp_ind StackFree constructor: literal stack_asm_name/names_ok/fixed_names guards only, exact stack_asm_ok(comp f constructor) conclusion. No selector premise or target validity assumption. Native Spt/HolProg payloads and positive-width translation only. HOL comp preserves constructor head and stackProps812-829 target default True; all source guards retained. Untagged selector helper discharged by True.intro internally. Coordinator acceptance pending; proof-only."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+  "hol_name": "stack_names_comp_stack_asm_ok",
+  "lean_path": "Flapjack/Compiler/Backend/StackNames/AsmAdmissibility/Defaults.lean",
+  "lean_name": "stackNamesCompStackAsmOk_StackStore",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b repair .14.4.2 source comparison HOL616 comp_ind StackStore constructor: literal stack_asm_name/names_ok/fixed_names guards only, exact stack_asm_ok(comp f constructor) conclusion. No selector premise or target validity assumption. Native Spt/HolProg payloads and positive-width translation only. HOL comp preserves constructor head and stackProps812-829 target default True; all source guards retained. Untagged selector helper discharged by True.intro internally. Coordinator acceptance pending; proof-only."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+  "hol_name": "stack_names_comp_stack_asm_ok",
+  "lean_path": "Flapjack/Compiler/Backend/StackNames/AsmAdmissibility/Defaults.lean",
+  "lean_name": "stackNamesCompStackAsmOk_StackStoreAny",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b repair .14.4.2 source comparison HOL616 comp_ind StackStoreAny constructor: literal stack_asm_name/names_ok/fixed_names guards only, exact stack_asm_ok(comp f constructor) conclusion. No selector premise or target validity assumption. Native Spt/HolProg payloads and positive-width translation only. HOL comp preserves constructor head and stackProps812-829 target default True; all source guards retained. Untagged selector helper discharged by True.intro internally. Coordinator acceptance pending; proof-only."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+  "hol_name": "stack_names_comp_stack_asm_ok",
+  "lean_path": "Flapjack/Compiler/Backend/StackNames/AsmAdmissibility/Defaults.lean",
+  "lean_name": "stackNamesCompStackAsmOk_StackLoad",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b repair .14.4.2 source comparison HOL616 comp_ind StackLoad constructor: literal stack_asm_name/names_ok/fixed_names guards only, exact stack_asm_ok(comp f constructor) conclusion. No selector premise or target validity assumption. Native Spt/HolProg payloads and positive-width translation only. HOL comp preserves constructor head and stackProps812-829 target default True; all source guards retained. Untagged selector helper discharged by True.intro internally. Coordinator acceptance pending; proof-only."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+  "hol_name": "stack_names_comp_stack_asm_ok",
+  "lean_path": "Flapjack/Compiler/Backend/StackNames/AsmAdmissibility/Defaults.lean",
+  "lean_name": "stackNamesCompStackAsmOk_StackLoadAny",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b repair .14.4.2 source comparison HOL616 comp_ind StackLoadAny constructor: literal stack_asm_name/names_ok/fixed_names guards only, exact stack_asm_ok(comp f constructor) conclusion. No selector premise or target validity assumption. Native Spt/HolProg payloads and positive-width translation only. HOL comp preserves constructor head and stackProps812-829 target default True; all source guards retained. Untagged selector helper discharged by True.intro internally. Coordinator acceptance pending; proof-only."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+  "hol_name": "stack_names_comp_stack_asm_ok",
+  "lean_path": "Flapjack/Compiler/Backend/StackNames/AsmAdmissibility/Defaults.lean",
+  "lean_name": "stackNamesCompStackAsmOk_StackGetSize",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b repair .14.4.2 source comparison HOL616 comp_ind StackGetSize constructor: literal stack_asm_name/names_ok/fixed_names guards only, exact stack_asm_ok(comp f constructor) conclusion. No selector premise or target validity assumption. Native Spt/HolProg payloads and positive-width translation only. HOL comp preserves constructor head and stackProps812-829 target default True; all source guards retained. Untagged selector helper discharged by True.intro internally. Coordinator acceptance pending; proof-only."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+  "hol_name": "stack_names_comp_stack_asm_ok",
+  "lean_path": "Flapjack/Compiler/Backend/StackNames/AsmAdmissibility/Defaults.lean",
+  "lean_name": "stackNamesCompStackAsmOk_StackSetSize",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b repair .14.4.2 source comparison HOL616 comp_ind StackSetSize constructor: literal stack_asm_name/names_ok/fixed_names guards only, exact stack_asm_ok(comp f constructor) conclusion. No selector premise or target validity assumption. Native Spt/HolProg payloads and positive-width translation only. HOL comp preserves constructor head and stackProps812-829 target default True; all source guards retained. Untagged selector helper discharged by True.intro internally. Coordinator acceptance pending; proof-only."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+  "hol_name": "stack_names_comp_stack_asm_ok",
+  "lean_path": "Flapjack/Compiler/Backend/StackNames/AsmAdmissibility/Defaults.lean",
+  "lean_name": "stackNamesCompStackAsmOk_BitmapLoad",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b repair .14.4.2 source comparison HOL616 comp_ind BitmapLoad constructor: literal stack_asm_name/names_ok/fixed_names guards only, exact stack_asm_ok(comp f constructor) conclusion. No selector premise or target validity assumption. Native Spt/HolProg payloads and positive-width translation only. HOL comp preserves constructor head and stackProps812-829 target default True; all source guards retained. Untagged selector helper discharged by True.intro internally. Coordinator acceptance pending; proof-only."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+  "hol_name": "stack_names_comp_stack_asm_ok",
+  "lean_path": "Flapjack/Compiler/Backend/StackNames/AsmAdmissibility/Defaults.lean",
+  "lean_name": "stackNamesCompStackAsmOk_Halt",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b repair .14.4.2 source comparison HOL616 comp_ind Halt constructor: literal stack_asm_name/names_ok/fixed_names guards only, exact stack_asm_ok(comp f constructor) conclusion. No selector premise or target validity assumption. Native Spt/HolProg payloads and positive-width translation only. HOL comp preserves constructor head and stackProps812-829 target default True; all source guards retained. Untagged selector helper discharged by True.intro internally. Coordinator acceptance pending; proof-only."
+},
+{
   "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
   "lean_name": "scopedHandlerPrefix",
   "hol_path": null,

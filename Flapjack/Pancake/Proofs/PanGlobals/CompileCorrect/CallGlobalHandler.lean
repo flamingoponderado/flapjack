@@ -1204,6 +1204,7 @@ private theorem bypassScopedCorrect {width : Nat} {σ : Type} [NeZero width]
     function compiledArguments
   obtain ⟨ht, hr⟩ := nonGoodCallTail context target scratch (emptyLocalsHOLFinite sourcePost)
     (emptyLocalsHOLFinite targetPost) call result resultName flagName initializer address hcall hgood hempty
+  dsimp only [call, scratch, flagName, resultName, names, compiledHandler, compiledArguments] at ht hr
   refine ⟨_, ?_, hr⟩
   rw [hscope]
   simp only [ht]
