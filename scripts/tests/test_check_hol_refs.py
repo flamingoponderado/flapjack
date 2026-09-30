@@ -14,6 +14,72 @@ SITES = CHECKER["hol_attribute_sites"]
 REF_ERROR = CHECKER["hol_ref_error"]
 
 
+class ExternalHolSourcesTest(unittest.TestCase):
+    def fixture(self, root):
+        import hashlib
+        import json
+        base = root / "hol4"
+        (base / "src/finite_maps").mkdir(parents=True)
+        (base / "COPYRIGHT").write_text("retained license")
+        (base / "src/finite_maps/sptreeScript.sml").write_text("Theorem domain_union: T Proof simp[] QED")
+        lock = {"repository": CHECKER["EXTERNAL_HOL_REPOSITORY"], "commit": "a" * 40,
+                "files": {p: hashlib.sha256((base / p).read_bytes()).hexdigest()
+                          for p in ["COPYRIGHT", "src/finite_maps/sptreeScript.sml"]}}
+        (base / "SOURCES.json").write_text(json.dumps(lock))
+
+    def test_repository_snapshot_pin(self):
+        self.assertIsNone(CHECKER["hol_source_error"](CHECKER["ROOT"], CHECKER["EXTERNAL_HOL_PATH"]))
+
+    def test_upstream_identity_rejected(self):
+        import json
+        for field, value in [("commit", "not-a-commit"), ("repository", "https://example.com/other")]:
+            with self.subTest(field=field), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                self.fixture(root)
+                manifest = root / "hol4/SOURCES.json"
+                lock = json.loads(manifest.read_text())
+                lock[field] = value
+                manifest.write_text(json.dumps(lock))
+                self.assertIsNotNone(CHECKER["hol_source_error"](root, CHECKER["EXTERNAL_HOL_PATH"]))
+
+    def test_valid_pin(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.fixture(root)
+            self.assertIsNone(CHECKER["hol_source_error"](root, CHECKER["EXTERNAL_HOL_PATH"]))
+
+    def test_source_and_license_drift_rejected(self):
+        for relative in ["COPYRIGHT", "src/finite_maps/sptreeScript.sml"]:
+            with self.subTest(relative=relative), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                self.fixture(root)
+                (root / "hol4" / relative).write_text("altered")
+                self.assertIn("mismatch", CHECKER["hol_source_error"](root, CHECKER["EXTERNAL_HOL_PATH"]))
+
+    def test_unpinned_and_traversal_rejected(self):
+        for path in ["hol4/otherScript.sml", "/tmp/source.sml", "cakeml/../source.sml",
+                     "cakeml//source.sml", "hol4/src/finite_maps/./sptreeScript.sml"]:
+            with self.subTest(path=path):
+                self.assertIsNotNone(CHECKER["hol_source_error"](Path("/tmp"), path))
+
+    def test_missing_and_malformed_manifest_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.assertIsNotNone(CHECKER["hol_source_error"](root, CHECKER["EXTERNAL_HOL_PATH"]))
+            self.fixture(root)
+            (root / "hol4/SOURCES.json").write_text("[]")
+            self.assertIsNotNone(CHECKER["hol_source_error"](root, CHECKER["EXTERNAL_HOL_PATH"]))
+
+    def test_symlink_rejected_even_with_matching_bytes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.fixture(root)
+            source = root / CHECKER["EXTERNAL_HOL_PATH"]
+            source.rename(root / "source-copy")
+            source.symlink_to(root / "source-copy")
+            self.assertIsNotNone(CHECKER["hol_source_error"](root, CHECKER["EXTERNAL_HOL_PATH"]))
+
+
 class HolAttributeSitesTest(unittest.TestCase):
     def test_single_line(self):
         self.assertEqual(

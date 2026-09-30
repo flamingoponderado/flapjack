@@ -1,4 +1,6 @@
+import Flapjack.Compiler.Backend.WordAlloc.InstructionRoute
 import Flapjack.Word
+import Flapjack.Compiler.Backend.WordAlloc.ExpressionRoute
 import Flapjack.NumSet
 import Std.Data.HashMap
 
@@ -2232,6 +2234,14 @@ def wordAllocateSsaProgram [OfNat α 0] (state : WordSsaState) (program : WordPr
     labels and function labels are not virtual registers; every data-register
     position, including nested handlers and loop live sets, is transformed. -/
 
+/-- Compiled implementation of colouring through the reviewed constructor
+recursion and checked carrier codecs. -/
+def wordApplyColourExpRoute (colour : Nat → Nat) (expression : WordExp α) : WordExp α :=
+  WordAlloc.applyColourExpExecutable colour expression
+
+/-- Kernel-facing recursive equations. The kernel-proved compiler rewrite
+`wordApplyColourExp_eq_route` below routes compiled callers through the shared
+reviewed expression recursion. -/
 def wordApplyColourExp (colour : Nat → Nat) : WordExp α → WordExp α
   | .const value => .const value
   | .var name => .var (colour name)
@@ -2244,6 +2254,44 @@ def wordApplyColourExp (colour : Nat → Nat) : WordExp α → WordExp α
         (wordApplyColourExp colour right)
 termination_by expression => sizeOf expression
 decreasing_by all_goals decreasing_trivial
+
+/-- Kernel proof of the shared executable route, including every
+nested Op argument and both Shift operands. Flapjack carrier infrastructure. -/
+theorem wordApplyColourExp_route_eq (colour : Nat → Nat) (expression : WordExp α) :
+    wordApplyColourExpRoute colour expression = wordApplyColourExp colour expression := by
+  refine WordExp.rec
+    (motive_1 := fun e => wordApplyColourExpRoute colour e = wordApplyColourExp colour e)
+    (motive_2 := fun es => es.map (wordApplyColourExpRoute colour) =
+      es.map (wordApplyColourExp colour))
+    ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ expression
+  · intro value; simp [wordApplyColourExpRoute, wordApplyColourExp]
+  · intro name; simp [wordApplyColourExpRoute, wordApplyColourExp]
+  · intro store; simp [wordApplyColourExpRoute, wordApplyColourExp]
+  · intro address ih
+    simpa [wordApplyColourExpRoute, wordApplyColourExp] using congrArg WordExp.load ih
+  · intro operator arguments ih
+    simpa [wordApplyColourExpRoute, wordApplyColourExp] using congrArg (WordExp.op operator) ih
+  · intro operator left right ihLeft ihRight
+    simp only [wordApplyColourExpRoute] at ihLeft ihRight ⊢
+    simp [wordApplyColourExp, ihLeft, ihRight]
+  · rfl
+  · intro head tail ihHead ihTail; simp [ihHead, ihTail]
+
+/-- Kernel-proved compiler routing for all types and inputs, registered before
+production callers are compiled. Flapjack infrastructure, not a HOL theorem. -/
+@[csimp] theorem wordApplyColourExp_eq_route :
+    @wordApplyColourExp = @wordApplyColourExpRoute := by
+  funext α colour expression
+  exact (wordApplyColourExp_route_eq colour expression).symm
+
+/-- The production colouring function commutes with the reviewed word-valued
+HOL definition. Flapjack codec infrastructure, with no separate HOL original. -/
+theorem wordApplyColourExp_toHOL {width : Nat} [NeZero width]
+    (colour : Nat → Nat) (expression : WordExp (BitVec width)) :
+    wordExpToHOL (wordApplyColourExp colour expression) =
+      WordAlloc.applyColourExp colour (wordExpToHOL expression) := by
+  rw [← wordApplyColourExp_route_eq]
+  exact WordAlloc.applyColourExpExecutable_commutes colour expression
 
 def wordApplyColourRegImm (colour : Nat → Nat) : WordRegImm α → WordRegImm α
   | .imm value => .imm value
@@ -2271,13 +2319,8 @@ def wordApplyColourArith (colour : Nat → Nat) : WordArith α → WordArith α
       .shift operator (colour destination) (colour sourceLeft)
         (wordApplyColourRegImm colour sourceRight)
 
-def wordApplyColourInst (colour : Nat → Nat) : WordInst α → WordInst α
-  | .const destination value => .const (colour destination) value
-  | .arith operation => .arith (wordApplyColourArith colour operation)
-  | .mem operator destination address =>
-      .mem operator (colour destination) (colour address)
-  | .memOffset operator destination address offset =>
-      .memOffset operator (colour destination) (colour address) offset
+def wordApplyColourInst (colour : Nat → Nat) : WordInst α → WordInst α :=
+  WordAlloc.applyColourInstExecutable colour
 
 /-! Cake's `num_set` fields are represented by lists in Flapjack.  The source
     `apply_nummap_key` rebuilds those sets through `fromAList`, so the result is

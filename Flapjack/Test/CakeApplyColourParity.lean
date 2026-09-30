@@ -69,10 +69,57 @@ def loopLiveExact : Bool :=
 
 #guard loopLiveExact
 
+/-- Original `apply_colour_exp_def` EVAL rows in
+`scripts/hol-probes/word_alloc_colour_exp_probe.out`. The test executable
+calls `wordApplyColourExp`, including its kernel-proved compiler rewrite. -/
+def expressionColourExact : Bool :=
+  let nested : WordExp (BitVec 8) := .op .add
+    [.const 7, .load (.var 3), .lookup (.temp (BitVec.ofNat 5 9)),
+      .shift .lsl (.var 5) (.var 6)]
+  let nestedOK := match wordApplyColourExp (fun n => n + 10) nested with
+    | .op .add [.const v, .load (.var n), .lookup (.temp t),
+        .shift .lsl (.var left) (.var right)] =>
+        v == 7 && n == 13 && t == BitVec.ofNat 5 9 && left == 15 && right == 16
+    | _ => false
+  let duplicateOK := match wordApplyColourExp (fun n => n % 2)
+      (.op .sub [.var 3, .var 3, .var 4] : WordExp (BitVec 8)) with
+    | .op .sub [.var a, .var b, .var c] => a == 1 && b == 1 && c == 0
+    | _ => false
+  let emptyOK := match wordApplyColourExp (fun n => n + 10)
+      (.op .add [] : WordExp (BitVec 8)) with
+    | .op .add [] => true
+    | _ => false
+  nestedOK && duplicateOK && emptyOK
+
+#guard expressionColourExact
+
+/-- Original rows from word_alloc_colour_inst_probe.out: the executed allocator
+must retain both 16-bit memory instructions, rename 8/32-bit registers, and
+preserve four-register AddCarry operand order. -/
+def instructionColourExact : Bool :=
+  let f := fun n => n + 10
+  let memoryOK (op : WordMemOp) (expectedR expectedA : Nat) :=
+    match wordApplyColour f (.inst (.memOffset op 3 5 (BitVec.ofNat 8 7)) : WordProg (BitVec 8)) with
+    | .inst (.memOffset actual r a w) =>
+        actual == op && r == expectedR && a == expectedA && w == BitVec.ofNat 8 7
+    | _ => false
+  let carryOK := match wordApplyColour f
+      (.inst (.arith (.cakeAddCarry 1 2 3 4)) : WordProg (BitVec 8)) with
+    | .inst (.arith (.cakeAddCarry a b c d)) => a == 11 && b == 12 && c == 13 && d == 14
+    | _ => false
+  let fpOK := match WordAlloc.applyColourInst f
+      (.fp (.fpMovFromReg 1 2 3) : WordLangInst (BitVec 8)) with
+    | .fp (.fpMovFromReg a b c) => a == 1 && b == 12 && c == 13
+    | _ => false
+  memoryOK .load16 3 5 && memoryOK .store16 3 5 &&
+    memoryOK .load8 13 15 && memoryOK .store32 13 15 && carryOK && fpOK
+
+#guard instructionColourExact
+
 def parityGuard : Bool :=
   totalColourExact && assignExact && applyColourAliasedAssignExact &&
     returnRaiseExact &&
-    callHandlerExact && loopLiveExact
+    callHandlerExact && loopLiveExact && expressionColourExact && instructionColourExact
 
 #guard parityGuard
 #eval parityGuard

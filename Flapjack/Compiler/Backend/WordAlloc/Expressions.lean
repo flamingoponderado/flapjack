@@ -3,20 +3,28 @@ import Flapjack.Misc.Sptree
 
 namespace Flapjack.WordAlloc
 
-/-- Exact HOL expression renaming over the faithful word-valued carrier.
-Production routing from wordApplyColourExp remains tracked separately. -/
-@[hol "cakeml/compiler/backend/word_allocScript.sml" "apply_colour_exp_def"
-  (words_as_type_indexed_bitvec)]
-def applyColourExp {width : Nat} [NeZero width] (f : Nat → Nat) :
-    WordLangExpHOL (BitVec width) → WordLangExpHOL (BitVec width)
+/-- Shared constructor recursion for exact and executed expression colouring.
+This polymorphic implementation is Flapjack infrastructure; `applyColourExp`
+below retains HOL's word-valued signature. -/
+def applyColourExpCore {α : Type u} (f : Nat → Nat) :
+    WordLangExpHOL α → WordLangExpHOL α
   | .var n => .var (f n)
-  | .load e => .load (applyColourExp f e)
-  | .op op es => .op op (es.map (applyColourExp f))
-  | .shift sh e n => .shift sh (applyColourExp f e) (applyColourExp f n)
+  | .load e => .load (applyColourExpCore f e)
+  | .op op es => .op op (es.map (applyColourExpCore f))
+  | .shift sh e n => .shift sh (applyColourExpCore f e) (applyColourExpCore f n)
   | .const v => .const v
   | .lookup name => .lookup name
 termination_by e => sizeOf e
 decreasing_by all_goals decreasing_trivial
+
+/-- Exact HOL expression renaming over the faithful word-valued carrier.
+The executed allocator uses this same constructor recursion through the
+roundtrip expression codecs. -/
+@[hol "cakeml/compiler/backend/word_allocScript.sml" "apply_colour_exp_def"
+  (words_as_type_indexed_bitvec)]
+def applyColourExp {width : Nat} [NeZero width] (f : Nat → Nat) :
+    WordLangExpHOL (BitVec width) → WordLangExpHOL (BitVec width) :=
+  applyColourExpCore f
 
 /-- HOL big_union uses a right fold and the exact left-biased Spt union. -/
 @[hol "cakeml/compiler/backend/word_allocScript.sml" "big_union_def"]

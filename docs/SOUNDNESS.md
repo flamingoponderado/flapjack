@@ -135,6 +135,13 @@ The following are open review or verification obligations:
    computable binary64 sqrt equals the cut specification for every rational
    `r ≥ 0` (`holFloatRoundSqrt_rte_fp64`).
 
+   Because of the sqrt reformulation, the wordSem `inst_def` rendering
+   (`FPSqrt`) and the `fpSem` `fp_uop_comp_def` rendering (`FP_Sqrt`) carry
+   no `@[hol]` tag. The tagged `fpSem` comparison, `fp_bop_comp_def` and
+   `fpfma_def` declarations reach only the rational-domain renderings; their
+   local review notes record the clause-by-clause argument and the ordered
+   `ℚ → ℝ` embedding assumption.
+
 ## Trust and reproducibility notes
 
 The normal Lean kernel checks theorem elaboration. Some existing concrete
