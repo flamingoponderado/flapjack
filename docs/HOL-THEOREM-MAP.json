@@ -28099,5 +28099,15 @@
     "fmap_as_finite_support_relation": [
       "names"
     ]
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "check_store_consts_opt_def",
+    "hol_kind": "Definition",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/StoreConstsGuard.lean",
+    "lean_name": "checkStoreConstsOpt",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30 bead .18.5.12.1: stackSemScript743-747 has NONE=True and SOME n iff sptree lookup n code equals SOME (Seq (StoreConsts t1 t2 NONE) (Return 0)). Exact shared-word HolProg width retains all constructors and opaque MlString payload; reviewed positive-width word translation is sole qualifier. Structural isStoreConstsStub checks both Nat registers, NONE inner stub and Return0 in this exact sequence order. Kernel theorem isStoreConstsStub_iff proves equivalence to actual program equality for every program; checkStoreConstsOpt_some_iff lifts it through lookup, without BEq/equality-class assumptions or extra semantic premises. Code is Spt, not a finite-support map. Ten fresh original HOL rows/kernel replay cover bypass, matching, missing/wrong label, each register, recursive stub, nonzero Return, wrong constructor and reversed order. Proof-side guard only; evaluator production assembly remains tracked on .y19g.11.2.3/.11.4."
   }
 ]

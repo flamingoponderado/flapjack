@@ -1,0 +1,10 @@
+guard_none=T
+guard_missing=F
+guard_match=T
+guard_wrong_label=F
+guard_wrong_first_register=F
+guard_wrong_second_register=F
+guard_recursive_stub=F
+guard_return_nonzero=F
+guard_wrong_constructor=F
+guard_reversed_sequence=F

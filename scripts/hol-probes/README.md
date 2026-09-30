@@ -1478,3 +1478,22 @@ evaluator assembly and production routing remain tracked separately. The
 initial four-row slice was recovered from released fleet WIP without changing
 its shared stash; this slice extends its original HOL failure-path coverage.
 Regenerate using the established `scripts/hol-probes/regenerate.sh` workflow.
+
+## StackSem optional StoreConsts stub guard
+
+`stacksem_store_consts_guard_probeScript.sml` captures ten original
+`check_store_consts_opt_def` rows (stackSemScript.sml:743-747). NONE
+bypasses arbitrary code; SOME requires exactly Seq (StoreConsts t1 t2 NONE)
+(Return 0) at that label. Cases distinguish missing/wrong label, each
+register mismatch, nested stub, nonzero return, a wrong outer constructor,
+and reversed sequence order. Kernel replay lives in
+`Flapjack/Test/StackSemStoreConstsGuardParity.lean`.
+
+The structural guard uses the exact shared-word HolProg and Spt code
+carriers. Two universal kernel certificates equate its structural decision
+and lookup result to actual program equality, without an opaque-payload BEq
+or DecidableEq premise. Full StoreConsts evaluation and production routing
+remain on the assembly beads. Regenerate read-only with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_store_consts_guard_probeScript.sml
+bash scripts/hol-probes/regenerate.sh`.

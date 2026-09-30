@@ -43,6 +43,7 @@ import Flapjack.Test.StackSemRegisterTransfersParity
 import Flapjack.Test.StackSemPatternCopyParity
 import Flapjack.Test.StackSemIntegerInstParity
 import Flapjack.Test.StackSemEvaluateAllocCaseParity
+import Flapjack.Test.StackSemStoreConstsGuardParity
 import Flapjack.Test.PanGlobalsFpermCodeParity
 import Flapjack.Test.StackSemAllocationParity
 import Flapjack.Compiler.Backend.Semantics.StackSem.Bitmap
