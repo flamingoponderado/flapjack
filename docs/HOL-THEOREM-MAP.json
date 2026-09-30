@@ -29071,6 +29071,42 @@
     "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanGlobalsContextExact toBroad/ofBroad roundtrip; it supports PanGlobalsContextExact.globals named by the state_rel tags."
   },
   {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ClockExpressions.lean",
+    "lean_name": "evalDecClockEq",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "eval_dec_clock_eq",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison (2026-09-30; flapjack-uewj), HOL649-661: same unconditional state/expression or expression-list equation; eval is faithful evalCrepSemHOLExp, dec_clock exact subtraction, OPT_MMAP is Option List.mapM retaining both failure and success. No clock positivity or evaluation-success premise. Exact state canonical locals/globals/code maps with same-module roundtrip; positive width BitVec and universe-0 FFI host. Coordinator independent review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ClockExpressions.lean",
+    "lean_name": "optMmapEvalDecClockEq",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "opt_mmap_eval_dec_clock_eq",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison (2026-09-30; flapjack-uewj), HOL649-661: same unconditional state/expression or expression-list equation; eval is faithful evalCrepSemHOLExp, dec_clock exact subtraction, OPT_MMAP is Option List.mapM retaining both failure and success. No clock positivity or evaluation-success premise. Exact state canonical locals/globals/code maps with same-module roundtrip; positive width BitVec and universe-0 FFI host. Coordinator independent review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ClockExpressions.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Canonical broad/exact state roundtrip re-export; Flapjack representation infrastructure without a separate HOL original."
+  },
+  {
     "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NotBranchReturn.lean",
     "lean_name": "notBranchRetEvaluateReturnUnreachElim",
     "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
