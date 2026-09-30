@@ -1311,3 +1311,14 @@ traversals (nested, duplicate, empty, binary Shift, constant, lookup).
 reduction of the executed constant-erasure wrapper. Regenerate with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_alloc_live_exp_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`word_alloc_pair_keys_probe.out` records three original `apply_nummaps_key_def`
+rows (`word_allocScript.sml:29-33`): independent Boolean/numeric payloads,
+unit-map collisions, and an empty component with duplicate input keys.
+`Flapjack.Test.CakeApplyColourParity.pairedKeyMapExact` kernel-replays the
+heterogeneous exact maps and runtime-checks the actual paired allocator route
+for the unit cutsets. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_alloc_pair_keys_probeScript.sml
+scripts/hol-probes/regenerate.sh`; the original source was compared byte-for-byte
+before using the shared checkout's built objects.

@@ -26835,6 +26835,14 @@
     "reviewer": "Flapjack helper (bead flapjack-pxn.18.5.5.42.1) proving HOL inline_prog_correct's Call case (crep_inlineProofScript.sml:2409-2534) for every call inline_prog leaves as a Call (non-distinct return names, callee outside inl_bag, handler call), from the two tagged evaluate_ind Call IHs with P := crepInlineGoal. The HOL-only-suspended inlined Tail/Nontail paths are .42.2/.42.3; the tagged Call case is assembled in .42.4. Kernel-checked; standard axioms."
   },
   {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "apply_nummaps_key_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/KeyMaps.lean",
+    "lean_name": "applyNummapsKey",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-09-30 bead .11.1.9: original29-33 exact product of two fromAList/map-key/toAList operations. Independent alpha/beta Spt payloads retained, f Nat->Nat arbitrary incl collisions; existing applyNummapKey unfolds precisely to each original component. First-match reconstructed payload and mixed traversal order preserved. No word/type-width or finite-map qualifier: numeric tree carrier is exact Spt. Actual wordApplyColour Call (with/without handler), Alloc, Install and FFI paired cutsets now call applyNummapsKeyExecutable, whose numSetToExact/fromExact codecs execute this tagged definition. Universal equality to the two already reviewed single-map executable routes is rfl, no representation-validity/injection premises. Three original HOL paired observations captured; full compiler parity and source route audit reported on bead."
+  },
+  {
     "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
     "hol_name": "single_dec_evaluate",
     "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NestedDecs.lean",
