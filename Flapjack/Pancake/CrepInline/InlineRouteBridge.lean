@@ -1057,6 +1057,48 @@ def crepInlineCodecEntries {width : Nat} [NeZero width]
     List (CrepInlineEntry (BitVec width)) :=
   entries.map fun e => (toStringOfBytes e.1, (e.2.1, crepProgOfHOL e.2.2))
 
+/-- The codec of the exact-side filtered alist equals the executed-side inline
+    candidate list: filtering the decoded triples on the exact `MlString` name
+    set and then decoding gives the same list as filtering the source functions
+    on the `toStringOfBytes` image and then re-pairing.  No HOL original; it is
+    the list-level half of the top-level executed-vs-exact inline route relation
+    and uses the byte-range facts to invert the name and body codecs. -/
+theorem crepInlineCodecEntries_filter_map {width : Nat} [NeZero width]
+    (inl_fname : List CrepInlineMapHOLName)
+    (functions : List (FunName × List Nat × CrepProg (BitVec width)))
+    (hname : ∀ t ∈ functions, CrepNameRanged t.1)
+    (hprog : ∀ t ∈ functions, CrepProgNameRanged t.2.2) :
+    crepInlineCodecEntries
+        ((functions.map (fun t => (ofString t.1, t.2.1, crepProgToHOL t.2.2))).filter
+          (fun triple => inl_fname.contains triple.1))
+      = (functions.filter (fun t => (inl_fname.map toStringOfBytes).contains t.1)).map
+          (fun t => (t.1, (t.2.1, t.2.2))) := by
+  unfold crepInlineCodecEntries
+  revert hname hprog
+  induction functions with
+  | nil => intro hname hprog; rfl
+  | cons t rest ih =>
+      intro hname hprog
+      simp only [List.map_cons, List.filter_cons]
+      have ht_name : CrepNameRanged t.1 := hname t (by simp)
+      have ht_prog : CrepProgNameRanged t.2.2 := hprog t (by simp)
+      have hrest_name : ∀ u ∈ rest, CrepNameRanged u.1 := fun u hu => hname u (by simp [hu])
+      have hrest_prog : ∀ u ∈ rest, CrepProgNameRanged u.2.2 := fun u hu => hprog u (by simp [hu])
+      have hcontains : (inl_fname.map toStringOfBytes).contains t.1 =
+          inl_fname.contains (ofString t.1) :=
+        contains_map_toStringOfBytes t.1 ht_name
+      rw [hcontains]
+      by_cases hc : inl_fname.contains (ofString t.1) = true
+      · rw [if_pos hc, if_pos hc]
+        simp only [List.map_cons]
+        have hd : (toStringOfBytes (ofString t.1), (t.2.1, crepProgOfHOL (crepProgToHOL t.2.2)))
+            = (t.1, (t.2.1, t.2.2)) := by
+          rw [toStringOfBytes_ofString_of_bytes t.1 ht_name,
+            crepProgOfHOL_crepProgToHOL t.2.2 ht_prog]
+        rw [hd, ih hrest_name hrest_prog]
+      · rw [if_neg hc, if_neg hc]
+        exact ih hrest_name hrest_prog
+
 private theorem erase_active_contains {width : Nat} [NeZero width]
     (map : HolFiniteMapExact CrepInlineMapHOLName (List Nat × CrepProgHOL width))
     (active : Std.HashSet FunName) (name s : FunName)
