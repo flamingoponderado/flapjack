@@ -27414,5 +27414,69 @@
     "hol_name": "functions_filter_nil",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.7): exact DeclHOL/MlS/ShapeHOL re-port of HOL functions_filter_nil over the tagged exact functionsHOL/exceptionsHOL/decShapesHOL/fpermDecsHOL/resortDeclsHOL/newMainNameHOL/freshNameMlS and Bool-valued is_* predicates; same binders, hypotheses and conclusion (FILTER=List.filter, MAP FST=map Prod.fst, ALL_DISTINCT=Nodup, EVERY over Bool predicate = membership-quantified `= true`, unused HOL binders kept as free-typed binders). Supersedes the production-carrier documented_mismatch declaration of the same HOL name in Proofs/PanGlobals.lean, which stays untagged-by-status."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "evaluate_state_locals_rel_strong",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/Atoms.lean",
+    "lean_name": "evaluateStateLocalsRelStrongSkipExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; .43.5.1), HOL strong relation273-285 and atomic/Tick proof439-450/493. Genuine Skip constructor case: original eval, non-Error, locals_rel and state_rel premises; existential target same-result eval and post-state relation; same result-dependent locals_rel/locals_ext_rel (argument order s s' t t' checked against162-165). No extra premise or recursive IH. Skip/Break/Continue preserve both states; Tick splits original clock, uses state_rel clock equality, emptyLocals timeout and exact decClock relation. Imported canonical finite-support state, same-module roundtrip, positive-width Type0 words. Full theorem remains open."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "evaluate_state_locals_rel_strong",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/Atoms.lean",
+    "lean_name": "evaluateStateLocalsRelStrongBreakExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; .43.5.1), HOL strong relation273-285 and atomic/Tick proof439-450/493. Genuine Break constructor case: original eval, non-Error, locals_rel and state_rel premises; existential target same-result eval and post-state relation; same result-dependent locals_rel/locals_ext_rel (argument order s s' t t' checked against162-165). No extra premise or recursive IH. Skip/Break/Continue preserve both states; Tick splits original clock, uses state_rel clock equality, emptyLocals timeout and exact decClock relation. Imported canonical finite-support state, same-module roundtrip, positive-width Type0 words. Full theorem remains open."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "evaluate_state_locals_rel_strong",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/Atoms.lean",
+    "lean_name": "evaluateStateLocalsRelStrongContinueExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; .43.5.1), HOL strong relation273-285 and atomic/Tick proof439-450/493. Genuine Continue constructor case: original eval, non-Error, locals_rel and state_rel premises; existential target same-result eval and post-state relation; same result-dependent locals_rel/locals_ext_rel (argument order s s' t t' checked against162-165). No extra premise or recursive IH. Skip/Break/Continue preserve both states; Tick splits original clock, uses state_rel clock equality, emptyLocals timeout and exact decClock relation. Imported canonical finite-support state, same-module roundtrip, positive-width Type0 words. Full theorem remains open."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "evaluate_state_locals_rel_strong",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/Atoms.lean",
+    "lean_name": "evaluateStateLocalsRelStrongTickExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; .43.5.1), HOL strong relation273-285 and atomic/Tick proof439-450/493. Genuine Tick constructor case: original eval, non-Error, locals_rel and state_rel premises; existential target same-result eval and post-state relation; same result-dependent locals_rel/locals_ext_rel (argument order s s' t t' checked against162-165). No extra premise or recursive IH. Skip/Break/Continue preserve both states; Tick splits original clock, uses state_rel clock equality, emptyLocals timeout and exact decClock relation. Imported canonical finite-support state, same-module roundtrip, positive-width Type0 words. Full theorem remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/Atoms.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific canonical carrier roundtrip re-export; no independent HOL original."
   }
 ]
