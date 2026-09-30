@@ -455,6 +455,7 @@ import Flapjack.Test.CakeSsaControlParity
 import Flapjack.Test.CakeSsaCallParity
 import Flapjack.Test.CakeSsaInstParity
 import Flapjack.Test.CakeWordAllocParity
+import Flapjack.Test.WordAllocLiveExpressionParity
 import Flapjack.Test.CakeSsaSharedParity
 import Flapjack.Test.CakeSsaMemoryParity
 import Flapjack.Test.CakeSsaLeafParity
@@ -1010,6 +1011,7 @@ def main : IO Unit := do
     Flapjack.Test.CrepToLoopCodeRelParity.runChecks,
     Flapjack.Test.CakeRegAlloc.runChecks,
     Flapjack.Test.CakeWordAllocParity.runChecks,
+    Flapjack.WordAlloc.runChecks,
     Flapjack.Test.CrepeNestedSeqParity.runChecks,
     Flapjack.Test.CrepeStoresParity.runChecks,
     Flapjack.Test.CrepeNestedDecsParity.runChecks,
