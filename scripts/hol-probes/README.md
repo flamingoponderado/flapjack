@@ -1209,3 +1209,13 @@ is `Flapjack.Test.WordSemEvaluateParity`. Refresh with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_sem_evaluate_probeScript.sml
 bash scripts/hol-probes/regenerate.sh`.
+
+`word_alloc_colour_exp_probe.out` records original `word_alloc$apply_colour_exp_def`
+(`cakeml/compiler/backend/word_allocScript.sml:580-587`) at eight-bit words: nested
+Op/Load, a fixed five-bit Temp name, both expression-valued Shift operands,
+duplicate variables under an aliasing colouring, and empty Op arguments.
+`Flapjack.Test.CakeApplyColourParity.expressionColourExact` checks all three
+rows through the production function in the compiled `lake test` executable.
+Refresh with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_alloc_colour_exp_probeScript.sml
+bash scripts/hol-probes/regenerate.sh`.

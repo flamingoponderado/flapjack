@@ -7,7 +7,8 @@ import Flapjack.Pancake.WordLang
 The executable `WordExp` and exact `WordLangExpHOL` expression carriers share
 their expression constructors, but the production carrier parameterizes
 `WordStore` by a phantom word type. This module maps that field explicitly and
-provides width-specialized conversion in both directions. It is a carrier
+provides polymorphic conversion in both directions, including machine-word
+specializations. It is a carrier
 bridge only; it does not route production compilation through `compExpHOL`.
 -/
 
@@ -66,10 +67,10 @@ def wordStoreFromHOL {α : Type u} : WordStoreHOL → WordStore α
     wordStoreFromHOL (α := α) (wordStoreToHOL store) = store := by
   cases store <;> rfl
 
-/-- The executed expression carrier specialized to the machine word width and
-the exact HOL `wordLang$exp` carrier. -/
-def wordExpToHOL {width : Nat} :
-    WordExp (BitVec width) → WordLangExpHOL (BitVec width)
+/-- Convert the executed expression carrier to the constructor-matching HOL
+carrier. The codec is generic infrastructure; exact ports specialize to words. -/
+def wordExpToHOL {α : Type u} :
+    WordExp α → WordLangExpHOL α
   | .const value => .const value
   | .var name => .var name
   | .lookup store => .lookup (wordStoreToHOL store)
@@ -83,10 +84,10 @@ decreasing_by
     | exact sizeOf_list_dec _ _
     | decreasing_trivial
 
-/-- Exact HOL `wordLang$exp` decoded to the executed expression carrier at the
-same fixed width. -/
-def wordExpFromHOL {width : Nat} :
-    WordLangExpHOL (BitVec width) → WordExp (BitVec width)
+/-- Decode the constructor-matching HOL expression carrier to execution,
+retaining constant values and the fixed five-bit store-name payload. -/
+def wordExpFromHOL {α : Type u} :
+    WordLangExpHOL α → WordExp α
   | .const value => .const value
   | .var name => .var name
   | .lookup store => .lookup (wordStoreFromHOL store)
@@ -100,8 +101,8 @@ decreasing_by
     | exact sizeOf_list_dec _ _
     | decreasing_trivial
 
-theorem wordExpToHOL_fromHOL {width : Nat}
-    (expression : WordLangExpHOL (BitVec width)) :
+theorem wordExpToHOL_fromHOL {α : Type u}
+    (expression : WordLangExpHOL α) :
     wordExpToHOL (wordExpFromHOL expression) = expression := by
   refine WordLangExpHOL.rec
     (motive_1 := fun expression =>
@@ -125,8 +126,8 @@ theorem wordExpToHOL_fromHOL {width : Nat}
   · intro head tail ihHead ihTail
     simp [ihHead, ihTail]
 
-theorem wordExpFromHOL_toHOL {width : Nat}
-    (expression : WordExp (BitVec width)) :
+theorem wordExpFromHOL_toHOL {α : Type u}
+    (expression : WordExp α) :
     wordExpFromHOL (wordExpToHOL expression) = expression := by
   refine WordExp.rec
     (motive_1 := fun expression =>
