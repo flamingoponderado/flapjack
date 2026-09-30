@@ -1,3 +1,4 @@
+import Flapjack.Pancake.PanStructs.CompileExpExact
 import Flapjack.Pancake.PanStructs.OldExpShapeExact
 import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.RoundTrip
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.Expressions
