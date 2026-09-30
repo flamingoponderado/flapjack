@@ -1,15 +1,17 @@
 loop_arith_div=SOME [3]
-
 loop_arith_div_by_zero=NONE
-
 loop_arith_div_non_word=NONE
-
 loop_arith_longmul=SOME [1; 144]
-
 loop_arith_longmul_non_word=NONE
-
 loop_arith_longdiv=SOME [129; 1]
-
 loop_arith_longdiv_by_zero=NONE
-
 loop_arith_longdiv_overflow=NONE
+loop_arith_signed_0=SOME [0]
+loop_arith_signed_1=SOME [253]
+loop_arith_signed_2=SOME [253]
+loop_arith_signed_3=SOME [3]
+loop_arith_signed_4=SOME [128]
+loop_arith_signed_5=SOME [128]
+loop_arith_signed_6=SOME [0]
+loop_arith_signed_7=SOME [0]
+loop_arith_signed_8=NONE

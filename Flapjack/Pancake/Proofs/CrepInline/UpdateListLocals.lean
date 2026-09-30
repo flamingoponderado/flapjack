@@ -199,3 +199,25 @@ theorem submapFinishFlookup {α β : Type} [DecidableEq α] :
 end CrepInlineUpdateListLocals
 
 end Flapjack
+
+namespace Flapjack.CrepInlineUpdateListLocals
+
+/-- HOL SUBMAP_DIFF_LIST: adding fresh, distinct local names preserves every
+old binding. The length and distinctness premises are retained exactly even
+though the lookup proof needs only freshness. -/
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "SUBMAP_DIFF_LIST"
+  (fmap_as_finite_support_relation := [l])]
+theorem submapDiffListExact {α β : Type} [DecidableEq α]
+    (l : HolFiniteMapExact α β) (vs : List α) (vals : List β)
+    (_hlen : vs.length = vals.length) (_hdist : vs.Pairwise (· ≠ ·))
+    (hfresh : ∀ v ∈ vs, crepHolFdom l.lookup v = false) :
+    l.submap (l.updateListEq (vs.zip vals)) := by
+  intro key value hlookup
+  have hnot : key ∉ vs := by
+    intro hmem
+    have h := hfresh key hmem
+    simp [crepHolFdom, hlookup] at h
+  rw [lookup_updateListEq_zip_not_mem l vs vals key hnot]
+  exact hlookup
+
+end Flapjack.CrepInlineUpdateListLocals
