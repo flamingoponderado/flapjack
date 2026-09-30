@@ -36007,9 +36007,34 @@
 {
   "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
   "lean_name": "compileCorrect_CallGlobalHandler",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "compile_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "reviewer": "flapjack-luna-c source comparison33.11: original gen_goal172-181 and global destination Call with handler1138-1509. Literal compile_def118-125 nested result/flag Dec, names list parse, handler Seq flag1, Call Local result and If flag Skip Store(top-offset,VarLocalresult) retained. ONLY original args/code/nonzero-clock guarded callee IH and matching exception/eshapes/value shape/local validity guarded handler IH; full existential target run and goodRes post relation unchanged. Zero-clock, missing-context fallback, normal returned global Store, matched/unmatched exception, timeout/final FFI and all original nonError exclusions internally proved. Arguments/code/clock/entry relations and target callee/handler executions internally derived, no targetrun/postrelation/freshness/success premise. Both actual saved scratch lookups restored including absent bindings. Native MlS/ProgHOL/ShapeHOL/ValueHOL carriers, canonical state/context map ownership and nonvacuous roundtrip witnesses retained; bare callee finite map parameter covered. Positive BitVec width and Type0 FFI conventional translation only. Kernel PASS; coordinator independent source acceptance/integration pending, bead remains open.",
+  "fmap_as_finite_support_relation": [
+    "PanSemStateFiniteExact.locals",
+    "PanSemStateFiniteExact.globals",
+    "PanSemStateFiniteExact.code",
+    "PanSemStateFiniteExact.eshapes",
+    "PanGlobalsContextExact.globals",
+    "callee"
+  ],
+  "words_as_type_indexed_bitvec": true
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
   "hol_path": null,
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Public all-outcomes global destination Call with handler correctness candidate matching gen_goal and ONLY original guarded callee/handler IHs. Kernel checked zero-clock, return, matched/unmatched exception, timeout/final FFI and nonError exclusions. Untagged pending coordinator full HOL statement/carrier source review and justified qualifiers; no completed theorem-port claim."
+  "reviewer": "Canonical imported state/context roundtrip witness reexport, Flapjack representation infrastructure for qualified Call theorem."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Canonical imported state/context roundtrip witness reexport, Flapjack representation infrastructure for qualified Call theorem."
 }
 ]

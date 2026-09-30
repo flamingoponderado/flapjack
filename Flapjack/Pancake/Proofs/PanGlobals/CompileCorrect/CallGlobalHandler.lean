@@ -1368,8 +1368,29 @@ private theorem missingContextCorrect {width : Nat} {σ : Type} [NeZero width]
   refine ⟨targetPost, ?_, hpost⟩
   simpa only [compileProgExactHOL, hmissing] using htarget
 
-/-- Full global destination Call with handler over exact evaluators and original guarded IHs.
-Currently untagged pending final HOL carrier/statement review; no extra branch premises. -/
+/-- Canonical state roundtrips for the relation representation. -/
+theorem holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact
+    {width : Nat} {σ : Type} [NeZero width] :
+    (∀ (state : PanSemStateExact width σ) (h : state.FiniteSupport),
+        (PanSemStateFiniteExact.ofExact state h).toExact = state) ∧
+    (∀ state : PanSemStateFiniteExact width σ,
+        PanSemStateFiniteExact.ofExact state.toExact state.toExact_finiteSupport = state) :=
+  PanSemStateFiniteExact.holFmapAsFiniteSupportWitness
+
+/-- Canonical context roundtrip for the relation representation. -/
+theorem holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact
+    {width : Nat} [NeZero width] (context : PanGlobalsContextExact width) :
+    PanGlobalsContextExact.ofBroad (PanGlobalsContextExact.toBroad context) = context :=
+  PanGlobalsContextExact.holFmapAsFiniteSupportWitness context
+
+/-- Global destination Call with handler, with the original guarded callee and
+handler IHs and full result-dependent relation. Literal two scratch Dec scopes,
+handler flag continuation and return Store are derived internally. -/
+@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "compile_correct"
+  (fmap_as_finite_support_relation := [PanSemStateFiniteExact.locals,
+    PanSemStateFiniteExact.globals, PanSemStateFiniteExact.code,
+    PanSemStateFiniteExact.eshapes, PanGlobalsContextExact.globals, callee])
+  (words_as_type_indexed_bitvec)]
 theorem compileCorrect_CallGlobalHandler {width : Nat} {σ : Type} [NeZero width]
     (source : PanSemStateFiniteExact width σ) (name function : MlS) (arguments : List (ExpHOL width))
     (handlerId handlerVar : MlS) (handlerBody : ProgHOL width)
