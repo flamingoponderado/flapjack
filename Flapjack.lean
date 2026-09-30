@@ -1,4 +1,5 @@
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallNoDestination
+import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.TailCall
 import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.Assemble
 import Flapjack.Pancake.Proofs.PanGlobals.GlobalUpdateSupport
 import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.AssignPrimitive
@@ -11,6 +12,7 @@ import Flapjack.Pancake.Proofs.CrepInline.WhileInduction
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.While
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Raise
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Primitive
+import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.ExtCall
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Dec
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.If
 import Flapjack.Compiler.Backend.Semantics.StackSem.LocValueCase
