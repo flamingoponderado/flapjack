@@ -1,0 +1,6 @@
+reg_present=Reg 7
+reg_missing=Reg 4
+imm=Imm 255w
+dest_present=INR 7
+dest_missing=INR 4
+dest_label=INL 3
