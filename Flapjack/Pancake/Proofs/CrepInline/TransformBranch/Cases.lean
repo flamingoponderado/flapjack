@@ -43,7 +43,11 @@ def transformBranchPost {width : Nat} [NeZero width] {σ : Type} (ld : Nat) (rts
   | _ => r1 = r
 
 /-- The `evaluate_ind` motive of HOL `transform_branch_correct` at `(p, s)`.
-    Untagged Flapjack spelling of the motive. -/
+    Untagged Flapjack spelling of the motive. HOL also universally binds `res`,
+    which occurs nowhere in its hypotheses or conclusion; this motive omits
+    that vacuous binder. Reintroducing it leaves every instantiated goal
+    unchanged. In contrast, evaluate_unchanged_local retains its unused `v`
+    to mirror the source spelling. Neither choice omits a semantic guard. -/
 def transformBranchGoal {width : Nat} [NeZero width] {σ : Type}
     (p : CrepProgHOL width) (s : CrepSemHOLState width σ) : Prop :=
   ∀ (r : Option (CrepResultHOLExact width)) (s' : CrepSemHOLState width σ)
