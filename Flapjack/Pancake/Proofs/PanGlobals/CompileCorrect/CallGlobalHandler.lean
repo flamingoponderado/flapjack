@@ -635,6 +635,30 @@ private theorem returnedScratchCall {width : Nat} {σ : Type} [NeZero width]
   exact returnedLocalCall scratch post resultName function arguments values body callee returnShape
     initializer value _ ha hcode hclock hbody hreturn hlocal hshape
 
+/-- Normalize the literal returned Call's scratch writes before the Store tail.
+This private state identity is Flapjack proof infrastructure; it does not assert
+an additional HOL case or assume freshness of the caller's bindings. -/
+private theorem returnedScratchState {width : Nat} {σ : Type} [NeZero width]
+    (caller post : PanSemStateFiniteExact width σ) (resultName flagName : MlS)
+    (initializer value : ValueHOL width) (hne : resultName ≠ flagName) :
+    setVarHOLFinite resultName value
+      {post with locals := (setVarHOLFinite flagName (.val (.word (BitVec.ofNat width 0)))
+        (setVarHOLFinite resultName initializer caller)).locals} =
+    setVarHOLFinite flagName (.val (.word (BitVec.ofNat width 0)))
+      (setVarHOLFinite resultName value {post with locals := caller.locals}) := by
+  have hm : ((caller.locals.update (resultName, initializer)).update
+      (flagName, .val (.word (BitVec.ofNat width 0)))).update (resultName, value) =
+      (caller.locals.update (resultName, value)).update
+        (flagName, .val (.word (BitVec.ofNat width 0))) := by
+    apply HolFiniteMapExact.ext
+    funext key
+    by_cases hr : resultName = key
+    · have hf : flagName ≠ key := by simpa only [← hr] using Ne.symm hne
+      simp [FUPDATE, hr, hf]
+    · simp [FUPDATE, hr]
+  simp only [setVarHOLFinite]
+  rw [hm]
+
 /-- Internal missing-context branch of the full constructor proof. The branch
 condition selects the literal compiler fallback; the callee and handler IHs
 remain those of the original evaluator. Untagged infrastructure until the full

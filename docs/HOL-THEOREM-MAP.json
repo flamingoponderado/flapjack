@@ -34621,5 +34621,14 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-only actual generated normal-return Call connection for33.11. Consumes original callee IH branch run/args/lookup/clock/shape facts; scratch arguments, unchanged code/clock and identical callee entry derived internally, as is destination binding via accepted literal-name freshness. No scratch target-run or freshness public premise. Untagged internal clause, not full constructor port; handler/source-IH connections and remaining Call clauses/assembly unfinished."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "returnedScratchState",
+  "status": "no_hol_reference_pending_classification",
+  "reviewer": "Private scratch-write state identity for the pending full global destination Call handler case; untagged Flapjack infrastructure, not a completed HOL constructor port.",
+  "hol_name": null,
+  "hol_path": null,
+  "statement_status": "no_hol_reference_pending_classification"
 }
 ]
