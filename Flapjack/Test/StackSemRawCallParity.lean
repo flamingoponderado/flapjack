@@ -76,8 +76,8 @@ example : observe (evaluateRawCall (evaluateStub (C := C) (F := F)) 15
 /-! Closed helper checks: `dest_Seq` decomposes exactly `Seq` and `none`
 otherwise, and `bad_fun_return` classifies `NONE`/`Break`/`Continue`. -/
 private def checks : Bool :=
-  (Flapjack.StackSemControl.destSeqHOL (.seq .skip (.ret 4) : HolProg 8)).isSome &&
-  (Flapjack.StackSemControl.destSeqHOL (.skip : HolProg 8)).isNone &&
+  (Flapjack.StackSemControl.destSeq (.seq .skip (.ret 4) : HolProg 8)).isSome &&
+  (Flapjack.StackSemControl.destSeq (.skip : HolProg 8)).isNone &&
   Flapjack.StackSemControl.badFunReturn (none : Option (StackSemResult 8)) &&
   Flapjack.StackSemControl.badFunReturn (some (.break 2) : Option (StackSemResult 8)) &&
   Flapjack.StackSemControl.badFunReturn (some (.continue 3) : Option (StackSemResult 8)) &&

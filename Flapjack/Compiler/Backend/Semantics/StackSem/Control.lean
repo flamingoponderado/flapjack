@@ -1,12 +1,9 @@
 import Flapjack.Compiler.Backend.Semantics.StackSem.State
 
-/-! Counterpart of StackSem's code lookup, clock-clamping, and evaluate-def
-result-classification prerequisites. The payload of the code tree and the result
-component of the clock pair retain HOL's polymorphism. No evaluator or
-production-path refinement is supplied. -/
+/-! Counterpart of StackSem's code lookup and clock-clamping prerequisites.
+The payload of the code tree and the result component of the clock pair retain
+HOL's polymorphism. No evaluator or production-path refinement is supplied. -/
 namespace Flapjack.StackSemControl
-
-open Flapjack.Compiler.Backend.StackLang
 
 /-- Canonical finite-support state roundtrip re-export; infrastructure. -/
 theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} :
@@ -76,17 +73,14 @@ def exitLoop {width : Nat} [NeZero width] :
   | some (.continue label) => some (.continue (label - 1))
   | result => result
 
-/-- Untagged local alias for the RawCall entry-point decomposition of
-`cakeml/compiler/backend/semantics/stackSemScript.sml:749-751` `dest_Seq_def`:
-split a program on its two `Seq` components and return `none` otherwise.
-
-The single canonical tagged port of HOL `dest_Seq_def` is `destSeq`
-(added to this module by the companion exact-decoder change); this alias is
-retained only so the untagged RawCall slice compiles independently and should
-be deleted in favour of `destSeq` once that canonical definition lands. No
-`@[hol]` tag is carried here, to avoid two tags on the same HOL declaration. -/
-def destSeqHOL {width : Nat} [NeZero width] :
-    HolProg width → Option (HolProg width × HolProg width)
+/-- HOL `dest_Seq` (`cakeml/compiler/backend/semantics/stackSemScript.sml`):
+    expose a `Seq`'s two immediate sub-programs, otherwise `none`. -/
+@[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "dest_Seq_def"
+  (words_as_type_indexed_bitvec)]
+def destSeq {width : Nat} [NeZero width] :
+    Flapjack.Compiler.Backend.StackLang.HolProg width →
+      Option (Flapjack.Compiler.Backend.StackLang.HolProg width ×
+        Flapjack.Compiler.Backend.StackLang.HolProg width)
   | .seq first second => some (first, second)
   | _ => none
 

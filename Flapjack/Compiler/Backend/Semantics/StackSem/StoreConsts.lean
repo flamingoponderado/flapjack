@@ -56,28 +56,29 @@ theorem copyWordsForPattern_index_le {width : Nat} [NeZero width]
     exact Nat.le_trans (Nat.le_succ index) (ih h)
   case case4 => contradiction
 
-/-- HOL outer bitmap-copy driver (`copy_words_def`): walk the bitmap list from
-`index`, applying `copyWordsForPattern` at each step and continuing while the
-current pattern's high bit is set. -/
+set_option maxHeartbeats 800000 in
+set_option linter.unusedSimpArgs false in
+/-- HOL `copy_words_def` (`cakeml/compiler/backend/semantics/stackSemScript.sml`):
+the outer bitmap copy over the exact StackSem bitmap/memory carriers.  Reuses the
+accepted tagged `copyWordsForPattern` and its index bound. -/
 @[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "copy_words_def"
   (words_as_type_indexed_bitvec)]
-def copyWords {width : Nat} [NeZero width]
-    (index : Nat) (address offset : BitVec width)
-    (bitmaps : List (BitVec width)) (domain : BitVec width → Prop)
-    [DecidablePred domain] (memory : BitVec width → WordLocW width) :
+def copyWordsExact {width : Nat} [NeZero width] (i : Nat) (a off : BitVec width)
+    (bs : List (BitVec width)) (domain : BitVec width → Prop) [DecidablePred domain]
+    (memory : BitVec width → WordLocW width) :
     Option (BitVec width × (BitVec width → WordLocW width)) :=
-  if bitmaps.length ≤ index then none else
-    let pattern := bitmaps[index]!
-    match _hpat : copyWordsForPattern pattern (index + 1) address offset bitmaps domain memory with
+  if _h : bs.length ≤ i then none
+  else
+    let pattern := bs[i]!
+    match _hcp : copyWordsForPattern pattern (i + 1) a off bs domain memory with
     | none => none
-    | some (index1, address1, memory1) =>
-        if pattern.msb then copyWords index1 address1 offset bitmaps domain memory1
-        else some (address1, memory1)
-termination_by bitmaps.length - index
+    | some (i1, a1, m1) =>
+        if pattern.msb then copyWordsExact i1 a1 off bs domain m1 else some (a1, m1)
+termination_by bs.length - i
 decreasing_by
-  have hle : index + 1 ≤ index1 :=
-    copyWordsForPattern_index_le pattern (index + 1) address offset bitmaps domain memory
-      index1 (address1, memory1) _hpat
+  simp_wf
+  have hle : i + 1 ≤ i1 :=
+    copyWordsForPattern_index_le pattern (i + 1) a off bs domain memory i1 (a1, m1) _hcp
   omega
 
 end Flapjack.StackSemStoreConsts

@@ -27,7 +27,7 @@ def evaluateRawCall {width : Nat} [NeZero width] {C F : Type}
   match sptLookup dest s.code with
   | none => (some .error, s)
   | some prog =>
-      match destSeqHOL prog with
+      match destSeq prog with
       | some (_, body) =>
           if s.clock = 0 then (some .timeOut, emptyEnv s)
           else
