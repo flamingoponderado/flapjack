@@ -29114,5 +29114,27 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Canonical broad/exact state roundtrip re-export; Flapjack representation infrastructure without a separate HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ExpressionCodeAgreement.lean",
+    "lean_name": "evalStateLocalsSameCodeFdomSame",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "eval_state_locals_same_code_fdom_same",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison (2026-09-30; jn6v), HOL1467-1503: same state/expression/value/target binders and conjunction of source successful eval, reviewed state_rel_code, reviewed locals_strong_rel, and source code-domain subset. FDOM membership represented by lookup != none (equivalent to existence of SOME lookup by Option cases, as HOL1456). Same successful target value conclusion. No target-evaluation hypothesis, extra premises or stronger public conclusion. Exact Crep carriers, canonical state maps with same-module roundtrip, positive BitVec and universe-0 FFI host. Existing untagged exact Option-equality helper is proof infrastructure only. Coordinator independent review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ExpressionCodeAgreement.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Canonical carrier roundtrip re-export, Flapjack infrastructure with no separate HOL declaration."
   }
 ]
