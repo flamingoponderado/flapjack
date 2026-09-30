@@ -27523,10 +27523,120 @@
   {
     "hol_path": null,
     "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileDecsStructural.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack support (bead flapjack-pxn.18.5.2.22.8): same-module canonical finite-support roundtrip witness re-export for the fmap_as_finite_support qualifier; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileDecsStructural.lean",
+    "lean_name": "compile_decs_functions_thmHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_decs_functions_thm",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.8): exact port of HOL compile_decs_functions_thm over the tagged exact compileDecsExactHOL/compileProgExactHOL/compileTopExactHOL (and, for the evaluate_decls lemmas, evaluateDeclsHOLFinite/isWfShapeExactHOL/isWfShapeNilHOL) on DeclHOL/MlS/ShapeHOL; same binders, hypotheses and conclusion (4-tuple equality premise as in HOL, FILTER=List.filter, EVERY=membership-quantified, ALOOKUP=List.lookup, HOL free P as Prop predicate, HOL ARB on the unreachable non-function branch of compile_decs_functions_thm rendered by a fixed Name declaration as in functionsHOL_eq_FILTER). Qualifiers record only the finite-map carrier and BitVec word dimension."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileDecsStructural.lean",
+    "lean_name": "compile_decs_decls_thmHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_decs_decls_thm",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.8): exact port of HOL compile_decs_decls_thm over the tagged exact compileDecsExactHOL/compileProgExactHOL/compileTopExactHOL (and, for the evaluate_decls lemmas, evaluateDeclsHOLFinite/isWfShapeExactHOL/isWfShapeNilHOL) on DeclHOL/MlS/ShapeHOL; same binders, hypotheses and conclusion (4-tuple equality premise as in HOL, FILTER=List.filter, EVERY=membership-quantified, ALOOKUP=List.lookup, HOL free P as Prop predicate, HOL ARB on the unreachable non-function branch of compile_decs_functions_thm rendered by a fixed Name declaration as in functionsHOL_eq_FILTER). Qualifiers record only the finite-map carrier and BitVec word dimension."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileDecsStructural.lean",
+    "lean_name": "compile_decs_EVERY_is_functionHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_decs_EVERY_is_function",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.8): exact port of HOL compile_decs_EVERY_is_function over the tagged exact compileDecsExactHOL/compileProgExactHOL/compileTopExactHOL (and, for the evaluate_decls lemmas, evaluateDeclsHOLFinite/isWfShapeExactHOL/isWfShapeNilHOL) on DeclHOL/MlS/ShapeHOL; same binders, hypotheses and conclusion (4-tuple equality premise as in HOL, FILTER=List.filter, EVERY=membership-quantified, ALOOKUP=List.lookup, HOL free P as Prop predicate, HOL ARB on the unreachable non-function branch of compile_decs_functions_thm rendered by a fixed Name declaration as in functionsHOL_eq_FILTER). Qualifiers record only the finite-map carrier and BitVec word dimension."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileDecsStructural.lean",
+    "lean_name": "compile_decs_EVERYHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_decs_EVERY",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.8): exact port of HOL compile_decs_EVERY over the tagged exact compileDecsExactHOL/compileProgExactHOL/compileTopExactHOL (and, for the evaluate_decls lemmas, evaluateDeclsHOLFinite/isWfShapeExactHOL/isWfShapeNilHOL) on DeclHOL/MlS/ShapeHOL; same binders, hypotheses and conclusion (4-tuple equality premise as in HOL, FILTER=List.filter, EVERY=membership-quantified, ALOOKUP=List.lookup, HOL free P as Prop predicate, HOL ARB on the unreachable non-function branch of compile_decs_functions_thm rendered by a fixed Name declaration as in functionsHOL_eq_FILTER). Qualifiers record only the finite-map carrier and BitVec word dimension."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileDecsStructural.lean",
+    "lean_name": "compile_decls_appendHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_decls_append",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.8): exact port of HOL compile_decls_append over the tagged exact compileDecsExactHOL/compileProgExactHOL/compileTopExactHOL (and, for the evaluate_decls lemmas, evaluateDeclsHOLFinite/isWfShapeExactHOL/isWfShapeNilHOL) on DeclHOL/MlS/ShapeHOL; same binders, hypotheses and conclusion (4-tuple equality premise as in HOL, FILTER=List.filter, EVERY=membership-quantified, ALOOKUP=List.lookup, HOL free P as Prop predicate, HOL ARB on the unreachable non-function branch of compile_decs_functions_thm rendered by a fixed Name declaration as in functionsHOL_eq_FILTER). Qualifiers record only the finite-map carrier and BitVec word dimension."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileDecsStructural.lean",
+    "lean_name": "compile_decs_preserve_functionsHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_decs_preserve_functions",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.8): exact port of HOL compile_decs_preserve_functions over the tagged exact compileDecsExactHOL/compileProgExactHOL/compileTopExactHOL (and, for the evaluate_decls lemmas, evaluateDeclsHOLFinite/isWfShapeExactHOL/isWfShapeNilHOL) on DeclHOL/MlS/ShapeHOL; same binders, hypotheses and conclusion (4-tuple equality premise as in HOL, FILTER=List.filter, EVERY=membership-quantified, ALOOKUP=List.lookup, HOL free P as Prop predicate, HOL ARB on the unreachable non-function branch of compile_decs_functions_thm rendered by a fixed Name declaration as in functionsHOL_eq_FILTER). Qualifiers record only the finite-map carrier and BitVec word dimension."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileDecsStructural.lean",
+    "lean_name": "compile_decs_exns_are_exnsHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_decs_exns_are_exns",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.8): exact port of HOL compile_decs_exns_are_exns over the tagged exact compileDecsExactHOL/compileProgExactHOL/compileTopExactHOL (and, for the evaluate_decls lemmas, evaluateDeclsHOLFinite/isWfShapeExactHOL/isWfShapeNilHOL) on DeclHOL/MlS/ShapeHOL; same binders, hypotheses and conclusion (4-tuple equality premise as in HOL, FILTER=List.filter, EVERY=membership-quantified, ALOOKUP=List.lookup, HOL free P as Prop predicate, HOL ARB on the unreachable non-function branch of compile_decs_functions_thm rendered by a fixed Name declaration as in functionsHOL_eq_FILTER). Qualifiers record only the finite-map carrier and BitVec word dimension."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileDecsStructural.lean",
+    "lean_name": "compile_decs_FILTER_declsHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_decs_FILTER_decs",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.8): exact port of HOL compile_decs_FILTER_decs over the tagged exact compileDecsExactHOL/compileProgExactHOL/compileTopExactHOL (and, for the evaluate_decls lemmas, evaluateDeclsHOLFinite/isWfShapeExactHOL/isWfShapeNilHOL) on DeclHOL/MlS/ShapeHOL; same binders, hypotheses and conclusion (4-tuple equality premise as in HOL, FILTER=List.filter, EVERY=membership-quantified, ALOOKUP=List.lookup, HOL free P as Prop predicate, HOL ARB on the unreachable non-function branch of compile_decs_functions_thm rendered by a fixed Name declaration as in functionsHOL_eq_FILTER). Qualifiers record only the finite-map carrier and BitVec word dimension."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermCode.lean",
     "lean_name": "holFmapAsFiniteSupportResultWitness_fpermCodeHOL",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-sol2026-09-30 .22.4.1: Flapjack canonical finite-map implementation/codec factoring, localized provenance in docstring. Single-update and arbitrary-entry list-update lemmas are not standalone HOL declarations; source restricts update list to functions. FEMPTY kernel equality remains untagged because a supported single-equality representation rule is absent (tracked .4.3), not a completed HOL port. Codec witness compares tagged lookup to independent raw FUN_FMAP rendering without assuming target equality."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileDecsStructural.lean",
+    "lean_name": "compileDecs_exns_proj",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack support (bead flapjack-pxn.18.5.2.22.8): local proof factoring for the exact compile_decs/compile_top ports; no HOL original."
   },
   {
     "hol_path": null,
@@ -27569,5 +27679,98 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison 2026-09-30, y19g.11.2.1: source688-709. Same zero-failure and one-sentinel success before domain/index checks; low bit relocates only selected words, total function memory update at address, logical right shift, index increment, modular address increment. bytes_in_word compared with HOL/src/n-bit/byteScript.sml:193-195: n2w(dimindex DIV8). List EL is under identical bounds. Positive BitVec dimension is sole qualifier; domain as Prop/function set, DecidablePred supplies computation, no extra logical premise. LESS_EQ retains source final pair (address,memory), success premise and index conclusion without extra hypotheses. Numeric pattern measure proves termination. Twelve direct original HOL rows/kernel replay cover failures, sentinel bypass, modular overflow, widths16 and4 including zero-stride overwrite. No executed compiler or full evaluator completion claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileDecsStructural.lean",
+    "lean_name": "compileDecs_funs_proj",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack support (bead flapjack-pxn.18.5.2.22.8): local proof factoring for the exact compile_decs/compile_top ports; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileDecsStructural.lean",
+    "lean_name": "compile_top_only_functions_or_exnsHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_top_only_functions_or_exns",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.8): exact port of HOL compile_top_only_functions_or_exns over the tagged exact compileDecsExactHOL/compileProgExactHOL/compileTopExactHOL (and, for the evaluate_decls lemmas, evaluateDeclsHOLFinite/isWfShapeExactHOL/isWfShapeNilHOL) on DeclHOL/MlS/ShapeHOL; same binders, hypotheses and conclusion (4-tuple equality premise as in HOL, FILTER=List.filter, EVERY=membership-quantified, ALOOKUP=List.lookup, HOL free P as Prop predicate, HOL ARB on the unreachable non-function branch of compile_decs_functions_thm rendered by a fixed Name declaration as in functionsHOL_eq_FILTER). Qualifiers record only the finite-map carrier and BitVec word dimension."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileDecsStructural.lean",
+    "lean_name": "exceptionsHOL_fpermDecsHOL",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack support (bead flapjack-pxn.18.5.2.22.8): local proof factoring for the exact compile_decs/compile_top ports; no HOL original."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileDecsStructural.lean",
+    "lean_name": "exceptionsHOL_of_functions",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack support (bead flapjack-pxn.18.5.2.22.8): local proof factoring for the exact compile_decs/compile_top ports; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileDecsStructural.lean",
+    "lean_name": "exceptions_compile_topHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "exceptions_compile_top",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.8): exact port of HOL exceptions_compile_top over the tagged exact compileDecsExactHOL/compileProgExactHOL/compileTopExactHOL (and, for the evaluate_decls lemmas, evaluateDeclsHOLFinite/isWfShapeExactHOL/isWfShapeNilHOL) on DeclHOL/MlS/ShapeHOL; same binders, hypotheses and conclusion (4-tuple equality premise as in HOL, FILTER=List.filter, EVERY=membership-quantified, ALOOKUP=List.lookup, HOL free P as Prop predicate, HOL ARB on the unreachable non-function branch of compile_decs_functions_thm rendered by a fixed Name declaration as in functionsHOL_eq_FILTER). Qualifiers record only the finite-map carrier and BitVec word dimension."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopShapeWf.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack support (bead flapjack-pxn.18.5.2.22.8): same-module canonical finite-support roundtrip witness re-export for the fmap_as_finite_support qualifier; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopShapeWf.lean",
+    "lean_name": "evaluate_decls_functions_wfHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "evaluate_decls_functions_wf",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.8): exact port of HOL evaluate_decls_functions_wf over the tagged exact compileDecsExactHOL/compileProgExactHOL/compileTopExactHOL (and, for the evaluate_decls lemmas, evaluateDeclsHOLFinite/isWfShapeExactHOL/isWfShapeNilHOL) on DeclHOL/MlS/ShapeHOL; same binders, hypotheses and conclusion (4-tuple equality premise as in HOL, FILTER=List.filter, EVERY=membership-quantified, ALOOKUP=List.lookup, HOL free P as Prop predicate, HOL ARB on the unreachable non-function branch of compile_decs_functions_thm rendered by a fixed Name declaration as in functionsHOL_eq_FILTER). Qualifiers record only the finite-map carrier and BitVec word dimension. Follow-up (source review): the evaluator's memory-domain decidability is Classical.propDecidable at every evaluateDeclsHOLFinite call in hypothesis and conclusion; the earlier extra [DecidablePred s.memaddrs] binder, absent from HOL, is removed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopShapeWf.lean",
+    "lean_name": "compile_top_shape_wfHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_top_shape_wf",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.8): exact port of HOL compile_top_shape_wf over the tagged exact compileDecsExactHOL/compileProgExactHOL/compileTopExactHOL (and, for the evaluate_decls lemmas, evaluateDeclsHOLFinite/isWfShapeExactHOL/isWfShapeNilHOL) on DeclHOL/MlS/ShapeHOL; same binders, hypotheses and conclusion (4-tuple equality premise as in HOL, FILTER=List.filter, EVERY=membership-quantified, ALOOKUP=List.lookup, HOL free P as Prop predicate, HOL ARB on the unreachable non-function branch of compile_decs_functions_thm rendered by a fixed Name declaration as in functionsHOL_eq_FILTER). Qualifiers record only the finite-map carrier and BitVec word dimension. Follow-up (source review): the evaluator's memory-domain decidability is Classical.propDecidable at every evaluateDeclsHOLFinite call in hypothesis and conclusion; the earlier extra [DecidablePred s.memaddrs] binder, absent from HOL, is removed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopShapeWf.lean",
+    "lean_name": "compile_top_shape_wf_nilHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_top_shape_wf_nil",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.8): exact port of HOL compile_top_shape_wf_nil over the tagged exact compileDecsExactHOL/compileProgExactHOL/compileTopExactHOL (and, for the evaluate_decls lemmas, evaluateDeclsHOLFinite/isWfShapeExactHOL/isWfShapeNilHOL) on DeclHOL/MlS/ShapeHOL; same binders, hypotheses and conclusion (4-tuple equality premise as in HOL, FILTER=List.filter, EVERY=membership-quantified, ALOOKUP=List.lookup, HOL free P as Prop predicate, HOL ARB on the unreachable non-function branch of compile_decs_functions_thm rendered by a fixed Name declaration as in functionsHOL_eq_FILTER). Qualifiers record only the finite-map carrier and BitVec word dimension. Follow-up (source review): the evaluator's memory-domain decidability is Classical.propDecidable at every evaluateDeclsHOLFinite call in hypothesis and conclusion; the earlier extra [DecidablePred s.memaddrs] binder, absent from HOL, is removed."
   }
 ]

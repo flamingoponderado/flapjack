@@ -13,6 +13,21 @@ private def compileTopFunctionLookup {width : Nat} [NeZero width] (start : MlS) 
   | (name, entry) :: entries =>
       if start = name then some entry else compileTopFunctionLookup start entries
 
+/-- The local first-match selection is HOL `ALOOKUP`, rendered as core
+`List.lookup` under `MlS` decidable equality. Flapjack factoring lemma with no
+independent HOL declaration. -/
+theorem compileTopFunctionLookup_eq_lookup {width : Nat} [NeZero width] (start : MlS)
+    (entries : List (MlS × List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL)) :
+    compileTopFunctionLookup start entries = entries.lookup start := by
+  induction entries with
+  | nil => rfl
+  | cons entry entries ih =>
+      obtain ⟨name, value⟩ := entry
+      by_cases h : start = name
+      · subst h; simp [compileTopFunctionLookup, List.lookup]
+      · have : (start == name) = false := by simpa using h
+        simp [compileTopFunctionLookup, List.lookup, h, this, ih]
+
 /-- The top compiler's first-match selection commutes with decoding exact
 declarations and names. Only the arguments, body and return shape are selected
 by HOL `compile_top`; inline/export flags are intentionally outside this
