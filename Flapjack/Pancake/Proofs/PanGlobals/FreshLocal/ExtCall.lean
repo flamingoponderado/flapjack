@@ -1,0 +1,74 @@
+import Flapjack.Pancake.Proofs.PanGlobals
+import Flapjack.Pancake.Semantics.PanProps.EvalInvariant
+
+namespace Flapjack.PanGlobalsFreshLocalExtCall
+
+open Flapjack.Pancake.PanLang
+open Flapjack.PanSemStateFiniteExact
+
+/-- Canonical finite state roundtrip; no separate HOL original. -/
+theorem holFmapAsFiniteSupportWitness {width : Nat} {σ : Type} [NeZero width] :
+    (∀ (state : PanSemStateExact width σ) (h : state.FiniteSupport),
+      (PanSemStateFiniteExact.ofExact state h).toExact = state) ∧
+    (∀ state : PanSemStateFiniteExact width σ,
+      PanSemStateFiniteExact.ofExact state.toExact state.toExact_finiteSupport = state) :=
+  PanSemStateFiniteExact.holFmapAsFiniteSupportWitness
+
+/-- Flapjack-specific transport of existing broad expression freshness through
+the canonical state codec. The domain decision is internal, not a premise. -/
+private theorem evalFreshUpdate {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (name : MlS) (value : ValueHOL width)
+    (expression : ExpHOL width) (h : name ∉ varExpHOL expression) :
+    @evalHOLExact width σ _
+      ({state with locals := state.locals.updateEq (name, value)} :
+        PanSemStateFiniteExact width σ).toExact
+      (fun address => Classical.propDecidable (state.memaddrs address)) expression =
+    @evalHOLExact width σ _ state.toExact
+      (fun address => Classical.propDecidable (state.memaddrs address)) expression := by
+  classical
+  have hlookup : (state.locals.updateEq (name, value)).lookup =
+      FUPDATE_HOL state.locals.lookup (name, value) := by
+    funext key
+    exact HolFiniteMapExact.lookup_updateEq _ _ _
+  simpa only [toExact_setLocals, hlookup] using
+    (@evalHOLExact_updLocals_not_mem width σ _ state.toExact
+      (fun address => Classical.propDecidable (state.memaddrs address)) name value expression h)
+
+/-- Genuine ExtCall case of the original fresh-local theorem. -/
+@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "evaluate_fresh_local"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateFreshLocal_ExtCall {width : Nat} {σ : Type} [NeZero width]
+    (name : MlS) (value : ValueHOL width) (function : MlS)
+    (configuration configurationLength array arrayLength : ExpHOL width)
+    (state : PanSemStateFiniteExact width σ)
+    (res : Option (PanSemResultExact width)) (post : PanSemStateFiniteExact width σ)
+    (h : ¬ name ∈ freeVarIdsHOL (.extCall function configuration configurationLength array arrayLength) ∧
+      evaluateHOLFiniteState state (.extCall function configuration configurationLength array arrayLength) =
+        (res, post)) :
+    ∃ locals,
+      evaluateHOLFiniteState {state with locals := state.locals.updateEq (name, value)}
+        (.extCall function configuration configurationLength array arrayLength) =
+          (res, {post with locals := locals}) ∧
+      (goodResHOL res = true ∧ res ≠ some .error →
+        locals = post.locals.updateEq (name, value)) := by
+  classical
+  have hf : name ∉ varExpHOL configuration ∧ name ∉ varExpHOL configurationLength ∧
+      name ∉ varExpHOL array ∧ name ∉ varExpHOL arrayLength := by
+    simpa only [freeVarIdsHOL, List.mem_append, not_or, and_assoc] using h.1
+  have h1 := evalFreshUpdate state name value configuration hf.1
+  have h2 := evalFreshUpdate state name value configurationLength hf.2.1
+  have h3 := evalFreshUpdate state name value array hf.2.2.1
+  have h4 := evalFreshUpdate state name value arrayLength hf.2.2.2
+  have hev := h.2
+  rw [evaluateHOLFiniteState_extCall_source] at hev
+  rw [evaluateHOLFiniteState_extCall_source]
+  simp only [evalHOLFinite_eq_toExact, h1, h2, h3, h4] at hev ⊢
+  refine ⟨if goodResHOL res then post.locals.updateEq (name, value) else post.locals, ?_, ?_⟩
+  · repeat' split at hev
+    all_goals obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
+    all_goals simp_all [goodResHOL, emptyLocalsHOLFinite, ofExact, toExact]
+  · intro hg
+    rw [if_pos hg.1]
+
+end Flapjack.PanGlobalsFreshLocalExtCall

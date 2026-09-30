@@ -1,5 +1,8 @@
+import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.ShMemStore
+import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.ExtCall
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Primitive
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Results
+import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Dec
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Assign
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Memory
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.ResVar
@@ -8,6 +11,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.ByteStore
 import Flapjack.Pancake.Proofs.PanGlobals.WriteBytearray
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Leaves
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.If
+import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Seq
 import Flapjack.Pancake.Proofs.PanGlobals.MemoryLookup
 import Flapjack.Pancake.Proofs.PanGlobals.MemorySwap
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelationCode
