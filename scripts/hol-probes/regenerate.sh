@@ -1609,7 +1609,7 @@ run_probe pan_itree_h_handle_deccall_ret_probeScript.sml \
   failed_caller raised_clears_locals \
   "$cake_dir/pancake/semantics/pan_itreeSemScript.sml"
 run_probe loop_sem_loop_arith_probeScript.sml loop_sem_loop_arith_probe.out \
-  loop_arith_div loop_arith_longdiv_overflow "$cake_dir/pancake/semantics/loopSemScript.sml"
+  loop_arith_div loop_arith_signed_8 "$cake_dir/pancake/semantics/loopSemScript.sml"
 run_probe longdiv_code_probeScript.sml longdiv_code_probe.out \
   longdiv_code_software riscv_longdiv_encoding \
   "$cake_dir/compiler/backend/data_to_wordScript.sml"

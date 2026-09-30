@@ -4,11 +4,12 @@ import Flapjack.LoopSemantics
 namespace Flapjack
 
 /--
-Faithful port of the original CakeML Pancake `loop_arith` definition.
+Flapjack-specific broad Nat arithmetic helper, not an exact HOL port.
 
-Reference: `cakeml/pancake/semantics/loopSemScript.sml:118-145` (`loop_arith_def`).
-Word values are modelled as unbounded `Nat`s; `width` fixes the original
-`dimword (:'a) = 2 ^ width` so the word operations can be reproduced exactly.
+HOL `loop_arith_def` LDiv uses signed fixed-width word_quot; this helper uses
+unsigned unbounded Nat division and has no width binder. Its successful
+positive examples do not establish signed-word correspondence. The exact
+width-aware semantics live in Pancake/Semantics/LoopSemStateExact.lean.
 -/
 def loopArithDiv (destination dividend divisor : Nat) (locals : Nat → Option Nat) :
     Option (Nat → Option Nat) :=
