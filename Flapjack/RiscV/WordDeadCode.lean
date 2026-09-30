@@ -1,3 +1,4 @@
+import Flapjack.RiscV.AllocatorMemoryInvariant
 import Flapjack.Compiler.Backend.WordAlloc.LivenessRoute
 import Flapjack.NatDedup
 import Flapjack.RiscV.CakeRegAlloc
@@ -493,18 +494,28 @@ open Flapjack
 open Flapjack.RiscV
 
 /-! The source-shaped allocator boundary: full SSA is performed first, then
-Cake's dead-program pass feeds the clash tree and IRC allocator. -/
+Cake's dead-program pass feeds the clash tree and IRC allocator.
+
+Ordinary load16/store16 instructions are unsupported by the reviewed allocator
+routes. Reject them recursively at entry, before each liveness-based dead pass,
+and before graph construction/colouring. Checks preserve every accepted tree;
+failure returns `none`, with no deletion or opcode substitution. This checked
+safety boundary does not prove universal source-to-boundary closure. -/
 def cakeAllocateWordFunctionAfterDead [OfNat α 0] [WordCseHash α] (currentFunction : Nat)
     (parameters : List Nat) (program : WordProg α) [BEq α] :
     Option (WordSsaState × List Nat × WordProg α × WordSpillState) :=
+  if !allocatorMemorySupported program then none else
   let (state, renamedParameters, ssaProgram) :=
     wordFullSsaCcTrans parameters.length program
+  if !allocatorMemorySupported ssaProgram then none else
   let ssaProgram := wordRemoveDeadProgram ssaProgram
   let ssaProgram := wordCseProp ssaProgram
   let ssaProgram := wordCopyProp ssaProgram
   let ssaProgram := wordThreeToTwoReg ssaProgram
   let ssaProgram := wordRemoveUnreachableAfterCopy ssaProgram
+  if !allocatorMemorySupported ssaProgram then none else
   let ssaProgram := wordRemoveDeadProgram ssaProgram
+  if !allocatorMemorySupported ssaProgram then none else
   let tree := wordClashTree ssaProgram []
   let fs := cakeGetStackOnly ssaProgram
   let forced := cakeGetForced ssaProgram
@@ -523,5 +534,38 @@ def cakeAllocateWordFunctionAfterDead [OfNat α 0] [WordCseHash α] (currentFunc
       some (state, renamedParameters, ssaProgram,
         cakeColourWordSpillState cakeRiscVRegisterCount
           parameters ssaProgram colouring)
+
+/-- A successful executed allocator call certifies its complete input tree.
+The executed API is specialized to `WordProg Nat`; the validator itself is
+universe-polymorphic. This is not a port of a HOL declaration. -/
+theorem cakeAllocateWordFunctionAfterDead_input_supported
+    (currentFunction : Nat) (parameters : List Nat) (program : WordProg Nat)
+    (output : WordSsaState × List Nat × WordProg Nat × WordSpillState)
+    (h : cakeAllocateWordFunctionAfterDead currentFunction parameters program = some output) :
+    allocatorMemorySupported program = true := by
+  unfold cakeAllocateWordFunctionAfterDead at h
+  split at h <;> simp_all
+
+/-- The program returned by successful allocation also passed the recursive
+check immediately before clash-tree construction and colouring. -/
+theorem cakeAllocateWordFunctionAfterDead_output_supported
+    (currentFunction : Nat) (parameters : List Nat) (program : WordProg Nat)
+    (output : WordSsaState × List Nat × WordProg Nat × WordSpillState)
+    (h : cakeAllocateWordFunctionAfterDead currentFunction parameters program = some output) :
+    allocatorMemorySupported output.2.2.1 = true := by
+  unfold cakeAllocateWordFunctionAfterDead at h
+  split at h <;> simp_all
+  split at h <;> simp_all
+  rcases h with ⟨_, _, checked, rfl⟩
+  exact checked
+
+/-- The successful API excludes unsupported input occurrences. -/
+theorem cakeAllocateWordFunctionAfterDead_input_safe
+    (currentFunction : Nat) (parameters : List Nat) (program : WordProg Nat)
+    (output : WordSsaState × List Nat × WordProg Nat × WordSpillState)
+    (h : cakeAllocateWordFunctionAfterDead currentFunction parameters program = some output) :
+    ¬ UnsupportedAllocatorMemory program :=
+  allocatorMemorySupported_excludes
+    (cakeAllocateWordFunctionAfterDead_input_supported currentFunction parameters program output h)
 
 end Flapjack.RiscV.CakeRegAlloc
