@@ -1,5 +1,20 @@
 [
   {
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvaluateAddClockIoEventsMono.lean",
+    "lean_name": "panPropsEvaluateAddClockIoEventsMono",
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "evaluate_add_clock_io_events_mono",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; bead flapjack-4ac.4.50.1), panPropsScript.sml:881: same universal exps/s/extra order, no hypotheses, and List.IsPrefix of the two output FFI event lists. The high-clock state changes only clock to s.clock + extra. Both executions use evaluateHOLFiniteState, whose exact 21-clause rebound evaluate_def theorem was independently accepted under qj5. The existing kernel-checked projection helper supplies domain DecidablePred witnesses internally, obtains successful finite runs via evalPanSemRecursiveCallFiniteContext_total, projects each to the broad recursive evaluator, identifies c1.toExact with ctxAddClock c0.toExact, and applies the clock-increase prefix induction. Marker success hypotheses of the broad auxiliary are discharged by totality and do not appear in the tagged theorem. Canonical HolFiniteMapExact translation names precisely PanSemStateFiniteExact.locals/globals/code/eshapes, with same-module PanPropsAddClockEventsSupport.holFmapAsFiniteSupportWitness re-exporting the non-vacuous state roundtrip. HOL words use positive BitVec width with NeZero and the FFI host uses sigma : Type. Independent coordinator review remains required before closure."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateIoEventsMono.lean",
     "lean_name": "evaluate_io_events_mono",
     "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
