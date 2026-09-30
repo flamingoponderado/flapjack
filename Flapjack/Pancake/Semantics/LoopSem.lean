@@ -484,6 +484,34 @@ def readBytearrayWordHOL {width byteWidth : Nat} [NeZero width] [NeZero byteWidt
       let rest ← readBytearrayWordHOL (address + 1) length getByte
       pure (byte :: rest)
 
+/-- Flapjack-only support lemma: a successful `readBytearrayWordHOL` returns a
+    list whose length is the requested length (HOL `read_bytearray_LENGTH`,
+    `src/misc/miscScript.sml`). Flapjack-specific infrastructure with no
+    standalone tagged HOL declaration. -/
+theorem readBytearrayWordHOL_length {width byteWidth : Nat} [NeZero width] [NeZero byteWidth]
+    (address : RiscV.Word width) (length : Nat)
+    (getByte : RiscV.Word width → Option (BitVec byteWidth))
+    (bytes : List (BitVec byteWidth))
+    (h : readBytearrayWordHOL (byteWidth := byteWidth) address length getByte = some bytes) :
+    bytes.length = length := by
+  induction length generalizing address bytes with
+  | zero =>
+      simp only [readBytearrayWordHOL] at h
+      injection h with hb
+      rw [← hb]; rfl
+  | succ length ih =>
+      simp only [readBytearrayWordHOL] at h
+      cases hb : getByte address with
+      | none => simp [hb] at h
+      | some byte =>
+          simp only [hb] at h
+          cases hr : readBytearrayWordHOL (byteWidth := byteWidth) (address+1) length getByte with
+          | none => rw [hr] at h; simp at h
+          | some rest =>
+              simp only [hr] at h
+              injection h with hbytes
+              rw [← hbytes, List.length_cons, ih (address+1) rest hr]
+
 /-- Width-generic port of HOL `byte$get_byte` (`src/n-bit/byteScript.sml:21`).
     That script is part of the HOL standard library rather than the CakeML
     submodule, so this declaration carries no HOL tag.  The byte shift is
