@@ -109,6 +109,19 @@ WORDS_AS_TYPE_INDEXED_BITVEC_RE = re.compile(
 WORD_DIMENSION_AS_WIDTH_RE = re.compile(
     r'\(\s*word_dimension_as_width\s*:=\s*([A-Za-z_][A-Za-z0-9_\']*)\s*\)'
 )
+REALS_AS_RATIONAL_CUTS_RE = re.compile(
+    r'\(\s*reals_as_rational_cuts\s*\)'
+)
+# The reviewed binary64 real renderings: HOL `binary_ieee`/`machine_ieee`
+# reals as Lean `Rat`, and `fp64_sqrt`'s real square root as its rational cut
+# (docs/SOUNDNESS.md item 8).  A tagged declaration whose own source uses a
+# declaration of these modules must carry `(reals_as_rational_cuts)`.
+REALS_RENDERING_GLOBS = ("Flapjack/Misc/MachineIeee.lean", "Flapjack/Misc/BinaryIeee*.lean")
+REALS_RENDERING_DECL_RE = re.compile(
+    r"^\s*(?:@\[[^\]]*\]\s*)?(?:(?:private|protected|noncomputable|partial)\s+)*"
+    r"(?:def|abbrev|structure|inductive|opaque)\s+([A-Za-z_][A-Za-z0-9_'.]*)",
+    re.M,
+)
 WORD_POSITIVITY_EXTRA_RE = re.compile(
     r"(?:width\s*(?:≠|!=|>|≥)\s*(?:0|1)\b|0\s*<\s*width\b|1\s*≤\s*width\b"
     r"|Nat\.pos\b|NeZero\.out\b)"
@@ -278,7 +291,8 @@ def find_lean_decl(lines: list[str], start: int) -> str:
 
 def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = False,
                         include_word_dimension_width: bool = False,
-                        include_fmap_function: bool = False):
+                        include_fmap_function: bool = False,
+                        include_reals_as_rational_cuts: bool = False):
     """Yield HOL attributes, including attributes split across Lean lines."""
     comment_depth = 0
     start: int | None = None
@@ -346,6 +360,8 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                     site += (width.group(1) if width else None,)
                 if include_fmap_function:
                     site += (fields_for(FMAP_AS_FINITE_SUPPORT_FUNCTION_RE),)
+                if include_reals_as_rational_cuts:
+                    site += (bool(REALS_AS_RATIONAL_CUTS_RE.search(attribute)),)
                 yield site
         start = None
         chunks = []
@@ -2286,6 +2302,59 @@ def reviewed_hol_prog_word_alias(signature: str, module: str, root: str) -> bool
     return True
 
 
+def reals_rendering_names(root: Path) -> set[str]:
+    """Short names of the reviewed binary64 real-rendering declarations."""
+    names: set[str] = set()
+    for pattern in REALS_RENDERING_GLOBS:
+        for path in sorted(root.glob(pattern)):
+            text = strip_lean_comments(path.read_text(encoding="utf-8"))
+            for match in REALS_RENDERING_DECL_RE.finditer(text):
+                names.add(match.group(1).rsplit(".", 1)[-1])
+    return names
+
+
+REALS_SOURCE_END_RE = re.compile(r"^(?:@\[|/--|/-!|namespace\b|end\b|section\b|open\b)")
+
+
+def reals_rendering_mentions(declaration_source: str, names: set[str]) -> list[str]:
+    """Rendering declarations used by a tagged declaration's own source text.
+
+    The source is cut at the next attribute, docstring or section boundary so
+    that a declaration without a body (for example a datatype) is not charged
+    with the following declarations' text."""
+    kept: list[str] = []
+    for index, line in enumerate(declaration_source.splitlines()):
+        if index > 0 and REALS_SOURCE_END_RE.match(line) and kept and not line.startswith("@[hol"):
+            header_done = any(re.search(r"\b(?:def|theorem|lemma|abbrev|inductive|structure|instance|opaque)\b", k) for k in kept)
+            if header_done:
+                break
+        kept.append(line)
+    tokens = set(re.findall(r"[A-Za-z_][A-Za-z0-9_']*", strip_lean_comments("\n".join(kept))))
+    return sorted(tokens & names)
+
+
+def reals_as_rational_cuts_errors(declaration_source: str, qualified: bool,
+                                  names: set[str]) -> list[str]:
+    """`(reals_as_rational_cuts)` is required exactly when the declaration uses a
+    reviewed binary64 real rendering in its own source.  Declarations that only
+    refer to a qualified declaration inherit the assumption instead (recorded
+    in the theorem map), and may not carry the qualifier themselves."""
+    mentions = reals_rendering_mentions(declaration_source, names)
+    if mentions and not qualified:
+        return [
+            "uses the binary64 real renderings "
+            f"({', '.join(mentions[:4])}{', ...' if len(mentions) > 4 else ''}) and must carry "
+            "(reals_as_rational_cuts)"
+        ]
+    if qualified and not mentions:
+        return [
+            "(reals_as_rational_cuts) is only for declarations whose own source uses a "
+            "reviewed binary64 real rendering (Flapjack/Misc/MachineIeee.lean, "
+            "Flapjack/Misc/BinaryIeee*.lean); dependents inherit the assumption instead"
+        ]
+    return []
+
+
 def words_as_type_indexed_bitvec_errors(
     declaration_text: str,
     declaration: str,
@@ -2728,6 +2797,7 @@ def main(argv: list[str]) -> int:
         )
         return 1
 
+    reals_names = reals_rendering_names(ROOT)
     for lean_path in lean_files():
         rel = lean_path.relative_to(ROOT).as_posix()
         lines = lean_path.read_text(encoding="utf-8").splitlines()
@@ -2737,12 +2807,19 @@ def main(argv: list[str]) -> int:
              names_fields, boundary_fields, fmap_fields, fmap_result,
              fmap_relation, fmap_equalities, words_bitvec,
              fmap_parameters, fmap_existentials, dimension_width,
-             fmap_function_positions) in hol_attribute_sites(
+             fmap_function_positions, reals_cuts) in hol_attribute_sites(
                 lines, include_fmap_existentials=True,
                 include_word_dimension_width=True,
                 include_fmap_function=True,
+                include_reals_as_rational_cuts=True,
              ):
             where = f"{rel}:{number}"
+            errors.extend(
+                f"{where}: {error}"
+                for error in reals_as_rational_cuts_errors(
+                    tagged_declaration_source(lines, number), reals_cuts, reals_names,
+                )
+            )
             lean_decl = find_lean_decl(lines, number - 1)
             if module not in reachable and not module_reported:
                 module_reported = True

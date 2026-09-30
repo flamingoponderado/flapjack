@@ -468,6 +468,31 @@ entire equation and its operator associativity, and record the comparison in
 the manifest. The qualifier permits no changed hypotheses or behavior and does
 not itself prove cross-language equivalence.
 
+**Qualify the reviewed binary64 real rendering.** Use
+`(reals_as_rational_cuts)` on a tagged declaration whose own source uses a
+declaration of the reviewed HOL-standard-library IEEE renderings
+(`Flapjack/Misc/MachineIeee.lean`, `Flapjack/Misc/BinaryIeee*.lean`). Those
+renderings represent each HOL `real` inside `binary_ieee`/`machine_ieee`
+rounding by a Lean `Rat` when the real is rational, and the square root of
+`fp64_sqrt` by its rational cut. This is admissible only because HOL's rounding
+specification (`float_round_with_flags`, `float_round`, `round`,
+`closest_such`, `is_closest`, `threshold`) inspects its real argument only
+through order, equality and absolute-difference comparisons with rationals,
+which the cut decides exactly, and because the rounded value does not depend
+on HOL's choice operator. Agreement with HOL's real-number specification
+remains the external assumption of `docs/SOUNDNESS.md` item 8. The qualifier
+records that representation only: it authorizes no change to clauses,
+hypotheses, conclusions, NaN or flag behavior. `check-hol-refs.py` requires
+the qualifier exactly on the tagged declarations whose own source (signature
+and body, comments excluded) names a rendering declaration, and rejects it
+elsewhere. A declaration that merely calls a qualified declaration (for
+example the wordSem `evaluate` calling `inst`) is a dependent: it does not
+carry the qualifier but must record the inherited assumption in the theorem
+map. The status is `reviewed_reals_as_rational_cuts` when no other qualifier
+applies; otherwise the status the other qualifiers require is kept and the
+manifest records `"reals_as_rational_cuts": true`. The manifest note must
+name the qualifier and SOUNDNESS item 8, and it can never be `reviewed_exact`.
+
 **Port the executable path, too.** As HOL definitions are ported, make the
 compiler that `flapjack-compile` actually runs call the reviewed `@[hol]`
 definitions. A tagged proof-only duplicate beside a different production

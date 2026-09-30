@@ -379,6 +379,8 @@ elab "#emit_hol_type_hashes" : command => do
           ("words_as_type_indexed_bitvec", toJson ref.wordsAsTypeIndexedBitvec)]
         if let some width := ref.wordDimensionAsWidth then
           qualifiers := qualifiers ++ [("word_dimension_as_width", toJson width)]
+        if ref.realsAsRationalCuts then
+          qualifiers := qualifiers ++ [("reals_as_rational_cuts", toJson true)]
         let mut fields : List (String × Json) := [
           ("lean_name", toJson name.toString),
           ("hol_path", toJson ref.path),

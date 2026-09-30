@@ -2089,5 +2089,71 @@ class WordDimensionAsWidthStatusTest(unittest.TestCase):
         self.assertTrue(any("mutually exclusive" in error for error in errors))
 
 
+
+class RealsAsRationalCutsStatusTest(unittest.TestCase):
+    def setUp(self):
+        self.path = "Flapjack/Example.lean"
+        self.key = (self.path, "fpSemFpUopComp")
+        self.hol = ("cakeml/semantics/fpSemScript.sml", "fp_uop_comp_def")
+        base = (*self.hol, (), (), (), (), False, (), False, False, (), (), None, ())
+        self.tag = {self.key: (*base, True)}
+        self.untagged = {self.key: (*base, False)}
+        words = (*self.hol, (), (), (), ("fpRegs", "store"), False, (), False, True,
+                 (), (), None, ())
+        self.words_tag = {self.key: (*words, True)}
+
+    def record(self, **overrides):
+        record = {
+            "hol_path": self.hol[0],
+            "hol_name": self.hol[1],
+            "lean_path": self.path,
+            "lean_name": self.key[1],
+            "statement_status": "reviewed_reals_as_rational_cuts",
+            "reals_as_rational_cuts": True,
+            "reviewer": ("source comparison: FP_Sqrt via the reals_as_rational_cuts "
+                         "rendering, docs/SOUNDNESS.md item 8"),
+        }
+        record.update(overrides)
+        return {key: value for key, value in record.items() if value is not None}
+
+    def errors(self, record, tagged=None):
+        return MAP["validate_inventory"](
+            [record], {self.key}, self.tag if tagged is None else tagged, set()
+        )
+
+    def test_accepts_source_reviewed_reals_qualifier(self):
+        self.assertEqual(self.errors(self.record()), [])
+
+    def test_requires_matching_tag_and_manifest_field(self):
+        self.assertTrue(any("manifest reals_as_rational_cuts" in error
+                            for error in self.errors(
+                                self.record(reals_as_rational_cuts=None))))
+        self.assertTrue(any("manifest reals_as_rational_cuts" in error
+                            for error in self.errors(self.record(), self.untagged)))
+        self.assertTrue(any("needs a matching @[hol] qualifier" in error
+                            for error in self.errors(
+                                self.record(reals_as_rational_cuts=None), self.untagged)))
+
+    def test_rejects_exact_status_and_requires_note(self):
+        self.assertTrue(any("cannot have reviewed_exact" in error
+                            for error in self.errors(
+                                self.record(statement_status="reviewed_exact"))))
+        self.assertTrue(any("naming the qualifier" in error
+                            for error in self.errors(
+                                self.record(reviewer="source comparison only"))))
+
+    def test_combined_qualifiers_keep_their_status(self):
+        combined = self.record(
+            statement_status="reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+            fmap_as_finite_support=["fpRegs", "store"],
+            words_as_type_indexed_bitvec=True,
+        )
+        self.assertFalse(any("reals_as_rational_cuts" in error
+                             for error in self.errors(combined, self.words_tag)))
+        wrong = dict(combined, statement_status="reviewed_reals_as_rational_cuts")
+        self.assertTrue(any("keeps the status those qualifiers require" in error
+                            for error in self.errors(wrong, self.words_tag)))
+
+
 if __name__ == "__main__":
     unittest.main()

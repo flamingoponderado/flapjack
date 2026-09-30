@@ -1780,6 +1780,7 @@ VALID_STATUSES = {
     "reviewed_fmap_as_finite_support_equalities",
     "reviewed_words_as_type_indexed_bitvec",
     "reviewed_word_dimension_as_width",
+    "reviewed_reals_as_rational_cuts",
     "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
     "pending_statement_review",
@@ -1921,10 +1922,11 @@ def tagged_declarations(
              names_fields, boundary_fields, fmap_fields, fmap_result,
              fmap_relation, fmap_equalities, words_bitvec,
              fmap_parameters, fmap_existentials, dimension_width,
-             fmap_function_positions) in HOL_ATTRIBUTE_SITES(
+             fmap_function_positions, reals_cuts) in HOL_ATTRIBUTE_SITES(
                  lines, include_fmap_existentials=True,
                  include_word_dimension_width=True,
                  include_fmap_function=True,
+                 include_reals_as_rational_cuts=True,
              ):
             lean_name = FIND_LEAN_DECL(lines, line - 1)
             key = (rel, lean_name)
@@ -1934,7 +1936,8 @@ def tagged_declarations(
             value = (hol_path, hol_name, list_fields, names_fields,
                      boundary_fields, fmap_fields, fmap_result, fmap_relation,
                      fmap_equalities, words_bitvec, fmap_parameters,
-                     fmap_existentials, dimension_width, fmap_function_positions)
+                     fmap_existentials, dimension_width, fmap_function_positions,
+                     reals_cuts)
             if key in tagged and tagged[key] != value:
                 raise ValueError(f"conflicting @[hol] references for {rel}:{lean_name}")
             tagged[key] = value
@@ -1949,7 +1952,7 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         hol_path, hol_name, list_fields, names_fields, boundary_fields, fmap_fields,
         fmap_result, fmap_relation, fmap_equalities, words_bitvec, fmap_parameters,
         fmap_existentials, dimension_width,
-        fmap_function_positions,
+        fmap_function_positions, reals_cuts,
     ) in tagged.items():
         entry = {
             "hol_path": hol_path,
@@ -1986,6 +1989,8 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
             entry["words_as_type_indexed_bitvec"] = True
         if dimension_width:
             entry["word_dimension_as_width"] = dimension_width
+        if reals_cuts:
+            entry["reals_as_rational_cuts"] = True
         inventory[(lean_path, lean_name)] = entry
 
     for lean_path, lean_name in proof_theorem_declarations(root):
@@ -2259,6 +2264,7 @@ def validate_inventory(
         fmap_existentials = tag[11] if tag is not None and len(tag) > 11 else ()
         dimension_width = tag[12] if tag is not None and len(tag) > 12 else None
         fmap_function_positions = tag[13] if tag is not None and len(tag) > 13 else ()
+        reals_cuts = bool(tag[14]) if tag is not None and len(tag) > 14 else False
         manifest_list_fields = tuple(record.get("list_as_array", ()))
         manifest_names_fields = tuple(record.get("names_as_string", ()))
         manifest_boundary_fields = tuple(record.get("names_as_string_boundary", ()))
@@ -2344,6 +2350,41 @@ def validate_inventory(
         elif status == "reviewed_word_dimension_as_width":
             errors.append(
                 f"{key[0]}:{key[1]}: reviewed_word_dimension_as_width needs a matching @[hol] qualifier"
+            )
+        if bool(record.get("reals_as_rational_cuts", False)) != reals_cuts:
+            errors.append(
+                f"{key[0]}:{key[1]}: manifest reals_as_rational_cuts does not match its @[hol] tag"
+            )
+        other_qualified = bool(
+            list_fields or names_fields or boundary_fields or fmap_fields or fmap_result
+            or fmap_relation or fmap_equalities or words_bitvec or fmap_parameters
+            or fmap_existentials or dimension_width or fmap_function_positions
+        )
+        if reals_cuts:
+            if status == "reviewed_exact":
+                errors.append(
+                    f"{key[0]}:{key[1]}: reals_as_rational_cuts @[hol] tag cannot have reviewed_exact status"
+                )
+            if not other_qualified and status != "reviewed_reals_as_rational_cuts":
+                errors.append(
+                    f"{key[0]}:{key[1]}: reals_as_rational_cuts alone needs "
+                    "reviewed_reals_as_rational_cuts status"
+                )
+            if other_qualified and status == "reviewed_reals_as_rational_cuts":
+                errors.append(
+                    f"{key[0]}:{key[1]}: reals_as_rational_cuts with other qualifiers keeps "
+                    "the status those qualifiers require"
+                )
+            reviewer_text = reviewer.lower() if isinstance(reviewer, str) else ""
+            if ("source" not in reviewer_text or "reals_as_rational_cuts" not in reviewer_text
+                    or "soundness" not in reviewer_text):
+                errors.append(
+                    f"{key[0]}:{key[1]}: reals_as_rational_cuts requires a source-comparison "
+                    "note naming the qualifier and docs/SOUNDNESS.md item 8"
+                )
+        elif status == "reviewed_reals_as_rational_cuts":
+            errors.append(
+                f"{key[0]}:{key[1]}: reviewed_reals_as_rational_cuts needs a matching @[hol] qualifier"
             )
         combined_words_status = (
             "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec"
