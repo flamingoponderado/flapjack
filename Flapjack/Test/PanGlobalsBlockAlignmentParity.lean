@@ -38,4 +38,3 @@ example : observe (8 : BitVec 64) 8 =
 -- unaligned64
 example : observe (9 : BitVec 64) 8 =
     (1, false, true, false) := by decide
-
