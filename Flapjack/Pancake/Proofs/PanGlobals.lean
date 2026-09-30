@@ -1901,18 +1901,26 @@ theorem resortDeclsHOL_eq_filter {width : Nat} [NeZero width] (decs : List (Decl
     `Function` and `xs` consists only of `Decl`/`ExnDecl` declarations, moving
     `y` from the end to the front of the declaration list leaves
     `evaluate_decls` unchanged.  HOL's `EVERY` over the `Decl`/`ExnDecl` case
-    split is rendered as `xs.all (fun d => is_decl d || is_exn_decl d) = true`. -/
+    split is rendered as `xs.all (fun d => is_decl d || is_exn_decl d) = true`.
+
+    The finite-support evaluator is called with the classical `DecidablePred
+    state.memaddrs` instance supplied internally, so the statement quantifies only
+    over the state (and declarations) exactly as the HOL statement does and carries
+    no decidability-instance parameter. -/
 @[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "evaluate_decls_one_fun_last"
   (fmap_as_finite_support := [locals, globals, code, eshapes])
   (words_as_type_indexed_bitvec)]
 theorem evaluateDeclsOneFunLast {width : Nat} {σ : Type} [NeZero width]
     (y : DeclHOL width) (xs : List (DeclHOL width))
-    (state : PanSemStateFiniteExact width σ) [DecidablePred state.memaddrs] :
+    (state : PanSemStateFiniteExact width σ) :
     isFunctionHOL y = true →
     xs.all (fun d => isDeclHOL d || isExnDeclHOL d) = true →
-    PanSemStateFiniteExact.evaluateDeclsHOLFinite state (xs ++ [y]) =
-      PanSemStateFiniteExact.evaluateDeclsHOLFinite state (y :: xs) := by
+    PanSemStateFiniteExact.evaluateDeclsHOLFinite
+        (h := (fun a => Classical.propDecidable (state.memaddrs a))) state (xs ++ [y]) =
+      PanSemStateFiniteExact.evaluateDeclsHOLFinite
+        (h := (fun a => Classical.propDecidable (state.memaddrs a))) state (y :: xs) := by
   intro hy hxs
+  letI : DecidablePred state.memaddrs := (fun a => Classical.propDecidable (state.memaddrs a))
   cases y with
   | function f =>
       have h := evaluateDeclsHOLFinite_moveFunctionRight xs hxs f [] state
@@ -1924,33 +1932,48 @@ theorem evaluateDeclsOneFunLast {width : Nat} {σ : Type} [NeZero width]
 /-- Exact port of HOL `resort_decls_evaluate`
     (`cakeml/pancake/proofs/pan_globalsProofScript.sml:1874-1941`): if every
     declaration of `decs` is a `Function`, `Decl`, or `ExnDecl`, then evaluating
-    the resorted list and the original list agree. -/
+    the resorted list and the original list agree.
+
+    The finite-support evaluator is called with the classical `DecidablePred
+    state.memaddrs` instance supplied internally, so the statement quantifies only
+    over the state (and declarations) exactly as the HOL statement does and carries
+    no decidability-instance parameter. -/
 @[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "resort_decls_evaluate"
   (fmap_as_finite_support := [locals, globals, code, eshapes])
   (words_as_type_indexed_bitvec)]
 theorem resortDeclsEvaluate {width : Nat} {σ : Type} [NeZero width]
-    (state : PanSemStateFiniteExact width σ) [DecidablePred state.memaddrs]
+    (state : PanSemStateFiniteExact width σ)
     (decs : List (DeclHOL width)) :
     decs.all (fun d => isFunctionHOL d || isDeclHOL d || isExnDeclHOL d) = true →
-    PanSemStateFiniteExact.evaluateDeclsHOLFinite state (resortDeclsHOL decs) =
-      PanSemStateFiniteExact.evaluateDeclsHOLFinite state decs := by
+    PanSemStateFiniteExact.evaluateDeclsHOLFinite
+        (h := (fun a => Classical.propDecidable (state.memaddrs a))) state (resortDeclsHOL decs) =
+      PanSemStateFiniteExact.evaluateDeclsHOLFinite
+        (h := (fun a => Classical.propDecidable (state.memaddrs a))) state decs := by
   intro h
+  letI : DecidablePred state.memaddrs := (fun a => Classical.propDecidable (state.memaddrs a))
   rw [resortDeclsHOL_eq_filter decs h]
   exact evaluateDeclsHOLFinite_nf decs h state
 
 /-- Exact port of HOL `resort_decls_evaluate_IMP[local]`
     (`cakeml/pancake/proofs/pan_globalsProofScript.sml:1943-1950`): a successful
     evaluation of `decs` and the resort admissibility predicate imply a
-    successful evaluation of `resort_decls decs` to the same state. -/
+    successful evaluation of `resort_decls decs` to the same state.
+
+    The finite-support evaluator is called with the classical `DecidablePred
+    state.memaddrs` instance supplied internally, so the statement quantifies only
+    over the state (and declarations) exactly as the HOL statement does and carries
+    no decidability-instance parameter. -/
 @[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "resort_decls_evaluate_IMP"
   (fmap_as_finite_support := [locals, globals, code, eshapes])
   (words_as_type_indexed_bitvec)]
 theorem resortDeclsEvaluateImp {width : Nat} {σ : Type} [NeZero width]
-    (state : PanSemStateFiniteExact width σ) [DecidablePred state.memaddrs]
+    (state : PanSemStateFiniteExact width σ)
     (decs : List (DeclHOL width)) (state' : PanSemStateFiniteExact width σ) :
-    PanSemStateFiniteExact.evaluateDeclsHOLFinite state decs = some state' →
+    PanSemStateFiniteExact.evaluateDeclsHOLFinite
+        (h := (fun a => Classical.propDecidable (state.memaddrs a))) state decs = some state' →
     decs.all (fun d => isFunctionHOL d || isDeclHOL d || isExnDeclHOL d) = true →
-    PanSemStateFiniteExact.evaluateDeclsHOLFinite state (resortDeclsHOL decs) = some state' := by
+    PanSemStateFiniteExact.evaluateDeclsHOLFinite
+        (h := (fun a => Classical.propDecidable (state.memaddrs a))) state (resortDeclsHOL decs) = some state' := by
   intro hdecs hresort
   rw [resortDeclsEvaluate state decs hresort]
   exact hdecs
