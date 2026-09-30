@@ -32786,7 +32786,7 @@
     "code"
   ],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.3) compared HOL transform_branch_correct (crep_inlineProofScript.sml:2042-2059): forall p s r s' res ld rts. evaluate (p,s) = (r,s') /\\ (!retvs. r = SOME (Return retvs) ==> LENGTH rts = LENGTH retvs) /\\ (!x. MEM x rts ==> ~MEM x (var_prog p)) /\\ (exists z. OPT_MMAP (FLOOKUP s.locals) rts = SOME z) /\\ ALL_DISTINCT rts /\\ r <> SOME Error ==> exists r1 s1'. evaluate (transform_branch ld rts p, s) = (r1,s1') /\\ state_rel s' s1' /\\ case r of NONE => ... | SOME (Return retvs) => r1 = SOME (Break ld) /\\ OPT_MMAP (FLOOKUP s1'.locals) rts = SOME retvs | SOME Error => F | res => r1 = res. HOL's outer binder res occurs only as the shadowing catch-all case pattern, so the vacuous binder is omitted (documented in the module); all other binders in order. Case: Call for every caltyp (Resume :2173-2184), IH TransformBranchCallHandlerIH = the guarded evaluate_ind handler premise (callee premise unused as in HOL); tail Call NONE becomes Seq (Call (SOME (rts,NONE))) (Break ld). Exact tagged evaluator/transform_branch/var_prog/state_rel/locals_strong_rel over CrepSemHOLState; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.3) compared HOL transform_branch_correct (crep_inlineProofScript.sml:2042-2059): forall p s r s' res ld rts. evaluate (p,s) = (r,s') /\\ (!retvs. r = SOME (Return retvs) ==> LENGTH rts = LENGTH retvs) /\\ (!x. MEM x rts ==> ~MEM x (var_prog p)) /\\ (exists z. OPT_MMAP (FLOOKUP s.locals) rts = SOME z) /\\ ALL_DISTINCT rts /\\ r <> SOME Error ==> exists r1 s1'. evaluate (transform_branch ld rts p, s) = (r1,s1') /\\ state_rel s' s1' /\\ case r of NONE => ... | SOME (Return retvs) => r1 = SOME (Break ld) /\\ OPT_MMAP (FLOOKUP s1'.locals) rts = SOME retvs | SOME Error => F | res => r1 = res. HOL's outer binder res occurs only as the shadowing catch-all case pattern, so the vacuous binder is omitted (documented in the module); all other binders in order. Case: Call for every caltyp (Resume :2173-2184), with exactly evaluate_ind's two guarded Call premises at motive transformBranchGoal (bead .47.6): TransformBranchCallCalleeIH (argument eval, lookup_code, ALL_DISTINCT selector, clock <> 0 => goal for the callee body at dec_clock s with locals := newlocals; unused by the proof as in HOL) and TransformBranchCallHandlerIH (same guards plus callee Exception eid and caltyp = SOME (rts,SOME (eid,p)) => goal for the handler at st with locals := s.locals); proof delegates to untagged callGoal; both premises discharged by the assembly via evalCrepSemHOLProgExact_inductLex; tail Call NONE becomes Seq (Call (SOME (rts,NONE))) (Break ld). Exact tagged evaluator/transform_branch/var_prog/state_rel/locals_strong_rel over CrepSemHOLState; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformBranch/Assembly.lean",
@@ -32896,15 +32896,7 @@
   "hol_path": null,
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.5.47.3): transform_branch_correct motive for the named case/assembly step; no separate HOL declaration."
-},
-{
-  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformBranch/Assembly.lean",
-  "lean_name": "whileBranchMotive",
-  "hol_path": null,
-  "hol_name": null,
-  "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.5.47.3): transform_branch_correct motive for the named case/assembly step; no separate HOL declaration."
+  "reviewer": "Flapjack local support (beads flapjack-pxn.18.5.5.47.3, .47.6): the transform_branch_correct motive for Call from the handler IH alone; not HOL's case shape (callee premise omitted as unused), wrapped by the tagged transformBranchCorrect_Call."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformBranch/Assembly.lean",
@@ -32912,7 +32904,7 @@
   "hol_path": null,
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.5.47.3): transform_branch_correct motive for the named case/assembly step; no separate HOL declaration."
+  "reviewer": "Flapjack local support (beads flapjack-pxn.18.5.5.47.3, .47.6): the evaluate_ind motive of transform_branch_correct for every program and state by evalCrepSemHOLProgExact_inductLex over the tagged cases, supplying their literal premises including the Call callee premise; no separate HOL declaration."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/WrappedTransformIf.lean",
