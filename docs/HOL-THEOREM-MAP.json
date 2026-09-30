@@ -36479,6 +36479,61 @@
   "reviewer": "Flapjack-only bare-index translation candidate infrastructure, bead .18.5.5.50.2. Retains arbitrary nonempty alpha itself and derives word width as max1 Nat.card alpha; kernel witnesses finite nonempty cardinal and infinite dimension1 after original fcpScript63-65 source inspection. Indexed unreach candidate uses f:alpha->Nat and that SAME alpha-derived word dimension, no independent width/domain or BitVec substitution. No exact HOL port or approved representation claim: original external fcp library source now byte-pinned at existing HOL commit a390cbabd3a4521bab4ee20281e3e42933a8a3ae; index/word qualifier/checker source review remains parent50 obligation."
 },
 {
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/ExtCall.lean",
+  "lean_name": "evaluateFperm_ExtCall",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_fperm",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "reviewer": "flapjack-sol source comparison22.5.13: original evaluate_fperm1721-1810 full source-run implication specialized to faithful evaluate_ind ExtCall conjunct (no IH). fperm leaves ExtCall function and four expressions unchanged. Exact evaluator retains all four native word/value checks, both byte-array reads and failure outcomes, final FFI event plus empty locals, returning FFI state and byte-memory write; only code is permuted. Complete arbitrary result/post quantification and exact target post-state equality preserved, no successful FFI/read/target run assumption. Canonical finite-support state reconstructed via imported genuine roundtrip witness; native MlS identifiers and reviewed positive-width word carriers, Type0 FFI. Local elaboration transparency setting handles semireducible finite-support proof conversion only and does not weaken kernel verification. Proof-only constructor, production evaluator unchanged. Independent coordinator source acceptance pending.",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/ExtCall.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Canonical imported state roundtrip reexport, Flapjack representation infrastructure without an independent HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Assembly.lean",
+  "lean_name": "compileCorrectHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "compile_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "reviewer": "flapjack-sol source comparison36: original gen_goal172-181 and full compile_correct assembled by original panSem evaluate_ind across21 constructors (proof ends1615). Public program/source/result/context/target/post quantification and only original state_rel T, source evaluate pair and res not Error hypotheses retained. Conclusion is genuine existential target evaluation of reviewed compileProgExactHOL with same result and full good_res state relation. Imported faithful evaluateIndHOL supplies every recursive IH internally; no public IH, universally quantified context assumption, target run, pass predicate, or postrelation premise. Assign Local/Global exact native split; seven Call leaves unchanged; Dec/Seq/If guards retained, While original three guards instantiated with constructor equalities, DecCall original continuation/callee intermediate products and shape guards instantiated. Canonical imported state/context map owners and genuine roundtrip witnesses used; native complete ProgHOL/ValueHOL/ShapeHOL and MlS carriers. Positive type-indexed BitVec width and Type0 FFI conventional translation only. Executed globals route already uses reviewed compileProgExactHOL/compileTopExactHOL; no production change in this proof assembly. Focused kernel PASS; independent coordinator source acceptance and full merged-tree gates pending, not a whole compiler theorem completion.",
+  "fmap_as_finite_support_relation": [
+    "PanSemStateFiniteExact.locals",
+    "PanSemStateFiniteExact.globals",
+    "PanSemStateFiniteExact.code",
+    "PanSemStateFiniteExact.eshapes",
+    "PanGlobalsContextExact.globals"
+  ],
+  "words_as_type_indexed_bitvec": true
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Assembly.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Canonical imported state/context roundtrip reexport; Flapjack representation infrastructure without an independent HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Assembly.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Canonical imported state/context roundtrip reexport; Flapjack representation infrastructure without an independent HOL declaration."
+},
+{
   "hol_path": null,
   "hol_name": null,
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimIndexSize.lean",
@@ -36502,6 +36557,25 @@
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-only representation-review infrastructure, bead .18.5.5.50.4. Literal Finite/card-versus-infinite1 equation corresponds to pinned fcpScript63-65, derived from existing finite/infinite branch witnesses. Positive widths are realized by Fin width, without restricting arbitrary HOL index types; Nat.card congruence establishes equivalence invariance. No HOL tag or approved bare-index/word qualifier claim; faithful translation/source review remains parent50 obligation."
 },
-  {"lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/DecCall.lean", "lean_name": "evaluateFperm_DecCall", "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml", "hol_name": "evaluate_fperm", "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec", "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"], "words_as_type_indexed_bitvec": true, "reviewer": "flapjack-luna-a source comparison for22.5.14: original evaluate_fperm1721-1810 DecCall arm1777ff and panSem evaluate_def DecCall695ff. Same arbitrary f/g/name/shape/function/arguments/continuation/state/result/post and source-run premise. Literal callee IH is guarded by source argument success, actual lookup and nonzero clock; continuation IH additionally actual callee Return pair and both shape equalities. No target-run, success/nonError, postrelation, or Call-case premise. Exact total pair evaluator with accepted fix_clock erasure, actual decremented-clock/callee-local entry, source-local restoration before continuation and res_var restoration after it; all outcomes retained. Native MlS names, canonical locals/globals/code/eshapes maps with genuine local roundtrip, positive width-indexed words and Type0 FFI. No executed behavior changes. Coordinator review pending; full recursive assembly remains open."},
-  {"lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/DecCall.lean", "lean_name": "holFmapAsFiniteSupportWitness", "statement_status": "no_hol_reference_pending_classification", "reviewer": "Flapjack-specific canonical state roundtrip representation witness; no separately named HOL declaration."}
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/DecCall.lean",
+  "lean_name": "evaluateFperm_DecCall",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_fperm",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison for22.5.14: original evaluate_fperm1721-1810 DecCall arm1777ff and panSem evaluate_def DecCall695ff. Same arbitrary f/g/name/shape/function/arguments/continuation/state/result/post and source-run premise. Literal callee IH is guarded by source argument success, actual lookup and nonzero clock; continuation IH additionally actual callee Return pair and both shape equalities. No target-run, success/nonError, postrelation, or Call-case premise. Exact total pair evaluator with accepted fix_clock erasure, actual decremented-clock/callee-local entry, source-local restoration before continuation and res_var restoration after it; all outcomes retained. Native MlS names, canonical locals/globals/code/eshapes maps with genuine local roundtrip, positive width-indexed words and Type0 FFI. No executed behavior changes. Coordinator review pending; full recursive assembly remains open."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/DecCall.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific canonical state roundtrip representation witness; no separately named HOL declaration."
+}
 ]
