@@ -9,12 +9,11 @@ Kernel-checked application of the tagged
 `PanPropsEvalStateFiniteExact` carrier and the pair evaluator
 `evaluateHOLFinitePair`.
 
-A direct original-HOL `EVAL` oracle probe for `evaluate_clock_sub1` is
-infeasible in this checkout: the pinned `cakeml` tree has no built `.hol/objs`
-and regenerating the HOL session fails with `Cannot find file preamble.ui`, so
-no oracle row is fabricated here.  Instead the fixtures instantiate the theorem
-on `Skip` (whose HOL equation is `evaluate (Skip,s) = (NONE,s)`) and
-kernel-check the clock-subtraction arithmetic of the statement.
+This module is kernel proof-term instantiation of the tagged theorem, not a
+direct original-HOL `EVAL` oracle comparison: no oracle row is fabricated here.
+The fixtures instantiate the theorem on `Skip` (whose HOL equation is
+`evaluate (Skip,s) = (NONE,s)`) and kernel-check the clock-subtraction
+arithmetic of the statement.
 -/
 
 namespace Flapjack.Test.PanPropsEvaluateClockSub1Parity
