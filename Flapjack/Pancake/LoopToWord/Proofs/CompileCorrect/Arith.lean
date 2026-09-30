@@ -157,8 +157,8 @@ theorem compileCorrect_Arith {width : Nat} [NeZero width] {C F : Type}
         · rename_i hq0
           cases hs'
           have hmem : sptMem r1 ctxt := hAcc r1 (by simp [accVarsHOL, sptMem_sptInsert])
-          obtain ⟨hl, h0⟩ := localsRel_retv_insert ctxt _ _ r1 (.word (w2 / q)) retv hLocals hmem hRetv
-          refine ⟨WordSemStateFiniteExact.setVar (LoopToWord.findVarHOL ctxt r1) (.word (w2 / q)) t,
+          obtain ⟨hl, h0⟩ := localsRel_retv_insert ctxt _ _ r1 (.word (w2.sdiv q)) retv hLocals hmem hRetv
+          refine ⟨WordSemStateFiniteExact.setVar (LoopToWord.findVarHOL ctxt r1) (.word (w2.sdiv q)) t,
             none, ?_, ?_, stateRel_setVar _ _ _ _ _ _ hState, rfl, h0, hl, rfl, rfl⟩
           · simp only [LoopToWord.compHOL]
             rw [WordSemStateFiniteExact.evaluate]

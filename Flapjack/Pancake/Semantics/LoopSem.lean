@@ -84,12 +84,15 @@ def loopSetGlobalMachine {W F : Type} (state : LoopMachineState W F)
   { state with globals := fun current =>
       if current == address then some value else state.globals current }
 
-/-! Bridge the source-shaped `loop_arith` port into the exact machine-state
-    evaluator.  `loopArith` is defined on `Nat` words, so this helper is the
-    `W = Nat` instance; the FFI type stays free.  Non-word locals remain
-    untouched, while every word local returned by `loopArith` is written back
-    as a `Word`; a missing operand therefore still produces the source `NONE`
-    result. -/
+/-! Flapjack-specific projection of broad Nat arithmetic into machine states.
+    This helper is not an exact HOL `loop_arith` port: its Div branch computes
+    unsigned unbounded Nat division instead of signed fixed-width word_quot.
+    Location operands are rejected and untouched locals are retained, but those
+    properties do not establish word-level correspondence. No repository caller
+    currently wires this helper into an executed evaluator hook (audit bead
+    `flapjack-g4n1`). The faithful width-aware definition is
+    `LoopSemStateFiniteExact.loopArith`; using it through this different state
+    carrier requires a separately proved relation and faithful hook wiring. -/
 def loopArithMachine (width : Nat) (state : LoopMachineState Nat F)
     (operation : LoopArith) : Option (LoopMachineState Nat F) :=
   let locals : Nat → Option Nat := fun name =>

@@ -29,7 +29,9 @@ computable algorithms.  The HOL `words` operations are:
   `BitVec.ofInt`;
 * `n2w`/`w2n` are `BitVec.ofNat`/`toNat`, and `dimword (:'a)` is
   `2 ^ width`;
-* word `/` is unsigned `BitVec` division;
+* word `/` is signed truncating `BitVec.sdiv`, matching the four
+  sign cases of HOL `word_quot_def` (wordsScript.sml:354-366);
+  unsigned word division is HOL `//`, not `/`;
 * `word_extract` is `holWordExtract`, `bit_field_insert` is
   `holBitFieldInsert`, and `@@` into `word64` is concatenation followed by
   `setWidth 64`.
@@ -112,7 +114,7 @@ noncomputable def inst {width : Nat} [NeZero width] {C : Type} {F : Type}
       assign r1 (.shift sh (.var r2) (match ri with | .reg r3 => .var r3 | .imm w => .const w)) s
   | .arith (.div r1 r2 r3) =>
       match getVars [r3, r2] s with
-      | some [.word q, .word w2] => if q ≠ 0 then some (setVar r1 (.word (w2 / q)) s) else none
+      | some [.word q, .word w2] => if q ≠ 0 then some (setVar r1 (.word (w2.sdiv q)) s) else none
       | _ => none
   | .arith (.addCarry r1 r2 r3 r4) =>
       match getVars [r2, r3, r4] s with

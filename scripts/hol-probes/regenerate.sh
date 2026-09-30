@@ -1618,7 +1618,7 @@ run_probe pan_itree_h_handle_deccall_ret_probeScript.sml \
   failed_caller raised_clears_locals \
   "$cake_dir/pancake/semantics/pan_itreeSemScript.sml"
 run_probe loop_sem_loop_arith_probeScript.sml loop_sem_loop_arith_probe.out \
-  loop_arith_div loop_arith_longdiv_overflow "$cake_dir/pancake/semantics/loopSemScript.sml"
+  loop_arith_div loop_arith_signed_8 "$cake_dir/pancake/semantics/loopSemScript.sml"
 run_probe longdiv_code_probeScript.sml longdiv_code_probe.out \
   longdiv_code_software riscv_longdiv_encoding \
   "$cake_dir/compiler/backend/data_to_wordScript.sml"
@@ -1841,6 +1841,15 @@ run_probe machine_ieee_fp64_sqrt_special_probeScript.sml machine_ieee_fp64_sqrt_
 run_probe machine_ieee_fp64_sqrt_exact_probeScript.sml machine_ieee_fp64_sqrt_exact_probe.out \
   sqrt_four sqrt_min_sub sqrt_2p1022 \
   "$hol_dir/src/floating-point/binary_ieeeScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
+# Signed word quotient operator in original wordSem Div (.18.5.10.1).
+run_probe word_sem_div_signed_probeScript.sml word_sem_div_signed_probe.out \
+  positive negative_small negative_dividend negative_divisor both_negative \
+  min_overflow min_half positive_minus_one zero_divisor zero_dividend \
+  alias_dividend alias_divisor same_source missing_dividend location_divisor \
+  min64_overflow min1_overflow \
+  "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 
 # The wordSem inst_def probe observes integer arithmetic, memory and

@@ -50,3 +50,40 @@ def locCheck {α : Type}
     ∃ key program, sptLookup key code = some program ∧ getLabels program labels
 
 end Flapjack.StackSem
+
+namespace Flapjack.StackSemLabels
+
+open Flapjack.Compiler.Backend.StackLang
+
+/-- Forget the exact instruction payloads for label observation.  The HOL
+    label equations inspect only `Seq`, `Ite`, `Loop`, and `Call` structure;
+    every other constructor is a leaf for this observation.  This adapter lets
+    width-indexed `HolProg` clients reuse the one source-reviewed generic
+    `StackSem.getLabels` implementation instead of carrying a duplicate clause
+    definition. -/
+def labelsProgram {width : Nat} [NeZero width] : HolProg width → ProgM (BitVec width)
+  | .seq first second => .seq (labelsProgram first) (labelsProgram second)
+  | .ite _ _ _ thenBranch elseBranch =>
+      .ite .equal 0 (.imm (0 : BitVec width))
+        (labelsProgram thenBranch) (labelsProgram elseBranch)
+  | .loop body => .loop (labelsProgram body)
+  | .call none _ none => .call none (.inl 0) none
+  | .call none _ (some (handlerBody, handlerFirst, handlerSecond)) =>
+      .call none (.inl 0)
+        (some (labelsProgram handlerBody, handlerFirst, handlerSecond))
+  | .call (some (body, link, first, second)) _ none =>
+      .call (some (labelsProgram body, link, first, second)) (.inl 0) none
+  | .call (some (body, link, first, second)) _
+      (some (handlerBody, handlerFirst, handlerSecond)) =>
+      .call (some (labelsProgram body, link, first, second)) (.inl 0)
+        (some (labelsProgram handlerBody, handlerFirst, handlerSecond))
+  | _ => .skip
+termination_by program => sizeOf program
+decreasing_by all_goals simp_wf <;> omega
+
+/-- Width-indexed compatibility name implemented through the canonical
+    source-reviewed generic `StackSem.getLabels` definition. -/
+abbrev getLabels {width : Nat} [NeZero width] : HolProg width → (Nat × Nat) → Prop :=
+  fun program => Flapjack.StackSem.getLabels (labelsProgram program)
+
+end Flapjack.StackSemLabels
