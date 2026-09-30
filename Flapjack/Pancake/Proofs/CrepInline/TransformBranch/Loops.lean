@@ -318,7 +318,13 @@ theorem transformBranchCorrect_While {width : Nat} [NeZero width] {σ : Type}
   whileGoal e c s ih
 
 /-- `Call` case (Resume at `:2173-2184`) for every call shape, with only the
-    guarded `evaluate_ind` handler premise. -/
+    guarded `evaluate_ind` handler premise.  SPECIALISED, STRONGER case: HOL's
+    `evaluate_ind` Call conjunct also supplies a callee premise
+    `P (prog, dec_clock s with locals := newlocals)`; HOL's proof of this case
+    does not use it, so it is omitted here rather than added as an unused
+    hypothesis (as for the accepted `evaluate_locals_same_fdom` and
+    `transform_eoc_correct` Call cases).  The assembly discharges the handler
+    premise internally. -/
 @[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "transform_branch_correct"
   (fmap_as_finite_support := [locals, globals, code])
   (words_as_type_indexed_bitvec)]
