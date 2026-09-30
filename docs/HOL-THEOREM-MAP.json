@@ -13673,7 +13673,8 @@
     "hol_name": "is_wf_shape_v_nil_step1",
     "lean_path": "Flapjack/Pancake/Semantics/PanProps.lean",
     "lean_name": "isWfShapeValueHOLExact_nil_step1",
-    "statement_status": "reviewed_exact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-ds4 (source comparison, bead flapjack-4ac.4.7; exact HOL panProps$is_wf_shape_v_nil_step1 (panPropsScript.sml:48): !sctxt v. sctxt = [] /\\ is_wf_shape sctxt (shape_of v) ==> is_wf_shape_v sctxt v. Lean `{width : Nat} [NeZero width] (context : StructContextExact) (value : ValueHOL width) (h : context = [] /\\ Flapjack.Pancake.PanLang.isWfShapeExactHOL context (shapeOfHOLExact value) = true) : isWfShapeValueHOLExact context value = true` renders the conjunction with /\\ and the Bool predicates with `= true`; carriers are the already-reviewed exact StructContextExact/ValueHOL/isWfShapeExactHOL/shapeOfHOLExact. No extra hypotheses; [NeZero width] models HOL's positive word dimension. Proof by induction on the value with the context substituted to []. Direct HOL rows is_wf_shape_v_* in pan_structs_value_validity_probe.out; parity example in Flapjack/Test/PanStructsValueValidityParity.lean)"
   },
   {
