@@ -165,19 +165,6 @@ regressions use `native_decide`; their locations are audited by
 engineering policy and should not be confused with an independent review of
 the theorem statements or a proof of semantic equivalence to HOL.
 
-The authoritative reference sources remain under `cakeml/pancake`, including
-`pan_to_targetScript.sml` and its proof files. When adding a parity fixture,
-record the source program, the exact reference command/output boundary, and
-any normalization of labels or names. A fixture that fails against CakeML is a
-compiler-parity bug and must remain tracked as high-priority work until fixed
-or its reference interpretation is corrected.
-
-The checked-in HOL probes under `scripts/hol-probes` provide the same evidence
-for intermediate definitions that cannot be observed through the source
-compiler command. They are optional for normal Lean builds, but their outputs
-must be regenerated from the original CakeML/HOL source before the associated
-porting bead is closed.
-
 ## Required next evidence for a stronger claim
 
 Before describing Flapjack as a Pancake-equivalent compiler, the project needs
