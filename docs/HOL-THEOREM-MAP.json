@@ -31135,5 +31135,37 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack local proof factoring; no standalone HOL original. Preserves exact update/FFI clauses."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/OptMmapEvalCorrect.lean",
+  "lean_name": "optMmapEvalCorrectHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "OPT_MMAP_eval_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "PanSemStateFiniteExact.locals",
+    "PanSemStateFiniteExact.globals",
+    "PanSemStateFiniteExact.code",
+    "PanSemStateFiniteExact.eshapes",
+    "PanGlobalsContextExact.globals"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source comparison2026-09-30 HOL919-932: original state_rel T ctxt source target conjunction OPT_MMAP(eval source)argexps=SOME args implies OPT_MMAP(eval target)(MAP(compile_exp ctxt)argexps)=SOME args. Both OPT_MMAP evaluators are explicit reviewed PanSemStateFiniteExact.evalListHOLFinite; argument MAP is literal List.map of reviewed compileExpExactHOL. Successful list recursion derives each source element and recursively same source values; full accepted compileExpCorrectHOL supplies target head. No public pointwise IH, target evaluation, nil-struct or compile-success premise. Exact name/shape/expression/value carriers; canonical state locals/globals/code/eshapes and context globals with two same-module genuine roundtrip witnesses; positive width NeZero and universe0 FFI. No executable change. Coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/OptMmapEvalCorrect.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack canonical carrier roundtrip re-export for exact list theorem representation qualifiers; no independent HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/OptMmapEvalCorrect.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack canonical carrier roundtrip re-export for exact list theorem representation qualifiers; no independent HOL declaration."
 }
 ]
