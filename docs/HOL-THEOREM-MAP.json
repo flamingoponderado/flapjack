@@ -32553,6 +32553,54 @@
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-specific composition of initializer head expression proof2149-2163 (.22.10.7). Original state_rel F and source successful empty-locals evaluation derive unchanged-target compiled evaluation using accepted state_rel_empty_locals, compile_exp_correct and eval_empty_locals_IMP. No target success assumption, extra shape or alignment assumption, or new named HOL theorem. Full recursive initializer remains open."
 },
+{
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "res_var_FEMPTY",
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationLocals.lean",
+  "lean_name": "resVarFEMPTYExact",
+  "statement_status": "documented_mismatch",
+  "reviewer": "flapjack-ds10 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.32.6; documented_mismatch, tag withdrawn after coordinator review). HOL res_var_FEMPTY (pan_globalsProofScript.sml:1011-1015) has elaborated type res_var FEMPTY (n,NONE) = FEMPTY over the bare polymorphic finite-map carrier 'a |-> 'b; the Lean statement renders that carrier with HolFiniteMapExact (resVarEq/empty). No existing finite-map qualifier classifies a tagged theorem whose whole content is a single map equality: fmap_as_finite_support_result is limited to defs by its lookup-target witness rule and fmap_as_finite_support_equalities requires at least two top-level conjuncts. The @[hol] tag was withdrawn rather than left as reviewed_exact; faithful classification/extending the single-map-equality qualifier+witness checks is tracked by flapjack-pxn.18.5.2.32.6.1."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+  "hol_name": "call_FFI_LENGTH",
+  "lean_path": "Flapjack/Compiler/Backend/StackRemove.lean",
+  "lean_name": "callFFILengthHOL",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead pxn.18.5.2.35.5 followup): HOL call_FFI_LENGTH (stack_removeProofScript.sml:67) is (call_FFI s i conf xs = FFI_return n ys) ==> LENGTH ys = LENGTH xs. Carriers/naming render through the already reviewed call_FFI_def tag on callFFIHOL (ffiScript.sml, reviewed_exact): call_FFI->callFFIHOL, FFI_return->HolFfiResult.ret, ffi_state->HolFfiState, LENGTH ys = LENGTH xs -> nextBytes.length = bytes.length; no semantic difference. Proven by the FfiHOL local corollary callFFIHOL_ret_length."
+},
+{
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "compile_correct",
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ExtCall.lean",
+  "lean_name": "compileCorrect_ExtCall",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "PanSemStateFiniteExact.locals",
+    "PanSemStateFiniteExact.globals",
+    "PanSemStateFiniteExact.code",
+    "PanSemStateFiniteExact.eshapes",
+    "PanGlobalsContextExact.globals"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-pxn.18.5.2.35) of cakeml/pancake/proofs/pan_globalsProofScript.sml:1595-1613 Resume compile_correct[ExtCall]: the HOL case holds the original state relation, source run and non-Error premises only; it uses the evaluate_ind expression hypothesis compile_exp_correct for the four compiled argument evaluations, state_rel_read_bytearray for the two byte-array reads, and state_rel_change_ffi with state_rel_write_bytearray for the call_FFI return branch, plus state_rel_empty_locals for the FinalFFI branch; concluded with good_res_def. Source evaluator is the tagged evaluateHOLFiniteState (panSem$evaluate_def), compiler the tagged compileProgExactHOL (pan_globals$compile_def), relation the tagged panGlobalsStateRelHOLExact (state_rel_def). No extra hypothesis added."
+},
+{
+  "hol_path": null,
+  "hol_name": null,
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ExtCall.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.2.35): same-module canonical roundtrip witness re-exported for the relation qualifier; infrastructure, no HOL original."
+},
+{
+  "hol_path": null,
+  "hol_name": null,
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ExtCall.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.2.35): same-module canonical roundtrip witness re-exported for the relation qualifier; infrastructure, no HOL original."
+},
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/GlobalStoreReload.lean",
     "lean_name": "stateRel_storeReload",
