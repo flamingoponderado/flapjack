@@ -1,3 +1,4 @@
+import Flapjack.Pancake.WordLang.OccurrenceCorrespondence
 import Flapjack.Compiler.Backend.StackProps.FloatNames
 import Flapjack.Compiler.Backend.StackProps.AddressNames
 import Flapjack.Compiler.Backend.StackProps.ArithmeticNames
