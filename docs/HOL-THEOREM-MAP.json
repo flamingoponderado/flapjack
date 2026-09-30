@@ -31636,5 +31636,37 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.5.43.7): the evaluate_ind motive of evaluate_locals_same_fdom for every program and state by structural recursion over the tagged cases; no separate HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Return.lean",
+  "lean_name": "compileCorrect_Return",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "compile_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "PanSemStateFiniteExact.locals",
+    "PanSemStateFiniteExact.globals",
+    "PanSemStateFiniteExact.code",
+    "PanSemStateFiniteExact.eshapes",
+    "PanGlobalsContextExact.globals"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-c source comparison2026-09-30 (.31.2): genuine Return compile_correct case860-864 using original gen_goal172-182; original state_rel T/source evaluation/non-Error premises and existential target evaluation/state_rel(good_res) conclusion retained, no added IH/run/result/shape premise. Accepted full compileExpCorrectHOL supplies target value. Original state relation supplies empty source/target struct contexts, preserving <=32 shape-size test; stateRelEmptyLocalsHOL establishes original post relation. Failed eval/oversize cases contradict original non-Error premise. Exact ProgHOL/ExpHOL/MlS/ValueHOL/positive width/NeZero/universe0 FFI; canonical state locals/globals/code/eshapes and context globals with genuine same-module roundtrips. Proof-only, no executable change; coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Return.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only infrastructure. Canonical state toExact/ofExact roundtrip forwarded for named state maps."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Return.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only infrastructure. Canonical context toBroad/ofBroad roundtrip forwarded for context globals."
 }
 ]
