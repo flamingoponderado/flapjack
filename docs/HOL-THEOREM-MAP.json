@@ -35623,5 +35623,13 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Private generated Call clause for pending33.11: unmatched exception, timeout or final FFI bypass handler and destination; scratch arguments/code/clock/callee entry derived internally, result emptyLocals exact. Internal callee IH branch facts pending full all-case original-IH assembly; untagged infrastructure, no completed port claim."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "bypassScopedCorrect",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Private scoped unmatched exception/timeout/final FFI branch for pending33.11; initializer, actual scratch Call/continuation and both scope-restored relation derived from internal callee IH branch facts. Original source IH discharge/full all-outcome constructor remains unfinished; untagged infrastructure."
 }
 ]

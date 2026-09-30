@@ -1112,10 +1112,10 @@ private theorem bypassScratchCall {width : Nat} {σ : Type} [NeZero width]
     (hcode : lookupCodeHOLFinite state.code.lookup function values = some (body, callee, returnShape))
     (hclock : state.clock ≠ 0)
     (hbody : evaluateHOLFiniteState (callEntryStateHOLFinite state callee) body = (some result, post))
-    (hbypass : match result with
+    (hbypass : (fun r : PanSemResultExact width => match r with
       | .exception eid _ => eid ≠ handlerId
       | .timeOut | .finalFfi _ => True
-      | _ => False) :
+      | _ => False) result) :
     let names := handlerVar :: freeVarIdsHOL handler ++ arguments.flatMap varExpHOL
     let resultName := freshNameMlS (ofString "") names
     let flagName := freshNameMlS (ofString "vn'") (resultName :: names)
@@ -1148,6 +1148,65 @@ private theorem bypassScratchCall {width : Nat} {σ : Type} [NeZero width]
   | exception eid value => simp only [if_neg hbypass]
   | timeOut | finalFfi outcome => rfl
   | «break» | «continue» | error | returned value => contradiction
+
+/-- Literal outer scopes for unmatched exceptions and terminal callee results.
+The compiler initialization, scratch argument run, Call result and scoped
+relation are derived internally from callee-IH branch facts. Private until the
+original IH connection and all-outcome constructor assembly are complete. -/
+private theorem bypassScopedCorrect {width : Nat} {σ : Type} [NeZero width]
+    (context : PanGlobalsContextExact width)
+    (source target sourcePost targetPost : PanSemStateFiniteExact width σ)
+    (name function handlerId handlerVar : MlS) (handler body : ProgHOL width)
+    (arguments : List (ExpHOL width)) (values : List (ValueHOL width))
+    (callee : HolFiniteMapExact MlS (ValueHOL width)) (returnShape shape : ShapeHOL)
+    (address : BitVec width) (result : PanSemResultExact width)
+    (hcaller : panGlobalsStateRelHOLExact true context source target)
+    (hcontext : context.globals.lookup name = some (shape, address))
+    (hargs : evalListHOLFinite target
+      (h := fun a => Classical.propDecidable (target.memaddrs a))
+      (compileExpExactHOLList context arguments) = some values)
+    (hcode : lookupCodeHOLFinite target.code.lookup function values =
+      some (compileProgExactHOL context body, callee, returnShape))
+    (hclock : target.clock ≠ 0)
+    (hbody : evaluateHOLFiniteState (callEntryStateHOLFinite target callee)
+      (compileProgExactHOL context body) = (some result, targetPost))
+    (hbypass : (fun r : PanSemResultExact width => match r with
+      | .exception eid _ => eid ≠ handlerId
+      | .timeOut | .finalFfi _ => True
+      | _ => False) result)
+    (hrel : panGlobalsStateRelHOLExact false context sourcePost targetPost) :
+    ∃ finalPost,
+      evaluateHOLFiniteState target (compileProgExactHOL context
+        (.call (some (some (.global, name), some (handlerId, handlerVar, handler)))
+          function arguments)) = (some result, finalPost) ∧
+      panGlobalsStateRelHOLExact (goodResHOL (some result)) context
+        (emptyLocalsHOLFinite sourcePost) finalPost := by
+  classical
+  obtain ⟨initializer, _, hscope⟩ := presentContextScope context source target name
+    function handlerId handlerVar arguments handler shape address hcaller hcontext
+  have hcall := bypassScratchCall target targetPost function handlerId handlerVar
+    (compileProgExactHOL context handler) (compileExpExactHOLList context arguments)
+    values (compileProgExactHOL context body) callee returnShape initializer result
+    hargs hcode hclock hbody hbypass
+  have hgood : goodResHOL (some result) = false := by
+    cases result <;> simp_all only [goodResHOL]
+  have hempty := (PanGlobalsStateRelationLocals.stateRelEmptyLocalsHOL context
+    sourcePost targetPost false).2 hrel
+  let compiledHandler := compileProgExactHOL context handler
+  let compiledArguments := compileExpExactHOLList context arguments
+  let names := handlerVar :: freeVarIdsHOL compiledHandler ++ compiledArguments.flatMap varExpHOL
+  let resultName := freshNameMlS (ofString "") names
+  let flagName := freshNameMlS (ofString "vn'") (resultName :: names)
+  let scratch := setVarHOLFinite flagName (.val (.word (BitVec.ofNat width 0)))
+    (setVarHOLFinite resultName initializer target)
+  let call := ProgHOL.call (some (some (.local, resultName), some (handlerId, handlerVar,
+    .seq compiledHandler (.assign .local flagName (.const (BitVec.ofNat width 1))))))
+    function compiledArguments
+  obtain ⟨ht, hr⟩ := nonGoodCallTail context target scratch (emptyLocalsHOLFinite sourcePost)
+    (emptyLocalsHOLFinite targetPost) call result resultName flagName initializer address hcall hgood hempty
+  refine ⟨_, ?_, hr⟩
+  rw [hscope]
+  simp only [ht]
 
 /-- Internal missing-context branch of the full constructor proof. The branch
 condition selects the literal compiler fallback; the callee and handler IHs
