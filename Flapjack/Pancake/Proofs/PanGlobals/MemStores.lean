@@ -61,7 +61,7 @@ private theorem stride_succ {width : Nat} (a : BitVec width) (n : Nat) :
 
 /-- Local support: `addresses a (n + k)` splits at the `n`-th stride.  No HOL
     original (HOL's proof uses `addresses_thm`). -/
-theorem addresses_add {width : Nat} (n k : Nat) :
+theorem addresses_add {width : Nat} [NeZero width] (n k : Nat) :
     ∀ (a x : BitVec width), addresses a (n + k) x ↔
       addresses a n x ∨
         addresses (a + BitVec.ofNat width (width / 8) * BitVec.ofNat width n) k x := by
@@ -316,7 +316,7 @@ theorem memLoadMemStoreHOL {width : Nat} [NeZero width] :
 
 /-- Local support: without wrap-around, a block of `n1` strides is disjoint
     from the next `n2` strides at HOL's good dimensions. -/
-private theorem addresses_disjoint_stride {width : Nat} (hw : goodDimindex width)
+private theorem addresses_disjoint_stride {width : Nat} [NeZero width] (hw : goodDimindex width)
     (a : BitVec width) (n1 n2 : Nat) (hlt : (n1 + n2) * (width / 8) < 2 ^ width) :
     ∀ x, addresses a n1 x →
       ¬ addresses (a + BitVec.ofNat width (width / 8) * BitVec.ofNat width n1) n2 x := by
