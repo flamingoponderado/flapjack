@@ -1,0 +1,13 @@
+load "bossLib"; load "preamble"; load "stackPropsTheory";
+open bossLib HolKernel Parse preamble stackPropsTheory;
+fun out label q = (print(label ^ "="); print_term(rconc(EVAL q)); print "\n");
+val _ = out "skip" ``inst_name ((c:8 asm$asm_config) with <|ISA := asm$RISC_V; reg_count := 8; avoid_regs := [0;1]; fp_reg_count := 4; two_reg_arith := T; addr_offset := (0w,0w)|>) (Skip : 8 asm$inst)``;
+val _ = out "const_last" ``inst_name ((c:8 asm$asm_config) with <|ISA := asm$RISC_V; reg_count := 8; avoid_regs := [0;1]; fp_reg_count := 4; two_reg_arith := T; addr_offset := (0w,0w)|>) (Const 5 255w : 8 asm$inst)``;
+val _ = out "const_bound" ``inst_name ((c:8 asm$asm_config) with <|ISA := asm$RISC_V; reg_count := 8; avoid_regs := [0;1]; fp_reg_count := 4; two_reg_arith := T; addr_offset := (0w,0w)|>) (Const 6 0w : 8 asm$inst)``;
+val _ = out "mem_good" ``inst_name ((c:8 asm$asm_config) with <|ISA := asm$RISC_V; reg_count := 8; avoid_regs := [0;1]; fp_reg_count := 4; two_reg_arith := T; addr_offset := (0w,0w)|>) (Mem Load 5 (Addr 1 0w) : 8 asm$inst)``;
+val _ = out "mem_destination" ``inst_name ((c:8 asm$asm_config) with <|ISA := asm$RISC_V; reg_count := 8; avoid_regs := [0;1]; fp_reg_count := 4; two_reg_arith := T; addr_offset := (0w,0w)|>) (Mem Load 6 (Addr 1 0w) : 8 asm$inst)``;
+val _ = out "mem_base" ``inst_name ((c:8 asm$asm_config) with <|ISA := asm$RISC_V; reg_count := 8; avoid_regs := [0;1]; fp_reg_count := 4; two_reg_arith := T; addr_offset := (0w,0w)|>) (Mem Load 1 (Addr 6 0w) : 8 asm$inst)``;
+val _ = out "arith_good" ``inst_name ((c:8 asm$asm_config) with <|ISA := asm$RISC_V; reg_count := 8; avoid_regs := [0;1]; fp_reg_count := 4; two_reg_arith := T; addr_offset := (0w,0w)|>) (Arith (Binop Add 1 1 (Reg 2)) : 8 asm$inst)``;
+val _ = out "arith_bad" ``inst_name ((c:8 asm$asm_config) with <|ISA := asm$RISC_V; reg_count := 8; avoid_regs := [0;1]; fp_reg_count := 4; two_reg_arith := T; addr_offset := (0w,0w)|>) (Arith (Binop Add 1 2 (Reg 2)) : 8 asm$inst)``;
+val _ = out "fp_good" ``inst_name ((c:8 asm$asm_config) with <|ISA := asm$RISC_V; reg_count := 8; avoid_regs := [0;1]; fp_reg_count := 4; two_reg_arith := T; addr_offset := (0w,0w)|>) (FP (FPAbs 0 1) : 8 asm$inst)``;
+val _ = out "fp_alias" ``inst_name ((c:8 asm$asm_config) with <|ISA := asm$RISC_V; reg_count := 8; avoid_regs := [0;1]; fp_reg_count := 4; two_reg_arith := T; addr_offset := (0w,0w)|>) (FP (FPAbs 0 0) : 8 asm$inst)``;
