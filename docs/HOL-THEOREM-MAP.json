@@ -32496,5 +32496,13 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-b source comparison2026-09-30 full HOL evaluate_unchanged_local1105-1135: original universal name/unused value/program/state/result/post binders and only nonfree/source run/good_res/nonError imply identical local lookup. No public IH or extra successful-evaluation, freshness, domain, target, or post-state premise. Internally invokes exact evaluateIndHOL over unchangedLocalGoal and discharges all21 clauses in source order: Skip,Dec,Assign,Primitive,Store,Store32,StoreByte,ShMemLoad,ShMemStore,Seq,If,Break,Continue,While,Return,Raise,Tick,Annot,Call,DecCall,ExtCall. Call dispatches NONE/non-tail-no-handler/handler; handler IH reconstructs all literal original guards/aliases. DecCall reconstructs all continuation guards/aliases, both shape equalities; unused callee IH not needed by specialized preservation cases. Original exact MlS/ProgHOL/ValueHOL/state, canonical finite-support witness and positive width/universe0 FFI. Peer case sources inspected then ordinary-merged; their beads remain pending coordinator acceptance. Proof-only; coordinator full source review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/InitGlobalsStore.lean",
+  "lean_name": "initGlobalStorePreservesSourceMemory",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only initializer-cons infrastructure (.22.10.8). Source pan_globalsProofScript.sml:2164-2181 and2285-2300 derives successful head stores and preservation of source-domain memory. Composes reviewed mem_stores_addrs_IS_SOME and mem_stores_lookup. Free-region target coverage and source disjointness plus store-footprint inclusion and old memory agreement imply existential store success and preserved agreement. No assumed target store result, alignment, nonwrapping bound or scalar restriction; universal same-width total word_lab memory. No separately named HOL declaration, so untagged. Full initializer state relation and recursive proof remain open."
 }
 ]
