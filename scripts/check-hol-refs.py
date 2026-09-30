@@ -47,15 +47,17 @@ EXTERNAL_HOL_LPREFIX_LUB_PATH = (
     "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml"
 )
 EXTERNAL_HOL_FCP_PATH = "hol4/src/n-bit/fcpScript.sml"
+EXTERNAL_HOL_LLIST_PATH = "hol4/src/coalgebras/llistScript.sml"
 EXTERNAL_HOL_OPTION_PATH = "hol4/src/coretypes/optionScript.sml"
 EXTERNAL_HOL_PATHS = frozenset({
     EXTERNAL_HOL_PATH, EXTERNAL_HOL_LPREFIX_LUB_PATH, EXTERNAL_HOL_FCP_PATH,
-    EXTERNAL_HOL_OPTION_PATH,
+    EXTERNAL_HOL_LLIST_PATH, EXTERNAL_HOL_OPTION_PATH,
 })
 EXTERNAL_HOL_FILES = frozenset({
     "COPYRIGHT",
     "src/finite_maps/sptreeScript.sml",
     "src/n-bit/fcpScript.sml",
+    "src/coalgebras/llistScript.sml",
     "src/coretypes/optionScript.sml",
     "examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
 })
