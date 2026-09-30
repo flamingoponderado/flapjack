@@ -37152,5 +37152,28 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.5.51): HOL crep_inlineProofScript.sml:2301-2319 inline_prog_correct. Binders p s r s' inl_fs s1 inl_bag in HOL order, as declared parameters. Single conjunctive hypothesis as in HOL: evaluate (p,s) = (r,s'), r <> SOME Error, inl_fs SUBMAP s.code, inl_bag SUBMAP inl_fs, state_rel_code s s1, locals_strong_rel s s1, code_inl_rel inl_fs s s1. Conclusion: exists s1'. evaluate (inline_prog inl_bag p, s1) = (r, s1') /\\ state_rel_code s' s1' /\\ code_inl_rel inl_fs s' s1' /\\ the result-indexed case (NONE/Break/Continue => locals_strong_rel; Error => F; other => T) as the displayed match. Carriers as the accepted constructor cases: evalCrepSemHOLProgExact, the tagged inline_prog_def port inlineProgHOLExact, and the exact state_rel_code/locals_strong_rel/code_inl_rel ports. No extra premise and no public IH: the untagged inlineMotive proves the evaluate_ind predicate for all p and s by the lexicographic (clock, size) induction, applying each of the 19 tagged constructor cases with its literal premises."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SkipSeqExact.lean",
+  "lean_name": "evaluateSkipSeqHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+  "hol_name": "evaluate_skip_seq",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison pan_simpProofScript.sml84-87: unconditional complete evaluate(Seq Skip p,s)=evaluate(p,s), arbitrary exact program/state, no additional premise. Skip returns NONE and unchanged state; source Seq clause uses fix_clock_evaluate rewrite exactly as finite line780 equation. Native ProgHOL/MlS/result carriers, canonical finite locals/globals/code/eshapes and genuine imported-owner codec roundtrip, positive BitVec width and Type0 FFI host only. Coordinator acceptance pending; proof-only no executable change."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SkipSeqExact.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Imported-owner canonical finite-state roundtrip; derived representation infrastructure with no separately named HOL original."
 }
 ]
