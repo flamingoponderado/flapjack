@@ -28685,5 +28685,69 @@
     "lean_name": "isWfShapeValueHOLExact_of_nil_shape",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.10.4.1): HOL panPropsScript.sml:48-54 `is_wf_shape_v_nil_step1: !sctxt v. sctxt = [] /\\ is_wf_shape sctxt (shape_of v) ==> is_wf_shape_v sctxt v`. Lean renders sctxt = [] as the literal empty StructContextExact, is_wf_shape as isWfShapeExactHOL, shape_of as shapeOfHOLExact and is_wf_shape_v as isWfShapeValueHOLExact over ValueHOL width; no extra premise beyond the empty context. Kernel proof mirrors the mutual is_wf_shape_v structure (RStruct defers to the EVERY fold over field values, NStruct is vacuous at the empty context)."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_exp_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationExact.lean",
+    "lean_name": "panGlobalsCompileExpCorrectLoadCaseExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-pxn.18.5.2.24.1) against pan_globalsProofScript.sml:103-131: exact Load case of compile_exp_correct (state_rel T ctxt s t with eval s e = SOME v implies eval t (compile_exp ctxt e) = SOME v). The finite-map relation qualifier names the four PanSemStateFiniteExact finite-map fields and the PanGlobalsContextExact.globals map traversed by the state relation; words_as_type_indexed_bitvec records the HOL word dimension. The address subexpression is compiled by the same pass, so the case carries the original eval_ind induction hypothesis for the address expression; the state relation and evaluation premise and the conclusion keep HOL's shape with no stronger premise."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_exp_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationExact.lean",
+    "lean_name": "panGlobalsCompileExpCorrectLoad32CaseExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-pxn.18.5.2.24.1) against pan_globalsProofScript.sml:103-131: exact Load32 case of compile_exp_correct (state_rel T ctxt s t with eval s e = SOME v implies eval t (compile_exp ctxt e) = SOME v). The finite-map relation qualifier names the four PanSemStateFiniteExact finite-map fields and the PanGlobalsContextExact.globals map traversed by the state relation; words_as_type_indexed_bitvec records the HOL word dimension. The address subexpression is compiled by the same pass, so the case carries the original eval_ind induction hypothesis for the address expression; the state relation and evaluation premise and the conclusion keep HOL's shape with no stronger premise."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_exp_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationExact.lean",
+    "lean_name": "panGlobalsCompileExpCorrectLoadByteCaseExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-pxn.18.5.2.24.1) against pan_globalsProofScript.sml:103-131: exact LoadByte case of compile_exp_correct (state_rel T ctxt s t with eval s e = SOME v implies eval t (compile_exp ctxt e) = SOME v). The finite-map relation qualifier names the four PanSemStateFiniteExact finite-map fields and the PanGlobalsContextExact.globals map traversed by the state relation; words_as_type_indexed_bitvec records the HOL word dimension. The address subexpression is compiled by the same pass, so the case carries the original eval_ind induction hypothesis for the address expression; the state relation and evaluation premise and the conclusion keep HOL's shape with no stronger premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationExact.lean",
+    "lean_name": "panMemLoad32HOL_mono",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only monotonicity helper for panMemLoad32HOL (Flapjack infrastructure, no separate HOL declaration); supports the Load32 case of compile_exp_correct."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationExact.lean",
+    "lean_name": "panMemLoadByteHOL_mono",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only monotonicity helper for panMemLoadByteHOL (Flapjack infrastructure, no separate HOL declaration); supports the LoadByte case of compile_exp_correct."
   }
 ]

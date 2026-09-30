@@ -29,6 +29,8 @@ declaration is itself a CakeML-script port.
 
 namespace Flapjack
 
+open Flapjack.Pancake.PanLang
+
 open Flapjack.Basis.Pure.MlString (MlString)
 open Flapjack.Pancake.PanLang
   (MlS ShapeHOL StructContextExact StructInfoHOLExact ProgHOL sizeOfShapeHOL)
@@ -332,5 +334,232 @@ theorem panGlobalsCompileExpCorrectGlobalVarCaseExact {width : Nat} {σ : Type}
     rfl
   rw [hop]
   exact hmemload
+
+
+/-! ### Memory-load monotonicity helpers
+
+HOL's `Load`/`Load32`/`LoadByte` cases of `compile_exp_correct` inline the
+`mem_load`/`mem_load_32`/`mem_load_byte` definitions and the `state_rel_def`
+memory conjuncts.  The following two lemmas are the same transfer step stated
+once for the `panMemLoad32HOL` and `panMemLoadByteHOL` helpers (Flapjack
+infrastructure, no separate HOL declaration to cite). -/
+
+/-- `panMemLoad32HOL` is monotone in the address domain and memory: if the
+    target domain contains the source domain and the two memories agree there,
+    then the target reads the same `word32`. -/
+theorem panMemLoad32HOL_mono {width : Nat} [NeZero width]
+    (sm tm : RiscV.Word width → HolWordLab width)
+    (sd td : RiscV.Word width → Prop)
+    (be : Bool) (address : RiscV.Word width) (v : RiscV.Word 32)
+    (hsub : ∀ a, sd a → td a) (hmem : ∀ a, sd a → sm a = tm a)
+    (h : @panMemLoad32HOL width _ sm sd (fun a => Classical.propDecidable (sd a))
+      be address = some v) :
+    @panMemLoad32HOL width _ tm td (fun a => Classical.propDecidable (td a))
+      be address = some v := by
+  unfold panMemLoad32HOL at h ⊢
+  by_cases hal : address.toNat % 4 = 0
+  · rw [if_pos hal] at h ⊢
+    dsimp only at h ⊢
+    cases hm : sm (panByteAlignHOL (width := width) address) with
+    | word value =>
+      rw [hm] at h
+      by_cases hsd : sd (panByteAlignHOL (width := width) address)
+      · rw [if_pos hsd] at h
+        rw [if_pos (hsub _ hsd)]
+        rw [← hmem _ hsd, hm]
+        exact h
+      · rw [if_neg hsd] at h
+        exact absurd h (by simp)
+  · rw [if_neg hal] at h ⊢
+    simp at h
+
+/-- `panMemLoadByteHOL` is monotone in the address domain and memory, with the
+    same statement shape as `panMemLoad32HOL_mono`. -/
+theorem panMemLoadByteHOL_mono {width : Nat} [NeZero width]
+    (sm tm : RiscV.Word width → HolWordLab width)
+    (sd td : RiscV.Word width → Prop)
+    (be : Bool) (address : RiscV.Word width) (v : UInt8)
+    (hsub : ∀ a, sd a → td a) (hmem : ∀ a, sd a → sm a = tm a)
+    (h : @panMemLoadByteHOL width _ sm sd (fun a => Classical.propDecidable (sd a))
+      be address = some v) :
+    @panMemLoadByteHOL width _ tm td (fun a => Classical.propDecidable (td a))
+      be address = some v := by
+  unfold panMemLoadByteHOL at h ⊢
+  dsimp only at h ⊢
+  cases hm : sm (panByteAlignHOL (width := width) address) with
+  | word value =>
+    rw [hm] at h
+    by_cases hsd : sd (panByteAlignHOL (width := width) address)
+    · rw [if_pos hsd] at h
+      rw [if_pos (hsub _ hsd)]
+      rw [← hmem _ hsd, hm]
+      exact h
+    · rw [if_neg hsd] at h
+      exact absurd h (by simp)
+
+/-- HOL `compile_exp_correct`, `Load` case
+    (`cakeml/pancake/proofs/pan_globalsProofScript.sml:103-131`).  The address
+    subexpression is compiled by the same pass, so the case carries the
+    original `eval_ind` induction hypothesis for the address expression; the
+    state relation and evaluation premise and the conclusion keep HOL's shape
+    and add no stronger premise. -/
+@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "compile_exp_correct"
+  (fmap_as_finite_support_relation :=
+    [PanSemStateFiniteExact.locals, PanSemStateFiniteExact.globals,
+     PanSemStateFiniteExact.code, PanSemStateFiniteExact.eshapes,
+     PanGlobalsContextExact.globals])
+  (words_as_type_indexed_bitvec)]
+theorem panGlobalsCompileExpCorrectLoadCaseExact {width : Nat} {σ : Type}
+    [NeZero width]
+    (source target : PanSemStateFiniteExact width σ)
+    (context : PanGlobalsContextExact width)
+    (shape : ShapeHOL) (address : ExpHOL width) (value : ValueHOL width)
+    (addressIH : ∀ (addressValue : ValueHOL width),
+      @PanSemStateFiniteExact.evalHOLFinite width σ _ source
+        (fun a => Classical.propDecidable (source.memaddrs a)) address = some addressValue →
+      @PanSemStateFiniteExact.evalHOLFinite width σ _ target
+        (fun a => Classical.propDecidable (target.memaddrs a))
+        (compileExpExactHOL context address) = some addressValue)
+    (h : panGlobalsStateRelHOLExact true context source target ∧
+      @PanSemStateFiniteExact.evalHOLFinite width σ _ source
+        (fun a => Classical.propDecidable (source.memaddrs a))
+        (.load shape address) = some value) :
+    @PanSemStateFiniteExact.evalHOLFinite width σ _ target
+      (fun a => Classical.propDecidable (target.memaddrs a))
+      (compileExpExactHOL context (.load shape address)) = some value := by
+  obtain ⟨hrel, heval⟩ := h
+  obtain ⟨hstructsS, hstructsT⟩ := panGlobalsStateRelStructsHOLExact true context source target hrel
+  simp only [compileExpExactHOL, PanSemStateFiniteExact.evalHOLFinite_load] at heval ⊢
+  rw [hstructsS] at heval
+  rw [hstructsT]
+  by_cases hwf : isWfShapeExactHOL ([] : StructContextExact) shape = true
+  · rw [if_pos hwf] at heval ⊢
+    cases haddr : @PanSemStateFiniteExact.evalHOLFinite width σ _ source
+        (fun a => Classical.propDecidable (source.memaddrs a)) address with
+    | none => simp only [haddr] at heval; simp at heval
+    | some av =>
+        cases av with
+        | val wv =>
+            cases wv with
+            | word word =>
+                simp only [haddr] at heval
+                have haddrT := addressIH (.val (.word word)) (by rw [haddr])
+                simp only [haddrT]
+                exact panGlobalsStateRelMemLoadHOLExact true context source target
+                  shape word value ⟨hrel, heval⟩
+        | rStruct fields => simp only [haddr] at heval; simp at heval
+        | nStruct name fields => simp only [haddr] at heval; simp at heval
+  · rw [if_neg hwf] at heval ⊢
+    simp at heval
+
+/-- HOL `compile_exp_correct`, `Load32` case
+    (`cakeml/pancake/proofs/pan_globalsProofScript.sml:103-131`). -/
+@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "compile_exp_correct"
+  (fmap_as_finite_support_relation :=
+    [PanSemStateFiniteExact.locals, PanSemStateFiniteExact.globals,
+     PanSemStateFiniteExact.code, PanSemStateFiniteExact.eshapes,
+     PanGlobalsContextExact.globals])
+  (words_as_type_indexed_bitvec)]
+theorem panGlobalsCompileExpCorrectLoad32CaseExact {width : Nat} {σ : Type}
+    [NeZero width]
+    (source target : PanSemStateFiniteExact width σ)
+    (context : PanGlobalsContextExact width)
+    (address : ExpHOL width) (value : ValueHOL width)
+    (addressIH : ∀ (addressValue : ValueHOL width),
+      @PanSemStateFiniteExact.evalHOLFinite width σ _ source
+        (fun a => Classical.propDecidable (source.memaddrs a)) address = some addressValue →
+      @PanSemStateFiniteExact.evalHOLFinite width σ _ target
+        (fun a => Classical.propDecidable (target.memaddrs a))
+        (compileExpExactHOL context address) = some addressValue)
+    (h : panGlobalsStateRelHOLExact true context source target ∧
+      @PanSemStateFiniteExact.evalHOLFinite width σ _ source
+        (fun a => Classical.propDecidable (source.memaddrs a))
+        (.load32 address) = some value) :
+    @PanSemStateFiniteExact.evalHOLFinite width σ _ target
+      (fun a => Classical.propDecidable (target.memaddrs a))
+      (compileExpExactHOL context (.load32 address)) = some value := by
+  obtain ⟨hrel, heval⟩ := h
+  obtain ⟨_hTop, _hloc, _hbase, hbe, _heshapes, _hclock, _hstructsS, _hstructsT, _hglob, _hwf,
+    hsub, _hshmem, hmem, _hffi, _hcode, _hdis, _htopmem, _halign, _hgood⟩ := hrel
+  simp only [compileExpExactHOL, PanSemStateFiniteExact.evalHOLFinite_load32] at heval ⊢
+  rw [← hbe]
+  cases haddr : @PanSemStateFiniteExact.evalHOLFinite width σ _ source
+      (fun a => Classical.propDecidable (source.memaddrs a)) address with
+  | none => simp only [haddr] at heval; simp at heval
+  | some av =>
+      cases av with
+      | val wv =>
+          cases wv with
+          | word word =>
+              simp only [haddr] at heval
+              have haddrT := addressIH (.val (.word word)) (by rw [haddr])
+              cases h32 : @panMemLoad32HOL width _ source.memory source.memaddrs
+                  (fun a => Classical.propDecidable (source.memaddrs a)) source.be word with
+              | none => simp only [h32] at heval; simp at heval
+              | some w32 =>
+                  simp only [h32, Option.map_some] at heval
+                  have hval : value = .val (.word (BitVec.ofNat width w32.toNat)) :=
+                    (Option.some.inj heval).symm
+                  subst hval
+                  have h32t := panMemLoad32HOL_mono source.memory target.memory
+                    source.memaddrs target.memaddrs source.be word w32 hsub hmem h32
+                  simp only [haddrT, Option.map_some, h32t]
+      | rStruct fields => simp only [haddr] at heval; simp at heval
+      | nStruct name fields => simp only [haddr] at heval; simp at heval
+
+/-- HOL `compile_exp_correct`, `LoadByte` case
+    (`cakeml/pancake/proofs/pan_globalsProofScript.sml:103-131`). -/
+@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "compile_exp_correct"
+  (fmap_as_finite_support_relation :=
+    [PanSemStateFiniteExact.locals, PanSemStateFiniteExact.globals,
+     PanSemStateFiniteExact.code, PanSemStateFiniteExact.eshapes,
+     PanGlobalsContextExact.globals])
+  (words_as_type_indexed_bitvec)]
+theorem panGlobalsCompileExpCorrectLoadByteCaseExact {width : Nat} {σ : Type}
+    [NeZero width]
+    (source target : PanSemStateFiniteExact width σ)
+    (context : PanGlobalsContextExact width)
+    (address : ExpHOL width) (value : ValueHOL width)
+    (addressIH : ∀ (addressValue : ValueHOL width),
+      @PanSemStateFiniteExact.evalHOLFinite width σ _ source
+        (fun a => Classical.propDecidable (source.memaddrs a)) address = some addressValue →
+      @PanSemStateFiniteExact.evalHOLFinite width σ _ target
+        (fun a => Classical.propDecidable (target.memaddrs a))
+        (compileExpExactHOL context address) = some addressValue)
+    (h : panGlobalsStateRelHOLExact true context source target ∧
+      @PanSemStateFiniteExact.evalHOLFinite width σ _ source
+        (fun a => Classical.propDecidable (source.memaddrs a))
+        (.loadByte address) = some value) :
+    @PanSemStateFiniteExact.evalHOLFinite width σ _ target
+      (fun a => Classical.propDecidable (target.memaddrs a))
+      (compileExpExactHOL context (.loadByte address)) = some value := by
+  obtain ⟨hrel, heval⟩ := h
+  obtain ⟨_hTop, _hloc, _hbase, hbe, _heshapes, _hclock, _hstructsS, _hstructsT, _hglob, _hwf,
+    hsub, _hshmem, hmem, _hffi, _hcode, _hdis, _htopmem, _halign, _hgood⟩ := hrel
+  simp only [compileExpExactHOL, PanSemStateFiniteExact.evalHOLFinite_loadByte] at heval ⊢
+  rw [← hbe]
+  cases haddr : @PanSemStateFiniteExact.evalHOLFinite width σ _ source
+      (fun a => Classical.propDecidable (source.memaddrs a)) address with
+  | none => simp only [haddr] at heval; simp at heval
+  | some av =>
+      cases av with
+      | val wv =>
+          cases wv with
+          | word word =>
+              simp only [haddr] at heval
+              have haddrT := addressIH (.val (.word word)) (by rw [haddr])
+              cases h8 : @panMemLoadByteHOL width _ source.memory source.memaddrs
+                  (fun a => Classical.propDecidable (source.memaddrs a)) source.be word with
+              | none => simp only [h8] at heval; simp at heval
+              | some w8 =>
+                  simp only [h8, Option.map_some] at heval
+                  have hval : value = .val (.word (BitVec.ofNat width w8.toNat)) :=
+                    (Option.some.inj heval).symm
+                  subst hval
+                  have h8t := panMemLoadByteHOL_mono source.memory target.memory
+                    source.memaddrs target.memaddrs source.be word w8 hsub hmem h8
+                  simp only [haddrT, Option.map_some, h8t]
+      | rStruct fields => simp only [haddr] at heval; simp at heval
+      | nStruct name fields => simp only [haddr] at heval; simp at heval
 
 end Flapjack
