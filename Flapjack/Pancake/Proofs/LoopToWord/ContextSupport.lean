@@ -154,13 +154,11 @@ theorem envToListIMPHOL {width : Nat} [NeZero width] {C F : Type}
 /-- Exact HOL `cut_env_LN_IMP` from
 `cakeml/pancake/proofs/loop_to_wordProofScript.sml`: cutting with an empty
 second name set returns the first cut as `cut_env`'s union, and exposes that
-same pair through `cut_envs`. The only representation qualification is the
-indexed Lean `BitVec` model of HOL's polymorphic word values. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "cut_env_LN_IMP"
-  (words_as_type_indexed_bitvec)]
-theorem wordSemCutEnvLNIMPHOL {width : Nat} [NeZero width]
-    (nameSets : WordLangNumSetHOL) (locals : Spt (WordLocW width))
-    (env : Spt (WordLocW width))
+same pair through `cut_envs`. The environment payload is arbitrary, as in HOL. -/
+@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "cut_env_LN_IMP"]
+theorem wordSemCutEnvLNIMPHOL {β : Type}
+    (nameSets : WordLangNumSetHOL) (locals : Spt β)
+    (env : Spt β)
     (hcut : wordSemCutEnv (nameSets, (Spt.ln : WordLangNumSetHOL)) locals = some env) :
     wordSemCutEnvs (nameSets, (Spt.ln : WordLangNumSetHOL)) locals =
       some (env, Spt.ln) := by
@@ -182,18 +180,16 @@ theorem wordSemCutEnvLNIMPHOL {width : Nat} [NeZero width]
 cut by `mk_new_cutset ctxt x1` preserves register zero because that generated
 set always contains zero; the second `LN` cut contributes the empty map to the
 `cut_env` union. The premise and lookup conclusion use the same exact Spt
-`cut_env` definition as HOL; the only representation qualification is HOL's
-type-indexed word values represented by `WordLocW width`. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "cut_env_mk_new_cutset_IMP"
-  (words_as_type_indexed_bitvec)]
-theorem wordSemCutEnvMkNewCutsetIMPHOL {width : Nat} [NeZero width]
+`cut_env` definition as HOL; arbitrary environment payloads are retained. -/
+@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "cut_env_mk_new_cutset_IMP"]
+theorem wordSemCutEnvMkNewCutsetIMPHOL {β : Type}
     (context : Spt Nat) (live : WordLangNumSetHOL)
-    (locals result : Spt (WordLocW width))
+    (locals result : Spt β)
     (hcut : wordSemCutEnv (mkNewCutsetHOL context live, (Spt.ln : WordLangNumSetHOL))
       locals = some result) :
     sptLookup 0 result = sptLookup 0 locals := by
   have hempty : wordSemCutNames (Spt.ln : WordLangNumSetHOL) locals =
-      some (Spt.ln : Spt (WordLocW width)) := by
+      some (Spt.ln : Spt β) := by
     have hinter : sptInter locals (Spt.ln : WordLangNumSetHOL) = Spt.ln := by
       cases locals <;> simp [sptInter]
     simp [wordSemCutNames, LoopSemStateFiniteExact.sptSubsetLive, hinter]
@@ -215,7 +211,7 @@ theorem wordSemCutEnvMkNewCutsetIMPHOL {width : Nat} [NeZero width]
       have hzero : sptMem 0 (mkNewCutsetHOL context live) := by
         change (sptLookup 0 (mkNewCutsetHOL context live)).isSome
         simp [mkNewCutsetHOL, sptLookup_sptInsert_same]
-      have hcut' : sptUnion (Spt.ln : Spt (WordLocW width)) first = result := by
+      have hcut' : sptUnion (Spt.ln : Spt β) first = result := by
         simpa [wordSemCutEnvs, hfirst, hempty] using hcut
       have hresult : result = first := by
         simpa [sptUnion] using hcut'.symm
@@ -293,13 +289,8 @@ theorem wordSemCutEnvMkNewCutsetHOL {width : Nat} [NeZero width]
       cases targetLocals <;> simp [sptInter]
     simp [wordSemCutNames, LoopSemStateFiniteExact.sptSubsetLive, hinter]
   refine ⟨sptInter targetLocals (mkNewCutsetHOL context live), ?_, ?_⟩
-  · unfold wordSemCutEnv
-    change (match wordSemCutEnvs
-        (mkNewCutsetHOL context live, (Spt.ln : WordLangNumSetHOL)) targetLocals with
-      | some (first, second) => some (sptUnion second first)
-      | result => none) = some (sptInter targetLocals (mkNewCutsetHOL context live)
-        )
-    rw [wordSemCutEnvs, hempty]
+  · simp only [wordSemCutEnv, wordSemCutEnvs]
+    rw [hempty]
     simp only [wordSemCutNames, if_pos hsubset, sptUnion]
   · rcases hrel with ⟨hinjective, heven, hlookups⟩
     refine ⟨hinjective, heven, ?_⟩
