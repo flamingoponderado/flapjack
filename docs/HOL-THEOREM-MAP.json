@@ -36886,6 +36886,7 @@
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-specific commutation bridge: the shared-memory read sh_mem_load_def is unchanged by the fpermCodeHOL code update, since it inspects only the shared-memory domain and the FFI and every branch preserves the input code field. No independent HOL declaration; HOL argues this inline (pan_globalsProofScript.sml:1798-1804)."
 },
+<<<<<<< HEAD
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/Assembly.lean",
     "lean_name": "evaluateFpermHOL",
@@ -36909,4 +36910,134 @@
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only canonical state representation roundtrip infrastructure; no independent HOL original."
   }
+=======
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/CallNontail.lean",
+  "lean_name": "inlineProgHOLExact_call_nontail",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack local support (bead .42.3) for the Nontail Call case of inline_prog_correct: inlineProgHOLExact_call_nontail."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/CallNontail.lean",
+  "lean_name": "genlist_gt",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack local support (bead .42.3) for the Nontail Call case of inline_prog_correct: genlist_gt."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/CallNontail.lean",
+  "lean_name": "genlist_nodup",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack local support (bead .42.3) for the Nontail Call case of inline_prog_correct: genlist_nodup."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/CallNontail.lean",
+  "lean_name": "le_foldl_max_mem",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack local support (bead .42.3) for the Nontail Call case of inline_prog_correct: le_foldl_max_mem."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/CallNontail.lean",
+  "lean_name": "exists_mem_genlist",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack local support (bead .42.3) for the Nontail Call case of inline_prog_correct: exists_mem_genlist."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/CallNontail.lean",
+  "lean_name": "retTmps_facts",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack local support (bead .42.3) for the Nontail Call case of inline_prog_correct: retTmps_facts."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/CallNontail.lean",
+  "lean_name": "codeRel_trans",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack local support (bead .42.3) for the Nontail Call case of inline_prog_correct: codeRel_trans."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/CallNontail.lean",
+  "lean_name": "codeRel_emptyLocals",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack local support (bead .42.3) for the Nontail Call case of inline_prog_correct: codeRel_emptyLocals."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/CallNontail.lean",
+  "lean_name": "finmap_eq_of_submap_fdom",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack local support (bead .42.3) for the Nontail Call case of inline_prog_correct: finmap_eq_of_submap_fdom."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/CallNontail.lean",
+  "lean_name": "vars_map_var",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack local support (bead .42.3) for the Nontail Call case of inline_prog_correct: vars_map_var."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/CallNontail.lean",
+  "lean_name": "nestedSeq_assigns",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack local support (bead .42.3) for the Nontail Call case of inline_prog_correct: nestedSeq_assigns."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/CallNontail.lean",
+  "lean_name": "transformedCallee_clock0",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack local support (bead .42.3) for the Nontail Call case of inline_prog_correct: transformedCallee_clock0."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/CallNontail.lean",
+  "lean_name": "replicate_const_eval",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack local support (bead .42.3) for the Nontail Call case of inline_prog_correct: replicate_const_eval."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/CallNontail.lean",
+  "lean_name": "mapM_some_isSome",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack local support (bead .42.3) for the Nontail Call case of inline_prog_correct: mapM_some_isSome."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/CallNontail.lean",
+  "lean_name": "crepAllDistinct_nodup",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack local support (bead .42.3) for the Nontail Call case of inline_prog_correct: crepAllDistinct_nodup."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/CallNontail.lean",
+  "lean_name": "callNontail",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack helper (bead .42.3) for HOL Resume inline_prog_correct[Nontail] (crep_inlineProofScript.sml:2719-3037): the inlined assign-call part of the Call case, with evaluate_ind's Call body IH at crepInlineGoal (as callNonInlined/callTail), over exact carriers; no extra premise (the path conditions ALL_DISTINCT rets and FLOOKUP inl_bag fname = SOME (ns, body) are HOL's own case split, discharged in .42.4). Proof follows HOL's lemma sequence. Untagged; the tagged Call case is assembled in .42.4."
+}
+>>>>>>> 4d7929ed50afe376e69a38f7ee4030efde43652d
 ]
