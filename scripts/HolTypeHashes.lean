@@ -190,6 +190,7 @@ import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectStoreByte
 import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectExtCall
 import Flapjack.Pancake.Proofs.CrepInline
 import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.ExtCall
+import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.Primitive
 import Flapjack.Pancake.Proofs.CrepInline.UpdateListLocals
 import Flapjack.Pancake.Proofs.CrepInline.NestedDecs
 import Flapjack.Pancake.Proofs.CrepInline.ShMem

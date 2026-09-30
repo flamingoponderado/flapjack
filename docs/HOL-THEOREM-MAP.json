@@ -27108,5 +27108,35 @@
     "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific canonical state roundtrip re-export for finite-support qualification, not a HOL theorem port."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "evaluate_locals_same_fdom",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/Primitive.lean",
+    "lean_name": "evaluateLocalsSameFdomPrimitiveExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; .43.1.2), HOL evaluate_locals_same_fdom181-191 Primitive arm234-241 and exact crepSem Primitive clause. Same source eval and normal/Break/Continue result guard, same domain equality conclusion specialized only to Primitive. Success requires equal lengths, every destination present and distinct names, then exact FUPDATE_LIST ZIP. General canonical map lemma proves updating only present keys preserves every isSome/domain query. Failure branches preserve state. Canonical finite-support carrier and positive-width qualifier; no extra semantic premise. Full theorem remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/Primitive.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific infrastructure. Canonical state roundtrip re-export."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/Primitive.lean",
+    "lean_name": "updateListEqIsSomeOfPresent",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific infrastructure. Canonical map infrastructure: all updated keys present implies query domain unchanged; no independent HOL original."
   }
 ]
