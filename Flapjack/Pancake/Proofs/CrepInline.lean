@@ -3131,13 +3131,15 @@ state)` and the motive stated at `crepStampExactDomains state loopState`
 (`EvaluateHOL.lean:4011`/`:4022`). That form is exactly this plain-state
 `ihWhile`: `fixClockCrepSemHOL_evalCrepSemHOLProgExact` (EvaluateHOL.lean:4851,
 HOL `fix_clock_evaluate`, crepSemScript.sml:432-437) drops the `fixClockCrepSemHOL`
-wrapper on any exact-evaluator result, and `crepStampExactDomains_fixClock_body`
-(EvaluateHOL.lean, this branch) shows `crepStampExactDomains state loopState =
-loopState` for the body-result state, so the stamped state and the plain
-body-result state coincide. Hence `ihWhile` is the `inductHOL`
-`hwhile_none`/`hwhile_continue` recursive hypothesis transported to the plain
-state used by the `While` clause, and the parent assembly supplies it by those
-two identities. Flapjack-specific `inlineProgHOLExact` inline rendering. -/
+wrapper on any exact-evaluator result, and the kernel-checked helper
+`crepStampExactDomains_handler_motive` (EvaluateHOL.lean, this branch; based on
+`crepStampExactDomains_fixClock_body`) derives `P res loopState` from the
+handler-shaped `P res (crepStampExactDomains state loopState)`, carrying the
+result component (and hence the `none`/`continue 0` guard) unchanged. Applying
+that helper to the `hwhile_none`/`hwhile_continue` handler hypotheses therefore
+produces this plain `ihWhile` with no extra premise, so the correspondence is
+kernel-checked rather than asserted. Flapjack-specific `inlineProgHOLExact`
+inline rendering. -/
 @[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "inline_prog_correct"
   (fmap_as_finite_support_relation :=
     [CrepSemHOLState.locals, CrepSemHOLState.globals, CrepSemHOLState.code,
