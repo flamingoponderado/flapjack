@@ -30114,6 +30114,86 @@
     "reviewer": "Flapjack-only relation support (bead flapjack-pxn.18.5.2.30): replacing the ffi field of both related states with the same value preserves panGlobalsStateRelHOLExact, whose only ffi occurrence is an equality conjunct. HOL has no separate declaration."
   },
   {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMemGlobal.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness (bead flapjack-pxn.18.5.2.30.2) forwarding the reviewed PanSemStateFiniteExact toExact/ofExact finite-support roundtrip; it supports the PanSemStateFiniteExact fields named by the compile_correct ShMemLoad/ShMemStore case tags."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMemGlobal.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness (bead flapjack-pxn.18.5.2.30.2) forwarding the reviewed PanGlobalsContextExact ofBroad/toBroad roundtrip; it supports the PanGlobalsContextExact.globals field named by the compile_correct ShMemLoad/ShMemStore case tags."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMemGlobal.lean",
+    "lean_name": "panMemStoresHOL_singleton_apply",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only support (bead flapjack-pxn.18.5.2.30.2): applying a singleton panMemStoresHOL update exposes its pointwise result. HOL inlines this singleton case in Resume compile_correct[ShMemLoad]; it has no separate declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMemGlobal.lean",
+    "lean_name": "stateRelGlobalWriteHOL",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only relation support (bead flapjack-pxn.18.5.2.30.2): a successful ShMemLoad global-write updating the source globals map (set_global name loaded) and the target memory at top_addr - gaddr preserves panGlobalsStateRelHOLExact, using mem_stores_mem_load_back / mem_stores_load_disjoint / mem_load_disjoint / disjoint_globals. HOL proves this inline in Resume compile_correct[ShMemLoad]; it has no separate declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMemGlobal.lean",
+    "lean_name": "updateEq_eq_update",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only support (bead flapjack-pxn.18.5.2.30.2): the Boolean BEq and HOL-equality DecidableEq finite-map update interfaces agree, via FUPDATE_HOL_eq_FUPDATE. No separate HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMemGlobal.lean",
+    "lean_name": "setVarEq",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only support (bead flapjack-pxn.18.5.2.30.2): setVarHOLFinite in the HOL-equality update form. No separate HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMemGlobal.lean",
+    "lean_name": "updateSameEq",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only support (bead flapjack-pxn.18.5.2.30.2): a later finite-map update shadows an earlier one at the same key. No separate HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMemGlobal.lean",
+    "lean_name": "resVarEq_updateEq",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only support (bead flapjack-pxn.18.5.2.30.2): restoring the original binding after an update at the same key, for the local restoration algebra of the compiled global ShMemLoad. No separate HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMemGlobal.lean",
+    "lean_name": "updateEq_self",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only support (bead flapjack-pxn.18.5.2.30.2): updating a finite-map key with the value it already holds is the identity. No separate HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMemGlobal.lean",
+    "lean_name": "eraseEq_self",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only support (bead flapjack-pxn.18.5.2.30.2): erasing an absent finite-map key is the identity. No separate HOL declaration."
+  },
+  {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ShMem.lean",
     "lean_name": "stateRelFlagFalseHOL",
     "hol_path": null,
