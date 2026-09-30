@@ -32449,5 +32449,29 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack local support (bead .47.2.4): the evaluate_ind motive of transform_eoc_correct for every program and state by structural recursion over the tagged cases; no separate HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/GlobalBlockAlignment.lean",
+  "lean_name": "aligned_mod",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only source-derived GlobalAssign alignment infrastructure (bead28.6.1). Original Assign559-568 combines external alignment byte_aligned_add/aligned_add_sub_cor; no single CakeML declaration has this synthesized statement. Uses actual original state_rel goodDimindex32/64 and byte-align fixed points; no generic external alignment port or extra compiler assumption claimed. Kernel arithmetic includes modular underflow; state relation corollary derives block alignment and context lookup internally. External HOL8rows independently captured and kernel replayed; coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/GlobalBlockAlignment.lean",
+  "lean_name": "byteAligned_sub",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only source-derived GlobalAssign alignment infrastructure (bead28.6.1). Original Assign559-568 combines external alignment byte_aligned_add/aligned_add_sub_cor; no single CakeML declaration has this synthesized statement. Uses actual original state_rel goodDimindex32/64 and byte-align fixed points; no generic external alignment port or extra compiler assumption claimed. Kernel arithmetic includes modular underflow; state relation corollary derives block alignment and context lookup internally. External HOL8rows independently captured and kernel replayed; coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/GlobalBlockAlignment.lean",
+  "lean_name": "stateRel_globalBlockAligned",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only source-derived GlobalAssign alignment infrastructure (bead28.6.1). Original Assign559-568 combines external alignment byte_aligned_add/aligned_add_sub_cor; no single CakeML declaration has this synthesized statement. Uses actual original state_rel goodDimindex32/64 and byte-align fixed points; no generic external alignment port or extra compiler assumption claimed. Kernel arithmetic includes modular underflow; state relation corollary derives block alignment and context lookup internally. External HOL8rows independently captured and kernel replayed; coordinator review pending."
 }
 ]

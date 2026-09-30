@@ -2533,6 +2533,10 @@ run_probe pan_word_of_bytes_overlong_probeScript.sml pan_word_of_bytes_overlong_
 run_probe stack_props_fixed_names_probeScript.sml stack_props_fixed_names_probe.out \
   x86_good x86_empty x86_bad_zero riscv_empty "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 
+run_probe pan_globals_block_alignment_probeScript.sml pan_globals_block_alignment_probe.out \
+  block32 wrap32 zero32 unaligned32 block64 wrap64 zero64 unaligned64 \
+  "$hol_dir/src/n-bit/alignmentScript.sml" "$cake_dir/pancake"
+
 run_probe stacksem_loc_value_probeScript.sml stacksem_loc_value_probe.out \
   loc_zero_present loc_zero_absent loc_nonzero_present loc_handler_present loc_handler_no_return loc_disabled_stack \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
