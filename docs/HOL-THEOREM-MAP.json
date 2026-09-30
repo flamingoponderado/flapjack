@@ -34696,5 +34696,227 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.44.5) compared crep_inlineProofScript.sml:907-924: binders vs es p s r s' vals t as declared parameters in HOL order; hypotheses OPT_MMAP (eval s) es = SOME vals (List.mapM), LENGTH vs = LENGTH es, ALL_DISTINCT vs (Nodup), var_cexp freshness, v NOTIN FDOM t (crepHolFdom t.lookup v = false), evaluate (p, s with locals := t |++ ZIP (vs,vals)) = (r,s') (updateListEq), t SUBMAP s.locals (HolFiniteMapExact.submap), continuing-result case rendered as the displayed match proposition; conclusion exists t'. evaluate (nested_decs vs es p, s) = (r,t') /\\ state_rel s' t' /\\ FDIFF s.locals (FDOM t) SUBMAP t'.locals (crepHolSubmap of crepHolFdiff). No extra premise. Proof uses evaluate_state_locals_rel_strong, evaluate_nested_decs_locals_nested_res_var, evaluate_locals_same_fdom', flookup_res_var_is_mem_zip_eq, flookup_res_var_distinct_zip_eq. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NotVarProg.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed CrepSemHOLState toBroad/ofBroad roundtrip for the relation qualifier."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NotVarProg.lean",
+  "lean_name": "lookup_updateListEq_zip_not_mem'",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack private support (bead .44.5.1) for not_var_prog_flookup_eqn: a constructor step of the internal evaluate_ind discharge or a finite-map lookup helper; no HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NotVarProg.lean",
+  "lean_name": "lookup_updateEq_ne",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack private support (bead .44.5.1) for not_var_prog_flookup_eqn: a constructor step of the internal evaluate_ind discharge or a finite-map lookup helper; no HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NotVarProg.lean",
+  "lean_name": "lookup_resVarEq_ne",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack private support (bead .44.5.1) for not_var_prog_flookup_eqn: a constructor step of the internal evaluate_ind discharge or a finite-map lookup helper; no HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NotVarProg.lean",
+  "lean_name": "nv_skip",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack private support (bead .44.5.1) for not_var_prog_flookup_eqn: a constructor step of the internal evaluate_ind discharge or a finite-map lookup helper; no HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NotVarProg.lean",
+  "lean_name": "nv_break",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack private support (bead .44.5.1) for not_var_prog_flookup_eqn: a constructor step of the internal evaluate_ind discharge or a finite-map lookup helper; no HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NotVarProg.lean",
+  "lean_name": "nv_continue",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack private support (bead .44.5.1) for not_var_prog_flookup_eqn: a constructor step of the internal evaluate_ind discharge or a finite-map lookup helper; no HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NotVarProg.lean",
+  "lean_name": "nv_tick",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack private support (bead .44.5.1) for not_var_prog_flookup_eqn: a constructor step of the internal evaluate_ind discharge or a finite-map lookup helper; no HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NotVarProg.lean",
+  "lean_name": "nv_raise",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack private support (bead .44.5.1) for not_var_prog_flookup_eqn: a constructor step of the internal evaluate_ind discharge or a finite-map lookup helper; no HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NotVarProg.lean",
+  "lean_name": "nv_return",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack private support (bead .44.5.1) for not_var_prog_flookup_eqn: a constructor step of the internal evaluate_ind discharge or a finite-map lookup helper; no HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NotVarProg.lean",
+  "lean_name": "nv_assign",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack private support (bead .44.5.1) for not_var_prog_flookup_eqn: a constructor step of the internal evaluate_ind discharge or a finite-map lookup helper; no HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NotVarProg.lean",
+  "lean_name": "nv_store",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack private support (bead .44.5.1) for not_var_prog_flookup_eqn: a constructor step of the internal evaluate_ind discharge or a finite-map lookup helper; no HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NotVarProg.lean",
+  "lean_name": "nv_store32",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack private support (bead .44.5.1) for not_var_prog_flookup_eqn: a constructor step of the internal evaluate_ind discharge or a finite-map lookup helper; no HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NotVarProg.lean",
+  "lean_name": "nv_storeByte",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack private support (bead .44.5.1) for not_var_prog_flookup_eqn: a constructor step of the internal evaluate_ind discharge or a finite-map lookup helper; no HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NotVarProg.lean",
+  "lean_name": "nv_storeGlob",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack private support (bead .44.5.1) for not_var_prog_flookup_eqn: a constructor step of the internal evaluate_ind discharge or a finite-map lookup helper; no HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NotVarProg.lean",
+  "lean_name": "nv_primitive",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack private support (bead .44.5.1) for not_var_prog_flookup_eqn: a constructor step of the internal evaluate_ind discharge or a finite-map lookup helper; no HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NotVarProg.lean",
+  "lean_name": "nv_extCall",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack private support (bead .44.5.1) for not_var_prog_flookup_eqn: a constructor step of the internal evaluate_ind discharge or a finite-map lookup helper; no HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NotVarProg.lean",
+  "lean_name": "nv_shMemLoad",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack private support (bead .44.5.1) for not_var_prog_flookup_eqn: a constructor step of the internal evaluate_ind discharge or a finite-map lookup helper; no HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NotVarProg.lean",
+  "lean_name": "nv_shMemStore",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack private support (bead .44.5.1) for not_var_prog_flookup_eqn: a constructor step of the internal evaluate_ind discharge or a finite-map lookup helper; no HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NotVarProg.lean",
+  "lean_name": "nv_shMem",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack private support (bead .44.5.1) for not_var_prog_flookup_eqn: a constructor step of the internal evaluate_ind discharge or a finite-map lookup helper; no HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NotVarProg.lean",
+  "lean_name": "nv_dec",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack private support (bead .44.5.1) for not_var_prog_flookup_eqn: a constructor step of the internal evaluate_ind discharge or a finite-map lookup helper; no HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NotVarProg.lean",
+  "lean_name": "nv_seq",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack private support (bead .44.5.1) for not_var_prog_flookup_eqn: a constructor step of the internal evaluate_ind discharge or a finite-map lookup helper; no HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NotVarProg.lean",
+  "lean_name": "nv_ite",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack private support (bead .44.5.1) for not_var_prog_flookup_eqn: a constructor step of the internal evaluate_ind discharge or a finite-map lookup helper; no HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NotVarProg.lean",
+  "lean_name": "nv_while",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack private support (bead .44.5.1) for not_var_prog_flookup_eqn: a constructor step of the internal evaluate_ind discharge or a finite-map lookup helper; no HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NotVarProg.lean",
+  "lean_name": "nv_call",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack private support (bead .44.5.1) for not_var_prog_flookup_eqn: a constructor step of the internal evaluate_ind discharge or a finite-map lookup helper; no HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NotVarProg.lean",
+  "lean_name": "nv_all",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack private support (bead .44.5.1) for not_var_prog_flookup_eqn: a constructor step of the internal evaluate_ind discharge or a finite-map lookup helper; no HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NotVarProg.lean",
+  "lean_name": "notVarProgFlookupEqnExact",
+  "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+  "hol_name": "not_var_prog_flookup_eqn",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "CrepSemHOLState.locals",
+    "CrepSemHOLState.globals",
+    "CrepSemHOLState.code"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.44.5.1) compared crep_inlineProofScript.sml:814-824: binders p s r s' x as declared parameters in HOL order; hypotheses evaluate (p,s) = (r,s') (evalCrepSemHOLProgExact s p), NOT MEM x (var_prog p) (x NOTIN crepVarProgHOLExact p, the reviewed var_prog_def port), continuing-result case rendered as the displayed match proposition; conclusion FLOOKUP s'.locals x = FLOOKUP s.locals x (lookup on finite-support locals). No extra premise, no public IH: the evaluate_ind induction is discharged internally by structural recursion on p with an inner clock induction for While (private nv_* support). Coordinator source review pending."
 }
 ]
