@@ -248,6 +248,34 @@ private theorem returnedValueStoreTail {width : Nat} {σ : Type} [NeZero width]
   · simpa only [sourceScratch, setVarHOLFinite, setGlobalHOLFinite,
       restoreTwoScratchWrites _ _ _ _ _ _ hne] using hscope
 
+/-- Internal normal-return Call computation. The local destination's shape
+check is derived from its actual initializer binding. Handler code is not run
+on this clause. These are callee-IH branch facts, not extra premises on the
+public constructor theorem. -/
+private theorem returnedLocalCall {width : Nat} {σ : Type} [NeZero width]
+    (state post : PanSemStateFiniteExact width σ) (name function : MlS)
+    (arguments : List (ExpHOL width)) (values : List (ValueHOL width))
+    (body : ProgHOL width) (callee : HolFiniteMapExact MlS (ValueHOL width))
+    (returnShape : ShapeHOL) (initializer value : ValueHOL width)
+    (handler : Option (MlS × MlS × ProgHOL width))
+    (hargs : evalListHOLFinite state
+      (h := fun a => Classical.propDecidable (state.memaddrs a)) arguments = some values)
+    (hcode : lookupCodeHOLFinite state.code.lookup function values = some (body, callee, returnShape))
+    (hclock : state.clock ≠ 0)
+    (hbody : evaluateHOLFiniteState (callEntryStateHOLFinite state callee) body =
+      (some (.returned value), post))
+    (hreturn : shapeOfHOLExact value = returnShape)
+    (hlocal : state.locals.lookup name = some initializer)
+    (hshape : shapeOfHOLExact value = shapeOfHOLExact initializer) :
+    evaluateHOLFiniteState state (.call (some (some (.local, name), handler)) function arguments) =
+      (none, setVarHOLFinite name value {post with locals := state.locals}) := by
+  classical
+  have hv : isValidValueHOLExact state.toExact .local name value = true := by
+    simp [isValidValueHOLExact, lookupKvarHOLExact, hlocal, hshape, shapeEqHOL_eq_true]
+  have hs := (shapeEqHOL_eq_true _ _).mpr hreturn
+  simp only [evaluateHOLFiniteState_call, hargs, hcode, if_neg hclock, hbody,
+    hs, hv, ite_true, setKvarHOLFinite]
+
 /-- Internal missing-context branch of the full constructor proof. The branch
 condition selects the literal compiler fallback; the callee and handler IHs
 remain those of the original evaluator. Untagged infrastructure until the full

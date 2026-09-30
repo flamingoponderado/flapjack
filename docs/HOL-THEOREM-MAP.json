@@ -34122,5 +34122,13 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-only internal normal-return tail of actual global-handler constructor33.11. Derives existential literal zero-flag If/Store target run from caller/callee relation and source global validity via accepted global store theorem; restores both scratch locals using actual caller and result-initialized snapshots, including absent bindings. No target Store/run or post-relation premise. Internal branch facts are not a public HOL constructor theorem; matched-handler and full assembly remain unfinished. Untagged and no full-port claim."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "returnedLocalCall",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only internal actual normal-return Call computation for33.11. Source compare panSem returned clause: successful args/lookup/nonzero clock and callee returned run are internal branch facts; return shape check preserved, local validity derived from actual initializer lookup and same shape. Handler not evaluated on returned clause. Untagged, not public constructor statement or completed HOL port; full handler/abnormal simulation and assembly remain."
 }
 ]
