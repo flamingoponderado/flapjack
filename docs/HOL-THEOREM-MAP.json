@@ -35487,5 +35487,13 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Private non-good Call continuation/scoped relation algebra for pending33.11. Non-good result bypasses If Store and relation ignores restored locals. Central target Call run and relation are internal original callee IH obligations, not public constructor premises. Full all-case assembly remains unfinished; untagged infrastructure."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "bypassScratchCall",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Private generated Call clause for pending33.11: unmatched exception, timeout or final FFI bypass handler and destination; scratch arguments/code/clock/callee entry derived internally, result emptyLocals exact. Internal callee IH branch facts pending full all-case original-IH assembly; untagged infrastructure, no completed port claim."
 }
 ]
