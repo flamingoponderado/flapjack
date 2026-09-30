@@ -456,6 +456,7 @@ import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.CutState
 import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.FfiHook
 import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.SetGlobal
 import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.Store
+import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.Loads
 import Flapjack.Pancake.Semantics.LoopSemStateExact.Semantics
 import Flapjack.Pancake.Semantics.LoopProps.EvaluateClockExact
 import Flapjack.Pancake.Semantics.LoopProps.EvaluateIoEventsExact
