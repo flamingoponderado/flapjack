@@ -29349,6 +29349,62 @@
     "reviewer": "Luna A compared HOL1564-1569: same original flag/context/states and arbitrary new FFI x; state_rel implies state_rel after setting ffi=x on both states. All relation conjuncts unchanged except FFI equality becomes reflexive. No new premise on FFI, target result or state. Exact reviewed HolFfiState universe0 host, positive-width state and canonical finite relation carriers; same-module roundtrip witnesses. Direct dependency of source state_rel_write_bytearray at1608 confirmed. Coordinator source review pending."
   },
   {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ExpressionCodeAgreement.lean",
+    "lean_name": "evalStateLocalsSameCodeFdomSame",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "eval_state_locals_same_code_fdom_same",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison (2026-09-30; jn6v), HOL1467-1503: same state/expression/value/target binders and conjunction of source successful eval, reviewed state_rel_code, reviewed locals_strong_rel, and source code-domain subset. FDOM membership represented by lookup != none (equivalent to existence of SOME lookup by Option cases, as HOL1456). Same successful target value conclusion. No target-evaluation hypothesis, extra premises or stronger public conclusion. Exact Crep carriers, canonical state maps with same-module roundtrip, positive BitVec and universe-0 FFI host. Existing untagged exact Option-equality helper is proof infrastructure only. Coordinator independent review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ExpressionCodeAgreement.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Canonical carrier roundtrip re-export, Flapjack infrastructure with no separate HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimPredicates.lean",
+    "lean_name": "unreachElimPreserveHasReturn",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "unreach_elim_preserve_has_return",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison (2026-09-30; dect), HOL2275-2300: same program/output/optional early-exit binders, conjunction of source Boolean predicate and exact unreach_elim output pair, and same output predicate. HOL no-has-return is = false; not_branch_ret is = true. Exact reviewed CrepProgHOL/unreachElimHOLExact/hasReturnHOLExact/notBranchRetHOLExact, only positive BitVec word-carrier translation. Structural predicate induction covers Seq early-exit branch and nested Call handler; second uses first for conditional/loop/handler no-return. No semantic or extra result assumptions. Coordinator independent review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimPredicates.lean",
+    "lean_name": "unreachElimPreserveNotBranchRet",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "unreach_elim_preserve_not_branch_ret",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison (2026-09-30; dect), HOL2275-2300: same program/output/optional early-exit binders, conjunction of source Boolean predicate and exact unreach_elim output pair, and same output predicate. HOL no-has-return is = false; not_branch_ret is = true. Exact reviewed CrepProgHOL/unreachElimHOLExact/hasReturnHOLExact/notBranchRetHOLExact, only positive BitVec word-carrier translation. Structural predicate induction covers Seq early-exit branch and nested Call handler; second uses first for conditional/loop/handler no-return. No semantic or extra result assumptions. Coordinator independent review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimPredicates.lean",
+    "lean_name": "noReturnOutput",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private direct-output induction factoring for dect source theorems; no separate HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimPredicates.lean",
+    "lean_name": "notBranchOutput",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private direct-output induction factoring for dect source theorems; no separate HOL original."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/backend_commonScript.sml",
     "hol_name": "word_shift_def",
     "lean_path": "Flapjack/Compiler/Backend/BackendCommon.lean",
@@ -29363,7 +29419,9 @@
     "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
     "lean_name": "evaluateLocalsSameFdomTrivialAtomsExact",
     "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support_relation": ["CrepSemHOLState.locals"],
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals"
+    ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-pxn.18.5.5.43.1) against crep_inlineProofScript.sml:181-191; Skip/Break/Continue/Tick cases. FDOM is Flapjack.FiniteMap.FDOM applied to locals.lookup; result condition matches HOL; no extra hypotheses."
   },
@@ -29381,7 +29439,9 @@
     "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
     "lean_name": "evaluateLocalsSameFdomMemoryGlobalsAtomsExact",
     "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support_relation": ["CrepSemHOLState.locals"],
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals"
+    ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-ds10 source comparison (2026-09-30; bead flapjack-pxn.18.5.5.43.1) against crep_inlineProofScript.sml:181-191 statement and the memory/globals atomic arm :246-248: HOL FDOM s.locals = FDOM s'.locals under the result condition renders exactly as FDOM s.locals.lookup = FDOM s'.locals.lookup over the faithful CrepSemHOLState (FiniteMap.FDOM). Covers Store/Store32/StoreByte/StoreGlob (locals unchanged) and Raise (result exception makes the HOL condition false, so the implication is vacuous); no extra premises."
   },
@@ -29399,7 +29459,9 @@
     "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
     "lean_name": "evaluateLocalsSameFdomAssignCaseExact",
     "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support_relation": ["CrepSemHOLState.locals"],
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals"
+    ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-ds10 source comparison (2026-09-30; bead flapjack-pxn.18.5.5.43.1) against crep_inlineProofScript.sml:181-191 and the guarded Assign arm (crepSemScript.sml:260-266): exact FDOM s.locals = FDOM s'.locals under the HOL result condition, rendered over CrepSemHOLState; assignment fires only when the target is already bound, so the domain is preserved; no extra premises."
   },
