@@ -1209,7 +1209,7 @@ def panCompileTap [CakeDisplayWord α]
     direct output of Cake's tagged `compile_top`. Parser-backed production
     entrypoints provide the byte-range proof composed through the earlier
     passes, selecting `structCompileTopExpressionsExactOfByteRanged` (which executes the
-    reviewed exact expression, shape and old-shape compilers), `globalCompileTopCakeRouted` (which executes
+    reviewed exact program, expression, shape and old-shape compilers through their codecs), `globalCompileTopCakeRouted` (which executes
     the reviewed exact `compileTopExactHOL` for a byte-ranged start name), and
     `compileProgTopHOLWithMetadataOfExact` at the
     declaration-to-Crep boundary. That branch executes the exact per-function
