@@ -1,3 +1,4 @@
+import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.AssignGlobal
 import Flapjack.Pancake.Proofs.PanGlobals.GlobalStorePreservation
 import Flapjack.Pancake.Proofs.PanGlobals.GlobalStoreReload
 import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.Assemble

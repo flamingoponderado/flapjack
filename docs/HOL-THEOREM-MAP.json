@@ -32616,5 +32616,45 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only synthesized memory certificate for original Assign573-585, bead28.6.4. Original state relation/global lookup/context/same-shape replacement and internal successful-store obligation imply all other globals reload unchanged and source-memory-domain agreement. Derives separation, shape well-formedness and flatten length internally using reviewed MemStores helpers. No alternate relation, scalar restriction or new public compiler premise. No single HOL declaration has this statement; coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/AssignGlobal.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only internal GlobalAssign infrastructure, bead28.6: canonical representation roundtrips and composition of accepted arbitrary-shaped store/reload/support/disjointness certificates. No separately named HOL declaration. Store success, memory invariants and entire post relation derived internally; no extra compiler theorem premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/AssignGlobal.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only internal GlobalAssign infrastructure, bead28.6: canonical representation roundtrips and composition of accepted arbitrary-shaped store/reload/support/disjointness certificates. No separately named HOL declaration. Store success, memory invariants and entire post relation derived internally; no extra compiler theorem premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/AssignGlobal.lean",
+    "lean_name": "globalWriteRelation",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only internal GlobalAssign infrastructure, bead28.6: canonical representation roundtrips and composition of accepted arbitrary-shaped store/reload/support/disjointness certificates. No separately named HOL declaration. Store success, memory invariants and entire post relation derived internally; no extra compiler theorem premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/AssignGlobal.lean",
+    "lean_name": "compileCorrect_AssignGlobal",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison, bead28.6: literal Global-variable branch of original Assign535-591 and gen_goal174-181, original state_rel T plus faithful source evaluate/nonError to existential target evaluate and full state_rel(good_res). No evaluator IH or target run/store/post-relation premise. Failed initializer/invalid global excluded by original nonError. Source validity derives existing global and exact shape equality. Reviewed full compile_exp_correct derives target initializer. Accepted arbitrary-shaped store success/reload/support/disjointness/unaffected-memory certificates derive all internal obligations from original relation; top alignment and goodDimindex/strict length not added as assumptions. Exact compile_def GlobalAssign uses context lookup and Store(Op Sub [TopAddr,Const offset], compiled value); address eval uses exact wordOp subtraction. Canonical finite-map relation carriers/witnesses and positive type-indexed BitVec/Type0 host translation only; underlying exact MlS/ShapeHOL/ValueHOL/ProgHOL carriers unchanged. Kernel source check PASS; full gates and coordinator review pending."
   }
 ]
