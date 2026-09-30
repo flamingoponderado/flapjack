@@ -45,16 +45,7 @@ assurance does not automatically transfer to Flapjack.
 
 The following are open review or verification obligations:
 
-1. Flapjack has no assembled top-level Pancake compiler-correctness theorem for
-   the whole source-to-RISC-V compiler. The `pc_compile_correct`
-   pass-simulation chain has since been ported
-   (`Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Assembly.lean`), but it
-   is not yet composed with the remaining lowerings into an end-to-end
-   statement. `Flapjack/PanToCrepCorrectnessBoundary.lean` contains only
-   elementary value-context and non-overlap facts; it is not a compiler
-   correctness boundary. Therefore the current lower-level theorems do not
-   imply soundness or semantic preservation for the whole source-to-RISC-V
-   compiler.
+1. Compiler-correctness theorem porting is in progress.
 2. The RISC-V semantics in Flapjack have not yet been compared systematically
    with the Sail RISC-V model. The HOL reference model lives in the HOL source
    tree at `examples/l3-machine-code/riscv/model/riscv.sml`, but correspondence
