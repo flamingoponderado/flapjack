@@ -33922,5 +33922,78 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-specific initializer context certificate (.22.10.13), original2189-2195 and state_rel context FEVERY conjunct. Source empty-locals evaluation/stateRel F derive declared shape validity. Original globalsSize alignment plus relation goodDimindex/top alignment derive new offset and headblock alignment using accepted stride/subtraction. Addition factors through zero and double subtraction. Exact context updateEq preserves original entries and allows replacement. No fresh-name/store/evaluation result/newalignment premise; no independently named CakeML HOL declaration. Full state relation/cons assembly remains open."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/DecCall.lean",
+  "lean_name": "compileCorrect_DecCall",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "compile_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "PanSemStateFiniteExact.locals",
+    "PanSemStateFiniteExact.globals",
+    "PanSemStateFiniteExact.code",
+    "PanSemStateFiniteExact.eshapes",
+    "PanGlobalsContextExact.globals",
+    "callee"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-c source comparison2026-09-30: original gen_goal172-182 and complete DecCall constructor proof1511-1533, panSem696-718/line780 fix_clock rewrite, evaluate_ind DecCall conjunct. Same universal result/context/target/post, stateRel T/source evaluation/nonError hypotheses and existential compiled target evaluation/full good_res postrelation. Only literal argument/code/nonzero-clock callee IH and returned-value/declared-shape/return-shape-matching continuation IH; administrative tuple-option intermediate binders normalized. Returned shape tests converted to structural equalities with reviewed shapeEqHOL_eq_true. OPT_MMAP and lookup relation derive compiled arguments/body/callee locals/return shape; dec_clock/change_locals give callee entry. Body result Return restores caller locals, then set_var yields continuation entry T. Continuation result restores res_var at resultName using caller saved binding through accepted state_rel_res_var, including NONE saved bindings. Invalid args/code/body/shape cases excluded only by original nonError; timeout/exception/final clear locals as original. No target run, saved-binding existence, freshness or postrelation premise. Original DecCall proof does not use compile_correct Call constructor; removed that spurious dependency with coordinator approval. Canonical maps include standalone callee binder and both owning state/context roundtrip witnesses; positive-width word/universe0 FFI translation and exact MlS names. Full compiler assembly remains open, coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/DecCall.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only local canonical state/context roundtrip or compiled argument MAP equation for the DecCall theorem; no separate HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/DecCall.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only local canonical state/context roundtrip or compiled argument MAP equation for the DecCall theorem; no separate HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/DecCall.lean",
+  "lean_name": "compileList_eq_map",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only local canonical state/context roundtrip or compiled argument MAP equation for the DecCall theorem; no separate HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/DeclListLemmas.lean",
+  "lean_name": "freshNameMlS_correctSubset",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "fresh_name_correct'",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison2026-09-30 HOL1003-1007: all native mlstring name/list/list variables; MEM fresh_name in names prime then set-subset then False. Pointwise universal candidate membership implication is exactly HOL set subset. Uses reviewed native freshNameMlS and native fresh_name_correct993 theorem, with no codec, byte-rangedness, changed quantified carrier, or extra premise. Existing String-qualified theorem preserved; this adds missing native-carrier counterpart for global-handler proof1316/1324/1415. Proof-only; coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/InitGlobalsRecursiveDisjoint.lean",
+  "lean_name": "recursiveGlobalsFreeDisjoint",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific full initializer head state relation assembly (22.10.14), composing original HOL initializer hypotheses and accepted range/store/reload/map/context certificates. Derives store success and all19 state_rel conjuncts, including replacement-name updates and empty source code. No post-state relation or target evaluation premise. No independently named HOL declaration; recursive initializer correctness remains open."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/InitGlobalsState.lean",
+  "lean_name": "initializerHeadStateRel",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific full initializer head state relation assembly (22.10.14), composing original HOL initializer hypotheses and accepted range/store/reload/map/context certificates. Derives store success and all19 state_rel conjuncts, including replacement-name updates and empty source code. No post-state relation or target evaluation premise. No independently named HOL declaration; recursive initializer correctness remains open."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallHandlerFreshNames.lean",
+  "lean_name": "callHandlerScratchNamesFresh",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only synthesized proof-step helper for global-destination Call-with-handler lowering; literal compiler scratch-name list and native MlS freshNameMlS_correct imply both names absent from compiled handler/argument variables and distinct. HOL compile_correct proof1414-1434 derives these facts inline; no standalone original declaration or Call simulation is claimed. No freshness premise; no executable change. Coordinator classification pending."
 }
 ]
