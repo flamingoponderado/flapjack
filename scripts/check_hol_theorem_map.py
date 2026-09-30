@@ -2347,6 +2347,22 @@ def validate_inventory(
             errors.append(
                 f"{key[0]}:{key[1]}: reviewed_reals_as_rational_cuts needs a matching @[hol] qualifier"
             )
+        if record.get("inherits_reals_as_rational_cuts", False):
+            if reals_cuts:
+                errors.append(
+                    f"{key[0]}:{key[1]}: a reals_as_rational_cuts-qualified declaration "
+                    "does not also record an inherited assumption"
+                )
+            if tag is None:
+                errors.append(
+                    f"{key[0]}:{key[1]}: inherits_reals_as_rational_cuts is only for tagged declarations"
+                )
+            reviewer_text = reviewer.lower() if isinstance(reviewer, str) else ""
+            if "inherit" not in reviewer_text or "reals_as_rational_cuts" not in reviewer_text:
+                errors.append(
+                    f"{key[0]}:{key[1]}: inherits_reals_as_rational_cuts requires a note "
+                    "naming the inherited reals_as_rational_cuts assumption"
+                )
         combined_words_status = (
             "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec"
         )

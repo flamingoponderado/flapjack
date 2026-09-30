@@ -2142,6 +2142,23 @@ class RealsAsRationalCutsStatusTest(unittest.TestCase):
                             for error in self.errors(
                                 self.record(reviewer="source comparison only"))))
 
+    def test_inherited_assumption_needs_note_and_excludes_the_qualifier(self):
+        base = (*self.hol, (), (), (), (), False, (), False, False, (), (), None, ())
+        dependent_tag = {self.key: (*base, False)}
+        dependent = self.record(
+            statement_status="reviewed_exact", reals_as_rational_cuts=None,
+            inherits_reals_as_rational_cuts=True,
+            reviewer="source comparison; inherited reals_as_rational_cuts assumption via inst",
+        )
+        self.assertEqual(self.errors(dependent, dependent_tag), [])
+        self.assertTrue(any("naming the inherited" in error
+                            for error in self.errors(
+                                dict(dependent, reviewer="source comparison"), dependent_tag)))
+        both = self.record(inherits_reals_as_rational_cuts=True,
+                           reviewer=self.record()["reviewer"] + " inherited too")
+        self.assertTrue(any("does not also record an inherited assumption" in error
+                            for error in self.errors(both)))
+
     def test_combined_qualifiers_keep_their_status(self):
         combined = self.record(
             statement_status="reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",

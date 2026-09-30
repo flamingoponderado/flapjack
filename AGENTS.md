@@ -487,8 +487,12 @@ the qualifier exactly on the tagged declarations whose own source (signature
 and body, comments excluded) names a rendering declaration, and rejects it
 elsewhere. A declaration that merely calls a qualified declaration (for
 example the wordSem `evaluate` calling `inst`) is a dependent: it does not
-carry the qualifier but must record the inherited assumption in the theorem
-map. The status is `reviewed_reals_as_rational_cuts` when no other qualifier
+carry the qualifier but must record `"inherits_reals_as_rational_cuts": true`
+and a note naming the inherited assumption in the theorem map.
+`check_hol_type_hashes.py` compares that field, in both directions, with the
+constant closure computed by `scripts/HolTypeHashes.lean` (types, and bodies
+of definitions, through Flapjack definitions and datatypes; theorem proofs are
+not followed). The status is `reviewed_reals_as_rational_cuts` when no other qualifier
 applies; otherwise the status the other qualifiers require is kept and the
 manifest records `"reals_as_rational_cuts": true`. The manifest note must
 name the qualifier and SOUNDNESS item 8, and it can never be `reviewed_exact`.
