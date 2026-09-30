@@ -1415,6 +1415,22 @@ scripts/hol-probes/regenerate.sh`. The `evaluateJumpLower` fragment is
 untagged; the tagged port of `bad_fun_return_def` lives in
 `StackSem/Control.lean`, and assembled full evaluation remains on y19g.
 
+`stacksem_rawcall_probeScript.sml` records seven direct original
+`stackSem$evaluate` observations for the `RawCall` clause
+(`stackSemScript.sml:849-861`): a successful `Seq` code entry whose second
+component is a `Return` (the non-bad result propagates with the decremented
+clock), a zero-clock timeout that empties the environment, a missing code
+target (`Error`), a non-`Seq` code entry (`dest_Seq` returns `NONE`, hence
+`Error`), and `Break`/`Continue`/`Skip` sub-results (`bad_fun_return` maps each
+to `Error` with the recursed state). The observer records result, clock,
+register 1 and stack length. Kernel replay over a concrete `evaluate` stub lives
+in `Flapjack/Test/StackSemRawCallParity.lean`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_rawcall_probeScript.sml
+scripts/hol-probes/regenerate.sh`. The `evaluateRawCall` fragment is untagged;
+the tagged ports of `dest_Seq_def` and `bad_fun_return_def` live in
+`StackSem/Control.lean`, and assembled full evaluation remains on y19g.
+
 `pan_globals_fperm_code_probeScript.sml` observes the original
 `pan_globalsProof$fperm_code` finite map using its proved
 `FLOOKUP_fperm_code'` rewrite followed by HOL EVAL (plain EVAL leaves

@@ -6,6 +6,8 @@ component of the clock pair retain HOL's polymorphism. No evaluator or
 production-path refinement is supplied. -/
 namespace Flapjack.StackSemControl
 
+open Flapjack.Compiler.Backend.StackLang
+
 /-- Canonical finite-support state roundtrip re-export; infrastructure. -/
 theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} :
     (∀ (state : StackSemStateBroad width C F) (h : state.FiniteSupport),
@@ -73,6 +75,20 @@ def exitLoop {width : Nat} [NeZero width] :
   | some (.break label) => if label = 0 then none else some (.break (label - 1))
   | some (.continue label) => some (.continue (label - 1))
   | result => result
+
+/-- HOL `dest_Seq_def` (`cakeml/compiler/backend/semantics/stackSemScript.sml:749-751`):
+decompose a program into its two components exactly on `Seq`, and `none`
+otherwise. This is the RawCall entry-point decomposition of the called code.
+HOL is polymorphic in the word type `'a` and inspects only the word-independent
+`Seq` constructor; the Lean statement is over the width-indexed exact `HolProg`
+carrier (the only representation difference is the reviewed type-indexed word
+translation of that carrier). -/
+@[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "dest_Seq_def"
+  (words_as_type_indexed_bitvec)]
+def destSeqHOL {width : Nat} [NeZero width] :
+    HolProg width → Option (HolProg width × HolProg width)
+  | .seq first second => some (first, second)
+  | _ => none
 
 /-- HOL `bad_fun_return_def` (`cakeml/compiler/backend/semantics/stackSemScript.sml:754-758`):
 a call/jump sub-evaluation is a bad function return when it produced `NONE` or

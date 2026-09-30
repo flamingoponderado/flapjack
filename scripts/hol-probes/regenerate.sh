@@ -135,6 +135,10 @@ run_probe stacksem_jumplower_probeScript.sml stacksem_jumplower_probe.out \
   jump_lower_comparison_false jump_lower_loc_operand jump_lower_break_sub \
   jump_lower_continue_sub jump_lower_none_sub \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe stacksem_rawcall_probeScript.sml stacksem_rawcall_probe.out \
+  raw_call_success raw_call_timeout raw_call_code_missing raw_call_non_seq \
+  raw_call_break_sub raw_call_continue_sub raw_call_none_sub \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe stacksem_expression_probeScript.sml stacksem_expression_probe.out \
   const var_word var_loc var_missing lookup_word lookup_loc lookup_missing load_word load_loc load_oob load_bad_address op_empty_and op_add_wrap op_sub_bad_arity op_bad_operand shift_valid shift_oob shift_bad_right assign_success assign_failure \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
