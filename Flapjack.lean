@@ -20,6 +20,7 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateInd
 import Flapjack.Compiler.Backend.Semantics.WordSem.EventsMono
 import Flapjack.Compiler.Backend.Semantics.WordSem.Semantics
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClock
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClockIoEventsMono
 import Flapjack.Misc.ShiftSeq
 import Flapjack.Misc.BinaryIeee
 import Flapjack.Misc.MachineIeee
