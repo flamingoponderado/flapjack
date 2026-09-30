@@ -1113,13 +1113,11 @@ HOL `panPropsScript.sml:822` states that if
 clock `k` for which evaluation returns the same result and all the same
 post-state components except that the clock is zero.  Its proof depends on
 `evaluate_clock_sub`; it does not assume an evaluator-success marker as a
-premise.  There is deliberately no `@[hol]` theorem for this result yet:
-`evaluateHOLFiniteViaExact` is the total pair-shaped adapter, but it delegates
-through the unrestricted-map `PanSemStateExact` evaluator, while the direct
-finite evaluator's projection is proved and the tagged panSem `evaluate_def`
-assembly is `evaluateHOLFiniteState_eq_evaluate_def`
-(`PanSem/EvaluateClock.lean`). The faithful finite-state theorem
-is tracked by `flapjack-4ac.4.47.1`.
+premise. The faithful source theorem is now `evaluateMinClockHOLFinite` in
+`PanProps/EvaluateMinClock.lean`, over the reviewed direct finite pair evaluator
+and the accepted `evaluateClockSubHOLFinite` prerequisite. It retains the exact
+non-timeout premise and existential input clock without adding an assembly
+or successful-option premise.
 -/
 
 /-- Flapjack-specific adapter from the PanProps finite-support state to the
