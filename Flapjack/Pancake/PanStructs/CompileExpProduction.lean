@@ -1,4 +1,4 @@
-import Flapjack.Pancake.PanStructs.CompileProgTraversal
+import Flapjack.Pancake.PanStructs.CompileProgProduction
 
 /-! Flapjack production declaration and top-level traversal. Program traversal
 is factored into its own counterpart-local module so exact program codecs can
@@ -7,7 +7,7 @@ namespace Flapjack
 open Pancake.PanLang
 
 /-- Production declarations preserve the legacy context flow while invoking
-the reviewed expression compiler through its checked codec wrapper. -/
+the reviewed expression and program compilers through their checked codecs. -/
 def structCompileDeclsExactProduction {width : Nat} [NeZero width] :
     List (Decl (BitVec width)) → StructPassContext →
       List (Decl (BitVec width)) × StructPassContext
@@ -25,7 +25,7 @@ def structCompileDeclsExactProduction {width : Nat} [NeZero width] :
       let functionContext := { finalContext with locals := declaration.params }
       let compiledDeclaration := { declaration with
         params := parameters
-        body := structCompileProgExactProduction functionContext declaration.body
+        body := structCompileProgHOLExactProduction functionContext declaration.body
         returnShape := structCompileShapeExactProduction context.structs declaration.returnShape }
       (.function compiledDeclaration :: compiled, finalContext)
   | .exnDecl exception shape :: declarations, context =>
@@ -87,7 +87,7 @@ theorem structCompileDeclsExactProduction_eq_legacy {width : Nat} [NeZero width]
           rw [ih context hc hl hg hrest, hpEq,
             structCompileShapeExactProduction_eq_legacy
               context.structs declaration.returnShape hc hreturn,
-            structCompileProgExactProduction_eq_legacy
+            structCompileProgHOLExactProduction_eq_legacy
               { (structCompileDecls rest context).2 with locals := declaration.params }
               hcTail hparams hgTail declaration.body hbody]
       | exnDecl exception shape =>
