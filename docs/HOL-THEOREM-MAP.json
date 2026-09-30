@@ -30376,5 +30376,36 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific infrastructure: Private codec transport of broad expression freshness; no separate source declaration, decision internal."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/Primitive.lean",
+    "lean_name": "evaluateFreshLocal_Primitive",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "evaluate_fresh_local",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Luna A source comparison (.32.3.5), pan_globalsProofScript1045-1091 genuine Primitive case. Original quantified fresh name/value/state/result/poststate, source freshness/evaluation conjunction, existential locals and conditional good_res/non-Error FUPDATE retained. No recursive IH or extra premise. Target disequality and flattened argument freshness derive internally from free_var_ids. Literal OPT_MMAP expression-list evaluation transported through broad canonical codec. Argument failures, primitive-operation failures and target validity errors preserved; successful distinct-name local updates commute. Same-module canonical roundtrip, reviewed finite-map and positive width/Type0 FFI translation; constructor carriers retained. Kernel checked; independent coordinator review pending. Full fresh-local induction .32.3 remains open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/Primitive.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific infrastructure: Canonical state roundtrip re-export; representation infrastructure, no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/Primitive.lean",
+    "lean_name": "evalFreshUpdate",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific infrastructure: Private codec transport of broad expression freshness; no separate source declaration, decision internal."
   }
 ]
