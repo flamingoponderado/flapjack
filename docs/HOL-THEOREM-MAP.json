@@ -33137,6 +33137,22 @@
     "reviewer": "Flapjack-only equation between literal recursive compiled argument list and MAP spelling used by exact OPT_MMAP theorem; no separate HOL declaration."
   },
 {
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/InitGlobalsReload.lean",
+  "lean_name": "initializerHeadReload",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific initializer new-global lookup composition (.22.10.10), source2240-2260. Original state_rel F and successful source expression under empty locals derive nil shape validity via accepted state_rel_empty_locals/eval_state_rel_is_wf_shape. Declared shape equality and original combined-size bound derive strict head flatten length bound internally; successful-store internal equation plus accepted mem_stores_mem_load_back yields exact reload. No public shape-validity, goodDimindex, head-bound or target-run assumption. No independent named HOL declaration; full initializer relation and recursive theorem remain open."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/InitGlobalsOldLoads.lean",
+  "lean_name": "initializerOldGlobalLoads",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific original initializer old-global reload composition (.22.10.11), HOL2245-2285. Original source state_rel F, empty-locals evaluation and shape equality derive nilshape/flattenlength; accepted headAllocationBase and addresses_add derive head containment in original combined free range. Original old-global/free disjointness yields mem_stores_load_disjoint premise internally; internal store equation preserves every original global reload. No new shape-validity/footprint/alignment/target-run premise. No independently named HOL declaration. Full initializer state relation and cons assembly remain open."
+},
+{
   "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallHandlerNoDestination.lean",
   "lean_name": "compileCorrect_CallHandlerNoDestination",
   "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
