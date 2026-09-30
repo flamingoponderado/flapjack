@@ -2420,6 +2420,10 @@ run_probe pan_sem_evaluate_ind_probeScript.sml pan_sem_evaluate_ind_probe.out \
   evaluate_ind "$cake_dir/pancake/semantics/panSemScript.sml" \
   "$cake_dir/pancake/semantics"
 
+run_probe word_alloc_key_map_probeScript.sml word_alloc_key_map_probe.out \
+  key_map_mixed key_map_collision key_map_done \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
 # HOL's byte decoder `word_of_bytes` (HOL/src/n-bit/byteScript.sml:197) is the
 # function installed by the exact shared-memory loads (panSemScript.sml:517/524,
 # crepSemScript.sml) as `word_of_bytes F 0w new_bytes`, with no length premise
