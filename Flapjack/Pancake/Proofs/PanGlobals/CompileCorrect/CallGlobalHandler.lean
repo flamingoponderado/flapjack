@@ -445,6 +445,77 @@ private theorem normalHandlerFlagRun {width : Nat} {σ : Type} [NeZero width]
   funext key
   by_cases hk : flagName = key <;> simp [FUPDATE, hk]
 
+/-- Normal matched-handler continuation: the generated flag one selects Skip
+in the literal outer If, so the global Store is not executed. Positivity comes
+from the original width carrier's NeZero instance, not an extra premise.
+Internal branch composition, not the full constructor correctness theorem. -/
+private theorem normalHandlerIfRun {width : Nat} {σ : Type} [NeZero width]
+    (caller post : PanSemStateFiniteExact width σ) (handler : ProgHOL width)
+    (resultName flagName handlerVar : MlS) (initializer exceptionValue : ValueHOL width)
+    (address : BitVec width)
+    (hr : resultName ≠ handlerVar) (hf : flagName ≠ handlerVar)
+    (hrFresh : resultName ∉ freeVarIdsHOL handler) (hfFresh : flagName ∉ freeVarIdsHOL handler)
+    (hrun : evaluateHOLFiniteState (setVarHOLFinite handlerVar exceptionValue caller) handler =
+      (none, post)) :
+    ∃ finalPost,
+      evaluateHOLFiniteState
+        (setVarHOLFinite handlerVar exceptionValue
+          (setVarHOLFinite flagName (.val (.word (BitVec.ofNat width 0)))
+            (setVarHOLFinite resultName initializer caller)))
+        (.seq (.seq handler (.assign .local flagName (.const (BitVec.ofNat width 1))))
+          (.ite (.var .local flagName) .skip
+            (.store (.op .sub [.topAddr, .const address]) (.var .local resultName)))) = (none, finalPost) ∧
+      finalPost = {post with locals := ((post.locals.update (resultName, initializer)).update
+        (flagName, .val (.word (BitVec.ofNat width 1))))} := by
+  obtain ⟨finalPost, hflag, hpost⟩ := normalHandlerFlagRun caller post handler resultName flagName
+    handlerVar initializer exceptionValue hr hf hrFresh hfFresh hrun
+  refine ⟨finalPost, ?_, hpost⟩
+  rw [evaluateHOLFiniteState_seq_line780, hflag]
+  simp only
+  have hone : BitVec.ofNat width 1 ≠ 0 := by
+    intro he
+    have hn := congrArg BitVec.toNat he
+    simp only [BitVec.toNat_ofNat,
+      Nat.mod_eq_of_lt (Nat.one_lt_two_pow (NeZero.ne width))] at hn
+    contradiction
+  rw [evaluateHOLFiniteState_ite, hpost]
+  simp only [evalHOLExact, HolFiniteMapExact.lookup_update_pointwise,
+    ite_true, if_neg hone, evaluateHOLFiniteState_skip]
+
+/-- Complete normal-handler continuation and restored relation, composing the
+literal flag/If computation with both scope restorations. The handler run and
+relation are internal IH outputs; this is not the public HOL constructor. -/
+private theorem normalHandlerTail {width : Nat} {σ : Type} [NeZero width]
+    (context : PanGlobalsContextExact width)
+    (caller sourcePost post : PanSemStateFiniteExact width σ) (handler : ProgHOL width)
+    (resultName flagName handlerVar : MlS) (initializer exceptionValue : ValueHOL width)
+    (address : BitVec width) (hrf : resultName ≠ flagName)
+    (hr : resultName ≠ handlerVar) (hf : flagName ≠ handlerVar)
+    (hrFresh : resultName ∉ freeVarIdsHOL handler) (hfFresh : flagName ∉ freeVarIdsHOL handler)
+    (hrun : evaluateHOLFiniteState (setVarHOLFinite handlerVar exceptionValue caller) handler =
+      (none, post)) (hrel : panGlobalsStateRelHOLExact true context sourcePost post) :
+    ∃ finalPost,
+      evaluateHOLFiniteState
+        (setVarHOLFinite handlerVar exceptionValue
+          (setVarHOLFinite flagName (.val (.word (BitVec.ofNat width 0)))
+            (setVarHOLFinite resultName initializer caller)))
+        (.seq (.seq handler (.assign .local flagName (.const (BitVec.ofNat width 1))))
+          (.ite (.var .local flagName) .skip
+            (.store (.op .sub [.topAddr, .const address]) (.var .local resultName)))) = (none, finalPost) ∧
+      panGlobalsStateRelHOLExact true context sourcePost
+        {finalPost with locals := (HolFiniteMapExact.resVarEq
+          (HolFiniteMapExact.resVarEq finalPost.locals
+            (flagName, (setVarHOLFinite resultName initializer caller).locals.lookup flagName))
+          (resultName, caller.locals.lookup resultName))} := by
+  obtain ⟨finalPost, htail, hpost⟩ := normalHandlerIfRun caller post handler resultName flagName
+    handlerVar initializer exceptionValue address hr hf hrFresh hfFresh hrun
+  refine ⟨finalPost, htail, ?_⟩
+  have hrestore := restoreHandlerScopes context caller sourcePost post handler none
+    resultName flagName handlerVar initializer (.val (.word (BitVec.ofNat width 1))) exceptionValue
+    finalPost.locals hrf hr hf hrFresh hfFresh hrun (by simp) hrel
+    (fun _ => congrArg PanSemStateFiniteExact.locals hpost)
+  simpa only [hpost, goodResHOL] using hrestore
+
 /-- Internal missing-context branch of the full constructor proof. The branch
 condition selects the literal compiler fallback; the callee and handler IHs
 remain those of the original evaluator. Untagged infrastructure until the full
