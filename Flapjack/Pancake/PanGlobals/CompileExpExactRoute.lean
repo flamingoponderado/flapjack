@@ -37,8 +37,12 @@ through the executed decl/prog compiler, with kernel-checked equalities
 `compileDecsCakeOfExact_eq` (under `IsCakeCanonical` + `DeclByteRanged`) to the
 production functions.  The executed `globalCompileTopForStartSomeCakeOfExact`
 (`PanGlobalsByteRanged.lean`) and `Pipeline.lean:654` run these routed siblings
-on the parser-proof (byte-range) branch, so that branch textually calls the
-tagged `compileExpExactHOL`.
+on the parser-proof (byte-range) branch. The later declaration wrapper in
+`DeclarationProgramRoute.lean` now replaces the recursive String program
+mirror at that caller with decoded tagged `compileProgExactHOL`; its universal
+program correspondence is proved in `ProgramExactRoute.lean`. Initializers
+continue to call tagged `compileExpExactHOL` directly. The compatibility
+siblings here remain available for the kernel-checked routing equalities.
 
 The fallback branch (input not proved byte-ranged) remains the legacy
 production functions; this is not a claim that all arbitrary `String` inputs
