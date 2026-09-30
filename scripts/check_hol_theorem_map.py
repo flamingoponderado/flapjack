@@ -2074,6 +2074,8 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         ("Flapjack/Misc/LprefixLub.lean", "IMP_equiv_lprefix_chain"),
         ("Flapjack/Misc/LprefixLub.lean", "lprefix_lub_equiv_chain2"),
         ("Flapjack/Misc/LprefixLub.lean", "IMP_build_lprefix_lub_EQ"),
+        ("Flapjack/Misc/LList.lean", "llistShorter"),
+        ("Flapjack/Misc/LList.lean", "llistShorter_fromList"),
         ("Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean", "CrepResultHOLExact"),
         ("Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean", "exitLoopCrepResult"),
         ("Flapjack/Pancake/Proofs/CrepInline.lean", "genlist_less_than"),

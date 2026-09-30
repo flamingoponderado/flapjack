@@ -1,3 +1,5 @@
+import Flapjack.HolRef
+
 /-!
 # HOL `llist` (possibly infinite lists)
 
@@ -488,15 +490,15 @@ theorem rep_some_of_toList_none {ll : HolLList α} (h : toList ll = none) :
 
 /-! ### `llist_shorter` and the `llist`-library helpers
 
-HOL `llist_shorter` is declared in the pinned
-`lprefix_lubScript.sml:122-129`, while `LTAKE_LLENGTH_SOME`, `LTAKE_LNTH_EL` and
-`lnth_some_down_closed` come from the external lazy-list library
-(`HOL/src/coalgebras/llistScript.sml`), whose snapshot is not one of the pinned
-external sources.  Following the review decision for this port all six keep
-HOL's names and statements and carry no `@[hol]` tag: the `llistScript.sml`
-citations would be rejected by the external-path checker, and the
-`llist_shorter` declarations are kept as the same generic lazy-list
-infrastructure.  They are the prerequisites for the exact
+HOL `llist_shorter_def` (`:122-129`) and `llist_shorter_fromList` (`:163-169`)
+are declared in the pinned external source `lprefix_lubScript.sml`, so those two
+ports carry exact `@[hol]` tags citing that pinned path.  `llist_shorter_lnth`
+(`:131-161`) is a HOL `val ... Q.prove` (not a `Theorem`/`Definition`), which the
+external-path checker does not recognise as a declaration, so it stays untagged.
+`LTAKE_LLENGTH_SOME`, `LTAKE_LNTH_EL` and `lnth_some_down_closed` come from the
+external lazy-list library (`HOL/src/coalgebras/llistScript.sml`), whose snapshot
+is not one of the pinned external sources, so they likewise stay untagged.  All
+six keep HOL's names and statements and are the prerequisites for the exact
 `equiv_lprefix_chain_thm2` port. -/
 
 /-- A `some` length forces finiteness. -/
@@ -585,6 +587,7 @@ theorem lnth_some_down_closed {ll : HolLList α} {x : α} {n1 n2 : Nat}
 
 /-- HOL `llist_shorter` (`lprefix_lubScript.sml:122-129`): `ll1` is no longer
     than `ll2`; `none` is the infinite length. -/
+@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "llist_shorter_def"]
 def llistShorter (ll1 ll2 : HolLList α) : Prop :=
   match llength ll1, llength ll2 with
   | none, none => True
@@ -593,6 +596,7 @@ def llistShorter (ll1 ll2 : HolLList α) : Prop :=
   | some x, some y => x ≤ y
 
 /-- HOL `llist_shorter_fromList` (`lprefix_lubScript.sml:163-169`). -/
+@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "llist_shorter_fromList"]
 theorem llistShorter_fromList (l1 l2 : List α) :
     llistShorter (fromList l1) (fromList l2) ↔ l1.length ≤ l2.length := by
   simp [llistShorter, llength_fromList]

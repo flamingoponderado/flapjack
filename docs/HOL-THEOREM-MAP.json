@@ -16821,7 +16821,24 @@
     "lean_path": "Flapjack/Misc/LprefixLub.lean",
     "lean_name": "equiv_lprefix_chain_thm2",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.1.1): HOL lprefix_lubScript.sml:264-304 `Theorem equiv_lprefix_chain_thm2: !ls1 ls2. lprefix_chain ls1 /\\ lprefix_chain ls2 /\\ (!ll2. ll2 IN ls2 ==> LFINITE ll2) ==> (equiv_lprefix_chain ls1 ls2 <=> (\u2200ll1 n x. ll1 IN ls1 /\\ LNTH n ll1 = SOME x ==> ?ll2. ll2 IN ls2 /\\ LNTH n ll2 = SOME x) /\\ (!ll2 n x. ll2 IN ls2 /\\ ll2 <> [||] ==> ?ll1. ll1 IN ls1 /\\ llist_shorter ll2 ll1))`. The Lean theorem equiv_lprefix_chain_thm2 takes the same three hypotheses curried as h1 : lprefixChain ls1, h2 : lprefixChain ls2 and hfin : \u2200 ll2, ls2 ll2 \u2192 LFinite ll2, and states the same iff with the same two conjuncts and binder order ll1/ll2 n x; the second conjunct keeps HOL's unused universal n x binders as _n _x (names only). HOL set membership ll \u2200 ls is predicate application ls ll, HOL [||] is lnil, and llist_shorter is the same-named untagged LList port. Generic in \u03b1; no width, word or finite-map carrier occurs."
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.1.1): HOL lprefix_lubScript.sml:264-304 `Theorem equiv_lprefix_chain_thm2: !ls1 ls2. lprefix_chain ls1 /\\ lprefix_chain ls2 /\\ (!ll2. ll2 IN ls2 ==> LFINITE ll2) ==> (equiv_lprefix_chain ls1 ls2 <=> (\u2200ll1 n x. ll1 IN ls1 /\\ LNTH n ll1 = SOME x ==> ?ll2. ll2 IN ls2 /\\ LNTH n ll2 = SOME x) /\\ (!ll2 n x. ll2 IN ls2 /\\ ll2 <> [||] ==> ?ll1. ll1 IN ls1 /\\ llist_shorter ll2 ll1))`. The Lean theorem equiv_lprefix_chain_thm2 takes the same three hypotheses curried as h1 : lprefixChain ls1, h2 : lprefixChain ls2 and hfin : \u2200 ll2, ls2 ll2 \u2192 LFinite ll2, and states the same iff with the same two conjuncts and binder order ll1/ll2 n x; the second conjunct keeps HOL's unused universal n x binders as _n _x (names only). HOL set membership ll \u2200 ls is predicate application ls ll, HOL [||] is lnil, and llist_shorter is the same-named LList port, tagged as llist_shorter_def. Generic in \u03b1; no width, word or finite-map carrier occurs."
+  },
+
+  {
+    "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+    "hol_name": "llist_shorter_def",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "llistShorter",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.1.1): HOL lprefix_lubScript.sml:122-129 `Definition llist_shorter_def` declares `llist_shorter ll1 ll2` by case analysis on `(LLENGTH ll1, LLENGTH ll2)`: (NONE,NONE) and (SOME _,NONE) are true, (NONE,SOME _) is false, and (SOME x,SOME y) is x <= y. The Lean def llistShorter matches clause for clause over HolLList with llength (NONE=`none`), same constructor order. Generic in alpha; no width, word or finite-map carrier occurs."
+  },
+  {
+    "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+    "hol_name": "llist_shorter_fromList",
+    "lean_path": "Flapjack/Misc/LList.lean",
+    "lean_name": "llistShorter_fromList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.22.3.2.1.1): HOL lprefix_lubScript.sml:163-169 `Theorem llist_shorter_fromList: !l1 l2. llist_shorter (fromList l1) (fromList l2) <=> LENGTH l1 <= LENGTH l2`. The Lean theorem llistShorter_fromList binds l1 l2 and states the same iff with the same orientation, using the tagged llistShorter and llength_fromList. Generic in alpha; no width, word or finite-map carrier occurs."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
