@@ -1247,7 +1247,7 @@ theorem evalPanSemRecursiveCallFiniteContext_structs_eq {width : Nat} {σ : Type
     simp only [Option.some.injEq, Prod.mk.injEq] at heval
     rcases heval with ⟨rfl, rfl⟩
     have hfirst := ihFirst (some val) postContext firstEval
-    simpa [FiniteEvalContext.withState, fixedContext, fixed, fixClockHOLFinite, state]
+    simpa [FiniteEvalContext.withState, FiniteEvalContext.withState_state, fixedContext, fixed, fixClockHOLFinite, state]
       using hfirst
   case case10 =>
     simp
@@ -1332,7 +1332,7 @@ theorem evalPanSemRecursiveCallFiniteContext_structs_eq {width : Nat} {σ : Type
     simp only [Option.some.injEq, Prod.mk.injEq] at heval
     rcases heval with ⟨rfl, rfl⟩
     have hbody := ihBody (some .break) postContext bodyEval
-    simpa [FiniteEvalContext.withState, fixedContext, fixed,
+    simpa [FiniteEvalContext.withState, FiniteEvalContext.withState_state, fixedContext, fixed,
       fixClockHOLFinite, entryContext, entry, decClockHOLFinite, state] using hbody
   case case16 =>
     rename_i ihBody
@@ -1358,7 +1358,7 @@ theorem evalPanSemRecursiveCallFiniteContext_structs_eq {width : Nat} {σ : Type
     simp only [Option.some.injEq, Prod.mk.injEq] at heval
     rcases heval with ⟨rfl, rfl⟩
     have hbody := ihBody bodyResult postContext bodyEval
-    simpa [FiniteEvalContext.withState, fixedContext, fixed,
+    simpa [FiniteEvalContext.withState, FiniteEvalContext.withState_state, fixedContext, fixed,
       fixClockHOLFinite, entryContext, entry, decClockHOLFinite, state] using hbody
   case case17 =>
     simp
@@ -1397,8 +1397,9 @@ theorem evalPanSemRecursiveCallFiniteContext_structs_eq {width : Nat} {σ : Type
     simp only [Option.some.injEq, Prod.mk.injEq] at heval
     rcases heval with ⟨rfl, rfl⟩
     have hbody := ihBody none postContext bodyEval
-    simpa [FiniteEvalContext.withState, fixedContext, callFixedContextHOLFinite,
-      fixClockHOLFinite, entryContext, entry, callEntryStateHOLFinite] using hbody
+    simpa [FiniteEvalContext.withState, FiniteEvalContext.withState_state, fixedContext, callFixedContextHOLFinite,
+      fixClockHOLFinite, entryContext, entry, callEntryStateHOLFinite,
+      callEntryContextHOLFinite] using hbody
   case case24 =>
     rename_i ihBody
     rename_i fixedContext
@@ -1421,8 +1422,8 @@ theorem evalPanSemRecursiveCallFiniteContext_structs_eq {width : Nat} {σ : Type
     simp only [Option.some.injEq, Prod.mk.injEq] at heval
     rcases heval with ⟨rfl, rfl⟩
     have hbody := ihBody (some .break) postContext bodyEval
-    simpa [FiniteEvalContext.withState, fixedContext, callFixedContextHOLFinite,
-      fixClockHOLFinite, entryContext, entry, callEntryStateHOLFinite] using hbody
+    simpa [FiniteEvalContext.withState, FiniteEvalContext.withState_state, fixedContext, callFixedContextHOLFinite,
+      fixClockHOLFinite, entryContext, entry, callEntryStateHOLFinite, callEntryContextHOLFinite] using hbody
   case case25 =>
     rename_i ihBody
     rename_i fixedContext
@@ -1445,8 +1446,8 @@ theorem evalPanSemRecursiveCallFiniteContext_structs_eq {width : Nat} {σ : Type
     simp only [Option.some.injEq, Prod.mk.injEq] at heval
     rcases heval with ⟨rfl, rfl⟩
     have hbody := ihBody (some .continue) postContext bodyEval
-    simpa [FiniteEvalContext.withState, fixedContext, callFixedContextHOLFinite,
-      fixClockHOLFinite, entryContext, entry, callEntryStateHOLFinite] using hbody
+    simpa [FiniteEvalContext.withState, FiniteEvalContext.withState_state, fixedContext, callFixedContextHOLFinite,
+      fixClockHOLFinite, entryContext, entry, callEntryStateHOLFinite, callEntryContextHOLFinite] using hbody
   case case26 =>
     rename_i ihBody
     rename_i fixedContext
@@ -1471,8 +1472,9 @@ theorem evalPanSemRecursiveCallFiniteContext_structs_eq {width : Nat} {σ : Type
     simp only [Option.some.injEq, Prod.mk.injEq] at heval
     rcases heval with ⟨rfl, rfl⟩
     have hbody := ihBody (some (.returned value)) postContext bodyEval
-    simpa [FiniteEvalContext.withState, fixedContext, callFixedContextHOLFinite,
+    simpa [FiniteEvalContext.withState, FiniteEvalContext.withState_state, fixedContext, callFixedContextHOLFinite,
       fixClockHOLFinite, entryContext, entry, callEntryStateHOLFinite,
+      callEntryContextHOLFinite, FiniteEvalContext.emptyLocalsContextHOLFinite,
       state, emptyLocalsHOLFinite] using hbody
   case case27 =>
     rename_i ihBody
@@ -1499,8 +1501,9 @@ theorem evalPanSemRecursiveCallFiniteContext_structs_eq {width : Nat} {σ : Type
     simp only [Option.some.injEq, Prod.mk.injEq] at heval
     rcases heval with ⟨rfl, rfl⟩
     have hbody := ihBody (some (.returned value)) postContext bodyEval
-    simpa [FiniteEvalContext.withState, fixedContext, callFixedContextHOLFinite,
-      fixClockHOLFinite, entryContext, entry, callEntryStateHOLFinite] using hbody
+    simpa [FiniteEvalContext.withState, FiniteEvalContext.withState_state, fixedContext, callFixedContextHOLFinite,
+      fixClockHOLFinite, entryContext, entry, callEntryStateHOLFinite, callEntryContextHOLFinite,
+      callRestoreLocalsContextHOLFinite] using hbody
   case case29 =>
     rename_i ihBody
     rename_i fixedContext
@@ -1530,8 +1533,8 @@ theorem evalPanSemRecursiveCallFiniteContext_structs_eq {width : Nat} {σ : Type
     simp only [Option.some.injEq, Prod.mk.injEq] at heval
     rcases heval with ⟨rfl, rfl⟩
     have hbody := ihBody (some (.returned value)) postContext bodyEval
-    simpa [FiniteEvalContext.withState, fixedContext, callFixedContextHOLFinite,
-      fixClockHOLFinite, entryContext, entry, callEntryStateHOLFinite] using hbody
+    simpa [FiniteEvalContext.withState, FiniteEvalContext.withState_state, fixedContext, callFixedContextHOLFinite,
+      fixClockHOLFinite, entryContext, entry, callEntryStateHOLFinite, callEntryContextHOLFinite] using hbody
   case case30 =>
     rename_i ihBody
     rename_i fixedContext
@@ -1557,8 +1560,8 @@ theorem evalPanSemRecursiveCallFiniteContext_structs_eq {width : Nat} {σ : Type
     simp only [Option.some.injEq, Prod.mk.injEq] at heval
     rcases heval with ⟨rfl, rfl⟩
     have hbody := ihBody (some (.returned value)) postContext bodyEval
-    simpa [FiniteEvalContext.withState, fixedContext, callFixedContextHOLFinite,
-      fixClockHOLFinite, entryContext, entry, callEntryStateHOLFinite] using hbody
+    simpa [FiniteEvalContext.withState, FiniteEvalContext.withState_state, fixedContext, callFixedContextHOLFinite,
+      fixClockHOLFinite, entryContext, entry, callEntryStateHOLFinite, callEntryContextHOLFinite] using hbody
   case case31 =>
     rename_i ihBody
     rename_i fixedContext
@@ -1584,9 +1587,9 @@ theorem evalPanSemRecursiveCallFiniteContext_structs_eq {width : Nat} {σ : Type
     simp only [Option.some.injEq, Prod.mk.injEq] at heval
     rcases heval with ⟨rfl, rfl⟩
     have hbody := ihBody (some (.exception exceptionId value)) postContext bodyEval
-    simpa [FiniteEvalContext.withState, fixedContext, callFixedContextHOLFinite,
+    simpa [FiniteEvalContext.withState, FiniteEvalContext.withState_state, fixedContext, callFixedContextHOLFinite,
       fixClockHOLFinite, entryContext, entry, callEntryStateHOLFinite,
-      emptyLocalsHOLFinite] using hbody
+      callEntryContextHOLFinite, emptyLocalsHOLFinite] using hbody
   case case32 =>
     rename_i ihBody
     rename_i fixedContext
@@ -1613,13 +1616,13 @@ theorem evalPanSemRecursiveCallFiniteContext_structs_eq {width : Nat} {σ : Type
     simp only [Option.some.injEq, Prod.mk.injEq] at heval
     rcases heval with ⟨rfl, rfl⟩
     have hbody := ihBody (some (.exception exceptionId value)) postContext bodyEval
-    simpa [FiniteEvalContext.withState, fixedContext, callFixedContextHOLFinite,
-      fixClockHOLFinite, entryContext, entry, callEntryStateHOLFinite, emptyLocalsHOLFinite] using hbody
+    simpa [FiniteEvalContext.withState, FiniteEvalContext.withState_state, fixedContext, callFixedContextHOLFinite,
+      fixClockHOLFinite, entryContext, entry, callEntryStateHOLFinite,
+      callEntryContextHOLFinite, emptyLocalsHOLFinite] using hbody
   case case33 =>
     rename_i ihHandler
     rename_i ihBody
     rename_i handlerContext
-    rename_i handlerState
     rename_i fixedContext
     rename_i bodyEval
     rename_i shapeLookup
@@ -1647,6 +1650,7 @@ theorem evalPanSemRecursiveCallFiniteContext_structs_eq {width : Nat} {σ : Type
     intro result output heval
     have hbody := ihBody (some (.exception handlerId value)) postContext bodyEval
     have hhandler := ihHandler result output heval
+    let handlerState := handlerStateHOLFinite context fixedContext handlerVar value
     calc
       output.state.structs = handlerContext.state.structs := hhandler
       _ = handlerState.structs := rfl
@@ -1654,8 +1658,9 @@ theorem evalPanSemRecursiveCallFiniteContext_structs_eq {width : Nat} {σ : Type
         simp [handlerState, handlerStateHOLFinite, setVarHOLFinite,
           fixedContext, callFixedContextHOLFinite]
       _ = entry.structs := by
-        simpa [FiniteEvalContext.withState, fixedContext, callFixedContextHOLFinite,
-          fixClockHOLFinite, entryContext, callEntryStateHOLFinite] using hbody
+        simpa [FiniteEvalContext.withState, FiniteEvalContext.withState_state, fixedContext, callFixedContextHOLFinite,
+          fixClockHOLFinite, entryContext, entry, callEntryStateHOLFinite,
+          callEntryContextHOLFinite] using hbody
       _ = state.structs := by simp [entry, callEntryStateHOLFinite]
       _ = context.state.structs := rfl
   case case34 =>
@@ -1688,8 +1693,8 @@ theorem evalPanSemRecursiveCallFiniteContext_structs_eq {width : Nat} {σ : Type
     simp only [Option.some.injEq, Prod.mk.injEq] at heval
     rcases heval with ⟨rfl, rfl⟩
     have hbody := ihBody (some (.exception handlerId value)) postContext bodyEval
-    simpa [FiniteEvalContext.withState, fixedContext, callFixedContextHOLFinite,
-      fixClockHOLFinite, entryContext, entry, callEntryStateHOLFinite] using hbody
+    simpa [FiniteEvalContext.withState, FiniteEvalContext.withState_state, fixedContext, callFixedContextHOLFinite,
+      fixClockHOLFinite, entryContext, entry, callEntryStateHOLFinite, callEntryContextHOLFinite] using hbody
   case case35 =>
     rename_i ihBody
     rename_i fixedContext
@@ -1718,8 +1723,8 @@ theorem evalPanSemRecursiveCallFiniteContext_structs_eq {width : Nat} {σ : Type
     simp only [Option.some.injEq, Prod.mk.injEq] at heval
     rcases heval with ⟨rfl, rfl⟩
     have hbody := ihBody (some (.exception handlerId value)) postContext bodyEval
-    simpa [FiniteEvalContext.withState, fixedContext, callFixedContextHOLFinite,
-      fixClockHOLFinite, entryContext, entry, callEntryStateHOLFinite] using hbody
+    simpa [FiniteEvalContext.withState, FiniteEvalContext.withState_state, fixedContext, callFixedContextHOLFinite,
+      fixClockHOLFinite, entryContext, entry, callEntryStateHOLFinite, callEntryContextHOLFinite] using hbody
   case case36 =>
     rename_i ihBody
     rename_i fixedContext
@@ -1749,8 +1754,9 @@ theorem evalPanSemRecursiveCallFiniteContext_structs_eq {width : Nat} {σ : Type
     simp only [Option.some.injEq, Prod.mk.injEq] at heval
     rcases heval with ⟨rfl, rfl⟩
     have hbody := ihBody (some (.exception exceptionId value)) postContext bodyEval
-    simpa [FiniteEvalContext.withState, fixedContext, callFixedContextHOLFinite,
-      fixClockHOLFinite, entryContext, entry, callEntryStateHOLFinite, emptyLocalsHOLFinite] using hbody
+    simpa [FiniteEvalContext.withState, FiniteEvalContext.withState_state, fixedContext, callFixedContextHOLFinite,
+      fixClockHOLFinite, entryContext, entry, callEntryStateHOLFinite,
+      callEntryContextHOLFinite, emptyLocalsHOLFinite] using hbody
   case case37 =>
     rename_i ihBody
     rename_i fixedContext
@@ -1779,8 +1785,9 @@ theorem evalPanSemRecursiveCallFiniteContext_structs_eq {width : Nat} {σ : Type
     simp only [Option.some.injEq, Prod.mk.injEq] at heval
     rcases heval with ⟨rfl, rfl⟩
     have hbody := ihBody (some other) postContext bodyEval
-    simpa [FiniteEvalContext.withState, fixedContext, callFixedContextHOLFinite,
-      fixClockHOLFinite, entryContext, entry, callEntryStateHOLFinite, emptyLocalsHOLFinite] using hbody
+    simpa [FiniteEvalContext.withState, FiniteEvalContext.withState_state, fixedContext, callFixedContextHOLFinite,
+      fixClockHOLFinite, entryContext, entry, callEntryStateHOLFinite,
+      callEntryContextHOLFinite, emptyLocalsHOLFinite] using hbody
   case case38 =>
     simp
   case case39 =>
@@ -1816,8 +1823,8 @@ theorem evalPanSemRecursiveCallFiniteContext_structs_eq {width : Nat} {σ : Type
     simp only [Option.some.injEq, Prod.mk.injEq] at heval
     rcases heval with ⟨rfl, rfl⟩
     have hbody := ihBody none postContext bodyEval
-    simpa [FiniteEvalContext.withState, fixedContext, callFixedContextHOLFinite,
-      fixClockHOLFinite, entryContext, entry, callEntryStateHOLFinite] using hbody
+    simpa [FiniteEvalContext.withState, FiniteEvalContext.withState_state, fixedContext, callFixedContextHOLFinite,
+      fixClockHOLFinite, entryContext, entry, callEntryStateHOLFinite, callEntryContextHOLFinite] using hbody
   case case43 =>
     rename_i ihBody
     rename_i fixedContext
@@ -1842,8 +1849,8 @@ theorem evalPanSemRecursiveCallFiniteContext_structs_eq {width : Nat} {σ : Type
     simp only [Option.some.injEq, Prod.mk.injEq] at heval
     rcases heval with ⟨rfl, rfl⟩
     have hbody := ihBody (some .break) postContext bodyEval
-    simpa [FiniteEvalContext.withState, fixedContext, callFixedContextHOLFinite,
-      fixClockHOLFinite, entryContext, entry, callEntryStateHOLFinite] using hbody
+    simpa [FiniteEvalContext.withState, FiniteEvalContext.withState_state, fixedContext, callFixedContextHOLFinite,
+      fixClockHOLFinite, entryContext, entry, callEntryStateHOLFinite, callEntryContextHOLFinite] using hbody
   case case44 =>
     rename_i ihBody
     rename_i fixedContext
@@ -1868,8 +1875,8 @@ theorem evalPanSemRecursiveCallFiniteContext_structs_eq {width : Nat} {σ : Type
     simp only [Option.some.injEq, Prod.mk.injEq] at heval
     rcases heval with ⟨rfl, rfl⟩
     have hbody := ihBody (some .continue) postContext bodyEval
-    simpa [FiniteEvalContext.withState, fixedContext, callFixedContextHOLFinite,
-      fixClockHOLFinite, entryContext, entry, callEntryStateHOLFinite] using hbody
+    simpa [FiniteEvalContext.withState, FiniteEvalContext.withState_state, fixedContext, callFixedContextHOLFinite,
+      fixClockHOLFinite, entryContext, entry, callEntryStateHOLFinite, callEntryContextHOLFinite] using hbody
   case case45 =>
     simp
   case case46 =>
@@ -1937,8 +1944,8 @@ theorem evalPanSemRecursiveCallFiniteContext_structs_eq {width : Nat} {σ : Type
     simp only [Option.some.injEq, Prod.mk.injEq] at heval
     rcases heval with ⟨rfl, rfl⟩
     have hbody := ihBody (some (.returned value)) postContext bodyEval
-    simpa [FiniteEvalContext.withState, fixedContext, callFixedContextHOLFinite,
-      fixClockHOLFinite, entryContext, entry, callEntryStateHOLFinite] using hbody
+    simpa [FiniteEvalContext.withState, FiniteEvalContext.withState_state, fixedContext, callFixedContextHOLFinite,
+      fixClockHOLFinite, entryContext, entry, callEntryStateHOLFinite, callEntryContextHOLFinite] using hbody
   case case48 =>
     rename_i ihBody
     rename_i fixedContext
@@ -1968,7 +1975,7 @@ theorem evalPanSemRecursiveCallFiniteContext_structs_eq {width : Nat} {σ : Type
     simp only [Option.some.injEq, Prod.mk.injEq] at heval
     rcases heval with ⟨rfl, rfl⟩
     have hbody := ihBody (some other) postContext bodyEval
-    simpa [FiniteEvalContext.withState, fixedContext, callFixedContextHOLFinite,
+    simpa [FiniteEvalContext.withState, FiniteEvalContext.withState_state, fixedContext, callFixedContextHOLFinite,
       fixClockHOLFinite, entryContext, entry, callEntryStateHOLFinite,
       emptyLocalsHOLFinite] using hbody
   case case49 =>
@@ -2017,8 +2024,10 @@ theorem evalPanSemRecursiveCallFiniteContext_structs_eq {width : Nat} {σ : Type
     cases (show VarKind from by assumption) <;>
       try simp_all (config := { zetaDelta := true })
         [FiniteEvalContext.withState, callFixedContextHOLFinite,
-          callEntryStateHOLFinite, fixClockHOLFinite,
+          callEntryStateHOLFinite,
+          callEntryContextHOLFinite, fixClockHOLFinite,
           setVarHOLFinite, setKvarHOLFinite,
+          callSetKvarContextHOLFinite,
           setGlobalHOLFinite, PanSemStateFiniteExact.toExact]
   case case66 =>
     let ctx : FiniteEvalContext width σ := by assumption
@@ -2438,7 +2447,8 @@ theorem evalPanSemRecursiveCallFiniteContext_shapeInvariant
       simpa [hfixedStructs] using
         panSemStateVarsHOLWf_emptyLocals fixedContext.state hfixedVars
     have hvalueWf : isWfShapeValueHOLExact context.state.structs value = true := by
-      simpa [panSemResultHOLWf, entryContext, entry, callEntryStateHOLFinite] using hbody.2.2
+      simpa [panSemResultHOLWf, entryContext, entry, callEntryStateHOLFinite,
+        callEntryContextHOLFinite] using hbody.2.2
     exact ⟨hfixedStructs, hfixedVarsAtOrig, by
       simpa [panSemResultHOLWf] using hvalueWf⟩
   case case32 =>
@@ -2495,7 +2505,8 @@ theorem evalPanSemRecursiveCallFiniteContext_shapeInvariant
       simpa [hfixedStructs] using
         panSemStateVarsHOLWf_emptyLocals fixedContext.state hfixedVars
     have hvalueWf : isWfShapeValueHOLExact context.state.structs value = true := by
-      simpa [panSemResultHOLWf, entryContext, entry, callEntryStateHOLFinite] using hbody.2.2
+      simpa [panSemResultHOLWf, entryContext, entry, callEntryStateHOLFinite,
+        callEntryContextHOLFinite] using hbody.2.2
     exact ⟨hfixedStructs, hfixedVarsAtOrig, by
       simpa [panSemResultHOLWf] using hvalueWf⟩
   case case41 =>
@@ -2505,7 +2516,6 @@ theorem evalPanSemRecursiveCallFiniteContext_shapeInvariant
     rename_i ihHandler
     rename_i ihBody
     rename_i handlerContext
-    rename_i handlerState
     rename_i fixedContext
     rename_i bodyEval
     rename_i shapeLookup
@@ -2556,7 +2566,7 @@ theorem evalPanSemRecursiveCallFiniteContext_shapeInvariant
         _ = entryContext.state.structs := hbody.1
         _ = context.state.structs := by rfl
     have hvalueWf : isWfShapeValueHOLExact context.state.structs value = true := by
-      simpa [panSemResultHOLWf, entryContext, entry, callEntryStateHOLFinite] using hbody.2.2
+      simpa [panSemResultHOLWf, entryContext, entry, callEntryStateHOLFinite, callEntryContextHOLFinite] using hbody.2.2
     let handlerBase : PanSemStateFiniteExact width σ :=
       { fixedContext.state with locals := state.locals }
     have hhandlerBaseStructs : handlerBase.structs = context.state.structs := by
@@ -2570,16 +2580,19 @@ theorem evalPanSemRecursiveCallFiniteContext_shapeInvariant
           (PanSemStateFiniteExact.setVarHOLFinite handlerVar value handlerBase) :=
       panSemStateVarsHOLWf_setVar handlerBase handlerVar value hhandlerBaseVars
         (by simpa [hhandlerBaseStructs] using hvalueWf)
+    let handlerState := handlerStateHOLFinite context fixedContext handlerVar value
     have hhandlerVars : panSemStateVarsHOLWf context.state.structs handlerState := by
       rw [← hhandlerBaseStructs]
       simpa [handlerState, handlerStateHOLFinite, handlerBase, setVarHOLFinite] using hsetHandler
     have hhandlerStateStructs : handlerState.structs = context.state.structs := by
       simpa [handlerState, handlerStateHOLFinite, setVarHOLFinite] using hhandlerBaseStructs
     have hhandlerStructs : handlerContext.state.structs = context.state.structs := by
-      simpa [handlerContext, FiniteEvalContext.withState] using hhandlerStateStructs
+      simpa [handlerContext, FiniteEvalContext.withState, FiniteEvalContext.withState_state,
+        callContinuationContextHOLFinite] using hhandlerStateStructs
     have hhandlerVarsAtContext :
         panSemStateVarsHOLWf handlerContext.state.structs handlerContext.state := by
-      simpa [handlerContext, FiniteEvalContext.withState, hhandlerStateStructs] using hhandlerVars
+      simpa [handlerContext, FiniteEvalContext.withState, FiniteEvalContext.withState_state,
+        callContinuationContextHOLFinite, handlerState, hhandlerStateStructs] using hhandlerVars
     have hhandler := ihHandler hhandlerVarsAtContext result output heval
     refine ⟨?_, ?_, ?_⟩
     · calc
@@ -2823,7 +2836,7 @@ theorem evalPanSemRecursiveCallFiniteContext_shapeInvariant
         _ = entryContext.state.structs := hbody.1
         _ = context.state.structs := by rfl
     have hvalueWf : isWfShapeValueHOLExact context.state.structs value = true := by
-      simpa [panSemResultHOLWf, entryContext, entry, callEntryStateHOLFinite] using hbody.2.2
+      simpa [panSemResultHOLWf, entryContext, entry, callEntryStateHOLFinite, callEntryContextHOLFinite] using hbody.2.2
     let continuationBase : PanSemStateFiniteExact width σ :=
       { fixedContext.state with locals := state.locals }
     let continuationState := handlerStateHOLFinite context fixedContext resultName value
@@ -2987,7 +3000,7 @@ theorem evalPanSemRecursiveCallFiniteContext_shapeInvariant
       simpa [hfixedStructs] using
         panSemStateVarsHOLWf_emptyLocals fixedContext.state hfixedVars
     have hresultWf : panSemResultHOLWf context.state.structs (some other) := by
-      simpa [entryContext, FiniteEvalContext.withState, entry, callEntryStateHOLFinite] using hbody.2.2
+      simpa [entryContext, FiniteEvalContext.withState, entry, callEntryStateHOLFinite, callEntryContextHOLFinite] using hbody.2.2
     exact ⟨hfixedStructs, hfixedVarsAtOrig, hresultWf⟩
   case case49 =>
     intro result output heval
@@ -3326,7 +3339,7 @@ theorem evalPanSemRecursiveCallFiniteContext_shapeInvariant
       simpa [hfixedStructs] using
         panSemStateVarsHOLWf_emptyLocals fixedContext.state hfixedVars
     have hvalueWf : isWfShapeValueHOLExact context.state.structs value = true := by
-      simpa [panSemResultHOLWf, entryContext, entry, callEntryStateHOLFinite] using hbody.2.2
+      simpa [panSemResultHOLWf, entryContext, entry, callEntryStateHOLFinite, callEntryContextHOLFinite] using hbody.2.2
     exact ⟨hfixedStructs, hfixedVarsAtOrig, by
       simpa [panSemResultHOLWf] using hvalueWf⟩
   case case37 =>
@@ -3387,7 +3400,7 @@ theorem evalPanSemRecursiveCallFiniteContext_shapeInvariant
       simpa [hfixedStructs] using
         panSemStateVarsHOLWf_emptyLocals fixedContext.state hfixedVars
     have hresultWf : panSemResultHOLWf context.state.structs (some other) := by
-      simpa [entryContext, FiniteEvalContext.withState, entry, callEntryStateHOLFinite] using hbody.2.2
+      simpa [entryContext, FiniteEvalContext.withState, entry, callEntryStateHOLFinite, callEntryContextHOLFinite] using hbody.2.2
     exact ⟨hfixedStructs, hfixedVarsAtOrig, hresultWf⟩
   case case30 =>
     rename_i ihBody
@@ -3726,9 +3739,9 @@ theorem evalPanSemRecursiveCallFiniteContext_shapeInvariant
       simpa [hfixedStructs] using
         panSemStateVarsHOLWf_emptyLocals fixedContext.state hfixedVars
     have hvalueWf : isWfShapeValueHOLExact sourceContext.state.structs value = true := by
-      simpa [panSemResultHOLWf, entryContext, entry, callEntryStateHOLFinite] using hbody.2.2
+      simpa [panSemResultHOLWf, entryContext, entry, callEntryStateHOLFinite, callEntryContextHOLFinite] using hbody.2.2
     refine ⟨?_, ?_, ?_⟩
-    · simp [FiniteEvalContext.withState, PanSemStateFiniteExact.emptyLocalsHOLFinite,
+    · simp [PanSemStateFiniteExact.emptyLocalsHOLFinite,
         hfixedStructs]
     · simpa [FiniteEvalContext.withState] using houtputVars
     · simpa [panSemResultHOLWf] using hvalueWf
@@ -3787,8 +3800,9 @@ theorem evalPanSemRecursiveCallFiniteContext_shapeInvariant
       · simpa [hfixedStructs] using hvars.1
       · simpa [hfixedStructs] using hfixedVars.2
     refine ⟨?_, ?_, by simp [panSemResultHOLWf]⟩
-    · simp [FiniteEvalContext.withState, hfixedStructs]
-    · simpa [FiniteEvalContext.withState, hfixedStructs] using hrestoredVars
+    · simp [FiniteEvalContext.withState, callRestoreLocalsContextHOLFinite, hfixedStructs]
+    · simpa [FiniteEvalContext.withState, callRestoreLocalsContextHOLFinite,
+        hfixedStructs] using hrestoredVars
   case case28 =>
     rename_i ihBody
     rename_i fixedContext
