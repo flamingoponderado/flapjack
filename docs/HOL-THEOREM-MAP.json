@@ -30422,5 +30422,44 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-c source comparison2026-09-30 (.32.3.9): genuine Seq case of evaluate_fresh_local1045-1091. Literal evaluate_ind NONE-gated second-child then unconditional first-child IH conjunction. Original nonfree/source-evaluation predicate and existential post-locals plus conditional good_res/non-Error FUPDATE preserved. Source Seq/fix_clock behavior via accepted line780 rewrite, with no clock premise. NONE first output conditional update establishes exact intermediate fresh binding before second-child IH; SOME first result propagates original existential unchanged. Exact MlS/ValueHOL/ProgHOL, four canonical finite maps with roundtrip, positive word width/NeZero and universe0 FFI. No extra assumption and no executable change; full parent remains open; coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/ShMemLoad.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack canonical finite-state roundtrip re-export; no standalone HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/ShMemLoad.lean",
+    "lean_name": "evaluateFreshLocal_ShMemLoad",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "evaluate_fresh_local",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison2026-09-30 (.32.3.12): genuine nonrecursive ShMemLoad case of evaluate_fresh_local1045-1091. Original fresh-name/source-evaluation premises, existential post locals and conditional good_res/non-Error FUPDATE. Source panSem608-614 lookup_kvar word gate and sh_mem_load510-527 raw/aligned address guards, FFI_final clearing, FFI_return destination update retained. Freshness derives local destination inequality and expression guard invariance; no added premise. Exact MlS/ValueHOL/ProgHOL/FFI carriers, canonical four state maps with roundtrip and lawful equality-based/Boolean update commutation, positive width/NeZero and universe0 FFI. Proof-only; parent open and coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/ShMemLoad.lean",
+    "lean_name": "updateMixed",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local proof factoring; no standalone HOL original. Preserves exact update/FFI clauses."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/ShMemLoad.lean",
+    "lean_name": "loadFresh",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local proof factoring; no standalone HOL original. Preserves exact update/FFI clauses."
   }
 ]
