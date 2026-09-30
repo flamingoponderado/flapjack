@@ -29735,6 +29735,172 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-c source comparison2026-09-30 (.32.2): HOL1020-1045 retains state/list/name/value quantifiers, absence from FLAT(MAP var_exp es), and exact OPT_MMAP(eval) equality after one/two sequential local FUPDATEs. Two-update theorem has both original freshness conjuncts and no distinct-name premise. Exact MlS/ExpHOL/ValueHOL, lists, finite-state four maps with genuine canonical roundtrip witness, positive BitVec width/NeZero and universe0 FFI. Internally chosen memory-domain decisions are unchanged by locals updates and impose no premise. Existing broad exact list freshness proof is transported by explicit canonical-to-broad state equality; second result applies first twice. Proof-only; coordinator source review pending."
+,
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/MemStores.lean",
+    "lean_name": "memStoresLoadDisjointHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "mem_stores_load_disjoint",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.2.27) compared pan_globalsProofScript.sml:323-364: both conjuncts (shape and shape-list), hypotheses mem_stores success, stcs = [], is_wf_shape stcs sh (EVERY as list membership), DISJOINT as forall x. s x ==> ~t x, SUM (MAP size_of_shape shs); conclusion mem_load(s) on m with stcs equals mem_load(s) on memory with []. Exact tagged panMemStoresHOL/memLoadHOLExact/flattenHOL/shapeOfHOLExact/isWfShapeExactHOL/sizeOfShapeHOL and stack_removeProof addresses; HOL predicate sets as Prop predicates with classical membership decided inside the statement (no premise); positive-width word translation only. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/MemStores.lean",
+    "lean_name": "memLoadMemStoreHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "mem_load_mem_store",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.2.27) compared pan_globalsProofScript.sml:266-307: all three mem_load_ind conjuncts including HOL's trivial mem_load_flds conjunct (... /\\ T ==> T); hypotheses load success, sctxt = [], wf shape(s), shape_of w = s / ss = MAP shape_of ws; conclusion exists m. mem_stores addr (flatten w | FLAT (MAP (\\a. flatten a) ws)) = SOME m. Exact tagged panMemStoresHOL/memLoadHOLExact/flattenHOL/shapeOfHOLExact/isWfShapeExactHOL/sizeOfShapeHOL and stack_removeProof addresses; HOL predicate sets as Prop predicates with classical membership decided inside the statement (no premise); positive-width word translation only. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/MemStores.lean",
+    "lean_name": "memStoresMemLoadBackHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "mem_stores_mem_load_back",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.2.27) compared pan_globalsProofScript.sml:366-423: both conjuncts; hypotheses mem_stores success, LENGTH (flatten ..) * w2n bytes_in_word < dimword (2^width), wf shape_of (EVERY over MAP shape_of), sctxt = [], good_dimindex (goodDimindex); conclusion mem_load(s) (shape_of ..) addr addrs m sctxt = SOME val(s). Exact tagged panMemStoresHOL/memLoadHOLExact/flattenHOL/shapeOfHOLExact/isWfShapeExactHOL/sizeOfShapeHOL and stack_removeProof addresses; HOL predicate sets as Prop predicates with classical membership decided inside the statement (no premise); positive-width word translation only. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/MemStores.lean",
+    "lean_name": "w2nAddAltHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "w2n_add_alt",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.2.27) compared pan_globalsProofScript.sml:448-456: w2n a + w2n b < dimword ==> w2n a + w2n b = w2n (a+b); dimword = 2^width. Exact tagged panMemStoresHOL/memLoadHOLExact/flattenHOL/shapeOfHOLExact/isWfShapeExactHOL/sizeOfShapeHOL and stack_removeProof addresses; HOL predicate sets as Prop predicates with classical membership decided inside the statement (no premise); positive-width word translation only. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/MemStores.lean",
+    "lean_name": "byteAlignedMulBytesInWordHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "byte_aligned_mul_bytes_in_word",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.2.27) compared pan_globalsProofScript.sml:431-446: good_dimindex /\\ byte_aligned a ==> exists b. a = b * bytes_in_word /\\ w2n b * w2n bytes_in_word < dimword; byte_aligned rendered by the reviewed panGlobalsByteAlignedHOL fixed-point predicate used by state_rel. Exact tagged panMemStoresHOL/memLoadHOLExact/flattenHOL/shapeOfHOLExact/isWfShapeExactHOL/sizeOfShapeHOL and stack_removeProof addresses; HOL predicate sets as Prop predicates with classical membership decided inside the statement (no premise); positive-width word translation only. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/MemStores.lean",
+    "lean_name": "goodDimindexW2nAddHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "good_dimindex_w2n_add",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.2.27) compared pan_globalsProofScript.sml:458-488: good_dimindex /\\ byte_aligned a /\\ a <> -1w * bytes_in_word ==> w2n a + w2n bytes_in_word = w2n (a + bytes_in_word); -1w as (-1 : BitVec width). Exact tagged panMemStoresHOL/memLoadHOLExact/flattenHOL/shapeOfHOLExact/isWfShapeExactHOL/sizeOfShapeHOL and stack_removeProof addresses; HOL predicate sets as Prop predicates with classical membership decided inside the statement (no premise); positive-width word translation only. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/MemStores.lean",
+    "lean_name": "memStoresBoundedLengthHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "mem_stores_bounded_length",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.2.27) compared pan_globalsProofScript.sml:490-533: mem_stores success /\\ addr' NOTIN addrs /\\ byte_aligned addr /\\ byte_aligned addr' /\\ good_dimindex ==> w2n bytes_in_word * LENGTH ws <= w2n (addr' - addr). Exact tagged panMemStoresHOL/memLoadHOLExact/flattenHOL/shapeOfHOLExact/isWfShapeExactHOL/sizeOfShapeHOL and stack_removeProof addresses; HOL predicate sets as Prop predicates with classical membership decided inside the statement (no premise); positive-width word translation only. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/MemStores.lean",
+    "lean_name": "lessMultMono'",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "LESS_MULT_MONO'",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.2.27) compared pan_globalsProofScript.sml:425-429 (local): 0 < a ==> (a * m < a * n <=> m < n) over num = Nat; same free variables. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/MemStores.lean",
+    "lean_name": "memStoresLookup_gen",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.2.27): mem_stores_lookup for an arbitrary domain decision instance; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/MemStores.lean",
+    "lean_name": "stride_succ",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.2.27): bytes_in_word stride successor arithmetic; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/MemStores.lean",
+    "lean_name": "addresses_add",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.2.27): splitting addresses a (n+k) at the n-th stride (HOL uses addresses_thm); no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/MemStores.lean",
+    "lean_name": "sizeOfShapesHOL_eq_sum",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.2.27): sizeOfShapesHOL is SUM (MAP size_of_shape); no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/MemStores.lean",
+    "lean_name": "isWfShapesExactHOL_iff",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.2.27): list well-formedness helper equals EVERY; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/MemStores.lean",
+    "lean_name": "memStoresLoadDisjoint_aux",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.2.27): mutual core of mem_stores_load_disjoint over a generic decision instance; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/MemStores.lean",
+    "lean_name": "memLoad_domain_cover",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.2.27): successful empty-context load covers its addresses by the domain (mem_load_mem_store core); no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/MemStores.lean",
+    "lean_name": "addresses_disjoint_stride",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.2.27): non-wrapping consecutive address blocks are disjoint at good dimensions; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/MemStores.lean",
+    "lean_name": "loadBack_val",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.2.27): first conjunct core of mem_stores_mem_load_back; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/MemStores.lean",
+    "lean_name": "loadBack_vals",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.2.27): second conjunct core of mem_stores_mem_load_back; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/MemStores.lean",
+    "lean_name": "byteAligned_toNat",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.2.27): byte_aligned at good dimensions as w2n divisibility; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/MemStores.lean",
+    "lean_name": "memStores_cover",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.2.27): successful mem_stores covers its addresses by the domain; no HOL original."
   }
 ,
 {
