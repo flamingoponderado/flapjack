@@ -792,6 +792,49 @@ theorem compileProgCakeOfExact_shMemLoad_local_exact_bridge [LawfulBEq String]
     compileExpRouteCake]
   rw [Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes name hname]
 
+/-- Global shared-memory loads commute with the exact compiler for the
+    production `InfoMap` lookup outcomes.  The generated local binder is
+    decoded with the same byte codec used to construct `ofPass`; this is
+    Flapjack-only routing infrastructure, not a separate HOL declaration. -/
+theorem compileProgCakeOfExact_shMemLoad_global_exact_bridge [LawfulBEq String]
+    {width : Nat} [NeZero width]
+    (context : GlobalPassContext (BitVec width)) (size : OpSize) (name : String)
+    (address : Exp (BitVec width)) (hname : NameRanged name) :
+    compileProgCakeOfExact context (.shMemLoad size .global name address) =
+      progOfHOL (compileProgExactHOL (PanGlobalsContextExact.ofPass context)
+        (progToHOL (.shMemLoad size .global name address))) := by
+  have hnameDecode : toStringOfBytes (ofString name) = name :=
+    Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes name hname
+  have hlocal :
+      toStringOfBytes
+          (Flapjack.Pancake.PanLang.mlstrAppend (ofString name) (ofString "'")) =
+        name ++ globalApostrophes 1 := by
+    rw [toStringOfBytes_mlstrAppend, hnameDecode, toStringOfBytes_ofString_quote]
+    rfl
+  cases hlookup : lookupInfo name context.globals with
+  | none =>
+      simp [compileProgCakeOfExact, compileProgExactHOL, progToHOL,
+        PanGlobalsContextExact.ofPass_globals_lookup, FLOOKUP,
+        FLOOKUP_cakeContextOfPass_globals, hlookup, progOfHOL, hnameDecode]
+  | some entry =>
+      obtain ⟨shape, globalAddress⟩ := entry
+      cases shape with
+      | one =>
+          simp [compileProgCakeOfExact, compileProgExactHOL, progToHOL,
+            PanGlobalsContextExact.ofPass_globals_lookup, FLOOKUP,
+            FLOOKUP_cakeContextOfPass_globals, hlookup, progOfHOL, expOfHOL,
+            compileExpRouteCake, shapeToHOL, shapeOfHOL, hnameDecode, hlocal]
+      | comb fields =>
+          simp [compileProgCakeOfExact, compileProgExactHOL, progToHOL,
+            PanGlobalsContextExact.ofPass_globals_lookup, FLOOKUP,
+            FLOOKUP_cakeContextOfPass_globals, hlookup, progOfHOL,
+            shapeToHOL, hnameDecode]
+      | named fieldName =>
+          simp [compileProgCakeOfExact, compileProgExactHOL, progToHOL,
+            PanGlobalsContextExact.ofPass_globals_lookup, FLOOKUP,
+            FLOOKUP_cakeContextOfPass_globals, hlookup, progOfHOL,
+            shapeToHOL, hnameDecode]
+
 /-- Literal control constructors `.break`, `.continue`, and `.tick` commute
     without byte-range premises because both compilers leave them unchanged.
     Flapjack routing infrastructure (untagged). -/

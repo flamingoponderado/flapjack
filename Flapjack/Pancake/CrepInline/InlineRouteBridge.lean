@@ -968,5 +968,83 @@ theorem crepNotBranchRet_codec {width : Nat} [NeZero width] :
   | .shMem operator name address => by simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
   | .tick => by simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
 
+/-- Executed inline call body with a `some (returnNames, none)` return shape lifts
+    to the exact `some (returnNames, none)` arm computation under `crepProgToHOL`.
+    Here the argument `body` plays the role of the exact `inlinedCallee` that the
+    caller supplies (in the production recursion it is the `crepUnreachElim` result
+    of the recursive inlining of the callee). -/
+theorem crepProgToHOL_crepInlineCallBody_some_none {width : Nat} [NeZero width]
+    (returnNames : List Nat) (name : FunName)
+    (arguments : List (CrepExp (BitVec width)))
+    (argumentNames : List Nat) (body : CrepProg (BitVec width)) :
+    crepProgToHOL (crepInlineCallBody (some (returnNames, none)) name arguments
+        argumentNames body) =
+      (if !crepAllDistinct returnNames then
+        CrepProgHOL.call (some (returnNames, none)) (ofString name)
+          (arguments.map crepExpToHOL)
+      else
+        let maxArguments :=
+          ((arguments.map crepExpToHOL).flatMap crepExpVarsHOL).foldl max 0
+        let maxArgumentNames := argumentNames.foldl max 0
+        let temporaryNames :=
+          genlistSuccAddHOLExact (max maxArguments maxArgumentNames)
+            argumentNames.length
+        let maxReturnNames := returnNames.foldl max 0
+        let maxInlinedCallee := crepVmaxProgHOLExact (crepProgToHOL body)
+        let maxTemporaryNames := temporaryNames.foldl max 0
+        let temporaryReturns :=
+          genlistSuccAddHOLExact
+            (max maxReturnNames (max maxInlinedCallee maxTemporaryNames))
+            returnNames.length
+        let transformedCallee :=
+          if notBranchRetHOLExact (crepProgToHOL body) then
+            .seq .tick (transformEocHOLExact temporaryReturns (crepProgToHOL body))
+          else
+            .while (.const 1)
+              (transformBranchHOLExact 0 temporaryReturns (crepProgToHOL body))
+        inlineNontailHOLExact transformedCallee returnNames temporaryReturns
+          temporaryNames (arguments.map crepExpToHOL) argumentNames) := by
+  simp only [crepInlineCallBody]
+  by_cases hd : (!crepAllDistinct returnNames) = true
+  · rw [if_pos hd, if_pos hd]
+    simp only [crepProgToHOL]
+  · rw [if_neg hd, if_neg hd]
+    rw [crepInlineTmpNames_codec, crepVmaxProg_codec, crepNotBranchRet_codec]
+    by_cases hbr : notBranchRetHOLExact (crepProgToHOL body) = true
+    · rw [if_pos hbr, if_pos hbr]
+      simp only [crepProgToHOL, crepProgToHOL_crepTransformEoc,
+        crepProgToHOL_crepInlineNontail, genlistSuccAddHOLExact, Nat.add_assoc]
+    · rw [if_neg hbr, if_neg hbr]
+      simp only [crepProgToHOL, crepExpToHOL, crepProgToHOL_crepTransformBranch,
+        crepProgToHOL_crepInlineNontail, genlistSuccAddHOLExact, Nat.add_assoc]
+
+/-- The `ofString`/`toStringOfBytes` codec preserves Bool equality on
+    byte-ranged names. -/
+theorem beq_ofString_eq_ofString {s t : String}
+    (hs : CrepNameRanged s) (ht : CrepNameRanged t) :
+    (ofString s == ofString t) = (s == t) := by
+  rw [beq_comm (ofString s) (ofString t), beq_ofString_eq ht,
+      toStringOfBytes_ofString_of_bytes s hs, beq_comm t s]
+
+/-- Production active-name membership after erasing `name` matches the exact
+    finite-map lookup guarded by the same erase, under the `toStringOfBytes`
+    codec. Introduced for the pending inline body-recursion relation, where the
+    executable pass carries a list of inlineable entries together with an active
+    name set while the exact core carries the `alistToFmapHOLExact` finite map. -/
+theorem crepInlineActiveNames_erase_codec {width : Nat} [NeZero width] {α : Type}
+    (bodyDecode : CrepProgHOL width → CrepProg α)
+    (entries : List (CrepInlineMapHOLName × (List Nat × CrepProgHOL width)))
+    (name : FunName) (s : String) (hs : CrepNameRanged s) (hname : CrepNameRanged name) :
+    ((crepInlineActiveNames (entries.map (fun e =>
+        (toStringOfBytes e.1, (e.2.1, bodyDecode e.2.2))))).erase name).contains s =
+      (((alistToFmapHOLExact entries).erase (ofString name)).lookup (ofString s)).isSome := by
+  rw [Std.HashSet.contains_erase, crepInlineActiveNames_contains_eq,
+      crepInlineLookup_codec bodyDecode entries s hs, Option.isSome_map,
+      HolFiniteMapExact.lookup_erase,
+      show (FDOMSUB (alistToFmapHOLExact entries).lookup (ofString name) (ofString s)) =
+        FLOOKUP (FDOMSUB (alistToFmapHOLExact entries).lookup (ofString name)) (ofString s) from rfl,
+      FLOOKUP_domsub, beq_ofString_eq_ofString hname hs]
+  cases hb : (name == s) <;> simp_all [FLOOKUP]
+
 end CrepInlineRoute
 end Flapjack
