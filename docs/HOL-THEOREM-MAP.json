@@ -30085,5 +30085,69 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-c source comparison2026-09-30 (.32.5.2): genuine Seq evaluate_ind case of HOL1107-1137. Original unused value binder retained; original fresh-name/source-eval/good_res/non-Error conjunction implies unchanged lookup. Sole added IH conjunction is literal generated Seq premise: forall firstResult,middle, (firstResult,middle)=evaluate(first,state) and firstResult=NONE implies original predicate at second,middle; original predicate at first,state. No all-state or unconditional second-child IH added. List append freshness derives both child premises. Accepted line780 Seq equation derives fix_clock removal from reviewed fix_clock_evaluate; no clock bound assumed. NONE result composes both lookup equalities; SOME result uses first-child IH. Exact MlS/ProgHOL/ValueHOL, canonical four-map state with genuine roundtrip, positive width/NeZero and universe0 FFI; proof-only, assembly remains open, coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Labels.lean",
+  "lean_name": "getLabels",
+  "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+  "hol_name": "get_labels_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison (2026-09-30; y19g.15.1), stackSemScript.sml:667-680: Seq and If union branch labels; Loop recurses; Call inserts the return continuation label and its nested labels, with handler labels included only under SOME return continuation as HOL's clause parenthesization specifies; Halt and all remaining constructors yield the empty label set. Lean uses ProgM α, the exact generic stackLang prog carrier at arbitrary HOL word type α, and predicate membership for HOL set operations. Direct original HOL EVAL replay: scripts/hol-probes/stacksem_labels_probe.out. This is proof-side prerequisite only; no production evaluator route change. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Labels.lean",
+  "lean_name": "locCheck",
+  "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+  "hol_name": "loc_check_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison (2026-09-30; y19g.15.1), stackSemScript.sml:682-686: source condition is (l2=0 and l1 in domain code) or exists n e, lookup n code=SOME e and (l1,l2) in get_labels e. Lean preserves that disjunction, exact Spt num_map lookup/domain carrier, arbitrary HOL word type α via ProgM α, and predicate rendering of HOL sets. Probe EVAL covers the zero-offset present key; the nonzero label witness is kernel-proved in the original HOL probe because EVAL leaves its unbounded existential symbolic. Lean replay: Flapjack.Test.StackSemLabelsParity. Proof-side prerequisite only; no production evaluator route change. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/ReadBytearray.lean",
+  "lean_name": "stateRelReadBytearray",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "state_rel_read_bytearray",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "PanSemStateFiniteExact.locals",
+    "PanSemStateFiniteExact.globals",
+    "PanSemStateFiniteExact.code",
+    "PanSemStateFiniteExact.eshapes",
+    "PanGlobalsContextExact.globals"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source comparison HOL1534-1546: original flag/context/source/target/bytes/address/count binders, conjunction of state_rel and successful source read, same-byte successful target conclusion. Exact BitVec8 bytes and positive-width words; aligned byte-load/domain guard/get-byte, target endianness/domain/memory agreement derived from state_rel. Faithful read_bytearray recurrence increments word address with overflow, all lengths including zero. Canonical state/context maps and roundtrip witnesses. No extra target result or caller premise. Coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/ReadBytearray.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack proof/representation infrastructure with no independent HOL declaration; successful byte/array monotonicity and canonical map roundtrip support exact original state relation theorem."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/ReadBytearray.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack proof/representation infrastructure with no independent HOL declaration; successful byte/array monotonicity and canonical map roundtrip support exact original state relation theorem."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/ReadBytearray.lean",
+  "lean_name": "byteLoad_mono",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack proof/representation infrastructure with no independent HOL declaration; successful byte/array monotonicity and canonical map roundtrip support exact original state relation theorem."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/ReadBytearray.lean",
+  "lean_name": "readArray_mono",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack proof/representation infrastructure with no independent HOL declaration; successful byte/array monotonicity and canonical map roundtrip support exact original state relation theorem."
 }
 ]
