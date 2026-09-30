@@ -93,4 +93,34 @@ def getVars {width : Nat} [NeZero width] {C F : Type}
           | none => none
           | some xs => some (x :: xs)
 
+/-! HOL `bytes_in_word` (`hol/src/n-bit/byteScript.sml:193`, external HOL
+library outside the CakeML sources) has no `@[hol]` tag: the cakeml-only
+reference checker cannot cite it. It is the word-sized byte count. -/
+def bytesInWord (width : Nat) [NeZero width] : BitVec width :=
+  BitVec.ofNat width (width / 8)
+
+/-- HOL StackSem `copy_words_for_pattern_def` (`stackSemScript.sml:684-700`):
+    copy the set bits of `pattern` into memory as `Word` payloads, advancing
+    the destination by `bytes_in_word` per copied bit, until the pattern is
+    exhausted (`1w`) or a guard fails (`0w`, out of domain, past the bitmap). -/
+@[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "copy_words_for_pattern_def"
+  (words_as_type_indexed_bitvec)]
+def copyWordsForPatternExact {width : Nat} [NeZero width]
+    (pattern : BitVec width) (i : Nat) (a off : BitVec width)
+    (bs : List (BitVec width)) (dm : BitVec width → Bool)
+    (m : BitVec width → WordLocW width) :
+    Option (Nat × BitVec width × (BitVec width → WordLocW width)) :=
+  if pattern = 0 then none
+  else if pattern = 1 then some (i, a, m)
+  else if dm a = true ∧ i < bs.length then
+    let b := pattern.getLsbD 0
+    let w := bs[i]!
+    let m' := fun key => if key = a then WordLocW.word (if b then w + off else w) else m key
+    copyWordsForPatternExact (pattern >>> 1) (i + 1) (a + bytesInWord width) off bs dm m'
+  else none
+termination_by bs.length - i
+decreasing_by
+  simp_wf
+  omega
+
 end Flapjack.StackSemStateOps
