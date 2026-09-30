@@ -37561,5 +37561,35 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.4.4.1): pan_to_crepProofScript.sml:5042-5053 forall s t pan_code start. state_rel (s with structs := []) t /\\ ALL_DISTINCT (MAP FST (functions pan_code)) /\\ s.code = FEMPTY /\\ t.code = alist_to_fmap (compile_prog pan_code) /\\ s.locals = FEMPTY /\\ s.eshapes = FEMPTY /\\ EVERY (localised_prog o ...) /\\ EVERY (\\x. is_function x \\/ is_exn_decl x) pan_code /\\ size_of_eids pan_code < dimword(:'a) /\\ semantics_decls s start pan_code <> Fail ==> semantics t start = semantics_decls s start pan_code. Same binders, ten conjuncts and conclusion. Carriers and renderings as in the accepted state_rel_imp_semantics_to_crep / _decls_to_crep ports (panToCrepStateRelFiniteExact, alist_to_fmap as HolFiniteMapExact.empty.updateList (..).reverse, functionsHOL, localisedProgHOL, sizeOfEidsHOL < 2^width for dimword, FDOM equality as lookup isSome equality), with t.code over the tagged pan_to_crep compile_prog (compileProgDeclsHOLW). No extra premise. The proof composes the accepted state_rel_imp_semantics_decls_to_crep (target code alist_to_fmap crep_code) with crep_inline state_rel_imp_semantics, rather than HOL's reduction to state_rel_imp_semantics through evaluate_decls; same statement."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SeqAssocExact.lean",
+  "lean_name": "evaluateSeqAssocCallHandlerHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+  "hol_name": "evaluate_seq_assoc",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison pan_simpProof117-137 and seq_assoc_def18-40 Call SOME handler recursive case: complete arbitrary-prefix result/state equality; exactly source Skip/handler-or-continuation IH and no other premise. arbitrary optional return binder, exception equality/shape/validity/binding, successful returns ignore handler; literal binder split covers every case. Accepted exact source evaluator clauses rewritten and universal bodyIH applies at actual continuation state. Native exact carriers, canonical fourmap state fields/genuine roundtrip witness, positive BitVec width and Type0 FFI only. Genuine constructor case, full117 assembly remains open; coordinator review pending, proof-only."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SeqAssocExact.lean",
+  "lean_name": "evaluateSeqAssocDecCallHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+  "hol_name": "evaluate_seq_assoc",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison pan_simpProof117-137 and seq_assoc_def18-40 DecCall recursive case: complete arbitrary-prefix result/state equality; exactly source Skip/handler-or-continuation IH and no other premise. return-shape conjunction and restoration of caller local binding preserved; every callee/control/argument/lookup/clock branch retained. Accepted exact source evaluator clauses rewritten and universal bodyIH applies at actual continuation state. Native exact carriers, canonical fourmap state fields/genuine roundtrip witness, positive BitVec width and Type0 FFI only. Genuine constructor case, full117 assembly remains open; coordinator review pending, proof-only."
 }
 ]
