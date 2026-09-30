@@ -27907,5 +27907,17 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-b source comparison against stackPropsScript.sml:839-842: exact positive-width HolRegImm reg Nat / imm BitVec width, operator Sum BinOp Cmp and AsmConfigExact. Reg invokes reduced logical regName; Imm invokes validImm exactly, no asm reg_imm_ok xor-minus-one exception. Prop is logical HOL Bool rendering. No extra hypothesis or altered carrier. Kernel clauses tested; compiler route unchanged."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/StackProps/FixedNames.lean",
+  "lean_name": "fixedNames",
+  "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+  "hol_name": "fixed_names_def",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source comparison stackProps961-968: exact x86_64 conditional, find_name3=2 and4=1 and0=0; other ISA True. Canonical HolFiniteMapExact names.lookup, positive-width exact AsmConfigExact. No added BIJ assumption. Qualified finite-map relation bare names and indexed words. Kernel ISA branches checked; no compiler execution change.",
+  "fmap_as_finite_support_relation": [
+    "names"
+  ]
 }
 ]
