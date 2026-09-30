@@ -2206,6 +2206,86 @@ def word_dimension_errors(text: str) -> list[str]:
     return errors
 
 
+def reviewed_hol_prog_word_alias(signature: str, module: str, root: str) -> bool:
+    """Resolve the one reviewed shared-word StackLang alias, never by name alone.
+
+    HolProg is an instantiation of the generic seven-payload Prog, not a fresh
+    carrier owner. Check its exact RHS, positive binder, import reachability,
+    unique alias name and each word-bearing payload's actual owning declaration.
+    This is intentionally not arbitrary abbreviation unfolding.
+    """
+    occurrences = re.findall(
+        r"\b((?:[A-Za-z_][A-Za-z0-9_']*\.)*HolProg)\s+([A-Za-z_][A-Za-z0-9_']*)\b",
+        signature,
+    )
+    if any(name not in ("HolProg", "StackLang.HolProg", "Compiler.Backend.StackLang.HolProg",
+                        "Flapjack.Compiler.Backend.StackLang.HolProg")
+           for name, _ in occurrences):
+        return False
+    uses = [width for _, width in occurrences]
+    if not uses or any(
+        not re.search(r"[({]\s*" + re.escape(w) + r"\s*:\s*Nat\s*[)}]", signature)
+        or not re.search(r"\[\s*NeZero\s+" + re.escape(w) + r"\s*\]", signature)
+        for w in uses
+    ):
+        return False
+    pending = [module]
+    infos = {}
+    while pending:
+        name = pending.pop()
+        if name in infos:
+            continue
+        info = _lean_file_info(module_source_file(name, root))
+        if info is None:
+            continue
+        infos[name] = info
+        pending.extend(info.imports)
+    owner = "Flapjack.Compiler.Backend.StackLang.Prog"
+    if owner not in infos:
+        return False
+    declarations = []
+    for name, info in infos.items():
+        text = strip_lean_comments(info.text)
+        for match in re.finditer(
+            r"^\s*(?:abbrev|def|opaque|structure|inductive)\s+(?:[A-Za-z_][A-Za-z0-9_']*\.)*HolProg\b", text, re.M
+        ):
+            declarations.append((name, text[match.start():]))
+    if len(declarations) != 1 or declarations[0][0] != owner:
+        return False
+    expected = """abbrev HolProg (width : Nat) [NeZero width] :=
+      Flapjack.Compiler.Backend.StackLang.Prog (HolInst width) HolCmp (HolRegImm width)
+        HolBinop HolMemop (HolAddr width) Flapjack.Basis.Pure.MlString.MlString"""
+    if not any(site[1:3] == ("cakeml/compiler/backend/stackLangScript.sml", "prog")
+               for site in hol_attribute_sites(infos[owner].lines)):
+        return False
+    actual = re.split(r"\n\s*end\b", declarations[0][1], maxsplit=1)[0]
+    if " ".join(actual.split()) != " ".join(expected.split()):
+        return False
+    asm = "Flapjack.Compiler.Encoders.Asm"
+    if asm not in infos:
+        return False
+    owners = imported_inductive_owners(module, root)
+    for payload in ("HolInst", "HolRegImm", "HolAddr"):
+        payload_declarations = [name for name, info in infos.items()
+            for _ in re.finditer(
+                r"^\s*(?:abbrev|def|opaque|structure|inductive)\s+"
+                r"(?:[A-Za-z_][A-Za-z0-9_']*\.)*" + payload + r"\b",
+                strip_lean_comments(info.text), re.M)]
+        if payload_declarations != [asm]:
+            return False
+        candidates = owners.get(payload, [])
+        if len(candidates) != 1 or candidates[0][0] != asm:
+            return False
+        _, header, fields = candidates[0]
+        if not re.search(r"\(width\s*:\s*Nat\)\s*\[NeZero\s+width\]", header):
+            return False
+        if not any(field_mentions_word_carrier(field, "width") for field in fields.values()):
+            return False
+        if word_dimension_errors(header + "\n" + "\n".join(fields.values())):
+            return False
+    return True
+
+
 def words_as_type_indexed_bitvec_errors(
     declaration_text: str,
     declaration: str,
@@ -2286,8 +2366,11 @@ def words_as_type_indexed_bitvec_errors(
                 "translation"
             )
 
-    carrier_ok = False
-    if not has_direct_word and lines is not None and module and root:
+    carrier_ok = bool(module and root and reviewed_hol_prog_word_alias(signature, module, root))
+    if identifier_token_occurs(signature, "HolProg") and not carrier_ok:
+        errors.append("words_as_type_indexed_bitvec requires the source-resolved canonical "
+                      "HolProg alias, its unique word payload owners and each positive width")
+    if not has_direct_word and not carrier_ok and lines is not None and module and root:
         local_types = structure_field_types(lines)
         local_types.update(inductive_constructor_types(lines))
         local_headers = structure_headers(lines)
