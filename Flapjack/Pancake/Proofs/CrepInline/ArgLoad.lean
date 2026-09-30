@@ -77,7 +77,7 @@ theorem generalSimulateArgLoadCorrectExact {width : Nat} [NeZero width] {σ : Ty
     intro k v hk
     simp only [HolFiniteMapExact.lookup_updateListEq] at hk ⊢
     exact submap_updateList _ _ _
-      (CrepInlineUpdateListLocals.submapDiffListExact t tmp_vars vals (by omega) htnd
+      (CrepInlineUpdateListLocals.submapDiffList t tmp_vars vals (by omega) htnd
         (fun v hv => hfresh v (Or.inr hv))) k v hk
   obtain ⟨t1, hev1, hrel1, _⟩ := evaluateStateLocalsRelExact p _ r s'
     { s with locals := (t.updateListEq (tmp_vars.zip vals)).updateListEq (vs.zip vals) } hev hne
