@@ -36146,5 +36146,127 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Canonical imported state/context roundtrip witness reexport, Flapjack representation infrastructure for qualified Call theorem."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/Dec.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack representation infrastructure: canonical state toExact/ofExact roundtrip re-export, no separate HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/Dec.lean",
+  "lean_name": "evaluateFperm_Dec",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_fperm",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol (22.5.9) compared original evaluate_fperm1721-1810, evaluate_ind Dec conjunct and source panSem559-565: quantified initializer value and exact eval(s,initializer)=SOME value plus shape=shape_of value guard, body IH at original s.locals update(name,value) ONLY. Sole original source Dec run implies exact permuted target run/same result/post code permutation. All original input/f/g/name/shape/body/result/post quantifiers, no targetrun/nonError/postrelation premise. Initializer failure and mismatched shape remain Error with state preserved; successful body IH supplied from actual source initializer/structural shape equality bridge, scoped res_var restoration commutes definitionally with code update for every body outcome and any saved caller binding. Exact finite evaluator/ValueHOL/ShapeHOL/MlString, canonical4state maps and positive words/Type0 FFI qualifier only; same-module genuine canonical roundtrip witness. Full permutation induction remains open; coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/While.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack representation infrastructure: genuine canonical state toExact/ofExact roundtrip re-export, no independent HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/While.lean",
+  "lean_name": "evaluateFperm_While",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_fperm",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol (22.5.11) compared original evaluate_fperm1721 While arm and literal faithful evaluate_ind While conjunct: all THREE original guarded IHs retained with original value/wordlab/word/body result/post and continue-result variables. Body IH at decClock s guarded by actual successful nonzero word condition and nonzero source clock; distinct NONE and Continue backedges additionally require original source body-pair equality and exact result guards. Full original motive is same source-run implication to target equality/same result/post code permutation, no targetrun/nonError/postrelation premise. Accepted faithful while clock rewrite and unconditional expression/code invariance used. Missing/structured condition Error, zero condition, timeout with cleared locals, normal/continue recursion, Break-to-NONE, returned/exception/error/timeout/finalFFI outcomes all proved. Clock decrement/code update and locals clearing/code update transported internally, not assumed. Exact canonical4state maps, MlString/ValueHOL/word carrier and positive words/Type0 FFI qualifiers only; genuine local canonical witness. fpermEvaluateGoal is untagged statement infrastructure spelling original motive, no independent HOL declaration. Full permutation assembly remains open; coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/FixedStores.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific same-module canonical state roundtrip reexport for the relation's four map fields; no independent HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/FixedStores.lean",
+  "lean_name": "evaluateFperm_Store32",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_fperm",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison evaluate_fperm1721-1810 Store32 case and panSem590-603: original f/g/destination/source/state/res/post and sole source-run premise; full target evaluation and unchanged result/code-permuted post. Both original ValWord guards and all operand/nonword/memory failures retained; accepted eval_upd_code_eta supplies operand invariance internally. Original fixed 32-bit w2w conversion rendered by BitVec.ofNat 32 value.toNat, original endian/domain/memory operation unchanged; successful memory-only update commutes with code update. Native MlS/ExpHOL/ProgHOL/value/result, canonical four state maps and positive type-indexed words only; fixed widths unchanged; same-module unconditional roundtrip witness. No validity/success/target/post premise. Genuine constructor case, full theorem open. Proof-only no executable behavior change."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/FixedStores.lean",
+  "lean_name": "evaluateFperm_StoreByte",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_fperm",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison evaluate_fperm1721-1810 StoreByte case and panSem590-603: original f/g/destination/source/state/res/post and sole source-run premise; full target evaluation and unchanged result/code-permuted post. Both original ValWord guards and all operand/nonword/memory failures retained; accepted eval_upd_code_eta supplies operand invariance internally. Original fixed 8-bit w2w conversion rendered by BitVec.ofNat 8 value.toNat, original endian/domain/memory operation unchanged; successful memory-only update commutes with code update. Native MlS/ExpHOL/ProgHOL/value/result, canonical four state maps and positive type-indexed words only; fixed widths unchanged; same-module unconditional roundtrip witness. No validity/success/target/post premise. Genuine constructor case, full theorem open. Proof-only no executable behavior change."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/ClockAnnot.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific same-module canonical state roundtrip witness forwarding the owning carrier conversion; no independent HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/ClockAnnot.lean",
+  "lean_name": "evaluateFperm_Annot",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_fperm",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison evaluate_fperm1721-1810 Annot case and panSem653-656: original f/g/state/res/post and sole source evaluation premise, full target evaluation with fperm program/code-permuted input and unchanged result/code-permuted post. Native MlS annotation payload binders retained for Annot; original NONE/state equation. Tick retains clock=0 TimeOut/empty_locals versus nonzero NONE/dec_clock; code update commutes with original locals/clock record updates, no clock-success assumption. Reviewed native ProgHOL/PanSemResultExact/PanSemStateFiniteExact with canonical locals/globals/code/eshapes and positive word/Type0 FFI translations only; local unconditional roundtrip witness. No target/post premise or changed clock semantics. Genuine constructor slice, full theorem open. Proof-only no executable change."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/ClockAnnot.lean",
+  "lean_name": "evaluateFperm_Tick",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_fperm",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison evaluate_fperm1721-1810 Tick case and panSem653-656: original f/g/state/res/post and sole source evaluation premise, full target evaluation with fperm program/code-permuted input and unchanged result/code-permuted post. Native MlS annotation payload binders retained for Annot; original NONE/state equation. Tick retains clock=0 TimeOut/empty_locals versus nonzero NONE/dec_clock; code update commutes with original locals/clock record updates, no clock-success assumption. Reviewed native ProgHOL/PanSemResultExact/PanSemStateFiniteExact with canonical locals/globals/code/eshapes and positive word/Type0 FFI translations only; local unconditional roundtrip witness. No target/post premise or changed clock semantics. Genuine constructor slice, full theorem open. Proof-only no executable change."
 }
 ]
