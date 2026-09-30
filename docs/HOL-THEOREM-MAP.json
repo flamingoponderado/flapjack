@@ -27627,5 +27627,36 @@
     "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific canonical carrier roundtrip re-export; no independent HOL original."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "eval_original_extend_locals",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/Expressions.lean",
+    "lean_name": "evalOriginalExtendLocalsExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "locals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; .43.5.2), HOL eval_original_extend_locals58-76. Same source successful eval and SUBMAP to supplied locals, conclusion successful same-value eval after locals-only record update. Exact12 CrepExpHOL constructors follow faithful evaluator; list Op IH transports only successful mapM elements, allowing failure results to differ under extension. No target success/evaluator equality premise. Fixed Nat keys, HolWordLab positive width, canonical finite-support state and standalone locals binder, local state roundtrip. Imported eval uses unchanged memory/domain/endianness/globals/base/top. Production route unchanged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/Expressions.lean",
+    "lean_name": "mapMSuccessTransport",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific successful mapM transport/canonical carrier roundtrip; no independent HOL original."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/Expressions.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific successful mapM transport/canonical carrier roundtrip; no independent HOL original."
   }
 ]

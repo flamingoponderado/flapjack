@@ -196,6 +196,7 @@ import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.Structural
 import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.While
 import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.Call
 import Flapjack.Pancake.Proofs.CrepInline.EvaluateStateLocals.Atoms
+import Flapjack.Pancake.Proofs.CrepInline.Expressions
 import Flapjack.Pancake.Proofs.CrepInline.UpdateListLocals
 import Flapjack.Pancake.Proofs.CrepInline.NestedDecs
 import Flapjack.Pancake.Proofs.CrepInline.ShMem
