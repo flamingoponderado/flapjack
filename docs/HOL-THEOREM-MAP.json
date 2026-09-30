@@ -27086,5 +27086,27 @@
       "l"
     ],
     "reviewer": "flapjack-luna-b source comparison (2026-09-30; .18.5.5.44.4), HOL882-906. Same universally quantified finite map, name/value lists; same equal length, ALL_DISTINCT/Pairwise inequality and every new name outside FDOM premises. Same SUBMAP into FUPDATE_LIST ZIP conclusion. Canonical HolFiniteMapExact/updateListEq with DecidableEq implements HOL equality, no BEq side conditions. Domain absence is lookup.isSome=false; lookup proof excludes all existing-binding keys from update names, preserving every binding by exact FUPDATE_LIST not-member lemma. No target equality or submap assumption; length/distinctness retained though freshness suffices for this proof."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "evaluate_locals_same_fdom",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/ExtCall.lean",
+    "lean_name": "evaluateLocalsSameFdomExtCallExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; .43.1.1), crep_inlineProofScript.sml181-191 ExtCall case and crepSemScript ExtCall clause. Same exact source evaluation premise, normal/Break/Continue result condition, and FDOM locals equality conclusion, specialized only to ExtCall constructor. All four lookup failures, read failures, FFI final and return arms preserve locals; return updates only memory/ffi. Canonical finite-support maps/roundtrip, positive word dimension and universe0 FFI; no target evaluation or domain equality premise. Full domain theorem remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/ExtCall.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific canonical state roundtrip re-export for finite-support qualification, not a HOL theorem port."
   }
 ]

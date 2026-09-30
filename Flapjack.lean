@@ -363,6 +363,7 @@ import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectStore32
 import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectStoreByte
 import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectExtCall
 import Flapjack.Pancake.Proofs.CrepInline
+import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.ExtCall
 import Flapjack.Pancake.Proofs.CrepInline.NestedDecs
 import Flapjack.Pancake.Proofs.CrepInline.ShMem
 import Flapjack.Pancake.Proofs.CrepInline.Call
