@@ -50,6 +50,7 @@ import Flapjack.Compiler.Backend.WordToStackRegFormat
 import Flapjack.Compiler.Backend.LabSem
 import Flapjack.Compiler.Backend.LabProps
 import Flapjack.Compiler.Backend.StackNames
+import Flapjack.Compiler.Backend.StackNames.NamesOk
 import Flapjack.Compiler.Backend.StackNames.Labels
 import Flapjack.Compiler.Backend.StackRemove
 import Flapjack.Compiler.Encoders.Asm

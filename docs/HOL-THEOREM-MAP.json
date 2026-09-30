@@ -27865,5 +27865,38 @@
     "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific successful mapM transport/canonical carrier roundtrip; no independent HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/RegisterNames.lean",
+    "lean_name": "regName",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "reg_name_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; .18.5.15.7.4): stackProps832-835 bound n < c.reg_count - LENGTH c.avoid_regs retains Nat subtraction/list length. stack_namesProof598-614 original names_ok premise implies reg_ok for every in-range register; distinct two source names remain distinct under rename. Exact AsmConfigExact positive-width word fields; bare names is canonical HolFiniteMapExact, existing findName/namesOkHOL applied to its lookup projection (HOL FLOOKUP/tlookup behavior). ALL_DISTINCT mapped range injectivity and EVERY range validity, no extra bijection/success premise, no executable route claim. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackNames/NamesOk.lean",
+    "lean_name": "namesOkImp",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+    "hol_name": "names_ok_imp",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; .18.5.15.7.4): stackProps832-835 bound n < c.reg_count - LENGTH c.avoid_regs retains Nat subtraction/list length. stack_namesProof598-614 original names_ok premise implies reg_ok for every in-range register; distinct two source names remain distinct under rename. Exact AsmConfigExact positive-width word fields; bare names is canonical HolFiniteMapExact, existing findName/namesOkHOL applied to its lookup projection (HOL FLOOKUP/tlookup behavior). ALL_DISTINCT mapped range injectivity and EVERY range validity, no extra bijection/success premise, no executable route claim. Coordinator review pending.",
+    "fmap_as_finite_support_relation": [
+      "names"
+    ]
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackNames/NamesOk.lean",
+    "lean_name": "namesOkImp2",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+    "hol_name": "names_ok_imp2",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; .18.5.15.7.4): stackProps832-835 bound n < c.reg_count - LENGTH c.avoid_regs retains Nat subtraction/list length. stack_namesProof598-614 original names_ok premise implies reg_ok for every in-range register; distinct two source names remain distinct under rename. Exact AsmConfigExact positive-width word fields; bare names is canonical HolFiniteMapExact, existing findName/namesOkHOL applied to its lookup projection (HOL FLOOKUP/tlookup behavior). ALL_DISTINCT mapped range injectivity and EVERY range validity, no extra bijection/success premise, no executable route claim. Coordinator review pending.",
+    "fmap_as_finite_support_relation": [
+      "names"
+    ]
   }
 ]
