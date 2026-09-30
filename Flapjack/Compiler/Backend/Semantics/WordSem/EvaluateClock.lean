@@ -130,7 +130,12 @@ theorem memStore_clock_termdep {width : Nat} [NeZero width] {C : Type} {F : Type
   · cases h; exact ⟨rfl, rfl⟩
   · cases h
 
-/-- Exact HOL local `inst_clock` (`wordSemScript.sml:1314-1322`). -/
+/-- Exact HOL local `inst_clock` (`wordSemScript.sml:1314-1322`): binders,
+    hypothesis and conclusion as in HOL.  Dependency caveat (bead
+    `flapjack-2hoy.2`): the statement is over the untagged `inst` rendering,
+    whose `FPSqrt` clause is the rational-cut reformulation of HOL
+    `fp64_sqrt` (faithful prerequisite `flapjack-dshl`).  Clock preservation
+    holds for that clause exactly as in HOL. -/
 @[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "inst_clock"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem inst_clock {width : Nat} [NeZero width] {C : Type} {F : Type}
