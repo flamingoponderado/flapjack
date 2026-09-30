@@ -2219,9 +2219,39 @@ def _statements_of_declaration(source: str, name: str) -> list[str]:
     return results
 
 
+def _binder_types(binder_zone: str) -> list[str]:
+    """Return the declared type text of each top-level `(name : type)` binder."""
+    types: list[str] = []
+    depth = 0
+    start = -1
+    for i, ch in enumerate(binder_zone):
+        if ch == "(":
+            if depth == 0:
+                start = i + 1
+            depth += 1
+        elif ch == ")":
+            depth -= 1
+            if depth == 0 and start >= 0:
+                inner = binder_zone[start:i]
+                colon = _last_top_level_colon(inner)
+                if colon >= 0:
+                    types.append(inner[colon + 1:].strip())
+                start = -1
+    return types
+
+
+def _is_proof_premise_type(type_text: str) -> bool:
+    """Heuristically decide whether a binder type is a proposition (proof premise)."""
+    text = type_text.strip()
+    if text in {"False", "True"}:
+        return True
+    return any(op in text for op in ("\u2192", "->", "\u2194", "\u00ac", "="))
+
+
 def _has_lookup_equality_witness(
     lines: list[str], witness: str, forbidden: str,
     expected: tuple[str, str] | None = None,
+    unconditional: bool = False,
 ) -> tuple[bool, str]:
     source = strip_lean_comments("\n".join(lines))
     statements = _statements_of_declaration(source, witness)
@@ -2247,6 +2277,20 @@ def _has_lookup_equality_witness(
             rest = split[1]
         premises, final = segments[:-1], segments[-1]
         binder_zone = statement[:colon] if colon >= 0 else ""
+        if unconditional:
+            if premises:
+                return (
+                    False,
+                    f"witness `{witness}` must be unconditional; it introduces "
+                    "an arrow premise",
+                )
+            for type_text in _binder_types(binder_zone):
+                if _is_proof_premise_type(type_text):
+                    return (
+                        False,
+                        f"witness `{witness}` must be unconditional; binder "
+                        f"`{type_text}` is a proof premise, not typed data",
+                    )
         if re.search(r"(?i)\b(?:lookup|flookup)\b", binder_zone) and (
             "=" in binder_zone or "\u2194" in binder_zone
         ):
@@ -2451,9 +2495,18 @@ def fmap_as_finite_support_equality_errors(
             "fmap_as_finite_support_equality conclusion is not a map equality"
         )
         return errors
+    kind = re.search(
+        r"\b(theorem|lemma|example|def|abbrev|opaque|instance|structure|inductive)\b",
+        declaration_text,
+    )
+    if kind is not None and kind.group(1) not in {"theorem", "lemma"}:
+        errors.append(
+            "fmap_as_finite_support_equality may tag only a theorem or lemma; "
+            f"found `{kind.group(1)}`"
+        )
     witness = fmap_as_finite_support_equality_witness_name(decl_name)
     ok, message = _has_lookup_equality_witness(
-        lines, witness, decl_name, expected,
+        lines, witness, decl_name, expected, unconditional=True,
     )
     if not ok:
         errors.append(f"fmap_as_finite_support_equality {message}")

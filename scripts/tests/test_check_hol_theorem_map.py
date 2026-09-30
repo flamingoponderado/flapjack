@@ -2218,9 +2218,6 @@ class RealsAsRationalCutsStatusTest(unittest.TestCase):
                             for error in self.errors(wrong, self.words_tag)))
 
 
-if __name__ == "__main__":
-    unittest.main()
-
 
 class FmapEqualityStatusTest(unittest.TestCase):
     """A single theorem-level map equality needs its own reviewed status."""
@@ -2284,3 +2281,7 @@ class FmapEqualityStatusTest(unittest.TestCase):
         errors = self._errors(
             self._record(), self._tag(fmap_fields=("locals",)))
         self.assertTrue(any("mutually exclusive" in e for e in errors), errors)
+
+
+if __name__ == "__main__":
+    unittest.main()
