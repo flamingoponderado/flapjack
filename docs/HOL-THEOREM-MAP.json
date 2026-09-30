@@ -1165,7 +1165,6 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-ds9 (source comparison, 2026-09-27; bead flapjack-pxn.18.5.5.7.7.18): HOL sh_mem_op_def (crepSemScript.sml:210-218) is the eight equations sh_mem_op Load r ad s = sh_mem_load r ad 0 s; Store = sh_mem_store r ad 0 s; Load8 = sh_mem_load r ad 1 s; Store8 = sh_mem_store r ad 1 s; Load16 = sh_mem_load r ad 2 s; Store16 = sh_mem_store r ad 2 s; Load32 = sh_mem_load r ad 4 s; Store32 = sh_mem_store r ad 4 s. The Lean match dispatches the eight WordMemOp (tagged asm$memop) constructors to crepShMemLoadExactHOL/crepShMemStoreExactHOL at exactly 0/1/2/4, one clause per equation. The fmap_as_finite_support qualifier records HOL's |-> locals/globals/code as HolFiniteMapExact; there is no other representation difference. The `(words_as_type_indexed_bitvec)` qualifier (flapjack-ds10, bead flapjack-4ac.5.16.5.20) records the HOL `'a word`/`dimindex (:α)` to `BitVec width`/`[NeZero width]` translation; this is the committed end-to-end combined-qualifier fixture. Direct HOL EVAL rows sh_mem_op_load .. sh_mem_op_store32 all = T in scripts/hol-probes/crep_sh_mem_op_probe.out are replayed by kernel-checked theorems in Flapjack/Test/CrepShMemHOLParity.lean."
   },
-
 {
     "hol_path": null,
     "hol_name": null,
@@ -32378,7 +32377,7 @@
     "code"
   ],
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.2.3) compared crep_inlineProofScript.sml:1893-1913 (statement) and Resume transform_eoc_correct[Call] :2024-2038: HOL's goal at p = Call caltyp fname args for every caltyp, with all quantifiers, hypotheses and the case conclusion written out; the only extra hypothesis is TransformEocCallHandlerIH, the guarded evaluate_ind handler premise (argument eval, lookup_code, ALL_DISTINCT selector, clock, callee Exception eid, caltyp = SOME (rts,SOME (eid,p))) at motive transformEocGoal, mirroring the accepted ihHandler of evaluate_locals_same_fdom's Call case; HOL's callee premise is not used. Tail Call NONE: transformed to Call (SOME (rts,NONE)); a callee Return retvs gives NONE with rts read back (opt_mmap_some_eq_zip_flookup on the finite-support carrier), other outcomes coincide. Call (SOME (_,NONE)): unchanged, no Return (not_has_return_not_evaluate_return). Handler: identical except the matching-exception branch, discharged by the handler IH. Exact tagged carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  "reviewer": "flapjack-opus (beads flapjack-pxn.18.5.5.47.2.3, .47.5) compared crep_inlineProofScript.sml:1893-1913 (statement) and Resume transform_eoc_correct[Call] :2024-2038: HOL's goal at p = Call caltyp fname args for every caltyp, with all quantifiers, hypotheses and the case conclusion written out; the hypotheses beyond HOL's statement are exactly evaluate_ind's two guarded Call premises at motive transformEocGoal: TransformEocCallCalleeIH (argument eval, lookup_code, ALL_DISTINCT selector, clock <> 0 => goal for the callee body at dec_clock s with locals := newlocals; restored by .47.5, unused by the proof as in HOL) and TransformEocCallHandlerIH (same guards plus callee Exception eid and caltyp = SOME (rts,SOME (eid,p)) => goal for the handler at st with locals := s.locals). Proof delegates to untagged callEocGoal. Tail Call NONE: transformed to Call (SOME (rts,NONE)); a callee Return retvs gives NONE with rts read back (opt_mmap_some_eq_zip_flookup on the finite-support carrier), other outcomes coincide. Call (SOME (_,NONE)): unchanged, no Return (not_has_return_not_evaluate_return). Handler: identical except the matching-exception branch, discharged by the handler IH. Both premises discharged internally by the transformEocCorrect assembly (evalCrepSemHOLProgExact_inductLex). Exact tagged carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/Call.lean",
@@ -32436,19 +32435,11 @@
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/Assembly.lean",
-  "lean_name": "whileEocMotive",
-  "hol_path": null,
-  "hol_name": null,
-  "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Flapjack local support (bead .47.2.4): the While motive for all states by clock induction providing TransformEocWhileIH; no separate HOL declaration."
-},
-{
-  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/Assembly.lean",
   "lean_name": "eocMotive",
   "hol_path": null,
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Flapjack local support (bead .47.2.4): the evaluate_ind motive of transform_eoc_correct for every program and state by structural recursion over the tagged cases; no separate HOL declaration."
+  "reviewer": "Flapjack local support (beads .47.2.4, .47.5): the evaluate_ind motive of transform_eoc_correct for every program and state by evalCrepSemHOLProgExact_inductLex over the tagged cases, supplying their literal premises including the Call callee premise; no separate HOL declaration."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/GlobalBlockAlignment.lean",
@@ -34373,5 +34364,13 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.44.5.1) compared crep_inlineProofScript.sml:814-824: binders p s r s' x as declared parameters in HOL order; hypotheses evaluate (p,s) = (r,s') (evalCrepSemHOLProgExact s p), NOT MEM x (var_prog p) (x NOTIN crepVarProgHOLExact p, the reviewed var_prog_def port), continuing-result case rendered as the displayed match proposition; conclusion FLOOKUP s'.locals x = FLOOKUP s.locals x (lookup on finite-support locals). No extra premise, no public IH: the evaluate_ind induction is discharged internally by structural recursion on p with an inner clock induction for While (private nv_* support). Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/Call.lean",
+    "lean_name": "callEocGoal",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead .47.5): the transform_eoc_correct motive for Call from the handler IH alone; not HOL's case shape (callee premise omitted as unused), wrapped by the tagged transformEocCorrect_Call."
   }
 ]
