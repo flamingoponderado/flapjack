@@ -33110,5 +33110,13 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-specific original initializer old-global reload composition (.22.10.11), HOL2245-2285. Original source state_rel F, empty-locals evaluation and shape equality derive nilshape/flattenlength; accepted headAllocationBase and addresses_add derive head containment in original combined free range. Original old-global/free disjointness yields mem_stores_load_disjoint premise internally; internal store equation preserves every original global reload. No new shape-validity/footprint/alignment/target-run premise. No independently named HOL declaration. Full initializer state relation and cons assembly remain open."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/InitGlobalsMapDisjoint.lean",
+  "lean_name": "initializerMapsDisjoint",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific original initializer simultaneous-map update certificate (.22.10.12), HOL2300-2327. Original state_rel supplies old disjointGlobals; original oldglobal/free disjointness plus accepted headAllocationBase/addresses_add yields head-vs-old separation both ways. Exact context updateEq and executed source setGlobalHOLFinite/update lookup semantics used. Exhaustive key=initializer-name cases preserve old-vs-old and exclude both-new using key inequality. Arbitrary replacement name/value, no freshness/scalar/target-evaluation premise or independently named HOL declaration. Full initializer relation/cons assembly remains open."
 }
 ]
