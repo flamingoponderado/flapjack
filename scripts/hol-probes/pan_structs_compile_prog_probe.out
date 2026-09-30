@@ -1,0 +1,8 @@
+dec=Dec «v» (Comb [One; Comb [One; One]]) (RStruct [Const 1w; Const 2w])
+  (Return (RField 1 (Var Local «v»)))
+deccall=DecCall «v» (Comb [One; Comb [One; One]]) «f» []
+  (Return (RField 1 (Var Local «v»)))
+handler=StandAloneCall (SOME («E»,«v»,Return (RField 1 (RStruct [])))) «f» []
+callnone=TailCall «f» []
+callnohandler=AssignCall (Local,«v») NONE «f» []
+fallback=Tick

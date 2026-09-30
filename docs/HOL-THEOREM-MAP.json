@@ -26242,12 +26242,164 @@
     "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-pxn.18.4.4): HOL pan_to_crepProof state_rel_imp_semantics_to_crep (pan_to_crepProofScript.sml:4694-4705). Lean keeps the binders s t pan_code start (panSem/crepSem states share the FFI host σ) and every premise conjunct: state_rel; ALL_DISTINCT (MAP FST (functions pan_code)); s.code and t.code = alist_to_fmap of functions / compile_to_crep (rendered HolFiniteMapExact.empty.updateList l.reverse, as in the tagged mk_ctxt_code_imp_code_rel); s.locals = FEMPTY; EVERY (localised_prog ∘ FST o SND ∘ SND) as each function body; size_of_eids < dimword (2 ^ width); FDOM equality as pointwise lookup definedness; semantics s start <> Fail. The conclusion is crepSem semantics t start = panSem semantics s start, over the tagged crepSemantics and panSem semantics_def. No extra premise. The proof route differs from HOL's direct unfolding of both semantics_defs. The untagged panSemIsWrapper and the tagged crep_sem_is_wrapper rewrite both sides as semantics_wrapper, and the tagged semantics_wrapper_eq applies. Premises come from the tagged pc_compile_correct at Call NONE start [] with ctxt mk_ctxt FEMPTY (make_funcs (functions pan_code)) 0 (get_eids_from_decls pan_code) (code_rel via mk_ctxt_code_imp_code_rel, excp_rel via get_eids_imp_excp_rel, locals_rel via mk_ctxt_imp_locals_rel), the tagged crepProps/panProps evaluate_add_clock_eq and the evaluate_add_clock_io_events_mono pair. Same-module relation witnesses. Kernel-checked; standard axioms."
   },
   {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "inline_prog_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "inlineProgCorrectAssignCaseExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "inlFs",
+      "inlBag"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-09-30; bead flapjack-pxn.18.5.5.39) against crep_inlineProofScript.sml:2301-2309 and the Assign atomic case of the catch-all at 2401. HOL inline_prog_def's generic unchanged-program clause at crep_inlineScript.sml:249 leaves Assign unchanged, and crepSemScript.sml:282-286 defines evaluate(Assign name src, s): on SOME value it updates locals name to value when the local exists, else Error. The statement preserves the source run, non-Error condition, both SUBMAP premises, state_rel_code, locals_strong_rel and code_inl_rel premises, existential target run, post-state/code relations, and result-dependent local relation; Assign has no recursive evaluate_ind IH. Lean uses exact CrepProgHOL assign, evalCrepSemHOLProgExact_assign_holShape, evalCodeInlExact for the target expression, and flips the local via hlocals. State maps and both inline maps use the reviewed HolFiniteMapExact carrier with same-module witnesses; BitVec width models the positive-width HOL word."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "inline_prog_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "inlFs",
+      "inlBag"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "lean_name": "inlineProgCorrectBreakCaseExact",
+    "reviewer": "flapjack-ds10 source comparison (2026-09-30; bead flapjack-pxn.18.5.5.39) against crep_inlineProofScript.sml:2301-2309 and the Break atomic case of the catch-all at 2401. HOL inline_prog_def's generic unchanged-program clause leaves Break unchanged; crepSemScript.sml evaluates (Break n, s) to (SOME (Break n), s). The statement preserves all HOL premises (source run, non-Error, both SUBMAP, state_rel_code, locals_strong_rel, code_inl_rel), the existential target run, post-state/code relations, and the result-dependent local relation (Break requires locals_strong_rel, matching HOL's case). Lean uses exact CrepProgHOL break, evalCrepSemHOLProgExact_break, and inlineProgHOLExact identity. Carriers are the reviewed HolFiniteMapExact and positive-width BitVec word."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "inline_prog_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "inlFs",
+      "inlBag"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "lean_name": "inlineProgCorrectContinueCaseExact",
+    "reviewer": "flapjack-ds10 source comparison (2026-09-30; bead flapjack-pxn.18.5.5.39) against crep_inlineProofScript.sml:2301-2309 and the Continue atomic case of the catch-all at 2401. HOL inline_prog_def's generic unchanged-program clause leaves Continue unchanged; crepSemScript.sml evaluates (Continue n, s) to (SOME (Continue n), s). The statement preserves all HOL premises (source run, non-Error, both SUBMAP, state_rel_code, locals_strong_rel, code_inl_rel), the existential target run, post-state/code relations, and the result-dependent local relation (Continue requires locals_strong_rel, matching HOL's case). Lean uses exact CrepProgHOL continue, evalCrepSemHOLProgExact_continue, and inlineProgHOLExact identity. Carriers are the reviewed HolFiniteMapExact and positive-width BitVec word."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "inline_prog_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "inlFs",
+      "inlBag"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "lean_name": "inlineProgCorrectRaiseCaseExact",
+    "reviewer": "flapjack-ds10 source comparison (2026-09-30; bead flapjack-pxn.18.5.5.39) against crep_inlineProofScript.sml:2301-2309 and the Raise atomic case of the catch-all at 2401. HOL inline_prog_def's generic unchanged-program clause leaves Raise unchanged; crepSemScript.sml evaluates (Raise eid, s) to (SOME (Exception eid), empty_locals s). The statement preserves all HOL premises (source run, non-Error, both SUBMAP, state_rel_code, locals_strong_rel, code_inl_rel), the existential target run, post-state/code relations, and the result-dependent local relation (Exception falls under HOL's default _ => T branch, so no local relation is required). Lean uses exact CrepProgHOL raise, evalCrepSemHOLProgExact_raise, emptyLocals, and inlineProgHOLExact identity. Carriers are the reviewed HolFiniteMapExact and positive-width BitVec word."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "inline_prog_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "inlineProgCorrectStoreCaseExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "inlFs",
+      "inlBag"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-pxn.18.5.5.39) against crep_inlineProofScript.sml:2301-2309 and the atomic catch-all at :2401; this is an atomic arm of HOL inline_prog_correct whose inline_prog_def leaves it unchanged."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "inline_prog_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "inlineProgCorrectStoreGlobCaseExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "inlFs",
+      "inlBag"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-pxn.18.5.5.39) against crep_inlineProofScript.sml:2301-2309 and the atomic catch-all at :2401; this is an atomic arm of HOL inline_prog_correct whose inline_prog_def leaves it unchanged."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "inline_prog_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "inlineProgCorrectStore32CaseExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "inlFs",
+      "inlBag"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-pxn.18.5.5.39) against crep_inlineProofScript.sml:2301-2309 and the atomic catch-all at :2401; this is an atomic arm of HOL inline_prog_correct whose inline_prog_def leaves it unchanged."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "inline_prog_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "inlineProgCorrectStoreByteCaseExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "inlFs",
+      "inlBag"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-pxn.18.5.5.39) against crep_inlineProofScript.sml:2301-2309 and the atomic catch-all at :2401; this is an atomic arm of HOL inline_prog_correct whose inline_prog_def leaves it unchanged."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "inline_prog_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "inlineProgCorrectTickCaseExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "inlFs",
+      "inlBag"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-pxn.18.5.5.39) against crep_inlineProofScript.sml:2301-2309 and the atomic catch-all at :2401; this is an atomic arm of HOL inline_prog_correct whose inline_prog_def leaves it unchanged."
+  },
+  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelImpSemantics.lean",
     "lean_name": "panSemIsWrapper",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific support for stateRelImpSemanticsToCrep (bead flapjack-pxn.18.4.4): panSem semantics_def rewritten as the semantics_wrapper of its entry runs (TimeOut Incomplete; FinalFFI/Return CompleteResult; else RunError, matching HOL's Fail test). HOL states no panSem analogue of crep_sem_is_wrapper."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "srel_mem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 (2026-09-30, bead flapjack-pxn.18.5.5.39): Flapjack-specific private helper for the exact inline_prog_correct atomic memory/tick cases; no HOL declaration of its own."
   },
   {
     "hol_path": null,
@@ -26260,6 +26412,14 @@
   {
     "hol_path": null,
     "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "srel_glob",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 (2026-09-30, bead flapjack-pxn.18.5.5.39): Flapjack-specific private helper for the exact inline_prog_correct atomic memory/tick cases; no HOL declaration of its own."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelImpSemantics.lean",
     "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
     "statement_status": "no_hol_reference_pending_classification",
@@ -26268,9 +26428,149 @@
   {
     "hol_path": null,
     "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "srel_empty",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 (2026-09-30, bead flapjack-pxn.18.5.5.39): Flapjack-specific private helper for the exact inline_prog_correct atomic memory/tick cases; no HOL declaration of its own."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelImpSemantics.lean",
     "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on stateRelImpSemanticsToCrep; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_structsScript.sml",
+    "hol_name": "compile_def",
+    "lean_path": "Flapjack/Pancake/PanStructs/CompileProgExact.lean",
+    "lean_name": "compileProgExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source/carrier review 2026-09-30 bead .18.5.3.77.1.4: original157-210 compile_def constructor cases compared with ContextExact/ProgHOL. Dec and DecCall emit compiled shape but bind original source shape to body locals; exact expression/list calls throughout. Call retains target flags, name, arguments and option/product payloads, recursively compiles only handler body at unchanged context. Seq/If/While recurse normally; stores and shared stores preserve source payload order, shared load destination untouched. ExtCall preserves all four expression positions, Return/Raise preserve identifiers; Skip/Break/Continue/Tick/Annot unchanged. Positive width-indexed BitVec payloads only qualifier. Original HOL six-row compile_prog probe newly captured and kernel-replayed, including body-local source shape and optional handler. Production routing remains linked open work; not an executed-path completion claim."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_structsScript.sml",
+    "hol_name": "compile_decs_def",
+    "lean_path": "Flapjack/Pancake/PanStructs/CompileDeclsExact.lean",
+    "lean_name": "compileDeclsExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source/carrier review 2026-09-30 bead .18.5.3.77.1.5: source213-247 compared clause-by-clause with exact DeclHOL/FunDeclHOL/ContextExact. Reverse compile_decs recursion retains source global shapes in final context; Decl initializer uses initial context. Function preserves name/inline/export, compiles params/return against initial structs, body against final tail context with original params replacing locals. Name removed, ExnDecl retained with compiled shape. get_names prepends source names in traversal order, ignores non-Name constructors; compile_top starts all three context lists empty, collects names then takes first pair component. Exact MlS names and positive word-indexed syntax; no other representation differences. New original five-row HOL EVAL probe/kernel replay checks full output+context, function forward global reference, flags/params, Name removal, reverse name order and duplicate struct shadow. Source definitions only; production routing remains on parent acceptance graph."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_structsScript.sml",
+    "hol_name": "get_names_def",
+    "lean_path": "Flapjack/Pancake/PanStructs/CompileDeclsExact.lean",
+    "lean_name": "getNamesExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source/carrier review 2026-09-30 bead .18.5.3.77.1.5: source213-247 compared clause-by-clause with exact DeclHOL/FunDeclHOL/ContextExact. Reverse compile_decs recursion retains source global shapes in final context; Decl initializer uses initial context. Function preserves name/inline/export, compiles params/return against initial structs, body against final tail context with original params replacing locals. Name removed, ExnDecl retained with compiled shape. get_names prepends source names in traversal order, ignores non-Name constructors; compile_top starts all three context lists empty, collects names then takes first pair component. Exact MlS names and positive word-indexed syntax; no other representation differences. New original five-row HOL EVAL probe/kernel replay checks full output+context, function forward global reference, flags/params, Name removal, reverse name order and duplicate struct shadow. Source definitions only; production routing remains on parent acceptance graph."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_structsScript.sml",
+    "hol_name": "compile_top_def",
+    "lean_path": "Flapjack/Pancake/PanStructs/CompileDeclsExact.lean",
+    "lean_name": "compileTopExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source/carrier review 2026-09-30 bead .18.5.3.77.1.5: source213-247 compared clause-by-clause with exact DeclHOL/FunDeclHOL/ContextExact. Reverse compile_decs recursion retains source global shapes in final context; Decl initializer uses initial context. Function preserves name/inline/export, compiles params/return against initial structs, body against final tail context with original params replacing locals. Name removed, ExnDecl retained with compiled shape. get_names prepends source names in traversal order, ignores non-Name constructors; compile_top starts all three context lists empty, collects names then takes first pair component. Exact MlS names and positive word-indexed syntax; no other representation differences. New original five-row HOL EVAL probe/kernel replay checks full output+context, function forward global reference, flags/params, Name removal, reverse name order and duplicate struct shadow. Source definitions only; production routing remains on parent acceptance graph."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "srel_decclock",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 (2026-09-30, bead flapjack-pxn.18.5.5.39): Flapjack-specific private helper for the exact inline_prog_correct atomic memory/tick cases; no HOL declaration of its own."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "inline_store",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 (2026-09-30, bead flapjack-pxn.18.5.5.39): Flapjack-specific private helper for the exact inline_prog_correct atomic memory/tick cases; no HOL declaration of its own."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "inline_store32",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 (2026-09-30, bead flapjack-pxn.18.5.5.39): Flapjack-specific private helper for the exact inline_prog_correct atomic memory/tick cases; no HOL declaration of its own."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "inline_storeByte",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 (2026-09-30, bead flapjack-pxn.18.5.5.39): Flapjack-specific private helper for the exact inline_prog_correct atomic memory/tick cases; no HOL declaration of its own."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "inline_storeGlob",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 (2026-09-30, bead flapjack-pxn.18.5.5.39): Flapjack-specific private helper for the exact inline_prog_correct atomic memory/tick cases; no HOL declaration of its own."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "inline_tick",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 (2026-09-30, bead flapjack-pxn.18.5.5.39): Flapjack-specific private helper for the exact inline_prog_correct atomic memory/tick cases; no HOL declaration of its own."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "inline_prog_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "inlineProgCorrectPrimitiveCaseExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "inlFs",
+      "inlBag"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-09-30; bead flapjack-pxn.18.5.5.39) against crep_inlineProofScript.sml:2301-2309 and the atomic catch-all :2401 with HOL inline_prog_def (crep_inlineScript.sml:203-249) leaving Primitive unchanged. The Lean statement preserves HOL's evaluator equation (crepSemScript.sml:248-259): OPT_MMAP locals lookups, crep_primop, and the LENGTH/EVERY IS_SOME/ALL_DISTINCT guard as a proposition, with the same non-Error premise and post-state (locals updateListEq, code untouched). Tagged with the shared case qualifiers; direct oracle rows cover the primitive evaluator in the exact Crep suite."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "inline_primitive",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 Flapjack-only infrastructure (2026-09-30; bead flapjack-pxn.18.5.5.39): private identity lemma that inlineProgHOLExact leaves Primitive unchanged (HOL inline_prog_def fall-through arm); no cakeml HOL declaration of its own."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "inline_prog_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "inlineProgCorrectExtCallCaseExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "inlFs",
+      "inlBag"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-09-30; bead flapjack-pxn.18.5.5.39) against crep_inlineProofScript.sml:2301-2309 and the atomic catch-all :2401 with HOL inline_prog_def (crep_inlineScript.sml:203-249) leaving ExtCall unchanged. The Lean statement preserves HOL's evaluator equation (crepSemScript.sml:367-379): four word locals lookups, read_bytearray over mem_load_byte, call_FFI, and the FFI_final/FFI_return post-states, with the same non-Error premise. Tagged with the shared case qualifiers; direct oracle rows cover the exact Crep ExtCall evaluator (ioEvents monotonicity)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "inline_extCall",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 Flapjack-only infrastructure (2026-09-30; bead flapjack-pxn.18.5.5.39): private identity lemma that inlineProgHOLExact leaves ExtCall unchanged (HOL inline_prog_def fall-through arm); no cakeml HOL declaration of its own."
   }
 ]
