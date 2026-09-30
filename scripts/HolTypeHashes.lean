@@ -351,6 +351,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Assign
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Primitive
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Store
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.FixedStores
+import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.ClockAnnot
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Seq
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.If
 import Flapjack.Pancake.Proofs.PanGlobals.DeclListLemmas
