@@ -2476,3 +2476,7 @@ run_probe stack_props_fixed_names_probeScript.sml stack_props_fixed_names_probe.
 
 run_probe stack_names_operand_probeScript.sml stack_names_operand_probe.out \
   reg_present reg_missing imm dest_present dest_missing dest_label "$cake_dir/compiler/backend/stack_namesScript.sml" "$cake_dir/compiler/backend"
+
+run_probe stack_names_instruction_probeScript.sml stack_names_instruction_probe.out \
+  skip const binop shift div longmul longdiv addcarry addoverflow suboverflow mem fpless fplesseq fpeq fptoreg fpfromreg fpdefault \
+  "$cake_dir/compiler/backend/stack_namesScript.sml" "$cake_dir/compiler/backend"

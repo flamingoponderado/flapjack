@@ -27927,5 +27927,14 @@
   "hol_name": "dest_find_name_def",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-b source comparison stack_names16-19/51-54: names is exact Spt Nat with tlookup default identity; ri operand exact HolRegImm width positive, register renamed/immediate unchanged; destination INR renamed/INL unchanged. Unconditional codec/raw-helper correspondence kernel-checked; original6HOL rows incl missing-key fallback replayed. Parent core migration remains open, no executed route completion claim."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/StackNames/InstructionNames.lean",
+  "lean_name": "instFindNameHOL",
+  "hol_path": "cakeml/compiler/backend/stack_namesScript.sml",
+  "hol_name": "inst_find_name_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source comparison stack_names21-49: exact Spt Nat names (misc tlookup, identity fallback), HolInst/HolArith/HolRegImm/HolAddr positive-width carriers and exact FP carrier. All eight arithmetic variants rename every integer register, memory renames destination/base preserving offset, comparisons rename integer destination only, FP moves rename integer sides preserving float indices; remaining FP cases unchanged. Exhaustive unconditional codec correspondence kernel-checked. Original17HOL rows and kernel replay cover all renamed clauses plus FPAdd default. No finite-map qualifier or executed-route completion claim; parent .15.7.7 remains open."
 }
 ]
