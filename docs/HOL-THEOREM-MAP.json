@@ -35290,5 +35290,20 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-4ac.4.60.1.1.11): HOL panPropsScript.sml:724-728 quantifies p,t,res,st,ck with the high-run equation evaluate (p,t) = (res, st with clock := st.clock + ck), the premise res <> SOME TimeOut, and the conclusion evaluate (p,t with clock := t.clock - ck) = (res,st). This is the nonrecursive ExtCall (read_bytearray, call_FFI, write_bytearray) case of recInduct evaluate_ind; the constructor has no IH and none is added. Same statement shape and carrier (PanPropsEvalStateFiniteExact, evaluateHOLFinitePair) as the accepted Assign case. Proof (untagged clockSub_of_noTimeout/pairClockSub_of_noTimeout): the clause never returns SOME TimeOut (nt_* lemmas over the tagged evaluateHOLFiniteState equations), so the tagged evaluate_add_clock_eq lifts the low-clock run by ck to t, and the tagged evaluate_clock gives ck <= t.clock; comparing with the high run yields the result. Qualifiers: owner PanPropsEvalStateFiniteExact (imported from EvalInvariant.lean, witness re-exported in-module) and the indexed-word translation. The full evaluate_clock_sub remains open (While .9, If .12, Call .13, DecCall .14, assembly .15)."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "evaluate_clock_sub",
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvaluateClockSubCall.lean",
+    "lean_name": "evaluateClockSubCallCaseHOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-4ac.4.60.1.1.13): HOL panPropsScript.sml:724-728 evaluate_clock_sub, Call case of recInduct evaluate_ind. Same statement shape and carrier as the accepted Seq/Assign cases: high-run equation evaluate (Call caltyp fname argexps, t) = (res, st with clock := st.clock + ck), res <> SOME TimeOut, conclusion evaluate (Call .., t with clock := t.clock - ck) = (res, st). The only additional hypotheses are evaluate_ind's two guarded Call premises at the clock-sub motive, clockSubCallHandlerIH and clockSubCallCalleeIH. These are copied verbatim from the reviewed binder-aligned evaluate_invariants Call premises (EvalInvariant.lean, OPT_MMAP as List.mapM, lookup_code triple, clock <> 0, callee Exception eid exn, caltyp = SOME (_, SOME (eid', evar, p)), eid = eid', FLOOKUP eshapes, shape_of, is_valid_value), with the motive replaced by clockSubAtHOLFinite. No other premise. Proof: the untagged canonical core callCore shows the clock-subtracted run does not end in TimeOut (callee IH aligns the callee run at dec_clock with the new locals, handler IH the matched handler run, and evaluate_clock bounds ck); then clockSub_of_lowNoTimeout uses the tagged evaluate_add_clock_eq to lift the low run to the given one. The full evaluate_clock_sub remains open (While .9, If .12, DecCall .14, assembly .15)."
   }
 ]
