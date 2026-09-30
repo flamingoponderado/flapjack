@@ -33428,5 +33428,13 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-only local canonical state/context roundtrip or compiled argument MAP equation for the DecCall theorem; no separate HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallHandlerFreshNames.lean",
+  "lean_name": "callHandlerScratchNamesFresh",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only synthesized proof-step helper for global-destination Call-with-handler lowering; literal compiler scratch-name list and native MlS freshNameMlS_correct imply both names absent from compiled handler/argument variables and distinct. HOL compile_correct proof1414-1434 derives these facts inline; no standalone original declaration or Call simulation is claimed. No freshness premise; no executable change. Coordinator classification pending."
 }
 ]
