@@ -252,6 +252,27 @@ private theorem memStore_ioEvents_eq {width : Nat} [NeZero width] {C F : Type}
   unfold memStore
   split <;> rfl
 
+/-- Flapjack-specific projection lemma: successful exact instructions preserve
+    the FFI field. This supplies the Inst leaf of the event-prefix induction;
+    it is not a separate HOL declaration port. -/
+private theorem inst_ffi_of_some {width : Nat} [NeZero width] {C F : Type}
+    (i : WordLangInst (BitVec width)) (state next : WordSemStateFiniteExact width C F)
+    (h : inst i state = some next) : next.ffi = state.ffi := by
+  unfold inst at h
+  repeat' split at h
+  all_goals (try dsimp only at h)
+  all_goals (repeat' split at h)
+  all_goals first
+    | (simp only [reduceCtorEq] at h; done)
+    | (cases h; rfl)
+    | (simp only [Option.some.injEq] at h; subst h; rfl)
+    | (unfold assign at h; split at h
+       · cases h
+       · cases h; rfl)
+    | (rename_i heq; cases h
+       unfold memStore at heq
+       split at heq <;> cases heq <;> rfl)
+
 private theorem jumpExc_ioEvents_eq_of_some {width : Nat} [NeZero width] {C F : Type}
     (state next : WordSemStateFiniteExact width C F) (l1 l2 : Nat)
     (h : jumpExc state = some (next, l1, l2)) :
@@ -336,6 +357,174 @@ private theorem ffiStatement_ioEvents_prefix {width : Nat} [NeZero width]
     first
     | exact callFFIHOL_result_ioEvents_prefix _ _ _ _ _ (by assumption)
     | (rename_i hcall; exact callFFIHOL_result_ioEvents_prefix _ _ _ _ _ hcall)
+
+/-- Flapjack-specific projection form of the Inst induction leaf. -/
+private theorem instStatement_ioEvents_prefix {width : Nat} [NeZero width] {C F : Type}
+    (i : WordLangInst (BitVec width)) (state : WordSemStateFiniteExact width C F) :
+    state.ffi.ioEvents <+: (evaluate (.inst i) state).2.ffi.ioEvents := by
+  rw [evaluate]
+  cases hi : inst i state with
+  | none => exact List.prefix_refl _
+  | some next =>
+      have hffi := inst_ffi_of_some i state next hi
+      simpa only [hffi] using List.prefix_refl state.ffi.ioEvents
+
+/-- Flapjack-specific projection form of the Seq induction clause. Its two
+    premises are exactly the recursive event-prefix induction hypotheses. -/
+private theorem seqStatement_ioEvents_prefix {width : Nat} [NeZero width] {C F : Type}
+    (c1 c2 : WordLangProgHOL (BitVec width)) (state : WordSemStateFiniteExact width C F)
+    (hfirst : state.ffi.ioEvents <+: (evaluate c1 state).2.ffi.ioEvents)
+    (hsecond : ∀ res next, evaluate c1 state = (res, next) → res = none →
+      next.ffi.ioEvents <+: (evaluate c2 next).2.ffi.ioEvents) :
+    state.ffi.ioEvents <+: (evaluate (.seq c1 c2) state).2.ffi.ioEvents := by
+  rw [evaluate, fix_clock_evaluate]
+  cases hstep : evaluate c1 state with
+  | mk result next =>
+      rw [hstep] at hfirst
+      cases result with
+      | none => exact hfirst.trans (hsecond none next hstep rfl)
+      | some result => exact hfirst
+
+/-- Flapjack-specific projection form of the Loop induction clause. The body
+    and recursive-loop premises retain the exact evaluator's cut and clock
+    side conditions; cut-state representation changes do not alter FFI events. -/
+private theorem loopStatement_ioEvents_prefix {width : Nat} [NeZero width] {C F : Type}
+    (names exitNames : WordLangNumSetHOL) (body : WordLangProgHOL (BitVec width))
+    (state : WordSemStateFiniteExact width C F)
+    (hbody : ∀ v, cutState (names, .ln) state = some v →
+      v.ffi.ioEvents <+: (evaluate body v).2.ffi.ioEvents)
+    (hrecur : ∀ v res next, cutState (names, .ln) state = some v →
+      evaluate body v = (res, next) → wordSemContLoop res = true → next.clock ≠ 0 →
+      (decClock next).ffi.ioEvents <+:
+        (evaluate (wordSemSTOP (.loop names body exitNames)) (decClock next)).2.ffi.ioEvents) :
+    state.ffi.ioEvents <+: (evaluate (.loop names body exitNames) state).2.ffi.ioEvents := by
+  rw [evaluate]
+  cases hcut : cutState (names, .ln) state with
+  | none => exact List.prefix_refl _
+  | some v =>
+      dsimp only
+      rw [fix_clock_evaluate]
+      have hfirst := hbody v hcut
+      have hsame := cutState_ioEvents_eq hcut
+      rw [hsame] at hfirst
+      cases hstep : evaluate body v with
+      | mk result next =>
+          dsimp only
+          rw [hstep] at hfirst
+          by_cases hcont : wordSemContLoop result = true
+          · simp only [if_pos hcont]
+            by_cases hz : next.clock = 0
+            · simpa only [hz, ↓reduceDIte, flushState] using hfirst
+            · simp only [hz, ↓reduceDIte]
+              exact hfirst.trans (hrecur v result next hcut hstep hcont hz)
+          · simp only [if_neg hcont]
+            repeat' split
+            all_goals first
+              | exact hfirst
+              | (have hsame := cutState_ioEvents_eq ‹cutState _ next = some _›
+                 rw [hsame]; exact hfirst)
+
+/-- Flapjack-specific FFI projection of the exact frame push. -/
+private theorem pushEnv_ffi {width : Nat} [NeZero width] {C F : Type}
+    (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (handler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat))
+    (state : WordSemStateFiniteExact width C F) :
+    (pushEnv envs handler state).ffi = state.ffi := by
+  cases handler with
+  | none => rfl
+  | some value => obtain ⟨n, prog, l1, l2⟩ := value; rfl
+
+/-- Flapjack-specific returning-Call prefix composition. The callee and
+    continuation premises are the normalized recursive induction hypotheses,
+    with the exact code lookup, return-location, environment and clock guards. -/
+private theorem returningCallStatement_ioEvents_prefix {width : Nat} [NeZero width] {C F : Type}
+    (n : List Nat) (names : WordLangCutsetsHOL) (retHandler : WordLangProgHOL (BitVec width))
+    (l1 l2 : Nat) (dest : Option Nat) (args : List Nat)
+    (handler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat))
+    (state : WordSemStateFiniteExact width C F) (xs args1 : List (WordLocW width))
+    (prog : WordLangProgHOL (BitVec width)) (ss : Option Nat)
+    (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (hg : getVars args state = some xs) (hbad : ¬ wordSemBadDestArgs dest args = true)
+    (hf : wordSemFindCode dest (wordSemAddRetLoc (some (n, names, retHandler, l1, l2)) xs)
+      state.code state.stackSize = some (args1, prog, ss))
+    (hnames : ¬ (sptDomainEmpty names.1 ∨ ¬ n.Nodup))
+    (henvs : wordSemCutEnvs names state.locals = some envs) (hz : state.clock ≠ 0)
+    (hcallee : (callEnv args1 ss (pushEnv envs handler (decClock state))).ffi.ioEvents <+:
+      (evaluate prog (callEnv args1 ss (pushEnv envs handler (decClock state)))).2.ffi.ioEvents)
+    (hreturn : ∀ x ys t popped,
+      evaluate prog (callEnv args1 ss (pushEnv envs handler (decClock state))) =
+        (some (.result x ys), t) →
+      ¬ (x ≠ .loc l1 l2 ∨ ys.length ≠ n.length) → popEnv t = some popped →
+      sptDomainEqUnion popped.locals envs.1 envs.2 →
+      popped.ffi.ioEvents <+: (evaluate retHandler (setVars n ys popped)).2.ffi.ioEvents)
+    (hexception : ∀ x y t n' hprog l1' l2',
+      evaluate prog (callEnv args1 ss (pushEnv envs handler (decClock state))) =
+        (some (.exception x y), t) →
+      handler = some (n', hprog, l1', l2') → x = .loc l1' l2' →
+      sptDomainEqUnion t.locals envs.1 envs.2 →
+      t.ffi.ioEvents <+: (evaluate hprog (setVar n' y t)).2.ffi.ioEvents) :
+    state.ffi.ioEvents <+:
+      (evaluate (.call (some (n, names, retHandler, l1, l2)) dest args handler) state).2.ffi.ioEvents := by
+  have ht := (evaluate_def_rebound (width := width) (C := C) (F := F)).2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2
+  rw [ht]
+  simp only [hg, hbad, Bool.false_eq_true, if_false, hf, hnames, henvs, hz]
+  have hstart : (callEnv args1 ss (pushEnv envs handler (decClock state))).ffi.ioEvents =
+      state.ffi.ioEvents := by
+    change (pushEnv envs handler (decClock state)).ffi.ioEvents = state.ffi.ioEvents
+    rw [pushEnv_ffi]
+    rfl
+  rw [hstart] at hcallee
+  rcases hcv : evaluate prog (callEnv args1 ss (pushEnv envs handler (decClock state))) with ⟨rc, t⟩
+  rw [hcv] at hcallee
+  rcases rc with _ | ⟨x, ys⟩ | ⟨x, y⟩ | k | k | _ | _ | _ | _
+  · exact hcallee
+  · simp only
+    split
+    · exact hcallee
+    · rename_i hvalid
+      cases hp : popEnv t with
+      | none => exact hcallee
+      | some popped =>
+          dsimp only
+          have hevents := popEnv_ioEvents_eq t popped hp
+          split
+          · rename_i hdom
+            have hnext := hreturn x ys t popped hcv hvalid hp hdom
+            rw [hevents] at hnext
+            exact hcallee.trans hnext
+          · simpa only [hevents] using hcallee
+  · cases hh : handler with
+    | none => exact hcallee
+    | some hv =>
+        obtain ⟨n', hprog, l1', l2'⟩ := hv
+        dsimp only
+        split
+        · exact hcallee
+        · rename_i hloc
+          split
+          · rename_i hdom
+            exact hcallee.trans (hexception x y t n' hprog l1' l2' hcv hh
+              (Classical.byContradiction hloc) hdom)
+          · exact hcallee
+  all_goals exact hcallee
+
+/-- Flapjack-specific tail-Call induction clause. Both successful return and
+    bad-return rejection retain the callee's FFI events. -/
+private theorem tailCallStatement_ioEvents_prefix {width : Nat} [NeZero width] {C F : Type}
+    (dest : Option Nat) (args : List Nat) (state : WordSemStateFiniteExact width C F)
+    (xs args1 : List (WordLocW width)) (prog : WordLangProgHOL (BitVec width)) (ss : Option Nat)
+    (hg : getVars args state = some xs) (hbad : ¬ wordSemBadDestArgs dest args = true)
+    (hf : wordSemFindCode dest (wordSemAddRetLoc none xs) state.code state.stackSize =
+      some (args1, prog, ss)) (hz : state.clock ≠ 0)
+    (hcallee : (callEnv args1 ss (decClock state)).ffi.ioEvents <+:
+      (evaluate prog (callEnv args1 ss (decClock state))).2.ffi.ioEvents) :
+    state.ffi.ioEvents <+: (evaluate (.call none dest args none) state).2.ffi.ioEvents := by
+  have ht := (evaluate_def_rebound (width := width) (C := C) (F := F)).2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2
+  rw [ht]
+  simp only [hg, hbad, Bool.false_eq_true, if_false, hf, hz]
+  rcases hcv : evaluate prog (callEnv args1 ss (decClock state)) with ⟨result, next⟩
+  rw [hcv] at hcallee
+  split <;> exact hcallee
 
 end WordSemStateFiniteExact
 
