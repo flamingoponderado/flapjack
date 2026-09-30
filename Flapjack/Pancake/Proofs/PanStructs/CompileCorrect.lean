@@ -3054,8 +3054,13 @@ theorem panStructCompileExpCorrectNStructCase
             have hcompileMap : structCompileExp.structCompileExps context
                 (fields.map Prod.snd) =
                 fields.map (fun field => structCompileExp context field.2) := by
-              rw [structCompileExps_eq_map]
-              simp [List.map_map]
+              calc
+                _ = (fields.map Prod.snd).map (structCompileExp context) :=
+                  congrFun (structCompileExps_eq_map context) (fields.map Prod.snd)
+                _ = fields.map (fun field => structCompileExp context field.2) := by
+                  induction fields with
+                  | nil => rfl
+                  | cons field fields _ => simp
             rw [hcompileMap] at htargetListLocal
             refine ⟨?_, hfieldsValid, ?_⟩
             · simp [structOldExpShape, panSemShapeOf]
