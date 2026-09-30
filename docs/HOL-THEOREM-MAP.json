@@ -34511,5 +34511,87 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Source comparison HOL2126-2327: initGlobalsGoal retains all original hypotheses, total finite-state evaluate and existential target run/full stateRel/clock/ffi/locals/finalalignment. Recursive cons adds only source evaluate_decls_ind guarded tailIH at setGlobal state, shapeEq guard and arbitrary nextcontext; assembled list induction discharges it, nonDecl cases impossible by original EVERY is_decl. Head expression/store/stateRel/tailcoverage/disjointness derived internally with replacement names allowed; no new targetrun/postrelation premise. Native MlS, canonical map relation ownership and words_as_type_indexed_bitvec reviewed; production behavior unchanged."
-}
+},
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/Call.lean",
+    "lean_name": "evaluateStateLocalsRelStrongCallExact",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "evaluate_state_locals_rel_strong",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus (beads flapjack-pxn.18.5.5.43.5.7 and review fix .43.5.7.1) compared HOL evaluate_state_locals_rel_strong (crep_inlineProofScript.sml:273-285) at p = Call caltyp fname argexps (curried leaf shape) with Resume [Call] :511-562. The tagged case takes BOTH of HOL evaluate_ind's guarded Call premises: StrongLocalsCallCalleeIH (arguments evaluate, lookup_code succeeds, ALL_DISTINCT selector, clock <> 0 ==> P (prog, dec_clock s with locals := newlocals)) and StrongLocalsCallHandlerIH (callee raises Exception eid, caltyp = SOME (rts, SOME (eid, p)) ==> P (p, st with locals := s.locals)), spelled with the accepted evaluate_locals_same_fdom Call guard spellings (equivalence recorded in EvaluateLocals/Assembly.lean callGuard_*). It is NOT a stronger case: the proof (untagged callStrongGoal) merely does not use the callee premise, since state_rel makes both callee start states equal. Return write-back keeps locals_rel/locals_ext_rel. Exact tagged carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Type-hash change: one added premise. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/Call.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed CrepSemHOLState toBroad/ofBroad roundtrip for the relation qualifier."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/Call.lean",
+    "lean_name": "callReturnPost",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead .43.5.7): Call return write-back preserves locals_rel/locals_ext_rel over existing destinations."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/Call.lean",
+    "lean_name": "callStrongGoal",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead .43.5.7): the evaluate_state_locals_rel_strong motive for Call from the handler IH."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/Assembly.lean",
+    "lean_name": "evaluateStateLocalsRelStrongExact",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "evaluate_state_locals_rel_strong",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.8) compared crep_inlineProofScript.sml:273-285: the full HOL statement forall p s r s' t. evaluate (p,s) = (r,s') /\\ r <> SOME Error /\\ locals_rel s t /\\ state_rel s t ==> exists t'. evaluate (p,t) = (r,t') /\\ state_rel s' t' /\\ case r of NONE/Break/Continue => locals_rel s' t' /\\ locals_ext_rel s s' t t' | SOME Error => F | _ => T; HOL binders and conjunction, no extra premise and no public IH. Assembled from all tagged cases (Skip/Break/Continue/Tick, Assign/Store*/StoreGlob/Raise/Return/Primitive/ExtCall/ShMem, Dec/Seq/If, While, Call) by the lexicographic (clock, size) induction evalCrepSemHOLProgExact_inductLex, supplying every tagged case's literal guarded evaluate_ind premises, including the Call callee premise at the decremented clock and StrongLocalsWhileIH (review fix .43.5.7.1). Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/Assembly.lean",
+    "lean_name": "evaluateStateLocalsRelExact",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "evaluate_state_locals_rel",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.6) compared crep_inlineProofScript.sml:567-585: forall p s r s' t. evaluate (p,s) = (r,s') ==> r <> SOME Error ==> locals_rel s t /\\ state_rel s t ==> exists t'. evaluate (p,t) = (r,t') /\\ state_rel s' t' /\\ case r of NONE/Break/Continue => locals_rel s' t' | SOME Error => F | _ => T; curried exactly as in HOL; proved from evaluate_state_locals_rel_strong as in HOL. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/Assembly.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed CrepSemHOLState toBroad/ofBroad roundtrip for the relation qualifier."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/Assembly.lean",
+    "lean_name": "strongMotive",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (beads .43.5.8/.43.5.7.1): evaluate_ind motive of evaluate_state_locals_rel_strong for every program and state by evalCrepSemHOLProgExact_inductLex over the tagged cases."
+  }
 ]

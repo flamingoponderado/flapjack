@@ -24,13 +24,13 @@ theorem holFmapAsFiniteSupportRelationWitness_CrepSemHOLState
 end StrongMoreAtomsSupport
 
 /-- Local support: the target of `state_rel s t` is `s` with `t`'s locals. -/
-private theorem target_eq {width : Nat} [NeZero width] {σ : Type}
+theorem target_eq {width : Nat} [NeZero width] {σ : Type}
     {s t : CrepSemHOLState width σ} (h : crepInlineStateRelExact s t) :
     ∃ tl, t = { s with locals := tl } :=
   ⟨t.locals, (withLocals_eq_of_stateRel h).symm⟩
 
 /-- Local support: the continuing post when neither run changes its locals. -/
-private theorem post_locals_same {width : Nat} [NeZero width] {σ : Type}
+theorem post_locals_same {width : Nat} [NeZero width] {σ : Type}
     (s s' t t' : CrepSemHOLState width σ) (hs : s'.locals = s.locals) (ht : t'.locals = t.locals)
     (hloc : crepInlineLocalsRelExact s t) :
     crepInlineLocalsRelExact s' t' ∧ crepInlineLocalsExtRelExact s s' t t' := by
@@ -235,7 +235,7 @@ private theorem returnStrongGoal {width : Nat} [NeZero width] {σ : Type}
       exact ⟨_, rfl, ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10⟩, trivial⟩
 
 /-- Local support: a successful list of lookups transfers along `SUBMAP`. -/
-private theorem mapM_lookup_submap {β : Type} {f g : Nat → Option β}
+theorem mapM_lookup_submap {β : Type} {f g : Nat → Option β}
     (hfg : ∀ k v, f k = some v → g k = some v) :
     ∀ (xs : List Nat) (vs : List β), xs.mapM f = some vs → xs.mapM g = some vs
   | [], _, h => h
@@ -251,7 +251,7 @@ private theorem mapM_lookup_submap {β : Type} {f g : Nat → Option β}
               simpa [hx, hr] using h
 
 /-- Local support: `FUPDATE_LIST` preserves `SUBMAP` for the same entries. -/
-private theorem submap_updateList {β : Type} :
+theorem submap_updateList {β : Type} :
     ∀ (entries : List (Nat × β)) (f g : Nat → Option β),
       (∀ k v, f k = some v → g k = some v) →
       ∀ k v, FUPDATE_LIST_HOL f entries k = some v → FUPDATE_LIST_HOL g entries k = some v
@@ -265,7 +265,7 @@ private theorem submap_updateList {β : Type} :
       · simp only [hke, if_false] at hk ⊢; exact h k v hk
 
 /-- Local support: updating existing keys keeps the domain. -/
-private theorem dom_updateList {β : Type} :
+theorem dom_updateList {β : Type} :
     ∀ (entries : List (Nat × β)) (f : Nat → Option β),
       (∀ e ∈ entries, (f e.1).isSome) →
       ∀ k, (FUPDATE_LIST_HOL f entries k).isSome = (f k).isSome
