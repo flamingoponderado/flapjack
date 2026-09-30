@@ -1,4 +1,7 @@
+import Flapjack.Compiler.Backend.WordAlloc.InstructionRoute
+import Flapjack.Compiler.Backend.WordAlloc.KeyMapRoute
 import Flapjack.Word
+import Flapjack.Compiler.Backend.WordAlloc.ExpressionRoute
 import Flapjack.NumSet
 import Std.Data.HashMap
 
@@ -1035,8 +1038,8 @@ def wordSsaRenameProgramWithLoops [OfNat α 0] (frames : List WordSsaLoopFrame)
            order is the Patricia-tree order of the renamed keys rather than
            the incoming list order.  This order reaches the clash tree and is
            observable in exact RISC-V allocation. -/
-        let ssaLiveIn := NumSet.fromList (liveIn.map (wordSsaRead setupState))
-        let ssaLiveOut := NumSet.fromList (liveOut.map (wordSsaRead setupState))
+        let ssaLiveIn := WordAlloc.applyNummapKeyExecutable (wordSsaRead setupState) liveIn
+        let ssaLiveOut := WordAlloc.applyNummapKeyExecutable (wordSsaRead setupState) liveOut
         let program := .loop ssaLiveIn body ssaLiveOut
         /- CakeML threads the loop body's fresh-name counter out of
            `ssa_cc_trans (Loop ...)`, so code after the loop never reuses a
@@ -2232,6 +2235,14 @@ def wordAllocateSsaProgram [OfNat α 0] (state : WordSsaState) (program : WordPr
     labels and function labels are not virtual registers; every data-register
     position, including nested handlers and loop live sets, is transformed. -/
 
+/-- Compiled implementation of colouring through the reviewed constructor
+recursion and checked carrier codecs. -/
+def wordApplyColourExpRoute (colour : Nat → Nat) (expression : WordExp α) : WordExp α :=
+  WordAlloc.applyColourExpExecutable colour expression
+
+/-- Kernel-facing recursive equations. The kernel-proved compiler rewrite
+`wordApplyColourExp_eq_route` below routes compiled callers through the shared
+reviewed expression recursion. -/
 def wordApplyColourExp (colour : Nat → Nat) : WordExp α → WordExp α
   | .const value => .const value
   | .var name => .var (colour name)
@@ -2244,6 +2255,44 @@ def wordApplyColourExp (colour : Nat → Nat) : WordExp α → WordExp α
         (wordApplyColourExp colour right)
 termination_by expression => sizeOf expression
 decreasing_by all_goals decreasing_trivial
+
+/-- Kernel proof of the shared executable route, including every
+nested Op argument and both Shift operands. Flapjack carrier infrastructure. -/
+theorem wordApplyColourExp_route_eq (colour : Nat → Nat) (expression : WordExp α) :
+    wordApplyColourExpRoute colour expression = wordApplyColourExp colour expression := by
+  refine WordExp.rec
+    (motive_1 := fun e => wordApplyColourExpRoute colour e = wordApplyColourExp colour e)
+    (motive_2 := fun es => es.map (wordApplyColourExpRoute colour) =
+      es.map (wordApplyColourExp colour))
+    ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ expression
+  · intro value; simp [wordApplyColourExpRoute, wordApplyColourExp]
+  · intro name; simp [wordApplyColourExpRoute, wordApplyColourExp]
+  · intro store; simp [wordApplyColourExpRoute, wordApplyColourExp]
+  · intro address ih
+    simpa [wordApplyColourExpRoute, wordApplyColourExp] using congrArg WordExp.load ih
+  · intro operator arguments ih
+    simpa [wordApplyColourExpRoute, wordApplyColourExp] using congrArg (WordExp.op operator) ih
+  · intro operator left right ihLeft ihRight
+    simp only [wordApplyColourExpRoute] at ihLeft ihRight ⊢
+    simp [wordApplyColourExp, ihLeft, ihRight]
+  · rfl
+  · intro head tail ihHead ihTail; simp [ihHead, ihTail]
+
+/-- Kernel-proved compiler routing for all types and inputs, registered before
+production callers are compiled. Flapjack infrastructure, not a HOL theorem. -/
+@[csimp] theorem wordApplyColourExp_eq_route :
+    @wordApplyColourExp = @wordApplyColourExpRoute := by
+  funext α colour expression
+  exact (wordApplyColourExp_route_eq colour expression).symm
+
+/-- The production colouring function commutes with the reviewed word-valued
+HOL definition. Flapjack codec infrastructure, with no separate HOL original. -/
+theorem wordApplyColourExp_toHOL {width : Nat} [NeZero width]
+    (colour : Nat → Nat) (expression : WordExp (BitVec width)) :
+    wordExpToHOL (wordApplyColourExp colour expression) =
+      WordAlloc.applyColourExp colour (wordExpToHOL expression) := by
+  rw [← wordApplyColourExp_route_eq]
+  exact WordAlloc.applyColourExpExecutable_commutes colour expression
 
 def wordApplyColourRegImm (colour : Nat → Nat) : WordRegImm α → WordRegImm α
   | .imm value => .imm value
@@ -2271,19 +2320,19 @@ def wordApplyColourArith (colour : Nat → Nat) : WordArith α → WordArith α
       .shift operator (colour destination) (colour sourceLeft)
         (wordApplyColourRegImm colour sourceRight)
 
-def wordApplyColourInst (colour : Nat → Nat) : WordInst α → WordInst α
-  | .const destination value => .const (colour destination) value
-  | .arith operation => .arith (wordApplyColourArith colour operation)
-  | .mem operator destination address =>
-      .mem operator (colour destination) (colour address)
-  | .memOffset operator destination address offset =>
-      .memOffset operator (colour destination) (colour address) offset
+def wordApplyColourInst (colour : Nat → Nat) : WordInst α → WordInst α :=
+  WordAlloc.applyColourInstExecutable colour
 
-/-! Cake's `num_set` fields are represented by lists in Flapjack.  The source
-    `apply_nummap_key` rebuilds those sets through `fromAList`, so the result is
-    canonical (sorted and duplicate-free), rather than a plain mapped list. -/
+/-! List-backed `num_set` fields cross the exact tree codec before colouring.
+    The reviewed `apply_nummap_key` owns reconstruction, collisions, and mixed
+    traversal order; its output is not an ascending sorted list. -/
 def wordApplyColourNumSet (colour : Nat → Nat) (names : List Nat) : List Nat :=
-  NumSet.fromAList (names.map colour)
+  WordAlloc.applyNummapKeyExecutable colour names
+
+/-- Paired cutsets use the reviewed HOL pair operation through its list codec. -/
+def wordApplyColourNumSets (colour : Nat → Nat) (names : List Nat × List Nat) :
+    List Nat × List Nat :=
+  WordAlloc.applyNummapsKeyExecutable colour names
 
 def wordApplyColour (colour : Nat → Nat) : WordProg α → WordProg α
   | .skip => .skip
@@ -2318,8 +2367,7 @@ def wordApplyColour (colour : Nat → Nat) : WordProg α → WordProg α
       target arguments none =>
       .call
         (some (values.map colour,
-          (wordApplyColourNumSet colour cutsets.1,
-            wordApplyColourNumSet colour cutsets.2),
+          wordApplyColourNumSets colour cutsets,
           wordApplyColour colour returnCode, returnLabel, entryLabel))
         target (arguments.map colour) none
   | .call none target arguments
@@ -2332,15 +2380,14 @@ def wordApplyColour (colour : Nat → Nat) : WordProg α → WordProg α
       (some (exception, body, handlerLabel, handlerEntryLabel)) =>
       .call
         (some (values.map colour,
-          (wordApplyColourNumSet colour cutsets.1,
-            wordApplyColourNumSet colour cutsets.2),
+          wordApplyColourNumSets colour cutsets,
           wordApplyColour colour returnCode, returnLabel, entryLabel))
         target (arguments.map colour)
         (some (colour exception, wordApplyColour colour body,
           handlerLabel, handlerEntryLabel))
   | .alloc destination (nonGc, gc) =>
       .alloc (colour destination)
-        (wordApplyColourNumSet colour nonGc, wordApplyColourNumSet colour gc)
+        (wordApplyColourNumSets colour (nonGc, gc))
   | .storeConsts source bitmap codeLength dataLength constants =>
       .storeConsts (colour source) (colour bitmap) (colour codeLength)
         (colour dataLength) constants
@@ -2349,7 +2396,7 @@ def wordApplyColour (colour : Nat → Nat) : WordProg α → WordProg α
   | .install codeBuffer codeLength dataBuffer dataLength (nonGc, gc) =>
       .install (colour codeBuffer) (colour codeLength) (colour dataBuffer)
         (colour dataLength)
-        (wordApplyColourNumSet colour nonGc, wordApplyColourNumSet colour gc)
+        (wordApplyColourNumSets colour (nonGc, gc))
   | .codeBufferWrite address value =>
       .codeBufferWrite (colour address) (colour value)
   | .dataBufferWrite address value =>
@@ -2357,8 +2404,7 @@ def wordApplyColour (colour : Nat → Nat) : WordProg α → WordProg α
   | .ffi function configuration configurationLength array arrayLength live =>
       .ffi function (colour configuration) (colour configurationLength)
         (colour array) (colour arrayLength)
-        (wordApplyColourNumSet colour live.1,
-          wordApplyColourNumSet colour live.2)
+        (wordApplyColourNumSets colour live)
   | .shareInst operator name address =>
       .shareInst operator (colour name) (wordApplyColourExp colour address)
 termination_by program => sizeOf program

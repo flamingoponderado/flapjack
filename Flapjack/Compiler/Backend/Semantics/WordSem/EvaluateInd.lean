@@ -286,11 +286,18 @@ theorem evaluate_ind {width : Nat} [NeZero width] {C : Type} {F : Type} :
       hInstall hCodeBufferWrite hDataBufferWrite hFfi hShareInst hCall v v1
 
 open Classical in
-/-- Exact HOL rebound `evaluate_def` (`wordSemScript.sml:1369-1370`,
+/-- Rendering of HOL rebound `evaluate_def` (`wordSemScript.sml:1369-1370`,
     `REWRITE_RULE [fix_clock_evaluate] evaluate_def`): the `evaluate`
     equations with `fix_clock` removed from the `Seq`, `Loop` and returning
     `Call` clauses.  There is one conjunct per clause, in HOL order, with
-    HOL's binder order. -/
+    HOL's binder order.
+
+    Exact port with an inherited assumption (PR #1179 review, bead
+    `flapjack-qfld`): the `Inst` conjunct calls the tagged `inst`, which carries
+    `(reals_as_rational_cuts)` for its `FPSqrt` rendering; this declaration
+    does not use a real rendering itself and records the inherited
+    `docs/SOUNDNESS.md` item 8 assumption in the theorem map.  Every other
+    conjunct follows HOL clause by clause. -/
 @[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "evaluate_def" 1369
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem evaluate_def_rebound {width : Nat} [NeZero width] {C : Type} {F : Type} :

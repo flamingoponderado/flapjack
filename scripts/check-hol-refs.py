@@ -5,7 +5,8 @@ Every Lean declaration that ports a HOL4 declaration carries
 `@[hol "cakeml/.../fooScript.sml" "theorem_name"]` (see `Flapjack/HolRef.lean`
 and `AGENTS.md`).  This script checks, without running Lean, that
 
-* the cited file exists in the `cakeml` submodule, and
+* the cited file exists in the `cakeml` submodule or the explicitly allowed
+  byte-pinned HOL4 snapshot (including its retained license), and
 * a HOL declaration with exactly that name is declared in that file; when
   the name is duplicated, the tag must cite a matching source line
   (`Theorem`, `Triviality`, `Definition`, `Datatype`, `Inductive`,
@@ -28,6 +29,8 @@ Uses only the standard library.
 from __future__ import annotations
 
 import os
+import hashlib
+import json
 import re
 import sys
 from functools import lru_cache
@@ -37,6 +40,41 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 LEAN_DIRS = [ROOT / "Flapjack", ROOT / "Flapjack.lean"]
+
+# External sources are deliberately restricted to the reviewed snapshot.
+EXTERNAL_HOL_PATH = "hol4/src/finite_maps/sptreeScript.sml"
+EXTERNAL_HOL_REPOSITORY = "https://github.com/HOL-Theorem-Prover/HOL"
+
+
+def hol_source_error(root: Path, path: str) -> str | None:
+    """Validate a repository-relative source, including external byte pins."""
+    parts = path.split("/")
+    if any(part in ("", ".", "..") for part in parts) or not path.endswith(".sml"):
+        return "invalid repository-relative HOL source path"
+    if path.startswith("cakeml/"):
+        return None
+    if path != EXTERNAL_HOL_PATH:
+        return "HOL source is not a supported pinned external path"
+    try:
+        lock = json.loads((root / "hol4/SOURCES.json").read_text())
+        if (set(lock) != {"repository", "commit", "files"}
+                or lock["repository"] != EXTERNAL_HOL_REPOSITORY
+                or not isinstance(lock["commit"], str)
+                or not re.fullmatch(r"[0-9a-f]{40}", lock["commit"])
+                or not isinstance(lock["files"], dict)
+                or set(lock["files"]) != {"COPYRIGHT", "src/finite_maps/sptreeScript.sml"}):
+            return "invalid pinned external HOL source manifest"
+        for relative, digest in lock["files"].items():
+            target = root / "hol4" / relative
+            if (not isinstance(digest, str) or not re.fullmatch(r"[0-9a-f]{64}", digest)
+                    or not target.is_file()
+                    or target.resolve() != target.absolute()
+                    or hashlib.sha256(target.read_bytes()).hexdigest() != digest):
+                return f"pinned external HOL source/license mismatch: {relative}"
+    except (OSError, ValueError, TypeError):
+        return "missing or invalid pinned external HOL source manifest"
+    return None
+
 
 ATTR_RE = re.compile(r'\bhol\s+"([^"]+)"\s+"([^"]+)"(?:\s+(\d+))?')
 QUALIFIER_RE = re.compile(r'\(\s*list_as_array\s*:=\s*\[([^]]*)\]\s*\)')
@@ -70,6 +108,19 @@ WORDS_AS_TYPE_INDEXED_BITVEC_RE = re.compile(
 )
 WORD_DIMENSION_AS_WIDTH_RE = re.compile(
     r'\(\s*word_dimension_as_width\s*:=\s*([A-Za-z_][A-Za-z0-9_\']*)\s*\)'
+)
+REALS_AS_RATIONAL_CUTS_RE = re.compile(
+    r'\(\s*reals_as_rational_cuts\s*\)'
+)
+# The reviewed binary64 real renderings: HOL `binary_ieee`/`machine_ieee`
+# reals as Lean `Rat`, and `fp64_sqrt`'s real square root as its rational cut
+# (docs/SOUNDNESS.md item 8).  A tagged declaration whose own source uses a
+# declaration of these modules must carry `(reals_as_rational_cuts)`.
+REALS_RENDERING_GLOBS = ("Flapjack/Misc/MachineIeee.lean", "Flapjack/Misc/BinaryIeee*.lean")
+REALS_RENDERING_DECL_RE = re.compile(
+    r"^\s*(?:@\[[^\]]*\]\s*)?(?:(?:private|protected|noncomputable|partial)\s+)*"
+    r"(?:def|abbrev|structure|inductive|opaque)\s+([A-Za-z_][A-Za-z0-9_'.]*)",
+    re.M,
 )
 WORD_POSITIVITY_EXTRA_RE = re.compile(
     r"(?:width\s*(?:≠|!=|>|≥)\s*(?:0|1)\b|0\s*<\s*width\b|1\s*≤\s*width\b"
@@ -240,7 +291,8 @@ def find_lean_decl(lines: list[str], start: int) -> str:
 
 def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = False,
                         include_word_dimension_width: bool = False,
-                        include_fmap_function: bool = False):
+                        include_fmap_function: bool = False,
+                        include_reals_as_rational_cuts: bool = False):
     """Yield HOL attributes, including attributes split across Lean lines."""
     comment_depth = 0
     start: int | None = None
@@ -308,6 +360,8 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                     site += (width.group(1) if width else None,)
                 if include_fmap_function:
                     site += (fields_for(FMAP_AS_FINITE_SUPPORT_FUNCTION_RE),)
+                if include_reals_as_rational_cuts:
+                    site += (bool(REALS_AS_RATIONAL_CUTS_RE.search(attribute)),)
                 yield site
         start = None
         chunks = []
@@ -2168,6 +2222,139 @@ def word_dimension_errors(text: str) -> list[str]:
     return errors
 
 
+def reviewed_hol_prog_word_alias(signature: str, module: str, root: str) -> bool:
+    """Resolve the one reviewed shared-word StackLang alias, never by name alone.
+
+    HolProg is an instantiation of the generic seven-payload Prog, not a fresh
+    carrier owner. Check its exact RHS, positive binder, import reachability,
+    unique alias name and each word-bearing payload's actual owning declaration.
+    This is intentionally not arbitrary abbreviation unfolding.
+    """
+    occurrences = re.findall(
+        r"\b((?:[A-Za-z_][A-Za-z0-9_']*\.)*HolProg)\s+([A-Za-z_][A-Za-z0-9_']*)\b",
+        signature,
+    )
+    if any(name not in ("HolProg", "StackLang.HolProg", "Compiler.Backend.StackLang.HolProg",
+                        "Flapjack.Compiler.Backend.StackLang.HolProg")
+           for name, _ in occurrences):
+        return False
+    uses = [width for _, width in occurrences]
+    if not uses or any(
+        not re.search(r"[({]\s*" + re.escape(w) + r"\s*:\s*Nat\s*[)}]", signature)
+        or not re.search(r"\[\s*NeZero\s+" + re.escape(w) + r"\s*\]", signature)
+        for w in uses
+    ):
+        return False
+    pending = [module]
+    infos = {}
+    while pending:
+        name = pending.pop()
+        if name in infos:
+            continue
+        info = _lean_file_info(module_source_file(name, root))
+        if info is None:
+            continue
+        infos[name] = info
+        pending.extend(info.imports)
+    owner = "Flapjack.Compiler.Backend.StackLang.Prog"
+    if owner not in infos:
+        return False
+    declarations = []
+    for name, info in infos.items():
+        text = strip_lean_comments(info.text)
+        for match in re.finditer(
+            r"^\s*(?:abbrev|def|opaque|structure|inductive)\s+(?:[A-Za-z_][A-Za-z0-9_']*\.)*HolProg\b", text, re.M
+        ):
+            declarations.append((name, text[match.start():]))
+    if len(declarations) != 1 or declarations[0][0] != owner:
+        return False
+    expected = """abbrev HolProg (width : Nat) [NeZero width] :=
+      Flapjack.Compiler.Backend.StackLang.Prog (HolInst width) HolCmp (HolRegImm width)
+        HolBinop HolMemop (HolAddr width) Flapjack.Basis.Pure.MlString.MlString"""
+    if not any(site[1:3] == ("cakeml/compiler/backend/stackLangScript.sml", "prog")
+               for site in hol_attribute_sites(infos[owner].lines)):
+        return False
+    actual = re.split(r"\n\s*end\b", declarations[0][1], maxsplit=1)[0]
+    if " ".join(actual.split()) != " ".join(expected.split()):
+        return False
+    asm = "Flapjack.Compiler.Encoders.Asm"
+    if asm not in infos:
+        return False
+    owners = imported_inductive_owners(module, root)
+    for payload in ("HolInst", "HolRegImm", "HolAddr"):
+        payload_declarations = [name for name, info in infos.items()
+            for _ in re.finditer(
+                r"^\s*(?:abbrev|def|opaque|structure|inductive)\s+"
+                r"(?:[A-Za-z_][A-Za-z0-9_']*\.)*" + payload + r"\b",
+                strip_lean_comments(info.text), re.M)]
+        if payload_declarations != [asm]:
+            return False
+        candidates = owners.get(payload, [])
+        if len(candidates) != 1 or candidates[0][0] != asm:
+            return False
+        _, header, fields = candidates[0]
+        if not re.search(r"\(width\s*:\s*Nat\)\s*\[NeZero\s+width\]", header):
+            return False
+        if not any(field_mentions_word_carrier(field, "width") for field in fields.values()):
+            return False
+        if word_dimension_errors(header + "\n" + "\n".join(fields.values())):
+            return False
+    return True
+
+
+def reals_rendering_names(root: Path) -> set[str]:
+    """Short names of the reviewed binary64 real-rendering declarations."""
+    names: set[str] = set()
+    for pattern in REALS_RENDERING_GLOBS:
+        for path in sorted(root.glob(pattern)):
+            text = strip_lean_comments(path.read_text(encoding="utf-8"))
+            for match in REALS_RENDERING_DECL_RE.finditer(text):
+                names.add(match.group(1).rsplit(".", 1)[-1])
+    return names
+
+
+REALS_SOURCE_END_RE = re.compile(r"^(?:@\[|/--|/-!|namespace\b|end\b|section\b|open\b)")
+
+
+def reals_rendering_mentions(declaration_source: str, names: set[str]) -> list[str]:
+    """Rendering declarations used by a tagged declaration's own source text.
+
+    The source is cut at the next attribute, docstring or section boundary so
+    that a declaration without a body (for example a datatype) is not charged
+    with the following declarations' text."""
+    kept: list[str] = []
+    for index, line in enumerate(declaration_source.splitlines()):
+        if index > 0 and REALS_SOURCE_END_RE.match(line) and kept and not line.startswith("@[hol"):
+            header_done = any(re.search(r"\b(?:def|theorem|lemma|abbrev|inductive|structure|instance|opaque)\b", k) for k in kept)
+            if header_done:
+                break
+        kept.append(line)
+    tokens = set(re.findall(r"[A-Za-z_][A-Za-z0-9_']*", strip_lean_comments("\n".join(kept))))
+    return sorted(tokens & names)
+
+
+def reals_as_rational_cuts_errors(declaration_source: str, qualified: bool,
+                                  names: set[str]) -> list[str]:
+    """`(reals_as_rational_cuts)` is required exactly when the declaration uses a
+    reviewed binary64 real rendering in its own source.  Declarations that only
+    refer to a qualified declaration inherit the assumption instead (recorded
+    in the theorem map), and may not carry the qualifier themselves."""
+    mentions = reals_rendering_mentions(declaration_source, names)
+    if mentions and not qualified:
+        return [
+            "uses the binary64 real renderings "
+            f"({', '.join(mentions[:4])}{', ...' if len(mentions) > 4 else ''}) and must carry "
+            "(reals_as_rational_cuts)"
+        ]
+    if qualified and not mentions:
+        return [
+            "(reals_as_rational_cuts) is only for declarations whose own source uses a "
+            "reviewed binary64 real rendering (Flapjack/Misc/MachineIeee.lean, "
+            "Flapjack/Misc/BinaryIeee*.lean); dependents inherit the assumption instead"
+        ]
+    return []
+
+
 def words_as_type_indexed_bitvec_errors(
     declaration_text: str,
     declaration: str,
@@ -2248,8 +2435,11 @@ def words_as_type_indexed_bitvec_errors(
                 "translation"
             )
 
-    carrier_ok = False
-    if not has_direct_word and lines is not None and module and root:
+    carrier_ok = bool(module and root and reviewed_hol_prog_word_alias(signature, module, root))
+    if identifier_token_occurs(signature, "HolProg") and not carrier_ok:
+        errors.append("words_as_type_indexed_bitvec requires the source-resolved canonical "
+                      "HolProg alias, its unique word payload owners and each positive width")
+    if not has_direct_word and not carrier_ok and lines is not None and module and root:
         local_types = structure_field_types(lines)
         local_types.update(inductive_constructor_types(lines))
         local_headers = structure_headers(lines)
@@ -2607,6 +2797,7 @@ def main(argv: list[str]) -> int:
         )
         return 1
 
+    reals_names = reals_rendering_names(ROOT)
     for lean_path in lean_files():
         rel = lean_path.relative_to(ROOT).as_posix()
         lines = lean_path.read_text(encoding="utf-8").splitlines()
@@ -2616,12 +2807,19 @@ def main(argv: list[str]) -> int:
              names_fields, boundary_fields, fmap_fields, fmap_result,
              fmap_relation, fmap_equalities, words_bitvec,
              fmap_parameters, fmap_existentials, dimension_width,
-             fmap_function_positions) in hol_attribute_sites(
+             fmap_function_positions, reals_cuts) in hol_attribute_sites(
                 lines, include_fmap_existentials=True,
                 include_word_dimension_width=True,
                 include_fmap_function=True,
+                include_reals_as_rational_cuts=True,
              ):
             where = f"{rel}:{number}"
+            errors.extend(
+                f"{where}: {error}"
+                for error in reals_as_rational_cuts_errors(
+                    tagged_declaration_source(lines, number), reals_cuts, reals_names,
+                )
+            )
             lean_decl = find_lean_decl(lines, number - 1)
             if module not in reachable and not module_reported:
                 module_reported = True
@@ -2730,8 +2928,9 @@ def main(argv: list[str]) -> int:
                     )
                 )
             target = ROOT / hol_path
-            if not hol_path.startswith("cakeml/") or not hol_path.endswith(".sml"):
-                errors.append(f"{where}: path is not a cakeml/...sml file: {hol_path}")
+            source_error = hol_source_error(ROOT, hol_path)
+            if source_error is not None:
+                errors.append(f"{where}: {source_error}: {hol_path}")
                 continue
             if not target.is_file():
                 errors.append(f"{where}: HOL file does not exist: {hol_path}")

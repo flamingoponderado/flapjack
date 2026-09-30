@@ -1,5 +1,6 @@
 import Flapjack.Pancake.PanGlobals
-import Flapjack.Pancake.PanGlobals.CompileExpExactRoute
+import Flapjack.Pancake.PanGlobals.DeclarationProgramRoute
+import Flapjack.Pancake.PanGlobals.CompileTopExact
 import Flapjack.Pancake.PanLang.Decl
 import Flapjack.Pancake.PanLang.Prog
 
@@ -667,8 +668,12 @@ theorem globalCompileTopCake_byteRanged [LawfulBEq String]
 
 `globalCompileTopForStartSomeCakeOfExact` is the parser-proved route through
 the tagged `resortDeclsHOL`, `newMainNameHOL`, and `decShapesHOL` definitions,
-as well as `nestedSeqHOL` (via `nestedSeqCake`) and the exact declaration
-compiler. Its local codecs require the byte-range invariant supplied by the
+as well as `nestedSeqHOL` (via `nestedSeqCake`). Its declaration wrapper
+`compileDecsCakeViaProgramHOL` runs tagged `compileProgExactHOL` directly for
+function bodies and `compileExpExactHOL` for initializers; declaration metadata
+and context threading retain their production representation. This does not
+claim direct routing through the entire HOL compile_decs definition.
+Its local codecs require the byte-range invariant supplied by the
 source parser. The equality theorem below establishes that these reviewed
 definitions produce the same compiler result as the String-backed compatibility
 path. Calls without the byte-range proof retain that path. -/
@@ -696,7 +701,7 @@ def globalCompileTopForStartSomeCakeOfExact [LawfulBEq String] {width : Nat} [Ne
           maxGlobalsSize := maxGlobalsSize
           bytesInWord := cakeBytesInWord width
           fromNat := BitVec.ofNat width }
-      let compiled := compileDecsCakeOfExact initial renamed
+      let compiled := compileDecsCakeViaProgramHOL initial renamed
       let parameters := entry.params.map (fun (name, _) => Exp.var .local name)
       let newMain : Decl (BitVec width) :=
         .function
@@ -756,9 +761,10 @@ theorem globalCompileTopForStartSomeCakeOfExact_eq [LawfulBEq String]
       have hinitialShapes : GlobalContextListShapesByteRanged initial := by
         intro entry hmem
         simp [initial] at hmem
-      have hrouted : compileDecsCakeOfExact initial renamed
+      have hrouted : compileDecsCakeViaProgramHOL initial renamed
           = compileDecsCake (cakeContextOfPass initial) renamed :=
-        compileDecsCakeOfExact_eq renamed initial hcanonical hinitialShapes hrenamed
+        (compileDecsCakeViaProgramHOL_eq renamed initial hinitialShapes hrenamed).trans
+          (compileDecsCakeOfExact_eq renamed initial hcanonical hinitialShapes hrenamed)
       have hthreaded := globalCompileDecsThreaded_byteRanged initial hinitialContext renamed hrenamed
       have hcompiled :
           ∀ program ∈ (compileDecsCake (cakeContextOfPass initial) renamed).initializers,
@@ -795,6 +801,155 @@ theorem globalCompileTopCakeOfExact_byteRanged [LawfulBEq String]
     ∀ declaration ∈ globalCompileTopCakeOfExact declarations start hinput,
       DeclByteRanged declaration := by
   rw [globalCompileTopCakeOfExact_eq declarations start hinput]
+  exact globalCompileTopCake_byteRanged declarations start hinput
+
+
+/-! ### Whole-top exact route
+
+The parser-path top compiler below executes the reviewed exact
+`compileTopExactHOL` (`pan_globalsScript.sml:236-256`) on the encoded
+declarations and decodes its output.  `compileTopExactHOL_decode` is the
+kernel-checked codec equation against the production `globalCompileTopCake`:
+it needs only the parser byte-range facts for the input declarations and the
+start name.  Both are Flapjack cross-carrier infrastructure with no separate
+HOL original (bead flapjack-pxn.18.5.2.22.1). -/
+
+/-- Decoding the exact HOL top compiler on byte-ranged input is the production
+    top compiler.  The start name must be byte-ranged: `ofString` truncates
+    code points above 255, so an out-of-range start could otherwise select a
+    different function.  No evaluation or target result is assumed. -/
+theorem compileTopExactHOL_decode [LawfulBEq String]
+    {width : Nat} [NeZero width]
+    (declarations : List (Decl (BitVec width))) (start : FunName)
+    (hinput : ∀ declaration ∈ declarations, DeclByteRanged declaration)
+    (hstart : NameRanged start) :
+    (compileTopExactHOL (declarations.map declToHOL)
+        (Flapjack.Basis.Pure.MlString.ofString start)).map declOfHOL =
+      globalCompileTopCake declarations start := by
+  have hroundD := map_declOfHOL_declToHOL_byteRanged declarations hinput
+  have hstartRT := Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes start hstart
+  have hlook := compileTopFunctionLookup_decode (declarations.map declToHOL)
+    (Flapjack.Basis.Pure.MlString.ofString start)
+  rw [hstartRT, hroundD] at hlook
+  unfold compileTopExactHOL globalCompileTopCake globalCompileTopForStartSomeCake
+  cases hfind : globalFindFunction start declarations with
+  | none =>
+    rw [hfind] at hlook
+    split
+    · rfl
+    · next heq => rw [heq] at hlook; simp at hlook
+  | some entry =>
+    rw [hfind] at hlook
+    split
+    · next heq => rw [heq] at hlook; simp at hlook
+    · next arguments body returnShape heq =>
+      rw [heq] at hlook
+      simp only [Option.map_some, Option.some.injEq, Prod.mk.injEq] at hlook
+      obtain ⟨hparams, _, hret⟩ := hlook
+      have hentry := globalFindFunction_byteRanged start declarations hinput entry hfind
+      have hrenamedStart : NameRanged (globalNewMainName declarations) :=
+        holMlStringWitness_globalNewMainName declarations
+      have hresorted := globalResortDecls_byteRanged declarations hinput
+      let renamedP := globalRenameDecls start (globalNewMainName declarations)
+        (globalResortDecls declarations)
+      have hrenamedP : ∀ declaration ∈ renamedP, DeclByteRanged declaration :=
+        globalRenameDecls_byteRanged start _ hstart hrenamedStart _ hresorted
+      have hRdec : (fpermDecsHOL (Flapjack.Basis.Pure.MlString.ofString start)
+          (newMainNameHOL (declarations.map declToHOL))
+          (resortDeclsHOL (declarations.map declToHOL))).map declOfHOL = renamedP := by
+        rw [map_declOfHOL_fpermDecsHOL, map_declOfHOL_resortDeclsHOL,
+          toStringOfBytes_newMainNameHOL, hstartRT, hroundD]
+      have hRenc : renamedP.map declToHOL = fpermDecsHOL (Flapjack.Basis.Pure.MlString.ofString start)
+          (newMainNameHOL (declarations.map declToHOL))
+          (resortDeclsHOL (declarations.map declToHOL)) := by
+        rw [← hRdec, List.map_map]
+        conv => rhs; rw [← List.map_id (fpermDecsHOL _ _ _)]
+        apply List.map_congr_left
+        intro d _
+        exact declToHOL_declOfHOL d
+      let initialP : GlobalPassContext (BitVec width) :=
+        { globals := []
+          globalsSize := BitVec.ofNat width 0
+          maxGlobalsSize := cakeBytesInWord width * BitVec.ofNat width
+            ((globalDeclShapes renamedP).map Shape.shapeSize |>.foldl (· + ·) 0)
+          bytesInWord := cakeBytesInWord width
+          fromNat := BitVec.ofNat width }
+      have hcanonical : initialP.IsCakeCanonical := ⟨rfl, fun value => rfl⟩
+      have hinitialShapes : GlobalContextListShapesByteRanged initialP := by
+        intro entry hmem
+        simp [initialP] at hmem
+      have hrouted : compileDecsCake (cakeContextOfPass initialP) renamedP =
+          compileDecsCakeViaProgramHOL initialP renamedP :=
+        ((compileDecsCakeViaProgramHOL_eq renamedP initialP hinitialShapes hrenamedP).trans
+          (compileDecsCakeOfExact_eq renamedP initialP hcanonical hinitialShapes hrenamedP)).symm
+      have hsize : ((decShapesHOL (fpermDecsHOL (Flapjack.Basis.Pure.MlString.ofString start)
+            (newMainNameHOL (declarations.map declToHOL))
+            (resortDeclsHOL (declarations.map declToHOL)))).map sizeOfShapeHOL).sum =
+          ((globalDeclShapes renamedP).map Shape.shapeSize).foldl (· + ·) 0 := by
+        rw [← hRdec, ← map_shapeOfHOL_decShapesHOL, List.map_map, ← List.sum_eq_foldl]
+        congr 1
+        apply List.map_congr_left
+        intro s _
+        show _ = Shape.shapeSize (shapeOfHOL s)
+        rw [← sizeOfShapeHOL_shapeToHOL, shapeToHOL_shapeOfHOL]
+      have hrel := compileDecsCakeViaProgramHOL_exact renamedP initialP hinitialShapes hrenamedP
+      have hinit : PanGlobalsContextExact.ofPass initialP =
+          { globals := HolFiniteMapExact.empty
+            globalsSize := 0
+            maxGlobalsSize := cakeBytesInWord width * BitVec.ofNat width
+              ((decShapesHOL (fpermDecsHOL (Flapjack.Basis.Pure.MlString.ofString start)
+                (newMainNameHOL (declarations.map declToHOL))
+                (resortDeclsHOL (declarations.map declToHOL)))).map sizeOfShapeHOL).sum } := by
+        rw [hsize]
+        unfold PanGlobalsContextExact.ofPass
+        congr 1
+      rw [hinit, hRenc] at hrel
+      simp only [Option.getD]
+      rw [hrouted]
+      obtain ⟨hi, hf, he, _⟩ := hrel
+      rw [hi, hf, he]
+      simp only [List.map_append, List.map_cons, declOfHOL, funDeclOfHOL,
+        progOfHOL, nestedSeqHOL_progOfHOL, List.append_assoc, List.singleton_append]
+      rw [hstartRT, toStringOfBytes_newMainNameHOL, hroundD, ← hparams, ← hret]
+      simp [List.map_map, Function.comp_def, expOfHOL, paramOfHOL]
+
+
+/-- Parser-path top compiler that executes the reviewed exact
+    `compileTopExactHOL` whenever the start name is byte-ranged, decoding its
+    output for the production declaration carrier.  An out-of-range start name
+    (which cannot select any parser-produced function) keeps the existing
+    `globalCompileTopCakeOfExact` path.  Routing infrastructure; no HOL
+    original. -/
+def globalCompileTopCakeRouted [LawfulBEq String] {width : Nat} [NeZero width]
+    (declarations : List (Decl (BitVec width))) (start : FunName)
+    (hinput : ∀ declaration ∈ declarations, DeclByteRanged declaration) :
+    List (Decl (BitVec width)) :=
+  if NameRanged start then
+    (compileTopExactHOL (declarations.map declToHOL)
+      (Flapjack.Basis.Pure.MlString.ofString start)).map declOfHOL
+  else
+    globalCompileTopCakeOfExact declarations start hinput
+
+/-- The routed executable top compiler computes the production result. -/
+theorem globalCompileTopCakeRouted_eq [LawfulBEq String]
+    {width : Nat} [NeZero width]
+    (declarations : List (Decl (BitVec width))) (start : FunName)
+    (hinput : ∀ declaration ∈ declarations, DeclByteRanged declaration) :
+    globalCompileTopCakeRouted declarations start hinput =
+      globalCompileTopCake declarations start := by
+  unfold globalCompileTopCakeRouted
+  split
+  · next hstart => exact compileTopExactHOL_decode declarations start hinput hstart
+  · exact globalCompileTopCakeOfExact_eq declarations start hinput
+
+/-- Byte-range preservation for the routed top compiler. -/
+theorem globalCompileTopCakeRouted_byteRanged [LawfulBEq String]
+    {width : Nat} [NeZero width]
+    (declarations : List (Decl (BitVec width))) (start : FunName)
+    (hinput : ∀ declaration ∈ declarations, DeclByteRanged declaration) :
+    ∀ declaration ∈ globalCompileTopCakeRouted declarations start hinput,
+      DeclByteRanged declaration := by
+  rw [globalCompileTopCakeRouted_eq declarations start hinput]
   exact globalCompileTopCake_byteRanged declarations start hinput
 
 end Flapjack

@@ -29,7 +29,9 @@ computable algorithms.  The HOL `words` operations are:
   `BitVec.ofInt`;
 * `n2w`/`w2n` are `BitVec.ofNat`/`toNat`, and `dimword (:'a)` is
   `2 ^ width`;
-* word `/` is unsigned `BitVec` division;
+* word `/` is signed truncating `BitVec.sdiv`, matching the four
+  sign cases of HOL `word_quot_def` (wordsScript.sml:354-366);
+  unsigned word division is HOL `//`, not `/`;
 * `word_extract` is `holWordExtract`, `bit_field_insert` is
   `holBitFieldInsert`, and `@@` into `word64` is concatenation followed by
   `setWidth 64`.
@@ -39,8 +41,9 @@ namespace Flapjack
 
 namespace WordSemInstSupport
 
-/-- Same-module canonical finite-support witness for the `fpRegs`/`store`
-    fields named by the tagged `inst`. -/
+/-- Canonical finite-support roundtrip for the `fpRegs`/`store` fields that
+    `inst` reads and writes.  Kept for the exact `inst_def` port (bead
+    `flapjack-dshl`); `inst` itself is currently untagged. -/
 theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C : Type} {F : Type} :
     (∀ (state : WordSemStateBroad width C F) (h : state.FiniteSupport),
         (WordSemStateBroad.ofBroad state h).toBroad = state) ∧
@@ -68,7 +71,7 @@ def holBitFieldInsert (h l : Nat) {k n : Nat} (a : BitVec k) (w : BitVec n) : Bi
 
 namespace WordSemStateFiniteExact
 
-/-- Exact HOL `inst_def` (`wordSemScript.sml:716-939`); see the module
+/-- Rendering of HOL `inst_def` (`wordSemScript.sml:716-939`); see the module
     docstring for the operation renderings.  Clause by clause:
     * `Skip` leaves the state unchanged, `Const` assigns `Const w`, and
       `Binop`/`Shift` assign the `Op`/`Shift` expression over `Var` and the
@@ -83,22 +86,25 @@ namespace WordSemStateFiniteExact
     * `FP` reads and writes the `fp_regs` through `get_fp_var`/`set_fp_var`.
       Its `dimindex (:'a) = 64` tests are `width = 64`.
 
-    Caveat on the FP clauses. The `inst_def` clauses are a reviewed rendering
-    over the qualified carriers. Correctness of the separately untagged
-    binary64 library renderings is an external assumption, not proved by this
-    tag. Arithmetic,
-    comparison and conversion (`Flapjack.Misc.BinaryIeee*`,
-    `MachineIeee`) render HOL real values of floats as `Rat`.  Square root
-    (`BinaryIeeeSqrt`) renders HOL `sqrt r` through rational cut criteria.
-    Their agreement with HOL's real-number specification is the external
-    assurance assumption of `docs/SOUNDNESS.md` item 8.  `real_to_float` is
-    reached only through `int_to_fp64` in the `FPFromInt` clause, and there
-    its argument is a Lean `Int` (`w2i` of an extracted word).  So the
-    Rat-restricted `holRealToFloat` only ever receives integers, which is
-    within its covered domain.  NaN results are HOL's unspecified
-    `float_some_qnan`. -/
+    Qualified port (`reals_as_rational_cuts`, PR #1179 review, bead
+    `flapjack-qfld`).  The `FPSqrt` clause calls `holFp64Sqrt`
+    (`BinaryIeeeSqrt`), which decides each comparison of HOL `fp64_sqrt`
+    against the real `sqrt r` by its rational cut; HOL's rounding inspects
+    that real only through such comparisons, so this is a representation of
+    the HOL real, recorded by the qualifier.  Its agreement with HOL remains
+    the external assumption of `docs/SOUNDNESS.md` item 8.
+
+    Every other clause matches HOL clause by clause.  The other FP clauses use
+    the binary64 renderings over `Rat`.  Floats have dyadic rational values,
+    so those renderings reach only rational arguments (see the `fpSem`
+    comparison and arithmetic declarations for the argument).
+    `real_to_float` is reached only through `int_to_fp64` in `FPFromInt`, with
+    an integer argument (`w2i` of an extracted word).  NaN results are HOL's
+    unspecified `float_some_qnan`, rendered by `Classical.epsilon` on the same
+    predicate. -/
 @[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "inst_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)
+  (reals_as_rational_cuts)]
 noncomputable def inst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (i : WordLangInst (BitVec width)) (s : WordSemStateFiniteExact width C F) :
     Option (WordSemStateFiniteExact width C F) :=
@@ -111,7 +117,7 @@ noncomputable def inst {width : Nat} [NeZero width] {C : Type} {F : Type}
       assign r1 (.shift sh (.var r2) (match ri with | .reg r3 => .var r3 | .imm w => .const w)) s
   | .arith (.div r1 r2 r3) =>
       match getVars [r3, r2] s with
-      | some [.word q, .word w2] => if q ≠ 0 then some (setVar r1 (.word (w2 / q)) s) else none
+      | some [.word q, .word w2] => if q ≠ 0 then some (setVar r1 (.word (w2.sdiv q)) s) else none
       | _ => none
   | .arith (.addCarry r1 r2 r3 r4) =>
       match getVars [r2, r3, r4] s with

@@ -1,3 +1,14 @@
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutNames
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyRemap
+import Flapjack.Pancake.PanStructs.CompileDeclsExact
+import Flapjack.Pancake.PanStructs.CompileProgExact
+import Flapjack.Pancake.PanStructs.CompileExpExact
+import Flapjack.Pancake.PanStructs.OldExpShapeExact
+import Flapjack.Compiler.Backend.WordAlloc.Instructions
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyMaps
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.Expressions
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.LiveExpressions
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.Updates
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.StateRelation
 import Flapjack.Compiler.Backend.WordAlloc.Expressions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.StrongLocalsRel
@@ -14,7 +25,18 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.Inst
 import Flapjack.Compiler.Backend.Semantics.WordSem.Evaluate
 import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateClock
 import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateInd
+import Flapjack.Compiler.Backend.Semantics.StackSem.State
+import Flapjack.Compiler.Backend.Semantics.StackSem.Control
+import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+import Flapjack.Compiler.Backend.Semantics.StackSem.Expressions
+import Flapjack.Compiler.Backend.Semantics.StackSem.Allocation
+import Flapjack.Compiler.Backend.Semantics.StackSem.Bitmap
+import Flapjack.Compiler.Backend.Semantics.StackSem.WordBitmap
+import Flapjack.Compiler.Backend.Semantics.StackSem.StackCodec
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateIoEventsMono
 import Flapjack.Compiler.Backend.Semantics.WordSem.Semantics
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClock
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClockIoEventsMono
 import Flapjack.Misc.ShiftSeq
 import Flapjack.FpSemHOL
 import Flapjack.Basis.Pure.MlList
@@ -28,6 +50,8 @@ import Flapjack.Compiler.Backend.WordToStackRegFormat
 import Flapjack.Compiler.Backend.LabSem
 import Flapjack.Compiler.Backend.LabProps
 import Flapjack.Compiler.Backend.StackNames
+import Flapjack.Compiler.Backend.StackNames.NamesOk
+import Flapjack.Compiler.Backend.StackNames.Labels
 import Flapjack.Compiler.Backend.StackRemove
 import Flapjack.Compiler.Encoders.Asm
 import Flapjack.Misc.AppList
@@ -123,6 +147,7 @@ import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call.HandlerTail
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call.SomeHandler
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Assembly
+import Flapjack.Pancake.LoopToWord.Proofs.StateRelImpSemantics
 import Flapjack.Pancake.LoopLang.AssignedVars
 import Flapjack.Pancake.Semantics.LoopProps.AssignedVars
 import Flapjack.Pancake.Semantics.LoopProps.CutSets
@@ -130,12 +155,16 @@ import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOk
 import Flapjack.Pancake.PanCommon
 import Flapjack.Pancake.PanGlobals
 import Flapjack.Pancake.PanGlobals.CompileExpExact
+import Flapjack.Pancake.PanGlobals.CompileTopExact
 import Flapjack.Pancake.PanLang
 import Flapjack.Pancake.PanLang.Shape
 import Flapjack.Pancake.PanLang.Exp
 import Flapjack.Pancake.PanLang.Prog
 import Flapjack.Pancake.PanLang.Decl
 import Flapjack.Pancake.PanSimp
+import Flapjack.Pancake.Proofs.PanSimp.StateRel
+import Flapjack.Pancake.Proofs.PanSimp.CompileEvalCorrect
+import Flapjack.Pancake.Proofs.PanSimp.RetToTailCorrect
 import Flapjack.Pancake.PanToCrep
 import Flapjack.Pancake.PanToCrep.Compile
 import Flapjack.Pancake.PanToCrep.CompileExact
@@ -162,7 +191,21 @@ import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectStore32
 import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectStoreByte
 import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectExtCall
 import Flapjack.Pancake.Proofs.CrepInline
+import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.ExtCall
+import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.Primitive
+import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.ShMem
+import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.Structural
+import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.While
+import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.Call
+import Flapjack.Pancake.Proofs.CrepInline.EvaluateStateLocals.Atoms
+import Flapjack.Pancake.Proofs.CrepInline.Expressions
+import Flapjack.Pancake.Proofs.CrepInline.UpdateListLocals
+import Flapjack.Pancake.Proofs.CrepInline.NestedDecs
+import Flapjack.Pancake.Proofs.CrepInline.ShMem
 import Flapjack.Pancake.Proofs.PanGlobals
+import Flapjack.Pancake.Proofs.PanGlobals.DeclListLemmas
+import Flapjack.Pancake.Proofs.PanGlobals.CompileDecsStructural
+import Flapjack.Pancake.Proofs.PanGlobals.CompileTopShapeWf
 import Flapjack.Pancake.Proofs.PanStructs
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrect
 import Flapjack.Pancake.Proofs.PanToCrep
@@ -173,6 +216,7 @@ import Flapjack.Pancake.Proofs.PanToCrep.CompileExpValRel
 import Flapjack.Pancake.Proofs.PanToWord
 import Flapjack.Pancake.Proofs.PanToCrep.Primop
 import Flapjack.Pancake.Proofs.PanToCrep.StateRelFiniteSupport
+import Flapjack.Pancake.Proofs.PanToCrep.StateRelImpSemantics
 import Flapjack.Pancake.Proofs.PanToCrep.TotalEvaluateCases
 import Flapjack.Pancake.Proofs.PanToCrep.EvaluateNestedAssign
 import Flapjack.Pancake.Proofs.PanToCrep.EvaluateNestedDecs
@@ -259,8 +303,11 @@ import Flapjack.Pancake.Semantics.PanSem.TotalSteps
 import Flapjack.Pancake.Semantics.PanSem.ValueHOL
 import Flapjack.Pancake.Semantics.PanSem.StateExact
 import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+import Flapjack.Pancake.Semantics.PanSem.Semantics
 import Flapjack.Pancake.Semantics.PanSem.EvaluateClock
 import Flapjack.Pancake.Semantics.PanSem.ClockTimeout
+import Flapjack.Pancake.Semantics.PanProps.EvaluateAddClockIoEventsMono
+import Flapjack.Pancake.Semantics.PanProps.EvaluateAddClockEq
 import Flapjack.Pancake.Semantics.PanSem.ShMemLoadCase
 import Flapjack.Pancake.Semantics.PanSem.ExtCallCase
 import Flapjack.Pancake.Semantics.PanSem.LocalUpdatesExact
@@ -311,8 +358,60 @@ private def definitionBody? : ConstantInfo → Option Expr
   | .opaqueInfo value => some value.value
   | _ => none
 
+/-- Constants mentioned by a declaration for the inherited-assumption closure:
+    its type, and its body when it is a definition. Theorem proofs are not
+    followed. -/
+private def closureEdges (info : ConstantInfo) : Array Name :=
+  let fromType := info.type.getUsedConstants
+  match definitionBody? info with
+  | some body => fromType ++ body.getUsedConstants
+  | none => fromType
+
+/-- Whether a declaration's type (and body, for a definition) transitively
+    reaches a `(reals_as_rational_cuts)`-tagged declaration through Flapjack
+    definitions and datatypes. `known` caches both outcomes soundly: a `true`
+    result is cached when found, and when a traversal is exhausted without a
+    hit every visited constant is cached as `false` (its closure lies inside
+    the visited set). -/
+private def reachesRealsCuts (env : Environment) (realsTagged : NameSet)
+    (known : Std.HashMap Name Bool) (root : Name) : Bool × Std.HashMap Name Bool := Id.run do
+  let flapjackModule (constName : Name) : Bool :=
+    match env.getModuleIdxFor? constName with
+    | some idx => (env.header.moduleNames[idx.toNat]!).getRoot == `Flapjack
+    | none => true
+  let mut known := known
+  let mut visited : NameSet := {}
+  let mut stack : Array Name :=
+    match env.find? root with
+    | some info => closureEdges info
+    | none => #[]
+  while !stack.isEmpty do
+    let current := stack.back!
+    stack := stack.pop
+    if visited.contains current then continue
+    visited := visited.insert current
+    if realsTagged.contains current then
+      return (true, known.insert root true)
+    match known.get? current with
+    | some true => return (true, known.insert root true)
+    | some false => continue
+    | none => pure ()
+    if !flapjackModule current then continue
+    match env.find? current with
+    | some info =>
+        match info with
+        | .thmInfo _ => pure ()
+        | _ => stack := stack ++ closureEdges info
+    | none => pure ()
+  for constName in visited.toList do
+    known := known.insert constName false
+  return (false, known.insert root false)
+
 elab "#emit_hol_type_hashes" : command => do
   let env ← getEnv
+  let realsTagged : NameSet := (HolRef.all env).foldl
+    (fun acc (entry : Name × HolRef) => if entry.2.realsAsRationalCuts then acc.insert entry.1 else acc) {}
+  let mut known : Std.HashMap Name Bool := {}
   for (name, ref) in HolRef.all env do
     match env.find? name with
     | none => throwError "missing declaration {name}"
@@ -332,6 +431,8 @@ elab "#emit_hol_type_hashes" : command => do
           ("words_as_type_indexed_bitvec", toJson ref.wordsAsTypeIndexedBitvec)]
         if let some width := ref.wordDimensionAsWidth then
           qualifiers := qualifiers ++ [("word_dimension_as_width", toJson width)]
+        if ref.realsAsRationalCuts then
+          qualifiers := qualifiers ++ [("reals_as_rational_cuts", toJson true)]
         let mut fields : List (String × Json) := [
           ("lean_name", toJson name.toString),
           ("hol_path", toJson ref.path),
@@ -342,6 +443,11 @@ elab "#emit_hol_type_hashes" : command => do
         | some body =>
             fields := fields ++ [("value_expr", toJson (reprStr (canonicalExpr body)))]
         | none => pure ()
+        if !ref.realsAsRationalCuts then
+          let (reaches, known') := reachesRealsCuts env realsTagged known name
+          known := known'
+          if reaches then
+            fields := fields ++ [("inherits_reals_as_rational_cuts", toJson true)]
         liftIO <| IO.println (Json.mkObj fields).compress
 
 #emit_hol_type_hashes

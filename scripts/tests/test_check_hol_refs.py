@@ -14,6 +14,72 @@ SITES = CHECKER["hol_attribute_sites"]
 REF_ERROR = CHECKER["hol_ref_error"]
 
 
+class ExternalHolSourcesTest(unittest.TestCase):
+    def fixture(self, root):
+        import hashlib
+        import json
+        base = root / "hol4"
+        (base / "src/finite_maps").mkdir(parents=True)
+        (base / "COPYRIGHT").write_text("retained license")
+        (base / "src/finite_maps/sptreeScript.sml").write_text("Theorem domain_union: T Proof simp[] QED")
+        lock = {"repository": CHECKER["EXTERNAL_HOL_REPOSITORY"], "commit": "a" * 40,
+                "files": {p: hashlib.sha256((base / p).read_bytes()).hexdigest()
+                          for p in ["COPYRIGHT", "src/finite_maps/sptreeScript.sml"]}}
+        (base / "SOURCES.json").write_text(json.dumps(lock))
+
+    def test_repository_snapshot_pin(self):
+        self.assertIsNone(CHECKER["hol_source_error"](CHECKER["ROOT"], CHECKER["EXTERNAL_HOL_PATH"]))
+
+    def test_upstream_identity_rejected(self):
+        import json
+        for field, value in [("commit", "not-a-commit"), ("repository", "https://example.com/other")]:
+            with self.subTest(field=field), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                self.fixture(root)
+                manifest = root / "hol4/SOURCES.json"
+                lock = json.loads(manifest.read_text())
+                lock[field] = value
+                manifest.write_text(json.dumps(lock))
+                self.assertIsNotNone(CHECKER["hol_source_error"](root, CHECKER["EXTERNAL_HOL_PATH"]))
+
+    def test_valid_pin(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.fixture(root)
+            self.assertIsNone(CHECKER["hol_source_error"](root, CHECKER["EXTERNAL_HOL_PATH"]))
+
+    def test_source_and_license_drift_rejected(self):
+        for relative in ["COPYRIGHT", "src/finite_maps/sptreeScript.sml"]:
+            with self.subTest(relative=relative), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                self.fixture(root)
+                (root / "hol4" / relative).write_text("altered")
+                self.assertIn("mismatch", CHECKER["hol_source_error"](root, CHECKER["EXTERNAL_HOL_PATH"]))
+
+    def test_unpinned_and_traversal_rejected(self):
+        for path in ["hol4/otherScript.sml", "/tmp/source.sml", "cakeml/../source.sml",
+                     "cakeml//source.sml", "hol4/src/finite_maps/./sptreeScript.sml"]:
+            with self.subTest(path=path):
+                self.assertIsNotNone(CHECKER["hol_source_error"](Path("/tmp"), path))
+
+    def test_missing_and_malformed_manifest_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.assertIsNotNone(CHECKER["hol_source_error"](root, CHECKER["EXTERNAL_HOL_PATH"]))
+            self.fixture(root)
+            (root / "hol4/SOURCES.json").write_text("[]")
+            self.assertIsNotNone(CHECKER["hol_source_error"](root, CHECKER["EXTERNAL_HOL_PATH"]))
+
+    def test_symlink_rejected_even_with_matching_bytes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.fixture(root)
+            source = root / CHECKER["EXTERNAL_HOL_PATH"]
+            source.rename(root / "source-copy")
+            source.symlink_to(root / "source-copy")
+            self.assertIsNotNone(CHECKER["hol_source_error"](root, CHECKER["EXTERNAL_HOL_PATH"]))
+
+
 class HolAttributeSitesTest(unittest.TestCase):
     def test_single_line(self):
         self.assertEqual(
@@ -159,6 +225,51 @@ theorem holFmapAsFiniteSupportWitness : True := by trivial
         word_carrier = "def example (width : Nat) [NeZero width] : BitVec width := 0"
         self.assertTrue(any("word-free signatures" in error
                             for error in check(word_carrier, "example", "width")))
+
+    def test_reals_as_rational_cuts_site_flag(self):
+        sites = list(SITES([
+            '@[hol "cakeml/semantics/fpSemScript.sml" "fp_uop_comp_def"',
+            '  (reals_as_rational_cuts)]',
+        ], include_fmap_existentials=True, include_word_dimension_width=True,
+            include_fmap_function=True, include_reals_as_rational_cuts=True))
+        self.assertTrue(sites[0][-1])
+        plain = list(SITES([
+            '@[hol "cakeml/semantics/fpSemScript.sml" "fp_uop_comp_def"]',
+        ], include_reals_as_rational_cuts=True))
+        self.assertFalse(plain[0][-1])
+
+    def test_reals_as_rational_cuts_required_exactly_for_rendering_users(self):
+        check = CHECKER["reals_as_rational_cuts_errors"]
+        names = {"holFp64Sqrt", "holFp64Add"}
+        user = "noncomputable def uop : BitVec 64 -> BitVec 64\n  | x => holFp64Sqrt .roundTiesToEven x"
+        self.assertEqual(check(user, True, names), [])
+        self.assertTrue(any("must carry (reals_as_rational_cuts)" in error
+                            for error in check(user, False, names)))
+        dependent = "def evaluate (s : State) : State := match inst s with | _ => s"
+        self.assertEqual(check(dependent, False, names), [])
+        self.assertTrue(any("dependents inherit" in error
+                            for error in check(dependent, True, names)))
+        comment_only = "def f : Nat := 0 -- see holFp64Sqrt"
+        self.assertEqual(check(comment_only, False, names), [])
+
+    def test_reals_as_rational_cuts_ignores_following_declarations(self):
+        check = CHECKER["reals_as_rational_cuts_errors"]
+        names = {"holFp64Equal"}
+        datatype = """inductive FpCmp where
+  | less | equal
+  deriving DecidableEq
+
+/-- next -/
+@[hol "cakeml/semantics/fpSemScript.sml" "fp_cmp_comp_def"]
+noncomputable def cmp : FpCmp -> Bool
+  | .equal => holFp64Equal 0 0
+"""
+        self.assertEqual(check(datatype, False, names), [])
+
+    def test_reals_rendering_names_cover_machine_ieee(self):
+        names = CHECKER["reals_rendering_names"](CHECKER["ROOT"])
+        self.assertIn("holFp64Sqrt", names)
+        self.assertIn("holFp64Add", names)
 
     def test_fmap_as_finite_support_fields(self):
         self.assertEqual(
@@ -1463,6 +1574,94 @@ class HolDatatypeDeclarationsTest(unittest.TestCase):
         names = DECL(path, {})
         self.assertEqual(names["expr"], [2])
         self.assertNotIn("field", names)
+
+
+class HolProgWordAliasTest(unittest.TestCase):
+    SIGNATURE = "theorem example {width : Nat} [NeZero width] (p : HolProg width) : True := by trivial"
+    MODULE = "Flapjack.AliasProbe"
+
+    def fixture(self, root):
+        for module in ("Flapjack.Compiler.Backend.StackLang.Prog",
+                       "Flapjack.Compiler.Backend.StackLang",
+                       "Flapjack.Compiler.Encoders.Asm"):
+            relative = Path(module.replace(".", "/") + ".lean")
+            destination = root / relative
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            destination.write_text((CHECKER["ROOT"] / relative).read_text())
+        (root / "Flapjack/AliasProbe.lean").write_text(
+            "import Flapjack.Compiler.Backend.StackLang.Prog\n" + self.SIGNATURE)
+
+    def errors(self, root, signature=None):
+        signature = signature or self.SIGNATURE
+        return CHECKER["words_as_type_indexed_bitvec_errors"](
+            signature, "example", module=self.MODULE, root=str(root), lines=signature.splitlines())
+
+    def test_exact_alias(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.fixture(root)
+            for name in ("HolProg", "StackLang.HolProg", "Compiler.Backend.StackLang.HolProg",
+                         "Flapjack.Compiler.Backend.StackLang.HolProg"):
+                self.assertEqual(self.errors(root, self.SIGNATURE.replace("HolProg", name)), [])
+
+    def test_rejects_source_drift(self):
+        for old, new in (("[NeZero width]", ""),
+                         ("(HolAddr width)", "(HolAddr 64)"),
+                         ("HolRegImm width", "HolRegImm 0"),
+                         ("HolCmp", "Nat")):
+            with self.subTest(change=new), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                self.fixture(root)
+                path = root / "Flapjack/Compiler/Backend/StackLang/Prog.lean"
+                path.write_text(path.read_text().replace(old, new))
+                self.assertTrue(self.errors(root))
+
+    def test_rejects_shadow_and_unimported_alias(self):
+        for declaration in ("abbrev HolProg (width : Nat) := Nat",
+                            "abbrev Evil.HolProg (width : Nat) := Nat",
+                            "inductive HolInst (width : Nat) [NeZero width] where | fake"):
+            with self.subTest(shadow=declaration), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                self.fixture(root)
+                path = root / "Flapjack/AliasProbe.lean"
+                path.write_text(path.read_text() + "\n" + declaration)
+                self.assertTrue(self.errors(root))
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.fixture(root)
+            (root / "Flapjack/AliasProbe.lean").write_text(self.SIGNATURE)
+            self.assertTrue(self.errors(root))
+
+    def test_rejects_imported_payload_alias_shadow(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.fixture(root)
+            (root / "Flapjack/Shadow.lean").write_text("abbrev HolInst (width : Nat) := Nat")
+            path = root / "Flapjack/AliasProbe.lean"
+            path.write_text("import Flapjack.Shadow\n" + path.read_text())
+            self.assertTrue(self.errors(root))
+
+    def test_rejects_missing_or_wrong_positive_width(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.fixture(root)
+            for signature in (self.SIGNATURE.replace("[NeZero width]", ""),
+                              self.SIGNATURE.replace("[NeZero width]", "[NeZero other]"),
+                              self.SIGNATURE.replace("HolProg width", "HolProg 0"),
+                              self.SIGNATURE.replace("HolProg width", "Evil.HolProg width"),
+                              self.SIGNATURE.replace("(p : HolProg width)",
+                                  "(p : Evil.HolProg width) (unrelated : BitVec width)")):
+                self.assertTrue(self.errors(root, signature))
+
+    def test_rejects_payload_without_own_word_and_positive_width(self):
+        for old, new in (("(value : BitVec width)", "(value : Nat)"),
+                         ("inductive HolInst (width : Nat) [NeZero width]", "inductive HolInst (width : Nat)")):
+            with self.subTest(change=new), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                self.fixture(root)
+                path = root / "Flapjack/Compiler/Encoders/Asm.lean"
+                path.write_text(path.read_text().replace(old, new))
+                self.assertTrue(self.errors(root))
 
 
 class WordsAsTypeIndexedBitvecQualifierTest(unittest.TestCase):

@@ -101,9 +101,48 @@ run_probe() {
   done
 }
 
+run_probe stacksem_expression_probeScript.sml stacksem_expression_probe.out \
+  const var_word var_loc var_missing lookup_word lookup_loc lookup_missing load_word load_loc load_oob load_bad_address op_empty_and op_add_wrap op_sub_bad_arity op_bad_operand shift_valid shift_oob shift_bad_right assign_success assign_failure \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe stacksem_allocation_probeScript.sml stacksem_allocation_probe.out \
+  space_true space_false space_wrap space_loc space_missing space_next_loc \
+  gc_short gc_bad_stack gc_none gc_decode_fail gc_success space_mixed type_space alloc_success alloc_halt alloc_gc_failure alloc_missing alloc_bad_amount alloc_bad_space \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe stacksem_stack_codec_probeScript.sml stacksem_stack_codec_probe.out \
+  full_zero full_one full_two full_oob full_loc enc_empty enc_zero enc_zero_extra enc_loc enc_true enc_false enc_two enc_short enc_missing_sentinel enc_bad_continuation dec_empty dec_zero dec_true dec_false dec_short_roots dec_extra_roots dec_two dec_zero_extra full_mixed enc_mixed dec_mixed type_full type_enc type_dec \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
+run_probe stacksem_word_bitmap_probeScript.sml stacksem_word_bitmap_probe.out \
+  length_zero length_one length_high bitmap_empty bitmap_zero bitmap_one bitmap_order \
+  bitmap_trailing bitmap_missing_continuation bitmap_continuation bitmap_width_one \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
 # Run from the local HOL object directory when Holmake has populated it, so
 # HOL's ordinary theory loader finds compiled CakeML theories. Fall back to
 # the source directory for checkouts whose Holmake places objects there.
+run_probe word_alloc_pair_keys_probeScript.sml word_alloc_pair_keys_probe.out \
+  heterogeneous collision empty "$cake_dir/compiler/backend/word_allocScript.sml" \
+  "$cake_dir/compiler/backend"
+run_probe word_sem_cut_names_type_probeScript.sml word_sem_cut_names_type_probe.out \
+  cut_names_type cut_envs_type cut_env_type "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+run_probe word_alloc_live_inst_probeScript.sml word_alloc_live_inst_probe.out \
+  load16 load8 store32 carry overflow to64 to32 from64 from32 "$cake_dir/compiler/backend/word_allocScript.sml" \
+  "$cake_dir/compiler/backend"
+run_probe word_alloc_live_exp_probeScript.sml word_alloc_live_exp_probe.out \
+  nested duplicate empty shift constant lookup \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+run_probe word_alloc_colour_inst_probeScript.sml word_alloc_colour_inst_probe.out \
+  load16 store16 load8 store32 carry fp_move "$cake_dir/compiler/backend/word_allocScript.sml" \
+  "$cake_dir/compiler/backend"
+run_probe word_alloc_live_exp_probeScript.sml word_alloc_live_exp_probe.out \
+  nested duplicate empty shift constant lookup \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+run_probe word_alloc_colour_exp_probeScript.sml word_alloc_colour_exp_probe.out \
+  nested duplicate empty "$cake_dir/compiler/backend/word_allocScript.sml" \
+  "$cake_dir/compiler/backend"
 run_probe word_add_carry_probeScript.sml word_add_carry_probe.out \
   ordinary carry_overflow "$cake_dir/compiler/backend/backend_commonScript.sml" \
   "$cake_dir/compiler/backend"
@@ -1200,7 +1239,7 @@ run_probe pan_globals_compile_probeScript.sml pan_globals_compile_probe.out \
   "$cake_dir/pancake"
 
 run_probe pan_globals_compile_top_probeScript.sml pan_globals_compile_top_probe.out \
-  missing_start global_present present_start "$cake_dir/pancake/pan_globalsScript.sml"
+  missing_start global_present present_start top_missing top_function top_global_exception compile_top_probe_done "$cake_dir/pancake/pan_globalsScript.sml"
 run_probe pan_globals_compile_decs_probeScript.sml pan_globals_compile_decs_probe.out \
   empty compile_decs_probe_done "$cake_dir/pancake/pan_globalsScript.sml"
 run_probe smart_seq_probeScript.sml smart_seq_probe.out \
@@ -1282,6 +1321,10 @@ run_probe afindi_probeScript.sml afindi_probe.out \
   opt_mmap_eq_every alookup_drop_helper map_fst_eq_alookup \
   map_fst_eq_alookup_different_value_types map_fst_eq_alookup_inferred_types \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml"
+run_probe pan_structs_compile_decls_probeScript.sml pan_structs_compile_decls_probe.out \
+  empty decs names top shadow "$cake_dir/pancake/pan_structsScript.sml"
+run_probe pan_structs_compile_prog_probeScript.sml pan_structs_compile_prog_probe.out \
+  dec deccall handler callnone callnohandler fallback "$cake_dir/pancake/pan_structsScript.sml"
 run_probe pan_structs_compile_exp_probeScript.sml pan_structs_compile_exp_probe.out \
   rstruct old_shapes_map "$cake_dir/pancake/pan_structsScript.sml"
 run_probe crep_semantics_probeScript.sml crep_semantics_probe.out \
@@ -1566,7 +1609,7 @@ run_probe pan_itree_h_handle_deccall_ret_probeScript.sml \
   failed_caller raised_clears_locals \
   "$cake_dir/pancake/semantics/pan_itreeSemScript.sml"
 run_probe loop_sem_loop_arith_probeScript.sml loop_sem_loop_arith_probe.out \
-  loop_arith_div loop_arith_longdiv_overflow "$cake_dir/pancake/semantics/loopSemScript.sml"
+  loop_arith_div loop_arith_signed_8 "$cake_dir/pancake/semantics/loopSemScript.sml"
 run_probe longdiv_code_probeScript.sml longdiv_code_probe.out \
   longdiv_code_software riscv_longdiv_encoding \
   "$cake_dir/compiler/backend/data_to_wordScript.sml"
@@ -1789,6 +1832,15 @@ run_probe machine_ieee_fp64_sqrt_special_probeScript.sml machine_ieee_fp64_sqrt_
 run_probe machine_ieee_fp64_sqrt_exact_probeScript.sml machine_ieee_fp64_sqrt_exact_probe.out \
   sqrt_four sqrt_min_sub sqrt_2p1022 \
   "$hol_dir/src/floating-point/binary_ieeeScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
+# Signed word quotient operator in original wordSem Div (.18.5.10.1).
+run_probe word_sem_div_signed_probeScript.sml word_sem_div_signed_probe.out \
+  positive negative_small negative_dividend negative_divisor both_negative \
+  min_overflow min_half positive_minus_one zero_divisor zero_dividend \
+  alias_dividend alias_divisor same_source missing_dividend location_divisor \
+  min64_overflow min1_overflow \
+  "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 
 # The wordSem inst_def probe observes integer arithmetic, memory and
@@ -2397,6 +2449,10 @@ run_probe loop_sem_evaluate_ind_probeScript.sml loop_sem_evaluate_ind_probe.out 
 run_probe pan_sem_evaluate_ind_probeScript.sml pan_sem_evaluate_ind_probe.out \
   evaluate_ind "$cake_dir/pancake/semantics/panSemScript.sml" \
   "$cake_dir/pancake/semantics"
+
+run_probe word_alloc_key_map_probeScript.sml word_alloc_key_map_probe.out \
+  key_map_mixed key_map_collision key_map_done \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
 
 # HOL's byte decoder `word_of_bytes` (HOL/src/n-bit/byteScript.sml:197) is the
 # function installed by the exact shared-memory loads (panSemScript.sml:517/524,

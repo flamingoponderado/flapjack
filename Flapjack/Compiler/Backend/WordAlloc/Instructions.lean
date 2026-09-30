@@ -1,0 +1,103 @@
+import Flapjack.Pancake.WordLang
+
+namespace Flapjack.WordAlloc
+
+/-- Exact HOL immediate colouring: register operands are renamed and word
+immediates remain unchanged. -/
+@[hol "cakeml/compiler/backend/word_allocScript.sml" "apply_colour_imm_def"
+  (words_as_type_indexed_bitvec)]
+def applyColourImm {width : Nat} [NeZero width] (f : Nat → Nat) :
+    WordRegImm (BitVec width) → WordRegImm (BitVec width)
+  | .reg n => .reg (f n)
+  | .imm w => .imm w
+
+/-- Shared generic immediate recursion for exact and executed colouring.
+Flapjack implementation infrastructure; the tagged port keeps its word type. -/
+def applyColourImmCore {α : Type u} (f : Nat → Nat) : WordRegImm α → WordRegImm α
+  | .reg n => .reg (f n)
+  | .imm w => .imm w
+
+/-- Shared exact constructor recursion for instruction colouring.
+Flapjack implementation infrastructure used by the executed carrier route. -/
+def applyColourInstCore {α : Type u} (f : Nat → Nat) :
+    WordLangInst α → WordLangInst α
+  | .skip => .skip
+  | .const r w => .const (f r) w
+  | .arith (.binop op r1 r2 ri) => .arith (.binop op (f r1) (f r2) (applyColourImmCore f ri))
+  | .arith (.shift sh r1 r2 ri) => .arith (.shift sh (f r1) (f r2) (applyColourImmCore f ri))
+  | .arith (.div r1 r2 r3) => .arith (.div (f r1) (f r2) (f r3))
+  | .arith (.addCarry r1 r2 r3 r4) => .arith (.addCarry (f r1) (f r2) (f r3) (f r4))
+  | .arith (.addOverflow r1 r2 r3 r4) => .arith (.addOverflow (f r1) (f r2) (f r3) (f r4))
+  | .arith (.subOverflow r1 r2 r3 r4) => .arith (.subOverflow (f r1) (f r2) (f r3) (f r4))
+  | .arith (.longMul r1 r2 r3 r4) => .arith (.longMul (f r1) (f r2) (f r3) (f r4))
+  | .arith (.longDiv r1 r2 r3 r4 r5) => .arith (.longDiv (f r1) (f r2) (f r3) (f r4) (f r5))
+  | .mem .load r (.addr a w) => .mem .load (f r) (.addr (f a) w)
+  | .mem .store r (.addr a w) => .mem .store (f r) (.addr (f a) w)
+  | .mem .load32 r (.addr a w) => .mem .load32 (f r) (.addr (f a) w)
+  | .mem .store32 r (.addr a w) => .mem .store32 (f r) (.addr (f a) w)
+  | .mem .load8 r (.addr a w) => .mem .load8 (f r) (.addr (f a) w)
+  | .mem .store8 r (.addr a w) => .mem .store8 (f r) (.addr (f a) w)
+  | .fp (.fpLess r f1 f2) => .fp (.fpLess (f r) f1 f2)
+  | .fp (.fpLessEqual r f1 f2) => .fp (.fpLessEqual (f r) f1 f2)
+  | .fp (.fpEqual r f1 f2) => .fp (.fpEqual (f r) f1 f2)
+  | .fp (.fpMovToReg r1 r2 d) => .fp (.fpMovToReg (f r1) (f r2) d)
+  | .fp (.fpMovFromReg d r1 r2) => .fp (.fpMovFromReg d (f r1) (f r2))
+  | instruction => instruction
+
+
+/-- Exact HOL instruction colouring. The literal six memory clauses omit
+Load16/Store16, which retain the whole instruction through HOL's catchall.
+FP comparison/move integer registers alone are renamed; float registers are
+unchanged. The executed instruction route uses this same generic recursion. -/
+@[hol "cakeml/compiler/backend/word_allocScript.sml" "apply_colour_inst_def"
+  (words_as_type_indexed_bitvec)]
+def applyColourInst {width : Nat} [NeZero width] (f : Nat → Nat) :
+    WordLangInst (BitVec width) → WordLangInst (BitVec width) :=
+  applyColourInstCore f
+
+/-- Shared instruction-liveness recursion. This Flapjack implementation
+infrastructure accepts an explicit numeric word width; the HOL port below
+binds that dimension through its positive-width word carrier. -/
+def getLiveInstCore {α : Type u} (width : Nat) : WordLangInst α → NumSet → NumSet
+  | .skip, live => live
+  | .const r _, live => sptDelete r live
+  | .arith (.binop _ r1 r2 (.reg r3)), live
+  | .arith (.shift _ r1 r2 (.reg r3)), live =>
+      sptInsert r2 () (sptInsert r3 () (sptDelete r1 live))
+  | .arith (.binop _ r1 r2 (.imm _)), live
+  | .arith (.shift _ r1 r2 (.imm _)), live => sptInsert r2 () (sptDelete r1 live)
+  | .arith (.div r1 r2 r3), live => sptInsert r3 () (sptInsert r2 () (sptDelete r1 live))
+  | .arith (.addCarry r1 r2 r3 r4), live =>
+      sptInsert r4 () (sptInsert r3 () (sptInsert r2 () (sptDelete r1 live)))
+  | .arith (.addOverflow r1 r2 r3 r4), live
+  | .arith (.subOverflow r1 r2 r3 r4), live =>
+      sptInsert r3 () (sptInsert r2 () (sptDelete r4 (sptDelete r1 live)))
+  | .arith (.longMul r1 r2 r3 r4), live =>
+      sptInsert r4 () (sptInsert r3 () (sptDelete r2 (sptDelete r1 live)))
+  | .arith (.longDiv r1 r2 r3 r4 r5), live =>
+      sptInsert r5 () (sptInsert r4 () (sptInsert r3 () (sptDelete r2 (sptDelete r1 live))))
+  | .mem .load r (.addr a _), live
+  | .mem .load32 r (.addr a _), live
+  | .mem .load8 r (.addr a _), live => sptInsert a () (sptDelete r live)
+  | .mem .store r (.addr a _), live
+  | .mem .store32 r (.addr a _), live
+  | .mem .store8 r (.addr a _), live => sptInsert a () (sptInsert r () live)
+  | .fp (.fpLess r _ _), live
+  | .fp (.fpLessEqual r _ _), live
+  | .fp (.fpEqual r _ _), live => sptDelete r live
+  | .fp (.fpMovToReg r1 r2 _), live =>
+      if width = 64 then sptDelete r1 live else sptDelete r1 (sptDelete r2 live)
+  | .fp (.fpMovFromReg _ r1 r2), live =>
+      if width = 64 then sptInsert r1 () live else sptInsert r2 () (sptInsert r1 () live)
+  | _, live => live
+
+/-- Exact HOL instruction liveness, retaining insertion/deletion order and
+all constructor clauses. Load16/Store16 and FP-only operations use the literal
+HOL catchall; integer FP moves distinguish 64-bit from other word dimensions. -/
+@[hol "cakeml/compiler/backend/word_allocScript.sml" "get_live_inst_def"
+  (words_as_type_indexed_bitvec)]
+def getLiveInst {width : Nat} [NeZero width] :
+    WordLangInst (BitVec width) → NumSet → NumSet :=
+  getLiveInstCore width
+
+end Flapjack.WordAlloc

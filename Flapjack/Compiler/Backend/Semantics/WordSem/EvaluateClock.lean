@@ -130,7 +130,12 @@ theorem memStore_clock_termdep {width : Nat} [NeZero width] {C : Type} {F : Type
   · cases h; exact ⟨rfl, rfl⟩
   · cases h
 
-/-- Exact HOL local `inst_clock` (`wordSemScript.sml:1314-1322`). -/
+/-- Exact HOL local `inst_clock` (`wordSemScript.sml:1314-1322`): binders,
+    hypothesis and conclusion as in HOL.  Inherited assumption (bead
+    `flapjack-qfld`): the statement is over the tagged `inst`, which carries
+    `(reals_as_rational_cuts)` for its `FPSqrt` rendering; the theorem map
+    records the inherited `docs/SOUNDNESS.md` item 8 assumption.  Clock
+    preservation holds for that clause exactly as in HOL. -/
 @[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "inst_clock"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem inst_clock {width : Nat} [NeZero width] {C : Type} {F : Type}

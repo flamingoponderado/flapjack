@@ -2,6 +2,7 @@ import Flapjack.Pancake.PanStructs
 import Flapjack.Pancake.PanLang.Decl
 import Flapjack.Pancake.PanLang.Prog
 import Flapjack.Pancake.PanStructs.CompileShapeExact
+import Flapjack.Pancake.PanStructs.OldExpShapeExact
 
 /-!
 Byte-rangedness preservation for the named-structure elimination pass
@@ -107,6 +108,30 @@ def structContextToCompileShapeExact (context : StructContext) :
     List (MlS × List (MlS × ShapeHOL)) :=
   context.map fun entry =>
     (ofString entry.1, entry.2.fields.map fun field => (ofString field.1, shapeToHOL field.2))
+
+/-- Flapjack codec infrastructure, with no HOL original: encode all three
+production context fields without cached StructInfo sizes. -/
+def structPassContextToExact (context : StructPassContext) :
+    Flapjack.Pancake.PanStructs.CompileShapeExact.ContextExact :=
+  { structs := structContextToCompileShapeExact context.structs
+    locals := context.locals.map fun p => (ofString p.1, shapeToHOL p.2)
+    globals := context.globals.map fun p => (ofString p.1, shapeToHOL p.2) }
+
+/-- Exact `old_exp_shape` callback used by the byte-ranged production route.
+    Its correspondence to the source callback is proved under the real input
+    invariants below; outside that domain, the total String/mlstring codec can
+    be lossy. -/
+def structOldExpShapeExactCodec {width : Nat} [NeZero width]
+    (context : StructPassContext) (expression : Exp (BitVec width)) : Shape :=
+  shapeOfHOL (Pancake.PanStructs.CompileShapeExact.oldExpShapeExact
+    (structPassContextToExact context) (expToHOL expression))
+
+/-- Executed old-shape callback for the parser-proved production route. The
+    wrapper only exposes this callback when the declaration list carries the
+    byte-range premise needed for the codec correspondence theorem below. -/
+def structOldExpShapeExactProduction {width : Nat} [NeZero width]
+    (context : StructPassContext) (expression : Exp (BitVec width)) : Shape :=
+  structOldExpShapeExactCodec context expression
 
 private theorem ofString_injective_of_ranged_local {a b : String}
     (ha : NameRanged a) (hb : NameRanged b) (h : ofString a = ofString b) : a = b := by
@@ -230,6 +255,29 @@ theorem structCompileShapeWF_eq_compileShapeExact
       rw [hdropNone]
       simp [shapeOfHOL]
 
+/-- Exact HOL-shape callback for the parser-proved struct pass. This function
+    is only exported through `structCompileTopExactOfByteRanged` below, whose
+    source premise is required because the total String-to-MlString codec is
+    lossy outside `NameRanged`. -/
+def structCompileShapeExactProduction (context : StructContext) (shape : Shape) : Shape :=
+  shapeOfHOL (Flapjack.Pancake.PanStructs.CompileShapeExact.compileShapeExact
+    (structContextToCompileShapeExact context) (shapeToHOL shape))
+
+/-- The callback-driven exact `pan_structs` pass, restricted to declaration
+    lists that round-trip through the HOL byte-valued name and shape carriers.
+    It executes both HOL `compile_shape` and `old_exp_shape` exact definitions
+    through their codecs.
+    `structCompileTopExact_eq_legacyOfByteRanged` proves its output equals the
+    legacy pass on this domain. The parser-backed `compileFlapjackEntryCake`
+    route executes this pass after composing its byte-range evidence. This
+    codec wrapper has no separate HOL declaration. -/
+def structCompileTopExactOfByteRanged [BEq String] {width : Nat} [NeZero width]
+    (declarations : List (Decl (BitVec width)))
+    (_hdeclarations : ∀ declaration ∈ declarations, DeclByteRanged declaration) :
+    List (Decl (BitVec width)) :=
+  structCompileTop declarations structCompileShapeExactProduction
+    structOldExpShapeExactProduction
+
 theorem structCompileShape_byteRanged (context : StructContext) (shape : Shape)
     (hc : CtxBR context) (hs : ShapeByteRanged shape) :
     ShapeByteRanged (structCompileShape context shape) :=
@@ -313,88 +361,277 @@ theorem structSelectFields_byteRanged [BEq String]
 theorem structCompileExp_byteRanged {width : Nat} [BEq String] (context : StructPassContext)
     (hc : CtxBR context.structs) :
     ∀ e : Exp (BitVec width), ExpByteRanged e → ExpByteRanged (structCompileExp context e) := by
-  refine (structCompileExp.induct (α := BitVec width) context
-    (motive1 := fun l => (∀ e ∈ l, ExpByteRanged e) →
-        ∀ e ∈ structCompileExp.structCompileExps context l, ExpByteRanged e)
-    (motive2 := fun e => ExpByteRanged e → ExpByteRanged (structCompileExp context e))
-    (motive3 := fun l => (∀ p ∈ l, ExpByteRanged p.2) →
-        ∀ p ∈ structCompileExp.structCompileFields context l, ExpByteRanged p.2)
-    ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_)
-  · intro _ e he
-    simp [structCompileExp.structCompileExps] at he
-  · intro e es ihe ihes hall x hx
+  have hgeneral : ∀ (e : Exp (BitVec width))
+      (compileShape : StructContext → Shape → Shape)
+      (oldExpShape : StructPassContext → Exp (BitVec width) → Shape),
+      compileShape = structCompileShape → ExpByteRanged e →
+        ExpByteRanged (structCompileExp context e compileShape oldExpShape) := by
+    exact (structCompileExp.induct (α := BitVec width) context
+    (motive1 := fun l compileShape oldExpShape => compileShape = structCompileShape →
+        (∀ e ∈ l, ExpByteRanged e) →
+          ∀ e ∈ structCompileExp.structCompileExps context l compileShape oldExpShape,
+            ExpByteRanged e)
+    (motive2 := fun e compileShape oldExpShape => compileShape = structCompileShape →
+        ExpByteRanged e → ExpByteRanged (structCompileExp context e compileShape oldExpShape))
+    (motive3 := fun l compileShape oldExpShape => compileShape = structCompileShape →
+        (∀ p ∈ l, ExpByteRanged p.2) →
+          ∀ p ∈ structCompileExp.structCompileFields context l compileShape oldExpShape,
+            ExpByteRanged p.2)
+    (by
+      intro compileShape oldExpShape hcb hall e he
+      simp [structCompileExp.structCompileExps] at he)
+    (by
+    intro e es compileShape oldExpShape ihe ihes hcb hall x hx
     simp only [structCompileExp.structCompileExps] at hx
     rcases List.mem_cons.mp hx with rfl | hx'
-    · exact ihe (hall e (by simp))
-    · exact ihes (fun y hy => hall y (by simp [hy])) x hx'
-  · intro fields ih hv
-    rw [structCompileExp]
-    exact (listExpByteRanged_iff _).mpr (ih ((listExpByteRanged_iff _).mp hv))
-  · intro index value ih hv
-    rw [structCompileExp]
-    simp only [ExpByteRanged] at hv ⊢
-    exact ih hv
-  · intro name fields info hlookup ihfields hv
-    rw [structCompileExp]
-    simp only [hlookup]
-    exact (listExpByteRanged_iff _).mpr
-      (structSelectFields_byteRanged info.fields _
-        (ihfields (fun p hp => ((listFieldByteRanged_iff fields).mp hv.2 p hp).2)))
-  · intro name fields hlookup _hv
-    rw [structCompileExp]
-    simp only [hlookup]
-    simp [ExpByteRanged, ListExpByteRanged]
-  · intro field value ih hv
-    rw [structCompileExp]
-    simp only [ExpByteRanged] at hv ⊢
-    exact ih hv.2
-  · intro shape address ih hv
-    rw [structCompileExp]
-    exact ⟨structCompileShape_byteRanged context.structs shape hc hv.1, ih hv.2⟩
-  · intro address ih hv
-    rw [structCompileExp]
-    exact ih hv
-  · intro address ih hv
-    rw [structCompileExp]
-    exact ih hv
-  · intro operator arguments ih hv
-    rw [structCompileExp]
-    exact (listExpByteRanged_iff _).mpr (ih ((listExpByteRanged_iff _).mp hv))
-  · intro operator arguments ih hv
-    rw [structCompileExp]
-    exact (listExpByteRanged_iff _).mpr (ih ((listExpByteRanged_iff _).mp hv))
-  · intro operator left right ihl ihr hv
-    rw [structCompileExp]
-    exact ⟨ihl hv.1, ihr hv.2⟩
-  · intro operator left right ihl ihr hv
-    rw [structCompileExp]
-    exact ⟨ihl hv.1, ihr hv.2⟩
-  · intro expression h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 h11 hv
-    cases expression with
-    | const v => simp [ExpByteRanged]
-    | var k name => simpa [structCompileExp] using hv
-    | baseAddr => simp [structCompileExp, ExpByteRanged]
-    | topAddr => simp [structCompileExp, ExpByteRanged]
-    | bytesInWord => simp [structCompileExp, ExpByteRanged]
-    | rStruct fs => exact (h1 fs rfl).elim
-    | rField i v => exact (h2 i v rfl).elim
-    | nStruct nm fs => exact (h3 nm fs rfl).elim
-    | nField f v => exact (h4 f v rfl).elim
-    | load sh a => exact (h5 sh a rfl).elim
-    | load32 a => exact (h6 a rfl).elim
-    | loadByte a => exact (h7 a rfl).elim
-    | op o args => exact (h8 o args rfl).elim
-    | panOp o args => exact (h9 o args rfl).elim
-    | cmp o l r => exact (h10 o l r rfl).elim
-    | shift o l r => exact (h11 o l r rfl).elim
-  · intro _ p hp
-    simp [structCompileExp.structCompileFields] at hp
-  · intro field expression fields ihe ih hall p hp
-    simp only [structCompileExp.structCompileFields] at hp
-    rw [List.mem_cons] at hp
-    rcases hp with rfl | hp'
-    · exact ihe (hall (field, expression) (by simp))
-    · exact ih (fun q hq => hall q (by simp [hq])) p hp'
+    · exact ihe hcb (hall e (by simp))
+    · exact ihes hcb (fun y hy => hall y (by simp [hy])) x hx')
+    (by
+      intro fields compileShape oldExpShape ih hcb hv
+      rw [structCompileExp]
+      exact (listExpByteRanged_iff _).mpr (ih hcb ((listExpByteRanged_iff _).mp hv)))
+    (by
+      intro index value compileShape oldExpShape ih hcb hv
+      rw [structCompileExp]
+      simp only [ExpByteRanged] at hv ⊢
+      exact ih hcb hv)
+    (by
+      intro name fields compileShape oldExpShape info hlookup ihfields hcb hv
+      rw [structCompileExp]
+      simp only [hlookup]
+      exact (listExpByteRanged_iff _).mpr
+        (structSelectFields_byteRanged info.fields _
+          (ihfields hcb (fun p hp => ((listFieldByteRanged_iff fields).mp hv.2 p hp).2))))
+    (by
+      intro name fields compileShape oldExpShape hlookup ihfields hcb _hv
+      rw [structCompileExp]
+      simp only [hlookup]
+      simp [ExpByteRanged, ListExpByteRanged])
+    (by
+      intro field value compileShape oldExpShape ih hcb hv
+      rw [structCompileExp]
+      simp only [ExpByteRanged] at hv ⊢
+      exact ih hcb hv.2)
+    (by
+      intro shape address compileShape oldExpShape ih hcb hv
+      rw [structCompileExp]
+      subst compileShape
+      exact ⟨structCompileShape_byteRanged context.structs shape hc hv.1, ih rfl hv.2⟩)
+    (by
+      intro address compileShape oldExpShape ih hcb hv
+      rw [structCompileExp]
+      exact ih hcb hv)
+    (by
+      intro address compileShape oldExpShape ih hcb hv
+      rw [structCompileExp]
+      exact ih hcb hv)
+    (by
+      intro operator arguments compileShape oldExpShape ih hcb hv
+      rw [structCompileExp]
+      exact (listExpByteRanged_iff _).mpr (ih hcb ((listExpByteRanged_iff _).mp hv)))
+    (by
+      intro operator arguments compileShape oldExpShape ih hcb hv
+      rw [structCompileExp]
+      exact (listExpByteRanged_iff _).mpr (ih hcb ((listExpByteRanged_iff _).mp hv)))
+    (by
+      intro operator left right compileShape oldExpShape ihl ihr hcb hv
+      rw [structCompileExp]
+      exact ⟨ihl hcb hv.1, ihr hcb hv.2⟩)
+    (by
+      intro operator left right compileShape oldExpShape ihl ihr hcb hv
+      rw [structCompileExp]
+      exact ⟨ihl hcb hv.1, ihr hcb hv.2⟩)
+    (by
+      intro compileShape oldExpShape expression h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 h11 hcb hv
+      subst compileShape
+      cases expression with
+      | const v => simp [structCompileExp, ExpByteRanged]
+      | var k name => simpa [structCompileExp] using hv
+      | baseAddr => simp [structCompileExp, ExpByteRanged]
+      | topAddr => simp [structCompileExp, ExpByteRanged]
+      | bytesInWord => simp [structCompileExp, ExpByteRanged]
+      | rStruct fs => exact (h1 fs rfl).elim
+      | rField i v => exact (h2 i v rfl).elim
+      | nStruct nm fs => exact (h3 nm fs rfl).elim
+      | nField f v => exact (h4 f v rfl).elim
+      | load sh a => exact (h5 sh a rfl).elim
+      | load32 a => exact (h6 a rfl).elim
+      | loadByte a => exact (h7 a rfl).elim
+      | op o args => exact (h8 o args rfl).elim
+      | panOp o args => exact (h9 o args rfl).elim
+      | cmp o l r => exact (h10 o l r rfl).elim
+      | shift o l r => exact (h11 o l r rfl).elim)
+    (by
+      intro compileShape oldExpShape hcb _ p hp
+      simp [structCompileExp.structCompileFields] at hp)
+    (by
+      intro field expression fields compileShape oldExpShape ihe ih hcb hall p hp
+      simp only [structCompileExp.structCompileFields] at hp
+      rw [List.mem_cons] at hp
+      rcases hp with rfl | hp'
+      · exact ihe hcb (hall (field, expression) (by simp))
+      · exact ih hcb (fun q hq => hall q (by simp [hq])) p hp'))
+  intro e he
+  exact hgeneral e structCompileShape structOldExpShape rfl he
+
+private theorem structCompileExp_eq_of_shape_eq {width : Nat} [BEq String]
+    (context : StructPassContext) (compileShape : StructContext → Shape → Shape) :
+    (∀ shape, ShapeByteRanged shape →
+      compileShape context.structs shape = structCompileShape context.structs shape) →
+    ∀ expression : Exp (BitVec width), ExpByteRanged expression →
+      structCompileExp context expression compileShape = structCompileExp context expression := by
+  have hgeneral : ∀ (expression : Exp (BitVec width))
+      (compileShape : StructContext → Shape → Shape)
+      (oldExpShape : StructPassContext → Exp (BitVec width) → Shape),
+      (∀ shape, ShapeByteRanged shape →
+        compileShape context.structs shape = structCompileShape context.structs shape) →
+      ExpByteRanged expression →
+        structCompileExp context expression compileShape oldExpShape =
+          structCompileExp context expression structCompileShape oldExpShape := by
+    exact (structCompileExp.induct (α := BitVec width) context
+    (motive1 := fun expressions compileShape oldExpShape =>
+      (∀ shape, ShapeByteRanged shape →
+        compileShape context.structs shape = structCompileShape context.structs shape) →
+      (∀ expression ∈ expressions, ExpByteRanged expression) →
+        structCompileExp.structCompileExps context expressions compileShape oldExpShape =
+          structCompileExp.structCompileExps context expressions structCompileShape oldExpShape)
+    (motive2 := fun expression compileShape oldExpShape =>
+      (∀ shape, ShapeByteRanged shape →
+        compileShape context.structs shape = structCompileShape context.structs shape) →
+      ExpByteRanged expression →
+        structCompileExp context expression compileShape oldExpShape =
+          structCompileExp context expression structCompileShape oldExpShape)
+    (motive3 := fun fields compileShape oldExpShape =>
+      (∀ shape, ShapeByteRanged shape →
+        compileShape context.structs shape = structCompileShape context.structs shape) →
+      (∀ field ∈ fields, ExpByteRanged field.2) →
+        structCompileExp.structCompileFields context fields compileShape oldExpShape =
+          structCompileExp.structCompileFields context fields structCompileShape oldExpShape)
+    (by
+      intro compileShape oldExpShape hshape hall
+      simp [structCompileExp.structCompileExps])
+    (by
+      intro expression expressions compileShape oldExpShape ihe ih hshape hall
+      simp only [structCompileExp.structCompileExps]
+      rw [ihe hshape (hall expression (by simp))]
+      rw [ih hshape (fun item hitem => hall item (by simp [hitem]))])
+    (by
+      intro fields compileShape oldExpShape ih hshape hv
+      simp only [structCompileExp]
+      exact congrArg Exp.rStruct (ih hshape ((listExpByteRanged_iff _).mp hv)))
+    (by
+      intro index value compileShape oldExpShape ih hshape hv
+      simp only [structCompileExp]
+      exact congrArg (Exp.rField index) (ih hshape hv))
+    (by
+      intro name fields compileShape oldExpShape info hlookup ih hshape hv
+      simp only [structCompileExp, hlookup]
+      rw [ih hshape (fun field hfield =>
+        ((listFieldByteRanged_iff fields).mp hv.2 field hfield).2)])
+    (by
+      intro name fields compileShape oldExpShape hlookup ih hshape _hv
+      simp only [structCompileExp, hlookup])
+    (by
+      intro field value compileShape oldExpShape ih hshape hv
+      simp only [structCompileExp]
+      exact congrArg (Exp.rField (match oldExpShape context value with
+        | .named name =>
+            match lookupInfo name context.structs with
+            | some info => (structFindFieldIndex field info.fields).getD 0
+            | none => 0
+        | _ => 0)) (ih hshape hv.2))
+    (by
+      intro shape address compileShape oldExpShape ih hshape hv
+      simp only [structCompileExp]
+      rw [hshape shape hv.1, ih hshape hv.2])
+    (by
+      intro address compileShape oldExpShape ih hshape hv
+      simp only [structCompileExp]
+      exact congrArg Exp.load32 (ih hshape hv))
+    (by
+      intro address compileShape oldExpShape ih hshape hv
+      simp only [structCompileExp]
+      exact congrArg Exp.loadByte (ih hshape hv))
+    (by
+      intro operator arguments compileShape oldExpShape ih hshape hv
+      simp only [structCompileExp]
+      exact congrArg (Exp.op operator) (ih hshape ((listExpByteRanged_iff _).mp hv)))
+    (by
+      intro operator arguments compileShape oldExpShape ih hshape hv
+      simp only [structCompileExp]
+      exact congrArg (Exp.panOp operator) (ih hshape ((listExpByteRanged_iff _).mp hv)))
+    (by
+      intro operator left right compileShape oldExpShape ihl ihr hshape hv
+      simp only [structCompileExp]
+      simp only [Exp.cmp.injEq]
+      exact ⟨trivial, ihl hshape hv.1, ihr hshape hv.2⟩)
+    (by
+      intro operator left right compileShape oldExpShape ihl ihr hshape hv
+      simp only [structCompileExp]
+      simp only [Exp.shift.injEq]
+      exact ⟨trivial, ihl hshape hv.1, ihr hshape hv.2⟩)
+    (by
+      intro compileShape oldExpShape expression h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 h11 hshape hv
+      cases expression with
+      | const value => simp [structCompileExp]
+      | var kind name => simp [structCompileExp]
+      | baseAddr => simp [structCompileExp]
+      | topAddr => simp [structCompileExp]
+      | bytesInWord => simp [structCompileExp]
+      | rStruct fields => exact (h1 fields rfl).elim
+      | rField index value => exact (h2 index value rfl).elim
+      | nStruct name fields => exact (h3 name fields rfl).elim
+      | nField field value => exact (h4 field value rfl).elim
+      | load shape address => exact (h5 shape address rfl).elim
+      | load32 address => exact (h6 address rfl).elim
+      | loadByte address => exact (h7 address rfl).elim
+      | op operator arguments => exact (h8 operator arguments rfl).elim
+      | panOp operator arguments => exact (h9 operator arguments rfl).elim
+      | cmp operator left right => exact (h10 operator left right rfl).elim
+      | shift operator left right => exact (h11 operator left right rfl).elim)
+    (by
+      intro compileShape oldExpShape hshape hall
+      simp [structCompileExp.structCompileFields])
+    (by
+      intro field expression fields compileShape oldExpShape ihe ih hshape hall
+      simp only [structCompileExp.structCompileFields]
+      simp only [ihe hshape (hall (field, expression) (by simp)),
+        ih hshape (fun pair hpair => hall pair (by simp [hpair]))]))
+  intro hshape expression he
+  exact hgeneral expression compileShape structOldExpShape hshape he
+
+private theorem structCompileShapeExactProduction_eq_legacy
+    (context : StructContext) (shape : Shape) (hc : CtxBR context)
+    (hs : ShapeByteRanged shape) :
+    structCompileShapeExactProduction context shape = structCompileShape context shape := by
+  unfold structCompileShapeExactProduction structCompileShape
+  exact (structCompileShapeWF_eq_compileShapeExact context shape hc hs).symm
+
+private theorem structCompileExp_exact_eq_legacy {width : Nat} [BEq String]
+    (context : StructPassContext) (hc : CtxBR context.structs) :
+    ∀ expression : Exp (BitVec width), ExpByteRanged expression →
+      structCompileExp context expression structCompileShapeExactProduction =
+        structCompileExp context expression := by
+  apply structCompileExp_eq_of_shape_eq context structCompileShapeExactProduction
+  · intro shape hshape
+    exact structCompileShapeExactProduction_eq_legacy context.structs shape hc hshape
+
+private theorem structCompileExps_eq_of_shape_eq {width : Nat} [BEq String]
+    (context : StructPassContext) (compileShape : StructContext → Shape → Shape)
+    (hshape : ∀ shape, ShapeByteRanged shape →
+      compileShape context.structs shape = structCompileShape context.structs shape) :
+    ∀ expressions : List (Exp (BitVec width)),
+      (∀ expression ∈ expressions, ExpByteRanged expression) →
+        structCompileExp.structCompileExps context expressions compileShape =
+          structCompileExp.structCompileExps context expressions
+  | [], _ => by simp [structCompileExp.structCompileExps]
+  | expression :: expressions, hall => by
+      simp only [structCompileExp.structCompileExps]
+      congr 1
+      · exact structCompileExp_eq_of_shape_eq context compileShape hshape expression
+          (hall expression (by simp))
+      · exact structCompileExps_eq_of_shape_eq context compileShape hshape expressions
+          (fun item hitem => hall item (by simp [hitem]))
 
 private theorem structCompileExps_byteRanged {width : Nat} [BEq String]
     (context : StructPassContext) (hc : CtxBR context.structs) :
@@ -543,15 +780,224 @@ decreasing_by
     | (simp_wf; omega)
     | omega
 
-private theorem structCompileParams_byteRanged [BEq String] (context : StructContext)
-    (hc : CtxBR context) (parameters : List (String × Shape))
-    (h : ListParamByteRanged parameters) :
-    ListParamByteRanged (parameters.map fun (name, shape) =>
-      (name, structCompileShape context shape)) := by
-  intro parameter hmem
-  obtain ⟨source, hsource, rfl⟩ := List.mem_map.mp hmem
-  rcases h source hsource with ⟨hname, hshape⟩
-  exact ⟨hname, structCompileShape_byteRanged context source.2 hc hshape⟩
+theorem structCompileExp_oldShape_eq {width : Nat} [BEq String]
+    (context : StructPassContext) (compileShape : StructContext → Shape → Shape)
+    (oldShape : StructPassContext → Exp (BitVec width) → Shape)
+    (hold : ∀ expression, ExpByteRanged expression →
+      oldShape context expression = structOldExpShape context expression) :
+    ∀ expression, ExpByteRanged expression →
+      structCompileExp context expression compileShape oldShape =
+        structCompileExp context expression compileShape := by
+  intro expression
+  refine Exp.rec (α := BitVec width)
+    (motive_1 := fun expression => ExpByteRanged expression →
+      structCompileExp context expression compileShape oldShape =
+        structCompileExp context expression compileShape)
+    (motive_2 := fun expressions => ListExpByteRanged expressions →
+      structCompileExp.structCompileExps context expressions compileShape oldShape =
+        structCompileExp.structCompileExps context expressions compileShape)
+    (motive_3 := fun fields => ListFieldByteRanged fields →
+      structCompileExp.structCompileFields context fields compileShape oldShape =
+        structCompileExp.structCompileFields context fields compileShape)
+    (motive_4 := fun field => ExpByteRanged field.2 →
+      structCompileExp context field.2 compileShape oldShape =
+        structCompileExp context field.2 compileShape)
+    (fun _ _ => by simp [structCompileExp])
+    (fun _ _ _ => by simp [structCompileExp])
+    (fun fields ih he => by
+      simp only [ExpByteRanged] at he
+      simp only [structCompileExp]
+      exact congrArg Exp.rStruct (ih he))
+    (fun index value ih he => by
+      simp only [structCompileExp]
+      exact congrArg (Exp.rField index) (ih he))
+    (fun name fields ih he => by
+      simp only [ExpByteRanged] at he
+      simp only [structCompileExp]
+      rw [ih he.2])
+    (fun field value ih he => by
+      simp only [ExpByteRanged] at he
+      simp only [structCompileExp]
+      rw [hold value he.2]
+      rw [ih he.2])
+    (fun shape address ih he => by
+      simp only [ExpByteRanged] at he
+      simp only [structCompileExp]
+      rw [ih he.2])
+    (fun address ih he => by
+      simp only [ExpByteRanged] at he
+      simp only [structCompileExp]
+      rw [ih he])
+    (fun address ih he => by
+      simp only [ExpByteRanged] at he
+      simp only [structCompileExp]
+      rw [ih he])
+    (fun operator arguments ih he => by
+      simp only [ExpByteRanged] at he
+      simp only [structCompileExp]
+      rw [ih he])
+    (fun operator arguments ih he => by
+      simp only [ExpByteRanged] at he
+      simp only [structCompileExp]
+      rw [ih he])
+    (fun operator left right ihl ihr he => by
+      simp only [ExpByteRanged] at he
+      simp only [structCompileExp]
+      rw [ihl he.1, ihr he.2])
+    (fun operator left right ihl ihr he => by
+      simp only [ExpByteRanged] at he
+      simp only [structCompileExp]
+      rw [ihl he.1, ihr he.2])
+    (by simp [structCompileExp])
+    (by simp [structCompileExp])
+    (by simp [structCompileExp])
+    (by simp [structCompileExp.structCompileExps])
+    (fun head tail ihhead ihtail hall => by
+      simp only [ListExpByteRanged] at hall
+      simp only [structCompileExp.structCompileExps]
+      rw [ihhead hall.1]
+      exact congrArg (fun es => structCompileExp context head compileShape :: es)
+        (ihtail hall.2))
+    (by simp [structCompileExp.structCompileFields])
+    (fun field expression ihExpression ihFields hall => by
+      rcases field with ⟨fieldName, value⟩
+      simp only [ListFieldByteRanged] at hall
+      simp only [structCompileExp.structCompileFields.eq_2]
+      have hvalue : ExpByteRanged value := hall.2.1
+      rw [ihExpression hvalue]
+      rw [ihFields hall.2.2])
+    (fun field value ih he => ih he)
+    expression
+
+
+private theorem structCompileProgExps_eq_of_shape_eq {width : Nat} [BEq String]
+    (context : StructPassContext) (compileShape : StructContext → Shape → Shape)
+    (hshape : ∀ shape, ShapeByteRanged shape →
+      compileShape context.structs shape = structCompileShape context.structs shape) :
+    ∀ expressions : List (Exp (BitVec width)),
+      (∀ expression ∈ expressions, ExpByteRanged expression) →
+        structCompileProg.structCompileExps context expressions compileShape =
+          structCompileProg.structCompileExps context expressions
+  | [], _ => by simp [structCompileProg.structCompileExps]
+  | expression :: expressions, hall => by
+      simp only [structCompileProg.structCompileExps]
+      congr 1
+      · exact structCompileExp_eq_of_shape_eq context compileShape hshape expression
+          (hall expression (by simp))
+      · exact structCompileProgExps_eq_of_shape_eq context compileShape hshape expressions
+          (fun item hitem => hall item (by simp [hitem]))
+
+private theorem structCompileProg_eq_of_shape_eq {width : Nat} [BEq String]
+    (context : StructPassContext) (compileShape : StructContext → Shape → Shape)
+    (hshape : ∀ shape, ShapeByteRanged shape →
+      compileShape context.structs shape = structCompileShape context.structs shape) :
+    ∀ program : Prog (BitVec width), ProgByteRanged program →
+      structCompileProg context program compileShape = structCompileProg context program
+  | .skip, _ => by simp [structCompileProg]
+  | .dec name shape value body, h => by
+      simp only [ProgByteRanged] at h
+      rcases h with ⟨_, hshapeProg, hvalue, hbody⟩
+      simp only [structCompileProg]
+      rw [hshape shape hshapeProg]
+      rw [structCompileExp_eq_of_shape_eq context compileShape hshape value hvalue]
+      rw [structCompileProg_eq_of_shape_eq
+        { context with locals := (name, shape) :: context.locals } compileShape hshape body hbody]
+  | .assign kind name value, h => by
+      simp only [ProgByteRanged] at h
+      simp only [structCompileProg]
+      rw [structCompileExp_eq_of_shape_eq context compileShape hshape value h.2]
+  | .primitive name operator arguments, h => by
+      simp only [ProgByteRanged] at h
+      simp only [structCompileProg]
+      rw [structCompileProgExps_eq_of_shape_eq context compileShape hshape arguments h.2]
+  | .store address value, h => by
+      simp only [ProgByteRanged] at h
+      simp only [structCompileProg]
+      rw [structCompileExp_eq_of_shape_eq context compileShape hshape address h.1]
+      rw [structCompileExp_eq_of_shape_eq context compileShape hshape value h.2]
+  | .store32 address value, h => by
+      simp only [ProgByteRanged] at h
+      simp only [structCompileProg]
+      rw [structCompileExp_eq_of_shape_eq context compileShape hshape address h.1]
+      rw [structCompileExp_eq_of_shape_eq context compileShape hshape value h.2]
+  | .storeByte address value, h => by
+      simp only [ProgByteRanged] at h
+      simp only [structCompileProg]
+      rw [structCompileExp_eq_of_shape_eq context compileShape hshape address h.1]
+      rw [structCompileExp_eq_of_shape_eq context compileShape hshape value h.2]
+  | .seq first second, h => by
+      simp only [ProgByteRanged] at h
+      simp only [structCompileProg]
+      rw [structCompileProg_eq_of_shape_eq context compileShape hshape first h.1]
+      rw [structCompileProg_eq_of_shape_eq context compileShape hshape second h.2]
+  | .ite condition thenBranch elseBranch, h => by
+      simp only [ProgByteRanged] at h
+      simp only [structCompileProg]
+      rw [structCompileExp_eq_of_shape_eq context compileShape hshape condition h.1]
+      rw [structCompileProg_eq_of_shape_eq context compileShape hshape thenBranch h.2.1]
+      rw [structCompileProg_eq_of_shape_eq context compileShape hshape elseBranch h.2.2]
+  | .while condition body, h => by
+      simp only [ProgByteRanged] at h
+      simp only [structCompileProg]
+      rw [structCompileExp_eq_of_shape_eq context compileShape hshape condition h.1]
+      rw [structCompileProg_eq_of_shape_eq context compileShape hshape body h.2]
+  | .break, _ => by simp [structCompileProg]
+  | .continue, _ => by simp [structCompileProg]
+  | .call none function arguments, h => by
+      simp only [ProgByteRanged] at h
+      simp only [structCompileProg]
+      rw [structCompileProgExps_eq_of_shape_eq context compileShape hshape arguments h.2.1]
+  | .call (some (returns, none)) function arguments, h => by
+      simp only [ProgByteRanged] at h
+      simp only [structCompileProg]
+      rw [structCompileProgExps_eq_of_shape_eq context compileShape hshape arguments h.2.1]
+  | .call (some (returns, some (exception, handlerVar, handler))) function arguments, h => by
+      simp only [ProgByteRanged] at h
+      rcases h with ⟨_, hargs, _, _, _, hhandler⟩
+      simp only [structCompileProg]
+      rw [structCompileProgExps_eq_of_shape_eq context compileShape hshape arguments hargs]
+      rw [structCompileProg_eq_of_shape_eq context compileShape hshape handler hhandler]
+  | .decCall name shape function arguments body, h => by
+      simp only [ProgByteRanged] at h
+      rcases h with ⟨_, hshapeProg, _, hargs, hbody⟩
+      simp only [structCompileProg]
+      rw [hshape shape hshapeProg]
+      rw [structCompileProgExps_eq_of_shape_eq context compileShape hshape arguments hargs]
+      rw [structCompileProg_eq_of_shape_eq
+        { context with locals := (name, shape) :: context.locals } compileShape hshape body hbody]
+  | .extCall function configuration configurationLength array arrayLength, h => by
+      simp only [ProgByteRanged] at h
+      simp only [structCompileProg]
+      rw [structCompileExp_eq_of_shape_eq context compileShape hshape configuration h.2.1]
+      rw [structCompileExp_eq_of_shape_eq context compileShape hshape configurationLength h.2.2.1]
+      rw [structCompileExp_eq_of_shape_eq context compileShape hshape array h.2.2.2.1]
+      rw [structCompileExp_eq_of_shape_eq context compileShape hshape arrayLength h.2.2.2.2]
+  | .raise exception value, h => by
+      simp only [ProgByteRanged] at h
+      simp only [structCompileProg]
+      rw [structCompileExp_eq_of_shape_eq context compileShape hshape value h.2]
+  | .return value, h => by
+      simp only [ProgByteRanged] at h
+      simp only [structCompileProg]
+      rw [structCompileExp_eq_of_shape_eq context compileShape hshape value h]
+  | .shMemLoad size kind name address, h => by
+      simp only [ProgByteRanged] at h
+      simp only [structCompileProg]
+      rw [structCompileExp_eq_of_shape_eq context compileShape hshape address h.2]
+  | .shMemStore size address value, h => by
+      simp only [ProgByteRanged] at h
+      simp only [structCompileProg]
+      rw [structCompileExp_eq_of_shape_eq context compileShape hshape address h.1]
+      rw [structCompileExp_eq_of_shape_eq context compileShape hshape value h.2]
+  | .tick, _ => by simp [structCompileProg]
+  | .annot tag text, _ => by simp [structCompileProg]
+termination_by program _ => sizeOf program
+decreasing_by
+  all_goals
+    first
+    | decreasing_trivial
+    | (simp_wf; omega)
+    | omega
 
 private theorem structGetNamesStep_ctxBR {width : Nat} (context : StructPassContext)
     (declaration : Decl (BitVec width)) (hc : CtxBR context.structs)
@@ -601,15 +1047,58 @@ private theorem structGetNames_ctxBR {width : Nat} (context : StructPassContext)
           change CtxBR (structGetNames context rest).structs
           exact ih context hc hrest
 
+private theorem structGetNames_locals_globals {width : Nat} (context : StructPassContext)
+    (declarations : List (Decl (BitVec width))) :
+    (structGetNames context declarations).locals = context.locals ∧
+      (structGetNames context declarations).globals = context.globals := by
+  induction declarations generalizing context with
+  | nil => simp [structGetNames]
+  | cons declaration rest ih =>
+      cases declaration with
+      | name name fields =>
+          change (structGetNames
+            { context with structs := (name, { fields := fields, size := 0 }) :: context.structs }
+            rest).locals = context.locals ∧
+            (structGetNames
+              { context with structs := (name, { fields := fields, size := 0 }) :: context.structs }
+              rest).globals = context.globals
+          exact ih _
+      | decl shape name value =>
+          change (structGetNames context rest).locals = context.locals ∧
+            (structGetNames context rest).globals = context.globals
+          exact ih context
+      | function declaration =>
+          change (structGetNames context rest).locals = context.locals ∧
+            (structGetNames context rest).globals = context.globals
+          exact ih context
+      | exnDecl exception shape =>
+          change (structGetNames context rest).locals = context.locals ∧
+            (structGetNames context rest).globals = context.globals
+          exact ih context
+
+private theorem structCompileParams_byteRanged [BEq String] (context : StructContext)
+    (hc : CtxBR context) (parameters : List (String × Shape))
+    (h : ListParamByteRanged parameters) :
+    ListParamByteRanged (parameters.map fun (name, shape) =>
+      (name, structCompileShape context shape)) := by
+  intro parameter hmem
+  obtain ⟨source, hsource, rfl⟩ := List.mem_map.mp hmem
+  rcases h source hsource with ⟨hname, hshape⟩
+  exact ⟨hname, structCompileShape_byteRanged context source.2 hc hshape⟩
+
+
 private theorem structCompileDecls_structs {width : Nat} [BEq String]
     (declarations : List (Decl (BitVec width))) :
-    ∀ context : StructPassContext,
-      (structCompileDecls declarations context).2.structs = context.structs := by
+    ∀ (context : StructPassContext)
+      (compileShape : StructContext → Shape → Shape)
+      (oldShape : StructPassContext → Exp (BitVec width) → Shape),
+      (structCompileDecls declarations context compileShape oldShape).2.structs = context.structs := by
   induction declarations with
-  | nil => intro context; rfl
+  | nil => intro context compileShape oldShape; rfl
   | cons declaration rest ih =>
-      intro context
+      intro context compileShape oldShape
       cases declaration <;> simp [structCompileDecls, ih]
+
 
 private theorem structCompileDecls_byteRanged {width : Nat} [BEq String]
     (declarations : List (Decl (BitVec width))) :
@@ -645,6 +1134,7 @@ private theorem structCompileDecls_byteRanged {width : Nat} [BEq String]
             simp only [DeclByteRanged, FunDeclByteRanged] at hd ⊢
             rcases hd with ⟨hname, hparams, hbody, hreturn⟩
             have hstructs := structCompileDecls_structs rest context
+              structCompileShape structOldExpShape
             have hctx : CtxBR (structCompileDecls rest context).2.structs := by
               simpa [hstructs] using hc
             have hbodyOut := structCompileProg_byteRanged
@@ -680,5 +1170,845 @@ theorem structCompileTop_byteRanged {width : Nat} [BEq String]
   simpa [structCompileTop, initial] using
     structCompileDecls_byteRanged declarations (structGetNames initial declarations)
       hcontext hdecls declaration hmem
+
+/-- Flapjack codec infrastructure, not a HOL theorem. Byte-range hypotheses
+ensure exact identifier equality selects the same first occurrence, including
+missing keys and duplicate keys, for any translated payload. -/
+theorem encodedContextLookup {α β : Type} (convert : α → β)
+    (name : String) (entries : List (String × α))
+    (hname : NameRanged name) (hkeys : ∀ p ∈ entries, NameRanged p.1) :
+    (entries.map fun p => (ofString p.1, convert p.2)).findSome?
+        (fun p => if p.1 = ofString name then some p.2 else none) =
+      (lookupInfo name entries).map convert := by
+  induction entries with
+  | nil => simp [lookupInfo]
+  | cons entry entries ih =>
+      rcases entry with ⟨candidate, value⟩
+      have hcandidate := hkeys (candidate, value) (by simp)
+      have htail : ∀ p ∈ entries, NameRanged p.1 :=
+        fun p hp => hkeys p (by simp [hp])
+      by_cases hmatch : candidate = name
+      · subst candidate
+        simp [lookupInfo]
+      · have hexact : ofString candidate ≠ ofString name :=
+          fun h => hmatch (ofString_injective_of_ranged_local hcandidate hname h)
+        simp [lookupInfo, hmatch, hexact, ih htail]
+
+/-- Flapjack codec lookup specialization for source local/global/field shapes;
+shape payload conversion preserves every source shape. -/
+theorem encodedShapeContextLookup (name : String) (entries : List (String × Shape))
+    (hname : NameRanged name) (hentries : ListParamByteRanged entries) :
+    (entries.map fun p => (ofString p.1, shapeToHOL p.2)).findSome?
+        (fun p => if p.1 = ofString name then some p.2 else none) =
+      (lookupInfo name entries).map shapeToHOL := by
+  exact encodedContextLookup shapeToHOL name entries hname
+    (fun p hp => (hentries p hp).1)
+
+
+/-- Flapjack codec infrastructure: the exact local lookup is the source lookup
+with its shape payload encoded, under the actual byte-range obligations. -/
+theorem structPassContextToExact_locals (context : StructPassContext) (name : String)
+    (hname : NameRanged name) (hentries : ListParamByteRanged context.locals) :
+    (structPassContextToExact context).locals.findSome?
+        (fun p => if p.1 = ofString name then some p.2 else none) =
+      (lookupInfo name context.locals).map shapeToHOL :=
+  encodedShapeContextLookup name context.locals hname hentries
+
+/-- Flapjack codec infrastructure: the exact global lookup preserves the
+source first-match result and all missing-key defaults. -/
+theorem structPassContextToExact_globals (context : StructPassContext) (name : String)
+    (hname : NameRanged name) (hentries : ListParamByteRanged context.globals) :
+    (structPassContextToExact context).globals.findSome?
+        (fun p => if p.1 = ofString name then some p.2 else none) =
+      (lookupInfo name context.globals).map shapeToHOL :=
+  encodedShapeContextLookup name context.globals hname hentries
+
+/-- Flapjack codec infrastructure: nested struct/field lookup preserves both
+first-match searches. Missing structs or fields remain NONE; stored shape
+payloads use the existing exact shape codec. -/
+theorem encodedStructFieldLookup (context : StructContext) (name field : String)
+    (hc : CtxBR context) (hname : NameRanged name) (hfield : NameRanged field) :
+    ((structContextToCompileShapeExact context).findSome?
+        (fun p => if p.1 = ofString name then some p.2 else none)).bind
+        (fun fields => fields.findSome?
+          (fun p => if p.1 = ofString field then some p.2 else none)) =
+      ((lookupInfo name context).bind (fun info => lookupInfo field info.fields)).map
+        shapeToHOL := by
+  induction context with
+  | nil => simp [structContextToCompileShapeExact, lookupInfo]
+  | cons entry context ih =>
+      rcases entry with ⟨candidate, info⟩
+      have hhead := hc (candidate, info) (by simp)
+      have htail : CtxBR context := fun p hp => hc p (by simp [hp])
+      by_cases hmatch : candidate = name
+      · subst candidate
+        simpa [structContextToCompileShapeExact, lookupInfo] using
+          encodedShapeContextLookup field info.fields hfield hhead.2
+      · have hexact : ofString candidate ≠ ofString name :=
+          fun h => hmatch (ofString_injective_of_ranged_local hhead.1 hname h)
+        simpa [structContextToCompileShapeExact, lookupInfo, hmatch, hexact] using ih htail
+
+/-- Flapjack codec infrastructure: decoding a looked-up encoded shape recovers
+its production payload, rather than only relating the encoded maps. -/
+theorem encodedShapeContextLookup_roundtrip (name : String)
+    (entries : List (String × Shape)) (hname : NameRanged name)
+    (hentries : ListParamByteRanged entries) :
+    ((entries.map fun p => (ofString p.1, shapeToHOL p.2)).findSome?
+      (fun p => if p.1 = ofString name then some p.2 else none)).map shapeOfHOL =
+      lookupInfo name entries := by
+  rw [encodedShapeContextLookup name entries hname hentries]
+  induction entries with
+  | nil => simp [lookupInfo]
+  | cons entry entries ih =>
+      rcases entry with ⟨candidate, shape⟩
+      have hhead := hentries (candidate, shape) (by simp)
+      have htail : ListParamByteRanged entries := fun p hp => hentries p (by simp [hp])
+      by_cases hmatch : candidate = name
+      · simp [lookupInfo, hmatch, shapeOfHOL_shapeToHOL shape hhead.2]
+      · simpa [lookupInfo, hmatch] using ih htail
+
+/-- Flapjack range infrastructure: any selected association-list payload
+satisfies an invariant held by all source entries. No HOL theorem is claimed. -/
+private theorem lookupInfo_payload_invariant {α : Type} (property : α → Prop)
+    (key : String) (entries : List (String × α))
+    (hall : ∀ p ∈ entries, property p.2) (value : α)
+    (hlookup : lookupInfo key entries = some value) : property value := by
+  induction entries with
+  | nil => simp [lookupInfo] at hlookup
+  | cons entry entries ih =>
+      rcases entry with ⟨candidate, payload⟩
+      by_cases hmatch : candidate == key
+      · simp only [lookupInfo, hmatch] at hlookup
+        cases hlookup
+        exact hall (candidate, value) (by simp)
+      · simp only [lookupInfo, hmatch] at hlookup
+        exact ih (fun p hp => hall p (by simp [hp])) hlookup
+
+private theorem lookupShape_default_byteRanged (name : String) (entries : List (String × Shape))
+    (hall : ListParamByteRanged entries) :
+    ShapeByteRanged ((lookupInfo name entries).getD .one) := by
+  cases hlookup : lookupInfo name entries with
+  | none => simp [ShapeByteRanged]
+  | some shape =>
+      exact lookupInfo_payload_invariant ShapeByteRanged name entries
+        (fun p hp => (hall p hp).2) shape hlookup
+
+mutual
+  /-- Flapjack codec prerequisite, not a HOL theorem. Derives the range of the
+  computed source shape from real source input/context invariants; in particular
+  a computed Named name can safely be used by the exact lookup correspondence. -/
+  theorem structOldExpShape_byteRanged {width : Nat} (context : StructPassContext)
+      (hc : CtxBR context.structs) (hl : ListParamByteRanged context.locals)
+      (hg : ListParamByteRanged context.globals) (expression : Exp (BitVec width))
+      (he : ExpByteRanged expression) : ShapeByteRanged (structOldExpShape context expression) := by
+    cases hexpression : expression with
+    | var kind name =>
+        cases kind
+        · simpa only [structOldExpShape] using lookupShape_default_byteRanged name context.locals hl
+        · simpa only [structOldExpShape] using lookupShape_default_byteRanged name context.globals hg
+    | rStruct fields =>
+        simp only [hexpression, ExpByteRanged] at he
+        simpa only [structOldExpShape, ShapeByteRanged] using
+          structOldExpShapes_byteRanged context hc hl hg fields ((listExpByteRanged_iff fields).mp he)
+    | rField index value =>
+        simp only [hexpression, ExpByteRanged] at he
+        have hshape := structOldExpShape_byteRanged context hc hl hg value he
+        cases hvalue : structOldExpShape context value with
+        | one => simp [structOldExpShape, hvalue, ShapeByteRanged]
+        | named name => simp [structOldExpShape, hvalue, ShapeByteRanged]
+        | comb shapes =>
+            simp only [hvalue, ShapeByteRanged] at hshape
+            simp only [structOldExpShape, hvalue]
+            cases hindex : shapes[index]? with
+            | none => simp [List.getD, hindex, ShapeByteRanged]
+            | some shape =>
+                have hmem : shape ∈ shapes := List.mem_of_getElem? hindex
+                simpa [List.getD, hindex] using hshape shape hmem
+    | nStruct name fields =>
+        simp only [hexpression, ExpByteRanged] at he
+        simpa only [structOldExpShape, ShapeByteRanged] using he.1
+    | nField field value =>
+        cases hvalue : structOldExpShape context value with
+        | one => simp [structOldExpShape, hvalue, ShapeByteRanged]
+        | comb shapes => simp [structOldExpShape, hvalue, ShapeByteRanged]
+        | named name =>
+            simp only [structOldExpShape, hvalue]
+            cases hlookup : lookupInfo name context.structs with
+            | none => simp [ShapeByteRanged]
+            | some info =>
+                have hfields : ListParamByteRanged info.fields :=
+                  lookupInfo_payload_invariant (fun info : StructInfo => ListParamByteRanged info.fields)
+                    name context.structs (fun p hp => (hc p hp).2) info hlookup
+                have hr := lookupShape_default_byteRanged field info.fields hfields
+                cases hf : lookupInfo field info.fields <;> simpa [hf] using hr
+    | load shape address =>
+        simp only [hexpression, ExpByteRanged] at he
+        simpa only [structOldExpShape] using he.1
+    | const value => simp [structOldExpShape, ShapeByteRanged]
+    | load32 address => simp [structOldExpShape, ShapeByteRanged]
+    | loadByte address => simp [structOldExpShape, ShapeByteRanged]
+    | op operator args => simp [structOldExpShape, ShapeByteRanged]
+    | panOp operator args => simp [structOldExpShape, ShapeByteRanged]
+    | cmp operator left right => simp [structOldExpShape, ShapeByteRanged]
+    | shift operator left right => simp [structOldExpShape, ShapeByteRanged]
+    | baseAddr => simp [structOldExpShape, ShapeByteRanged]
+    | topAddr => simp [structOldExpShape, ShapeByteRanged]
+    | bytesInWord => simp [structOldExpShape, ShapeByteRanged]
+  termination_by sizeOf expression
+  decreasing_by all_goals simp_all; all_goals omega
+
+  /-- Flapjack range infrastructure for the mutual expression-list worker. -/
+  theorem structOldExpShapes_byteRanged {width : Nat} (context : StructPassContext)
+      (hc : CtxBR context.structs) (hl : ListParamByteRanged context.locals)
+      (hg : ListParamByteRanged context.globals) (expressions : List (Exp (BitVec width)))
+      (he : ∀ e ∈ expressions, ExpByteRanged e) :
+      ∀ shape ∈ structOldExpShape.structOldExpShapes context expressions, ShapeByteRanged shape := by
+    cases hexpressions : expressions with
+    | nil => simp [structOldExpShape.structOldExpShapes]
+    | cons expression expressions =>
+        rw [hexpressions] at he
+        intro shape hmem
+        simp only [structOldExpShape.structOldExpShapes] at hmem
+        rcases List.mem_cons.mp hmem with rfl | htail
+        · exact structOldExpShape_byteRanged context hc hl hg expression (he expression (by simp))
+        · exact structOldExpShapes_byteRanged context hc hl hg expressions
+            (fun e h => he e (by simp [h])) shape htail
+  termination_by sizeOf expressions
+  decreasing_by all_goals simp_all; all_goals omega
+end
+
+/-- Flapjack codec infrastructure for raw field selection. Encoding commutes
+with indexed selection and the defensive One default, including out-of-range
+indices. This representation lemma has no HOL theorem original. -/
+theorem shapeToHOL_getD (shapes : List Shape) (index : Nat) :
+    shapeToHOL (shapes.getD index .one) =
+      (shapes.map shapeToHOL)[index]?.getD .one := by
+  induction shapes generalizing index with
+  | nil => simp [List.getD, shapeToHOL]
+  | cons shape shapes ih =>
+      cases index with
+      | zero => simp [List.getD]
+      | succ index => simpa [List.getD] using ih index
+
+/-- Flapjack cross-carrier infrastructure: both source variable kinds retain
+first-match lookup and the One default. The source name is actually ranged;
+no successful lookup or computed result is assumed. No HOL theorem original. -/
+theorem oldExpShapeExact_var_encode {width : Nat} [NeZero width]
+    (context : StructPassContext) (kind : VarKind) (name : String)
+    (hn : NameRanged name) (hl : ListParamByteRanged context.locals)
+    (hg : ListParamByteRanged context.globals) :
+    Pancake.PanStructs.CompileShapeExact.oldExpShapeExact
+      (structPassContextToExact context) (expToHOL (Exp.var kind name : Exp (BitVec width))) =
+        shapeToHOL (structOldExpShape context (Exp.var kind name : Exp (BitVec width))) := by
+  cases kind
+  · simp only [expToHOL, Pancake.PanStructs.CompileShapeExact.oldExpShapeExact,
+      structOldExpShape]
+    rw [structPassContextToExact_locals context name hn hl]
+    cases lookupInfo name context.locals <;> simp [shapeToHOL]
+  · simp only [expToHOL, Pancake.PanStructs.CompileShapeExact.oldExpShapeExact,
+      structOldExpShape]
+    rw [structPassContextToExact_globals context name hn hg]
+    cases lookupInfo name context.globals <;> simp [shapeToHOL]
+
+/-- Flapjack codec equation for the source Named constructor. Its payload
+expressions do not affect the old shape; no HOL theorem original. -/
+theorem oldExpShapeExact_nStruct_encode {width : Nat} [NeZero width]
+    (context : StructPassContext) (name : String)
+    (fields : List (String × Exp (BitVec width))) :
+    Pancake.PanStructs.CompileShapeExact.oldExpShapeExact
+      (structPassContextToExact context) (expToHOL (.nStruct name fields)) =
+        shapeToHOL (structOldExpShape context (.nStruct name fields)) := by
+  simp only [expToHOL, Pancake.PanStructs.CompileShapeExact.oldExpShapeExact,
+    structOldExpShape, shapeToHOL]
+
+/-- Flapjack codec equation for the source Load constructor: its explicit
+shape is retained without evaluating the address; no HOL theorem original. -/
+theorem oldExpShapeExact_load_encode {width : Nat} [NeZero width]
+    (context : StructPassContext) (shape : Shape) (address : Exp (BitVec width)) :
+    Pancake.PanStructs.CompileShapeExact.oldExpShapeExact
+      (structPassContextToExact context) (expToHOL (.load shape address)) =
+        shapeToHOL (structOldExpShape context (.load shape address)) := by
+  simp only [expToHOL, Pancake.PanStructs.CompileShapeExact.oldExpShapeExact,
+    structOldExpShape]
+
+/-- Flapjack codec infrastructure for compile_exp named-field indexing.
+Actual byte-ranged query and stored names make equality injective through the
+name codec. Both operations retain the first duplicate match and absent fields;
+this cross-carrier lemma has no HOL theorem original. -/
+theorem encodedFieldIndexLookup (field : String) (fields : List (String × Shape))
+    (hfield : NameRanged field) (hfields : ListParamByteRanged fields) :
+    afindi (ofString field) (fields.map fun p => (ofString p.1, shapeToHOL p.2)) =
+      structFindFieldIndex field fields := by
+  induction fields with
+  | nil => simp [afindi, structFindFieldIndex]
+  | cons entry fields ih =>
+      rcases entry with ⟨candidate, shape⟩
+      have hhead := hfields (candidate, shape) (by simp)
+      have htail : ListParamByteRanged fields := fun p hp => hfields p (by simp [hp])
+      by_cases hmatch : candidate = field
+      · subst candidate
+        simp [afindi, structFindFieldIndex]
+      · have hexact : ofString field ≠ ofString candidate :=
+          fun h => hmatch (ofString_injective_of_ranged_local hhead.1 hfield h.symm)
+        simp only [List.map_cons, afindi_cons, hexact, ↓reduceIte,
+          structFindFieldIndex, beq_iff_eq, hmatch, ↓reduceIte]
+        rw [ih htail]
+        cases structFindFieldIndex field fields <;> rfl
+
+/-- Flapjack codec corollary retaining the source zero default for missing
+named fields. No target lookup success or index bounds are assumed. -/
+theorem encodedFieldIndexLookup_default (field : String) (fields : List (String × Shape))
+    (hfield : NameRanged field) (hfields : ListParamByteRanged fields) :
+    (afindi (ofString field) (fields.map fun p => (ofString p.1, shapeToHOL p.2))).getD 0 =
+      (structFindFieldIndex field fields).getD 0 := by
+  rw [encodedFieldIndexLookup field fields hfield hfields]
+
+private theorem shapeToHOL_getD_map (value : Option Shape) :
+    (value.map shapeToHOL).getD .one = shapeToHOL (value.getD .one) := by
+  cases value <;> simp [Option.getD, shapeToHOL]
+
+private theorem structOldExpShapes_eq_map {α : Type} (context : StructPassContext)
+    (expressions : List (Exp α)) :
+    structOldExpShape.structOldExpShapes context expressions =
+      expressions.map (structOldExpShape context) := by
+  induction expressions with
+  | nil => simp [structOldExpShape.structOldExpShapes]
+  | cons expression expressions ih => simp [structOldExpShape.structOldExpShapes, ih]
+
+/-- Flapjack-only codec correspondence (no HOL declaration): on the parser's
+byte-ranged domain, HOL's `old_exp_shape` evaluator on encoded context and
+expression agrees with the encoded production `structOldExpShape`. This is the
+recursive callback equality used by the whole-pass theorem below to route the
+production compiler through that HOL definition. -/
+theorem oldExpShapeExact_encode {width : Nat} [NeZero width]
+    (context : StructPassContext) (expression : Exp (BitVec width))
+    (hc : CtxBR context.structs) (hl : ListParamByteRanged context.locals)
+    (hg : ListParamByteRanged context.globals) :
+    ExpByteRanged expression →
+    Pancake.PanStructs.CompileShapeExact.oldExpShapeExact
+      (structPassContextToExact context) (expToHOL expression) =
+        shapeToHOL (structOldExpShape context expression) := by
+  refine Exp.rec (α := BitVec width)
+    (motive_1 := fun e => ExpByteRanged e →
+      Pancake.PanStructs.CompileShapeExact.oldExpShapeExact
+        (structPassContextToExact context) (expToHOL e) =
+        shapeToHOL (structOldExpShape context e))
+    (motive_2 := fun es => ListExpByteRanged es →
+      Pancake.PanStructs.CompileShapeExact.oldExpShapesExact
+        (structPassContextToExact context) (es.map expToHOL) =
+        (es.map fun e => shapeToHOL (structOldExpShape context e)))
+    (motive_3 := fun _ => True) (motive_4 := fun _ => True)
+    (fun _ _ => by simp [expToHOL, Pancake.PanStructs.CompileShapeExact.oldExpShapeExact,
+      structOldExpShape, shapeToHOL])
+    (fun kind name he => oldExpShapeExact_var_encode context kind name he hl hg)
+    (fun fields ih he => by
+      simp only [ExpByteRanged] at he
+      simp only [expToHOL, Pancake.PanStructs.CompileShapeExact.oldExpShapeExact,
+        structOldExpShape]
+      rw [ih he]
+      simp only [shapeToHOL]
+      rw [structOldExpShapes_eq_map]
+      apply congrArg ShapeHOL.comb
+      rw [List.map_map]
+      rfl)
+    (fun index value ih he => by
+      simp only [ExpByteRanged] at he
+      simp only [expToHOL, Pancake.PanStructs.CompileShapeExact.oldExpShapeExact]
+      rw [ih he]
+      cases hshape : structOldExpShape context value with
+      | one => simp [structOldExpShape, hshape, shapeToHOL]
+      | named name => simp [structOldExpShape, hshape, shapeToHOL]
+      | comb shapes =>
+        simp only [hshape, structOldExpShape, shapeToHOL]
+        exact (shapeToHOL_getD shapes index).symm)
+    (fun name fields _ _ => oldExpShapeExact_nStruct_encode context name fields)
+    (fun field value ih he => by
+      simp only [ExpByteRanged] at he
+      rw [Flapjack.Pancake.PanLang.expToHOL.eq_6]
+      rw [Pancake.PanStructs.CompileShapeExact.oldExpShapeExact.eq_6]
+      rw [ih he.2]
+      cases hshape : structOldExpShape context value with
+      | one => simp [hshape, structOldExpShape, shapeToHOL]
+      | comb shapes => simp [hshape, structOldExpShape, shapeToHOL]
+      | named name =>
+        have hshapeRanged := structOldExpShape_byteRanged context hc hl hg value he.2
+        simp only [hshape, ShapeByteRanged] at hshapeRanged
+        have hname : NameRanged name := hshapeRanged
+        have houter := encodedContextLookup
+          (fun info : StructInfo => info.fields.map fun p => (ofString p.1, shapeToHOL p.2))
+          name context.structs hname (fun p hp => (hc p hp).1)
+        cases hstruct : lookupInfo name context.structs with
+        | none =>
+          simp only [structPassContextToExact, structContextToCompileShapeExact, houter, hstruct,
+            structOldExpShape, hshape, shapeToHOL]
+          simp
+        | some info =>
+          have hfields : ListParamByteRanged info.fields :=
+            lookupInfo_payload_invariant (fun info : StructInfo => ListParamByteRanged info.fields)
+              name context.structs (fun p hp => (hc p hp).2) info hstruct
+          have hencodedFields := encodedShapeContextLookup field info.fields he.1 hfields
+          simp only [structPassContextToExact, structContextToCompileShapeExact, houter, hstruct,
+            structOldExpShape, hshape, shapeToHOL]
+          simp
+          rw [hencodedFields]
+          cases hfield : lookupInfo field info.fields <;> simp [shapeToHOL])
+    (fun _ address _ _ => by
+      simp [expToHOL, Pancake.PanStructs.CompileShapeExact.oldExpShapeExact,
+        structOldExpShape])
+    (fun address ih _ => by simp [expToHOL, Pancake.PanStructs.CompileShapeExact.oldExpShapeExact,
+      structOldExpShape, shapeToHOL])
+    (fun address ih _ => by simp [expToHOL, Pancake.PanStructs.CompileShapeExact.oldExpShapeExact,
+      structOldExpShape, shapeToHOL])
+    (fun _ args ih _ => by simp [expToHOL, Pancake.PanStructs.CompileShapeExact.oldExpShapeExact,
+      structOldExpShape, shapeToHOL])
+    (fun _ args ih _ => by simp [expToHOL, Pancake.PanStructs.CompileShapeExact.oldExpShapeExact,
+      structOldExpShape, shapeToHOL])
+    (fun _ _ _ ihl ihr _ => by simp [expToHOL, Pancake.PanStructs.CompileShapeExact.oldExpShapeExact,
+      structOldExpShape, shapeToHOL])
+    (fun _ _ _ ihl ihr _ => by simp [expToHOL, Pancake.PanStructs.CompileShapeExact.oldExpShapeExact,
+      structOldExpShape, shapeToHOL])
+    (by simp [expToHOL, Pancake.PanStructs.CompileShapeExact.oldExpShapeExact,
+      structOldExpShape, shapeToHOL])
+    (by simp [expToHOL, Pancake.PanStructs.CompileShapeExact.oldExpShapeExact,
+      structOldExpShape, shapeToHOL])
+    (by simp [expToHOL, Pancake.PanStructs.CompileShapeExact.oldExpShapeExact,
+      structOldExpShape, shapeToHOL])
+    (by simp [Pancake.PanStructs.CompileShapeExact.oldExpShapesExact])
+    (fun head tail ihhead ihtail hall => by
+      simp only [ListExpByteRanged] at hall
+      simp [Pancake.PanStructs.CompileShapeExact.oldExpShapesExact,
+        ihhead hall.1, ihtail hall.2])
+    trivial
+    (fun _ _ _ _ => trivial)
+    (fun _ _ _ => trivial)
+    expression
+
+/-- The executed exact old-shape callback agrees with the production callback
+    on parser-ranged contexts and expressions. This Flapjack-only codec result
+    is what licenses routing the compiler through HOL `old_exp_shape`. -/
+theorem structOldExpShapeExactProduction_eq_legacy {width : Nat} [NeZero width]
+    (context : StructPassContext) (expression : Exp (BitVec width))
+    (hc : CtxBR context.structs) (hl : ListParamByteRanged context.locals)
+    (hg : ListParamByteRanged context.globals) (he : ExpByteRanged expression) :
+    structOldExpShapeExactProduction context expression =
+      structOldExpShape context expression := by
+  unfold structOldExpShapeExactProduction
+  unfold structOldExpShapeExactCodec
+  rw [oldExpShapeExact_encode context expression hc hl hg he]
+  exact shapeOfHOL_shapeToHOL _
+    (structOldExpShape_byteRanged context hc hl hg expression he)
+
+
+private theorem structCompileProgExps_oldShape_eq {width : Nat} [BEq String]
+    (context : StructPassContext) (compileShape : StructContext → Shape → Shape)
+    (oldShape : StructPassContext → Exp (BitVec width) → Shape)
+    (hold : ∀ context, CtxBR context.structs → ListParamByteRanged context.locals →
+      ListParamByteRanged context.globals → ∀ expression, ExpByteRanged expression →
+        oldShape context expression = structOldExpShape context expression)
+    (hc : CtxBR context.structs) (hl : ListParamByteRanged context.locals)
+    (hg : ListParamByteRanged context.globals) :
+    ∀ expressions : List (Exp (BitVec width)),
+      (∀ expression ∈ expressions, ExpByteRanged expression) →
+        structCompileProg.structCompileExps context expressions compileShape oldShape =
+          structCompileProg.structCompileExps context expressions compileShape
+  | [], _ => by simp [structCompileProg.structCompileExps]
+  | expression :: expressions, hall => by
+      simp only [structCompileProg.structCompileExps]
+      congr 1
+      · exact structCompileExp_oldShape_eq context compileShape oldShape
+          (hold context hc hl hg) expression
+          (hall expression (by simp))
+      · exact structCompileProgExps_oldShape_eq context compileShape oldShape hold hc hl hg expressions
+          (fun item hitem => hall item (by simp [hitem]))
+
+private theorem structCompileProg_oldShape_eq {width : Nat} [BEq String]
+    (context : StructPassContext) (compileShape : StructContext → Shape → Shape)
+    (oldShape : StructPassContext → Exp (BitVec width) → Shape)
+    (hold : ∀ context, CtxBR context.structs → ListParamByteRanged context.locals →
+      ListParamByteRanged context.globals → ∀ expression, ExpByteRanged expression →
+        oldShape context expression = structOldExpShape context expression)
+    (hc : CtxBR context.structs) (hl : ListParamByteRanged context.locals)
+    (hg : ListParamByteRanged context.globals) :
+    ∀ program : Prog (BitVec width), ProgByteRanged program →
+      structCompileProg context program compileShape oldShape =
+        structCompileProg context program compileShape
+  | .skip, _ => by simp [structCompileProg]
+  | .dec name shape value body, h => by
+      simp only [ProgByteRanged] at h
+      rcases h with ⟨hname, hshape, hvalue, hbody⟩
+      have hl' : ListParamByteRanged ((name, shape) :: context.locals) := by
+        intro p hp
+        simp only [List.mem_cons] at hp
+        rcases hp with hp | hp
+        · cases hp; exact ⟨hname, hshape⟩
+        · exact hl p hp
+      simp only [structCompileProg]
+      rw [structCompileExp_oldShape_eq context compileShape oldShape
+        (hold context hc hl hg) value hvalue]
+      rw [structCompileProg_oldShape_eq
+        { context with locals := (name, shape) :: context.locals }
+        compileShape oldShape hold hc hl' hg body hbody]
+  | .assign kind name value, h => by
+      simp only [ProgByteRanged] at h
+      simp only [structCompileProg]
+      rw [structCompileExp_oldShape_eq context compileShape oldShape
+        (hold context hc hl hg) value h.2]
+  | .primitive name operator arguments, h => by
+      simp only [ProgByteRanged] at h
+      simp only [structCompileProg]
+      rw [structCompileProgExps_oldShape_eq context compileShape oldShape hold hc hl hg arguments h.2]
+  | .store address value, h => by
+      simp only [ProgByteRanged] at h
+      simp only [structCompileProg]
+      rw [structCompileExp_oldShape_eq context compileShape oldShape
+        (hold context hc hl hg) address h.1]
+      rw [structCompileExp_oldShape_eq context compileShape oldShape
+        (hold context hc hl hg) value h.2]
+  | .store32 address value, h => by
+      simp only [ProgByteRanged] at h
+      simp only [structCompileProg]
+      rw [structCompileExp_oldShape_eq context compileShape oldShape
+        (hold context hc hl hg) address h.1]
+      rw [structCompileExp_oldShape_eq context compileShape oldShape
+        (hold context hc hl hg) value h.2]
+  | .storeByte address value, h => by
+      simp only [ProgByteRanged] at h
+      simp only [structCompileProg]
+      rw [structCompileExp_oldShape_eq context compileShape oldShape
+        (hold context hc hl hg) address h.1]
+      rw [structCompileExp_oldShape_eq context compileShape oldShape
+        (hold context hc hl hg) value h.2]
+  | .seq first second, h => by
+      simp only [ProgByteRanged] at h
+      simp only [structCompileProg]
+      rw [structCompileProg_oldShape_eq context compileShape oldShape hold hc hl hg first h.1]
+      rw [structCompileProg_oldShape_eq context compileShape oldShape hold hc hl hg second h.2]
+  | .ite condition thenBranch elseBranch, h => by
+      simp only [ProgByteRanged] at h
+      simp only [structCompileProg]
+      rw [structCompileExp_oldShape_eq context compileShape oldShape
+        (hold context hc hl hg) condition h.1]
+      rw [structCompileProg_oldShape_eq context compileShape oldShape hold hc hl hg thenBranch h.2.1]
+      rw [structCompileProg_oldShape_eq context compileShape oldShape hold hc hl hg elseBranch h.2.2]
+  | .while condition body, h => by
+      simp only [ProgByteRanged] at h
+      simp only [structCompileProg]
+      rw [structCompileExp_oldShape_eq context compileShape oldShape
+        (hold context hc hl hg) condition h.1]
+      rw [structCompileProg_oldShape_eq context compileShape oldShape hold hc hl hg body h.2]
+  | .break, _ => by simp [structCompileProg]
+  | .continue, _ => by simp [structCompileProg]
+  | .call none function arguments, h => by
+      simp only [ProgByteRanged] at h
+      simp only [structCompileProg]
+      rw [structCompileProgExps_oldShape_eq context compileShape oldShape hold hc hl hg arguments h.2.1]
+  | .call (some (returns, none)) function arguments, h => by
+      simp only [ProgByteRanged] at h
+      simp only [structCompileProg]
+      rw [structCompileProgExps_oldShape_eq context compileShape oldShape hold hc hl hg arguments h.2.1]
+  | .call (some (returns, some (exception, handlerVar, handler))) function arguments, h => by
+      simp only [ProgByteRanged] at h
+      rcases h with ⟨_, hargs, _, _, _, hhandler⟩
+      simp only [structCompileProg]
+      rw [structCompileProgExps_oldShape_eq context compileShape oldShape hold hc hl hg arguments hargs]
+      rw [structCompileProg_oldShape_eq context compileShape oldShape hold hc hl hg handler hhandler]
+  | .decCall name shape function arguments body, h => by
+      simp only [ProgByteRanged] at h
+      rcases h with ⟨hname, hshape, _, hargs, hbody⟩
+      have hl' : ListParamByteRanged ((name, shape) :: context.locals) := by
+        intro p hp
+        simp only [List.mem_cons] at hp
+        rcases hp with hp | hp
+        · cases hp; exact ⟨hname, hshape⟩
+        · exact hl p hp
+      simp only [structCompileProg]
+      rw [structCompileProgExps_oldShape_eq context compileShape oldShape hold hc hl hg arguments hargs]
+      rw [structCompileProg_oldShape_eq
+        { context with locals := (name, shape) :: context.locals }
+        compileShape oldShape hold hc hl' hg body hbody]
+  | .extCall function configuration configurationLength array arrayLength, h => by
+      simp only [ProgByteRanged] at h
+      simp only [structCompileProg]
+      rw [structCompileExp_oldShape_eq context compileShape oldShape
+        (hold context hc hl hg) configuration h.2.1]
+      rw [structCompileExp_oldShape_eq context compileShape oldShape
+        (hold context hc hl hg) configurationLength h.2.2.1]
+      rw [structCompileExp_oldShape_eq context compileShape oldShape
+        (hold context hc hl hg) array h.2.2.2.1]
+      rw [structCompileExp_oldShape_eq context compileShape oldShape
+        (hold context hc hl hg) arrayLength h.2.2.2.2]
+  | .raise exception value, h => by
+      simp only [ProgByteRanged] at h
+      simp only [structCompileProg]
+      rw [structCompileExp_oldShape_eq context compileShape oldShape
+        (hold context hc hl hg) value h.2]
+  | .return value, h => by
+      simp only [ProgByteRanged] at h
+      simp only [structCompileProg]
+      rw [structCompileExp_oldShape_eq context compileShape oldShape
+        (hold context hc hl hg) value h]
+  | .shMemLoad size kind name address, h => by
+      simp only [ProgByteRanged] at h
+      simp only [structCompileProg]
+      rw [structCompileExp_oldShape_eq context compileShape oldShape
+        (hold context hc hl hg) address h.2]
+  | .shMemStore size address value, h => by
+      simp only [ProgByteRanged] at h
+      simp only [structCompileProg]
+      rw [structCompileExp_oldShape_eq context compileShape oldShape
+        (hold context hc hl hg) address h.1]
+      rw [structCompileExp_oldShape_eq context compileShape oldShape
+        (hold context hc hl hg) value h.2]
+  | .tick, _ => by simp [structCompileProg]
+  | .annot tag text, _ => by simp [structCompileProg]
+termination_by program _ => sizeOf program
+decreasing_by
+  all_goals
+    first
+    | decreasing_trivial
+    | (simp_wf; omega)
+    | omega
+
+private theorem structCompileParams_eq_of_shape_eq [BEq String] (context : StructContext)
+    (compileShape : StructContext → Shape → Shape)
+    (hshape : ∀ shape, ShapeByteRanged shape →
+      compileShape context shape = structCompileShape context shape) :
+    ∀ parameters : List (String × Shape), ListParamByteRanged parameters →
+      parameters.map (fun (name, shape) => (name, compileShape context shape)) =
+        parameters.map (fun (name, shape) => (name, structCompileShape context shape)) := by
+  intro parameters
+  induction parameters with
+  | nil => simp
+  | cons parameter parameters ih =>
+      intro hall
+      obtain ⟨name, shape⟩ := parameter
+      obtain ⟨_, hs⟩ := hall (name, shape) (by simp)
+      simp only [List.map_cons]
+      rw [hshape shape hs]
+      congr 1
+      exact ih (fun item hitem => hall item (by simp [hitem]))
+
+private theorem structCompileDecls_context_eq [BEq String]
+    (declarations : List (Decl α)) :
+    ∀ (context : StructPassContext) (firstShape secondShape : StructContext → Shape → Shape)
+      (firstOldShape secondOldShape : StructPassContext → Exp α → Shape),
+      (structCompileDecls declarations context firstShape firstOldShape).2 =
+        (structCompileDecls declarations context secondShape secondOldShape).2 := by
+  induction declarations with
+  | nil => intro context firstShape secondShape firstOldShape secondOldShape; rfl
+  | cons declaration rest ih =>
+      intro context firstShape secondShape firstOldShape secondOldShape
+      cases declaration with
+      | decl shape name value =>
+          simpa [structCompileDecls] using
+            ih { context with globals := (name, shape) :: context.globals }
+              firstShape secondShape firstOldShape secondOldShape
+      | function declaration =>
+          simpa [structCompileDecls] using
+            ih context firstShape secondShape firstOldShape secondOldShape
+      | exnDecl exception shape =>
+          simpa [structCompileDecls] using
+            ih context firstShape secondShape firstOldShape secondOldShape
+      | name name fields =>
+          simpa [structCompileDecls] using
+            ih context firstShape secondShape firstOldShape secondOldShape
+
+private theorem structCompileProg_exact_eq_legacy {width : Nat} [BEq String]
+    [NeZero width]
+    (context : StructPassContext) (hc : CtxBR context.structs)
+    (hl : ListParamByteRanged context.locals) (hg : ListParamByteRanged context.globals) :
+    ∀ program : Prog (BitVec width), ProgByteRanged program →
+      structCompileProg context program structCompileShapeExactProduction
+          structOldExpShapeExactProduction = structCompileProg context program := by
+  intro program hp
+  calc
+    structCompileProg context program structCompileShapeExactProduction
+        structOldExpShapeExactProduction =
+      structCompileProg context program structCompileShapeExactProduction :=
+        structCompileProg_oldShape_eq context structCompileShapeExactProduction
+          structOldExpShapeExactProduction
+          (fun c hc' hl' hg' e he => structOldExpShapeExactProduction_eq_legacy
+            c e hc' hl' hg' he)
+          hc hl hg program hp
+    _ = structCompileProg context program := by
+      exact structCompileProg_eq_of_shape_eq context structCompileShapeExactProduction
+        (fun shape hshape => structCompileShapeExactProduction_eq_legacy
+          context.structs shape hc hshape) program hp
+
+private theorem structCompileExpExact_eq_legacy {width : Nat} [BEq String] [NeZero width]
+    (context : StructPassContext) (hc : CtxBR context.structs)
+    (hl : ListParamByteRanged context.locals) (hg : ListParamByteRanged context.globals) :
+    ∀ expression : Exp (BitVec width), ExpByteRanged expression →
+      structCompileExp context expression structCompileShapeExactProduction
+          structOldExpShapeExactProduction = structCompileExp context expression := by
+  intro expression he
+  calc
+    structCompileExp context expression structCompileShapeExactProduction
+        structOldExpShapeExactProduction =
+      structCompileExp context expression structCompileShapeExactProduction :=
+        structCompileExp_oldShape_eq context structCompileShapeExactProduction
+          structOldExpShapeExactProduction
+          (fun e he => structOldExpShapeExactProduction_eq_legacy context e hc hl hg he)
+          expression he
+    _ = structCompileExp context expression :=
+      structCompileExp_exact_eq_legacy context hc expression he
+
+private theorem structCompileDecls_globals_byteRanged {width : Nat} [BEq String]
+    (declarations : List (Decl (BitVec width))) :
+    ∀ (context : StructPassContext)
+      (compileShape : StructContext → Shape → Shape)
+      (oldShape : StructPassContext → Exp (BitVec width) → Shape),
+      ListParamByteRanged context.globals →
+      (∀ declaration ∈ declarations, DeclByteRanged declaration) →
+      ListParamByteRanged (structCompileDecls declarations context compileShape oldShape).2.globals := by
+  induction declarations with
+  | nil => intro context compileShape oldShape hg _; exact hg
+  | cons declaration rest ih =>
+      intro context compileShape oldShape hg hdecls
+      have hd := hdecls declaration (by simp)
+      have hrest : ∀ item ∈ rest, DeclByteRanged item := by
+        intro item hitem
+        exact hdecls item (by simp [hitem])
+      cases declaration with
+      | decl shape name value =>
+          simp only [structCompileDecls]
+          simp only [DeclByteRanged] at hd
+          rcases hd with ⟨hshape, hname, _⟩
+          apply ih
+          · intro p hp
+            simp only [List.mem_cons] at hp
+            rcases hp with hp | hp
+            · cases hp; exact ⟨hname, hshape⟩
+            · exact hg p hp
+          · exact hrest
+      | function declaration =>
+          simpa only [structCompileDecls] using ih context compileShape oldShape hg hrest
+      | exnDecl exception shape =>
+          simpa only [structCompileDecls] using ih context compileShape oldShape hg hrest
+      | name name fields =>
+          simpa only [structCompileDecls] using ih context compileShape oldShape hg hrest
+
+
+private theorem structCompileDeclsExact_eq_legacy {width : Nat} [BEq String] [NeZero width]
+    (declarations : List (Decl (BitVec width))) :
+    ∀ (context : StructPassContext), CtxBR context.structs →
+      ListParamByteRanged context.locals → ListParamByteRanged context.globals →
+      (∀ declaration ∈ declarations, DeclByteRanged declaration) →
+        (structCompileDecls declarations context structCompileShapeExactProduction
+          structOldExpShapeExactProduction).1 =
+          (structCompileDecls declarations context).1 := by
+  induction declarations with
+  | nil => intro context hc hl hg hdecls; rfl
+  | cons declaration rest ih =>
+      intro context hc hl hg hdecls
+      have hd := hdecls declaration (by simp)
+      have hrest : ∀ item ∈ rest, DeclByteRanged item := by
+        intro item hitem
+        exact hdecls item (by simp [hitem])
+      cases declaration with
+      | decl shape name value =>
+          simp only [structCompileDecls]
+          simp only [DeclByteRanged] at hd
+          rcases hd with ⟨hshape, hname, hvalue⟩
+          have hg' : ListParamByteRanged ((name, shape) :: context.globals) := by
+            intro p hp
+            simp only [List.mem_cons] at hp
+            rcases hp with hp | hp
+            · cases hp; exact ⟨hname, hshape⟩
+            · exact hg p hp
+          rw [structCompileShapeExactProduction_eq_legacy context.structs shape hc hshape]
+          rw [structCompileExpExact_eq_legacy context hc hl hg value hvalue]
+          congr 1
+          exact ih { context with globals := (name, shape) :: context.globals } hc hl hg' hrest
+      | function declaration =>
+          simp only [structCompileDecls]
+          simp only [DeclByteRanged, FunDeclByteRanged] at hd
+          rcases hd with ⟨_, hparams, hbody, hreturn⟩
+          have htailContext := structCompileDecls_context_eq rest context
+            structCompileShapeExactProduction structCompileShape
+            structOldExpShapeExactProduction structOldExpShape
+          have htailStructs := structCompileDecls_structs rest context
+            structCompileShape structOldExpShape
+          have hcTail : CtxBR (structCompileDecls rest context).2.structs := by
+            rw [htailStructs]
+            exact hc
+          have hgTail := structCompileDecls_globals_byteRanged rest context
+            structCompileShape structOldExpShape hg hrest
+          have hparamsEq := structCompileParams_eq_of_shape_eq context.structs
+            structCompileShapeExactProduction
+            (fun shape hs => structCompileShapeExactProduction_eq_legacy
+              context.structs shape hc hs) declaration.params hparams
+          have hreturnEq := structCompileShapeExactProduction_eq_legacy
+            context.structs declaration.returnShape hc hreturn
+          have hbodyEq :
+              structCompileProg
+                  { (structCompileDecls rest context structCompileShapeExactProduction
+                      structOldExpShapeExactProduction).2 with locals := declaration.params }
+                  declaration.body structCompileShapeExactProduction structOldExpShapeExactProduction =
+                structCompileProg
+                  { (structCompileDecls rest context).2 with locals := declaration.params }
+                  declaration.body := by
+            rw [htailContext]
+            exact structCompileProg_exact_eq_legacy
+              { (structCompileDecls rest context).2 with locals := declaration.params }
+              hcTail hparams hgTail declaration.body hbody
+          have hfunction :
+              ({ declaration with
+                params := declaration.params.map (fun (name, shape) =>
+                  (name, structCompileShapeExactProduction context.structs shape))
+                body := structCompileProg
+                  { (structCompileDecls rest context structCompileShapeExactProduction
+                      structOldExpShapeExactProduction).2 with locals := declaration.params }
+                  declaration.body structCompileShapeExactProduction structOldExpShapeExactProduction
+                returnShape := structCompileShapeExactProduction context.structs declaration.returnShape }) =
+              ({ declaration with
+                params := declaration.params.map (fun (name, shape) =>
+                  (name, structCompileShape context.structs shape))
+                body := structCompileProg
+                  { (structCompileDecls rest context).2 with locals := declaration.params }
+                  declaration.body
+                returnShape := structCompileShape context.structs declaration.returnShape }) := by
+            cases declaration with
+            | mk name inline exported params body returnShape =>
+                simp only [hparamsEq, hbodyEq, hreturnEq]
+          rw [hfunction]
+          rw [ih context hc hl hg hrest]
+      | exnDecl exception shape =>
+          simp only [structCompileDecls]
+          simp only [DeclByteRanged] at hd
+          rcases hd with ⟨_, hshape⟩
+          rw [structCompileShapeExactProduction_eq_legacy context.structs shape hc hshape]
+          congr 1
+          exact ih context hc hl hg hrest
+      | name name fields =>
+          simp only [structCompileDecls]
+          exact ih context hc hl hg hrest
+
+
+/-- Both exact HOL callbacks in the parser-ranged `pan_structs` route preserve
+    the production result. The proof composes the recursive old-expression
+    codec with the existing shape callback equivalence through programs and
+    declarations. This Flapjack-only theorem is not a HOL port. -/
+theorem structCompileTopExact_eq_legacyOfByteRanged {width : Nat} [BEq String] [NeZero width]
+    (declarations : List (Decl (BitVec width)))
+    (hdeclarations : ∀ declaration ∈ declarations, DeclByteRanged declaration) :
+    structCompileTopExactOfByteRanged declarations hdeclarations =
+      structCompileTop declarations := by
+  let initial : StructPassContext := { structs := [], locals := [], globals := [] }
+  letI : BEq String := instBEqOfDecidableEq
+  have hcontext : CtxBR (structGetNames initial declarations).structs :=
+    structGetNames_ctxBR initial declarations (by simp [initial, CtxBR]) hdeclarations
+  have hfields := structGetNames_locals_globals initial declarations
+  have hl : ListParamByteRanged (structGetNames initial declarations).locals := by
+    rw [hfields.1]
+    simp [initial, ListParamByteRanged]
+  have hg : ListParamByteRanged (structGetNames initial declarations).globals := by
+    rw [hfields.2]
+    simp [initial, ListParamByteRanged]
+  simpa [structCompileTopExactOfByteRanged, structCompileTop, initial] using
+    structCompileDeclsExact_eq_legacy declarations (structGetNames initial declarations)
+      hcontext hl hg hdeclarations
+
+
 
 end Flapjack

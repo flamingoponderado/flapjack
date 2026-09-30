@@ -20,6 +20,16 @@ open Flapjack
 open Flapjack.RiscV
 open Flapjack.RiscV.CakeRegAlloc
 
+/-- Original `apply_nummap_key` oracle rows `key_map_mixed` and
+`key_map_collision` in word_alloc_key_map_probe.out. The latter includes
+duplicate inputs and a noninjective colouring. -/
+def keyMapRouteGuard : Bool :=
+  wordApplyColourNumSet (fun n => n + 1) [0, 1, 2, 3, 4, 9] ==
+      [3, 1, 5, 4, 2, 10] &&
+    wordApplyColourNumSet (fun n => n % 3) [9, 2, 1, 0, 9, 4] == [1, 0, 2]
+
+#guard keyMapRouteGuard
+
 def add1Program : WordProg Nat :=
   .seq
     (.move 1 [(13, 0), (17, 2), (21, 4)])
@@ -293,7 +303,11 @@ def runChecks : IO Bool := do
     IO.println "PASS Cake word_alloc AddCarry output matches the checked HOL oracle"
   else
     IO.println "FAIL Cake word_alloc AddCarry output matches the checked HOL oracle"
-  pure (add1AllocatorGuard && simpleAllocatorGuard && linearScanSourceAllocatorGuard && simpleSpillAllocatorGuard && ircK1AllocatorGuard &&
+  if keyMapRouteGuard then
+    IO.println "PASS executed key renaming matches original mixed-order and collision oracles"
+  else
+    IO.println "FAIL executed key renaming matches original mixed-order and collision oracles"
+  pure (keyMapRouteGuard && add1AllocatorGuard && simpleAllocatorGuard && linearScanSourceAllocatorGuard && simpleSpillAllocatorGuard && ircK1AllocatorGuard &&
     ircK1UnweightedAllocatorGuard && addCarryAllocatorGuard)
 
 end Flapjack.Test.CakeWordAllocParity

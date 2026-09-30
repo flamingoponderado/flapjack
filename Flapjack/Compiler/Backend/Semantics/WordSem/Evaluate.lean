@@ -78,7 +78,7 @@ theorem wordSemLex {a b c a' b' c' : Nat}
 end Measure
 
 open Classical in
-/-- Exact HOL `evaluate_def` (`wordSemScript.sml:1016-1260`), clause by clause
+/-- Rendering of HOL `evaluate_def` (`wordSemScript.sml:1016-1260`), clause by clause
     over the tagged helpers:
     * straight-line forms: `Skip`, `Alloc`, `StoreConsts`, `Move`, `Inst`,
       `Assign`, `Get`, `Set`, `OpCurrHeap`, `Store`, and `Tick`;
@@ -89,7 +89,14 @@ open Classical in
     * `Call`: tail calls, and returning calls with their result, exception
       and handler cases.
     HOL's equality tests on results are rendered as matches, and set
-    conditions on `domain` use `sptDomainEmpty`/`sptDomainEqUnion`. -/
+    conditions on `domain` use `sptDomainEmpty`/`sptDomainEqUnion`.
+
+    Exact port with an inherited assumption (PR #1179 review, bead
+    `flapjack-qfld`): the `Inst` clause calls the tagged `inst`, which carries
+    `(reals_as_rational_cuts)` for its `FPSqrt` rendering; this declaration
+    does not use a real rendering itself and records the inherited
+    `docs/SOUNDNESS.md` item 8 assumption in the theorem map.  Every other clause
+    follows HOL clause by clause. -/
 @[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "evaluate_def" 1016
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 noncomputable def evaluate {width : Nat} [NeZero width] {C : Type} {F : Type}

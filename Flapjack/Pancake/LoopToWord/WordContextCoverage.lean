@@ -9,7 +9,9 @@ declaration. They establish that the context built by the executed
 `loopReferencedVars`; this is the successful-lookup premise needed by
 `findVarHOL_wordFindVar_of_lookup` when routing expression compilation through
 the exact `compExpHOL` definition. They do not establish expression/compiler
-equivalence or change the observable missing-name defaults.
+equivalence. Both the HOL and production find_var return zero for a missing
+name; coverage is needed to establish the intended mapped name, not to hide
+a difference in missing-name behavior.
 -/
 
 namespace Flapjack

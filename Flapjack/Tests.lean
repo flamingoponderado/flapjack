@@ -1,3 +1,7 @@
+import Flapjack.Test.StackSemStackCodecParity
+import Flapjack.Test.StackSemControl
+import Flapjack.Test.StackSemStateOps
+import Flapjack.Test.StackSemWordBitmapParity
 import Flapjack.Test.Source
 import Flapjack.Test.Parser
 import Flapjack.Test.DisplayParity

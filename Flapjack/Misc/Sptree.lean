@@ -998,6 +998,44 @@ def sptUnion {α : Type} : Spt α → Spt α → Spt α
           .bs (sptUnion first first') value (sptUnion second second')
 termination_by left _ => sizeOf left
 
+/-- Exact HOL lookup of left-biased Spt union, over the constructor-for-
+constructor tree carrier and generic value type. -/
+@[hol "hol4/src/finite_maps/sptreeScript.sml" "lookup_union"]
+theorem sptLookup_sptUnion {α : Type} (left right : Spt α) (key : Nat) :
+    sptLookup key (sptUnion left right) =
+      match sptLookup key left with
+      | some v => some v
+      | none => sptLookup key right := by
+  induction left generalizing right key with
+  | ln => simp [sptUnion]
+  | ls v =>
+      cases right <;> by_cases h0 : key = 0 <;> simp [sptUnion, sptLookup, h0]
+  | bn l r ihl ihr =>
+      cases right <;> by_cases h0 : key = 0 <;> by_cases he : key % 2 = 0 <;>
+        simp [sptUnion, sptLookup, h0, he, ihl, ihr]
+      all_goals split <;> simp_all
+  | bs l v r ihl ihr =>
+      cases right <;> by_cases h0 : key = 0 <;> by_cases he : key % 2 = 0 <;>
+        simp [sptUnion, sptLookup, h0, he, ihl, ihr]
+      all_goals split <;> simp_all
+
+/-- Pointwise membership helper for allocation live sets. Flapjack
+infrastructure; the full HOL set equality is ported by `sptDomain_sptUnion`. -/
+theorem sptMem_sptUnion {α : Type} (left right : Spt α) (key : Nat) :
+    sptMem key (sptUnion left right) ↔ sptMem key left ∨ sptMem key right := by
+  unfold sptMem sptDomain
+  rw [sptLookup_sptUnion]
+  cases sptLookup key left <;> simp
+
+/-- Exact HOL domain equality for union. HOL sets and Lean predicates both
+use characteristic membership, so this states the full set equality. -/
+@[hol "hol4/src/finite_maps/sptreeScript.sml" "domain_union"]
+theorem sptDomain_sptUnion {α : Type} (left right : Spt α) :
+    sptDomain (sptUnion left right) =
+      (fun key => sptDomain left key ∨ sptDomain right key) := by
+  funext key
+  exact propext (sptMem_sptUnion left right key)
+
 /-- HOL `sptree$inter` (`HOL/src/finite_maps/sptreeScript.sml:272-291`): keep
 only keys present in both trees, with the left operand's value.  HOL's declared
 type is heterogeneous (`'a num_map -> 'b num_map -> 'a num_map`; the second
@@ -1027,6 +1065,47 @@ def sptInter {α β : Type} : Spt α → Spt β → Spt α
       | .bs first' _ second' =>
           sptMkBS (sptInter first first') value (sptInter second second')
 termination_by left _ => sizeOf left
+
+/-- Lookup infrastructure for the canonical empty-branch collapse. -/
+private theorem sptLookup_mkBN {α : Type} (left right : Spt α) (key : Nat) :
+    sptLookup key (sptMkBN left right) = sptLookup key (.bn left right) := by
+  cases left <;> cases right <;> by_cases h0 : key = 0 <;>
+    by_cases he : key % 2 = 0 <;> simp [sptMkBN, sptLookup, h0, he]
+
+/-- Lookup infrastructure for the canonical singleton collapse. -/
+private theorem sptLookup_mkBS {α : Type} (left : Spt α) (v : α) (right : Spt α) (key : Nat) :
+    sptLookup key (sptMkBS left v right) = sptLookup key (.bs left v right) := by
+  cases left <;> cases right <;> by_cases h0 : key = 0 <;>
+    by_cases he : key % 2 = 0 <;> simp [sptMkBS, sptLookup, h0, he]
+
+/-- Exact heterogeneous HOL intersection lookup, preserving the left payload
+only when both trees contain the key. No well-formedness premise is needed. -/
+@[hol "hol4/src/finite_maps/sptreeScript.sml" "lookup_inter"]
+theorem sptLookup_sptInterCases {α β : Type} (left : Spt α) (right : Spt β) (key : Nat) :
+    sptLookup key (sptInter left right) =
+      match sptLookup key left, sptLookup key right with
+      | some value, some _ => some value
+      | _, _ => none := by
+  induction left generalizing right key with
+  | ln => simp [sptInter]
+  | ls value =>
+      cases right <;> by_cases h0 : key = 0 <;> simp [sptInter, sptLookup, h0]
+  | bn l r ihl ihr =>
+      cases right <;> by_cases h0 : key = 0 <;> by_cases he : key % 2 = 0 <;>
+        simp [sptInter, sptLookup_mkBN, sptLookup, h0, he, ihl, ihr]
+  | bs l value r ihl ihr =>
+      cases right <;> by_cases h0 : key = 0 <;> by_cases he : key % 2 = 0 <;>
+        simp [sptInter, sptLookup_mkBN, sptLookup_mkBS, sptLookup, h0, he, ihl, ihr]
+
+/-- Full HOL domain intersection equality over characteristic predicates. -/
+@[hol "hol4/src/finite_maps/sptreeScript.sml" "domain_inter"]
+theorem sptDomain_sptInter {α β : Type} (left : Spt α) (right : Spt β) :
+    sptDomain (sptInter left right) =
+      (fun key => sptDomain left key ∧ sptDomain right key) := by
+  funext key
+  unfold sptDomain
+  rw [sptLookup_sptInterCases]
+  cases sptLookup key left <;> cases sptLookup key right <;> simp
 
 /-- HOL `sptree$difference` (`HOL/src/finite_maps/sptreeScript.sml:319-339`):
 remove every key present in the right tree while retaining the left payloads.

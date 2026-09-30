@@ -1,5 +1,15 @@
 # Original Pancake HOL probes
 
+`pan_globals_compile_top_probe.out` retains `missing_start`, `global_present`,
+and `present_start`, and adds `top_missing`, `top_function`, and
+`top_global_exception` for exact `compile_top_def`. The new 64-bit rows cover
+parameter and inline/export metadata, absent-global reads, global initializer
+address 8, and exception/new-main/function ordering. Regenerate using the built
+original theories with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=pan_globals_compile_top_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`Flapjack.Test.PanGlobalsCompileTopExactParity` replays the new rows; it does not
+claim production top-level routing or the pass semantics theorem.
+
 The repository-wide parity workflow is documented in
 [`docs/PARITY-TESTING.md`](../../docs/PARITY-TESTING.md).
 
@@ -1209,3 +1219,127 @@ is `Flapjack.Test.WordSemEvaluateParity`. Refresh with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_sem_evaluate_probeScript.sml
 bash scripts/hol-probes/regenerate.sh`.
+
+`word_alloc_colour_exp_probe.out` records original `word_alloc$apply_colour_exp_def`
+(`cakeml/compiler/backend/word_allocScript.sml:580-587`) at eight-bit words: nested
+Op/Load, a fixed five-bit Temp name, both expression-valued Shift operands,
+duplicate variables under an aliasing colouring, and empty Op arguments.
+`Flapjack.Test.CakeApplyColourParity.expressionColourExact` checks all three
+rows through the production function in the compiled `lake test` executable.
+Refresh with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_alloc_colour_exp_probeScript.sml
+bash scripts/hol-probes/regenerate.sh`.
+
+`word_alloc_colour_inst_probe.out` records direct original
+`word_alloc$apply_colour_inst_def` observations at 8-bit words. Under
+`n + 10`, Load16/Store16 retain registers 3/5 through the catchall, whereas
+Load8/Store32 rename them to 13/15 and preserve offset 7w. AddCarry retains
+all four operand positions, and FPMovFromReg preserves its float destination
+while renaming both integer sources. These rows drive reconciliation of the
+executed allocator, whose previous blanket memory renaming differs at 16 bits.
+Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=word_alloc_colour_inst_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
+# Word allocation key renaming
+
+`word_alloc_key_map_probeScript.sml` evaluates the original `apply_nummap_key`
+on unit-valued numeric trees, including mixed traversal order, duplicate input
+keys, and noninjective renaming. `CakeWordAllocParity.keyMapRouteGuard` checks
+the executed list boundary against these captured rows.
+
+Regenerate with:
+
+```sh
+CAKEML=/path/to/built/cakeml HOL_PROBE_ONLY=word_alloc_key_map_probeScript.sml scripts/hol-probes/regenerate.sh
+```
+
+## StackSem word bitmap codec
+
+`stacksem_word_bitmap_probeScript.sml` captures eleven original HOL `bit_length`
+and `read_bitmap` rows: zero/one/high-bit lengths, empty input, terminal zero/one,
+least-significant-first ordering, ignored terminal suffix, missing continuation,
+continuation concatenation, and width-one words. Regenerate against read-only
+prebuilt theory objects with:
+
+```sh
+CAKEML=/home/zksecurity/pancake-lean/cakeml \
+HOL_PROBE_ONLY=stacksem_word_bitmap_probeScript.sml scripts/hol-probes/regenerate.sh
+```
+
+`Flapjack/Test/StackSemWordBitmapParity.lean` kernel-checks each captured result.
+These rows exercise the HOL-shaped word/list ports; they do not establish
+Nat-utility refinement or full StackSem evaluator execution.
+
+`word_alloc_live_inst_probe.out` captures nine original `get_live_inst_def`
+observations (`word_allocScript.sml:706-752`): Load16 catchall, Load8,
+Store32, AddCarry, AddOverflow, and FPMovToReg/FPMovFromReg at 32 and 64 bits.
+The exact tree enumeration lists are kernel-replayed and runtime-checked in
+`Flapjack.Test.CakeApplyColourParity.instructionLivenessExact`. This checks the
+exact definition; the independent production list-liveness route remains open
+on bead `.18.5.11.1.7.1`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_alloc_live_inst_probeScript.sml
+scripts/hol-probes/regenerate.sh` (the shared checkout supplies built objects;
+its original word_alloc source was compared byte-for-byte).
+
+`word_alloc_live_exp_probe.out` records direct original `get_live_exp_def`
+observations for nested expressions, duplicate variables, empty operators,
+both Shift operands, constants, and lookups. The captured mixed-tree key order
+is kernel-replayed through `getLiveExpExecutable` in
+`Flapjack.Test.WordAllocLiveExpressionParity`. The executed dead-code set
+boundary calls reviewed `getLiveExp`; duplicate-sensitive occurrence lists
+used by clash construction retain their separate representation. Regenerate
+with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_alloc_live_exp_probeScript.sml
+scripts/hol-probes/regenerate.sh` after building original CakeML theories.
+
+`word_sem_cut_names_type_probe.out` prints the original HOL `cut_names`
+constant types for `cut_names`, `cut_envs`, and `cut_env` from `wordSemTheory`: independent name-map and environment-map
+payload parameters in the first, and generic environment payloads in the latter two. It guards the carrier review of `wordSemCutNames` against
+an accidental specialization to unit keys or word-valued locals. Regenerate
+with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_sem_cut_names_type_probeScript.sml
+scripts/hol-probes/regenerate.sh`; the original wordSem source was compared
+byte-for-byte before using the shared checkout's built objects.
+
+## StackSem recursive stack codecs
+
+`stacksem_stack_codec_probeScript.sml` captures26 concrete original HOL
+`full_read_bitmap`/`enc_stack`/`dec_stack` rows and their three inferred types.
+The standalone definitions have independent bitmap and descriptor/stack word
+dimensions; mixed8-bit bitmap/1-bit stack rows guard this distinction. Other rows
+cover one-based indexing, sentinel shape, recursive frames, selected and
+unselected location values, truncated inputs/roots, extra roots, missing
+continuation words and missing final sentinel.
+
+Regenerate read-only with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_stack_codec_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`Flapjack/Test/StackSemStackCodecParity.lean` kernel-checks all26 concrete rows.
+Full GC/evaluator execution and Nat-machine refinement remain separate work.
+
+`word_alloc_live_exp_probe.out` captures six original `get_live_exp` key
+traversals (nested, duplicate, empty, binary Shift, constant, lookup).
+`Flapjack.Test.WordAllocLiveExpressionParity` replays all six with kernel
+reduction of the executed constant-erasure wrapper. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_alloc_live_exp_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`word_alloc_pair_keys_probe.out` records three original `apply_nummaps_key_def`
+rows (`word_allocScript.sml:29-33`): independent Boolean/numeric payloads,
+unit-map collisions, and an empty component with duplicate input keys.
+`Flapjack.Test.CakeApplyColourParity.pairedKeyMapExact` kernel-replays the
+heterogeneous exact maps and runtime-checks the actual paired allocator route
+for the unit cutsets. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_alloc_pair_keys_probeScript.sml
+scripts/hol-probes/regenerate.sh`; the original source was compared byte-for-byte
+before using the shared checkout's built objects.
+
+`stacksem_allocation_probe.out` captures eighteen concrete original GC,
+unsigned-space and allocation observations plus the independent-dimension
+`has_space` type. `Flapjack.Test.StackSemAllocationParity` kernel-replays all
+concrete rows (including 1-bit request/8-bit store and rollback/GC post-state
+errors). Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_allocation_probeScript.sml scripts/hol-probes/regenerate.sh`.
+Full StackSem evaluation and production refinement remain open.
+
+`stacksem_expression_probeScript.sml` captures twenty original StackSem word_exp/assign rows: all six constructors, failed/missing/Loc lookups, domain and memory payload rejection, wraparound, invalid arithmetic arity, binary shift bounds, and destination update/failure. Kernel replay: `Flapjack/Test/StackSemExpressionParity.lean`. Full evaluator/production refinement is separate.
