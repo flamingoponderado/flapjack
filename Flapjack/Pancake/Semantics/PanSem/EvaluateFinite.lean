@@ -514,7 +514,7 @@ theorem evalPanSemRecursiveCallFiniteContext_call_clock_zero {width : Nat} {σ :
       some (body, callee, returnShape))
     (hclock : context.state.clock = 0) :
     evalPanSemRecursiveCallFiniteContext (.call info function arguments) context =
-      some (some .timeOut, context.withState (emptyLocalsHOLFinite context.state) rfl rfl) := by
+      some (some .timeOut, FiniteEvalContext.emptyLocalsContextHOLFinite context) := by
   rw [evalPanSemRecursiveCallFiniteContext.eq_def]
   dsimp only
   rw [hargs]
@@ -595,7 +595,7 @@ theorem evalPanSemRecursiveCallFiniteContext_call_return_shape_mismatch
       some (body, callee, returnShape))
     (hclock : context.state.clock ≠ 0)
     (hbody : evalPanSemRecursiveCallFiniteContext body
-      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl) =
+      (callEntryContextHOLFinite context callee) =
       some (some (.returned value), bodyContext))
     (hshape : shapeEqHOL (shapeOfHOLExact value) returnShape = false) :
     evalPanSemRecursiveCallFiniteContext (.call info function arguments) context =
@@ -627,7 +627,7 @@ theorem evalPanSemRecursiveCallFiniteContext_call_body_none
       some (body, callee, returnShape))
     (hclock : context.state.clock ≠ 0)
     (hbody : evalPanSemRecursiveCallFiniteContext body
-      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl) =
+      (callEntryContextHOLFinite context callee) =
       some (none, bodyContext)) :
     evalPanSemRecursiveCallFiniteContext (.call info function arguments) context =
       some (some .error,
@@ -652,7 +652,7 @@ theorem evalPanSemRecursiveCallFiniteContext_call_body_break
       some (body, callee, returnShape))
     (hclock : context.state.clock ≠ 0)
     (hbody : evalPanSemRecursiveCallFiniteContext body
-      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl) =
+      (callEntryContextHOLFinite context callee) =
       some (some .break, bodyContext)) :
     evalPanSemRecursiveCallFiniteContext (.call info function arguments) context =
       some (some .error,
@@ -677,7 +677,7 @@ theorem evalPanSemRecursiveCallFiniteContext_call_body_continue
       some (body, callee, returnShape))
     (hclock : context.state.clock ≠ 0)
     (hbody : evalPanSemRecursiveCallFiniteContext body
-      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl) =
+      (callEntryContextHOLFinite context callee) =
       some (some .continue, bodyContext)) :
     evalPanSemRecursiveCallFiniteContext (.call info function arguments) context =
       some (some .error,
@@ -707,7 +707,7 @@ theorem evalPanSemRecursiveCallFiniteContext_call_matched_exception_handler
       some (body, callee, returnShape))
     (hclock : context.state.clock ≠ 0)
     (hbody : evalPanSemRecursiveCallFiniteContext body
-      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl) =
+      (callEntryContextHOLFinite context callee) =
         some (some (.exception handlerId value), bodyContext))
     (hshape : context.state.eshapes.lookup handlerId = some declaredShape)
     (hshapeEq : shapeEqHOL (shapeOfHOLExact value) declaredShape = true)
@@ -719,8 +719,7 @@ theorem evalPanSemRecursiveCallFiniteContext_call_matched_exception_handler
         (callEntryStateHOLFinite context.state callee)
         (some (.exception handlerId value)) bodyContext
     evalPanSemRecursiveCallFiniteContext handlerProgram
-        (fixedContext.withState
-          (handlerStateHOLFinite context fixedContext handlerVar value) rfl rfl) := by
+        (callContinuationContextHOLFinite context fixedContext handlerVar value) := by
   rw [evalPanSemRecursiveCallFiniteContext.eq_5]
   simp only [hargs]
   rw [hlookup]
@@ -743,13 +742,14 @@ theorem evalPanSemRecursiveCallFiniteContext_call_return_none
       some (body, callee, returnShape))
     (hclock : context.state.clock ≠ 0)
     (hbody : evalPanSemRecursiveCallFiniteContext body
-      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl) =
+      (callEntryContextHOLFinite context callee) =
       some (some (.returned value), bodyContext))
     (hshape : shapeEqHOL (shapeOfHOLExact value) returnShape = true) :
     evalPanSemRecursiveCallFiniteContext (.call none function arguments) context =
       some (some (.returned value),
-        (callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee) (some (.returned value)) bodyContext).withState
-          (emptyLocalsHOLFinite (callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee) (some (.returned value)) bodyContext).state) rfl rfl) := by
+        FiniteEvalContext.emptyLocalsContextHOLFinite
+          (callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
+            (some (.returned value)) bodyContext)) := by
   rw [evalPanSemRecursiveCallFiniteContext.eq_5]
   simp only [hargs, hlookup, if_neg hclock, hbody]
   simp [hshape]
@@ -770,14 +770,15 @@ theorem evalPanSemRecursiveCallFiniteContext_call_return_caller_locals
       some (body, callee, returnShape))
     (hclock : context.state.clock ≠ 0)
     (hbody : evalPanSemRecursiveCallFiniteContext body
-      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl) =
+      (callEntryContextHOLFinite context callee) =
       some (some (.returned value), bodyContext))
     (hshape : shapeEqHOL (shapeOfHOLExact value) returnShape = true) :
     evalPanSemRecursiveCallFiniteContext
         (.call (some (none, handler)) function arguments) context =
       some (none,
-        (callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee) (some (.returned value)) bodyContext).withState
-          { (callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee) (some (.returned value)) bodyContext).state with locals := context.state.locals } rfl rfl) := by
+        callRestoreLocalsContextHOLFinite context
+          (callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
+            (some (.returned value)) bodyContext)) := by
   rw [evalPanSemRecursiveCallFiniteContext.eq_5]
   simp only [hargs, hlookup, if_neg hclock, hbody]
   simp [hshape]
@@ -799,17 +800,16 @@ theorem evalPanSemRecursiveCallFiniteContext_call_return_set_kvar
       some (body, callee, returnShape))
     (hclock : context.state.clock ≠ 0)
     (hbody : evalPanSemRecursiveCallFiniteContext body
-      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl) =
+      (callEntryContextHOLFinite context callee) =
       some (some (.returned value), bodyContext))
     (hshape : shapeEqHOL (shapeOfHOLExact value) returnShape = true)
     (hvalid : isValidValueHOLExact context.state.toExact kind name value = true) :
     evalPanSemRecursiveCallFiniteContext
         (.call (some (some (kind, name), handler)) function arguments) context =
       some (none,
-        (callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee) (some (.returned value)) bodyContext).withState
-          (setKvarHOLFinite kind name value
-            { (callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee) (some (.returned value)) bodyContext).state with locals := context.state.locals })
-          (by cases kind <;> rfl) (by cases kind <;> rfl)) := by
+        callSetKvarContextHOLFinite context
+          (callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
+            (some (.returned value)) bodyContext) kind name value) := by
   rw [evalPanSemRecursiveCallFiniteContext.eq_5]
   simp only [hargs, hlookup, if_neg hclock, hbody]
   simp [hshape, hvalid]
@@ -831,7 +831,7 @@ theorem evalPanSemRecursiveCallFiniteContext_call_return_kvar_invalid
       some (body, callee, returnShape))
     (hclock : context.state.clock ≠ 0)
     (hbody : evalPanSemRecursiveCallFiniteContext body
-      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl) =
+      (callEntryContextHOLFinite context callee) =
       some (some (.returned value), bodyContext))
     (hshape : shapeEqHOL (shapeOfHOLExact value) returnShape = true)
     (hinvalid : isValidValueHOLExact context.state.toExact kind name value = false) :
@@ -859,12 +859,13 @@ theorem evalPanSemRecursiveCallFiniteContext_call_exception_unhandled
       some (body, callee, returnShape))
     (hclock : context.state.clock ≠ 0)
     (hbody : evalPanSemRecursiveCallFiniteContext body
-      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl) =
+      (callEntryContextHOLFinite context callee) =
       some (some (.exception exceptionId value), bodyContext)) :
     evalPanSemRecursiveCallFiniteContext (.call none function arguments) context =
       some (some (.exception exceptionId value),
-        (callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee) (some (.exception exceptionId value)) bodyContext).withState
-          (emptyLocalsHOLFinite (callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee) (some (.exception exceptionId value)) bodyContext).state) rfl rfl) := by
+        FiniteEvalContext.emptyLocalsContextHOLFinite
+          (callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
+            (some (.exception exceptionId value)) bodyContext)) := by
   rw [evalPanSemRecursiveCallFiniteContext.eq_5]
   simp only [hargs, hlookup, if_neg hclock, hbody]
 
@@ -885,13 +886,14 @@ theorem evalPanSemRecursiveCallFiniteContext_call_exception_no_handler
       some (body, callee, returnShape))
     (hclock : context.state.clock ≠ 0)
     (hbody : evalPanSemRecursiveCallFiniteContext body
-      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl) =
+      (callEntryContextHOLFinite context callee) =
       some (some (.exception exceptionId value), bodyContext)) :
     evalPanSemRecursiveCallFiniteContext
         (.call (some (returnInfo, none)) function arguments) context =
       some (some (.exception exceptionId value),
-        (callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee) (some (.exception exceptionId value)) bodyContext).withState
-          (emptyLocalsHOLFinite (callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee) (some (.exception exceptionId value)) bodyContext).state) rfl rfl) := by
+        FiniteEvalContext.emptyLocalsContextHOLFinite
+          (callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
+            (some (.exception exceptionId value)) bodyContext)) := by
   rw [evalPanSemRecursiveCallFiniteContext.eq_5]
   simp only [hargs, hlookup, if_neg hclock, hbody]
 
@@ -913,15 +915,16 @@ theorem evalPanSemRecursiveCallFiniteContext_call_exception_mismatch
       some (body, callee, returnShape))
     (hclock : context.state.clock ≠ 0)
     (hbody : evalPanSemRecursiveCallFiniteContext body
-      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl) =
+      (callEntryContextHOLFinite context callee) =
       some (some (.exception exceptionId value), bodyContext))
     (hne : ¬ exceptionId = handlerId) :
     evalPanSemRecursiveCallFiniteContext
         (.call (some (returnInfo, some (handlerId, handlerVar, handlerProgram)))
           function arguments) context =
       some (some (.exception exceptionId value),
-        (callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee) (some (.exception exceptionId value)) bodyContext).withState
-          (emptyLocalsHOLFinite (callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee) (some (.exception exceptionId value)) bodyContext).state) rfl rfl) := by
+        FiniteEvalContext.emptyLocalsContextHOLFinite
+          (callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
+            (some (.exception exceptionId value)) bodyContext)) := by
   rw [evalPanSemRecursiveCallFiniteContext.eq_5]
   simp only [hargs, hlookup, if_neg hclock, hbody]
   simp only [if_neg hne]
@@ -944,7 +947,7 @@ theorem evalPanSemRecursiveCallFiniteContext_call_exception_missing_shape
       some (body, callee, returnShape))
     (hclock : context.state.clock ≠ 0)
     (hbody : evalPanSemRecursiveCallFiniteContext body
-      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl) =
+      (callEntryContextHOLFinite context callee) =
       some (some (.exception exceptionId value), bodyContext))
     (heq : exceptionId = handlerId)
     (hshapeNone : context.state.eshapes.lookup exceptionId = none) :
@@ -977,7 +980,7 @@ theorem evalPanSemRecursiveCallFiniteContext_call_exception_invalid
       some (body, callee, returnShape))
     (hclock : context.state.clock ≠ 0)
     (hbody : evalPanSemRecursiveCallFiniteContext body
-      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl) =
+      (callEntryContextHOLFinite context callee) =
       some (some (.exception exceptionId value), bodyContext))
     (heq : exceptionId = handlerId)
     (hshapeSome : context.state.eshapes.lookup exceptionId = some declaredShape)
@@ -1648,7 +1651,9 @@ macro "callProjectionCloser" : tactic =>
     | (apply PanSemExactEvalContext.ext; rfl)
     | (apply PanSemExactEvalContext.ext
        simp only [FiniteEvalContext.withState_state, toExact_setKvarHOLFinite,
-         toExact_setLocals])
+         toExact_setLocals, FiniteEvalContext.toExact_emptyLocalsContextHOLFinite,
+         toExact_callRestoreLocalsContextHOLFinite,
+         toExact_callSetKvarContextHOLFinite])
     | rfl)
 
 set_option maxHeartbeats 1000000 in
@@ -1691,27 +1696,19 @@ theorem evalPanSemRecursiveCallFiniteContext_call_projection {width : Nat} {σ :
         · have hclock' : context.toExact.state.clock = 0 := hclock
           rw [if_pos hclock, if_pos hclock']
           simp only [Option.map_some, Option.some.injEq]
-          have hb : (context.withState (emptyLocalsHOLFinite context.state) rfl rfl).toExact =
+          have hb : (FiniteEvalContext.emptyLocalsContextHOLFinite context).toExact =
               context.toExact.withState (emptyLocalsHOLExact context.state.toExact) rfl rfl := by
-            apply PanSemExactEvalContext.ext
-            change emptyLocalsHOLExact context.state.toExact =
-              (emptyLocalsHOLFinite context.state).toExact
-            rw [toExact_emptyLocalsHOLFinite]
+            exact FiniteEvalContext.toExact_emptyLocalsContextHOLFinite context
           rw [hb]
           rfl
         · have hclock' : ¬(context.toExact.state.clock = 0) := hclock
           rw [if_neg hclock, if_neg hclock']
-          generalize hent : context.withState
-            (callEntryStateHOLFinite context.state callee) rfl rfl = ent
+          generalize hent : callEntryContextHOLFinite context callee = ent
           generalize hentb : context.toExact.withState
             (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
           have hentb_eq : entb = ent.toExact := by
             rw [← hentb, ← hent]
-            apply PanSemExactEvalContext.ext
-            change (callEntryStateHOLFinite context.state callee).toExact =
-              Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup
-            rw [toExact_callEntryStateHOLFinite]
-            rfl
+            exact (FiniteEvalContext.toExact_callEntryContext context callee).symm
           rw [hentb_eq]
           cases hbody : evalPanSemRecursiveCallFiniteContext body ent with
           | none =>
@@ -1748,11 +1745,8 @@ theorem evalPanSemRecursiveCallFiniteContext_call_projection {width : Nat} {σ :
                           simp only [Option.map_some, Option.some.injEq, Prod.mk.injEq]
                           refine ⟨trivial, ?_⟩
                           apply PanSemExactEvalContext.ext
-                          simp only [FiniteEvalContext.toExact,
-                            PanSemExactEvalContext.withState_state,
-                            FiniteEvalContext.withState_state]
-                          rw [toExact_setKvarHOLFinite]
-                          congr 1
+                          rw [toExact_callSetKvarContextHOLFinite]
+                          rfl
                         · have hvalid' : ¬(isValidValueHOLExact context.toExact.state kind name value = true) := hvalid
                           simp only [if_neg hvalid, if_neg hvalid']; callProjectionCloser
                   · simp only [if_neg hshape]; callProjectionCloser
@@ -1841,13 +1835,7 @@ theorem evalPanSemRecursiveCallFiniteContext_decCall_projection {width : Nat} {�
         · have hclock' : context.toExact.state.clock = 0 := hclock
           rw [if_pos hclock, if_pos hclock']
           simp only [Option.map_some, Option.some.injEq]
-          have hb : (FiniteEvalContext.emptyLocalsContextHOLFinite context).toExact =
-              PanSemExactEvalContext.emptyLocalsContextHOLExact context.toExact := by
-            apply PanSemExactEvalContext.ext
-            change (emptyLocalsHOLFinite context.state).toExact =
-              emptyLocalsHOLExact context.state.toExact
-            rw [toExact_emptyLocalsHOLFinite]
-          rw [hb]
+          rw [FiniteEvalContext.toExact_emptyLocalsContextHOLFinite]
         · have hclock' : ¬(context.toExact.state.clock = 0) := hclock
           rw [if_neg hclock, if_neg hclock']
           generalize hent : context.withState
@@ -2230,7 +2218,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
       change emptyLocalsHOLExact context.state.toExact = (emptyLocalsHOLFinite context.state).toExact
       rw [toExact_emptyLocalsHOLFinite]
   | case22 =>
-      rename_i inst context state info function arguments values x2 body callee returnShape x1 h entry entryContext x ih1
+      rename_i inst context state info function arguments values x2 body callee returnShape x1 h entryContext x ih1
       rw [evalPanSemRecursiveCallContextHOLExact.eq_5]
       rw [show (FiniteEvalContext.toExact context).state.code = context.state.code.lookup from rfl]
       have hargs : @Flapjack.evalListHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable arguments = some values := by
@@ -2263,12 +2251,11 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
       have hclock' : ¬(context.toExact.state.clock = 0) := h
       rw [if_neg hclock']
       generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
+      have hentry : callEntryContextHOLFinite context callee = entryContext := rfl
       have hentb_eq : entb = entryContext.toExact := by
         rw [← hentb]
-        apply PanSemExactEvalContext.ext
-        change (callEntryStateHOLFinite context.state callee).toExact = Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup
-        rw [toExact_callEntryStateHOLFinite]
-        rfl
+        rw [← hentry]
+        exact (FiniteEvalContext.toExact_callEntryContext context callee).symm
       rw [hentb_eq, ← ih1, x]
       simp only [Option.map_some, Option.some.injEq]
       congr 1
@@ -2284,12 +2271,11 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
       have hclock' : ¬(context.toExact.state.clock = 0) := h
       rw [if_neg hclock']
       generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
+      have hentry : callEntryContextHOLFinite context callee = entryContext := rfl
       have hentb_eq : entb = entryContext.toExact := by
         rw [← hentb]
-        apply PanSemExactEvalContext.ext
-        change (callEntryStateHOLFinite context.state callee).toExact = Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup
-        rw [toExact_callEntryStateHOLFinite]
-        rfl
+        rw [← hentry]
+        exact (FiniteEvalContext.toExact_callEntryContext context callee).symm
       rw [hentb_eq, ← ih1, x]
       simp only [Option.map_some, Option.some.injEq]
       congr 1
@@ -2338,8 +2324,8 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
       simp only [Option.some.injEq, Prod.mk.injEq]
       refine ⟨trivial, ?_⟩
       apply PanSemExactEvalContext.ext
-      simp only [FiniteEvalContext.toExact, FiniteEvalContext.withState,
-        PanSemExactEvalContext.withState_state, toExact_emptyLocalsHOLFinite]
+      simp only [FiniteEvalContext.toExact,
+        PanSemExactEvalContext.withState_state]
       congr 1
   | case27 =>
       rename_i inst context state function arguments values x2 body callee returnShape x1 hClock entry entryContext postContext value hshape snd x fixedContext ih1
@@ -2365,8 +2351,8 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
       simp only [Option.some.injEq, Prod.mk.injEq]
       refine ⟨trivial, ?_⟩
       apply PanSemExactEvalContext.ext
-      simp only [FiniteEvalContext.toExact, FiniteEvalContext.withState,
-        PanSemExactEvalContext.withState_state, toExact_setLocals]
+      simp only [FiniteEvalContext.toExact,
+        PanSemExactEvalContext.withState_state]
       congr 1
   | case28 =>
       rename_i inst context state function arguments values x2 body callee returnShape x1 hClock entry entryContext postContext value hshape kind name snd hvalid x fixedContext ih1
@@ -2394,7 +2380,7 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
       refine ⟨trivial, ?_⟩
       apply PanSemExactEvalContext.ext
       simp only [FiniteEvalContext.toExact, PanSemExactEvalContext.withState_state,
-        FiniteEvalContext.withState_state]
+        FiniteEvalContext.withState_state, callSetKvarContextHOLFinite]
       rw [toExact_setKvarHOLFinite]
       congr 1
   | case29 =>
@@ -2473,8 +2459,8 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
       simp only [Option.some.injEq, Prod.mk.injEq]
       refine ⟨trivial, ?_⟩
       apply PanSemExactEvalContext.ext
-      simp only [FiniteEvalContext.toExact, FiniteEvalContext.withState,
-        PanSemExactEvalContext.withState_state, toExact_emptyLocalsHOLFinite]
+      simp only [FiniteEvalContext.toExact,
+        PanSemExactEvalContext.withState_state]
       congr 1
   | case32 =>
       rename_i inst context state function arguments values x2 body callee returnShape x1 hClock entry entryContext postContext exceptionId value fst x fixedContext ih1
@@ -2499,11 +2485,11 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
       simp only [Option.some.injEq, Prod.mk.injEq]
       refine ⟨trivial, ?_⟩
       apply PanSemExactEvalContext.ext
-      simp only [FiniteEvalContext.toExact, FiniteEvalContext.withState,
-        PanSemExactEvalContext.withState_state, toExact_emptyLocalsHOLFinite]
+      simp only [FiniteEvalContext.toExact,
+        PanSemExactEvalContext.withState_state]
       congr 1
   | case33 =>
-      rename_i inst context state function arguments values x3 body callee returnShape x2 hClock entry entryContext postContext value fst handlerId handlerVar handlerProgram shape hcond x1 x fixedContext handlerState handlerContext ih2 ih1
+      rename_i inst context state function arguments values x3 body callee returnShape x2 hClock entry entryContext postContext value fst handlerId handlerVar handlerProgram shape hcond x1 x fixedContext handlerContext ih2 ih1
       rw [evalPanSemRecursiveCallContextHOLExact.eq_5]
       rw [show (FiniteEvalContext.toExact context).state.code = context.state.code.lookup from rfl]
       have hargs : @Flapjack.evalListHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable arguments = some values := by
@@ -2622,8 +2608,8 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
       simp only [Option.some.injEq, Prod.mk.injEq]
       refine ⟨trivial, ?_⟩
       apply PanSemExactEvalContext.ext
-      simp only [FiniteEvalContext.toExact, FiniteEvalContext.withState,
-        PanSemExactEvalContext.withState_state, toExact_emptyLocalsHOLFinite]
+      simp only [FiniteEvalContext.toExact,
+        PanSemExactEvalContext.withState_state]
       congr 1
   | case37 =>
       rename_i inst context state info function arguments values x6 body callee returnShape x5 hClock entry entryContext postContext other x4 x3 x2 x1 x fixedContext ih1
@@ -2648,8 +2634,8 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
       simp only [Option.some.injEq, Prod.mk.injEq]
       refine ⟨trivial, ?_⟩
       apply PanSemExactEvalContext.ext
-      simp only [FiniteEvalContext.toExact, FiniteEvalContext.withState,
-        PanSemExactEvalContext.withState_state, toExact_emptyLocalsHOLFinite]
+      simp only [FiniteEvalContext.toExact,
+        PanSemExactEvalContext.withState_state]
       congr 1
   | case38 =>
       rename_i inst context state resultName shape function arguments continuation x
