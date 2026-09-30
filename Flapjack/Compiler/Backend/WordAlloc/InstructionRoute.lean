@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.WordAlloc.Instructions
+import Flapjack.Compiler.Backend.WordAlloc.KeyMapRoute
 
 namespace Flapjack.WordAlloc
 
@@ -59,5 +60,44 @@ theorem applyColourInstExecutable_mem {α : Type u} (f : Nat → Nat)
       | .load16 | .store16 => .mem op r a
       | _ => .mem op (f r) (f a)) := by
   cases op <;> rfl
+
+/-- Production instruction liveness through the reviewed HOL recursion.
+The production carrier has no FP constructors, so its numeric width argument
+is immaterial here. The distinct five-register AddCarry remains Flapjack-only.
+This adapter has no separate HOL original. -/
+def getLiveInstExecutable {α : Type u} (instruction : WordInst α) (live : NumSet) : NumSet :=
+  match instruction with
+  | .const r w => getLiveInstCore 64 (.const r w) live
+  | .arith (.addCarry r1 r2 r3 r4 r5) =>
+      sptInsert r5 () (sptInsert r4 () (sptInsert r3 ()
+        (sptDelete r2 (sptDelete r1 live))))
+  | .arith a => match arithToHOL a with
+    | some exact => getLiveInstCore 64 (.arith exact) live
+    | none => live
+  | .mem op r a => getLiveInstCore 64 (.mem op r (.addr a ())) live
+  | .memOffset op r a w => getLiveInstCore 64 (.mem op r (.addr a w)) live
+
+/-- Literal carry-input behavior of the shared four-register instruction;
+the carry register is retained as a read even when it aliases the destination.
+This codec equation is Flapjack infrastructure, not a new HOL port. -/
+theorem getLiveInstExecutable_cakeAddCarry {α : Type u}
+    (r1 r2 r3 r4 : Nat) (live : NumSet) :
+    getLiveInstExecutable (α := α) (.arith (.cakeAddCarry r1 r2 r3 r4)) live =
+      sptInsert r4 () (sptInsert r3 () (sptInsert r2 () (sptDelete r1 live))) := rfl
+
+/-- Execute HOL's removal decision on shared production constructors.
+The separate five-register primitive removes only when both outputs are dead.
+Production has no FP constructors, so the core's word dimension is immaterial.
+This production codec has no separate HOL original. -/
+def removeDeadInstExecutable {α : Type u} (instruction : WordInst α) (live : NumSet) : Bool :=
+  match instruction with
+  | .const r w => removeDeadInstCore 64 (.const r w) live
+  | .arith (.addCarry r1 r2 _ _ _) =>
+      (sptLookup r1 live).isNone && (sptLookup r2 live).isNone
+  | .arith a => match arithToHOL a with
+    | some exact => removeDeadInstCore 64 (.arith exact) live
+    | none => false
+  | .mem op r a => removeDeadInstCore 64 (.mem op r (.addr a ())) live
+  | .memOffset op r a w => removeDeadInstCore 64 (.mem op r (.addr a w)) live
 
 end Flapjack.WordAlloc

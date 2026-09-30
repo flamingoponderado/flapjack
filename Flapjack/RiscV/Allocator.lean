@@ -330,8 +330,13 @@ def wordPairwiseClashes : List Nat → List (Nat × Nat)
         wordPairwiseClashes names
 
 def wordInstLiveBefore {α : Type u} (instruction : WordInst α) (liveAfter : List Nat) : List Nat :=
-  wordInstReadVars instruction ++
-    liveAfter.filter (fun name => name ∉ wordInstWriteVars instruction)
+  match instruction with
+  | .arith (.addCarry _ _ _ _ _) =>
+      -- The five-register Flapjack primitive has no HOL instruction counterpart.
+      wordInstReadVars instruction ++
+        liveAfter.filter (fun name => name ∉ wordInstWriteVars instruction)
+  | _ => WordAlloc.numSetFromExact
+      (WordAlloc.getLiveInstExecutable instruction (WordAlloc.numSetToExact liveAfter))
 
 def wordInstClashes {α : Type u} (instruction : WordInst α) (liveAfter : List Nat) :
     List (Nat × Nat) :=

@@ -1,4 +1,6 @@
 import Flapjack.Compiler.Backend.StackProps.FixedNames
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnv
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnvs
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutNames
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyRemap
 import Flapjack.Pancake.PanStructs.CompileDeclsExact
@@ -30,6 +32,8 @@ import Flapjack.Compiler.Backend.Semantics.StackSem.State
 import Flapjack.Compiler.Backend.Semantics.StackSem.Control
 import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
 import Flapjack.Compiler.Backend.Semantics.StackSem.Expressions
+import Flapjack.Compiler.Backend.Semantics.StackSem.StoreConsts
+import Flapjack.Compiler.Backend.Semantics.StackSem.StoreConstsGuard
 import Flapjack.Compiler.Backend.Semantics.StackSem.Allocation
 import Flapjack.Compiler.Backend.Semantics.StackSem.Bitmap
 import Flapjack.Compiler.Backend.Semantics.StackSem.WordBitmap
@@ -204,6 +208,7 @@ import Flapjack.Pancake.Proofs.CrepInline.UpdateListLocals
 import Flapjack.Pancake.Proofs.CrepInline.NestedDecs
 import Flapjack.Pancake.Proofs.CrepInline.ShMem
 import Flapjack.Pancake.Proofs.PanGlobals
+import Flapjack.Pancake.Proofs.PanGlobals.FpermCode
 import Flapjack.Pancake.Proofs.PanGlobals.DeclListLemmas
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelationExact
 import Flapjack.Pancake.Proofs.PanGlobals.CompileDecsStructural
@@ -329,6 +334,7 @@ import Flapjack.Pancake.Semantics.PanSem.StateDefsExact
 import Flapjack.Pancake.Semantics.PanSem.EvaluateInd
 import Flapjack.Pancake.WordLang
 import Flapjack.Pancake.WordConvs
+import Flapjack.Pancake.WordConvs.NotCreated
 import Flapjack.RiscV.CorrectnessEncoding
 import Flapjack.Compiler.Backend.StackProps
 import Flapjack.Pancake.PanStructs

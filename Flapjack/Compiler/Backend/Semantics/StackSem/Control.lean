@@ -53,4 +53,24 @@ theorem fixClockImp {width returnedWidth : Nat} [NeZero width] [NeZero returnedW
   rw [← hc]
   exact Nat.min_le_left _ _
 
+/-- HOL loop reentry: normal completion and Continue 0 reenter; every other
+control result leaves the current loop. -/
+@[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "cont_loop_def"
+  (words_as_type_indexed_bitvec)]
+def contLoop {width : Nat} [NeZero width] : Option (StackSemResult width) → Bool
+  | none => true
+  | some (.continue label) => decide (label = 0)
+  | _ => false
+
+/-- HOL loop exit: Break 0 becomes normal completion, positive Break labels
+and all Continue labels decrement by natural monus, other results propagate.
+In evaluate's Loop clause, Continue 0 takes contLoop's reentry branch first. -/
+@[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "exit_loop_def"
+  (words_as_type_indexed_bitvec)]
+def exitLoop {width : Nat} [NeZero width] :
+    Option (StackSemResult width) → Option (StackSemResult width)
+  | some (.break label) => if label = 0 then none else some (.break (label - 1))
+  | some (.continue label) => some (.continue (label - 1))
+  | result => result
+
 end Flapjack.StackSemControl
