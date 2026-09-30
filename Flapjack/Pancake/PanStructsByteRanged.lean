@@ -1268,4 +1268,114 @@ theorem encodedShapeContextLookup_roundtrip (name : String)
       · simp [lookupInfo, hmatch, shapeOfHOL_shapeToHOL shape hhead.2]
       · simpa [lookupInfo, hmatch] using ih htail
 
+/-- Flapjack range infrastructure: any selected association-list payload
+satisfies an invariant held by all source entries. No HOL theorem is claimed. -/
+private theorem lookupInfo_payload_invariant {α : Type} (property : α → Prop)
+    (key : String) (entries : List (String × α))
+    (hall : ∀ p ∈ entries, property p.2) (value : α)
+    (hlookup : lookupInfo key entries = some value) : property value := by
+  induction entries with
+  | nil => simp [lookupInfo] at hlookup
+  | cons entry entries ih =>
+      rcases entry with ⟨candidate, payload⟩
+      by_cases hmatch : candidate == key
+      · simp only [lookupInfo, hmatch] at hlookup
+        cases hlookup
+        exact hall (candidate, value) (by simp)
+      · simp only [lookupInfo, hmatch] at hlookup
+        exact ih (fun p hp => hall p (by simp [hp])) hlookup
+
+private theorem lookupShape_default_byteRanged (name : String) (entries : List (String × Shape))
+    (hall : ListParamByteRanged entries) :
+    ShapeByteRanged ((lookupInfo name entries).getD .one) := by
+  cases hlookup : lookupInfo name entries with
+  | none => simp [ShapeByteRanged]
+  | some shape =>
+      exact lookupInfo_payload_invariant ShapeByteRanged name entries
+        (fun p hp => (hall p hp).2) shape hlookup
+
+mutual
+  /-- Flapjack codec prerequisite, not a HOL theorem. Derives the range of the
+  computed source shape from real source input/context invariants; in particular
+  a computed Named name can safely be used by the exact lookup correspondence. -/
+  theorem structOldExpShape_byteRanged {width : Nat} (context : StructPassContext)
+      (hc : CtxBR context.structs) (hl : ListParamByteRanged context.locals)
+      (hg : ListParamByteRanged context.globals) (expression : Exp (BitVec width))
+      (he : ExpByteRanged expression) : ShapeByteRanged (structOldExpShape context expression) := by
+    cases hexpression : expression with
+    | var kind name =>
+        cases kind
+        · simpa only [structOldExpShape] using lookupShape_default_byteRanged name context.locals hl
+        · simpa only [structOldExpShape] using lookupShape_default_byteRanged name context.globals hg
+    | rStruct fields =>
+        simp only [hexpression, ExpByteRanged] at he
+        simpa only [structOldExpShape, ShapeByteRanged] using
+          structOldExpShapes_byteRanged context hc hl hg fields ((listExpByteRanged_iff fields).mp he)
+    | rField index value =>
+        simp only [hexpression, ExpByteRanged] at he
+        have hshape := structOldExpShape_byteRanged context hc hl hg value he
+        cases hvalue : structOldExpShape context value with
+        | one => simp [structOldExpShape, hvalue, ShapeByteRanged]
+        | named name => simp [structOldExpShape, hvalue, ShapeByteRanged]
+        | comb shapes =>
+            simp only [hvalue, ShapeByteRanged] at hshape
+            simp only [structOldExpShape, hvalue]
+            cases hindex : shapes[index]? with
+            | none => simp [List.getD, hindex, ShapeByteRanged]
+            | some shape =>
+                have hmem : shape ∈ shapes := List.mem_of_getElem? hindex
+                simpa [List.getD, hindex] using hshape shape hmem
+    | nStruct name fields =>
+        simp only [hexpression, ExpByteRanged] at he
+        simpa only [structOldExpShape, ShapeByteRanged] using he.1
+    | nField field value =>
+        cases hvalue : structOldExpShape context value with
+        | one => simp [structOldExpShape, hvalue, ShapeByteRanged]
+        | comb shapes => simp [structOldExpShape, hvalue, ShapeByteRanged]
+        | named name =>
+            simp only [structOldExpShape, hvalue]
+            cases hlookup : lookupInfo name context.structs with
+            | none => simp [ShapeByteRanged]
+            | some info =>
+                have hfields : ListParamByteRanged info.fields :=
+                  lookupInfo_payload_invariant (fun info : StructInfo => ListParamByteRanged info.fields)
+                    name context.structs (fun p hp => (hc p hp).2) info hlookup
+                have hr := lookupShape_default_byteRanged field info.fields hfields
+                cases hf : lookupInfo field info.fields <;> simpa [hf] using hr
+    | load shape address =>
+        simp only [hexpression, ExpByteRanged] at he
+        simpa only [structOldExpShape] using he.1
+    | const value => simp [structOldExpShape, ShapeByteRanged]
+    | load32 address => simp [structOldExpShape, ShapeByteRanged]
+    | loadByte address => simp [structOldExpShape, ShapeByteRanged]
+    | op operator args => simp [structOldExpShape, ShapeByteRanged]
+    | panOp operator args => simp [structOldExpShape, ShapeByteRanged]
+    | cmp operator left right => simp [structOldExpShape, ShapeByteRanged]
+    | shift operator left right => simp [structOldExpShape, ShapeByteRanged]
+    | baseAddr => simp [structOldExpShape, ShapeByteRanged]
+    | topAddr => simp [structOldExpShape, ShapeByteRanged]
+    | bytesInWord => simp [structOldExpShape, ShapeByteRanged]
+  termination_by sizeOf expression
+  decreasing_by all_goals simp_all; all_goals omega
+
+  /-- Flapjack range infrastructure for the mutual expression-list worker. -/
+  theorem structOldExpShapes_byteRanged {width : Nat} (context : StructPassContext)
+      (hc : CtxBR context.structs) (hl : ListParamByteRanged context.locals)
+      (hg : ListParamByteRanged context.globals) (expressions : List (Exp (BitVec width)))
+      (he : ∀ e ∈ expressions, ExpByteRanged e) :
+      ∀ shape ∈ structOldExpShape.structOldExpShapes context expressions, ShapeByteRanged shape := by
+    cases hexpressions : expressions with
+    | nil => simp [structOldExpShape.structOldExpShapes]
+    | cons expression expressions =>
+        rw [hexpressions] at he
+        intro shape hmem
+        simp only [structOldExpShape.structOldExpShapes] at hmem
+        rcases List.mem_cons.mp hmem with rfl | htail
+        · exact structOldExpShape_byteRanged context hc hl hg expression (he expression (by simp))
+        · exact structOldExpShapes_byteRanged context hc hl hg expressions
+            (fun e h => he e (by simp [h])) shape htail
+  termination_by sizeOf expressions
+  decreasing_by all_goals simp_all; all_goals omega
+end
+
 end Flapjack
