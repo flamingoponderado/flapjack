@@ -108,6 +108,10 @@ run_probe stacksem_fpreg_inst_probeScript.sml stacksem_fpreg_inst_probe.out \
   fpreg_mov_nan fpreg_mov_missing fpreg_abs_nan fpreg_abs_zero fpreg_neg_nan fpreg_neg_zero fpreg_abs_missing fpreg_neg_missing fpreg_to64 fpreg_to32 fpreg_to8 fpreg_to32_alias fpreg_to_missing fpreg_from64_ignore fpreg_from64_loc fpreg_from32 fpreg_from8 fpreg_from32_missing fpreg_from32_loc fpreg_from32_alias \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
+run_probe stacksem_fp_arith_probeScript.sml stacksem_fp_arith_probe.out \
+  fpless_true fpless_false fpless_equal fpless_missing fplessequal_true fplessequal_false fpequal_true fpequal_false fpadd_result fpadd_missing fpsub_result fpmul_result fpdiv_result fpfma_order \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
 run_probe stacksem_store_consts_guard_probeScript.sml stacksem_store_consts_guard_probe.out \
   guard_none guard_missing guard_match guard_wrong_label guard_wrong_first_register guard_wrong_second_register guard_recursive_stub guard_return_nonzero guard_wrong_constructor guard_reversed_sequence \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"

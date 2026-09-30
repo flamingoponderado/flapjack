@@ -1809,6 +1809,32 @@ on the assembling instruction/evaluator beads. Regenerate read-only using
 HOL_PROBE_ONLY=stacksem_fpreg_inst_probeScript.sml
 bash scripts/hol-probes/regenerate.sh`.
 
+## StackSem FP comparison and arithmetic cases
+
+`stacksem_fp_arith_probeScript.sml` captures fourteen original `inst_def`
+observations for FPLess, FPLessEqual, FPEqual, FPAdd, FPSub, FPMul, FPDiv and
+FPFma (`cakeml/compiler/backend/semantics/stackSemScript.sml:519-542` for the
+comparisons and `:563-587` for the arithmetic). The rows cover true/false
+comparisons, a missing FP operand failure, a missing arithmetic operand
+failure, and the binary64 results (1+2=3, 3-1=2, 2*3=6, 6/2=3). The FPFma row
+is `FPFma 7 2 3` with addend fp7 = 10.0, f2 = fp2 = 2.0 and f3 = fp3 = 3.0:
+HOL `fpfma v1 v2 v3 = fp64_mul_add roundTiesToEven v2 v3 v1`
+(`fpSemScript.sml:60-62`) permutes the addend to the last slot, so the observed
+result is `mul_add 2 3 10 = 16.0` (`0x4030000000000000`), not the
+wrongly-ordered `mul_add 10 2 3 = 23.0` (`0x4037000000000000`).
+`Flapjack/Test/StackSemFpRegisterInstParity.lean` kernel-replays every row:
+structural examples fix each case's exact returned expression, comparison rows
+evaluate the computable comparison renderings, and the arithmetic/FMA rows use
+the proven computable-rounding bridges of
+`Flapjack/Misc/BinaryIeeeArithFp64.lean`. FPMov, FPAbs, FPNeg, FPMovToReg and
+FPMovFromReg are already covered by `stacksem_fpreg_inst_probeScript.sml`. The
+untagged partial case helper
+`Flapjack/Compiler/Backend/Semantics/StackSem/FpRegisterInstructions.lean` is
+not the whole HOL `inst_def`. Regenerate read-only using
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_fp_arith_probeScript.sml
+bash scripts/hol-probes/regenerate.sh`.
+
 `stack_props_inst_name_probe.out` records ten direct `inst_name_def` EVAL rows
 from original stackPropsTheory, covering every instruction constructor and
 logical-register/address, two-register arithmetic, and FP alias failures.
