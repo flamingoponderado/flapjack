@@ -455,6 +455,8 @@ import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.Ffi
 import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.CutState
 import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.FfiHook
 import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.SetGlobal
+import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.Store
+import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.Loads
 import Flapjack.Pancake.Semantics.LoopSemStateExact.Semantics
 import Flapjack.Pancake.Semantics.LoopProps.EvaluateClockExact
 import Flapjack.Pancake.Semantics.LoopProps.EvaluateIoEventsExact
@@ -498,6 +500,7 @@ import Flapjack.Pancake.Semantics.PanProps.EvaluateClockSubCall
 import Flapjack.Pancake.Semantics.PanProps.EvaluateClockSubDecCall
 import Flapjack.Pancake.Semantics.PanProps.EvaluateClockSubAssembly
 import Flapjack.Pancake.Semantics.PanProps.EvaluateClockSub1
+import Flapjack.Pancake.Semantics.PanProps.EvaluateMinClock
 import Flapjack.Pancake.Semantics.PanSem.ShMemLoadCase
 import Flapjack.Pancake.Semantics.PanSem.ExtCallCase
 import Flapjack.Pancake.Semantics.PanSem.LocalUpdatesExact

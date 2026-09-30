@@ -87,12 +87,16 @@ theorem compileProgTopHOLProductionExact_decode_eq {width : Nat} [NeZero width]
 
 /-- Executed parser-backed adapter: compile the complete declaration list with
 HOL's reviewed `compile_prog`, then decode its ordered table and retain the
-production metadata. The byte premise is proof-only codec infrastructure. -/
+production metadata. Project names, flattened parameters and return shapes
+directly from declarations, avoiding compilation of discarded compatibility
+bodies. The byte premise is proof-only codec infrastructure. -/
 def compileProgNativeWithMetadata {width : Nat} [NeZero width]
     (declarations : List (Decl (BitVec width)))
     (_hdecls : ∀ declaration ∈ declarations, DeclByteRanged declaration) :
     List (CompiledFunction (BitVec width)) :=
-  (compileToCrepHOLWithMetadata declarations).zipWith
+  ((functionEntries declarations).map fun (name, params, _, returnShape) =>
+    ({ name, params := panToCrepVars params, body := .skip, returnShape } :
+      CompiledFunction (BitVec width))).zipWith
     (fun original (_, _, body) => { original with body })
     ((compileProgDeclsHOLW (declarations.map declToHOL)).map
       (fun t => (toStringOfBytes t.1, t.2.1, crepProgOfHOL t.2.2)))
@@ -106,6 +110,8 @@ theorem compileProgNativeWithMetadata_eq {width : Nat} [NeZero width]
       compileProgTopHOLWithMetadata declarations := by
   unfold compileProgNativeWithMetadata compileProgTopHOLWithMetadata
   rw [← compileProgTopHOL_decode_eq declarations hdecls]
+  simp only [compileToCrepHOLWithMetadata, compileToCrepHOL,
+    List.zipWith_map_right, List.zipWith_self, List.zipWith_map_left]
 
 /-- Preserve the generic pipeline API for custom literal dictionaries. Standard
 BitVec literals select the native whole compiler; custom literals retain the
