@@ -4,7 +4,8 @@ import Flapjack.Pancake.CrepLang.GeneratedSize
 /-!
 # crep_inline: `unreach_elim` size and return lemmas
 
-Exact counterparts of `cakeml/pancake/proofs/crep_inlineProofScript.sml:1730-1780`
+Counterpart and explicitly untagged support for
+`cakeml/pancake/proofs/crep_inlineProofScript.sml:1730-1780`
 (`unreach_elim_prog_size`, `not_has_return_imp_unreach_elim`), bead
 `flapjack-pxn.18.5.5.46.2`, over the tagged `unreachElimHOLExact`
 (`unreach_elim_def`) and `hasReturnHOLExact` (`has_return_def`).
@@ -12,7 +13,8 @@ Exact counterparts of `cakeml/pancake/proofs/crep_inlineProofScript.sml:1730-178
 `crepLang$prog_size`, transcribed untagged as `crepProgSizeHOL`
 (`Flapjack.Pancake.CrepLang.GeneratedSize`, pinned by
 `scripts/hol-probes/crep_lang_size_probe.out`).  HOL's size parameter
-`f : 'a -> num` is a free function argument.
+`f : 'a -> num` shares the program's HOL type index; the untagged size
+rendering below has an independent Lean parameter, as its local caveat explains.
 -/
 
 namespace Flapjack

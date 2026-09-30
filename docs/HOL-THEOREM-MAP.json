@@ -28154,7 +28154,7 @@
     "hol_name": "reg_name_def",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-b source comparison (2026-09-30; .18.5.15.7.4): stackProps832-835 bound n < c.reg_count - LENGTH c.avoid_regs retains Nat subtraction/list length. stack_namesProof598-614 original names_ok premise implies reg_ok for every in-range register; distinct two source names remain distinct under rename. Exact AsmConfigExact positive-width word fields; bare names is canonical HolFiniteMapExact, existing findName/namesOkHOL applied to its lookup projection (HOL FLOOKUP/tlookup behavior). ALL_DISTINCT mapped range injectivity and EVERY range validity, no extra bijection/success premise, no executable route claim. Coordinator review pending."
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; .18.5.15.7.4): stackProps832-835 bound n < c.reg_count - LENGTH c.avoid_regs retains Nat subtraction/list length. stack_namesProof598-614 original names_ok premise implies reg_ok for every in-range register; distinct two source names remain distinct under rename. Exact AsmConfigExact positive-width word fields; names is the literal Spt Nat num_map; namesOkSptHOL uses range/map of findName(sptLookup), with original-register missing-key default (misc tlookup). Tagged implications consume the canonical Spt predicate directly. ALL_DISTINCT mapped range injectivity and EVERY range validity, no extra bijection/success premise, no executable route claim. Coordinator review pending."
   },
   {
   "lean_path": "Flapjack/Compiler/Backend/StackNames/NamesOk.lean",
@@ -29406,6 +29406,120 @@
     "reviewer": "Private direct-output induction factoring for dect source theorems; no separate HOL original."
   },
   {
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/HasMain.lean",
+    "lean_name": "semanticsDeclsHasMainPrime",
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "semantics_decls_has_main'",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison2026-09-30,4ac.4.110: literal panProps1628-1638 has sole semantics_decls s start code != Fail premise and existential body/rshape with FLOOKUP(s.code |++ functions code) start=SOME([],body,rshape). Same binders, premise, update-list and existential conclusion in Lean. Exact semanticsDecls structural prepass/evaluator failure branches excluded internally; evaluateDecls code-update and zero-clock non-failure helper derive the entry without extra premises. PanSemStateFiniteExact canonical locals/globals/code/eshapes maps with genuine same-module roundtrip; positive BitVec width, NeZero, universe0 FFI host; exact MlS names and lists retained. Proof-only, no routing claim. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/ShapeValueEval.lean",
+    "lean_name": "evalShapeValNone",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "eval_shape_val_NONE",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison2026-09-30 (.25.1): literal HOL968-978 same universal state and conjunction of forall shape eval(shape_val)=NONE iff F and forall shapes OPT_MMAP(eval)(shape_vals)=NONE iff F. Exact finite evaluator delegates to reviewed literal eval clauses; exact shapeValHOL/shapeValsHOL retained. Mutual ShapeHOL/list induction derives successful results for zero constants and RStruct, no state restriction or evaluator-result premise. Classical memory decisions internal. Canonical locals/globals/code/eshapes finite maps with genuine same-module roundtrip, positive BitVec width with NeZero and universe0 FFI host; faithful names/lists. Proof-only; coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/ShapeValueEval.lean",
+    "lean_name": "shapeValueSuccess",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack mutual induction factoring or canonical finite-state roundtrip; no standalone HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/ShapeValueEval.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack mutual induction factoring or canonical finite-state roundtrip; no standalone HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/MemStoresAppend.lean",
+    "lean_name": "memStoresAppend",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "mem_stores_append",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison (2026-09-30; .18.5.2.27.2), HOL245-255: same addr/values/domain/memory/suffix binders and unconditional concatenation equation. Match retains NONE failure and SOME updated memory; continuation uses addr + bytes_in_word * n2w LENGTH values, with original fixed stride width DIV8 and modular BitVec multiplication/addition. Total HolWordLab function memory and Prop domain retain original carriers; decidable domain is computation infrastructure, no success/positivity/bounds assumption. Positive word qualifier only. Kernel list induction covers failed/successful store; source review pending coordinator."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationCode.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanSemStateFiniteExact toExact/ofExact finite-support roundtrip; it supports the PanSemStateFiniteExact fields named by the state_rel tags."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationCode.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanGlobalsContextExact toBroad/ofBroad roundtrip; it supports PanGlobalsContextExact.globals named by the state_rel tags."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationCode.lean",
+    "lean_name": "stateRelLookupCodeHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "state_rel_lookup_code",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanGlobalsContextExact.globals",
+      "callee"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Luna A compared HOL934-941 and panSem458-467 lookup_code: original state_rel ls plus successful source lookup implies target lookup of compiled body, same locals and return shape. HOL SOME(prog,newlocals) groups tail of triple; Lean binds callee and returnShape separately. Canonical callee map qualifier names standalone callee, states/context same-module roundtrips. lookupCodeHOLFinite wraps unchanged exact raw lookup using checked finite support; canonical proof irrelevance yields identical map. Nodup parameter names, exact length+pairwise shape equality implement ALL_DISTINCT and LIST_REL; unchanged ZIP and left FUPDATE_LIST last-binding semantics. No extra premise on code/target outcome. Positive words/Type0 FFI, exact MlS keys. Calls1149/1516 verified. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/MemorySwap.lean",
+    "lean_name": "memStoresMemorySwapHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "mem_stores_memory_swap",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Luna A compared original HOL257-264: all original address/value/domain/initial memory/replacement memory/result quantifiers; original source store success implies existential replacement store result, no added premise. Exact panMemStoresHOL and panMemStoreHOL preserve domain failure and recursive word stride; domain membership is decided internally with no class or coverage hypothesis. Words-only conventional positive-width BitVec/HolWordLab translation, memory remains HOL function. Nil, successful head/tail and failed-domain clauses compared. No executable change. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/MemoryLookup.lean",
+    "lean_name": "memStoresLookupHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "mem_stores_lookup",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Luna A compared HOL310-321: original quantified addr,vs,addrs,memory,m,query, conjunction source mem_stores success and query not in addresses addr LENGTH vs imply identical lookup. Exact panMemStoresHOL and addresses word stride, no added wrapping/alignment/distinctness/coverage premise. Query exclusion splits into head inequality and tail exclusion; store recursion leaves query unchanged. Classical domain decisions internal, no class premise. Positive-width words conventional translation only, memory HOL function. Constructor/word carriers and successful/failed domain branches source-reviewed; coordinator review pending."
+  },
+{
+  "lean_path": "Flapjack/Compiler/Backend/StackNames/NamesOk.lean",
+  "lean_name": "namesOkSptHOL",
+  "hol_path": "cakeml/compiler/backend/stack_namesScript.sml",
+  "hol_name": "names_ok_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b PR1180 source review HOL111-116: actual Spt Nat num_map, findName(sptLookup) is misc tlookup missing-key identity; GENLIST range/map of truncated reg_count-LENGTH avoid_regs; ALL_DISTINCT Nodup and EVERY Bool all hardware bound/nonmembership. No word carrier or representation exception. Implication premises now use this canonical predicate directly. Coordinator review pending."
+},
+  {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Base.lean",
     "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
     "hol_path": null,
@@ -29536,33 +29650,6 @@
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/MemStores.lean",
-    "lean_name": "memStoresAppendHOL",
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "mem_stores_append",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.2.27) compared pan_globalsProofScript.sml:245-255: forall addr vs addrs memory vs'. mem_stores addr (vs++vs') = case mem_stores addr vs of NONE=>NONE | SOME m' => mem_stores (addr + bytes_in_word * n2w (LENGTH vs)) vs' addrs m'; same binders, bytes_in_word = panBytesInWord (n2w (dimindex DIV 8)). Exact tagged panMemStoresHOL/memLoadHOLExact/flattenHOL/shapeOfHOLExact/isWfShapeExactHOL/sizeOfShapeHOL and stack_removeProof addresses; HOL predicate sets as Prop predicates with classical membership decided inside the statement (no premise); positive-width word translation only. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/MemStores.lean",
-    "lean_name": "memStoresMemorySwapHOL",
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "mem_stores_memory_swap",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.2.27) compared pan_globalsProofScript.sml:257-264: success on one memory implies success on any other memory; same binders. Exact tagged panMemStoresHOL/memLoadHOLExact/flattenHOL/shapeOfHOLExact/isWfShapeExactHOL/sizeOfShapeHOL and stack_removeProof addresses; HOL predicate sets as Prop predicates with classical membership decided inside the statement (no premise); positive-width word translation only. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/MemStores.lean",
-    "lean_name": "memStoresLookupHOL",
-    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-    "hol_name": "mem_stores_lookup",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.2.27) compared pan_globalsProofScript.sml:310-321: mem_stores success and addr' NOTIN addresses addr (LENGTH vs) imply m addr' = memory addr'. Exact tagged panMemStoresHOL/memLoadHOLExact/flattenHOL/shapeOfHOLExact/isWfShapeExactHOL/sizeOfShapeHOL and stack_removeProof addresses; HOL predicate sets as Prop predicates with classical membership decided inside the statement (no premise); positive-width word translation only. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/MemStores.lean",
     "lean_name": "memStoresLoadDisjointHOL",
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
     "hol_name": "mem_stores_load_disjoint",
@@ -29631,14 +29718,6 @@
     "hol_name": "LESS_MULT_MONO'",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.2.27) compared pan_globalsProofScript.sml:425-429 (local): 0 < a ==> (a * m < a * n <=> m < n) over num = Nat; same free variables. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/MemStores.lean",
-    "lean_name": "memStoresAppend_gen",
-    "hol_path": null,
-    "hol_name": null,
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.2.27): mem_stores_append for an arbitrary domain decision instance; no HOL original."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/MemStores.lean",

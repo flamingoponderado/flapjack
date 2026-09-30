@@ -7,6 +7,15 @@ namespace Flapjack.Compiler.Backend.StackNames
 open Flapjack.Compiler.Encoders.Asm
 open Flapjack.Compiler.Backend.StackProps
 
+/-- HOL names_ok over its actual num_map carrier. GENLIST is range/map;
+tlookup uses tree lookup with the original register as the missing-key default. -/
+@[hol "cakeml/compiler/backend/stack_namesScript.sml" "names_ok_def"]
+def namesOkSptHOL (names : Flapjack.Spt Nat) (regCount : Nat)
+    (avoidRegs : List Nat) : Prop :=
+  let xs := (List.range (regCount - avoidRegs.length)).map
+    (findName (fun key => Flapjack.sptLookup key names))
+  xs.Nodup ∧ xs.all (fun x => x < regCount && !(avoidRegs.contains x)) = true
+
 /-- Flapjack list infrastructure: distinct mapped outputs are injective on the
 original list. This factors HOL's ALL_DISTINCT_GENLIST reasoning; no HOL
 original is claimed for the helper. -/
@@ -35,7 +44,7 @@ tlookup without assuming a representation exception. -/
   (words_as_type_indexed_bitvec)]
 theorem namesOkImp {width : Nat} [NeZero width]
     (names : Flapjack.Spt Nat) (config : AsmConfigExact width)
-    (h : namesOkHOL (fun key => Flapjack.sptLookup key names) config.regCount config.avoidRegs) :
+    (h : namesOkSptHOL names config.regCount config.avoidRegs) :
     ∀ register, regName register config → asmRegOkExact (findName (fun key => Flapjack.sptLookup key names) register) config = true := by
   intro register hr
   have hm : findName (fun key => Flapjack.sptLookup key names) register ∈
@@ -52,7 +61,7 @@ remain distinct under renaming. The sole source antecedent is retained. -/
 theorem namesOkImp2 {width : Nat} [NeZero width]
     (names : Flapjack.Spt Nat) (config : AsmConfigExact width)
     (register other : Nat)
-    (h : namesOkHOL (fun key => Flapjack.sptLookup key names) config.regCount config.avoidRegs ∧ register ≠ other ∧
+    (h : namesOkSptHOL names config.regCount config.avoidRegs ∧ register ≠ other ∧
       regName register config ∧ regName other config) :
     findName (fun key => Flapjack.sptLookup key names) register ≠ findName (fun key => Flapjack.sptLookup key names) other := by
   exact mappedNodupNe _ _ h.1.1 _ _ (List.mem_range.mpr h.2.2.1)

@@ -2,6 +2,7 @@ import Flapjack.Pancake.Semantics.PanSemStateEval
 import Flapjack.Compiler.Backend.StackRemove
 import Flapjack.Pancake.Semantics.PanProps
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsMemory
+import Flapjack.Pancake.Proofs.PanGlobals.MemStoresAppend
 import Flapjack.Misc.GoodDimindex
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelationExact
 
@@ -9,7 +10,9 @@ import Flapjack.Pancake.Proofs.PanGlobals.StateRelationExact
 # pan_globals `mem_stores` memory lemmas
 
 Counterpart of `cakeml/pancake/proofs/pan_globalsProofScript.sml:243-533`
-(bead `flapjack-pxn.18.5.2.27`): algebra of the exact tagged `panMemStoresHOL`
+(bead `flapjack-pxn.18.5.2.27`; `mem_stores_append`, `mem_stores_memory_swap`
+and `mem_stores_lookup` are the sibling modules `MemStoresAppend`,
+`MemorySwap` and `MemoryLookup`): algebra of the exact tagged `panMemStoresHOL`
 (`panSem$mem_stores_def`) over the total `HolWordLab` memory with a `Prop`
 domain, and the word-arithmetic facts about the `bytes_in_word` stride used by
 the `compile_correct` Store cases.  HOL's `'a word set` domain is a predicate;
@@ -23,78 +26,9 @@ open Flapjack
 open Flapjack.Compiler.Backend.StackRemove (addresses)
 open Flapjack.Pancake.PanLang
 
-/-- Local support: `mem_stores_append` for any domain decision procedure. -/
-private theorem memStoresAppend_gen {width : Nat} [NeZero width]
-    (addrs : BitVec width → Prop) [DecidablePred addrs] :
-    ∀ (addr : BitVec width) (vs : List (HolWordLab width))
-      (memory : BitVec width → HolWordLab width) (vs' : List (HolWordLab width)),
-      panMemStoresHOL addr (vs ++ vs') addrs memory =
-        match panMemStoresHOL addr vs addrs memory with
-        | none => none
-        | some memory' =>
-            panMemStoresHOL (addr + panBytesInWord width * BitVec.ofNat width vs.length)
-              vs' addrs memory' := by
-  intro addr vs
-  induction vs generalizing addr with
-  | nil =>
-      intro memory vs'
-      simp [panMemStoresHOL]
-  | cons v vs ih =>
-      intro memory vs'
-      simp only [List.cons_append, panMemStoresHOL]
-      cases panMemStoreHOL addr v addrs memory with
-      | none => rfl
-      | some updated =>
-          simp only
-          rw [ih]
-          have hstride : addr + panBytesInWord width + panBytesInWord width *
-              BitVec.ofNat width vs.length =
-              addr + panBytesInWord width * BitVec.ofNat width (vs.length + 1) := by
-            rw [BitVec.ofNat_add, BitVec.mul_add, BitVec.mul_one, BitVec.add_assoc,
-              BitVec.add_comm (panBytesInWord width)]
-          simp only [List.length_cons, hstride]
-
-/-- Exact HOL `mem_stores_append` (`pan_globalsProofScript.sml:245-255`). -/
-@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "mem_stores_append"
-  (words_as_type_indexed_bitvec)]
-theorem memStoresAppendHOL {width : Nat} [NeZero width] :
-    ∀ (addr : BitVec width) (vs : List (HolWordLab width)) (addrs : BitVec width → Prop)
-      (memory : BitVec width → HolWordLab width) (vs' : List (HolWordLab width)),
-      letI : DecidablePred addrs := fun a => Classical.propDecidable (addrs a)
-      panMemStoresHOL addr (vs ++ vs') addrs memory =
-        match panMemStoresHOL addr vs addrs memory with
-        | none => none
-        | some memory' =>
-            panMemStoresHOL (addr + panBytesInWord width * BitVec.ofNat width vs.length)
-              vs' addrs memory' := by
-  classical
-  intro addr vs addrs memory vs'
-  exact memStoresAppend_gen addrs addr vs memory vs'
-
-/-- Exact HOL `mem_stores_memory_swap` (`pan_globalsProofScript.sml:257-264`). -/
-@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "mem_stores_memory_swap"
-  (words_as_type_indexed_bitvec)]
-theorem memStoresMemorySwapHOL {width : Nat} [NeZero width] :
-    ∀ (addr : BitVec width) (vs : List (HolWordLab width)) (addrs : BitVec width → Prop)
-      (memory memory' m : BitVec width → HolWordLab width),
-      letI : DecidablePred addrs := fun a => Classical.propDecidable (addrs a)
-      panMemStoresHOL addr vs addrs memory = some m →
-        ∃ m', panMemStoresHOL addr vs addrs memory' = some m' := by
-  classical
-  intro addr vs
-  induction vs generalizing addr with
-  | nil =>
-      intro addrs memory memory' m _
-      exact ⟨memory', rfl⟩
-  | cons v vs ih =>
-      intro addrs memory memory' m h
-      simp only [panMemStoresHOL, panMemStoreHOL] at h ⊢
-      by_cases hd : addrs addr
-      · simp only [if_pos hd] at h ⊢
-        exact ih _ addrs _ _ m h
-      · simp [if_neg hd] at h
-
-/-- Local support: `mem_stores_lookup` for any domain decision procedure. -/
+/-- Local support: `mem_stores_lookup` for any domain decision procedure (the
+    tagged port is `PanGlobalsMemoryLookup.memStoresLookupHOL`, stated with the
+    classical decision only). -/
 private theorem memStoresLookup_gen {width : Nat} [NeZero width]
     (addrs : BitVec width → Prop) [DecidablePred addrs] :
     ∀ (addr : BitVec width) (vs : List (HolWordLab width))
@@ -117,20 +51,6 @@ private theorem memStoresLookup_gen {width : Nat} [NeZero width]
             vs.length addr' := fun hin => hnot (Or.inr hin)
         rw [ih _ _ m addr' h htail, if_neg hne]
       · simp [if_neg hd] at h
-
-/-- Exact HOL `mem_stores_lookup` (`pan_globalsProofScript.sml:310-321`). -/
-@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "mem_stores_lookup"
-  (words_as_type_indexed_bitvec)]
-theorem memStoresLookupHOL {width : Nat} [NeZero width] :
-    ∀ (addr : BitVec width) (vs : List (HolWordLab width)) (addrs : BitVec width → Prop)
-      (memory m : BitVec width → HolWordLab width) (addr' : BitVec width),
-      letI : DecidablePred addrs := fun a => Classical.propDecidable (addrs a)
-      panMemStoresHOL addr vs addrs memory = some m ∧
-        ¬ addresses addr vs.length addr' →
-        m addr' = memory addr' := by
-  classical
-  intro addr vs addrs memory m addr' h
-  exact memStoresLookup_gen addrs addr vs memory m addr' h.1 h.2
 
 /-- Local support: the stride step `a + B + B * n = a + B * (n + 1)`. -/
 private theorem stride_succ {width : Nat} (a : BitVec width) (n : Nat) :
@@ -453,7 +373,7 @@ mutual
     | val :: vals, addr, memory, m, hm, hlen, hwf => by
         simp only [List.map_cons, List.flatten_cons] at hm hlen hwf ⊢
         simp only [isWfShapesExactHOL_cons, Bool.and_eq_true] at hwf
-        have happ := memStoresAppend_gen addrs addr (flattenHOL val) memory
+        have happ := Flapjack.PanGlobalsMemStoresAppend.memStoresAppend addr (flattenHOL val) addrs memory
           (vals.map flattenHOL).flatten
         rw [hm] at happ
         cases h1 : panMemStoresHOL addr (flattenHOL val) addrs memory with

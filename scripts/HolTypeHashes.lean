@@ -1,3 +1,6 @@
+import Flapjack.Pancake.Proofs.PanGlobals.MemoryLookup
+import Flapjack.Pancake.Proofs.PanGlobals.MemorySwap
+import Flapjack.Pancake.Proofs.PanGlobals.StateRelationCode
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelationFfi
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelationClock
 import Flapjack.Pancake.Proofs.PanGlobals.CompileExpLeaves
@@ -11,6 +14,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.CompileExpCmpShift
 import Flapjack.Pancake.Proofs.PanGlobals.CompileExpRStruct
 import Flapjack.Pancake.Proofs.PanGlobals.CompileExpRField
 import Flapjack.Pancake.Proofs.PanGlobals.SemanticsEmptyLocals
+import Flapjack.Pancake.Proofs.PanGlobals.ShapeValueEval
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelationLocals
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsShape
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsDisjoint
@@ -241,6 +245,7 @@ import Flapjack.Pancake.Proofs.CrepInline.UnreachElimProgSize
 import Flapjack.Pancake.Proofs.CrepInline.NestedDecs
 import Flapjack.Pancake.Proofs.CrepInline.ShMem
 import Flapjack.Pancake.Proofs.PanGlobals
+import Flapjack.Pancake.Proofs.PanGlobals.MemStoresAppend
 import Flapjack.Pancake.Proofs.PanGlobals.FpermCode
 import Flapjack.Pancake.Proofs.PanGlobals.DeclListLemmas
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelationExact
