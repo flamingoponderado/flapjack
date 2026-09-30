@@ -241,6 +241,29 @@ decreasing_by
     | omega
 
 
+/-- Flapjack output-range infrastructure for the executed program traversal.
+Only parser input and context invariants are assumed; the output range needed
+by decoding is established here, rather than supplied as a premise. -/
+theorem structCompileProgExactProduction_byteRanged {width : Nat} [NeZero width]
+    (context : StructPassContext) (hc : CtxBR context.structs)
+    (hl : ListParamByteRanged context.locals) (hg : ListParamByteRanged context.globals)
+    (program : Prog (BitVec width)) (hp : ProgByteRanged program) :
+    ProgByteRanged (structCompileProgExactProduction context program) := by
+  rw [structCompileProgExactProduction_eq_legacy context hc hl hg program hp]
+  exact structCompileProg_byteRanged context hc program hp
+
+/-- Flapjack production-output codec roundtrip. The required output range is
+derived internally, including identifiers in recursive bodies and handlers.
+This is codec infrastructure with no independent HOL theorem original. -/
+theorem structCompileProgExactProduction_codec_roundtrip {width : Nat} [NeZero width]
+    (context : StructPassContext) (hc : CtxBR context.structs)
+    (hl : ListParamByteRanged context.locals) (hg : ListParamByteRanged context.globals)
+    (program : Prog (BitVec width)) (hp : ProgByteRanged program) :
+    progOfHOL (progToHOL (structCompileProgExactProduction context program)) =
+      structCompileProgExactProduction context program :=
+  progOfHOL_progToHOL _
+    (structCompileProgExactProduction_byteRanged context hc hl hg program hp)
+
 /-- Production declarations preserve the legacy context flow while invoking
 the reviewed expression compiler through its checked codec wrapper. -/
 def structCompileDeclsExactProduction {width : Nat} [NeZero width] :
