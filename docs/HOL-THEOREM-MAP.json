@@ -30225,5 +30225,51 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific infrastructure: Private codec transport of broad expression freshness; no separate source declaration, decision internal."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/Results.lean",
+    "lean_name": "evaluateFreshLocal_Return",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "evaluate_fresh_local",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Luna A source comparison (.32.3.4), pan_globalsProofScript1045-1091 genuine Return evaluate_ind case. Original quantified fresh name/value/state/result/poststate, source freshness and evaluation, existential locals and conditional good_res/non-Error FUPDATE retained. No added success, size, shape or target evaluation assumption; no recursive IH. Exact expression freshness is transported through canonical broad codec, domain decision internal. Return preserves eval failure and size<=32 check; Raise preserves eshapes lookup, exact shape equality and size<=32 check. Successful return/exception clears locals and is not good_res; all errors retain state and updated locals. Same-module canonical roundtrip; standard finite-map and positive width/Type0 FFI translation. Independent coordinator review pending; full induction .32.3 remains open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/Results.lean",
+    "lean_name": "evaluateFreshLocal_Raise",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "evaluate_fresh_local",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Luna A source comparison (.32.3.4), pan_globalsProofScript1045-1091 genuine Raise evaluate_ind case. Original quantified fresh name/value/state/result/poststate, source freshness and evaluation, existential locals and conditional good_res/non-Error FUPDATE retained. No added success, size, shape or target evaluation assumption; no recursive IH. Exact expression freshness is transported through canonical broad codec, domain decision internal. Return preserves eval failure and size<=32 check; Raise preserves eshapes lookup, exact shape equality and size<=32 check. Successful return/exception clears locals and is not good_res; all errors retain state and updated locals. Same-module canonical roundtrip; standard finite-map and positive width/Type0 FFI translation. Independent coordinator review pending; full induction .32.3 remains open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/Results.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific infrastructure: Canonical state roundtrip re-export; representation infrastructure, no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/Results.lean",
+    "lean_name": "evalFreshUpdate",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific infrastructure: Private codec transport of broad expression freshness; no separate source declaration, decision internal."
   }
 ]
