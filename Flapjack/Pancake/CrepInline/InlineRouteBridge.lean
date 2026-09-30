@@ -1454,5 +1454,40 @@ theorem crepInlineCodecEntries_range {width : Nat} [NeZero width]
   rw [hv, crepProgOfHOL_crepProgToHOL f.2.2 (hprog f hf)]
   exact hprog f hf
 
+/-- The executed inline pass `compileInlTopHOL` agrees, on byte-ranged names,
+    with the exact tagged `compileInlTopHOLExact` after decoding every triple
+    through the item codec `(ofString, crepProgToHOL)`.  This is the top-level
+    composition of the per-program body recursion with the filtered-alist
+    finite-map setup; it is Flapjack-specific cross-representation
+    infrastructure, so it carries no `@[hol]` tag. -/
+theorem crepProgToHOL_compileInlTopHOL {width : Nat} [NeZero width]
+    (inl_fname : List CrepInlineMapHOLName)
+    (functions : List (FunName × List Nat × CrepProg (BitVec width)))
+    (hname : ∀ t ∈ functions, CrepNameRanged t.1)
+    (hprog : ∀ t ∈ functions, CrepProgNameRanged t.2.2) :
+    (compileInlTopHOL (inl_fname.map toStringOfBytes) functions).map
+        (fun t => (ofString t.1, t.2.1, crepProgToHOL t.2.2)) =
+      compileInlTopHOLExact inl_fname
+        (functions.map (fun t => (ofString t.1, t.2.1, crepProgToHOL t.2.2))) := by
+  rw [compileInlTopHOLExact_eq_compileInlProgHOLExact]
+  unfold compileInlTopHOL
+  rw [← crepInlineCodecEntries_filter_map inl_fname functions hname hprog]
+  simp only [compileInlProgHOLExact, List.map_map]
+  apply List.map_congr_left
+  intro t ht
+  simp only [Function.comp_apply]
+  refine Prod.ext rfl (Prod.ext rfl ?_)
+  unfold inlineProgHOLExact
+  exact crepProgToHOL_crepInlineProgRecursive _ _ _ _ _ _
+    (fun s hs => erase_active_contains _ _ t.1 s
+      (crepInlineCodecEntries_active_lookup (width := width) inl_fname functions).1
+      (hname t ht) hs)
+    (erase_active_lookup _ _ _ t.1
+      (crepInlineCodecEntries_active_lookup (width := width) inl_fname functions).2
+      (hname t ht))
+    (erase_range _ (ofString t.1)
+      (crepInlineCodecEntries_range (width := width) inl_fname functions hprog))
+    (hprog t ht)
+
 end CrepInlineRoute
 end Flapjack
