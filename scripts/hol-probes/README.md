@@ -1309,3 +1309,18 @@ with `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_sem_cut_names_type_probeScript.sml
 scripts/hol-probes/regenerate.sh`; the original wordSem source was compared
 byte-for-byte before using the shared checkout's built objects.
+
+## StackSem recursive stack codecs
+
+`stacksem_stack_codec_probeScript.sml` captures26 concrete original HOL
+`full_read_bitmap`/`enc_stack`/`dec_stack` rows and their three inferred types.
+The standalone definitions have independent bitmap and descriptor/stack word
+dimensions; mixed8-bit bitmap/1-bit stack rows guard this distinction. Other rows
+cover one-based indexing, sentinel shape, recursive frames, selected and
+unselected location values, truncated inputs/roots, extra roots, missing
+continuation words and missing final sentinel.
+
+Regenerate read-only with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_stack_codec_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`Flapjack/Test/StackSemStackCodecParity.lean` kernel-checks all26 concrete rows.
+Full GC/evaluator execution and Nat-machine refinement remain separate work.

@@ -1,3 +1,5 @@
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutNames
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyRemap
 import Flapjack.Pancake.PanStructs.CompileDeclsExact
 import Flapjack.Pancake.PanStructs.CompileProgExact
 import Flapjack.Pancake.PanStructs.CompileExpExact
@@ -28,6 +30,7 @@ import Flapjack.Compiler.Backend.Semantics.StackSem.Control
 import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
 import Flapjack.Compiler.Backend.Semantics.StackSem.Bitmap
 import Flapjack.Compiler.Backend.Semantics.StackSem.WordBitmap
+import Flapjack.Compiler.Backend.Semantics.StackSem.StackCodec
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateIoEventsMono
 import Flapjack.Compiler.Backend.Semantics.WordSem.Semantics
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClock
@@ -184,6 +187,7 @@ import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectStore32
 import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectStoreByte
 import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectExtCall
 import Flapjack.Pancake.Proofs.CrepInline
+import Flapjack.Pancake.Proofs.CrepInline.ShMem
 import Flapjack.Pancake.Proofs.PanGlobals
 import Flapjack.Pancake.Proofs.PanStructs
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrect
