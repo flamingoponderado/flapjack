@@ -2,6 +2,12 @@
 
 ## Lean/Lake cache artifacts
 
+Mathlib is a pinned proof dependency. Run `lake exe cache get` after dependency
+updates to fetch its compiled cache; CI explicitly enables the same command via
+Lean Action's `use-mathlib-cache` input. Keep the real-sqrt agreement module
+reachable from the umbrella build. The compiler executable does not depend on
+Mathlib's real-analysis modules.
+
 For a one-off check of a Lean source file, prefer `lake lean path/to/File.lean`
 over `lake env lean path/to/File.lean`. `lake lean` builds the file's imports
 through Lake first, so it can reuse and restore cached build artifacts, and

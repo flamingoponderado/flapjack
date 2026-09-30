@@ -4,6 +4,9 @@ import os
 import runpy
 import tempfile
 import unittest
+import contextlib
+import io
+from unittest.mock import patch
 from pathlib import Path
 
 
@@ -178,6 +181,29 @@ abbrev WordSemGcFun (width : Nat) : Type :=
     MODULE = SOURCE + """
 theorem holFmapAsFiniteSupportWitness : True := by trivial
 """
+
+    def test_main_rejects_out_of_range_function_position(self):
+        main = CHECKER["main"]
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "cakeml/pancake").mkdir(parents=True)
+            hol = root / "cakeml/pancake/fixtureScript.sml"
+            hol.write_text("Definition gc_fun_def: gc_fun = T End\n")
+            lean = root / "Fixture.lean"
+            lean.write_text(
+                '@[hol "cakeml/pancake/fixtureScript.sml" "gc_fun_def" '
+                '(fmap_as_finite_support_function := [argument_9, result_3])]\n'
+                + self.MODULE
+            )
+            output = io.StringIO()
+            with patch.dict(main.__globals__, {
+                "ROOT": root,
+                "lean_files": lambda: [lean],
+                "reachable_modules": lambda: {"Fixture"},
+                "reals_rendering_names": lambda _: set(),
+            }), contextlib.redirect_stderr(output), contextlib.redirect_stdout(output):
+                self.assertEqual(main([]), 1)
+            self.assertIn("argument_9 is outside the 4-component product", output.getvalue())
 
     def test_accepts_exact_argument_and_result_product_slots(self):
         self.assertEqual(
