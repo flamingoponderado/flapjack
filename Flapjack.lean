@@ -1,3 +1,5 @@
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.LiveExpressions
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.Updates
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.StateRelation
 import Flapjack.Compiler.Backend.WordAlloc.Expressions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.StrongLocalsRel
@@ -17,8 +19,10 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.Domain
 import Flapjack.Compiler.Backend.Semantics.WordSem.Evaluate
 import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateClock
 import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateInd
+import Flapjack.Compiler.Backend.Semantics.WordSem.EventsMono
 import Flapjack.Compiler.Backend.Semantics.WordSem.Semantics
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClock
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClockIoEventsMono
 import Flapjack.Misc.ShiftSeq
 import Flapjack.Misc.BinaryIeee
 import Flapjack.Misc.MachineIeee

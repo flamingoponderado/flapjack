@@ -1,3 +1,5 @@
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.LiveExpressions
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.Updates
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.StateRelation
 import Flapjack.Compiler.Backend.WordAlloc.Expressions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.StrongLocalsRel
