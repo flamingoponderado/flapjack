@@ -34169,5 +34169,21 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-only internal actual normal-return Call computation for33.11. Source compare panSem returned clause: successful args/lookup/nonzero clock and callee returned run are internal branch facts; return shape check preserved, local validity derived from actual initializer lookup and same shape. Handler not evaluated on returned clause. Untagged, not public constructor statement or completed HOL port; full handler/abnormal simulation and assembly remain."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "matchedHandlerCall",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only internal matched-exception branch infrastructure for actual33.11: literal Call clause retains exception shape/local validity; validity derived from actual handler binding and same shape; handler execution/result not assumed. Scratch entry algebra reorders handler binding past scratch writes at distinct keys, preserving canonical finite maps. Branch guards/freshness are internal facts, not public HOL premises. Untagged, no standalone HOL declaration; full handler transport/restoration and constructor assembly remain unfinished."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "handlerScratchEntry",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only internal matched-exception branch infrastructure for actual33.11: literal Call clause retains exception shape/local validity; validity derived from actual handler binding and same shape; handler execution/result not assumed. Scratch entry algebra reorders handler binding past scratch writes at distinct keys, preserving canonical finite maps. Branch guards/freshness are internal facts, not public HOL premises. Untagged, no standalone HOL declaration; full handler transport/restoration and constructor assembly remain unfinished."
 }
 ]

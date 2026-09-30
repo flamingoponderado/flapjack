@@ -276,6 +276,59 @@ private theorem returnedLocalCall {width : Nat} {σ : Type} [NeZero width]
   simp only [evaluateHOLFiniteState_call, hargs, hcode, if_neg hclock, hbody,
     hs, hv, ite_true, setKvarHOLFinite]
 
+/-- Internal matched-exception Call computation. Derives the local handler
+binding validity from the actual saved binding and value shape. The result is
+the handler computation itself, so no successful handler execution is assumed.
+This is an internal clause used by the full constructor, not its HOL statement. -/
+private theorem matchedHandlerCall {width : Nat} {σ : Type} [NeZero width]
+    (state post : PanSemStateFiniteExact width σ) (function handlerId handlerVar : MlS)
+    (destination : Option (VarKind × MlS)) (handler : ProgHOL width)
+    (arguments : List (ExpHOL width)) (values : List (ValueHOL width))
+    (body : ProgHOL width) (callee : HolFiniteMapExact MlS (ValueHOL width))
+    (returnShape handlerShape : ShapeHOL) (initializer value : ValueHOL width)
+    (hargs : evalListHOLFinite state
+      (h := fun a => Classical.propDecidable (state.memaddrs a)) arguments = some values)
+    (hcode : lookupCodeHOLFinite state.code.lookup function values = some (body, callee, returnShape))
+    (hclock : state.clock ≠ 0)
+    (hbody : evaluateHOLFiniteState (callEntryStateHOLFinite state callee) body =
+      (some (.exception handlerId value), post))
+    (hexception : state.eshapes.lookup handlerId = some handlerShape)
+    (hhandlerShape : shapeOfHOLExact value = handlerShape)
+    (hlocal : state.locals.lookup handlerVar = some initializer)
+    (hshape : shapeOfHOLExact value = shapeOfHOLExact initializer) :
+    evaluateHOLFiniteState state
+      (.call (some (destination, some (handlerId, handlerVar, handler))) function arguments) =
+      evaluateHOLFiniteState
+        (setVarHOLFinite handlerVar value {post with locals := state.locals}) handler := by
+  classical
+  have hv : isValidValueHOLExact state.toExact .local handlerVar value = true := by
+    simp [isValidValueHOLExact, lookupKvarHOLExact, hlocal, hshape, shapeEqHOL_eq_true]
+  have hs := (shapeEqHOL_eq_true _ _).mpr hhandlerShape
+  simp only [evaluateHOLFiniteState_call, hargs, hcode, if_neg hclock, hbody,
+    ite_true, hexception, hs, hv, Bool.true_and]
+
+/-- Reorder the matched handler binding past the two distinct scratch writes.
+This identifies the actual Call handler-entry state with the state used by the
+accepted two-fresh-locals transport. Distinctness is a derived internal branch
+fact from the compiler's freshness list, not an extra public-case premise. -/
+private theorem handlerScratchEntry {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (resultName flagName handlerVar : MlS)
+    (initializer flagValue exceptionValue : ValueHOL width)
+    (hr : resultName ≠ handlerVar) (hf : flagName ≠ handlerVar) :
+    setVarHOLFinite handlerVar exceptionValue
+      (setVarHOLFinite flagName flagValue (setVarHOLFinite resultName initializer state)) =
+    setVarHOLFinite flagName flagValue
+      (setVarHOLFinite resultName initializer (setVarHOLFinite handlerVar exceptionValue state)) := by
+  have comm (map : HolFiniteMapExact MlS (ValueHOL width)) (a b : MlS)
+      (x y : ValueHOL width) (hne : a ≠ b) :
+      (map.update (a, x)).update (b, y) = (map.update (b, y)).update (a, x) := by
+    apply HolFiniteMapExact.ext
+    exact FUPDATE_comm map.lookup a x b y hne
+  simp only [setVarHOLFinite]
+  congr 1
+  rw [comm _ flagName handlerVar flagValue exceptionValue hf,
+    comm _ resultName handlerVar initializer exceptionValue hr]
+
 /-- Internal missing-context branch of the full constructor proof. The branch
 condition selects the literal compiler fallback; the callee and handler IHs
 remain those of the original evaluator. Untagged infrastructure until the full
