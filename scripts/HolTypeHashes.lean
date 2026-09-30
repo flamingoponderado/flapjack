@@ -1,3 +1,4 @@
+import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Decls
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Assembly
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Call
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.ExtCall

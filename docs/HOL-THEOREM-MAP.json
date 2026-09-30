@@ -36674,4 +36674,44 @@
   "reviewer": "Flapjack local support (beads .42.6/.42.7): FUPDATE_LIST_HOL over keys already in the domain keeps the domain, generic in key/value types."
 }
 
+,
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/Decls.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific derived declaration-induction infrastructure; no separately named HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/Decls.lean",
+  "lean_name": "update_eq_updateEq",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific derived declaration-induction infrastructure; no separately named HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/Decls.lean",
+  "lean_name": "functionUpdate",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific derived declaration-induction infrastructure; no separately named HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/Decls.lean",
+  "lean_name": "evaluateDeclsFperm",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_decls_fperm",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "reviewer": "C source comparison pan_globals1820-1837 and exact evaluate_decls: sole original successful source declaration-run premise, same permuted declaration/code equation and post-state code update. Native MlS, DeclHOL, ShapeHOL, ProgHOL and original initializer shape, function parameter/return well-formedness, exception freshness/shape guards preserved. Direct list induction uses accepted eval_upd_code_eta and fpermCode update algebra; native lawful name update equals equality update. Canonical finite-support state fields with imported-owner roundtrip, positive width BitVec/NeZero and Type0 FFI translation only. No program simulation, target-run, freshness, shape or postrelation extra premise. Candidate pending independent coordinator source review; proof-only production unchanged.",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true
+}
 ]
