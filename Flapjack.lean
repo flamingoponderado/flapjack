@@ -1,4 +1,4 @@
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallGlobalHandler
+import Flapjack.Compiler.Backend.StackNames.AsmAdmissibility.Inst
 import Flapjack.RiscV.AllocatorMemoryInvariant.Ssa
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallHandlerArguments
 import Flapjack.Pancake.Semantics.PanSem.LookupCodeFinite
@@ -789,3 +789,4 @@ The library currently contains the first Lean representation of Flapjack's
 front-end language. The source of truth used while porting is the CakeML HOL
 development in `cakeml/pancake`.
 -/
+import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallGlobalHandler
