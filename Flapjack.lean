@@ -1,3 +1,4 @@
+import Flapjack.Pancake.Proofs.PanGlobals.GlobalBlockAlignment
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Dec
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.If
 import Flapjack.Compiler.Backend.Semantics.StackSem.LocValueCase
