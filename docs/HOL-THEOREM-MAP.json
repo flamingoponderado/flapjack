@@ -28211,5 +28211,17 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-y19g.11.2.2) against stackSemScript.sml copy_words_def: if LENGTH bs <= i then NONE else let pattern = EL i bs in case copy_words_for_pattern pattern (i+1) a off bs dm m of NONE => NONE | SOME (i1,a1,m1) => if word_msb pattern then copy_words i1 a1 off bs dm m1 else SOME (a1,m1). Lean copyWordsExact preserves the same recursive bitmap copy over the exact StackSemStateFiniteExact carriers (bitmaps : List (BitVec width), mdomain : BitVec width -> Bool, memory : BitVec width -> WordLocW width) with termination measure LENGTH bs - i discharged by copyWordsForPatternExact_least (HOL copy_words_for_pattern_LESS_EQ); word_msb renders as BitVec.msb; external HOL bytes_in_word stays untagged Flapjack infrastructure.",
     "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "find_code_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Control.lean",
+    "lean_name": "findCode",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-09-30) against stackSemScript.sml find_code_def: direct code-label lookup or indirect lookup through a zero-offset Loc over the exact StackSem code tree; regs finite-support field traversed; restored row after integration merge dropped it."
   }
 ]
