@@ -1,5 +1,32 @@
 [
   {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/StackCodec.lean",
+    "lean_name": "fullReadBitmap",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "full_read_bitmap_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.6), stackSemScript309-314: bitmap list and exact word_loc descriptor, Word0 rejected, other Word indexes DROP(w2n(w-1w)) followed by accepted read_bitmap, Loc rejected. Word subtraction occurs before unsigned projection; no Nat replacement or range assumption. Independent bitmapWidth and stack/descriptor width, each positive BitVec/WordLocW with its own NeZero; HOL lists retained. Original HOL probe exposed the independence and Lean signatures preserve it. Accepted .2/.3 prerequisites. Exact GC/full evaluator and Nat-machine refinement remain open; coordinator source review required."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/StackCodec.lean",
+    "lean_name": "encStack",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "enc_stack_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.6), stackSemScript316-334: empty stack NONE; Word0 singleton SOME[], zero with tail NONE; otherwise full bitmap/filter failures propagate, recursive remainder encoding succeeds as selected++roots. Exact WordLoc/list carriers incl data labels. Natural stack-length recursion is justified by accepted filter_bitmap_LENGTH; no fuel-bound behavior. Independent bitmapWidth and stack/descriptor width, each positive BitVec/WordLocW with its own NeZero; HOL lists retained. Original HOL probe exposed the independence and Lean signatures preserve it. Accepted .2/.3 prerequisites. Exact GC/full evaluator and Nat-machine refinement remain open; coordinator source review required."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/StackCodec.lean",
+    "lean_name": "decStack",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "dec_stack_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.6), stackSemScript336-354: empty stack NONE for arbitrary roots; Word0 succeeds iff roots and tail are both empty, returning singleton Word0. Otherwise full bitmap/map failures propagate and recursively decode remaining roots/remainder; return [header]++front++rest, retaining unselected values and headers. Termination by stack length using map_bitmap_LENGTH; no fuel cutoff. Independent bitmapWidth and stack/descriptor width, each positive BitVec/WordLocW with its own NeZero; HOL lists retained. Original HOL probe exposed the independence and Lean signatures preserve it. Accepted .2/.3 prerequisites. Exact GC/full evaluator and Nat-machine refinement remain open; coordinator source review required."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Control.lean",
     "lean_name": "findCode",
     "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
@@ -26437,6 +26464,22 @@
     "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on stateRelImpSemanticsToCrep; forwards the imported checked roundtrip; no HOL declaration"
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ALOOKUP_key_remap_INJ",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/KeyRemap.lean",
+    "lean_name": "alookupKeyRemapINJ",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-09-30 bead .11.1.8: original word_allocProof639-658. Generic alpha source keys, beta target keys and gamma values retained; exact List product and first-match ZIP association lookup. Existing holAlookup uses propositional equality; Flapjack keyLookup convenience wrapper chooses Classical.typeDecidableEq internally, no DecidableEq/BEq/LawfulBEq hypothesis. List.zip truncation agrees under retained LENGTH premise. Entire Option equality, including NONE; original INJ f (n INSERT set keys) UNIV rendered pairwise equality implication on (a=n or a in keys), UNIV membership tautological. Original equal list/value lengths retained; no target lookup or global INJ hypothesis. Proof by input-key induction, same first-match head tests and tail injection restriction."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ALOOKUP_key_remap_2",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/KeyRemap.lean",
+    "lean_name": "alookupKeyRemapTwo",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-09-30 bead .11.1.8: original word_allocProof619-637. Generic alpha source keys, beta target keys and gamma values retained; exact List product and first-match ZIP association lookup. Existing holAlookup uses propositional equality; Flapjack keyLookup convenience wrapper chooses Classical.typeDecidableEq internally, no DecidableEq/BEq/LawfulBEq hypothesis. List.zip truncation agrees under retained LENGTH premise. Original injection only on set keys, LENGTH equality and successful source lookup imply corresponding successful renamed lookup. Source success establishes n membership before using full scoped equality theorem; no added n-membership premise, target-success or global INJ premise."
+  },
+  {
     "hol_path": "cakeml/pancake/pan_structsScript.sml",
     "hol_name": "compile_def",
     "lean_path": "Flapjack/Pancake/PanStructs/CompileProgExact.lean",
@@ -26646,5 +26689,13 @@
     "lean_name": "alistToFmap_eq_lookup",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Private list/finite-map helper of stateRelImpSemanticsDeclsToCrep (bead flapjack-pxn.18.4.4): right-folded alist_to_fmap as List.lookup; no HOL declaration (HOL uses library lemmas inline)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "cut_names_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/CutNames.lean",
+    "lean_name": "cutNamesLemma",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-09-30 bead .11.1.6: literal HOL277-311; independent alpha names payload and beta source/target/cut environment payloads retained, exact generic Spt carriers. All five conclusions retained: existential successful renamed target cut, full image-domain equality, strong_locals_rel restricted environments, INJ on source cut domain, source cut domain=names domain. Original INJ f domain(names) UNIV rendered pairwise equality implication on that domain (UNIV membership tautological). No global INJ, target-cut/target-result/target-domain/global relation premise. Source successful generic cut_names yields subset and source intersection; target subset follows image-domain theorem/source lookup/strong relation. Exact heterogeneous inter lookup and full domain intersection give restricted relation and absorption. No word/carrier qualifier: original helpers and relation are payload-polymorphic, prerequisite6.1 accepted after direct HOL type probes. All quantified variables, premises and conclusion conjuncts compared against HOL."
   }
 ]
