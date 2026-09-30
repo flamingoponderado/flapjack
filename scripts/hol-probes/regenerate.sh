@@ -2539,3 +2539,11 @@ run_probe stack_props_addr_name_probeScript.sml stack_props_addr_name_probe.out 
 
 run_probe stack_props_fp_name_probeScript.sml stack_props_fp_name_probe.out \
   fpLess fpLessEqual fpEqual fpAbs fpAbs_alias fpNeg fpNeg_alias fpSqrt fpMov fpToInt fpFromInt fpAdd fpSub fpMul fpDiv binary_mismatch binary_three_reg fma_arm fma_riscv fma_count2 fpMovToReg_32 fpMovFromReg_32 move32_alias move32_bound move64_ignored fp_bound logical_bound "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe stack_props_inst_name_probeScript.sml stack_props_inst_name_probe.out \
+  skip const_last const_bound mem_good mem_destination mem_base arith_good arith_bad fp_good fp_alias "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe word_simp_smartseq_probeScript.sml word_simp_smartseq_probe.out \
+  skip_left skip_right labels_skip_left labels_call_left labels_both labels_seq "$cake_dir/compiler/backend/word_simpScript.sml" "$cake_dir/compiler/backend"
+
+run_probe stack_props_remove_name_probeScript.sml stack_props_remove_name_probe.out \
+  get_last get_bound set store_ignored_second store_first_bad load_ignored_second load_first_bad get_size set_size_bad heap store_any_bad load_any bitmap_bad consts seq_bad if_ignored_condition loop_bad call_none_ignored call_body_bad call_handler_bad call_both_good inst_ignored "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"

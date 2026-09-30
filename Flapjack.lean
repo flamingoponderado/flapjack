@@ -1,4 +1,7 @@
 import Flapjack.Pancake.Proofs.PanGlobals.CompileExpLeaves
+import Flapjack.Compiler.Backend.StackProps.RemoveNames
+import Flapjack.Pancake.Proofs.WordConvs.SmartSeqLabels
+import Flapjack.Pancake.WordLang.OccurrenceCorrespondence
 import Flapjack.Pancake.Proofs.PanGlobals.CompileExpOperators
 import Flapjack.Pancake.Proofs.PanGlobals.CompileExpNamed
 import Flapjack.Pancake.Proofs.PanGlobals.CompileExpCmpShift
@@ -10,6 +13,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsDisjoint
 import Flapjack.Compiler.Backend.Semantics.StackSem.FixedStackCases
 import Flapjack.Compiler.Backend.StackProps.FloatNames
 import Flapjack.Compiler.Backend.StackProps.AddressNames
+import Flapjack.Compiler.Backend.StackProps.InstructionNames
 import Flapjack.Compiler.Backend.StackProps.ArithmeticNames
 import Flapjack.Compiler.Backend.RiscVConfig.RegisterNames
 import Flapjack.Compiler.Backend.StackNames.CallLinkProjection
