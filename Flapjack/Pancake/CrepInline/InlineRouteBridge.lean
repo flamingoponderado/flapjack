@@ -1057,36 +1057,6 @@ def crepInlineCodecEntries {width : Nat} [NeZero width]
     List (CrepInlineEntry (BitVec width)) :=
   entries.map fun e => (toStringOfBytes e.1, (e.2.1, crepProgOfHOL e.2.2))
 
-/-- Flapjack codec infrastructure, not a HOL original: every function or
-    external-call name occurring in the program is byte-ranged (`CrepNameRanged`),
-    recursing through `dec`/`seq`/`ite`/`while` and call-handler bodies.  This is
-    exactly the range needed to invert the `toStringOfBytes`/`ofString` name codec
-    in the recursive inline-route relation; it says nothing about evaluation and
-    is used only by `crepProgToHOL_crepInlineProgRecursive`. -/
-def crepProgNameRanged {width : Nat} [NeZero width] : CrepProg (BitVec width) → Prop
-  | .skip => True
-  | .dec _ _ body => crepProgNameRanged body
-  | .assign _ _ => True
-  | .primitive _ _ _ => True
-  | .store _ _ => True
-  | .store32 _ _ => True
-  | .storeByte _ _ => True
-  | .storeGlob _ _ => True
-  | .seq first second => crepProgNameRanged first ∧ crepProgNameRanged second
-  | .ite _ thenBranch elseBranch =>
-      crepProgNameRanged thenBranch ∧ crepProgNameRanged elseBranch
-  | .while _ body => crepProgNameRanged body
-  | .break _ => True
-  | .continue _ => True
-  | .call none name _ => CrepNameRanged name
-  | .call (some (_, none)) name _ => CrepNameRanged name
-  | .call (some (_, some (_, body))) name _ => CrepNameRanged name ∧ crepProgNameRanged body
-  | .extCall function _ _ _ _ => CrepNameRanged function
-  | .raise _ => True
-  | .return _ => True
-  | .shMem _ _ _ => True
-  | .tick => True
-
 private theorem erase_active_contains {width : Nat} [NeZero width]
     (map : HolFiniteMapExact CrepInlineMapHOLName (List Nat × CrepProgHOL width))
     (active : Std.HashSet FunName) (name s : FunName)
@@ -1125,8 +1095,8 @@ private theorem erase_active_lookup {width : Nat} [NeZero width]
 private theorem erase_range {width : Nat} [NeZero width]
     (map : HolFiniteMapExact CrepInlineMapHOLName (List Nat × CrepProgHOL width))
     (name : CrepInlineMapHOLName)
-    (hrange : ∀ k v, map.lookup k = some v → crepProgNameRanged (crepProgOfHOL v.2)) :
-    ∀ k v, (map.erase name).lookup k = some v → crepProgNameRanged (crepProgOfHOL v.2) := by
+    (hrange : ∀ k v, map.lookup k = some v → CrepProgNameRanged (crepProgOfHOL v.2)) :
+    ∀ k v, (map.erase name).lookup k = some v → CrepProgNameRanged (crepProgOfHOL v.2) := by
   intro k v h
   rw [HolFiniteMapExact.lookup_erase,
       show (FDOMSUB map.lookup name k) = FLOOKUP (FDOMSUB map.lookup name) k from rfl,
@@ -1154,36 +1124,36 @@ theorem crepProgToHOL_crepInlineProgRecursive {width : Nat} [NeZero width]
       (∀ s, CrepNameRanged s → active.contains s = true →
         crepInlineLookup s (crepInlineCodecEntries entries) =
           (map.lookup (ofString s)).map (fun e => (e.1, crepProgOfHOL e.2))) →
-      (∀ k v, map.lookup k = some v → crepProgNameRanged (crepProgOfHOL v.2)) →
-      crepProgNameRanged program →
+      (∀ k v, map.lookup k = some v → CrepProgNameRanged (crepProgOfHOL v.2)) →
+      CrepProgNameRanged program →
       crepProgToHOL (crepInlineProgRecursive (crepInlineCodecEntries entries) active program) =
         inlineProgHOLCoreExact map supportKeys support_spec (crepProgToHOL program) := by
   fun_induction crepInlineProgRecursive (crepInlineCodecEntries entries) active program with
   | case1 active name value body ih =>
       intro map supportKeys support_spec hactive hlookup hrange hprog
-      simp only [crepProgNameRanged] at hprog
+      simp only [CrepProgNameRanged] at hprog
       simp only [crepInlineProgRecursive, crepProgToHOL, inlineProgHOLCoreExact]
       rw [ih map supportKeys support_spec hactive hlookup hrange hprog]
   | case2 active first second ih1 ih2 =>
       intro map supportKeys support_spec hactive hlookup hrange hprog
-      simp only [crepProgNameRanged] at hprog
+      simp only [CrepProgNameRanged] at hprog
       simp only [crepInlineProgRecursive, crepProgToHOL, inlineProgHOLCoreExact]
       rw [ih1 map supportKeys support_spec hactive hlookup hrange hprog.1,
           ih2 map supportKeys support_spec hactive hlookup hrange hprog.2]
   | case3 active condition thenBranch elseBranch ih1 ih2 =>
       intro map supportKeys support_spec hactive hlookup hrange hprog
-      simp only [crepProgNameRanged] at hprog
+      simp only [CrepProgNameRanged] at hprog
       simp only [crepInlineProgRecursive, crepProgToHOL, inlineProgHOLCoreExact]
       rw [ih1 map supportKeys support_spec hactive hlookup hrange hprog.1,
           ih2 map supportKeys support_spec hactive hlookup hrange hprog.2]
   | case4 active condition body ih =>
       intro map supportKeys support_spec hactive hlookup hrange hprog
-      simp only [crepProgNameRanged] at hprog
+      simp only [CrepProgNameRanged] at hprog
       simp only [crepInlineProgRecursive, crepProgToHOL, inlineProgHOLCoreExact]
       rw [ih map supportKeys support_spec hactive hlookup hrange hprog]
   | case5 active name arguments hmem hlookupNone =>
       intro map supportKeys support_spec hactive hlookup hrange hprog
-      simp only [crepProgNameRanged] at hprog
+      simp only [CrepProgNameRanged] at hprog
       have hcont : active.contains name = true := Std.HashSet.mem_iff_contains.mp hmem
       have hmapEq := hlookup name hprog hcont
       rw [hlookupNone] at hmapEq
@@ -1196,7 +1166,7 @@ theorem crepProgToHOL_crepInlineProgRecursive {width : Nat} [NeZero width]
       simp at hc
   | case6 active name arguments hmem argumentNames body hlookupSome body' snd hrec ih =>
       intro map supportKeys support_spec hactive hlookup hrange hprog
-      simp only [crepProgNameRanged] at hprog
+      simp only [CrepProgNameRanged] at hprog
       have hcont : active.contains name = true := Std.HashSet.mem_iff_contains.mp hmem
       have hmapEq : (map.lookup (ofString name)).map (fun e => (e.1, crepProgOfHOL e.2)) =
           some (argumentNames, body) := by
@@ -1211,7 +1181,7 @@ theorem crepProgToHOL_crepInlineProgRecursive {width : Nat} [NeZero width]
         fun s hs => erase_active_contains map active name s hactive hprog hs
       have hlookup' := erase_active_lookup entries map active name hlookup hprog
       have hrange' := erase_range map (ofString name) hrange
-      have hbodyRange : crepProgNameRanged (crepProgOfHOL p.2) := hrange (ofString name) p hmap
+      have hbodyRange : CrepProgNameRanged (crepProgOfHOL p.2) := hrange (ofString name) p hmap
       have hrecToHOL : crepProgToHOL
             (crepInlineProgRecursive (crepInlineCodecEntries entries) (active.erase name)
               (crepProgOfHOL p.2)) =
@@ -1237,7 +1207,7 @@ theorem crepProgToHOL_crepInlineProgRecursive {width : Nat} [NeZero width]
       rw [inlineProgHOLCoreExact_call_none, hmap]
   | case7 active name arguments hnot =>
       intro map supportKeys support_spec hactive hlookup hrange hprog
-      simp only [crepProgNameRanged] at hprog
+      simp only [CrepProgNameRanged] at hprog
       have hcont : active.contains name = false := by
         cases h : active.contains name with
         | false => rfl
@@ -1252,7 +1222,7 @@ theorem crepProgToHOL_crepInlineProgRecursive {width : Nat} [NeZero width]
       rw [inlineProgHOLCoreExact_call_none, hmapNone]
   | case8 active returnNames name arguments hmem hlookupNone =>
       intro map supportKeys support_spec hactive hlookup hrange hprog
-      simp only [crepProgNameRanged] at hprog
+      simp only [CrepProgNameRanged] at hprog
       have hcont : active.contains name = true := Std.HashSet.mem_iff_contains.mp hmem
       have hmapEq := hlookup name hprog hcont
       rw [hlookupNone] at hmapEq
@@ -1265,7 +1235,7 @@ theorem crepProgToHOL_crepInlineProgRecursive {width : Nat} [NeZero width]
       simp at hc
   | case9 active returnNames name arguments hmem argumentNames body hlookupSome body' snd hrec ih =>
       intro map supportKeys support_spec hactive hlookup hrange hprog
-      simp only [crepProgNameRanged] at hprog
+      simp only [CrepProgNameRanged] at hprog
       have hcont : active.contains name = true := Std.HashSet.mem_iff_contains.mp hmem
       have hmapEq : (map.lookup (ofString name)).map (fun e => (e.1, crepProgOfHOL e.2)) =
           some (argumentNames, body) := by
@@ -1280,7 +1250,7 @@ theorem crepProgToHOL_crepInlineProgRecursive {width : Nat} [NeZero width]
         fun s hs => erase_active_contains map active name s hactive hprog hs
       have hlookup' := erase_active_lookup entries map active name hlookup hprog
       have hrange' := erase_range map (ofString name) hrange
-      have hbodyRange : crepProgNameRanged (crepProgOfHOL p.2) := hrange (ofString name) p hmap
+      have hbodyRange : CrepProgNameRanged (crepProgOfHOL p.2) := hrange (ofString name) p hmap
       have hrecToHOL : crepProgToHOL
             (crepInlineProgRecursive (crepInlineCodecEntries entries) (active.erase name)
               (crepProgOfHOL p.2)) =
@@ -1306,7 +1276,7 @@ theorem crepProgToHOL_crepInlineProgRecursive {width : Nat} [NeZero width]
       rw [inlineProgHOLCoreExact_call_returns, hmap]
   | case10 active returnNames name arguments hnot =>
       intro map supportKeys support_spec hactive hlookup hrange hprog
-      simp only [crepProgNameRanged] at hprog
+      simp only [CrepProgNameRanged] at hprog
       have hcont : active.contains name = false := by
         cases h : active.contains name with
         | false => rfl
@@ -1325,7 +1295,7 @@ theorem crepProgToHOL_crepInlineProgRecursive {width : Nat} [NeZero width]
         rfl
   | case11 active returnNames handler body name arguments ih =>
       intro map supportKeys support_spec hactive hlookup hrange hprog
-      simp only [crepProgNameRanged] at hprog
+      simp only [CrepProgNameRanged] at hprog
       simp only [crepInlineProgRecursive, crepProgToHOL, inlineProgHOLCoreExact]
       rw [ih map supportKeys support_spec hactive hlookup hrange hprog.2]
   | case12 active program h1 h2 h3 h4 h5 h6 h7 =>
