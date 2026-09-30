@@ -1,4 +1,7 @@
 import Flapjack.Pancake.Proofs.PanGlobals.CompileExpLeaves
+import Flapjack.Compiler.Backend.StackProps.RemoveNames
+import Flapjack.Pancake.Proofs.WordConvs.SmartSeqLabels
+import Flapjack.Pancake.WordLang.OccurrenceCorrespondence
 import Flapjack.Pancake.Proofs.PanGlobals.CompileExpOperators
 import Flapjack.Pancake.Proofs.PanGlobals.CompileExpNamed
 import Flapjack.Pancake.Proofs.PanGlobals.CompileExpCmpShift
