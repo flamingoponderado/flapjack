@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.StackNames.ProgramNames
 import Flapjack.Compiler.Backend.StackNames.InstructionNames
 import Flapjack.Compiler.Backend.StackNames.OperandNames
 import Flapjack.Compiler.Backend.StackProps.FixedNames

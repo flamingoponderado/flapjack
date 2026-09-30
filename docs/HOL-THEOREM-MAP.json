@@ -27936,5 +27936,41 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-b source comparison stack_names21-49: exact Spt Nat names (misc tlookup, identity fallback), HolInst/HolArith/HolRegImm/HolAddr positive-width carriers and exact FP carrier. All eight arithmetic variants rename every integer register, memory renames destination/base preserving offset, comparisons rename integer destination only, FP moves rename integer sides preserving float indices; remaining FP cases unchanged. Exhaustive unconditional codec correspondence kernel-checked. Original17HOL rows and kernel replay cover all renamed clauses plus FPAdd default. No finite-map qualifier or executed-route completion claim; parent .15.7.7 remains open."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/StackNames/ProgramNames.lean",
+  "lean_name": "progCompHOL",
+  "hol_path": "cakeml/compiler/backend/stack_namesScript.sml",
+  "hol_name": "comp_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source comparison stack_names56-107 and proof268-272: literal comp recursion uses exact Spt Nat tlookup with identity fallback, exact positive-width HolProg and MlString FFI carrier, exact operand/instruction renamers. Call optional tuples preserve labels while recursing bodies and renaming link/indirect destination; other labels/immediates unchanged. List entry/map equations and unconditional MAP_FST conclusion match HOL. Kernel functional induction proves raw-helper correspondence with no extra premise;15originalHOL program rows replayed. Parent production naming boundary migration remains open."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/StackNames/ProgramNames.lean",
+  "lean_name": "progCompEntryHOL",
+  "hol_path": "cakeml/compiler/backend/stack_namesScript.sml",
+  "hol_name": "prog_comp_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source comparison stack_names56-107 and proof268-272: literal comp recursion uses exact Spt Nat tlookup with identity fallback, exact positive-width HolProg and MlString FFI carrier, exact operand/instruction renamers. Call optional tuples preserve labels while recursing bodies and renaming link/indirect destination; other labels/immediates unchanged. List entry/map equations and unconditional MAP_FST conclusion match HOL. Kernel functional induction proves raw-helper correspondence with no extra premise;15originalHOL program rows replayed. Parent production naming boundary migration remains open."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/StackNames/ProgramNames.lean",
+  "lean_name": "compileHOL",
+  "hol_path": "cakeml/compiler/backend/stack_namesScript.sml",
+  "hol_name": "compile_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source comparison stack_names56-107 and proof268-272: literal comp recursion uses exact Spt Nat tlookup with identity fallback, exact positive-width HolProg and MlString FFI carrier, exact operand/instruction renamers. Call optional tuples preserve labels while recursing bodies and renaming link/indirect destination; other labels/immediates unchanged. List entry/map equations and unconditional MAP_FST conclusion match HOL. Kernel functional induction proves raw-helper correspondence with no extra premise;15originalHOL program rows replayed. Parent production naming boundary migration remains open."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/StackNames/ProgramNames.lean",
+  "lean_name": "map_fst_compileHOL",
+  "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+  "hol_name": "MAP_FST_compile",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source comparison stack_names56-107 and proof268-272: literal comp recursion uses exact Spt Nat tlookup with identity fallback, exact positive-width HolProg and MlString FFI carrier, exact operand/instruction renamers. Call optional tuples preserve labels while recursing bodies and renaming link/indirect destination; other labels/immediates unchanged. List entry/map equations and unconditional MAP_FST conclusion match HOL. Kernel functional induction proves raw-helper correspondence with no extra premise;15originalHOL program rows replayed. Parent production naming boundary migration remains open."
 }
 ]

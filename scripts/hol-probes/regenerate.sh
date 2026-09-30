@@ -2480,3 +2480,6 @@ run_probe stack_names_operand_probeScript.sml stack_names_operand_probe.out \
 run_probe stack_names_instruction_probeScript.sml stack_names_instruction_probe.out \
   skip const binop shift div longmul longdiv addcarry addoverflow suboverflow mem fpless fplesseq fpeq fptoreg fpfromreg fpdefault \
   "$cake_dir/compiler/backend/stack_namesScript.sml" "$cake_dir/compiler/backend"
+
+run_probe stack_names_program_probeScript.sml stack_names_program_probe.out \
+  seq if loop call_none call_ret call_exc call_both install shared buffer jump loc continue default compile "$cake_dir/compiler/backend/stack_namesScript.sml" "$cake_dir/compiler/backend"
