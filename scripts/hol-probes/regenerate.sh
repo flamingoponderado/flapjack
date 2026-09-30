@@ -115,6 +115,9 @@ run_probe stacksem_word_bitmap_probeScript.sml stacksem_word_bitmap_probe.out \
 # Run from the local HOL object directory when Holmake has populated it, so
 # HOL's ordinary theory loader finds compiled CakeML theories. Fall back to
 # the source directory for checkouts whose Holmake places objects there.
+run_probe word_sem_cut_names_type_probeScript.sml word_sem_cut_names_type_probe.out \
+  cut_names_type cut_envs_type cut_env_type "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
 run_probe word_alloc_live_inst_probeScript.sml word_alloc_live_inst_probe.out \
   load16 load8 store32 carry overflow to64 to32 from64 from32 "$cake_dir/compiler/backend/word_allocScript.sml" \
   "$cake_dir/compiler/backend"
@@ -2421,6 +2424,10 @@ run_probe loop_sem_evaluate_ind_probeScript.sml loop_sem_evaluate_ind_probe.out 
 run_probe pan_sem_evaluate_ind_probeScript.sml pan_sem_evaluate_ind_probe.out \
   evaluate_ind "$cake_dir/pancake/semantics/panSemScript.sml" \
   "$cake_dir/pancake/semantics"
+
+run_probe word_alloc_key_map_probeScript.sml word_alloc_key_map_probe.out \
+  key_map_mixed key_map_collision key_map_done \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
 
 # HOL's byte decoder `word_of_bytes` (HOL/src/n-bit/byteScript.sml:197) is the
 # function installed by the exact shared-memory loads (panSemScript.sml:517/524,

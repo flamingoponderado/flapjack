@@ -234,21 +234,18 @@ end WordSemStateFiniteExact
 /-- Exact HOL `cut_names_def` (`wordSemScript.sml:578-583`):
     `cut_names name_set env = if domain name_set SUBSET domain env then SOME
     (inter env name_set) else NONE`. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "cut_names_def"
-  (words_as_type_indexed_bitvec)]
-def wordSemCutNames {width : Nat} [NeZero width]
-    (nameSet : WordLangNumSetHOL) (env : Spt (WordLocW width)) :
-    Option (Spt (WordLocW width)) :=
+@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "cut_names_def"]
+def wordSemCutNames {α β : Type}
+    (nameSet : Spt α) (env : Spt β) : Option (Spt β) :=
   if LoopSemStateFiniteExact.sptSubsetLive nameSet env then some (sptInter env nameSet)
   else none
 
 /-- Exact HOL `cut_envs_def` (`wordSemScript.sml:585-590`): cut both name sets
     of a `cutsets` pair, failing if either cut fails. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "cut_envs_def"
-  (words_as_type_indexed_bitvec)]
-def wordSemCutEnvs {width : Nat} [NeZero width]
-    (nameSets : WordLangCutsetsHOL) (env : Spt (WordLocW width)) :
-    Option (Spt (WordLocW width) × Spt (WordLocW width)) :=
+@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "cut_envs_def"]
+def wordSemCutEnvs {β : Type}
+    (nameSets : WordLangCutsetsHOL) (env : Spt β) :
+    Option (Spt β × Spt β) :=
   match wordSemCutNames nameSets.1 env, wordSemCutNames nameSets.2 env with
   | some e1, some e2 => some (e1, e2)
   | _, _ => none
@@ -256,11 +253,10 @@ def wordSemCutEnvs {width : Nat} [NeZero width]
 /-- Exact HOL `cut_env_def` (`wordSemScript.sml:592-597`):
     `case cut_envs name_sets env of SOME (e1, e2) => SOME (union e2 e1) | _ =>
     NONE`. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "cut_env_def"
-  (words_as_type_indexed_bitvec)]
-def wordSemCutEnv {width : Nat} [NeZero width]
-    (nameSets : WordLangCutsetsHOL) (env : Spt (WordLocW width)) :
-    Option (Spt (WordLocW width)) :=
+@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "cut_env_def"]
+def wordSemCutEnv {β : Type}
+    (nameSets : WordLangCutsetsHOL) (env : Spt β) :
+    Option (Spt β) :=
   match wordSemCutEnvs nameSets env with
   | some (e1, e2) => some (sptUnion e2 e1)
   | _ => none
