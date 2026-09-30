@@ -36478,6 +36478,29 @@
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-only bare-index translation candidate infrastructure, bead .18.5.5.50.2. Retains arbitrary nonempty alpha itself and derives word width as max1 Nat.card alpha; kernel witnesses finite nonempty cardinal and infinite dimension1 after original fcpScript63-65 source inspection. Indexed unreach candidate uses f:alpha->Nat and that SAME alpha-derived word dimension, no independent width/domain or BitVec substitution. No exact HOL port or approved representation claim: original external fcp library source now byte-pinned at existing HOL commit a390cbabd3a4521bab4ee20281e3e42933a8a3ae; index/word qualifier/checker source review remains parent50 obligation."
 },
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/ExtCall.lean",
+  "lean_name": "evaluateFperm_ExtCall",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_fperm",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "reviewer": "flapjack-sol source comparison22.5.13: original evaluate_fperm1721-1810 full source-run implication specialized to faithful evaluate_ind ExtCall conjunct (no IH). fperm leaves ExtCall function and four expressions unchanged. Exact evaluator retains all four native word/value checks, both byte-array reads and failure outcomes, final FFI event plus empty locals, returning FFI state and byte-memory write; only code is permuted. Complete arbitrary result/post quantification and exact target post-state equality preserved, no successful FFI/read/target run assumption. Canonical finite-support state reconstructed via imported genuine roundtrip witness; native MlS identifiers and reviewed positive-width word carriers, Type0 FFI. Local elaboration transparency setting handles semireducible finite-support proof conversion only and does not weaken kernel verification. Proof-only constructor, production evaluator unchanged. Independent coordinator source acceptance pending.",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/ExtCall.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Canonical imported state roundtrip reexport, Flapjack representation infrastructure without an independent HOL declaration."
+},
   {
     "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
     "hol_name": "evaluate_clock_sub",
