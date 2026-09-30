@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.StackNames.CallLinkProjection
 import Flapjack.Compiler.Backend.StackNames.ProgramNames
 import Flapjack.Compiler.Backend.StackNames.InstructionNames
 import Flapjack.Compiler.Backend.StackNames.OperandNames
