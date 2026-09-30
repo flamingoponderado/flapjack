@@ -342,6 +342,7 @@ import Flapjack.Test.StackSemPatternCopyParity
 import Flapjack.Test.StackSemIntegerInstParity
 import Flapjack.Test.StackSemEvaluateAllocCaseParity
 import Flapjack.Test.StackSemStoreConstsGuardParity
+import Flapjack.Test.StackSemFpRegisterInstParity
 import Flapjack.Test.PanGlobalsFpermCodeParity
 import Flapjack.Test.WordLangEveryVarParity
 import Flapjack.Test.WordSemCarriersParity

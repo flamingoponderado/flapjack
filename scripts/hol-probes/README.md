@@ -1497,3 +1497,22 @@ remain on the assembly beads. Regenerate read-only with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=stacksem_store_consts_guard_probeScript.sml
 bash scripts/hol-probes/regenerate.sh`.
+
+## StackSem FP register movement and sign cases
+
+`stacksem_fpreg_inst_probeScript.sml` captures twenty original `inst_def`
+observations for FPMov, FPAbs, FPNeg, FPMovToReg and FPMovFromReg.
+The rows cover NaN payloads, signed zero, missing and location operands,
+64-bit single-register transfers, 32-bit split/concatenate, unusual 8-bit
+truncation, and aliased registers. A 64-bit FromReg ignores its second
+register; non-64-bit ToReg writes the high slice last, including aliases.
+`Flapjack/Test/StackSemFpRegisterInstParity.lean` kernel-replays every row
+over arbitrary base states. The partial case helper is untagged and keeps
+unsupported constructors distinct from an instruction failure. Universal
+certificates prove successful clock/stack/memory preservation, high-slice
+alias behavior, and the 64-bit single-source FromReg equation.
+Floating arithmetic, real conversions and complete evaluator routing remain
+on the assembling instruction/evaluator beads. Regenerate read-only using
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_fpreg_inst_probeScript.sml
+bash scripts/hol-probes/regenerate.sh`.

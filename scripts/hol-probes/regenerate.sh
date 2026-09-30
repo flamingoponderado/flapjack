@@ -104,6 +104,10 @@ run_probe() {
 run_probe pan_globals_fperm_code_probeScript.sml pan_globals_fperm_code_probe.out \
   swap_f swap_g other missing equal_names \
   "$cake_dir/pancake/proofs/pan_globalsProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe stacksem_fpreg_inst_probeScript.sml stacksem_fpreg_inst_probe.out \
+  fpreg_mov_nan fpreg_mov_missing fpreg_abs_nan fpreg_abs_zero fpreg_neg_nan fpreg_neg_zero fpreg_abs_missing fpreg_neg_missing fpreg_to64 fpreg_to32 fpreg_to8 fpreg_to32_alias fpreg_to_missing fpreg_from64_ignore fpreg_from64_loc fpreg_from32 fpreg_from8 fpreg_from32_missing fpreg_from32_loc fpreg_from32_alias \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
 run_probe stacksem_store_consts_guard_probeScript.sml stacksem_store_consts_guard_probe.out \
   guard_none guard_missing guard_match guard_wrong_label guard_wrong_first_register guard_wrong_second_register guard_recursive_stub guard_return_nonzero guard_wrong_constructor guard_reversed_sequence \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
