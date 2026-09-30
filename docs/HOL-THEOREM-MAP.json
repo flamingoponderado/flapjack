@@ -36388,5 +36388,13 @@
   "lean_name": "llistShorter_lnth",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-b rc27 source comparison pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae lines131-161 local val Q.prove: exact iff llist_shorter ll1 ll2 versus forall n x LNTH n ll1=SOME x implies exists y LNTH n ll2=SOME y. Same arbitrary element/list/index/payload carriers, no equality of x and y added and no chain premise. Imported llength is finite length versus NONE infinity; original option length order preserved. Proof/cases unchanged. Coordinator source acceptance pending; no executable changes."
+},
+{
+  "hol_path": "hol4/src/coretypes/optionScript.sml",
+  "hol_name": "some_def",
+  "lean_path": "Flapjack/Misc/Option.lean",
+  "lean_name": "holOptionSome",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b rc27.1 source comparison pinned HOL a390cbabd3a4521bab4ee20281e3e42933a8a3ae optionScript794-796: same arbitrary Type0 carrier/predicate, existential guard, SOME chosen satisfying witness when inhabited, NONE when uninhabited. Classical.choose under the guard translates HOL Hilbert choice; arbitrary nonunique choices remain unspecified independently, not cross-assistant equal. Definition body preserved byte-for-byte during counterpart relocation, no new hypothesis/carrier qualifier/executable behavior. Coordinator source acceptance pending."
 }
 ]

@@ -46,10 +46,14 @@ EXTERNAL_HOL_PATH = "hol4/src/finite_maps/sptreeScript.sml"
 EXTERNAL_HOL_LPREFIX_LUB_PATH = (
     "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml"
 )
-EXTERNAL_HOL_PATHS = frozenset({EXTERNAL_HOL_PATH, EXTERNAL_HOL_LPREFIX_LUB_PATH})
+EXTERNAL_HOL_OPTION_PATH = "hol4/src/coretypes/optionScript.sml"
+EXTERNAL_HOL_PATHS = frozenset({
+    EXTERNAL_HOL_PATH, EXTERNAL_HOL_LPREFIX_LUB_PATH, EXTERNAL_HOL_OPTION_PATH,
+})
 EXTERNAL_HOL_FILES = frozenset({
     "COPYRIGHT",
     "src/finite_maps/sptreeScript.sml",
+    "src/coretypes/optionScript.sml",
     "examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
 })
 EXTERNAL_HOL_REPOSITORY = "https://github.com/HOL-Theorem-Prover/HOL"

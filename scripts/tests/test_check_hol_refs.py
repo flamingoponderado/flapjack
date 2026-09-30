@@ -23,11 +23,14 @@ class ExternalHolSourcesTest(unittest.TestCase):
         import json
         base = root / "hol4"
         (base / "src/finite_maps").mkdir(parents=True)
+        (base / "src/coretypes").mkdir(parents=True)
         (base / "examples/pl-semantics/lprefix_lub").mkdir(parents=True)
         (base / "COPYRIGHT").write_text("retained license")
         (base / "src/finite_maps/sptreeScript.sml").write_text("Theorem domain_union: T Proof simp[] QED")
         (base / "examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml").write_text(
             "Theorem IMP_build_lprefix_lub_EQ: T Proof simp[] QED")
+        (base / "src/coretypes/optionScript.sml").write_text(
+            'val some_def = new_definition("some_def", ``some P = NONE``);')
         lock = {"repository": CHECKER["EXTERNAL_HOL_REPOSITORY"], "commit": "a" * 40,
                 "files": {p: hashlib.sha256((base / p).read_bytes()).hexdigest()
                           for p in sorted(CHECKER["EXTERNAL_HOL_FILES"])}}
@@ -37,6 +40,23 @@ class ExternalHolSourcesTest(unittest.TestCase):
         self.assertIsNone(CHECKER["hol_source_error"](CHECKER["ROOT"], CHECKER["EXTERNAL_HOL_PATH"]))
         self.assertIsNone(
             CHECKER["hol_source_error"](CHECKER["ROOT"], CHECKER["EXTERNAL_HOL_LPREFIX_LUB_PATH"]))
+
+    def test_option_source_and_old_style_declaration(self):
+        path = CHECKER["EXTERNAL_HOL_OPTION_PATH"]
+        self.assertIsNone(CHECKER["hol_source_error"](CHECKER["ROOT"], path))
+        self.assertIsNone(REF_ERROR(CHECKER["ROOT"] / path, "some_def", 794, {}))
+
+    def test_missing_option_pin_rejected(self):
+        import json
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.fixture(root)
+            manifest = root / "hol4/SOURCES.json"
+            lock = json.loads(manifest.read_text())
+            del lock["files"]["src/coretypes/optionScript.sml"]
+            manifest.write_text(json.dumps(lock))
+            self.assertIsNotNone(CHECKER["hol_source_error"](
+                root, CHECKER["EXTERNAL_HOL_OPTION_PATH"]))
 
     def test_upstream_identity_rejected(self):
         import json
@@ -70,7 +90,8 @@ class ExternalHolSourcesTest(unittest.TestCase):
 
     def test_source_and_license_drift_rejected(self):
         for relative in ["COPYRIGHT", "src/finite_maps/sptreeScript.sml",
-                         "examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml"]:
+                         "examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+                         "src/coretypes/optionScript.sml"]:
             with self.subTest(relative=relative), tempfile.TemporaryDirectory() as tmp:
                 root = Path(tmp)
                 self.fixture(root)
