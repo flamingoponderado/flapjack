@@ -401,6 +401,7 @@ import Flapjack.Pancake.PanGlobalsByteRanged
 import Flapjack.Pancake.Proofs.PanGlobals
 import Flapjack.Pancake.Proofs.PanGlobals.MemStoresAppend
 import Flapjack.Pancake.Proofs.PanGlobals.FpermCode
+import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Leaves
 import Flapjack.Pancake.Proofs.PanGlobals.DeclListLemmas
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelationExact
 import Flapjack.Pancake.Proofs.PanGlobals.CompileDecsStructural
