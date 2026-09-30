@@ -35128,6 +35128,21 @@
   "reviewer": "flapjack-luna-b source comparison, bead .18.5.15.7.14.2: HOL616 comp_ind ShMemOp case retains stack_asm_name/names_ok/fixed_names and exact stack_asm_ok(comp f p) conclusion. Spt and native StackLang payloads; positive word-width translation only. Source stackProps812-829: ShMemOp preserves offset and ISA branches, bounds from names_ok_imp; buffer/raise/return use reg_count and avoid_regs; OpCurrHeap targets default True, guards retained but unused. No target validity premise, executed behavior change or full theorem claim; coordinator source acceptance pending."
 },
 {
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ArgLoadStrong.lean",
+  "lean_name": "generalSimulateArgLoadStrongAllDruleExact",
+  "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+  "hol_name": "general_simulate_arg_load_strong_all_drule",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "CrepSemHOLState.locals",
+    "CrepSemHOLState.globals",
+    "CrepSemHOLState.code",
+    "t"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol (.45.4.3) compared original HOL1350-1379: all original quantified variables and eleven strong_all guards retained, followed by the original twelfth observed nested evaluation premise at result r1/state tprime. Conclusion exactly r1=r, full state_rel and source-result match with FDIFF and restored-locals submaps for NONE/Break/Continue, Error False, other True. This target-run premise belongs to HOL drule only; existential strong_all has no such premise. Proof derives independent existential run then projects deterministic pair equality to identify both result and state. Canonical locals/globals/code and standalone t maps, positive-width BitVec and Type0 FFI only; existing canonical roundtrip witness retained. Coordinator review pending."
+},
+{
   "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
   "lean_name": "scopedHandlerPrefix",
   "hol_path": null,
