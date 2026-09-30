@@ -1212,13 +1212,15 @@ def panCompileTap [CakeDisplayWord α]
     reviewed exact program, expression, shape and old-shape compilers through their codecs), `globalCompileTopCakeRouted` (which executes
     the reviewed exact `compileTopExactHOL` for a byte-ranged start name), and
     `compileProgNativeWithMetadataRouted` at the
-    declaration-to-Crep boundary. That branch executes the reviewed exact whole declaration compiler, including
-    its exact inliner, and decodes for the existing production metadata representation;
+    declaration-to-Crep boundary. With standard BitVec literals that branch executes
+    the reviewed exact whole declaration compiler and exact inliner, then decodes
+    for the existing production metadata representation;
     `compileFlapjackEntryCake_ofExact_eq` below proves the whole pipeline result
     equals the compatibility route. Crep-to-Loop is the single production route
     `pipelineLoopFunctionsSource`, which the CLI drivers reuse. The exact
     `compile_prog`/`comp_func` Crep-to-Loop routes are
-    tested alternatives only, until their output equality is proved. The optional proof preserves this helper's source compatibility
+    tested alternatives only, until their output equality is proved.
+    The optional proof preserves this helper's source compatibility
     for callers that do not carry the codec invariant. -/
 def compileFlapjackEntryCake {width : Nat} [NeZero width]
     [BEq (BitVec width)] [OfNat (BitVec width) 0]
