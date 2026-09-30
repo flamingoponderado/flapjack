@@ -3111,34 +3111,19 @@ theorem crepShMemOpExactHOL_same {width : Nat} [NeZero width] {σ : Type}
 set_option linter.unusedSimpArgs false in
 /-- HOL `inline_prog_correct` While case (`crep_inlineProofScript.sml:2326`),
 the `While` conjunct of the source-reviewed `crepSem$evaluate_ind`. The clause is
-`evalCrepSemHOLProgExact_while_holShape` (EvaluateHOL.lean:5217); the two
+`evalCrepSemHOLProgExact_while_holShape`; the two
 induction hypotheses are the HOL case's sub-body IH (at `decClockCrepSemHOL s`)
 and its recursive while IH (at the body-result state).
 
-`ihWhile` mirrors the recursive-call hypothesis of the exact evaluator's
-induction principle: `evalCrepSemHOLProg.inductHOL`'s `hwhile_none` /
-`hwhile_continue` handlers (EvaluateHOL.lean:4011/4022) hand the recursive
-motive back only for a body result of `none` or `continue 0`. Accordingly the
-guard below is exactly `loopResult = none ∨ loopResult = some (.continue 0)`
-(any other `continue n` exits the loop in the `While` clause and receives no
-recursive motive), so `ihWhile` cannot be instantiated at the original state
-`s`; the `While` clause runs the body only when `s.clock ≠ 0` and
-`decClockCrepSemHOL` strictly decreases the clock there.
-
-HANDLER CORRESPONDENCE: the induction principle supplies the recursive `While`
-motive with the body result fed through `fixClockCrepSemHOL (decClockCrepSemHOL
-state)` and the motive stated at `crepStampExactDomains state loopState`
-(`EvaluateHOL.lean:4011`/`:4022`). That form is exactly this plain-state
-`ihWhile`: `fixClockCrepSemHOL_evalCrepSemHOLProgExact` (EvaluateHOL.lean:4851,
-HOL `fix_clock_evaluate`, crepSemScript.sml:432-437) drops the `fixClockCrepSemHOL`
-wrapper on any exact-evaluator result, and the kernel-checked helper
-`crepStampExactDomains_handler_motive` (EvaluateHOL.lean, this branch; based on
-`crepStampExactDomains_fixClock_body`) derives `P res loopState` from the
-handler-shaped `P res (crepStampExactDomains state loopState)`, carrying the
-result component (and hence the `none`/`continue 0` guard) unchanged. Applying
-that helper to the `hwhile_none`/`hwhile_continue` handler hypotheses therefore
-produces this plain `ihWhile` with no extra premise, so the correspondence is
-kernel-checked rather than asserted.
+ASSEMBLY LIMITATION: faithfulness of this case follows from HOL's source
+`evaluate_ind`, not from `evalCrepSemHOLProg.inductHOL`. The latter's
+`hwhile_none` / `hwhile_continue` handlers require a body motive as an extra
+premise and do not themselves supply a separate body IH. The unused
+`crepStampExactDomains_handler_motive` helper transports a stamped state; it
+does not discharge that premise or establish correspondence of the induction
+principles. Full assembly must use a principle supplying HOL's guarded body
+and re-entry IHs, or repair the current handlers first. This case alone does
+not establish that assembly.
 
 SOURCE-GUARD CORRESPONDENCE: the printed Crep `evaluate_ind` While conjunct
 (`scripts/hol-probes/crep_sem_evaluate_ind_probe.out`) guards every recursive
