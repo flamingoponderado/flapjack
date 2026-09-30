@@ -1433,4 +1433,36 @@ theorem oldExpShapeExact_load_encode {width : Nat} [NeZero width]
   simp only [expToHOL, Pancake.PanStructs.CompileShapeExact.oldExpShapeExact,
     structOldExpShape]
 
+/-- Flapjack codec infrastructure for compile_exp named-field indexing.
+Actual byte-ranged query and stored names make equality injective through the
+name codec. Both operations retain the first duplicate match and absent fields;
+this cross-carrier lemma has no HOL theorem original. -/
+theorem encodedFieldIndexLookup (field : String) (fields : List (String × Shape))
+    (hfield : NameRanged field) (hfields : ListParamByteRanged fields) :
+    afindi (ofString field) (fields.map fun p => (ofString p.1, shapeToHOL p.2)) =
+      structFindFieldIndex field fields := by
+  induction fields with
+  | nil => simp [afindi, structFindFieldIndex]
+  | cons entry fields ih =>
+      rcases entry with ⟨candidate, shape⟩
+      have hhead := hfields (candidate, shape) (by simp)
+      have htail : ListParamByteRanged fields := fun p hp => hfields p (by simp [hp])
+      by_cases hmatch : candidate = field
+      · subst candidate
+        simp [afindi, structFindFieldIndex]
+      · have hexact : ofString field ≠ ofString candidate :=
+          fun h => hmatch (ofString_injective_of_ranged_local hhead.1 hfield h.symm)
+        simp only [List.map_cons, afindi_cons, hexact, ↓reduceIte,
+          structFindFieldIndex, beq_iff_eq, hmatch, ↓reduceIte]
+        rw [ih htail]
+        cases structFindFieldIndex field fields <;> rfl
+
+/-- Flapjack codec corollary retaining the source zero default for missing
+named fields. No target lookup success or index bounds are assumed. -/
+theorem encodedFieldIndexLookup_default (field : String) (fields : List (String × Shape))
+    (hfield : NameRanged field) (hfields : ListParamByteRanged fields) :
+    (afindi (ofString field) (fields.map fun p => (ofString p.1, shapeToHOL p.2))).getD 0 =
+      (structFindFieldIndex field fields).getD 0 := by
+  rw [encodedFieldIndexLookup field fields hfield hfields]
+
 end Flapjack
