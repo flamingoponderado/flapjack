@@ -35857,6 +35857,418 @@
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-4ac.4.60.1.1.14): HOL panPropsScript.sml:724-728 evaluate_clock_sub, DecCall case of recInduct evaluate_ind. Same statement shape and carrier as the accepted cases: high run evaluate (DecCall rt shape fname argexps prog1, s) = (res, st with clock := st.clock + ck), res <> SOME TimeOut, conclusion on s with clock := s.clock - ck. The only additional hypotheses are evaluate_ind's two guarded DecCall premises at the clock-sub motive: clockSubDecCallContIH (P (prog1, set_var rt retv (st with locals := s.locals)) under args/lookup_code/clock guards, a callee Return retv and both shape checks) and clockSubDecCallCalleeIH (P (prog, dec_clock s with locals := newlocals)). Both are copied verbatim from the reviewed evaluate_invariants DecCall spelling (EvalInvariant.lean), with the motive replaced by clockSubAtHOLFinite. No other premise. Proof: the untagged canonical core decCallCore shows the low run cannot time out (callee IH aligns the callee run, continuation IH the continuation run, evaluate_clock bounds ck); then clockSub_of_lowNoTimeout lifts it via the tagged evaluate_add_clock_eq. The full evaluate_clock_sub remains open (While .9, If .12, assembly .15)."
 },
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "scopedHandlerPrefix",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only private proof step for in-progress global-handler constructor33.11. Scope equation preserves actual saved lookups of both Dec binders, including absent bindings. Missing global/source and missing context/compiler branches retain original guarded callee/handler IHs; nonError excludes return to absent global. No full global-handler theorem exists yet; present-context normal-return and matched-handler branches plus final assembly remain open. No standalone HOL declaration/tag or complete constructor-port claim; coordinator classification pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "missingGlobalCallRun",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only private proof step for in-progress global-handler constructor33.11. Scope equation preserves actual saved lookups of both Dec binders, including absent bindings. Missing global/source and missing context/compiler branches retain original guarded callee/handler IHs; nonError excludes return to absent global. No full global-handler theorem exists yet; present-context normal-return and matched-handler branches plus final assembly remain open. No standalone HOL declaration/tag or complete constructor-port claim; coordinator classification pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "missingContextCorrect",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only private proof step for in-progress global-handler constructor33.11. Scope equation preserves actual saved lookups of both Dec binders, including absent bindings. Missing global/source and missing context/compiler branches retain original guarded callee/handler IHs; nonError excludes return to absent global. No full global-handler theorem exists yet; present-context normal-return and matched-handler branches plus final assembly remain open. No standalone HOL declaration/tag or complete constructor-port claim; coordinator classification pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "restoreUpdate",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only private restoration algebra for in-progress global-handler constructor33.11: restores actual saved lookups after two distinct scratch writes, allowing absent original bindings and different initializer/final result values. Kernel checked; no standalone HOL declaration and no full constructor-port claim. Present-context cases and assembly remain open."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "restoreTwoScratchWrites",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only private restoration algebra for in-progress global-handler constructor33.11: restores actual saved lookups after two distinct scratch writes, allowing absent original bindings and different initializer/final result values. Kernel checked; no standalone HOL declaration and no full constructor-port claim. Present-context cases and assembly remain open."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "presentContextInitializer",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only private proof step in actual global-handler constructor33.11. Source compared pan_globalsScript118-125: literal fresh names/Call handler flag/If Skip Store retained. Present context and original state_rel derive initialization success and recovered shape; no extra initializer success premise. Both actual saved scratch lookups retained. Untagged: full central Call/If simulation and constructor assembly remain unfinished; not a completed HOL case port."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "presentContextScope",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only private proof step in actual global-handler constructor33.11. Source compared pan_globalsScript118-125: literal fresh names/Call handler flag/If Skip Store retained. Present context and original state_rel derive initialization success and recovered shape; no extra initializer success premise. Both actual saved scratch lookups retained. Untagged: full central Call/If simulation and constructor assembly remain unfinished; not a completed HOL case port."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "returnedValueStoreTail",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only internal normal-return tail of actual global-handler constructor33.11. Derives existential literal zero-flag If/Store target run from caller/callee relation and source global validity via accepted global store theorem; restores both scratch locals using actual caller and result-initialized snapshots, including absent bindings. No target Store/run or post-relation premise. Internal branch facts are not a public HOL constructor theorem; matched-handler and full assembly remain unfinished. Untagged and no full-port claim."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "returnedLocalCall",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only internal actual normal-return Call computation for33.11. Source compare panSem returned clause: successful args/lookup/nonzero clock and callee returned run are internal branch facts; return shape check preserved, local validity derived from actual initializer lookup and same shape. Handler not evaluated on returned clause. Untagged, not public constructor statement or completed HOL port; full handler/abnormal simulation and assembly remain."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "matchedHandlerCall",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only internal matched-exception branch infrastructure for actual33.11: literal Call clause retains exception shape/local validity; validity derived from actual handler binding and same shape; handler execution/result not assumed. Scratch entry algebra reorders handler binding past scratch writes at distinct keys, preserving canonical finite maps. Branch guards/freshness are internal facts, not public HOL premises. Untagged, no standalone HOL declaration; full handler transport/restoration and constructor assembly remain unfinished."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "handlerScratchEntry",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only internal matched-exception branch infrastructure for actual33.11: literal Call clause retains exception shape/local validity; validity derived from actual handler binding and same shape; handler execution/result not assumed. Scratch entry algebra reorders handler binding past scratch writes at distinct keys, preserving canonical finite maps. Branch guards/freshness are internal facts, not public HOL premises. Untagged, no standalone HOL declaration; full handler transport/restoration and constructor assembly remain unfinished."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "handlerScratchRun",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only internal matched-handler transport for actual33.11. Composes accepted two-fresh-locals theorem with actual handler-entry reordering and lawful canonical equality/Boolean update agreement. Preserves all result outcomes and HOL conditional goodRes/nonError final-locals guarantee; no successful handler or target evaluation premise. Internal source handler run/freshness guards remain branch facts; not a public constructor theorem. Untagged; saved-local restoration/abnormal outcomes/full assembly remain unfinished."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "restoreHandlerScopes",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only internal matched-handler restoration for actual33.11. Uses reviewed evaluate_unchanged_local to recover both caller lookups for original goodRes/nonError outcomes, then canonical scope restoration algebra; other outcomes use relation false locals flag. Conditional transported scratch-map fact is internal branch data, not public HOL-case premise. Both actual saved snapshots and possibly absent originals preserved. Untagged; full constructor assembly and normal/abnormal branch connections still unfinished."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "normalHandlerFlagRun",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only actual normal matched-handler composition for33.11. Derives flag binding from accepted fresh-local transport, applies accepted handlerFlagNormal, and proves exact final map with flag one/result initializer. No successful target handler or assignment-validity premise; source handler run remains internal branch/IH data. Untagged, no completed public constructor claim; outer If and full branch assembly remain unfinished."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "normalHandlerIfRun",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only actual normal matched-handler continuation for33.11. Derives flag-one nonzero from existing NeZero width; literal outer If selects Skip for every address. Composes generated handler/flag run with both scope restorations to establish full relation from internal handler IH outputs, without target-run/success/word-positivity public premises. Untagged internal branch composition; full callee/source IH connections, other outcome clauses and public constructor assembly remain unfinished."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "normalHandlerTail",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only actual normal matched-handler continuation for33.11. Derives flag-one nonzero from existing NeZero width; literal outer If selects Skip for every address. Composes generated handler/flag run with both scope restorations to establish full relation from internal handler IH outputs, without target-run/success/word-positivity public premises. Untagged internal branch composition; full callee/source IH connections, other outcome clauses and public constructor assembly remain unfinished."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "nonNormalHandlerTail",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only internal matched-handler continuation result assembly for33.11. Non-normal outcomes bypass flag assignment/outer If; preserves goodRes conditional locals relation including handler Return. Composes accepted fresh transport/unchanged-local scope restoration for all nonError results. Internal handler run/relation/freshness are IH/branch outputs that full constructor must derive; not public HOL premises. Untagged; callee/source-handler IH connections and other Call branches/full constructor assembly remain unfinished."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "handlerTail",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only internal matched-handler continuation result assembly for33.11. Non-normal outcomes bypass flag assignment/outer If; preserves goodRes conditional locals relation including handler Return. Composes accepted fresh transport/unchanged-local scope restoration for all nonError results. Internal handler run/relation/freshness are IH/branch outputs that full constructor must derive; not public HOL premises. Untagged; callee/source-handler IH connections and other Call branches/full constructor assembly remain unfinished."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "returnedScratchCall",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only actual generated normal-return Call connection for33.11. Consumes original callee IH branch run/args/lookup/clock/shape facts; scratch arguments, unchanged code/clock and identical callee entry derived internally, as is destination binding via accepted literal-name freshness. No scratch target-run or freshness public premise. Untagged internal clause, not full constructor port; handler/source-IH connections and remaining Call clauses/assembly unfinished."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "returnedScratchState",
+  "status": "no_hol_reference_pending_classification",
+  "reviewer": "Private scratch-write state identity for the pending full global destination Call handler case; untagged Flapjack infrastructure, not a completed HOL constructor port.",
+  "hol_name": null,
+  "hol_path": null,
+  "statement_status": "no_hol_reference_pending_classification"
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "returnedCallStoreTail",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Private normal-return composition for pending full global handler Call case33.11. Derives actual generated Call/If Store sequence and scope-restored relation from internal callee IH branch facts using accepted scratch arguments and Store API; no completed full constructor or HOL port claim. Original source IH discharge and remaining clauses still required."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "returnedScopedCorrect",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Private normal-return literal compiler scoped branch for pending33.11. Derives initializer shape from caller globals relation, post global validity from original callee shape invariant, generated Call/Store execution and saved scope restoration internally. Callee IH run/relation remain internal assembly facts; full constructor guarded IH discharge and other outcomes unfinished. No HOL tag or completed port claim."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "returnedFromIH",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Private normal-return branch of pending33.11, deriving target callee execution and post relation from original guarded callee IH, argument/code/clock transport and callee entry relation. No target run/post relation premise. Full constructor including handler and other outcomes remains unfinished; untagged infrastructure."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "matchedScratchCall",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Private matched-exception generated Call computation for pending33.11. Actual scratch arguments and handler binding preserved from literal names freshness, unchanged clock/code/entry/eshapes; no successful-handler premise. Full original guarded handler-IH and constructor assembly remain open; untagged infrastructure."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "matchedCallTail",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Private all-non-error matched Call/flag/If composition for pending33.11. Derives literal scratch name freshness internally; uses internal callee branch and handler IH outputs to establish generated sequence and scope-restored relation for normal/exception/return/timeout/final outcomes. No successful handler premise. Full original guarded handler-IH discharge and public constructor assembly remain unfinished; untagged infrastructure."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "matchedScopedCorrect",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Private matched-handler literal compiler outer-scope branch for pending33.11. Initializer/scopes derived from caller relation/context branch, combines internal callee and handler IH outputs for all nonError handler results and scoped goodRes relation. Full original guarded IH discharge/all Call outcomes remain unfinished; no tag or completed port claim."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "matchedFromIH",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Private matched exception branch of pending33.11 with ORIGINAL guarded callee/handler IHs; derives target args/code/clock/entry, callee and handler executions, handler entry relation and binding validity internally. No target run/postrelation premise. Remaining Call outcomes/full public constructor assembly unfinished; untagged infrastructure."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "nonGoodCallTail",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Private non-good Call continuation/scoped relation algebra for pending33.11. Non-good result bypasses If Store and relation ignores restored locals. Central target Call run and relation are internal original callee IH obligations, not public constructor premises. Full all-case assembly remains unfinished; untagged infrastructure."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "bypassScratchCall",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Private generated Call clause for pending33.11: unmatched exception, timeout or final FFI bypass handler and destination; scratch arguments/code/clock/callee entry derived internally, result emptyLocals exact. Internal callee IH branch facts pending full all-case original-IH assembly; untagged infrastructure, no completed port claim."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "bypassScopedCorrect",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Private scoped unmatched exception/timeout/final FFI branch for pending33.11; initializer, actual scratch Call/continuation and both scope-restored relation derived from internal callee IH branch facts. Original source IH discharge/full all-outcome constructor remains unfinished; untagged infrastructure."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "bypassFromIH",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Private unmatched-exception/timeout/final FFI branch for pending33.11 deriving actual scoped compiled run and relation from ORIGINAL guarded source callee IH. Target args/code/clock/entry/run/relation internal, no target premises. Remaining zero-clock/all-case public constructor assembly unfinished; untagged infrastructure."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "zeroClockCorrect",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Private zero-clock literal scoped Call branch; caller relation derives initialization/scratch args/code/clock and non-good scoped relation."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "compileCorrect_CallGlobalHandler",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "compile_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "reviewer": "flapjack-luna-c source comparison33.11: original gen_goal172-181 and global destination Call with handler1138-1509. Literal compile_def118-125 nested result/flag Dec, names list parse, handler Seq flag1, Call Local result and If flag Skip Store(top-offset,VarLocalresult) retained. ONLY original args/code/nonzero-clock guarded callee IH and matching exception/eshapes/value shape/local validity guarded handler IH; full existential target run and goodRes post relation unchanged. Zero-clock, missing-context fallback, normal returned global Store, matched/unmatched exception, timeout/final FFI and all original nonError exclusions internally proved. Arguments/code/clock/entry relations and target callee/handler executions internally derived, no targetrun/postrelation/freshness/success premise. Both actual saved scratch lookups restored including absent bindings. Native MlS/ProgHOL/ShapeHOL/ValueHOL carriers, canonical state/context map ownership and nonvacuous roundtrip witnesses retained; bare callee finite map parameter covered. Positive BitVec width and Type0 FFI conventional translation only. Kernel PASS; coordinator independent source acceptance/integration pending, bead remains open.",
+  "fmap_as_finite_support_relation": [
+    "PanSemStateFiniteExact.locals",
+    "PanSemStateFiniteExact.globals",
+    "PanSemStateFiniteExact.code",
+    "PanSemStateFiniteExact.eshapes",
+    "PanGlobalsContextExact.globals",
+    "callee"
+  ],
+  "words_as_type_indexed_bitvec": true
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Canonical imported state/context roundtrip witness reexport, Flapjack representation infrastructure for qualified Call theorem."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Canonical imported state/context roundtrip witness reexport, Flapjack representation infrastructure for qualified Call theorem."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/Dec.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack representation infrastructure: canonical state toExact/ofExact roundtrip re-export, no separate HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/Dec.lean",
+  "lean_name": "evaluateFperm_Dec",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_fperm",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol (22.5.9) compared original evaluate_fperm1721-1810, evaluate_ind Dec conjunct and source panSem559-565: quantified initializer value and exact eval(s,initializer)=SOME value plus shape=shape_of value guard, body IH at original s.locals update(name,value) ONLY. Sole original source Dec run implies exact permuted target run/same result/post code permutation. All original input/f/g/name/shape/body/result/post quantifiers, no targetrun/nonError/postrelation premise. Initializer failure and mismatched shape remain Error with state preserved; successful body IH supplied from actual source initializer/structural shape equality bridge, scoped res_var restoration commutes definitionally with code update for every body outcome and any saved caller binding. Exact finite evaluator/ValueHOL/ShapeHOL/MlString, canonical4state maps and positive words/Type0 FFI qualifier only; same-module genuine canonical roundtrip witness. Full permutation induction remains open; coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/While.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack representation infrastructure: genuine canonical state toExact/ofExact roundtrip re-export, no independent HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/While.lean",
+  "lean_name": "evaluateFperm_While",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_fperm",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol (22.5.11) compared original evaluate_fperm1721 While arm and literal faithful evaluate_ind While conjunct: all THREE original guarded IHs retained with original value/wordlab/word/body result/post and continue-result variables. Body IH at decClock s guarded by actual successful nonzero word condition and nonzero source clock; distinct NONE and Continue backedges additionally require original source body-pair equality and exact result guards. Full original motive is same source-run implication to target equality/same result/post code permutation, no targetrun/nonError/postrelation premise. Accepted faithful while clock rewrite and unconditional expression/code invariance used. Missing/structured condition Error, zero condition, timeout with cleared locals, normal/continue recursion, Break-to-NONE, returned/exception/error/timeout/finalFFI outcomes all proved. Clock decrement/code update and locals clearing/code update transported internally, not assumed. Exact canonical4state maps, MlString/ValueHOL/word carrier and positive words/Type0 FFI qualifiers only; genuine local canonical witness. fpermEvaluateGoal is untagged statement infrastructure spelling original motive, no independent HOL declaration. Full permutation assembly remains open; coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/FixedStores.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific same-module canonical state roundtrip reexport for the relation's four map fields; no independent HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/FixedStores.lean",
+  "lean_name": "evaluateFperm_Store32",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_fperm",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison evaluate_fperm1721-1810 Store32 case and panSem590-603: original f/g/destination/source/state/res/post and sole source-run premise; full target evaluation and unchanged result/code-permuted post. Both original ValWord guards and all operand/nonword/memory failures retained; accepted eval_upd_code_eta supplies operand invariance internally. Original fixed 32-bit w2w conversion rendered by BitVec.ofNat 32 value.toNat, original endian/domain/memory operation unchanged; successful memory-only update commutes with code update. Native MlS/ExpHOL/ProgHOL/value/result, canonical four state maps and positive type-indexed words only; fixed widths unchanged; same-module unconditional roundtrip witness. No validity/success/target/post premise. Genuine constructor case, full theorem open. Proof-only no executable behavior change."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/FixedStores.lean",
+  "lean_name": "evaluateFperm_StoreByte",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_fperm",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison evaluate_fperm1721-1810 StoreByte case and panSem590-603: original f/g/destination/source/state/res/post and sole source-run premise; full target evaluation and unchanged result/code-permuted post. Both original ValWord guards and all operand/nonword/memory failures retained; accepted eval_upd_code_eta supplies operand invariance internally. Original fixed 8-bit w2w conversion rendered by BitVec.ofNat 8 value.toNat, original endian/domain/memory operation unchanged; successful memory-only update commutes with code update. Native MlS/ExpHOL/ProgHOL/value/result, canonical four state maps and positive type-indexed words only; fixed widths unchanged; same-module unconditional roundtrip witness. No validity/success/target/post premise. Genuine constructor case, full theorem open. Proof-only no executable behavior change."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/ClockAnnot.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific same-module canonical state roundtrip witness forwarding the owning carrier conversion; no independent HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/ClockAnnot.lean",
+  "lean_name": "evaluateFperm_Annot",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_fperm",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison evaluate_fperm1721-1810 Annot case and panSem653-656: original f/g/state/res/post and sole source evaluation premise, full target evaluation with fperm program/code-permuted input and unchanged result/code-permuted post. Native MlS annotation payload binders retained for Annot; original NONE/state equation. Tick retains clock=0 TimeOut/empty_locals versus nonzero NONE/dec_clock; code update commutes with original locals/clock record updates, no clock-success assumption. Reviewed native ProgHOL/PanSemResultExact/PanSemStateFiniteExact with canonical locals/globals/code/eshapes and positive word/Type0 FFI translations only; local unconditional roundtrip witness. No target/post premise or changed clock semantics. Genuine constructor slice, full theorem open. Proof-only no executable change."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/ClockAnnot.lean",
+  "lean_name": "evaluateFperm_Tick",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_fperm",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison evaluate_fperm1721-1810 Tick case and panSem653-656: original f/g/state/res/post and sole source evaluation premise, full target evaluation with fperm program/code-permuted input and unchanged result/code-permuted post. Native MlS annotation payload binders retained for Annot; original NONE/state equation. Tick retains clock=0 TimeOut/empty_locals versus nonzero NONE/dec_clock; code update commutes with original locals/clock record updates, no clock-success assumption. Reviewed native ProgHOL/PanSemResultExact/PanSemStateFiniteExact with canonical locals/globals/code/eshapes and positive word/Type0 FFI translations only; local unconditional roundtrip witness. No target/post premise or changed clock semantics. Genuine constructor slice, full theorem open. Proof-only no executable change."
+},
   {
     "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
     "hol_name": "evaluate_clock_sub",
