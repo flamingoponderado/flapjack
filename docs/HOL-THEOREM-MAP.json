@@ -30068,5 +30068,36 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific infrastructure: Private transport of broad expression freshness through canonical finite locals lookup; no standalone HOL declaration, internal domain decision adds no premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/Assign.lean",
+    "lean_name": "evaluateFreshLocal_Assign",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "evaluate_fresh_local",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Luna A source comparison (.32.3.3), HOL1045-1091 genuine Assign evaluate_ind case. Original fresh-name/value/state/result/poststate binders, source freshness/evaluation conjunction, existential locals preserving result/nonlocals and good_res/non-Error conditional FUPDATE. Only constructor specialization; no recursive IH or added success/name-disequality/target-evaluation premise. For Local, target disequality follows internally from free_var_ids; Global needs no local-name condition. Broad expression freshness transported through the canonical finite-state codec, internal domain decision. Validity performs the unchanged target lookup/shape comparison; map updates commute only at the internally derived distinct local names. All failure branches retained. Same-module canonical state roundtrip and standard positive BitVec width/Type0 FFI qualifiers; MlS/ValueHOL/VarKind/ExpHOL/PanSemResultExact constructors retained. Kernel checked, independent coordinator review pending. Full fresh-local induction remains open on .32.3."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/Assign.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific infrastructure: Canonical state roundtrip re-export; representation infrastructure, no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/Assign.lean",
+    "lean_name": "evalFreshUpdate",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific infrastructure: Private codec transport of broad expression freshness; no separate source declaration, decision internal."
   }
 ]
