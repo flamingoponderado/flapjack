@@ -27075,5 +27075,16 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-b source comparison (2026-09-30; bead flapjack-pxn.18.5.5.44.3), crep_inlineProofScript.sml:761-777: same six premises including observed nested evaluation; conclusion same result equality, state_rel and exact locals fold. Follows from existential theorem and deterministic pair equality. Observed eval premise is part of original HOL corollary only, never assumed by existential theorem. Canonical finite-support carrier/updateEq/updateListEq/resVarEq with positive width and universe0 FFI; no additional simulation or post-state relation premise."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "SUBMAP_DIFF_LIST",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UpdateListLocals.lean",
+    "lean_name": "submapDiffListExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "l"
+    ],
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; .18.5.5.44.4), HOL882-906. Same universally quantified finite map, name/value lists; same equal length, ALL_DISTINCT/Pairwise inequality and every new name outside FDOM premises. Same SUBMAP into FUPDATE_LIST ZIP conclusion. Canonical HolFiniteMapExact/updateListEq with DecidableEq implements HOL equality, no BEq side conditions. Domain absence is lookup.isSome=false; lookup proof excludes all existing-binding keys from update names, preserving every binding by exact FUPDATE_LIST not-member lemma. No target equality or submap assumption; length/distinctness retained though freshness suffices for this proof."
   }
 ]
