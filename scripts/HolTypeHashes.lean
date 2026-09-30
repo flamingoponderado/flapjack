@@ -1,3 +1,4 @@
+import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.Assemble
 import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.AssignPrimitive
 import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.ShMemStore
 import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.ShMemLoad
@@ -301,6 +302,10 @@ import Flapjack.Pancake.Proofs.CrepInline.ExpressionCodeAgreement
 import Flapjack.Pancake.Proofs.CrepInline.NotBranchReturn
 import Flapjack.Pancake.Proofs.CrepInline.UnreachElimEvaluate
 import Flapjack.Pancake.Proofs.CrepInline.NestedSeqAssign
+import Flapjack.Pancake.Proofs.CrepInline.TransformEoc.Cases
+import Flapjack.Pancake.Proofs.CrepInline.TransformEoc.While
+import Flapjack.Pancake.Proofs.CrepInline.TransformEoc.Call
+import Flapjack.Pancake.Proofs.CrepInline.TransformEoc.Assembly
 import Flapjack.Pancake.Proofs.CrepInline.UnreachElimProgSize
 import Flapjack.Pancake.Proofs.CrepInline.NestedDecs
 import Flapjack.Pancake.Proofs.CrepInline.ShMem
