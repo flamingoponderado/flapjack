@@ -26267,5 +26267,21 @@
     "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on stateRelImpSemanticsToCrep; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ALOOKUP_key_remap_INJ",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/KeyRemap.lean",
+    "lean_name": "alookupKeyRemapINJ",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-09-30 bead .11.1.8: original word_allocProof639-658. Generic alpha source keys, beta target keys and gamma values retained; exact List product and first-match ZIP association lookup. Existing holAlookup uses propositional equality; Flapjack keyLookup convenience wrapper chooses Classical.typeDecidableEq internally, no DecidableEq/BEq/LawfulBEq hypothesis. List.zip truncation agrees under retained LENGTH premise. Entire Option equality, including NONE; original INJ f (n INSERT set keys) UNIV rendered pairwise equality implication on (a=n or a in keys), UNIV membership tautological. Original equal list/value lengths retained; no target lookup or global INJ hypothesis. Proof by input-key induction, same first-match head tests and tail injection restriction."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ALOOKUP_key_remap_2",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/KeyRemap.lean",
+    "lean_name": "alookupKeyRemapTwo",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-09-30 bead .11.1.8: original word_allocProof619-637. Generic alpha source keys, beta target keys and gamma values retained; exact List product and first-match ZIP association lookup. Existing holAlookup uses propositional equality; Flapjack keyLookup convenience wrapper chooses Classical.typeDecidableEq internally, no DecidableEq/BEq/LawfulBEq hypothesis. List.zip truncation agrees under retained LENGTH premise. Original injection only on set keys, LENGTH equality and successful source lookup imply corresponding successful renamed lookup. Source success establishes n membership before using full scoped equality theorem; no added n-membership premise, target-success or global INJ premise."
   }
 ]
