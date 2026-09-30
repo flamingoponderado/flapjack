@@ -1,0 +1,4 @@
+normal_continue=SOME (7w,Word 117w,Word 34w,Word 51w,Word 119w,Loc 9 9)
+stops_early=SOME (6w,Word 110w,Word 111w,Word 115w,Loc 9 9)
+zero_pattern=NONE
+out_of_range=NONE
