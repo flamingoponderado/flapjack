@@ -1209,6 +1209,59 @@ private theorem bypassScopedCorrect {width : Nat} {σ : Type} [NeZero width]
   rw [hscope]
   simp only [ht]
 
+/-- Discharge unmatched exceptions and terminal callee outcomes from the
+original guarded callee IH. No target run or post-relation premise is supplied;
+private until all Call outcomes and the public constructor are assembled. -/
+private theorem bypassFromIH {width : Nat} {σ : Type} [NeZero width]
+    (source : PanSemStateFiniteExact width σ) (name function handlerId handlerVar : MlS)
+    (arguments : List (ExpHOL width)) (handler : ProgHOL width)
+    (ih : ∀ (args : List (ValueHOL width)) (body : ProgHOL width)
+      (callee : HolFiniteMapExact MlS (ValueHOL width)) (returnShape : ShapeHOL),
+      evalListHOLFinite source (h := fun a => Classical.propDecidable (source.memaddrs a)) arguments = some args ∧
+      lookupCodeHOLFinite source.code.lookup function args = some (body, callee, returnShape) ∧
+      source.clock ≠ 0 → compileCorrectGoal body (callEntryStateHOLFinite source callee))
+    (context : PanGlobalsContextExact width) (target post : PanSemStateFiniteExact width σ)
+    (args : List (ValueHOL width)) (body : ProgHOL width)
+    (callee : HolFiniteMapExact MlS (ValueHOL width)) (returnShape shape : ShapeHOL)
+    (address : BitVec width) (result : PanSemResultExact width)
+    (hrel : panGlobalsStateRelHOLExact true context source target)
+    (hcontext : context.globals.lookup name = some (shape, address))
+    (ha : evalListHOLFinite source (h := fun a => Classical.propDecidable (source.memaddrs a)) arguments = some args)
+    (hl : lookupCodeHOLFinite source.code.lookup function args = some (body, callee, returnShape))
+    (hz : source.clock ≠ 0)
+    (hb : evaluateHOLFiniteState (callEntryStateHOLFinite source callee) body = (some result, post))
+    (hbypass : (fun r : PanSemResultExact width => match r with
+      | .exception eid _ => eid ≠ handlerId
+      | .timeOut | .finalFfi _ => True
+      | _ => False) result) :
+    ∃ targetPost,
+      evaluateHOLFiniteState target (compileProgExactHOL context
+        (.call (some (some (.global, name), some (handlerId, handlerVar, handler)))
+          function arguments)) = (some result, targetPost) ∧
+      panGlobalsStateRelHOLExact (goodResHOL (some result)) context (emptyLocalsHOLFinite post) targetPost := by
+  classical
+  have hta := PanGlobalsOptMmapEvalCorrect.optMmapEvalCorrectHOL context source target arguments args ⟨hrel, ha⟩
+  have hlist : ∀ es : List (ExpHOL width), compileExpExactHOLList context es = es.map (compileExpExactHOL context) := by
+    intro es
+    induction es with
+    | nil => simp only [compileExpExactHOLList, List.map_nil]
+    | cons e es hrec => simp only [compileExpExactHOLList, List.map_cons, hrec]
+  rw [← hlist arguments] at hta
+  have htl := PanGlobalsStateRelationCode.stateRelLookupCodeHOL context source target true function args body callee returnShape ⟨hrel, hl⟩
+  have htz : target.clock ≠ 0 := hrel.2.2.2.2.2.1 ▸ hz
+  have hd := PanGlobalsStateRelationClock.stateRelDecClockHOL context source target true hrel
+  have he := (PanGlobalsStateRelationLocals.stateRelChangeLocalsHOL context
+    (decClockHOLFinite source) (decClockHOLFinite target) true callee).1 hd
+  change panGlobalsStateRelHOLExact true context (callEntryStateHOLFinite source callee) (callEntryStateHOLFinite target callee) at he
+  have hgood : goodResHOL (some result) = false := by cases result <;> simp_all only [goodResHOL]
+  have hne : some result ≠ some (.error : PanSemResultExact width) := by
+    cases result <;> simp_all
+  obtain ⟨bt, hbt, hr⟩ := ih args body callee returnShape ⟨ha, hl, hz⟩
+    (some result) context (callEntryStateHOLFinite target callee) post ⟨he, hb, hne⟩
+  rw [hgood] at hr
+  exact bypassScopedCorrect context source target post bt name function handlerId handlerVar
+    handler body arguments args callee returnShape shape address result hrel hcontext hta htl htz hbt hbypass hr
+
 /-- Internal missing-context branch of the full constructor proof. The branch
 condition selects the literal compiler fallback; the callee and handler IHs
 remain those of the original evaluator. Untagged infrastructure until the full
