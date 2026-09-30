@@ -34,30 +34,12 @@ do not establish whole-compiler equivalence.
 
 ## HOL-to-Lean trust boundary
 
-This project ports HOL definitions and theorem statements into Lean; it does
-not prove, and currently cannot prove within either prover, that a HOL
-definition and its Lean translation are equivalent. Such a cross-prover
-equivalence proof is out of scope. A `@[hol]` tag is applied only after review
-of the source and Lean declaration shapes; it records reviewed provenance,
-not a machine-checked equivalence certificate. Confidence in a
-translation comes from line-by-line review of definitions and theorem shapes,
-direct HOL probes compared with Lean results, and differential compiler tests.
-Those checks are valuable but finite and do not close this trust boundary.
-
-`HOL-THEOREM-MAP.json` records each tagged declaration and every theorem or
-lemma under `Flapjack/Pancake/Proofs`, including statement-review status and a
-reviewer field. The CI gate checks inventory coverage and metadata consistency;
-it does not perform statement review. Entries marked
-`pending_statement_review` or `no_hol_reference_pending_classification` remain
-open review work and must not be described as exact HOL ports. A `reviewer`
-field on a pending entry records inventory authorship, not completed statement
-review.
-
-Lean proofs establish their conclusions about the Lean definitions actually
-used in their statements. Even a complete Lean port of Pancake's correctness
-chain would imply a property of the original HOL/Pancake compiler only under
-the externally reviewed assumption that the relevant definitions and theorem
-statements were translated faithfully.
+Similarity to HOL artifacts does not establish equivalence. HOL-to-Lean
+equivalence proofs are out of scope; `@[hol]` tags record reviewed provenance,
+not equivalence certificates. Lean proofs establish results only about the
+Lean definitions in their statements. Those definitions, statements, and their
+implications must be evaluated independently of the HOL artifacts; HOL's
+assurance does not automatically transfer to Flapjack.
 
 ## Explicit limitations
 
