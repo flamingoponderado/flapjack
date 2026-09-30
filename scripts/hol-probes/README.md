@@ -1229,3 +1229,15 @@ while renaming both integer sources. These rows drive reconciliation of the
 executed allocator, whose previous blanket memory renaming differs at 16 bits.
 Regenerate with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=word_alloc_colour_inst_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
+
+`word_alloc_live_inst_probe.out` captures nine original `get_live_inst_def`
+observations (`word_allocScript.sml:706-752`): Load16 catchall, Load8,
+Store32, AddCarry, AddOverflow, and FPMovToReg/FPMovFromReg at 32 and 64 bits.
+The exact tree enumeration lists are kernel-replayed and runtime-checked in
+`Flapjack.Test.CakeApplyColourParity.instructionLivenessExact`. This checks the
+exact definition; the independent production list-liveness route remains open
+on bead `.18.5.11.1.7.1`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_alloc_live_inst_probeScript.sml
+scripts/hol-probes/regenerate.sh` (the shared checkout supplies built objects;
+its original word_alloc source was compared byte-for-byte).
