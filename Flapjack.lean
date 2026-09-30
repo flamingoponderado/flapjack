@@ -547,6 +547,7 @@ import Flapjack.Pancake.LoopToWord.Proofs.RelationsExact
 import Flapjack.Pancake.LoopToWord.Proofs.FindVarExact
 import Flapjack.Pancake.LoopToWord.MakeCtxtExact
 import Flapjack.Pancake.LoopToWord.CompFuncExact
+import Flapjack.Pancake.LoopToWord.Proofs.NoFP
 import Flapjack.Test.LoopToWordProductionRouteParity
 import Flapjack.Pancake.LoopLang.AssignedVars
 import Flapjack.Pancake.Semantics.LoopProps.AssignedVars
