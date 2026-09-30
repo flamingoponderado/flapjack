@@ -37322,5 +37322,20 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-opus source comparison (bead flapjack-2de.4.2): crep_inlineProofScript.sml:3284-3294 forall e args s r s' t inl_fs. evaluate (Call NONE e args, s) = (r,s') /\\ state_rel_code s t /\\ inl_fs SUBMAP s.code /\\ locals_strong_rel s t /\\ code_inl_rel inl_fs s t /\\ r <> SOME Error ==> FST (evaluate (Call NONE e args, t)) = FST (evaluate (Call NONE e args, s)) /\\ state_rel_code (SND (evaluate (Call NONE e args, s))) (SND (evaluate (Call NONE e args, t))). Lean binds e args s r s' t inl_fs in HOL order, with the same six conjuncts and conclusion (FST/SND as .1/.2) over evalCrepSemHOLProgExact and the exact relation ports. No extra premise. Proof: inline_prog with the empty inline bag leaves Call NONE unchanged (inlineProgHOLExact_call_nonInlined), so the reviewed callNonInlined applies, with its callee-body premise from the accepted inline_prog_correct motive (inlineMotive) and its handler premise vacuous for Call NONE; this is the content of HOL's proof, which uses inline_prog_correct on the callee body."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SkipSeqExact.lean",
+  "lean_name": "evaluateSmartSeqHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+  "hol_name": "evaluate_SmartSeq",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison pan_simpProofScript.sml69-73 and pan_simpScript.sml13-15: arbitrary first/second program/state, unconditional complete evaluate(SmartSeq p q,s)=evaluate(Seq p q,s). Exact ProgHOL constructor match realizes source p=Skip test; Skip prefix evaluation returns NONE/unchangedstate and exact line780 Seq preserves fix_clock via proved bound. Every other prefix literally Seq. No extra premises or restricted evaluator. Canonical finite state fourmap fields with genuine witness, positive wordwidth and Type0 FFI only. Coordinator review pending; proof-only no executed change."
 }
 ]
