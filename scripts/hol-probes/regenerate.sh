@@ -2519,3 +2519,36 @@ run_probe pan_word_of_bytes_overlong_probeScript.sml pan_word_of_bytes_overlong_
 
 run_probe stack_props_fixed_names_probeScript.sml stack_props_fixed_names_probe.out \
   x86_good x86_empty x86_bad_zero riscv_empty "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe stacksem_fixed_stack_probeScript.sml stacksem_fixed_stack_probe.out \
+  stack_alloc_disabled stack_alloc_success stack_alloc_boundary stack_alloc_exhausted stack_free_boundary stack_free_excess stack_free_disabled stack_load_loc stack_load_boundary stack_load_disabled stack_store_loc stack_store_missing stack_store_boundary stack_store_disabled stack_size_modular stack_size_disabled stack_size_unsigned \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe stack_names_operand_probeScript.sml stack_names_operand_probe.out \
+  reg_present reg_missing imm dest_present dest_missing dest_label "$cake_dir/compiler/backend/stack_namesScript.sml" "$cake_dir/compiler/backend"
+
+run_probe stack_names_instruction_probeScript.sml stack_names_instruction_probe.out \
+  skip const binop shift div longmul longdiv addcarry addoverflow suboverflow mem fpless fplesseq fpeq fptoreg fpfromreg fpdefault \
+  "$cake_dir/compiler/backend/stack_namesScript.sml" "$cake_dir/compiler/backend"
+
+run_probe stack_names_program_probeScript.sml stack_names_program_probe.out \
+  seq if loop call_none call_ret call_exc call_both install shared buffer jump loc continue default compile "$cake_dir/compiler/backend/stack_namesScript.sml" "$cake_dir/compiler/backend"
+
+run_probe riscv_names_tlookup_probeScript.sml riscv_names_tlookup_probe.out \
+  names "$cake_dir/compiler/backend/riscv/riscv_configScript.sml" "$cake_dir/compiler/backend/riscv"
+
+run_probe stack_props_arith_name_probeScript.sml stack_props_arith_name_probe.out \
+  or_exception or_wrong binop_two binop_same imm_valid shift_zero_lsl shift_zero_lsr shift_width shift_x86_4 shift_x86_1 div_riscv div_x86 mul_x86_3 mul_x86_2 mul_arm_alias mul_riscv_alias longdiv_3 longdiv_2 carry_good carry_alias addoverflow_right_alias suboverflow_left_alias "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe stack_props_addr_name_probeScript.sml stack_props_addr_name_probe.out \
+  word_min word_max word_low word_high half_min half_max half_high half_ag32 byte_zero byte_high reg_last reg_bound "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe stack_props_fp_name_probeScript.sml stack_props_fp_name_probe.out \
+  fpLess fpLessEqual fpEqual fpAbs fpAbs_alias fpNeg fpNeg_alias fpSqrt fpMov fpToInt fpFromInt fpAdd fpSub fpMul fpDiv binary_mismatch binary_three_reg fma_arm fma_riscv fma_count2 fpMovToReg_32 fpMovFromReg_32 move32_alias move32_bound move64_ignored fp_bound logical_bound "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe stack_props_inst_name_probeScript.sml stack_props_inst_name_probe.out \
+  skip const_last const_bound mem_good mem_destination mem_base arith_good arith_bad fp_good fp_alias "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe word_simp_smartseq_probeScript.sml word_simp_smartseq_probe.out \
+  skip_left skip_right labels_skip_left labels_call_left labels_both labels_seq "$cake_dir/compiler/backend/word_simpScript.sml" "$cake_dir/compiler/backend"
+
+run_probe stack_props_remove_name_probeScript.sml stack_props_remove_name_probe.out \
+  get_last get_bound set store_ignored_second store_first_bad load_ignored_second load_first_bad get_size set_size_bad heap store_any_bad load_any bitmap_bad consts seq_bad if_ignored_condition loop_bad call_none_ignored call_body_bad call_handler_bad call_both_good inst_ignored "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"

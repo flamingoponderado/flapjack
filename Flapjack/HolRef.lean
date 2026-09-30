@@ -241,6 +241,16 @@ structure HolRef where
       named binder to be Nat and retain its own `[NeZero width]` discharge;
       source review compares how the dimension is used in both bodies. -/
   wordDimensionAsWidth : Option String := none
+  /-- Reviewed binary64 real-rendering translation: HOL `real` values inside
+      the HOL standard-library IEEE rounding specification (`binary_ieee`,
+      `machine_ieee`) are represented by Lean `Rat` when the real is rational
+      and by the rational cut of `sqrt r` for `fp64_sqrt`
+      (`Flapjack/Misc/BinaryIeee*.lean`, `docs/SOUNDNESS.md` item 8).  It
+      records only that representation; it authorizes no change to the HOL
+      declaration's clauses, hypotheses or conclusions, and the agreement
+      with HOL's real-number specification remains the documented external
+      assumption. -/
+  realsAsRationalCuts : Bool := false
   deriving Inhabited, Repr, BEq
 
 open Lean Meta
@@ -259,6 +269,7 @@ syntax "(" "fmap_as_finite_support_relation" ":=" "[" ident,* "]" ")" : holQuali
 syntax "(" "fmap_as_finite_support_equalities" ")" : holQualifier
 syntax "(" "words_as_type_indexed_bitvec" ")" : holQualifier
 syntax "(" "word_dimension_as_width" ":=" ident ")" : holQualifier
+syntax "(" "reals_as_rational_cuts" ")" : holQualifier
 syntax (name := hol) "hol " str str (num)? holQualifier* : attr
 
 private def checkedHolRef (path name : String) (line? : Option Nat := none)
@@ -271,7 +282,8 @@ private def checkedHolRef (path name : String) (line? : Option Nat := none)
     (fmapAsFiniteSupportRelation : Array (String × String) := #[])
     (fmapAsFiniteSupportEqualities : Bool := false)
     (wordsAsTypeIndexedBitvec : Bool := false)
-    (wordDimensionAsWidth : Option String := none) : CoreM HolRef := do
+    (wordDimensionAsWidth : Option String := none)
+    (realsAsRationalCuts : Bool := false) : CoreM HolRef := do
   unless (path.startsWith "cakeml/" && path.endsWith ".sml" ||
       path == "hol4/src/finite_maps/sptreeScript.sml" ||
       path == "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml") &&
@@ -302,7 +314,7 @@ private def checkedHolRef (path name : String) (line? : Option Nat := none)
     throwError "@[hol]: fmap_as_finite_support_relation entries must be distinct"
   if wordDimensionAsWidth.isSome && wordsAsTypeIndexedBitvec then
     throwError "@[hol]: word_dimension_as_width is mutually exclusive with words_as_type_indexed_bitvec"
-  pure { path, name, line?, listAsArray, namesAsString, namesAsStringBoundary, fmapAsFiniteSupport, fmapAsFiniteSupportResult, fmapAsFiniteSupportFunction, fmapAsFiniteSupportHeterogeneousFunction, fmapAsFiniteSupportParameters, fmapAsFiniteSupportExistentials, fmapAsFiniteSupportRelation, fmapAsFiniteSupportEqualities, wordsAsTypeIndexedBitvec, wordDimensionAsWidth }
+  pure { path, name, line?, listAsArray, namesAsString, namesAsStringBoundary, fmapAsFiniteSupport, fmapAsFiniteSupportResult, fmapAsFiniteSupportFunction, fmapAsFiniteSupportHeterogeneousFunction, fmapAsFiniteSupportParameters, fmapAsFiniteSupportExistentials, fmapAsFiniteSupportRelation, fmapAsFiniteSupportEqualities, wordsAsTypeIndexedBitvec, wordDimensionAsWidth, realsAsRationalCuts }
 
 private def parseHolQualifier (stx : Syntax) : CoreM (String × Array String × Bool × Array (String × String)) := do
   match stx with
@@ -342,6 +354,8 @@ private def parseHolQualifier (stx : Syntax) : CoreM (String × Array String × 
       pure ("words_as_type_indexed_bitvec", #[], true, #[])
   | `(holQualifier| (word_dimension_as_width := $width:ident)) =>
       pure ("word_dimension_as_width", #[width.getId.eraseMacroScopes.toString], false, #[])
+  | `(holQualifier| (reals_as_rational_cuts)) =>
+      pure ("reals_as_rational_cuts", #[], true, #[])
   | _ => throwError "@[hol]: malformed qualifier"
 
 private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
@@ -359,6 +373,7 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
     let mut fmapAsFiniteSupportEqualities : Bool := false
     let mut wordsAsTypeIndexedBitvec : Bool := false
     let mut wordDimensionAsWidth : Option String := none
+    let mut realsAsRationalCuts : Bool := false
     for qualifier in qualifiers do
       let (kind, fields, isResult, pairs) ← parseHolQualifier qualifier
       if kind == "list_as_array" then listAsArray := listAsArray ++ fields
@@ -376,8 +391,12 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
         if wordDimensionAsWidth.isSome then
           throwError "@[hol]: word_dimension_as_width may appear only once"
         wordDimensionAsWidth := fields[0]!
+      else if kind == "reals_as_rational_cuts" then
+        if realsAsRationalCuts then
+          throwError "@[hol]: reals_as_rational_cuts may appear only once"
+        realsAsRationalCuts := true
       else fmapAsFiniteSupport := fmapAsFiniteSupport ++ fields
-    checkedHolRef path name line? listAsArray namesAsString namesAsStringBoundary fmapAsFiniteSupport fmapAsFiniteSupportResult fmapAsFiniteSupportFunction fmapAsFiniteSupportHeterogeneousFunction fmapAsFiniteSupportParameters fmapAsFiniteSupportExistentials fmapAsFiniteSupportRelation fmapAsFiniteSupportEqualities wordsAsTypeIndexedBitvec wordDimensionAsWidth
+    checkedHolRef path name line? listAsArray namesAsString namesAsStringBoundary fmapAsFiniteSupport fmapAsFiniteSupportResult fmapAsFiniteSupportFunction fmapAsFiniteSupportHeterogeneousFunction fmapAsFiniteSupportParameters fmapAsFiniteSupportExistentials fmapAsFiniteSupportRelation fmapAsFiniteSupportEqualities wordsAsTypeIndexedBitvec wordDimensionAsWidth realsAsRationalCuts
   match stx with
   | `(attr| hol $path:str $name:str $line:num $qualifiers:holQualifier*) =>
       parse path.getString name.getString (some line.getNat) qualifiers
@@ -560,7 +579,9 @@ private def HolRef.qualifierSuffix (ref : HolRef) : String :=
     " (words_as_type_indexed_bitvec)" else ""
   let wordDimensionAsWidth := ref.wordDimensionAsWidth.map
     (fun width => s!" (word_dimension_as_width := {width})") |>.getD ""
-  listAsArray ++ namesAsString ++ namesAsStringBoundary ++ fmapAsFiniteSupport ++ fmapAsFiniteSupportResult ++ fmapAsFiniteSupportFunction ++ fmapAsFiniteSupportHeterogeneousFunction ++ fmapAsFiniteSupportParameters ++ fmapAsFiniteSupportExistentials ++ fmapAsFiniteSupportRelation ++ fmapAsFiniteSupportEqualities ++ wordsAsTypeIndexedBitvec ++ wordDimensionAsWidth
+  let realsAsRationalCuts := if ref.realsAsRationalCuts then
+    " (reals_as_rational_cuts)" else ""
+  listAsArray ++ namesAsString ++ namesAsStringBoundary ++ fmapAsFiniteSupport ++ fmapAsFiniteSupportResult ++ fmapAsFiniteSupportFunction ++ fmapAsFiniteSupportHeterogeneousFunction ++ fmapAsFiniteSupportParameters ++ fmapAsFiniteSupportExistentials ++ fmapAsFiniteSupportRelation ++ fmapAsFiniteSupportEqualities ++ wordsAsTypeIndexedBitvec ++ wordDimensionAsWidth ++ realsAsRationalCuts
 
 /-! Parser regressions for the original syntax, each qualifier alone, and both
 qualifiers together. These elaborate temporary syntax values only; they do not
@@ -614,6 +635,29 @@ run_cmd do
     catch _ => pure true
   unless conflictingDimensionRejected do
     throwError "@[hol] word_dimension_as_width and words_as_type_indexed_bitvec must be mutually exclusive"
+  let realsSyntax ← `(attr| hol "cakeml/semantics/fpSemScript.sml" "fp_uop_comp_def"
+    (reals_as_rational_cuts))
+  let realsRef ← Lean.Elab.Command.liftCoreM (parseHolRefAttribute realsSyntax)
+  unless realsRef.realsAsRationalCuts &&
+      HolRef.qualifierSuffix realsRef == " (reals_as_rational_cuts)" do
+    throwError "@[hol] reals_as_rational_cuts syntax regression"
+  let realsCombinedSyntax ← `(attr| hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "inst_def"
+    (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)
+    (reals_as_rational_cuts))
+  let realsCombinedRef ← Lean.Elab.Command.liftCoreM (parseHolRefAttribute realsCombinedSyntax)
+  unless realsCombinedRef.realsAsRationalCuts && realsCombinedRef.wordsAsTypeIndexedBitvec &&
+      HolRef.qualifierSuffix realsCombinedRef ==
+        " (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec) (reals_as_rational_cuts)" do
+    throwError "@[hol] combined reals_as_rational_cuts syntax regression"
+  let duplicateRealsSyntax ← `(attr| hol "cakeml/semantics/fpSemScript.sml" "fp_uop_comp_def"
+    (reals_as_rational_cuts) (reals_as_rational_cuts))
+  let duplicateRealsRejected ← Lean.Elab.Command.liftCoreM do
+    try
+      let _ ← parseHolRefAttribute duplicateRealsSyntax
+      pure false
+    catch _ => pure true
+  unless duplicateRealsRejected do
+    throwError "@[hol] duplicate reals_as_rational_cuts qualifiers must be rejected"
   let boundarySyntax ← `(attr| hol "cakeml/pancake/panLangScript.sml" "varname"
     (names_as_string := [name, generated]) (names_as_string_boundary := [generated]))
   let boundaryRef ← Lean.Elab.Command.liftCoreM (parseHolRefAttribute boundarySyntax)

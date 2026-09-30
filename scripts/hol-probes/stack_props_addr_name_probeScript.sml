@@ -1,0 +1,15 @@
+load "bossLib"; load "preamble"; load "stackPropsTheory";
+open bossLib HolKernel Parse preamble stackPropsTheory;
+fun out label q = (print(label ^ "="); print_term(rconc(EVAL q)); print "\n");
+val _ = out "word_min" ``addr_name Load (Addr 1 254w : 8 asm$addr) ((c:8 asm$asm_config) with <|ISA := asm$RISC_V; reg_count := 8; avoid_regs := [0;1]; addr_offset := (254w,2w); hw_offset := (255w,1w); byte_offset := (0w,0w)|>)``;
+val _ = out "word_max" ``addr_name Store (Addr 1 2w : 8 asm$addr) ((c:8 asm$asm_config) with <|ISA := asm$RISC_V; reg_count := 8; avoid_regs := [0;1]; addr_offset := (254w,2w); hw_offset := (255w,1w); byte_offset := (0w,0w)|>)``;
+val _ = out "word_low" ``addr_name Load32 (Addr 1 253w : 8 asm$addr) ((c:8 asm$asm_config) with <|ISA := asm$RISC_V; reg_count := 8; avoid_regs := [0;1]; addr_offset := (254w,2w); hw_offset := (255w,1w); byte_offset := (0w,0w)|>)``;
+val _ = out "word_high" ``addr_name Store32 (Addr 1 3w : 8 asm$addr) ((c:8 asm$asm_config) with <|ISA := asm$RISC_V; reg_count := 8; avoid_regs := [0;1]; addr_offset := (254w,2w); hw_offset := (255w,1w); byte_offset := (0w,0w)|>)``;
+val _ = out "half_min" ``addr_name Load16 (Addr 1 255w : 8 asm$addr) ((c:8 asm$asm_config) with <|ISA := asm$RISC_V; reg_count := 8; avoid_regs := [0;1]; addr_offset := (254w,2w); hw_offset := (255w,1w); byte_offset := (0w,0w)|>)``;
+val _ = out "half_max" ``addr_name Store16 (Addr 1 1w : 8 asm$addr) ((c:8 asm$asm_config) with <|ISA := asm$RISC_V; reg_count := 8; avoid_regs := [0;1]; addr_offset := (254w,2w); hw_offset := (255w,1w); byte_offset := (0w,0w)|>)``;
+val _ = out "half_high" ``addr_name Load16 (Addr 1 2w : 8 asm$addr) ((c:8 asm$asm_config) with <|ISA := asm$RISC_V; reg_count := 8; avoid_regs := [0;1]; addr_offset := (254w,2w); hw_offset := (255w,1w); byte_offset := (0w,0w)|>)``;
+val _ = out "half_ag32" ``addr_name Store16 (Addr 1 0w : 8 asm$addr) ((c:8 asm$asm_config) with <|ISA := asm$Ag32; reg_count := 8; avoid_regs := [0;1]; addr_offset := (254w,2w); hw_offset := (255w,1w); byte_offset := (0w,0w)|>)``;
+val _ = out "byte_zero" ``addr_name Load8 (Addr 1 0w : 8 asm$addr) ((c:8 asm$asm_config) with <|ISA := asm$Ag32; reg_count := 8; avoid_regs := [0;1]; addr_offset := (254w,2w); hw_offset := (255w,1w); byte_offset := (0w,0w)|>)``;
+val _ = out "byte_high" ``addr_name Store8 (Addr 1 1w : 8 asm$addr) ((c:8 asm$asm_config) with <|ISA := asm$RISC_V; reg_count := 8; avoid_regs := [0;1]; addr_offset := (254w,2w); hw_offset := (255w,1w); byte_offset := (0w,0w)|>)``;
+val _ = out "reg_last" ``addr_name Load (Addr 5 0w : 8 asm$addr) ((c:8 asm$asm_config) with <|ISA := asm$RISC_V; reg_count := 8; avoid_regs := [0;1]; addr_offset := (254w,2w); hw_offset := (255w,1w); byte_offset := (0w,0w)|>)``;
+val _ = out "reg_bound" ``addr_name Load (Addr 6 0w : 8 asm$addr) ((c:8 asm$asm_config) with <|ISA := asm$RISC_V; reg_count := 8; avoid_regs := [0;1]; addr_offset := (254w,2w); hw_offset := (255w,1w); byte_offset := (0w,0w)|>)``;

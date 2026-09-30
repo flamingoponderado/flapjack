@@ -1,0 +1,10 @@
+skip=T
+const_last=T
+const_bound=F
+mem_good=T
+mem_destination=F
+mem_base=F
+arith_good=T
+arith_bad=F
+fp_good=T
+fp_alias=F

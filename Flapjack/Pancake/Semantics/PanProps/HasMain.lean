@@ -1,12 +1,13 @@
 import Flapjack.Pancake.Semantics.PanSem.EvaluateClock
+import Flapjack.Pancake.Semantics.PanSem.Semantics
 
 /-!
 The `semantics_decls_has_main` theorems in `panPropsScript.sml:1611-1638`
 ultimately inspect the zero-clock `Call NONE start []` evaluation.  Keep its
-first source-semantic fact separate from the still-missing generic
-`semantics_wrapper`/lazy-list-LUB carrier: a non-Error result from that exact
-call requires a zero-argument code entry.  This helper is Flapjack-specific
-proof infrastructure and has no standalone HOL declaration.
+first source-semantic fact separate: a non-Error result from that exact
+call requires a zero-argument code entry. The second helper derives that
+result premise from the exact semantics' non-failure test. These helpers are
+Flapjack-specific proof infrastructure and have no standalone HOL declaration.
 -/
 
 namespace Flapjack
@@ -19,9 +20,8 @@ open PanSemStateFiniteExact
     `Call NONE start []` at clock zero can only come from a zero-parameter
     code entry.  HOL's `evaluate_def` performs `lookup_code` before checking
     the clock; its exact finite-support equation is
-    `evaluateHOLFiniteState_call`.  This does not establish the outer
-    `semantics_decls ... <> Fail` premise, whose wrapper/LUB carrier remains
-    tracked separately. -/
+    `evaluateHOLFiniteState_call`. This helper alone does not establish the
+    outer `semantics_decls ... <> Fail` premise or the declaration code update. -/
 theorem callAtZeroNonError_has_zeroArgCodeEntry
     {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) (start : MlS)
@@ -62,5 +62,25 @@ theorem callAtZeroNonError_has_zeroArgCodeEntry
               (.call none start [] : ProgHOL width) = (some .error, state0) := by
             simpa [hlookup] using hcall
           exact False.elim (hresult (congrArg Prod.fst hrun))
+
+/-- Flapjack-specific infrastructure for the zero-clock step in the proofs
+    of `semantics_decls_has_main` and its prime variant (HOL lines 1611–1638).
+    There is no separate HOL declaration for this intermediate result.
+    The only premise is non-failure of the reviewed exact semantics; the
+    non-Error evaluator fact is derived from its failure test internally. -/
+theorem semanticsNonFail_has_zeroArgCodeEntry
+    {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (start : MlS)
+    (hsem : semantics state start ≠ .fail) :
+    ∃ body returnShape,
+      state.code.lookup start = some ([], body, returnShape) := by
+  classical
+  apply callAtZeroNonError_has_zeroArgCodeEntry state start
+  intro herror
+  apply hsem
+  unfold semantics
+  dsimp only
+  rw [if_pos]
+  exact ⟨0, by rw [herror]; trivial⟩
 
 end Flapjack

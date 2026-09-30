@@ -86,13 +86,13 @@ namespace WordSemStateFiniteExact
     * `FP` reads and writes the `fp_regs` through `get_fp_var`/`set_fp_var`.
       Its `dimindex (:'a) = 64` tests are `width = 64`.
 
-    Not an exact port: the `@[hol]` tag is withdrawn (bead `flapjack-2hoy.2`).
-    The `FPSqrt` clause calls `holFp64Sqrt` (`BinaryIeeeSqrt`).  HOL
-    `fp64_sqrt` rounds the real `sqrt r`, but `holFp64Sqrt` replaces each
-    comparison against `sqrt r` with a rational cut criterion.  That is a
-    reformulation of the specification, not an admitted carrier translation.
-    Its agreement with HOL is the external assumption of `docs/SOUNDNESS.md`
-    item 8.  The faithful rendering is bead `flapjack-dshl`.
+    Qualified port (`reals_as_rational_cuts`, PR #1179 review, bead
+    `flapjack-qfld`).  The `FPSqrt` clause calls `holFp64Sqrt`
+    (`BinaryIeeeSqrt`), which decides each comparison of HOL `fp64_sqrt`
+    against the real `sqrt r` by its rational cut; HOL's rounding inspects
+    that real only through such comparisons, so this is a representation of
+    the HOL real, recorded by the qualifier.  Its agreement with HOL remains
+    the external assumption of `docs/SOUNDNESS.md` item 8.
 
     Every other clause matches HOL clause by clause.  The other FP clauses use
     the binary64 renderings over `Rat`.  Floats have dyadic rational values,
@@ -102,6 +102,9 @@ namespace WordSemStateFiniteExact
     an integer argument (`w2i` of an extracted word).  NaN results are HOL's
     unspecified `float_some_qnan`, rendered by `Classical.epsilon` on the same
     predicate. -/
+@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "inst_def"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)
+  (reals_as_rational_cuts)]
 noncomputable def inst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (i : WordLangInst (BitVec width)) (s : WordSemStateFiniteExact width C F) :
     Option (WordSemStateFiniteExact width C F) :=

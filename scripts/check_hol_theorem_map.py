@@ -38,45 +38,6 @@ DATA_DECLARATION_RE = re.compile(
 # inventory small and source-reviewed; a mismatch row is not generated merely
 # because an arbitrary Lean def happens to mention a HOL name.
 WITHDRAWN_HOL_DECLARATIONS = {
-    ("Flapjack/Compiler/Backend/Semantics/WordSem/Evaluate.lean", "evaluate"): (
-        "cakeml/compiler/backend/semantics/wordSemScript.sml",
-        "evaluate_def",
-        "flapjack-opus source review (2026-09-30; bead flapjack-2hoy.2, coordinator decision "
-        "2026-09-30T01:15Z): @[hol] evaluate_def (:1016) tag withdrawn. The Inst clause delegates "
-        "to the untagged inst, whose FPSqrt clause is the rational-cut reformulation of HOL "
-        "fp64_sqrt (docs/SOUNDNESS.md item 8); every other clause follows HOL clause by clause "
-        "over the fmap/words carriers. Preserved untagged with proofs. Faithful prerequisite: "
-        "flapjack-dshl."
-    ),
-    ("Flapjack/Compiler/Backend/Semantics/WordSem/EvaluateInd.lean", "evaluate_def_rebound"): (
-        "cakeml/compiler/backend/semantics/wordSemScript.sml",
-        "evaluate_def",
-        "flapjack-opus source review (2026-09-30; bead flapjack-2hoy.2, coordinator decision "
-        "2026-09-30T01:15Z): @[hol] rebound evaluate_def (:1369) tag withdrawn with evaluate: its "
-        "Inst conjunct is over the untagged inst (FPSqrt rational-cut reformulation, "
-        "docs/SOUNDNESS.md item 8); every other conjunct is HOL's, fix_clock removed as in HOL. "
-        "Preserved untagged. Faithful prerequisite: flapjack-dshl."
-    ),
-    ("Flapjack/Compiler/Backend/Semantics/WordSem/Inst.lean", "inst"): (
-        "cakeml/compiler/backend/semantics/wordSemScript.sml",
-        "inst_def",
-        "flapjack-opus source review (2026-09-30; bead flapjack-2hoy.2, coordinator decision "
-        "2026-09-30T01:04Z): @[hol] tag withdrawn. The FPSqrt clause calls holFp64Sqrt, which "
-        "replaces HOL fp64_sqrt's rounding of the real sqrt r by rational cut criteria "
-        "(Flapjack/Misc/BinaryIeeeSqrt.lean): a specification reformulation, not an admitted "
-        "carrier translation (external assumption, docs/SOUNDNESS.md item 8). All other clauses "
-        "match HOL clause by clause over the fmap/words carriers; the other FP clauses reach only "
-        "rational arguments. Preserved untagged. Faithful prerequisite: flapjack-dshl."
-    ),
-    ("Flapjack/FpSemHOL.lean", "fpSemFpUopComp"): (
-        "cakeml/semantics/fpSemScript.sml",
-        "fp_uop_comp_def",
-        "flapjack-opus source review (2026-09-30; bead flapjack-2hoy.6, coordinator decision "
-        "2026-09-30T01:04Z): @[hol] tag withdrawn. The case map matches HOL fp_uop_comp_def "
-        "(fpSemScript.sml:43-49), but FP_Sqrt calls holFp64Sqrt, the rational-cut reformulation "
-        "of HOL fp64_sqrt's real sqrt rounding (docs/SOUNDNESS.md item 8). FP_Abs/FP_Neg are "
-        "real-free. Preserved untagged. Faithful prerequisite: flapjack-dshl."
-    ),
     ("Flapjack/Pancake/CrepToLoop/StateRel.lean", "crepToLoopGlobalsRel"): (
         "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
         "globals_rel_def",
@@ -1816,6 +1777,7 @@ VALID_STATUSES = {
     "reviewed_fmap_as_finite_support_equalities",
     "reviewed_words_as_type_indexed_bitvec",
     "reviewed_word_dimension_as_width",
+    "reviewed_reals_as_rational_cuts",
     "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
     "pending_statement_review",
@@ -1958,11 +1920,12 @@ def tagged_declarations(
              fmap_relation, fmap_equalities, words_bitvec,
              fmap_parameters, fmap_existentials, dimension_width,
              fmap_function_positions,
-             fmap_heterogeneous_function_positions) in HOL_ATTRIBUTE_SITES(
+             fmap_heterogeneous_function_positions, reals_cuts) in HOL_ATTRIBUTE_SITES(
                  lines, include_fmap_existentials=True,
                  include_word_dimension_width=True,
                  include_fmap_function=True,
                  include_fmap_heterogeneous_function=True,
+                 include_reals_as_rational_cuts=True,
              ):
             lean_name = FIND_LEAN_DECL(lines, line - 1)
             key = (rel, lean_name)
@@ -1973,7 +1936,7 @@ def tagged_declarations(
                      boundary_fields, fmap_fields, fmap_result, fmap_relation,
                      fmap_equalities, words_bitvec, fmap_parameters,
                      fmap_existentials, dimension_width, fmap_function_positions,
-                     fmap_heterogeneous_function_positions)
+                     fmap_heterogeneous_function_positions, reals_cuts)
             if key in tagged and tagged[key] != value:
                 raise ValueError(f"conflicting @[hol] references for {rel}:{lean_name}")
             tagged[key] = value
@@ -1988,7 +1951,7 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         hol_path, hol_name, list_fields, names_fields, boundary_fields, fmap_fields,
         fmap_result, fmap_relation, fmap_equalities, words_bitvec, fmap_parameters,
         fmap_existentials, dimension_width,
-        fmap_function_positions, fmap_heterogeneous_function_positions,
+        fmap_function_positions, fmap_heterogeneous_function_positions, reals_cuts,
     ) in tagged.items():
         entry = {
             "hol_path": hol_path,
@@ -2029,6 +1992,8 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
             entry["words_as_type_indexed_bitvec"] = True
         if dimension_width:
             entry["word_dimension_as_width"] = dimension_width
+        if reals_cuts:
+            entry["reals_as_rational_cuts"] = True
         inventory[(lean_path, lean_name)] = entry
 
     for lean_path, lean_name in proof_theorem_declarations(root):
@@ -2317,6 +2282,7 @@ def validate_inventory(
         fmap_heterogeneous_function_positions = (
             tag[14] if tag is not None and len(tag) > 14 else ()
         )
+        reals_cuts = bool(tag[15]) if tag is not None and len(tag) > 15 else False
         manifest_list_fields = tuple(record.get("list_as_array", ()))
         manifest_names_fields = tuple(record.get("names_as_string", ()))
         manifest_boundary_fields = tuple(record.get("names_as_string_boundary", ()))
@@ -2410,6 +2376,57 @@ def validate_inventory(
             errors.append(
                 f"{key[0]}:{key[1]}: reviewed_word_dimension_as_width needs a matching @[hol] qualifier"
             )
+        if bool(record.get("reals_as_rational_cuts", False)) != reals_cuts:
+            errors.append(
+                f"{key[0]}:{key[1]}: manifest reals_as_rational_cuts does not match its @[hol] tag"
+            )
+        other_qualified = bool(
+            list_fields or names_fields or boundary_fields or fmap_fields or fmap_result
+            or fmap_relation or fmap_equalities or words_bitvec or fmap_parameters
+            or fmap_existentials or dimension_width or fmap_function_positions
+        )
+        if reals_cuts:
+            if status == "reviewed_exact":
+                errors.append(
+                    f"{key[0]}:{key[1]}: reals_as_rational_cuts @[hol] tag cannot have reviewed_exact status"
+                )
+            if not other_qualified and status != "reviewed_reals_as_rational_cuts":
+                errors.append(
+                    f"{key[0]}:{key[1]}: reals_as_rational_cuts alone needs "
+                    "reviewed_reals_as_rational_cuts status"
+                )
+            if other_qualified and status == "reviewed_reals_as_rational_cuts":
+                errors.append(
+                    f"{key[0]}:{key[1]}: reals_as_rational_cuts with other qualifiers keeps "
+                    "the status those qualifiers require"
+                )
+            reviewer_text = reviewer.lower() if isinstance(reviewer, str) else ""
+            if ("source" not in reviewer_text or "reals_as_rational_cuts" not in reviewer_text
+                    or "soundness" not in reviewer_text):
+                errors.append(
+                    f"{key[0]}:{key[1]}: reals_as_rational_cuts requires a source-comparison "
+                    "note naming the qualifier and docs/SOUNDNESS.md item 8"
+                )
+        elif status == "reviewed_reals_as_rational_cuts":
+            errors.append(
+                f"{key[0]}:{key[1]}: reviewed_reals_as_rational_cuts needs a matching @[hol] qualifier"
+            )
+        if record.get("inherits_reals_as_rational_cuts", False):
+            if reals_cuts:
+                errors.append(
+                    f"{key[0]}:{key[1]}: a reals_as_rational_cuts-qualified declaration "
+                    "does not also record an inherited assumption"
+                )
+            if tag is None:
+                errors.append(
+                    f"{key[0]}:{key[1]}: inherits_reals_as_rational_cuts is only for tagged declarations"
+                )
+            reviewer_text = reviewer.lower() if isinstance(reviewer, str) else ""
+            if "inherit" not in reviewer_text or "reals_as_rational_cuts" not in reviewer_text:
+                errors.append(
+                    f"{key[0]}:{key[1]}: inherits_reals_as_rational_cuts requires a note "
+                    "naming the inherited reals_as_rational_cuts assumption"
+                )
         combined_words_status = (
             "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec"
         )

@@ -1,3 +1,11 @@
+import Flapjack.Test.StackPropsInstructionNames
+import Flapjack.Test.StackPropsRemoveNames
+import Flapjack.Test.WordSimpSmartSeqParity
+import Flapjack.Test.StackSemFixedStackCasesParity
+import Flapjack.Test.StackPropsFloatNames
+import Flapjack.Test.StackPropsAddressNames
+import Flapjack.Test.StackPropsArithmeticNames
+import Flapjack.Test.RiscVNamesExactParity
 import Flapjack.RiscV.Encoding
 import Flapjack.Test.DeclBridgeParity
 import Flapjack.Test.RiscVColourLivenessParity
@@ -414,7 +422,6 @@ import Flapjack.Test.ParserByteRangedParity
 import Flapjack.Test.ParserKeywordParity
 import Flapjack.Test.PanLangWfShapeParity
 import Flapjack.Test.PanLangWfFieldsContextParity
-import Flapjack.Test.PanHHandleCallRetParity
 import Flapjack.Test.PanMrecParity
 import Flapjack.Test.PanHProgDecParity
 import Flapjack.Test.PanHProgSeqParity
@@ -446,7 +453,6 @@ import Flapjack.Test.RiscVArtifactParity
 import Flapjack.Test.RiscVWordExtract6Parity
 import Flapjack.Test.RiscVEncodeLengthParity
 import Flapjack.Test.WordColourLivenessParity
-import Flapjack.Test.RiscVMemOpParity
 import Flapjack.Test.RiscVRegisterMapParity
 import Flapjack.Test.CakeAllocatorCore
 import Flapjack.Test.CakeFramePolicy
@@ -475,7 +481,6 @@ import Flapjack.Test.CakeSsaLeafParity
 import Flapjack.Test.CakeDeadCodeStateParity
 import Flapjack.Test.CakeReturnSoundness
 import Flapjack.Test.CakeCompileSingleCorrectness
-import Flapjack.Test.CakeApplyColourParity
 import Flapjack.Test.CakeSpillCostParity
 import Flapjack.Test.CakeFrameVectorParity
 import Flapjack.Test.WordFuseConditions
