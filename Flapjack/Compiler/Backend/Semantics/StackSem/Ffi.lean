@@ -12,7 +12,7 @@ clause does not recurse, so no recursive-evaluation parameter is needed. The
 assembled evaluator route is tracked by `flapjack-y19g`
 (bead `flapjack-y19g.14.4`).
 
-Counterpart of `cakeml/compiler/backend/semantics/stackSemScript.sml:951-971`.
+Counterpart of `cakeml/compiler/backend/semantics/stackSemScript.sml:945-960`.
 The four word registers are read in HOL order, both byte arrays are read with
 the exact `read_bytearray`/`mem_load_byte_aux` ports, and the exact
 `call_FFI` port decides the branch: `FFI_final` returns
@@ -26,27 +26,15 @@ namespace Flapjack.StackSemFfi
 
 open StackSemStateOps Compiler.Backend.StackLang
 
-/-- Flapjack-only helper for HOL `DRESTRICT fm keep`
-(`finite_mapScript.sml:715`): `DRESTRICT` keeps exactly the keys in its set
-argument, so a key survives when the membership predicate holds and is dropped
-otherwise. This is not a tagged HOL declaration; it renders the finite-map
-restriction `s.regs` uses to install HOL `DRESTRICT s.regs s.ffi_save_regs`. The
-support of the result is a subset of the source support, so the original
-witness still covers it. -/
-def restrictIn {α β : Type} (m : HolFiniteMapExact α β) (keep : α → Bool) :
-    HolFiniteMapExact α β where
-  lookup key := if keep key then m.lookup key else none
-  finiteSupport := by
-    obtain ⟨keys, hkeys⟩ := m.finiteSupport
-    refine ⟨keys, ?_⟩
-    intro key hkey
-    apply hkeys key
-    by_cases h : keep key
-    · simpa [h] using hkey
-    · simp [h] at hkey
+/-- Compatibility name for the shared saved-register restriction. Both FFI
+    and Install use the same implementation in StackSemStateOps; this alias is
+    Flapjack infrastructure and has no independent HOL declaration. -/
+abbrev restrictIn {α β : Type} (m : HolFiniteMapExact α β) (keep : α → Bool) :
+    HolFiniteMapExact α β := StackSemStateOps.restrictIn m keep
+
 
 /-- The HOL `evaluate (FFI ffi_index ptr len ptr2 len2 ret, s)` branch
-(`cakeml/compiler/backend/semantics/stackSemScript.sml:951-971`; the Lean
+(`cakeml/compiler/backend/semantics/stackSemScript.sml:945-960`; the Lean
 constructor is `.ffi function configuration configurationLength array
 arrayLength returnAddress`). It reads `configurationLength`, `configuration`,
 `arrayLength`, and `array` in that HOL order; all four must be `Word`, else

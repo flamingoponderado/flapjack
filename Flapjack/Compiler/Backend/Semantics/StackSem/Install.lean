@@ -23,31 +23,22 @@ bitmap, both buffers, the `union` of the old code with `fromAList progs`, the
 `DRESTRICT`/`FUPDATE` register update at `codeBuffer`, the emptied `fp_regs`, and
 the shifted oracle. The `returnAddress` field is unused by the HOL clause. The
 configuration comparison `FST (new_oracle 0) = cfg'` is HOL's total `=` on `'c`,
-rendered as Lean equality under the `[DecidableEq C]` instance that the branch
-requires; this is the only extra typeclass and it changes no clause. -/
+rendered by canonical classical propositional equality in `evaluateInstall`,
+which has no `[DecidableEq C]` binder. The computable implementation
+`evaluateInstallWithDecidableEq` keeps an instance for execution; its full result
+is proved equal to the canonical interface for every such instance. Neither
+fragment is a total evaluator or a tagged port of `evaluate_def`. -/
 
 namespace Flapjack.StackSemInstall
 
 open StackSemStateOps Compiler.Backend.StackLang
 
-/-- Flapjack-only helper for HOL `DRESTRICT fm keep`
-(`finite_mapScript.sml:715`): `DRESTRICT` keeps exactly the keys in its set
-argument, so a key survives when the membership predicate holds and is dropped
-otherwise. This is not a tagged HOL declaration; it renders the finite-map
-restriction `s.regs` uses to install HOL `DRESTRICT s.regs s.ffi_save_regs`. The
-support of the result is a subset of the source support, so the original
-witness still covers it. -/
-def restrictIn {α β : Type} (m : HolFiniteMapExact α β) (keep : α → Bool) :
-    HolFiniteMapExact α β where
-  lookup key := if keep key then m.lookup key else none
-  finiteSupport := by
-    obtain ⟨keys, hkeys⟩ := m.finiteSupport
-    refine ⟨keys, ?_⟩
-    intro key hkey
-    apply hkeys key
-    by_cases h : keep key
-    · simpa [h] using hkey
-    · simp [h] at hkey
+/-- Compatibility name for the shared saved-register restriction. Both FFI
+    and Install use the same implementation in StackSemStateOps; this alias is
+    Flapjack infrastructure and has no independent HOL declaration. -/
+abbrev restrictIn {α β : Type} (m : HolFiniteMapExact α β) (keep : α → Bool) :
+    HolFiniteMapExact α β := StackSemStateOps.restrictIn m keep
+
 
 /-- The HOL `evaluate (Install ptr len dptr dlen ret, s)` branch
 (`cakeml/compiler/backend/semantics/stackSemScript.sml:893-921`; the Lean
@@ -64,7 +55,7 @@ result and a nonempty `progs` succeed only when `bytes = bytes'`,
 `bitmaps ++ bm`, both flushed buffers, `union s.code (fromAList progs)`,
 `(DRESTRICT s.regs s.ffi_save_regs) |+ (codeBuffer, Loc k 0)`, `FEMPTY` for
 `fp_regs`, and `new_oracle`. Every other shape is `(SOME Error, s)`. -/
-def evaluateInstall {width : Nat} [NeZero width] {C F : Type} [DecidableEq C]
+def evaluateInstallWithDecidableEq {width : Nat} [NeZero width] {C F : Type} [DecidableEq C]
     (program : HolProg width) (s : StackSemStateFiniteExact width C F) :
     Option (Option (StackSemResult width) × StackSemStateFiniteExact width C F) :=
   match program with
@@ -96,10 +87,65 @@ def evaluateInstall {width : Nat} [NeZero width] {C F : Type} [DecidableEq C]
         | _, _, _, _ => (some .error, s))
   | _ => none
 
+/-- Source-shaped Install interface on arbitrary configuration carrier `C`.
+    HOL's configuration equality is total propositional equality; the interface
+    adds no decidable-equality parameter. This remains an untagged partial
+    dispatch fragment, pending the total evaluator assembly. -/
+noncomputable def evaluateInstall {width : Nat} [NeZero width] {C F : Type}
+    (program : HolProg width) (s : StackSemStateFiniteExact width C F) :
+    Option (Option (StackSemResult width) × StackSemStateFiniteExact width C F) := by
+  classical
+  exact evaluateInstallWithDecidableEq program s
+
+/-- Flapjack implementation correspondence, with no oracle/result premise:
+    every decidable implementation of propositional equality gives the same
+    complete result and post-state as the canonical source-shaped interface. -/
+theorem evaluateInstall_eq_withDecidableEq {width : Nat} [NeZero width] {C F : Type}
+    [DecidableEq C] (program : HolProg width) (s : StackSemStateFiniteExact width C F) :
+    evaluateInstall program s = evaluateInstallWithDecidableEq program s := by
+  unfold evaluateInstall
+  congr 1
+  exact Subsingleton.elim _ _
+
 /-- Flapjack assembly equation for the source Install clause, exposing the four
 register reads, the oracle sample, the two buffer branches, the compile/`progs`
 shape test, and the successful state update. -/
-theorem evaluateInstall_install {width : Nat} [NeZero width] {C F : Type} [DecidableEq C]
+theorem evaluateInstallWithDecidableEq_install {width : Nat} [NeZero width] {C F : Type} [DecidableEq C]
+    (codeBuffer codeLength dataBuffer dataLength returnAddress : Nat)
+    (s : StackSemStateFiniteExact width C F) :
+    evaluateInstallWithDecidableEq (.install codeBuffer codeLength dataBuffer dataLength returnAddress) s =
+      some (match getVar codeBuffer s, getVar codeLength s,
+                   getVar dataBuffer s, getVar dataLength s with
+        | some (.word w1), some (.word w2), some (.word w3), some (.word w4) =>
+            let (cfg, progs, bm) := s.compileOracle 0
+            match wordSemBufferFlush s.codeBuffer w1 w2,
+                  (if s.useStack then wordSemBufferFlush s.dataBuffer w3 w4
+                   else some (bm, s.dataBuffer)) with
+            | some (bytes, cb), some (data, db) =>
+                let newOracle := holShiftSeq 1 s.compileOracle
+                match s.compile cfg progs, progs with
+                | some (bytes', cfg'), (k, _prog) :: _ =>
+                    if bytes = bytes' ∧ data = bm ∧ (newOracle 0).1 = cfg' then
+                      (none, { s with
+                        bitmaps := s.bitmaps ++ bm
+                        codeBuffer := cb
+                        dataBuffer := db
+                        code := sptUnion s.code (sptFromAList progs)
+                        regs := (restrictIn s.regs s.ffiSaveRegs).updateEq
+                          (codeBuffer, .loc k 0)
+                        fpRegs := HolFiniteMapExact.empty
+                        compileOracle := newOracle })
+                    else (some .error, s)
+                | _, _ => (some .error, s)
+            | _, _ => (some .error, s)
+        | _, _, _, _ => (some .error, s)) := rfl
+
+
+open Classical in
+/-- Flapjack assembly equation for the source Install clause, exposing the four
+register reads, the oracle sample, the two buffer branches, the compile/`progs`
+shape test, and the successful state update. -/
+theorem evaluateInstall_install {width : Nat} [NeZero width] {C F : Type}
     (codeBuffer codeLength dataBuffer dataLength returnAddress : Nat)
     (s : StackSemStateFiniteExact width C F) :
     evaluateInstall (.install codeBuffer codeLength dataBuffer dataLength returnAddress) s =
@@ -127,6 +173,9 @@ theorem evaluateInstall_install {width : Nat} [NeZero width] {C F : Type} [Decid
                     else (some .error, s)
                 | _, _ => (some .error, s)
             | _, _ => (some .error, s)
-        | _, _, _, _ => (some .error, s)) := rfl
+        | _, _, _, _ => (some .error, s)) := by
+  unfold evaluateInstall evaluateInstallWithDecidableEq
+  rfl
+
 
 end Flapjack.StackSemInstall

@@ -1,4 +1,30 @@
+`stacksem_loop_recursive_probe.out` contains eleven fresh direct original
+`stackSem$evaluate (Loop body, state)` observations (stackSemScript.sml:833-837).
+The original evaluator performs all recursive re-entry. The Lean replay
+`Flapjack.Test.StackSemLoopRecursiveParity` runs real leaf clauses and a
+clock-decreasing recursive Loop function, whose factoring equation is checked
+against `StackSemControlCases.evaluateLoop`. No callback supplies a preset
+terminal timeout. Cases cover Continue0/Skip/Tick repeated entry, zero-clock
+Tick, Break0/Break2/Continue2, Return location/error, Raise and Halt. Kernel
+coverage certificates show every fixture body is handled by evaluateLeaf;
+actual runtime rows compare result, clock, register1 and stack length.
+This restricted test evaluator is not the total evaluate_def port. Regenerate
+with `HOL_PROBE_ONLY=stacksem_loop_recursive_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 # Original Pancake HOL probes
+
+`stacksem_call_indirect_probe.out` captures ten direct original `stackSem$evaluate`
+Call INR observations (find_code645-651, returning Call861-892): indirect and
+returning success, link/target alias rejection before update, tail alias success,
+nonzero entry, Word/missing/code-missing targets, timeout, and wrong returned
+location after the link register is written. It projects result, clock, link3,
+target4 and stack length. `Flapjack.Test.StackSemCallIndirectParity` kernel- and
+runtime-replays every row with the existing source-shaped leaf evaluator for
+all actual Return3/Return4 subcalls. The test callback is not a total evaluator;
+no unsupported callback is reached, and full StackSem assembly remains open.
+Regenerate read-only with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_call_indirect_probeScript.sml scripts/hol-probes/regenerate.sh`.
+The pre-existing fourteen direct Call rows are preserved.
 
 `pan_globals_block_alignment_probe.out` records eight original
 `alignmentTheory` observations for 32/64-bit block-address subtraction:
@@ -1485,7 +1511,7 @@ evaluation remains on `y19g`/`y19g.18`.
 
 `stacksem_jumplower_probeScript.sml` records eight direct original
 `stackSem$evaluate` observations for the `JumpLower` clause
-(`stackSemScript.sml:838-848`): a successful unsigned `Lower` comparison whose
+(`stackSemScript.sml:838-849`): a successful unsigned `Lower` comparison whose
 `INL` code lookup finds a `Return` sub-program (the non-bad result propagates
 with the decremented clock), a zero-clock timeout that empties the environment,
 a missing code target, a false comparison (`NONE` with the state unchanged), a
@@ -1502,7 +1528,7 @@ untagged; the tagged port of `bad_fun_return_def` lives in
 
 `stacksem_rawcall_probeScript.sml` records seven direct original
 `stackSem$evaluate` observations for the `RawCall` clause
-(`stackSemScript.sml:849-861`): a successful `Seq` code entry whose second
+(`stackSemScript.sml:850-860`): a successful `Seq` code entry whose second
 component is a `Return` (the non-bad result propagates with the decremented
 clock), a zero-clock timeout that empties the environment, a missing code
 target (`Error`), a non-`Seq` code entry (`dest_Seq` returns `NONE`, hence
@@ -1592,7 +1618,7 @@ ports live in `StackSem/Expressions.lean`, `StackSem/ShMem.lean` and
 `StackSem/StateOps.lean`, and assembled full evaluation remains on y19g.
 
 `stacksem_ffi_probeScript.sml` records four direct original `stackSem$evaluate`
-observations for the `FFI` clause (`stackSemScript.sml:951-971`) at 64-bit words.
+observations for the `FFI` clause (`stackSemScript.sml:945-960`) at 64-bit words.
 The state type is `(64,'c,num)`; `ffi_save_regs = {1; 6}`, `mdomain = {0w}` with
 word 0 holding `0xAABBCCDDEEFF0011w`, and the operand registers hold
 `configurationLength = 2w`, `configuration = 2w`, `arrayLength = 3w`,
