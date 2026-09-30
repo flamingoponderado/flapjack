@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 import Flapjack.Pancake.Semantics.PanSem.LookupCodeFinite
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallHandlerArguments
+=======
+import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallHandlerArguments
+import Flapjack.Pancake.Semantics.PanSem.LookupCodeFinite
+>>>>>>> 59740f83b006a57f1182d1d6a20427edd416abb6
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsCons
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallHandlerFlag
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallHandlerFreshNames
