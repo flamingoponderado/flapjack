@@ -60,7 +60,8 @@ open Flapjack.Compiler.Backend.StackLang
     every other constructor is a leaf for this observation.  This adapter lets
     width-indexed `HolProg` clients reuse the one source-reviewed generic
     `StackSem.getLabels` implementation instead of carrying a duplicate clause
-    definition. -/
+    definition. This carrier projection is Flapjack-specific infrastructure,
+    not a separate HOL declaration. -/
 def labelsProgram {width : Nat} [NeZero width] : HolProg width → ProgM (BitVec width)
   | .seq first second => .seq (labelsProgram first) (labelsProgram second)
   | .ite _ _ _ thenBranch elseBranch =>
