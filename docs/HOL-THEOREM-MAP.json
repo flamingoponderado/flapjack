@@ -32641,5 +32641,21 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-only equation between literal recursive compiled argument list and MAP spelling used by exact OPT_MMAP theorem; no separate HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/GlobalStoreReload.lean",
+  "lean_name": "stateRel_storeReload",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only synthesized certificate for original Assign543-568, bead28.6.3. Original state relation and global lookup plus same-shape replacement internally imply existential successful arbitrary-shaped store and exact reload, using reviewed MemStores and accepted alignment prerequisite. Top non-domain derives strict nonwrapping length. No target-store/alignment/length compiler premise or scalar restriction. No single HOL declaration has this combined statement; coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/GlobalStorePreservation.lean",
+  "lean_name": "stateRel_storePreserves",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only synthesized memory certificate for original Assign573-585, bead28.6.4. Original state relation/global lookup/context/same-shape replacement and internal successful-store obligation imply all other globals reload unchanged and source-memory-domain agreement. Derives separation, shape well-formedness and flatten length internally using reviewed MemStores helpers. No alternate relation, scalar restriction or new public compiler premise. No single HOL declaration has this statement; coordinator review pending."
 }
 ]
