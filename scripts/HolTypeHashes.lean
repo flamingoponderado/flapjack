@@ -1,6 +1,7 @@
 import Flapjack.Pancake.PanStructs.CompileExpExact
 import Flapjack.Pancake.PanStructs.OldExpShapeExact
 import Flapjack.Compiler.Backend.WordAlloc.Instructions
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyMaps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.Expressions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.LiveExpressions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.Updates
@@ -20,6 +21,7 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.Inst
 import Flapjack.Compiler.Backend.Semantics.WordSem.Evaluate
 import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateClock
 import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateInd
+import Flapjack.Compiler.Backend.Semantics.StackSem.State
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateIoEventsMono
 import Flapjack.Compiler.Backend.Semantics.WordSem.Semantics
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClock

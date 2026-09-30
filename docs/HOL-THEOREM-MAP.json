@@ -1,5 +1,40 @@
 [
   {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/State.lean",
+    "lean_name": "StackSemStateFiniteExact",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "state",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["regs", "fpRegs", "store"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.1): stackSemScript.sml state datatype has22 fields in source order, all preserved. regs is num|->word_loc, fp_regs num|->word64, store store_name|->word_loc: exactly the three canonical finite-map translations named in the qualifier. stack and bitmaps remain List; stack_space and clock are Nat. memory is total word-to-word_loc, mdomain/sh_mdomain and ffi_save_regs are reviewed Bool-predicate set renderings (no extra finite-support assumption). compile takes C and List(Nat x HolProg width), returns Option(List(BitVec8) x C); compile_oracle returns C x that program list x List(BitVec width), matching the HOL right-associated products. code is Spt HolProg, not a finite map. use_stack/use_store/use_alloc/be are Bool. HolProg uses the reviewed exact asm fields, one shared positive word width, and MlString FFI names. WordLocW, WordStoreHOL (all18 store_name constructors including Temp(BitVec5)), WordSemBuffer width8/widthwidth, WordSemGcFun width and HolFfiState F reuse the same exact shared carriers as WordSem: the GC callback domain is roots/memory/domain/store and optional result roots/memory/store, with canonical store at both positions as reviewed by its own function qualifier. The owning state retains NeZero width, C/F universe0 types, and same-module StackSemStateSupport.holFmapAsFiniteSupportWitness gives both non-vacuous roundtrips. This is a carrier prerequisite only; exact evaluator, numerical instruction semantics and executed-path refinement remain open. Coordinator independent review required."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/State.lean",
+    "lean_name": "StackSemResult",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "result",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.1): stackSemScript.sml:12-21 has eight constructors: Result/Exception/Halt each one word_loc; Break/Continue each num; TimeOut/Error no payload; FinalFFI one final_event. StackSemResult preserves that order and every arity/payload, using reviewed WordLocW width and HolFinalEvent, Nat for num, positive BitVec dimension with NeZero width. Unlike WordSemResult, Result has no extra value list. Carrier only, no evaluator claim; independent coordinator review required."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/KeyMaps.lean",
+    "lean_name": "applyNummapKey",
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "apply_nummap_key_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-c source comparison (2026-09-30; bead flapjack-bqzw), literal word_allocScript.sml:23-26: payload-polymorphic numeric Spt map, arbitrary Nat-to-Nat function, fromAList of MAP (key,value) to (f key,value) over exact toAList enumeration. No injection or well-formedness condition. Exact Spt constructors, unrestricted mixed HOL foldi enumeration, head-over-tail fromAList insertion and first-match collision behavior are preserved. This definition alone does not establish executed allocator routing; that obligation remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/KeyMaps.lean",
+    "lean_name": "applyNummapKeyDomain",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "apply_nummap_key_domain",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-c source comparison (2026-09-30; bead flapjack-bqzw), word_allocProofScript.sml:267-275: universally binds arbitrary f and payload-polymorphic names, concludes full domain equality to IMAGE f (domain names), with no hypotheses. Lean predicate set equality expands IMAGE into existence of a source domain key whose f image equals the queried key. Proof uses unconditional exact fromAList key membership and toAList/lookup support, covering collisions and unrestricted Spt trees; no injection, target lookup, or well-formedness premise. Independent coordinator review remains required."
+  },
+  {
     "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvaluateAddClockIoEventsMono.lean",
     "lean_name": "panPropsEvaluateAddClockIoEventsMono",
     "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
