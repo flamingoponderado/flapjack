@@ -26701,10 +26701,26 @@
   {
     "hol_path": null,
     "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "same_setVar",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.5.41.1): untagged Flapjack state-transfer infrastructure for the exact shared-memory helper congruence; no HOL original (Flapjack codec/semantics transfer over CrepSemHOLState)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/CrepInline/Call.lean",
     "lean_name": "codeInl_of_code_eq",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack helper of the inline_prog_correct Call case (bead flapjack-pxn.18.5.5.42.1): code_inl_rel reads only the two code maps; no HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "same_emptyLocals",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.5.41.1): untagged Flapjack state-transfer infrastructure for the exact shared-memory helper congruence; no HOL original (Flapjack codec/semantics transfer over CrepSemHOLState)."
   },
   {
     "hol_path": null,
@@ -26717,10 +26733,26 @@
   {
     "hol_path": null,
     "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "same_setFfi",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.5.41.1): untagged Flapjack state-transfer infrastructure for the exact shared-memory helper congruence; no HOL original (Flapjack codec/semantics transfer over CrepSemHOLState)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/CrepInline/Call.lean",
     "lean_name": "lookupCodeFiniteHOL_eq_holFinite",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack bridge (bead flapjack-pxn.18.5.5.42.1) between the HOL-shaped Call clause's finite code lookup and the lookupCodeHOLFinite wrapper of the tagged evaluate_ind; no HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "crepShMemLoadExactHOL_same",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.5.41.1): untagged Flapjack state-transfer infrastructure for the exact shared-memory helper congruence; no HOL original (Flapjack codec/semantics transfer over CrepSemHOLState)."
   },
   {
     "hol_path": null,
@@ -26733,10 +26765,82 @@
   {
     "hol_path": null,
     "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "crepShMemStoreExactHOL_same",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.5.41.1): untagged Flapjack state-transfer infrastructure for the exact shared-memory helper congruence; no HOL original (Flapjack codec/semantics transfer over CrepSemHOLState)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "crepShMemOpExactHOL_same",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.5.41.1): untagged Flapjack state-transfer infrastructure for the exact shared-memory helper congruence; no HOL original (Flapjack codec/semantics transfer over CrepSemHOLState)."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "inline_prog_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ShMem.lean",
+    "lean_name": "inlineProgCorrectShMemCaseExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "inlFs",
+      "inlBag"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; bead flapjack-pxn.18.5.5.41) against crep_inlineProofScript.sml:2301-2320 and ShMem case :2405-2406. Retains all seven original premises, existential evaluation, post-state state/code relations and result-dependent locals conclusion. ShMem is unchanged by inline_prog; evalCodeInlExact transfers its address expression. Exact load/store congruences cover all eight operators, domain/error guards and returned/final FFI states. Code preservation is proved from exact transitions; no target evaluation, post-state relation or simulation is a theorem premise. No recursive IH is needed for this atomic case."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ShMem.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-luna-b Flapjack-only infrastructure (2026-09-30; bead flapjack-pxn.18.5.5.41): canonical carrier witness re-export or exact shared-memory code-field preservation; no separate HOL declaration claimed."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ShMem.lean",
+    "lean_name": "load_code",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-luna-b Flapjack-only infrastructure (2026-09-30; bead flapjack-pxn.18.5.5.41): canonical carrier witness re-export or exact shared-memory code-field preservation; no separate HOL declaration claimed."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ShMem.lean",
+    "lean_name": "store_code",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-luna-b Flapjack-only infrastructure (2026-09-30; bead flapjack-pxn.18.5.5.41): canonical carrier witness re-export or exact shared-memory code-field preservation; no separate HOL declaration claimed."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ShMem.lean",
+    "lean_name": "op_code",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-luna-b Flapjack-only infrastructure (2026-09-30; bead flapjack-pxn.18.5.5.41): canonical carrier witness re-export or exact shared-memory code-field preservation; no separate HOL declaration claimed."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/CrepInline/Call.lean",
     "lean_name": "callNonInlined",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack helper (bead flapjack-pxn.18.5.5.42.1) proving HOL inline_prog_correct's Call case (crep_inlineProofScript.sml:2409-2534) for every call inline_prog leaves as a Call (non-distinct return names, callee outside inl_bag, handler call), from the two tagged evaluate_ind Call IHs with P := crepInlineGoal. The HOL-only-suspended inlined Tail/Nontail paths are .42.2/.42.3; the tagged Call case is assembled in .42.4. Kernel-checked; standard axioms."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "apply_nummaps_key_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/KeyMaps.lean",
+    "lean_name": "applyNummapsKey",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-09-30 bead .11.1.9: original29-33 exact product of two fromAList/map-key/toAList operations. Independent alpha/beta Spt payloads retained, f Nat->Nat arbitrary incl collisions; existing applyNummapKey unfolds precisely to each original component. First-match reconstructed payload and mixed traversal order preserved. No word/type-width or finite-map qualifier: numeric tree carrier is exact Spt. Actual wordApplyColour Call (with/without handler), Alloc, Install and FFI paired cutsets now call applyNummapsKeyExecutable, whose numSetToExact/fromExact codecs execute this tagged definition. Universal equality to the two already reviewed single-map executable routes is rfl, no representation-validity/injection premises. Three original HOL paired observations captured; full compiler parity and source route audit reported on bead."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UpdateListLocals.lean",
