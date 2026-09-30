@@ -75,15 +75,12 @@ The evolving HOL-to-Lean source layout is recorded in
 
 ## Port in progress
 
-Contributions are welcome. The RISC-V compiler port and its correctness proof
+The RISC-V compiler port and its correctness proof
 are still in progress. [GitHub issues](https://github.com/pirapira/flapjack/issues)
 track work and claims; [`PLAN.md`](PLAN.md) gives the staged direction.
 [`docs/SOUNDNESS.md`](docs/SOUNDNESS.md) describes assurance limits, external
 assumptions, and out-of-scope gaps.
 Start with the porting and verification rules in [`AGENTS.md`](AGENTS.md).
-The bead and single-PR instructions in its *Fleet workflow* section apply to
-the coordinated internal agents; outside contributors can open their own
-focused PRs.
 
 Work bottom-up from a desired theorem through its HOL dependencies: port small
 definitions and supporting lemmas first. Use `@[hol ...]` tags and
@@ -93,19 +90,3 @@ untagged candidates in a script; `--goal HOL_NAME` limits the list to earlier
 declarations, and `--kind Theorem` includes theorem candidates. Check the
 source, Lean analogues, and issue claims before choosing a target: tags are
 navigation aids, not evidence of equivalence or of a missing port.
-
-If you use a coding agent, this is a suitable prompt for a small first PR:
-
-```text
-Find one unclaimed, narrowly scoped RISC-V Pancake porting issue. Follow its
-HOL dependencies bottom-up; use scripts/next-hol-port.py and the existing
-@[hol] tags to find one small definition that still needs a faithful Lean
-port. If no issue is that small, propose a candidate before coding. Read
-AGENTS.md and the corresponding HOL source. Port only that definition into
-its counterpart Lean module, preserving its inputs, outputs, and edge cases.
-Add a focused HOL EVAL probe and matching Lean tests for two representative
-cases. Do not change the compiler pipeline or add a broad refactor. Run the
-affected lake build, lake test, scripts/check-hol-refs.py, and
-scripts/check-warnings.sh. Open one PR with the HOL reference, test results,
-and any remaining gap in its description.
-```

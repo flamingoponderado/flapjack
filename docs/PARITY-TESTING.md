@@ -274,3 +274,28 @@ hashes and per-program results in `results.json`, verifies the pinned guest
 source hash, and filters corpus programs using the original Cake compiler's
 acceptance. This evidence covers those concrete programs; universal
 parser/pipeline encodability remains a separate proof obligation.
+
+## Pinned stateless guest builds
+
+`scripts/guest-parity.json` pins both guest sources to upstream revision
+`b2b653bfc406fae42ac3f7f1a23397ae4716cd1b`. Upstream
+`tools/gen-guest-ast.sh` identifies `Guest/guest.pp.pnk` as the `ZISK_ACCEL`
+accelerator build and `Guest/guest-software.pp.pnk` as the default all-Pancake
+crypto build. These source variants select accelerator use; they are not
+compiler optimizer modes. No separate optimizer-mode source artifact is pinned
+by this check.
+CI fetches both paths from that single revision and checks each source digest
+before comparing complete stdout byte hashes, without normalization.
+
+The manifest records the independently generated original Pancake stdout hashes,
+output sizes, oracle executable digest and local CakeML source context. Refresh
+by running the original executable on **both** new sources with
+`cake --pancake --target=riscv < source.pnk`; never derive a reference digest
+from Flapjack. Then rebuild `flapjack-compile` and run:
+
+```sh
+python3 scripts/check-guest-parity.py guest.pp.pnk --variant accelerated
+python3 scripts/check-guest-parity.py guest-software.pp.pnk --variant software
+```
+
+Any mismatch is a parity defect to track and repair, not an alternate golden.
