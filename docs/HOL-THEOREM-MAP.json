@@ -30092,7 +30092,7 @@
   "hol_path": null,
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "flapjack-luna-c source comparison (2026-09-30; y19g.15.1), stackSemScript.sml:667-680: Seq and If union branch labels; Loop recurses; Call inserts the return continuation label and its nested labels, with handler labels included only under SOME return continuation as HOL's clause parenthesization specifies; Halt and all remaining constructors yield the empty label set. Lean uses ProgM α, the exact generic stackLang prog carrier at arbitrary HOL word type α, and predicate membership for HOL set operations. Direct original HOL EVAL replay: scripts/hol-probes/stacksem_labels_probe.out. This is proof-side prerequisite only; no production evaluator route change. Coordinator source review pending."
+  "reviewer": "Flapjack-only generic ProgM label observation helper. Its arbitrary payload carrier is not the faithful HOL program carrier. PR1180 repair withdrew the tag; getLabelsExact is the reviewed port, with a kernel-checked label-observation correspondence only. No full carrier codec or executed evaluator routing claim."
 },
 {
   "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Labels.lean",
@@ -30100,7 +30100,7 @@
   "hol_path": null,
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "flapjack-luna-c source comparison (2026-09-30; y19g.15.1), stackSemScript.sml:682-686: source condition is (l2=0 and l1 in domain code) or exists n e, lookup n code=SOME e and (l1,l2) in get_labels e. Lean preserves that disjunction, exact Spt num_map lookup/domain carrier, arbitrary HOL word type α via ProgM α, and predicate rendering of HOL sets. Probe EVAL covers the zero-offset present key; the nonzero label witness is kernel-proved in the original HOL probe because EVAL leaves its unbounded existential symbolic. Lean replay: Flapjack.Test.StackSemLabelsParity. Proof-side prerequisite only; no production evaluator route change. Coordinator source review pending."
+  "reviewer": "Flapjack-only generic ProgM location observation helper. PR1180 repair withdrew the tag for the arbitrary payload carrier; locCheckExact is the reviewed positive-width HOL program port. Kernel correspondence preserves projected sparse-tree lookup/domain and labels, not full program semantics."
 },
 {
   "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/ReadBytearray.lean",
