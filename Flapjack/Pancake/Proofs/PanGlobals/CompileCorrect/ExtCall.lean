@@ -13,7 +13,13 @@ bead `flapjack-pxn.18.5.2.35`).  The case uses the established theorem
 `compile_exp_correct` for the four compiled arguments, the byte-array
 read transport `state_rel_read_bytearray`, the `call_FFI` split with
 `state_rel_change_ffi` and `state_rel_write_bytearray`, and the empty-locals
-transport `state_rel_empty_locals`.  Source evaluator is the tagged
+transport `state_rel_empty_locals`. These are established support theorems,
+not additional `evaluate_ind` hypotheses. The return-length step uses
+`callFFIHOL_ret_length`, the helper whose exact statement and proof are
+re-exported by tagged `StackRemove.callFFILengthHOL` (`call_FFI_LENGTH`);
+its dependency direction is helper to tagged wrapper. This keeps the Pancake
+case on the shared FFI helper without adding a backend-proof import.
+Source evaluator is the tagged
 `evaluateHOLFiniteState` (`panSem$evaluate_def`), the compiler the tagged
 `compileProgExactHOL` (`pan_globals$compile_def`) and the relation the tagged
 `panGlobalsStateRelHOLExact` (`state_rel_def`).
