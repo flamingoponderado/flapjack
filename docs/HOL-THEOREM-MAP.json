@@ -27210,5 +27210,27 @@
     "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific canonical carrier roundtrip re-export; no independent HOL original."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "evaluate_locals_same_fdom",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/While.lean",
+    "lean_name": "evaluateLocalsSameFdomWhileExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; .43.2), HOL evaluate_locals_same_fdom181-205 and exact evaluate_ind While conjunct440. Original evaluation, NONE/Continue/Break guard and domain equality. WhileDomainIH bundles exactly the three guarded evaluate_ind recursion premises: Continue0 iteration, NONE iteration, dec_clock body. No unrestricted circular loop hypothesis. Body IH composed with recursive IH; dec_clock preserves locals; Break0 returns normally; positive labels exit_loop decrements without changing domain; other results excluded by original guard. Exact imported finite-support state, same-module roundtrip, positive-width Type0 word translation. Full induction assembly remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/While.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific canonical carrier roundtrip re-export; no independent HOL original."
   }
 ]
