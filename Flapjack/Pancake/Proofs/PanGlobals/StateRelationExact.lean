@@ -5,6 +5,7 @@ import Flapjack.Pancake.PanGlobals.CompileExpExact
 import Flapjack.Pancake.Semantics.PanProps
 import Flapjack.Pancake.Semantics.PanSem.MemLoadHOL
 import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+import Flapjack.Pancake.Semantics.PanSem.EvalFinite
 import Flapjack.Pancake.Semantics.PanSemStateEval
 
 /-!
@@ -284,5 +285,52 @@ theorem panGlobalsStateRelMemLoadHOLExact {width : Nat} {σ : Type}
     (fun a => Classical.propDecidable (source.memaddrs a))
     (fun a => Classical.propDecidable (target.memaddrs a))
     source.memory target.memory hsub hmem).1 shape address value hload
+
+/-- HOL `compile_exp_correct`, `Var Global` case
+    (`cakeml/pancake/proofs/pan_globalsProofScript.sml:103-119`).  The source
+    proof is a `recInduct eval_ind` case split; this piece keeps the same
+    hypotheses (`state_rel T ctxt s t` and the source evaluation equation), the
+    same source-shaped conclusion, and no extra premise.  The state relation
+    exposes the globals finite map and its memory-load image, and `compile_exp`
+    renders the global read as `Load sh (Op Sub [TopAddr; Const address])`, so
+    the compilable address is `target.topAddr - address`. -/
+@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "compile_exp_correct"
+  (fmap_as_finite_support_relation :=
+    [PanSemStateFiniteExact.locals, PanSemStateFiniteExact.globals,
+     PanSemStateFiniteExact.code, PanSemStateFiniteExact.eshapes,
+     PanGlobalsContextExact.globals])
+  (words_as_type_indexed_bitvec)]
+theorem panGlobalsCompileExpCorrectGlobalVarCaseExact {width : Nat} {σ : Type}
+    [NeZero width]
+    (source : PanSemStateFiniteExact width σ) (name : MlS)
+    (value : ValueHOL width) (context : PanGlobalsContextExact width)
+    (target : PanSemStateFiniteExact width σ) :
+    (panGlobalsStateRelHOLExact true context source target ∧
+      @PanSemStateFiniteExact.evalHOLFinite width σ _ source
+        (fun address => Classical.propDecidable (source.memaddrs address))
+        (.var .global name) = some value) →
+    @PanSemStateFiniteExact.evalHOLFinite width σ _ target
+      (fun address => Classical.propDecidable (target.memaddrs address))
+      (compileExpExactHOL context (.var .global name)) = some value := by
+  intro ⟨hrel, heval⟩
+  simp only [PanSemStateFiniteExact.evalHOLFinite_var_global] at heval
+  obtain ⟨_, hstructsT⟩ := panGlobalsStateRelStructsHOLExact true context source target hrel
+  obtain ⟨address, hlookup, hwf, hmemload, _⟩ :=
+    hrel.2.2.2.2.2.2.2.2.1 name value heval
+  have hwf' : Flapjack.Pancake.PanLang.isWfShapeExactHOL ([] : StructContextExact)
+      (shapeOfHOLExact value) = true := by
+    simpa only [isWfShapeNilHOL] using hwf
+  simp only [compileExpExactHOL, hlookup]
+  rw [PanSemStateFiniteExact.evalHOLFinite_load]
+  rw [hstructsT]
+  rw [if_pos hwf']
+  have hop :
+      @PanSemStateFiniteExact.evalHOLFinite width σ _ target
+        (fun address => Classical.propDecidable (target.memaddrs address))
+        (.op .sub [.topAddr, .const address]) =
+        some (.val (.word (target.topAddr - address))) := by
+    rfl
+  rw [hop]
+  exact hmemload
 
 end Flapjack

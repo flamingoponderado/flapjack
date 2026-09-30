@@ -28512,5 +28512,21 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-y19g.11.2.2) against stackSemScript.sml copy_words_def: if LENGTH bs <= i then NONE else let pattern = EL i bs in case copy_words_for_pattern pattern (i+1) a off bs dm m of NONE => NONE | SOME (i1,a1,m1) => if word_msb pattern then copy_words i1 a1 off bs dm m1 else SOME (a1,m1). Lean copyWordsExact preserves the same recursive bitmap copy over the exact StackSemStateFiniteExact carriers (bitmaps : List (BitVec width), mdomain : BitVec width -> Bool, memory : BitVec width -> WordLocW width) with termination measure LENGTH bs - i discharged by copyWordsForPatternExact_least (HOL copy_words_for_pattern_LESS_EQ); word_msb renders as BitVec.msb; external HOL bytes_in_word stays untagged Flapjack infrastructure.",
     "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_exp_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationExact.lean",
+    "lean_name": "panGlobalsCompileExpCorrectGlobalVarCaseExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-pxn.18.5.2.24.2) against pan_globalsProofScript.sml:103-119: exact Var Global case of compile_exp_correct (state_rel T ctxt s t with eval s e = SOME v implies eval t (compile_exp ctxt e) = SOME v). The finite-map relation qualifier names the four PanSemStateFiniteExact finite-map fields and the PanGlobalsContextExact.globals map that the state relation and the compiled global read traverse; words_as_type_indexed_bitvec records the HOL word dimension. The conclusion uses the same state relation and source evaluation equation, with no extra premise."
   }
 ]
