@@ -1471,6 +1471,24 @@ tagged ports of `find_code_def`, `fix_clock_def`, `set_var_def`,
 `bad_fun_return_def` and `dest_Seq_def` live in `StackSem/Control.lean` and
 `StackSem/StateOps.lean`, and assembled full evaluation remains on y19g.
 
+`stacksem_buffer_write_probeScript.sml` records five direct original
+`stackSem$evaluate` observations for the `CodeBufferWrite` and
+`DataBufferWrite` clauses (`stackSemScript.sml:928-944`). The rows cover a
+code-buffer write that succeeds through the exact `buffer_write` port with the
+byte truncated by `w2w` (260w becomes 4w), a code-buffer write whose address
+mismatches the next position (`Error`), a full-width data-buffer write that
+succeeds through the 64-bit dimension factor, a data-buffer address mismatch
+(`Error`), and `use_stack = F` (`Error` before any register read); the observer
+records result plus the affected buffer's position, buffer and space_left.
+Kernel replay over concrete `WordSemBuffer` fixtures lives in
+`Flapjack/Test/StackSemBufferWriteParity.lean`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_buffer_write_probeScript.sml
+scripts/hol-probes/regenerate.sh`. The `evaluateBufferWrite` fragment is
+untagged; the tagged `buffer_write_def` port lives in
+`Flapjack/Compiler/Backend/Semantics/WordSem/State.lean`, and assembled full
+evaluation remains on y19g.
+
 `pan_globals_fperm_code_probeScript.sml` observes the original
 `pan_globalsProof$fperm_code` finite map using its proved
 `FLOOKUP_fperm_code'` rewrite followed by HOL EVAL (plain EVAL leaves
