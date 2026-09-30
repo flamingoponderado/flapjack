@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.WordAlloc.InstructionRoute
+import Flapjack.Compiler.Backend.WordAlloc.KeyMapRoute
 import Flapjack.Word
 import Flapjack.Compiler.Backend.WordAlloc.ExpressionRoute
 import Flapjack.NumSet
@@ -1037,8 +1038,8 @@ def wordSsaRenameProgramWithLoops [OfNat α 0] (frames : List WordSsaLoopFrame)
            order is the Patricia-tree order of the renamed keys rather than
            the incoming list order.  This order reaches the clash tree and is
            observable in exact RISC-V allocation. -/
-        let ssaLiveIn := NumSet.fromList (liveIn.map (wordSsaRead setupState))
-        let ssaLiveOut := NumSet.fromList (liveOut.map (wordSsaRead setupState))
+        let ssaLiveIn := WordAlloc.applyNummapKeyExecutable (wordSsaRead setupState) liveIn
+        let ssaLiveOut := WordAlloc.applyNummapKeyExecutable (wordSsaRead setupState) liveOut
         let program := .loop ssaLiveIn body ssaLiveOut
         /- CakeML threads the loop body's fresh-name counter out of
            `ssa_cc_trans (Loop ...)`, so code after the loop never reuses a
@@ -2322,11 +2323,11 @@ def wordApplyColourArith (colour : Nat → Nat) : WordArith α → WordArith α
 def wordApplyColourInst (colour : Nat → Nat) : WordInst α → WordInst α :=
   WordAlloc.applyColourInstExecutable colour
 
-/-! Cake's `num_set` fields are represented by lists in Flapjack.  The source
-    `apply_nummap_key` rebuilds those sets through `fromAList`, so the result is
-    canonical (sorted and duplicate-free), rather than a plain mapped list. -/
+/-! List-backed `num_set` fields cross the exact tree codec before colouring.
+    The reviewed `apply_nummap_key` owns reconstruction, collisions, and mixed
+    traversal order; its output is not an ascending sorted list. -/
 def wordApplyColourNumSet (colour : Nat → Nat) (names : List Nat) : List Nat :=
-  NumSet.fromAList (names.map colour)
+  WordAlloc.applyNummapKeyExecutable colour names
 
 def wordApplyColour (colour : Nat → Nat) : WordProg α → WordProg α
   | .skip => .skip
