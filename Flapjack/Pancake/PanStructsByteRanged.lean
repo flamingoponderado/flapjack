@@ -1465,4 +1465,123 @@ theorem encodedFieldIndexLookup_default (field : String) (fields : List (String 
       (structFindFieldIndex field fields).getD 0 := by
   rw [encodedFieldIndexLookup field fields hfield hfields]
 
+private theorem shapeToHOL_getD_map (value : Option Shape) :
+    (value.map shapeToHOL).getD .one = shapeToHOL (value.getD .one) := by
+  cases value <;> simp [Option.getD, shapeToHOL]
+
+private theorem structOldExpShapes_eq_map {α : Type} (context : StructPassContext)
+    (expressions : List (Exp α)) :
+    structOldExpShape.structOldExpShapes context expressions =
+      expressions.map (structOldExpShape context) := by
+  induction expressions with
+  | nil => simp [structOldExpShape.structOldExpShapes]
+  | cons expression expressions ih => simp [structOldExpShape.structOldExpShapes, ih]
+
+/-- Flapjack-only codec correspondence (no HOL declaration): on the parser's
+byte-ranged domain, HOL's `old_exp_shape` evaluator on encoded context and
+expression agrees with the encoded production `structOldExpShape`. This does
+not by itself route the production compiler through that HOL definition. -/
+theorem oldExpShapeExact_encode {width : Nat} [NeZero width]
+    (context : StructPassContext) (expression : Exp (BitVec width))
+    (hc : CtxBR context.structs) (hl : ListParamByteRanged context.locals)
+    (hg : ListParamByteRanged context.globals) :
+    ExpByteRanged expression →
+    Pancake.PanStructs.CompileShapeExact.oldExpShapeExact
+      (structPassContextToExact context) (expToHOL expression) =
+        shapeToHOL (structOldExpShape context expression) := by
+  refine Exp.rec (α := BitVec width)
+    (motive_1 := fun e => ExpByteRanged e →
+      Pancake.PanStructs.CompileShapeExact.oldExpShapeExact
+        (structPassContextToExact context) (expToHOL e) =
+        shapeToHOL (structOldExpShape context e))
+    (motive_2 := fun es => ListExpByteRanged es →
+      Pancake.PanStructs.CompileShapeExact.oldExpShapesExact
+        (structPassContextToExact context) (es.map expToHOL) =
+        (es.map fun e => shapeToHOL (structOldExpShape context e)))
+    (motive_3 := fun _ => True) (motive_4 := fun _ => True)
+    (fun _ _ => by simp [expToHOL, Pancake.PanStructs.CompileShapeExact.oldExpShapeExact,
+      structOldExpShape, shapeToHOL])
+    (fun kind name he => oldExpShapeExact_var_encode context kind name he hl hg)
+    (fun fields ih he => by
+      simp only [ExpByteRanged] at he
+      simp only [expToHOL, Pancake.PanStructs.CompileShapeExact.oldExpShapeExact,
+        structOldExpShape]
+      rw [ih he]
+      simp only [shapeToHOL]
+      rw [structOldExpShapes_eq_map]
+      apply congrArg ShapeHOL.comb
+      rw [List.map_map]
+      rfl)
+    (fun index value ih he => by
+      simp only [ExpByteRanged] at he
+      simp only [expToHOL, Pancake.PanStructs.CompileShapeExact.oldExpShapeExact]
+      rw [ih he]
+      cases hshape : structOldExpShape context value with
+      | one => simp [structOldExpShape, hshape, shapeToHOL]
+      | named name => simp [structOldExpShape, hshape, shapeToHOL]
+      | comb shapes =>
+        simp only [hshape, structOldExpShape, shapeToHOL]
+        exact (shapeToHOL_getD shapes index).symm)
+    (fun name fields _ _ => oldExpShapeExact_nStruct_encode context name fields)
+    (fun field value ih he => by
+      simp only [ExpByteRanged] at he
+      rw [Flapjack.Pancake.PanLang.expToHOL.eq_6]
+      rw [Pancake.PanStructs.CompileShapeExact.oldExpShapeExact.eq_6]
+      rw [ih he.2]
+      cases hshape : structOldExpShape context value with
+      | one => simp [hshape, structOldExpShape, shapeToHOL]
+      | comb shapes => simp [hshape, structOldExpShape, shapeToHOL]
+      | named name =>
+        have hshapeRanged := structOldExpShape_byteRanged context hc hl hg value he.2
+        simp only [hshape, ShapeByteRanged] at hshapeRanged
+        have hname : NameRanged name := hshapeRanged
+        have houter := encodedContextLookup
+          (fun info : StructInfo => info.fields.map fun p => (ofString p.1, shapeToHOL p.2))
+          name context.structs hname (fun p hp => (hc p hp).1)
+        cases hstruct : lookupInfo name context.structs with
+        | none =>
+          simp only [structPassContextToExact, structContextToCompileShapeExact, houter, hstruct,
+            structOldExpShape, hshape, shapeToHOL]
+          simp
+        | some info =>
+          have hfields : ListParamByteRanged info.fields :=
+            lookupInfo_payload_invariant (fun info : StructInfo => ListParamByteRanged info.fields)
+              name context.structs (fun p hp => (hc p hp).2) info hstruct
+          have hencodedFields := encodedShapeContextLookup field info.fields he.1 hfields
+          simp only [structPassContextToExact, structContextToCompileShapeExact, houter, hstruct,
+            structOldExpShape, hshape, shapeToHOL]
+          simp
+          rw [hencodedFields]
+          cases hfield : lookupInfo field info.fields <;> simp [shapeToHOL])
+    (fun _ address _ _ => by
+      simp [expToHOL, Pancake.PanStructs.CompileShapeExact.oldExpShapeExact,
+        structOldExpShape])
+    (fun address ih _ => by simp [expToHOL, Pancake.PanStructs.CompileShapeExact.oldExpShapeExact,
+      structOldExpShape, shapeToHOL])
+    (fun address ih _ => by simp [expToHOL, Pancake.PanStructs.CompileShapeExact.oldExpShapeExact,
+      structOldExpShape, shapeToHOL])
+    (fun _ args ih _ => by simp [expToHOL, Pancake.PanStructs.CompileShapeExact.oldExpShapeExact,
+      structOldExpShape, shapeToHOL])
+    (fun _ args ih _ => by simp [expToHOL, Pancake.PanStructs.CompileShapeExact.oldExpShapeExact,
+      structOldExpShape, shapeToHOL])
+    (fun _ _ _ ihl ihr _ => by simp [expToHOL, Pancake.PanStructs.CompileShapeExact.oldExpShapeExact,
+      structOldExpShape, shapeToHOL])
+    (fun _ _ _ ihl ihr _ => by simp [expToHOL, Pancake.PanStructs.CompileShapeExact.oldExpShapeExact,
+      structOldExpShape, shapeToHOL])
+    (by simp [expToHOL, Pancake.PanStructs.CompileShapeExact.oldExpShapeExact,
+      structOldExpShape, shapeToHOL])
+    (by simp [expToHOL, Pancake.PanStructs.CompileShapeExact.oldExpShapeExact,
+      structOldExpShape, shapeToHOL])
+    (by simp [expToHOL, Pancake.PanStructs.CompileShapeExact.oldExpShapeExact,
+      structOldExpShape, shapeToHOL])
+    (by simp [Pancake.PanStructs.CompileShapeExact.oldExpShapesExact])
+    (fun head tail ihhead ihtail hall => by
+      simp only [ListExpByteRanged] at hall
+      simp [Pancake.PanStructs.CompileShapeExact.oldExpShapesExact,
+        ihhead hall.1, ihtail hall.2])
+    trivial
+    (fun _ _ _ _ => trivial)
+    (fun _ _ _ => trivial)
+    expression
+
 end Flapjack
