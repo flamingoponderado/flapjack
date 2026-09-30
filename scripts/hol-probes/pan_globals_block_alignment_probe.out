@@ -1,0 +1,8 @@
+block32=(8,T,T,T)
+wrap32=(4294967292,T,T,T)
+zero32=(0,T,T,T)
+unaligned32=(1,F,T,F)
+block64=(16,T,T,T)
+wrap64=(18446744073709551608,T,T,T)
+zero64=(0,T,T,T)
+unaligned64=(1,F,T,F)
