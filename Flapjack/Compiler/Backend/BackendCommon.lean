@@ -32,7 +32,12 @@ def wordNumStubs : Nat := stackNumStubs + 1 + 1
   (word_dimension_as_width := width)]
 def wordShiftAmount (width : Nat) [NeZero width] : Nat := if width = 32 then 2 else 3
 
+example : @wordShiftAmount 1 ⟨by decide⟩ = 3 := rfl
+example : @wordShiftAmount 4 ⟨by decide⟩ = 3 := rfl
+example : @wordShiftAmount 8 ⟨by decide⟩ = 3 := rfl
+example : @wordShiftAmount 16 ⟨by decide⟩ = 3 := rfl
 example : @wordShiftAmount 32 ⟨by decide⟩ = 2 := rfl
 example : @wordShiftAmount 64 ⟨by decide⟩ = 3 := rfl
+example : @wordShiftAmount 128 ⟨by decide⟩ = 3 := rfl
 
 end Flapjack

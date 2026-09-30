@@ -146,6 +146,10 @@ run_probe word_alloc_colour_exp_probeScript.sml word_alloc_colour_exp_probe.out 
 run_probe word_add_carry_probeScript.sml word_add_carry_probe.out \
   ordinary carry_overflow "$cake_dir/compiler/backend/backend_commonScript.sml" \
   "$cake_dir/compiler/backend"
+run_probe backend_common_word_shift_probeScript.sml backend_common_word_shift_probe.out \
+  ws1 ws4 ws8 ws16 ws32 ws64 ws128 \
+  "$cake_dir/compiler/backend/backend_commonScript.sml" \
+  "$cake_dir/compiler/backend"
 run_probe riscv_word_extract_6_probeScript.sml riscv_word_extract_6_probe.out \
   word_extract_6_zero word_extract_6_63 word_extract_6_64_premise \
   "$cake_dir/compiler/encoders/riscv/riscv_targetScript.sml" \
