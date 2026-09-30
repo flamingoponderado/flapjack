@@ -6721,13 +6721,15 @@ theorem evaluateClockSubIfCaseHOLFinite {width : Nat} {σ : Type} [NeZero width]
             (fun address => Classical.propDecidable (state.toPanSemFinite.memaddrs address))
             condition = some v1 ∧
           v1 = .val v6 ∧ v6 = .word w →
-        PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state
-            (if w ≠ 0 then thenBranch else elseBranch : ProgHOL width) =
-          (result, { st with clock := st.clock + ck }) →
-        result ≠ some .timeOut →
-        PanPropsEvalStateFiniteExact.evaluateHOLFinitePair
-          { state with clock := state.clock - ck }
-          (if w ≠ 0 then thenBranch else elseBranch : ProgHOL width) = (result, st)) →
+        ∀ (result2 : Option (PanSemResultExact width))
+          (st2 : PanPropsEvalStateFiniteExact width σ) (ck2 : Nat),
+          PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state
+              (if w ≠ 0 then thenBranch else elseBranch : ProgHOL width) =
+            (result2, { st2 with clock := st2.clock + ck2 }) →
+          result2 ≠ some .timeOut →
+          PanPropsEvalStateFiniteExact.evaluateHOLFinitePair
+            { state with clock := state.clock - ck2 }
+            (if w ≠ 0 then thenBranch else elseBranch : ProgHOL width) = (result2, st2)) →
       PanPropsEvalStateFiniteExact.evaluateHOLFinitePair
         { state with clock := state.clock - ck } (.ite condition thenBranch elseBranch) =
           (result, st) := by
@@ -6779,7 +6781,7 @@ theorem evaluateClockSubIfCaseHOLFinite {width : Nat} {σ : Type} [NeZero width]
                   rw [if_pos hzero]
                   exact hRun
               have hBranchLow := ihIf (.val (.word word)) (.word word) word
-                ⟨hCond, rfl, rfl⟩ hBranchPair hne
+                ⟨hCond, rfl, rfl⟩ result st ck hBranchPair hne
               by_cases hzero : word = 0
               · rw [if_neg (by simp [hzero])] at hBranchLow
                 rw [if_pos hzero]
