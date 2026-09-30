@@ -36547,5 +36547,28 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-4ac.4.60.1.1.12): exact source shape of HOL panPropsScript.sml evaluate_clock_sub If constructor, handled in the generic final branch of the HOL induction (panSemScript.sml:630). Single literal guarded IH after the eval/Val/Word guard: forall result2 st2 ck2, source selected-branch run = (result2, st2 with clock := st2.clock + ck2) -> result2 <> SOME TimeOut -> low-clock selected-branch run = (result2, st2), exactly as the accepted Call/DecCall clockSubAt cases; original premisses (high-run equation to st with clock := st.clock+ck and result <> SOME TimeOut), no added premise and no outer-specialized IH."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/Call.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Canonical imported-state roundtrip infrastructure, no separate HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermEvaluate/Call.lean",
+  "lean_name": "evaluateFperm_Call",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_fperm",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison evaluate_fperm1721-1810 Call1746-1775, panSem657-693 and faithful EvaluateInd105-137: original f/g/program/state/result/post equation with only literal successful-argument/code/nonzero-clock callee IH and original matched-exception handler IH. Product decomposition binders substituted by components, exception-ID equality substituted, original eshapes/shape/LOCAL validity guards retained. ALL results including body NONE/Break/Continue Error, invalid return shape/destination, invalid/missing handler and body Error; unhandled exception/timeout/finalFFI empty locals; caller locals restored before return write/handler. Existing faithful Call equation discharges fix_clock through clock bounds, no added bound premise. Canonical finite locals/globals/code/eshapes with genuine imported-owner roundtrip; native MlS/ProgHOL/ShapeHOL/ValueHOL, positive BitVec width/NeZero and Type0 FFI unchanged. No target run/postrelation/nonError/success/freshness premise. Full constructor candidate ready independent coordinator review; full theorem assembly still open. Proof-only no executed compiler change."
 }
 ]
