@@ -37567,8 +37567,9 @@
     "hol_name": "addresses_thm",
     "lean_path": "Flapjack/Compiler/Backend/StackRemove.lean",
     "lean_name": "addresses_eq_set",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.14) against cakeml/compiler/backend/proofs/stack_removeProofScript.sml:2770-2773: HOL !n a. addresses a n = { a + n2w i * bytes_in_word | i < n }. Rendered over the already-tagged addresses_def carrier as an equality of the predicate-set BitVec width -> Prop, with HOL 'a word as BitVec width and n2w i * bytes_in_word as BitVec.ofNat width i * bytesInWord width. Derived directly from the tagged IN_addresses (mem_addresses); no added premises. Consumed by the compile_top_semantics_decls proof (pan_globalsProofScript.sml:3131 simp[addresses_thm])."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.14) against cakeml/compiler/backend/proofs/stack_removeProofScript.sml:2770-2773: HOL !n a. addresses a n = { a + n2w i * bytes_in_word | i < n }. The HOL dimension (:a) is positive (dimindex > 0), rendered by width : Nat with [NeZero width]; HOL 'a word is BitVec width and n2w i * bytes_in_word is BitVec.ofNat width i * bytesInWord width (words_as_type_indexed_bitvec). The set carrier is the predicate BitVec width -> Prop, matching the tagged addresses_def. Derived directly from the tagged IN_addresses (mem_addresses); no added premises. Consumed by the compile_top_semantics_decls proof (pan_globalsProofScript.sml:3131 simp[addresses_thm]).",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
