@@ -56,7 +56,7 @@ theorem generalSimulateArgLoadStrongExact {width : Nat} [NeZero width] {σ : Typ
   intro ⟨hes, hlen, hnd, hsub, hev, hfresh, hcont, htnd, htlen, hdisj, hfree⟩
   let middle : CrepSemHOLState width σ := {s with locals := t.updateListEq (tmp_vars.zip vals)}
   have hbase : t.submap middle.locals :=
-    CrepInlineUpdateListLocals.submapDiffListExact t tmp_vars vals (by omega) htnd
+    CrepInlineUpdateListLocals.submapDiffList t tmp_vars vals (by omega) htnd
       (fun v hv => hfresh v (Or.inr hv))
   have hvals : (tmp_vars.map CrepExpHOL.var).mapM (evalCrepSemHOLExp middle) = some vals := by
     rw [← lookupLocalsEqMapVarsHOL tmp_vars middle]
