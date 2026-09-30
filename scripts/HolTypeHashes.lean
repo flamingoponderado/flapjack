@@ -1,3 +1,4 @@
+import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Dec
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.AssignLocal
 import Flapjack.Pancake.Proofs.PanGlobals.OptMmapEvalCorrect
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.DecCall
@@ -32,7 +33,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.StateRelationClock
 import Flapjack.Pancake.Proofs.PanGlobals.CompileExpLeaves
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Base
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Seq
-import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Dec
+import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Store
 import Flapjack.Pancake.Proofs.PanGlobals.MemStores
 import Flapjack.Pancake.Proofs.PanGlobals.MemoryUpdate
 import Flapjack.Pancake.Proofs.PanGlobals.ShMemLoadLemmas
