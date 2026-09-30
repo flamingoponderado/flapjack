@@ -4,6 +4,52 @@ namespace Flapjack
 
 open Flapjack.Pancake.PanLang
 
+/-- Local proof-irrelevance factoring for the context codec; no HOL original. -/
+private theorem contextCodecMapExt {α β : Type} {left right : HolFiniteMapExact α β}
+    (h : left.lookup = right.lookup) : left = right := by
+  cases left
+  cases right
+  cases h
+  rfl
+
+/-- Production declaration insertion commutes with the exact finite-map
+context codec. The inserted name is byte-ranged by the parser; existing keys
+and shapes need no extra premise, and duplicate keys use first-match lookup.
+This paired-carrier law has no independent HOL original and remains untagged.
+It supplies the context step of a future full `compile_decs` routing proof. -/
+theorem PanGlobalsContextExact.ofPass_globalUpdate [LawfulBEq String]
+    {width : Nat} [NeZero width] (context : GlobalPassContext (BitVec width))
+    (name : String) (shape : Shape) (address : BitVec width)
+    (hname : NameRanged name) :
+    ofPass { context with
+      globals := (name, (shape, address)) :: context.globals
+      globalsSize := address } =
+      { ofPass context with
+        globals := (ofPass context).globals.updateEq
+          (Flapjack.Basis.Pure.MlString.ofString name, (shapeToHOL shape, address))
+        globalsSize := address } := by
+  apply congrArg (fun globals => PanGlobalsContextExact.mk globals address context.maxGlobalsSize)
+  apply contextCodecMapExt
+  funext key
+  have hdecoded :
+      Flapjack.Basis.Pure.MlString.toStringOfBytes key = name ↔
+        key = Flapjack.Basis.Pure.MlString.ofString name := by
+    constructor
+    · intro h
+      simpa [Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes] using
+        congrArg Flapjack.Basis.Pure.MlString.ofString h
+    · intro h
+      rw [h]
+      exact Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes name hname
+  by_cases h : key = Flapjack.Basis.Pure.MlString.ofString name
+  · have hround :=
+      Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes name hname
+    simp [ofPass, lookupInfo, HolFiniteMapExact.updateEq, FUPDATE_HOL, h, hround]
+  · have hne : name ≠ Flapjack.Basis.Pure.MlString.toStringOfBytes key := by
+      intro heq
+      exact h (hdecoded.mp heq.symm)
+    simp [ofPass, lookupInfo, HolFiniteMapExact.updateEq, FUPDATE_HOL, h, hne]
+
 /-- Executable Flapjack declaration wrapper: function bodies run the reviewed
 HOL program compiler directly. Declaration metadata and context threading
 retain the production representation. This wrapper has no separate HOL

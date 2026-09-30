@@ -26464,6 +26464,22 @@
     "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on stateRelImpSemanticsToCrep; forwards the imported checked roundtrip; no HOL declaration"
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ALOOKUP_key_remap_INJ",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/KeyRemap.lean",
+    "lean_name": "alookupKeyRemapINJ",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-09-30 bead .11.1.8: original word_allocProof639-658. Generic alpha source keys, beta target keys and gamma values retained; exact List product and first-match ZIP association lookup. Existing holAlookup uses propositional equality; Flapjack keyLookup convenience wrapper chooses Classical.typeDecidableEq internally, no DecidableEq/BEq/LawfulBEq hypothesis. List.zip truncation agrees under retained LENGTH premise. Entire Option equality, including NONE; original INJ f (n INSERT set keys) UNIV rendered pairwise equality implication on (a=n or a in keys), UNIV membership tautological. Original equal list/value lengths retained; no target lookup or global INJ hypothesis. Proof by input-key induction, same first-match head tests and tail injection restriction."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ALOOKUP_key_remap_2",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/KeyRemap.lean",
+    "lean_name": "alookupKeyRemapTwo",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-09-30 bead .11.1.8: original word_allocProof619-637. Generic alpha source keys, beta target keys and gamma values retained; exact List product and first-match ZIP association lookup. Existing holAlookup uses propositional equality; Flapjack keyLookup convenience wrapper chooses Classical.typeDecidableEq internally, no DecidableEq/BEq/LawfulBEq hypothesis. List.zip truncation agrees under retained LENGTH premise. Original injection only on set keys, LENGTH equality and successful source lookup imply corresponding successful renamed lookup. Source success establishes n membership before using full scoped equality theorem; no added n-membership premise, target-success or global INJ premise."
+  },
+  {
     "hol_path": "cakeml/pancake/pan_structsScript.sml",
     "hol_name": "compile_def",
     "lean_path": "Flapjack/Pancake/PanStructs/CompileProgExact.lean",
@@ -26588,12 +26604,99 @@
     "reviewer": "flapjack-ds10 source comparison (2026-09-30; bead flapjack-pxn.18.5.5.39) against crep_inlineProofScript.sml:2301-2309 and the atomic catch-all :2401 with HOL inline_prog_def (crep_inlineScript.sml:203-249) leaving ExtCall unchanged. The Lean statement preserves HOL's evaluator equation (crepSemScript.sml:367-379): four word locals lookups, read_bytearray over mem_load_byte, call_FFI, and the FFI_final/FFI_return post-states, with the same non-Error premise. Tagged with the shared case qualifiers; direct oracle rows cover the exact Crep ExtCall evaluator (ioEvents monotonicity)."
   },
   {
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/Semantics.lean",
+    "lean_name": "semanticsDecls",
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "semantics_decls_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-pxn.18.4.3.77.17.2): HOL panSem semantics_decls_def (panSemScript.sml:861-869) clause for clause: case decs_stcnames [] decls of NONE => Fail | SOME st_ctxt => case evaluate_decls (s with structs := st_ctxt) decls of NONE => Fail | SOME s' => semantics s' start. decs_stcnames is the tagged decsStcnamesHOLExact, evaluate_decls the tagged evaluateDeclsHOLFinite (its operational DecidablePred evidence chosen classically; instances are subsingletons, no premise), semantics the tagged exact semantics_def. State PanSemStateFiniteExact (fmap_as_finite_support [locals, globals, code, eshapes], same-module witness; words_as_type_indexed_bitvec)."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelImpSemantics.lean",
+    "lean_name": "stateRelImpSemanticsDeclsToCrep",
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "state_rel_imp_semantics_decls_to_crep",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "CrepSemHOLState.code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-pxn.18.4.4): HOL pan_to_crepProof state_rel_imp_semantics_decls_to_crep (pan_to_crepProofScript.sml:4973-4985). Lean keeps the binders s t pan_code start and every premise conjunct: state_rel (s with structs := []) t; ALL_DISTINCT (MAP FST (functions pan_code)); s.code = FEMPTY; t.code = alist_to_fmap (compile_to_crep pan_code) (HolFiniteMapExact.empty.updateList l.reverse, as in mk_ctxt_code_imp_code_rel); s.locals = FEMPTY; s.eshapes = FEMPTY; EVERY localised function bodies; EVERY (λx. is_function x ∨ is_exn_decl x) as List.all (as in the tagged evaluate_decls_only_funs_and_exn_decls); size_of_eids < 2 ^ width; semantics_decls <> Fail. The conclusion is crep semantics t start = semantics_decls s start pan_code. No extra premise. The proof follows HOL. decs_stcnames_only_functions gives the empty struct context. evaluate_decls_only_funs_and_exn_decls (across the field-identical PanProps carrier roundtrip) gives code |++ functions and eshapes |++ exceptions. Then state_rel_imp_semantics_to_crep applies: alist_to_fmap equals |++ under distinct names, and the FDOM of eshapes equals that of get_eids_from_decls. Kernel-checked; standard axioms."
+  },
+  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
     "lean_name": "inline_extCall",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-ds10 Flapjack-only infrastructure (2026-09-30; bead flapjack-pxn.18.5.5.39): private identity lemma that inlineProgHOLExact leaves ExtCall unchanged (HOL inline_prog_def fall-through arm); no cakeml HOL declaration of its own."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelImpSemantics.lean",
+    "lean_name": "list_lookup_isSome_iff",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private list/finite-map helper of stateRelImpSemanticsDeclsToCrep (bead flapjack-pxn.18.4.4): List.lookup membership; no HOL declaration (HOL uses library lemmas inline)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelImpSemantics.lean",
+    "lean_name": "list_lookup_of_mem_nodup",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private list/finite-map helper of stateRelImpSemanticsDeclsToCrep (bead flapjack-pxn.18.4.4): List.lookup of a member under distinct keys; no HOL declaration (HOL uses library lemmas inline)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelImpSemantics.lean",
+    "lean_name": "list_lookup_mem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private list/finite-map helper of stateRelImpSemanticsDeclsToCrep (bead flapjack-pxn.18.4.4): List.lookup returns a member; no HOL declaration (HOL uses library lemmas inline)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelImpSemantics.lean",
+    "lean_name": "list_lookup_reverse_of_nodup",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private list/finite-map helper of stateRelImpSemanticsDeclsToCrep (bead flapjack-pxn.18.4.4): List.lookup order-independence under distinct keys (HOL alookup_distinct_reverse step); no HOL declaration (HOL uses library lemmas inline)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelImpSemantics.lean",
+    "lean_name": "fupdateList_empty_eq_lookup",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private list/finite-map helper of stateRelImpSemanticsDeclsToCrep (bead flapjack-pxn.18.4.4): FUPDATE_LIST FEMPTY as List.lookup of the reverse; no HOL declaration (HOL uses library lemmas inline)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelImpSemantics.lean",
+    "lean_name": "alistToFmap_eq_lookup",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private list/finite-map helper of stateRelImpSemanticsDeclsToCrep (bead flapjack-pxn.18.4.4): right-folded alist_to_fmap as List.lookup; no HOL declaration (HOL uses library lemmas inline)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "cut_names_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/CutNames.lean",
+    "lean_name": "cutNamesLemma",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-09-30 bead .11.1.6: literal HOL277-311; independent alpha names payload and beta source/target/cut environment payloads retained, exact generic Spt carriers. All five conclusions retained: existential successful renamed target cut, full image-domain equality, strong_locals_rel restricted environments, INJ on source cut domain, source cut domain=names domain. Original INJ f domain(names) UNIV rendered pairwise equality implication on that domain (UNIV membership tautological). No global INJ, target-cut/target-result/target-domain/global relation premise. Source successful generic cut_names yields subset and source intersection; target subset follows image-domain theorem/source lookup/strong relation. Exact heterogeneous inter lookup and full domain intersection give restricted relation and absorption. No word/carrier qualifier: original helpers and relation are payload-polymorphic, prerequisite6.1 accepted after direct HOL type probes. All quantified variables, premises and conclusion conjuncts compared against HOL."
   },
   {
     "hol_path": null,
