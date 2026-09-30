@@ -49,6 +49,7 @@ import Flapjack.Pancake.PanLang.Prog
 import Flapjack.Pancake.PanLang.Prog.FreeVarIdsCodec
 import Flapjack.Pancake.PanGlobals.CallHandlerExact
 import Flapjack.Pancake.PanGlobals.ProgramExactRoute
+import Flapjack.Pancake.PanGlobals.DeclarationProgramRoute
 import Flapjack.Pancake.PanLang.Decl
 import Flapjack.Pancake.PanGlobals.CompileExpExact
 import Flapjack.Pancake.PanGlobals.CompileExpExactRoute
