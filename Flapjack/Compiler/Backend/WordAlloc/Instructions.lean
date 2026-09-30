@@ -55,4 +55,49 @@ def applyColourInst {width : Nat} [NeZero width] (f : Nat → Nat) :
     WordLangInst (BitVec width) → WordLangInst (BitVec width) :=
   applyColourInstCore f
 
+/-- Shared instruction-liveness recursion. This Flapjack implementation
+infrastructure accepts an explicit numeric word width; the HOL port below
+binds that dimension through its positive-width word carrier. -/
+def getLiveInstCore {α : Type u} (width : Nat) : WordLangInst α → NumSet → NumSet
+  | .skip, live => live
+  | .const r _, live => sptDelete r live
+  | .arith (.binop _ r1 r2 (.reg r3)), live
+  | .arith (.shift _ r1 r2 (.reg r3)), live =>
+      sptInsert r2 () (sptInsert r3 () (sptDelete r1 live))
+  | .arith (.binop _ r1 r2 (.imm _)), live
+  | .arith (.shift _ r1 r2 (.imm _)), live => sptInsert r2 () (sptDelete r1 live)
+  | .arith (.div r1 r2 r3), live => sptInsert r3 () (sptInsert r2 () (sptDelete r1 live))
+  | .arith (.addCarry r1 r2 r3 r4), live =>
+      sptInsert r4 () (sptInsert r3 () (sptInsert r2 () (sptDelete r1 live)))
+  | .arith (.addOverflow r1 r2 r3 r4), live
+  | .arith (.subOverflow r1 r2 r3 r4), live =>
+      sptInsert r3 () (sptInsert r2 () (sptDelete r4 (sptDelete r1 live)))
+  | .arith (.longMul r1 r2 r3 r4), live =>
+      sptInsert r4 () (sptInsert r3 () (sptDelete r2 (sptDelete r1 live)))
+  | .arith (.longDiv r1 r2 r3 r4 r5), live =>
+      sptInsert r5 () (sptInsert r4 () (sptInsert r3 () (sptDelete r2 (sptDelete r1 live))))
+  | .mem .load r (.addr a _), live
+  | .mem .load32 r (.addr a _), live
+  | .mem .load8 r (.addr a _), live => sptInsert a () (sptDelete r live)
+  | .mem .store r (.addr a _), live
+  | .mem .store32 r (.addr a _), live
+  | .mem .store8 r (.addr a _), live => sptInsert a () (sptInsert r () live)
+  | .fp (.fpLess r _ _), live
+  | .fp (.fpLessEqual r _ _), live
+  | .fp (.fpEqual r _ _), live => sptDelete r live
+  | .fp (.fpMovToReg r1 r2 _), live =>
+      if width = 64 then sptDelete r1 live else sptDelete r1 (sptDelete r2 live)
+  | .fp (.fpMovFromReg _ r1 r2), live =>
+      if width = 64 then sptInsert r1 () live else sptInsert r2 () (sptInsert r1 () live)
+  | _, live => live
+
+/-- Exact HOL instruction liveness, retaining insertion/deletion order and
+all constructor clauses. Load16/Store16 and FP-only operations use the literal
+HOL catchall; integer FP moves distinguish 64-bit from other word dimensions. -/
+@[hol "cakeml/compiler/backend/word_allocScript.sml" "get_live_inst_def"
+  (words_as_type_indexed_bitvec)]
+def getLiveInst {width : Nat} [NeZero width] :
+    WordLangInst (BitVec width) → NumSet → NumSet :=
+  getLiveInstCore width
+
 end Flapjack.WordAlloc
