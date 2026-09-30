@@ -521,6 +521,7 @@
     {"bytes": 726, "out": "stacksem_leaf_transfers_probe.out", "rows": 16, "sha256": "696ec738710ec2253cb6995bf96ec872471e8bebc454ded2816c468fbe80d42a"},
     {"bytes": 464, "out": "stacksem_loc_value_probe.out", "rows": 6, "sha256": "f5f141b5c975c1368adea5201fbd6b5679d071ad21017a9d9251837d5ca0d60a"},
     {"bytes": 628, "out": "stacksem_loop_control_probe.out", "rows": 28, "sha256": "768c7b662944dace225885eb5c71c860fe2963206d24243a76012f910da7828d"},
+    {"bytes": 495, "out": "stacksem_loop_recursive_probe.out", "rows": 11, "sha256": "f625c42a353cc91392612fce69b49fc9a978b1812b1dbd2e79371607a330c1ac"},
     {"bytes": 437, "out": "stacksem_pattern_copy_probe.out", "rows": 12, "sha256": "7433f6bc2e90e4acb4fdf8bb7ed83680c2696de4931f429be37be61ba0697d26"},
     {"bytes": 361, "out": "stacksem_rawcall_probe.out", "rows": 7, "sha256": "e409be555e06327880d9087a816faf29354b11dd0947c29e0760cbe825b0fdea"},
     {"bytes": 602, "out": "stacksem_register_transfers_probe.out", "rows": 13, "sha256": "b35b1a41f085f0e0fa3bda4a8bb4c7ae12f5186170b0220d7fd69bc1c680760b"},

@@ -167,6 +167,10 @@ run_probe stacksem_call_indirect_probeScript.sml stacksem_call_indirect_probe.ou
   indirect_tail indirect_return indirect_link_alias indirect_tail_alias indirect_nonzero \
   indirect_word indirect_missing indirect_code_missing indirect_timeout indirect_wrong_return \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe stacksem_loop_recursive_probeScript.sml stacksem_loop_recursive_probe.out \
+  continue_three skip_three tick_three tick_zero break_zero break_two continue_two \
+  return_location return_word_error raise_location halt_word \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe stacksem_buffer_write_probeScript.sml stacksem_buffer_write_probe.out \
   code_write_success code_write_mismatch data_write_success data_write_mismatch data_write_disabled \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"

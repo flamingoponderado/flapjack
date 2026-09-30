@@ -1,3 +1,16 @@
+`stacksem_loop_recursive_probe.out` contains eleven fresh direct original
+`stackSem$evaluate (Loop body, state)` observations (stackSemScript.sml:833-837).
+The original evaluator performs all recursive re-entry. The Lean replay
+`Flapjack.Test.StackSemLoopRecursiveParity` runs real leaf clauses and a
+clock-decreasing recursive Loop function, whose factoring equation is checked
+against `StackSemControlCases.evaluateLoop`. No callback supplies a preset
+terminal timeout. Cases cover Continue0/Skip/Tick repeated entry, zero-clock
+Tick, Break0/Break2/Continue2, Return location/error, Raise and Halt. Kernel
+coverage certificates show every fixture body is handled by evaluateLeaf;
+actual runtime rows compare result, clock, register1 and stack length.
+This restricted test evaluator is not the total evaluate_def port. Regenerate
+with `HOL_PROBE_ONLY=stacksem_loop_recursive_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 # Original Pancake HOL probes
 
 `stacksem_call_indirect_probe.out` captures ten direct original `stackSem$evaluate`
