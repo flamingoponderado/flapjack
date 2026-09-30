@@ -1,3 +1,4 @@
+import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Memory
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Leaves
 import Flapjack.Pancake.Proofs.PanGlobals.MemoryLookup
 import Flapjack.Pancake.Proofs.PanGlobals.MemorySwap
