@@ -49,7 +49,7 @@ def strongLocalsGoal {width : Nat} [NeZero width] {σ : Type}
 
 /-- Local support: `locals_rel` is preserved by updating both maps at the
     same key with the same value. -/
-private theorem localsRel_updateEq {width : Nat} [NeZero width] {σ : Type}
+theorem localsRel_updateEq {width : Nat} [NeZero width] {σ : Type}
     {s t : CrepSemHOLState width σ} (h : crepInlineLocalsRelExact s t) (v : Nat)
     (w : HolWordLab width) :
     crepInlineLocalsRelExact { s with locals := s.locals.updateEq (v, w) }
