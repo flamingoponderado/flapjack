@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordAlloc.Instructions
 import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
 
 /-!
@@ -52,6 +53,22 @@ theorem strongLocalsRelGetVar {width : Nat} [NeZero width] {C F : Type}
       WordSemStateFiniteExact.getVar n st = some x) :
     WordSemStateFiniteExact.getVar (f n) cst = some x :=
   h.1 n x ⟨h.2.1, h.2.2⟩
+
+/-- Exact HOL register/immediate lookup transport. The live-set membership
+condition applies only to registers; immediate success needs no local lookup. -/
+@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "strong_locals_rel_get_var_imm"
+  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
+  (words_as_type_indexed_bitvec)]
+theorem strongLocalsRelGetVarImm {width : Nat} [NeZero width] {C F : Type}
+    (f : Nat → Nat) (live : Nat → Prop) (st cst : WordSemStateFiniteExact width C F)
+    (n : WordRegImm (BitVec width)) (x : WordLocW width)
+    (h : strongLocalsRel f live st.locals cst.locals ∧
+      (match n with | .reg key => live key | .imm _ => True) ∧
+      WordSemStateFiniteExact.getVarImm n st = some x) :
+    WordSemStateFiniteExact.getVarImm (applyColourImm f n) cst = some x := by
+  cases n with
+  | reg key => exact strongLocalsRelGetVar f live st cst key x h
+  | imm word => simpa only [applyColourImm, WordSemStateFiniteExact.getVarImm] using h.2.2
 
 /-- HOL strong_locals_rel_get_vars: every requested live source lookup is
 transported, preserving list order and duplicates. -/
