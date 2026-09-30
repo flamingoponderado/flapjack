@@ -33733,5 +33733,43 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack local support (bead .43.5.6): the evaluate_state_locals_rel_strong motive for While from StrongLocalsWhileIH."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/Call.lean",
+    "lean_name": "evaluateStateLocalsRelStrongCallExact",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "evaluate_state_locals_rel_strong",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.7) compared HOL evaluate_state_locals_rel_strong (crep_inlineProofScript.sml:273-285) at p = Call caltyp fname argexps (curried leaf shape) with Resume [Call] :511-562. SPECIALISED stronger case (documented beside the theorem): the only extra hypothesis is StrongLocalsCallHandlerIH, HOL evaluate_ind's guarded handler premise (spelled with the evaluator guards of the accepted evaluate_locals_same_fdom Call case); HOL's callee premise is omitted because state_rel makes dec_clock t with locals := newlocals equal to dec_clock s with locals := newlocals, so both callee runs coincide. Return write-back keeps locals_rel (FUPDATE_LIST over SUBMAP) and locals_ext_rel (destinations are existing locals). Exact tagged carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/Call.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed CrepSemHOLState toBroad/ofBroad roundtrip for the relation qualifier."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/Call.lean",
+    "lean_name": "callReturnPost",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead .43.5.7): Call return write-back preserves locals_rel/locals_ext_rel over existing destinations."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/Call.lean",
+    "lean_name": "callStrongGoal",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead .43.5.7): the evaluate_state_locals_rel_strong motive for Call from the handler IH."
   }
 ]
