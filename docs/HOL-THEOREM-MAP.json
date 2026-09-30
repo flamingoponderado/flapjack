@@ -33906,6 +33906,78 @@
   "reviewer": "Flapjack-specific well-founded clock/sizeOf induction interface, no standalone HOL declaration. Kernel proof derives the actual guarded While body IH at decClock and plain-state NONE/Continue0 reentry IHs using evaluator clock monotonicity; other constructors retain the induction step. It is not the complete HOL evaluate_ind port. Consumed by CrepInline/WhileInduction.lean assembleWhile, closing the prior While assembly gap without a public correctness premise."
 },
 {
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/Assembly.lean",
+  "lean_name": "callGuard_args_eq",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack guard-equivalence support (P0 flapjack-i0y2.3, PR1182 review item 4): args.mapM evalCrepSemHOLExp equals evaluate_ind's args.mapM crepExactEvalExpClassical; Lean-internal equation, no HOL original and no cross-prover claim."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/Assembly.lean",
+  "lean_name": "callGuard_lookup_eq",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack guard-equivalence support (P0 flapjack-i0y2.3, PR1182 review item 4): lookupCodeFiniteHOL equals evaluate_ind's lookupCodeHOLFinite on the code lookup; Lean-internal equation, no HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/Assembly.lean",
+  "lean_name": "callGuard_nodup_iff",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack guard-equivalence support (P0 flapjack-i0y2.3, PR1182 review item 4): crepReturnInfoNodupError is evaluate_ind's inline ALL_DISTINCT selector; definitional, no HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/InitGlobalsCons.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only infrastructure. Canonical state toExact/ofExact roundtrip forwarded for named state maps."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/InitGlobalsCons.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only infrastructure. Canonical context toBroad/ofBroad roundtrip forwarded for context globals."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/InitGlobalsCons.lean",
+  "lean_name": "initGlobalsCons",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_decls_init_globals_lemma",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "PanSemStateFiniteExact.locals",
+    "PanSemStateFiniteExact.globals",
+    "PanSemStateFiniteExact.code",
+    "PanSemStateFiniteExact.eshapes",
+    "PanGlobalsContextExact.globals"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison HOL2126-2327: initGlobalsGoal retains all original hypotheses, total finite-state evaluate and existential target run/full stateRel/clock/ffi/locals/finalalignment. Recursive cons adds only source evaluate_decls_ind guarded tailIH at setGlobal state, shapeEq guard and arbitrary nextcontext; assembled list induction discharges it, nonDecl cases impossible by original EVERY is_decl. Head expression/store/stateRel/tailcoverage/disjointness derived internally with replacement names allowed; no new targetrun/postrelation premise. Native MlS, canonical map relation ownership and words_as_type_indexed_bitvec reviewed; production behavior unchanged."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/InitGlobalsCons.lean",
+  "lean_name": "initGlobalsAll",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_decls_init_globals_lemma",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "PanSemStateFiniteExact.locals",
+    "PanSemStateFiniteExact.globals",
+    "PanSemStateFiniteExact.code",
+    "PanSemStateFiniteExact.eshapes",
+    "PanGlobalsContextExact.globals"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison HOL2126-2327: initGlobalsGoal retains all original hypotheses, total finite-state evaluate and existential target run/full stateRel/clock/ffi/locals/finalalignment. Recursive cons adds only source evaluate_decls_ind guarded tailIH at setGlobal state, shapeEq guard and arbitrary nextcontext; assembled list induction discharges it, nonDecl cases impossible by original EVERY is_decl. Head expression/store/stateRel/tailcoverage/disjointness derived internally with replacement names allowed; no new targetrun/postrelation premise. Native MlS, canonical map relation ownership and words_as_type_indexed_bitvec reviewed; production behavior unchanged."
+},
+{
   "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
   "lean_name": "scopedHandlerPrefix",
   "hol_path": null,

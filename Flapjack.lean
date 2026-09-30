@@ -1,5 +1,6 @@
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallGlobalHandler
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallHandlerArguments
+import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsCons
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallHandlerFlag
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallHandlerFreshNames
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallGlobal
