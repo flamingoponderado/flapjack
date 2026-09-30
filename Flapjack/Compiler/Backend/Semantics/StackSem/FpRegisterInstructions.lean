@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
 import Flapjack.Misc.MachineIeee
 import Flapjack.Misc.BinaryIeeeArith
 import Flapjack.Misc.BinaryIeeeSqrt
+import Flapjack.Misc.BinaryIeeeSqrt.RoundAgreement
 import Flapjack.Misc.BinaryIeeeConvert
 import Flapjack.Compiler.Backend.Semantics.WordSem.Inst
 
@@ -13,7 +14,10 @@ not a port of the whole inst_def. The comparison cases follow HOL `inst_def`
 arithmetic cases follow `:563-587`, with the `FPFma` fused multiply-add
 permutation of `fpSem$fpfma` (`cakeml/semantics/fpSemScript.sml:60-62`); the
 conversions follow `FPSqrt` `:559-562`, `FPToInt` `:605-624` and `FPFromInt`
-`:625-640`. Whole evaluator routing remains separate. -/
+`:625-640`, with `FPSqrt` rendered through the faithful real-sqrt
+`holFp64SqrtReal` (`Flapjack/Misc/BinaryIeeeSqrt/RoundAgreement.lean`, proven
+equal to the rational-cut `holFp64Sqrt` by `holFp64Sqrt_tiesToEven_agreement`).
+Whole evaluator routing remains separate. -/
 namespace Flapjack.StackSemFpRegisterInstructions
 open StackSemStateOps Compiler.Encoders.Asm
 
@@ -45,7 +49,7 @@ noncomputable def instFpRegister {width : Nat} [NeZero width] {C F : Type}
       | none => none)
   | .fp (.fpSqrt d1 d2) => some (
       match getFpVar d2 s with
-      | some f => some (setFpVar d1 (holFp64Sqrt .roundTiesToEven f) s)
+      | some f => some (setFpVar d1 (holFp64SqrtReal .roundTiesToEven f) s)
       | none => none)
   | .fp (.fpLess r d1 d2) => some (
       match getFpVar d1 s, getFpVar d2 s with

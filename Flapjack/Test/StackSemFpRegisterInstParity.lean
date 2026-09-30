@@ -13,8 +13,10 @@ The fragment is an untagged partial case dispatcher; the whole `inst_def`
 assembly is tracked separately. The comparison rows evaluate the computable
 HOL comparison renderings directly; the arithmetic and FMA rows replay through
 the proven computable-rounding equivalences of
-`Flapjack.Misc.BinaryIeeeArithFp64`; the FPSqrt row uses `holFp64Sqrt_rte`
-(`Flapjack.Misc.BinaryIeeeSqrtFp64`), the FPFromInt rows use `holIntToFp64_rte`
+`Flapjack.Misc.BinaryIeeeArithFp64`; the FPSqrt row uses the faithful
+real-sqrt `holFp64SqrtReal`, connected to the computable `holFp64Sqrt_rte`
+(`Flapjack.Misc.BinaryIeeeSqrtFp64`) through
+`holFp64Sqrt_tiesToEven_agreement`; the FPFromInt rows use `holIntToFp64_rte`
 (`Flapjack.Misc.BinaryIeeeConvert`), and the FPToInt rows use the computable
 `holFp64ToInt`. Structural examples below prove the exact returned expression
 of every new case, including the `FPFma` addend permutation. -/
@@ -443,7 +445,7 @@ example {width : Nat} [NeZero width] {C F : Type}
     (d1 d2 : Nat) (s : StackSemStateFiniteExact width C F) (f : BitVec 64)
     (h : getFpVar d2 s = some f) :
     instFpRegister (.fp (.fpSqrt d1 d2)) s =
-      some (some (setFpVar d1 (holFp64Sqrt .roundTiesToEven f) s)) := by
+      some (some (setFpVar d1 (holFp64SqrtReal .roundTiesToEven f) s)) := by
   simp [instFpRegister, h]
 
 example {width : Nat} [NeZero width] {C F : Type}
@@ -498,8 +500,8 @@ example {width : Nat} [NeZero width] {C F : Type} (d1 d2 : Nat)
 -- Closed binary64 conversion values, kernel-checked through the computable
 -- roundTiesToEven bridges where the source definition is choice-based.
 private theorem holFp64Sqrt_four :
-    holFp64Sqrt .roundTiesToEven 0x4010000000000000 = 0x4000000000000000 := by
-  rw [holFp64Sqrt_rte]; decide +kernel
+    holFp64SqrtReal .roundTiesToEven 0x4010000000000000 = 0x4000000000000000 := by
+  rw [← holFp64Sqrt_tiesToEven_agreement, holFp64Sqrt_rte]; decide +kernel
 private theorem holFp64ToInt_two :
     holFp64ToInt .roundTiesToEven (BitVec.ofNat 64 0x4000000000000000) = some (2 : Int) := by
   decide +kernel
@@ -535,7 +537,7 @@ example {C F : Type} (s : StackSemStateFiniteExact 64 C F) :
       some (6,some 4611686018427387904,some (.inl 77),some (.inr (4,5))) := by
   have h : instFpRegister (.fp (.fpSqrt 7 2))
       (convFixture s 0x4010000000000000 0x4024000000000000) =
-      some (some (setFpVar 7 (holFp64Sqrt .roundTiesToEven 0x4010000000000000)
+      some (some (setFpVar 7 (holFp64SqrtReal .roundTiesToEven 0x4010000000000000)
         (convFixture s 0x4010000000000000 0x4024000000000000))) := by
     simp [instFpRegister, getFpVar, convFixture, FUPDATE_HOL]
   rw [h, holFp64Sqrt_four]
