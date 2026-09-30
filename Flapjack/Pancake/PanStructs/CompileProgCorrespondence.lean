@@ -1,4 +1,4 @@
-import Flapjack.Pancake.PanStructs.CompileExpProduction
+import Flapjack.Pancake.PanStructs.CompileProgTraversal
 import Flapjack.Pancake.PanStructs.CompileProgExact
 
 /-! Flapjack program codec correspondence, with no HOL theorem original.
