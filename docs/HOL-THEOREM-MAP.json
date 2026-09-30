@@ -27862,6 +27862,15 @@
     "reviewer": "flapjack-sol source comparison 2026-09-30, y19g.11.2.1: source688-709. Same zero-failure and one-sentinel success before domain/index checks; low bit relocates only selected words, total function memory update at address, logical right shift, index increment, modular address increment. bytes_in_word compared with HOL/src/n-bit/byteScript.sml:193-195: n2w(dimindex DIV8). List EL is under identical bounds. Positive BitVec dimension is sole qualifier; domain as Prop/function set, DecidablePred supplies computation, no extra logical premise. LESS_EQ retains source final pair (address,memory), success premise and index conclusion without extra hypotheses. Numeric pattern measure proves termination. Twelve direct original HOL rows/kernel replay cover failures, sentinel bypass, modular overflow, widths16 and4 including zero-stride overwrite. No executed compiler or full evaluator completion claimed."
   },
   {
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "copy_words_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/StoreConsts.lean",
+    "lean_name": "copyWords",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-09-30; bead flapjack-y19g.11.2.2): HOL copy_words_def (stackSemScript.sml:711-722) is if LENGTH bs <= i then NONE else let pattern = EL i bs in case copy_words_for_pattern pattern (i+1) a off bs dm m of NONE => NONE | SOME (i1,a1,m1) => if word_msb pattern then copy_words i1 a1 off bs dm m1 else SOME (a1,m1). Lean transcribes the guard order exactly, seeds the pattern call with index+1, tests BitVec.msb (HOL word_msb) on the same unshifted pattern, and returns the same (address,memory) pair. The recursion is over the same pattern list and measure LENGTH bs - i; termination uses the tagged copyWordsForPattern_index_le exactly as HOL's WF_REL_TAC with copy_words_for_pattern_LESS_EQ. bmaps word/dimindex(:a) to positive-width BitVec width/[NeZero width], the sole qualifier; the list is an ordinary constructor-for-constructor List translation and memory is the total function carrier already reviewed for copy_words_for_pattern_def. Four direct original HOL EVAL rows in scripts/hol-probes/stacksem_copy_words_probe.out (normal loop continuation, early msb-clear stop, zero pattern during loop, out-of-range index) are replayed kernel-checked in Flapjack.Test.StackSemCopyWordsParity. No executed compiler or full evaluator completion claimed. Coordinator source review pending."
+  },
+  {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileDecsStructural.lean",
     "lean_name": "compileDecs_funs_proj",
     "hol_path": null,

@@ -121,6 +121,9 @@ run_probe stacksem_integer_inst_probeScript.sml stacksem_integer_inst_probe.out 
 run_probe stacksem_pattern_copy_probeScript.sml stacksem_pattern_copy_probe.out \
   zero one_bypass even odd multi missing_bitmap missing_domain later_domain address_wrap value_wrap stride16 stride4 \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe stacksem_copy_words_probeScript.sml stacksem_copy_words_probe.out \
+  normal_continue stops_early zero_pattern out_of_range \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe stacksem_register_transfers_probeScript.sml stacksem_register_transfers_probe.out \
   get_word get_loc get_missing get_disabled set_word set_loc set_missing set_disabled op_add op_sub op_loc op_missing op_disabled \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"

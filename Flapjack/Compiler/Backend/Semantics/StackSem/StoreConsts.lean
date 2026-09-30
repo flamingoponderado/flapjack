@@ -56,4 +56,28 @@ theorem copyWordsForPattern_index_le {width : Nat} [NeZero width]
     exact Nat.le_trans (Nat.le_succ index) (ih h)
   case case4 => contradiction
 
+/-- HOL outer bitmap-copy driver (`copy_words_def`): walk the bitmap list from
+`index`, applying `copyWordsForPattern` at each step and continuing while the
+current pattern's high bit is set. -/
+@[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "copy_words_def"
+  (words_as_type_indexed_bitvec)]
+def copyWords {width : Nat} [NeZero width]
+    (index : Nat) (address offset : BitVec width)
+    (bitmaps : List (BitVec width)) (domain : BitVec width → Prop)
+    [DecidablePred domain] (memory : BitVec width → WordLocW width) :
+    Option (BitVec width × (BitVec width → WordLocW width)) :=
+  if bitmaps.length ≤ index then none else
+    let pattern := bitmaps[index]!
+    match _hpat : copyWordsForPattern pattern (index + 1) address offset bitmaps domain memory with
+    | none => none
+    | some (index1, address1, memory1) =>
+        if pattern.msb then copyWords index1 address1 offset bitmaps domain memory1
+        else some (address1, memory1)
+termination_by bitmaps.length - index
+decreasing_by
+  have hle : index + 1 ≤ index1 :=
+    copyWordsForPattern_index_le pattern (index + 1) address offset bitmaps domain memory
+      index1 (address1, memory1) _hpat
+  omega
+
 end Flapjack.StackSemStoreConsts

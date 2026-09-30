@@ -351,6 +351,7 @@ import Flapjack.Test.StackSemLoopControlParity
 import Flapjack.Test.StackSemLeafTransfersParity
 import Flapjack.Test.StackSemRegisterTransfersParity
 import Flapjack.Test.StackSemPatternCopyParity
+import Flapjack.Test.StackSemCopyWordsParity
 import Flapjack.Test.StackSemIntegerInstParity
 import Flapjack.Test.StackSemEvaluateAllocCaseParity
 import Flapjack.Test.StackSemStoreConstsGuardParity
@@ -1155,6 +1156,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.StackSemRawCallParity.runChecks,
     Flapjack.Test.StackSemCallParity.runChecks,
     Flapjack.Test.StackSemBufferWriteParity.runChecks,
+    Flapjack.Test.StackSemCopyWordsParity.runChecks,
     Flapjack.Test.PanGlobalsFpermCodeParity.runChecks,
     Flapjack.Test.WordLangEveryVarParity.runChecks,
     Flapjack.Test.WordSemCarriersParity.runChecks,

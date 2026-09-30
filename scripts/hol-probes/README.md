@@ -1537,6 +1537,20 @@ all rows. Regenerate with
 HOL_PROBE_ONLY=stacksem_pattern_copy_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
 
+`stacksem_copy_words_probeScript.sml` captures four direct original HOL
+`copy_words_def` observations (stackSemScript.sml:711-722) at width 8. The
+observer retains the final address and selected memory lookups. Rows cover a
+normal relocation whose leading high bit set keeps the loop going
+(`normal_continue`, final address `7w` with relocated and plain cells), an
+early stop after six writes when the pattern high bit is clear (`stops_early`),
+a zero pattern reached during the loop (`zero_pattern`, `NONE`), and an
+out-of-range start index (`out_of_range`, `NONE`).
+`Flapjack/Test/StackSemCopyWordsParity.lean` replays all rows as kernel-checked
+examples and prints a PASS line. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_copy_words_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
+
 `stacksem_integer_inst_probeScript.sml` records 33 original StackSem instruction
 observations, replayed in `Flapjack/Test/StackSemIntegerInstParity.lean` over
 arbitrary base states with all observed fields overridden. The observer uses
