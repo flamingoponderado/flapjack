@@ -37651,5 +37651,200 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "C source comparison pan_simpProofScript.sml117-137 and seq_assoc_def18-40: genuine CallNoHandler base case, unconditional complete exact evaluation equality for arbitrary prefix/state and source fields. No extra semantic premise or IH. Accepted exact Seq/Skip/Annot equations and literal SmartSeq semantics preserve complete post-state including errors/control flow. Native exact carriers, canonical four-map state with genuine roundtrip witness, positive BitVec width and Type0 FFI only. Full117 assembly remains open; coordinator review pending; proof-only."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SeqAssocExact.lean",
+  "lean_name": "evaluateSeqAssocAssignHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+  "hol_name": "evaluate_seq_assoc",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison pan_simpProof117-137 and literal seq_assoc_def18-40 otherwise Assign arm: full arbitrary-prefix program/state result equality, no extra premise or IH. Source syntax remains this same constructor under SmartSeq; accepted evaluate_SmartSeq gives complete evaluation equality with Seq. Exact fixed-width/native MlS carriers and canonical finite-map state fields with genuine witness; positive BitVec/Type0 FFI translation only. Genuine case, full117 assembly stillopen; coordinator review pending, proof-only."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SeqAssocExact.lean",
+  "lean_name": "evaluateSeqAssocPrimitiveHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+  "hol_name": "evaluate_seq_assoc",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison pan_simpProof117-137 and literal seq_assoc_def18-40 otherwise Primitive arm: full arbitrary-prefix program/state result equality, no extra premise or IH. Source syntax remains this same constructor under SmartSeq; accepted evaluate_SmartSeq gives complete evaluation equality with Seq. Exact fixed-width/native MlS carriers and canonical finite-map state fields with genuine witness; positive BitVec/Type0 FFI translation only. Genuine case, full117 assembly stillopen; coordinator review pending, proof-only."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SeqAssocExact.lean",
+  "lean_name": "evaluateSeqAssocStoreHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+  "hol_name": "evaluate_seq_assoc",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison pan_simpProof117-137 and literal seq_assoc_def18-40 otherwise Store arm: full arbitrary-prefix program/state result equality, no extra premise or IH. Source syntax remains this same constructor under SmartSeq; accepted evaluate_SmartSeq gives complete evaluation equality with Seq. Exact fixed-width/native MlS carriers and canonical finite-map state fields with genuine witness; positive BitVec/Type0 FFI translation only. Genuine case, full117 assembly stillopen; coordinator review pending, proof-only."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SeqAssocExact.lean",
+  "lean_name": "evaluateSeqAssocStore32HOL",
+  "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+  "hol_name": "evaluate_seq_assoc",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison pan_simpProof117-137 and literal seq_assoc_def18-40 otherwise Store32 arm: full arbitrary-prefix program/state result equality, no extra premise or IH. Source syntax remains this same constructor under SmartSeq; accepted evaluate_SmartSeq gives complete evaluation equality with Seq. Exact fixed-width/native MlS carriers and canonical finite-map state fields with genuine witness; positive BitVec/Type0 FFI translation only. Genuine case, full117 assembly stillopen; coordinator review pending, proof-only."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SeqAssocExact.lean",
+  "lean_name": "evaluateSeqAssocStoreByteHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+  "hol_name": "evaluate_seq_assoc",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison pan_simpProof117-137 and literal seq_assoc_def18-40 otherwise StoreByte arm: full arbitrary-prefix program/state result equality, no extra premise or IH. Source syntax remains this same constructor under SmartSeq; accepted evaluate_SmartSeq gives complete evaluation equality with Seq. Exact fixed-width/native MlS carriers and canonical finite-map state fields with genuine witness; positive BitVec/Type0 FFI translation only. Genuine case, full117 assembly stillopen; coordinator review pending, proof-only."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SeqAssocExact.lean",
+  "lean_name": "evaluateSeqAssocBreakHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+  "hol_name": "evaluate_seq_assoc",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison pan_simpProof117-137 and literal seq_assoc_def18-40 otherwise Break arm: full arbitrary-prefix program/state result equality, no extra premise or IH. Source syntax remains this same constructor under SmartSeq; accepted evaluate_SmartSeq gives complete evaluation equality with Seq. Exact fixed-width/native MlS carriers and canonical finite-map state fields with genuine witness; positive BitVec/Type0 FFI translation only. Genuine case, full117 assembly stillopen; coordinator review pending, proof-only."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SeqAssocExact.lean",
+  "lean_name": "evaluateSeqAssocContinueHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+  "hol_name": "evaluate_seq_assoc",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison pan_simpProof117-137 and literal seq_assoc_def18-40 otherwise Continue arm: full arbitrary-prefix program/state result equality, no extra premise or IH. Source syntax remains this same constructor under SmartSeq; accepted evaluate_SmartSeq gives complete evaluation equality with Seq. Exact fixed-width/native MlS carriers and canonical finite-map state fields with genuine witness; positive BitVec/Type0 FFI translation only. Genuine case, full117 assembly stillopen; coordinator review pending, proof-only."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SeqAssocExact.lean",
+  "lean_name": "evaluateSeqAssocExtCallHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+  "hol_name": "evaluate_seq_assoc",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison pan_simpProof117-137 and literal seq_assoc_def18-40 otherwise ExtCall arm: full arbitrary-prefix program/state result equality, no extra premise or IH. Source syntax remains this same constructor under SmartSeq; accepted evaluate_SmartSeq gives complete evaluation equality with Seq. Exact fixed-width/native MlS carriers and canonical finite-map state fields with genuine witness; positive BitVec/Type0 FFI translation only. Genuine case, full117 assembly stillopen; coordinator review pending, proof-only."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SeqAssocExact.lean",
+  "lean_name": "evaluateSeqAssocRaiseHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+  "hol_name": "evaluate_seq_assoc",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison pan_simpProof117-137 and literal seq_assoc_def18-40 otherwise Raise arm: full arbitrary-prefix program/state result equality, no extra premise or IH. Source syntax remains this same constructor under SmartSeq; accepted evaluate_SmartSeq gives complete evaluation equality with Seq. Exact fixed-width/native MlS carriers and canonical finite-map state fields with genuine witness; positive BitVec/Type0 FFI translation only. Genuine case, full117 assembly stillopen; coordinator review pending, proof-only."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SeqAssocExact.lean",
+  "lean_name": "evaluateSeqAssocReturnHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+  "hol_name": "evaluate_seq_assoc",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison pan_simpProof117-137 and literal seq_assoc_def18-40 otherwise Return arm: full arbitrary-prefix program/state result equality, no extra premise or IH. Source syntax remains this same constructor under SmartSeq; accepted evaluate_SmartSeq gives complete evaluation equality with Seq. Exact fixed-width/native MlS carriers and canonical finite-map state fields with genuine witness; positive BitVec/Type0 FFI translation only. Genuine case, full117 assembly stillopen; coordinator review pending, proof-only."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SeqAssocExact.lean",
+  "lean_name": "evaluateSeqAssocShMemLoadHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+  "hol_name": "evaluate_seq_assoc",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison pan_simpProof117-137 and literal seq_assoc_def18-40 otherwise ShMemLoad arm: full arbitrary-prefix program/state result equality, no extra premise or IH. Source syntax remains this same constructor under SmartSeq; accepted evaluate_SmartSeq gives complete evaluation equality with Seq. Exact fixed-width/native MlS carriers and canonical finite-map state fields with genuine witness; positive BitVec/Type0 FFI translation only. Genuine case, full117 assembly stillopen; coordinator review pending, proof-only."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SeqAssocExact.lean",
+  "lean_name": "evaluateSeqAssocShMemStoreHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+  "hol_name": "evaluate_seq_assoc",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison pan_simpProof117-137 and literal seq_assoc_def18-40 otherwise ShMemStore arm: full arbitrary-prefix program/state result equality, no extra premise or IH. Source syntax remains this same constructor under SmartSeq; accepted evaluate_SmartSeq gives complete evaluation equality with Seq. Exact fixed-width/native MlS carriers and canonical finite-map state fields with genuine witness; positive BitVec/Type0 FFI translation only. Genuine case, full117 assembly stillopen; coordinator review pending, proof-only."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SeqAssocExact.lean",
+  "lean_name": "evaluateSeqAssocTickHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+  "hol_name": "evaluate_seq_assoc",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "C source comparison pan_simpProof117-137 and literal seq_assoc_def18-40 otherwise Tick arm: full arbitrary-prefix program/state result equality, no extra premise or IH. Source syntax remains this same constructor under SmartSeq; accepted evaluate_SmartSeq gives complete evaluation equality with Seq. Exact fixed-width/native MlS carriers and canonical finite-map state fields with genuine witness; positive BitVec/Type0 FFI translation only. Genuine case, full117 assembly stillopen; coordinator review pending, proof-only."
 }
 ]
