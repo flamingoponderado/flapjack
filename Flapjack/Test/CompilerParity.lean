@@ -309,6 +309,7 @@ import Flapjack.Test.PanSemStateExactParity
 import Flapjack.Test.PanSemStateBridgeParity
 import Flapjack.Test.PanSemLocalUpdatesExactParity
 import Flapjack.Test.PanPropsShapeResVarParity
+import Flapjack.Test.PanPropsEvaluateClockSub1Parity
 import Flapjack.Test.PanCommonPropsZipDisjointParity
 import Flapjack.Test.CrepPropsAssignedVarsParity
 import Flapjack.Test.PanSemIsValidValueExactParity
@@ -375,6 +376,8 @@ import Flapjack.Test.StackSemFfiParity
 import Flapjack.Test.StackSemInstallParity
 import Flapjack.Test.StackSemMeasureParity
 import Flapjack.Test.StackProductionCodecParity
+import Flapjack.Test.StackWordPayloadParity
+import Flapjack.Test.StackMacroLeavesParity
 import Flapjack.Test.StackSemControlCasesParity
 import Flapjack.Test.PanGlobalsFpermCodeParity
 import Flapjack.Test.PanGlobalsFpermShMemLoadParity
@@ -1128,6 +1131,7 @@ def main : IO Unit := do
     Flapjack.Test.PanSemStateBridgeParity.runChecks,
     Flapjack.Test.PanSemLocalUpdatesExactParity.runChecks,
     Flapjack.Test.PanPropsShapeResVarParity.runChecks,
+    Flapjack.Test.PanPropsEvaluateClockSub1Parity.runChecks,
     Flapjack.Test.PanCommonPropsZipDisjointParity.runChecks,
     Flapjack.Test.CrepPropsAssignedVarsParity.runChecks,
     Flapjack.Test.PanSemIsValidValueExactParity.runChecks,
@@ -1182,6 +1186,8 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.StackSemInstallParity.runChecks,
     Flapjack.Test.StackSemMeasureParity.runChecks,
     Flapjack.Test.StackProductionCodecParity.runChecks,
+    Flapjack.Test.StackWordPayloadParity.runChecks,
+    Flapjack.Test.StackMacroLeavesParity.runChecks,
     Flapjack.Test.StackSemCopyWordsParity.runChecks,
     Flapjack.Test.StackSemStoreConstSemParity.runChecks,
     Flapjack.Test.StackSemStoreConstsParity.runChecks,
