@@ -27976,5 +27976,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-pxn.18.5.12.1) against stackSemScript.sml:743-745 check_store_consts_opt_def: the NONE stub is T; the SOME n stub is `lookup n c = SOME (Seq (StoreConsts t1 t2 NONE) (Return 0))`. Lean checkStoreConstsOpt over exact Spt (HolProg width) with sptLookup and exact constructors .seq/.storeConsts/.ret 0. Words qualifier for the width-indexed program carrier."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/backend_commonScript.sml",
+    "hol_name": "word_shift_def",
+    "lean_path": "Flapjack/Compiler/Backend/BackendCommon.lean",
+    "lean_name": "wordShiftAmount",
+    "statement_status": "reviewed_word_dimension_as_width",
+    "word_dimension_as_width": "width",
+    "reviewer": "flapjack-ds10 source comparison (2026-09-30; bead flapjack-pxn.18.5.12.4) against backend_commonScript.sml:157-164: HOL word_shift (:'a) = if dimindex(:'a) = 32 then 2 else 3:num, used only through the numeric dimension and with no word-valued carrier. Lean binds (width : Nat) [NeZero width] and defines wordShiftAmount width = if width = 32 then 2 else 3. Boundary observes 32->2, 64->3 checked by kernel examples in the same module."
   }
 ]
