@@ -29947,8 +29947,6 @@
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-b P0 0r2k source comparison HOL667-686: literal Seq/If unions, Loop, return+handler labels under SOME return, default empty; location zero-offset domain or existential successful Spt lookup and exact label membership. Faithful positive-width HolProg/config carrier. Generic helper observation correspondence kernel checked, no full carrier claim. Exact replay uses HolProg. No evaluator call to helpers found; no executed-path change claim. Coordinator review pending."
 },
-  
-  
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/Leaves.lean",
     "lean_name": "evaluateFreshLocal_Skip",
