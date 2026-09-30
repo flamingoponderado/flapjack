@@ -2054,6 +2054,9 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
     # These source/theorem pairs were checked against their HOL declaration
     # statements in the active review task, not merely copied from attributes.
     reviewed_exact = {
+        ("Flapjack/Misc/LList.lean", "lprefixAntisymHOL"),
+        ("Flapjack/Misc/LList.lean", "lprefixTransHOL"),
+        ("Flapjack/Misc/LList.lean", "prefixesLprefixTotalHOL"),
         ("Flapjack/Compiler/Backend/RegAlloc.lean", "isStackVar"),
         ("Flapjack/Compiler/Backend/RegAlloc.lean", "isPhyVar"),
         ("Flapjack/Compiler/Backend/RegAlloc.lean", "isAllocVar"),
