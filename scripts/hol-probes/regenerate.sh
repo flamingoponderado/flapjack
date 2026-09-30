@@ -679,6 +679,14 @@ run_probe pan_lang_size_probeScript.sml pan_lang_size_probe.out \
   MEM_IMP_exp_size exp_size_base \
   "$cake_dir/pancake/panLangScript.sml" \
   "$cake_dir/pancake"
+run_probe crep_inline_prog_size_type_probeScript.sml crep_inline_prog_size_type_probe.out \
+  prog_size_type exp_size_type unreach_elim_prog_size_typed \
+  "$cake_dir/pancake/proofs/crep_inlineProofScript.sml" \
+  "$cake_dir/pancake/proofs"
+run_probe crep_lang_size_probeScript.sml crep_lang_size_probe.out \
+  exp_size_def prog_size_def prog_size_seq prog_size_call prog_size_dec prog_size_ext prog_size_raise \
+  "$cake_dir/pancake/crepLangScript.sml" \
+  "$cake_dir/pancake"
 run_probe pan_lang_decl_predicates_probeScript.sml pan_lang_decl_predicates_probe.out \
   is_decl_decl is_decl_exception is_exn_decl_exception is_exn_decl_decl \
   is_name_name is_name_decl size_of_eids_empty size_of_eids_mixed \
