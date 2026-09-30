@@ -156,7 +156,10 @@ behavior. Flapjack's assembled end-to-end theorem is still unfinished.
 
 ## Trust and reproducibility notes
 
-The normal Lean kernel checks theorem elaboration. Some existing concrete
+The Lean kernel checks elaborated theorem statements and proof terms.
+Elaboration adds implicit arguments, inferred types, and resolved notation
+not explicit in the source; the resulting statement may differ from what
+the author intended. Some existing concrete
 regressions use `native_decide`; their locations are audited by
 `scripts/check-native-decide.sh` and the allowlist. This is a repository
 engineering policy and should not be confused with an independent review of
