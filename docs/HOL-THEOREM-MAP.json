@@ -35162,5 +35162,14 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Source comparison evaluate_fperm1721-1810 Continue constructor case: retains f/g/state/res/post and sole original source evaluation premise, target evaluation of fperm program at code-permuted input and exact unchanged result/code-permuted post. Original fperm identity default and total evaluate_def Continue state-preserving equation give proof; no target premise, recursive callback, Option failure, clock simplification or lookup assumption. Native MlS/ProgHOL/PanSemResultExact and canonical PanSemStateFiniteExact four maps/positive word dimension use reviewed translations with same-module unconditional roundtrip witness. Genuine case only, full theorem and other constructors remain open. Proof-only/no executable behavior change."
-}
+},
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+    "hol_name": "stack_names_comp_stack_asm_ok",
+    "lean_path": "Flapjack/Compiler/Backend/StackNames/AsmAdmissibility/Defaults.lean",
+    "lean_name": "stackNamesCompStackAsmOk_Default",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison .18.5.15.7.14.4: HOL616 comp_ind remaining nonrecursive constructors; explicit constructor selector excludes Inst/OpCurrHeap/ShMemOp/CodeBufferWrite/Raise/Return/Seq/If/Loop/Call, covered separately. Same stack_asm_name/names_ok/fixed_names antecedent and stack_asm_ok(comp f p) result. Exact Spt/HolProg/config and positive-width word translation only. Original comp preserves each constructor head; original stackProps812-829 target defaults True, including DataBufferWrite even though stack_asm_name checks its registers. Source guards retained, no successful target hypothesis or full theorem claim. Coordinator acceptance pending."
+  }
 ]
