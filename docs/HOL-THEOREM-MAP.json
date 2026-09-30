@@ -30955,5 +30955,37 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack local proof factoring; no standalone HOL original. Preserves exact update/FFI clauses."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileExpCorrect.lean",
+    "lean_name": "compileExpCorrectHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_exp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison2026-09-30 HOL103-157: full original forall s/e/v/ctxt/t statement, state_rel T plus successful source eval implies identical value from compile_exp target eval. No public IH, successful pass/target evaluation or extra shape premise. Nested structural ExpHOL/List induction generalizes value/context/target and discharges reviewed constructor IHs internally; Load supplies literal wf-shape guarded IH from structural child theorem, Load32/Byte arbitrary value/context/target IH retained. Global reviewed case; named structures impossible from state_rel empty structs; RStruct/Op/Panop pointwise list child proofs. Exact MlS/ShapeHOL/ExpHOL/ValueHOL carriers, canonical four state maps and context globals with two same-module roundtrip witnesses, positive width/NeZero and universe0 FFI. No executed compiler change. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileExpCorrect.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack canonical carrier roundtrip re-export for the full expression theorem representation qualifiers; no separate HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileExpCorrect.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack canonical carrier roundtrip re-export for the full expression theorem representation qualifiers; no separate HOL original."
   }
 ]
