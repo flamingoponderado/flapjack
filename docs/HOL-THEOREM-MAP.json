@@ -28514,5 +28514,65 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.9.2): HOL rebound evaluate_def (wordSemScript.sml:1369-1370, REWRITE_RULE [fix_clock_evaluate] evaluate_def), compared with the statement printed from wordSemTheory. It is a conjunction of 26 universally quantified equations, one per clause in HOL order, with HOL's binder order (for example !s c2 c1 for Seq, !s names exit_names c for Loop, and !s ret handler dest args for Call). Each right-hand side is the corresponding clause of the reviewed tagged evaluate (evaluate_def line 1016), with fix_clock removed from the Seq, Loop and returning-Call clauses (HOL prints no fix_clock), and with Lean-only termination annotations (match h :, dite on the clock) replaced by plain match and if. Install's classical equality is under open Classical, as in the definition. Each conjunct is proved from the equation lemma of evaluate and fix_clock_evaluate; no extra premise. Kernel-checked; axioms propext, Classical.choice, Quot.sound; qualifiers as for evaluate_def with the same-module witness WordSemEvaluateIndSupport.holFmapAsFiniteSupportWitness. Inherited assumption (PR #1179 review, bead flapjack-qfld): the Inst conjunct calls the tagged inst, which carries reals_as_rational_cuts for its FPSqrt rendering (docs/SOUNDNESS.md item 8); this declaration uses no real rendering itself. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimEvaluate.lean",
+    "lean_name": "unreachElimNotNoneEvaluate",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "unreach_elim_not_none_evaluate",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.5.46.3; crep_inlineProofScript.sml:1569-1573: same binders p s r s' p1 e; conjunction premise unreach_elim p = (p1, SOME e) /\\ evaluate (p,s) = (r,s'); conclusion ?e. r = SOME e), over the tagged exact unreachElimHOLExact (unreach_elim_def) and the exact Crep evaluator evalCrepSemHOLProgExact (evaluate_def) on CrepSemHOLState, whose memory-domain decidability is classical internally (no binder). No added premises. Proof: functional induction on unreach_elim (not_none) and the lexicographic (clock, size) evaluation induction evalCrepSemHOLProgExact_inductLex (correct), following HOL's evaluate_ind cases; kernel-checked."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimEvaluate.lean",
+    "lean_name": "unreachElimCorrect",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "unreach_elim_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.5.46.3; crep_inlineProofScript.sml:1608-1613: same binders p s r s' p1 s1; conjunction premise evaluate (p,s) = (r,s') /\\ r <> SOME Error /\\ unreach_elim p = (p1,s1); conclusion evaluate (p1,s) = (r,s')), over the tagged exact unreachElimHOLExact (unreach_elim_def) and the exact Crep evaluator evalCrepSemHOLProgExact (evaluate_def) on CrepSemHOLState, whose memory-domain decidability is classical internally (no binder). No added premises. Proof: functional induction on unreach_elim (not_none) and the lexicographic (clock, size) evaluation induction evalCrepSemHOLProgExact_inductLex (correct), following HOL's evaluate_ind cases; kernel-checked."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimEvaluate.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack support (bead flapjack-pxn.18.5.5.46.3): same-module canonical finite-support roundtrip witness re-export for the fmap_as_finite_support qualifier; no HOL original."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimEvaluate.lean",
+    "lean_name": "lexSmaller",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack support (bead flapjack-pxn.18.5.5.46.3): local lexicographic-measure helper for the (clock, size) induction; no HOL original."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimEvaluate.lean",
+    "lean_name": "lexClock",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack support (bead flapjack-pxn.18.5.5.46.3): local lexicographic-measure helper for the (clock, size) induction; no HOL original."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UnreachElimEvaluate.lean",
+    "lean_name": "clockLeOfEval",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack support (bead flapjack-pxn.18.5.5.46.3): local clock-monotonicity helper read off an evaluation equation; no HOL original."
   }
 ]
