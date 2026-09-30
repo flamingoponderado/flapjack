@@ -11,6 +11,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Memory
 import Flapjack.Pancake.Proofs.PanGlobals.ReadBytearray
 import Flapjack.Pancake.Proofs.PanGlobals.ByteStore
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Leaves
+import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.While
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.If
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Seq
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.ShMemLoad
