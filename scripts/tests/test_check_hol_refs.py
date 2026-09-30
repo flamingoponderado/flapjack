@@ -23,15 +23,20 @@ class ExternalHolSourcesTest(unittest.TestCase):
         import json
         base = root / "hol4"
         (base / "src/finite_maps").mkdir(parents=True)
+        (base / "examples/pl-semantics/lprefix_lub").mkdir(parents=True)
         (base / "COPYRIGHT").write_text("retained license")
         (base / "src/finite_maps/sptreeScript.sml").write_text("Theorem domain_union: T Proof simp[] QED")
+        (base / "examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml").write_text(
+            "Theorem IMP_build_lprefix_lub_EQ: T Proof simp[] QED")
         lock = {"repository": CHECKER["EXTERNAL_HOL_REPOSITORY"], "commit": "a" * 40,
                 "files": {p: hashlib.sha256((base / p).read_bytes()).hexdigest()
-                          for p in ["COPYRIGHT", "src/finite_maps/sptreeScript.sml"]}}
+                          for p in sorted(CHECKER["EXTERNAL_HOL_FILES"])}}
         (base / "SOURCES.json").write_text(json.dumps(lock))
 
     def test_repository_snapshot_pin(self):
         self.assertIsNone(CHECKER["hol_source_error"](CHECKER["ROOT"], CHECKER["EXTERNAL_HOL_PATH"]))
+        self.assertIsNone(
+            CHECKER["hol_source_error"](CHECKER["ROOT"], CHECKER["EXTERNAL_HOL_LPREFIX_LUB_PATH"]))
 
     def test_upstream_identity_rejected(self):
         import json
@@ -51,8 +56,21 @@ class ExternalHolSourcesTest(unittest.TestCase):
             self.fixture(root)
             self.assertIsNone(CHECKER["hol_source_error"](root, CHECKER["EXTERNAL_HOL_PATH"]))
 
+    def test_missing_lprefix_pin_rejected(self):
+        import json
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.fixture(root)
+            manifest = root / "hol4/SOURCES.json"
+            lock = json.loads(manifest.read_text())
+            del lock["files"]["examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml"]
+            manifest.write_text(json.dumps(lock))
+            self.assertIsNotNone(
+                CHECKER["hol_source_error"](root, CHECKER["EXTERNAL_HOL_LPREFIX_LUB_PATH"]))
+
     def test_source_and_license_drift_rejected(self):
-        for relative in ["COPYRIGHT", "src/finite_maps/sptreeScript.sml"]:
+        for relative in ["COPYRIGHT", "src/finite_maps/sptreeScript.sml",
+                         "examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml"]:
             with self.subTest(relative=relative), tempfile.TemporaryDirectory() as tmp:
                 root = Path(tmp)
                 self.fixture(root)
@@ -283,6 +301,73 @@ def lookupCodeHOLFiniteExact
                        "lookupCodeHOLFiniteExact", self.POSITIONS),
             [],
         )
+
+    def test_rejects_extra_implicit_proof_and_instance_binders(self):
+        equality = self.WITNESS.split(" :\n", 1)[1].split(" :=", 1)[0]
+        for binder in ("{h : True}", "[h : Inhabited Value]",
+                       "{h : lookupCodeHOLExact code.lookup fname arguments = none}",
+                       "{h : " + equality + "}"):
+            witness = self.WITNESS.replace("(arguments : List Value) :",
+                                          f"(arguments : List Value) {binder} :")
+            with self.subTest(binder=binder):
+                errors = self.CHECK(self.module(witness=witness).splitlines(),
+                                    self.SOURCE, "lookupCodeHOLFiniteExact", self.POSITIONS)
+                self.assertTrue(any("extra implicit premises" in e for e in errors))
+
+    def test_accepts_matching_implicit_width_parameters(self):
+        source = self.SOURCE.replace("    (code :", "    {width : Nat} [NeZero width] (code :", 1)
+        witness = self.WITNESS.replace("    (code :", "    {width : Nat} [NeZero width] (code :", 1)
+        self.assertEqual(self.CHECK(self.module(source, witness).splitlines(),
+                                   source, "lookupCodeHOLFiniteExact", self.POSITIONS), [])
+
+    def test_rejects_ambient_section_premises(self):
+        equality = self.WITNESS.split(" :\n", 1)[1].split(" :=", 1)[0]
+        for command in (
+            "variable {h : ∀ code fname arguments, " + equality + "}\ninclude h\n",
+            "variable {h : True}\n",
+            "variables {h : True}\n",
+            "include h in\n",
+            "omit h in\n",
+            "section Ambient variable {h : True}\n",
+        ):
+            with self.subTest(command=command):
+                module = self.SOURCE + command + self.WITNESS
+                errors = self.CHECK(module.splitlines(), self.SOURCE,
+                                    "lookupCodeHOLFiniteExact", self.POSITIONS)
+                self.assertTrue(any("without ambient" in e for e in errors))
+
+    def test_rejects_kernel_valid_inherited_premise_reproducer(self):
+        source = (Path(__file__).parent / "fixtures" /
+                  "heterogeneous_ambient_premise.lean").read_text()
+        errors = self.CHECK(source.splitlines(), source,
+                            "lookupCodeHOLFiniteExact", self.POSITIONS)
+        self.assertTrue(any("without ambient" in e for e in errors))
+
+    def test_accepts_sections_without_ambient_binders_and_commented_commands(self):
+        module = "section\n/- variable {h : True}; include h -/\n" + self.module() + "end\n"
+        self.assertEqual(self.CHECK(module.splitlines(), self.SOURCE,
+                                   "lookupCodeHOLFiniteExact", self.POSITIONS), [])
+
+    def test_rejects_inert_or_embedded_raw_application(self):
+        raw = "lookupCodeHOLExact code.lookup fname arguments"
+        for replacement in (f"(fun _ => none) ({raw})", f"id ({raw})",
+                            f"({raw}) extra", f"(let discarded := {raw}; none)"):
+            witness = self.WITNESS.replace(raw, replacement)
+            with self.subTest(replacement=replacement):
+                errors = self.CHECK(self.module(witness=witness).splitlines(),
+                                    self.SOURCE, "lookupCodeHOLFiniteExact", self.POSITIONS)
+                self.assertTrue(any("independent raw lookup" in e for e in errors))
+
+    def test_rejects_inert_or_trailing_canonical_projection(self):
+        projection = "(lookupCodeHOLFiniteExact code fname arguments).map\n      (fun (body, locals, shape) => (body, locals.lookup, shape))"
+        for replacement in (f"(fun _ => none) ({projection})",
+                            f"id ({projection})", f"{projection} extra",
+                            projection.replace("(body, locals.lookup, shape))",
+                                               "(body, locals.lookup, shape) extra)")):
+            witness = self.WITNESS.replace(projection, replacement)
+            with self.subTest(replacement=replacement):
+                self.assertTrue(self.CHECK(self.module(witness=witness).splitlines(),
+                                          self.SOURCE, "lookupCodeHOLFiniteExact", self.POSITIONS))
 
     def test_rejects_raw_map_in_either_position(self):
         raw_input = self.SOURCE.replace(

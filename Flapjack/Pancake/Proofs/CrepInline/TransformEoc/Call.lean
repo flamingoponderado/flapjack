@@ -8,9 +8,9 @@ import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.Call
 bead `flapjack-pxn.18.5.5.47.2.3`).  `transform_eoc` rewrites a tail call
 `Call NONE` to `Call (SOME (rts, NONE))`, leaves `Call (SOME (_, NONE))`
 unchanged and transforms the handler of `Call (SOME (_, SOME (eid, p)))`.  The
-only induction hypothesis is HOL `evaluate_ind`'s guarded handler premise,
-specialized to `transformEocGoal`, as in the accepted `evaluate_locals_same_fdom`
-Call case; HOL's callee premise is not needed.
+tagged case retains both guarded `evaluate_ind` premises at `transformEocGoal`.
+The handler-only calculation is stronger untagged support: its proof does not
+use the callee motive, but that omission is not an exact HOL case statement.
 -/
 
 namespace Flapjack
@@ -100,6 +100,18 @@ private theorem tailGoal {width : Nat} [NeZero width] {σ : Type}
               exact ⟨_, _, rfl, ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩, rfl⟩
             · obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
               exact ⟨_, _, rfl, ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩, rfl⟩
+
+/-- HOL `evaluate_ind`'s guarded Call callee premise specialized to the
+`transform_eoc_correct` motive. All successful-call guards are retained. -/
+def TransformEocCallCalleeIH {width : Nat} [NeZero width] {σ : Type}
+    (s : CrepSemHOLState width σ)
+    (info : Option (List Nat × Option (BitVec width × CrepProgHOL width)))
+    (fname : Flapjack.Basis.Pure.MlString.MlString) (args : List (CrepExpHOL width)) : Prop :=
+  ∀ values prog newlocals,
+    args.mapM (evalCrepSemHOLExp s) = some values →
+    lookupCodeFiniteHOL s.code fname values values.length = some (prog, newlocals) →
+    ¬ crepReturnInfoNodupError info → s.clock ≠ 0 →
+    transformEocGoal prog { decClockCrepSemHOL s with locals := newlocals }
 
 /-- HOL `evaluate_ind`'s guarded Call handler premise, specialized to
     `transformEocGoal` (as `ihHandler` of the accepted locals-domain Call case). -/
@@ -194,15 +206,9 @@ private theorem handlerGoal {width : Nat} [NeZero width] {σ : Type}
               · obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
                 exact ⟨_, _, rfl, stateRel_refl _, rfl⟩
 
-/-- `Call` case of HOL `transform_eoc_correct` (Resume at `:2024-2038`), for
-    every call shape, with only the guarded `evaluate_ind` handler premise.
-    Specialized stronger case: HOL's unused callee-body IH is omitted;
-    the handler guards are retained, with tuple/result aliases normalized.
-    The assembled theorem discharges this premise internally. -/
-@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "transform_eoc_correct"
-  (fmap_as_finite_support := [locals, globals, code])
-  (words_as_type_indexed_bitvec)]
-theorem transformEocCorrect_Call {width : Nat} [NeZero width] {σ : Type}
+/-- Flapjack-specific stronger handler-only calculation. This omits the
+callee IH of HOL's induction case, so it deliberately has no HOL tag. -/
+theorem transformEocCallHandlerCalculation {width : Nat} [NeZero width] {σ : Type}
     (info : Option (List Nat × Option (BitVec width × CrepProgHOL width)))
     (fname : Flapjack.Basis.Pure.MlString.MlString) (args : List (CrepExpHOL width))
     (s : CrepSemHOLState width σ)
@@ -230,6 +236,39 @@ theorem transformEocCorrect_Call {width : Nat} [NeZero width] {σ : Type}
   · exact tailGoal fname args s
   · exact leafGoal _ s (fun _ => by simp [transformEocHOLExact]) (by simp [hasReturnHOLExact])
   · exact handlerGoal names eid h fname args s ih
+
+/-- Exact Call case of HOL `transform_eoc_correct`: both guarded callee and
+handler induction premises are retained. The calculation needs only the
+handler premise; the complete assembly supplies both internally. -/
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "transform_eoc_correct"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
+theorem transformEocCorrect_Call {width : Nat} [NeZero width] {σ : Type}
+    (info : Option (List Nat × Option (BitVec width × CrepProgHOL width)))
+    (fname : Flapjack.Basis.Pure.MlString.MlString) (args : List (CrepExpHOL width))
+    (s : CrepSemHOLState width σ)
+    (_ihCallee : TransformEocCallCalleeIH s info fname args)
+    (ih : TransformEocCallHandlerIH s info fname args) :
+    ∀ (r : Option (CrepResultHOLExact width)) (s' : CrepSemHOLState width σ)
+      (res : Option CrepEarlyExitHOL) (rts : List Nat),
+      evalCrepSemHOLProgExact s (.call info fname args) = (r, s') ∧
+        unreachElimHOLExact (.call info fname args) = ((.call info fname args), res) ∧
+        notBranchRetHOLExact (.call info fname args) = true ∧
+        (∀ retvs, r = some (.return retvs) → rts.length = retvs.length) ∧
+        (∀ x, x ∈ rts → x ∉ crepVarProgHOLExact (.call info fname args)) ∧
+        (∃ z, rts.mapM s.locals.lookup = some z) ∧
+        rts.Nodup ∧
+        r ≠ some .error →
+      ∃ r1 s1', evalCrepSemHOLProgExact s (transformEocHOLExact rts (.call info fname args)) = (r1, s1') ∧
+        crepInlineStateRelExact s' s1' ∧
+        match r with
+        | none => r1 = none ∧ crepInlineLocalsStrongRelExact s' s1'
+        | some (.break n) => r1 = some (.break n) ∧ crepInlineLocalsStrongRelExact s' s1'
+        | some (.continue n) => r1 = some (.continue n) ∧ crepInlineLocalsStrongRelExact s' s1'
+        | some (.return retvs) => r1 = none ∧ rts.mapM s1'.locals.lookup = some retvs
+        | some .error => False
+        | _ => r1 = r :=
+  transformEocCallHandlerCalculation info fname args s ih
 
 end CrepInlineTransformEoc
 

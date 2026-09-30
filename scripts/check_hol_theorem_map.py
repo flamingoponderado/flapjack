@@ -1787,6 +1787,7 @@ VALID_STATUSES = {
     "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_equalities",
     "reviewed_fmap_as_finite_support_equality",
+    "reviewed_fmap_as_finite_support_equality_words_as_type_indexed_bitvec",
     "reviewed_words_as_type_indexed_bitvec",
     "reviewed_word_dimension_as_width",
     "reviewed_reals_as_rational_cuts",
@@ -2057,6 +2058,17 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         ("Flapjack/Compiler/Backend/RegAlloc.lean", "isPhyVar"),
         ("Flapjack/Compiler/Backend/RegAlloc.lean", "isAllocVar"),
         ("Flapjack/Compiler/Backend/RegAlloc.lean", "conventionPartitions"),
+        ("Flapjack/Misc/LprefixLub.lean", "equivLprefixChain"),
+        ("Flapjack/Misc/LprefixLub.lean", "lprefixRel"),
+        ("Flapjack/Misc/LprefixLub.lean", "lprefix_lub_is_chain"),
+        ("Flapjack/Misc/LprefixLub.lean", "equivLprefixChain_thm"),
+        ("Flapjack/Misc/LprefixLub.lean", "equiv_lprefix_chain_thm2"),
+        ("Flapjack/Misc/LprefixLub.lean", "lprefix_rel_lnth"),
+        ("Flapjack/Misc/LprefixLub.lean", "IMP_equiv_lprefix_chain"),
+        ("Flapjack/Misc/LprefixLub.lean", "lprefix_lub_equiv_chain2"),
+        ("Flapjack/Misc/LprefixLub.lean", "IMP_build_lprefix_lub_EQ"),
+        ("Flapjack/Misc/LprefixLub.lean", "llistShorter"),
+        ("Flapjack/Misc/LprefixLub.lean", "llistShorter_fromList"),
         ("Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean", "CrepResultHOLExact"),
         ("Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean", "exitLoopCrepResult"),
         ("Flapjack/Pancake/Proofs/CrepInline.lean", "genlist_less_than"),
@@ -2077,6 +2089,7 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
          "structInfosOkHOLExact_lookup_fields_nodup"),
         ("Flapjack/Pancake/Proofs/PanGlobals.lean", "ALOOKUP_MAP3"),
         ("Flapjack/Pancake/Proofs/PanGlobals.lean", "ALOOKUP_MAP4"),
+        ("Flapjack/Pancake/Proofs/PanGlobals.lean", "numCasesLemma"),
         ("Flapjack/Pancake/PanGlobals.lean", "fpermName"),
         ("Flapjack/Pancake/PanGlobals.lean", "fpermHOL"),
         ("Flapjack/Pancake/PanGlobals.lean", "fpermDecsHOL"),
@@ -2364,17 +2377,33 @@ def validate_inventory(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support_equality (single map "
                 "equality) is mutually exclusive with other finite-map qualifiers"
             )
+        combined_equality_words_status = (
+            "reviewed_fmap_as_finite_support_equality_words_as_type_indexed_bitvec"
+        )
         if fmap_equality and status == "reviewed_exact":
             errors.append(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support_equality @[hol] tag cannot have "
                 "reviewed_exact status; use reviewed_fmap_as_finite_support_equality after source comparison"
             )
-        if fmap_equality and status != "reviewed_fmap_as_finite_support_equality":
+        if fmap_equality and words_bitvec and status != combined_equality_words_status:
+            errors.append(
+                f"{key[0]}:{key[1]}: fmap_as_finite_support_equality combined with "
+                "words_as_type_indexed_bitvec requires the combined review status "
+                "reviewed_fmap_as_finite_support_equality_words_as_type_indexed_bitvec"
+            )
+        if (
+            fmap_equality
+            and not words_bitvec
+            and status != "reviewed_fmap_as_finite_support_equality"
+        ):
             errors.append(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support_equality @[hol] tag needs a reviewed "
                 "source classification (reviewed_fmap_as_finite_support_equality)"
             )
-        if not fmap_equality and status == "reviewed_fmap_as_finite_support_equality":
+        if not fmap_equality and status in {
+            "reviewed_fmap_as_finite_support_equality",
+            combined_equality_words_status,
+        }:
             errors.append(
                 f"{key[0]}:{key[1]}: reviewed_fmap_as_finite_support_equality needs a "
                 "fmap_as_finite_support_equality @[hol] tag"
@@ -2601,10 +2630,12 @@ def validate_inventory(
             combined_words_status,
             "reviewed_fmap_as_finite_support_function_words_as_type_indexed_bitvec",
             "reviewed_fmap_as_finite_support_result_words_as_type_indexed_bitvec",
+            combined_heterogeneous_function_words_status,
             combined_relation_words_status,
             combined_parameter_words_status,
             combined_existential_words_status,
             combined_relation_existential_words_status,
+            combined_equality_words_status,
         }:
             errors.append(
                 f"{key[0]}:{key[1]}: words_as_type_indexed_bitvec @[hol] tag needs a reviewed "

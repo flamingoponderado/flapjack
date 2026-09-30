@@ -464,7 +464,7 @@ theorem evalPanSemRecursiveCallFiniteContext_call_lookup_none {width : Nat} {σ 
   dsimp only
   rw [hargs]
   dsimp only
-  rw [hlookupNone]
+  rw [lookupCodeCanonicalHOL, hlookupNone]
 
 /-- HOL `evaluate_def` `DecCall` clause short circuit: an argument list that fails
     to evaluate yields the error result at the unchanged context. -/
@@ -498,7 +498,7 @@ theorem evalPanSemRecursiveCallFiniteContext_decCall_lookup_none {width : Nat} {
   dsimp only
   rw [hargs]
   dsimp only
-  rw [hlookupNone]
+  rw [lookupCodeCanonicalHOL, hlookupNone]
 
 /-- HOL `evaluate_def` `Call` clause clock-exhaustion branch: when the caller's
     clock is exhausted the call returns `TimeOut` with empty locals. -/
@@ -519,7 +519,7 @@ theorem evalPanSemRecursiveCallFiniteContext_call_clock_zero {width : Nat} {σ :
   dsimp only
   rw [hargs]
   dsimp only
-  rw [hlookup]
+  rw [lookupCodeCanonicalHOL, hlookup]
   dsimp only
   rw [if_pos hclock]
 
@@ -544,7 +544,7 @@ theorem evalPanSemRecursiveCallFiniteContext_decCall_clock_zero {width : Nat} {�
   dsimp only
   rw [hargs]
   dsimp only
-  rw [hlookup]
+  rw [lookupCodeCanonicalHOL, hlookup]
   dsimp only
   rw [if_pos hclock]
 
@@ -604,7 +604,7 @@ theorem evalPanSemRecursiveCallFiniteContext_call_return_shape_mismatch
           (some (.returned value)) bodyContext) := by
   rw [evalPanSemRecursiveCallFiniteContext.eq_5]
   simp only [hargs]
-  rw [hlookup]
+  rw [lookupCodeCanonicalHOL, hlookup]
   simp only [if_neg hclock, hbody]
   have hshapeNe : ¬ shapeEqHOL (shapeOfHOLExact value) returnShape = true := by
     rw [hshape]
@@ -722,7 +722,7 @@ theorem evalPanSemRecursiveCallFiniteContext_call_matched_exception_handler
         (callContinuationContextHOLFinite context fixedContext handlerVar value) := by
   rw [evalPanSemRecursiveCallFiniteContext.eq_5]
   simp only [hargs]
-  rw [hlookup]
+  rw [lookupCodeCanonicalHOL, hlookup]
   simp only [if_neg hclock]
   rw [hbody]
   simp [hshape, hshapeEq, hvalid]
@@ -1029,7 +1029,7 @@ theorem evalPanSemRecursiveCallFiniteContext_decCall_return_shape_mismatch
           (some (.returned value)) bodyContext) := by
   rw [evalPanSemRecursiveCallFiniteContext.eq_6]
   simp only [hargs]
-  rw [hlookup]
+  rw [lookupCodeCanonicalHOL, hlookup]
   simp only [if_neg hclock, hbody]
   rcases hshape with hdecl | hreturn
   · have hshapeNe : ¬ (shapeEqHOL (shapeOfHOLExact value) shape &&
@@ -1150,7 +1150,7 @@ theorem evalPanSemRecursiveCallFiniteContext_decCall_return_continuation
       _ = _ := hbody
   rw [evalPanSemRecursiveCallFiniteContext.eq_6]
   simp only [hargs]
-  rw [hlookup]
+  rw [lookupCodeCanonicalHOL, hlookup]
   simp only [if_neg hclock, hbodyGenerated]
   rw [if_pos (by simp [hshape])]
   rw [hcontinuation]

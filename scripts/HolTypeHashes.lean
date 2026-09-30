@@ -1,5 +1,12 @@
+import Flapjack.Compiler.Backend.StackNames.AsmAdmissibility.Inst
+import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallGlobal
+import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsCons
+import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.DecCall
+import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallHandlerNoDestination
+import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallLocalHandler
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallNoDestination
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallLocal
+import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.AssignGlobal
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.TailCall
 import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.Assemble
 import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.AssignPrimitive
@@ -50,6 +57,8 @@ import Flapjack.Pancake.Proofs.PanGlobals.StateRelationClock
 import Flapjack.Pancake.Proofs.PanGlobals.CompileExpLeaves
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Base
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Seq
+import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.ShMem
+import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.ShMemGlobal
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Store
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Return
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Store32
@@ -123,6 +132,7 @@ import Flapjack.Compiler.Backend.Semantics.StackSem.SizeBitmapCases
 import Flapjack.Compiler.Backend.Semantics.StackSem.Control
 import Flapjack.Compiler.Backend.Semantics.StackSem.Labels
 import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
+import Flapjack.Compiler.Backend.Semantics.StackSem.ShMem
 import Flapjack.Compiler.Backend.Semantics.StackSem.Expressions
 import Flapjack.Compiler.Backend.Semantics.StackSem.StoreConsts
 import Flapjack.Compiler.Backend.Semantics.StackSem.StoreConstsGuard
@@ -296,6 +306,15 @@ import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.While
 import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.Assembly
 import Flapjack.Pancake.Proofs.CrepInline.EvaluateLocals.Call
 import Flapjack.Pancake.Proofs.CrepInline.EvaluateStateLocals.Atoms
+import Flapjack.Pancake.Proofs.CrepInline.EvaluateStateLocals.Structural
+import Flapjack.Pancake.Proofs.CrepInline.EvaluateStateLocals.MoreAtoms
+import Flapjack.Pancake.Proofs.CrepInline.EvaluateStateLocals.While
+import Flapjack.Pancake.Proofs.CrepInline.EvaluateStateLocals.Call
+import Flapjack.Pancake.Proofs.CrepInline.EvaluateStateLocals.Assembly
+import Flapjack.Pancake.Proofs.CrepInline.ArgLoad
+import Flapjack.Pancake.Proofs.CrepInline.NestedDecsSublocals
+import Flapjack.Pancake.Proofs.CrepInline.NotVarProg
+import Flapjack.Pancake.Proofs.CrepInline.ArgLoadStrong
 import Flapjack.Pancake.Proofs.CrepInline.Expressions
 import Flapjack.Pancake.Proofs.CrepInline.ExpressionRelations
 import Flapjack.Pancake.Proofs.CrepInline.UpdateListLocals
@@ -321,6 +340,7 @@ import Flapjack.Pancake.Proofs.CrepInline.ShMem
 import Flapjack.Pancake.Proofs.PanGlobals
 import Flapjack.Pancake.Proofs.PanGlobals.MemStoresAppend
 import Flapjack.Pancake.Proofs.PanGlobals.FpermCode
+import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Leaves
 import Flapjack.Pancake.Proofs.PanGlobals.DeclListLemmas
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelationExact
 import Flapjack.Pancake.Proofs.PanGlobals.CompileDecsStructural

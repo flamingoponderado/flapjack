@@ -41,8 +41,17 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 LEAN_DIRS = [ROOT / "Flapjack", ROOT / "Flapjack.lean"]
 
-# External sources are deliberately restricted to the reviewed snapshot.
+# External sources are deliberately restricted to the reviewed snapshots.
 EXTERNAL_HOL_PATH = "hol4/src/finite_maps/sptreeScript.sml"
+EXTERNAL_HOL_LPREFIX_LUB_PATH = (
+    "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml"
+)
+EXTERNAL_HOL_PATHS = frozenset({EXTERNAL_HOL_PATH, EXTERNAL_HOL_LPREFIX_LUB_PATH})
+EXTERNAL_HOL_FILES = frozenset({
+    "COPYRIGHT",
+    "src/finite_maps/sptreeScript.sml",
+    "examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+})
 EXTERNAL_HOL_REPOSITORY = "https://github.com/HOL-Theorem-Prover/HOL"
 
 
@@ -53,7 +62,7 @@ def hol_source_error(root: Path, path: str) -> str | None:
         return "invalid repository-relative HOL source path"
     if path.startswith("cakeml/"):
         return None
-    if path != EXTERNAL_HOL_PATH:
+    if path not in EXTERNAL_HOL_PATHS:
         return "HOL source is not a supported pinned external path"
     try:
         lock = json.loads((root / "hol4/SOURCES.json").read_text())
@@ -62,7 +71,7 @@ def hol_source_error(root: Path, path: str) -> str | None:
                 or not isinstance(lock["commit"], str)
                 or not re.fullmatch(r"[0-9a-f]{40}", lock["commit"])
                 or not isinstance(lock["files"], dict)
-                or set(lock["files"]) != {"COPYRIGHT", "src/finite_maps/sptreeScript.sml"}):
+                or set(lock["files"]) != EXTERNAL_HOL_FILES):
             return "invalid pinned external HOL source manifest"
         for relative, digest in lock["files"].items():
             target = root / "hol4" / relative
@@ -1620,6 +1629,7 @@ def _option_map_projects_result_slot(
     result_component_count: int,
 ) -> bool:
     """Whether `(decl ...).map` projects precisely its named result map slot."""
+    target_side = _strip_outer_parens(target_side)
     target = re.search(rf"\b{re.escape(decl_name)}\b", target_side)
     if target is None:
         return False
@@ -1633,7 +1643,7 @@ def _option_map_projects_result_slot(
             depth -= 1
             if depth == 0:
                 opening = None
-    if opening is None:
+    if opening != 0:
         return False
     call = _parenthesized_content(target_side, opening)
     if call is None:
@@ -1642,8 +1652,8 @@ def _option_map_projects_result_slot(
     map_match = re.match(r"\s*\.map\b", target_side[call_end:])
     if map_match is None:
         return False
-    after_map = target_side[call_end + map_match.end():]
-    lambda_match = re.search(r"\bfun\b", after_map)
+    after_map = _strip_outer_parens(target_side[call_end + map_match.end():])
+    lambda_match = re.match(r"fun\b", after_map)
     if lambda_match is None:
         return False
     cursor = lambda_match.end()
@@ -1675,7 +1685,7 @@ def _option_map_projects_result_slot(
         expected = f"{binder}.lookup" if index == result_position else binder
         if _strip_outer_parens(component) != expected:
             return False
-    return True
+    return not after_map[projected[1]:].strip()
 
 
 def fmap_as_finite_support_function_errors(
@@ -1793,7 +1803,7 @@ def fmap_as_finite_support_function_errors(
     return errors
 
 
-def _function_declaration_signature(source: str, decl_name: str):
+def _function_declaration_signature(source: str, decl_name: str, *, all_binders: bool = False):
     """Return explicit argument binder types and result type for a def/theorem."""
     declaration = re.search(
         rf"\b(?:def|theorem|lemma)\s+{re.escape(decl_name)}\b", source
@@ -1828,7 +1838,9 @@ def _function_declaration_signature(source: str, decl_name: str):
             if depth:
                 return None
             inner = header[index + 1:cursor - 1].strip()
-            if char == "(":
+            if all_binders:
+                groups.append((char, inner))
+            elif char == "(":
                 binder = _split_type_top_level(inner, (":",))
                 if len(binder) == 2:
                     groups.append((binder[0], binder[1]))
@@ -1861,6 +1873,16 @@ def _same_module_heterogeneous_fmap_witness_errors(
         ]
     statement = match.group("statement")
     errors: list[str] = []
+    # A written header omits section variables that Lean inserts at elaboration
+    # (including proof premises forced by `include`). Do not approximate Lean's
+    # section-variable inference here. This narrow qualifier requires a module
+    # with self-contained binders and no ambient variable/context commands.
+    # Widths and NeZero instances remain supported as explicit header binders.
+    if re.search(r"\b(?:variable|variables|include|omit)\b", module_source):
+        errors.append(
+            "heterogeneous finite-map projection witness requires self-contained "
+            "binders in a module without ambient variable/include/omit commands"
+        )
     signature = _function_declaration_signature(module_source, expected)
     if signature is None:
         errors.append(
@@ -1878,6 +1900,16 @@ def _same_module_heterogeneous_fmap_witness_errors(
                 "heterogeneous finite-map projection witness must quantify exactly "
                 "the tagged operation's explicit inputs"
             )
+    # Implicit proof premises and instances are premises too. Compare every
+    # binder against the operation, including its width/type parameters.
+    target_full = _function_declaration_signature(module_source, decl_name, all_binders=True)
+    witness_full = _function_declaration_signature(module_source, expected, all_binders=True)
+    normalize_binders = lambda sig: [(kind, re.sub(r"\s+", "", text))
+                                     for kind, text in sig[0]] if sig else None
+    if (target_full is None or witness_full is None or
+            normalize_binders(target_full) != normalize_binders(witness_full)):
+        errors.append("heterogeneous finite-map projection witness must retain exactly "
+                      "all operation binders, with no extra implicit premises or instances")
     if "↔" in proposition:
         errors.append(
             "heterogeneous finite-map projection witness must conclude an equality, not iff"
@@ -1937,7 +1969,10 @@ def _same_module_heterogeneous_fmap_witness_errors(
                 r"\b" + re.escape(decl_name) + r"\s+" +
                 r"\s+".join(re.escape(name) for name in names) + r"\b"
             )
-            if target_call.search(target_side) is None:
+            canonical_side = _strip_outer_parens(target_side)
+            canonical_call = _parenthesized_content(canonical_side, 0)
+            if (canonical_call is None or
+                    target_call.fullmatch(canonical_call[0].strip()) is None):
                 errors.append(
                     "heterogeneous finite-map projection witness must apply the "
                     "tagged operation to its explicit inputs in declaration order"
@@ -1950,7 +1985,7 @@ def _same_module_heterogeneous_fmap_witness_errors(
                 r"\b(lookup[A-Za-z0-9_']*)\s+" +
                 r"\s+".join(re.escape(name) for name in raw_arguments) + r"\b"
             )
-            raw_match = raw_call.search(raw_side)
+            raw_match = raw_call.fullmatch(_strip_outer_parens(raw_side))
             if raw_match is None or raw_match.group(1) == decl_name:
                 errors.append(
                     "heterogeneous finite-map projection witness must apply an "

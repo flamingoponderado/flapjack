@@ -65,11 +65,15 @@ theorem flookupFpermCodeHOL {width : Nat} [NeZero width] (f g : MlS)
         (entry.1, fpermHOL f g entry.2.1, entry.2.2)) := by
   simp only [flookupFpermCodeHOL', fpermName_cancel]
 
-/-- Flapjack finite-map equality corresponding to HOL fperm_code_FEMPTY.
-The single map-equality conclusion currently has no supported qualifier:
-fmap_as_finite_support_equalities requires at least two conjuncts, while the
-result qualifier requires a lookup witness on the tagged declaration itself.
-Keep this untagged until a single-equality representation rule is reviewed. -/
+/-- Source comparison, flapjack-ds10 (2026-09-30, bead
+`flapjack-pxn.18.5.2.22.4.3`). Exact port of HOL `fperm_code_FEMPTY`
+(`cakeml/pancake/proofs/pan_globalsProofScript.sml:1657`):
+`fperm_code f g FEMPTY = FEMPTY`. The whole statement is a single
+`HolFiniteMapExact` map equality, so it carries the dedicated singular
+`(fmap_as_finite_support_equality)` qualifier, witnessed at the lookup level by
+`holFmapAsFiniteSupportEqualityWitness_fpermCodeHOL_empty`. -/
+@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "fperm_code_FEMPTY"
+  (fmap_as_finite_support_equality) (words_as_type_indexed_bitvec)]
 theorem fpermCodeHOL_empty {width : Nat} [NeZero width] (f g : MlS) :
     fpermCodeHOL f g
       (HolFiniteMapExact.empty : HolFiniteMapExact MlS
@@ -77,6 +81,16 @@ theorem fpermCodeHOL_empty {width : Nat} [NeZero width] (f g : MlS) :
   apply HolFiniteMapExact.ext
   funext name
   rfl
+
+/-- Unconditional lookup-level witness for `fpermCodeHOL_empty`: both sides
+agree at the same universally bound key `name`. -/
+theorem holFmapAsFiniteSupportEqualityWitness_fpermCodeHOL_empty
+    {width : Nat} [NeZero width] (f g : MlS) (name : MlS) :
+    (fpermCodeHOL f g
+      (HolFiniteMapExact.empty : HolFiniteMapExact MlS
+        (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))).lookup name =
+      HolFiniteMapExact.empty.lookup name := by
+  rw [fpermCodeHOL_empty]
 
 @[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "fperm_decs_append"
   (words_as_type_indexed_bitvec)]
@@ -134,5 +148,46 @@ theorem fpermCodeHOL_updateList_functions {width : Nat} [NeZero width] (f g : Ml
       (fpermCodeHOL f g fm).updateListEq (functionsHOL (fpermDecsHOL f g code)) := by
   rw [functionsFpermDecsHOL]
   exact fpermCodeHOL_updateListEq f g fm (functionsHOL code)
+
+/-- Exact HOL `lookup_code_fperm_code`: code/body/name permutation leaves
+parameter validation and the returned callee locals and return shape unchanged.
+The canonical lookup used here is the executed faithful Call/DecCall entry. -/
+@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "lookup_code_fperm_code"
+  (fmap_as_finite_support_relation := [code]) (words_as_type_indexed_bitvec)]
+theorem lookupCodeFpermCodeHOL {width : Nat} [NeZero width] (f g : MlS)
+    (code : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))
+    (name : MlS) (args : List (ValueHOL width)) :
+    PanSemStateFiniteExact.lookupCodeCanonicalHOL (fpermCodeHOL f g code) (fpermName f g name) args =
+      (PanSemStateFiniteExact.lookupCodeCanonicalHOL code name args).map (fun entry =>
+        (fpermHOL f g entry.1, entry.2.1, entry.2.2)) := by
+  have hraw : lookupCodeHOLExact (fpermCodeHOL f g code).lookup (fpermName f g name) args =
+      (lookupCodeHOLExact code.lookup name args).map (fun entry =>
+        (fpermHOL f g entry.1, entry.2.1, entry.2.2)) := by
+    unfold lookupCodeHOLExact
+    rw [flookupFpermCodeHOL]
+    cases h : code.lookup name with
+    | none => simp
+    | some entry =>
+        obtain ⟨params, body, shape⟩ := entry
+        simp only [Option.map_some]
+        split <;> simp_all
+  let project := fun (entry : ProgHOL width × HolFiniteMapExact MlS (ValueHOL width) × ShapeHOL) =>
+    (entry.1, entry.2.1.lookup, entry.2.2)
+  have hinj : Function.Injective project := by
+    rintro ⟨p1,l1,s1⟩ ⟨p2,l2,s2⟩ h
+    simp only [project, Prod.mk.injEq] at h
+    obtain ⟨rfl, hl, rfl⟩ := h
+    have hm : l1 = l2 := HolFiniteMapExact.ext hl
+    subst l2
+    rfl
+  apply Option.map_injective hinj
+  rw [PanSemStateFiniteExact.holFmapAsFiniteSupportHeterogeneousFunctionWitness_lookupCodeCanonicalHOL]
+  rw [Option.map_map]
+  change _ = Option.map ((fun (entry : ProgHOL width × (MlS → Option (ValueHOL width)) × ShapeHOL) =>
+    (fpermHOL f g entry.1, entry.2.1, entry.2.2)) ∘ project)
+      (PanSemStateFiniteExact.lookupCodeCanonicalHOL code name args)
+  rw [← Option.map_map]
+  rw [PanSemStateFiniteExact.holFmapAsFiniteSupportHeterogeneousFunctionWitness_lookupCodeCanonicalHOL]
+  exact hraw
 
 end Flapjack
