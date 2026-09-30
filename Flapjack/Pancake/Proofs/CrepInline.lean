@@ -2421,7 +2421,7 @@ theorem inlineProgCorrectStoreCaseExact {width : Nat} [NeZero width] {σ : Type}
     [CrepSemHOLState.locals, CrepSemHOLState.globals,
       CrepSemHOLState.code, inlFs, inlBag])
   (words_as_type_indexed_bitvec)]
-private theorem inlineProgCorrectStoreGlobCaseExact {width : Nat} [NeZero width] {σ : Type}
+theorem inlineProgCorrectStoreGlobCaseExact {width : Nat} [NeZero width] {σ : Type}
     (s : CrepSemHOLState width σ)
     (inlFs : HolFiniteMapExact CrepInlineMapHOLName (List Nat × CrepProgHOL width))
     (inlBag : HolFiniteMapExact CrepInlineMapHOLName (List Nat × CrepProgHOL width))
@@ -2478,7 +2478,7 @@ private theorem inlineProgCorrectStoreGlobCaseExact {width : Nat} [NeZero width]
     [CrepSemHOLState.locals, CrepSemHOLState.globals,
       CrepSemHOLState.code, inlFs, inlBag])
   (words_as_type_indexed_bitvec)]
-private theorem inlineProgCorrectStore32CaseExact {width : Nat} [NeZero width] {σ : Type}
+theorem inlineProgCorrectStore32CaseExact {width : Nat} [NeZero width] {σ : Type}
     (s : CrepSemHOLState width σ)
     (inlFs : HolFiniteMapExact CrepInlineMapHOLName (List Nat × CrepProgHOL width))
     (inlBag : HolFiniteMapExact CrepInlineMapHOLName (List Nat × CrepProgHOL width))
@@ -2557,7 +2557,7 @@ private theorem inlineProgCorrectStore32CaseExact {width : Nat} [NeZero width] {
     [CrepSemHOLState.locals, CrepSemHOLState.globals,
       CrepSemHOLState.code, inlFs, inlBag])
   (words_as_type_indexed_bitvec)]
-private theorem inlineProgCorrectStoreByteCaseExact {width : Nat} [NeZero width] {σ : Type}
+theorem inlineProgCorrectStoreByteCaseExact {width : Nat} [NeZero width] {σ : Type}
     (s : CrepSemHOLState width σ)
     (inlFs : HolFiniteMapExact CrepInlineMapHOLName (List Nat × CrepProgHOL width))
     (inlBag : HolFiniteMapExact CrepInlineMapHOLName (List Nat × CrepProgHOL width))
@@ -2636,7 +2636,7 @@ private theorem inlineProgCorrectStoreByteCaseExact {width : Nat} [NeZero width]
     [CrepSemHOLState.locals, CrepSemHOLState.globals,
       CrepSemHOLState.code, inlFs, inlBag])
   (words_as_type_indexed_bitvec)]
-private theorem inlineProgCorrectTickCaseExact {width : Nat} [NeZero width] {σ : Type}
+theorem inlineProgCorrectTickCaseExact {width : Nat} [NeZero width] {σ : Type}
     (s : CrepSemHOLState width σ)
     (inlFs : HolFiniteMapExact CrepInlineMapHOLName (List Nat × CrepProgHOL width))
     (inlBag : HolFiniteMapExact CrepInlineMapHOLName (List Nat × CrepProgHOL width))

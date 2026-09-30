@@ -1,3 +1,4 @@
+import Flapjack.Pancake.PanStructs.CompileExpExact
 import Flapjack.Pancake.PanStructs.OldExpShapeExact
 import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.RoundTrip
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.Expressions
@@ -51,6 +52,7 @@ import Flapjack.Pancake.PanLang.Prog.FreeVarIdsCodec
 import Flapjack.Pancake.PanGlobals.CallHandlerExact
 import Flapjack.Pancake.PanGlobals.ProgramExactRoute
 import Flapjack.Pancake.PanGlobals.DeclarationProgramRoute
+import Flapjack.Pancake.PanGlobals.CompileTopExact
 import Flapjack.Pancake.PanLang.Decl
 import Flapjack.Pancake.PanGlobals.CompileExpExact
 import Flapjack.Pancake.PanGlobals.CompileExpExactRoute
