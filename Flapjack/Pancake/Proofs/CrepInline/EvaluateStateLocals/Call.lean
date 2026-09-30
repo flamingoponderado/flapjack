@@ -5,14 +5,17 @@ import Flapjack.Pancake.Proofs.CrepInline.EvaluateStateLocals.MoreAtoms
 
 `Resume evaluate_state_locals_rel_strong[Call]`
 (`cakeml/pancake/proofs/crep_inlineProofScript.sml:511-562`, bead
-`flapjack-pxn.18.5.5.43.5.7`).  The only induction
-hypothesis is HOL `evaluate_ind`'s guarded Call handler premise (handler at
-`st with locals := s.locals`) at the motive `strongLocalsGoal`, spelled with the
-same evaluator guards as the accepted `evaluate_locals_same_fdom` Call case.
-SPECIALISED, STRONGER case: HOL's proof also uses the callee premise
-`P (prog, dec_clock s with locals := newlocals)`, but here `state_rel s t`
-makes the callee's start state `dec_clock t with locals := newlocals` equal to
-the source one, so both callee runs coincide and that premise is not needed.
+`flapjack-pxn.18.5.5.43.5.7`).  The tagged case takes
+HOL `evaluate_ind`'s two guarded Call premises at the motive
+`strongLocalsGoal`: the callee premise (body at `dec_clock s with locals :=
+newlocals`) and the handler premise (handler at `st with locals := s.locals`),
+with the evaluator guard spellings of the accepted `evaluate_locals_same_fdom`
+Call case (their equivalence with `evaluate_ind`'s spellings is recorded in
+`EvaluateLocals/Assembly.lean`).  The proof, the untagged `callStrongGoal`,
+uses only the handler premise: `state_rel s t` makes the callee's start state
+`dec_clock t with locals := newlocals` equal to the source one, so both callee
+runs coincide.  The tagged statement keeps HOL's full premise list and is not
+a stronger case.
 -/
 
 namespace Flapjack.CrepInlineExact
@@ -27,6 +30,19 @@ theorem holFmapAsFiniteSupportRelationWitness_CrepSemHOLState
       CrepSemBroadState.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
   CrepSemHOLState.holFmapAsFiniteSupportWitness
 end StrongCallSupport
+
+/-- HOL `evaluate_ind`'s guarded Call callee premise at `strongLocalsGoal`:
+    arguments evaluate, the code lookup succeeds, the return names are
+    distinct and the clock is nonzero. -/
+def StrongLocalsCallCalleeIH {width : Nat} [NeZero width] {σ : Type}
+    (s : CrepSemHOLState width σ)
+    (info : Option (List Nat × Option (BitVec width × CrepProgHOL width)))
+    (fname : Flapjack.Basis.Pure.MlString.MlString) (args : List (CrepExpHOL width)) : Prop :=
+  ∀ values prog newlocals,
+    args.mapM (evalCrepSemHOLExp s) = some values →
+    lookupCodeFiniteHOL s.code fname values values.length = some (prog, newlocals) →
+    ¬ crepReturnInfoNodupError info → s.clock ≠ 0 →
+    strongLocalsGoal prog { decClockCrepSemHOL s with locals := newlocals }
 
 /-- HOL `evaluate_ind`'s guarded Call handler premise at `strongLocalsGoal`. -/
 def StrongLocalsCallHandlerIH {width : Nat} [NeZero width] {σ : Type}
@@ -159,9 +175,10 @@ theorem callStrongGoal {width : Nat} [NeZero width] {σ : Type}
               · exact emp _ trivial hev
 
 /-- `Call` case of HOL `evaluate_state_locals_rel_strong` (Resume at `:511-562`)
-    for every call shape.  SPECIALISED, STRONGER case: only HOL `evaluate_ind`'s
-    guarded handler premise is assumed; the callee premise is unnecessary because
-    `state_rel` makes both callee start states equal (see the module note). -/
+    for every call shape, with both of HOL `evaluate_ind`'s guarded Call
+    premises: the callee premise `_ihCallee` and the handler premise `ih`.
+    The proof uses only `ih` (see the module note); `_ihCallee` is kept so the
+    statement is HOL's case, not a stronger one. -/
 @[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "evaluate_state_locals_rel_strong"
   (fmap_as_finite_support_relation :=
     [CrepSemHOLState.locals, CrepSemHOLState.globals, CrepSemHOLState.code])
@@ -169,7 +186,9 @@ theorem callStrongGoal {width : Nat} [NeZero width] {σ : Type}
 theorem evaluateStateLocalsRelStrongCallExact {width : Nat} [NeZero width] {σ : Type}
     (info : Option (List Nat × Option (BitVec width × CrepProgHOL width)))
     (fname : Flapjack.Basis.Pure.MlString.MlString) (args : List (CrepExpHOL width))
-    (s : CrepSemHOLState width σ) (ih : StrongLocalsCallHandlerIH s info fname args)
+    (s : CrepSemHOLState width σ)
+    (_ihCallee : StrongLocalsCallCalleeIH s info fname args)
+    (ih : StrongLocalsCallHandlerIH s info fname args)
     (r : Option (CrepResultHOLExact width)) (s' t : CrepSemHOLState width σ)
     (heval : evalCrepSemHOLProgExact s (.call info fname args) = (r, s'))
     (herror : r ≠ some .error)
