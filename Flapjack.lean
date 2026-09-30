@@ -1,9 +1,9 @@
 import Flapjack.Compiler.Backend.Semantics.StackSem.FixedStackCases
 import Flapjack.Pancake.PanStructs.CompileExpProduction
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnv
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnvs
 import Flapjack.Compiler.Backend.StackProps.FixedNames
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.InstConst
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnv
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnvs
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutNames
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyRemap
 import Flapjack.Pancake.PanStructs.CompileDeclsExact
@@ -282,8 +282,10 @@ import Flapjack.Pancake.PanGlobalsByteRanged
 import Flapjack.Pancake.Proofs.PanGlobals
 import Flapjack.Pancake.Proofs.PanGlobals.FpermCode
 import Flapjack.Pancake.Proofs.PanGlobals.DeclListLemmas
+import Flapjack.Pancake.Proofs.PanGlobals.StateRelationExact
 import Flapjack.Pancake.Proofs.PanGlobals.CompileDecsStructural
 import Flapjack.Pancake.Proofs.PanGlobals.CompileTopShapeWf
+import Flapjack.Pancake.Proofs.PanGlobals.CompileTopSemanticsExact
 import Flapjack.Pancake.Proofs.PanToCrep.EvaluateCases
 import Flapjack.Pancake.Proofs.PanToCrep.TotalEvaluateCases
 import Flapjack.Pancake.Proofs.PanToCrep.EvaluateNestedAssign
@@ -395,6 +397,7 @@ import Flapjack.Pancake.Proofs.CrepInline.NestedDecs
 import Flapjack.Pancake.Proofs.CrepInline.ShMem
 import Flapjack.Pancake.Proofs.CrepInline.Call
 import Flapjack.Pancake.Proofs.CrepInline.UpdateListLocals
+import Flapjack.Pancake.Proofs.CrepInline.UnreachElim
 import Flapjack.Pancake.CrepInline.Canonical
 import Flapjack.Pancake.CrepInline.InlineRouteBridge
 import Flapjack.CompileFunctionDistinct
