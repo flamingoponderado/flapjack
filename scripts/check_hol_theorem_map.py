@@ -435,6 +435,39 @@ DEFINITION_RE = re.compile(
     r"(?:def|abbrev|opaque|theorem|lemma)\s+([^\s:({\[]+)"
 )
 DOCUMENTED_MISMATCHES = {
+    ("Flapjack/Compiler/Backend/StackNames.lean", "riFindName"): (
+        "cakeml/compiler/backend/stack_namesScript.sml", "ri_find_name_def",
+        "flapjack-luna-b .15.7.7 source review: HOL tlookup names is Spt num, not unrestricted function-backed map; tag withdrawn, exact migration remains open."
+    ),
+    ("Flapjack/Compiler/Backend/StackNames.lean", "instFindName"): (
+        "cakeml/compiler/backend/stack_namesScript.sml", "inst_find_name_def",
+        "flapjack-luna-b .15.7.7 source review: HOL tlookup names is Spt num, not unrestricted function-backed map; tag withdrawn, exact migration remains open."
+    ),
+    ("Flapjack/Compiler/Backend/StackNames.lean", "destFindName"): (
+        "cakeml/compiler/backend/stack_namesScript.sml", "dest_find_name_def",
+        "flapjack-luna-b .15.7.7 source review: HOL tlookup names is Spt num, not unrestricted function-backed map; tag withdrawn, exact migration remains open."
+    ),
+    ("Flapjack/Compiler/Backend/StackNames.lean", "progComp"): (
+        "cakeml/compiler/backend/stack_namesScript.sml", "comp_def",
+        "flapjack-luna-b .15.7.7 source review: HOL tlookup names is Spt num, not unrestricted function-backed map; tag withdrawn, exact migration remains open."
+    ),
+    ("Flapjack/Compiler/Backend/StackNames.lean", "progCompEntry"): (
+        "cakeml/compiler/backend/stack_namesScript.sml", "prog_comp_def",
+        "flapjack-luna-b .15.7.7 source review: HOL tlookup names is Spt num, not unrestricted function-backed map; tag withdrawn, exact migration remains open."
+    ),
+    ("Flapjack/Compiler/Backend/StackNames.lean", "compile"): (
+        "cakeml/compiler/backend/stack_namesScript.sml", "compile_def",
+        "flapjack-luna-b .15.7.7 source review: HOL tlookup names is Spt num, not unrestricted function-backed map; tag withdrawn, exact migration remains open."
+    ),
+    ("Flapjack/Compiler/Backend/StackNames.lean", "map_fst_compile"): (
+        "cakeml/compiler/backend/proofs/stack_namesProofScript.sml", "MAP_FST_compile",
+        "flapjack-luna-b .15.7.7 source review: HOL tlookup names is Spt num, not unrestricted function-backed map; tag withdrawn, exact migration remains open."
+    ),
+    ("Flapjack/Compiler/Backend/StackNames.lean", "namesOkHOL"): (
+        "cakeml/compiler/backend/stack_namesScript.sml", "names_ok_def",
+        "flapjack-luna-b .15.7.7 source review: HOL tlookup names is Spt num, not unrestricted function-backed map; tag withdrawn, exact migration remains open."
+    ),
+
     ("Flapjack/Pancake/Proofs/CrepInline.lean", "crepInlineStateRelW"): (
         "cakeml/pancake/proofs/crep_inlineProofScript.sml",
         "state_rel_def",
