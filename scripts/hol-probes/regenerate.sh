@@ -2503,6 +2503,12 @@ run_probe pan_sem_evaluate_ind_probeScript.sml pan_sem_evaluate_ind_probe.out \
   evaluate_ind "$cake_dir/pancake/semantics/panSemScript.sml" \
   "$cake_dir/pancake/semantics"
 
+# The expression-level panSem eval_ind principle is tdefn-generated; capture its
+# exact recursive IH binders (e.g. the Load shape-wf guard) for source review.
+run_probe pan_sem_eval_ind_probeScript.sml pan_sem_eval_ind_probe.out \
+  eval_ind "$cake_dir/pancake/semantics/panSemScript.sml" \
+  "$cake_dir/pancake/semantics"
+
 run_probe word_alloc_key_map_probeScript.sml word_alloc_key_map_probe.out \
   key_map_mixed key_map_collision key_map_done \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"

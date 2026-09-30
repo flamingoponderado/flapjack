@@ -3138,8 +3138,16 @@ handler-shaped `P res (crepStampExactDomains state loopState)`, carrying the
 result component (and hence the `none`/`continue 0` guard) unchanged. Applying
 that helper to the `hwhile_none`/`hwhile_continue` handler hypotheses therefore
 produces this plain `ihWhile` with no extra premise, so the correspondence is
-kernel-checked rather than asserted. Flapjack-specific `inlineProgHOLExact`
-inline rendering. -/
+kernel-checked rather than asserted.
+
+SOURCE-GUARD CORRESPONDENCE: the printed Crep `evaluate_ind` While conjunct
+(`scripts/hol-probes/crep_sem_evaluate_ind_probe.out`) guards every recursive
+call with `eval s e = SOME v2 ∧ v2 = Word w ∧ w ≠ 0w ∧ s.clock ≠ 0`, and the
+two `While` recursive clauses additionally carry `(res,s1) = evaluate (c,dec_clock
+s)` plus `res = SOME (Continue 0)` / `res = NONE`.  Accordingly `ihBody` and
+`ihWhile` below take the literal outer guards `evalCrepSemHOLExp s condition =
+some (.word w)`, `w ≠ 0`, `s.clock ≠ 0` before their conclusions. Flapjack-specific
+`inlineProgHOLExact` inline rendering. -/
 @[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "inline_prog_correct"
   (fmap_as_finite_support_relation :=
     [CrepSemHOLState.locals, CrepSemHOLState.globals, CrepSemHOLState.code,
@@ -3161,7 +3169,9 @@ theorem inlineProgCorrectWhileCaseExact {width : Nat} [NeZero width] {σ : Type}
     (hstate : crepInlineStateRelCodeExact s t)
     (hlocals : crepInlineLocalsStrongRelExact s t)
     (hcode : crepInlineCodeInlRelExact inlFs s t)
-    (ihBody : ∀ (result : Option (CrepResultHOLExact width))
+    (ihBody : (w : BitVec width) →
+        evalCrepSemHOLExp s condition = some (.word w) → w ≠ 0 → s.clock ≠ 0 →
+        ∀ (result : Option (CrepResultHOLExact width))
         (source' : CrepSemHOLState width σ)
         (inlFs' : HolFiniteMapExact CrepInlineMapHOLName
           (List Nat × CrepProgHOL width))
@@ -3187,7 +3197,9 @@ theorem inlineProgCorrectWhileCaseExact {width : Nat} [NeZero width] {σ : Type}
           | some (CrepResultHOLExact.continue _) => crepInlineLocalsStrongRelExact source' target'
           | some .error => False
           | _ => True)
-    (ihWhile : ∀ (loopState : CrepSemHOLState width σ)
+    (ihWhile : (w : BitVec width) →
+        evalCrepSemHOLExp s condition = some (.word w) → w ≠ 0 → s.clock ≠ 0 →
+        ∀ (loopState : CrepSemHOLState width σ)
         (loopResult : Option (CrepResultHOLExact width)),
         evalCrepSemHOLProgExact (decClockCrepSemHOL s) body = (loopResult, loopState) →
         (loopResult = none ∨
@@ -3280,7 +3292,7 @@ theorem inlineProgCorrectWhileCaseExact {width : Nat} [NeZero width] {σ : Type}
                 · simp only [hbodyErr, exitLoopCrepResult] at hsource
                   exact absurd (congrArg Prod.fst hsource).symm hnotError
                 · obtain ⟨targetLoop, htargetBody, hstateLoop, hcodeLoop, hlocalsLoop⟩ :=
-                    ihBody loopRes loopState inlFs (decClockCrepSemHOL t) inlBag hbody hbodyErr
+                    ihBody w hcond hw hc loopRes loopState inlFs (decClockCrepSemHOL t) inlBag hbody hbodyErr
                       (by simpa only [decClockCrepSemHOL] using hsubmap)
                       hbag (srel_decclock s t hstate)
                       (by simpa only [crepInlineLocalsStrongRelExact, decClockCrepSemHOL] using hlocals)
@@ -3293,7 +3305,7 @@ theorem inlineProgCorrectWhileCaseExact {width : Nat} [NeZero width] {σ : Type}
                   | none =>
                       simp only [hbody] at hsource
                       obtain ⟨targetFinal, htargetFinal, hstateFinal, hcodeFinal, hlocalsFinal⟩ :=
-                        ihWhile loopState none hbody (Or.inl rfl)
+                        ihWhile w hcond hw hc loopState none hbody (Or.inl rfl)
                           r s' inlFs targetLoop inlBag hsource hnotError
                           hsubmapLoop hbag hstateLoop hlocalsLoop hcodeLoop
                       refine ⟨targetFinal, ?_, hstateFinal, hcodeFinal, ?_⟩
@@ -3312,7 +3324,7 @@ theorem inlineProgCorrectWhileCaseExact {width : Nat} [NeZero width] {σ : Type}
                           rcases n with _ | n
                           · simp only [hbody] at hsource
                             obtain ⟨targetFinal, htargetFinal, hstateFinal, hcodeFinal, hlocalsFinal⟩ :=
-                              ihWhile loopState (some (.continue 0)) hbody (Or.inr rfl)
+                              ihWhile w hcond hw hc loopState (some (.continue 0)) hbody (Or.inr rfl)
                                 r s' inlFs targetLoop inlBag hsource hnotError
                                 hsubmapLoop hbag hstateLoop hlocalsLoop hcodeLoop
                             refine ⟨targetFinal, ?_, hstateFinal, hcodeFinal, ?_⟩
