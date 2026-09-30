@@ -1,3 +1,6 @@
+import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.TailCall
+import Flapjack.Pancake.Proofs.PanGlobals.GlobalStorePreservation
+import Flapjack.Pancake.Proofs.PanGlobals.GlobalStoreReload
 import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.Assemble
 import Flapjack.Pancake.Proofs.PanGlobals.GlobalUpdateSupport
 import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.AssignPrimitive
@@ -10,6 +13,7 @@ import Flapjack.Pancake.Proofs.CrepInline.WhileInduction
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.While
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Raise
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Primitive
+import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.ExtCall
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Dec
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.If
 import Flapjack.Compiler.Backend.Semantics.StackSem.LocValueCase
@@ -71,6 +75,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.StateRelationLocals
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsShape
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsDisjoint
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsSimulation
+import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsRanges
 import Flapjack.Compiler.Backend.Semantics.StackSem.FixedStackCases
 import Flapjack.Compiler.Backend.Semantics.StackSem.DynamicStackCases
 import Flapjack.Compiler.Backend.Semantics.StackSem.SizeBitmapCases
@@ -391,6 +396,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.Leaves
 import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.Results
 import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.ExtCall
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsMemory
+import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsStore
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsAlignment
 import Flapjack.Pancake.Proofs.PanToCrep.EvaluateCases
 import Flapjack.Pancake.Proofs.PanToCrep.TotalEvaluateCases

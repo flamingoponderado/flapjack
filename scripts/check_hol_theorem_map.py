@@ -396,6 +396,10 @@ DEFINITION_RE = re.compile(
     r"(?:def|abbrev|opaque|theorem|lemma)\s+([^\s:({\[]+)"
 )
 DOCUMENTED_MISMATCHES = {
+    ("Flapjack/Pancake/Proofs/PanGlobals/StateRelationLocals.lean", "resVarFEMPTYExact"): (
+        "cakeml/pancake/proofs/pan_globalsProofScript.sml", "res_var_FEMPTY",
+        "flapjack-ds10 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.32.6; documented_mismatch, tag withdrawn after coordinator review). HOL res_var_FEMPTY (pan_globalsProofScript.sml:1011-1015) is res_var FEMPTY (n,NONE) = FEMPTY over the bare polymorphic finite-map carrier; the Lean statement renders that carrier with HolFiniteMapExact (resVarEq/empty). No existing finite-map qualifier classifies a tagged theorem whose whole content is a single map equality (fmap_as_finite_support_result is def-only by its lookup-target witness rule; fmap_as_finite_support_equalities needs >=2 top-level conjuncts). Faithful classification tracked by flapjack-pxn.18.5.2.32.6.1."
+    ),
     ("Flapjack/Pancake/Proofs/CrepInline/UnreachElimProgSize.lean", "unreachElimProgSize"): (
         "cakeml/pancake/proofs/crep_inlineProofScript.sml", "unreach_elim_prog_size",
         "flapjack-ds10 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.5.50; documented_mismatch). HOL unreach_elim_prog_size (crep_inlineProofScript.sml:1730-1733), elaborated type in scripts/hol-probes/crep_inline_prog_size_type_probe.out, is forall (p q : 'a crepLang$prog) (r : early_exit option) (f : 'a -> num). unreach_elim p = (q,r) ==> prog_size f q <= prog_size f p, where 'a is the same bare HOL type index that indexes 'a word. The untagged Lean declaration quantifies an independent {alpha : Type} (f : alpha -> Nat), an extra type quantifier: it is implied by each HOL instance only because prog_size never applies f, which does not license replacing the bare index carrier. A BitVec-width-domain rendering was attempted and rejected by coordinator review (words_as_type_indexed_bitvec licenses HOL word values, not arbitrary bare alpha; checker-green is not review acceptance). Faithful translation/review of the bare index carrier, or a reviewed size-family translation removing the irrelevant function uniformly, remains open."
@@ -1779,6 +1783,7 @@ VALID_STATUSES = {
     "reviewed_fmap_as_finite_support_relation",
     "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_equalities",
+    "reviewed_fmap_as_finite_support_equality",
     "reviewed_words_as_type_indexed_bitvec",
     "reviewed_word_dimension_as_width",
     "reviewed_reals_as_rational_cuts",
@@ -1924,12 +1929,14 @@ def tagged_declarations(
              fmap_relation, fmap_equalities, words_bitvec,
              fmap_parameters, fmap_existentials, dimension_width,
              fmap_function_positions,
-             fmap_heterogeneous_function_positions, reals_cuts) in HOL_ATTRIBUTE_SITES(
+             fmap_heterogeneous_function_positions, reals_cuts,
+             fmap_equality) in HOL_ATTRIBUTE_SITES(
                  lines, include_fmap_existentials=True,
                  include_word_dimension_width=True,
                  include_fmap_function=True,
                  include_fmap_heterogeneous_function=True,
                  include_reals_as_rational_cuts=True,
+                 include_fmap_as_finite_support_equality=True,
              ):
             lean_name = FIND_LEAN_DECL(lines, line - 1)
             key = (rel, lean_name)
@@ -1940,7 +1947,7 @@ def tagged_declarations(
                      boundary_fields, fmap_fields, fmap_result, fmap_relation,
                      fmap_equalities, words_bitvec, fmap_parameters,
                      fmap_existentials, dimension_width, fmap_function_positions,
-                     fmap_heterogeneous_function_positions, reals_cuts)
+                     fmap_heterogeneous_function_positions, reals_cuts, fmap_equality)
             if key in tagged and tagged[key] != value:
                 raise ValueError(f"conflicting @[hol] references for {rel}:{lean_name}")
             tagged[key] = value
@@ -1956,6 +1963,7 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         fmap_result, fmap_relation, fmap_equalities, words_bitvec, fmap_parameters,
         fmap_existentials, dimension_width,
         fmap_function_positions, fmap_heterogeneous_function_positions, reals_cuts,
+        fmap_equality,
     ) in tagged.items():
         entry = {
             "hol_path": hol_path,
@@ -1998,6 +2006,8 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
             entry["word_dimension_as_width"] = dimension_width
         if reals_cuts:
             entry["reals_as_rational_cuts"] = True
+        if fmap_equality:
+            entry["fmap_as_finite_support_equality"] = True
         inventory[(lean_path, lean_name)] = entry
 
     for lean_path, lean_name in proof_theorem_declarations(root):
@@ -2287,6 +2297,7 @@ def validate_inventory(
             tag[14] if tag is not None and len(tag) > 14 else ()
         )
         reals_cuts = bool(tag[15]) if tag is not None and len(tag) > 15 else False
+        fmap_equality = bool(tag[16]) if tag is not None and len(tag) > 16 else False
         manifest_list_fields = tuple(record.get("list_as_array", ()))
         manifest_names_fields = tuple(record.get("names_as_string", ()))
         manifest_boundary_fields = tuple(record.get("names_as_string_boundary", ()))
@@ -2300,6 +2311,7 @@ def validate_inventory(
         manifest_fmap_existentials = tuple(record.get("fmap_as_finite_support_existentials", ()))
         manifest_fmap_relation = tuple(record.get("fmap_as_finite_support_relation", ()))
         manifest_fmap_equalities = bool(record.get("fmap_as_finite_support_equalities", False))
+        manifest_fmap_equality = bool(record.get("fmap_as_finite_support_equality", False))
         tag_fmap_relation = tuple(
             f"{carrier}.{field}" if field else carrier
             for carrier, field in fmap_relation
@@ -2348,6 +2360,41 @@ def validate_inventory(
             errors.append(
                 f"{key[0]}:{key[1]}: manifest fmap_as_finite_support_equalities does not match its @[hol] tag"
             )
+        if manifest_fmap_equality != fmap_equality:
+            errors.append(
+                f"{key[0]}:{key[1]}: manifest fmap_as_finite_support_equality does not match its @[hol] tag"
+            )
+        if fmap_equality and (
+            fmap_fields or fmap_result or fmap_relation or fmap_equalities
+            or fmap_parameters or fmap_existentials or fmap_function_positions
+            or fmap_heterogeneous_function_positions
+        ):
+            errors.append(
+                f"{key[0]}:{key[1]}: fmap_as_finite_support_equality (single map "
+                "equality) is mutually exclusive with other finite-map qualifiers"
+            )
+        if fmap_equality and status == "reviewed_exact":
+            errors.append(
+                f"{key[0]}:{key[1]}: fmap_as_finite_support_equality @[hol] tag cannot have "
+                "reviewed_exact status; use reviewed_fmap_as_finite_support_equality after source comparison"
+            )
+        if fmap_equality and status != "reviewed_fmap_as_finite_support_equality":
+            errors.append(
+                f"{key[0]}:{key[1]}: fmap_as_finite_support_equality @[hol] tag needs a reviewed "
+                "source classification (reviewed_fmap_as_finite_support_equality)"
+            )
+        if not fmap_equality and status == "reviewed_fmap_as_finite_support_equality":
+            errors.append(
+                f"{key[0]}:{key[1]}: reviewed_fmap_as_finite_support_equality needs a "
+                "fmap_as_finite_support_equality @[hol] tag"
+            )
+        if fmap_equality:
+            equality_reviewer_text = reviewer.lower() if isinstance(reviewer, str) else ""
+            if "source" not in equality_reviewer_text or "fmap_as_finite_support_equality" not in equality_reviewer_text:
+                errors.append(
+                    f"{key[0]}:{key[1]}: reviewed_fmap_as_finite_support_equality requires a "
+                    "source-comparison note naming the qualifier"
+                )
         manifest_words_bitvec = bool(record.get("words_as_type_indexed_bitvec", False))
         if manifest_words_bitvec != words_bitvec:
             errors.append(
@@ -2704,7 +2751,7 @@ def validate_inventory(
                     f"{key[0]}:{key[1]}: reviewed_fmap_as_finite_support_result requires a "
                     "source-comparison note in the reviewer field"
                 )
-        if fmap_equalities and (fmap_fields or fmap_result or fmap_relation or fmap_parameters):
+        if fmap_equalities and (fmap_fields or fmap_result or fmap_relation or fmap_parameters or fmap_equality):
             errors.append(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support_equalities (theorem-level map "
                 "equalities) is mutually exclusive with the field/result/relation qualifiers"
@@ -2733,7 +2780,7 @@ def validate_inventory(
                 )
         if fmap_function_positions and (
             fmap_fields or fmap_result or fmap_parameters or fmap_existentials
-            or fmap_relation or fmap_equalities
+            or fmap_relation or fmap_equalities or fmap_equality
         ):
             errors.append(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support_function is mutually "
@@ -2741,7 +2788,7 @@ def validate_inventory(
             )
         if fmap_heterogeneous_function_positions and (
             fmap_fields or fmap_result or fmap_parameters or fmap_existentials
-            or fmap_relation or fmap_equalities or fmap_function_positions
+            or fmap_relation or fmap_equalities or fmap_function_positions or fmap_equality
         ):
             errors.append(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support_heterogeneous_function is "

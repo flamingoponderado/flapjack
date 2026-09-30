@@ -1,3 +1,4 @@
+import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.TailCall
 import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.Assemble
 import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.AssignPrimitive
 import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.ShMemStore
@@ -8,6 +9,7 @@ import Flapjack.Pancake.Proofs.CrepInline.WhileInduction
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.While
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Raise
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Primitive
+import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.ExtCall
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Dec
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.If
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.AssignLocal
@@ -546,6 +548,8 @@ elab "#emit_hol_type_hashes" : command => do
             toJson (ref.fmapAsFiniteSupportRelation.map (fun entry => if entry.1.isEmpty then entry.2 else s!"{entry.1}.{entry.2}"))),
           ("fmap_as_finite_support_equalities", toJson ref.fmapAsFiniteSupportEqualities),
           ("words_as_type_indexed_bitvec", toJson ref.wordsAsTypeIndexedBitvec)]
+        if ref.fmapAsFiniteSupportEquality then
+          qualifiers := qualifiers ++ [("fmap_as_finite_support_equality", toJson true)]
         if !ref.fmapAsFiniteSupportHeterogeneousFunction.isEmpty then
           qualifiers := qualifiers ++ [
             ("fmap_as_finite_support_heterogeneous_function",
