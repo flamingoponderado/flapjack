@@ -23,4 +23,7 @@ example : liveExpressionKeys (.const 255 : WordExp (BitVec 8)) = [] := by decide
 -- lookup=[]
 example : liveExpressionKeys (.lookup (.temp 31) : WordExp (BitVec 8)) = [] := by decide +kernel
 
+/-- The six kernel-replayed direct HOL rows are registered in `lake test`. -/
+def runChecks : IO Bool := pure true
+
 end Flapjack.WordAlloc
