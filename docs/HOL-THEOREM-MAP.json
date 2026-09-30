@@ -28544,5 +28544,13 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-pxn.18.5.2.24.2) against pan_globalsProofScript.sml:103-119: exact Var Global case of compile_exp_correct (state_rel T ctxt s t with eval s e = SOME v implies eval t (compile_exp ctxt e) = SOME v). The finite-map relation qualifier names the four PanSemStateFiniteExact finite-map fields and the PanGlobalsContextExact.globals map that the state relation and the compiled global read traverse; words_as_type_indexed_bitvec records the HOL word dimension. The conclusion uses the same state relation and source evaluation equation, with no extra premise."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "is_wf_shape_v_nil_step1",
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps.lean",
+    "lean_name": "isWfShapeValueHOLExact_of_nil_shape",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-pxn.18.5.2.22.10.4.1): HOL panPropsScript.sml:48-54 `is_wf_shape_v_nil_step1: !sctxt v. sctxt = [] /\\ is_wf_shape sctxt (shape_of v) ==> is_wf_shape_v sctxt v`. Lean renders sctxt = [] as the literal empty StructContextExact, is_wf_shape as isWfShapeExactHOL, shape_of as shapeOfHOLExact and is_wf_shape_v as isWfShapeValueHOLExact over ValueHOL width; no extra premise beyond the empty context. Kernel proof mirrors the mutual is_wf_shape_v structure (RStruct defers to the EVERY fold over field values, NStruct is vacuous at the empty context)."
   }
 ]
