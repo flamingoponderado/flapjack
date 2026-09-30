@@ -34,49 +34,20 @@ do not establish whole-compiler equivalence.
 
 ## HOL-to-Lean trust boundary
 
-This project ports HOL definitions and theorem statements into Lean; it does
-not prove, and currently cannot prove within either prover, that a HOL
-definition and its Lean translation are equivalent. Such a cross-prover
-equivalence proof is out of scope. A `@[hol]` tag is applied only after review
-of the source and Lean declaration shapes; it records reviewed provenance,
-not a machine-checked equivalence certificate. Confidence in a
-translation comes from line-by-line review of definitions and theorem shapes,
-direct HOL probes compared with Lean results, and differential compiler tests.
-Those checks are valuable but finite and do not close this trust boundary.
-
-`HOL-THEOREM-MAP.json` records each tagged declaration and every theorem or
-lemma under `Flapjack/Pancake/Proofs`, including statement-review status and a
-reviewer field. The CI gate checks inventory coverage and metadata consistency;
-it does not perform statement review. Entries marked
-`pending_statement_review` or `no_hol_reference_pending_classification` remain
-open review work and must not be described as exact HOL ports. A `reviewer`
-field on a pending entry records inventory authorship, not completed statement
-review.
-
-Lean proofs establish their conclusions about the Lean definitions actually
-used in their statements. Even a complete Lean port of Pancake's correctness
-chain would imply a property of the original HOL/Pancake compiler only under
-the externally reviewed assumption that the relevant definitions and theorem
-statements were translated faithfully.
+Similarity to HOL artifacts does not establish equivalence. HOL-to-Lean
+equivalence proofs are out of scope; `@[hol]` tags record reviewed provenance,
+not equivalence certificates. Lean proofs establish results only about the
+Lean definitions in their statements. Those definitions, statements, and their
+implications must be evaluated independently of the HOL artifacts; HOL's
+assurance does not automatically transfer to Flapjack.
 
 ## Explicit limitations
 
 The following are open review or verification obligations:
 
-1. Flapjack has no assembled top-level Pancake compiler-correctness theorem for
-   the whole source-to-RISC-V compiler. The `pc_compile_correct`
-   pass-simulation chain has since been ported
-   (`Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Assembly.lean`), but it
-   is not yet composed with the remaining lowerings into an end-to-end
-   statement. `Flapjack/PanToCrepCorrectnessBoundary.lean` contains only
-   elementary value-context and non-overlap facts; it is not a compiler
-   correctness boundary. Therefore the current lower-level theorems do not
-   imply soundness or semantic preservation for the whole source-to-RISC-V
-   compiler.
-2. The RISC-V semantics in Flapjack have not yet been compared systematically
-   with the Sail RISC-V model. The HOL reference model lives in the HOL source
-   tree at `examples/l3-machine-code/riscv/model/riscv.sml`, but correspondence
-   to Sail is not claimed here.
+1. Compiler-correctness theorem porting is in progress.
+2. The RISC-V semantics in Flapjack have not been proven equivalent to a Lean
+   extraction of the authoritative Sail RISC-V model.
 3. Compiler behavior has not been tested extensively against the original
    Pancake compiler. The executable parity suite and differential fuzzer cover
    only a small corpus and do not establish equivalence for arbitrary input.
@@ -96,11 +67,6 @@ The following are open review or verification obligations:
    state and selected regressions. It does not review the mathematical
    adequacy of the specifications or prove untested source programs compile
    identically to CakeML.
-7. HOL's `panSem$evaluate_decls` now has a faithful Lean definition,
-   `evaluateDecls`, checked against direct HOL probes. The distinct
-   `evalPanValueDeclarationsWithStructs` remains Flapjack-specific and is not
-   used as evidence for the exact `compile_top_shape_wf` port. This work does
-   not claim a cross-prover equivalence proof.
 8. HOL's floating-point library specifies rounding over real numbers. The
    current Lean binary64 arithmetic rendering uses `Rat` for finite float
    values and rational operation inputs. Lean proves its computable
@@ -190,7 +156,10 @@ behavior. Flapjack's assembled end-to-end theorem is still unfinished.
 
 ## Trust and reproducibility notes
 
-The normal Lean kernel checks theorem elaboration. Some existing concrete
+The Lean kernel checks elaborated theorem statements and proof terms.
+Elaboration adds implicit arguments, inferred types, and resolved notation
+not explicit in the source; the resulting statement may differ from what
+the author intended. Some existing concrete
 regressions use `native_decide`; their locations are audited by
 `scripts/check-native-decide.sh` and the allowlist. This is a repository
 engineering policy and should not be confused with an independent review of
