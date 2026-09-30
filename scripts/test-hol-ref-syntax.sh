@@ -37,28 +37,37 @@ printf '%s\n' \
   'import Flapjack.HolRef' \
   '@[hol "hol4/examples/pl-semantics/otherScript.sml" "not_pinned"]' \
   'theorem unpinnedExternal : True := trivial' > "$test_file"
-if lake env lean "$test_file" >/dev/null 2>&1; then
+if output=$(lake lean "$test_file" 2>&1); then
   echo 'unpinned external HOL path was accepted' >&2
+  printf '%s\n' "$output" >&2
   exit 1
 fi
+printf '%s\n' "$output"
+[[ "$output" == *'path must be a safe'* ]] || { echo 'expected qualifier diagnostic absent' >&2; exit 1; }
 
 printf '%s\n' \
   'import Flapjack.HolRef' \
   '@[hol "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml" "dec_deg_def" (list_as_array := [])]' \
   'theorem emptyQualifier : True := trivial' > "$test_file"
-if lake env lean "$test_file" >/dev/null 2>&1; then
+if output=$(lake lean "$test_file" 2>&1); then
   echo 'empty list_as_array qualifier was accepted' >&2
+  printf '%s\n' "$output" >&2
   exit 1
 fi
+printf '%s\n' "$output"
+[[ "$output" == *'unexpected token'* ]] || { echo 'expected qualifier diagnostic absent' >&2; exit 1; }
 
 printf '%s\n' \
   'import Flapjack.HolRef' \
   '@[hol "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml" "dec_deg_def" (list_as_array := [degrees, degrees])]' \
   'theorem duplicateFields : True := trivial' > "$test_file"
-if lake env lean "$test_file" >/dev/null 2>&1; then
+if output=$(lake lean "$test_file" 2>&1); then
   echo 'duplicate list_as_array fields were accepted' >&2
+  printf '%s\n' "$output" >&2
   exit 1
 fi
+printf '%s\n' "$output"
+[[ "$output" == *'list_as_array fields must be distinct'* ]] || { echo 'expected qualifier diagnostic absent' >&2; exit 1; }
 
 # A literal or compound `NeZero` argument is never a valid positivity
 # discharge, a reducible zero-width abbreviation must be unfolded, and nested
@@ -67,29 +76,38 @@ printf '%s\n' \
   'import Flapjack.HolRef' \
   '@[hol "cakeml/pancake/semantics/panSemScript.sml" "state" (words_as_type_indexed_bitvec)]' \
   'theorem literalNeZero [NeZero 5] (x : BitVec 5) : True := trivial' > "$test_file"
-if lake env lean "$test_file" >/dev/null 2>&1; then
+if output=$(lake lean "$test_file" 2>&1); then
   echo 'literal NeZero binder under the words qualifier was accepted' >&2
+  printf '%s\n' "$output" >&2
   exit 1
 fi
+printf '%s\n' "$output"
+[[ "$output" == *'NeZero must discharge a local width variable'* ]] || { echo 'expected qualifier diagnostic absent' >&2; exit 1; }
 
 printf '%s\n' \
   'import Flapjack.HolRef' \
   '@[hol "cakeml/pancake/semantics/panSemScript.sml" "state" (words_as_type_indexed_bitvec)]' \
   'theorem compoundNeZero {w : Nat} [NeZero (w - w)] (x : BitVec w) : True := trivial' > "$test_file"
-if lake env lean "$test_file" >/dev/null 2>&1; then
+if output=$(lake lean "$test_file" 2>&1); then
   echo 'compound NeZero binder under the words qualifier was accepted' >&2
+  printf '%s\n' "$output" >&2
   exit 1
 fi
+printf '%s\n' "$output"
+[[ "$output" == *'NeZero must discharge a local width variable'* ]] || { echo 'expected qualifier diagnostic absent' >&2; exit 1; }
 
 printf '%s\n' \
   'import Flapjack.HolRef' \
   'abbrev ZeroWord (w : Nat) := BitVec w' \
   '@[hol "cakeml/pancake/semantics/panSemScript.sml" "state" (words_as_type_indexed_bitvec)]' \
   'theorem zeroWidthAbbrev (x : ZeroWord 0) : True := trivial' > "$test_file"
-if lake env lean "$test_file" >/dev/null 2>&1; then
+if output=$(lake lean "$test_file" 2>&1); then
   echo 'zero-width reducible abbreviation under the words qualifier was accepted' >&2
+  printf '%s\n' "$output" >&2
   exit 1
 fi
+printf '%s\n' "$output"
+[[ "$output" == *'word dimension is the literal 0'* ]] || { echo 'expected qualifier diagnostic absent' >&2; exit 1; }
 
 # A nullary reducible abbreviation used as a type is a bare `.const`, not an
 # application, so it must be unfolded before the `.app` default is applied;
@@ -99,30 +117,38 @@ printf '%s\n' \
   'abbrev ZeroWord := BitVec 0' \
   '@[hol "cakeml/pancake/semantics/panSemScript.sml" "state" (words_as_type_indexed_bitvec)]' \
   'theorem nullaryZeroWidthAbbrev (x : ZeroWord) : True := trivial' > "$test_file"
-if lake env lean "$test_file" >/dev/null 2>&1; then
+if output=$(lake lean "$test_file" 2>&1); then
   echo 'nullary zero-width abbreviation under the words qualifier was accepted' >&2
+  printf '%s\n' "$output" >&2
   exit 1
 fi
+printf '%s\n' "$output"
+[[ "$output" == *'word dimension is the literal 0'* ]] || { echo 'expected qualifier diagnostic absent' >&2; exit 1; }
 
 printf '%s\n' \
   'import Flapjack.HolRef' \
   'abbrev W (w : Nat) := BitVec w' \
   '@[hol "cakeml/pancake/semantics/panSemScript.sml" "state" (words_as_type_indexed_bitvec)]' \
   'theorem parameterizedZeroWidthAbbrev (x : W 0) : True := trivial' > "$test_file"
-if lake env lean "$test_file" >/dev/null 2>&1; then
+if output=$(lake lean "$test_file" 2>&1); then
   echo 'parameterized zero-width abbreviation under the words qualifier was accepted' >&2
+  printf '%s\n' "$output" >&2
   exit 1
 fi
+printf '%s\n' "$output"
+[[ "$output" == *'word dimension is the literal 0'* ]] || { echo 'expected qualifier diagnostic absent' >&2; exit 1; }
 
 printf '%s\n' \
   'import Flapjack.HolRef' \
   'abbrev W (w : Nat) := BitVec w' \
   '@[hol "cakeml/pancake/semantics/panSemScript.sml" "state" (words_as_type_indexed_bitvec)]' \
   'theorem parameterizedPositiveWidthAbbrev {w : Nat} [NeZero w] (x : W w) : True := trivial' > "$test_file"
-if ! lake env lean "$test_file" >/dev/null 2>&1; then
+if ! output=$(lake lean "$test_file" 2>&1); then
   echo 'parameterized positive-width abbreviation under the words qualifier was rejected' >&2
+  printf '%s\n' "$output" >&2
   exit 1
 fi
+printf '%s\n' "$output"
 
 # A declaration type containing a structure projection must be traversed
 # (`Expr.proj`), not skipped or crashed on.
@@ -133,27 +159,34 @@ printf '%s\n' \
   '@[hol "cakeml/pancake/semantics/panSemScript.sml" "state" (words_as_type_indexed_bitvec)]' \
   'theorem projectionTraversal {w : Nat} [NeZero w] (x : BitVec w) (b : Box)' \
   '    (h : b.n = 0) : True := trivial' > "$test_file"
-if ! lake env lean "$test_file" >/dev/null 2>&1; then
+if ! output=$(lake lean "$test_file" 2>&1); then
   echo 'a structure projection in the declaration type was rejected or crashed' >&2
+  printf '%s\n' "$output" >&2
   exit 1
 fi
+printf '%s\n' "$output"
 
 printf '%s\n' \
   'import Flapjack.HolRef' \
   '@[hol "cakeml/pancake/semantics/panSemScript.sml" "state" (words_as_type_indexed_bitvec)]' \
   'theorem nestedMissingNeZero (f : (u : Unit) → (m : Nat) → BitVec m) : True := trivial' > "$test_file"
-if lake env lean "$test_file" >/dev/null 2>&1; then
+if output=$(lake lean "$test_file" 2>&1); then
   echo 'nested forall with an undischarged width under the words qualifier was accepted' >&2
+  printf '%s\n' "$output" >&2
   exit 1
 fi
+printf '%s\n' "$output"
+[[ "$output" == *'has no NeZero binder'* ]] || { echo 'expected qualifier diagnostic absent' >&2; exit 1; }
 
 printf '%s\n' \
   'import Flapjack.HolRef' \
   '@[hol "cakeml/pancake/semantics/panSemScript.sml" "state" (words_as_type_indexed_bitvec)]' \
   'theorem nestedBoundNeZero (a : ∀ {w : Nat} [NeZero w], BitVec w) : True := trivial' > "$test_file"
-if ! lake env lean "$test_file" >/dev/null 2>&1; then
+if ! output=$(lake lean "$test_file" 2>&1); then
   echo 'nested forall with its own NeZero binder was rejected' >&2
+  printf '%s\n' "$output" >&2
   exit 1
 fi
+printf '%s\n' "$output"
 
 echo 'HOL reference attribute syntax: exact and qualified forms pass; invalid qualifiers rejected'
