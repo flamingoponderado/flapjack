@@ -31472,5 +31472,37 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-only canonical state/context roundtrip, paired local-update algebra and compiler list-worker MAP equation supporting the genuine Primitive case; no separate HOL declaration."
-}
+},
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Dec.lean",
+    "lean_name": "compileCorrect_Dec",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison (2026-09-30; bead flapjack-pxn.18.5.2.28.5), pan_globalsProofScript172-186 gen_goal and624-633 Dec branch; canonical pan_sem_evaluate_ind_probe.out Dec conjunct: forall value, eval s e=SOME value AND shape=shape_of value imply P(body,s with locals updated). Lean retains this guard and fixed source state, with P=compileCorrectGoal, then unfolds the original conclusion: state_rel T/source evaluate/nonError imply existential target evaluate and state_rel(good_res). Accepted compile_exp_correct derives successful target initializer internally; identical set_var preserves initial relation, guarded body IH supplies target run, state_rel_res_var restores original saved local on both sides for every original result. No target evaluation, body outcome, strengthened IH or post-relation premise. Same canonical owning finite state/context and positive-width/Type0 FFI translation as reviewed Seq; witnesses source checked. Full fresh-local is not a source dependency. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Dec.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanSemStateFiniteExact toExact/ofExact finite-support roundtrip; it supports the PanSemStateFiniteExact fields named by the compile_correct Dec tag."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/Dec.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanGlobalsContextExact toBroad/ofBroad roundtrip; it supports PanGlobalsContextExact.globals named by the compile_correct Dec tag."
+  }
 ]
