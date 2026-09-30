@@ -26642,5 +26642,53 @@
     "lean_name": "crepShMemOpExactHOL_same",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.5.41.1): untagged Flapjack state-transfer infrastructure for the exact shared-memory helper congruence; no HOL original (Flapjack codec/semantics transfer over CrepSemHOLState)."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "inline_prog_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ShMem.lean",
+    "lean_name": "inlineProgCorrectShMemCaseExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "inlFs",
+      "inlBag"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; bead flapjack-pxn.18.5.5.41) against crep_inlineProofScript.sml:2301-2320 and ShMem case :2405-2406. Retains all seven original premises, existential evaluation, post-state state/code relations and result-dependent locals conclusion. ShMem is unchanged by inline_prog; evalCodeInlExact transfers its address expression. Exact load/store congruences cover all eight operators, domain/error guards and returned/final FFI states. Code preservation is proved from exact transitions; no target evaluation, post-state relation or simulation is a theorem premise. No recursive IH is needed for this atomic case."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ShMem.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-luna-b Flapjack-only infrastructure (2026-09-30; bead flapjack-pxn.18.5.5.41): canonical carrier witness re-export or exact shared-memory code-field preservation; no separate HOL declaration claimed."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ShMem.lean",
+    "lean_name": "load_code",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-luna-b Flapjack-only infrastructure (2026-09-30; bead flapjack-pxn.18.5.5.41): canonical carrier witness re-export or exact shared-memory code-field preservation; no separate HOL declaration claimed."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ShMem.lean",
+    "lean_name": "store_code",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-luna-b Flapjack-only infrastructure (2026-09-30; bead flapjack-pxn.18.5.5.41): canonical carrier witness re-export or exact shared-memory code-field preservation; no separate HOL declaration claimed."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ShMem.lean",
+    "lean_name": "op_code",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-luna-b Flapjack-only infrastructure (2026-09-30; bead flapjack-pxn.18.5.5.41): canonical carrier witness re-export or exact shared-memory code-field preservation; no separate HOL declaration claimed."
   }
 ]

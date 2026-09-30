@@ -357,6 +357,7 @@ import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectStore32
 import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectStoreByte
 import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectExtCall
 import Flapjack.Pancake.Proofs.CrepInline
+import Flapjack.Pancake.Proofs.CrepInline.ShMem
 import Flapjack.Pancake.CrepInline.Canonical
 import Flapjack.Pancake.CrepInline.InlineRouteBridge
 import Flapjack.CompileFunctionDistinct
