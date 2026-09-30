@@ -1262,6 +1262,60 @@ private theorem bypassFromIH {width : Nat} {σ : Type} [NeZero width]
   exact bypassScopedCorrect context source target post bt name function handlerId handlerVar
     handler body arguments args callee returnShape shape address result hrel hcontext hta htl htz hbt hbypass hr
 
+/-- Zero-clock present-global branch of the literal compiled Call. Derives
+scratch argument transport and both scope restorations internally. Private
+until the public original-IH all-outcomes constructor is assembled. -/
+private theorem zeroClockCorrect {width : Nat} {σ : Type} [NeZero width]
+    (context : PanGlobalsContextExact width) (source target : PanSemStateFiniteExact width σ)
+    (name function handlerId handlerVar : MlS) (handler body : ProgHOL width)
+    (arguments : List (ExpHOL width)) (args : List (ValueHOL width))
+    (callee : HolFiniteMapExact MlS (ValueHOL width)) (returnShape shape : ShapeHOL)
+    (address : BitVec width)
+    (hrel : panGlobalsStateRelHOLExact true context source target)
+    (hcontext : context.globals.lookup name = some (shape, address))
+    (ha : evalListHOLFinite source (h := fun a => Classical.propDecidable (source.memaddrs a)) arguments = some args)
+    (hl : lookupCodeHOLFinite source.code.lookup function args = some (body, callee, returnShape))
+    (hz : source.clock = 0) :
+    ∃ targetPost,
+      evaluateHOLFiniteState target (compileProgExactHOL context
+        (.call (some (some (.global, name), some (handlerId, handlerVar, handler))) function arguments)) =
+        (some .timeOut, targetPost) ∧
+      panGlobalsStateRelHOLExact false context (emptyLocalsHOLFinite source) targetPost := by
+  classical
+  obtain ⟨initializer, _, hscope⟩ := presentContextScope context source target name
+    function handlerId handlerVar arguments handler shape address hrel hcontext
+  let ch := compileProgExactHOL context handler
+  let ca := compileExpExactHOLList context arguments
+  let names := handlerVar :: freeVarIdsHOL ch ++ ca.flatMap varExpHOL
+  let rn := freshNameMlS (ofString "") names
+  let fn := freshNameMlS (ofString "vn'") (rn :: names)
+  let scratch := setVarHOLFinite fn (.val (.word (BitVec.ofNat width 0)))
+    (setVarHOLFinite rn initializer target)
+  let call := ProgHOL.call (some (some (.local, rn), some (handlerId, handlerVar,
+    .seq ch (.assign .local fn (.const (BitVec.ofNat width 1)))))) function ca
+  have hta := PanGlobalsOptMmapEvalCorrect.optMmapEvalCorrectHOL context source target arguments args ⟨hrel, ha⟩
+  have hlist : ∀ es : List (ExpHOL width), compileExpExactHOLList context es = es.map (compileExpExactHOL context) := by
+    intro es
+    induction es with
+    | nil => simp only [compileExpExactHOLList, List.map_nil]
+    | cons e es ih => simp only [compileExpExactHOLList, List.map_cons, ih]
+  rw [← hlist arguments] at hta
+  have htransport := PanGlobalsCallHandlerArguments.callHandlerArgumentsUnderScratchLocals target handlerVar ch ca initializer (.val (.word (BitVec.ofNat width 0)))
+  have hsargs : evalListHOLFinite scratch (h := fun a => Classical.propDecidable (scratch.memaddrs a)) ca = some args := htransport.trans hta
+  have htl := PanGlobalsStateRelationCode.stateRelLookupCodeHOL context source target true function args body callee returnShape ⟨hrel, hl⟩
+  have hscode : lookupCodeHOLFinite scratch.code.lookup function args = some (compileProgExactHOL context body, callee, returnShape) := htl
+  have htz : scratch.clock = 0 := hrel.2.2.2.2.2.1 ▸ hz
+  have hcall : evaluateHOLFiniteState scratch call = (some .timeOut, emptyLocalsHOLFinite scratch) := by
+    simp only [call, evaluateHOLFiniteState_call, hsargs, hscode, if_pos htz]
+  have hempty := (PanGlobalsStateRelationLocals.stateRelEmptyLocalsHOL context source target false).1 hrel
+  have hsrel : panGlobalsStateRelHOLExact false context (emptyLocalsHOLFinite source) (emptyLocalsHOLFinite scratch) := hempty
+  obtain ⟨ht, hr⟩ := nonGoodCallTail context target scratch (emptyLocalsHOLFinite source)
+    (emptyLocalsHOLFinite scratch) call .timeOut rn fn initializer address hcall rfl hsrel
+  dsimp only [call, scratch, fn, rn, names, ch, ca] at ht hr
+  refine ⟨_, ?_, hr⟩
+  rw [hscope]
+  simp only [ht]
+
 /-- Internal missing-context branch of the full constructor proof. The branch
 condition selects the literal compiler fallback; the callee and handler IHs
 remain those of the original evaluator. Untagged infrastructure until the full
@@ -1313,5 +1367,109 @@ private theorem missingContextCorrect {width : Nat} {σ : Type} [NeZero width]
       res context target post ⟨hrel, hsource, hne⟩
   refine ⟨targetPost, ?_, hpost⟩
   simpa only [compileProgExactHOL, hmissing] using htarget
+
+/-- Full global destination Call with handler over exact evaluators and original guarded IHs.
+Currently untagged pending final HOL carrier/statement review; no extra branch premises. -/
+theorem compileCorrect_CallGlobalHandler {width : Nat} {σ : Type} [NeZero width]
+    (source : PanSemStateFiniteExact width σ) (name function : MlS) (arguments : List (ExpHOL width))
+    (handlerId handlerVar : MlS) (handlerBody : ProgHOL width)
+    (ih : ∀ (args : List (ValueHOL width)) (body : ProgHOL width)
+      (callee : HolFiniteMapExact MlS (ValueHOL width)) (returnShape : ShapeHOL),
+      evalListHOLFinite source (h := fun a => Classical.propDecidable (source.memaddrs a)) arguments = some args ∧
+      lookupCodeHOLFinite source.code.lookup function args = some (body,callee,returnShape) ∧ source.clock ≠ 0 →
+      compileCorrectGoal body (callEntryStateHOLFinite source callee))
+    (ihHandler : ∀ (args : List (ValueHOL width)) (body : ProgHOL width)
+      (callee : HolFiniteMapExact MlS (ValueHOL width)) (returnShape : ShapeHOL)
+      (value : ValueHOL width) (calleePost : PanSemStateFiniteExact width σ) (handlerShape : ShapeHOL),
+      evalListHOLFinite source (h := fun a => Classical.propDecidable (source.memaddrs a)) arguments = some args ∧
+      lookupCodeHOLFinite source.code.lookup function args = some (body, callee, returnShape) ∧
+      source.clock ≠ 0 ∧
+      evaluateHOLFiniteState (callEntryStateHOLFinite source callee) body =
+        (some (.exception handlerId value), calleePost) ∧
+      source.eshapes.lookup handlerId = some handlerShape ∧
+      shapeOfHOLExact value = handlerShape ∧
+      isValidValueHOLExact source.toExact .local handlerVar value = true →
+      compileCorrectGoal handlerBody
+        (setVarHOLFinite handlerVar value {calleePost with locals := source.locals})) :
+    ∀ (res : Option (PanSemResultExact width)) (context : PanGlobalsContextExact width)
+      (target post : PanSemStateFiniteExact width σ),
+      panGlobalsStateRelHOLExact true context source target ∧
+        evaluateHOLFiniteState source (.call (some (some (.global, name), some (handlerId, handlerVar, handlerBody))) function arguments) = (res,post) ∧ res ≠ some .error →
+      ∃ targetPost,
+        evaluateHOLFiniteState target (compileProgExactHOL context (.call (some (some (.global, name), some (handlerId, handlerVar, handlerBody))) function arguments)) = (res,targetPost) ∧
+        panGlobalsStateRelHOLExact (goodResHOL res) context post targetPost := by
+  classical
+  intro res context target post h
+  rcases h with ⟨hrel, hev, hne⟩
+  cases hcontext : context.globals.lookup name with
+  | none =>
+    exact missingContextCorrect source name function arguments handlerId handlerVar handlerBody
+      ih ihHandler res context target post hcontext ⟨hrel, hev, hne⟩
+  | some pair =>
+    rcases pair with ⟨shape, address⟩
+    rw [evaluateHOLFiniteState_call] at hev
+    cases ha : evalListHOLFinite source (h := fun a => Classical.propDecidable (source.memaddrs a)) arguments with
+    | none => simp only [ha] at hev; exact False.elim (hne (Prod.mk.inj hev).1.symm)
+    | some args =>
+      simp only [ha] at hev
+      cases hl : lookupCodeHOLFinite source.code.lookup function args with
+      | none => simp only [hl] at hev; exact False.elim (hne (Prod.mk.inj hev).1.symm)
+      | some entry =>
+        rcases entry with ⟨body, callee, returnShape⟩
+        simp only [hl] at hev
+        by_cases hz : source.clock = 0
+        · simp only [if_pos hz] at hev
+          obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
+          exact zeroClockCorrect context source target name function handlerId handlerVar handlerBody body
+            arguments args callee returnShape shape address hrel hcontext ha hl hz
+        · simp only [if_neg hz] at hev
+          rcases hb : evaluateHOLFiniteState (callEntryStateHOLFinite source callee) body with ⟨br, bs⟩
+          simp only [hb] at hev
+          cases br with
+          | none => exact False.elim (hne (Prod.mk.inj hev).1.symm)
+          | some result =>
+            cases result with
+            | «break» | «continue» | error => exact False.elim (hne (Prod.mk.inj hev).1.symm)
+            | returned value =>
+              by_cases hs : shapeEqHOL (shapeOfHOLExact value) returnShape = true
+              · simp only [hs, ↓reduceIte] at hev
+                by_cases hv : isValidValueHOLExact source.toExact .global name value = true
+                · simp only [hv, ↓reduceIte] at hev
+                  obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
+                  exact returnedFromIH source name function handlerId handlerVar arguments handlerBody ih
+                    context target bs args body callee returnShape value hrel ha hl hz hb
+                    ((shapeEqHOL_eq_true _ _).mp hs) hv
+                · simp only [if_neg hv] at hev
+                  exact False.elim (hne (Prod.mk.inj hev).1.symm)
+              · simp only [if_neg hs] at hev
+                exact False.elim (hne (Prod.mk.inj hev).1.symm)
+            | exception eid value =>
+              by_cases hid : eid = handlerId
+              · subst eid
+                simp only at hev
+                cases hs : source.eshapes.lookup handlerId with
+                | none => simp only [hs] at hev; exact False.elim (hne (Prod.mk.inj hev).1.symm)
+                | some handlerShape =>
+                  simp only [hs] at hev
+                  by_cases hv : (shapeEqHOL (shapeOfHOLExact value) handlerShape &&
+                    isValidValueHOLExact source.toExact .local handlerVar value) = true
+                  · simp only [if_pos hv] at hev
+                    have hg := hv
+                    simp only [Bool.and_eq_true] at hg
+                    exact matchedFromIH source name function arguments handlerId handlerVar handlerBody
+                      ih ihHandler context target bs post args body callee returnShape handlerShape shape
+                      value address res hrel hcontext ha hl hz hb hs
+                      ((shapeEqHOL_eq_true _ _).mp hg.1) hg.2 hev hne
+                  · simp only [if_neg hv] at hev
+                    exact False.elim (hne (Prod.mk.inj hev).1.symm)
+              · simp only [if_neg hid] at hev
+                obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
+                exact bypassFromIH source name function handlerId handlerVar arguments handlerBody ih
+                  context target bs args body callee returnShape shape address (.exception eid value)
+                  hrel hcontext ha hl hz hb hid
+            | timeOut | finalFfi outcome =>
+              obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
+              exact bypassFromIH source name function handlerId handlerVar arguments handlerBody ih
+                context target bs args body callee returnShape shape address _ hrel hcontext ha hl hz hb trivial
 
 end Flapjack.PanGlobalsCompileCorrectCallGlobalHandler

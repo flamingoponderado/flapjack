@@ -35901,5 +35901,21 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Private unmatched-exception/timeout/final FFI branch for pending33.11 deriving actual scoped compiled run and relation from ORIGINAL guarded source callee IH. Target args/code/clock/entry/run/relation internal, no target premises. Remaining zero-clock/all-case public constructor assembly unfinished; untagged infrastructure."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "zeroClockCorrect",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Private zero-clock literal scoped Call branch; caller relation derives initialization/scratch args/code/clock and non-good scoped relation."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "compileCorrect_CallGlobalHandler",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Public all-outcomes global destination Call with handler correctness candidate matching gen_goal and ONLY original guarded callee/handler IHs. Kernel checked zero-clock, return, matched/unmatched exception, timeout/final FFI and nonError exclusions. Untagged pending coordinator full HOL statement/carrier source review and justified qualifiers; no completed theorem-port claim."
 }
 ]
