@@ -28414,5 +28414,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.5.46.1): exact syntactic port of HOL not_has_return_imp_not_branch_ret over the tagged exact unreachElimHOLExact/nestedDecsHOL/argLoadHOLExact/hasReturnHOLExact/notBranchRetHOLExact on CrepProgHOL; same quantified variables, LENGTH side conditions and conclusion (HOL Bool predicates used as propositions rendered `= true`). Only the BitVec word-dimension qualifier applies."
-  }
+  },
+{
+  "lean_path": "Flapjack/Compiler/Backend/StackProps/ArithmeticNames.lean",
+  "lean_name": "arithName",
+  "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+  "hol_name": "arith_name_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source844-883: all nine clauses retain exact HolArith/AsmConfigExact positive-width carriers, reg_name reduced bound and reg_imm_name exact valid_imm. Literal two_reg implication with OR register exception; immediate shift0 implies Lsl and w2n<dimension; register shift x86 logical4, longMul logical3/0/0 and ISA nonalias restrictions, longDiv0/3/3/0. Div ISA set, carry distinct from both sources and overflow distinct from left only retained.22fresh originalHOL positive/negative boundary cases kernel-replayed in lake test. No simulation/evaluation premise or reuse of post-naming asm validator; proof prerequisite, executable behavior unchanged."
+}
 ]

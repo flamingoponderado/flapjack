@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.StackProps.ArithmeticNames
 import Flapjack.Compiler.Backend.RiscVConfig.RegisterNames
 import Flapjack.Compiler.Backend.StackNames.CallLinkProjection
 import Flapjack.Compiler.Backend.StackNames.ProgramNames

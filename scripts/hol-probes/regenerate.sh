@@ -2518,3 +2518,6 @@ run_probe stack_names_program_probeScript.sml stack_names_program_probe.out \
 
 run_probe riscv_names_tlookup_probeScript.sml riscv_names_tlookup_probe.out \
   names "$cake_dir/compiler/backend/riscv/riscv_configScript.sml" "$cake_dir/compiler/backend/riscv"
+
+run_probe stack_props_arith_name_probeScript.sml stack_props_arith_name_probe.out \
+  or_exception or_wrong binop_two binop_same imm_valid shift_zero_lsl shift_zero_lsr shift_width shift_x86_4 shift_x86_1 div_riscv div_x86 mul_x86_3 mul_x86_2 mul_arm_alias mul_riscv_alias longdiv_3 longdiv_2 carry_good carry_alias addoverflow_right_alias suboverflow_left_alias "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
