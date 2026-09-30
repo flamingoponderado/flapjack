@@ -3,6 +3,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.MemorySwap
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelationCode
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelationFfi
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelationClock
+import Flapjack.Misc.BinaryIeeeSqrt.RealAgreement
 import Flapjack.Pancake.Proofs.PanGlobals.CompileExpLeaves
 import Flapjack.Compiler.Backend.StackProps.RemoveNames
 import Flapjack.Pancake.Proofs.WordConvs.SmartSeqLabels
@@ -317,6 +318,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.CompileTopSemanticsExact
 import Flapjack.Pancake.Proofs.PanGlobals.CallObservation
 import Flapjack.Pancake.Proofs.PanGlobals.SemanticsCongruence
 import Flapjack.Pancake.Proofs.PanGlobals.SemanticsEmptyLocals
+import Flapjack.Pancake.Proofs.PanGlobals.ShapeValueEval
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsMemory
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsAlignment
 import Flapjack.Pancake.Proofs.PanToCrep.EvaluateCases
