@@ -2483,3 +2483,6 @@ run_probe stack_names_instruction_probeScript.sml stack_names_instruction_probe.
 
 run_probe stack_names_program_probeScript.sml stack_names_program_probe.out \
   seq if loop call_none call_ret call_exc call_both install shared buffer jump loc continue default compile "$cake_dir/compiler/backend/stack_namesScript.sml" "$cake_dir/compiler/backend"
+
+run_probe riscv_names_tlookup_probeScript.sml riscv_names_tlookup_probe.out \
+  names "$cake_dir/compiler/backend/riscv/riscv_configScript.sml" "$cake_dir/compiler/backend/riscv"
