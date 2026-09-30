@@ -30239,6 +30239,98 @@
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.2.29.1): EVERY is_wf_shape_nil equals the list well-formedness helper; no HOL original."
   },
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/Memory.lean",
+  "lean_name": "evaluateFreshLocal_Store",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_fresh_local",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Luna A source comparison (.32.3.2), HOL1045-1091 genuine Store evaluate_ind case: original fresh-name/value/state/result/poststate binders, fresh-name and source-evaluation conjunction, existential locals preserving result/all nonlocals, and good_res/non-Error conditional post-local FUPDATE. Constructor specialization only, no recursive IH and no added success/bound/address/target-run premise. Exact ProgHOL/MlS/ValueHOL/PanSemResultExact carriers and tagged total finite evaluator memory constructor equation; canonical state finite-map roundtrip in same module, positive BitVec width/Type0 FFI. Existing kernel broad expression freshness transported through canonical locals lookup codec; membership decisions internal. Source and target evaluate the same address/value, preserving all domain/memory-write failure branches and original memory update/32bit/8bit truncations. Error runs are not excluded. Kernel checked; independent coordinator review pending. Full evaluate_fresh_local remains open on .32.3."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/Memory.lean",
+  "lean_name": "evaluateFreshLocal_Store32",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_fresh_local",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Luna A source comparison (.32.3.2), HOL1045-1091 genuine Store32 evaluate_ind case: original fresh-name/value/state/result/poststate binders, fresh-name and source-evaluation conjunction, existential locals preserving result/all nonlocals, and good_res/non-Error conditional post-local FUPDATE. Constructor specialization only, no recursive IH and no added success/bound/address/target-run premise. Exact ProgHOL/MlS/ValueHOL/PanSemResultExact carriers and tagged total finite evaluator memory constructor equation; canonical state finite-map roundtrip in same module, positive BitVec width/Type0 FFI. Existing kernel broad expression freshness transported through canonical locals lookup codec; membership decisions internal. Source and target evaluate the same address/value, preserving all domain/memory-write failure branches and original memory update/32bit/8bit truncations. Error runs are not excluded. Kernel checked; independent coordinator review pending. Full evaluate_fresh_local remains open on .32.3."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/Memory.lean",
+  "lean_name": "evaluateFreshLocal_StoreByte",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_fresh_local",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Luna A source comparison (.32.3.2), HOL1045-1091 genuine StoreByte evaluate_ind case: original fresh-name/value/state/result/poststate binders, fresh-name and source-evaluation conjunction, existential locals preserving result/all nonlocals, and good_res/non-Error conditional post-local FUPDATE. Constructor specialization only, no recursive IH and no added success/bound/address/target-run premise. Exact ProgHOL/MlS/ValueHOL/PanSemResultExact carriers and tagged total finite evaluator memory constructor equation; canonical state finite-map roundtrip in same module, positive BitVec width/Type0 FFI. Existing kernel broad expression freshness transported through canonical locals lookup codec; membership decisions internal. Source and target evaluate the same address/value, preserving all domain/memory-write failure branches and original memory update/32bit/8bit truncations. Error runs are not excluded. Kernel checked; independent coordinator review pending. Full evaluate_fresh_local remains open on .32.3."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/Memory.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific infrastructure: Canonical state roundtrip re-export for the finite-map qualifier; representation infrastructure has no HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/Memory.lean",
+  "lean_name": "evalFreshUpdate",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific infrastructure: Private transport of broad expression freshness through canonical finite locals lookup; no standalone HOL declaration, internal domain decision adds no premise."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/Assign.lean",
+  "lean_name": "evaluateFreshLocal_Assign",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_fresh_local",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Luna A source comparison (.32.3.3), HOL1045-1091 genuine Assign evaluate_ind case. Original fresh-name/value/state/result/poststate binders, source freshness/evaluation conjunction, existential locals preserving result/nonlocals and good_res/non-Error conditional FUPDATE. Only constructor specialization; no recursive IH or added success/name-disequality/target-evaluation premise. For Local, target disequality follows internally from free_var_ids; Global needs no local-name condition. Broad expression freshness transported through the canonical finite-state codec, internal domain decision. Validity performs the unchanged target lookup/shape comparison; map updates commute only at the internally derived distinct local names. All failure branches retained. Same-module canonical state roundtrip and standard positive BitVec width/Type0 FFI qualifiers; MlS/ValueHOL/VarKind/ExpHOL/PanSemResultExact constructors retained. Kernel checked, independent coordinator review pending. Full fresh-local induction remains open on .32.3."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/Assign.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific infrastructure: Canonical state roundtrip re-export; representation infrastructure, no HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/Assign.lean",
+  "lean_name": "evalFreshUpdate",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific infrastructure: Private codec transport of broad expression freshness; no separate source declaration, decision internal."
+},
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/Dec.lean",
     "lean_name": "holFmapAsFiniteSupportWitness",
