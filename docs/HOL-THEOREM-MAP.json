@@ -35266,5 +35266,13 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Private normal-return branch of pending33.11, deriving target callee execution and post relation from original guarded callee IH, argument/code/clock transport and callee entry relation. No target run/post relation premise. Full constructor including handler and other outcomes remains unfinished; untagged infrastructure."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "matchedScratchCall",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Private matched-exception generated Call computation for pending33.11. Actual scratch arguments and handler binding preserved from literal names freshness, unchanged clock/code/entry/eshapes; no successful-handler premise. Full original guarded handler-IH and constructor assembly remain open; untagged infrastructure."
 }
 ]

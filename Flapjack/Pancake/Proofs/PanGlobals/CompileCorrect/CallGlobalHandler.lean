@@ -824,6 +824,58 @@ private theorem returnedFromIH {width : Nat} {σ : Type} [NeZero width]
   exact returnedScopedCorrect context source target post targetPost name function handlerId handlerVar
     handler body arguments values callee returnShape value hrel hr hvalid hbody hta htl htz ht hreturn
 
+/-- Connect the matched exception callee run to the generated scratch Call.
+Scratch names preserve the original handler binding and argument evaluation;
+this private clause is pending the full original handler-IH assembly. -/
+private theorem matchedScratchCall {width : Nat} {σ : Type} [NeZero width]
+    (state post : PanSemStateFiniteExact width σ) (function handlerId handlerVar : MlS)
+    (handler : ProgHOL width) (arguments : List (ExpHOL width))
+    (values : List (ValueHOL width)) (body : ProgHOL width)
+    (callee : HolFiniteMapExact MlS (ValueHOL width)) (returnShape handlerShape : ShapeHOL)
+    (initializer handlerInitializer value : ValueHOL width)
+    (hargs : evalListHOLFinite state
+      (h := fun a => Classical.propDecidable (state.memaddrs a)) arguments = some values)
+    (hcode : lookupCodeHOLFinite state.code.lookup function values = some (body, callee, returnShape))
+    (hclock : state.clock ≠ 0)
+    (hbody : evaluateHOLFiniteState (callEntryStateHOLFinite state callee) body =
+      (some (.exception handlerId value), post))
+    (hexception : state.eshapes.lookup handlerId = some handlerShape)
+    (hhandlerShape : shapeOfHOLExact value = handlerShape)
+    (hlocal : state.locals.lookup handlerVar = some handlerInitializer)
+    (hshape : shapeOfHOLExact value = shapeOfHOLExact handlerInitializer) :
+    let names := handlerVar :: freeVarIdsHOL handler ++ arguments.flatMap varExpHOL
+    let resultName := freshNameMlS (ofString "") names
+    let flagName := freshNameMlS (ofString "vn'") (resultName :: names)
+    let scratch := setVarHOLFinite flagName (.val (.word (BitVec.ofNat width 0)))
+      (setVarHOLFinite resultName initializer state)
+    evaluateHOLFiniteState scratch
+      (.call (some (some (.local, resultName), some (handlerId, handlerVar,
+        .seq handler (.assign .local flagName (.const (BitVec.ofNat width 1))))))
+        function arguments) =
+      evaluateHOLFiniteState (setVarHOLFinite handlerVar value {post with locals := scratch.locals})
+        (.seq handler (.assign .local flagName (.const (BitVec.ofNat width 1)))) := by
+  classical
+  dsimp only
+  let names := handlerVar :: freeVarIdsHOL handler ++ arguments.flatMap varExpHOL
+  let resultName := freshNameMlS (ofString "") names
+  let flagName := freshNameMlS (ofString "vn'") (resultName :: names)
+  let scratch := setVarHOLFinite flagName (.val (.word (BitVec.ofNat width 0)))
+    (setVarHOLFinite resultName initializer state)
+  obtain ⟨hr, hf, _, _, _, _, _⟩ :=
+    PanGlobalsCallHandlerFreshNames.callHandlerScratchNamesFresh handlerVar handler arguments
+  change resultName ∉ names at hr
+  change flagName ∉ names at hf
+  have hm : handlerVar ∈ names := by simp [names]
+  have hrh : resultName ≠ handlerVar := fun he => hr (he.symm ▸ hm)
+  have hfh : flagName ≠ handlerVar := fun he => hf (he.symm ▸ hm)
+  have ha := PanGlobalsCallHandlerArguments.callHandlerArgumentsUnderScratchLocals state
+    handlerVar handler arguments initializer (.val (.word (BitVec.ofNat width 0)))
+  have hl : scratch.locals.lookup handlerVar = some handlerInitializer := by
+    simpa [scratch, setVarHOLFinite, FUPDATE, hrh, hfh] using hlocal
+  exact matchedHandlerCall scratch post function handlerId handlerVar _ _ arguments values body
+    callee returnShape handlerShape handlerInitializer value (ha.trans hargs) hcode hclock hbody
+    hexception hhandlerShape hl hshape
+
 /-- Internal missing-context branch of the full constructor proof. The branch
 condition selects the literal compiler fallback; the callee and handler IHs
 remain those of the original evaluator. Untagged infrastructure until the full
