@@ -1,4 +1,5 @@
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Call
+import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.ExtCall
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Call
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.CallEntry
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallGlobalHandler
@@ -585,6 +586,7 @@ import Flapjack.Pancake.Proofs.CrepInline.WrappedTransformIf
 import Flapjack.Pancake.Proofs.CrepInline.TransformBranch.Loops
 import Flapjack.Pancake.Proofs.CrepInline.TransformBranch.Cases
 import Flapjack.Pancake.Proofs.CrepInline.UnreachElimProgSize
+import Flapjack.Pancake.Proofs.CrepInline.UnreachElimIndexSize
 import Flapjack.Pancake.CrepInline.Canonical
 import Flapjack.Pancake.CrepInline.InlineRouteBridge
 import Flapjack.CompileFunctionDistinct
