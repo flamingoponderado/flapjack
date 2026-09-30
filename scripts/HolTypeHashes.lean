@@ -1,3 +1,4 @@
+import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.AssignLocal
 import Flapjack.Pancake.Proofs.PanGlobals.OptMmapEvalCorrect
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.DecCall
 import Flapjack.Pancake.Proofs.PanGlobals.CompileExpCorrect
@@ -48,6 +49,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.If
 import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.Seq
 import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.Dec
 import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.While
+import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.CallNoHandler
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelationLocals
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsShape
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsDisjoint
