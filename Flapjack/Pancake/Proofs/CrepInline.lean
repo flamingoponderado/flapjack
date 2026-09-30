@@ -2288,37 +2288,37 @@ private theorem srel_decclock {width : Nat} [NeZero width] {σ : Type}
     show s.clock - 1 = t.clock - 1
     rw [hcl], hbe, hffi, hba, hta⟩
 
-private theorem inline_store {width : Nat} [NeZero width] (inlBag) (dst src) :
+theorem inline_store {width : Nat} [NeZero width] (inlBag) (dst src) :
     CrepInlineCanonical.inlineProgHOLExact inlBag
         (.store dst src : CrepProgHOL width) = .store dst src := by
   unfold CrepInlineCanonical.inlineProgHOLExact
   simp only [CrepInlineCanonical.inlineProgHOLCoreExact]
 
-private theorem inline_store32 {width : Nat} [NeZero width] (inlBag) (dst src) :
+theorem inline_store32 {width : Nat} [NeZero width] (inlBag) (dst src) :
     CrepInlineCanonical.inlineProgHOLExact inlBag
         (.store32 dst src : CrepProgHOL width) = .store32 dst src := by
   unfold CrepInlineCanonical.inlineProgHOLExact
   simp only [CrepInlineCanonical.inlineProgHOLCoreExact]
 
-private theorem inline_storeByte {width : Nat} [NeZero width] (inlBag) (dst src) :
+theorem inline_storeByte {width : Nat} [NeZero width] (inlBag) (dst src) :
     CrepInlineCanonical.inlineProgHOLExact inlBag
         (.storeByte dst src : CrepProgHOL width) = .storeByte dst src := by
   unfold CrepInlineCanonical.inlineProgHOLExact
   simp only [CrepInlineCanonical.inlineProgHOLCoreExact]
 
-private theorem inline_storeGlob {width : Nat} [NeZero width] (inlBag) (dst src) :
+theorem inline_storeGlob {width : Nat} [NeZero width] (inlBag) (dst src) :
     CrepInlineCanonical.inlineProgHOLExact inlBag
         (.storeGlob dst src : CrepProgHOL width) = .storeGlob dst src := by
   unfold CrepInlineCanonical.inlineProgHOLExact
   simp only [CrepInlineCanonical.inlineProgHOLCoreExact]
 
-private theorem inline_tick {width : Nat} [NeZero width] (inlBag) :
+theorem inline_tick {width : Nat} [NeZero width] (inlBag) :
     CrepInlineCanonical.inlineProgHOLExact inlBag
         (.tick : CrepProgHOL width) = .tick := by
   unfold CrepInlineCanonical.inlineProgHOLExact
   simp only [CrepInlineCanonical.inlineProgHOLCoreExact]
 
-private theorem inline_primitive {width : Nat} [NeZero width]
+theorem inline_primitive {width : Nat} [NeZero width]
     (inlBag : HolFiniteMapExact CrepInlineMapHOLName (List Nat × CrepProgHOL width))
     (names : List Nat) (operator : PrimOp) (args : List Nat) :
     CrepInlineCanonical.inlineProgHOLExact inlBag
@@ -2327,7 +2327,7 @@ private theorem inline_primitive {width : Nat} [NeZero width]
   unfold CrepInlineCanonical.inlineProgHOLExact
   simp only [CrepInlineCanonical.inlineProgHOLCoreExact]
 
-private theorem inline_extCall {width : Nat} [NeZero width]
+theorem inline_extCall {width : Nat} [NeZero width]
     (inlBag : HolFiniteMapExact CrepInlineMapHOLName (List Nat × CrepProgHOL width))
     (function : Flapjack.Basis.Pure.MlString.MlString)
     (configuration configurationLength array arrayLength : Nat) :

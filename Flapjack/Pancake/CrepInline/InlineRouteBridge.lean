@@ -1454,8 +1454,6 @@ theorem crepInlineCodecEntries_range {width : Nat} [NeZero width]
   rw [hv, crepProgOfHOL_crepProgToHOL f.2.2 (hprog f hf)]
   exact hprog f hf
 
-set_option maxHeartbeats 8000000 in
-set_option linter.unusedSimpArgs false in
 /-- The executed inline pass `compileInlTopHOL` agrees, on byte-ranged names,
     with the exact tagged `compileInlTopHOLExact` after decoding every triple
     through the item codec `(ofString, crepProgToHOL)`.  This is the top-level
