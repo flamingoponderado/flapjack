@@ -11,18 +11,17 @@ outside the live set. These lemmas do not claim the full allocation simulation.
 
 namespace Flapjack.WordAlloc
 
-/-- HOL's live-scoped lookup relation, without any injectivity assumption. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "strong_locals_rel_def"
-  (words_as_type_indexed_bitvec)]
-def strongLocalsRel {width : Nat} [NeZero width] (f : Nat → Nat) (live : Nat → Prop)
-    (source target : Spt (WordLocW width)) : Prop :=
+/-- HOL's payload-polymorphic live-scoped lookup relation, without any
+injectivity assumption or restriction to word-valued locals. -/
+@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "strong_locals_rel_def"]
+def strongLocalsRel {α : Type} (f : Nat → Nat) (live : Nat → Prop)
+    (source target : Spt α) : Prop :=
   ∀ n v, live n ∧ sptLookup n source = some v → sptLookup (f n) target = some v
 
 /-- HOL strong_locals_rel_subset_domain with predicate-rendered set inclusion. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "strong_locals_rel_subset_domain"
-  (words_as_type_indexed_bitvec)]
-theorem strongLocalsRelSubsetDomain {width : Nat} [NeZero width]
-    (f : Nat → Nat) (live : Nat → Prop) (l1 l2 : Spt (WordLocW width))
+@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "strong_locals_rel_subset_domain"]
+theorem strongLocalsRelSubsetDomain {α : Type}
+    (f : Nat → Nat) (live : Nat → Prop) (l1 l2 : Spt α)
     (h : strongLocalsRel f live l1 l2 ∧ (∀ n, live n → sptMem n l1)) :
     ∀ v, live v → sptMem (f v) l2 := by
   intro v hv
@@ -87,10 +86,9 @@ theorem strongLocalsRelGetVars {width : Nat} [NeZero width] {C F : Type} :
           simp [WordSemStateFiniteExact.getVars, hhead, htail]
 
 /-- HOL strong_locals_rel_UNION; set union is pointwise disjunction. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "strong_locals_rel_UNION"
-  (words_as_type_indexed_bitvec)]
-theorem strongLocalsRelUnion {width : Nat} [NeZero width]
-    (f : Nat → Nat) (A B : Nat → Prop) (t l : Spt (WordLocW width)) :
+@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "strong_locals_rel_UNION"]
+theorem strongLocalsRelUnion {α : Type}
+    (f : Nat → Nat) (A B : Nat → Prop) (t l : Spt α) :
     strongLocalsRel f (fun n => A n ∨ B n) t l ↔
       strongLocalsRel f A t l ∧ strongLocalsRel f B t l := by
   constructor
@@ -105,11 +103,10 @@ theorem strongLocalsRelUnion {width : Nat} [NeZero width]
 /-- Exact HOL strong_locals_rel_insert: colours need be injective only on
 `n INSERT live`; the old relation is required only on `live DELETE n`.
 HOL INJ's codomain UNIV membership is tautological. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "strong_locals_rel_insert"
-  (words_as_type_indexed_bitvec)]
-theorem strongLocalsRelInsert {width : Nat} [NeZero width]
+@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "strong_locals_rel_insert"]
+theorem strongLocalsRelInsert {α : Type}
     (f : Nat → Nat) (n : Nat) (live : Nat → Prop)
-    (source target : Spt (WordLocW width)) (value : WordLocW width)
+    (source target : Spt α) (value : α)
     (h : (∀ a b, (a = n ∨ live a) → (b = n ∨ live b) → f a = f b → a = b) ∧
       strongLocalsRel f (fun k => live k ∧ k ≠ n) source target) :
     strongLocalsRel f live (sptInsert n value source) (sptInsert (f n) value target) := by
