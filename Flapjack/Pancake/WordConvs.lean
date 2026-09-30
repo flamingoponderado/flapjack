@@ -397,7 +397,9 @@ its own constant. -/
 def wordLangArbMemOp : WordMemOp := .load
 
 /-- HOL `wordConvs$not_created_subprogs_def` (`wordConvsScript.sml:536-566`)
-over the faithful backend WordLang syntax. `P` is `Prop`-valued (HOL's is
+over the older function-backed WordLang syntax. The Boolean checker and
+choice-independent specializations on `WordLangProgHOL` are in the
+`WordConvs.NotCreated` submodule. `P` here is `Prop`-valued (HOL's is
 `Bool`): the `Alloc`/`Install` clauses compare against `(LN,LN)` and the
 `ShareInst` clause against `ARB`, and `WordLangNumSet` has no decidable
 equality. The recursion and every constructor clause match HOL. Untagged:

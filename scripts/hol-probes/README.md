@@ -1364,3 +1364,11 @@ concrete rows (including 1-bit request/8-bit store and rollback/GC post-state
 errors). Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=stacksem_allocation_probeScript.sml scripts/hol-probes/regenerate.sh`.
 Full StackSem evaluation and production refinement remain open.
+
+The existing `word_convs_not_created_probe.out` records 15 original HOL
+`no_alloc`/`no_install`/`no_mt`/`no_share_inst` observations.
+`Flapjack/Test/WordLangNotCreatedParity.lean` checks those rows against the
+executable Boolean definitions on `WordLangProgHOL`, both in the kernel and
+in the runtime suite. `WordConvs/NotCreated.lean` also proves agreement with
+the original inequality predicates for every possible `ARB : memop` choice;
+the choice-parametric general checker is deliberately untagged.

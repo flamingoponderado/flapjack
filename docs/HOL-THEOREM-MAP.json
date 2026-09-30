@@ -27052,5 +27052,41 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-b source comparison (2026-09-30; bead flapjack-pxn.18.5.5.44.2) against crep_inlineProofScript.sml:597-634. Same six premises: successful OPT_MMAP/List.mapM, equal lengths, ALL_DISTINCT/Pairwise inequality, freshness for every name/expression, exact updated-locals body evaluation and non-Error. Same existential nested_decs evaluation/state_rel. Induction transfers tail map through exact irrelevant-local expression equality, applies reviewed single_dec_evaluate, and composes all ten state_rel fields. Canonical updateListEq implements FUPDATE_LIST and zip order. No target evaluation, simulation, or post-state relation premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "no_alloc_subprogs_def",
+    "lean_path": "Flapjack/Pancake/WordConvs/NotCreated.lean",
+    "lean_name": "noAllocSubprogsHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-pxn.18.5.15.1.3: wordConvsScript.sml:536-616 and exact WordLangProgHOL carrier. Bool conjunction order, both optional Call bodies/handler probe, Loop/If/MustTerminate recursion, Alloc/Install LN pairs, LocValue label, and all catchalls match. Constructor rejection is justified by the kernel-checked noAllocSubprogsHOL_eq_choice certificate against HOL's original inequality predicate for every program and every ARB memop representative. Positive BitVec dimension is the only carrier translation. General extra-choice-parameter checker remains untagged. Original 15 captured HOL rows replayed by kernel and executable Bool checks; whole convention theorem and compiler routing remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "no_install_subprogs_def",
+    "lean_path": "Flapjack/Pancake/WordConvs/NotCreated.lean",
+    "lean_name": "noInstallSubprogsHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-pxn.18.5.15.1.3: wordConvsScript.sml:536-616 and exact WordLangProgHOL carrier. Bool conjunction order, both optional Call bodies/handler probe, Loop/If/MustTerminate recursion, Alloc/Install LN pairs, LocValue label, and all catchalls match. Constructor rejection is justified by the kernel-checked noInstallSubprogsHOL_eq_choice certificate against HOL's original inequality predicate for every program and every ARB memop representative. Positive BitVec dimension is the only carrier translation. General extra-choice-parameter checker remains untagged. Original 15 captured HOL rows replayed by kernel and executable Bool checks; whole convention theorem and compiler routing remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "no_mt_subprogs_def",
+    "lean_path": "Flapjack/Pancake/WordConvs/NotCreated.lean",
+    "lean_name": "noMtSubprogsHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-pxn.18.5.15.1.3: wordConvsScript.sml:536-616 and exact WordLangProgHOL carrier. Bool conjunction order, both optional Call bodies/handler probe, Loop/If/MustTerminate recursion, Alloc/Install LN pairs, LocValue label, and all catchalls match. Constructor rejection is justified by the kernel-checked noMtSubprogsHOL_eq_choice certificate against HOL's original inequality predicate for every program and every ARB memop representative. Positive BitVec dimension is the only carrier translation. General extra-choice-parameter checker remains untagged. Original 15 captured HOL rows replayed by kernel and executable Bool checks; whole convention theorem and compiler routing remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "no_share_inst_subprogs_def",
+    "lean_path": "Flapjack/Pancake/WordConvs/NotCreated.lean",
+    "lean_name": "noShareInstSubprogsHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-pxn.18.5.15.1.3: wordConvsScript.sml:536-616 and exact WordLangProgHOL carrier. Bool conjunction order, both optional Call bodies/handler probe, Loop/If/MustTerminate recursion, Alloc/Install LN pairs, LocValue label, and all catchalls match. Constructor rejection is justified by the kernel-checked noShareInstSubprogsHOL_eq_choice certificate against HOL's original inequality predicate for every program and every ARB memop representative. Positive BitVec dimension is the only carrier translation. General extra-choice-parameter checker remains untagged. Original 15 captured HOL rows replayed by kernel and executable Bool checks; whole convention theorem and compiler routing remain open."
   }
 ]
