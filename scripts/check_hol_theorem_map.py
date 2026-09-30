@@ -2091,8 +2091,6 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         ("Flapjack/Pancake/Proofs/PanGlobals.lean", "ALOOKUP_MAP4"),
         ("Flapjack/Pancake/Proofs/PanGlobals.lean", "numCasesLemma"),
         ("Flapjack/Pancake/PanGlobals.lean", "fpermName"),
-        ("Flapjack/Pancake/PanGlobals.lean", "fpermHOL"),
-        ("Flapjack/Pancake/PanGlobals.lean", "fpermDecsHOL"),
         ("Flapjack/Pancake/PanGlobals.lean", "resortDeclsHOL"),
         ("Flapjack/Pancake/PanGlobals.lean", "decShapesHOL"),
         ("Flapjack/Pancake/PanGlobals.lean", "freshNameMlS"),

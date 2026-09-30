@@ -3460,8 +3460,9 @@
     "hol_name": "fperm_def",
     "lean_path": "Flapjack/Pancake/PanGlobals.lean",
     "lean_name": "fpermHOL",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds9 (source comparison, bead flapjack-pxn.18.3.5.8.20) HOL fperm_def (pan_globalsScript.sml:191-214) has seven equations (Dec, Seq, If, While, Call with optional rtyp/handler, DecCall, default). The exact Lean port fpermHOL is over the reviewed word-indexed ProgHOL width carrier with MlS identifiers; the Call metadata nesting Option (Option (VarKind × MlS) × Option (MlS × MlS × ProgHOL width)) matches HOL (((varkind # varname) option # ((eid # varname # prog) option)) option) constructor-for-constructor, the call/decCall names use the reviewed exact polymorphic fpermName, and every expression payload is left untouched. No qualifier applies. Direct HOL rows in scripts/hol-probes/pan_globals_fperm_probe.out."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "C source comparison literal pan_globalsScript191-214 fperm and216-221 fperm_decs, native ProgHOL/DeclHOL/FunDeclHOL with positive-width expression/value carriers: standard words_as_type_indexed_bitvec translation under NeZero width only. fperm preserves every expression payload, optional return destination and exception identifiers/binding; renames Call/DecCall function names and recursively traverses exactly original Dec/Seq/If/While/call-handler/DecCall children, identity catchall. fperm_decs changes only Function name/body, preserves inline/exported/params/returnShape and other declarations/list order. Native MlS and option/list/constructor structure unchanged, no new hypothesis. Entire definition signature/body byte-identical; explicit qualifier/classification repair, independent coordinator review pending.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "cakeml/pancake/pan_globalsScript.sml",
@@ -3476,8 +3477,9 @@
     "hol_name": "fperm_decs_def",
     "lean_path": "Flapjack/Pancake/PanGlobals.lean",
     "lean_name": "fpermDecsHOL",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds9 (source comparison, bead flapjack-pxn.18.3.5.8.20) HOL fperm_decs_def (pan_globalsScript.sml:216-221) has three equations ([], Function fi::decs renaming fi.name via fperm_name and fi.body via fperm, other d::decs unchanged). The exact Lean port fpermDecsHOL is over List (DeclHOL width) with MlString identifiers, uses the reviewed exact fpermName/fpermHOL, and matches clause-for-clause. No qualifier applies."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "C source comparison literal pan_globalsScript191-214 fperm and216-221 fperm_decs, native ProgHOL/DeclHOL/FunDeclHOL with positive-width expression/value carriers: standard words_as_type_indexed_bitvec translation under NeZero width only. fperm preserves every expression payload, optional return destination and exception identifiers/binding; renames Call/DecCall function names and recursively traverses exactly original Dec/Seq/If/While/call-handler/DecCall children, identity catchall. fperm_decs changes only Function name/body, preserves inline/exported/params/returnShape and other declarations/list order. Native MlS and option/list/constructor structure unchanged, no new hypothesis. Entire definition signature/body byte-identical; explicit qualifier/classification repair, independent coordinator review pending.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "cakeml/pancake/pan_globalsScript.sml",
