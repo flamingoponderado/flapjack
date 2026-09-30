@@ -27876,29 +27876,23 @@
     "reviewer": "flapjack-luna-b source comparison (2026-09-30; .18.5.15.7.4): stackProps832-835 bound n < c.reg_count - LENGTH c.avoid_regs retains Nat subtraction/list length. stack_namesProof598-614 original names_ok premise implies reg_ok for every in-range register; distinct two source names remain distinct under rename. Exact AsmConfigExact positive-width word fields; bare names is canonical HolFiniteMapExact, existing findName/namesOkHOL applied to its lookup projection (HOL FLOOKUP/tlookup behavior). ALL_DISTINCT mapped range injectivity and EVERY range validity, no extra bijection/success premise, no executable route claim. Coordinator review pending."
   },
   {
-    "lean_path": "Flapjack/Compiler/Backend/StackNames/NamesOk.lean",
-    "lean_name": "namesOkImp",
-    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
-    "hol_name": "names_ok_imp",
-    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-b source comparison (2026-09-30; .18.5.15.7.4): stackProps832-835 bound n < c.reg_count - LENGTH c.avoid_regs retains Nat subtraction/list length. stack_namesProof598-614 original names_ok premise implies reg_ok for every in-range register; distinct two source names remain distinct under rename. Exact AsmConfigExact positive-width word fields; bare names is canonical HolFiniteMapExact, existing findName/namesOkHOL applied to its lookup projection (HOL FLOOKUP/tlookup behavior). ALL_DISTINCT mapped range injectivity and EVERY range validity, no extra bijection/success premise, no executable route claim. Coordinator review pending.",
-    "fmap_as_finite_support_relation": [
-      "names"
-    ]
-  },
+  "lean_path": "Flapjack/Compiler/Backend/StackNames/NamesOk.lean",
+  "lean_name": "namesOkImp",
+  "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+  "hol_name": "names_ok_imp",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b corrective source review: find_name is misc tlookup over num num_map (Spt), not |-> finite map. Signature now Spt Nat and sptLookup projected into existing lookup helper with identity-key fallback. No finite-map qualifier; original equation/hypotheses retained, no BIJ premise. Exact positive-width AsmConfigExact uses words qualifier only. Corrects prior invalid finite-map translation."
+},
   {
-    "lean_path": "Flapjack/Compiler/Backend/StackNames/NamesOk.lean",
-    "lean_name": "namesOkImp2",
-    "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
-    "hol_name": "names_ok_imp2",
-    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-b source comparison (2026-09-30; .18.5.15.7.4): stackProps832-835 bound n < c.reg_count - LENGTH c.avoid_regs retains Nat subtraction/list length. stack_namesProof598-614 original names_ok premise implies reg_ok for every in-range register; distinct two source names remain distinct under rename. Exact AsmConfigExact positive-width word fields; bare names is canonical HolFiniteMapExact, existing findName/namesOkHOL applied to its lookup projection (HOL FLOOKUP/tlookup behavior). ALL_DISTINCT mapped range injectivity and EVERY range validity, no extra bijection/success premise, no executable route claim. Coordinator review pending.",
-    "fmap_as_finite_support_relation": [
-      "names"
-    ]
-  },
+  "lean_path": "Flapjack/Compiler/Backend/StackNames/NamesOk.lean",
+  "lean_name": "namesOkImp2",
+  "hol_path": "cakeml/compiler/backend/proofs/stack_namesProofScript.sml",
+  "hol_name": "names_ok_imp2",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b corrective source review: find_name is misc tlookup over num num_map (Spt), not |-> finite map. Signature now Spt Nat and sptLookup projected into existing lookup helper with identity-key fallback. No finite-map qualifier; original equation/hypotheses retained, no BIJ premise. Exact positive-width AsmConfigExact uses words qualifier only. Corrects prior invalid finite-map translation."
+},
 {
   "lean_path": "Flapjack/Compiler/Backend/StackProps/RegisterNames.lean",
   "lean_name": "regImmName",
@@ -27913,11 +27907,8 @@
   "lean_name": "fixedNames",
   "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
   "hol_name": "fixed_names_def",
-  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-luna-b source comparison stackProps961-968: exact x86_64 conditional, find_name3=2 and4=1 and0=0; other ISA True. Canonical HolFiniteMapExact names.lookup, positive-width exact AsmConfigExact. No added BIJ assumption. Qualified finite-map relation bare names and indexed words. Kernel ISA branches checked; no compiler execution change.",
-  "fmap_as_finite_support_relation": [
-    "names"
-  ]
+  "reviewer": "flapjack-luna-b corrective source review: find_name is misc tlookup over num num_map (Spt), not |-> finite map. Signature now Spt Nat and sptLookup projected into existing lookup helper with identity-key fallback. No finite-map qualifier; original equation/hypotheses retained, no BIJ premise. Exact positive-width AsmConfigExact uses words qualifier only. Corrects prior invalid finite-map translation."
 }
 ]
