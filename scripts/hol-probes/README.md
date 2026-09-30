@@ -1,5 +1,15 @@
 # Original Pancake HOL probes
 
+`stacksem_dynamic_stack_probe.out` captures twenty original `stackSem$evaluate`
+observations for StackLoadAny and StackStoreAny (evaluate_def978-1007): disabled
+operations, missing and Loc offsets, exact bounds, unaligned Words, nonzero
+stack space, Loc payloads, aliased registers, and widths1/8/32/64. The matching
+kernel replay is `Flapjack.Test.StackSemDynamicStackCasesParity`; these cases
+remain untagged assembly fragments until the total evaluator is assembled.
+Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_dynamic_stack_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
+
 `pan_globals_compile_top_probe.out` retains `missing_start`, `global_present`,
 and `present_start`, and adds `top_missing`, `top_function`, and
 `top_global_exception` for exact `compile_top_def`. The new 64-bit rows cover
