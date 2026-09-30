@@ -197,7 +197,9 @@ theorem callFFIHOL_ret {σ : Type u} (state : HolFfiState σ) (name : HolFfiName
   unfold callFFIHOL
   rw [if_neg hne, h]
 
-/-- Flapjack-only support lemma: a returning (non-final) `callFFIHOL` preserves
+/-- Flapjack-only local corollary of the canonical tagged port
+`Flapjack.Compiler.Backend.StackRemove.callFFILengthHOL` (HOL `call_FFI_LENGTH`):
+a returning (non-final) `callFFIHOL` preserves
     the byte-list length.  On the identity call it returns the input bytes; on
     any other call the returning branch is guarded by `nextBytes.length = bytes.length`.
     Used to feed `stateRelWriteBytearrayHOL` in the `ExtCall` `compile_correct` case.

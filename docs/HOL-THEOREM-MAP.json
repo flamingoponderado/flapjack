@@ -31834,5 +31834,13 @@
     "lean_name": "resVarFEMPTYExact",
     "statement_status": "documented_mismatch",
     "reviewer": "flapjack-ds10 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.32.6; documented_mismatch, tag withdrawn after coordinator review). HOL res_var_FEMPTY (pan_globalsProofScript.sml:1011-1015) has elaborated type res_var FEMPTY (n,NONE) = FEMPTY over the bare polymorphic finite-map carrier 'a |-> 'b; the Lean statement renders that carrier with HolFiniteMapExact (resVarEq/empty). No existing finite-map qualifier classifies a tagged theorem whose whole content is a single map equality: fmap_as_finite_support_result is limited to defs by its lookup-target witness rule and fmap_as_finite_support_equalities requires at least two top-level conjuncts. The @[hol] tag was withdrawn rather than left as reviewed_exact; faithful classification/extending the single-map-equality qualifier+witness checks is tracked by flapjack-pxn.18.5.2.32.6.1."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "call_FFI_LENGTH",
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove.lean",
+    "lean_name": "callFFILengthHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead pxn.18.5.2.35.5 followup): HOL call_FFI_LENGTH (stack_removeProofScript.sml:67) is (call_FFI s i conf xs = FFI_return n ys) ==> LENGTH ys = LENGTH xs. Carriers/naming render through the already reviewed call_FFI_def tag on callFFIHOL (ffiScript.sml, reviewed_exact): call_FFI->callFFIHOL, FFI_return->HolFfiResult.ret, ffi_state->HolFfiState, LENGTH ys = LENGTH xs -> nextBytes.length = bytes.length; no semantic difference. Proven by the FfiHOL local corollary callFFIHOL_ret_length."
   }
 ]
