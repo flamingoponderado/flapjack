@@ -31453,5 +31453,155 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.5.43.7): the evaluate_ind motive of evaluate_locals_same_fdom for every program and state by structural recursion over the tagged cases; no separate HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/Cases.lean",
+    "lean_name": "transformEocCorrect_Leaf",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "transform_eoc_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.2.1): HOL transform_eoc_correct (crep_inlineProofScript.sml:1893-1913): forall p s r s' res rts. evaluate (p,s) = (r,s') /\\ unreach_elim p = (p,res) /\\ not_branch_ret p /\\ (!retvs. r = SOME (Return retvs) ==> LENGTH rts = LENGTH retvs) /\\ (!x. MEM x rts ==> ~MEM x (var_prog p)) /\\ (exists z. OPT_MMAP (FLOOKUP s.locals) rts = SOME z) /\\ ALL_DISTINCT rts /\\ r <> SOME Error ==> exists r1 s1'. evaluate (transform_eoc rts p, s) = (r1,s1') /\\ state_rel s' s1' /\\ case r of NONE => r1 = NONE /\\ locals_strong_rel s' s1' | SOME (Break n) => ... | SOME (Continue n) => ... | SOME (Return retvs) => r1 = NONE /\\ OPT_MMAP (FLOOKUP s1'.locals) rts = SOME retvs | SOME Error => F | res => r1 = res; the statement is instantiated at p = each program left unchanged by transform_eoc (Skip, Assign, Primitive, Store, Store32, StoreByte, StoreGlob, Break, Continue, Raise, Tick, ExtCall, ShMem; the final rw of HOL's proof), stated through a constructor disjunction as for the accepted evaluate_locals_same_fdom atom cases; no IH; Return excluded by the tagged not_has_return_not_evaluate_return with HOL's quantifiers, hypotheses and full case conclusion written out; the only extra hypotheses are the evaluate_ind motive (untagged transformEocGoal) for sub-programs at every state. Exact tagged evaluator/unreach_elim/not_branch_ret/var_prog/transform_eoc/state_rel/locals_strong_rel over CrepSemHOLState; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/Cases.lean",
+    "lean_name": "transformEocCorrect_Return",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "transform_eoc_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.2.1): HOL transform_eoc_correct (crep_inlineProofScript.sml:1893-1913): forall p s r s' res rts. evaluate (p,s) = (r,s') /\\ unreach_elim p = (p,res) /\\ not_branch_ret p /\\ (!retvs. r = SOME (Return retvs) ==> LENGTH rts = LENGTH retvs) /\\ (!x. MEM x rts ==> ~MEM x (var_prog p)) /\\ (exists z. OPT_MMAP (FLOOKUP s.locals) rts = SOME z) /\\ ALL_DISTINCT rts /\\ r <> SOME Error ==> exists r1 s1'. evaluate (transform_eoc rts p, s) = (r1,s1') /\\ state_rel s' s1' /\\ case r of NONE => r1 = NONE /\\ locals_strong_rel s' s1' | SOME (Break n) => ... | SOME (Continue n) => ... | SOME (Return retvs) => r1 = NONE /\\ OPT_MMAP (FLOOKUP s1'.locals) rts = SOME retvs | SOME Error => F | res => r1 = res; the statement is instantiated at p = Return es (HOL :1966-1970, evaluate_nested_seq_assign); no IH with HOL's quantifiers, hypotheses and full case conclusion written out; the only extra hypotheses are the evaluate_ind motive (untagged transformEocGoal) for sub-programs at every state. Exact tagged evaluator/unreach_elim/not_branch_ret/var_prog/transform_eoc/state_rel/locals_strong_rel over CrepSemHOLState; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/Cases.lean",
+    "lean_name": "transformEocCorrect_Dec",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "transform_eoc_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.2.1): HOL transform_eoc_correct (crep_inlineProofScript.sml:1893-1913): forall p s r s' res rts. evaluate (p,s) = (r,s') /\\ unreach_elim p = (p,res) /\\ not_branch_ret p /\\ (!retvs. r = SOME (Return retvs) ==> LENGTH rts = LENGTH retvs) /\\ (!x. MEM x rts ==> ~MEM x (var_prog p)) /\\ (exists z. OPT_MMAP (FLOOKUP s.locals) rts = SOME z) /\\ ALL_DISTINCT rts /\\ r <> SOME Error ==> exists r1 s1'. evaluate (transform_eoc rts p, s) = (r1,s1') /\\ state_rel s' s1' /\\ case r of NONE => r1 = NONE /\\ locals_strong_rel s' s1' | SOME (Break n) => ... | SOME (Continue n) => ... | SOME (Return retvs) => r1 = NONE /\\ OPT_MMAP (FLOOKUP s1'.locals) rts = SOME retvs | SOME Error => F | res => r1 = res; the statement is instantiated at p = Dec v e body (HOL :1919-1934), IH for body with HOL's quantifiers, hypotheses and full case conclusion written out; the only extra hypotheses are the evaluate_ind motive (untagged transformEocGoal) for sub-programs at every state. Exact tagged evaluator/unreach_elim/not_branch_ret/var_prog/transform_eoc/state_rel/locals_strong_rel over CrepSemHOLState; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/Cases.lean",
+    "lean_name": "transformEocCorrect_If",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "transform_eoc_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.2.1): HOL transform_eoc_correct (crep_inlineProofScript.sml:1893-1913): forall p s r s' res rts. evaluate (p,s) = (r,s') /\\ unreach_elim p = (p,res) /\\ not_branch_ret p /\\ (!retvs. r = SOME (Return retvs) ==> LENGTH rts = LENGTH retvs) /\\ (!x. MEM x rts ==> ~MEM x (var_prog p)) /\\ (exists z. OPT_MMAP (FLOOKUP s.locals) rts = SOME z) /\\ ALL_DISTINCT rts /\\ r <> SOME Error ==> exists r1 s1'. evaluate (transform_eoc rts p, s) = (r1,s1') /\\ state_rel s' s1' /\\ case r of NONE => r1 = NONE /\\ locals_strong_rel s' s1' | SOME (Break n) => ... | SOME (Continue n) => ... | SOME (Return retvs) => r1 = NONE /\\ OPT_MMAP (FLOOKUP s1'.locals) rts = SOME retvs | SOME Error => F | res => r1 = res; the statement is instantiated at p = If c c1 c2 (HOL :1936-1942), IHs for both branches; branch not_branch_ret from not_has_return_imp_not_branch_ret with HOL's quantifiers, hypotheses and full case conclusion written out; the only extra hypotheses are the evaluate_ind motive (untagged transformEocGoal) for sub-programs at every state. Exact tagged evaluator/unreach_elim/not_branch_ret/var_prog/transform_eoc/state_rel/locals_strong_rel over CrepSemHOLState; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/Cases.lean",
+    "lean_name": "transformEocCorrect_Seq",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "transform_eoc_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.2.1): HOL transform_eoc_correct (crep_inlineProofScript.sml:1893-1913): forall p s r s' res rts. evaluate (p,s) = (r,s') /\\ unreach_elim p = (p,res) /\\ not_branch_ret p /\\ (!retvs. r = SOME (Return retvs) ==> LENGTH rts = LENGTH retvs) /\\ (!x. MEM x rts ==> ~MEM x (var_prog p)) /\\ (exists z. OPT_MMAP (FLOOKUP s.locals) rts = SOME z) /\\ ALL_DISTINCT rts /\\ r <> SOME Error ==> exists r1 s1'. evaluate (transform_eoc rts p, s) = (r1,s1') /\\ state_rel s' s1' /\\ case r of NONE => r1 = NONE /\\ locals_strong_rel s' s1' | SOME (Break n) => ... | SOME (Continue n) => ... | SOME (Return retvs) => r1 = NONE /\\ OPT_MMAP (FLOOKUP s1'.locals) rts = SOME retvs | SOME Error => F | res => r1 = res; the statement is instantiated at p = Seq c1 c2 (HOL :1944-1964), IHs for both components; the isSome branch is refuted by the untagged proven unreach_elim_prog_size (documented carrier mismatch .50), FDOM preservation by the assembled evaluate_locals_same_fdom', Return from c1 excluded by not_branch_ret_evaluate_return_unreach_elim with HOL's quantifiers, hypotheses and full case conclusion written out; the only extra hypotheses are the evaluate_ind motive (untagged transformEocGoal) for sub-programs at every state. Exact tagged evaluator/unreach_elim/not_branch_ret/var_prog/transform_eoc/state_rel/locals_strong_rel over CrepSemHOLState; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/Cases.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module canonical witness forwarding the reviewed CrepSemHOLState toBroad/ofBroad roundtrip for the locals/globals/code finite-map qualifier."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/Cases.lean",
+    "lean_name": "stateRel_refl",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead .47.2.1): crep_inline state_rel is reflexive; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/Cases.lean",
+    "lean_name": "eq_of_stateRel_localsStrongRel",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead .47.2.1): state_rel plus locals_strong_rel gives state equality (HOL state_component_equality); no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/Cases.lean",
+    "lean_name": "panMap2_eq_zipWith",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead .47.2.1): MAP2 (panMap2) equals List.zipWith; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/Cases.lean",
+    "lean_name": "mapM_some_of_fdom_eq",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead .47.2.1): equal FDOMs transfer a successful OPT_MMAP FLOOKUP (HOL fdoms_eq_opt_mmap_flookup_some on the finite-support carrier); no separate declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/Cases.lean",
+    "lean_name": "leafGoal",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead .47.2.1): motive for programs transform_eoc leaves unchanged with no Return."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/Cases.lean",
+    "lean_name": "returnGoal",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead .47.2.1): motive for Return."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/Cases.lean",
+    "lean_name": "decGoal",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead .47.2.1): motive for Dec from the body IH."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/Cases.lean",
+    "lean_name": "iteGoal",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead .47.2.1): motive for If from the branch IHs."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/Cases.lean",
+    "lean_name": "seqGoal",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead .47.2.1): motive for Seq from the component IHs."
   }
 ]
