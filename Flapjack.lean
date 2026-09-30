@@ -785,6 +785,7 @@ import Flapjack.Word
 import Flapjack.Stack
 import Flapjack.Compiler.Backend.StackLang
 import Flapjack.Compiler.Backend.StackLang.Prog
+import Flapjack.Compiler.Backend.StackLang.ProductionCodec
 import Flapjack.Compiler.Backend.StackCarrier
 import Flapjack.Basis.Pure.MlString
 import Flapjack.Compiler.Backend.MlStringBridge
