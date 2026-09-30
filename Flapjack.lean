@@ -1,3 +1,4 @@
+import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.ResVar
 import Flapjack.Pancake.Proofs.PanGlobals.ReadBytearray
 import Flapjack.Compiler.Backend.StackProps.ProgramValidity
 import Flapjack.Compiler.Backend.StackProps.ProgramNames
