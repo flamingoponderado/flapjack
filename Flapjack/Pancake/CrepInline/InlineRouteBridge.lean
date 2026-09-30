@@ -1046,5 +1046,84 @@ theorem crepInlineActiveNames_erase_codec {width : Nat} [NeZero width] {α : Typ
       FLOOKUP_domsub, beq_ofString_eq_ofString hname hs]
   cases hb : (name == s) <;> simp_all [FLOOKUP]
 
+def crepInlineCodecEntries {width : Nat} [NeZero width]
+    (entries : List (CrepInlineMapHOLName × (List Nat × CrepProgHOL width))) :
+    List (CrepInlineEntry (BitVec width)) :=
+  entries.map fun e => (toStringOfBytes e.1, (e.2.1, crepProgOfHOL e.2.2))
+
+def crepProgNameRanged {width : Nat} [NeZero width] : CrepProg (BitVec width) → Prop
+  | .skip => True
+  | .dec _ _ body => crepProgNameRanged body
+  | .assign _ _ => True
+  | .primitive _ _ _ => True
+  | .store _ _ => True
+  | .store32 _ _ => True
+  | .storeByte _ _ => True
+  | .storeGlob _ _ => True
+  | .seq first second => crepProgNameRanged first ∧ crepProgNameRanged second
+  | .ite _ thenBranch elseBranch =>
+      crepProgNameRanged thenBranch ∧ crepProgNameRanged elseBranch
+  | .while _ body => crepProgNameRanged body
+  | .break _ => True
+  | .continue _ => True
+  | .call none name _ => CrepNameRanged name
+  | .call (some (_, none)) name _ => CrepNameRanged name
+  | .call (some (_, some (_, body))) name _ => CrepNameRanged name ∧ crepProgNameRanged body
+  | .extCall function _ _ _ _ => CrepNameRanged function
+  | .raise _ => True
+  | .return _ => True
+  | .shMem _ _ _ => True
+  | .tick => True
+
+private theorem erase_active_contains {width : Nat} [NeZero width]
+    (map : HolFiniteMapExact CrepInlineMapHOLName (List Nat × CrepProgHOL width))
+    (active : Std.HashSet FunName) (name s : FunName)
+    (hactive : ∀ s, CrepNameRanged s → active.contains s = (map.lookup (ofString s)).isSome)
+    (hname : CrepNameRanged name) (hs : CrepNameRanged s) :
+    (active.erase name).contains s =
+      ((map.erase (ofString name)).lookup (ofString s)).isSome := by
+  rw [Std.HashSet.contains_erase, hactive s hs, HolFiniteMapExact.lookup_erase,
+      show (FDOMSUB map.lookup (ofString name) (ofString s)) =
+        FLOOKUP (FDOMSUB map.lookup (ofString name)) (ofString s) from rfl,
+      FLOOKUP_domsub, beq_ofString_eq_ofString hname hs]
+  by_cases hb : (name == s) = true <;> simp_all [FLOOKUP]
+
+private theorem erase_active_lookup {width : Nat} [NeZero width]
+    (entries : List (CrepInlineMapHOLName × (List Nat × CrepProgHOL width)))
+    (map : HolFiniteMapExact CrepInlineMapHOLName (List Nat × CrepProgHOL width))
+    (active : Std.HashSet FunName) (name : FunName)
+    (hlookup : ∀ s, CrepNameRanged s → active.contains s = true →
+      crepInlineLookup s (crepInlineCodecEntries entries) =
+        (map.lookup (ofString s)).map (fun e => (e.1, crepProgOfHOL e.2)))
+    (hname : CrepNameRanged name) :
+    ∀ s, CrepNameRanged s → (active.erase name).contains s = true →
+      crepInlineLookup s (crepInlineCodecEntries entries) =
+        ((map.erase (ofString name)).lookup (ofString s)).map
+          (fun e => (e.1, crepProgOfHOL e.2)) := by
+  intro s hs hcont
+  rw [Std.HashSet.contains_erase] at hcont
+  rw [Bool.and_eq_true] at hcont
+  obtain ⟨h1, h2⟩ := hcont
+  rw [hlookup s hs h2, HolFiniteMapExact.lookup_erase,
+      show (FDOMSUB map.lookup (ofString name) (ofString s)) =
+        FLOOKUP (FDOMSUB map.lookup (ofString name)) (ofString s) from rfl,
+      FLOOKUP_domsub, beq_ofString_eq_ofString hname hs]
+  cases hb : (name == s) <;> simp_all [FLOOKUP]
+
+private theorem erase_range {width : Nat} [NeZero width]
+    (map : HolFiniteMapExact CrepInlineMapHOLName (List Nat × CrepProgHOL width))
+    (name : CrepInlineMapHOLName)
+    (hrange : ∀ k v, map.lookup k = some v → crepProgNameRanged (crepProgOfHOL v.2)) :
+    ∀ k v, (map.erase name).lookup k = some v → crepProgNameRanged (crepProgOfHOL v.2) := by
+  intro k v h
+  rw [HolFiniteMapExact.lookup_erase,
+      show (FDOMSUB map.lookup name k) = FLOOKUP (FDOMSUB map.lookup name) k from rfl,
+      FLOOKUP_domsub] at h
+  by_cases hk : (name == k) = true
+  · rw [hk] at h; simp at h
+  · rw [Bool.not_eq_true] at hk
+    rw [hk] at h; simp only [Bool.false_eq_true, if_false, FLOOKUP] at h
+    exact hrange k v (by simpa using h)
+
 end CrepInlineRoute
 end Flapjack
