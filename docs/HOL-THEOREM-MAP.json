@@ -28576,6 +28576,144 @@
     "reviewer": "Flapjack support (bead flapjack-pxn.18.5.5.46.3): local clock-monotonicity helper read off an evaluation equation; no HOL original."
   },
   {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/InitGlobalsDisjoint.lean",
+    "lean_name": "disjointAddressesHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "DISJOINT_addresses_lemma",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Luna A source2098-2109: original three conjunction premises; actual addresses predicate and no common member DISJOINT conclusion. Canonical byte stride and positive word dimension; arbitrary base may wrap, no added bound. Used2195; coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/InitGlobalsShape.lean",
+    "lean_name": "evalStateRelIsWfShapeHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "eval_state_rel_is_wf_shape",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Luna A source2110-2125: original eval/state_rel/FEVERY locals conjunction; exact nil shape conclusion. Internal domain decision, no added premise. Canonical carrier/witnesses and positive word/Type0 FFI. Global value wf derived from relation and empty structs; existing eval invariant and shape_of used. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/InitGlobalsShape.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanSemStateFiniteExact toExact/ofExact finite-support roundtrip; it supports the PanSemStateFiniteExact fields named by the state_rel tags."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/InitGlobalsShape.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanGlobalsContextExact toBroad/ofBroad roundtrip; it supports PanGlobalsContextExact.globals named by the state_rel tags."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationLocals.lean",
+    "lean_name": "stateRelEmptyLocalsHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "state_rel_empty_locals",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Luna A source945-959: original conjunction T/F implications at arbitrary new flag. Canonical empty locals/shared arbitrary locals replacement; all other relation clauses preserved. Canonical state/context local roundtrips; bare locals parameter qualified. Positive word/Type0 FFI. No added premise. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationLocals.lean",
+    "lean_name": "stateRelChangeLocalsHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "state_rel_change_locals",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanGlobalsContextExact.globals",
+      "locals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Luna A source945-959: original conjunction T/F implications at arbitrary new flag. Canonical empty locals/shared arbitrary locals replacement; all other relation clauses preserved. Canonical state/context local roundtrips; bare locals parameter qualified. Positive word/Type0 FFI. No added premise. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationLocals.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanSemStateFiniteExact toExact/ofExact finite-support roundtrip; it supports the PanSemStateFiniteExact fields named by the state_rel tags."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationLocals.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanGlobalsContextExact toBroad/ofBroad roundtrip; it supports PanGlobalsContextExact.globals named by the state_rel tags."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileExpRField.lean",
+    "lean_name": "compileExpCorrectRFieldHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "compile_exp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Luna A source103-185 RField induction case, panSem218-223 and exact compile_exp RField clause: original state_rel T and successful source eval imply identical target value. Sole extra premise is recursive expression IH at same source/context/target, universally quantified result, carrying original relation/eval premises. Internal canonical membership decisions add no premise. Exact finite state/context local roundtrips and positive word/Type0 FFI. List optional indexing preserves successful bounds and out-of-range NONE. No successful compile assumption or target eval premise beyond legitimate IH. Full compile_exp_correct remains open. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileExpRField.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanSemStateFiniteExact toExact/ofExact finite-support roundtrip; it supports the PanSemStateFiniteExact fields named by the state_rel tags."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileExpRField.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed PanGlobalsContextExact toBroad/ofBroad roundtrip; it supports PanGlobalsContextExact.globals named by the state_rel tags."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CallObservation.lean",
+    "lean_name": "panGlobals_call_emptyLocals_observation",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific premise-free evaluator observation used to assemble semantics_empty_locals; no standalone HOL original. Source review pan_globalsProofScript2862-2889 and panSem Call clause: callee entry overwrites caller locals, all body results retain literal fix_clock, failure/timeout preserve FFI events. Exact full semantics theorem remains separate."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/SemanticsCongruence.lean",
+    "lean_name": "panGlobals_semantics_of_clock_observations",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific observational congruence, no standalone HOL original. Uses equal result-option and ffi events at every clock to equate failure, entire termination-choice predicate and divergence prefix set. Conditional assembly infrastructure, not semantics_empty_locals or a pass-correctness port."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/backend_commonScript.sml",
     "hol_name": "word_shift_def",
     "lean_path": "Flapjack/Compiler/Backend/BackendCommon.lean",
@@ -28677,7 +28815,8 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-pxn.18.5.2.24.2) against pan_globalsProofScript.sml:103-119: exact Var Global case of compile_exp_correct (state_rel T ctxt s t with eval s e = SOME v implies eval t (compile_exp ctxt e) = SOME v). The finite-map relation qualifier names the four PanSemStateFiniteExact finite-map fields and the PanGlobalsContextExact.globals map that the state relation and the compiled global read traverse; words_as_type_indexed_bitvec records the HOL word dimension. The conclusion uses the same state relation and source evaluation equation, with no extra premise."
-  },  {
+  },
+  {
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
     "hol_name": "compile_exp_correct",
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationExact.lean",
