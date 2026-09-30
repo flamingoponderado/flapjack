@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.StackNames.AsmAdmissibility.Inst
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallGlobal
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsCons
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.DecCall
@@ -339,6 +340,7 @@ import Flapjack.Pancake.Proofs.CrepInline.ShMem
 import Flapjack.Pancake.Proofs.PanGlobals
 import Flapjack.Pancake.Proofs.PanGlobals.MemStoresAppend
 import Flapjack.Pancake.Proofs.PanGlobals.FpermCode
+import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Leaves
 import Flapjack.Pancake.Proofs.PanGlobals.DeclListLemmas
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelationExact
 import Flapjack.Pancake.Proofs.PanGlobals.CompileDecsStructural

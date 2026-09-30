@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.StackNames.AsmAdmissibility.Inst
 import Flapjack.RiscV.AllocatorMemoryInvariant.Ssa
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallHandlerArguments
 import Flapjack.Pancake.Semantics.PanSem.LookupCodeFinite
@@ -398,6 +399,7 @@ import Flapjack.Pancake.PanGlobalsByteRanged
 import Flapjack.Pancake.Proofs.PanGlobals
 import Flapjack.Pancake.Proofs.PanGlobals.MemStoresAppend
 import Flapjack.Pancake.Proofs.PanGlobals.FpermCode
+import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Leaves
 import Flapjack.Pancake.Proofs.PanGlobals.DeclListLemmas
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelationExact
 import Flapjack.Pancake.Proofs.PanGlobals.CompileDecsStructural
