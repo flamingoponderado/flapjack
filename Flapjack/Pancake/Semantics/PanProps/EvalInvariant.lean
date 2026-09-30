@@ -6316,54 +6316,6 @@ private theorem evaluateClockSubWhileBreakBodyProjection {width : Nat} {σ : Typ
   simp [lowState, fixedLow, hFixedLow,
     PanPropsEvalStateFiniteExact.ofPanSemFinite_toPanSemFinite]
 
-set_option maxHeartbeats 1600000 in
-/-- Exact Break-body branch of HOL `evaluate_clock_sub`
-    (`panPropsScript.sml:724-758`) at the `While` constructor
-    (`panSemScript.sml:630`). This is the sub-case in which the recursive body
-    run supplies `SOME Break`; the low-clock `Break` body run is then derived
-    internally by the generated body induction hypothesis (the body is the only
-    sub-program for which `evaluate_ind` yields an IH here, since a `Break`
-    result terminates the loop without a recursive `While` call). The enclosing
-    high `While` run (at `state`) and its non-timeout premise are the case
-    premises, and the body run returning `SOME Break` is the constructor split
-    that selects this branch. -/
-@[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_clock_sub"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])
-  (words_as_type_indexed_bitvec)]
-theorem evaluateClockSubWhileBreakBodyCaseHOLFinite {width : Nat} {σ : Type}
-    [NeZero width] (condition : ExpHOL width) (body : ProgHOL width)
-    (state : PanPropsEvalStateFiniteExact width σ)
-    (result : Option (PanSemResultExact width))
-    (st : PanPropsEvalStateFiniteExact width σ) (ck : Nat)
-    (hWhileRun : PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state
-        (.while condition body) = (result, { st with clock := st.clock + ck }))
-    (hNotTimeout : result ≠ some .timeOut)
-    (ihBody : ∀ (v2' : ValueHOL width) (v11' : HolWordLab width) (word' : BitVec width),
-      @evalHOLExact width σ _ state.toPanSemFinite.toExact
-          (fun address => Classical.propDecidable (state.memaddrs address)) condition = some v2' ∧
-        v2' = .val v11' ∧ v11' = .word word' ∧ word' ≠ 0 ∧ state.clock ≠ 0 →
-      ∀ (result' : Option (PanSemResultExact width))
-        (post : PanPropsEvalStateFiniteExact width σ) (ck' : Nat),
-        PanPropsEvalStateFiniteExact.evaluateHOLFinitePair
-            { state with clock := state.clock - 1 } body =
-          (result', { post with clock := post.clock + ck' }) →
-        result' ≠ some .timeOut →
-        PanPropsEvalStateFiniteExact.evaluateHOLFinitePair
-          { { state with clock := state.clock - 1 } with
-              clock := (state.clock - 1) - ck' } body = (result', post))
-    (word : BitVec width)
-    (hGuard : @evalHOLExact width σ _ state.toPanSemFinite.toExact
-      (fun address => Classical.propDecidable (state.memaddrs address)) condition =
-      some (.val (.word word))) (hWord : word ≠ 0) (hClock : state.clock ≠ 0)
-    (bodyPost : PanPropsEvalStateFiniteExact width σ)
-    (hBody : PanPropsEvalStateFiniteExact.evaluateHOLFinitePair
-      { state with clock := state.clock - 1 } body =
-        (some .break, bodyPost)) :
-    PanPropsEvalStateFiniteExact.evaluateHOLFinitePair
-      { state with clock := state.clock - ck } (.while condition body) = (result, st) :=
-  evaluateClockSubWhileBreakBodyProjection condition body state result st ck
-    hWhileRun hNotTimeout ihBody word hGuard hWord hClock bodyPost hBody
-
 /-- Flapjack-specific projection of the condition-failure (error) branch of the
     exact source While clause (`panSemScript.sml:630`) through the PanProps pair
     codec: when the condition does not evaluate to a word value, both the source
