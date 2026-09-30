@@ -25693,5 +25693,28 @@
     "lean_name": "holFmapAsFiniteSupportWitness",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only canonical finite-state codec roundtrip, forwarding the imported PanSemStateFiniteExact witness. HOL has no separate theorem about the Lean representation."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+    "hol_name": "compile_eval_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/CompileEvalCorrect.lean",
+    "lean_name": "compileEvalCorrect",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-30; bead flapjack-pxn.18.5.1.2.1) against pan_simpProofScript.sml403-497. Same s/e/v/t binders, conjunction eval s e = SOME v and state_rel s t t.code, and eval t e = SOME v conclusion. Exact imported stateRel preserves the state update and both code-lookup conjuncts. PanSemStateFiniteExact, ExpHOL and ValueHOL have the reviewed HOL payloads, including exact MlS names and positive type-indexed words. evalHOLFinite is the reviewed eval_def; classical domain-membership decision procedures add no logical premise. The proof rewrites only the relation state update and applies unconditional finite code-update evaluation invariance, which holds for every expression constructor because eval does not observe code. No production functions-list/common-fuel evaluator, target run, simulation assumption, byte-name premise or weakened conclusion is used. Four canonical state-map fields use the local imported-carrier roundtrip witness; width and FFI host follow the standard positive BitVec/universe-0 translation.",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/CompileEvalCorrect.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only canonical state representation roundtrip; forwards the imported PanSemStateFiniteExact witness and has no separate HOL declaration."
   }
 ]
