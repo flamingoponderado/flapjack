@@ -1,3 +1,4 @@
+import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallLocalHandler
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.CallLocal
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.TailCall
 import Flapjack.Pancake.Proofs.PanGlobals.UnchangedLocal.Assemble
