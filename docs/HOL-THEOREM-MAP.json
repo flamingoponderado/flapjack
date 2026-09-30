@@ -32093,5 +32093,43 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-c source comparison2026-09-30 (.32.5.10): original evaluate_unchanged_local1105-1136 ShMemLoad constructor from panSem605-610. Original unused v, nonfree/source run/good_res/nonerror and unchanged lookup retained. Local destination differs by freshness; global writes retain locals. Width-indexed shared-domain direct/aligned address guards and original final/return FFI arms preserved; no additional domain/success premise. Exact MlS/canonical four finite maps with genuine roundtrip/positive width NeZero/universe0 FFI. Proof-only, coordinator source acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/Results.lean",
+  "lean_name": "evaluateUnchangedLocal_Return",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_unchanged_local",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison (2026-09-30;32.5.12): Original evaluate_unchanged_local1105-1137 Return constructor case; unused value binder/name nonfree/source evaluation/good_res/nonerror and identical locals lookup conclusion preserved. Literal total Return/Raise equations split expression result, exception-shape lookup and original shape/size32 guard. Successful returned/exception result fails original good_res; every failure returns Error retaining source state. No added success/shape/target/recursive premise. fmap_as_finite_support covers exactly finite-state locals/globals/code/eshapes with canonical roundtrip; words_as_type_indexed_bitvec standard positive dimension and universe0 FFI only. Other cases/full assembly open; coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/Results.lean",
+  "lean_name": "evaluateUnchangedLocal_Raise",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_unchanged_local",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison (2026-09-30;32.5.12): Original evaluate_unchanged_local1105-1137 Raise constructor case; unused value binder/name nonfree/source evaluation/good_res/nonerror and identical locals lookup conclusion preserved. Literal total Return/Raise equations split expression result, exception-shape lookup and original shape/size32 guard. Successful returned/exception result fails original good_res; every failure returns Error retaining source state. No added success/shape/target/recursive premise. fmap_as_finite_support covers exactly finite-state locals/globals/code/eshapes with canonical roundtrip; words_as_type_indexed_bitvec standard positive dimension and universe0 FFI only. Other cases/full assembly open; coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/Results.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack canonical finite-state roundtrip re-export; no standalone HOL declaration."
 }
 ]
