@@ -267,11 +267,12 @@ def wordDeadCodeWithStores [WordCseHash α] : WordProg α → List Nat →
         wordDeadAddReads live (WordAlloc.liveExpressionKeys address ++ [value]), nlive)
   | .set store value, live, _, _, nlive =>
       match value with
-      | .var _ =>
+      | .var source =>
           if wordDeadStoreKey store ∈ nlive then
             (.skip, live, nlive)
           else
-            (.set store value, wordDeadAddReads live (WordAlloc.liveExpressionKeys value),
+            (.set store value, wordDeadAddReads live
+              (WordAlloc.liveExpressionKeys (.var source : WordExp α)),
               wordDeadStoreKey store :: nlive)
       | _ =>
           (.set store value, wordDeadAddReads live (WordAlloc.liveExpressionKeys value), [])

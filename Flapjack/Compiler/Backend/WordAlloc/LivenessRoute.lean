@@ -21,15 +21,14 @@ decreasing_by all_goals decreasing_trivial
 
 /-- Exact set-valued liveness for the generic executable carrier. This calls
 the reviewed definition directly; WordDeadCode consumes its canonical key
-traversal at the Assign/Store/Set/ShareInst set boundaries. The constant-erasure
-theorem below justifies this representation boundary, so this wrapper has no
-independent HOL original. -/
+traversal at the Assign/Store/Set/ShareInst set boundaries. The constant-erasure theorem below justifies this representation
+boundary, so this wrapper has no independent HOL original. -/
 def getLiveExpExecutable {α : Type u} (expression : WordExp α) : Spt Unit :=
   getLiveExp (expressionForLiveness expression)
 
 /-- Constant erasure preserves the complete numeric tree, not just membership.
-For every positive word width this is the reviewed exact liveness result of the
-original expression codec. Cross-carrier infrastructure without a HOL
+For every positive word width this is the reviewed exact liveness result of
+the original expression codec. Cross-carrier infrastructure without a HOL
 original; no injectivity, evaluation, or output premise is assumed. -/
 theorem getLiveExpExecutable_exact {width : Nat} [NeZero width]
     (expression : WordExp (BitVec width)) :

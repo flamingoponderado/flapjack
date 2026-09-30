@@ -26921,6 +26921,20 @@
     "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.5.48; crep_inlineProofScript.sml:2693-2699): same binders fm q l fm' ns; hypotheses outside-q-and-ns lookup transfer, q/ns disjointness, ALL_DISTINCT q (List.Nodup), OPT_MMAP (FLOOKUP fm') q = SOME l; conclusion fm |++ ZIP (q,l) SUBMAP FOLDL res_var fm' (ZIP (ns, MAP (FLOOKUP fm) ns)) with SUBMAP = HolFiniteMapExact.submap and res_var = the tagged resVarEq. No extra hypotheses."
   },
   {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "single_dec_evaluate",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NestedDecs.lean",
+    "lean_name": "singleDecEvaluateExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; bead flapjack-pxn.18.5.5.44.1) against crep_inlineProofScript.sml:587-595 and exact crepSem evaluate Dec equation. Same successful expression, updated-locals body evaluation and non-Error premises; same existential Dec evaluation and state_rel conclusion. Restoration uses exact resVarEq and alters only locals; all ten state_rel fields remain equal. No target evaluation or post-state relation assumed."
+  },
+  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/CrepInline/UpdateListLocals.lean",
@@ -26943,5 +26957,13 @@
     "lean_name": "lookup_updateListEq_zip_getElem",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack private helper (bead flapjack-pxn.18.5.5.48): with distinct keys and equal lengths, the updateListEq over ZIP (zs, ys) maps zs[i] to ys[i]; via FUPDATE_LIST_HOL_eq_FUPDATE_LIST and updateEqZipFlookupHOL. No HOL original."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/NestedDecs.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-luna-b Flapjack-specific canonical state roundtrip witness re-export; no separate HOL declaration claimed."
   }
 ]
