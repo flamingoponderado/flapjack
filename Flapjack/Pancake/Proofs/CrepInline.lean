@@ -3125,19 +3125,17 @@ recursive motive), so `ihWhile` cannot be instantiated at the original state
 `s`; the `While` clause runs the body only when `s.clock ≠ 0` and
 `decClockCrepSemHOL` strictly decreases the clock there.
 
-ON HOLD: the `@[hol]` tag above is not yet accepted. The parent assembly must
-supply this hypothesis literally from `inductHOL`, including the
-`crepStampExactDomains`/`fixClockCrepSemHOL` correspondence between the
-handler's stamped body-result state and the plain body-result state used here;
-that correspondence is not assumed in the statement but remains to be proved
-before the tag can be reviewed. Flapjack-specific `inlineProgHOLExact` inline
-rendering; carriers and relation qualifiers match the other
-`inline_prog_correct` case lemmas. -/
-@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "inline_prog_correct"
-  (fmap_as_finite_support_relation :=
-    [CrepSemHOLState.locals, CrepSemHOLState.globals,
-      CrepSemHOLState.code, inlFs, inlBag])
-  (words_as_type_indexed_bitvec)]
+TAG WITHDRAWN (mismatch): the `@[hol]` tag is deliberately absent. The
+induction principle supplies the recursive `While` motive at
+`crepStampExactDomains state loopState` (with the body result fed through
+`fixClockCrepSemHOL (decClockCrepSemHOL state)`), not at the plain
+body-result state `loopState` used by `ihWhile` here. So this plain-state
+form is not an instance of the `inductHOL` recursive hypothesis (the missing
+`crepStampExactDomains`/`fixClockCrepSemHOL` correspondence is not proved),
+and this declaration must not carry the HOL tag. The statement/proof here is
+useful Flapjack infrastructure; the faithful tagged replacement (handler-shaped
+recursive hypothesis plus the stamp/fixClock correspondence) is tracked as an
+open dependency. Flapjack-specific `inlineProgHOLExact` inline rendering. -/
 theorem inlineProgCorrectWhileCaseExact {width : Nat} [NeZero width] {σ : Type}
     (condition : CrepExpHOL width) (body : CrepProgHOL width)
     (s : CrepSemHOLState width σ)
