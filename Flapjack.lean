@@ -1,4 +1,5 @@
 import Flapjack.Pancake.Proofs.PanSimp.SkipSeqExact
+import Flapjack.Pancake.Proofs.PanGlobals.FpermSemantics
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Prime
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelImpSemantics
 import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.Decls

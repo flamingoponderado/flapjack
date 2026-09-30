@@ -37190,5 +37190,36 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "C source comparison pan_simpProofScript.sml75-81: unconditional complete evaluate(Seq p Skip,s)=evaluate(p,s), arbitrary exact program/state, no extra hypotheses. Reviewed line780 Seq uses source fix_clock_evaluate; source clock bound discharges clamp for every run. NONE runs execute Skip preserving post-state; every SOME result propagates unchanged, including errors/exceptional control. Native syntax/result/MlS, canonical finite-map fields with genuine imported-owner roundtrip, positive width and Type0 FFI only. Coordinator review pending; proof-only no executed compiler change."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermSemantics.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack canonical-state representation roundtrip and private generic evaluation-pair alias elimination; no independently named HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermSemantics.lean",
+  "lean_name": "terminationWitnessReduced",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack canonical-state representation roundtrip and private generic evaluation-pair alias elimination; no independently named HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermSemantics.lean",
+  "lean_name": "semanticsFpermHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "semantics_fperm",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol source comparison22.5.20 against pan_globalsProofScript1839-1853 and panSemScript785-809: unconditional equality semantics (state with code=fperm_code f g state.code) (fperm_name f g start) = semantics state start, over arbitrary native MlS swap names/state/start. No nonFail, successful-run, target evaluation, IH, trace-prefix or result premise. Accepted evaluateFpermPrimeHOL at native Call NONE start [] gives complete pair mapping at every clock; internally projected results and FFI event lists are exactly equal. Original semantics failure test, classical holOptionSome termination predicate and entire HolLList buildLprefixLub trace-set predicate retained. Private predicate lemma only eliminates existential pair aliases, so both classical choice predicates and complete divergence sets coincide before choice/LUB; no uniqueness assumption. Canonical imported finite locals/globals/code/eshapes and same-module genuine state roundtrip reexport, native word-indexed ProgHOL/result/state and Type0 FFI host; only finite-support and positive type-indexed BitVec translations qualified. Proof-only semantic composition; no executed compiler behavior change. Independent coordinator source acceptance and merged checks pending."
 }
 ]
