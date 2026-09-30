@@ -39,7 +39,10 @@ private theorem compileList_eq_map {width : Nat} [NeZero width]
 
 /-- Genuine tail Call NONE case of original compile_correct. Only the original
 argument/lookup/nonzero-clock guarded callee evaluate_ind IH is used; no handler
-IH is required for this literal caltyp specialization. No extra public premise. -/
+IH is required for this literal caltyp specialization. No extra public premise.
+The bare finite-map qualifier entry `callee` names the standalone map
+universally bound inside the original callee IH. It is not an extra outer
+map parameter or premise; the reviewed map translation applies at that binder. -/
 @[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "compile_correct"
   (fmap_as_finite_support_relation := [PanSemStateFiniteExact.locals, PanSemStateFiniteExact.globals, PanSemStateFiniteExact.code, PanSemStateFiniteExact.eshapes, PanGlobalsContextExact.globals, callee])
   (words_as_type_indexed_bitvec)]
