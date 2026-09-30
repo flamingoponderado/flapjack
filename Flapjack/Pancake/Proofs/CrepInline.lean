@@ -2702,7 +2702,6 @@ private theorem inlineProgCorrectTickCaseExact {width : Nat} [NeZero width] {σ 
     · simp only [crepInlineLocalsStrongRelExact]
       exact hlocals
 
-set_option maxHeartbeats 1000000 in
 /-- HOL `inline_prog_correct` Primitive case
     (`crep_inlineProofScript.sml:2301-2309`, atomic catch-all `:2401`). -/
 @[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "inline_prog_correct"
@@ -2783,7 +2782,6 @@ theorem inlineProgCorrectPrimitiveCaseExact {width : Nat} [NeZero width] {σ : T
           · rw [if_neg hg] at hsource
             exact absurd (congrArg Prod.fst hsource).symm hnotError
 
-set_option maxHeartbeats 1000000 in
 /-- HOL `inline_prog_correct` ExtCall case
     (`crep_inlineProofScript.sml:2301-2309`, atomic catch-all `:2401`). -/
 @[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "inline_prog_correct"
