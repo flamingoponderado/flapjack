@@ -40,6 +40,7 @@ import Flapjack.Compiler.Backend.Semantics.StackSem.Labels
 import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
 import Flapjack.Compiler.Backend.Semantics.StackSem.Expressions
 import Flapjack.Compiler.Backend.Semantics.StackSem.Allocation
+import Flapjack.Compiler.Backend.Semantics.StackSem.JumpLower
 import Flapjack.Test.StackSemExpressionParity
 import Flapjack.Test.StackSemLabelsParity
 import Flapjack.Test.StackSemLoopControlParity
@@ -50,6 +51,7 @@ import Flapjack.Test.StackSemIntegerInstParity
 import Flapjack.Test.StackSemEvaluateAllocCaseParity
 import Flapjack.Test.StackSemStoreConstsGuardParity
 import Flapjack.Test.StackSemFpRegisterInstParity
+import Flapjack.Test.StackSemJumpLowerParity
 import Flapjack.Test.PanGlobalsFpermCodeParity
 import Flapjack.Test.StackSemAllocationParity
 import Flapjack.Compiler.Backend.Semantics.StackSem.Bitmap

@@ -1,8 +1,9 @@
 import Flapjack.Compiler.Backend.Semantics.StackSem.State
 
-/-! Counterpart of StackSem's code lookup and clock-clamping prerequisites.
-The payload of the code tree and the result component of the clock pair retain
-HOL's polymorphism. No evaluator or production-path refinement is supplied. -/
+/-! Counterpart of StackSem's code lookup, clock-clamping, and evaluate-def
+result-classification prerequisites. The payload of the code tree and the result
+component of the clock pair retain HOL's polymorphism. No evaluator or
+production-path refinement is supplied. -/
 namespace Flapjack.StackSemControl
 
 /-- Canonical finite-support state roundtrip re-export; infrastructure. -/
@@ -72,5 +73,18 @@ def exitLoop {width : Nat} [NeZero width] :
   | some (.break label) => if label = 0 then none else some (.break (label - 1))
   | some (.continue label) => some (.continue (label - 1))
   | result => result
+
+/-- HOL `bad_fun_return_def` (`cakeml/compiler/backend/semantics/stackSemScript.sml:754-758`):
+a call/jump sub-evaluation is a bad function return when it produced `NONE` or
+a `Break`/`Continue`; every other result propagates. Exact StackSem
+`StackSemResult` classifier, distinct from WordSem's same-named definition over
+its different result type. -/
+@[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "bad_fun_return_def"
+  (words_as_type_indexed_bitvec)]
+def badFunReturn {width : Nat} [NeZero width] : Option (StackSemResult width) → Bool
+  | none => true
+  | some (.break _) => true
+  | some (.continue _) => true
+  | _ => false
 
 end Flapjack.StackSemControl

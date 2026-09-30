@@ -1398,6 +1398,23 @@ HOL_PROBE_ONLY=stacksem_loop_control_probeScript.sml
 scripts/hol-probes/regenerate.sh`. Evaluator assembly and its production
 refinement remain tracked by y19g/.12.
 
+`stacksem_jumplower_probeScript.sml` records eight direct original
+`stackSem$evaluate` observations for the `JumpLower` clause
+(`stackSemScript.sml:838-848`): a successful unsigned `Lower` comparison whose
+`INL` code lookup finds a `Return` sub-program (the non-bad result propagates
+with the decremented clock), a zero-clock timeout that empties the environment,
+a missing code target, a false comparison (`NONE` with the state unchanged), a
+`Loc` operand (`Error`), and `Break`/`Continue`/`Skip` sub-results
+(`bad_fun_return` maps each to `Error` with the recursed state). The observer
+records result, clock, register 1 and stack length. Kernel replay over a
+concrete `evaluate` stub lives in
+`Flapjack/Test/StackSemJumpLowerParity.lean`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_jumplower_probeScript.sml
+scripts/hol-probes/regenerate.sh`. The `evaluateJumpLower` fragment is
+untagged; the tagged port of `bad_fun_return_def` lives in
+`StackSem/Control.lean`, and assembled full evaluation remains on y19g.
+
 `pan_globals_fperm_code_probeScript.sml` observes the original
 `pan_globalsProof$fperm_code` finite map using its proved
 `FLOOKUP_fperm_code'` rewrite followed by HOL EVAL (plain EVAL leaves
