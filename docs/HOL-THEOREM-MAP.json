@@ -1,5 +1,24 @@
 [
   {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/State.lean",
+    "lean_name": "StackSemStateFiniteExact",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "state",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["regs", "fpRegs", "store"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.1): stackSemScript.sml state datatype has22 fields in source order, all preserved. regs is num|->word_loc, fp_regs num|->word64, store store_name|->word_loc: exactly the three canonical finite-map translations named in the qualifier. stack and bitmaps remain List; stack_space and clock are Nat. memory is total word-to-word_loc, mdomain/sh_mdomain and ffi_save_regs are reviewed Bool-predicate set renderings (no extra finite-support assumption). compile takes C and List(Nat x HolProg width), returns Option(List(BitVec8) x C); compile_oracle returns C x that program list x List(BitVec width), matching the HOL right-associated products. code is Spt HolProg, not a finite map. use_stack/use_store/use_alloc/be are Bool. HolProg uses the reviewed exact asm fields, one shared positive word width, and MlString FFI names. WordLocW, WordStoreHOL (all18 store_name constructors including Temp(BitVec5)), WordSemBuffer width8/widthwidth, WordSemGcFun width and HolFfiState F reuse the same exact shared carriers as WordSem: the GC callback domain is roots/memory/domain/store and optional result roots/memory/store, with canonical store at both positions as reviewed by its own function qualifier. The owning state retains NeZero width, C/F universe0 types, and same-module StackSemStateSupport.holFmapAsFiniteSupportWitness gives both non-vacuous roundtrips. This is a carrier prerequisite only; exact evaluator, numerical instruction semantics and executed-path refinement remain open. Coordinator independent review required."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/State.lean",
+    "lean_name": "StackSemResult",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "result",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.1): stackSemScript.sml:12-21 has eight constructors: Result/Exception/Halt each one word_loc; Break/Continue each num; TimeOut/Error no payload; FinalFFI one final_event. StackSemResult preserves that order and every arity/payload, using reviewed WordLocW width and HolFinalEvent, Nat for num, positive BitVec dimension with NeZero width. Unlike WordSemResult, Result has no extra value list. Carrier only, no evaluator claim; independent coordinator review required."
+  },
+  {
     "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvaluateAddClockIoEventsMono.lean",
     "lean_name": "panPropsEvaluateAddClockIoEventsMono",
     "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
