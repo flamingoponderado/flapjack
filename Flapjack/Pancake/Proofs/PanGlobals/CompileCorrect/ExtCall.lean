@@ -9,8 +9,8 @@ import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Base
 # pan_globals `compile_correct`: the `ExtCall` case
 
 `Resume compile_correct[ExtCall]` (`cakeml/pancake/proofs/pan_globalsProofScript.sml:1595-1613`,
-bead `flapjack-pxn.18.5.2.35`).  The case uses the `evaluate_ind` expression
-hypothesis `compile_exp_correct` for the four compiled arguments, the byte-array
+bead `flapjack-pxn.18.5.2.35`).  The case uses the established theorem
+`compile_exp_correct` for the four compiled arguments, the byte-array
 read transport `state_rel_read_bytearray`, the `call_FFI` split with
 `state_rel_change_ffi` and `state_rel_write_bytearray`, and the empty-locals
 transport `state_rel_empty_locals`.  Source evaluator is the tagged
