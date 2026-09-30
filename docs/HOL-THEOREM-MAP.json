@@ -31903,5 +31903,51 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack local support (bead .47.2.2): the transform_eoc_correct motive for While from TransformEocWhileIH."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/Call.lean",
+    "lean_name": "transformEocCorrect_Call",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "transform_eoc_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.47.2.3) compared crep_inlineProofScript.sml:1893-1913 (statement) and Resume transform_eoc_correct[Call] :2024-2038: HOL's goal at p = Call caltyp fname args for every caltyp, with all quantifiers, hypotheses and the case conclusion written out; the only extra hypothesis is TransformEocCallHandlerIH, the guarded evaluate_ind handler premise (argument eval, lookup_code, ALL_DISTINCT selector, clock, callee Exception eid, caltyp = SOME (rts,SOME (eid,p))) at motive transformEocGoal, mirroring the accepted ihHandler of evaluate_locals_same_fdom's Call case; HOL's callee premise is not used. Tail Call NONE: transformed to Call (SOME (rts,NONE)); a callee Return retvs gives NONE with rts read back (opt_mmap_some_eq_zip_flookup on the finite-support carrier), other outcomes coincide. Call (SOME (_,NONE)): unchanged, no Return (not_has_return_not_evaluate_return). Handler: identical except the matching-exception branch, discharged by the handler IH. Exact tagged carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/Call.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module canonical witness forwarding the reviewed CrepSemHOLState toBroad/ofBroad roundtrip for the locals/globals/code finite-map qualifier."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/Call.lean",
+    "lean_name": "mapM_updateListEq_zip",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead .47.2.3): distinct zip-updated keys read back their values (HOL opt_mmap_some_eq_zip_flookup on the finite-support carrier); no separate declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/Call.lean",
+    "lean_name": "tailGoal",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead .47.2.3): the transform_eoc_correct motive for a tail Call NONE."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformEoc/Call.lean",
+    "lean_name": "handlerGoal",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead .47.2.3): the motive for a handler Call from the handler IH."
   }
 ]

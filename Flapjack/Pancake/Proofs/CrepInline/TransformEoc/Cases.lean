@@ -68,7 +68,7 @@ def transformEocGoal {width : Nat} [NeZero width] {σ : Type}
       crepInlineStateRelExact s' s1' ∧ transformEocPost rts r r1 s' s1'
 
 /-- Local support: `state_rel` is reflexive. -/
-private theorem stateRel_refl {width : Nat} [NeZero width] {σ : Type}
+theorem stateRel_refl {width : Nat} [NeZero width] {σ : Type}
     (s : CrepSemHOLState width σ) : crepInlineStateRelExact s s :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
@@ -113,7 +113,7 @@ theorem mapM_some_of_fdom_eq {β : Type} {f g : Nat → Option β}
 
 /-- Local support: programs that `transform_eoc` leaves unchanged and that
     contain no `Return`. -/
-private theorem leafGoal {width : Nat} [NeZero width] {σ : Type}
+theorem leafGoal {width : Nat} [NeZero width] {σ : Type}
     (p : CrepProgHOL width) (s : CrepSemHOLState width σ)
     (htr : ∀ rts, transformEocHOLExact rts p = p) (hnr : hasReturnHOLExact p = false) :
     transformEocGoal p s := by
