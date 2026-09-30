@@ -1280,3 +1280,12 @@ on bead `.18.5.11.1.7.1`. Regenerate with
 HOL_PROBE_ONLY=word_alloc_live_inst_probeScript.sml
 scripts/hol-probes/regenerate.sh` (the shared checkout supplies built objects;
 its original word_alloc source was compared byte-for-byte).
+
+`word_sem_cut_names_type_probe.out` prints the original HOL `cut_names`
+constant types for `cut_names`, `cut_envs`, and `cut_env` from `wordSemTheory`: independent name-map and environment-map
+payload parameters in the first, and generic environment payloads in the latter two. It guards the carrier review of `wordSemCutNames` against
+an accidental specialization to unit keys or word-valued locals. Regenerate
+with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_sem_cut_names_type_probeScript.sml
+scripts/hol-probes/regenerate.sh`; the original wordSem source was compared
+byte-for-byte before using the shared checkout's built objects.

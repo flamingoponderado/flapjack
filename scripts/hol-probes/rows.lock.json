@@ -516,6 +516,7 @@
     {"bytes": 926, "out": "word_sem_alloc_probe.out", "rows": 24, "sha256": "7690f4b8a32129e06fce150b73d9fbb3b7ec40604b17bae5c7299586ce2dd7ce"},
     {"bytes": 599, "out": "word_sem_call_helpers_probe.out", "rows": 25, "sha256": "dcf260ccaef59b0fa35d1ce263c60b227abb010c3b54b1944a87f84322813b86"},
     {"bytes": 261, "out": "word_sem_carriers_probe.out", "rows": 6, "sha256": "017cae98df183c920ef4584f41b0ebf7e8a2703efad6f69e2a01af0a3e82afd1"},
+    {"bytes": 296, "out": "word_sem_cut_names_type_probe.out", "rows": 3, "sha256": "81b7fcaa655459313798f9bf402dd15fd536a654bb89e1cc6e4edd6c5705df1a"},
     {"bytes": 993, "out": "word_sem_env_probe.out", "rows": 29, "sha256": "47a073a95ec645de1bf2c7139a94e6e0aee9f63b7de0e3a52f25e7f408442c14"},
     {"bytes": 115, "out": "word_sem_eval_prereq_probe.out", "rows": 7, "sha256": "7ab09897f915a3ca87c999e0ad13972faedf7e6f390ae6df404e3d80c22ec610"},
     {"bytes": 2482, "out": "word_sem_evaluate_probe.out", "rows": 36, "sha256": "37195d436ec384f99d89d5d678e8bd0c131b2ccfa6a3e0a0b74cbd58ed8b4f10"},

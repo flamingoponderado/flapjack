@@ -1,0 +1,5 @@
+cut_names_type=:α sptree$num_map -> β sptree$num_map -> β sptree$num_map option
+cut_envs_type=:sptree$num_set # sptree$num_set ->
+α sptree$num_map -> (α sptree$num_map # α sptree$num_map) option
+cut_env_type=:sptree$num_set # sptree$num_set ->
+α sptree$num_map -> α sptree$num_map option
