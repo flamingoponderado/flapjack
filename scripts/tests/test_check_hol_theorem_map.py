@@ -1537,7 +1537,12 @@ class ValidateInventoryTest(unittest.TestCase):
                 record = by_key[key]
                 self.assertEqual(
                     (record["hol_path"], record["hol_name"]), (hol_path, hol_name))
-                self.assertEqual(record["statement_status"], "reviewed_exact")
+                if key[1] == "isWfShapeValueHOLExact_nil_step1":
+                    self.assertEqual(record["statement_status"],
+                                     "reviewed_words_as_type_indexed_bitvec")
+                    self.assertIs(record["words_as_type_indexed_bitvec"], True)
+                else:
+                    self.assertEqual(record["statement_status"], "reviewed_exact")
                 self.assertIn(key, MAP["tagged_declarations"]())
 
     def test_panprops_mem_load_is_wf_shape_v_exact_port(self):
