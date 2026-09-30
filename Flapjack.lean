@@ -12,6 +12,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Assign
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Memory
 import Flapjack.Pancake.Proofs.PanGlobals.ReadBytearray
 import Flapjack.Pancake.Proofs.PanGlobals.ByteStore
+import Flapjack.Pancake.Proofs.PanGlobals.WriteBytearray
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Leaves
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.While
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.If
@@ -47,6 +48,8 @@ import Flapjack.Pancake.Proofs.PanGlobals.StateRelationLocals
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsShape
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsDisjoint
 import Flapjack.Compiler.Backend.Semantics.StackSem.FixedStackCases
+import Flapjack.Compiler.Backend.Semantics.StackSem.DynamicStackCases
+import Flapjack.Compiler.Backend.Semantics.StackSem.SizeBitmapCases
 import Flapjack.Compiler.Backend.StackProps.FloatNames
 import Flapjack.Compiler.Backend.StackProps.AddressNames
 import Flapjack.Compiler.Backend.StackProps.InstructionNames

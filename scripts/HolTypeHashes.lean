@@ -12,6 +12,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Assign
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Memory
 import Flapjack.Pancake.Proofs.PanGlobals.ReadBytearray
 import Flapjack.Pancake.Proofs.PanGlobals.ByteStore
+import Flapjack.Pancake.Proofs.PanGlobals.WriteBytearray
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.Leaves
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.While
 import Flapjack.Pancake.Proofs.PanGlobals.FreshLocal.If
@@ -91,6 +92,7 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.Evaluate
 import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateClock
 import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateInd
 import Flapjack.Compiler.Backend.Semantics.StackSem.State
+import Flapjack.Compiler.Backend.Semantics.StackSem.SizeBitmapCases
 import Flapjack.Compiler.Backend.Semantics.StackSem.Control
 import Flapjack.Compiler.Backend.Semantics.StackSem.Labels
 import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
