@@ -1,4 +1,4 @@
-import Flapjack.Pancake.WordConvs
+import Flapjack.Pancake.WordConvs.NotCreated
 import Flapjack.Test.Runtime
 
 /-!
@@ -14,79 +14,89 @@ open Flapjack
 
 private abbrev W := BitVec 8
 
-private def cuts : WordLangCutsets :=
-  ((FEMPTY : WordLangNumSet), (FEMPTY : WordLangNumSet))
+private def cuts : WordLangCutsetsHOL := (.ln, .ln)
 
-private def skipP : WordLangProg W := .skip
+private def skipP : WordLangProgHOL W := .skip
 
-private def allocEmpty : WordLangProg W := .alloc 0 cuts
+private def allocEmpty : WordLangProgHOL W := .alloc 0 cuts
 
-private def allocOther : WordLangProg W := .alloc 1 cuts
+private def allocOther : WordLangProgHOL W := .alloc 1 cuts
 
-private def seqAlloc : WordLangProg W := .seq .skip (.alloc 0 cuts)
+private def seqAlloc : WordLangProgHOL W := .seq .skip (.alloc 0 cuts)
 
-private def mtSkip : WordLangProg W := .mustTerminate .skip
+private def mtSkip : WordLangProgHOL W := .mustTerminate .skip
 
-private def installEmpty : WordLangProg W := .install 0 0 0 0 cuts
+private def installEmpty : WordLangProgHOL W := .install 0 0 0 0 cuts
 
-private def shareArb : WordLangProg W := .shareInst wordLangArbMemOp 0 (.var 0)
+private def shareArb : WordLangProgHOL W := .shareInst wordLangArbMemOp 0 (.var 0)
 
-private def shareLoad : WordLangProg W := .shareInst .load 0 (.var 0)
+private def shareLoad : WordLangProgHOL W := .shareInst .load 0 (.var 0)
 
-private def seqShare : WordLangProg W := .seq .skip shareArb
+private def seqShare : WordLangProgHOL W := .seq .skip shareArb
 
-private def callNone : WordLangProg W := .call none none [] none
+private def callNone : WordLangProgHOL W := .call none none [] none
 
-private def callHandlerMt : WordLangProg W :=
+private def callHandlerMt : WordLangProgHOL W :=
   .call none none [] (some (0, .mustTerminate .skip, 0, 0))
 
 -- nac_skip=T
-example : noAllocSubprogs skipP := by simp [noAllocSubprogs, notCreatedSubprogs, skipP]
+example : noAllocSubprogsHOL skipP = true := by decide
 -- nac_alloc_empty=F
-example : ¬ noAllocSubprogs allocEmpty := by
-  simp [noAllocSubprogs, notCreatedSubprogs, allocEmpty, cuts]
+example : noAllocSubprogsHOL allocEmpty = false := by decide
 -- nac_alloc_other=F
-example : ¬ noAllocSubprogs allocOther := by
-  simp [noAllocSubprogs, notCreatedSubprogs, allocOther, cuts]
+example : noAllocSubprogsHOL allocOther = false := by decide
 -- nac_seq_alloc=F
-example : ¬ noAllocSubprogs seqAlloc := by
-  simp [noAllocSubprogs, notCreatedSubprogs, seqAlloc, cuts]
+example : noAllocSubprogsHOL seqAlloc = false := by decide
 -- nac_mt_skip=T
-example : noAllocSubprogs mtSkip := by
-  simp [noAllocSubprogs, notCreatedSubprogs, mtSkip]
+example : noAllocSubprogsHOL mtSkip = true := by decide
 -- nins_install_empty=F
-example : ¬ noInstallSubprogs installEmpty := by
-  simp [noInstallSubprogs, notCreatedSubprogs, installEmpty, cuts]
+example : noInstallSubprogsHOL installEmpty = false := by decide
 -- nmt_mt_skip=F
-example : ¬ noMtSubprogs mtSkip := by
-  simp [noMtSubprogs, notCreatedSubprogs, mtSkip]
+example : noMtSubprogsHOL mtSkip = false := by decide
 -- nsi_skip=T
-example : noShareInstSubprogs skipP := by
-  simp [noShareInstSubprogs, notCreatedSubprogs, skipP]
+example : noShareInstSubprogsHOL skipP = true := by decide
 -- nsi_share_arb=F
-example : ¬ noShareInstSubprogs shareArb := by
-  simp [noShareInstSubprogs, notCreatedSubprogs, shareArb]
+example : noShareInstSubprogsHOL shareArb = false := by decide
 -- nsi_share_load=F
-example : ¬ noShareInstSubprogs shareLoad := by
-  simp [noShareInstSubprogs, notCreatedSubprogs, shareLoad]
+example : noShareInstSubprogsHOL shareLoad = false := by decide
 -- nsi_seq_share=F
-example : ¬ noShareInstSubprogs seqShare := by
-  simp [noShareInstSubprogs, notCreatedSubprogs, seqShare, shareArb]
+example : noShareInstSubprogsHOL seqShare = false := by decide
 -- nsi_call_none=T
-example : noShareInstSubprogs callNone := by
-  simp [noShareInstSubprogs, notCreatedSubprogs, callNone]
+example : noShareInstSubprogsHOL callNone = true := by decide
 -- nsi_call_handler_mt=T
-example : noShareInstSubprogs callHandlerMt := by
-  simp [noShareInstSubprogs, notCreatedSubprogs, callHandlerMt]
+example : noShareInstSubprogsHOL callHandlerMt = true := by decide
 -- nmt_call_handler_mt=F
-example : ¬ noMtSubprogs callHandlerMt := by
-  simp [noMtSubprogs, notCreatedSubprogs, callHandlerMt]
+example : noMtSubprogsHOL callHandlerMt = false := by decide
 -- nac_install_empty=T
-example : noAllocSubprogs installEmpty := by
-  simp [noAllocSubprogs, notCreatedSubprogs, installEmpty, cuts]
+example : noAllocSubprogsHOL installEmpty = true := by decide
+
+private def oracleChecks : Bool :=
+  [
+    noAllocSubprogsHOL skipP == true,
+    noAllocSubprogsHOL allocEmpty == false,
+    noAllocSubprogsHOL allocOther == false,
+    noAllocSubprogsHOL seqAlloc == false,
+    noAllocSubprogsHOL mtSkip == true,
+    noInstallSubprogsHOL installEmpty == false,
+    noMtSubprogsHOL mtSkip == false,
+    noShareInstSubprogsHOL skipP == true,
+    noShareInstSubprogsHOL shareArb == false,
+    noShareInstSubprogsHOL shareLoad == false,
+    noShareInstSubprogsHOL seqShare == false,
+    noShareInstSubprogsHOL callNone == true,
+    noShareInstSubprogsHOL callHandlerMt == true,
+    noMtSubprogsHOL callHandlerMt == false,
+    noAllocSubprogsHOL installEmpty == true
+  ].all id
+
+#guard oracleChecks
 
 def runChecks : IO Bool := do
-  IO.println "PASS wordConvs not_created_subprogs no_alloc/no_install/no_mt/no_share_inst match all 15 oracle rows"
-  pure true
+  if oracleChecks then
+    IO.println "PASS exact Boolean wordConvs specializations match all 15 original HOL rows"
+    pure true
+  else
+    IO.println "FAIL exact Boolean wordConvs specializations disagree with original HOL"
+    pure false
 
 end Flapjack.Test.WordLangNotCreatedParity

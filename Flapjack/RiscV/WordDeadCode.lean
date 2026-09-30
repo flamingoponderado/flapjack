@@ -50,19 +50,10 @@ def wordDeadMove (priority : Nat) (live : List Nat) (moves : List (Nat × Nat)) 
 
 def wordDeadInst {α : Type} (live : List Nat) (instruction : WordInst α) :
     WordProg α × List Nat :=
-  let writes := wordInstWriteVars instruction
-  let reads := wordInstReadVars instruction
-  if writes.any (fun name => name ∈ live) then
-    (.inst instruction,
-      wordDeadAddReads (wordDeadRemoveWrites live writes) reads)
+  if WordAlloc.removeDeadInstExecutable instruction (WordAlloc.numSetToExact live) then
+    (.skip, live)
   else
-    match instruction with
-    | .mem operator _ _ =>
-        match operator with
-        | .store | .store8 | .store16 | .store32 =>
-            (.inst instruction, wordDeadAddReads live reads)
-        | _ => (.skip, live)
-    | _ => (.skip, live)
+    (.inst instruction, wordInstLiveBefore instruction live)
 
 def wordDeadReturnLabels : WordProg α → List Nat
   | .return label _ => [label]

@@ -600,7 +600,7 @@ private theorem structCompileExp_eq_of_shape_eq {width : Nat} [BEq String]
   intro hshape expression he
   exact hgeneral expression compileShape structOldExpShape hshape he
 
-private theorem structCompileShapeExactProduction_eq_legacy
+theorem structCompileShapeExactProduction_eq_legacy
     (context : StructContext) (shape : Shape) (hc : CtxBR context)
     (hs : ShapeByteRanged shape) :
     structCompileShapeExactProduction context shape = structCompileShape context shape := by
@@ -1019,7 +1019,7 @@ private theorem structGetNamesStep_ctxBR {width : Nat} (context : StructPassCont
   | function declaration => exact hc
   | exnDecl exception shape => exact hc
 
-private theorem structGetNames_ctxBR {width : Nat} (context : StructPassContext)
+theorem structGetNames_ctxBR {width : Nat} (context : StructPassContext)
     (declarations : List (Decl (BitVec width))) (hc : CtxBR context.structs)
     (hdecls : ∀ declaration ∈ declarations, DeclByteRanged declaration) :
     CtxBR (structGetNames context declarations).structs := by
@@ -1047,7 +1047,7 @@ private theorem structGetNames_ctxBR {width : Nat} (context : StructPassContext)
           change CtxBR (structGetNames context rest).structs
           exact ih context hc hrest
 
-private theorem structGetNames_locals_globals {width : Nat} (context : StructPassContext)
+theorem structGetNames_locals_globals {width : Nat} (context : StructPassContext)
     (declarations : List (Decl (BitVec width))) :
     (structGetNames context declarations).locals = context.locals ∧
       (structGetNames context declarations).globals = context.globals := by
@@ -1087,7 +1087,7 @@ private theorem structCompileParams_byteRanged [BEq String] (context : StructCon
   exact ⟨hname, structCompileShape_byteRanged context source.2 hc hshape⟩
 
 
-private theorem structCompileDecls_structs {width : Nat} [BEq String]
+theorem structCompileDecls_structs {width : Nat} [BEq String]
     (declarations : List (Decl (BitVec width))) :
     ∀ (context : StructPassContext)
       (compileShape : StructContext → Shape → Shape)
@@ -1269,7 +1269,7 @@ theorem encodedShapeContextLookup_roundtrip (name : String)
 
 /-- Flapjack range infrastructure: any selected association-list payload
 satisfies an invariant held by all source entries. No HOL theorem is claimed. -/
-private theorem lookupInfo_payload_invariant {α : Type} (property : α → Prop)
+theorem lookupInfo_payload_invariant {α : Type} (property : α → Prop)
     (key : String) (entries : List (String × α))
     (hall : ∀ p ∈ entries, property p.2) (value : α)
     (hlookup : lookupInfo key entries = some value) : property value := by
@@ -1769,7 +1769,7 @@ decreasing_by
     | (simp_wf; omega)
     | omega
 
-private theorem structCompileParams_eq_of_shape_eq [BEq String] (context : StructContext)
+theorem structCompileParams_eq_of_shape_eq [BEq String] (context : StructContext)
     (compileShape : StructContext → Shape → Shape)
     (hshape : ∀ shape, ShapeByteRanged shape →
       compileShape context shape = structCompileShape context shape) :
@@ -1853,7 +1853,7 @@ private theorem structCompileExpExact_eq_legacy {width : Nat} [BEq String] [NeZe
     _ = structCompileExp context expression :=
       structCompileExp_exact_eq_legacy context hc expression he
 
-private theorem structCompileDecls_globals_byteRanged {width : Nat} [BEq String]
+theorem structCompileDecls_globals_byteRanged {width : Nat} [BEq String]
     (declarations : List (Decl (BitVec width))) :
     ∀ (context : StructPassContext)
       (compileShape : StructContext → Shape → Shape)

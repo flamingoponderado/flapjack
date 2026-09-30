@@ -101,6 +101,35 @@ run_probe() {
   done
 }
 
+run_probe pan_globals_fperm_code_probeScript.sml pan_globals_fperm_code_probe.out \
+  swap_f swap_g other missing equal_names \
+  "$cake_dir/pancake/proofs/pan_globalsProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe stacksem_fpreg_inst_probeScript.sml stacksem_fpreg_inst_probe.out \
+  fpreg_mov_nan fpreg_mov_missing fpreg_abs_nan fpreg_abs_zero fpreg_neg_nan fpreg_neg_zero fpreg_abs_missing fpreg_neg_missing fpreg_to64 fpreg_to32 fpreg_to8 fpreg_to32_alias fpreg_to_missing fpreg_from64_ignore fpreg_from64_loc fpreg_from32 fpreg_from8 fpreg_from32_missing fpreg_from32_loc fpreg_from32_alias \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe stacksem_store_consts_guard_probeScript.sml stacksem_store_consts_guard_probe.out \
+  guard_none guard_missing guard_match guard_wrong_label guard_wrong_first_register guard_wrong_second_register guard_recursive_stub guard_return_nonzero guard_wrong_constructor guard_reversed_sequence \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe stacksem_evaluate_alloc_probeScript.sml stacksem_evaluate_alloc_probe.out \
+  evaluate_alloc_disabled evaluate_alloc_missing evaluate_alloc_location evaluate_alloc_word_success evaluate_alloc_gc_failure evaluate_alloc_gc_missing_size evaluate_alloc_gc_bad_space evaluate_alloc_gc_exhausted \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe stacksem_integer_inst_probeScript.sml stacksem_integer_inst_probe.out \
+  skip const or_loc or_missing or_loc_general add shift div div_zero carry carry_alias add_overflow sub_overflow long_mul long_div long_div_overflow load load8 load16 load32 store_loc store8 store16 store32 store8_loc load32_64 store32_64 load32_64_be store32_64_be store8_64_offset store8_64_offset_be load8_no_domain store32_no_domain \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe stacksem_pattern_copy_probeScript.sml stacksem_pattern_copy_probe.out \
+  zero one_bypass even odd multi missing_bitmap missing_domain later_domain address_wrap value_wrap stride16 stride4 \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe stacksem_register_transfers_probeScript.sml stacksem_register_transfers_probe.out \
+  get_word get_loc get_missing get_disabled set_word set_loc set_missing set_disabled op_add op_sub op_loc op_missing op_disabled \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe stacksem_leaf_transfers_probeScript.sml stacksem_leaf_transfers_probe.out \
+  skip halt_word halt_loc halt_missing tick_zero tick_one return_loc return_word return_missing raise_loc raise_word raise_missing break_zero break_three continue_zero continue_three \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe stacksem_loop_control_probeScript.sml stacksem_loop_control_probe.out \
+  reg_word reg_loc reg_missing immediate cont_none cont_continue_zero cont_continue_three cont_break_zero cont_break_one cont_break_three cont_result cont_exception cont_halt cont_timeout cont_error cont_final exit_none exit_continue_zero exit_continue_three exit_break_zero exit_break_one exit_break_three exit_result exit_exception exit_halt exit_timeout exit_error exit_final \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe stacksem_expression_probeScript.sml stacksem_expression_probe.out \
   const var_word var_loc var_missing lookup_word lookup_loc lookup_missing load_word load_loc load_oob load_bad_address op_empty_and op_add_wrap op_sub_bad_arity op_bad_operand shift_valid shift_oob shift_bad_right assign_success assign_failure \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
@@ -119,6 +148,15 @@ run_probe stacksem_word_bitmap_probeScript.sml stacksem_word_bitmap_probe.out \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 
+run_probe stacksem_labels_probeScript.sml stacksem_labels_probe.out \
+  locvalue_label seq_left seq_right if_right loop_body call_return_direct \
+  call_return_nested call_handler_direct call_handler_nested call_empty \
+  call_handler_without_return halt_empty \
+  loccheck_zero_present loccheck_zero_absent loccheck_label_present loccheck_label_absent \
+  loccheck_label_witness \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
 # Run from the local HOL object directory when Holmake has populated it, so
 # HOL's ordinary theory loader finds compiled CakeML theories. Fall back to
 # the source directory for checkouts whose Holmake places objects there.
@@ -128,6 +166,9 @@ run_probe word_alloc_pair_keys_probeScript.sml word_alloc_pair_keys_probe.out \
 run_probe word_sem_cut_names_type_probeScript.sml word_sem_cut_names_type_probe.out \
   cut_names_type cut_envs_type cut_env_type "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
   "$cake_dir/compiler/backend/semantics"
+run_probe word_alloc_remove_dead_inst_probeScript.sml word_alloc_remove_dead_inst_probe.out \
+  skip const_dead const_live load16 store16 store32 load8 carry_live carry_dead longmul_live to32 to64 "$cake_dir/compiler/backend/word_allocScript.sml" \
+  "$cake_dir/compiler/backend"
 run_probe word_alloc_live_inst_probeScript.sml word_alloc_live_inst_probe.out \
   load16 load8 store32 carry overflow to64 to32 from64 from32 "$cake_dir/compiler/backend/word_allocScript.sml" \
   "$cake_dir/compiler/backend"

@@ -1802,7 +1802,10 @@ VALID_STATUSES = {
     "reviewed_fmap_as_finite_support",
     "reviewed_fmap_as_finite_support_function",
     "reviewed_fmap_as_finite_support_function_words_as_type_indexed_bitvec",
+    "reviewed_fmap_as_finite_support_heterogeneous_function",
+    "reviewed_fmap_as_finite_support_heterogeneous_function_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_result",
+    "reviewed_fmap_as_finite_support_result_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_parameters",
     "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_existentials",
@@ -1954,10 +1957,12 @@ def tagged_declarations(
              names_fields, boundary_fields, fmap_fields, fmap_result,
              fmap_relation, fmap_equalities, words_bitvec,
              fmap_parameters, fmap_existentials, dimension_width,
-             fmap_function_positions) in HOL_ATTRIBUTE_SITES(
+             fmap_function_positions,
+             fmap_heterogeneous_function_positions) in HOL_ATTRIBUTE_SITES(
                  lines, include_fmap_existentials=True,
                  include_word_dimension_width=True,
                  include_fmap_function=True,
+                 include_fmap_heterogeneous_function=True,
              ):
             lean_name = FIND_LEAN_DECL(lines, line - 1)
             key = (rel, lean_name)
@@ -1967,7 +1972,8 @@ def tagged_declarations(
             value = (hol_path, hol_name, list_fields, names_fields,
                      boundary_fields, fmap_fields, fmap_result, fmap_relation,
                      fmap_equalities, words_bitvec, fmap_parameters,
-                     fmap_existentials, dimension_width, fmap_function_positions)
+                     fmap_existentials, dimension_width, fmap_function_positions,
+                     fmap_heterogeneous_function_positions)
             if key in tagged and tagged[key] != value:
                 raise ValueError(f"conflicting @[hol] references for {rel}:{lean_name}")
             tagged[key] = value
@@ -1982,7 +1988,7 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         hol_path, hol_name, list_fields, names_fields, boundary_fields, fmap_fields,
         fmap_result, fmap_relation, fmap_equalities, words_bitvec, fmap_parameters,
         fmap_existentials, dimension_width,
-        fmap_function_positions,
+        fmap_function_positions, fmap_heterogeneous_function_positions,
     ) in tagged.items():
         entry = {
             "hol_path": hol_path,
@@ -2004,6 +2010,10 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
             entry["fmap_as_finite_support_result"] = True
         if fmap_function_positions:
             entry["fmap_as_finite_support_function"] = list(fmap_function_positions)
+        if fmap_heterogeneous_function_positions:
+            entry["fmap_as_finite_support_heterogeneous_function"] = list(
+                fmap_heterogeneous_function_positions
+            )
         if fmap_parameters:
             entry["fmap_as_finite_support_parameters"] = list(fmap_parameters)
         if fmap_existentials:
@@ -2304,12 +2314,18 @@ def validate_inventory(
         fmap_existentials = tag[11] if tag is not None and len(tag) > 11 else ()
         dimension_width = tag[12] if tag is not None and len(tag) > 12 else None
         fmap_function_positions = tag[13] if tag is not None and len(tag) > 13 else ()
+        fmap_heterogeneous_function_positions = (
+            tag[14] if tag is not None and len(tag) > 14 else ()
+        )
         manifest_list_fields = tuple(record.get("list_as_array", ()))
         manifest_names_fields = tuple(record.get("names_as_string", ()))
         manifest_boundary_fields = tuple(record.get("names_as_string_boundary", ()))
         manifest_fmap_fields = tuple(record.get("fmap_as_finite_support", ()))
         manifest_fmap_result = bool(record.get("fmap_as_finite_support_result", False))
         manifest_fmap_function = tuple(record.get("fmap_as_finite_support_function", ()))
+        manifest_fmap_heterogeneous_function = tuple(
+            record.get("fmap_as_finite_support_heterogeneous_function", ())
+        )
         manifest_fmap_parameters = tuple(record.get("fmap_as_finite_support_parameters", ()))
         manifest_fmap_existentials = tuple(record.get("fmap_as_finite_support_existentials", ()))
         manifest_fmap_relation = tuple(record.get("fmap_as_finite_support_relation", ()))
@@ -2341,6 +2357,10 @@ def validate_inventory(
         if manifest_fmap_function != fmap_function_positions:
             errors.append(
                 f"{key[0]}:{key[1]}: manifest fmap_as_finite_support_function positions do not match its @[hol] tag"
+            )
+        if manifest_fmap_heterogeneous_function != fmap_heterogeneous_function_positions:
+            errors.append(
+                f"{key[0]}:{key[1]}: manifest fmap_as_finite_support_heterogeneous_function positions do not match its @[hol] tag"
             )
         if manifest_fmap_parameters != fmap_parameters:
             errors.append(
@@ -2396,6 +2416,12 @@ def validate_inventory(
         combined_function_words_status = (
             "reviewed_fmap_as_finite_support_function_words_as_type_indexed_bitvec"
         )
+        heterogeneous_function_status = (
+            "reviewed_fmap_as_finite_support_heterogeneous_function"
+        )
+        combined_heterogeneous_function_words_status = (
+            "reviewed_fmap_as_finite_support_heterogeneous_function_words_as_type_indexed_bitvec"
+        )
         combined_relation_words_status = (
             "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec"
         )
@@ -2419,6 +2445,13 @@ def validate_inventory(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support_function combined with "
                 "words_as_type_indexed_bitvec requires the combined review status "
                 "reviewed_fmap_as_finite_support_function_words_as_type_indexed_bitvec"
+            )
+        if (words_bitvec and fmap_heterogeneous_function_positions
+                and status != combined_heterogeneous_function_words_status):
+            errors.append(
+                f"{key[0]}:{key[1]}: fmap_as_finite_support_heterogeneous_function "
+                "combined with words_as_type_indexed_bitvec requires the combined review status "
+                "reviewed_fmap_as_finite_support_heterogeneous_function_words_as_type_indexed_bitvec"
             )
         if words_bitvec and fmap_relation and status not in {
             combined_relation_words_status,
@@ -2457,6 +2490,14 @@ def validate_inventory(
                 f"{key[0]}:{key[1]}: "
                 "reviewed_fmap_as_finite_support_function_words_as_type_indexed_bitvec needs "
                 "both fmap_as_finite_support_function and words_as_type_indexed_bitvec qualifiers"
+            )
+        if status == combined_heterogeneous_function_words_status and not (
+            words_bitvec and fmap_heterogeneous_function_positions
+        ):
+            errors.append(
+                f"{key[0]}:{key[1]}: {status} needs both "
+                "fmap_as_finite_support_heterogeneous_function and "
+                "words_as_type_indexed_bitvec qualifiers"
             )
         if status == combined_relation_words_status and not (
             words_bitvec and fmap_relation
@@ -2500,6 +2541,7 @@ def validate_inventory(
             "reviewed_words_as_type_indexed_bitvec",
             combined_words_status,
             "reviewed_fmap_as_finite_support_function_words_as_type_indexed_bitvec",
+            "reviewed_fmap_as_finite_support_result_words_as_type_indexed_bitvec",
             combined_relation_words_status,
             combined_parameter_words_status,
             combined_existential_words_status,
@@ -2618,12 +2660,18 @@ def validate_inventory(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support_result @[hol] tag cannot have "
                 "reviewed_exact status; use reviewed_fmap_as_finite_support_result after source comparison"
             )
-        if fmap_result and status != "reviewed_fmap_as_finite_support_result":
+        result_words_status = "reviewed_fmap_as_finite_support_result_words_as_type_indexed_bitvec"
+        if status == result_words_status and not (fmap_result and words_bitvec):
+            errors.append(
+                f"{key[0]}:{key[1]}: {result_words_status} needs both "
+                "fmap_as_finite_support_result and words_as_type_indexed_bitvec qualifiers"
+            )
+        if fmap_result and status not in {"reviewed_fmap_as_finite_support_result", result_words_status}:
             errors.append(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support_result @[hol] tag needs a reviewed "
                 "source classification (reviewed_fmap_as_finite_support_result)"
             )
-        if not fmap_result and status == "reviewed_fmap_as_finite_support_result":
+        if not fmap_result and status in {"reviewed_fmap_as_finite_support_result", result_words_status}:
             errors.append(
                 f"{key[0]}:{key[1]}: reviewed_fmap_as_finite_support_result needs a "
                 "fmap_as_finite_support_result @[hol] tag"
@@ -2669,6 +2717,14 @@ def validate_inventory(
             errors.append(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support_function is mutually "
                 "exclusive with other finite-map qualifiers"
+            )
+        if fmap_heterogeneous_function_positions and (
+            fmap_fields or fmap_result or fmap_parameters or fmap_existentials
+            or fmap_relation or fmap_equalities or fmap_function_positions
+        ):
+            errors.append(
+                f"{key[0]}:{key[1]}: fmap_as_finite_support_heterogeneous_function is "
+                "mutually exclusive with other finite-map qualifiers"
             )
         if not set(boundary_fields) <= set(names_fields):
             errors.append(
@@ -2728,6 +2784,33 @@ def validate_inventory(
             errors.append(
                 f"{key[0]}:{key[1]}: {status} needs a matching "
                 "fmap_as_finite_support_function @[hol] tag"
+            )
+        if fmap_heterogeneous_function_positions:
+            expected_heterogeneous_status = (
+                combined_heterogeneous_function_words_status
+                if words_bitvec else heterogeneous_function_status
+            )
+            if status != expected_heterogeneous_status:
+                errors.append(
+                    f"{key[0]}:{key[1]}: fmap_as_finite_support_heterogeneous_function "
+                    f"needs {expected_heterogeneous_status} after source comparison"
+                )
+            reviewer_text = reviewer.lower() if isinstance(reviewer, str) else ""
+            if "source" not in reviewer_text or any(
+                position.lower() not in reviewer_text
+                for position in fmap_heterogeneous_function_positions
+            ):
+                errors.append(
+                    f"{key[0]}:{key[1]}: {status} needs a source-review note that names "
+                    "every heterogeneous nested finite-map position"
+                )
+        elif status in {
+            heterogeneous_function_status,
+            combined_heterogeneous_function_words_status,
+        }:
+            errors.append(
+                f"{key[0]}:{key[1]}: {status} needs a matching "
+                "fmap_as_finite_support_heterogeneous_function @[hol] tag"
             )
         if fmap_fields and status != "reviewed_fmap_as_finite_support" and status != combined_words_status and status != combined_relation_words_status:
             errors.append(

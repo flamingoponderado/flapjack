@@ -317,13 +317,39 @@ with the other finite-map qualifiers. Its syntactic checker and Lean witness
 do not prove HOL-to-Lean equivalence; review the entire function domain,
 codomain, and surrounding word/set carriers against HOL before tagging.
 
+**Qualify a heterogeneous finite-map function.** Use
+`(fmap_as_finite_support_heterogeneous_function := [argument_N, result_M])`
+only for a direct function definition with a typed result whose named explicit
+input binder and `Option`-wrapped product result slot are each exactly one
+`HolFiniteMapExact` carrier. `argument_N` counts explicit input binders;
+`result_M` counts one-based top-level tuple components. The two map types may
+be distinct, but every `HolFiniteMapExact` occurrence in the declaration
+signature must be one of those two slots. Raw maps and products/functions that
+merely contain a map are ineligible. The same module must provide
+`holFmapAsFiniteSupportHeterogeneousFunctionWitness_<declaration>` over exactly
+the same explicit inputs. Its unconditional equality must compare the tagged
+operation's `Option.map` result projection (using the returned map's `.lookup`)
+with an independent raw lookup operation applied through the canonical input
+map's `.lookup`. This narrowly permits different input/result map types; it
+does not authorize changes to the HOL function's clauses or any other carriers.
+Use manifest status `reviewed_fmap_as_finite_support_heterogeneous_function`
+(or its `_words_as_type_indexed_bitvec` combination) only after source review
+compares the complete HOL declaration and projection witness. The checker and
+Lean theorem establish syntax/kernel validity, not HOL correspondence.
+
 **Qualify standalone finite-map carriers.** Use
 `(fmap_as_finite_support_result)` when a tagged declaration is not a structure
 field but whose own input or result carrier is the reviewed canonical
 `HolFiniteMapExact` translation (for example a HOL definition that returns a
 finite map directly, such as `get_eids_from_decls_def`). This is distinct from
 `fmap_as_finite_support`, which names the fields of an owning carrier; the two
-qualifiers are mutually exclusive. The tagged declaration's own signature must
+qualifiers are mutually exclusive. When the same declaration also translates
+HOL words to positive-width BitVecs, include `words_as_type_indexed_bitvec`
+and use manifest status
+`reviewed_fmap_as_finite_support_result_words_as_type_indexed_bitvec`.
+Both qualifiers and the existing lookup witness remain mandatory; their
+combination permits no additional statement or semantic difference.
+The tagged declaration's own signature must
 mention `HolFiniteMapExact`; a raw function-backed `α → Option β` map is
 ineligible. The module must contain a checked canonical witness named
 `holFmapAsFiniteSupportResultWitness_<declaration>`, whose final equality/iff

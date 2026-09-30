@@ -47,6 +47,11 @@ class HolTypeHashesTest(unittest.TestCase):
         pending = [{**self.manifest[0], "statement_status": "pending_statement_review"}]
         self.assertEqual(MODULE.lock_records(pending, self.export), [])
 
+    def test_reviewed_result_word_composition_remains_locked(self):
+        manifest = [{**self.manifest[0],
+            "statement_status": "reviewed_fmap_as_finite_support_result_words_as_type_indexed_bitvec"}]
+        self.assertEqual(len(MODULE.lock_records(manifest, self.export)), 1)
+
     def test_definition_body_change_changes_review_lock(self):
         definition_export = [{
             **self.export[0],
@@ -176,6 +181,38 @@ class HolTypeHashesTest(unittest.TestCase):
             lock["records"][0]["qualifiers"]["fmap_as_finite_support_relation"],
             ["PanState.locals", "CrepState.locals"],
         )
+
+    def test_heterogeneous_fmap_function_qualifier_is_locked(self):
+        manifest = [{
+            **self.manifest[0],
+            "statement_status": "reviewed_fmap_as_finite_support_heterogeneous_function",
+            "fmap_as_finite_support_heterogeneous_function": [
+                "argument_1", "result_2"
+            ],
+        }]
+        export = [{
+            **self.export[0],
+            "qualifiers": {
+                "fmap_as_finite_support_heterogeneous_function": [
+                    "argument_1", "result_2"
+                ],
+            },
+        }]
+        lock = MODULE.expected_lock(manifest, export, "leanprover/lean4:v4")
+        self.assertEqual(
+            lock["records"][0]["qualifiers"][
+                "fmap_as_finite_support_heterogeneous_function"
+            ],
+            ["argument_1", "result_2"],
+        )
+        changed = [{
+            **export[0],
+            "qualifiers": {
+                "fmap_as_finite_support_heterogeneous_function": ["argument_1"],
+            },
+        }]
+        with self.assertRaisesRegex(ValueError, "manifest qualifiers differ"):
+            MODULE.lock_records(manifest, changed)
 
     def test_fmap_as_finite_support_equalities_qualifier_is_locked(self):
         manifest = [{
