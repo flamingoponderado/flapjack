@@ -6,6 +6,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.ShapeValueEval
 
 namespace Flapjack.PanGlobalsCompileCorrectCallGlobalHandler
 open Flapjack.Pancake.PanLang
+open Flapjack.Basis.Pure.MlString (ofString)
 open Flapjack.PanSemStateFiniteExact
 open Flapjack.PanGlobalsCompileCorrect
 
@@ -119,6 +120,73 @@ private theorem missingGlobalCallRun {width : Nat} {σ : Type} [NeZero width]
             · simp only [if_neg hs] at run
               exact False.elim (nonError (Prod.mk.inj run).1.symm)
           | «break» | «continue» | error | exception eid value | timeOut | finalFfi outcome => exact run
+
+/-- Present-global proof step: the original state relation supplies the shape
+wellformedness needed by the generated declaration. Initialization success and
+shape recovery are conclusions, not extra assumptions on the constructor.
+This factoring has no standalone HOL declaration. -/
+private theorem presentContextInitializer {width : Nat} {σ : Type} [NeZero width]
+    (context : PanGlobalsContextExact width) (source target : PanSemStateFiniteExact width σ)
+    (name : MlS) (shape : ShapeHOL) (address : BitVec width)
+    (hrel : panGlobalsStateRelHOLExact true context source target)
+    (hcontext : context.globals.lookup name = some (shape, address)) :
+    ∃ initializer : ValueHOL width,
+      @evalHOLFinite width σ _ target
+        (fun a => Classical.propDecidable (target.memaddrs a)) (shapeValHOL shape) = some initializer ∧
+      shape = shapeOfHOLExact initializer := by
+  classical
+  have hw := panGlobalsStateRelGlobalsWfHOLExact true context source target name
+    (shape, address) ⟨hcontext, hrel⟩
+  cases he : evalHOLFinite target (shapeValHOL shape) with
+  | none =>
+    exact False.elim (((PanGlobalsShapeValueEval.evalShapeValNone target).1 shape).mp he)
+  | some initializer =>
+    refine ⟨initializer, rfl, ?_⟩
+    apply (PanGlobalsShapeValueEval.evalShapeValShape target).1 shape initializer
+    exact ⟨he, hw⟩
+
+/-- Normalize the literal present-global lowering using only its context entry
+and the original state relation. Both declarations restore their actual saved
+lookups. The remaining central Call/If computation is left intact for the
+constructor's callee and handler induction hypotheses; this is an internal
+proof step, not the full HOL correctness result. -/
+private theorem presentContextScope {width : Nat} {σ : Type} [NeZero width]
+    (context : PanGlobalsContextExact width) (source target : PanSemStateFiniteExact width σ)
+    (name function handlerId handlerVar : MlS) (arguments : List (ExpHOL width))
+    (handler : ProgHOL width) (shape : ShapeHOL) (address : BitVec width)
+    (hrel : panGlobalsStateRelHOLExact true context source target)
+    (hcontext : context.globals.lookup name = some (shape, address)) :
+    let compiledArguments := compileExpExactHOLList context arguments
+    let compiledHandler := compileProgExactHOL context handler
+    let names := handlerVar :: freeVarIdsHOL compiledHandler ++ compiledArguments.flatMap varExpHOL
+    let resultName := freshNameMlS (ofString "") names
+    let flagName := freshNameMlS (ofString "vn'") (resultName :: names)
+    let body := ProgHOL.seq
+      (.call (some (some (.local, resultName), some (handlerId, handlerVar,
+        .seq compiledHandler (.assign .local flagName (.const (BitVec.ofNat width 1))))))
+        function compiledArguments)
+      (.ite (.var .local flagName) .skip
+        (.store (.op .sub [.topAddr, .const address]) (.var .local resultName)))
+    ∃ initializer : ValueHOL width,
+      shape = shapeOfHOLExact initializer ∧
+      evaluateHOLFiniteState target
+        (compileProgExactHOL context
+          (.call (some (some (.global, name), some (handlerId, handlerVar, handler)))
+            function arguments)) =
+        (let resultState := setVarHOLFinite resultName initializer target
+         let scratchState := setVarHOLFinite flagName (.val (.word (BitVec.ofNat width 0))) resultState
+         let output := evaluateHOLFiniteState scratchState body
+         let flagPost := {output.2 with locals := (HolFiniteMapExact.resVarEq output.2.locals
+           (flagName, resultState.locals.lookup flagName))}
+         (output.1, {flagPost with locals := (HolFiniteMapExact.resVarEq flagPost.locals
+           (resultName, target.locals.lookup resultName))})) := by
+  classical
+  dsimp only
+  obtain ⟨initializer, hinit, hshape⟩ :=
+    presentContextInitializer context source target name shape address hrel hcontext
+  refine ⟨initializer, hshape, ?_⟩
+  simp only [compileProgExactHOL, hcontext]
+  exact scopedHandlerPrefix target _ _ shape initializer _ hinit hshape
 
 /-- Internal missing-context branch of the full constructor proof. The branch
 condition selects the literal compiler fallback; the callee and handler IHs

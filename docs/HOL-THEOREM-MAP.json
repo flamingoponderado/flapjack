@@ -34016,5 +34016,21 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-only private restoration algebra for in-progress global-handler constructor33.11: restores actual saved lookups after two distinct scratch writes, allowing absent original bindings and different initializer/final result values. Kernel checked; no standalone HOL declaration and no full constructor-port claim. Present-context cases and assembly remain open."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "presentContextInitializer",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only private proof step in actual global-handler constructor33.11. Source compared pan_globalsScript118-125: literal fresh names/Call handler flag/If Skip Store retained. Present context and original state_rel derive initialization success and recovered shape; no extra initializer success premise. Both actual saved scratch lookups retained. Untagged: full central Call/If simulation and constructor assembly remain unfinished; not a completed HOL case port."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/CallGlobalHandler.lean",
+  "lean_name": "presentContextScope",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only private proof step in actual global-handler constructor33.11. Source compared pan_globalsScript118-125: literal fresh names/Call handler flag/If Skip Store retained. Present context and original state_rel derive initialization success and recovered shape; no extra initializer success premise. Both actual saved scratch lookups retained. Untagged: full central Call/If simulation and constructor assembly remain unfinished; not a completed HOL case port."
 }
 ]
