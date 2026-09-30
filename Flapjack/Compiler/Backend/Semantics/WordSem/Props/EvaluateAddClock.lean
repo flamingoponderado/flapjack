@@ -3,7 +3,7 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateInd
 /-!
 # wordProps `evaluate_add_clock` over the exact wordSem evaluator
 
-Counterpart of `cakeml/compiler/backend/semantics/wordPropsScript.sml:136-1395`
+Counterpart of `cakeml/compiler/backend/semantics/wordPropsScript.sml:1383`
 (bead `flapjack-pxn.18.5.9.1.1`).  HOL's proof uses the "CONST lemmas": each
 wordSem helper commutes with a change of `clock`.  It also uses
 `evaluate_clock_const`: every non-recursive statement returns its input clock
