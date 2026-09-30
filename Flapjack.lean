@@ -1,3 +1,7 @@
+import Flapjack.Pancake.Proofs.PanGlobals.CompileExpRField
+import Flapjack.Pancake.Proofs.PanGlobals.StateRelationLocals
+import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsShape
+import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsDisjoint
 import Flapjack.Pancake.PanStructs.CompileExpProduction
 import Flapjack.Compiler.Backend.StackProps.FixedNames
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.InstConst
