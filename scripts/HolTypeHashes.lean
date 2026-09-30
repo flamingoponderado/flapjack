@@ -456,6 +456,7 @@ import Flapjack.Pancake.Semantics.PanSem.EvaluateClock
 import Flapjack.Pancake.Semantics.PanSem.ClockTimeout
 import Flapjack.Pancake.Semantics.PanProps.EvaluateAddClockIoEventsMono
 import Flapjack.Pancake.Semantics.PanProps.EvaluateAddClockEq
+import Flapjack.Pancake.Semantics.PanProps.EvaluateClockSubAtoms
 import Flapjack.Pancake.Semantics.PanSem.ShMemLoadCase
 import Flapjack.Pancake.Semantics.PanSem.ExtCallCase
 import Flapjack.Pancake.Semantics.PanSem.LocalUpdatesExact
