@@ -6609,6 +6609,154 @@ theorem evaluateClockSubDecCaseHOLFinite {width : Nat} {σ : Type} [NeZero width
           rw [hLowCanonical]
           exact PanPropsEvalStateFiniteExact.ofPanSemFinite_toPanSemFinite lowState
 
+/-! # The `If` induction case of HOL `evaluate_clock_sub`
+
+HOL handles the `If` constructor in the generic final branch of its
+induction proof and supplies a single guarded induction hypothesis over
+`if w <> 0 then c1 else c2` at the same state.  This leaf keeps that
+exact guarded IH and the theorem's original premisses. -/
+
+set_option linter.unusedSimpArgs false in
+private theorem evaluateHOLFinitePair_ite {width : Nat} {σ : Type} [NeZero width]
+    (state : PanPropsEvalStateFiniteExact width σ)
+    (condition : ExpHOL width) (thenBranch elseBranch : ProgHOL width) :
+    PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state
+        (.ite condition thenBranch elseBranch) =
+      (match @evalHOLExact width σ _ state.toPanSemFinite.toExact
+          (fun address => Classical.propDecidable (state.toPanSemFinite.memaddrs address))
+          condition with
+       | some (.val (.word word)) =>
+           if word = 0 then PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state elseBranch
+           else PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state thenBranch
+       | _ => (some .error, state)) := by
+  classical
+  simp only [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair,
+    PanSemStateFiniteExact.evaluateHOLFiniteState_ite,
+    PanPropsEvalStateFiniteExact.ofPanSemFinite_toPanSemFinite]
+  cases h : @evalHOLExact width σ _ state.toPanSemFinite.toExact
+      (fun address => Classical.propDecidable (state.toPanSemFinite.memaddrs address))
+      condition with
+  | none =>
+      simp only [h]
+      rw [PanPropsEvalStateFiniteExact.ofPanSemFinite_toPanSemFinite]
+  | some value =>
+      cases value with
+      | val payload =>
+          cases payload with
+          | word word =>
+              simp only [h]
+              by_cases hzero : word = 0
+              · rw [if_pos hzero, if_pos hzero]
+              · rw [if_neg hzero, if_neg hzero]
+      | rStruct f =>
+          simp only [h]
+          rw [PanPropsEvalStateFiniteExact.ofPanSemFinite_toPanSemFinite]
+      | nStruct n f =>
+          simp only [h]
+          rw [PanPropsEvalStateFiniteExact.ofPanSemFinite_toPanSemFinite]
+
+set_option maxHeartbeats 4000000 in
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_clock_sub"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateClockSubIfCaseHOLFinite {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (condition : ExpHOL width) (thenBranch elseBranch : ProgHOL width)
+      (state : PanPropsEvalStateFiniteExact width σ)
+      (result : Option (PanSemResultExact width))
+      (st : PanPropsEvalStateFiniteExact width σ) (ck : Nat),
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state
+          (.ite condition thenBranch elseBranch : ProgHOL width) =
+        (result, { st with clock := st.clock + ck }) →
+      result ≠ some .timeOut →
+      (∀ (v1 : ValueHOL width) (v6 : HolWordLab width) (w : BitVec width),
+        @evalHOLExact width σ _ state.toPanSemFinite.toExact
+            (fun address => Classical.propDecidable (state.toPanSemFinite.memaddrs address))
+            condition = some v1 ∧
+          v1 = .val v6 ∧ v6 = .word w →
+        PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state
+            (if w ≠ 0 then thenBranch else elseBranch : ProgHOL width) =
+          (result, { st with clock := st.clock + ck }) →
+        result ≠ some .timeOut →
+        PanPropsEvalStateFiniteExact.evaluateHOLFinitePair
+          { state with clock := state.clock - ck }
+          (if w ≠ 0 then thenBranch else elseBranch : ProgHOL width) = (result, st)) →
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair
+        { state with clock := state.clock - ck } (.ite condition thenBranch elseBranch) =
+          (result, st) := by
+  classical
+  intro condition thenBranch elseBranch state result st ck hRun hne ihIf
+  let lowState : PanPropsEvalStateFiniteExact width σ := { state with clock := state.clock - ck }
+  have hLowCondEq :
+      @evalHOLExact width σ _ lowState.toPanSemFinite.toExact
+          (fun address => Classical.propDecidable (lowState.toPanSemFinite.memaddrs address))
+          condition =
+        @evalHOLExact width σ _ state.toPanSemFinite.toExact
+          (fun address => Classical.propDecidable (state.toPanSemFinite.memaddrs address)) condition := by
+    change @evalHOLExact width σ _
+      ({ state.toPanSemFinite with clock := state.clock - ck }).toExact
+      (fun address => Classical.propDecidable
+        (({ state.toPanSemFinite with clock := state.clock - ck }).memaddrs address))
+      condition = _
+    exact evalHOLExact_upd_clock_eq state.toPanSemFinite.toExact condition (state.clock - ck)
+  rw [evaluateHOLFinitePair_ite] at hRun
+  rw [evaluateHOLFinitePair_ite]
+  rw [hLowCondEq]
+  generalize hCond : @evalHOLExact width σ _ state.toPanSemFinite.toExact
+      (fun address => Classical.propDecidable (state.toPanSemFinite.memaddrs address)) condition = x
+    at hRun ⊢
+  cases x with
+  | none =>
+      dsimp only at hRun ⊢
+      obtain ⟨hresult, hpost⟩ := Prod.mk.inj hRun
+      subst hresult
+      have hst : st = lowState := by
+        cases st <;> simp_all [lowState, PanPropsEvalStateFiniteExact.toPanSemFinite] <;> omega
+      subst hst
+      rfl
+  | some value =>
+      cases value with
+      | val payload =>
+          cases payload with
+          | word word =>
+              dsimp only at hRun ⊢
+              have hBranchPair :
+                  PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state
+                      (if word ≠ 0 then thenBranch else elseBranch : ProgHOL width) =
+                    (result, { st with clock := st.clock + ck }) := by
+                by_cases hzero : word = 0
+                · rw [if_pos hzero] at hRun
+                  rw [if_neg (by simp [hzero])]
+                  exact hRun
+                · rw [if_neg hzero] at hRun
+                  rw [if_pos hzero]
+                  exact hRun
+              have hBranchLow := ihIf (.val (.word word)) (.word word) word
+                ⟨hCond, rfl, rfl⟩ hBranchPair hne
+              by_cases hzero : word = 0
+              · rw [if_neg (by simp [hzero])] at hBranchLow
+                rw [if_pos hzero]
+                exact hBranchLow
+              · rw [if_pos hzero] at hBranchLow
+                rw [if_neg hzero]
+                exact hBranchLow
+      | rStruct f =>
+          dsimp only at hRun ⊢
+          obtain ⟨hresult, hpost⟩ := Prod.mk.inj hRun
+          subst hresult
+          have hst : st = lowState := by
+            cases st <;> simp_all [lowState, PanPropsEvalStateFiniteExact.toPanSemFinite] <;> omega
+          subst hst
+          rfl
+      | nStruct n f =>
+          dsimp only at hRun ⊢
+          obtain ⟨hresult, hpost⟩ := Prod.mk.inj hRun
+          subst hresult
+          have hst : st = lowState := by
+            cases st <;> simp_all [lowState, PanPropsEvalStateFiniteExact.toPanSemFinite] <;> omega
+          subst hst
+          rfl
+
+
 /-! # The `Skip` induction case of HOL `evaluate_clock_sub`
 
 This leaf case keeps the theorem's original high-run equation and non-timeout
