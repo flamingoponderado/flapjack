@@ -294,6 +294,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.CompileTopShapeWf
 import Flapjack.Pancake.Proofs.PanGlobals.CompileTopSemanticsExact
 import Flapjack.Pancake.Proofs.PanGlobals.CallObservation
 import Flapjack.Pancake.Proofs.PanGlobals.SemanticsCongruence
+import Flapjack.Pancake.Proofs.PanGlobals.SemanticsEmptyLocals
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsMemory
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsAlignment
 import Flapjack.Pancake.Proofs.PanToCrep.EvaluateCases

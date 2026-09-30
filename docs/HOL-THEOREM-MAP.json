@@ -28712,5 +28712,28 @@
     "lean_name": "panGlobals_semantics_of_clock_observations",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific observational congruence, no standalone HOL original. Uses equal result-option and ffi events at every clock to equate failure, entire termination-choice predicate and divergence prefix set. Conditional assembly infrastructure, not semantics_empty_locals or a pass-correctness port."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/SemanticsEmptyLocals.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific same-module canonical finite state roundtrip re-export, no separate HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/SemanticsEmptyLocals.lean",
+    "lean_name": "semanticsEmptyLocals",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "semantics_empty_locals",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison2026-09-30, bead .22.2: literal pan_globalsProofScript2862-2889 universally quantifies state t and start, no premises, semantics t start = semantics(t with locals:=FEMPTY) start. Lean retains both state/start binders and exact equality direction with canonical emptyLocalsHOLFinite; no observation premise in final theorem. Uses tagged exact PanSem semantics and finite evaluator; accepted unconditional Call observation at every clock plus complete semantics congruence equates failure, full classical termination-choice predicate and divergence prefix set. Source Call NONE discards caller locals on entry, retains original fix_clock and all results. PanSemStateFiniteExact owns four canonical finite maps, same-module genuine roundtrip witness re-export; positive BitVec width with NeZero and universe0 FFI host are standard word translations; faithful MlS needs no String qualifier. No changed behavior or executable routing claim; coordinator review pending."
   }
 ]
