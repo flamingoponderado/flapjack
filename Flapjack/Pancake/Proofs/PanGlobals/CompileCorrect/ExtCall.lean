@@ -172,7 +172,7 @@ theorem compileCorrect_ExtCall {width : Nat} {σ : Type} [NeZero width]
                                                               have hr' : res = none := hr.symm
                                                               subst hr'
                                                               have hlen : newBytes.length = l2.toNat :=
-                                                                (callFFIHOL_ret_length target.ffi (.extCall function)
+                                                                (Flapjack.Compiler.Backend.StackRemove.callFFILengthHOL target.ffi (.extCall function)
                                                                   bytes1 bytes2 newBytes newFfi hcall).trans
                                                                   (readBytearrayWordHOL_length a2 l2.toNat
                                                                     (@panMemLoadByteWord8HOL width _ source.memory

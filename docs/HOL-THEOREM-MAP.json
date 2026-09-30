@@ -33135,5 +33135,29 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only equation between literal recursive compiled argument list and MAP spelling used by exact OPT_MMAP theorem; no separate HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/Assembly.lean",
+    "lean_name": "callGuard_args_eq",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack guard-equivalence support (P0 flapjack-i0y2.3, PR1182 review item 4): args.mapM evalCrepSemHOLExp equals evaluate_ind's args.mapM crepExactEvalExpClassical; Lean-internal equation, no HOL original and no cross-prover claim."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/Assembly.lean",
+    "lean_name": "callGuard_lookup_eq",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack guard-equivalence support (P0 flapjack-i0y2.3, PR1182 review item 4): lookupCodeFiniteHOL equals evaluate_ind's lookupCodeHOLFinite on the code lookup; Lean-internal equation, no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateLocals/Assembly.lean",
+    "lean_name": "callGuard_nodup_iff",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack guard-equivalence support (P0 flapjack-i0y2.3, PR1182 review item 4): crepReturnInfoNodupError is evaluate_ind's inline ALL_DISTINCT selector; definitional, no HOL original."
   }
 ]
