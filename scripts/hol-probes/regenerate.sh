@@ -1302,6 +1302,10 @@ run_probe afindi_probeScript.sml afindi_probe.out \
   opt_mmap_eq_every alookup_drop_helper map_fst_eq_alookup \
   map_fst_eq_alookup_different_value_types map_fst_eq_alookup_inferred_types \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml"
+run_probe pan_structs_compile_decls_probeScript.sml pan_structs_compile_decls_probe.out \
+  empty decs names top shadow "$cake_dir/pancake/pan_structsScript.sml"
+run_probe pan_structs_compile_prog_probeScript.sml pan_structs_compile_prog_probe.out \
+  dec deccall handler callnone callnohandler fallback "$cake_dir/pancake/pan_structsScript.sml"
 run_probe pan_structs_compile_exp_probeScript.sml pan_structs_compile_exp_probe.out \
   rstruct old_shapes_map "$cake_dir/pancake/pan_structsScript.sml"
 run_probe crep_semantics_probeScript.sml crep_semantics_probe.out \
