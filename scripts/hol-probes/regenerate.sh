@@ -104,6 +104,9 @@ run_probe() {
 run_probe pan_globals_fperm_code_probeScript.sml pan_globals_fperm_code_probe.out \
   swap_f swap_g other missing equal_names \
   "$cake_dir/pancake/proofs/pan_globalsProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe stacksem_register_transfers_probeScript.sml stacksem_register_transfers_probe.out \
+  get_word get_loc get_missing get_disabled set_word set_loc set_missing set_disabled op_add op_sub op_loc op_missing op_disabled \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe stacksem_leaf_transfers_probeScript.sml stacksem_leaf_transfers_probe.out \
   skip halt_word halt_loc halt_missing tick_zero tick_one return_loc return_word return_missing raise_loc raise_word raise_missing break_zero break_three continue_zero continue_three \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"

@@ -1409,3 +1409,16 @@ with `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=stacksem_leaf_transfers_probeScript.sml
 scripts/hol-probes/regenerate.sh`. The partial dispatcher is intentionally
 untagged; assembled full evaluation remains on y19g.
+
+`stacksem_register_transfers_probeScript.sml` captures thirteen direct original
+HOL Get/Set/OpCurrHeap evaluations. It checks word and location payloads,
+missing keys, disabled use_store, and arithmetic operand order (8-bit Sub
+produces 253 from 7 minus 10). The observer records result, clock, destination
+register and CurrHeap lookup. Kernel replay is in
+`Flapjack/Test/StackSemRegisterTransfersParity.lean`, over arbitrary base states.
+The syntax/state store-name codec preserves every constructor and has both
+kernel-checked roundtrips. The dispatcher is untagged assembly infrastructure;
+full evaluation remains on y19g. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_register_transfers_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
