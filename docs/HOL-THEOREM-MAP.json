@@ -28359,5 +28359,87 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-30, bead flapjack-pxn.18.5.5.46.1): exact syntactic port of HOL not_has_return_imp_not_branch_ret over the tagged exact unreachElimHOLExact/nestedDecsHOL/argLoadHOLExact/hasReturnHOLExact/notBranchRetHOLExact on CrepProgHOL; same quantified variables, LENGTH side conditions and conclusion (HOL Bool predicates used as propositions rendered `= true`). Only the BitVec word-dimension qualifier applies."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsExact.lean",
+    "lean_name": "fpermDecsHOL_append",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only private assembly infrastructure for evaluate_decls_compile_top; derives structural tables and evaluation from source premises, no independent HOL declaration claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsExact.lean",
+    "lean_name": "resortDeclsHOL_filter_partition",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only private assembly infrastructure for evaluate_decls_compile_top; derives structural tables and evaluation from source premises, no independent HOL declaration claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsExact.lean",
+    "lean_name": "functionsHOL_map_compile",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only private assembly infrastructure for evaluate_decls_compile_top; derives structural tables and evaluation from source premises, no independent HOL declaration claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsExact.lean",
+    "lean_name": "compileDecsHOL_function_suffix",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only private assembly infrastructure for evaluate_decls_compile_top; derives structural tables and evaluation from source premises, no independent HOL declaration claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsExact.lean",
+    "lean_name": "compileDecsHOL_resorted_functions",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only private assembly infrastructure for evaluate_decls_compile_top; derives structural tables and evaluation from source premises, no independent HOL declaration claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsExact.lean",
+    "lean_name": "evaluateDeclsCompileTopUpdates",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only private assembly infrastructure for evaluate_decls_compile_top; derives structural tables and evaluation from source premises, no independent HOL declaration claimed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopSemanticsExact.lean",
+    "lean_name": "evaluateDeclsCompileTopHOLFinite",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "evaluate_decls_compile_top",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison against pan_globalsProofScript.sml:2543-2610 and panLangScript.sml:127: preserves the four conjuncts (successful source evaluate_decls, first-match ALOOKUP, Function/Decl/Exn restriction, compile_decs equation with empty globals/zero size/source shape budget), and explicit compiled evaluate_decls result with main code update then MAP body compilation at final context, plus compiled exception updates. TailCall is Call NONE; Local/FST argument map, parameter/return shapes and nested_seq match. Named canonical finite maps belong to imported PanSemStateFiniteExact and PanGlobalsContextExact, each with same-module roundtrip witness; positive BitVec width and universe-0 FFI translation are the only other carrier differences. No extra hypotheses, target evaluation assumption or post-state assumption. Source success premise is explicitly HOL original. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/InitGlobalsMemory.lean",
+    "lean_name": "memStoresAddrsIsSomeHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "mem_stores_addrs_IS_SOME",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison against pan_globalsProofScript.sml:2079-2086, panSemScript.sml:373-386 and stack_removeProofScript.sml:2745-2748. Preserves universal address/list/domain/memory binders, address-set subset premise and existential successful mem_stores result. HOL mem_store explicitly types address and word_lab at the same word dimension, represented by positive BitVec width and HolWordLab width. Domain is a Prop predicate; memory is a total function. Classical membership decision is internal to evaluator application, adds no premise. Address and store strides both reduce to BitVec.ofNat width (width / 8), with modular addition and no distinctness/alignment/overflow assumptions, including zero stride. Function update and recursive failure/success are the existing reviewed panMemStoresHOL clauses. Used by source initialization proof at2164; no state relation or executable change. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/InitGlobalsAlignment.lean",
+    "lean_name": "byteAlignedBytesInWordMulHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "byte_aligned_bytes_in_word_mul",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison against pan_globalsProofScript.sml:2088-2096. Original implicit word binder x is explicit word:BitVec width with NeZero width, sole good_dimindex premise remains existing tagged goodDimindex (width=32 or64). bytes_in_word is canonical panBytesInWord n2w(width DIV8); byte_aligned is existing source-shaped panGlobalsByteAlignedHOL, fixed point of panByteAlignHOL clearing LOG2(width DIV8) low bits, exactly2/3 at allowed dimensions. Conclusion preserves modular word multiplication, no no-wrap bound or extra alignment assumption. Kernel proof considers exactly source good dimensions and derives divisibility after reduction modulo2^width. StateRelationExact imported read-only for the existing alignment predicate; no relation theorem assumed. Source used at2211 and3126. Coordinator review pending."
   }
 ]
