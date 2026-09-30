@@ -28122,5 +28122,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-a source comparison against pan_globalsProofScript.sml:2079-2086, panSemScript.sml:373-386 and stack_removeProofScript.sml:2745-2748. Preserves universal address/list/domain/memory binders, address-set subset premise and existential successful mem_stores result. HOL mem_store explicitly types address and word_lab at the same word dimension, represented by positive BitVec width and HolWordLab width. Domain is a Prop predicate; memory is a total function. Classical membership decision is internal to evaluator application, adds no premise. Address and store strides both reduce to BitVec.ofNat width (width / 8), with modular addition and no distinctness/alignment/overflow assumptions, including zero stride. Function update and recursive failure/success are the existing reviewed panMemStoresHOL clauses. Used by source initialization proof at2164; no state relation or executable change. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/InitGlobalsAlignment.lean",
+    "lean_name": "byteAlignedBytesInWordMulHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "byte_aligned_bytes_in_word_mul",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison against pan_globalsProofScript.sml:2088-2096. Original implicit word binder x is explicit word:BitVec width with NeZero width, sole good_dimindex premise remains existing tagged goodDimindex (width=32 or64). bytes_in_word is canonical panBytesInWord n2w(width DIV8); byte_aligned is existing source-shaped panGlobalsByteAlignedHOL, fixed point of panByteAlignHOL clearing LOG2(width DIV8) low bits, exactly2/3 at allowed dimensions. Conclusion preserves modular word multiplication, no no-wrap bound or extra alignment assumption. Kernel proof considers exactly source good dimensions and derives divisibility after reduction modulo2^width. StateRelationExact imported read-only for the existing alignment predicate; no relation theorem assumed. Source used at2211 and3126. Coordinator review pending."
   }
 ]
