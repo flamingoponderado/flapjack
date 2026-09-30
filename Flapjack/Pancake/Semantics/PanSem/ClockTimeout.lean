@@ -204,11 +204,10 @@ theorem evaluateHOLFiniteState_add_clock_or_timeout {width : Nat} {σ : Type} [N
 
 /-! ## Clock-increase FFI-event prefix
 
-HOL `panPropsScript.sml:881` `evaluate_add_clock_io_events_mono`: at a larger
-clock, evaluation can only append FFI I/O events.  The state-level theorem
-below is stated over `evaluateHOLFiniteState` with no mathematical premises.
-It is Flapjack-specific infrastructure (no `@[hol]` tag) pending the reviewed
-exact `evaluate_def` acceptance (bead `flapjack-4ac.4.50.1`). -/
+At a larger clock, evaluation can only append FFI I/O events. The state-level
+projection helper below is Flapjack-specific finite-to-broad infrastructure.
+The HOL-shaped theorem is placed in the panProps counterpart submodule
+`PanProps/EvaluateAddClockIoEventsMono.lean`. -/
 
 /-- Flapjack-specific bridge: a successful finite-context run projects to the
     broad exact evaluator applied to `toExact`, so the FFI event trace of the
@@ -224,12 +223,11 @@ private theorem evalPanSemRecursiveCallContextHOLExact_map_toExact_some
   rw [h] at hproj
   simpa using hproj.symm
 
-/-- State-level clock-increase FFI-event prefix for the finite-support carrier
-    evaluator: running `evaluateHOLFiniteState` at a larger clock can only add
-    FFI I/O events (HOL `evaluate_add_clock_io_events_mono`,
-    `panPropsScript.sml:881`).  The two `DecidablePred` witnesses are supplied
-    internally by `evaluateHOLFiniteState`'s classical choice, so this
-    statement has no mathematical premises. -/
+/-- Flapjack-specific state-level projection helper for clock-increase FFI
+    prefixes. The two `DecidablePred` witnesses are supplied internally by
+    `evaluateHOLFiniteState`'s classical choice; totality discharges both outer
+    assembly markers. The HOL theorem with its original binder order lives
+    in the panProps counterpart. -/
 theorem evaluateHOLFiniteState_add_clock_ioEvents_prefix {width : Nat} {σ : Type}
     [NeZero width] (state : PanSemStateFiniteExact width σ) (program : ProgHOL width)
     (extra : Nat) :
