@@ -1873,6 +1873,29 @@ not the whole HOL `inst_def`. Regenerate read-only using
 HOL_PROBE_ONLY=stacksem_fp_arith_probeScript.sml
 bash scripts/hol-probes/regenerate.sh`.
 
+`stacksem_fp_convert_probeScript.sml` captures eleven original `inst_def`
+observations for FPSqrt, FPToInt and FPFromInt
+(`cakeml/compiler/backend/semantics/stackSemScript.sml:558-562` for FPSqrt,
+`:605-623` for FPToInt and `:624-636` for FPFromInt). FPSqrt is probed on the
+exact square 4.0 (`0x4010000000000000`) whose `isqrtLib` sqrt is
+2.0 (`0x4000000000000000`), plus a missing-operand failure. FPToInt covers an
+in-range 2.0 -> `2w`, a `2^52` value that fails HOL's `w2i (i2w i) = i` word32
+round-trip (out-of-range -> NONE), the 32-bit low/high `bit_field_insert`
+split (`FPToInt 14 2` / `FPToInt 15 2` into `d1 DIV 2 = 7`), and a missing
+operand. FPFromInt covers the 64-bit low-32-bit read (`0x0000000000000003` ->
+3.0), the 32-bit low/high half selection (`FPFromInt 7 14` -> 4.0,
+`FPFromInt 7 15` -> 3.0 over `fp7 = 0x0000000300000004`), and a
+missing-operand failure. `Flapjack/Test/StackSemFpRegisterInstParity.lean`
+kernel-replays every row: the FPSqrt row uses `holFp64Sqrt_rte` from
+`Flapjack/Misc/BinaryIeeeSqrtFp64.lean`, the FPFromInt rows use
+`holIntToFp64_rte` from `Flapjack/Misc/BinaryIeeeConvert.lean`, and the FPToInt
+rows use the computable `holFp64ToInt`. The untagged partial case helper
+`Flapjack/Compiler/Backend/Semantics/StackSem/FpRegisterInstructions.lean` is
+not the whole HOL `inst_def`. Regenerate read-only using
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_fp_convert_probeScript.sml
+bash scripts/hol-probes/regenerate.sh`.
+
 `stack_props_inst_name_probe.out` records ten direct `inst_name_def` EVAL rows
 from original stackPropsTheory, covering every instruction constructor and
 logical-register/address, two-register arithmetic, and FP alias failures.
