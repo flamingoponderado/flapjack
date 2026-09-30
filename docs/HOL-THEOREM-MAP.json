@@ -32474,6 +32474,29 @@
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-only source-derived GlobalAssign alignment infrastructure (bead28.6.1). Original Assign559-568 combines external alignment byte_aligned_add/aligned_add_sub_cor; no single CakeML declaration has this synthesized statement. Uses actual original state_rel goodDimindex32/64 and byte-align fixed points; no generic external alignment port or extra compiler assumption claimed. Kernel arithmetic includes modular underflow; state relation corollary derives block alignment and context lookup internally. External HOL8rows independently captured and kernel replayed; coordinator review pending."
 },
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/Assemble.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only canonical finite-state roundtrip re-export for full unchanged-local representation qualifier; no standalone HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/UnchangedLocal/Assemble.lean",
+  "lean_name": "evaluateUnchangedLocalHOL",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_unchanged_local",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source comparison2026-09-30 full HOL evaluate_unchanged_local1105-1135: original universal name/unused value/program/state/result/post binders and only nonfree/source run/good_res/nonError imply identical local lookup. No public IH or extra successful-evaluation, freshness, domain, target, or post-state premise. Internally invokes exact evaluateIndHOL over unchangedLocalGoal and discharges all21 clauses in source order: Skip,Dec,Assign,Primitive,Store,Store32,StoreByte,ShMemLoad,ShMemStore,Seq,If,Break,Continue,While,Return,Raise,Tick,Annot,Call,DecCall,ExtCall. Call dispatches NONE/non-tail-no-handler/handler; handler IH reconstructs all literal original guards/aliases. DecCall reconstructs all continuation guards/aliases, both shape equalities; unused callee IH not needed by specialized preservation cases. Original exact MlS/ProgHOL/ValueHOL/state, canonical finite-support witness and positive width/universe0 FFI. Peer case sources inspected then ordinary-merged; their beads remain pending coordinator acceptance. Proof-only; coordinator full source review pending."
+},
   {
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
     "hol_name": "res_var_FEMPTY",
