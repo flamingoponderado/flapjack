@@ -31631,5 +31631,13 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-c source comparison2026-09-30 (.32.4): full evaluate_two_fresh_locals1087-1102. Original eight binders and two nonfree/source-run conjunction, existential locals, identical result/nonlocals and conditional good_res/non-Error ordered double FUPDATE retained. Full evaluateFreshLocalHOL applied twice exactly as HOL proof; no public IH, distinct-name premise, update commutation or extra evaluation hypothesis. Equal names preserve second-write priority. Canonical four state maps and genuine roundtrip, exact MlS/ProgHOL/ValueHOL positive width/NeZero/universe0 FFI. Proof-only, no executable change; coordinator acceptance pending; full fresh-local prerequisite accepted at c50ef83df."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/WhileInduction.lean",
+    "lean_name": "assembleWhile",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack partial induction assembly consumer. Reviewed inlineProgCorrectWhileCaseExact discharged using separately derived original guarded body and plain NONE/Continue0 reentry IHs; no extra While correctness premise. Remaining constructor obligations explicit; full inline_prog_correct remains open."
   }
 ]
