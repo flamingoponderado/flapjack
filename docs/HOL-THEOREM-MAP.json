@@ -32553,6 +32553,151 @@
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-specific composition of initializer head expression proof2149-2163 (.22.10.7). Original state_rel F and source successful empty-locals evaluation derive unchanged-target compiled evaluation using accepted state_rel_empty_locals, compile_exp_correct and eval_empty_locals_IMP. No target success assumption, extra shape or alignment assumption, or new named HOL theorem. Full recursive initializer remains open."
 },
+{
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "res_var_FEMPTY",
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/StateRelationLocals.lean",
+  "lean_name": "resVarFEMPTYExact",
+  "statement_status": "documented_mismatch",
+  "reviewer": "flapjack-ds10 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.2.32.6; documented_mismatch, tag withdrawn after coordinator review). HOL res_var_FEMPTY (pan_globalsProofScript.sml:1011-1015) has elaborated type res_var FEMPTY (n,NONE) = FEMPTY over the bare polymorphic finite-map carrier 'a |-> 'b; the Lean statement renders that carrier with HolFiniteMapExact (resVarEq/empty). No existing finite-map qualifier classifies a tagged theorem whose whole content is a single map equality: fmap_as_finite_support_result is limited to defs by its lookup-target witness rule and fmap_as_finite_support_equalities requires at least two top-level conjuncts. The @[hol] tag was withdrawn rather than left as reviewed_exact; faithful classification/extending the single-map-equality qualifier+witness checks is tracked by flapjack-pxn.18.5.2.32.6.1."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+  "hol_name": "call_FFI_LENGTH",
+  "lean_path": "Flapjack/Compiler/Backend/StackRemove.lean",
+  "lean_name": "callFFILengthHOL",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead pxn.18.5.2.35.5 followup): HOL call_FFI_LENGTH (stack_removeProofScript.sml:67) is (call_FFI s i conf xs = FFI_return n ys) ==> LENGTH ys = LENGTH xs. Carriers/naming render through the already reviewed call_FFI_def tag on callFFIHOL (ffiScript.sml, reviewed_exact): call_FFI->callFFIHOL, FFI_return->HolFfiResult.ret, ffi_state->HolFfiState, LENGTH ys = LENGTH xs -> nextBytes.length = bytes.length; no semantic difference. Proven by the FfiHOL local corollary callFFIHOL_ret_length."
+},
+{
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "compile_correct",
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ExtCall.lean",
+  "lean_name": "compileCorrect_ExtCall",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "PanSemStateFiniteExact.locals",
+    "PanSemStateFiniteExact.globals",
+    "PanSemStateFiniteExact.code",
+    "PanSemStateFiniteExact.eshapes",
+    "PanGlobalsContextExact.globals"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds10 source comparison (2026-09-30, bead flapjack-pxn.18.5.2.35) of cakeml/pancake/proofs/pan_globalsProofScript.sml:1595-1613 Resume compile_correct[ExtCall]: the HOL case holds the original state relation, source run and non-Error premises only; it uses the evaluate_ind expression hypothesis compile_exp_correct for the four compiled argument evaluations, state_rel_read_bytearray for the two byte-array reads, and state_rel_change_ffi with state_rel_write_bytearray for the call_FFI return branch, plus state_rel_empty_locals for the FinalFFI branch; concluded with good_res_def. Source evaluator is the tagged evaluateHOLFiniteState (panSem$evaluate_def), compiler the tagged compileProgExactHOL (pan_globals$compile_def), relation the tagged panGlobalsStateRelHOLExact (state_rel_def). No extra hypothesis added."
+},
+{
+  "hol_path": null,
+  "hol_name": null,
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ExtCall.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.2.35): same-module canonical roundtrip witness re-exported for the relation qualifier; infrastructure, no HOL original."
+},
+{
+  "hol_path": null,
+  "hol_name": null,
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/ExtCall.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.2.35): same-module canonical roundtrip witness re-exported for the relation qualifier; infrastructure, no HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/TailCall.lean",
+  "lean_name": "compileCorrect_CallNone",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "compile_correct",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "PanSemStateFiniteExact.locals",
+    "PanSemStateFiniteExact.globals",
+    "PanSemStateFiniteExact.code",
+    "PanSemStateFiniteExact.eshapes",
+    "PanGlobalsContextExact.globals",
+    "callee"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source comparison2026-09-30 original gen_goal172-182 and compile_correct Call1138ff specialized caltyp NONE. Original source/function/args/result/context/target/post and state_rel T/source evaluation/nonError conclusion unchanged; sole actual evaluate_ind args/code lookup/nonzero clock callee IH retained. No handler IH needed for literal NONE. Accepted OPT_MMAP derives target compiled values, state_rel_lookup_code derives matching compiled body/callee/returnShape; dec_clock and change_locals derive entry state relation. Source clock0 timeout clears locals. Missing args/code, callee NONE/Break/Continue/Error or return shape mismatch excluded only by original nonError; returned/exception/timeout/finalFfi use body IH and empty_locals at good_res false. No target evaluation/post relation/freshness/global return premises. Canonical maps named state/context fields plus standalone callee IH binder, same-module roundtrip witnesses, positive BitVec width/universe0 FFI. Proof-only; full non-tail/handler/global cases remain open; coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/TailCall.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only canonical state/context roundtrip re-export for exact TailCall representation qualifiers; no separate HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/TailCall.lean",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only canonical state/context roundtrip re-export for exact TailCall representation qualifiers; no separate HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileCorrect/TailCall.lean",
+  "lean_name": "compileList_eq_map",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only equation between literal recursive compiled argument list and MAP spelling used by exact OPT_MMAP theorem; no separate HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/GlobalStoreReload.lean",
+  "lean_name": "stateRel_storeReload",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only synthesized certificate for original Assign543-568, bead28.6.3. Original state relation and global lookup plus same-shape replacement internally imply existential successful arbitrary-shaped store and exact reload, using reviewed MemStores and accepted alignment prerequisite. Top non-domain derives strict nonwrapping length. No target-store/alignment/length compiler premise or scalar restriction. No single HOL declaration has this combined statement; coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/GlobalStorePreservation.lean",
+  "lean_name": "stateRel_storePreserves",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only synthesized memory certificate for original Assign573-585, bead28.6.4. Original state relation/global lookup/context/same-shape replacement and internal successful-store obligation imply all other globals reload unchanged and source-memory-domain agreement. Derives separation, shape well-formedness and flatten length internally using reviewed MemStores helpers. No alternate relation, scalar restriction or new public compiler premise. No single HOL declaration has this statement; coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/InitGlobalsStore.lean",
+  "lean_name": "initGlobalStorePreservesSourceMemory",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only initializer-cons infrastructure (.22.10.8). Source pan_globalsProofScript.sml:2164-2181 and2285-2300 derives successful head stores and preservation of source-domain memory. Composes reviewed mem_stores_addrs_IS_SOME and mem_stores_lookup. Free-region target coverage and source disjointness plus store-footprint inclusion and old memory agreement imply existential store success and preserved agreement. No assumed target store result, alignment, nonwrapping bound or scalar restriction; universal same-width total word_lab memory. No separately named HOL declaration, so untagged. Full initializer state relation and recursive proof remain open."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/InitGlobalsRanges.lean",
+  "lean_name": "recursiveFreeBase",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific original initializer cons algebra composition (.22.10.9), HOL2182-2235. Exact compiler globalsSize advancement and modular free-base equality; accepted addresses_add/DISJOINT_addresses_lemma derive partition and recursive domain/disjointness using original goodDimindex and combined-size bound. No store/evaluation premise or independently named HOL theorem; full initializer state relation and recursion remain open."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/InitGlobalsRanges.lean",
+  "lean_name": "headAllocationBase",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific original initializer cons algebra composition (.22.10.9), HOL2182-2235. Exact compiler globalsSize advancement and modular free-base equality; accepted addresses_add/DISJOINT_addresses_lemma derive partition and recursive domain/disjointness using original goodDimindex and combined-size bound. No store/evaluation premise or independently named HOL theorem; full initializer state relation and recursion remain open."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/InitGlobalsRanges.lean",
+  "lean_name": "allocationPartition",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific original initializer cons algebra composition (.22.10.9), HOL2182-2235. Exact compiler globalsSize advancement and modular free-base equality; accepted addresses_add/DISJOINT_addresses_lemma derive partition and recursive domain/disjointness using original goodDimindex and combined-size bound. No store/evaluation premise or independently named HOL theorem; full initializer state relation and recursion remain open."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/InitGlobalsRanges.lean",
+  "lean_name": "recursiveFreeRangePremises",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific original initializer cons algebra composition (.22.10.9), HOL2182-2235. Exact compiler globalsSize advancement and modular free-base equality; accepted addresses_add/DISJOINT_addresses_lemma derive partition and recursive domain/disjointness using original goodDimindex and combined-size bound. No store/evaluation premise or independently named HOL theorem; full initializer state relation and recursion remain open."
+},
   {
     "lean_path": "Flapjack/Pancake/Proofs/CrepInline/TransformBranch/Cases.lean",
     "lean_name": "transformBranchCorrect_Leaf",

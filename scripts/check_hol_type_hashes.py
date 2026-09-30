@@ -58,6 +58,7 @@ def validate_export_record(record: Any, line_number: int) -> dict[str, Any]:
         "fmap_as_finite_support_parameters",
         "fmap_as_finite_support_existentials",
         "fmap_as_finite_support_relation", "fmap_as_finite_support_equalities",
+        "fmap_as_finite_support_equality",
         "words_as_type_indexed_bitvec",
         "word_dimension_as_width",
         "reals_as_rational_cuts",
@@ -68,6 +69,7 @@ def validate_export_record(record: Any, line_number: int) -> dict[str, Any]:
         (
             not isinstance(qualifiers.get(key), bool)
             if key in ("fmap_as_finite_support_result", "fmap_as_finite_support_equalities",
+                       "fmap_as_finite_support_equality",
                        "words_as_type_indexed_bitvec", "reals_as_rational_cuts")
             else not isinstance(value, str)
             if key == "word_dimension_as_width"
@@ -157,6 +159,7 @@ def lock_records(
             "reviewed_fmap_as_finite_support_relation",
             "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
             "reviewed_fmap_as_finite_support_equalities",
+            "reviewed_fmap_as_finite_support_equality",
             "reviewed_words_as_type_indexed_bitvec",
             "reviewed_word_dimension_as_width",
             "reviewed_reals_as_rational_cuts",
@@ -206,6 +209,8 @@ def lock_records(
             )
         if record.get("fmap_as_finite_support_equalities", False):
             qualifiers["fmap_as_finite_support_equalities"] = True
+        if record.get("fmap_as_finite_support_equality", False):
+            qualifiers["fmap_as_finite_support_equality"] = True
         if record.get("words_as_type_indexed_bitvec", False):
             qualifiers["words_as_type_indexed_bitvec"] = True
         if record.get("word_dimension_as_width") is not None:
