@@ -1,3 +1,14 @@
+`loop_sem_store_narrow_probe.out` captures sixteen direct original Loop
+Store32/StoreByte `evaluate_def` observations at width64 (clauses325-337).
+It registers the original recursive theorem with the HOL compset, without a
+surrogate evaluator. Rows cover 64-to-32/8 narrowing, both endian placements,
+upper-half Store32, alignment/domain/type/memory errors, unchanged other memory
+and clock. Every guard in `Flapjack.Test.LoopStoreNarrowParity` cites its row;
+missing production memory totalizes to the original Loc0 0 sentinel. These are
+adapter checks, not full runtime hook-bundle wiring. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=loop_sem_store_narrow_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `stacksem_loop_recursive_probe.out` contains eleven fresh direct original
 `stackSem$evaluate (Loop body, state)` observations (stackSemScript.sml:833-837).
 The original evaluator performs all recursive re-entry. The Lean replay

@@ -226,6 +226,7 @@
     {"bytes": 101, "out": "loop_sem_sh_mem_op_probe.out", "rows": 8, "sha256": "5e02247b3c6c01dd3fcbd8d5e053e1b942660bb7bb8fff248b6caaf8748033cc"},
     {"bytes": 140, "out": "loop_sem_sh_mem_store_probe.out", "rows": 4, "sha256": "c4d78d0b16d8a533d5f2ceb916abfcb3c9db5fb6ab37b8e6c43702acc4657c40"},
     {"bytes": 116, "out": "loop_sem_state_carrier_probe.out", "rows": 8, "sha256": "416b98ce8b907fde8f4da5b14616d71e6313a611f6587221adca7e0bad6be590"},
+    {"bytes": 449, "out": "loop_sem_store_narrow_probe.out", "rows": 16, "sha256": "651d38550d111e6f203a86ebec354ae424b76d9f852056451caafad48ab55214"},
     {"bytes": 74, "out": "loop_semantics_probe.out", "rows": 2, "sha256": "a57ffe14114c6763b2af2dbd3d9f958a73960927ed7c1355b087b131e5264aaf"},
     {"bytes": 273, "out": "loop_to_word_acc_vars_acc_prime_probe.out", "rows": 14, "sha256": "45ca4ea347d52187b132b3f3d82f7cbbc75c7b0e62fd120207be73d1e025e65b"},
     {"bytes": 328, "out": "loop_to_word_comp_call_probe.out", "rows": 3, "sha256": "922f7a5ee277b9ffc1fd72a35d03800a58d786a3634017606195983c0df38c5e"},
