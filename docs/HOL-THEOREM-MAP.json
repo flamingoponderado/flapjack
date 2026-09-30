@@ -1,5 +1,37 @@
 [
   {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Bitmap.lean",
+    "lean_name": "filterBitmap",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "filter_bitmap_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.2), stackSemScript27-35: generic List Bool x List alpha -> Option(List alpha x List alpha). Empty bitmap returns empty selection and all remaining values; false consumes one input without selection; true recursively selects the tail then prepends the current value; malformed remaining bitmap/input returns none. Every clause and recursive failure matches HOL. No array/word/map/name translation, no validity premise. Old stackGcNatFilterBitmap is proved equal for all inputs by stackGcNatFilterBitmap_eq_exact, without changing that implementation. Exact evaluator/GC wiring remains on open y19g; independent coordinator source review required."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Bitmap.lean",
+    "lean_name": "mapBitmap",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "map_bitmap_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.2), stackSemScript37-48: generic bitmap/moved/original lists to optional right-associated triple. Empty bitmap returns empty rebuilt prefix and both unconsumed lists; false copies and consumes one original value without consuming moved; true consumes both lists and inserts the moved head; recursive failure and missing required heads return none. HOL list carriers, tuple order, recursion and wildcard rejection are preserved. Old stackGcNatMapBitmap is proved equal on all inputs by stackGcNatMapBitmap_eq_exact, no bitmap-validity assumption or implementation change. Exact evaluator/GC wiring remains open under y19g; coordinator review required."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Bitmap.lean",
+    "lean_name": "filterBitmapLength",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "filter_bitmap_LENGTH",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.2), stackSemScript50-58: same universal bs/xs/x/y order, sole filter_bitmap bs xs = SOME(x,y) premise, and LENGTH y <= LENGTH xs conclusion. Polymorphic List alpha carrier; no validity or success premise beyond the original result equality. Kernel proof by source bitmap/input cases and transitivity. Coordinator review required."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Bitmap.lean",
+    "lean_name": "mapBitmapLength",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "map_bitmap_LENGTH",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-b source comparison (2026-09-30; y19g.2), stackSemScript60-71: same universal t1/t2/t3/x/y/z order, sole map_bitmap t1 t2 t3 = SOME(x,y,z) premise, and conjunction LENGTH y <= LENGTH t2 /\\ LENGTH z <= LENGTH t3. Generic lists, no extra conditions; all false/true/empty/truncated-input cases kernel-proved. Coordinator review required."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/State.lean",
     "lean_name": "StackSemStateFiniteExact",
     "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
