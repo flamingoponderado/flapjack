@@ -32657,5 +32657,13 @@
   "hol_name": null,
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-only synthesized memory certificate for original Assign573-585, bead28.6.4. Original state relation/global lookup/context/same-shape replacement and internal successful-store obligation imply all other globals reload unchanged and source-memory-domain agreement. Derives separation, shape well-formedness and flatten length internally using reviewed MemStores helpers. No alternate relation, scalar restriction or new public compiler premise. No single HOL declaration has this statement; coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/InitGlobalsStore.lean",
+  "lean_name": "initGlobalStorePreservesSourceMemory",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only initializer-cons infrastructure (.22.10.8). Source pan_globalsProofScript.sml:2164-2181 and2285-2300 derives successful head stores and preservation of source-domain memory. Composes reviewed mem_stores_addrs_IS_SOME and mem_stores_lookup. Free-region target coverage and source disjointness plus store-footprint inclusion and old memory agreement imply existential store success and preserved agreement. No assumed target store result, alignment, nonwrapping bound or scalar restriction; universal same-width total word_lab memory. No separately named HOL declaration, so untagged. Full initializer state relation and recursive proof remain open."
 }
 ]
