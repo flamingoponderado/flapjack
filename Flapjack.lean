@@ -1,3 +1,6 @@
+import Flapjack.Pancake.Proofs.PanGlobals.MemoryLookup
+import Flapjack.Pancake.Proofs.PanGlobals.MemorySwap
+import Flapjack.Pancake.Proofs.PanGlobals.StateRelationCode
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelationFfi
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelationClock
 import Flapjack.Misc.BinaryIeeeSqrt.RealAgreement
