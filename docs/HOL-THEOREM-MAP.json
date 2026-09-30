@@ -37168,5 +37168,28 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (bead flapjack-2de.4.1): crep_inlineProofScript.sml:3270-3272 forall crep_code inl_fs. ALL_DISTINCT (MAP FST crep_code) ==> ALL_DISTINCT (MAP FST (compile_inl_prog inl_fs crep_code)). Lean binds crep_code inl_fs in HOL order; ALL_DISTINCT is List.Nodup, MAP FST is List.map Prod.fst, and compile_inl_prog is the tagged compileInlProgHOLExact. Same premise and conclusion."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/StateRelImpSemantics.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed CrepSemHOLState toBroad/ofBroad roundtrip for the relation qualifier."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "evaluate_call_same_result_state",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/StateRelImpSemantics.lean",
+    "lean_name": "evaluateCallSameResultStateExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "inl_fs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-2de.4.2): crep_inlineProofScript.sml:3284-3294 forall e args s r s' t inl_fs. evaluate (Call NONE e args, s) = (r,s') /\\ state_rel_code s t /\\ inl_fs SUBMAP s.code /\\ locals_strong_rel s t /\\ code_inl_rel inl_fs s t /\\ r <> SOME Error ==> FST (evaluate (Call NONE e args, t)) = FST (evaluate (Call NONE e args, s)) /\\ state_rel_code (SND (evaluate (Call NONE e args, s))) (SND (evaluate (Call NONE e args, t))). Lean binds e args s r s' t inl_fs in HOL order, with the same six conjuncts and conclusion (FST/SND as .1/.2) over evalCrepSemHOLProgExact and the exact relation ports. No extra premise. Proof: inline_prog with the empty inline bag leaves Call NONE unchanged (inlineProgHOLExact_call_nonInlined), so the reviewed callNonInlined applies, with its callee-body premise from the accepted inline_prog_correct motive (inlineMotive) and its handler premise vacuous for Call NONE; this is the content of HOL's proof, which uses inline_prog_correct on the callee body."
   }
 ]
