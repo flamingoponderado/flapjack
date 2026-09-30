@@ -1507,6 +1507,24 @@ scripts/hol-probes/regenerate.sh`. The tagged ports of `sh_mem_store_def`,
 `sh_mem_load32_def` and the `sh_mem_op_def` dispatch live in
 `Flapjack/Compiler/Backend/Semantics/StackSem/ShMem.lean`.
 
+`stacksem_sh_mem_op_probeScript.sml` records four direct original
+`stackSem$evaluate` observations for the `ShMemOp` clause
+(`stackSemScript.sml:922-927`). The effective address is
+`word_exp s (Op Add [Var a; Const w])`; a byte-incrementing FFI oracle makes the
+successful row observable through the recorded FFI state. The rows cover a
+`ShMemOp Load` success with `word_exp` yielding `0w + 8w` and a positive clock
+(result `NONE`, clock decremented to 4, FFI state incremented), a `word_exp`
+miss on a `Loc` operand (`SOME Error`, state unchanged), a miss on a missing
+register (same), and `clock = 0` (`SOME TimeOut`, `empty_env` clearing regs and
+the stack). Kernel replay of all four rows lives in
+`Flapjack/Test/StackSemShMemOpParity.lean`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_sh_mem_op_probeScript.sml
+scripts/hol-probes/regenerate.sh`. The `evaluateShMemOp` fragment is untagged;
+the tagged `word_exp_def`, `sh_mem_op_def`, `dec_clock_def` and `empty_env_def`
+ports live in `StackSem/Expressions.lean`, `StackSem/ShMem.lean` and
+`StackSem/StateOps.lean`, and assembled full evaluation remains on y19g.
+
 `pan_globals_fperm_code_probeScript.sml` observes the original
 `pan_globalsProof$fperm_code` finite map using its proved
 `FLOOKUP_fperm_code'` rewrite followed by HOL EVAL (plain EVAL leaves
