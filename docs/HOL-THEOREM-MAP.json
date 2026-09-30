@@ -33143,5 +33143,321 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack local support (bead .43.5.4): motive for If."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/MoreAtoms.lean",
+    "lean_name": "evaluateStateLocalsRelStrongAssignExact",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "evaluate_state_locals_rel_strong",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.5) compared HOL evaluate_state_locals_rel_strong (crep_inlineProofScript.sml:273-285): forall p s r s' t. evaluate (p,s) = (r,s') /\\ r <> SOME Error /\\ locals_rel s t /\\ state_rel s t ==> exists t'. evaluate (p,t) = (r,t') /\\ state_rel s' t' /\\ case r of NONE/Break/Continue => locals_rel s' t' /\\ locals_ext_rel s s' t t' | SOME Error => F | _ => T; stated for the constructor Assign n e (existing local overwritten on both sides) in the curried form of the accepted leaf cases, no induction hypothesis and no extra premise (HOL :400-498). Proof: state_rel makes t = s with locals := t.locals, so the target run repeats the source run; expression values via eval_original_extend_locals, local lookups via locals_rel. Exact tagged carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/MoreAtoms.lean",
+    "lean_name": "evaluateStateLocalsRelStrongStoreExact",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "evaluate_state_locals_rel_strong",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.5) compared HOL evaluate_state_locals_rel_strong (crep_inlineProofScript.sml:273-285): forall p s r s' t. evaluate (p,s) = (r,s') /\\ r <> SOME Error /\\ locals_rel s t /\\ state_rel s t ==> exists t'. evaluate (p,t) = (r,t') /\\ state_rel s' t' /\\ case r of NONE/Break/Continue => locals_rel s' t' /\\ locals_ext_rel s s' t t' | SOME Error => F | _ => T; stated for the constructor Store dst src in the curried form of the accepted leaf cases, no induction hypothesis and no extra premise (HOL :400-498). Proof: state_rel makes t = s with locals := t.locals, so the target run repeats the source run; expression values via eval_original_extend_locals, local lookups via locals_rel. Exact tagged carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/MoreAtoms.lean",
+    "lean_name": "evaluateStateLocalsRelStrongStore32Exact",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "evaluate_state_locals_rel_strong",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.5) compared HOL evaluate_state_locals_rel_strong (crep_inlineProofScript.sml:273-285): forall p s r s' t. evaluate (p,s) = (r,s') /\\ r <> SOME Error /\\ locals_rel s t /\\ state_rel s t ==> exists t'. evaluate (p,t) = (r,t') /\\ state_rel s' t' /\\ case r of NONE/Break/Continue => locals_rel s' t' /\\ locals_ext_rel s s' t t' | SOME Error => F | _ => T; stated for the constructor Store32 dst src in the curried form of the accepted leaf cases, no induction hypothesis and no extra premise (HOL :400-498). Proof: state_rel makes t = s with locals := t.locals, so the target run repeats the source run; expression values via eval_original_extend_locals, local lookups via locals_rel. Exact tagged carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/MoreAtoms.lean",
+    "lean_name": "evaluateStateLocalsRelStrongStoreByteExact",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "evaluate_state_locals_rel_strong",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.5) compared HOL evaluate_state_locals_rel_strong (crep_inlineProofScript.sml:273-285): forall p s r s' t. evaluate (p,s) = (r,s') /\\ r <> SOME Error /\\ locals_rel s t /\\ state_rel s t ==> exists t'. evaluate (p,t) = (r,t') /\\ state_rel s' t' /\\ case r of NONE/Break/Continue => locals_rel s' t' /\\ locals_ext_rel s s' t t' | SOME Error => F | _ => T; stated for the constructor StoreByte dst src in the curried form of the accepted leaf cases, no induction hypothesis and no extra premise (HOL :400-498). Proof: state_rel makes t = s with locals := t.locals, so the target run repeats the source run; expression values via eval_original_extend_locals, local lookups via locals_rel. Exact tagged carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/MoreAtoms.lean",
+    "lean_name": "evaluateStateLocalsRelStrongStoreGlobExact",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "evaluate_state_locals_rel_strong",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.5) compared HOL evaluate_state_locals_rel_strong (crep_inlineProofScript.sml:273-285): forall p s r s' t. evaluate (p,s) = (r,s') /\\ r <> SOME Error /\\ locals_rel s t /\\ state_rel s t ==> exists t'. evaluate (p,t) = (r,t') /\\ state_rel s' t' /\\ case r of NONE/Break/Continue => locals_rel s' t' /\\ locals_ext_rel s s' t t' | SOME Error => F | _ => T; stated for the constructor StoreGlob dst src in the curried form of the accepted leaf cases, no induction hypothesis and no extra premise (HOL :400-498). Proof: state_rel makes t = s with locals := t.locals, so the target run repeats the source run; expression values via eval_original_extend_locals, local lookups via locals_rel. Exact tagged carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/MoreAtoms.lean",
+    "lean_name": "evaluateStateLocalsRelStrongRaiseExact",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "evaluate_state_locals_rel_strong",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.5) compared HOL evaluate_state_locals_rel_strong (crep_inlineProofScript.sml:273-285): forall p s r s' t. evaluate (p,s) = (r,s') /\\ r <> SOME Error /\\ locals_rel s t /\\ state_rel s t ==> exists t'. evaluate (p,t) = (r,t') /\\ state_rel s' t' /\\ case r of NONE/Break/Continue => locals_rel s' t' /\\ locals_ext_rel s s' t t' | SOME Error => F | _ => T; stated for the constructor Raise eid in the curried form of the accepted leaf cases, no induction hypothesis and no extra premise (HOL :400-498). Proof: state_rel makes t = s with locals := t.locals, so the target run repeats the source run; expression values via eval_original_extend_locals, local lookups via locals_rel. Exact tagged carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/MoreAtoms.lean",
+    "lean_name": "evaluateStateLocalsRelStrongReturnExact",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "evaluate_state_locals_rel_strong",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.5) compared HOL evaluate_state_locals_rel_strong (crep_inlineProofScript.sml:273-285): forall p s r s' t. evaluate (p,s) = (r,s') /\\ r <> SOME Error /\\ locals_rel s t /\\ state_rel s t ==> exists t'. evaluate (p,t) = (r,t') /\\ state_rel s' t' /\\ case r of NONE/Break/Continue => locals_rel s' t' /\\ locals_ext_rel s s' t t' | SOME Error => F | _ => T; stated for the constructor Return es (via eval_optmmap_state_locals_rel) in the curried form of the accepted leaf cases, no induction hypothesis and no extra premise (HOL :400-498). Proof: state_rel makes t = s with locals := t.locals, so the target run repeats the source run; expression values via eval_original_extend_locals, local lookups via locals_rel. Exact tagged carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/MoreAtoms.lean",
+    "lean_name": "evaluateStateLocalsRelStrongPrimitiveExact",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "evaluate_state_locals_rel_strong",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.5) compared HOL evaluate_state_locals_rel_strong (crep_inlineProofScript.sml:273-285): forall p s r s' t. evaluate (p,s) = (r,s') /\\ r <> SOME Error /\\ locals_rel s t /\\ state_rel s t ==> exists t'. evaluate (p,t) = (r,t') /\\ state_rel s' t' /\\ case r of NONE/Break/Continue => locals_rel s' t' /\\ locals_ext_rel s s' t t' | SOME Error => F | _ => T; stated for the constructor Primitive lhss op rhss (FUPDATE_LIST over existing keys) in the curried form of the accepted leaf cases, no induction hypothesis and no extra premise (HOL :400-498). Proof: state_rel makes t = s with locals := t.locals, so the target run repeats the source run; expression values via eval_original_extend_locals, local lookups via locals_rel. Exact tagged carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/MoreAtoms.lean",
+    "lean_name": "evaluateStateLocalsRelStrongExtCallExact",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "evaluate_state_locals_rel_strong",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.5) compared HOL evaluate_state_locals_rel_strong (crep_inlineProofScript.sml:273-285): forall p s r s' t. evaluate (p,s) = (r,s') /\\ r <> SOME Error /\\ locals_rel s t /\\ state_rel s t ==> exists t'. evaluate (p,t) = (r,t') /\\ state_rel s' t' /\\ case r of NONE/Break/Continue => locals_rel s' t' /\\ locals_ext_rel s s' t t' | SOME Error => F | _ => T; stated for the constructor ExtCall in the curried form of the accepted leaf cases, no induction hypothesis and no extra premise (HOL :400-498). Proof: state_rel makes t = s with locals := t.locals, so the target run repeats the source run; expression values via eval_original_extend_locals, local lookups via locals_rel. Exact tagged carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/MoreAtoms.lean",
+    "lean_name": "evaluateStateLocalsRelStrongShMemExact",
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "evaluate_state_locals_rel_strong",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.5.43.5.5) compared HOL evaluate_state_locals_rel_strong (crep_inlineProofScript.sml:273-285): forall p s r s' t. evaluate (p,s) = (r,s') /\\ r <> SOME Error /\\ locals_rel s t /\\ state_rel s t ==> exists t'. evaluate (p,t) = (r,t') /\\ state_rel s' t' /\\ case r of NONE/Break/Continue => locals_rel s' t' /\\ locals_ext_rel s s' t t' | SOME Error => F | _ => T; stated for the constructor ShMem op v ad (all eight operators) in the curried form of the accepted leaf cases, no induction hypothesis and no extra premise (HOL :400-498). Proof: state_rel makes t = s with locals := t.locals, so the target run repeats the source run; expression values via eval_original_extend_locals, local lookups via locals_rel. Exact tagged carriers; canonical finite-support and positive-width word/Type0 FFI translation only. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/MoreAtoms.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module qualifier witness forwarding the reviewed CrepSemHOLState toBroad/ofBroad roundtrip for the relation qualifier."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/MoreAtoms.lean",
+    "lean_name": "target_eq",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.5.43.5.5) for the evaluate_state_locals_rel_strong atom cases; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/MoreAtoms.lean",
+    "lean_name": "post_locals_same",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.5.43.5.5) for the evaluate_state_locals_rel_strong atom cases; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/MoreAtoms.lean",
+    "lean_name": "post_locals_set",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.5.43.5.5) for the evaluate_state_locals_rel_strong atom cases; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/MoreAtoms.lean",
+    "lean_name": "eval_tl",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.5.43.5.5) for the evaluate_state_locals_rel_strong atom cases; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/MoreAtoms.lean",
+    "lean_name": "assignStrongGoal",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.5.43.5.5) for the evaluate_state_locals_rel_strong atom cases; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/MoreAtoms.lean",
+    "lean_name": "storeLikeGoal",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.5.43.5.5) for the evaluate_state_locals_rel_strong atom cases; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/MoreAtoms.lean",
+    "lean_name": "storeStrongGoal",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.5.43.5.5) for the evaluate_state_locals_rel_strong atom cases; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/MoreAtoms.lean",
+    "lean_name": "store32StrongGoal",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.5.43.5.5) for the evaluate_state_locals_rel_strong atom cases; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/MoreAtoms.lean",
+    "lean_name": "storeByteStrongGoal",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.5.43.5.5) for the evaluate_state_locals_rel_strong atom cases; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/MoreAtoms.lean",
+    "lean_name": "storeGlobStrongGoal",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.5.43.5.5) for the evaluate_state_locals_rel_strong atom cases; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/MoreAtoms.lean",
+    "lean_name": "raiseStrongGoal",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.5.43.5.5) for the evaluate_state_locals_rel_strong atom cases; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/MoreAtoms.lean",
+    "lean_name": "returnStrongGoal",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.5.43.5.5) for the evaluate_state_locals_rel_strong atom cases; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/MoreAtoms.lean",
+    "lean_name": "mapM_lookup_submap",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.5.43.5.5) for the evaluate_state_locals_rel_strong atom cases; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/MoreAtoms.lean",
+    "lean_name": "submap_updateList",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.5.43.5.5) for the evaluate_state_locals_rel_strong atom cases; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/MoreAtoms.lean",
+    "lean_name": "dom_updateList",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.5.43.5.5) for the evaluate_state_locals_rel_strong atom cases; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/MoreAtoms.lean",
+    "lean_name": "primitiveStrongGoal",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.5.43.5.5) for the evaluate_state_locals_rel_strong atom cases; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/MoreAtoms.lean",
+    "lean_name": "extCallStrongGoal",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.5.43.5.5) for the evaluate_state_locals_rel_strong atom cases; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/MoreAtoms.lean",
+    "lean_name": "post_locals_set'",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.5.43.5.5) for the evaluate_state_locals_rel_strong atom cases; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/MoreAtoms.lean",
+    "lean_name": "shLoad_rel",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.5.43.5.5) for the evaluate_state_locals_rel_strong atom cases; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/MoreAtoms.lean",
+    "lean_name": "shStore_rel",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.5.43.5.5) for the evaluate_state_locals_rel_strong atom cases; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/EvaluateStateLocals/MoreAtoms.lean",
+    "lean_name": "shMemStrongGoal",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (bead flapjack-pxn.18.5.5.43.5.5) for the evaluate_state_locals_rel_strong atom cases; no HOL original."
   }
 ]
