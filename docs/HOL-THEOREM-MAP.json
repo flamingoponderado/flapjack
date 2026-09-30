@@ -30823,5 +30823,67 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-c source comparison2026-09-30 (.32.3.9): genuine Seq case of evaluate_fresh_local1045-1091. Literal evaluate_ind NONE-gated second-child then unconditional first-child IH conjunction. Original nonfree/source-evaluation predicate and existential post-locals plus conditional good_res/non-Error FUPDATE preserved. Source Seq/fix_clock behavior via accepted line780 rewrite, with no clock premise. NONE first output conditional update establishes exact intermediate fresh binding before second-child IH; SOME first result propagates original existential unchanged. Exact MlS/ValueHOL/ProgHOL, four canonical finite maps with roundtrip, positive word width/NeZero and universe0 FFI. No extra assumption and no executable change; full parent remains open; coordinator review pending."
-  }
+  },
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/ExtCall.lean",
+  "lean_name": "evaluateFreshLocal_ExtCall",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_fresh_local",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Luna A source comparison (.32.3.8), pan_globalsProofScript1045-1091 genuine ExtCall case and panSem711-726. Original name/value/state/result/poststate quantifiers, freshness/source evaluation, existential locals and conditional good_res/non-Error FUPDATE retained. No added success, bounds, byte-read, FFI-result or target evaluation premise; no recursive IH. Four expression freshness facts derive internally from free_var_ids; same broad expression codec transport. Preserves four ordered word-valued expression checks, both read_bytearray results, call_FFI final versus return split, final empty_locals, returning write_bytearray/memory and new FFI updates, and all error state branches. Existential locals choose original postlocals when not good_res and their fresh update otherwise; conditional implication follows literal good_res. Canonical finite carrier repack reduced internally; same-module state roundtrip, reviewed four finite maps and positive width/Type0 FFI translation. Kernel checked; independent coordinator review pending; full induction .32.3 open."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/ExtCall.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific infrastructure: Canonical state roundtrip re-export; representation infrastructure, no HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/ExtCall.lean",
+  "lean_name": "evalFreshUpdate",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific infrastructure: Private codec transport of broad expression freshness; no separate source declaration, decision internal."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/ShMemStore.lean",
+  "lean_name": "evaluateFreshLocal_ShMemStore",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_fresh_local",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Luna A source comparison (.32.3.11), pan_globalsProofScript1045-1091 genuine ShMemStore case and panSem611-615 plus sh_mem_store. Original fresh name/value/state/result/poststate quantifiers, freshness/source evaluation conjunction, existential locals and conditional good_res/non-Error FUPDATE retained. No recursive IH or extra success/domain/FFI/target evaluation assumption. Both expression freshness facts derive internally. Uses explicit reviewed total evaluate_def equation, unfolds actual sh_mem_store helper internally, preserves word checks, nb_op zero/nonzero mode, direct/aligned shared domain, byte payload take versus whole word, call_FFI final/return split and all errors. Shared-store final retains state locals, unlike ExtCall empty_locals; returning branch updates only FFI. Canonical codec reduction commutes with fresh locals. Same-module canonical finite-state witness and positive width/Type0 FFI translation; constructor carriers retained. Kernel checked; independent coordinator review pending. Full fresh-local induction .32.3 remains open."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/ShMemStore.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific infrastructure: Canonical state roundtrip re-export; representation infrastructure, no HOL original."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/ShMemStore.lean",
+  "lean_name": "evalFreshUpdate",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-specific infrastructure: Private codec transport of broad expression freshness; no separate source declaration, decision internal."
+}
 ]
