@@ -27551,5 +27551,23 @@
     "lean_name": "fpermCodeHOL_updateListEq",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-sol2026-09-30 .22.4.1: Flapjack canonical finite-map implementation/codec factoring, localized provenance in docstring. Single-update and arbitrary-entry list-update lemmas are not standalone HOL declarations; source restricts update list to functions. FEMPTY kernel equality remains untagged because a supported single-equality representation rule is absent (tracked .4.3), not a completed HOL port. Codec witness compares tagged lookup to independent raw FUN_FMAP rendering without assuming target equality."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "copy_words_for_pattern_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/StoreConsts.lean",
+    "lean_name": "copyWordsForPattern",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30, y19g.11.2.1: source688-709. Same zero-failure and one-sentinel success before domain/index checks; low bit relocates only selected words, total function memory update at address, logical right shift, index increment, modular address increment. bytes_in_word compared with HOL/src/n-bit/byteScript.sml:193-195: n2w(dimindex DIV8). List EL is under identical bounds. Positive BitVec dimension is sole qualifier; domain as Prop/function set, DecidablePred supplies computation, no extra logical premise. LESS_EQ retains source final pair (address,memory), success premise and index conclusion without extra hypotheses. Numeric pattern measure proves termination. Twelve direct original HOL rows/kernel replay cover failures, sentinel bypass, modular overflow, widths16 and4 including zero-stride overwrite. No executed compiler or full evaluator completion claimed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "copy_words_for_pattern_LESS_EQ",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/StoreConsts.lean",
+    "lean_name": "copyWordsForPattern_index_le",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30, y19g.11.2.1: source688-709. Same zero-failure and one-sentinel success before domain/index checks; low bit relocates only selected words, total function memory update at address, logical right shift, index increment, modular address increment. bytes_in_word compared with HOL/src/n-bit/byteScript.sml:193-195: n2w(dimindex DIV8). List EL is under identical bounds. Positive BitVec dimension is sole qualifier; domain as Prop/function set, DecidablePred supplies computation, no extra logical premise. LESS_EQ retains source final pair (address,memory), success premise and index conclusion without extra hypotheses. Numeric pattern measure proves termination. Twelve direct original HOL rows/kernel replay cover failures, sentinel bypass, modular overflow, widths16 and4 including zero-stride overwrite. No executed compiler or full evaluator completion claimed."
   }
 ]

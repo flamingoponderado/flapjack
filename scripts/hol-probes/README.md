@@ -1422,3 +1422,15 @@ full evaluation remains on y19g. Regenerate with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=stacksem_register_transfers_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
+
+`stacksem_pattern_copy_probeScript.sml` captures twelve direct original HOL
+copy_words_for_pattern results. The observer retains returned index/address
+and three memory lookups. Cases include zero failure, sentinel-one bypass of
+invalid bounds/domain, relocated and plain words, multiword copying, early
+and later failure, address/value wraparound, and widths16/4. Width4 has zero
+byte stride and overwrites the same address; both HOL and the kernel replay
+retain that behavior. `Flapjack/Test/StackSemPatternCopyParity.lean` replays
+all rows. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stacksem_pattern_copy_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
