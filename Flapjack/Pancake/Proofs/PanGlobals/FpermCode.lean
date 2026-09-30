@@ -23,7 +23,7 @@ def fpermCodeRaw {width : Nat} [NeZero width] (f g : MlS)
 finite-map carrier. Mapping the finite source support through the same swap
 establishes precisely the finite preimage used by HOL's FUN_FMAP. -/
 @[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "fperm_code_def"
-  (fmap_as_finite_support_result)]
+  (fmap_as_finite_support_result) (words_as_type_indexed_bitvec)]
 def fpermCodeHOL {width : Nat} [NeZero width] (f g : MlS)
     (code : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL)) :
     HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL) where
@@ -47,7 +47,7 @@ theorem holFmapAsFiniteSupportResultWitness_fpermCodeHOL
     (fpermCodeHOL f g code).lookup name = fpermCodeRaw f g code.lookup name := rfl
 
 @[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "FLOOKUP_fperm_code'"
-  (fmap_as_finite_support_relation := [code])]
+  (fmap_as_finite_support_relation := [code]) (words_as_type_indexed_bitvec)]
 theorem flookupFpermCodeHOL' {width : Nat} [NeZero width] (f g : MlS)
     (code : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))
     (name : MlS) :
@@ -56,7 +56,7 @@ theorem flookupFpermCodeHOL' {width : Nat} [NeZero width] (f g : MlS)
         (entry.1, fpermHOL f g entry.2.1, entry.2.2)) := rfl
 
 @[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "FLOOKUP_fperm_code"
-  (fmap_as_finite_support_relation := [code])]
+  (fmap_as_finite_support_relation := [code]) (words_as_type_indexed_bitvec)]
 theorem flookupFpermCodeHOL {width : Nat} [NeZero width] (f g : MlS)
     (code : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))
     (name : MlS) :
@@ -78,7 +78,8 @@ theorem fpermCodeHOL_empty {width : Nat} [NeZero width] (f g : MlS) :
   funext name
   rfl
 
-@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "fperm_decs_append"]
+@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "fperm_decs_append"
+  (words_as_type_indexed_bitvec)]
 theorem fpermDecsHOL_append {width : Nat} [NeZero width] (f g : MlS)
     (xs ys : List (DeclHOL width)) :
     fpermDecsHOL f g (xs ++ ys) = fpermDecsHOL f g xs ++ fpermDecsHOL f g ys := by
@@ -125,7 +126,7 @@ theorem fpermCodeHOL_updateListEq {width : Nat} [NeZero width] (f g : MlS)
       rw [ih, fpermCodeHOL_updateEq]
 
 @[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "fperm_code_FUPDATE_LIST_functions"
-  (fmap_as_finite_support_relation := [fm])]
+  (fmap_as_finite_support_relation := [fm]) (words_as_type_indexed_bitvec)]
 theorem fpermCodeHOL_updateList_functions {width : Nat} [NeZero width] (f g : MlS)
     (fm : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))
     (code : List (DeclHOL width)) :

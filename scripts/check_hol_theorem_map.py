@@ -1803,6 +1803,7 @@ VALID_STATUSES = {
     "reviewed_fmap_as_finite_support_function",
     "reviewed_fmap_as_finite_support_function_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_result",
+    "reviewed_fmap_as_finite_support_result_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_parameters",
     "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_existentials",
@@ -2488,6 +2489,7 @@ def validate_inventory(
             "reviewed_words_as_type_indexed_bitvec",
             combined_words_status,
             "reviewed_fmap_as_finite_support_function_words_as_type_indexed_bitvec",
+            "reviewed_fmap_as_finite_support_result_words_as_type_indexed_bitvec",
             combined_relation_words_status,
             combined_parameter_words_status,
             combined_existential_words_status,
@@ -2606,12 +2608,18 @@ def validate_inventory(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support_result @[hol] tag cannot have "
                 "reviewed_exact status; use reviewed_fmap_as_finite_support_result after source comparison"
             )
-        if fmap_result and status != "reviewed_fmap_as_finite_support_result":
+        result_words_status = "reviewed_fmap_as_finite_support_result_words_as_type_indexed_bitvec"
+        if status == result_words_status and not (fmap_result and words_bitvec):
+            errors.append(
+                f"{key[0]}:{key[1]}: {result_words_status} needs both "
+                "fmap_as_finite_support_result and words_as_type_indexed_bitvec qualifiers"
+            )
+        if fmap_result and status not in {"reviewed_fmap_as_finite_support_result", result_words_status}:
             errors.append(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support_result @[hol] tag needs a reviewed "
                 "source classification (reviewed_fmap_as_finite_support_result)"
             )
-        if not fmap_result and status == "reviewed_fmap_as_finite_support_result":
+        if not fmap_result and status in {"reviewed_fmap_as_finite_support_result", result_words_status}:
             errors.append(
                 f"{key[0]}:{key[1]}: reviewed_fmap_as_finite_support_result needs a "
                 "fmap_as_finite_support_result @[hol] tag"

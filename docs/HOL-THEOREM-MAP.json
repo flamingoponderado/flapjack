@@ -27475,7 +27475,8 @@
     "hol_name": "fperm_code_def",
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermCode.lean",
     "lean_name": "fpermCodeHOL",
-    "statement_status": "reviewed_fmap_as_finite_support_result",
+    "statement_status": "reviewed_fmap_as_finite_support_result_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
     "fmap_as_finite_support_result": true,
     "reviewer": "flapjack-sol source comparison2026-09-30 bead .18.5.2.22.4.1 against pan_globalsProof1617-1685. Uses accepted exact MlS/ProgHOL/ShapeHOL and exact fpermName/fpermHOL/fpermDecsHOL/functionsHOL. FUN_FMAP preimage domain is exactly swapped source domain; absent source key yields NONE, present payload preserves parameters and return shape and permutes body. Finite support via swapped witness list and name involution. Both full Option lookup equations preserve arbitrary key/code; declaration append is structural; update-list theorem proved universally from canonical FUPDATE_LIST order, no success/disjointness/distinctness premises, duplicate keys preserved. Result codec witness is independent raw lookup operation; relation bare map parameters are canonical input maps. FEMPTY single-map equality and canonical lookup_code theorem remain tracked .4.3/.4.2, not claimed ported here. Production/evaluation permutation theorem remains on parent .4/.5."
   },
@@ -27484,7 +27485,8 @@
     "hol_name": "FLOOKUP_fperm_code",
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermCode.lean",
     "lean_name": "flookupFpermCodeHOL",
-    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
     "fmap_as_finite_support_relation": [
       "code"
     ],
@@ -27495,7 +27497,8 @@
     "hol_name": "FLOOKUP_fperm_code'",
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermCode.lean",
     "lean_name": "flookupFpermCodeHOL'",
-    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
     "fmap_as_finite_support_relation": [
       "code"
     ],
@@ -27506,7 +27509,8 @@
     "hol_name": "fperm_decs_append",
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermCode.lean",
     "lean_name": "fpermDecsHOL_append",
-    "statement_status": "reviewed_exact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison2026-09-30 bead .18.5.2.22.4.1 against pan_globalsProof1617-1685. Uses accepted exact MlS/ProgHOL/ShapeHOL and exact fpermName/fpermHOL/fpermDecsHOL/functionsHOL. FUN_FMAP preimage domain is exactly swapped source domain; absent source key yields NONE, present payload preserves parameters and return shape and permutes body. Finite support via swapped witness list and name involution. Both full Option lookup equations preserve arbitrary key/code; declaration append is structural; update-list theorem proved universally from canonical FUPDATE_LIST order, no success/disjointness/distinctness premises, duplicate keys preserved. Result codec witness is independent raw lookup operation; relation bare map parameters are canonical input maps. FEMPTY single-map equality and canonical lookup_code theorem remain tracked .4.3/.4.2, not claimed ported here. Production/evaluation permutation theorem remains on parent .4/.5."
   },
   {
@@ -27514,7 +27518,8 @@
     "hol_name": "fperm_code_FUPDATE_LIST_functions",
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FpermCode.lean",
     "lean_name": "fpermCodeHOL_updateList_functions",
-    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
     "fmap_as_finite_support_relation": [
       "fm"
     ],
