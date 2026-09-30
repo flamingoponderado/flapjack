@@ -36495,7 +36495,7 @@
       "f",
       "g"
     ],
-    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.5.42.6): compared crep_inlineProofScript.sml:143-145: forall x y f g. f SUBMAP g /\\ LENGTH x = LENGTH y ==> f |++ ZIP(x,y) SUBMAP g |++ ZIP(x,y). Lean binds x y f g in HOL order, with the same conjunctive hypothesis (length premise retained although unused, as in HOL's statement) and conclusion; SUBMAP is HolFiniteMapExact.submap, |++ ZIP is updateListEq on the zip. HOL's key type is instantiated as num (Nat) as at every use site in the script; the value type stays generic. f and g are bare finite-support parameters. No extra premise."
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.5.42.6): compared crep_inlineProofScript.sml:143-145: forall x y f g. f SUBMAP g /\\ LENGTH x = LENGTH y ==> f |++ ZIP(x,y) SUBMAP g |++ ZIP(x,y). Lean binds x y f g in HOL order, with the same conjunctive hypothesis (length premise retained although unused, as in HOL's statement) and conclusion; SUBMAP is HolFiniteMapExact.submap, |++ ZIP is updateListEq on the zip. Both the key type (with DecidableEq, the Lean encoding of HOL key equality in |++) and the value type are polymorphic, as in HOL (repair per coordinator 20:28Z). f and g are bare finite-support parameters. No extra premise."
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
@@ -36506,6 +36506,22 @@
     "fmap_as_finite_support_relation": [
       "fm"
     ],
-    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.5.42.7): compared crep_inlineProofScript.sml:501-504: forall vs fm vals upd_vals. OPT_MMAP (FLOOKUP fm) vs = SOME vals /\\ LENGTH vs = LENGTH upd_vals ==> FDOM (fm |++ ZIP(vs,upd_vals)) = FDOM fm. Lean binds vs fm vals upd_vals in HOL order: OPT_MMAP (FLOOKUP fm) is List.mapM fm.lookup, |++ ZIP is updateListEq, and FDOM equality is equality of crepHolFdom lookups (the reviewed FDOM rendering of the crep_inline ports). Keys are num (Nat) as at the use site; the value type is generic. fm is a bare finite-support parameter. No extra premise."
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.5.42.7): compared crep_inlineProofScript.sml:501-504: forall vs fm vals upd_vals. OPT_MMAP (FLOOKUP fm) vs = SOME vals /\\ LENGTH vs = LENGTH upd_vals ==> FDOM (fm |++ ZIP(vs,upd_vals)) = FDOM fm. Lean binds vs fm vals upd_vals in HOL order: OPT_MMAP (FLOOKUP fm) is List.mapM fm.lookup, |++ ZIP is updateListEq, and FDOM equality is equality of crepHolFdom lookups (the reviewed FDOM rendering of the crep_inline ports). Key (DecidableEq) and value types are polymorphic, as in HOL (repair per coordinator 20:28Z). fm is a bare finite-support parameter. No extra premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/FiniteMapLemmas.lean",
+    "lean_name": "submap_fupdateListHOL",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (beads .42.6/.42.7): pointwise SUBMAP preserved by the same FUPDATE_LIST_HOL, generic in key/value types."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/FiniteMapLemmas.lean",
+    "lean_name": "dom_fupdateListHOL",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack local support (beads .42.6/.42.7): FUPDATE_LIST_HOL over keys already in the domain keeps the domain, generic in key/value types."
   }
 ]
