@@ -31106,6 +31106,37 @@
     "reviewer": "Flapjack-only canonical carrier roundtrip and local-update/restoration algebra supporting the genuine DecCall case; no separate HOL declaration."
   },
 {
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/CallHandler.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack canonical finite-state roundtrip re-export; no standalone HOL declaration."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/CallHandler.lean",
+  "lean_name": "evaluateFreshLocal_CallHandler",
+  "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+  "hol_name": "evaluate_fresh_local",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code",
+    "eshapes"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-c source comparison2026-09-30 (.32.3.16): genuine handler-present non-tail Call subcase of evaluate_fresh_local1045-1091. Original nonfree/run premise and existential post locals plus conditional good_res/non-Error update retained. HOL panSem657-702 handler matched-ID/eshapes/shape/is_valid_value guard preserved. Only handler evaluate_ind IH retained: redundant product decomposition binders/equalities eliminated by substitution; every args/lookup/positive-clock/callee-exception/ID/shape/validation conjunct remains. Callee entry overwrites caller locals so callee run identical; handler freshness and variable inequality derived from free_var_ids. Restored caller-local exception update commutes with fresh update, validation lookup unchanged. Remaining return/error/clearing paths literal. Exact MlS/ProgHOL/ValueHOL/canonical four maps, genuine roundtrip, NeZero width and universe0 FFI. Proof-only; full assembly open, coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/FreshLocal/CallHandler.lean",
+  "lean_name": "updateMixed",
+  "hol_path": null,
+  "hol_name": null,
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack local proof factoring; no standalone HOL original. Preserves exact update/FFI clauses."
+},
+{
   "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/OptMmapEvalCorrect.lean",
   "lean_name": "optMmapEvalCorrectHOL",
   "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
