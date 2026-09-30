@@ -421,6 +421,51 @@ def lookupCodeHOLFiniteExact
         self.assertTrue(any("word-free signatures" in error
                             for error in check(word_carrier, "example", "width")))
 
+    def test_reals_as_rational_cuts_site_flag(self):
+        sites = list(SITES([
+            '@[hol "cakeml/semantics/fpSemScript.sml" "fp_uop_comp_def"',
+            '  (reals_as_rational_cuts)]',
+        ], include_fmap_existentials=True, include_word_dimension_width=True,
+            include_fmap_function=True, include_reals_as_rational_cuts=True))
+        self.assertTrue(sites[0][-1])
+        plain = list(SITES([
+            '@[hol "cakeml/semantics/fpSemScript.sml" "fp_uop_comp_def"]',
+        ], include_reals_as_rational_cuts=True))
+        self.assertFalse(plain[0][-1])
+
+    def test_reals_as_rational_cuts_required_exactly_for_rendering_users(self):
+        check = CHECKER["reals_as_rational_cuts_errors"]
+        names = {"holFp64Sqrt", "holFp64Add"}
+        user = "noncomputable def uop : BitVec 64 -> BitVec 64\n  | x => holFp64Sqrt .roundTiesToEven x"
+        self.assertEqual(check(user, True, names), [])
+        self.assertTrue(any("must carry (reals_as_rational_cuts)" in error
+                            for error in check(user, False, names)))
+        dependent = "def evaluate (s : State) : State := match inst s with | _ => s"
+        self.assertEqual(check(dependent, False, names), [])
+        self.assertTrue(any("dependents inherit" in error
+                            for error in check(dependent, True, names)))
+        comment_only = "def f : Nat := 0 -- see holFp64Sqrt"
+        self.assertEqual(check(comment_only, False, names), [])
+
+    def test_reals_as_rational_cuts_ignores_following_declarations(self):
+        check = CHECKER["reals_as_rational_cuts_errors"]
+        names = {"holFp64Equal"}
+        datatype = """inductive FpCmp where
+  | less | equal
+  deriving DecidableEq
+
+/-- next -/
+@[hol "cakeml/semantics/fpSemScript.sml" "fp_cmp_comp_def"]
+noncomputable def cmp : FpCmp -> Bool
+  | .equal => holFp64Equal 0 0
+"""
+        self.assertEqual(check(datatype, False, names), [])
+
+    def test_reals_rendering_names_cover_machine_ieee(self):
+        names = CHECKER["reals_rendering_names"](CHECKER["ROOT"])
+        self.assertIn("holFp64Sqrt", names)
+        self.assertIn("holFp64Add", names)
+
     def test_fmap_as_finite_support_fields(self):
         self.assertEqual(
             list(SITES([
