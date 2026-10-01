@@ -39049,5 +39049,13 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.5: exact83-86 maps DIV2 over both Nat coordinates, actual reviewed parmove scheduler, maps format_var k over both Option coordinates, then exact wMoveAux with unchanged k/f/fprime triple. Output ProgM(BitVec width) uses single shared positive word dimension and faithful MlString; qualifier only type-indexed word translation. No fuel/simulation premise or alternative executed scheduler. Eleven fresh direct original64-bit equality rows cover all formatting branches, register/spill swap cycles, odd DIV2/collision, underflow and fprime; width32 empty case kernel checked. Production comp/compile wiring tracked25 remains open."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/CheckPartialCol.lean",
+  "lean_name": "checkPartialColInj",
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "check_partial_col_INJ",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01 (.11.4.4), original2632-2683: same generic colouring f, numeric name list, four unit Spt maps, original wf live/domain flive=image/scoped INJ/checker-success premises only. Full conjunction wf output/liveprime literal numset_list_insert/scoped INJ/full image-domain equality. Existing-name branch uses accepted insert_unchanged; new-name branch derives collision exclusion from input image and absent colour, preserves wf and image. No wf coloured, global injection or simulation assumption added. Coordinator review pending."
 }
 ]
