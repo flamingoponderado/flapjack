@@ -42140,5 +42140,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-a source comparison HOL2813-2826 and returningCall NONE handler3237-3252: exact WordLangProgHOL positive-width BitVec, full original six premises/five conclusions through accepted motive. Universally quantified returnvariables/cutsets/returnprogram/labels/destination/arguments. Only returnprogram IH, checker right-first body outcome internally destructured, fixed return/argument sets injection/image from checkColInj, wf from source cutsets and actual listinsert/union. Unit union commutativity identifies source colouring cutset order. No targetevaluation/postcode/output/domain assumptions added. words_as_type_indexed_bitvec is sole carrier translation. Coordinator review pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "oracle_colour_ok_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/OracleColour.lean",
+    "lean_name": "oracleColourOk",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison word_allocScript1607-1626: explicit NONE and SOME col branches on exact Spt Nat num_map, supplied literal ClashTree and WordLangProgHOL positive-width BitVec program. Native totalColour/everyEvenColour/checkClashTree/applyColour/everyStackVarHOL helpers used, not production substitutes. Checker non-NONE is Option.isSome (constructor test), conjunctions Boolean, x>=2*k is decide(2*k<=x) on unboundedNat, forcedpairs EVERY disequality List.all with exactNat BEq. Returns actualcolouredprogram onlyafter both guards, every rejectionNONE retained; no successfuloracle/poststate/targetevaluation premise. words_as_type_indexed_bitvec only carrier translation; Spt is originalnum_map nofinite-mapqualifier. Executedallocator migration remains open; original branch parity and coordinatorreview pending."
   }
 ]

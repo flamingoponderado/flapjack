@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordAlloc.OracleColour
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.ReturnNoHandler
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.ShareInst
 import Flapjack.Compiler.Backend.WordAlloc.CoalesceCost

@@ -2367,3 +2367,12 @@ programs, and independently rejected return-set/argument-set colour collisions.
 CompilerParity driver and instantiates the universal original-motive theorem.
 These finite observations do not prove cross-prover or whole-allocator equivalence.
 `word_alloc_spillcost_probeScript.sml` captures ten original natural costs: zero, each counter weight, both tail branches on asymmetric counters, and a fifth counter at 2^64. Same-input kernel numeric fixtures are in the actual CompilerParity root. The formula retains source tuple order and multiplies the entire sum; this helper does not establish allocator or executed compiler correctness.
+
+`word_alloc_oracle_colour_probeScript.sml` freshly observes ten original oracle
+branches: NONE input, empty success, physical-map failure, clash failure,
+forced-pair equality/disequality, actual renamed Assign output, stack-bound
+equality/failure, and malformed sparse-map input. `WordAllocOracleColourParity`
+proves equalities on the same inputs by kernel-checked reduction, without a
+program DecidableEq assumption, and is imported by the actual test driver.
+This is finite regression evidence, not whole-allocator correctness; the
+executed allocator route remains separate work.
