@@ -1,10 +1,11 @@
+import Flapjack.Test.StackToLabFullEncodingParity
 import Flapjack.Test.StackToLabRecursiveValidityParity
 import Flapjack.Test.StackToLabNonrecursiveValidityParity
-import Flapjack.Test.LabValidityNativeParity
-import Flapjack.Test.StackToLabNativeParity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
+import Flapjack.Test.LabValidityNativeParity
+import Flapjack.Test.StackToLabNativeParity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMovePreserve
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAOptionLookupSubset
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenamePropertyWrappers
@@ -19,10 +20,6 @@ import Flapjack.Test.SSAMapExtendParity
 import Flapjack.Test.SSARenamePropertiesParity
 import Flapjack.Test.SSALocalsPhysicalInsertParity
 import Flapjack.Test.SSAMapPreservationParity
-import Flapjack.Test.SSARegisterFlipParity
-import Flapjack.Test.SSAMapExtendParity
-import Flapjack.Test.SSARenamePropertiesParity
-import Flapjack.Test.SSAMapBoundsParity
 import Flapjack.Test.SSARegisterClassParity
 import Flapjack.Test.SSALocalsParity
 import Flapjack.Test.SSAMapParity

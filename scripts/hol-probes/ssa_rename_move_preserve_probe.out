@@ -1,0 +1,6 @@
+rms_full=⊢ ∀st ssa na ls cst. ssa_locals_rel na ssa st.locals cst.locals ∧ set ls ⊆ domain st.locals ∧ ALL_DISTINCT ls ∧ ssa_map_ok na ssa ∧ word_state_eq_rel st cst ⇒ (let (mov,ssa',na') = list_next_var_rename_move ssa na ls; (res,rcst) = evaluate (mov,cst) in res = NONE ∧ ssa_locals_rel na' ssa' st.locals rcst.locals ∧ word_state_eq_rel st rcst ∧ (¬is_phy_var na ⇒ ∀w. is_phy_var w ⇒ lookup w rcst.locals = lookup w cst.locals) ∧ ∀x y. lookup x st.locals = SOME y ⇒ lookup (THE (lookup x ssa)) rcst.locals = SOME y)
+rms_type_st=:(α, β, γ) state
+rms_type_cst=:(α, β, γ) state
+rms_type_ssa=:num sptree$num_map
+rms_type_na=:num
+rms_type_ls=:num list
