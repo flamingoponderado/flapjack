@@ -41281,5 +41281,29 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Source comparison wordLangScript252-300, exact prog/exp/inst/cutsets carriers at14-68 and asm85-134: all constructor clauses and defaults retained over WordLangProgHOL(BitVec width), native MlString, canonical Spt Unit cut sets and fixed Temp5 store names. Positivewidth words_as_type_indexed_bitvec. Move MAP FST++MAP SND, guarded Call return/handler recursion and argument/value/both-cutset maxima, If reg/imm branches, Loop entry/body/exit maxima and every frame operand match source; destination and labels ignored exactly where source ignores them. Uses accepted exact maxVarInstHOL/maxVarExpHOL/cutsetsMaxHOL/max3HOL plus standard natural MAX_LIST. No wf/domain/callback/targetresult/success premise; nested structural-size termination kernel checked. Fresh37 direct original rows cover all source constructors, Call guard and32/64 FP instruction transfer, kernel replay. Full native wrappers, executed production route and correctness remainOPEN."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/DSteps.lean",
+  "lean_name": "dstep_rules",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "dstep_rules",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-a: source six-clause Hol_reln at 478-492 and local NoRead at 22 compared literally; generic Option registers and three List state carriers match. Prefix-only Extend guard and combined Save/Emit retained. Full rules, least-relation induction and exhaustive cases; no added well-formedness or successful-result premise."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/DSteps.lean",
+  "lean_name": "dstep_ind",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "dstep_ind",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-a: source six-clause Hol_reln at 478-492 and local NoRead at 22 compared literally; generic Option registers and three List state carriers match. Prefix-only Extend guard and combined Save/Emit retained. Full rules, least-relation induction and exhaustive cases; no added well-formedness or successful-result premise."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/DSteps.lean",
+  "lean_name": "dstep_cases",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "dstep_cases",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-a: source six-clause Hol_reln at 478-492 and local NoRead at 22 compared literally; generic Option registers and three List state carriers match. Prefix-only Extend guard and combined Save/Emit retained. Full rules, least-relation induction and exhaustive cases; no added well-formedness or successful-result premise."
 }
 ]

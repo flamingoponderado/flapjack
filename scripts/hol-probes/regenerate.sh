@@ -2836,3 +2836,7 @@ run_probe parmove_emithead_probeScript.sml parmove_emithead_probe.out \
 run_probe parmove_stepssem_probeScript.sml parmove_stepssem_probe.out \
   pv_rtc_0_1 pv_rtc_0_2 pv_rtc_0_temp pv_rtc_1_1 pv_rtc_1_2 pv_rtc_1_temp pv_rtc_2_1 pv_rtc_2_2 pv_rtc_2_temp pv_rtc_3_1 pv_rtc_3_2 pv_rtc_3_temp \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe parmove_dsteps_probeScript.sml parmove_dsteps_probe.out \
+  pd_remove pd_start pd_extend pd_save_emit pd_emit_head pd_emit_last pd_start_guard pd_read_guard pd_extend_suffix_read \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"

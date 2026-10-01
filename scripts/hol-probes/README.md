@@ -2185,3 +2185,11 @@ with kernel computations and an actual RTC constructor proof. Real registers
 remain27/17, while NONE changes99 to17. The theorem uses original eqenv,
 not equality at the temporary; reflexive closure is kernel checked separately.
 No functional scheduler or production-route correctness is inferred.
+
+`parmove_dsteps_probeScript.sml` freshly proves nine observations from the original
+`reg_alloc/parmove` theory: all six deterministic rules, two guard boundaries,
+and Extend with a suffix that still reads the selected register. The last row
+checks the source prefix-only NoRead guard. `ParmoveDStepsParity.lean` replays
+the same inputs in Lean. These finite observations are regression evidence,
+not a cross-prover equivalence proof; the complete rules, induction and cases
+statements are source-reviewed in `Parmove/DSteps.lean`.
