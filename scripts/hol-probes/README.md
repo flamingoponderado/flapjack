@@ -3376,3 +3376,28 @@ Load/Store instrumentation operations remain distinct from forbidden ShMemOp.
 applies all three full public theorems with arbitrary inputs and positive width.
 These regressions do not establish cross-language equivalence or instrumentation
 evaluation correctness. Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_call_core_probeScript.sml`.
+
+### SSA map intersection and insertion
+
+`ssa_map_preservation_probeScript.sml` replays the complete literal local proofs
+from word_allocProof lines 5916–5933 and captures the independently polymorphic
+right-map binder type. Thirteen actual theorem applications discharge the full
+original premises, require empty hypotheses and the exact requested conclusion,
+then render that proven predicate as `T` with `EQT_INTRO`. These rows are not
+claimed direct evaluations of a symbolic universally quantified map predicate.
+Two false original guard evaluations are separate sentinels. Matching kernel
+applications cover empty, preserved/dropped, overwritten, malformed, branching
+and large-number maps; they are regressions, not a cross-language proof.
+
+### SSA locals physical-register writes
+
+`ssa_locals_physical_insert_probeScript.sml` replays the complete literal
+`ssa_locals_rel_ignore_insert` local proof at word_allocProof 5573–5587 in its
+original theory environment. Eight actual theorem applications discharge the
+whole original premise, check empty hypotheses and the exact conclusion, then
+render that proved relation as `T` via `EQT_INTRO`. Two false guards are direct
+original simplifications; the complete statement and inferred generic payload
+types are captured separately. The kernel fixture applies the full theorem to
+the identical Bool/Nat inputs, including overwritten physical keys, malformed
+trees and an unbounded natural key. These regressions are not a cross-language
+proof or completion of the full SSA correctness theorem.
