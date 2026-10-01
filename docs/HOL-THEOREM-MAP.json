@@ -41226,5 +41226,19 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Codex source review against evaluate_apply_colour1105-1130 specialized to Inst and its Resume1225-1391: all five instruction families are exhausted, including eight arithmetic and eight memory constructors and generic full sixteen-case FP theorem. Same original colouring_ok, word_state_eq_rel, strong_locals_rel premises; exact existential permutation/error-disjunction/result/state/live/loop-table locals postcondition through reviewed applyColourPost. No target evaluation, success, validity, distinctness or proof-hook premise; no subprogram IH because Inst has no subprograms. Each literal constructor theorem was source-reviewed and integrated before assembly. Canonical imported WordSemStateFiniteExact fpRegs/store roundtrip witness; Spt locals/code unqualified as original trees; positive-width word/host translation. Inherits reviewed FP dependency reals_as_rational_cuts assumption in docs/SOUNDNESS item8; no direct real primitive rendering or new qualification. Full program evaluate_apply_colour assembly remains open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_apply_colour",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/FFI.lean",
+  "lean_name": "evaluateApplyColour_FFI",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Codex source review against evaluate_apply_colour1105-1130 specialized to FFI and Resume2182-2205: original three premises and exact full existential postcondition, with no callback, success, target evaluation/result, or alias restriction premise. Four native input reads (len1,ptr1,len2,ptr2) are transported using live membership; scoped injection and relation on both cut-set domains derived from original hypotheses; existing exact cutEnvLemma proves target cut success and source-domain equality, enabling any live-after relation through strongLocalsRelExtendAux. Native evaluate FFI clause retains byte reads/errors, deterministic callFFIHOL on identical exact MlString name/input memory/FFI fields, final outcome flushState true, or returning byte-array memory update, cut locals, empty fpRegs and returned FFI state. Same canonical state fpRegs/store qualifier and local imported roundtrip; Spt locals/code remain original trees, word dimensions positive. Inherits existing native evaluator reals_as_rational_cuts assumption (docs/SOUNDNESS item8), with no direct rendering primitive. No executable behavior changes; full Install/ShareInst and whole program assembly remain open."
 }
 ]
