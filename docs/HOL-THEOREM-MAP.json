@@ -42077,5 +42077,14 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-b source comparison 2026-10-01 word_alloc1741-1779: actual native WordLangProgHOL at positive BitVec width and Spt unit pair; seven recursive equations retain foldr, Seq second-before-first, branch initial contexts and operand deletion, Call NONE ignoring handler, return and exception independently from initial trees, Loop body and actual getClashTree Delta fallback. Entry discards first component after empty pair. No new premise or production replacement. Fresh original branch observations and kernel fixtures; coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/GetPrefs.lean",
+  "lean_name": "getPrefs",
+  "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+  "hol_name": "get_prefs_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 original1203-1218: all seven recursive clauses over actual native WordLangProgHOL positive BitVec width. Move maps original pair order with unchanged Nat priority then appends arbitrary accumulator; MustTerminate/Loop descend; Seq and If first outside second; returning Call exception outside return; NONE Call ignores its handler through literal fallback. Preserves duplicates/self moves/unbounded Nat, adds no wf or execution premise. Seventeen fresh original full-list equalities and matching kernel rfl fixtures in actual CompilerParity. Coordinator source review pending; native get_heuristics and executed full allocator remain parent work."
 }
 ]

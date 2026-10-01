@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordAlloc.GetPrefs
 import Flapjack.Compiler.Backend.WordAlloc.GetStackOnly
 import Flapjack.Compiler.Backend.WordAlloc.CoalesceCost
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.LoopCases

@@ -1,0 +1,17 @@
+prefs_skip=T
+prefs_empty=T
+prefs_move=T
+prefs_duplicate=T
+prefs_self=T
+prefs_seq=T
+prefs_if_reg=T
+prefs_if_imm=T
+prefs_must=T
+prefs_loop=T
+prefs_tail=T
+prefs_tail_handler=T
+prefs_return=T
+prefs_both=T
+prefs_nested=T
+prefs_ignored=T
+prefs_large=T
