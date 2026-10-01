@@ -203,6 +203,7 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.Seq
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.If
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.Loop
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.Call
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutNames
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyRemap
 import Flapjack.Pancake.PanStructs.CompileDeclsExact
@@ -937,6 +938,7 @@ import Flapjack.Compiler.Backend.Parmove.Invariants.Path
 import Flapjack.Compiler.Backend.Parmove.Invariants.Preservation
 import Flapjack.Compiler.Backend.Parmove.StepSem.StartExtend
 import Flapjack.Compiler.Backend.Parmove.StepSem.RemoveSelfEmitLast
+import Flapjack.Compiler.Backend.Parmove.StepSem.Save
 import Flapjack.Compiler.Backend.Parmove.EnvironmentChange
 import Flapjack.Compiler.Backend.Parmove.UpdateLemmas
 import Flapjack.Compiler.Backend.Parmove.Permutation
