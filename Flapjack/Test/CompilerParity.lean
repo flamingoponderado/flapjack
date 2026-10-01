@@ -1,3 +1,4 @@
+import Flapjack.Test.WordToStackCompileKeysParity
 import Flapjack.Test.ParmoveSplitSourceParity
 import Flapjack.Test.ParmoveStepsCorrectParity
 
