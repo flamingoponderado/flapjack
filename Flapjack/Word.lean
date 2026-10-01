@@ -309,7 +309,11 @@ def wordProgDCE : WordProg α → WordProg α
 /-! Atomic cases shared by the state-threaded `loop_to_word$comp` port below.
     Structured control flow is handled there so this helper is not a second
     program compiler. -/
-private def loopToWordAtom [OfNat α 1] (context : WordContext) :
+/-- Atomic clauses of the compatibility Loop compiler. Public so the
+source-output codec proof can inspect the actual clauses without a duplicate
+compiler or references to generated private names. Flapjack infrastructure;
+this compatibility carrier helper is not a tagged HOL definition. -/
+def loopToWordAtom [OfNat α 1] (context : WordContext) :
     LoopProg α → WordProg α
   | .skip => .skip
   | .assign name value =>
