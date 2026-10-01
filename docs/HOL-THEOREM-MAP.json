@@ -48618,5 +48618,90 @@
     "hol_name": "OpCurrHeapToNumList_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol2 source comparison 2026-10-02, bead flapjack-word-cse-defs.1: complete original word_cseScript.sml:228-315 clauses, quantified inputs, constructor arities and output lists compared with native Asm carriers. Numeric identifiers, destination omissions, FPFma all-three-register exception and inst catch-all [1] are literal. Width-independent Nat/list/enum carriers are exact. Original HOL fixtures and kernel replays cover every constructor. Knowledge maps, executed replacement and CSE simulation remain open on parent; no correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/RegisterUses.lean",
+    "lean_name": "firstRegOfArith",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "firstRegOfArith_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 complete source comparison 2026-10-02, flapjack-word-cse-register-keys: Every source constructor clause and positional register binder compared; native HolArith/HolFp/HolMemop carrier arities exact. Carry flag is both read/write; overflow flag only write; Shift Reg cannot be stored; FP general-register writes retain FPMovToReg two outputs. ODD r is exactly r % 2 == 1 over Nat. words_as_type_indexed_bitvec records only HOL positive type dimension/word to BitVec width with NeZero. 104 original register observations replayed in kernel. Full arith_keys_eq and knowledge/invariant simulation remain open. Executed definition replacement remains linked on CSE production frontier; no whole correctness claim.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/RegisterUses.lean",
+    "lean_name": "arithWrites",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "arithWrites_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 complete source comparison 2026-10-02, flapjack-word-cse-register-keys: Every source constructor clause and positional register binder compared; native HolArith/HolFp/HolMemop carrier arities exact. Carry flag is both read/write; overflow flag only write; Shift Reg cannot be stored; FP general-register writes retain FPMovToReg two outputs. ODD r is exactly r % 2 == 1 over Nat. words_as_type_indexed_bitvec records only HOL positive type dimension/word to BitVec width with NeZero. 104 original register observations replayed in kernel. Full arith_keys_eq and knowledge/invariant simulation remain open. Executed definition replacement remains linked on CSE production frontier; no whole correctness claim.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/RegisterUses.lean",
+    "lean_name": "arithReads",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "arithReads_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 complete source comparison 2026-10-02, flapjack-word-cse-register-keys: Every source constructor clause and positional register binder compared; native HolArith/HolFp/HolMemop carrier arities exact. Carry flag is both read/write; overflow flag only write; Shift Reg cannot be stored; FP general-register writes retain FPMovToReg two outputs. ODD r is exactly r % 2 == 1 over Nat. words_as_type_indexed_bitvec records only HOL positive type dimension/word to BitVec width with NeZero. 104 original register observations replayed in kernel. Full arith_keys_eq and knowledge/invariant simulation remain open. Executed definition replacement remains linked on CSE production frontier; no whole correctness claim.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/RegisterUses.lean",
+    "lean_name": "fpWrites",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "fpWrites_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 complete source comparison 2026-10-02, flapjack-word-cse-register-keys: Every source constructor clause and positional register binder compared; native HolArith/HolFp/HolMemop carrier arities exact. Carry flag is both read/write; overflow flag only write; Shift Reg cannot be stored; FP general-register writes retain FPMovToReg two outputs. ODD r is exactly r % 2 == 1 over Nat. Nat/enums/lists are identity carriers. 104 original register observations replayed in kernel. Full arith_keys_eq and knowledge/invariant simulation remain open. Executed definition replacement remains linked on CSE production frontier; no whole correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/RegisterUses.lean",
+    "lean_name": "canMemArith",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "can_mem_arith_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 complete source comparison 2026-10-02, flapjack-word-cse-register-keys: Every source constructor clause and positional register binder compared; native HolArith/HolFp/HolMemop carrier arities exact. Carry flag is both read/write; overflow flag only write; Shift Reg cannot be stored; FP general-register writes retain FPMovToReg two outputs. ODD r is exactly r % 2 == 1 over Nat. words_as_type_indexed_bitvec records only HOL positive type dimension/word to BitVec width with NeZero. 104 original register observations replayed in kernel. Full arith_keys_eq and knowledge/invariant simulation remain open. Executed definition replacement remains linked on CSE production frontier; no whole correctness claim.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/RegisterUses.lean",
+    "lean_name": "isStore",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "is_store_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 complete source comparison 2026-10-02, flapjack-word-cse-register-keys: Every source constructor clause and positional register binder compared; native HolArith/HolFp/HolMemop carrier arities exact. Carry flag is both read/write; overflow flag only write; Shift Reg cannot be stored; FP general-register writes retain FPMovToReg two outputs. ODD r is exactly r % 2 == 1 over Nat. Nat/enums/lists are identity carriers. 104 original register observations replayed in kernel. Full arith_keys_eq and knowledge/invariant simulation remain open. Executed definition replacement remains linked on CSE production frontier; no whole correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/KeyInjectivity.lean",
+    "lean_name": "wordToNumUnique",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "wordToNum_unique",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 complete source comparison 2026-10-02, flapjack-word-cse-register-keys: Original unrestricted forall equivalence, exact independent operand binders and both equality sides preserved; no range/class/knowledge guard. Full original proof replay regenerated and kernel theorem application checked. words_as_type_indexed_bitvec records only HOL positive type dimension/word to BitVec width with NeZero. 104 original register observations replayed in kernel. Full arith_keys_eq and knowledge/invariant simulation remain open. Executed definition replacement remains linked on CSE production frontier; no whole correctness claim.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/KeyInjectivity.lean",
+    "lean_name": "arithOpToNumEq",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "arithOpToNum_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 complete source comparison 2026-10-02, flapjack-word-cse-register-keys: Original unrestricted forall equivalence, exact independent operand binders and both equality sides preserved; no range/class/knowledge guard. Full original proof replay regenerated and kernel theorem application checked. Nat/enums/lists are identity carriers. 104 original register observations replayed in kernel. Full arith_keys_eq and knowledge/invariant simulation remain open. Executed definition replacement remains linked on CSE production frontier; no whole correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/KeyInjectivity.lean",
+    "lean_name": "memOpToNumEq",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "memOpToNum_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 complete source comparison 2026-10-02, flapjack-word-cse-register-keys: Original unrestricted forall equivalence, exact independent operand binders and both equality sides preserved; no range/class/knowledge guard. Full original proof replay regenerated and kernel theorem application checked. Nat/enums/lists are identity carriers. 104 original register observations replayed in kernel. Full arith_keys_eq and knowledge/invariant simulation remain open. Executed definition replacement remains linked on CSE production frontier; no whole correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/KeyInjectivity.lean",
+    "lean_name": "shiftToNumEq",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "shiftToNum_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 complete source comparison 2026-10-02, flapjack-word-cse-register-keys: Original unrestricted forall equivalence, exact independent operand binders and both equality sides preserved; no range/class/knowledge guard. Full original proof replay regenerated and kernel theorem application checked. Nat/enums/lists are identity carriers. 104 original register observations replayed in kernel. Full arith_keys_eq and knowledge/invariant simulation remain open. Executed definition replacement remains linked on CSE production frontier; no whole correctness claim."
   }
 ]
