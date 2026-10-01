@@ -161,6 +161,73 @@
         "fresh_citation_closure": 6642,
         "artifact": "scripts/hol-audits/linear-scan-161c-evidence/inventory.diff"
       }
+    },
+    "expanded_type_sweep": {
+      "artifacts": [
+        {
+          "path": "scripts/hol-audits/linear-scan-161c-evidence/type-sweep/ls_types.out",
+          "sha256": "c17f9b8ab4869ddd0b233300b9a150ed238fd5309a158cebfd5db0bad5b3c997"
+        },
+        {
+          "path": "scripts/hol-audits/linear-scan-161c-evidence/type-sweep/ls_types.sml",
+          "sha256": "889a9fd66e33ee69d38ad95b9a581874c25b926f35458c586f55c0cfa65573de"
+        },
+        {
+          "path": "scripts/hol-audits/linear-scan-161c-evidence/type-sweep/lsproof_names.txt",
+          "sha256": "6b1cd63f0b61730427438ac26e4efb24373e17be163f2668e186043c9f252aee"
+        },
+        {
+          "path": "scripts/hol-audits/linear-scan-161c-evidence/type-sweep/lsproof_tv.raw",
+          "sha256": "d67e5964cb09be5120cdc2737207cc7dbff5cbe1b740c81257929d5b33297259"
+        },
+        {
+          "path": "scripts/hol-audits/linear-scan-161c-evidence/type-sweep/lsproof_tv.sml",
+          "sha256": "b6f88dc56f4993fda0c26705b5049ee5c1ca67e68709dafe1fca23823100dd1e"
+        },
+        {
+          "path": "scripts/hol-audits/linear-scan-161c-evidence/type-sweep/ra_names.txt",
+          "sha256": "813f1a3a3c997bf9e48f441c63cd539fdddaba230f848528ac8a0743714b4e20"
+        },
+        {
+          "path": "scripts/hol-audits/linear-scan-161c-evidence/type-sweep/ra_tv.raw",
+          "sha256": "bf8fc63c5a9fc2a746bcf146e4ce4c21cd882d099445bca9e03d973bbb478485"
+        },
+        {
+          "path": "scripts/hol-audits/linear-scan-161c-evidence/type-sweep/ra_tv.sml",
+          "sha256": "b83b779685a4504bd34293d437241bc1fa9a937b2686b53c42d2bbabb00d2c32"
+        },
+        {
+          "path": "scripts/hol-audits/linear-scan-161c-evidence/type-sweep/ra_types.out",
+          "sha256": "f75210beda7b10c945a5688d62e0f7b906f0fdefd9e591697ee7b88bcf02c1dd"
+        },
+        {
+          "path": "scripts/hol-audits/linear-scan-161c-evidence/type-sweep/ra_types.sml",
+          "sha256": "f8e2f59fe44f9bb305a125b91faf454da7e282c7c1780dbfc12c76d1d33d9713"
+        }
+      ],
+      "linear_scan_proof_names": 105,
+      "captured_linear_scan_proof_names": 105,
+      "polymorphic_theorems": [
+        "set_MAP_FST_toAList_eq_domain",
+        "domain_numset_list_delete",
+        "ALL_DISTINCT_INJ_MAP",
+        "check_col_output",
+        "check_col_success",
+        "lookup_numset_list_delete",
+        "get_intervals_intbeg_reduce",
+        "get_intervals_beg_less_live",
+        "id_def",
+        "foldi_find_bijection_invariants",
+        "domain_apply_bij_set",
+        "LENGTH_toAList",
+        "check_col_equal_col"
+      ],
+      "polymorphic_binder_review": "Compared all13 original typed ST entries against exact161c Lean signatures. Arbitrary map payloads, independent unused live carriers and two-carrier ALL_DISTINCT_INJ_MAP are retained; no residual restriction found in this generality sweep.",
+      "reg_alloc_proof_names": 11,
+      "reg_alloc_polymorphic": "domain_numset_list_delete retains arbitrary map payload",
+      "local_theorem_exception": "MEM_smerge is [local] and capture reports MISSING; original source review remains required, not a claimed fetched theorem.",
+      "capture_provenance": "Peer capture: constants linear_scan/reg_alloc via dest_const; DB.fetch linear_scanProof/reg_allocProof named entries with type_vars_in_term(concl), print typed statement iff polymorphic. Run supplied scripts from corresponding original reg_alloc/proofs theory directory; reviewer inspected captured outputs, did not rerun HOL.",
+      "scope": "Generality audit, not all105theorem HOL statement source acceptance."
     }
   }
 }
