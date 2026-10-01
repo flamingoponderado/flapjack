@@ -31,6 +31,36 @@ INDEX_HOL = _load("index_hol", "index-hol.py")
 INVENTORY = _load("hol_dependency_inventory", "hol-dependency-inventory.py")
 
 
+class HolTypeIndexTests(unittest.TestCase):
+    def test_quoted_abbreviations_and_spans(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            path = root / "fixtureScript.sml"
+            path.write_text(
+                "Theory fixture\n"
+                "(* Type hidden = ``:num`` *)\n"
+                "Type heu_data = ``:num#num#num#num#num``\n"
+                "Type multiline = ``:\n num # bool\n``\n"
+                "Type unicode = “:num_set # num_set” (* comment *)\n"
+                "Theorem after = known\n"
+            )
+            entries, _, recognized = INDEX_HOL.parse_file(root, path)
+            self.assertTrue(recognized)
+            self.assertEqual([(e.kind, e.name, e.start, e.end) for e in entries], [
+                ("Type", "heu_data", 3, 3),
+                ("Type", "multiline", 4, 6),
+                ("Type", "unicode", 7, 7),
+                ("Theorem", "after", 8, 8),
+            ])
+
+    def test_actual_heu_data_source(self):
+        root = SCRIPTS.parent / "cakeml"
+        entries, _, _ = INDEX_HOL.parse_file(
+            root, root / "compiler/backend/word_allocScript.sml")
+        entry = next(e for e in entries if e.name == "heu_data")
+        self.assertEqual((entry.kind, entry.start, entry.end), ("Type", 1262, 1262))
+
+
 class HolRelnTupleIndexTests(unittest.TestCase):
     def test_unindented_nested_bindings_not_indexed(self):
         binding = "val (step_rules,step_ind,step_cases) = Hol_reln`step x y`;\n"

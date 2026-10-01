@@ -1,0 +1,17 @@
+load "bossLib"; load "preamble"; load "wordLangTheory";
+open HolKernel Parse bossLib preamble wordLangTheory;
+fun out label q = (print(label ^ "="); print_term(rconc(EVAL q)); print "\n");
+val _ = out "im_const" ``max_var_inst (Const 17 9w: 8 asm$inst) = 17``;
+val _ = out "im_bin_reg" ``max_var_inst (Arith (Binop Add 3 11 (Reg 17)): 8 asm$inst) = 17``;
+val _ = out "im_bin_imm" ``max_var_inst (Arith (Binop Add 3 11 (Imm 99w)): 8 asm$inst) = 11``;
+val _ = out "im_shift_reg" ``max_var_inst (Arith (Shift Lsl 3 11 (Reg 17)): 8 asm$inst) = 17``;
+val _ = out "im_shift_imm" ``max_var_inst (Arith (Shift Lsl 3 11 (Imm 99w)): 8 asm$inst) = 11``;
+val _ = out "im_div" ``max_var_inst (Arith (Div 3 11 17): 8 asm$inst) = 17``;
+val _ = out "im_carry" ``max_var_inst (Arith (AddCarry 3 11 17 5): 8 asm$inst) = 17``;
+val _ = out "im_mul" ``max_var_inst (Arith (LongMul 3 11 17 5): 8 asm$inst) = 17``;
+val _ = out "im_longdiv" ``max_var_inst (Arith (LongDiv 3 11 17 5 23): 8 asm$inst) = 23``;
+val _ = out "im_load" ``max_var_inst (Mem Load 3 (Addr 17 0w): 8 asm$inst) = 17``;
+val _ = out "im_store8" ``max_var_inst (Mem Store8 3 (Addr 17 99w): 8 asm$inst) = 17``;
+val _ = out "im_large" ``max_var_inst (Mem Load32 3 (Addr 1208925819614629174706177 99w): 8 asm$inst) = 1208925819614629174706177``;
+val _ = out "im_load16" ``max_var_inst (Mem Load16 3 (Addr 17 99w): 8 asm$inst) = 0``;
+val _ = out "im_store16" ``max_var_inst (Mem Store16 3 (Addr 17 99w): 8 asm$inst) = 0``;
