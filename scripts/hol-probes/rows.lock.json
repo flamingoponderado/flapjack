@@ -4577,6 +4577,12 @@
       "out": "wrap_rt_probe.out",
       "rows": 5,
       "sha256": "34b4dc9b2384c56cae695cdda57731febdbd5d7d19b90a6c6004b6c39bdf87cd"
+    },
+    {
+      "bytes": 222,
+      "out": "word_to_stack_comp_code_labels_probe.out",
+      "rows": 14,
+      "sha256": "ee6ae651e6d67c1715dd3b3ab9926afeeaa6d5e80a490a4b1ac7f9c2de8a42f5"
     }
   ],
   "version": 1
