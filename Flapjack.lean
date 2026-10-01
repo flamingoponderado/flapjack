@@ -1,3 +1,5 @@
+import Flapjack.Compiler.Backend.LabSem.State
+import Flapjack.SemanticsProps.Implements
 import Flapjack.Pancake.Proofs.PanSimp.SeqAssocExact
 import Flapjack.Pancake.Proofs.PanSimp.WhileBodyExact
 import Flapjack.Pancake.Proofs.PanSimp.SkipSeqExact
@@ -135,6 +137,8 @@ import Flapjack.Compiler.Backend.StackProps.FixedNames
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.InstConst
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnv
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnvs
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.EnvFrame
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnvLemma
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutNames
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyRemap
 import Flapjack.Pancake.PanStructs.CompileDeclsExact
