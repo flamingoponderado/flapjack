@@ -1,0 +1,10 @@
+oc_none=T
+oc_empty=T
+oc_physical_bad=T
+oc_checker_collision=T
+oc_forced_collision=T
+oc_forced_distinct=T
+oc_rename=T
+oc_stack_equal=T
+oc_stack_below=T
+oc_raw_map=T

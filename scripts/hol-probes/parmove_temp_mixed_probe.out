@@ -1,0 +1,4 @@
+ntm_real=T
+ntm_read=F
+ntm_write=T
+ntm_both=F
