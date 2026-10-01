@@ -46997,5 +46997,23 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-a source comparison 2026-10-01 flapjack-jbh9: full original4840-4915 statement and literal proof replayed freshly with literal prerequisite proofs. Original inferred stL:(alpha,beta,gamma) and cstL:(alpha,delta,epsilon) retained as independently quantified code/FFI Type0 and shared positive word width. All original allocation/Nodup/mapOK premises and locals-relation implication, all five conclusions retained: NONE, untouched SSA lookups, old locals, output locals relation, complete word_state_eq_rel. Actual faithful native evaluator, arbitrary Nat/Spt maps/priority; no output/evaluation/postrelation premises. Only canonical fpRegs/store finite maps and standard positive BitVec width translated; locals/code actual Spt. Same-module real roundtrip. Guarded SOME selector payload independent of fallback. Existing evaluator inherits rational-cut FP assumption SOUNDNESS item8; Move path invokes locals only. Kernel full induction passes. No production changes; original probe is proof/type evidence, not cross-language equivalence. Delivery checks tracked on bead. Inherits the existing reals_as_rational_cuts assumption through WordSemStateFiniteExact.evaluate; SOUNDNESS item8 applies to that closure.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSALocalsPhysicalStateUpdates.lean",
+    "lean_name": "ssaLocalsRelIgnoreSetVar",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_locals_rel_ignore_set_var",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison 2026-10-01 flapjack-vki8: full original physical-target setVar5557-5571/list-insert5590-5609 wrappers, literal original proofs freshly replayed. HOL inferred st:(alpha,beta,gamma) and cst:(alpha,delta,epsilon) retained with four independent code/FFI Type0 binders and shared positive word width. All original mapOK/localsRel/physical-target premises retained, including EVERY and exact list length for list wrapper; full native locals relation conclusion unchanged. Native Spt locals and canonical alistInsert/setVar. Only standard BitVec width/NeZero word translation; no finite-map fields traversed and no extra premise, evaluation, result or simulated output assumed. Kernel wrappers use accepted physical insertion and full list induction; stronger untagged generic helper does not weaken the public statement. No executed compiler change. Original proof capture is regression evidence, not cross-language equivalence. Full gates and delivery tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSALocalsPhysicalStateUpdates.lean",
+    "lean_name": "ssaLocalsRelIgnoreListInsert",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_locals_rel_ignore_list_insert",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison 2026-10-01 flapjack-vki8: full original physical-target setVar5557-5571/list-insert5590-5609 wrappers, literal original proofs freshly replayed. HOL inferred st:(alpha,beta,gamma) and cst:(alpha,delta,epsilon) retained with four independent code/FFI Type0 binders and shared positive word width. All original mapOK/localsRel/physical-target premises retained, including EVERY and exact list length for list wrapper; full native locals relation conclusion unchanged. Native Spt locals and canonical alistInsert/setVar. Only standard BitVec width/NeZero word translation; no finite-map fields traversed and no extra premise, evaluation, result or simulated output assumed. Kernel wrappers use accepted physical insertion and full list induction; stronger untagged generic helper does not weaken the public statement. No executed compiler change. Original proof capture is regression evidence, not cross-language equivalence. Full gates and delivery tracked on bead."
   }
 ]

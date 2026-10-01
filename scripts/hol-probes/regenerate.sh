@@ -3543,3 +3543,7 @@ run_probe ssa_merge_correct_right_probeScript.sml ssa_merge_correct_right_probe.
 run_probe ssa_merge_correct_left_probeScript.sml ssa_merge_correct_left_probe.out \
   mlc_full mlc_type_ls mlc_type_na mlc_type_ssaL mlc_type_ssaR mlc_type_stL mlc_type_cstL mlc_type_pri \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_physical_state_updates_probeScript.sml ssa_physical_state_updates_probe.out \
+  ph_set_full ph_set_type_st ph_set_type_cst ph_list_full ph_list_type_st ph_list_type_cst \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

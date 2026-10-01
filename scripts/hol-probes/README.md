@@ -3659,3 +3659,5 @@ query revealed that fixing this ignored field to Nat specialized the predicate;
 its existing canonical Lean definition now preserves the generic carrier.
 The actual compiler theorem still uses Nat there, as required by its original
 compiler type. No clauses or executed compiler behavior change.
+
+ssa_physical_state_updates_probe.out freshly replays the literal physical-target setVar and list-insert locals-relation proofs and records their independent source/target code/FFI types. SSALocalsPhysicalStateUpdates retains every original premise including list length, using native Spt locals. No executable change or cross-language equivalence claim.
