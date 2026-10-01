@@ -96,6 +96,7 @@ import Flapjack.Compiler.Backend.WordToStack.ProductionInstructionMaximum
 import Flapjack.Compiler.Backend.WordToStack.ProductionColourDomain
 import Flapjack.Compiler.Backend.WordToStack.ProductionProgramMaximum
 import Flapjack.Compiler.Backend.WordToStack.ProductionFrame
+import Flapjack.Compiler.Backend.WordToStack.ProductionAllocatorCodec
 import Flapjack.Compiler.Backend.WordToStack.ProductionSsaCodecDomain
 import Flapjack.Compiler.Backend.WordToStack.ProductionDeadCodecDomain
 import Flapjack.Compiler.Backend.WordToStack.ProductionCseCodecDomain

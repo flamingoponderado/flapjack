@@ -68,6 +68,22 @@ with `HOL_PROBE_ONLY=stacksem_loop_recursive_probeScript.sml scripts/hol-probes/
 
 # Original Pancake HOL probes
 
+`word_to_stack_allocator_stages_probe.out` records four fresh original
+pre-allocation stage-chain outputs for Skip, Tick, Raise and tail Call, following
+`word_to_word$compile_single`'s SSA/dead/CSE/copy/three-to-two/unreachable/dead
+order with original `two_reg_arith = F`. `WordToStackAllocatorCodecParity`
+replays the same complete output trees and separately checks actual allocator
+success, memory-guard failure and five-register codec rejection.
+`ProductionAllocatorCodec` composes the accepted codec closures through the
+real allocator wrapper and derives an existential native encoding of its actual
+coloured output from accepted input and the real result equation. These finite
+observations do not establish universal pass equivalence, acceptance of the
+initial source-to-Word image, native ABI/output equivalence, or executed routing.
+In particular, this does not source-review the production assignment-based
+three-to-two implementation as a universal port of the original pass.
+Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_to_stack_allocator_stages_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `word_to_stack_retained_frame_probe.out` captures eight fresh original
 `compile_prog` frame projections: empty, register-edge, first/second spill,
 argument-area dominance, equal demands, zero register count, and a natural
