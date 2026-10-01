@@ -1,0 +1,15 @@
+spd_missing_phy=3
+spd_missing_virtual=0
+spd_present_phy=9
+spd_present_virtual=4
+spd_present_zero=0
+spd_raw_bs=5
+spd_raw_bn_hit=8
+spd_raw_bn_miss=1
+spd_large_phy=18446744073709551616
+spd_large_virtual=0
+tc_missing_phy=(6,6)
+tc_missing_virtual=(0,0)
+tc_present=(18,18)
+tc_raw=(16,16)
+tc_large=(36893488147419103232,36893488147419103232)
