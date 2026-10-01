@@ -2195,6 +2195,16 @@ pending/active lists and an existential emitted history, not semantic correctnes
 
 `labsem_evaluate_probeScript.sml` checks all full native evaluator branches in 57 whole executions, including installed-code execution, byte/configuration guard rejection, failed-instruction rollback, clock exhaustion, shared-memory sequence shifts, external-call register/FP havoc and exact return/final events. The paired kernel fixtures live in `Flapjack/Test/LabSemEvaluateParity.lean`. Constructor-specific `loc_to_pc` computation equations are derived with `SIMP_CONV [Once loc_to_pc_def]` in the HOL kernel to eliminate the original existential label guard before recursive execution; these preserve the original evaluator and inputs.
 
+`parmove_stepscorrect_probeScript.sml` captures12fresh original parallel and
+reversed-sequential values for a cycle and chain. Kernel tests construct the
+actual five-step cycle and four-step chain relations and apply steps_correct
+for arbitrary environments. The temporary changes99to27 on the cycle; original
+eqenv excludes it. No pmov-to-Step relationship is assumed or claimed.
+
+
+`word_to_stack_programs_native_probeScript.sml` observes the literal native `compile_prog` and generic `compile_word_to_stack` in 21 original executions. Cases cover frame subtraction/MAX boundaries, widths1/8/64, perf, arbitrary identifiers, duplicate preservation, and left-to-right bitmap content/length across multiple programs and multiword insertions. `Flapjack/Test/WordToStackNativeProgramsParity.lean` replays identical inputs and results in the kernel. Native top-level compilation and production caller routing remain separate work.
+
+
 `parmove_destination_probeScript.sml` observes the real/temporary destinations
 of native `pmov` on terminal, self, chain, cycle, scratch, duplicate, and active
 states. `ParmoveDestinationParity` replays each row and applies the unconditional
@@ -2204,3 +2214,4 @@ original destination-membership theorem, including malformed states.
 on eight arbitrary states, including scratch/duplicate/active and real history.
 `ParmoveSourceParity` replays each row and applies the unconditional original
 source-membership theorem; the cycle-save source is justified from active LAST.
+

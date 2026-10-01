@@ -1,6 +1,8 @@
 import Flapjack.Test.ParmoveSourceParity
 import Flapjack.Test.ParmoveDestinationParity
+import Flapjack.Test.ParmoveStepsCorrectParity
 import Flapjack.Test.ParmoveFinalParity
+import Flapjack.Test.WordToStackNativeProgramsParity
 import Flapjack.Test.ParmoveStepsSemParity
 import Flapjack.Test.ParmoveStepSemParity
 import Flapjack.Test.ParmoveEmitHeadParity
