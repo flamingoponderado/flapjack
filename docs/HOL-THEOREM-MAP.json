@@ -41299,6 +41299,20 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "flapjack-sol source comparison 2026-10-01 b4v0: complete original evaluate_def490-617, literal zero-clock priority and every Inst/JumpReg/Cbw/ShareMem/Halt/LocValue/Jump/JumpCmp/Call/Install/CallFFI/default equation on accepted native 23-field State and MachineResult. Real source clock recursion; failed instruction writes roll back to original state, timeout retains successful writes. Original shared and external FFI final/return rules, sequence shifts and distinct register/FP havoc retained. Install arbitrary configuration equality uses local Classical decision without BEq assumption; buffer bytes and next oracle configuration both required, nonempty program appended, pointer override retained. No hooks or extra hypotheses. Qualified only positive word dimensions and Type0 host. Inherits reviewed reals_as_rational_cuts through asmInst/fpUpd, docs/SOUNDNESS.md item8; no direct real rendering. 57 original HOL whole-execution observations paired with kernel Lean fixtures cover all branches, installed-code execution, guard rejection, clock boundaries, rollback, final events and return havoc. Original loc_to_pc computation rules derived in HOL kernel from same definition. Compiler execution unchanged; native semantics assembly and full compiler correctness remain open. Independent coordinator review pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_apply_colour",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/Install.lean",
+  "lean_name": "evaluateApplyColour_Install",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "flapjack-luna-c source comparison (2026-10-01; bead flapjack-pxn.18.5.11.1.29.2): literal HOL evaluate_apply_colour Install Resume word_allocProofScript2133-2162 and original motive1105-1130. Original colouring_ok/state equality/scoped locals premises and full existential; no extra successful-installation, compilation, callback, target-run, or alias premise. Exact native evaluator clause WordSem Evaluate211-240 matches wordSemScript1118-1152: cut_env first, four Word reads, oracle0 config/program list, both buffer flushes, compile success/nonempty program, bytes/data/next-config checks, left-biased old-code union, ptr Loc head-label insertion, empty fp_regs, shifted oracle, stack_max NONE and stack_size LN. All errors use only original source Error alternative. Cut injectivity and write/live injectivity are derived from colouring_ok; locals extension uses the exact cut domain. Canonical imported exact fpRegs/store finite support maps and positive type-indexed BitVec width with universe-0 C/F; no sptree field is misclassified as finite map. No direct IEEE rendering call; full evaluator dependency inherits reals_as_rational_cuts and SOUNDNESS item 8. Full Install/FFI/ShareInst parent and overall correctness remain open pending coordinator acceptance."
 }
 ,
   {
@@ -41315,20 +41329,6 @@
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.28): HOL Resume evaluate_apply_colour[Call] (word_allocProofScript.sml:1449-1809), i.e. the HOL theorem at Call ret dest args handler: same binders st cst f live lt, the three HOL premises and the HOL existential conclusion (applyColourPost); the only extra hypotheses are the induction hypotheses for the two sub-programs the HOL case uses (return handler and exception handler, as applyColourGoal), no other premise. Proof follows the HOL case: strong_locals_rel_get_vars for the arguments; tail calls run the callee on identical states under the coloured oracle; returning calls use cut_envs_lemma, push_env_s_val_eq with the oracle split (untagged ppPerm) and permute_swap_lemma4 for the callee, the stack_swap state identity (untagged calleeSwap) and evaluate_stack_swap to transport the coloured callee run, push_env_pop_env_s_key_eq, s_key_eq_push_env_imp_MAP_FST, key_map_implies and ALOOKUP_key_remap_INJ (via allocLocalsRel) for the popped locals, pop_env_frame for word_state_eq_rel, strong_locals_rel_set_vars_dom / strong_locals_rel_set_var_dom and the IHs for the handlers; the no-handler exception case uses LASTN past the handler-free pushed frame and s_val_and_key_eq. Untagged callRetTail renders the evaluate_def Call continuation (Flapjack infrastructure). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
   },
-{
-  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
-  "hol_name": "evaluate_apply_colour",
-  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/Install.lean",
-  "lean_name": "evaluateApplyColour_Install",
-  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
-  "fmap_as_finite_support": [
-    "fpRegs",
-    "store"
-  ],
-  "words_as_type_indexed_bitvec": true,
-  "inherits_reals_as_rational_cuts": true,
-  "reviewer": "flapjack-luna-c source comparison (2026-10-01; bead flapjack-pxn.18.5.11.1.29.2): literal HOL evaluate_apply_colour Install Resume word_allocProofScript2133-2162 and original motive1105-1130. Original colouring_ok/state equality/scoped locals premises and full existential; no extra successful-installation, compilation, callback, target-run, or alias premise. Exact native evaluator clause WordSem Evaluate211-240 matches wordSemScript1118-1152: cut_env first, four Word reads, oracle0 config/program list, both buffer flushes, compile success/nonempty program, bytes/data/next-config checks, left-biased old-code union, ptr Loc head-label insertion, empty fp_regs, shifted oracle, stack_max NONE and stack_size LN. All errors use only original source Error alternative. Cut injectivity and write/live injectivity are derived from colouring_ok; locals extension uses the exact cut domain. Canonical imported exact fpRegs/store finite support maps and positive type-indexed BitVec width with universe-0 C/F; no sptree field is misclassified as finite map. No direct IEEE rendering call; full evaluator dependency inherits reals_as_rational_cuts and SOUNDNESS item 8. Full Install/FFI/ShareInst parent and overall correctness remain open pending coordinator acceptance."
-},
 {
   "lean_path": "Flapjack/Compiler/Backend/Parmove/DestinationMembership.lean",
   "lean_name": "memMapFstSndSndPmov",
