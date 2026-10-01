@@ -29,6 +29,19 @@ state-transition, error, hypothesis, and conclusion details must still match
 HOL. See [`AGENTS.md`](../AGENTS.md#qualify-only-named-list-to-array-state-fields)
 for the review rule.
 
+## ML bindings versus declarations
+
+`scripts/check-hol-refs.py` recognizes a HOL declaration in two forms: a
+definition/theorem header (`Theorem`, `Triviality`, `Definition`, `Datatype`,
+`Inductive`, `CoInductive`, `Overload`, `Type`) or an ML `val NAME = ...`
+binding. A theorem-valued binding such as
+`val llist_shorter_lnth = Q.prove (...)` is a proved result, so a Lean
+counterpart may cite it from `@[hol]`. The scanner accepts every
+`val NAME =` line and cannot distinguish a proved binding from an arbitrary ML
+value, so it does not enforce theorem status: source review is responsible for
+never tagging a non-theorem value, and the reference checker only verifies that
+the cited name occurs in one of the two syntactic forms.
+
 | HOL script | Lean counterpart |
 | --- | --- |
 | `panLangScript.sml` | `Flapjack/Pancake/PanLang.lean` (exact `mlstring`-named syntax over the faithful carriers in `Flapjack/Pancake/PanLang/Shape.lean`, `Flapjack/Pancake/PanLang/Exp.lean` and `Flapjack/Pancake/PanLang/Prog.lean` and `Flapjack/Pancake/PanLang/Decl.lean` (`fun_decl`, `decl`, `struct_info`, byte-ranged production roundtrips and the MlString-keyed struct-context pass-boundary bridge), and follow-ups) |
