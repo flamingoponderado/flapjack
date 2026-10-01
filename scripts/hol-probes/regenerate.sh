@@ -3087,13 +3087,6 @@ run_probe word_to_stack_program_maximum_probeScript.sml word_to_stack_program_ma
 run_probe word_alloc_canonize_sort_probeScript.sml word_alloc_canonize_sort_probe.out \
   cs_empty cs_one cs_two cs_three cs_four cs_five cs_odd cs_even cs_dups cs_priority cs_x_first cs_y_second cs_reversed_coords cs_large cs_zeros cs_descending cs_ascending \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
-run_probe word_copy_codec_domain_probeScript.sml word_copy_codec_domain_probe.out \
-  copy_carry copy_load16 copy_store16 copy_seq_alias copy_if copy_loop copy_must copy_both \
-  "$cake_dir/compiler/backend/word_copyScript.sml" "$cake_dir/compiler/backend"
-
-run_probe reg_alloc_initialization_probeScript.sml reg_alloc_initialization_probe.out \
-  ira_adj ira_tag ira_degrees ira_coalesced ira_move_related ira_preserved ira_failure ira_zero \
-  "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
 run_probe reg_alloc_state_map_probeScript.sml reg_alloc_state_map_probe.out \
   sm_type sm_bool_state sm_num_state sm_empty sm_one sm_order sm_reverse sm_duplicates sm_large sm_fail_empty sm_fail_first sm_fail_middle sm_fail_last sm_fail_duplicates sm_success sm_state_failure sm_list_state sm_list_error sm_tuple_state sm_empty_failure_callback \
@@ -3113,6 +3106,10 @@ run_probe word_alloc_canonize_moves_probeScript.sml word_alloc_canonize_moves_pr
 run_probe word_copy_codec_domain_probeScript.sml word_copy_codec_domain_probe.out \
   copy_carry copy_load16 copy_store16 copy_seq_alias copy_if copy_loop copy_must copy_both \
   "$cake_dir/compiler/backend/word_copyScript.sml" "$cake_dir/compiler/backend"
+
+run_probe reg_alloc_initialization_probeScript.sml reg_alloc_initialization_probe.out \
+  ira_adj ira_tag ira_degrees ira_coalesced ira_move_related ira_preserved ira_failure ira_zero \
+  "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
 run_probe reg_alloc_sorted_mem_probeScript.sml reg_alloc_sorted_mem_probe.out \
   sorted_mem_empty sorted_mem_singleton sorted_mem_above sorted_mem_middle sorted_mem_gap sorted_mem_below sorted_mem_tail sorted_mem_duplicate sorted_mem_unsorted_stop sorted_mem_unsorted_continue sorted_mem_zero sorted_mem_large \
