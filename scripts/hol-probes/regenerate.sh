@@ -3413,7 +3413,6 @@ run_probe word_alloc_move_head_probeScript.sml word_alloc_move_head_probe.out \
 run_probe word_alloc_limit_arithmetic_probeScript.sml word_alloc_limit_arithmetic_probe.out \
   la_original_numeric_proof la_0 la_1 la_2 la_3 la_4 la_7 la_8 la_15 la_16 la_1208925819614629174706176 la_1208925819614629174706177 la_1208925819614629174706178 la_1208925819614629174706179 \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
-
 run_probe word_to_stack_no_shmemop_call_core_probeScript.sml word_to_stack_no_shmemop_call_core_probe.out \
   cc_ret_zero cc_ret_one cc_ret_many cc_ret_width1 cc_prefix_1 cc_suffix_1 cc_prefix_32 cc_suffix_32 cc_prefix_64 cc_suffix_64 cc_prefix_80 cc_suffix_80 \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"

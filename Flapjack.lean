@@ -4,6 +4,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveDomains
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetup.EvenListDistinct
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.LimitVar.Arithmetic
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoves.MoveHead
+import Flapjack.Compiler.Backend.WordAlloc.ProductionMaxVarExp
 import Flapjack.Compiler.Backend.WordAlloc.LimitVar
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameProperties
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARegisterFlip
