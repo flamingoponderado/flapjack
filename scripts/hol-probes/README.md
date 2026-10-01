@@ -2201,14 +2201,6 @@ actual five-step cycle and four-step chain relations and apply steps_correct
 for arbitrary environments. The temporary changes99to27 on the cycle; original
 eqenv excludes it. No pmov-to-Step relationship is assumed or claimed.
 
-`parmove_split_source_probeScript.sml` freshly evaluates original splitAtPki
-with the index-independent source predicate and pair callback used by fstep.
-Seven full partition outputs are kernel paired with actual splitSource: empty,
-first/middle/absent matches, NONE, duplicate destinations and late zero. Generic
-untagged SplitSource laws derive prefixNoRead, suffixheadmatch and empty-suffix
-NoRead equivalence. They are Flapjack infrastructure, not a general indexed
-combinator port or completed functional scheduler simulation.
-
 
 `word_to_stack_programs_native_probeScript.sml` observes the literal native `compile_prog` and generic `compile_word_to_stack` in 21 original executions. Cases cover frame subtraction/MAX boundaries, widths1/8/64, perf, arbitrary identifiers, duplicate preservation, and left-to-right bitmap content/length across multiple programs and multiword insertions. `Flapjack/Test/WordToStackNativeProgramsParity.lean` replays identical inputs and results in the kernel. Native top-level compilation and production caller routing remain separate work.
 
@@ -2219,5 +2211,13 @@ checks the source prefix-only NoRead guard. `ParmoveDStepsParity.lean` replays
 the same inputs in Lean. These finite observations are regression evidence,
 not a cross-prover equivalence proof; the complete rules, induction and cases
 statements are source-reviewed in `Parmove/DSteps.lean`.
+
+`parmove_split_source_probeScript.sml` freshly evaluates original splitAtPki
+with the index-independent source predicate and pair callback used by fstep.
+Seven full partition outputs are kernel paired with actual splitSource: empty,
+first/middle/absent matches, NONE, duplicate destinations and late zero. Generic
+untagged SplitSource laws derive prefixNoRead, suffixheadmatch and empty-suffix
+NoRead equivalence. They are Flapjack infrastructure, not a general indexed
+combinator port or completed functional scheduler simulation.
 
 `parmove_dstep_step_probeScript.sml` captures six original wf premises and nine cycle semantic values before Save, after Save, and after EmitHead. Kernel fixtures prove all six actual DStep-to-Steps applications with the original wf premise. The temporary changes99to17 on Save; no functional scheduler simulation is assumed.
