@@ -1,0 +1,15 @@
+load "bossLib"; load "preamble"; load "word_to_stackProofTheory";
+open HolKernel Parse bossLib preamble word_to_stackProofTheory;
+fun print_eval label q = (print(label ^ "="); print_term(rconc(EVAL q)); print "\n");
+val plain16 = ``wordSem$StackFrame (SOME 999) [(7,wordLang$Word 65535w)] [(9,wordLang$Loc 40 41)] NONE :16 wordSem$stack_frame``;
+val handler16 = ``wordSem$StackFrame (SOME 999) [(7,wordLang$Word 65535w)] [(9,wordLang$Loc 40 41)] (SOME(999,42,43)) :16 wordSem$stack_frame``;
+val plain1 = ``wordSem$StackFrame (SOME 999) [(7,wordLang$Word 1w)] [(9,wordLang$Loc 40 41)] NONE :1 wordSem$stack_frame``;
+val handler1 = ``wordSem$StackFrame (SOME 999) [(7,wordLang$Word 1w)] [(9,wordLang$Loc 40 41)] (SOME(999,42,43)) :1 wordSem$stack_frame``;
+val _ = print_eval "asg_base16" ``abs_stack ([3w]:8 word list) ([]:16 wordSem$stack_frame list) [wordLang$Word 0w] [] = SOME []``;
+val _ = print_eval "asg_base1" ``abs_stack ([3w]:8 word list) ([]:1 wordSem$stack_frame list) [wordLang$Word 0w] [] = SOME []``;
+val _ = print_eval "asg_plain16" ``abs_stack ([3w]:8 word list) [^plain16] [wordLang$Word 1w;wordLang$Word 7w;wordLang$Word 0w] [1] = SOME [(NONE,[T],[wordLang$Word 7w])]``;
+val _ = print_eval "asg_handler16" ``abs_stack ([3w]:8 word list) [^handler16] [wordLang$Word 1w;wordLang$Loc 1 2;wordLang$Word 6w;wordLang$Word 1w;wordLang$Word 7w;wordLang$Word 0w] [1] = SOME [(SOME(wordLang$Loc 1 2,wordLang$Word 6w),[T],[wordLang$Word 7w])]``;
+val _ = print_eval "asg_plain1" ``abs_stack ([3w]:8 word list) [^plain1] [wordLang$Word 1w;wordLang$Word 7w;wordLang$Word 0w] [1] = SOME [(NONE,[T],[wordLang$Word 7w])]``;
+val _ = print_eval "asg_handler1" ``abs_stack ([3w]:8 word list) [^handler1] [wordLang$Word 1w;wordLang$Loc 1 2;wordLang$Word 6w;wordLang$Word 1w;wordLang$Word 7w;wordLang$Word 0w] [1] = SOME [(SOME(wordLang$Loc 1 2,wordLang$Word 6w),[T],[wordLang$Word 7w])]``;
+val _ = print_eval "asg_nested16" ``abs_stack ([3w]:8 word list) [^handler16;^plain16] [wordLang$Word 1w;wordLang$Loc 1 2;wordLang$Word 6w;wordLang$Word 1w;wordLang$Word 7w;wordLang$Word 1w;wordLang$Word 8w;wordLang$Word 0w] [1;1] = SOME [(SOME(wordLang$Loc 1 2,wordLang$Word 6w),[T],[wordLang$Word 7w]);(NONE,[T],[wordLang$Word 8w])]``;
+val _ = print_eval "asg_marker_bad" ``abs_stack ([3w]:8 word list) [^handler16] [wordLang$Word 2w] [1] = NONE``;

@@ -1,0 +1,10 @@
+mb_bind_ok=(M_success 8,15)
+mb_bind_fail=(M_failure 7,6)
+mb_ignore_ok=(M_success 25,15)
+mb_ignore_fail=(M_failure 7,6)
+mb_return=(M_success 3,4)
+mb_run_ok=M_success 3
+mb_run_fail=M_failure 7
+mb_alloc_three=(M_success (),[7; 7; 7])
+mb_alloc_zero=(M_success (),[])
+mb_exn_bytes=T

@@ -1,0 +1,15 @@
+load "bossLib";
+load "preamble";
+load "word_to_stackProofTheory";
+open bossLib HolKernel Parse preamble word_to_stackProofTheory stackSemTheory;
+fun report label th term = if aconv (concl th) term then print (label ^ "=T\n") else raise Fail label;
+val _ = let val term = ``!bits. full_read_bitmap ([0w:8 word]) (Word (1w:1 word)) = SOME bits ==> full_read_bitmap (([0w:8 word]) ++ ([255w:8 word])) (Word (1w:1 word)) = SOME bits``; val th = prove(term, rpt strip_tac >> match_mp_tac full_read_bitmap_append >> asm_rewrite_tac []) in report "fra_8_1" th term end;
+val _ = let val term = ``!bits. full_read_bitmap ([0w:8 word]) (Word (1w:16 word)) = SOME bits ==> full_read_bitmap (([0w:8 word]) ++ ([255w:8 word])) (Word (1w:16 word)) = SOME bits``; val th = prove(term, rpt strip_tac >> match_mp_tac full_read_bitmap_append >> asm_rewrite_tac []) in report "fra_8_16" th term end;
+val _ = let val term = ``!bits. full_read_bitmap ([0w:1 word]) (Word (1w:32 word)) = SOME bits ==> full_read_bitmap (([0w:1 word]) ++ ([1w:1 word])) (Word (1w:32 word)) = SOME bits``; val th = prove(term, rpt strip_tac >> match_mp_tac full_read_bitmap_append >> asm_rewrite_tac []) in report "fra_1_32" th term end;
+val _ = let val term = ``!bits. full_read_bitmap ([32768w;0w]:16 word list) (Word (1w:8 word)) = SOME bits ==> full_read_bitmap (([32768w;0w]:16 word list) ++ ([65535w:16 word])) (Word (1w:8 word)) = SOME bits``; val th = prove(term, rpt strip_tac >> match_mp_tac full_read_bitmap_append >> asm_rewrite_tac []) in report "fra_16_8" th term end;
+val _ = let val term = ``!bits. full_read_bitmap ([255w;0w]:8 word list) (Word (2w:32 word)) = SOME bits ==> full_read_bitmap (([255w;0w]:8 word list) ++ ([255w:8 word])) (Word (2w:32 word)) = SOME bits``; val th = prove(term, rpt strip_tac >> match_mp_tac full_read_bitmap_append >> asm_rewrite_tac []) in report "fra_offset" th term end;
+val _ = let val term = ``!bits. full_read_bitmap ([0w:8 word]) (Word (1w:8 word)) = SOME bits ==> full_read_bitmap (([0w:8 word]) ++ ([255w:8 word])) (Word (1w:8 word)) = SOME bits``; val th = prove(term, rpt strip_tac >> match_mp_tac full_read_bitmap_append >> asm_rewrite_tac []) in report "fra_same" th term end;
+val _ = let val term = ``IS_SOME (full_read_bitmap [0w:8 word] (Word (1w:1 word)))``; val th = EVAL term in if aconv (rhs (concl th)) ``T`` then print "fra_success8_1=T\n" else raise Fail "fra_success8_1" end;
+val _ = let val term = ``full_read_bitmap [0w:1 word] (Word (1w:32 word)) = SOME []``; val th = EVAL term in if aconv (rhs (concl th)) ``T`` then print "fra_success1_32=T\n" else raise Fail "fra_success1_32" end;
+val _ = let val term = ``full_read_bitmap [0w:8 word] (Word (0w:16 word)) = NONE``; val th = EVAL term in if aconv (rhs (concl th)) ``T`` then print "fra_zero=T\n" else raise Fail "fra_zero" end;
+val _ = let val term = ``full_read_bitmap [0w:8 word] (Loc 1 2:16 word word_loc) = NONE``; val th = EVAL term in if aconv (rhs (concl th)) ``T`` then print "fra_loc=T\n" else raise Fail "fra_loc" end;
