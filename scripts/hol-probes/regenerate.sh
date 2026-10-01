@@ -2762,3 +2762,7 @@ run_probe parmove_steps_probeScript.sml parmove_steps_probe.out \
   ps_remove ps_start ps_extend ps_save ps_emit_head ps_emit_last \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
+
+run_probe parmove_noread_probeScript.sml parmove_noread_probe.out \
+  pn_duplicate_left pn_duplicate_right pn_untouched_left pn_untouched_right pn_boundary_left pn_boundary_right pn_self_left pn_self_right \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"

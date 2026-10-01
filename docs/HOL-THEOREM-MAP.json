@@ -39793,5 +39793,13 @@
   "hol_name": "step_cases",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.6.1: original Hol_reln29-37 and actual HOL kernel print /tmp/flapjack-b-step-statements.log. Exact iff six-way existential disjunction, both pre/post tuple equalities retained in each case; NoRead/distinct remain in last two cases. All witnesses and list splits unrestricted as source. Exhaustive constructor elimination and converse reconstructors prove both directions. Primitive Step inductive has exactly these six nonrecursive constructors; not incorrectly tagged as a generated theorem. Generic Option register/List product carriers. Local RTC overload uses standard ReflTransGen with no separate named source tag. No simulator/evaluation premise; full wf and step_sem remain open."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/NoRead.lean",
+  "lean_name": "parsem_NoRead",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "parsem_NoRead",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.6.3: original267-283 exact sole NoRead moves x premise (local overload notMEM x MAP SND), conclusion full function equality parsem((x,y)::moves)env=parsem moves((x=+env y)env). Generic same-component pair/List and function environments retained; no windmill/no-write/global environment equality premise. Tail source-map equality follows because every source differs from x; update-list definition then yields original equation. Repeated destinations allowed, snapshot vs updated-read boundary covered by8fresh original rows and Lean guards/full-function generic use. step_sem429/443 actual prerequisite; whole semantic preservation remains open."
 }
 ]

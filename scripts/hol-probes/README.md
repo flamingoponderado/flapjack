@@ -2080,3 +2080,13 @@ kernel-derived positive witnesses, not EVAL or production compiler parity.
 and a start/emit two-step chain. Rules, leastness, and exhaustive cases were
 also compared against the actual generated HOL theorem conclusions.
 Well-formedness and semantic preservation are separate unfinished proofs.
+
+### ParMove no-read observations
+
+`parmove_noread_probeScript.sml` captures eight direct original HOL values.
+Paired observations include repeated writes, untouched keys, and self moves.
+When the tail reads the changed destination, the two sides give 11 versus 12,
+showing the no-read premise is necessary. `ParmoveNoReadParity.lean` replays
+all rows and checks the full-function lemma with the original sole premise.
+The source function update is expressed as the equivalent conditional.
+Full scheduler semantic preservation remains open.
