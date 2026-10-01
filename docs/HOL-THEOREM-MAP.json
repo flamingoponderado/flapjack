@@ -42420,5 +42420,69 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol: source5636-5650 compared binder by binder against arbitrary native AsmConfigExact, perf, WordLangProgHOL, AppList/count, natural frame triple and HolProg output. Sole hypotheses are actual compiler output equation and initial flattened-length bound; conclusion retains final bound and before-minus-length equals after-minus-length. Positive type-indexed word translation only; accepted native compiler/carriers and exact functional induction cover every constructor, including both If branches, Loop, MustTerminate, Seq and returning Call with return and handler IHs. Actual wLiveLength and insertBitmap accounting compose; no frame/config validity, evaluation-success, output-bound or simulation premise. Eighteen fresh original observations paired with kernel fixtures cover nonzero gaps, nested insertion, tiny/multiword widths and a failing initial-bound counterexample. Axiom audit contains only propext, Classical.choice and Quot.sound. Executed compiler routing remains on linked bead25.17."
-  }
+  },
+{
+  "lean_path": "Flapjack/Translator/Monadic/MonadBase.lean",
+  "lean_name": "Exc",
+  "hol_path": "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml",
+  "hol_name": "exc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison2026-10-01 bead11.5.10.2: literal ml_monadBase17-19. Independent state/value/exception/result carriers; success passes updated state/value, failure retains updated state/error, ignore drops only value; return preserves state, allocation replicates List and invokes arbitrary setter, run projects FST. No rollback/fuel/success premise. Generic kernel fixtures and fresh original monad_base_probe rows. Coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Translator/Monadic/MonadBase.lean",
+  "lean_name": "M",
+  "hol_path": "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml",
+  "hol_name": "M",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison2026-10-01 bead11.5.10.2: literal ml_monadBase21. Independent state/value/exception/result carriers; success passes updated state/value, failure retains updated state/error, ignore drops only value; return preserves state, allocation replicates List and invokes arbitrary setter, run projects FST. No rollback/fuel/success premise. Generic kernel fixtures and fresh original monad_base_probe rows. Coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Translator/Monadic/MonadBase.lean",
+  "lean_name": "bind",
+  "hol_path": "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml",
+  "hol_name": "st_ex_bind_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison2026-10-01 bead11.5.10.2: literal ml_monadBase34-40. Independent state/value/exception/result carriers; success passes updated state/value, failure retains updated state/error, ignore drops only value; return preserves state, allocation replicates List and invokes arbitrary setter, run projects FST. No rollback/fuel/success premise. Generic kernel fixtures and fresh original monad_base_probe rows. Coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Translator/Monadic/MonadBase.lean",
+  "lean_name": "ignoreBind",
+  "hol_path": "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml",
+  "hol_name": "st_ex_ignore_bind_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison2026-10-01 bead11.5.10.2: literal ml_monadBase42-48. Independent state/value/exception/result carriers; success passes updated state/value, failure retains updated state/error, ignore drops only value; return preserves state, allocation replicates List and invokes arbitrary setter, run projects FST. No rollback/fuel/success premise. Generic kernel fixtures and fresh original monad_base_probe rows. Coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Translator/Monadic/MonadBase.lean",
+  "lean_name": "ret",
+  "hol_path": "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml",
+  "hol_name": "st_ex_return_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison2026-10-01 bead11.5.10.2: literal ml_monadBase86-89. Independent state/value/exception/result carriers; success passes updated state/value, failure retains updated state/error, ignore drops only value; return preserves state, allocation replicates List and invokes arbitrary setter, run projects FST. No rollback/fuel/success premise. Generic kernel fixtures and fresh original monad_base_probe rows. Coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Translator/Monadic/MonadBase.lean",
+  "lean_name": "arrayAlloc",
+  "hol_path": "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml",
+  "hol_name": "Marray_alloc_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison2026-10-01 bead11.5.10.2: literal ml_monadBase216-219. Independent state/value/exception/result carriers; success passes updated state/value, failure retains updated state/error, ignore drops only value; return preserves state, allocation replicates List and invokes arbitrary setter, run projects FST. No rollback/fuel/success premise. Generic kernel fixtures and fresh original monad_base_probe rows. Coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Translator/Monadic/MonadBase.lean",
+  "lean_name": "run",
+  "hol_path": "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml",
+  "hol_name": "run_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison2026-10-01 bead11.5.10.2: literal ml_monadBase565-567. Independent state/value/exception/result carriers; success passes updated state/value, failure retains updated state/error, ignore drops only value; return preserves state, allocation replicates List and invokes arbitrary setter, run projects FST. No rollback/fuel/success premise. Generic kernel fixtures and fresh original monad_base_probe rows. Coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Exceptions.lean",
+  "lean_name": "StateException",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+  "hol_name": "state_exn",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison2026-10-01 bead11.5.10.2 reg_alloc101-103: Fail string | Subscript. HOL string is char list, retained as List of reviewed MlString.HolChar=BitVec8 canonical256-element char; no UTF8 String or mlstring wrapper. Constructor arity/equality preserved including0/255 bytes/order. Fresh original probe/kernel fixtures; raising/accessors and production refinement remain open prerequisites. Coordinator review pending."
+}
 ]

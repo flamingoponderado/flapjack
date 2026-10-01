@@ -2451,6 +2451,7 @@ observations do not establish cross-prover equivalence or executed allocator
 routing. Regenerate read-only with
 `HOL_PROBE_ONLY=word_alloc_heu_max_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
+`monad_base_probe` evaluates original generic state-exception bind/ignore/return/run/allocation clauses, with changed state on success and failure, zero/three-element allocation and distinct byte-character exception payloads. `MonadBaseParity` replays all ten rows and independent generic carriers. Regression evidence, not a cross-language equivalence proof. Production allocator routing remains open.
 `word_to_stack_full_read_bitmap_mixed_probeScript.sml` captures six original universal success-preservation applications at independently chosen bitmap/descriptor widths (8/1, 8/16, 1/32, 16/8, offset 8/32 and same-width 8/8), plus four actual success/zero/location guard equalities. Matching kernel applications include arbitrary independent positive widths. This repairs full_read_bitmap_append type generality; its proof and executed fullReadBitmap definition are unchanged.
 
 `word_alloc_heu_call_probe.out` captures sixteen original call-name unions,
