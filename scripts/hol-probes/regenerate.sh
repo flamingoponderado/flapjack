@@ -3253,6 +3253,10 @@ run_probe parmove_map_state_probeScript.sml parmove_map_state_probe.out \
   pms_empty pms_pending pms_active pms_emitted pms_order pms_constant pms_large pms_bool pms_cross_carrier pms_option_constant \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
+run_probe word_alloc_full_ssa_probeScript.sml word_alloc_full_ssa_probe.out \
+  fs_skip fs_args fs_assign fs_if fs_big \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
 run_probe word_alloc_ssa_cc_trans_probeScript.sml word_alloc_ssa_cc_trans_probe.out \
   sc_skip sc_move sc_storeconsts sc_inst sc_assign sc_get sc_store sc_seq sc_mustterminate sc_if sc_if_skip sc_alloc sc_raise sc_opcurrheap sc_return sc_tick sc_set sc_locvalue sc_install sc_codebufferwrite sc_databufferwrite sc_ffi sc_call_tail sc_call_ret sc_call_handler sc_shareinst_load sc_shareinst_store sc_loop sc_loop_break sc_break_free sc_continue_free \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
