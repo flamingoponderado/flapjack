@@ -41141,5 +41141,14 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "flapjack-luna-c source comparison 2026-10-01 child25.4: literal Inst Skip and full FP constructor, HOL Inst1374-1391 plus wordSem inst_def FP821-938. Same original st/cst/f/live/lt binders, three colouring_ok/state-equality/live-scoped-locals premises, full existential applyColourPost, no IH/success/NaN/register-distinctness premise. Full FP theorem case-splits all16 WordLangFp constructors and unfolds actual reviewed inst/evaluate; identical FP reads follow state-equality, common set_fp_var frame preserves actual fixed64 map and all other fields. FP comparisons derive integer-write scoped injectivity. FPMovToReg keeps64 single update vs non64 low first/high second with actual width extracts and alias overwrite, derives both insert obligations from writes-union-live. FPMovFromReg transports original integer reads (one at64, two otherwise), preserving Loc/missing failures, high concatenated before low and fixed64 result. FPToInt keeps actual RTE/none/range guards, fixed signed word32 check, source failure without write, old FP half insertion at indexDIV2/ODD; FPFromInt uses signed word32 at64 and actual polymorphic width otherwise. FMA accumulator/source order unchanged, arithmetic and NaN values are the identical imported primitive computation, not recalculated approximations. Canonical imported state map roundtrip; words qualifier translates positive dimension. Inherited reals_as_rational_cuts assumption via wordSem evaluate/inst, SOUNDNESS item8; no direct rendering call or new cross-prover agreement claim. Whole Inst assembly remains open. Coordinator review pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/wordLangScript.sml",
+  "hol_name": "max_var_exp_def",
+  "lean_path": "Flapjack/Pancake/WordLang/MaxVarExp.lean",
+  "lean_name": "maxVarExpHOL",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Codex source comparison wordLangScript208-214: Var returns its Nat register, Load recurses, Op takes MAX_LIST of mapped bounds including zero for empty list, Shift takes MAX of both bounds, and Const/Lookup return zero. maxList independently compared with original natural MAX_LIST zero/cons MAX recursion. Signature specializes reviewed WordLangExpHOL to positive-width BitVec width with NeZero; store_name carrier retained, no extra premises or fixed-width restriction. Eight fresh direct original HOL observations and identical kernel fixtures cover each clause and nested/empty expressions. Full program max_var and native wrapper routing remain open under bead flapjack-pxn.18.5.15.3.25.15."
 }
 ]

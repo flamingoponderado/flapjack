@@ -2805,3 +2805,7 @@ run_probe parmove_remove_last_probeScript.sml parmove_remove_last_probe.out \
 run_probe labsem_inst_probeScript.sml labsem_inst_probe.out \
   lab_inst_skip lab_inst_const lab_inst_arith_or_loc lab_inst_arith_or_loc_other lab_inst_arith_div_zero lab_inst_arith_shift_invalid lab_inst_mem_load_loc lab_inst_mem_store_unaligned lab_inst_mem_load32_loc_failure lab_inst_mem_load16_unsupported lab_inst_mem_store16_unsupported lab_inst_fp_mov_payload lab_inst_fp_neg_zero lab_inst_fp_from_reg_loc_failure \
   "$cake_dir/compiler/backend/semantics/labSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe word_lang_max_var_exp_probeScript.sml word_lang_max_var_exp_probe.out \
+  max_var max_load max_op_empty max_op_nested max_shift max_const max_lookup max_mixed \
+  "$cake_dir/compiler/backend/wordLangScript.sml" "$cake_dir/compiler/backend"

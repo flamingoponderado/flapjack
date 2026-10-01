@@ -1,0 +1,8 @@
+max_var=37
+max_load=19
+max_op_empty=0
+max_op_nested=51
+max_shift=22
+max_const=0
+max_lookup=0
+max_mixed=29
