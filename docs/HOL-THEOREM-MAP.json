@@ -38427,5 +38427,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-ds10 source comparison (2026-10-01, bead flapjack-pxn.18.5.15.10.2) vs targetSemScript.sml:18-45: all 16 fields in HOL order; ('a word) set rendered as BitVec width -> Prop, word8 as BitVec 8, ffiname as HolFfiName, addr as HolAddr; ffi_interfer/next_interfer/ccache_interfer arrow shapes preserved; target embeds HolAsmTarget. word rendering qualified."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmSemScript.sml",
+    "hol_name": "asm_state",
+    "lean_path": "Flapjack/Compiler/Encoders/AsmSem/State.lean",
+    "lean_name": "AsmState",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-10-01, bead flapjack-pxn.18.5.15.10.3) vs asmSemScript.sml:12-23: all 9 record fields in HOL order (regs/fp_regs/mem/mem_domain/pc/lr/align/be/failed); word as BitVec width, word8 as BitVec 8, word64 as BitVec 64, reg as Nat, set as BitVec width -> Prop. word rendering qualified."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmPropsScript.sml",
+    "hol_name": "target_state_rel_def",
+    "lean_path": "Flapjack/Compiler/Encoders/AsmSem/State.lean",
+    "lean_name": "targetStateRel",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-10-01, bead flapjack-pxn.18.5.15.10.3) vs asmPropsScript.sml:58-64: target_state_rel t s ms with all five conjuncts (state_ok, get_pc=pc, mem_domain memory agreement, reg_count/avoid_regs register agreement, fp_reg_count fp agreement); argument order t s ms preserved; MEM i avoid_regs rendered as avoidRegs.contains i = false. word rendering qualified."
   }
 ]
