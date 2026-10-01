@@ -2128,3 +2128,11 @@ destination fails `wf` (17 versus 37), and a pending source reads the emitted
 destination despite valid `wf` (17 versus 27). Lean checks every row and these
 premise boundaries. The generic case proofs retain both original premises;
 Save, EmitHead and the full semantic-preservation assembly remain open.
+
+`parmove_save_probeScript.sml` captures 20 original HOL `sem` values for Save,
+including a cycle, reversed nonempty emitted history, and the permitted final
+`NONE` source. The temporary may change (99 to 67) while real-register results
+agree. A deliberately invalid pending `NONE` source yields 99 versus 27 and
+fails `wf`; no equivalence is claimed for it. Lean checks all observations and
+the input invariants. Save's generic theorem proves the original real-register
+equivalence from the full source `wf`, with no extra agreement premise.

@@ -2799,3 +2799,7 @@ run_probe parmove_start_extend_probeScript.sml parmove_start_extend_probe.out \
 run_probe parmove_remove_last_probeScript.sml parmove_remove_last_probe.out \
   pr_self_pre_1 pr_self_pre_4 pr_self_pre_5 pr_self_post_1 pr_self_post_4 pr_self_post_5 pr_last_pre_1 pr_last_pre_4 pr_last_pre_5 pr_last_post_1 pr_last_post_4 pr_last_post_5 pr_bad_self_pre pr_bad_self_post pr_bad_read_pre pr_bad_read_post \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe parmove_save_probeScript.sml parmove_save_probe.out \
+  pv_save_history_pre_1 pv_save_history_pre_4 pv_save_history_pre_5 pv_save_history_pre_temp pv_save_history_post_1 pv_save_history_post_4 pv_save_history_post_5 pv_save_history_post_temp pv_save_cycle_pre_1 pv_save_cycle_pre_2 pv_save_cycle_pre_4 pv_save_cycle_post_1 pv_save_cycle_post_2 pv_save_cycle_post_4 pv_save_none_source_pre_1 pv_save_none_source_pre_4 pv_save_none_source_post_1 pv_save_none_source_post_4 pv_save_bad_pending_pre_4 pv_save_bad_pending_post_4 \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
