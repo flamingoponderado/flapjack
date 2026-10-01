@@ -49354,5 +49354,14 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-a source comparison 2026-10-02, bead flapjack-60qg: compared word_allocProofScript.sml6256-6294 and replayed its literal proof with six inferred type captures. Retains all st/w/cst/ssa/na/res quantifiers, source word_exp success, full word_state_eq_rel and ssa_locals_rel, concluding actual native word_exp on ssa_cc_trans_exp succeeds with identical result. HOL st/cst share alpha/beta/gamma and Lean shares positive BitVec width and universe-0 C/F. Reviewed constructor-identical expressions including nested Op arguments, both expression-valued Shift operands and fixed 5-bit Store Temp payload; Spt locals/SSA are tree maps, only fpRegs/store translate HOL finite maps. Same-module imported-owner witness establishes real broad/exact roundtrip. Lean proof identifies native SSA renamer with reviewed applyColourExp at optionLookup and derives its scoped local transport from SSA locals without adding premises; success/store/memory/domain behavior remains actual native wordExp. No target evaluation or extra simulation/post-state assumption."
-  }
+  },
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "fix_inconsistencies_props",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAFixInconsistenciesProps.lean",
+  "lean_name": "fixInconsistenciesProps",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol-a source comparison 2026-10-02, bead flapjack-q8y7: compared word_allocProofScript.sml5838-5856 and replayed literal original proof plus literal ssa_map_ok_extend/merge_moves_frame/fake_moves_frame prerequisites. Full capture quantifies prio/ssaL/ssaR/na/a/b/naOut/ssaU and eight types confirm unit-sum option priority, exact num Spt maps, natural counters and same alpha program carriers. Lean retains actual native fixInconsistencies output equality, original isAllocVar and both input ssaMapOK premises, and all three monotonicity/allocation/output-map conclusions. No evaluator, target-result or post-state assumption. Native merge/fake frames supply the original proof composition; tree maps remain reviewed Spt and are not finite-map-qualified. Only HOL positive word dimension translates to BitVec width with NeZero discharge."
+}
 ]
