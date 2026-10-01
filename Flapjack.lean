@@ -2,6 +2,9 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.InsertBitmapPrefix
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LivePrefix
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LiveLength
 import Flapjack.Compiler.Backend.Parmove.DestinationWrapper
+import Flapjack.Compiler.Backend.WordAlloc.TotalColour
+import Flapjack.Compiler.Backend.Parmove.SourceMembershipWrapper
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvenStartingLocals
 import Flapjack.Compiler.Backend.Parmove.DStepStep
 
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileKeys

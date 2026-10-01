@@ -2288,3 +2288,9 @@ Nat payloads. `WordToStackInsertPrefixParity` kernel-applies the full original
 statement to the same actual insertion outputs in the CompilerParity driver.
 No word dimension or count bound is required. These observations are regression
 evidence, not a cross-prover equivalence or whole-compiler correctness proof.
+
+`word_alloc_total_colour_probeScript.sml` records eight direct original
+`total_colour` lookups: absent physical/virtual keys (including large keys),
+mapped physical/virtual keys, and a mapped zero colour. Same-input kernel
+fixtures are registered in the actual CompilerParity test root.
+`word_alloc_even_locals_probeScript.sml` computes the original starting-local domain predicate on six full native word/location trees: empty, zero, sparse even keys, odd, mixed and duplicate overwrite. Standard finite-domain logical rewrites normalize its universal quantifier; actual Spt insertion-domain lemmas replay the same six inputs in kernel fixtures imported by CompilerParity. This predicate is a prerequisite, not the whole allocator theorem.
