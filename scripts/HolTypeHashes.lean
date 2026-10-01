@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.BackendProps
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CodeLabels
 import Flapjack.Pancake.WordConvs.CodeLabels
 import Flapjack.Compiler.Backend.StackProps.CodeLabels

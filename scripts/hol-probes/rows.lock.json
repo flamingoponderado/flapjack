@@ -4415,6 +4415,12 @@
       "out": "word_to_stack_code_labels_probe.out",
       "rows": 14,
       "sha256": "967d322d14992cc6185bcdc8c6faecac30b9c0a499b25fffc9473f737b966b97"
+    },
+    {
+      "bytes": 209,
+      "out": "backendprops_nonzero_labels_probe.out",
+      "rows": 15,
+      "sha256": "79dbfaff328f99645e594adf91217ba216d2da03e230f88c3b46a1308bf1c014"
     }
   ],
   "version": 1
