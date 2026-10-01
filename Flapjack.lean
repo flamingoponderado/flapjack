@@ -7,6 +7,9 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopPrimitives
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopCalls
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemop.Handlers
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.LimitVar.Properties
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMovePreserve
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAOptionLookupSubset
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenamePropertyWrappers
@@ -155,6 +158,8 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead.Control
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead.StateEffect
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead.Move
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead.Inst
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead.Call
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.GetForced
 import Flapjack.Compiler.Backend.WordAlloc.CoalesceCost
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.LoopCases
@@ -1237,6 +1242,7 @@ import Flapjack.Compiler.Backend.WordAlloc.SSATransInst
 import Flapjack.Compiler.Backend.WordAlloc.SSAHelpers
 import Flapjack.Compiler.Backend.WordAlloc.SSACcTrans
 import Flapjack.Compiler.Backend.WordAlloc.FullSSA
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMoveFrames
 
 
 /- The context-aware Crep-to-Loop correctness file is being updated alongside
