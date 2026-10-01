@@ -1,0 +1,25 @@
+load "preamble";
+load "word_allocTheory";
+open bossLib HolKernel Parse preamble word_allocTheory;
+fun out label q = (print (label ^ "="); print_term (rconc (EVAL q)); print "\n");
+
+val _ = out "even_colour_empty" ``every_even_colour (sptree$fromAList []) = T``;
+val _ = out "even_colour_zero" ``every_even_colour (sptree$fromAList [(0, 0)]) = T``;
+val _ = out "even_colour_zero_bad" ``every_even_colour (sptree$fromAList [(0, 1)]) = F``;
+val _ = out "even_colour_physical" ``every_even_colour (sptree$fromAList [(2, 1); (4, 2); (20, 10)]) = T``;
+val _ = out "even_colour_physical_bad" ``every_even_colour (sptree$fromAList [(2, 1); (4, 3); (20, 10)]) = F``;
+val _ = out "even_colour_virtual" ``every_even_colour (sptree$fromAList [(1, 99); (3, 0); (5, 400)]) = T``;
+val _ = out "even_colour_mixed" ``every_even_colour (sptree$fromAList [(0, 0); (1, 50); (2, 1); (3, 900); (8, 4); (9, 1000)]) = T``;
+val _ = out "even_colour_mixed_bad" ``every_even_colour (sptree$fromAList [(0, 0); (1, 50); (2, 1); (3, 900); (8, 5); (9, 1000)]) = F``;
+val _ = out "even_colour_virtual_large" ``every_even_colour (sptree$fromAList [(999999999999999999999, 0)]) = T``;
+val _ = out "even_colour_physical_large" ``every_even_colour (sptree$fromAList [(18446744073709551616, 9223372036854775808)]) = T``;
+val _ = out "even_colour_physical_large_bad" ``every_even_colour (sptree$fromAList [(18446744073709551616, 9223372036854775809)]) = F``;
+val _ = out "even_colour_duplicate_first_good" ``every_even_colour (sptree$fromAList [(2, 1); (2, 9)]) = T``;
+val _ = out "even_colour_duplicate_first_bad" ``every_even_colour (sptree$fromAList [(2, 9); (2, 1)]) = F``;
+val _ = out "even_colour_duplicate_virtual" ``every_even_colour (sptree$fromAList [(3, 100); (3, 0)]) = T``;
+val _ = out "even_colour_no_zero" ``every_even_colour (sptree$fromAList [(6, 3); (10, 5); (14, 7)]) = T``;
+val _ = out "even_colour_last_bad" ``every_even_colour (sptree$fromAList [(6, 3); (10, 5); (14, 8)]) = F``;
+val _ = out "even_colour_empty_internal" ``every_even_colour (BN LN LN) = T``;
+val _ = out "even_colour_physical_root_bad" ``every_even_colour (BS LN 7 LN) = F``;
+val _ = out "even_colour_virtual_left" ``every_even_colour (BN LN (LS 89)) = T``;
+val _ = out "even_colour_physical_right_bad" ``every_even_colour (BN (LS 89) LN) = F``;
