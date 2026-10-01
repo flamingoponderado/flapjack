@@ -39669,5 +39669,161 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.27): HOL Resume evaluate_apply_colour[Alloc] case of word_allocProofScript.sml:1105-1130, i.e. the HOL theorem at Alloc n names: same binders st cst f live lt, the three HOL premises and the HOL existential conclusion (applyColourPost), no IH (no sub-program) and no extra premise. Proof follows the HOL case: cut_envs_lemma for the restriction, push_env_s_val_eq to choose the source permute oracle, gc_s_val_eq_gen, s_key_eq_val_eq_pop_env and push_env_pop_env_s_key_eq for the popped frames, ALOOKUP_key_remap_INJ for the locals, s_val_and_key_eq for the stack; untagged helper allocSim/allocLocalsRel factor that argument. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "s_val_eq_APPEND",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackLists.lean",
+    "lean_name": "sValEqAppend",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.1) against wordPropsScript.sml s_val_eq_APPEND: same quantified variables, premises and conclusion over the reviewed s_val_eq/s_key_eq definitions, the HOL LASTN rendering wordSemLastN (REVERSE (TAKE n (REVERSE xs))) and the stack_size rendering wordSemStackSize; HOL lists as Lean lists. Positive BitVec width is the only carrier translation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "s_val_eq_REVERSE",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackLists.lean",
+    "lean_name": "sValEqReverse",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.1) against wordPropsScript.sml s_val_eq_REVERSE: same quantified variables, premises and conclusion over the reviewed s_val_eq/s_key_eq definitions, the HOL LASTN rendering wordSemLastN (REVERSE (TAKE n (REVERSE xs))) and the stack_size rendering wordSemStackSize; HOL lists as Lean lists. Positive BitVec width is the only carrier translation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "s_val_eq_TAKE",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackLists.lean",
+    "lean_name": "sValEqTake",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.1) against wordPropsScript.sml s_val_eq_TAKE: same quantified variables, premises and conclusion over the reviewed s_val_eq/s_key_eq definitions, the HOL LASTN rendering wordSemLastN (REVERSE (TAKE n (REVERSE xs))) and the stack_size rendering wordSemStackSize; HOL lists as Lean lists. Positive BitVec width is the only carrier translation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "s_val_eq_LASTN",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackLists.lean",
+    "lean_name": "sValEqLastN",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.1) against wordPropsScript.sml s_val_eq_LASTN: same quantified variables, premises and conclusion over the reviewed s_val_eq/s_key_eq definitions, the HOL LASTN rendering wordSemLastN (REVERSE (TAKE n (REVERSE xs))) and the stack_size rendering wordSemStackSize; HOL lists as Lean lists. Positive BitVec width is the only carrier translation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "s_key_eq_APPEND",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackLists.lean",
+    "lean_name": "sKeyEqAppend",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.1) against wordPropsScript.sml s_key_eq_APPEND: same quantified variables, premises and conclusion over the reviewed s_val_eq/s_key_eq definitions, the HOL LASTN rendering wordSemLastN (REVERSE (TAKE n (REVERSE xs))) and the stack_size rendering wordSemStackSize; HOL lists as Lean lists. Positive BitVec width is the only carrier translation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "s_key_eq_REVERSE",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackLists.lean",
+    "lean_name": "sKeyEqReverse",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.1) against wordPropsScript.sml s_key_eq_REVERSE: same quantified variables, premises and conclusion over the reviewed s_val_eq/s_key_eq definitions, the HOL LASTN rendering wordSemLastN (REVERSE (TAKE n (REVERSE xs))) and the stack_size rendering wordSemStackSize; HOL lists as Lean lists. Positive BitVec width is the only carrier translation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "s_key_eq_TAKE",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackLists.lean",
+    "lean_name": "sKeyEqTake",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.1) against wordPropsScript.sml s_key_eq_TAKE: same quantified variables, premises and conclusion over the reviewed s_val_eq/s_key_eq definitions, the HOL LASTN rendering wordSemLastN (REVERSE (TAKE n (REVERSE xs))) and the stack_size rendering wordSemStackSize; HOL lists as Lean lists. Positive BitVec width is the only carrier translation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "s_key_eq_LASTN",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackLists.lean",
+    "lean_name": "sKeyEqLastN",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.1) against wordPropsScript.sml s_key_eq_LASTN: same quantified variables, premises and conclusion over the reviewed s_val_eq/s_key_eq definitions, the HOL LASTN rendering wordSemLastN (REVERSE (TAKE n (REVERSE xs))) and the stack_size rendering wordSemStackSize; HOL lists as Lean lists. Positive BitVec width is the only carrier translation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "s_key_eq_tail",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackLists.lean",
+    "lean_name": "sKeyEqTail",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.1) against wordPropsScript.sml s_key_eq_tail: same quantified variables, premises and conclusion over the reviewed s_val_eq/s_key_eq definitions, the HOL LASTN rendering wordSemLastN (REVERSE (TAKE n (REVERSE xs))) and the stack_size rendering wordSemStackSize; HOL lists as Lean lists. Positive BitVec width is the only carrier translation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "s_val_eq_tail",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackLists.lean",
+    "lean_name": "sValEqTail",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.1) against wordPropsScript.sml s_val_eq_tail: same quantified variables, premises and conclusion over the reviewed s_val_eq/s_key_eq definitions, the HOL LASTN rendering wordSemLastN (REVERSE (TAKE n (REVERSE xs))) and the stack_size rendering wordSemStackSize; HOL lists as Lean lists. Positive BitVec width is the only carrier translation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "s_key_eq_LASTN_exists",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackLists.lean",
+    "lean_name": "sKeyEqLastNExists",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.1) against wordPropsScript.sml s_key_eq_LASTN_exists: same quantified variables, premises and conclusion over the reviewed s_val_eq/s_key_eq definitions, the HOL LASTN rendering wordSemLastN (REVERSE (TAKE n (REVERSE xs))) and the stack_size rendering wordSemStackSize; HOL lists as Lean lists. Positive BitVec width is the only carrier translation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "s_val_eq_LASTN_exists",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackLists.lean",
+    "lean_name": "sValEqLastNExists",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.1) against wordPropsScript.sml s_val_eq_LASTN_exists: same quantified variables, premises and conclusion over the reviewed s_val_eq/s_key_eq definitions, the HOL LASTN rendering wordSemLastN (REVERSE (TAKE n (REVERSE xs))) and the stack_size rendering wordSemStackSize; HOL lists as Lean lists. Positive BitVec width is the only carrier translation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "LASTN_LENGTH_cond",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackLists.lean",
+    "lean_name": "lastNLengthCond",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.1) against wordPropsScript.sml LASTN_LENGTH_cond: same quantified variables, premises and conclusion over the reviewed s_val_eq/s_key_eq definitions, the HOL LASTN rendering wordSemLastN (REVERSE (TAKE n (REVERSE xs))) and the stack_size rendering wordSemStackSize; HOL lists as Lean lists."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "s_val_eq_stack_size",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackLists.lean",
+    "lean_name": "sValEqStackSize",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.1) against wordPropsScript.sml s_val_eq_stack_size: same quantified variables, premises and conclusion over the reviewed s_val_eq/s_key_eq definitions, the HOL LASTN rendering wordSemLastN (REVERSE (TAKE n (REVERSE xs))) and the stack_size rendering wordSemStackSize; HOL lists as Lean lists. Positive BitVec width is the only carrier translation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "s_key_eq_stack_size",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackLists.lean",
+    "lean_name": "sKeyEqStackSize",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.1) against wordPropsScript.sml s_key_eq_stack_size: same quantified variables, premises and conclusion over the reviewed s_val_eq/s_key_eq definitions, the HOL LASTN rendering wordSemLastN (REVERSE (TAKE n (REVERSE xs))) and the stack_size rendering wordSemStackSize; HOL lists as Lean lists. Positive BitVec width is the only carrier translation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "s_val_append_eq_stack_size",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackLists.lean",
+    "lean_name": "sValAppendEqStackSize",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.1) against wordPropsScript.sml s_val_append_eq_stack_size: same quantified variables, premises and conclusion over the reviewed s_val_eq/s_key_eq definitions, the HOL LASTN rendering wordSemLastN (REVERSE (TAKE n (REVERSE xs))) and the stack_size rendering wordSemStackSize; HOL lists as Lean lists. Positive BitVec width is the only carrier translation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "handler_eq",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackLists.lean",
+    "lean_name": "handlerEq",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.1) against wordPropsScript.sml:2275-2279 handler_eq: x with handler := x.handler = x over the exact WordSem state; free x as explicit binder. WordSem finite-map fields via fmap_as_finite_support and positive width are the only carrier translations."
   }
 ]
