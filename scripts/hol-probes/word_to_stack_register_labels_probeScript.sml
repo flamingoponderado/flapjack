@@ -1,0 +1,11 @@
+load "preamble";
+load "word_to_stackTheory";
+load "stackPropsTheory";
+open bossLib HolKernel Parse preamble word_to_stackTheory stackPropsTheory;
+fun out label q = (print (label ^ "="); print_term (rconc (EVAL q)); print "\n");
+val _ = out "wr_physical" ``(get_code_labels(wRegWrite1 (\r. (Skip:64 stackLang$prog)) 2 (4,9,8)) = {},get_code_labels(wRegWrite2 (\r. (Skip:64 stackLang$prog)) 2 (4,9,8)) = {})``;
+val _ = out "wr_boundary" ``(get_code_labels(wRegWrite1 (\r. (StackStore r 0:64 stackLang$prog)) 8 (4,9,8)) = {},get_code_labels(wRegWrite2 (\r. (StackStore r 0:64 stackLang$prog)) 8 (4,9,8)) = {})``;
+val _ = out "wr_spilled" ``(get_code_labels(wRegWrite1 (\r. (Seq Skip (StackLoad r 1):64 stackLang$prog)) 20 (4,2,0)) = {},get_code_labels(wRegWrite2 (\r. (Seq Skip (StackLoad r 1):64 stackLang$prog)) 20 (4,2,0)) = {})``;
+val _ = out "wr_zero" ``(get_code_labels(wRegWrite1 (\r. (Skip:64 stackLang$prog)) 0 (0,0,0)) = {},get_code_labels(wRegWrite2 (\r. (Skip:64 stackLang$prog)) 0 (0,0,0)) = {})``;
+val _ = out "wr_large" ``(get_code_labels(wRegWrite1 (\r. (Skip:64 stackLang$prog)) 1208925819614629174706176 (4,2,38685626227668133590597632)) = {},get_code_labels(wRegWrite2 (\r. (Skip:64 stackLang$prog)) 1208925819614629174706176 (4,2,38685626227668133590597632)) = {})``;
+val _ = out "wr_labelled" ``((7,3) IN get_code_labels(wRegWrite1 (\r. (LocValue 0 7 3:64 stackLang$prog)) 20 (4,0,0)),(7,3) IN get_code_labels(wRegWrite2 (\r. (LocValue 0 7 3:64 stackLang$prog)) 20 (4,0,0)))``;
