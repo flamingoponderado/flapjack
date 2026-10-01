@@ -1,5 +1,5 @@
 {
-  "lean_toolchain": "leanprover/lean4:v4.33.1",
+  "lean_toolchain": "leanprover/lean4:v4.33.0",
   "records": [
     {"lean_path":"Flapjack/AstHOL.lean","lean_name":"Opb","lean_full_name":"Flapjack.Opb","hol_path":"cakeml/semantics/astScript.sml","hol_name":"opb","sha256":"b4611575b2b62eb57ff8b514cf96bf01666158b035ac2fcc89065136260d1e05"},
     {"lean_path":"Flapjack/AstHOL.lean","lean_name":"Shift","lean_full_name":"Flapjack.Shift","hol_path":"cakeml/semantics/astScript.sml","hol_name":"shift","sha256":"b4611575b2b62eb57ff8b514cf96bf01666158b035ac2fcc89065136260d1e05"},
