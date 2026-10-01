@@ -1,4 +1,11 @@
+import Flapjack.Test.WordAllocTotalColourParity
+import Flapjack.Test.ParmoveSourceWrapperParity
+import Flapjack.Test.WordToStackNativeConfigParity
+import Flapjack.Test.ParmoveDStepsParity
 import Flapjack.Test.ParmoveDStepStepParity
+
+import Flapjack.Test.WordToStackCompileKeysParity
+import Flapjack.Test.ParmoveDstepsClosureParity
 import Flapjack.Test.ParmoveSplitSourceParity
 import Flapjack.Test.ParmoveStepsCorrectParity
 
