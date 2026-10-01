@@ -1,0 +1,8 @@
+copy_carry=T
+copy_load16=T
+copy_store16=T
+copy_seq_alias=T
+copy_if=T
+copy_loop=T
+copy_must=T
+copy_both=T

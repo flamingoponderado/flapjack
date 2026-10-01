@@ -1,5 +1,5 @@
 import Flapjack.Translator.Monadic.MonadBase.Arrays
-import Flapjack.Compiler.Backend.RegAlloc.StExMap
+import Flapjack.Compiler.Backend.RegAlloc.StateMap
 namespace Flapjack.Test.MonadArraysParity
 open Translator.Monadic.MonadBase RegAlloc
 -- Replay of the eleven original monad_arrays_probe rows (HOL `FST` getter and
@@ -7,10 +7,10 @@ open Translator.Monadic.MonadBase RegAlloc
 abbrev St := List Nat × Bool
 def getA : St → List Nat := Prod.fst
 def setA (a : List Nat) (s : St) : St := (a, s.2)
-example : msub (0 : Nat) 1 [5, 6, 7] = .success 6 := by decide +kernel
-example : msub (0 : Nat) 3 [5, 6, 7] = .failure 0 := by decide +kernel
-example : mupdate (0 : Nat) 9 1 [5, 6, 7] = .success [5, 9, 7] := by decide +kernel
-example : mupdate (0 : Nat) 9 3 [5, 6, 7] = .failure 0 := by decide +kernel
+example : mSub (0 : Nat) 1 [5, 6, 7] = .success 6 := by decide +kernel
+example : mSub (0 : Nat) 3 [5, 6, 7] = .failure 0 := by decide +kernel
+example : mUpdate (0 : Nat) 9 1 [5, 6, 7] = .success [5, 9, 7] := by decide +kernel
+example : mUpdate (0 : Nat) 9 3 [5, 6, 7] = .failure 0 := by decide +kernel
 example : (arrayLength (exception := Nat) getA ([1, 2], true)) = (.success 2, ([1, 2], true)) :=
   rfl
 example : arraySub getA (0 : Nat) 1 ([1, 2], true) = (.success 2, ([1, 2], true)) := by

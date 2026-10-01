@@ -1,0 +1,13 @@
+load "bossLib"; load "preamble"; load "parmoveTheory";
+open bossLib HolKernel Parse preamble parmoveTheory;
+fun observe label term = let val th = EVAL term in print (label ^ "="); print_term (rhs (concl th)); print "\n" end;
+observe "pms_empty" ``map_state (\x:num. x+1) ([],[],[]) = ([],[],[])``;
+observe "pms_pending" ``map_state (\x:num. x+1) ([(1,2)],[],[]) = ([(2,3)],[],[])``;
+observe "pms_active" ``map_state (\x:num. x+1) ([],[(3,4)],[]) = ([],[(4,5)],[])``;
+observe "pms_emitted" ``map_state (\x:num. x+1) ([],[],[(5,6)]) = ([],[],[(6,7)])``;
+observe "pms_order" ``map_state (\x:num. x+1) ([(1,2);(3,4)],[(5,6)],[(7,8);(9,10)]) = ([(2,3);(4,5)],[(6,7)],[(8,9);(10,11)])``;
+observe "pms_constant" ``map_state (\x:num. 0) ([(1,2)],[(3,4)],[(5,6)]) = ([(0,0)],[(0,0)],[(0,0)])``;
+observe "pms_large" ``map_state (\x:num. x+1) ([(18446744073709551616,18446744073709551617)],[],[]) = ([(18446744073709551617,18446744073709551618)],[],[])``;
+observe "pms_bool" ``map_state (\x:bool. ~x) ([(T,F)],[(F,F)],[(T,T)]) = ([(F,T)],[(T,T)],[(F,F)])``;
+observe "pms_cross_carrier" ``map_state (\x:num. x=0) ([(0,1)],[(2,0)],[(0,0)]) = ([(T,F)],[(F,T)],[(T,T)])``;
+observe "pms_option_constant" ``map_state (\x:num option. SOME 7) ([(NONE,SOME 1)],[],[(SOME 2,NONE)]) = ([(SOME 7,SOME 7)],[],[(SOME 7,SOME 7)])``;

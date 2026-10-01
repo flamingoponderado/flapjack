@@ -2559,6 +2559,38 @@ unbounded names/counters and widths 1/64/128. These finite observations do not
 establish general cross-prover equivalence or production allocator routing.
 Regenerate read-only with
 `HOL_PROBE_ONLY=word_alloc_heu_prog_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`word_to_stack_instruction_maximum_probe` captures fourteen original integer instruction maxima, including immediate/register arithmetic, all arithmetic production constructors with a HOL counterpart, offset-bearing memory and a register name above 2^80. The final two rows expose the zero HOL maximum for Load16/Store16; kernel fixtures verify their existing allocator-guard rejection. The distinct five-register AddCarry has no HOL counterpart and its codec rejection is tested separately. Full arithmetic Option-map equality assumes no codec success, and supported instruction correspondence uses the existing real memory guard. Full program codec closure and executed native routing remain dependency-linked work.
+
+`word_alloc_canonize_sort_probe.out` captures seventeen fresh original mllist
+sort observations on the exact inline x/y/priority comparator, replayed by
+`CanonizeSortParity`. Empty/base/recursive sizes, duplicates, coordinate
+precedence, unnormalized reversed pairs and unbounded names/priorities are
+covered. This reuses the existing native MlList sorter; it neither expands
+external-source checker trust nor completes normalization/grouping or executed
+allocator routing. Source revision/span digest are beside `canonizeMoveLess`.
+Regenerate read-only with
+`HOL_PROBE_ONLY=word_alloc_canonize_sort_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`monad_list_primitives_probe.out` captures twenty-five fresh original Msub,
+Mupdate and failure-bound observations, replayed by `MonadListPrimitivesParity`
+in the kernel. Head/middle/last/empty/boundary/large indices, duplicates and
+independent Nat/Bool/tuple value/exception carriers are covered. Generic theorem
+applications retain only the original out-of-range premise. Finite observations
+do not establish cross-prover equivalence or completion of successful EL/LUPDATE
+equations, state-array accessors or production allocator routing. Regenerate
+read-only with
+`HOL_PROBE_ONLY=monad_list_primitives_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`reg_alloc_state_map_probe.out` captures the original polymorphic st_ex_MAP
+type and nineteen fresh result/state equations, replayed by
+`RegAllocStateMapParity` in the kernel. Independent input/state/result/exception
+carriers, effect order, every failure position, failure-returned state,
+state-dependent failure and empty callbacks are covered. The source type is
+recorded as an observation; no genericity is inferred from specialized rows
+alone. Finite observations do not establish cross-prover equivalence or
+completion of generated allocator functions or production routing. Regenerate
+read-only with
+`HOL_PROBE_ONLY=reg_alloc_state_map_probeScript.sml scripts/hol-probes/regenerate.sh`.
 `word_alloc_canonize_moves_aux_probeScript.sml` / `.out` compares the literal
 counting recursion at word_allocScript1641-1648 against twelve full output
 lists: empty/current zero count, arbitrary accumulator, priority up/down/equal,
@@ -2580,6 +2612,13 @@ cycle save, prior-written scratch reads/save, and Boolean registers. Matching
 `Flapjack/Test/ParmoveTempStepParity.lean` checks source wf/safety and derives
 target safety via the actual Step constructor and full ported theorem.
 RTC/pmov and full Move correctness remain separate open obligations.
+
+`monad_array_length_probe.out` captures five fresh original Marray_length
+equations, kernel replayed in `MonadArrayLengthParity`: empty/duplicate lists,
+Bool/list states, Bool values and a large Nat state. Generic pointwise equation
+is separately kernel checked. Finite observations do not establish
+cross-assistant equivalence or production allocator routing. Regenerate with
+`HOL_PROBE_ONLY=monad_array_length_probeScript.sml scripts/hol-probes/regenerate.sh`.
 `word_to_stack_instruction_maximum_probe` captures fourteen original integer instruction maxima, including immediate/register arithmetic, all arithmetic production constructors with a HOL counterpart, offset-bearing memory and a register name above 2^80. The final two rows expose the zero HOL maximum for Load16/Store16; kernel fixtures verify their existing allocator-guard rejection. The distinct five-register AddCarry has no HOL counterpart and its codec rejection is tested separately. Full arithmetic Option-map equality assumes no codec success, and supported instruction correspondence uses the existing real memory guard. Full program codec closure and executed native routing remain dependency-linked work.
 
 `word_alloc_canonize_sort_probe.out` captures seventeen fresh original mllist
@@ -2591,3 +2630,32 @@ external-source checker trust nor completes normalization/grouping or executed
 allocator routing. Source revision/span digest are beside `canonizeMoveLess`.
 Regenerate read-only with
 `HOL_PROBE_ONLY=word_alloc_canonize_sort_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`word_alloc_canonize_moves_probe.out` contains nineteen fresh original full
+canonize_moves equations, kernel replayed by `CanonizeMovesParity`. They cover
+normalization, strict sorting, maximum priorities, group counts and reverse
+group order, including self moves, duplicate orientations, zeros and large
+natural numbers. Finite observations do not prove cross-assistant equivalence
+or executed allocator routing. Regenerate with
+`HOL_PROBE_ONLY=word_alloc_canonize_moves_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`word_copy_codec_domain_probe` records eight original copy equations;
+`WordCopyCodecDomainParity.lean` replays them and separately checks nested
+five-register AddCarry rejection. Codec-domain preservation is Flapjack
+infrastructure, not a HOL semantic equivalence theorem.
+
+`parmove_all_distinct_step_probe`, `parmove_state_to_list_probe`, and
+`parmove_temp_steps_probe` capture original observations replayed by the
+corresponding Lean parity modules. They cover primitive real-destination
+distinctness, generic three-list flattening, and RTC scratch safety respectively.
+`parmove_preservation_shape_probe` records the original preservation and
+renaming statements/types as an audit aid, not a port or equivalence proof.
+Its capture omits blank separator lines between printed HOL clauses.
+
+`parmove_map_state_probe` captures ten original equations for mapping both
+endpoints through all three lists, including independent Nat-to-Bool carriers
+and noninjective maps. `ParmoveMapStateParity` replays the same inputs in Lean;
+the finite fixtures do not prove cross-assistant equivalence.
+
+`reg_alloc_sorted_mem_probe` captures twelve original early-stop membership
+equations, including unsorted inputs. `RegAllocSortedMemParity` kernel-replays
+the same cases and the executed wrapper's equation for arbitrary keys/lists.

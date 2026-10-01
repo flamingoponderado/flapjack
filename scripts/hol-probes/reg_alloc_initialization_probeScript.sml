@@ -1,0 +1,17 @@
+load "bossLib"; load "preamble"; load "reg_allocTheory";
+open HolKernel Parse bossLib preamble reg_allocTheory;
+fun out label q = (print(label ^ "="); print_term(rconc(EVAL q)); print "\n");
+val seed = ``(<| adj_ls := (2,[7;9]); node_tag := (1,Atemp);
+ degrees := (3,5); dim := 99; simp_wl := [1]; spill_wl := [2];
+ freeze_wl := [3]; avail_moves_wl := [(8,(1,2))];
+ unavail_moves_wl := [(6,(4,5))]; coalesced := (4,8);
+ move_related := (5,T); stack := [9;8] |> : ira_state)``;
+val _ = out "ira_adj" ``run_ira_state (\s. ((M_success(s.adj_ls = [[7;9];[7;9]])):(bool,num)exc,s)) ^seed = M_success T``;
+val _ = out "ira_tag" ``run_ira_state (\s. ((M_success(s.node_tag = [Atemp])):(bool,num)exc,s)) ^seed = M_success T``;
+val _ = out "ira_degrees" ``run_ira_state (\s. ((M_success(s.degrees = [5;5;5])):(bool,num)exc,s)) ^seed = M_success T``;
+val _ = out "ira_coalesced" ``run_ira_state (\s. ((M_success(s.coalesced = [8;8;8;8])):(bool,num)exc,s)) ^seed = M_success T``;
+val _ = out "ira_move_related" ``run_ira_state (\s. ((M_success(s.move_related = [T;T;T;T;T])):(bool,num)exc,s)) ^seed = M_success T``;
+val _ = out "ira_preserved" ``run_ira_state (\s. ((M_success(s.dim = 99 /\ s.simp_wl = [1] /\ s.spill_wl = [2] /\ s.freeze_wl = [3] /\ s.avail_moves_wl = [(8,(1,2))] /\ s.unavail_moves_wl = [(6,(4,5))] /\ s.stack = [9;8])):(bool,num)exc,s)) ^seed = M_success T``;
+val _ = out "ira_failure" ``run_ira_state (\s. ((M_failure 23):(bool,num)exc,s with dim := 123)) ^seed = M_failure 23``;
+val zero = ``^seed with <|adj_ls := (0,[7;9]); node_tag := (0,Stemp); degrees := (0,5); coalesced := (0,8); move_related := (0,T)|>``;
+val _ = out "ira_zero" ``run_ira_state (\s. ((M_success(s.adj_ls = [] /\ s.node_tag = [] /\ s.degrees = [] /\ s.coalesced = [] /\ s.move_related = [] /\ s.dim = 99)):(bool,num)exc,s)) ^zero = M_success T``;

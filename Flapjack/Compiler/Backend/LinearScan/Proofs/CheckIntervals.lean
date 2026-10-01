@@ -208,7 +208,7 @@ theorem checkIntervalsCheckLiveTree :
     intro r v hv; simp [sptLookup] at hv
   have emp : ∀ r, ¬ sptDomain (Spt.ln : NumSet) r := by intro r; simp [sptDomain, sptLookup]
   have hsl := getIntervalsCheckStartliveProp _ _ _ _ _ _ _ ⟨h, hnone⟩
-  have hP := getIntervalsBegLessLive lt .ln _ _ _ h
+  have hP := getIntervalsBegLessLive lt () _ _ _ h
   have hQ := getIntervalsLiveLessEnd _ _ _ _ .ln _ _ _ ⟨h, fun r hr => absurd hr (emp r)⟩
   have hR := checkNumberPropertySubsetEndout _ _ _ _ .ln _ _ _ ⟨h, fun x hx => absurd hx (emp x)⟩
   obtain ⟨db, de⟩ := getIntervalsDomainEqLiveTreeRegisters lt _ _ _ h

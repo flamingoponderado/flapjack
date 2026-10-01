@@ -28,7 +28,7 @@ private theorem subEqn {value : Type} [Nonempty value] (get : LinearScanHiddenSt
   unfold arraySub
   split
   · rename_i h; rw [msubEq _ _ _ h, holEl_eq_getElem n _ h]
-  · rename_i h; rw [msubExnEq _ _ _ (by omega)]
+  · rename_i h; rw [mSubExnEq _ _ _ (by omega)]
 
 private theorem updateEqn {value : Type} (get : LinearScanHiddenState → List value)
     (set : List value → LinearScanHiddenState → LinearScanHiddenState)
@@ -38,7 +38,7 @@ private theorem updateEqn {value : Type} (get : LinearScanHiddenState → List v
       else (.failure .Subscript, s) := by
   by_cases h : n < (get s).length
   · rw [if_pos h]; unfold arrayUpdate; rw [mupdateEq _ _ _ _ h]
-  · rw [if_neg h]; unfold arrayUpdate; rw [mupdateExnEq _ _ _ _ (by omega)]
+  · rw [if_neg h]; unfold arrayUpdate; rw [mUpdateExnEq _ _ _ _ (by omega)]
 
 /-- HOL `colors_sub_eqn` (`linear_scanProofScript.sml:2020-2029`).
 

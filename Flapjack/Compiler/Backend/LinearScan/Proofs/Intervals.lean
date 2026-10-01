@@ -1045,12 +1045,13 @@ theorem getIntervalsEndIncrease :
       rw [hv']; rfl
 
 /-- Exact HOL `get_intervals_intbeg_reduce` (`linear_scanProofScript.sml:1646-1692`);
-HOL's unused binder `live` is retained. -/
+HOL's unused binder `live` is retained at
+HOL's polymorphic type. -/
 @[hol "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml"
   "get_intervals_intbeg_reduce"]
-theorem getIntervalsIntbegReduce :
+theorem getIntervalsIntbegReduce {β : Type} :
     ∀ (lt : LiveTree) (n_in : Int) (beg_in end_in : Spt Int) (n_out : Int)
-      (beg_out end_out : Spt Int) (_live : NumSet),
+      (beg_out end_out : Spt Int) (_live : β),
       (n_out, beg_out, end_out) = getIntervals lt n_in beg_in end_in ∧
       (∀ r v, sptLookup r beg_in = some v → n_in ≤ v) →
       (∀ r, (sptLookup r beg_out).elim n_out (fun x => x) ≤
@@ -1194,9 +1195,9 @@ theorem getIntervalsCheckStartliveProp :
         | obtain ⟨n2, b2, e2, h2, h1⟩ := getIntervalsBranch lt1 lt2 _ _ _ _ _ _ h
         | obtain ⟨n2, b2, e2, h2, h1⟩ := getIntervalsSeq lt1 lt2 _ _ _ _ _ _ h
       have c2 := ih2 _ _ _ _ _ _ ⟨h2, hb⟩
-      have v2 := (getIntervalsIntbegReduce lt2 _ _ _ _ _ _ .ln ⟨h2, hb⟩).2
+      have v2 := (getIntervalsIntbegReduce lt2 _ _ _ _ _ _ () ⟨h2, hb⟩).2
       have c1 := ih1 _ _ _ _ _ _ ⟨h1, v2⟩
-      have hred := (getIntervalsIntbegReduce lt1 _ _ _ _ _ _ .ln ⟨h1, v2⟩).1
+      have hred := (getIntervalsIntbegReduce lt1 _ _ _ _ _ _ () ⟨h1, v2⟩).1
       have haug := getIntervalsIntendAugment lt1 _ _ _ _ _ _ h1
       have hn2 := getIntervalsNout lt2 _ _ _ _ _ _ h2
       refine ⟨?_, checkStartlivePropMonotone lt2 _ _ _ _ _ _ _ ⟨hred, haug, c2⟩⟩
@@ -1566,11 +1567,12 @@ theorem checkNumberPropertySubsetEndout :
           exact ⟨by rw [← hn2]; exact c1, c2'⟩
 
 /-- Exact HOL `get_intervals_beg_less_live` (`linear_scanProofScript.sml:1622-1644`);
-HOL's unused binder `live_in` is retained. -/
+HOL's unused binder `live_in` is retained at
+HOL's polymorphic type. -/
 @[hol "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml"
   "get_intervals_beg_less_live"]
-theorem getIntervalsBegLessLive :
-    ∀ (lt : LiveTree) (_live_in : NumSet) (n_out : Int) (beg_out end_out : Spt Int),
+theorem getIntervalsBegLessLive {β : Type} :
+    ∀ (lt : LiveTree) (_live_in : β) (n_out : Int) (beg_out end_out : Spt Int),
       (n_out, beg_out, end_out) = getIntervals (fixDomination lt) 0 .ln .ln →
       checkNumberPropertyStrong (fun n (live : NumSet) => ∀ r, sptDomain live r →
         (sptLookup r beg_out).elim n_out (fun x => x) ≤ n) (fixDomination lt) 0 .ln := by

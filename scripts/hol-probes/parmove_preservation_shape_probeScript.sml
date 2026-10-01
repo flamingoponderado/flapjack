@@ -1,0 +1,32 @@
+load "bossLib"; load "preamble"; load "parmoveTheory";
+open HolKernel Parse parmoveTheory;
+(* Original kernel theorem statements only: this is a source-shape audit,
+   not a claim that an absent Lean theorem has been ported. *)
+fun capture label th = (print (label ^ "="); print_term (concl th); print "\n");
+val _ = capture "pm_audit_not_use_temp_before_assign_append" parmoveTheory.not_use_temp_before_assign_append;
+val _ = capture "pm_audit_not_use_temp_before_assign_insert" parmoveTheory.not_use_temp_before_assign_insert;
+val _ = capture "pm_audit_not_use_temp_before_assign_thm" parmoveTheory.not_use_temp_before_assign_thm;
+val _ = capture "pm_audit_step_not_use_temp_before_assign" parmoveTheory.step_not_use_temp_before_assign;
+val _ = capture "pm_audit_steps_not_use_temp_before_assign" parmoveTheory.steps_not_use_temp_before_assign;
+val _ = capture "pm_audit_pmov_not_use_temp_before_assign" parmoveTheory.pmov_not_use_temp_before_assign;
+val _ = capture "pm_audit_parmove_not_use_temp_before_assign" parmoveTheory.parmove_not_use_temp_before_assign;
+val _ = capture "pm_audit_ALL_DISTINCT_step" parmoveTheory.ALL_DISTINCT_step;
+val _ = capture "pm_audit_ALL_DISTINCT_steps" parmoveTheory.ALL_DISTINCT_steps;
+val _ = capture "pm_audit_ALL_DISTINCT_pmov" parmoveTheory.ALL_DISTINCT_pmov;
+val _ = capture "pm_audit_ALL_DISTINCT_parmove" parmoveTheory.ALL_DISTINCT_parmove;
+val _ = capture "pm_audit_state_to_list_def" parmoveTheory.state_to_list_def;
+val _ = capture "pm_audit_step_preserves_moves" parmoveTheory.step_preserves_moves;
+val _ = capture "pm_audit_steps_preserves_moves" parmoveTheory.steps_preserves_moves;
+val _ = capture "pm_audit_pmov_preserves_moves" parmoveTheory.pmov_preserves_moves;
+val _ = capture "pm_audit_parmove_preserves_moves" parmoveTheory.parmove_preserves_moves;
+val _ = capture "pm_audit_map_state_def" parmoveTheory.map_state_def;
+val _ = capture "pm_audit_inj_on_state_def" parmoveTheory.inj_on_state_def;
+val _ = capture "pm_audit_step_inj_on_state" parmoveTheory.step_inj_on_state;
+val _ = capture "pm_audit_steps_inj_on_state" parmoveTheory.steps_inj_on_state;
+val _ = capture "pm_audit_step_MAP_INJ" parmoveTheory.step_MAP_INJ;
+val _ = capture "pm_audit_fstep_MAP_INJ" parmoveTheory.fstep_MAP_INJ;
+val _ = capture "pm_audit_pmov_MAP_INJ" parmoveTheory.pmov_MAP_INJ;
+val _ = capture "pm_audit_parmove_MAP_INJ" parmoveTheory.parmove_MAP_INJ;
+val _ = (print "pm_audit_type_state_to_list="; print_type (type_of ``parmove$state_to_list``); print "\n");
+val _ = (print "pm_audit_type_map_state="; print_type (type_of ``parmove$map_state``); print "\n");
+val _ = (print "pm_audit_type_inj_on_state="; print_type (type_of ``parmove$inj_on_state``); print "\n");

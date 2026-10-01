@@ -1,0 +1,15 @@
+load "bossLib"; load "preamble"; load "reg_allocTheory";
+open HolKernel Parse bossLib preamble reg_allocTheory;
+fun out label q = (print(label ^ "="); print_term(rconc(EVAL q)); print "\n");
+val _ = out "sorted_mem_empty" ``sorted_mem 0 [] = F``;
+val _ = out "sorted_mem_singleton" ``sorted_mem 4 [4] = T``;
+val _ = out "sorted_mem_above" ``sorted_mem 8 [7;4;2] = F``;
+val _ = out "sorted_mem_middle" ``sorted_mem 4 [7;4;2] = T``;
+val _ = out "sorted_mem_gap" ``sorted_mem 5 [7;4;2] = F``;
+val _ = out "sorted_mem_below" ``sorted_mem 1 [7;4;2] = F``;
+val _ = out "sorted_mem_tail" ``sorted_mem 2 [7;4;2] = T``;
+val _ = out "sorted_mem_duplicate" ``sorted_mem 4 [7;4;4;2] = T``;
+val _ = out "sorted_mem_unsorted_stop" ``sorted_mem 7 [2;7] = F``;
+val _ = out "sorted_mem_unsorted_continue" ``sorted_mem 2 [7;2;9] = T``;
+val _ = out "sorted_mem_zero" ``sorted_mem 0 [2;1;0] = T``;
+val _ = out "sorted_mem_large" ``sorted_mem 1208925819614629174706176 [1208925819614629174706177;1208925819614629174706176] = T``;

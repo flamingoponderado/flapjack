@@ -1,7 +1,7 @@
 import Flapjack.HolRef
 import Flapjack.Compiler.Backend.LinearScan.HiddenState
 import Flapjack.Compiler.Backend.RegAlloc
-import Flapjack.Compiler.Backend.RegAlloc.StExMap
+import Flapjack.Compiler.Backend.RegAlloc.StateMap
 import Flapjack.Misc.MiscThe
 
 /-!
