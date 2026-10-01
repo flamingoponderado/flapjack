@@ -101,6 +101,10 @@ run_probe() {
   done
 }
 
+run_probe stackprops_state_constants_probeScript.sml stackprops_state_constants_probe.out \
+  sc_20 sc_20_types sc_43 sc_43_types sc_49 sc_49_types sc_74 sc_74_types sc_84 sc_84_types sc_90 sc_90_types sc_110 sc_110_types sc_116 sc_116_types sc_125 sc_125_types sc_131 sc_131_types sc_137 sc_137_types sc_144 sc_144_types sc_164 sc_164_types \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
 run_probe stacksem_fp_conversion_types_probeScript.sml stacksem_fp_conversion_types_probe.out \
   fp_inst_type fp_get_type fp_set_type fp_sqrt_type fp_to_int_type fp_from_int_type fp_oracle_type \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
@@ -3650,7 +3654,6 @@ run_probe loop_to_word_program_names_probeScript.sml loop_to_word_program_names_
 run_probe lab_validity_native_probeScript.sml lab_validity_native_probe.out \
   line_ok_asm_skip line_ok_asm_cbw line_ok_label line_ok_labasm_halt line_ok_asm_badreg all_enc_ok_one_ok all_enc_ok_one_bad cbw_to_asm_store8 cbw_to_asm_sharemem sec_ok_one_ok sec_ok_one_bad sec_ok_empty all_enc_ok_two_ok all_enc_ok_empty native_cbw_width1_huge native_shared_width80 native_cbw_definition native_line_definition native_section_definition \
   "$cake_dir/compiler/backend/semantics/labPropsScript.sml" "$cake_dir/compiler/backend/semantics"
-
 run_probe word_to_stack_no_shmemop_tail_probeScript.sml word_to_stack_no_shmemop_tail_probe.out \
   tc_direct0_1 tc_directmany_1 tc_indirect0_1 tc_indirectsmall_1 tc_indirectlarge_1 tc_direct0_32 tc_directmany_32 tc_indirect0_32 tc_indirectsmall_32 tc_indirectlarge_32 tc_direct0_64 tc_directmany_64 tc_indirect0_64 tc_indirectsmall_64 tc_indirectlarge_64 tc_direct0_80 tc_directmany_80 tc_indirect0_80 tc_indirectsmall_80 tc_indirectlarge_80 tc_ignored_safe tc_ignored_shared \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"

@@ -3811,6 +3811,12 @@ ssa_option_lookup_subset_probe.out replays the full original subset-helper proof
 ### Loop-to-Word label threading and handler ownership
 
 `loop_to_word_label_handlers_probeScript.sml` replays all four full literal source proofs: function-label preservation, next-label monotonicity, handler ownership for comp, and per-function ownership for compile_prog. Actual theorem applications use original compiler equalities supplied by EVAL; no extra guard or target evaluation assumption. Complete nested outputs at widths 1/64/80 show return labels, exception labels, both continuations and final counter; the tail case ignores its source handlers. A duplicate-owner compiled list and false-owner sentinel are retained. Matching generic-width kernel fixtures apply the public theorems and check the complete nested output.
+
+`stacksem_fp_conversion_types_probeScript.sml` captures seven original full
+types for the StackSem FP sqrt/conversion case review: `inst`, FP lookup/update,
+three machine-IEEE operations and the generic compile-oracle projection. The
+state parameters and fixed word64 FP register carrier are retained; this is
+source-shape evidence, not a HOL-to-Lean equivalence proof.
 ### Native compiler flat-effect no-shared-memory cases
 
 `word_to_stack_no_shmemop_flat_probeScript.sml` captures fifty-four original
@@ -3866,6 +3872,24 @@ types for the StackSem FP sqrt/conversion case review: `inst`, FP lookup/update,
 three machine-IEEE operations and the generic compile-oracle projection. The
 state parameters and fixed word64 FP register carrier are retained; this is
 source-shape evidence, not a HOL-to-Lean equivalence proof.
+`word_alloc_limit_props_probe.out` freshly re-elaborates the literal complete
+local `limit_var_props` proof, then evaluates twelve complete native program
+maximum/limit/allocation/strict-occurrence tuples. The tuples exactly match
+`WordAllocLimitVarParity.lean`; `WordAllocLimitPropertiesParity.lean` imports
+those kernel fixtures and applies the full public theorem with arbitrary
+positive-width programs and the original limit equality premise. Cases retain
+all residues, widths1/32/64/80, the original ignored Load16 registers, tail Call
+handler exclusion, returning Call body traversal and unbounded Nat registers.
+The qualified tag records only the standard HOL type-indexed word translation.
+
+`word_to_stack_no_shmemop_handlers_probe.out` literally replays all three local
+PushHandler/PopHandler/StackHandlerArgs no-shmemop proofs and captures their
+generic operation types. Sixteen fresh predicate observations cover both perf
+flags, independent unused frame carriers, safe and forbidden continuations,
+widths1/32/64/80, direct/indirect generic destinations and large frame offsets.
+`WordToStackNoShmemopHandlersParity.lean` kernel-replays every observation and
+applies each full theorem at arbitrary original carriers. Pop retains false
+continuations; no range, safety, valid-frame or execution premises are added.
 
 ### Full native tail Call no-shared-memory case
 
@@ -3909,6 +3933,13 @@ group; other constructors and assembly remain separately tracked. These
 regressions do not establish cross-language equivalence or whole compiler correctness.
 Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_handled_probeScript.sml`.
 
+`stackprops_state_constants_probeScript.sml` captures the complete thirteen
+state-operation constant/commutation statements from stackProps20-168 and
+their original free-variable types. It fetches exported HOL theorems; the
+local/overwritten declarations at84/90/110/125 are explicitly re-proved with
+their original statements and proofs. In particular, empty_env_const has
+independently polymorphic x and z states. These are source-shape captures,
+not a claim of HOL-to-Lean equivalence or exported status for local helpers.
 ### Primitive and rejected no-shared-memory compiler cases
 
 `word_to_stack_no_shmemop_primitives_probeScript.sml` captures thirty-two
