@@ -2590,3 +2590,11 @@ renaming statements/types as an audit aid, not a port or equivalence proof.
 Its capture omits blank separator lines between printed HOL clauses.
 
 - `parmove_all_distinct_steps_probeScript.sml`: four full destination predicates for zero-step scratch and start/save states. Lean fixtures additionally certify the RTC trace; HOL observations alone do not establish it.
+`parmove_map_state_probe` captures ten original equations for mapping both
+endpoints through all three lists, including independent Nat-to-Bool carriers
+and noninjective maps. `ParmoveMapStateParity` replays the same inputs in Lean;
+the finite fixtures do not prove cross-assistant equivalence.
+
+`reg_alloc_sorted_mem_probe` captures twelve original early-stop membership
+equations, including unsorted inputs. `RegAllocSortedMemParity` kernel-replays
+the same cases and the executed wrapper's equation for arbitrary keys/lists.
