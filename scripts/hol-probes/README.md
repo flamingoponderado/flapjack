@@ -1920,6 +1920,19 @@ the production route. Regenerate read-only with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_alloc_get_writes_inst_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
+
+`word_alloc_get_writes_probe.out` records seven direct original
+`get_writes_def` observations (word_allocScript.sml1009-1023). Identical
+full-tree inputs/outputs are kernel replayed in
+`Flapjack.Test.WordAllocProgramWritesParity`: duplicate Move destinations,
+StoreConsts insert order, instruction/shared Load16 distinction, shared-store
+fallback, compound Seq fallback, and Install's first destination only.
+These rows are regression evidence; the executed compiler route and allocator
+correctness remain open. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_alloc_get_writes_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
+
 `word_to_stack_stack_size_rel_probe.out` records six original frame-size relation
 observations (absent/present maximum, failed bound, absent local/frame sizes,
 and frame guard) from `word_to_stackProofTheory`. The exact kernel replay is
