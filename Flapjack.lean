@@ -1,3 +1,4 @@
+import Flapjack.SemanticsProps.Implements
 import Flapjack.Pancake.Proofs.PanSimp.SeqAssocExact
 import Flapjack.Pancake.Proofs.PanSimp.WhileBodyExact
 import Flapjack.Pancake.Proofs.PanSimp.SkipSeqExact
