@@ -38949,5 +38949,14 @@
   "hol_name": "EL_index_list2",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead15.3.41: literal projections346/353 and lookup330/338. Polymorphic List and Nat quantifiers match; COUNT_LIST translated List.range, reverse keys plus k; original i<LENGTH xs guards both EL accesses, bounded Lean indexing adds no premise and indexed-list bound derives from lengthIndexList. Same truncated Nat subtraction in both spellings. No unguarded HD/default, word or finite-map carrier difference. Structural induction proves all four; original projection/first/last lookup rows replay in kernel. Full state relation remains separate."
+},
+{
+  "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+  "hol_name": "get_delta_inst_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/ClashTreeInst.lean",
+  "lean_name": "getDeltaInst",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison 2026-10-01, bead flapjack-pxn.18.5.11.4.3.1: word_allocScript.sml:1085-1119 get_delta_inst_def compared clause by clause against getDeltaInst over the exact positive-width HolInst carrier and the literal ClashTree receiver. Skip -> Delta [] []; Const reg w -> Delta [reg] []; Binop/Shift match their reg_imm right operand, Reg r3 -> Delta [r1] [r2;r3] and Imm -> Delta [r1] [r2]; Div r1 r2 r3 -> Delta [r1] [r3;r2]; AddCarry -> Delta [r1;r4] [r4;r3;r2]; AddOverflow/SubOverflow -> Delta [r1;r4] [r3;r2]; LongMul -> Delta [r1;r2] [r4;r3]; LongDiv -> Delta [r1;r2] [r5;r4;r3]; Load/Load32/Load8 -> Delta [r] [a]; Store/Store32/Store8 -> Delta [] [r;a]; FPLess/FPLessEqual/FPEqual -> Delta [r] []; the HOL dimindex(:'a) = 64 tests for FPMovToReg and FPMovFromReg are rendered as width = 64 on the positive-width BitVec width carrier (dimindex(:'a) = width), giving Delta [r1] [] vs Delta [r1;r2] [] and Delta [] [r1] vs Delta [] [r1;r2]; the final HOL catchall Delta [] [] is the Lean _ arm covering FPNeg/FPAdd and other unlisted instructions such as Load16. No quantifier, hypothesis, side condition, or list order differs; the sole carrier translation is HOL 'a word -> BitVec width at [NeZero width]. Twenty-four fresh direct original HOL full-tree equalities (scripts/hol-probes/word_alloc_get_delta_inst_probe.out) are kernel replayed by Flapjack.Test.WordAllocGetDeltaInstParity. Proof-side port; replacing the executed caller remains separate work."
 }
 ]
