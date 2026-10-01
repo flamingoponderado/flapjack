@@ -9,7 +9,7 @@ private def emptySource : List (WordSemStackFrame 8) := []
 private def oneTarget : List (WordLocW 8) := [.word 0]
 
 -- ss_none=T
-example : stackSizeRel 0 none 0 none emptySource [] 0 0 := by
+example : stackSizeRel 0 none 0 none emptySource ([] : List (WordLocW 8)) 0 0 := by
   simp [stackSizeRel, emptySource]
 -- ss_some=T
 example : stackSizeRel 0 (some 0) 1 (some 1) emptySource oneTarget 0 0 := by
