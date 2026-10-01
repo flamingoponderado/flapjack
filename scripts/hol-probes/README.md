@@ -4035,6 +4035,22 @@ Structural size termination retains complete Call tuple equalities. The captured
 exported theorem is not a new literal replay of its original proof. These
 regressions do not prove HOL-to-Lean equivalence or whole compiler semantics.
 Selector: `HOL_PROBE_ONLY=word_to_stack_comp_no_shmemop_probeScript.sml`.
+
+### Generated machine IEEE FP64 source identities
+
+`machine_ieee_fp64_declarations_probeScript.sml` fetches all 47 reviewed FP64
+definitions from the original `machine_ieee` theory and captures their actual
+conclusions. The script invokes `machine_ieeeLib.mk_fp_encoding` at
+`HOL/src/floating-point/machine_ieeeScript.sml:13-16`; its FP64 tuple at line 16
+is `("fp64", 52, 11, SOME "double")`, giving a 64-bit encoding.
+The reference checker accepts these generated definition names only with
+source line 16, and verifies both Script and Lib against the pinned HOL gitlink
+and tracked blobs. Generated theorem names and other formats are outside this
+reviewed expansion. These source identities do not approve a Lean statement,
+real rendering, carrier translation, or choice behavior; review each port
+before tagging it. Regenerate with
+`HOL_PROBE_ONLY=machine_ieee_fp64_declarations_probeScript.sml`.
+
 `ssa_fake_moves_correct_left_probeScript.sml` replays the literal left fake-move simulation and local frame/map prerequisites, capturing the full statement and seven types including independent source/target code and FFI dimensions.
 
 `ssa_fake_moves_correct_right_probeScript.sml` replays the literal right fake-move simulation and its local prerequisites, capturing the full five-conclusion statement and seven inferred types.
@@ -4042,3 +4058,12 @@ Selector: `HOL_PROBE_ONLY=word_to_stack_comp_no_shmemop_probeScript.sml`.
 `ssa_fix_inconsistencies_correct_left_probeScript.sml` replays the literal left reconciliation assembly and its original merge/fake prerequisites; captures the full statement and six types, including identical source/target word/code/FFI dimensions.
 
 `ssa_fix_inconsistencies_correct_right_probeScript.sml` replays the literal right reconciliation assembly and original map-agreement prerequisites, capturing the full returned-left-map result and six inferred types.
+### WordSem partial Word extractors
+
+The final four rows of `word_sem_accessors_probe.out` freshly evaluate the
+specified `theWord (Word w) = w` and `get_word (Word w) = w` clauses at
+widths 1/64 and 32/80 respectively. No Loc result is evaluated or assigned an
+oracle value. The Lean ports retain independent opaque completions indexed by
+width and both Loc fields; their Word equations and Word-guarded agreement
+are kernel checked in `WordSem.Accessors` and `WordSemAccessorsParity`.
+These regressions do not establish a concrete meaning for unspecified Locs.

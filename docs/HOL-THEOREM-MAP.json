@@ -49341,5 +49341,23 @@
     "lean_name": "extractColorationOutput",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-01 (re-tag after bead flapjack-pxn.18.5.15.3.38.1 tagged holEl against the pinned HOL submodule): linear_scanProofScript.sml:5867-5919, sp_inverts both ways and the two EVERY hypotheses; extract_coloration invbij l acc sth = (M_success col, sth), the per-r if MEM (the 0 (lookup r bij)) l case split with EL (the tagged miscThe), and domain col SUBSET domain bij UNION domain acc as ∀ x, sptDomain col x → sptDomain bij x ∨ sptDomain acc x. HOL EL is the exact holEl, int num_map the reviewed Spt Int carrier with sptLookup = lookup, EVERY (\\r. P r) l is ∀ r ∈ l, P r, r IN domain s is sptDomain s r, LENGTH is List.length, record update sth with <|..|> is Lean structure update. Statement compared clause by clause with the source; kernel-checked; no extra premise."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Accessors.lean",
+    "lean_name": "wordSemGetWord",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "get_word_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison (2026-10-02; bead flapjack-h29l.12): original wordSemScript.sml:278-280 specifies only the Word equation, with no Loc clause. Lean returns the original word on Word and an opaque function of both location fields on Loc; no concrete value, equality across locations, or equality with theWord is imposed. This follows accepted HOL HD unspecified-value rendering and ports the partial specification, not a claimed concrete Loc outcome. WordLocW preserves Word and Loc num num; BitVec width with [NeZero width] records words_as_type_indexed_bitvec. Existing Word-guarded accessor/evaluator paths remain independent of the opaque completions; no additional premise or changed error behavior."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Accessors.lean",
+    "lean_name": "wordSemTheWord",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "theWord_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison (2026-10-02; bead flapjack-h29l.12): original wordSemScript.sml:42-44 specifies only the Word equation, with no Loc clause. Lean returns the original word on Word and an opaque function of both location fields on Loc; no concrete value, equality across locations, or equality with get_word is imposed. This follows accepted HOL HD unspecified-value rendering and ports the partial specification, not a claimed concrete Loc outcome. WordLocW preserves Word and Loc num num; BitVec width with [NeZero width] records words_as_type_indexed_bitvec. Existing Word-guarded accessor/evaluator paths remain independent of the opaque completions; no additional premise or changed error behavior."
   }
 ]
