@@ -38494,5 +38494,23 @@
   "hol_name": "adjust_names_def",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead15.3.37: literal index_list319-322 recurses on polymorphic List, uses n+length tail, retains order and fixed starting n; LENGTH_index_list325-329 universally quantifies list and Nat with unconditional identical length equality proved by induction; adjust_names792-794 is Nat division by2. No word/fmap/array carrier difference, extra premise or runtime approximation. Fresh original5rows and kernel replay cover empty/singleton/descending indices/even+odd division. Needed stack_rel_aux815 indexing; full state relation remains separate."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/BitmapAppend.lean",
+  "lean_name": "readBitmapAppendExtra",
+  "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+  "hol_name": "read_bitmap_append_extra",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead15.3.39: literal HOL read_bitmap_append_extra744-755 and full_read_bitmap_append757-766. Same successfuldecode premise and samebits conclusion after appendedbitmap list; all lists/descriptors arbitrary, one sourcepositivewidth BitVec/NeZero, reviewed StackSem.readBitmap/fullReadBitmap at samewidth. Induction follows terminal versus continuationword clauses. Descriptor bound is proved from successfuldecode (emptydrop contradicts reader), not an extra assumption. No changedreader, fuel, totalEL, finite-map or trustqualifier. Fresh original4equations/kernel replay cover terminal/continuation and one-baseddescriptor offsets1/2. Laterabs_stack_bitmaps_prefix andstate/compiler correctness separate."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/BitmapAppend.lean",
+  "lean_name": "fullReadBitmapAppend",
+  "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+  "hol_name": "full_read_bitmap_append",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead15.3.39: literal HOL read_bitmap_append_extra744-755 and full_read_bitmap_append757-766. Same successfuldecode premise and samebits conclusion after appendedbitmap list; all lists/descriptors arbitrary, one sourcepositivewidth BitVec/NeZero, reviewed StackSem.readBitmap/fullReadBitmap at samewidth. Induction follows terminal versus continuationword clauses. Descriptor bound is proved from successfuldecode (emptydrop contradicts reader), not an extra assumption. No changedreader, fuel, totalEL, finite-map or trustqualifier. Fresh original4equations/kernel replay cover terminal/continuation and one-baseddescriptor offsets1/2. Laterabs_stack_bitmaps_prefix andstate/compiler correctness separate."
 }
 ]
