@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.WordToStack.NativeLive
 import Flapjack.Compiler.Backend.WordToStack.NativeStubs
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.InstMemory
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.InstArith
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.InstAssign
 import Flapjack.Compiler.Backend.LabSem.FpUpdates
