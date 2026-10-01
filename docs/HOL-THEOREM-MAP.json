@@ -45316,5 +45316,37 @@
     "lean_name": "firstMatchCol",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.9) against reg_allocScript.sml:994-1003: [] => return NONE; x::xs => node_tag_sub x; Fixed m => if MEM m ks then return (SOME m) else first_match_col ks xs | _ => first_match_col ks xs. HOL do-blocks as accepted bind/ignoreBind/ret; exception type state_exn as in the fresh HOL type_of; reviewed accessors (.10.5.2) and stExForeach."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "raise_Fail_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/ExceptionFunctions.lean",
+    "lean_name": "raiseFail",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.9.2) against reg_allocScript.sml:106 define_monad_exception_functions ``:state_exn`` ``:ra_state`` (ml_monadBaseLib.sml:186-307), fresh HOL print_thm: !e1. raise_Fail e1 = (\\state. (M_failure (Fail e1), state)) at result type 'a; Fail payload as the reviewed StateException HolChar list. Name provenance via the bounded monad_exception_declarations recognizer (.10.5.9.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "raise_Subscript_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/ExceptionFunctions.lean",
+    "lean_name": "raiseSubscript",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.9.2) against reg_allocScript.sml:106 define_monad_exception_functions ``:state_exn`` ``:ra_state`` (ml_monadBaseLib.sml:186-307), fresh HOL print_thm: raise_Subscript = (\\state. (M_failure Subscript, state)) at result type 'a. Name provenance via the bounded monad_exception_declarations recognizer (.10.5.9.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "handle_Fail_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/ExceptionFunctions.lean",
+    "lean_name": "handleFail",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.9.2) against reg_allocScript.sml:106 define_monad_exception_functions ``:state_exn`` ``:ra_state`` (ml_monadBaseLib.sml:186-307), fresh HOL print_thm: !x f. handle_Fail x f = (\\state. case x state of (M_success y, state) => (M_success y, state) | (M_failure (Fail e1), state) => f e1 state | (M_failure Subscript, state) => (M_failure Subscript, state)); the inner state is the one returned by x. Name provenance via the bounded monad_exception_declarations recognizer (.10.5.9.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "handle_Subscript_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/ExceptionFunctions.lean",
+    "lean_name": "handleSubscript",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.9.2) against reg_allocScript.sml:106 define_monad_exception_functions ``:state_exn`` ``:ra_state`` (ml_monadBaseLib.sml:186-307), fresh HOL print_thm: !x f. handle_Subscript x f = (\\state. case x state of (M_success y, state) => (M_success y, state) | (M_failure (Fail e1), state) => (M_failure (Fail e1), state) | (M_failure Subscript, state) => f state). Name provenance via the bounded monad_exception_declarations recognizer (.10.5.9.1)."
   }
 ]
