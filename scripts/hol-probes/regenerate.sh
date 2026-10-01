@@ -3096,3 +3096,7 @@ run_probe monad_list_primitives_probeScript.sml monad_list_primitives_probe.out 
 run_probe monad_array_length_probeScript.sml monad_array_length_probe.out \
   al_type al_empty al_duplicates al_bool_state al_list_state al_bool_values \
   "$cake_dir/translator/monadic/monad_base/ml_monadBaseScript.sml" "$cake_dir/translator/monadic/monad_base"
+
+run_probe word_alloc_canonize_moves_probeScript.sml word_alloc_canonize_moves_probe.out \
+  cm_empty cm_one cm_two cm_three cm_four cm_five cm_odd cm_even cm_dups cm_priority cm_x_first cm_y_second cm_reversed_coords cm_large cm_zeros cm_descending cm_ascending cm_self_moves cm_all_flipped \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"

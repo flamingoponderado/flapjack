@@ -42690,5 +42690,13 @@
     "hol_name": "Marray_length_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.11.1.3): original ml_monadBaseScript.sml200-203. Generic getter state -> List value, independent state/value/exception Type carriers, result M state Nat exception. HOL LENGTH becomes List.length, M_success becomes accepted Exc.success and the entire input state is returned unchanged. No bounds, equality instance, validity, successful callback or fixed allocator state. Same total lambda equation. Five fresh original equations and identical kernel replay cover empty/duplicate lists, independent Bool/list states and Bool values with large Nat state; universal pointwise rfl checks all three carriers. Finite observations are regression evidence, not cross-assistant equivalence. Native analysis primitive only; other array accessors and actual production allocator route stay open. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/CanonizeMoves.lean",
+    "lean_name": "canonizeMoves",
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "canonize_moves_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.3.2.4): complete original1650-1662. Input List (Nat # (Nat # Nat)), result List (Nat # Nat # (Nat # Nat)), fixed original num priorities and endpoint carriers, no hypotheses. Literal MAP flips endpoints precisely when x > y including unchanged equality, then accepted native mllist sort uses strict x/y/priority comparison with original nesting. Empty sorted list yields empty; nonempty (p,m)::xs calls accepted canonizeMovesAux p m 1 xs [], preserving reverse sorted group output, counts and MAX priority. No callback, assumed sorted input, supplied output, fuel, fixed width, equality restriction or filtered self move. Accepted source sorting prerequisite .4.2 and counting .4.1 reused; underlying untagged sorting helpers retain explicit external source audit beside CanonizeSort. Nineteen fresh original complete equations allT and registered kernel replay cover reversed orientations collapsing together, duplicate counts/priorities, self moves, every small-sort branch, long lists, zeros and unbounded numbers. Native analysis definition only; actual executed allocator canonicalization/get_heuristics and compiler correctness remain open. Coordinator review pending."
   }
 ]

@@ -2566,3 +2566,11 @@ external-source checker trust nor completes normalization/grouping or executed
 allocator routing. Source revision/span digest are beside `canonizeMoveLess`.
 Regenerate read-only with
 `HOL_PROBE_ONLY=word_alloc_canonize_sort_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`word_alloc_canonize_moves_probe.out` contains nineteen fresh original full
+canonize_moves equations, kernel replayed by `CanonizeMovesParity`. They cover
+normalization, strict sorting, maximum priorities, group counts and reverse
+group order, including self moves, duplicate orientations, zeros and large
+natural numbers. Finite observations do not prove cross-assistant equivalence
+or executed allocator routing. Regenerate with
+`HOL_PROBE_ONLY=word_alloc_canonize_moves_probeScript.sml scripts/hol-probes/regenerate.sh`.
