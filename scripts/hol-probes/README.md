@@ -1,3 +1,11 @@
+`word_program_max_unrestricted_probe.out` captures eight fresh whole-program
+maximum and limit results across Seq, tail Call handler, returning Call with
+handler, and Loop containing ordinary 16-bit memory. The existing program
+maximum codec theorem now holds without the memory guard. Kernel fixtures check
+all four original maxima/limits, actual codec acceptance and unchanged guard
+rejection; the earlier 32 constructor rows and five-register rejection remain.
+This is carrier correspondence, not an executed native limit route.
+
 `word_max_inst_route_probe.out` records seven fresh original instruction maxima
 and program limits. HOL max_var_inst leaves Mem Load16/Store16 to the zero
 fallback, unlike its explicit Load/Store/Load8/Store8/Load32/Store32 clauses.

@@ -4297,6 +4297,12 @@
       "sha256": "eddfe3223911b99c134bce0503aac0a58e6014907284f9da14744e4057d19479"
     },
     {
+      "bytes": 114,
+      "out": "word_program_max_unrestricted_probe.out",
+      "rows": 8,
+      "sha256": "b258cfa3c0173474fb6bf43ce19328c2e63ba30f5e0c5a4d355b88cf440c69f2"
+    },
+    {
       "bytes": 651,
       "out": "word_sem_accessors_probe.out",
       "rows": 31,
