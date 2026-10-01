@@ -2984,6 +2984,15 @@ run_probe word_alloc_sp_default_probeScript.sml word_alloc_sp_default_probe.out 
 run_probe reg_alloc_in_clash_tree_probeScript.sml reg_alloc_in_clash_tree_probe.out \
   ict_delta_write ict_delta_read ict_delta_miss ict_set ict_set_miss ict_set_raw ict_branch_left ict_branch_right ict_branch_none_miss ict_branch_some ict_branch_some_miss ict_seq_left ict_seq_right ict_large cct_ok_f cct_ok_gf cct_collision_f cct_collision_gf \
   "$cake_dir/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml" "$cake_dir/compiler/backend/reg_alloc/proofs"
+run_probe reg_alloc_invariants_probeScript.sml reg_alloc_invariants_probe.out \
+  he_hit he_miss he_y_oob he_x_oob he_large und_sym und_asym grs_ok grs_unsorted grs_bad_move grs_bad_length nc_ok nc_clash nc_atemp nc_self spi_ok spi_bad spi_insert clq_ok clq_bad sub_ok sub_bad hide_num cs_ok cs_bad cs_self_loop gp_first gp_outside gnp_none gnp_low \
+  "$cake_dir/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml" "$cake_dir/compiler/backend/reg_alloc/proofs"
+run_probe reg_alloc_mk_bij_lemmas_probeScript.sml reg_alloc_mk_bij_lemmas_probe.out \
+  mbl_remap_keys mbl_remap_wf mbl_remap_inverse mbl_tree_keys mbl_tree_wf mbl_large \
+  "$cake_dir/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml" "$cake_dir/compiler/backend/reg_alloc/proofs"
+run_probe reg_alloc_accessors_probeScript.sml reg_alloc_accessors_probe.out \
+  acc_get_dim acc_get_stack acc_get_avail acc_set_dim acc_set_keeps acc_adj_length acc_tag_sub acc_tag_sub_oob acc_adj_sub acc_large_oob acc_update_deg acc_update_oob acc_update_mr acc_update_tag acc_coalesced_sub acc_map_sub acc_map_oob acc_mupdate \
+  "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 run_probe word_alloc_get_forced_probeScript.sml word_alloc_get_forced_probe.out \
   gf_addcarry_riscv gf_addcarry_mips gf_addcarry_self gf_addcarry_x86 gf_addovf_riscv gf_addovf_armv8 gf_subovf_mips gf_subovf_self gf_longmul_armv7 gf_longmul_armv7_self gf_longmul_riscv gf_longmul_ag32 gf_longmul_x86 gf_fptoreg_32 gf_fptoreg_32_self gf_fptoreg_64 gf_fpfromreg_32 gf_fpfromreg_64 gf_other_inst gf_seq gf_if gf_must gf_loop gf_call_return gf_call_both gf_call_tail gf_skip gf_large \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
