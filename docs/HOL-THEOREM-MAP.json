@@ -42494,5 +42494,21 @@
     "lean_name": "holThe",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.2), pinned optionScript.sml:176-180: THE_DEF is new_recursive_definition over option_Axiom with only THE (SOME x) = x, so HOL determines nothing about THE NONE. Lean holThe (some x) = x and holThe none = holTheNone α, an opaque constant that no Lean proof can unfold, so Lean likewise knows nothing about it. Generic Type0 carrier; the [Nonempty α] binder records inhabitedness that every HOL type has and adds no other information. Noncomputable. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "check_partial_col_success",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs.lean",
+    "lean_name": "checkPartialColSuccess",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-v2oo), reg_allocProofScript.sml:1253-1294: forall ls live flive col (same binder order), premises domain flive = IMAGE col (domain live) /\\ INJ col (set ls UNION domain live) UNIV as one conjunction, conclusion ?livein flivein. check_partial_col col ls live flive = SOME (livein,flivein) /\\ domain flivein = IMAGE col (domain livein). Over the reviewed RegAlloc.checkPartialCol with NumSet carriers; HOL sets are predicates (domain = sptDomain, set ls = list membership, UNION = disjunction, IMAGE = existential), INJ _ _ UNIV is scoped injectivity with the trivial UNIV codomain conjunct omitted as in the accepted word_allocProof INJ ports. No wf or other premise added. Kernel-checked structural induction mirroring HOL's case split on lookup h live. Proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "check_partial_col_domain",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs.lean",
+    "lean_name": "checkPartialColDomain",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-v2oo), reg_allocProofScript.sml:1541-1550: forall ls f live flive v, check_partial_col f ls live flive = SOME v ==> domain (FST v) = set ls UNION domain live; Lean v : NumSet x NumSet, FST v = v.1, domain = sptDomain, set ls UNION domain live = fun x => x IN ls \\/ sptDomain live x. Same binders/order, no added premise (no wf). Proof-only; coordinator source acceptance pending."
   }
 ]
