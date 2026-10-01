@@ -1431,6 +1431,19 @@ with `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_alloc_live_exp_probeScript.sml
 scripts/hol-probes/regenerate.sh` after building original CakeML theories.
 
+`word_alloc_reads_exp_probe.out` records direct original `get_reads_exp_def`
+observations (`word_allocScript.sml:1122-1128`) for a single `Var` read, a
+`Load` of a `Var`, an `Op` whose nested read lists flatten in argument order,
+a `Shift` that concatenates its left operand's reads before its right
+operand's, the `Const`/`Lookup` catch-all empty list, and a mixed nested
+`Op`/`Load`/`Shift` expression. `Flapjack.Test.WordAllocReadsExpParity`
+kernel-replays all seven rows through the exact polymorphic
+`getReadsExpHOL`. This proof-side port does not yet replace the executed
+caller. Regenerate read-only with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_alloc_reads_exp_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
+
 `word_sem_cut_names_type_probe.out` prints the original HOL `cut_names`
 constant types for `cut_names`, `cut_envs`, and `cut_env` from `wordSemTheory`: independent name-map and environment-map
 payload parameters in the first, and generic environment payloads in the latter two. It guards the carrier review of `wordSemCutNames` against
@@ -1984,3 +1997,5 @@ and eqenv ignores only NONE. The two eqenv rows use the original
 `ParmoveSemanticsParity.lean` checks every captured observation; no windmill
 premise is imposed on repeated destinations. Full scheduler correctness and
 production wiring remain open.
+
+- `word_to_stack_bitmap_append_probeScript.sml`: successful bitmap decoding remains unchanged after appending words.

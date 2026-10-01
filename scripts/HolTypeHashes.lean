@@ -148,9 +148,11 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.StateRelation
 import Flapjack.Compiler.Backend.WordAlloc.Expressions
 import Flapjack.Compiler.Backend.WordAlloc.ProgramLiveness
 import Flapjack.Compiler.Backend.WordAlloc.InstructionWrites
+import Flapjack.Compiler.Backend.WordAlloc.ReadsExp
 import Flapjack.Compiler.Backend.WordAlloc.ProgramWrites
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.StrongLocalsRel
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.NumSets
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.NumSetInsertion
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ScopedInjection
 import Flapjack.Compiler.Backend.BackendCommon
 import Flapjack.Compiler.Backend.Semantics.WordSem
@@ -201,6 +203,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.StackSize
 import Flapjack.Compiler.Backend.WordToStack.Proofs.Frames
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstraction
 import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexList
+import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapAppend
 import Flapjack.Compiler.Backend.WordToStackRegFormat
 import Flapjack.Compiler.Backend.Parmove
 import Flapjack.Compiler.Backend.Parmove.Semantics

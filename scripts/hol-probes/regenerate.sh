@@ -241,6 +241,9 @@ run_probe word_alloc_live_exp_probeScript.sml word_alloc_live_exp_probe.out \
 run_probe word_alloc_colour_exp_probeScript.sml word_alloc_colour_exp_probe.out \
   nested duplicate empty "$cake_dir/compiler/backend/word_allocScript.sml" \
   "$cake_dir/compiler/backend"
+run_probe word_alloc_reads_exp_probeScript.sml word_alloc_reads_exp_probe.out \
+  var_single load_var op_nested shift_order const_empty lookup_empty mixed_nested \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
 run_probe word_add_carry_probeScript.sml word_add_carry_probe.out \
   ordinary carry_overflow "$cake_dir/compiler/backend/backend_commonScript.sml" \
   "$cake_dir/compiler/backend"
@@ -2706,3 +2709,7 @@ run_probe parmove_semantics_probeScript.sml parmove_semantics_probe.out \
 run_probe reg_alloc_clash_tree_probeScript.sml reg_alloc_clash_tree_probe.out \
   delete_names col_collision partial_existing partial_collision delta_discard_writes seq_right_first branch_merge branch_fixed_collision \
   "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe word_to_stack_bitmap_append_probeScript.sml word_to_stack_bitmap_append_probe.out \
+  ba_terminal ba_continuation ba_full_one ba_full_two \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"

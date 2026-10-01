@@ -1,0 +1,7 @@
+var_single=[3]
+load_var=[3]
+op_nested=[3; 5; 3]
+shift_order=[5; 6]
+const_empty=[]
+lookup_empty=[]
+mixed_nested=[7; 2; 4]
