@@ -3318,3 +3318,7 @@ run_probe ssa_setup_probeScript.sml ssa_setup_probe.out \
 run_probe ssa_map_ok_probeScript.sml ssa_map_ok_probe.out \
   sm_empty sm_valid sm_at_bound sm_physical sm_invalid sm_definition \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stackprops_forbidden_operations_probeScript.sml stackprops_forbidden_operations_probe.out \
+  forbid_skip forbid_inst forbid_get forbid_set forbid_heap forbid_call_empty forbid_seq forbid_if forbid_loop forbid_jump forbid_alloc forbid_store_consts forbid_raise forbid_return forbid_break forbid_continue forbid_ffi forbid_tick forbid_loc forbid_install forbid_shmem forbid_code_write forbid_data_write forbid_raw_call forbid_stack_alloc forbid_stack_free forbid_stack_store forbid_stack_store_any forbid_stack_load forbid_stack_load_any forbid_stack_get_size forbid_stack_set_size forbid_bitmap_load forbid_halt forbid_call_handler_install forbid_call_handler_shmem forbid_call_return_install forbid_call_return_shmem forbid_call_both forbid_call_safe forbid_seq_left forbid_seq_right forbid_if_left forbid_if_right forbid_loop_install forbid_loop_shmem \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"

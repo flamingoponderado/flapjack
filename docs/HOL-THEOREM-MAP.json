@@ -43774,5 +43774,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison 2026-10-01 bead .26.15: full original11814-11844. Arbitrary assembler config, perf, register count, complete Nat-owner/argument/program list, AppList bitmap input and complete compiled bodies/frame-list/bitmap residual equation retained. Only original EVERY good_handlers and perf=F premises. Literal target BIGUNION IMAGE getter over body list, two inserted stub pairs, image(n -> (n,0)) of source BIGUNION and compiled owned-handler BIGUNION; original parser grouping separately checked T. Per-row actual compileProgNative frame sizing derives from accepted full comp label theorem, followed by actual compileWordToStackNative row induction; no key uniqueness, frame/bitmap bound, target subset/evaluation, successful-pass, simulation or HD/EL premise. Only positive type-indexed HOL word dimension translated to BitVec width with NeZero. Private packaging/set-membership lemmas are Flapjack-specific infrastructure. Seven freshly regenerated original actual whole-list set/frame/cursor/guard observations plus parsed-group sentinel all T; identical-input kernel fixture includes duplicate keys, spilled locals, owned/wrong-owner handlers, dropped tail handlers and bitmap threading. Full public theorem applied to a nonempty returning handler row with arbitrary config/registers/bitmap input. Regression evidence is not cross-language equivalence. Coordinator review/acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/ForbiddenOperations.lean",
+    "lean_name": "noInstall",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "no_install_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-01 bead .3.47.1: full literal StackProps1175-1195 on actual reviewed34-constructor HolProg carrier, exact shared positive word dimension/asm payloads/MlString. Call return and handler options traversed independently, including handler with return NONE; Seq/If conjunction, Loop recursion, Install alone False, every other constructor True. Tuple payloads and all ignored fields unchanged; no wf/label/ownership/frame/performance or extra premise. Only positive type-indexed HOL words translated to BitVec width with NeZero. Fresh original46 fully concrete predicate-pair equality observations allT, all34 constructors plus12 recursive/optional-continuation boundaries; identical kernel fixtures plus arbitrarywidth/payload application and width1. Runtime unchanged. Regression evidence is not HOL-to-Lean equivalence; full compiler preservation chain .47 and coordinator acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/ForbiddenOperations.lean",
+    "lean_name": "noShmemop",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "no_shmemop_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-01 bead .3.47.1: full literal StackProps1175-1195 on actual reviewed34-constructor HolProg carrier, exact shared positive word dimension/asm payloads/MlString. Call return and handler options traversed independently, including handler with return NONE; Seq/If conjunction, Loop recursion, ShMemOp alone False, every other constructor True. Tuple payloads and all ignored fields unchanged; no wf/label/ownership/frame/performance or extra premise. Only positive type-indexed HOL words translated to BitVec width with NeZero. Fresh original46 fully concrete predicate-pair equality observations allT, all34 constructors plus12 recursive/optional-continuation boundaries; identical kernel fixtures plus arbitrarywidth/payload application and width1. Runtime unchanged. Regression evidence is not HOL-to-Lean equivalence; full compiler preservation chain .47 and coordinator acceptance pending."
   }
 ]

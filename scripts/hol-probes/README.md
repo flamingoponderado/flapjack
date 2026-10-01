@@ -3099,3 +3099,16 @@ alongside a nonvacuous full theorem application with arbitrary configuration,
 register count and bitmap input. These are regression checks, not a
 HOL-to-Lean equivalence proof or whole compiler correctness acceptance.
 Selector: `HOL_PROBE_ONLY=word_to_stack_program_code_labels_probeScript.sml`.
+
+### Native StackProps forbidden operations
+
+`stackprops_forbidden_operations_probeScript.sml` records 46 original predicate
+pairs for `no_install` and `no_shmemop`: all 34 constructors and 12 nested
+Call/Seq/If/Loop boundaries. Both optional Call bodies are inspected independently,
+including a forbidden handler when the return field is NONE. Every equality
+observation resolves T and is kernel-replayed by
+`StackPropsForbiddenOperationsParity`, with additional arbitrary positive-width
+and payload applications. The definitions use the reviewed native `HolProg`
+carrier and preserve the literal source clauses. These are regression checks,
+not cross-language equivalence or full compiler preservation acceptance.
+Selector: `HOL_PROBE_ONLY=stackprops_forbidden_operations_probeScript.sml`.
