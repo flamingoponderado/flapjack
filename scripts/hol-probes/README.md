@@ -4218,3 +4218,5 @@ replay of the full compiler theorem or a HOL-to-Lean equivalence proof.
 Whole compiler semantic correctness remains unfinished.
 
 Selector: `HOL_PROBE_ONLY=word_to_stack_no_install_top_probeScript.sml`.
+
+- `ssa_cc_trans_props_allocation_probeScript.sml` replays the literal original Alloc/Install/FFI case tactics and native compiler unfolding with original shifted-list derivation and local prerequisites; three full cases and 31 type captures check the counter/map/cutset/loop-table/program and exact mlstring carriers.

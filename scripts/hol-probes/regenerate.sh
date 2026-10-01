@@ -3875,3 +3875,11 @@ run_probe word_props_no_install_code_probeScript.sml word_props_no_install_code_
 run_probe word_to_stack_no_install_top_probeScript.sml word_to_stack_no_install_top_probe.out \
   nt_full nt_conf_type nt_source_type nt_bitmaps_type nt_config_type nt_frames_type nt_outputs_type nt_empty_1 nt_safe_1 nt_shadow_1 nt_bad_1 nt_empty_32 nt_safe_32 nt_shadow_32 nt_bad_32 nt_empty_64 nt_safe_64 nt_shadow_64 nt_bad_64 nt_empty_80 nt_safe_80 nt_shadow_80 nt_bad_80 nt_code_empty nt_code_safe nt_code_shadow \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_cc_trans_props_allocation_probeScript.sml ssa_cc_trans_props_allocation_probe.out \
+  spa_alloc_full spa_alloc_type_num spa_alloc_type_numset spa_alloc_type_ssa spa_alloc_type_na spa_alloc_type_lt spa_alloc_type_progOut spa_alloc_type_ssaOut spa_alloc_type_naOut \
+  spa_install_full spa_install_type_ptr spa_install_type_len spa_install_type_dptr spa_install_type_dlen spa_install_type_numset spa_install_type_ssa spa_install_type_na spa_install_type_lt \
+  spa_install_type_progOut spa_install_type_ssaOut spa_install_type_naOut spa_ffi_full spa_ffi_type_ffi_index spa_ffi_type_ptr1 spa_ffi_type_len1 spa_ffi_type_ptr2 spa_ffi_type_len2 \
+  spa_ffi_type_numset spa_ffi_type_ssa spa_ffi_type_na spa_ffi_type_lt spa_ffi_type_progOut spa_ffi_type_ssaOut spa_ffi_type_naOut \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
