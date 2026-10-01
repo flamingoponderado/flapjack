@@ -1,0 +1,12 @@
+hls_empty=T
+hls_duplicates=T
+hls_owned=T
+hls_wrong_owner=T
+hls_wrong_zero=T
+hls_wrong_one=T
+hls_tail_drop=T
+hls_same_owner_twice=T
+hls_nested=T
+hls_nested_bad=T
+hls_threaded=T
+hls_width_one=T
