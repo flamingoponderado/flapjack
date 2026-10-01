@@ -49,5 +49,11 @@
     "own_merged_warnings": "PASS zero /tmp/sol-next-merged-warnings.log",
     "peer_generality_repair": "live/pending; not restarted",
     "CI": "pending"
+  },
+  "reproduction": {
+    "script": "scripts/hol-audits/linear-scan-el-proof-closure-review.lean",
+    "observed_log": "scripts/hol-audits/linear-scan-el-proof-closure-review.log",
+    "command": "lake env lean /absolute/path/to/linear-scan-el-proof-closure-review.lean --setup /tmp/sol-peer-proof-audit.setup.json",
+    "precondition": "Peer imports built and terminal; use source-checked Lake importArts setup with audit module name. This exact historical coverage run uses 1094 candidate import names; do not substitute current root import silently."
   }
 }
