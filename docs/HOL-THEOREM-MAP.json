@@ -39093,5 +39093,32 @@
     "lean_name": "getRegValue",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.15.10.4). Source comparison with targetSemScript.sml:263-266 get_reg_value_def: get_reg_value NONE w f = w /\\ get_reg_value (SOME v) _ f = f v. HOL leaves both types fully generic: v : key is applied to f : key -> value, so the Lean port quantifies {key value : Type} over (Option key, value, key -> value). No word-carrier difference, so no representation qualifier applies."
+  },
+  {
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "asm_write_bytearray_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/PostAsm.lean",
+    "lean_name": "asmWriteBytearrayHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-10-01, bead flapjack-w51v) vs miscScript.sml:3758-3760: HOL asm_write_bytearray a [] m = m and asm_write_bytearray a (x::xs) m = (a =+ x) (asm_write_bytearray (a+1w) xs m); Lean asmWriteBytearrayHOL {width} [NeZero width] (address) (bytes) (memory : BitVec width -> BitVec 8) has the same two clauses with 'a word as BitVec width and word8 as BitVec 8; structural recursion on bytes; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/targetSemScript.sml",
+    "hol_name": "post_ffi_asm_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/PostAsm.lean",
+    "lean_name": "postFfiAsmHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-10-01, bead flapjack-w51v) vs targetSemScript.sml:395-408: HOL post_ffi_asm mc_conf t1 new_bytes ms' = t1 with regs := (if MEM a callee_saved_regs \\/ ~(a < reg_count) \\/ MEM a avoid_regs then t1.regs a else get_reg ms' a), fp_regs := get_fp_reg ms', mem := asm_write_bytearray (t1.regs ptr2_reg) new_bytes t1.mem, pc := t1.regs link_reg. Lean postFfiAsmHOL preserves the same guard (List.contains for MEM, decide for the Nat bound), the same get_reg/get_fp_reg sources, asmWriteBytearrayHOL for mem and the link-register pc; over exact MachineConfig/HolAsmTarget/AsmState with BitVec-width words."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/targetSemScript.sml",
+    "hol_name": "post_ccache_asm_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/PostAsm.lean",
+    "lean_name": "postCcacheAsmHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-10-01, bead flapjack-w51v) vs targetSemScript.sml:410-423: HOL post_ccache_asm mc_conf t1 ms' = t1 with regs := (if MEM a callee_saved_regs \\/ a = ptr_reg \\/ ~(a < reg_count) \\/ MEM a avoid_regs then t1.regs a else get_reg ms' a), fp_regs := get_fp_reg ms', pc := t1.regs link_reg (memory untouched). Lean postCcacheAsmHOL has the same guard including the ptr_reg preservation and leaves mem unchanged; over exact carriers with BitVec-width words."
   }
 ]
