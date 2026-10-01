@@ -38192,5 +38192,31 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead15.3.32: literal HOL432-437 conjunction every_var is_phy_var, every_stack_var x >= 2*k, call_arg_convention. Uses accepted exact WordLangProgHOL positive BitVec/NeZero and native Spt Unit cutsets with reviewed everyVarHOL/everyStackVarHOL/callArgConventionHOL/isPhyVar; no changed clauses or hypotheses, no raw-map translation. Four fresh original post-allocation rows replayed over exact carrier. Definition is an initialization prerequisite; no executed compiler route or full correctness claim."
-}
+},
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/targetSemScript.sml",
+    "hol_name": "machine_result",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/State.lean",
+    "lean_name": "MachineResult",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds10 source comparison (2026-10-01, bead flapjack-pxn.18.5.15.10.2) vs targetSemScript.sml:14-17: HOL machine_result = Halt outcome | Error | TimeOut; Lean MachineResult preserves constructor order and arity (nullary Error/TimeOut, Halt carrying the reviewed HolOutcome from ffiScript.sml:83). No word-carrier field, so no qualifier."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmPropsScript.sml",
+    "hol_name": "target",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/State.lean",
+    "lean_name": "HolAsmTarget",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-10-01, bead flapjack-pxn.18.5.15.10.2) vs asmPropsScript.sml:44-56: HOL target record fields config/next/get_pc/get_reg/get_fp_reg/get_byte/state_ok/proj in order; Lean HolAsmTarget preserves them over AsmConfigExact, BitVec width ([NeZero width]), BitVec 64 for word64, and polymorphic state/projection. word rendering qualified."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/targetSemScript.sml",
+    "hol_name": "machine_config",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/State.lean",
+    "lean_name": "MachineConfig",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-10-01, bead flapjack-pxn.18.5.15.10.2) vs targetSemScript.sml:18-45: all 16 fields in HOL order; ('a word) set rendered as BitVec width -> Prop, word8 as BitVec 8, ffiname as HolFfiName, addr as HolAddr; ffi_interfer/next_interfer/ccache_interfer arrow shapes preserved; target embeds HolAsmTarget. word rendering qualified."
+  }
 ]
