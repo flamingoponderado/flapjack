@@ -453,8 +453,12 @@ def noShareInstSubprogs {width : Nat} (program : WordLangProg (BitVec width)) : 
     (fun q => q ≠ .shareInst wordLangArbMemOp 0 (.var 0))
     program
 
-/-! HOL `good_handlers_def` over the exact HOL-shaped WordLang carrier. -/
-@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "good_handlers_def"]
+/-- Literal handler-ownership predicate on the HOL-shaped WordLang carrier.
+The positive HOL word dimension is represented by `BitVec width`; the tag
+records that carrier translation. Nat handler-label equality uses the standard
+decidable equality. A Call without a return ignores its handler entirely. -/
+@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "good_handlers_def"
+  (words_as_type_indexed_bitvec)]
 def goodHandlersHOL {width : Nat} [NeZero width] (n : Nat) :
     WordLangProgHOL (BitVec width) -> Bool
   | .call returns _ _ handler =>
