@@ -1,0 +1,10 @@
+fs_final=T
+fs_self=T
+fs_start=T
+fs_first=T
+fs_single=T
+fs_chain=T
+fs_cycle=T
+fs_cycle_long=T
+fs_temp_match=T
+fs_temp_self=T

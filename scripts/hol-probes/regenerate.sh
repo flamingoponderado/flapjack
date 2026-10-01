@@ -2660,7 +2660,46 @@ run_probe stack_props_program_validity_probeScript.sml stack_props_program_valid
 run_probe word_alloc_get_live_probeScript.sml word_alloc_get_live_probe.out \
   get_live_store_consts get_live_break_outside get_live_return \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+# The word_to_stack wInst probe observes the instruction helper `wInst`
+# (word_to_stackScript.sml:88-175), including the width-64 FP move clauses and
+# the Load16/Store16 Skip catch-all.
+run_probe word_to_stack_winst_probeScript.sml word_to_stack_winst_probe.out \
+  wi_const wi_binop_imm wi_binop_reg wi_div wi_addcarry wi_longmul wi_longdiv \
+  wi_load16_skip wi_store wi_fpless wi_fpmovtoreg wi_fpmovfromreg wi_fpadd wi_skip \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" \
+  "$cake_dir/compiler/backend"
+
+run_probe parmove_fstep_probeScript.sml parmove_fstep_probe.out \
+  fs_final fs_self fs_start fs_first fs_single fs_chain fs_cycle fs_cycle_long fs_temp_match fs_temp_self \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
 
 run_probe word_alloc_get_writes_inst_probeScript.sml word_alloc_get_writes_inst_probe.out \
   writes_const writes_add_carry writes_long_div writes_load16_catchall writes_fp_move64 writes_fp_move32 writes_fp_from_reg_catchall \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_alloc_get_writes_probeScript.sml word_alloc_get_writes_probe.out \
+  writes_move writes_store_consts writes_inst_load16 writes_shared_load16 writes_shared_store16 writes_seq_catchall writes_install \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+run_probe word_to_stack_stack_size_rel_probeScript.sml word_to_stack_stack_size_rel_probe.out \
+  ss_none ss_some ss_bad_max ss_missing_loc ss_missing_frame ss_frame_guard \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_lang_occurrences_exact_probeScript.sml word_lang_occurrences_exact_probe.out \
+  name_empty name_even name_odd var_move_even var_move_odd var_loop_live stack_loop_live stack_alloc_odd var_call_none stack_call_none var_call_some stack_call_some \
+  "$cake_dir/compiler/backend/wordLangScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_to_stack_frames_probeScript.sml word_to_stack_frames_probe.out \
+  hv_empty hv_plain hv_handler hf_none hf_some se_empty se_desc se_equal se_asc \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_abs_stack_probeScript.sml word_to_stack_abs_stack_probe.out \
+  as_base as_base_bad as_plain as_bitmap_bad as_len_bad as_short as_rest_bad as_handler as_marker_bad as_handler_short as_lens_bad \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_index_list_probeScript.sml word_to_stack_index_list_probe.out \
+  il_empty il_single il_desc an_even an_odd \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe parmove_semantics_probeScript.sml parmove_semantics_probe.out \
+  sem_windmill sem_repeated sem_parallel_swap1 sem_parallel_swap2 sem_sequential_swap2 sem_parallel_last sem_sequential_last sem_untouched sem_state_first sem_state_second sem_ignore_temp sem_real_difference \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"

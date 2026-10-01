@@ -1,0 +1,7 @@
+writes_move=T
+writes_store_consts=T
+writes_inst_load16=T
+writes_shared_load16=T
+writes_shared_store16=T
+writes_seq_catchall=T
+writes_install=T

@@ -1,0 +1,11 @@
+load "bossLib";
+load "preamble";
+load "word_to_stackProofTheory";
+open HolKernel Parse bossLib preamble word_to_stackProofTheory;
+fun print_eval label q = let val th0 = EVAL q val th = TRANS th0 (QCONV (SIMP_CONV (srw_ss()) []) (rconc th0)) in print(label ^ "="); print_term(rconc th); print "\n" end;
+val _ = print_eval "ss_none" ``stack_size_rel 0 NONE 0 NONE ([]:8 wordSem$stack_frame list) ([]:8 wordLang$word_loc list) 0 0``;
+val _ = print_eval "ss_some" ``stack_size_rel 0 (SOME 0) 1 (SOME 1) ([]:8 wordSem$stack_frame list) [wordLang$Word 0w] 0 0``;
+val _ = print_eval "ss_bad_max" ``stack_size_rel 0 (SOME 0) 1 (SOME 0) ([]:8 wordSem$stack_frame list) [wordLang$Word 0w] 0 0``;
+val _ = print_eval "ss_missing_loc" ``stack_size_rel 0 NONE 1 (SOME 1) ([]:8 wordSem$stack_frame list) [wordLang$Word 0w] 0 0``;
+val _ = print_eval "ss_missing_frame" ``stack_size_rel 0 (SOME 0) 1 (SOME 1) [wordSem$StackFrame NONE [] [] NONE : 8 wordSem$stack_frame] [wordLang$Word 0w] 0 0``;
+val _ = print_eval "ss_frame_guard" ``stack_size_rel 2 (SOME 1) 1 NONE ([]:8 wordSem$stack_frame list) [wordLang$Word 0w] 0 0``;
