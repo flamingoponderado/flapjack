@@ -2010,3 +2010,5 @@ The recursion uses the original measure, not fuel. Full semantic correctness
 and the executed Word-to-Stack wrapper remain open.
 
 - `word_to_stack_abs_stack_prefix_probeScript.sml`: successful bitmap prefix preservation for base, ordinary, handler, recursive and mixed frames.
+
+- `word_to_stack_abs_stack_lengths_probeScript.sml`: exact successful abstraction frame counts for base, ordinary, handler, recursive and mixed frames.

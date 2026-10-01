@@ -38983,5 +38983,14 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead15.3.40: literal HOL768-779 quantifies bitmap/frame/stack/lens/suffix/result and assumes only abs_stack success, concluding identical SOME result under bitmap append. Same exact reviewed absStack and frame/WordLocW carriers at one source positive width, BitVec/NeZero standard translation only. Structural frame induction follows every ordinary/handler/fallback branch; fullReadBitmapAppend handles successful reader and induction hypothesis supplies recursive result. No new bounds, target evaluation assumption, totalHD/default, finite-map or runtime path. Fresh original five base/ordinary/handler/nested/mixed successful prefix rows and kernel replay; full state/pass relation remains separate."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StackAbstractionLengths.lean",
+  "lean_name": "absStackImpLength",
+  "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+  "hol_name": "abs_stack_IMP_LENGTH",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead15.3.43: literal1188-1195 forall bitmap/sourceframes/targetstack/lens/result, only abs_stack success premise, identical conjunction result.length=frames.length AND lens.length=frames.length. Same exact absStack/frame/WordLocW at one positive sourcewordwidth BitVec/NeZero translation. Structural frame induction extracts successful recursive result and original reconstructed result equality for ordinary and handler branches; fallback success contradictions match source. No extra guard, totalHD/default, evaluator or finite-map premise. Freshoriginal five framecountrows and kernel replay also check concrete lens counts. Actual compilerproofuses1436/1947/2022/2212/2511/2545/2725/5265; full relation/simulation separate."
 }
 ]
