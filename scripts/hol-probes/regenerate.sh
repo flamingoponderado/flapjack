@@ -3073,6 +3073,14 @@ run_probe parmove_temp_step_probeScript.sml parmove_temp_step_probe.out \
   pts_remove pts_start pts_extend pts_save_cycle pts_emit_head pts_emit_last pts_save_none pts_emit_scratch pts_bool \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
+run_probe word_to_stack_colour_domain_probeScript.sml word_to_stack_colour_domain_probe.out \
+  cd_load16 cd_store16 cd_load8 cd_store32 cd_carry cd_collision cd_seq cd_must cd_if cd_loop cd_tail_handler cd_both cd_large \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_to_stack_program_maximum_probeScript.sml word_to_stack_program_maximum_probe.out \
+  pm_skip pm_tick pm_move pm_assign pm_inst pm_get pm_store pm_set pm_seq pm_if_reg pm_if_imm pm_loop pm_must pm_break pm_continue pm_raise pm_loc pm_return pm_return_initial pm_tail_handler pm_return_call pm_both_call pm_alloc pm_constants pm_heap pm_install pm_code_write pm_data_write pm_ffi pm_shared16 pm_large pm_tail_empty \
+  "$cake_dir/pancake/loop_to_wordScript.sml" "$cake_dir/pancake"
+
 run_probe reg_alloc_state_map_probeScript.sml reg_alloc_state_map_probe.out \
   sm_type sm_bool_state sm_num_state sm_empty sm_one sm_order sm_reverse sm_duplicates sm_large sm_fail_empty sm_fail_first sm_fail_middle sm_fail_last sm_fail_duplicates sm_success sm_state_failure sm_list_state sm_list_error sm_tuple_state sm_empty_failure_callback \
   "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
