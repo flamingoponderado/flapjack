@@ -3198,3 +3198,15 @@ hypotheses; `EQT_INTRO` renders its proved conclusion as T. The three local
 replays are captured separately and are not claimed exported HOL DB theorems.
 `SSARegisterFlipParity` kernel-checks identical tuples and fourteen full public
 theorem applications, without a bounded-register or additional class premise.
+
+### SSA map intersection and insertion
+
+`ssa_map_preservation_probeScript.sml` replays the complete literal local proofs
+from word_allocProof lines 5916–5933 and captures the independently polymorphic
+right-map binder type. Thirteen actual theorem applications discharge the full
+original premises, require empty hypotheses and the exact requested conclusion,
+then render that proven predicate as `T` with `EQT_INTRO`. These rows are not
+claimed direct evaluations of a symbolic universally quantified map predicate.
+Two false original guard evaluations are separate sentinels. Matching kernel
+applications cover empty, preserved/dropped, overwritten, malformed, branching
+and large-number maps; they are regressions, not a cross-language proof.

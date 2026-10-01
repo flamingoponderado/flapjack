@@ -3403,6 +3403,12 @@
       "sha256": "f80fb6e485ddbe0a0af427f7a4e48f1f59fb20ff8990b41098bfe1f2d0053215"
     },
     {
+      "bytes": 525,
+      "out": "ssa_map_preservation_probe.out",
+      "rows": 18,
+      "sha256": "a492be8830545e1b6eb091c59adf26b841f11221a68ccee47c58c8953314647a"
+    },
+    {
       "bytes": 1639,
       "out": "ssa_merge_moves_probe.out",
       "rows": 12,

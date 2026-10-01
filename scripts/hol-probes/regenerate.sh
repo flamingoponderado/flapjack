@@ -3357,3 +3357,7 @@ run_probe ssa_map_extend_probeScript.sml ssa_map_extend_probe.out \
 run_probe ssa_register_flip_probeScript.sml ssa_register_flip_probe.out \
   rf_residue_0 rf_equalities_0 rf_residue_1 rf_equalities_1 rf_residue_2 rf_equalities_2 rf_residue_3 rf_equalities_3 rf_residue_4 rf_equalities_4 rf_residue_5 rf_equalities_5 rf_residue_6 rf_equalities_6 rf_residue_7 rf_equalities_7 rf_alloc_application_0 rf_alloc_application_1 rf_alloc_application_2 rf_stack_application_0 rf_stack_application_1 rf_stack_application_2 rf_is_alloc_var_flip_source_replay rf_is_stack_var_flip_source_replay rf_flip_rw_source_replay \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_map_preservation_probeScript.sml ssa_map_preservation_probe.out \
+  mi_empty mi_retain_alloc mi_retain_stack mi_drop mi_invalid mi_branch mi_huge ms_empty ms_stack ms_overwrite ms_extend ms_invalid ms_huge ms_physical_guard ms_bound_guard ssa_map_ok_inter_source_replay ssa_map_ok_insert_source_replay mi_original_types \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

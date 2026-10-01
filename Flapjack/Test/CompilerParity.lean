@@ -1,3 +1,4 @@
+import Flapjack.Test.SSAMapPreservationParity
 import Flapjack.Test.SSARegisterFlipParity
 import Flapjack.Test.SSAMapExtendParity
 import Flapjack.Test.SSARenamePropertiesParity
