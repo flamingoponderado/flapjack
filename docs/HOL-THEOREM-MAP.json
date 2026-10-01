@@ -43479,6 +43479,122 @@
     "reviewer": "flapjack-sol source comparison2026-10-01 w1a4.5: literal1003-1021 sole ALL_DISTINCT(MAP FST mvs) premise and ALL_DISTINCT(FILTER IS_SOME(MAP FST(parmove mvs))) conclusion. Arbitrary register carrier with accepted scheduler DecidableEq dictionary, no source bound/scratch-safety/target-evaluation premise. Actual tagged parmove lifts each pair to SOME, runs pmov with empty active/emitted lists and reverses emitted moves. Proof derives wf_init and lifted distinctness from sole premise, applies accepted allDistinctPmov then projects emitted-list distinctness and reverses it; no final-state fact assumed. Fresh original DB.fetch complete exported theorem and six full scheduler outputs plus duplicate-destination (F,F) boundary from temporary cwd/canonical in-memory HOLpath loader, no CakeML writes. Fourteen kernel fixtures replay outputs/nonvacuous theorem applications/boundary/Bool carrier. Proof-only port, no executable compiler change; coordinator acceptance pending."
   },
   {
+    "lean_path": "Flapjack/Compiler/Encoders/AsmSem/Arithmetic.lean",
+    "lean_name": "updPc",
+    "hol_path": "cakeml/compiler/encoders/asm/asmSemScript.sml",
+    "hol_name": "upd_pc_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-pxn.18.5.15.10.24): compared original asmSemScript26-129 and lab_to_targetProofScript upd_pc_with_pc. Native AsmState has original function-backed register/memory fields, fixed FP64 and byte8; only positive-width word index translates to BitVec. All original clauses, original-state operand reads, register shift guard (immediates unguarded), retained failure writes, total DIV_0/MOD_0, signed overflow and ordered aliasing updates preserved. IsTest uses exact monomorphic HolCmp. Complete eight-constructor arithmetic definition and primitive pc-self-update theorem only; full asm evaluator and executed compiler routing remain unfinished. Fresh direct original asmSemTheory capture and 52 kernel replays pass. Coordinator review pending.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/AsmSem/Arithmetic.lean",
+    "lean_name": "updReg",
+    "hol_path": "cakeml/compiler/encoders/asm/asmSemScript.sml",
+    "hol_name": "upd_reg_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-pxn.18.5.15.10.24): compared original asmSemScript26-129 and lab_to_targetProofScript upd_pc_with_pc. Native AsmState has original function-backed register/memory fields, fixed FP64 and byte8; only positive-width word index translates to BitVec. All original clauses, original-state operand reads, register shift guard (immediates unguarded), retained failure writes, total DIV_0/MOD_0, signed overflow and ordered aliasing updates preserved. IsTest uses exact monomorphic HolCmp. Complete eight-constructor arithmetic definition and primitive pc-self-update theorem only; full asm evaluator and executed compiler routing remain unfinished. Fresh direct original asmSemTheory capture and 52 kernel replays pass. Coordinator review pending.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/AsmSem/Arithmetic.lean",
+    "lean_name": "updFpReg",
+    "hol_path": "cakeml/compiler/encoders/asm/asmSemScript.sml",
+    "hol_name": "upd_fp_reg_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-pxn.18.5.15.10.24): compared original asmSemScript26-129 and lab_to_targetProofScript upd_pc_with_pc. Native AsmState has original function-backed register/memory fields, fixed FP64 and byte8; only positive-width word index translates to BitVec. All original clauses, original-state operand reads, register shift guard (immediates unguarded), retained failure writes, total DIV_0/MOD_0, signed overflow and ordered aliasing updates preserved. IsTest uses exact monomorphic HolCmp. Complete eight-constructor arithmetic definition and primitive pc-self-update theorem only; full asm evaluator and executed compiler routing remain unfinished. Fresh direct original asmSemTheory capture and 52 kernel replays pass. Coordinator review pending.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/AsmSem/Arithmetic.lean",
+    "lean_name": "updMem",
+    "hol_path": "cakeml/compiler/encoders/asm/asmSemScript.sml",
+    "hol_name": "upd_mem_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-pxn.18.5.15.10.24): compared original asmSemScript26-129 and lab_to_targetProofScript upd_pc_with_pc. Native AsmState has original function-backed register/memory fields, fixed FP64 and byte8; only positive-width word index translates to BitVec. All original clauses, original-state operand reads, register shift guard (immediates unguarded), retained failure writes, total DIV_0/MOD_0, signed overflow and ordered aliasing updates preserved. IsTest uses exact monomorphic HolCmp. Complete eight-constructor arithmetic definition and primitive pc-self-update theorem only; full asm evaluator and executed compiler routing remain unfinished. Fresh direct original asmSemTheory capture and 52 kernel replays pass. Coordinator review pending.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/AsmSem/Arithmetic.lean",
+    "lean_name": "readReg",
+    "hol_path": "cakeml/compiler/encoders/asm/asmSemScript.sml",
+    "hol_name": "read_reg_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-pxn.18.5.15.10.24): compared original asmSemScript26-129 and lab_to_targetProofScript upd_pc_with_pc. Native AsmState has original function-backed register/memory fields, fixed FP64 and byte8; only positive-width word index translates to BitVec. All original clauses, original-state operand reads, register shift guard (immediates unguarded), retained failure writes, total DIV_0/MOD_0, signed overflow and ordered aliasing updates preserved. IsTest uses exact monomorphic HolCmp. Complete eight-constructor arithmetic definition and primitive pc-self-update theorem only; full asm evaluator and executed compiler routing remain unfinished. Fresh direct original asmSemTheory capture and 52 kernel replays pass. Coordinator review pending.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/AsmSem/Arithmetic.lean",
+    "lean_name": "readFpReg",
+    "hol_path": "cakeml/compiler/encoders/asm/asmSemScript.sml",
+    "hol_name": "read_fp_reg_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-pxn.18.5.15.10.24): compared original asmSemScript26-129 and lab_to_targetProofScript upd_pc_with_pc. Native AsmState has original function-backed register/memory fields, fixed FP64 and byte8; only positive-width word index translates to BitVec. All original clauses, original-state operand reads, register shift guard (immediates unguarded), retained failure writes, total DIV_0/MOD_0, signed overflow and ordered aliasing updates preserved. IsTest uses exact monomorphic HolCmp. Complete eight-constructor arithmetic definition and primitive pc-self-update theorem only; full asm evaluator and executed compiler routing remain unfinished. Fresh direct original asmSemTheory capture and 52 kernel replays pass. Coordinator review pending.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/AsmSem/Arithmetic.lean",
+    "lean_name": "readMem",
+    "hol_path": "cakeml/compiler/encoders/asm/asmSemScript.sml",
+    "hol_name": "read_mem_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-pxn.18.5.15.10.24): compared original asmSemScript26-129 and lab_to_targetProofScript upd_pc_with_pc. Native AsmState has original function-backed register/memory fields, fixed FP64 and byte8; only positive-width word index translates to BitVec. All original clauses, original-state operand reads, register shift guard (immediates unguarded), retained failure writes, total DIV_0/MOD_0, signed overflow and ordered aliasing updates preserved. IsTest uses exact monomorphic HolCmp. Complete eight-constructor arithmetic definition and primitive pc-self-update theorem only; full asm evaluator and executed compiler routing remain unfinished. Fresh direct original asmSemTheory capture and 52 kernel replays pass. Coordinator review pending.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/AsmSem/Arithmetic.lean",
+    "lean_name": "assertState",
+    "hol_path": "cakeml/compiler/encoders/asm/asmSemScript.sml",
+    "hol_name": "assert_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-pxn.18.5.15.10.24): compared original asmSemScript26-129 and lab_to_targetProofScript upd_pc_with_pc. Native AsmState has original function-backed register/memory fields, fixed FP64 and byte8; only positive-width word index translates to BitVec. All original clauses, original-state operand reads, register shift guard (immediates unguarded), retained failure writes, total DIV_0/MOD_0, signed overflow and ordered aliasing updates preserved. IsTest uses exact monomorphic HolCmp. Complete eight-constructor arithmetic definition and primitive pc-self-update theorem only; full asm evaluator and executed compiler routing remain unfinished. Fresh direct original asmSemTheory capture and 52 kernel replays pass. Coordinator review pending.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/AsmSem/Arithmetic.lean",
+    "lean_name": "regImm",
+    "hol_path": "cakeml/compiler/encoders/asm/asmSemScript.sml",
+    "hol_name": "reg_imm_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-pxn.18.5.15.10.24): compared original asmSemScript26-129 and lab_to_targetProofScript upd_pc_with_pc. Native AsmState has original function-backed register/memory fields, fixed FP64 and byte8; only positive-width word index translates to BitVec. All original clauses, original-state operand reads, register shift guard (immediates unguarded), retained failure writes, total DIV_0/MOD_0, signed overflow and ordered aliasing updates preserved. IsTest uses exact monomorphic HolCmp. Complete eight-constructor arithmetic definition and primitive pc-self-update theorem only; full asm evaluator and executed compiler routing remain unfinished. Fresh direct original asmSemTheory capture and 52 kernel replays pass. Coordinator review pending.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/AsmSem/Arithmetic.lean",
+    "lean_name": "binopUpd",
+    "hol_path": "cakeml/compiler/encoders/asm/asmSemScript.sml",
+    "hol_name": "binop_upd_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-pxn.18.5.15.10.24): compared original asmSemScript26-129 and lab_to_targetProofScript upd_pc_with_pc. Native AsmState has original function-backed register/memory fields, fixed FP64 and byte8; only positive-width word index translates to BitVec. All original clauses, original-state operand reads, register shift guard (immediates unguarded), retained failure writes, total DIV_0/MOD_0, signed overflow and ordered aliasing updates preserved. IsTest uses exact monomorphic HolCmp. Complete eight-constructor arithmetic definition and primitive pc-self-update theorem only; full asm evaluator and executed compiler routing remain unfinished. Fresh direct original asmSemTheory capture and 52 kernel replays pass. Coordinator review pending.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/AsmSem/Arithmetic.lean",
+    "lean_name": "isTest",
+    "hol_path": "cakeml/compiler/encoders/asm/asmSemScript.sml",
+    "hol_name": "is_test_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-pxn.18.5.15.10.24): compared original asmSemScript26-129 and lab_to_targetProofScript upd_pc_with_pc. Native AsmState has original function-backed register/memory fields, fixed FP64 and byte8; only positive-width word index translates to BitVec. All original clauses, original-state operand reads, register shift guard (immediates unguarded), retained failure writes, total DIV_0/MOD_0, signed overflow and ordered aliasing updates preserved. IsTest uses exact monomorphic HolCmp. Complete eight-constructor arithmetic definition and primitive pc-self-update theorem only; full asm evaluator and executed compiler routing remain unfinished. Fresh direct original asmSemTheory capture and 52 kernel replays pass. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/AsmSem/Arithmetic.lean",
+    "lean_name": "arithUpd",
+    "hol_path": "cakeml/compiler/encoders/asm/asmSemScript.sml",
+    "hol_name": "arith_upd_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-pxn.18.5.15.10.24): compared original asmSemScript26-129 and lab_to_targetProofScript upd_pc_with_pc. Native AsmState has original function-backed register/memory fields, fixed FP64 and byte8; only positive-width word index translates to BitVec. All original clauses, original-state operand reads, register shift guard (immediates unguarded), retained failure writes, total DIV_0/MOD_0, signed overflow and ordered aliasing updates preserved. IsTest uses exact monomorphic HolCmp. Complete eight-constructor arithmetic definition and primitive pc-self-update theorem only; full asm evaluator and executed compiler routing remain unfinished. Fresh direct original asmSemTheory capture and 52 kernel replays pass. Coordinator review pending.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/AsmUpdates.lean",
+    "lean_name": "updPc_with_pc",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "upd_pc_with_pc",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-pxn.18.5.15.10.24): compared original asmSemScript26-129 and lab_to_targetProofScript upd_pc_with_pc. Native AsmState has original function-backed register/memory fields, fixed FP64 and byte8; only positive-width word index translates to BitVec. All original clauses, original-state operand reads, register shift guard (immediates unguarded), retained failure writes, total DIV_0/MOD_0, signed overflow and ordered aliasing updates preserved. IsTest uses exact monomorphic HolCmp. Complete eight-constructor arithmetic definition and primitive pc-self-update theorem only; full asm evaluator and executed compiler routing remain unfinished. Fresh direct original asmSemTheory capture and 52 kernel replays pass. Coordinator review pending.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
     "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
     "hol_name": "not_use_temp_before_assign_insert",
     "lean_path": "Flapjack/Compiler/Backend/Parmove/TempBeforeAssign/Insert.lean",
