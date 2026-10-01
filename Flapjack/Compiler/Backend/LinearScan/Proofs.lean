@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.LinearScan.Proofs.LiveTree
 import Flapjack.Compiler.Backend.LinearScan.Proofs.Intervals
 import Flapjack.Compiler.Backend.LinearScan.Proofs.CheckIntervals
+import Flapjack.Compiler.Backend.LinearScan.Proofs.RegExchange
 
 /-!
 # linear_scan proofs
@@ -17,6 +18,8 @@ order:
   `get_intervals`, `get_intervals_withlive` and `check_number_property`.
 * `CheckIntervals`: `linear_scanProofScript.sml:1767-2018`,
   `check_intervals_check_live_tree` and `get_intervals_ct_eq`.
+* `RegExchange`: `linear_scanProofScript.sml:2020-2402`, the generated
+  array accessor equations and `apply_reg_exchange_correct`.
 
 The top-level `linear_scan_reg_alloc_correct` is not yet ported.
 -/
