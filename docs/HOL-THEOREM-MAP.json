@@ -43074,6 +43074,24 @@
     "reviewer": "flapjack-sol3 source comparison (2026-10-01; .10.18): actual miscTheory constant type queried by bytes_in_mem_type.sml confirms generic beta list/memory values. miscScript4249-4255 domain and excluded-set guards plus equality and wrapped increment retained. Original lab_to_targetProof APPEND1214 retains iff/conjunction and n2w(length xs) offset; UPDATE1223 retains every in-range wrapped address inequality and functional-update conclusion. Only positive word dimension translates to BitVec width/NeZero; generic universe-zero Value and lists retained. Fresh original11-row boundary oracle bytes_in_mem_probe.out, all11 kernel replays BytesInMemParity. No HOL-to-Lean equivalence or production/compiler correctness claimed; coordinator source review pending."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Navigation.lean",
+    "lean_name": "codeSimilar_asmFetchAux",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "code_similar_IMP_asm_fetch_aux_line_similar",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; bead .18.5.15.10.19): original source1568-1584 and3475ff retain all PCs, section/label identifiers and programs, and sole code_similar premise. Core Option.Rel has HOL OPTREL none/none and some/some clauses. Results are respectively related fetched options and identical optional label PCs over actual native LabSem Navigation. LinesRel retains EVERY2 and all line payload carriers remain native with fixed word8 bytes and MlString. Only polymorphic word dimension is positive-width BitVec. No success/label-validity/evaluation premise. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Navigation.lean",
+    "lean_name": "codeSimilar_locToPc",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "code_similar_loc_to_pc",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; bead .18.5.15.10.19): original source1568-1584 and3475ff retain all PCs, section/label identifiers and programs, and sole code_similar premise. Core Option.Rel has HOL OPTREL none/none and some/some clauses. Results are respectively related fetched options and identical optional label PCs over actual native LabSem Navigation. LinesRel retains EVERY2 and all line payload carriers remain native with fixed word8 bytes and MlString. Only polymorphic word dimension is positive-width BitVec. No success/label-validity/evaluation premise. Coordinator review pending."
+  },
+  {
     "lean_path": "Flapjack/Pancake/WordConvs/CodeLabels.lean",
     "lean_name": "getCodeLabelsHOL",
     "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
