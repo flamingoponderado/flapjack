@@ -35,6 +35,8 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapExtend
 
 
 import Flapjack
+import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopTop
+import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopPrograms
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFixInconsistenciesCorrectLeft
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeMovesCorrectRight
 import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Full

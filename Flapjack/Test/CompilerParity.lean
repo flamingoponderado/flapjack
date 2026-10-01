@@ -10,6 +10,8 @@ import Flapjack.Test.WordToStackNoShmemopHandledCallParity
 import Flapjack.Test.WordToStackNoShmemopReturningCallParity
 import Flapjack.Test.WordToStackNoShmemopTailCallParity
 import Flapjack.Test.WordToStackCompNoShmemopParity
+import Flapjack.Test.WordToStackNoShmemopTopParity
+import Flapjack.Test.WordToStackNoShmemopProgramsParity
 import Flapjack.Test.WordToStackNoShmemopHandlersParity
 import Flapjack.Test.WordAllocLimitPropertiesParity
 import Flapjack.Test.SSAMapStepParity

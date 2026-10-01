@@ -4067,3 +4067,33 @@ oracle value. The Lean ports retain independent opaque completions indexed by
 width and both Loc fields; their Word equations and Word-guarded agreement
 are kernel checked in `WordSem.Accessors` and `WordSemAccessorsParity`.
 These regressions do not establish a concrete meaning for unspecified Locs.
+### Full native program-list no-shared-memory preservation
+
+`word_to_stack_no_shmemop_programs_probeScript.sml` freshly captures the
+original exported `compile_word_to_stack_no_share_inst` theorem, all eight
+input/output carrier types, and sixteen actual source/compiled-target
+predicate pairs. Widths 1/32/64/80 and both performance flags cover empty and
+multiple-row lists, duplicate Boolean identifiers, nonzero bitmap state,
+bitmap-changing Alloc/StoreConsts, frame arithmetic boundaries, rejected
+shared operations, and an ignored tail-call handler. The latter retains a
+false source predicate and true target predicate, consistent with implication.
+`Flapjack/Test/WordToStackNoShmemopProgramsParity.lean` checks the pairs in the
+kernel and applies the full generic-identifier theorem and actual compiler
+projections. Captures are regression evidence, not a new proof replay or a
+HOL-to-Lean equivalence proof. Whole compiler semantic correctness remains open.
+
+Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_programs_probeScript.sml`.
+
+### Full native top-level no-shared-memory preservation
+
+`word_to_stack_no_shmemop_top_probeScript.sml` captures original exported
+`compile_no_shmemop`, its six carriers and sixteen source/actual-target pairs.
+Performance is false as in HOL. Both injected stubs, widths1/32/64/80,
+zero/underflow/large register counts, duplicate avoid registers/identifiers,
+empty/multiple rows, bitmap changes and rejected shared/ignored-handler cases
+are covered. `Flapjack/Test/WordToStackNoShmemopTopParity.lean` checks those
+pairs and two full-signature applications retaining all four outputs.
+Captures are regression evidence, not a new original proof replay or a
+HOL-to-Lean equivalence proof. Compiler semantic preservation remains open.
+
+Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_top_probeScript.sml`.
