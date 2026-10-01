@@ -32,6 +32,16 @@ with `HOL_PROBE_ONLY=stacksem_loop_recursive_probeScript.sml scripts/hol-probes/
 
 # Original Pancake HOL probes
 
+`reg_alloc_clash_tree_probe.out` captures eight direct original register
+allocator checker observations: repeated deletion, duplicate colours,
+existing-name skips, partial collisions, Delta's discarded write result,
+right-first Seq traversal, Branch merging and fixed-set collisions.
+`Flapjack.Test.RegAllocClashTreeParity` kernel-replays the identical inputs and
+full output trees. These finite regressions do not prove allocator soundness
+or wire the checker into the executed compiler. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=reg_alloc_clash_tree_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `stacksem_call_indirect_probe.out` captures ten direct original `stackSem$evaluate`
 Call INR observations (find_code645-651, returning Call861-892): indirect and
 returning success, link/target alias rejection before update, tail alias success,
