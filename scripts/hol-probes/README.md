@@ -3754,3 +3754,16 @@ widths1/32/64/80, direct/indirect generic destinations and large frame offsets.
 `WordToStackNoShmemopHandlersParity.lean` kernel-replays every observation and
 applies each full theorem at arbitrary original carriers. Pop retains false
 continuations; no range, safety, valid-frame or execution premises are added.
+
+### Full native tail Call no-shared-memory case
+
+`word_to_stack_no_shmemop_tail_probeScript.sml` captures twenty-two original
+source-guard/compiled-target pairs. Widths1/32/64/80, both perf flags,
+direct/indirect destinations, empty arguments, large final registers and full
+frames are retained. Safe and forbidden compiler-ignored handlers show why the
+original source implication is retained instead of an equivalence.
+`WordToStackNoShmemopTailCallParity` reduces the identical native compiler
+inputs in the kernel and applies the complete generic original-shaped case.
+The guarded nonempty LAST path needs no total-list default assumption.
+These fixtures do not prove cross-language equivalence or full compiler correctness.
+Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_tail_probeScript.sml`.

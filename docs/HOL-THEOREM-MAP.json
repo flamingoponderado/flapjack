@@ -47249,5 +47249,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison2026-10-01 bead48.2.3: full local StackHandlerArgs_no_shmemop12251-12258: arbitrary perf, Sum alpha beta destination with independent payload carriers, argument count Nat and complete Nat×Nat×Nat frame; unconditional result. Accepted stack_move_no_shmemop preserves the native generated stack allocation continuation at every offset/count; no bounds, frame validity or target safety premises. Sole word qualifier translates original type-indexed word to positive BitVec width/NeZero, with native HolProg and accepted original constructor arities/fields; independent unused frame/Sum carriers are preserved, not specialized. Literal entire original three local proofs and generic operation types freshly replayed in original HOL. Sixteen same-input native predicate observations (including mixed frame types, false continuations, direct/indirect Sum Bool Unit and large frames) match kernel fixtures; three arbitrary-carrier applications check the actual complete theorem signatures. No executable or compiler change and no full comp_no_shmemop claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NoShmemopCalls.lean",
+    "lean_name": "compNoShmemopTailCall",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "comp_no_shmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-01 bead48.3.4: full original comp_no_shmemop12259-12357 Call12318-12340 return NONE constructor case. Same arbitrary assembler config/perf/source destination/argument list/independent optional handler/full AppList bitmap state/full Nat triple frame/output and residual pair, original no_share_inst guard and actual native comp equality. Original conclusion no_shmemop target retained, with no bounds, validity, target-evaluation, supplied safety or handler IH. Compiler ignores optional handler exactly in this source tail branch; guard still scans it. Exact call_dest branches retain guarded nonempty LAST access without total-list default reliance; stackfree branches and actual wStackLoad preservation. Sole qualifier translates positive HOL type-indexed words to BitVec/NeZero. Fresh original22 complete source guard/target pairs match kernel compiler reductions, including safe and forbidden ignored handler source guards; generic fixture applies full theorem. No executed compiler change or whole compiler correctness claim."
   }
 ]
