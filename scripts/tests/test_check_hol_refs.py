@@ -652,6 +652,27 @@ noncomputable def cmp : FpCmp -> Bool
         self.assertIn("holFp64Sqrt", names)
         self.assertIn("holFp64Add", names)
 
+    def test_reals_rendering_names_cover_nested_sqrt_real(self):
+        names = CHECKER["reals_rendering_names"](CHECKER["ROOT"])
+        self.assertIn("holFp64SqrtReal", names)
+        user = "noncomputable def sqrtCase : BitVec 64 -> BitVec 64 := holFp64SqrtReal .roundTiesToEven"
+        check = CHECKER["reals_as_rational_cuts_errors"]
+        self.assertEqual(check(user, True, names), [])
+        self.assertTrue(any("must carry" in e for e in check(user, False, names)))
+        self.assertEqual(check("def f : Nat := 0 -- holFp64SqrtReal", False, names), [])
+
+    def test_reals_rendering_names_recurse_beneath_binary_ieee(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            nested = root / "Flapjack/Misc/BinaryIeeeSqrt"
+            nested.mkdir(parents=True)
+            (nested / "RoundAgreement.lean").write_text(
+                "noncomputable def holFp64SqrtReal : Nat := 0\n"
+                "theorem comparisonOnly : True := trivial\n")
+            names = CHECKER["reals_rendering_names"](root)
+            self.assertIn("holFp64SqrtReal", names)
+            self.assertNotIn("comparisonOnly", names)
+
     def test_fmap_as_finite_support_fields(self):
         self.assertEqual(
             list(SITES([

@@ -1,0 +1,122 @@
+cp_asm_const_type=:num -> α word -> α inst
+cp_clock_neutral_type=:α stackLang$prog -> bool
+cp_1=(dec_clock (s :(β, γ, α) state)).ffi = s.ffi ∧
+((dec_clock (z :(δ, ε, ζ) state)).use_alloc ⇔ z.use_alloc) ∧
+((dec_clock z).use_store ⇔ z.use_store) ∧
+((dec_clock z).use_stack ⇔ z.use_stack) ∧ (dec_clock z).stack = z.stack ∧
+(dec_clock z).store = z.store ∧ (dec_clock z).code = z.code ∧
+(dec_clock z).data_buffer = z.data_buffer ∧
+(dec_clock z).code_buffer = z.code_buffer ∧
+(dec_clock z).fp_regs = z.fp_regs ∧ ((dec_clock z).be ⇔ z.be) ∧
+(dec_clock z).gc_fun = z.gc_fun ∧ (dec_clock z).memory = z.memory ∧
+(dec_clock z).mdomain = z.mdomain ∧ (dec_clock z).sh_mdomain = z.sh_mdomain ∧
+(dec_clock z).bitmaps = z.bitmaps ∧
+(dec_clock z).stack_space = z.stack_space ∧
+(dec_clock z).compile = z.compile ∧
+(dec_clock z).compile_oracle = z.compile_oracle
+
+cp_1_types=(z :(δ, ε, ζ) state)
+::(δ, ε, ζ) state;(s :(β, γ, α) state)
+::(β, γ, α) state;
+cp_2=((f :γ -> α) ## (g :δ -> β)) (p :γ # δ) = ((x :α),(y :β)) ⇔
+∃(q :γ) (r :δ). p = (q,r) ∧ x = f q ∧ y = g r
+
+cp_2_types=(y :β)
+::β;(x :α)
+::α;(p :γ # δ)
+::γ # δ;(g :δ -> β)
+::δ -> β;(f :γ -> α)
+::γ -> α;
+cp_3=bad_fun_return (res :α result option) ⇒
+res = (NONE :α result option) ∨
+∃(n :num). res = SOME (Break n :α result) ∨ res = SOME (Continue n :α result)
+
+cp_3_types=(res :α result option)
+::α result option;
+cp_4=cont_loop (res :α result option) ⇒
+res = (NONE :α result option) ∨ res = SOME (Continue (0 :num) :α result)
+
+cp_4_types=(res :α result option)
+::α result option;
+cp_5=((s :(β, γ, α) state) with clock := (k :num)).ffi = s.ffi
+
+cp_5_types=(s :(β, γ, α) state)
+::(β, γ, α) state;(k :num)
+::num;
+cp_6=(∀(p2 :α stackLang$prog) (p1 :α stackLang$prog).
+   clock_neutral (Seq p1 p2) ⇔ clock_neutral p1 ∧ clock_neutral p2) ∧
+(∀(v2 :num) (v1 :num) (v0 :num).
+   clock_neutral (LocValue v0 v1 v2 :α stackLang$prog) ⇔ T) ∧
+(∀(v3 :num). clock_neutral (Halt v3 :α stackLang$prog) ⇔ T) ∧
+(∀(v4 :α inst). clock_neutral (Inst v4 :α stackLang$prog) ⇔ T) ∧
+(clock_neutral (Skip :α stackLang$prog) ⇔ T) ∧
+(∀(v7 :α reg_imm) (v6 :num) (v5 :cmp) (p2 :α stackLang$prog)
+     (p1 :α stackLang$prog).
+   clock_neutral (If v5 v6 v7 p1 p2 :α stackLang$prog) ⇔
+   clock_neutral p1 ∧ clock_neutral p2) ∧
+(∀(v9 :store_name) (v8 :num). clock_neutral (Get v8 v9 :α stackLang$prog) ⇔ F) ∧
+(∀(v11 :num) (v10 :store_name).
+   clock_neutral (Set v10 v11 :α stackLang$prog) ⇔ F) ∧
+(∀(v14 :num) (v13 :num) (v12 :binop).
+   clock_neutral (OpCurrHeap v12 v13 v14 :α stackLang$prog) ⇔ F) ∧
+(∀(v17 :(α stackLang$prog # num # num) option) (v16 :num + num)
+     (v15 :(α stackLang$prog # num # num # num) option).
+   clock_neutral (Call v15 v16 v17 :α stackLang$prog) ⇔ F) ∧
+(∀(v25 :α stackLang$prog). clock_neutral (Loop v25 :α stackLang$prog) ⇔ F) ∧
+(∀(v28 :num) (v27 :num) (v26 :num).
+   clock_neutral (JumpLower v26 v27 v28 :α stackLang$prog) ⇔ F) ∧
+(∀(v29 :num). clock_neutral (Alloc v29 :α stackLang$prog) ⇔ F) ∧
+(∀(v32 :num option) (v31 :num) (v30 :num).
+   clock_neutral (StoreConsts v30 v31 v32 :α stackLang$prog) ⇔ F) ∧
+(∀(v33 :num). clock_neutral (Raise v33 :α stackLang$prog) ⇔ F) ∧
+(∀(v34 :num). clock_neutral (Return v34 :α stackLang$prog) ⇔ F) ∧
+(∀(v35 :num). clock_neutral (Break v35 :α stackLang$prog) ⇔ F) ∧
+(∀(v36 :num). clock_neutral (Continue v36 :α stackLang$prog) ⇔ F) ∧
+(∀(v42 :num) (v41 :num) (v40 :num) (v39 :num) (v38 :num) (v37 :mlstring).
+   clock_neutral (FFI v37 v38 v39 v40 v41 v42 :α stackLang$prog) ⇔ F) ∧
+(clock_neutral (Tick :α stackLang$prog) ⇔ F) ∧
+(∀(v50 :num) (v49 :num) (v48 :num) (v47 :num) (v46 :num).
+   clock_neutral (Install v46 v47 v48 v49 v50 :α stackLang$prog) ⇔ F) ∧
+(∀(v53 :α addr) (v52 :num) (v51 :memop).
+   clock_neutral (ShMemOp v51 v52 v53) ⇔ F) ∧
+(∀(v55 :num) (v54 :num).
+   clock_neutral (CodeBufferWrite v54 v55 :α stackLang$prog) ⇔ F) ∧
+(∀(v57 :num) (v56 :num).
+   clock_neutral (DataBufferWrite v56 v57 :α stackLang$prog) ⇔ F) ∧
+(∀(v58 :num). clock_neutral (RawCall v58 :α stackLang$prog) ⇔ F) ∧
+(∀(v59 :num). clock_neutral (StackAlloc v59 :α stackLang$prog) ⇔ F) ∧
+(∀(v60 :num). clock_neutral (StackFree v60 :α stackLang$prog) ⇔ F) ∧
+(∀(v62 :num) (v61 :num).
+   clock_neutral (StackStore v61 v62 :α stackLang$prog) ⇔ F) ∧
+(∀(v64 :num) (v63 :num).
+   clock_neutral (StackStoreAny v63 v64 :α stackLang$prog) ⇔ F) ∧
+(∀(v66 :num) (v65 :num).
+   clock_neutral (StackLoad v65 v66 :α stackLang$prog) ⇔ F) ∧
+(∀(v68 :num) (v67 :num).
+   clock_neutral (StackLoadAny v67 v68 :α stackLang$prog) ⇔ F) ∧
+(∀(v69 :num). clock_neutral (StackGetSize v69 :α stackLang$prog) ⇔ F) ∧
+(∀(v70 :num). clock_neutral (StackSetSize v70 :α stackLang$prog) ⇔ F) ∧
+∀(v72 :num) (v71 :num).
+  clock_neutral (BitmapLoad v71 v72 :α stackLang$prog) ⇔ F
+
+cp_6_types=
+cp_skip64=T
+
+cp_sqrt1=T
+
+cp_halt16=T
+
+cp_loc1=T
+
+cp_seq_good64=T
+
+cp_seq_tick16=F
+
+cp_if_good1=T
+
+cp_if_bad64=F
+
+cp_loop_skip64=F
+
+cp_call_skip1=F
+

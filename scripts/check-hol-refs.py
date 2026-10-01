@@ -257,7 +257,10 @@ REALS_AS_RATIONAL_CUTS_RE = re.compile(
 # reals as Lean `Rat`, and `fp64_sqrt`'s real square root as its rational cut
 # (docs/SOUNDNESS.md item 8).  A tagged declaration whose own source uses a
 # declaration of these modules must carry `(reals_as_rational_cuts)`.
-REALS_RENDERING_GLOBS = ("Flapjack/Misc/MachineIeee.lean", "Flapjack/Misc/BinaryIeee*.lean")
+REALS_RENDERING_GLOBS = (
+    "Flapjack/Misc/MachineIeee.lean", "Flapjack/Misc/BinaryIeee*.lean",
+    "Flapjack/Misc/BinaryIeee*/**/*.lean",
+)
 REALS_RENDERING_DECL_RE = re.compile(
     r"^\s*(?:@\[[^\]]*\]\s*)?(?:(?:private|protected|noncomputable|partial)\s+)*"
     r"(?:def|abbrev|structure|inductive|opaque)\s+([A-Za-z_][A-Za-z0-9_'.]*)",
