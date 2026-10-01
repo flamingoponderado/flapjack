@@ -2209,3 +2209,8 @@ non-well-formed BN trees are retained without a validity restriction.
 `WordToStackNativeConfigParity.lean` kernel-replays the same records. This
 carrier prerequisite does not establish the top compiler or its executed route;
 those remain tracked on the WordToStack compiler beads.
+`parmove_stepscorrect_probeScript.sml` captures12fresh original parallel and
+reversed-sequential values for a cycle and chain. Kernel tests construct the
+actual five-step cycle and four-step chain relations and apply steps_correct
+for arbitrary environments. The temporary changes99to27 on the cycle; original
+eqenv excludes it. No pmov-to-Step relationship is assumed or claimed.

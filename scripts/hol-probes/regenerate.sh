@@ -2850,3 +2850,6 @@ run_probe labsem_evaluate_probeScript.sml labsem_evaluate_probe.out \
 run_probe word_to_stack_native_config_probeScript.sml word_to_stack_native_config_probe.out \
   nc_length nc_empty nc_single nc_nonwf nc_raw nc_update_length nc_update_tree \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+run_probe parmove_stepscorrect_probeScript.sml parmove_stepscorrect_probe.out \
+  pv_correct_cycle_parallel_1 pv_correct_cycle_parallel_2 pv_correct_cycle_parallel_temp pv_correct_cycle_sequential_1 pv_correct_cycle_sequential_2 pv_correct_cycle_sequential_temp pv_correct_chain_parallel_1 pv_correct_chain_parallel_2 pv_correct_chain_parallel_temp pv_correct_chain_sequential_1 pv_correct_chain_sequential_2 pv_correct_chain_sequential_temp \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
