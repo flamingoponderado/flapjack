@@ -3050,6 +3050,10 @@ run_probe reg_alloc_remap_probeScript.sml reg_alloc_remap_probe.out \
   remap_empty remap_delta remap_duplicate remap_seq remap_branch remap_fixed remap_raw_empty remap_raw_root remap_set_order remap_large remap_nested remap_initial \
   "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
+run_probe reg_alloc_state_map_probeScript.sml reg_alloc_state_map_probe.out \
+  sm_type sm_bool_state sm_num_state sm_empty sm_one sm_order sm_reverse sm_duplicates sm_large sm_fail_empty sm_fail_first sm_fail_middle sm_fail_last sm_fail_duplicates sm_success sm_state_failure sm_list_state sm_list_error sm_tuple_state sm_empty_failure_callback \
+  "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
 run_probe monad_list_primitives_probeScript.sml monad_list_primitives_probe.out \
   lp_sub_empty lp_sub_empty_bound lp_sub_head lp_sub_middle lp_sub_last lp_sub_length lp_sub_length_bound lp_sub_large lp_sub_large_bound lp_sub_duplicate lp_update_empty lp_update_empty_bound lp_update_head lp_update_middle lp_update_last lp_update_length lp_update_length_bound lp_update_large lp_update_large_bound lp_update_duplicate lp_bool_sub lp_bool_update lp_bool_fail lp_tuple_error lp_tuple_value \
   "$cake_dir/translator/monadic/monad_base/ml_monadBaseScript.sml" "$cake_dir/translator/monadic/monad_base"

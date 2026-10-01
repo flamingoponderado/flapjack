@@ -2511,3 +2511,14 @@ do not establish cross-prover equivalence or completion of successful EL/LUPDATE
 equations, state-array accessors or production allocator routing. Regenerate
 read-only with
 `HOL_PROBE_ONLY=monad_list_primitives_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`reg_alloc_state_map_probe.out` captures the original polymorphic st_ex_MAP
+type and nineteen fresh result/state equations, replayed by
+`RegAllocStateMapParity` in the kernel. Independent input/state/result/exception
+carriers, effect order, every failure position, failure-returned state,
+state-dependent failure and empty callbacks are covered. The source type is
+recorded as an observation; no genericity is inferred from specialized rows
+alone. Finite observations do not establish cross-prover equivalence or
+completion of generated allocator functions or production routing. Regenerate
+read-only with
+`HOL_PROBE_ONLY=reg_alloc_state_map_probeScript.sml scripts/hol-probes/regenerate.sh`.

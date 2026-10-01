@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.RegAlloc.StateMap
 import Flapjack.Translator.Monadic.MonadBase.ListPrimitives
 import Flapjack.Compiler.Backend.WordAlloc.CanonizeSort
 import Flapjack.Compiler.Backend.WordAlloc.HeuProg
