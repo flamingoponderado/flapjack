@@ -85,6 +85,7 @@ import Flapjack.Test.FindIndexBoundsParity
 import Flapjack.Test.ParmoveTempAppendParity
 import Flapjack.Test.LabToTargetPositionsParity
 import Flapjack.Test.LabToTargetLabelsParity
+import Flapjack.Test.AsmSemMemoryParity
 import Flapjack.Test.WordAllocShareCheckerParity
 import Flapjack.Test.SpDefaultParity
 import Flapjack.Test.InClashTreeParity
@@ -1535,6 +1536,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.WordConvsPostAllocExactParity.runChecks,
     Flapjack.Test.LabToTargetPositionsParity.runChecks,
     Flapjack.Test.LabToTargetLabelsParity.runChecks,
+    Flapjack.Test.AsmSemMemoryParity.runChecks,
     Flapjack.Test.LabToTargetSectionLookupParity.runChecks,
     Flapjack.Test.TargetPropsInterferenceParity.runChecks,
     Flapjack.Test.AsmSemArithmeticParity.runChecks,

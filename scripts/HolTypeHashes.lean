@@ -364,6 +364,7 @@ import Flapjack.Compiler.Backend.Semantics.StackSem.SizeBitmapCases
 import Flapjack.Compiler.Backend.Semantics.TargetSem.State
 import Flapjack.Compiler.Encoders.AsmProps.Target
 import Flapjack.Compiler.Encoders.AsmSem.State
+import Flapjack.Compiler.Encoders.AsmProps.Memory
 import Flapjack.Compiler.Backend.Semantics.TargetSem.Machine
 import Flapjack.Misc.AsmWriteBytearray
 import Flapjack.Misc.BytesInMemory
