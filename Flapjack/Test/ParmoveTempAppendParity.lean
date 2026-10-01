@@ -21,6 +21,14 @@ example : observation [(some 1,some 2),(some 3,some 4)] [(none,some 2)] = (true,
 -- nta_late_write=(T,T,F,F)
 example : observation [(some 1,some 2),(none,some 3)] [(some 4,none)] = (true,true,false,false) := rfl
 
-example {α : Type} (first second : List (Move α)) := notUseTempBeforeAssignAppend first second
+example {destination source : Type}
+    (first second : List (Option destination × Option source)) :=
+  notUseTempBeforeAssignAppend first second
+
+-- Mixed-carrier original observations exercise the unrestricted HOL type.
+example : notUseTempBeforeAssign ([(some true, some 7)] : List (Option Bool × Option Nat)) = true := rfl
+example : notUseTempBeforeAssign ([(some false, none)] : List (Option Bool × Option Nat)) = false := rfl
+example : notUseTempBeforeAssign ([(none, some 7), (some true, none)] : List (Option Bool × Option Nat)) = true := rfl
+example : notUseTempBeforeAssign ([(none, none)] : List (Option Bool × Option Nat)) = false := rfl
 
 end Flapjack.Test.ParmoveTempAppendParity

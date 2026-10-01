@@ -2355,3 +2355,5 @@ identity colouring, with a variable address. The same inputs are kernel-replayed
 in `WordAllocShareCheckerParity`, imported by the actual CompilerParity driver.
 These finite observations supplement the full original-motive case proofs;
 they do not establish cross-prover equivalence or whole allocator correctness.
+
+`parmove_temp_mixed_probeScript.sml` checks four literal scratch-safety clauses with independent bool destination and num source carriers. `ParmoveTempAppendParity` kernel-replays these rows and applies the append theorem to arbitrary independent carriers; existing same-carrier sentinels remain registered.
