@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Encoders.AsmProps.FpPreservation
 import Flapjack.Compiler.Encoders.AsmProps.PcCoverage
 import Flapjack.Pancake.WordConvs.NameMonotonicity
 import Flapjack.Pancake.WordConvs.EveryVarInstMono

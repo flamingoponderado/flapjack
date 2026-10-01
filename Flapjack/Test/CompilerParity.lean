@@ -1,3 +1,4 @@
+import Flapjack.Test.AsmSemFpUpdatesParity
 import Flapjack.Test.AsmPropsPcCoverageParity
 import Flapjack.Test.AsmSemArithmeticParity
 import Flapjack.Test.WordConvsNameMonoParity
@@ -1537,6 +1538,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.LabToTargetSectionLookupParity.runChecks,
     Flapjack.Test.TargetPropsInterferenceParity.runChecks,
     Flapjack.Test.AsmPropsPcCoverageParity.runChecks,
+    Flapjack.Test.AsmSemFpUpdatesParity.runChecks,
     Flapjack.Test.AsmSemArithmeticParity.runChecks,
     Flapjack.Test.BytesInMemParity.runChecks,
     Flapjack.Test.CrepSemIoEventsMonoParity.runChecks

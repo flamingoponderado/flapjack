@@ -43628,5 +43628,25 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-pxn.18.5.15.10.26): Original asmPropsScript136-162: universally quantified byte list/base with arbitrary memory/domain/alignment, bytes_in_memory premise implies all_pcs(LENGTH xs) pc k SUBSET d. Lean uses accepted misc bytesInMemoryHOL and exactly that sole premise/conclusion. Local byteOffsetInDomain induction establishes every in-bounds wrapped byte offset is in the original domain; allPcs_eq then supplies generated offsets. No domain validity or target evaluation assumed as additional hypotheses. Only HOL positive word-index to BitVec width/NeZero translation; fixed word8 bytes, HOL num to Nat and HOL sets to predicate-backed Set retained. Direct original asmPropsTheory13 oracle rows with kernel replays, universal theorem itself kernel checked. Independent encoder prerequisite; full encoder correctness not claimed. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/AsmSem/FpUpdates.lean",
+    "lean_name": "fpUpd",
+    "hol_path": "cakeml/compiler/encoders/asm/asmSemScript.sml",
+    "hol_name": "fp_upd_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-pxn.18.5.15.10.28): all16 original asmSem fp_upd clauses on native AsmState and exact monomorphic HolFp. Fixed FP64, raw width-indexed register words (no Lab WordLoc callback/guard), RTE mode on every rounding operation; fp64_mul_add reads original r2/r3/r1 operand order. Non64 moves extract to actual width and concatenate actual widths before fixed64 conversion, sequential alias writes preserved. FPToInt asserts signedword32 equality yet unconditionally writes zero-extended32 or original-parent-register field insertion after failure; none conversion assertsfalse. FPFromInt64 signedextract32, non64 signedextractactualwidth (no width32 assumption). Direct reals_as_rational_cuts uses shared reviewed IEEE renderings/SOUNDNESS item8; no fixed arithmetic quiet-NaN payload or extra positivity/conversion-success premise. 34 fresh DIRECT original asmSemTheory rows and kernel replays cover all16, widths8/32/64/128, alias halves, overflow retainedwrites/failure, sign/NaN comparisons and exactpayloadmoves, FMAorder and ties. FullASM/evaluator/runtime routing not claimed. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/AsmProps/FpPreservation.lean",
+    "lean_name": "fpUpd_consts",
+    "hol_path": "cakeml/compiler/encoders/asm/asmPropsScript.sml",
+    "hol_name": "fp_upd_consts",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-pxn.18.5.15.10.28): original asmProps380-389 exact five conjuncts in sourceorder: native fp_upd preserves mem_domain, align, mem, lr, be for every operation/native state/positive width. Complete all16cases, including both width branches and Option integerconversion outcomes; no failed/conversion success/IEEE-result callback premise. Regs/fp_regs/failed may change and are not assertedconstant (matching original). Inherits reals_as_rational_cuts through native AsmSem.fpUpd, SOUNDNESS item8; theorem own source does not directly name an IEEE rendering and therefore carries only words qualifier plus inherited marker. Kernel checked full universal statement; original34FProws regression context, no wholeASM/encoder acceptance. Coordinator review pending."
   }
 ]
