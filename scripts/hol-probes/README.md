@@ -1886,3 +1886,11 @@ and frame guard) from `word_to_stackProofTheory`. The exact kernel replay is
 `Flapjack.Test.WordToStackStackSizeParity`. Regenerate read-only with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_to_stack_stack_size_rel_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`word_lang_occurrences_exact_probe.out` records twelve original `every_name`,
+`every_var` and `every_stack_var` observations, including exact Spt cutsets,
+Loop live-set scope and Call handlers under NONE/SOME returns.
+`Flapjack.Test.WordLangOccurrencesExactParity` invokes all three new tagged
+predicates and kernel-replays each row. Regenerate read-only with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_lang_occurrences_exact_probeScript.sml scripts/hol-probes/regenerate.sh`.
