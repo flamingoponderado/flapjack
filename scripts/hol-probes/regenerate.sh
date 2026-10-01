@@ -101,6 +101,10 @@ run_probe() {
   done
 }
 
+run_probe word_to_stack_no_install_helpers_probeScript.sml word_to_stack_no_install_helpers_probe.out \
+  ni_moves_empty ni_moves_all_pairs ni_load_install ni_load_skip ni_reg1_direct ni_reg1_spill ni_reg2_direct ni_reg2_spill ni_live_zero ni_live_frame ni_stack_move_install ni_stack_move_zero ni_copy_aux_zero ni_copy_aux_many \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe word_to_stack_copy_ret_carriers_probeScript.sml word_to_stack_copy_ret_carriers_probe.out \
   ret_tail_bool_zero ret_tail_bool_plain ret_tail_list_handle ret_tail_list_perf ret_tail_install \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"

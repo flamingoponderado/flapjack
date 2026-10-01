@@ -26,6 +26,7 @@ import Flapjack.Test.LabToTargetSectionLookupParity
 
 import Flapjack.Test.ParmovePreservesMovesPmovParity
 import Flapjack.Test.WordToStackCodeLabelsParity
+import Flapjack.Test.WordToStackNoInstallHelpersParity
 import Flapjack.Test.WordToStackCopyRetCarriersParity
 import Flapjack.Test.WordToStackCompCodeLabelsParity
 import Flapjack.Test.WordToStackProgramCodeLabelsParity

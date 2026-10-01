@@ -4549,6 +4549,12 @@
       "sha256": "c17f05cd96c0462f2d5f14f4b3a6c3b1cab886bd7621a0e520ae46c73ead9e12"
     },
     {
+      "bytes": 251,
+      "out": "word_to_stack_no_install_helpers_probe.out",
+      "rows": 14,
+      "sha256": "08ff5c1f58d30be60f95030b28d4842b3b76d69d6407bf0ff8c683cf9eba9265"
+    },
+    {
       "bytes": 79,
       "out": "word_to_stack_perf_slots_probe.out",
       "rows": 4,

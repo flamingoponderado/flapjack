@@ -43897,5 +43897,68 @@
     "lean_name": "isStackVarAdd",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-luna-c exact source5708-5724: arbitrary Nat next, only original allocation/stack predicate premise, same predicate at next+4. Reuses reviewed native isAllocVar/isStackVar MOD4 residues1/3, no bound/wf/distinct/word-width or SSA-state premise. Actual source use list_next_var_rename_props5768/5776 tracked6->7. Eight fresh direct original predicate observations incl physical-register and large Nat boundaries, six kernel theorem applications. The original local proofs are replayed literally in the Flapjack-side HOL probe and separately labeled source_replay, not claimed exported DB theorems. No executable behavior change. Coordinator acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "wMoveAux_no_install_lem",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NoInstall.lean",
+    "lean_name": "wMoveAuxNoInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison2026-10-01 bead47.2.2: original11959-11966, full arbitrary list of Sum Nat Nat destination/source pairs and complete all-Nat frame; empty/singleton/longer source branches and all four move shapes, unconditional output no-install. Fresh full original helper/public theorem types checked in /tmp/sol3-no-install-types.log. Uses accepted native noInstall/HolProg constructor payloads; sole word translation is positive HOL alpha word dimension to BitVec width/NeZero. All source quantifiers, hypotheses and conclusions retained; no total HD/EL, source-absent guard, target result, map/list/string translation or successful compiler assumption. Fourteen original observations (twelve applications of six original exported theorems with all actual premises discharged, two local copy_ret_aux definition observations) replayed by kernel applications on identical inputs, widths64/1 and safe/Install continuations. Parent full compiler no-install preservation remains unfinished; regression/kernel checking is distinct from cross-language source review."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "wStackLoad_no_install_lem",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NoInstall.lean",
+    "lean_name": "wStackLoadNoInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison2026-10-01 bead47.2.2: original11968-11973, full arbitrary load-pair list and native continuation; exact Bool equality, including Install continuations. No successful or safe-continuation premise. Fresh full original helper/public theorem types checked in /tmp/sol3-no-install-types.log. Uses accepted native noInstall/HolProg constructor payloads; sole word translation is positive HOL alpha word dimension to BitVec width/NeZero. All source quantifiers, hypotheses and conclusions retained; no total HD/EL, source-absent guard, target result, map/list/string translation or successful compiler assumption. Fourteen original observations (twelve applications of six original exported theorems with all actual premises discharged, two local copy_ret_aux definition observations) replayed by kernel applications on identical inputs, widths64/1 and safe/Install continuations. Parent full compiler no-install preservation remains unfinished; regression/kernel checking is distinct from cross-language source review."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "wRegWrite1_no_install_lem",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NoInstall.lean",
+    "lean_name": "wRegWrite1NoInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison2026-10-01 bead47.2.2: original11975-11983, original universally quantified callback no-install premise retained for every Nat register; arbitrary r/frame, original r DIV 2 branch and spill sequence. Fresh full original helper/public theorem types checked in /tmp/sol3-no-install-types.log. Uses accepted native noInstall/HolProg constructor payloads; sole word translation is positive HOL alpha word dimension to BitVec width/NeZero. All source quantifiers, hypotheses and conclusions retained; no total HD/EL, source-absent guard, target result, map/list/string translation or successful compiler assumption. Fourteen original observations (twelve applications of six original exported theorems with all actual premises discharged, two local copy_ret_aux definition observations) replayed by kernel applications on identical inputs, widths64/1 and safe/Install continuations. Parent full compiler no-install preservation remains unfinished; regression/kernel checking is distinct from cross-language source review."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "wRegWrite2_no_install_lem",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NoInstall.lean",
+    "lean_name": "wRegWrite2NoInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison2026-10-01 bead47.2.2: original11985-11993, original universally quantified callback no-install premise retained for every Nat register; arbitrary r/frame, original r DIV 2 branch, second temporary and spill sequence. Fresh full original helper/public theorem types checked in /tmp/sol3-no-install-types.log. Uses accepted native noInstall/HolProg constructor payloads; sole word translation is positive HOL alpha word dimension to BitVec width/NeZero. All source quantifiers, hypotheses and conclusions retained; no total HD/EL, source-absent guard, target result, map/list/string translation or successful compiler assumption. Fourteen original observations (twelve applications of six original exported theorems with all actual premises discharged, two local copy_ret_aux definition observations) replayed by kernel applications on identical inputs, widths64/1 and safe/Install continuations. Parent full compiler no-install preservation remains unfinished; regression/kernel checking is distinct from cross-language source review."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "wLive_no_install_lem",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NoInstall.lean",
+    "lean_name": "wLiveNoInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison2026-10-01 bead47.2.2: original11995-12002, arbitrary Spt Unit cutset pair, AppList (BitVec width) x Nat bitmap and full frame; unconditional first-projection no-install; source empty/nonempty frame branches. Fresh full original helper/public theorem types checked in /tmp/sol3-no-install-types.log. Uses accepted native noInstall/HolProg constructor payloads; sole word translation is positive HOL alpha word dimension to BitVec width/NeZero. All source quantifiers, hypotheses and conclusions retained; no total HD/EL, source-absent guard, target result, map/list/string translation or successful compiler assumption. Fourteen original observations (twelve applications of six original exported theorems with all actual premises discharged, two local copy_ret_aux definition observations) replayed by kernel applications on identical inputs, widths64/1 and safe/Install continuations. Parent full compiler no-install preservation remains unfinished; regression/kernel checking is distinct from cross-language source review."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "stack_move_no_install_lem",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NoInstall.lean",
+    "lean_name": "stackMoveNoInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison2026-10-01 bead47.2.2: original12004-12010, all arbitrary count/start/offset/temporary/continuation inputs retained; full no-install Bool equality, no continuation safety assumption. Fresh full original helper/public theorem types checked in /tmp/sol3-no-install-types.log. Uses accepted native noInstall/HolProg constructor payloads; sole word translation is positive HOL alpha word dimension to BitVec width/NeZero. All source quantifiers, hypotheses and conclusions retained; no total HD/EL, source-absent guard, target result, map/list/string translation or successful compiler assumption. Fourteen original observations (twelve applications of six original exported theorems with all actual premises discharged, two local copy_ret_aux definition observations) replayed by kernel applications on identical inputs, widths64/1 and safe/Install continuations. Parent full compiler no-install preservation remains unfinished; regression/kernel checking is distinct from cross-language source review."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "copy_ret_aux_no_install",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NoInstall.lean",
+    "lean_name": "copyRetAuxNoInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison2026-10-01 bead47.2.2: original local12012-12020, arbitrary k/f/n with unconditional no-install; exact source zero/successor recursion and list_Seq tree preserved. Local source theorem not claimed exported; original definition instances directly evaluated. Fresh full original helper/public theorem types checked in /tmp/sol3-no-install-types.log. Uses accepted native noInstall/HolProg constructor payloads; sole word translation is positive HOL alpha word dimension to BitVec width/NeZero. All source quantifiers, hypotheses and conclusions retained; no total HD/EL, source-absent guard, target result, map/list/string translation or successful compiler assumption. Fourteen original observations (twelve applications of six original exported theorems with all actual premises discharged, two local copy_ret_aux definition observations) replayed by kernel applications on identical inputs, widths64/1 and safe/Install continuations. Parent full compiler no-install preservation remains unfinished; regression/kernel checking is distinct from cross-language source review."
   }
 ]
