@@ -2172,6 +2172,13 @@ a cycle changes register2 from17 to27; a pending read changes register4 from17
 to27. These are not accepted steps. The proof derives active no-read and retains
 both original guards. Full step_sem/RTC/scheduler assembly remains open.
 
+`parmove_stepssem_probeScript.sml` freshly captures 12 original semantic
+observations along a three-step cycle chain (Save, EmitHead, EmitLast), paired
+with kernel computations and an actual RTC constructor proof. Real registers
+remain27/17, while NONE changes99 to17. The theorem uses original eqenv,
+not equality at the temporary; reflexive closure is kernel checked separately.
+No functional scheduler or production-route correctness is inferred.
+
 `wordlang_max_var_probeScript.sml` captures 37 direct original full-program
 `max_var` equations. Cases include every constructor, tail-call handler
 suppression, returning and exceptional continuations, both Loop cut sets,
@@ -2179,12 +2186,14 @@ and 32/64-bit instruction transfer branches. `WordLangMaxVarParity.lean`
 kernel-replays the same inputs. These finite rows support source review;
 they do not establish a cross-prover equivalence or production route.
 
-`parmove_stepssem_probeScript.sml` freshly captures 12 original semantic
-observations along a three-step cycle chain (Save, EmitHead, EmitLast), paired
-with kernel computations and an actual RTC constructor proof. Real registers
-remain27/17, while NONE changes99 to17. The theorem uses original eqenv,
-not equality at the temporary; reflexive closure is kernel checked separately.
-No functional scheduler or production-route correctness is inferred.
+`parmove_final_probeScript.sml` freshly captures seven full original pmov
+results: terminal history preservation, self move, dependency chain, cycle,
+scratch-register inputs, duplicate destinations and nonempty active/history.
+Every full state is kernel paired in ParmoveFinalParity. Scratch and duplicate
+inputs deliberately exceed wf: pmov_final is unconditional. It proves empty
+pending/active lists and an existential emitted history, not semantic correctness.
+
+`labsem_evaluate_probeScript.sml` checks all full native evaluator branches in 57 whole executions, including installed-code execution, byte/configuration guard rejection, failed-instruction rollback, clock exhaustion, shared-memory sequence shifts, external-call register/FP havoc and exact return/final events. The paired kernel fixtures live in `Flapjack/Test/LabSemEvaluateParity.lean`. Constructor-specific `loc_to_pc` computation equations are derived with `SIMP_CONV [Once loc_to_pc_def]` in the HOL kernel to eliminate the original existential label guard before recursive execution; these preserve the original evaluator and inputs.
 
 `parmove_dsteps_probeScript.sml` freshly proves nine observations from the original
 `reg_alloc/parmove` theory: all six deterministic rules, two guard boundaries,

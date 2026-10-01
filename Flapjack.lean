@@ -1,9 +1,11 @@
 import Flapjack.Compiler.Backend.Parmove.DSteps
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Install
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.FFI
 import Flapjack.Pancake.WordLang.MaxVar
 import Flapjack.Pancake.WordLang.CutsetsMax
 import Flapjack.Pancake.WordLang.MaxVarInst
 import Flapjack.Compiler.Backend.WordToStack.NativeCompile
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.FFI
+import Flapjack.Compiler.Backend.Parmove.PmovFinal
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Inst
 import Flapjack.Compiler.Backend.Parmove.StepsSem
 import Flapjack.Pancake.WordLang.MaxVarExp
@@ -17,9 +19,6 @@ import Flapjack.Compiler.Backend.WordToStack.NativePerf
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.InstMemory
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.InstArith
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.InstAssign
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.InstFp
-import Flapjack.Pancake.WordLang.MaxVarExp
-import Flapjack.Compiler.Backend.Parmove.StepSem.EmitHead
 import Flapjack.Compiler.Backend.LabSem.FpUpdates
 import Flapjack.Compiler.Backend.LabSem.Arithmetic
 import Flapjack.Compiler.Backend.WordToStack.NativeReturn
@@ -29,6 +28,7 @@ import Flapjack.Compiler.Backend.WordToStack.NativeMoves
 import Flapjack.Compiler.Backend.LabSem.Memory
 import Flapjack.Compiler.Backend.LabSem.SharedMemory
 import Flapjack.Compiler.Backend.LabSem.Inst
+import Flapjack.Compiler.Backend.LabSem.Evaluate
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.If
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.CutState
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.LoopRecursion
@@ -199,6 +199,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.ColouringOk
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Motive
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Leaves
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Alloc
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Call
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.MoveStoreConsts
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.PermuteSwap
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StackEq
