@@ -1,8 +1,12 @@
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsSwap
+import Flapjack.Compiler.Backend.WordAlloc.ProductionMaxVarInst
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsPhysicalInsert
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapPreservation
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsBounds
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapBounds
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveDomains
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetup.EvenListDistinct
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveFrame
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.LimitVar.Arithmetic
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoves.MoveHead
 import Flapjack.Compiler.Backend.WordAlloc.ProductionMaxVarExp
@@ -10,6 +14,7 @@ import Flapjack.Compiler.Backend.WordAlloc.LimitVar
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameProperties
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARegisterFlip
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapExtend
+
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetup.ListNextVarRenameArithmetic
 import Flapjack.Compiler.Encoders.AsmProps.Assertions.Iteration
 import Flapjack.Compiler.Encoders.AsmSem.Arithmetic
