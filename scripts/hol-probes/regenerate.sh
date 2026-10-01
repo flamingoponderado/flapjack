@@ -2959,6 +2959,15 @@ run_probe word_alloc_stack_only_probeScript.sml word_alloc_stack_only_probe.out 
 run_probe word_alloc_get_prefs_probeScript.sml word_alloc_get_prefs_probe.out \
   prefs_skip prefs_empty prefs_move prefs_duplicate prefs_self prefs_seq prefs_if_reg prefs_if_imm prefs_must prefs_loop prefs_tail prefs_tail_handler prefs_return prefs_both prefs_nested prefs_ignored prefs_large \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+run_probe word_alloc_sp_default_probeScript.sml word_alloc_sp_default_probe.out \
+  spd_missing_phy spd_missing_virtual spd_present_phy spd_present_virtual spd_present_zero spd_raw_bs spd_raw_bn_hit spd_raw_bn_miss spd_large_phy spd_large_virtual tc_missing_phy tc_missing_virtual tc_present tc_raw tc_large \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+run_probe reg_alloc_in_clash_tree_probeScript.sml reg_alloc_in_clash_tree_probe.out \
+  ict_delta_write ict_delta_read ict_delta_miss ict_set ict_set_miss ict_set_raw ict_branch_left ict_branch_right ict_branch_none_miss ict_branch_some ict_branch_some_miss ict_seq_left ict_seq_right ict_large cct_ok_f cct_ok_gf cct_collision_f cct_collision_gf \
+  "$cake_dir/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml" "$cake_dir/compiler/backend/reg_alloc/proofs"
+run_probe word_alloc_get_forced_probeScript.sml word_alloc_get_forced_probe.out \
+  gf_addcarry_riscv gf_addcarry_mips gf_addcarry_self gf_addcarry_x86 gf_addovf_riscv gf_addovf_armv8 gf_subovf_mips gf_subovf_self gf_longmul_armv7 gf_longmul_armv7_self gf_longmul_riscv gf_longmul_ag32 gf_longmul_x86 gf_fptoreg_32 gf_fptoreg_32_self gf_fptoreg_64 gf_fpfromreg_32 gf_fpfromreg_64 gf_other_inst gf_seq gf_if gf_must gf_loop gf_call_return gf_call_both gf_call_tail gf_skip gf_large \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
 
 
 run_probe word_alloc_share_checker_probeScript.sml word_alloc_share_checker_probe.out \
