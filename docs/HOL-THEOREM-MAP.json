@@ -40145,5 +40145,47 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-a source comparison2026-10-01 beadof5g: all eight wShareInst clauses186-223 compared individually. Load/Load8/Load16/Load32 stage address via wReg1, ordered native wStackLoad and destination wRegWrite1 spill; Store/Store8/Store16/Store32 stage address via wReg1 then value via wReg2, concatenate loads in source order and emit matching ShMemOp with source register/address/offset unchanged. Unlike wInst, shared-memory16 cases are explicitly handled by source. HolMemop aliases reviewed eight-constructor WordMemOp; HolAddr width and HolProg width use reviewed same positive-word-width native payloads, faithful MlString program carrier. words_as_type_indexed_bitvec authorizes only BitVec width/NeZero translation. All-input toGeneric_wShareInstNative kernel theorem transports to accepted generic helper without memory-evaluation/result/success or bounds premise. No production alias adjustment/default or behavior change; actualcomp/production route remains parent25 OPEN. Coordinator review pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_apply_colour",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/InstAssign.lean",
+  "lean_name": "evaluateApplyColour_InstConst",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01 child25.1: HOL Inst1228-1263 Const subcase; same st/cst/f/live/lt binders, positive HOL word dimension, original colouring_ok/state equality/live-scoped locals premises and full existential applyColourPost. No IH (no subprogram), success or target-run premise. Literal inst clause equals exact expression assignment; write-set equality and input-live domain equivalence proved for all keys (including register/immediate operands). Reuses accepted Assign theorem, preserves Error disjunction and all post fields. Canonical imported state fpRegs/store translation with genuine broad roundtrip witness. Inherited reals_as_rational_cuts assumption through wordSem evaluate/inst, SOUNDNESS item8, not a direct real rendering or a new review of its primitives. Remaining Inst cases/assembly stay open; coordinator review pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_apply_colour",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/InstAssign.lean",
+  "lean_name": "evaluateApplyColour_InstBinop",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01 child25.1: HOL Inst1228-1263 Binop subcase; same st/cst/f/live/lt binders, positive HOL word dimension, original colouring_ok/state equality/live-scoped locals premises and full existential applyColourPost. No IH (no subprogram), success or target-run premise. Literal inst clause equals exact expression assignment; write-set equality and input-live domain equivalence proved for all keys (including register/immediate operands). Reuses accepted Assign theorem, preserves Error disjunction and all post fields. Canonical imported state fpRegs/store translation with genuine broad roundtrip witness. Inherited reals_as_rational_cuts assumption through wordSem evaluate/inst, SOUNDNESS item8, not a direct real rendering or a new review of its primitives. Remaining Inst cases/assembly stay open; coordinator review pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_apply_colour",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/InstAssign.lean",
+  "lean_name": "evaluateApplyColour_InstShift",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01 child25.1: HOL Inst1228-1263 Shift subcase; same st/cst/f/live/lt binders, positive HOL word dimension, original colouring_ok/state equality/live-scoped locals premises and full existential applyColourPost. No IH (no subprogram), success or target-run premise. Literal inst clause equals exact expression assignment; write-set equality and input-live domain equivalence proved for all keys (including register/immediate operands). Reuses accepted Assign theorem, preserves Error disjunction and all post fields. Canonical imported state fpRegs/store translation with genuine broad roundtrip witness. Inherited reals_as_rational_cuts assumption through wordSem evaluate/inst, SOUNDNESS item8, not a direct real rendering or a new review of its primitives. Remaining Inst cases/assembly stay open; coordinator review pending."
 }
 ]
