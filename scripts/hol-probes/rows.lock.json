@@ -4691,6 +4691,12 @@
       "out": "wrap_rt_probe.out",
       "rows": 5,
       "sha256": "34b4dc9b2384c56cae695cdda57731febdbd5d7d19b90a6c6004b6c39bdf87cd"
+    },
+    {
+      "bytes": 192,
+      "out": "word_to_stack_handler_safety_probe.out",
+      "rows": 12,
+      "sha256": "f185a51b195d2228ab0cfb5bd59ea471cb538973d2e5c7304badc1e547d1b054"
     }
   ],
   "version": 1

@@ -3131,3 +3131,19 @@ and payload applications. The definitions use the reviewed native `HolProg`
 carrier and preserve the literal source clauses. These are regression checks,
 not cross-language equivalence or full compiler preservation acceptance.
 Selector: `HOL_PROBE_ONLY=stackprops_forbidden_operations_probeScript.sml`.
+
+### Full incremental Word-to-Stack handler safety
+
+`word_to_stack_handler_safety_probeScript.sml` observes the original actual
+whole-program compiler, EVERY handler guard and full `stack_good_handler_labels`
+predicate. Twelve pair-equality claims resolve T: nonzero wrong-owner and nested
+wrong-owner failures, zero and existing entry-one exceptions, duplicate owners,
+nested valid handlers, dropped tail handlers, bitmap threading and width one
+with zero registers. The probe proves finite-list union normalization in HOL,
+evaluates the compiler, then discharges finite-set claims; the two negative
+predicate cases use the concrete offending `(9,5)` witness. No compiler
+correctness theorem is used to prove these observations. Matching kernel
+regressions and a nonempty full public theorem application retain arbitrary
+positive width/configuration/registers/bitmap input. These are regression checks,
+not cross-language equivalence or overall compiler correctness acceptance.
+Selector: `HOL_PROBE_ONLY=word_to_stack_handler_safety_probeScript.sml`.
