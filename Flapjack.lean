@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.StackProps.LabelSafety
 import Flapjack.Pancake.WordConvs.NameMonotonicity
+import Flapjack.Compiler.Encoders.AsmProps.PcCoverage
 import Flapjack.Pancake.WordConvs.EveryVarInstMono
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Parmove
 import Flapjack.Compiler.Backend.Parmove.AllDistinct.Parmove

@@ -101,6 +101,10 @@ run_probe() {
   done
 }
 
+run_probe asmprops_pc_coverage_probeScript.sml asmprops_pc_coverage_probe.out \
+  pcs_empty pcs_byte_wrap pcs_stride_short pcs_stride_exact pcs_stride_tail pcs_stride_twice pcs_stride_extra pcs_dimension_stride pcs_large_stride pcs_width1_duplicates pcs_width1_stride pcs_width32_wrap pcs_width64_wrap \
+  "$cake_dir/compiler/encoders/asm/asmPropsScript.sml" "$cake_dir/compiler/encoders/asm"
+
 run_probe lab_to_target_section_lookup_probeScript.sml lab_to_target_section_lookup_probe.out \
   section_entry section_label5 section_label7 section_missing preceding_entry preceding_label5 empty_tail_entry empty_tail_missing \
   "$cake_dir/compiler/backend/semantics/labSemScript.sml" "$cake_dir/compiler/backend/semantics"
