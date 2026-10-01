@@ -2597,3 +2597,16 @@ update, strict spill selector comparisons/tie accumulation, and the full
 success existential with good-state/subgraph/dimension/node-tag conclusions.
 Native `CakeRegAlloc` helpers are not thereby reviewed as literal state-monad
 ports. No source implementation or executed compiler route changes here.
+
+### Native state-exception partition
+
+`reg_alloc_state_partition_probeScript.sml` captures the original generic
+`st_ex_PARTITION` type and 22 Boolean equalities over full result/state pairs.
+`RegAllocStatePartitionParity.lean` replays the same inputs and outputs in the
+Lean kernel. Fixtures cover prepend accumulators, duplicates, reversed input,
+large Nat values, state-dependent decisions, all failure positions and
+independent Bool/list/product state and exception carriers. The generic empty
+case is also checked by `rfl`. Finite parity observations support the literal
+source comparison; they do not prove cross-prover equivalence or execute a
+production allocator replacement. Native phase proofs and production routing
+remain separate work.
