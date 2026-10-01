@@ -1,3 +1,7 @@
+import Flapjack.Test.WordConvsEveryVarInstMonoParity
+import Flapjack.Test.ParmovePreservesMovesParmoveParity
+import Flapjack.Test.ParmoveAllDistinctWrapperParity
+import Flapjack.Test.WordAllocMax3Parity
 import Flapjack.Test.BackendPropsNonzeroLabelsParity
 
 import Flapjack.Test.TargetPropsInterferenceParity
@@ -6,6 +10,9 @@ import Flapjack.Test.ParmovePreservesMovesPmovParity
 import Flapjack.Test.WordToStackCodeLabelsParity
 import Flapjack.Test.WordConvsCodeLabelsParity
 import Flapjack.Test.ParmovePreservesMovesStepsParity
+import Flapjack.Test.WordConvsExpMonoParity
+import Flapjack.Test.WordAllocMaxVarExpParity
+import Flapjack.Test.WordAllocMaxVarInstParity
 import Flapjack.Test.WordToStackRegisterLabelsParity
 import Flapjack.Test.WordToStackCompileLookupParity
 import Flapjack.Test.WordAllocGetHeuristicsParity
@@ -1090,6 +1097,7 @@ def main : IO Unit := do
     checkBool "Pancake computed local-store address compiles" nestedLocalStoreBytesAccepted,
     checkBool "Pancake RISC-V artifact envelope markers" ArtifactFormat.pancakeEnvelopeMatches,
     checkBool "Pancake RISC-V artifact prologue" ArtifactFormat.pancakePrologueMatches,
+    Flapjack.Test.WordConvsEveryVarInstMonoParity.runChecks,
     Flapjack.Test.SourceGlobalParity.runChecks,
     checkBool "shadowing global source remains accepted"
       Flapjack.Test.SourceGlobalParity.shadowingBytesAccepted,

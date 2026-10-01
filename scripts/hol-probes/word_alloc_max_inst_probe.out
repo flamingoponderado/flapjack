@@ -1,0 +1,13 @@
+mi_skip=(0,T)
+mi_const=(1208925819614629174706176,T)
+mi_binreg=(9,T)
+mi_binimm=(9,T)
+mi_shift=(17,T)
+mi_div=(21,T)
+mi_longdiv=(99,T)
+mi_load8=(80,T)
+mi_fp64_to=(2,T)
+mi_fp32_to=(99,T)
+mi_fp80_from=(99,T)
+mi_fpignored=(0,T)
+mi_original_theorem=⊢ ∀inst. every_var_inst (λx. x ≤ max_var_inst inst) inst

@@ -3179,6 +3179,10 @@ run_probe parmove_all_distinct_steps_probeScript.sml parmove_all_distinct_steps_
   adrtc_scratch adrtc_first adrtc_middle adrtc_last \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
+run_probe word_alloc_max3_eq_probeScript.sml word_alloc_max3_eq_probe.out \
+  max3_eq_statement max3_zero max3_x max3_y max3_z_after_x max3_z_after_y \
+  max3_xy_tie max3_xz_tie max3_yz_tie max3_large \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/misc"
 run_probe wordconvs_code_labels_probeScript.sml wordconvs_code_labels_probe.out \
   wl_skip wl_location wl_direct_tail wl_indirect_tail wl_tail_handler wl_both_bodies wl_metadata_omitted wl_return_only wl_duplicate wl_if wl_loop wl_must \
   "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
@@ -3222,3 +3226,27 @@ run_probe word_to_stack_compile_lookup_probeScript.sml word_to_stack_compile_loo
 run_probe word_to_stack_register_labels_probeScript.sml word_to_stack_register_labels_probe.out \
   wr_physical wr_boundary wr_spilled wr_zero wr_large wr_labelled \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
+run_probe parmove_all_distinct_wrapper_probeScript.sml parmove_all_distinct_wrapper_probe.out \
+  pad_original_statement pad_empty pad_self pad_chain pad_swap pad_cycle \
+  pad_shared_source pad_duplicate_boundary \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+run_probe word_alloc_max_inst_probeScript.sml word_alloc_max_inst_probe.out \
+  mi_skip mi_const mi_binreg mi_binimm mi_shift mi_div mi_longdiv mi_load8 mi_fp64_to mi_fp32_to mi_fp80_from mi_fpignored mi_original_theorem \
+  "$cake_dir/compiler/backend/wordLangScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_alloc_max_exp_probeScript.sml word_alloc_max_exp_probe.out \
+  me_const me_lookup me_var me_load me_empty me_nested me_duplicate me_shiftleft me_shiftright me_zero me_original_theorem \
+  "$cake_dir/compiler/backend/wordLangScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe wordconvs_exp_mono_probeScript.sml wordconvs_exp_mono_probe.out \
+  em_var em_nested em_empty em_const em_lookup em_duplicate em_large em_guard_needed em_original_theorem \
+  "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe parmove_preserves_moves_parmove_probeScript.sml parmove_preserves_moves_parmove_probe.out \
+  pmm_shared pmm_cycle pmm_bool pmm_output pmm_self pmm_empty \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe word_convs_every_var_inst_mono_probeScript.sml word_convs_every_var_inst_mono_probe.out \
+  im_original_theorem im_skip im_const im_binreg im_binimm im_shift im_div im_longdiv im_load8 im_load16_ignored im_fpless im_fp64_to im_fp32_to im_fp80_from im_fpignored im_fp32_reject \
+  "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
