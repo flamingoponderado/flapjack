@@ -48545,5 +48545,85 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.1.3): literal HOL wordConvsScript.sml:536-556, clause by clause in HOL order with HOL's catchall, over the exact WordLangProgHOL carrier with bool-valued P as in HOL; MustTerminate/Seq/Loop/If recursion, Call with both optional bodies and the normalised handler probe, Alloc/Install (LN,LN), LocValue label, ShareInst ARB 0 (Var 0). HOL ARB (boolScript new_constant, deliberately undefined) is the uninterpreted Lean opaque holArbMemOp, so no theorem can depend on its value, as in HOL. Positive BitVec/NeZero is the only carrier translation. notCreatedSubprogsHOL_eq_withMemOp relates it to the choice-parametric checker and the *_eq_notCreated lemmas link the tagged no_* specialisations, whose 15 original HOL probe rows are replayed (exact-checker rows added in Flapjack/Test/WordLangNotCreatedParity.lean)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "remove_dead_not_created_subprogs",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/RemoveDead.lean",
+    "lean_name": "removeDead_notCreatedSubprogs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.1.8): HOL wordConvsProofScript.sml:1521-1535 remove_dead_not_created_subprogs: quantifiers prog q r lt with HOL's free predicate P as leading binder, premise not_created_subprogs P prog, conclusion not_created_subprogs P (FST (remove_dead prog q r lt)) over the exact notCreatedSubprogsHOL. Statement over the exact WordLangProgHOL carrier and reviewed WordAlloc.removeDead/removeDeadProg; positive BitVec/NeZero is the only carrier translation; proved by the untagged structural induction removeDead_induct mirroring HOL remove_dead_ind; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "remove_dead_prog_not_created_subprogs",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/RemoveDead.lean",
+    "lean_name": "removeDeadProg_notCreatedSubprogs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.1.8): HOL wordConvsProofScript.sml:1537-1543 remove_dead_prog_not_created_subprogs: free P and prog, not_created_subprogs P prog implies not_created_subprogs P (remove_dead_prog prog). Statement over the exact WordLangProgHOL carrier and reviewed WordAlloc.removeDead/removeDeadProg; positive BitVec/NeZero is the only carrier translation; proved by the untagged structural induction removeDead_induct mirroring HOL remove_dead_ind; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "remove_dead_conventions",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/RemoveDead.lean",
+    "lean_name": "removeDeadConventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.1.8): HOL wordConvsProofScript.sml:1545-1561 remove_dead_conventions: quantifiers p live nlive lt c with free instruction predicate P leading; HOL's binder k does not occur in the statement and is omitted (documented beside the theorem); the let comp and the six conjuncts in HOL order: flat_exp_conventions, full_inst_ok_less c, pre_alloc_conventions (preAllocConventionsHOL), every_inst P, wf_cutsets as implications and extract_labels equality. Statement over the exact WordLangProgHOL carrier and reviewed WordAlloc.removeDead/removeDeadProg; positive BitVec/NeZero is the only carrier translation; proved by the untagged structural induction removeDead_induct mirroring HOL remove_dead_ind; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "remove_dead_prog_conventions",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/RemoveDead.lean",
+    "lean_name": "removeDeadProgConventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.1.8): HOL wordConvsProofScript.sml:1563-1565 remove_dead_prog_conventions: the HOL derived theorem remove_dead_conventions SPEC p LN [] [] with LET_THM/FORALL_AND_THM and GSYM remove_dead_prog_def: free p, c, P and the six conjuncts on remove_dead_prog p. Statement over the exact WordLangProgHOL carrier and reviewed WordAlloc.removeDead/removeDeadProg; positive BitVec/NeZero is the only carrier translation; proved by the untagged structural induction removeDead_induct mirroring HOL remove_dead_ind; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_remove_dead",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/RemoveDead.lean",
+    "lean_name": "getCodeLabels_removeDead",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.1.8): HOL wordConvsProofScript.sml:1567-1577 word_get_code_labels_remove_dead: quantifiers ps live nlive lt, word_get_code_labels (FST (remove_dead ps live nlive lt)) SUBSET word_get_code_labels ps over the reviewed getCodeLabelsHOL Set Nat. Statement over the exact WordLangProgHOL carrier and reviewed WordAlloc.removeDead/removeDeadProg; positive BitVec/NeZero is the only carrier translation; proved by the untagged structural induction removeDead_induct mirroring HOL remove_dead_ind; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_remove_dead_prog",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/RemoveDead.lean",
+    "lean_name": "getCodeLabels_removeDeadProg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.1.8): HOL wordConvsProofScript.sml:1579-1584 word_get_code_labels_remove_dead_prog: free ps, word_get_code_labels (remove_dead_prog ps) SUBSET word_get_code_labels ps. Statement over the exact WordLangProgHOL carrier and reviewed WordAlloc.removeDead/removeDeadProg; positive BitVec/NeZero is the only carrier translation; proved by the untagged structural induction removeDead_induct mirroring HOL remove_dead_ind; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_good_handlers_remove_dead",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/RemoveDead.lean",
+    "lean_name": "goodHandlers_removeDead",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.1.8): HOL wordConvsProofScript.sml:1586-1596 word_good_handlers_remove_dead: quantifiers ps live nlive lt with free handler label n leading, word_good_handlers n (FST (remove_dead ...)) <=> word_good_handlers n ps over the reviewed goodHandlersHOL (bool = true on both sides). Statement over the exact WordLangProgHOL carrier and reviewed WordAlloc.removeDead/removeDeadProg; positive BitVec/NeZero is the only carrier translation; proved by the untagged structural induction removeDead_induct mirroring HOL remove_dead_ind; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_good_handlers_remove_dead_prog",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/RemoveDead.lean",
+    "lean_name": "goodHandlers_removeDeadProg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.1.8): HOL wordConvsProofScript.sml:1598-1603 word_good_handlers_remove_dead_prog: free n and ps, word_good_handlers n (remove_dead_prog ps) <=> word_good_handlers n ps. Statement over the exact WordLangProgHOL carrier and reviewed WordAlloc.removeDead/removeDeadProg; positive BitVec/NeZero is the only carrier translation; proved by the untagged structural induction removeDead_induct mirroring HOL remove_dead_ind; no extra premise."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/RemoveDead.lean",
+    "lean_name": "removeDead_induct",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only structural induction over remove_dead results used by the tagged wordConvsProof remove_dead theorems; HOL uses remove_dead_ind with remove_dead_def directly, so no separate HOL declaration is being ported."
   }
 ]
