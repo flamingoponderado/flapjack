@@ -3463,3 +3463,18 @@ query revealed that fixing this ignored field to Nat specialized the predicate;
 its existing canonical Lean definition now preserves the generic carrier.
 The actual compiler theorem still uses Nat there, as required by its original
 compiler type. No clauses or executed compiler behavior change.
+
+### Full WordConvs forbidden-constructor equation group
+
+`word_convs_no_alloc_def_probeScript.sml`, `word_convs_no_mt_def_probeScript.sml`
+and `word_convs_no_share_inst_def_probeScript.sml` each instantiate all 26
+original exported clauses and three further Call option combinations at width
+one. Every row records actual predicate truth and the original clause
+conclusion. Failing recursive/rejected constructor values remain false;
+all original clause conclusions are true. `WordConvsPredicateEquationsParity`
+replays the 87 observations through complete conjunction projections, preserving
+both optional Call bodies. The public theorems retain all original shared
+binders and simplify only constant constructor inequalities/self-equalities;
+no ARB representative or extra premise is introduced. The canonical reviewed
+predicates are reused. This supporting group does not establish full compiler
+preservation or cross-language equivalence.
