@@ -41367,5 +41367,19 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.4.8) against wordConvsScript.sml:352-375, clause by clause over WordLangProgHOL (BitVec width): Alloc n s and Install _ _ _ _ s => wf_names s; Call ret dest args h => ret NONE => T | SOME (v,cutset,ret_handler,l1,l2) => wf_names cutset /\\ wf_cutsets ret_handler /\\ (h NONE => T | SOME (v,prog,l1,l2) => wf_cutsets prog); FFI _ _ _ _ _ args => wf_names args; MustTerminate s; Seq s1 s2 both; Loop names p exit_names => wf names /\\ wf exit_names /\\ wf_cutsets p; If both branches; every other statement T. HOL sptree$wf is sptWf; HOL bool as Prop; HOL 'a word as positive-width BitVec (words_as_type_indexed_bitvec)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_apply_colour",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour.lean",
+    "lean_name": "evaluateApplyColour",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.30): HOL evaluate_apply_colour (word_allocProofScript.sml:1105-1163) itself: binders !prog st cst f live lt, the three HOL premises colouring_ok f prog live lt /\\ word_state_eq_rel st cst /\\ strong_locals_rel f (domain (get_live prog live lt)) st.locals cst.locals, and the HOL existential conclusion rendered by the untagged applyColourPost (exists perm'; SOME Error => T; else res = res', word_state_eq_rel and the NONE/Break/Continue/other locals obligation), no other premise. HOL proves it by completeInduct_on prog_size with suspended per-constructor cases; the Lean proof is the untagged structural recursion applyColourGoal_all over the 26 tagged evaluateApplyColour_<Case> theorems, whose only extra hypotheses are sub-program IHs (Seq, If, MustTerminate, Loop body, Call return/exception handlers), each discharged by the recursive call. Axioms: propext, Classical.choice, Quot.sound. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
   }
 ]
