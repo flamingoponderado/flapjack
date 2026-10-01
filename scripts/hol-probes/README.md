@@ -2488,7 +2488,6 @@ unbounded names/counters and widths 1/64/128. These finite observations do not
 establish general cross-prover equivalence or production allocator routing.
 Regenerate read-only with
 `HOL_PROBE_ONLY=word_alloc_heu_prog_probeScript.sml scripts/hol-probes/regenerate.sh`.
-
 `word_alloc_canonize_moves_aux_probeScript.sml` / `.out` compares the literal
 counting recursion at word_allocScript1641-1648 against twelve full output
 lists: empty/current zero count, arbitrary accumulator, priority up/down/equal,

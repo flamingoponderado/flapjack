@@ -1,10 +1,10 @@
 import Flapjack.Compiler.Backend.Parmove.StateToList
 import Flapjack.Compiler.Backend.Parmove.AllDistinct.Step
-import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Step
-import Flapjack.Misc.FindIndex.ShiftZero
-import Flapjack.Compiler.Backend.WordAlloc.CanonizeMovesAux
 import Flapjack.Compiler.Backend.WordAlloc.HeuProg
 import Flapjack.Compiler.Backend.RegAlloc.Remap
+import Flapjack.Compiler.Backend.WordAlloc.CanonizeMovesAux
+import Flapjack.Misc.FindIndex.ShiftZero
+import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Step
 import Flapjack.Compiler.Backend.WordAlloc.HeuCall
 import Flapjack.Compiler.Backend.WordAlloc.HeuMax
 import Flapjack.Compiler.Backend.RegAlloc.Exceptions
