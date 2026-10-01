@@ -2336,3 +2336,4 @@ values, identical endpoints, Bool payloads, zero multiplier, a large natural,
 and a malformed tree. `WordAllocCoalesceCostParity` replays the same inputs in
 the actual test driver. This definition does not yet replace the executed
 allocator heuristics and does not establish whole allocator correctness.
+`word_alloc_spillcost_probeScript.sml` captures ten original natural costs: zero, each counter weight, both tail branches on asymmetric counters, and a fifth counter at 2^64. Same-input kernel numeric fixtures are in the actual CompilerParity root. The formula retains source tuple order and multiplies the entire sum; this helper does not establish allocator or executed compiler correctness.

@@ -42051,5 +42051,13 @@
   "hol_name": "get_coalescecost_def",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-a source comparison word_allocScript1676-1681: generic native num_map payload translated constructor-for-constructor to Spt alpha, exact right-associated Nat tuple n,p,(x,y). lookup NONE contributes0 and any SOME contributes1 (Option.isNone exactly tests constructor; no payload equality or value cost). Exact unbounded Nat n*(10*(p+1)+xcost+ycost), unchanged endpoint pair, no wf/range/success premise. No width or map qualifier needed. Original eight observations include asymmetric presence, same endpoints, Bool payload, zero multiplier, 2^64 and malformed tree. Executed allocator migration remains open; coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Heuristics.lean",
+  "lean_name": "getSpillCost",
+  "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+  "hol_name": "get_spillcost_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison (2026-10-01), original1666-1670: five right-associated Nat counters c,lr,lm,rr,rm retain exact product order; weighted natural sum c+2lr+4lm+2rr+4rm multiplied in entirety by Bool tail branch 5 or 1. Exact unbounded Nat arithmetic, no machine-word conversion, overflow, success or range premise. Ten freshly captured original numeric rows/kernel identical inputs include each individual counter weight, asymmetric both tail branches, zero and 2^64 fifth counter; actual CompilerParity import. Coordinator source review pending; native get_heuristics/full word_alloc/executed production remain open."
 }
 ]

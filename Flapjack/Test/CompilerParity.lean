@@ -2,6 +2,7 @@ import Flapjack.Test.WordAllocCoalesceCostParity
 import Flapjack.Test.WordAllocLoopCheckerParity
 import Flapjack.Test.WordToStackCompilePrefixParity
 import Flapjack.Test.ParmoveCorrectParity
+import Flapjack.Test.WordAllocSpillCostParity
 import Flapjack.Test.WordAllocMergeStackSetsParity
 import Flapjack.Test.ParmoveTempBeforeAssignParity
 import Flapjack.Test.FindIndexParity

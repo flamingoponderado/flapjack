@@ -2948,3 +2948,8 @@ run_probe word_alloc_loop_checker_probeScript.sml word_alloc_loop_checker_probe.
 run_probe word_alloc_coalesce_cost_probeScript.sml word_alloc_coalesce_cost_probe.out \
   cc_absent cc_left cc_right cc_both cc_same cc_zero cc_large cc_raw \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
+
+run_probe word_alloc_spillcost_probeScript.sml word_alloc_spillcost_probe.out \
+  spill_zero spill_call_tail spill_call_nontail spill_left_register spill_left_memory spill_right_register spill_right_memory spill_asymmetric_tail spill_asymmetric_nontail spill_large \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
