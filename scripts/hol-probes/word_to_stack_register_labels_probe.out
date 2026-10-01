@@ -1,0 +1,6 @@
+wr_physical=(T,T)
+wr_boundary=(T,T)
+wr_spilled=(T,T)
+wr_zero=(T,T)
+wr_large=(T,T)
+wr_labelled=(T,T)
