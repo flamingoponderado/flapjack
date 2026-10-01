@@ -2057,7 +2057,6 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         ("Flapjack/Misc/Sptree.lean", "lookupAny"),
         ("Flapjack/Misc/FindIndex.lean", "findIndex"),
         ("Flapjack/Compiler/Backend/LabToTarget/Positions.lean", "findPos"),
-        ("Flapjack/Compiler/Backend/LabToTarget/Positions.lean", "getLabel"),
         ("Flapjack/Compiler/Backend/LabToTarget/Positions.lean", "getFfiIndex"),
         ("Flapjack/Misc/LList.lean", "lprefixAntisymHOL"),
         ("Flapjack/Misc/LList.lean", "lprefixTransHOL"),

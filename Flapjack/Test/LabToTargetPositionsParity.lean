@@ -10,9 +10,11 @@ original `lab_to_target` position, label, FFI-index and jump-offset definitions
 concrete `labLang$lab`, `labLang$asm_with_lab`, `num spt spt` and `ffiname list`
 values (bead `flapjack-pxn.18.5.15.10.11`).
 
-The opaque `cmp`/`reg_imm` fields of `get_label` are instantiated at `Unit`
-(it never inspects them).  `get_jump_offset` is observed at 64-bit; HOL's result
-word dimension is independent of the instruction word, so the replay fixes both
+The `get_label` carriers are instantiated at HOL's actual fixed carriers
+(`HolCmp`, `HolRegImm 8`, `MlString`), since HOL `get_label` uses the fixed
+`cmp`, word-indexed `reg_imm` and `mlstring` rather than arbitrary opaque
+types.  `get_jump_offset` is observed at 64-bit; HOL's result word dimension
+is independent of the instruction word, so the replay fixes both
 independently.  Every captured row is replayed below as a kernel-checked
 example.
 -/
@@ -25,7 +27,7 @@ open Flapjack.Compiler.Encoders.Asm
 open Flapjack
 
 private abbrev MlS := Flapjack.Basis.Pure.MlString.MlString
-private abbrev AWL := AsmWithLab Unit Unit Unit
+private abbrev AWL := AsmWithLab HolCmp (HolRegImm 8) MlS
 private abbrev AWL64 := AsmWithLab HolCmp (HolRegImm 64) MlS
 
 private def labs : Spt (Spt Nat) :=
@@ -43,7 +45,7 @@ example : findPos (.lab 5 3) labs = 0 := by decide +kernel
 
 -- GetLabelJump / GetLabelJumpCmp / GetLabelCall / GetLabelLocValue / GetLabelDefault
 example : getLabel (.jump (.lab 1 2) : AWL) = .lab 1 2 := rfl
-example : getLabel (.jumpCmp () 0 () (.lab 3 4) : AWL) = .lab 3 4 := rfl
+example : getLabel (.jumpCmp .equal 1 (.reg 2) (.lab 3 4) : AWL) = .lab 3 4 := rfl
 example : getLabel (.call (.lab 5 6) : AWL) = .lab 5 6 := rfl
 example : getLabel (.locValue 7 (.lab 8 9) : AWL) = .lab 8 9 := rfl
 example : getLabel (.halt : AWL) = .lab 0 0 := rfl

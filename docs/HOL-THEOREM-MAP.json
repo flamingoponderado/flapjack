@@ -41560,8 +41560,9 @@
     "lean_name": "getLabel",
     "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
     "hol_name": "get_label_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.11): literal lab_to_targetScript.sml:91-98, clause for clause. `Jump l => l`, `JumpCmp c r ri l => l`, `Call l => l`, `LocValue r l => l`, and the catch-all `_ => Lab 0 0` covering CallFFI/Install/Halt; the ignored cmp/reg_imm payloads are not inspected. Cmp/RegImm/MlString stay fully polymorphic, so no word/BitVec carrier occurs and no qualifier is needed. Replayed as the GetLabel* rows of scripts/hol-probes/lab_to_target_positions_probe.out in Flapjack.Test.LabToTargetPositionsParity. Coordinator source review pending."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.11; carrier-repaired): literal lab_to_targetScript.sml:91-98, clause for clause. `Jump l => l`, `JumpCmp c r ri l => l`, `Call l => l`, `LocValue r l => l`, and the catch-all `_ => Lab 0 0` covering CallFFI/Install/Halt. The carriers are HOL fixed carriers, not arbitrary opaque types: `AsmWithLab HolCmp (HolRegImm width) MlString` at positive width, so the word-indexed reg_imm renders as BitVec width and the words qualifier records that translation. Replayed as the GetLabel* rows of scripts/hol-probes/lab_to_target_positions_probe.out in Flapjack.Test.LabToTargetPositionsParity. Coordinator source review pending."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Positions.lean",

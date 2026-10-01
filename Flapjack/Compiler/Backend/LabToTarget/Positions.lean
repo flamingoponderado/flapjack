@@ -44,8 +44,10 @@ def findPos : Lab → Spt (Spt Nat) → Nat
 the target label of `Jump`, `JumpCmp`, `Call` and `LocValue`; every other
 labelled instruction (`CallFFI`, `Install`, `Halt`) returns the impossible
 `Lab 0 0`. -/
-@[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "get_label_def"]
-def getLabel {Cmp RegImm MlString : Type} : AsmWithLab Cmp RegImm MlString → Lab
+@[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "get_label_def"
+  (words_as_type_indexed_bitvec)]
+def getLabel {width : Nat} [NeZero width] :
+    AsmWithLab HolCmp (HolRegImm width) Flapjack.Basis.Pure.MlString.MlString → Lab
   | .jump l => l
   | .jumpCmp _ _ _ l => l
   | .call l => l
