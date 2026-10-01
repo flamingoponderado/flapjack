@@ -3353,3 +3353,7 @@ run_probe word_alloc_limit_var_probeScript.sml word_alloc_limit_var_probe.out \
 run_probe ssa_locals_bounds_probeScript.sml ssa_locals_bounds_probe.out \
   lb_more \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_locals_swap_probeScript.sml ssa_locals_swap_probe.out \
+  sw_type_ssaL sw_type_cst sw_type_st sw_type_ssaR sw_type_na sw_full \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

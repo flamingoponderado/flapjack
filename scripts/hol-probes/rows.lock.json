@@ -3397,6 +3397,12 @@
       "sha256": "6dd57ee5c171ed3a5f0c2b346cbf85ba68409ed6320b180b19a4cca89291b7f0"
     },
     {
+      "bytes": 325,
+      "out": "ssa_locals_swap_probe.out",
+      "rows": 6,
+      "sha256": "340cf84bef67a7ae9a74496e1513101aa90f81d69fa2e6ab13544030b7947663"
+    },
+    {
       "bytes": 235,
       "out": "ssa_map_bounds_probe.out",
       "rows": 10,

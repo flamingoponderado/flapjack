@@ -43946,5 +43946,14 @@
     "lean_name": "ssaLocalsRelMore",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-luna-a compared original5195-5203: arbitrary Nat bounds, native Spt Nat SSA map and same generic payload type for source/target locals. Sole original conjunction relation and bound ordering; identical relation conclusion at larger bound. Accepted native locals definition retains both domain/lookup clauses and guarded THE correspondence via selector independence. No word-width restriction, tree well-formedness, target-result or extra premise. Proof preserves both domain clauses and lookup equality and composes only the allocated source-key bound."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_eq_rel_swap",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSALocalsSwap.lean",
+    "lean_name": "ssaEqRelSwap",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol-a compared5186-5193 and fresh original inferred types: st:(alpha,beta,gamma) state; cst:(alpha,delta,epsilon) state. Positive indexed word dimension shared, all four ignored code/FFI types independently generic Type0. Actual reviewed native WordSem state carriers preserved, no state parameters replaced by maps; only locals Spt field traversed, no finite-map field used. Original relation AND domain equality AND pointwise lookup equality, identical swapped locals-relation conclusion, no extra premise. Native accepted locals predicate supplies guarded THE correspondence. Full original literal proof srw_tac replay PASS, independent inferred state carrier types captured. Generic kernel fixture applies actual theorem at arbitrary states/maps/width. No executable change.",
+    "words_as_type_indexed_bitvec": true
   }
 ]

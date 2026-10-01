@@ -3167,3 +3167,8 @@ and original conjunction. Existing `ssa_locals_rel_probe.out` observations and
 `SSALocalsParity` fixtures cover nonvacuous, rejected, boundary and malformed
 relations; that fixture additionally applies the complete bound theorem at
 arbitrary payload, trees and counters.
+
+`ssa_locals_swap_probe.out` captures the complete literal local SSA map-swap
+proof and inferred free-variable types. Source and target states share only
+the word dimension; their code and FFI carriers are independent. The generic
+`SSALocalsParity` fixture applies the actual theorem at arbitrary native states.
