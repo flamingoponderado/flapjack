@@ -3197,6 +3197,9 @@ run_probe wordconvs_code_labels_probeScript.sml wordconvs_code_labels_probe.out 
 run_probe word_to_stack_code_labels_probeScript.sml word_to_stack_code_labels_probe.out \
   lh_load_empty lh_load_many lh_move_zero lh_move_many lh_aux_zero lh_aux_many lh_ret_zero lh_ret_plain lh_ret_handler lh_ret_perf lh_ret_width_one lh_live_zero lh_live_frame lh_live_width_one \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+run_probe word_to_stack_comp_code_labels_probeScript.sml word_to_stack_comp_code_labels_probe.out \
+  cl_skip cl_loc_spilled cl_raise cl_store cl_sequence cl_loop cl_tail_drops_handler cl_indirect_empty cl_indirect_nonempty cl_returning cl_owned_handler cl_wrong_owner cl_zero_frame cl_width_one \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
 run_probe parmove_preserves_moves_step_probeScript.sml parmove_preserves_moves_step_probe.out \
   preserve_4_before preserve_4_after preserve_6_before preserve_6_after preserve_1_before preserve_1_after preserve_8_before preserve_8_after preserve_scratch_before preserve_scratch_after \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
@@ -3258,6 +3261,9 @@ run_probe word_convs_every_var_inst_mono_probeScript.sml word_convs_every_var_in
   im_original_theorem im_skip im_const im_binreg im_binimm im_shift im_div im_longdiv im_load8 im_load16_ignored im_fpless im_fp64_to im_fp32_to im_fp80_from im_fpignored im_fp32_reject \
   "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
 
+run_probe parmove_scratch_order_wrapper_probeScript.sml parmove_scratch_order_wrapper_probe.out \
+  pso_original_statement pso_empty pso_self pso_chain pso_swap pso_cycle pso_shared_source pso_bool_swap pso_duplicate_boundary \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 run_probe wordconvs_name_mono_probeScript.sml wordconvs_name_mono_probe.out \
   nm_empty nm_single nm_both nm_invalid nm_guard_needed nm_original_theorem \
   "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"

@@ -43630,21 +43630,38 @@
     "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-pxn.18.5.15.10.26): Original asmPropsScript136-162: universally quantified byte list/base with arbitrary memory/domain/alignment, bytes_in_memory premise implies all_pcs(LENGTH xs) pc k SUBSET d. Lean uses accepted misc bytesInMemoryHOL and exactly that sole premise/conclusion. Local byteOffsetInDomain induction establishes every in-bounds wrapped byte offset is in the original domain; allPcs_eq then supplies generated offsets. No domain validity or target evaluation assumed as additional hypotheses. Only HOL positive word-index to BitVec width/NeZero translation; fixed word8 bytes, HOL num to Nat and HOL sets to predicate-backed Set retained. Direct original asmPropsTheory13 oracle rows with kernel replays, universal theorem itself kernel checked. Independent encoder prerequisite; full encoder correctness not claimed. Coordinator full source/carrier review completed (2026-10-01); independent acceptance review tracked by flapjack-pxn.18.5.15.10.26.1."
   },
   {
-    "lean_path": "Flapjack/Compiler/Backend/StackProps/LabelSafety.lean",
-    "lean_name": "stackGoodCodeLabels",
-    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
-    "hol_name": "stack_good_code_labels_def",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead .18.5.15.3.26.16): literal full1160-1174 predicates over list(num x positive-width HolProg), arbitrary SetNat external labels, set-of-list, IMAGE and BIGUNION preserved. Original indexed stackLang carrier and accepted getter/restrict_nonzero used. Same union association and source entry0/entry1 handler ownership restriction; no finite external set, unique keys, successful evaluation or target premise. Only word dimension translation; full original inferred types and10 kernel/original rows reviewed. Coordinator acceptance pending."
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/TempBeforeAssign/Parmove.lean",
+    "lean_name": "parmoveNotUseTempBeforeAssign",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "parmove_not_use_temp_before_assign",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison2026-10-01 .15.3.46: literal parmoveScript932-953, arbitrary register carrier and sole windmill premise. Exact optional first source-scratch index match, absent read True; present read requires present first destination-scratch index with not(i<=j). No initialized-output, final-state or target-run premise. Derives lifted wf_init from input windmill, accepted pmovNotUseTempBeforeAssign and unconditional pmov_final, then accepted first-index iff. Proof-irrelevant DecidableEq transport fixes the schedule and changes only equality decision dictionaries in first-index search; no extra HOL assumption. Fresh exported DB.fetch complete theorem plus eight whole-output/first-index/windmill/result observations from read-only original theories in temporary cwd. Six Nat valid cases, Bool swap, duplicate-input boundary F/T; all kernel-replayed plus full generic theorem and seven nonvacuous applications. Proof-only port; executed scheduler unchanged. Coordinator acceptance pending."
   },
   {
-    "lean_path": "Flapjack/Compiler/Backend/StackProps/LabelSafety.lean",
-    "lean_name": "stackGoodHandlerLabels",
-    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
-    "hol_name": "stack_good_handler_labels_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCodeLabels.lean",
+    "lean_name": "wordToStackCompCodeLabels",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_comp_code_labels",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead .18.5.15.3.26.16): literal full1160-1174 predicates over list(num x positive-width HolProg), arbitrary SetNat external labels, set-of-list, IMAGE and BIGUNION preserved. Original indexed stackLang carrier and accepted getter/restrict_nonzero used. Same union association and source entry0/entry1 handler ownership restriction; no finite external set, unique keys, successful evaluation or target premise. Only word dimension translation; full original inferred types and10 kernel/original rows reviewed. Coordinator acceptance pending."
-  }
-]
+    "reviewer": "flapjack-sol2 source comparison 2026-10-01 bead .26.12: full original11748-11812 over actual literal compNative. Arbitrary assembler configuration, perf, faithful WordLangProgHOL, AppList bitmapstate with full Nat total, three-Nat frame tuple and owner retained. Only original good_handlers guard and perf=F hypotheses; full target Set(Nat x Nat) subset of raise/store-const stub pairs union image(n -> (n,0)) of literal source getter union literal compiled owned-handler getter. Actual compiler functional induction proves every constructor, including all instruction clauses, spilled registers, both immediate branches, direct/indirect/empty-argument dispatch, absent-return handler dropping, both returning call branches, arbitrary return lists and nested continuations. Final generated nonzero handler entry is discharged only from the original handler-owner conjunct, not a new premise. No frame bounds, target subset/evaluation, simulation, success, key uniqueness, HD/EL assumption or narrowed evaluator. Private local lowering/set equations are proved Flapjack-specific infrastructure with no separately claimed HOL original. Only original positive word dimension translated to BitVec width plus NeZero. Fourteen original actual compiler full-set/guard observations include wrong-owner guard sentinel, zero frame and width1; identical-input fixture and full gate validation recorded on bead. Regression evidence is not HOL-to-Lean equivalence. Coordinator review required before acceptance. Coordinator whole source/statement/fixture review completed (2026-10-01); independent acceptance tracked by flapjack-pxn.18.5.15.3.26.12.1."
+  },
+    {
+      "lean_path": "Flapjack/Compiler/Backend/StackProps/LabelSafety.lean",
+      "lean_name": "stackGoodCodeLabels",
+      "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+      "hol_name": "stack_good_code_labels_def",
+      "statement_status": "reviewed_words_as_type_indexed_bitvec",
+      "words_as_type_indexed_bitvec": true,
+      "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead .18.5.15.3.26.16): literal full1160-1174 predicates over list(num x positive-width HolProg), arbitrary SetNat external labels, set-of-list, IMAGE and BIGUNION preserved. Original indexed stackLang carrier and accepted getter/restrict_nonzero used. Same union association and source entry0/entry1 handler ownership restriction; no finite external set, unique keys, successful evaluation or target premise. Only word dimension translation; full original inferred types and10 kernel/original rows reviewed. Coordinator acceptance pending."
+    },
+    {
+      "lean_path": "Flapjack/Compiler/Backend/StackProps/LabelSafety.lean",
+      "lean_name": "stackGoodHandlerLabels",
+      "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+      "hol_name": "stack_good_handler_labels_def",
+      "statement_status": "reviewed_words_as_type_indexed_bitvec",
+      "words_as_type_indexed_bitvec": true,
+      "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead .18.5.15.3.26.16): literal full1160-1174 predicates over list(num x positive-width HolProg), arbitrary SetNat external labels, set-of-list, IMAGE and BIGUNION preserved. Original indexed stackLang carrier and accepted getter/restrict_nonzero used. Same union association and source entry0/entry1 handler ownership restriction; no finite external set, unique keys, successful evaluation or target premise. Only word dimension translation; full original inferred types and10 kernel/original rows reviewed. Coordinator acceptance pending."
+    }
+  ]

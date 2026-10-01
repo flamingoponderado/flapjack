@@ -3007,6 +3007,12 @@
       "sha256": "9a52f48f9aa4d0ba87adf2f57586cbe903fb818c605ab885e0b106469a00ed6e"
     },
     {
+      "bytes": 711,
+      "out": "parmove_scratch_order_wrapper_probe.out",
+      "rows": 9,
+      "sha256": "059425b8e9abd875c668e2c6041d15639578433c828d6d4f185690e6fad336d1"
+    },
+    {
       "bytes": 238,
       "out": "parmove_semantics_probe.out",
       "rows": 12,
@@ -4577,6 +4583,12 @@
       "out": "wrap_rt_probe.out",
       "rows": 5,
       "sha256": "34b4dc9b2384c56cae695cdda57731febdbd5d7d19b90a6c6004b6c39bdf87cd"
+    },
+    {
+      "bytes": 222,
+      "out": "word_to_stack_comp_code_labels_probe.out",
+      "rows": 14,
+      "sha256": "ee6ae651e6d67c1715dd3b3ab9926afeeaa6d5e80a490a4b1ac7f9c2de8a42f5"
     }
   ],
   "version": 1
