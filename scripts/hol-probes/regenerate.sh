@@ -3305,3 +3305,7 @@ run_probe ssa_setup_probeScript.sml ssa_setup_probe.out \
 run_probe ssa_map_ok_probeScript.sml ssa_map_ok_probe.out \
   sm_empty sm_valid sm_at_bound sm_physical sm_invalid sm_definition \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_rename_lookup_probeScript.sml ssa_rename_lookup_probe.out \
+  rename_empty rename_overwrite rename_invalid rename_order rename_large \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"

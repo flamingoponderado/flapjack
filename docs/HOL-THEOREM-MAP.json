@@ -43749,5 +43749,13 @@
     "lean_name": "ssaMapOK",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-luna-c source4523-4527: arbitrary Nat next and canonical native Spt Nat tree, forall x/y lookup SOME implication, nonphysical mapped register and strict next bound. Actual reviewed RegAlloc.isPhyVar is source MOD2=0; no injectivity/wf/freshness premise. Five fresh original source-clause simplifier observations and identical kernel fixtures, including malformed BN LN LN. This is a proof predicate and has no executed compiler definition route. Coordinator acceptance pending."
-  }
+  },
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "list_next_var_rename_lemma_2",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSARenameLookup.lean",
+  "lean_name": "listNextVarRenameLemma2",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-a source4561-4577 comparison: arbitrary Nat input names/start and canonical Spt Nat initial/output trees, sole ALL_DISTINCT premise; all four output-map/domain-union/outside-lookup/inside-success conjuncts retained. THE is represented by getD 0 only for each successful lookup, independently established by the fourth conjunct; kernel listNextVarRenameSelectorIndependent proves every selector agreeing on SOME gives identical names, so HOL THE NONE is never constrained. No tree-wf, freshness, physical-register or target-relation premise. Five freshly run original EVAL observations and kernel replays include malformed BN LN LN, overwrite, arbitrary order, and unbounded natural numbers; an actual theorem application retains all conjuncts for arbitrary initial tree/start. Local HOL theorem is reviewed from source; fresh exported theorem invocation is not claimed. Coordinator acceptance pending."
+}
 ]
