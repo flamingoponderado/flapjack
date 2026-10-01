@@ -2643,6 +2643,7 @@ lengths deliberately differ from PC counts. This is regression evidence for
 that boundary, not a separate oracle for the proof-local helper or a
 cross-language equivalence proof. Regenerate with
 `HOL_PROBE_ONLY=lab_to_target_section_lookup_probeScript.sml scripts/hol-probes/regenerate.sh`.
+- `parmove_preserves_moves_steps_probeScript.sml`: six complete destination/witness observations for Start/Save states. Lean fixtures certify the RTC trace and zero-step case; HOL observations alone do not prove that trace or cross-assistant equivalence.
 `wordconvs_code_labels_probe.out` contains twelve fresh direct original
 `wordConvs$get_code_labels` complete-set observations, replayed at identical
 width64 inputs by `Flapjack.Test.WordConvsCodeLabelsParity`. Cases cover direct
@@ -2662,6 +2663,20 @@ original proof theory has no prebuilt object in this environment; this is
 source re-elaboration, not an observation from that prebuilt theory or a
 cross-language equivalence proof. Run `HOL/bin/hol run <absolute script path>`
 from the original backend semantics directory, optionally setting `CAKEML`.
+# Word-to-Stack native label helpers
+
+`word_to_stack_code_labels_probeScript.sml` evaluates fourteen complete-set
+assertions from original `word_to_stackTheory` and `stackPropsTheory`. The
+identical inputs are kernel-replayed by `WordToStackCodeLabelsParity`: empty
+and repeated stack loads, zero and recursive stack moves, zero and recursive
+return copies, both performance/handler flags, arbitrary return payloads,
+width one, and zero/nonzero live frames with irregular bitmap counts. The
+nonempty continuation includes both code references and an owned handler.
+These finite regressions do not prove compiler correctness or cross-language
+equivalence. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_to_stack_code_labels_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
 - `parmove_preserves_moves_steps_probeScript.sml`: six complete destination/witness observations for Start/Save states. Lean fixtures certify the RTC trace and zero-step case; HOL observations alone do not prove that trace or cross-assistant equivalence.
 ### Register allocator phase closure audit
 
@@ -2728,3 +2743,8 @@ instruction/name/memory-operation carriers are fixed by labLang's datatype.
 Run `HOL/bin/hol run <absolute script path>` from the original backend semantics
 directory and redirect stdout to the paired `.txt`, trimming trailing whitespace
 (optionally set `CAKEML`). All printed type and statement content is retained.
+`parmove_preserves_moves_pmov_probe.out` records three fresh original scheduler
+observations: terminal scratch destination, pending destination, and full pending
+output. ParmovePreservesMovesPmovParity kernel-replays the same inputs and applies
+the source-shaped preservation theorem with internally discharged well-formedness.
+Finite observations are regression evidence, not cross-prover equivalence.
