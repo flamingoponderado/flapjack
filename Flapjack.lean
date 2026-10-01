@@ -122,6 +122,7 @@ import Flapjack.Compiler.Backend.Semantics.StackSem.FixedStackCases
 import Flapjack.Compiler.Backend.Semantics.StackSem.DynamicStackCases
 import Flapjack.Compiler.Backend.Semantics.StackSem.SizeBitmapCases
 import Flapjack.Compiler.Backend.Semantics.TargetSem.State
+import Flapjack.Compiler.Encoders.AsmProps.Target
 import Flapjack.Compiler.Encoders.AsmSem.State
 import Flapjack.Compiler.Backend.StackProps.FloatNames
 import Flapjack.Compiler.Backend.StackProps.AddressNames

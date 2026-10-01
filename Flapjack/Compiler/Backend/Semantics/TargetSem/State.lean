@@ -1,4 +1,4 @@
-import Flapjack.Compiler.Encoders.Asm
+import Flapjack.Compiler.Encoders.AsmProps.Target
 import Flapjack.FfiHOL
 
 /-!
@@ -11,13 +11,15 @@ Counterpart of `cakeml/compiler/backend/semantics/targetSemScript.sml`'s
 
 * `machine_result = Halt outcome | Error | TimeOut` — `outcome` is the
   reviewed `HolOutcome` (`ffiScript.sml:83`).
-* `target` is the polymorphic target-configuration record whose `config` field
-  uses the exact `AsmConfigExact`, and whose `'b`/`'c` state/projection
-  parameters stay polymorphic.
 * `machine_config` is the same record as HOL: program/shared address sets are
-  rendered as predicates `BitVec width → Prop` (matching the existing
-  `memaddrs`/`mdomain` rendering), `word8` as `BitVec 8`, `ffi` names as
-  `HolFfiName`, and `addr` as the exact `HolAddr`.
+  rendered as predicates `BitVec width → Prop` (HOL's `'a word set`); note
+  that some existing Flapjack machine carriers render domains as
+  `BitVec width → Bool`, so a later relation between the two renderings needs
+  a Prop/Bool conversion that is not part of this module.  `word8` is
+  `BitVec 8`, `ffi` names are `HolFfiName`, and `addr` is the exact `HolAddr`.
+
+The embedded `target` record (and `target_state_rel`) lives in the asmProps
+counterpart `Flapjack/Compiler/Encoders/AsmProps/Target.lean`.
 
 This module supplies carriers only: no evaluator, no `target_state_rel`, and no
 `good_init_state`. Those remain separate dependencies.
@@ -34,27 +36,6 @@ inductive MachineResult where
   | halt (outcome : HolOutcome)
   | error
   | timeOut
-
-/-- Exact HOL `Datatype: target = <| config : 'a asm_config ; next : 'b -> 'b ;
-    get_pc : 'b -> 'a word ; get_reg : 'b -> num -> 'a word ;
-    get_fp_reg : 'b -> num -> word64 ; get_byte : 'b -> 'a word -> word8 ;
-    state_ok : 'b -> bool ; proj : 'a word set -> 'b -> 'c |>`
-    (`cakeml/compiler/encoders/asm/asmPropsScript.sml:44-56`).
-
-    `'a word` is rendered as `BitVec width` with the reviewed `[NeZero width]`
-    discharge; the state parameter `'b` and projection parameter `'c` are kept
-    polymorphic.  `config` is the exact reviewed `AsmConfigExact`. -/
-@[hol "cakeml/compiler/encoders/asm/asmPropsScript.sml" "target"
-  (words_as_type_indexed_bitvec)]
-structure HolAsmTarget (width : Nat) [NeZero width] (state : Type) (projection : Type) where
-  config : AsmConfigExact width
-  next : state → state
-  getPc : state → BitVec width
-  getReg : state → Nat → BitVec width
-  getFpReg : state → Nat → BitVec 64
-  getByte : state → BitVec width → BitVec 8
-  stateOk : state → Bool
-  proj : (BitVec width → Prop) → state → projection
 
 /-- Exact HOL `Datatype: machine_config = <| prog_addresses : ('a word) set ;
     shared_addresses : ('a word) set ; ffi_entry_pcs : ('a word) list ;

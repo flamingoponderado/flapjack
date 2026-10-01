@@ -38413,7 +38413,7 @@
   {
     "hol_path": "cakeml/compiler/encoders/asm/asmPropsScript.sml",
     "hol_name": "target",
-    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/State.lean",
+    "lean_path": "Flapjack/Compiler/Encoders/AsmProps/Target.lean",
     "lean_name": "HolAsmTarget",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
@@ -38440,7 +38440,7 @@
   {
     "hol_path": "cakeml/compiler/encoders/asm/asmPropsScript.sml",
     "hol_name": "target_state_rel_def",
-    "lean_path": "Flapjack/Compiler/Encoders/AsmSem/State.lean",
+    "lean_path": "Flapjack/Compiler/Encoders/AsmProps/Target.lean",
     "lean_name": "targetStateRel",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
