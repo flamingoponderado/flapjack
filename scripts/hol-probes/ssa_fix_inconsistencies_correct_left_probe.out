@@ -1,0 +1,7 @@
+ficl_full=⊢ ∀na ssaL ssaR. is_alloc_var na ∧ ssa_map_ok na ssaL ⇒ (let (moveL,moveR,na',ssaU) = fix_inconsistencies prio ssaL ssaR na in ∀stL cstL. ssa_locals_rel na ssaL stL.locals cstL.locals ⇒ (let (resL,rcstL) = evaluate (moveL,cstL) in resL = NONE ∧ ssa_locals_rel na' ssaU stL.locals rcstL.locals ∧ word_state_eq_rel cstL rcstL))
+ficl_type_na=:num
+ficl_type_ssaL=:num sptree$num_map
+ficl_type_ssaR=:num sptree$num_map
+ficl_type_prio=:(unit + unit) option
+ficl_type_stL=:(α, β, γ) state
+ficl_type_cstL=:(α, β, γ) state
