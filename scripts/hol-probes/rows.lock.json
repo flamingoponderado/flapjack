@@ -31,6 +31,12 @@
       "sha256": "fb00053f44698704d47ad72155116e228341abdc8a31fca36f84735d31fe6183"
     },
     {
+      "bytes": 374,
+      "out": "asmprops_assertions_probe.out",
+      "rows": 16,
+      "sha256": "18139bed8a3d7cf5f3a74e01e06b9eb90f311177aa86ecbb461aa37d57120411"
+    },
+    {
       "bytes": 356,
       "out": "asmprops_pc_coverage_probe.out",
       "rows": 13,
@@ -41,6 +47,12 @@
       "out": "asmsem_arithmetic_probe.out",
       "rows": 52,
       "sha256": "c4406552396a5b9fa262f53fa969456b1feeb7dd6d0139fd2d846efcce4343e3"
+    },
+    {
+      "bytes": 740,
+      "out": "asmsem_fp_updates_probe.out",
+      "rows": 34,
+      "sha256": "68e07e4909950a079b51a7856287746c2b27e57c44e375358ce9fb270a4bb200"
     },
     {
       "bytes": 47,
@@ -2947,6 +2959,12 @@
       "sha256": "eaeca280f556d0868b98c2ab3b7d725e400d5f0aeba27db04ecda90eb05a7bf4"
     },
     {
+      "bytes": 681,
+      "out": "parmove_fstep_map_inj_probe.out",
+      "rows": 9,
+      "sha256": "e9ab68248642fca0904e624a340a6f17ca33f06ee2fd7bd35004153ee44d8997"
+    },
+    {
       "bytes": 124,
       "out": "parmove_fstep_probe.out",
       "rows": 10,
@@ -3083,6 +3101,12 @@
       "out": "parmove_state_to_list_probe.out",
       "rows": 9,
       "sha256": "65e6947c4b078a5d0336e7ef1c66ed08141cbfe37d3b38d53960220bc716a02f"
+    },
+    {
+      "bytes": 740,
+      "out": "parmove_step_map_inj_probe.out",
+      "rows": 9,
+      "sha256": "aedf37a428f34bc8ca53cce3d6419386b124cc80660b0f50d101017d0be77667"
     },
     {
       "bytes": 75,
@@ -3433,6 +3457,18 @@
       "sha256": "567c10eaf56c07243856c191b60a982c5c554900a977305b11f33afbaf699349"
     },
     {
+      "bytes": 178,
+      "out": "ssa_map_ok_probe.out",
+      "rows": 6,
+      "sha256": "f80fb6e485ddbe0a0af427f7a4e48f1f59fb20ff8990b41098bfe1f2d0053215"
+    },
+    {
+      "bytes": 1401,
+      "out": "ssa_setup_probe.out",
+      "rows": 16,
+      "sha256": "37de8c367664510f56d1506592a74ed21182759e0221e236386e8269bab89602"
+    },
+    {
       "bytes": 162,
       "out": "stack_alloc_next_lab_probe.out",
       "rows": 7,
@@ -3581,6 +3617,12 @@
       "out": "stackprops_code_labels_probe.out",
       "rows": 15,
       "sha256": "0951919b9c2820704747f40b352ab0cf70ab9bb1ee3a2535536992f1814929e6"
+    },
+    {
+      "bytes": 250,
+      "out": "stackprops_label_safety_probe.out",
+      "rows": 10,
+      "sha256": "fc85cce61b21a596486ae2cb9283bdc70df9c55a6440d3f463cb67ff4e405c97"
     },
     {
       "bytes": 744,
@@ -4015,6 +4057,12 @@
       "sha256": "545ae70e2aa85b72b6ef7cab66a3ab6fce73527f371bf38e334f52b5666df961"
     },
     {
+      "bytes": 1119,
+      "out": "word_alloc_max_var_max_probe.out",
+      "rows": 47,
+      "sha256": "e63edbb0591eda24126f672815f82053c231513637814002801f1394fa324a40"
+    },
+    {
       "bytes": 110,
       "out": "word_alloc_mem8_probe.out",
       "rows": 2,
@@ -4363,6 +4411,12 @@
       "sha256": "64c2d245595e68a41168ea58a0aed0f49073f29ae85660f7e095640c101f5dca"
     },
     {
+      "bytes": 194,
+      "out": "word_to_stack_allocator_stages_probe.out",
+      "rows": 4,
+      "sha256": "2a0cde2e40423ec54a58d79a6004aa4209ad293a26adc27511fd6f877a6f77b1"
+    },
+    {
       "bytes": 60,
       "out": "word_to_stack_bitmap_append_probe.out",
       "rows": 4,
@@ -4403,6 +4457,12 @@
       "out": "word_to_stack_colour_domain_probe.out",
       "rows": 13,
       "sha256": "da868a9e87fcb4af4689997e0d64a9d875b11abe42c21139955615f5e6de52fa"
+    },
+    {
+      "bytes": 222,
+      "out": "word_to_stack_comp_code_labels_probe.out",
+      "rows": 14,
+      "sha256": "ee6ae651e6d67c1715dd3b3ab9926afeeaa6d5e80a490a4b1ac7f9c2de8a42f5"
     },
     {
       "bytes": 485,
@@ -4549,6 +4609,12 @@
       "sha256": "8765182f39ccdb4a95f8cea1b64beaf2fa8acd8e53f4fc02f35699e632a5889b"
     },
     {
+      "bytes": 112,
+      "out": "word_to_stack_program_code_labels_probe.out",
+      "rows": 8,
+      "sha256": "b847721678f908ce0431152c5230b9556dc54826487925dac80b4eaebd829372"
+    },
+    {
       "bytes": 392,
       "out": "word_to_stack_program_maximum_probe.out",
       "rows": 32,
@@ -4571,6 +4637,24 @@
       "out": "word_to_stack_register_labels_probe.out",
       "rows": 6,
       "sha256": "b9bb14bb79be72c5d83ae4f8b1f00a0beb7092529dd537b2fcc094f8d9bb0c78"
+    },
+    {
+      "bytes": 252,
+      "out": "word_to_stack_retained_frame_probe.out",
+      "rows": 8,
+      "sha256": "724cd582400ce633e427ce825b4a49b7455a297f3544a88e947151b22a29d7d0"
+    },
+    {
+      "bytes": 972,
+      "out": "word_to_stack_selector_domain_probe.out",
+      "rows": 13,
+      "sha256": "94e2f9670cb0ba20a8ee49dee48905cdbdf691f5712a3023d0608f0b185ce89d"
+    },
+    {
+      "bytes": 754,
+      "out": "word_to_stack_selector_prelude_probe.out",
+      "rows": 10,
+      "sha256": "3e0383892a0b48a9ad9d2dfaf982eb88e2f6ca28211e672db66a1c70c3c7ebff"
     },
     {
       "bytes": 95,
@@ -4649,6 +4733,12 @@
       "out": "wordconvs_name_mono_probe.out",
       "rows": 6,
       "sha256": "13e29790deb918245cfe46ca9ae526da5b2765c00e622e83afd29a2bb0457808"
+    },
+    {
+      "bytes": 284,
+      "out": "wordconvs_program_mono_probe.out",
+      "rows": 12,
+      "sha256": "fa2d97500a9db803c98e6d8ee2bac4a5803763ddcff7b4070cc6cd215df18042"
     },
     {
       "bytes": 82,

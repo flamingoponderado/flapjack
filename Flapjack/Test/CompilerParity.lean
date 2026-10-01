@@ -1,3 +1,12 @@
+import Flapjack.Test.WordAllocMaxVarMaxParity
+import Flapjack.Test.SSAMapParity
+import Flapjack.Test.SSASetupParity
+import Flapjack.Test.AsmPropsAssertionsParity
+import Flapjack.Test.StackPropsLabelSafetyParity
+import Flapjack.Test.ParmoveFstepMapInjParity
+import Flapjack.Test.AsmSemFpUpdatesParity
+import Flapjack.Test.WordConvsProgramMonoParity
+import Flapjack.Test.ParmoveStepMapInjParity
 import Flapjack.Test.ParmoveScratchOrderWrapperParity
 import Flapjack.Test.WordConvsNameMonoParity
 import Flapjack.Test.AsmPropsPcCoverageParity
@@ -8,12 +17,13 @@ import Flapjack.Test.ParmoveAllDistinctWrapperParity
 import Flapjack.Test.WordAllocMax3Parity
 import Flapjack.Test.BackendPropsNonzeroLabelsParity
 
-import Flapjack.Test.AsmSemArithmeticParity
 import Flapjack.Test.TargetPropsInterferenceParity
 import Flapjack.Test.LabToTargetSectionLookupParity
 
 import Flapjack.Test.ParmovePreservesMovesPmovParity
 import Flapjack.Test.WordToStackCodeLabelsParity
+import Flapjack.Test.WordToStackCompCodeLabelsParity
+import Flapjack.Test.WordToStackProgramCodeLabelsParity
 import Flapjack.Test.WordConvsCodeLabelsParity
 import Flapjack.Test.ParmovePreservesMovesStepsParity
 import Flapjack.Test.WordConvsExpMonoParity
@@ -1119,6 +1129,7 @@ def main : IO Unit := do
     checkBool "Pancake computed local-store address compiles" nestedLocalStoreBytesAccepted,
     checkBool "Pancake RISC-V artifact envelope markers" ArtifactFormat.pancakeEnvelopeMatches,
     checkBool "Pancake RISC-V artifact prologue" ArtifactFormat.pancakePrologueMatches,
+    Flapjack.Test.StackPropsLabelSafetyParity.runChecks,
     Flapjack.Test.WordConvsEveryVarInstMonoParity.runChecks,
     Flapjack.Test.SourceGlobalParity.runChecks,
     checkBool "shadowing global source remains accepted"
@@ -1554,6 +1565,8 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.LabToTargetSectionLookupParity.runChecks,
     Flapjack.Test.TargetPropsInterferenceParity.runChecks,
     Flapjack.Test.AsmPropsPcCoverageParity.runChecks,
+    Flapjack.Test.AsmPropsAssertionsParity.runChecks,
+    Flapjack.Test.AsmSemFpUpdatesParity.runChecks,
     Flapjack.Test.AsmSemArithmeticParity.runChecks,
     Flapjack.Test.BytesInMemParity.runChecks,
     Flapjack.Test.CrepSemIoEventsMonoParity.runChecks
