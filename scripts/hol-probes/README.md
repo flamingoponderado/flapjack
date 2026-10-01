@@ -2663,3 +2663,33 @@ source re-elaboration, not an observation from that prebuilt theory or a
 cross-language equivalence proof. Run `HOL/bin/hol run <absolute script path>`
 from the original backend semantics directory, optionally setting `CAKEML`.
 - `parmove_preserves_moves_steps_probeScript.sml`: six complete destination/witness observations for Start/Save states. Lean fixtures certify the RTC trace and zero-step case; HOL observations alone do not prove that trace or cross-assistant equivalence.
+### Register allocator phase closure audit
+
+`reg_alloc_phase_closure_probeScript.sml` captures 29 exported original HOL
+definition equations for the five `do_step` phases and their nested helpers.
+These are statement captures, not Boolean behavioral parity or Lean theorem
+replays. The five success results are local HOL lemmas and were reviewed in
+`reg_alloc/proofs/reg_allocProofScript.sml:2075-2838`; no DB export or completed
+port is claimed for them. `reg_alloc_phase_closure_audit.json` records the
+source-confirmed helper frontier and shared bead IDs under `.10.5.8.6`.
+
+The five phase children remain blocked on genuine helpers. Important retained
+details include unspill's two partitions and update order, coalescing's parent
+compression even on rejected moves, prefreeze's stateful unavailable-worklist
+update, strict spill selector comparisons/tie accumulation, and the full
+success existential with good-state/subgraph/dimension/node-tag conclusions.
+Native `CakeRegAlloc` helpers are not thereby reviewed as literal state-monad
+ports. No source implementation or executed compiler route changes here.
+
+### Native state-exception partition
+
+`reg_alloc_state_partition_probeScript.sml` captures the original generic
+`st_ex_PARTITION` type and 22 Boolean equalities over full result/state pairs.
+`RegAllocStatePartitionParity.lean` replays the same inputs and outputs in the
+Lean kernel. Fixtures cover prepend accumulators, duplicates, reversed input,
+large Nat values, state-dependent decisions, all failure positions and
+independent Bool/list/product state and exception carriers. The generic empty
+case is also checked by `rfl`. Finite parity observations support the literal
+source comparison; they do not prove cross-prover equivalence or execute a
+production allocator replacement. Native phase proofs and production routing
+remain separate work.
