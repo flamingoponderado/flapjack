@@ -46292,5 +46292,19 @@
     "lean_name": "sptWfInter",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.6) against HOL sptreeScript.sml:353-358: !m1 m2. wf (inter m1 m2); induction as HOL with wf_mk_BN/wf_mk_BS (private wfMkBN/wfMkBS); generic payloads."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_remove_dead_Loop_helper",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateRemoveDead/Loop.lean",
+    "lean_name": "evaluateRemoveDeadLoopHelper",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.2) against word_allocProofScript.sml:3728-3898: same 14 universally quantified variables in HOL order; premises strong_locals_rel I (domain livein) st.locals t, live_store_rel nlivein st.store tstore, evaluate (Loop names body exit_names, st) = (res,rst), flat_exp_conventions body, remove_dead (Loop ...) live nlive lt = (prog',livein,nlivein), nlivein = [], res <> SOME Error, and the universally quantified body statement for remove_dead body names [] ((names,exit_names)::lt) with its NONE/Break/Continue/other case expression; conclusion ?t' tstore'. evaluate (prog', st with <|locals:=t;store:=tstore|>) = (res, rst with <|locals:=t';store:=tstore'|>) /\\ case res of ... (spelled by the untagged Flapjack motive removeDeadPost, same four branches; oEL as sptOel, I as id). Proof by clock induction as HOL (completeInduct_on st.clock), using strong_locals_rel_I_cut_env, live_store_rel_NIL/refl and the reviewed evaluate_def/evaluate_clock; no extra premise. Over WordSemStateFiniteExact (fpRegs/store relation + words qualifiers, same-module witness). Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through the reviewed wordSem evaluate/inst FP rendering; no real rendering is used by this declaration itself.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]
