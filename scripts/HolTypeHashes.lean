@@ -1,3 +1,5 @@
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Assembly
+import Flapjack.Misc.Sptree.Mapi
 import Flapjack.Compiler.Backend.WordAlloc.OracleColour
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.ReturnNoHandler
 import Flapjack.Compiler.Backend.WordAlloc.HeuCounters
