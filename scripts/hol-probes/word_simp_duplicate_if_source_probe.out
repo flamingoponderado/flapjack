@@ -1,0 +1,14 @@
+duplicate_roundtrip=If Less 1 (Reg 2) (Seq (Seq (Assign 3 (Const 1w)) (Assign 4 (Const 1w))) (Assign 5 (Const 7w))) (Seq (Assign 3 (Const 0w)) (Assign 4 (Const 0w)))
+duplicate_must=MustTerminate (If Less 1 (Reg 2) (Seq (Seq (Assign 3 (Const 1w)) (Assign 4 (Const 1w))) (Assign 5 (Const 7w))) (Seq (Assign 3 (Const 0w)) (Assign 4 (Const 0w))))
+duplicate_loop=Loop LN (If Less 1 (Reg 2) (Seq (Seq (Assign 3 (Const 1w)) (Assign 4 (Const 1w))) (Assign 5 (Const 7w))) (Seq (Assign 3 (Const 0w)) (Assign 4 (Const 0w)))) LN
+duplicate_call_return=Call (SOME ([],(LN,LN),If Less 1 (Reg 2) (Seq (Seq (Assign 3 (Const 1w)) (Assign 4 (Const 1w))) (Assign 5 (Const 7w))) (Seq (Assign 3 (Const 0w)) (Assign 4 (Const 0w))),3,4)) (SOME 7) [1] NONE
+duplicate_call_handler=Call NONE (SOME 7) [1] (SOME (1,If Less 1 (Reg 2) (Seq (Seq (Assign 3 (Const 1w)) (Assign 4 (Const 1w))) (Assign 5 (Const 7w))) (Seq (Assign 3 (Const 0w)) (Assign 4 (Const 0w))),3,4))
+duplicate_call_both=Call (SOME ([],(LN,LN),If Less 1 (Reg 2) (Seq (Seq (Assign 3 (Const 1w)) (Assign 4 (Const 1w))) (Assign 5 (Const 7w))) (Seq (Assign 3 (Const 0w)) (Assign 4 (Const 0w))),3,4)) (SOME 7) [1] (SOME (1,If Less 1 (Reg 2) (Seq (Seq (Assign 3 (Const 1w)) (Assign 4 (Const 1w))) (Assign 5 (Const 7w))) (Seq (Assign 3 (Const 0w)) (Assign 4 (Const 0w))),5,6))
+duplicate_if=If Equal 8 (Imm 0w) (If Less 1 (Reg 2) (Seq (Seq (Assign 3 (Const 1w)) (Assign 4 (Const 1w))) (Assign 5 (Const 7w))) (Seq (Assign 3 (Const 0w)) (Assign 4 (Const 0w)))) Tick
+duplicate_no_hoist=Seq Tick Skip
+duplicate_zero_bound=NONE
+duplicate_non_simple=F
+duplicate_move_simple=T
+duplicate_raise_other=0
+duplicate_raise_zero=0
+duplicate_raise_three=3

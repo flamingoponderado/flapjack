@@ -6,9 +6,9 @@ import Flapjack.Pancake.WordLang
 
 `word_simp$compile_exp` runs `Seq_assoc`, `const_fp`, `simp_duplicate_if` and
 `push_out_if` before `word_inst$inst_select` (`word_simpScript.sml:491-498`).
-Flapjack ports the sequence flattening (`Seq_assoc_right`), the condition
-duplication (`wordFuseConditions`) and the expression normalisation inside
-`inst_select`, but not `const_fp`.
+The production path implements the accumulator traversal of `Seq_assoc`,
+`const_fp`, condition duplication (`wordFuseConditions`), and expression
+normalisation inside `inst_select`.
 
 `const_fp` matters for byte parity because its `Call`, `FFI`, `Alloc` and
 `Install` rules re-materialise the argument constants in front of the
@@ -61,20 +61,10 @@ def wordSimpLeftSeqItems : List (WordProg α) → List (WordProg α)
   | .skip :: statements => wordSimpLeftSeqItems statements
   | statements => statements
 
-/-! Cake's `Seq_assoc` threads the left prefix through an accumulator
-    (`word_simpScript.sml:21-38`), so it visits each node once.  Recursing
-    into both halves and then re-running `wordSimpSeqItems` over the two
-    *already reassociated* results walks the processed spine again at every
-    `Seq` node, which is quadratic in the length of the sequence: on the
-    stateless guest one 14 325-node function spent 16.4 s here.
-
-    Returning the spine items directly removes the re-walk.  The result is
-    unchanged: `wordSimpSeqAssoc` is `wordSimpLeftSeq` of these items, and
-    for a `Seq` the previous code took `wordSimpLeftSeq` of the same list
-    before `wordSimpLeftSeqItems` dropped its leading `Skip`s -- which
-    `wordSimpLeftSeq` drops again on its own.  Cake applies the same
-    reassociation under `Call` return and exception-handler metadata, so the
-    fuel-driven traversal below descends into those programs too. -/
+/-! Legacy list/fuel traversal, retained as infrastructure. It drops only
+leading Skip nodes and is not equivalent to original Seq_assoc. The executed
+wrapper below uses the source-shaped accumulator instead. Both visit input
+nodes once, avoiding repeated output-spine traversal. -/
 def wordSimpProgFuel : WordProg α → Nat
   | .seq first second => 1 + wordSimpProgFuel first + wordSimpProgFuel second
   | .ite _ _ _ thenBranch elseBranch =>
@@ -122,8 +112,40 @@ termination_by fuel _ => fuel
 def wordSimpSeqAssocItems (program : WordProg α) : List (WordProg α) :=
   wordSimpSeqAssocItemsFuel (wordSimpProgFuel program + 1) program
 
+/-- Production accumulator traversal following every clause of HOL's
+`Seq_assoc` (`word_simpScript.sml:21-38`). A Skip contributes nothing at any
+position in the spine, not merely at the start of a flattened subtree.
+Recursive return/exception bodies start with an empty prefix. This uses the
+extended production WordProg carrier, so it is not tagged as a native HOL port.
+The accumulator visits each input node once without re-walking output spines. -/
+def wordSimpSeqAssocAcc (before : WordProg α) : WordProg α → WordProg α
+  | .skip => before
+  | .seq first second =>
+      wordSimpSeqAssocAcc (wordSimpSeqAssocAcc before first) second
+  | .ite operator condition right thenBranch elseBranch =>
+      wordSimpSmartSeq before (.ite operator condition right
+        (wordSimpSeqAssocAcc .skip thenBranch)
+        (wordSimpSeqAssocAcc .skip elseBranch))
+  | .mustTerminate body =>
+      wordSimpSmartSeq before (.mustTerminate (wordSimpSeqAssocAcc .skip body))
+  | .call returns target arguments handler =>
+      let returns := match returns with
+        | none => none
+        | some (names, cutsets, body, label, entry) =>
+            some (names, cutsets, wordSimpSeqAssocAcc .skip body, label, entry)
+      let handler := match handler with
+        | none => none
+        | some (exception, body, label, entry) =>
+            some (exception, wordSimpSeqAssocAcc .skip body, label, entry)
+      wordSimpSmartSeq before (.call returns target arguments handler)
+  | .loop liveIn body liveOut =>
+      wordSimpSmartSeq before (.loop liveIn (wordSimpSeqAssocAcc .skip body) liveOut)
+  | other => wordSimpSmartSeq before other
+termination_by program => sizeOf program
+decreasing_by all_goals decreasing_trivial
+
 def wordSimpSeqAssoc (program : WordProg α) : WordProg α :=
-  wordSimpLeftSeq (wordSimpSeqAssocItems program)
+  wordSimpSeqAssocAcc .skip program
 
 
 /-! `strip_const` (`word_simpScript.sml:131-138`). -/

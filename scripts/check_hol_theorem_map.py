@@ -31,8 +31,11 @@ PENDING_REVIEW_NOTE_ALLOWLIST = {
     tuple(entry) for entry in PENDING_REVIEW_NOTE_ALLOWLIST_DATA["entries"]
 }
 COORDINATOR_PENDING_NOTE = re.compile(
-    r"\bcoordinator(?:\s+(?:acceptance|review))?\s+"
-    r"(?:is\s+)?(?:pending|required)\b",
+    r"\b(?:coordinator|integration|external\s+PR)\b[^.;]{0,40}?"
+    r"\b(?:acceptance|review)\b[^.;]{0,20}?\b(?:pending|required)\b"
+    r"|\bcoordinator\s+(?:is\s+)?(?:pending|required)\b"
+    r"|\bpending\s+(?:coordinator|integration)\s+(?:acceptance|review)\b"
+    r"|\b(?:acceptance|review)\s+pending\s+coordinator\b",
     re.IGNORECASE,
 )
 REFS = runpy.run_path(str(ROOT / "scripts" / "check-hol-refs.py"))

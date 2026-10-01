@@ -1,0 +1,8 @@
+crni_zero_bad=(T,F)
+crni_plain_good=(T,T)
+crni_handler_bad=(T,F)
+crni_perf_good=(T,T)
+crni_perf_bad=(T,F)
+crni_option_tail_handler=(T,F)
+crni_empty_list_loop=(T,F)
+crni_exact_count_zero=(T,T)

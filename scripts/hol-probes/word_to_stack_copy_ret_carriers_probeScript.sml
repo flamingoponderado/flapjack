@@ -1,0 +1,10 @@
+load "preamble";
+load "word_to_stackTheory";
+load "stackPropsTheory";
+open bossLib HolKernel Parse preamble word_to_stackTheory stackPropsTheory;
+fun out label q = (print (label ^ "="); print_term (rconc (EVAL q)); print "\n");
+val _ = out "ret_tail_bool_zero" ``copy_ret F F (9,0,T) [1;2] (Skip:64 stackLang$prog) = Skip``;
+val _ = out "ret_tail_bool_plain" ``copy_ret F F (1,0,F) [1;2] (Skip:64 stackLang$prog) = Seq (copy_ret_aux 1 0 2) (SeqStackFree 2 Skip)``;
+val _ = out "ret_tail_list_handle" ``copy_ret F T (1,7,[T;F]) [1;2] (Skip:64 stackLang$prog) = Seq (copy_ret_aux 1 10 2) (SeqStackFree 2 Skip)``;
+val _ = out "ret_tail_list_perf" ``copy_ret T T (0,7,[T;F]) [T;F] (Skip:1 stackLang$prog) = Seq (copy_ret_aux 0 12 3) (SeqStackFree 3 Skip)``;
+val _ = out "ret_tail_install" ``no_install (copy_ret T F (0,7,T) [T;F] (Install 0 1 2 3 4:1 stackLang$prog)) = F``;

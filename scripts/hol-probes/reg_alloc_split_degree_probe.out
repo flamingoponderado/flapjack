@@ -1,0 +1,12 @@
+inc_self=M_success T
+inc_other=M_success F
+inc_last=M_success T
+inc_oob=M_failure Subscript
+sd_low_self=M_success T
+sd_high=M_success F
+sd_low_coalesced_k6=M_success F
+sd_eq_k=M_success F
+sd_out_of_d=M_success T
+sd_oob_bound_true=M_failure Subscript
+sd_beyond_all=M_success T
+sd_state=T

@@ -62,10 +62,26 @@ Before closing a porting bead backed by a HOL probe, regenerate its captured
 outputs from the original CakeML/HOL source. Probes provide regression evidence,
 not a HOL-to-Lean equivalence proof.
 
-Claim a commit-sized bead before starting work. Record the pushed branch and
-commit, verification results, or exact blocked reason on the bead, and notify
-the coordinator. Keep dependency beads open until their own acceptance criteria
-are met.
+Prefer a whole HOL script or a large coherent section as an agent work area,
+with different agents owning distant areas. Keep declaration-level beads and
+real dependency edges underneath it for traceability; they are not necessarily
+separate reporting events. Split an oversized script along its own theorem
+groups. Agree on ownership before crossing into another agent's area, and
+change areas only between tasks, without interrupting ongoing work.
+
+Claim a ready bead before starting work. Record the pushed branch and
+commit, verification results, or exact blocked reason on the bead. Keep
+dependency beads open until their own acceptance criteria are met.
+
+Report a completed file or substantial coherent section as soon as its checks
+are finished, even if it took fewer than ten commits. For smaller scattered
+work, roughly ten meaningful content commits is a useful reporting interval,
+not a quota. Keep pushing your own branch and
+updating individual beads throughout the batch; do not wait to publish work.
+Send one summary with the branch/head, covered beads, and actual checks instead
+of a message for every commit or small task. Report urgent blockers, conflicts,
+coordination needs, or a requested delivery sooner. Do not interrupt ongoing
+work merely to report; use a clean between-task boundary.
 
 Before creating or claiming a child bead, read the fleet inbox and list the
 parent's children in the shared bead database. Do not duplicate a constructor
@@ -74,7 +90,7 @@ Use your fleet agent name as the assignee (not a generic tool name). If an
 assignment conflicts with a new message, stop and ask the coordinator which
 case to keep before editing.
 
-Use `bd ready` to choose the next unblocked, commit-sized task. The shared bead
+Use `bd ready` to choose the next unblocked task within your assigned area. The shared bead
 database is the source of truth for current priorities; do not hard-code a
 temporary strategic focus here or claim a blocked parent merely because it is
 high priority. The coordinator keeps bead priorities aligned with the current
@@ -92,11 +108,11 @@ the RISC-V result. Give every missing HOL declaration a bead; split a large
 declaration into commit-sized children along its HOL cases or prerequisites.
 Before adding a blocking edge, check the HOL proof or definition to confirm it
 really needs that prerequisite. Do not serialize independent ports merely to
-make a tidy-looking chain. Assign P1 work only from unblocked, commit-sized
+make a tidy-looking chain. Assign P1 work only from unblocked
 leaves; leave blocked parents unassigned and record the exact frontier there.
 
-Agents leave completed slices open and report them as ready for review with
-branch, commit, and checks. The coordinator reviews the source and Lean
+Agents leave completed slices open, record readiness on their beads, and include
+them in the next batched report with branch, commit, and checks. The coordinator reviews the source and Lean
 statement, merges the commit into the single integration PR, then closes the
 bead only if its acceptance criteria are met. A pushed agent branch alone is
 not completion.

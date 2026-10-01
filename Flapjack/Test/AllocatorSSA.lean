@@ -129,12 +129,15 @@ example :
                         (.seq .skip (.inst (.const 224 0)))
                         (.move 1 [(228, 220)]))
                       (.move 1 [(232, 216)]))), 0, 0))))) := by
+  have merge : Compiler.Backend.WordAlloc.mergeMovesExecutable [3,1,4,2]
+      [(2,212),(1,208)] [(4,220),(3,216),(1,208)] 224 =
+      ([],[],224,[(1,208),(2,212)],[(3,216),(1,208),(4,220)]) := by decide +kernel
   simp [wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
     wordSsaListNextVarRenameMove, wordSsaCallAbiRegisters,
     wordSsaReadCutsets, wordSsaRestrict, wordSsaFreshList,
     wordSsaFresh, wordSsaRenameExp, wordSsaRead, wordSsaKeys,
     wordSsaFixInconsistencies, wordSsaPriorityMove, wordSsaBranchPriority,
-    wordSsaMergeMoves, wordSsaFakeInconsistencyMoves, wordSsaForceRename,
+    wordSsaMergeMoves, merge, wordSsaFakeInconsistencyMoves, wordSsaForceRename,
     NumSet.fromList, NumSet.fromAList, NumSet.toAList, NumSet.toSet, NumSet.insert, NumSet.insertFuel, NumSet.lrnext, NumSet.lrnextFuel, NumSet.insertList,
     wordSsaSeq, lookupNatInfo,
     List.eraseDups, List.eraseDupsBy, List.eraseDupsBy.loop]
@@ -300,10 +303,12 @@ example :
           (.seq .skip
             (.seq (.move 2 [])
               (.seq .skip (.inst (.const 14 0)))))) := by
+  have merge : Compiler.Backend.WordAlloc.mergeMovesExecutable [1] [(1,10)] [] 14 =
+      ([],[],14,[(1,10)],[]) := by decide +kernel
   simp [wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
     wordSsaRenameExp, wordSsaRenameRegImm, wordSsaRead, wordSsaFresh,
     wordSsaKeys, wordSsaFixInconsistencies,
-    wordSsaPriorityMove, wordSsaBranchPriority, wordSsaMergeMoves,
+    wordSsaPriorityMove, wordSsaBranchPriority, wordSsaMergeMoves, merge,
     wordSsaFakeInconsistencyMoves, wordSsaForceRename,
     NumSet.fromList, NumSet.toAList, NumSet.toSet, NumSet.insert, NumSet.insertFuel, NumSet.lrnext, NumSet.lrnextFuel, NumSet.insertList, List.eraseDups,
     List.eraseDupsBy, List.eraseDupsBy.loop, lookupNatInfo]
