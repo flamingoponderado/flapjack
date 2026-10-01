@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.InstFp
 import Flapjack.Compiler.Backend.WordToStack.NativeLive
 import Flapjack.Compiler.Backend.WordToStack.NativeStubs
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.InstMemory
@@ -13,6 +14,7 @@ import Flapjack.Compiler.Backend.WordToStack.NativeCallArgs
 import Flapjack.Compiler.Backend.WordToStack.NativeMoves
 import Flapjack.Compiler.Backend.LabSem.Memory
 import Flapjack.Compiler.Backend.LabSem.SharedMemory
+import Flapjack.Compiler.Backend.LabSem.Inst
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.If
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Loop
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.MustTerminate

@@ -1,0 +1,14 @@
+lab_inst_skip=T
+lab_inst_const=T
+lab_inst_arith_or_loc=T
+lab_inst_arith_or_loc_other=T
+lab_inst_arith_div_zero=T
+lab_inst_arith_shift_invalid=T
+lab_inst_mem_load_loc=T
+lab_inst_mem_store_unaligned=T
+lab_inst_mem_load32_loc_failure=T
+lab_inst_mem_load16_unsupported=T
+lab_inst_mem_store16_unsupported=T
+lab_inst_fp_mov_payload=T
+lab_inst_fp_neg_zero=T
+lab_inst_fp_from_reg_loc_failure=T
