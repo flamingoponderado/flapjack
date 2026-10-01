@@ -3385,10 +3385,22 @@
       "sha256": "567c10eaf56c07243856c191b60a982c5c554900a977305b11f33afbaf699349"
     },
     {
+      "bytes": 144,
+      "out": "ssa_locals_bounds_probe.out",
+      "rows": 1,
+      "sha256": "81725c70ac26603766c0d15b5a01ee9855854dc7caa6bca76f3d9c5481482e6b"
+    },
+    {
       "bytes": 526,
       "out": "ssa_locals_rel_probe.out",
       "rows": 10,
       "sha256": "6dd57ee5c171ed3a5f0c2b346cbf85ba68409ed6320b180b19a4cca89291b7f0"
+    },
+    {
+      "bytes": 235,
+      "out": "ssa_map_bounds_probe.out",
+      "rows": 10,
+      "sha256": "706c0097912cbe6f00598900820ffb2ec8962603ba8241d23402d3cafa842558"
     },
     {
       "bytes": 279,

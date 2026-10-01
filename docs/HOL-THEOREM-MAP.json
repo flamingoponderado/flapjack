@@ -44098,5 +44098,29 @@
     "lean_name": "flipRw",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c full source5726-5746/5862-5875: arbitrary Nat next, only original source class premise for each implication, unconditional pair of Boolean equalities for flip_rw. Accepted native isAllocVar/isStackVar modulo-four residues1/3. Nat.add_mod preserves natural addition without a bounded-register or wordwidth assumption. All4residues including physical classes and large Nat observations match original direct EVAL, six guarded source theorem applications and eight unconditional flip_rw applications; three complete literal local proof replays separately labeled, not claimed exported DB theorems. Lean eight kernel tuples and fourteen actual theorem applications; initial fixture spacing fixed before successful gates. Real source consumers5913/6053/9367/9747, distinct from previous +4 increment ports. No executable compiler behavior change; Author source comparison and reported checks complete; external PR review pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "merge_moves_frame2",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAMergeMoveDomains.lean",
+    "lean_name": "mergeMovesFrame2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source4687-4717 comparison: arbitrary list/start/native Spt Nat maps, no premises; original five-product merge_moves let result. Both characteristic-domain equalities retained plus every input-list key in original native intersection has equal output lookups. No distinctness, wf, class, freshness, map relation or desired result premise. Native canonical Spt/inter/domain_inter and lookup/insert laws retain all constructors including malformed trees. Full tail-first induction handles missing/equal/unequal cases; inserts occur only at present keys. Generic kernel actual theorem application retains all three conjuncts; freshly regenerated original complete merge results, definition/type and ten kernel replays include missing/equal/unequal/repeated/reordered/malformed/unbounded Nat inputs. Local HOL theorem compared from source, no exported invocation claimed. Executed list-state route remains separate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_map_ok_more",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAMapBounds.lean",
+    "lean_name": "ssaMapOKMore",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source5205-5213 comparison: arbitrary natural next/nextOut and native Spt Nat tree; sole original conjunction ssa_map_ok next tree and next<=nextOut. Conclusion retains exact same tree at larger bound. Original forall lookup-SOME domain and nonphysical guard come from accepted native SSAMap predicate; no wf, distinctness, freshness, class or desired target premise. Proof preserves nonphysical clause and composes strict/non-strict natural order. Nine fresh original complete predicate pairs include equal/raised/rejected bounds, malformed tree, overwrite and large odd/even values; matching kernel fixture plus arbitrary map/bounds application. Full original local proof replayed in original HOL from its literal tactic text, not falsely claimed DB-export invocation. No executable compiler change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_locals_rel_more",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSALocalsBounds.lean",
+    "lean_name": "ssaLocalsRelMore",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a compared original5195-5203: arbitrary Nat bounds, native Spt Nat SSA map and same generic payload type for source/target locals. Sole original conjunction relation and bound ordering; identical relation conclusion at larger bound. Accepted native locals definition retains both domain/lookup clauses and guarded THE correspondence via selector independence. No word-width restriction, tree well-formedness, target-result or extra premise. Proof preserves both domain clauses and lookup equality and composes only the allocated source-key bound."
   }
 ]
