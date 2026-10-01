@@ -7,15 +7,20 @@ open Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Backend.StackProps
 open Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Backend.LabProps
 open Flapjack.Compiler.Encoders.Asm
 /-!
-Recursive constructor cases of the local `flatten_line_ok_pre` in
+Recursive structural constructor pieces of the local `flatten_line_ok_pre` in
 `stack_to_labProofScript.sml:3629-3661`. Each case keeps zero-offset validity,
 source assembly validity, the actual flatten tuple equation and the full EVERY
-conclusion. The only additional premises are the original statement instantiated
-as induction hypotheses for the actual subprograms. Counters and continuation
+conclusion. The additional premises are the whole quantified original-statement
+structural motive for the actual subprograms. They are stronger than the
+particular recursive-call hypotheses produced by HOL flatten_ind; these pieces
+do not claim literal HOL induction-rule arguments. The complete theorem in
+Full.lean discharges these motives internally and has no public IH. Counters and continuation
 stacks are threaded exactly as in the original definition. If covers all six
 branches; returned Call covers both target forms and both handler alternatives.
 The original line precheck accepts LabAsm lines without extra jump conditions.
-The assembling theorem and compile_all_enc_ok_pre remain separate open work.
+Full.lean assembles the complete flatten and compile_all statements; its
+coordinator acceptance is tracked separately. Full compiler correctness and
+the executed production replacement remain open work.
 -/
 /-- Flapjack-specific simplifier extraction of the first conjunct of the
 already tagged misc append_thm; no separate HOL declaration is asserted. -/
@@ -23,7 +28,7 @@ private theorem appendList_eq {α : Type} (left right : AppList α) :
     appListAppend (.append left right) = appListAppend left ++ appListAppend right :=
   (appListAppend_thm left right []).1
 
-/-- Full original recursive constructor case with genuine subprogram induction hypotheses. -/
+/-- Recursive constructor piece under whole-statement structural motives for its subprograms; not a literal flatten_ind case. -/
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_line_ok_pre"
   (words_as_type_indexed_bitvec)]
 theorem flattenLineOkPreSeq {width : Nat} [NeZero width]
@@ -70,7 +75,7 @@ theorem flattenLineOkPreSeq {width : Nat} [NeZero width]
                 · subst line
                   trivial
             · exact hy line hSecond
-/-- Full original recursive constructor case with genuine subprogram induction hypotheses. -/
+/-- Recursive constructor piece under whole-statement structural motives for its subprograms; not a literal flatten_ind case. -/
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_line_ok_pre"
   (words_as_type_indexed_bitvec)]
 theorem flattenLineOkPreLoop {width : Nat} [NeZero width]
@@ -110,7 +115,7 @@ theorem flattenLineOkPreLoop {width : Nat} [NeZero width]
       · subst line
         trivial
 
-/-- Full original recursive constructor case with genuine subprogram induction hypotheses. -/
+/-- Recursive constructor piece under whole-statement structural motives for its subprograms; not a literal flatten_ind case. -/
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_line_ok_pre"
   (words_as_type_indexed_bitvec)]
 theorem flattenLineOkPreIf {width : Nat} [NeZero width]
@@ -155,7 +160,7 @@ theorem flattenLineOkPreIf {width : Nat} [NeZero width]
             simp only [appListAppend] at hx hy
             grind only [lineOkPreHOL]
 
-/-- Full original recursive constructor case with genuine subprogram induction hypotheses. -/
+/-- Recursive constructor piece under whole-statement structural motives for its subprograms; not a literal flatten_ind case. -/
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_line_ok_pre"
   (words_as_type_indexed_bitvec)]
 theorem flattenLineOkPreReturnedCallNone {width : Nat} [NeZero width]
@@ -194,7 +199,7 @@ theorem flattenLineOkPreReturnedCallNone {width : Nat} [NeZero width]
       simp only [appListAppend] at hx
       grind only [lineOkPreHOL]
 
-/-- Full original recursive constructor case with genuine subprogram induction hypotheses. -/
+/-- Recursive constructor piece under whole-statement structural motives for its subprograms; not a literal flatten_ind case. -/
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_line_ok_pre"
   (words_as_type_indexed_bitvec)]
 theorem flattenLineOkPreReturnedCallSome {width : Nat} [NeZero width]
