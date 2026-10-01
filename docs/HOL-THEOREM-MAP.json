@@ -51172,5 +51172,197 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-a source comparison flapjack-vw2t: original marked Calls6092–6174 and native compiler functional induction. Call SOME specialized functional-induction clause22; exception IH first, return IH second, retaining every actual setup/rename/cut/handler/fresh guard and binder before output quantifiers. Original compiler equality plus ssa_map_ok/is_alloc_var premises imply all three counter monotonicity/allocation/map bounds; actual handler input frames and final reconciliation derived, no extra validity/distinctness/evaluation/post-map/desired simulation premise. Native List/Nat/Spt cutsets and loop-table triples; Option Nat destination; actual four-field exception payload, positive width BitVec matching original word dimension. Fresh literal original Call tactics kernel replay and full quantified types captured. Proof-side infrastructure; executable unchanged."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/InstructionKeys.lean",
+    "lean_name": "wordToNum",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "wordToNum_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02, bead flapjack-word-cse-defs.1: complete original word_cseScript.sml:228-315 clauses, quantified inputs, constructor arities and output lists compared with native Asm carriers. Numeric identifiers, destination omissions, FPFma all-three-register exception and inst catch-all [1] are literal. words_as_type_indexed_bitvec records only positive-width BitVec / HOL type-indexed word translation; w2n is unsigned toNat. Original HOL fixtures and kernel replays cover every constructor. Knowledge maps, executed replacement and CSE simulation remain open on parent; no correctness claim.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/InstructionKeys.lean",
+    "lean_name": "shiftToNum",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "shiftToNum_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02, bead flapjack-word-cse-defs.1: complete original word_cseScript.sml:228-315 clauses, quantified inputs, constructor arities and output lists compared with native Asm carriers. Numeric identifiers, destination omissions, FPFma all-three-register exception and inst catch-all [1] are literal. Width-independent Nat/list/enum carriers are exact. Original HOL fixtures and kernel replays cover every constructor. Knowledge maps, executed replacement and CSE simulation remain open on parent; no correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/InstructionKeys.lean",
+    "lean_name": "arithOpToNum",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "arithOpToNum_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02, bead flapjack-word-cse-defs.1: complete original word_cseScript.sml:228-315 clauses, quantified inputs, constructor arities and output lists compared with native Asm carriers. Numeric identifiers, destination omissions, FPFma all-three-register exception and inst catch-all [1] are literal. Width-independent Nat/list/enum carriers are exact. Original HOL fixtures and kernel replays cover every constructor. Knowledge maps, executed replacement and CSE simulation remain open on parent; no correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/InstructionKeys.lean",
+    "lean_name": "regImmToNumList",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "regImmToNumList_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02, bead flapjack-word-cse-defs.1: complete original word_cseScript.sml:228-315 clauses, quantified inputs, constructor arities and output lists compared with native Asm carriers. Numeric identifiers, destination omissions, FPFma all-three-register exception and inst catch-all [1] are literal. words_as_type_indexed_bitvec records only positive-width BitVec / HOL type-indexed word translation; w2n is unsigned toNat. Original HOL fixtures and kernel replays cover every constructor. Knowledge maps, executed replacement and CSE simulation remain open on parent; no correctness claim.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/InstructionKeys.lean",
+    "lean_name": "arithToNumList",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "arithToNumList_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02, bead flapjack-word-cse-defs.1: complete original word_cseScript.sml:228-315 clauses, quantified inputs, constructor arities and output lists compared with native Asm carriers. Numeric identifiers, destination omissions, FPFma all-three-register exception and inst catch-all [1] are literal. words_as_type_indexed_bitvec records only positive-width BitVec / HOL type-indexed word translation; w2n is unsigned toNat. Original HOL fixtures and kernel replays cover every constructor. Knowledge maps, executed replacement and CSE simulation remain open on parent; no correctness claim.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/InstructionKeys.lean",
+    "lean_name": "memOpToNum",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "memOpToNum_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02, bead flapjack-word-cse-defs.1: complete original word_cseScript.sml:228-315 clauses, quantified inputs, constructor arities and output lists compared with native Asm carriers. Numeric identifiers, destination omissions, FPFma all-three-register exception and inst catch-all [1] are literal. Width-independent Nat/list/enum carriers are exact. Original HOL fixtures and kernel replays cover every constructor. Knowledge maps, executed replacement and CSE simulation remain open on parent; no correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/InstructionKeys.lean",
+    "lean_name": "loadToNumList",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "loadToNumList_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02, bead flapjack-word-cse-defs.1: complete original word_cseScript.sml:228-315 clauses, quantified inputs, constructor arities and output lists compared with native Asm carriers. Numeric identifiers, destination omissions, FPFma all-three-register exception and inst catch-all [1] are literal. words_as_type_indexed_bitvec records only positive-width BitVec / HOL type-indexed word translation; w2n is unsigned toNat. Original HOL fixtures and kernel replays cover every constructor. Knowledge maps, executed replacement and CSE simulation remain open on parent; no correctness claim.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/InstructionKeys.lean",
+    "lean_name": "fpToNumList",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "fpToNumList_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02, bead flapjack-word-cse-defs.1: complete original word_cseScript.sml:228-315 clauses, quantified inputs, constructor arities and output lists compared with native Asm carriers. Numeric identifiers, destination omissions, FPFma all-three-register exception and inst catch-all [1] are literal. Width-independent Nat/list/enum carriers are exact. Original HOL fixtures and kernel replays cover every constructor. Knowledge maps, executed replacement and CSE simulation remain open on parent; no correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/InstructionKeys.lean",
+    "lean_name": "instToNumList",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "instToNumList_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02, bead flapjack-word-cse-defs.1: complete original word_cseScript.sml:228-315 clauses, quantified inputs, constructor arities and output lists compared with native Asm carriers. Numeric identifiers, destination omissions, FPFma all-three-register exception and inst catch-all [1] are literal. words_as_type_indexed_bitvec records only positive-width BitVec / HOL type-indexed word translation; w2n is unsigned toNat. Original HOL fixtures and kernel replays cover every constructor. Knowledge maps, executed replacement and CSE simulation remain open on parent; no correctness claim.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/InstructionKeys.lean",
+    "lean_name": "opCurrHeapToNumList",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "OpCurrHeapToNumList_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02, bead flapjack-word-cse-defs.1: complete original word_cseScript.sml:228-315 clauses, quantified inputs, constructor arities and output lists compared with native Asm carriers. Numeric identifiers, destination omissions, FPFma all-three-register exception and inst catch-all [1] are literal. Width-independent Nat/list/enum carriers are exact. Original HOL fixtures and kernel replays cover every constructor. Knowledge maps, executed replacement and CSE simulation remain open on parent; no correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/RegisterUses.lean",
+    "lean_name": "firstRegOfArith",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "firstRegOfArith_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 complete source comparison 2026-10-02, flapjack-word-cse-register-keys: Every source constructor clause and positional register binder compared; native HolArith/HolFp/HolMemop carrier arities exact. Carry flag is both read/write; overflow flag only write; Shift Reg cannot be stored; FP general-register writes retain FPMovToReg two outputs. ODD r is exactly r % 2 == 1 over Nat. words_as_type_indexed_bitvec records only HOL positive type dimension/word to BitVec width with NeZero. 104 original register observations replayed in kernel. Full arith_keys_eq and knowledge/invariant simulation remain open. Executed definition replacement remains linked on CSE production frontier; no whole correctness claim.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/RegisterUses.lean",
+    "lean_name": "arithWrites",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "arithWrites_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 complete source comparison 2026-10-02, flapjack-word-cse-register-keys: Every source constructor clause and positional register binder compared; native HolArith/HolFp/HolMemop carrier arities exact. Carry flag is both read/write; overflow flag only write; Shift Reg cannot be stored; FP general-register writes retain FPMovToReg two outputs. ODD r is exactly r % 2 == 1 over Nat. words_as_type_indexed_bitvec records only HOL positive type dimension/word to BitVec width with NeZero. 104 original register observations replayed in kernel. Full arith_keys_eq and knowledge/invariant simulation remain open. Executed definition replacement remains linked on CSE production frontier; no whole correctness claim.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/RegisterUses.lean",
+    "lean_name": "arithReads",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "arithReads_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 complete source comparison 2026-10-02, flapjack-word-cse-register-keys: Every source constructor clause and positional register binder compared; native HolArith/HolFp/HolMemop carrier arities exact. Carry flag is both read/write; overflow flag only write; Shift Reg cannot be stored; FP general-register writes retain FPMovToReg two outputs. ODD r is exactly r % 2 == 1 over Nat. words_as_type_indexed_bitvec records only HOL positive type dimension/word to BitVec width with NeZero. 104 original register observations replayed in kernel. Full arith_keys_eq and knowledge/invariant simulation remain open. Executed definition replacement remains linked on CSE production frontier; no whole correctness claim.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/RegisterUses.lean",
+    "lean_name": "fpWrites",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "fpWrites_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 complete source comparison 2026-10-02, flapjack-word-cse-register-keys: Every source constructor clause and positional register binder compared; native HolArith/HolFp/HolMemop carrier arities exact. Carry flag is both read/write; overflow flag only write; Shift Reg cannot be stored; FP general-register writes retain FPMovToReg two outputs. ODD r is exactly r % 2 == 1 over Nat. Nat/enums/lists are identity carriers. 104 original register observations replayed in kernel. Full arith_keys_eq and knowledge/invariant simulation remain open. Executed definition replacement remains linked on CSE production frontier; no whole correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/RegisterUses.lean",
+    "lean_name": "canMemArith",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "can_mem_arith_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 complete source comparison 2026-10-02, flapjack-word-cse-register-keys: Every source constructor clause and positional register binder compared; native HolArith/HolFp/HolMemop carrier arities exact. Carry flag is both read/write; overflow flag only write; Shift Reg cannot be stored; FP general-register writes retain FPMovToReg two outputs. ODD r is exactly r % 2 == 1 over Nat. words_as_type_indexed_bitvec records only HOL positive type dimension/word to BitVec width with NeZero. 104 original register observations replayed in kernel. Full arith_keys_eq and knowledge/invariant simulation remain open. Executed definition replacement remains linked on CSE production frontier; no whole correctness claim.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/RegisterUses.lean",
+    "lean_name": "isStore",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "is_store_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 complete source comparison 2026-10-02, flapjack-word-cse-register-keys: Every source constructor clause and positional register binder compared; native HolArith/HolFp/HolMemop carrier arities exact. Carry flag is both read/write; overflow flag only write; Shift Reg cannot be stored; FP general-register writes retain FPMovToReg two outputs. ODD r is exactly r % 2 == 1 over Nat. Nat/enums/lists are identity carriers. 104 original register observations replayed in kernel. Full arith_keys_eq and knowledge/invariant simulation remain open. Executed definition replacement remains linked on CSE production frontier; no whole correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/KeyInjectivity.lean",
+    "lean_name": "wordToNumUnique",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "wordToNum_unique",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 complete source comparison 2026-10-02, flapjack-word-cse-register-keys: Original unrestricted forall equivalence, exact independent operand binders and both equality sides preserved; no range/class/knowledge guard. Full original proof replay regenerated and kernel theorem application checked. words_as_type_indexed_bitvec records only HOL positive type dimension/word to BitVec width with NeZero. 104 original register observations replayed in kernel. Full arith_keys_eq and knowledge/invariant simulation remain open. Executed definition replacement remains linked on CSE production frontier; no whole correctness claim.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/KeyInjectivity.lean",
+    "lean_name": "arithOpToNumEq",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "arithOpToNum_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 complete source comparison 2026-10-02, flapjack-word-cse-register-keys: Original unrestricted forall equivalence, exact independent operand binders and both equality sides preserved; no range/class/knowledge guard. Full original proof replay regenerated and kernel theorem application checked. Nat/enums/lists are identity carriers. 104 original register observations replayed in kernel. Full arith_keys_eq and knowledge/invariant simulation remain open. Executed definition replacement remains linked on CSE production frontier; no whole correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/KeyInjectivity.lean",
+    "lean_name": "memOpToNumEq",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "memOpToNum_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 complete source comparison 2026-10-02, flapjack-word-cse-register-keys: Original unrestricted forall equivalence, exact independent operand binders and both equality sides preserved; no range/class/knowledge guard. Full original proof replay regenerated and kernel theorem application checked. Nat/enums/lists are identity carriers. 104 original register observations replayed in kernel. Full arith_keys_eq and knowledge/invariant simulation remain open. Executed definition replacement remains linked on CSE production frontier; no whole correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/KeyInjectivity.lean",
+    "lean_name": "shiftToNumEq",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "shiftToNum_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 complete source comparison 2026-10-02, flapjack-word-cse-register-keys: Original unrestricted forall equivalence, exact independent operand binders and both equality sides preserved; no range/class/knowledge guard. Full original proof replay regenerated and kernel theorem application checked. Nat/enums/lists are identity carriers. 104 original register observations replayed in kernel. Full arith_keys_eq and knowledge/invariant simulation remain open. Executed definition replacement remains linked on CSE production frontier; no whole correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/InsertEquality.lean",
+    "lean_name": "insertEq",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "insert_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 full source comparison 2026-10-02, word-cse-insert-eq: original167-175 arbitrary Nat key and generic values/tree, insertion equality iff value equality; no wf assumption. Unused universally bound n2 appears in neither equality nor any premise, so omitted with local note. Spt preserves exact HOL num_map constructors; malformed BN/BS remain quantified. Original complete theorem/proof replay plus ten empty/malformed/nested equal/unequal observations captured, actual arbitrary-carrier kernel theorem applications. Genuine prerequisite of arith_keys_eq, not CSE/compiler semantic completion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/ArithmeticKeys.lean",
+    "lean_name": "arithKeysEq",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "arith_keys_eq",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 complete source comparison 2026-10-02, word-cse-arith-keys: entire original1174-1202 quantified a1/a2, conjunction of can_mem_arith a1 and key equality, both eligibility/reads conclusions, and forall faithful state/value original source evaluation implies destination-adjusted target evaluation are retained. No successful pass, target result, output relation, extra IH, width/range/wf or operand premise. Public guard excludes all multi-output cases exactly as original. Internal keyDestination derives full source constructor/operator/operand equality (all eight constructors considered); internal resultTransfer uses actual faithful evaluate Inst and set_var, with unrestricted insert_eq recovering the computed value. Binop both reg/imm, immediate Shift and signed Div transport internally, no simplified tagged evaluator. Native HolArith-to-WordLangArith codecs are constructor-for-constructor; state words translate to positive BitVec/[NeZero], C and F retain arbitrary universe-0 host types. fmap_as_finite_support_relation names only reviewed owning WordSemStateFiniteExact.fpRegs/store; locals/code are original Spt num_map and unqualified. Imported owner is not duplicated, same-module witness reuses genuine reviewed broad/exact roundtrip. Inherits reals_as_rational_cuts through faithful evaluate/inst, SOUNDNESS item8, no additional IEEE assumption. Literal complete original proof replay and original complete statement/carrier types plus60 full theorem applications across widths1/32/64/80, with arbitrary config/FFI/state/value quantification; matching60 full kernel theorem applications plusone arbitrary-width evaluation transfer. Source/kernel regression evidence is not cross-language equivalence; CSE knowledge invariant and whole pass/compiler chain remain unfinished."
   }
 ]

@@ -4268,3 +4268,51 @@ arbitrary accumulator; no full compiler or cross-language equivalence is claimed
 ### SSA Call allocation/map invariant
 
 `ssa_cc_trans_props_calls_probe.out` specializes the original functional induction at tail/returning Call, replays the literal original marked Calls proof, and captures the complete statements and all actual outer/guarded-handler variable types. Both exact guarded handler IHs are retained in the Lean returning-Call case; input/final map bounds are derived.
+## Native Word CSE instruction keys
+
+`word_cse_instruction_keys_probeScript.sml` regenerates all ten original
+definitions and function types plus 93 evaluations from `word_cseTheory`.
+The cases cover every shift, binop, memory operation, arithmetic and FP
+constructor, widths 1/32/64/80, unsigned all-ones words, and the instruction
+catch-all. `Flapjack/Test/WordCseInstructionKeysParity.lean` kernel-replays
+the values. FPFma retains all three registers; the other destination omissions
+follow the original. These fixtures are regression evidence, not a CSE
+simulation proof. Production carrier replacement and knowledge maps remain
+tracked on `flapjack-word-cse-defs`.
+
+## Native Word CSE register and key prerequisites
+
+`word_cse_register_keys_probeScript.sml` exports the six original register
+classifier definitions and their inferred types, plus all four unrestricted
+encoding injectivity theorems. It replays the complete original proofs with no
+remaining hypotheses, and evaluates 104 original observations. The cases cover
+all arithmetic and FP constructors, immediate/register splits, carry versus
+overflow flags, all memory-operation store classifiers, and widths 8/80.
+`Flapjack/Test/WordCseRegisterKeysParity.lean` kernel-replays the observations
+and applies the four full injectivity theorems at arbitrary inputs. Regression
+fixtures do not prove HOL-to-Lean equivalence or the remaining CSE simulation.
+
+## Word CSE insertion equality
+
+`word_cse_insert_equality_probeScript.sml` exports the complete original
+`insert_eq` and literally replays its proof with no open hypotheses. Ten
+observations cover equal/unequal writes on empty, leaf, malformed BN/BS and
+nested sparse trees. `WordCseInsertEqualityParity.lean` kernel-checks those
+cases and applies the unrestricted theorem at arbitrary carriers/trees and an
+80-bit carrier with a large Nat key. The original unused `n2` is omitted in
+Lean only because it occurs in no premise or conclusion.
+
+## Full Word CSE arithmetic-key simulation
+
+`word_cse_arithmetic_keys_probeScript.sml` captures the entire original
+`arith_keys_eq` and literally replays its proof with no open hypotheses. Three
+original carrier types and 60 full theorem applications cover all five binops
+with both register/immediate operands, all four immediate shifts and signed
+division at widths 1/32/64/80. Each application proves the original key/eligibility
+premises and retains the full universally quantified faithful evaluation
+implication, plus both read/eligibility conclusions.
+`WordCseArithmeticKeysParity.lean` applies the complete kernel theorem to all
+60 cases and at arbitrary width/state/value. The theorem uses the actual
+clocked WordSem evaluator, its reviewed finite-support state and its inherited
+IEEE rational-cut assumption (SOUNDNESS item 8). This is a CSE simulation
+prerequisite, not the entire CSE invariant/pass or compiler theorem.

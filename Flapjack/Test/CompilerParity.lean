@@ -25,6 +25,10 @@ import Flapjack.Test.StackToLabFullEncodingParity
 import Flapjack.Test.ProductionScheduler
 import Flapjack.Test.StackToLabRecursiveValidityParity
 import Flapjack.Test.StackToLabNonrecursiveValidityParity
+import Flapjack.Test.WordCseArithmeticKeysParity
+import Flapjack.Test.WordCseInsertEqualityParity
+import Flapjack.Test.WordCseRegisterKeysParity
+import Flapjack.Test.WordCseInstructionKeysParity
 import Flapjack.Test.WordToStackNoInstallTopParity
 import Flapjack.Test.WordPropsNoInstallCodeParity
 import Flapjack.Test.WordToStackNoInstallProgramsParity
