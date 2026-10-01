@@ -844,6 +844,7 @@ import Flapjack.Compiler.Backend.WordAlloc.SSAMergeMoves
 import Flapjack.Compiler.Backend.WordAlloc.SSAFixInconsistencies
 import Flapjack.Compiler.Backend.WordAlloc.SSATransInst
 import Flapjack.Compiler.Backend.WordAlloc.SSAHelpers
+import Flapjack.Compiler.Backend.WordAlloc.SSACcTrans
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveBounds
 
 
