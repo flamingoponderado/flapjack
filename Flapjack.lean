@@ -1,4 +1,6 @@
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetup.ListNextVarRenameArithmetic
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.Maximum.MaxVar
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocals
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMap
 import Flapjack.Compiler.Backend.WordAlloc.SSASetup
 import Flapjack.Compiler.Encoders.AsmProps.Assertions
@@ -34,6 +36,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCodeLabels
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ProgramCodeLabels
 import Flapjack.Pancake.WordConvs.CodeLabels
 import Flapjack.Compiler.Backend.StackProps.CodeLabels
+import Flapjack.Compiler.Backend.StackProps.ForbiddenOperations
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Steps
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Step
 import Flapjack.Compiler.Backend.LabToTarget.Navigation
@@ -1126,6 +1129,7 @@ import Flapjack.RiscV.WordDiagnostics
 import Flapjack.FfiHOL
 import Flapjack.FfiBridge
 import Flapjack.Compiler.Backend.RegAlloc.StateForeach
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameLookup
 
 
 /- The context-aware Crep-to-Loop correctness file is being updated alongside
