@@ -3559,6 +3559,12 @@
       "sha256": "0951919b9c2820704747f40b352ab0cf70ab9bb1ee3a2535536992f1814929e6"
     },
     {
+      "bytes": 852,
+      "out": "stackprops_forbidden_operations_probe.out",
+      "rows": 46,
+      "sha256": "718e64268abb7c05d330507ff019f684e9f6d44c5c0f53f2ca65ac3cf8ca78e7"
+    },
+    {
       "bytes": 250,
       "out": "stackprops_label_safety_probe.out",
       "rows": 10,
