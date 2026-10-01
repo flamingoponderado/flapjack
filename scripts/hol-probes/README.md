@@ -40,6 +40,34 @@ with `HOL_PROBE_ONLY=stacksem_loop_recursive_probeScript.sml scripts/hol-probes/
 
 # Original Pancake HOL probes
 
+`ParmoveAllDistinctPmovParity` replays the complete original scheduler outputs
+terminal/self/chain/cycle/active from `parmove_final_probe.out` while applying
+the full `ALL_DISTINCT_pmov` theorem under its real source premises. The
+original quantified theorem is captured as `pm_audit_ALL_DISTINCT_pmov` in
+`parmove_preservation_shape_probe.out`. Kernel boundary checks also cover
+repeated scratch destinations and duplicate emitted history; scratch safety
+is not a premise of this distinctness theorem. Existing original evidence is
+reused, with no fresh HOL execution claimed.
+
+`ParmoveTempPmovParity` replays the complete self/chain/cycle/active scheduler
+outputs from `parmove_final_probe.out` and applies the full conditional
+`pmov_not_use_temp_before_assign` port to each valid, initially safe state.
+The full original quantified statement is already captured as
+`pm_audit_pmov_not_use_temp_before_assign` in
+`parmove_preservation_shape_probe.out`, including the unused arbitrary `i`.
+The kernel tests also cover prior scratch history and distinguish captured
+rows failing well-formedness or initial safety from valid theorem applications.
+This reuses existing original evidence; no fresh HOL execution is claimed.
+
+`parmove_preservation_shape_probe.out` records the original full
+`inj_on_state_def` equation and its independent Option input/output carrier
+type (`pm_audit_inj_on_state_def`, `pm_audit_type_inj_on_state`).
+`ParmoveInjOnStateParity` checks the literal Lean predicate's support and global
+NONE boundaries in the kernel, including a noninjective map accepted on a
+singleton support and collisions rejected in each of the three state segments.
+These checks use the existing original declaration capture; they are not fresh
+original-HOL executions or a completed injective scheduler simulation.
+
 `labsem_fp_updates_probe.out` records 29 direct original `labSem$fp_upd`
 observations, paired with kernel checks in `LabSemFpUpdatesParity`. All sixteen
 constructors are exercised. Cases include NaN/sign payloads, signed zero,
@@ -2487,6 +2515,7 @@ production allocator routing. Regenerate read-only with
 `HOL_PROBE_ONLY=reg_alloc_remap_probeScript.sml scripts/hol-probes/regenerate.sh`.
 `word_to_stack_cutset_maximum_probe` captures twelve original cutset maxima, including duplicate/root keys, reordered and overlapping lists, sparse names and naturals above 2^80. Kernel fixtures replay the same inputs and apply the unconditional full list-to-Spt maximum correspondence. The production frame and compiler route remain separate dependency-linked work.
 
+`word_to_stack_ssa_codec_probe` captures eight fresh original full SSA equations, including ABI entry moves, assignment, constant, shift, long multiplication, Raise, Call and Return. Kernel fixtures replay every complete output tree at the same inputs. Nine separate codec-domain sentinels cover ordinary 16-bit memory and nested five-register AddCarry rejection. Untagged universal infrastructure proves actual SSA renaming for arbitrary frames/state and the full ABI wrapper preserve codec acceptance; subsequent optimization passes and the native production route remain open.
 `word_alloc_heu_prog_probe.out` captures fifty-two fresh original program
 heuristic observations, replayed by `HeuProgParity` in the kernel. Every
 program clause and catchall, all shared-memory widths, same-input If joins,
@@ -2550,6 +2579,9 @@ cycle save, prior-written scratch reads/save, and Boolean registers. Matching
 target safety via the actual Step constructor and full ported theorem.
 RTC/pmov and full Move correctness remain separate open obligations.
 
+`word_to_stack_dead_codec_probe` captures thirteen fresh original whole-program dead-code output equations: dead moves/constants/loads, retained ordinary 16-bit memory and stores, observable shared loads, sequence and If pruning, loops, MustTerminate, unchanged tail-call handlers and both transformed returning Call continuations. Kernel fixtures replay the same complete output trees. Separate production-only five-register AddCarry sentinels check deletion, live retention and nested handler rejection; that constructor has no HOL counterpart. The full arbitrary-backward-state theorem and executed wrapper prove one-way actual codec acceptance closure, not equality, since deletion can remove a rejected primitive. Subsequent optimizations and the native compiler route remain open.
+
+`word_to_stack_cse_codec_probe` captures sixteen fresh original complete CSE output equations, covering constant recording, repeated Get/load/offset/shift facts, ordinary 16-bit memory, observable shared loads, loops, MustTerminate, If, unchanged returning and tail Call bodies, and memory-store/call knowledge barriers. Kernel fixtures replay every same-input complete tree. Separate sentinels check nested five-register AddCarry rejection. Untagged infrastructure proves actual CSE preserves codec acceptance exactly for arbitrary knowledge and all program constructors, then derives the executed wrapper; it assumes no valid-knowledge, codec-success, desired-output or pass-success premise. Remaining optimization passes and native routing stay open.
 `monad_array_length_probe.out` captures five fresh original Marray_length
 equations, kernel replayed in `MonadArrayLengthParity`: empty/duplicate lists,
 Bool/list states, Bool values and a large Nat state. Generic pointwise equation
@@ -2568,6 +2600,11 @@ allocator routing. Source revision/span digest are beside `canonizeMoveLess`.
 Regenerate read-only with
 `HOL_PROBE_ONLY=word_alloc_canonize_sort_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
+`word_to_stack_unreach_codec_probe` captures sixteen fresh original complete unreachable-pass output equations: Skip and right association, Raise/Return/Break/Continue/tail-call pruning, priority-preserving move composition with duplicate destinations and a residual sequence, loops, MustTerminate, If, unchanged nonreturning handlers and both returning Call continuations. Kernel fixtures replay the same complete outputs. Separate production-only five-register AddCarry sentinels check unreachable deletion, retained rejection and the different handler policies. Untagged infrastructure proves actual sequence simplification, suffix-accumulator flattening and folding preserve acceptance, then derives the executed post-copy wrapper; no output-codec, normal-form, guard or successful-pass premise is assumed. This is one-way closure, since unreachable rejected inputs can be erased; native frame and routing remain open.
+
+`reg_alloc_safe_div_probe` captures fourteen fresh original guarded natural-division equations: zero numerator/denominator, one, below/equal/above divisor, exact/remainder division and numerals above 2^80. Kernel fixtures replay all same inputs and prove the executed `cakeSafeDiv` wrapper is definitionally the reviewed `RegAlloc.safeDiv` at arbitrary Nat inputs. The actual minimum-cost scan and spill selection call this shared definition. These equations do not establish the full spill/allocator success theorem, which remains dependency-linked work.
+
+`parmove_first_index_probe` captures fifteen fresh original predicate/first-read/first-write triples. Empty and ordinary moves, absent writes/reads, simultaneous scratch access, strictly earlier/later writes, repeated occurrences and independent Bool/Nat/function carriers are covered. Kernel fixtures replay the same full triples. The exact tagged characterization retains both zero-offset optional first indices and strict order; local classical equality preserves arbitrary carriers without a public decidable-equality premise. Step/RTC/pmov and complete Move correctness remain separate obligations.
 `word_alloc_canonize_moves_probe.out` contains nineteen fresh original full
 canonize_moves equations, kernel replayed by `CanonizeMovesParity`. They cover
 normalization, strict sorting, maximum priorities, group counts and reverse
