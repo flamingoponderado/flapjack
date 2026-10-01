@@ -2914,3 +2914,7 @@ run_probe word_alloc_remove_temp_stack_probeScript.sml word_alloc_remove_temp_st
 run_probe word_alloc_merge_stack_only_probeScript.sml word_alloc_merge_stack_only_probe.out \
   mso_present_alloc mso_present_physical mso_present_stack mso_absent_stack_alloc mso_absent_stack_physical mso_absent_delete_missing mso_absent_delete_root mso_present_overwrite mso_raw \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_alloc_spillcost_probeScript.sml word_alloc_spillcost_probe.out \
+  spill_zero spill_call_tail spill_call_nontail spill_left_register spill_left_memory spill_right_register spill_right_memory spill_asymmetric_tail spill_asymmetric_nontail spill_large \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"

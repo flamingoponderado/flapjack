@@ -41738,5 +41738,13 @@
   "hol_name": "insert_bitmap_isPREFIX",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-a: full source2797-2803 arbitrary payload list bm, AppList/count input and output, index and sole insertion output equation imply flattened-input prefix of flattened-output. Original insert_bitmap is payload-polymorphic (no word operations); generic alpha matches its accepted definition and AppList constructors exactly. No width qualifier, count bound, wellformedness or success premise. List.IsPrefix is the same existential suffix equality; proof projects actual insertion and uses accepted append_thm. Seven fresh original observations on empty/nested/short-count/slack/Bool/Option Nat cases replayed by kernel theorem applications in actual CompilerParity driver. Native comp/compiler correctness remains open."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Heuristics.lean",
+  "lean_name": "getSpillCost",
+  "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+  "hol_name": "get_spillcost_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison (2026-10-01), original1666-1670: five right-associated Nat counters c,lr,lm,rr,rm retain exact product order; weighted natural sum c+2lr+4lm+2rr+4rm multiplied in entirety by Bool tail branch 5 or 1. Exact unbounded Nat arithmetic, no machine-word conversion, overflow, success or range premise. Ten freshly captured original numeric rows/kernel identical inputs include each individual counter weight, asymmetric both tail branches, zero and 2^64 fifth counter; actual CompilerParity import. Coordinator source review pending; native get_heuristics/full word_alloc/executed production remain open."
 }
 ]
