@@ -3106,3 +3106,7 @@ run_probe word_alloc_canonize_moves_probeScript.sml word_alloc_canonize_moves_pr
 run_probe word_copy_codec_domain_probeScript.sml word_copy_codec_domain_probe.out \
   copy_carry copy_load16 copy_store16 copy_seq_alias copy_if copy_loop copy_must copy_both \
   "$cake_dir/compiler/backend/word_copyScript.sml" "$cake_dir/compiler/backend"
+
+run_probe reg_alloc_initialization_probeScript.sml reg_alloc_initialization_probe.out \
+  ira_adj ira_tag ira_degrees ira_coalesced ira_move_related ira_preserved ira_failure ira_zero \
+  "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
