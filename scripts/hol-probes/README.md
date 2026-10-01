@@ -3150,3 +3150,17 @@ theorems to the same inputs. Weakening/interference fixtures change functions
 above the original count bound, and the intermediate carrier remains Bool
 while states are Nat. These regressions do not establish cross-language
 equivalence or complete encoder correctness.
+
+### SSA renaming properties
+
+`ssa_rename_properties_probeScript.sml` replays the complete local
+`list_next_var_rename_props` source proof (word_allocProof5749-5777), with its
+two local register-class increment prerequisites also replayed literally. It
+then applies this proved theorem to eight original `list_next_var_rename`
+results: both classes, empty lists, duplicates, existing and overwritten
+bindings, a malformed tree, and unbounded natural indices. Each application
+discharges the original equality and class/map premises and checks an empty
+hypothesis list. Rows contain `(next,T)`: `EQT_INTRO` renders the **proved full
+four-conjunct conclusion** as T. This is distinct from attempting to EVAL a
+symbolic universally quantified lookup predicate. The full replay statement is
+captured separately; this local theorem is not claimed to be exported in HOL's DB.
