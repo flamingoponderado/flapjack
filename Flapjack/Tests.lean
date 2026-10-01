@@ -164,6 +164,7 @@ import Flapjack.Test.ProductionAllocationLimit
 import Flapjack.Test.LoopToWordSourceCodec
 import Flapjack.Test.ProductionPreSsaCodec
 import Flapjack.Test.ProductionLocations
+import Flapjack.Test.ProductionConfiguration
 import Flapjack.Test.PanValueMemoryFfi
 import Flapjack.Test.PanValueAcceleratorFfi
 import Flapjack.Test.PanValueFfiClockMemoryFfi
