@@ -2444,3 +2444,11 @@ normalizes the right nodes. Exact trees are compared, not only domains. Finite
 observations do not establish cross-prover equivalence or executed allocator
 routing. Regenerate read-only with
 `HOL_PROBE_ONLY=word_alloc_heu_max_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`word_alloc_heu_call_probe.out` captures sixteen original call-name unions,
+kernel-replayed as exact trees by `HeuCallParity`. Generic tracked Nat, Bool
+and Nat-tuple payloads, overlap/disjoint/deep keys and malformed internal nodes
+are covered. Payload-only map retains raw structure and no wf premise is added.
+Finite observations do not establish cross-prover equivalence or executed
+allocator routing. Regenerate read-only with
+`HOL_PROBE_ONLY=word_alloc_heu_call_probeScript.sml scripts/hol-probes/regenerate.sh`.

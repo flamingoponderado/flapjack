@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordAlloc.HeuCall
 import Flapjack.Compiler.Backend.WordAlloc.HeuMax
 import Flapjack.Compiler.Backend.WordAlloc.HeuInst
 import Flapjack.Misc.Sptree.Map
