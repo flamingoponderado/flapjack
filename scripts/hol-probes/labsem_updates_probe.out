@@ -1,0 +1,17 @@
+lab_updates_pc_overwrite=T
+lab_updates_pc_increment=T
+lab_updates_clock_zero=T
+lab_updates_clock_positive=T
+lab_updates_reg_hit=T
+lab_updates_reg_other=T
+lab_updates_reg_loc=T
+lab_updates_mem_hit=T
+lab_updates_mem_other=T
+lab_updates_assert_sticky=T
+lab_updates_assert_false=T
+lab_updates_failed_reg_write=T
+lab_updates_failed_mem_write=T
+lab_updates_reg_imm_loc=T
+lab_updates_reg_imm_word=T
+lab_updates_fp_hit=T
+lab_updates_fp_other=T

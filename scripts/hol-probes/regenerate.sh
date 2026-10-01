@@ -2714,6 +2714,7 @@ run_probe reg_alloc_clash_tree_probeScript.sml reg_alloc_clash_tree_probe.out \
   delete_names col_collision partial_existing partial_collision delta_discard_writes seq_right_first branch_merge branch_fixed_collision \
   "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
+run_probe labsem_updates_probeScript.sml labsem_updates_probe.out lab_updates_pc_overwrite lab_updates_pc_increment lab_updates_clock_zero lab_updates_clock_positive lab_updates_reg_hit lab_updates_reg_other lab_updates_reg_loc lab_updates_mem_hit lab_updates_mem_other lab_updates_assert_sticky lab_updates_assert_false lab_updates_failed_reg_write lab_updates_failed_mem_write lab_updates_reg_imm_loc lab_updates_reg_imm_word lab_updates_fp_hit lab_updates_fp_other "$cake_dir/compiler/backend/semantics/labSemScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe parmove_invariants_probeScript.sml parmove_invariants_probe.out \
   iv_empty_path iv_single_path iv_chain_path iv_bad_path iv_empty_wf iv_pending_wf iv_repeated iv_pending_dest iv_pending_source iv_active_last_temp iv_active_front_temp iv_active_dest iv_active_path \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
@@ -2738,3 +2739,4 @@ run_probe word_to_stack_wmove_probeScript.sml word_to_stack_wmove_probe.out \
 run_probe parmove_updates_probeScript.sml parmove_updates_probe.out \
   pu_fresh pu_snapshot pu_untouched pu_later_destination pu_freshness_boundary pu_empty pu_self pu_swap pu_eq_forward pu_eq_reverse \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+run_probe labsem_navigation_probeScript.sml labsem_navigation_probe.out nav_fetch0 nav_fetch1 nav_fetch2 nav_fetch3 nav_fetch4 nav_fetch_end nav_length nav_entry1 nav_entry2 nav_empty9 nav_empty8 nav_label5 nav_label7 nav_label4 nav_missing nav_missingsection nav_return0 nav_return1 nav_return2 nav_return3 nav_return4 nav_return5 nav_first_label "$cake_dir/compiler/backend/semantics/labSemScript.sml" "$cake_dir/compiler/backend/semantics"
