@@ -1,3 +1,7 @@
+import Flapjack.Test.HeuCallParity
+import Flapjack.Test.HeuMaxParity
+import Flapjack.Test.HeuInstParity
+import Flapjack.Test.SptMapParity
 import Flapjack.Test.WordAllocCheckerAssemblyParity
 import Flapjack.Test.SptMapiParity
 import Flapjack.Test.WordAllocOracleColourParity

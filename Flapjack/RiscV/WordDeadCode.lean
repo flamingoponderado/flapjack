@@ -493,7 +493,29 @@ namespace Flapjack.RiscV.CakeRegAlloc
 open Flapjack
 open Flapjack.RiscV
 
-/-! The source-shaped allocator boundary: full SSA is performed first, then
+/-- Flapjack-only executed allocation result. Retain the real IRC colouring
+so the native Word-to-Stack route can consume coloured Word names without
+reconstructing them from locations. There is no separate HOL declaration
+for this production-carrier packaging. -/
+structure CakeAllocationWithColour (α : Type u) where
+  ssaState : WordSsaState
+  parameters : List Nat
+  program : WordProg α
+  allocation : WordSpillState
+  colouring : NatInfoMap Nat
+
+/-- Preserve the historical caller contract; its program remains SSA-shaped
+and its spill-state locations carry the allocation. Flapjack-only projection. -/
+def CakeAllocationWithColour.toLegacy (result : CakeAllocationWithColour α) :
+    WordSsaState × List Nat × WordProg α × WordSpillState :=
+  (result.ssaState, result.parameters, result.program, result.allocation)
+
+/-- Materialize exactly the colouring used by the frame calculation.
+This is a production-carrier operation, not a HOL compiler correctness claim. -/
+def CakeAllocationWithColour.colouredProgram (result : CakeAllocationWithColour α) : WordProg α :=
+  wordApplyColour (CakeAlloc.totalColour result.colouring) result.program
+
+/-- The source-shaped allocator boundary: full SSA is performed first, then
 Cake's dead-program pass feeds the clash tree and IRC allocator.
 
 Ordinary load16/store16 instructions are unsupported by the reviewed allocator
@@ -501,9 +523,9 @@ routes. Reject them recursively at entry, before each liveness-based dead pass,
 and before graph construction/colouring. Checks preserve every accepted tree;
 failure returns `none`, with no deletion or opcode substitution. This checked
 safety boundary does not prove universal source-to-boundary closure. -/
-def cakeAllocateWordFunctionAfterDead [OfNat α 0] [WordCseHash α] (currentFunction : Nat)
+def cakeAllocateWordFunctionAfterDeadWithColour [OfNat α 0] [WordCseHash α] (currentFunction : Nat)
     (parameters : List Nat) (program : WordProg α) [BEq α] :
-    Option (WordSsaState × List Nat × WordProg α × WordSpillState) :=
+    Option (CakeAllocationWithColour α) :=
   if !allocatorMemorySupported program then none else
   let (state, renamedParameters, ssaProgram) :=
     wordFullSsaCcTrans parameters.length program
@@ -531,38 +553,96 @@ def cakeAllocateWordFunctionAfterDead [OfNat α 0] [WordCseHash α] (currentFunc
       moves bij initialState with
   | none => none
   | some colouring =>
-      some (state, renamedParameters, ssaProgram,
+      some ⟨state, renamedParameters, ssaProgram,
         cakeColourWordSpillState cakeRiscVRegisterCount
-          parameters ssaProgram colouring)
+          parameters ssaProgram colouring, colouring⟩
+
+/-- Historical executed API, now a projection of the shared result retaining
+its actual colouring. Guard/pass order and allocation inputs are shared. -/
+def cakeAllocateWordFunctionAfterDead [OfNat α 0] [WordCseHash α] (currentFunction : Nat)
+    (parameters : List Nat) (program : WordProg α) [BEq α] :
+    Option (WordSsaState × List Nat × WordProg α × WordSpillState) :=
+  (cakeAllocateWordFunctionAfterDeadWithColour currentFunction parameters program).map
+    CakeAllocationWithColour.toLegacy
+
+/-- The retained colouring is precisely the one used to construct the actual
+spill state, derived from the executed result equation. Flapjack-only carrier
+infrastructure; this is not a HOL allocation or pass-correctness theorem. -/
+theorem cakeAllocateWordFunctionAfterDeadWithColour_allocation
+    {α : Type} [OfNat α 0] [WordCseHash α] [BEq α]
+    (currentFunction : Nat) (parameters : List Nat) (program : WordProg α)
+    (output : CakeAllocationWithColour α)
+    (h : cakeAllocateWordFunctionAfterDeadWithColour currentFunction parameters program = some output) :
+    output.allocation = cakeColourWordSpillState cakeRiscVRegisterCount
+      parameters output.program output.colouring := by
+  unfold cakeAllocateWordFunctionAfterDeadWithColour at h
+  repeat' (split at h <;> simp_all)
+  all_goals rcases h with ⟨_, _, _, rfl⟩
+  all_goals rfl
+
+/-- The executed frame occupancy is computed from the actual retained
+colouring and its coloured program, with the original argument-area floor.
+No desired maximum equality or reconstructed colouring is assumed. This
+does not yet relate the separate production maximum to native maxVarHOL. -/
+theorem cakeAllocateWordFunctionAfterDeadWithColour_frame
+    {α : Type} [OfNat α 0] [WordCseHash α] [BEq α]
+    (currentFunction : Nat) (parameters : List Nat) (program : WordProg α)
+    (output : CakeAllocationWithColour α)
+    (h : cakeAllocateWordFunctionAfterDeadWithColour currentFunction parameters program = some output) :
+    output.allocation.nextSpill =
+      max ((wordProgCakeMaxVar output.colouredProgram / 2 + 1) - cakeRiscVRegisterCount)
+        (parameters.length - cakeRiscVRegisterCount) := by
+  rw [cakeAllocateWordFunctionAfterDeadWithColour_allocation currentFunction parameters program output h]
+  exact cakeColourWordSpillState_nextSpill_eq_occupancy cakeRiscVRegisterCount
+    parameters output.program output.colouring
+
+/-- The shared executed result retains a recursively checked source program.
+This is a guard certificate, not a source-semantics correctness theorem. -/
+theorem cakeAllocateWordFunctionAfterDeadWithColour_output_supported
+    {α : Type} [OfNat α 0] [WordCseHash α] [BEq α]
+    (currentFunction : Nat) (parameters : List Nat) (program : WordProg α)
+    (output : CakeAllocationWithColour α)
+    (h : cakeAllocateWordFunctionAfterDeadWithColour currentFunction parameters program = some output) :
+    allocatorMemorySupported output.program = true := by
+  unfold cakeAllocateWordFunctionAfterDeadWithColour at h
+  repeat' (split at h <;> simp_all)
+  all_goals rcases h with ⟨_, _, checked, rfl⟩
+  all_goals exact checked
 
 /-- A successful executed allocator call certifies its complete input tree.
-The executed API is specialized to `WordProg Nat`; the validator itself is
-universe-polymorphic. This is not a port of a HOL declaration. -/
+This certificate covers arbitrary word payloads, including the executed
+BitVec caller, without an extra supported-input premise. This is not a port of a HOL declaration. -/
 theorem cakeAllocateWordFunctionAfterDead_input_supported
-    (currentFunction : Nat) (parameters : List Nat) (program : WordProg Nat)
-    (output : WordSsaState × List Nat × WordProg Nat × WordSpillState)
+    {α : Type} [OfNat α 0] [WordCseHash α] [BEq α]
+    (currentFunction : Nat) (parameters : List Nat) (program : WordProg α)
+    (output : WordSsaState × List Nat × WordProg α × WordSpillState)
     (h : cakeAllocateWordFunctionAfterDead currentFunction parameters program = some output) :
     allocatorMemorySupported program = true := by
-  unfold cakeAllocateWordFunctionAfterDead at h
-  split at h <;> simp_all
+  unfold cakeAllocateWordFunctionAfterDead cakeAllocateWordFunctionAfterDeadWithColour at h
+  split at h <;> simp_all [CakeAllocationWithColour.toLegacy]
 
 /-- The program returned by successful allocation also passed the recursive
 check immediately before clash-tree construction and colouring. -/
 theorem cakeAllocateWordFunctionAfterDead_output_supported
-    (currentFunction : Nat) (parameters : List Nat) (program : WordProg Nat)
-    (output : WordSsaState × List Nat × WordProg Nat × WordSpillState)
+    {α : Type} [OfNat α 0] [WordCseHash α] [BEq α]
+    (currentFunction : Nat) (parameters : List Nat) (program : WordProg α)
+    (output : WordSsaState × List Nat × WordProg α × WordSpillState)
     (h : cakeAllocateWordFunctionAfterDead currentFunction parameters program = some output) :
     allocatorMemorySupported output.2.2.1 = true := by
   unfold cakeAllocateWordFunctionAfterDead at h
-  split at h <;> simp_all
-  split at h <;> simp_all
-  rcases h with ⟨_, _, checked, rfl⟩
-  exact checked
+  cases hc : cakeAllocateWordFunctionAfterDeadWithColour currentFunction parameters program with
+  | none => simp [hc] at h
+  | some shared =>
+      simp only [hc, Option.map_some, Option.some.injEq] at h
+      subst output
+      exact cakeAllocateWordFunctionAfterDeadWithColour_output_supported
+        currentFunction parameters program shared hc
 
 /-- The successful API excludes unsupported input occurrences. -/
 theorem cakeAllocateWordFunctionAfterDead_input_safe
-    (currentFunction : Nat) (parameters : List Nat) (program : WordProg Nat)
-    (output : WordSsaState × List Nat × WordProg Nat × WordSpillState)
+    {α : Type} [OfNat α 0] [WordCseHash α] [BEq α]
+    (currentFunction : Nat) (parameters : List Nat) (program : WordProg α)
+    (output : WordSsaState × List Nat × WordProg α × WordSpillState)
     (h : cakeAllocateWordFunctionAfterDead currentFunction parameters program = some output) :
     ¬ UnsupportedAllocatorMemory program :=
   allocatorMemorySupported_excludes

@@ -1,0 +1,16 @@
+hc_merge_empty=T
+hc_merge_left=T
+hc_merge_right=T
+hc_merge_overlap=T
+hc_merge_disjoint=T
+hc_merge_raw_left=T
+hc_merge_raw_right=T
+hc_merge_raw_root=T
+hc_add_empty=T
+hc_add_nat=T
+hc_add_bool=T
+hc_add_tuple=T
+hc_add_nested=T
+hc_add_raw_bn=T
+hc_add_raw_bs=T
+hc_add_raw_overlap=T
