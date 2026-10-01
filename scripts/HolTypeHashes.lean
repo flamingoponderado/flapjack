@@ -55,6 +55,7 @@ import Flapjack.Compiler.Backend.WordToStack.ProductionProgramMaximum
 import Flapjack.Compiler.Backend.WordToStack.ProductionSsaCodecDomain
 import Flapjack.Compiler.Backend.WordToStack.ProductionDeadCodecDomain
 import Flapjack.Compiler.Backend.WordToStack.ProductionCseCodecDomain
+import Flapjack.Compiler.Backend.WordToStack.ProductionUnreachCodecDomain
 import Flapjack.Compiler.Backend.Parmove.DestinationWrapper
 import Flapjack.Compiler.Backend.Parmove.DStepStep
 

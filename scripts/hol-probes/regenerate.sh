@@ -3093,3 +3093,7 @@ run_probe word_to_stack_cse_codec_probeScript.sml word_to_stack_cse_codec_probe.
 run_probe word_alloc_canonize_sort_probeScript.sml word_alloc_canonize_sort_probe.out \
   cs_empty cs_one cs_two cs_three cs_four cs_five cs_odd cs_even cs_dups cs_priority cs_x_first cs_y_second cs_reversed_coords cs_large cs_zeros cs_descending cs_ascending \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_to_stack_unreach_codec_probeScript.sml word_to_stack_unreach_codec_probe.out \
+  uc_skip uc_skip_seq uc_raise uc_return uc_break uc_continue uc_tail uc_merge uc_overlap uc_rest uc_assoc uc_loop uc_must uc_if uc_tail_handler uc_both \
+  "$cake_dir/compiler/backend/word_unreachScript.sml" "$cake_dir/compiler/backend"
