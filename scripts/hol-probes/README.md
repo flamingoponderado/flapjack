@@ -3389,3 +3389,7 @@ types are captured separately. The kernel fixture applies the full theorem to
 the identical Bool/Nat inputs, including overwritten physical keys, malformed
 trees and an unbounded natural key. These regressions are not a cross-language
 proof or completion of the full SSA correctness theorem.
+
+### SSA merge unchanged lookups
+
+`ssa_merge_move_lookups_probeScript.sml` replays the complete literal original local frame2 and frame3 proofs, specializes frame3 to empty maps, applies it under independently proved guards for an absent-list key and an outside-intersection key, captures both whole merge results, and checks the false guard for a changed common key. Lean `mergeMovesFrame3` retains the full original guard and both lookup equalities for arbitrary native trees.

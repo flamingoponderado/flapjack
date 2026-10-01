@@ -3424,3 +3424,7 @@ run_probe ssa_map_preservation_probeScript.sml ssa_map_preservation_probe.out \
 run_probe ssa_locals_physical_insert_probeScript.sml ssa_locals_physical_insert_probe.out \
   pi_empty pi_empty_existing pi_live pi_overwrite pi_branch pi_invalid pi_huge pi_generic_nat pi_nonphysical_guard pi_invalid_map_guard pi_full_source_replay pi_original_types \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_merge_move_lookups_probeScript.sml ssa_merge_move_lookups_probe.out \
+  frame3_full_source_replay frame3_empty frame3_absent frame3_outside frame3_absent_result frame3_outside_result frame3_common_guard \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

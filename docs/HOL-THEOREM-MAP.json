@@ -44187,5 +44187,13 @@
     "lean_name": "ssaLocalsRelIgnoreInsert",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c compared full literal5573-5587: arbitrary generic payload alpha, Nat SSA map/source and target locals/next/physical key/inserted value; original conjunction ssa_map_ok AND ssa_locals_rel AND is_phy_var only. Complete unchanged relation conclusion after target insertion, both clauses retained. Map invariant excludes physical keys from every successful SSA image; guarded THE uses selector independence already reviewed with SSALocals. No freshness, injectivity, wellformedness, word-width, target-result or new trust assumption. Original complete local proof replay with original wordSemTheory environment, eight real theorem applications with independently proved full premises/empty hypotheses/exact conclusions rendered T by EQT_INTRO, two false guard EVAL sentinels, full inferred generic binder types. Eight kernel theorem applications over Bool/Nat payloads cover empty, live, overwrites, branching, malformed and huge keys. Actual fullSSA consumers7911/9644-9646. Source comparison complete; full SSA proof still incomplete, no executable compiler change."
+  },
+{
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAMergeMoveLookups.lean",
+    "lean_name": "mergeMovesFrame3",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "merge_moves_frame3",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison (2026-10-01; flapjack-wma3): full HOL lines 4720-4745, arbitrary list/start/native num_map carriers and key; original absent-list OR outside-original-intersection guard and both unchanged lookup equalities. No allocation, well-formedness, distinctness or counter premise. Tail-first recursive definition and domain preservation from full frame2 match the source proof; consumer at line 5299. Literal original full frame2/frame3 proof replay and Lean kernel proof."
   }
 ]
