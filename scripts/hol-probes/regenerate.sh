@@ -107,6 +107,9 @@ run_probe lab_to_target_section_lookup_probeScript.sml lab_to_target_section_loo
 run_probe target_props_interference_probeScript.sml target_props_interference_probe.out \
   shift_zero shift_three shift_composition shift_ffi_unchanged shift_target_unchanged region_empty region_safe_before_wrap region_wrap_hits_entry \
   "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe asmsem_arithmetic_probeScript.sml asmsem_arithmetic_probe.out \
+  asm_binop_add asm_binop_sub asm_binop_and asm_binop_or asm_binop_xor asm_lsl_reg_valid asm_lsl_reg_invalid asm_lsl_imm_past asm_lsr_reg_invalid asm_asr_reg_invalid asm_ror_reg_invalid asm_ror_imm_past asm_shift_alias_count asm_div_ok asm_div_zero_write asm_div_source_alias asm_longmul asm_longmul_alias asm_longdiv_ok asm_longdiv_overflow_write asm_longdiv_zero_write asm_longdiv_alias asm_addcarry asm_addcarry_no_carry asm_addcarry_alias asm_addoverflow asm_addoverflow_no_flag asm_addoverflow_alias asm_suboverflow asm_suboverflow_alias asm_prior_failure asm_width1_carry asm_width32_overflow asm_width64_longmul asm_upd_pc asm_upd_reg asm_upd_reg_other asm_upd_fp_reg asm_upd_mem asm_upd_mem_other asm_assert_false asm_assert_prior asm_reg_imm_reg asm_reg_imm_imm asm_is_test_equal asm_is_test_lower asm_is_test_less asm_is_test_test asm_is_test_notequal asm_is_test_notlower asm_is_test_notless asm_is_test_nottest \
+  "$cake_dir/compiler/encoders/asm/asmSemScript.sml" "$cake_dir/compiler/encoders/asm"
 run_probe bytes_in_mem_probeScript.sml bytes_in_mem_probe.out \
   empty_ignores_guards nat_wrap excluded_head excluded_tail domain_head domain_tail wrong_value bool_payload update_off_region update_hit_region append_wrapped \
   "$cake_dir/misc/miscScript.sml" "$cake_dir/misc"
@@ -3179,6 +3182,10 @@ run_probe parmove_all_distinct_steps_probeScript.sml parmove_all_distinct_steps_
   adrtc_scratch adrtc_first adrtc_middle adrtc_last \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
+run_probe word_alloc_max3_eq_probeScript.sml word_alloc_max3_eq_probe.out \
+  max3_eq_statement max3_zero max3_x max3_y max3_z_after_x max3_z_after_y \
+  max3_xy_tie max3_xz_tie max3_yz_tie max3_large \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/misc"
 run_probe wordconvs_code_labels_probeScript.sml wordconvs_code_labels_probe.out \
   wl_skip wl_location wl_direct_tail wl_indirect_tail wl_tail_handler wl_both_bodies wl_metadata_omitted wl_return_only wl_duplicate wl_if wl_loop wl_must \
   "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
@@ -3223,6 +3230,10 @@ run_probe word_to_stack_register_labels_probeScript.sml word_to_stack_register_l
   wr_physical wr_boundary wr_spilled wr_zero wr_large wr_labelled \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
 
+run_probe parmove_all_distinct_wrapper_probeScript.sml parmove_all_distinct_wrapper_probe.out \
+  pad_original_statement pad_empty pad_self pad_chain pad_swap pad_cycle \
+  pad_shared_source pad_duplicate_boundary \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 run_probe word_alloc_max_inst_probeScript.sml word_alloc_max_inst_probe.out \
   mi_skip mi_const mi_binreg mi_binimm mi_shift mi_div mi_longdiv mi_load8 mi_fp64_to mi_fp32_to mi_fp80_from mi_fpignored mi_original_theorem \
   "$cake_dir/compiler/backend/wordLangScript.sml" "$cake_dir/compiler/backend"
