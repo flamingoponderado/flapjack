@@ -1,0 +1,13 @@
+rp_empty_alloc=(1,T)
+rp_empty_stack=(3,T)
+rp_alloc_duplicates=(13,T)
+rp_stack_duplicates=(15,T)
+rp_existing=(17,T)
+rp_overwrite=(17,T)
+rp_invalid=(9,T)
+rp_huge=(1000000000000000000000000000013,T)
+rp_full_source_replay=⊢ ∀ls ssa na ls' ssa' na'.
+    list_next_var_rename ls ssa na = (ls',ssa',na') ⇒
+    (is_alloc_var na ∨ is_stack_var na) ∧ ssa_map_ok na ssa ⇒
+    na ≤ na' ∧ (is_alloc_var na ⇒ is_alloc_var na') ∧
+    (is_stack_var na ⇒ is_stack_var na') ∧ ssa_map_ok na' ssa'
