@@ -3214,3 +3214,30 @@ hypothesis list. Rows contain `(next,T)`: `EQT_INTRO` renders the **proved full
 four-conjunct conclusion** as T. This is distinct from attempting to EVAL a
 symbolic universally quantified lookup predicate. The full replay statement is
 captured separately; this local theorem is not claimed to be exported in HOL's DB.
+
+### Independent return frame-tail carriers
+
+`word_to_stack_copy_ret_carriers_probeScript.sml` directly evaluates the original
+`word_to_stack` definitions with Bool and List Bool third frame components,
+independent Nat/Bool return lists, widths 64 and 1, both handler offsets and an
+Install continuation. `WordToStackCopyRetCarriersParity` kernel-checks the same
+five observations and applies the full code/handler-label theorem with arbitrary
+independent frame-tail and list types. Original full type is
+`bool -> bool -> num # num # beta -> gamma list -> alpha stackLang$prog -> alpha stackLang$prog`;
+its unused frame-tail must not be specialized to Nat. These checks provide
+regression evidence and do not prove cross-language equivalence or compiler correctness.
+
+### Native no-install helper theorems
+
+`word_to_stack_no_install_helpers_probeScript.sml` applies the six original
+exported helper theorems at twelve concrete inputs, discharging the original
+universal callback premises from `no_install_def`. Each result has no assumptions
+and its exact conclusion is checked before evaluation. The local
+`copy_ret_aux_no_install` theorem is not exported, so its two source definition
+instances are evaluated directly. `WordToStackNoInstallHelpersParity` kernel-checks
+the same fourteen inputs using all seven complete Lean theorems, plus explicit
+false results for Install continuations. Coverage includes zero/positive counts,
+all four move operand forms, register/spill branches, bitmap insertion, arbitrary
+frame arithmetic and word widths 64/1. This is helper preservation only; the
+`copy_ret` wrapper and full compiler preservation remain tracked on bead47.2.
+Original observations and kernel checks do not establish cross-language equivalence.

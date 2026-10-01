@@ -38,6 +38,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileLookup
 import Flapjack.Compiler.Backend.WordAlloc.GetHeuristics
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Pmov
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CodeLabels
+import Flapjack.Compiler.Backend.WordToStack.Proofs.NoInstall
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCodeLabels
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ProgramCodeLabels
 import Flapjack.Pancake.WordConvs.CodeLabels

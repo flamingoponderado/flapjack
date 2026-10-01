@@ -4453,6 +4453,12 @@
       "sha256": "740e2fcafb35a167c191552c017f1199ad48c113dfbc99cbd590dabf6afc2a6d"
     },
     {
+      "bytes": 106,
+      "out": "word_to_stack_copy_ret_carriers_probe.out",
+      "rows": 5,
+      "sha256": "98aafeccf41b4548b846d6ed2e246db23035288c474f29d75d12d58faebc21a9"
+    },
+    {
       "bytes": 64,
       "out": "word_to_stack_copy_ret_probe.out",
       "rows": 6,
@@ -4553,6 +4559,12 @@
       "out": "word_to_stack_native_top_probe.out",
       "rows": 24,
       "sha256": "c17f05cd96c0462f2d5f14f4b3a6c3b1cab886bd7621a0e520ae46c73ead9e12"
+    },
+    {
+      "bytes": 251,
+      "out": "word_to_stack_no_install_helpers_probe.out",
+      "rows": 14,
+      "sha256": "08ff5c1f58d30be60f95030b28d4842b3b76d69d6407bf0ff8c683cf9eba9265"
     },
     {
       "bytes": 79,
