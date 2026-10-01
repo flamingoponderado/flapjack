@@ -4,6 +4,12 @@ import Flapjack.Test.WordToStackBitmapMixedParity
 import Flapjack.Test.RegAllocCarriers
 import Flapjack.Test.HeuInstParity
 import Flapjack.Test.SptMapParity
+import Flapjack.Test.WordToStackCutsetMaximumParity
+import Flapjack.Test.RetainedAllocatorColour
+import Flapjack.Test.WordToStackHandlerValGeneralityParity
+import Flapjack.Test.WordToStackAbsStackGeneralityParity
+import Flapjack.Test.WordToStackExpressionMaximumParity
+import Flapjack.Test.WordToStackCompLengthParity
 import Flapjack.Test.WordAllocCheckerAssemblyParity
 import Flapjack.Test.SptMapiParity
 import Flapjack.Test.ParmoveIndependenceParity
