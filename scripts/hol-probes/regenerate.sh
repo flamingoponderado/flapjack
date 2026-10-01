@@ -3662,6 +3662,10 @@ run_probe loop_to_word_program_names_probeScript.sml loop_to_word_program_names_
 run_probe lab_validity_native_probeScript.sml lab_validity_native_probe.out \
   line_ok_asm_skip line_ok_asm_cbw line_ok_label line_ok_labasm_halt line_ok_asm_badreg all_enc_ok_one_ok all_enc_ok_one_bad cbw_to_asm_store8 cbw_to_asm_sharemem sec_ok_one_ok sec_ok_one_bad sec_ok_empty all_enc_ok_two_ok all_enc_ok_empty native_cbw_width1_huge native_shared_width80 native_cbw_definition native_line_definition native_section_definition \
   "$cake_dir/compiler/backend/semantics/labPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe stack_to_lab_nonrecursive_validity_probeScript.sml stack_to_lab_nonrecursive_validity_probe.out \
+  native_flatten_full_source_proof native_cbw_application native_shared_application \
+  "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_to_stack_no_shmemop_tail_probeScript.sml word_to_stack_no_shmemop_tail_probe.out \
   tc_direct0_1 tc_directmany_1 tc_indirect0_1 tc_indirectsmall_1 tc_indirectlarge_1 tc_direct0_32 tc_directmany_32 tc_indirect0_32 tc_indirectsmall_32 tc_indirectlarge_32 tc_direct0_64 tc_directmany_64 tc_indirect0_64 tc_indirectsmall_64 tc_indirectlarge_64 tc_direct0_80 tc_directmany_80 tc_indirect0_80 tc_indirectsmall_80 tc_indirectlarge_80 tc_ignored_safe tc_ignored_shared \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
@@ -3678,6 +3682,9 @@ run_probe word_to_stack_no_shmemop_primitives_probeScript.sml word_to_stack_no_s
   cp_skip_1 cp_assign_1 cp_store_1 cp_raise_1 cp_break_1 cp_continue_1 cp_tick_1 cp_skip_32 cp_assign_32 cp_store_32 cp_raise_32 cp_break_32 cp_continue_32 cp_tick_32 cp_skip_64 cp_assign_64 cp_store_64 cp_raise_64 cp_break_64 cp_continue_64 cp_tick_64 cp_skip_80 cp_assign_80 cp_store_80 cp_raise_80 cp_break_80 cp_continue_80 cp_tick_80 cp_load_valid cp_load_invalid cp_store_valid cp_store_invalid \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
 
+run_probe stack_to_lab_full_encoding_probeScript.sml stack_to_lab_full_encoding_probe.out \
+  full_flatten_source_proof full_compile_all_source_statement full_compile_all_application full_compile_all_sections \
+  "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe ssa_get_set_vars_probeScript.sml ssa_get_set_vars_probe.out \
   get_vars_list_insert_eq_gen_full get_vars_set_vars_eq_full \
   gvi_type_st gvi_type_ls gvi_type_x gvi_type_locs gvi_type_a gvi_type_b \
@@ -3695,3 +3702,6 @@ run_probe ssa_setup_props_probeScript.sml ssa_setup_props_probe.out \
   setup_full setup_type_lim setup_type_n setup_type_st setup_type_prog \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+run_probe word_to_stack_comp_no_shmemop_probeScript.sml word_to_stack_comp_no_shmemop_probe.out \
+  cs_full cs_conf_type cs_perf_type cs_source_type cs_bitmap_type cs_frame_type cs_target_type cs_residual_type cs_nested_1 cs_if_1 cs_ignored_1 cs_nested_32 cs_if_32 cs_ignored_32 cs_nested_64 cs_if_64 cs_ignored_64 cs_nested_80 cs_if_80 cs_ignored_80 \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"

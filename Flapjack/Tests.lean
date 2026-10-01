@@ -1,3 +1,6 @@
+import Flapjack.Test.StackToLabFullEncodingParity
+import Flapjack.Test.StackToLabRecursiveValidityParity
+import Flapjack.Test.StackToLabNonrecursiveValidityParity
 import Flapjack.Test.LabValidityNativeParity
 import Flapjack.Test.StackToLabNativeParity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps

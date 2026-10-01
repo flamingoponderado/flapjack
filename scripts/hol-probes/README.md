@@ -3882,6 +3882,14 @@ including generic payload/cache statements. The exact definitions live in
 helpers are separate infrastructure. Native executable routing and full
 encoding correctness remain tracked on the fleet dependency graph.
 
+`stack_to_lab_nonrecursive_validity_probe.out` replays the complete literal
+original local `flatten_line_ok_pre` proof, then evaluates source validity,
+zero-byte-offset validity and the full output-line predicate for CodeBufferWrite
+and shared Load inputs. `StackToLabNonrecursiveValidityParity` applies all
+31 native nonrecursive cases at arbitrary carriers/parameters and includes
+those two concrete theorem applications. Every case retains all original
+premises and the full app-list output conclusion. Recursive Seq/If/Loop and
+returned Call, the assembling theorem and executable route remain open.
 `stacksem_fp_conversion_types_probeScript.sml` captures seven original full
 types for the StackSem FP sqrt/conversion case review: `inst`, FP lookup/update,
 three machine-IEEE operations and the generic compile-oracle projection. The
@@ -3971,3 +3979,20 @@ Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_primitives_probeScript.sml`.
 `ssa_locals_list_rename_probe.out` freshly replays the full original generic list-renaming locals relation, its three local theorem prerequisites and source physical-class tactic, with nine original inferred types confirming generic payload alpha and native tree/list carriers. All seven original premises are retained.
 
 `ssa_setup_props_probe.out` freshly replays the complete original setup-SSA proof, six local prerequisite proofs and two ML tactics, plus four inferred types. State/program/move share their word dimension. The tagged native theorem retains the original allocation/domain premises and all six actual evaluator conclusions; executed setup routing is tracked separately.
+
+### Full arbitrary-program comp no-shared-memory preservation
+
+`word_to_stack_comp_no_shmemop_probeScript.sml` freshly captures the exported
+original `comp_no_shmemop` theorem and all seven original input/output carrier
+types. Twelve original predicate pairs cover deeply nested Loop, MustTerminate,
+Seq, If and returning/handled Calls with actual bitmap-producing children over
+widths1/32/64/80 and both perf and immediate-validation branches. Ignored tail
+handlers retain false-source/true-target sentinels.
+`WordToStackCompNoShmemopParity` kernel-reduces identical inputs and applies the
+full arbitrary-program theorem, including its actual compiler projections.
+The public statement has only the original source guard and compilation equality;
+all26 constructor cases and their genuine child IH are discharged internally.
+Structural size termination retains complete Call tuple equalities. The captured
+exported theorem is not a new literal replay of its original proof. These
+regressions do not prove HOL-to-Lean equivalence or whole compiler semantics.
+Selector: `HOL_PROBE_ONLY=word_to_stack_comp_no_shmemop_probeScript.sml`.

@@ -1,0 +1,3 @@
+native_flatten_full_source_proof=∀t p n m cs bs ls a b c. byte_offset_ok c 0w ∧ stack_asm_ok c p ∧ flatten t p n m cs bs = (ls,a,b) ⇒ EVERY (line_ok_pre c) (append ls)
+native_cbw_application=(T,T,T)
+native_shared_application=(T,T,T)

@@ -5,9 +5,12 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead.Store
 # `evaluate_remove_dead` control cases
 
 The `Seq`, `MustTerminate`, `If` and `Loop` cases of `word_allocProofScript.sml:3900-4472`
-`evaluate_remove_dead` (Resume blocks 4137, 4157, 4170, 4281). Each takes the
-statement for its sub-programs as induction hypotheses; `Loop` is
-`evaluate_remove_dead_Loop_helper` at the body statement.
+`evaluate_remove_dead` (Resume blocks 4137, 4157, 4170, 4281). These are
+structural-motive pieces: their child hypotheses quantify over every live/nlive
+list and loop context. HOL's `remove_dead_ind` instead supplies hypotheses at
+the arguments selected by `remove_dead`. They are therefore not literal cases
+of that induction principle. `Loop` uses `evaluate_remove_dead_Loop_helper`.
+On this frozen port frontier, Call pieces and whole-theorem assembly are absent.
 -/
 
 namespace Flapjack.WordAlloc
