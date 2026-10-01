@@ -39040,5 +39040,14 @@
   "hol_name": "insert_unchanged",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-c source comparison 2026-10-01 (.11.4.4.2): original2255-2264 generic tree/key/value; sole lookup=some value premise, full structural insert equality, no wf premise. Literal four constructors and recursive parity/address arithmetic. Needed by check_partial_col_INJ existing-key branch2667-2683. Coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStackRegFormat.lean",
+  "lean_name": "wMove",
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "wMove_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.5: exact83-86 maps DIV2 over both Nat coordinates, actual reviewed parmove scheduler, maps format_var k over both Option coordinates, then exact wMoveAux with unchanged k/f/fprime triple. Output ProgM(BitVec width) uses single shared positive word dimension and faithful MlString; qualifier only type-indexed word translation. No fuel/simulation premise or alternative executed scheduler. Eleven fresh direct original64-bit equality rows cover all formatting branches, register/spill swap cycles, odd DIV2/collision, underflow and fprime; width32 empty case kernel checked. Production comp/compile wiring tracked25 remains open."
 }
 ]
