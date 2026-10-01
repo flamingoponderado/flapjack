@@ -1,0 +1,17 @@
+load "bossLib";
+load "preamble";
+load "lab_to_targetTheory";
+open bossLib HolKernel Parse preamble lab_to_targetTheory labLangTheory miscTheory ffiTheory;
+fun observe label term = let val th = EVAL term in print (label ^ "="); print_term (rhs (concl th)); print "\n" end;
+val _ = observe "lp_hit" ``find_pos (Lab 3 5) (insert 3 (insert 5 (0:num) LN) LN) = 0``;
+val _ = observe "lp_miss" ``find_pos (Lab 3 6) (insert 3 (insert 5 (0:num) LN) LN) = 0``;
+val _ = observe "lp_none" ``find_pos (Lab 1 2) LN = 0``;
+val _ = observe "gl_jump" ``get_label (Jump (Lab 3 5) : num asm_with_lab) = Lab 3 5``;
+val _ = observe "gl_call" ``get_label (Call (Lab 1 2) : num asm_with_lab) = Lab 1 2``;
+val _ = observe "gl_default" ``get_label (Install : num asm_with_lab) = Lab 0 0``;
+val _ = observe "fi_hit" ``get_ffi_index [ExtCall «a»; ExtCall «b»] (ExtCall «b») = 1``;
+val _ = observe "fi_missing" ``get_ffi_index [ExtCall «a»] (ExtCall «z») = 0``;
+val _ = observe "jo_jump" ``(get_jump_offset (Jump (Lab 3 5) : num asm_with_lab) ([]: ffiname list) (insert 3 (insert 5 (0:num) LN) LN) 7 : 8 word) = 249w``;
+val _ = observe "jo_install" ``(get_jump_offset (Install : num asm_with_lab) ([]: ffiname list) (insert 3 (insert 5 (0:num) LN) LN) 7 : 8 word) = 217w``;
+val _ = observe "jo_halt" ``(get_jump_offset (Halt : num asm_with_lab) ([]: ffiname list) (insert 3 (insert 5 (0:num) LN) LN) 7 : 8 word) = 233w``;
+val _ = observe "jo_callffi" ``(get_jump_offset (CallFFI «b» : num asm_with_lab) [ExtCall «a»; ExtCall «b»] (insert 3 (insert 5 (0:num) LN) LN) 7 : 8 word) = 185w``;

@@ -1010,6 +1010,7 @@ import Flapjack.Misc.OptMmapCong
 import Flapjack.Compiler.Backend.LabLang
 import Flapjack.Compiler.Backend.LabSem
 import Flapjack.Compiler.Backend.LabProps
+import Flapjack.Compiler.Backend.LabToTarget.Positions
 import Flapjack.Compiler.Backend.StackNames
 import Flapjack.Compiler.Backend.StackNames.NamesOk
 import Flapjack.Compiler.Backend.StackNames.Labels

@@ -42740,5 +42740,54 @@
     "lean_name": "sptWf",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds10 source comparison (bead flapjack-pxn.18.5.15.3.29.2): exact port of the pinned external HOL sptreeScript.sml:39-42 wf_def over the reviewed Lean Spt carrier (LN/LS/BN/BS, same as spt). HOL's Prop-valued well-formedness is rendered as a Bool function, matching the accepted convention for the Word-to-Stack frame predicates (isHandlerFrame/sortedEnv); clauses are literal: LN/LS true, BN/BS require both children well-formed and not both empty. Needed by Word-to-Stack state_rel_def ('wf s.locals' where locals is an sptree)."
+  },
+  {
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "lookup_any_def",
+    "lean_path": "Flapjack/Misc/Sptree.lean",
+    "lean_name": "lookupAny",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds10 source comparison (bead flapjack-pxn.18.5.15.10.11): HOL lookup_any_def miscScript.sml:344-348 is lookup with a caller-supplied default; the Lean port matches clauses with Spt/sptLookup over the reviewed num_map carrier."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "ffi_offset_def",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Positions.lean",
+    "lean_name": "ffiOffset",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds10 source comparison (bead flapjack-pxn.18.5.15.10.11): HOL ffi_offset_def lab_to_targetScript.sml:15-16 is the constant 16; word-free reviewed_exact."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "find_pos_def",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Positions.lean",
+    "lean_name": "findPos",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds10 source comparison (bead flapjack-pxn.18.5.15.10.11): HOL find_pos_def lab_to_targetScript.sml:86-89 uses lookup_any k2 (lookup_any k1 labs LN) 0 over num_map num_map; the Lean port reuses reviewed lookupAny over Spt (Spt Nat); word-free."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "get_label_def",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Positions.lean",
+    "lean_name": "getLabel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds10 source comparison (bead flapjack-pxn.18.5.15.10.11): HOL get_label_def lab_to_targetScript.sml:91-97 Jump/JumpCmp/Call/LocValue carry their label and the catch-all is Lab 0 0; Lean pattern-matches the LabLang AsmWithLab constructors with the same default; word-free and polymorphic in the payload carriers."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "get_ffi_index_def",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Positions.lean",
+    "lean_name": "getFfiIndex",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds10 source comparison (bead flapjack-pxn.18.5.15.10.11): HOL get_ffi_index_def lab_to_targetScript.sml:104-107 is the 0 (find_index s ffis 0) over the ffiname list; Lean reuses reviewed findIndex and Option.getD 0; word-free."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "get_jump_offset_def",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Positions.lean",
+    "lean_name": "getJumpOffset",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (bead flapjack-pxn.18.5.15.10.11): HOL get_jump_offset_def lab_to_targetScript.sml:109-118 with CallFFI/Install/Halt back-offsets using ffi_offset and get_ffi_index and the generic find_pos - pos form, n2w rendered as BitVec.ofNat width; positive-width words qualifier over the reviewed lab_to_target carriers."
   }
 ]

@@ -1,0 +1,12 @@
+lp_hit=T
+lp_miss=T
+lp_none=T
+gl_jump=T
+gl_call=T
+gl_default=T
+fi_hit=T
+fi_missing=T
+jo_jump=T
+jo_install=T
+jo_halt=T
+jo_callffi=T
