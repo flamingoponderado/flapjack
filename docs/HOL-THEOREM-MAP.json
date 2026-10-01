@@ -40926,6 +40926,47 @@
   "reviewer": "Source comparison word_to_stackScript.sml252-258: full cutsets num_set pair (source wordLang33, canonical Spt Unit), AppList word bitmap pair, k/f/f-prime tuple retained. Source f=0 identity; otherwise insert_bitmap(write_bitmap(SND live)k f-prime), constant n2w(index+1), StackStore k0 and returned insertedbitmap unchanged. Native HolProg width with positivewidth words_as_type_indexed_bitvec reviewed; universal both-component transport to reviewed wLiveExact kernelchecked, no wf/domain/targetrun premise. Actual fullcompiler/productionroute remains open."
 },
 {
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/SharedMemory.lean",
+  "lean_name": "shareMemLoad",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "share_mem_load_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol original source comparison 2026-10-01 b4v0.4: literal labSem429-488 full native load/store/eight-case shared-memory dispatcher on accepted State/HolAddr/WordLocW and canonical HolFfiResult/HolFfiState. Whole-word requests test w2n MOD(width DIV8)=0 and exact shared domain; nonzero sizes test byte_align base only, with actual LOG2 byte alignment at arbitrary positive widths. callFFIHOL mappedRead/mappedWrite config singleton n2w size; protocol bytes little endian independent of state.be. Loads send address bytes and decode all returned bytes, not TAKE size; stores send whole or TAKE size value bytes followed by full address bytes. Final returns preserve original state exactly; returned loads update only ffi/register/pc/clock, returned stores only ffi/pc/clock via original inc_pc/dec_clock. Shared16 supported unlike ordinary mem_op16. Qualified only positive width/Type0 FFI carrier translation, no map/string/list exception or extra callback. 39 direct original rows allT and paired native kernel replay include exact protocol/oracle guards/events, final and invalid return lengths, Loc failures, alias/clock0/endianness/address wrap, widths24/8/1 and size256 configuration truncation. Three untagged clock consequences are Flapjack infrastructure for original evaluator recursion, not separate HOL theorem claims. Full evaluator/executable routing/end-to-end correctness remain open; coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/SharedMemory.lean",
+  "lean_name": "shareMemStore",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "share_mem_store_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol original source comparison 2026-10-01 b4v0.4: literal labSem429-488 full native load/store/eight-case shared-memory dispatcher on accepted State/HolAddr/WordLocW and canonical HolFfiResult/HolFfiState. Whole-word requests test w2n MOD(width DIV8)=0 and exact shared domain; nonzero sizes test byte_align base only, with actual LOG2 byte alignment at arbitrary positive widths. callFFIHOL mappedRead/mappedWrite config singleton n2w size; protocol bytes little endian independent of state.be. Loads send address bytes and decode all returned bytes, not TAKE size; stores send whole or TAKE size value bytes followed by full address bytes. Final returns preserve original state exactly; returned loads update only ffi/register/pc/clock, returned stores only ffi/pc/clock via original inc_pc/dec_clock. Shared16 supported unlike ordinary mem_op16. Qualified only positive width/Type0 FFI carrier translation, no map/string/list exception or extra callback. 39 direct original rows allT and paired native kernel replay include exact protocol/oracle guards/events, final and invalid return lengths, Loc failures, alias/clock0/endianness/address wrap, widths24/8/1 and size256 configuration truncation. Three untagged clock consequences are Flapjack infrastructure for original evaluator recursion, not separate HOL theorem claims. Full evaluator/executable routing/end-to-end correctness remain open; coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/SharedMemory.lean",
+  "lean_name": "shareMemOp",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "share_mem_op_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol original source comparison 2026-10-01 b4v0.4: literal labSem429-488 full native load/store/eight-case shared-memory dispatcher on accepted State/HolAddr/WordLocW and canonical HolFfiResult/HolFfiState. Whole-word requests test w2n MOD(width DIV8)=0 and exact shared domain; nonzero sizes test byte_align base only, with actual LOG2 byte alignment at arbitrary positive widths. callFFIHOL mappedRead/mappedWrite config singleton n2w size; protocol bytes little endian independent of state.be. Loads send address bytes and decode all returned bytes, not TAKE size; stores send whole or TAKE size value bytes followed by full address bytes. Final returns preserve original state exactly; returned loads update only ffi/register/pc/clock, returned stores only ffi/pc/clock via original inc_pc/dec_clock. Shared16 supported unlike ordinary mem_op16. Qualified only positive width/Type0 FFI carrier translation, no map/string/list exception or extra callback. 39 direct original rows allT and paired native kernel replay include exact protocol/oracle guards/events, final and invalid return lengths, Loc failures, alias/clock0/endianness/address wrap, widths24/8/1 and size256 configuration truncation. Three untagged clock consequences are Flapjack infrastructure for original evaluator recursion, not separate HOL theorem claims. Full evaluator/executable routing/end-to-end correctness remain open; coordinator source review pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+  "hol_name": "evaluate_stack_swap",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateStackSwap/Loop.lean",
+  "lean_name": "evaluateStackSwap_Loop",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.4): HOL evaluate_stack_swap (wordPropsScript.sml:2316-2363) at the Loop case of evaluate_ind: same binder s, the HOL case-split conclusion rendered by the untagged stackSwapPost, and as premises exactly the two Loop induction hypotheses of the tagged Lean evaluate_ind (wordSemScript.sml evaluate_ind rebound without fix_clock): STOP (Loop names c exit_names) at dec_clock s1 for every cut state v, body run (res, s1) = evaluate c v with cont_loop res and s1.clock <> 0, and the body c at every cut state v. No extra premise. Proof follows HOL (wordPropsScript.sml:2533-2833), using the rebound evaluate_def: cut_state keeps stack and handler and commutes with the stack swap; a continuing body result either times out with a flushed state or is transported into the next iteration (s_key_eq_trans, untagged stackSwapRel_seqTail); Break 0 leaves through the exit cut; every other result passes through exit_loop with the body's transported run (untagged stackSwapRel_exitLoop, including the exception LASTN frame). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+},
+{
   "lean_path": "Flapjack/Compiler/Backend/Parmove/StepSem/RemoveSelfEmitLast.lean",
   "lean_name": "step_sem_removeSelf",
   "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",

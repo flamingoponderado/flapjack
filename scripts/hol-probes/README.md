@@ -2120,6 +2120,7 @@ destination and differs (27 versus 37): it is outside `wf`, not a valid-step
 semantic-equivalence claim. Lean kernel examples replay all rows; the generic
 case proofs establish the original quantified `eqenv` conclusion under `wf`.
 The other four cases and full `step_sem` assembly remain open.
+`labsem_shared_memory_probeScript.sml` evaluates original LabSem shared-memory load/store/op equations (429–488). Its 39 rows check all eight operations and actual mappedRead/mappedWrite configuration and little-endian payloads against guarded canonical FFI oracles. They cover returned host/events/register/PC/clock state, unchanged final state, invalid return length, domain and Loc errors, aliasing, clock zero, width24 LOG2 alignment, width8/1 boundaries, TAKE beyond the word length, size256 configuration truncation, ignored ordinary-memory endianness, and address wrap. Generic-width byte results unfold the original library set_byte definition after EVAL. `Flapjack/Test/LabSemSharedMemoryParity.lean` replays every row in the kernel on an arbitrary remaining source state. Full native evaluate and production routing remain separate work.
 
 `parmove_remove_last_probeScript.sml` captures 16 direct original HOL `sem`
 values for RemoveSelf and EmitLast, including nonempty reversed emitted history
@@ -2136,3 +2137,4 @@ agree. A deliberately invalid pending `NONE` source yields 99 versus 27 and
 fails `wf`; no equivalence is claimed for it. Lean checks all observations and
 the input invariants. Save's generic theorem proves the original real-register
 equivalence from the full source `wf`, with no extra agreement premise.
+

@@ -11,6 +11,7 @@ import Flapjack.Compiler.Backend.WordToStack.NativeSharedMemory
 import Flapjack.Compiler.Backend.WordToStack.NativeCallArgs
 import Flapjack.Compiler.Backend.WordToStack.NativeMoves
 import Flapjack.Compiler.Backend.LabSem.Memory
+import Flapjack.Compiler.Backend.LabSem.SharedMemory
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.If
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.CutState
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.LoopRecursion
@@ -192,6 +193,7 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.Alloc
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.MustTerminate
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.Seq
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.If
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.Loop
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutNames
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyRemap
 import Flapjack.Pancake.PanStructs.CompileDeclsExact
