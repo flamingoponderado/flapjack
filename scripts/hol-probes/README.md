@@ -3863,6 +3863,14 @@ equivalence or complete the compiler theorem. Selector:
 `ssa_locals_list_rename_probe.out` freshly replays the full original generic list-renaming locals relation, its three local theorem prerequisites and source physical-class tactic, with nine original inferred types confirming generic payload alpha and native tree/list carriers. All seven original premises are retained.
 
 `ssa_setup_props_probe.out` freshly replays the complete original setup-SSA proof, six local prerequisite proofs and two ML tactics, plus four inferred types. State/program/move share their word dimension. The tagged native theorem retains the original allocation/domain premises and all six actual evaluator conclusions; executed setup routing is tracked separately.
+`stackprops_state_constants_probeScript.sml` captures the complete thirteen
+state-operation constant/commutation statements from stackProps20-168 and
+their original free-variable types. It fetches exported HOL theorems; the
+local/overwritten declarations at84/90/110/125 are explicitly re-proved with
+their original statements and proofs. In particular, empty_env_const has
+independently polymorphic x and z states. These are source-shape captures,
+not a claim of HOL-to-Lean equivalence or exported status for local helpers.
+
 `ssa_rename_move_preserve_weak_probe.out` freshly replays the full original move-renaming preservation proof plus its literal local prerequisites and five original inferred carriers; both states share all three type dimensions. No successful target evaluation or post-state relation is assumed.
 ### Loop-to-Word compiled names, membership, and first-match lookup
 
@@ -3895,6 +3903,14 @@ types for the StackSem FP sqrt/conversion case review: `inst`, FP lookup/update,
 three machine-IEEE operations and the generic compile-oracle projection. The
 state parameters and fixed word64 FP register carrier are retained; this is
 source-shape evidence, not a HOL-to-Lean equivalence proof.
+
+`stackprops_clock_support_probeScript.sml` captures the six full original
+clock-proof support declarations and free-variable types, including the
+independent dec_clock_const states and four pair_map_eq carriers. The original
+asm Const type confirms that the program parameter indexes HOL words. Ten
+clock_neutral observations cover recursion and rejected Loop/Call/Tick cases
+at word dimensions1/16/64; StackPropsClockSupportParity kernel-replays them.
+These are source and regression captures, not evaluator equivalence.
 `word_alloc_limit_props_probe.out` freshly re-elaborates the literal complete
 local `limit_var_props` proof, then evaluates twelve complete native program
 maximum/limit/allocation/strict-occurrence tuples. The tuples exactly match

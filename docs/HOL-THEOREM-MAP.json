@@ -49029,5 +49029,68 @@
       "WordSemStateFiniteExact.store"
     ],
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/ClockSupport.lean",
+    "lean_name": "decClockConst",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "dec_clock_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-1f7c): compared the complete original dec_clock_const and original full variable/constant types in the clock-support capture. All conjuncts, original implication/iff direction and hypotheses are retained. dec_clock_const preserves nineteen fields over independently polymorphic s/z word/configuration/FFI states. pair_map_eq retains four independent source product/function carriers. bad_fun_return_IMP retains one shared existential label, and cont_loop_IMP permits only NONE or Continue0. with_clock_ffi is exactly the clock-update FFI projection. clock_neutral_def retains every clause, only Seq/If recursion and all other constructor exclusions: source asm Const carries an alpha word, so the program parameter is a word index, rendered as positive-width HolProg with faithful MlString and asm payloads; no arbitrary raw payload carrier specialization is certified. No evaluator/callback relation or extra premise is introduced. words_as_type_indexed_bitvec records only the standard positive word-dimension/FFI host translation. fmap_as_finite_support records the three actual imported StackSemStateFiniteExact maps; same-module ClockSupport witness reexports its canonical codec.",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ]
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/ClockSupport.lean",
+    "lean_name": "pairMapEq",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "pair_map_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-1f7c): compared the complete original pair_map_eq and original full variable/constant types in the clock-support capture. All conjuncts, original implication/iff direction and hypotheses are retained. dec_clock_const preserves nineteen fields over independently polymorphic s/z word/configuration/FFI states. pair_map_eq retains four independent source product/function carriers. bad_fun_return_IMP retains one shared existential label, and cont_loop_IMP permits only NONE or Continue0. with_clock_ffi is exactly the clock-update FFI projection. clock_neutral_def retains every clause, only Seq/If recursion and all other constructor exclusions: source asm Const carries an alpha word, so the program parameter is a word index, rendered as positive-width HolProg with faithful MlString and asm payloads; no arbitrary raw payload carrier specialization is certified. No evaluator/callback relation or extra premise is introduced."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/ClockSupport.lean",
+    "lean_name": "badFunReturnImp",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "bad_fun_return_IMP",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-1f7c): compared the complete original bad_fun_return_IMP and original full variable/constant types in the clock-support capture. All conjuncts, original implication/iff direction and hypotheses are retained. dec_clock_const preserves nineteen fields over independently polymorphic s/z word/configuration/FFI states. pair_map_eq retains four independent source product/function carriers. bad_fun_return_IMP retains one shared existential label, and cont_loop_IMP permits only NONE or Continue0. with_clock_ffi is exactly the clock-update FFI projection. clock_neutral_def retains every clause, only Seq/If recursion and all other constructor exclusions: source asm Const carries an alpha word, so the program parameter is a word index, rendered as positive-width HolProg with faithful MlString and asm payloads; no arbitrary raw payload carrier specialization is certified. No evaluator/callback relation or extra premise is introduced. words_as_type_indexed_bitvec records only the standard positive word-dimension/FFI host translation.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/ClockSupport.lean",
+    "lean_name": "contLoopImp",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "cont_loop_IMP",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-1f7c): compared the complete original cont_loop_IMP and original full variable/constant types in the clock-support capture. All conjuncts, original implication/iff direction and hypotheses are retained. dec_clock_const preserves nineteen fields over independently polymorphic s/z word/configuration/FFI states. pair_map_eq retains four independent source product/function carriers. bad_fun_return_IMP retains one shared existential label, and cont_loop_IMP permits only NONE or Continue0. with_clock_ffi is exactly the clock-update FFI projection. clock_neutral_def retains every clause, only Seq/If recursion and all other constructor exclusions: source asm Const carries an alpha word, so the program parameter is a word index, rendered as positive-width HolProg with faithful MlString and asm payloads; no arbitrary raw payload carrier specialization is certified. No evaluator/callback relation or extra premise is introduced. words_as_type_indexed_bitvec records only the standard positive word-dimension/FFI host translation.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/ClockSupport.lean",
+    "lean_name": "withClockFfi",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "with_clock_ffi",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-1f7c): compared the complete original with_clock_ffi and original full variable/constant types in the clock-support capture. All conjuncts, original implication/iff direction and hypotheses are retained. dec_clock_const preserves nineteen fields over independently polymorphic s/z word/configuration/FFI states. pair_map_eq retains four independent source product/function carriers. bad_fun_return_IMP retains one shared existential label, and cont_loop_IMP permits only NONE or Continue0. with_clock_ffi is exactly the clock-update FFI projection. clock_neutral_def retains every clause, only Seq/If recursion and all other constructor exclusions: source asm Const carries an alpha word, so the program parameter is a word index, rendered as positive-width HolProg with faithful MlString and asm payloads; no arbitrary raw payload carrier specialization is certified. No evaluator/callback relation or extra premise is introduced. words_as_type_indexed_bitvec records only the standard positive word-dimension/FFI host translation. fmap_as_finite_support records the three actual imported StackSemStateFiniteExact maps; same-module ClockSupport witness reexports its canonical codec.",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ]
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/ClockSupport.lean",
+    "lean_name": "clockNeutralHOL",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "clock_neutral_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-1f7c): compared the complete original clock_neutral_def and original full variable/constant types in the clock-support capture. All conjuncts, original implication/iff direction and hypotheses are retained. dec_clock_const preserves nineteen fields over independently polymorphic s/z word/configuration/FFI states. pair_map_eq retains four independent source product/function carriers. bad_fun_return_IMP retains one shared existential label, and cont_loop_IMP permits only NONE or Continue0. with_clock_ffi is exactly the clock-update FFI projection. clock_neutral_def retains every clause, only Seq/If recursion and all other constructor exclusions: source asm Const carries an alpha word, so the program parameter is a word index, rendered as positive-width HolProg with faithful MlString and asm payloads; no arbitrary raw payload carrier specialization is certified. No evaluator/callback relation or extra premise is introduced. words_as_type_indexed_bitvec records only the standard positive word-dimension/FFI host translation.",
+    "words_as_type_indexed_bitvec": true
   }
 ]
