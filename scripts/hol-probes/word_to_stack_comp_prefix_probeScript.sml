@@ -1,0 +1,13 @@
+load "preamble";
+load "word_to_stackTheory";
+open bossLib HolKernel Parse preamble word_to_stackTheory;
+fun out label q = (print(label ^ "="); print_term(rconc(EVAL q)); print "\n");
+val _ = out "cp_skip" ``let bs = (Append (List [4w:64 word]) (List [7w]),0); bs2 = SND (comp (c:64 asm$asm_config) F (wordLang$Skip) bs (4,1,2)) in append (FST bs) ≼ append (FST bs2)``;
+val _ = out "cp_alloc" ``let bs = (Append (List [4w:64 word]) (List [7w]),0); bs2 = SND (comp (c:64 asm$asm_config) F (wordLang$Alloc 0 (LN,LN)) bs (4,1,2)) in append (FST bs) ≼ append (FST bs2)``;
+val _ = out "cp_must" ``let bs = (Append (List [4w:64 word]) (List [7w]),0); bs2 = SND (comp (c:64 asm$asm_config) F (wordLang$MustTerminate (Alloc 0 (LN,LN))) bs (4,1,2)) in append (FST bs) ≼ append (FST bs2)``;
+val _ = out "cp_seq" ``let bs = (Append (List [4w:64 word]) (List [7w]),0); bs2 = SND (comp (c:64 asm$asm_config) F (wordLang$Seq (Alloc 0 (LN,LN)) (Alloc 0 (LN,LN))) bs (4,1,2)) in append (FST bs) ≼ append (FST bs2)``;
+val _ = out "cp_if" ``let bs = (Append (List [4w:64 word]) (List [7w]),0); bs2 = SND (comp (c:64 asm$asm_config) F (wordLang$If Equal 0 (Reg 1) (Alloc 0 (LN,LN)) (Alloc 0 (LN,LN))) bs (4,1,2)) in append (FST bs) ≼ append (FST bs2)``;
+val _ = out "cp_loop" ``let bs = (Append (List [4w:64 word]) (List [7w]),0); bs2 = SND (comp (c:64 asm$asm_config) F (wordLang$Loop LN (Alloc 0 (LN,LN)) LN) bs (4,1,2)) in append (FST bs) ≼ append (FST bs2)``;
+val _ = out "cp_return" ``let bs = (Append (List [4w:64 word]) (List [7w]),0); bs2 = SND (comp (c:64 asm$asm_config) T (wordLang$Call (SOME ([],(LN,LN),Alloc 0 (LN,LN),7,8)) (SOME 9) [] NONE) bs (4,1,2)) in append (FST bs) ≼ append (FST bs2)``;
+val _ = out "cp_handler" ``let bs = (Append (List [4w:64 word]) (List [7w]),0); bs2 = SND (comp (c:64 asm$asm_config) F (wordLang$Call (SOME ([],(LN,LN),Alloc 0 (LN,LN),7,8)) (SOME 9) [] (SOME (99,Alloc 0 (LN,LN),11,12))) bs (4,1,2)) in append (FST bs) ≼ append (FST bs2)``;
+val _ = out "cp_consts" ``let bs = (Append (List [4w:64 word]) (List [7w]),0); bs2 = SND (comp (c:64 asm$asm_config) F (wordLang$StoreConsts 0 1 2 3 [(T,7w);(F,8w)]) bs (4,1,2)) in append (FST bs) ≼ append (FST bs2)``;

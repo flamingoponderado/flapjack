@@ -9,6 +9,7 @@ import Flapjack.Test.WordToStackNativeTopParity
 import Flapjack.Test.SptUnionAlgebraParity
 import Flapjack.Test.WordAllocEvenColourParity
 import Flapjack.Test.TargetSemMappedMemoryParity
+import Flapjack.Test.WordToStackCompilePrefixParity
 import Flapjack.Test.WordAllocTotalColourParity
 import Flapjack.Test.ParmoveSourceWrapperParity
 import Flapjack.Test.WordToStackInsertPrefixParity
