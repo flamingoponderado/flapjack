@@ -2612,3 +2612,9 @@ All eleven rows are kernel-replayed by `BytesInMemParity`. The companion
 read-only with `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=bytes_in_mem_probeScript.sml scripts/hol-probes/regenerate.sh`.
 Finite observations do not establish cross-language equivalence.
+`reg_alloc_sort_moves_probe` captures twelve original priority-sort/merge
+equations, including equal priorities and unsorted merge inputs; the matching
+Lean fixture replays them. `parmove_all_distinct_steps_probe` captures four
+destination-distinctness observations; Lean also applies the full RTC theorem
+to zero-step and concrete two-step traces. These fixtures do not establish
+cross-language equivalence or whole allocator correctness.

@@ -2,6 +2,9 @@ import Flapjack.Compiler.Backend.LabToTarget.Memory
 import Flapjack.Compiler.Backend.LabToTarget.Fetch
 import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar
 import Flapjack.Compiler.Backend.RegAlloc.SortedMem
+import Flapjack.Compiler.Backend.Parmove.AllDistinct.Steps
+import Flapjack.Compiler.Backend.RegAlloc.SortMoves
+import Flapjack.Compiler.Backend.WordToStack.ProductionThreeToTwoDomain
 import Flapjack.Compiler.Backend.RegAlloc.Initialization
 import Flapjack.RiscV.WordCopyCodecDomain
 import Flapjack.Compiler.Backend.WordAlloc.CanonizeMoves
