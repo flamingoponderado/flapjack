@@ -43601,5 +43601,14 @@
     "lean_name": "everyNameMono",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-luna-c: complete source34-41 P/names/Q and global pointwise implication AND every_name P guard preserved. Actual everyNameHOL enumerates MAP FST of toAList for both canonical Spt Unit halves, matching literal every_name_def and num_set pair. Arbitrary trees including non-well-formed ones; no wf/domain/bound or target-result premise. No word/finite-map representation difference. Coordinator acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "every_var_mono",
+    "lean_path": "Flapjack/Pancake/WordConvs/ProgramMonotonicity.lean",
+    "lean_name": "everyVarMono",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c: complete source45-57 quantified P/native prog/Q with global predicate implication AND source every_var guard. Actual everyVarHOL over full WordLangProgHOL, original every_var_def133-176 including return-dependent handler traversal, all cutset Spt lists, instructions/expressions and catchall cases. No extra bound/wf/evaluation/success/target premise. Only positive word dimension BitVec translation; faithful MlString, List, Spt and other payload carriers retained. Coordinator acceptance pending."
   }
 ]
