@@ -1985,7 +1985,9 @@ HOL_PROBE_ONLY=word_lang_occurrences_exact_probeScript.sml scripts/hol-probes/re
 
 - `word_to_stack_abs_stack_probeScript.sml`: original abstraction success and failure branches.
 
-- `word_to_stack_index_list_probeScript.sml`: descending indices and physical-name division.
+- `word_to_stack_index_list_probeScript.sml`: descending indices, value/key projections, guarded first/last lookup, and physical-name division.
+
+- `word_to_stack_bitmap_append_probeScript.sml`: successful bitmap decoding remains unchanged after appending words.
 ### Parallel-move state semantics
 
 `parmove_semantics_probeScript.sml` captures twelve direct original
@@ -1998,4 +2000,10 @@ and eqenv ignores only NONE. The two eqenv rows use the original
 premise is imposed on repeated destinations. Full scheduler correctness and
 production wiring remain open.
 
-- `word_to_stack_bitmap_append_probeScript.sml`: successful bitmap decoding remains unchanged after appending words.
+### Literal parallel-move scheduler
+
+`parmove_scheduler_probeScript.sml` captures nine original pmov/parmove outputs:
+final emitted suffix, temporary self-move, empty/self/single moves, chain, swap,
+three-cycle and repeated destinations. `ParmoveFstepParity.lean` replays them.
+The recursion uses the original measure, not fuel. Full semantic correctness
+and the executed Word-to-Stack wrapper remain open.
