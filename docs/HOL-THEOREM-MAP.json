@@ -39761,5 +39761,59 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-sol direct source review 2026-10-01, bead b4v0.2.1, original labSem86-149: literal5 binop equations/full8 arith constructors over reviewed HolArith/HolRegImm/WordLocW and canonical complete LabSem.State. Match r1-r5 by source position, not descriptive constructor labels. Binop Word/Word all5 operations; Loc OR exception iff original right is Reg source, no payload-equality substitute. Shift total asmSem.wordShift then assert unsigned amount<width AFTERwrite, including rotate invalid amount. Div unsigned read divisor then dividend, writes before assert; original HOL arithmetic DIV_0/MOD_0 confirm quotient0/remaindernumerator at divisor0, matching native Nat/BitVec.udiv (not SMT division). Carry uses any nonzero incoming word, writes sumr1 then flagr4; LongMul writes highr1 then lowr2; LongDiv high*2^width+low, quotient/remainder, writes remainderr2 then quotientr1 before zero/boundassert. Overflow compares signed wrapped toInt with unbounded signed operand sum/difference; result r1 then flag r4. Failure/type errors use sticky assert and preserve original other fields; no target-run/evaluator or extra premises. Positive word dimension/FFI universe0 conventional translation only. Direct original44 observations allT after original DIV_0/MOD_0 simplification; all44 arbitrary-state kernel replays direct rfl, covering all8/error/Loc/shift/alias/overflow. Full asm_inst/frame/evaluate consumers remain linked/open; coordinator source acceptance pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "wMoveSingle_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeMoves.lean",
+  "lean_name": "wMoveSingleNative",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison2026-10-01 beadcohf: wMoveSingle62-70 retains all four INL/INR register-slot cases, Or register copy and source saturating f-1-(r-k) offsets, with spill/spill load then store. wMoveAux73-76 retains empty Skip, singleton unwrapped fragment and longer Seq recursion. wMove83-86 maps DIV2 on both fields, calls accepted literal parmove, maps format_var on both optional registers with same k and lowers exact scheduler list. No production scheduler, extra wellformedness/bound/success premise or output assumption. HolProg width uses reviewed HolInst/HolArith/HolRegImm native payloads, same positive word width; words_as_type_indexed_bitvec records only BitVec width/NeZero translation. Three universal map transport proofs relate native outputs to accepted generic helpers. Production compiler and semantics remain open parent25; coordinator review pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "wMoveAux_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeMoves.lean",
+  "lean_name": "wMoveAuxNative",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison2026-10-01 beadcohf: wMoveSingle62-70 retains all four INL/INR register-slot cases, Or register copy and source saturating f-1-(r-k) offsets, with spill/spill load then store. wMoveAux73-76 retains empty Skip, singleton unwrapped fragment and longer Seq recursion. wMove83-86 maps DIV2 on both fields, calls accepted literal parmove, maps format_var on both optional registers with same k and lowers exact scheduler list. No production scheduler, extra wellformedness/bound/success premise or output assumption. HolProg width uses reviewed HolInst/HolArith/HolRegImm native payloads, same positive word width; words_as_type_indexed_bitvec records only BitVec width/NeZero translation. Three universal map transport proofs relate native outputs to accepted generic helpers. Production compiler and semantics remain open parent25; coordinator review pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "wMove_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeMoves.lean",
+  "lean_name": "wMoveNative",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison2026-10-01 beadcohf: wMoveSingle62-70 retains all four INL/INR register-slot cases, Or register copy and source saturating f-1-(r-k) offsets, with spill/spill load then store. wMoveAux73-76 retains empty Skip, singleton unwrapped fragment and longer Seq recursion. wMove83-86 maps DIV2 on both fields, calls accepted literal parmove, maps format_var on both optional registers with same k and lowers exact scheduler list. No production scheduler, extra wellformedness/bound/success premise or output assumption. HolProg width uses reviewed HolInst/HolArith/HolRegImm native payloads, same positive word width; words_as_type_indexed_bitvec records only BitVec width/NeZero translation. Three universal map transport proofs relate native outputs to accepted generic helpers. Production compiler and semantics remain open parent25; coordinator review pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "stack_move_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeCallArgs.lean",
+  "lean_name": "stackMoveNative",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison2026-10-01 beadfk1h: stack_move286-291 retains zero body and recursive higher-slot movement before current StackLoad/StackStore, with same start+offset register/slot order. StackArgs293-298 retains stack_arg_count, StackAlloc and stack_move n0fk. call_dest264-273 retains SOME direct Skip/INL, NONE LENGTHargs=0 explicit raise_stub_location, otherwise guarded LAST passed to wReg2 and native wStackLoad Skip with INR returned register. Nonempty getLast proof is internally discharged by original LENGTHguard, not an added caller premise; no Option-none result branch, arbitrary empty-LAST/default or source allowlist dependency. Native HolProg width uses exact reviewed payload carrier and faithful MlString field; words_as_type_indexed_bitvec records positive-width translation with NeZero. Three universal kernel payload-codec transport proofs to accepted generic helpers cover all inputs, not a call simulation. Actual compiler/production route remains open parent25; coordinator source review pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "StackArgs_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeCallArgs.lean",
+  "lean_name": "stackArgsNative",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison2026-10-01 beadfk1h: stack_move286-291 retains zero body and recursive higher-slot movement before current StackLoad/StackStore, with same start+offset register/slot order. StackArgs293-298 retains stack_arg_count, StackAlloc and stack_move n0fk. call_dest264-273 retains SOME direct Skip/INL, NONE LENGTHargs=0 explicit raise_stub_location, otherwise guarded LAST passed to wReg2 and native wStackLoad Skip with INR returned register. Nonempty getLast proof is internally discharged by original LENGTHguard, not an added caller premise; no Option-none result branch, arbitrary empty-LAST/default or source allowlist dependency. Native HolProg width uses exact reviewed payload carrier and faithful MlString field; words_as_type_indexed_bitvec records positive-width translation with NeZero. Three universal kernel payload-codec transport proofs to accepted generic helpers cover all inputs, not a call simulation. Actual compiler/production route remains open parent25; coordinator source review pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "call_dest_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeCallArgs.lean",
+  "lean_name": "callDestNative",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison2026-10-01 beadfk1h: stack_move286-291 retains zero body and recursive higher-slot movement before current StackLoad/StackStore, with same start+offset register/slot order. StackArgs293-298 retains stack_arg_count, StackAlloc and stack_move n0fk. call_dest264-273 retains SOME direct Skip/INL, NONE LENGTHargs=0 explicit raise_stub_location, otherwise guarded LAST passed to wReg2 and native wStackLoad Skip with INR returned register. Nonempty getLast proof is internally discharged by original LENGTHguard, not an added caller premise; no Option-none result branch, arbitrary empty-LAST/default or source allowlist dependency. Native HolProg width uses exact reviewed payload carrier and faithful MlString field; words_as_type_indexed_bitvec records positive-width translation with NeZero. Three universal kernel payload-codec transport proofs to accepted generic helpers cover all inputs, not a call simulation. Actual compiler/production route remains open parent25; coordinator source review pending."
 }
 ]
