@@ -1,3 +1,4 @@
+import Flapjack.Misc.BinaryIeeeArithExec
 import Flapjack.Pancake.LoopToWord.Proofs.ProgramNames
 import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocationLimit
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveLookups

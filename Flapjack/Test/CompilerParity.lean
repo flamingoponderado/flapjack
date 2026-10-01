@@ -1,3 +1,4 @@
+import Flapjack.Test.BinaryIeeeArithExecParity
 import Flapjack.Test.LoopToWordProgramNamesParity
 import Flapjack.Test.SSAMergeMoveLookupsParity
 import Flapjack.Test.LoopToWordLabelHandlersParity
