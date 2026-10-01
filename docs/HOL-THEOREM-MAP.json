@@ -49123,5 +49123,47 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol3 completed full source/body/carrier comparison2026-10-01 bead y19g.11.3, source409-640. Exact HolInst five outer constructors and all16 HolFp opcodes; all numeric payloads, positive machine width, fixed64 FP register words, arbitrary independent compile C and FFI F retained. Actual imported22-field native owning state and canonical regs/fpRegs/store codec, same-module witness. Full inst composes actual source-reviewed integer/memory and completeFP clauses; generic structural coverage proves selected fragment outerOption always present even on semantic failure. Source comparison retains Skip identity/Const assign, Or same-register Word-or-Loc copy, all shifts/div/carry/overflow/longmul/longdiv guards and write order, complete load/store address/domain/endian operations, unsupported16-bit memory returningNONE, allFP guards/modes/order/conversions reviewed under i81m. No callbacks, success assumption, target result, stronger carrier bound, alternate evaluator or dropped field. Inherits reals_as_rational_cuts from actualFP arithmetic/conversion/sqrt renderings, SOUNDNESS item8; pure Lean sqrt comparison is not cross-HOL equivalence. No direct rendering call requires a directreal qualifier. Kernel full constructor coverage and clock preservation; fresh original integer andFP observation groups. This is full primitive inst_def only, not evaluate_def, production route or whole compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/ExpressionClock.lean",
+    "lean_name": "memStoreWithClock",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "mem_load_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 completed source/statement/carrier comparison2026-10-01 bead7ia9: actual imported StackSemStateFiniteExact width C F preserves original generic independent machine/compile/FFI state type, faithful WordLangExpHOL expression and WordLocW carriers; positive-width BitVec translation only. Canonical regs/fpRegs/store fields with same-module codec forwarding the actual imported owner. No evaluator, callback, supplied successful transition or added premise; full original quantifiers and Option-map shape retained. Six original statement/fulltype rows freshly captured and22 clocked original observations independently kernel replayed. Original233-237 is named mem_load_with_const but actually states mem_store clock update commutation; exact name and equation preserved, unconditional outside-domain NONE included. Only memory is updated, clock update commutes with it."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/ExpressionClock.lean",
+    "lean_name": "wordExpWithClock",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "word_exp_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 completed source/statement/carrier comparison2026-10-01 bead7ia9: actual imported StackSemStateFiniteExact width C F preserves original generic independent machine/compile/FFI state type, faithful WordLangExpHOL expression and WordLocW carriers; positive-width BitVec translation only. Canonical regs/fpRegs/store fields with same-module codec forwarding the actual imported owner. No evaluator, callback, supplied successful transition or added premise; full original quantifiers and Option-map shape retained. Six original statement/fulltype rows freshly captured and22 clocked original observations independently kernel replayed. Original301-314 universally quantifies s/y/k. Complete nested expression/list recursor covers Const/Var/Lookup/Load/Op/Shift and every element of arbitrary Op argument lists; structural induction hypotheses are discharged internally. Missing/Loc operands, domain errors, argument count and shift bounds retain original evaluator behavior; no successful-evaluation hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/ExpressionClock.lean",
+    "lean_name": "assignWithClock",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "assign_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 completed source/statement/carrier comparison2026-10-01 bead7ia9: actual imported StackSemStateFiniteExact width C F preserves original generic independent machine/compile/FFI state type, faithful WordLangExpHOL expression and WordLocW carriers; positive-width BitVec translation only. Canonical regs/fpRegs/store fields with same-module codec forwarding the actual imported owner. No evaluator, callback, supplied successful transition or added premise; full original quantifiers and Option-map shape retained. Six original statement/fulltype rows freshly captured and22 clocked original observations independently kernel replayed. Original316-320 states exact OPTION_MAP clock update commutation. Uses the proved unconditional complete expression theorem and actual register update; success and failure both covered, no result assumed."
   }
 ]

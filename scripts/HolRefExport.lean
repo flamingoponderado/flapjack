@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.StackProps.ClockSupport
+import Flapjack.Compiler.Backend.StackProps.ExpressionClock
 import Flapjack.Compiler.Backend.StackProps.StateConstants
 import Flapjack.Compiler.Backend.LabProps.Native
 import Flapjack.Compiler.Backend.StackToLab.Native

@@ -105,6 +105,10 @@ run_probe stacksem_fp_case_types_probeScript.sml stacksem_fp_case_types_probe.ou
   fpc_inst fpc_constructor fpc_lookup fpc_update fpc_general_lookup fpc_general_update fpc_all_payloads \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
+run_probe stackprops_expression_clock_probeScript.sml stackprops_expression_clock_probe.out \
+  ec_store_statement ec_store_types ec_word_statement ec_word_types ec_assign_statement ec_assign_types ec_const ec_var_word ec_var_loc ec_var_missing ec_lookup_word ec_lookup_loc ec_lookup_missing ec_load_word ec_load_loc ec_load_oob ec_load_bad_address ec_op_empty_and ec_op_add_wrap ec_op_sub_bad_arity ec_op_bad_operand ec_shift_valid ec_shift_oob ec_shift_bad_right ec_assign_success ec_assign_failure ec_store_success ec_store_failure \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
 run_probe stackprops_clock_support_probeScript.sml stackprops_clock_support_probe.out \
   cp_asm_const_type cp_clock_neutral_type cp_1 cp_1_types cp_2 cp_2_types cp_3 cp_3_types cp_4 cp_4_types cp_5 cp_5_types cp_6 cp_6_types cp_skip64 cp_sqrt1 cp_halt16 cp_loc1 cp_seq_good64 cp_seq_tick16 cp_if_good1 cp_if_bad64 cp_loop_skip64 cp_call_skip1 \
   "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"

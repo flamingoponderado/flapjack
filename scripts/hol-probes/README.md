@@ -4021,3 +4021,12 @@ exported theorem is not a new literal replay of its original proof. These
 regressions do not prove HOL-to-Lean equivalence or whole compiler semantics.
 Selector: `HOL_PROBE_ONLY=word_to_stack_comp_no_shmemop_probeScript.sml`.
 `ssa_fake_moves_correct_left_probeScript.sml` replays the literal left fake-move simulation and local frame/map prerequisites, capturing the full statement and seven types including independent source/target code and FFI dimensions.
+
+`stackprops_expression_clock_probeScript.sml` captures six full source/type
+rows for `mem_load_with_const`, `word_exp_with_const` and `assign_with_const`,
+then22 clocked original expression/assignment/store observations. The first
+theorem's original name is misleading: its statement concerns `mem_store`.
+The new kernel replay covers domain failure, Loc rejection, missing operands,
+operator lists, wraparound, shift bounds and successful/failed assignment.
+The full recursive theorem imposes no success, size or clock bound. These
+captures provide regression evidence, not HOL-to-Lean equivalence.

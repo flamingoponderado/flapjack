@@ -1,4 +1,5 @@
 import Flapjack.Test.StackPropsClockSupportParity
+import Flapjack.Test.StackPropsExpressionClockParity
 import Flapjack.Test.StackToLabFullEncodingParity
 import Flapjack.Test.StackToLabRecursiveValidityParity
 import Flapjack.Test.StackToLabNonrecursiveValidityParity
