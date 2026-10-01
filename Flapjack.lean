@@ -1,7 +1,9 @@
 import Flapjack.Compiler.Backend.WordAlloc.ProductionMaxVarExp
 import Flapjack.Compiler.Backend.WordAlloc.LimitVar
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameProperties
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetup.ListNextVarRenameArithmetic
 import Flapjack.Compiler.Encoders.AsmProps.Assertions.Iteration
+import Flapjack.Compiler.Encoders.AsmSem.Arithmetic
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.Maximum.MaxVar
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARegisterClass
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocals
@@ -11,6 +13,7 @@ import Flapjack.Compiler.Encoders.AsmProps.Assertions
 import Flapjack.Compiler.Backend.StackProps.LabelSafety
 import Flapjack.Compiler.Backend.Parmove.FstepMapInj
 import Flapjack.Compiler.Encoders.AsmProps.FpPreservation
+import Flapjack.Compiler.Encoders.AsmSem.FpUpdates
 import Flapjack.Pancake.WordConvs.ProgramMonotonicity
 import Flapjack.Compiler.Backend.Parmove.StepMapInj
 import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Parmove
@@ -1126,6 +1129,7 @@ import Flapjack.Compiler.Backend.RegAlloc.StateForeach
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameLookup
 import Flapjack.Compiler.Backend.WordAlloc.SSAMergeMoves
 import Flapjack.Compiler.Backend.WordAlloc.ProductionMergeMoves
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveBounds
 
 
 /- The context-aware Crep-to-Loop correctness file is being updated alongside
