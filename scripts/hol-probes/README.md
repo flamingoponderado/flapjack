@@ -2112,3 +2112,11 @@ a start/emit chain. These observations support state-shape review; the full
 universally quantified preservation proofs are independently kernel-checked.
 Full scheduler semantic correctness remains open.
 `labsem_memory_probeScript.sml` captures 46 original ordinary-memory observations across all eight mem_op cases: retained failed Load/Store writes, narrow type/alignment/aligned-domain checks, endian and resizing, unsupported16 operations, address wrap, sticky failure, and one-/eight-bit dimensions. `LabSemMemoryParity` replays them with targeted simplification and kernel computation. The original unused `is_Loc` classifies `semanticPrimitives.v` (Loc Bool/Nat), not `wordLang.word_loc`, and is tracked separately on `flapjack-og0v`; it is absent from these memory operations.
+
+`parmove_start_extend_probeScript.sml` captures 14 direct original HOL `sem`
+values for the Start and Extend states, with nonempty reversed emitted histories,
+shared sources and snapshot reads. The final pair deliberately repeats a
+destination and differs (27 versus 37): it is outside `wf`, not a valid-step
+semantic-equivalence claim. Lean kernel examples replay all rows; the generic
+case proofs establish the original quantified `eqenv` conclusion under `wf`.
+The other four cases and full `step_sem` assembly remain open.
