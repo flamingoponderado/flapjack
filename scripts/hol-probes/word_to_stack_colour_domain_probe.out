@@ -1,0 +1,13 @@
+cd_load16=T
+cd_store16=T
+cd_load8=T
+cd_store32=T
+cd_carry=T
+cd_collision=T
+cd_seq=T
+cd_must=T
+cd_if=T
+cd_loop=T
+cd_tail_handler=T
+cd_both=T
+cd_large=T

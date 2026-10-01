@@ -27,6 +27,21 @@ val _ = print_eval "beta" ``2``;
 
 
 class ProbeRowCheckerTest(unittest.TestCase):
+    def test_registration_paths_required(self):
+        valid = ('run_probe demo_probeScript.sml demo_probe.out alpha beta '
+                 '"$cake_dir/demoScript.sml" "$cake_dir/compiler/backend"\n')
+        self.assertEqual(ROWS.check_registrations(valid), [])
+        self.assertEqual(ROWS.check_registrations(
+            'run_probe demo_probeScript.sml demo_probe.out "$cake_dir/demoScript.sml"\n'), [])
+        self.assertTrue(ROWS.check_registrations(
+            'run_probe demo_probeScript.sml demo_probe.out alpha beta\n'))
+
+    def test_continuation_cannot_absorb_next_registration(self):
+        broken = ('run_probe a_probeScript.sml a_probe.out alpha \\\n'
+                  'run_probe b_probeScript.sml b_probe.out beta \\\n'
+                  '"$cake_dir/demoScript.sml" "$cake_dir/compiler/backend"\n')
+        self.assertTrue(ROWS.check_registrations(broken))
+
     def _probes_dir(self, directory: str, out_text: str) -> Path:
         probes = Path(directory) / "hol-probes"
         probes.mkdir()
