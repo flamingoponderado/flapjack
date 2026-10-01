@@ -1,3 +1,4 @@
+import Flapjack.Test.WordToStackCodeLabelsParity
 import Flapjack.Test.WordConvsCodeLabelsParity
 import Flapjack.Test.StackPropsCodeLabelsParity
 import Flapjack.Test.RegAllocSortedMemParity

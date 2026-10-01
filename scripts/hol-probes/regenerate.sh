@@ -3153,6 +3153,10 @@ run_probe parmove_all_distinct_steps_probeScript.sml parmove_all_distinct_steps_
 run_probe wordconvs_code_labels_probeScript.sml wordconvs_code_labels_probe.out \
   wl_skip wl_location wl_direct_tail wl_indirect_tail wl_tail_handler wl_both_bodies wl_metadata_omitted wl_return_only wl_duplicate wl_if wl_loop wl_must \
   "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe word_to_stack_code_labels_probeScript.sml word_to_stack_code_labels_probe.out \
+  lh_load_empty lh_load_many lh_move_zero lh_move_many lh_aux_zero lh_aux_many lh_ret_zero lh_ret_plain lh_ret_handler lh_ret_perf lh_ret_width_one lh_live_zero lh_live_frame lh_live_width_one \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
 run_probe parmove_preserves_moves_step_probeScript.sml parmove_preserves_moves_step_probe.out \
   preserve_4_before preserve_4_after preserve_6_before preserve_6_after preserve_1_before preserve_1_after preserve_8_before preserve_8_after preserve_scratch_before preserve_scratch_after \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"

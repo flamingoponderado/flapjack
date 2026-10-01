@@ -2635,3 +2635,17 @@ cross-language equivalence. Regenerate against read-only prebuilt theories with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=wordconvs_code_labels_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
+# Word-to-Stack native label helpers
+
+`word_to_stack_code_labels_probeScript.sml` evaluates fourteen complete-set
+assertions from original `word_to_stackTheory` and `stackPropsTheory`. The
+identical inputs are kernel-replayed by `WordToStackCodeLabelsParity`: empty
+and repeated stack loads, zero and recursive stack moves, zero and recursive
+return copies, both performance/handler flags, arbitrary return payloads,
+width one, and zero/nonzero live frames with irregular bitmap counts. The
+nonempty continuation includes both code references and an owned handler.
+These finite regressions do not prove compiler correctness or cross-language
+equivalence. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_to_stack_code_labels_probeScript.sml
+scripts/hol-probes/regenerate.sh`.

@@ -4397,6 +4397,12 @@
       "out": "wordconvs_code_labels_probe.out",
       "rows": 12,
       "sha256": "7e554eb4c4f85794408a9035532af0edf01084a1d290160025fa0690211c9acf"
+    },
+    {
+      "bytes": 219,
+      "out": "word_to_stack_code_labels_probe.out",
+      "rows": 14,
+      "sha256": "967d322d14992cc6185bcdc8c6faecac30b9c0a499b25fffc9473f737b966b97"
     }
   ],
   "version": 1
