@@ -43791,5 +43791,13 @@
     "lean_name": "ssaLocalsRel",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-luna-c source4510-4518 and full exported type: arbitrary Nat bound, Spt Nat renaming map and generic shared alpha-valued Spt source/target. Both full forall clauses: mapped target domain, source-domain membership, THE mapped lookup equality, alloc-variable strict bound. Actual reviewed native Spt lookup/domain and isAllocVar. No wf/injectivity/bound/success premise added. Lean local selector uses getD0 ONLY under source-domain conjunct; kernel ssaLocalsRel_selectorIndependent proves entire relation independent of any selector agreeing on SOME, with no relation assumption. HOL option THE_DEF176-179 constrains only SOME; no equality about THE NONE claimed. Eight fresh original source-clause simplified Bool-valued relation observations (T,T,F,F,F,F,T,T) and full original type/definition prints, identical kernel fixtures. Proof predicate has no executed compiler definition route. Coordinator whole source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "list_next_var_rename_lemma_2",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSARenameLookup.lean",
+    "lean_name": "listNextVarRenameLemma2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source4561-4577 comparison: arbitrary Nat input names/start and canonical Spt Nat initial/output trees, sole ALL_DISTINCT premise; all four output-map/domain-union/outside-lookup/inside-success conjuncts retained. THE is represented by getD 0 only for each successful lookup, independently established by the fourth conjunct; kernel listNextVarRenameSelectorIndependent proves every selector agreeing on SOME gives identical names, so HOL THE NONE is never constrained. No tree-wf, freshness, physical-register or target-relation premise. Five freshly run original EVAL observations and kernel replays include malformed BN LN LN, overwrite, arbitrary order, and unbounded natural numbers; an actual theorem application retains all conjuncts for arbitrary initial tree/start. Local HOL theorem is reviewed from source; fresh exported theorem invocation is not claimed. Coordinator acceptance pending."
   }
 ]

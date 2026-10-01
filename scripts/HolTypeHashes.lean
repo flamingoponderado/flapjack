@@ -780,6 +780,7 @@ import Flapjack.RiscV.CorrectnessEncoding
 import Flapjack.Compiler.Backend.StackProps
 import Flapjack.Pancake.PanStructs
 import Flapjack.Compiler.Backend.RegAlloc.StateForeach
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameLookup
 
 
 

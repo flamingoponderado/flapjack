@@ -3072,6 +3072,11 @@ The native transition inherits the existing IEEE real-rendering assurance limit
 Probes remain regression evidence, not complete cross-language IEEE equivalence
 or whole ASM/compiler routing acceptance.
 
+SSA renaming lookup regressions: `ssa_rename_lookup_probeScript.sml` runs original
+`list_next_var_rename` and THE lookups for empty, overwritten, malformed-tree,
+reordered and unbounded-Nat inputs. `SSARenameLookupParity.lean` kernel-replays
+all five captures and applies the full four-conjunct theorem with arbitrary
+initial tree/start. Captures are regression evidence, not a cross-prover proof.
 ### Generic native ASM assertions
 
 `asmprops_assertions_probeScript.sml` evaluates original `asmPropsTheory`
