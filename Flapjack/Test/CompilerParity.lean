@@ -1,3 +1,4 @@
+import Flapjack.Test.ProductionScheduler
 import Flapjack.Test.LabValidityNativeParity
 import Flapjack.Test.StackToLabNativeParity
 import Flapjack.Test.WordToStackNoShmemopPrimitivesParity
@@ -1626,6 +1627,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.WordToStackAbsStackPrefixParity.runChecks,
     Flapjack.Test.WordToStackAbsStackParity.runChecks,
     Flapjack.Test.WordToStackFramesParity.runChecks,
+    Flapjack.Test.ProductionScheduler.runChecks,
     Flapjack.Test.WordConvsPostAllocExactParity.runChecks,
     Flapjack.Test.LabToTargetSectionLookupParity.runChecks,
     Flapjack.Test.TargetPropsInterferenceParity.runChecks,

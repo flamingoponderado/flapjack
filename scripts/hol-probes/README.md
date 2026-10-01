@@ -3953,3 +3953,13 @@ and applies all eight full original-shaped cases. The rejected ShareInst proof
 uses only its original false source guard, with no target safety premise.
 These regressions do not establish cross-language equivalence or full compiler correctness.
 Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_primitives_probeScript.sml`.
+
+`word_to_stack_scheduler_route_probe.out` captures six fresh original rows:
+empty/swap/duplicate-destination scheduling, the actual k=22 NONE slot23, and
+full spill-cycle trees at frame3 and frame0. ProductionScheduler kernel-replays
+all six numeric observations, plus identity and mixed-location cycles. Its
+all-input proof establishes the actual option scheduler equals native parmove,
+deriving fuel sufficiency from the source measure. The native wMove tree
+fixtures retain both temporary registers and natural frame subtraction; they
+do not establish actual move materialization or complete compiler equivalence.
+Regenerate with `HOL_PROBE_ONLY=word_to_stack_scheduler_route_probeScript.sml`.
