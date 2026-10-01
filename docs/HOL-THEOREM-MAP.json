@@ -38966,5 +38966,37 @@
   "lean_name": "checkColInj",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-c literal source2592-2606 comparison 2026-10-01 bead11.4.5: same sole successful check_col premise on existing exact NumSet/Spt Unit checker, all three source conclusions q=input tree, scoped INJ on domain q with UNIV range tautology discharged, and full predicate equality domain r = IMAGE f domain q. No added wf/global injection/target evaluation assumption. ALL_DISTINCT is exact Pairwise inequality; unconditional toAList/lookup bridge and full fromAList/numeric-insert equality used only inside kernel proof. No representation qualifier or executable evaluator change."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/Invariants.lean",
+  "lean_name": "path",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "path_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.8: source57-62: generic pair list; empty/singleton true; earlier source equals next destination and recurse on tail, same equality orientation."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/Invariants.lean",
+  "lean_name": "path_tail",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "path_tail",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.8: source75-80: universally quantified generic tail/head; path cons implies path tail without further hypotheses."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/Invariants.lean",
+  "lean_name": "wf",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "wf_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.8: source120-129: generic Option-register pending/active lists and independent arbitrary emitted carrier; all six conjuncts in source order; windmill pending++active; both pending coordinates SOME; nonempty active FRONT sources SOME; all active destinations SOME; path active. Lean List dropLast equals HOL FRONT on nonempty list guarded exactly as HOL; emitted moves unconstrained. Bounded universal membership is EVERY/MAP, no added side condition."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/Invariants.lean",
+  "lean_name": "wf_init",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "wf_init",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.8: source132-139: exact conjunction windmill pending and both pending coordinates SOME implies wf(pending,[],[]), final empty list has independent generic element carrier, no extra premise. Full invariant preservation and parmove_correct remain open."
 }
 ]
