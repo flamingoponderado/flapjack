@@ -4252,3 +4252,11 @@ and proof literally. Six direct padding observations include empty nop chunks,
 label-only code, nonempty accumulators and unchanged resolved offsets. Kernel
 fixtures replay them and apply the full theorem at arbitrary positive width and
 arbitrary accumulator; no full compiler or cross-language equivalence is claimed.
+
+`lab_to_target_encoding_similarity_probeScript.sml` captures four complete
+original similarity statements and their inferred types; both local lemmas
+replay literal source statements and proofs. Six native observations exercise
+initial encoding, unchanged and changed offsets, length growth/failure flags,
+nonempty accumulators and multiple sections. The full line theorem retains
+HOL's complete result tail `(position, flag)` and arbitrary prefix premise.
+Kernel fixtures replay the observations and apply the full section theorem.
