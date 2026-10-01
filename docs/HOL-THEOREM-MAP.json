@@ -47035,5 +47035,19 @@
     ],
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.3.3): HOL Resume evaluate_remove_dead[Move] (word_allocProofScript.sml:3958) case of the theorem at 3900-3928, i.e. the HOL statement with prog fixed to Move, stated as removeDeadGoal; empty filter (Skip) and filtered-move branches as HOL: filtered destinations stay ALL_DISTINCT, filtered sources are read by get_vars_exists/get_vars_eq and strong_locals_rel_I_get_vars', and the first live move to each destination decides both alist_insert lookups (HOL's induction on ls with strong_locals_rel_I_insert_insert/_insert_notin); no IH, no extra premise. Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through wordSem evaluate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_remove_dead",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateRemoveDead/Inst.lean",
+    "lean_name": "evaluateRemoveDead_Inst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.3.4): HOL Resume evaluate_remove_dead[Inst] (word_allocProofScript.sml:4031) case of the theorem at 3900-3928, i.e. the HOL statement with prog fixed to Inst i for every instruction i, stated as removeDeadGoal; HOL unfolds inst_def/remove_dead_inst_def/get_live_inst_def per instruction, here factored through the untagged footprint (instReads/instWrites) and instCongr: removed instructions write only dead registers and change only locals (strong_locals_rel_insert_notin), kept ones read registers in get_live_inst and re-establish strong_locals_rel I on live (strong_locals_rel_I_get_var/_insert_insert); no IH, no extra premise. Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through wordSem evaluate/inst."
   }
 ]

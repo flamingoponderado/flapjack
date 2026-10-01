@@ -122,6 +122,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead.Store
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead.Control
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead.StateEffect
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead.Move
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateRemoveDead.Inst
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.GetForced
 import Flapjack.Compiler.Backend.WordAlloc.CoalesceCost
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.LoopCases
