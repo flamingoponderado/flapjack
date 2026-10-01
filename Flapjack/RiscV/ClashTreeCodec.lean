@@ -24,9 +24,16 @@ declaration, so it carries no `@[hol]` tag.  It provides
 * `wordClashTreeToReviewed` / `reviewedToWordClashTree`, a codec between the two
   carriers (the `List Nat` payload is mapped through the set codec
   `listToNumSet` / `numSetToList`);
-* roundtrip laws on the precisely stated `CanonicalTree` / `ReviewedCanonical`
-  fragments (the structural roundtrip) and unconditional domain-level
-  roundtrips (`DomEq`);
+* one codec roundtrip law, `reviewedToWordClashTree_toReviewed`, on the
+  `CanonicalTree` fragment (executed trees whose `set` / `branch` payloads are
+  already in the canonical `toAList` enumeration order of their set).  No
+  converse roundtrip is stated: re-enumerating a reviewed `NumSet` payload with
+  `numSetToList` can change the executed list order, so the codec is not a
+  roundtrip on arbitrary trees and no `ReviewedCanonical` fragment is defined.
+  What *is* unconditional is the membership/domain level: `DomEq_listToNumSet`
+  and `DomEq_numSetToList` (the payload codec preserves the member set),
+  `DomEq_eraseDups_listToNumSet`, and `DomEq_wordNumSetDelete` /
+  `ListDomEq_filter_not_toAList_difference` (the set operations agree);
 * `wordClashTreeCheck_agrees`: the executed checker's `Option` result corresponds
   to the reviewed checker's `Option` result under the codec, including the
   domains of the returned live/coloured sets;
@@ -38,6 +45,25 @@ declaration, so it carries no `@[hol]` tag.  It provides
   routing function instead of `wordClashTreeCheck` directly, and
   `wordOracleColouringOk_eq_wordClashTreeCheck` proves the oracle's `Bool` is
   unchanged.
+
+## Executable-path rationale
+
+The executed allocator oracle decision is already routed through the reviewed
+checker: `wordOracleClashTreeCheck` (`OracleAllocator.lean`) returns
+`(wordClashTreeCheckViaReviewed colour tree [] []).isSome` and
+`wordOracleColouringOk` consumes it, with `wordOracleClashTreeCheck_eq` proving
+the oracle's `Bool` is exactly the executed `wordClashTreeCheck` verdict.  The
+standalone executed `wordClashTreeCheck` definition is retained for the other
+in-tree call sites (for example `SpillCosts`, `RegAlloc`,
+`AllocatorCorrectness`), which also consume only `.isSome`.  Routing those call
+sites is not free: the reviewed checker returns `NumSet`s and a fully routed
+caller would need the exact returned `List Nat` order, but the reviewed
+`toAList` enumeration need not match the executed prepend order, so literal
+returned-list equality is not provable; only the `isSome` verdict is forced,
+which is exactly what those callers use.  No performance exception is claimed.
+The remaining per-call-site production routing is tracked by bead
+`flapjack-pxn.18.5.11.4.2`.  This codec module does not change production
+behaviour; it records the reviewed checker's correspondence and routing.
 
 ## Source comparison (executed vs reviewed checker)
 

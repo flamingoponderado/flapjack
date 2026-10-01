@@ -61,6 +61,19 @@ or wire the checker into the executed compiler. Regenerate with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=reg_alloc_clash_tree_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
+`reg_alloc_check_clash_tree_probe.out` captures seven direct original
+`check_col`/`check_partial_col`/`check_clash_tree` observations on small
+concrete trees with a numeric colour function (built from a finite map via
+`FLOOKUP`) and nonempty live/flive `num_set` inputs: Delta writes/reads, a fixed
+Set, Branch NONE and Branch SOME, right-first Seq, and two failures (an incoming
+flive already holding the write's colour, and a non-injective numeric colour on
+a Set). `Flapjack.Test.ClashTreeCodecParity` kernel-replays the same trees
+through the `WordClashTree`/`RegAlloc.ClashTree` codec and the reviewed
+`checkClashTree`, and the executed `wordClashTreeCheck` verdicts. These finite
+regressions do not prove allocator soundness or full production routing.
+Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=reg_alloc_check_clash_tree_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `stacksem_call_indirect_probe.out` captures ten direct original `stackSem$evaluate`
 Call INR observations (find_code645-651, returning Call861-892): indirect and
 returning success, link/target alias rejection before update, tail alias success,

@@ -2744,6 +2744,13 @@ run_probe reg_alloc_clash_tree_probeScript.sml reg_alloc_clash_tree_probe.out \
   delete_names col_collision partial_existing partial_collision delta_discard_writes seq_right_first branch_merge branch_fixed_collision \
   "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
+# Direct original `check_clash_tree` observations with a numeric colour function
+# (built from a finite map), nonempty live/flive num_sets, every clash-tree
+# constructor and two failure cases (bead flapjack-pxn.18.5.11.4.2.1).
+run_probe reg_alloc_check_clash_tree_probeScript.sml reg_alloc_check_clash_tree_probe.out \
+  delta_live set_fixed branch_none branch_some seq_right_first delta_flive_collision set_colour_collision \
+  "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
 run_probe labsem_updates_probeScript.sml labsem_updates_probe.out lab_updates_pc_overwrite lab_updates_pc_increment lab_updates_clock_zero lab_updates_clock_positive lab_updates_reg_hit lab_updates_reg_other lab_updates_reg_loc lab_updates_mem_hit lab_updates_mem_other lab_updates_assert_sticky lab_updates_assert_false lab_updates_failed_reg_write lab_updates_failed_mem_write lab_updates_reg_imm_loc lab_updates_reg_imm_word lab_updates_fp_hit lab_updates_fp_other "$cake_dir/compiler/backend/semantics/labSemScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe parmove_invariants_probeScript.sml parmove_invariants_probe.out \
   iv_empty_path iv_single_path iv_chain_path iv_bad_path iv_empty_wf iv_pending_wf iv_repeated iv_pending_dest iv_pending_source iv_active_last_temp iv_active_front_temp iv_active_dest iv_active_path \
