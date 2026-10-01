@@ -1,3 +1,4 @@
+import Flapjack.Test.SSALocalsParity
 import Flapjack.Test.SSAMapParity
 import Flapjack.Test.SSASetupParity
 import Flapjack.Test.StackPropsLabelSafetyParity

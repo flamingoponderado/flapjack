@@ -3306,3 +3306,7 @@ run_probe ssa_setup_probeScript.sml ssa_setup_probe.out \
 run_probe ssa_map_ok_probeScript.sml ssa_map_ok_probe.out \
   sm_empty sm_valid sm_at_bound sm_physical sm_invalid sm_definition \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_locals_rel_probeScript.sml ssa_locals_rel_probe.out \
+  sl_empty sl_valid sl_missing_map sl_missing_target sl_wrong_value sl_bound sl_bound_ok sl_invalid sl_definition sl_original_type \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
