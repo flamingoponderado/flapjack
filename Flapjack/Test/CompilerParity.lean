@@ -6,6 +6,7 @@ import Flapjack.Test.AsmPropsArithmeticPreservationParity
 import Flapjack.Test.LabToTargetEncodingSimilarityParity
 import Flapjack.Test.StackPropsInstructionConstantsParity
 import Flapjack.Test.LabToTargetPaddingLengthParity
+import Flapjack.Test.LabImplicitSectionZero
 import Flapjack.Test.StackToLabExecutedInput
 import Flapjack.Test.ProductionMacros
 import Flapjack.Test.StackWordBoundary

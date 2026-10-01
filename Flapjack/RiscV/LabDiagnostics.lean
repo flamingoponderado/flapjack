@@ -77,7 +77,7 @@ def labCompileLinesChecked [NeZero width] (context : WordFfiContext)
 def compileLabSectionChecked [NeZero width] (context : WordFfiContext)
     (sectionData : LabSection (Word width)) :
     Except LabLoweringError (List (Instruction width)) :=
-  let labels := labCollectLabels sectionData.name 0 sectionData.lines
+  let labels := (0, 0) :: labCollectLabels sectionData.name 0 sectionData.lines
   labCompileLinesChecked context sectionData.name labels 0 sectionData.lines
 
 def labCompileAsmProgramChecked [NeZero width] (context : WordFfiContext)
