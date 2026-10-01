@@ -15,6 +15,7 @@ val (_, suffix) = Substring.position marker (Substring.full source);
 val after = Substring.triml (String.size marker) suffix;
 val (body, _) = Substring.position "\nEnd" after;
 val _ = if Substring.isEmpty body then raise Fail "Original definition missing" else ();
+val _ = new_theory "enc_with_nop_source_type";
 val definition = Define [QUOTE (Substring.string body)];
 val _ = print "enc_with_nop_original_source_type=";
 val _ = print_type (type_of ``enc_with_nop``);

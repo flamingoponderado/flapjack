@@ -1,4 +1,6 @@
 import Flapjack.Test.LabToTargetSectionLookupParity
+import Flapjack.Test.WordConvsCodeLabelsParity
+import Flapjack.Test.StackPropsCodeLabelsParity
 import Flapjack.Test.BytesInMemParity
 import Flapjack.Test.StackPropsCodeLabelsParity
 import Flapjack.Test.RegAllocSortedMemParity
