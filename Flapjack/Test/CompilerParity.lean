@@ -20,6 +20,7 @@ import Flapjack.Test.WordToStackFramesParity
 import Flapjack.Test.ParmoveSemanticsParity
 import Flapjack.Test.ParmoveFstepParity
 import Flapjack.Test.RegAllocClashTreeParity
+import Flapjack.Test.ClashTreeCodecParity
 import Flapjack.Test.WordConvsPostAllocExactParity
 import Flapjack.Test.PanGlobalsBlockAlignmentParity
 import Flapjack.Test.StackSemLocValueParity
@@ -1350,6 +1351,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.WordAllocCutEnvLemmaParity.runChecks,
     Flapjack.Test.WordAllocGetDeltaInstParity.runChecks,
     Flapjack.Test.WordAllocGetClashTreeParity.runChecks,
+    Flapjack.Test.ClashTreeCodecParity.runChecks,
     Flapjack.Test.LoopMarkAllHOLParity.runChecks,
     Flapjack.Test.LoopCallCompHOLParity.runChecks,
     Flapjack.Test.CrepLocalsWordLabParity.runChecks,

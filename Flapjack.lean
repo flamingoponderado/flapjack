@@ -725,6 +725,7 @@ import Flapjack.RiscV.LinearScan
 import Flapjack.RiscV.LinearScanSource
 import Flapjack.RiscV.LinearScanDriver
 import Flapjack.RiscV.OracleAllocator
+import Flapjack.RiscV.ClashTreeCodec
 import Flapjack.RiscV.AllocatorCorrectness
 import Flapjack.RiscV.CorrectnessSsa
 import Flapjack.RiscV.CorrectnessGraphCoverage
