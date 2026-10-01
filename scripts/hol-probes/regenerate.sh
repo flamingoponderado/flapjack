@@ -2720,3 +2720,7 @@ run_probe word_to_stack_map_fst_probeScript.sml word_to_stack_map_fst_probe.out 
 run_probe word_to_stack_bitmap_append_probeScript.sml word_to_stack_bitmap_append_probe.out \
   ba_terminal ba_continuation ba_full_one ba_full_two \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_abs_stack_prefix_probeScript.sml word_to_stack_abs_stack_prefix_probe.out \
+  ap_base ap_plain ap_handler ap_nested ap_mixed \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"

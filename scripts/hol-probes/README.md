@@ -2008,3 +2008,5 @@ final emitted suffix, temporary self-move, empty/self/single moves, chain, swap,
 three-cycle and repeated destinations. `ParmoveFstepParity.lean` replays them.
 The recursion uses the original measure, not fuel. Full semantic correctness
 and the executed Word-to-Stack wrapper remain open.
+
+- `word_to_stack_abs_stack_prefix_probeScript.sml`: successful bitmap prefix preservation for base, ordinary, handler, recursive and mixed frames.
