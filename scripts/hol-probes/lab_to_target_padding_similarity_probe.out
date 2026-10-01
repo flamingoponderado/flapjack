@@ -1,0 +1,23 @@
+ps_add=∀(ls :α line list) (ls' :α line list) (h :word8 list).
+  LIST_REL (line_similar :α line -> α line -> bool) ls ls' ⇒
+  LIST_REL (line_similar :α line -> α line -> bool) ls (add_nop h ls')
+ps_add_types=(ls :α line list)::α line list;(ls' :α line list)::α line list;(h :word8 list)::word8 list;
+ps_section=∀(nop :word8 list) (l2 :α line list) (aux :α line list) (l1 :α line list).
+  LIST_REL (line_similar :α line -> α line -> bool) l1 (REVERSE aux ++ l2) ⇒
+  LIST_REL (line_similar :α line -> α line -> bool) l1
+    (pad_section nop l2 aux)
+ps_section_types=(nop :word8 list)::word8 list;(l2 :α line list)::α line list;(aux :α line list)::α line list;(l1 :α line list)::α line list;
+ps_code=∀(code1 :α sec list) (code2 :α sec list).
+  code_similar code1 code2 ⇒
+  code_similar code1 (pad_code (nop :word8 list) code2)
+ps_code_types=(code1 :α sec list)::α sec list;(code2 :α sec list)::α sec list;(nop :word8 list)::word8 list;
+ps_add_value=[Label 1 2 9; Asm (Asmi (Inst Skip)) [1w; 7w] 2;
+ LabAsm (Jump (Lab 1 2)) 13w [2w] 1]
+ps_section_value=[Label 1 2 0; Asm (Asmi (Inst Skip)) [1w] 1;
+ LabAsm (Jump (Lab 1 2)) 13w [2w] 1]
+ps_empty_nop=[Label 1 2 0; Asm (Asmi (Inst Skip)) [1w] 1;
+ LabAsm (Jump (Lab 1 2)) 13w [2w] 1]
+ps_acc_value=[LabAsm (Jump (Lab 1 2)) 19w [4w; 7w] 2; Label 1 2 0;
+ Asm (Asmi (Inst Skip)) [7w; 7w] 2]
+ps_label_only=[Label 1 2 0; Label 1 3 0]
+ps_code_similar=T
