@@ -1,7 +1,9 @@
-import Flapjack.Compiler.Backend.Parmove.FstepDstep
 import Flapjack.Compiler.Backend.Parmove.SourceMembership
-import Flapjack.Compiler.Backend.Parmove.DestinationMembership
+import Flapjack.Compiler.Backend.Parmove.FstepDstep
+import Flapjack.Compiler.Backend.WordToStack.NativeConfig
 import Flapjack.Compiler.Backend.Parmove.DSteps
+
+import Flapjack.Compiler.Backend.Parmove.DestinationMembership
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Install
 import Flapjack.Compiler.Backend.Parmove.SplitSource
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.FFI
@@ -35,6 +37,7 @@ import Flapjack.Compiler.Backend.LabSem.Memory
 import Flapjack.Compiler.Backend.LabSem.SharedMemory
 import Flapjack.Compiler.Backend.LabSem.Inst
 import Flapjack.Compiler.Backend.LabSem.Evaluate
+import Flapjack.Compiler.Backend.LabSem.Semantics
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.If
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.CutState
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.LoopRecursion
@@ -639,6 +642,7 @@ import Flapjack.Pancake.Semantics.CrepProps.EvaluateAddClock
 import Flapjack.Pancake.Semantics.CrepProps.EvalSomeVarCexp
 import Flapjack.Pancake.Semantics.CrepProps.EvaluateAddClockIoEventsMono
 import Flapjack.Pancake.WordConvs
+import Flapjack.Pancake.WordConvs.WfCutsets
 import Flapjack.Pancake.WordConvs.NotCreated
 import Flapjack.Pancake.PanToCrep
 import Flapjack.CrepeCompileExpVariables
