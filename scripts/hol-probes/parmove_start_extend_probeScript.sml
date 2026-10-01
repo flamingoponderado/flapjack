@@ -1,0 +1,21 @@
+load "bossLib";
+load "preamble";
+load "parmoveTheory";
+open bossLib HolKernel Parse preamble parmoveTheory;
+fun print_eval label q = let val th = EVAL q in
+ (print (label ^ "="); print_term (rconc th); print "\n") end;
+val env = ``\x:num option. case x of NONE => 99n | SOME k => 10*k+7``;
+print_eval "ps_start_pre_1" ``parmove$sem ([(SOME 4,SOME 2);(SOME 1,SOME 2);(SOME 5,SOME 4)],[],[(SOME 2,SOME 3);(SOME 3,SOME 6)]) ^env (SOME 1)``;
+print_eval "ps_start_pre_4" ``parmove$sem ([(SOME 4,SOME 2);(SOME 1,SOME 2);(SOME 5,SOME 4)],[],[(SOME 2,SOME 3);(SOME 3,SOME 6)]) ^env (SOME 4)``;
+print_eval "ps_start_pre_5" ``parmove$sem ([(SOME 4,SOME 2);(SOME 1,SOME 2);(SOME 5,SOME 4)],[],[(SOME 2,SOME 3);(SOME 3,SOME 6)]) ^env (SOME 5)``;
+print_eval "ps_start_post_1" ``parmove$sem ([(SOME 4,SOME 2);(SOME 5,SOME 4)],[(SOME 1,SOME 2)],[(SOME 2,SOME 3);(SOME 3,SOME 6)]) ^env (SOME 1)``;
+print_eval "ps_start_post_4" ``parmove$sem ([(SOME 4,SOME 2);(SOME 5,SOME 4)],[(SOME 1,SOME 2)],[(SOME 2,SOME 3);(SOME 3,SOME 6)]) ^env (SOME 4)``;
+print_eval "ps_start_post_5" ``parmove$sem ([(SOME 4,SOME 2);(SOME 5,SOME 4)],[(SOME 1,SOME 2)],[(SOME 2,SOME 3);(SOME 3,SOME 6)]) ^env (SOME 5)``;
+print_eval "ps_extend_pre_1" ``parmove$sem ([(SOME 4,SOME 2);(SOME 3,SOME 1);(SOME 5,SOME 4)],[(SOME 1,SOME 2)],[(SOME 2,SOME 3);(SOME 3,SOME 6)]) ^env (SOME 1)``;
+print_eval "ps_extend_pre_3" ``parmove$sem ([(SOME 4,SOME 2);(SOME 3,SOME 1);(SOME 5,SOME 4)],[(SOME 1,SOME 2)],[(SOME 2,SOME 3);(SOME 3,SOME 6)]) ^env (SOME 3)``;
+print_eval "ps_extend_pre_5" ``parmove$sem ([(SOME 4,SOME 2);(SOME 3,SOME 1);(SOME 5,SOME 4)],[(SOME 1,SOME 2)],[(SOME 2,SOME 3);(SOME 3,SOME 6)]) ^env (SOME 5)``;
+print_eval "ps_extend_post_1" ``parmove$sem ([(SOME 4,SOME 2);(SOME 5,SOME 4)],[(SOME 3,SOME 1);(SOME 1,SOME 2)],[(SOME 2,SOME 3);(SOME 3,SOME 6)]) ^env (SOME 1)``;
+print_eval "ps_extend_post_3" ``parmove$sem ([(SOME 4,SOME 2);(SOME 5,SOME 4)],[(SOME 3,SOME 1);(SOME 1,SOME 2)],[(SOME 2,SOME 3);(SOME 3,SOME 6)]) ^env (SOME 3)``;
+print_eval "ps_extend_post_5" ``parmove$sem ([(SOME 4,SOME 2);(SOME 5,SOME 4)],[(SOME 3,SOME 1);(SOME 1,SOME 2)],[(SOME 2,SOME 3);(SOME 3,SOME 6)]) ^env (SOME 5)``;
+print_eval "ps_bad_pre" ``parmove$sem ([(SOME 1,SOME 2);(SOME 1,SOME 3)],[],[]) ^env (SOME 1)``;
+print_eval "ps_bad_post" ``parmove$sem ([(SOME 1,SOME 3)],[(SOME 1,SOME 2)],[]) ^env (SOME 1)``;

@@ -1,4 +1,6 @@
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.InstFp
+import Flapjack.Compiler.Backend.WordToStack.NativeLive
+import Flapjack.Compiler.Backend.WordToStack.NativeStubs
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.InstMemory
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.InstArith
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.InstAssign
@@ -11,6 +13,7 @@ import Flapjack.Compiler.Backend.WordToStack.NativeSharedMemory
 import Flapjack.Compiler.Backend.WordToStack.NativeCallArgs
 import Flapjack.Compiler.Backend.WordToStack.NativeMoves
 import Flapjack.Compiler.Backend.LabSem.Memory
+import Flapjack.Compiler.Backend.LabSem.SharedMemory
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.If
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Loop
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.MustTerminate
@@ -165,6 +168,7 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.Alloc
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.MustTerminate
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.Seq
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.If
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.Loop
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutNames
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyRemap
 import Flapjack.Pancake.PanStructs.CompileDeclsExact
@@ -260,6 +264,8 @@ import Flapjack.Compiler.Backend.Parmove.Semantics
 import Flapjack.Compiler.Backend.Parmove.Invariants
 import Flapjack.Compiler.Backend.Parmove.Invariants.Path
 import Flapjack.Compiler.Backend.Parmove.Invariants.Preservation
+import Flapjack.Compiler.Backend.Parmove.StepSem.StartExtend
+import Flapjack.Compiler.Backend.Parmove.StepSem.RemoveSelfEmitLast
 import Flapjack.Compiler.Backend.Parmove.EnvironmentChange
 import Flapjack.Compiler.Backend.Parmove.UpdateLemmas
 import Flapjack.Compiler.Backend.Parmove.Permutation

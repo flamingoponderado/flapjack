@@ -1,3 +1,5 @@
+import Flapjack.Test.ParmoveRemoveLastParity
+import Flapjack.Test.ParmoveStartExtendParity
 import Flapjack.Test.ParmoveWfStepsParity
 import Flapjack.Test.ParmoveNoReadParity
 import Flapjack.Test.LabSemFpUpdatesParity
@@ -5,6 +7,7 @@ import Flapjack.Test.LabSemArithmeticParity
 import Flapjack.Test.ParmoveStepsParity
 import Flapjack.Test.ParmovePermutationParity
 import Flapjack.Test.LabSemMemoryParity
+import Flapjack.Test.LabSemSharedMemoryParity
 import Flapjack.Test.ParmoveEnvironmentParity
 import Flapjack.Test.ParmovePathParity
 import Flapjack.Test.ParmoveUpdateLemmasParity

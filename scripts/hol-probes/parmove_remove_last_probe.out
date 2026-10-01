@@ -1,0 +1,16 @@
+pr_self_pre_1=17
+pr_self_pre_4=67
+pr_self_pre_5=47
+pr_self_post_1=17
+pr_self_post_4=67
+pr_self_post_5=47
+pr_last_pre_1=67
+pr_last_pre_4=67
+pr_last_pre_5=47
+pr_last_post_1=67
+pr_last_post_4=67
+pr_last_post_5=47
+pr_bad_self_pre=17
+pr_bad_self_post=37
+pr_bad_read_pre=17
+pr_bad_read_post=27
