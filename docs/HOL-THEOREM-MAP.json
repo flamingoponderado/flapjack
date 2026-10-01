@@ -42609,5 +42609,14 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.8) against word_allocProofScript.sml:3337-3375: !prog lt c. EVERY (\\(x,y). in_clash_tree (get_clash_tree prog lt) x /\\ in_clash_tree (get_clash_tree prog lt) y) (get_forced c prog []); reviewed inClashTree/getClashTree; the untagged generalized-accumulator lemma getForcedInClashTreeAcc replaces HOL's EVERY_get_forced rewriting inside the get_forced_ind proof. Sole carrier translation words_as_type_indexed_bitvec: HOL 'a word / 'a asm_config / 'a prog to BitVec width / AsmConfigExact width / WordLangProgHOL (BitVec width) with [NeZero width] discharging dimindex(:'a) >= 1; no other difference.",
   "words_as_type_indexed_bitvec": true
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/HeuProg.lean",
+  "lean_name": "getHeu",
+  "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+  "hol_name": "get_heu_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.3.2.5): full source1403-1464 over reviewed WordLangProgHOL(BitVec width), positive NeZero width and actual Spt HeuData/NumSet pair. Full program constructor arity, WordLangInst mirror positions and eight shared memop constructors audited against wordLangScript36-74 and asmScript; generic source word dimension translated at positive width, no fixed machine-width substitution. Native Lists/maps/mlstring carriers retain source shapes. Move right fold sources then destinations; Set Var only; heap source read before destination; Seq forward, MustTerminate/Loop recurse; If independently evaluates both bodies from same incoming pair then componentwise maximum/call union plus condition reads. Tail Call ignores arbitrary handler and adds tracked names only for direct self-target; returning Call pre-adds self names, evaluates return body, and NONE exception handler deliberately discards bodyCalls; SOME exception body starts from same original tracked/pre-added calls and combines both results. No target-evaluation, successful converter, validity, callback or fuel hypothesis. All eight ShareInst memory widths count only payload name, ignoring address; every other constructor retains input pair. Fifty-two fresh original observations and identical registered kernel exact-tree fixtures cover every program clause, both target/handler options, branch/Seq call unions, aliases, all catchalls, positive widths1/64/128, unbounded name/counter and raw-tree preservation. Analysis prerequisite only: get_heuristics assembly and production allocator migration remain open; coordinator review pending."
 }
 ]

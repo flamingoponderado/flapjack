@@ -3077,3 +3077,7 @@ run_probe word_to_stack_instruction_maximum_probeScript.sml word_to_stack_instru
 run_probe reg_alloc_remap_probeScript.sml reg_alloc_remap_probe.out \
   remap_empty remap_delta remap_duplicate remap_seq remap_branch remap_fixed remap_raw_empty remap_raw_root remap_set_order remap_large remap_nested remap_initial \
   "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe word_alloc_heu_prog_probeScript.sml word_alloc_heu_prog_probe.out \
+  hp_move hp_inst hp_get hp_set_var hp_set_other hp_heap hp_heap_alias hp_loc hp_seq hp_must hp_loop hp_if_reg hp_if_alias hp_if_imm hp_tail_indirect hp_tail_other hp_tail_self hp_ret_indirect hp_ret_other hp_ret_self hp_ret_discard hp_ret_self_discard hp_ret_handler hp_if_calls hp_seq_calls hp_share_load hp_share_load8 hp_share_load16 hp_share_load32 hp_share_store hp_share_store8 hp_share_store16 hp_share_store32 hp_ignore_skip hp_ignore_assign hp_ignore_store hp_ignore_alloc hp_ignore_consts hp_ignore_raise hp_ignore_return hp_ignore_break hp_ignore_continue hp_ignore_tick hp_ignore_install hp_ignore_code hp_ignore_data hp_ignore_ffi hp_width1 hp_width128 hp_large_counter hp_raw_skip hp_raw_self \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
