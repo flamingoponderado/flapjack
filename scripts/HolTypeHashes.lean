@@ -11,6 +11,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.LoopCases
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompilePrefix
 import Flapjack.Compiler.Backend.Parmove.Correct
 import Flapjack.Compiler.Backend.WordAlloc.Heuristics
+import Flapjack.Compiler.Backend.WordAlloc.GetStackOnly
 import Flapjack.Compiler.Backend.WordAlloc.MergeStackSets
 import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign
 import Flapjack.Misc.FindIndex
