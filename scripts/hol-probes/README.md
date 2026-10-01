@@ -2310,3 +2310,17 @@ evidence, not a cross-prover equivalence or whole-compiler correctness proof.
 `word_to_stack_native_top_probeScript.sml` audits the original compile type and checks 24 full top-level result tuples. `WordToStackNativeTopParity` checks identical bitmap words, exact sparse frame maps, complete frame lists and ordered stub/program bodies in the kernel. Boundaries include both performance seeds and narrow wrap, natural register subtraction, duplicate avoid entries/identifiers, unbounded natural IDs, zero frames and ordered multiword bitmap threading. Expected stub subterms use the independently reviewed original/native stub definitions; body and bitmap values are otherwise literal expectations. Executed compiler routing remains separately tracked.
 
 `word_alloc_checker_call_none_probeScript.sml` captures six original full-checker equality observations: empty, one/two arguments, repeated argument, noninjective colour rejection and ignored optional handler. Identical kernel fixtures plus the universal six-premise/five-conclusion Call-NONE case are imported by CompilerParity; returning Call cases remain separate obligations.
+`word_to_stack_comp_prefix_probeScript.sml` freshly observes nine whole
+compiler-prefix equations: Skip, Alloc, MustTerminate, Seq, If, Loop, returning
+Call with perf enabled, returning Call with handler, and StoreConsts. Every
+input starts from a nested AppList whose count is deliberately below its
+flattened length. `WordToStackCompilePrefixParity` applies the full original
+output-equation theorem to the same actual compiler outputs in the real Lake
+test driver. These observations are regression evidence, not a cross-prover
+equivalence or whole-compiler correctness proof.
+`word_alloc_loop_checker_probeScript.sml` freshly observes seven original
+checker equations: absent and present Break/Continue table lookups, Loop with
+Skip and Continue bodies, and a rejected colliding colour. The kernel fixtures
+in `WordAllocLoopCheckerParity` replay the same inputs through the actual test
+driver. These observations do not establish cross-prover equivalence or the
+whole allocator theorem; universal case proofs retain the original motive.
