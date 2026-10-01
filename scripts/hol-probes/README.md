@@ -2144,3 +2144,10 @@ agree. A deliberately invalid pending `NONE` source yields 99 versus 27 and
 fails `wf`; no equivalence is claimed for it. Lean checks all observations and
 the input invariants. Save's generic theorem proves the original real-register
 equivalence from the full source `wf`, with no extra agreement premise.
+
+`parmove_emithead_probeScript.sml` captures 26 fresh original sem values, paired
+with kernel checks: reversed history, a three-move active path and valid final
+NONE source. Two wf-valid boundaries violate the constructor guards: closing
+a cycle changes register2 from17 to27; a pending read changes register4 from17
+to27. These are not accepted steps. The proof derives active no-read and retains
+both original guards. Full step_sem/RTC/scheduler assembly remains open.
