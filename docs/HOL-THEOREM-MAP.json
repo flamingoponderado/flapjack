@@ -46817,5 +46817,103 @@
     ],
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.3.5): HOL Resume evaluate_remove_dead[Loop] (word_allocProofScript.sml:4281) case of the theorem at 3900-3928, stated as removeDeadGoal for the fixed constructor with removeDeadGoal hypotheses for its sub-programs only (IH for the body; the case is evaluate_remove_dead_Loop_helper at the body statement for (names, exit_names)::lt); no extra premise. Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through wordSem evaluate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_remove_dead",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateRemoveDead/StateEffect.lean",
+    "lean_name": "evaluateRemoveDead_Alloc",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.3.7): HOL Resume evaluate_remove_dead[Alloc] (word_allocProofScript.sml:4301) case of the theorem at 3900-3928, i.e. the HOL statement with prog fixed to Alloc, stated as removeDeadGoal; nlive reset to [] so stores are equal (live_store_rel_NIL); allocation register by strong_locals_rel_I_get_var, cut sets by strong_locals_rel_I_cut_envs, and the rest of alloc (push_env/gc/pop_env) reads locals only through the cut, so both sides produce the same state; no IH, no extra premise. Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through wordSem evaluate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_remove_dead",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateRemoveDead/StateEffect.lean",
+    "lean_name": "evaluateRemoveDead_StoreConsts",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.3.7): HOL Resume evaluate_remove_dead[StoreConsts] (word_allocProofScript.sml:4338) case of the theorem at 3900-3928, i.e. the HOL statement with prog fixed to StoreConsts, stated as removeDeadGoal; catch-all clause keeps nlive; address/offset registers by strong_locals_rel_I_get_var; the written/unset registers re-establish strong_locals_rel on live as HOL (lookup_insert/lookup_delete); store unchanged; no IH, no extra premise. Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through wordSem evaluate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_remove_dead",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateRemoveDead/StateEffect.lean",
+    "lean_name": "evaluateRemoveDead_Install",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.3.7): HOL Resume evaluate_remove_dead[Install] (word_allocProofScript.sml:4352) case of the theorem at 3900-3928, i.e. the HOL statement with prog fixed to Install, stated as removeDeadGoal; catch-all clause keeps nlive; four argument registers by strong_locals_rel_I_get_var, cut by strong_locals_rel_I_cut_env, so the installed locals coincide; store unchanged; no IH, no extra premise. Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through wordSem evaluate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_remove_dead",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateRemoveDead/StateEffect.lean",
+    "lean_name": "evaluateRemoveDead_CodeBufferWrite",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.3.7): HOL Resume evaluate_remove_dead[CodeBufferWrite] (word_allocProofScript.sml:4376) case of the theorem at 3900-3928, i.e. the HOL statement with prog fixed to CodeBufferWrite, stated as removeDeadGoal; catch-all clause keeps nlive; both registers by strong_locals_rel_I_get_var; locals and store unchanged, relation restricted to live (strong_locals_rel_subset); no IH, no extra premise. Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through wordSem evaluate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_remove_dead",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateRemoveDead/StateEffect.lean",
+    "lean_name": "evaluateRemoveDead_DataBufferWrite",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.3.7): HOL Resume evaluate_remove_dead[DataBufferWrite] (word_allocProofScript.sml:4393) case of the theorem at 3900-3928, i.e. the HOL statement with prog fixed to DataBufferWrite, stated as removeDeadGoal; catch-all clause keeps nlive; both registers by strong_locals_rel_I_get_var; locals and store unchanged, relation restricted to live (strong_locals_rel_subset); no IH, no extra premise. Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through wordSem evaluate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_remove_dead",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateRemoveDead/StateEffect.lean",
+    "lean_name": "evaluateRemoveDead_FFI",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.3.7): HOL Resume evaluate_remove_dead[FFI] (word_allocProofScript.sml:4410) case of the theorem at 3900-3928, i.e. the HOL statement with prog fixed to FFI, stated as removeDeadGoal; catch-all clause keeps nlive; four argument registers by strong_locals_rel_I_get_var, cut by strong_locals_rel_I_cut_env so the returned locals coincide; FFI_final flushes both states identically (flush_state_def); no IH, no extra premise. Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through wordSem evaluate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_remove_dead",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateRemoveDead/StateEffect.lean",
+    "lean_name": "evaluateRemoveDead_ShareInst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.3.7): HOL Resume evaluate_remove_dead[ShareInst] (word_allocProofScript.sml:4438) case of the theorem at 3900-3928, i.e. the HOL statement with prog fixed to ShareInst, stated as removeDeadGoal; catch-all clause keeps nlive; flat_exp_conventions makes the address Var or Op Add [Var; Const], so nlive_store holds and strong_locals_rel_I_word_exp transfers it; loads by strong_locals_rel_I_insert_insert, stores by strong_locals_rel_I_get_var; final FFI flushes both states identically; no IH, no extra premise. Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through wordSem evaluate."
   }
 ]
