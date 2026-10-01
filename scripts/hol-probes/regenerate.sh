@@ -2755,6 +2755,7 @@ run_probe parmove_path_probeScript.sml parmove_path_probe.out \
   pv_empty pv_single pv_chain pv_cycle pv_changed_dest pv_bad_prefix pv_windmill_empty pv_windmill_fresh pv_windmill_repeated pv_windmill_sources \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
+
 run_probe parmove_environment_probeScript.sml parmove_environment_probe.out \
   pe_first_written pe_second_written pe_first_untouched pe_second_untouched \
   pe_source_boundary pe_source_maps pe_empty pe_snapshot \
