@@ -38384,5 +38384,22 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.15) against word_allocProofScript.sml:442-513: for all y x f perm tperm, domain y = IMAGE f (domain x) (rendered as predicate equality with the cut_envs_lemma convention), INJ f (domain x) UNIV and strong_locals_rel f (domain x) x y imply let (l,permute) = env_to_list y perm in ?perm'. let (l',permute') = env_to_list x perm' in permute' = tperm and MAP (λ(x,y). (f x,y)) l' = l. Same quantifiers, three premises, existential and both conclusions; proof follows HOL (PERM of mapped sorted lists, list_rearrange_perm, list_rearrange_MAP, perm' = if n=0 then _ else tperm (n-1))."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/State.lean",
+  "lean_name": "Word8Loc",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "word8_loc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol source comparison (2026-10-01, bead flapjack-b4v0.1): labSemScript.sml10-44. Word8Loc exactly Byte word8 | LocByte num num num. State preserves all23 fields in order: regs total num->word_loc, fp_regs total num->word64, mem total word->word_loc, mem_domain/shared_mem_domain sets, pc, be, ffi, io_regs num->ffiname->num->word option, cc_regs num->num->word option, io_fp_regs/cc_fp_regs num->num->word64, code list of sections, compile C->prog->(word8 list*C)option, compile_oracle num->C*prog, code_buffer buffer(width,8), clock, failed and five ptr/len/link register fields. Canonical WordLocW, WordSemBuffer, HolFfiState and HolFfiName imported without duplication. Concrete LabLang instantiation uses HolAsm (not merely HolInst nor generic AsmData), HolMemop/HolAddr/HolCmp/HolRegImm and opaque MlString at one shared width; all constructor arities and source payloads compared labLang16-51/asm138-145. Sets use the previously reviewed Bool membership rendering; no finite-map fields, hence no fmap qualifier. Only variable word dimension uses positive BitVec width/NeZero; fixed8/64 retained. C/F universe0 independent; no evaluator or runtime claim."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/State.lean",
+  "lean_name": "State",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "state",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "reviewer": "flapjack-sol source comparison (2026-10-01, bead flapjack-b4v0.1): labSemScript.sml10-44. Word8Loc exactly Byte word8 | LocByte num num num. State preserves all23 fields in order: regs total num->word_loc, fp_regs total num->word64, mem total word->word_loc, mem_domain/shared_mem_domain sets, pc, be, ffi, io_regs num->ffiname->num->word option, cc_regs num->num->word option, io_fp_regs/cc_fp_regs num->num->word64, code list of sections, compile C->prog->(word8 list*C)option, compile_oracle num->C*prog, code_buffer buffer(width,8), clock, failed and five ptr/len/link register fields. Canonical WordLocW, WordSemBuffer, HolFfiState and HolFfiName imported without duplication. Concrete LabLang instantiation uses HolAsm (not merely HolInst nor generic AsmData), HolMemop/HolAddr/HolCmp/HolRegImm and opaque MlString at one shared width; all constructor arities and source payloads compared labLang16-51/asm138-145. Sets use the previously reviewed Bool membership rendering; no finite-map fields, hence no fmap qualifier. Only variable word dimension uses positive BitVec width/NeZero; fixed8/64 retained. C/F universe0 independent; no evaluator or runtime claim.",
+  "words_as_type_indexed_bitvec": true
 }
 ]
