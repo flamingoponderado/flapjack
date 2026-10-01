@@ -1,0 +1,42 @@
+{
+  "bead": "flapjack-pxn.18.5.15.3.46.6.1",
+  "parent": "flapjack-pxn.18.5.15.3.46.6",
+  "reviewer": "flapjack-luna-c",
+  "verdict": "SOURCE/KERNEL/ORIGINAL PASS; coordinator acceptance pending",
+  "delivery_sha": "70b875da90db5bcd183c25dc8b439e86507a4f39",
+  "proof_blob": "69ae005a33d69dd32c1c026885ef9a3954b5a7ef",
+  "fixture_blob": "32f43dcedf8029dadddb5ceeeb87c31625a95619",
+  "hol_source": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml:920-930",
+  "lean_source": "Flapjack/Compiler/Backend/Parmove/TempBeforeAssign/Pmov.lean:11",
+  "statement_review": [
+    "HOL forall p i retains arbitrary unused beta; Lean retains independent {\u03b9 : Type} (_i : \u03b9), with a function-valued fixture.",
+    "Only original wf and initial safety over reverse(active ++ emitted) are assumed. Conclusion computes actual pmov, without callbacks, target safety/evaluation premises or intermediate wf assumptions.",
+    "Option/list/product carriers, all six wf conjuncts, scratch-read rejection and immediate scratch-write acceptance match literal HOL.",
+    "Proof composes unconditional pmov_dsteps with dsteps_steps using initial wf and the accepted RTC scratch invariant; final wf is projected away as in HOL. DecidableEq implements source equality."
+  ],
+  "kernel_review": {
+    "command": "lake lean /tmp/c-pmov-review.lean",
+    "exit_code": 0,
+    "method": "Exact immutable proof and all 11 immutable examples checked against accepted imports. Only the fixture import of the unmerged peer module was removed.",
+    "axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "scope": "Isolated proof and examples, not full peer branch rebuild.",
+    "reproduction": "git show delivery_sha:lean_source (without :11), followed by git show delivery_sha:Flapjack/Test/ParmoveTempPmovParity.lean with its first import removed; append #print axioms Flapjack.Compiler.Backend.Parmove.pmovNotUseTempBeforeAssign and #check @Flapjack.Compiler.Backend.Parmove.pmovNotUseTempBeforeAssign, then lake lean the temporary file."
+  },
+  "original_review": {
+    "command": "/home/zksecurity/HOL/bin/hol run /tmp/c-pmov-review-originalScript.sml",
+    "exit_code": 0,
+    "method": "Fresh read-only DB.fetch, binder type inspection and EVAL of (wf, initial safety, complete pmov output, final safety) for all 11 fixture inputs.",
+    "output": "original_statement=\u22a2 \u2200p i.\n    \u22a2 p \u2227 not_use_temp_before_assign (REVERSE (FST (SND p) ++ SND (SND p))) \u21d2\n    not_use_temp_before_assign\n      (REVERSE (FST (SND (pmov p)) ++ SND (SND (pmov p))))\np\n::(\u03b1 option # \u03b1 option) list #\n(\u03b1 option # \u03b1 option) list # (\u03b1 option # \u03b1 option) list\ni\n::\u03b2\nself=(T,T,([],[],[]),T)\n\nchain=(T,T,([],[],[(SOME 2,SOME 3); (SOME 1,SOME 2)]),T)\n\ncycle=(T,T,([],[],[(SOME 1,NONE); (SOME 2,SOME 1); (NONE,SOME 2)]),T)\n\nactive=(T,T,([],[],[(SOME 2,NONE); (SOME 1,SOME 2); (NONE,SOME 1)]),T)\n\nempty=(T,T,([],[],[]),T)\n\ninitialized=(T,T,([],[],[(NONE,SOME 7)]),T)\n\nprior_scratch=(T,T,([],[],[(SOME 1,NONE); (NONE,SOME 2)]),T)\n\nunsafe_terminal=(T,F,([],[],[(SOME 7,NONE)]),F)\n\npending_scratch=(F,T,([],[],[(NONE,SOME 2); (SOME 1,NONE)]),F)\n\nduplicate=(F,T,([],[],[(SOME 1,SOME 3); (SOME 1,SOME 2)]),T)\n\nbool=(T,T,([],[],[(SOME T,SOME F)]),T)\n\n",
+    "comparison": "Four fixture whole outputs match exactly. Eight positive applications have true wf and initial/final safety. Unsafe terminal has false initial/final safety; pending scratch and duplicate violate wf. Invalid rows are not successful conditional theorem applications. Peer fixtures honestly describe earlier reused captures.",
+    "reproduction_script": "scripts/hol-audits/pmov_scratch_safety_reviewScript.sml"
+  },
+  "limitations": [
+    "Source review and finite oracle rows do not prove cross-assistant equivalence for all inputs.",
+    "No peer branch merged or edited; no executable implementation changed.",
+    "Parent and review child remain open for coordinator acceptance."
+  ]
+}

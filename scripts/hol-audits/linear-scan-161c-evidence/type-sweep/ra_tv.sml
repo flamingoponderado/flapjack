@@ -1,0 +1,14 @@
+load "bossLib"; load "reg_allocProofTheory"; open HolKernel Parse boolLib bossLib;
+val _ = Globals.linewidth := 3000; val _ = show_types := true;
+fun q n = (let val th = DB.fetch "reg_allocProof" n; val tvs = type_vars_in_term (concl th) in print ("TV " ^ n ^ " " ^ Int.toString (length tvs) ^ "\n"); if null tvs then () else (print ("ST " ^ n ^ " "); print_term (concl th); print "\n") end) handle _ => print ("TV " ^ n ^ " MISSING\n");
+val _ = q "INJ_IMG_lookup";
+val _ = q "MEM_smerge";
+val _ = q "check_clash_tree_INJ";
+val _ = q "check_col_INJ";
+val _ = q "check_partial_col_INJ";
+val _ = q "check_partial_col_domain";
+val _ = q "check_partial_col_success";
+val _ = q "domain_numset_list_delete";
+val _ = q "in_clash_tree_def";
+val _ = q "sp_inverts_def";
+val _ = q "sp_inverts_insert";

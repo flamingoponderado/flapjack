@@ -37,6 +37,12 @@
       "sha256": "dbfa8ad0165adfd7bcad992839f37f39c4b4b51bbb0bc9805a40e24529197422"
     },
     {
+      "bytes": 209,
+      "out": "backendprops_nonzero_labels_probe.out",
+      "rows": 15,
+      "sha256": "79dbfaff328f99645e594adf91217ba216d2da03e230f88c3b46a1308bf1c014"
+    },
+    {
       "bytes": 665,
       "out": "binary_ieee_round_constants_probe.out",
       "rows": 3,
@@ -1097,6 +1103,12 @@
       "out": "lab_props_sec_ends_label_probe.out",
       "rows": 5,
       "sha256": "152d6742e65b67592b63a097593a4a131602feb98553eba932290ab7156f521b"
+    },
+    {
+      "bytes": 145,
+      "out": "lab_to_target_section_lookup_probe.out",
+      "rows": 8,
+      "sha256": "280b5b0f8b136fde960f097d23d0bd12518c36b19bca95c84f9e561db8f3d0e4"
     },
     {
       "bytes": 1166,
@@ -2905,6 +2917,12 @@
       "sha256": "12dc56e3354f8ae0190fb9c1ea937f8f3329a2c19644f3059cef1b548eeab834"
     },
     {
+      "bytes": 119,
+      "out": "parmove_first_index_probe.out",
+      "rows": 15,
+      "sha256": "eaeca280f556d0868b98c2ab3b7d725e400d5f0aeba27db04ecda90eb05a7bf4"
+    },
+    {
       "bytes": 124,
       "out": "parmove_fstep_probe.out",
       "rows": 10,
@@ -3179,6 +3197,12 @@
       "out": "reg_alloc_remap_probe.out",
       "rows": 12,
       "sha256": "3852b3f4916d853750298109c8af0bd0d2b7c5dbf3d0eac4067d4762abf12459"
+    },
+    {
+      "bytes": 102,
+      "out": "reg_alloc_safe_div_probe.out",
+      "rows": 14,
+      "sha256": "77be640a211ee71d7697652674ce16af134f9ee40705464891333e6572e53858"
     },
     {
       "bytes": 163,
@@ -3697,6 +3721,12 @@
       "sha256": "2bccd8807cc28a4cc17ec6a92d04822083c8949ea97ec1cf5bdab9b2476addaf"
     },
     {
+      "bytes": 160,
+      "out": "target_props_interference_probe.out",
+      "rows": 8,
+      "sha256": "9b8902ef84d7de51b5b581223be164199171fc8083931242ffca07152f870db1"
+    },
+    {
       "bytes": 213,
       "out": "target_sem_encoded_bytes_probe.out",
       "rows": 11,
@@ -3911,6 +3941,18 @@
       "out": "word_alloc_loop_checker_probe.out",
       "rows": 7,
       "sha256": "95c0fd22077891c7d510c9afdbe86a6795254605d16cf11e8cc345859c72e624"
+    },
+    {
+      "bytes": 287,
+      "out": "word_alloc_max_exp_probe.out",
+      "rows": 11,
+      "sha256": "065e30996d63ebeacdfb205263ad9e8ff7098a2ab078dd0a84a2fb2af41f1b31"
+    },
+    {
+      "bytes": 307,
+      "out": "word_alloc_max_inst_probe.out",
+      "rows": 13,
+      "sha256": "545ae70e2aa85b72b6ef7cab66a3ab6fce73527f371bf38e334f52b5666df961"
     },
     {
       "bytes": 110,
@@ -4321,10 +4363,22 @@
       "sha256": "b8e27124fa021d27663b0795106ece3816fb9c7e3f1f54d7714f09b68f1942c5"
     },
     {
+      "bytes": 183,
+      "out": "word_to_stack_cse_codec_probe.out",
+      "rows": 16,
+      "sha256": "26b5b30b79b24ccf1c8d6e6d02b4eda9f3a307ae3c2da7cef374195900c45552"
+    },
+    {
       "bytes": 155,
       "out": "word_to_stack_cutset_maximum_probe.out",
       "rows": 12,
       "sha256": "ece396d132d4a84b7a8a527fa9e481c2f858fb889d4ad8592e14aaf7269f3e9b"
+    },
+    {
+      "bytes": 150,
+      "out": "word_to_stack_dead_codec_probe.out",
+      "rows": 13,
+      "sha256": "c869f5ca4d792d01aa5448d3dc9a72d2a38078dabf01f21872f223b5679ac0d4"
     },
     {
       "bytes": 96,
@@ -4441,6 +4495,12 @@
       "sha256": "b9bb14bb79be72c5d83ae4f8b1f00a0beb7092529dd537b2fcc094f8d9bb0c78"
     },
     {
+      "bytes": 95,
+      "out": "word_to_stack_ssa_codec_probe.out",
+      "rows": 8,
+      "sha256": "a828556fd4efeb1e9573fac8ca93e61dbcd9b204da0abacc188c4c054747b8e5"
+    },
+    {
       "bytes": 119,
       "out": "word_to_stack_stack_size_rel_probe.out",
       "rows": 8,
@@ -4457,6 +4517,12 @@
       "out": "word_to_stack_stub_probe.out",
       "rows": 6,
       "sha256": "c18d790b3072d993e9de1f22098a5a715f382ad1cf9d5831f706ba95444b32b7"
+    },
+    {
+      "bytes": 183,
+      "out": "word_to_stack_unreach_codec_probe.out",
+      "rows": 16,
+      "sha256": "555f3e5d087f6c4adfc67b4de74800fd68ac5dc4b9658ceead017ec2703b415e"
     },
     {
       "bytes": 185,
@@ -4493,6 +4559,12 @@
       "out": "wordconvs_code_labels_probe.out",
       "rows": 12,
       "sha256": "7e554eb4c4f85794408a9035532af0edf01084a1d290160025fa0690211c9acf"
+    },
+    {
+      "bytes": 235,
+      "out": "wordconvs_exp_mono_probe.out",
+      "rows": 9,
+      "sha256": "f3ea2141323e36cbc98ef85fd29086685dd246cb6d87e688c5edfae5567c77db"
     },
     {
       "bytes": 82,

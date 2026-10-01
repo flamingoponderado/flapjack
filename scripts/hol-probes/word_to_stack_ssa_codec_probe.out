@@ -1,0 +1,8 @@
+sc_skip=T
+sc_assigns=T
+sc_constant=T
+sc_shift=T
+sc_multiply=T
+sc_raise=T
+sc_call=T
+sc_return=T
