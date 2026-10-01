@@ -2963,6 +2963,13 @@ run_probe word_alloc_share_checker_probeScript.sml word_alloc_share_checker_prob
 run_probe word_alloc_spillcost_probeScript.sml word_alloc_spillcost_probe.out \
   spill_zero spill_call_tail spill_call_nontail spill_left_register spill_left_memory spill_right_register spill_right_memory spill_asymmetric_tail spill_asymmetric_nontail spill_large \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+run_probe word_alloc_return_checker_probeScript.sml word_alloc_return_checker_probe.out \
+  rc_empty rc_cuts rc_duplicate_args rc_return_tick rc_return_break rc_return_collision rc_args_collision \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_alloc_oracle_colour_probeScript.sml word_alloc_oracle_colour_probe.out \
+  oc_none oc_empty oc_physical_bad oc_checker_collision oc_forced_collision oc_forced_distinct oc_rename oc_stack_equal oc_stack_below oc_raw_map \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
 
 run_probe word_alloc_heu_counters_probeScript.sml word_alloc_heu_counters_probe.out \
   hc_lhs_const_absent hc_lhs_const_present hc_lhs_const_repeat hc_lhs_const_other hc_lhs_reg_absent hc_lhs_reg_present hc_lhs_reg_repeat hc_lhs_reg_other hc_lhs_mem_absent hc_lhs_mem_present hc_lhs_mem_repeat hc_lhs_mem_other hc_rhs_reg_absent hc_rhs_reg_present hc_rhs_reg_repeat hc_rhs_reg_other hc_rhs_mem_absent hc_rhs_mem_present hc_rhs_mem_repeat hc_rhs_mem_other \
