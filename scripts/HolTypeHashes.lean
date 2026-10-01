@@ -315,6 +315,7 @@ import Flapjack.FpSemHOL
 import Flapjack.Basis.Pure.MlList
 import Flapjack.Compiler.Backend.RegAlloc
 import Flapjack.Compiler.Backend.RegAlloc.ClashTree
+import Flapjack.Compiler.Backend.LinearScan
 import Flapjack.AstHOL
 import Flapjack.Compiler.Backend.StackLang
 import Flapjack.Compiler.Backend.StackLang.Prog

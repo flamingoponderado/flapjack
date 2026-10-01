@@ -51,6 +51,19 @@ LabSem evaluator routing or cross-language IEEE equivalence. Regenerate with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=labsem_fp_updates_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
+`linear_scan_pure_defs_probe.out` captures fifteen direct original
+`linear_scanScript.sml` EVAL observations of the pure live-tree and interval
+definitions: get_live_tree with a branch cut set, get_live_backward,
+fix_domination (both branches of the `live = LN` test), check_live_tree
+(success, colour collision, branch merge), numset_list_add_if_lt/gt over a
+present key, get_intervals, get_intervals_withlive, get_intervals_ct,
+size_of_live_tree and both numset_list_insert variants, each compared with a
+full raw sparse-tree value. `Flapjack.Test.LinearScanPureDefsParity`
+kernel-replays the identical inputs and outputs. These finite rows do not
+prove the allocator theorem or route these definitions into the compiler.
+Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=linear_scan_pure_defs_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `reg_alloc_clash_tree_probe.out` captures eight direct original register
 allocator checker observations: repeated deletion, duplicate colours,
 existing-name skips, partial collisions, Delta's discarded write result,

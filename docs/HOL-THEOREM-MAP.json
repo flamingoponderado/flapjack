@@ -42310,5 +42310,189 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.11.4.19): full source2813-2826 theorem, proof2813-3309 get_clash_tree_ind. Quantified prog/lt/f/live/flive/livein/flivein unchanged. Six premises are wf_cutsets, wf live, EVERY paired wf context, domain flive=IMAGE f(domain live), INJ f(domain live) UNIV, and original successful check_clash_tree equation. Five conclusions are wf livein, INJ on livein, colouring_ok, livein=get_live, domain flivein=IMAGE f(domain livein); hide is identity. Predicate set/image/injectivity translations preserve each conjunct. No target evaluation, caller-supplied IH, poststate fact, constructor restriction or additional premise. Structural recursive proof uses accepted cases for every native constructor and all three Call branches (tail arbitrary ignored handler, returning NONE handler, returning SOME handler); only strict subprogram recursion remains internally. Exact WordLangProgHOL/BitVec positive width with NeZero retains source dimension via words_as_type_indexed_bitvec, HOL lists and Spt unit trees retained. Five fresh mixed original checker observations and kernel replay exercise nested control/return/handler/tail ignored malformed handler/rejection; observations supplement, not establish, source equivalence. Full checker soundness assembly now proved; executed checker route, allocation semantics and whole compiler correctness remain open. Coordinator review pending."
-}
+},
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "live_tree",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan.lean",
+    "lean_name": "LiveTree",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.2), linear_scanScript.sml:17-22: four constructors Writes/Reads (num list), Branch/Seq (two subtrees), same order. Carriers: HOL num_set is NumSet (Spt Unit), int num_map is Spt Int, int is Int, num list is List Nat, clash_tree is the reviewed RegAlloc.ClashTree; toAList/difference/union/insert/lookup are sptToAList/sptDifference/sptUnion/sptInsert/sptLookup and numset_list_delete is the reviewed RegAlloc.numsetListDelete. Every clause, let binding, argument order and traversal order (right child first where HOL numbers/checks lt2 or ct2 first) is transcribed. No word, finite-map or list-as-array translation. Kernel replay of 15 original HOL EVAL rows in Flapjack.Test.LinearScanPureDefsParity (scripts/hol-probes/linear_scan_pure_defs_probe.out). Proof-side port; the executed allocator (Flapjack/RiscV/LinearScan*.lean) is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "numset_list_insert_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan.lean",
+    "lean_name": "numsetListInsert",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.2), linear_scanScript.sml:25-28: left-to-right insert x () into num_set. Carriers: HOL num_set is NumSet (Spt Unit), int num_map is Spt Int, int is Int, num list is List Nat, clash_tree is the reviewed RegAlloc.ClashTree; toAList/difference/union/insert/lookup are sptToAList/sptDifference/sptUnion/sptInsert/sptLookup and numset_list_delete is the reviewed RegAlloc.numsetListDelete. Every clause, let binding, argument order and traversal order (right child first where HOL numbers/checks lt2 or ct2 first) is transcribed. No word, finite-map or list-as-array translation. Kernel replay of 15 original HOL EVAL rows in Flapjack.Test.LinearScanPureDefsParity (scripts/hol-probes/linear_scan_pure_defs_probe.out). Proof-side port; the executed allocator (Flapjack/RiscV/LinearScan*.lean) is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "numset_list_insert_nottailrec_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan.lean",
+    "lean_name": "numsetListInsertNottailrec",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.2), linear_scanScript.sml:30-33: insert x () applied after the recursive insertion of the tail. Carriers: HOL num_set is NumSet (Spt Unit), int num_map is Spt Int, int is Int, num list is List Nat, clash_tree is the reviewed RegAlloc.ClashTree; toAList/difference/union/insert/lookup are sptToAList/sptDifference/sptUnion/sptInsert/sptLookup and numset_list_delete is the reviewed RegAlloc.numsetListDelete. Every clause, let binding, argument order and traversal order (right child first where HOL numbers/checks lt2 or ct2 first) is transcribed. No word, finite-map or list-as-array translation. Kernel replay of 15 original HOL EVAL rows in Flapjack.Test.LinearScanPureDefsParity (scripts/hol-probes/linear_scan_pure_defs_probe.out). Proof-side port; the executed allocator (Flapjack/RiscV/LinearScan*.lean) is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "get_live_tree_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan.lean",
+    "lean_name": "getLiveTree",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.2), linear_scanScript.sml:35-58: Delta wr rd = Seq (Reads rd) (Writes wr); Set = Reads (MAP FST (toAList cutset)); Branch with SOME cut = Seq (Reads cutlist) (Branch lt1 lt2), NONE = Branch lt1 lt2; Seq = Seq lt1 lt2. Carriers: HOL num_set is NumSet (Spt Unit), int num_map is Spt Int, int is Int, num list is List Nat, clash_tree is the reviewed RegAlloc.ClashTree; toAList/difference/union/insert/lookup are sptToAList/sptDifference/sptUnion/sptInsert/sptLookup and numset_list_delete is the reviewed RegAlloc.numsetListDelete. Every clause, let binding, argument order and traversal order (right child first where HOL numbers/checks lt2 or ct2 first) is transcribed. No word, finite-map or list-as-array translation. Kernel replay of 15 original HOL EVAL rows in Flapjack.Test.LinearScanPureDefsParity (scripts/hol-probes/linear_scan_pure_defs_probe.out). Proof-side port; the executed allocator (Flapjack/RiscV/LinearScan*.lean) is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "check_live_tree_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan.lean",
+    "lean_name": "checkLiveTree",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.2), linear_scanScript.sml:60-88: Writes runs check_partial_col and discards its output, returning numset_list_delete l live and numset_list_delete (MAP f l) flive; Reads is check_partial_col; Branch checks lt1 then lt2 from the same inputs, then check_partial_col over MAP FST (toAList (difference livein2 livein1)) into (livein1, flivein1); Seq checks lt2 first then lt1. Carriers: HOL num_set is NumSet (Spt Unit), int num_map is Spt Int, int is Int, num list is List Nat, clash_tree is the reviewed RegAlloc.ClashTree; toAList/difference/union/insert/lookup are sptToAList/sptDifference/sptUnion/sptInsert/sptLookup and numset_list_delete is the reviewed RegAlloc.numsetListDelete. Every clause, let binding, argument order and traversal order (right child first where HOL numbers/checks lt2 or ct2 first) is transcribed. No word, finite-map or list-as-array translation. Kernel replay of 15 original HOL EVAL rows in Flapjack.Test.LinearScanPureDefsParity (scripts/hol-probes/linear_scan_pure_defs_probe.out). Proof-side port; the executed allocator (Flapjack/RiscV/LinearScan*.lean) is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "get_live_backward_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan.lean",
+    "lean_name": "getLiveBackward",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.2), linear_scanScript.sml:90-106: Writes deletes, Reads numset_list_insert, Branch inserts MAP FST (toAList (difference live2 live1)) into live1, Seq backward through lt2 then lt1. Carriers: HOL num_set is NumSet (Spt Unit), int num_map is Spt Int, int is Int, num list is List Nat, clash_tree is the reviewed RegAlloc.ClashTree; toAList/difference/union/insert/lookup are sptToAList/sptDifference/sptUnion/sptInsert/sptLookup and numset_list_delete is the reviewed RegAlloc.numsetListDelete. Every clause, let binding, argument order and traversal order (right child first where HOL numbers/checks lt2 or ct2 first) is transcribed. No word, finite-map or list-as-array translation. Kernel replay of 15 original HOL EVAL rows in Flapjack.Test.LinearScanPureDefsParity (scripts/hol-probes/linear_scan_pure_defs_probe.out). Proof-side port; the executed allocator (Flapjack/RiscV/LinearScan*.lean) is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "fix_domination_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan.lean",
+    "lean_name": "fixDomination",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.2), linear_scanScript.sml:108-113: live = get_live_backward lt LN; raw tree equality live = LN (Spt DecidableEq) then lt, else Seq (Writes (MAP FST (toAList live))) lt. Carriers: HOL num_set is NumSet (Spt Unit), int num_map is Spt Int, int is Int, num list is List Nat, clash_tree is the reviewed RegAlloc.ClashTree; toAList/difference/union/insert/lookup are sptToAList/sptDifference/sptUnion/sptInsert/sptLookup and numset_list_delete is the reviewed RegAlloc.numsetListDelete. Every clause, let binding, argument order and traversal order (right child first where HOL numbers/checks lt2 or ct2 first) is transcribed. No word, finite-map or list-as-array translation. Kernel replay of 15 original HOL EVAL rows in Flapjack.Test.LinearScanPureDefsParity (scripts/hol-probes/linear_scan_pure_defs_probe.out). Proof-side port; the executed allocator (Flapjack/RiscV/LinearScan*.lean) is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "numset_list_add_if_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan.lean",
+    "lean_name": "numsetListAddIf",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.2), linear_scanScript.sml:115-127: P : int -> int -> bool is a Lean Bool function; SOME v' inserts only if P v v', NONE always inserts. Carriers: HOL num_set is NumSet (Spt Unit), int num_map is Spt Int, int is Int, num list is List Nat, clash_tree is the reviewed RegAlloc.ClashTree; toAList/difference/union/insert/lookup are sptToAList/sptDifference/sptUnion/sptInsert/sptLookup and numset_list_delete is the reviewed RegAlloc.numsetListDelete. Every clause, let binding, argument order and traversal order (right child first where HOL numbers/checks lt2 or ct2 first) is transcribed. No word, finite-map or list-as-array translation. Kernel replay of 15 original HOL EVAL rows in Flapjack.Test.LinearScanPureDefsParity (scripts/hol-probes/linear_scan_pure_defs_probe.out). Proof-side port; the executed allocator (Flapjack/RiscV/LinearScan*.lean) is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "numset_list_add_if_lt_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan.lean",
+    "lean_name": "numsetListAddIfLt",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.2), linear_scanScript.sml:129-131: P = $<= rendered fun a b => decide (a <= b). Carriers: HOL num_set is NumSet (Spt Unit), int num_map is Spt Int, int is Int, num list is List Nat, clash_tree is the reviewed RegAlloc.ClashTree; toAList/difference/union/insert/lookup are sptToAList/sptDifference/sptUnion/sptInsert/sptLookup and numset_list_delete is the reviewed RegAlloc.numsetListDelete. Every clause, let binding, argument order and traversal order (right child first where HOL numbers/checks lt2 or ct2 first) is transcribed. No word, finite-map or list-as-array translation. Kernel replay of 15 original HOL EVAL rows in Flapjack.Test.LinearScanPureDefsParity (scripts/hol-probes/linear_scan_pure_defs_probe.out). Proof-side port; the executed allocator (Flapjack/RiscV/LinearScan*.lean) is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "numset_list_add_if_gt_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan.lean",
+    "lean_name": "numsetListAddIfGt",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.2), linear_scanScript.sml:133-135: P = \\a b. b <= a rendered fun a b => decide (b <= a). Carriers: HOL num_set is NumSet (Spt Unit), int num_map is Spt Int, int is Int, num list is List Nat, clash_tree is the reviewed RegAlloc.ClashTree; toAList/difference/union/insert/lookup are sptToAList/sptDifference/sptUnion/sptInsert/sptLookup and numset_list_delete is the reviewed RegAlloc.numsetListDelete. Every clause, let binding, argument order and traversal order (right child first where HOL numbers/checks lt2 or ct2 first) is transcribed. No word, finite-map or list-as-array translation. Kernel replay of 15 original HOL EVAL rows in Flapjack.Test.LinearScanPureDefsParity (scripts/hol-probes/linear_scan_pure_defs_probe.out). Proof-side port; the executed allocator (Flapjack/RiscV/LinearScan*.lean) is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "size_of_live_tree_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan.lean",
+    "lean_name": "sizeOfLiveTree",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.2), linear_scanScript.sml:137-151: int-valued, leaves 1, compound nodes sum. Carriers: HOL num_set is NumSet (Spt Unit), int num_map is Spt Int, int is Int, num list is List Nat, clash_tree is the reviewed RegAlloc.ClashTree; toAList/difference/union/insert/lookup are sptToAList/sptDifference/sptUnion/sptInsert/sptLookup and numset_list_delete is the reviewed RegAlloc.numsetListDelete. Every clause, let binding, argument order and traversal order (right child first where HOL numbers/checks lt2 or ct2 first) is transcribed. No word, finite-map or list-as-array translation. Kernel replay of 15 original HOL EVAL rows in Flapjack.Test.LinearScanPureDefsParity (scripts/hol-probes/linear_scan_pure_defs_probe.out). Proof-side port; the executed allocator (Flapjack/RiscV/LinearScan*.lean) is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "get_intervals_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan.lean",
+    "lean_name": "getIntervals",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.2), linear_scanScript.sml:153-170: Writes (n-1, add_if_lt l n beg, add_if_gt l n end); Reads (n-1, beg, add_if_gt l n end); Branch and Seq both number lt2 first then lt1. Carriers: HOL num_set is NumSet (Spt Unit), int num_map is Spt Int, int is Int, num list is List Nat, clash_tree is the reviewed RegAlloc.ClashTree; toAList/difference/union/insert/lookup are sptToAList/sptDifference/sptUnion/sptInsert/sptLookup and numset_list_delete is the reviewed RegAlloc.numsetListDelete. Every clause, let binding, argument order and traversal order (right child first where HOL numbers/checks lt2 or ct2 first) is transcribed. No word, finite-map or list-as-array translation. Kernel replay of 15 original HOL EVAL rows in Flapjack.Test.LinearScanPureDefsParity (scripts/hol-probes/linear_scan_pure_defs_probe.out). Proof-side port; the executed allocator (Flapjack/RiscV/LinearScan*.lean) is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "get_intervals_withlive_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan.lean",
+    "lean_name": "getIntervalsWithlive",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.2), linear_scanScript.sml:173-191: Reads deletes l from int_beg; Branch numbers lt1 from difference int_beg2 live and removes union (get_live_backward lt1 live) (get_live_backward lt2 live) from the result; Seq passes get_live_backward lt2 live to lt1. Carriers: HOL num_set is NumSet (Spt Unit), int num_map is Spt Int, int is Int, num list is List Nat, clash_tree is the reviewed RegAlloc.ClashTree; toAList/difference/union/insert/lookup are sptToAList/sptDifference/sptUnion/sptInsert/sptLookup and numset_list_delete is the reviewed RegAlloc.numsetListDelete. Every clause, let binding, argument order and traversal order (right child first where HOL numbers/checks lt2 or ct2 first) is transcribed. No word, finite-map or list-as-array translation. Kernel replay of 15 original HOL EVAL rows in Flapjack.Test.LinearScanPureDefsParity (scripts/hol-probes/linear_scan_pure_defs_probe.out). Proof-side port; the executed allocator (Flapjack/RiscV/LinearScan*.lean) is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "check_number_property_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan.lean",
+    "lean_name": "checkNumberProperty",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.2), linear_scanScript.sml:193-215: HOL bool-valued with arbitrary predicate P : int -> num_set -> bool; Lean is Prop-valued with P : Int -> NumSet -> Prop (HOL's classical bool), conjunction r1 /\\ r2, same numbering n - size_of_live_tree lt2 and live sets. Carriers: HOL num_set is NumSet (Spt Unit), int num_map is Spt Int, int is Int, num list is List Nat, clash_tree is the reviewed RegAlloc.ClashTree; toAList/difference/union/insert/lookup are sptToAList/sptDifference/sptUnion/sptInsert/sptLookup and numset_list_delete is the reviewed RegAlloc.numsetListDelete. Every clause, let binding, argument order and traversal order (right child first where HOL numbers/checks lt2 or ct2 first) is transcribed. No word, finite-map or list-as-array translation. Kernel replay of 15 original HOL EVAL rows in Flapjack.Test.LinearScanPureDefsParity (scripts/hol-probes/linear_scan_pure_defs_probe.out). Proof-side port; the executed allocator (Flapjack/RiscV/LinearScan*.lean) is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "check_number_property_strong_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan.lean",
+    "lean_name": "checkNumberPropertyStrong",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.2), linear_scanScript.sml:217-239: as check_number_property, Prop-valued, with the extra Branch conjunct P (n - size_of_live_tree (Branch lt1 lt2)) (get_live_backward (Branch lt1 lt2) live). Carriers: HOL num_set is NumSet (Spt Unit), int num_map is Spt Int, int is Int, num list is List Nat, clash_tree is the reviewed RegAlloc.ClashTree; toAList/difference/union/insert/lookup are sptToAList/sptDifference/sptUnion/sptInsert/sptLookup and numset_list_delete is the reviewed RegAlloc.numsetListDelete. Every clause, let binding, argument order and traversal order (right child first where HOL numbers/checks lt2 or ct2 first) is transcribed. No word, finite-map or list-as-array translation. Kernel replay of 15 original HOL EVAL rows in Flapjack.Test.LinearScanPureDefsParity (scripts/hol-probes/linear_scan_pure_defs_probe.out). Proof-side port; the executed allocator (Flapjack/RiscV/LinearScan*.lean) is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "check_startlive_prop_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan.lean",
+    "lean_name": "checkStartliveProp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.2), linear_scanScript.sml:241-260: Prop-valued (HOL bool with !r and ?v); Writes: forall r, MEM r l ==> option_CASE (lookup r beg) ndef (\\x.x) <= n /\\ ?v. lookup r end = SOME v /\\ n <= v (option_CASE as match); Reads T; Branch/Seq conjunction with n - size_of_live_tree lt2 for lt1. Carriers: HOL num_set is NumSet (Spt Unit), int num_map is Spt Int, int is Int, num list is List Nat, clash_tree is the reviewed RegAlloc.ClashTree; toAList/difference/union/insert/lookup are sptToAList/sptDifference/sptUnion/sptInsert/sptLookup and numset_list_delete is the reviewed RegAlloc.numsetListDelete. Every clause, let binding, argument order and traversal order (right child first where HOL numbers/checks lt2 or ct2 first) is transcribed. No word, finite-map or list-as-array translation. Kernel replay of 15 original HOL EVAL rows in Flapjack.Test.LinearScanPureDefsParity (scripts/hol-probes/linear_scan_pure_defs_probe.out). Proof-side port; the executed allocator (Flapjack/RiscV/LinearScan*.lean) is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "live_tree_registers_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan.lean",
+    "lean_name": "liveTreeRegisters",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.2), linear_scanScript.sml:262-267: num set as Nat -> Prop; set l is list membership, UNION pointwise disjunction. Carriers: HOL num_set is NumSet (Spt Unit), int num_map is Spt Int, int is Int, num list is List Nat, clash_tree is the reviewed RegAlloc.ClashTree; toAList/difference/union/insert/lookup are sptToAList/sptDifference/sptUnion/sptInsert/sptLookup and numset_list_delete is the reviewed RegAlloc.numsetListDelete. Every clause, let binding, argument order and traversal order (right child first where HOL numbers/checks lt2 or ct2 first) is transcribed. No word, finite-map or list-as-array translation. Kernel replay of 15 original HOL EVAL rows in Flapjack.Test.LinearScanPureDefsParity (scripts/hol-probes/linear_scan_pure_defs_probe.out). Proof-side port; the executed allocator (Flapjack/RiscV/LinearScan*.lean) is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "interval_intersect_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan.lean",
+    "lean_name": "intervalIntersect",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.2), linear_scanScript.sml:269-271: Prop l1 <= r2 /\\ l2 <= r1 on Int pairs. Carriers: HOL num_set is NumSet (Spt Unit), int num_map is Spt Int, int is Int, num list is List Nat, clash_tree is the reviewed RegAlloc.ClashTree; toAList/difference/union/insert/lookup are sptToAList/sptDifference/sptUnion/sptInsert/sptLookup and numset_list_delete is the reviewed RegAlloc.numsetListDelete. Every clause, let binding, argument order and traversal order (right child first where HOL numbers/checks lt2 or ct2 first) is transcribed. No word, finite-map or list-as-array translation. Kernel replay of 15 original HOL EVAL rows in Flapjack.Test.LinearScanPureDefsParity (scripts/hol-probes/linear_scan_pure_defs_probe.out). Proof-side port; the executed allocator (Flapjack/RiscV/LinearScan*.lean) is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "point_inside_interval_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan.lean",
+    "lean_name": "pointInsideInterval",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.2), linear_scanScript.sml:273-275: Prop l <= n /\\ n <= r. Carriers: HOL num_set is NumSet (Spt Unit), int num_map is Spt Int, int is Int, num list is List Nat, clash_tree is the reviewed RegAlloc.ClashTree; toAList/difference/union/insert/lookup are sptToAList/sptDifference/sptUnion/sptInsert/sptLookup and numset_list_delete is the reviewed RegAlloc.numsetListDelete. Every clause, let binding, argument order and traversal order (right child first where HOL numbers/checks lt2 or ct2 first) is transcribed. No word, finite-map or list-as-array translation. Kernel replay of 15 original HOL EVAL rows in Flapjack.Test.LinearScanPureDefsParity (scripts/hol-probes/linear_scan_pure_defs_probe.out). Proof-side port; the executed allocator (Flapjack/RiscV/LinearScan*.lean) is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "check_intervals_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan.lean",
+    "lean_name": "checkIntervals",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.2), linear_scanScript.sml:277-284: Prop, forall r1 r2, r1 IN domain int_beg (sptDomain) /\\ r2 IN domain int_beg /\\ interval_intersect (THE ..., THE ...) (THE ..., THE ...) /\\ f r1 = f r2 ==> r1 = r2; HOL THE is the tagged holThe (THE NONE unspecified opaque). Carriers: HOL num_set is NumSet (Spt Unit), int num_map is Spt Int, int is Int, num list is List Nat, clash_tree is the reviewed RegAlloc.ClashTree; toAList/difference/union/insert/lookup are sptToAList/sptDifference/sptUnion/sptInsert/sptLookup and numset_list_delete is the reviewed RegAlloc.numsetListDelete. Every clause, let binding, argument order and traversal order (right child first where HOL numbers/checks lt2 or ct2 first) is transcribed. No word, finite-map or list-as-array translation. Kernel replay of 15 original HOL EVAL rows in Flapjack.Test.LinearScanPureDefsParity (scripts/hol-probes/linear_scan_pure_defs_probe.out). Proof-side port; the executed allocator (Flapjack/RiscV/LinearScan*.lean) is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "get_intervals_ct_aux_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan.lean",
+    "lean_name": "getIntervalsCtAux",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.2), linear_scanScript.sml:286-305: Delta (n-2, add_if_lt wr n beg, add_if_gt rd (n-1) (add_if_gt wr n end), numset_list_insert rd (numset_list_delete wr live)); Set (n-1, beg, add_if_gt (MAP FST (toAList cutset)) n end, union cutset live); Branch numbers ct2 then ct1 from the same live, NONE union live1 live2, SOME (n1-1, beg1, add_if_gt cut n1 end1, union cutset (union live1 live2)); Seq ct2 then ct1 with live2. Carriers: HOL num_set is NumSet (Spt Unit), int num_map is Spt Int, int is Int, num list is List Nat, clash_tree is the reviewed RegAlloc.ClashTree; toAList/difference/union/insert/lookup are sptToAList/sptDifference/sptUnion/sptInsert/sptLookup and numset_list_delete is the reviewed RegAlloc.numsetListDelete. Every clause, let binding, argument order and traversal order (right child first where HOL numbers/checks lt2 or ct2 first) is transcribed. No word, finite-map or list-as-array translation. Kernel replay of 15 original HOL EVAL rows in Flapjack.Test.LinearScanPureDefsParity (scripts/hol-probes/linear_scan_pure_defs_probe.out). Proof-side port; the executed allocator (Flapjack/RiscV/LinearScan*.lean) is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "get_intervals_ct_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan.lean",
+    "lean_name": "getIntervalsCt",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.2), linear_scanScript.sml:307-312: aux from 0 LN LN LN; listlive = MAP FST (toAList live); (n-1, add_if_lt listlive n beg, add_if_gt listlive n end). Carriers: HOL num_set is NumSet (Spt Unit), int num_map is Spt Int, int is Int, num list is List Nat, clash_tree is the reviewed RegAlloc.ClashTree; toAList/difference/union/insert/lookup are sptToAList/sptDifference/sptUnion/sptInsert/sptLookup and numset_list_delete is the reviewed RegAlloc.numsetListDelete. Every clause, let binding, argument order and traversal order (right child first where HOL numbers/checks lt2 or ct2 first) is transcribed. No word, finite-map or list-as-array translation. Kernel replay of 15 original HOL EVAL rows in Flapjack.Test.LinearScanPureDefsParity (scripts/hol-probes/linear_scan_pure_defs_probe.out). Proof-side port; the executed allocator (Flapjack/RiscV/LinearScan*.lean) is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "hol4/src/coretypes/optionScript.sml",
+    "hol_name": "THE_DEF",
+    "lean_path": "Flapjack/Misc/Option.lean",
+    "lean_name": "holThe",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.2), pinned optionScript.sml:176-180: THE_DEF is new_recursive_definition over option_Axiom with only THE (SOME x) = x, so HOL determines nothing about THE NONE. Lean holThe (some x) = x and holThe none = holTheNone α, an opaque constant that no Lean proof can unfold, so Lean likewise knows nothing about it. Generic Type0 carrier; the [Nonempty α] binder records inhabitedness that every HOL type has and adds no other information. Noncomputable. Coordinator source acceptance pending."
+  }
 ]
