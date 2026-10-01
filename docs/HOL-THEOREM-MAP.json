@@ -39743,5 +39743,33 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead25.12: original register-write clauses40-50, ordered stack-load recursion52-55, and all wInst clauses88-185 compared with native HolInst/HolProg payloads. Same register division, strict window bound, saturating subtraction, staging and spill order, literal LongMul/LongDiv register assignments, six handled memory operations (Load16/Store16 catchall), FP comparison staging and width=64 move split, remaining FP passthrough and Inst Skip catchall. HolInst/HolArith/HolRegImm/HolAddr constructors are source-reviewed mirrors; HolFp/HolCmp/HolMemop aliases unchanged. words_as_type_indexed_bitvec records only positive width translation with NeZero; no extra premises or supplied target result. Universal toGeneric_wInst transport is kernel checked, not a semantics theorem. Full compiler and executed route remain open on parent25; coordinator review pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/Loop.lean",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "lean_name": "evaluateApplyColourLoopHelper",
+  "hol_name": "evaluate_apply_colour_Loop_helper",
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01 (.11.1.26.4): original931-1103 Loop_helper and evaluate_apply_colour Loop case. Full original colouring/state/live-before locals premises and sole body IH; full existential error disjunction and result-selected locals. Native clock induction transports entry cut, extends relation using exact cut domain, handles source Error, zero-clock timeout with flush, recursively stitches oracle for NONE/Continue0 using strict decClock descent and permute_swap_lemma, transports Break0 exit cut, and shifts positive Break/Continue loop-table indices. No target evaluation/success, extra injection/clock/word/oracle premise. Core and conversion untagged local infrastructure; positive width and canonical actual imported fpRegs/store carrier with local roundtrip. Inherits reals_as_rational_cuts from reviewed WordSem evaluator (SOUNDNESS item8). Coordinator review pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/Loop.lean",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "lean_name": "evaluateApplyColour_Loop",
+  "hol_name": "evaluate_apply_colour",
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01 (.11.1.26.4): original931-1103 Loop_helper and evaluate_apply_colour Loop case. Full original colouring/state/live-before locals premises and sole body IH; full existential error disjunction and result-selected locals. Native clock induction transports entry cut, extends relation using exact cut domain, handles source Error, zero-clock timeout with flush, recursively stitches oracle for NONE/Continue0 using strict decClock descent and permute_swap_lemma, transports Break0 exit cut, and shifts positive Break/Continue loop-table indices. No target evaluation/success, extra injection/clock/word/oracle premise. Core and conversion untagged local infrastructure; positive width and canonical actual imported fpRegs/store carrier with local roundtrip. Inherits reals_as_rational_cuts from reviewed WordSem evaluator (SOUNDNESS item8). Coordinator review pending."
 }
 ]
