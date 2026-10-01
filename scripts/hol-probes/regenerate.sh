@@ -803,6 +803,21 @@ run_probe word_to_stack_retained_frame_probeScript.sml word_to_stack_retained_fr
 run_probe word_to_stack_allocator_stages_probeScript.sml word_to_stack_allocator_stages_probe.out \
   allocator_stages_skip allocator_stages_tick allocator_stages_raise allocator_stages_tail_call \
   "$cake_dir/compiler/backend/word_to_wordScript.sml" "$cake_dir/compiler/backend"
+run_probe word_simp_duplicate_if_source_probeScript.sml word_simp_duplicate_if_source_probe.out \
+  duplicate_roundtrip duplicate_must duplicate_loop duplicate_call_return duplicate_call_handler \
+  duplicate_call_both duplicate_if duplicate_no_hoist duplicate_zero_bound duplicate_non_simple \
+  duplicate_move_simple duplicate_raise_other duplicate_raise_zero duplicate_raise_three \
+  "$cake_dir/compiler/backend/word_simpScript.sml" "$cake_dir/compiler/backend"
+run_probe word_simp_seq_assoc_source_probeScript.sml word_simp_seq_assoc_source_probe.out \
+  assoc_skip assoc_prefix_skip assoc_trailing_skip assoc_interior_skip assoc_all_skip \
+  assoc_middle_skip assoc_right_spine assoc_if assoc_loop assoc_must assoc_tail_handler \
+  assoc_return assoc_both assoc_prefix_unchanged assoc_inst assoc_pre_ssa \
+  "$cake_dir/compiler/backend/word_simpScript.sml" "$cake_dir/compiler/backend"
+run_probe word_simp_constant_domain_probeScript.sml word_simp_constant_domain_probe.out \
+  constant_program_skip constant_program_assign constant_program_selected constant_program_unknown \
+  constant_program_tail constant_program_return constant_program_both constant_program_alloc \
+  constant_program_install constant_program_ffi constant_program_loop constant_program_must constant_program_trailing_skip \
+  "$cake_dir/compiler/backend/word_simpScript.sml" "$cake_dir/compiler/backend"
 run_probe word_to_stack_selector_domain_probeScript.sml word_to_stack_selector_domain_probe.out \
   selector_program_skip selector_program_seq selector_program_set selector_program_load \
   selector_program_store selector_program_store_offset selector_program_share selector_program_if \
@@ -3344,6 +3359,9 @@ run_probe ssa_rename_lookup_probeScript.sml ssa_rename_lookup_probe.out \
   rename_empty rename_overwrite rename_invalid rename_order rename_large \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
 
+run_probe ssa_merge_route_probeScript.sml ssa_merge_route_probe.out \
+  route_empty route_missing route_equal route_unequal route_tail route_duplicate_names route_duplicate_maps route_big \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
 run_probe ssa_merge_moves_probeScript.sml ssa_merge_moves_probe.out \
   merge_empty merge_missing_both merge_missing_left merge_missing_right merge_equal merge_unequal merge_tail_order merge_duplicate merge_invalid merge_big merge_definition merge_original_type \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
@@ -3353,3 +3371,34 @@ run_probe list_next_var_rename_lemma1_probeScript.sml list_next_var_rename_lemma
 run_probe stackprops_forbidden_operations_probeScript.sml stackprops_forbidden_operations_probe.out \
   forbid_skip forbid_inst forbid_get forbid_set forbid_heap forbid_call_empty forbid_seq forbid_if forbid_loop forbid_jump forbid_alloc forbid_store_consts forbid_raise forbid_return forbid_break forbid_continue forbid_ffi forbid_tick forbid_loc forbid_install forbid_shmem forbid_code_write forbid_data_write forbid_raw_call forbid_stack_alloc forbid_stack_free forbid_stack_store forbid_stack_store_any forbid_stack_load forbid_stack_load_any forbid_stack_get_size forbid_stack_set_size forbid_bitmap_load forbid_halt forbid_call_handler_install forbid_call_handler_shmem forbid_call_return_install forbid_call_return_shmem forbid_call_both forbid_call_safe forbid_seq_left forbid_seq_right forbid_if_left forbid_if_right forbid_loop_install forbid_loop_shmem \
   "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe word_alloc_limit_var_probeScript.sml word_alloc_limit_var_probe.out \
+  lv_original_definition lv_original_type lv_residue0 lv_residue1 lv_residue2 lv_residue3 lv_residue4 lv_skip1 lv_seven lv_eight lv_ignored16 lv_tail_handler lv_call_body lv_huge \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe ssa_rename_properties_probeScript.sml ssa_rename_properties_probe.out \
+  rp_empty_alloc rp_empty_stack rp_alloc_duplicates rp_stack_duplicates rp_existing rp_overwrite rp_invalid rp_huge rp_full_source_replay \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_handler_safety_probeScript.sml word_to_stack_handler_safety_probe.out \
+  hls_empty hls_duplicates hls_owned hls_wrong_owner hls_wrong_zero hls_wrong_one hls_tail_drop hls_same_owner_twice hls_nested hls_nested_bad hls_threaded hls_width_one \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
+run_probe wordconvs_label_safety_probeScript.sml wordconvs_label_safety_probe.out \
+  wcs_empty wcs_skip wcs_self wcs_missing wcs_external wcs_univ wcs_duplicates wcs_cross wcs_owned wcs_wrong_owner wcs_tail_foreign wcs_tail_missing wcs_nested wcs_width_one \
+  "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe word_to_stack_no_shmemop_helpers_probeScript.sml word_to_stack_no_shmemop_helpers_probe.out \
+  nsh_move_empty nsh_move_rr nsh_move_rs nsh_move_sr nsh_move_ss nsh_move_multi nsh_move_width1 nsh_load_empty nsh_load_loads nsh_load_forbidden nsh_write1_register nsh_write1_stack nsh_write1_forbidden nsh_write2_register nsh_write2_stack nsh_write2_forbidden nsh_live_zero nsh_live_nonzero nsh_live_width1 nsh_stack_zero nsh_stack_positive nsh_stack_forbidden \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_to_stack_handler_frame_carriers_probeScript.sml word_to_stack_handler_frame_carriers_probe.out \
+  hcf_push_type hcf_pop_type hcf_push_64_F hcf_pop_64_F_skip hcf_pop_64_F_forbidden hcf_push_64_T hcf_pop_64_T_skip hcf_pop_64_T_forbidden hcf_push_1_F hcf_pop_1_F_skip hcf_pop_1_F_forbidden hcf_push_1_T hcf_pop_1_T_skip hcf_pop_1_T_forbidden \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
+run_probe ssa_map_extend_probeScript.sml ssa_map_extend_probe.out \
+  se_empty_alloc se_empty_stack se_existing se_overwrite se_invalid se_huge_alloc se_huge_stack se_physical_premise se_at_bound_premise se_full_source_replay \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_register_flip_probeScript.sml ssa_register_flip_probe.out \
+  rf_residue_0 rf_equalities_0 rf_residue_1 rf_equalities_1 rf_residue_2 rf_equalities_2 rf_residue_3 rf_equalities_3 rf_residue_4 rf_equalities_4 rf_residue_5 rf_equalities_5 rf_residue_6 rf_equalities_6 rf_residue_7 rf_equalities_7 rf_alloc_application_0 rf_alloc_application_1 rf_alloc_application_2 rf_stack_application_0 rf_stack_application_1 rf_stack_application_2 rf_is_alloc_var_flip_source_replay rf_is_stack_var_flip_source_replay rf_flip_rw_source_replay \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
