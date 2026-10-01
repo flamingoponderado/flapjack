@@ -1,3 +1,4 @@
+import Flapjack.Test.WordToStackIndexListParity
 import Flapjack.Test.WordToStackAbsStackParity
 import Flapjack.Test.WordToStackFramesParity
 import Flapjack.Test.WordConvsPostAllocExactParity
@@ -1355,6 +1356,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.CrepLangGeneratedSizeParity.runChecks,
     Flapjack.Test.PanSimpProgBridgeParity.runChecks,
     Flapjack.Test.CrepSemTotalExtCallParity.runChecks,
+    Flapjack.Test.WordToStackIndexListParity.runChecks,
     Flapjack.Test.WordToStackAbsStackParity.runChecks,
     Flapjack.Test.WordToStackFramesParity.runChecks,
     Flapjack.Test.WordConvsPostAllocExactParity.runChecks,

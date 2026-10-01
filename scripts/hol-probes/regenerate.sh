@@ -2679,3 +2679,7 @@ run_probe word_to_stack_frames_probeScript.sml word_to_stack_frames_probe.out \
 run_probe word_to_stack_abs_stack_probeScript.sml word_to_stack_abs_stack_probe.out \
   as_base as_base_bad as_plain as_bitmap_bad as_len_bad as_short as_rest_bad as_handler as_marker_bad as_handler_short as_lens_bad \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_index_list_probeScript.sml word_to_stack_index_list_probe.out \
+  il_empty il_single il_desc an_even an_odd \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
