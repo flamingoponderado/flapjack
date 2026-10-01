@@ -1,0 +1,11 @@
+load "bossLib";
+load "preamble";
+load "ml_monadBaseTheory";
+open bossLib HolKernel Parse preamble ml_monadBaseTheory;
+fun observe label term = let val th = EVAL term in print (label ^ "="); print_term (rhs (concl th)); print "\n" end;
+val _ = print ("al_type=" ^ type_to_string (type_of ``ml_monadBase$Marray_length``) ^ "\n");
+val _ = observe "al_empty" ``Marray_length (\(s:num). ([]:num list)) 42 = (M_success 0, 42)``;
+val _ = observe "al_duplicates" ``Marray_length (\(s:num). [s;s;s]) 7 = (M_success 3, 7)``;
+val _ = observe "al_bool_state" ``Marray_length (\(s:bool). if s then [2;3] else []) T = (M_success 2, T)``;
+val _ = observe "al_list_state" ``Marray_length (\(s:num list). s) [2;3;5] = (M_success 3, [2;3;5])``;
+val _ = observe "al_bool_values" ``Marray_length (\(s:num). [T;F;T]) 18446744073709551616 = (M_success 3, 18446744073709551616)``;
