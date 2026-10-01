@@ -2575,6 +2575,10 @@ group order, including self moves, duplicate orientations, zeros and large
 natural numbers. Finite observations do not prove cross-assistant equivalence
 or executed allocator routing. Regenerate with
 `HOL_PROBE_ONLY=word_alloc_canonize_moves_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`word_copy_codec_domain_probe` records eight original copy equations;
+`WordCopyCodecDomainParity.lean` replays them and separately checks nested
+five-register AddCarry rejection. Codec-domain preservation is Flapjack
+infrastructure, not a HOL semantic equivalence theorem.
 
 ### Register allocator phase closure audit
 
