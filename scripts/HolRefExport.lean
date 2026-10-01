@@ -892,27 +892,10 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveBounds
 
 open Lean Elab Command Flapjack
 
-/-! Export kernel-visible declaration types and definition bodies, not
-source-text approximations. Binder names and metadata do not affect the
-proposition and are removed before serializing the elaborated expression. The
-pinned Lean toolchain determines the format of the structural `repr` consumed
-by `check_hol_type_hashes.py`.
-
-Theorem proof terms are deliberately excluded: they may be refactored without
-changing the reviewed statement. Definition and `opaque` bodies are included
-because a tagged definition body can drift without changing its elaborated
-type. -/
-private partial def canonicalExpr : Expr → Expr
-  | .forallE _ type body info =>
-      .forallE `_ (canonicalExpr type) (canonicalExpr body) info
-  | .lam _ type body info =>
-      .lam `_ (canonicalExpr type) (canonicalExpr body) info
-  | .letE _ type value body nondep =>
-      .letE `_ (canonicalExpr type) (canonicalExpr value) (canonicalExpr body) nondep
-  | .app fn arg => .app (canonicalExpr fn) (canonicalExpr arg)
-  | .proj name index body => .proj name index (canonicalExpr body)
-  | .mdata _ body => canonicalExpr body
-  | expr => expr
+/-! List every `@[hol]`-tagged declaration with the qualifiers recorded by its
+elaborated attribute and, for declarations without `(reals_as_rational_cuts)`,
+whether its constant closure reaches one that carries it. Consumed by
+`check_hol_ref_export.py`, which compares both against the theorem map. -/
 
 /-- The body of a tagged definition or `opaque` declaration, if present. -/
 private def definitionBody? : ConstantInfo → Option Expr
@@ -969,7 +952,7 @@ private def reachesRealsCuts (env : Environment) (realsTagged : NameSet)
     known := known.insert constName false
   return (false, known.insert root false)
 
-elab "#emit_hol_type_hashes" : command => do
+elab "#emit_hol_ref_export" : command => do
   let env ← getEnv
   let realsTagged : NameSet := (HolRef.all env).foldl
     (fun acc (entry : Name × HolRef) => if entry.2.realsAsRationalCuts then acc.insert entry.1 else acc) {}
@@ -977,7 +960,7 @@ elab "#emit_hol_type_hashes" : command => do
   for (name, ref) in HolRef.all env do
     match env.find? name with
     | none => throwError "missing declaration {name}"
-    | some info =>
+    | some _ =>
         let mut qualifiers : List (String × Json) := [
           ("list_as_array", toJson ref.listAsArray),
           ("names_as_string", toJson ref.namesAsString),
@@ -1005,12 +988,7 @@ elab "#emit_hol_type_hashes" : command => do
           ("lean_name", toJson name.toString),
           ("hol_path", toJson ref.path),
           ("hol_name", toJson ref.name),
-          ("type_expr", toJson (reprStr (canonicalExpr info.type))),
           ("qualifiers", Json.mkObj qualifiers)]
-        match definitionBody? info with
-        | some body =>
-            fields := fields ++ [("value_expr", toJson (reprStr (canonicalExpr body)))]
-        | none => pure ()
         if !ref.realsAsRationalCuts then
           let (reaches, known') := reachesRealsCuts env realsTagged known name
           known := known'
@@ -1018,4 +996,4 @@ elab "#emit_hol_type_hashes" : command => do
             fields := fields ++ [("inherits_reals_as_rational_cuts", toJson true)]
         liftIO <| IO.println (Json.mkObj fields).compress
 
-#emit_hol_type_hashes
+#emit_hol_ref_export
