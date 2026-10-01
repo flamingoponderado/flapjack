@@ -32,9 +32,9 @@ def cakeLoadOutOfRangeAddress : Bool :=
   match wordInstSelectProgram (α := Nat) 7
       (.assign 2 (.load (.op .add [.var 13, .const 4096]))) with
   | .seq
-      (.seq
-        (.seq (.move 0 [(7, 13)]) (.inst (.const 8 4096)))
-        (.inst (.arith (.binOp .add 7 7 (.reg 8)))))
+      (.seq (.move 0 [(7, 13)])
+        (.seq (.inst (.const 8 4096))
+          (.inst (.arith (.binOp .add 7 7 (.reg 8))))))
       (.inst (.mem .load 2 7)) => true
   | _ => false
 
@@ -167,9 +167,9 @@ def cakeSubNegativeImmediateBoundary : Bool :=
 def cakeSubNegativeImmediateExcluded : Bool :=
   match wordInstSelectAtom (α := Nat) 23
       (.op .sub [.var 18, .const (2 ^ 64 - 2048)]) with
-  | (.seq (.seq (.move 0 [(23, 18)])
-      (.inst (.const 24 value)))
-      (.inst (.arith (.binOp .sub 23 23 (.reg 24)))), .var 23) =>
+  | (.seq (.move 0 [(23, 18)])
+      (.seq (.inst (.const 24 value))
+        (.inst (.arith (.binOp .sub 23 23 (.reg 24))))), .var 23) =>
       value == 2 ^ 64 - 2048
   | _ => false
 
@@ -191,9 +191,9 @@ def cakeSharedByteOffsetMaterializesConstant : Bool :=
       (.shareInst .store8 10
         (.op .add [.var 12, .const 2684420096])) with
   | .seq
-      (.seq
-        (.seq (.move 0 [(23, 12)]) (.inst (.const 24 value)))
-        (.inst (.arith (.binOp .add 23 23 (.reg 24)))))
+      (.seq (.move 0 [(23, 12)])
+        (.seq (.inst (.const 24 value))
+          (.inst (.arith (.binOp .add 23 23 (.reg 24))))))
       (.shareInst .store8 10 (.var 23)) =>
       value == 2684420096
   | _ => false
