@@ -3724,3 +3724,8 @@ run_probe ssa_fake_moves_correct_right_probeScript.sml ssa_fake_moves_correct_ri
   fmr_full fmr_type_ls fmr_type_na fmr_type_ssaL fmr_type_ssaR fmr_type_stR fmr_type_cstR fmr_type_prio \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_fix_inconsistencies_correct_left_probeScript.sml ssa_fix_inconsistencies_correct_left_probe.out \
+  ficl_full ficl_type_na ficl_type_ssaL ficl_type_ssaR ficl_type_prio ficl_type_stL ficl_type_cstL \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
