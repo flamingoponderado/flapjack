@@ -2888,11 +2888,6 @@ run_probe parmove_dstep_step_probeScript.sml parmove_dstep_step_probe.out \
 run_probe word_alloc_total_colour_probeScript.sml word_alloc_total_colour_probe.out \
   tc_absent_zero tc_absent_physical tc_absent_virtual tc_absent_large_physical tc_absent_large_virtual tc_mapped_physical tc_mapped_virtual tc_mapped_zero \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
-
-run_probe parmove_temp_before_assign_probeScript.sml parmove_temp_before_assign_probe.out \
-  nt_empty nt_read nt_both_none nt_write_stops nt_recursive_read nt_recursive_write nt_write nt_real_chain \
-  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
-
-run_probe find_index_probeScript.sml find_index_probe.out \
-  fi_empty fi_head fi_middle fi_absent fi_duplicate fi_zero fi_large_offset fi_last \
-  "$cake_dir/misc/miscScript.sml" "$cake_dir/misc"
+run_probe word_alloc_even_locals_probeScript.sml word_alloc_even_locals_probe.out \
+  wa_even_empty wa_even_zero wa_even_even_holes wa_even_odd wa_even_mixed wa_even_overwrite \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

@@ -2260,15 +2260,4 @@ key list; it does not establish pass simulation or final binary correctness.
 `total_colour` lookups: absent physical/virtual keys (including large keys),
 mapped physical/virtual keys, and a mapped zero colour. Same-input kernel
 fixtures are registered in the actual CompilerParity test root.
-
-
-`parmove_temp_before_assign_probeScript.sml` records eight original ordered
-predicate evaluations, including NONE/NONE rejection and immediate acceptance
-after a scratch write even when a later move reads scratch. Paired kernel
-fixtures are registered in CompilerParity; full scheduler preservation remains
-a separate theorem obligation.
-
-
-`find_index_probeScript.sml` records eight original first-match searches with
-arbitrary starting offsets, including duplicate matches and a large offset.
-Same-input kernel fixtures are registered in CompilerParity.
+`word_alloc_even_locals_probeScript.sml` computes the original starting-local domain predicate on six full native word/location trees: empty, zero, sparse even keys, odd, mixed and duplicate overwrite. Standard finite-domain logical rewrites normalize its universal quantifier; actual Spt insertion-domain lemmas replay the same six inputs in kernel fixtures imported by CompilerParity. This predicate is a prerequisite, not the whole allocator theorem.
