@@ -1,5 +1,8 @@
 import Flapjack.Compiler.Backend.LabSem.Arithmetic
+import Flapjack.Compiler.Backend.WordToStack.NativeCallArgs
+import Flapjack.Compiler.Backend.WordToStack.NativeMoves
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.If
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Loop
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.MustTerminate
 import Flapjack.Compiler.Backend.WordToStack.NativeInstructions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Seq
@@ -237,6 +240,8 @@ import Flapjack.Compiler.Backend.Parmove.Invariants
 import Flapjack.Compiler.Backend.Parmove.Invariants.Path
 import Flapjack.Compiler.Backend.Parmove.EnvironmentChange
 import Flapjack.Compiler.Backend.Parmove.UpdateLemmas
+import Flapjack.Compiler.Backend.Parmove.Permutation
+import Flapjack.Compiler.Backend.Parmove.Steps
 import Flapjack.Compiler.Backend.LabSem
 import Flapjack.Compiler.Backend.LabProps
 import Flapjack.Compiler.Backend.StackNames
