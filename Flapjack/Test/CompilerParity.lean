@@ -56,6 +56,7 @@ import Flapjack.Test.WordToStackNoShmemopCallCoreParity
 import Flapjack.Test.WordToStackNoShmemopReturnParity
 import Flapjack.Test.WordToStackNoShmemopInstructionsParity
 import Flapjack.Test.WordToStackNoShmemopFlatEffectsParity
+import Flapjack.Test.WordToStackNoShmemopRecursiveParity
 import Flapjack.Test.WordToStackHandlerFrameCarriersParity
 import Flapjack.Test.ParmovePreservesMovesStepsParity
 import Flapjack.Test.WordConvsExpMonoParity

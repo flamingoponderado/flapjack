@@ -3719,3 +3719,19 @@ The latter do not claim direct reduction of the scheduler. Twelve generic
 public case applications keep the original guard and compilation equality.
 These regressions do not establish cross-language equivalence or the complete
 compiler theorem. Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_flat_probeScript.sml`.
+
+### Native compiler recursive no-shared-memory cases
+
+`word_to_stack_no_shmemop_recursive_probeScript.sml` evaluates forty-two
+original source/actual-target predicate pairs for MustTerminate, Loop, Seq
+and all If operand/validation branches. Widths1/32/64/80, both perf flags,
+malformed cutsets and nested bitmap-producing branches are retained. False
+source guards include genuinely forbidden output, invalid-address fallback
+and an independently checked handler ignored by the tail-call compiler;
+explicit false/false and false/true expectations prevent an equivalence claim.
+`WordToStackNoShmemopRecursiveParity` kernel-reduces the identical compiler
+equations and applies all four generic original-shaped cases with only their
+legitimate source-subprogram induction hypotheses. The accepted full source
+guard equations are reused. These regressions do not establish cross-language
+equivalence or complete the compiler theorem. Selector:
+`HOL_PROBE_ONLY=word_to_stack_no_shmemop_recursive_probeScript.sml`.
