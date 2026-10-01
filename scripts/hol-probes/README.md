@@ -2337,3 +2337,19 @@ type (bead `flapjack-pxn.18.5.15.10.10`). Regenerate with
 HOL_PROBE_ONLY=misc_lookup_any_find_index_probeScript.sml
 scripts/hol-probes/regenerate.sh`. These finite observations are regression
 evidence, not a cross-prover equivalence proof.
+
+`target_sem_mapped_memory_probeScript.sml` checks both literal mapped instruction templates in original HOL: all eight size/opcode choices, invalid sizes, mismatched register/address/bytes, missing domain, wrapped addresses, empty encodings and word8 size wrap. The ignored return-PC parameter remains independently polymorphic. `TargetSemMappedMemoryParity` checks the same 35 observations in the Lean kernel.
+
+`word_alloc_even_colour_probeScript.sml` compares the actual sparse-tree physical-colour constraint with twenty original observations: physical keys require half their key, virtual values are unrestricted, duplicate entries use original first precedence, arbitrary large natural keys and malformed trees remain accepted inputs. `WordAllocEvenColourParity` checks the same results in the Lean kernel; no well-formedness or complete-domain assumption is added.
+
+`spt_union_algebra_probeScript.sml` checks all four literal universal Spt union/insert statements using their original kernel theorem proofs, then 28 concrete original raw-tree observations. `SptUnionAlgebraParity` applies the matching universal Lean theorems and checks malformed trees, singleton overwrites and left bias. Commutativity is restricted to unit-valued number sets; a Nat-valued counterexample is also checked. Concrete stored numerals are explicitly Nat on both sides.
+
+`word_to_stack_native_top_probeScript.sml` audits the original compile type and checks 24 full top-level result tuples. `WordToStackNativeTopParity` checks identical bitmap words, exact sparse frame maps, complete frame lists and ordered stub/program bodies in the kernel. Boundaries include both performance seeds and narrow wrap, natural register subtraction, duplicate avoid entries/identifiers, unbounded natural IDs, zero frames and ordered multiword bitmap threading. Expected stub subterms use the independently reviewed original/native stub definitions; body and bitmap values are otherwise literal expectations. Executed compiler routing remains separately tracked.
+`word_to_stack_comp_prefix_probeScript.sml` freshly observes nine whole
+compiler-prefix equations: Skip, Alloc, MustTerminate, Seq, If, Loop, returning
+Call with perf enabled, returning Call with handler, and StoreConsts. Every
+input starts from a nested AppList whose count is deliberately below its
+flattened length. `WordToStackCompilePrefixParity` applies the full original
+output-equation theorem to the same actual compiler outputs in the real Lake
+test driver. These observations are regression evidence, not a cross-prover
+equivalence or whole-compiler correctness proof.
