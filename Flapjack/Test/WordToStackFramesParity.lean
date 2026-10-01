@@ -1,9 +1,11 @@
 import Flapjack.Compiler.Backend.WordToStack.Proofs.Frames
 namespace Flapjack.Test.WordToStackFramesParity
 open Flapjack.WordToStackProofs
-example : handlerVal (width := 8) [] = 1 := by cbv
-example : handlerVal (width := 8) [(none, [true,false], [.word 0, .loc 1 2])] = 4 := by cbv
-example : handlerVal (width := 8) [(some (.loc 1 2, .word 0), [], [.word 0])] = 6 := by cbv
+private abbrev AbstractFrame :=
+  Option (WordLocW 8 × WordLocW 8) × List Bool × List (WordLocW 8)
+example : handlerVal ([] : List AbstractFrame) = 1 := by cbv
+example : handlerVal ([(none, [true,false], [.word 0, .loc 1 2])] : List AbstractFrame) = 4 := by cbv
+example : handlerVal ([(some (.loc 1 2, .word 0), [], [.word 0])] : List AbstractFrame) = 6 := by cbv
 example : isHandlerFrame (width := 8) (.stackFrame none [] [] none) = false := by cbv
 example : isHandlerFrame (width := 8) (.stackFrame none [] [] (some (0,1,2))) = true := by cbv
 example : sortedEnv (width := 8) (.stackFrame none [] [] none) = true := by cbv

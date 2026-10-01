@@ -4,11 +4,11 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.State
 namespace Flapjack.WordToStackProofs
 
 /-- Number of target words occupied by the abstract frames, including the
-terminal word and the handler header when present. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "handler_val_def"
-  (words_as_type_indexed_bitvec)]
-def handlerVal {width : Nat} [NeZero width] :
-    List (Option (WordLocW width × WordLocW width) × List Bool × List (WordLocW width)) → Nat
+terminal word and the handler header when present. The handler payload,
+ignored middle field and frame elements have independent arbitrary types,
+as in HOL; this calculation observes only SOME/NONE and list lengths. -/
+@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "handler_val_def"]
+def handlerVal {α β γ : Type} : List (Option α × β × List γ) → Nat
   | [] => 1
   | (none, _, frame) :: stack => 1 + frame.length + handlerVal stack
   | (some _, _, frame) :: stack => 4 + frame.length + handlerVal stack

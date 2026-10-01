@@ -39,6 +39,9 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvenStartingLocals
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InsertBitmapPrefix
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LivePrefix
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LiveLength
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompLength
+import Flapjack.Compiler.Backend.WordToStack.ProductionExpressionMaximum
+import Flapjack.Compiler.Backend.WordToStack.ProductionCutsetMaximum
 import Flapjack.Compiler.Backend.Parmove.DestinationWrapper
 import Flapjack.Compiler.Backend.Parmove.DStepStep
 
