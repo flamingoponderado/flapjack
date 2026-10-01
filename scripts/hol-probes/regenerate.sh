@@ -2688,6 +2688,11 @@ run_probe word_to_stack_stack_size_rel_probeScript.sml word_to_stack_stack_size_
   ss_none ss_some ss_bad_max ss_missing_loc ss_missing_frame ss_frame_guard \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe target_sem_encoded_bytes_probeScript.sml target_sem_encoded_bytes_probe.out \
+  oracle_first oracle_shift bytes_empty bytes_nonempty bytes_domain_fail bytes_wrap \
+  encoded_drop encoded_guard_true encoded_guard_strict encoded_bytes_match \
+  "$cake_dir/compiler/backend/semantics/targetSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
 run_probe word_lang_occurrences_exact_probeScript.sml word_lang_occurrences_exact_probe.out \
   name_empty name_even name_odd var_move_even var_move_odd var_loop_live stack_loop_live stack_alloc_odd var_call_none stack_call_none var_call_some stack_call_some \
   "$cake_dir/compiler/backend/wordLangScript.sml" "$cake_dir/compiler/backend"

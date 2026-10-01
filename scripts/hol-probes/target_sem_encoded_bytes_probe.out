@@ -1,0 +1,10 @@
+oracle_first=5
+oracle_shift=8
+bytes_empty=T
+bytes_nonempty=T
+bytes_domain_fail=F
+bytes_wrap=T
+encoded_drop=[30w; 40w]
+encoded_guard_true=T
+encoded_guard_strict=F
+encoded_bytes_match=T
