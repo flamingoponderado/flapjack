@@ -1,0 +1,15 @@
+FindPosHit=13
+FindPosHitZero=10
+FindPosDefaultLabel=0
+FindPosDefaultSection=0
+GetLabelJump=Lab 1 2
+GetLabelJumpCmp=Lab 3 4
+GetLabelCall=Lab 5 6
+GetLabelLocValue=Lab 8 9
+GetLabelDefault=Lab 0 0
+GetFfiIndexHit=1
+GetFfiIndexDefault=0
+GetJumpOffsetCallFFI=0xFFFFFFFFFFFFFFB6w
+GetJumpOffsetInstall=0xFFFFFFFFFFFFFFD6w
+GetJumpOffsetHalt=0xFFFFFFFFFFFFFFE6w
+GetJumpOffsetJump=3w

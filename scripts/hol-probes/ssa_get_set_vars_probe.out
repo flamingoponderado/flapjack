@@ -1,0 +1,11 @@
+get_vars_list_insert_eq_gen_full=⊢ ∀ls x locs a b. LENGTH ls = LENGTH x ∧ ALL_DISTINCT ls ∧ LENGTH a = LENGTH b ∧ (∀e. MEM e ls ⇒ ¬MEM e a) ⇒ get_vars ls (st with locals := alist_insert (a ++ ls) (b ++ x) locs) = SOME x
+get_vars_set_vars_eq_full=⊢ ∀ls x. ALL_DISTINCT ls ∧ LENGTH x = LENGTH ls ⇒ get_vars ls (set_vars ls x cst) = SOME x
+gvi_type_st=:(α, β, γ) state
+gvi_type_ls=:num list
+gvi_type_x=:α word_loc list
+gvi_type_locs=:α word_loc sptree$num_map
+gvi_type_a=:num list
+gvi_type_b=:α word_loc list
+gsv_type_cst=:(α, β, γ) state
+gsv_type_ls=:num list
+gsv_type_x=:α word_loc list

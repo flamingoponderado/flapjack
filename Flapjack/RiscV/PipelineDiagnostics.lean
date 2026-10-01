@@ -56,6 +56,30 @@ def cakeWordFrameSlots [NeZero width] (allocation : WordSpillState)
   max cakeFrameSlots
     (wordParameters.length - RiscV.CakeRegAlloc.cakeRiscVRegisterCount)
 
+/-- The concrete configuration used by the executed source Word-to-Stack
+caller. This is Flapjack infrastructure, not HOL's two-field compiler config.
+The location map and frame occupancy are supplied by the actual allocator;
+scheduler temporaries and body/bitmap equivalence need separate proofs. -/
+def sourceWordStackConfig (label : Nat) (allocation : WordSpillState)
+    (frameSlots : Nat) : WordStackConfig :=
+  { locations := allocation.locations
+    scratch := RiscV.CakeRegAlloc.cakeRiscVRegisterCount
+    stackBase := 0
+    addressScratch := 23
+    specialScratch := RiscV.cakeSpecialScratch
+    carryScratch := RiscV.cakeCarryScratch
+    abiBase := 1
+    abiStride := 1
+    callAbiBase := 0
+    /- The source-shaped call list includes Cake's link slot.  Its
+       register window is the full Cake `k`, not the historical
+       twelve-register value used by the generic RISC-V path. -/
+    abiRegisterCount := RiscV.CakeRegAlloc.cakeRiscVRegisterCount
+    abiFrameSlots := frameSlots
+    frameOffset := if frameSlots = 0 then 0 else frameSlots + 1
+    sectionId := label
+    handlerLabel := label }
+
 def pipelineWordFunctionsToStackChecked [NeZero width] :
     List (Nat × List Nat × WordProg (Word width)) →
       Except PipelineWordLoweringError
@@ -325,24 +349,7 @@ def pipelineWordFunctionsAllocatedWithSpillsAndFullSsaAndBitmapsFromWordCheckedA
             RiscV.cakeWordFrameSlots allocation wordParameters renamedProgram
           -- x23 stays clear of every Cake colour (x29 is colour 12 and can
           -- hold a call argument), so the parallel-move source check never trips.
-          let config : RiscV.WordStackConfig :=
-            { locations := allocation.locations
-              scratch := RiscV.CakeRegAlloc.cakeRiscVRegisterCount
-              stackBase := 0
-              addressScratch := 23
-              specialScratch := RiscV.cakeSpecialScratch
-              carryScratch := RiscV.cakeCarryScratch
-              abiBase := 1
-              abiStride := 1
-              callAbiBase := 0
-              /- The source-shaped call list includes Cake's link slot.  Its
-                 register window is the full Cake `k`, not the historical
-                 twelve-register value used by the generic RISC-V path. -/
-              abiRegisterCount := RiscV.CakeRegAlloc.cakeRiscVRegisterCount
-              abiFrameSlots := frameSlots
-              frameOffset := if frameSlots = 0 then 0 else frameSlots + 1
-              sectionId := label
-              handlerLabel := label }
+          let config := RiscV.sourceWordStackConfig label allocation frameSlots
           let localState : RiscV.WordStackBitmapState :=
             { data := [], length := bitmaps.length }
           let lower :=
