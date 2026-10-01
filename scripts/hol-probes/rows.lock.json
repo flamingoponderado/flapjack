@@ -4667,21 +4667,12 @@
       "out": "wrap_rt_probe.out",
       "rows": 5,
       "sha256": "34b4dc9b2384c56cae695cdda57731febdbd5d7d19b90a6c6004b6c39bdf87cd"
-<<<<<<< HEAD
-    },
-    {
-      "bytes": 112,
-      "out": "word_to_stack_program_code_labels_probe.out",
-      "rows": 8,
-      "sha256": "b847721678f908ce0431152c5230b9556dc54826487925dac80b4eaebd829372"
     },
     {
       "bytes": 852,
       "out": "stackprops_forbidden_operations_probe.out",
       "rows": 46,
       "sha256": "718e64268abb7c05d330507ff019f684e9f6d44c5c0f53f2ca65ac3cf8ca78e7"
-=======
->>>>>>> origin/fleet-integration-post-1189-stack
     }
   ],
   "version": 1

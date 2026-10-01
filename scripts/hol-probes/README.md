@@ -3084,16 +3084,12 @@ original full-type queries retain both independent carriers; the definition
 ports have no word specialization. These rows are regression evidence,
 not HOL-to-Lean equivalence or complete encoder correctness. The full
 iteration/weakening theorem chain is a separate dependency.
-<<<<<<< HEAD
-
-=======
 `word_alloc_max_var_max_probe.out` captures the complete exported theorem and46
 fresh original maximum/at-bound/strict-below triples across native constructors,
 recursive Call/Loop bodies, ignored fields, non-wellformed cutsets and widths
 1/32/64/80. `WordAllocMaxVarMaxParity` checks93 kernel examples against these
 inputs and the full premise-free theorem. Run this capture alone with
 `HOL_PROBE_ONLY=word_alloc_max_var_max_probeScript.sml`.
->>>>>>> origin/fleet-integration-post-1189-stack
 ### Whole-program Word-to-Stack code labels
 
 `word_to_stack_program_code_labels_probeScript.sml` evaluates seven actual
@@ -3108,7 +3104,6 @@ alongside a nonvacuous full theorem application with arbitrary configuration,
 register count and bitmap input. These are regression checks, not a
 HOL-to-Lean equivalence proof or whole compiler correctness acceptance.
 Selector: `HOL_PROBE_ONLY=word_to_stack_program_code_labels_probeScript.sml`.
-<<<<<<< HEAD
 
 ### Native StackProps forbidden operations
 
@@ -3122,5 +3117,3 @@ and payload applications. The definitions use the reviewed native `HolProg`
 carrier and preserve the literal source clauses. These are regression checks,
 not cross-language equivalence or full compiler preservation acceptance.
 Selector: `HOL_PROBE_ONLY=stackprops_forbidden_operations_probeScript.sml`.
-=======
->>>>>>> origin/fleet-integration-post-1189-stack
