@@ -1,6 +1,6 @@
-import Flapjack.Compiler.Encoders.AsmProps.Assertions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMap
 import Flapjack.Compiler.Backend.WordAlloc.SSASetup
+import Flapjack.Compiler.Encoders.AsmProps.Assertions
 import Flapjack.Compiler.Backend.StackProps.LabelSafety
 import Flapjack.Compiler.Backend.Parmove.FstepMapInj
 import Flapjack.Compiler.Encoders.AsmProps.FpPreservation

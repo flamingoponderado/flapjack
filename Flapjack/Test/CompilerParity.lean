@@ -1,6 +1,6 @@
-import Flapjack.Test.AsmPropsAssertionsParity
 import Flapjack.Test.SSAMapParity
 import Flapjack.Test.SSASetupParity
+import Flapjack.Test.AsmPropsAssertionsParity
 import Flapjack.Test.StackPropsLabelSafetyParity
 import Flapjack.Test.ParmoveFstepMapInjParity
 import Flapjack.Test.AsmSemFpUpdatesParity
