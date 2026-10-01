@@ -1,3 +1,11 @@
+`word_to_stack_comp_native_probe.out` contains 19 direct original comp_def observations,
+kernel-replayed by WordToStackNativeCompileParity. Includes recursive returning/handled
+Calls, valid/invalid immediates and Seq/If/Call bitmap threading. The complete
+native traversal is source-reviewed; these rows do not prove cross-prover
+equivalence or establish production routing/compiler correctness. Regenerate
+with HOL_PROBE_ONLY=word_to_stack_comp_native_probeScript.sml and the read-only
+prebuilt CakeML backend theory directory.
+
 `word_to_stack_write_bitmap_type.sml` queries the original HOL constant type
 (`α sptree$num_map -> num -> num -> β word list`) from the prebuilt
 `word_to_stackTheory`; run `HOL/bin/hol run <absolute script path>` from the

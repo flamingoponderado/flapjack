@@ -5,11 +5,14 @@ import Flapjack.Compiler.Backend.WordToStack.NativeStubs
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.InstMemory
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.InstArith
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.InstAssign
+import Flapjack.Compiler.Backend.WordToStack.NativeCompile
+import Flapjack.Compiler.Backend.WordToStack.NativeHandlers
+import Flapjack.Compiler.Backend.WordToStack.NativePerf
 import Flapjack.Compiler.Backend.LabSem.FpUpdates
 import Flapjack.Compiler.Backend.LabSem.Arithmetic
 import Flapjack.Compiler.Backend.WordToStack.NativeReturn
-import Flapjack.Compiler.Backend.WordToStack.NativePerf
-import Flapjack.Compiler.Backend.WordToStack.NativeHandlers
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.InstAssign
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.InstArith
 import Flapjack.Compiler.Backend.WordToStack.NativeSharedMemory
 import Flapjack.Compiler.Backend.WordToStack.NativeCallArgs
 import Flapjack.Compiler.Backend.WordToStack.NativeMoves
@@ -171,6 +174,7 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.MustT
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.Seq
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.If
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.Loop
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.Call
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutNames
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyRemap
 import Flapjack.Pancake.PanStructs.CompileDeclsExact

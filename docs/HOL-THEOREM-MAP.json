@@ -41143,6 +41143,29 @@
   "reviewer": "flapjack-luna-c source comparison 2026-10-01 child25.4: literal Inst Skip and full FP constructor, HOL Inst1374-1391 plus wordSem inst_def FP821-938. Same original st/cst/f/live/lt binders, three colouring_ok/state-equality/live-scoped-locals premises, full existential applyColourPost, no IH/success/NaN/register-distinctness premise. Full FP theorem case-splits all16 WordLangFp constructors and unfolds actual reviewed inst/evaluate; identical FP reads follow state-equality, common set_fp_var frame preserves actual fixed64 map and all other fields. FP comparisons derive integer-write scoped injectivity. FPMovToReg keeps64 single update vs non64 low first/high second with actual width extracts and alias overwrite, derives both insert obligations from writes-union-live. FPMovFromReg transports original integer reads (one at64, two otherwise), preserving Loc/missing failures, high concatenated before low and fixed64 result. FPToInt keeps actual RTE/none/range guards, fixed signed word32 check, source failure without write, old FP half insertion at indexDIV2/ODD; FPFromInt uses signed word32 at64 and actual polymorphic width otherwise. FMA accumulator/source order unchanged, arithmetic and NaN values are the identical imported primitive computation, not recalculated approximations. Canonical imported state map roundtrip; words qualifier translates positive dimension. Inherited reals_as_rational_cuts assumption via wordSem evaluate/inst, SOUNDNESS item8; no direct rendering call or new cross-prover agreement claim. Whole Inst assembly remains open. Coordinator review pending."
 },
 {
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "comp_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeCompile.lean",
+  "lean_name": "compNative",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison original453-555 and fresh original constant type: AsmConfigExact width, WordLangProgHOL(BitVec width), AppListword/length, complete k/f/f-prime, total native HolProg/bitmap pair. Every source clause and impossible fallback preserved, recursive Call return+handler tuples and source Seq/If bitmap order; native helpers source-reviewed, total instruction/address codecs, constructor store-name translation fixedTemp5, validImm exact SumCmp branch. words_as_type_indexed_bitvec with positivewidth; no callback/targetresult/conversion/wf premise. Kernel structural termination38 and19fresh original directcomp rows kernel-replayed. Definition port only; compile_prog/topproduction routing and correctness remainOPEN."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+  "hol_name": "evaluate_stack_swap",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateStackSwap/Call.lean",
+  "lean_name": "evaluateStackSwap_Call",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.5): HOL evaluate_stack_swap (wordPropsScript.sml:2316-2363) at the Call case of evaluate_ind: same binder s, the HOL case-split conclusion rendered by the untagged stackSwapPost, and as premises exactly the four Call induction hypotheses of the tagged Lean evaluate_ind (text copied verbatim with P := stackSwapPost): the return handler at set_vars n ys s1 after a Result and pop_env, the exception handler at set_var n' y s2 after an Exception, the returning callee at call_env args1 ss (push_env envs handler (dec_clock s)), and the tail callee at call_env args1 ss (dec_clock s). No extra premise. Proof follows HOL (wordPropsScript.sml:2879-3233) on the rebound evaluate_def: get_vars/find_code/cut_envs/clock do not read the stack; push_env and call_env commute with a value-equal stack (s_val_eq_stack_size, s_val_eq_length; untagged pushEnv_withStack/callEnv_withStack); tail calls pass bad_fun_return (untagged stackSwapRel_badRet); Result pops a frame equal by s_val_and_key_eq, with push_env_pop_env_s_key_eq and the restored handler (untagged pushEnv_popEnv_handler), then the return-handler IH via stackSwapRel_seqTail; Exception without handler uses LASTN past the handler-free pushed frame (untagged lastN_cons, LASTN_LENGTH_cond), with handler the whole pushed stack is the LASTN frame, lss' = lss by key/value reassembly, then the handler IH. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+},
+{
   "lean_path": "Flapjack/Compiler/Backend/Parmove/StepSem/Save.lean",
   "lean_name": "step_sem_save",
   "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
