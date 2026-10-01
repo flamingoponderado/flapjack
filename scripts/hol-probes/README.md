@@ -3818,6 +3818,9 @@ ssa_option_lookup_subset_probe.out replays the full original subset-helper proof
 
 `loop_to_word_label_handlers_probeScript.sml` replays all four full literal source proofs: function-label preservation, next-label monotonicity, handler ownership for comp, and per-function ownership for compile_prog. Actual theorem applications use original compiler equalities supplied by EVAL; no extra guard or target evaluation assumption. Complete nested outputs at widths 1/64/80 show return labels, exception labels, both continuations and final counter; the tail case ignores its source handlers. A duplicate-owner compiled list and false-owner sentinel are retained. Matching generic-width kernel fixtures apply the public theorems and check the complete nested output.
 
+`ssa_rename_move_preserve_weak_probe.out` freshly replays the full original move-renaming preservation proof plus its literal local prerequisites and five original inferred carriers; both states share all three type dimensions. No successful target evaluation or post-state relation is assumed.
+
+`ssa_get_set_vars_probe.out` freshly replays the full original generalized prefix/list-insert read and set/read proofs, with nine original inferred state/list/tree types. Native SSAGetSetVars retains every original length, distinctness and disjointness premise and the real WordSem operations.
 `stacksem_fp_conversion_types_probeScript.sml` captures seven original full
 types for the StackSem FP sqrt/conversion case review: `inst`, FP lookup/update,
 three machine-IEEE operations and the generic compile-oracle projection. The
@@ -3857,6 +3860,9 @@ guard equations are reused. These regressions do not establish cross-language
 equivalence or complete the compiler theorem. Selector:
 `HOL_PROBE_ONLY=word_to_stack_no_shmemop_recursive_probeScript.sml`.
 
+`ssa_locals_list_rename_probe.out` freshly replays the full original generic list-renaming locals relation, its three local theorem prerequisites and source physical-class tactic, with nine original inferred types confirming generic payload alpha and native tree/list carriers. All seven original premises are retained.
+
+`ssa_setup_props_probe.out` freshly replays the complete original setup-SSA proof, six local prerequisite proofs and two ML tactics, plus four inferred types. State/program/move share their word dimension. The tagged native theorem retains the original allocation/domain premises and all six actual evaluator conclusions; executed setup routing is tracked separately.
 `ssa_rename_move_preserve_weak_probe.out` freshly replays the full original move-renaming preservation proof plus its literal local prerequisites and five original inferred carriers; both states share all three type dimensions. No successful target evaluation or post-state relation is assumed.
 ### Loop-to-Word compiled names, membership, and first-match lookup
 
@@ -3970,6 +3976,26 @@ and applies all eight full original-shaped cases. The rejected ShareInst proof
 uses only its original false source guard, with no target safety premise.
 These regressions do not establish cross-language equivalence or full compiler correctness.
 Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_primitives_probeScript.sml`.
+
+`ssa_rename_move_preserve_probeScript.sml` replays the literal strong SSA move-preservation proof and local prerequisites, capturing its full statement and five inferred argument types.
 `ssa_locals_list_rename_probe.out` freshly replays the full original generic list-renaming locals relation, its three local theorem prerequisites and source physical-class tactic, with nine original inferred types confirming generic payload alpha and native tree/list carriers. All seven original premises are retained.
 
 `ssa_setup_props_probe.out` freshly replays the complete original setup-SSA proof, six local prerequisite proofs and two ML tactics, plus four inferred types. State/program/move share their word dimension. The tagged native theorem retains the original allocation/domain premises and all six actual evaluator conclusions; executed setup routing is tracked separately.
+
+### Full arbitrary-program comp no-shared-memory preservation
+
+`word_to_stack_comp_no_shmemop_probeScript.sml` freshly captures the exported
+original `comp_no_shmemop` theorem and all seven original input/output carrier
+types. Twelve original predicate pairs cover deeply nested Loop, MustTerminate,
+Seq, If and returning/handled Calls with actual bitmap-producing children over
+widths1/32/64/80 and both perf and immediate-validation branches. Ignored tail
+handlers retain false-source/true-target sentinels.
+`WordToStackCompNoShmemopParity` kernel-reduces identical inputs and applies the
+full arbitrary-program theorem, including its actual compiler projections.
+The public statement has only the original source guard and compilation equality;
+all26 constructor cases and their genuine child IH are discharged internally.
+Structural size termination retains complete Call tuple equalities. The captured
+exported theorem is not a new literal replay of its original proof. These
+regressions do not prove HOL-to-Lean equivalence or whole compiler semantics.
+Selector: `HOL_PROBE_ONLY=word_to_stack_comp_no_shmemop_probeScript.sml`.
+`ssa_fake_moves_correct_left_probeScript.sml` replays the literal left fake-move simulation and local frame/map prerequisites, capturing the full statement and seven types including independent source/target code and FFI dimensions.

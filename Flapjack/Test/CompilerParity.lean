@@ -7,6 +7,7 @@ import Flapjack.Test.WordToStackNoShmemopPrimitivesParity
 import Flapjack.Test.WordToStackNoShmemopHandledCallParity
 import Flapjack.Test.WordToStackNoShmemopReturningCallParity
 import Flapjack.Test.WordToStackNoShmemopTailCallParity
+import Flapjack.Test.WordToStackCompNoShmemopParity
 import Flapjack.Test.WordToStackNoShmemopHandlersParity
 import Flapjack.Test.WordAllocLimitPropertiesParity
 import Flapjack.Test.SSAMapStepParity
@@ -16,8 +17,6 @@ import Flapjack.Test.LoopToWordProgramNamesParity
 import Flapjack.Test.SSAMergeMoveLookupsParity
 import Flapjack.Test.LoopToWordLabelHandlersParity
 import Flapjack.Test.WordConvsPredicateEquationsParity
-import Flapjack.Test.SSAMapStepParity
-import Flapjack.Test.SSALocalsInsertParity
 import Flapjack.Test.WordToStackCodeLabelSafetyParity
 import Flapjack.Test.WordMaxInstRouteParity
 import Flapjack.Test.SSALocalsPhysicalInsertParity
@@ -258,7 +257,6 @@ import Flapjack.Test.StackPropsFloatNames
 import Flapjack.Test.StackPropsAddressNames
 import Flapjack.Test.StackPropsArithmeticNames
 import Flapjack.Test.RiscVNamesExactParity
-import Flapjack.RiscV.Encoding
 import Flapjack.Test.DeclBridgeParity
 import Flapjack.Test.RiscVColourLivenessParity
 import Flapjack.Test.PipelineDiagnostics
@@ -304,7 +302,6 @@ import Flapjack.Test.CrepNestedAssignDistinctHOLParity
 import Flapjack.Test.CrepNestedDecsSeqResVarEqParity
 import Flapjack.Test.CrepNestedDecsLoadGlobalsParity
 import Flapjack.Test.CrepSemTotalCallParity
-import Flapjack.Pancake.Proofs.PanToCrep.TotalEvaluateCases
 import Flapjack.Test.CrepSemTotalAssignParity
 import Flapjack.Test.CrepSemTotalStoreParity
 import Flapjack.Test.CrepSemTotalShMemParity
@@ -383,7 +380,6 @@ import Flapjack.Test.LoopToWordAccVarsAccParity
 import Flapjack.Test.LoopToWordExpCarrierCodecParity
 import Flapjack.Test.WordExpCarrierCodecParity
 import Flapjack.Test.WordContextCodecParity
-import Flapjack.Test.WordCompileExpExactParity
 import Flapjack.Test.LoopProgCarrierCodecParity
 import Flapjack.Test.WordProgCarrierCodecParity
 import Flapjack.Test.LoopDecClockParity
@@ -599,18 +595,9 @@ import Flapjack.Test.WordLangCallArgParity
 import Flapjack.Test.RegAllocVarParity
 import Flapjack.Test.WordLangNotCreatedParity
 import Flapjack.Test.WordConvsNoInstallDefParity
-import Flapjack.Test.StackSemLoopControlParity
-import Flapjack.Test.StackSemLeafTransfersParity
-import Flapjack.Test.StackSemRegisterTransfersParity
-import Flapjack.Test.StackSemPatternCopyParity
 import Flapjack.Test.StackSemCopyWordsParity
 import Flapjack.Test.StackSemStoreConstSemParity
 import Flapjack.Test.StackSemStoreConstsParity
-import Flapjack.Test.StackSemIntegerInstParity
-import Flapjack.Test.StackSemEvaluateAllocCaseParity
-import Flapjack.Test.StackSemStoreConstsGuardParity
-import Flapjack.Test.StackSemFpRegisterInstParity
-import Flapjack.Test.StackSemJumpLowerParity
 import Flapjack.Test.StackSemRawCallParity
 import Flapjack.Test.StackSemCallParity
 import Flapjack.Test.StackSemCallIndirectParity
@@ -627,7 +614,6 @@ import Flapjack.Test.StackMacroLeavesParity
 import Flapjack.Test.LoopStoreNarrowParity
 import Flapjack.Test.WordToStackLiveBitmapParity
 import Flapjack.Test.StackSemControlCasesParity
-import Flapjack.Test.PanGlobalsFpermCodeParity
 import Flapjack.Test.PanGlobalsFpermShMemLoadParity
 import Flapjack.Test.WordLangEveryVarParity
 import Flapjack.Test.WordSemCarriersParity
@@ -717,7 +703,6 @@ import Flapjack.Test.LoopShMemOpParity
 import Flapjack.Test.LoopGetVarImmParity
 import Flapjack.Test.LoopSemCodeTableParity
 import Flapjack.Test.LoopSemCutParity
-import Flapjack.Test.CrepToLoopCompFuncParity
 import Flapjack.Test.CrepArithExactParity
 import Flapjack.Test.CrepArithStoreGlobParity
 import Flapjack.Test.CrepArithStore32Parity
@@ -755,14 +740,14 @@ import Flapjack.Test.CakeSsaCallParity
 import Flapjack.Test.CakeSsaInstParity
 import Flapjack.Test.CakeWordAllocParity
 import Flapjack.Test.WordAllocLiveExpressionParity
-import Flapjack.Test.WordAllocProgramLivenessParity
-import Flapjack.Test.WordAllocApplyColourExactParity
-import Flapjack.Test.WordAllocCutEnvLemmaParity
-import Flapjack.Test.WordAllocInstructionWritesParity
-import Flapjack.Test.WordAllocReadsExpParity
+import Flapjack.Test.WordCompileExpExactParity
+import Flapjack.Test.StackSemLoopControlParity
+import Flapjack.Test.StackSemJumpLowerParity
+import Flapjack.Test.PanGlobalsFpermCodeParity
+import Flapjack.Test.CrepToLoopCompFuncParity
 import Flapjack.Test.WordAllocGetDeltaInstParity
 import Flapjack.Test.WordAllocGetClashTreeParity
-import Flapjack.Test.WordAllocProgramWritesParity
+import Flapjack.Test.WordAllocCutEnvLemmaParity
 import Flapjack.Test.CakeSsaSharedParity
 import Flapjack.Test.CakeSsaMemoryParity
 import Flapjack.Test.CakeSsaLeafParity
