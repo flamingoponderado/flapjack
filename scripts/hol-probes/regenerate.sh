@@ -105,6 +105,10 @@ run_probe stacksem_fp_case_types_probeScript.sml stacksem_fp_case_types_probe.ou
   fpc_inst fpc_constructor fpc_lookup fpc_update fpc_general_lookup fpc_general_update fpc_all_payloads \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
+run_probe stackprops_expression_clock_probeScript.sml stackprops_expression_clock_probe.out \
+  ec_store_statement ec_store_types ec_word_statement ec_word_types ec_assign_statement ec_assign_types ec_const ec_var_word ec_var_loc ec_var_missing ec_lookup_word ec_lookup_loc ec_lookup_missing ec_load_word ec_load_loc ec_load_oob ec_load_bad_address ec_op_empty_and ec_op_add_wrap ec_op_sub_bad_arity ec_op_bad_operand ec_shift_valid ec_shift_oob ec_shift_bad_right ec_assign_success ec_assign_failure ec_store_success ec_store_failure \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
 run_probe stackprops_clock_support_probeScript.sml stackprops_clock_support_probe.out \
   cp_asm_const_type cp_clock_neutral_type cp_1 cp_1_types cp_2 cp_2_types cp_3 cp_3_types cp_4 cp_4_types cp_5 cp_5_types cp_6 cp_6_types cp_skip64 cp_sqrt1 cp_halt16 cp_loc1 cp_seq_good64 cp_seq_tick16 cp_if_good1 cp_if_bad64 cp_loop_skip64 cp_call_skip1 \
   "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
@@ -3746,6 +3750,13 @@ run_probe ssa_fix_inconsistencies_correct_right_probeScript.sml ssa_fix_inconsis
   ficr_full ficr_type_na ficr_type_ssaL ficr_type_ssaR ficr_type_prio ficr_type_stR ficr_type_cstR \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+run_probe word_to_stack_no_shmemop_programs_probeScript.sml word_to_stack_no_shmemop_programs_probe.out \
+  pl_full pl_conf_type pl_perf_type pl_register_type pl_source_type pl_bitmap_type pl_outputs_type pl_frames_type pl_residual_type pl_empty_1 pl_safe_1 pl_ignored_1 pl_shared_1 pl_empty_32 pl_safe_32 pl_ignored_32 pl_shared_32 pl_empty_64 pl_safe_64 pl_ignored_64 pl_shared_64 pl_empty_80 pl_safe_80 pl_ignored_80 pl_shared_80 \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_no_shmemop_top_probeScript.sml word_to_stack_no_shmemop_top_probe.out \
+  tp_full tp_conf_type tp_source_type tp_bitmaps_type tp_config_type tp_frames_type tp_outputs_type tp_empty_1 tp_safe_1 tp_ignored_1 tp_shared_1 tp_empty_32 tp_safe_32 tp_ignored_32 tp_shared_32 tp_empty_64 tp_safe_64 tp_ignored_64 tp_shared_64 tp_empty_80 tp_safe_80 tp_ignored_80 tp_shared_80 \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe ssa_cc_trans_exp_correct_probeScript.sml ssa_cc_trans_exp_correct_probe.out \
   sec_full sec_type_st sec_type_w sec_type_cst sec_type_ssa sec_type_na sec_type_res \
@@ -3756,6 +3767,12 @@ run_probe ssa_fix_inconsistencies_props_probeScript.sml ssa_fix_inconsistencies_
   fip_full fip_type_prio fip_type_ssaL fip_type_ssaR fip_type_na fip_type_a fip_type_b fip_type_nextOut fip_type_ssaU \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+run_probe stack_to_lab_executed_codec_probeScript.sml stack_to_lab_executed_codec_probe.out \
+  codec_source_addcarry codec_source_addoverflow codec_source_memoffset codec_source_cbw codec_source_cbw_store_order codec_source_name_bytes codec_source_ffi codec_source_nonzero_position codec_source_wide_constant \
+  "$cake_dir/compiler/backend/stack_to_labScript.sml" "$cake_dir/compiler/backend"
+run_probe word_to_stack_comp_no_install_probeScript.sml word_to_stack_comp_no_install_probe.out \
+  ci_full ci_conf_type ci_perf_type ci_source_type ci_bitmap_type ci_frame_type ci_target_type ci_residual_type ci_skip_64 ci_move_64 ci_inst_64 ci_assign_64 ci_get_64 ci_set_64 ci_store_64 ci_alloc_64 ci_store_consts_64 ci_raise_64 ci_return_64 ci_break_64 ci_continue_64 ci_tick_64 ci_heap_64 ci_loc_64 ci_install_64 ci_code_write_64 ci_data_write_64 ci_ffi_64 ci_share_64 ci_must_64 ci_loop_64 ci_seq_64 ci_branch_64 ci_call_64 ci_nested_1 ci_if_1 ci_ignored_1 ci_nested_32 ci_if_32 ci_ignored_32 ci_nested_64 ci_if_64 ci_ignored_64 ci_nested_80 ci_if_80 ci_ignored_80 ci_ignored_install \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe ssa_cc_trans_inst_props_probeScript.sml ssa_cc_trans_inst_props_probe.out \
   sip_full sip_type_i sip_type_ssa sip_type_na sip_type_iOut sip_type_ssaOut sip_type_naOut \

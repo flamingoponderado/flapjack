@@ -1,3 +1,4 @@
+import Flapjack.Test.StackToLabExecutedCodecParity
 import Flapjack.Test.StackToLabFullEncodingParity
 import Flapjack.Test.StackToLabRecursiveValidityParity
 import Flapjack.Test.StackToLabNonrecursiveValidityParity

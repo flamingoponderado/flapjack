@@ -1,0 +1,23 @@
+tp_full=⊢ compile cf F prog = (bs,fs,ns,prog') ∧ EVERY (λ(n,m,pp). no_share_inst pp) prog ⇒ EVERY (λ(a,p). no_shmemop p) prog'
+tp_conf_type=:α asm_config
+tp_source_type=:(num # num # α prog) list
+tp_bitmaps_type=:α word list
+tp_config_type=:config
+tp_frames_type=:num list
+tp_outputs_type=:(num # α stackLang$prog) list
+tp_empty_1=T
+tp_safe_1=T
+tp_ignored_1=T
+tp_shared_1=T
+tp_empty_32=T
+tp_safe_32=T
+tp_ignored_32=T
+tp_shared_32=T
+tp_empty_64=T
+tp_safe_64=T
+tp_ignored_64=T
+tp_shared_64=T
+tp_empty_80=T
+tp_safe_80=T
+tp_ignored_80=T
+tp_shared_80=T
