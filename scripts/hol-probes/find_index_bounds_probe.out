@@ -1,0 +1,8 @@
+fib_head=(SOME 7,T,T)
+fib_middle=(SOME 8,T,T)
+fib_duplicate=(SOME 4,T,T)
+fib_large=(SOME 4294967297,T,T)
+fib_last=(SOME 12,T,T)
+fib_zero=(SOME 0,T,T)
+fib_absent=(NONE,T,F)
+fib_empty=(NONE,T,F)

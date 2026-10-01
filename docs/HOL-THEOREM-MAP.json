@@ -41480,7 +41480,7 @@
     "lean_path": "Flapjack/Pancake/WordConvs/WfCutsets.lean",
     "lean_name": "wfNames",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.4.8) against wordConvsScript.sml:347-350: wf_names t = (wf (FST t) /\\ wf (SND t)) over the exact cutsets carrier num_set # num_set (WordLangCutsetsHOL = Spt Unit x Spt Unit), HOL sptree$wf rendered by the Flapjack sptWf on the exact Spt carrier (Flapjack/Misc/Sptree.lean, clause-for-clause LN/LS/BN/BS with isEmpty), HOL bool as Prop (sptWf _ = true)."
+    "reviewer": "flapjack-opus source comparison (beads flapjack-pxn.18.5.11.4.8, flapjack-pjnm) against wordConvsScript.sml:347-350: wf_names t = (wf (FST t) /\\ wf (SND t)) for t : 'a spt # 'b spt with arbitrary payload types (generality restored per PR1186 review; the cutsets carrier num_set # num_set is the Unit instance used by wf_cutsets), HOL sptree$wf rendered by the Flapjack sptWf on the exact Spt carrier (clause-for-clause LN/LS/BN/BS with isEmpty), HOL bool as Prop (sptWf _ = true)."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
@@ -41863,7 +41863,7 @@
   "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
   "hol_name": "not_use_temp_before_assign_def",
   "statement_status": "reviewed_exact",
-  "reviewer": "flapjack-luna-c source comparison (2026-10-01; bead46.1): literal831-836 ordered empty/read-NONE/write-NONE/recurse clauses on native List of Option register pairs. NONE,NONE is false by first applicable source-NONE clause. Destination NONE with real source returns true immediately even when tail later reads NONE. Only real-real moves recurse. No wf/distinctness/initialization assumption or altered scratch semantics. Eight fresh direct original HOL rows and same-input rfl kernel fixtures, actualCompilerParity root registration. Parent46 required by word_to_stackProof6187 remains blocked on append/find-index/step/closure proof frontier, definition alone does not prove compiler output initialized. Coordinator review pending."
+  "reviewer": "flapjack-luna-c source comparison (2026-10-01; bead46.1): literal831-836 ordered empty/read-NONE/write-NONE/recurse clauses on native List of Option register pairs. NONE,NONE is false by first applicable source-NONE clause. Destination NONE with real source returns true immediately even when tail later reads NONE. Only real-real moves recurse. No wf/distinctness/initialization assumption or altered scratch semantics. Eight fresh direct original HOL rows and same-input rfl kernel fixtures, actualCompilerParity root registration. Parent46 required by word_to_stackProof6187 remains blocked on append/find-index/step/closure proof frontier, definition alone does not prove compiler output initialized. Coordinator review pending. Source review repair up74: independent destination/source type variables retained as List(Option destination × Option source), replacing one-carrier Move specialization; literal clauses and unrestricted append iff unchanged. Four fresh original bool-destination/num-source observations and mixed-carrier Lean kernel fixtures plus universally independent theorem application."
 },
 {
   "lean_path": "Flapjack/Misc/FindIndex.lean",
@@ -42177,15 +42177,88 @@
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-a source comparison HOL2813-2826 and returningCall NONE handler3237-3252: exact WordLangProgHOL positive-width BitVec, full original six premises/five conclusions through accepted motive. Universally quantified returnvariables/cutsets/returnprogram/labels/destination/arguments. Only returnprogram IH, checker right-first body outcome internally destructured, fixed return/argument sets injection/image from checkColInj, wf from source cutsets and actual listinsert/union. Unit union commutativity identifies source colouring cutset order. No targetevaluation/postcode/output/domain assumptions added. words_as_type_indexed_bitvec is sole carrier translation. Coordinator review pending."
 },
-  {
-    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
-    "hol_name": "oracle_colour_ok_def",
-    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/OracleColour.lean",
-    "lean_name": "oracleColourOk",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-a source comparison word_allocScript1607-1626: explicit NONE and SOME col branches on exact Spt Nat num_map, supplied literal ClashTree and WordLangProgHOL positive-width BitVec program. Native totalColour/everyEvenColour/checkClashTree/applyColour/everyStackVarHOL helpers used, not production substitutes. Checker non-NONE is Option.isSome (constructor test), conjunctions Boolean, x>=2*k is decide(2*k<=x) on unboundedNat, forcedpairs EVERY disequality List.all with exactNat BEq. Returns actualcolouredprogram onlyafter both guards, every rejectionNONE retained; no successfuloracle/poststate/targetevaluation premise. words_as_type_indexed_bitvec only carrier translation; Spt is originalnum_map nofinite-mapqualifier. Executedallocator migration remains open; original branch parity and coordinatorreview pending."
-  },
+{
+  "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+  "hol_name": "oracle_colour_ok_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/OracleColour.lean",
+  "lean_name": "oracleColourOk",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison word_allocScript1607-1626: explicit NONE and SOME col branches on exact Spt Nat num_map, supplied literal ClashTree and WordLangProgHOL positive-width BitVec program. Native totalColour/everyEvenColour/checkClashTree/applyColour/everyStackVarHOL helpers used, not production substitutes. Checker non-NONE is Option.isSome (constructor test), conjunctions Boolean, x>=2*k is decide(2*k<=x) on unboundedNat, forcedpairs EVERY disequality List.all with exactNat BEq. Returns actualcolouredprogram onlyafter both guards, every rejectionNONE retained; no successfuloracle/poststate/targetevaluation premise. words_as_type_indexed_bitvec only carrier translation; Spt is originalnum_map nofinite-mapqualifier. Executedallocator migration remains open; original branch parity and coordinatorreview pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/TempBeforeAssign/Append.lean",
+  "lean_name": "notUseTempBeforeAssignAppend",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "not_use_temp_before_assign_append",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source839-846: original generic two-list iff; Bool predicate truth and EVERY IS_SOME MAP FST as forall membership, no wf/distinctness premise. Constructor induction preserves ordered scratch-read rejection before scratch-write acceptance; only all-real destinations require suffix safety. Eight fresh original truth/prefix/all-real/suffix tuple observations and identical kernel fixtures, generic theorem application included. Source review repair up74: independent destination/source type variables retained as List(Option destination × Option source), replacing one-carrier Move specialization; literal clauses and unrestricted append iff unchanged. Four fresh original bool-destination/num-source observations and mixed-carrier Lean kernel fixtures plus universally independent theorem application."
+},
+{
+  "lean_path": "Flapjack/Misc/FindIndex/Bounds.lean",
+  "lean_name": "findIndexLessLength",
+  "hol_path": "cakeml/misc/miscScript.sml",
+  "hol_name": "find_index_LESS_LENGTH",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c original1123-1130: arbitrary list,target,offset,index with successful find_index=SOME index premise; BOTH offset<=index and index<offset+LENGTH list retained. Generic propositional equality, no zero-offset/unique-match/size premise. Native list induction and arithmetic derive bounds. Eight original search/lower/upper tuples include first/duplicate/last/large-offset and absent/empty strict-bound sentinels, matching kernel fixture tuples and six theorem callsites."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/ClashTreeColouringOk/CallNone.lean",
+  "lean_name": "clashTreeColouringOk_CallNone",
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "clash_tree_colouring_ok",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-c original Call NONE case3230-3236, full motive2813-2826: arbitrary optional destination,args,optional handler including program/labels, original six premises/all five conclusions. No IH or added premise; source ignores handler in this branch. Set checkColInj supplies output equality/injection/image, native insertion wf and original live injection prove catchall colouringOk writes union. Qualifier only standard positive-width word translation; NumSet is exact Spt. Six fresh original checker equality observations paired kernel fixtures plus universal case application; full returning Call branches remain separate open children18.2/3."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/HeuCounters.lean",
+  "lean_name": "add1LhsConst",
+  "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+  "hol_name": "add1_lhs_const_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c literal1266-1304: native Spt of right-associated five Nat product, arbitrary key/tree including malformed trees, no wf/domain premise. Absent lookup inserts named unit basis; present increments only named component with unbounded Nat arithmetic. Four fresh original full-tree/lookup equations per function (absent,present,repeat,other-key preservation) matched by Lean kernel fixtures. Helper family only; recursive get_heu and production routing remain open."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/HeuCounters.lean",
+  "lean_name": "add1LhsReg",
+  "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+  "hol_name": "add1_lhs_reg_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c literal1266-1304: native Spt of right-associated five Nat product, arbitrary key/tree including malformed trees, no wf/domain premise. Absent lookup inserts named unit basis; present increments only named component with unbounded Nat arithmetic. Four fresh original full-tree/lookup equations per function (absent,present,repeat,other-key preservation) matched by Lean kernel fixtures. Helper family only; recursive get_heu and production routing remain open."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/HeuCounters.lean",
+  "lean_name": "add1LhsMem",
+  "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+  "hol_name": "add1_lhs_mem_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c literal1266-1304: native Spt of right-associated five Nat product, arbitrary key/tree including malformed trees, no wf/domain premise. Absent lookup inserts named unit basis; present increments only named component with unbounded Nat arithmetic. Four fresh original full-tree/lookup equations per function (absent,present,repeat,other-key preservation) matched by Lean kernel fixtures. Helper family only; recursive get_heu and production routing remain open."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/HeuCounters.lean",
+  "lean_name": "add1RhsReg",
+  "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+  "hol_name": "add1_rhs_reg_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c literal1266-1304: native Spt of right-associated five Nat product, arbitrary key/tree including malformed trees, no wf/domain premise. Absent lookup inserts named unit basis; present increments only named component with unbounded Nat arithmetic. Four fresh original full-tree/lookup equations per function (absent,present,repeat,other-key preservation) matched by Lean kernel fixtures. Helper family only; recursive get_heu and production routing remain open."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/HeuCounters.lean",
+  "lean_name": "add1RhsMem",
+  "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+  "hol_name": "add1_rhs_mem_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c literal1266-1304: native Spt of right-associated five Nat product, arbitrary key/tree including malformed trees, no wf/domain premise. Absent lookup inserts named unit basis; present increments only named component with unbounded Nat arithmetic. Four fresh original full-tree/lookup equations per function (absent,present,repeat,other-key preservation) matched by Lean kernel fixtures. Helper family only; recursive get_heu and production routing remain open."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/HeuCounters.lean",
+  "lean_name": "HeuData",
+  "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+  "hol_name": "heu_data",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source1262: literal right-associated num#num#num#num#num Type abbreviation, exactly Nat five-product. Reference checker supports Type headers directly; dependency index omission does not prevent tagging. No word/fmap/carrier exception."
+},
   {
     "lean_path": "Flapjack/Misc/Sptree/Mapi.lean",
     "lean_name": "sptMapi0",

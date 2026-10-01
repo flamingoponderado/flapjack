@@ -11,10 +11,10 @@ the reviewed `sptWf`; HOL booleans are rendered as propositions.
 
 namespace Flapjack
 
-/-- Exact HOL `wf_names_def` (`wordConvsScript.sml:347-350`): both cut sets
-are `sptree$wf`. -/
+/-- Exact HOL `wf_names_def` (`wordConvsScript.sml:347-350`): both components
+are `sptree$wf`, for arbitrary payload types as in HOL (`t : 'a spt # 'b spt`). -/
 @[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "wf_names_def"]
-def wfNames (t : WordLangCutsetsHOL) : Prop :=
+def wfNames {α β : Type} (t : Spt α × Spt β) : Prop :=
   sptWf t.1 = true ∧ sptWf t.2 = true
 
 /-- Exact HOL `wf_cutsets_def` (`wordConvsScript.sml:352-375`), clause by
