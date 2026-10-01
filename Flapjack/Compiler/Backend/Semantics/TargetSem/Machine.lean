@@ -30,11 +30,12 @@ open Flapjack.Compiler.Encoders.Asm
 /-- Exact HOL `get_reg_value_def`
     (`cakeml/compiler/backend/semantics/targetSemScript.sml:263-266`):
     `get_reg_value NONE w _ = w` / `get_reg_value (SOME v) _ f = f v`.
-    Polymorphic in the value type, so no word qualifier applies. -/
+    HOL leaves both the key and the value type fully generic, so this is
+    polymorphic in both, with no word qualifier. -/
 @[hol "cakeml/compiler/backend/semantics/targetSemScript.sml" "get_reg_value_def"]
-def getRegValue {α : Type} (value : Option Nat) (fallback : α)
-    (lookup : Nat → α) : α :=
-  match value with
+def getRegValue {key value : Type} (argument : Option key) (fallback : value)
+    (lookup : key → value) : value :=
+  match argument with
   | none => fallback
   | some register => lookup register
 

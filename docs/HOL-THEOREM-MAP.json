@@ -38904,6 +38904,6 @@
     "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/Machine.lean",
     "lean_name": "getRegValue",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.15.10.4). Source comparison with targetSemScript.sml:263-266 get_reg_value_def: get_reg_value NONE w f = w /\\ get_reg_value (SOME v) _ f = f v. Lean is the same polymorphic match over (value : Option Nat). No word-carrier difference, so no representation qualifier applies."
+    "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.15.10.4). Source comparison with targetSemScript.sml:263-266 get_reg_value_def: get_reg_value NONE w f = w /\\ get_reg_value (SOME v) _ f = f v. HOL leaves both types fully generic: v : key is applied to f : key -> value, so the Lean port quantifies {key value : Type} over (Option key, value, key -> value). No word-carrier difference, so no representation qualifier applies."
   }
 ]
