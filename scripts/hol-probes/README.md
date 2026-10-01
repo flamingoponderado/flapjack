@@ -4122,6 +4122,21 @@ The new kernel replay covers domain failure, Loc rejection, missing operands,
 operator lists, wraparound, shift bounds and successful/failed assignment.
 The full recursive theorem imposes no success, size or clock bound. These
 captures provide regression evidence, not HOL-to-Lean equivalence.
+`ssa_fake_moves_correct_right_probeScript.sml` replays the literal right fake-move simulation and its local prerequisites, capturing the full five-conclusion statement and seven inferred types.
+
+`ssa_fix_inconsistencies_correct_left_probeScript.sml` replays the literal left reconciliation assembly and its original merge/fake prerequisites; captures the full statement and six types, including identical source/target word/code/FFI dimensions.
+
+`ssa_fix_inconsistencies_correct_right_probeScript.sml` replays the literal right reconciliation assembly and original map-agreement prerequisites, capturing the full returned-left-map result and six inferred types.
+
+`stackprops_instruction_constants_probeScript.sml` captures four complete
+original instruction support statements and their full types, plus ten native
+observations of success, failure, clock updates and FFI updates. The two local
+clock-neutral lemmas replay the original source statement and proof verbatim.
+The FFI theorem preserves HOL's independent updated host type. The published
+`set_var_with_const` FFI conjunct is likewise repaired to retain that independent
+host; its original 26-row state-constants capture was freshly regenerated and
+remains unchanged. These probes do not establish cross-language equivalence or
+remove the inherited external real-carrier assumption.
 ### Full native compiler no-install preservation
 
 `word_to_stack_comp_no_install_probeScript.sml` freshly captures original
