@@ -1,0 +1,9 @@
+hv_empty=1
+hv_plain=4
+hv_handler=6
+hf_none=F
+hf_some=T
+se_empty=T
+se_desc=T
+se_equal=F
+se_asc=F

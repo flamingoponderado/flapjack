@@ -1,0 +1,14 @@
+load "bossLib"; load "preamble"; load "word_to_stackProofTheory";
+open HolKernel Parse bossLib preamble word_to_stackProofTheory;
+fun print_eval label q = (print(label ^ "="); print_term(rconc(EVAL q)); print "\n");
+val _ = print_eval "as_base" ``abs_stack ([3w]:8 word list) ([]:8 wordSem$stack_frame list) [wordLang$Word 0w] [] = SOME []``;
+val _ = print_eval "as_base_bad" ``abs_stack ([3w]:8 word list) ([]:8 wordSem$stack_frame list) [] [] = NONE``;
+val _ = print_eval "as_plain" ``abs_stack ([3w]:8 word list) [wordSem$StackFrame NONE [] [] NONE :8 wordSem$stack_frame] [wordLang$Word 1w;wordLang$Word 7w;wordLang$Word 0w] [1] = SOME [(NONE,[T],[wordLang$Word 7w])]``;
+val _ = print_eval "as_bitmap_bad" ``abs_stack ([3w]:8 word list) [wordSem$StackFrame NONE [] [] NONE :8 wordSem$stack_frame] [wordLang$Word 0w;wordLang$Word 0w] [1] = NONE``;
+val _ = print_eval "as_len_bad" ``abs_stack ([3w]:8 word list) [wordSem$StackFrame NONE [] [] NONE :8 wordSem$stack_frame] [wordLang$Word 1w;wordLang$Word 7w;wordLang$Word 0w] [2] = NONE``;
+val _ = print_eval "as_short" ``abs_stack ([3w]:8 word list) [wordSem$StackFrame NONE [] [] NONE :8 wordSem$stack_frame] [wordLang$Word 1w] [1] = NONE``;
+val _ = print_eval "as_rest_bad" ``abs_stack ([3w]:8 word list) [wordSem$StackFrame NONE [] [] NONE :8 wordSem$stack_frame] [wordLang$Word 1w;wordLang$Word 7w] [1] = NONE``;
+val _ = print_eval "as_handler" ``abs_stack ([3w]:8 word list) [wordSem$StackFrame NONE [] [] (SOME(0,1,2)) :8 wordSem$stack_frame] [wordLang$Word 1w;wordLang$Loc 1 2;wordLang$Word 6w;wordLang$Word 1w;wordLang$Word 7w;wordLang$Word 0w] [1] = SOME [(SOME(wordLang$Loc 1 2,wordLang$Word 6w),[T],[wordLang$Word 7w])]``;
+val _ = print_eval "as_marker_bad" ``abs_stack ([3w]:8 word list) [wordSem$StackFrame NONE [] [] (SOME(0,1,2)) :8 wordSem$stack_frame] [wordLang$Word 2w] [1] = NONE``;
+val _ = print_eval "as_handler_short" ``abs_stack ([3w]:8 word list) [wordSem$StackFrame NONE [] [] (SOME(0,1,2)) :8 wordSem$stack_frame] [wordLang$Word 1w;wordLang$Loc 1 2] [1] = NONE``;
+val _ = print_eval "as_lens_bad" ``abs_stack ([3w]:8 word list) [wordSem$StackFrame NONE [] [] NONE :8 wordSem$stack_frame] [wordLang$Word 1w] [] = NONE``;
