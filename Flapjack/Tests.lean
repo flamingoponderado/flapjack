@@ -230,6 +230,7 @@ import Flapjack.Test.LoopPropsCompSyntaxOkParity
 import Flapjack.Test.CrepToLoopCompFuncParity
 import Flapjack.Test.CrepToLoopSurvivesMapiAssignParity
 import Flapjack.Test.SSARenameLookupParity
+import Flapjack.Test.SSAMergeMovesParity
 
 /-!
 # Flapjack regression tests

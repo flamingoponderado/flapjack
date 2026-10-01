@@ -31,6 +31,12 @@
       "sha256": "fb00053f44698704d47ad72155116e228341abdc8a31fca36f84735d31fe6183"
     },
     {
+      "bytes": 138,
+      "out": "asmprops_assertions_iteration_probe.out",
+      "rows": 6,
+      "sha256": "d9cb3107a1be1904e98d2b2b31551d5b116778e8669d11cdf5fe0962e2b82452"
+    },
+    {
       "bytes": 374,
       "out": "asmprops_assertions_probe.out",
       "rows": 16,
@@ -3391,6 +3397,18 @@
       "sha256": "f80fb6e485ddbe0a0af427f7a4e48f1f59fb20ff8990b41098bfe1f2d0053215"
     },
     {
+      "bytes": 1639,
+      "out": "ssa_merge_moves_probe.out",
+      "rows": 12,
+      "sha256": "8a679f3532e055edfaae58707eb08c29354875db7badf7fe49eac32d689db3c4"
+    },
+    {
+      "bytes": 328,
+      "out": "ssa_register_class_probe.out",
+      "rows": 10,
+      "sha256": "d1a7a95b4d2e730a6518608c3b3c4ebd742d43c32fa47f5325741f87b16995a4"
+    },
+    {
       "bytes": 459,
       "out": "ssa_rename_lookup_probe.out",
       "rows": 5,
@@ -4691,12 +4709,6 @@
       "out": "wrap_rt_probe.out",
       "rows": 5,
       "sha256": "34b4dc9b2384c56cae695cdda57731febdbd5d7d19b90a6c6004b6c39bdf87cd"
-    },
-    {
-      "bytes": 328,
-      "out": "ssa_register_class_probe.out",
-      "rows": 10,
-      "sha256": "d1a7a95b4d2e730a6518608c3b3c4ebd742d43c32fa47f5325741f87b16995a4"
     }
   ],
   "version": 1

@@ -3114,6 +3114,11 @@ register count and bitmap input. These are regression checks, not a
 HOL-to-Lean equivalence proof or whole compiler correctness acceptance.
 Selector: `HOL_PROBE_ONLY=word_to_stack_program_code_labels_probeScript.sml`.
 
+`ssa_merge_moves_probe.out` captures ten complete original merge_moves results,
+both maps included, plus the exported definition and full inferred type. Native
+`SSAMergeMovesParity` kernel-replays those results, including tail-first order,
+duplicate keys, malformed trees and unbounded naturals. Production routing
+remains separately tracked; these observations are not a cross-prover proof.
 `list_next_var_rename_lemma1_probe.out` records a fresh replay of the complete
 local original theorem and proof, plus eight full renaming observations with
 selected map lookups and all three arithmetic conclusions. Cases include
@@ -3133,3 +3138,15 @@ and payload applications. The definitions use the reviewed native `HolProg`
 carrier and preserve the literal source clauses. These are regression checks,
 not cross-language equivalence or full compiler preservation acceptance.
 Selector: `HOL_PROBE_ONLY=stackprops_forbidden_operations_probeScript.sml`.
+### Full generic ASM assertion iteration
+
+`asmprops_assertions_iteration_probeScript.sml` applies all six original
+`asmPropsTheory` iteration/weakening theorems. It matches each complete
+conclusion, instantiates remaining source variables, proves every original
+premise, checks the resulting theorem has no hypotheses and exactly the
+requested conclusion, then evaluates that conclusion. All six rows are `T`;
+`AsmPropsAssertionsIterationParity.lean` applies the corresponding full Lean
+theorems to the same inputs. Weakening/interference fixtures change functions
+above the original count bound, and the intermediate carrier remains Bool
+while states are Nat. These regressions do not establish cross-language
+equivalence or complete encoder correctness.
