@@ -4409,6 +4409,12 @@
       "out": "parmove_preserves_moves_steps_probe.out",
       "rows": 6,
       "sha256": "91ce20e9527c47c7bf16436e94de6959d386866fa41b8d2b354d1d3072a4aee7"
+    },
+    {
+      "bytes": 42,
+      "out": "parmove_preserves_moves_pmov_probe.out",
+      "rows": 3,
+      "sha256": "bed478f34f37b5dba6da84930702fa5d2b4ada9d59cd5c0376b6a510ec72bec1"
     }
   ],
   "version": 1

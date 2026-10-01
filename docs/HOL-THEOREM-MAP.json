@@ -43107,5 +43107,13 @@
     "hol_name": "steps_preserves_moves",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-luna-a source comparison 2026-10-01 beadw1a4.8: original1039-1048 free destination x explicit as Option alpha; initial existential non-self source conjunct primitive-step RTC implies same final existential. Arbitrary raw Option alpha pair-list State, stateToList concatenation and canonical ReflTransGen Step retained, lambdas beta-reduced. No wf, scratch safety, equality instance, target output or intermediate-invariant premise. Refl/tail induction lifts accepted whole stepPreservesMoves. Certified zero-step and two-step Start/Save kernel fixtures expose changing source and scratch destination; fresh original predicates/output witness equations are regression evidence only. Coordinator acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/PreservesMoves/Pmov.lean",
+    "lean_name": "pmovPreservesMoves",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "pmov_preserves_moves",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison 2026-10-01 w1a4.9: full original1050-1061/fresh DB.fetch. Arbitrary Option alpha pair-list State; original wf/member/nonself conjunction implies destination in MAP FST actual pmov state. Canonical pmov uses computational DecidableEq alpha (propositional equality, no BEq laws); inherited accepted API, no new semantic premise. Primitive RTC derived from pmovDsteps and dsteps_steps; final witness derived from accepted stepsPreservesMoves. No supplied target output, RTC, scratch safety or invariant assumption. Original fixtures/kernel and full gates required; coordinator acceptance pending."
   }
 ]

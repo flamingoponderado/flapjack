@@ -3164,3 +3164,7 @@ run_probe wordconvs_code_labels_probeScript.sml wordconvs_code_labels_probe.out 
 run_probe parmove_preserves_moves_steps_probeScript.sml parmove_preserves_moves_steps_probe.out \
   rtc_real_before rtc_real_after rtc_scratch_before rtc_scratch_after rtc_changed_source rtc_old_source_absent \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe parmove_preserves_moves_pmov_probeScript.sml parmove_preserves_moves_pmov_probe.out \
+  pmv_terminal pmv_pending pmv_output \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
