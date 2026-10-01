@@ -1,3 +1,4 @@
+import Flapjack.Test.SSASetupParity
 import Flapjack.Test.WordConvsProgramMonoParity
 import Flapjack.Test.ParmoveScratchOrderWrapperParity
 import Flapjack.Test.WordConvsNameMonoParity

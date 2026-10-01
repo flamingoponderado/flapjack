@@ -3284,3 +3284,7 @@ run_probe wordconvs_name_mono_probeScript.sml wordconvs_name_mono_probe.out \
 run_probe wordconvs_program_mono_probeScript.sml wordconvs_program_mono_probe.out \
   pm_skip pm_moves pm_inst pm_assign pm_seq pm_alloc pm_loop pm_call_none pm_call_return pm_call_handler pm_guard_needed pm_original_theorem \
   "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe ssa_setup_probeScript.sml ssa_setup_probe.out \
+  ss_even ss_empty ss_duplicates ss_invalid ss_one ss_setup0 ss_setup1 ss_setup3 ss_setup80 even_list_def next_var_rename_def list_next_var_rename_def setup_ssa_def \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"

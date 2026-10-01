@@ -3349,6 +3349,12 @@
       "sha256": "567c10eaf56c07243856c191b60a982c5c554900a977305b11f33afbaf699349"
     },
     {
+      "bytes": 1140,
+      "out": "ssa_setup_probe.out",
+      "rows": 13,
+      "sha256": "8c09976f47b02e1acb3f53b8f006871af510d90e1a755712add89f9a57fbc4a2"
+    },
+    {
       "bytes": 162,
       "out": "stack_alloc_next_lab_probe.out",
       "rows": 7,

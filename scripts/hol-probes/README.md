@@ -1,3 +1,5 @@
+`ssa_setup_probe.out` captures four original word_alloc definitions and nine direct EVAL rows for empty, duplicate, malformed-tree, arbitrary-start renaming and native setup widths 1/32/64/80. `Flapjack/Test/SSASetupParity.lean` kernel-replays identical inputs and observations. Regenerate with `HOL_PROBE_ONLY=ssa_setup_probeScript.sml`.
+
 `wordconvs_program_mono_probe.out` prints the complete original `every_var_mono`
 and eleven same-input predicate pairs replayed by `WordConvsProgramMonoParity`.
 These include Call NONE ignoring its populated handler, returning Calls with and

@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordAlloc.SSASetup
 import Flapjack.Pancake.WordConvs.ProgramMonotonicity
 import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Parmove
 import Flapjack.Pancake.WordConvs.NameMonotonicity

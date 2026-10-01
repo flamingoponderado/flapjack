@@ -43654,5 +43654,38 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-c: complete source45-57 quantified P/native prog/Q with global predicate implication AND source every_var guard. Actual everyVarHOL over full WordLangProgHOL, original every_var_def133-176 including return-dependent handler traversal, all cutset Spt lists, instructions/expressions and catchall cases. No extra bound/wf/evaluation/success/target premise. Only positive word dimension BitVec translation; faithful MlString, List, Spt and other payload carriers retained. Coordinator complete source/fixture review accepted (2026-10-01)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "even_list_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/SSASetup.lean",
+    "lean_name": "evenList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-c source/body/carrier comparison: word_allocScript39-55 and1809-1815. Literal GENLIST even naturals, native Spt insert, forward recursion including duplicate keys and arbitrary initial tree/start; Move1 ZIP renamed/even arguments and unused full WordLangProgHOL body. No allocation/wf/success premise. Nine fresh original kernel replay rows. Setup only translates positive type-indexed word dimension to BitVec width with NeZero. Executed list-state routing separately tracked on .30.2.1.1; coordinator acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "next_var_rename_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/SSASetup.lean",
+    "lean_name": "nextVarRename",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-c source/body/carrier comparison: word_allocScript39-55 and1809-1815. Literal GENLIST even naturals, native Spt insert, forward recursion including duplicate keys and arbitrary initial tree/start; Move1 ZIP renamed/even arguments and unused full WordLangProgHOL body. No allocation/wf/success premise. Nine fresh original kernel replay rows. Setup only translates positive type-indexed word dimension to BitVec width with NeZero. Executed list-state routing separately tracked on .30.2.1.1; coordinator acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "list_next_var_rename_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/SSASetup.lean",
+    "lean_name": "listNextVarRename",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-c source/body/carrier comparison: word_allocScript39-55 and1809-1815. Literal GENLIST even naturals, native Spt insert, forward recursion including duplicate keys and arbitrary initial tree/start; Move1 ZIP renamed/even arguments and unused full WordLangProgHOL body. No allocation/wf/success premise. Nine fresh original kernel replay rows. Setup only translates positive type-indexed word dimension to BitVec width with NeZero. Executed list-state routing separately tracked on .30.2.1.1; coordinator acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "setup_ssa_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/SSASetup.lean",
+    "lean_name": "setupSSA",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-c source/body/carrier comparison: word_allocScript39-55 and1809-1815. Literal GENLIST even naturals, native Spt insert, forward recursion including duplicate keys and arbitrary initial tree/start; Move1 ZIP renamed/even arguments and unused full WordLangProgHOL body. No allocation/wf/success premise. Nine fresh original kernel replay rows. Setup only translates positive type-indexed word dimension to BitVec width with NeZero. Executed list-state routing separately tracked on .30.2.1.1; coordinator acceptance pending.",
+    "words_as_type_indexed_bitvec": true
   }
 ]

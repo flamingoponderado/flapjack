@@ -1,0 +1,26 @@
+ss_even=([],[0],[0; 2; 4; 6; 8])
+ss_empty=([],[NONE; NONE; NONE; SOME 99],5)
+ss_duplicates=([5; 9; 13],[NONE; SOME 13; SOME 9; SOME 99],17)
+ss_invalid=([0; 4],[SOME 0; NONE; SOME 4],8)
+ss_one=(101,[SOME 88; SOME 101],105)
+ss_setup0=(Move1 [],[NONE; NONE; NONE; NONE],7)
+ss_setup1=(Move1 [(0,0)],[SOME 0; NONE; NONE; NONE],4)
+ss_setup3=(Move1 [(5,0); (9,2); (13,4)],[SOME 5; SOME 9; SOME 13; NONE],17)
+ss_setup80=(Move1 [(101,0); (105,2); (109,4)],[SOME 101; SOME 105; SOME 109; NONE],113)
+even_list_def=⊢ even_list = GENLIST (λx. 2 * x)
+next_var_rename_def=⊢ ∀v ssa na. next_var_rename v ssa na = (na,insert v na ssa,na + 4)
+list_next_var_rename_def=⊢ (∀ssa na. list_next_var_rename [] ssa na = ([],ssa,na)) ∧
+  ∀x xs ssa na.
+    list_next_var_rename (x::xs) ssa na =
+    (let
+       (y,ssa',na') = next_var_rename x ssa na;
+       (ys,ssa'',na'') = list_next_var_rename xs ssa' na'
+     in
+       (y::ys,ssa'',na''))
+setup_ssa_def=⊢ ∀n lim prog.
+    setup_ssa n lim prog =
+    (let
+       args = even_list n;
+       (new_ls,ssa',n') = list_next_var_rename args LN lim
+     in
+       (Move1 (ZIP (new_ls,args)),ssa',n'))
