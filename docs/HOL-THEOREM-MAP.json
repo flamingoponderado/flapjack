@@ -41188,6 +41188,23 @@
   "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.6.5.3: Genuine fourth Save constructor case of original step_sem370. Concrete source states instantiate unconditional Step.save, with entire original input wf and forallenv eqenv every real register retained. No environment-agreement/target evaluation or stronger source premise. Pending/active-prefix sources are real by original pending-source and nonempty FRONT conjuncts; last source may be NONE. Full arbitrary emitted history is reversed before literal NONE save. Reviewed wf_step transports invariant independently, parsem_perm/cons expose final destination, parsem_change_env proves real-register agreement from those source facts. Option registers/List/function/value carriers unchanged.20fresh original rows kernel-paired: reversed history, cycle, valid final NONE source, changed temporary ignored by eqenv, invalid pending NONE source99vs27 outsidewf. EmitHead/fullassembly remain open."
 },
 {
+  "hol_path": "cakeml/misc/miscScript.sml",
+  "hol_name": "max3_def",
+  "lean_path": "Flapjack/Misc/Max3.lean",
+  "lean_name": "max3HOL",
+  "statement_status": "reviewed_exact",
+  "reviewer": "Source comparison miscScript641-644: three universally quantified naturals, exact nested strict comparisons and source branch order, same natural output; no carrier or hypothesis difference."
+},
+{
+  "hol_path": "cakeml/compiler/backend/wordLangScript.sml",
+  "hol_name": "max_var_inst_def",
+  "lean_path": "Flapjack/Pancake/WordLang/MaxVarInst.lean",
+  "lean_name": "maxVarInstHOL",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison wordLangScript216-241 and asmScript85-134: exact WordLangInst(BitVec width) instruction/arith/reg-imm/address/FP constructor payloads; positivewidth words_as_type_indexed_bitvec. All arithmetic max3/nestedMAX clauses and six memory cases retain argument order; FP comparisons return integer destination, FP MovToReg and MovFromReg preserve dimension64 branch and integer fields, all remaining FP cases default0. No extra premise, callback, targetresult, or dimension64 restriction; original26 direct rows include32/64 transfers and kernel replay. Full max_var/program frame sizing and production routing remainOPEN."
+},
+{
   "hol_path": "cakeml/compiler/backend/wordLangScript.sml",
   "hol_name": "max_var_exp_def",
   "lean_path": "Flapjack/Pancake/WordLang/MaxVarExp.lean",
