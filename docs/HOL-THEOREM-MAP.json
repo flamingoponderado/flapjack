@@ -39428,5 +39428,19 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.31) against wordPropsScript.sml:2115-2133: !x b s t. s_key_eq (push_env x b s).stack t.stack ==> ?n l ls opt. t.stack = StackFrame n (toAList (FST x)) l opt :: ls /\\ ?y. pop_env t = SOME y /\\ y.locals = union (fromAList l) (fromAList (toAList (FST x))) /\\ domain (SND x) UNION domain (FST x) = domain y.locals /\\ s_key_eq s.stack y.stack; set equality as predicate equality, over the reviewed s_key_eq/s_val_eq definitions and the tagged wordSem gc/push_env/pop_env renderings. Positive BitVec width and the WordSem finite-map fields are the only carrier translations."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_apply_colour",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/Alloc.lean",
+    "lean_name": "evaluateApplyColour_Alloc",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.27): HOL Resume evaluate_apply_colour[Alloc] case of word_allocProofScript.sml:1105-1130, i.e. the HOL theorem at Alloc n names: same binders st cst f live lt, the three HOL premises and the HOL existential conclusion (applyColourPost), no IH (no sub-program) and no extra premise. Proof follows the HOL case: cut_envs_lemma for the restriction, push_env_s_val_eq to choose the source permute oracle, gc_s_val_eq_gen, s_key_eq_val_eq_pop_env and push_env_pop_env_s_key_eq for the popped frames, ALOOKUP_key_remap_INJ for the locals, s_val_and_key_eq for the stack; untagged helper allocSim/allocLocalsRel factor that argument. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
   }
 ]

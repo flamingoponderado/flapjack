@@ -131,6 +131,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.PermuteSwap
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ColouringOk
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Motive
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Leaves
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Alloc
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.PermuteSwap
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StackEq
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StackSwap
