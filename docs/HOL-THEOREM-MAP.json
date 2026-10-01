@@ -48625,5 +48625,49 @@
     "lean_name": "removeDead_induct",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only structural induction over remove_dead results used by the tagged wordConvsProof remove_dead theorems; HOL uses remove_dead_ind with remove_dead_def directly, so no separate HOL declaration is being ported."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "apply_colour_lab_pres",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/ApplyColour.lean",
+    "lean_name": "applyColour_labPres",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.1.9): HOL wordConvsProofScript.sml:2782-2789 apply_colour_lab_pres: quantifiers col prog, extract_labels prog = extract_labels (apply_colour col prog). Statement over the exact WordLangProgHOL carrier and the reviewed WordAlloc.applyColour (apply_colour_def); positive BitVec/NeZero is the only carrier translation; proved by structural recursion over the program mirroring HOL apply_colour_ind; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "apply_colour_not_created_subprogs",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/ApplyColour.lean",
+    "lean_name": "applyColour_notCreatedSubprogs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.1.9): HOL wordConvsProofScript.sml:2855-2864 apply_colour_not_created_subprogs: free P prog f, not_created_subprogs P prog implies not_created_subprogs P (apply_colour f prog) over the exact notCreatedSubprogsHOL (via the untagged invariance equality notCreatedSubprogs_applyColour_eq). Statement over the exact WordLangProgHOL carrier and the reviewed WordAlloc.applyColour (apply_colour_def); positive BitVec/NeZero is the only carrier translation; proved by structural recursion over the program mirroring HOL apply_colour_ind; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_apply_colour",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/ApplyColour.lean",
+    "lean_name": "getCodeLabels_applyColour",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.1.9): HOL wordConvsProofScript.sml:2880-2888 word_get_code_labels_apply_colour: quantifiers col ps, word_get_code_labels (apply_colour col ps) = word_get_code_labels ps over the reviewed getCodeLabelsHOL. Statement over the exact WordLangProgHOL carrier and the reviewed WordAlloc.applyColour (apply_colour_def); positive BitVec/NeZero is the only carrier translation; proved by structural recursion over the program mirroring HOL apply_colour_ind; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_good_handlers_apply_colour",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/ApplyColour.lean",
+    "lean_name": "goodHandlers_applyColour",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.1.9): HOL wordConvsProofScript.sml:2890-2898 word_good_handlers_apply_colour: quantifiers col ps with free handler label n leading, word_good_handlers n (apply_colour col ps) <=> word_good_handlers n ps over the reviewed goodHandlersHOL. Statement over the exact WordLangProgHOL carrier and the reviewed WordAlloc.applyColour (apply_colour_def); positive BitVec/NeZero is the only carrier translation; proved by structural recursion over the program mirroring HOL apply_colour_ind; no extra premise."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/ApplyColour.lean",
+    "lean_name": "notCreatedSubprogs_applyColour_eq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only invariance equality used by the tagged apply_colour_not_created_subprogs implication; HOL proves the implication directly by apply_colour_ind, so no separate HOL declaration is being ported."
   }
 ]
