@@ -3369,3 +3369,14 @@ clause requires no choice of HOL ARB. All source shared inputs remain in the
 full theorem; the only qualifier translates positive type-indexed word dimensions.
 These regression observations do not establish compiler correctness or replace
 source-level HOL/Lean correspondence review.
+
+### Full generic-frame copy-ret no-install theorem
+
+`word_to_stack_copy_ret_no_install_probeScript.sml` evaluates eight original
+full `copy_ret_no_install` iff instances together with actual output predicates.
+The original theorem is local; this capture evaluates original definitions and
+does not claim an exported theorem application. Independent generic frame tails
+and return-list types, widths 64/1/16, zero/nonzero counts, both flags and unsafe
+Install/handler/loop continuations are replayed by
+`WordToStackCopyRetNoInstallParity`. The unrestricted native theorem retains the
+full source iff without a continuation-safety assumption.
