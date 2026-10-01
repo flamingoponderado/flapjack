@@ -12,7 +12,8 @@ private theorem max3_eq_max (a b c : Nat) : max3HOL a b c = max a (max b c) := b
   split <;> split <;> omega
 
 /-- Full arithmetic maximum correspondence through the actual partial codec.
-The distinct five-register AddCarry is rejected on both sides. No conversion
+When the codec rejects the distinct five-register AddCarry, both mapped
+expressions are none; no maximum correspondence is asserted for that case. No conversion
 success or desired-maximum premise is assumed. This is Flapjack carrier
 infrastructure, not a HOL theorem port. -/
 theorem wordArithCakeMaxVar_codec {width : Nat} [NeZero width]

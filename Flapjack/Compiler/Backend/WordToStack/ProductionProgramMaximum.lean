@@ -88,8 +88,8 @@ private theorem encodedMaximum {width : Nat} [NeZero width]
 /-- Full production program maximum correspondence through the actual
 partial native codec under the allocator's existing checked memory guard.
 No successful-codec, desired-maximum, target-evaluation or compiler-success
-premise is assumed. Rejected five-register AddCarry remains explicit on both
-sides. This is Flapjack-only carrier correspondence; source-to-SSA codec image,
+premise is assumed. When five-register AddCarry is codec-rejected, both mapped expressions are
+none; no maximum correspondence is asserted for that case. This is Flapjack-only carrier correspondence; source-to-SSA codec image,
 native frame/config integration and executed routing remain separate work. -/
 theorem wordProgCakeMaxVar_codec {width : Nat} [NeZero width]
     (program : WordProg (BitVec width))
