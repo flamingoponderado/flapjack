@@ -3813,3 +3813,11 @@ legitimate source-subprogram induction hypotheses. The accepted full source
 guard equations are reused. These regressions do not establish cross-language
 equivalence or complete the compiler theorem. Selector:
 `HOL_PROBE_ONLY=word_to_stack_no_shmemop_recursive_probeScript.sml`.
+
+`stackprops_state_constants_probeScript.sml` captures the complete thirteen
+state-operation constant/commutation statements from stackProps20-168 and
+their original free-variable types. It fetches exported HOL theorems; the
+local/overwritten declarations at84/90/110/125 are explicitly re-proved with
+their original statements and proofs. In particular, empty_env_const has
+independently polymorphic x and z states. These are source-shape captures,
+not a claim of HOL-to-Lean equivalence or exported status for local helpers.

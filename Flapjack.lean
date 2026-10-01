@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.StackProps.StateConstants
 import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocationLimit
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveLookups
 import Flapjack.Pancake.LoopToWord.Proofs.LabelHandlers

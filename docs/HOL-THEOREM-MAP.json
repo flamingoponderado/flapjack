@@ -47986,5 +47986,200 @@
     "words_as_type_indexed_bitvec": true,
     "reals_as_rational_cuts": true,
     "reviewer": "flapjack-ds9 source comparison (2026-09-30; bead flapjack-y19g.11.3.3): HOL inst_def FPFromInt clause (cakeml/compiler/backend/semantics/stackSemScript.sml:624-636) = if dimindex(:a) = 64 then case get_fp_var d2 s of SOME f => let i = w2i ((31 >< 0) f : word32) in SOME (set_fp_var d1 (int_to_fp64 roundTiesToEven i) s) | NONE => NONE else case get_fp_var (d2 DIV 2) s of SOME v => let i = w2i (if ODD d2 then (63 >< 32) v else (31 >< 0) v : 'a word) in SOME (set_fp_var d1 (int_to_fp64 roundTiesToEven i) s) | NONE => NONE, split out as the exact FPFromInt constructor case of HOL inst_def (a split along HOL's own case structure). The stated result is exactly the clause's Option state value, with no dispatcher outer some; (31 >< 0)/(63 >< 32) are holWordExtract and w2i is BitVec.toInt. The owning carrier is the tagged StackSemStateFiniteExact; its three |-> fields regs/fp_regs/store are recorded by fmap_as_finite_support [regs, fpRegs, store] with the same-module witness Flapjack.StackSemFpRegisterInstructions.FiniteSupport.holFmapAsFiniteSupportWitness. The words qualifier records the positive-width BitVec width translation; the clause's own source uses the reviewed binary64 real rendering holIntToFp64 (Flapjack/Misc/BinaryIeeeConvert.lean), so the declaration carries (reals_as_rational_cuts): agreement with HOL's real-number specification remains the external assumption of docs/SOUNDNESS.md item 8 (source review names the qualifier reals_as_rational_cuts and Soundness item 8). No quantifier, hypothesis, side condition or conclusion differs. Rows fpfromint_result, fpfromint_missing, fpfromint32_even and fpfromint32_odd of scripts/hol-probes/stacksem_fp_convert_probe.out are replayed by Flapjack.Test.StackSemFpRegisterInstParity. flapjack-sol3 source comparison (2026-10-01; flapjack-y19g.11.3.3.1): independently compared original stackSem inst_def clauses 558-562, 605-623 and 624-636, original full generic inst/get_fp_var/set_fp_var types, and the 22-field owning state. C and F remain arbitrary; fp_regs is fixed word64 while the width-split FPFromInt extraction is word32 only at width=64 and width-indexed otherwise. Missing operands, signed i2w/w2i round-trip rejection, odd/even DIV-2 slots and exact Option state outputs are preserved, without extra premises. The same-module finite-support witness forwards the actual owning carrier codec. Original 11-row probe freshly regenerated from pinned HOL source. The real-sqrt/cut agreement is pure Lean and does not prove HOL-to-Lean equivalence; conversion representation assumptions remain as recorded."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/StateConstants.lean",
+    "lean_name": "setStoreConst",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "set_store_const",
+    "hol_line": 20,
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-imh9): compared the complete original set_store_const at source line 20, including every conjunct in source order and the original bound variables. Lean uses the accepted StackSemStateFiniteExact owning carrier with generic positive width and arbitrary C/F, fixed word64 fpRegs, and canonical regs/fpRegs/store maps via fmap_as_finite_support; same-module StateConstants codec witness reexports the actual owning state codec. words_as_type_indexed_bitvec records only the standard word/FFI carrier translation. Field updates and lookup clauses are unchanged; no extra hypothesis. The empty_env_const statement retains independent x and z states. Duplicate set_fp_var_const declarations are disambiguated by exact source lines90 and137. Original source/theorem captures accompany the group."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/StateConstants.lean",
+    "lean_name": "setStoreWithConst",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "set_store_with_const",
+    "hol_line": 43,
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-imh9): compared the complete original set_store_with_const at source line 43, including every conjunct in source order and the original bound variables. Lean uses the accepted StackSemStateFiniteExact owning carrier with generic positive width and arbitrary C/F, fixed word64 fpRegs, and canonical regs/fpRegs/store maps via fmap_as_finite_support; same-module StateConstants codec witness reexports the actual owning state codec. words_as_type_indexed_bitvec records only the standard word/FFI carrier translation. Field updates and lookup clauses are unchanged; no extra hypothesis. The empty_env_const statement retains independent x and z states. Duplicate set_fp_var_const declarations are disambiguated by exact source lines90 and137. Original source/theorem captures accompany the group."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/StateConstants.lean",
+    "lean_name": "setVarConst",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "set_var_const",
+    "hol_line": 49,
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-imh9): compared the complete original set_var_const at source line 49, including every conjunct in source order and the original bound variables. Lean uses the accepted StackSemStateFiniteExact owning carrier with generic positive width and arbitrary C/F, fixed word64 fpRegs, and canonical regs/fpRegs/store maps via fmap_as_finite_support; same-module StateConstants codec witness reexports the actual owning state codec. words_as_type_indexed_bitvec records only the standard word/FFI carrier translation. Field updates and lookup clauses are unchanged; no extra hypothesis. The empty_env_const statement retains independent x and z states. Duplicate set_fp_var_const declarations are disambiguated by exact source lines90 and137. Original source/theorem captures accompany the group."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/StateConstants.lean",
+    "lean_name": "setVarWithConst",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "set_var_with_const",
+    "hol_line": 74,
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-imh9): compared the complete original set_var_with_const at source line 74, including every conjunct in source order and the original bound variables. Lean uses the accepted StackSemStateFiniteExact owning carrier with generic positive width and arbitrary C/F, fixed word64 fpRegs, and canonical regs/fpRegs/store maps via fmap_as_finite_support; same-module StateConstants codec witness reexports the actual owning state codec. words_as_type_indexed_bitvec records only the standard word/FFI carrier translation. Field updates and lookup clauses are unchanged; no extra hypothesis. The empty_env_const statement retains independent x and z states. Duplicate set_fp_var_const declarations are disambiguated by exact source lines90 and137. Original source/theorem captures accompany the group."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/StateConstants.lean",
+    "lean_name": "setFpVarWithConst",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "set_fp_var_with_const",
+    "hol_line": 84,
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-imh9): compared the complete original set_fp_var_with_const at source line 84, including every conjunct in source order and the original bound variables. Lean uses the accepted StackSemStateFiniteExact owning carrier with generic positive width and arbitrary C/F, fixed word64 fpRegs, and canonical regs/fpRegs/store maps via fmap_as_finite_support; same-module StateConstants codec witness reexports the actual owning state codec. words_as_type_indexed_bitvec records only the standard word/FFI carrier translation. Field updates and lookup clauses are unchanged; no extra hypothesis. The empty_env_const statement retains independent x and z states. Duplicate set_fp_var_const declarations are disambiguated by exact source lines90 and137. Original source/theorem captures accompany the group."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/StateConstants.lean",
+    "lean_name": "setFpVarConstFields",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "set_fp_var_const",
+    "hol_line": 90,
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-imh9): compared the complete original set_fp_var_const at source line 90, including every conjunct in source order and the original bound variables. Lean uses the accepted StackSemStateFiniteExact owning carrier with generic positive width and arbitrary C/F, fixed word64 fpRegs, and canonical regs/fpRegs/store maps via fmap_as_finite_support; same-module StateConstants codec witness reexports the actual owning state codec. words_as_type_indexed_bitvec records only the standard word/FFI carrier translation. Field updates and lookup clauses are unchanged; no extra hypothesis. The empty_env_const statement retains independent x and z states. Duplicate set_fp_var_const declarations are disambiguated by exact source lines90 and137. Original source/theorem captures accompany the group."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/StateConstants.lean",
+    "lean_name": "getFpVarWithConst",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "get_fp_var_with_const",
+    "hol_line": 110,
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-imh9): compared the complete original get_fp_var_with_const at source line 110, including every conjunct in source order and the original bound variables. Lean uses the accepted StackSemStateFiniteExact owning carrier with generic positive width and arbitrary C/F, fixed word64 fpRegs, and canonical regs/fpRegs/store maps via fmap_as_finite_support; same-module StateConstants codec witness reexports the actual owning state codec. words_as_type_indexed_bitvec records only the standard word/FFI carrier translation. Field updates and lookup clauses are unchanged; no extra hypothesis. The empty_env_const statement retains independent x and z states. Duplicate set_fp_var_const declarations are disambiguated by exact source lines90 and137. Original source/theorem captures accompany the group."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/StateConstants.lean",
+    "lean_name": "getVarWithConst",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "get_var_with_const",
+    "hol_line": 116,
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-imh9): compared the complete original get_var_with_const at source line 116, including every conjunct in source order and the original bound variables. Lean uses the accepted StackSemStateFiniteExact owning carrier with generic positive width and arbitrary C/F, fixed word64 fpRegs, and canonical regs/fpRegs/store maps via fmap_as_finite_support; same-module StateConstants codec witness reexports the actual owning state codec. words_as_type_indexed_bitvec records only the standard word/FFI carrier translation. Field updates and lookup clauses are unchanged; no extra hypothesis. The empty_env_const statement retains independent x and z states. Duplicate set_fp_var_const declarations are disambiguated by exact source lines90 and137. Original source/theorem captures accompany the group."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/StateConstants.lean",
+    "lean_name": "getVarsWithConst",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "get_vars_with_const",
+    "hol_line": 125,
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-imh9): compared the complete original get_vars_with_const at source line 125, including every conjunct in source order and the original bound variables. Lean uses the accepted StackSemStateFiniteExact owning carrier with generic positive width and arbitrary C/F, fixed word64 fpRegs, and canonical regs/fpRegs/store maps via fmap_as_finite_support; same-module StateConstants codec witness reexports the actual owning state codec. words_as_type_indexed_bitvec records only the standard word/FFI carrier translation. Field updates and lookup clauses are unchanged; no extra hypothesis. The empty_env_const statement retains independent x and z states. Duplicate set_fp_var_const declarations are disambiguated by exact source lines90 and137. Original source/theorem captures accompany the group."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/StateConstants.lean",
+    "lean_name": "getVarImmWithConst",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "get_var_imm_with_const",
+    "hol_line": 131,
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-imh9): compared the complete original get_var_imm_with_const at source line 131, including every conjunct in source order and the original bound variables. Lean uses the accepted StackSemStateFiniteExact owning carrier with generic positive width and arbitrary C/F, fixed word64 fpRegs, and canonical regs/fpRegs/store maps via fmap_as_finite_support; same-module StateConstants codec witness reexports the actual owning state codec. words_as_type_indexed_bitvec records only the standard word/FFI carrier translation. Field updates and lookup clauses are unchanged; no extra hypothesis. The empty_env_const statement retains independent x and z states. Duplicate set_fp_var_const declarations are disambiguated by exact source lines90 and137. Original source/theorem captures accompany the group."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/StateConstants.lean",
+    "lean_name": "setFpVarConst",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "set_fp_var_const",
+    "hol_line": 137,
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-imh9): compared the complete original set_fp_var_const at source line 137, including every conjunct in source order and the original bound variables. Lean uses the accepted StackSemStateFiniteExact owning carrier with generic positive width and arbitrary C/F, fixed word64 fpRegs, and canonical regs/fpRegs/store maps via fmap_as_finite_support; same-module StateConstants codec witness reexports the actual owning state codec. words_as_type_indexed_bitvec records only the standard word/FFI carrier translation. Field updates and lookup clauses are unchanged; no extra hypothesis. The empty_env_const statement retains independent x and z states. Duplicate set_fp_var_const declarations are disambiguated by exact source lines90 and137. Original source/theorem captures accompany the group."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/StateConstants.lean",
+    "lean_name": "emptyEnvConst",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "empty_env_const",
+    "hol_line": 144,
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-imh9): compared the complete original empty_env_const at source line 144, including every conjunct in source order and the original bound variables. Lean uses the accepted StackSemStateFiniteExact owning carrier with generic positive width and arbitrary C/F, fixed word64 fpRegs, and canonical regs/fpRegs/store maps via fmap_as_finite_support; same-module StateConstants codec witness reexports the actual owning state codec. words_as_type_indexed_bitvec records only the standard word/FFI carrier translation. Field updates and lookup clauses are unchanged; no extra hypothesis. The empty_env_const statement retains independent x and z states. Duplicate set_fp_var_const declarations are disambiguated by exact source lines90 and137. Original source/theorem captures accompany the group. Full original type capture confirms x:(beta,gamma,alpha)state and z:(delta,epsilon,zeta)state: Lean retains independent width/otherWidth and C/F/OtherC/OtherF, with separate positivity instances, not just independently valued states on one carrier."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/StateConstants.lean",
+    "lean_name": "emptyEnvWithConst",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "empty_env_with_const",
+    "hol_line": 164,
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-imh9): compared the complete original empty_env_with_const at source line 164, including every conjunct in source order and the original bound variables. Lean uses the accepted StackSemStateFiniteExact owning carrier with generic positive width and arbitrary C/F, fixed word64 fpRegs, and canonical regs/fpRegs/store maps via fmap_as_finite_support; same-module StateConstants codec witness reexports the actual owning state codec. words_as_type_indexed_bitvec records only the standard word/FFI carrier translation. Field updates and lookup clauses are unchanged; no extra hypothesis. The empty_env_const statement retains independent x and z states. Duplicate set_fp_var_const declarations are disambiguated by exact source lines90 and137. Original source/theorem captures accompany the group."
   }
 ]

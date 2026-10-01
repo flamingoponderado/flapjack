@@ -101,6 +101,10 @@ run_probe() {
   done
 }
 
+run_probe stackprops_state_constants_probeScript.sml stackprops_state_constants_probe.out \
+  sc_20 sc_20_types sc_43 sc_43_types sc_49 sc_49_types sc_74 sc_74_types sc_84 sc_84_types sc_90 sc_90_types sc_110 sc_110_types sc_116 sc_116_types sc_125 sc_125_types sc_131 sc_131_types sc_137 sc_137_types sc_144 sc_144_types sc_164 sc_164_types \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
 run_probe stacksem_fp_conversion_types_probeScript.sml stacksem_fp_conversion_types_probe.out \
   fp_inst_type fp_get_type fp_set_type fp_sqrt_type fp_to_int_type fp_from_int_type fp_oracle_type \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
