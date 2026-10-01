@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.LabSem.Arithmetic
+import Flapjack.Compiler.Backend.LabSem.FpUpdates
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.If
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Loop
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.MustTerminate

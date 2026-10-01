@@ -39789,5 +39789,15 @@
   "lean_name": "evaluateApplyColour_Loop",
   "hol_name": "evaluate_apply_colour",
   "reviewer": "flapjack-luna-c source comparison 2026-10-01 (.11.1.26.4): original931-1103 Loop_helper and evaluate_apply_colour Loop case. Full original colouring/state/live-before locals premises and sole body IH; full existential error disjunction and result-selected locals. Native clock induction transports entry cut, extends relation using exact cut domain, handles source Error, zero-clock timeout with flush, recursively stitches oracle for NONE/Continue0 using strict decClock descent and permute_swap_lemma, transports Break0 exit cut, and shifts positive Break/Continue loop-table indices. No target evaluation/success, extra injection/clock/word/oracle premise. Core and conversion untagged local infrastructure; positive width and canonical actual imported fpRegs/store carrier with local roundtrip. Inherits reals_as_rational_cuts from reviewed WordSem evaluator (SOUNDNESS item8). Coordinator review pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "fp_upd_def",
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/FpUpdates.lean",
+  "lean_name": "fpUpd",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01 b4v0.2.3: all16 literal fp_upd_def158-223 clauses on imported native State, HolFp constructor carrier, actual positive polymorphic word width and fixed word64 FP registers. Source RTE primitives imported from reviewed IEEE renderings, source fpSemFpfma operand order retained with accumulator first. MovToReg sequential updates preserve alias high-half overwrite; MovFromReg concat uses actual width and Loc errors assert. FPToInt asserts signed-word32 range equality but unconditionally writes narrowed bits after failure, with old-register half insertion for non64 widths. FPFromInt non64 signed extraction uses actual width, not32. No operation callback, conversion-success premise or runtime approximation. Inherits reals_as_rational_cuts from imported IEEE renderings (SOUNDNESS item8), including unspecified quiet-NaN choice, without fixing raw NaN arithmetic payloads.29 direct original HOL rows/kernel matches cover allconstructors, width8/32/64/128, NaN/sign payloads, FMA order, rounding ties, alias/error/overflow write cases. Whole Lab evaluator/runtime wiring remain open. Coordinator review pending."
 }
 ]

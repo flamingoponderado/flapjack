@@ -32,6 +32,17 @@ with `HOL_PROBE_ONLY=stacksem_loop_recursive_probeScript.sml scripts/hol-probes/
 
 # Original Pancake HOL probes
 
+`labsem_fp_updates_probe.out` records 29 direct original `labSem$fp_upd`
+observations, paired with kernel checks in `LabSemFpUpdatesParity`. All sixteen
+constructors are exercised. Cases include NaN/sign payloads, signed zero,
+rounding ties, FMA operand order, aliased destinations, failure with retained
+overflow writes, odd-half insertion, and actual widths8/32/64/128. The IEEE
+definitions and conversions are registered in HOL's EVAL compset as in the
+existing machine IEEE probes. These finite observations do not establish full
+LabSem evaluator routing or cross-language IEEE equivalence. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=labsem_fp_updates_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `reg_alloc_clash_tree_probe.out` captures eight direct original register
 allocator checker observations: repeated deletion, duplicate colours,
 existing-name skips, partial collisions, Delta's discarded write result,
