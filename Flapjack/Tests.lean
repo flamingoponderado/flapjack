@@ -1,3 +1,4 @@
+import Flapjack.Test.StackToLabNativeParity
 import Flapjack.Test.SSALocalsPhysicalInsertParity
 import Flapjack.Test.SSAMapPreservationParity
 import Flapjack.Test.SSARegisterFlipParity

@@ -47035,5 +47035,57 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-sol source comparison2026-10-01 bead48.2.3: full local StackHandlerArgs_no_shmemop12251-12258: arbitrary perf, Sum alpha beta destination with independent payload carriers, argument count Nat and complete Nat\u00d7Nat\u00d7Nat frame; unconditional result. Accepted stack_move_no_shmemop preserves the native generated stack allocation continuation at every offset/count; no bounds, frame validity or target safety premises. Sole word qualifier translates original type-indexed word to positive BitVec width/NeZero, with native HolProg and accepted original constructor arities/fields; independent unused frame/Sum carriers are preserved, not specialized. Literal entire original three local proofs and generic operation types freshly replayed in original HOL. Sixteen same-input native predicate observations (including mixed frame types, false continuations, direct/indirect Sum Bool Unit and large frames) match kernel fixtures; three arbitrary-carrier applications check the actual complete theorem signatures. No executable or compiler change and no full comp_no_shmemop claim."
-}
+},
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Native.lean",
+    "lean_name": "findLabHOL",
+    "hol_path": "cakeml/compiler/backend/stack_to_labScript.sml",
+    "hol_name": "find_lab_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol completed source comparison (2026-10-01; bead52bq), stack_to_labScript.sml:33-38: Nat index and List Nat labels; optional lookup returns zero exactly on NONE, the selected label on SOME, including out-of-range indices."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Native.lean",
+    "lean_name": "negateHOL",
+    "hol_path": "cakeml/compiler/backend/stack_to_labScript.sml",
+    "hol_name": "negate_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol completed source comparison (2026-10-01; bead52bq), stack_to_labScript.sml:24-32: all eight native comparison constructors, paired involutive negations; no omitted constructors or side conditions."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Native.lean",
+    "lean_name": "compileJumpHOL",
+    "hol_path": "cakeml/compiler/backend/stack_to_labScript.sml",
+    "hol_name": "compile_jump_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol completed source comparison (2026-10-01; bead52bq), stack_to_labScript.sml:19-22: INL emits native LabAsm Jump (Lab n 0) with zero word, empty byte cache and zero length; INR emits native Asmi JumpReg with empty cache and zero length. Positive-width BitVec/[NeZero width] is the sole HOL word-dimension translation.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Native.lean",
+    "lean_name": "flattenHOL",
+    "hol_path": "cakeml/compiler/backend/stack_to_labScript.sml",
+    "hol_name": "flatten_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol completed source comparison (2026-10-01; bead52bq), stack_to_labScript.sml:44-117: every recursive quotation clause and wildcard compared, including recursive order and threaded label counters, tail Seq label1, six If branches, nr1/nr2 flags, Loop continuation/break stacks, direct/indirect tail Call ignoring handlers, returned Call with optional handler and its explicit inner parentheses, exact FFI MlString pass-through, installation, native shared-memory and Cbw payloads. Local ++ inherits left-associative fixity from HOL listScript148; every Append tree is preserved, not merely its flattened list. All zero words, empty BitVec8 caches, and zero encoded lengths match. HolProg uses the reviewed single-width native asm carriers and exact MlString; no callback operations, zero-value parameter, or extra premises. The original full exported definition and45 complete outputs were freshly evaluated in stack_to_lab_native_probe.out. Positive-width BitVec/[NeZero width] is the sole HOL word-dimension translation.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Native.lean",
+    "lean_name": "isSeqHOL",
+    "hol_path": "cakeml/compiler/backend/stack_to_labScript.sml",
+    "hol_name": "is_Seq_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol completed source comparison (2026-10-01; bead52bq), stack_to_labScript.sml:126-129: true only for the root Seq constructor; false for every other native program root, with no traversal or extra assumptions. Positive-width BitVec/[NeZero width] is the sole HOL word-dimension translation.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Native.lean",
+    "lean_name": "progToSectionHOL",
+    "hol_path": "cakeml/compiler/backend/stack_to_labScript.sml",
+    "hol_name": "prog_to_section_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol completed source comparison (2026-10-01; bead52bq), stack_to_labScript.sml:131-136: pair input (n,p), flatten T p n (next_lab p2) [][]; Section n appends the resulting app_list plus exactly one Label n (m if root Seq else1)0. Native nextLab specialization compared against stack_allocScript649-662: complete source traversal and MAX label seed clauses retained. Same native line carrier, exact section field order and list extraction; no extra safety premise. Positive-width BitVec/[NeZero width] is the sole HOL word-dimension translation.",
+    "words_as_type_indexed_bitvec": true
+  }
 ]

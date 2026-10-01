@@ -3702,3 +3702,13 @@ widths1/32/64/80, direct/indirect generic destinations and large frame offsets.
 `WordToStackNoShmemopHandlersParity.lean` kernel-replays every observation and
 applies each full theorem at arbitrary original carriers. Pop retains false
 continuations; no range, safety, valid-frame or execution premises are added.
+
+`stack_to_lab_native_probe.out` records the full original `flatten_def` and
+45 complete native output observations, including actual `app_list` tree
+association, all If and optional Call branches, all original fallback
+constructors, width1/80 words, and exact FFI names. The native counterpart is
+`StackToLab/Native.lean`; `StackToLabNativeParity` supplies 45 kernel fixtures,
+including arbitrary exact MlString pass-through. HOL's locally overloaded
+`++` remains left-associative, so the generic callback bridge's right-associated
+tree is not a definition-exact substitute. Production routing remains tracked
+on fleet bead `flapjack-52bq.1`.

@@ -1,3 +1,4 @@
+import Flapjack.Test.StackToLabNativeParity
 import Flapjack.Test.WordToStackNoShmemopHandlersParity
 import Flapjack.Test.WordAllocLimitPropertiesParity
 import Flapjack.Test.WordConvsPredicateEquationsParity
