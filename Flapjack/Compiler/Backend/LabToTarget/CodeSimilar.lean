@@ -150,8 +150,10 @@ theorem codeSimilar_append {width : Nat} [NeZero width] (l1 l2 r1 r2 : List (Sec
       intro h
       exact ⟨ih rest' ⟨h.1.1, h.2⟩, h.1.2⟩
 
-/-- The HOL local overload at lab_to_targetProofScript.sml:49, counting
-FILTER (not o is_Label). It has no standalone HOL declaration to tag. -/
+/-- HOL's local overload at source line 49: LENGTH (FILTER (not o is_Label)).
+The list and fixed byte carriers are retained; only the word dimension changes. -/
+@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "len_no_lab"
+  (words_as_type_indexed_bitvec)]
 def lenNoLab {width : Nat} [NeZero width] (lines : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) : Nat :=
   (lines.filter (fun line => !LabSem.isLabelHOL line)).length
