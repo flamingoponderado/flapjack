@@ -325,6 +325,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.StrongLocalsRel
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.NumSets
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.NumSetDeletion
 import Flapjack.Compiler.Backend.RegAlloc.Proofs
+import Flapjack.Compiler.Backend.RegAlloc.Proofs.SpInverts
 import Flapjack.Compiler.Backend.RegAlloc.SpDefault
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Motive
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Leaves
