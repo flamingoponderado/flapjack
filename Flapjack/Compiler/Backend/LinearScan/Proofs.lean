@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.LinearScan.Proofs.LiveTree
 import Flapjack.Compiler.Backend.LinearScan.Proofs.Intervals
+import Flapjack.Compiler.Backend.LinearScan.Proofs.CheckIntervals
 
 /-!
 # linear_scan proofs
@@ -14,6 +15,8 @@ order:
   `check_clash_tree` correspondence.
 * `Intervals`: `linear_scanProofScript.sml:600-1765`, properties of
   `get_intervals`, `get_intervals_withlive` and `check_number_property`.
+* `CheckIntervals`: `linear_scanProofScript.sml:1767-2018`,
+  `check_intervals_check_live_tree` and `get_intervals_ct_eq`.
 
 The top-level `linear_scan_reg_alloc_correct` is not yet ported.
 -/

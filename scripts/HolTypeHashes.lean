@@ -335,6 +335,8 @@ import Flapjack.Compiler.Backend.RegAlloc.ClashTree
 import Flapjack.Compiler.Backend.LinearScan
 import Flapjack.Compiler.Backend.LinearScan.Proofs
 import Flapjack.Misc.Sptree.ToAList
+import Flapjack.Translator.Monadic.MonadBase.Arrays
+import Flapjack.Compiler.Backend.RegAlloc.StExMap
 import Flapjack.AstHOL
 import Flapjack.Compiler.Backend.StackLang
 import Flapjack.Compiler.Backend.StackLang.Prog

@@ -989,6 +989,8 @@ import Flapjack.Compiler.Backend.RegAlloc.ClashTree
 import Flapjack.Compiler.Backend.LinearScan
 import Flapjack.Compiler.Backend.LinearScan.Proofs
 import Flapjack.Misc.Sptree.ToAList
+import Flapjack.Translator.Monadic.MonadBase.Arrays
+import Flapjack.Compiler.Backend.RegAlloc.StExMap
 import Flapjack.Misc.AppList
 import Flapjack.Misc.Sptree
 import Flapjack.Misc.LList

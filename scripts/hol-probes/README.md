@@ -51,6 +51,30 @@ LabSem evaluator routing or cross-language IEEE equivalence. Regenerate with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=labsem_fp_updates_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
+`linear_scan_pure_props_probe.out` captures eighteen direct original
+observations of the proposition-valued `linear_scanScript.sml` definitions:
+`check_number_property` (signed bounds, branch numbering), the extra Branch
+conjunct of `check_number_property_strong` against the weak form,
+`check_startlive_prop` (in-range, `ndef` default, missing end, branch
+numbering), `live_tree_registers` membership, `interval_intersect`,
+`point_inside_interval`, `THE (SOME x)`, and two `check_intervals` instances
+proved in HOL without any fact about `THE NONE` (a missing end, and a colour
+clash). Closed instances are decided by EVAL/SIMP_CONV; the two
+`check_intervals` rows are HOL `prove` calls. `Flapjack.Test.LinearScanPurePropsParity`
+kernel-checks the same propositions over the opaque `holTheNone`. This does
+not compare an unspecified `THE NONE` value across provers. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=linear_scan_pure_props_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`monad_arrays_probe.out` captures eleven direct original EVAL rows of the
+ml_monadBase fixed-array primitives (`Msub`/`Mupdate` in and out of range,
+`Marray_length`, `Marray_sub`, `Marray_update` with the unchanged state on
+failure) and reg_alloc `st_ex_MAP` (success threading the state, and the first
+failure stopping the traversal with its state), replayed in
+`Flapjack.Test.MonadArraysParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=monad_arrays_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `linear_scan_pure_defs_probe.out` captures fifteen direct original
 `linear_scanScript.sml` EVAL observations of the pure live-tree and interval
 definitions: get_live_tree with a branch cut set, get_live_backward,

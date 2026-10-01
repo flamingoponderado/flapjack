@@ -43401,5 +43401,133 @@
     "lean_name": "getIntervalsBegLessLive",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.8), linear_scanProofScript.sml get_intervals_beg_less_live. HOL statement: !lt live_in n_out beg_out end_out. (n_out, beg_out, end_out) = get_intervals (fix_domination lt) 0 LN LN ==> check_number_property_strong (\\n (live : num_set). !r. r IN domain live ==> option_CASE (lookup r beg_out) n_out (\\x.x) <= n) (fix_domination lt) 0 LN Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "exists_point_inside_interval_interval_intersect",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/CheckIntervals.lean",
+    "lean_name": "existsPointInsideIntervalIntervalIntersect",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.9), linear_scanProofScript.sml exists_point_inside_interval_interval_intersect. HOL statement: !l1 r1 l2 r2 v. point_inside_interval (l1, r1) v  /\\ point_inside_interval (l2, r2) v ==> interval_intersect (l1, r1) (l2, r2) Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "check_intervals_check_live_tree_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/CheckIntervals.lean",
+    "lean_name": "checkIntervalsCheckLiveTreeLemma",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.9), linear_scanProofScript.sml check_intervals_check_live_tree_lemma. HOL statement: !lt n_in beg_out end_out f live flive. check_startlive_prop lt n_in beg_out end_out (n_in - size_of_live_tree lt) /\\ check_number_property_strong (\\n (live' : num_set). !r. r IN domain live' ==> option_CASE (lookup r beg_out) n_out (\\x.x) <= n) lt n_in live  /\\ check_number_property (\\n (live' : num_set). !r. r IN domain live' ==> ?v. lookup r end_out = SOME v /\\ n+1 <= v) lt n_in live /\\ check_number_property_strong (\\n (live' : num_set). domain live' SUBSET domain end_out) lt n_in live /\\ domain beg_out = domain end_out /\\ live_tree_registers lt SUBSET domain end_out /\\ check_intervals f beg_out end_out /\\ domain flive = IMAGE f (domain live) /\\ INJ f (domain live) UNIV ==> ?liveout fliveout. check_live_tree f lt live flive = SOME (liveout, fliveout) Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "check_intervals_check_live_tree",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/CheckIntervals.lean",
+    "lean_name": "checkIntervalsCheckLiveTree",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.9), linear_scanProofScript.sml check_intervals_check_live_tree. HOL statement: !lt n_out beg_out end_out f. (n_out, beg_out, end_out) = get_intervals (fix_domination lt) 0 LN LN /\\ check_intervals f beg_out end_out ==> ?liveout fliveout. check_live_tree f (fix_domination lt) LN LN = SOME (liveout, fliveout) Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "get_intervals_ct_aux_live",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/CheckIntervals.lean",
+    "lean_name": "getIntervalsCtAuxLive",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.9), linear_scanProofScript.sml get_intervals_ct_aux_live. HOL statement: !ct n_in beg_in end_in live_in live_in' n_out beg_out end_out live_out. domain live_in = domain live_in' /\\ (n_out, beg_out, end_out, live_out) = get_intervals_ct_aux ct n_in beg_in end_in live_in ==> domain live_out = domain (get_live_backward (get_live_tree ct) live_in') Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "get_intervals_ct_aux_int",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/CheckIntervals.lean",
+    "lean_name": "getIntervalsCtAuxInt",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.9), linear_scanProofScript.sml get_intervals_ct_aux_int. HOL statement: !ct n_in beg_in end_in live_in n_out beg_out end_out live_out. (n_out, beg_out, end_out, live_out) = get_intervals_ct_aux ct n_in beg_in end_in live_in ==> (n_out, beg_out, end_out) = get_intervals (get_live_tree ct) n_in beg_in end_in Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "get_intervals_ct_eq",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/CheckIntervals.lean",
+    "lean_name": "getIntervalsCtEq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.9), linear_scanProofScript.sml get_intervals_ct_eq. HOL statement: !ct int_beg1 int_beg2 int_end1 int_end2 n1 n2. (n1, int_beg1, int_end1) = get_intervals_ct ct /\\ (n2, int_beg2, int_end2) = get_intervals (fix_domination (get_live_tree ct)) 0 LN LN ==> (!r. lookup r int_beg1 = lookup r int_beg2) /\\ (!r. lookup r int_end1 = lookup r int_end2) Lean transcribes the same binders in order (HOL free variables first; HOL binder names `end` rendered end_), conjunction/implication structure and conclusion. Renderings: HOL int is Int, num_set NumSet, int num_map Spt Int; domain = sptDomain; set/UNION/SUBSET/EMPTY/NOTIN as predicates; option_CASE x d (\\x.x) as Option.elim x d (fun x => x); predicate arguments of check_number_property(_strong) are the HOL lambdas (Prop-valued as in the reviewed definitions); pattern equations (n_out, beg_out, end_out) = get_intervals ... kept as equations. Over the tagged linear_scan definitions; no hypothesis added. Kernel-checked; proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml",
+    "hol_name": "Msub_def",
+    "lean_path": "Flapjack/Translator/Monadic/MonadBase/Arrays.lean",
+    "lean_name": "msub",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.1), ml_monadBaseScript.sml:124-129: Msub e n l = case l of [] => M_failure e | x::l' => if n = 0 then M_success x else Msub e (n-1) l'; Lean msub e n l over the accepted MonadBase.Exc carrier with generic Type0 element/exception, same argument order and clauses (num n as Nat, n-1 truncated as HOL). Proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml",
+    "hol_name": "Msub_eq",
+    "lean_path": "Flapjack/Translator/Monadic/MonadBase/Arrays.lean",
+    "lean_name": "msubEq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.1), ml_monadBaseScript.sml:131-138: !l n e. n < LENGTH l ==> Msub e n l = M_success (EL n l); HOL EL under the bound is the bounded getElem l[n] (the bound is the binder h, the reviewed EL rendering used elsewhere), same binders. Kernel-checked; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml",
+    "hol_name": "Msub_exn_eq",
+    "lean_path": "Flapjack/Translator/Monadic/MonadBase/Arrays.lean",
+    "lean_name": "msubExnEq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.1), ml_monadBaseScript.sml:140-147: !l n e. n >= LENGTH l ==> Msub e n l = M_failure e. Same binders/premise/conclusion. Kernel-checked; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml",
+    "hol_name": "Mupdate_def",
+    "lean_path": "Flapjack/Translator/Monadic/MonadBase/Arrays.lean",
+    "lean_name": "mupdate",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.1), ml_monadBaseScript.sml:150-161: Mupdate e x n l = case l of [] => M_failure e | x'::l' => if n = 0 then M_success (x::l') else (case Mupdate e x (n-1) l' of M_success l'' => M_success (x'::l'') | other => other); Lean mupdate e x n l with the same clauses, result Exc (List value) exception, inner failure returned unchanged. Proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml",
+    "hol_name": "Mupdate_eq",
+    "lean_path": "Flapjack/Translator/Monadic/MonadBase/Arrays.lean",
+    "lean_name": "mupdateEq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.1), ml_monadBaseScript.sml:163-170: !l n x e. n < LENGTH l ==> Mupdate e x n l = M_success (LUPDATE x n l); HOL LUPDATE x n l is Lean List.set l n x (same element replacement, identity out of range). Kernel-checked; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml",
+    "hol_name": "Mupdate_exn_eq",
+    "lean_path": "Flapjack/Translator/Monadic/MonadBase/Arrays.lean",
+    "lean_name": "mupdateExnEq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.1), ml_monadBaseScript.sml:172-179: !l n x e. n >= LENGTH l ==> Mupdate e x n l = M_failure e. Kernel-checked; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml",
+    "hol_name": "Marray_length_def",
+    "lean_path": "Flapjack/Translator/Monadic/MonadBase/Arrays.lean",
+    "lean_name": "arrayLength",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.1), ml_monadBaseScript.sml:199-202: Marray_length get_arr = \\s. (M_success (LENGTH (get_arr s)), s) over the accepted M carrier. Proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml",
+    "hol_name": "Marray_sub_def",
+    "lean_path": "Flapjack/Translator/Monadic/MonadBase/Arrays.lean",
+    "lean_name": "arraySub",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.1), ml_monadBaseScript.sml:204-207: Marray_sub get_arr e n = \\s. (Msub e n (get_arr s), s); same argument order, state unchanged. Proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml",
+    "hol_name": "Marray_update_def",
+    "lean_path": "Flapjack/Translator/Monadic/MonadBase/Arrays.lean",
+    "lean_name": "arrayUpdate",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.1), ml_monadBaseScript.sml:209-214: Marray_update get_arr set_arr e n x = \\s. case Mupdate e x n (get_arr s) of M_success a => (M_success (), set_arr a s) | M_failure e => (M_failure e, s); set_arr : value list -> state -> state as in the accepted arrayAlloc; failure keeps the original state. Proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "st_ex_MAP_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/StExMap.lean",
+    "lean_name": "stExMap",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.1), reg_allocScript.sml:148-156: st_ex_MAP f [] = return []; st_ex_MAP f (x::xs) = do fx <- f x; fxs <- st_ex_MAP f xs; return (fx::fxs) od, i.e. st_ex_bind (f x) (\\fx. st_ex_bind (st_ex_MAP f xs) (\\fxs. st_ex_return (fx::fxs))) over the accepted MonadBase bind/ret; generic state/element/result/exception types. Proof-only; coordinator source acceptance pending."
   }
 ]
