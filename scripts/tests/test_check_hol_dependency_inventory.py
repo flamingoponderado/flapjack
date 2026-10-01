@@ -31,6 +31,66 @@ INDEX_HOL = _load("index_hol", "index-hol.py")
 INVENTORY = _load("hol_dependency_inventory", "hol-dependency-inventory.py")
 
 
+class HolRelnTupleIndexTests(unittest.TestCase):
+    def test_unindented_nested_bindings_not_indexed(self):
+        binding = "val (step_rules,step_ind,step_cases) = Hol_reln`step x y`;\n"
+        for opening, closing in (("local\n", "in end;\n"),
+                                 ("val x = let\n", "in 1 end;\n"),
+                                 ("structure X = struct\n", "end;\n")):
+            with self.subTest(opening=opening), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                path = root / "fixtureScript.sml"
+                path.write_text("Theory fixture\n" + opening + binding + closing)
+                entries, _, _ = INDEX_HOL.parse_file(root, path)
+                self.assertFalse(any(e.name == "step_rules" for e in entries))
+
+    def test_shared_names_and_span(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            path = root / "fixtureScript.sml"
+            path.write_text("Theory fixture\nval (step_rules,step_ind,step_cases) = Hol_reln`\n step x y\n`;\n")
+            entries, _, recognized = INDEX_HOL.parse_file(root, path)
+            self.assertTrue(recognized)
+            self.assertEqual([(e.kind, e.name, e.start, e.end) for e in entries], [
+                ("Theorem", "step_rules", 2, 4),
+                ("Theorem", "step_ind", 2, 4),
+                ("Theorem", "step_cases", 2, 4),
+            ])
+
+    def test_actual_source_agrees_with_reference_checker(self):
+        import runpy
+        checker = runpy.run_path(str(SCRIPTS / "check-hol-refs.py"))
+        root = SCRIPTS.parent / "cakeml"
+        path = root / "compiler/backend/reg_alloc/parmoveScript.sml"
+        entries, _, _ = INDEX_HOL.parse_file(root, path)
+        tuples = [e for e in entries if e.name in {
+            "step_rules", "step_ind", "step_cases", "dstep_rules", "dstep_ind", "dstep_cases"
+        }]
+        self.assertEqual(len(tuples), 6)
+        names = checker["hol_declaration_lines"](path, {})
+        for entry in tuples:
+            self.assertEqual(names[entry.name], [entry.start])
+            self.assertEqual(entry.end, 37 if entry.name.startswith("step_") else 492)
+
+    def test_tuple_binding_ends_previous_equality_declaration(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            path = root / "fixtureScript.sml"
+            path.write_text("Theory fixture\nTheorem previous = known\nval (step_rules,step_ind,step_cases) = Hol_reln`step x y`;\n")
+            entries, _, _ = INDEX_HOL.parse_file(root, path)
+            previous = next(e for e in entries if e.name == "previous")
+            self.assertEqual(previous.end, 2)
+            self.assertEqual(len(entries), 4)
+
+    def test_arbitrary_tuple_not_indexed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            path = root / "fixtureScript.sml"
+            path.write_text("Theory fixture\nval (step_rules,step_ind,step_cases) = other_generator`step x y`;\n")
+            entries, _, _ = INDEX_HOL.parse_file(root, path)
+            self.assertEqual(entries, [])
+
+
 def _write_script(root: Path, name: str, body: str) -> Path:
     path = root / name
     path.parent.mkdir(parents=True, exist_ok=True)
