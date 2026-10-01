@@ -2058,6 +2058,8 @@ source values break equality. Empty and snapshot observations are included.
 `ParmoveEnvironmentParity.lean` replays the rows and applies the exact lemma
 with its original conjunction. Full scheduler preservation remains open.
 
+`labsem_arithmetic_probeScript.sml` captures 44 original observations across all eight LabSem integer-arithmetic constructors: Loc/self-OR guards, invalid shift/division writes, sticky failure, signed overflow and aliased destinations. Original arithmetic `DIV_0`/`MOD_0` simplify the otherwise unreduced zero-divisor cases after EVAL; no replacement arithmetic evaluator is defined. `Flapjack.Test.LabSemArithmeticParity` replays all rows by direct kernel reduction on otherwise arbitrary native source states.
+
 ### ParMove permutation observations
 
 `parmove_permutation_probeScript.sml` captures ten direct original HOL values.
@@ -2066,6 +2068,7 @@ swap, and empty examples are included. Repeated destinations give 13 versus 12
 under reversal, showing why the original windmill premise cannot be removed.
 `ParmovePermutationParity.lean` replays all values and checks the full-function
 lemma with a genuine list permutation. Full scheduler correctness remains open.
+
 
 ### ParMove generated relation witnesses
 
