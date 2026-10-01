@@ -4297,6 +4297,12 @@
       "sha256": "d6c2bfb8f25cdccff2b90bedbdcc4602dbdd8e5019e7c96aced56c04dcedbb8d"
     },
     {
+      "bytes": 336,
+      "out": "word_to_stack_program_bitmaps_probe.out",
+      "rows": 10,
+      "sha256": "8765182f39ccdb4a95f8cea1b64beaf2fa8acd8e53f4fc02f35699e632a5889b"
+    },
+    {
       "bytes": 392,
       "out": "word_to_stack_program_maximum_probe.out",
       "rows": 32,

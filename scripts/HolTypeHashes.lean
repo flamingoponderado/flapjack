@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.Parmove.InjOnState
 import Flapjack.Compiler.Backend.RegAlloc.SortedMem
+import Flapjack.Compiler.Backend.WordToStack.Proofs.ProgramBitmaps
 import Flapjack.Compiler.Backend.RegAlloc.Initialization
 import Flapjack.Compiler.Backend.WordAlloc.CanonizeMoves
 import Flapjack.Translator.Monadic.MonadBase.ArrayLength
