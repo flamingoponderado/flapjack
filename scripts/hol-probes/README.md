@@ -4039,3 +4039,13 @@ before tagging it. Regenerate with
 `ssa_fake_moves_correct_left_probeScript.sml` replays the literal left fake-move simulation and local frame/map prerequisites, capturing the full statement and seven types including independent source/target code and FFI dimensions.
 
 `ssa_fake_moves_correct_right_probeScript.sml` replays the literal right fake-move simulation and its local prerequisites, capturing the full five-conclusion statement and seven inferred types.
+
+### WordSem partial Word extractors
+
+The final four rows of `word_sem_accessors_probe.out` freshly evaluate the
+specified `theWord (Word w) = w` and `get_word (Word w) = w` clauses at
+widths 1/64 and 32/80 respectively. No Loc result is evaluated or assigned an
+oracle value. The Lean ports retain independent opaque completions indexed by
+width and both Loc fields; their Word equations and Word-guarded agreement
+are kernel checked in `WordSem.Accessors` and `WordSemAccessorsParity`.
+These regressions do not establish a concrete meaning for unspecified Locs.

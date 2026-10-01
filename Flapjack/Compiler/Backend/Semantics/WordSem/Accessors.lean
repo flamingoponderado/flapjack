@@ -22,8 +22,11 @@ witness below). `'a word` is `BitVec width` at a positive width.
 
 HOL `theWord_def` (`:42-44`) and `get_word_def` (`:278-280`) are partial:
 there is no clause for `Loc`, so HOL leaves their value on `Loc` unspecified.
-They are not ported, and the accessors below pattern-match on `Word` wherever
-HOL applies them.
+They are ported below with independent opaque functions for their unspecified
+`Loc` cases. The functions may depend on both location fields and the word
+width; no equality between the two functions or concrete Loc value is imposed.
+The evaluator accessor paths already pattern-match on `Word`, so their
+successful equations do not depend on either unspecified function.
 -/
 
 namespace Flapjack
@@ -41,6 +44,49 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C : Type} {F
 
 end WordSemAccessorsSupport
 
+/-- Flapjack infrastructure for the unconstrained `Loc` results of HOL
+`theWord_def`. No HOL declaration names this completion function. It is opaque
+and depends on the complete location and positive word dimension, so no Lean
+proof can impose a concrete value or equate distinct locations. -/
+noncomputable opaque wordSemTheWordLoc (width : Nat) [NeZero width]
+    (label offset : Nat) : BitVec width
+
+/-- Independent opaque completion for the missing `Loc` clause of HOL
+`get_word_def`. HOL does not equate its unspecified values with `theWord`'s;
+this Flapjack infrastructure retains that distinction. -/
+noncomputable opaque wordSemGetWordLoc (width : Nat) [NeZero width]
+    (label offset : Nat) : BitVec width
+
+/-- Exact HOL `theWord_def` (`wordSemScript.sml:42-44`): the sole equation is
+`theWord (Word w) = w`. Its total carrier has unspecified `Loc` results,
+represented by `wordSemTheWordLoc`; no concrete Loc behavior is claimed.
+The word/Loc carrier and dimension are the reviewed `WordLocW width` and
+positive `BitVec width` translation. -/
+@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "theWord_def"
+  (words_as_type_indexed_bitvec)]
+noncomputable def wordSemTheWord {width : Nat} [NeZero width] :
+    WordLocW width → BitVec width
+  | .word w => w
+  | .loc label offset => wordSemTheWordLoc width label offset
+
+/-- Exact HOL `get_word_def` (`wordSemScript.sml:278-280`): its sole equation
+is `get_word (Word w) = w`. The unspecified Loc completion is independent of
+`theWord`'s. There is no extra premise and no equality for either Loc result. -/
+@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "get_word_def"
+  (words_as_type_indexed_bitvec)]
+noncomputable def wordSemGetWord {width : Nat} [NeZero width] :
+    WordLocW width → BitVec width
+  | .word w => w
+  | .loc label offset => wordSemGetWordLoc width label offset
+
+/-- Kernel equation for the original specified Word clause. -/
+@[simp] theorem wordSemTheWord_word {width : Nat} [NeZero width] (w : BitVec width) :
+    wordSemTheWord (.word w) = w := rfl
+
+/-- Kernel equation for the original specified Word clause. -/
+@[simp] theorem wordSemGetWord_word {width : Nat} [NeZero width] (w : BitVec width) :
+    wordSemGetWord (.word w) = w := rfl
+
 /-- Exact HOL `is_fwd_ptr_def` (`wordSemScript.sml:37-40`):
     `is_fwd_ptr (Word w) = ((w && 3w) = 0w)` and `is_fwd_ptr _ = F`. -/
 @[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "is_fwd_ptr_def"
@@ -56,6 +102,15 @@ def wordSemIsFwdPtr {width : Nat} [NeZero width] : WordLocW width → Bool
 def wordSemIsWordLoc {width : Nat} [NeZero width] : WordLocW width → Bool
   | .word _ => true
   | _ => false
+
+/-- Flapjack guarded accessors agree because both inputs are Words; this
+states no relationship between their unspecified Loc completions. -/
+theorem wordSemTheWord_eq_getWord_of_isWord {width : Nat} [NeZero width]
+    (v : WordLocW width) (h : wordSemIsWordLoc v = true) :
+    wordSemTheWord v = wordSemGetWord v := by
+  cases v with
+  | word w => rfl
+  | loc label offset => simp [wordSemIsWordLoc] at h
 
 /-- Exact HOL `word_cmp_def` (`wordSemScript.sml:56-68`).  On two `Word`s,
     each of HOL's eight clauses is the same comparison as the corresponding
