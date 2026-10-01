@@ -1,0 +1,18 @@
+load "bossLib"; load "preamble"; load "parmoveTheory"; load "miscTheory";
+open HolKernel Parse bossLib preamble parmoveTheory miscTheory;
+fun out label q = (print(label ^ "="); print_term(rconc(EVAL q)); print "\n");
+val _ = out "fi_0" ``let ls = ([]:(num option # num option) list) in (not_use_temp_before_assign ls,find_index NONE (MAP SND ls) 0,find_index NONE (MAP FST ls) 0) = (T,NONE,NONE)``;
+val _ = out "fi_1" ``let ls = ([(SOME 0,SOME 1)]:(num option # num option) list) in (not_use_temp_before_assign ls,find_index NONE (MAP SND ls) 0,find_index NONE (MAP FST ls) 0) = (T,NONE,NONE)``;
+val _ = out "fi_2" ``let ls = ([(SOME 0,NONE)]:(num option # num option) list) in (not_use_temp_before_assign ls,find_index NONE (MAP SND ls) 0,find_index NONE (MAP FST ls) 0) = (F,SOME 0,NONE)``;
+val _ = out "fi_3" ``let ls = ([(NONE,SOME 1)]:(num option # num option) list) in (not_use_temp_before_assign ls,find_index NONE (MAP SND ls) 0,find_index NONE (MAP FST ls) 0) = (T,NONE,SOME 0)``;
+val _ = out "fi_4" ``let ls = ([(NONE,NONE)]:(num option # num option) list) in (not_use_temp_before_assign ls,find_index NONE (MAP SND ls) 0,find_index NONE (MAP FST ls) 0) = (F,SOME 0,SOME 0)``;
+val _ = out "fi_5" ``let ls = ([(NONE,SOME 1);(SOME 2,NONE)]:(num option # num option) list) in (not_use_temp_before_assign ls,find_index NONE (MAP SND ls) 0,find_index NONE (MAP FST ls) 0) = (T,SOME 1,SOME 0)``;
+val _ = out "fi_6" ``let ls = ([(SOME 2,NONE);(NONE,SOME 1)]:(num option # num option) list) in (not_use_temp_before_assign ls,find_index NONE (MAP SND ls) 0,find_index NONE (MAP FST ls) 0) = (F,SOME 0,SOME 1)``;
+val _ = out "fi_7" ``let ls = ([(SOME 0,SOME 1);(NONE,SOME 2);(SOME 3,NONE)]:(num option # num option) list) in (not_use_temp_before_assign ls,find_index NONE (MAP SND ls) 0,find_index NONE (MAP FST ls) 0) = (T,SOME 2,SOME 1)``;
+val _ = out "fi_8" ``let ls = ([(NONE,SOME 0);(NONE,NONE)]:(num option # num option) list) in (not_use_temp_before_assign ls,find_index NONE (MAP SND ls) 0,find_index NONE (MAP FST ls) 0) = (T,SOME 1,SOME 0)``;
+val _ = out "fi_9" ``let ls = ([(SOME 0,SOME 1);(NONE,NONE)]:(num option # num option) list) in (not_use_temp_before_assign ls,find_index NONE (MAP SND ls) 0,find_index NONE (MAP FST ls) 0) = (F,SOME 1,SOME 1)``;
+val _ = out "fi_10" ``let ls = ([(SOME 0,NONE);(SOME 1,NONE);(NONE,SOME 2)]:(num option # num option) list) in (not_use_temp_before_assign ls,find_index NONE (MAP SND ls) 0,find_index NONE (MAP FST ls) 0) = (F,SOME 0,SOME 2)``;
+val _ = out "fi_11" ``let ls = ([(NONE,SOME 0);(NONE,SOME 1);(SOME 2,NONE)]:(num option # num option) list) in (not_use_temp_before_assign ls,find_index NONE (MAP SND ls) 0,find_index NONE (MAP FST ls) 0) = (T,SOME 2,SOME 0)``;
+val _ = out "fi_12" ``let ls = ([(SOME 0,SOME 1);(SOME 2,SOME 3);(SOME 4,NONE);(NONE,SOME 5)]:(num option # num option) list) in (not_use_temp_before_assign ls,find_index NONE (MAP SND ls) 0,find_index NONE (MAP FST ls) 0) = (F,SOME 2,SOME 3)``;
+val _ = out "fi_mixed" ``let ls = [(NONE,SOME 7);(SOME T,NONE)] in (not_use_temp_before_assign ls,find_index NONE (MAP SND ls) 0,find_index NONE (MAP FST ls) 0) = (T,SOME 1,SOME 0)``;
+val _ = out "fi_function" ``let ls = [(NONE,SOME (SUC:num->num));(SOME T,NONE)] in (not_use_temp_before_assign ls,find_index NONE (MAP SND ls) 0,find_index NONE (MAP FST ls) 0) = (T,SOME 1,SOME 0)``;
