@@ -3803,3 +3803,13 @@ equivalence or complete the compiler theorem. Selector:
 ### Executable canonical quiet-NaN arithmetic refinement
 
 `Flapjack/Misc/BinaryIeeeArithExec.lean` supplies five computable word producers and unconditional equality-or-quiet-NaN refinements to the existing arithmetic renderings. The logical operations remain unchanged. `BinaryIeeeArithExecParity.lean` matches all 49 rows of the freshly regenerated `machine_ieee_fp64_arith_nan`, `machine_ieee_fp64_arith_special`, and `machine_ieee_fp64_arith_round` captures: non-choice outputs are bit-exact, while symbolic quiet-NaN choices are matched by canonical quiet NaNs without asserting payload equality. WordSem uses roundTiesToEven and ignores flags for these five clauses. Full instruction/evaluator routing remains open under h29l.10; these new executable producers are Flapjack infrastructure, not separately tagged HOL declarations.
+
+`lab_validity_native_probe.out` freshly records three original native
+conversion/validity definitions and sixteen original observations, including
+actual eight-bit assembler configuration acceptance/rejection, empty and
+mixed sections, and width1/80 memory-conversion boundaries with unbounded
+natural registers. `LabValidityNativeParity` has sixteen kernel fixtures,
+including generic payload/cache statements. The exact definitions live in
+`LabToTarget/Native.lean` and `LabProps/Native.lean`; the generic callback
+helpers are separate infrastructure. Native executable routing and full
+encoding correctness remain tracked on the fleet dependency graph.

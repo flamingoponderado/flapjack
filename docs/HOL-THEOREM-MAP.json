@@ -48105,5 +48105,32 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-c author source comparison (2026-10-01; l8d5), original line 1894: full quantified native program list, numeric names, List numeric formals and positive-width HolLoopProg/WordLangProgHOL; exact comp_func/compile_prog/compile composition retained. HOL ALL_DISTINCT becomes Lean List.Nodup and MEM becomes membership without representation change. Name-distinctness statements retain only original source distinctness premise; membership retains only source triple membership; lookup retains only original SOME(params,body) premise and proves whole compiled SOME result via native sptFromAList first-match lookup, including duplicate names. No successful allocation, target evaluation, source uniqueness or simulation premise. Four complete literal original proofs replayed with original simplifier context, complete duplicate/distinct compiled outputs and first/missing lookup sentinels matched by generic-width kernel fixtures. Standard words_as_type_indexed_bitvec is the sole carrier translation; each width has NeZero."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Native.lean",
+    "lean_name": "cbwToAsmHOL",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "cbw_to_asm_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol completed source/body/carrier comparison (2026-10-01; bead npxw), source lines31-37: all three source constructors compared: Asmi returns its exact HolAsm payload unchanged; Cbw r1 r2 returns Inst(Mem Store8 r2(Addr r1 0w)); ShareMem m r ad returns Inst(Mem m r ad). Native assembler/memory/address carriers preserve arities, positive shared word dimension, and all register naturals; no assembler configuration argument or validity assumption added. Sole qualifier records positive-width BitVec/[NeZero width] word-dimension translation. Original config line/section/conversion oracle freshly re-evaluated; generic kernel fixtures preserve arbitrary native payloads and ignored caches."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/Native.lean",
+    "lean_name": "lineOkPreHOL",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "line_ok_pre_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol completed source/body/carrier comparison (2026-10-01; bead npxw), source lines1247-1250: original asm_config argument is the exact AsmConfigExact width carrier; Asm b bytes l is asm_ok(cbw_to_asm b)c, represented as accepted native asmOkExact Boolean equality true. Every non-Asm line is True. Caches are List(BitVec8), native label instruction payloads and exact MlString retained; both bytes and length are ignored, without range/length premises. Predicate codomain is Prop; no callback checks or alternate encoder carrier introduced. Sole qualifier records positive-width BitVec/[NeZero width] word-dimension translation. Original config line/section/conversion oracle freshly re-evaluated; generic kernel fixtures preserve arbitrary native payloads and ignored caches."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/Native.lean",
+    "lean_name": "secOkPreHOL",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "sec_ok_pre_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol completed source/body/carrier comparison (2026-10-01; bead npxw), source lines1252-1255: exact config and native Section carrier, ignores section identifier and requires EVERY(line_ok_pre c) over the section line list, expressed as universal list membership. No encoded-cache, section-number or target-validity assumption. The all_enc_ok_pre spelling is a source overload with no declaration to tag; its separate Lean helper is deliberately untagged. Sole qualifier records positive-width BitVec/[NeZero width] word-dimension translation. Original config line/section/conversion oracle freshly re-evaluated; generic kernel fixtures preserve arbitrary native payloads and ignored caches."
   }
 ]
