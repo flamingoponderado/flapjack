@@ -3222,6 +3222,10 @@ run_probe parmove_map_state_probeScript.sml parmove_map_state_probe.out \
   pms_empty pms_pending pms_active pms_emitted pms_order pms_constant pms_large pms_bool pms_cross_carrier pms_option_constant \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
+run_probe word_alloc_fix_inconsistencies_probeScript.sml word_alloc_fix_inconsistencies_probe.out \
+  ol_hit ol_miss pr_none pr_inl pr_inr fm fms_empty fms_left_only fms_right_only fms_both fi_equal fi_mixed \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
 run_probe reg_alloc_move_prep_probeScript.sml reg_alloc_move_prep_probe.out \
   ec_basic ec_oob cr_self cr_chain cr_fixed fco_same fco_out_dim fco_adjacent fco_fixed_atemp fco_fixed_high fco_ok um_order um_keep \
   "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"

@@ -46497,5 +46497,48 @@
     "lean_name": "optSplit",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.14): reg_allocProofScript.sml:3094-3098 a ≠ NONE ⇔ a = SOME (), a : unit option (forced by SOME ()), free variable as explicit argument. Kernel-checked; no holEl in the proof closure. No extra premise. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "option_lookup_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/SSAFixInconsistencies.lean",
+    "lean_name": "optionLookup",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.15.2.30.6): word_allocScript.sml:34-36 option_lookup t v = case lookup v t of NONE => 0n | SOME x => x; type num num_map -> num -> num. Original EVAL rows (scripts/hol-probes/word_alloc_fix_inconsistencies_probe.out, 64-bit) replayed by definitional equality in Flapjack.Test.WordAllocFixInconsistenciesParity. No extra premise. Proof-side port; the executed list-state SSA pass is not routed through it (see .30.2.1.1.1). Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "priority_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/SSAFixInconsistencies.lean",
+    "lean_name": "priority",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.15.2.30.6): word_allocScript.sml:88-94 priority NONE b = 1; priority (SOME (INL ())) b = if b then 2 else 1; priority (SOME (INR ())) b = if b then 1 else 2; type (unit + unit) option -> bool -> num, rendered Option (Unit ⊕ Unit). Original EVAL rows (scripts/hol-probes/word_alloc_fix_inconsistencies_probe.out, 64-bit) replayed by definitional equality in Flapjack.Test.WordAllocFixInconsistenciesParity. No extra premise. Proof-side port; the executed list-state SSA pass is not routed through it (see .30.2.1.1.1). Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "fake_move_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/SSAFixInconsistencies.lean",
+    "lean_name": "fakeMove",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.15.2.30.6): word_allocScript.sml:56-58 fake_move v = Inst (Const v 0w); type num -> α prog. HOL α prog with α the word dimension is WordLangProgHOL (BitVec width) with [NeZero width] (words_as_type_indexed_bitvec). Original EVAL rows (scripts/hol-probes/word_alloc_fix_inconsistencies_probe.out, 64-bit) replayed by definitional equality in Flapjack.Test.WordAllocFixInconsistenciesParity. No extra premise. Proof-side port; the executed list-state SSA pass is not routed through it (see .30.2.1.1.1). Coordinator source acceptance pending.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "fake_moves_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/SSAFixInconsistencies.lean",
+    "lean_name": "fakeMoves",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.15.2.30.6): word_allocScript.sml:97-114 fake_moves prio [] ssa_L ssa_R na = (Skip,Skip,na,ssa_L,ssa_R); (x::xs): tail first, then case (lookup x ssa_L', lookup x ssa_R') of (NONE,SOME Ly) => left Seq fake_move, right Seq Move (priority prio F) [(na',Ly)] | (SOME Lx,NONE) => left Move (priority prio T) [(na',Lx)], right fake_move | _ => unchanged; both maps insert x na' and counter na'+4 in the two moving cases. Lean: same clauses and case order. HOL α prog with α the word dimension is WordLangProgHOL (BitVec width) with [NeZero width] (words_as_type_indexed_bitvec). Original EVAL rows (scripts/hol-probes/word_alloc_fix_inconsistencies_probe.out, 64-bit) replayed by definitional equality in Flapjack.Test.WordAllocFixInconsistenciesParity. No extra premise. Proof-side port; the executed list-state SSA pass is not routed through it (see .30.2.1.1.1). Coordinator source acceptance pending.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "fix_inconsistencies_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/SSAFixInconsistencies.lean",
+    "lean_name": "fixInconsistencies",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.15.2.30.6): word_allocScript.sml:116-127 fix_inconsistencies prio ssa_L ssa_R na: var_union = MAP FST (toAList (union ssa_L ssa_R)); merge_moves then fake_moves over var_union; result (Seq (Move (priority prio T) Lmov) Lseq, Seq (Move (priority prio F) Rmov) Rseq, na'', ssa_L''). Lean: reviewed sptToAList, sptree union as the existing left-biased sptUnion rendering (untagged infrastructure), accepted mergeMoves. HOL α prog with α the word dimension is WordLangProgHOL (BitVec width) with [NeZero width] (words_as_type_indexed_bitvec). Original EVAL rows (scripts/hol-probes/word_alloc_fix_inconsistencies_probe.out, 64-bit) replayed by definitional equality in Flapjack.Test.WordAllocFixInconsistenciesParity. No extra premise. Proof-side port; the executed list-state SSA pass is not routed through it (see .30.2.1.1.1). Coordinator source acceptance pending.",
+    "words_as_type_indexed_bitvec": true
   }
 ]

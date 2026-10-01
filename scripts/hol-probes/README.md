@@ -2864,6 +2864,13 @@ the finite fixtures do not prove cross-assistant equivalence.
 equations, including unsorted inputs. `RegAllocSortedMemParity` kernel-replays
 the same cases and the executed wrapper's equation for arbitrary keys/lists.
 
+`word_alloc_fix_inconsistencies_probe` captures 12 original EVAL results of
+`option_lookup`, `priority`, `fake_move`, `fake_moves` and
+`fix_inconsistencies` at 64-bit words (raw sparse trees), replayed by
+definitional equality in `WordAllocFixInconsistenciesParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_alloc_fix_inconsistencies_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `reg_alloc_move_prep_probe` captures 13 original EVAL results of
 `extract_color` (raw sparse result), `coalesce_root`, `full_consistency_ok`
 (each rejecting check and an accepted pair) and `update_move`, kernel-replayed

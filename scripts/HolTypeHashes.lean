@@ -820,6 +820,7 @@ import Flapjack.Compiler.Backend.RegAlloc.Proofs.ClashTreeDomain
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.MoveRelatedForeach
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameLookup
 import Flapjack.Compiler.Backend.WordAlloc.SSAMergeMoves
+import Flapjack.Compiler.Backend.WordAlloc.SSAFixInconsistencies
 
 
 
