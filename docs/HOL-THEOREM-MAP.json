@@ -38132,6 +38132,15 @@
   "reviewer": "flapjack-luna-b source comparison 2026-10-01, bead15.3.24: Source252-258: full cutsets=Spt Unit pair and (k,f,fprime) triple retained. f=0 leaves bitmaps unchanged; otherwise exact write_bitmap of SND live, insert_bitmap, Const k (n2w(i+1)), StackStore k0. Shared-word ProgM uses exact MlString constructor carrier, untouched here. No dropped inputs/convenience domain-list signature or extra hypotheses. Full comp/compile_prog/pass proof and production routing remain open; coordinator acceptance pending."
 },
 {
+  "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+  "hol_name": "get_writes_inst_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/InstructionWrites.lean",
+  "lean_name": "getWritesInst",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01, bead11.1.16.1: literal681-703 on exact WordLangInst at positive BitVec/NeZero and NumSet Spt Unit. Const/Binop/Shift/Div write destination; AddCarry/AddOverflow/SubOverflow insert r4 outside r1; LongMul/LongDiv insert r2 outside r1; only Load/Load32/Load8 write target (Load16 falls through to LN). FPLess/FPLessEqual/FPEqual write integer result; FPMovToReg writes r1 only at64, else r2 outside r1. Every unlisted instruction gives LN, no extra premise. Same imported constructor carriers as reviewed instruction liveness. Seven fresh direct original HOL full-tree equalities kernel replayed; production route remains separate OPEN16.2."
+},
+{
   "lean_path": "Flapjack/Pancake/WordLang/OccurrencesExact.lean",
   "lean_name": "everyNameHOL",
   "hol_path": "cakeml/compiler/backend/wordLangScript.sml",
