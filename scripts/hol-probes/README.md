@@ -2555,3 +2555,14 @@ Bool/list states, Bool values and a large Nat state. Generic pointwise equation
 is separately kernel checked. Finite observations do not establish
 cross-assistant equivalence or production allocator routing. Regenerate with
 `HOL_PROBE_ONLY=monad_array_length_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`word_to_stack_instruction_maximum_probe` captures fourteen original integer instruction maxima, including immediate/register arithmetic, all arithmetic production constructors with a HOL counterpart, offset-bearing memory and a register name above 2^80. The final two rows expose the zero HOL maximum for Load16/Store16; kernel fixtures verify their existing allocator-guard rejection. The distinct five-register AddCarry has no HOL counterpart and its codec rejection is tested separately. Full arithmetic Option-map equality assumes no codec success, and supported instruction correspondence uses the existing real memory guard. Full program codec closure and executed native routing remain dependency-linked work.
+
+`word_alloc_canonize_sort_probe.out` captures seventeen fresh original mllist
+sort observations on the exact inline x/y/priority comparator, replayed by
+`CanonizeSortParity`. Empty/base/recursive sizes, duplicates, coordinate
+precedence, unnormalized reversed pairs and unbounded names/priorities are
+covered. This reuses the existing native MlList sorter; it neither expands
+external-source checker trust nor completes normalization/grouping or executed
+allocator routing. Source revision/span digest are beside `canonizeMoveLess`.
+Regenerate read-only with
+`HOL_PROBE_ONLY=word_alloc_canonize_sort_probeScript.sml scripts/hol-probes/regenerate.sh`.

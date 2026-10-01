@@ -3081,6 +3081,10 @@ run_probe word_to_stack_program_maximum_probeScript.sml word_to_stack_program_ma
   pm_skip pm_tick pm_move pm_assign pm_inst pm_get pm_store pm_set pm_seq pm_if_reg pm_if_imm pm_loop pm_must pm_break pm_continue pm_raise pm_loc pm_return pm_return_initial pm_tail_handler pm_return_call pm_both_call pm_alloc pm_constants pm_heap pm_install pm_code_write pm_data_write pm_ffi pm_shared16 pm_large pm_tail_empty \
   "$cake_dir/pancake/loop_to_wordScript.sml" "$cake_dir/pancake"
 
+run_probe word_alloc_canonize_sort_probeScript.sml word_alloc_canonize_sort_probe.out \
+  cs_empty cs_one cs_two cs_three cs_four cs_five cs_odd cs_even cs_dups cs_priority cs_x_first cs_y_second cs_reversed_coords cs_large cs_zeros cs_descending cs_ascending \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
 run_probe reg_alloc_state_map_probeScript.sml reg_alloc_state_map_probe.out \
   sm_type sm_bool_state sm_num_state sm_empty sm_one sm_order sm_reverse sm_duplicates sm_large sm_fail_empty sm_fail_first sm_fail_middle sm_fail_last sm_fail_duplicates sm_success sm_state_failure sm_list_state sm_list_error sm_tuple_state sm_empty_failure_callback \
   "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
@@ -3088,10 +3092,6 @@ run_probe reg_alloc_state_map_probeScript.sml reg_alloc_state_map_probe.out \
 run_probe monad_list_primitives_probeScript.sml monad_list_primitives_probe.out \
   lp_sub_empty lp_sub_empty_bound lp_sub_head lp_sub_middle lp_sub_last lp_sub_length lp_sub_length_bound lp_sub_large lp_sub_large_bound lp_sub_duplicate lp_update_empty lp_update_empty_bound lp_update_head lp_update_middle lp_update_last lp_update_length lp_update_length_bound lp_update_large lp_update_large_bound lp_update_duplicate lp_bool_sub lp_bool_update lp_bool_fail lp_tuple_error lp_tuple_value \
   "$cake_dir/translator/monadic/monad_base/ml_monadBaseScript.sml" "$cake_dir/translator/monadic/monad_base"
-
-run_probe word_alloc_canonize_sort_probeScript.sml word_alloc_canonize_sort_probe.out \
-  cs_empty cs_one cs_two cs_three cs_four cs_five cs_odd cs_even cs_dups cs_priority cs_x_first cs_y_second cs_reversed_coords cs_large cs_zeros cs_descending cs_ascending \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
 
 run_probe monad_array_length_probeScript.sml monad_array_length_probe.out \
   al_type al_empty al_duplicates al_bool_state al_list_state al_bool_values \
