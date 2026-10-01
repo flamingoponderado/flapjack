@@ -1,3 +1,9 @@
+import Flapjack.Test.RegAllocInitializationParity
+import Flapjack.Test.WordCopyCodecDomainParity
+import Flapjack.Test.CanonizeMovesParity
+import Flapjack.Test.MonadArrayLengthParity
+import Flapjack.Test.RegAllocStateMapParity
+import Flapjack.Test.MonadListPrimitivesParity
 import Flapjack.Test.CanonizeSortParity
 import Flapjack.Test.FindIndexAppendParity
 import Flapjack.Test.HeuProgParity
