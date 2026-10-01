@@ -38487,5 +38487,261 @@
     "lean_name": "getReadsExpHOL",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds9 source comparison 2026-10-01, bead flapjack-pxn.18.5.11.4.3.2: compared word_allocScript.sml:1122-1128 clause-by-clause against getReadsExpHOL. The exact polymorphic WordLangExpHOL carrier (Flapjack/Pancake/WordLang.lean:230, itself tagged exact for the wordLangScript.sml exp datatype) retains Const/Var/Lookup/Load/Op with Op taking an `exp list` and binary expression-valued Shift. Clause Var yields the singleton read list [num]; Load recurses into its address; Op is `FLAT (MAP get_reads_exp ls)`, represented by List.flatten of the mapped read lists, preserving argument order and duplicate registers; Shift is left-operand reads ++ right-operand reads, also preserving order and duplicates; the final HOL catchall returns [] and the Lean `_` arm covers Const and Lookup with []. Result is an ordered List Nat with no set normalization. No representation qualifier applies: the signature names no BitVec/word dimension, no finite-map carrier, and no mlstring. This is a proof-side port; replacing the executed caller remains separate work."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "wInst_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStackRegFormat.lean",
+    "lean_name": "wInst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-deepseek-three (source comparison): HOL wInst (word_to_stackScript.sml:88-175) is polymorphic in the stack word type and mirrors the asm instruction forms: Const -> wRegWrite1 (fun n. Inst (Const n c)); Arith Binop/Shift with Imm/Reg -> wReg1/wReg2 staging plus wRegWrite1; Div/AddCarry/AddOverflow/SubOverflow -> wReg1/wReg2 plus wRegWrite1; LongMul -> Inst (Arith (LongMul 3 0 0 2)); LongDiv -> wReg1 plus Inst (Arith (LongDiv 0 3 3 0 n5)); Mem Load/Store/Load8/Store8/Load32/Store32 -> wReg1/wReg2 plus wStackLoad/wRegWrite1 (Load16/Store16 intentionally fall to the Skip catch-all); FP FPLess/FPLessEqual/FPEqual -> wRegWrite1; FPMovToReg/FPMovFromReg are gated on dimindex(:'a) = 64; the remaining FP forms pass through as Inst (FP f); and wInst _ kf = Inst Skip. Lean wInst {width} [NeZero width] : WordLangInst (BitVec width) -> Nat x Nat x Nat -> ProgM (BitVec width) mirrors every clause with dimindex(:'a) = 64 read as width = 64 over the width-indexed exact carrier ProgM (BitVec width). Direct HOL rows wi_const..wi_skip=T in scripts/hol-probes/word_to_stack_winst_probe.out, reproduced by wInstParityGuard in Flapjack/Test/WordToStackBitsParity.lean. Re-reviewed flapjack-luna-b 2026-10-01 bead15.3.25.2 after ordinary merge of peer branch: current WordLangInst constructor arities and ProgM shared word carrier match asmScript/stackLangScript; source clauses88-185 retain staging order, extra carry register, fixed LongMul/LongDiv destinations, FP64 split and catchall. NeZero width is retained; word translation is qualified. Fourteen original64-bit rows cover representative cases, not every constructor or non64 FP branch. No production caller claim; full compiler25 remains open. Coordinator acceptance pending.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "fstep_def",
+    "lean_path": "Flapjack/Compiler/Backend/Parmove.lean",
+    "lean_name": "fstep",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead15.3.25.3: parmoveScript.sml526-546 generic three lists of (option alpha, option alpha) pairs, NONE temporary. Same final state, self-move discard/start, first pending source equal to active destination retained in suffix then removed and prepended to active; singleton emits; longer path FRONT/LAST cycle detection saves last source to NONE and emits (d,s),(NONE,d) in that order; noncycle pops head. splitSource specializes listTheory splitAtPki (listScript.sml3996) to its index-independent predicate; first-match order preserved and prefix/suffix reconstruction proved. frontLast is total nonempty FRONT/LAST with reconstruction and length proofs; no default, wf premise or dropped invalid state. DecidableEq only computes propositional equality, no BEq assumption. Literal termination measure2*length pending+length active proved decreasing for every unfinished state. Ten direct original HOL num-option EVAL rows cover every branch, first matching source, long cycle and NONE cases, replayed in Lean. pmov/parmove semantics and production wMove/compiler remain open. Coordinator review pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "windmill_def",
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/Semantics.lean",
+    "lean_name": "windmill",
+    "statement_status": "reviewed_exact",
+    "reviewer": "47: ALL_DISTINCT(MAP FST moves) is List.Nodup of destination projection; no source restriction. Source comparison flapjack-luna-b 2026-10-01 bead15.3.25.7: generic List/product/function carriers, ordinary propositional equality computed by DecidableEq (no BEq semantic premise), no finite-map/word translation. Twelve fresh original HOL observations cover snapshot versus updated source reads, repeated destinations without windmill, unchanged keys, emitted reversal and temporary equivalence; kernel replays and composition lemmas. Full parmove_correct and executed compiler remain open; coordinator acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "parsem_def",
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/Semantics.lean",
+    "lean_name": "parsem",
+    "statement_status": "reviewed_exact",
+    "reviewer": "161: snapshot every rho(source) before head-before-tail function updates; original UPDATE_LIST_THM confirms last repeated destination wins. MAP pairs is the source ZIP(MAP FST,MAP(rho o SND)) at equal lengths. Source comparison flapjack-luna-b 2026-10-01 bead15.3.25.7: generic List/product/function carriers, ordinary propositional equality computed by DecidableEq (no BEq semantic premise), no finite-map/word translation. Twelve fresh original HOL observations cover snapshot versus updated source reads, repeated destinations without windmill, unchanged keys, emitted reversal and temporary equivalence; kernel replays and composition lemmas. Full parmove_correct and executed compiler remain open; coordinator acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "seqsem_def",
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/Semantics.lean",
+    "lean_name": "seqsem",
+    "statement_status": "reviewed_exact",
+    "reviewer": "318: same nil identity and head update followed by recursive tail, each source read from updated rho. Source comparison flapjack-luna-b 2026-10-01 bead15.3.25.7: generic List/product/function carriers, ordinary propositional equality computed by DecidableEq (no BEq semantic premise), no finite-map/word translation. Twelve fresh original HOL observations cover snapshot versus updated source reads, repeated destinations without windmill, unchanged keys, emitted reversal and temporary equivalence; kernel replays and composition lemmas. Full parmove_correct and executed compiler remain open; coordinator acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "sem_def",
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/Semantics.lean",
+    "lean_name": "sem",
+    "statement_status": "reviewed_exact",
+    "reviewer": "340: generic alpha register keys and beta values retained (original kernel type probed); parsem(pending++active)(seqsem(REVERSE emitted)rho). Not restricted to option registers. Source comparison flapjack-luna-b 2026-10-01 bead15.3.25.7: generic List/product/function carriers, ordinary propositional equality computed by DecidableEq (no BEq semantic premise), no finite-map/word translation. Twelve fresh original HOL observations cover snapshot versus updated source reads, repeated destinations without windmill, unchanged keys, emitted reversal and temporary equivalence; kernel replays and composition lemmas. Full parmove_correct and executed compiler remain open; coordinator acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "eqenv_def",
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/Semantics.lean",
+    "lean_name": "eqenv",
+    "statement_status": "reviewed_exact",
+    "reviewer": "358: forall option register r, IS_SOME r implies rho1 r=rho2 r; only NONE ignored. Source comparison flapjack-luna-b 2026-10-01 bead15.3.25.7: generic List/product/function carriers, ordinary propositional equality computed by DecidableEq (no BEq semantic premise), no finite-map/word translation. Twelve fresh original HOL observations cover snapshot versus updated source reads, repeated destinations without windmill, unchanged keys, emitted reversal and temporary equivalence; kernel replays and composition lemmas. Full parmove_correct and executed compiler remain open; coordinator acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "seqsem_append",
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/Semantics.lean",
+    "lean_name": "seqsem_append",
+    "statement_status": "reviewed_exact",
+    "reviewer": "326: same two universally bound move lists, function equality seqsem(first++second)=seqsem second o seqsem first; no side premises; induction proof. Source comparison flapjack-luna-b 2026-10-01 bead15.3.25.7: generic List/product/function carriers, ordinary propositional equality computed by DecidableEq (no BEq semantic premise), no finite-map/word translation. Twelve fresh original HOL observations cover snapshot versus updated source reads, repeated destinations without windmill, unchanged keys, emitted reversal and temporary equivalence; kernel replays and composition lemmas. Full parmove_correct and executed compiler remain open; coordinator acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "sem_init",
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/Semantics.lean",
+    "lean_name": "sem_init",
+    "statement_status": "reviewed_exact",
+    "reviewer": "344: sem(pending,[],[])=parsem pending, generic keys/values and function equality; no premise. Source comparison flapjack-luna-b 2026-10-01 bead15.3.25.7: generic List/product/function carriers, ordinary propositional equality computed by DecidableEq (no BEq semantic premise), no finite-map/word translation. Twelve fresh original HOL observations cover snapshot versus updated source reads, repeated destinations without windmill, unchanged keys, emitted reversal and temporary equivalence; kernel replays and composition lemmas. Full parmove_correct and executed compiler remain open; coordinator acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "sem_final",
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/Semantics.lean",
+    "lean_name": "sem_final",
+    "statement_status": "reviewed_exact",
+    "reviewer": "350: sem([],[],emitted)=seqsem(REVERSE emitted), generic keys/values and function equality; no premise. Source comparison flapjack-luna-b 2026-10-01 bead15.3.25.7: generic List/product/function carriers, ordinary propositional equality computed by DecidableEq (no BEq semantic premise), no finite-map/word translation. Twelve fresh original HOL observations cover snapshot versus updated source reads, repeated destinations without windmill, unchanged keys, emitted reversal and temporary equivalence; kernel replays and composition lemmas. Full parmove_correct and executed compiler remain open; coordinator acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/IndexList.lean",
+    "lean_name": "indexList",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "index_list_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead15.3.37: literal index_list319-322 recurses on polymorphic List, uses n+length tail, retains order and fixed starting n; LENGTH_index_list325-329 universally quantifies list and Nat with unconditional identical length equality proved by induction; adjust_names792-794 is Nat division by2. No word/fmap/array carrier difference, extra premise or runtime approximation. Fresh original5rows and kernel replay cover empty/singleton/descending indices/even+odd division. Needed stack_rel_aux815 indexing; full state relation remains separate."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/IndexList.lean",
+    "lean_name": "lengthIndexList",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "LENGTH_index_list",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead15.3.37: literal index_list319-322 recurses on polymorphic List, uses n+length tail, retains order and fixed starting n; LENGTH_index_list325-329 universally quantifies list and Nat with unconditional identical length equality proved by induction; adjust_names792-794 is Nat division by2. No word/fmap/array carrier difference, extra premise or runtime approximation. Fresh original5rows and kernel replay cover empty/singleton/descending indices/even+odd division. Needed stack_rel_aux815 indexing; full state relation remains separate."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/IndexList.lean",
+    "lean_name": "adjustNames",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "adjust_names_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead15.3.37: literal index_list319-322 recurses on polymorphic List, uses n+length tail, retains order and fixed starting n; LENGTH_index_list325-329 universally quantifies list and Nat with unconditional identical length equality proved by induction; adjust_names792-794 is Nat division by2. No word/fmap/array carrier difference, extra premise or runtime approximation. Fresh original5rows and kernel replay cover empty/singleton/descending indices/even+odd division. Needed stack_rel_aux815 indexing; full state relation remains separate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "s_frame_val_eq_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackEq.lean",
+    "lean_name": "sFrameValEq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.20): wordPropsScript.sml:1796-1802: two literal clauses (NONE/NONE: MAP SND equal and size equal; SOME/SOME: also handler triple equal) and catchall F; non-GC list ignored as in HOL. Positive BitVec width is the only carrier translation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "s_val_eq_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackEq.lean",
+    "lean_name": "sValEq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.20): wordPropsScript.sml:1811-1816: [] [] T, cons pairs conjoin tail and frame relation in HOL order, otherwise F. Positive BitVec width is the only carrier translation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "s_frame_key_eq_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackEq.lean",
+    "lean_name": "sFrameKeyEq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.20): wordPropsScript.sml:1819-1825: NONE/NONE: MAP FST equal, non-GC lists equal, sizes equal; SOME/SOME: also handlers equal; catchall F. Positive BitVec width is the only carrier translation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "s_key_eq_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackEq.lean",
+    "lean_name": "sKeyEq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.20): wordPropsScript.sml:1834-1839: [] [] T, cons pairs conjoin tail and frame relation, otherwise F. Positive BitVec width is the only carrier translation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "s_frame_val_eq_def2",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackEq.lean",
+    "lean_name": "sFrameValEqDef2",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.20): wordPropsScript.sml:1804-1809: StackFrame form iff MAP SND equal, handler equal, size equal. Positive BitVec width is the only carrier translation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "s_frame_key_eq_def2",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackEq.lean",
+    "lean_name": "sFrameKeyEqDef2",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.20): wordPropsScript.sml:1827-1832: StackFrame form iff MAP FST equal, handler equal, non-GC list equal, size equal. Positive BitVec width is the only carrier translation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "s_frame_key_eq_refl",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackEq.lean",
+    "lean_name": "sFrameKeyEqRefl",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.20): wordPropsScript.sml:1858-1863: !ls. s_frame_key_eq ls ls = T. Positive BitVec width is the only carrier translation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "s_frame_val_eq_refl",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackEq.lean",
+    "lean_name": "sFrameValEqRefl",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.20): wordPropsScript.sml:1865-1870: !ls. s_frame_val_eq ls ls = T. Positive BitVec width is the only carrier translation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "s_key_eq_refl",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackEq.lean",
+    "lean_name": "sKeyEqRefl",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.20): wordPropsScript.sml:1872-1878: !ls. s_key_eq ls ls = T. Positive BitVec width is the only carrier translation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "s_val_eq_refl",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackEq.lean",
+    "lean_name": "sValEqRefl",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.20): wordPropsScript.sml:1880-1886: !ls. s_val_eq ls ls = T. Positive BitVec width is the only carrier translation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "s_val_and_key_eq",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StackEq.lean",
+    "lean_name": "sValAndKeyEq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.20): wordPropsScript.sml:1983-1992: !s t. s_val_eq s t /\\ s_key_eq s t ==> s = t. Positive BitVec width is the only carrier translation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "push_env_s_val_eq",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/PushPopEnv.lean",
+    "lean_name": "pushEnvSValEq",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.20): word_allocProofScript.sml:515-563: forall tperm, all nine HOL premises in order (handler/stack/locals_size equalities, both IMAGE domains, both INJs, strong_locals_rel on domain x, the b/b' handler-label case relation) imply ?perm with env_to_list conjuncts (permute' = tperm, renamed list equality, injectivity on MAP FST l') and s_val_eq of the two push_env stacks; envs pair (x',x) as HOL (FST to toAList, SND to env_to_list). Unused x'/y' premises retained. WordSem finite maps via fmap_as_finite_support, positive width via words_as_type_indexed_bitvec."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "s_key_eq_val_eq_pop_env",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/PushPopEnv.lean",
+    "lean_name": "sKeyEqValEqPopEnv",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.20): word_allocProofScript.sml:596-617: pop_env s = SOME s' /\\ s_key_eq s.stack (StackFrame n lsz ls opt::keys) /\\ s_val_eq s.stack vals ==> ?lsz' ls' rest with vals shape, s'.locals = union (fromAList (ZIP (MAP FST ls, MAP SND ls'))) (fromAList lsz), key/val tails, handler case split; exact. WordSem finite maps via fmap_as_finite_support, positive width via words_as_type_indexed_bitvec."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "pop_env_frame",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/PushPopEnv.lean",
+    "lean_name": "popEnvFrame",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.20): word_allocProofScript.sml:710-722: s_val_eq r'.stack st' /\\ s_key_eq y'.stack y''.stack /\\ pop_env (r' with stack := st') = SOME y'' /\\ pop_env r' = SOME y' ==> word_state_eq_rel y' y''; exact. WordSem finite maps via fmap_as_finite_support, positive width via words_as_type_indexed_bitvec."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "s_key_eq_push_env_imp_MAP_FST",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/PushPopEnv.lean",
+    "lean_name": "sKeyEqPushEnvImpMapFst",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.20): word_allocProofScript.sml:892-904: s_key_eq (push_env (x',x'') o0 s).stack (StackFrame n' bb l opt::ls) /\\ env_to_list x'' s.permute = (ll,res) ==> MAP FST ll = MAP FST l /\\ set (MAP FST bb) = domain x'; set as membership predicate. WordSem finite maps via fmap_as_finite_support, positive width via words_as_type_indexed_bitvec."
   }
 ]

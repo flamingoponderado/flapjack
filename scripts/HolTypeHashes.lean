@@ -123,6 +123,8 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnv
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnvs
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EnvFrame
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnvLemma
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.PushPopEnv
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StackEq
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutNames
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyRemap
 import Flapjack.Pancake.PanStructs.CompileDeclsExact
@@ -191,7 +193,10 @@ import Flapjack.Compiler.Backend.WordToStack.LiveBitmap
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackSize
 import Flapjack.Compiler.Backend.WordToStack.Proofs.Frames
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstraction
+import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexList
 import Flapjack.Compiler.Backend.WordToStackRegFormat
+import Flapjack.Compiler.Backend.Parmove
+import Flapjack.Compiler.Backend.Parmove.Semantics
 import Flapjack.Compiler.Backend.LabSem
 import Flapjack.Compiler.Backend.LabProps
 import Flapjack.Compiler.Backend.StackNames
