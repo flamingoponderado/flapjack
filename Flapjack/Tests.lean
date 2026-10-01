@@ -1,3 +1,4 @@
+import Flapjack.Test.ProductionThreeToTwoDomain
 import Flapjack.Test.CanonizeMovesParity
 import Flapjack.Test.MonadArrayLengthParity
 import Flapjack.Test.RegAllocStateMapParity
