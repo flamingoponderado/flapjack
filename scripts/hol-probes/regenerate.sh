@@ -2918,3 +2918,7 @@ run_probe word_alloc_remove_temp_stack_probeScript.sml word_alloc_remove_temp_st
 run_probe word_alloc_merge_stack_only_probeScript.sml word_alloc_merge_stack_only_probe.out \
   mso_present_alloc mso_present_physical mso_present_stack mso_absent_stack_alloc mso_absent_stack_physical mso_absent_delete_missing mso_absent_delete_root mso_present_overwrite mso_raw \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
+run_probe find_index_bounds_probeScript.sml find_index_bounds_probe.out \
+  fib_head fib_middle fib_duplicate fib_large fib_last fib_zero fib_absent fib_empty \
+  "$cake_dir/misc/miscScript.sml" "$cake_dir/misc"

@@ -1,0 +1,13 @@
+load "bossLib";
+load "preamble";
+load "miscTheory";
+open bossLib HolKernel Parse preamble miscTheory;
+fun observe label term = let val th = EVAL term in print(label ^ "="); print_term(rhs(concl th)); print "\n" end;
+val _ = observe "fib_head" ``(find_index (4:num) [4;9] 7, (7:num) <= 7, 7 < 7 + LENGTH [4;9])``;
+val _ = observe "fib_middle" ``(find_index (9:num) [4;9] 7, (7:num) <= 8, 8 < 7 + LENGTH [4;9])``;
+val _ = observe "fib_duplicate" ``(find_index (4:num) [4;4] 4, (4:num) <= 4, 4 < 4 + LENGTH [4;4])``;
+val _ = observe "fib_large" ``(find_index (9:num) [4;9] 4294967296, (4294967296:num) <= 4294967297, 4294967297 < 4294967296 + LENGTH [4;9])``;
+val _ = observe "fib_last" ``(find_index (7:num) [1;2;3;7] 9, (9:num) <= 12, 12 < 9 + LENGTH [1;2;3;7])``;
+val _ = observe "fib_zero" ``(find_index (0:num) [0] 0, (0:num) <= 0, 0 < 0 + LENGTH [0])``;
+val _ = observe "fib_absent" ``(find_index (8:num) [1;2] 5, (5:num) <= 7, 7 < 5 + LENGTH [1;2])``;
+val _ = observe "fib_empty" ``(find_index (4:num) [] 10, (10:num) <= 10, 10 < 10 + LENGTH [])``;

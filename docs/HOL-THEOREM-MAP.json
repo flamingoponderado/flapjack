@@ -41921,5 +41921,13 @@
   "hol_name": "not_use_temp_before_assign_append",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-c source839-846: original generic two-list iff; Bool predicate truth and EVERY IS_SOME MAP FST as forall membership, no wf/distinctness premise. Constructor induction preserves ordered scratch-read rejection before scratch-write acceptance; only all-real destinations require suffix safety. Eight fresh original truth/prefix/all-real/suffix tuple observations and identical kernel fixtures, generic theorem application included."
+},
+{
+  "lean_path": "Flapjack/Misc/FindIndex/Bounds.lean",
+  "lean_name": "findIndexLessLength",
+  "hol_path": "cakeml/misc/miscScript.sml",
+  "hol_name": "find_index_LESS_LENGTH",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c original1123-1130: arbitrary list,target,offset,index with successful find_index=SOME index premise; BOTH offset<=index and index<offset+LENGTH list retained. Generic propositional equality, no zero-offset/unique-match/size premise. Native list induction and arithmetic derive bounds. Eight original search/lower/upper tuples include first/duplicate/last/large-offset and absent/empty strict-bound sentinels, matching kernel fixture tuples and six theorem callsites."
 }
 ]

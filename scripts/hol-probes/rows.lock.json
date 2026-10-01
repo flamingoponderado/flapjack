@@ -165,6 +165,7 @@
     {"bytes":13,"out":"extract_sum_probe.out","rows":2,"sha256":"45ddbb2fcd8d130d22b944b73003acffa491d090dd9d39711b2de060c89ccdbc"},
     {"bytes":199,"out":"ffi_call_probe.out","rows":6,"sha256":"47fd071155b497ea7501f136263c410df51c202e88550b44637fdaaa6d682483"},
     {"bytes":463,"out":"ffi_state_carrier_probe.out","rows":19,"sha256":"2eaa952ab65690ce7e0295ba3a42708411a2206def03b8622c9eb2d9271dde48"},
+    {"bytes":193,"out":"find_index_bounds_probe.out","rows":8,"sha256":"036aa694867fc8a83358e80cc3332d3d1f7497264ea437bc840dd9baca3fb237"},
     {"bytes":144,"out":"find_index_probe.out","rows":8,"sha256":"1f97680b6c19dfc24cbe2cf479bc0bef927388faf6358531c0a22afbe958d4f7"},
     {"bytes":81,"out":"fm_empty_zip_alist_probe.out","rows":4,"sha256":"37c2430b9e311fcd750f7e841f55ff858ad624eff05232358404effeb9e42b06"},
     {"bytes":124,"out":"fp_sem_fp_cmp_probe.out","rows":6,"sha256":"5542b7030041c2441ab4a7fef05d2ce6dcc257cfd2988d96348e5f419fc1b650"},
