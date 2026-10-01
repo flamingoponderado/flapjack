@@ -42704,7 +42704,7 @@
     "lean_path": "Flapjack/Compiler/Backend/LinearScan.lean",
     "lean_name": "getIntervals",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.2), linear_scanScript.sml:153-170: Writes (n-1, add_if_lt l n beg, add_if_gt l n end); Reads (n-1, beg, add_if_gt l n end); Branch and Seq both number lt2 first then lt1. Carriers: HOL num_set is NumSet (Spt Unit), int num_map is Spt Int, int is Int, num list is List Nat, clash_tree is the reviewed RegAlloc.ClashTree; toAList/difference/union/insert/lookup are sptToAList/sptDifference/sptUnion/sptInsert/sptLookup and numset_list_delete is the reviewed RegAlloc.numsetListDelete. Every clause, let binding, argument order and traversal order (right child first where HOL numbers/checks lt2 or ct2 first) is transcribed. No word, finite-map or list-as-array translation. Kernel replay of 15 original HOL EVAL rows in Flapjack.Test.LinearScanPureDefsParity (scripts/hol-probes/linear_scan_pure_defs_probe.out). Proof-side port; the executed allocator (Flapjack/RiscV/LinearScan*.lean) is not routed through it. Coordinator source acceptance pending."
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.2), linear_scanScript.sml:153-169: Writes (n-1, add_if_lt l n beg, add_if_gt l n end); Reads (n-1, beg, add_if_gt l n end); Branch and Seq both number lt2 first then lt1. Carriers: HOL num_set is NumSet (Spt Unit), int num_map is Spt Int, int is Int, num list is List Nat, clash_tree is the reviewed RegAlloc.ClashTree; toAList/difference/union/insert/lookup are sptToAList/sptDifference/sptUnion/sptInsert/sptLookup and numset_list_delete is the reviewed RegAlloc.numsetListDelete. Every clause, let binding, argument order and traversal order (right child first where HOL numbers/checks lt2 or ct2 first) is transcribed. No word, finite-map or list-as-array translation. Kernel replay of 15 original HOL EVAL rows in Flapjack.Test.LinearScanPureDefsParity (scripts/hol-probes/linear_scan_pure_defs_probe.out). Proof-side port; the executed allocator (Flapjack/RiscV/LinearScan*.lean) is not routed through it. Coordinator source acceptance pending."
   },
   {
     "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
@@ -43529,5 +43529,429 @@
     "lean_name": "stExMap",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.1), reg_allocScript.sml:148-156: st_ex_MAP f [] = return []; st_ex_MAP f (x::xs) = do fx <- f x; fxs <- st_ex_MAP f xs; return (fx::fxs) od, i.e. st_ex_bind (f x) (\\fx. st_ex_bind (st_ex_MAP f xs) (\\fxs. st_ex_return (fx::fxs))) over the accepted MonadBase bind/ret; generic state/element/result/exception types. Proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "linear_scan_state",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/HiddenState.lean",
+    "lean_name": "LinearScanState",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.3), linear_scanScript.sml:314-323. HOL: linear_scan_state = <| active: (int # num) list (* interval end # reg *) ; colorpool: num list ; phyregs: num_set ; colornum: num ; colormax: num ; stacknum: num |> Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "linear_scan_hidden_state",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/HiddenState.lean",
+    "lean_name": "LinearScanHiddenState",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.3), linear_scanScript.sml:325-333. HOL: linear_scan_hidden_state = <| colors : num list ; int_beg : int list ; int_end : int list ; sorted_regs : num list ; sorted_moves : (num # (num # num)) list |> Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "colors_length_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/HiddenState.lean",
+    "lean_name": "colorsLength",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.3), linear_scanScript.sml generated accessor colors_length_def (fetched by `val colors_length_def = fetch \"-\" \"colors_length_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "colors_sub_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/HiddenState.lean",
+    "lean_name": "colorsSub",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.3), linear_scanScript.sml generated accessor colors_sub_def (fetched by `val colors_sub_def = fetch \"-\" \"colors_sub_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "update_colors_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/HiddenState.lean",
+    "lean_name": "updateColors",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.3), linear_scanScript.sml generated accessor update_colors_def (fetched by `val update_colors_def = fetch \"-\" \"update_colors_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "int_beg_length_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/HiddenState.lean",
+    "lean_name": "intBegLength",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.3), linear_scanScript.sml generated accessor int_beg_length_def (fetched by `val int_beg_length_def = fetch \"-\" \"int_beg_length_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "int_beg_sub_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/HiddenState.lean",
+    "lean_name": "intBegSub",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.3), linear_scanScript.sml generated accessor int_beg_sub_def (fetched by `val int_beg_sub_def = fetch \"-\" \"int_beg_sub_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "update_int_beg_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/HiddenState.lean",
+    "lean_name": "updateIntBeg",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.3), linear_scanScript.sml generated accessor update_int_beg_def (fetched by `val update_int_beg_def = fetch \"-\" \"update_int_beg_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "int_end_length_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/HiddenState.lean",
+    "lean_name": "intEndLength",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.3), linear_scanScript.sml generated accessor int_end_length_def (fetched by `val int_end_length_def = fetch \"-\" \"int_end_length_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "int_end_sub_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/HiddenState.lean",
+    "lean_name": "intEndSub",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.3), linear_scanScript.sml generated accessor int_end_sub_def (fetched by `val int_end_sub_def = fetch \"-\" \"int_end_sub_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "update_int_end_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/HiddenState.lean",
+    "lean_name": "updateIntEnd",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.3), linear_scanScript.sml generated accessor update_int_end_def (fetched by `val update_int_end_def = fetch \"-\" \"update_int_end_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "sorted_regs_length_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/HiddenState.lean",
+    "lean_name": "sortedRegsLength",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.3), linear_scanScript.sml generated accessor sorted_regs_length_def (fetched by `val sorted_regs_length_def = fetch \"-\" \"sorted_regs_length_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "sorted_regs_sub_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/HiddenState.lean",
+    "lean_name": "sortedRegsSub",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.3), linear_scanScript.sml generated accessor sorted_regs_sub_def (fetched by `val sorted_regs_sub_def = fetch \"-\" \"sorted_regs_sub_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "update_sorted_regs_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/HiddenState.lean",
+    "lean_name": "updateSortedRegs",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.3), linear_scanScript.sml generated accessor update_sorted_regs_def (fetched by `val update_sorted_regs_def = fetch \"-\" \"update_sorted_regs_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "sorted_moves_length_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/HiddenState.lean",
+    "lean_name": "sortedMovesLength",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.3), linear_scanScript.sml generated accessor sorted_moves_length_def (fetched by `val sorted_moves_length_def = fetch \"-\" \"sorted_moves_length_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "sorted_moves_sub_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/HiddenState.lean",
+    "lean_name": "sortedMovesSub",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.3), linear_scanScript.sml generated accessor sorted_moves_sub_def (fetched by `val sorted_moves_sub_def = fetch \"-\" \"sorted_moves_sub_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "update_sorted_moves_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/HiddenState.lean",
+    "lean_name": "updateSortedMoves",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.3), linear_scanScript.sml generated accessor update_sorted_moves_def (fetched by `val update_sorted_moves_def = fetch \"-\" \"update_sorted_moves_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "numset_list_add_if_lt_monad_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/HiddenState.lean",
+    "lean_name": "numsetListAddIfLtMonad",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.3), linear_scanScript.sml generated accessor numset_list_add_if_lt_monad_def (fetched by `val numset_list_add_if_lt_monad_def = fetch \"-\" \"numset_list_add_if_lt_monad_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "numset_list_add_if_gt_monad_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/HiddenState.lean",
+    "lean_name": "numsetListAddIfGtMonad",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.3), linear_scanScript.sml generated accessor numset_list_add_if_gt_monad_def (fetched by `val numset_list_add_if_gt_monad_def = fetch \"-\" \"numset_list_add_if_gt_monad_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "get_intervals_ct_monad_aux_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/HiddenState.lean",
+    "lean_name": "getIntervalsCtMonadAux",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.3), linear_scanScript.sml generated accessor get_intervals_ct_monad_aux_def (fetched by `val get_intervals_ct_monad_aux_def = fetch \"-\" \"get_intervals_ct_monad_aux_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "get_intervals_ct_monad_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/HiddenState.lean",
+    "lean_name": "getIntervalsCtMonad",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.3), linear_scanScript.sml generated accessor get_intervals_ct_monad_def (fetched by `val get_intervals_ct_monad_def = fetch \"-\" \"get_intervals_ct_monad_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "remove_inactive_intervals_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Steps.lean",
+    "lean_name": "removeInactiveIntervals",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.4), linear_scanScript.sml generated accessor remove_inactive_intervals_def (fetched by `val remove_inactive_intervals_def = fetch \"-\" \"remove_inactive_intervals_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "add_active_interval_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Steps.lean",
+    "lean_name": "addActiveInterval",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.4), linear_scanScript.sml generated accessor add_active_interval_def (fetched by `val add_active_interval_def = fetch \"-\" \"add_active_interval_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "find_color_in_list_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Steps.lean",
+    "lean_name": "findColorInList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.4), linear_scanScript.sml generated accessor find_color_in_list_def (fetched by `val find_color_in_list_def = fetch \"-\" \"find_color_in_list_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "find_color_in_colornum_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Steps.lean",
+    "lean_name": "findColorInColornum",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.4), linear_scanScript.sml generated accessor find_color_in_colornum_def (fetched by `val find_color_in_colornum_def = fetch \"-\" \"find_color_in_colornum_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "find_color_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Steps.lean",
+    "lean_name": "findColor",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.4), linear_scanScript.sml generated accessor find_color_def (fetched by `val find_color_def = fetch \"-\" \"find_color_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "spill_register_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Steps.lean",
+    "lean_name": "spillRegister",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.4), linear_scanScript.sml generated accessor spill_register_def (fetched by `val spill_register_def = fetch \"-\" \"spill_register_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "color_register_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Steps.lean",
+    "lean_name": "colorRegister",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.4), linear_scanScript.sml generated accessor color_register_def (fetched by `val color_register_def = fetch \"-\" \"color_register_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "find_last_stealable_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Steps.lean",
+    "lean_name": "findLastStealable",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.4), linear_scanScript.sml generated accessor find_last_stealable_def (fetched by `val find_last_stealable_def = fetch \"-\" \"find_last_stealable_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "find_spill_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Steps.lean",
+    "lean_name": "findSpill",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.4), linear_scanScript.sml generated accessor find_spill_def (fetched by `val find_spill_def = fetch \"-\" \"find_spill_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "linear_reg_alloc_step_aux_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Steps.lean",
+    "lean_name": "linearRegAllocStepAux",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.4), linear_scanScript.sml generated accessor linear_reg_alloc_step_aux_def (fetched by `val linear_reg_alloc_step_aux_def = fetch \"-\" \"linear_reg_alloc_step_aux_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "linear_reg_alloc_step_pass1_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Steps.lean",
+    "lean_name": "linearRegAllocStepPass1",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.4), linear_scanScript.sml generated accessor linear_reg_alloc_step_pass1_def (fetched by `val linear_reg_alloc_step_pass1_def = fetch \"-\" \"linear_reg_alloc_step_pass1_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "linear_reg_alloc_step_pass2_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Steps.lean",
+    "lean_name": "linearRegAllocStepPass2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.4), linear_scanScript.sml generated accessor linear_reg_alloc_step_pass2_def (fetched by `val linear_reg_alloc_step_pass2_def = fetch \"-\" \"linear_reg_alloc_step_pass2_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "linear_reg_alloc_pass1_initial_state_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Steps.lean",
+    "lean_name": "linearRegAllocPass1InitialState",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.4), linear_scanScript.sml generated accessor linear_reg_alloc_pass1_initial_state_def (fetched by `val linear_reg_alloc_pass1_initial_state_def = fetch \"-\" \"linear_reg_alloc_pass1_initial_state_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "linear_reg_alloc_pass2_initial_state_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Steps.lean",
+    "lean_name": "linearRegAllocPass2InitialState",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.4), linear_scanScript.sml generated accessor linear_reg_alloc_pass2_initial_state_def (fetched by `val linear_reg_alloc_pass2_initial_state_def = fetch \"-\" \"linear_reg_alloc_pass2_initial_state_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "find_reg_exchange_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Sorting.lean",
+    "lean_name": "findRegExchange",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.5), linear_scanScript.sml generated accessor find_reg_exchange_def (fetched by `val find_reg_exchange_def = fetch \"-\" \"find_reg_exchange_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "MAP_colors_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Sorting.lean",
+    "lean_name": "mapColors",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.5), linear_scanScript.sml generated accessor MAP_colors_def (fetched by `val MAP_colors_def = fetch \"-\" \"MAP_colors_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "apply_reg_exchange_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Sorting.lean",
+    "lean_name": "applyRegExchange",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.5), linear_scanScript.sml generated accessor apply_reg_exchange_def (fetched by `val apply_reg_exchange_def = fetch \"-\" \"apply_reg_exchange_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "st_ex_FOLDL_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Sorting.lean",
+    "lean_name": "stExFoldl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.5), linear_scanScript.sml generated accessor st_ex_FOLDL_def (fetched by `val st_ex_FOLDL_def = fetch \"-\" \"st_ex_FOLDL_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "st_ex_FILTER_good_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Sorting.lean",
+    "lean_name": "stExFilterGood",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.5), linear_scanScript.sml generated accessor st_ex_FILTER_good_def (fetched by `val st_ex_FILTER_good_def = fetch \"-\" \"st_ex_FILTER_good_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "edges_to_adjlist_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Sorting.lean",
+    "lean_name": "edgesToAdjlist",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.5), linear_scanScript.sml generated accessor edges_to_adjlist_def (fetched by `val edges_to_adjlist_def = fetch \"-\" \"edges_to_adjlist_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "sort_moves_rev_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Sorting.lean",
+    "lean_name": "sortMovesRev",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.5), linear_scanScript.sml generated accessor sort_moves_rev_def (fetched by `val sort_moves_rev_def = fetch \"-\" \"sort_moves_rev_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "swap_regs_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Sorting.lean",
+    "lean_name": "swapRegs",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.5), linear_scanScript.sml generated accessor swap_regs_def (fetched by `val swap_regs_def = fetch \"-\" \"swap_regs_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "partition_regs_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Sorting.lean",
+    "lean_name": "partitionRegs",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.5), linear_scanScript.sml generated accessor partition_regs_def (fetched by `val partition_regs_def = fetch \"-\" \"partition_regs_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "sort_regs_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Sorting.lean",
+    "lean_name": "sortRegs",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.5), linear_scanScript.sml generated accessor sort_regs_def (fetched by `val sort_regs_def = fetch \"-\" \"sort_regs_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "list_to_sorted_regs_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Sorting.lean",
+    "lean_name": "listToSortedRegs",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.5), linear_scanScript.sml generated accessor list_to_sorted_regs_def (fetched by `val list_to_sorted_regs_def = fetch \"-\" \"list_to_sorted_regs_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "sorted_regs_to_list_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Sorting.lean",
+    "lean_name": "sortedRegsToList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.5), linear_scanScript.sml generated accessor sorted_regs_to_list_def (fetched by `val sorted_regs_to_list_def = fetch \"-\" \"sorted_regs_to_list_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "swap_moves_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Sorting.lean",
+    "lean_name": "swapMoves",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.5), linear_scanScript.sml generated accessor swap_moves_def (fetched by `val swap_moves_def = fetch \"-\" \"swap_moves_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "partition_moves_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Sorting.lean",
+    "lean_name": "partitionMoves",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.5), linear_scanScript.sml generated accessor partition_moves_def (fetched by `val partition_moves_def = fetch \"-\" \"partition_moves_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "sort_moves_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Sorting.lean",
+    "lean_name": "sortMoves",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.5), linear_scanScript.sml generated accessor sort_moves_def (fetched by `val sort_moves_def = fetch \"-\" \"sort_moves_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "list_to_sorted_moves_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Sorting.lean",
+    "lean_name": "listToSortedMoves",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.5), linear_scanScript.sml generated accessor list_to_sorted_moves_def (fetched by `val list_to_sorted_moves_def = fetch \"-\" \"list_to_sorted_moves_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "sorted_moves_to_list_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Sorting.lean",
+    "lean_name": "sortedMovesToList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.5), linear_scanScript.sml generated accessor sorted_moves_to_list_def (fetched by `val sorted_moves_to_list_def = fetch \"-\" \"sorted_moves_to_list_def\"` at :382-400) from define_MFarray_manip_funs over linear_scan_hidden_state: <f>_length = Marray_length (\\s. s.<f>), <f>_sub = Marray_sub (\\s. s.<f>) Subscript, update_<f> = Marray_update (\\s. s.<f>) (\\x s. s with <f> := x) Subscript (ml_monadBaseLib.sml:399-428); Lean is the same application of the reviewed arrayLength/arraySub/arrayUpdate with StateException.Subscript. Rendering: HOL do-blocks are the accepted MonadBase bind/ignoreBind/ret (pattern binders as pattern lambdas, let as let), HOL num/int as Nat/Int, num_set/num_map as Spt, records as structures (with-updates as structure updates), reg_alloc is_phy_var/is_stack_var as the reviewed Bool predicates, misc the as miscThe, MEM/FILTER with decide, option_CASE as Option.elim, the reg_alloc state_exn Subscript for array bounds. Kernel replay of the original EVAL rows in Flapjack.Test.LinearScanMonadParity (scripts/hol-probes/linear_scan_monad_probe.out, 34 rows, full result values). Proof-side port; the executed allocator is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "the_def",
+    "lean_path": "Flapjack/Misc/MiscThe.lean",
+    "lean_name": "miscThe",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.4), miscScript.sml:21-24: the _ (SOME x) = x /\\ the x NONE = x; Lean miscThe with the same two clauses, generic Type0 payload. Exercised by the pass-1/pass-2 rows of linear_scan_monad_probe. Coordinator source acceptance pending."
   }
 ]

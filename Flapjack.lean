@@ -987,6 +987,10 @@ import Flapjack.Compiler.Backend.StackProps
 import Flapjack.Compiler.Backend.RegAlloc
 import Flapjack.Compiler.Backend.RegAlloc.ClashTree
 import Flapjack.Compiler.Backend.LinearScan
+import Flapjack.Compiler.Backend.LinearScan.HiddenState
+import Flapjack.Compiler.Backend.LinearScan.Steps
+import Flapjack.Compiler.Backend.LinearScan.Sorting
+import Flapjack.Misc.MiscThe
 import Flapjack.Compiler.Backend.LinearScan.Proofs
 import Flapjack.Misc.Sptree.ToAList
 import Flapjack.Translator.Monadic.MonadBase.Arrays

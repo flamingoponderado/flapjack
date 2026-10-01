@@ -154,7 +154,7 @@ def sizeOfLiveTree : LiveTree → Int
   | .branch lt1 lt2 => sizeOfLiveTree lt1 + sizeOfLiveTree lt2
   | .seq lt1 lt2 => sizeOfLiveTree lt1 + sizeOfLiveTree lt2
 
-/-- Backward interval numbering (`linear_scanScript.sml:153-170`). Both
+/-- Backward interval numbering (`linear_scanScript.sml:153-169`). Both
 compound cases number the right child first. -/
 @[hol "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml" "get_intervals_def"]
 def getIntervals : LiveTree → Int → Spt Int → Spt Int → Int × Spt Int × Spt Int

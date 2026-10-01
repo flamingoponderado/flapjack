@@ -66,6 +66,19 @@ not compare an unspecified `THE NONE` value across provers. Regenerate with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=linear_scan_pure_props_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
+`linear_scan_monad_probe.out` captures thirty-four direct original EVAL
+results of the monadic `linear_scanScript.sml` definitions on a concrete
+hidden state, printed with raw sparse-tree constructors: the conditional
+interval updates (including a `Subscript` failure), `get_intervals_ct_monad`,
+`remove_inactive_intervals`, colour search, spilling, colouring, stealing,
+the pass-1/pass-2 steps, register exchange, `st_ex_FOLDL`,
+`st_ex_FILTER_good`, `edges_to_adjlist`, the in-array register/move sorts and
+list conversions, and the initial states. `Flapjack.Test.LinearScanMonadParity`
+kernel-checks every full result value. These finite rows do not prove
+allocator soundness or route these definitions into the compiler. Regenerate
+with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=linear_scan_monad_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `monad_arrays_probe.out` captures eleven direct original EVAL rows of the
 ml_monadBase fixed-array primitives (`Msub`/`Mupdate` in and out of range,
 `Marray_length`, `Marray_sub`, `Marray_update` with the unchanged state on
