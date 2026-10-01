@@ -1,4 +1,7 @@
+import Flapjack.Compiler.Backend.WordAlloc.HeuCall
 import Flapjack.Compiler.Backend.WordAlloc.HeuMax
+import Flapjack.Compiler.Backend.RegAlloc.Exceptions
+import Flapjack.Compiler.Backend.RegAlloc.Carriers
 import Flapjack.Compiler.Backend.WordAlloc.HeuInst
 import Flapjack.Misc.Sptree.Map
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Assembly
