@@ -1,7 +1,11 @@
 import Flapjack.Test.ClashTreeCallNoneParity
 import Flapjack.Test.FindIndexBoundsParity
 import Flapjack.Test.ParmoveTempAppendParity
+import Flapjack.Test.WordAllocCoalesceCostParity
+import Flapjack.Test.WordAllocLoopCheckerParity
+import Flapjack.Test.WordToStackCompilePrefixParity
 import Flapjack.Test.ParmoveCorrectParity
+import Flapjack.Test.WordAllocSpillCostParity
 import Flapjack.Test.WordAllocMergeStackSetsParity
 import Flapjack.Test.ParmoveTempBeforeAssignParity
 import Flapjack.Test.FindIndexParity
@@ -12,8 +16,6 @@ import Flapjack.Test.WordToStackNativeTopParity
 import Flapjack.Test.SptUnionAlgebraParity
 import Flapjack.Test.WordAllocEvenColourParity
 import Flapjack.Test.TargetSemMappedMemoryParity
-import Flapjack.Test.WordToStackCompilePrefixParity
-import Flapjack.Test.WordAllocLoopCheckerParity
 import Flapjack.Test.WordAllocTotalColourParity
 import Flapjack.Test.ParmoveSourceWrapperParity
 import Flapjack.Test.WordToStackInsertPrefixParity
