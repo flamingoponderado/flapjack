@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.Parmove.AllDistinct.Step
 import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Step
 import Flapjack.Misc.FindIndex.ShiftZero
 import Flapjack.Compiler.Backend.WordAlloc.CanonizeMovesAux

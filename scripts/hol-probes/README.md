@@ -2510,3 +2510,5 @@ or evidence that missing Lean declarations have been ported. In particular,
 retain the broad arbitrary list carrier of `state_to_list`, generic raw pair
 mapping of `map_state`, and support-restricted injectivity plus global NONE
 reflection in `inj_on_state`; theorem acceptance is tracked on individual beads.
+
+`parmove_all_distinct_step_probeScript.sml` captures eleven original source/target destination distinctness observations for all primitive rules, cycles, initialized scratch and repeated scratch destinations without wf, and Bool. Matching kernel fixtures apply the full theorem to actual Step constructors. Ground observations do not establish universal cross-language equivalence.

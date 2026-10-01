@@ -42633,5 +42633,13 @@
   "hol_name": "step_not_use_temp_before_assign",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead46.4: full original879-907 primitive Step preservation of not_use_temp_before_assign(REVERSE(active++emitted)). Same arbitrary generic register carrier and all six exact Step clauses, source wf and source Boolean safety only; no target wf/safety/initialization hypothesis. RemoveSelf leaves chronology unchanged; Start/Extend derive ordinary inserted move from pending wf; Save uses exact append equivalence and option split, including prior scratch initialization; EmitHead derives ordinary head from active FRONT source and destination wf and removes/reinserts it; EmitLast has identical chronology. Local untagged neutral-move equation is documented Flapjack infrastructure, no extra premise. Nine fresh original combined wf/source/target observations paired with genuine native Step theorem applications cover every constructor, cycle save, prior-written scratch read/save, and Bool carrier. Full RTC/pmov/Move/compiler results remain open. Coordinator source acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/AllDistinct/Step.lean",
+  "lean_name": "allDistinctStep",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "ALL_DISTINCT_step",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 w1a4.2: full source966-977 arbitrary alpha/state triples. Only primitive Step and source ALL_DISTINCT(FILTER IS_SOME(MAP FST(pending++active++emitted))) imply target same property. All six native clauses, no wf/initialized scratch/target-result premise or equality-carrier restriction. List Nodup/Option.isSome translate literally. Eleven fresh original observations and actual kernel Step/theorem applications cover six clauses, cycle/save/read and non-wf repeated NONE destinations, Bool; duplicate real destination negative guard. RTC/pmov/full parmove remain open. Coordinator acceptance pending."
 }
 ]

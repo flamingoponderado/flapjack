@@ -466,6 +466,7 @@
     {"bytes": 72, "out": "pan_word_helpers_probe.out", "rows": 5, "sha256": "ec81a37a0f09d6db89e1355d748778f24cdb3fe348574e8300d229a2f2243d1c"},
     {"bytes": 513, "out": "pan_word_of_bytes_overlong_probe.out", "rows": 17, "sha256": "413f95c14359ac90e03392a24a7149c10183db056e5fe0c94457c3b1e5995b5b"},
     {"bytes": 296, "out": "pancake_peg_probe.out", "rows": 1, "sha256": "1087f8c89b4f68e7d0e0e4ade5f93a0acf6316a5505fb5148e43d268ac758b80"},
+    {"bytes": 172, "out": "parmove_all_distinct_step_probe.out", "rows": 11, "sha256": "5d1012dec98326bff03632b7a61e6226d29f9bab967ae00e754ef3afa175507e"},
     {"bytes": 76, "out": "parmove_correct_probe.out", "rows": 7, "sha256": "1ca5b096f1494807d7457c504ccd87bf1ccd7fd31028e72ba6ff1d1c4f2b81af"},
     {"bytes": 263, "out": "parmove_destination_probe.out", "rows": 7, "sha256": "9ed71be8d9b6c7ce604fe355772377b4f7b2ee5613b573adeb4853c638d127a0"},
     {"bytes": 189, "out": "parmove_destination_wrapper_probe.out", "rows": 7, "sha256": "c345ea001f58a111cabcdacad114cef8b94005c59bbfea66c2b799599ab4a0cf"},
