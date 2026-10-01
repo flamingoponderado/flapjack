@@ -3018,6 +3018,9 @@ run_probe reg_alloc_stemp_colouring_probeScript.sml reg_alloc_stemp_colouring_pr
 run_probe word_alloc_remove_dead_probeScript.sml word_alloc_remove_dead_probe.out \
   rd_move_partial rd_move_dead rd_inst_dead rd_inst_live rd_get_dead rd_get_live rd_curr_heap rd_locvalue_dead rd_set_dead_store rd_set_live_store rd_set_exp rd_seq_drop rd_seq_both rd_must rd_if_dead rd_if_imm rd_call_ret rd_call_tail rd_alloc rd_loop rd_break rd_continue_missing rd_catchall rd_prog lsr_agree lsr_differ \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_alloc_nlive_store_probeScript.sml word_alloc_nlive_store_probe.out \
+  ns_lookup_dead ns_lookup_live ns_var ns_const ns_op_dead ns_op_live ns_op_empty ns_load ns_load_dead ns_shift_left_dead ns_shift_right_dead ns_shift_live \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_alloc_get_forced_probeScript.sml word_alloc_get_forced_probe.out \
   gf_addcarry_riscv gf_addcarry_mips gf_addcarry_self gf_addcarry_x86 gf_addovf_riscv gf_addovf_armv8 gf_subovf_mips gf_subovf_self gf_longmul_armv7 gf_longmul_armv7_self gf_longmul_riscv gf_longmul_ag32 gf_longmul_x86 gf_fptoreg_32 gf_fptoreg_32_self gf_fptoreg_64 gf_fpfromreg_32 gf_fpfromreg_64 gf_other_inst gf_seq gf_if gf_must gf_loop gf_call_return gf_call_both gf_call_tail gf_skip gf_large \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"

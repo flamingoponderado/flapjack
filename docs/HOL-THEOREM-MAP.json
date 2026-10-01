@@ -45922,5 +45922,228 @@
       "tstore"
     ],
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.1) against word_allocProofScript.sml:3492-3497 (HOL type 'a list -> ('a |-> 'b) -> ('a |-> 'b) -> bool): live_store_rel nlive sstore tstore <=> !n. n NOTIN set nlive ==> FLOOKUP sstore n = FLOOKUP tstore n; source fmap_as_finite_support_relation: the two standalone HOL finite maps are the canonical HolFiniteMapExact carrier (bare entries sstore, tstore), FLOOKUP as .lookup, set nlive membership as list membership; polymorphic alpha beta."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "live_store_rel_less",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/RemoveDead.lean",
+    "lean_name": "liveStoreRelLess",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "st",
+      "tt"
+    ],
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.6) against word_allocProofScript.sml:3499-3506: live_store_rel ls st tt /\\ set ls SUBSET set ls' ==> live_store_rel ls' st tt; SUBSET as membership inclusion. Source fmap_as_finite_support_relation: standalone HOL finite maps as canonical HolFiniteMapExact (bare entries), FLOOKUP as .lookup; polymorphic."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "live_store_rel_FLOOKUP_store",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/RemoveDead.lean",
+    "lean_name": "liveStoreRelFlookupStore",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "sstore",
+      "tstore"
+    ],
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.6) against word_allocProofScript.sml:3508-3514: live_store_rel ls sstore tstore /\\ s NOTIN set ls ==> FLOOKUP tstore s = FLOOKUP sstore s. Source fmap_as_finite_support_relation: standalone HOL finite maps as canonical HolFiniteMapExact (bare entries), FLOOKUP as .lookup; polymorphic."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "nlive_store_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/RemoveDead.lean",
+    "lean_name": "nliveStore",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.6) against word_allocProofScript.sml:3516-3527: Op _ ls => EVERY (nlive_store nlive) ls (over the attached argument list); Lookup s => s NOTIN set nlive; Load e => recurse; Shift _ e1 e2 => both; catchall T. 12-row original probe word_alloc_nlive_store_probe + kernel replay."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "strong_locals_rel_I_get_var",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/RemoveDead.lean",
+    "lean_name": "strongLocalsRelIGetVar",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.6) against word_allocProofScript.sml:3529-3535: get_var x st = SOME v /\\ strong_locals_rel I (x INSERT live) st.locals t ==> get_var x (st with <|locals:=t;store:=tstore|>) = SOME v. Over the faithful WordSemStateFiniteExact carrier (fmap_as_finite_support_relation on fpRegs/store, words_as_type_indexed_bitvec); HOL I as id, set operations as predicates, free variables as explicit binders; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "strong_locals_rel_I_get_var'",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/RemoveDead.lean",
+    "lean_name": "strongLocalsRelIGetVar'",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.6) against word_allocProofScript.sml:3537-3543: as strong_locals_rel_I_get_var with st with <|locals:=t|>. Over the faithful WordSemStateFiniteExact carrier (fmap_as_finite_support_relation on fpRegs/store, words_as_type_indexed_bitvec); HOL I as id, set operations as predicates, free variables as explicit binders; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "strong_locals_rel_I_word_exp",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/RemoveDead.lean",
+    "lean_name": "strongLocalsRelIWordExp",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.6) against word_allocProofScript.sml:3545-3610: !st exp res. word_exp st exp = SOME res /\\ strong_locals_rel I (domain (union (get_live_exp exp) live)) st.locals t /\\ live_store_rel nlive st.store tstore /\\ nlive_store nlive exp ==> word_exp (st with <|locals:=t;store:=tstore|>) exp = SOME res; free t live nlive tstore leading; proof by word_exp_ind cases (Var via the live set, Lookup via live_store_rel, Load, Op via the_words/big_union domain, Shift). Over the faithful WordSemStateFiniteExact carrier (fmap_as_finite_support_relation on fpRegs/store, words_as_type_indexed_bitvec); HOL I as id, set operations as predicates, free variables as explicit binders; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "strong_locals_rel_insert_notin",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/RemoveDead.lean",
+    "lean_name": "strongLocalsRelInsertNotin",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.6) against word_allocProofScript.sml:3612-3619: strong_locals_rel f live s t /\\ n NOTIN live ==> strong_locals_rel f live (insert n v s) t; generic payload."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "strong_locals_rel_I_get_vars'",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/RemoveDead.lean",
+    "lean_name": "strongLocalsRelIGetVars'",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.6) against word_allocProofScript.sml:3621-3638: !ls live st t vs. (!x. MEM x ls ==> x IN live) /\\ strong_locals_rel I live st.locals t /\\ get_vars ls st = SOME vs ==> get_vars ls (st with locals:=t) = SOME vs. Over the faithful WordSemStateFiniteExact carrier (fmap_as_finite_support_relation on fpRegs/store, words_as_type_indexed_bitvec); HOL I as id, set operations as predicates, free variables as explicit binders; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "strong_locals_rel_I_cut_envs",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/RemoveDead.lean",
+    "lean_name": "strongLocalsRelICutEnvs",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.6) against word_allocProofScript.sml:3640-3654: strong_locals_rel I (domain (FST cutset) UNION domain (SND cutset)) st.locals t /\\ cut_envs cutset st.locals = SOME x ==> cut_envs cutset t = SOME x; tree equality via spt_eq_thm with wf_inter (newly tagged sptWfInter). Over the faithful WordSemStateFiniteExact carrier (fmap_as_finite_support_relation on fpRegs/store, words_as_type_indexed_bitvec); HOL I as id, set operations as predicates, free variables as explicit binders; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "strong_locals_rel_I_cut_env",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/RemoveDead.lean",
+    "lean_name": "strongLocalsRelICutEnv",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.6) against word_allocProofScript.sml:3656-3666: as cut_envs for cut_env. Over the faithful WordSemStateFiniteExact carrier (fmap_as_finite_support_relation on fpRegs/store, words_as_type_indexed_bitvec); HOL I as id, set operations as predicates, free variables as explicit binders; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "get_vars_eq",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/RemoveDead.lean",
+    "lean_name": "getVarsEq",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.6) against word_allocProofScript.sml:3668-3674: set ls SUBSET domain st.locals ==> ?z. get_vars ls st = SOME z /\\ z = MAP (\\x. THE (lookup x st.locals)) ls; THE as the tagged holThe (optionScript THE_DEF). Over the faithful WordSemStateFiniteExact carrier (fmap_as_finite_support_relation on fpRegs/store, words_as_type_indexed_bitvec); HOL I as id, set operations as predicates, free variables as explicit binders; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "get_vars_exists",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/RemoveDead.lean",
+    "lean_name": "getVarsExists",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.6) against word_allocProofScript.sml:3676-3683: !ls. (?z. get_vars ls st = SOME z) <=> set ls SUBSET domain st.locals. Over the faithful WordSemStateFiniteExact carrier (fmap_as_finite_support_relation on fpRegs/store, words_as_type_indexed_bitvec); HOL I as id, set operations as predicates, free variables as explicit binders; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "strong_locals_rel_I_insert_insert",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/RemoveDead.lean",
+    "lean_name": "strongLocalsRelIInsertInsert",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.6) against word_allocProofScript.sml:3685-3692: strong_locals_rel I (live DELETE p) A B /\\ v = v' ==> strong_locals_rel I live (insert p v A) (insert p v' B); DELETE as conjunction with k <> p, generic payload."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "st_eq",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/RemoveDead.lean",
+    "lean_name": "stEq",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.6) against word_allocProofScript.sml:3694-3700: rst with <|locals:=t;store:=tstore|> = rst with <|locals:=t';store:=tstore'|> <=> t = t' /\\ tstore = tstore'. Over the faithful WordSemStateFiniteExact carrier (fmap_as_finite_support_relation on fpRegs/store, words_as_type_indexed_bitvec); HOL I as id, set operations as predicates, free variables as explicit binders; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "live_store_rel_NIL",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/RemoveDead.lean",
+    "lean_name": "liveStoreRelNil",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "sstore",
+      "tstore"
+    ],
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.6) against word_allocProofScript.sml:3702-3708: live_store_rel [] sstore tstore <=> sstore = tstore (fmap_eq_flookup as structure extensionality of the canonical carrier). Source fmap_as_finite_support_relation: standalone HOL finite maps as canonical HolFiniteMapExact (bare entries), FLOOKUP as .lookup; polymorphic."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "live_store_rel_refl",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/RemoveDead.lean",
+    "lean_name": "liveStoreRelRefl",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "sstore"
+    ],
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.6) against word_allocProofScript.sml:3710-3714: live_store_rel ls sstore sstore. Source fmap_as_finite_support_relation: standalone HOL finite maps as canonical HolFiniteMapExact (bare entries), FLOOKUP as .lookup; polymorphic."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "with_same_store",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/RemoveDead.lean",
+    "lean_name": "withSameStore",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.6) against word_allocProofScript.sml:3716-3720: st with store := st.store = st. Over the faithful WordSemStateFiniteExact carrier (fmap_as_finite_support_relation on fpRegs/store, words_as_type_indexed_bitvec); HOL I as id, set operations as predicates, free variables as explicit binders; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "with_same_locals",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/RemoveDead.lean",
+    "lean_name": "withSameLocals",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.6) against word_allocProofScript.sml:3722-3726: st with locals := st.locals = st. Over the faithful WordSemStateFiniteExact carrier (fmap_as_finite_support_relation on fpRegs/store, words_as_type_indexed_bitvec); HOL I as id, set operations as predicates, free variables as explicit binders; no extra premise."
+  },
+  {
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "wf_inter",
+    "lean_path": "Flapjack/Misc/Sptree/Wf.lean",
+    "lean_name": "sptWfInter",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.6) against HOL sptreeScript.sml:353-358: !m1 m2. wf (inter m1 m2); induction as HOL with wf_mk_BN/wf_mk_BS (private wfMkBN/wfMkBS); generic payloads."
   }
 ]

@@ -4033,6 +4033,12 @@
       "sha256": "c3a5c9a206d0334587c2af1a9bde2cde38fef29756506a8c8459e9cf68d9096b"
     },
     {
+      "bytes": 178,
+      "out": "word_alloc_nlive_store_probe.out",
+      "rows": 12,
+      "sha256": "ea57b24983b04af9e16930ec46c17820c6a99ac5be910c9284faba9b88b52021"
+    },
+    {
       "bytes": 164,
       "out": "word_alloc_oracle_colour_probe.out",
       "rows": 10,

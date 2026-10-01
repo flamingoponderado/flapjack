@@ -94,6 +94,7 @@ import Flapjack.Test.SpDefaultParity
 import Flapjack.Test.InClashTreeParity
 import Flapjack.Test.GetForcedParity
 import Flapjack.Test.WordAllocRemoveDeadParity
+import Flapjack.Test.WordAllocNliveStoreParity
 import Flapjack.Test.RegAllocInvariantsParity
 import Flapjack.Test.RegAllocMkBijLemmasParity
 import Flapjack.Test.RegAllocAccessorsParity
