@@ -50033,5 +50033,13 @@
     "lean_name": "regAlloc",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.28): reg_allocScript.sml:1490-1493 reg_alloc_aux ... (mk_bij ct). Statement-by-statement transcription of the HOL do-block over the tagged accessors and helpers (bind/ignoreBind/ret, pattern binders as matches, PARTITION as holPartition, EXISTS as List.any, NULL l as l = [], COUNT_LIST as List.range, FILTER with the Boolean test); type compared with the original type_of (TY output, all monomorphic over ra_state). Exercised by the original HOL EVAL rows of scripts/hol-probes/reg_alloc_allocator_probe.out (12 complete reg_alloc runs) kernel-replayed in Flapjack.Test.RegAllocAllocatorParity. Proof-side; the executed allocator is not routed through it."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "select_reg_alloc_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/SelectRegAlloc.lean",
+    "lean_name": "selectRegAlloc",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.3.5): word_allocScript.sml:1697-1703 select_reg_alloc alg spillcosts k heu_moves tree forced fs = if 4 <= alg then linear_scan$linear_scan_reg_alloc k heu_moves tree forced else reg_alloc (if alg <= 1n then Simple else IRC) spillcosts k heu_moves tree forced fs, over the exact tagged linearScanRegAlloc and regAlloc (RegAlloc/Allocator.lean); type num -> num num_map option -> num -> (num # num # num) list -> clash_tree -> (num # num) list -> num_set -> (num num_map, state_exn) exc confirmed by the sra_type probe row and a Lean signature check. Seven original HOL EVAL rows (algorithms 0-5) kernel-replayed in Flapjack.Test.WordAllocSelectRegAllocParity. Proof-side; the executed compiler's allocator routing remains separate."
   }
 ]
