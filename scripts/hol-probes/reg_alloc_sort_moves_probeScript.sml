@@ -1,0 +1,15 @@
+load "reg_allocTheory";
+open HolKernel Parse boolLib bossLib reg_allocTheory;
+fun observe label term = let val th = EVAL term in print (label ^ "="); print_term (rhs (concl th)); print "\n" end;
+val _ = observe "sort_empty" ``(sort_moves ([]:(num#num)list)) = []``;
+val _ = observe "sort_one" ``(sort_moves [(3,7)]) = [(3,7)]``;
+val _ = observe "sort_mixed" ``(sort_moves [(1,9);(4,2);(2,8);(0,5)]) = [(4,2); (2,8); (1,9); (0,5)]``;
+val _ = observe "sort_ties" ``(sort_moves [(3,1);(3,2);(3,3);(3,4);(3,5)]) = [(3,5); (3,4); (3,3); (3,2); (3,1)]``;
+val _ = observe "sort_bool" ``(sort_moves [(1,T);(3,F);(2,T)]) = [(3,F); (2,T); (1,T)]``;
+val _ = observe "merge_empty" ``(smerge ([]:(num#num)list) []) = []``;
+val _ = observe "merge_left" ``(smerge [(2,7);(1,8)] []) = [(2,7); (1,8)]``;
+val _ = observe "merge_right" ``(smerge [] [(2,7);(1,8)]) = [(2,7); (1,8)]``;
+val _ = observe "merge_ties" ``(smerge [(3,1);(3,2);(1,8)] [(3,4);(2,5);(1,9)]) = [(3,1); (3,2); (3,4); (2,5); (1,8); (1,9)]``;
+val _ = observe "merge_unsorted" ``(smerge [(1,2);(9,3)] [(2,4);(0,5)]) = [(2,4); (1,2); (9,3); (0,5)]``;
+val _ = observe "merge_duplicate" ``(smerge [(4,7);(4,7)] [(4,7)]) = [(4,7); (4,7); (4,7)]``;
+val _ = observe "merge_bool" ``(smerge [(3,T);(1,F)] [(3,F);(2,T)]) = [(3,T); (3,F); (2,T); (1,F)]``;

@@ -1,5 +1,8 @@
 import Flapjack.Test.StackPropsCodeLabelsParity
 import Flapjack.Test.RegAllocSortedMemParity
+import Flapjack.Test.ParmoveAllDistinctStepsParity
+import Flapjack.Test.RegAllocSortMovesParity
+import Flapjack.Test.ProductionThreeToTwoDomain
 import Flapjack.Test.RegAllocInitializationParity
 import Flapjack.Test.WordCopyCodecDomainParity
 import Flapjack.Test.CanonizeMovesParity
