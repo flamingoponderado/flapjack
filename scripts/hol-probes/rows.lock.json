@@ -4595,6 +4595,12 @@
       "out": "word_to_stack_selector_prelude_probe.out",
       "rows": 10,
       "sha256": "3e0383892a0b48a9ad9d2dfaf982eb88e2f6ca28211e672db66a1c70c3c7ebff"
+    },
+    {
+      "bytes": 681,
+      "out": "parmove_fstep_map_inj_probe.out",
+      "rows": 9,
+      "sha256": "e9ab68248642fca0904e624a340a6f17ca33f06ee2fd7bd35004153ee44d8997"
     }
   ],
   "version": 1

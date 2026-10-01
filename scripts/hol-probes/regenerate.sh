@@ -3271,6 +3271,9 @@ run_probe word_convs_every_var_inst_mono_probeScript.sml word_convs_every_var_in
   im_original_theorem im_skip im_const im_binreg im_binimm im_shift im_div im_longdiv im_load8 im_load16_ignored im_fpless im_fp64_to im_fp32_to im_fp80_from im_fpignored im_fp32_reject \
   "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
 
+run_probe parmove_fstep_map_inj_probeScript.sml parmove_fstep_map_inj_probe.out \
+  pfm_statement pfm_empty pfm_self pfm_start pfm_found pfm_emit pfm_cycle pfm_no_cycle pfm_temp \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 run_probe parmove_scratch_order_wrapper_probeScript.sml parmove_scratch_order_wrapper_probe.out \
   pso_original_statement pso_empty pso_self pso_chain pso_swap pso_cycle pso_shared_source pso_bool_swap pso_duplicate_boundary \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"

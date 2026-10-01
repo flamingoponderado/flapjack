@@ -43636,5 +43636,13 @@
     "hol_name": "parmove_not_use_temp_before_assign",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol source comparison2026-10-01 .15.3.46: literal parmoveScript932-953, arbitrary register carrier and sole windmill premise. Exact optional first source-scratch index match, absent read True; present read requires present first destination-scratch index with not(i<=j). No initialized-output, final-state or target-run premise. Derives lifted wf_init from input windmill, accepted pmovNotUseTempBeforeAssign and unconditional pmov_final, then accepted first-index iff. Proof-irrelevant DecidableEq transport fixes the schedule and changes only equality decision dictionaries in first-index search; no extra HOL assumption. Fresh exported DB.fetch complete theorem plus eight whole-output/first-index/windmill/result observations from read-only original theories in temporary cwd. Six Nat valid cases, Bool swap, duplicate-input boundary F/T; all kernel-replayed plus full generic theorem and seven nonvacuous applications. Proof-only port; executed scheduler unchanged. Coordinator acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/FstepMapInj.lean",
+    "lean_name": "fstepMapInj",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "fstep_MAP_INJ",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-b source comparison 2026-10-01 w1a4.17: complete original1191-1253 forall p inj_on_state f p implies fstep(map_state f p)=map_state f(fstep p). Independent Option alpha/Option beta state carriers retained; native DecidableEq implementation parameters only, no global injectivity, wf, safety or target-result premise. Literal fstep526-545/map_state1086-1088/inj_on_state1090-1097 compared; native splitSource and frontLast proven to commute with local endpoint reflection/renaming, including first-source search, active LAST/FRONT and f NONE=NONE derived from original global NONE equivalence. Eight fresh original whole-output pairs with HOL-proved local premises and kernel theorem applications cover every step branch and a globally noninjective Nat-to-Bool map. Proof-only theorem, no executable change. Coordinator source review pending."
   }
 ]
