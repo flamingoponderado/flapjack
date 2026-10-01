@@ -12498,14 +12498,7 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-ds9 source comparison (2026-09-28, bead flapjack-pxn.18.5.6.30.1; crep_to_loopScript.sml:257-265): the HOL definition has two curried binders target and prog with no premises. Let fnums = GENLIST (n. n + first_name) (LENGTH prog); comp = comp_func target (make_funcs prog) in MAP2 (n (name,params,body). (n, (GENLIST I o LENGTH) params, loop_live$optimise (comp params (crep_arith$simp_prog body)))) fnums prog. compileProgHOLExact has the same binders/order and body, using tagged compFuncHOLExact, crepSimpProgHOL, optimiseHOL and firstLoopName plus the lawful-equality executable companion crepToLoopMakeFuncsExactExecutable. Its lookup is kernel-proved equal to the generic tagged make_funcs_def port crepToLoopMakeFuncsExactHOL by crepToLoopMakeFuncsExactExecutable_lookup_eq_HOL; this computational specialization preserves the exact HOL lookup. The input carrier is List (MlString x List Nat x CrepProgHOL width), matching HOL (mlstring # num list # 'a crepLang$prog) list; the result is List (Nat x List Nat x HolLoopProg width), matching HOL (num # num list # 'a loopLang$prog) list. List.zipWith models HOL MAP2 (both truncate to the shorter list; here the two lists have equal length). List.range n models GENLIST I n. The maps built by make_funcs and comp_func are local intermediates, not binders of compile_prog_def, so no finite-map qualifier applies to compileProgHOLExact. The generic make_funcs_def port carries fmap_as_finite_support_result and its same-module lookup witness; HOL alist_to_fmap first-inserted-wins is restored by reversing before the update fold. The only outer type translation is HOL's positive type-indexed 'a word to BitVec width with [NeZero width], recorded by words_as_type_indexed_bitvec. No premise, success condition, or output case is added. Direct original HOL EVAL rows cp_fnums/cp_params/cp_body/cp_length/cp_call_fnums/cp_call_params/cp_call_body are in scripts/hol-probes/crep_to_loop_compile_prog_probe.out and replayed by Flapjack.Test.CrepToLoopCompileProgParity. The parser-backed byte/image/runtime-image entry points invoke compileProgHOLExact after executable checks establish byte-ranged function and nested Crep names. The canonical HolLoopProg projection is followed by an untagged source-pipeline label rebase from HOL firstLoopName+n (64+n) to the caller-selected production label base. It rewrites emitted function-row labels, direct function-call targets, and locValue code sources in that generated interval; it leaves Loop break/continue labels and other local identifiers intact. The 166-program original Pancake corpus and routed fixtures are regression evidence for observed outputs, not a kernel-checked whole-program execution-equivalence proof. The exact remaining code-table key and runtime WordLoc/state relation is tracked separately and remains open. The generic non-byte-name fallback remains available; no performance exception is claimed."
   },
-  {
-    "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
-    "hol_name": "is_Label_def",
-    "lean_path": "Flapjack/Compiler/Backend/LabSem.lean",
-    "lean_name": "isLabel",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Codex (labSemScript.sml:47 is_Label returns T exactly on Label, F otherwise; Lean pattern match preserves all constructors)"
-  },
+
   {
     "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
     "hol_name": "sec_ends_with_label_def",
@@ -38835,5 +38828,14 @@
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.22) against word_allocProofScript.sml:836-851: (!st'. evaluate (prog,st) = (SOME Error,st') ==> P (SOME Error,st')) /\\ (?perm. P ((I ## (λs. s with permute := perm)) (evaluate (prog,st)))) ==> ?perm. P (evaluate (prog, st with permute := perm)); free prog st P as explicit binders, I ## g rendered as the pair map (p.1, g p.2). Exact; proof from tagged permute_swap_lemma as in HOL. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
   "inherits_reals_as_rational_cuts": true
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/Classifier.lean",
+  "lean_name": "isLabelHOL",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "is_Label_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol source comparison (2026-10-01, b4v0.3.2): labSemScript47 is_Label true exactly Label, false on other two constructors. Canonical actual LabLang Line payloads use HolAsm/HolMemop/HolAddr and HolCmp/HolRegImm/MlString with BitVec at one positive NeZero width; fixed encoded bytes BitVec8 retained. The former generic isLabel quantified arbitrary payload Types, including an arbitrary Word, which is not the source carrier even when ignored; its unqualified tag/map/pin are removed while the generic function signature/body stay unchanged as explicitly documented Flapjack-only utility. Native three-case classifier is exact under word-dimension translation. Unconditional kernel isLabelHOL_eq_generic compares actual native instances, no added hypothesis. Native navigation/evaluator consumption remains linked on b4v0.3/b4v0; no executed compiler change or performance exception."
 }
 ]
