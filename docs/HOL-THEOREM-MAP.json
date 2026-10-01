@@ -43039,6 +43039,14 @@
     "reviewer": "flapjack-sol2 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.3.26.9): complete stackPropsScript.sml:1144-1157 compared with getCodeLabels. The definition retains original owner/program binders and uses exact HolProg width, the reviewed StackLang.Prog specialization over HolInst/HolCmp/HolRegImm/HolBinop/HolMemop/HolAddr and exact MlString, with all original constructor and continuation tuple shapes. The only carrier translation is positive type-indexed HOL word dimension to BitVec width with [NeZero width], recorded by words_as_type_indexed_bitvec. HOL sets are Lean Set (Nat x Nat), with empty/singleton/union preserving membership and duplicate elimination. Handler extraction returns empty for Call NONE regardless of a populated handler, and for Call SOME recurses into the return body and handler body, adding the handler tuple only when its first label equals owner. Code extraction independently traverses both populated bodies regardless of the return option, adds (target,0) for INL targets, (target,0) for JumpLower, (target,1) for RawCall, the full LocValue tuple and (stub,0) for StoreConsts SOME. Both traverse Seq/If by union and Loop by recursion; every other source constructor yields empty. No source convention, target label relation, caller success or evaluation premise is added. Fifteen fresh direct original HOL complete-set equalities all evaluate to T and the identical inputs/sets are kernel-replayed in StackPropsCodeLabelsParity, including Call NONE asymmetry, owner mismatch, both nested bodies and duplicates. This is proof-side label analysis required by word_to_stack_comp_code_labels, not a proof of that compiler theorem or source-to-RISC-V correctness."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/PreservesMoves/Step.lean",
+    "lean_name": "stepPreservesMoves",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "step_preserves_moves",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead flapjack-w1a4.7: source1030-1037 full primitive Step implies preservation of existential non-self source for every destination x. Native arbitrary Option alpha register and pair-list triple State, stateToList concatenation, all six Step clauses retained. No equality instance, state validity, scratch-safety or supplied target-result premise. Save may change the source to NONE; scratch destination uses the emitted original source. Proof handles every constructor, including all pending/active/emitted membership branches. Fresh original destination predicate observations and matching kernel fixtures are regression evidence, not cross-assistant equivalence. Coordinator acceptance pending."
+  },
+  {
     "lean_path": "Flapjack/Pancake/WordConvs/CodeLabels.lean",
     "lean_name": "getCodeLabelsHOL",
     "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",

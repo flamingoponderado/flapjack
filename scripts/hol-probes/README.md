@@ -2600,6 +2600,7 @@ correctness or cross-language equivalence. Regenerate with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=stackprops_code_labels_probeScript.sml
 scripts/hol-probes/regenerate.sh` against the read-only prebuilt theories.
+- `parmove_all_distinct_steps_probeScript.sml`: four full destination predicates for zero-step scratch and start/save states. Lean fixtures additionally certify the RTC trace; HOL observations alone do not establish it.
 `parmove_map_state_probe` captures ten original equations for mapping both
 endpoints through all three lists, including independent Nat-to-Bool carriers
 and noninjective maps. `ParmoveMapStateParity` replays the same inputs in Lean;
@@ -2609,6 +2610,7 @@ the finite fixtures do not prove cross-assistant equivalence.
 equations, including unsorted inputs. `RegAllocSortedMemParity` kernel-replays
 the same cases and the executed wrapper's equation for arbitrary keys/lists.
 
+- `parmove_preserves_moves_step_probeScript.sml`: ten original non-self destination predicates before/after Save, including scratch destination. Lean fixtures certify the steps and witness changes; observations do not prove transition or cross-assistant equivalence.
 `word_to_stack_program_bitmaps_probe` captures ten original single-program
 and list-compiler bitmap snapshots, replayed in `WordToStackProgramBitmapsParity`.
 Cases include invalid initial bounds, width one, repeated identifiers, and
