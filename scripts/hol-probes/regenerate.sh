@@ -3145,6 +3145,13 @@ run_probe word_remove_must_terminate_probeScript.sml word_remove_must_terminate_
   "$cake_dir/compiler/backend/word_removeScript.sml" \
   "$cake_dir/compiler/backend"
 
+# `data_to_word` pointer-layout helpers: `shift_length`, `small_shift_length`
+# and `get_gen_size` (empty, in range, overflowing) at 64 and 32 bits.
+run_probe data_to_word_config_probeScript.sml data_to_word_config_probe.out \
+  shift_length gen_size_three_32 \
+  "$cake_dir/compiler/backend/data_to_wordScript.sml" \
+  "$cake_dir/compiler/backend"
+
 run_probe word_alloc_checker_call_none_probeScript.sml word_alloc_checker_call_none_probe.out \
   ccn_empty ccn_one ccn_duplicate ccn_args ccn_collision ccn_handler_ignored \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend"

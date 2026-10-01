@@ -50783,5 +50783,46 @@
     "lean_name": "removeMustTerminate_induct",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only structural induction over remove_must_terminate results used by the tagged wordConvsProof remove_must_terminate theorems; HOL uses remove_must_terminate_ind with remove_must_terminate_def directly, so no separate HOL declaration is being ported."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "gc_kind",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Config.lean",
+    "lean_name": "GcKind",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2): HOL Datatype gc_kind (data_to_wordScript.sml:17-23): None | Simple | Generational (num list), constructor for constructor with the num list as List Nat."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "config",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Config.lean",
+    "lean_name": "Config",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2): HOL record config (data_to_wordScript.sml:25-36): all eleven fields in HOL order (tag_bits, len_bits, pad_bits, len_size : num; has_div, has_longdiv, has_fp_ops, has_fp_tern, be, call_empty_ffi : bool; gc_kind), camelCase names, num as Nat, bool as Bool."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "small_shift_length_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Config.lean",
+    "lean_name": "smallShiftLength",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2): literal small_shift_length conf = conf.len_bits + conf.tag_bits + 1 (101-103); original probe row replayed in Flapjack/Test/DataToWordConfigParity.lean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "shift_length_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Config.lean",
+    "lean_name": "shiftLength",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2): literal shift_length conf = 1 + conf.pad_bits + conf.len_bits + conf.tag_bits + 1 (105-107); original probe row replayed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "get_gen_size_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Config.lean",
+    "lean_name": "getGenSize",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.2): literal get_gen_size (1109-1115): [] => bytes_in_word * -1w; x::xs => if w2n bytes_in_word * x < dimword then bytes_in_word * n2w x else bytes_in_word * -1w; bytes_in_word is wordSemBytesInWord (byteScript bytes_in_word = n2w (dimindex DIV 8)), dimword is 2 ^ width; positive BitVec/NeZero is the only translation. Four original rows (empty, in range, overflow at 64, 32-bit) replayed."
   }
 ]

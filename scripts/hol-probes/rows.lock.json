@@ -163,6 +163,7 @@
     {"bytes": 90, "out": "crep_var_cexp_probe.out", "rows": 7, "sha256": "d915c5739366a2f3ef43c3b043acea31ff40dd37983354ab35f6b48e0d9dc2aa"},
     {"bytes": 78, "out": "crep_vmap_ctxtfc_probe.out", "rows": 7, "sha256": "bb121330b6b5fd571f27e176bb0a19bdbef1c7da6660391d7ae2da984f6bbb79"},
     {"bytes": 477, "out": "ctxt_fc_probe.out", "rows": 6, "sha256": "8a507b00bc204713a4452260d8a316c681b33b0d6c1889cb91a86fcc5488440d"},
+    {"bytes": 155, "out": "data_to_word_config_probe.out", "rows": 6, "sha256": "82d64ad100c26e3af2edab3eab7d2766baa06d1a40c000b8a5d418e58d8a86bd"},
     {"bytes": 180, "out": "dup_exn_eids_probe.out", "rows": 5, "sha256": "037c27330fea662fc0699e00a2abff4fa7651c62dcbbe7fdac1416fdc5c7b317"},
     {"bytes": 94, "out": "eval_nested_assign_distinct_eq_probe.out", "rows": 3, "sha256": "13e53c72478096199734fe0e784b90fa179dbc10be38c220380fd8902ab163c6"},
     {"bytes": 78, "out": "eval_nested_decs_load_globals_probe.out", "rows": 2, "sha256": "36a7401f16f797e3391445f10f5576ffe2fe08a40165c29e82f2bade4d94994f"},
