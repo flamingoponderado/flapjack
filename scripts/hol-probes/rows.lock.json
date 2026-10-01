@@ -2881,6 +2881,12 @@
       "sha256": "9e0215ba434733695ce75e6251c2190e8633130a127331ee3ff7a1f5e9894504"
     },
     {
+      "bytes": 145,
+      "out": "parmove_map_state_probe.out",
+      "rows": 10,
+      "sha256": "42106d39a53d1e9a02dad2e61305db5098249f8405706d316bbbf32f6c2a6a88"
+    },
+    {
       "bytes": 160,
       "out": "parmove_noread_probe.out",
       "rows": 8,
