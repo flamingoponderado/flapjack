@@ -41504,4 +41504,13 @@
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-sol source comparison 2026-10-01 targetSem80-116: literal size word8 branch order1/0/2/4, exact Load8/Load/Load16/Load32 or Store templates, target.config.encode and bytesInMemoryHOL getByte/domain, other sizes False. Original elaborated types confirm ignored return-PC is independently polymorphic beta, retained generic returnPc Type. Positive word carrier only qualifier; arbitrary target state/projection, address and register preserved. No added stateOk, PC, alignment or return-PC guard. Original 35 byte/domain/wrap observations paired with Lean kernel fixtures. Full target evaluator and compiler production correctness remain separate dependency beads."
 }
+,
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/EvenColour.lean",
+  "lean_name": "everyEvenColour",
+  "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+  "hol_name": "every_even_colour_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol source comparison 2026-10-01 bead11.5.5: literal every_even_colour_def1586-1588, EVERY lambda(x,y) if is_phy_var x then y=x DIV2 else T over actual original Spt toAList. Exact constructor-for-constructor Spt Nat, native sptToAList mixed enumeration and tagged isPhyVar modulo2; List.all and Bool Nat equality compute original EVERY/equality, no generic BEq law premise. All arbitrary trees allowed, including BN LN LN; no wellformedness, bijection, domain or successful-oracle assumption. Twenty fresh original observations allT and same-input Lean kernel checks cover empty/physical/virtual/mixed, bad colours, unbounded natural keys beyond64bits, first-entry duplicate precedence and malformed/raw trees. Production oracle checker and native word_alloc remain separately dependency-linked open; no executed compiler routing claim."
+}
 ]
