@@ -2322,3 +2322,5 @@ Skip and Continue bodies, and a rejected colliding colour. The kernel fixtures
 in `WordAllocLoopCheckerParity` replay the same inputs through the actual test
 driver. These observations do not establish cross-prover equivalence or the
 whole allocator theorem; universal case proofs retain the original motive.
+
+The `word_to_stack_comp_length_probe` checks eighteen actual compiler bitmap-accounting outputs against native kernel fixtures. It covers recursive return/handler and branch threading, nonzero initial count-minus-length gaps, empty and zero-frame inputs, tiny and multiword widths, and an invalid initial bound whose output bound fails. The public full `comp_IMP_LENGTH` theorem retains the source output equation and sole initial bound, and proves both accounting conjuncts over every native constructor.

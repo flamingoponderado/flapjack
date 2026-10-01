@@ -42043,5 +42043,14 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-a source comparison: HOL 2813-2826 and case Continue at 3270-3299. Exact WordLangProgHOL positive-width BitVec carrier; original six premises and five conclusions via accepted clashTreeGoal/clashTreeConcl. Loop has only body IH, uses right-first checker and fixed-set checkColInj; Break/Continue derive indexed projection wf from EVERY table premise, including absent lookup LN. No extra evaluation, injectivity, table bounds or desired conclusion premises. words_as_type_indexed_bitvec is only carrier translation. Coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompLength.lean",
+  "lean_name": "compImpLength",
+  "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+  "hol_name": "comp_IMP_LENGTH",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol: source5636-5650 compared binder by binder against arbitrary native AsmConfigExact, perf, WordLangProgHOL, AppList/count, natural frame triple and HolProg output. Sole hypotheses are actual compiler output equation and initial flattened-length bound; conclusion retains final bound and before-minus-length equals after-minus-length. Positive type-indexed word translation only; accepted native compiler/carriers and exact functional induction cover every constructor, including both If branches, Loop, MustTerminate, Seq and returning Call with return and handler IHs. Actual wLiveLength and insertBitmap accounting compose; no frame/config validity, evaluation-success, output-bound or simulation premise. Eighteen fresh original observations paired with kernel fixtures cover nonzero gaps, nested insertion, tiny/multiword widths and a failing initial-bound counterexample. Axiom audit contains only propext, Classical.choice and Quot.sound. Executed compiler routing remains on linked bead25.17."
 }
 ]
