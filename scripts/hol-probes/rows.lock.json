@@ -2996,6 +2996,12 @@
       "sha256": "86056be1950303f8195fa52dcbf2c23c065d52323da492bb4fede3d8b1af899e"
     },
     {
+      "bytes": 274,
+      "out": "reg_alloc_check_partial_col_probe.out",
+      "rows": 7,
+      "sha256": "15b42c3f80d3f30141c6e2d9f31ebdfeec4a3916096ece39f7714ec09b53708a"
+    },
+    {
       "bytes": 151,
       "out": "reg_alloc_clash_tree_probe.out",
       "rows": 8,

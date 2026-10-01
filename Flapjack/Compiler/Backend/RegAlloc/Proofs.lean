@@ -260,4 +260,107 @@ theorem checkClashTreeInj :
       dsimp only
       exact ihl f g ro rc grc ⟨hinj, hdrc⟩
 
+/-- Exact HOL `check_partial_col_success` (`reg_allocProofScript.sml:1253-1294`):
+a colouring injective on `set ls ∪ domain live`, with `flive` the image of
+`live`, passes the partial check and keeps the image invariant. HOL
+`INJ col S UNIV` is injectivity on `S` (membership in `UNIV` is trivial), and
+`IMAGE` is an existential. -/
+@[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml" "check_partial_col_success"]
+theorem checkPartialColSuccess : ∀ (ls : List Nat) (live flive : NumSet) (col : Nat → Nat),
+    sptDomain flive = (fun y => ∃ x, sptDomain live x ∧ col x = y) ∧
+      (∀ a b, (a ∈ ls ∨ sptDomain live a) → (b ∈ ls ∨ sptDomain live b) → col a = col b →
+        a = b) →
+    ∃ livein flivein, checkPartialCol col ls live flive = some (livein, flivein) ∧
+      sptDomain flivein = (fun y => ∃ x, sptDomain livein x ∧ col x = y)
+  | [], live, flive, _, ⟨hd, _⟩ => ⟨live, flive, rfl, hd⟩
+  | h :: ls, live, flive, col, ⟨hd, hinj⟩ => by
+      simp only [checkPartialCol]
+      cases hl : sptLookup h live with
+      | some u =>
+          cases u
+          refine checkPartialColSuccess ls live flive col ⟨hd, fun a b ha hb => hinj a b ?_ ?_⟩
+          · rcases ha with ha | ha
+            · exact Or.inl (List.mem_cons_of_mem _ ha)
+            · exact Or.inr ha
+          · rcases hb with hb | hb
+            · exact Or.inl (List.mem_cons_of_mem _ hb)
+            · exact Or.inr hb
+      | none =>
+          have hnot : sptLookup (col h) flive = none := by
+            cases hc : sptLookup (col h) flive with
+            | none => rfl
+            | some v =>
+                exfalso
+                have hdom : sptDomain flive (col h) := by simp [sptDomain, hc]
+                rw [hd] at hdom
+                obtain ⟨x, hx, hxc⟩ := hdom
+                have := hinj x h (Or.inr hx) (Or.inl List.mem_cons_self) hxc
+                subst this
+                simp [sptDomain, hl] at hx
+          rw [hnot]
+          refine checkPartialColSuccess ls (sptInsert h () live) (sptInsert (col h) () flive) col
+            ⟨?_, fun a b ha hb => hinj a b ?_ ?_⟩
+          · funext y
+            apply propext
+            rw [sptDomain_insertUnit, hd]
+            constructor
+            · rintro (rfl | ⟨x, hx, rfl⟩)
+              · exact ⟨h, (sptDomain_insertUnit _ _ _).mpr (Or.inl rfl), rfl⟩
+              · exact ⟨x, (sptDomain_insertUnit _ _ _).mpr (Or.inr hx), rfl⟩
+            · rintro ⟨x, hx, rfl⟩
+              rcases (sptDomain_insertUnit _ _ _).mp hx with rfl | hx
+              · exact Or.inl rfl
+              · exact Or.inr ⟨x, hx, rfl⟩
+          · rcases ha with ha | ha
+            · exact Or.inl (List.mem_cons_of_mem _ ha)
+            · rcases (sptDomain_insertUnit _ _ _).mp ha with rfl | ha
+              · exact Or.inl List.mem_cons_self
+              · exact Or.inr ha
+          · rcases hb with hb | hb
+            · exact Or.inl (List.mem_cons_of_mem _ hb)
+            · rcases (sptDomain_insertUnit _ _ _).mp hb with rfl | hb
+              · exact Or.inl List.mem_cons_self
+              · exact Or.inr hb
+
+/-- Exact HOL `check_partial_col_domain` (`reg_allocProofScript.sml:1541-1550`). -/
+@[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml" "check_partial_col_domain"]
+theorem checkPartialColDomain : ∀ (ls : List Nat) (f : Nat → Nat) (live flive : NumSet)
+    (v : NumSet × NumSet), checkPartialCol f ls live flive = some v →
+      sptDomain v.1 = fun x => x ∈ ls ∨ sptDomain live x
+  | [], _, live, flive, v, h => by
+      simp only [checkPartialCol, Option.some.injEq] at h
+      subst h
+      funext x; simp
+  | n :: ls, f, live, flive, v, h => by
+      simp only [checkPartialCol] at h
+      cases hl : sptLookup n live with
+      | some u =>
+          rw [hl] at h
+          rw [checkPartialColDomain ls f live flive v h]
+          funext x
+          apply propext
+          by_cases hx : x = n
+          · subst hx; simp [sptDomain, hl]
+          · simp [hx]
+      | none =>
+          rw [hl] at h
+          cases hc : sptLookup (f n) flive with
+          | some u => rw [hc] at h; cases h
+          | none =>
+              rw [hc] at h
+              rw [checkPartialColDomain ls f _ _ v h]
+              funext x
+              apply propext
+              rw [sptDomain_insertUnit]
+              simp only [List.mem_cons]
+              constructor
+              · rintro (h1 | h1 | h1)
+                · exact Or.inl (Or.inr h1)
+                · exact Or.inl (Or.inl h1)
+                · exact Or.inr h1
+              · rintro ((h1 | h1) | h1)
+                · exact Or.inr (Or.inl h1)
+                · exact Or.inl h1
+                · exact Or.inr (Or.inr h1)
+
 end Flapjack.RegAlloc

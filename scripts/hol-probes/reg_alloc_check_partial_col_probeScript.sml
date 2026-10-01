@@ -1,0 +1,12 @@
+load "bossLib";
+load "preamble";
+load "reg_allocProofTheory";
+open bossLib HolKernel Parse preamble reg_allocTheory reg_allocProofTheory;
+fun observe label term = let val th = EVAL term in print (label ^ "="); print_term (rhs (concl th)); print "\n" end;
+val _ = observe "cpc_inj" ``OPTION_MAP (\(a,b). (toAList a, toAList b)) (check_partial_col (\x. x + 1) [1;2] (insert 3 () LN) (insert 4 () LN))``;
+val _ = observe "cpc_present" ``OPTION_MAP (\(a,b). (toAList a, toAList b)) (check_partial_col (\x. 0) [3] (insert 3 () LN) (insert 0 () LN))``;
+val _ = observe "cpc_dup" ``OPTION_MAP (\(a,b). (toAList a, toAList b)) (check_partial_col (\x. x) [1;1] LN LN)``;
+val _ = observe "cpc_clash_live" ``OPTION_MAP (\(a,b). (toAList a, toAList b)) (check_partial_col (\x. 0) [1] (insert 3 () LN) (insert 0 () LN))``;
+val _ = observe "cpc_clash_list" ``OPTION_MAP (\(a,b). (toAList a, toAList b)) (check_partial_col (\x. 0) [1;2] LN LN)``;
+val _ = observe "cpc_domain" ``OPTION_MAP (\(a,b). MAP FST (toAList a)) (check_partial_col (\x. x + 1) [5;1] (insert 3 () LN) (insert 4 () LN))``;
+val _ = observe "cpc_large" ``OPTION_MAP (\(a,b). (toAList a, toAList b)) (check_partial_col (\x. x) [36893488147419103232] LN LN)``;
