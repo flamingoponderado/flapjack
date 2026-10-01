@@ -3297,7 +3297,7 @@ run_probe reg_alloc_coalesce_probeScript.sml reg_alloc_coalesce_probe.out \
   "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
 run_probe reg_alloc_worklist_probeScript.sml reg_alloc_worklist_probe.out \
-  dd_basic dd_zero dd_oob ddeg_basic ddeg_dup ddeg_out_of_dim ddeg_oob_adj asw_basic aspw_basic afw_basic aum_basic ps_basic ps_oob_move_related ps_oob rs_low rs_high_frozen rs_high_not_frozen rs_oob \
+  asw_type aspw_type afw_type aum_type dd_basic dd_zero dd_oob ddeg_basic ddeg_dup ddeg_out_of_dim ddeg_oob_adj asw_basic aspw_basic afw_basic aum_basic ps_basic ps_oob_move_related ps_oob rs_low rs_high_frozen rs_high_not_frozen rs_oob \
   "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
 run_probe reg_alloc_considered_var_probeScript.sml reg_alloc_considered_var_probe.out \
