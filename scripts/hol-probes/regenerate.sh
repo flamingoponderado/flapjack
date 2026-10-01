@@ -3010,6 +3010,18 @@ run_probe word_alloc_checker_assembly_probeScript.sml word_alloc_checker_assembl
   ca_control ca_return ca_handler ca_tail_ignored ca_collision \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
 
+run_probe parmove_independence_probeScript.sml parmove_independence_probe.out \
+  ind_head ind_middle ind_tail ind_cycle ind_fanout ind_self ind_bool ind_empty_others ind_nil_nat ind_nil_bool \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe parmove_seqsem_unchanged_probeScript.sml parmove_seqsem_unchanged_probe.out \
+  su_empty su_chain su_cycle su_repeat su_source su_written su_self su_bool \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe parmove_parsem_map_inj_probeScript.sml parmove_parsem_map_inj_probe.out \
+  pi_one pi_chain pi_cycle pi_shared_source pi_self pi_high pi_mixed pi_collision \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
 run_probe spt_map_probeScript.sml spt_map_probe.out \
   sm_empty sm_leaf sm_children sm_root sm_raw_bn sm_raw_bs sm_raw_nested sm_bool_nat sm_nat_bool sm_unit_raw \
   "$hol_dir/src/finite_maps/sptreeScript.sml" "$cake_dir/compiler/backend"
