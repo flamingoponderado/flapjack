@@ -1,3 +1,4 @@
+import Flapjack.Test.WordMaxInstRouteParity
 import Flapjack.Test.SSAMapBoundsParity
 import Flapjack.Test.WordAllocLimitArithmeticParity
 import Flapjack.Test.WordAllocMoveHeadParity

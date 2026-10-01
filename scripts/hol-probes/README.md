@@ -1,3 +1,11 @@
+`word_max_inst_route_probe.out` records seven fresh original instruction maxima
+and program limits. HOL max_var_inst leaves Mem Load16/Store16 to the zero
+fallback, unlike its explicit Load/Store/Load8/Store8/Load32/Store32 clauses.
+WordMaxInstRouteParity kernel-checks identical 32/64-bit operands and offsets
+against actual production helpers; the instruction correspondence covers every
+accepted codec form. Five-register AddCarry remains rejected. This repairs the
+production maximum discrepancy; it does not complete the native program route.
+
 `ssa_merge_route_probe.out` captures eight complete original merge_moves outputs
 through original fromAList/toAList: empty/missing/equal/unequal, tail-first
 fresh numbering, duplicate names, duplicate input-map first-match behavior,
