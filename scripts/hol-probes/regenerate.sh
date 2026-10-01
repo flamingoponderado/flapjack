@@ -101,6 +101,10 @@ run_probe() {
   done
 }
 
+run_probe asmprops_assertions_probeScript.sml asmprops_assertions_probe.out \
+  assert_zero_skip_p assert_zero_runs_next assert_order_ok assert_order_bad assert_count_fold assert_prefixes assert_weaken_bound assert_state_bool assert2_zero assert2_mixed_ok assert2_mixed_bad assert2_changed_above assert2_first_pair assert2_constant_ok assert2_every_pairs assert2_first_bad \
+  "$cake_dir/compiler/encoders/asm/asmPropsScript.sml" "$cake_dir/compiler/encoders/asm"
+
 run_probe asmsem_fp_updates_probeScript.sml asmsem_fp_updates_probe.out \
   asm_fp_less_nan asm_fp_less_equal_zero asm_fp_equal_nan asm_fp_equal_zero asm_fp_mov_payload asm_fp_abs_payload asm_fp_neg_zero asm_fp_sqrt_four asm_fp_add_two asm_fp_sub_zero asm_fp_mul_four asm_fp_div_half asm_fp_fma_order asm_fp_to_reg64 asm_fp_to_reg_alias32 asm_fp_from_reg64 asm_fp_from_reg32 asm_fp_from_reg8 asm_fp_to_int_tie_even asm_fp_to_int_negative asm_fp_to_int_overflow_bits asm_fp_to_int_overflow_failed asm_fp_to_int_inf_error asm_fp_to_int_odd32 asm_fp_from_int64 asm_fp_from_int32 asm_fp_from_int8 asm_fp_from_int128 asm_fp_to_int_lower_alias32 asm_fp_to_int_upper_alias32 asm_fp_to_int_overflow32 asm_fp_to_reg8 asm_fp_from_reg128 asm_fp_prior_failure \
   "$cake_dir/compiler/encoders/asm/asmSemScript.sml" "$cake_dir/compiler/encoders/asm"

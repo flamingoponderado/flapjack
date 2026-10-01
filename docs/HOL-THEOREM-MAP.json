@@ -43750,6 +43750,22 @@
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-luna-c source4523-4527: arbitrary Nat next and canonical native Spt Nat tree, forall x/y lookup SOME implication, nonphysical mapped register and strict next bound. Actual reviewed RegAlloc.isPhyVar is source MOD2=0; no injectivity/wf/freshness premise. Five fresh original source-clause simplifier observations and identical kernel fixtures, including malformed BN LN LN. This is a proof predicate and has no executed compiler definition route. Coordinator acceptance pending."
   },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/AsmProps/Assertions.lean",
+    "lean_name": "asserts",
+    "hol_path": "cakeml/compiler/encoders/asm/asmPropsScript.sml",
+    "hol_name": "asserts_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; .10.30.1): direct original asmPropsTheory kernel-inferred types queried read-only, whole source104-115 compared. Full generic alpha state, Nat-indexed endofunction and predicates; zero applies next0 then Q and ignores P, successor applies next(n+1), checks P, recurses with decremented count/new state. HOL bool predicates rendered as Prop without added premises; no fixed word/carrier specialization. Fresh16 direct original/kernel observations include noncommutative update order, zero P bypass and terminal next0, Bool states and negative guards. Full theorem-chain acceptance remains separate30.2; coordinator acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/AsmProps/Assertions.lean",
+    "lean_name": "asserts2",
+    "hol_path": "cakeml/compiler/encoders/asm/asmPropsScript.sml",
+    "hol_name": "asserts2_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; .10.30.1): direct original asmPropsTheory kernel-inferred types queried read-only, whole source104-115 compared. Original inferred num -> (num -> alpha -> beta) -> (beta -> alpha) -> beta -> (beta -> alpha -> bool) -> bool. Both independent carriers retained (Lean alpha denotes state/beta intermediate); zero True, positive checks P s(fc s) then recurses n-1 at fi n(fc s). Structural zero/successor clauses exactly equivalent original if n=0/else. No positivity/success/target-result premise. Fresh16 direct original/kernel observations include independent Nat-state/Bool-intermediate, count-dependent fi, off-bound function changes and failed P. Full theorem-chain acceptance separate30.2; coordinator pending."
+  },
 {
   "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
   "hol_name": "list_next_var_rename_lemma_2",
