@@ -49,21 +49,24 @@ declaration, so it carries no `@[hol]` tag.  It provides
 ## Executable-path rationale
 
 The executed allocator oracle decision is already routed through the reviewed
-checker: `wordOracleClashTreeCheck` (`OracleAllocator.lean`) returns
-`(wordClashTreeCheckViaReviewed colour tree [] []).isSome` and
-`wordOracleColouringOk` consumes it, with `wordOracleClashTreeCheck_eq` proving
-the oracle's `Bool` is exactly the executed `wordClashTreeCheck` verdict.  The
-standalone executed `wordClashTreeCheck` definition is retained for the other
-in-tree call sites (for example `SpillCosts`, `RegAlloc`,
-`AllocatorCorrectness`), which also consume only `.isSome`.  Routing those call
-sites is not free: the reviewed checker returns `NumSet`s and a fully routed
-caller would need the exact returned `List Nat` order, but the reviewed
-`toAList` enumeration need not match the executed prepend order, so literal
-returned-list equality is not provable; only the `isSome` verdict is forced,
-which is exactly what those callers use.  No performance exception is claimed.
-The remaining per-call-site production routing is tracked by bead
-`flapjack-pxn.18.5.11.4.2`.  This codec module does not change production
-behaviour; it records the reviewed checker's correspondence and routing.
+checker.  `wordOracleClashTreeCheck` (`OracleAllocator.lean`) calls
+`wordClashTreeCheckViaReviewedBool`, the direct-`Bool` routing that returns the
+reviewed checker's verdict with no `NumSet`-to-list enumeration, and
+`wordOracleColouringOk` consumes it; `wordOracleClashTreeCheck_eq` proves the
+oracle's `Bool` is exactly the executed `wordClashTreeCheck` verdict.
+
+The remaining work is genuine, not a list-order obstacle.  The standalone
+executed `wordClashTreeCheck` is retained at call sites (`SpillCosts`,
+`RegAlloc`, `AllocatorCorrectness`) that still use it directly; those call
+sites also consume only the success/failure verdict, so they can be migrated to
+`wordClashTreeCheckViaReviewedBool` without needing the exact returned `List Nat`
+order.  Literal returned-list equality would be needed only for a caller that
+inspects the returned sets, and is not provable because the reviewed `toAList`
+enumeration need not match the executed prepend order; no current call site
+needs it.  No performance exception is claimed.  The remaining per-call-site
+production routing is tracked by bead `flapjack-pxn.18.5.11.4.2`.  This codec
+module does not change production behaviour; it records the reviewed checker's
+correspondence and routing.
 
 ## Source comparison (executed vs reviewed checker)
 
@@ -1113,5 +1116,28 @@ theorem wordClashTreeCheckViaReviewed_isSome (colour : Nat → Nat)
   exact (CheckResultRel.isSome_eq (wordClashTreeCheck_agrees colour tree live flive
     (listToNumSet live) (listToNumSet flive)
     (DomEq_listToNumSet live) (DomEq_listToNumSet flive))).symm
+
+/-- Verdict-only routing: returns the reviewed checker's `Bool` verdict directly,
+with no `NumSet`-to-list enumeration.  This is the shape callers that consume
+only the success/failure verdict should use. -/
+def wordClashTreeCheckViaReviewedBool (colour : Nat → Nat) (tree : WordClashTree)
+    (live flive : List Nat) : Bool :=
+  (checkClashTree colour (wordClashTreeToReviewed tree)
+    (listToNumSet live) (listToNumSet flive)).isSome
+
+/-- The direct-`Bool` routing agrees with the list-enumerating routing's verdict. -/
+theorem wordClashTreeCheckViaReviewedBool_eq (colour : Nat → Nat)
+    (tree : WordClashTree) (live flive : List Nat) :
+    wordClashTreeCheckViaReviewedBool colour tree live flive =
+      (wordClashTreeCheckViaReviewed colour tree live flive).isSome := by
+  unfold wordClashTreeCheckViaReviewedBool
+  exact (wordClashTreeCheckViaReviewed_isSome_checkClashTree colour tree live flive).symm
+
+/-- The direct-`Bool` routing preserves the executed checker's verdict. -/
+theorem wordClashTreeCheckViaReviewedBool_eq_executed (colour : Nat → Nat)
+    (tree : WordClashTree) (live flive : List Nat) :
+    wordClashTreeCheckViaReviewedBool colour tree live flive =
+      (wordClashTreeCheck colour tree live flive).isSome := by
+  rw [wordClashTreeCheckViaReviewedBool_eq, wordClashTreeCheckViaReviewed_isSome]
 
 end Flapjack.ClashTreeCodec

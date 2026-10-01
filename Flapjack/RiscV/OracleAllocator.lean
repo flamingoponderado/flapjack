@@ -53,15 +53,16 @@ def wordOracleStackSafe (colour : Nat → Nat) (stackStart : Nat) :
 
 /-- The oracle's clash-tree check, routed through the reviewed
 `RegAlloc.checkClashTree` via the `ClashTreeCodec` codec.  The executed verdict
-is the `isSome` of the reviewed checker's result; `wordOracleClashTreeCheck_eq`
-proves it is exactly the `wordClashTreeCheck` verdict. -/
+is the `isSome` of the reviewed checker's result, obtained directly as a `Bool`
+with no `NumSet`-to-list enumeration; `wordOracleClashTreeCheck_eq` proves it is
+exactly the `wordClashTreeCheck` verdict. -/
 def wordOracleClashTreeCheck (colour : Nat → Nat) (tree : WordClashTree) : Bool :=
-  (wordClashTreeCheckViaReviewed colour tree [] []).isSome
+  wordClashTreeCheckViaReviewedBool colour tree [] []
 
 theorem wordOracleClashTreeCheck_eq (colour : Nat → Nat) (tree : WordClashTree) :
     wordOracleClashTreeCheck colour tree =
       (wordClashTreeCheck colour tree [] []).isSome :=
-  wordClashTreeCheckViaReviewed_isSome colour tree [] []
+  wordClashTreeCheckViaReviewedBool_eq_executed colour tree [] []
 
 def wordOracleColouringOk (_colours stackStart : Nat)
     (tree : WordClashTree) (forced : List (Nat × Nat))
@@ -85,7 +86,7 @@ theorem wordOracleColouringOk_eq_wordClashTreeCheck
            wordOracleStackSafe colour stackStart
              (wordClashTreeNames tree).eraseDups) := by
   simp only [wordOracleColouringOk, wordOracleClashTreeCheck,
-    wordClashTreeCheckViaReviewed_isSome]
+    wordClashTreeCheckViaReviewedBool_eq_executed]
 
 def wordAllocateFunctionWithOracle [OfNat α 0] (parameters : List Nat)
     (program : WordProg α) (colours stackStart : Nat)
