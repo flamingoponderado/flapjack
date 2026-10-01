@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordToStack.NativeStubs
 import Flapjack.Compiler.Backend.WordToStack.NativeHandlers
 import Flapjack.Compiler.Backend.WordToStack.NativePerf
 import Flapjack.Compiler.Backend.LabSem.FpUpdates

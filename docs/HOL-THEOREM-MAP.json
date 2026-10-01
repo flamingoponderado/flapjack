@@ -40713,5 +40713,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "Source review word_to_stackScript.sml349-384 and original HOL object type: StackHandlerArgs independently quantifies both destination payload carriers (Sum alpha beta) and positive program word width. Both frame-size increments exact. PushHandler retains allocation, constant1, labels, saved-handler slots0-2 and perf slots3-4/source register order; PopHandler restores/free-before-continuation. Native HolProg carrier reviewed with words_as_type_indexed_bitvec; universal all-input toGeneric transport. Source list_Seq exact empty/singleton/cons specialization; no instrumentation simulation or production route claim. Generic carrier repair r1p4 accepted/published db7e433e0."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "raise_stub_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeStubs.lean",
+    "lean_name": "raiseStubNative",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "Source review word_to_stackScript.sml557-580: literal raise stub Get/StackSetSize, perf restore slots3/4 with Or registers, then next handler slot2/Set, PCslot1/free/Raise; constant stub StoreConsts k(k+1)NONE then Return0. Native HolProg positive width under words_as_type_indexed_bitvec; universal all-input transport kernel checked. Source list_Seq retained, no instrumentation simulation or production-path completion claim.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "store_consts_stub_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeStubs.lean",
+    "lean_name": "storeConstsStubNative",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "Source review word_to_stackScript.sml557-580: literal raise stub Get/StackSetSize, perf restore slots3/4 with Or registers, then next handler slot2/Set, PCslot1/free/Raise; constant stub StoreConsts k(k+1)NONE then Return0. Native HolProg positive width under words_as_type_indexed_bitvec; universal all-input transport kernel checked. Source list_Seq retained, no instrumentation simulation or production-path completion claim.",
+    "words_as_type_indexed_bitvec": true
   }
 ]
