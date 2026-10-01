@@ -1,0 +1,33 @@
+(* Fresh original max_var_inst observations at both dimensions. *)
+load "bossLib";
+load "preamble";
+load "wordLangTheory";
+open bossLib HolKernel Parse preamble wordLangTheory;
+fun out label q = let val th = EVAL q in
+  (print (label ^ "="); print_term (rconc th); print "\n") end;
+val _ = out "mi_skip" ``max_var_inst (Skip: 64 asm$inst) = 0``;
+val _ = out "mi_const" ``max_var_inst (Const 17 9w: 64 asm$inst) = 17``;
+val _ = out "mi_binop_reg" ``max_var_inst (Arith (Binop Add 3 11 (Reg 17)): 64 asm$inst) = 17``;
+val _ = out "mi_binop_imm" ``max_var_inst (Arith (Binop Add 3 11 (Imm 99w)): 64 asm$inst) = 11``;
+val _ = out "mi_shift_reg" ``max_var_inst (Arith (Shift Lsl 3 11 (Reg 17)): 64 asm$inst) = 17``;
+val _ = out "mi_shift_imm" ``max_var_inst (Arith (Shift Lsl 3 11 (Imm 99w)): 64 asm$inst) = 11``;
+val _ = out "mi_div" ``max_var_inst (Arith (Div 3 11 17): 64 asm$inst) = 17``;
+val _ = out "mi_addCarry" ``max_var_inst (Arith (AddCarry 3 11 17 5): 64 asm$inst) = 17``;
+val _ = out "mi_addOverflow" ``max_var_inst (Arith (AddOverflow 3 11 17 5): 64 asm$inst) = 17``;
+val _ = out "mi_subOverflow" ``max_var_inst (Arith (SubOverflow 3 11 17 5): 64 asm$inst) = 17``;
+val _ = out "mi_longMul" ``max_var_inst (Arith (LongMul 3 11 17 5): 64 asm$inst) = 17``;
+val _ = out "mi_longdiv" ``max_var_inst (Arith (LongDiv 3 11 17 5 23): 64 asm$inst) = 23``;
+val _ = out "mi_load" ``max_var_inst (Mem Load 3 (Addr 17 99w): 64 asm$inst) = 17``;
+val _ = out "mi_store" ``max_var_inst (Mem Store 3 (Addr 17 99w): 64 asm$inst) = 17``;
+val _ = out "mi_load32" ``max_var_inst (Mem Load32 3 (Addr 17 99w): 64 asm$inst) = 17``;
+val _ = out "mi_store32" ``max_var_inst (Mem Store32 3 (Addr 17 99w): 64 asm$inst) = 17``;
+val _ = out "mi_load8" ``max_var_inst (Mem Load8 3 (Addr 17 99w): 64 asm$inst) = 17``;
+val _ = out "mi_store8" ``max_var_inst (Mem Store8 3 (Addr 17 99w): 64 asm$inst) = 17``;
+val _ = out "mi_fpLess" ``max_var_inst (FP (FPLess 3 99 101): 64 asm$inst) = 3``;
+val _ = out "mi_fpLessEqual" ``max_var_inst (FP (FPLessEqual 3 99 101): 64 asm$inst) = 3``;
+val _ = out "mi_fpEqual" ``max_var_inst (FP (FPEqual 3 99 101): 64 asm$inst) = 3``;
+val _ = out "mi_toreg64" ``max_var_inst (FP (FPMovToReg 3 17 99): 64 asm$inst) = 3``;
+val _ = out "mi_fromreg64" ``max_var_inst (FP (FPMovFromReg 99 3 17): 64 asm$inst) = 3``;
+val _ = out "mi_toreg32" ``max_var_inst (FP (FPMovToReg 3 17 99): 32 asm$inst) = 17``;
+val _ = out "mi_fromreg32" ``max_var_inst (FP (FPMovFromReg 99 3 17): 32 asm$inst) = 17``;
+val _ = out "mi_fpdefault" ``max_var_inst (FP (FPAdd 99 101 103): 64 asm$inst) = 0``;
