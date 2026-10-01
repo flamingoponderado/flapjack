@@ -3685,3 +3685,8 @@ run_probe ssa_setup_props_probeScript.sml ssa_setup_props_probe.out \
   setup_full setup_type_lim setup_type_n setup_type_st setup_type_prog \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_rename_move_preserve_probeScript.sml ssa_rename_move_preserve_probe.out \
+  rms_full rms_type_st rms_type_cst rms_type_ssa rms_type_na rms_type_ls \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"

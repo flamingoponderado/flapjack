@@ -48518,5 +48518,19 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-a completed source comparison 2026-10-01 flapjack-pxn.18.5.15.2.30.2: full original10139-10208 literal setup proof plus six original local prerequisite proofs and two original ML tactics freshly replayed; four inferred original state/program/counter/count types confirm state/program/move share word dimension and generic code/FFI. Original is_alloc_var limit AND exact initial source-locals domain=even_list count premises retained; complete six actual evaluator conclusions NONE, whole state relation, mapOK, locals relation, allocation class and counter lower bound retained. Actual reviewed setupSSA, WordSem evaluate and native Spt/list operations used, arbitrary initial values and malformed trees allowed; no successful pass/evaluation, bound on input physical keys, post-state relation or output premise added. Canonical fpRegs/store finite-support and positive BitVec/NeZero carriers explicit with genuine roundtrip witness. Inherits reals_as_rational_cuts via full evaluator, SOUNDNESS item8; Move prologue reads/writes only locals. Fresh own CakeML857f0d source replay on matching pinned HOLa390cb/CakeML857f0d built tree. No cross-prover equivalence claim and no compiler executable change; production SSA setup routing remains on separate existing child bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSARenameMovePreserve.lean",
+    "lean_name": "listNextVarRenameMovePreserve",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "list_next_var_rename_move_preserve",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-a completed source comparison 2026-10-01 flapjack-i4rl: original5327-5432 and fresh literal proof/prerequisite replay from pinned CakeML857f0d/HOLa390cb matching shared builds. All five premises preserved: locals relation, SOURCE-domain subset, Nodup, mapOK, whole state relation. Actual native producer/evaluator and all five conclusions preserved, including physical-register preservation conditional on nonphysical next and all original SSA-selected values. Fresh types confirm same alpha,beta,gamma source/target states; positive-width BitVec and canonical fpRegs/store roundtrip witness reviewed. HOL THE only observed under proved SOME guard; no target evaluation or post-state hypothesis. Inherits reals_as_rational_cuts SOUNDNESS item8; Move touches locals only. No executable route changes or cross-prover equivalence claim."
   }
 ]

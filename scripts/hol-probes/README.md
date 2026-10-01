@@ -3959,3 +3959,5 @@ and applies all eight full original-shaped cases. The rejected ShareInst proof
 uses only its original false source guard, with no target safety premise.
 These regressions do not establish cross-language equivalence or full compiler correctness.
 Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_primitives_probeScript.sml`.
+
+`ssa_rename_move_preserve_probeScript.sml` replays the literal strong SSA move-preservation proof and local prerequisites, capturing its full statement and five inferred argument types.

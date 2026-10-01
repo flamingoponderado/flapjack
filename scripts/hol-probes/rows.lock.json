@@ -612,6 +612,7 @@
     {"bytes": 328, "out": "ssa_register_class_probe.out", "rows": 10, "sha256": "d1a7a95b4d2e730a6518608c3b3c4ebd742d43c32fa47f5325741f87b16995a4"},
     {"bytes": 790, "out": "ssa_register_flip_probe.out", "rows": 25, "sha256": "6f7a989504063c08b420dccce972f3dfdb6ba7d6986920ce68374727a85bb729"},
     {"bytes": 459, "out": "ssa_rename_lookup_probe.out", "rows": 5, "sha256": "6704452ea7c732755f87ac6f2165c881f28f13210e1d0471ce238a0dd1211ce7"},
+    {"bytes": 692, "out": "ssa_rename_move_preserve_probe.out", "rows": 6, "sha256": "c54d8a71384808fefa81193fc478fa268569e1c55513b55279bfae453f44a25a"},
     {"bytes": 501, "out": "ssa_rename_move_preserve_weak_probe.out", "rows": 6, "sha256": "58f683597f2f41dddff35b046ae98e620ed99e6a3db3d390de6c131c63306d78"},
     {"bytes": 502, "out": "ssa_rename_properties_probe.out", "rows": 9, "sha256": "d24de551070d87fbaf7b50a2757d289cdec9f4b67e6331fcd31af4547057c118"},
     {"bytes": 867, "out": "ssa_rename_property_wrappers_probe.out", "rows": 4, "sha256": "81e47ddbcdd4e282a3d01a6e7c2ec3ee9541d099219fe53d16b99323dba133ff"},
