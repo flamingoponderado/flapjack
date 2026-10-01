@@ -42650,5 +42650,21 @@
     "hol_name": "find_index_APPEND",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-luna-c source comparison2026-10-01 bead46.8 misc1265-1274: arbitrary element carrier, Lists l1/l2, target x, Nat n; full equality with case find_index x l1 n. NONE searches l2 at n+LENGTH l1; SOME preserves first result. Literal reviewed findIndex evaluator, no presence/unique-match/zero-offset/fuel/target-result premise. DecidableEq supplies HOL propositional equality only. Kernel list induction generalizes arbitrary offset; ten fresh original EVAL rows replay identical inputs, including Bool carrier, duplicates and offset10^20. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Initialization.lean",
+    "lean_name": "IraState",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "ira_state",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-c source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.10.4.1): literal define_run_declarations factory reg_allocScript1466-1468 and ml_monadBaseLib467-538. All twelve native State fields preserved; adj_ls/node_tag/degrees/coalesced/move_related become Nat x element initialization pairs. FST is independent replication length, SND is replicated value; seven remaining fields unchanged. Runner accepts arbitrary MonadBase.M State value exception, reconstructs the exact State with five List.replicate calls and returns run result without consistency/success premises. Native List/Nat/Bool/Tag carriers and independent Type0 result/exception match source. Eight fresh original HOL EVAL observations including inconsistent dim, zero lengths and failure replay kernel-checked. Production IRC route and remaining public wrappers stay open on parent. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Initialization.lean",
+    "lean_name": "runIraState",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "run_ira_state_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-c source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.10.4.1): literal define_run_declarations factory reg_allocScript1466-1468 and ml_monadBaseLib467-538. All twelve native State fields preserved; adj_ls/node_tag/degrees/coalesced/move_related become Nat x element initialization pairs. FST is independent replication length, SND is replicated value; seven remaining fields unchanged. Runner accepts arbitrary MonadBase.M State value exception, reconstructs the exact State with five List.replicate calls and returns run result without consistency/success premises. Native List/Nat/Bool/Tag carriers and independent Type0 result/exception match source. Eight fresh original HOL EVAL observations including inconsistent dim, zero lengths and failure replay kernel-checked. Production IRC route and remaining public wrappers stay open on parent. Coordinator review pending."
   }
 ]

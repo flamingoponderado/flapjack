@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.RegAlloc.Initialization
 import Flapjack.Misc.FindIndex.Append
 import Flapjack.Compiler.Backend.RegAlloc.Exceptions
 import Flapjack.Compiler.Backend.WordAlloc.CanonizeSort
