@@ -1,3 +1,4 @@
+import Flapjack.Test.WordAllocLimitArithmeticParity
 import Flapjack.Test.WordAllocMoveHeadParity
 import Flapjack.Test.WordAllocLimitVarParity
 import Flapjack.Test.SSARenamePropertiesParity

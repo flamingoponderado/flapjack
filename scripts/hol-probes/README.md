@@ -1,3 +1,13 @@
+`word_alloc_limit_arithmetic_probe.out` re-elaborates the numeric class and
+strict-bound obligations from the original local `limit_var_props` MOD_PLUS
+argument, then captures thirteen exact limit/class/strict-bound/alignment tuples.
+The registered `WordAllocLimitArithmeticParity` fixtures match all four residues,
+zero, multiples of four, and large unbounded Nat register IDs. Two generic kernel
+applications check the actual unconditional infrastructure. These untagged lemmas
+have no independent HOL theorem name and do not replace the full native program
+`limit_var_props`: that still needs native `max_var_max` and `limit_var_def`.
+Regenerate with `HOL_PROBE_ONLY=word_alloc_limit_arithmetic_probeScript.sml`.
+
 `word_alloc_move_head_probe.out` freshly re-elaborates the complete local
 `mov_eval_head` from its original proof and runs eleven native Move evaluations.
 The matching `WordAllocMoveHeadParity` fixtures retain arbitrary untouched
