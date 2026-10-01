@@ -1,3 +1,6 @@
+import Flapjack.Compiler.Backend.WordAlloc.CoalesceCost
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.LoopCases
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompilePrefix
 import Flapjack.Compiler.Backend.Parmove.Correct
 import Flapjack.Compiler.Backend.WordAlloc.MergeStackSets
 import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign
@@ -8,8 +11,6 @@ import Flapjack.Compiler.Backend.WordToStack.NativeTopCompile
 import Flapjack.Misc.Sptree.UnionAlgebra
 import Flapjack.Compiler.Backend.WordAlloc.EvenColour
 import Flapjack.Compiler.Backend.Semantics.TargetSem.MappedMemory
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompilePrefix
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.LoopCases
 import Flapjack.Compiler.Backend.WordAlloc.TotalColour
 import Flapjack.Compiler.Backend.Parmove.SourceMembershipWrapper
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvenStartingLocals

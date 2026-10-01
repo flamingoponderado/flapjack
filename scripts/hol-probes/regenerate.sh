@@ -2943,3 +2943,8 @@ run_probe word_to_stack_comp_prefix_probeScript.sml word_to_stack_comp_prefix_pr
 run_probe word_alloc_loop_checker_probeScript.sml word_alloc_loop_checker_probe.out \
   lc_break_absent lc_continue_absent lc_break_present lc_continue_present lc_loop_skip lc_loop_continue lc_break_collision \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
+
+run_probe word_alloc_coalesce_cost_probeScript.sml word_alloc_coalesce_cost_probe.out \
+  cc_absent cc_left cc_right cc_both cc_same cc_zero cc_large cc_raw \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
