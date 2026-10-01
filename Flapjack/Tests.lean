@@ -3,6 +3,8 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
 import Flapjack.Test.LabValidityNativeParity
 import Flapjack.Test.StackToLabNativeParity
+import Flapjack.Test.StackToLabRecursiveValidityParity
+import Flapjack.Test.StackToLabNonrecursiveValidityParity
 import Flapjack.Test.LabValidityNativeParity
 import Flapjack.Test.StackToLabNativeParity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
