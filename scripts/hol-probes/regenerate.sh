@@ -3597,3 +3597,7 @@ run_probe word_to_stack_no_shmemop_returning_probeScript.sml word_to_stack_no_sh
 run_probe word_to_stack_no_shmemop_handled_probeScript.sml word_to_stack_no_shmemop_handled_probe.out \
   ch_direct0_1 ch_directmany_1 ch_indirect0_1 ch_indirectsmall_1 ch_indirectlarge_1 ch_direct0_32 ch_directmany_32 ch_indirect0_32 ch_indirectsmall_32 ch_indirectlarge_32 ch_direct0_64 ch_directmany_64 ch_indirect0_64 ch_indirectsmall_64 ch_indirectlarge_64 ch_direct0_80 ch_directmany_80 ch_indirect0_80 ch_indirectsmall_80 ch_indirectlarge_80 ch_return_shared ch_handler_shared ch_return_invalid ch_handler_invalid ch_both_shared ch_both_invalid \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_to_stack_no_shmemop_primitives_probeScript.sml word_to_stack_no_shmemop_primitives_probe.out \
+  cp_skip_1 cp_assign_1 cp_store_1 cp_raise_1 cp_break_1 cp_continue_1 cp_tick_1 cp_skip_32 cp_assign_32 cp_store_32 cp_raise_32 cp_break_32 cp_continue_32 cp_tick_32 cp_skip_64 cp_assign_64 cp_store_64 cp_raise_64 cp_break_64 cp_continue_64 cp_tick_64 cp_skip_80 cp_assign_80 cp_store_80 cp_raise_80 cp_break_80 cp_continue_80 cp_tick_80 cp_load_valid cp_load_invalid cp_store_valid cp_store_invalid \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"

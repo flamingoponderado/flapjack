@@ -3796,3 +3796,17 @@ induction hypotheses. The three Call cases complete the original constructor
 group; other constructors and assembly remain separately tracked. These
 regressions do not establish cross-language equivalence or whole compiler correctness.
 Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_handled_probeScript.sml`.
+
+### Primitive and rejected no-shared-memory compiler cases
+
+`word_to_stack_no_shmemop_primitives_probeScript.sml` captures thirty-two
+original source/actual-target predicate pairs for Skip, Assign, Store, Raise,
+Break, Continue, Tick and ShareInst. Widths1/32/64/80, both perf flags and full
+zero/nonzero/large frames remain explicit. Assign and Store retain the original
+compiler's impossible-constructor Skip fallback. Valid and invalid shared Load
+and Store keep false/false and false/true results instead of an equivalence.
+`WordToStackNoShmemopPrimitivesParity` kernel-reduces identical compiler inputs
+and applies all eight full original-shaped cases. The rejected ShareInst proof
+uses only its original false source guard, with no target safety premise.
+These regressions do not establish cross-language equivalence or full compiler correctness.
+Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_primitives_probeScript.sml`.

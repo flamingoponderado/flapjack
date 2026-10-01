@@ -47276,5 +47276,77 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison2026-10-01 bead48.3.6: complete original comp_no_shmemop12259-12357 Call12318-12340 SOME return/SOME handler case. Same arbitrary original config/perf/return values+cutsets+code+labels/destination+args/handler value+code+labels/full input bitmap/frame/actual output-residual pair/source guard/compiler equality. Only two legitimate child IH retain same conf/perf and original source guard/actual compiler equality with arbitrary child bitmap/frame/output pair. Exact wLive residual bitmap feeds return compilation, whose residual feeds handler compilation; neither post-state safety nor desired simulation for current program assumed. Accepted source no_share_inst_def fifth projection supplies both child guards without specializing actual Call fields. Native full push/pop/stackHandlerArgs and copyRet/perf semantics reused from ordinary merged Sol107ee/c459 and accepted48.2.3. Sole qualifier translates positive HOL type-indexed words to BitVec/NeZero. Fresh original26 complete guard/target pairs exactly kernel replayed, widths1/32/64/80/both perf/direct+indirect/empty+large arguments/multiple return values/nested Alloc-return and StoreConsts-handler bitmap production; independently and jointly forbidden or invalid-address child sentinels retain false/false and false/true. Generic fixture applies full actual theorem with both IH. Proof-only case completes Call constructor case group, not whole compiler theorem or executed route."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NoShmemopPrimitives.lean",
+    "lean_name": "compNoShmemopSkip",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "comp_no_shmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-01 bead48.3.7: complete original comp_no_shmemop12259-12357 Skip constructor case, compared actual comp_def453-555 and native faithful source/target carriers. Arbitrary original config/perf/all constructor payloads/full bitmap and Nat triple frame/output-residual pair, original no_share_inst guard and actual compiler equality retained, original no_shmemop conclusion. No irrelevant IH. Literal original primitive target constructor is retained; no target evaluation, safety or extra bounds premise introduced. Sole qualifier translates positive HOL type-indexed words to BitVec width/NeZero. Fresh original32 complete guard/actual compiled-target pairs kernel replayed over widths1/32/64/80 and both perf, full zero/nonzero/large frames; generic fixtures apply all eight complete theorem signatures. Rejected valid/invalid Load/Store observations retain false/false and false/true, not an equivalence. Proof-only case group, not full compiler correctness or executed compiler changes."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NoShmemopPrimitives.lean",
+    "lean_name": "compNoShmemopAssign",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "comp_no_shmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-01 bead48.3.7: complete original comp_no_shmemop12259-12357 Assign constructor case, compared actual comp_def453-555 and native faithful source/target carriers. Arbitrary original config/perf/all constructor payloads/full bitmap and Nat triple frame/output-residual pair, original no_share_inst guard and actual compiler equality retained, original no_shmemop conclusion. No irrelevant IH. Source Assign/Store use literal original comp_def impossible fallback to target Skip; retained original source payload is arbitrary and no assignment/store execution semantics are claimed. Sole qualifier translates positive HOL type-indexed words to BitVec width/NeZero. Fresh original32 complete guard/actual compiled-target pairs kernel replayed over widths1/32/64/80 and both perf, full zero/nonzero/large frames; generic fixtures apply all eight complete theorem signatures. Rejected valid/invalid Load/Store observations retain false/false and false/true, not an equivalence. Proof-only case group, not full compiler correctness or executed compiler changes."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NoShmemopPrimitives.lean",
+    "lean_name": "compNoShmemopStore",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "comp_no_shmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-01 bead48.3.7: complete original comp_no_shmemop12259-12357 Store constructor case, compared actual comp_def453-555 and native faithful source/target carriers. Arbitrary original config/perf/all constructor payloads/full bitmap and Nat triple frame/output-residual pair, original no_share_inst guard and actual compiler equality retained, original no_shmemop conclusion. No irrelevant IH. Source Assign/Store use literal original comp_def impossible fallback to target Skip; retained original source payload is arbitrary and no assignment/store execution semantics are claimed. Sole qualifier translates positive HOL type-indexed words to BitVec width/NeZero. Fresh original32 complete guard/actual compiled-target pairs kernel replayed over widths1/32/64/80 and both perf, full zero/nonzero/large frames; generic fixtures apply all eight complete theorem signatures. Rejected valid/invalid Load/Store observations retain false/false and false/true, not an equivalence. Proof-only case group, not full compiler correctness or executed compiler changes."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NoShmemopPrimitives.lean",
+    "lean_name": "compNoShmemopRaise",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "comp_no_shmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-01 bead48.3.7: complete original comp_no_shmemop12259-12357 Raise constructor case, compared actual comp_def453-555 and native faithful source/target carriers. Arbitrary original config/perf/all constructor payloads/full bitmap and Nat triple frame/output-residual pair, original no_share_inst guard and actual compiler equality retained, original no_shmemop conclusion. No irrelevant IH. Literal original primitive target constructor is retained; no target evaluation, safety or extra bounds premise introduced. Sole qualifier translates positive HOL type-indexed words to BitVec width/NeZero. Fresh original32 complete guard/actual compiled-target pairs kernel replayed over widths1/32/64/80 and both perf, full zero/nonzero/large frames; generic fixtures apply all eight complete theorem signatures. Rejected valid/invalid Load/Store observations retain false/false and false/true, not an equivalence. Proof-only case group, not full compiler correctness or executed compiler changes."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NoShmemopPrimitives.lean",
+    "lean_name": "compNoShmemopBreak",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "comp_no_shmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-01 bead48.3.7: complete original comp_no_shmemop12259-12357 Break constructor case, compared actual comp_def453-555 and native faithful source/target carriers. Arbitrary original config/perf/all constructor payloads/full bitmap and Nat triple frame/output-residual pair, original no_share_inst guard and actual compiler equality retained, original no_shmemop conclusion. No irrelevant IH. Literal original primitive target constructor is retained; no target evaluation, safety or extra bounds premise introduced. Sole qualifier translates positive HOL type-indexed words to BitVec width/NeZero. Fresh original32 complete guard/actual compiled-target pairs kernel replayed over widths1/32/64/80 and both perf, full zero/nonzero/large frames; generic fixtures apply all eight complete theorem signatures. Rejected valid/invalid Load/Store observations retain false/false and false/true, not an equivalence. Proof-only case group, not full compiler correctness or executed compiler changes."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NoShmemopPrimitives.lean",
+    "lean_name": "compNoShmemopContinue",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "comp_no_shmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-01 bead48.3.7: complete original comp_no_shmemop12259-12357 Continue constructor case, compared actual comp_def453-555 and native faithful source/target carriers. Arbitrary original config/perf/all constructor payloads/full bitmap and Nat triple frame/output-residual pair, original no_share_inst guard and actual compiler equality retained, original no_shmemop conclusion. No irrelevant IH. Literal original primitive target constructor is retained; no target evaluation, safety or extra bounds premise introduced. Sole qualifier translates positive HOL type-indexed words to BitVec width/NeZero. Fresh original32 complete guard/actual compiled-target pairs kernel replayed over widths1/32/64/80 and both perf, full zero/nonzero/large frames; generic fixtures apply all eight complete theorem signatures. Rejected valid/invalid Load/Store observations retain false/false and false/true, not an equivalence. Proof-only case group, not full compiler correctness or executed compiler changes."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NoShmemopPrimitives.lean",
+    "lean_name": "compNoShmemopTick",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "comp_no_shmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-01 bead48.3.7: complete original comp_no_shmemop12259-12357 Tick constructor case, compared actual comp_def453-555 and native faithful source/target carriers. Arbitrary original config/perf/all constructor payloads/full bitmap and Nat triple frame/output-residual pair, original no_share_inst guard and actual compiler equality retained, original no_shmemop conclusion. No irrelevant IH. Literal original primitive target constructor is retained; no target evaluation, safety or extra bounds premise introduced. Sole qualifier translates positive HOL type-indexed words to BitVec width/NeZero. Fresh original32 complete guard/actual compiled-target pairs kernel replayed over widths1/32/64/80 and both perf, full zero/nonzero/large frames; generic fixtures apply all eight complete theorem signatures. Rejected valid/invalid Load/Store observations retain false/false and false/true, not an equivalence. Proof-only case group, not full compiler correctness or executed compiler changes."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NoShmemopPrimitives.lean",
+    "lean_name": "compNoShmemopShareInst",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "comp_no_shmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-01 bead48.3.7: complete original comp_no_shmemop12259-12357 ShareInst constructor case, compared actual comp_def453-555 and native faithful source/target carriers. Arbitrary original config/perf/all constructor payloads/full bitmap and Nat triple frame/output-residual pair, original no_share_inst guard and actual compiler equality retained, original no_shmemop conclusion. No irrelevant IH. Source ShareInst has false no_share_inst guard regardless of memory operation/address; contradiction proves the original implication without claiming successful target no_shmemop. Actual compiler address-valid and fallback outputs remain distinct in fixtures. Sole qualifier translates positive HOL type-indexed words to BitVec width/NeZero. Fresh original32 complete guard/actual compiled-target pairs kernel replayed over widths1/32/64/80 and both perf, full zero/nonzero/large frames; generic fixtures apply all eight complete theorem signatures. Rejected valid/invalid Load/Store observations retain false/false and false/true, not an equivalence. Proof-only case group, not full compiler correctness or executed compiler changes."
   }
 ]
