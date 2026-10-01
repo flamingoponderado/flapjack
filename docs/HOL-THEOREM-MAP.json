@@ -39283,5 +39283,19 @@
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-c source comparison 2026-10-01 (.11.1.26.2), original1105-1130 and Resume1433-1447: exact constructor with original3 premises/full existential post, only genuine body IH. Zero termdep yields source Error; otherwise body runs with original MustTerminate_limit and decremented termdep, its selected oracle retained. Body Error and timeout-to-Error handled; all other results restore original clock and termdep, original state and result-selected locals conclusion. Canonical fpRegs/store and positive-width word qualifiers with imported carrier roundtrip. Inherits reals_as_rational_cuts from reviewed WordSem evaluator, SOUNDNESS item8; no evaluator mutation. Coordinator review pending.",
   "inherits_reals_as_rational_cuts": true
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_apply_colour",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/If.lean",
+  "lean_name": "evaluateApplyColour_If",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01 (.11.1.26.3), original1105-1130 and Resume1833-1881: original3premises/full existential post at exact Cmp/register-immediate/two branch constructor; only genuine branch IHs. Missing source lookup/comparison chooses source Error; successful lookup transport preserves identical WordLocW operands and exact wordSemWordCmp result, without assuming word-only operands or comparison success. Chosen branch receives original colouringOk/state relation and locals restricted from full merged input live set. Positive-width word and canonical fpRegs/store qualifiers with imported-carrier roundtrip. Inherits reals_as_rational_cuts from reviewed WordSem evaluator, SOUNDNESS item8. Coordinator review pending.",
+  "inherits_reals_as_rational_cuts": true
 }
 ]
