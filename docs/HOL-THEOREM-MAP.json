@@ -50739,5 +50739,49 @@
     "lean_name": "stExMapDegreesSub",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.3.38.2) against reg_allocProofScript.sml:285-291: !ls s. EVERY (\\v. v < LENGTH s.degrees) ls ==> st_ex_MAP degrees_sub ls s = (M_success (MAP (\\i. EL i s.degrees) ls),s); HOL EL is the exact tagged Flapjack.holEl (listScript EL_def, pinned HOL submodule, provenance flapjack-pxn.18.5.15.3.38.1); no changed clause or hypothesis."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_removeScript.sml",
+    "hol_name": "remove_must_terminate_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordRemove.lean",
+    "lean_name": "removeMustTerminate",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.1.11): literal HOL word_removeScript.sml:16-31, clause by clause in HOL order with HOL's final catchall: Seq, If, MustTerminate p => remove_must_terminate p, Call (both optional bodies, all other fields unchanged), Loop; over the exact WordLangProgHOL carrier with positive BitVec/NeZero as the only translation. Eight original HOL EVAL rows (word_remove_must_terminate_probe.out) replayed in the kernel by Flapjack/Test/WordRemoveMustTerminateParity.lean. Proof-side definition; executed-path status tracked separately."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "remove_must_terminate_conventions",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/RemoveMustTerminate.lean",
+    "lean_name": "removeMustTerminateConventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.1.11): HOL wordConvsProofScript.sml:2929-2949 remove_must_terminate_conventions: quantifiers p c k with free instruction predicate P leading; the let comp and the five conjuncts in HOL order: flat_exp_conventions, full_inst_ok_less c, post_alloc_conventions k (postAllocConventionsHOL), every_inst P as implications and extract_labels equality. Statement over the exact WordLangProgHOL carrier and the reviewed removeMustTerminate (remove_must_terminate_def); positive BitVec/NeZero is the only carrier translation; proved by the untagged structural induction removeMustTerminate_induct mirroring HOL remove_must_terminate_ind; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_remove_must_terminate",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/RemoveMustTerminate.lean",
+    "lean_name": "getCodeLabels_removeMustTerminate",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.1.11): HOL wordConvsProofScript.sml:2951-2959 word_get_code_labels_remove_must_terminate: quantifier ps, word_get_code_labels (remove_must_terminate ps) = word_get_code_labels ps over the reviewed getCodeLabelsHOL. Statement over the exact WordLangProgHOL carrier and the reviewed removeMustTerminate (remove_must_terminate_def); positive BitVec/NeZero is the only carrier translation; proved by the untagged structural induction removeMustTerminate_induct mirroring HOL remove_must_terminate_ind; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_good_handlers_remove_must_terminate",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/RemoveMustTerminate.lean",
+    "lean_name": "goodHandlers_removeMustTerminate",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.1.11): HOL wordConvsProofScript.sml:2961-2969 word_good_handlers_remove_must_terminate: quantifier ps with free handler label n leading, word_good_handlers n (remove_must_terminate ps) <=> word_good_handlers n ps over the reviewed goodHandlersHOL. Statement over the exact WordLangProgHOL carrier and the reviewed removeMustTerminate (remove_must_terminate_def); positive BitVec/NeZero is the only carrier translation; proved by the untagged structural induction removeMustTerminate_induct mirroring HOL remove_must_terminate_ind; no extra premise."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/RemoveMustTerminate.lean",
+    "lean_name": "removeMustTerminate_induct",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only structural induction over remove_must_terminate results used by the tagged wordConvsProof remove_must_terminate theorems; HOL uses remove_must_terminate_ind with remove_must_terminate_def directly, so no separate HOL declaration is being ported."
   }
 ]
