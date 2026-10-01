@@ -38139,5 +38139,13 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-b source comparison 2026-10-01, bead15.3.24: Source252-258: full cutsets=Spt Unit pair and (k,f,fprime) triple retained. f=0 leaves bitmaps unchanged; otherwise exact write_bitmap of SND live, insert_bitmap, Const k (n2w(i+1)), StackStore k0. Shared-word ProgM uses exact MlString constructor carrier, untouched here. No dropped inputs/convenience domain-list signature or extra hypotheses. Full comp/compile_prog/pass proof and production routing remain open; coordinator acceptance pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "fstep_def",
+  "lean_path": "Flapjack/Compiler/Backend/Parmove.lean",
+  "lean_name": "fstep",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead15.3.25.3: parmoveScript.sml526-546 generic three lists of (option alpha, option alpha) pairs, NONE temporary. Same final state, self-move discard/start, first pending source equal to active destination retained in suffix then removed and prepended to active; singleton emits; longer path FRONT/LAST cycle detection saves last source to NONE and emits (d,s),(NONE,d) in that order; noncycle pops head. splitSource specializes listTheory splitAtPki (listScript.sml3996) to its index-independent predicate; first-match order preserved and prefix/suffix reconstruction proved. frontLast is total nonempty FRONT/LAST with reconstruction and length proofs; no default, wf premise or dropped invalid state. DecidableEq only computes propositional equality, no BEq assumption. Literal termination measure2*length pending+length active proved decreasing for every unfinished state. Ten direct original HOL num-option EVAL rows cover every branch, first matching source, long cycle and NONE cases, replayed in Lean. pmov/parmove semantics and production wMove/compiler remain open. Coordinator review pending."
 }
 ]

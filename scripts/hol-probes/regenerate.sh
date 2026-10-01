@@ -2668,3 +2668,7 @@ run_probe word_to_stack_winst_probeScript.sml word_to_stack_winst_probe.out \
   wi_load16_skip wi_store wi_fpless wi_fpmovtoreg wi_fpmovfromreg wi_fpadd wi_skip \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" \
   "$cake_dir/compiler/backend"
+
+run_probe parmove_fstep_probeScript.sml parmove_fstep_probe.out \
+  fs_final fs_self fs_start fs_first fs_single fs_chain fs_cycle fs_cycle_long fs_temp_match fs_temp_self \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
