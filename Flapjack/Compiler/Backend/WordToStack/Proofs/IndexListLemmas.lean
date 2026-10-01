@@ -49,4 +49,21 @@ theorem elIndexList2 {α : Type} (xs : List α) (i k : Nat) (h : i < xs.length) 
   rw [elIndexList xs i k h]
   congr 1
 
+/-- HOL `MAP_FST_def`: map the key of each pair, leaving the value untouched.
+Untagged-target check: fully polymorphic pair-list key mapping, no carrier
+translation. -/
+@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "MAP_FST_def"]
+def mapFstHOL {α β γ : Type} (f : α → β) (xs : List (α × γ)) : List (β × γ) :=
+  xs.map (fun p => (f p.1, p.2))
+
+/-- HOL `MAP_SND_MAP_FST`: `MAP_FST` preserves the value projection for an arbitrary
+function and list. -/
+@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "MAP_SND_MAP_FST"]
+theorem mapSndMapFstHOL {α β γ : Type} (xs : List (α × γ)) (f : α → β) :
+    (mapFstHOL f xs).map Prod.snd = xs.map Prod.snd := by
+  induction xs with
+  | nil => rfl
+  | cons x xs ih =>
+      show ((f x.1, x.2) :: mapFstHOL f xs).map Prod.snd = (x :: xs).map Prod.snd
+      rw [List.map_cons, List.map_cons, ih]
 end Flapjack.WordToStackProofs

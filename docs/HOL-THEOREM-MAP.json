@@ -39019,5 +39019,21 @@
     "lean_name": "getRegValue",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.15.10.4). Source comparison with targetSemScript.sml:263-266 get_reg_value_def: get_reg_value NONE w f = w /\\ get_reg_value (SOME v) _ f = f v. HOL leaves both types fully generic: v : key is applied to f : key -> value, so the Lean port quantifies {key value : Type} over (Option key, value, key -> value). No word-carrier difference, so no representation qualifier applies."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "MAP_FST_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/IndexListLemmas.lean",
+    "lean_name": "mapFstHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds10 source comparison (2026-10-01, bead flapjack-pxn.18.5.15.3.42) vs word_to_stackProofScript.sml:782-784: HOL MAP_FST f xs = MAP (\\(x,y). (f x, y)) xs; Lean mapFstHOL {alpha beta gamma} (f : alpha -> beta) (xs : List (alpha x gamma)) = xs.map (fun p => (f p.1, p.2)). Fully polymorphic pair-list key mapping: no word, finite-map or list-source carrier difference, so no representation qualifier; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "MAP_SND_MAP_FST",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/IndexListLemmas.lean",
+    "lean_name": "mapSndMapFstHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds10 source comparison (2026-10-01, bead flapjack-pxn.18.5.15.3.42) vs word_to_stackProofScript.sml:786-790: HOL !xs f. MAP SND (MAP_FST f xs) = MAP SND xs; Lean mapSndMapFstHOL {alpha beta gamma} (xs : List (alpha x gamma)) (f : alpha -> beta) : (mapFstHOL f xs).map Prod.snd = xs.map Prod.snd. Same polymorphic quantifiers, unconditional, no word/finite-map carrier; structural induction mirrors the HOL LIST induction."
   }
 ]
