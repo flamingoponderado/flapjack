@@ -1,7 +1,19 @@
 import Flapjack.Compiler.Backend.RegAlloc.SortedMem
+import Flapjack.RiscV.CakeRegAlloc
 
 namespace Flapjack.Test.RegAllocSortedMemParity
 open Flapjack.RegAlloc
+open Flapjack.RiscV.CakeRegAlloc
+
+/-- Kernel regression of the former executed equation on arbitrary inputs. -/
+example (x : Nat) (ys : List Nat) : cakeSortedMem x ys =
+    match ys with
+    | [] => false
+    | y :: rest => if x = y then true else if x > y then false else cakeSortedMem x rest := by
+  cases ys <;> rfl
+
+example : cakeSortedMem 7 [2,7] = false := rfl
+example : cakeSortedMem 2 [7,2,9] = true := rfl
 
 /- Same-input kernel replay of fresh original HOL EVAL rows, including
 unsorted lists where early stopping differs from unrestricted membership. -/
