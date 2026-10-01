@@ -2129,3 +2129,10 @@ destination fails `wf` (17 versus 37), and a pending source reads the emitted
 destination despite valid `wf` (17 versus 27). Lean checks every row and these
 premise boundaries. The generic case proofs retain both original premises;
 Save, EmitHead and the full semantic-preservation assembly remain open.
+
+`target_sem_encoded_bytes_probeScript.sml` captures ten component observations
+and proves the whole `encoded_bytes_in_mem` predicate on the same configuration,
+memory and domain. The eleventh row is printed only after checking the theorem's
+exact conclusion and empty hypothesis list. `TargetSemEncodedBytesParity.lean`
+replays each row, using the same `Jump 0w` and block-index `1` witnesses for the
+whole predicate. These concrete checks do not prove compiler correctness.

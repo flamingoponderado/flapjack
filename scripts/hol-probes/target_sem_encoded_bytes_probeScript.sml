@@ -34,3 +34,15 @@ val _ = print_eval "encoded_guard_true" ``1 * 2 ** ^c.code_alignment < LENGTH (^
 val _ = print_eval "encoded_guard_strict" ``2 * 2 ** ^c.code_alignment < LENGTH (^c.encode ARB)``;
 val _ = print_eval "encoded_bytes_match" ``bytes_in_memory (0w:8 word)
     (DROP (1 * 2 ** ^c.code_alignment) (^c.encode ARB)) ^m UNIV``;
+
+(* Prove the whole existential predicate, rather than just its components.
+   The chosen instruction is well typed and the theorem has no assumptions. *)
+val encoded_goal = ``encoded_bytes_in_mem ^c (0w:8 word) ^m UNIV``;
+val encoded_th = prove (encoded_goal,
+  PURE_REWRITE_TAC [encoded_bytes_in_mem_def]
+  \\ qexists_tac `(asm$Jump (0w:8 word) : 8 asm)`
+  \\ qexists_tac `1`
+  \\ EVAL_TAC);
+val _ = if aconv (concl encoded_th) encoded_goal andalso null (hyp encoded_th)
+  then print "encoded_bytes_in_mem_whole=T\n"
+  else raise Fail "unexpected encoded_bytes_in_mem theorem conclusion or hypotheses";

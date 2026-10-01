@@ -8,3 +8,4 @@ encoded_drop=[30w; 40w]
 encoded_guard_true=T
 encoded_guard_strict=F
 encoded_bytes_match=T
+encoded_bytes_in_mem_whole=T
