@@ -4032,3 +4032,16 @@ or a HOL-to-Lean equivalence proof. Code-map and compiler semantic correctness
 remain open.
 
 Selector: `HOL_PROBE_ONLY=word_to_stack_no_install_programs_probeScript.sml`.
+
+### WordProps code-map no-install convention
+
+`word_props_no_install_code_probeScript.sml` freshly captures full original
+`no_install_code_def`, three carrier queries and sixteen concrete lookup and
+source-predicate observations over widths1/80 and all Spt constructors.
+Malformed trees, missing keys and actual forbidden Install entries remain in
+scope. `Flapjack/Test/WordPropsNoInstallCodeParity.lean` checks the observations
+and arbitrary-width empty/safe-malformed/forbidden-map convention properties.
+Captures are regressions, not a HOL-to-Lean equivalence proof or new original
+proof replay. The predicate does not narrow the source code-map carrier.
+
+Selector: `HOL_PROBE_ONLY=word_props_no_install_code_probeScript.sml`.

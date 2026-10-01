@@ -3689,3 +3689,7 @@ run_probe word_to_stack_comp_no_install_probeScript.sml word_to_stack_comp_no_in
 run_probe word_to_stack_no_install_programs_probeScript.sml word_to_stack_no_install_programs_probe.out \
   ip_full ip_conf_type ip_perf_type ip_register_type ip_source_type ip_bitmap_type ip_outputs_type ip_frames_type ip_residual_type ip_empty_1 ip_safe_1 ip_ignored_1 ip_shared_1 ip_empty_32 ip_safe_32 ip_ignored_32 ip_shared_32 ip_empty_64 ip_safe_64 ip_ignored_64 ip_shared_64 ip_empty_80 ip_safe_80 ip_ignored_80 ip_shared_80 \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_props_no_install_code_probeScript.sml word_props_no_install_code_probe.out \
+  nic_def nic_code_type nic_program_type nic_argument_type nic_empty_1 nic_leaf_zero_1 nic_leaf_missing_1 nic_bad_leaf_1 nic_malformed_empty_1 nic_malformed_value_1 nic_nested_left_1 nic_nested_right_1 nic_empty_80 nic_leaf_zero_80 nic_leaf_missing_80 nic_bad_leaf_80 nic_malformed_empty_80 nic_malformed_value_80 nic_nested_left_80 nic_nested_right_80 \
+  "$cake_dir/compiler/backend/semantics/wordPropsScript.sml" "$cake_dir/compiler/backend/semantics"
