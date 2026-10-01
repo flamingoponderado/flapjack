@@ -39277,5 +39277,21 @@
   "hol_name": "eqenv_sym",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.9: source364-368: exact implication eqenv first second -> eqenv second first, generic Option-key and value carriers. IS_SOME guard retained; temporary ignored in both directions. Needed directly in fullparmove_correct692; no stronger relation assumed."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/Invariants/Path.lean",
+  "lean_name": "windmill_cons",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "windmill_cons",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.10: source50-54: exact equivalence windmill(head::tail) iff head destination not in MAP FST tail and windmill tail. Generic same-component pair/List carrier; no distinct sources, decidable equality or extra wf premise."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/Invariants/Path.lean",
+  "lean_name": "path_change_start",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "path_change_start",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.10: source64-72: universally quantified prefix/replacement/last, exact conjunction path(SNOC last prefix) and FST last=FST replacement implies path(SNOC replacement prefix). SNOC rendered prefix++singleton; all fields/carriers preserved, no fresh destination/NoRead/wf/target-path premise. Structural list induction matches source empty/single/multiple cases. Required wf_step141-149 and thereby dsteps_steps/full scheduler theorem. Ten fresh original T/F path/windmill observations and generic kernel applications cover premise boundaries; wf_step remains open."
 }
 ]

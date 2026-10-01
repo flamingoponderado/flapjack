@@ -2738,3 +2738,7 @@ run_probe word_to_stack_wmove_probeScript.sml word_to_stack_wmove_probe.out \
 run_probe parmove_updates_probeScript.sml parmove_updates_probe.out \
   pu_fresh pu_snapshot pu_untouched pu_later_destination pu_freshness_boundary pu_empty pu_self pu_swap pu_eq_forward pu_eq_reverse \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe parmove_path_probeScript.sml parmove_path_probe.out \
+  pv_empty pv_single pv_chain pv_cycle pv_changed_dest pv_bad_prefix pv_windmill_empty pv_windmill_fresh pv_windmill_repeated pv_windmill_sources \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"

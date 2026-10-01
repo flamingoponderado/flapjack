@@ -874,6 +874,7 @@ import Flapjack.Compiler.Backend.WordToStackRegFormat
 import Flapjack.Compiler.Backend.Parmove
 import Flapjack.Compiler.Backend.Parmove.Semantics
 import Flapjack.Compiler.Backend.Parmove.Invariants
+import Flapjack.Compiler.Backend.Parmove.Invariants.Path
 import Flapjack.Compiler.Backend.Parmove.UpdateLemmas
 import Flapjack.RiscV.CakeAllocatorBitsBridge
 import Flapjack.StackAlloc

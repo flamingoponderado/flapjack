@@ -2037,3 +2037,12 @@ snapshot sources, untouched/empty/self/swap cases and repeated-destination
 freshness failure are replayed by `ParmoveUpdateLemmasParity.lean`, alongside
 generic freshness/windmill theorem applications. Full step invariance and
 `parmove_correct` remain open.
+
+### Parallel-move path preservation prerequisites
+
+`parmove_path_probeScript.sml` captures ten original SNOC-path and windmill
+observations. Empty/single/chain/cycle paths, changed-final-destination and
+broken-prefix failures, and fresh/repeated destinations with repeated sources
+are replayed in the kernel by `ParmovePathParity.lean`. Generic source-shaped
+path_change_start/windmill_cons applications retain the original premises.
+Full wf preservation and scheduler correctness remain open.

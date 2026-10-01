@@ -1,0 +1,10 @@
+pv_empty=T
+pv_single=T
+pv_chain=T
+pv_cycle=T
+pv_changed_dest=F
+pv_bad_prefix=F
+pv_windmill_empty=T
+pv_windmill_fresh=T
+pv_windmill_repeated=F
+pv_windmill_sources=T
