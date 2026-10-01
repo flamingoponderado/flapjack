@@ -1,3 +1,4 @@
+import Flapjack.Test.WordToStackExpressionMaximumParity
 import Flapjack.Test.WordToStackCompLengthParity
 import Flapjack.Test.WordAllocCoalesceCostParity
 import Flapjack.Test.WordAllocLoopCheckerParity
