@@ -40924,5 +40924,14 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Source comparison word_to_stackScript.sml252-258: full cutsets num_set pair (source wordLang33, canonical Spt Unit), AppList word bitmap pair, k/f/f-prime tuple retained. Source f=0 identity; otherwise insert_bitmap(write_bitmap(SND live)k f-prime), constant n2w(index+1), StackStore k0 and returned insertedbitmap unchanged. Native HolProg width with positivewidth words_as_type_indexed_bitvec reviewed; universal both-component transport to reviewed wLiveExact kernelchecked, no wf/domain/targetrun premise. Actual fullcompiler/productionroute remains open."
-}
+},
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "comp_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeCompile.lean",
+    "lean_name": "compNative",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison original453-555 and fresh original constant type: AsmConfigExact width, WordLangProgHOL(BitVec width), AppListword/length, complete k/f/f-prime, total native HolProg/bitmap pair. Every source clause and impossible fallback preserved, recursive Call return+handler tuples and source Seq/If bitmap order; native helpers source-reviewed, total instruction/address codecs, constructor store-name translation fixedTemp5, validImm exact SumCmp branch. words_as_type_indexed_bitvec with positivewidth; no callback/targetresult/conversion/wf premise. Kernel structural termination38 and19fresh original directcomp rows kernel-replayed. Definition port only; compile_prog/topproduction routing and correctness remainOPEN."
+  }
 ]
