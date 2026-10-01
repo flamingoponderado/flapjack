@@ -51578,5 +51578,14 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-sol-a source comparison flapjack-u9pq: exact native functional-induction clause7/8/9 of original ssa_cc_trans_props5951ff. Seq original guarded second IH then initial first IH; MustTerminate original same-context bodyIH; If original renamed-condition/regimm guards and first-produced branch tuple guard for second IH, second branch retains original map and advanced counter. Exact original output equality/map/allocation premises derive all3 counter/class/map conclusions including actual reconciliation; no additional caller/output/evaluation/validity premise or arbitrary-context IH. Original complete literal case tactics kernel replay and all outer/context types captured; owning native Nat/List/Spt/regimm/prog carriers and positive BitVec dimension compared. Proof-only, executed behavior unchanged."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "ssa_cc_trans_props",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramProps.lean",
+  "lean_name": "ssaCcTransProps",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol-a source comparison flapjack-hyxt: full original all-program ssa_cc_trans_props5951ff, including resumed Loop/Break/Continue cases. Quantified native program/map/counter/loop-table/output tuple; actual compiler equality then original ssa_map_ok/is_alloc_var premise imply counter monotonicity/allocated counter/output-map bound. No case IH, desired target evaluation, validity or output-frame premise in final theorem. Native datatype induction includes both nested option-product handler programs and all27functional cases; scoped original case IHs are discharged by induction. Exact original HOL functional-induction assembly from literal27case proof replays, full source types captured. Spt Nat map, List of Spt Nat/two Spt Unit loop-table triples, native constructor arities and positive width BitVec match reviewed owning carriers. No executable behavior change."
 }
 ]
