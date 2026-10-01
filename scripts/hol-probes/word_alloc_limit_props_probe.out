@@ -1,0 +1,13 @@
+lp_full_source_replay=⊢ ∀prog lim. limit_var prog = lim ⇒ is_alloc_var lim ∧ every_var (λx. x < lim) prog
+lp_residue0=(0,5,T,T)
+lp_residue1=(1,5,T,T)
+lp_residue2=(2,5,T,T)
+lp_residue3=(3,5,T,T)
+lp_residue4=(4,9,T,T)
+lp_skip1=(0,5,T,T)
+lp_seven=(7,9,T,T)
+lp_eight=(8,13,T,T)
+lp_ignored16=(0,5,T,T)
+lp_tail_handler=(0,5,T,T)
+lp_call_body=(26,29,T,T)
+lp_huge=(1208925819614629174706176,1208925819614629174706181,T,T)

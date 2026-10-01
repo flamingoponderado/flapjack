@@ -3297,7 +3297,7 @@ run_probe reg_alloc_coalesce_probeScript.sml reg_alloc_coalesce_probe.out \
   "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
 run_probe reg_alloc_worklist_probeScript.sml reg_alloc_worklist_probe.out \
-  dd_basic dd_zero dd_oob ddeg_basic ddeg_dup ddeg_out_of_dim ddeg_oob_adj asw_basic aspw_basic afw_basic aum_basic ps_basic ps_oob_move_related ps_oob rs_low rs_high_frozen rs_high_not_frozen rs_oob \
+  asw_type aspw_type afw_type aum_type dd_basic dd_zero dd_oob ddeg_basic ddeg_dup ddeg_out_of_dim ddeg_oob_adj asw_basic aspw_basic afw_basic aum_basic ps_basic ps_oob_move_related ps_oob rs_low rs_high_frozen rs_high_not_frozen rs_oob \
   "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
 run_probe reg_alloc_considered_var_probeScript.sml reg_alloc_considered_var_probe.out \
@@ -3564,10 +3564,27 @@ run_probe word_to_stack_no_shmemop_return_probeScript.sml word_to_stack_no_shmem
 run_probe word_to_stack_no_shmemop_inst_probeScript.sml word_to_stack_no_shmemop_inst_probe.out \
   ci_skip ci_const ci_binop_imm ci_binop_reg ci_shift_imm ci_shift_reg ci_div ci_long_mul ci_long_div ci_carry ci_add_overflow ci_sub_overflow ci_load ci_load8 ci_load16 ci_load32 ci_store ci_store8 ci_store16 ci_store32 ci_fpless ci_fplessequal ci_fpequal ci_fpabs ci_fpneg ci_fpsqrt ci_fpadd ci_fpsub ci_fpmul ci_fpdiv ci_fpfma ci_fpmov ci_fpmovtoreg ci_fpmovfromreg ci_fptoint ci_fpfromint ci_fpmovtoreg1 ci_fpmovfromreg1 ci_fpmovtoreg32 ci_fpmovfromreg32 ci_fpmovtoreg80 ci_fpmovfromreg80 \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
 run_probe ssa_map_bounds_probeScript.sml ssa_map_bounds_probe.out \
   mb_empty mb_valid mb_same mb_bound mb_physical mb_invalid mb_large_physical mb_large mb_overwrite mb_more \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+
+
+
+run_probe word_alloc_limit_props_probeScript.sml word_alloc_limit_props_probe.out \
+  lp_full_source_replay lp_residue0 lp_residue1 lp_residue2 lp_residue3 lp_residue4 lp_skip1 lp_seven lp_eight lp_ignored16 lp_tail_handler lp_call_body lp_huge \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+
+
+run_probe word_to_stack_no_shmemop_handlers_probeScript.sml word_to_stack_no_shmemop_handlers_probe.out \
+  hn_push_source hn_pop_source hn_args_source hn_push_type hn_pop_type hn_args_type hn_push_64_F hn_pop_64_F_safe hn_pop_64_F_forbidden hn_push_64_T hn_pop_64_T_safe hn_pop_64_T_forbidden hn_push_1_F hn_pop_1_F_safe hn_pop_1_F_forbidden hn_push_1_T hn_pop_1_T_safe hn_pop_1_T_forbidden hn_args_direct_zero hn_args_direct_perf hn_args_indirect_small hn_args_indirect_huge \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_to_lab_native_probeScript.sml stack_to_lab_native_probe.out \
+  native_flatten_definition native_seq_tail_tree native_if_left_skip_tree native_if_right_skip_tree native_if_left_noreturn_tree native_if_right_noreturn_tree native_if_fallthrough_tree native_loop_tree native_call_handler_tree native_section_seq native_tick native_inst native_halt native_raise native_return native_break_missing native_continue_missing native_rawcall native_tailcall_label native_tailcall_register native_lower native_location native_install native_shared native_buffer native_fallback native_width1 native_width80 native_ffi native_fallback_01 native_fallback_02 native_fallback_03 native_fallback_04 native_fallback_05 native_fallback_06 native_fallback_07 native_fallback_08 native_fallback_09 native_fallback_10 native_fallback_11 native_fallback_12 native_fallback_13 native_fallback_14 native_fallback_15 native_if_both_skip native_call_return_only \
+  "$cake_dir/compiler/backend/stack_to_labScript.sml" "$cake_dir/compiler/backend"
 run_probe ssa_locals_insert_probeScript.sml ssa_locals_insert_probe.out \
   fi_full fi_source_type fi_target_type fi_value_type fi_set_var_full fi_empty fi_preserve \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -3602,3 +3619,15 @@ run_probe word_to_stack_no_shmemop_flat_probeScript.sml word_to_stack_no_shmemop
 run_probe word_to_stack_no_shmemop_recursive_probeScript.sml word_to_stack_no_shmemop_recursive_probe.out \
   rc_must_1 rc_loop_1 rc_seq_1 rc_reg_1 rc_imm_yes_1 rc_imm_no_1 rc_must_32 rc_loop_32 rc_seq_32 rc_reg_32 rc_imm_yes_32 rc_imm_no_32 rc_must_64 rc_loop_64 rc_seq_64 rc_reg_64 rc_imm_yes_64 rc_imm_no_64 rc_must_80 rc_loop_80 rc_seq_80 rc_reg_80 rc_imm_yes_80 rc_imm_no_80 rc_must_shared rc_must_invalid rc_must_ignored_handler rc_loop_shared rc_loop_invalid rc_loop_ignored_handler rc_seq_shared rc_seq_invalid rc_seq_ignored_handler rc_reg_shared rc_reg_invalid rc_reg_ignored_handler rc_imm_yes_shared rc_imm_yes_invalid rc_imm_yes_ignored_handler rc_imm_no_shared rc_imm_no_invalid rc_imm_no_ignored_handler \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
+run_probe ssa_rename_property_wrappers_probeScript.sml ssa_rename_property_wrappers_probe.out \
+  rw_core_full rw_move_full rw_move_type rw_single_full \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe ssa_option_lookup_subset_probeScript.sml ssa_option_lookup_subset_probe.out \
+  os_full os_type_ssa os_type_cst_locs os_type_ls \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_rename_move_preserve_weak_probeScript.sml ssa_rename_move_preserve_weak_probe.out \
+  rmw_full rmw_type_st rmw_type_cst rmw_type_ssa rmw_type_na rmw_type_ls \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"

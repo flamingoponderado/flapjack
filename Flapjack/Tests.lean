@@ -1,3 +1,7 @@
+import Flapjack.Test.StackToLabNativeParity
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMovePreserve
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAOptionLookupSubset
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenamePropertyWrappers
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsPhysicalStateUpdates
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoves.CorrectLeft
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoves.CorrectRight
