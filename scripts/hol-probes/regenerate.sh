@@ -2664,5 +2664,7 @@ run_probe word_alloc_get_live_probeScript.sml word_alloc_get_live_probe.out \
 # (word_to_stackScript.sml:88-175), including the width-64 FP move clauses and
 # the Load16/Store16 Skip catch-all.
 run_probe word_to_stack_winst_probeScript.sml word_to_stack_winst_probe.out \
-  wi_const wi_skip "$cake_dir/compiler/backend/word_to_stackScript.sml" \
+  wi_const wi_binop_imm wi_binop_reg wi_div wi_addcarry wi_longmul wi_longdiv \
+  wi_load16_skip wi_store wi_fpless wi_fpmovtoreg wi_fpmovfromreg wi_fpadd wi_skip \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" \
   "$cake_dir/compiler/backend"

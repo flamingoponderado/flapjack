@@ -501,8 +501,10 @@ def wShareInst {α : Type} (op : WordMemOp) (v : Nat)
 
 Every clause is mirrored, with `dimindex (:'a) = 64` becoming `width = 64`.
 `Load16`/`Store16` are not handled by HOL and fall to the `Skip` catch-all, as
-in the source. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "wInst_def"]
+in the source. The positive-width BitVec translation is recorded explicitly;
+this helper is not yet wired into the executed compiler (bead 15.3.25). -/
+@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "wInst_def"
+  (words_as_type_indexed_bitvec)]
 def wInst {width : Nat} [NeZero width] (i : WordLangInst (BitVec width))
     (kf : Nat × Nat × Nat) : ProgM (BitVec width) :=
   match i with
