@@ -2262,3 +2262,17 @@ original destination-membership theorem, including malformed states.
 `labsem_semantics_probeScript.sml` proves four whole behavior observations through original `semantics_def`: Error, success, resource limit, and self-loop divergence with the entire arbitrary input trace retained. Evaluator equations are derived in the original HOL kernel and record-update left-hand sides normalized before rewriting the quantified clocks. The loop equation covers every natural clock by induction; the divergent trace uses the actual constant-image and prefix-chain/LUB uniqueness theorems. `Flapjack/Test/LabSemSemanticsParity.lean` proves the corresponding native observations, including arbitrary Halt word values. Neither side substitutes a finite timeout for divergence.
 
 `parmove_dstep_step_probeScript.sml` captures six original wf premises and nine cycle semantic values before Save, after Save, and after EmitHead. Kernel fixtures prove all six actual DStep-to-Steps applications with the original wf premise. The temporary changes99to17 on Save; no functional scheduler simulation is assumed.
+
+`word_to_stack_compile_keys_probeScript.sml` captures seven fresh original
+key-list projections of the actual recursive compiler, retaining empty, generic,
+duplicate and reordered identifiers, bitmap-changing bodies and width-one
+inputs. `WordToStackCompileKeysParity.lean` applies the full reviewed theorem
+to the same actual compiler results. The source theorem preserves the entire
+key list; it does not establish pass simulation or final binary correctness.
+
+
+`word_alloc_total_colour_probeScript.sml` records eight direct original
+`total_colour` lookups: absent physical/virtual keys (including large keys),
+mapped physical/virtual keys, and a mapped zero colour. Same-input kernel
+fixtures are registered in the actual CompilerParity test root.
+`word_alloc_even_locals_probeScript.sml` computes the original starting-local domain predicate on six full native word/location trees: empty, zero, sparse even keys, odd, mixed and duplicate overwrite. Standard finite-domain logical rewrites normalize its universal quantifier; actual Spt insertion-domain lemmas replay the same six inputs in kernel fixtures imported by CompilerParity. This predicate is a prerequisite, not the whole allocator theorem.

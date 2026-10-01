@@ -872,10 +872,13 @@ filtered alist. Its unconditional theorem
 implementation with the source-shaped wrapper using `inlineProgHOLExact`.
 No certificate or successful-pass premise is added to this declaration.
 
-This is the exact declaration-level compiler, separate from the executed
-production carrier bridge. That remaining route is tracked by
-`flapjack-4ac.2.20.3` and `flapjack-e7w.2`; tagging this definition does not
-establish that production route. -/
+The parser-proved entrypoint executes this declaration-level compiler through
+`compileProgNativeWithMetadataRouted` and `compileProgNativeWithMetadata` in
+`CompileProgCorrespondence.lean`. The standard BitVec literal dictionaries
+select the native route; custom dictionaries retain compatibility compilation.
+That module proves complete decoded output and metadata agreement under the
+parser-supplied declaration byte-range condition. This definition and codec
+agreement do not establish the end-to-end compiler correctness theorem. -/
 @[hol "cakeml/pancake/pan_to_crepScript.sml" "compile_prog_def"
   (words_as_type_indexed_bitvec)]
 def compileProgDeclsHOLW {width : Nat} [NeZero width]
