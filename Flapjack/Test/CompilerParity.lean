@@ -1,3 +1,4 @@
+import Flapjack.Test.StackPropsCodeLabelsParity
 import Flapjack.Test.RegAllocInitializationParity
 import Flapjack.Test.WordCopyCodecDomainParity
 import Flapjack.Test.CanonizeMovesParity

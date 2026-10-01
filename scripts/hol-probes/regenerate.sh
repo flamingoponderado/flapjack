@@ -3129,3 +3129,7 @@ run_probe parmove_state_to_list_probeScript.sml parmove_state_to_list_probe.out 
 run_probe parmove_temp_steps_probeScript.sml parmove_temp_steps_probe.out \
   ptr_remove ptr_start ptr_extend ptr_save_cycle ptr_emit_head ptr_emit_last ptr_save_none ptr_emit_scratch ptr_bool ptr_refl_empty ptr_refl_scratch ptr_cycle_three \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe stackprops_code_labels_probeScript.sml stackprops_code_labels_probe.out \
+  sl_skip sl_jump sl_raw sl_location sl_store_none sl_store_some sl_direct_tail sl_indirect_tail_handler sl_direct_tail_handler sl_return_owner sl_return_other_owner sl_return_no_handler sl_sequence_duplicate sl_if_loop sl_nested_handlers \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
