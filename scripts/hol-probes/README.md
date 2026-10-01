@@ -3730,3 +3730,33 @@ ssa_physical_state_updates_probe.out freshly replays the literal physical-target
 ### Loop-to-Word label threading and handler ownership
 
 `loop_to_word_label_handlers_probeScript.sml` replays all four full literal source proofs: function-label preservation, next-label monotonicity, handler ownership for comp, and per-function ownership for compile_prog. Actual theorem applications use original compiler equalities supplied by EVAL; no extra guard or target evaluation assumption. Complete nested outputs at widths 1/64/80 show return labels, exception labels, both continuations and final counter; the tail case ignores its source handlers. A duplicate-owner compiled list and false-owner sentinel are retained. Matching generic-width kernel fixtures apply the public theorems and check the complete nested output.
+### Native compiler flat-effect no-shared-memory cases
+
+`word_to_stack_no_shmemop_flat_probeScript.sml` captures fifty-four original
+source-guard/actual-target-predicate observations for twelve flat-effect cases
+over widths1/32/64/80, both perf flags and zero/nonzero/large frames. Samples
+include move cycles/repeated sources, malformed cutsets, bitmap-producing live
+and constant paths, exact byte-backed FFI names and all Set expression branches.
+`WordToStackNoShmemopFlatEffectsParity` replays the identical inputs through
+actual compiler equations: fifty direct kernel predicate reductions and four
+Move observations using accepted preservation for arbitrary scheduled lists.
+The latter do not claim direct reduction of the scheduler. Twelve generic
+public case applications keep the original guard and compilation equality.
+These regressions do not establish cross-language equivalence or the complete
+compiler theorem. Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_flat_probeScript.sml`.
+
+### Native compiler recursive no-shared-memory cases
+
+`word_to_stack_no_shmemop_recursive_probeScript.sml` evaluates forty-two
+original source/actual-target predicate pairs for MustTerminate, Loop, Seq
+and all If operand/validation branches. Widths1/32/64/80, both perf flags,
+malformed cutsets and nested bitmap-producing branches are retained. False
+source guards include genuinely forbidden output, invalid-address fallback
+and an independently checked handler ignored by the tail-call compiler;
+explicit false/false and false/true expectations prevent an equivalence claim.
+`WordToStackNoShmemopRecursiveParity` kernel-reduces the identical compiler
+equations and applies all four generic original-shaped cases with only their
+legitimate source-subprogram induction hypotheses. The accepted full source
+guard equations are reused. These regressions do not establish cross-language
+equivalence or complete the compiler theorem. Selector:
+`HOL_PROBE_ONLY=word_to_stack_no_shmemop_recursive_probeScript.sml`.
