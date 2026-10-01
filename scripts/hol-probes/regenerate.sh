@@ -2703,3 +2703,7 @@ run_probe word_to_stack_index_list_probeScript.sml word_to_stack_index_list_prob
 run_probe parmove_semantics_probeScript.sml parmove_semantics_probe.out \
   sem_windmill sem_repeated sem_parallel_swap1 sem_parallel_swap2 sem_sequential_swap2 sem_parallel_last sem_sequential_last sem_untouched sem_state_first sem_state_second sem_ignore_temp sem_real_difference \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe parmove_scheduler_probeScript.sml parmove_scheduler_probe.out \
+  pm_final pm_temp_self pm_empty pm_self pm_single pm_chain pm_swap pm_cycle pm_repeated \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"

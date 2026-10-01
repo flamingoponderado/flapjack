@@ -1974,3 +1974,11 @@ and eqenv ignores only NONE. The two eqenv rows use the original
 `ParmoveSemanticsParity.lean` checks every captured observation; no windmill
 premise is imposed on repeated destinations. Full scheduler correctness and
 production wiring remain open.
+
+### Literal parallel-move scheduler
+
+`parmove_scheduler_probeScript.sml` captures nine original pmov/parmove outputs:
+final emitted suffix, temporary self-move, empty/self/single moves, chain, swap,
+three-cycle and repeated destinations. `ParmoveFstepParity.lean` replays them.
+The recursion uses the original measure, not fuel. Full semantic correctness
+and the executed Word-to-Stack wrapper remain open.
