@@ -41582,6 +41582,42 @@
     "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.11): literal lab_to_targetScript.sml:109-118, all four clauses in order. `CallFFI s => 0w - n2w (pos + (3 + get_ffi_index ffis (ExtCall s)) * ffi_offset)`, `Install => 0w - n2w (pos + 2 * ffi_offset)`, `Halt => 0w - n2w (pos + ffi_offset)`, and the catch-all `a => n2w (find_pos (get_label a) labs) - n2w pos`; `pos` is HOL num (Lean Nat), `ffis` is the exact ffiname list (Lean List HolFfiName, ExtCall s = .extCall MlString), and ffi_offset is ffiOffset. The HOL probe showed the result `b word` stays independent of the instruction's `a reg_imm` word dimension (dimword (:-a) stayed free when the instruction was fixed at 64), so the port keeps two independent positive widths (regImmWidth and width) rather than specializing. Only HOL's type-indexed `a word` is translated to positive-width BitVec width with its own [NeZero] (words_as_type_indexed_bitvec) and the 0w-/n2w rendering is kept literal. Replayed as the GetJumpOffset* rows of scripts/hol-probes/lab_to_target_positions_probe.out in Flapjack.Test.LabToTargetPositionsParity. Coordinator source review pending."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/SecondPass.lean",
+    "lean_name": "encLinesAgain",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "enc_lines_again_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 factual clause comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.13): literal lab_to_targetScript.sml:120-136, clause for clause. The empty list returns `(REVERSE acc, pos, ok)`; `Label k1 k2 l :: xs` and `Asm x1 x2 l :: xs` recurse at `pos + l` prepending the unchanged line; `LabAsm a w bytes l :: xs` computes `w1 = get_jump_offset a ffis labs pos`, recurses at `pos + l` when `w = w1`, and otherwise re-encodes `bs = enc (lab_inst w1 a)`, takes `l1 = MAX (LENGTH bs) l`, recurses at `pos + l1` with `LabAsm a w1 bs l1` and flag `ok AND (l1 = l)`. HOL `REVERSE`/`MAX`/`LENGTH`/`T`/conjunction are `List.reverse`/`Nat.max`/`.length`/`true`/`&& on Bool`, and the `(l1 = l)` conjunct is `decide (l1 = l)`. The instructions/position use the exact LabLang carriers at one shared word width; the words qualifier records only HOL's type-indexed word to positive-width `BitVec width` (with `[NeZero width]`) translation of the line's position field and the `get_jump_offset`/`lab_inst` results. The encoder parameter is the HOL `enc : HolAsm width -> word8 list`, not the production assembler. Replayed as the four EncLinesAgain rows of scripts/hol-probes/lab_to_target_secondpass_probe.out in Flapjack.Test.LabToTargetSecondPassParity. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/SecondPass.lean",
+    "lean_name": "encSecsAgain",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "enc_secs_again_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 factual clause comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.13): literal lab_to_targetScript.sml:137-144, clause for clause. The empty list is `([], T)`; `Section s lines :: rest` computes `(lines1, pos1, ok) = enc_lines_again labs ffis pos enc lines ([], T)`, then `(rest1, ok1) = enc_secs_again pos1 labs ffis enc rest`, returning `(Section s lines1 :: rest1, ok AND ok1)`. The shared one-width LabLang Line/Section carriers are used throughout with HOL `T`/conjunction rendered as `true`/`&&` on Bool; the words qualifier records only HOL's type-indexed word to positive-width `BitVec width` translation. Replayed as the two EncSecsAgain rows of scripts/hol-probes/lab_to_target_secondpass_probe.out in Flapjack.Test.LabToTargetSecondPassParity. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/SecondPass.lean",
+    "lean_name": "linesUpdLabLen",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "lines_upd_lab_len_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 factual clause comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.13): literal lab_to_targetScript.sml:147-157, clause for clause. The empty list is `(REVERSE acc, pos)`; `Label k1 k2 l :: xs` sets `l1 = if EVEN pos then 0 else 1` (HOL `EVEN pos` rendered as `pos % 2 = 0`), recurses at `pos + l1` replacing the label by `Label k1 k2 l1`; `Asm x1 x2 l :: xs` and `LabAsm a w bytes l :: xs` recurse at `pos + l` prepending the unchanged line. The line's position field is the same shared word width; the words qualifier records only HOL's type-indexed word to positive-width `BitVec width` translation. Replayed as the three LinesUpdLabLen rows of scripts/hol-probes/lab_to_target_secondpass_probe.out in Flapjack.Test.LabToTargetSecondPassParity. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/SecondPass.lean",
+    "lean_name": "updLabLen",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "upd_lab_len_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 factual clause comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.13): literal lab_to_targetScript.sml:158-166, clause for clause. The empty list is `[]`; `Section s lines :: rest` computes `(lines1, pos1) = lines_upd_lab_len pos lines []`, then `rest1 = upd_lab_len pos1 rest`, returning `Section s lines1 :: rest1`. The same shared one-width Line/Section carriers and the words qualifier recording only HOL's type-indexed word to positive-width `BitVec width` translation; no extra hypothesis or clause change. Replayed as the two UpdLabLen rows of scripts/hol-probes/lab_to_target_secondpass_probe.out in Flapjack.Test.LabToTargetSecondPassParity. Coordinator source review pending."
+  },
+  {
     "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
     "hol_name": "wf_union",
     "lean_path": "Flapjack/Misc/Sptree/Wf.lean",
