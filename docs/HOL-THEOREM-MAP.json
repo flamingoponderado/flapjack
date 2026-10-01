@@ -43160,5 +43160,77 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison (2026-10-01; bead .18.5.15.10.22): original lines94-115. Definition retains arbitrary encoder/instruction/encoded list, generic encoded payload, zero-NOP-length branch, truncated subtraction and natural DIV, APPEND/FLAT/REPLICATE. Exact native HolAsm includes all source constructors; only polymorphic word dimension translates to positive BitVec width. The iff retains the complete existential repetition count, with no encoder validity/nonempty/length premise. Proof handles empty encoding and derives quotient from append/repetition lengths exactly as HOL. This is the original proof-side relation, no executed compiler behavior changes. Original proof theory has no prebuilt object here; enc_with_nop_source_type.sml re-elaborates unchanged source text in an in-memory HOL theory for type inspection, not a prebuilt-theory oracle or equivalence claim. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/Interference.lean",
+    "lean_name": "shiftInterfer",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "shift_interfer_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; bead .18.5.15.10.23): original targetPropsScript.sml10-90 and lab_to_targetProofScript.sml132-149/230-247. Native accepted MachineConfig/AsmState fields retained; shift changes only nextInterfer via the exact shift_seq(i+k), leaving all FFI/cache/target fields intact. Zero theorem retains function equality to I; compositions retain each original count order. bytesInMemoryHOL fixed word8 payload and all wrapped BitVec offsets retained. SUBSET uses universal predicate implication; DIFF retains domain equality to domain2-and-not-pcs, initial memory relation and full DISJOINT premise. DISJOINT is expanded as forall address not(membership and exists bounded offset equality); set-of-list membership is List membership, with no uniqueness assumption. Shorter preserves complete original conjunction and conclusion. Only polymorphic word dimension translates to positive BitVec width; no extra successful evaluation, encoder or region premise. Fresh source-derived HOL eight observations and kernel fixtures PASS; exact unchanged definition text is re-elaborated because prebuilt targetProps theory is unavailable, not a prebuilt-theory oracle or cross-language equivalence claim. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/Interference.lean",
+    "lean_name": "shiftInterfer_intro",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "shift_interfer_intro",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; bead .18.5.15.10.23): original targetPropsScript.sml10-90 and lab_to_targetProofScript.sml132-149/230-247. Native accepted MachineConfig/AsmState fields retained; shift changes only nextInterfer via the exact shift_seq(i+k), leaving all FFI/cache/target fields intact. Zero theorem retains function equality to I; compositions retain each original count order. bytesInMemoryHOL fixed word8 payload and all wrapped BitVec offsets retained. SUBSET uses universal predicate implication; DIFF retains domain equality to domain2-and-not-pcs, initial memory relation and full DISJOINT premise. DISJOINT is expanded as forall address not(membership and exists bounded offset equality); set-of-list membership is List membership, with no uniqueness assumption. Shorter preserves complete original conjunction and conclusion. Only polymorphic word dimension translates to positive BitVec width; no extra successful evaluation, encoder or region premise. Fresh source-derived HOL eight observations and kernel fixtures PASS; exact unchanged definition text is re-elaborated because prebuilt targetProps theory is unavailable, not a prebuilt-theory oracle or cross-language equivalence claim. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/Interference.lean",
+    "lean_name": "bytesInMemory_subset",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "bytes_in_memory_SUBSET",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; bead .18.5.15.10.23): original targetPropsScript.sml10-90 and lab_to_targetProofScript.sml132-149/230-247. Native accepted MachineConfig/AsmState fields retained; shift changes only nextInterfer via the exact shift_seq(i+k), leaving all FFI/cache/target fields intact. Zero theorem retains function equality to I; compositions retain each original count order. bytesInMemoryHOL fixed word8 payload and all wrapped BitVec offsets retained. SUBSET uses universal predicate implication; DIFF retains domain equality to domain2-and-not-pcs, initial memory relation and full DISJOINT premise. DISJOINT is expanded as forall address not(membership and exists bounded offset equality); set-of-list membership is List membership, with no uniqueness assumption. Shorter preserves complete original conjunction and conclusion. Only polymorphic word dimension translates to positive BitVec width; no extra successful evaluation, encoder or region premise. Fresh source-derived HOL eight observations and kernel fixtures PASS; exact unchanged definition text is re-elaborated because prebuilt targetProps theory is unavailable, not a prebuilt-theory oracle or cross-language equivalence claim. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/Interference.lean",
+    "lean_name": "bytesInMemory_diff",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "bytes_in_memory_DIFF",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; bead .18.5.15.10.23): original targetPropsScript.sml10-90 and lab_to_targetProofScript.sml132-149/230-247. Native accepted MachineConfig/AsmState fields retained; shift changes only nextInterfer via the exact shift_seq(i+k), leaving all FFI/cache/target fields intact. Zero theorem retains function equality to I; compositions retain each original count order. bytesInMemoryHOL fixed word8 payload and all wrapped BitVec offsets retained. SUBSET uses universal predicate implication; DIFF retains domain equality to domain2-and-not-pcs, initial memory relation and full DISJOINT premise. DISJOINT is expanded as forall address not(membership and exists bounded offset equality); set-of-list membership is List membership, with no uniqueness assumption. Shorter preserves complete original conjunction and conclusion. Only polymorphic word dimension translates to positive BitVec width; no extra successful evaluation, encoder or region premise. Fresh source-derived HOL eight observations and kernel fixtures PASS; exact unchanged definition text is re-elaborated because prebuilt targetProps theory is unavailable, not a prebuilt-theory oracle or cross-language equivalence claim. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetProps/Interference.lean",
+    "lean_name": "ffiEntryPcsDisjoint",
+    "hol_path": "cakeml/compiler/backend/semantics/targetPropsScript.sml",
+    "hol_name": "ffi_entry_pcs_disjoint_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; bead .18.5.15.10.23): original targetPropsScript.sml10-90 and lab_to_targetProofScript.sml132-149/230-247. Native accepted MachineConfig/AsmState fields retained; shift changes only nextInterfer via the exact shift_seq(i+k), leaving all FFI/cache/target fields intact. Zero theorem retains function equality to I; compositions retain each original count order. bytesInMemoryHOL fixed word8 payload and all wrapped BitVec offsets retained. SUBSET uses universal predicate implication; DIFF retains domain equality to domain2-and-not-pcs, initial memory relation and full DISJOINT premise. DISJOINT is expanded as forall address not(membership and exists bounded offset equality); set-of-list membership is List membership, with no uniqueness assumption. Shorter preserves complete original conjunction and conclusion. Only polymorphic word dimension translates to positive BitVec width; no extra successful evaluation, encoder or region premise. Fresh source-derived HOL eight observations and kernel fixtures PASS; exact unchanged definition text is re-elaborated because prebuilt targetProps theory is unavailable, not a prebuilt-theory oracle or cross-language equivalence claim. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Interference.lean",
+    "lean_name": "shiftInterfer_zero",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "shift_interfer_0",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; bead .18.5.15.10.23): original targetPropsScript.sml10-90 and lab_to_targetProofScript.sml132-149/230-247. Native accepted MachineConfig/AsmState fields retained; shift changes only nextInterfer via the exact shift_seq(i+k), leaving all FFI/cache/target fields intact. Zero theorem retains function equality to I; compositions retain each original count order. bytesInMemoryHOL fixed word8 payload and all wrapped BitVec offsets retained. SUBSET uses universal predicate implication; DIFF retains domain equality to domain2-and-not-pcs, initial memory relation and full DISJOINT premise. DISJOINT is expanded as forall address not(membership and exists bounded offset equality); set-of-list membership is List membership, with no uniqueness assumption. Shorter preserves complete original conjunction and conclusion. Only polymorphic word dimension translates to positive BitVec width; no extra successful evaluation, encoder or region premise. Fresh source-derived HOL eight observations and kernel fixtures PASS; exact unchanged definition text is re-elaborated because prebuilt targetProps theory is unavailable, not a prebuilt-theory oracle or cross-language equivalence claim. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Interference.lean",
+    "lean_name": "shiftInterfer_twice",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "shift_interfer_twice",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; bead .18.5.15.10.23): original targetPropsScript.sml10-90 and lab_to_targetProofScript.sml132-149/230-247. Native accepted MachineConfig/AsmState fields retained; shift changes only nextInterfer via the exact shift_seq(i+k), leaving all FFI/cache/target fields intact. Zero theorem retains function equality to I; compositions retain each original count order. bytesInMemoryHOL fixed word8 payload and all wrapped BitVec offsets retained. SUBSET uses universal predicate implication; DIFF retains domain equality to domain2-and-not-pcs, initial memory relation and full DISJOINT premise. DISJOINT is expanded as forall address not(membership and exists bounded offset equality); set-of-list membership is List membership, with no uniqueness assumption. Shorter preserves complete original conjunction and conclusion. Only polymorphic word dimension translates to positive BitVec width; no extra successful evaluation, encoder or region premise. Fresh source-derived HOL eight observations and kernel fixtures PASS; exact unchanged definition text is re-elaborated because prebuilt targetProps theory is unavailable, not a prebuilt-theory oracle or cross-language equivalence claim. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Interference.lean",
+    "lean_name": "ffiEntryPcsDisjoint_shorter",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "ffi_entry_pcs_disjoint_LENGTH_shorter",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; bead .18.5.15.10.23): original targetPropsScript.sml10-90 and lab_to_targetProofScript.sml132-149/230-247. Native accepted MachineConfig/AsmState fields retained; shift changes only nextInterfer via the exact shift_seq(i+k), leaving all FFI/cache/target fields intact. Zero theorem retains function equality to I; compositions retain each original count order. bytesInMemoryHOL fixed word8 payload and all wrapped BitVec offsets retained. SUBSET uses universal predicate implication; DIFF retains domain equality to domain2-and-not-pcs, initial memory relation and full DISJOINT premise. DISJOINT is expanded as forall address not(membership and exists bounded offset equality); set-of-list membership is List membership, with no uniqueness assumption. Shorter preserves complete original conjunction and conclusion. Only polymorphic word dimension translates to positive BitVec width; no extra successful evaluation, encoder or region premise. Fresh source-derived HOL eight observations and kernel fixtures PASS; exact unchanged definition text is re-elaborated because prebuilt targetProps theory is unavailable, not a prebuilt-theory oracle or cross-language equivalence claim. Coordinator review pending."
   }
 ]

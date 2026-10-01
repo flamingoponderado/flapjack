@@ -2693,3 +2693,15 @@ case is also checked by `rfl`. Finite parity observations support the literal
 source comparison; they do not prove cross-prover equivalence or execute a
 production allocator replacement. Native phase proofs and production routing
 remain separate work.
+
+`target_props_interference_probe.out` contains eight source-derived HOL
+observations of oracle shifts and wrapped FFI regions, replayed by
+`TargetPropsInterferenceParity`. The probe reads unchanged original
+`shift_interfer_def` and `ffi_entry_pcs_disjoint_def` bodies and re-elaborates
+them in memory using the original machine carriers. The original targetProps
+proof theory has no prebuilt object here; this is explicitly source-derived
+execution, not a prebuilt-theory oracle or cross-language equivalence proof.
+No theory artifact is exported. Rows cover identity/composition, preservation
+of FFI/target fields, duplicate FFI entries, empty intervals, and wraparound
+that first hits an FFI entry. Unresolved logical observations are rejected.
+Regenerate with `HOL_PROBE_ONLY=target_props_interference_probeScript.sml scripts/hol-probes/regenerate.sh`.

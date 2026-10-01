@@ -6,8 +6,8 @@ open Flapjack Flapjack.Compiler.Backend.Semantics.TargetProps
 @[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
   "shift_interfer_0" (words_as_type_indexed_bitvec)]
 theorem shiftInterfer_zero {width : Nat} [NeZero width] {state projection : Type}
-    : shiftInterfer (width := width) (state := state) (projection := projection) 0 =
-      (id : MachineConfig width state projection → MachineConfig width state projection) := by
+    : (shiftInterfer 0 : MachineConfig width state projection →
+        MachineConfig width state projection) = id := by
   funext config
   have horacle : holShiftSeq 0 config.nextInterfer = config.nextInterfer := by
     funext index

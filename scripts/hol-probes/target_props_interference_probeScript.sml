@@ -31,7 +31,7 @@ fun print_eval label q = let
         numLib.BOUNDED_EXISTS_CONV EVAL)) THENC EVAL THENC
     REPEATC (CHANGED_CONV (DEPTH_CONV
       (numLib.BOUNDED_FORALL_CONV EVAL ORELSEC numLib.BOUNDED_EXISTS_CONV EVAL)
-      THENC EVAL))) q
+      THENC EVAL)) THENC SIMP_CONV (srw_ss()) []) q
   val _ = if aconv (rconc th) ``T`` then () else raise Fail (label ^ ": unresolved observation")
   in print (label ^ "="); print_term (rconc th); print "\n" end;
 val config = ``(ARB:(8,num,unit) machine_config) with

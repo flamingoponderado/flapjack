@@ -4,5 +4,5 @@ shift_composition=T
 shift_ffi_unchanged=T
 shift_target_unchanged=T
 region_empty=T
-region_safe_before_wrap=∀a. a < 1 ⇒ (a + 254) MOD 256 ≠ 0
+region_safe_before_wrap=T
 region_wrap_hits_entry=T

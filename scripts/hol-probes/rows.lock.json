@@ -3631,6 +3631,12 @@
       "sha256": "2bccd8807cc28a4cc17ec6a92d04822083c8949ea97ec1cf5bdab9b2476addaf"
     },
     {
+      "bytes": 160,
+      "out": "target_props_interference_probe.out",
+      "rows": 8,
+      "sha256": "9b8902ef84d7de51b5b581223be164199171fc8083931242ffca07152f870db1"
+    },
+    {
       "bytes": 213,
       "out": "target_sem_encoded_bytes_probe.out",
       "rows": 11,
