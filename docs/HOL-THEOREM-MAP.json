@@ -38047,5 +38047,117 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.14) against word_allocScript.sml apply_colour_def, clause by clause over the tagged WordLangProgHOL carrier: Skip; Move keeps literal ZIP (MAP (f o FST) ls, MAP (f o SND) ls); Inst via tagged apply_colour_inst; Assign/Store/Set/ShareInst via tagged apply_colour_exp; Get renames dest only; Call renames returned vars, cut sets via apply_nummaps_key, return handler, args, handler exception var and handler body, labels/dest unchanged; Seq/MustTerminate/If (apply_colour_imm) recursive; Install/FFI/Alloc cut sets via apply_nummaps_key; CodeBufferWrite/DataBufferWrite/LocValue/StoreConsts/Raise/Return/OpCurrHeap rename register fields only (FFI name, labels, constants, store names unchanged); Tick; Loop via apply_nummap_key on both live sets; catchall Break/Continue unchanged. Positive BitVec width is the sole carrier translation. Six original HOL EVAL rows (scripts/hol-probes/apply_colour_probe.out) replayed by Flapjack.Test.WordAllocApplyColourExactParity. Proof-side exact definition; executed allocator still uses wordApplyColour (production routing separate)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "gc_frame",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EnvFrame.lean",
+    "lean_name": "gcFrame",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.15) against word_allocProofScript.sml:565-594: gc st = SOME st' implies all twenty listed fields equal (fp_regs, mdomain, sh_mdomain, gc_fun, handler, clock, code, locals, locals_size, stack_size, stack_max, stack_limit, be, ffi, compile, compile_oracle, code_buffer, data_buffer, permute, termdep), in source order, over the tagged gc_def rendering; finite maps fpRegs/store via fmap_as_finite_support, positive width via words_as_type_indexed_bitvec. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "LENGTH_list_rerrange",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EnvFrame.lean",
+    "lean_name": "lengthListRearrange",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.15) against word_allocProofScript.sml:394-398: LENGTH (list_rearrange mover xs) = LENGTH xs over the tagged list_rearrange_def rendering, generic element type."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "list_rearrange_perm",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EnvFrame.lean",
+    "lean_name": "listRearrangePerm",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.15) against word_allocProofScript.sml:403-413: PERM xs ys implies ?perm. list_rearrange perm xs = ys (HOL PERM is List.Perm); generic element type, no added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "list_rearrange_MAP",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EnvFrame.lean",
+    "lean_name": "listRearrangeMap",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.15) against word_allocProofScript.sml:425-429: !l f m. list_rearrange m (MAP f l) = MAP f (list_rearrange m l), generic types. HOL's local GENLIST_MAP helper is not needed by the Lean rendering (documented in module docstring)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "list_rearrange_keys",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EnvFrame.lean",
+    "lean_name": "listRearrangeKeys",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.15) against word_allocProofScript.sml:682-688: list_rearrange perm ls = e implies set (MAP FST e) = set (MAP FST ls); HOL set rendered as membership predicate, alist generic."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "list_rearrange_keys_2",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EnvFrame.lean",
+    "lean_name": "listRearrangeKeysTwo",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.15) against word_allocProofScript.sml:690-694: set (MAP FST (list_rearrange perm ls)) = set (MAP FST ls)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "MAP_FST_list_rearrange_keys_SORT",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EnvFrame.lean",
+    "lean_name": "mapFstListRearrangeKeysSort",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.15) against word_allocProofScript.sml:696-702: set (MAP FST (list_rearrange perm (sort key_val_compare (toAList x)))) = domain x over the tagged sort/key_val_compare/toAList/domain renderings; word_loc payload at positive width."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "MAP_FST_keys_SORT",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EnvFrame.lean",
+    "lean_name": "mapFstKeysSort",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.15) against word_allocProofScript.sml:704-708: set (MAP FST (sort f (toAList x))) = domain x for arbitrary comparison f; tree payload generic."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "env_to_list_keys",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EnvFrame.lean",
+    "lean_name": "envToListKeys",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.15) against word_allocProofScript.sml:669-680: let (l,permute) = env_to_list x perm in set (MAP FST l) = domain x, over the tagged env_to_list_def rendering."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "key_map_implies",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EnvFrame.lean",
+    "lean_name": "keyMapImplies",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.15) against word_allocProofScript.sml:724-734: MAP (λ(x,y). (f x,y)) l' = l implies MAP f (MAP FST l') = MAP FST l, generic types."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "nummaps_to_nummap",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EnvFrame.lean",
+    "lean_name": "nummapsToNummap",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.15) against word_allocProofScript.sml:381-386: FST/SND of apply_nummaps_key f a are apply_nummap_key f of FST/SND a, over the tagged key-map definitions; payloads generic."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "INJ_union",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EnvFrame.lean",
+    "lean_name": "injUnion",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.15) against word_allocProofScript.sml:388-392: INJ f (A UNION B) C implies INJ f A C and INJ f B C, with INJ expanded literally as INJ_DEF (maps into C and injective on the set) and union as pointwise disjunction; all three sets generic."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "env_to_list_perm",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EnvFrame.lean",
+    "lean_name": "envToListPerm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.15) against word_allocProofScript.sml:442-513: for all y x f perm tperm, domain y = IMAGE f (domain x) (rendered as predicate equality with the cut_envs_lemma convention), INJ f (domain x) UNIV and strong_locals_rel f (domain x) x y imply let (l,permute) = env_to_list y perm in ?perm'. let (l',permute') = env_to_list x perm' in permute' = tperm and MAP (λ(x,y). (f x,y)) l' = l. Same quantifiers, three premises, existential and both conclusions; proof follows HOL (PERM of mapped sorted lists, list_rearrange_perm, list_rearrange_MAP, perm' = if n=0 then _ else tperm (n-1))."
   }
 ]
