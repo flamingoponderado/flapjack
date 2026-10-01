@@ -1,0 +1,7 @@
+pc_empty=T
+pc_self=T
+pc_chain=T
+pc_cycle=T
+pc_fanout=T
+pc_order=T
+pc_bool=T

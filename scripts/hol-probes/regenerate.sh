@@ -2918,3 +2918,6 @@ run_probe word_alloc_remove_temp_stack_probeScript.sml word_alloc_remove_temp_st
 run_probe word_alloc_merge_stack_only_probeScript.sml word_alloc_merge_stack_only_probe.out \
   mso_present_alloc mso_present_physical mso_present_stack mso_absent_stack_alloc mso_absent_stack_physical mso_absent_delete_missing mso_absent_delete_root mso_present_overwrite mso_raw \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+run_probe parmove_correct_probeScript.sml parmove_correct_probe.out \
+  pc_empty pc_self pc_chain pc_cycle pc_fanout pc_order pc_bool \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"

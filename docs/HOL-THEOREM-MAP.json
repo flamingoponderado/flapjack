@@ -41905,5 +41905,13 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.4.13): HOL clash_tree_colouring_ok (word_allocProofScript.sml:2813-2826) at the Inst case of get_clash_tree_ind, rendered by the untagged clashTreeGoal: binders lt f live flive livein flivein; the six HOL premises wf_cutsets prog, wf live, EVERY (\\(n,e). wf n /\\ wf e) lt (as membership-quantified sptWf of both components), domain flive = IMAGE f (domain live), INJ f (domain live) UNIV, check_clash_tree f (get_clash_tree prog lt) live flive = SOME (livein,flivein); and the five hide'd HOL conclusions (untagged clashTreeConcl): wf livein, INJ f (domain livein), colouring_ok f prog live lt, livein = get_live prog live lt, domain flivein = IMAGE f (domain livein). No sub-program, no IH, no extra premise. Proof follows the HOL Inst branch (word_allocProofScript.sml:2840-2975, all Const/Arith/Mem/FP sub-cases): get_delta_inst is a Delta whose writes are get_writes_inst and whose result equals get_live_inst (untagged instDelta: rfl or spt_eq_thm / wf_insert_swap / wf_delete_swap per instruction, 64-bit vs other width FP moves); then HOL start_tac: the Delta step via check_partial_col_INJ on writes then reads, domain_numset_list_delete and INJ_IMP_IMAGE_DIFF (untagged checkDelta/deltaConcl), the get_live equation by numset_list_insert_eq_UNION/wf_get_live_exp/get_reads_exp_get_live_exp, wf_numset_list_delete_eq (Move) or spt_eq_thm (StoreConsts). HOL sets as predicates, IMAGE as an existential, INJ as injectivity on the domain predicate; HOL 'a word as positive-width BitVec."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/Correct.lean",
+  "lean_name": "parmove_correct",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "parmove_correct",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source672-694: whole generic theorem, original windmill premise only; all environments and real-register eqenv conclusion, actual parmove/parsem. Derives terminal emitted list, deterministic RTC, initial wf from some-lifted unique destinations and real fields, primitive RTC and final semantic consequence; no assumed output/simulation premise. Seven universal original theorem applications and matching Lean kernel applications, Bool carriers included. Full compiler theorem remains separate."
 }
 ]
