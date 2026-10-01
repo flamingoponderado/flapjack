@@ -92,6 +92,7 @@ import Flapjack.Test.RegAllocMkBijLemmasParity
 import Flapjack.Test.RegAllocAccessorsParity
 import Flapjack.Test.RegAllocColouringParity
 import Flapjack.Test.RegAllocExceptionFunctionsParity
+import Flapjack.Test.RegAllocStempColouringParity
 import Flapjack.Test.WordAllocCoalesceCostParity
 import Flapjack.Test.WordAllocLoopCheckerParity
 import Flapjack.Test.WordToStackCompilePrefixParity

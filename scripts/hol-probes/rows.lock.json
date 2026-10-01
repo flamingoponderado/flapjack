@@ -3253,6 +3253,12 @@
       "sha256": "f77d83c8eb6624a79f956be3ade756841ba28b04cebf492636d49a890cdd1cec"
     },
     {
+      "bytes": 879,
+      "out": "reg_alloc_stemp_colouring_probe.out",
+      "rows": 20,
+      "sha256": "f748b69d78f716491c48f15c3524e99e08adf952a18d51f9cf6f7c24e01a973d"
+    },
+    {
       "bytes": 131,
       "out": "reg_alloc_var_partition_probe.out",
       "rows": 10,

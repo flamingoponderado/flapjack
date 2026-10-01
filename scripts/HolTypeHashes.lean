@@ -341,6 +341,7 @@ import Flapjack.Compiler.Backend.RegAlloc.Accessors
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.AccessorEqns
 import Flapjack.Compiler.Backend.RegAlloc.Colouring
 import Flapjack.Compiler.Backend.RegAlloc.ExceptionFunctions
+import Flapjack.Compiler.Backend.RegAlloc.StempColouring
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Motive
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Leaves
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Inst

@@ -3004,6 +3004,9 @@ run_probe reg_alloc_colouring_probeScript.sml reg_alloc_colouring_probe.out \
 run_probe reg_alloc_exception_functions_probeScript.sml reg_alloc_exception_functions_probe.out \
   ef_raise_fail ef_raise_sub ef_hs_success ef_hs_catch ef_hs_pass_fail ef_hs_failing_state ef_hs_accessor ef_hf_catch ef_hf_pass_sub ef_hf_success ef_hf_failing_state \
   "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+run_probe reg_alloc_stemp_colouring_probeScript.sml reg_alloc_stemp_colouring_probe.out \
+  st_type_assign_tag st_type_neg_biased st_tag_col st_unbound_empty st_unbound_gap st_unbound_below st_unbound_dup st_tag_none st_tag_pref st_tag_non_stemp st_tag_oob st_all st_all_k_high st_neg_first_hit st_neg_first_bad st_neg_first_oob st_neg_biased st_neg_biased_missing st_neg_biased_oob_partner st_neg_biased_out_of_dim \
+  "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 run_probe word_alloc_get_forced_probeScript.sml word_alloc_get_forced_probe.out \
   gf_addcarry_riscv gf_addcarry_mips gf_addcarry_self gf_addcarry_x86 gf_addovf_riscv gf_addovf_armv8 gf_subovf_mips gf_subovf_self gf_longmul_armv7 gf_longmul_armv7_self gf_longmul_riscv gf_longmul_ag32 gf_longmul_x86 gf_fptoreg_32 gf_fptoreg_32_self gf_fptoreg_64 gf_fpfromreg_32 gf_fpfromreg_64 gf_other_inst gf_seq gf_if gf_must gf_loop gf_call_return gf_call_both gf_call_tail gf_skip gf_large \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"

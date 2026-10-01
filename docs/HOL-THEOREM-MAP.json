@@ -45737,5 +45737,53 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-pxn.18.5.15.10.24): compared original asmSemScript26-129 and lab_to_targetProofScript upd_pc_with_pc. Native AsmState has original function-backed register/memory fields, fixed FP64 and byte8; only positive-width word index translates to BitVec. All original clauses, original-state operand reads, register shift guard (immediates unguarded), retained failure writes, total DIV_0/MOD_0, signed overflow and ordered aliasing updates preserved. IsTest uses exact monomorphic HolCmp. Complete eight-constructor arithmetic definition and primitive pc-self-update theorem only; full asm evaluator and executed compiler routing remain unfinished. Fresh direct original asmSemTheory capture and 52 kernel replays pass. Coordinator review pending.",
     "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "tag_col_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/StempColouring.lean",
+    "lean_name": "tagCol",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.10) against reg_allocScript.sml:938-941: tag_col (Fixed n) = n; tag_col _ = 0. HOL do-blocks as accepted bind/ret; exception type state_exn; reviewed accessors (.10.5.2), stExMap/stExForeach, MlList.sort, handleSubscript (.10.5.9.2)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "unbound_colour_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/StempColouring.lean",
+    "lean_name": "unboundColour",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.10) against reg_allocScript.sml:947-955: unbound_colour col [] = col; unbound_colour col (x::xs) = if col < x then col else if x = col then unbound_colour (col+1) xs else unbound_colour col xs. HOL do-blocks as accepted bind/ret; exception type state_exn; reviewed accessors (.10.5.2), stExMap/stExForeach, MlList.sort, handleSubscript (.10.5.9.2)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "assign_Stemp_tag_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/StempColouring.lean",
+    "lean_name": "assignStempTag",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.10) against reg_allocScript.sml:959-980: node_tag_sub n; Stemp => adj_ls_sub n; tags <- st_ex_MAP node_tag_sub adjs; let bads = sort (\\x y. x <= y) (MAP tag_col tags) in c <- prefs n bads; NONE => update_node_tag n (Fixed (unbound_colour k bads)) | SOME y => Fixed y; other tags return (); probe type row confirms num -> (num -> num list -> ra_state -> (num option, state_exn) exc # ra_state) -> num -> ra_state -> (unit, state_exn) exc # ra_state. HOL do-blocks as accepted bind/ret; exception type state_exn; reviewed accessors (.10.5.2), stExMap/stExForeach, MlList.sort, handleSubscript (.10.5.9.2)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "assign_Stemps_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/StempColouring.lean",
+    "lean_name": "assignStemps",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.10) against reg_allocScript.sml:984-990: get_dim; cs <- return (GENLIST (\\x.x) d); st_ex_FOREACH cs (assign_Stemp_tag k prefs); GENLIST (\\x.x) d as List.range d. HOL do-blocks as accepted bind/ret; exception type state_exn; reviewed accessors (.10.5.2), stExMap/stExForeach, MlList.sort, handleSubscript (.10.5.9.2)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "neg_first_match_col_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/StempColouring.lean",
+    "lean_name": "negFirstMatchCol",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.10) against reg_allocScript.sml:1419-1430: [] => return NONE; x::xs => node_tag_sub x; Fixed m => if MEM m bads \\/ m < k then recurse else return (SOME m) | _ => recurse. HOL do-blocks as accepted bind/ret; exception type state_exn; reviewed accessors (.10.5.2), stExMap/stExForeach, MlList.sort, handleSubscript (.10.5.9.2)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "neg_biased_pref_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/StempColouring.lean",
+    "lean_name": "negBiasedPref",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.10) against reg_allocScript.sml:1432-1446: get_dim; if n < d then let vs = case lookup n mtable of NONE => [] | SOME vs => vs in handle_Subscript (neg_first_match_col k bads vs) (return NONE) else return NONE; mtable : num list num_map as Spt (List Nat), lookup as sptLookup; probe type row confirms num -> num list num_map -> num -> num list -> ra_state -> (num option, state_exn) exc # ra_state. HOL do-blocks as accepted bind/ret; exception type state_exn; reviewed accessors (.10.5.2), stExMap/stExForeach, MlList.sort, handleSubscript (.10.5.9.2)."
   }
 ]

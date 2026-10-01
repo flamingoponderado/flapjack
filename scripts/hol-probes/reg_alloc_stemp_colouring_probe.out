@@ -1,0 +1,24 @@
+st_type_assign_tag=:num ->
+(num -> num list -> ra_state -> (num option, state_exn) exc # ra_state) ->
+num -> ra_state -> (unit, state_exn) exc # ra_state
+st_type_neg_biased=:num ->
+num list sptree$num_map ->
+num -> num list -> ra_state -> (num option, state_exn) exc # ra_state
+st_tag_col=(7,0,0)
+st_unbound_empty=4
+st_unbound_gap=5
+st_unbound_below=4
+st_unbound_dup=4
+st_tag_none=[Fixed 4; Fixed 5; Fixed 3; Stemp]
+st_tag_pref=[Fixed 9; Fixed 5; Fixed 3; Stemp]
+st_tag_non_stemp=T
+st_tag_oob=M_failure Subscript
+st_all=(M_success (),[Fixed 4; Fixed 5; Fixed 3; Fixed 4])
+st_all_k_high=[Fixed 6; Fixed 5; Fixed 3; Fixed 6]
+st_neg_first_hit=M_success (SOME 5)
+st_neg_first_bad=M_success NONE
+st_neg_first_oob=M_failure Subscript
+st_neg_biased=M_success (SOME 5)
+st_neg_biased_missing=M_success NONE
+st_neg_biased_oob_partner=M_success NONE
+st_neg_biased_out_of_dim=M_success NONE
