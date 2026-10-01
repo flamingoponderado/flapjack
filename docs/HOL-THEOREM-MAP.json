@@ -40730,6 +40730,48 @@
   "words_as_type_indexed_bitvec": true
 },
 {
+  "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+  "hol_name": "evaluate_stack_swap",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateStackSwap/MustTerminate.lean",
+  "lean_name": "evaluateStackSwap_MustTerminate",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.3): HOL evaluate_stack_swap (wordPropsScript.sml:2316-2363) at the MustTerminate case of evaluate_ind: same binder s, the HOL case-split conclusion rendered by the untagged stackSwapPost, and as premises exactly the MustTerminate induction hypotheses of the tagged Lean evaluate_ind (wordSemScript.sml evaluate_ind rebound without fix_clock): the body at s with clock := MustTerminate_limit and termdep := s.termdep - 1, under s.termdep <> 0. No extra premise. Proof follows HOL (wordPropsScript.sml:2449-2460): TimeOut of the body becomes Error (unconstrained); every other result only restores clock/termdep, which leaves stack, handler, locals and locals_size unchanged (untagged mtPost/stackSwapRel_mt). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+  "hol_name": "evaluate_stack_swap",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateStackSwap/Seq.lean",
+  "lean_name": "evaluateStackSwap_Seq",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.3): HOL evaluate_stack_swap (wordPropsScript.sml:2316-2363) at the Seq case of evaluate_ind: same binder s, the HOL case-split conclusion rendered by the untagged stackSwapPost, and as premises exactly the Seq induction hypotheses of the tagged Lean evaluate_ind (wordSemScript.sml evaluate_ind rebound without fix_clock): c2 at every s1 with (res, s1) = evaluate c1 s and res = NONE, and c1 at s. No extra premise. Proof follows HOL (wordPropsScript.sml:2461-2508), using the rebound evaluate_def without fix_clock: a non-NONE first result is the sequence result; otherwise the second run is transported along the first run's stack via s_key_eq_trans, s_key_eq_length and s_key_eq_LASTN_exists for the exception frame (untagged stackSwapRel_mono/stackSwapRel_seqTail). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+  "hol_name": "evaluate_stack_swap",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateStackSwap/If.lean",
+  "lean_name": "evaluateStackSwap_If",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.3): HOL evaluate_stack_swap (wordPropsScript.sml:2316-2363) at the If case of evaluate_ind: same binder s, the HOL case-split conclusion rendered by the untagged stackSwapPost, and as premises exactly the If induction hypotheses of the tagged Lean evaluate_ind (wordSemScript.sml evaluate_ind rebound without fix_clock): c1 under the guard getVar/get_var_imm/word_cmp = SOME T and c2 under SOME F, in the HOL evaluate_ind variable form. No extra premise. Proof follows HOL (wordPropsScript.sml:2529-2532): the guard reads only locals, so the stack-swapped run takes the same branch. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
   "hol_name": "evaluate_apply_colour",
   "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/InstArith.lean",

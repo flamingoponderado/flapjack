@@ -33,4 +33,48 @@ theorem path_change_start {α : Type} (before : List (α × α))
           change nextDestination = source ∧ path ((nextDestination, nextSource) :: (rest ++ [replacement]))
           exact ⟨valid.1, ih replacement last ⟨valid.2, sameDestination⟩⟩
 
+/-- Flapjack-only endpoint decomposition lemma. Each path read either names
+one of its destinations or the final source. This structural helper has no
+separately exported HOL original. -/
+theorem path_read_mem_or_endpoint {α : Type} (before : List (α × α))
+    (last : α × α) (valid : path (before ++ [last])) (read : α)
+    (member : read ∈ (before ++ [last]).map Prod.snd) :
+    read ∈ (before ++ [last]).map Prod.fst ∨ read = last.2 := by
+  induction before with
+  | nil => exact Or.inr (by simpa using member)
+  | cons head before ih =>
+      simp only [List.cons_append, List.map_cons, List.mem_cons] at member ⊢
+      rcases member with equal | member
+      · cases before with
+        | nil =>
+            have link : last.1 = head.2 := by
+              simpa [path] using valid
+            exact Or.inl (Or.inr (by simp [equal, link]))
+        | cons next rest =>
+            have link : next.1 = head.2 := by
+              cases head; cases next
+              exact valid.1
+            exact Or.inl (Or.inr (by simp [equal, link]))
+      · have tailValid : path (before ++ [last]) := path_tail _ head valid
+        rcases ih tailValid member with found | endpoint
+        · exact Or.inl (Or.inr found)
+        · exact Or.inr endpoint
+
+/-- Flapjack-only no-read infrastructure for the scheduler emit-head case.
+The nonempty endpoint decomposition discharges HOL local NoRead_path length
+and HD/LAST observations without choosing values for empty lists. Only the
+original path, destination uniqueness and endpoint mismatch are assumed. -/
+theorem path_tail_noRead {α : Type} (head : α × α)
+    (middle : List (α × α)) (last : α × α)
+    (valid : path (head :: (middle ++ [last])))
+    (unique : windmill (head :: (middle ++ [last])))
+    (different : head.1 ≠ last.2) :
+    head.1 ∉ (middle ++ [last]).map Prod.snd := by
+  intro member
+  have noDestination := (windmill_cons head (middle ++ [last])).mp unique |>.1
+  rcases path_read_mem_or_endpoint middle last (path_tail _ head valid) head.1 member with
+    destination | endpoint
+  · exact noDestination destination
+  · exact different endpoint
+
 end Flapjack.Compiler.Backend.Parmove
