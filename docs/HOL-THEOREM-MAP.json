@@ -41429,6 +41429,16 @@
   "reviewer": "flapjack-luna-c source comparison (2026-10-01, bead flapjack-pxn.18.5.15.3.44.1): literal original699-703, proof through751. Same forall arbitrary pending/active/emitted Option-register List state and real register x: membership SOME x in MAP FST emitted actual pmov implies membership in MAP FST concatenated three input lists. Native tagged pmov/fstep recursion; no wf, termination, final shape, result equality, or simulation premise. DecidableEq computes HOL equality with no BEq correctness premise. Proof follows actual pmov induction and unconditional one-step destination preservation; splitSource_append/frontLast_append derive list membership, temporary NONE excluded exactly by SOME x. No carrier/word/finite-map difference or qualifier. Independent prerequisite of public MEM_MAP_FST_parmove used in word_to_stackProof3479/3541/6194; scheduler semantics and executed routing remain separate."
 },
 {
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/Semantics.lean",
+  "lean_name": "semantics",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "semantics_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "flapjack-sol source comparison 2026-10-01 7gff: complete literal semantics_def619-635 over accepted native width-indexed State/evaluate and canonical HolBehaviour/HolOutcome/HolIoEvent/HolLList. Same arbitrary state and existential natural clocks: any Error takes priority; exact holOptionSome predicate with existential clock/next/outcome, actual Halt pair equality and result=Terminate outcome next.ffi.ioEvents; optional None yields Diverge of actual buildLprefixLub of all clock-indexed fromList traces, IMAGE UNIV represented by trace predicate exists clock equality. No finite bound/max-clock observation, extra chain condition, alternate evaluator or assumed successful run. Qualified only positive word dimension and Type0 compiler/FFI carriers. Inherits reviewed reals_as_rational_cuts through native evaluate/asmInst/fpUpd, docs/SOUNDNESS.md item8; no direct real rendering. Four original HOL full behavior propositions reduce to T and identical Lean kernel fixtures: empty-code failure, successful Halt, resource-limit Halt, all-clock self-loop divergence preserving entire arbitrary input IO trace. Both original and Lean loop evaluator equations proven by natural clock induction, LUB result by actual prefix-chain/LUB uniqueness, not a timeout approximation. Native tests additionally quantify arbitrary Halt word values. This observational definition does not change the executed compiler; final machine/pass-composition/compiler theorem and coordinator independent source review remain pending."
+},
+{
   "lean_path": "Flapjack/Compiler/Backend/Parmove/DStepStep.lean",
   "lean_name": "dstep_step",
   "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
