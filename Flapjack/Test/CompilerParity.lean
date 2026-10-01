@@ -1,5 +1,8 @@
 import Flapjack.Test.LabValidityNativeParity
 import Flapjack.Test.StackToLabNativeParity
+import Flapjack.Test.WordToStackNoShmemopHandledCallParity
+import Flapjack.Test.WordToStackNoShmemopReturningCallParity
+import Flapjack.Test.WordToStackNoShmemopTailCallParity
 import Flapjack.Test.WordToStackNoShmemopHandlersParity
 import Flapjack.Test.WordAllocLimitPropertiesParity
 import Flapjack.Test.SSAMapStepParity
