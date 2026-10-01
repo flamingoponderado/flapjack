@@ -1,4 +1,4 @@
-import Flapjack.Compiler.Backend.Parmove
+import Flapjack.Compiler.Backend.Parmove.FstepDstep
 
 namespace Flapjack.Test.ParmoveFstepParity
 open Flapjack.Compiler.Backend.Parmove
@@ -48,5 +48,35 @@ repeated destinations. They do not establish full `parmove_correct`. -/
 #guard parmove [((1 : Nat), 2), (2, 3), (3, 1)] ==
   [(none, r 2), (r 2, r 3), (r 3, r 1), (r 1, none)]
 #guard parmove [((1 : Nat), 2), (1, 3)] == [(r 1, r 2), (r 1, r 3)]
+
+
+/-! Kernel applications of the exact nonterminal-step theorem to the nine
+nonterminal original fstep fixtures above; the terminal row is excluded. -/
+example : DStep (α := Nat) ([(r 1, r 1), (r 2, r 3)], [], []) (fstep ([(r 1, r 1), (r 2, r 3)], [], [])) :=
+  fstepDstep _ (by intro emitted; simp)
+
+example : DStep (α := Nat) ([(r 1, r 2), (r 3, r 4)], [], []) (fstep ([(r 1, r 2), (r 3, r 4)], [], [])) :=
+  fstepDstep _ (by intro emitted; simp)
+
+example : DStep (α := Nat) ([(r 7, r 8), (r 3, r 1), (r 4, r 1)], [(r 1, r 2)], []) (fstep ([(r 7, r 8), (r 3, r 1), (r 4, r 1)], [(r 1, r 2)], [])) :=
+  fstepDstep _ (by intro emitted; simp)
+
+example : DStep (α := Nat) ([(r 7, r 8)], [(r 1, r 2)], [(r 8, r 9)]) (fstep ([(r 7, r 8)], [(r 1, r 2)], [(r 8, r 9)])) :=
+  fstepDstep _ (by intro emitted; simp)
+
+example : DStep (α := Nat) ([], [(r 1, r 2), (r 2, r 3), (r 3, r 4)], []) (fstep ([], [(r 1, r 2), (r 2, r 3), (r 3, r 4)], [])) :=
+  fstepDstep _ (by intro emitted; simp)
+
+example : DStep (α := Nat) ([], [(r 1, r 2), (r 2, r 1)], []) (fstep ([], [(r 1, r 2), (r 2, r 1)], [])) :=
+  fstepDstep _ (by intro emitted; simp)
+
+example : DStep (α := Nat) ([], [(r 1, r 2), (r 2, r 3), (r 3, r 1)], [(r 8, r 9)]) (fstep ([], [(r 1, r 2), (r 2, r 3), (r 3, r 1)], [(r 8, r 9)])) :=
+  fstepDstep _ (by intro emitted; simp)
+
+example : DStep (α := Nat) ([(r 2, none)], [(none, r 1)], []) (fstep ([(r 2, none)], [(none, r 1)], [])) :=
+  fstepDstep _ (by intro emitted; simp)
+
+example : DStep (α := Nat) ([(none, none)], [], []) (fstep ([(none, none)], [], [])) :=
+  fstepDstep _ (by intro emitted; simp)
 
 end Flapjack.Test.ParmoveFstepParity

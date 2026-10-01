@@ -1,0 +1,16 @@
+load "bossLib";
+load "preamble";
+load "parmoveTheory";
+open bossLib HolKernel Parse preamble parmoveTheory;
+fun print_proved label q rule =
+  let val th = prove(q, mp_tac rule >> simp[])
+  in if aconv (concl th) q then (print(label ^ "="); print "T\n") else raise Fail label end;
+val _ = print_proved "pd_remove" ``$dstep ([(SOME (1:num),SOME (1:num))],[],[]) ([],[],[])`` (Q.ISPECL [`SOME (1:num)`, `([]:(num option # num option) list)`, `([]:(num option # num option) list)`] (CONJUNCT1 dstep_rules));
+val _ = print_proved "pd_start" ``$dstep ([(SOME (1:num),SOME (2:num))],[],[]) ([],[(SOME (1:num),SOME (2:num))],[])`` (Q.ISPECL [`SOME (1:num)`, `SOME (2:num)`, `([]:(num option # num option) list)`, `([]:(num option # num option) list)`] (CONJUNCT1 (CONJUNCT2 dstep_rules)));
+val _ = print_proved "pd_extend" ``$dstep ([(SOME (3:num),SOME (1:num))],[(SOME (1:num),SOME (2:num))],[]) ([],[(SOME (3:num),SOME (1:num));(SOME (1:num),SOME (2:num))],[])`` (Q.ISPECL [`SOME (1:num)`, `SOME (3:num)`, `SOME (2:num)`, `([]:(num option # num option) list)`, `([]:(num option # num option) list)`, `([]:(num option # num option) list)`, `([]:(num option # num option) list)`] (CONJUNCT1 (CONJUNCT2 (CONJUNCT2 dstep_rules))));
+val _ = print_proved "pd_save_emit" ``$dstep ([],[(SOME (1:num),SOME (2:num));(SOME (3:num),SOME (1:num))],[]) ([],[(SOME (3:num),NONE)],[(SOME (1:num),SOME (2:num));(NONE,SOME (1:num))])`` (Q.ISPECL [`SOME (3:num)`, `SOME (1:num)`, `SOME (2:num)`, `([]:(num option # num option) list)`, `([]:(num option # num option) list)`, `([]:(num option # num option) list)`] (CONJUNCT1 (CONJUNCT2 (CONJUNCT2 (CONJUNCT2 dstep_rules)))));
+val _ = print_proved "pd_emit_head" ``$dstep ([],[(SOME (3:num),SOME (1:num));(SOME (1:num),SOME (2:num))],[]) ([],[(SOME (1:num),SOME (2:num))],[(SOME (3:num),SOME (1:num))])`` (Q.ISPECL [`SOME (1:num)`, `SOME (3:num)`, `SOME (2:num)`, `SOME (1:num)`, `([]:(num option # num option) list)`, `([]:(num option # num option) list)`, `([]:(num option # num option) list)`] (CONJUNCT1 (CONJUNCT2 (CONJUNCT2 (CONJUNCT2 (CONJUNCT2 dstep_rules))))));
+val _ = print_proved "pd_emit_last" ``$dstep ([],[(SOME (1:num),SOME (2:num))],[]) ([],[],[(SOME (1:num),SOME (2:num))])`` (Q.ISPECL [`SOME (1:num)`, `SOME (2:num)`, `([]:(num option # num option) list)`, `([]:(num option # num option) list)`] (CONJUNCT2 (CONJUNCT2 (CONJUNCT2 (CONJUNCT2 (CONJUNCT2 dstep_rules))))));
+val _ = print_proved "pd_start_guard" ``~(SOME (1:num) <> SOME (1:num))`` (EVAL ``~(SOME (1:num) <> SOME (1:num))``);
+val _ = print_proved "pd_read_guard" ``MEM (SOME (1:num)) (MAP SND [(SOME (4:num),SOME (1:num))])`` (EVAL ``MEM (SOME (1:num)) (MAP SND [(SOME (4:num),SOME (1:num))])``);
+val _ = print_proved "pd_extend_suffix_read" ``$dstep ([(SOME (3:num),SOME (1:num));(SOME (4:num),SOME (1:num))],[(SOME (1:num),SOME (2:num))],[]) ([(SOME (4:num),SOME (1:num))],[(SOME (3:num),SOME (1:num));(SOME (1:num),SOME (2:num))],[])`` (Q.ISPECL [`SOME (1:num)`, `SOME (3:num)`, `SOME (2:num)`, `([]:(num option # num option) list)`, `[(SOME (4:num),SOME (1:num))]`, `([]:(num option # num option) list)`, `([]:(num option # num option) list)`] (CONJUNCT1 (CONJUNCT2 (CONJUNCT2 dstep_rules))));

@@ -1,3 +1,6 @@
+import Flapjack.Test.ParmoveDStepStepParity
+import Flapjack.Test.WordToStackNativeConfigParity
+import Flapjack.Test.ParmoveDStepsParity
 import Flapjack.Test.WordLangMaxVarParity
 import Flapjack.Test.WordLangCutsetsMaxParity
 import Flapjack.Test.WordLangMaxVarInstParity

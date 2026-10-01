@@ -1,0 +1,7 @@
+pv_destination_terminal=[SOME 7]
+pv_destination_self=[]
+pv_destination_chain=[SOME 2; SOME 1]
+pv_destination_cycle=[SOME 1; SOME 2; NONE]
+pv_destination_scratch=[NONE; SOME 1]
+pv_destination_duplicate=[SOME 1; SOME 1]
+pv_destination_active=[SOME 2; SOME 1; NONE]

@@ -41369,6 +41369,39 @@
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.29.3): HOL Resume evaluate_apply_colour[ShareInst] (word_allocProofScript.sml:2207 onward), i.e. the HOL theorem at ShareInst op v exp: same binders st cst f live lt, the three HOL premises and the HOL existential conclusion (applyColourPost, with the source oracle as HOL's exists_tac), no sub-program, no IH and no extra premise. Proof follows the HOL case over all eight operations: apply_colour_exp_lemma for the address; stores use strong_locals_rel_get_var for the stored variable (live by the Store branch of get_live) and keep the locals; loads go through sh_mem_set_var with strong_locals_rel_insert (INJ on get_writes UNION live from colouring_ok) and strong_locals_rel_subset; sh_mdomain and ffi are related by word_state_eq_rel; FinalFFI flushes both states. Untagged shStoreGen is the common unfolding of the four sh_mem_store* definitions (Flapjack infrastructure). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
   },
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/DSteps.lean",
+  "lean_name": "dstep_rules",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "dstep_rules",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-a: source six-clause Hol_reln at 478-492 and local NoRead at 22 compared literally; generic Option registers and three List state carriers match. Prefix-only Extend guard and combined Save/Emit retained. Full rules, least-relation induction and exhaustive cases; no added well-formedness or successful-result premise."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/DSteps.lean",
+  "lean_name": "dstep_ind",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "dstep_ind",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-a: source six-clause Hol_reln at 478-492 and local NoRead at 22 compared literally; generic Option registers and three List state carriers match. Prefix-only Extend guard and combined Save/Emit retained. Full rules, least-relation induction and exhaustive cases; no added well-formedness or successful-result premise."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/DSteps.lean",
+  "lean_name": "dstep_cases",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "dstep_cases",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-a: source six-clause Hol_reln at 478-492 and local NoRead at 22 compared literally; generic Option registers and three List state carriers match. Prefix-only Extend guard and combined Save/Emit retained. Full rules, least-relation induction and exhaustive cases; no added well-formedness or successful-result premise."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeConfig.lean",
+  "lean_name": "Config",
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "config",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-a: source datatype16-19 compared field by field. HOL num maps to Nat and num spt uses the constructor-for-constructor Spt Nat carrier (LN/LS/BN/BS); no raw function map or well-formedness restriction. No word or FFI parameter occurs in this record. Seven freshly regenerated original projections and field-update equations kernel paired; top compile_def caller remains tracked by parent25.16."
+}
+,
   {
     "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
     "hol_name": "wf_names_def",
@@ -41489,4 +41522,47 @@
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.4.10) against word_allocProofScript.sml:2806-2811: INJ f (s UNION t) UNIV ==> IMAGE f (s DIFF t) = IMAGE f s DIFF IMAGE f t, sets as predicates, INJ on the union as injectivity on the predicate (codomain UNIV trivial), IMAGE as an existential and DIFF as a negated conjunct, identical rendering to the accepted INJ_IMP_IMAGE_DIFF port (same HOL statement)."
   }
+,
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/DestinationMembership.lean",
+  "lean_name": "memMapFstSndSndPmov",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "MEM_MAP_FST_SND_SND_pmov",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison (2026-10-01, bead flapjack-pxn.18.5.15.3.44.1): literal original699-703, proof through751. Same forall arbitrary pending/active/emitted Option-register List state and real register x: membership SOME x in MAP FST emitted actual pmov implies membership in MAP FST concatenated three input lists. Native tagged pmov/fstep recursion; no wf, termination, final shape, result equality, or simulation premise. DecidableEq computes HOL equality with no BEq correctness premise. Proof follows actual pmov induction and unconditional one-step destination preservation; splitSource_append/frontLast_append derive list membership, temporary NONE excluded exactly by SOME x. No carrier/word/finite-map difference or qualifier. Independent prerequisite of public MEM_MAP_FST_parmove used in word_to_stackProof3479/3541/6194; scheduler semantics and executed routing remain separate."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/Semantics.lean",
+  "lean_name": "semantics",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "semantics_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "flapjack-sol source comparison 2026-10-01 7gff: complete literal semantics_def619-635 over accepted native width-indexed State/evaluate and canonical HolBehaviour/HolOutcome/HolIoEvent/HolLList. Same arbitrary state and existential natural clocks: any Error takes priority; exact holOptionSome predicate with existential clock/next/outcome, actual Halt pair equality and result=Terminate outcome next.ffi.ioEvents; optional None yields Diverge of actual buildLprefixLub of all clock-indexed fromList traces, IMAGE UNIV represented by trace predicate exists clock equality. No finite bound/max-clock observation, extra chain condition, alternate evaluator or assumed successful run. Qualified only positive word dimension and Type0 compiler/FFI carriers. Inherits reviewed reals_as_rational_cuts through native evaluate/asmInst/fpUpd, docs/SOUNDNESS.md item8; no direct real rendering. Four original HOL full behavior propositions reduce to T and identical Lean kernel fixtures: empty-code failure, successful Halt, resource-limit Halt, all-clock self-loop divergence preserving entire arbitrary input IO trace. Both original and Lean loop evaluator equations proven by natural clock induction, LUB result by actual prefix-chain/LUB uniqueness, not a timeout approximation. Native tests additionally quantify arbitrary Halt word values. This observational definition does not change the executed compiler; final machine/pass-composition/compiler theorem and coordinator independent source review remain pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/SourceMembership.lean",
+  "lean_name": "memMapSndSndSndPmov",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "MEM_MAP_SND_SND_SND_pmov",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison (2026-10-01, bead flapjack-pxn.18.5.15.3.45.1): literal original764-768, proof through816. Same forall arbitrary pending/active/emitted Option-register List state and real x: membership SOME x in MAP SND emitted actual pmov implies membership in MAP SND concatenated three input lists. Native tagged pmov/fstep recursion; no wf, termination, final shape, result equality, or simulation premise. DecidableEq computes HOL equality with no BEq correctness premise. Actual pmov induction and unconditional one-step source preservation; splitSource_append/frontLast_append derive membership. Cycle save source equals original active LAST source under the actual fstep condition; temporary NONE excluded exactly by SOME x, not assumed absent from input. No carrier/word/finite-map difference or qualifier. Independent prerequisite of public MEM_MAP_SND_parmove used in word_to_stackProof6173/6193; full scheduler semantics and executed routing remain separate."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/FstepDstep.lean",
+  "lean_name": "fstepDstep",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "fstep_dstep",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison (2026-10-01; bead25.6.11): literal589-610 forall emitted state !=([],[],emitted) implies DStep state(fstep state), unrestricted native Option/List carriers and ordinary propositional equality. Six actual rules used; first-match source and prefix NoRead derived from accepted splitSource laws, pending partition recovered by splitSource_append. Active empty/singleton/nonempty distinct; cycle last source equality reconstructs actual last pair using frontLast_append, no extra wf/search/result premise. Nine nonterminal fixtures apply exact theorem; existing ten original fstep rows freshly regenerated. Coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/DStepStep.lean",
+  "lean_name": "dstep_step",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "dstep_step",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison (2026-10-01), original503-516: generic Option register, three List state, actual least DStep and primitive Step RTC, original sole wf premise. Five cases single primitive step; cycle Save followed by EmitHead derives r != NONE from wf real destinations, no extra assumption. Fresh six wf and nine semantic cycle observations replayed in kernel; coordinator source review pending."
+}
 ]
