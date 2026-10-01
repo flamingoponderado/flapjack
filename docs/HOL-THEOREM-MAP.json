@@ -42762,5 +42762,14 @@
     "hol_name": "sorted_mem_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-luna-c source comparison2026-10-01 bead.11.5.10.5.8.6.25: literal reg_allocScript193-199 arbitrary Nat key and List Nat. Empty false; head equality true; x>head false before recursion; otherwise recursive tail. No descending-order, membership, uniqueness or range premise. Nat equality/order and Bool/List constructors retained exactly. Twelve fresh original EVAL equations replay identical inputs by kernel rfl, including unsorted early-stop rejection, unsorted continuing match, duplicates, zero, tail, and 80-bit key. Production cakeSortedMem now delegates this same definition; unconditional arbitrary-key/list kernel equality and former recursive equation replay establish this helper replacement only. Remaining allocator state and graph correctness are unproved; this routing does not claim allocator correctness. Fresh original executed corpus comparison is required on linked .25.1. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/GetHeuristics.lean",
+    "lean_name": "getHeuristics",
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "get_heuristics_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison2026-10-01 bead.11.5.3.2: literal word_allocScript1683-1694 arbitrary Nat algorithm/functionName/native WordLangProgHOL positive-width BitVec. Odd MOD2=1 uses reviewed getHeu on LN pair, reviewed getPrefs empty list, exact external sptMapi with getSpillCost and lookup-key calls NONE, reviewed canonizeMoves and MAP getCoalesceCost. Even branch returns raw getPrefs and NONE; no callback, successful allocator, range, well-formedness or output premise. Literal Nat/List/Spt/Option constructors retained; words_as_type_indexed_bitvec records only original word dimension translation. All helper prerequisites accepted; sptMapi0 and smart constructors reviewed in external sptree counterpart. Ten fresh full original EVAL results and four whole structural insert equalities replayed by kernel-checked fixtures, including self/other call cost, duplicate/reversed moves, even raw priority, empty odd SOME LN,80bit algorithms and16/64word dimensions. This native source composition does not claim full allocator correctness or executed route; parent.5.3 retains production obligations. Coordinator review pending."
   }
 ]

@@ -1,3 +1,4 @@
+import Flapjack.Test.WordAllocGetHeuristicsParity
 import Flapjack.Test.RegAllocSortedMemParity
 import Flapjack.Test.RegAllocInitializationParity
 import Flapjack.Test.WordCopyCodecDomainParity
