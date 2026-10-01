@@ -42376,6 +42376,30 @@
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.3.2.5.3): source1381-1390 computes difference t1 t2 then union of that remainder with mapi on t2; absent lookup k t1 retains right value; present left value uses heu_max rightvalue leftvalue. HeuData is accepted literal Nat five-product, tree is constructor-for-constructor Spt, no wf premise or map-carrier substitution. Standard Nat max implements HOL num MAX, unbounded counters retained. Imported difference compared to original sptree319-339 and union219-239 clause by clause, including raw BN/BS preservation and only the source smart-constructor collapses; accepted indexed mapi866-878 retains source key arithmetic and mapped-right normalization. Left remainder/right map/payload operand orientation unchanged. Twenty fresh original scalar/exact-tree observations and identical kernel driver replay cover zero/equal/large counters, overlapping/disjoint/mixed/deep keys and every malformed-tree orientation (left raw nodes preserved while mapped right raw nodes normalize). This is native branch heuristic collection, not an executed allocator route or whole get_heu/allocator correctness. Coordinator review pending."
 },
+{
+  "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Carriers.lean",
+  "lean_name": "Tag",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+  "hol_name": "tag",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01 bead11.5.10.1: literal datatype 41-43. Constructor arities and Nat payloads match; all twelve ra_state fields retain Lists, alist List (Nat × (Nat × Nat)), Bool list. No list-array qualifier or production IRC equivalence claim. Coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Carriers.lean",
+  "lean_name": "State",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+  "hol_name": "ra_state",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01 bead11.5.10.1: literal datatype 61-82. Constructor arities and Nat payloads match; all twelve ra_state fields retain Lists, alist List (Nat × (Nat × Nat)), Bool list. No list-array qualifier or production IRC equivalence claim. Coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Carriers.lean",
+  "lean_name": "Algorithm",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+  "hol_name": "algorithm",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01 bead11.5.10.1: literal datatype 1346-1348. Constructor arities and Nat payloads match; all twelve ra_state fields retain Lists, alist List (Nat × (Nat × Nat)), Bool list. No list-array qualifier or production IRC equivalence claim. Coordinator review pending."
+},
   {
     "lean_path": "Flapjack/Compiler/Backend/WordAlloc/HeuCall.lean",
     "lean_name": "heuMergeCall",
