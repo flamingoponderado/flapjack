@@ -2280,3 +2280,11 @@ non-wf Spt, width-eight packing and an input count below flattened length.
 actual native outputs in the real CompilerParity test driver. No input count
 bound is needed. These observations provide regression evidence, not a
 cross-prover equivalence or whole-compiler correctness proof.
+
+`word_to_stack_insert_prefix_probeScript.sml` freshly observes seven insertion
+prefix equations over the original payload-polymorphic operation: empty and
+nested trees, a count below flattened length, positive slack, Bool and Option
+Nat payloads. `WordToStackInsertPrefixParity` kernel-applies the full original
+statement to the same actual insertion outputs in the CompilerParity driver.
+No word dimension or count bound is required. These observations are regression
+evidence, not a cross-prover equivalence or whole-compiler correctness proof.

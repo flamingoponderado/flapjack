@@ -41610,4 +41610,13 @@
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-a: full source2805-2816 compared binder by binder: arbitrary Spt Unit cutset pair, AppList word/count pair, right-associated natural frame triple, actual native HolProg output and bitmap output; sole actual wLive output equation implies flattened input prefix of flattened output. List.IsPrefix is the original existential suffix equality. No input count bound, wellformedness or evaluation premise; words_as_type_indexed_bitvec only translates positive source dimension. Direct proof follows actual insertBitmap and accepted append_thm. Seven fresh original same-input observations include count below flattened length and malformed Spt; fixture imported by actual CompilerParity driver. This prerequisite does not establish whole comp/compiler correctness."
 }
+,
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/InsertBitmapPrefix.lean",
+  "lean_name": "insertBitmapIsPrefix",
+  "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+  "hol_name": "insert_bitmap_isPREFIX",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-a: full source2797-2803 arbitrary payload list bm, AppList/count input and output, index and sole insertion output equation imply flattened-input prefix of flattened-output. Original insert_bitmap is payload-polymorphic (no word operations); generic alpha matches its accepted definition and AppList constructors exactly. No width qualifier, count bound, wellformedness or success premise. List.IsPrefix is the same existential suffix equality; proof projects actual insertion and uses accepted append_thm. Seven fresh original observations on empty/nested/short-count/slack/Bool/Option Nat cases replayed by kernel theorem applications in actual CompilerParity driver. Native comp/compiler correctness remains open."
+}
 ]
