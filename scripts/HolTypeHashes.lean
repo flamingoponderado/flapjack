@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Parmove
 import Flapjack.Pancake.WordConvs.NameMonotonicity
 import Flapjack.Compiler.Encoders.AsmProps.PcCoverage
 import Flapjack.Pancake.WordConvs.EveryVarInstMono
