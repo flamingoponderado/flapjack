@@ -8,7 +8,7 @@ directly:
 
     python3 scripts/check-hol-probe-rows.py
 
-The checker has two independent, deterministic parts.
+The checker has three independent, deterministic parts.
 
 1. Structural coverage. Every ``scripts/hol-probes/<name>.out`` is parsed into
    rows of the form ``label=value`` (the value may span continuation lines; a
@@ -27,6 +27,10 @@ The checker has two independent, deterministic parts.
    every captured ``.out``. Any change to an ``.out`` byte, whether a value, a
    label, or a row addition/removal, fails until the lock is regenerated with
    ``--update`` after review.
+
+3. Driver structure. Literal ``run_probe`` registrations in ``regenerate.sh``
+   must supply a source path and, optionally, a working directory after their
+   labels. A dangling continuation must not absorb another registration.
 
 This gate does not evaluate HOL. The probe scripts and ``.out`` files are
 committed artifacts, so the checker compares them against each other and
@@ -48,6 +52,7 @@ import argparse
 import hashlib
 import json
 import re
+import shlex
 import sys
 from pathlib import Path
 
@@ -290,8 +295,35 @@ def check_lock(probes_dir: Path, lock_path: Path) -> list[str]:
     ]
 
 
+def check_registrations(text: str) -> list[str]:
+    """Check literal run_probe commands without executing the shell script."""
+    errors = []
+    logical = re.sub(r"\\\r?\n", " ", text)
+    for number, line in enumerate(logical.splitlines(), 1):
+        if not re.match(r"^run_probe\s", line):
+            continue
+        tokens = shlex.split(line, comments=True)
+        source = next((i for i in range(3, len(tokens))
+                       if tokens[i].startswith(("$", "/"))), len(tokens))
+        paths = tokens[source:]
+        if (len(tokens) < 4 or tokens.count("run_probe") != 1
+                or not tokens[1].endswith("Script.sml")
+                or not tokens[2].endswith(".out")
+                or len(paths) not in (1, 2)
+                or not paths[0].endswith("Script.sml")
+                or (len(paths) == 2 and not paths[1].startswith(("$", "/")))
+                or any(not re.fullmatch(r"[A-Za-z][A-Za-z0-9_]*", label)
+                       for label in tokens[3:source])):
+            errors.append(f"regenerate.sh logical line {number}: malformed run_probe "
+                          "registration (expected labels followed by source and optional directory)")
+    return errors
+
+
 def check(probes_dir: Path, lock_path: Path) -> None:
     errors = check_structural(probes_dir) + check_lock(probes_dir, lock_path)
+    driver = probes_dir / "regenerate.sh"
+    if driver.is_file():
+        errors += check_registrations(read_text(driver))
     if errors:
         raise ValueError("\n".join(errors))
 

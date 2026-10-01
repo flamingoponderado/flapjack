@@ -938,17 +938,16 @@ def sptListInsert : List Nat → NumSet → NumSet
   | key :: keys, tree => sptListInsert keys (sptInsert key () tree)
 
 /-- HOL `sptree$mk_BN` (`HOL/src/finite_maps/sptreeScript.sml:88-92`): collapse
-two empty children back to `LN`.  The HOL source lives in the HOL
-installation's `src/finite_maps`, outside `cakeml/`, so this rendering is
-Flapjack infrastructure and carries no `@[hol]` tag. -/
+two empty children back to `LN`. This helper remains untagged pending its own
+source review; external HOL sources can be tagged using `hol4/` references. -/
 def sptMkBN {α : Type} (left right : Spt α) : Spt α :=
   match left, right with
   | .ln, .ln => .ln
   | _, _ => .bn left right
 
 /-- HOL `sptree$mk_BS` (`HOL/src/finite_maps/sptreeScript.sml:94-98`): collapse
-the two empty children around a value to `LS`.  Untagged Flapjack
-infrastructure, as for `sptMkBN`. -/
+the two empty children around a value to `LS`. This helper remains untagged
+pending its own source review, as for `sptMkBN`. -/
 def sptMkBS {α : Type} (left : Spt α) (value : α) (right : Spt α) : Spt α :=
   match left, right with
   | .ln, .ln => .ls value
@@ -1111,8 +1110,8 @@ theorem sptDomain_sptInter {α β : Type} (left : Spt α) (right : Spt β) :
 remove every key present in the right tree while retaining the left payloads.
 The right value type is independent because its payloads are never read. The
 recursive clauses and `sptMkBN`/`sptMkBS` collapse behavior follow the HOL
-definition exactly. The source is outside the CakeML submodule, so this is
-Flapjack infrastructure without an `@[hol]` tag. -/
+definition clause by clause. This helper remains untagged pending its own
+source review; its external source location does not prohibit a tag. -/
 def sptDifference {α β : Type} : Spt α → Spt β → Spt α
   | .ln, _ => .ln
   | .ls value, right =>
