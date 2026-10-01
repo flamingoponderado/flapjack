@@ -2994,6 +2994,10 @@ run_probe parmove_temp_mixed_probeScript.sml parmove_temp_mixed_probe.out \
   ntm_real ntm_read ntm_write ntm_both \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
+run_probe parmove_temp_insert_probeScript.sml parmove_temp_insert_probe.out \
+  nti_empty nti_real_ok nti_read_bad nti_write_first nti_bad_append nti_append_ok \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
 run_probe word_alloc_checker_assembly_probeScript.sml word_alloc_checker_assembly_probe.out \
   ca_control ca_return ca_handler ca_tail_ignored ca_collision \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"

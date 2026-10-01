@@ -2,9 +2,10 @@ import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Append
 
 namespace Flapjack.Compiler.Backend.Parmove
 
-/-- The literal scratch-safety insertion law: inserting a scratch write
-`(SOME x, SOME y)` anywhere preserves scratch-safety. Source and destination
-option carriers remain independently quantified, as in HOL. -/
+/-- The literal insertion law: inserting a real move `(SOME x, SOME y)` (a
+non-scratch destination `x` with a real source `y`) anywhere preserves
+scratch-safety. Source and destination option carriers remain independently
+quantified, as in HOL. -/
 @[hol "cakeml/compiler/backend/reg_alloc/parmoveScript.sml" "not_use_temp_before_assign_insert"]
 theorem notUseTempBeforeAssignInsert {destination source : Type}
     (first second : List (Option destination × Option source))
