@@ -38439,7 +38439,7 @@
   "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
   "hol_name": "INJ_UNION",
   "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/ScopedInjection.lean",
-  "lean_name": "injUnion",
+  "lean_name": "injUnionUniv",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-c source comparison 2026-10-01, bead11.1.21: literal33-40: INJ f (A UNION B) UNIV implies conjunction of INJ on A and B; explicit local injectivity, universal codomain range tautology discharged, no global injection. HOL polymorphic sets/functions rendered as predicates and functions at generic Type carriers. No word/map carrier translation, strengthened premise, target run, or weakened membership-only result. Source prerequisites of full allocator simulation/clash-tree soundness; executable compiler unchanged."
 },

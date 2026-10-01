@@ -5,7 +5,7 @@ namespace Flapjack.WordAlloc
 /-- HOL union-scoped injection restricts to each constituent. Predicate sets
 render HOL sets, and the codomain UNIV contributes no range constraint. -/
 @[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "INJ_UNION"]
-theorem injUnion {α β : Type} (f : α → β) (a b : α → Prop)
+theorem injUnionUniv {α β : Type} (f : α → β) (a b : α → Prop)
     (h : ∀ x y, (a x ∨ b x) → (a y ∨ b y) → f x = f y → x = y) :
     (∀ x y, a x → a y → f x = f y → x = y) ∧
       (∀ x y, b x → b y → f x = f y → x = y) := by
