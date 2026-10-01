@@ -12,8 +12,8 @@ private theorem max3_eq_max (a b c : Nat) : max3HOL a b c = max a (max b c) := b
   split <;> split <;> omega
 
 /-- Full arithmetic maximum correspondence through the actual partial codec.
-When the codec rejects the distinct five-register AddCarry, both mapped
-expressions are none; no maximum correspondence is asserted for that case. No conversion
+The distinct five-register AddCarry codec returns `none`, so both mapped
+expressions are `none`; the equality asserts no maximum for rejected inputs. No conversion
 success or desired-maximum premise is assumed. This is Flapjack carrier
 infrastructure, not a HOL theorem port. -/
 theorem wordArithCakeMaxVar_codec {width : Nat} [NeZero width]
@@ -29,8 +29,9 @@ theorem wordArithCakeMaxVar_codec {width : Nat} [NeZero width]
 /-- Instruction maxima agree through the existing operand-preserving codec
 under the allocator's actual checked memory guard. The guard excludes ordinary
 Load16/Store16, which HOL's max_var_inst catch-all ignores; it is not a caller
-assumption about the desired maximum. Every arithmetic codec rejection remains
-explicit. Flapjack-only carrier correspondence; full program codec closure and
+assumption about the desired maximum. On arithmetic codec rejection both mapped
+expressions are `none`; no rejection or maximum theorem is claimed independently
+of that codec. Flapjack-only carrier correspondence; full program codec closure and
 the native frame/production route remain separate obligations. -/
 theorem wordInstCakeMaxVar_codec {width : Nat} [NeZero width]
     (instruction : WordInst (BitVec width))

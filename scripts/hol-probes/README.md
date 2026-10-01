@@ -2485,3 +2485,33 @@ production allocator routing. Regenerate read-only with
 `HOL_PROBE_ONLY=reg_alloc_remap_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `word_to_stack_ssa_codec_probe` captures eight fresh original full SSA equations, including ABI entry moves, assignment, constant, shift, long multiplication, Raise, Call and Return. Kernel fixtures replay every complete output tree at the same inputs. Nine separate codec-domain sentinels cover ordinary 16-bit memory and nested five-register AddCarry rejection. Untagged universal infrastructure proves actual SSA renaming for arbitrary frames/state and the full ABI wrapper preserve codec acceptance; subsequent optimization passes and the native production route remain open.
+`word_alloc_heu_prog_probe.out` captures fifty-two fresh original program
+heuristic observations, replayed by `HeuProgParity` in the kernel. Every
+program clause and catchall, all shared-memory widths, same-input If joins,
+forward Seq, self/other/indirect calls, ignored tail handlers and the source
+returning-call no-handler discard are covered. Fixtures also cover raw trees,
+unbounded names/counters and widths 1/64/128. These finite observations do not
+establish general cross-prover equivalence or production allocator routing.
+Regenerate read-only with
+`HOL_PROBE_ONLY=word_alloc_heu_prog_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`word_alloc_canonize_moves_aux_probeScript.sml` / `.out` compares the literal
+counting recursion at word_allocScript1641-1648 against twelve full output
+lists: empty/current zero count, arbitrary accumulator, priority up/down/equal,
+changed groups, reverse flush order, unsorted/reversed/self moves, and unbounded
+Nat counters/priorities/registers. Kernel pairs live in
+`Flapjack/Test/WordAllocCanonizeMovesAuxParity.lean`; this does not establish
+the separate sort prerequisite or executed allocator routing.
+
+`misc_find_index_shift_zero_probeScript.sml` / `.out` compares ten whole
+original offset-shift equations with kernel theorem applications in
+`Flapjack/Test/FindIndexShiftZeroParity.lean`: empty, head/interior/last, missing,
+duplicates, zero and unbounded offsets/identifiers, and Boolean carriers.
+This supports the Move first-index characterization; it does not establish
+the full pass-correctness result.
+
+`parmove_temp_step_probeScript.sml` / `.out` captures nine combined original
+wf/source/target scratch-safety observations for all six primitive Step cases,
+cycle save, prior-written scratch reads/save, and Boolean registers. Matching
+`Flapjack/Test/ParmoveTempStepParity.lean` checks source wf/safety and derives
+target safety via the actual Step constructor and full ported theorem.
+RTC/pmov and full Move correctness remain separate open obligations.

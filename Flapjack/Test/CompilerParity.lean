@@ -2,7 +2,11 @@ import Flapjack.Test.WordToStackSsaCodecParity
 import Flapjack.Test.WordToStackProgramMaximumParity
 import Flapjack.Test.WordToStackColourDomainParity
 import Flapjack.Test.WordToStackInstructionMaximumParity
+import Flapjack.Test.HeuProgParity
 import Flapjack.Test.RegAllocRemapParity
+import Flapjack.Test.WordAllocCanonizeMovesAuxParity
+import Flapjack.Test.FindIndexShiftZeroParity
+import Flapjack.Test.ParmoveTempStepParity
 import Flapjack.Test.HeuCallParity
 import Flapjack.Test.MonadBaseParity
 import Flapjack.Test.RegAllocCarriers
