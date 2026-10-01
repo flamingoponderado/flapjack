@@ -1,3 +1,4 @@
+import Flapjack.Test.AsmPropsArithmeticPreservationParity
 import Flapjack.Test.StackPropsInstructionConstantsParity
 import Flapjack.Test.LabToTargetMapLemmasParity
 import Flapjack.Test.LabToTargetEncodingParity
