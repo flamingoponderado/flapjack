@@ -2580,17 +2580,6 @@ or executed allocator routing. Regenerate with
 five-register AddCarry rejection. Codec-domain preservation is Flapjack
 infrastructure, not a HOL semantic equivalence theorem.
 
-`word_to_stack_program_bitmaps_probe.out` contains ten fresh direct original
-`compile_prog` and `compile_word_to_stack` observations, kernel-replayed by
-`Flapjack.Test.WordToStackProgramBitmapsParity`. They retain bitmap lengths,
-counts, gaps, initial-prefix equality, frame outputs and repeated/Boolean keys;
-cases include zero frame, nested insertion, width one and an invalid initial
-length bound. The full arbitrary-input prefix and accounting theorems live in
-`WordToStack/Proofs/ProgramBitmaps.lean`. These finite observations do not prove
-cross-language equivalence or source-to-RISC-V correctness. Regenerate with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml
-HOL_PROBE_ONLY=word_to_stack_program_bitmaps_probeScript.sml
-scripts/hol-probes/regenerate.sh` from the read-only prebuilt backend theory.
 `parmove_all_distinct_step_probe`, `parmove_state_to_list_probe`, and
 `parmove_temp_steps_probe` capture original observations replayed by the
 corresponding Lean parity modules. They cover primitive real-destination
@@ -2611,3 +2600,18 @@ correctness or cross-language equivalence. Regenerate with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=stackprops_code_labels_probeScript.sml
 scripts/hol-probes/regenerate.sh` against the read-only prebuilt theories.
+`parmove_map_state_probe` captures ten original equations for mapping both
+endpoints through all three lists, including independent Nat-to-Bool carriers
+and noninjective maps. `ParmoveMapStateParity` replays the same inputs in Lean;
+the finite fixtures do not prove cross-assistant equivalence.
+
+`reg_alloc_sorted_mem_probe` captures twelve original early-stop membership
+equations, including unsorted inputs. `RegAllocSortedMemParity` kernel-replays
+the same cases and the executed wrapper's equation for arbitrary keys/lists.
+
+`word_to_stack_program_bitmaps_probe` captures ten original single-program
+and list-compiler bitmap snapshots, replayed in `WordToStackProgramBitmapsParity`.
+Cases include invalid initial bounds, width one, repeated identifiers, and
+independent Bool identifiers. The general prefix/accounting proofs retain
+the original compiler output equations and initial-length bound; finite
+snapshots are not a cross-language equivalence proof.

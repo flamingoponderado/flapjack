@@ -3107,9 +3107,6 @@ run_probe word_copy_codec_domain_probeScript.sml word_copy_codec_domain_probe.ou
   copy_carry copy_load16 copy_store16 copy_seq_alias copy_if copy_loop copy_must copy_both \
   "$cake_dir/compiler/backend/word_copyScript.sml" "$cake_dir/compiler/backend"
 
-run_probe word_to_stack_program_bitmaps_probeScript.sml word_to_stack_program_bitmaps_probe.out \
-  pb_single_skip pb_single_zero_frame pb_single_alloc pb_single_seq pb_single_invalid_bound pb_single_width_one pb_rows_empty pb_rows_repeat_id pb_rows_mixed pb_rows_bool \
-  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
 run_probe reg_alloc_initialization_probeScript.sml reg_alloc_initialization_probe.out \
   ira_adj ira_tag ira_degrees ira_coalesced ira_move_related ira_preserved ira_failure ira_zero \
   "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
@@ -3133,3 +3130,14 @@ run_probe parmove_temp_steps_probeScript.sml parmove_temp_steps_probe.out \
 run_probe stackprops_code_labels_probeScript.sml stackprops_code_labels_probe.out \
   sl_skip sl_jump sl_raw sl_location sl_store_none sl_store_some sl_direct_tail sl_indirect_tail_handler sl_direct_tail_handler sl_return_owner sl_return_other_owner sl_return_no_handler sl_sequence_duplicate sl_if_loop sl_nested_handlers \
   "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe parmove_map_state_probeScript.sml parmove_map_state_probe.out \
+  pms_empty pms_pending pms_active pms_emitted pms_order pms_constant pms_large pms_bool pms_cross_carrier pms_option_constant \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe reg_alloc_sorted_mem_probeScript.sml reg_alloc_sorted_mem_probe.out \
+  sorted_mem_empty sorted_mem_singleton sorted_mem_above sorted_mem_middle sorted_mem_gap sorted_mem_below sorted_mem_tail sorted_mem_duplicate sorted_mem_unsorted_stop sorted_mem_unsorted_continue sorted_mem_zero sorted_mem_large \
+  "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe word_to_stack_program_bitmaps_probeScript.sml word_to_stack_program_bitmaps_probe.out \
+  pb_single_skip pb_single_zero_frame pb_single_alloc pb_single_seq pb_single_invalid_bound pb_single_width_one pb_rows_empty pb_rows_repeat_id pb_rows_mixed pb_rows_bool \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
