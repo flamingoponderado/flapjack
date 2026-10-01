@@ -42160,6 +42160,15 @@
   "reviewer": "flapjack-luna-a source comparison HOL2813-2826 and ShareInst3146-3232: Load32 case retains original six premises and five conclusions through accepted clashTreeGoal/clashTreeConcl. Exact WordLangProgHOL positive-width BitVec carrier; no subprogramIH or addedpremise. Delta checker via accepted deltaConcl; stores no writes and read-list includes value register, live equality from unit singleton/union algebra. Loads singleton destination write, expression reads, deleted incoming live wf derived from original wf live. No bounds/evaluation/poststate assumptions. words_as_type_indexed_bitvec only carrier translation; mainreviewpending."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "clash_tree_colouring_ok",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/ClashTreeColouringOk/CallHandler.lean",
+  "lean_name": "clashTreeColouringOk_CallHandler",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.4.18.3): HOL clash_tree_colouring_ok (word_allocProofScript.sml:2813-2826) at the returning Call (SOME (vs,cutset,ret_handler,l1,l2)) with exception handler SOME (v',h,l1',l2') case of get_clash_tree_ind, rendered by the untagged clashTreeGoal: binders lt f live flive livein flivein; the six HOL premises wf_cutsets prog, wf live, EVERY (\\(n,e). wf n /\\ wf e) lt (as membership-quantified sptWf of both components), domain flive = IMAGE f (domain live), INJ f (domain live) UNIV, check_clash_tree f (get_clash_tree prog lt) live flive = SOME (livein,flivein); and the five hide'd HOL conclusions (untagged clashTreeConcl): wf livein, INJ f (domain livein), colouring_ok f prog live lt, livein = get_live prog live lt, domain flivein = IMAGE f (domain livein). IHs: clashTreeGoal ret_handler and clashTreeGoal h (both used at live, as get_clash_tree_ind); no other premise. Proof follows HOL (word_allocProofScript.sml:3253-3268): Branch (SOME live_set) — left Seq (Set (numset_list_insert vs cutset)) ret_tree, right Seq (Set (insert v' () cutset)) handler tree, fixed check_col_INJ on union cutset args_set = get_live; wf_names gives wf of the cut union (wf_union), colouring_ok's union (SND) (FST) by domain commutativity (untagged inj_of_domain_iff, setAfterTree). HOL sets as predicates, IMAGE as an existential, INJ as injectivity on the domain predicate; HOL 'a word as positive-width BitVec."
+},
+{
   "lean_path": "Flapjack/Compiler/Backend/Parmove/TempBeforeAssign/Append.lean",
   "lean_name": "notUseTempBeforeAssignAppend",
   "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
