@@ -2202,3 +2202,10 @@ checks the source prefix-only NoRead guard. `ParmoveDStepsParity.lean` replays
 the same inputs in Lean. These finite observations are regression evidence,
 not a cross-prover equivalence proof; the complete rules, induction and cases
 statements are source-reviewed in `Parmove/DSteps.lean`.
+
+`word_to_stack_native_config_probeScript.sml` captures seven fresh original
+configuration record projections and updates. Empty, singleton, raw BS and
+non-well-formed BN trees are retained without a validity restriction.
+`WordToStackNativeConfigParity.lean` kernel-replays the same records. This
+carrier prerequisite does not establish the top compiler or its executed route;
+those remain tracked on the WordToStack compiler beads.

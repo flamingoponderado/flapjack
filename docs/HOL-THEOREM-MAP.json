@@ -41366,5 +41366,13 @@
   "hol_name": "dstep_cases",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-a: source six-clause Hol_reln at 478-492 and local NoRead at 22 compared literally; generic Option registers and three List state carriers match. Prefix-only Extend guard and combined Save/Emit retained. Full rules, least-relation induction and exhaustive cases; no added well-formedness or successful-result premise."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeConfig.lean",
+  "lean_name": "Config",
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "config",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-a: source datatype16-19 compared field by field. HOL num maps to Nat and num spt uses the constructor-for-constructor Spt Nat carrier (LN/LS/BN/BS); no raw function map or well-formedness restriction. No word or FFI parameter occurs in this record. Seven freshly regenerated original projections and field-update equations kernel paired; top compile_def caller remains tracked by parent25.16."
 }
 ]
