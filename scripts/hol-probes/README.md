@@ -2137,4 +2137,3 @@ agree. A deliberately invalid pending `NONE` source yields 99 versus 27 and
 fails `wf`; no equivalence is claimed for it. Lean checks all observations and
 the input invariants. Save's generic theorem proves the original real-register
 equivalence from the full source `wf`, with no extra agreement premise.
-
