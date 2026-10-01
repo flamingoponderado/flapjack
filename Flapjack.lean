@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.StackToLab.ExecutedCodec
 import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Full
 import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Recursive
 import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Nonrecursive
