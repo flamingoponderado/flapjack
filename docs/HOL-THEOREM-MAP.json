@@ -43930,5 +43930,13 @@
   "lean_name": "mergeMovesFrame2",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-a source4687-4717 comparison: arbitrary list/start/native Spt Nat maps, no premises; original five-product merge_moves let result. Both characteristic-domain equalities retained plus every input-list key in original native intersection has equal output lookups. No distinctness, wf, class, freshness, map relation or desired result premise. Native canonical Spt/inter/domain_inter and lookup/insert laws retain all constructors including malformed trees. Full tail-first induction handles missing/equal/unequal cases; inserts occur only at present keys. Generic kernel actual theorem application retains all three conjuncts; freshly regenerated original complete merge results, definition/type and ten kernel replays include missing/equal/unequal/repeated/reordered/malformed/unbounded Nat inputs. Local HOL theorem compared from source, no exported invocation claimed. Executed list-state route remains separate."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "ssa_map_ok_more",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAMapBounds.lean",
+  "lean_name": "ssaMapOKMore",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-a source5205-5213 comparison: arbitrary natural next/nextOut and native Spt Nat tree; sole original conjunction ssa_map_ok next tree and next<=nextOut. Conclusion retains exact same tree at larger bound. Original forall lookup-SOME domain and nonphysical guard come from accepted native SSAMap predicate; no wf, distinctness, freshness, class or desired target premise. Proof preserves nonphysical clause and composes strict/non-strict natural order. Nine fresh original complete predicate pairs include equal/raised/rejected bounds, malformed tree, overwrite and large odd/even values; matching kernel fixture plus arbitrary map/bounds application. Full original local proof replayed in original HOL from its literal tactic text, not falsely claimed DB-export invocation. No executable compiler change."
 }
 ]

@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapBounds
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveDomains
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetup.EvenListDistinct
 import Flapjack.Compiler.Backend.WordAlloc.LimitVar

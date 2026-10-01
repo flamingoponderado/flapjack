@@ -3317,6 +3317,10 @@ run_probe ssa_setup_probeScript.sml ssa_setup_probe.out \
   ss_even ss_empty ss_duplicates ss_invalid ss_one ss_setup0 ss_setup1 ss_setup3 ss_setup80 even_list_def next_var_rename_def list_next_var_rename_def setup_ssa_def ss_setup_1_to_80 ss_setup_80_to_1 ss_setup_original_type \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
 
+run_probe ssa_map_bounds_probeScript.sml ssa_map_bounds_probe.out \
+  mb_empty mb_valid mb_same mb_bound mb_physical mb_invalid mb_large_physical mb_large mb_overwrite mb_more \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe ssa_map_ok_probeScript.sml ssa_map_ok_probe.out \
   sm_empty sm_valid sm_at_bound sm_physical sm_invalid sm_definition \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
