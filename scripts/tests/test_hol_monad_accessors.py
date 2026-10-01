@@ -101,6 +101,15 @@ class MonadAccessorTest(unittest.TestCase):
                 generated = [name for names, _, _ in RECOGNIZE(source) for name in names]
                 self.assertFalse(set(ARRAY) & set(generated))
 
+    def test_checker_keeps_single_fetch_alias_location(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = pathlib.Path(directory) / 'fixtureScript.sml'
+            path.write_text('Theory fixture\n' + SOURCE +
+                            'val items_sub_def = fetch "-" "items_sub_def";\n')
+            lines = CHECK(path, {})
+            self.assertEqual(lines['items_sub_def'], [10])
+            self.assertEqual(lines['items_length_def'], [9])
+
     def test_checker_and_index_share_span(self):
         with tempfile.TemporaryDirectory() as directory:
             root = pathlib.Path(directory)

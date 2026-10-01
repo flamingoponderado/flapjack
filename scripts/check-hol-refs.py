@@ -3569,10 +3569,17 @@ def hol_declaration_lines(
             path.read_text(encoding="utf-8", errors="replace")
         ):
             names.setdefault(carrier, []).append(number)
-        for generated, number, _end in HOL_MONAD_ACCESSORS(
-            path.read_text(encoding="utf-8", errors="replace")
-        ):
+        source_text = path.read_text(encoding="utf-8", errors="replace")
+        # `val NAME = fetch "-" "NAME";` re-binds the theorem the factory
+        # generated under its own name; it is the same declaration, already
+        # recorded at the alias line, so the factory line is not a second one.
+        fetch_aliases = set(re.findall(
+            r'^val\s+([A-Za-z0-9_\']+)\s*=\s*fetch\s+"-"\s+"\1"\s*;',
+            source_text, re.MULTILINE))
+        for generated, number, _end in HOL_MONAD_ACCESSORS(source_text):
             for name in generated:
+                if name in fetch_aliases:
+                    continue
                 names.setdefault(name, []).append(number)
         for locations in names.values():
             locations.sort()
