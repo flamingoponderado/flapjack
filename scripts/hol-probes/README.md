@@ -2588,6 +2588,18 @@ distinctness, generic three-list flattening, and RTC scratch safety respectively
 renaming statements/types as an audit aid, not a port or equivalence proof.
 Its capture omits blank separator lines between printed HOL clauses.
 
+`stackprops_code_labels_probe.out` contains fifteen fresh direct original
+`stackProps$get_code_labels` and `stack_get_handler_labels` complete-set
+observations, replayed by `Flapjack.Test.StackPropsCodeLabelsParity` at the
+identical width64 inputs. Coverage includes direct/indirect and returning/tail
+Calls, the differing treatment of a populated handler with no return,
+owner-matching and owner-mismatching handler labels, recursive traversal of
+both bodies, duplicates, Seq/If/Loop, RawCall entry one, LocValue and optional
+StoreConsts stubs. These regressions do not establish compiler label
+correctness or cross-language equivalence. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=stackprops_code_labels_probeScript.sml
+scripts/hol-probes/regenerate.sh` against the read-only prebuilt theories.
 `parmove_map_state_probe` captures ten original equations for mapping both
 endpoints through all three lists, including independent Nat-to-Bool carriers
 and noninjective maps. `ParmoveMapStateParity` replays the same inputs in Lean;
