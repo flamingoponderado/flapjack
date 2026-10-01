@@ -1,3 +1,4 @@
+import Flapjack.Test.MonadBaseParity
 import Flapjack.Test.RegAllocCarriers
 import Flapjack.Test.HeuMaxParity
 import Flapjack.Test.HeuInstParity

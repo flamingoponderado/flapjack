@@ -2444,3 +2444,5 @@ normalizes the right nodes. Exact trees are compared, not only domains. Finite
 observations do not establish cross-prover equivalence or executed allocator
 routing. Regenerate read-only with
 `HOL_PROBE_ONLY=word_alloc_heu_max_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`monad_base_probe` evaluates original generic state-exception bind/ignore/return/run/allocation clauses, with changed state on success and failure, zero/three-element allocation and distinct byte-character exception payloads. `MonadBaseParity` replays all ten rows and independent generic carriers. Regression evidence, not a cross-language equivalence proof. Production allocator routing remains open.
