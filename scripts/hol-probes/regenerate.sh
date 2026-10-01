@@ -3115,6 +3115,10 @@ run_probe lab_to_target_positions_probeScript.sml lab_to_target_positions_probe.
   lp_hit lp_miss lp_none gl_jump gl_call gl_default fi_hit fi_missing jo_jump jo_install jo_halt jo_callffi \
   "$cake_dir/compiler/backend/lab_to_targetScript.sml" "$cake_dir/compiler/backend"
 
+run_probe lab_to_target_labels_probeScript.sml lab_to_target_labels_probe.out \
+  sl_nil sl_mix sl_zero_only cl_empty cl_lookup cl_base_lookup \
+  "$cake_dir/compiler/backend/lab_to_targetScript.sml" "$cake_dir/compiler/backend"
+
 run_probe word_copy_codec_domain_probeScript.sml word_copy_codec_domain_probe.out \
   copy_carry copy_load16 copy_store16 copy_seq_alias copy_if copy_loop copy_must copy_both \
   "$cake_dir/compiler/backend/word_copyScript.sml" "$cake_dir/compiler/backend"

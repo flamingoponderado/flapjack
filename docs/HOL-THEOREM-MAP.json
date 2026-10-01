@@ -43172,5 +43172,21 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-ds10 source comparison (bead flapjack-pxn.18.5.15.10.11): HOL get_jump_offset_def lab_to_targetScript.sml:109-118 with CallFFI/Install/Halt back-offsets using ffi_offset and get_ffi_index and the generic find_pos - pos form, n2w rendered as BitVec.ofNat width; positive-width words qualifier over the reviewed lab_to_target carriers."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "section_labels_def",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Labels.lean",
+    "lean_name": "sectionLabels",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.15.10.8): source comparison against cakeml/compiler/backend/lab_to_targetScript.sml:62-74 section_labels_def. Literal clause order: nil returns (pos,labs); Label _ l2 len advances pos by len and either skips zero labels or conses (l2,pos+len); Asm _ _ len and LabAsm _ _ _ len advance pos by len. Fully polymorphic in the Line parameters; no word carrier is named, so no word qualifier applies."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "compute_labels_alt_def",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Labels.lean",
+    "lean_name": "computeLabelsAlt",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.15.10.8): source comparison against cakeml/compiler/backend/lab_to_targetScript.sml:76-83 compute_labels_alt_def. Literal clause order: nil returns labs; Section k lines cons computes (newPos,secLabs)=section_labels pos lines [] then recurses on rest with insert k (fromAList ((0,pos)::secLabs)) labs (sptInsert/sptFromAList). Fully polymorphic in the Line parameters; no word carrier is named."
   }
 ]
