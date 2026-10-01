@@ -70,6 +70,25 @@ example : noMtSubprogsHOL callHandlerMt = false := by decide
 -- nac_install_empty=T
 example : noAllocSubprogsHOL installEmpty = true := by decide
 
+-- The exact general checker at HOL's predicates and `ARB` gives the same rows.
+-- nac_alloc_empty=F
+example : notCreatedSubprogsHOL
+    (fun q => by classical exact decide (q ≠ .alloc 0 (.ln, .ln))) allocEmpty = false := by
+  rw [← noAllocSubprogsHOL_eq_notCreated]; decide
+-- nins_install_empty=F
+example : notCreatedSubprogsHOL
+    (fun q => by classical exact decide (q ≠ .install 0 0 0 0 (.ln, .ln))) installEmpty = false := by
+  rw [← noInstallSubprogsHOL_eq_notCreated]; decide
+-- nmt_call_handler_mt=F
+example : notCreatedSubprogsHOL
+    (fun q => by classical exact decide (q ≠ .mustTerminate .skip)) callHandlerMt = false := by
+  rw [← noMtSubprogsHOL_eq_notCreated]; decide
+-- nsi_call_handler_mt=T
+example : notCreatedSubprogsHOL
+    (fun q => by classical exact decide (q ≠ .shareInst holArbMemOp 0 (.var 0))) callHandlerMt =
+      true := by
+  rw [← noShareInstSubprogsHOL_eq_notCreated]; decide
+
 private def oracleChecks : Bool :=
   [
     noAllocSubprogsHOL skipP == true,

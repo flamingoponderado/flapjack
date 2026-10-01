@@ -9,9 +9,9 @@ import Flapjack.Compiler.Backend.LinearScan.Proofs.CheckIntervals
 
 Ports of `linear_scanProofScript.sml:5206-5469`. The `sptree_eq_list`
 correspondence between the interval maps and the hidden-state arrays and the
-interval-monad correctness theorems use HOL `EL` and are provisional
-(untagged) until the `listScript` provenance review. The `EL`-free theorems
-(`linear_scanProofScript.sml:5386-5469`) are exact:
+interval-monad correctness theorems use HOL `EL`, rendered by the exact tagged
+`holEl`. The `EL`-free theorems (`linear_scanProofScript.sml:5386-5469`) are
+exact:
 the clash tree's names are the registers of its live-tree view,
 `fix_domination` adds no registers, and `get_intervals` keeps every
 beginning no later than its end. Renderings as in `Intervals`; `the 0` is the
@@ -192,8 +192,8 @@ theorem getIntervalsBegLessEnd :
 
 /-- HOL proof-script definition `sptree_eq_list` (`linear_scanProofScript.sml:5206-5211`).
 
-Provisional and untagged: uses HOL `EL` (the untagged total `holEl`), whose
-`listScript` provenance is pending review (bead flapjack-pxn.18.5.15.3.38.1). -/
+HOL `EL` is the exact `holEl`. -/
+@[hol "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml" "sptree_eq_list_def"]
 def sptreeEqList (s : Spt Int) (l : List Int) : Prop :=
   ∀ i, i < l.length →
     (0 < holEl i l ↔ sptLookup i s = none) ∧ (holEl i l ≤ 0 ↔ sptLookup i s = some (holEl i l))
@@ -221,8 +221,8 @@ private theorem sptreeEqListLookup (s : Spt Int) (l : List Int) (r : Nat) (hr : 
 
 /-- HOL `numset_list_add_if_lt_monad_correct` (`linear_scanProofScript.sml:5213-5232`).
 
-Provisional and untagged: uses HOL `EL` through `sptree_eq_list` (bead
-flapjack-pxn.18.5.15.3.38.1). -/
+HOL `EL` (through `sptree_eq_list`) is the exact `holEl`. -/
+@[hol "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml" "numset_list_add_if_lt_monad_correct"]
 theorem numsetListAddIfLtMonadCorrect :
     ∀ (int_beg : Spt Int) (sth : LinearScanHiddenState) (l : List Nat) (v : Int),
       v ≤ 0 ∧ sptreeEqList int_beg sth.int_beg ∧ (∀ r, r ∈ l → r < sth.int_beg.length) →
@@ -284,8 +284,8 @@ theorem numsetListAddIfLtMonadCorrect :
 
 /-- HOL `numset_list_add_if_gt_monad_correct` (`linear_scanProofScript.sml:5234-5253`).
 
-Provisional and untagged: uses HOL `EL` through `sptree_eq_list` (bead
-flapjack-pxn.18.5.15.3.38.1). -/
+HOL `EL` (through `sptree_eq_list`) is the exact `holEl`. -/
+@[hol "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml" "numset_list_add_if_gt_monad_correct"]
 theorem numsetListAddIfGtMonadCorrect :
     ∀ (int_end : Spt Int) (sth : LinearScanHiddenState) (l : List Nat) (v : Int),
       v ≤ 0 ∧ sptreeEqList int_end sth.int_end ∧ (∀ r, r ∈ l → r < sth.int_end.length) →
@@ -395,8 +395,8 @@ private theorem getIntervalsCtAuxBranch' (o : Option NumSet) (ct1 ct2 : ClashTre
 
 /-- HOL `get_intervals_ct_monad_aux_correct` (`linear_scanProofScript.sml:5255-5347`).
 
-Provisional and untagged: uses HOL `EL` through `sptree_eq_list` (bead
-flapjack-pxn.18.5.15.3.38.1). -/
+HOL `EL` (through `sptree_eq_list`) is the exact `holEl`. -/
+@[hol "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml" "get_intervals_ct_monad_aux_correct"]
 theorem getIntervalsCtMonadAuxCorrect :
     ∀ (ct : ClashTree) (sth : LinearScanHiddenState) (live : NumSet) (n : Int)
       (int_beg int_end : Spt Int) (nout : Int) (int_begout int_endout : Spt Int)
@@ -530,7 +530,8 @@ theorem getIntervalsCtMonadAuxCorrect :
 
 /-- HOL `get_intervals_ct_monad_correct` (`linear_scanProofScript.sml:5349-5384`).
 
-Provisional and untagged: uses HOL `EL` (bead flapjack-pxn.18.5.15.3.38.1). -/
+HOL `EL` is the exact `holEl`. -/
+@[hol "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml" "get_intervals_ct_monad_correct"]
 theorem getIntervalsCtMonadCorrect :
     ∀ (ct : ClashTree) (sth : LinearScanHiddenState) (n : Int) (int_beg int_end : Spt Int),
       (∀ i, i < sth.int_beg.length → 0 < holEl i sth.int_beg) ∧

@@ -1,0 +1,7 @@
+sec_full=⊢ ∀st w cst ssa na res. word_exp st w = SOME res ∧ word_state_eq_rel st cst ∧ ssa_locals_rel na ssa st.locals cst.locals ⇒ word_exp cst (ssa_cc_trans_exp ssa w) = SOME res
+sec_type_st=:(α, β, γ) state
+sec_type_w=:α exp
+sec_type_cst=:(α, β, γ) state
+sec_type_ssa=:num sptree$num_map
+sec_type_na=:num
+sec_type_res=:α word_loc

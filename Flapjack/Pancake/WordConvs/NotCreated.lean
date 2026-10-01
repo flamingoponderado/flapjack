@@ -88,6 +88,70 @@ theorem notCreatedSubprogsWithMemOp_congr {α : Type}
   | _ => rfl
 termination_by sizeOf program
 
+/-- HOL `ARB : memop` (`HOL/src/bool/boolScript.sml`: `new_constant("ARB",alpha)`,
+"doesn't have to be defined at all"), rendered as an uninterpreted Lean
+`opaque` constant: no theorem can depend on its value, exactly as in HOL.
+Flapjack rendering; HOL's `ARB` is an axiomatised constant, not a definition. -/
+opaque holArbMemOp : WordMemOp := .load
+
+/-- Exact HOL `wordConvs$not_created_subprogs_def` (`wordConvsScript.sml:536-556`),
+clause by clause, on the faithful Spt-backed program with HOL `ARB` as the
+uninterpreted `holArbMemOp`. HOL's predicate is `bool`-valued (`P : 'a prog ->
+bool`), as here. -/
+@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "not_created_subprogs_def"
+  (words_as_type_indexed_bitvec)]
+def notCreatedSubprogsHOL {width : Nat} [NeZero width]
+    (P : WordLangProgHOL (BitVec width) → Bool) : WordLangProgHOL (BitVec width) → Bool
+  | .mustTerminate body => P (.mustTerminate .skip) && notCreatedSubprogsHOL P body
+  | .seq first second => notCreatedSubprogsHOL P first && notCreatedSubprogsHOL P second
+  | .loop _ body _ => notCreatedSubprogsHOL P body
+  | .ite _ _ _ first second => notCreatedSubprogsHOL P first && notCreatedSubprogsHOL P second
+  | .call returns destination _ handler =>
+      P (.call none destination [] none) &&
+        (match returns with
+          | none => true
+          | some (_, _, body, _, _) => notCreatedSubprogsHOL P body) &&
+        (match handler with
+          | none => true
+          | some (_, body, label, _) =>
+              P (.call none none [] (some (0, .skip, label, 0))) &&
+                notCreatedSubprogsHOL P body)
+  | .alloc _ _ => P (.alloc 0 (.ln, .ln))
+  | .locValue _ label => P (.locValue 0 label)
+  | .shareInst _ _ _ => P (.shareInst holArbMemOp 0 (.var 0))
+  | .install _ _ _ _ _ => P (.install 0 0 0 0 (.ln, .ln))
+  | _ => true
+
+/-- The exact checker is the choice-parametric checker at HOL's `ARB`
+(Flapjack infrastructure). -/
+theorem notCreatedSubprogsHOL_eq_withMemOp {width : Nat} [NeZero width]
+    (P : WordLangProgHOL (BitVec width) → Bool) :
+    ∀ program, notCreatedSubprogsHOL P program = notCreatedSubprogsWithMemOp holArbMemOp P program
+  | .mustTerminate body => by
+      simp only [notCreatedSubprogsHOL, notCreatedSubprogsWithMemOp,
+        notCreatedSubprogsHOL_eq_withMemOp P body]
+  | .seq first second | .ite _ _ _ first second => by
+      simp only [notCreatedSubprogsHOL, notCreatedSubprogsWithMemOp,
+        notCreatedSubprogsHOL_eq_withMemOp P first, notCreatedSubprogsHOL_eq_withMemOp P second]
+  | .loop _ body _ => by
+      simp only [notCreatedSubprogsHOL, notCreatedSubprogsWithMemOp,
+        notCreatedSubprogsHOL_eq_withMemOp P body]
+  | .call none _ _ none => by simp [notCreatedSubprogsHOL, notCreatedSubprogsWithMemOp]
+  | .call none _ _ (some (_, body, _, _)) => by
+      simp only [notCreatedSubprogsHOL, notCreatedSubprogsWithMemOp,
+        notCreatedSubprogsHOL_eq_withMemOp P body]
+  | .call (some (_, _, ret, _, _)) _ _ none => by
+      simp only [notCreatedSubprogsHOL, notCreatedSubprogsWithMemOp,
+        notCreatedSubprogsHOL_eq_withMemOp P ret]
+  | .call (some (_, _, ret, _, _)) _ _ (some (_, body, _, _)) => by
+      simp only [notCreatedSubprogsHOL, notCreatedSubprogsWithMemOp,
+        notCreatedSubprogsHOL_eq_withMemOp P ret, notCreatedSubprogsHOL_eq_withMemOp P body]
+  | .skip | .move _ _ | .inst _ | .assign _ _ | .get _ _ | .set _ _ | .store _ _
+  | .alloc _ _ | .storeConsts _ _ _ _ _ | .raise _ | .return _ _ | .break _ | .continue _
+  | .tick | .opCurrHeap _ _ _ | .locValue _ _ | .install _ _ _ _ _ | .codeBufferWrite _ _
+  | .dataBufferWrite _ _ | .ffi _ _ _ _ _ _ | .shareInst _ _ _ => by
+      simp [notCreatedSubprogsHOL, notCreatedSubprogsWithMemOp]
+
 /-- HOL's `no_alloc` specialization: on the normalized nodes inspected by
 the checker, inequality with `Alloc 0 (LN,LN)` is exactly this constructor test.
 The correspondence theorem below checks that simplification for every input
@@ -171,5 +235,34 @@ theorem noShareInstSubprogsHOL_eq_choice {width : Nat} [NeZero width]
   classical
   unfold noShareInstSubprogsHOL
   apply notCreatedSubprogsWithMemOp_congr <;> simp
+
+/-- The tagged `no_*` specialisations are the exact `not_created_subprogs` at HOL's
+predicates and HOL's `ARB` (Flapjack infrastructure linking the exact general
+checker to the specialisations, whose original-HOL probe rows are replayed in
+`Flapjack/Test/WordLangNotCreatedParity.lean`). -/
+theorem noAllocSubprogsHOL_eq_notCreated {width : Nat} [NeZero width]
+    (program : WordLangProgHOL (BitVec width)) :
+    noAllocSubprogsHOL program = notCreatedSubprogsHOL
+      (fun q => by classical exact decide (q ≠ .alloc 0 (.ln, .ln))) program := by
+  rw [notCreatedSubprogsHOL_eq_withMemOp]; exact noAllocSubprogsHOL_eq_choice holArbMemOp program
+
+theorem noInstallSubprogsHOL_eq_notCreated {width : Nat} [NeZero width]
+    (program : WordLangProgHOL (BitVec width)) :
+    noInstallSubprogsHOL program = notCreatedSubprogsHOL
+      (fun q => by classical exact decide (q ≠ .install 0 0 0 0 (.ln, .ln))) program := by
+  rw [notCreatedSubprogsHOL_eq_withMemOp]; exact noInstallSubprogsHOL_eq_choice holArbMemOp program
+
+theorem noMtSubprogsHOL_eq_notCreated {width : Nat} [NeZero width]
+    (program : WordLangProgHOL (BitVec width)) :
+    noMtSubprogsHOL program = notCreatedSubprogsHOL
+      (fun q => by classical exact decide (q ≠ .mustTerminate .skip)) program := by
+  rw [notCreatedSubprogsHOL_eq_withMemOp]; exact noMtSubprogsHOL_eq_choice holArbMemOp program
+
+theorem noShareInstSubprogsHOL_eq_notCreated {width : Nat} [NeZero width]
+    (program : WordLangProgHOL (BitVec width)) :
+    noShareInstSubprogsHOL program = notCreatedSubprogsHOL
+      (fun q => by classical exact decide (q ≠ .shareInst holArbMemOp 0 (.var 0))) program := by
+  rw [notCreatedSubprogsHOL_eq_withMemOp]
+  exact noShareInstSubprogsHOL_eq_choice holArbMemOp program
 
 end Flapjack

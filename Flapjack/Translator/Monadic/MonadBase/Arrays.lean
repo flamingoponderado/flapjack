@@ -2,6 +2,7 @@ import Flapjack.HolRef
 import Flapjack.Translator.Monadic.MonadBase
 import Flapjack.Translator.Monadic.MonadBase.ListPrimitives
 import Flapjack.Translator.Monadic.MonadBase.ArrayLength
+import Flapjack.Misc.ListEl
 
 /-!
 # ml_monadBase fixed-array primitives
@@ -18,24 +19,22 @@ the bounded `l[n]`.
 
 namespace Flapjack.Translator.Monadic.MonadBase
 
-/-- HOL `Msub_eq` (`ml_monadBaseScript.sml:131-138`).
-
-Provisional and untagged: this ports HOL `Msub_eq` but its statement uses HOL `EL`
-(rendered by the untagged total `holEl`, or its bounded form), whose HOL
-`listScript` provenance is pending review (bead flapjack-pxn.18.5.15.3.38.1).
-Restore the `@[hol]` tag once that review is accepted. -/
-theorem msubEq {value exception : Type} :
-    ∀ (l : List value) (n : Nat) (e : exception) (h : n < l.length),
-      mSub e n l = .success (l[n]'h) := by
+/-- Exact HOL `Msub_eq` (`ml_monadBaseScript.sml:131-138`):
+`!l n e. n < LENGTH l ==> Msub e n l = M_success (EL n l)`, HOL `EL` as the
+exact `holEl` (HOL types are inhabited, hence `[Nonempty value]`). -/
+@[hol "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml" "Msub_eq"]
+theorem msubEq {value exception : Type} [Nonempty value] :
+    ∀ (l : List value) (n : Nat) (e : exception),
+      n < l.length → mSub e n l = .success (holEl n l) := by
   intro l
   induction l with
   | nil => intro n e h; simp at h
   | cons x l ih =>
       intro n e h
       cases n with
-      | zero => simp [mSub]
+      | zero => simp [mSub, holEl, holHd]
       | succ n =>
-          simp only [mSub, Nat.succ_ne_zero, if_false, Nat.add_sub_cancel, List.getElem_cons_succ]
+          simp only [mSub, Nat.succ_ne_zero, if_false, Nat.add_sub_cancel, holEl, List.tail_cons]
           exact ih n e (by simp at h; omega)
 
 /-- Exact HOL `Mupdate_eq` (`ml_monadBaseScript.sml:163-170`); HOL `LUPDATE x n l`

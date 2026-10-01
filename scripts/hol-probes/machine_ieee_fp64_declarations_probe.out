@@ -1,0 +1,47 @@
+float_to_fp64_def=∀x. float_to_fp64 x = x.Sign @@ x.Exponent @@ x.Significand
+fp64_abs_def=fp64_abs = float_to_fp64 ∘ float_abs ∘ fp64_to_float
+fp64_add_def=∀mode a b. fp64_add mode a b = float_to_fp64 (SND (float_add mode (fp64_to_float a) (fp64_to_float b)))
+fp64_add_with_flags_def=∀mode a b. fp64_add_with_flags mode a b = (I ## float_to_fp64) (float_add mode (fp64_to_float a) (fp64_to_float b))
+fp64_bottom_def=fp64_bottom = float_to_fp64 (float_bottom (:52 # 11))
+fp64_compare_def=∀a b. fp64_compare a b = float_compare (fp64_to_float a) (fp64_to_float b)
+fp64_div_def=∀mode a b. fp64_div mode a b = float_to_fp64 (SND (float_div mode (fp64_to_float a) (fp64_to_float b)))
+fp64_div_with_flags_def=∀mode a b. fp64_div_with_flags mode a b = (I ## float_to_fp64) (float_div mode (fp64_to_float a) (fp64_to_float b))
+fp64_equal_def=∀a b. fp64_equal a b ⇔ float_equal (fp64_to_float a) (fp64_to_float b)
+fp64_greaterEqual_def=∀a b. fp64_greaterEqual a b ⇔ float_greater_equal (fp64_to_float a) (fp64_to_float b)
+fp64_greaterThan_def=∀a b. fp64_greaterThan a b ⇔ float_greater_than (fp64_to_float a) (fp64_to_float b)
+fp64_isFinite_def=fp64_isFinite = float_is_finite ∘ fp64_to_float
+fp64_isInfinite_def=fp64_isInfinite = float_is_infinite ∘ fp64_to_float
+fp64_isIntegral_def=fp64_isIntegral = float_is_integral ∘ fp64_to_float
+fp64_isNan_def=fp64_isNan = float_is_nan ∘ fp64_to_float
+fp64_isNormal_def=fp64_isNormal = float_is_normal ∘ fp64_to_float
+fp64_isSignallingNan_def=fp64_isSignallingNan = float_is_signalling ∘ fp64_to_float
+fp64_isSubnormal_def=fp64_isSubnormal = float_is_subnormal ∘ fp64_to_float
+fp64_isZero_def=fp64_isZero = float_is_zero ∘ fp64_to_float
+fp64_lessEqual_def=∀a b. fp64_lessEqual a b ⇔ float_less_equal (fp64_to_float a) (fp64_to_float b)
+fp64_lessThan_def=∀a b. fp64_lessThan a b ⇔ float_less_than (fp64_to_float a) (fp64_to_float b)
+fp64_mul_add_def=∀mode a b c. fp64_mul_add mode a b c = float_to_fp64 (SND (float_mul_add mode (fp64_to_float a) (fp64_to_float b) (fp64_to_float c)))
+fp64_mul_add_with_flags_def=∀mode a b c. fp64_mul_add_with_flags mode a b c = (I ## float_to_fp64) (float_mul_add mode (fp64_to_float a) (fp64_to_float b) (fp64_to_float c))
+fp64_mul_def=∀mode a b. fp64_mul mode a b = float_to_fp64 (SND (float_mul mode (fp64_to_float a) (fp64_to_float b)))
+fp64_mul_sub_def=∀mode a b c. fp64_mul_sub mode a b c = float_to_fp64 (SND (float_mul_sub mode (fp64_to_float a) (fp64_to_float b) (fp64_to_float c)))
+fp64_mul_sub_with_flags_def=∀mode a b c. fp64_mul_sub_with_flags mode a b c = (I ## float_to_fp64) (float_mul_sub mode (fp64_to_float a) (fp64_to_float b) (fp64_to_float c))
+fp64_mul_with_flags_def=∀mode a b. fp64_mul_with_flags mode a b = (I ## float_to_fp64) (float_mul mode (fp64_to_float a) (fp64_to_float b))
+fp64_negInf_def=fp64_negInf = float_to_fp64 (float_minus_infinity (:52 # 11))
+fp64_negMin_def=fp64_negMin = float_to_fp64 (float_minus_min (:52 # 11))
+fp64_negZero_def=fp64_negZero = float_to_fp64 NEG0
+fp64_negate_def=fp64_negate = float_to_fp64 ∘ float_negate ∘ fp64_to_float
+fp64_posInf_def=fp64_posInf = float_to_fp64 (float_plus_infinity (:52 # 11))
+fp64_posMin_def=fp64_posMin = float_to_fp64 (float_plus_min (:52 # 11))
+fp64_posZero_def=fp64_posZero = float_to_fp64 POS0
+fp64_roundToIntegral_def=∀mode. fp64_roundToIntegral mode = float_to_fp64 ∘ float_round_to_integral mode ∘ fp64_to_float
+fp64_sqrt_def=∀mode. fp64_sqrt mode = float_to_fp64 ∘ SND ∘ float_sqrt mode ∘ fp64_to_float
+fp64_sqrt_with_flags_def=∀mode. fp64_sqrt_with_flags mode = (I ## float_to_fp64) ∘ float_sqrt mode ∘ fp64_to_float
+fp64_sub_def=∀mode a b. fp64_sub mode a b = float_to_fp64 (SND (float_sub mode (fp64_to_float a) (fp64_to_float b)))
+fp64_sub_with_flags_def=∀mode a b. fp64_sub_with_flags mode a b = (I ## float_to_fp64) (float_sub mode (fp64_to_float a) (fp64_to_float b))
+fp64_to_float_def=∀w. fp64_to_float w = <|Sign := (63 >< 63) w; Exponent := (62 >< 52) w; Significand := (51 >< 0) w|>
+fp64_to_int_def=∀mode. fp64_to_int mode = float_to_int mode ∘ fp64_to_float
+fp64_to_real_def=fp64_to_real = float_to_real ∘ fp64_to_float
+fp64_to_value_def=fp64_to_value = float_value ∘ fp64_to_float
+fp64_top_def=fp64_top = float_to_fp64 FLT_MAX
+int_to_fp64_def=∀mode a. int_to_fp64 mode a = real_to_fp64 mode (real_of_int a)
+real_to_fp64_def=∀mode. real_to_fp64 mode = float_to_fp64 ∘ real_to_float mode
+real_to_fp64_with_flags_def=∀mode. real_to_fp64_with_flags mode = (I ## float_to_fp64) ∘ real_to_float_with_flags mode

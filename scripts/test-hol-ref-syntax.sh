@@ -28,6 +28,8 @@ printf '%s\n' \
   'theorem pinnedFcpSyntax : True := trivial' \
   '@[hol "HOL/src/list/src/listScript.sml" "EL_def"]' \
   'theorem submoduleSyntax : True := trivial' \
+  '@[hol "HOL/src/floating-point/machine_ieeeScript.sml" "fp64_to_float_def" 16]' \
+  'theorem generatedFp64Syntax : True := trivial' \
   '#hol_refs' > "$test_file"
 output=$(lake lean "$test_file")
 [[ "$output" == *'qualifiedSyntax  cakeml/compiler/backend/reg_alloc/reg_allocScript.sml  dec_deg_def (list_as_array := [degrees])'* ]]
@@ -38,6 +40,7 @@ output=$(lake lean "$test_file")
 [[ "$output" == *'pinnedLlistSyntax  hol4/src/coalgebras/llistScript.sml  LPREFIX_TRANS'* ]]
 [[ "$output" == *'pinnedFcpSyntax  hol4/src/n-bit/fcpScript.sml  dimindex_def'* ]]
 [[ "$output" == *'submoduleSyntax  HOL/src/list/src/listScript.sml  EL_def'* ]]
+[[ "$output" == *'generatedFp64Syntax  HOL/src/floating-point/machine_ieeeScript.sml  fp64_to_float_def :16'* ]]
 
 printf '%s\n' \
   'import Flapjack.HolRef' \

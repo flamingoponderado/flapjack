@@ -1,0 +1,7 @@
+sip_full=⊢ ∀i ssa na i' ssa' na'. ssa_cc_trans_inst i ssa na = (i',ssa',na') ⇒ ssa_map_ok na ssa ∧ is_alloc_var na ⇒ na ≤ na' ∧ is_alloc_var na' ∧ ssa_map_ok na' ssa'
+sip_type_i=:α inst
+sip_type_ssa=:num sptree$num_map
+sip_type_na=:num
+sip_type_iOut=:α prog
+sip_type_ssaOut=:num sptree$num_map
+sip_type_naOut=:num

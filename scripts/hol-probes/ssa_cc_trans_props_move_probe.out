@@ -1,0 +1,9 @@
+spm_full=⊢ ∀pri ls ssa na lt progOut ssaOut naOut. ssa_cc_trans (Move pri ls) ssa na lt = (progOut,ssaOut,naOut) ⇒ ssa_map_ok na ssa ∧ is_alloc_var na ⇒ na ≤ naOut ∧ is_alloc_var naOut ∧ ssa_map_ok naOut ssaOut
+spm_type_pri=:num
+spm_type_ls=:(num # num) list
+spm_type_ssa=:num sptree$num_map
+spm_type_na=:num
+spm_type_lt=:(num sptree$num_map # sptree$num_set # sptree$num_set) list
+spm_type_progOut=:α prog
+spm_type_ssaOut=:num sptree$num_map
+spm_type_naOut=:num

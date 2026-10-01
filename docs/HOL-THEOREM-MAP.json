@@ -48145,7 +48145,8 @@
       "store"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 source comparison (2026-09-30; bead flapjack-y19g.11.3.3): HOL inst_def FPSqrt clause (cakeml/compiler/backend/semantics/stackSemScript.sml:558-562) = case get_fp_var d2 s of SOME f => SOME (set_fp_var d1 (fp64_sqrt roundTiesToEven f) s) | _ => NONE, split out as the exact FPSqrt constructor case of HOL inst_def (a split along HOL's own case structure). The stated result is exactly the clause's Option state value, with no dispatcher outer some. The owning carrier is the tagged StackSemStateFiniteExact; its three |-> fields regs/fp_regs/store are recorded by fmap_as_finite_support [regs, fpRegs, store] with the same-module witness Flapjack.StackSemFpRegisterInstructions.FiniteSupport.holFmapAsFiniteSupportWitness (forwarding StackSemStateOps.holFmapAsFiniteSupportWitness). The words qualifier records the HOL 'a word/dimindex (:a) to positive-width BitVec width/[NeZero width] translation; fp64_sqrt roundTiesToEven is the faithful real-sqrt rendering holFp64SqrtReal (Flapjack/Misc/BinaryIeeeSqrt/RoundAgreement.lean), proven equal to the rational-cut holFp64Sqrt by holFp64Sqrt_tiesToEven_agreement. No quantifier, hypothesis, side condition or conclusion differs. Rows fpsqrt_result and fpsqrt_missing of scripts/hol-probes/stacksem_fp_convert_probe.out are replayed by Flapjack.Test.StackSemFpRegisterInstParity. flapjack-sol3 source comparison (2026-10-01; flapjack-y19g.11.3.3.1): independently compared original stackSem inst_def clauses 558-562, 605-623 and 624-636, original full generic inst/get_fp_var/set_fp_var types, and the 22-field owning state. C and F remain arbitrary; fp_regs is fixed word64 while the width-split FPFromInt extraction is word32 only at width=64 and width-indexed otherwise. Missing operands, signed i2w/w2i round-trip rejection, odd/even DIV-2 slots and exact Option state outputs are preserved, without extra premises. The same-module finite-support witness forwards the actual owning carrier codec. Original 11-row probe freshly regenerated from pinned HOL source. The real-sqrt/cut agreement is pure Lean and does not prove HOL-to-Lean equivalence; conversion representation assumptions remain as recorded."
+    "reviewer": "flapjack-ds9 source comparison (2026-09-30; bead flapjack-y19g.11.3.3): HOL inst_def FPSqrt clause (cakeml/compiler/backend/semantics/stackSemScript.sml:558-562) = case get_fp_var d2 s of SOME f => SOME (set_fp_var d1 (fp64_sqrt roundTiesToEven f) s) | _ => NONE, split out as the exact FPSqrt constructor case of HOL inst_def (a split along HOL's own case structure). The stated result is exactly the clause's Option state value, with no dispatcher outer some. The owning carrier is the tagged StackSemStateFiniteExact; its three |-> fields regs/fp_regs/store are recorded by fmap_as_finite_support [regs, fpRegs, store] with the same-module witness Flapjack.StackSemFpRegisterInstructions.FiniteSupport.holFmapAsFiniteSupportWitness (forwarding StackSemStateOps.holFmapAsFiniteSupportWitness). The words qualifier records the HOL 'a word/dimindex (:a) to positive-width BitVec width/[NeZero width] translation; fp64_sqrt roundTiesToEven is the faithful real-sqrt rendering holFp64SqrtReal (Flapjack/Misc/BinaryIeeeSqrt/RoundAgreement.lean), proven equal to the rational-cut holFp64Sqrt by holFp64Sqrt_tiesToEven_agreement. No quantifier, hypothesis, side condition or conclusion differs. Rows fpsqrt_result and fpsqrt_missing of scripts/hol-probes/stacksem_fp_convert_probe.out are replayed by Flapjack.Test.StackSemFpRegisterInstParity. flapjack-sol3 source comparison (2026-10-01; flapjack-y19g.11.3.3.1): independently compared original stackSem inst_def clauses 558-562, 605-623 and 624-636, original full generic inst/get_fp_var/set_fp_var types, and the 22-field owning state. C and F remain arbitrary; fp_regs is fixed word64 while the width-split FPFromInt extraction is word32 only at width=64 and width-indexed otherwise. Missing operands, signed i2w/w2i round-trip rejection, odd/even DIV-2 slots and exact Option state outputs are preserved, without extra premises. The same-module finite-support witness forwards the actual owning carrier codec. Original 11-row probe freshly regenerated from pinned HOL source. The real-sqrt/cut agreement is pure Lean and does not prove HOL-to-Lean equivalence; conversion representation assumptions remain as recorded. Review repair (flapjack-main, 2026-10-01; 8cua.1): explicit real-rendering qualifier records Rat finite values/threshold/largest embedded in Mathlib Real and Real.sqrt, not a rational implementation of sqrt. Internal Lean agreement does not establish HOL correspondence; the external assumption is SOUNDNESS item 8. No definition-body or evaluator behavior changed. The source-comparison qualifier is reals_as_rational_cuts.",
+    "reals_as_rational_cuts": true
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/FpRegisterInstructions.lean",
@@ -49029,5 +49030,1405 @@
       "WordSemStateFiniteExact.store"
     ],
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/ClockSupport.lean",
+    "lean_name": "decClockConst",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "dec_clock_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-1f7c): compared the complete original dec_clock_const and original full variable/constant types in the clock-support capture. All conjuncts, original implication/iff direction and hypotheses are retained. dec_clock_const preserves nineteen fields over independently polymorphic s/z word/configuration/FFI states. pair_map_eq retains four independent source product/function carriers. bad_fun_return_IMP retains one shared existential label, and cont_loop_IMP permits only NONE or Continue0. with_clock_ffi is exactly the clock-update FFI projection. clock_neutral_def retains every clause, only Seq/If recursion and all other constructor exclusions: source asm Const carries an alpha word, so the program parameter is a word index, rendered as positive-width HolProg with faithful MlString and asm payloads; no arbitrary raw payload carrier specialization is certified. No evaluator/callback relation or extra premise is introduced. words_as_type_indexed_bitvec records only the standard positive word-dimension/FFI host translation. fmap_as_finite_support records the three actual imported StackSemStateFiniteExact maps; same-module ClockSupport witness reexports its canonical codec.",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ]
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/ClockSupport.lean",
+    "lean_name": "pairMapEq",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "pair_map_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-1f7c): compared the complete original pair_map_eq and original full variable/constant types in the clock-support capture. All conjuncts, original implication/iff direction and hypotheses are retained. dec_clock_const preserves nineteen fields over independently polymorphic s/z word/configuration/FFI states. pair_map_eq retains four independent source product/function carriers. bad_fun_return_IMP retains one shared existential label, and cont_loop_IMP permits only NONE or Continue0. with_clock_ffi is exactly the clock-update FFI projection. clock_neutral_def retains every clause, only Seq/If recursion and all other constructor exclusions: source asm Const carries an alpha word, so the program parameter is a word index, rendered as positive-width HolProg with faithful MlString and asm payloads; no arbitrary raw payload carrier specialization is certified. No evaluator/callback relation or extra premise is introduced."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/ClockSupport.lean",
+    "lean_name": "badFunReturnImp",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "bad_fun_return_IMP",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-1f7c): compared the complete original bad_fun_return_IMP and original full variable/constant types in the clock-support capture. All conjuncts, original implication/iff direction and hypotheses are retained. dec_clock_const preserves nineteen fields over independently polymorphic s/z word/configuration/FFI states. pair_map_eq retains four independent source product/function carriers. bad_fun_return_IMP retains one shared existential label, and cont_loop_IMP permits only NONE or Continue0. with_clock_ffi is exactly the clock-update FFI projection. clock_neutral_def retains every clause, only Seq/If recursion and all other constructor exclusions: source asm Const carries an alpha word, so the program parameter is a word index, rendered as positive-width HolProg with faithful MlString and asm payloads; no arbitrary raw payload carrier specialization is certified. No evaluator/callback relation or extra premise is introduced. words_as_type_indexed_bitvec records only the standard positive word-dimension/FFI host translation.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/ClockSupport.lean",
+    "lean_name": "contLoopImp",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "cont_loop_IMP",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-1f7c): compared the complete original cont_loop_IMP and original full variable/constant types in the clock-support capture. All conjuncts, original implication/iff direction and hypotheses are retained. dec_clock_const preserves nineteen fields over independently polymorphic s/z word/configuration/FFI states. pair_map_eq retains four independent source product/function carriers. bad_fun_return_IMP retains one shared existential label, and cont_loop_IMP permits only NONE or Continue0. with_clock_ffi is exactly the clock-update FFI projection. clock_neutral_def retains every clause, only Seq/If recursion and all other constructor exclusions: source asm Const carries an alpha word, so the program parameter is a word index, rendered as positive-width HolProg with faithful MlString and asm payloads; no arbitrary raw payload carrier specialization is certified. No evaluator/callback relation or extra premise is introduced. words_as_type_indexed_bitvec records only the standard positive word-dimension/FFI host translation.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/ClockSupport.lean",
+    "lean_name": "withClockFfi",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "with_clock_ffi",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-1f7c): compared the complete original with_clock_ffi and original full variable/constant types in the clock-support capture. All conjuncts, original implication/iff direction and hypotheses are retained. dec_clock_const preserves nineteen fields over independently polymorphic s/z word/configuration/FFI states. pair_map_eq retains four independent source product/function carriers. bad_fun_return_IMP retains one shared existential label, and cont_loop_IMP permits only NONE or Continue0. with_clock_ffi is exactly the clock-update FFI projection. clock_neutral_def retains every clause, only Seq/If recursion and all other constructor exclusions: source asm Const carries an alpha word, so the program parameter is a word index, rendered as positive-width HolProg with faithful MlString and asm payloads; no arbitrary raw payload carrier specialization is certified. No evaluator/callback relation or extra premise is introduced. words_as_type_indexed_bitvec records only the standard positive word-dimension/FFI host translation. fmap_as_finite_support records the three actual imported StackSemStateFiniteExact maps; same-module ClockSupport witness reexports its canonical codec.",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ]
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/ClockSupport.lean",
+    "lean_name": "clockNeutralHOL",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "clock_neutral_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-1f7c): compared the complete original clock_neutral_def and original full variable/constant types in the clock-support capture. All conjuncts, original implication/iff direction and hypotheses are retained. dec_clock_const preserves nineteen fields over independently polymorphic s/z word/configuration/FFI states. pair_map_eq retains four independent source product/function carriers. bad_fun_return_IMP retains one shared existential label, and cont_loop_IMP permits only NONE or Continue0. with_clock_ffi is exactly the clock-update FFI projection. clock_neutral_def retains every clause, only Seq/If recursion and all other constructor exclusions: source asm Const carries an alpha word, so the program parameter is a word index, rendered as positive-width HolProg with faithful MlString and asm payloads; no arbitrary raw payload carrier specialization is certified. No evaluator/callback relation or extra premise is introduced. words_as_type_indexed_bitvec records only the standard positive word-dimension/FFI host translation.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "fake_moves_correctR",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAFakeMovesCorrectRight.lean",
+    "lean_name": "fakeMovesCorrectR",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol-a completed source comparison 2026-10-01 5qx9: original5089-5184 and fresh literal three-proof/seven-type replay from matching pinned CakeML857f0d/HOLa390cb shared builds. Full right-side allocation/Nodup/right-mapOK and locals-relation implication, actual native right fakeMoves/evaluate, all five NONE/untouched right map/old target locals/output locals/full state conclusions retained. Fresh stR alpha,beta,gamma and cstR alpha,delta,epsilon types confirm independent code/FFI and shared positive word dimension. Canonical fpRegs/store roundtrip reviewed; guarded SOME selectors, actual parallel Move and zero Const, actual Seq clock/termdep restoration. No successful-evaluation/post-state or left-mapOK premise. Inherits reals_as_rational_cuts SOUNDNESS item8. Left helper infrastructure reused from checked4847ec1e8; accepted frame30.12 checked native tree, ordinary unified18f233 mergeac8e99f6b. No executable route change.",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/FpInstructions.lean",
+    "lean_name": "instFp",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "inst_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 completed source/body/carrier comparison 2026-10-01, bead i81m: complete FP constructor branch of original inst_def409 clauses519-636, split along HOL outer FP case. All16 payload types are num/Nat registers; full original types confirm machine-indexed state, independent arbitrary compile C and FFI F, fixed word64 fp_regs. Actual imported native owning state retains all22 fields and canonical finite-support regs/fpRegs/store; same-module witness forwards its codec. Structural coverage proves outer Option always present, so join retains precisely original semantic Option state. Compared comparisons writing width-indexed0/1, movement/sign updates, RTE binary arithmetic, FMA destination/addend first with mul-add f2 f3 f1; transfers ignore r2 at64, otherwise low/high slicing and high-last alias order, high@@low concat before64 conversion; ToInt signed word32 roundtrip/odd DIV2 insertion and FromInt fixed32 only at64, width-indexed otherwise. Existing reviewed sqrt/ToInt/FromInt operations reused unchanged. Inherits reals_as_rational_cuts through arithmetic/conversion/real-sqrt dependencies, SOUNDNESS item8; pure Lean sqrt agreement is not HOL-to-Lean equivalence. No direct rendering call, so no direct real qualifier. No callback, stronger premise, supplied evaluation or simplified evaluator. Original type and movement/arithmetic/conversion captures freshly regenerated, structural coverage and frame theorem kernel checked. Complete FP case only, not full inst/evaluate or compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Inst.lean",
+    "lean_name": "instHOL",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "inst_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 completed full source/body/carrier comparison2026-10-01 bead y19g.11.3, source409-640. Exact HolInst five outer constructors and all16 HolFp opcodes; all numeric payloads, positive machine width, fixed64 FP register words, arbitrary independent compile C and FFI F retained. Actual imported22-field native owning state and canonical regs/fpRegs/store codec, same-module witness. Full inst composes actual source-reviewed integer/memory and completeFP clauses; generic structural coverage proves selected fragment outerOption always present even on semantic failure. Source comparison retains Skip identity/Const assign, Or same-register Word-or-Loc copy, all shifts/div/carry/overflow/longmul/longdiv guards and write order, complete load/store address/domain/endian operations, unsupported16-bit memory returningNONE, allFP guards/modes/order/conversions reviewed under i81m. No callbacks, success assumption, target result, stronger carrier bound, alternate evaluator or dropped field. Inherits reals_as_rational_cuts from actualFP arithmetic/conversion/sqrt renderings, SOUNDNESS item8; pure Lean sqrt comparison is not cross-HOL equivalence. No direct rendering call requires a directreal qualifier. Kernel full constructor coverage and clock preservation; fresh original integer andFP observation groups. This is full primitive inst_def only, not evaluate_def, production route or whole compiler correctness."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "fix_inconsistencies_correctL",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAFixInconsistenciesCorrectLeft.lean",
+    "lean_name": "fixInconsistenciesCorrectL",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol-a completed source comparison 2026-10-01 7aal: original5227-5262 plus fresh literal original assembly/prerequisite proof replay from matching pinned CakeML857f0d/HOLa390cb shared builds. Six inferred argument types confirm stL/cstL same alpha,beta,gamma state, unlike generic merge/fake helpers: shared word/code/FFI retained. Original allocation and left-mapOK conjuncts, native fixInconsistencies let and universally quantified states/locals relation implication (state binders commuted before state-independent allocation/map assumptions to expose carrier to the syntactic qualifier checker), all actual evaluation NONE/output locals/full state conclusions preserved. Actual original union/toAList key list, native merge and fakeMoves, real Seq fixClock discharge from proved frame; no target-evaluation/postrelation premise. Canonical fpRegs/store roundtrip and positive BitVec/NeZero reviewed; guarded selectors. Inherits reals_as_rational_cuts SOUNDNESS item8; returned code only Move/zero Const. Accepted jbh9/npgx/frame30.7 dependencies source present; no executable compiler route change.",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "fix_inconsistencies_correctR",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAFixInconsistenciesCorrectRight.lean",
+    "lean_name": "fixInconsistenciesCorrectR",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol-a completed source comparison 2026-10-02 amny: original5264-5316 and fresh literal original right assembly plus merge/fake/frame/swap prerequisites replay from matching pinned CakeML857f0d/HOLa390cb shared builds. Six inferred types confirm same alpha,beta,gamma state dimensions. Original allocation/right-mapOK premises and state-quantified locals relation implication preserved (universal states commuted across state-independent premises for syntactic carrier visibility). Actual returned right program evaluates to NONE and establishes outputlocals relation at the RETURNED LEFT ssaU, not right-only map, plus whole-state relation. Native merge/fake frames prove entire output domain/lookup agreement for original union/toAList keys; ssaEqRelSwap discharges actual left-map result. No target-evaluation, desired agreement, post-state or extra left-mapOK premise. Canonical fpRegs/store roundtrip and positive BitVec/NeZero reviewed. Inherits reals_as_rational_cuts SOUNDNESS item8; Move/zeroConst only. Source/kernel-checked accepted aaaj/5qx9/frame30.7/qn5j/wma3/frame30.12/odmf dependencies; untagged local relation composition reused, no artificial source edge to left correctness theorem. No executed compiler route change.",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "HOL/src/sort/sortingScript.sml",
+    "hol_name": "SORTED_DEF",
+    "lean_path": "Flapjack/Misc/Sorting.lean",
+    "lean_name": "holSorted",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-rkkf), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: sortingScript.sml:564-568 SORTED R [] = T, SORTED R [x] = T, SORTED R (x::y::rst) <=> R x y /\\ SORTED R (y::rst); type ('a -> 'a -> bool) -> 'a list -> bool, the relation rendered as α → α → Prop. Same three clauses; no transitivity assumed. Original type confirmed by type_of; original EVAL rows (scripts/hol-probes/hol_sorting_probe.out) kernel-replayed in Flapjack.Test.HolSortingParity. No extra premise."
+  },
+  {
+    "hol_path": "HOL/src/sort/sortingScript.sml",
+    "hol_name": "PART_DEF",
+    "lean_path": "Flapjack/Misc/Sorting.lean",
+    "lean_name": "holPart",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-rkkf), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: sortingScript.sml:643-648 PART P [] l1 l2 = (l1,l2), PART P (h::rst) l1 l2 = if P h then PART P rst (h::l1) l2 else PART P rst l1 (h::l2); type ('a -> bool) -> 'a list -> 'a list -> 'a list -> 'a list # 'a list, predicate as α → Bool. Same clauses. Original type confirmed by type_of; original EVAL rows (scripts/hol-probes/hol_sorting_probe.out) kernel-replayed in Flapjack.Test.HolSortingParity. No extra premise."
+  },
+  {
+    "hol_path": "HOL/src/sort/sortingScript.sml",
+    "hol_name": "PARTITION_DEF",
+    "lean_path": "Flapjack/Misc/Sorting.lean",
+    "lean_name": "holPartition",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-rkkf), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: sortingScript.sml:740-741 PARTITION P l = PART P l [] []; type ('a -> bool) -> 'a list -> 'a list # 'a list. Original type confirmed by type_of; original EVAL rows (scripts/hol-probes/hol_sorting_probe.out) kernel-replayed in Flapjack.Test.HolSortingParity. No extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "colors_sub_eqn",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/RegExchange.lean",
+    "lean_name": "colorsSubEqn",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (re-tag after bead flapjack-pxn.18.5.15.3.38.1 tagged holHd/holEl against the pinned HOL submodule): linear_scanProofScript.sml:2020-2029 colors_sub n s = if n < LENGTH s.colors then (M_success (EL n s.colors),s) else (M_failure Subscript,s). HOL EL is the exact holEl (unbounded where HOL is unbounded), ALL_DISTINCT List.Nodup, MEM list membership, DIV Nat division, LUPDATE List.set. Statement re-compared clause by clause with the type_of-checked original statement (DB.fetch linear_scanProof, show_types). Kernel-checked. No extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "int_beg_sub_eqn",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/RegExchange.lean",
+    "lean_name": "intBegSubEqn",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (re-tag after bead flapjack-pxn.18.5.15.3.38.1 tagged holHd/holEl against the pinned HOL submodule): linear_scanProofScript.sml:2042-2051, the same shape for int_beg. HOL EL is the exact holEl (unbounded where HOL is unbounded), ALL_DISTINCT List.Nodup, MEM list membership, DIV Nat division, LUPDATE List.set. Statement re-compared clause by clause with the type_of-checked original statement (DB.fetch linear_scanProof, show_types). Kernel-checked. No extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "int_end_sub_eqn",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/RegExchange.lean",
+    "lean_name": "intEndSubEqn",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (re-tag after bead flapjack-pxn.18.5.15.3.38.1 tagged holHd/holEl against the pinned HOL submodule): linear_scanProofScript.sml:2064-2073, the same shape for int_end. HOL EL is the exact holEl (unbounded where HOL is unbounded), ALL_DISTINCT List.Nodup, MEM list membership, DIV Nat division, LUPDATE List.set. Statement re-compared clause by clause with the type_of-checked original statement (DB.fetch linear_scanProof, show_types). Kernel-checked. No extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "sorted_regs_sub_eqn",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/RegExchange.lean",
+    "lean_name": "sortedRegsSubEqn",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (re-tag after bead flapjack-pxn.18.5.15.3.38.1 tagged holHd/holEl against the pinned HOL submodule): linear_scanProofScript.sml:2086-2095, the same shape for sorted_regs. HOL EL is the exact holEl (unbounded where HOL is unbounded), ALL_DISTINCT List.Nodup, MEM list membership, DIV Nat division, LUPDATE List.set. Statement re-compared clause by clause with the type_of-checked original statement (DB.fetch linear_scanProof, show_types). Kernel-checked. No extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "sorted_moves_sub_eqn",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/RegExchange.lean",
+    "lean_name": "sortedMovesSubEqn",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (re-tag after bead flapjack-pxn.18.5.15.3.38.1 tagged holHd/holEl against the pinned HOL submodule): linear_scanProofScript.sml:2108-2117, the same shape for sorted_moves (num # num # num elements). HOL EL is the exact holEl (unbounded where HOL is unbounded), ALL_DISTINCT List.Nodup, MEM list membership, DIV Nat division, LUPDATE List.set. Statement re-compared clause by clause with the type_of-checked original statement (DB.fetch linear_scanProof, show_types). Kernel-checked. No extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "find_reg_exchange_step_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/RegExchange.lean",
+    "lean_name": "findRegExchangeStep",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (re-tag after bead flapjack-pxn.18.5.15.3.38.1 tagged holHd/holEl against the pinned HOL submodule): linear_scanProofScript.sml:2136-2143 find_reg_exchange_step colors r (exch,invexch): col1 = EL r colors (unbounded), fcol1 = r DIV 2, col2/fcol2 via lookup_default_id, two inserts into each map; type num list -> num -> num num_map # num num_map -> ... HOL EL is the exact holEl (unbounded where HOL is unbounded), ALL_DISTINCT List.Nodup, MEM list membership, DIV Nat division, LUPDATE List.set. Statement re-compared clause by clause with the type_of-checked original statement (DB.fetch linear_scanProof, show_types). Kernel-checked. No extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "find_reg_exchange_FOLDL",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/RegExchange.lean",
+    "lean_name": "findRegExchangeFoldl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (re-tag after bead flapjack-pxn.18.5.15.3.38.1 tagged holHd/holEl against the pinned HOL submodule): linear_scanProofScript.sml:2145-2153 ∀l colors exch invexch sth. (∀r. MEM r l ⇒ r < LENGTH sth.colors) ⇒ find_reg_exchange l exch invexch sth = (M_success (FOLDL (λa b. find_reg_exchange_step sth.colors b a) (exch,invexch) l), sth). The binder colors is unused and has the polymorphic type alpha in the original (type_vars_in_term = [alpha]); the Lean binder is (_colors : β) with {β : Type}. HOL EL is the exact holEl (unbounded where HOL is unbounded), ALL_DISTINCT List.Nodup, MEM list membership, DIV Nat division, LUPDATE List.set. Statement re-compared clause by clause with the type_of-checked original statement (DB.fetch linear_scanProof, show_types). Kernel-checked. No extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "find_reg_exchange_FOLDR_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/RegExchange.lean",
+    "lean_name": "findRegExchangeFoldrCorrect",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (re-tag after bead flapjack-pxn.18.5.15.3.38.1 tagged holHd/holEl against the pinned HOL submodule): linear_scanProofScript.sml:2166-2281, all five conclusion conjuncts (inverse compositions, r DIV 2 targets, the three k-threshold implications with id) over FOLDR of find_reg_exchange_step. HOL EL is the exact holEl (unbounded where HOL is unbounded), ALL_DISTINCT List.Nodup, MEM list membership, DIV Nat division, LUPDATE List.set. Statement re-compared clause by clause with the type_of-checked original statement (DB.fetch linear_scanProof, show_types). Kernel-checked. No extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "find_reg_exchange_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/RegExchange.lean",
+    "lean_name": "findRegExchangeCorrect",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (re-tag after bead flapjack-pxn.18.5.15.3.38.1 tagged holHd/holEl against the pinned HOL submodule): linear_scanProofScript.sml:2283-2311, monadic find_reg_exchange from LN LN, same conclusions with sth.colors. HOL EL is the exact holEl (unbounded where HOL is unbounded), ALL_DISTINCT List.Nodup, MEM list membership, DIV Nat division, LUPDATE List.set. Statement re-compared clause by clause with the type_of-checked original statement (DB.fetch linear_scanProof, show_types). Kernel-checked. No extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "MAP_colors_eq_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/RegExchange.lean",
+    "lean_name": "mapColorsEqLemma",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (re-tag after bead flapjack-pxn.18.5.15.3.38.1 tagged holHd/holEl against the pinned HOL submodule): linear_scanProofScript.sml:2313-2350 incl. the unbounded ∀n'. n ≤ n' ⇒ EL n' sthout.colors = EL n' sth.colors clause. HOL EL is the exact holEl (unbounded where HOL is unbounded), ALL_DISTINCT List.Nodup, MEM list membership, DIV Nat division, LUPDATE List.set. Statement re-compared clause by clause with the type_of-checked original statement (DB.fetch linear_scanProof, show_types). Kernel-checked. No extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "MAP_colors_eq",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/RegExchange.lean",
+    "lean_name": "mapColorsEq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (re-tag after bead flapjack-pxn.18.5.15.3.38.1 tagged holHd/holEl against the pinned HOL submodule): linear_scanProofScript.sml:2352-2362. HOL EL is the exact holEl (unbounded where HOL is unbounded), ALL_DISTINCT List.Nodup, MEM list membership, DIV Nat division, LUPDATE List.set. Statement re-compared clause by clause with the type_of-checked original statement (DB.fetch linear_scanProof, show_types). Kernel-checked. No extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "apply_reg_exchange_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/RegExchange.lean",
+    "lean_name": "applyRegExchangeCorrect",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (re-tag after bead flapjack-pxn.18.5.15.3.38.1 tagged holHd/holEl against the pinned HOL submodule): linear_scanProofScript.sml:2364-2402, all seven conclusion conjuncts. HOL EL is the exact holEl (unbounded where HOL is unbounded), ALL_DISTINCT List.Nodup, MEM list membership, DIV Nat division, LUPDATE List.set. Statement re-compared clause by clause with the type_of-checked original statement (DB.fetch linear_scanProof, show_types). Kernel-checked. No extra premise."
+  },
+  {
+    "hol_path": "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml",
+    "hol_name": "Msub_eq",
+    "lean_path": "Flapjack/Translator/Monadic/MonadBase/Arrays.lean",
+    "lean_name": "msubEq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (re-tag after bead flapjack-pxn.18.5.15.3.38.1 tagged holHd/holEl against the pinned HOL submodule): ml_monadBaseScript.sml:131-138 ∀l n e. n < LENGTH l ⇒ Msub e n l = M_success (EL n l). Lean: the same implication over the canonical mSub with EL as holEl; [Nonempty value] records HOL's inhabited types (needed only by holEl's opaque out-of-range value). Previously stated with a dependent getElem; restated literally. Kernel-checked."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "sptree_eq_list_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/IntervalMonad.lean",
+    "lean_name": "sptreeEqList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (re-tag after bead flapjack-pxn.18.5.15.3.38.1 tagged holEl against the pinned HOL submodule): linear_scanProofScript.sml:5206-5211 sptree_eq_list (s : int num_map) l = ∀i. i < LENGTH l ⇒ (0 < EL i l ⇔ lookup i s = NONE) ∧ (EL i l ≤ 0 ⇔ lookup i s = SOME (EL i l)); the Lean def has the same body over Spt Int and List Int. HOL EL is the exact holEl, int num_map the reviewed Spt Int carrier with sptLookup = lookup, EVERY (\\r. P r) l is ∀ r ∈ l, P r, r IN domain s is sptDomain s r, LENGTH is List.length, record update sth with <|..|> is Lean structure update. Statement compared clause by clause with the source; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "numset_list_add_if_lt_monad_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/IntervalMonad.lean",
+    "lean_name": "numsetListAddIfLtMonadCorrect",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (re-tag after bead flapjack-pxn.18.5.15.3.38.1 tagged holEl against the pinned HOL submodule): linear_scanProofScript.sml:5213-5232, hypotheses v ≤ 0, sptree_eq_list int_beg sth.int_beg, EVERY bound; the four conclusion conjuncts. HOL EL is the exact holEl, int num_map the reviewed Spt Int carrier with sptLookup = lookup, EVERY (\\r. P r) l is ∀ r ∈ l, P r, r IN domain s is sptDomain s r, LENGTH is List.length, record update sth with <|..|> is Lean structure update. Statement compared clause by clause with the source; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "numset_list_add_if_gt_monad_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/IntervalMonad.lean",
+    "lean_name": "numsetListAddIfGtMonadCorrect",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (re-tag after bead flapjack-pxn.18.5.15.3.38.1 tagged holEl against the pinned HOL submodule): linear_scanProofScript.sml:5234-5253, the int_end counterpart with the same hypotheses and conclusion conjuncts. HOL EL is the exact holEl, int num_map the reviewed Spt Int carrier with sptLookup = lookup, EVERY (\\r. P r) l is ∀ r ∈ l, P r, r IN domain s is sptDomain s r, LENGTH is List.length, record update sth with <|..|> is Lean structure update. Statement compared clause by clause with the source; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "get_intervals_ct_monad_aux_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/IntervalMonad.lean",
+    "lean_name": "getIntervalsCtMonadAuxCorrect",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (re-tag after bead flapjack-pxn.18.5.15.3.38.1 tagged holEl against the pinned HOL submodule): linear_scanProofScript.sml:5255-5347, the ten-variable statement with seven hypotheses and eight conclusion conjuncts, in the same order. HOL EL is the exact holEl, int num_map the reviewed Spt Int carrier with sptLookup = lookup, EVERY (\\r. P r) l is ∀ r ∈ l, P r, r IN domain s is sptDomain s r, LENGTH is List.length, record update sth with <|..|> is Lean structure update. Statement compared clause by clause with the source; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "get_intervals_ct_monad_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/IntervalMonad.lean",
+    "lean_name": "getIntervalsCtMonadCorrect",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (re-tag after bead flapjack-pxn.18.5.15.3.38.1 tagged holEl against the pinned HOL submodule): linear_scanProofScript.sml:5349-5384, positivity of every EL of int_beg/int_end, get_intervals_ct ct = (n,int_beg,int_end), equal lengths and the in_clash_tree bound; the six conclusion conjuncts. HOL EL is the exact holEl, int num_map the reviewed Spt Int carrier with sptLookup = lookup, EVERY (\\r. P r) l is ∀ r ∈ l, P r, r IN domain s is sptDomain s r, LENGTH is List.length, record update sth with <|..|> is Lean structure update. Statement compared clause by clause with the source; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "extract_coloration_output",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/ApplyBijection.lean",
+    "lean_name": "extractColorationOutput",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (re-tag after bead flapjack-pxn.18.5.15.3.38.1 tagged holEl against the pinned HOL submodule): linear_scanProofScript.sml:5867-5919, sp_inverts both ways and the two EVERY hypotheses; extract_coloration invbij l acc sth = (M_success col, sth), the per-r if MEM (the 0 (lookup r bij)) l case split with EL (the tagged miscThe), and domain col SUBSET domain bij UNION domain acc as ∀ x, sptDomain col x → sptDomain bij x ∨ sptDomain acc x. HOL EL is the exact holEl, int num_map the reviewed Spt Int carrier with sptLookup = lookup, EVERY (\\r. P r) l is ∀ r ∈ l, P r, r IN domain s is sptDomain s r, LENGTH is List.length, record update sth with <|..|> is Lean structure update. Statement compared clause by clause with the source; kernel-checked; no extra premise."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Accessors.lean",
+    "lean_name": "wordSemGetWord",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "get_word_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison (2026-10-02; bead flapjack-h29l.12): original wordSemScript.sml:278-280 specifies only the Word equation, with no Loc clause. Lean returns the original word on Word and an opaque function of both location fields on Loc; no concrete value, equality across locations, or equality with theWord is imposed. This follows accepted HOL HD unspecified-value rendering and ports the partial specification, not a claimed concrete Loc outcome. WordLocW preserves Word and Loc num num; BitVec width with [NeZero width] records words_as_type_indexed_bitvec. Existing Word-guarded accessor/evaluator paths remain independent of the opaque completions; no additional premise or changed error behavior."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Accessors.lean",
+    "lean_name": "wordSemTheWord",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "theWord_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison (2026-10-02; bead flapjack-h29l.12): original wordSemScript.sml:42-44 specifies only the Word equation, with no Loc clause. Lean returns the original word on Word and an opaque function of both location fields on Loc; no concrete value, equality across locations, or equality with get_word is imposed. This follows accepted HOL HD unspecified-value rendering and ports the partial specification, not a claimed concrete Loc outcome. WordLocW preserves Word and Loc num num; BitVec width with [NeZero width] records words_as_type_indexed_bitvec. Existing Word-guarded accessor/evaluator paths remain independent of the opaque completions; no additional premise or changed error behavior."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NoShmemopPrograms.lean",
+    "lean_name": "compileWordToStackNoShareInst",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "compile_word_to_stack_no_share_inst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02 bead48.4: complete original12359-12376 and compile_prog/compile_word_to_stack583-601. Arbitrary config/perf/register count/program list with independent generic identifier beta/full input bitmap/output list/frame list/residual retained. Only original EVERY no_share_inst and actual full compiler triple equality hypotheses; target EVERY no_shmemop conclusion. List/EVERY translated to List/all truth. Nat subtraction/MAX frame arithmetic, unconditional StackAlloc prefix and left-to-right bitmap threading reviewed; full accepted compNoShmemop and list IH discharged internally. No public IH, identifier equality/distinctness, target safety/evaluation, bounds, conversion or simulation premises. Sole qualifier translates positive HOL words to BitVec width/NeZero. Fresh original exported theorem, all eight types and sixteen pairs cover empty/multiple rows, duplicate Bool identifiers, bitmap-changing Alloc/StoreConsts, frame boundaries, rejected shared and ignored-handler sentinels over widths1/32/64/80/both perf. Kernel fixtures replay original pairs and apply complete generic signature and actual compiler projections. Proof-only syntax preservation, not whole compiler semantic correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NoShmemopTop.lean",
+    "lean_name": "compileNoShmemop",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "compile_no_shmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02 bead48.5: complete original12378-12392, compile_def603-619, raise_stub_def/store_consts_stub_def. Fixed false perf, Nat identifier list, arbitrary config and full bitmap/config/frame-list/program-list quadruple retained. Only actual compile equality and original EVERY source no_share_inst hypotheses; original EVERY target no_shmemop conclusion includes both stubs. Accepted list theorem and unconditional false raise/constant-store stub syntax discharge safety internally. No public IH, target safety/evaluation/simulation, config validity, distinctness, bounds or conversion premises. Config Spt frame map is the reviewed source tree carrier; List/all represents original lists/EVERY. Sole qualifier translates positive HOL words to BitVec width/NeZero. Fresh exported theorem/six types/16 pairs plus2 arbitrary full-signature kernel applications over widths1/32/64/80, zero/underflow/large reg counts, duplicate avoid regs/ids, bitmap changes and rejected shared/ignored-handler sentinels. Proof-only syntax preservation, not whole compiler semantics."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_exp_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAExpressions.lean",
+    "lean_name": "ssaCcTransExpCorrect",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison 2026-10-02, bead flapjack-60qg: compared word_allocProofScript.sml6256-6294 and replayed its literal proof with six inferred type captures. Retains all st/w/cst/ssa/na/res quantifiers, source word_exp success, full word_state_eq_rel and ssa_locals_rel, concluding actual native word_exp on ssa_cc_trans_exp succeeds with identical result. HOL st/cst share alpha/beta/gamma and Lean shares positive BitVec width and universe-0 C/F. Reviewed constructor-identical expressions including nested Op arguments, both expression-valued Shift operands and fixed 5-bit Store Temp payload; Spt locals/SSA are tree maps, only fpRegs/store translate HOL finite maps. Same-module imported-owner witness establishes real broad/exact roundtrip. Lean proof identifies native SSA renamer with reviewed applyColourExp at optionLookup and derives its scoped local transport from SSA locals without adding premises; success/store/memory/domain behavior remains actual native wordExp. No target evaluation or extra simulation/post-state assumption."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "fix_inconsistencies_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAFixInconsistenciesProps.lean",
+    "lean_name": "fixInconsistenciesProps",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison 2026-10-02, bead flapjack-q8y7: compared word_allocProofScript.sml5838-5856 and replayed literal original proof plus literal ssa_map_ok_extend/merge_moves_frame/fake_moves_frame prerequisites. Full capture quantifies prio/ssaL/ssaR/na/a/b/naOut/ssaU and eight types confirm unit-sum option priority, exact num Spt maps, natural counters and same alpha program carriers. Lean retains actual native fixInconsistencies output equality, original isAllocVar and both input ssaMapOK premises, and all three monotonicity/allocation/output-map conclusions. No evaluator, target-result or post-state assumption. Native merge/fake frames supply the original proof composition; tree maps remain reviewed Spt and are not finite-map-qualified. Only HOL positive word dimension translates to BitVec width with NeZero discharge."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/ExpressionClock.lean",
+    "lean_name": "memStoreWithClock",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "mem_load_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 completed source/statement/carrier comparison2026-10-01 bead7ia9: actual imported StackSemStateFiniteExact width C F preserves original generic independent machine/compile/FFI state type, faithful WordLangExpHOL expression and WordLocW carriers; positive-width BitVec translation only. Canonical regs/fpRegs/store fields with same-module codec forwarding the actual imported owner. No evaluator, callback, supplied successful transition or added premise; full original quantifiers and Option-map shape retained. Six original statement/fulltype rows freshly captured and22 clocked original observations independently kernel replayed. Original233-237 is named mem_load_with_const but actually states mem_store clock update commutation; exact name and equation preserved, unconditional outside-domain NONE included. Only memory is updated, clock update commutes with it."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/ExpressionClock.lean",
+    "lean_name": "wordExpWithClock",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "word_exp_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 completed source/statement/carrier comparison2026-10-01 bead7ia9: actual imported StackSemStateFiniteExact width C F preserves original generic independent machine/compile/FFI state type, faithful WordLangExpHOL expression and WordLocW carriers; positive-width BitVec translation only. Canonical regs/fpRegs/store fields with same-module codec forwarding the actual imported owner. No evaluator, callback, supplied successful transition or added premise; full original quantifiers and Option-map shape retained. Six original statement/fulltype rows freshly captured and22 clocked original observations independently kernel replayed. Original301-314 universally quantifies s/y/k. Complete nested expression/list recursor covers Const/Var/Lookup/Load/Op/Shift and every element of arbitrary Op argument lists; structural induction hypotheses are discharged internally. Missing/Loc operands, domain errors, argument count and shift bounds retain original evaluator behavior; no successful-evaluation hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/ExpressionClock.lean",
+    "lean_name": "assignWithClock",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "assign_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 completed source/statement/carrier comparison2026-10-01 bead7ia9: actual imported StackSemStateFiniteExact width C F preserves original generic independent machine/compile/FFI state type, faithful WordLangExpHOL expression and WordLocW carriers; positive-width BitVec translation only. Canonical regs/fpRegs/store fields with same-module codec forwarding the actual imported owner. No evaluator, callback, supplied successful transition or added premise; full original quantifiers and Option-map shape retained. Six original statement/fulltype rows freshly captured and22 clocked original observations independently kernel replayed. Original316-320 states exact OPTION_MAP clock update commutation. Uses the proved unconditional complete expression theorem and actual register update; success and failure both covered, no result assumed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NoInstallCompiler.lean",
+    "lean_name": "compNoInstall",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "comp_no_install",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02 bead47.3: complete original12029-12127 and comp_def453-555, all26 constructors and3 Call alternatives. Arbitrary original config/perf/full source program/input bitmap/full Nat frame/output-residual pair retained; only original wordConvs no_install guard, actual compiler equality and perf=false hypotheses. Exact target no_install conclusion. All child IH internally discharged by source-size recursion including full tuple equalities and exact left-to-right bitmap threading; no public IH, target safety/evaluation/simulation, bounds, config validity, conversion or HD/EL premises. Accepted canonical source/target predicates and all8 no-install helpers reused; source WordLangInst lowers through exact HolInst codec, positive words/faithful MlString/Spt/config/AppList carriers reviewed. Private dispatch/shared lowering calculations have no separate HOL original. Shared-memory operations are allowed by no_install and rejected Install source guards retained. Sole word qualifier translates positive HOL dimension to BitVec width/NeZero. Fresh original exported theorem/all7 carrier types and39 actual pairs (26 constructor rows plus12 deep width1/32/64/80 cases and ignored-Install handler sentinel) kernel replayed, with2 full arbitrary-program theorem applications. Proof-only syntax preservation, not target semantics or whole compiler correctness."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_inst_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAInstructionProps.lean",
+    "lean_name": "ssaCcTransInstProps",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison 2026-10-02, bead flapjack-yfm2: compared word_allocProofScript.sml5817-5833, replayed literal theorem proof with literal local ssa_map_ok_extend/is_alloc_var_add prerequisites, and captured six original argument carriers. Retains forall instruction/ssa/next/output/ssaOut/nextOut, actual native ssa_cc_trans_inst output equality, original ssa_map_ok and is_alloc_var conjunction, and all three counter monotonicity/allocation/output-map conclusions. Reviewed original asm inst, arith, reg_imm, addr, memop and FP constructors against native carriers; input and output share positive BitVec width with NeZero, including exact dimindex=64 FP branches and both register-equality branches of FPMovFromReg. SSA tree maps use reviewed Spt, not finite-map translation; priority/move sequence and all one/two-name insertions remain native. Proof case splits all instructions and discharges only the original fresh insert allocation/bounds; no added executable/evaluation or output-validity premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "pre_alloc_conventions_def",
+    "lean_path": "Flapjack/Pancake/WordConvs.lean",
+    "lean_name": "preAllocConventionsHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.1.7): literal HOL wordConvsScript.sml:425-429 pre_alloc_conventions p = every_stack_var is_stack_var p /\\ call_arg_convention p over the exact WordLangProgHOL carrier with the reviewed everyStackVarHOL/callArgConventionHOL and is_stack_var (isStackVar); HOL boolean conjunction as &&, no changed clauses or hypotheses; positive BitVec/NeZero is the only carrier translation. The four original pre-allocation rows of word_convs_alloc_conventions_probe.out are replayed over the exact carrier (Flapjack/Test/WordConvsPreAllocExactParity.lean)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "not_created_subprogs_def",
+    "lean_path": "Flapjack/Pancake/WordConvs/NotCreated.lean",
+    "lean_name": "notCreatedSubprogsHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.1.3): literal HOL wordConvsScript.sml:536-556, clause by clause in HOL order with HOL's catchall, over the exact WordLangProgHOL carrier with bool-valued P as in HOL; MustTerminate/Seq/Loop/If recursion, Call with both optional bodies and the normalised handler probe, Alloc/Install (LN,LN), LocValue label, ShareInst ARB 0 (Var 0). HOL ARB (boolScript new_constant, deliberately undefined) is the uninterpreted Lean opaque holArbMemOp, so no theorem can depend on its value, as in HOL. Positive BitVec/NeZero is the only carrier translation. notCreatedSubprogsHOL_eq_withMemOp relates it to the choice-parametric checker and the *_eq_notCreated lemmas link the tagged no_* specialisations, whose 15 original HOL probe rows are replayed (exact-checker rows added in Flapjack/Test/WordLangNotCreatedParity.lean)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "remove_dead_not_created_subprogs",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/RemoveDead.lean",
+    "lean_name": "removeDead_notCreatedSubprogs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.1.8): HOL wordConvsProofScript.sml:1521-1535 remove_dead_not_created_subprogs: quantifiers prog q r lt with HOL's free predicate P as leading binder, premise not_created_subprogs P prog, conclusion not_created_subprogs P (FST (remove_dead prog q r lt)) over the exact notCreatedSubprogsHOL. Statement over the exact WordLangProgHOL carrier and reviewed WordAlloc.removeDead/removeDeadProg; positive BitVec/NeZero is the only carrier translation; proved by the untagged structural induction removeDead_induct mirroring HOL remove_dead_ind; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "remove_dead_prog_not_created_subprogs",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/RemoveDead.lean",
+    "lean_name": "removeDeadProg_notCreatedSubprogs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.1.8): HOL wordConvsProofScript.sml:1537-1543 remove_dead_prog_not_created_subprogs: free P and prog, not_created_subprogs P prog implies not_created_subprogs P (remove_dead_prog prog). Statement over the exact WordLangProgHOL carrier and reviewed WordAlloc.removeDead/removeDeadProg; positive BitVec/NeZero is the only carrier translation; proved by the untagged structural induction removeDead_induct mirroring HOL remove_dead_ind; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "remove_dead_conventions",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/RemoveDead.lean",
+    "lean_name": "removeDeadConventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.1.8): HOL wordConvsProofScript.sml:1545-1561 remove_dead_conventions: quantifiers p live nlive lt c with free instruction predicate P leading; HOL's binder k does not occur in the statement and is omitted (documented beside the theorem); the let comp and the six conjuncts in HOL order: flat_exp_conventions, full_inst_ok_less c, pre_alloc_conventions (preAllocConventionsHOL), every_inst P, wf_cutsets as implications and extract_labels equality. Statement over the exact WordLangProgHOL carrier and reviewed WordAlloc.removeDead/removeDeadProg; positive BitVec/NeZero is the only carrier translation; proved by the untagged structural induction removeDead_induct mirroring HOL remove_dead_ind; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "remove_dead_prog_conventions",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/RemoveDead.lean",
+    "lean_name": "removeDeadProgConventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.1.8): HOL wordConvsProofScript.sml:1563-1565 remove_dead_prog_conventions: the HOL derived theorem remove_dead_conventions SPEC p LN [] [] with LET_THM/FORALL_AND_THM and GSYM remove_dead_prog_def: free p, c, P and the six conjuncts on remove_dead_prog p. Statement over the exact WordLangProgHOL carrier and reviewed WordAlloc.removeDead/removeDeadProg; positive BitVec/NeZero is the only carrier translation; proved by the untagged structural induction removeDead_induct mirroring HOL remove_dead_ind; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_remove_dead",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/RemoveDead.lean",
+    "lean_name": "getCodeLabels_removeDead",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.1.8): HOL wordConvsProofScript.sml:1567-1577 word_get_code_labels_remove_dead: quantifiers ps live nlive lt, word_get_code_labels (FST (remove_dead ps live nlive lt)) SUBSET word_get_code_labels ps over the reviewed getCodeLabelsHOL Set Nat. Statement over the exact WordLangProgHOL carrier and reviewed WordAlloc.removeDead/removeDeadProg; positive BitVec/NeZero is the only carrier translation; proved by the untagged structural induction removeDead_induct mirroring HOL remove_dead_ind; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_remove_dead_prog",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/RemoveDead.lean",
+    "lean_name": "getCodeLabels_removeDeadProg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.1.8): HOL wordConvsProofScript.sml:1579-1584 word_get_code_labels_remove_dead_prog: free ps, word_get_code_labels (remove_dead_prog ps) SUBSET word_get_code_labels ps. Statement over the exact WordLangProgHOL carrier and reviewed WordAlloc.removeDead/removeDeadProg; positive BitVec/NeZero is the only carrier translation; proved by the untagged structural induction removeDead_induct mirroring HOL remove_dead_ind; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_good_handlers_remove_dead",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/RemoveDead.lean",
+    "lean_name": "goodHandlers_removeDead",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.1.8): HOL wordConvsProofScript.sml:1586-1596 word_good_handlers_remove_dead: quantifiers ps live nlive lt with free handler label n leading, word_good_handlers n (FST (remove_dead ...)) <=> word_good_handlers n ps over the reviewed goodHandlersHOL (bool = true on both sides). Statement over the exact WordLangProgHOL carrier and reviewed WordAlloc.removeDead/removeDeadProg; positive BitVec/NeZero is the only carrier translation; proved by the untagged structural induction removeDead_induct mirroring HOL remove_dead_ind; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_good_handlers_remove_dead_prog",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/RemoveDead.lean",
+    "lean_name": "goodHandlers_removeDeadProg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.1.8): HOL wordConvsProofScript.sml:1598-1603 word_good_handlers_remove_dead_prog: free n and ps, word_good_handlers n (remove_dead_prog ps) <=> word_good_handlers n ps. Statement over the exact WordLangProgHOL carrier and reviewed WordAlloc.removeDead/removeDeadProg; positive BitVec/NeZero is the only carrier translation; proved by the untagged structural induction removeDead_induct mirroring HOL remove_dead_ind; no extra premise."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/RemoveDead.lean",
+    "lean_name": "removeDead_induct",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only structural induction over remove_dead results used by the tagged wordConvsProof remove_dead theorems; HOL uses remove_dead_ind with remove_dead_def directly, so no separate HOL declaration is being ported."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NoInstallPrograms.lean",
+    "lean_name": "compileWordToStackNoInstall",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "compile_word_to_stack_no_install",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02 bead47.4: full original12129-12150 and compile_prog/compile_word_to_stack583-601. Arbitrary config/perf/register count/generic independent beta identifier/source rows/full initial bitmap/output list/frame list/residual retained. Original EVERY no_install, actual compiler triple equality and perf=false are the only public hypotheses; original EVERY target no_install conclusion. List induction internally invokes full compNoInstall at actual Nat-subtraction/MAX frame and exact left-to-right bitmap threading, with unconditional StackAlloc prefix. No public IH, unique keys/equality instances, bounds, target safety/evaluation/simulation or conversion premise. Faithful WordLangProgHOL/HolProg/AsmConfigExact/AppList and Spt cutsets reviewed; lists/EVERY use List/all truth. Sole qualifier translates positive HOL words to BitVec width/NeZero. Fresh original exported theorem/all8 types/16 pairs over widths1/32/64/80, duplicate Boolean identifiers, empty/multiple rows, bitmap-changing Alloc/StoreConsts, shared operations allowed and ignored Install handler false-source/true-target sentinel. Kernel pairs and2 full arbitrary beta/perf applications retain plain equality. Proof-only syntax preservation, not code-map top theorem or compiler semantic correctness."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "all_enc_ok_light",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/RemoveLabels.lean",
+    "lean_name": "allEncOkLight",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.16): HOL lab_to_targetScript.sml:188 declares all_enc_ok_light as an Overload (which the reference checker resolves as a declaration), body `λc ls. EVERY (sec_ok_light c) ls`; Lean `sections.all (secOkLight config)` is exactly List.all over the same exact secOkLight, no clause or guard changed. The linked Section/Line carrier's only type-indexed word is translated to positive-width BitVec width with [NeZero width]. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Encoding.lean",
+    "lean_name": "ffiOffset",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "ffi_offset_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.7): literal lab_to_targetScript.sml:15-17 `ffi_offset = 16:num`, transcribed as `Nat` 16. No word, list, map, string or FFI carrier, so no qualifier is needed. Replayed as the FFIOffset row of scripts/hol-probes/lab_to_target_encoding_probe.out in Flapjack.Test.LabToTargetEncodingParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Encoding.lean",
+    "lean_name": "labInst",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "lab_inst_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.7): literal lab_to_targetScript.sml:21-29, all seven clauses. `Jump _`, `JumpCmp c r ri _`, `Call _` use the supplied target word; `LocValue r _` becomes `Loc r w`; `Halt`, `Install`, `CallFFI n` all collapse to `Jump w`, exactly as the source discards those payloads. Stated over the exact imported LabLang.asm_with_lab instantiated at HolCmp/HolRegImm/MlString; only HOL's type-indexed `'a word` is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). Replayed as the seven LabInst* rows of lab_to_target_encoding_probe.out in Flapjack.Test.LabToTargetEncodingParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Encoding.lean",
+    "lean_name": "cbwToAsmExact",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "cbw_to_asm_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.7): literal lab_to_targetScript.sml:31-37. `Asmi a => a`; `Cbw r1 r2 => Inst (Mem Store8 r2 (Addr r1 0w))`; `ShareMem m r ad => Inst (Mem m r ad)`. The generic untagged Flapjack.Compiler.Backend.LabProps.cbwToAsm is an AsmChecks record adapter whose signature carries an extra callback parameter, so a new exact definition over HolAsm/HolMemop/HolAddr was added in this module; LabProps.lean is unmodified. Only HOL's `'a word` is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). Replayed as the CbwToAsm* rows of lab_to_target_encoding_probe.out in Flapjack.Test.LabToTargetEncodingParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Encoding.lean",
+    "lean_name": "encLine",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "enc_line_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.7): literal lab_to_targetScript.sml:40-47. `Label n1 n2 n3 => Label n1 n2 skip_len`; `Asm a _ _ => let bs = enc (cbw_to_asm a) in Asm a bs (LENGTH bs)`; `LabAsm l _ _ _ => let bs = enc (lab_inst 0w l) in LabAsm l 0w bs (LENGTH bs)`. The instruction encoder `enc : HolAsm width -> word8 list` is the HOL parameter of the same definition, not the production assembler encoder. Only HOL's `'a word` is translated to positive-width `BitVec width` with `[NeZero width]`; the `word8 list` bytes stay fixed 8-bit (words_as_type_indexed_bitvec). Replayed as the EncLine* rows of lab_to_target_encoding_probe.out in Flapjack.Test.LabToTargetEncodingParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Encoding.lean",
+    "lean_name": "encSec",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "enc_sec_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.7): literal lab_to_targetScript.sml:49-52 `enc_sec enc skip_len (Section k xs) = Section k (MAP (enc_line enc skip_len) xs)`, preserving the section id and mapping the passed encoder/skip_len over the line list. Exact Section/Line carriers at one width; only HOL's `'a word` is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). Replayed as the EncSec row of lab_to_target_encoding_probe.out in Flapjack.Test.LabToTargetEncodingParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Encoding.lean",
+    "lean_name": "encSecList",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "enc_sec_list_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.7): literal lab_to_targetScript.sml:54-57 `enc_sec_list enc xs = let skip_len = LENGTH (enc (Inst Skip)) in MAP (enc_sec enc skip_len) xs`, sharing one skip length computed from the encoding of `Inst Skip` across every section. Exact Section/Line carriers at one width; only HOL's `'a word` is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). Replayed as the EncSecList row of lab_to_target_encoding_probe.out in Flapjack.Test.LabToTargetEncodingParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Labels.lean",
+    "lean_name": "sectionLabels",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "section_labels_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.8; carrier-repaired): literal lab_to_targetScript.sml:62-74, clause for clause. `section_labels pos [] labs = (pos,labs)`; `Label _ l2 len :: xs` keeps the exact `if l2 = 0` guard so a zero label is ignored and a nonzero label is prepended as `(l2,pos+len)` after advancing to `pos+len`; `Asm _ _ len :: xs` and `LabAsm _ _ _ len :: xs` advance to `pos+len` recording nothing. Return type is exactly `num # (num#num) list`; the imported Line/Section carriers are instantiated at HOL's actual carriers (HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString) with the shared word dimension rendered as positive-width BitVec width; the words qualifier records that type-indexed-word translation. No added hypothesis, dropped guard, or weakened clause. Replayed as the SectionLabels* rows of lab_to_target_labels_probe.out in Flapjack.Test.LabToTargetLabelsParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Labels.lean",
+    "lean_name": "computeLabelsAlt",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "compute_labels_alt_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.8; carrier-repaired): literal lab_to_targetScript.sml:76-83, clause for clause. `compute_labels_alt pos [] labs = labs`; `Section k lines::rest` computes `let (new_pos,sec_labs) = section_labels pos lines []`, then recurses with `new_pos` and accumulates `insert k (fromAList ((0,pos)::sec_labs)) labs`, capturing the section start `pos` (not `new_pos`) under key 0. HOL `insert` and `fromAList` are the Sptree operations and render as `sptInsert`/`sptFromAList`; the accumulator type is `num_map num_map` = `num spt spt` (the generated lab_to_targetTheory doc prints `num -> α sec list -> num sptree$num_map sptree$num_map -> ...`, with `num_map = 'a spt`), i.e. Lean `Spt (Spt Nat)`, matching the `(num#num)` entries fed to `fromAList`. The imported Line/Section carriers are instantiated at HOL's actual carriers with the shared word dimension rendered as positive-width BitVec width; the words qualifier records that translation. No added hypothesis or weakened clause. Replayed as the ComputeLabelsAlt/ComputeLookup* rows of lab_to_target_labels_probe.out in Flapjack.Test.LabToTargetLabelsParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Positions.lean",
+    "lean_name": "findPos",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "find_pos_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.11): literal lab_to_targetScript.sml:86-89 `find_pos (Lab k1 k2) labs = (lookup_any k2 (lookup_any k1 labs LN) 0):num`, clause for clause on the single Lab constructor. The outer default is the empty inner spt (Lean .ln) and the inner default is the numeric 0; HOL lookup_any is the reviewed lookupAny, with `labs : num spt spt` rendered as `Spt (Spt Nat)`. No word/BitVec carrier occurs, so no qualifier is needed. Replayed as the FindPos* rows of scripts/hol-probes/lab_to_target_positions_probe.out in Flapjack.Test.LabToTargetPositionsParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Positions.lean",
+    "lean_name": "getLabel",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "get_label_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.11; carrier-repaired): literal lab_to_targetScript.sml:91-98, clause for clause. `Jump l => l`, `JumpCmp c r ri l => l`, `Call l => l`, `LocValue r l => l`, and the catch-all `_ => Lab 0 0` covering CallFFI/Install/Halt. The carriers are HOL fixed carriers, not arbitrary opaque types: `AsmWithLab HolCmp (HolRegImm width) MlString` at positive width, so the word-indexed reg_imm renders as BitVec width and the words qualifier records that translation. Replayed as the GetLabel* rows of scripts/hol-probes/lab_to_target_positions_probe.out in Flapjack.Test.LabToTargetPositionsParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Positions.lean",
+    "lean_name": "getFfiIndex",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "get_ffi_index_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.11): literal lab_to_targetScript.sml:104-107 `get_ffi_index ffis s = the 0 (find_index s ffis 0)`, fully generic in the list element type. HOL `the` is rendered as Option.getD 0, HOL find_index is the reviewed findIndex, and HOL `=` on the generic element type is the standard decidable equality [DecidableEq alpha]. No word/BitVec carrier occurs, so no qualifier is needed. Replayed as the GetFfiIndex* rows of scripts/hol-probes/lab_to_target_positions_probe.out in Flapjack.Test.LabToTargetPositionsParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Positions.lean",
+    "lean_name": "getJumpOffset",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "get_jump_offset_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.11): literal lab_to_targetScript.sml:109-118, all four clauses in order. `CallFFI s => 0w - n2w (pos + (3 + get_ffi_index ffis (ExtCall s)) * ffi_offset)`, `Install => 0w - n2w (pos + 2 * ffi_offset)`, `Halt => 0w - n2w (pos + ffi_offset)`, and the catch-all `a => n2w (find_pos (get_label a) labs) - n2w pos`; `pos` is HOL num (Lean Nat), `ffis` is the exact ffiname list (Lean List HolFfiName, ExtCall s = .extCall MlString), and ffi_offset is ffiOffset. The HOL probe showed the result `b word` stays independent of the instruction's `a reg_imm` word dimension (dimword (:-a) stayed free when the instruction was fixed at 64), so the port keeps two independent positive widths (regImmWidth and width) rather than specializing. Only HOL's type-indexed `a word` is translated to positive-width BitVec width with its own [NeZero] (words_as_type_indexed_bitvec) and the 0w-/n2w rendering is kept literal. Replayed as the GetJumpOffset* rows of scripts/hol-probes/lab_to_target_positions_probe.out in Flapjack.Test.LabToTargetPositionsParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/SecondPass.lean",
+    "lean_name": "encLinesAgain",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "enc_lines_again_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 factual clause comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.13): literal lab_to_targetScript.sml:120-136, clause for clause. The empty list returns `(REVERSE acc, pos, ok)`; `Label k1 k2 l :: xs` and `Asm x1 x2 l :: xs` recurse at `pos + l` prepending the unchanged line; `LabAsm a w bytes l :: xs` computes `w1 = get_jump_offset a ffis labs pos`, recurses at `pos + l` when `w = w1`, and otherwise re-encodes `bs = enc (lab_inst w1 a)`, takes `l1 = MAX (LENGTH bs) l`, recurses at `pos + l1` with `LabAsm a w1 bs l1` and flag `ok AND (l1 = l)`. HOL `REVERSE`/`MAX`/`LENGTH`/`T`/conjunction are `List.reverse`/`Nat.max`/`.length`/`true`/`&& on Bool`, and the `(l1 = l)` conjunct is `decide (l1 = l)`. The instructions/position use the exact LabLang carriers at one shared word width; the words qualifier records only HOL's type-indexed word to positive-width `BitVec width` (with `[NeZero width]`) translation of the line's position field and the `get_jump_offset`/`lab_inst` results. The encoder parameter is the HOL `enc : HolAsm width -> word8 list`, not the production assembler. Replayed as the four EncLinesAgain rows of scripts/hol-probes/lab_to_target_secondpass_probe.out in Flapjack.Test.LabToTargetSecondPassParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/SecondPass.lean",
+    "lean_name": "encSecsAgain",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "enc_secs_again_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 factual clause comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.13): literal lab_to_targetScript.sml:137-144, clause for clause. The empty list is `([], T)`; `Section s lines :: rest` computes `(lines1, pos1, ok) = enc_lines_again labs ffis pos enc lines ([], T)`, then `(rest1, ok1) = enc_secs_again pos1 labs ffis enc rest`, returning `(Section s lines1 :: rest1, ok AND ok1)`. The shared one-width LabLang Line/Section carriers are used throughout with HOL `T`/conjunction rendered as `true`/`&&` on Bool; the words qualifier records only HOL's type-indexed word to positive-width `BitVec width` translation. Replayed as the two EncSecsAgain rows of scripts/hol-probes/lab_to_target_secondpass_probe.out in Flapjack.Test.LabToTargetSecondPassParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/SecondPass.lean",
+    "lean_name": "linesUpdLabLen",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "lines_upd_lab_len_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 factual clause comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.13): literal lab_to_targetScript.sml:147-157, clause for clause. The empty list is `(REVERSE acc, pos)`; `Label k1 k2 l :: xs` sets `l1 = if EVEN pos then 0 else 1` (HOL `EVEN pos` rendered as `pos % 2 = 0`), recurses at `pos + l1` replacing the label by `Label k1 k2 l1`; `Asm x1 x2 l :: xs` and `LabAsm a w bytes l :: xs` recurse at `pos + l` prepending the unchanged line. The line's position field is the same shared word width; the words qualifier records only HOL's type-indexed word to positive-width `BitVec width` translation. Replayed as the three LinesUpdLabLen rows of scripts/hol-probes/lab_to_target_secondpass_probe.out in Flapjack.Test.LabToTargetSecondPassParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/SecondPass.lean",
+    "lean_name": "updLabLen",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "upd_lab_len_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 factual clause comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.13): literal lab_to_targetScript.sml:158-166, clause for clause. The empty list is `[]`; `Section s lines :: rest` computes `(lines1, pos1) = lines_upd_lab_len pos lines []`, then `rest1 = upd_lab_len pos1 rest`, returning `Section s lines1 :: rest1`. The same shared one-width Line/Section carriers and the words qualifier recording only HOL's type-indexed word to positive-width `BitVec width` translation; no extra hypothesis or clause change. Replayed as the two UpdLabLen rows of scripts/hol-probes/lab_to_target_secondpass_probe.out in Flapjack.Test.LabToTargetSecondPassParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Padding.lean",
+    "lean_name": "lineOkLight",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "line_ok_light_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.14): literal lab_to_targetScript.sml:168-181, all seven clauses in HOL order. `Label _ _ l => T` and `Asm b bytes l => T` are `true`; `LabAsm Halt w bytes l`, `LabAsm Install w bytes l` and `LabAsm (CallFFI index) w bytes l` all check `asm_ok (Jump w) c`; `LabAsm (Call v24) w bytes l => F` is `false`; the catch-all `LabAsm a w bytes l` checks `asm_ok (lab_inst w a) c`. Stated over the exact imported LabLang.line carrier at HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and the exact `AsmConfigExact` configuration; the two asm_ok calls read the exact `asmOkExact` (`asm_ok_def`) port. Only HOL's type-indexed `'a word` shared by the config and the line is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). No added hypothesis, dropped clause, or weakened branch. Replayed as the ten LineOkLight* rows of scripts/hol-probes/lab_to_target_padding_probe.out in Flapjack.Test.LabToTargetPaddingParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Padding.lean",
+    "lean_name": "secOkLight",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "sec_ok_light_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.14): literal lab_to_targetScript.sml:183-186, the single clause `sec_ok_light c (Section k ls) <=> EVERY (line_ok_light c) ls`. HOL `EVERY` is Lean `List.all`; the section carrier is the exact LabLang.sec over the linked line carrier, whose only type-indexed word is translated to positive-width `BitVec width` (words_as_type_indexed_bitvec). No added hypothesis or weakened clause. Replayed as the SecOkLight* rows of scripts/hol-probes/lab_to_target_padding_probe.out in Flapjack.Test.LabToTargetPaddingParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Padding.lean",
+    "lean_name": "padBytes",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "pad_bytes_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.14): literal lab_to_targetScript.sml:192-196 `pad_bytes bytes len nop = let len_bytes = LENGTH bytes in if len <= len_bytes then bytes else TAKE len (bytes ++ FLAT (REPLICATE len nop))`. The HOL type is fully polymorphic `α list -> num -> α list -> α list` (confirmed in the generated lab_to_targetTheory doc), so it carries no type-indexed word and is rendered as `{α : Type} (bytes : List α) (len : Nat) (nop : List α) : List α` with LENGTH/TAKE/FLAT/REPLICATE as `.length`/`List.take`/`List.flatten`/`List.replicate`. Because no type-indexed word occurs, this declaration is reviewed_exact and carries no words qualifier. Replayed as the three PadBytes* rows of scripts/hol-probes/lab_to_target_padding_probe.out in Flapjack.Test.LabToTargetPaddingParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Padding.lean",
+    "lean_name": "addNop",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "add_nop_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.14): literal lab_to_targetScript.sml:199-207, all four clauses. `[] => []`; `Label l1 l2 len :: xs => Label l1 l2 len :: add_nop nop xs`; `Asm x bytes len :: xs => Asm x (bytes ++ nop) (len+1) :: xs`; `LabAsm y w bytes len :: xs => LabAsm y w (bytes ++ nop) (len+1) :: xs`. The Asm/LabAsm clauses do not recurse and keep the remaining list exactly. `nop` is the fixed HOL `word8 list` (`List (BitVec 8)`); the linked line carrier's position field is the only type-indexed word, translated to positive-width `BitVec width` (words_as_type_indexed_bitvec). No added hypothesis, dropped clause, or changed recursion. Replayed as the four AddNop* rows of scripts/hol-probes/lab_to_target_padding_probe.out in Flapjack.Test.LabToTargetPaddingParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Padding.lean",
+    "lean_name": "padSection",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "pad_section_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.14): literal lab_to_targetScript.sml:209-217, all four clauses. `[] => REVERSE aux` (Lean `aux.reverse`); the Label clause pushes `Label l1 l2 0 :: (if len = 0 then aux else add_nop nop aux)`; the Asm and LabAsm clauses push the line with `pad_bytes bytes len nop` and unchanged length. `nop` is the fixed HOL `word8 list`; the linked line carrier's position field is the only type-indexed word, translated to positive-width `BitVec width` (words_as_type_indexed_bitvec). No added hypothesis, dropped guard, or reordered clause. Replayed as the PadSection* rows of scripts/hol-probes/lab_to_target_padding_probe.out in Flapjack.Test.LabToTargetPaddingParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Padding.lean",
+    "lean_name": "padCode",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "pad_code_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.14): literal lab_to_targetScript.sml:220-223, both clauses. `[] => []`; `Section n xs :: ys => Section n (pad_section nop xs []) :: pad_code nop ys`. `nop` is the fixed HOL `word8 list`; the linked Section/Line carrier's only type-indexed word is translated to positive-width `BitVec width` (words_as_type_indexed_bitvec). No added hypothesis or changed clause. Replayed as the PadCode* rows of scripts/hol-probes/lab_to_target_padding_probe.out in Flapjack.Test.LabToTargetPaddingParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Padding.lean",
+    "lean_name": "secLength",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "sec_length_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.14): literal lab_to_targetScript.sml:234-239, all four clauses. `[] => k`; `Label _ _ l :: xs`, `Asm x1 x2 l :: xs` and `LabAsm a w bytes l :: xs` all recurse on `xs` with `k + l`. The linked line carrier's position field is the only type-indexed word, translated to positive-width `BitVec width` (words_as_type_indexed_bitvec). No added hypothesis, dropped clause, or changed accumulation. Replayed as the SecLength* rows of scripts/hol-probes/lab_to_target_padding_probe.out in Flapjack.Test.LabToTargetPaddingParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Padding.lean",
+    "lean_name": "getSymbols",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "get_symbols_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.14): literal lab_to_targetScript.sml:241-245, both clauses. `[] => []`; `Section k l :: secs => let len = sec_length l 0 in (k, pos, len) :: get_symbols (pos+len) secs`. The result is HOL `(num # num # num) list` rendered as `List (Nat × Nat × Nat)`; the linked Section/Line carrier's only type-indexed word is translated to positive-width `BitVec width` (words_as_type_indexed_bitvec). No added hypothesis or changed clause. Replayed as the GetSymbols* rows of scripts/hol-probes/lab_to_target_padding_probe.out in Flapjack.Test.LabToTargetPaddingParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/RemoveLabels.lean",
+    "lean_name": "zeroLabsAccOf",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "zero_labs_acc_of_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.16): literal lab_to_targetScript.sml:248-256, all four clauses in HOL order. `LocValue _ (Lab n1 n2)`, `Jump (Lab n1 n2)` and `JumpCmp _ _ _ (Lab n1 n2)` all insert `n1` (value `()`, HOL `insert n1 () acc`) when `n2 = 0` and otherwise return `acc`; the catch-all returns `acc`. The accumulator is the exact `NumSet = Spt Unit`; `insert` is `sptInsert` and `()` is the unit value. The instruction carrier is the exact imported LabLang.asm_with_lab at HolCmp/HolRegImm/MlString, whose `HolRegImm width` field carries HOL's type-indexed word translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). No added hypothesis, dropped clause, or reordered branch. Replayed as the ZeroLabsAccOf* rows of scripts/hol-probes/lab_to_target_removelabels_probe.out in Flapjack.Test.LabToTargetRemoveLabelsParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/RemoveLabels.lean",
+    "lean_name": "lineGetZeroLabsAcc",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "line_get_zero_labs_acc_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.16): literal lab_to_targetScript.sml:259-262, both clauses. `LabAsm a _ _ _` delegates to `zero_labs_acc_of a` (matching the `asm_with_lab` payload of the LabAsm line); every other line returns the accumulator. The line carrier is the exact linked LabLang.line whose only type-indexed word is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). No added hypothesis, dropped clause, or changed payload projection. Replayed as the LineGetZeroLabsAcc* rows of scripts/hol-probes/lab_to_target_removelabels_probe.out in Flapjack.Test.LabToTargetRemoveLabelsParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/RemoveLabels.lean",
+    "lean_name": "secGetZeroLabsAcc",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "sec_get_zero_labs_acc_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.16): literal lab_to_targetScript.sml:264-267, the single clause `sec_get_zero_labs_acc (Section _ lines) acc = FOLDR line_get_zero_labs_acc acc lines`. HOL `FOLDR` is Lean `List.foldr`. The section carrier is the exact linked LabLang.sec whose only type-indexed word is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). No added hypothesis or changed fold. Replayed as the GetZeroLabsAcc* rows of scripts/hol-probes/lab_to_target_removelabels_probe.out in Flapjack.Test.LabToTargetRemoveLabelsParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/RemoveLabels.lean",
+    "lean_name": "getZeroLabsAcc",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "get_zero_labs_acc_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.16): literal lab_to_targetScript.sml:269-272, the single clause `get_zero_labs_acc code = FOLDR sec_get_zero_labs_acc LN code`. HOL `FOLDR` is Lean `List.foldr` and `LN` is the exact empty `NumSet = Spt Unit`; the linked Section/Line carrier's only type-indexed word is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). No added hypothesis or changed fold. Replayed as the GetZeroLabsAccEmpty/GetZeroLabsAccConcrete rows of scripts/hol-probes/lab_to_target_removelabels_probe.out in Flapjack.Test.LabToTargetRemoveLabelsParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/RemoveLabels.lean",
+    "lean_name": "zeroLabsAccExist",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "zero_labs_acc_exist_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.16): literal lab_to_targetScript.sml:274-282. `let zlabs = toAList (get_zero_labs_acc code) in EVERY (fn (n,_) => case lookup n labs of NONE => F | SOME l => lookup 0 l <> NONE) zlabs` is rendered with `sptToAList`, `List.all`, `sptLookup`, `none`/`some`, `false` and `(sptLookup 0 l).isSome` for the `lookup 0 l <> NONE` test. The lab map is the exact `Spt (Spt Nat)` (`num num_map num_map`) and the code's only type-indexed word is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). No added hypothesis, changed default, or weakened membership test. Replayed as the ZeroLabsAccExistTrue/False rows of scripts/hol-probes/lab_to_target_removelabels_probe.out in Flapjack.Test.LabToTargetRemoveLabelsParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/RemoveLabels.lean",
+    "lean_name": "removeLabelsLoop",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "remove_labels_loop_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.16): literal lab_to_targetScript.sml:286-311, clause for clause and let-binding for let-binding, preserving HOL's shadowing. `labs = compute_labels_alt pos sec_list init_labs`; `(sec_list,done) = enc_secs_again pos labs ffis c.encode sec_list`; when `done` then `sec_list = upd_lab_len pos sec_list`, `labs = compute_labels_alt pos sec_list init_labs`, `(sec_list,done) = enc_secs_again pos labs ffis c.encode sec_list`, `sec_list = pad_code (c.encode (Inst Skip)) sec_list`, then `if done /\\ all_enc_ok_light c sec_list /\\ zero_labs_acc_exist labs sec_list then SOME (sec_list,labs) else NONE`; otherwise `if clock = 0 then NONE else remove_labels_loop (clock-1) c pos init_labs ffis sec_list` on the shadowed sec_list. `c.encode` is `config.encode` of the exact `AsmConfigExact width`; `all_enc_ok_light` is HOL's Overload `EVERY (sec_ok_light c)`, rendered as the tagged helper `allEncOkLight`; the linked Section/Line carrier's only type-indexed word is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). Lean termination is on the decremented `clock` only, matching HOL's clock recursion; no guard, conjunct, or returned pair is weakened. Replayed as the RemoveLabelsLoopZero/One rows of scripts/hol-probes/lab_to_target_removelabels_probe.out in Flapjack.Test.LabToTargetRemoveLabelsParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/RemoveLabels.lean",
+    "lean_name": "removeLabels",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "remove_labels_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.16): literal lab_to_targetScript.sml:313-322, the single clause `remove_labels init_clock c pos labs ffis sec_list = remove_labels_loop init_clock c pos labs ffis (enc_sec_list c.encode sec_list)`. `c.encode` is `config.encode` of the exact `AsmConfigExact width` and `enc_sec_list` is the reviewed `encSecList`; the linked Section/Line carrier's only type-indexed word is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). No added hypothesis or changed seeding. Replayed as the RemoveLabelsZero row of scripts/hol-probes/lab_to_target_removelabels_probe.out in Flapjack.Test.LabToTargetRemoveLabelsParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/RemoveLabels.lean",
+    "lean_name": "lineBytes",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "line_bytes_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.16): literal lab_to_targetScript.sml:326-330, all three clauses. `Label _ _ _ => []`; `Asm _ bytes _ => bytes`; `LabAsm _ _ bytes _ => bytes`. The byte list is the fixed HOL `word8 list` (`List (BitVec 8)`) and the linked line carrier's position field is the only type-indexed word, translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). No added hypothesis or changed clause. Replayed as the LineBytes* rows of scripts/hol-probes/lab_to_target_removelabels_probe.out in Flapjack.Test.LabToTargetRemoveLabelsParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/RemoveLabels.lean",
+    "lean_name": "progToBytes",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "prog_to_bytes_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.16): literal lab_to_targetScript.sml:332-337, all three clauses. `[] => []`; `Section k [] :: xs => prog_to_bytes xs` (empty sections are skipped); `Section k (y::ys) :: xs => line_bytes y ++ prog_to_bytes (Section k ys :: xs)`. The result is the fixed HOL `word8 list` and the linked Section/Line carrier's only type-indexed word is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). HOL's well-founded recursion over the shrinking section line list is mirrored by Lean's recursion, whose equation lemmas are used for the kernel replay; no guard or clause is weakened. Replayed as the ProgToBytesEmpty/ProgToBytesConcrete rows of scripts/hol-probes/lab_to_target_removelabels_probe.out in Flapjack.Test.LabToTargetRemoveLabelsParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemInfo.lean",
+    "lean_name": "ShmemInfoNum",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "shmem_info_num",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.20): literal lab_to_targetScript.sml:349-357, the Datatype `shmem_info_num = <| entry_pc: num; nbytes: word8; addr_reg: num; addr_off: num; reg: num; exit_pc: num |>`. Lean structure ShmemInfoNum has fields entryPc:Nat, nbytes:BitVec 8, addrReg:Nat, addrOff:Nat, reg:Nat, exitPc:Nat in the same order; the fixed HOL `word8` is the literal `BitVec 8` (not HOL's type-indexed `'a word`), so no words qualifier applies and the declaration is reviewed_exact. Replayed as the GetShmemInfo* rows of scripts/hol-probes/lab_to_target_shmeminfo_probe.out in Flapjack.Test.LabToTargetShmemInfoParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemInfo.lean",
+    "lean_name": "listAddIfFresh",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "list_add_if_fresh_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.20): literal lab_to_targetScript.sml:372, both clauses `list_add_if_fresh e [] = [e]` and `list_add_if_fresh e (f::r) = if e = f then f::r else f::list_add_if_fresh e r`. The HOL type is fully polymorphic `'a -> 'a list -> 'a list`, so it carries no type-indexed word and no qualifier; HOL `=` is rendered by the standard decidable equality `[DecidableEq alpha]`. Replayed as the ListAddIfFresh* rows of scripts/hol-probes/lab_to_target_shmeminfo_probe.out in Flapjack.Test.LabToTargetShmemInfoParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemInfo.lean",
+    "lean_name": "findFfiNames",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "find_ffi_names_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.20): literal lab_to_targetScript.sml:378, all three clauses in HOL order. `[] => []`; `Section k [] :: rest => find_ffi_names rest`; `Section k (x::xs) :: rest => case x of LabAsm (CallFFI s) _ _ _ => list_add_if_fresh (ExtCall s) (find_ffi_names (Section k xs :: rest)) | _ => find_ffi_names (Section k xs :: rest)`. The linked Line/Section carrier's only type-indexed word is the position field, translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec); the FFI name is the reviewed exact `HolFfiName` (`ExtCall s = .extCall MlString`) and HOL `=` on it is the derived `DecidableEq HolFfiName`. No added hypothesis, dropped clause, or reordered branch. Replayed as the FindFfiNames* rows of scripts/hol-probes/lab_to_target_shmeminfo_probe.out in Flapjack.Test.LabToTargetShmemInfoParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemInfo.lean",
+    "lean_name": "getMemopInfo",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "get_memop_info_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.20): literal lab_to_targetScript.sml:388, all eight clauses. `Load`/`Load32`/`Load16`/`Load8` map to `MappedRead` with byte sizes `0w`/`4w`/`2w`/`1w`, and `Store`/`Store32`/`Store16`/`Store8` map to `MappedWrite` with the same sizes. The result pair is the reviewed `HolShmemOp` (`MappedRead`/`MappedWrite`) with the fixed HOL `word8`, rendered as the literal `BitVec 8`; since the byte size is not HOL's type-indexed `'a word`, no words qualifier applies and the declaration is reviewed_exact. Replayed as the GetMemopInfo* rows of scripts/hol-probes/lab_to_target_shmeminfo_probe.out in Flapjack.Test.LabToTargetShmemInfoParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemInfo.lean",
+    "lean_name": "getShmemInfo",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "get_shmem_info_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.20): literal lab_to_targetScript.sml:401, all six clauses in HOL order. `[] => (ffi_names, shmem_info)`; `Section k [] :: rest` skips the empty section; `Section k (Label _ _ _ :: xs) :: rest` skips the label without advancing `pos`; `Section k (Asm (ShareMem m r ad) bytes _ :: xs) :: rest` binds `(name,nb) = get_memop_info m` and recurses at `pos + LENGTH bytes` appending `SharedMem name` and the record `<|entry_pc:=pos; nbytes:=nb; addr_reg:=(case ad of Addr r off => r); addr_off:=(case ad of Addr r off => w2n off); reg:=r; exit_pc:=pos+LENGTH bytes|>`; the `LabAsm _ _ bytes _` and other `Asm _ bytes _` clauses recurse at `pos + LENGTH bytes` recording nothing. HOL `LENGTH` is `.length` and `w2n` is `.toNat`; the record is the exact `ShmemInfoNum` and the FFI name is `HolFfiName`. The linked Line/Section carrier's only type-indexed word is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec); the fixed `word8` byte sizes stay literal. No added hypothesis, dropped clause, or changed position advance. Replayed as the GetShmemInfo* rows of scripts/hol-probes/lab_to_target_shmeminfo_probe.out in Flapjack.Test.LabToTargetShmemInfoParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "lean_path": "Flapjack/Misc/ListSubset.lean",
+    "lean_name": "listSubset",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "list_subset_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.27): literal miscScript.sml:3092, the single clause `list_subset l1 l2 = EVERY (\\x. MEM x l2) l1`. Lean `listSubset l1 l2 = l1.all (fun x => decide (x ∈ l2))`; the HOL type is fully polymorphic `'a list -> 'a list -> bool`, so it carries no type-indexed word and no carrier qualifier. HOL `EVERY` is Lean `List.all`, `MEM x l2` is the proposition `x ∈ l2` decided by `decide`, and HOL's decidable equality is the `[DecidableEq alpha]` binder. No added hypothesis or changed clause. Replayed as the ListSubset* rows of scripts/hol-probes/lab_to_target_compile_probe.out in Flapjack.Test.LabToTargetCompileParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter.lean",
+    "lean_name": "notSkip",
+    "hol_path": "cakeml/compiler/backend/lab_filterScript.sml",
+    "hol_name": "not_skip_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.27): literal lab_filterScript.sml:11, `not_skip l = case l of Asm (Asmi (Inst Skip)) _ _ => F | _ => T`. Lean pattern matches `.asm (.asmi (.inst .skip)) _ _` to `false` and every other `Label`/`Asm`/`LabAsm` line to `true`. Only the linked width-indexed `labLang$line` position field is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec); the decision itself is on the fixed `HolInst` constructor. No added hypothesis or changed branch. Replayed as the NotSkip* rows of scripts/hol-probes/lab_to_target_compile_probe.out in Flapjack.Test.LabToTargetCompileParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter.lean",
+    "lean_name": "filterSkip",
+    "hol_path": "cakeml/compiler/backend/lab_filterScript.sml",
+    "hol_name": "filter_skip_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.27): literal lab_filterScript.sml:15-16, both clauses `filter_skip [] = []` and `filter_skip (Section n xs :: rest) = Section n (FILTER not_skip xs) :: filter_skip rest`. Lean `[] => []` and `⟨n, xs⟩ :: rest => ⟨n, xs.filter notSkip⟩ :: filterSkip rest`; HOL `FILTER` is Lean `List.filter` and the section id/lines order is preserved. Only the linked width-indexed `labLang$line` position field is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec); the predicate is the reviewed `notSkip`. No added hypothesis or changed clause. Replayed as the FilterSkip* rows of scripts/hol-probes/lab_to_target_compile_probe.out in Flapjack.Test.LabToTargetCompileParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Compile.lean",
+    "lean_name": "Config",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "config",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.27): literal lab_to_targetScript.sml:358-368, the Datatype `config = <| labels : num num_map num_map; sec_pos_len : (num # num # num) list; pos : num; init_clock : num; ffi_names : ffiname list option; shmem_extra: shmem_info_num list; hash_size : num |>`. Lean structure Config has fields labels:Spt (Spt Nat), secPosLen:List (Nat x Nat x Nat), pos:Nat, initClock:Nat, ffiNames:Option (List HolFfiName), shmemExtra:List ShmemInfoNum, hashSize:Nat in the same order; `num_map` is the reviewed `Spt`, `#` is `x`, and the FFI-name list is the exact `HolFfiName`. No field carries HOL's type-indexed `'a word` (the only word is the fixed `word8` byte size inside the exact `ShmemInfoNum`), so no words qualifier applies and the declaration is reviewed_exact. Replayed as the Config* rows of scripts/hol-probes/lab_to_target_compile_probe.out in Flapjack.Test.LabToTargetCompileParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Compile.lean",
+    "lean_name": "compileLab",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "compile_lab_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.27): literal lab_to_targetScript.sml:430/453, the single clause. `current_ffis = find_ffi_names sec_list`; `(ffis, ffis_ok)` is `(ffis, list_subset current_ffis ffis)` when `c.ffi_names = SOME ffis` and `(current_ffis, T)` otherwise; when `ffis_ok` and `remove_labels c.init_clock asm_conf c.pos c.labels ffis sec_list = SOME (sec_list, l1)`, it computes `bytes = prog_to_bytes sec_list`, `(new_ffis, shmem_infos) = get_shmem_info sec_list c.pos [] []` and returns `SOME (bytes, c with <| labels := l1; pos := LENGTH bytes + c.pos; sec_pos_len := get_symbols c.pos sec_list; ffi_names := SOME (ffis ++ new_ffis); shmem_extra := shmem_infos |>)`; otherwise `NONE`. Lean transcribes each clause with the reviewed `findFfiNames`/`listSubset`/`removeLabels`/`progToBytes`/`getShmemInfo`/`getSymbols` and the exact `Config` record update. Only the linked width-indexed `labLang$line` position field is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec); `LENGTH` is `.length`. No added hypothesis, dropped branch, or reordered argument. Replayed as the CompileLab* rows of scripts/hol-probes/lab_to_target_compile_probe.out in Flapjack.Test.LabToTargetCompileParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Compile.lean",
+    "lean_name": "compile",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "compile_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.27): literal lab_to_targetScript.sml:478, the single clause `compile asm_conf c sec_list = compile_lab asm_conf c (filter_skip sec_list)`. Lean `compile asmConf c secList = compileLab asmConf c (filterSkip secList)`; `asm_conf`/`c`/`sec_list` order and the reviewed `filterSkip`/`compileLab` are preserved. Only the linked width-indexed `labLang$line` position field is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). No added hypothesis or changed call. Replayed as the CompileSkip/CompileLabFilterSkip rows of scripts/hol-probes/lab_to_target_compile_probe.out in Flapjack.Test.LabToTargetCompileParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "list_next_var_rename_props_2",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSARenameShiftedProperties.lean",
+    "lean_name": "listNextVarRenameProps2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-a source comparison 2026-10-02, bead flapjack-j4qq: literal original derived list theorem pipeline5878-5891 and move theorem5901-5916 replayed with nine original local prerequisites, full statements plus twelve input/output carrier captures. Raw list theorem preserves derived quantifier order ls/ssa/na/ssaOut/naOut/lsOut, stack-before-allocated disjunction, map bound at na+2, then bound/stack-to-allocated/allocated-to-stack/map conclusions. Move wrapper retains original quantifier order, allocated-before-stack and map bound at unshifted na; shifted map bound is proved from ssa_map_ok_lem, not assumed. All producers are native listNextVarRename/listNextVarRenameMove, exact Spt maps and Nat/List carriers, no distinctness or validity/target-evaluation premises. Move program HOL alpha word carrier translates to same positive BitVec width with NeZero. Raw theorem has no word carrier and is unqualified constructor-for-constructor exact."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "list_next_var_rename_move_props_2",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSARenameShiftedProperties.lean",
+    "lean_name": "listNextVarRenameMoveProps2",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol-a source comparison 2026-10-02, bead flapjack-j4qq: literal original derived list theorem pipeline5878-5891 and move theorem5901-5916 replayed with nine original local prerequisites, full statements plus twelve input/output carrier captures. Raw list theorem preserves derived quantifier order ls/ssa/na/ssaOut/naOut/lsOut, stack-before-allocated disjunction, map bound at na+2, then bound/stack-to-allocated/allocated-to-stack/map conclusions. Move wrapper retains original quantifier order, allocated-before-stack and map bound at unshifted na; shifted map bound is proved from ssa_map_ok_lem, not assumed. All producers are native listNextVarRename/listNextVarRenameMove, exact Spt maps and Nat/List carriers, no distinctness or validity/target-evaluation premises. Move program HOL alpha word carrier translates to same positive BitVec width with NeZero. Raw theorem has no word carrier and is unqualified constructor-for-constructor exact.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "HOL/src/relation/relationScript.sml",
+    "hol_name": "transitive_def",
+    "lean_path": "Flapjack/Misc/Relation.lean",
+    "lean_name": "holTransitive",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-hk7x), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: relationScript.sml:21-24 transitive (R:'a->'a->bool) = !x y z. R x y /\\ R y z ==> R x z; the relation rendered as α → α → Prop (as for holSorted), the same single clause."
+  },
+  {
+    "hol_path": "HOL/src/sort/sortingScript.sml",
+    "hol_name": "SORTED_EQ",
+    "lean_path": "Flapjack/Misc/Sorting.lean",
+    "lean_name": "holSortedEq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-hk7x), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: sortingScript.sml:588-596 !R L x. transitive R ==> (SORTED R (x::L) <=> SORTED R L /\\ !y. MEM y L ==> R x y), over the exact holSorted/holTransitive; same quantifiers, hypothesis and iff. Kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "HOL/src/sort/sortingScript.sml",
+    "hol_name": "SORTED_TL",
+    "lean_path": "Flapjack/Misc/Sorting.lean",
+    "lean_name": "holSortedTl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-hk7x), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: sortingScript.sml:1117-1121 SORTED R (x :: xs) ==> SORTED R xs with R x xs free; Lean binds them explicitly. Kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "less_FST_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/GoodState.lean",
+    "lean_name": "lessFst",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-hk7x): linear_scanProofScript.sml:2404-2406 less_FST (x:int#num) y = FST x <= FST y, original type int # num -> int # α -> bool (type_of); Lean {α} (x : Int × Nat) (y : Int × α), x.1 ≤ y.1."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "transitive_less_FST",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/GoodState.lean",
+    "lean_name": "transitiveLessFst",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-hk7x): linear_scanProofScript.sml:2408-2413 transitive (less_FST : int # num -> int # num -> bool), i.e. holTransitive (lessFst (α := Nat)). HOL EL is the exact holEl, SORTED holSorted, transitive holTransitive, ALL_DISTINCT List.Nodup, EVERY P l is ∀ x ∈ l (paired \\(e,r) reads x.1/x.2), MEM list membership, domain t sptDomain t, {f r | r | P r} the predicate fun c => ∃ r, c = f r ∧ P r, SUBSET pointwise implication, record updated_by/with Lean structure update. Statement compared clause by clause with the type_of/show_types-printed original (DB.fetch linear_scanProof, incl. free variables); kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "good_linear_scan_state_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/GoodState.lean",
+    "lean_name": "goodLinearScanState",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-hk7x): linear_scanProofScript.sml:2415-2443, type linear_scan_state -> linear_scan_hidden_state -> num list -> int -> (num # num) list -> num -> bool; all 22 conjuncts in HOL order (lengths, ALL_DISTINCT colorpool ++ active colours, bounds, the phyregs domain set equation, physical-register distinctness, colornum/colormax/stacknum orders, beg/end/active-interval clauses with pos ≤ 1 + EL r int_end, the interval_intersect (tagged intervalIntersect) injectivity, SORTED less_FST, active ends/membership, forced pairs, mincol bounds). HOL EL is the exact holEl, SORTED holSorted, transitive holTransitive, ALL_DISTINCT List.Nodup, EVERY P l is ∀ x ∈ l (paired \\(e,r) reads x.1/x.2), MEM list membership, domain t sptDomain t, {f r | r | P r} the predicate fun c => ∃ r, c = f r ∧ P r, SUBSET pointwise implication, record updated_by/with Lean structure update. Statement compared clause by clause with the type_of/show_types-printed original (DB.fetch linear_scanProof, incl. free variables); kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "remove_inactive_intervals_invariants",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/GoodState.lean",
+    "lean_name": "removeInactiveIntervalsInvariants",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-hk7x): linear_scanProofScript.sml:2453-2559 ∀beg st sth l pos forced mincol. good ∧ pos ≤ beg ⇒ ∃stout. (M_success stout, sth) = remove_inactive_intervals beg st sth ∧ good stout sth l beg forced mincol ∧ stout.colormax = st.colormax. HOL EL is the exact holEl, SORTED holSorted, transitive holTransitive, ALL_DISTINCT List.Nodup, EVERY P l is ∀ x ∈ l (paired \\(e,r) reads x.1/x.2), MEM list membership, domain t sptDomain t, {f r | r | P r} the predicate fun c => ∃ r, c = f r ∧ P r, SUBSET pointwise implication, record updated_by/with Lean structure update. Statement compared clause by clause with the type_of/show_types-printed original (DB.fetch linear_scanProof, incl. free variables); kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "add_active_interval_output",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/GoodState.lean",
+    "lean_name": "addActiveIntervalOutput",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-hk7x): linear_scanProofScript.sml:2561-2592 ∀lin (x:α) lout. SORTED less_FST lin ∧ lout = add_active_interval (e,r) lin ⇒ SORTED less_FST lout ∧ ∃l1 l2. lin = l1 ++ l2 ∧ lout = l1 ++ (e,r)::l2; e:int and r:num are free in HOL and explicit Lean parameters; the unused x keeps its polymorphic type ({β}). HOL EL is the exact holEl, SORTED holSorted, transitive holTransitive, ALL_DISTINCT List.Nodup, EVERY P l is ∀ x ∈ l (paired \\(e,r) reads x.1/x.2), MEM list membership, domain t sptDomain t, {f r | r | P r} the predicate fun c => ∃ r, c = f r ∧ P r, SUBSET pointwise implication, record updated_by/with Lean structure update. Statement compared clause by clause with the type_of/show_types-printed original (DB.fetch linear_scanProof, incl. free variables); kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "find_color_in_list_output",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/GoodState.lean",
+    "lean_name": "findColorInListOutput",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-hk7x): linear_scanProofScript.sml:2594-2621 ∀forbidden col l rest. find_color_in_list l forbidden = SOME (col,rest) ⇒ MEM col l ∧ col ∉ domain forbidden ∧ ∃l1 l2. rest = l1 ++ l2 ∧ l = l1 ++ col::l2. HOL EL is the exact holEl, SORTED holSorted, transitive holTransitive, ALL_DISTINCT List.Nodup, EVERY P l is ∀ x ∈ l (paired \\(e,r) reads x.1/x.2), MEM list membership, domain t sptDomain t, {f r | r | P r} the predicate fun c => ∃ r, c = f r ∧ P r, SUBSET pointwise implication, record updated_by/with Lean structure update. Statement compared clause by clause with the type_of/show_types-printed original (DB.fetch linear_scanProof, incl. free variables); kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "find_color_in_colornum_invariants",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/GoodState.lean",
+    "lean_name": "findColorInColornumInvariants",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-hk7x): linear_scanProofScript.sml:2623-2658, with stout and col free in HOL (explicit Lean parameters); hypotheses good, domain forbidden ⊆ {EL r sth.colors | MEM r l}, find_color_in_colornum st forbidden = (stout, SOME col); the six conclusion conjuncts incl. st = stout with <|colorpool := st.colorpool; colornum := st.colornum|>. HOL EL is the exact holEl, SORTED holSorted, transitive holTransitive, ALL_DISTINCT List.Nodup, EVERY P l is ∀ x ∈ l (paired \\(e,r) reads x.1/x.2), MEM list membership, domain t sptDomain t, {f r | r | P r} the predicate fun c => ∃ r, c = f r ∧ P r, SUBSET pointwise implication, record updated_by/with Lean structure update. Statement compared clause by clause with the type_of/show_types-printed original (DB.fetch linear_scanProof, incl. free variables); kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "find_color_invariants",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/GoodState.lean",
+    "lean_name": "findColorInvariants",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-hk7x): linear_scanProofScript.sml:2660-2695, the nine-variable statement with the same three hypotheses over find_color and the four conclusion conjuncts. HOL EL is the exact holEl, SORTED holSorted, transitive holTransitive, ALL_DISTINCT List.Nodup, EVERY P l is ∀ x ∈ l (paired \\(e,r) reads x.1/x.2), MEM list membership, domain t sptDomain t, {f r | r | P r} the predicate fun c => ∃ r, c = f r ∧ P r, SUBSET pointwise implication, record updated_by/with Lean structure update. Statement compared clause by clause with the type_of/show_types-printed original (DB.fetch linear_scanProof, incl. free variables); kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "update_color_active_colors_same",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/SpillRegister.lean",
+    "lean_name": "updateColorActiveColorsSame",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-8k3k): linear_scanProofScript.sml:2697-2706, polymorphic as in HOL (TV=3): unused e:α, active : (β # num) list, regcol : γ, colors : γ list; [Nonempty γ] records that HOL types are inhabited (needed only by holEl's opaque out-of-range value, as for msubEq). HOL EL is the exact holEl, LUPDATE v n l is l.set n v, FILTER (\\e,r. r <> reg) is filter (fun x => decide (x.2 ≠ reg)), ALL_DISTINCT List.Nodup, EVERY/MEM as list quantification/membership, good_linear_scan_state the exact goodLinearScanState. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "forced_update_stack_color_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/SpillRegister.lean",
+    "lean_name": "forcedUpdateStackColorLemma",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-8k3k): linear_scanProofScript.sml:2708-2725 over num lists. HOL EL is the exact holEl, LUPDATE v n l is l.set n v, FILTER (\\e,r. r <> reg) is filter (fun x => decide (x.2 ≠ reg)), ALL_DISTINCT List.Nodup, EVERY/MEM as list quantification/membership, good_linear_scan_state the exact goodLinearScanState. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "IS_SPARSE_SUBLIST_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/SpillRegister.lean",
+    "lean_name": "isSparseSublist",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-8k3k): linear_scanProofScript.sml:2727-2736, the three clauses IS_SPARSE_SUBLIST [] l2 = T, (x::xs) [] = F, (x::xs) (y::ys) = (x = y ∧ IS_SPARSE_SUBLIST xs ys) ∨ IS_SPARSE_SUBLIST (x::xs) ys, type α list -> α list -> bool rendered Prop-valued. HOL EL is the exact holEl, LUPDATE v n l is l.set n v, FILTER (\\e,r. r <> reg) is filter (fun x => decide (x.2 ≠ reg)), ALL_DISTINCT List.Nodup, EVERY/MEM as list quantification/membership, good_linear_scan_state the exact goodLinearScanState. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "FILTER_IS_SPARSE_SUBLIST",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/SpillRegister.lean",
+    "lean_name": "filterIsSparseSublist",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-8k3k): linear_scanProofScript.sml:2738-2745, P : α -> bool free in HOL (explicit Lean parameter, Bool-valued as FILTER's predicate). HOL EL is the exact holEl, LUPDATE v n l is l.set n v, FILTER (\\e,r. r <> reg) is filter (fun x => decide (x.2 ≠ reg)), ALL_DISTINCT List.Nodup, EVERY/MEM as list quantification/membership, good_linear_scan_state the exact goodLinearScanState. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "MEM_SPARSE_SUBLIST",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/SpillRegister.lean",
+    "lean_name": "memSparseSublist",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-8k3k): linear_scanProofScript.sml:2747-2755. HOL EL is the exact holEl, LUPDATE v n l is l.set n v, FILTER (\\e,r. r <> reg) is filter (fun x => decide (x.2 ≠ reg)), ALL_DISTINCT List.Nodup, EVERY/MEM as list quantification/membership, good_linear_scan_state the exact goodLinearScanState. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "IS_SPARSE_SUBLIST_APPEND_LEFT",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/SpillRegister.lean",
+    "lean_name": "isSparseSublistAppendLeft",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-8k3k): linear_scanProofScript.sml:2757-2762. HOL EL is the exact holEl, LUPDATE v n l is l.set n v, FILTER (\\e,r. r <> reg) is filter (fun x => decide (x.2 ≠ reg)), ALL_DISTINCT List.Nodup, EVERY/MEM as list quantification/membership, good_linear_scan_state the exact goodLinearScanState. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "IS_SPARSE_SUBLIST_APPEND_RIGHT",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/SpillRegister.lean",
+    "lean_name": "isSparseSublistAppendRight",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-8k3k): linear_scanProofScript.sml:2764-2773. HOL EL is the exact holEl, LUPDATE v n l is l.set n v, FILTER (\\e,r. r <> reg) is filter (fun x => decide (x.2 ≠ reg)), ALL_DISTINCT List.Nodup, EVERY/MEM as list quantification/membership, good_linear_scan_state the exact goodLinearScanState. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "MAP_IS_SPARSE_SUBLIST",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/SpillRegister.lean",
+    "lean_name": "mapIsSparseSublist",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-8k3k): linear_scanProofScript.sml:2775-2782, f : α -> β free in HOL (explicit Lean parameter). HOL EL is the exact holEl, LUPDATE v n l is l.set n v, FILTER (\\e,r. r <> reg) is filter (fun x => decide (x.2 ≠ reg)), ALL_DISTINCT List.Nodup, EVERY/MEM as list quantification/membership, good_linear_scan_state the exact goodLinearScanState. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "ALL_DISTINCT_IS_SPARSE_SUBLIST",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/SpillRegister.lean",
+    "lean_name": "allDistinctIsSparseSublist",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-8k3k): linear_scanProofScript.sml:2784-2801. HOL EL is the exact holEl, LUPDATE v n l is l.set n v, FILTER (\\e,r. r <> reg) is filter (fun x => decide (x.2 ≠ reg)), ALL_DISTINCT List.Nodup, EVERY/MEM as list quantification/membership, good_linear_scan_state the exact goodLinearScanState. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "spill_register_FILTER_invariants_hidden",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/SpillRegister.lean",
+    "lean_name": "spillRegisterFilterInvariantsHidden",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-8k3k): linear_scanProofScript.sml:2803-2912, including the id (¬is_phy_var reg ∨ ¬MEM reg l) wrapper; four hypotheses and eight conclusion conjuncts in HOL order. HOL EL is the exact holEl, LUPDATE v n l is l.set n v, FILTER (\\e,r. r <> reg) is filter (fun x => decide (x.2 ≠ reg)), ALL_DISTINCT List.Nodup, EVERY/MEM as list quantification/membership, good_linear_scan_state the exact goodLinearScanState. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "spill_register_FILTER_invariants",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/SpillRegister.lean",
+    "lean_name": "spillRegisterFilterInvariants",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-8k3k): linear_scanProofScript.sml:2914-2916, the hidden statement REWRITE_RULE [id_def] (id removed), otherwise identical. HOL EL is the exact holEl, LUPDATE v n l is l.set n v, FILTER (\\e,r. r <> reg) is filter (fun x => decide (x.2 ≠ reg)), ALL_DISTINCT List.Nodup, EVERY/MEM as list quantification/membership, good_linear_scan_state the exact goodLinearScanState. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "FILTER_MEM_active",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/SpillRegister.lean",
+    "lean_name": "filterMemActive",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-8k3k): linear_scanProofScript.sml:2918-2924 over (int # num) lists. HOL EL is the exact holEl, LUPDATE v n l is l.set n v, FILTER (\\e,r. r <> reg) is filter (fun x => decide (x.2 ≠ reg)), ALL_DISTINCT List.Nodup, EVERY/MEM as list quantification/membership, good_linear_scan_state the exact goodLinearScanState. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "spill_register_invariants",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/SpillRegister.lean",
+    "lean_name": "spillRegisterInvariants",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-8k3k): linear_scanProofScript.sml:2926-2945, five hypotheses and eight conclusion conjuncts in HOL order (int_beg/int_end before the colour-preservation clause, unlike the FILTER form). HOL EL is the exact holEl, LUPDATE v n l is l.set n v, FILTER (\\e,r. r <> reg) is filter (fun x => decide (x.2 ≠ reg)), ALL_DISTINCT List.Nodup, EVERY/MEM as list quantification/membership, good_linear_scan_state the exact goodLinearScanState. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "edges_to_adjlist_step_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/EdgesToAdjlist.lean",
+    "lean_name": "edgesToAdjlistStep",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-ehyz): linear_scanProofScript.sml:2947-2955 edges_to_adjlist_step sth (a,b) acc: a = b → acc; ($< LEX $<=) (EL a sth.int_beg, a) (EL b sth.int_beg, b) → insert b (a :: the [] (lookup b acc)) acc; else insert a (b :: the [] (lookup a acc)) acc; type linear_scan_hidden_state -> num # num -> num list num_map -> num list num_map. noncomputable only because holEl is. HOL EL is the exact holEl, LEX the exact holLex, the the exact miscThe, insert/lookup sptInsert/sptLookup over the reviewed Spt carrier, FOLDL/FOLDR List.foldl/List.foldr, MEM list membership, EVERY (\\r1,r2. P) l is ∀ x ∈ l over x.1/x.2, IN domain sptDomain. Compared clause by clause with the DB.fetch show_types original incl. types (TY output) and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "edges_to_adjlist_FOLDL",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/EdgesToAdjlist.lean",
+    "lean_name": "edgesToAdjlistFoldl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-ehyz): linear_scanProofScript.sml:2957-2970. HOL EL is the exact holEl, LEX the exact holLex, the the exact miscThe, insert/lookup sptInsert/sptLookup over the reviewed Spt carrier, FOLDL/FOLDR List.foldl/List.foldr, MEM list membership, EVERY (\\r1,r2. P) l is ∀ x ∈ l over x.1/x.2, IN domain sptDomain. Compared clause by clause with the DB.fetch show_types original incl. types (TY output) and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "forbidden_is_from_forced_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/EdgesToAdjlist.lean",
+    "lean_name": "forbiddenIsFromForced",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-ehyz): linear_scanProofScript.sml:2972-2976, (reg ≠ reg2 ∧ (MEM (reg2,reg) forced ∨ MEM (reg,reg2) forced) ∧ LEX) ⇔ MEM reg2 forbidden, type (num # num) list -> int list -> num -> num list -> bool. HOL EL is the exact holEl, LEX the exact holLex, the the exact miscThe, insert/lookup sptInsert/sptLookup over the reviewed Spt carrier, FOLDL/FOLDR List.foldl/List.foldr, MEM list membership, EVERY (\\r1,r2. P) l is ∀ x ∈ l over x.1/x.2, IN domain sptDomain. Compared clause by clause with the DB.fetch show_types original incl. types (TY output) and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "forbidden_is_from_forced_sublist_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/EdgesToAdjlist.lean",
+    "lean_name": "forbiddenIsFromForcedSublist",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-ehyz): linear_scanProofScript.sml:2978-2982, the same left side ⇔ (MEM reg2 forbidden ∧ MEM reg l). HOL EL is the exact holEl, LEX the exact holLex, the the exact miscThe, insert/lookup sptInsert/sptLookup over the reviewed Spt carrier, FOLDL/FOLDR List.foldl/List.foldr, MEM list membership, EVERY (\\r1,r2. P) l is ∀ x ∈ l over x.1/x.2, IN domain sptDomain. Compared clause by clause with the DB.fetch show_types original incl. types (TY output) and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "forbidden_is_from_forced_list_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/EdgesToAdjlist.lean",
+    "lean_name": "forbiddenIsFromForcedList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-ehyz): linear_scanProofScript.sml:2984-2989, polymorphic (α # α) list -> α list -> α -> α list -> bool as in HOL (TV=1). HOL EL is the exact holEl, LEX the exact holLex, the the exact miscThe, insert/lookup sptInsert/sptLookup over the reviewed Spt carrier, FOLDL/FOLDR List.foldl/List.foldr, MEM list membership, EVERY (\\r1,r2. P) l is ∀ x ∈ l over x.1/x.2, IN domain sptDomain. Compared clause by clause with the DB.fetch show_types original incl. types (TY output) and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "forbidden_is_from_map_color_forced_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/EdgesToAdjlist.lean",
+    "lean_name": "forbiddenIsFromMapColorForced",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-ehyz): linear_scanProofScript.sml:2991-2996, forbidden : num_set (NumSet), EL reg2 colors IN domain forbidden. HOL EL is the exact holEl, LEX the exact holLex, the the exact miscThe, insert/lookup sptInsert/sptLookup over the reviewed Spt carrier, FOLDL/FOLDR List.foldl/List.foldr, MEM list membership, EVERY (\\r1,r2. P) l is ∀ x ∈ l over x.1/x.2, IN domain sptDomain. Compared clause by clause with the DB.fetch show_types original incl. types (TY output) and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "edges_to_adjlist_FOLDR_output",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/EdgesToAdjlist.lean",
+    "lean_name": "edgesToAdjlistFoldrOutput",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-ehyz): linear_scanProofScript.sml:2998-3060 ∀forced sth. ∀reg. forbidden_is_from_forced forced sth.int_beg reg (the [] (lookup reg (FOLDR (λpair acc. step sth pair acc) LN forced))). HOL EL is the exact holEl, LEX the exact holLex, the the exact miscThe, insert/lookup sptInsert/sptLookup over the reviewed Spt carrier, FOLDL/FOLDR List.foldl/List.foldr, MEM list membership, EVERY (\\r1,r2. P) l is ∀ x ∈ l over x.1/x.2, IN domain sptDomain. Compared clause by clause with the DB.fetch show_types original incl. types (TY output) and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "edges_to_adjlist_output",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/EdgesToAdjlist.lean",
+    "lean_name": "edgesToAdjlistOutput",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-ehyz): linear_scanProofScript.sml:3062-3071. HOL EL is the exact holEl, LEX the exact holLex, the the exact miscThe, insert/lookup sptInsert/sptLookup over the reviewed Spt carrier, FOLDL/FOLDR List.foldl/List.foldr, MEM list membership, EVERY (\\r1,r2. P) l is ∀ x ∈ l over x.1/x.2, IN domain sptDomain. Compared clause by clause with the DB.fetch show_types original incl. types (TY output) and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "HOL/src/coretypes/pairScript.sml",
+    "hol_name": "LEX_DEF",
+    "lean_path": "Flapjack/Misc/Pair.lean",
+    "lean_name": "holLex",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-ehyz): pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: pairScript.sml:786-791 $LEX (R1:'a->'a->bool) (R2:'b->'b->bool) = \\(s,t) (u,v). R1 s u \\/ (s=u) /\\ R2 t v; relations rendered as α → α → Prop, the paired abstraction (UNCURRY) read through p.1/p.2: holLex R1 R2 p q = R1 p.1 q.1 ∨ (p.1 = q.1 ∧ R2 p.2 q.2). Same single clause; the Decidable instance is untagged Flapjack infrastructure."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "map_colors_sub_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/MapColorsSub.lean",
+    "lean_name": "mapColorsSub",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02: linear_scanScript.sml:1264-1268 map_colors_sub [] = return []; map_colors_sub (x::xs) = do fx <- colors_sub x; fxs <- map_colors_sub xs; return (fx::fxs) od, over the tagged colors_sub, st_ex_bind (bind) and st_ex_return (ret) in the linear_scan hidden-state monad; same two clauses and effect order."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
+    "hol_name": "map_colors_sub_eq",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/MapColorsSub.lean",
+    "lean_name": "mapColorsSubEq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02: linear_scanScript.sml:1270-1274 map_colors_sub = st_ex_MAP colors_sub, a function equality over the tagged stExMap; kernel-checked by funext and list induction; no premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "state_invariants_remove_head",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/ColorRegister.lean",
+    "lean_name": "stateInvariantsRemoveHead",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-ievu): linear_scanProofScript.sml:3073-3084. HOL EL is the exact holEl, good_linear_scan_state the exact goodLinearScanState, forbidden_is_from_map_color_forced the exact forbiddenIsFromMapColorForced, domain s ⊆ domain t is ∀ x, sptDomain s x → sptDomain t x, {EL r colors | MEM r l} the predicate ∃ r, c = holEl r colors ∧ r ∈ l, MEM/EVERY list membership/quantification, ¬MEM x l is x ∉ l. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "find_last_stealable_success",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/ColorRegister.lean",
+    "lean_name": "findLastStealableSuccess",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-ievu): linear_scanProofScript.sml:3086-3098, polymorphic active : (α # num) list as in HOL (TV=1). HOL EL is the exact holEl, good_linear_scan_state the exact goodLinearScanState, forbidden_is_from_map_color_forced the exact forbiddenIsFromMapColorForced, domain s ⊆ domain t is ∀ x, sptDomain s x → sptDomain t x, {EL r colors | MEM r l} the predicate ∃ r, c = holEl r colors ∧ r ∈ l, MEM/EVERY list membership/quantification, ¬MEM x l is x ∉ l. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "find_last_stealable_output",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/ColorRegister.lean",
+    "lean_name": "findLastStealableOutput",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-ievu): linear_scanProofScript.sml:3100-3130, polymorphic (TV=1); ¬is_phy_var (SND steal) ∧ lookup (EL (SND steal) sth.colors) forbidden = NONE ∧ the l1/l2 decomposition. HOL EL is the exact holEl, good_linear_scan_state the exact goodLinearScanState, forbidden_is_from_map_color_forced the exact forbiddenIsFromMapColorForced, domain s ⊆ domain t is ∀ x, sptDomain s x → sptDomain t x, {EL r colors | MEM r l} the predicate ∃ r, c = holEl r colors ∧ r ∈ l, MEM/EVERY list membership/quantification, ¬MEM x l is x ∉ l. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "good_linear_scan_state_active_length_colors",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/ColorRegister.lean",
+    "lean_name": "goodLinearScanStateActiveLengthColors",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-ievu): linear_scanProofScript.sml:3132-3140. HOL EL is the exact holEl, good_linear_scan_state the exact goodLinearScanState, forbidden_is_from_map_color_forced the exact forbiddenIsFromMapColorForced, domain s ⊆ domain t is ∀ x, sptDomain s x → sptDomain t x, {EL r colors | MEM r l} the predicate ∃ r, c = holEl r colors ∧ r ∈ l, MEM/EVERY list membership/quantification, ¬MEM x l is x ∉ l. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "color_register_eq",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/ColorRegister.lean",
+    "lean_name": "colorRegisterEq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-ievu): linear_scanProofScript.sml:3142-3159, color_register st reg col rend = do update_colors reg col; return (st with <| active updated_by add_active_interval (rend,reg); phyregs := if is_phy_var reg then insert col () st.phyregs else st.phyregs |>) od, rendered with the tagged ignoreBind/ret. HOL EL is the exact holEl, good_linear_scan_state the exact goodLinearScanState, forbidden_is_from_map_color_forced the exact forbiddenIsFromMapColorForced, domain s ⊆ domain t is ∀ x, sptDomain s x → sptDomain t x, {EL r colors | MEM r l} the predicate ∃ r, c = holEl r colors ∧ r ∈ l, MEM/EVERY list membership/quantification, ¬MEM x l is x ∉ l. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "color_register_invariants",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/ColorRegister.lean",
+    "lean_name": "colorRegisterInvariants",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-ievu): linear_scanProofScript.sml:3161-3360, all eleven hypotheses and seven conclusion conjuncts in HOL order. HOL EL is the exact holEl, good_linear_scan_state the exact goodLinearScanState, forbidden_is_from_map_color_forced the exact forbiddenIsFromMapColorForced, domain s ⊆ domain t is ∀ x, sptDomain s x → sptDomain t x, {EL r colors | MEM r l} the predicate ∃ r, c = holEl r colors ∧ r ∈ l, MEM/EVERY list membership/quantification, ¬MEM x l is x ∉ l. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "find_spill_invariants",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/ColorRegister.lean",
+    "lean_name": "findSpillInvariants",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-ievu): linear_scanProofScript.sml:3362-3476, six hypotheses (good state at EL reg sth.int_beg) and eight conclusion conjuncts in HOL order; force : bool. HOL EL is the exact holEl, good_linear_scan_state the exact goodLinearScanState, forbidden_is_from_map_color_forced the exact forbiddenIsFromMapColorForced, domain s ⊆ domain t is ∀ x, sptDomain s x → sptDomain t x, {EL r colors | MEM r l} the predicate ∃ r, c = holEl r colors ∧ r ∈ l, MEM/EVERY list membership/quantification, ¬MEM x l is x ∉ l. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "linear_reg_alloc_step_aux_invariants",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/ColorRegister.lean",
+    "lean_name": "linearRegAllocStepAuxInvariants",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-ievu): linear_scanProofScript.sml:3478-3540, seven hypotheses incl. domain forbidden ⊆ {EL r sth.colors | r | MEM r l}, forbidden : num_set; eight conclusion conjuncts. HOL EL is the exact holEl, good_linear_scan_state the exact goodLinearScanState, forbidden_is_from_map_color_forced the exact forbiddenIsFromMapColorForced, domain s ⊆ domain t is ∀ x, sptDomain s x → sptDomain t x, {EL r colors | MEM r l} the predicate ∃ r, c = holEl r colors ∧ r ∈ l, MEM/EVERY list membership/quantification, ¬MEM x l is x ∉ l. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "st_ex_MAP_colors_sub",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/ColorRegister.lean",
+    "lean_name": "stExMapColorsSub",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-ievu): linear_scanProofScript.sml:3542-3548, st_ex_MAP colors_sub l sth = (M_success (MAP (\\r. EL r sth.colors) l), sth) over the tagged stExMap. HOL EL is the exact holEl, good_linear_scan_state the exact goodLinearScanState, forbidden_is_from_map_color_forced the exact forbiddenIsFromMapColorForced, domain s ⊆ domain t is ∀ x, sptDomain s x → sptDomain t x, {EL r colors | MEM r l} the predicate ∃ r, c = holEl r colors ∧ r ∈ l, MEM/EVERY list membership/quantification, ¬MEM x l is x ∉ l. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "phystack_on_stack_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/PassInvariants.lean",
+    "lean_name": "phystackOnStack",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.12): linear_scanProofScript.sml:3550-3553 ∀r. MEM r l ∧ is_phy_var r ∧ 2 * st.colormax ≤ r ⇒ st.colormax ≤ EL r sth.colors; type num list -> linear_scan_state -> linear_scan_hidden_state -> bool. HOL EL is the exact holEl, SORTED holSorted, LEX holLex, transitive/total holTransitive/holTotal, ALL_DISTINCT List.Nodup, REVERSE List.reverse, the [] (lookup r m) miscThe [] (sptLookup r m), MEM/EVERY list membership/quantification, good_linear_scan_state/forbidden_is_from_forced_* the exact tagged ports, st_ex_FOLDL the tagged stExFoldl and the pass steps the tagged linearRegAllocStepPass1/2. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "linear_reg_alloc_step_pass1_invariants",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/PassInvariants.lean",
+    "lean_name": "linearRegAllocStepPass1Invariants",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.12): linear_scanProofScript.sml:3555-3634, nine hypotheses and nine conclusion conjuncts incl. the phystack_on_stack implication. HOL EL is the exact holEl, SORTED holSorted, LEX holLex, transitive/total holTransitive/holTotal, ALL_DISTINCT List.Nodup, REVERSE List.reverse, the [] (lookup r m) miscThe [] (sptLookup r m), MEM/EVERY list membership/quantification, good_linear_scan_state/forbidden_is_from_forced_* the exact tagged ports, st_ex_FOLDL the tagged stExFoldl and the pass steps the tagged linearRegAllocStepPass1/2. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "linear_reg_alloc_step_pass2_invariants",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/PassInvariants.lean",
+    "lean_name": "linearRegAllocStepPass2Invariants",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.12): linear_scanProofScript.sml:3636-3690, the same nine hypotheses and eight conclusion conjuncts. HOL EL is the exact holEl, SORTED holSorted, LEX holLex, transitive/total holTransitive/holTotal, ALL_DISTINCT List.Nodup, REVERSE List.reverse, the [] (lookup r m) miscThe [] (sptLookup r m), MEM/EVERY list membership/quantification, good_linear_scan_state/forbidden_is_from_forced_* the exact tagged ports, st_ex_FOLDL the tagged stExFoldl and the pass steps the tagged linearRegAllocStepPass1/2. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "intbeg_less_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/PassInvariants.lean",
+    "lean_name": "intbegLess",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.12): linear_scanProofScript.sml:3692-3694 intbeg_less (int_beg : int list) r1 r2 = ($< LEX $<=) (EL r1 int_beg, r1) (EL r2 int_beg, r2); type int list -> num -> num -> bool. HOL EL is the exact holEl, SORTED holSorted, LEX holLex, transitive/total holTransitive/holTotal, ALL_DISTINCT List.Nodup, REVERSE List.reverse, the [] (lookup r m) miscThe [] (sptLookup r m), MEM/EVERY list membership/quantification, good_linear_scan_state/forbidden_is_from_forced_* the exact tagged ports, st_ex_FOLDL the tagged stExFoldl and the pass steps the tagged linearRegAllocStepPass1/2. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "intbeg_less_transitive",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/PassInvariants.lean",
+    "lean_name": "intbegLessTransitive",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.12): linear_scanProofScript.sml:3696-3701. HOL EL is the exact holEl, SORTED holSorted, LEX holLex, transitive/total holTransitive/holTotal, ALL_DISTINCT List.Nodup, REVERSE List.reverse, the [] (lookup r m) miscThe [] (sptLookup r m), MEM/EVERY list membership/quantification, good_linear_scan_state/forbidden_is_from_forced_* the exact tagged ports, st_ex_FOLDL the tagged stExFoldl and the pass steps the tagged linearRegAllocStepPass1/2. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "intbeg_less_total",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/PassInvariants.lean",
+    "lean_name": "intbegLessTotal",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.12): linear_scanProofScript.sml:3703-3708. HOL EL is the exact holEl, SORTED holSorted, LEX holLex, transitive/total holTransitive/holTotal, ALL_DISTINCT List.Nodup, REVERSE List.reverse, the [] (lookup r m) miscThe [] (sptLookup r m), MEM/EVERY list membership/quantification, good_linear_scan_state/forbidden_is_from_forced_* the exact tagged ports, st_ex_FOLDL the tagged stExFoldl and the pass steps the tagged linearRegAllocStepPass1/2. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "st_ex_FOLDL_linear_reg_alloc_step_passn_invariants_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/PassInvariants.lean",
+    "lean_name": "stExFoldlLinearRegAllocStepPassnInvariantsLemma",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.12): linear_scanProofScript.sml:3710-3793, twelve hypotheses (b : bool selecting pass1/pass2) and eight conclusion conjuncts over REVERSE regl ++ l with posout existential. HOL EL is the exact holEl, SORTED holSorted, LEX holLex, transitive/total holTransitive/holTotal, ALL_DISTINCT List.Nodup, REVERSE List.reverse, the [] (lookup r m) miscThe [] (sptLookup r m), MEM/EVERY list membership/quantification, good_linear_scan_state/forbidden_is_from_forced_* the exact tagged ports, st_ex_FOLDL the tagged stExFoldl and the pass steps the tagged linearRegAllocStepPass1/2. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "st_ex_FOLDL_linear_reg_alloc_step_passn_invariants",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/PassInvariants.lean",
+    "lean_name": "stExFoldlLinearRegAllocStepPassnInvariants",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.12): linear_scanProofScript.sml:3795-3820, ten hypotheses with the empty allocated list and eight conclusion conjuncts. HOL EL is the exact holEl, SORTED holSorted, LEX holLex, transitive/total holTransitive/holTotal, ALL_DISTINCT List.Nodup, REVERSE List.reverse, the [] (lookup r m) miscThe [] (sptLookup r m), MEM/EVERY list membership/quantification, good_linear_scan_state/forbidden_is_from_forced_* the exact tagged ports, st_ex_FOLDL the tagged stExFoldl and the pass steps the tagged linearRegAllocStepPass1/2. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "HOL/src/relation/relationScript.sml",
+    "hol_name": "total_def",
+    "lean_path": "Flapjack/Misc/Relation.lean",
+    "lean_name": "holTotal",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.12): pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: relationScript.sml:56-58 total (R:'a->'a->bool) = !x y. R x y \\/ R y x; relation rendered as α → α → Prop (as for holTransitive), the same single clause."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Padding.lean",
+    "lean_name": "padCodeMap",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "pad_code_MAP",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source review: literal HOL MAP equation, quantifiers, unconditional conclusion, fixed bytes and positive word width match. No mismatch found; source/kernel verification recorded on .29."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/RemoveLabels.lean",
+    "lean_name": "progToBytesMap",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "prog_to_bytes_MAP",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source review: literal HOL MAP equation, quantifiers, unconditional conclusion, fixed bytes and positive word width match. No mismatch found; source/kernel verification recorded on .29."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsMove.lean",
+    "lean_name": "ssaCcTransPropsMove",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison 2026-10-02, bead flapjack-jq7g: genuine Move case of word_allocProofScript.sml5951ff, original marked Move proof5958-5986 replayed literally after its original compiler unfolding with four literal local prerequisites; full case statement and eight inferred carriers captured. Substitutes only Move pri ls for universally quantified prog, retains arbitrary input/output Spt maps, natural counters/priority, original loop-table list of Spt map and two Spt sets, native compiler output equality, original ssa_map_ok/is_alloc_var conjunction, and all three counter monotonicity/allocation/output-map conclusions. No IH for nonrecursive Move, no extra distinctness/tree validity/evaluation or target-validity assumption. forceRename uses actual filtered zip; all selected destination bounds/nonphysicality are derived from accepted list_next_var_rename_lemma_1 and original allocation residue. Native WordLangProgHOL carrier has positive BitVec width/NeZero; Spt maps/sets and List pairs remain identity translations, with no finite-map qualifier."
   }
 ]
