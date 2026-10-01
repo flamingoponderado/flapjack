@@ -1099,6 +1099,12 @@
       "sha256": "152d6742e65b67592b63a097593a4a131602feb98553eba932290ab7156f521b"
     },
     {
+      "bytes": 145,
+      "out": "lab_to_target_section_lookup_probe.out",
+      "rows": 8,
+      "sha256": "280b5b0f8b136fde960f097d23d0bd12518c36b19bca95c84f9e561db8f3d0e4"
+    },
+    {
       "bytes": 1166,
       "out": "labsem_arithmetic_probe.out",
       "rows": 44,
@@ -3647,6 +3653,12 @@
       "out": "stacksem_word_bitmap_probe.out",
       "rows": 11,
       "sha256": "2bccd8807cc28a4cc17ec6a92d04822083c8949ea97ec1cf5bdab9b2476addaf"
+    },
+    {
+      "bytes": 160,
+      "out": "target_props_interference_probe.out",
+      "rows": 8,
+      "sha256": "9b8902ef84d7de51b5b581223be164199171fc8083931242ffca07152f870db1"
     },
     {
       "bytes": 213,
