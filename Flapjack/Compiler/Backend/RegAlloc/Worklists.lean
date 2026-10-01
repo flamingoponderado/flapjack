@@ -28,19 +28,22 @@ def decDegree (n : Nat) : M State Unit StateException :=
     if n < d then bind (adjLsSub n) fun adjs => stExForeach adjs decDeg
     else ret ()
 
-/-- Literal `add_simp_wl` (`reg_allocScript.sml:274-280`): prepend. -/
+/-- Literal `add_simp_wl` (`reg_allocScript.sml:274-280`): prepend. The exception carrier is arbitrary, as in the
+original type (only the generic `get`/`set` accessors run). -/
 @[hol "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml" "add_simp_wl_def"]
-def addSimpWl (ls : List Nat) : M State Unit StateException :=
+def addSimpWl {γ : Type} (ls : List Nat) : M State Unit γ :=
   bind getSimpWl fun swl => setSimpWl (ls ++ swl)
 
-/-- Literal `add_spill_wl` (`reg_allocScript.sml:282-288`): prepend. -/
+/-- Literal `add_spill_wl` (`reg_allocScript.sml:282-288`): prepend. The exception carrier is arbitrary, as in the
+original type (only the generic `get`/`set` accessors run). -/
 @[hol "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml" "add_spill_wl_def"]
-def addSpillWl (ls : List Nat) : M State Unit StateException :=
+def addSpillWl {γ : Type} (ls : List Nat) : M State Unit γ :=
   bind getSpillWl fun swl => setSpillWl (ls ++ swl)
 
-/-- Literal `add_freeze_wl` (`reg_allocScript.sml:290-296`): prepend. -/
+/-- Literal `add_freeze_wl` (`reg_allocScript.sml:290-296`): prepend. The exception carrier is arbitrary, as in the
+original type (only the generic `get`/`set` accessors run). -/
 @[hol "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml" "add_freeze_wl_def"]
-def addFreezeWl (ls : List Nat) : M State Unit StateException :=
+def addFreezeWl {γ : Type} (ls : List Nat) : M State Unit γ :=
   bind getFreezeWl fun fwl => setFreezeWl (ls ++ fwl)
 
 /-- Literal `push_stack` (`reg_allocScript.sml:299-307`): read the stack,
@@ -52,9 +55,10 @@ def pushStack (x : Nat) : M State Unit StateException :=
     ignoreBind (updateDegrees x 0)
       (ignoreBind (updateMoveRelated x false) (setStack (x :: swl)))
 
-/-- Literal `add_unavail_moves_wl` (`reg_allocScript.sml:309-315`): prepend. -/
+/-- Literal `add_unavail_moves_wl` (`reg_allocScript.sml:309-315`): prepend. The exception carrier is arbitrary, as in the
+original type (only the generic `get`/`set` accessors run). -/
 @[hol "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml" "add_unavail_moves_wl_def"]
-def addUnavailMovesWl (ls : List (Nat × (Nat × Nat))) : M State Unit StateException :=
+def addUnavailMovesWl {γ : Type} (ls : List (Nat × (Nat × Nat))) : M State Unit γ :=
   bind getUnavailMovesWl fun swl => setUnavailMovesWl (ls ++ swl)
 
 /-- Literal `respill` (`reg_allocScript.sml:650-666`): a frozen node whose
