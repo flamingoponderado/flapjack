@@ -2936,3 +2936,7 @@ run_probe spt_union_algebra_probeScript.sml spt_union_algebra_probe.out \
 run_probe word_to_stack_native_top_probeScript.sml word_to_stack_native_top_probe.out \
   wts_top_empty_plain wts_top_empty_perf wts_top_empty_zero wts_top_empty_narrow wts_top_width_one_plain wts_top_width_one_perf wts_top_zero_registers wts_top_reg_underflow wts_top_avoid_duplicate wts_top_avoid_single wts_top_reg_only wts_top_stack_args wts_top_perf_args wts_top_break wts_top_duplicates wts_top_duplicates_reverse wts_top_order wts_top_large_identifier wts_top_bitmap_plain wts_top_bitmap_perf wts_top_bitmap_order wts_top_bitmap_reverse wts_top_bitmap_multiword wts_top_bitmap_zero_frame \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_alloc_checker_call_none_probeScript.sml word_alloc_checker_call_none_probe.out \
+  ccn_empty ccn_one ccn_duplicate ccn_args ccn_collision ccn_handler_ignored \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend"

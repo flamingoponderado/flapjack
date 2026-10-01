@@ -41996,5 +41996,14 @@
   "hol_name": "find_index_LESS_LENGTH",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-c original1123-1130: arbitrary list,target,offset,index with successful find_index=SOME index premise; BOTH offset<=index and index<offset+LENGTH list retained. Generic propositional equality, no zero-offset/unique-match/size premise. Native list induction and arithmetic derive bounds. Eight original search/lower/upper tuples include first/duplicate/last/large-offset and absent/empty strict-bound sentinels, matching kernel fixture tuples and six theorem callsites."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/ClashTreeColouringOk/CallNone.lean",
+  "lean_name": "clashTreeColouringOk_CallNone",
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "clash_tree_colouring_ok",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-c original Call NONE case3230-3236, full motive2813-2826: arbitrary optional destination,args,optional handler including program/labels, original six premises/all five conclusions. No IH or added premise; source ignores handler in this branch. Set checkColInj supplies output equality/injection/image, native insertion wf and original live injection prove catchall colouringOk writes union. Qualifier only standard positive-width word translation; NumSet is exact Spt. Six fresh original checker equality observations paired kernel fixtures plus universal case application; full returning Call branches remain separate open children18.2/3."
 }
 ]
