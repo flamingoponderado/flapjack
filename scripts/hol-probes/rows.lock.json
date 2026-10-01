@@ -648,6 +648,7 @@
     {"bytes": 676, "out": "stacksem_ffi_probe.out", "rows": 4, "sha256": "47594abf48b20e285b5ebb9478e5a030403f184127e3ee06fabd05578fee0a5f"},
     {"bytes": 1185, "out": "stacksem_fixed_stack_probe.out", "rows": 17, "sha256": "fa3aa72401dd7c196d8dcb97671e379b54178751f99c9fb1a5cce35fc4e8ff81"},
     {"bytes": 976, "out": "stacksem_fp_arith_probe.out", "rows": 14, "sha256": "37e3dfba373197fa8fd7913436d3b639ecddc18ed2cc241c78cf7025031ad085"},
+    {"bytes": 626, "out": "stacksem_fp_convert_probe.out", "rows": 11, "sha256": "4512fb6bff67a930718051464b903145593e59a24ca8723059d35e1473b32bd1"},
     {"bytes": 1080, "out": "stacksem_fpreg_inst_probe.out", "rows": 20, "sha256": "f1840a9bdd46706b0c03344283081c2d8519516eb653cd57b083523605e2c03a"},
     {"bytes": 763, "out": "stacksem_install_probe.out", "rows": 6, "sha256": "2c63d6fe8f8ca5b8b5c2729b23ed5f81cc8fabbab43ea1d25801f0b749bd0887"},
     {"bytes": 1317, "out": "stacksem_integer_inst_probe.out", "rows": 33, "sha256": "80226da4e01b0ec14fc51aed597801794bd2d7ea0fa5c66c735953aa0e17ab4f"},

@@ -1,0 +1,11 @@
+fpsqrt_result=SOME (6,SOME 4611686018427387904,SOME (INL 77),SOME (INR (4,5)))
+fpsqrt_missing=NONE
+fptoint_result=SOME (6,SOME 2,SOME (INL 77),SOME (INR (4,5)))
+fptoint_out_of_range=NONE
+fptoint_missing=NONE
+fptoint32_even=SOME (6,SOME 4621819117588971522,SOME (INL 77),SOME (INR (4,5)))
+fptoint32_odd=SOME (6,SOME 8589934592,SOME (INL 77),SOME (INR (4,5)))
+fpfromint_result=SOME (6,SOME 4613937818241073152,SOME (INL 77),SOME (INR (4,5)))
+fpfromint_missing=NONE
+fpfromint32_even=SOME (6,SOME 4616189618054758400,SOME (INL 77),SOME (INR (4,5)))
+fpfromint32_odd=SOME (6,SOME 4613937818241073152,SOME (INL 77),SOME (INR (4,5)))
