@@ -592,6 +592,7 @@
     {"bytes":483,"out":"word_alloc_get_clash_tree_probe.out","rows":32,"sha256":"2ccac4440a85691e59f68516d437c441b95ac1abc3aec4e725004efcb2577ca4"},
     {"bytes":365,"out":"word_alloc_get_delta_inst_probe.out","rows":24,"sha256":"8d50fb22e4cc3420953deaea1c19c16a80303b12c6c6a2d98f5300e3cf566a57"},
     {"bytes":67,"out":"word_alloc_get_live_probe.out","rows":3,"sha256":"7382e5e922de37ecf690649d96e2990b17395a432e2362dafe8c922a22c48e5e"},
+    {"bytes":246,"out":"word_alloc_get_prefs_probe.out","rows":17,"sha256":"fe80e1acc997a450ed5867831c0e7a16d622fa5baaba76c6117766d0a3dd4685"},
     {"bytes":145,"out":"word_alloc_get_writes_inst_probe.out","rows":7,"sha256":"93da4d5a47bbf92108b6c3670d2131f895c8e88773a8922c02bae43cb77525ea"},
     {"bytes":143,"out":"word_alloc_get_writes_probe.out","rows":7,"sha256":"ff9a74e2147b1fbbcb6f955f1c1d829c77de16f253bbf2d756e8eeb9e29a0859"},
     {"bytes":408,"out":"word_alloc_heu_counters_probe.out","rows":20,"sha256":"b0fe869eb0ac469e6d15ee74e094f7feee6dd8322abc1896cb94ba9a8af9b231"},

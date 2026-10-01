@@ -2956,6 +2956,9 @@ run_probe word_alloc_loop_checker_probeScript.sml word_alloc_loop_checker_probe.
 run_probe word_alloc_stack_only_probeScript.sml word_alloc_stack_only_probe.out \
   gso_skip gso_move gso_foldr gso_seq gso_must gso_loop gso_call_none gso_call_return gso_tick gso_return gso_alloc_nondelta gso_entry gso_if_reg gso_if_imm gso_call_both \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+run_probe word_alloc_get_prefs_probeScript.sml word_alloc_get_prefs_probe.out \
+  prefs_skip prefs_empty prefs_move prefs_duplicate prefs_self prefs_seq prefs_if_reg prefs_if_imm prefs_must prefs_loop prefs_tail prefs_tail_handler prefs_return prefs_both prefs_nested prefs_ignored prefs_large \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
 
 
 run_probe word_alloc_share_checker_probeScript.sml word_alloc_share_checker_probe.out \
