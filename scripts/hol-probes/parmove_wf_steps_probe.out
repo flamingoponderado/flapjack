@@ -1,0 +1,14 @@
+pw_remove_pre=T
+pw_remove_post=T
+pw_start_pre=T
+pw_start_post=T
+pw_extend_pre=T
+pw_extend_post=T
+pw_save_pre=T
+pw_save_post=T
+pw_emit_head_pre=T
+pw_emit_head_post=T
+pw_emit_last_pre=T
+pw_emit_last_post=T
+pw_bad_source=F
+pw_bad_path=F

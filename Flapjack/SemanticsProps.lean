@@ -17,11 +17,10 @@ possibly finite sequences with no gaps.
 namespace Flapjack
 
 /- Port status: these definitions follow the HOL constructor and relation
-   clauses, but they are not tagged as exact ports. The Lean `CakeLazyList`
-   representation below has no checked bridge to HOL's `llist`, and there is
-   no verified source-to-Lean representation relation for this behavior
-   carrier. `cakeImplements'_trans` is therefore a kernel-checked structural
-   analogue until those carrier correspondences are established. -/
+   clauses, but they are not tagged as exact ports. The representation lemmas
+   below relate the two Lean lazy-list carriers; they do not prove equivalence
+   with HOL artifacts. The event and behavior carriers still need source-level
+   review, so `cakeImplements'_trans` remains a Flapjack structural analogue. -/
 /-- A HOL lazy list (`llist`): a finite prefix may end, after which all reads
     are absent, or the list may continue indefinitely. -/
 structure CakeLazyList (α : Type u) where
@@ -210,8 +209,8 @@ independently reviewed exact HOL declaration with these statements, and the
 mapping of the `FfiEvent` carrier still awaits review (tracked by
 `flapjack-pxn.18.5.15.10.1`). -/
 
-/-- The reviewed representation relation: a `CakeLazyList` represents a HOL
-    `llist` when both read the same values at every index. -/
+/-- Local representation relation between the two Lean lazy-list carriers:
+    both read the same values at every index. -/
 def CakeLazyListRepresents (t : CakeLazyList α) (ll : HolLList α) : Prop :=
   t.get? = ll.rep
 

@@ -119,6 +119,7 @@ has been established. For declaration-level provenance, use
 [GitHub issues](https://github.com/pirapira/flapjack/issues), not in this
 layout guide.
 | compiler/backend/reg_alloc/reg_allocScript.sml | Flapjack/Compiler/Backend/RegAlloc.lean |
+| compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml | Flapjack/Compiler/Backend/RegAlloc/Proofs.lean |
 
 The pinned external `hol4/src/coretypes/optionScript.sml` counterpart is
 `Flapjack/Misc/Option.lean`.

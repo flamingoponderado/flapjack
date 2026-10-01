@@ -170,7 +170,6 @@ theorem toGeneric_wStackLoad {width : Nat} [NeZero width]
     simpa [wStackLoadNative, WordToStack.wStackLoad, toGeneric, Prog.map] using
       congrArg (fun q : ProgM (BitVec width) => StackLang.Prog.seq (StackLang.Prog.stackLoad r i) q) ih
 
-set_option linter.unusedSimpArgs false in
 /-- Flapjack-only all-input correspondence with the accepted generic helper.
 This proves representation transport, not evaluation or compiler correctness. -/
 theorem toGeneric_wInst {width : Nat} [NeZero width]
@@ -182,7 +181,7 @@ theorem toGeneric_wInst {width : Nat} [NeZero width]
     all_goals
       simp only [wInstNative, WordToStackRegFormat.wInst, HolInst.toWordLangInst,
         HolArith.toWordLangArith, HolRegImm.toWordRegImm]
-      try simp only [toGeneric_wStackLoad, toGeneric_wRegWrite1, toGeneric_wRegWrite2]
+      try simp only [toGeneric_wStackLoad, toGeneric_wRegWrite1]
       simp [toGeneric, StackLang.Prog.map, HolInst.toWordLangInst,
         HolArith.toWordLangArith, HolRegImm.toWordRegImm]
   | mem op d addr =>

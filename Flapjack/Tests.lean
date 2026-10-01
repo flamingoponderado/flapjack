@@ -1,3 +1,17 @@
+import Flapjack.Test.WordToStackCompilePrefixParity
+import Flapjack.Test.WordToStackInsertPrefixParity
+import Flapjack.Test.WordToStackLivePrefixParity
+import Flapjack.Test.WordToStackLiveLengthParity
+import Flapjack.Test.ParmoveDestinationWrapperParity
+import Flapjack.Test.ParmoveDStepStepParity
+
+import Flapjack.Test.WordToStackCompileKeysParity
+import Flapjack.Test.WordToStackNativeConfigParity
+import Flapjack.Test.ParmoveDStepsParity
+import Flapjack.Test.WordLangMaxVarParity
+import Flapjack.Test.WordLangCutsetsMaxParity
+import Flapjack.Test.WordLangMaxVarInstParity
+import Flapjack.Test.WordToStackNativeCompileParity
 import Flapjack.Test.StackSemStackCodecParity
 import Flapjack.Test.StackSemControl
 import Flapjack.Test.StackSemStateOps

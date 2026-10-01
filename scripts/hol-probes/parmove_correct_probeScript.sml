@@ -1,0 +1,12 @@
+load "bossLib";
+load "preamble";
+load "parmoveTheory";
+open bossLib HolKernel Parse preamble parmoveTheory;
+fun observe label term = let val th = prove(term, match_mp_tac parmove_correct >> EVAL_TAC) in if aconv(concl th) term then (print(label ^ "="); print "T\n") else raise Fail label end;
+val _ = observe "pc_empty" ``!rho:num option -> num. eqenv (seqsem (parmove ([]:(num#num)list)) rho) (parsem (MAP (\(x,y). (SOME x,SOME y)) ([]:(num#num)list)) rho)``;
+val _ = observe "pc_self" ``!rho:num option -> num. eqenv (seqsem (parmove [(1:num,1:num)]) rho) (parsem (MAP (\(x,y). (SOME x,SOME y)) [(1:num,1:num)]) rho)``;
+val _ = observe "pc_chain" ``!rho:num option -> num. eqenv (seqsem (parmove [(1:num,2:num);(2,3)]) rho) (parsem (MAP (\(x,y). (SOME x,SOME y)) [(1:num,2:num);(2,3)]) rho)``;
+val _ = observe "pc_cycle" ``!rho:num option -> num. eqenv (seqsem (parmove [(1:num,2:num);(2,1)]) rho) (parsem (MAP (\(x,y). (SOME x,SOME y)) [(1:num,2:num);(2,1)]) rho)``;
+val _ = observe "pc_fanout" ``!rho:num option -> num. eqenv (seqsem (parmove [(1:num,3:num);(2,3)]) rho) (parsem (MAP (\(x,y). (SOME x,SOME y)) [(1:num,3:num);(2,3)]) rho)``;
+val _ = observe "pc_order" ``!rho:num option -> num. eqenv (seqsem (parmove [(3:num,1:num);(1,2);(2,4)]) rho) (parsem (MAP (\(x,y). (SOME x,SOME y)) [(3:num,1:num);(1,2);(2,4)]) rho)``;
+val _ = observe "pc_bool" ``!rho:bool option -> bool. eqenv (seqsem (parmove [(F,T);(T,F)]) rho) (parsem (MAP (\(x,y). (SOME x,SOME y)) [(F,T);(T,F)]) rho)``;

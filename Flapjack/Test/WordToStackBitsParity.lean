@@ -749,11 +749,11 @@ def handlerParityGuard : Bool :=
   (Flapjack.Compiler.Backend.WordToStack.handlerSlots false == 3) &&
   (Flapjack.Compiler.Backend.WordToStack.handlerSlots true == 5) &&
   handlerProgBEq
-    (stackHandlerArgs (α := BitVec 64)
+    (stackHandlerArgs (α := BitVec 64) (δ := Nat) (ε := Nat)
       false (Sum.inl 4) 7 (2, 7, 9))
     (stackArgs (α := Nat) (β := Nat) (γ := BitVec 64) (Sum.inl 4) 7 (2, 10, 12)) &&
   handlerProgBEq
-    (stackHandlerArgs (α := BitVec 64)
+    (stackHandlerArgs (α := BitVec 64) (δ := Nat) (ε := Nat)
       true (Sum.inr 4) 7 (2, 7, 9))
     (stackArgs (α := Nat) (β := Nat) (γ := BitVec 64) (Sum.inr 4) 7 (2, 12, 14)) &&
   handlerProgBEq
@@ -776,7 +776,7 @@ def handlerParityGuard : Bool :=
 #eval handlerParityGuard
 #guard handlerParityGuard
 
-example : stackHandlerArgs (α := BitVec 64)
+example : stackHandlerArgs (α := BitVec 64) (δ := Nat) (ε := Nat)
     false (Sum.inl 4) 7 (2, 7, 9)
     = stackArgs (α := Nat) (β := Nat) (γ := BitVec 64) (Sum.inl 4) 7 (2, 10, 12) := rfl
 example : popHandler (α := BitVec 64) false (1, 2, 3) .skip
@@ -1055,3 +1055,17 @@ def runChecks : IO Bool := do
     wInstParityGuard && literalWMoveParityGuard)
 
 end Flapjack.Test.WordToStackBitsParity
+
+namespace Flapjack.Test.HandlerDestinationPolymorphism
+open Flapjack.Compiler.Backend.WordToStackRegFormat
+example {Word Left Right : Type} (perf : Bool) (dest : Sum Left Right)
+    (count k f scratch : Nat) :
+    stackHandlerArgs (α := Word) perf dest count (k,f,scratch) =
+      stackArgs dest count
+        (k, f + Flapjack.Compiler.Backend.WordToStack.handlerSlots perf,
+         scratch + Flapjack.Compiler.Backend.WordToStack.handlerSlots perf) := rfl
+example : stackHandlerArgs (α := Nat) (ε := Unit) false (Sum.inl true) 7 (2,7,9) =
+    stackArgs (γ := Nat) (β := Unit) (Sum.inl true) 7 (2,10,12) := rfl
+example : stackHandlerArgs (α := Nat) (δ := Bool) true (Sum.inr ()) 7 (2,7,9) =
+    stackArgs (γ := Nat) (α := Bool) (Sum.inr ()) 7 (2,12,14) := rfl
+end Flapjack.Test.HandlerDestinationPolymorphism
