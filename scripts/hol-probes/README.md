@@ -3401,3 +3401,13 @@ types are captured separately. The kernel fixture applies the full theorem to
 the identical Bool/Nat inputs, including overwritten physical keys, malformed
 trees and an unbounded natural key. These regressions are not a cross-language
 proof or completion of the full SSA correctness theorem.
+
+`ssa_merge_frame_probe.out` replays the literal complete local `merge_moves_frame`
+proof and its local `ssa_map_ok_extend` prerequisite, then freshly evaluates ten
+complete original merge results. The same-input kernel tuples in
+`SSAMergeMovesParity.lean` cover missing/equal/unequal maps, tail order, duplicate
+keys, malformed trees and unbounded natural registers.
+`SSAMergeMoveFrameParity.lean` applies the full theorem to arbitrary inputs with
+only the original allocation-class premise and all four result conjuncts.
+Malformed/physical-counter observation rows test the definition; they do not
+claim that the allocation premise holds. No exported local theorem is claimed.
