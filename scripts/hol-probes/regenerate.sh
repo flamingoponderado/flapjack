@@ -3076,6 +3076,9 @@ run_probe reg_alloc_accessors_probeScript.sml reg_alloc_accessors_probe.out \
 run_probe reg_alloc_colouring_probeScript.sml reg_alloc_colouring_probe.out \
   rc_empty_ks rc_no_nodes rc_fixed rc_dup_colours rc_oob rc_oob_after_empty aat_none aat_pref aat_stemp aat_non_atemp aat_oob aa_all aa_pref aa_one_colour fmc_hit fmc_not_in_ks fmc_empty fmc_oob \
   "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+run_probe reg_alloc_allocator_probeScript.sml reg_alloc_allocator_probe.out \
+  ra_simple_delta ra_irc_move ra_simple_move ra_irc_spill_cost ra_irc_spill_deg ra_simple_branch_forced ra_irc_phys ra_irc_fs ra_irc_stack ra_irc_coalesce_chain ra_irc_pressure ra_empty \
+  "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 run_probe reg_alloc_exception_functions_probeScript.sml reg_alloc_exception_functions_probe.out \
   ef_raise_fail ef_raise_sub ef_hs_success ef_hs_catch ef_hs_pass_fail ef_hs_failing_state ef_hs_accessor ef_hf_catch ef_hf_pass_sub ef_hf_success ef_hf_failing_state \
   "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"

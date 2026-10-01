@@ -540,6 +540,7 @@
     {"bytes": 182, "out": "prog_if_probe.out", "rows": 2, "sha256": "86056be1950303f8195fa52dcbf2c23c065d52323da492bb4fede3d8b1af899e"},
     {"bytes": 285, "out": "real_sqrt_round_agreement_special_probe.out", "rows": 8, "sha256": "6fd8527fe04c4f4319075b5c007e1b868916d6dc6c04f93319d699343c6c225d"},
     {"bytes": 550, "out": "reg_alloc_accessors_probe.out", "rows": 18, "sha256": "2b23be3b225229409f3801c21545ae63eeb80a0cc7d44f106358da834767d3f1"},
+    {"bytes": 504, "out": "reg_alloc_allocator_probe.out", "rows": 12, "sha256": "40975e3b9a2bdf53cef49dd36586e9236d995559d9390d2cbe628120d376f538"},
     {"bytes": 151, "out": "reg_alloc_clash_tree_probe.out", "rows": 8, "sha256": "1832a5c8df26d3e4d503c9b896b8c92656597611be255c73f45cbd33d46b6c82"},
     {"bytes": 8484, "out": "reg_alloc_coalesce_probe.out", "rows": 29, "sha256": "9150484c7cd2addcce59a37f55aab5454f3eccd6be645ca4e8148bbaacf78a3c"},
     {"bytes": 580, "out": "reg_alloc_colouring_probe.out", "rows": 18, "sha256": "c273e7a1a5ad0a3f70bb5ea0fb5348e6e4e3a3b059aed54e8d33bc804f88b9bf"},
