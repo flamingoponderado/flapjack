@@ -8,8 +8,9 @@ import Flapjack.Misc.Sptree
 
 The invariant definitions of `reg_allocProofScript.sml` used by
 `do_reg_alloc_correct`: edges, undirectedness, well-formed states, the
-no-clash colouring invariant, preference oracles, inverse maps, cliques,
-subgraphs and satisfactory colourings. HOL `bool` definitions are `Prop`s.
+no-clash colouring invariant, preference oracles, cliques, subgraphs and
+satisfactory colourings, and the inverse-map pair `sp_inverts`/`sp_inverts_insert`.
+HOL `bool` definitions are `Prop`s.
 
 HOL `EL n l` is `l[n]` when `n < LENGTH l` and otherwise `HD []`, because
 `TL [] = []` (`HOL/src/list/src/listScript.sml` `HD`, `TL_DEF`, `EL_def`). Here it
@@ -19,9 +20,9 @@ Both are provisional, untagged Flapjack infrastructure, not completed HOL ports.
 The HOL standard-library `listScript.sml` source is outside the reference
 checker's reviewed external paths. Its exact `HD`/`EL` tags wait on the
 provenance approval of beads flapjack-pxn.18.5.15.3.38 and .38.1. Until that
-approval lands, the `has_edge`, `no_clash` and `colouring_satisfactory` ports
-below depend on this unreviewed `EL` rendering, and their acceptance is held
-on bead .38. `holSorted` follows the original `sortingScript.sml` `SORTED_DEF`
+approval lands, every declaration below except `sp_inverts`, `sp_inverts_insert` and
+`hide` depends, directly or through `has_edge`/`good_ra_state`, on this unreviewed `EL`
+rendering, so those are untagged and their acceptance is held on bead .38. `holSorted` follows the original `sortingScript.sml` `SORTED_DEF`
 (adjacent pairs plus the recursive tail, with no transitivity assumption). It
 is likewise untagged.
 -/
@@ -50,20 +51,31 @@ def holSorted {α : Type} (R : α → α → Prop) : List α → Prop
 
 instance : Inhabited Tag := ⟨.Atemp⟩
 
-/-- Exact HOL `has_edge_def` (`reg_allocProofScript.sml:20-25`). -/
-@[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml" "has_edge_def"]
+/-- HOL `has_edge_def` (`reg_allocProofScript.sml:20-25`).
+
+Provisional and untagged: this ports HOL `has_edge_def` but its statement reads HOL `EL`
+through `holEl`, whose HOL `listScript` provenance is pending review (bead
+flapjack-pxn.18.5.15.3.38.1). Restore the `@[hol]` tag once that review is accepted. -/
 def hasEdge (adjls : List (List Nat)) (x y : Nat) : Prop :=
   x < adjls.length ∧ y < adjls.length ∧ y ∈ holEl x adjls
 
-/-- Exact HOL `undirected_def` (`reg_allocProofScript.sml:27-32`). -/
-@[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml" "undirected_def"]
+/-- HOL `undirected_def` (`reg_allocProofScript.sml:27-32`).
+
+Provisional and untagged: this ports HOL `undirected_def` but it is stated through
+`has_edge`, which reads HOL `EL` through `holEl`, whose HOL `listScript` provenance is
+pending review (bead flapjack-pxn.18.5.15.3.38.1). Restore the `@[hol]` tag once that
+review is accepted. -/
 def undirected (adjls : List (List Nat)) : Prop :=
   ∀ x y, hasEdge adjls x y → hasEdge adjls y x
 
-/-- Exact HOL `good_ra_state_def` (`reg_allocProofScript.sml:40-56`): every
-array has length `dim`, every stored node is below `dim`, adjacency lists are
-strictly decreasing, and the graph is undirected. -/
-@[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml" "good_ra_state_def"]
+/-- HOL `good_ra_state_def` (`reg_allocProofScript.sml:40-56`): every array has length
+`dim`, every stored node is below `dim`, adjacency lists are strictly decreasing, and
+the graph is undirected.
+
+Provisional and untagged: this ports HOL `good_ra_state_def` but it is stated through
+`undirected`/`has_edge` (HOL `EL` via `holEl`) and HOL `SORTED` via `holSorted`, whose
+HOL `listScript` provenance is pending review (bead flapjack-pxn.18.5.15.3.38.1).
+Restore the `@[hol]` tag once that review is accepted. -/
 def goodRaState (s : State) : Prop :=
   s.adj_ls.length = s.dim ∧
   s.node_tag.length = s.dim ∧
@@ -80,19 +92,26 @@ def goodRaState (s : State) : Prop :=
   (∀ m ∈ s.unavail_moves_wl, m.2.1 < s.dim ∧ m.2.2 < s.dim) ∧
   undirected s.adj_ls
 
-/-- Exact HOL `no_clash_def` (`reg_allocProofScript.sml:59-67`): adjacent nodes
-with fixed colours have different colours. The tags are read with HOL `EL`. -/
-@[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml" "no_clash_def"]
+/-- HOL `no_clash_def` (`reg_allocProofScript.sml:59-67`): adjacent nodes with fixed colours
+have different colours.
+
+Provisional and untagged: this ports HOL `no_clash_def` but its statement reads HOL `EL`
+through `holEl`, whose HOL `listScript` provenance is pending review (bead
+flapjack-pxn.18.5.15.3.38.1). Restore the `@[hol]` tag once that review is accepted. -/
 def noClash (adjLs : List (List Nat)) (nodeTag : List Tag) : Prop :=
   ∀ x y, hasEdge adjLs x y →
     match holEl x nodeTag, holEl y nodeTag with
     | .Fixed n, .Fixed m => n = m → x = y
     | _, _ => True
 
-/-- Exact HOL `good_pref_def` (`reg_allocProofScript.sml:73-83`): on a good
-state the oracle succeeds without changing the state and picks a member of
-its input list, if any. HOL's three type variables are the implicit binders. -/
-@[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml" "good_pref_def"]
+/-- HOL `good_pref_def` (`reg_allocProofScript.sml:73-83`): on a good state the oracle
+succeeds without changing the state and picks a member of its input list, if any. HOL's
+three type variables are the implicit binders.
+
+Provisional and untagged: this ports HOL `good_pref_def` but it is stated through
+`good_ra_state`, which depends on HOL `EL` via `holEl`, whose HOL `listScript`
+provenance is pending review (bead flapjack-pxn.18.5.15.3.38.1). Restore the `@[hol]`
+tag once that review is accepted. -/
 def goodPref {α β γ : Type} (pref : α → List β → M State (Option β) γ) : Prop :=
   ∀ n ks s, goodRaState s →
     ∃ res, pref n ks s = (.success res, s) ∧
@@ -100,9 +119,13 @@ def goodPref {α β γ : Type} (pref : α → List β → M State (Option β) γ
       | none => True
       | some k => k ∈ ks
 
-/-- Exact HOL `good_neg_pref_def` (`reg_allocProofScript.sml:575-584`): the
-selected colour avoids `bads` and is at least `k`. -/
-@[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml" "good_neg_pref_def"]
+/-- HOL `good_neg_pref_def` (`reg_allocProofScript.sml:575-584`): the selected colour avoids
+`bads` and is at least `k`.
+
+Provisional and untagged: this ports HOL `good_neg_pref_def` but it is stated through
+`good_ra_state`, which depends on HOL `EL` via `holEl`, whose HOL `listScript`
+provenance is pending review (bead flapjack-pxn.18.5.15.3.38.1). Restore the `@[hol]`
+tag once that review is accepted. -/
 def goodNegPref {α β : Type} (k : Nat) (pref : α → List Nat → M State (Option Nat) β) : Prop :=
   ∀ n bads s, goodRaState s →
     ∃ res, pref n bads s = (.success res, s) ∧
@@ -133,23 +156,39 @@ theorem spInvertsInsert (f g : Spt Nat) (x y : Nat) :
       exact hy (by simp [sptDomain, hg])
     rw [sptLookup_sptInsert_ne _ _ _ _ hfy, hg]
 
-/-- Exact HOL `is_clique_def` (`reg_allocProofScript.sml:983-987`). -/
-@[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml" "is_clique_def"]
+/-- HOL `is_clique_def` (`reg_allocProofScript.sml:983-987`).
+
+Provisional and untagged: this ports HOL `is_clique_def` but it is stated through
+`has_edge`, which reads HOL `EL` through `holEl`, whose HOL `listScript` provenance is
+pending review (bead flapjack-pxn.18.5.15.3.38.1). Restore the `@[hol]` tag once that
+review is accepted. -/
 def isClique (ls : List Nat) (adjls : List (List Nat)) : Prop :=
   ∀ x y, x ∈ ls ∧ y ∈ ls ∧ x ≠ y → hasEdge adjls x y
 
-/-- Exact HOL `is_subgraph_def` (`reg_allocProofScript.sml:989-993`). -/
-@[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml" "is_subgraph_def"]
+/-- HOL `is_subgraph_def` (`reg_allocProofScript.sml:989-993`).
+
+Provisional and untagged: this ports HOL `is_subgraph_def` but it is stated through
+`has_edge`, which reads HOL `EL` through `holEl`, whose HOL `listScript` provenance is
+pending review (bead flapjack-pxn.18.5.15.3.38.1). Restore the `@[hol]` tag once that
+review is accepted. -/
 def isSubgraph (g h : List (List Nat)) : Prop :=
   ∀ x y, hasEdge g x y → hasEdge h x y
 
-/-- Exact HOL `is_subgraph_refl` (`reg_allocProofScript.sml:995-999`). -/
-@[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml" "is_subgraph_refl"]
+/-- HOL `is_subgraph_refl` (`reg_allocProofScript.sml:995-999`).
+
+Provisional and untagged: this ports HOL `is_subgraph_refl` but it is stated through
+`is_subgraph`/`has_edge` (HOL `EL` via `holEl`), whose HOL `listScript` provenance is
+pending review (bead flapjack-pxn.18.5.15.3.38.1). Restore the `@[hol]` tag once that
+review is accepted. -/
 theorem isSubgraphRefl (s : List (List Nat)) : isSubgraph s s :=
   fun _ _ h => h
 
-/-- Exact HOL `is_subgraph_trans` (`reg_allocProofScript.sml:1001-1008`). -/
-@[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml" "is_subgraph_trans"]
+/-- HOL `is_subgraph_trans` (`reg_allocProofScript.sml:1001-1008`).
+
+Provisional and untagged: this ports HOL `is_subgraph_trans` but it is stated through
+`is_subgraph`/`has_edge` (HOL `EL` via `holEl`), whose HOL `listScript` provenance is
+pending review (bead flapjack-pxn.18.5.15.3.38.1). Restore the `@[hol]` tag once that
+review is accepted. -/
 theorem isSubgraphTrans (s s' s'' : List (List Nat)) :
     isSubgraph s s' ∧ isSubgraph s' s'' → isSubgraph s s'' :=
   fun ⟨h1, h2⟩ x y h => h2 x y (h1 x y h)
@@ -158,9 +197,12 @@ theorem isSubgraphTrans (s s' s'' : List (List Nat)) :
 @[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml" "hide_def"]
 def hide {α : Type} (x : α) : α := x
 
-/-- Exact HOL `colouring_satisfactory_def` (`reg_allocProofScript.sml:1236-1241`). -/
-@[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml"
-  "colouring_satisfactory_def"]
+/-- HOL `colouring_satisfactory_def` (`reg_allocProofScript.sml:1236-1241`).
+
+Provisional and untagged: this ports HOL `colouring_satisfactory_def` but its statement
+reads HOL `EL` through `holEl`, whose HOL `listScript` provenance is pending review
+(bead flapjack-pxn.18.5.15.3.38.1). Restore the `@[hol]` tag once that review is
+accepted. -/
 def colouringSatisfactory {α : Type} (col : Nat → α) (adjls : List (List Nat)) : Prop :=
   ∀ x, x < adjls.length →
     ∀ y, y < adjls.length ∧ y ∈ holEl x adjls → col x = col y → x = y
