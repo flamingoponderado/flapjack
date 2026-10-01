@@ -1,3 +1,4 @@
+import Flapjack.Test.StackWordBoundary
 import Flapjack.Test.StackToLabExecutedCodecParity
 import Flapjack.Test.StackToLabFullEncodingParity
 import Flapjack.Test.StackToLabRecursiveValidityParity

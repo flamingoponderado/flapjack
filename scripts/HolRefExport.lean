@@ -1,6 +1,9 @@
+import Flapjack.Compiler.Backend.StackProps.InstructionConstants
 import Flapjack.Compiler.Backend.StackProps.ClockSupport
 import Flapjack.Compiler.Backend.StackProps.ExpressionClock
 import Flapjack.Compiler.Backend.StackProps.StateConstants
+import Flapjack.Compiler.Backend.WordToStack.Proofs.NoInstallTop
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.NoInstallCode
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoInstallPrograms
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoInstallCompiler
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopTop
@@ -441,6 +444,9 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFixInconsistenciesCorrectRi
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAExpressions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFixInconsistenciesProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAInstructionProps
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameShiftedProperties
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsMove
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsAllocation
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeMovesCorrectLeft
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMoveFrames
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveBounds
