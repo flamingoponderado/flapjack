@@ -1,0 +1,16 @@
+load "bossLib";
+load "preamble";
+load "ml_monadBaseTheory";
+load "reg_allocTheory";
+open bossLib HolKernel Parse preamble ml_monadBaseTheory reg_allocTheory;
+fun observe label term = let val th = EVAL term in print(label ^ "="); print_term(rhs(concl th)); print "\n" end;
+val _ = observe "mb_bind_ok" ``st_ex_bind (\s:num. ((M_success 3):(num,num)exc,s+1)) (\x s. ((M_success (x+s)):(num,num)exc,s+10)) 4``;
+val _ = observe "mb_bind_fail" ``st_ex_bind (\s:num. ((M_failure 7):(num,num)exc,s+2)) (\x s. ((M_success (x+s)):(num,num)exc,s+10)) 4``;
+val _ = observe "mb_ignore_ok" ``st_ex_ignore_bind (\s:num. ((M_success 3):(num,num)exc,s+1)) (\s. ((M_success (20+s)):(num,num)exc,s+10)) 4``;
+val _ = observe "mb_ignore_fail" ``st_ex_ignore_bind (\s:num. ((M_failure 7):(num,num)exc,s+2)) (\s. ((M_success (20+s)):(num,num)exc,s+10)) 4``;
+val _ = observe "mb_return" ``(st_ex_return 3 4) : (num,num)exc # num``;
+val _ = observe "mb_run_ok" ``run (\s:num. ((M_success 3):(num,num)exc,s+1)) 4``;
+val _ = observe "mb_run_fail" ``run (\s:num. ((M_failure 7):(num,num)exc,s+2)) 4``;
+val _ = observe "mb_alloc_three" ``(Marray_alloc (\xs (s:num list). xs) 3 7 [9]) : (unit,num)exc # num list``;
+val _ = observe "mb_alloc_zero" ``(Marray_alloc (\xs (s:num list). xs) 0 7 [9]) : (unit,num)exc # num list``;
+val _ = observe "mb_exn_bytes" ``(Fail [CHR 0; CHR 255] <> Subscript) /\ (Fail [CHR 0; CHR 255] <> Fail [CHR 255; CHR 0])``;

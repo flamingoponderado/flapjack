@@ -6,8 +6,8 @@ namespace Flapjack.WordToStackProofs
 one length entry for each frame, under only the source success premise. -/
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "abs_stack_IMP_LENGTH"
   (words_as_type_indexed_bitvec)]
-theorem absStackImpLength {width : Nat} [NeZero width]
-    (bitmaps : List (BitVec width)) (frames : List (WordSemStackFrame width))
+theorem absStackImpLength {width : Nat} {frameWidth : Nat} [NeZero width] [NeZero frameWidth]
+    (bitmaps : List (BitVec width)) (frames : List (WordSemStackFrame frameWidth))
     (stack : List (WordLocW width)) (lens : List Nat)
     (result : List (Option (WordLocW width × WordLocW width) × List Bool × List (WordLocW width)))
     (h : absStack bitmaps frames stack lens = some result) :

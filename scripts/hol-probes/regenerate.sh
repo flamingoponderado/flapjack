@@ -3034,9 +3034,32 @@ run_probe word_alloc_heu_max_probeScript.sml word_alloc_heu_max_probe.out \
   hm_tuple hm_tuple_equal hm_tuple_zero hm_tuple_large hm_empty hm_left hm_right hm_overlap hm_disjoint hm_mixed hm_nested hm_raw_left_bn hm_raw_right_bn hm_raw_both_bn hm_raw_left_bs hm_raw_right_bs hm_raw_both_bs hm_raw_bs_leaf hm_raw_leaf_bs hm_raw_empty_leaf \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
 
+run_probe monad_base_probeScript.sml monad_base_probe.out \
+  mb_bind_ok mb_bind_fail mb_ignore_ok mb_ignore_fail mb_return mb_run_ok mb_run_fail mb_alloc_three mb_alloc_zero mb_exn_bytes \
+  "$cake_dir/translator/monadic/monad_base/ml_monadBaseScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 run_probe word_to_stack_full_read_bitmap_mixed_probeScript.sml word_to_stack_full_read_bitmap_mixed_probe.out \
   fra_8_1 fra_8_16 fra_1_32 fra_16_8 fra_offset fra_same fra_success8_1 fra_success1_32 fra_zero fra_loc \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_alloc_heu_call_probeScript.sml word_alloc_heu_call_probe.out \
+  hc_merge_empty hc_merge_left hc_merge_right hc_merge_overlap hc_merge_disjoint hc_merge_raw_left hc_merge_raw_right hc_merge_raw_root hc_add_empty hc_add_nat hc_add_bool hc_add_tuple hc_add_nested hc_add_raw_bn hc_add_raw_bs hc_add_raw_overlap \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_to_stack_abs_stack_generality_probeScript.sml word_to_stack_abs_stack_generality_probe.out \
+  asg_base16 asg_base1 asg_plain16 asg_handler16 asg_plain1 asg_handler1 asg_nested16 asg_marker_bad \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_handler_val_generality_probeScript.sml word_to_stack_handler_val_generality_probe.out \
+  hvg_empty hvg_plain_empty hvg_handler_empty hvg_plain_three hvg_handler_two hvg_mixed hvg_middle_function hvg_frame_functions \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_comp_length_probeScript.sml word_to_stack_comp_length_probe.out \
+  comp_length_skip comp_length_alloc comp_length_must_terminate comp_length_sequence comp_length_if_both_branches comp_length_loop comp_length_tail_ignores_handler comp_length_returning_call comp_length_call_and_handler comp_length_store_empty comp_length_call_store_nested_handler comp_length_zero_frame comp_length_multiword comp_length_width_one comp_length_bound_required comp_length_large_gap comp_length_empty_initial comp_length_sequence_store \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_to_stack_cutset_maximum_probeScript.sml word_to_stack_cutset_maximum_probe.out \
+  cs_empty cs_root cs_left cs_right cs_duplicates cs_left_max cs_reordered cs_root_duplicates cs_large cs_overlap cs_range cs_sparse \
+  "$cake_dir/pancake/loop_to_wordScript.sml" "$cake_dir/pancake"
 
 run_probe word_alloc_canonize_moves_aux_probeScript.sml word_alloc_canonize_moves_aux_probe.out \
   cma_empty cma_acc cma_same_up cma_same_down cma_same_equal cma_different cma_groups cma_unsorted cma_reversed cma_self cma_large cma_bool \

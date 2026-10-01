@@ -1,7 +1,9 @@
-import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Step
-import Flapjack.Misc.FindIndex.ShiftZero
 import Flapjack.Compiler.Backend.WordAlloc.CanonizeMovesAux
+import Flapjack.Misc.FindIndex.ShiftZero
+import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Step
+import Flapjack.Compiler.Backend.WordAlloc.HeuCall
 import Flapjack.Compiler.Backend.WordAlloc.HeuMax
+import Flapjack.Compiler.Backend.RegAlloc.Exceptions
 import Flapjack.Compiler.Backend.RegAlloc.Carriers
 import Flapjack.Compiler.Backend.WordAlloc.HeuInst
 import Flapjack.Misc.Sptree.Map
@@ -39,6 +41,9 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvenStartingLocals
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InsertBitmapPrefix
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LivePrefix
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LiveLength
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompLength
+import Flapjack.Compiler.Backend.WordToStack.ProductionExpressionMaximum
+import Flapjack.Compiler.Backend.WordToStack.ProductionCutsetMaximum
 import Flapjack.Compiler.Backend.Parmove.DestinationWrapper
 import Flapjack.Compiler.Backend.Parmove.DStepStep
 
