@@ -41228,5 +41228,14 @@
   "hol_name": "step_sem",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.6.5.4: genuine fifth step_sem case source412-438, full original wf and both constructor pending NoRead/endpoint inequality retained, arbitrary history/env and original eqenv conclusion. Path/destination uniqueness derives tail NoRead; reviewed permutation and parsem_NoRead then reverse/seqsem_append establish equality. No target evaluation, agreement, result or extra no-read premise. Option/List/function/value carriers unchanged. Coordinator acceptance pending; full assembly remains open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/wordLangScript.sml",
+  "hol_name": "max_var_def",
+  "lean_path": "Flapjack/Pancake/WordLang/MaxVar.lean",
+  "lean_name": "maxVarHOL",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison wordLangScript252-300, exact prog/exp/inst/cutsets carriers at14-68 and asm85-134: all constructor clauses and defaults retained over WordLangProgHOL(BitVec width), native MlString, canonical Spt Unit cut sets and fixed Temp5 store names. Positivewidth words_as_type_indexed_bitvec. Move MAP FST++MAP SND, guarded Call return/handler recursion and argument/value/both-cutset maxima, If reg/imm branches, Loop entry/body/exit maxima and every frame operand match source; destination and labels ignored exactly where source ignores them. Uses accepted exact maxVarInstHOL/maxVarExpHOL/cutsetsMaxHOL/max3HOL plus standard natural MAX_LIST. No wf/domain/callback/targetresult/success premise; nested structural-size termination kernel checked. Fresh37 direct original rows cover all source constructors, Call guard and32/64 FP instruction transfer, kernel replay. Full native wrappers, executed production route and correctness remainOPEN."
 }
 ]

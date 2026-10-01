@@ -2171,3 +2171,10 @@ NONE source. Two wf-valid boundaries violate the constructor guards: closing
 a cycle changes register2 from17 to27; a pending read changes register4 from17
 to27. These are not accepted steps. The proof derives active no-read and retains
 both original guards. Full step_sem/RTC/scheduler assembly remains open.
+
+`wordlang_max_var_probeScript.sml` captures 37 direct original full-program
+`max_var` equations. Cases include every constructor, tail-call handler
+suppression, returning and exceptional continuations, both Loop cut sets,
+and 32/64-bit instruction transfer branches. `WordLangMaxVarParity.lean`
+kernel-replays the same inputs. These finite rows support source review;
+they do not establish a cross-prover equivalence or production route.

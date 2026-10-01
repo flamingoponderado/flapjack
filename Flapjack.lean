@@ -1,3 +1,4 @@
+import Flapjack.Pancake.WordLang.MaxVar
 import Flapjack.Pancake.WordLang.CutsetsMax
 import Flapjack.Pancake.WordLang.MaxVarInst
 import Flapjack.Compiler.Backend.WordToStack.NativeCompile
