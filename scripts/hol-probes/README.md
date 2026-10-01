@@ -2220,4 +2220,16 @@ untagged SplitSource laws derive prefixNoRead, suffixheadmatch and empty-suffix
 NoRead equivalence. They are Flapjack infrastructure, not a general indexed
 combinator port or completed functional scheduler simulation.
 
+`word_to_stack_native_config_probeScript.sml` captures seven fresh original
+configuration record projections and updates. Empty, singleton, raw BS and
+non-well-formed BN trees are retained without a validity restriction.
+`WordToStackNativeConfigParity.lean` kernel-replays the same records. This
+carrier prerequisite does not establish the top compiler or its executed route;
+those remain tracked on the WordToStack compiler beads.
+
+`parmove_destination_probeScript.sml` observes the real/temporary destinations
+of native `pmov` on terminal, self, chain, cycle, scratch, duplicate, and active
+states. `ParmoveDestinationParity` replays each row and applies the unconditional
+original destination-membership theorem, including malformed states.
+
 `parmove_dstep_step_probeScript.sml` captures six original wf premises and nine cycle semantic values before Save, after Save, and after EmitHead. Kernel fixtures prove all six actual DStep-to-Steps applications with the original wf premise. The temporary changes99to17 on Save; no functional scheduler simulation is assumed.

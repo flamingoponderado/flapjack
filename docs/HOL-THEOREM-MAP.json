@@ -41394,6 +41394,41 @@
   "reviewer": "flapjack-luna-a: source six-clause Hol_reln at 478-492 and local NoRead at 22 compared literally; generic Option registers and three List state carriers match. Prefix-only Extend guard and combined Save/Emit retained. Full rules, least-relation induction and exhaustive cases; no added well-formedness or successful-result premise."
 },
 {
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeConfig.lean",
+  "lean_name": "Config",
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "config",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-a: source datatype16-19 compared field by field. HOL num maps to Nat and num spt uses the constructor-for-constructor Spt Nat carrier (LN/LS/BN/BS); no raw function map or well-formedness restriction. No word or FFI parameter occurs in this record. Seven freshly regenerated original projections and field-update equations kernel paired; top compile_def caller remains tracked by parent25.16."
+}
+,
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "wf_names_def",
+    "lean_path": "Flapjack/Pancake/WordConvs/WfCutsets.lean",
+    "lean_name": "wfNames",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.4.8) against wordConvsScript.sml:347-350: wf_names t = (wf (FST t) /\\ wf (SND t)) over the exact cutsets carrier num_set # num_set (WordLangCutsetsHOL = Spt Unit x Spt Unit), HOL sptree$wf rendered by the Flapjack sptWf on the exact Spt carrier (Flapjack/Misc/Sptree.lean, clause-for-clause LN/LS/BN/BS with isEmpty), HOL bool as Prop (sptWf _ = true)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "wf_cutsets_def",
+    "lean_path": "Flapjack/Pancake/WordConvs/WfCutsets.lean",
+    "lean_name": "wfCutsets",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.4.8) against wordConvsScript.sml:352-375, clause by clause over WordLangProgHOL (BitVec width): Alloc n s and Install _ _ _ _ s => wf_names s; Call ret dest args h => ret NONE => T | SOME (v,cutset,ret_handler,l1,l2) => wf_names cutset /\\ wf_cutsets ret_handler /\\ (h NONE => T | SOME (v,prog,l1,l2) => wf_cutsets prog); FFI _ _ _ _ _ args => wf_names args; MustTerminate s; Seq s1 s2 both; Loop names p exit_names => wf names /\\ wf exit_names /\\ wf_cutsets p; If both branches; every other statement T. HOL sptree$wf is sptWf; HOL bool as Prop; HOL 'a word as positive-width BitVec (words_as_type_indexed_bitvec)."
+  }
+,
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/DestinationMembership.lean",
+  "lean_name": "memMapFstSndSndPmov",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "MEM_MAP_FST_SND_SND_pmov",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison (2026-10-01, bead flapjack-pxn.18.5.15.3.44.1): literal original699-703, proof through751. Same forall arbitrary pending/active/emitted Option-register List state and real register x: membership SOME x in MAP FST emitted actual pmov implies membership in MAP FST concatenated three input lists. Native tagged pmov/fstep recursion; no wf, termination, final shape, result equality, or simulation premise. DecidableEq computes HOL equality with no BEq correctness premise. Proof follows actual pmov induction and unconditional one-step destination preservation; splitSource_append/frontLast_append derive list membership, temporary NONE excluded exactly by SOME x. No carrier/word/finite-map difference or qualifier. Independent prerequisite of public MEM_MAP_FST_parmove used in word_to_stackProof3479/3541/6194; scheduler semantics and executed routing remain separate."
+},
+{
   "lean_path": "Flapjack/Compiler/Backend/Parmove/DStepStep.lean",
   "lean_name": "dstep_step",
   "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
