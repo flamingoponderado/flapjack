@@ -11,3 +11,5 @@ rw_le2=T
 rw_be2=T
 rw_wrap_ok=T
 rw_wrap_oob=T
+rw_widen=T
+ww_widen=T

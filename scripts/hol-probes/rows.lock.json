@@ -6,7 +6,7 @@
     {"bytes": 75, "out": "arith_vars_probe.out", "rows": 3, "sha256": "6039a92875434374d668473ed65cc52591a7d30d8e94c6b63a481cf60eb92e7d"},
     {"bytes": 671, "out": "asm_config_checks_probe.out", "rows": 46, "sha256": "dc6ea82d857a94d23fb468eb30c36618ef7f1c089e539752f07a96420fc7c76e"},
     {"bytes": 251, "out": "asm_inst_fragment_probe.out", "rows": 20, "sha256": "fb00053f44698704d47ad72155116e228341abdc8a31fca36f84735d31fe6183"},
-    {"bytes": 142, "out": "asm_sem_mem_word_probe.out", "rows": 13, "sha256": "e6d03806c55d73f0f3258bfa0f4db15b6bebcdf410c947a576fde62cc55754af"},
+    {"bytes": 164, "out": "asm_sem_mem_word_probe.out", "rows": 15, "sha256": "d2c433230958dbc3bdfe4abd9baf8ec6e871987e98709ca900c8c536b8dfd4b4"},
     {"bytes": 1640, "out": "asmsem_arithmetic_probe.out", "rows": 52, "sha256": "c4406552396a5b9fa262f53fa969456b1feeb7dd6d0139fd2d846efcce4343e3"},
     {"bytes": 47, "out": "backend_common_word_shift_probe.out", "rows": 7, "sha256": "dbfa8ad0165adfd7bcad992839f37f39c4b4b51bbb0bc9805a40e24529197422"},
     {"bytes": 209, "out": "backendprops_nonzero_labels_probe.out", "rows": 15, "sha256": "79dbfaff328f99645e594adf91217ba216d2da03e230f88c3b46a1308bf1c014"},

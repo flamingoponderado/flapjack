@@ -43699,7 +43699,7 @@
     "lean_name": "readMemWord",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds10 source comparison (bead flapjack-pxn.18.5.15.10.25.1) against cakeml/compiler/encoders/asm/asmSemScript.sml:182-189 read_mem_word_def: count 0 returns (0w,s); SUC n recurses at (if s.be then a-1w else a+1w) then word_or (w<<8) (w2w (read_mem a s1)) with assert (a IN s1.mem_domain). Lean readMemWord reproduces both clauses over BitVec width/BitVec 8 and the Prop domain rendering; assert is assertState, the same rendering used by the accepted asmSem arithmetic primitives."
+    "reviewer": "flapjack-ds10 source comparison (bead flapjack-pxn.18.5.15.10.25.1) against cakeml/compiler/encoders/asm/asmSemScript.sml:182-189 read_mem_word_def: count 0 returns (0w,s); SUC n recurses at (if s.be then a-1w else a+1w) then word_or (w<<8) (w2w (read_mem a s1)) with assert (a IN s1.mem_domain). HOL type read_mem_word : 'b word -> num -> 'b asm_state -> 'a word # 'b asm_state, so the read-result word dimension is INDEPENDENT of the address/state dimension; Lean readMemWord binds both (width for address/state, resultWidth for the result) and w2w to word8 is BitVec.setWidth resultWidth. Assert is assertState, the same rendering used by the accepted asmSem arithmetic primitives."
   },
   {
     "hol_path": "cakeml/compiler/encoders/asm/asmSemScript.sml",
@@ -43708,7 +43708,7 @@
     "lean_name": "writeMemWord",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds10 source comparison (bead flapjack-pxn.18.5.15.10.25.1) against cakeml/compiler/encoders/asm/asmSemScript.sml:191-... write_mem_word_def: count 0 returns s; SUC n recurses at (if s.be then a-1w else a+1w) on (w>>>8), then assert (a IN s1.mem_domain) (upd_mem a (w2w w) s1). Lean writeMemWord matches the clauses; w2w to word8 is BitVec.setWidth 8."
+    "reviewer": "flapjack-ds10 source comparison (bead flapjack-pxn.18.5.15.10.25.1) against cakeml/compiler/encoders/asm/asmSemScript.sml:191-... write_mem_word_def: count 0 returns s; SUC n recurses at (if s.be then a-1w else a+1w) on (w>>>8), then assert (a IN s1.mem_domain) (upd_mem a (w2w w) s1). HOL type write_mem_word : 'a word -> num -> 'b word -> 'a asm_state -> 'a asm_state, so the written-value word dimension is INDEPENDENT of the address/state dimension; Lean writeMemWord binds both (width for address/state, valueWidth for the value) and w2w to word8 is BitVec.setWidth 8."
   },
   {
     "hol_path": "cakeml/compiler/encoders/asm/asmPropsScript.sml",
@@ -43717,7 +43717,7 @@
     "lean_name": "sndReadMemWordConsts",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds10 source comparison (bead flapjack-pxn.18.5.15.10.25.1) against cakeml/compiler/encoders/asm/asmPropsScript.sml:339-347 SND_read_mem_word_consts (script-local): !n a s. (SND (read_mem_word a n s)).be = s.be /\\ ... .lr /\\ ... .align /\\ ... .mem_domain. Lean sndReadMemWordConsts keeps the exact four-conjunct statement and HOL binder order (n a s)."
+    "reviewer": "flapjack-ds10 source comparison (bead flapjack-pxn.18.5.15.10.25.1) against cakeml/compiler/encoders/asm/asmPropsScript.sml:339-347 SND_read_mem_word_consts (script-local): !n a s. (SND (read_mem_word a n s)).be = s.be /\\ ... .lr /\\ ... .align /\\ ... .mem_domain. Lean sndReadMemWordConsts keeps the exact four-conjunct statement and HOL binder order (n a s); the read-result word dimension is an independent type parameter."
   },
   {
     "hol_path": "cakeml/compiler/encoders/asm/asmPropsScript.sml",
@@ -43726,7 +43726,7 @@
     "lean_name": "writeMemWordConsts",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds10 source comparison (bead flapjack-pxn.18.5.15.10.25.1) against cakeml/compiler/encoders/asm/asmPropsScript.sml:350-357 write_mem_word_consts (script-local): !n a w s. (write_mem_word a n w s).be = s.be /\\ ... .lr /\\ ... .align /\\ ... .mem_domain. Lean writeMemWordConsts keeps the exact four-conjunct statement and HOL binder order."
+    "reviewer": "flapjack-ds10 source comparison (bead flapjack-pxn.18.5.15.10.25.1) against cakeml/compiler/encoders/asm/asmPropsScript.sml:350-357 write_mem_word_consts (script-local): !n a w s. (write_mem_word a n w s).be = s.be /\\ ... .lr /\\ ... .align /\\ ... .mem_domain. Lean writeMemWordConsts keeps the exact four-conjunct statement and HOL binder order; the written-value word dimension is an independent type parameter."
   },
   {
     "hol_path": "cakeml/compiler/encoders/asm/asmPropsScript.sml",
@@ -43735,7 +43735,7 @@
     "lean_name": "readMemWord_IMP_mem_eq",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds10 source comparison (bead flapjack-pxn.18.5.15.10.25.1) against cakeml/compiler/encoders/asm/asmPropsScript.sml:424-... read_mem_word_IMP_mem_eq: !a k s w s'. read_mem_word a k s = (w,s') ==> s'.mem = s.mem. Lean readMemWord_IMP_mem_eq is the literal implication over the same carriers."
+    "reviewer": "flapjack-ds10 source comparison (bead flapjack-pxn.18.5.15.10.25.1) against cakeml/compiler/encoders/asm/asmPropsScript.sml:424-... read_mem_word_IMP_mem_eq: !a k s w s'. read_mem_word a k s = (w,s') ==> s'.mem = s.mem. Lean readMemWord_IMP_mem_eq is the literal implication over the same carriers, with the result word dimension (w) independent of the address/state dimension."
   },
   {
     "hol_path": "cakeml/compiler/encoders/asm/asmPropsScript.sml",
@@ -43744,7 +43744,7 @@
     "lean_name": "writeMemWord_mem_domain",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds10 source comparison (bead flapjack-pxn.18.5.15.10.25.1) against cakeml/compiler/encoders/asm/asmPropsScript.sml:433-... write_mem_word_mem_domain: !k b a s. (write_mem_word b k a s).mem_domain = s.mem_domain. Lean keeps the exact binder order and equality."
+    "reviewer": "flapjack-ds10 source comparison (bead flapjack-pxn.18.5.15.10.25.1) against cakeml/compiler/encoders/asm/asmPropsScript.sml:433-... write_mem_word_mem_domain: !k b a s. (write_mem_word b k a s).mem_domain = s.mem_domain. Lean keeps the exact binder order and equality; the value word dimension (a) is independent of the address/state dimension (b,s)."
   },
   {
     "hol_path": "cakeml/compiler/encoders/asm/asmPropsScript.sml",
@@ -43753,6 +43753,6 @@
     "lean_name": "writeMemWord_mem_eq",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds10 source comparison (bead flapjack-pxn.18.5.15.10.25.1) against cakeml/compiler/encoders/asm/asmPropsScript.sml:440-... write_mem_word_mem_eq: !k b a s x. ~(write_mem_word b k a s).failed /\\ x \\notin s.mem_domain ==> (write_mem_word b k a s).mem x = s.mem x. Lean keeps the exact hypothesis pair and conclusion."
+    "reviewer": "flapjack-ds10 source comparison (bead flapjack-pxn.18.5.15.10.25.1) against cakeml/compiler/encoders/asm/asmPropsScript.sml:440-... write_mem_word_mem_eq: !k b a s x. ~(write_mem_word b k a s).failed /\\ x \\notin s.mem_domain ==> (write_mem_word b k a s).mem x = s.mem x. Lean keeps the exact hypothesis pair and conclusion; the value word dimension (a) is independent of the address/state dimension (b,s,x)."
   }
 ]

@@ -38,3 +38,5 @@ val _ = observe "rw_le2"      ``FST (read_mem_word (0w:8 word) 2 ^stm) = (0x2211
 val _ = observe "rw_be2"      ``FST (read_mem_word (1w:8 word) 2 (^stm with be := T)) = (0x1122w:8 word)``;
 val _ = observe "rw_wrap_ok"  ``~(SND (read_mem_word (255w:8 word) 4 (^stm with mem_domain := {(255w:8 word);(0w:8 word);(1w:8 word);(2w:8 word)}))).failed``;
 val _ = observe "rw_wrap_oob" ``(SND (read_mem_word (255w:8 word) 4 ^st)).failed``;
+val _ = observe "rw_widen"    ``FST (read_mem_word (0w:8 word) 1 ^stm) = (0x11w:16 word)``;
+val _ = observe "ww_widen"    ``(write_mem_word (0w:8 word) 1 (0x1234w:16 word) ^st).mem (0w:8 word) = (0x34w:8 word)``;
