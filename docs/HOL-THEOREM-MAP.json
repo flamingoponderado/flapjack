@@ -38216,5 +38216,37 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-c source comparison 2026-10-01, bead11.1.17.1: literal1009-1023, all13 compiled clauses, exact WordLangProgHOL positive BitVec/NeZero and NumSet Spt Unit. Move inserts MAP FST in literal head-after-tail order; Inst calls accepted getWritesInst; Assign/Get/LocValue/Install/OpCurrHeap write only source destination. StoreConsts inserts a outside b outside c outside d. ShareInst Load/Load8/Load16/Load32 write destination; every other program gives LN, with no recursive traversal or extra premise. Source carrier arity/field types reused from reviewed program liveness; no finite-map/array/name substitution. Seven fresh direct original HOL full-tree observations kernel replayed, including instruction Load16 versus shared Load16, shared store, compound Seq fallback. Production route17.2 and inventory17 stay OPEN separately; full colouring/allocation theorem not claimed."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "INJ_UNION",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/ScopedInjection.lean",
+  "lean_name": "injUnion",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01, bead11.1.21: literal33-40: INJ f (A UNION B) UNIV implies conjunction of INJ on A and B; explicit local injectivity, universal codomain range tautology discharged, no global injection. HOL polymorphic sets/functions rendered as predicates and functions at generic Type carriers. No word/map carrier translation, strengthened premise, target run, or weakened membership-only result. Source prerequisites of full allocator simulation/clash-tree soundness; executable compiler unchanged."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "INJ_less",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/ScopedInjection.lean",
+  "lean_name": "injLess",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01, bead11.1.21: literal43-49: original conjunction INJ f larger UNIV and smaller SUBSET larger implies INJ f smaller UNIV, exact domain-scoped quantifiers. HOL polymorphic sets/functions rendered as predicates and functions at generic Type carriers. No word/map carrier translation, strengthened premise, target run, or weakened membership-only result. Source prerequisites of full allocator simulation/clash-tree soundness; executable compiler unchanged."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "INJ_IMP_IMAGE_DIFF",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/ScopedInjection.lean",
+  "lean_name": "injImageDiff",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01, bead11.1.21: literal61-68: INJ on s UNION t only; full equality IMAGE f (s DIFF t) = IMAGE f s DIFF IMAGE f t with existential predicate images and negated predicate differences, original orientation preserved. HOL polymorphic sets/functions rendered as predicates and functions at generic Type carriers. No word/map carrier translation, strengthened premise, target run, or weakened membership-only result. Source prerequisites of full allocator simulation/clash-tree soundness; executable compiler unchanged."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "INJ_IMP_IMAGE_DIFF_single",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/ScopedInjection.lean",
+  "lean_name": "injImageDiffSingle",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01, bead11.1.21: literal70-77: INJ on s UNION singleton n only; full equality IMAGE f s DIFF singleton(f n) = IMAGE f (s DIFF singleton n), original reverse orientation retained. HOL polymorphic sets/functions rendered as predicates and functions at generic Type carriers. No word/map carrier translation, strengthened premise, target run, or weakened membership-only result. Source prerequisites of full allocator simulation/clash-tree soundness; executable compiler unchanged."
 }
 ]
