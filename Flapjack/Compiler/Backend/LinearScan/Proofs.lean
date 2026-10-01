@@ -3,6 +3,7 @@ import Flapjack.Compiler.Backend.LinearScan.Proofs.Intervals
 import Flapjack.Compiler.Backend.LinearScan.Proofs.CheckIntervals
 import Flapjack.Compiler.Backend.LinearScan.Proofs.RegExchange
 import Flapjack.Compiler.Backend.LinearScan.Proofs.Bijection
+import Flapjack.Compiler.Backend.LinearScan.Proofs.ApplyBijection
 
 /-!
 # linear_scan proofs
@@ -23,6 +24,8 @@ order:
   array accessor equations and `apply_reg_exchange_correct`.
 * `Bijection`: `linear_scanProofScript.sml:4997-5204`, the register
   bijection invariants.
+* `ApplyBijection`: `linear_scanProofScript.sml:5565-6006`, checking a
+  renamed clash tree and reading back the colouring.
 
 The top-level `linear_scan_reg_alloc_correct` is not yet ported.
 -/
