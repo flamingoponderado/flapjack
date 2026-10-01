@@ -46531,7 +46531,7 @@
     "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Worklists.lean",
     "lean_name": "addSimpWl",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.8.6.26): reg_allocScript.sml:274-280 add_simp_wl ls = do swl <- get_simp_wl; set_simp_wl (ls ++ swl) od. Generated accessors from .10.5.2 (opus-wordsem e234f6ad2, pending acceptance). Original EVAL rows with full ra_state results (scripts/hol-probes/reg_alloc_worklist_probe.out) kernel-replayed in Flapjack.Test.RegAllocWorklistsParity. No extra premise. Proof-side port; executed allocator unchanged. Coordinator integration acceptance complete; author source comparison recorded. Exception-carrier repair (bead flapjack-n50p): source comparison of the original type ... -> ra_state -> (unit, 'a) exc # ra_state (probe rows *_type) shows the exception carrier is polymorphic, so the Lean helper is {\u03b3 : Type} M State Unit \u03b3; behaviour unchanged; generic-carrier kernel rows at Bool/Nat in Flapjack.Test.RegAllocWorklistsParity."
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.8.6.26): reg_allocScript.sml:274-280 add_simp_wl ls = do swl <- get_simp_wl; set_simp_wl (ls ++ swl) od. Generated accessors from .10.5.2 (opus-wordsem e234f6ad2, pending acceptance). Original EVAL rows with full ra_state results (scripts/hol-probes/reg_alloc_worklist_probe.out) kernel-replayed in Flapjack.Test.RegAllocWorklistsParity. No extra premise. Proof-side port; executed allocator unchanged. Coordinator integration acceptance complete; author source comparison recorded. Exception-carrier repair (bead flapjack-n50p): source comparison of the original type ... -> ra_state -> (unit, 'a) exc # ra_state (probe rows *_type) shows the exception carrier is polymorphic, so the Lean helper is {γ : Type} M State Unit γ; behaviour unchanged; generic-carrier kernel rows at Bool/Nat in Flapjack.Test.RegAllocWorklistsParity."
   },
   {
     "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
@@ -46539,7 +46539,7 @@
     "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Worklists.lean",
     "lean_name": "addSpillWl",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.8.6.26): reg_allocScript.sml:282-288 add_spill_wl ls = do swl <- get_spill_wl; set_spill_wl (ls ++ swl) od. Generated accessors from .10.5.2 (opus-wordsem e234f6ad2, pending acceptance). Original EVAL rows with full ra_state results (scripts/hol-probes/reg_alloc_worklist_probe.out) kernel-replayed in Flapjack.Test.RegAllocWorklistsParity. No extra premise. Proof-side port; executed allocator unchanged. Coordinator integration acceptance complete; author source comparison recorded. Exception-carrier repair (bead flapjack-n50p): source comparison of the original type ... -> ra_state -> (unit, 'a) exc # ra_state (probe rows *_type) shows the exception carrier is polymorphic, so the Lean helper is {\u03b3 : Type} M State Unit \u03b3; behaviour unchanged; generic-carrier kernel rows at Bool/Nat in Flapjack.Test.RegAllocWorklistsParity."
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.8.6.26): reg_allocScript.sml:282-288 add_spill_wl ls = do swl <- get_spill_wl; set_spill_wl (ls ++ swl) od. Generated accessors from .10.5.2 (opus-wordsem e234f6ad2, pending acceptance). Original EVAL rows with full ra_state results (scripts/hol-probes/reg_alloc_worklist_probe.out) kernel-replayed in Flapjack.Test.RegAllocWorklistsParity. No extra premise. Proof-side port; executed allocator unchanged. Coordinator integration acceptance complete; author source comparison recorded. Exception-carrier repair (bead flapjack-n50p): source comparison of the original type ... -> ra_state -> (unit, 'a) exc # ra_state (probe rows *_type) shows the exception carrier is polymorphic, so the Lean helper is {γ : Type} M State Unit γ; behaviour unchanged; generic-carrier kernel rows at Bool/Nat in Flapjack.Test.RegAllocWorklistsParity."
   },
   {
     "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
@@ -46547,7 +46547,7 @@
     "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Worklists.lean",
     "lean_name": "addFreezeWl",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.8.6.26): reg_allocScript.sml:290-296 add_freeze_wl ls = do fwl <- get_freeze_wl; set_freeze_wl (ls ++ fwl) od. Generated accessors from .10.5.2 (opus-wordsem e234f6ad2, pending acceptance). Original EVAL rows with full ra_state results (scripts/hol-probes/reg_alloc_worklist_probe.out) kernel-replayed in Flapjack.Test.RegAllocWorklistsParity. No extra premise. Proof-side port; executed allocator unchanged. Coordinator integration acceptance complete; author source comparison recorded. Exception-carrier repair (bead flapjack-n50p): source comparison of the original type ... -> ra_state -> (unit, 'a) exc # ra_state (probe rows *_type) shows the exception carrier is polymorphic, so the Lean helper is {\u03b3 : Type} M State Unit \u03b3; behaviour unchanged; generic-carrier kernel rows at Bool/Nat in Flapjack.Test.RegAllocWorklistsParity."
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.8.6.26): reg_allocScript.sml:290-296 add_freeze_wl ls = do fwl <- get_freeze_wl; set_freeze_wl (ls ++ fwl) od. Generated accessors from .10.5.2 (opus-wordsem e234f6ad2, pending acceptance). Original EVAL rows with full ra_state results (scripts/hol-probes/reg_alloc_worklist_probe.out) kernel-replayed in Flapjack.Test.RegAllocWorklistsParity. No extra premise. Proof-side port; executed allocator unchanged. Coordinator integration acceptance complete; author source comparison recorded. Exception-carrier repair (bead flapjack-n50p): source comparison of the original type ... -> ra_state -> (unit, 'a) exc # ra_state (probe rows *_type) shows the exception carrier is polymorphic, so the Lean helper is {γ : Type} M State Unit γ; behaviour unchanged; generic-carrier kernel rows at Bool/Nat in Flapjack.Test.RegAllocWorklistsParity."
   },
   {
     "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
@@ -46563,7 +46563,7 @@
     "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Worklists.lean",
     "lean_name": "addUnavailMovesWl",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.8.6.26): reg_allocScript.sml:309-315 add_unavail_moves_wl ls = do swl <- get_unavail_moves_wl; set_unavail_moves_wl (ls ++ swl) od; element carrier (num # num # num). Generated accessors from .10.5.2 (opus-wordsem e234f6ad2, pending acceptance). Original EVAL rows with full ra_state results (scripts/hol-probes/reg_alloc_worklist_probe.out) kernel-replayed in Flapjack.Test.RegAllocWorklistsParity. No extra premise. Proof-side port; executed allocator unchanged. Coordinator integration acceptance complete; author source comparison recorded. Exception-carrier repair (bead flapjack-n50p): source comparison of the original type ... -> ra_state -> (unit, 'a) exc # ra_state (probe rows *_type) shows the exception carrier is polymorphic, so the Lean helper is {\u03b3 : Type} M State Unit \u03b3; behaviour unchanged; generic-carrier kernel rows at Bool/Nat in Flapjack.Test.RegAllocWorklistsParity."
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.8.6.26): reg_allocScript.sml:309-315 add_unavail_moves_wl ls = do swl <- get_unavail_moves_wl; set_unavail_moves_wl (ls ++ swl) od; element carrier (num # num # num). Generated accessors from .10.5.2 (opus-wordsem e234f6ad2, pending acceptance). Original EVAL rows with full ra_state results (scripts/hol-probes/reg_alloc_worklist_probe.out) kernel-replayed in Flapjack.Test.RegAllocWorklistsParity. No extra premise. Proof-side port; executed allocator unchanged. Coordinator integration acceptance complete; author source comparison recorded. Exception-carrier repair (bead flapjack-n50p): source comparison of the original type ... -> ra_state -> (unit, 'a) exc # ra_state (probe rows *_type) shows the exception carrier is polymorphic, so the Lean helper is {γ : Type} M State Unit γ; behaviour unchanged; generic-carrier kernel rows at Bool/Nat in Flapjack.Test.RegAllocWorklistsParity."
   },
   {
     "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
@@ -47942,5 +47942,93 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison 2026-10-01 bead .48.3.3: full original If recursive constructor case of comp_no_shmemop12259-12357. All original config/perf/source constructor payloads/full AppList bitmap state/Nat frame/output/residual/source no_share_inst guard and actual compile equality retained. Only induction hypotheses for the actual source subprograms are added, each exactly the original guard-and-compilation implication for arbitrary child bitmap/frame/output/residual at the same config/perf/positive word width; no target safety, evaluator result, arbitrary context/simulation or other case premise. Accepted CLOSED nc7v full noShareInstDef source projections supply source guard clauses; unrelated clause binders specialized only because absent from these four projections, with no duplicate guard implementation. Native compiler preserves first-then-second bitmap threading, Loop/MustTerminate traversal, register operands and both valid_imm outcomes including constant materialization. Reviewed WordLang/StackLang/Asm carriers and Spt Unit cutsets retained; only standard positive HOL word dimension becomes BitVec width/NeZero. Forty-two fresh original source/actual compiled-target predicate pairs cover widths1/32/64/80, both perf flags, both immediate acceptance branches, malformed cutsets, nested bitmap-producing bodies, shared-memory forbidden bodies, invalid-address fallback and independently scanned ignored handler guards. Explicit false/false and false/true sentinels preserve implication rather than falsely claiming guard/target equivalence. Identical direct kernel equation reductions and four full generic public theorem applications with legitimate subprogram IH checked. These regressions do not establish cross-language equivalence; Call/catchall assembly and full compiler correctness remain unfinished."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "limit_var_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/LimitVar/Properties.lean",
+    "lean_name": "limitVarProps",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-01 bead30.1: full local word_allocProof10299-10335, arbitrary original program and Nat limit with only original limit_var program = limit premise; both allocation-class and complete every_var strict-bound conclusions retained. Native faithful WordLangProgHOL/BitVec positive width with NeZero discharges original HOL dimension positivity; all original constructor carriers and return-dependent Call handler occurrence traversal retained. Native maxVarMax and everyVarMono with unconditional source-local arithmetic establish bound for every occurrence, no successful compiler assumption, simplified evaluator or supplied desired bound. Literal original whole local theorem proof freshly re-elaborated using original exported max_var_max/every_var_mono; twelve original full program limit/class/occurrence tuples exactly match imported kernel fixtures, generic fixture applies actual full theorem at arbitrary programs and limits. Word qualifier permits only type-indexed positive word carrier translation; no additional map/list/name/FP behavior qualification or theorem premise. No executed compiler change and not full SSA correctness."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "PushHandler_no_shmemop",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NoShmemop/Handlers.lean",
+    "lean_name": "pushHandlerNoShmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-01 bead48.2.3: full local PushHandler_no_shmemop12233-12240: arbitrary perf Bool, labels Nat and Nat×beta×gamma frame with two independently quantified unused carriers; unconditional complete no_shmemop result. Both perf alternatives of literal native syntax retained. Sole word qualifier translates original type-indexed word to positive BitVec width/NeZero, with native HolProg and accepted original constructor arities/fields; independent unused frame/Sum carriers are preserved, not specialized. Literal entire original three local proofs and generic operation types freshly replayed in original HOL. Sixteen same-input native predicate observations (including mixed frame types, false continuations, direct/indirect Sum Bool Unit and large frames) match kernel fixtures; three arbitrary-carrier applications check the actual complete theorem signatures. No executable or compiler change and no full comp_no_shmemop claim."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "PopHandler_no_shmemop",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NoShmemop/Handlers.lean",
+    "lean_name": "popHandlerNoShmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-01 bead48.2.3: full local PopHandler_no_shmemop12242-12249: arbitrary perf and Nat×beta×gamma frame and native continuation; exact Boolean equality renders original iff and preserves both false and true continuations. No assumption of continuation safety. Sole word qualifier translates original type-indexed word to positive BitVec width/NeZero, with native HolProg and accepted original constructor arities/fields; independent unused frame/Sum carriers are preserved, not specialized. Literal entire original three local proofs and generic operation types freshly replayed in original HOL. Sixteen same-input native predicate observations (including mixed frame types, false continuations, direct/indirect Sum Bool Unit and large frames) match kernel fixtures; three arbitrary-carrier applications check the actual complete theorem signatures. No executable or compiler change and no full comp_no_shmemop claim."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "StackHandlerArgs_no_shmemop",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NoShmemop/Handlers.lean",
+    "lean_name": "stackHandlerArgsNoShmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-01 bead48.2.3: full local StackHandlerArgs_no_shmemop12251-12258: arbitrary perf, Sum alpha beta destination with independent payload carriers, argument count Nat and complete Nat×Nat×Nat frame; unconditional result. Accepted stack_move_no_shmemop preserves the native generated stack allocation continuation at every offset/count; no bounds, frame validity or target safety premises. Sole word qualifier translates original type-indexed word to positive BitVec width/NeZero, with native HolProg and accepted original constructor arities/fields; independent unused frame/Sum carriers are preserved, not specialized. Literal entire original three local proofs and generic operation types freshly replayed in original HOL. Sixteen same-input native predicate observations (including mixed frame types, false continuations, direct/indirect Sum Bool Unit and large frames) match kernel fixtures; three arbitrary-carrier applications check the actual complete theorem signatures. No executable or compiler change and no full comp_no_shmemop claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Native.lean",
+    "lean_name": "findLabHOL",
+    "hol_path": "cakeml/compiler/backend/stack_to_labScript.sml",
+    "hol_name": "find_lab_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol completed source comparison (2026-10-01; bead52bq), stack_to_labScript.sml:33-38: Nat index and List Nat labels; optional lookup returns zero exactly on NONE, the selected label on SOME, including out-of-range indices."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Native.lean",
+    "lean_name": "negateHOL",
+    "hol_path": "cakeml/compiler/backend/stack_to_labScript.sml",
+    "hol_name": "negate_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol completed source comparison (2026-10-01; bead52bq), stack_to_labScript.sml:24-32: all eight native comparison constructors, paired involutive negations; no omitted constructors or side conditions."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Native.lean",
+    "lean_name": "compileJumpHOL",
+    "hol_path": "cakeml/compiler/backend/stack_to_labScript.sml",
+    "hol_name": "compile_jump_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol completed source comparison (2026-10-01; bead52bq), stack_to_labScript.sml:19-22: INL emits native LabAsm Jump (Lab n 0) with zero word, empty byte cache and zero length; INR emits native Asmi JumpReg with empty cache and zero length. Positive-width BitVec/[NeZero width] is the sole HOL word-dimension translation.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Native.lean",
+    "lean_name": "flattenHOL",
+    "hol_path": "cakeml/compiler/backend/stack_to_labScript.sml",
+    "hol_name": "flatten_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol completed source comparison (2026-10-01; bead52bq), stack_to_labScript.sml:44-117: every recursive quotation clause and wildcard compared, including recursive order and threaded label counters, tail Seq label1, six If branches, nr1/nr2 flags, Loop continuation/break stacks, direct/indirect tail Call ignoring handlers, returned Call with optional handler and its explicit inner parentheses, exact FFI MlString pass-through, installation, native shared-memory and Cbw payloads. Local ++ inherits left-associative fixity from HOL listScript148; every Append tree is preserved, not merely its flattened list. All zero words, empty BitVec8 caches, and zero encoded lengths match. HolProg uses the reviewed single-width native asm carriers and exact MlString; no callback operations, zero-value parameter, or extra premises. The original full exported definition and45 complete outputs were freshly evaluated in stack_to_lab_native_probe.out. Positive-width BitVec/[NeZero width] is the sole HOL word-dimension translation.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Native.lean",
+    "lean_name": "isSeqHOL",
+    "hol_path": "cakeml/compiler/backend/stack_to_labScript.sml",
+    "hol_name": "is_Seq_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol completed source comparison (2026-10-01; bead52bq), stack_to_labScript.sml:126-129: true only for the root Seq constructor; false for every other native program root, with no traversal or extra assumptions. Positive-width BitVec/[NeZero width] is the sole HOL word-dimension translation.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Native.lean",
+    "lean_name": "progToSectionHOL",
+    "hol_path": "cakeml/compiler/backend/stack_to_labScript.sml",
+    "hol_name": "prog_to_section_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol completed source comparison (2026-10-01; bead52bq), stack_to_labScript.sml:131-136: pair input (n,p), flatten T p n (next_lab p2) [][]; Section n appends the resulting app_list plus exactly one Label n (m if root Seq else1)0. Native nextLab specialization compared against stack_allocScript649-662: complete source traversal and MAX label seed clauses retained. Same native line carrier, exact section field order and list extraction; no extra safety premise. Positive-width BitVec/[NeZero width] is the sole HOL word-dimension translation.",
+    "words_as_type_indexed_bitvec": true
   }
 ]
