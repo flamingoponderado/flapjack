@@ -8,9 +8,10 @@ Exact port of HOL `misc$asm_write_bytearray_def`
 `asm_write_bytearray a [] m = m` and
 `asm_write_bytearray a (x::xs) m = (a =+ x) (asm_write_bytearray (a+1w) xs m)`.
 
-The recursion writes the tail first and then overwrites the head address, so a
-later (larger-address) byte may overwrite an earlier one when the address wraps
-around; the Lean renderer keeps that head-update-after-tail-recursion order.
+The recursion writes the tail first and then overwrites the head address, so an
+earlier (head) byte overwrites a later one when the address wraps around; the
+Lean renderer keeps that head-update-after-tail-recursion order, so the first
+byte of the list wins at a wrapped address.
 
 `'a word` is rendered as `BitVec width` with the reviewed `[NeZero width]`
 discharge; `word8` is `BitVec 8`.
