@@ -41329,6 +41329,20 @@
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.28): HOL Resume evaluate_apply_colour[Call] (word_allocProofScript.sml:1449-1809), i.e. the HOL theorem at Call ret dest args handler: same binders st cst f live lt, the three HOL premises and the HOL existential conclusion (applyColourPost); the only extra hypotheses are the induction hypotheses for the two sub-programs the HOL case uses (return handler and exception handler, as applyColourGoal), no other premise. Proof follows the HOL case: strong_locals_rel_get_vars for the arguments; tail calls run the callee on identical states under the coloured oracle; returning calls use cut_envs_lemma, push_env_s_val_eq with the oracle split (untagged ppPerm) and permute_swap_lemma4 for the callee, the stack_swap state identity (untagged calleeSwap) and evaluate_stack_swap to transport the coloured callee run, push_env_pop_env_s_key_eq, s_key_eq_push_env_imp_MAP_FST, key_map_implies and ALOOKUP_key_remap_INJ (via allocLocalsRel) for the popped locals, pop_env_frame for word_state_eq_rel, strong_locals_rel_set_vars_dom / strong_locals_rel_set_var_dom and the IHs for the handlers; the no-handler exception case uses LASTN past the handler-free pushed frame and s_val_and_key_eq. Untagged callRetTail renders the evaluate_def Call continuation (Flapjack infrastructure). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
   },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_apply_colour",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/ShareInst.lean",
+    "lean_name": "evaluateApplyColour_ShareInst",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.29.3): HOL Resume evaluate_apply_colour[ShareInst] (word_allocProofScript.sml:2207 onward), i.e. the HOL theorem at ShareInst op v exp: same binders st cst f live lt, the three HOL premises and the HOL existential conclusion (applyColourPost, with the source oracle as HOL's exists_tac), no sub-program, no IH and no extra premise. Proof follows the HOL case over all eight operations: apply_colour_exp_lemma for the address; stores use strong_locals_rel_get_var for the stored variable (live by the Store branch of get_live) and keep the locals; loads go through sh_mem_set_var with strong_locals_rel_insert (INJ on get_writes UNION live from colouring_ok) and strong_locals_rel_subset; sh_mdomain and ffi are related by word_state_eq_rel; FinalFFI flushes both states. Untagged shStoreGen is the common unfolding of the four sh_mem_store* definitions (Flapjack infrastructure). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
 {
   "lean_path": "Flapjack/Compiler/Backend/Parmove/DestinationMembership.lean",
   "lean_name": "memMapFstSndSndPmov",
