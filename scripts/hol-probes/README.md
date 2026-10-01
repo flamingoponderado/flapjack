@@ -4073,3 +4073,5 @@ are kernel checked in `WordSem.Accessors` and `WordSemAccessorsParity`.
 These regressions do not establish a concrete meaning for unspecified Locs.
 
 - `ssa_cc_trans_inst_props_probeScript.sml` replays literal instruction allocation/map properties with original local map-extension and allocation-add proofs, capturing the full theorem and six argument carriers.
+
+- `ssa_rename_shifted_properties_probeScript.sml` replays the original raw-list derived pipeline and shifted move wrapper with nine original prerequisites; full statements and twelve type rows distinguish their input map-bound counters and conjunction orders.

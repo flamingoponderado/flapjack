@@ -3761,3 +3761,9 @@ run_probe ssa_cc_trans_inst_props_probeScript.sml ssa_cc_trans_inst_props_probe.
   sip_full sip_type_i sip_type_ssa sip_type_na sip_type_iOut sip_type_ssaOut sip_type_naOut \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_rename_shifted_properties_probeScript.sml ssa_rename_shifted_properties_probe.out \
+  srl_full srl_type_ls srl_type_ssa srl_type_na srl_type_lsOut srl_type_ssaOut srl_type_naOut \
+  srm_full srm_type_ls srm_type_ssa srm_type_na srm_type_lsOut srm_type_ssaOut srm_type_naOut \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"

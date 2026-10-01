@@ -49390,5 +49390,22 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-sol-a source comparison 2026-10-02, bead flapjack-yfm2: compared word_allocProofScript.sml5817-5833, replayed literal theorem proof with literal local ssa_map_ok_extend/is_alloc_var_add prerequisites, and captured six original argument carriers. Retains forall instruction/ssa/next/output/ssaOut/nextOut, actual native ssa_cc_trans_inst output equality, original ssa_map_ok and is_alloc_var conjunction, and all three counter monotonicity/allocation/output-map conclusions. Reviewed original asm inst, arith, reg_imm, addr, memop and FP constructors against native carriers; input and output share positive BitVec width with NeZero, including exact dimindex=64 FP branches and both register-equality branches of FPMovFromReg. SSA tree maps use reviewed Spt, not finite-map translation; priority/move sequence and all one/two-name insertions remain native. Proof case splits all instructions and discharges only the original fresh insert allocation/bounds; no added executable/evaluation or output-validity premise."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "list_next_var_rename_props_2",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSARenameShiftedProperties.lean",
+  "lean_name": "listNextVarRenameProps2",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol-a source comparison 2026-10-02, bead flapjack-j4qq: literal original derived list theorem pipeline5878-5891 and move theorem5901-5916 replayed with nine original local prerequisites, full statements plus twelve input/output carrier captures. Raw list theorem preserves derived quantifier order ls/ssa/na/ssaOut/naOut/lsOut, stack-before-allocated disjunction, map bound at na+2, then bound/stack-to-allocated/allocated-to-stack/map conclusions. Move wrapper retains original quantifier order, allocated-before-stack and map bound at unshifted na; shifted map bound is proved from ssa_map_ok_lem, not assumed. All producers are native listNextVarRename/listNextVarRenameMove, exact Spt maps and Nat/List carriers, no distinctness or validity/target-evaluation premises. Move program HOL alpha word carrier translates to same positive BitVec width with NeZero. Raw theorem has no word carrier and is unqualified constructor-for-constructor exact."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "list_next_var_rename_move_props_2",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSARenameShiftedProperties.lean",
+  "lean_name": "listNextVarRenameMoveProps2",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "reviewer": "flapjack-sol-a source comparison 2026-10-02, bead flapjack-j4qq: literal original derived list theorem pipeline5878-5891 and move theorem5901-5916 replayed with nine original local prerequisites, full statements plus twelve input/output carrier captures. Raw list theorem preserves derived quantifier order ls/ssa/na/ssaOut/naOut/lsOut, stack-before-allocated disjunction, map bound at na+2, then bound/stack-to-allocated/allocated-to-stack/map conclusions. Move wrapper retains original quantifier order, allocated-before-stack and map bound at unshifted na; shifted map bound is proved from ssa_map_ok_lem, not assumed. All producers are native listNextVarRename/listNextVarRenameMove, exact Spt maps and Nat/List carriers, no distinctness or validity/target-evaluation premises. Move program HOL alpha word carrier translates to same positive BitVec width with NeZero. Raw theorem has no word carrier and is unqualified constructor-for-constructor exact.",
+  "words_as_type_indexed_bitvec": true
 }
 ]
