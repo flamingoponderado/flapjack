@@ -39327,5 +39327,14 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-sol direct source comparison 2026-10-01, bead flapjack-b4v0.2.1.2: literal labSemScript65-83/151-156/319-325 equations over accepted full LabSem.State, native WordLocW/HolRegImm, total function maps and fixed64 FP registers. Record updates preserve all other fields; assertion is not b OR old failed, preserving preceding writes; clock subtraction saturates. No extra hypotheses, duplicate state, finite-map translation, FP arithmetic approximation or evaluator claim. Only standard positive HOL word dimension to BitVec width/NeZero and universe0 FFI translation. Original 17 state-write observations labsem_updates_probe.out all true, native kernel replay LabSemUpdatesParity. Shared native consumers remain tracked on arithmetic/memory/FP dependency beads; full evaluator and production compilation correctness remain open. Coordinator source acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabProps/SectionEnd.lean",
+  "lean_name": "secEndsWithLabelNative",
+  "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+  "hol_name": "sec_ends_with_label_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol direct source review 2026-10-01, bead1u9a: original labPropsScript81-84 nonempty list AND is_Label LAST over native Section/Line, actual ASM/cbw/Memop/Addr/Cmp/RegImm/MlString/fixed8 encoded bytes, shared positive polymorphic word width. Reverse-head [] False/cons classifier cases are exactly nonempty/final element; unspecified LAST [] is irrelevant under the nonempty conjunct. Uses reviewed native isLabelHOL, no changed evaluator or extra premises. Universal untagged compatibility proves restriction of broad local predicate is equivalent, whose false exact tag/map/pin main withdrew. Existing original five lab_props_sec_ends_label_probe.out rows kernel replayed against native definitions in LabSectionEndParity. Generic clients remain local infrastructure; only standard positive HOL word carrier translation qualified. Native navigation/state chain and full correctness remain open; coordinator source acceptance pending."
 }
 ]
