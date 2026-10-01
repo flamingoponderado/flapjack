@@ -43593,5 +43593,13 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-pxn.18.5.15.10.24): compared original asmSemScript26-129 and lab_to_targetProofScript upd_pc_with_pc. Native AsmState has original function-backed register/memory fields, fixed FP64 and byte8; only positive-width word index translates to BitVec. All original clauses, original-state operand reads, register shift guard (immediates unguarded), retained failure writes, total DIV_0/MOD_0, signed overflow and ordered aliasing updates preserved. IsTest uses exact monomorphic HolCmp. Complete eight-constructor arithmetic definition and primitive pc-self-update theorem only; full asm evaluator and executed compiler routing remain unfinished. Fresh direct original asmSemTheory capture and 52 kernel replays pass. Coordinator review pending.",
     "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/TempBeforeAssign/Parmove.lean",
+    "lean_name": "parmoveNotUseTempBeforeAssign",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "parmove_not_use_temp_before_assign",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison2026-10-01 .15.3.46: literal parmoveScript932-953, arbitrary register carrier and sole windmill premise. Exact optional first source-scratch index match, absent read True; present read requires present first destination-scratch index with not(i<=j). No initialized-output, final-state or target-run premise. Derives lifted wf_init from input windmill, accepted pmovNotUseTempBeforeAssign and unconditional pmov_final, then accepted first-index iff. Proof-irrelevant DecidableEq transport fixes the schedule and changes only equality decision dictionaries in first-index search; no extra HOL assumption. Fresh exported DB.fetch complete theorem plus eight whole-output/first-index/windmill/result observations from read-only original theories in temporary cwd. Six Nat valid cases, Bool swap, duplicate-input boundary F/T; all kernel-replayed plus full generic theorem and seven nonvacuous applications. Proof-only port; executed scheduler unchanged. Coordinator acceptance pending."
   }
 ]
