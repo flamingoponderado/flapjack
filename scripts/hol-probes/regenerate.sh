@@ -101,6 +101,10 @@ run_probe() {
   done
 }
 
+run_probe word_to_stack_copy_ret_carriers_probeScript.sml word_to_stack_copy_ret_carriers_probe.out \
+  ret_tail_bool_zero ret_tail_bool_plain ret_tail_list_handle ret_tail_list_perf ret_tail_install \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
 run_probe asmprops_assertions_iteration_probeScript.sml asmprops_assertions_iteration_probe.out \
   assert_theorem_fold assert_theorem_less assert_theorem_weaken assert_theorem_change assert_theorem_first assert_theorem_every \
   "$cake_dir/compiler/encoders/asm/asmPropsScript.sml" "$cake_dir/compiler/encoders/asm"

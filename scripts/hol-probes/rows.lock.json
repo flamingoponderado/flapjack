@@ -4441,6 +4441,12 @@
       "sha256": "740e2fcafb35a167c191552c017f1199ad48c113dfbc99cbd590dabf6afc2a6d"
     },
     {
+      "bytes": 106,
+      "out": "word_to_stack_copy_ret_carriers_probe.out",
+      "rows": 5,
+      "sha256": "98aafeccf41b4548b846d6ed2e246db23035288c474f29d75d12d58faebc21a9"
+    },
+    {
       "bytes": 64,
       "out": "word_to_stack_copy_ret_probe.out",
       "rows": 6,

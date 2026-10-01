@@ -3150,3 +3150,15 @@ theorems to the same inputs. Weakening/interference fixtures change functions
 above the original count bound, and the intermediate carrier remains Bool
 while states are Nat. These regressions do not establish cross-language
 equivalence or complete encoder correctness.
+
+### Independent return frame-tail carriers
+
+`word_to_stack_copy_ret_carriers_probeScript.sml` directly evaluates the original
+`word_to_stack` definitions with Bool and List Bool third frame components,
+independent Nat/Bool return lists, widths 64 and 1, both handler offsets and an
+Install continuation. `WordToStackCopyRetCarriersParity` kernel-checks the same
+five observations and applies the full code/handler-label theorem with arbitrary
+independent frame-tail and list types. Original full type is
+`bool -> bool -> num # num # beta -> gamma list -> alpha stackLang$prog -> alpha stackLang$prog`;
+its unused frame-tail must not be specialized to Nat. These checks provide
+regression evidence and do not prove cross-language equivalence or compiler correctness.
