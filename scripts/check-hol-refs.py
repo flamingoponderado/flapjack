@@ -3086,6 +3086,47 @@ def reals_as_rational_cuts_errors(declaration_source: str, qualified: bool,
     return []
 
 
+def _qualified_word_owner_names(module: str, name: str, root: str) -> set[str]:
+    """Read declaration namespaces, rather than infer them from file paths.
+
+    A module can declare a carrier in a different namespace. Sections and
+    mutual blocks delimit scopes but do not contribute identifier components.
+    This is only source-name resolution; positivity and payload checks remain
+    attached to the selected owning declaration.
+    """
+    info = _lean_file_info(module_source_file(module, Path(root)))
+    if info is None:
+        return set()
+    namespace = ""
+    scopes: list[str] = []
+    names: set[str] = set()
+    identifier = r"[A-Za-z_][A-Za-z0-9_']*(?:\.[A-Za-z_][A-Za-z0-9_']*)*"
+    for line in strip_lean_comments(info.text).splitlines():
+        command = line.strip()
+        match = re.fullmatch(r"namespace\s+(" + identifier + r")", command)
+        if match:
+            scopes.append(namespace)
+            suffix = match.group(1)
+            if suffix.startswith("_root_."):
+                namespace = suffix.removeprefix("_root_.")
+            else:
+                namespace = ".".join(part for part in (namespace, suffix) if part)
+            continue
+        if re.fullmatch(r"(?:noncomputable\s+)?section(?:\s+" + identifier + r")?|mutual", command):
+            scopes.append(namespace)
+            continue
+        if re.fullmatch(r"end(?:\s+" + identifier + r")?", command):
+            if scopes:
+                namespace = scopes.pop()
+            continue
+        declaration = re.match(r"(?:structure|inductive)\s+(" + identifier + r")\b", command)
+        if declaration and declaration.group(1).split(".")[-1] == name:
+            declared = declaration.group(1)
+            names.add(declared.removeprefix("_root_.") if declared.startswith("_root_.")
+                      else ".".join(part for part in (namespace, declared) if part))
+    return names
+
+
 def words_as_type_indexed_bitvec_errors(
     declaration_text: str,
     declaration: str,
@@ -3194,6 +3235,20 @@ def words_as_type_indexed_bitvec_errors(
             name: owners for name, owners in all_owners_by_name.items()
             if identifier_token_occurs(word_scope, name)
         }
+        signature_names = set(re.findall(
+            r"[A-Za-z_][A-Za-z0-9_']*(?:\.[A-Za-z_][A-Za-z0-9_']*)*", word_scope
+        ))
+        for name, owners in list(owners_by_name.items()):
+            # A bare occurrence remains ambiguous, including a local shadow.
+            # Only an actual qualified declaration name can select one owner;
+            # never pool positivity or word fields across different owners.
+            if len(owners) > 1 and name not in signature_names:
+                selected = [owner for owner in owners
+                            if _qualified_word_owner_names(owner[0], name, root)
+                            & signature_names]
+                if len(selected) == 1:
+                    owners_by_name[name] = selected
+                    all_owners_by_name[name] = selected
         ambiguous = [
             name for name, owners in owners_by_name.items() if len(owners) != 1
         ]
