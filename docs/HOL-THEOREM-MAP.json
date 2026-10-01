@@ -43815,5 +43815,13 @@
   "lean_name": "mergeMoves",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-a source63-82 and fresh exported definition/type comparison: Nat list, independent native Spt Nat maps and natural next; complete five-product result. Tail recursion precedes current-key lookups in updated maps; explicit NONE/other, SOME/NONE, SOME/SOME branches and Nat equality retain recursive result or prepend two moves, increment four, insert both maps. Canonical native Spt constructors/lookup/insert are shared with reviewed source-shaped carrier; no width, wf, distinct-key or freshness premise. Ten fresh original full-result captures and kernel replays cover empty, all missing branches, equality, inequality, tail order, duplicate keys (one allocation), malformed BN LN LN, and unbounded naturals. Proof-side native definition is partial executable-port progress: production Allocator.wordSsaMergeMoves routing remains on linked bead .30.3.1; coordinator acceptance pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "list_next_var_rename_lemma_2'",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSARenameLookup.lean",
+  "lean_name": "listNextVarRenameLemma2Prime",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-a source4579-4593 comparison: six arbitrary input/output List Nat, Spt Nat and Nat variables; exact renamer equality followed by ALL_DISTINCT, all four map/domain/outside-lookup/inside-success conclusions retained. Proof specializes accepted lemma2 and substitutes equality. THE uses getD only on successful lookups established by fourth conclusion; existing selector-independence covers all SOME-agreeing choices without constraining THE NONE. Native Spt retains malformed trees and unbounded Nat. Generic kernel fixture applies actual theorem with arbitrary inputs and outputs. Original renamer observations freshly regenerated; local theorem source-reviewed, no exported theorem invocation claimed. Coordinator acceptance pending."
 }
 ]
