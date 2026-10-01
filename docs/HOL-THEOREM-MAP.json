@@ -38602,5 +38602,37 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead15.3.39: literal HOL read_bitmap_append_extra744-755 and full_read_bitmap_append757-766. Same successfuldecode premise and samebits conclusion after appendedbitmap list; all lists/descriptors arbitrary, one sourcepositivewidth BitVec/NeZero, reviewed StackSem.readBitmap/fullReadBitmap at samewidth. Induction follows terminal versus continuationword clauses. Descriptor bound is proved from successfuldecode (emptydrop contradicts reader), not an extra assumption. No changedreader, fuel, totalEL, finite-map or trustqualifier. Fresh original4equations/kernel replay cover terminal/continuation and one-baseddescriptor offsets1/2. Laterabs_stack_bitmaps_prefix andstate/compiler correctness separate."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/IndexListLemmas.lean",
+  "lean_name": "mapSndIndexList",
+  "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+  "hol_name": "MAP_SND_index_list",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead15.3.41: literal projections346/353 and lookup330/338. Polymorphic List and Nat quantifiers match; COUNT_LIST translated List.range, reverse keys plus k; original i<LENGTH xs guards both EL accesses, bounded Lean indexing adds no premise and indexed-list bound derives from lengthIndexList. Same truncated Nat subtraction in both spellings. No unguarded HD/default, word or finite-map carrier difference. Structural induction proves all four; original projection/first/last lookup rows replay in kernel. Full state relation remains separate."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/IndexListLemmas.lean",
+  "lean_name": "mapFstIndexList",
+  "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+  "hol_name": "MAP_FST_index_list",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead15.3.41: literal projections346/353 and lookup330/338. Polymorphic List and Nat quantifiers match; COUNT_LIST translated List.range, reverse keys plus k; original i<LENGTH xs guards both EL accesses, bounded Lean indexing adds no premise and indexed-list bound derives from lengthIndexList. Same truncated Nat subtraction in both spellings. No unguarded HD/default, word or finite-map carrier difference. Structural induction proves all four; original projection/first/last lookup rows replay in kernel. Full state relation remains separate."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/IndexListLemmas.lean",
+  "lean_name": "elIndexList",
+  "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+  "hol_name": "EL_index_list",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead15.3.41: literal projections346/353 and lookup330/338. Polymorphic List and Nat quantifiers match; COUNT_LIST translated List.range, reverse keys plus k; original i<LENGTH xs guards both EL accesses, bounded Lean indexing adds no premise and indexed-list bound derives from lengthIndexList. Same truncated Nat subtraction in both spellings. No unguarded HD/default, word or finite-map carrier difference. Structural induction proves all four; original projection/first/last lookup rows replay in kernel. Full state relation remains separate."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/IndexListLemmas.lean",
+  "lean_name": "elIndexList2",
+  "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+  "hol_name": "EL_index_list2",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead15.3.41: literal projections346/353 and lookup330/338. Polymorphic List and Nat quantifiers match; COUNT_LIST translated List.range, reverse keys plus k; original i<LENGTH xs guards both EL accesses, bounded Lean indexing adds no premise and indexed-list bound derives from lengthIndexList. Same truncated Nat subtraction in both spellings. No unguarded HD/default, word or finite-map carrier difference. Structural induction proves all four; original projection/first/last lookup rows replay in kernel. Full state relation remains separate."
 }
 ]

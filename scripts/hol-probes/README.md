@@ -1962,7 +1962,7 @@ HOL_PROBE_ONLY=word_lang_occurrences_exact_probeScript.sml scripts/hol-probes/re
 
 - `word_to_stack_abs_stack_probeScript.sml`: original abstraction success and failure branches.
 
-- `word_to_stack_index_list_probeScript.sml`: descending indices and physical-name division.
+- `word_to_stack_index_list_probeScript.sml`: descending indices, value/key projections, guarded first/last lookup, and physical-name division.
 
 - `word_to_stack_bitmap_append_probeScript.sml`: successful bitmap decoding remains unchanged after appending words.
 ### Parallel-move state semantics

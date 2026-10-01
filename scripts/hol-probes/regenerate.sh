@@ -2698,7 +2698,7 @@ run_probe word_to_stack_abs_stack_probeScript.sml word_to_stack_abs_stack_probe.
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe word_to_stack_index_list_probeScript.sml word_to_stack_index_list_probe.out \
-  il_empty il_single il_desc an_even an_odd \
+  il_empty il_single il_desc an_even an_odd il_snd il_fst il_el_zero il_el_last \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe word_to_stack_bitmap_append_probeScript.sml word_to_stack_bitmap_append_probe.out \
