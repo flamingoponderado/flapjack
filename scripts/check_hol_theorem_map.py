@@ -10,6 +10,7 @@ state, not a claim that the Lean statement is equivalent to HOL.
 from __future__ import annotations
 
 import argparse
+from functools import lru_cache
 import json
 import re
 import runpy
@@ -1846,69 +1847,85 @@ FIELDS = {
 }
 
 
+_NORMAL_TOKEN_RE = re.compile(r'/-|--|"')
+_BLOCK_TOKEN_RE = re.compile(r"/-|-/")
+_STRING_TOKEN_RE = re.compile(r'[\\"]')
+_NON_NEWLINE_RE = re.compile(r"[^\n]")
+
+
+def _blank(segment: str) -> str:
+    """Replace every character except newlines by a space."""
+    return _NON_NEWLINE_RE.sub(" ", segment)
+
+
 def strip_comments(text: str) -> str:
-    """Remove Lean line and nested block comments, preserving line boundaries."""
+    """Remove Lean line and nested block comments, preserving line boundaries.
+
+    Comment characters become spaces and newlines are kept, so offsets and line
+    numbers are unchanged. String literals (with backslash escapes) are copied
+    verbatim; a comment opener inside one is not a comment. This scans token to
+    token with compiled patterns instead of character by character.
+    """
     result: list[str] = []
     index = 0
-    block_depth = 0
-    in_string = False
-    escaped = False
-    line_comment = False
-    while index < len(text):
-        if line_comment:
-            if text[index] == "\n":
-                line_comment = False
-                result.append("\n")
-            else:
-                result.append(" ")
-            index += 1
-            continue
-
-        if block_depth:
-            if text.startswith("/-", index):
-                block_depth += 1
-                result.extend((" ", " "))
-                index += 2
-            elif text.startswith("-/", index):
-                block_depth -= 1
-                result.extend((" ", " "))
-                index += 2
-            else:
-                result.append("\n" if text[index] == "\n" else " ")
-                index += 1
-            continue
-
-        if in_string:
-            result.append(text[index])
-            if escaped:
-                escaped = False
-            elif text[index] == "\\":
-                escaped = True
-            elif text[index] == '"':
-                in_string = False
-            index += 1
-            continue
-
-        if text.startswith("/-", index):
-            block_depth = 1
-            result.extend((" ", " "))
-            index += 2
-        elif text.startswith("--", index):
-            line_comment = True
-            result.extend((" ", " "))
-            index += 2
+    length = len(text)
+    while index < length:
+        match = _NORMAL_TOKEN_RE.search(text, index)
+        if match is None:
+            result.append(text[index:])
+            break
+        token_start = match.start()
+        result.append(text[index:token_start])
+        token = match.group()
+        if token == '"':
+            # Copy the string literal through its closing quote.
+            position = token_start + 1
+            while True:
+                found = _STRING_TOKEN_RE.search(text, position)
+                if found is None:
+                    position = length
+                    break
+                if found.group() == "\\":
+                    position = found.start() + 2
+                    continue
+                position = found.end()
+                break
+            result.append(text[token_start:min(position, length)])
+            index = position
+        elif token == "--":
+            newline = text.find("\n", token_start)
+            stop = length if newline < 0 else newline
+            result.append(" " * (stop - token_start))
+            index = stop
         else:
-            char = text[index]
-            result.append(char)
-            if char == '"':
-                in_string = True
-            index += 1
+            depth = 1
+            position = token_start + 2
+            while depth:
+                found = _BLOCK_TOKEN_RE.search(text, position)
+                if found is None:
+                    position = length
+                    break
+                depth += 1 if found.group() == "/-" else -1
+                position = found.end()
+            result.append(_blank(text[token_start:position]))
+            index = position
     return "".join(result)
+
+
+@lru_cache(maxsize=None)
+def _stripped_source_cached(path: str, size: int, mtime_ns: int) -> str:
+    return strip_comments(Path(path).read_text(encoding="utf-8"))
+
+
+def stripped_source(path: Path) -> str:
+    """Comment-stripped text of a Lean file, cached per (path, size, mtime)."""
+    stat = path.stat()
+    return _stripped_source_cached(str(path), stat.st_size, stat.st_mtime_ns)
 
 
 def lean_definition_exists(root: Path, lean_path: str, lean_name: str) -> bool:
     """Check that a registered untagged mismatch names a Lean declaration."""
-    source = strip_comments((root / lean_path).read_text(encoding="utf-8"))
+    source = stripped_source(root / lean_path)
     return any(
         (match := DATA_DECLARATION_RE.match(line)) and match.group(1) == lean_name
         for line in source.splitlines()
@@ -1920,7 +1937,7 @@ def lean_definition_exists(root: Path, lean_path: str, lean_name: str) -> bool:
 
 def lean_theorem_exists(root: Path, lean_path: str, lean_name: str) -> bool:
     """Check a theorem helper in any counterpart module, including Semantics/."""
-    source = strip_comments((root / lean_path).read_text(encoding="utf-8"))
+    source = stripped_source(root / lean_path)
     return any(
         (match := THEOREM_RE.match(line)) and match.group(1) == lean_name
         for line in source.splitlines()
@@ -1935,7 +1952,7 @@ def proof_theorem_declarations(root: Path = ROOT) -> set[tuple[str, str]]:
     declarations: set[tuple[str, str]] = set()
     proofs = root / "Flapjack" / "Pancake" / "Proofs"
     for path in sorted(proofs.rglob("*.lean")):
-        source = strip_comments(path.read_text(encoding="utf-8"))
+        source = stripped_source(path)
         rel = path.relative_to(root).as_posix()
         for line in source.splitlines():
             match = THEOREM_RE.match(line)
@@ -1950,7 +1967,7 @@ def data_declarations(root: Path = ROOT) -> set[tuple[str, str]]:
     for path in sorted(root.rglob("*.lean")):
         if ".lake" in path.parts:
             continue
-        source = strip_comments(path.read_text(encoding="utf-8"))
+        source = stripped_source(path)
         rel = path.relative_to(root).as_posix()
         for line in source.splitlines():
             match = DATA_DECLARATION_RE.match(line)
