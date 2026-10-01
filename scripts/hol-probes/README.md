@@ -4110,3 +4110,11 @@ Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_top_probeScript.sml`.
 - `ssa_cc_trans_exp_correct_probeScript.sml` replays the literal local SSA expression correctness proof (word_allocProof6256–6294) and captures the full theorem plus all six inferred argument carriers.
 
 - `ssa_fix_inconsistencies_props_probeScript.sml` replays literal reconciliation allocation/map bounds with its three original local prerequisites and captures the full theorem and eight argument carriers.
+`stackprops_expression_clock_probeScript.sml` captures six full source/type
+rows for `mem_load_with_const`, `word_exp_with_const` and `assign_with_const`,
+then22 clocked original expression/assignment/store observations. The first
+theorem's original name is misleading: its statement concerns `mem_store`.
+The new kernel replay covers domain failure, Loc rejection, missing operands,
+operator lists, wraparound, shift bounds and successful/failed assignment.
+The full recursive theorem imposes no success, size or clock bound. These
+captures provide regression evidence, not HOL-to-Lean equivalence.
