@@ -1,3 +1,49 @@
+`ssa_merge_route_probe.out` captures eight complete original merge_moves outputs
+through original fromAList/toAList: empty/missing/equal/unequal, tail-first
+fresh numbering, duplicate names, duplicate input-map first-match behavior,
+and natural counters larger than64 bits. SSAMergeMovesRouteParity kernel-checks
+the actual allocator wrapper at all identical inputs and independently checks
+preserved production state counters31/47. MergeMovesRoute invokes the accepted
+native definition. ProductionMergeMoves proves an unconditional codec result:
+ordered move lists, fresh counter, independent state counters and both map
+lookups at every key. Storage order canonicalizes to the original tree traversal;
+this is not list-order equality or a full SSA simulation theorem. No performance
+exception is claimed; executed compiler parity is required for integration.
+
+`word_simp_duplicate_if_source_probe.out` captures fourteen original source
+outputs: seven whole compile_exp trees across Seq/If/MustTerminate/Loop and
+all optional Call bodies, plus no-hoist, zero-bound, is_simple and
+non-Raise/zero/three dest_Raise_num boundaries. WordSimpDuplicateIfParity
+kernel-checks identical observations. Production pre-SSA now directly composes
+Seq_assoc, original const_fp, structural simp_duplicate_if and push_out_if.
+Hoist probes use const_fp without extra Seq_assoc, enforce original first-result
+zero guard, and normalize successful hoists with original Seq_assoc Skip.
+Legacy list/fact helpers remain separate from the production composition.
+This repairs flapjack-b9gd; original captured pre-SSA tree stays unchanged.
+
+`word_simp_seq_assoc_source_probe.out` records sixteen complete original
+`Seq_assoc` outputs: empty/nonempty accumulators, interior/trailing/all Skip,
+left association, If, Loop, MustTerminate and both optional Call bodies.
+`WordSimpSeqAssocParity` kernel-checks the fifteen accumulator trees; WordFuseConditions checks the
+complete original pre-SSA compile_exp tree, now matched by the repaired
+composition (flapjack-b9gd). The original expected tree was not changed. The formerly failing
+`Seq Tick Skip` input and original Tick oracle are preserved; the production
+accumulator now matches the original clause rather than the old Lean rewalk.
+
+`word_simp_constant_domain_probe.out` retains all thirteen original constant-pass
+trees unchanged. `WordToStackConstantDomainParity` now kernel-checks thirteen
+matches, including the repaired trailing Skip. `ProductionConstantDomain`
+proves codec acceptance through the actual accumulator with arbitrary accepted
+prefix, arbitrary initial constant knowledge, and the actual wrapper. Its
+implication permits constant branches to remove rejected code. Rejection
+sentinels cover the five-register primitive inside Loop and both Call bodies.
+These untagged carrier proofs do not claim HOL pass semantics, initial source
+image acceptance, fusion/hoist closure, native ABI/output correspondence, or
+production native routing.
+`ssa_register_class_probe.out` captures eight direct MOD4 class observations, including physical-register guard boundaries and large naturals. It also rechecks the literal original local `is_alloc_var_add`/`is_stack_var_add` statements with their original proof text; source-replay rows are distinct from exported-theorem rows. `Flapjack/Test/SSARegisterClassParity.lean` kernel-replays the observations and applies both ported theorems.
+
+`ssa_locals_rel_probe.out` simplifies the original whole generic relation with literal lookup/domain/THE clauses: eight Bool-valued success/missing-map/missing-target/wrong-value/allocation-bound/malformed-tree observations. `Flapjack/Test/SSALocalsParity.lean` replays identical inputs in the kernel; the full original definition and generic inferred type are captured.
+
 `ssa_map_ok_probe.out` simplifies the literal original SSA map predicate and lookup clauses for five empty/valid/bound/physical/malformed-tree cases; `Flapjack/Test/SSAMapParity.lean` kernel-replays those quantified predicates. The full original definition is printed.
 
 `ssa_setup_probe.out` captures four original word_alloc definitions and nine direct EVAL rows for empty, duplicate, malformed-tree, arbitrary-start renaming and native setup widths 1/32/64/80, plus independent 1-to-80 and 80-to-1 input/output dimensions and the full original inferred function type. `Flapjack/Test/SSASetupParity.lean` kernel-replays identical inputs and observations. Regenerate with `HOL_PROBE_ONLY=ssa_setup_probeScript.sml`.
@@ -3178,6 +3224,11 @@ The native transition inherits the existing IEEE real-rendering assurance limit
 Probes remain regression evidence, not complete cross-language IEEE equivalence
 or whole ASM/compiler routing acceptance.
 
+SSA renaming lookup regressions: `ssa_rename_lookup_probeScript.sml` runs original
+`list_next_var_rename` and THE lookups for empty, overwritten, malformed-tree,
+reordered and unbounded-Nat inputs. `SSARenameLookupParity.lean` kernel-replays
+all five captures and applies the full four-conjunct theorem with arbitrary
+initial tree/start. Captures are regression evidence, not a cross-prover proof.
 ### Generic native ASM assertions
 
 `asmprops_assertions_probeScript.sml` evaluates original `asmPropsTheory`
@@ -3212,3 +3263,173 @@ alongside a nonvacuous full theorem application with arbitrary configuration,
 register count and bitmap input. These are regression checks, not a
 HOL-to-Lean equivalence proof or whole compiler correctness acceptance.
 Selector: `HOL_PROBE_ONLY=word_to_stack_program_code_labels_probeScript.sml`.
+
+`ssa_merge_moves_probe.out` captures ten complete original merge_moves results,
+both maps included, plus the exported definition and full inferred type. Native
+`SSAMergeMovesParity` kernel-replays those results, including tail-first order,
+duplicate keys, malformed trees and unbounded naturals. Production routing
+remains separately tracked; these observations are not a cross-prover proof.
+`list_next_var_rename_lemma1_probe.out` records a fresh replay of the complete
+local original theorem and proof, plus eight full renaming observations with
+selected map lookups and all three arithmetic conclusions. Cases include
+duplicate names, overwritten keys, a malformed initial tree, zero and odd
+counters, and unbounded naturals. `SSAListRenameArithmeticParity` checks17
+kernel examples against identical inputs and the complete theorem. Select
+`HOL_PROBE_ONLY=list_next_var_rename_lemma1_probeScript.sml` to regenerate.
+### Native StackProps forbidden operations
+
+`stackprops_forbidden_operations_probeScript.sml` records 46 original predicate
+pairs for `no_install` and `no_shmemop`: all 34 constructors and 12 nested
+Call/Seq/If/Loop boundaries. Both optional Call bodies are inspected independently,
+including a forbidden handler when the return field is NONE. Every equality
+observation resolves T and is kernel-replayed by
+`StackPropsForbiddenOperationsParity`, with additional arbitrary positive-width
+and payload applications. The definitions use the reviewed native `HolProg`
+carrier and preserve the literal source clauses. These are regression checks,
+not cross-language equivalence or full compiler preservation acceptance.
+Selector: `HOL_PROBE_ONLY=stackprops_forbidden_operations_probeScript.sml`.
+### Full generic ASM assertion iteration
+
+`asmprops_assertions_iteration_probeScript.sml` applies all six original
+`asmPropsTheory` iteration/weakening theorems. It matches each complete
+conclusion, instantiates remaining source variables, proves every original
+premise, checks the resulting theorem has no hypotheses and exactly the
+requested conclusion, then evaluates that conclusion. All six rows are `T`;
+`AsmPropsAssertionsIterationParity.lean` applies the corresponding full Lean
+theorems to the same inputs. Weakening/interference fixtures change functions
+above the original count bound, and the intermediate carrier remains Bool
+while states are Nat. These regressions do not establish cross-language
+equivalence or complete encoder correctness.
+
+`word_alloc_limit_var_probe.out` records the full original definition/type and
+twelve native-program maximum/limit/class/strict-bound observations. Inputs
+cover all four residues, zero/multiples, widths1/32/64/80, unbounded naturals,
+returning Call bodies, ignored tail handlers and ignored Load16 fields.
+`WordAllocLimitVarParity` checks thirteen kernel examples against identical
+inputs. Select `HOL_PROBE_ONLY=word_alloc_limit_var_probeScript.sml`.
+The executed upstream maximum/limit route remains tracked on .30.1.2.1.
+
+### SSA renaming properties
+
+`ssa_rename_properties_probeScript.sml` replays the complete local
+`list_next_var_rename_props` source proof (word_allocProof5749-5777), with its
+two local register-class increment prerequisites also replayed literally. It
+then applies this proved theorem to eight original `list_next_var_rename`
+results: both classes, empty lists, duplicates, existing and overwritten
+bindings, a malformed tree, and unbounded natural indices. Each application
+discharges the original equality and class/map premises and checks an empty
+hypothesis list. Rows contain `(next,T)`: `EQT_INTRO` renders the **proved full
+four-conjunct conclusion** as T. This is distinct from attempting to EVAL a
+symbolic universally quantified lookup predicate. The full replay statement is
+captured separately; this local theorem is not claimed to be exported in HOL's DB.
+
+### Independent return frame-tail carriers
+
+`word_to_stack_copy_ret_carriers_probeScript.sml` directly evaluates the original
+`word_to_stack` definitions with Bool and List Bool third frame components,
+independent Nat/Bool return lists, widths 64 and 1, both handler offsets and an
+Install continuation. `WordToStackCopyRetCarriersParity` kernel-checks the same
+five observations and applies the full code/handler-label theorem with arbitrary
+independent frame-tail and list types. Original full type is
+`bool -> bool -> num # num # beta -> gamma list -> alpha stackLang$prog -> alpha stackLang$prog`;
+its unused frame-tail must not be specialized to Nat. These checks provide
+regression evidence and do not prove cross-language equivalence or compiler correctness.
+
+### Native no-install helper theorems
+
+`word_to_stack_no_install_helpers_probeScript.sml` applies the six original
+exported helper theorems at twelve concrete inputs, discharging the original
+universal callback premises from `no_install_def`. Each result has no assumptions
+and its exact conclusion is checked before evaluation. The local
+`copy_ret_aux_no_install` theorem is not exported, so its two source definition
+instances are evaluated directly. `WordToStackNoInstallHelpersParity` kernel-checks
+the same fourteen inputs using all seven complete Lean theorems, plus explicit
+false results for Install continuations. Coverage includes zero/positive counts,
+all four move operand forms, register/spill branches, bitmap insertion, arbitrary
+frame arithmetic and word widths 64/1. This is helper preservation only; the
+`copy_ret` wrapper and full compiler preservation remain tracked on bead47.2.
+Original observations and kernel checks do not establish cross-language equivalence.
+### Full incremental Word-to-Stack handler safety
+
+`word_to_stack_handler_safety_probeScript.sml` observes the original actual
+whole-program compiler, EVERY handler guard and full `stack_good_handler_labels`
+predicate. Twelve pair-equality claims resolve T: nonzero wrong-owner and nested
+wrong-owner failures, zero and existing entry-one exceptions, duplicate owners,
+nested valid handlers, dropped tail handlers, bitmap threading and width one
+with zero registers. The probe proves finite-list union normalization in HOL,
+evaluates the compiler, then discharges finite-set claims; the two negative
+predicate cases use the concrete offending `(9,5)` witness. No compiler
+correctness theorem is used to prove these observations. Matching kernel
+regressions and a nonempty full public theorem application retain arbitrary
+positive width/configuration/registers/bitmap input. These are regression checks,
+not cross-language equivalence or overall compiler correctness acceptance.
+Selector: `HOL_PROBE_ONLY=word_to_stack_handler_safety_probeScript.sml`.
+
+### Native WordConvs whole-program label safety
+
+`wordconvs_label_safety_probeScript.sml` checks fourteen original
+`good_code_labels` predicate equality claims, including three false predicates,
+infinite UNIV external labels, duplicate owners, cross references, returning and
+absent-return handler boundaries, nesting and width one. All claims resolve T.
+A local HOL finite-union lemma supports evaluation; missing-label failures use
+the concrete label 8. Matching kernel fixtures and an arbitrary positive-width,
+unrestricted external-set equation live in `WordConvsLabelSafetyParity`.
+These checks do not establish cross-language equivalence or full compiler
+preservation. Selector: `HOL_PROBE_ONLY=wordconvs_label_safety_probeScript.sml`.
+
+### Native Word-to-Stack no-shared-memory helpers
+
+`word_to_stack_no_shmemop_helpers_probeScript.sml` evaluates 22 original
+helper predicate claims. All resolve T, including four move representations,
+empty/multiple lists, both register-write branches, width one, zero/nonzero
+bitmap frames, and forbidden continuations whose predicate stays false.
+`WordToStackNoShmemopHelpersParity` kernel-replays identical inputs and applies
+the full public theorems with unrestricted inputs and original hypotheses.
+These regressions do not establish cross-language equivalence or full compiler
+preservation. Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_helpers_probeScript.sml`.
+
+### Independent unused handler frame carriers
+
+`word_to_stack_handler_frame_carriers_probeScript.sml` captures both complete
+original PushHandler/PopHandler types and twelve full output equality claims.
+The frame tails are independently Bool/String or List/Bool; both perf branches,
+widths64/1, and Skip/forbidden continuations are covered. All equalities resolve T.
+`WordToStackHandlerFrameCarriersParity` kernel-replays identical outputs and
+applies universal native/generic transports with arbitrary independent carriers.
+Two native erasure certificates prove that changing unused fields and their
+carriers leaves complete helper outputs unchanged. This does not establish
+cross-language equivalence, instrumentation correctness, or pass simulation.
+Selector: `HOL_PROBE_ONLY=word_to_stack_handler_frame_carriers_probeScript.sml`.
+`word_alloc_limit_var_probe.out` records the full original definition/type and
+twelve native-program maximum/limit/class/strict-bound observations. Inputs
+cover all four residues, zero/multiples, widths1/32/64/80, unbounded naturals,
+returning Call bodies, ignored tail handlers and ignored Load16 fields.
+`WordAllocLimitVarParity` checks thirteen kernel examples against identical
+inputs. Select `HOL_PROBE_ONLY=word_alloc_limit_var_probeScript.sml`.
+The executed upstream maximum/limit route remains tracked on .30.1.2.1.
+
+### SSA map extension
+
+`ssa_map_extend_probeScript.sml` replays the literal local
+`ssa_map_ok_extend` statement and proof (word_allocProof4624-4634). Seven
+applications cover empty maps in both nonphysical classes, an existing binding,
+an overwrite, a malformed tree, and large natural keys/values. Each original
+premise is independently proved; the resulting theorem must have no hypotheses
+and exactly the requested map-bound conclusion. `EQT_INTRO` renders that proved
+conclusion as T; these are theorem applications rather than direct EVAL of a
+symbolic universally quantified lookup predicate. Two further rows EVAL/simplify
+the physical-register and at-bound false premises. The complete local theorem
+is printed separately and is not claimed to be an exported HOL DB theorem.
+
+### SSA register-class conversion
+
+`ssa_register_flip_probeScript.sml` replays all three complete local source
+proofs: `is_alloc_var_flip`, `is_stack_var_flip`, and `flip_rw`. Eight direct
+original predicate tuples cover all four residues, both nonphysical classes
+after further increments, and large natural indices. The probe applies each
+implication three times, discharging its premise by original EVAL, and applies
+the unconditional two-equality theorem to all eight inputs. Each result has no
+hypotheses; `EQT_INTRO` renders its proved conclusion as T. The three local
+replays are captured separately and are not claimed exported HOL DB theorems.
+`SSARegisterFlipParity` kernel-checks identical tuples and fourteen full public
+theorem applications, without a bounded-register or additional class premise.

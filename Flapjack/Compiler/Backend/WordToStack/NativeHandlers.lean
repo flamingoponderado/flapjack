@@ -19,20 +19,22 @@ def stackHandlerArgsNative {width : Nat} [NeZero width] {α β : Type}
     (kf.1, kf.2.1 + WordToStack.handlerSlots perf,
       kf.2.2 + WordToStack.handlerSlots perf)
 
-/-- Literal handler restoration/freeing before the arbitrary native continuation. -/
+/-- Literal handler restoration/freeing before the arbitrary native continuation.
+The two unused frame fields retain independent HOL type variables. -/
 @[hol "cakeml/compiler/backend/word_to_stackScript.sml" "PopHandler_def"
   (words_as_type_indexed_bitvec)]
-def popHandlerNative {width : Nat} [NeZero width]
-    (perf : Bool) (kf : Nat × Nat × Nat) (prog : HolProg width) : HolProg width :=
+def popHandlerNative {width : Nat} [NeZero width] {β γ : Type}
+    (perf : Bool) (kf : Nat × β × γ) (prog : HolProg width) : HolProg width :=
   .seq (.stackLoad kf.1 2)
     (.seq (.set .handler kf.1)
       (.seq (.stackFree (WordToStack.handlerSlots perf)) prog))
 
-/-- Literal allocation, saved handler/labels and optional perf register slots. -/
+/-- Literal allocation, saved handler/labels and optional perf register slots.
+Both unused frame fields remain independently polymorphic, as in HOL. -/
 @[hol "cakeml/compiler/backend/word_to_stackScript.sml" "PushHandler_def"
   (words_as_type_indexed_bitvec)]
-def pushHandlerNative {width : Nat} [NeZero width]
-    (perf : Bool) (l1 l2 : Nat) (kf : Nat × Nat × Nat) : HolProg width :=
+def pushHandlerNative {width : Nat} [NeZero width] {β γ : Type}
+    (perf : Bool) (l1 l2 : Nat) (kf : Nat × β × γ) : HolProg width :=
   .seq (.stackAlloc (Flapjack.Compiler.Backend.WordToStack.handlerSlots perf))
     (.seq (.inst (.const kf.1 (1 : BitVec width)))
       (.seq (.stackStore kf.1 0)
@@ -63,20 +65,37 @@ theorem toGeneric_stackHandlerArgsNative {width : Nat} [NeZero width] {α β : T
   exact toGeneric_stackArgsNative dest argCount _
 
 /-- Flapjack-only transport with arbitrary continuation; no evaluation premise. -/
-theorem toGeneric_popHandlerNative {width : Nat} [NeZero width]
-    (perf : Bool) (kf : Nat × Nat × Nat) (prog : HolProg width) :
+theorem toGeneric_popHandlerNative {width : Nat} [NeZero width] {β γ : Type}
+    (perf : Bool) (kf : Nat × β × γ) (prog : HolProg width) :
     toGeneric (popHandlerNative perf kf prog) =
       WordToStackRegFormat.popHandler perf kf (toGeneric prog) := by
   simp [popHandlerNative, WordToStackRegFormat.popHandler, toGeneric, Prog.map]
 
 /-- Flapjack-only transport of both perf alternatives on every positive width.
 There is no HOL original for this representation codec equality. -/
-theorem toGeneric_pushHandlerNative {width : Nat} [NeZero width]
-    (perf : Bool) (l1 l2 : Nat) (kf : Nat × Nat × Nat) :
+theorem toGeneric_pushHandlerNative {width : Nat} [NeZero width] {β γ : Type}
+    (perf : Bool) (l1 l2 : Nat) (kf : Nat × β × γ) :
     toGeneric (pushHandlerNative (width := width) perf l1 l2 kf) =
       WordToStackRegFormat.pushHandlerW perf l1 l2 kf := by
   cases perf <;> simp [pushHandlerNative, WordToStackRegFormat.pushHandlerW,
     toGeneric, Prog.map, listSeq, HolInst.toWordLangInst, HolArith.toWordLangArith,
     HolRegImm.toWordRegImm]
+
+/-- Flapjack-only erasure certificate: changing either unused frame field,
+including its carrier, leaves the entire native handler setup unchanged.
+There is no corresponding named HOL theorem. -/
+theorem pushHandlerNative_unusedFrameFields {width : Nat} [NeZero width]
+    {β γ δ ε : Type} (perf : Bool) (l1 l2 k : Nat)
+    (f : β) (f' : γ) (g : δ) (g' : ε) :
+    pushHandlerNative (width := width) perf l1 l2 (k, f, f') =
+      pushHandlerNative perf l1 l2 (k, g, g') := rfl
+
+/-- Flapjack-only erasure certificate for the complete restore/free sequence
+and arbitrary continuation; there is no named HOL original. -/
+theorem popHandlerNative_unusedFrameFields {width : Nat} [NeZero width]
+    {β γ δ ε : Type} (perf : Bool) (k : Nat) (prog : HolProg width)
+    (f : β) (f' : γ) (g : δ) (g' : ε) :
+    popHandlerNative perf (k, f, f') prog =
+      popHandlerNative perf (k, g, g') prog := rfl
 
 end Flapjack.Compiler.Backend.WordToStack.Native

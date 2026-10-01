@@ -2,16 +2,11 @@ import Flapjack.RiscV.Allocator
 import Flapjack.RiscV.WordSimp
 
 /-!
-`Flapjack.CrepToLoop` lowers a control-flow condition by materializing the
-relation into a fresh temporary (`ite operator condition right (assign t 1)
-(assign t 0)`) and then testing that temporary (`ite notEqual u (imm 0) ...`).
-The original CakeML pipeline collapses this round trip before emission.  This
-module performs the collapse at the Word boundary: it tracks which variables
-provably hold the 0/1 result of a comparison and, when such a variable is
-tested against zero and is dead afterwards, replaces the test with the
-original comparison.  The rewrite is semantics preserving because the tracked
-  variable is dead; the later Cake-style dead-code cleanup removes the now
-  unused copy and definition after full SSA has assigned names consistently.
+Production implements original word_simp compile_exp through Seq_assoc,
+const_fp, simp_duplicate_if and push_out_if. The extended WordProg carrier
+prevents claiming a tagged native HOL port here. The separate list/fact fusion
+helpers are legacy Flapjack infrastructure and are not part of that executed
+composition; their presence does not establish original HOL correspondence.
 -/
 
 namespace Flapjack.RiscV
@@ -251,9 +246,16 @@ def wordDestSeq : WordProg α → WordProg α × WordProg α
   | .seq first second => (first, second)
   | program => (.skip, program)
 
-def wordDestRaise : WordProg α → Option Nat
-  | .raise exception => some exception
-  | _ => none
+/-- Original dest_Raise_num: every non-Raise program yields zero. -/
+def wordDestRaise : WordProg α → Nat
+  | .raise exception => exception
+  | _ => 0
+
+/-- Original const_fp itself, without the preceding compile_exp Seq_assoc. -/
+def wordHoistConstFp [Add α] [Sub α] [AndOp α] [OrOp α]
+    [HXor α α α] [Complement α] [OfNat α 1] [OfNat α 0] [DecidableEq α]
+    [PanCmp α] [WordSimpShift α] (program : WordProg α) : WordProg α :=
+  (wordConstFpLoop program []).1
 
 def wordHoistIfCandidate [Add α] [Sub α] [AndOp α] [OrOp α]
     [HXor α α α] [Complement α] [OfNat α 1] [OfNat α 0] [DecidableEq α]
@@ -262,17 +264,16 @@ def wordHoistIfCandidate [Add α] [Sub α] [AndOp α] [OrOp α]
     (dummy : WordProg α)
     (thenBranch elseBranch intermediate continuation : WordProg α) :
     Option (WordProg α) :=
-  let thenProbe := wordConstFp (.seq (.seq thenBranch intermediate) dummy)
-  let elseProbe := wordConstFp (.seq (.seq elseBranch intermediate) dummy)
-  match wordDestRaise (wordDestSeq thenProbe).2,
-    wordDestRaise (wordDestSeq elseProbe).2 with
-  | some thenResult, some elseResult =>
-      if thenResult + elseResult == 3 then
-        some (wordConstFp (.ite operator condition right
-          (.seq (.seq thenBranch intermediate) continuation)
-          (.seq (.seq elseBranch intermediate) continuation)))
-      else none
-  | _, _ => none
+  let thenProbe := wordHoistConstFp (.seq (.seq thenBranch intermediate) dummy)
+  let thenResult := wordDestRaise (wordDestSeq thenProbe).2
+  if thenResult == 0 then none else
+    let elseProbe := wordHoistConstFp (.seq (.seq elseBranch intermediate) dummy)
+    let elseResult := wordDestRaise (wordDestSeq elseProbe).2
+    if thenResult + elseResult == 3 then
+      some (wordHoistConstFp (.ite operator condition right
+        (.seq (.seq thenBranch intermediate) continuation)
+        (.seq (.seq elseBranch intermediate) continuation)))
+    else none
 
 def wordTryIfHoist2 [Add α] [Sub α] [AndOp α] [OrOp α]
     [HXor α α α] [Complement α] [OfNat α 1] [OfNat α 0] [DecidableEq α]
@@ -318,7 +319,7 @@ def wordSimpDuplicateIfAux [Add α] [Sub α] [AndOp α] [OrOp α]
       let first := wordSimpDuplicateIfAux fuel first
       let second := wordSimpDuplicateIfAux fuel second
       match wordTryIfHoist1 first second with
-      | some result => wordProgStripSeqSkips result
+      | some result => wordSimpSeqAssoc result
       | none => .seq first second
   | fuel + 1, .ite operator condition right thenBranch elseBranch =>
       .ite operator condition right
@@ -340,11 +341,33 @@ def wordSimpDuplicateIfAux [Add α] [Sub α] [AndOp α] [OrOp α]
       .call returns target arguments handler
   | _, program => program
 
+/-- Production recursion follows each original simp_duplicate_if clause.
+The extended production carrier is not a native tagged HOL port. -/
 def wordSimpDuplicateIf [Add α] [Sub α] [AndOp α] [OrOp α]
     [HXor α α α] [Complement α] [OfNat α 1] [OfNat α 0] [DecidableEq α]
-    [PanCmp α] [WordSimpShift α] [BEq α] (program : WordProg α) :
-    WordProg α :=
-  wordSimpDuplicateIfAux (wordProgFuel program + 1) program
+    [PanCmp α] [WordSimpShift α] [BEq α] : WordProg α → WordProg α
+  | .seq first second =>
+      let first := wordSimpDuplicateIf first
+      let second := wordSimpDuplicateIf second
+      match wordTryIfHoist1 first second with
+      | some result => wordSimpSeqAssoc result
+      | none => .seq first second
+  | .ite operator condition right thenBranch elseBranch =>
+      .ite operator condition right (wordSimpDuplicateIf thenBranch) (wordSimpDuplicateIf elseBranch)
+  | .loop liveIn body liveOut => .loop liveIn (wordSimpDuplicateIf body) liveOut
+  | .mustTerminate body => .mustTerminate (wordSimpDuplicateIf body)
+  | .call returns target arguments handler =>
+      let returns := match returns with
+        | none => none
+        | some (names,cutsets,body,label,entry) =>
+            some (names,cutsets,wordSimpDuplicateIf body,label,entry)
+      let handler := match handler with
+        | none => none
+        | some (exception,body,label,entry) => some (exception,wordSimpDuplicateIf body,label,entry)
+      .call returns target arguments handler
+  | other => other
+termination_by program => sizeOf program
+decreasing_by all_goals decreasing_trivial
 
 def wordDuplicateConditions [BEq α] [OfNat α 0] [OfNat α 1]
     (program : WordProg α) : WordProg α :=
@@ -436,7 +459,7 @@ def wordFuseConditionsAux [BEq α] [OfNat α 0] [OfNat α 1]
 /-- Fuse materialized comparison round trips in a Word program.  The fuel
 bounds the number of recursive visits through the sequence spine and the
 conditional branches; if the bound is exhausted the program is returned
-unchanged, so the pass is always sound. -/
+unchanged. This untagged legacy helper has no general simulation theorem here. -/
 def wordFuseConditions [BEq α] [OfNat α 0] [OfNat α 1]
     (program : WordProg α) : WordProg α :=
   let duplicated := wordDuplicateConditions program
@@ -512,6 +535,7 @@ def wordFuseConditionsAndFold [Add α] [Sub α] [AndOp α] [OrOp α]
     (program : WordProg α) : WordProg α :=
   wordPushOutIf (wordFuseConditionsWithFold program)
 
+-- The production composition excludes the separate fact/list fusion helpers.
 /-! The complete pre-SSA source pass corresponding to Cake's
     `word_simp$compile_exp`: constant propagation runs before duplicate-if
     fusion and terminating-branch hoisting. -/
@@ -519,6 +543,6 @@ def wordToWordPreSsa [Add α] [Sub α] [AndOp α] [OrOp α]
     [HXor α α α] [Complement α] [OfNat α 1] [OfNat α 0] [DecidableEq α]
     [PanCmp α] [WordSimpShift α]
     (program : WordProg α) : WordProg α :=
-  wordFuseConditionsAndFold (wordConstFp program)
+  wordPushOutIf (wordSimpDuplicateIf (wordConstFp program))
 
 end Flapjack.RiscV

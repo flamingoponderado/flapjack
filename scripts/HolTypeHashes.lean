@@ -1,10 +1,20 @@
+import Flapjack.Compiler.Backend.WordAlloc.LimitVar
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameProperties
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARegisterFlip
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapExtend
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetup.ListNextVarRenameArithmetic
+import Flapjack.Compiler.Encoders.AsmProps.Assertions.Iteration
+import Flapjack.Compiler.Encoders.AsmSem.Arithmetic
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.Maximum.MaxVar
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARegisterClass
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocals
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMap
 import Flapjack.Compiler.Backend.WordAlloc.SSASetup
 import Flapjack.Compiler.Encoders.AsmProps.Assertions
 import Flapjack.Compiler.Backend.StackProps.LabelSafety
 import Flapjack.Compiler.Backend.Parmove.FstepMapInj
 import Flapjack.Compiler.Encoders.AsmProps.FpPreservation
+import Flapjack.Compiler.Encoders.AsmSem.FpUpdates
 import Flapjack.Pancake.WordConvs.ProgramMonotonicity
 import Flapjack.Compiler.Backend.Parmove.StepMapInj
 import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Parmove
@@ -30,10 +40,15 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileLookup
 import Flapjack.Compiler.Backend.WordAlloc.GetHeuristics
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Pmov
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CodeLabels
+import Flapjack.Compiler.Backend.WordToStack.Proofs.NoInstall
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCodeLabels
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ProgramCodeLabels
+import Flapjack.Compiler.Backend.WordToStack.Proofs.HandlerLabels
+import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopHelpers
 import Flapjack.Pancake.WordConvs.CodeLabels
+import Flapjack.Pancake.WordConvs.LabelSafety
 import Flapjack.Compiler.Backend.StackProps.CodeLabels
+import Flapjack.Compiler.Backend.StackProps.ForbiddenOperations
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Steps
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Step
 import Flapjack.Compiler.Backend.LabToTarget.Navigation
@@ -809,6 +824,9 @@ import Flapjack.Compiler.Backend.RegAlloc.StateFilter
 import Flapjack.Compiler.Backend.RegAlloc.SortedInsert
 import Flapjack.Compiler.Backend.RegAlloc.TagColour
 import Flapjack.Compiler.Backend.RegAlloc.MoveTable
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameLookup
+import Flapjack.Compiler.Backend.WordAlloc.SSAMergeMoves
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveBounds
 
 
 
