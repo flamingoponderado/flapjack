@@ -986,6 +986,12 @@
       "sha256": "2eaa952ab65690ce7e0295ba3a42708411a2206def03b8622c9eb2d9271dde48"
     },
     {
+      "bytes": 320,
+      "out": "find_index_append_probe.out",
+      "rows": 10,
+      "sha256": "9ae2c5fb160e3293cc611cc3275f2d89b664e7c11cb9cdb550e2a27b2456e285"
+    },
+    {
       "bytes": 193,
       "out": "find_index_bounds_probe.out",
       "rows": 8,
@@ -3564,6 +3570,12 @@
       "out": "word_alloc_canonize_moves_aux_probe.out",
       "rows": 12,
       "sha256": "f59faa5d285c06d2662aad30f01d669059c9b66074a74bd781568853e94e2b0e"
+    },
+    {
+      "bytes": 204,
+      "out": "word_alloc_canonize_sort_probe.out",
+      "rows": 17,
+      "sha256": "0e8e3023bfa424a84659114a87a0cf06fdad2cc9f08d1715195f30fb041c19b4"
     },
     {
       "bytes": 71,
