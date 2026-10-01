@@ -3159,6 +3159,20 @@ returning Call bodies, ignored tail handlers and ignored Load16 fields.
 inputs. Select `HOL_PROBE_ONLY=word_alloc_limit_var_probeScript.sml`.
 The executed upstream maximum/limit route remains tracked on .30.1.2.1.
 
+### SSA renaming properties
+
+`ssa_rename_properties_probeScript.sml` replays the complete local
+`list_next_var_rename_props` source proof (word_allocProof5749-5777), with its
+two local register-class increment prerequisites also replayed literally. It
+then applies this proved theorem to eight original `list_next_var_rename`
+results: both classes, empty lists, duplicates, existing and overwritten
+bindings, a malformed tree, and unbounded natural indices. Each application
+discharges the original equality and class/map premises and checks an empty
+hypothesis list. Rows contain `(next,T)`: `EQT_INTRO` renders the **proved full
+four-conjunct conclusion** as T. This is distinct from attempting to EVAL a
+symbolic universally quantified lookup predicate. The full replay statement is
+captured separately; this local theorem is not claimed to be exported in HOL's DB.
+
 ### Full incremental Word-to-Stack handler safety
 
 `word_to_stack_handler_safety_probeScript.sml` observes the original actual

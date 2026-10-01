@@ -3415,6 +3415,12 @@
       "sha256": "6704452ea7c732755f87ac6f2165c881f28f13210e1d0471ce238a0dd1211ce7"
     },
     {
+      "bytes": 502,
+      "out": "ssa_rename_properties_probe.out",
+      "rows": 9,
+      "sha256": "d24de551070d87fbaf7b50a2757d289cdec9f4b67e6331fcd31af4547057c118"
+    },
+    {
       "bytes": 1401,
       "out": "ssa_setup_probe.out",
       "rows": 16,
