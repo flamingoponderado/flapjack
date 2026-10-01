@@ -3969,3 +3969,10 @@ and applies all eight full original-shaped cases. The rejected ShareInst proof
 uses only its original false source guard, with no target safety premise.
 These regressions do not establish cross-language equivalence or full compiler correctness.
 Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_primitives_probeScript.sml`.
+
+`stacksem_fp_case_types_probeScript.sml` captures seven original full type
+rows for the complete StackSem FP case, including all sixteen constructor
+payloads. Together with freshly regenerated movement/sign, arithmetic and
+conversion captures, these support the i81m source review. Generic machine,
+compile and FFI carriers and fixed word64 FP registers are preserved.
+Captures are regression evidence, not a HOL-to-Lean equivalence proof.
