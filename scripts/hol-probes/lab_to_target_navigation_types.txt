@@ -1,0 +1,75 @@
+<<HOL message: Created theory "lab_to_target_navigation_types">>
+Saved definition ____ "sec_loc_to_pc_def"
+Saved induction _____ "sec_loc_to_pc_ind"
+<<HOL message: mk_functional:
+  pattern completion has added 1 clause to the original specification.>>
+Saved definition ____ "sec_label_ok_def"
+Saved induction _____ "sec_label_ok_ind"
+Saved definition ____ "sec_labels_ok_def"
+sec_loc_to_pc=:num -> α line list -> num option
+sec_loc_to_pc_cons=sec_loc_to_pc n2 (l::lines) =
+if n2 = 0 ∨ ∃n1 k. l = Label n1 n2 k then SOME 0
+else OPTION_MAP (if is_Label l then I else SUC) (sec_loc_to_pc n2 lines)
+
+sec_loc_to_pc_cons_binder_lines=:α line list
+sec_loc_to_pc_cons_binder_l=:α line
+sec_loc_to_pc_cons_binder_n2=:num
+loc_to_pc_thm=∀n1 n2 ls.
+  EVERY sec_labels_ok ls ⇒
+  loc_to_pc n1 n2 ls =
+  case ls of
+    [] => NONE
+  | Section k xs::ys =>
+    if n1 = k then
+      case sec_loc_to_pc n2 xs of
+        NONE =>
+          OPTION_MAP ($+ (LENGTH (FILTER ($¬ ∘ is_Label) xs)))
+            (loc_to_pc n1 n2 ys)
+      | SOME v1 => SOME v1
+    else
+      OPTION_MAP ($+ (LENGTH (FILTER ($¬ ∘ is_Label) xs)))
+        (loc_to_pc n1 n2 ys)
+
+loc_to_pc_thm_binder_n1=:num
+loc_to_pc_thm_binder_n2=:num
+loc_to_pc_thm_binder_ls=:α sec list
+loc_to_pc=:num -> num -> α sec list -> num option
+is_Label=:α line -> bool
+asm_fetch_aux=:num -> α sec list -> α line option
+asm_code_length=:α sec list -> num
+sec_label_ok=:num -> α line -> bool
+sec_labels_ok=:α sec -> bool
+len_no_lab_original_overload=:α line list -> num
+<<HOL message: mk_functional:
+  pattern completion has added 5 clauses to the original specification.>>
+Saved definition ____ "line_similar_def"
+Saved induction _____ "line_similar_ind"
+<<HOL message: mk_functional:
+  pattern completion has added 1 clause to the original specification.>>
+Saved definition ____ "code_similar_def"
+Saved induction _____ "code_similar_ind"
+line_similar=:α line -> α line -> bool
+code_similar=:α sec list -> α sec list -> bool
+Label=:num -> num -> num -> α line
+Asm=:α asm_or_cbw -> word8 list -> num -> α line
+LabAsm=:α asm_with_lab -> α word -> word8 list -> num -> α line
+Section=:num -> α line list -> α sec
+Asmi=:α asm -> α asm_or_cbw
+ShareMem=:memop -> num -> α addr -> α asm_or_cbw
+JumpCmp=:cmp -> num -> α reg_imm -> lab -> α asm_with_lab
+CallFFI=:mlstring -> α asm_with_lab
+Imm=:α word -> α reg_imm
+Addr=:num -> α word -> α addr
+code_similar_IMP_asm_fetch_aux_line_similar=∀pc code1 code2.
+  code_similar code1 code2 ⇒
+  OPTREL line_similar (asm_fetch_aux pc code1) (asm_fetch_aux pc code2)
+
+code_similar_IMP_asm_fetch_aux_line_similar_binder_pc=:num
+code_similar_IMP_asm_fetch_aux_line_similar_binder_code1=:α sec list
+code_similar_IMP_asm_fetch_aux_line_similar_binder_code2=:α sec list
+code_similar_loc_to_pc=∀l1 l2 c1 c2. code_similar c1 c2 ⇒ loc_to_pc l1 l2 c1 = loc_to_pc l1 l2 c2
+
+code_similar_loc_to_pc_binder_l1=:num
+code_similar_loc_to_pc_binder_l2=:num
+code_similar_loc_to_pc_binder_c1=:α sec list
+code_similar_loc_to_pc_binder_c2=:α sec list

@@ -2714,3 +2714,17 @@ including independent Boolean callback results and List/Boolean states. These fi
 rows do not establish full allocator correctness or production routing. Regenerate
 with `HOL_PROBE_ONLY=reg_alloc_state_foreach_probeScript.sml` and the read-only
 original CakeML reg_alloc theory directory.
+
+`lab_to_target_navigation_types.sml` and its complete `.txt` transcript audit
+all three SectionNavigation declarations, their direct dependencies, the
+CodeSimilar relation types, the earlier fetch/location theorem binders, and
+native nested constructor types. Existing labSem constants are queried from
+the original loaded theory. Proof-local definitions and labProps definitions
+are re-elaborated from unchanged original source in memory; theorem statements
+are parsed from unchanged source and their bound/free variable types printed.
+This is type evidence, not a replay of the original proof or a cross-language
+equivalence proof. HOL `α line` has one shared word-index parameter; its
+instruction/name/memory-operation carriers are fixed by labLang's datatype.
+Run `HOL/bin/hol run <absolute script path>` from the original backend semantics
+directory and redirect stdout to the paired `.txt`, trimming trailing whitespace
+(optionally set `CAKEML`). All printed type and statement content is retained.

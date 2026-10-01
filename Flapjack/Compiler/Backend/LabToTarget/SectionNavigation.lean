@@ -3,7 +3,16 @@ import Flapjack.Compiler.Backend.LabSem.Navigation
 
 /-! Original section-local lookup and decomposition of native label navigation.
 Section label validity supplies exactly the ownership and nonzero-label facts
-needed to ignore sections with a different header. -/
+needed to ignore sections with a different header.
+
+Original inferred types are `num -> α line list -> num option` and
+`num -> num -> α sec list -> num option`. Here `α` is the HOL word-index
+parameter of labLang's datatype, not independent instruction/name carriers:
+Asm embeds `α asm_or_cbw`; LabAsm embeds `α asm_with_lab`, `α word`, and
+fixed word8 bytes. ShareMem fixes memop, JumpCmp fixes cmp/reg_imm, and
+CallFFI fixes mlstring. The native Lean instantiation below preserves those
+carriers with one positive word width. The complete reproducible original
+type transcript is scripts/hol-probes/lab_to_target_navigation_types.txt. -/
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm
 open Flapjack.Basis.Pure.MlString
