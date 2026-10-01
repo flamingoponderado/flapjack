@@ -3539,3 +3539,10 @@ run_probe word_convs_no_mt_def_probeScript.sml word_convs_no_mt_def_probe.out \
 run_probe word_convs_no_share_inst_def_probeScript.sml word_convs_no_share_inst_def_probe.out \
   wcns_01_mt wcns_02_seq wcns_03_loop wcns_04_if wcns_05_call wcns_06_alloc wcns_07_loc wcns_08_share wcns_09_install wcns_10_skip wcns_11_move wcns_12_inst wcns_13_assign wcns_14_get wcns_15_set wcns_16_store wcns_17_consts wcns_18_raise wcns_19_return wcns_20_break wcns_21_continue wcns_22_tick wcns_23_heap wcns_24_code wcns_25_data wcns_26_ffi wcns_call_none_none_width1 wcns_call_return_only_width1 wcns_call_both_present_width1 \
   "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe word_to_stack_no_shmemop_return_probeScript.sml word_to_stack_no_shmemop_return_probe.out \
+  cr_0_safe cr_0_forbidden cr_1_safe cr_1_forbidden cr_2_safe cr_2_forbidden cr_3_safe cr_3_forbidden cr_4_safe cr_4_forbidden cr_5_safe cr_5_forbidden cr_6_safe cr_6_forbidden cr_7_safe cr_7_forbidden \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_to_stack_no_shmemop_inst_probeScript.sml word_to_stack_no_shmemop_inst_probe.out \
+  ci_skip ci_const ci_binop_imm ci_binop_reg ci_shift_imm ci_shift_reg ci_div ci_long_mul ci_long_div ci_carry ci_add_overflow ci_sub_overflow ci_load ci_load8 ci_load16 ci_load32 ci_store ci_store8 ci_store16 ci_store32 ci_fpless ci_fplessequal ci_fpequal ci_fpabs ci_fpneg ci_fpsqrt ci_fpadd ci_fpsub ci_fpmul ci_fpdiv ci_fpfma ci_fpmov ci_fpmovtoreg ci_fpmovfromreg ci_fptoint ci_fpfromint ci_fpmovtoreg1 ci_fpmovfromreg1 ci_fpmovtoreg32 ci_fpmovfromreg32 ci_fpmovtoreg80 ci_fpmovfromreg80 \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
