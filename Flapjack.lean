@@ -1,3 +1,6 @@
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.If
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.MustTerminate
+import Flapjack.Compiler.Backend.WordToStack.NativeInstructions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Seq
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ReadsLiveExpressions
 import Flapjack.Compiler.Backend.LabSem.Navigation

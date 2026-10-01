@@ -39657,6 +39657,34 @@
   "reviewer": "flapjack-sol source comparison (2026-10-01, b4v0.3): literal labSem49-64/327-365/401-427 navigation on accepted native State and actual HolAsm/HolRegImm/HolAddr/MlString/BitVec LabLang carriers. Fetch skips labels without consuming position and skips empty sections; code length counts each nonlabel once, ignoring encoding lengths. loc_to_pc preserves first-match order, matching section entry even when empty for label0, positive label payload matching independent of section header, and offset increment only for nonlabels. next_label returns original Loc payload; get_lab_after skips current instruction then seeks first next label including next sections; failure stays NONE. All recursion follows original section/line equations; auxiliary size counts sections and lines only for Lean termination. Full asm_fetch_IMP proved for arbitrary source state/line from literal equations, no added bound/success/IH premise. Exact total functions, no flattened alternate evaluator. Positive word dimension qualifier names actual imported native word/state owners; no String/Array/fmap differences. Direct original HOL23 observations fully reduced=T, matching kernel replay; full evaluator/production route remains b4v0 open. Resumed direct source comparison 2026-10-01 after native classifier acceptance: all classifier consumers now use reviewed concrete isLabelHOL rather than broad generic utility. Canonical State/checker/native classifier prerequisites CLOSED. Original23 observations freshly revalidated. Full asm_fetch_IMP retains only original source-fetch premise; structural proof has no extra bound or simulation assumption. Coordinator source acceptance pending."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_apply_colour",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/MustTerminate.lean",
+  "lean_name": "evaluateApplyColour_MustTerminate",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01 (.11.1.26.2), original1105-1130 and Resume1433-1447: exact constructor with original3 premises/full existential post, only genuine body IH. Zero termdep yields source Error; otherwise body runs with original MustTerminate_limit and decremented termdep, its selected oracle retained. Body Error and timeout-to-Error handled; all other results restore original clock and termdep, original state and result-selected locals conclusion. Canonical fpRegs/store and positive-width word qualifiers with imported carrier roundtrip. Inherits reals_as_rational_cuts from reviewed WordSem evaluator, SOUNDNESS item8; no evaluator mutation. Coordinator review pending.",
+  "inherits_reals_as_rational_cuts": true
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_apply_colour",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/If.lean",
+  "lean_name": "evaluateApplyColour_If",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01 (.11.1.26.3), original1105-1130 and Resume1833-1881: original3premises/full existential post at exact Cmp/register-immediate/two branch constructor; only genuine branch IHs. Missing source lookup/comparison chooses source Error; successful lookup transport preserves identical WordLocW operands and exact wordSemWordCmp result, without assuming word-only operands or comparison success. Chosen branch receives original colouringOk/state relation and locals restricted from full merged input live set. Positive-width word and canonical fpRegs/store qualifiers with imported-carrier roundtrip. Inherits reals_as_rational_cuts from reviewed WordSem evaluator, SOUNDNESS item8. Coordinator review pending.",
+  "inherits_reals_as_rational_cuts": true
+},
+{
   "lean_path": "Flapjack/Compiler/Backend/Parmove/Invariants/Path.lean",
   "lean_name": "windmill_cons",
   "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
@@ -39679,6 +39707,42 @@
   "hol_name": "parsem_change_env",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.11: source255-265 exact conjunction (notMEM key MAP FST moves implies first key=second key) and MAP(first o SND)moves=MAP(second o SND)moves implies pointwise parsem equality. Generic pair/List and function environments retained. No windmill, destination uniqueness, globally equal inputs or target evaluation premise added. Function-update codec lemma proves result by induction, preserving repeated destination last-write behavior. Direct prerequisite of step_sem cycle case; full scheduler correctness remains open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "wRegWrite1_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeInstructions.lean",
+  "lean_name": "wRegWrite1Native",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead25.12: original register-write clauses40-50, ordered stack-load recursion52-55, and all wInst clauses88-185 compared with native HolInst/HolProg payloads. Same register division, strict window bound, saturating subtraction, staging and spill order, literal LongMul/LongDiv register assignments, six handled memory operations (Load16/Store16 catchall), FP comparison staging and width=64 move split, remaining FP passthrough and Inst Skip catchall. HolInst/HolArith/HolRegImm/HolAddr constructors are source-reviewed mirrors; HolFp/HolCmp/HolMemop aliases unchanged. words_as_type_indexed_bitvec records only positive width translation with NeZero; no extra premises or supplied target result. Universal toGeneric_wInst transport is kernel checked, not a semantics theorem. Full compiler and executed route remain open on parent25; coordinator review pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "wRegWrite2_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeInstructions.lean",
+  "lean_name": "wRegWrite2Native",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead25.12: original register-write clauses40-50, ordered stack-load recursion52-55, and all wInst clauses88-185 compared with native HolInst/HolProg payloads. Same register division, strict window bound, saturating subtraction, staging and spill order, literal LongMul/LongDiv register assignments, six handled memory operations (Load16/Store16 catchall), FP comparison staging and width=64 move split, remaining FP passthrough and Inst Skip catchall. HolInst/HolArith/HolRegImm/HolAddr constructors are source-reviewed mirrors; HolFp/HolCmp/HolMemop aliases unchanged. words_as_type_indexed_bitvec records only positive width translation with NeZero; no extra premises or supplied target result. Universal toGeneric_wInst transport is kernel checked, not a semantics theorem. Full compiler and executed route remain open on parent25; coordinator review pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "wStackLoad_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeInstructions.lean",
+  "lean_name": "wStackLoadNative",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead25.12: original register-write clauses40-50, ordered stack-load recursion52-55, and all wInst clauses88-185 compared with native HolInst/HolProg payloads. Same register division, strict window bound, saturating subtraction, staging and spill order, literal LongMul/LongDiv register assignments, six handled memory operations (Load16/Store16 catchall), FP comparison staging and width=64 move split, remaining FP passthrough and Inst Skip catchall. HolInst/HolArith/HolRegImm/HolAddr constructors are source-reviewed mirrors; HolFp/HolCmp/HolMemop aliases unchanged. words_as_type_indexed_bitvec records only positive width translation with NeZero; no extra premises or supplied target result. Universal toGeneric_wInst transport is kernel checked, not a semantics theorem. Full compiler and executed route remain open on parent25; coordinator review pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "wInst_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeInstructions.lean",
+  "lean_name": "wInstNative",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead25.12: original register-write clauses40-50, ordered stack-load recursion52-55, and all wInst clauses88-185 compared with native HolInst/HolProg payloads. Same register division, strict window bound, saturating subtraction, staging and spill order, literal LongMul/LongDiv register assignments, six handled memory operations (Load16/Store16 catchall), FP comparison staging and width=64 move split, remaining FP passthrough and Inst Skip catchall. HolInst/HolArith/HolRegImm/HolAddr constructors are source-reviewed mirrors; HolFp/HolCmp/HolMemop aliases unchanged. words_as_type_indexed_bitvec records only positive width translation with NeZero; no extra premises or supplied target result. Universal toGeneric_wInst transport is kernel checked, not a semantics theorem. Full compiler and executed route remain open on parent25; coordinator review pending."
 },
 {
   "lean_path": "Flapjack/Compiler/Backend/Parmove/Permutation.lean",
