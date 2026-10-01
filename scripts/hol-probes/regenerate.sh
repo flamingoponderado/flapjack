@@ -101,6 +101,12 @@ run_probe() {
   done
 }
 
+run_probe lab_to_target_section_lookup_probeScript.sml lab_to_target_section_lookup_probe.out \
+  section_entry section_label5 section_label7 section_missing preceding_entry preceding_label5 empty_tail_entry empty_tail_missing \
+  "$cake_dir/compiler/backend/semantics/labSemScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe target_props_interference_probeScript.sml target_props_interference_probe.out \
+  shift_zero shift_three shift_composition shift_ffi_unchanged shift_target_unchanged region_empty region_safe_before_wrap region_wrap_hits_entry \
+  "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe bytes_in_mem_probeScript.sml bytes_in_mem_probe.out \
   empty_ignores_guards nat_wrap excluded_head excluded_tail domain_head domain_tail wrong_value bool_payload update_off_region update_hit_region append_wrapped \
   "$cake_dir/misc/miscScript.sml" "$cake_dir/misc"
