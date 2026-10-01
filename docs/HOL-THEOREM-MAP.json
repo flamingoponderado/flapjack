@@ -42312,6 +42312,22 @@
   "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.11.4.19): full source2813-2826 theorem, proof2813-3309 get_clash_tree_ind. Quantified prog/lt/f/live/flive/livein/flivein unchanged. Six premises are wf_cutsets, wf live, EVERY paired wf context, domain flive=IMAGE f(domain live), INJ f(domain live) UNIV, and original successful check_clash_tree equation. Five conclusions are wf livein, INJ on livein, colouring_ok, livein=get_live, domain flivein=IMAGE f(domain livein); hide is identity. Predicate set/image/injectivity translations preserve each conjunct. No target evaluation, caller-supplied IH, poststate fact, constructor restriction or additional premise. Structural recursive proof uses accepted cases for every native constructor and all three Call branches (tail arbitrary ignored handler, returning NONE handler, returning SOME handler); only strict subprogram recursion remains internally. Exact WordLangProgHOL/BitVec positive width with NeZero retains source dimension via words_as_type_indexed_bitvec, HOL lists and Spt unit trees retained. Five fresh mixed original checker observations and kernel replay exercise nested control/return/handler/tail ignored malformed handler/rejection; observations supplement, not establish, source equivalence. Full checker soundness assembly now proved; executed checker route, allocation semantics and whole compiler correctness remain open. Coordinator review pending."
 },
 {
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/Independence.lean",
+  "lean_name": "parsem_nil",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "parsem_nil",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 parmove165: Complete transformer equality parsem [] = identity, with independent arbitrary register/value Type carriers and standard propositional DecidableEq register equality. Ten original universal theorem applications and actual CompilerParity kernel applications include independent Bool/Nat carriers; no numeric narrowing or word translation. Coordinator source review pending; broader preservation/renaming and compiler theorem remain open."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/Independence.lean",
+  "lean_name": "independence",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "independence",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 parmove182: Quantifies original before/source/destination/suffix/moves in source order; retains only windmill moves and moves decomposition conjuncts, concludes complete transformer equality after extracting the selected move to the head. Derived from reviewed parsem_perm with unconditional append permutation, no added freshness, wf, equality-of-output or successful-execution premise. Ten original universal theorem applications and actual CompilerParity kernel applications include independent Bool/Nat carriers; no numeric narrowing or word translation. Coordinator source review pending; broader preservation/renaming and compiler theorem remain open."
+},
+{
   "lean_path": "Flapjack/Compiler/Backend/Parmove/SeqsemUnchanged.lean",
   "lean_name": "seqsemMoveUnchanged",
   "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",

@@ -3005,13 +3005,14 @@ run_probe word_alloc_heu_counters_probeScript.sml word_alloc_heu_counters_probe.
 run_probe parmove_temp_mixed_probeScript.sml parmove_temp_mixed_probe.out \
   ntm_real ntm_read ntm_write ntm_both \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
-run_probe word_alloc_return_checker_probeScript.sml word_alloc_return_checker_probe.out \
-  rc_empty rc_cuts rc_duplicate_args rc_return_tick rc_return_break rc_return_collision rc_args_collision \
+
+run_probe word_alloc_checker_assembly_probeScript.sml word_alloc_checker_assembly_probe.out \
+  ca_control ca_return ca_handler ca_tail_ignored ca_collision \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
 
-run_probe word_alloc_oracle_colour_probeScript.sml word_alloc_oracle_colour_probe.out \
-  oc_none oc_empty oc_physical_bad oc_checker_collision oc_forced_collision oc_forced_distinct oc_rename oc_stack_equal oc_stack_below oc_raw_map \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+run_probe parmove_independence_probeScript.sml parmove_independence_probe.out \
+  ind_head ind_middle ind_tail ind_cycle ind_fanout ind_self ind_bool ind_empty_others ind_nil_nat ind_nil_bool \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
 run_probe parmove_seqsem_unchanged_probeScript.sml parmove_seqsem_unchanged_probe.out \
   su_empty su_chain su_cycle su_repeat su_source su_written su_self su_bool \
@@ -3020,7 +3021,3 @@ run_probe parmove_seqsem_unchanged_probeScript.sml parmove_seqsem_unchanged_prob
 run_probe parmove_parsem_map_inj_probeScript.sml parmove_parsem_map_inj_probe.out \
   pi_one pi_chain pi_cycle pi_shared_source pi_self pi_high pi_mixed pi_collision \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
-
-run_probe word_alloc_checker_assembly_probeScript.sml word_alloc_checker_assembly_probe.out \
-  ca_control ca_return ca_handler ca_tail_ignored ca_collision \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
