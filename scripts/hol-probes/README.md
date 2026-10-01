@@ -66,6 +66,19 @@ not compare an unspecified `THE NONE` value across provers. Regenerate with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=linear_scan_pure_props_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
+`linear_scan_top_probe.out` captures fourteen direct original EVAL results
+of the top-level `linear_scanScript.sml` definitions with raw sparse trees:
+`find_bijection_clash_tree` (Seq/Set and Branch with a cut set),
+`apply_bij_on_clash_tree`, `apply_bijection`, `size_of_clash_tree`,
+`extract_coloration`, the generated `run_i_linear_scan_hidden_state` (success
+and Subscript failure), and six end-to-end `linear_scan_reg_alloc` runs
+(moves, forced pairs, a spilling branch, physical and stack registers).
+`Flapjack.Test.LinearScanTopParity` kernel-checks every full result. These
+finite rows do not prove `linear_scan_reg_alloc_correct` or route the
+definitions into the compiler. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=linear_scan_top_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `linear_scan_monad_probe.out` captures thirty-four direct original EVAL
 results of the monadic `linear_scanScript.sml` definitions on a concrete
 hidden state, printed with raw sparse-tree constructors: the conditional

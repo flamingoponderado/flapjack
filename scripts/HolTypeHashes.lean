@@ -336,6 +336,8 @@ import Flapjack.Compiler.Backend.LinearScan
 import Flapjack.Compiler.Backend.LinearScan.HiddenState
 import Flapjack.Compiler.Backend.LinearScan.Steps
 import Flapjack.Compiler.Backend.LinearScan.Sorting
+import Flapjack.Compiler.Backend.LinearScan.TopLevel
+import Flapjack.Misc.Sptree.Foldi
 import Flapjack.Misc.MiscThe
 import Flapjack.Compiler.Backend.LinearScan.Proofs
 import Flapjack.Misc.Sptree.ToAList

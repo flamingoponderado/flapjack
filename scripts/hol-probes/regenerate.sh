@@ -2759,6 +2759,9 @@ run_probe monad_arrays_probeScript.sml monad_arrays_probe.out \
 run_probe linear_scan_monad_probeScript.sml linear_scan_monad_probe.out \
   add_if_lt_monad add_if_gt_monad add_if_subscript intervals_ct_monad remove_inactive add_active find_color_in_list find_color_pool find_color_colornum spill color_phy color_virt find_last_stealable find_spill_steal find_spill_keep step_aux_pref step_aux_spill pass1_phy pass1_stack pass1_forced pass2_virt find_reg_exchange apply_reg_exchange foldl filter_good edges sort_moves_rev sort_regs sorted_regs_to_list list_to_sorted_regs sort_moves sorted_moves_to_list list_to_sorted_moves pass_init \
   "$cake_dir/compiler/backend/reg_alloc/linear_scanScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+run_probe linear_scan_top_probeScript.sml linear_scan_top_probe.out \
+  bijection_seq bijection_branch apply_bij_tree apply_bijection size_ct extract run_i run_i_fail lsra_delta lsra_moves lsra_forced lsra_branch_spill lsra_phys lsra_stack \
+  "$cake_dir/compiler/backend/reg_alloc/linear_scanScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
 run_probe labsem_updates_probeScript.sml labsem_updates_probe.out lab_updates_pc_overwrite lab_updates_pc_increment lab_updates_clock_zero lab_updates_clock_positive lab_updates_reg_hit lab_updates_reg_other lab_updates_reg_loc lab_updates_mem_hit lab_updates_mem_other lab_updates_assert_sticky lab_updates_assert_false lab_updates_failed_reg_write lab_updates_failed_mem_write lab_updates_reg_imm_loc lab_updates_reg_imm_word lab_updates_fp_hit lab_updates_fp_other "$cake_dir/compiler/backend/semantics/labSemScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe parmove_invariants_probeScript.sml parmove_invariants_probe.out \
