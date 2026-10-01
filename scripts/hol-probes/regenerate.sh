@@ -2681,6 +2681,14 @@ run_probe word_alloc_get_writes_inst_probeScript.sml word_alloc_get_writes_inst_
   writes_const writes_add_carry writes_long_div writes_load16_catchall writes_fp_move64 writes_fp_move32 writes_fp_from_reg_catchall \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
 
+run_probe word_alloc_get_delta_inst_probeScript.sml word_alloc_get_delta_inst_probe.out \
+  gdi_skip gdi_const gdi_binop_reg gdi_binop_imm gdi_shift_reg gdi_shift_imm gdi_div gdi_addcarry gdi_addoverflow gdi_suboverflow gdi_longmul gdi_longdiv gdi_load gdi_store gdi_load32 gdi_store32 gdi_load8 gdi_store8 gdi_fpless gdi_fpmovtoreg64 gdi_fpmovtoreg32 gdi_fpmovfromreg64 gdi_fpmovfromreg32 gdi_fpneg_catchall \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_alloc_get_clash_tree_probeScript.sml word_alloc_get_clash_tree_probe.out \
+  gct_skip gct_move gct_inst gct_assign gct_get gct_store gct_seq gct_if_reg gct_if_imm gct_mustterminate gct_alloc gct_install gct_codebufferwrite gct_databufferwrite gct_ffi gct_raise gct_return gct_tick gct_locvalue gct_set gct_opcurrheap gct_storeconsts gct_shareinst_store gct_shareinst_other gct_loop gct_break_none gct_break_some gct_continue_none gct_continue_some gct_call_none gct_call_ret gct_call_ret_handler \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
 run_probe word_alloc_get_writes_probeScript.sml word_alloc_get_writes_probe.out \
   writes_move writes_store_consts writes_inst_load16 writes_shared_load16 writes_shared_store16 writes_seq_catchall writes_install \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
@@ -2703,6 +2711,7 @@ run_probe word_to_stack_abs_stack_probeScript.sml word_to_stack_abs_stack_probe.
 run_probe word_to_stack_index_list_probeScript.sml word_to_stack_index_list_probe.out \
   il_empty il_single il_desc an_even an_odd il_snd il_fst il_el_zero il_el_last \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe parmove_semantics_probeScript.sml parmove_semantics_probe.out \
   sem_windmill sem_repeated sem_parallel_swap1 sem_parallel_swap2 sem_sequential_swap2 sem_parallel_last sem_sequential_last sem_untouched sem_state_first sem_state_second sem_ignore_temp sem_real_difference \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
@@ -2741,9 +2750,11 @@ run_probe parmove_updates_probeScript.sml parmove_updates_probe.out \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 run_probe labsem_navigation_probeScript.sml labsem_navigation_probe.out nav_fetch0 nav_fetch1 nav_fetch2 nav_fetch3 nav_fetch4 nav_fetch_end nav_length nav_entry1 nav_entry2 nav_empty9 nav_empty8 nav_label5 nav_label7 nav_label4 nav_missing nav_missingsection nav_return0 nav_return1 nav_return2 nav_return3 nav_return4 nav_return5 nav_first_label "$cake_dir/compiler/backend/semantics/labSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
+
 run_probe parmove_path_probeScript.sml parmove_path_probe.out \
   pv_empty pv_single pv_chain pv_cycle pv_changed_dest pv_bad_prefix pv_windmill_empty pv_windmill_fresh pv_windmill_repeated pv_windmill_sources \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
 
 run_probe parmove_environment_probeScript.sml parmove_environment_probe.out \
   pe_first_written pe_second_written pe_first_untouched pe_second_untouched \
@@ -2752,4 +2763,17 @@ run_probe parmove_environment_probeScript.sml parmove_environment_probe.out \
 
 run_probe labsem_arithmetic_probeScript.sml labsem_arithmetic_probe.out lab_arith_binop_add lab_arith_binop_sub lab_arith_binop_and lab_arith_binop_or lab_arith_binop_xor lab_arith_loc_or_self lab_arith_loc_or_other_reg lab_arith_loc_or_imm lab_arith_loc_add_self lab_arith_binop_right_loc lab_arith_lsl_valid lab_arith_lsl_invalid lab_arith_lsr_invalid lab_arith_asr_invalid lab_arith_ror_invalid lab_arith_shift_source_loc lab_arith_shift_amount_loc lab_arith_div_valid lab_arith_div_zero lab_arith_div_divisor_loc lab_arith_div_dividend_loc lab_arith_carry_nonzero lab_arith_carry_zero lab_arith_carry_flag_alias lab_arith_carry_loc lab_arith_longmul_valid lab_arith_longmul_dest_alias lab_arith_longmul_loc lab_arith_longdiv_valid lab_arith_longdiv_dest_alias lab_arith_longdiv_quotient_bound lab_arith_longdiv_zero lab_arith_longdiv_loc lab_arith_add_overflow lab_arith_add_no_overflow lab_arith_add_negative_overflow lab_arith_sub_overflow lab_arith_sub_negative_rhs_overflow lab_arith_sub_no_overflow lab_arith_addOverflow_flag_alias lab_arith_addOverflow_loc lab_arith_subOverflow_flag_alias lab_arith_subOverflow_loc lab_arith_sticky_failed "$cake_dir/compiler/backend/semantics/labSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
+run_probe parmove_permutation_probeScript.sml parmove_permutation_probe.out \
+  pp_first_one pp_second_one pp_first_three pp_second_three pp_first_four pp_second_four pp_duplicate_first pp_duplicate_second pp_swap pp_empty \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+
+run_probe parmove_steps_probeScript.sml parmove_steps_probe.out \
+  ps_remove ps_start ps_extend ps_save ps_emit_head ps_emit_last \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+
+run_probe parmove_noread_probeScript.sml parmove_noread_probe.out \
+  pn_duplicate_left pn_duplicate_right pn_untouched_left pn_untouched_right pn_boundary_left pn_boundary_right pn_self_left pn_self_right \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 run_probe labsem_fp_updates_probeScript.sml labsem_fp_updates_probe.out lab_fp_less_nan lab_fp_less_equal_zero lab_fp_equal_nan lab_fp_equal_zero lab_fp_mov_payload lab_fp_abs_payload lab_fp_neg_zero lab_fp_sqrt_four lab_fp_add_two lab_fp_sub_zero lab_fp_mul_four lab_fp_div_half lab_fp_fma_order lab_fp_to_reg64 lab_fp_to_reg_alias32 lab_fp_from_reg64 lab_fp_from_reg_loc_error lab_fp_from_reg32 lab_fp_from_reg8 lab_fp_to_int_tie_even lab_fp_to_int_negative lab_fp_to_int_overflow_bits lab_fp_to_int_overflow_failed lab_fp_to_int_inf_error lab_fp_to_int_odd32 lab_fp_from_int64 lab_fp_from_int32 lab_fp_from_int8 lab_fp_from_int128 "$cake_dir/compiler/backend/semantics/labSemScript.sml" "$cake_dir/compiler/backend/semantics"
