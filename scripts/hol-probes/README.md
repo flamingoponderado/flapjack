@@ -2705,3 +2705,12 @@ No theory artifact is exported. Rows cover identity/composition, preservation
 of FFI/target fields, duplicate FFI entries, empty intervals, and wraparound
 that first hits an FFI entry. Unresolved logical observations are rejected.
 Regenerate with `HOL_PROBE_ONLY=target_props_interference_probeScript.sml scripts/hol-probes/regenerate.sh`.
+## Native state-exception iteration
+
+`reg_alloc_state_foreach_probeScript.sml` captures the generic original
+`st_ex_FOREACH` type and eleven direct observations. `RegAllocStateForeachParity`
+replays order, discarded success values, failure-state retention and tail skipping,
+including independent Boolean callback results and List/Boolean states. These finite
+rows do not establish full allocator correctness or production routing. Regenerate
+with `HOL_PROBE_ONLY=reg_alloc_state_foreach_probeScript.sml` and the read-only
+original CakeML reg_alloc theory directory.
