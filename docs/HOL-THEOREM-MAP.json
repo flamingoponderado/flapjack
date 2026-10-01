@@ -39825,5 +39825,299 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.1) against wordPropsScript.sml:2275-2279 handler_eq: x with handler := x.handler = x over the exact WordSem state; free x as explicit binder. WordSem finite-map fields via fmap_as_finite_support and positive width are the only carrier translations."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "evaluate_stack_swap",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateStackSwap/Leaves.lean",
+    "lean_name": "evaluateStackSwap_Skip",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.2): HOL evaluate_stack_swap (wordPropsScript.sml:2316-2363) at the Skip case of evaluate_ind: same binder s, no premise, and the HOL case-split conclusion rendered by the untagged stackSwapPost (Error unconstrained; FinalFFI/TimeOut/NotEnoughSpace with empty stack and locals and equal swapped run; Exception with the LASTN (handler+1) frame witnesses e0 e n ls m lss and the transported run; otherwise s_key_eq, handler and the transported run). No sub-program, so no IH and no extra premise. Proof follows HOL: every non-recursive statement except Raise and Alloc neither reads nor writes the stack below the frame (evaluate_withStack_const, untagged), so the swapped run returns the same result with the stack replaced, and the result is never an exception; flushing results empty the stack and locals; s_key_eq_refl gives the key equality. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "evaluate_stack_swap",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateStackSwap/Leaves.lean",
+    "lean_name": "evaluateStackSwap_StoreConsts",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.2): HOL evaluate_stack_swap (wordPropsScript.sml:2316-2363) at the StoreConsts case of evaluate_ind: same binder s, no premise, and the HOL case-split conclusion rendered by the untagged stackSwapPost (Error unconstrained; FinalFFI/TimeOut/NotEnoughSpace with empty stack and locals and equal swapped run; Exception with the LASTN (handler+1) frame witnesses e0 e n ls m lss and the transported run; otherwise s_key_eq, handler and the transported run). No sub-program, so no IH and no extra premise. Proof follows HOL: every non-recursive statement except Raise and Alloc neither reads nor writes the stack below the frame (evaluate_withStack_const, untagged), so the swapped run returns the same result with the stack replaced, and the result is never an exception; flushing results empty the stack and locals; s_key_eq_refl gives the key equality. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "evaluate_stack_swap",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateStackSwap/Leaves.lean",
+    "lean_name": "evaluateStackSwap_Move",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.2): HOL evaluate_stack_swap (wordPropsScript.sml:2316-2363) at the Move case of evaluate_ind: same binder s, no premise, and the HOL case-split conclusion rendered by the untagged stackSwapPost (Error unconstrained; FinalFFI/TimeOut/NotEnoughSpace with empty stack and locals and equal swapped run; Exception with the LASTN (handler+1) frame witnesses e0 e n ls m lss and the transported run; otherwise s_key_eq, handler and the transported run). No sub-program, so no IH and no extra premise. Proof follows HOL: every non-recursive statement except Raise and Alloc neither reads nor writes the stack below the frame (evaluate_withStack_const, untagged), so the swapped run returns the same result with the stack replaced, and the result is never an exception; flushing results empty the stack and locals; s_key_eq_refl gives the key equality. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "evaluate_stack_swap",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateStackSwap/Leaves.lean",
+    "lean_name": "evaluateStackSwap_Inst",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.2): HOL evaluate_stack_swap (wordPropsScript.sml:2316-2363) at the Inst case of evaluate_ind: same binder s, no premise, and the HOL case-split conclusion rendered by the untagged stackSwapPost (Error unconstrained; FinalFFI/TimeOut/NotEnoughSpace with empty stack and locals and equal swapped run; Exception with the LASTN (handler+1) frame witnesses e0 e n ls m lss and the transported run; otherwise s_key_eq, handler and the transported run). No sub-program, so no IH and no extra premise. Proof follows HOL: every non-recursive statement except Raise and Alloc neither reads nor writes the stack below the frame (evaluate_withStack_const, untagged), so the swapped run returns the same result with the stack replaced, and the result is never an exception; flushing results empty the stack and locals; s_key_eq_refl gives the key equality. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "evaluate_stack_swap",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateStackSwap/Leaves.lean",
+    "lean_name": "evaluateStackSwap_Assign",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.2): HOL evaluate_stack_swap (wordPropsScript.sml:2316-2363) at the Assign case of evaluate_ind: same binder s, no premise, and the HOL case-split conclusion rendered by the untagged stackSwapPost (Error unconstrained; FinalFFI/TimeOut/NotEnoughSpace with empty stack and locals and equal swapped run; Exception with the LASTN (handler+1) frame witnesses e0 e n ls m lss and the transported run; otherwise s_key_eq, handler and the transported run). No sub-program, so no IH and no extra premise. Proof follows HOL: every non-recursive statement except Raise and Alloc neither reads nor writes the stack below the frame (evaluate_withStack_const, untagged), so the swapped run returns the same result with the stack replaced, and the result is never an exception; flushing results empty the stack and locals; s_key_eq_refl gives the key equality. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "evaluate_stack_swap",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateStackSwap/Leaves.lean",
+    "lean_name": "evaluateStackSwap_Get",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.2): HOL evaluate_stack_swap (wordPropsScript.sml:2316-2363) at the Get case of evaluate_ind: same binder s, no premise, and the HOL case-split conclusion rendered by the untagged stackSwapPost (Error unconstrained; FinalFFI/TimeOut/NotEnoughSpace with empty stack and locals and equal swapped run; Exception with the LASTN (handler+1) frame witnesses e0 e n ls m lss and the transported run; otherwise s_key_eq, handler and the transported run). No sub-program, so no IH and no extra premise. Proof follows HOL: every non-recursive statement except Raise and Alloc neither reads nor writes the stack below the frame (evaluate_withStack_const, untagged), so the swapped run returns the same result with the stack replaced, and the result is never an exception; flushing results empty the stack and locals; s_key_eq_refl gives the key equality. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "evaluate_stack_swap",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateStackSwap/Leaves.lean",
+    "lean_name": "evaluateStackSwap_Set",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.2): HOL evaluate_stack_swap (wordPropsScript.sml:2316-2363) at the Set case of evaluate_ind: same binder s, no premise, and the HOL case-split conclusion rendered by the untagged stackSwapPost (Error unconstrained; FinalFFI/TimeOut/NotEnoughSpace with empty stack and locals and equal swapped run; Exception with the LASTN (handler+1) frame witnesses e0 e n ls m lss and the transported run; otherwise s_key_eq, handler and the transported run). No sub-program, so no IH and no extra premise. Proof follows HOL: every non-recursive statement except Raise and Alloc neither reads nor writes the stack below the frame (evaluate_withStack_const, untagged), so the swapped run returns the same result with the stack replaced, and the result is never an exception; flushing results empty the stack and locals; s_key_eq_refl gives the key equality. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "evaluate_stack_swap",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateStackSwap/Leaves.lean",
+    "lean_name": "evaluateStackSwap_OpCurrHeap",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.2): HOL evaluate_stack_swap (wordPropsScript.sml:2316-2363) at the OpCurrHeap case of evaluate_ind: same binder s, no premise, and the HOL case-split conclusion rendered by the untagged stackSwapPost (Error unconstrained; FinalFFI/TimeOut/NotEnoughSpace with empty stack and locals and equal swapped run; Exception with the LASTN (handler+1) frame witnesses e0 e n ls m lss and the transported run; otherwise s_key_eq, handler and the transported run). No sub-program, so no IH and no extra premise. Proof follows HOL: every non-recursive statement except Raise and Alloc neither reads nor writes the stack below the frame (evaluate_withStack_const, untagged), so the swapped run returns the same result with the stack replaced, and the result is never an exception; flushing results empty the stack and locals; s_key_eq_refl gives the key equality. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "evaluate_stack_swap",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateStackSwap/Leaves.lean",
+    "lean_name": "evaluateStackSwap_Store",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.2): HOL evaluate_stack_swap (wordPropsScript.sml:2316-2363) at the Store case of evaluate_ind: same binder s, no premise, and the HOL case-split conclusion rendered by the untagged stackSwapPost (Error unconstrained; FinalFFI/TimeOut/NotEnoughSpace with empty stack and locals and equal swapped run; Exception with the LASTN (handler+1) frame witnesses e0 e n ls m lss and the transported run; otherwise s_key_eq, handler and the transported run). No sub-program, so no IH and no extra premise. Proof follows HOL: every non-recursive statement except Raise and Alloc neither reads nor writes the stack below the frame (evaluate_withStack_const, untagged), so the swapped run returns the same result with the stack replaced, and the result is never an exception; flushing results empty the stack and locals; s_key_eq_refl gives the key equality. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "evaluate_stack_swap",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateStackSwap/Leaves.lean",
+    "lean_name": "evaluateStackSwap_Tick",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.2): HOL evaluate_stack_swap (wordPropsScript.sml:2316-2363) at the Tick case of evaluate_ind: same binder s, no premise, and the HOL case-split conclusion rendered by the untagged stackSwapPost (Error unconstrained; FinalFFI/TimeOut/NotEnoughSpace with empty stack and locals and equal swapped run; Exception with the LASTN (handler+1) frame witnesses e0 e n ls m lss and the transported run; otherwise s_key_eq, handler and the transported run). No sub-program, so no IH and no extra premise. Proof follows HOL: every non-recursive statement except Raise and Alloc neither reads nor writes the stack below the frame (evaluate_withStack_const, untagged), so the swapped run returns the same result with the stack replaced, and the result is never an exception; flushing results empty the stack and locals; s_key_eq_refl gives the key equality. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "evaluate_stack_swap",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateStackSwap/Leaves.lean",
+    "lean_name": "evaluateStackSwap_Return",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.2): HOL evaluate_stack_swap (wordPropsScript.sml:2316-2363) at the Return case of evaluate_ind: same binder s, no premise, and the HOL case-split conclusion rendered by the untagged stackSwapPost (Error unconstrained; FinalFFI/TimeOut/NotEnoughSpace with empty stack and locals and equal swapped run; Exception with the LASTN (handler+1) frame witnesses e0 e n ls m lss and the transported run; otherwise s_key_eq, handler and the transported run). No sub-program, so no IH and no extra premise. Proof follows HOL: every non-recursive statement except Raise and Alloc neither reads nor writes the stack below the frame (evaluate_withStack_const, untagged), so the swapped run returns the same result with the stack replaced, and the result is never an exception; flushing results empty the stack and locals; s_key_eq_refl gives the key equality. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "evaluate_stack_swap",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateStackSwap/Leaves.lean",
+    "lean_name": "evaluateStackSwap_Break",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.2): HOL evaluate_stack_swap (wordPropsScript.sml:2316-2363) at the Break case of evaluate_ind: same binder s, no premise, and the HOL case-split conclusion rendered by the untagged stackSwapPost (Error unconstrained; FinalFFI/TimeOut/NotEnoughSpace with empty stack and locals and equal swapped run; Exception with the LASTN (handler+1) frame witnesses e0 e n ls m lss and the transported run; otherwise s_key_eq, handler and the transported run). No sub-program, so no IH and no extra premise. Proof follows HOL: every non-recursive statement except Raise and Alloc neither reads nor writes the stack below the frame (evaluate_withStack_const, untagged), so the swapped run returns the same result with the stack replaced, and the result is never an exception; flushing results empty the stack and locals; s_key_eq_refl gives the key equality. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "evaluate_stack_swap",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateStackSwap/Leaves.lean",
+    "lean_name": "evaluateStackSwap_Continue",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.2): HOL evaluate_stack_swap (wordPropsScript.sml:2316-2363) at the Continue case of evaluate_ind: same binder s, no premise, and the HOL case-split conclusion rendered by the untagged stackSwapPost (Error unconstrained; FinalFFI/TimeOut/NotEnoughSpace with empty stack and locals and equal swapped run; Exception with the LASTN (handler+1) frame witnesses e0 e n ls m lss and the transported run; otherwise s_key_eq, handler and the transported run). No sub-program, so no IH and no extra premise. Proof follows HOL: every non-recursive statement except Raise and Alloc neither reads nor writes the stack below the frame (evaluate_withStack_const, untagged), so the swapped run returns the same result with the stack replaced, and the result is never an exception; flushing results empty the stack and locals; s_key_eq_refl gives the key equality. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "evaluate_stack_swap",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateStackSwap/Leaves.lean",
+    "lean_name": "evaluateStackSwap_LocValue",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.2): HOL evaluate_stack_swap (wordPropsScript.sml:2316-2363) at the LocValue case of evaluate_ind: same binder s, no premise, and the HOL case-split conclusion rendered by the untagged stackSwapPost (Error unconstrained; FinalFFI/TimeOut/NotEnoughSpace with empty stack and locals and equal swapped run; Exception with the LASTN (handler+1) frame witnesses e0 e n ls m lss and the transported run; otherwise s_key_eq, handler and the transported run). No sub-program, so no IH and no extra premise. Proof follows HOL: every non-recursive statement except Raise and Alloc neither reads nor writes the stack below the frame (evaluate_withStack_const, untagged), so the swapped run returns the same result with the stack replaced, and the result is never an exception; flushing results empty the stack and locals; s_key_eq_refl gives the key equality. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "evaluate_stack_swap",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateStackSwap/Leaves.lean",
+    "lean_name": "evaluateStackSwap_Install",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.2): HOL evaluate_stack_swap (wordPropsScript.sml:2316-2363) at the Install case of evaluate_ind: same binder s, no premise, and the HOL case-split conclusion rendered by the untagged stackSwapPost (Error unconstrained; FinalFFI/TimeOut/NotEnoughSpace with empty stack and locals and equal swapped run; Exception with the LASTN (handler+1) frame witnesses e0 e n ls m lss and the transported run; otherwise s_key_eq, handler and the transported run). No sub-program, so no IH and no extra premise. Proof follows HOL: every non-recursive statement except Raise and Alloc neither reads nor writes the stack below the frame (evaluate_withStack_const, untagged), so the swapped run returns the same result with the stack replaced, and the result is never an exception; flushing results empty the stack and locals; s_key_eq_refl gives the key equality. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "evaluate_stack_swap",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateStackSwap/Leaves.lean",
+    "lean_name": "evaluateStackSwap_CodeBufferWrite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.2): HOL evaluate_stack_swap (wordPropsScript.sml:2316-2363) at the CodeBufferWrite case of evaluate_ind: same binder s, no premise, and the HOL case-split conclusion rendered by the untagged stackSwapPost (Error unconstrained; FinalFFI/TimeOut/NotEnoughSpace with empty stack and locals and equal swapped run; Exception with the LASTN (handler+1) frame witnesses e0 e n ls m lss and the transported run; otherwise s_key_eq, handler and the transported run). No sub-program, so no IH and no extra premise. Proof follows HOL: every non-recursive statement except Raise and Alloc neither reads nor writes the stack below the frame (evaluate_withStack_const, untagged), so the swapped run returns the same result with the stack replaced, and the result is never an exception; flushing results empty the stack and locals; s_key_eq_refl gives the key equality. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "evaluate_stack_swap",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateStackSwap/Leaves.lean",
+    "lean_name": "evaluateStackSwap_DataBufferWrite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.2): HOL evaluate_stack_swap (wordPropsScript.sml:2316-2363) at the DataBufferWrite case of evaluate_ind: same binder s, no premise, and the HOL case-split conclusion rendered by the untagged stackSwapPost (Error unconstrained; FinalFFI/TimeOut/NotEnoughSpace with empty stack and locals and equal swapped run; Exception with the LASTN (handler+1) frame witnesses e0 e n ls m lss and the transported run; otherwise s_key_eq, handler and the transported run). No sub-program, so no IH and no extra premise. Proof follows HOL: every non-recursive statement except Raise and Alloc neither reads nor writes the stack below the frame (evaluate_withStack_const, untagged), so the swapped run returns the same result with the stack replaced, and the result is never an exception; flushing results empty the stack and locals; s_key_eq_refl gives the key equality. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "evaluate_stack_swap",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateStackSwap/Leaves.lean",
+    "lean_name": "evaluateStackSwap_FFI",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.2): HOL evaluate_stack_swap (wordPropsScript.sml:2316-2363) at the FFI case of evaluate_ind: same binder s, no premise, and the HOL case-split conclusion rendered by the untagged stackSwapPost (Error unconstrained; FinalFFI/TimeOut/NotEnoughSpace with empty stack and locals and equal swapped run; Exception with the LASTN (handler+1) frame witnesses e0 e n ls m lss and the transported run; otherwise s_key_eq, handler and the transported run). No sub-program, so no IH and no extra premise. Proof follows HOL: every non-recursive statement except Raise and Alloc neither reads nor writes the stack below the frame (evaluate_withStack_const, untagged), so the swapped run returns the same result with the stack replaced, and the result is never an exception; flushing results empty the stack and locals; s_key_eq_refl gives the key equality. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "evaluate_stack_swap",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateStackSwap/Leaves.lean",
+    "lean_name": "evaluateStackSwap_ShareInst",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.2): HOL evaluate_stack_swap (wordPropsScript.sml:2316-2363) at the ShareInst case of evaluate_ind: same binder s, no premise, and the HOL case-split conclusion rendered by the untagged stackSwapPost (Error unconstrained; FinalFFI/TimeOut/NotEnoughSpace with empty stack and locals and equal swapped run; Exception with the LASTN (handler+1) frame witnesses e0 e n ls m lss and the transported run; otherwise s_key_eq, handler and the transported run). No sub-program, so no IH and no extra premise. Proof follows HOL: every non-recursive statement except Raise and Alloc neither reads nor writes the stack below the frame (evaluate_withStack_const, untagged), so the swapped run returns the same result with the stack replaced, and the result is never an exception; flushing results empty the stack and locals; s_key_eq_refl gives the key equality. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "evaluate_stack_swap",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateStackSwap/Leaves.lean",
+    "lean_name": "evaluateStackSwap_Raise",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.2): HOL evaluate_stack_swap (wordPropsScript.sml:2316-2363) at the Raise case of evaluate_ind: same binder s, no premise, and the HOL case-split conclusion rendered by the untagged stackSwapPost (Error unconstrained; FinalFFI/TimeOut/NotEnoughSpace with empty stack and locals and equal swapped run; Exception with the LASTN (handler+1) frame witnesses e0 e n ls m lss and the transported run; otherwise s_key_eq, handler and the transported run). No sub-program, so no IH and no extra premise. Proof follows HOL: jump_exc on the value-equal stack (s_val_eq_length, s_val_eq_LASTN) reaches the same handler frame keys, with locals from that frame (lss' := e'), and s_key_eq_refl for the remaining stack. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "evaluate_stack_swap",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateStackSwap/Alloc.lean",
+    "lean_name": "evaluateStackSwap_Alloc",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.2): HOL evaluate_stack_swap (wordPropsScript.sml:2316-2363) at the Alloc case (proof wordPropsScript.sml:2371-2411): same binder s, no premise, the HOL case-split conclusion rendered by the untagged stackSwapPost, no IH. Proof follows HOL: the pushed frame is independent of the stack below (s_val_eq_stack_size for stack_max), gc_s_val_eq transports the collection, the popped frames coincide by s_val_and_key_eq with gc_s_key_eq, and push_env_pop_env_s_key_eq gives the key equality and the handler; has_space and AllocSize are stack-independent. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
   }
 ]
