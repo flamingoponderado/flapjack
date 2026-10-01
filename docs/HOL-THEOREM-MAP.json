@@ -38837,5 +38837,86 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-sol source comparison (2026-10-01, b4v0.3.2): labSemScript47 is_Label true exactly Label, false on other two constructors. Canonical actual LabLang Line payloads use HolAsm/HolMemop/HolAddr and HolCmp/HolRegImm/MlString with BitVec at one positive NeZero width; fixed encoded bytes BitVec8 retained. The former generic isLabel quantified arbitrary payload Types, including an arbitrary Word, which is not the source carrier even when ignored; its unqualified tag/map/pin are removed while the generic function signature/body stay unchanged as explicitly documented Flapjack-only utility. Native three-case classifier is exact under word-dimension translation. Unconditional kernel isLabelHOL_eq_generic compares actual native instances, no added hypothesis. Native navigation/evaluator consumption remains linked on b4v0.3/b4v0; no executed compiler change or performance exception."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/Updates.lean",
+  "lean_name": "updPc",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "upd_pc_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol direct source comparison 2026-10-01, bead flapjack-b4v0.2.1.2: literal labSemScript65-83/151-156/319-325 equations over accepted full LabSem.State, native WordLocW/HolRegImm, total function maps and fixed64 FP registers. Record updates preserve all other fields; assertion is not b OR old failed, preserving preceding writes; clock subtraction saturates. No extra hypotheses, duplicate state, finite-map translation, FP arithmetic approximation or evaluator claim. Only standard positive HOL word dimension to BitVec width/NeZero and universe0 FFI translation. Original 17 state-write observations labsem_updates_probe.out all true, native kernel replay LabSemUpdatesParity. Shared native consumers remain tracked on arithmetic/memory/FP dependency beads; full evaluator and production compilation correctness remain open. Coordinator source acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/Updates.lean",
+  "lean_name": "updReg",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "upd_reg_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol direct source comparison 2026-10-01, bead flapjack-b4v0.2.1.2: literal labSemScript65-83/151-156/319-325 equations over accepted full LabSem.State, native WordLocW/HolRegImm, total function maps and fixed64 FP registers. Record updates preserve all other fields; assertion is not b OR old failed, preserving preceding writes; clock subtraction saturates. No extra hypotheses, duplicate state, finite-map translation, FP arithmetic approximation or evaluator claim. Only standard positive HOL word dimension to BitVec width/NeZero and universe0 FFI translation. Original 17 state-write observations labsem_updates_probe.out all true, native kernel replay LabSemUpdatesParity. Shared native consumers remain tracked on arithmetic/memory/FP dependency beads; full evaluator and production compilation correctness remain open. Coordinator source acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/Updates.lean",
+  "lean_name": "updMem",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "upd_mem_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol direct source comparison 2026-10-01, bead flapjack-b4v0.2.1.2: literal labSemScript65-83/151-156/319-325 equations over accepted full LabSem.State, native WordLocW/HolRegImm, total function maps and fixed64 FP registers. Record updates preserve all other fields; assertion is not b OR old failed, preserving preceding writes; clock subtraction saturates. No extra hypotheses, duplicate state, finite-map translation, FP arithmetic approximation or evaluator claim. Only standard positive HOL word dimension to BitVec width/NeZero and universe0 FFI translation. Original 17 state-write observations labsem_updates_probe.out all true, native kernel replay LabSemUpdatesParity. Shared native consumers remain tracked on arithmetic/memory/FP dependency beads; full evaluator and production compilation correctness remain open. Coordinator source acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/Updates.lean",
+  "lean_name": "assertState",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "assert_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol direct source comparison 2026-10-01, bead flapjack-b4v0.2.1.2: literal labSemScript65-83/151-156/319-325 equations over accepted full LabSem.State, native WordLocW/HolRegImm, total function maps and fixed64 FP registers. Record updates preserve all other fields; assertion is not b OR old failed, preserving preceding writes; clock subtraction saturates. No extra hypotheses, duplicate state, finite-map translation, FP arithmetic approximation or evaluator claim. Only standard positive HOL word dimension to BitVec width/NeZero and universe0 FFI translation. Original 17 state-write observations labsem_updates_probe.out all true, native kernel replay LabSemUpdatesParity. Shared native consumers remain tracked on arithmetic/memory/FP dependency beads; full evaluator and production compilation correctness remain open. Coordinator source acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/Updates.lean",
+  "lean_name": "regImm",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "reg_imm_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol direct source comparison 2026-10-01, bead flapjack-b4v0.2.1.2: literal labSemScript65-83/151-156/319-325 equations over accepted full LabSem.State, native WordLocW/HolRegImm, total function maps and fixed64 FP registers. Record updates preserve all other fields; assertion is not b OR old failed, preserving preceding writes; clock subtraction saturates. No extra hypotheses, duplicate state, finite-map translation, FP arithmetic approximation or evaluator claim. Only standard positive HOL word dimension to BitVec width/NeZero and universe0 FFI translation. Original 17 state-write observations labsem_updates_probe.out all true, native kernel replay LabSemUpdatesParity. Shared native consumers remain tracked on arithmetic/memory/FP dependency beads; full evaluator and production compilation correctness remain open. Coordinator source acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/Updates.lean",
+  "lean_name": "updFpReg",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "upd_fp_reg_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol direct source comparison 2026-10-01, bead flapjack-b4v0.2.1.2: literal labSemScript65-83/151-156/319-325 equations over accepted full LabSem.State, native WordLocW/HolRegImm, total function maps and fixed64 FP registers. Record updates preserve all other fields; assertion is not b OR old failed, preserving preceding writes; clock subtraction saturates. No extra hypotheses, duplicate state, finite-map translation, FP arithmetic approximation or evaluator claim. Only standard positive HOL word dimension to BitVec width/NeZero and universe0 FFI translation. Original 17 state-write observations labsem_updates_probe.out all true, native kernel replay LabSemUpdatesParity. Shared native consumers remain tracked on arithmetic/memory/FP dependency beads; full evaluator and production compilation correctness remain open. Coordinator source acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/Updates.lean",
+  "lean_name": "readFpReg",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "read_fp_reg_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol direct source comparison 2026-10-01, bead flapjack-b4v0.2.1.2: literal labSemScript65-83/151-156/319-325 equations over accepted full LabSem.State, native WordLocW/HolRegImm, total function maps and fixed64 FP registers. Record updates preserve all other fields; assertion is not b OR old failed, preserving preceding writes; clock subtraction saturates. No extra hypotheses, duplicate state, finite-map translation, FP arithmetic approximation or evaluator claim. Only standard positive HOL word dimension to BitVec width/NeZero and universe0 FFI translation. Original 17 state-write observations labsem_updates_probe.out all true, native kernel replay LabSemUpdatesParity. Shared native consumers remain tracked on arithmetic/memory/FP dependency beads; full evaluator and production compilation correctness remain open. Coordinator source acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/Updates.lean",
+  "lean_name": "decClock",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "dec_clock_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol direct source comparison 2026-10-01, bead flapjack-b4v0.2.1.2: literal labSemScript65-83/151-156/319-325 equations over accepted full LabSem.State, native WordLocW/HolRegImm, total function maps and fixed64 FP registers. Record updates preserve all other fields; assertion is not b OR old failed, preserving preceding writes; clock subtraction saturates. No extra hypotheses, duplicate state, finite-map translation, FP arithmetic approximation or evaluator claim. Only standard positive HOL word dimension to BitVec width/NeZero and universe0 FFI translation. Original 17 state-write observations labsem_updates_probe.out all true, native kernel replay LabSemUpdatesParity. Shared native consumers remain tracked on arithmetic/memory/FP dependency beads; full evaluator and production compilation correctness remain open. Coordinator source acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/Updates.lean",
+  "lean_name": "incPc",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "inc_pc_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol direct source comparison 2026-10-01, bead flapjack-b4v0.2.1.2: literal labSemScript65-83/151-156/319-325 equations over accepted full LabSem.State, native WordLocW/HolRegImm, total function maps and fixed64 FP registers. Record updates preserve all other fields; assertion is not b OR old failed, preserving preceding writes; clock subtraction saturates. No extra hypotheses, duplicate state, finite-map translation, FP arithmetic approximation or evaluator claim. Only standard positive HOL word dimension to BitVec width/NeZero and universe0 FFI translation. Original 17 state-write observations labsem_updates_probe.out all true, native kernel replay LabSemUpdatesParity. Shared native consumers remain tracked on arithmetic/memory/FP dependency beads; full evaluator and production compilation correctness remain open. Coordinator source acceptance pending."
 }
 ]

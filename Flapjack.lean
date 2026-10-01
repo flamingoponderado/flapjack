@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabSem.Updates
 import Flapjack.Compiler.Backend.LabSem.Classifier
 import Flapjack.Compiler.Encoders.AsmSem
 import Flapjack.Compiler.Backend.LabSem.State

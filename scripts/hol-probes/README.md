@@ -1984,3 +1984,5 @@ and eqenv ignores only NONE. The two eqenv rows use the original
 `ParmoveSemanticsParity.lean` checks every captured observation; no windmill
 premise is imposed on repeated destinations. Full scheduler correctness and
 production wiring remain open.
+
+`labsem_updates_probeScript.sml` observes the original LabSem total register/memory updates, sticky assertion failure with retained writes, PC/clock updates, register/immediate decoding, and fixed64 FP register payloads. Its 17 rows are kernel-replayed in `Flapjack.Test.LabSemUpdatesParity`; it does not claim FP arithmetic or a full evaluator port.
