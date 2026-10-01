@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsPrimitives
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsCalls
 import Flapjack.Compiler.Backend.LabToTarget.LineLength
 import Flapjack.Compiler.Backend.LabToTarget.SectionLength
