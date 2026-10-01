@@ -42652,6 +42652,62 @@
     "reviewer": "flapjack-luna-c source comparison2026-10-01 bead46.8 misc1265-1274: arbitrary element carrier, Lists l1/l2, target x, Nat n; full equality with case find_index x l1 n. NONE searches l2 at n+LENGTH l1; SOME preserves first result. Literal reviewed findIndex evaluator, no presence/unique-match/zero-offset/fuel/target-result premise. DecidableEq supplies HOL propositional equality only. Kernel list induction generalizes arbitrary offset; ten fresh original EVAL rows replay identical inputs, including Bool carrier, duplicates and offset10^20. Coordinator review pending."
   },
   {
+    "lean_path": "Flapjack/Translator/Monadic/MonadBase/ListPrimitives.lean",
+    "lean_name": "mSub",
+    "hol_path": "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml",
+    "hol_name": "Msub_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.11.1.1): original 124-129, accepted exact Exc value/exception carrier with arbitrary independent universe-0 value and exception types, HOL list as Lean List and unbounded num as Nat. Msub empty-list failure and zero-success/nonzero recursive index subtraction retained; Mupdate retains full prefix only on recursive success and propagates original failure unchanged. Original n >= LENGTH l premise translates to values.length <= index, no validity, source-success, DecidableEq, exception classification or fixed-width restriction. Both generic failure-bound theorems prove original exact equality by list induction and index cases, with no added premises; kernel axioms propext/Classical.choice/Quot.sound only. Twenty-five fresh original observations and identical registered kernel replay cover head/middle/last/empty/boundary/large indices, duplicate values, independent Nat/Bool/tuple types and theorem applications at six failing boundaries. No total EL/LUPDATE claim is made; successful equations and state-array accessors remain parent frontier. Pure primitives/proofs; executed allocator migration and whole compiler correctness remain open. Coordinator source comparison completed against the original clauses and generic carriers; unified integration gates and publication are checked separately."
+  },
+  {
+    "lean_path": "Flapjack/Translator/Monadic/MonadBase/ListPrimitives.lean",
+    "lean_name": "mUpdate",
+    "hol_path": "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml",
+    "hol_name": "Mupdate_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.11.1.1): original 150-162, accepted exact Exc value/exception carrier with arbitrary independent universe-0 value and exception types, HOL list as Lean List and unbounded num as Nat. Msub empty-list failure and zero-success/nonzero recursive index subtraction retained; Mupdate retains full prefix only on recursive success and propagates original failure unchanged. Original n >= LENGTH l premise translates to values.length <= index, no validity, source-success, DecidableEq, exception classification or fixed-width restriction. Both generic failure-bound theorems prove original exact equality by list induction and index cases, with no added premises; kernel axioms propext/Classical.choice/Quot.sound only. Twenty-five fresh original observations and identical registered kernel replay cover head/middle/last/empty/boundary/large indices, duplicate values, independent Nat/Bool/tuple types and theorem applications at six failing boundaries. No total EL/LUPDATE claim is made; successful equations and state-array accessors remain parent frontier. Pure primitives/proofs; executed allocator migration and whole compiler correctness remain open. Coordinator source comparison completed against the original clauses and generic carriers; unified integration gates and publication are checked separately."
+  },
+  {
+    "lean_path": "Flapjack/Translator/Monadic/MonadBase/ListPrimitives.lean",
+    "lean_name": "mSubExnEq",
+    "hol_path": "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml",
+    "hol_name": "Msub_exn_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.11.1.1): original 140-146, accepted exact Exc value/exception carrier with arbitrary independent universe-0 value and exception types, HOL list as Lean List and unbounded num as Nat. Msub empty-list failure and zero-success/nonzero recursive index subtraction retained; Mupdate retains full prefix only on recursive success and propagates original failure unchanged. Original n >= LENGTH l premise translates to values.length <= index, no validity, source-success, DecidableEq, exception classification or fixed-width restriction. Both generic failure-bound theorems prove original exact equality by list induction and index cases, with no added premises; kernel axioms propext/Classical.choice/Quot.sound only. Twenty-five fresh original observations and identical registered kernel replay cover head/middle/last/empty/boundary/large indices, duplicate values, independent Nat/Bool/tuple types and theorem applications at six failing boundaries. No total EL/LUPDATE claim is made; successful equations and state-array accessors remain parent frontier. Pure primitives/proofs; executed allocator migration and whole compiler correctness remain open. Coordinator source comparison completed against the original clauses and generic carriers; unified integration gates and publication are checked separately."
+  },
+  {
+    "lean_path": "Flapjack/Translator/Monadic/MonadBase/ListPrimitives.lean",
+    "lean_name": "mUpdateExnEq",
+    "hol_path": "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml",
+    "hol_name": "Mupdate_exn_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.11.1.1): original 171-178, accepted exact Exc value/exception carrier with arbitrary independent universe-0 value and exception types, HOL list as Lean List and unbounded num as Nat. Msub empty-list failure and zero-success/nonzero recursive index subtraction retained; Mupdate retains full prefix only on recursive success and propagates original failure unchanged. Original n >= LENGTH l premise translates to values.length <= index, no validity, source-success, DecidableEq, exception classification or fixed-width restriction. Both generic failure-bound theorems prove original exact equality by list induction and index cases, with no added premises; kernel axioms propext/Classical.choice/Quot.sound only. Twenty-five fresh original observations and identical registered kernel replay cover head/middle/last/empty/boundary/large indices, duplicate values, independent Nat/Bool/tuple types and theorem applications at six failing boundaries. No total EL/LUPDATE claim is made; successful equations and state-array accessors remain parent frontier. Pure primitives/proofs; executed allocator migration and whole compiler correctness remain open. Coordinator source comparison completed against the original clauses and generic carriers; unified integration gates and publication are checked separately."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/StateMap.lean",
+    "lean_name": "stExMap",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "st_ex_MAP_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.11.1.2): full original148-156 and independently captured source type (input -> state -> Exc result exception # state) -> input list -> state -> Exc (result list) exception # state. All four carriers independently universe-0 Type, no specialization to allocator state_exn, fixed register type, successful callback, validity or DecidableEq hypothesis. Source empty return[] and head effect/bind then recursive tail effect/bind then cons-return are literal, using accepted exact MonadBase.M/Exc/bind/ret definitions. Failure short-circuits and retains the state returned by the failing computation, including prior head effects; no rollback or map-over-results substitute. Original type row plus nineteen fresh complete result/state equations and identical registered kernel replay cover empty callbacks, head/middle/last failure, state-dependent failure, order/reverse/duplicates/large values, independent Bool/Nat/list/tuple state/value/result/exception carriers and arbitrary generic empty-list equation. Pure monadic analysis dependency only: generated array/accessor functions and executed allocator/correctness route remain open. Coordinator source comparison completed against the original clauses and generic carriers; unified integration gates and publication are checked separately."
+  },
+  {
+    "lean_path": "Flapjack/Translator/Monadic/MonadBase/ArrayLength.lean",
+    "lean_name": "arrayLength",
+    "hol_path": "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml",
+    "hol_name": "Marray_length_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.11.1.3): original ml_monadBaseScript.sml200-203. Generic getter state -> List value, independent state/value/exception Type carriers, result M state Nat exception. HOL LENGTH becomes List.length, M_success becomes accepted Exc.success and the entire input state is returned unchanged. No bounds, equality instance, validity, successful callback or fixed allocator state. Same total lambda equation. Five fresh original equations and identical kernel replay cover empty/duplicate lists, independent Bool/list states and Bool values with large Nat state; universal pointwise rfl checks all three carriers. Finite observations are regression evidence, not cross-assistant equivalence. Native analysis primitive only; other array accessors and actual production allocator route stay open. Coordinator source comparison completed against the original clauses and generic carriers; unified integration gates and publication are checked separately."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/CanonizeMoves.lean",
+    "lean_name": "canonizeMoves",
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "canonize_moves_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.3.2.4): complete original1650-1662. Input List (Nat # (Nat # Nat)), result List (Nat # Nat # (Nat # Nat)), fixed original num priorities and endpoint carriers, no hypotheses. Literal MAP flips endpoints precisely when x > y including unchanged equality, then accepted native mllist sort uses strict x/y/priority comparison with original nesting. Empty sorted list yields empty; nonempty (p,m)::xs calls accepted canonizeMovesAux p m 1 xs [], preserving reverse sorted group output, counts and MAX priority. No callback, assumed sorted input, supplied output, fuel, fixed width, equality restriction or filtered self move. Accepted source sorting prerequisite .4.2 and counting .4.1 reused; underlying untagged sorting helpers retain explicit external source audit beside CanonizeSort. Nineteen fresh original complete equations allT and registered kernel replay cover reversed orientations collapsing together, duplicate counts/priorities, self moves, every small-sort branch, long lists, zeros and unbounded numbers. Native analysis definition only; actual executed allocator canonicalization/get_heuristics and compiler correctness remain open. Coordinator source comparison completed against the original clauses and generic carriers; unified integration gates and publication are checked separately."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/Parmove/AllDistinct/Step.lean",
     "lean_name": "allDistinctStep",
     "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
@@ -42682,13 +42738,5 @@
     "hol_name": "map_state_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-luna-b source comparison 2026-10-01 w1a4.11: literal source1086-1088 let m=MAP(f##f) in m##m##m. Native List.map(Prod.map f f) then right-associated Prod.map m (Prod.map m m) preserves both endpoints and all three list orders. Fresh original type audit independent alpha -> beta and raw pair-list triple input/output; generic native alpha/beta not specialized to Option registers, no equality/injectivity/NONE-preservation premise. Ten fresh original whole outputs paired with kernel fixtures include empty/each segment/order, noninjective constant, unbounded Nat, Bool, Nat->Bool different carriers and changing NONE. Definition proof support only, no executed behavior change; injective simulation obligations remain open. Coordinator acceptance pending."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/CanonizeMoves.lean",
-    "lean_name": "canonizeMoves",
-    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
-    "hol_name": "canonize_moves_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead11.5.3.2.4: full literal source1650-1662 fixed Nat priority/endpoints. MAP normalizes x<=y unchanged, else swaps; accepted concrete mllist sort uses strict x/y/priority inline relation through sortCanonizeMoves, no abstract sorting callback. Empty sorted list returns empty; head initializes accepted generic canonizeMovesAux with count1/empty accumulator. Right-associated count/priority/move output, reverse group order, count and maximum priority preserved. Twelve fresh original whole outputs matched by kernel fixtures cover all branches, endpoint/order/ties/nonadjacent normalization, counts/MAX/self/zeros/unbounded Nat. Concrete sort provenance was source-reviewed on closed prerequisite4.2; untagged external helper pins remain limited as documented there. Native proof-side definition only; production route remains open on get_heuristics/allocator closure. Coordinator acceptance pending."
   }
 ]

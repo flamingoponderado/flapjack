@@ -33,7 +33,7 @@
       "key": "classifiers",
       "bead": "flapjack-pxn.18.5.11.5.10.5.8.6.8",
       "title": "Fixed/Atemp/Fixed_k/considered_var/deg_or_inf definitions and bounded traversal lemmas",
-      "source_review": "Defs450,492,499,506,515; proofs2350 st_ex_FILTER_considered_var and local val st_ex_MAP_deg_or_inf2363. Exact tags, k versus k+1, no substitute Boolean test.",
+      "source_review": "is_Fixed_def:449; is_Atemp_def:490; is_Fixed_k_def:498; considered_var_def:506; deg_or_inf_def:516; st_ex_FILTER_considered_var:2350, local val st_ex_MAP_deg_or_inf:2363. Exact k versus k+1, no substitute Boolean test.",
       "helper_dependencies": [],
       "phase_children": []
     },
@@ -61,7 +61,7 @@
       "key": "sort",
       "bead": "flapjack-pxn.18.5.11.5.10.5.8.6.11",
       "title": "sort_moves/smerge definitions and MEM_smerge",
-      "source_review": "Defs343/349; proof2172. Descending strict priority sort, left-biased >= merge ties. sorted_mem193 owned existing graph construction .5.",
+      "source_review": "sort_moves_def343/smerge_def349; MEM_smerge2172. Descending strict-priority sort and left-biased >= merge ties. No allocator state prerequisite; sorted_mem is separately tracked.",
       "helper_dependencies": [],
       "phase_children": []
     },
@@ -83,7 +83,8 @@
       "helper_dependencies": [
         "split",
         "partition",
-        "revive"
+        "revive",
+        "respill"
       ],
       "phase_children": [
         "1",
@@ -229,5 +230,249 @@
     "Worklist add/respill definitions depend on accessors, not the success invariant proof.",
     "Local HOL success lemmas require direct source review: they are not exported DB theorems. The probe captures 29 exported definition equations only.",
     "Existing graph-construction .5 owns st_ex_FOREACH/FILTER and .6 list_insert_edge_succeeds. Missing sorted_mem and st_ex_PARTITION are distinct automatically allocated leaves; st_ex_MAP_adj_ls_sub is already owned by accessor proof bead .2."
+  ],
+  "definition_index": [
+    {
+      "name": "st_ex_FOREACH_def",
+      "line": 139
+    },
+    {
+      "name": "st_ex_PARTITION_def",
+      "line": 158
+    },
+    {
+      "name": "st_ex_FILTER_def",
+      "line": 170
+    },
+    {
+      "name": "sorted_mem_def",
+      "line": 193
+    },
+    {
+      "name": "dec_deg_def",
+      "line": 252
+    },
+    {
+      "name": "dec_degree_def",
+      "line": 260
+    },
+    {
+      "name": "push_stack_def",
+      "line": 299
+    },
+    {
+      "name": "is_not_coalesced_def",
+      "line": 322
+    },
+    {
+      "name": "split_degree_def",
+      "line": 330
+    },
+    {
+      "name": "sort_moves_def",
+      "line": 343
+    },
+    {
+      "name": "smerge_def",
+      "line": 349
+    },
+    {
+      "name": "revive_moves_def",
+      "line": 363
+    },
+    {
+      "name": "unspill_def",
+      "line": 379
+    },
+    {
+      "name": "do_simplify_def",
+      "line": 400
+    },
+    {
+      "name": "inc_deg_def",
+      "line": 418
+    },
+    {
+      "name": "is_Fixed_def",
+      "line": 449
+    },
+    {
+      "name": "is_Atemp_def",
+      "line": 490
+    },
+    {
+      "name": "is_Fixed_k_def",
+      "line": 498
+    },
+    {
+      "name": "considered_var_def",
+      "line": 506
+    },
+    {
+      "name": "deg_or_inf_def",
+      "line": 516
+    },
+    {
+      "name": "bg_ok_def",
+      "line": 524
+    },
+    {
+      "name": "consistency_ok_def",
+      "line": 565
+    },
+    {
+      "name": "coalesce_parent_def",
+      "line": 589
+    },
+    {
+      "name": "canonize_move_def",
+      "line": 609
+    },
+    {
+      "name": "st_ex_FIRST_def",
+      "line": 628
+    },
+    {
+      "name": "respill_def",
+      "line": 650
+    },
+    {
+      "name": "do_coalesce_def",
+      "line": 668
+    },
+    {
+      "name": "reset_move_related_def",
+      "line": 708
+    },
+    {
+      "name": "do_prefreeze_def",
+      "line": 726
+    },
+    {
+      "name": "do_freeze_def",
+      "line": 750
+    },
+    {
+      "name": "st_ex_list_MIN_cost_def",
+      "line": 778
+    },
+    {
+      "name": "st_ex_list_MAX_deg_def",
+      "line": 794
+    },
+    {
+      "name": "do_spill_def",
+      "line": 809
+    }
+  ],
+  "proof_index": [
+    {
+      "name": "is_not_coalesced_succeeds",
+      "line": 2075
+    },
+    {
+      "name": "st_ex_PARTITION_split_degree",
+      "line": 2085
+    },
+    {
+      "name": "st_ex_PARTITION_move_related_sub",
+      "line": 2118
+    },
+    {
+      "name": "dec_deg_success",
+      "line": 2139
+    },
+    {
+      "name": "dec_degree_success",
+      "line": 2154
+    },
+    {
+      "name": "MEM_smerge",
+      "line": 2175
+    },
+    {
+      "name": "revive_moves_success",
+      "line": 2184
+    },
+    {
+      "name": "unspill_success",
+      "line": 2206
+    },
+    {
+      "name": "push_stack_success",
+      "line": 2239
+    },
+    {
+      "name": "do_simplify_success",
+      "line": 2262
+    },
+    {
+      "name": "st_ex_FILTER_is_not_coalesced",
+      "line": 2286
+    },
+    {
+      "name": "consistency_ok_success",
+      "line": 2301
+    },
+    {
+      "name": "st_ex_FILTER_consistency_ok",
+      "line": 2320
+    },
+    {
+      "name": "st_ex_FILTER_considered_var",
+      "line": 2350
+    },
+    {
+      "name": "bg_ok_success",
+      "line": 2384
+    },
+    {
+      "name": "coalesce_parent_success",
+      "line": 2439
+    },
+    {
+      "name": "canonize_move_success",
+      "line": 2484
+    },
+    {
+      "name": "st_ex_FIRST_consistency_ok_bg_ok",
+      "line": 2495
+    },
+    {
+      "name": "do_coalesce_real_success",
+      "line": 2549
+    },
+    {
+      "name": "do_coalesce_success",
+      "line": 2606
+    },
+    {
+      "name": "st_ex_FOREACH_update_move_related",
+      "line": 2645
+    },
+    {
+      "name": "reset_move_related_success",
+      "line": 2658
+    },
+    {
+      "name": "do_prefreeze_success",
+      "line": 2684
+    },
+    {
+      "name": "do_freeze_success",
+      "line": 2727
+    },
+    {
+      "name": "st_ex_list_MIN_cost_success",
+      "line": 2758
+    },
+    {
+      "name": "st_ex_list_MAX_deg_success",
+      "line": 2774
+    },
+    {
+      "name": "do_spill_success",
+      "line": 2790
+    }
   ]
 }
