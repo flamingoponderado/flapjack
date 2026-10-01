@@ -462,6 +462,8 @@
     {"bytes": 513, "out": "pan_word_of_bytes_overlong_probe.out", "rows": 17, "sha256": "413f95c14359ac90e03392a24a7149c10183db056e5fe0c94457c3b1e5995b5b"},
     {"bytes": 296, "out": "pancake_peg_probe.out", "rows": 1, "sha256": "1087f8c89b4f68e7d0e0e4ade5f93a0acf6316a5505fb5148e43d268ac758b80"},
     {"bytes": 137, "out": "parmove_dsteps_probe.out", "rows": 9, "sha256": "06cb2fb4749dec5695a98a53bed3fe14ff9cf5af772876a42eb5d39ed710b21b"},
+
+    {"bytes": 263, "out": "parmove_destination_probe.out", "rows": 7, "sha256": "9ed71be8d9b6c7ce604fe355772377b4f7b2ee5613b573adeb4853c638d127a0"},
     {"bytes": 689, "out": "parmove_emithead_probe.out", "rows": 26, "sha256": "dda7aa9299652a795d587f0e52c7a63caf53369bcc793d032458d4704992a117"},
     {"bytes": 153, "out": "parmove_environment_probe.out", "rows": 8, "sha256": "c0ea060f5ddc87d9fbaf0916b05174c62550ce8faa557763d5a203c62ea0d9dd"},
     {"bytes": 386, "out": "parmove_final_probe.out", "rows": 7, "sha256": "12dc56e3354f8ae0190fb9c1ea937f8f3329a2c19644f3059cef1b548eeab834"},
@@ -474,6 +476,7 @@
     {"bytes": 528, "out": "parmove_save_probe.out", "rows": 20, "sha256": "911a6cf176ca90ffe034fc42021bcd0f578586626989989a5797caea0f0c1519"},
     {"bytes": 348, "out": "parmove_scheduler_probe.out", "rows": 9, "sha256": "9a52f48f9aa4d0ba87adf2f57586cbe903fb818c605ab885e0b106469a00ed6e"},
     {"bytes": 238, "out": "parmove_semantics_probe.out", "rows": 12, "sha256": "e6cf39747a7d47e75fded9b903563dc2d888216d779c2c7cc83d7b33eb245cfd"},
+    {"bytes": 404, "out": "parmove_split_source_probe.out", "rows": 7, "sha256": "b7129e63411059f834e5fc7b373438c2dd9535ed37e4ef375b877a3e37757ff1"},
     {"bytes": 257, "out": "parmove_start_extend_probe.out", "rows": 14, "sha256": "b14cdda2f6d4d024801d0d37afec4544f3f600525643ac95658b422b67daf130"},
     {"bytes": 75, "out": "parmove_steps_probe.out", "rows": 6, "sha256": "92da0df7db366fa99efa9ed99e747b30f8b2b4e50cfb78e67e2c602a1f1ec009"},
     {"bytes": 396, "out": "parmove_stepscorrect_probe.out", "rows": 12, "sha256": "e7b3f97b46984560c34a9e1ef9c095c179915cde801fd27914d2981e1dae2af1"},
