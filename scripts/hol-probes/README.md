@@ -3009,3 +3009,18 @@ applications, the scoped sentinel and an arbitrary carrier identity application.
 No global injectivity or decidable equality premise is introduced; this proof-only
 port leaves the executed scheduler unchanged.
 Selector: `HOL_PROBE_ONLY=parmove_step_map_inj_probeScript.sml`.
+### Full native asmSem FP transition
+
+`asmsem_fp_updates_probeScript.sml` uses the loaded original `asmSemTheory`
+and original IEEE libraries, evaluating 34 closed claims against the original
+`fp_upd`; every capture is resolved `T`. `AsmSemFpUpdatesParity` kernel-replays
+them against the native `AsmState` transition using reviewed IEEE refinement
+facts. All16 constructors are covered, with widths8/32/64/128, actual-width
+concatenation and signed extraction, paired alias/half writes, RTE ties, failed
+overflow writes, prior failure, NaN comparisons, sign payloads and FMA order.
+These are native raw register words, with no Lab location cases or evaluator
+callback. The full original `fp_upd_consts` theorem is separately kernel proved.
+The native transition inherits the existing IEEE real-rendering assurance limit
+(SOUNDNESS item8); fixed raw arithmetic NaN payload agreement is not asserted.
+Probes remain regression evidence, not complete cross-language IEEE equivalence
+or whole ASM/compiler routing acceptance.
