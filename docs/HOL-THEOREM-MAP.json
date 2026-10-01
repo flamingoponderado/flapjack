@@ -41251,6 +41251,45 @@
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-b source comparison 2026-10-01 child25.6.5.5: full original local step_sem370-444, forall states Step first second -> entire input wf -> forallenv eqenv; same Option/List/function carriers and arbitrary value carrier. Literal six-constructor case assembly, no assumed target evaluation/equality or stronger premise. All six concrete constructor applications kernel checked in ParmoveStepSemParity, arbitrary env. Original per-case captures retained (14 Start/Extend,16 RemoveSelf/EmitLast,20 Save,26 EmitHead); EmitHead independent coordinator review pending. No production behavior change; RTC/functional scheduler correctness remains open."
 },
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/StepsSem.lean",
+  "lean_name": "steps_sem",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "steps_sem",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 child25.6.6: literal source446-456, forall states actual RTCStep and entire inputwf conjunction -> forallenv originaleqenv. Same Option/List/function/arbitraryvaluecarrier; reflexive case equality and tail induction using actualwf_steps transport thenfullstep_sem. No assumed intermediate/targetequivalence or omitted sourcecondition. Kernel chain includes Save/EmitHead/EmitLast on a cycle with literalNONE scratch, plus reflexive closure; original semantic values freshly captured. One-step fullassembly independentreview pending; no compilerexecution/fullschedulerclaim."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_apply_colour",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/FFI.lean",
+  "lean_name": "evaluateApplyColour_FFI",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Codex source review against evaluate_apply_colour1105-1130 specialized to FFI and Resume2182-2205: original three premises and exact full existential postcondition, with no callback, success, target evaluation/result, or alias restriction premise. Four native input reads (len1,ptr1,len2,ptr2) are transported using live membership; scoped injection and relation on both cut-set domains derived from original hypotheses; existing exact cutEnvLemma proves target cut success and source-domain equality, enabling any live-after relation through strongLocalsRelExtendAux. Native evaluate FFI clause retains byte reads/errors, deterministic callFFIHOL on identical exact MlString name/input memory/FFI fields, final outcome flushState true, or returning byte-array memory update, cut locals, empty fpRegs and returned FFI state. Same canonical state fpRegs/store qualifier and local imported roundtrip; Spt locals/code remain original trees, word dimensions positive. Inherits existing native evaluator reals_as_rational_cuts assumption (docs/SOUNDNESS item8), with no direct rendering primitive. No executable behavior changes; full Install/ShareInst and whole program assembly remain open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/wordLangScript.sml",
+  "hol_name": "max_var_def",
+  "lean_path": "Flapjack/Pancake/WordLang/MaxVar.lean",
+  "lean_name": "maxVarHOL",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison wordLangScript252-300, exact prog/exp/inst/cutsets carriers at14-68 and asm85-134: all constructor clauses and defaults retained over WordLangProgHOL(BitVec width), native MlString, canonical Spt Unit cut sets and fixed Temp5 store names. Positivewidth words_as_type_indexed_bitvec. Move MAP FST++MAP SND, guarded Call return/handler recursion and argument/value/both-cutset maxima, If reg/imm branches, Loop entry/body/exit maxima and every frame operand match source; destination and labels ignored exactly where source ignores them. Uses accepted exact maxVarInstHOL/maxVarExpHOL/cutsetsMaxHOL/max3HOL plus standard natural MAX_LIST. No wf/domain/callback/targetresult/success premise; nested structural-size termination kernel checked. Fresh37 direct original rows cover all source constructors, Call guard and32/64 FP instruction transfer, kernel replay. Full native wrappers, executed production route and correctness remainOPEN."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/PmovFinal.lean",
+  "lean_name": "pmov_final",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "pmov_final",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.6.13: literal655-663 originalforallstate exists emitted actualpmovstate=([],[],emitted). Unconditional, no wf/windmill/algorithmrelation/assumedterminalresult; original Option/List statecarrier and all histories retained. Generated functional induction of actualreviewedpmov: terminalclause preserves history, nonterminalclause inherits existential at actualfstepstate. Source-decreasing termination alreadypart of revieweddefinition, no fuel restriction. Original terminal/self/chain/cycle/scratch/duplicate/active observations freshly captured; malformed inputs included because theoremunconditional. This proves shape only, not semantic or deterministicSteps correctness."
+},
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
     "hol_name": "evaluate_apply_colour",

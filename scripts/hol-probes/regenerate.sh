@@ -2408,6 +2408,10 @@ run_probe pan_globals_fperm_name_probeScript.sml pan_globals_fperm_name_probe.ou
   "$cake_dir/pancake/pan_globalsScript.sml" \
   "$cake_dir/pancake"
 
+run_probe wordlang_max_var_probeScript.sml wordlang_max_var_probe.out \
+  mv_skip mv_move mv_move_empty mv_inst64 mv_inst32 mv_assign mv_get mv_store mv_tail_ignored mv_tail_empty mv_call_body mv_call_cutset mv_call_values mv_handler_value mv_handler_body mv_seq mv_must mv_if_reg mv_if_imm mv_alloc mv_consts mv_install mv_codewrite mv_datawrite mv_ffi mv_raise mv_heap mv_return mv_return_empty mv_tick mv_loc mv_set mv_share mv_loop_exit mv_loop_body mv_break mv_continue \
+  "$cake_dir/compiler/backend/wordLangScript.sml" "$cake_dir/compiler/backend"
+
 run_probe wordlang_cutsets_max_probeScript.sml wordlang_cutsets_max_probe.out \
   cm_empty cm_left cm_right cm_both cm_zero cm_nonwf cm_raw cm_deep \
   "$cake_dir/compiler/backend/wordLangScript.sml" "$cake_dir/compiler/backend"
@@ -2827,4 +2831,12 @@ run_probe word_lang_max_var_exp_probeScript.sml word_lang_max_var_exp_probe.out 
 
 run_probe parmove_emithead_probeScript.sml parmove_emithead_probe.out \
   pv_head_history_pre_1 pv_head_history_pre_2 pv_head_history_pre_3 pv_head_history_pre_4 pv_head_history_pre_5 pv_head_history_post_1 pv_head_history_post_2 pv_head_history_post_3 pv_head_history_post_4 pv_head_history_post_5 pv_head_none_pre_1 pv_head_none_pre_2 pv_head_none_pre_4 pv_head_none_post_1 pv_head_none_post_2 pv_head_none_post_4 pv_head_bad_endpoint_pre_1 pv_head_bad_endpoint_pre_2 pv_head_bad_endpoint_post_1 pv_head_bad_endpoint_post_2 pv_head_bad_pending_pre_1 pv_head_bad_pending_pre_2 pv_head_bad_pending_pre_4 pv_head_bad_pending_post_1 pv_head_bad_pending_post_2 pv_head_bad_pending_post_4 \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe parmove_stepssem_probeScript.sml parmove_stepssem_probe.out \
+  pv_rtc_0_1 pv_rtc_0_2 pv_rtc_0_temp pv_rtc_1_1 pv_rtc_1_2 pv_rtc_1_temp pv_rtc_2_1 pv_rtc_2_2 pv_rtc_2_temp pv_rtc_3_1 pv_rtc_3_2 pv_rtc_3_temp \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe parmove_final_probeScript.sml parmove_final_probe.out \
+  pv_final_terminal pv_final_self pv_final_chain pv_final_cycle pv_final_scratch pv_final_duplicate pv_final_active \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"

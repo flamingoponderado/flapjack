@@ -1,3 +1,5 @@
+import Flapjack.Test.ParmoveFinalParity
+import Flapjack.Test.ParmoveStepsSemParity
 import Flapjack.Test.ParmoveStepSemParity
 import Flapjack.Test.ParmoveEmitHeadParity
 import Flapjack.Test.ParmoveSaveParity
