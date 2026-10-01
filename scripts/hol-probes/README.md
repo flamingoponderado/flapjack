@@ -40,6 +40,15 @@ with `HOL_PROBE_ONLY=stacksem_loop_recursive_probeScript.sml scripts/hol-probes/
 
 # Original Pancake HOL probes
 
+`parmove_preservation_shape_probe.out` records the original full
+`inj_on_state_def` equation and its independent Option input/output carrier
+type (`pm_audit_inj_on_state_def`, `pm_audit_type_inj_on_state`).
+`ParmoveInjOnStateParity` checks the literal Lean predicate's support and global
+NONE boundaries in the kernel, including a noninjective map accepted on a
+singleton support and collisions rejected in each of the three state segments.
+These checks use the existing original declaration capture; they are not fresh
+original-HOL executions or a completed injective scheduler simulation.
+
 `labsem_fp_updates_probe.out` records 29 direct original `labSem$fp_upd`
 observations, paired with kernel checks in `LabSemFpUpdatesParity`. All sixteen
 constructors are exercised. Cases include NaN/sign payloads, signed zero,

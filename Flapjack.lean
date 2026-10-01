@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.Parmove.InjOnState
 import Flapjack.Compiler.Backend.RegAlloc.Initialization
 import Flapjack.RiscV.WordCopyCodecDomain
 import Flapjack.Compiler.Backend.WordAlloc.CanonizeMoves

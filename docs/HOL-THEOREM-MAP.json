@@ -42762,5 +42762,13 @@
     "hol_name": "not_use_temp_before_assign_thm",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol source comparison 2026-10-01 bead .15.3.46.3: complete original858-877 predicate equality translated as predicate=true iff forall firstreadindex i, source find_index NONE (MAP SND ls)0=SOME i implies exists firstwriteindex j with destination find_index NONE (MAP FST ls)0=SOME j and j<i. Independent arbitrary destination/source Type carriers, all Option-pair lists and both literal offset0 searches retained. No validity/distinctness/success/targetrun premise; local classical DecidableEq implements HOL equality without adding public caller typeclass binders. Structural list/Option cases and accepted arbitrary-offset shift_0 derive strict order, including simultaneous NONE/NONE failure. Fresh fifteen original full predicate/read/write equations include duplicates, absent reads/writes, mixed Bool/Nat and function-valued source; identical-input kernel replay plus unrestricted public theorem fixture. Coordinator review and complete compiler/move safety assembly remain required."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/InjOnState.lean",
+    "lean_name": "injOnState",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "inj_on_state_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison (2026-10-01; bead flapjack-w1a4.12): Original1090-1097 lets ls0=state_to_list p, ls=MAP FST ls0++MAP SND ls0, then support-restricted injectivity on both endpoints and global (f x=NONE iff x=NONE). Lean preserves both independent Option alpha/Option beta carriers, full pending/active/emitted state flattening through reviewed stateToList, exact conjunction and implication, no global injectivity/DecidableEq/safety premise. Existing original parmove_preservation_shape_probe.out pm_audit_inj_on_state_def and pm_audit_type_inj_on_state capture full equation and type. Kernel fixtures distinguish globally collapsing map accepted on singleton support, collision rejection in each state segment, global NONE failure on empty support, arbitrary/function-valued identity and generic full defining equation. No fresh original HOL execution claimed; read-only isolation unavailable, CakeML untouched. Proof-side scheduler predicate, no executable production duplicate or output change. Coordinator review pending."
   }
 ]
