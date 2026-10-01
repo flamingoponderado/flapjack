@@ -3447,3 +3447,7 @@ run_probe ssa_map_step_probeScript.sml ssa_map_step_probe.out \
 run_probe ssa_merge_correct_right_probeScript.sml ssa_merge_correct_right_probe.out \
   mr_full mr_type_ls mr_type_na mr_type_ssaL mr_type_ssaR mr_type_stR mr_type_cstR mr_type_pri \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_merge_correct_left_probeScript.sml ssa_merge_correct_left_probe.out \
+  mlc_full mlc_type_ls mlc_type_na mlc_type_ssaL mlc_type_ssaR mlc_type_stL mlc_type_cstL mlc_type_pri \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

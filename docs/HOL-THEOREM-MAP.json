@@ -44242,5 +44242,19 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-a source comparison 2026-10-01 flapjack-aaaj: full original4840-4915 statement and literal proof replayed freshly with literal prerequisite proofs. Original inferred stR:(alpha,beta,gamma) and cstR:(alpha,delta,epsilon) retained as independently quantified code/FFI Type0 and shared positive word width. All original allocation/Nodup/mapOK premises and locals-relation implication, all five conclusions retained: NONE, untouched SSA lookups, old locals, output locals relation, complete word_state_eq_rel. Actual faithful native evaluator, arbitrary Nat/Spt maps/priority; no output/evaluation/postrelation premises. Only canonical fpRegs/store finite maps and standard positive BitVec width translated; locals/code actual Spt. Same-module real roundtrip. Guarded SOME selector payload independent of fallback. Existing evaluator inherits rational-cut FP assumption SOUNDNESS item8; Move path invokes locals only. Kernel full induction passes. No production changes; original probe is proof/type evidence, not cross-language equivalence. Delivery checks tracked on bead. Inherits the existing reals_as_rational_cuts assumption through WordSemStateFiniteExact.evaluate; SOUNDNESS item8 applies to that closure.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAMergeMoves/CorrectLeft.lean",
+    "lean_name": "mergeMovesCorrectL",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "merge_moves_correctL",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison 2026-10-01 flapjack-jbh9: full original4840-4915 statement and literal proof replayed freshly with literal prerequisite proofs. Original inferred stL:(alpha,beta,gamma) and cstL:(alpha,delta,epsilon) retained as independently quantified code/FFI Type0 and shared positive word width. All original allocation/Nodup/mapOK premises and locals-relation implication, all five conclusions retained: NONE, untouched SSA lookups, old locals, output locals relation, complete word_state_eq_rel. Actual faithful native evaluator, arbitrary Nat/Spt maps/priority; no output/evaluation/postrelation premises. Only canonical fpRegs/store finite maps and standard positive BitVec width translated; locals/code actual Spt. Same-module real roundtrip. Guarded SOME selector payload independent of fallback. Existing evaluator inherits rational-cut FP assumption SOUNDNESS item8; Move path invokes locals only. Kernel full induction passes. No production changes; original probe is proof/type evidence, not cross-language equivalence. Delivery checks tracked on bead. Inherits the existing reals_as_rational_cuts assumption through WordSemStateFiniteExact.evaluate; SOUNDNESS item8 applies to that closure.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]

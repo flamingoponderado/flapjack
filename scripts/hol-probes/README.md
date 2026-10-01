@@ -3432,3 +3432,5 @@ Malformed/physical-counter observation rows test the definition; they do not
 claim that the allocation premise holds. No exported local theorem is claimed.
 
 ssa_merge_correct_right_probe.out replays the complete original local merge_moves_correctR proof and its literal local prerequisites, then records all original inferred state/carrier types. CorrectRight proves the same five-conjunct native statement in Lean; no executable change or cross-language equivalence claim.
+
+ssa_merge_correct_left_probe.out replays the full original local merge_moves_correctL proof and its literal prerequisites, recording the complete statement and seven inferred types. CorrectLeft proves all five native evaluator conclusions with original hypotheses. No executable change or cross-language equivalence claim.

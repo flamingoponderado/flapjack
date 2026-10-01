@@ -575,6 +575,7 @@
     {"bytes": 178, "out": "ssa_map_ok_probe.out", "rows": 6, "sha256": "f80fb6e485ddbe0a0af427f7a4e48f1f59fb20ff8990b41098bfe1f2d0053215"},
     {"bytes": 525, "out": "ssa_map_preservation_probe.out", "rows": 18, "sha256": "a492be8830545e1b6eb091c59adf26b841f11221a68ccee47c58c8953314647a"},
     {"bytes": 156, "out": "ssa_map_step_probe.out", "rows": 7, "sha256": "b7538e3a3df5cd041be0817b42cb055e7b987648b14dbf483ae0ad3da6de810a"},
+    {"bytes": 721, "out": "ssa_merge_correct_left_probe.out", "rows": 8, "sha256": "3723326efa1ade51b88a8c80f4b9f5a248e8b71f75fda2952bf68446f0f2dddd"},
     {"bytes": 713, "out": "ssa_merge_correct_right_probe.out", "rows": 8, "sha256": "fcd2ce458779c907577688da537b3dcc44f4b14106e4e152bb8ff0b09349a379"},
     {"bytes": 949, "out": "ssa_merge_frame_probe.out", "rows": 11, "sha256": "18326d9280cd0afebb842eb62db0a43b8436b17d962cf3c2ab248af9fb9d7ab3"},
     {"bytes": 1639, "out": "ssa_merge_moves_probe.out", "rows": 12, "sha256": "8a679f3532e055edfaae58707eb08c29354875db7badf7fe49eac32d689db3c4"},
