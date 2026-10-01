@@ -1125,6 +1125,9 @@ import Flapjack.Compiler.Backend.RegAlloc.Proofs.NotCoalescedFilter
 import Flapjack.Compiler.Backend.RegAlloc.ConsideredVar
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.ConsideredVarFilter
 import Flapjack.Compiler.Backend.RegAlloc.Worklists
+import Flapjack.Misc.LookupAny
+import Flapjack.Compiler.Backend.RegAlloc.Coalesce
+import Flapjack.Compiler.Backend.RegAlloc.SpillChoice
 
 
 /- The context-aware Crep-to-Loop correctness file is being updated alongside

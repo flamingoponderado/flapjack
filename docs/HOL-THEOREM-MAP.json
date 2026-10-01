@@ -45961,5 +45961,77 @@
     "lean_name": "respill",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.8.6.26): reg_allocScript.sml:650-666 respill k x = do xd <- degrees_sub x; if xd < k then return () else do freeze <- get_freeze_wl; if MEM x freeze then do add_spill_wl [x]; set_freeze_wl (FILTER (λy. y≠x) freeze) od else return () od od. Lean: same nesting, MEM/FILTER with decide (every copy of x removed). Generated accessors from .10.5.2 (opus-wordsem e234f6ad2, pending acceptance). Original EVAL rows with full ra_state results (scripts/hol-probes/reg_alloc_worklist_probe.out) kernel-replayed in Flapjack.Test.RegAllocWorklistsParity. No extra premise. Proof-side port; executed allocator unchanged. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "inc_deg_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Coalesce.lean",
+    "lean_name": "incDeg",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.8.6.27): reg_allocScript.sml:418-424 inc_deg n d = do cd <- degrees_sub n; update_degrees n (cd+d) od. Generated accessors from .10.5.2 (opus-wordsem e234f6ad2, pending acceptance). Original EVAL rows (scripts/hol-probes/reg_alloc_coalesce_probe.out) kernel-replayed in Flapjack.Test.RegAllocCoalesceParity. No extra premise. Proof-side port; executed allocator unchanged. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "consistency_ok_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Coalesce.lean",
+    "lean_name": "consistencyOk",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.8.6.27): reg_allocScript.sml:565-582 consistency_ok x y = if x = y then return F else do adjy <- adj_ls_sub y; if sorted_mem x adjy then return F else do bx <- is_Fixed x; by <- is_Fixed y; movrelx <- move_related_sub x; movrely <- move_related_sub y; return ((bx ∨ movrelx) ∧ (by ∨ movrely) ∧ ¬(bx ∧ by)) od od. Lean: same order of reads with the accepted sortedMem and isFixed; HOL bool connectives as ||, &&, !. Generated accessors from .10.5.2 (opus-wordsem e234f6ad2, pending acceptance). Original EVAL rows (scripts/hol-probes/reg_alloc_coalesce_probe.out) kernel-replayed in Flapjack.Test.RegAllocCoalesceParity. No extra premise. Proof-side port; executed allocator unchanged. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "coalesce_parent_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Coalesce.lean",
+    "lean_name": "coalesceParent",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.8.6.27): reg_allocScript.sml:589-607 coalesce_parent x = do xt <- coalesced_sub x; bx <- is_Fixed xt; if bx then return xt else if x <= xt then return x else do anc <- coalesce_parent xt; update_coalesced x anc; return anc od od. Lean: same, as well-founded recursion on x (the recursive call is only reached when xt < x, HOL's own termination measure); the x <= xt test is a dependent if supplying that bound. Generated accessors from .10.5.2 (opus-wordsem e234f6ad2, pending acceptance). Original EVAL rows (scripts/hol-probes/reg_alloc_coalesce_probe.out) kernel-replayed in Flapjack.Test.RegAllocCoalesceParity. No extra premise. Proof-side port; executed allocator unchanged. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "canonize_move_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Coalesce.lean",
+    "lean_name": "canonizeMove",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.8.6.27): reg_allocScript.sml:609-618 canonize_move x y = do bx <- is_Fixed x; by <- is_Fixed y; if by then return (y,x) else if bx then return (x,y) else if x < y then return (x,y) else return (y,x) od. Generated accessors from .10.5.2 (opus-wordsem e234f6ad2, pending acceptance). Original EVAL rows (scripts/hol-probes/reg_alloc_coalesce_probe.out) kernel-replayed in Flapjack.Test.RegAllocCoalesceParity. No extra premise. Proof-side port; executed allocator unchanged. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "st_ex_FIRST_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Coalesce.lean",
+    "lean_name": "stExFirst",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.8.6.27): reg_allocScript.sml:626-648 st_ex_FIRST P Q [] unavail = return (NONE,unavail); st_ex_FIRST P Q (m::ms) unavail = let (p,(x,y)) = m in do x <- coalesce_parent x; y <- coalesce_parent y; b1 <- P x y; if ¬b1 then st_ex_FIRST P Q ms unavail else do (x,y) <- canonize_move x y; optb2 <- Q x y; case optb2 of NONE => st_ex_FIRST P Q ms ((p,(x,y))::unavail) | SOME pr => return (SOME ((x,y),pr,ms),unavail) od od. Lean: same clauses, let-pattern and pattern binder; original type quantifies Q's payload α and the move priority β, here {α β : Type}. Generated accessors from .10.5.2 (opus-wordsem e234f6ad2, pending acceptance). Original EVAL rows (scripts/hol-probes/reg_alloc_coalesce_probe.out) kernel-replayed in Flapjack.Test.RegAllocCoalesceParity. No extra premise. Proof-side port; executed allocator unchanged. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "reset_move_related_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Coalesce.lean",
+    "lean_name": "resetMoveRelated",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.8.6.27): reg_allocScript.sml:708-724 reset_move_related ls = do d <- get_dim; st_ex_FOREACH (COUNT_LIST d) (λx. update_move_related x F); st_ex_FOREACH ls (λ(_,(x,y)). do bx <- is_Fixed x; by <- is_Fixed y; update_move_related x (~bx); update_move_related y (~by) od) od. Lean: COUNT_LIST d as List.range d, the accepted stExForeach, priority carrier {α : Type} as in the original type. Generated accessors from .10.5.2 (opus-wordsem e234f6ad2, pending acceptance). Original EVAL rows (scripts/hol-probes/reg_alloc_coalesce_probe.out) kernel-replayed in Flapjack.Test.RegAllocCoalesceParity. No extra premise. Proof-side port; executed allocator unchanged. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "st_ex_list_MAX_deg_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/SpillChoice.lean",
+    "lean_name": "stExListMaxDeg",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.8.6.27): reg_allocScript.sml:794-807 st_ex_list_MAX_deg [] d k v acc = return (k,acc); (x::xs): if x < d then do xv <- degrees_sub x; if v < xv then st_ex_list_MAX_deg xs d x xv (k::acc) else st_ex_list_MAX_deg xs d k v (x::acc) od else st_ex_list_MAX_deg xs d k v acc. Generated accessors from .10.5.2 (opus-wordsem e234f6ad2, pending acceptance). Original EVAL rows (scripts/hol-probes/reg_alloc_coalesce_probe.out) kernel-replayed in Flapjack.Test.RegAllocCoalesceParity. No extra premise. Proof-side port; executed allocator unchanged. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "st_ex_list_MIN_cost_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/SpillChoice.lean",
+    "lean_name": "stExListMinCost",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.8.6.27): reg_allocScript.sml:778-792 st_ex_list_MIN_cost scost [] d k v acc = return (k,acc); (x::xs): if x < d then do xv <- degrees_sub x; cost <- return (safe_div (lookup_any x scost 0n) xv); if v > cost then ... xs d x cost (k::acc) else ... xs d k v (x::acc) od else ... xs d k v acc. Lean: same clauses with the accepted safeDiv, the tagged misc lookupAny, and the literal return binder as bind (ret e). Generated accessors from .10.5.2 (opus-wordsem e234f6ad2, pending acceptance). Original EVAL rows (scripts/hol-probes/reg_alloc_coalesce_probe.out) kernel-replayed in Flapjack.Test.RegAllocCoalesceParity. No extra premise. Proof-side port; executed allocator unchanged. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "lookup_any_def",
+    "lean_path": "Flapjack/Misc/LookupAny.lean",
+    "lean_name": "lookupAny",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.8.6.27): miscScript.sml:344-348 lookup_any x sp d = case lookup x sp of NONE => d | SOME m => m; original type num -> α num_map -> α -> α, so {α : Type}; HOL lookup is the reviewed sptLookup. Original EVAL rows (scripts/hol-probes/reg_alloc_coalesce_probe.out) kernel-replayed in Flapjack.Test.RegAllocCoalesceParity. No extra premise. Proof-side port; executed allocator unchanged. Coordinator source acceptance pending."
   }
 ]

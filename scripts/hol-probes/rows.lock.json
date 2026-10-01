@@ -3157,6 +3157,12 @@
       "sha256": "1832a5c8df26d3e4d503c9b896b8c92656597611be255c73f45cbd33d46b6c82"
     },
     {
+      "bytes": 8484,
+      "out": "reg_alloc_coalesce_probe.out",
+      "rows": 29,
+      "sha256": "9150484c7cd2addcce59a37f55aab5454f3eccd6be645ca4e8148bbaacf78a3c"
+    },
+    {
       "bytes": 455,
       "out": "reg_alloc_considered_var_probe.out",
       "rows": 20,
