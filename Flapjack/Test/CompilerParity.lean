@@ -1,8 +1,11 @@
+import Flapjack.Test.LabValidityNativeParity
 import Flapjack.Test.StackToLabNativeParity
 import Flapjack.Test.WordToStackNoShmemopHandlersParity
 import Flapjack.Test.WordAllocLimitPropertiesParity
 import Flapjack.Test.SSAMapStepParity
 import Flapjack.Test.SSALocalsInsertParity
+import Flapjack.Test.BinaryIeeeArithExecParity
+import Flapjack.Test.LoopToWordProgramNamesParity
 import Flapjack.Test.SSAMergeMoveLookupsParity
 import Flapjack.Test.LoopToWordLabelHandlersParity
 import Flapjack.Test.WordConvsPredicateEquationsParity
@@ -627,6 +630,7 @@ import Flapjack.Test.WordSemAllocParity
 import Flapjack.Test.WordSemShMemParity
 import Flapjack.Test.MachineIeeeCompareParity
 import Flapjack.Test.BinaryIeeeRoundParity
+import Flapjack.Test.BinaryIeeeSqrtRoundAgreementParity
 import Flapjack.Test.MachineIeeeArithSpecialParity
 import Flapjack.Test.FpSemOpsParity
 import Flapjack.Test.Fp64NanRefinementParity
@@ -1469,6 +1473,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.WordSemShMemParity.runChecks,
     Flapjack.Test.MachineIeeeCompareParity.runChecks,
     Flapjack.Test.BinaryIeeeRoundParity.runChecks,
+    Flapjack.Test.BinaryIeeeSqrtRoundAgreementParity.runChecks,
     Flapjack.Test.MachineIeeeArithSpecialParity.runChecks,
     Flapjack.Test.FpSemOpsParity.runChecks,
     Flapjack.Test.Fp64NanRefinementParity.runChecks,

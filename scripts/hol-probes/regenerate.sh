@@ -101,6 +101,10 @@ run_probe() {
   done
 }
 
+run_probe stacksem_fp_conversion_types_probeScript.sml stacksem_fp_conversion_types_probe.out \
+  fp_inst_type fp_get_type fp_set_type fp_sqrt_type fp_to_int_type fp_from_int_type fp_oracle_type \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
 run_probe word_to_stack_copy_ret_no_install_probeScript.sml word_to_stack_copy_ret_no_install_probe.out \
   crni_zero_bad crni_plain_good crni_handler_bad crni_perf_good crni_perf_bad crni_option_tail_handler crni_empty_list_loop crni_exact_count_zero \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -154,6 +158,10 @@ run_probe stacksem_fpreg_inst_probeScript.sml stacksem_fpreg_inst_probe.out \
 
 run_probe stacksem_fp_arith_probeScript.sml stacksem_fp_arith_probe.out \
   fpless_true fpless_false fpless_equal fpless_missing fplessequal_true fplessequal_false fpequal_true fpequal_false fpadd_result fpadd_missing fpsub_result fpmul_result fpdiv_result fpfma_order \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe stacksem_fp_convert_probeScript.sml stacksem_fp_convert_probe.out \
+  fpsqrt_result fpsqrt_missing fptoint_result fptoint_out_of_range fptoint_missing fptoint32_even fptoint32_odd fpfromint_result fpfromint_missing fpfromint32_even fpfromint32_odd \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe stacksem_store_consts_guard_probeScript.sml stacksem_store_consts_guard_probe.out \
@@ -3565,6 +3573,10 @@ run_probe word_to_stack_no_shmemop_inst_probeScript.sml word_to_stack_no_shmemop
   ci_skip ci_const ci_binop_imm ci_binop_reg ci_shift_imm ci_shift_reg ci_div ci_long_mul ci_long_div ci_carry ci_add_overflow ci_sub_overflow ci_load ci_load8 ci_load16 ci_load32 ci_store ci_store8 ci_store16 ci_store32 ci_fpless ci_fplessequal ci_fpequal ci_fpabs ci_fpneg ci_fpsqrt ci_fpadd ci_fpsub ci_fpmul ci_fpdiv ci_fpfma ci_fpmov ci_fpmovtoreg ci_fpmovfromreg ci_fptoint ci_fpfromint ci_fpmovtoreg1 ci_fpmovfromreg1 ci_fpmovtoreg32 ci_fpmovfromreg32 ci_fpmovtoreg80 ci_fpmovfromreg80 \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
 
+run_probe real_sqrt_round_agreement_special_probeScript.sml real_sqrt_round_agreement_special_probe.out \
+  sqrt_zero_pinf sqrt_zero_nz sqrt_positive_pinf sqrt_positive_nz sqrt_negative_pinf sqrt_negative_nz sqrt_negative_flags_all_modes sqrt_quiet_nan_flags_all_modes \
+  "$hol_dir/src/floating-point/binary_ieeeScript.sml" "$hol_dir/src/floating-point"
+
 run_probe ssa_map_bounds_probeScript.sml ssa_map_bounds_probe.out \
   mb_empty mb_valid mb_same mb_bound mb_physical mb_invalid mb_large_physical mb_large mb_overwrite mb_more \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -3631,3 +3643,10 @@ run_probe ssa_rename_move_preserve_weak_probeScript.sml ssa_rename_move_preserve
   rmw_full rmw_type_st rmw_type_cst rmw_type_ssa rmw_type_na rmw_type_ls \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+run_probe loop_to_word_program_names_probeScript.sml loop_to_word_program_names_probe.out \
+  first_compile_prog_all_distinct_source_replay first_compile_all_distinct_source_replay mem_prog_mem_compile_prog_source_replay lookup_prog_some_lookup_compile_prog_source_replay pn_duplicate_result pn_distinct_result pn_duplicate_names pn_distinct_names pn_first_lookup pn_missing_lookup pn_distinct_theorem pn_compile_theorem pn_member_theorem pn_lookup_theorem \
+  "$cake_dir/pancake/proofs/loop_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe lab_validity_native_probeScript.sml lab_validity_native_probe.out \
+  line_ok_asm_skip line_ok_asm_cbw line_ok_label line_ok_labasm_halt line_ok_asm_badreg all_enc_ok_one_ok all_enc_ok_one_bad cbw_to_asm_store8 cbw_to_asm_sharemem sec_ok_one_ok sec_ok_one_bad sec_ok_empty all_enc_ok_two_ok all_enc_ok_empty native_cbw_width1_huge native_shared_width80 native_cbw_definition native_line_definition native_section_definition \
+  "$cake_dir/compiler/backend/semantics/labPropsScript.sml" "$cake_dir/compiler/backend/semantics"

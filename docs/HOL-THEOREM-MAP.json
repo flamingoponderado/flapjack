@@ -48069,5 +48069,112 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-a completed source comparison 2026-10-01 flapjack-39oz: full original5450-5520 and fresh literal original five-proof replay. Original st/cst inferred same alpha,beta,gamma state; generic native Spt Nat, arbitrary counter/names with original locals relation/domain subset/Nodup/mapOK/full state relation premises, all NONE/output locals/full state conclusions retained. No physical/allocation class, tree validity, successful evaluation or post-state premise added. Actual native listNextVarRenameMove and WordSem evaluate, guarded SOME selectors and duplicate-free parallel writes kernel checked. Canonical fpRegs/store and positive BitVec/NeZero carriers use checked roundtrip witness. Inherits reals_as_rational_cuts from full evaluator, SOUNDNESS item8; Move branch reads/writes only locals. Source replay used HOLa390cb and CakeML857f0d matching initialized checkout pins and shared builds; no cross-prover equivalence claim. Peer getVarsEq consumed checked86deea0a9 through ordinary5a05542ef merge; no executable compiler change."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/ProgramNames.lean",
+    "lean_name": "loopToWordFirstCompileProgAllDistinct",
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "first_compile_prog_all_distinct",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c author source comparison (2026-10-01; l8d5), original line 1850: full quantified native program list, numeric names, List numeric formals and positive-width HolLoopProg/WordLangProgHOL; exact comp_func/compile_prog/compile composition retained. HOL ALL_DISTINCT becomes Lean List.Nodup and MEM becomes membership without representation change. Name-distinctness statements retain only original source distinctness premise; membership retains only source triple membership; lookup retains only original SOME(params,body) premise and proves whole compiled SOME result via native sptFromAList first-match lookup, including duplicate names. No successful allocation, target evaluation, source uniqueness or simulation premise. Four complete literal original proofs replayed with original simplifier context, complete duplicate/distinct compiled outputs and first/missing lookup sentinels matched by generic-width kernel fixtures. Standard words_as_type_indexed_bitvec is the sole carrier translation; each width has NeZero."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/ProgramNames.lean",
+    "lean_name": "loopToWordFirstCompileAllDistinct",
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "first_compile_all_distinct",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c author source comparison (2026-10-01; l8d5), original line 1867: full quantified native program list, numeric names, List numeric formals and positive-width HolLoopProg/WordLangProgHOL; exact comp_func/compile_prog/compile composition retained. HOL ALL_DISTINCT becomes Lean List.Nodup and MEM becomes membership without representation change. Name-distinctness statements retain only original source distinctness premise; membership retains only source triple membership; lookup retains only original SOME(params,body) premise and proves whole compiled SOME result via native sptFromAList first-match lookup, including duplicate names. No successful allocation, target evaluation, source uniqueness or simulation premise. Four complete literal original proofs replayed with original simplifier context, complete duplicate/distinct compiled outputs and first/missing lookup sentinels matched by generic-width kernel fixtures. Standard words_as_type_indexed_bitvec is the sole carrier translation; each width has NeZero."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/ProgramNames.lean",
+    "lean_name": "loopToWordMemProgMemCompileProg",
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "mem_prog_mem_compile_prog",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c author source comparison (2026-10-01; l8d5), original line 1875: full quantified native program list, numeric names, List numeric formals and positive-width HolLoopProg/WordLangProgHOL; exact comp_func/compile_prog/compile composition retained. HOL ALL_DISTINCT becomes Lean List.Nodup and MEM becomes membership without representation change. Name-distinctness statements retain only original source distinctness premise; membership retains only source triple membership; lookup retains only original SOME(params,body) premise and proves whole compiled SOME result via native sptFromAList first-match lookup, including duplicate names. No successful allocation, target evaluation, source uniqueness or simulation premise. Four complete literal original proofs replayed with original simplifier context, complete duplicate/distinct compiled outputs and first/missing lookup sentinels matched by generic-width kernel fixtures. Standard words_as_type_indexed_bitvec is the sole carrier translation; each width has NeZero."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/ProgramNames.lean",
+    "lean_name": "loopToWordLookupProgSomeLookupCompileProg",
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "lookup_prog_some_lookup_compile_prog",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c author source comparison (2026-10-01; l8d5), original line 1894: full quantified native program list, numeric names, List numeric formals and positive-width HolLoopProg/WordLangProgHOL; exact comp_func/compile_prog/compile composition retained. HOL ALL_DISTINCT becomes Lean List.Nodup and MEM becomes membership without representation change. Name-distinctness statements retain only original source distinctness premise; membership retains only source triple membership; lookup retains only original SOME(params,body) premise and proves whole compiled SOME result via native sptFromAList first-match lookup, including duplicate names. No successful allocation, target evaluation, source uniqueness or simulation premise. Four complete literal original proofs replayed with original simplifier context, complete duplicate/distinct compiled outputs and first/missing lookup sentinels matched by generic-width kernel fixtures. Standard words_as_type_indexed_bitvec is the sole carrier translation; each width has NeZero."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Native.lean",
+    "lean_name": "cbwToAsmHOL",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "cbw_to_asm_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol completed source/body/carrier comparison (2026-10-01; bead npxw), source lines31-37: all three source constructors compared: Asmi returns its exact HolAsm payload unchanged; Cbw r1 r2 returns Inst(Mem Store8 r2(Addr r1 0w)); ShareMem m r ad returns Inst(Mem m r ad). Native assembler/memory/address carriers preserve arities, positive shared word dimension, and all register naturals; no assembler configuration argument or validity assumption added. Sole qualifier records positive-width BitVec/[NeZero width] word-dimension translation. Original config line/section/conversion oracle freshly re-evaluated; generic kernel fixtures preserve arbitrary native payloads and ignored caches."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/Native.lean",
+    "lean_name": "lineOkPreHOL",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "line_ok_pre_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol completed source/body/carrier comparison (2026-10-01; bead npxw), source lines1247-1250: original asm_config argument is the exact AsmConfigExact width carrier; Asm b bytes l is asm_ok(cbw_to_asm b)c, represented as accepted native asmOkExact Boolean equality true. Every non-Asm line is True. Caches are List(BitVec8), native label instruction payloads and exact MlString retained; both bytes and length are ignored, without range/length premises. Predicate codomain is Prop; no callback checks or alternate encoder carrier introduced. Sole qualifier records positive-width BitVec/[NeZero width] word-dimension translation. Original config line/section/conversion oracle freshly re-evaluated; generic kernel fixtures preserve arbitrary native payloads and ignored caches."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/Native.lean",
+    "lean_name": "secOkPreHOL",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "sec_ok_pre_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol completed source/body/carrier comparison (2026-10-01; bead npxw), source lines1252-1255: exact config and native Section carrier, ignores section identifier and requires EVERY(line_ok_pre c) over the section line list, expressed as universal list membership. No encoded-cache, section-number or target-validity assumption. The all_enc_ok_pre spelling is a source overload with no declaration to tag; its separate Lean helper is deliberately untagged. Sole qualifier records positive-width BitVec/[NeZero width] word-dimension translation. Original config line/section/conversion oracle freshly re-evaluated; generic kernel fixtures preserve arbitrary native payloads and ignored caches."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/FpRegisterInstructions.lean",
+    "lean_name": "instFpSqrt",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "inst_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-09-30; bead flapjack-y19g.11.3.3): HOL inst_def FPSqrt clause (cakeml/compiler/backend/semantics/stackSemScript.sml:558-562) = case get_fp_var d2 s of SOME f => SOME (set_fp_var d1 (fp64_sqrt roundTiesToEven f) s) | _ => NONE, split out as the exact FPSqrt constructor case of HOL inst_def (a split along HOL's own case structure). The stated result is exactly the clause's Option state value, with no dispatcher outer some. The owning carrier is the tagged StackSemStateFiniteExact; its three |-> fields regs/fp_regs/store are recorded by fmap_as_finite_support [regs, fpRegs, store] with the same-module witness Flapjack.StackSemFpRegisterInstructions.FiniteSupport.holFmapAsFiniteSupportWitness (forwarding StackSemStateOps.holFmapAsFiniteSupportWitness). The words qualifier records the HOL 'a word/dimindex (:a) to positive-width BitVec width/[NeZero width] translation; fp64_sqrt roundTiesToEven is the faithful real-sqrt rendering holFp64SqrtReal (Flapjack/Misc/BinaryIeeeSqrt/RoundAgreement.lean), proven equal to the rational-cut holFp64Sqrt by holFp64Sqrt_tiesToEven_agreement. No quantifier, hypothesis, side condition or conclusion differs. Rows fpsqrt_result and fpsqrt_missing of scripts/hol-probes/stacksem_fp_convert_probe.out are replayed by Flapjack.Test.StackSemFpRegisterInstParity. flapjack-sol3 source comparison (2026-10-01; flapjack-y19g.11.3.3.1): independently compared original stackSem inst_def clauses 558-562, 605-623 and 624-636, original full generic inst/get_fp_var/set_fp_var types, and the 22-field owning state. C and F remain arbitrary; fp_regs is fixed word64 while the width-split FPFromInt extraction is word32 only at width=64 and width-indexed otherwise. Missing operands, signed i2w/w2i round-trip rejection, odd/even DIV-2 slots and exact Option state outputs are preserved, without extra premises. The same-module finite-support witness forwards the actual owning carrier codec. Original 11-row probe freshly regenerated from pinned HOL source. The real-sqrt/cut agreement is pure Lean and does not prove HOL-to-Lean equivalence; conversion representation assumptions remain as recorded."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/FpRegisterInstructions.lean",
+    "lean_name": "instFpToInt",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "inst_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-09-30; bead flapjack-y19g.11.3.3): HOL inst_def FPToInt clause (cakeml/compiler/backend/semantics/stackSemScript.sml:605-623) = case get_fp_var d2 s of NONE => NONE | SOME f => case fp64_to_int roundTiesToEven f of NONE => NONE | SOME i => let w = i2w i : word32 in if w2i w = i then (if dimindex(:a) = 64 then SOME (set_fp_var d1 (w2w w) s) else case get_fp_var (d1 DIV 2) s of NONE => NONE | SOME f => let (h,l) = if ODD d1 then (63,32) else (31,0) in SOME (set_fp_var (d1 DIV 2) (bit_field_insert h l w f) s)) else NONE, split out as the exact FPToInt constructor case of HOL inst_def (a split along HOL's own case structure). The stated result is exactly the clause's Option state value, with no dispatcher outer some; i2w/w2i are BitVec.ofInt/toInt, w2w is setWidth 64, bit_field_insert is holBitFieldInsert, and ODD d1 / d1 DIV 2 select the low/high half. The owning carrier is the tagged StackSemStateFiniteExact; its three |-> fields regs/fp_regs/store are recorded by fmap_as_finite_support [regs, fpRegs, store] with the same-module witness Flapjack.StackSemFpRegisterInstructions.FiniteSupport.holFmapAsFiniteSupportWitness. The words qualifier records the HOL 'a word/dimindex (:a) to positive-width BitVec width/[NeZero width] translation; the clause's own source uses the reviewed binary64 real rendering holFp64ToInt (Flapjack/Misc/BinaryIeeeConvert.lean), so the declaration carries (reals_as_rational_cuts): HOL fp64_to_int inspects its argument through the real-to-Rat rendering, and agreement with HOL's real-number specification remains the external assumption of docs/SOUNDNESS.md item 8 (source review names the qualifier reals_as_rational_cuts and Soundness item 8). No quantifier, hypothesis, side condition or conclusion differs. Rows fptoint_result, fptoint_out_of_range, fptoint_missing, fptoint32_even and fptoint32_odd of scripts/hol-probes/stacksem_fp_convert_probe.out are replayed by Flapjack.Test.StackSemFpRegisterInstParity. flapjack-sol3 source comparison (2026-10-01; flapjack-y19g.11.3.3.1): independently compared original stackSem inst_def clauses 558-562, 605-623 and 624-636, original full generic inst/get_fp_var/set_fp_var types, and the 22-field owning state. C and F remain arbitrary; fp_regs is fixed word64 while the width-split FPFromInt extraction is word32 only at width=64 and width-indexed otherwise. Missing operands, signed i2w/w2i round-trip rejection, odd/even DIV-2 slots and exact Option state outputs are preserved, without extra premises. The same-module finite-support witness forwards the actual owning carrier codec. Original 11-row probe freshly regenerated from pinned HOL source. The real-sqrt/cut agreement is pure Lean and does not prove HOL-to-Lean equivalence; conversion representation assumptions remain as recorded."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/FpRegisterInstructions.lean",
+    "lean_name": "instFpFromInt",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "inst_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-09-30; bead flapjack-y19g.11.3.3): HOL inst_def FPFromInt clause (cakeml/compiler/backend/semantics/stackSemScript.sml:624-636) = if dimindex(:a) = 64 then case get_fp_var d2 s of SOME f => let i = w2i ((31 >< 0) f : word32) in SOME (set_fp_var d1 (int_to_fp64 roundTiesToEven i) s) | NONE => NONE else case get_fp_var (d2 DIV 2) s of SOME v => let i = w2i (if ODD d2 then (63 >< 32) v else (31 >< 0) v : 'a word) in SOME (set_fp_var d1 (int_to_fp64 roundTiesToEven i) s) | NONE => NONE, split out as the exact FPFromInt constructor case of HOL inst_def (a split along HOL's own case structure). The stated result is exactly the clause's Option state value, with no dispatcher outer some; (31 >< 0)/(63 >< 32) are holWordExtract and w2i is BitVec.toInt. The owning carrier is the tagged StackSemStateFiniteExact; its three |-> fields regs/fp_regs/store are recorded by fmap_as_finite_support [regs, fpRegs, store] with the same-module witness Flapjack.StackSemFpRegisterInstructions.FiniteSupport.holFmapAsFiniteSupportWitness. The words qualifier records the positive-width BitVec width translation; the clause's own source uses the reviewed binary64 real rendering holIntToFp64 (Flapjack/Misc/BinaryIeeeConvert.lean), so the declaration carries (reals_as_rational_cuts): agreement with HOL's real-number specification remains the external assumption of docs/SOUNDNESS.md item 8 (source review names the qualifier reals_as_rational_cuts and Soundness item 8). No quantifier, hypothesis, side condition or conclusion differs. Rows fpfromint_result, fpfromint_missing, fpfromint32_even and fpfromint32_odd of scripts/hol-probes/stacksem_fp_convert_probe.out are replayed by Flapjack.Test.StackSemFpRegisterInstParity. flapjack-sol3 source comparison (2026-10-01; flapjack-y19g.11.3.3.1): independently compared original stackSem inst_def clauses 558-562, 605-623 and 624-636, original full generic inst/get_fp_var/set_fp_var types, and the 22-field owning state. C and F remain arbitrary; fp_regs is fixed word64 while the width-split FPFromInt extraction is word32 only at width=64 and width-indexed otherwise. Missing operands, signed i2w/w2i round-trip rejection, odd/even DIV-2 slots and exact Option state outputs are preserved, without extra premises. The same-module finite-support witness forwards the actual owning carrier codec. Original 11-row probe freshly regenerated from pinned HOL source. The real-sqrt/cut agreement is pure Lean and does not prove HOL-to-Lean equivalence; conversion representation assumptions remain as recorded."
   }
 ]

@@ -1,0 +1,26 @@
+line_ok_asm_skip=T
+line_ok_asm_cbw=T
+line_ok_label=T
+line_ok_labasm_halt=T
+line_ok_asm_badreg=F
+all_enc_ok_one_ok=T
+all_enc_ok_one_bad=F
+cbw_to_asm_store8=Inst (Mem Store8 2 (Addr 1 0w))
+cbw_to_asm_sharemem=Inst (Mem Load 4 (Addr 5 0w))
+sec_ok_one_ok=T
+sec_ok_one_bad=F
+sec_ok_empty=T
+all_enc_ok_two_ok=T
+all_enc_ok_empty=T
+native_cbw_width1_huge=Inst
+  (Mem Store8 1208925819614629174706179 (Addr 1208925819614629174706176 0w))
+native_shared_width80=Inst (Mem Store32 999 (Addr 1000 0xFFFFFFFFFFFFFFFFFFFFw))
+native_cbw_definition=∀a. cbw_to_asm a =
+    case a of
+      Asmi a => a
+    | Cbw r1 r2 => Inst (Mem Store8 r2 (Addr r1 0w))
+    | ShareMem m r ad => Inst (Mem m r ad)
+native_line_definition=(line_ok_pre c (Asm b bytes l) ⇔ asm_ok (cbw_to_asm b) c) ∧
+(line_ok_pre c (Label v2 v3 v4) ⇔ T) ∧
+(line_ok_pre c (LabAsm v8 v9 v10 v11) ⇔ T)
+native_section_definition=∀c k ls. sec_ok_pre c (Section k ls) ⇔ EVERY (line_ok_pre c) ls
