@@ -986,6 +986,12 @@
       "sha256": "2eaa952ab65690ce7e0295ba3a42708411a2206def03b8622c9eb2d9271dde48"
     },
     {
+      "bytes": 320,
+      "out": "find_index_append_probe.out",
+      "rows": 10,
+      "sha256": "9ae2c5fb160e3293cc611cc3275f2d89b664e7c11cb9cdb550e2a27b2456e285"
+    },
+    {
       "bytes": 193,
       "out": "find_index_bounds_probe.out",
       "rows": 8,
