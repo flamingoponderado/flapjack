@@ -2965,3 +2965,7 @@ run_probe word_alloc_stack_only_probeScript.sml word_alloc_stack_only_probe.out 
 run_probe word_alloc_get_prefs_probeScript.sml word_alloc_get_prefs_probe.out \
   prefs_skip prefs_empty prefs_move prefs_duplicate prefs_self prefs_seq prefs_if_reg prefs_if_imm prefs_must prefs_loop prefs_tail prefs_tail_handler prefs_return prefs_both prefs_nested prefs_ignored prefs_large \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
+run_probe parmove_independence_probeScript.sml parmove_independence_probe.out \
+  ind_head ind_middle ind_tail ind_cycle ind_fanout ind_self ind_bool ind_empty_others ind_nil_nat ind_nil_bool \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"

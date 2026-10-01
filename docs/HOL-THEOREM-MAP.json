@@ -42194,5 +42194,21 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-b source comparison 2026-10-01 original1203-1218: all seven recursive clauses over actual native WordLangProgHOL positive BitVec width. Move maps original pair order with unchanged Nat priority then appends arbitrary accumulator; MustTerminate/Loop descend; Seq and If first outside second; returning Call exception outside return; NONE Call ignores its handler through literal fallback. Preserves duplicates/self moves/unbounded Nat, adds no wf or execution premise. Seventeen fresh original full-list equalities and matching kernel rfl fixtures in actual CompilerParity. Coordinator source review pending; native get_heuristics and executed full allocator remain parent work."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/Independence.lean",
+  "lean_name": "parsem_nil",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "parsem_nil",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 parmove165: Complete transformer equality parsem [] = identity, with independent arbitrary register/value Type carriers and standard propositional DecidableEq register equality. Ten original universal theorem applications and actual CompilerParity kernel applications include independent Bool/Nat carriers; no numeric narrowing or word translation. Coordinator source review pending; broader preservation/renaming and compiler theorem remain open."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/Independence.lean",
+  "lean_name": "independence",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "independence",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 parmove182: Quantifies original before/source/destination/suffix/moves in source order; retains only windmill moves and moves decomposition conjuncts, concludes complete transformer equality after extracting the selected move to the head. Derived from reviewed parsem_perm with unconditional append permutation, no added freshness, wf, equality-of-output or successful-execution premise. Ten original universal theorem applications and actual CompilerParity kernel applications include independent Bool/Nat carriers; no numeric narrowing or word translation. Coordinator source review pending; broader preservation/renaming and compiler theorem remain open."
 }
 ]

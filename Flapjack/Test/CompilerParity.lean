@@ -1,3 +1,4 @@
+import Flapjack.Test.ParmoveIndependenceParity
 import Flapjack.Test.WordAllocGetPrefsParity
 import Flapjack.Test.WordAllocStackOnlyParity
 import Flapjack.Test.WordAllocShareCheckerParity
