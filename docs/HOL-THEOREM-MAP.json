@@ -42185,5 +42185,21 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-a source comparison word_allocScript1607-1626: explicit NONE and SOME col branches on exact Spt Nat num_map, supplied literal ClashTree and WordLangProgHOL positive-width BitVec program. Native totalColour/everyEvenColour/checkClashTree/applyColour/everyStackVarHOL helpers used, not production substitutes. Checker non-NONE is Option.isSome (constructor test), conjunctions Boolean, x>=2*k is decide(2*k<=x) on unboundedNat, forcedpairs EVERY disequality List.all with exactNat BEq. Returns actualcolouredprogram onlyafter both guards, every rejectionNONE retained; no successfuloracle/poststate/targetevaluation premise. words_as_type_indexed_bitvec only carrier translation; Spt is originalnum_map nofinite-mapqualifier. Executedallocator migration remains open; original branch parity and coordinatorreview pending."
-}
+},
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "sp_default_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/SpDefault.lean",
+    "lean_name": "spDefault",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.6) against reg_allocScript.sml:1219-1222: sp_default t i = case lookup i t of NONE => if is_phy_var i then i DIV 2 else 0 | SOME x => x, over the exact num num_map carrier Spt Nat with the reviewed sptLookup and isPhyVar; DIV as Nat division."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "total_colour_alt",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/TotalColour.lean",
+    "lean_name": "totalColourAlt",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.6) against word_allocScript.sml:1597-1604: total_colour col = (\\x. 2 * x) o sp_default col as a function equality over Spt Nat, with the reviewed totalColour and spDefault; no premise. Proof: the missing physical-register case uses is_phy_var (x MOD 2 = 0) so 2 * (x DIV 2) = x."
+  }
 ]
