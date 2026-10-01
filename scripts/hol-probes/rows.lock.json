@@ -1573,6 +1573,12 @@
       "sha256": "6c3fb11670fa203bc59e317290e0208273d0748683367479a96cc8fc02bdd293"
     },
     {
+      "bytes": 2145,
+      "out": "loop_to_word_label_handlers_probe.out",
+      "rows": 23,
+      "sha256": "4af430af43b6442e06718cb49bcfbfa165f8a6cec90e90df09b83d46f6604d82"
+    },
+    {
       "bytes": 768,
       "out": "loop_to_word_locals_rel_probe.out",
       "rows": 15,
@@ -3563,6 +3569,12 @@
       "out": "ssa_merge_frame_probe.out",
       "rows": 11,
       "sha256": "18326d9280cd0afebb842eb62db0a43b8436b17d962cf3c2ab248af9fb9d7ab3"
+    },
+    {
+      "bytes": 666,
+      "out": "ssa_merge_move_lookups_probe.out",
+      "rows": 7,
+      "sha256": "52ca8380142279e84bd254872ac2b31b9c70134762af5730dce1f2d05f0ee401"
     },
     {
       "bytes": 1639,

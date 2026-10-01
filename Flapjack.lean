@@ -1,6 +1,7 @@
-import Flapjack.Compiler.Backend.WordAlloc.ProductionLimitVar
 import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocationLimit
 import Flapjack.Pancake.LoopToWord.CompFuncCodecDomain
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveLookups
+import Flapjack.Pancake.LoopToWord.Proofs.LabelHandlers
 import Flapjack.Pancake.WordConvs.PredicateEquations
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsPhysicalStateUpdates
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoves.CorrectLeft
@@ -9,6 +10,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapStep
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsInsert
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CodeLabelSafety
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsSwap
+import Flapjack.Compiler.Backend.WordAlloc.ProductionLimitVar
 import Flapjack.Compiler.Backend.WordAlloc.ProductionMaxVarInst
 import Flapjack.Compiler.Backend.WordAlloc.ProductionMaxVarExp
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsPhysicalInsert
