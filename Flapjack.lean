@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvenStartingLocals
 import Flapjack.Compiler.Backend.Parmove.DStepStep
 
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileKeys
+import Flapjack.Compiler.Backend.Parmove.PmovDsteps
 import Flapjack.Compiler.Backend.WordToStack.NativeConfig
 import Flapjack.Compiler.Backend.Parmove.DSteps
 

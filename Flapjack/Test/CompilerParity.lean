@@ -2,6 +2,7 @@ import Flapjack.Test.WordAllocEvenLocalsParity
 import Flapjack.Test.ParmoveDStepStepParity
 
 import Flapjack.Test.WordToStackCompileKeysParity
+import Flapjack.Test.ParmoveDstepsClosureParity
 import Flapjack.Test.ParmoveSplitSourceParity
 import Flapjack.Test.ParmoveStepsCorrectParity
 

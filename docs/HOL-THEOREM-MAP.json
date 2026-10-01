@@ -41493,5 +41493,13 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-b source comparison (2026-10-01), original3304-3307: forall natural key in actual locals domain, reviewed is_phy_var. Native Spt(WordLocW width) retains HOL word/location payload and sptree domain via lookup presence, no consecutive-key assumption or map substitution, no state/evaluation premise. Only positive type-indexed HOL word translated to BitVec width with NeZero. Six fresh original empty/zero/sparse-even/odd/mixed/overwrite domain observations kernel paired using actual insertion-domain equivalence, payload ignored exactly as source. Native definition only; whole word_alloc_correct and production composition remain open; coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/PmovDsteps.lean",
+  "lean_name": "pmovDsteps",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "pmov_dsteps",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison (2026-10-01; bead25.6.12): literal642-653 unconditional forall state RTC DStep state(pmov state), native arbitrary Option/List state, same scheduler and six-rule relation. Actual pmov.induct, finished reflexivity, unfinished exact fstepDstep single step followed by recursive closure. No wf/termination/output/semantic simulation hypothesis; terminal emitted history retained. Seven original final-output fixtures replay closure; fresh original captured outputs checked. Coordinator review pending."
 }
 ]
