@@ -1,0 +1,33 @@
+ec_store_statement=mem_store (x :α word) (y :α word_loc)
+  ((z :(α, β, γ) state) with clock := (k :num)) =
+OPTION_MAP (λ(s :(α, β, γ) state). s with clock := k) (mem_store x y z)
+ec_store_types=(z :(α, β, γ) state)::(α, β, γ) state;(k :num)::num;(y :α word_loc)::α word_loc;(x :α word)::α word;
+ec_word_statement=∀(s :(α, β, γ) state) (y :α exp) (k :num).
+  (word_exp (s with clock := k) y :α word option) =
+  (word_exp s y :α word option)
+ec_word_types=(s :(α, β, γ) state)::(α, β, γ) state;(y :α exp)::α exp;(k :num)::num;
+ec_assign_statement=assign (x :num) (y :α exp) ((s :(α, β, γ) state) with clock := (k :num)) =
+OPTION_MAP (λ(s :(α, β, γ) state). s with clock := k) (assign x y s)
+ec_assign_types=(s :(α, β, γ) state)::(α, β, γ) state;(k :num)::num;(y :α exp)::α exp;(x :num)::num;
+ec_const=SOME 255w
+ec_var_word=SOME 7w
+ec_var_loc=NONE
+ec_var_missing=NONE
+ec_lookup_word=SOME 9w
+ec_lookup_loc=NONE
+ec_lookup_missing=NONE
+ec_load_word=SOME 11w
+ec_load_loc=NONE
+ec_load_oob=NONE
+ec_load_bad_address=NONE
+ec_op_empty_and=SOME 255w
+ec_op_add_wrap=SOME 1w
+ec_op_sub_bad_arity=NONE
+ec_op_bad_operand=NONE
+ec_shift_valid=SOME 12w
+ec_shift_oob=NONE
+ec_shift_bad_right=NONE
+ec_assign_success=SOME (SOME (Word 12w),SOME (Loc 4 5))
+ec_assign_failure=NONE
+ec_store_success=SOME (19,Loc 4 5)
+ec_store_failure=NONE

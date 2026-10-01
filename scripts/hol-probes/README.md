@@ -1,3 +1,12 @@
+`stack_to_lab_executed_codec_probe.out` records nine fresh original native
+constructor/operand observations, including AddCarry's four positions, an
+unsupported overflow result, memory offsets, Cbw's address/value/store order,
+embedded NUL/high-byte names, nonzero LabAsm position with byte caches, and an
+80-bit constant. StackToLabExecutedCodecParity kernel-replays these source rows
+and checks supported conversion/rejection boundaries. The codec is untagged
+Flapjack interface infrastructure with independent successful-output recovery;
+these rows do not assert a HOL codec, production wiring, or semantic simulation.
+
 ssa_map_bounds_probe.out captures nine complete original map-validity pairs and a kernel replay of the full original local bound-monotonicity proof. Cases include empty/malformed trees, equal/raised/rejected bounds, physical registers, unbounded natural values and overwritten entries. SSAMapBoundsParity replays the same predicates and applies the full theorem to arbitrary maps/bounds. Recursive insertion is unfolded once before predicate simplification to avoid expanding dead recursive branches.
 `word_program_max_unrestricted_probe.out` captures eight fresh whole-program
 maximum and limit results across Seq, tail Call handler, returning Call with
@@ -4058,6 +4067,10 @@ before tagging it. Regenerate with
 `ssa_fix_inconsistencies_correct_left_probeScript.sml` replays the literal left reconciliation assembly and its original merge/fake prerequisites; captures the full statement and six types, including identical source/target word/code/FFI dimensions.
 
 `ssa_fix_inconsistencies_correct_right_probeScript.sml` replays the literal right reconciliation assembly and original map-agreement prerequisites, capturing the full returned-left-map result and six inferred types.
+
+- `ssa_cc_trans_exp_correct_probeScript.sml` replays the literal local SSA expression correctness proof (word_allocProof6256–6294) and captures the full theorem plus all six inferred argument carriers.
+
+- `ssa_fix_inconsistencies_props_probeScript.sml` replays literal reconciliation allocation/map bounds with its three original local prerequisites and captures the full theorem and eight argument carriers.
 ### WordSem partial Word extractors
 
 The final four rows of `word_sem_accessors_probe.out` freshly evaluate the
@@ -4067,6 +4080,79 @@ oracle value. The Lean ports retain independent opaque completions indexed by
 width and both Loc fields; their Word equations and Word-guarded agreement
 are kernel checked in `WordSem.Accessors` and `WordSemAccessorsParity`.
 These regressions do not establish a concrete meaning for unspecified Locs.
+### Full native program-list no-shared-memory preservation
+
+`word_to_stack_no_shmemop_programs_probeScript.sml` freshly captures the
+original exported `compile_word_to_stack_no_share_inst` theorem, all eight
+input/output carrier types, and sixteen actual source/compiled-target
+predicate pairs. Widths 1/32/64/80 and both performance flags cover empty and
+multiple-row lists, duplicate Boolean identifiers, nonzero bitmap state,
+bitmap-changing Alloc/StoreConsts, frame arithmetic boundaries, rejected
+shared operations, and an ignored tail-call handler. The latter retains a
+false source predicate and true target predicate, consistent with implication.
+`Flapjack/Test/WordToStackNoShmemopProgramsParity.lean` checks the pairs in the
+kernel and applies the full generic-identifier theorem and actual compiler
+projections. Captures are regression evidence, not a new proof replay or a
+HOL-to-Lean equivalence proof. Whole compiler semantic correctness remains open.
+
+Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_programs_probeScript.sml`.
+
+### Full native top-level no-shared-memory preservation
+
+`word_to_stack_no_shmemop_top_probeScript.sml` captures original exported
+`compile_no_shmemop`, its six carriers and sixteen source/actual-target pairs.
+Performance is false as in HOL. Both injected stubs, widths1/32/64/80,
+zero/underflow/large register counts, duplicate avoid registers/identifiers,
+empty/multiple rows, bitmap changes and rejected shared/ignored-handler cases
+are covered. `Flapjack/Test/WordToStackNoShmemopTopParity.lean` checks those
+pairs and two full-signature applications retaining all four outputs.
+Captures are regression evidence, not a new original proof replay or a
+HOL-to-Lean equivalence proof. Compiler semantic preservation remains open.
+
+Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_top_probeScript.sml`.
+
+- `ssa_cc_trans_exp_correct_probeScript.sml` replays the literal local SSA expression correctness proof (word_allocProof6256–6294) and captures the full theorem plus all six inferred argument carriers.
+
+- `ssa_fix_inconsistencies_props_probeScript.sml` replays literal reconciliation allocation/map bounds with its three original local prerequisites and captures the full theorem and eight argument carriers.
+`stackprops_expression_clock_probeScript.sml` captures six full source/type
+rows for `mem_load_with_const`, `word_exp_with_const` and `assign_with_const`,
+then22 clocked original expression/assignment/store observations. The first
+theorem's original name is misleading: its statement concerns `mem_store`.
+The new kernel replay covers domain failure, Loc rejection, missing operands,
+operator lists, wraparound, shift bounds and successful/failed assignment.
+The full recursive theorem imposes no success, size or clock bound. These
+captures provide regression evidence, not HOL-to-Lean equivalence.
+### Full native compiler no-install preservation
+
+`word_to_stack_comp_no_install_probeScript.sml` freshly captures original
+exported `comp_no_install`, seven input/output types and 39 actual predicate
+pairs: all26 source constructors, 12 deep nested/conditional/call cases over
+widths1/32/64/80, and a false-source/true-target ignored Install handler.
+The source false-performance premise is retained. Shared operations are
+allowed by no-install; rejected Install and ignored-handler cases preserve
+implication direction. `Flapjack/Test/WordToStackCompNoInstallParity.lean`
+checks the observations and two complete arbitrary-program applications.
+Captures are regression evidence, not a new original proof replay or a
+HOL-to-Lean equivalence proof. Whole compiler semantic correctness is open.
+
+Selector: `HOL_PROBE_ONLY=word_to_stack_comp_no_install_probeScript.sml`.
+
+- `ssa_cc_trans_inst_props_probeScript.sml` replays literal instruction allocation/map properties with original local map-extension and allocation-add proofs, capturing the full theorem and six argument carriers.
+### Full native program-list no-install preservation
+
+`word_to_stack_no_install_programs_probeScript.sml` freshly captures exported
+original `compile_word_to_stack_no_install`, all eight carriers and sixteen
+actual source/target pairs over widths1/32/64/80. Observations retain false
+performance, generic Boolean identifiers with duplicates, empty/multiple rows,
+bitmap-changing Alloc/StoreConsts and arbitrary frame boundaries. Shared
+operations are allowed, and the ignored Install handler remains false source
+and true target. `Flapjack/Test/WordToStackNoInstallProgramsParity.lean` checks
+all pairs and two full generic-identifier applications with the original
+performance equality. Regression evidence is not a new original proof replay
+or a HOL-to-Lean equivalence proof. Code-map and compiler semantic correctness
+remain open.
+
+Selector: `HOL_PROBE_ONLY=word_to_stack_no_install_programs_probeScript.sml`.
 
 `lab_to_target_encoding_probeScript.sml` reads the original `lab_to_target` assembly encoding definitions (`ffi_offset`, `lab_inst`, `cbw_to_asm`, `enc_line`, `enc_sec`, `enc_sec_list`). Because `enc_line` takes the instruction encoder as a parameter, the probe supplies a concrete encoder at dimension 8 (`Inst Skip` to `[1w]`, every other asm to `[2w;3w]`), so the stored `LENGTH bs` fields and the `skip_len` of `enc_sec_list` are observable. Its 17 rows are kernel-replayed in `Flapjack.Test.LabToTargetEncodingParity`; it does not claim the label-computation or program-transform halves.
 
@@ -4098,5 +4184,7 @@ type (bead `flapjack-pxn.18.5.15.10.10`). Regenerate with
 HOL_PROBE_ONLY=misc_lookup_any_find_index_probeScript.sml
 scripts/hol-probes/regenerate.sh`. These finite observations are regression
 evidence, not a cross-prover equivalence proof.
+
+- `ssa_rename_shifted_properties_probeScript.sml` replays the original raw-list derived pipeline and shifted move wrapper with nine original prerequisites; full statements and twelve type rows distinguish their input map-bound counters and conjunction orders.
 
 `lab_to_target_maplemmas_probeScript.sml` reads the two original `lab_to_target` MAP lemmas directly: `pad_code_MAP` (`pad_code nop = MAP (\x. Section (Section_num x) (pad_section nop (Section_lines x) []))`, line 226) and `prog_to_bytes_MAP` (`!ls. prog_to_bytes ls = FLAT (MAP (FLAT o MAP line_bytes o Section_lines) ls)`, line 341). Its 8 rows EVAL both sides of each theorem on concrete 64-bit `labLang$sec` values: `pad_code_MAP` empty and over a two-section list (`[Section 1 [Label 1 2 0; Asm (Asmi (Inst Skip)) [1w;2w;9w] 3]; Section 2 []]`), printing the equality (`T`) plus the observed left/right-hand section lists; and `prog_to_bytes_MAP` empty and over the three-section `bytesCode` list from the sibling label-removal probe (the empty middle section is skipped, giving `[1w;2w;3w]`), printing the equality (`T`) plus the observed left/right-hand byte lists. The rows are kernel-replayed in `Flapjack.Test.LabToTargetMapLemmasParity` (bead `flapjack-pxn.18.5.15.10.29`). Regenerate with `HOL4=/home/zksecurity/HOL CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=lab_to_target_maplemmas_probeScript.sml scripts/hol-probes/regenerate.sh`.
