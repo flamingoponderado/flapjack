@@ -2069,7 +2069,6 @@ under reversal, showing why the original windmill premise cannot be removed.
 `ParmovePermutationParity.lean` replays all values and checks the full-function
 lemma with a genuine list permutation. Full scheduler correctness remains open.
 
-
 ### ParMove generated relation witnesses
 
 `parmove_steps_probeScript.sml` proves one concrete instance of each of the
@@ -2080,6 +2079,7 @@ kernel-derived positive witnesses, not EVAL or production compiler parity.
 and a start/emit two-step chain. Rules, leastness, and exhaustive cases were
 also compared against the actual generated HOL theorem conclusions.
 Well-formedness and semantic preservation are separate unfinished proofs.
+
 
 ### ParMove no-read observations
 
