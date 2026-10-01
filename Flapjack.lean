@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordCse.InstructionKeys
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoInstallTop
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.NoInstallCode
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoInstallPrograms

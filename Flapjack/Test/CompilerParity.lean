@@ -1,3 +1,4 @@
+import Flapjack.Test.WordCseInstructionKeysParity
 import Flapjack.Test.WordToStackNoInstallTopParity
 import Flapjack.Test.WordPropsNoInstallCodeParity
 import Flapjack.Test.WordToStackNoInstallProgramsParity

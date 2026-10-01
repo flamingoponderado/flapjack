@@ -4062,3 +4062,15 @@ replay of the full compiler theorem or a HOL-to-Lean equivalence proof.
 Whole compiler semantic correctness remains unfinished.
 
 Selector: `HOL_PROBE_ONLY=word_to_stack_no_install_top_probeScript.sml`.
+
+## Native Word CSE instruction keys
+
+`word_cse_instruction_keys_probeScript.sml` regenerates all ten original
+definitions and function types plus 93 evaluations from `word_cseTheory`.
+The cases cover every shift, binop, memory operation, arithmetic and FP
+constructor, widths 1/32/64/80, unsigned all-ones words, and the instruction
+catch-all. `Flapjack/Test/WordCseInstructionKeysParity.lean` kernel-replays
+the values. FPFma retains all three registers; the other destination omissions
+follow the original. These fixtures are regression evidence, not a CSE
+simulation proof. Production carrier replacement and knowledge maps remain
+tracked on `flapjack-word-cse-defs`.
