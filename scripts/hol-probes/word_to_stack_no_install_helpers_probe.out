@@ -1,0 +1,14 @@
+ni_moves_empty=T
+ni_moves_all_pairs=T
+ni_load_install=T
+ni_load_skip=T
+ni_reg1_direct=T
+ni_reg1_spill=T
+ni_reg2_direct=T
+ni_reg2_spill=T
+ni_live_zero=T
+ni_live_frame=T
+ni_stack_move_install=T
+ni_stack_move_zero=T
+ni_copy_aux_zero=T
+ni_copy_aux_many=T

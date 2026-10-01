@@ -72,4 +72,22 @@ theorem listNextVarRenameLemma2 (names : List Nat) (ssa : Spt Nat) (next : Nat) 
     (∀ key, key ∉ names → sptLookup key result.2.1 = sptLookup key ssa) ∧
     (∀ key, key ∈ names → ∃ value, sptLookup key result.2.1 = some value) :=
   listNextVarRenameLookup names ssa next
+/-- HOL's result-equality form of the preceding full lookup theorem. Both
+original premises and all four conclusions are retained. THE is used only on
+the successful lookups established by the fourth conclusion, with selector
+independence proved above. -/
+@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
+  "list_next_var_rename_lemma_2'"]
+theorem listNextVarRenameLemma2Prime (names : List Nat) (ssa : Spt Nat) (next : Nat)
+    (outputNames : List Nat) (outputMap : Spt Nat) (outputNext : Nat) :
+    listNextVarRename names ssa next = (outputNames, outputMap, outputNext) →
+    names.Nodup →
+    outputNames = names.map (fun key => (sptLookup key outputMap).getD 0) ∧
+    sptDomain outputMap = (fun key => sptDomain ssa key ∨ key ∈ names) ∧
+    (∀ key, key ∉ names → sptLookup key outputMap = sptLookup key ssa) ∧
+    (∀ key, key ∈ names → ∃ value, sptLookup key outputMap = some value) := by
+  intro result distinct
+  have h := listNextVarRenameLemma2 names ssa next distinct
+  simpa only [result] using h
+
 end Flapjack.Compiler.Backend.WordAlloc

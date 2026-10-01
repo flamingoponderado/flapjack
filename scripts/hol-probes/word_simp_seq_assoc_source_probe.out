@@ -1,0 +1,16 @@
+assoc_skip=Skip
+assoc_prefix_skip=Assign 1 (Const 7w)
+assoc_trailing_skip=Tick
+assoc_interior_skip=Seq Tick Tick
+assoc_all_skip=Skip
+assoc_middle_skip=Seq (Assign 1 (Const 7w)) (Assign 2 (Const 9w))
+assoc_right_spine=Seq (Seq Tick (Raise 3)) (Return 1 [2])
+assoc_if=If Equal 1 (Imm 0w) Tick (Raise 3)
+assoc_loop=Loop LN Tick LN
+assoc_must=MustTerminate Tick
+assoc_tail_handler=Call NONE (SOME 7) [1] (SOME (1,Tick,3,4))
+assoc_return=Call (SOME ([],(LN,LN),Tick,3,4)) (SOME 7) [1] NONE
+assoc_both=Call (SOME ([],(LN,LN),Tick,3,4)) (SOME 7) [1] (SOME (1,Raise 3,5,6))
+assoc_prefix_unchanged=Seq Tick Skip
+assoc_inst=Inst (Const 2 9w)
+assoc_pre_ssa=If Less 1 (Reg 2) (Seq (Seq (Assign 3 (Const 1w)) (Assign 4 (Const 1w))) (Assign 5 (Const 7w))) (Seq (Assign 3 (Const 0w)) (Assign 4 (Const 0w)))

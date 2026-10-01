@@ -1,3 +1,6 @@
+import Flapjack.Test.SSARegisterFlipParity
+import Flapjack.Test.SSAMapExtendParity
+import Flapjack.Test.SSARenamePropertiesParity
 import Flapjack.Test.SSARegisterClassParity
 import Flapjack.Test.SSALocalsParity
 import Flapjack.Test.SSAMapParity
@@ -47,6 +50,7 @@ import Flapjack.Test.WordToStackRetainedFrameParity
 import Flapjack.Test.WordToStackAllocatorCodecParity
 import Flapjack.Test.WordToStackSelectorPreludeParity
 import Flapjack.Test.WordToStackSelectorDomainParity
+import Flapjack.Test.WordToStackConstantDomainParity
 import Flapjack.Test.WordToStackNativeConfigParity
 import Flapjack.Test.ParmoveDStepsParity
 import Flapjack.Test.WordLangMaxVarParity
