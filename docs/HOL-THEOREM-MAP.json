@@ -40045,5 +40045,32 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.1) against wordPropsScript.sml:2275-2279 handler_eq: x with handler := x.handler = x over the exact WordSem state; free x as explicit binder. WordSem finite-map fields via fmap_as_finite_support and positive width are the only carrier translations."
+},
+{
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "SeqStackFree_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeReturn.lean",
+  "lean_name": "seqStackFreeNative",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison2026-10-01 beadv23t: SeqStackFree260-262 retains zero body/nonzero Seq(StackFree n)body. copy_ret_aux429-441 retains zero Skip, positive predecessor n-1, load slotn-1/store slotn-1+f and recursive copy through list_Seq. Existing StackLang.listSeq specialization on HolProg width compared to original stackLangScript86-90: empty Skip, singleton identity, longer right Seq recursion; no extra trailing Skip introduced. copy_ret443-451 retains num_stack_ret k vs, zero continuation, copy offset f+handler_slots perf only if is_handle, then SeqStackFree n kont. Return list element carrier beta independent of positive-width native continuation, no added bounds/success/result/evaluation premise. HolProg width uses reviewed exact payload/MlString carrier; words_as_type_indexed_bitvec records only BitVec width/NeZero translation. Three universal kernel codec relations to accepted generic helpers establish representation transport, not return simulation. Actual compiler/production path parent25 stays open; coordinator review pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "copy_ret_aux_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeReturn.lean",
+  "lean_name": "copyRetAuxNative",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison2026-10-01 beadv23t: SeqStackFree260-262 retains zero body/nonzero Seq(StackFree n)body. copy_ret_aux429-441 retains zero Skip, positive predecessor n-1, load slotn-1/store slotn-1+f and recursive copy through list_Seq. Existing StackLang.listSeq specialization on HolProg width compared to original stackLangScript86-90: empty Skip, singleton identity, longer right Seq recursion; no extra trailing Skip introduced. copy_ret443-451 retains num_stack_ret k vs, zero continuation, copy offset f+handler_slots perf only if is_handle, then SeqStackFree n kont. Return list element carrier beta independent of positive-width native continuation, no added bounds/success/result/evaluation premise. HolProg width uses reviewed exact payload/MlString carrier; words_as_type_indexed_bitvec records only BitVec width/NeZero translation. Three universal kernel codec relations to accepted generic helpers establish representation transport, not return simulation. Actual compiler/production path parent25 stays open; coordinator review pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "copy_ret_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeReturn.lean",
+  "lean_name": "copyRetNative",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison2026-10-01 beadv23t: SeqStackFree260-262 retains zero body/nonzero Seq(StackFree n)body. copy_ret_aux429-441 retains zero Skip, positive predecessor n-1, load slotn-1/store slotn-1+f and recursive copy through list_Seq. Existing StackLang.listSeq specialization on HolProg width compared to original stackLangScript86-90: empty Skip, singleton identity, longer right Seq recursion; no extra trailing Skip introduced. copy_ret443-451 retains num_stack_ret k vs, zero continuation, copy offset f+handler_slots perf only if is_handle, then SeqStackFree n kont. Return list element carrier beta independent of positive-width native continuation, no added bounds/success/result/evaluation premise. HolProg width uses reviewed exact payload/MlString carrier; words_as_type_indexed_bitvec records only BitVec width/NeZero translation. Three universal kernel codec relations to accepted generic helpers establish representation transport, not return simulation. Actual compiler/production path parent25 stays open; coordinator review pending."
 }
 ]

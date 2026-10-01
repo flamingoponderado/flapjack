@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.LabSem.Arithmetic
+import Flapjack.Compiler.Backend.WordToStack.NativeReturn
 import Flapjack.Compiler.Backend.WordToStack.NativeCallArgs
 import Flapjack.Compiler.Backend.WordToStack.NativeMoves
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.If
