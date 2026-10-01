@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.StackLang.ProductionWordBoundary
 import Flapjack.Compiler.Backend.StackToLab.ExecutedCodec
 import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Full
 import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Recursive
