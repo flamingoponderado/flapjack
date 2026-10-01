@@ -510,6 +510,7 @@
     {"bytes": 266, "out": "reg_alloc_dec_deg_probe.out", "rows": 6, "sha256": "01dfe94275cdc543b9e92b6bab355cc1040aaca5f6eddaa6d43113feeb1f0a15"},
     {"bytes": 347, "out": "reg_alloc_in_clash_tree_probe.out", "rows": 18, "sha256": "c5d219c27341746601b8ec7ba986efbde53e08fc8950e96ffe17e700f01a6c3a"},
     {"bytes": 258, "out": "reg_alloc_mk_bij_probe.out", "rows": 12, "sha256": "b7e9c9c4909dc012f2c85516433cd7f367f106375d48aa788b3de726c16f85c8"},
+    {"bytes": 18608, "out": "reg_alloc_phase_closure_probe.out", "rows": 29, "sha256": "d4a15acdfbf2afcb75f4c65afa496e1a0cc598ea4e93fc4ea9cdcee6abc007d5"},
     {"bytes": 983, "out": "reg_alloc_probe.out", "rows": 22, "sha256": "be65ef0dafe928cbd259cc02ee07758c789422e27b06c02ac3a107c69801c074"},
     {"bytes": 185, "out": "reg_alloc_remap_probe.out", "rows": 12, "sha256": "3852b3f4916d853750298109c8af0bd0d2b7c5dbf3d0eac4067d4762abf12459"},
     {"bytes": 131, "out": "reg_alloc_var_partition_probe.out", "rows": 10, "sha256": "3849b94bf71b14b9de020a777d210f9e4bebfdd343aa2a9cf03afdcb7ea25e55"},

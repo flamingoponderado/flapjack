@@ -3111,3 +3111,8 @@ run_probe parmove_map_state_probeScript.sml parmove_map_state_probe.out \
 run_probe word_alloc_canonize_moves_probeScript.sml word_alloc_canonize_moves_probe.out \
   cmf_empty cmf_single cmf_reversed cmf_self cmf_duplicates cmf_coordinates cmf_second_coord cmf_equal_priority cmf_merged_groups cmf_count cmf_large cmf_zeros \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
+# Audit-only original definition statements; no Lean port acceptance.
+run_probe reg_alloc_phase_closure_probeScript.sml reg_alloc_phase_closure_probe.out \
+  ra_phase_do_simplify ra_phase_do_coalesce ra_phase_do_prefreeze ra_phase_do_freeze ra_phase_do_spill ra_phase_dec_deg ra_phase_dec_degree ra_phase_push_stack ra_phase_is_not_coalesced ra_phase_split_degree ra_phase_sort_moves ra_phase_smerge ra_phase_revive_moves ra_phase_unspill ra_phase_inc_deg ra_phase_is_Fixed ra_phase_is_Atemp ra_phase_is_Fixed_k ra_phase_considered_var ra_phase_deg_or_inf ra_phase_bg_ok ra_phase_consistency_ok ra_phase_coalesce_parent ra_phase_canonize_move ra_phase_st_ex_FIRST ra_phase_respill ra_phase_reset_move_related ra_phase_st_ex_list_MIN_cost ra_phase_st_ex_list_MAX_deg \
+  "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"

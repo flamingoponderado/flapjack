@@ -2548,3 +2548,21 @@ reflection in `inj_on_state`; theorem acceptance is tracked on individual beads.
 `parmove_map_state_probeScript.sml` captures ten original whole triple outputs: each list, endpoint/order preservation, constant non-injective maps, unbounded Nat, Bool, different Nat-to-Bool carriers and a map that does not preserve NONE. Kernel fixtures use the broad independent-carrier definition. Independent original type evidence is in `parmove_preservation_shape_probe.out`; ground outputs do not establish universal correspondence or injective compiler simulation.
 
 `word_alloc_canonize_moves_probeScript.sml` checks twelve full original normalization/sort/grouping outputs and matching native kernel fixtures: empty, reversed/self endpoints, normalized duplicate groups, x/y-before-priority sort order, equal priorities, merged interleaved groups, count/max aggregation, unbounded Naturals and zeros. Uses accepted concrete original sort and grouping ports; this is proof-side definition evidence, not executed allocator routing or universal correspondence.
+
+### Register allocator phase closure audit
+
+`reg_alloc_phase_closure_probeScript.sml` captures 29 exported original HOL
+definition equations for the five `do_step` phases and their nested helpers.
+These are statement captures, not Boolean behavioral parity or Lean theorem
+replays. The five success results are local HOL lemmas and were reviewed in
+`reg_alloc/proofs/reg_allocProofScript.sml:2075-2838`; no DB export or completed
+port is claimed for them. `reg_alloc_phase_closure_audit.json` records the
+source-confirmed helper frontier and shared bead IDs under `.10.5.8.6`.
+
+The five phase children remain blocked on genuine helpers. Important retained
+details include unspill's two partitions and update order, coalescing's parent
+compression even on rejected moves, prefreeze's stateful unavailable-worklist
+update, strict spill selector comparisons/tie accumulation, and the full
+success existential with good-state/subgraph/dimension/node-tag conclusions.
+Native `CakeRegAlloc` helpers are not thereby reviewed as literal state-monad
+ports. No source implementation or executed compiler route changes here.

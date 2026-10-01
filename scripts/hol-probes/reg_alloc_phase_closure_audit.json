@@ -1,0 +1,233 @@
+{
+  "audit_bead": "flapjack-pxn.18.5.11.5.10.5.8.6",
+  "scope": "audit only; no new Lean port or executed-path claim",
+  "hol_source_commit": "857f0d98da8f8a3580f34423338e697809308ede",
+  "definitions": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+  "proofs": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+  "helpers": [
+    {
+      "key": "degree",
+      "bead": "flapjack-pxn.18.5.11.5.10.5.8.6.6",
+      "title": "dec_deg/dec_degree definitions and FOREACH success",
+      "source_review": "Defs252/260; proofs2139/2154. Nat truncated decrement, out-of-dimension dec_degree no-op, adjacency list traversal, only degrees changed and length preserved.",
+      "helper_dependencies": [],
+      "phase_children": [
+        "1",
+        "4",
+        "5"
+      ]
+    },
+    {
+      "key": "stack",
+      "bead": "flapjack-pxn.18.5.11.5.10.5.8.6.7",
+      "title": "push_stack definition and FOREACH success",
+      "source_review": "Def299; proof2239. Zero degree, clear move_related, prepend stack. Preserve other fields and both updated list lengths.",
+      "helper_dependencies": [],
+      "phase_children": [
+        "1",
+        "4",
+        "5"
+      ]
+    },
+    {
+      "key": "classifiers",
+      "bead": "flapjack-pxn.18.5.11.5.10.5.8.6.8",
+      "title": "Fixed/Atemp/Fixed_k/considered_var/deg_or_inf definitions and bounded traversal lemmas",
+      "source_review": "Defs450,492,499,506,515; proofs2350 st_ex_FILTER_considered_var and local val st_ex_MAP_deg_or_inf2363. Exact tags, k versus k+1, no substitute Boolean test.",
+      "helper_dependencies": [],
+      "phase_children": []
+    },
+    {
+      "key": "split",
+      "bead": "flapjack-pxn.18.5.11.5.10.5.8.6.9",
+      "title": "is_not_coalesced/split_degree definitions and bounded FILTER/PARTITION lemmas",
+      "source_review": "Defs322/330; proofs2075/2085/2286. Out-of-range split_degree returns true; filter theorem has ls AND acc bounds.",
+      "helper_dependencies": [],
+      "phase_children": [
+        "3"
+      ]
+    },
+    {
+      "key": "partition",
+      "bead": "flapjack-pxn.18.5.11.5.10.5.8.6.10",
+      "title": "move_related PARTITION membership preservation",
+      "source_review": "Proof2118. Preserve original accumulator membership disjunctions; only input atemps require bound.",
+      "helper_dependencies": [],
+      "phase_children": [
+        "3"
+      ]
+    },
+    {
+      "key": "sort",
+      "bead": "flapjack-pxn.18.5.11.5.10.5.8.6.11",
+      "title": "sort_moves/smerge definitions and MEM_smerge",
+      "source_review": "Defs343/349; proof2172. Descending strict priority sort, left-biased >= merge ties. sorted_mem193 owned existing graph construction .5.",
+      "helper_dependencies": [],
+      "phase_children": []
+    },
+    {
+      "key": "revive",
+      "bead": "flapjack-pxn.18.5.11.5.10.5.8.6.12",
+      "title": "revive_moves definition and success",
+      "source_review": "Def363; proof2184. st_ex_MAP_adj_ls_sub277, PARTITION touching neighbours, sort then merge, preserve availability membership. No claimed runtime replacement.",
+      "helper_dependencies": [
+        "sort"
+      ],
+      "phase_children": []
+    },
+    {
+      "key": "unspill",
+      "bead": "flapjack-pxn.18.5.11.5.10.5.8.6.13",
+      "title": "unspill definition and success",
+      "source_review": "Def379; proof2206. Preserve BOTH successive partitions, revive before final updates, prepend simp/freeze lists. Retain literal existential b even unused.",
+      "helper_dependencies": [
+        "split",
+        "partition",
+        "revive"
+      ],
+      "phase_children": [
+        "1",
+        "2",
+        "4",
+        "5"
+      ]
+    },
+    {
+      "key": "consistency",
+      "bead": "flapjack-pxn.18.5.11.5.10.5.8.6.14",
+      "title": "consistency_ok definition and success/FILTER bounds",
+      "source_review": "Def565; proofs2301/2320. Same-node fast reject, neighbour collision, Fixed/move-related checks; accumulator disjunction retained.",
+      "helper_dependencies": [
+        "classifiers"
+      ],
+      "phase_children": [
+        "3"
+      ]
+    },
+    {
+      "key": "bg",
+      "bead": "flapjack-pxn.18.5.11.5.10.5.8.6.15",
+      "title": "bg_ok definition and success",
+      "source_review": "Def524; proof2384. George then Briggs; k+1 on case1, Nat subtraction before >=; genuine bounded filter/map helper obligations.",
+      "helper_dependencies": [
+        "classifiers"
+      ],
+      "phase_children": []
+    },
+    {
+      "key": "ancestor",
+      "bead": "flapjack-pxn.18.5.11.5.10.5.8.6.16",
+      "title": "coalesce_parent definition and success",
+      "source_review": "Def589; proof2439. Literal decreasing x recursion, Fixed ancestor early return, x<=xt stop, recursive update only coalesced.",
+      "helper_dependencies": [
+        "classifiers"
+      ],
+      "phase_children": []
+    },
+    {
+      "key": "canonical",
+      "bead": "flapjack-pxn.18.5.11.5.10.5.8.6.17",
+      "title": "canonize_move definition and success",
+      "source_review": "Def609; proof2484. Fixed-right preferred, then Fixed-left, then strict numeric order.",
+      "helper_dependencies": [
+        "classifiers"
+      ],
+      "phase_children": []
+    },
+    {
+      "key": "first",
+      "bead": "flapjack-pxn.18.5.11.5.10.5.8.6.18",
+      "title": "st_ex_FIRST definition and consistency/bg search success",
+      "source_review": "Def623; proof2495. Ancestor compression updates state even on rejected moves; preserve unavail accumulator order and full option payload/bounds.",
+      "helper_dependencies": [
+        "ancestor",
+        "canonical",
+        "consistency",
+        "bg"
+      ],
+      "phase_children": [
+        "2"
+      ]
+    },
+    {
+      "key": "mutation",
+      "bead": "flapjack-pxn.18.5.11.5.10.5.8.6.19",
+      "title": "do_coalesce_real/inc_deg definitions and success",
+      "source_review": "Defs417/457; proof2549. Update y parent, conditional degree increment, list_insert_edge, dec_deg case1, push_stack y; subgraph/dim/tag existential must be derived.",
+      "helper_dependencies": [
+        "degree",
+        "stack",
+        "classifiers"
+      ],
+      "phase_children": [
+        "2"
+      ]
+    },
+    {
+      "key": "respill",
+      "bead": "flapjack-pxn.18.5.11.5.10.5.8.6.20",
+      "title": "respill and add worklist definitions",
+      "source_review": "Defs274/282/290/313/650. Exact prepend order, xd<k no-op, MEM freeze gate and FILTER all x removal.",
+      "helper_dependencies": [],
+      "phase_children": [
+        "1",
+        "2",
+        "4"
+      ]
+    },
+    {
+      "key": "reset",
+      "bead": "flapjack-pxn.18.5.11.5.10.5.8.6.21",
+      "title": "reset_move_related definition and success",
+      "source_review": "Def708; proofs2645/2658. Clear COUNT_LIST dim then mark non-Fixed endpoints, only move_related changed and length=dim.",
+      "helper_dependencies": [
+        "classifiers"
+      ],
+      "phase_children": [
+        "3"
+      ]
+    },
+    {
+      "key": "min",
+      "bead": "flapjack-pxn.18.5.11.5.10.5.8.6.22",
+      "title": "st_ex_list_MIN_cost definition and bounded success",
+      "source_review": "Def778; proof2758. Strict cost comparison, tie accumulator order, skip x>=d, state unchanged; safe_div existing .8.2.",
+      "helper_dependencies": [],
+      "phase_children": [
+        "5"
+      ]
+    },
+    {
+      "key": "max",
+      "bead": "flapjack-pxn.18.5.11.5.10.5.8.6.23",
+      "title": "st_ex_list_MAX_deg definition and bounded success",
+      "source_review": "Def796; proof2774. Strict degree comparison, tie accumulator order, skip x>=d, state unchanged.",
+      "helper_dependencies": [],
+      "phase_children": [
+        "5"
+      ]
+    },
+    {
+      "key": "partition_def",
+      "bead": "flapjack-pxn.18.5.11.5.10.5.8.6.24",
+      "title": "literal st_ex_PARTITION state sequencing",
+      "source_review": "reg_allocScript158: recursive state-exception partition; preserve true/false prepend accumulator order and failures. Generic carrier, no ra_state/accessor prerequisite.",
+      "helper_dependencies": [],
+      "phase_children": []
+    },
+    {
+      "key": "sorted_mem",
+      "bead": "flapjack-pxn.18.5.11.5.10.5.8.6.25",
+      "title": "literal sorted_mem early-stop membership",
+      "source_review": "reg_allocScript193: numeric sorted-list membership with early stop, not unrestricted MEM. Needed in consistency_ok/bg_ok/revive_moves; existing graph .5 mentions sorted_insert but does not own sorted_mem.",
+      "helper_dependencies": [],
+      "phase_children": []
+    }
+  ],
+  "notes": [
+    "Pure sort_moves/smerge has no state/accessor/invariant prerequisite; sorted_mem is needed by revive_moves and tracked under existing graph-construction .5.",
+    "Worklist add/respill definitions depend on accessors, not the success invariant proof.",
+    "Local HOL success lemmas require direct source review: they are not exported DB theorems. The probe captures 29 exported definition equations only.",
+    "Existing graph-construction .5 owns st_ex_FOREACH/FILTER and .6 list_insert_edge_succeeds. Missing sorted_mem and st_ex_PARTITION are distinct automatically allocated leaves; st_ex_MAP_adj_ls_sub is already owned by accessor proof bead .2."
+  ]
+}
