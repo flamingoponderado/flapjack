@@ -13,6 +13,12 @@ cut-set restriction is simulated by `cut_envs_lemma`, the permutation oracle is
 chosen by `push_env_s_val_eq`, the garbage collector is related by
 `gc_s_val_eq_gen`, and the popped environments by `s_key_eq_val_eq_pop_env`
 and `push_env_pop_env_s_key_eq`.
+
+Only `evaluateApplyColour_Alloc` carries a HOL tag. Every other theorem here
+(`sptAListLookup_eq_keyLookup`, `popEnvFields`, `popEnvHandlerNone`, the
+association-list lemmas, `allocLocalsRel` and `allocSim`) is Flapjack proof
+factoring or representation infrastructure for that single HOL case, not an
+independent HOL original.
 -/
 
 namespace Flapjack.WordAlloc
@@ -34,6 +40,9 @@ end EvaluateApplyColourAllocWitnesses
 
 open EvaluateApplyColourAllocWitnesses
 
+/-- Representation bridge (Flapjack infrastructure, no HOL original): the Spt
+library's first-match `sptAListLookup` and the classical-equality `keyLookup`
+used by the tagged `ALOOKUP_key_remap` ports are the same HOL `ALOOKUP`. -/
 theorem sptAListLookup_eq_keyLookup {α : Type} (k : Nat) :
     ∀ l : List (Nat × α), sptAListLookup k l = keyLookup l k
   | [] => by simp [sptAListLookup, keyLookup, holAlookup]
@@ -70,6 +79,7 @@ theorem popEnvHandlerNone {width : Nat} [NeZero width] {C F : Type}
   exact ⟨rfl, rfl, rfl⟩
 
 
+/-- `ALOOKUP` succeeds exactly on the listed keys (Flapjack infrastructure). -/
 private theorem alistLookupIsSomeA {α : Type} (k : Nat) :
     ∀ l : List (Nat × α), (sptAListLookup k l).isSome = true ↔ k ∈ l.map Prod.fst
   | [] => by simp [sptAListLookup]
@@ -78,6 +88,8 @@ private theorem alistLookupIsSomeA {α : Type} (k : Nat) :
       · subst h; simp [sptAListLookup]
       · simp [sptAListLookup, h, alistLookupIsSomeA k l]
 
+/-- A key of a zipped list with enough values is found (Flapjack
+infrastructure for HOL's `MEM_ZIP`/`ALOOKUP_MEM` reasoning). -/
 private theorem alistLookupZipSome {α : Type} :
     ∀ (keys : List Nat) (vs : List α) (k : Nat), k ∈ keys → keys.length ≤ vs.length →
       (sptAListLookup k (keys.zip vs)).isSome = true
@@ -90,6 +102,7 @@ private theorem alistLookupZipSome {α : Type} :
       · simp only [h, if_false]
         exact alistLookupZipSome keys vs k (by simpa [h] using hk) (by simpa using hl)
 
+/-- HOL `ZIP_MAP_FST_SND_EQ` for lists (Flapjack infrastructure). -/
 private theorem zipFstSnd' {α β : Type} (e : List (α × β)) :
     (e.map Prod.fst).zip (e.map Prod.snd) = e := by
   induction e with
