@@ -27,7 +27,6 @@ class ExternalHolSourcesTest(unittest.TestCase):
         (base / "src/n-bit").mkdir(parents=True)
         (base / "src/coalgebras").mkdir(parents=True)
         (base / "src/coretypes").mkdir(parents=True)
-        (base / "src/floating-point").mkdir(parents=True)
         (base / "examples/pl-semantics/lprefix_lub").mkdir(parents=True)
         (base / "COPYRIGHT").write_text("retained license")
         (base / "src/finite_maps/sptreeScript.sml").write_text("Theorem domain_union: T Proof simp[] QED")
@@ -39,8 +38,6 @@ class ExternalHolSourcesTest(unittest.TestCase):
             "Theorem LPREFIX_TRANS: T Proof simp[] QED")
         (base / "src/coretypes/optionScript.sml").write_text(
             'val some_def = new_definition("some_def", ``some P = NONE``);')
-        (base / "src/floating-point/binary_ieeeScript.sml").write_text(
-            "Definition float_some_qnan_def: float_some_qnan = ARB End")
         lock = {"repository": CHECKER["EXTERNAL_HOL_REPOSITORY"], "commit": "a" * 40,
                 "files": {p: hashlib.sha256((base / p).read_bytes()).hexdigest()
                           for p in sorted(CHECKER["EXTERNAL_HOL_FILES"])}}
@@ -60,23 +57,13 @@ class ExternalHolSourcesTest(unittest.TestCase):
         self.assertIsNone(CHECKER["hol_source_error"](CHECKER["ROOT"], path))
         self.assertIsNone(REF_ERROR(CHECKER["ROOT"] / path, "some_def", 794, {}))
 
-    def test_binary_ieee_source_and_declaration(self):
-        path = CHECKER["EXTERNAL_HOL_BINARY_IEEE_PATH"]
+    def test_binary_ieee_verified_submodule_source_and_declaration(self):
+        path = "HOL/src/floating-point/binary_ieeeScript.sml"
         self.assertIsNone(CHECKER["hol_source_error"](CHECKER["ROOT"], path))
         self.assertIsNone(REF_ERROR(CHECKER["ROOT"] / path, "float_some_qnan_def", 495, {}))
         self.assertIsNotNone(REF_ERROR(CHECKER["ROOT"] / path, "missing_ieee_def", None, {}))
-
-    def test_missing_binary_ieee_pin_rejected(self):
-        import json
-        with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp)
-            self.fixture(root)
-            manifest = root / "hol4/SOURCES.json"
-            lock = json.loads(manifest.read_text())
-            del lock["files"]["src/floating-point/binary_ieeeScript.sml"]
-            manifest.write_text(json.dumps(lock))
-            self.assertIsNotNone(CHECKER["hol_source_error"](
-                root, CHECKER["EXTERNAL_HOL_BINARY_IEEE_PATH"]))
+        self.assertIsNotNone(CHECKER["hol_source_error"](
+            CHECKER["ROOT"], "hol4/src/floating-point/binary_ieeeScript.sml"))
 
     def test_missing_option_pin_rejected(self):
         import json
@@ -158,8 +145,7 @@ class ExternalHolSourcesTest(unittest.TestCase):
                          "examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
                          "src/n-bit/fcpScript.sml",
                          "src/coalgebras/llistScript.sml",
-                         "src/coretypes/optionScript.sml",
-                         "src/floating-point/binary_ieeeScript.sml"]:
+                         "src/coretypes/optionScript.sml"]:
             with self.subTest(relative=relative), tempfile.TemporaryDirectory() as tmp:
                 root = Path(tmp)
                 self.fixture(root)

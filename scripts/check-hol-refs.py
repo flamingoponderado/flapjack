@@ -68,10 +68,9 @@ EXTERNAL_HOL_LPREFIX_LUB_PATH = (
 EXTERNAL_HOL_FCP_PATH = "hol4/src/n-bit/fcpScript.sml"
 EXTERNAL_HOL_LLIST_PATH = "hol4/src/coalgebras/llistScript.sml"
 EXTERNAL_HOL_OPTION_PATH = "hol4/src/coretypes/optionScript.sml"
-EXTERNAL_HOL_BINARY_IEEE_PATH = "hol4/src/floating-point/binary_ieeeScript.sml"
 EXTERNAL_HOL_PATHS = frozenset({
     EXTERNAL_HOL_PATH, EXTERNAL_HOL_LPREFIX_LUB_PATH, EXTERNAL_HOL_FCP_PATH,
-    EXTERNAL_HOL_LLIST_PATH, EXTERNAL_HOL_OPTION_PATH, EXTERNAL_HOL_BINARY_IEEE_PATH,
+    EXTERNAL_HOL_LLIST_PATH, EXTERNAL_HOL_OPTION_PATH,
 })
 EXTERNAL_HOL_FILES = frozenset({
     "COPYRIGHT",
@@ -79,7 +78,6 @@ EXTERNAL_HOL_FILES = frozenset({
     "src/n-bit/fcpScript.sml",
     "src/coalgebras/llistScript.sml",
     "src/coretypes/optionScript.sml",
-    "src/floating-point/binary_ieeeScript.sml",
     "examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
 })
 EXTERNAL_HOL_REPOSITORY = "https://github.com/HOL-Theorem-Prover/HOL"
