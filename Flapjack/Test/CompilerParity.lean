@@ -32,8 +32,12 @@ import Flapjack.Test.WordToStackNoInstallHelpersParity
 import Flapjack.Test.WordToStackCopyRetCarriersParity
 import Flapjack.Test.WordToStackCompCodeLabelsParity
 import Flapjack.Test.WordToStackProgramCodeLabelsParity
+import Flapjack.Test.WordToStackHandlerSafetyParity
 import Flapjack.Test.StackPropsForbiddenOperationsParity
 import Flapjack.Test.WordConvsCodeLabelsParity
+import Flapjack.Test.WordConvsLabelSafetyParity
+import Flapjack.Test.WordToStackNoShmemopHelpersParity
+import Flapjack.Test.WordToStackHandlerFrameCarriersParity
 import Flapjack.Test.ParmovePreservesMovesStepsParity
 import Flapjack.Test.WordConvsExpMonoParity
 import Flapjack.Test.WordAllocMaxVarExpParity

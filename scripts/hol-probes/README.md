@@ -3241,3 +3241,54 @@ all four move operand forms, register/spill branches, bitmap insertion, arbitrar
 frame arithmetic and word widths 64/1. This is helper preservation only; the
 `copy_ret` wrapper and full compiler preservation remain tracked on bead47.2.
 Original observations and kernel checks do not establish cross-language equivalence.
+### Full incremental Word-to-Stack handler safety
+
+`word_to_stack_handler_safety_probeScript.sml` observes the original actual
+whole-program compiler, EVERY handler guard and full `stack_good_handler_labels`
+predicate. Twelve pair-equality claims resolve T: nonzero wrong-owner and nested
+wrong-owner failures, zero and existing entry-one exceptions, duplicate owners,
+nested valid handlers, dropped tail handlers, bitmap threading and width one
+with zero registers. The probe proves finite-list union normalization in HOL,
+evaluates the compiler, then discharges finite-set claims; the two negative
+predicate cases use the concrete offending `(9,5)` witness. No compiler
+correctness theorem is used to prove these observations. Matching kernel
+regressions and a nonempty full public theorem application retain arbitrary
+positive width/configuration/registers/bitmap input. These are regression checks,
+not cross-language equivalence or overall compiler correctness acceptance.
+Selector: `HOL_PROBE_ONLY=word_to_stack_handler_safety_probeScript.sml`.
+
+### Native WordConvs whole-program label safety
+
+`wordconvs_label_safety_probeScript.sml` checks fourteen original
+`good_code_labels` predicate equality claims, including three false predicates,
+infinite UNIV external labels, duplicate owners, cross references, returning and
+absent-return handler boundaries, nesting and width one. All claims resolve T.
+A local HOL finite-union lemma supports evaluation; missing-label failures use
+the concrete label 8. Matching kernel fixtures and an arbitrary positive-width,
+unrestricted external-set equation live in `WordConvsLabelSafetyParity`.
+These checks do not establish cross-language equivalence or full compiler
+preservation. Selector: `HOL_PROBE_ONLY=wordconvs_label_safety_probeScript.sml`.
+
+### Native Word-to-Stack no-shared-memory helpers
+
+`word_to_stack_no_shmemop_helpers_probeScript.sml` evaluates 22 original
+helper predicate claims. All resolve T, including four move representations,
+empty/multiple lists, both register-write branches, width one, zero/nonzero
+bitmap frames, and forbidden continuations whose predicate stays false.
+`WordToStackNoShmemopHelpersParity` kernel-replays identical inputs and applies
+the full public theorems with unrestricted inputs and original hypotheses.
+These regressions do not establish cross-language equivalence or full compiler
+preservation. Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_helpers_probeScript.sml`.
+
+### Independent unused handler frame carriers
+
+`word_to_stack_handler_frame_carriers_probeScript.sml` captures both complete
+original PushHandler/PopHandler types and twelve full output equality claims.
+The frame tails are independently Bool/String or List/Bool; both perf branches,
+widths64/1, and Skip/forbidden continuations are covered. All equalities resolve T.
+`WordToStackHandlerFrameCarriersParity` kernel-replays identical outputs and
+applies universal native/generic transports with arbitrary independent carriers.
+Two native erasure certificates prove that changing unused fields and their
+carriers leaves complete helper outputs unchanged. This does not establish
+cross-language equivalence, instrumentation correctness, or pass simulation.
+Selector: `HOL_PROBE_ONLY=word_to_stack_handler_frame_carriers_probeScript.sml`.
