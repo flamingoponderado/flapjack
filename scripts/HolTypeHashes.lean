@@ -15,6 +15,11 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.ProgramBitmaps
 import Flapjack.Compiler.Backend.Parmove.AllDistinct.Steps
 import Flapjack.Compiler.Backend.RegAlloc.SortMoves
 import Flapjack.Compiler.Backend.WordToStack.ProductionThreeToTwoDomain
+import Flapjack.Compiler.Backend.RegAlloc.StatePartition
+import Flapjack.Compiler.Backend.Parmove.MapState
+import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Steps
+import Flapjack.Compiler.Backend.Parmove.StateToList
+import Flapjack.Compiler.Backend.Parmove.AllDistinct.Step
 import Flapjack.Compiler.Backend.RegAlloc.Initialization
 import Flapjack.Compiler.Backend.WordAlloc.CanonizeMoves
 import Flapjack.Translator.Monadic.MonadBase.ArrayLength
@@ -23,10 +28,6 @@ import Flapjack.Translator.Monadic.MonadBase.ListPrimitives
 import Flapjack.Compiler.Backend.WordAlloc.CanonizeSort
 import Flapjack.Misc.FindIndex.Append
 import Flapjack.Compiler.Backend.RegAlloc.Exceptions
-import Flapjack.Compiler.Backend.Parmove.MapState
-import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Steps
-import Flapjack.Compiler.Backend.Parmove.StateToList
-import Flapjack.Compiler.Backend.Parmove.AllDistinct.Step
 import Flapjack.Compiler.Backend.WordAlloc.HeuProg
 import Flapjack.Compiler.Backend.RegAlloc.Remap
 import Flapjack.Compiler.Backend.WordAlloc.CanonizeMovesAux
@@ -81,12 +82,10 @@ import Flapjack.Compiler.Backend.WordToStack.ProductionColourDomain
 import Flapjack.Compiler.Backend.WordToStack.ProductionProgramMaximum
 import Flapjack.Compiler.Backend.Parmove.DestinationWrapper
 import Flapjack.Compiler.Backend.Parmove.DStepStep
-
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileKeys
 import Flapjack.Compiler.Backend.Parmove.PmovDsteps
 import Flapjack.Compiler.Backend.WordToStack.NativeConfig
 import Flapjack.Compiler.Backend.Parmove.DSteps
-
 import Flapjack.Compiler.Backend.Parmove.DestinationMembership
 import Flapjack.Compiler.Backend.Parmove.FstepDstep
 import Flapjack.Compiler.Backend.Parmove.SourceMembership
@@ -742,6 +741,9 @@ import Flapjack.Pancake.WordConvs.NotCreated
 import Flapjack.RiscV.CorrectnessEncoding
 import Flapjack.Compiler.Backend.StackProps
 import Flapjack.Pancake.PanStructs
+import Flapjack.Compiler.Backend.RegAlloc.StateForeach
+
+
 
 open Lean Elab Command Flapjack
 
