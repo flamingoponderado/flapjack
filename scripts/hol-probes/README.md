@@ -40,6 +40,15 @@ with `HOL_PROBE_ONLY=stacksem_loop_recursive_probeScript.sml scripts/hol-probes/
 
 # Original Pancake HOL probes
 
+`ParmoveAllDistinctPmovParity` replays the complete original scheduler outputs
+terminal/self/chain/cycle/active from `parmove_final_probe.out` while applying
+the full `ALL_DISTINCT_pmov` theorem under its real source premises. The
+original quantified theorem is captured as `pm_audit_ALL_DISTINCT_pmov` in
+`parmove_preservation_shape_probe.out`. Kernel boundary checks also cover
+repeated scratch destinations and duplicate emitted history; scratch safety
+is not a premise of this distinctness theorem. Existing original evidence is
+reused, with no fresh HOL execution claimed.
+
 `ParmoveTempPmovParity` replays the complete self/chain/cycle/active scheduler
 outputs from `parmove_final_probe.out` and applies the full conditional
 `pmov_not_use_temp_before_assign` port to each valid, initially safe state.
