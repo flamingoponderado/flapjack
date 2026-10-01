@@ -1,3 +1,7 @@
+import Flapjack.Test.WordToStackInsertPrefixParity
+import Flapjack.Test.WordToStackLivePrefixParity
+import Flapjack.Test.WordToStackLiveLengthParity
+import Flapjack.Test.ParmoveDestinationWrapperParity
 import Flapjack.Test.ParmoveDStepStepParity
 
 import Flapjack.Test.WordToStackCompileKeysParity
