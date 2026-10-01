@@ -42084,5 +42084,53 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-c original Call NONE case3230-3236, full motive2813-2826: arbitrary optional destination,args,optional handler including program/labels, original six premises/all five conclusions. No IH or added premise; source ignores handler in this branch. Set checkColInj supplies output equality/injection/image, native insertion wf and original live injection prove catchall colouringOk writes union. Qualifier only standard positive-width word translation; NumSet is exact Spt. Six fresh original checker equality observations paired kernel fixtures plus universal case application; full returning Call branches remain separate open children18.2/3."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/HeuCounters.lean",
+  "lean_name": "add1LhsConst",
+  "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+  "hol_name": "add1_lhs_const_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c literal1266-1304: native Spt of right-associated five Nat product, arbitrary key/tree including malformed trees, no wf/domain premise. Absent lookup inserts named unit basis; present increments only named component with unbounded Nat arithmetic. Four fresh original full-tree/lookup equations per function (absent,present,repeat,other-key preservation) matched by Lean kernel fixtures. Helper family only; recursive get_heu and production routing remain open."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/HeuCounters.lean",
+  "lean_name": "add1LhsReg",
+  "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+  "hol_name": "add1_lhs_reg_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c literal1266-1304: native Spt of right-associated five Nat product, arbitrary key/tree including malformed trees, no wf/domain premise. Absent lookup inserts named unit basis; present increments only named component with unbounded Nat arithmetic. Four fresh original full-tree/lookup equations per function (absent,present,repeat,other-key preservation) matched by Lean kernel fixtures. Helper family only; recursive get_heu and production routing remain open."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/HeuCounters.lean",
+  "lean_name": "add1LhsMem",
+  "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+  "hol_name": "add1_lhs_mem_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c literal1266-1304: native Spt of right-associated five Nat product, arbitrary key/tree including malformed trees, no wf/domain premise. Absent lookup inserts named unit basis; present increments only named component with unbounded Nat arithmetic. Four fresh original full-tree/lookup equations per function (absent,present,repeat,other-key preservation) matched by Lean kernel fixtures. Helper family only; recursive get_heu and production routing remain open."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/HeuCounters.lean",
+  "lean_name": "add1RhsReg",
+  "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+  "hol_name": "add1_rhs_reg_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c literal1266-1304: native Spt of right-associated five Nat product, arbitrary key/tree including malformed trees, no wf/domain premise. Absent lookup inserts named unit basis; present increments only named component with unbounded Nat arithmetic. Four fresh original full-tree/lookup equations per function (absent,present,repeat,other-key preservation) matched by Lean kernel fixtures. Helper family only; recursive get_heu and production routing remain open."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/HeuCounters.lean",
+  "lean_name": "add1RhsMem",
+  "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+  "hol_name": "add1_rhs_mem_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c literal1266-1304: native Spt of right-associated five Nat product, arbitrary key/tree including malformed trees, no wf/domain premise. Absent lookup inserts named unit basis; present increments only named component with unbounded Nat arithmetic. Four fresh original full-tree/lookup equations per function (absent,present,repeat,other-key preservation) matched by Lean kernel fixtures. Helper family only; recursive get_heu and production routing remain open."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/HeuCounters.lean",
+  "lean_name": "HeuData",
+  "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+  "hol_name": "heu_data",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source1262: literal right-associated num#num#num#num#num Type abbreviation, exactly Nat five-product. Reference checker supports Type headers directly; dependency index omission does not prevent tagging. No word/fmap/carrier exception."
 }
 ]

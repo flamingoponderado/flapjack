@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordAlloc.HeuCounters
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.CallNone
 import Flapjack.Misc.FindIndex.Bounds
 import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Append
