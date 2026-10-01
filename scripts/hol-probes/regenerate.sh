@@ -3090,3 +3090,7 @@ run_probe word_to_stack_program_maximum_probeScript.sml word_to_stack_program_ma
 run_probe reg_alloc_remap_probeScript.sml reg_alloc_remap_probe.out \
   remap_empty remap_delta remap_duplicate remap_seq remap_branch remap_fixed remap_raw_empty remap_raw_root remap_set_order remap_large remap_nested remap_initial \
   "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe word_to_stack_ssa_codec_probeScript.sml word_to_stack_ssa_codec_probe.out \
+  sc_skip sc_assigns sc_constant sc_shift sc_multiply sc_raise sc_call sc_return \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
