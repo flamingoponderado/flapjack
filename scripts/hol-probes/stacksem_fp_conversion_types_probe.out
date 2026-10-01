@@ -1,0 +1,7 @@
+fp_inst_type=:α inst -> (α, β, γ) state -> (α, β, γ) state option
+fp_get_type=:num -> (α, β, γ) state -> word64 option
+fp_set_type=:num -> word64 -> (α, β, γ) state -> (α, β, γ) state
+fp_sqrt_type=:rounding -> word64 -> word64
+fp_to_int_type=:rounding -> word64 -> int option
+fp_from_int_type=:rounding -> int -> word64
+fp_oracle_type=:num -> γ # (num # α stackLang$prog) list # α word list

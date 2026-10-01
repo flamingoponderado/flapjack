@@ -1,3 +1,10 @@
+import Flapjack.Compiler.Backend.LabProps.Native
+import Flapjack.Compiler.Backend.StackToLab.Native
+import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemop.Handlers
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.LimitVar.Properties
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMovePreserve
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAOptionLookupSubset
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenamePropertyWrappers
 import Flapjack.Misc.BinaryIeeeArithExec
 import Flapjack.Pancake.LoopToWord.Proofs.ProgramNames
 import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocationLimit
@@ -10,6 +17,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoves.CorrectLeft
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoves.CorrectRight
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapStep
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsInsert
+import Flapjack.Pancake.WordConvs.PredicateEquations
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CodeLabelSafety
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsSwap
 import Flapjack.Compiler.Backend.WordAlloc.ProductionLimitVar
@@ -326,6 +334,7 @@ import Flapjack.Compiler.Backend.StackProps.AllocArg
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelationFfi
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelationClock
 import Flapjack.Misc.BinaryIeeeSqrt.RealAgreement
+import Flapjack.Misc.BinaryIeeeSqrt.RoundAgreement
 import Flapjack.Pancake.Proofs.PanGlobals.CompileExpLeaves
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Base
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Seq

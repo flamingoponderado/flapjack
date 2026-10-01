@@ -37,16 +37,16 @@ example : decDegree 3 s =
 example : decDegree 0 { s with adj_ls := [[1, 9]] } =
     (.failure .Subscript,({adj_ls := [[1, 9]], node_tag := [.Atemp, .Atemp, .Atemp, .Atemp], degrees := [2, 0, 5, 1], dim := 3, simp_wl := [7], spill_wl := [8], freeze_wl := [2, 9, 2], avail_moves_wl := [], unavail_moves_wl := [(1, (0, 1))], coalesced := [0, 1, 2, 3], move_related := [true, true, false, true], stack := [6]} : State)) := by decide +kernel
 -- asw_basic=(M_success (),<|adj_ls := [[1; 2]; [0]; [0; 0]; []]; node_tag := [Atemp; Atemp; Atemp; Atemp]; degrees := [2; 0; 5; 1]; dim := 3; simp_wl :=...
-example : addSimpWl [1, 2] s =
+example : addSimpWl (γ := StateException) [1, 2] s =
     (.success (),({adj_ls := [[1, 2], [0], [0, 0], []], node_tag := [.Atemp, .Atemp, .Atemp, .Atemp], degrees := [2, 0, 5, 1], dim := 3, simp_wl := [1, 2, 7], spill_wl := [8], freeze_wl := [2, 9, 2], avail_moves_wl := [], unavail_moves_wl := [(1, (0, 1))], coalesced := [0, 1, 2, 3], move_related := [true, true, false, true], stack := [6]} : State)) := by decide +kernel
 -- aspw_basic=(M_success (),<|adj_ls := [[1; 2]; [0]; [0; 0]; []]; node_tag := [Atemp; Atemp; Atemp; Atemp]; degrees := [2; 0; 5; 1]; dim := 3; simp_wl :=...
-example : addSpillWl [] s =
+example : addSpillWl (γ := StateException) [] s =
     (.success (),({adj_ls := [[1, 2], [0], [0, 0], []], node_tag := [.Atemp, .Atemp, .Atemp, .Atemp], degrees := [2, 0, 5, 1], dim := 3, simp_wl := [7], spill_wl := [8], freeze_wl := [2, 9, 2], avail_moves_wl := [], unavail_moves_wl := [(1, (0, 1))], coalesced := [0, 1, 2, 3], move_related := [true, true, false, true], stack := [6]} : State)) := by decide +kernel
 -- afw_basic=(M_success (),<|adj_ls := [[1; 2]; [0]; [0; 0]; []]; node_tag := [Atemp; Atemp; Atemp; Atemp]; degrees := [2; 0; 5; 1]; dim := 3; simp_wl :=...
-example : addFreezeWl [3] s =
+example : addFreezeWl (γ := StateException) [3] s =
     (.success (),({adj_ls := [[1, 2], [0], [0, 0], []], node_tag := [.Atemp, .Atemp, .Atemp, .Atemp], degrees := [2, 0, 5, 1], dim := 3, simp_wl := [7], spill_wl := [8], freeze_wl := [3, 2, 9, 2], avail_moves_wl := [], unavail_moves_wl := [(1, (0, 1))], coalesced := [0, 1, 2, 3], move_related := [true, true, false, true], stack := [6]} : State)) := by decide +kernel
 -- aum_basic=(M_success (),<|adj_ls := [[1; 2]; [0]; [0; 0]; []]; node_tag := [Atemp; Atemp; Atemp; Atemp]; degrees := [2; 0; 5; 1]; dim := 3; simp_wl :=...
-example : addUnavailMovesWl [(5, (2, 3))] s =
+example : addUnavailMovesWl (γ := StateException) [(5, (2, 3))] s =
     (.success (),({adj_ls := [[1, 2], [0], [0, 0], []], node_tag := [.Atemp, .Atemp, .Atemp, .Atemp], degrees := [2, 0, 5, 1], dim := 3, simp_wl := [7], spill_wl := [8], freeze_wl := [2, 9, 2], avail_moves_wl := [], unavail_moves_wl := [(5, (2, 3)), (1, (0, 1))], coalesced := [0, 1, 2, 3], move_related := [true, true, false, true], stack := [6]} : State)) := by decide +kernel
 -- ps_basic=(M_success (),<|adj_ls := [[1; 2]; [0]; [0; 0]; []]; node_tag := [Atemp; Atemp; Atemp; Atemp]; degrees := [0; 0; 5; 1]; dim := 3; simp_wl :=...
 example : pushStack 0 s =
@@ -69,5 +69,18 @@ example : respill 1 0 s =
 -- rs_oob=(M_failure Subscript,<|adj_ls := [[1; 2]; [0]; [0; 0]; []]; node_tag := [Atemp; Atemp; Atemp; Atemp]; degrees := [2; 0; 5; 1]; dim := 3; sim...
 example : respill 3 4 s =
     (.failure .Subscript,({adj_ls := [[1, 2], [0], [0, 0], []], node_tag := [.Atemp, .Atemp, .Atemp, .Atemp], degrees := [2, 0, 5, 1], dim := 3, simp_wl := [7], spill_wl := [8], freeze_wl := [2, 9, 2], avail_moves_wl := [], unavail_moves_wl := [(1, (0, 1))], coalesced := [0, 1, 2, 3], move_related := [true, true, false, true], stack := [6]} : State)) := by decide +kernel
+
+/-! The four worklist prepends are exception-polymorphic, as their original HOL
+types are (`... -> ra_state -> (unit, 'a) exc # ra_state`, rows `*_type` of the
+probe): the same results at the unrelated exception carriers `Bool` and `Nat`. -/
+example : addSimpWl (γ := Bool) [1, 2] s = (.success (), { s with simp_wl := [1, 2, 7] }) := by
+  decide +kernel
+example : addSpillWl (γ := Nat) [4] s = (.success (), { s with spill_wl := [4, 8] }) := by
+  decide +kernel
+example : addFreezeWl (γ := Bool) [3] s = (.success (), { s with freeze_wl := [3, 2, 9, 2] }) := by
+  decide +kernel
+example : addUnavailMovesWl (γ := Nat) [(5, (2, 3))] s =
+    (.success (), { s with unavail_moves_wl := [(5, (2, 3)), (1, (0, 1))] }) := by
+  decide +kernel
 
 end Flapjack.Test.RegAllocWorklistsParity

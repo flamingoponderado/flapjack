@@ -1,0 +1,4 @@
+os_full=⊢ ∀ssa cst_locs ls. (∀x y. lookup x ssa = SOME y ⇒ y ∈ domain cst_locs) ∧ set ls ⊆ domain ssa ⇒ set (MAP (option_lookup ssa) ls) ⊆ domain cst_locs
+os_type_ssa=:num sptree$num_map
+os_type_cst_locs=:α sptree$num_map
+os_type_ls=:num list

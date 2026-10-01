@@ -10,6 +10,11 @@ fun observe label term = let val th = EVAL term in print (label ^ "="); print_te
 val s = ``<| adj_ls := [[1;2];[0];[0;0];[]]; node_tag := [Atemp;Atemp;Atemp;Atemp]; degrees := [2;0;5;1]; dim := 3;
    simp_wl := [7]; spill_wl := [8]; freeze_wl := [2;9;2]; avail_moves_wl := []; unavail_moves_wl := [(1,0,1)];
    coalesced := [0;1;2;3]; move_related := [T;T;F;T]; stack := [6] |>``;
+fun observe_type label c = (print (label ^ "="); print_type (type_of c); print "\n");
+val _ = observe_type "asw_type" ``reg_alloc$add_simp_wl``;
+val _ = observe_type "aspw_type" ``reg_alloc$add_spill_wl``;
+val _ = observe_type "afw_type" ``reg_alloc$add_freeze_wl``;
+val _ = observe_type "aum_type" ``reg_alloc$add_unavail_moves_wl``;
 val _ = observe "dd_basic" ``dec_deg 0 ^s``;
 val _ = observe "dd_zero" ``dec_deg 1 ^s``;
 val _ = observe "dd_oob" ``dec_deg 4 ^s``;
