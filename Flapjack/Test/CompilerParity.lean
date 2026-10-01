@@ -1,3 +1,4 @@
+import Flapjack.Test.SSAMapExtendParity
 import Flapjack.Test.SSARenamePropertiesParity
 
 import Flapjack.Test.WordAllocLimitVarParity

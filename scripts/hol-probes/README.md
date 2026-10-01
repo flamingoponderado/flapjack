@@ -3172,3 +3172,16 @@ returning Call bodies, ignored tail handlers and ignored Load16 fields.
 `WordAllocLimitVarParity` checks thirteen kernel examples against identical
 inputs. Select `HOL_PROBE_ONLY=word_alloc_limit_var_probeScript.sml`.
 The executed upstream maximum/limit route remains tracked on .30.1.2.1.
+
+### SSA map extension
+
+`ssa_map_extend_probeScript.sml` replays the literal local
+`ssa_map_ok_extend` statement and proof (word_allocProof4624-4634). Seven
+applications cover empty maps in both nonphysical classes, an existing binding,
+an overwrite, a malformed tree, and large natural keys/values. Each original
+premise is independently proved; the resulting theorem must have no hypotheses
+and exactly the requested map-bound conclusion. `EQT_INTRO` renders that proved
+conclusion as T; these are theorem applications rather than direct EVAL of a
+symbolic universally quantified lookup predicate. Two further rows EVAL/simplify
+the physical-register and at-bound false premises. The complete local theorem
+is printed separately and is not claimed to be an exported HOL DB theorem.

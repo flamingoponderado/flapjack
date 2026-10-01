@@ -3349,3 +3349,7 @@ run_probe ssa_rename_properties_probeScript.sml ssa_rename_properties_probe.out 
 run_probe word_alloc_limit_var_probeScript.sml word_alloc_limit_var_probe.out \
   lv_original_definition lv_original_type lv_residue0 lv_residue1 lv_residue2 lv_residue3 lv_residue4 lv_skip1 lv_seven lv_eight lv_ignored16 lv_tail_handler lv_call_body lv_huge \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_map_extend_probeScript.sml ssa_map_extend_probe.out \
+  se_empty_alloc se_empty_stack se_existing se_overwrite se_invalid se_huge_alloc se_huge_stack se_physical_premise se_at_bound_premise se_full_source_replay \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

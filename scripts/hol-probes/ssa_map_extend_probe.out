@@ -1,0 +1,12 @@
+se_empty_alloc=T
+se_empty_stack=T
+se_existing=T
+se_overwrite=T
+se_invalid=T
+se_huge_alloc=T
+se_huge_stack=T
+se_physical_premise=F
+se_at_bound_premise=F
+se_full_source_replay=⊢ ∀ssa na h.
+    ssa_map_ok na ssa ∧ ¬is_phy_var na ⇒
+    ssa_map_ok (na + 4) (insert h na ssa)

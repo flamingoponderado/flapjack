@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapExtend
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameProperties
 
 import Flapjack.Compiler.Backend.WordAlloc.LimitVar

@@ -3391,6 +3391,12 @@
       "sha256": "6dd57ee5c171ed3a5f0c2b346cbf85ba68409ed6320b180b19a4cca89291b7f0"
     },
     {
+      "bytes": 279,
+      "out": "ssa_map_extend_probe.out",
+      "rows": 10,
+      "sha256": "97397673593a41e1bab5522b22b8aa1917a762dc953af30ac6667d622be8940c"
+    },
+    {
       "bytes": 178,
       "out": "ssa_map_ok_probe.out",
       "rows": 6,
