@@ -791,6 +791,21 @@ run_probe word_to_stack_retained_frame_probeScript.sml word_to_stack_retained_fr
 run_probe word_to_stack_allocator_stages_probeScript.sml word_to_stack_allocator_stages_probe.out \
   allocator_stages_skip allocator_stages_tick allocator_stages_raise allocator_stages_tail_call \
   "$cake_dir/compiler/backend/word_to_wordScript.sml" "$cake_dir/compiler/backend"
+run_probe word_simp_duplicate_if_source_probeScript.sml word_simp_duplicate_if_source_probe.out \
+  duplicate_roundtrip duplicate_must duplicate_loop duplicate_call_return duplicate_call_handler \
+  duplicate_call_both duplicate_if duplicate_no_hoist duplicate_zero_bound duplicate_non_simple \
+  duplicate_move_simple duplicate_raise_other duplicate_raise_zero duplicate_raise_three \
+  "$cake_dir/compiler/backend/word_simpScript.sml" "$cake_dir/compiler/backend"
+run_probe word_simp_seq_assoc_source_probeScript.sml word_simp_seq_assoc_source_probe.out \
+  assoc_skip assoc_prefix_skip assoc_trailing_skip assoc_interior_skip assoc_all_skip \
+  assoc_middle_skip assoc_right_spine assoc_if assoc_loop assoc_must assoc_tail_handler \
+  assoc_return assoc_both assoc_prefix_unchanged assoc_inst assoc_pre_ssa \
+  "$cake_dir/compiler/backend/word_simpScript.sml" "$cake_dir/compiler/backend"
+run_probe word_simp_constant_domain_probeScript.sml word_simp_constant_domain_probe.out \
+  constant_program_skip constant_program_assign constant_program_selected constant_program_unknown \
+  constant_program_tail constant_program_return constant_program_both constant_program_alloc \
+  constant_program_install constant_program_ffi constant_program_loop constant_program_must constant_program_trailing_skip \
+  "$cake_dir/compiler/backend/word_simpScript.sml" "$cake_dir/compiler/backend"
 run_probe word_to_stack_selector_domain_probeScript.sml word_to_stack_selector_domain_probe.out \
   selector_program_skip selector_program_seq selector_program_set selector_program_load \
   selector_program_store selector_program_store_offset selector_program_share selector_program_if \
@@ -3332,6 +3347,9 @@ run_probe ssa_rename_lookup_probeScript.sml ssa_rename_lookup_probe.out \
   rename_empty rename_overwrite rename_invalid rename_order rename_large \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
 
+run_probe ssa_merge_route_probeScript.sml ssa_merge_route_probe.out \
+  route_empty route_missing route_equal route_unequal route_tail route_duplicate_names route_duplicate_maps route_big \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
 run_probe ssa_merge_moves_probeScript.sml ssa_merge_moves_probe.out \
   merge_empty merge_missing_both merge_missing_left merge_missing_right merge_equal merge_unequal merge_tail_order merge_duplicate merge_invalid merge_big merge_definition merge_original_type \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"

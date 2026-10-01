@@ -721,6 +721,7 @@ import Flapjack.Test.WordSemSemanticsParity
 import Flapjack.Test.LoopPropsEvalExactParity
 import Flapjack.Test.SptreeSetOpsParity
 import Flapjack.Test.WordSimpSeqAssocParity
+import Flapjack.Test.WordSimpDuplicateIfParity
 import Flapjack.Test.RiscVFarTransferParity
 import Flapjack.Test.FfiHOLParity
 import Flapjack.Test.FfiBridgeParity
@@ -747,6 +748,7 @@ import Flapjack.Test.PanSimpProgBridgeParity
 import Flapjack.Test.RegAllocStateForeachParity
 import Flapjack.Test.SSARenameLookupParity
 import Flapjack.Test.SSAMergeMovesParity
+import Flapjack.Test.SSAMergeMovesRouteParity
 
 
 

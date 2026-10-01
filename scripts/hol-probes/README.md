@@ -1,3 +1,45 @@
+`ssa_merge_route_probe.out` captures eight complete original merge_moves outputs
+through original fromAList/toAList: empty/missing/equal/unequal, tail-first
+fresh numbering, duplicate names, duplicate input-map first-match behavior,
+and natural counters larger than64 bits. SSAMergeMovesRouteParity kernel-checks
+the actual allocator wrapper at all identical inputs and independently checks
+preserved production state counters31/47. MergeMovesRoute invokes the accepted
+native definition. ProductionMergeMoves proves an unconditional codec result:
+ordered move lists, fresh counter, independent state counters and both map
+lookups at every key. Storage order canonicalizes to the original tree traversal;
+this is not list-order equality or a full SSA simulation theorem. No performance
+exception is claimed; executed compiler parity is required for integration.
+
+`word_simp_duplicate_if_source_probe.out` captures fourteen original source
+outputs: seven whole compile_exp trees across Seq/If/MustTerminate/Loop and
+all optional Call bodies, plus no-hoist, zero-bound, is_simple and
+non-Raise/zero/three dest_Raise_num boundaries. WordSimpDuplicateIfParity
+kernel-checks identical observations. Production pre-SSA now directly composes
+Seq_assoc, original const_fp, structural simp_duplicate_if and push_out_if.
+Hoist probes use const_fp without extra Seq_assoc, enforce original first-result
+zero guard, and normalize successful hoists with original Seq_assoc Skip.
+Legacy list/fact helpers remain separate from the production composition.
+This repairs flapjack-b9gd; original captured pre-SSA tree stays unchanged.
+
+`word_simp_seq_assoc_source_probe.out` records sixteen complete original
+`Seq_assoc` outputs: empty/nonempty accumulators, interior/trailing/all Skip,
+left association, If, Loop, MustTerminate and both optional Call bodies.
+`WordSimpSeqAssocParity` kernel-checks the fifteen accumulator trees; WordFuseConditions checks the
+complete original pre-SSA compile_exp tree, now matched by the repaired
+composition (flapjack-b9gd). The original expected tree was not changed. The formerly failing
+`Seq Tick Skip` input and original Tick oracle are preserved; the production
+accumulator now matches the original clause rather than the old Lean rewalk.
+
+`word_simp_constant_domain_probe.out` retains all thirteen original constant-pass
+trees unchanged. `WordToStackConstantDomainParity` now kernel-checks thirteen
+matches, including the repaired trailing Skip. `ProductionConstantDomain`
+proves codec acceptance through the actual accumulator with arbitrary accepted
+prefix, arbitrary initial constant knowledge, and the actual wrapper. Its
+implication permits constant branches to remove rejected code. Rejection
+sentinels cover the five-register primitive inside Loop and both Call bodies.
+These untagged carrier proofs do not claim HOL pass semantics, initial source
+image acceptance, fusion/hoist closure, native ABI/output correspondence, or
+production native routing.
 `ssa_register_class_probe.out` captures eight direct MOD4 class observations, including physical-register guard boundaries and large naturals. It also rechecks the literal original local `is_alloc_var_add`/`is_stack_var_add` statements with their original proof text; source-replay rows are distinct from exported-theorem rows. `Flapjack/Test/SSARegisterClassParity.lean` kernel-replays the observations and applies both ported theorems.
 
 `ssa_locals_rel_probe.out` simplifies the original whole generic relation with literal lookup/domain/THE clauses: eight Bool-valued success/missing-map/missing-target/wrong-value/allocation-bound/malformed-tree observations. `Flapjack/Test/SSALocalsParity.lean` replays identical inputs in the kernel; the full original definition and generic inferred type are captured.
