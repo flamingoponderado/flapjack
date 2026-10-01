@@ -787,6 +787,10 @@ import Flapjack.RiscV.CorrectnessEncoding
 import Flapjack.Compiler.Backend.StackProps
 import Flapjack.Pancake.PanStructs
 import Flapjack.Compiler.Backend.RegAlloc.StateForeach
+import Flapjack.Compiler.Backend.RegAlloc.StateFilter
+import Flapjack.Compiler.Backend.RegAlloc.SortedInsert
+import Flapjack.Compiler.Backend.RegAlloc.TagColour
+import Flapjack.Compiler.Backend.RegAlloc.MoveTable
 
 
 

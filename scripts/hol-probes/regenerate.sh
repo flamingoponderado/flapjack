@@ -2775,6 +2775,10 @@ run_probe monad_arrays_probeScript.sml monad_arrays_probe.out \
 run_probe linear_scan_monad_probeScript.sml linear_scan_monad_probe.out \
   add_if_lt_monad add_if_gt_monad add_if_subscript intervals_ct_monad remove_inactive add_active find_color_in_list find_color_pool find_color_colornum spill color_phy color_virt find_last_stealable find_spill_steal find_spill_keep step_aux_pref step_aux_spill pass1_phy pass1_stack pass1_forced pass2_virt find_reg_exchange apply_reg_exchange foldl filter_good edges sort_moves_rev sort_regs sorted_regs_to_list list_to_sorted_regs sort_moves sorted_moves_to_list list_to_sorted_moves pass_init \
   "$cake_dir/compiler/backend/reg_alloc/linear_scanScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+run_probe linear_scan_generic_types_probeScript.sml linear_scan_generic_types_probe.out \
+  check_col check_intervals colors_length int_beg_length int_end_length sorted_regs_length sorted_moves_length find_last_stealable run_i_linear_scan_hidden_state linear_reg_alloc_and_extract_coloration i_linear_scan_hidden_state_CASE \
+  "$cake_dir/compiler/backend/reg_alloc/linear_scanScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
 run_probe linear_scan_top_probeScript.sml linear_scan_top_probe.out \
   bijection_seq bijection_branch apply_bij_tree apply_bijection size_ct extract run_i run_i_fail lsra_delta lsra_moves lsra_forced lsra_branch_spill lsra_phys lsra_stack \
   "$cake_dir/compiler/backend/reg_alloc/linear_scanScript.sml" "$cake_dir/compiler/backend/reg_alloc"
@@ -3202,6 +3206,14 @@ run_probe stackprops_code_labels_probeScript.sml stackprops_code_labels_probe.ou
 run_probe parmove_map_state_probeScript.sml parmove_map_state_probe.out \
   pms_empty pms_pending pms_active pms_emitted pms_order pms_constant pms_large pms_bool pms_cross_carrier pms_option_constant \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe reg_alloc_move_table_probeScript.sml reg_alloc_move_table_probe.out \
+  tc_type uc_type et_type pmi_type umi_type mts_type rm_type tc_fixed tc_atemp tc_stemp et_fixed et_atemp et_stemp uc_empty uc_gap uc_below uc_dup uc_run uc_unsorted uc_unsorted_miss uc_large pmi_empty pmi_existing pmi_bool umi_empty umi_self mts_empty mts_three mts_bool rm_three rm_ties rm_empty_list \
+  "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe reg_alloc_list_helpers_probeScript.sml reg_alloc_list_helpers_probe.out \
+  fi_type si_type fi_empty fi_mixed fi_all_true fi_all_false fi_duplicates fi_state_pred fi_fail_first fi_fail_middle fi_fail_last fi_bool_value fi_large si_empty si_empty_acc si_middle si_dup si_end si_front si_acc si_acc_dup si_unsorted si_unsorted_dup_later si_zero si_large \
+  "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
 run_probe reg_alloc_sorted_mem_probeScript.sml reg_alloc_sorted_mem_probe.out \
   sorted_mem_empty sorted_mem_singleton sorted_mem_above sorted_mem_middle sorted_mem_gap sorted_mem_below sorted_mem_tail sorted_mem_duplicate sorted_mem_unsorted_stop sorted_mem_unsorted_continue sorted_mem_zero sorted_mem_large \

@@ -157,6 +157,17 @@ definitions into the compiler. Regenerate with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=linear_scan_top_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
+`linear_scan_generic_types_probe.out` captures the original HOL types of
+eleven reg_alloc/linear_scan constants whose carriers are polymorphic:
+`check_col`'s `α num_map`, `check_intervals`' colour codomain, the five
+generated `*_length` exceptions, `find_last_stealable`'s interval-end
+component, `run_i_linear_scan_hidden_state`'s result/exception, the unused
+`nmax` argument of `linear_reg_alloc_and_extract_coloration`, and the
+`define_run` carrier's field types. `LinearScanGenericTypesParity` elaborates
+the Lean declarations at non-default instances of each carrier; the type rows
+fix binder generality only. Regenerate with `CAKEML=...
+HOL_PROBE_ONLY=linear_scan_generic_types_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `linear_scan_monad_probe.out` captures thirty-four direct original EVAL
 results of the monadic `linear_scanScript.sml` definitions on a concrete
 hidden state, printed with raw sparse-tree constructors: the conditional
@@ -2772,6 +2783,24 @@ the finite fixtures do not prove cross-assistant equivalence.
 `reg_alloc_sorted_mem_probe` captures twelve original early-stop membership
 equations, including unsorted inputs. `RegAllocSortedMemParity` kernel-replays
 the same cases and the executed wrapper's equation for arbitrary keys/lists.
+
+`reg_alloc_move_table_probe` captures the original types and 25 EVAL results
+of `tag_col`, `extract_tag`, `unbound_colour` (gaps, duplicates, unsorted
+inputs, large naturals), `pri_move_insert`, `undir_move_insert`, `moves_to_sp`
+and `resort_moves` (raw sparse trees, Bool payloads, equal priorities).
+`RegAllocMoveTableParity` kernel-replays every row and the executed
+`cakeUnboundColour`'s definitional equality with the literal definition.
+Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=reg_alloc_move_table_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`reg_alloc_list_helpers_probe` captures the original types and 23 EVAL results
+of `st_ex_FILTER` (accumulator order, state threading, state-dependent
+predicates, failure at every position, independent Bool carriers, large
+naturals) and `sorted_insert` (accumulator, duplicates, front/middle/end,
+unsorted inputs). `RegAllocListHelpersParity` kernel-replays every row and the
+executed `cakeSortedInsert`'s definitional equality with the literal
+definition. Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=reg_alloc_list_helpers_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 - `parmove_preserves_moves_step_probeScript.sml`: ten original non-self destination predicates before/after Save, including scratch destination. Lean fixtures certify the steps and witness changes; observations do not prove transition or cross-assistant equivalence.
 `word_to_stack_program_bitmaps_probe` captures ten original single-program

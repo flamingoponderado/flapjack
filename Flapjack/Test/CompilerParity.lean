@@ -34,6 +34,8 @@ import Flapjack.Test.WordToStackCseCodecParity
 import Flapjack.Test.WordToStackDeadCodecParity
 import Flapjack.Test.WordToStackSsaCodecParity
 import Flapjack.Test.RegAllocSortedMemParity
+import Flapjack.Test.RegAllocListHelpersParity
+import Flapjack.Test.RegAllocMoveTableParity
 import Flapjack.Test.RegAllocSortMovesRouteParity
 import Flapjack.Test.ParmovePreservesMovesStepParity
 import Flapjack.Test.ParmoveAllDistinctStepsParity
@@ -170,6 +172,7 @@ import Flapjack.Test.LinearScanPurePropsParity
 import Flapjack.Test.MonadArraysParity
 import Flapjack.Test.LinearScanMonadParity
 import Flapjack.Test.LinearScanTopParity
+import Flapjack.Test.LinearScanGenericTypesParity
 import Flapjack.Test.WordConvsPostAllocExactParity
 import Flapjack.Test.PanGlobalsBlockAlignmentParity
 import Flapjack.Test.StackSemLocValueParity

@@ -5,14 +5,15 @@ import Flapjack.Compiler.Backend.RegAlloc.StateForeach
 import Flapjack.Compiler.Backend.RegAlloc.StateMap
 import Flapjack.Basis.Pure.MlList
 import Flapjack.Misc.Sptree
+import Flapjack.Compiler.Backend.RegAlloc.TagColour
 
 /-!
 # reg_alloc Stemp colouring
 
 The second colouring pass of `reg_allocScript.sml:938-992` and the negative
-preference oracle of `reg_allocScript.sml:1419-1446`: tag colours, the first
-unbound colour, tagging one `Stemp` node, tagging all nodes, and the
-first-match/biased negative preferences. HOL `do` blocks are the accepted
+preference oracle of `reg_allocScript.sml:1419-1446`: tagging one `Stemp` node,
+tagging all nodes, and the first-match/biased negative preferences. `tag_col` and
+`unbound_colour` are the canonical ports of `RegAlloc.TagColour`. HOL `do` blocks are the accepted
 `bind`/`ret`; `sort` is `mllist$sort` (`Basis.Pure.MlList.sort`), `GENLIST (λx. x) n`
 is `List.range n`, `MAP f l` is `l.map f` and `lookup` is `sptLookup`. These are
 proof-side ports: the executed allocator is not routed through them.
@@ -21,23 +22,6 @@ proof-side ports: the executed allocator is not routed through them.
 namespace Flapjack.RegAlloc
 
 open Flapjack.Translator.Monadic.MonadBase
-
-/-- Exact HOL `tag_col_def` (`reg_allocScript.sml:938-941`): the colour of a fixed
-tag, and `0` otherwise. -/
-@[hol "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml" "tag_col_def"]
-def tagCol : Tag → Nat
-  | .Fixed n => n
-  | _ => 0
-
-/-- Exact HOL `unbound_colour_def` (`reg_allocScript.sml:947-955`): the first colour
-from `col` upwards that is not in the (assumed sorted) list. -/
-@[hol "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml" "unbound_colour_def"]
-def unboundColour : Nat → List Nat → Nat
-  | col, [] => col
-  | col, x :: xs =>
-    if col < x then col
-    else if x = col then unboundColour (col + 1) xs
-    else unboundColour col xs
 
 /-- Exact HOL `assign_Stemp_tag_def` (`reg_allocScript.sml:959-980`): a `Stemp`
 node is fixed to the oracle's choice, or else to the first colour from `k` not

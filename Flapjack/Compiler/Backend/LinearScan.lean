@@ -285,9 +285,10 @@ def pointInsideInterval : Int × Int → Int → Prop
 
 /-- Intersecting intervals of distinct names get distinct colours
 (`linear_scanScript.sml:277-284`). HOL `THE` is `holThe`; as in HOL, nothing
-is known about `THE NONE` (an end missing for a name with a beginning). -/
+is known about `THE NONE` (an end missing for a name with a beginning). As in
+HOL (`(num -> α) -> ...`), the colouring's codomain is arbitrary. -/
 @[hol "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml" "check_intervals_def"]
-def checkIntervals (f : Nat → Nat) (intBeg intEnd : Spt Int) : Prop :=
+def checkIntervals {α : Type} (f : Nat → α) (intBeg intEnd : Spt Int) : Prop :=
   ∀ r1 r2,
     sptDomain intBeg r1 ∧ sptDomain intBeg r2 ∧
     intervalIntersect (holThe (sptLookup r1 intBeg), holThe (sptLookup r1 intEnd))
