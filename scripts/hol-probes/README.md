@@ -4044,3 +4044,13 @@ captures provide regression evidence, not HOL-to-Lean equivalence.
 `ssa_fix_inconsistencies_correct_left_probeScript.sml` replays the literal left reconciliation assembly and its original merge/fake prerequisites; captures the full statement and six types, including identical source/target word/code/FFI dimensions.
 
 `ssa_fix_inconsistencies_correct_right_probeScript.sml` replays the literal right reconciliation assembly and original map-agreement prerequisites, capturing the full returned-left-map result and six inferred types.
+
+`stackprops_instruction_constants_probeScript.sml` captures four complete
+original instruction support statements and their full types, plus ten native
+observations of success, failure, clock updates and FFI updates. The two local
+clock-neutral lemmas replay the original source statement and proof verbatim.
+The FFI theorem preserves HOL's independent updated host type. The published
+`set_var_with_const` FFI conjunct is likewise repaired to retain that independent
+host; its original 26-row state-constants capture was freshly regenerated and
+remains unchanged. These probes do not establish cross-language equivalence or
+remove the inherited external real-carrier assumption.

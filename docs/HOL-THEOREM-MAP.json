@@ -48263,7 +48263,7 @@
       "store"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-imh9): compared the complete original set_var_with_const at source line 74, including every conjunct in source order and the original bound variables. Lean uses the accepted StackSemStateFiniteExact owning carrier with generic positive width and arbitrary C/F, fixed word64 fpRegs, and canonical regs/fpRegs/store maps via fmap_as_finite_support; same-module StateConstants codec witness reexports the actual owning state codec. words_as_type_indexed_bitvec records only the standard word/FFI carrier translation. Field updates and lookup clauses are unchanged; no extra hypothesis. The empty_env_const statement retains independent x and z states. Duplicate set_fp_var_const declarations are disambiguated by exact source lines90 and137. Original source/theorem captures accompany the group."
+    "reviewer": "flapjack-sol3 completed corrected source/fulltype/carrier review2026-10-02, P0 imh9.1: source set_var_with_const74 retains all five original clock/memory/FFI/stack/stackSpace update equalities and all binders. Fresh sc_74/sc_74_types confirms input z:(alpha,beta,gamma)state and independently polymorphic ffi:delta ffi_state; F and OtherF are separate Type0 parameters, and the FFI conjunct uses a genuine type-changing native state update to StackSemStateFiniteExact width C OtherF. The earlier same-F specialization missed this independent host and is repaired. Other four conjuncts retain the original input carrier. Positive-width BitVec and canonical finite-support regs/fpRegs/store qualifiers describe only those conventional representations, not carrier specialization. Actual imported state owner and same-module codec retained, no duplicated state structure, extra premise or guard. Kernel rfl proof covers the full conjunction; generic independent-host fixture exercises its FFI projection. Original full26row stateconstant/type capture freshly regenerated from pinned read-only HOL source. No IEEE/external real-carrier acceptance weakening."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/StackProps/StateConstants.lean",
@@ -49207,5 +49207,65 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 completed source/statement/carrier comparison2026-10-01 bead7ia9: actual imported StackSemStateFiniteExact width C F preserves original generic independent machine/compile/FFI state type, faithful WordLangExpHOL expression and WordLocW carriers; positive-width BitVec translation only. Canonical regs/fpRegs/store fields with same-module codec forwarding the actual imported owner. No evaluator, callback, supplied successful transition or added premise; full original quantifiers and Option-map shape retained. Six original statement/fulltype rows freshly captured and22 clocked original observations independently kernel replayed. Original316-320 states exact OPTION_MAP clock update commutation. Uses the proved unconditional complete expression theorem and actual register update; success and failure both covered, no result assumed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/InstructionConstants.lean",
+    "lean_name": "instConst",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "inst_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source/full-type comparison 2026-10-02, bead 9gak: Full thirteen preserved state fields under only original inst i s=SOME t premise; all five outer instruction constructors and all sixteen FP opcodes handled through actual native instHOL. Original lines323/344/650/662 and direct primitive dependencies compared; local650/662 replay their literal original statement and proof, not exported DB claims. Positive word width, fixed64 FP registers, independent compile C and FFI hosts Type0, actual imported native state owner and same-module canonical codec retained. No extra execution premise, target result assumption, callback, dropped guard or carrier specialization. Eighteen fresh original source/type/observation rows and native parity fixtures; kernel checked. Inherits reals_as_rational_cuts from native FP operations, SOUNDNESS item8; no stronger exact-real, evaluate or compiler correctness claim. Coordinator acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/InstructionConstants.lean",
+    "lean_name": "instWithClock",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "inst_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source/full-type comparison 2026-10-02, bead 9gak: Unconditional Option.map clock-update equality, including successful and NONE outcomes; arbitrary original input state and replacement clock. Original lines323/344/650/662 and direct primitive dependencies compared; local650/662 replay their literal original statement and proof, not exported DB claims. Positive word width, fixed64 FP registers, independent compile C and FFI hosts Type0, actual imported native state owner and same-module canonical codec retained. No extra execution premise, target result assumption, callback, dropped guard or carrier specialization. Eighteen fresh original source/type/observation rows and native parity fixtures; kernel checked. Inherits reals_as_rational_cuts from native FP operations, SOUNDNESS item8; no stronger exact-real, evaluate or compiler correctness claim. Coordinator acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/InstructionConstants.lean",
+    "lean_name": "instClockNeutral",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "inst_clock_neutral",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source/full-type comparison 2026-10-02, bead 9gak: Both original local theorem implications retained as a conjunction: SOME result clock update and NONE preservation, with arbitrary original result state. Original lines323/344/650/662 and direct primitive dependencies compared; local650/662 replay their literal original statement and proof, not exported DB claims. Positive word width, fixed64 FP registers, independent compile C and FFI hosts Type0, actual imported native state owner and same-module canonical codec retained. No extra execution premise, target result assumption, callback, dropped guard or carrier specialization. Eighteen fresh original source/type/observation rows and native parity fixtures; kernel checked. Inherits reals_as_rational_cuts from native FP operations, SOUNDNESS item8; no stronger exact-real, evaluate or compiler correctness claim. Coordinator acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/InstructionConstants.lean",
+    "lean_name": "instClockNeutralFfi",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "inst_clock_neutral_ffi",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source/full-type comparison 2026-10-02, bead 9gak: Both original local theorem implications retained as a conjunction. Fresh full type capture shows input s/t:(alpha,beta,gamma)state and independent k:delta ffi_state; independent OtherF:Type and genuine type-changing native record updates preserve delta rather than specializing it to gamma. Original lines323/344/650/662 and direct primitive dependencies compared; local650/662 replay their literal original statement and proof, not exported DB claims. Positive word width, fixed64 FP registers, independent compile C and FFI hosts Type0, actual imported native state owner and same-module canonical codec retained. No extra execution premise, target result assumption, callback, dropped guard or carrier specialization. Eighteen fresh original source/type/observation rows and native parity fixtures; kernel checked. Inherits reals_as_rational_cuts from native FP operations, SOUNDNESS item8; no stronger exact-real, evaluate or compiler correctness claim. Coordinator acceptance pending."
   }
 ]

@@ -1,5 +1,7 @@
+import Flapjack.Test.StackPropsInstructionConstantsParity
 import Flapjack.Test.StackPropsClockSupportParity
 import Flapjack.Test.StackPropsExpressionClockParity
+import Flapjack.Test.StackPropsStateConstantsFfiCarrierParity
 import Flapjack.Test.StackToLabFullEncodingParity
 import Flapjack.Test.ProductionScheduler
 import Flapjack.Test.StackToLabRecursiveValidityParity
