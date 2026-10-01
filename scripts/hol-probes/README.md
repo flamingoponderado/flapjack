@@ -2204,6 +2204,17 @@ eqenv excludes it. No pmov-to-Step relationship is assumed or claimed.
 
 `word_to_stack_programs_native_probeScript.sml` observes the literal native `compile_prog` and generic `compile_word_to_stack` in 21 original executions. Cases cover frame subtraction/MAX boundaries, widths1/8/64, perf, arbitrary identifiers, duplicate preservation, and left-to-right bitmap content/length across multiple programs and multiword insertions. `Flapjack/Test/WordToStackNativeProgramsParity.lean` replays identical inputs and results in the kernel. Native top-level compilation and production caller routing remain separate work.
 
+
+`parmove_destination_probeScript.sml` observes the real/temporary destinations
+of native `pmov` on terminal, self, chain, cycle, scratch, duplicate, and active
+states. `ParmoveDestinationParity` replays each row and applies the unconditional
+original destination-membership theorem, including malformed states.
+
+`parmove_source_probeScript.sml` observes native `pmov` source-register maps
+on eight arbitrary states, including scratch/duplicate/active and real history.
+`ParmoveSourceParity` replays each row and applies the unconditional original
+source-membership theorem; the cycle-save source is justified from active LAST.
+
 `parmove_dsteps_probeScript.sml` freshly proves nine observations from the original
 `reg_alloc/parmove` theory: all six deterministic rules, two guard boundaries,
 and Extend with a suffix that still reads the selected register. The last row
