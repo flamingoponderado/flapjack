@@ -42023,5 +42023,77 @@
     "hol_name": "get_coalescecost_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-luna-a source comparison word_allocScript1676-1681: generic native num_map payload translated constructor-for-constructor to Spt alpha, exact right-associated Nat tuple n,p,(x,y). lookup NONE contributes0 and any SOME contributes1 (Option.isNone exactly tests constructor; no payload equality or value cost). Exact unbounded Nat n*(10*(p+1)+xcost+ycost), unchanged endpoint pair, no wf/range/success premise. No width or map qualifier needed. Original eight observations include asymmetric presence, same endpoints, Bool payload, zero multiplier, 2^64 and malformed tree. Executed allocator migration remains open; coordinator review pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "clash_tree_colouring_ok",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/ClashTreeColouringOk/ShareInst.lean",
+    "lean_name": "clashTreeColouringOk_ShareStore",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison HOL2813-2826 and ShareInst3146-3232: Store case retains original six premises and five conclusions through accepted clashTreeGoal/clashTreeConcl. Exact WordLangProgHOL positive-width BitVec carrier; no subprogramIH or addedpremise. Delta checker via accepted deltaConcl; stores no writes and read-list includes value register, live equality from unit singleton/union algebra. Loads singleton destination write, expression reads, deleted incoming live wf derived from original wf live. No bounds/evaluation/poststate assumptions. words_as_type_indexed_bitvec only carrier translation; mainreviewpending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "clash_tree_colouring_ok",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/ClashTreeColouringOk/ShareInst.lean",
+    "lean_name": "clashTreeColouringOk_ShareStore8",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison HOL2813-2826 and ShareInst3146-3232: Store8 case retains original six premises and five conclusions through accepted clashTreeGoal/clashTreeConcl. Exact WordLangProgHOL positive-width BitVec carrier; no subprogramIH or addedpremise. Delta checker via accepted deltaConcl; stores no writes and read-list includes value register, live equality from unit singleton/union algebra. Loads singleton destination write, expression reads, deleted incoming live wf derived from original wf live. No bounds/evaluation/poststate assumptions. words_as_type_indexed_bitvec only carrier translation; mainreviewpending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "clash_tree_colouring_ok",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/ClashTreeColouringOk/ShareInst.lean",
+    "lean_name": "clashTreeColouringOk_ShareStore16",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison HOL2813-2826 and ShareInst3146-3232: Store16 case retains original six premises and five conclusions through accepted clashTreeGoal/clashTreeConcl. Exact WordLangProgHOL positive-width BitVec carrier; no subprogramIH or addedpremise. Delta checker via accepted deltaConcl; stores no writes and read-list includes value register, live equality from unit singleton/union algebra. Loads singleton destination write, expression reads, deleted incoming live wf derived from original wf live. No bounds/evaluation/poststate assumptions. words_as_type_indexed_bitvec only carrier translation; mainreviewpending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "clash_tree_colouring_ok",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/ClashTreeColouringOk/ShareInst.lean",
+    "lean_name": "clashTreeColouringOk_ShareStore32",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison HOL2813-2826 and ShareInst3146-3232: Store32 case retains original six premises and five conclusions through accepted clashTreeGoal/clashTreeConcl. Exact WordLangProgHOL positive-width BitVec carrier; no subprogramIH or addedpremise. Delta checker via accepted deltaConcl; stores no writes and read-list includes value register, live equality from unit singleton/union algebra. Loads singleton destination write, expression reads, deleted incoming live wf derived from original wf live. No bounds/evaluation/poststate assumptions. words_as_type_indexed_bitvec only carrier translation; mainreviewpending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "clash_tree_colouring_ok",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/ClashTreeColouringOk/ShareInst.lean",
+    "lean_name": "clashTreeColouringOk_ShareLoad",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison HOL2813-2826 and ShareInst3146-3232: Load case retains original six premises and five conclusions through accepted clashTreeGoal/clashTreeConcl. Exact WordLangProgHOL positive-width BitVec carrier; no subprogramIH or addedpremise. Delta checker via accepted deltaConcl; stores no writes and read-list includes value register, live equality from unit singleton/union algebra. Loads singleton destination write, expression reads, deleted incoming live wf derived from original wf live. No bounds/evaluation/poststate assumptions. words_as_type_indexed_bitvec only carrier translation; mainreviewpending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "clash_tree_colouring_ok",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/ClashTreeColouringOk/ShareInst.lean",
+    "lean_name": "clashTreeColouringOk_ShareLoad8",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison HOL2813-2826 and ShareInst3146-3232: Load8 case retains original six premises and five conclusions through accepted clashTreeGoal/clashTreeConcl. Exact WordLangProgHOL positive-width BitVec carrier; no subprogramIH or addedpremise. Delta checker via accepted deltaConcl; stores no writes and read-list includes value register, live equality from unit singleton/union algebra. Loads singleton destination write, expression reads, deleted incoming live wf derived from original wf live. No bounds/evaluation/poststate assumptions. words_as_type_indexed_bitvec only carrier translation; mainreviewpending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "clash_tree_colouring_ok",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/ClashTreeColouringOk/ShareInst.lean",
+    "lean_name": "clashTreeColouringOk_ShareLoad16",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison HOL2813-2826 and ShareInst3146-3232: Load16 case retains original six premises and five conclusions through accepted clashTreeGoal/clashTreeConcl. Exact WordLangProgHOL positive-width BitVec carrier; no subprogramIH or addedpremise. Delta checker via accepted deltaConcl; stores no writes and read-list includes value register, live equality from unit singleton/union algebra. Loads singleton destination write, expression reads, deleted incoming live wf derived from original wf live. No bounds/evaluation/poststate assumptions. words_as_type_indexed_bitvec only carrier translation; mainreviewpending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "clash_tree_colouring_ok",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/ClashTreeColouringOk/ShareInst.lean",
+    "lean_name": "clashTreeColouringOk_ShareLoad32",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison HOL2813-2826 and ShareInst3146-3232: Load32 case retains original six premises and five conclusions through accepted clashTreeGoal/clashTreeConcl. Exact WordLangProgHOL positive-width BitVec carrier; no subprogramIH or addedpremise. Delta checker via accepted deltaConcl; stores no writes and read-list includes value register, live equality from unit singleton/union algebra. Loads singleton destination write, expression reads, deleted incoming live wf derived from original wf live. No bounds/evaluation/poststate assumptions. words_as_type_indexed_bitvec only carrier translation; mainreviewpending."
   }
 ]

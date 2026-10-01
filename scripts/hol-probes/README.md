@@ -2330,3 +2330,10 @@ allocator heuristics and does not establish whole allocator correctness.
 `spt_union_algebra_probeScript.sml` checks all four literal universal Spt union/insert statements using their original kernel theorem proofs, then 28 concrete original raw-tree observations. `SptUnionAlgebraParity` applies the matching universal Lean theorems and checks malformed trees, singleton overwrites and left bias. Commutativity is restricted to unit-valued number sets; a Nat-valued counterexample is also checked. Concrete stored numerals are explicitly Nat on both sides.
 
 `word_to_stack_native_top_probeScript.sml` audits the original compile type and checks 24 full top-level result tuples. `WordToStackNativeTopParity` checks identical bitmap words, exact sparse frame maps, complete frame lists and ordered stub/program bodies in the kernel. Boundaries include both performance seeds and narrow wrap, natural register subtraction, duplicate avoid entries/identifiers, unbounded natural IDs, zero frames and ordered multiword bitmap threading. Expected stub subterms use the independently reviewed original/native stub definitions; body and bitmap values are otherwise literal expectations. Executed compiler routing remains separately tracked.
+
+`word_alloc_share_checker_probeScript.sml` freshly observes all eight ShareInst
+checker cases (Store/Store8/Store16/Store32 and Load/Load8/Load16/Load32) under
+identity colouring, with a variable address. The same inputs are kernel-replayed
+in `WordAllocShareCheckerParity`, imported by the actual CompilerParity driver.
+These finite observations supplement the full original-motive case proofs;
+they do not establish cross-prover equivalence or whole allocator correctness.
