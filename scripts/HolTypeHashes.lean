@@ -1,3 +1,4 @@
+import Flapjack.Pancake.WordConvs.NameMonotonicity
 import Flapjack.Pancake.WordConvs.EveryVarInstMono
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Parmove
 import Flapjack.Compiler.Backend.Parmove.AllDistinct.Parmove

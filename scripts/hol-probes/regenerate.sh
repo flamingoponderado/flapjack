@@ -3253,3 +3253,7 @@ run_probe parmove_preserves_moves_parmove_probeScript.sml parmove_preserves_move
 run_probe word_convs_every_var_inst_mono_probeScript.sml word_convs_every_var_inst_mono_probe.out \
   im_original_theorem im_skip im_const im_binreg im_binimm im_shift im_div im_longdiv im_load8 im_load16_ignored im_fpless im_fp64_to im_fp32_to im_fp80_from im_fpignored im_fp32_reject \
   "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe wordconvs_name_mono_probeScript.sml wordconvs_name_mono_probe.out \
+  nm_empty nm_single nm_both nm_invalid nm_guard_needed nm_original_theorem \
+  "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
