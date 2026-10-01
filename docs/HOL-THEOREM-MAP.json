@@ -42284,5 +42284,13 @@
   "hol_name": "seqsem_move_unchanged",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-c literal331-336: arbitrary register/value carriers, move list, environment,key; sole key nonmembership in MAP FST implies actual seqsem result atkey equals input. Standard propositional DecidableEq implementation, no windmill/distinctness/global injectivity/target evaluation premise. List induction with arbitrary environment follows literal update semantics. Eight fresh original actual value/equality tuples and matching Lean kernel fixtures exercise empty/chain/cycle/repeated destinations/keyread/written-key negative/selfupdate/Bool registers with Nat values, plus universally arbitrary-carrier theorem application. Companion parsem_MAP_INJ and full family remain open."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/ParseSemMapInj.lean",
+  "lean_name": "parsemMapInj",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "parsem_MAP_INJ",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c literal284-314: arbitrary independent source-register alpha,target-register gamma,value beta; original windmill distinct destinations, injection only on set(MAP FST ms++MAP SND ms) into UNIV, and destination membership x; actual renamed parsem at f x equals original parsem under r composed f at x. Bounded forall list-membership formulation exactly INJ domain, no global-injection/target-result/simulation premise. Propositional DecidableEq supplies actual function-update computation. Literal induction/fresh destination/parsem_cons, injectivity restricted to tail for IH. Eight original value/value/equality tuples matched kernel fixtures: chains,cycles,sharedsources,self,large key, Nat->Bool renaming noninjective outside listed domain, explicit colliding-domain negative sentinel; generic universal theorem application retains independent carriers. Full h32p family acceptance remains coordinator-owned."
 }
 ]

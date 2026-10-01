@@ -1,3 +1,4 @@
+import Flapjack.Test.ParmoveParseSemMapInjParity
 import Flapjack.Test.ParmoveSeqsemUnchangedParity
 import Flapjack.Test.WordAllocOracleColourParity
 import Flapjack.Test.WordAllocReturnCheckerParity

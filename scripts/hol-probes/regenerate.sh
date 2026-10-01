@@ -2992,3 +2992,7 @@ run_probe word_alloc_oracle_colour_probeScript.sml word_alloc_oracle_colour_prob
 run_probe parmove_seqsem_unchanged_probeScript.sml parmove_seqsem_unchanged_probe.out \
   su_empty su_chain su_cycle su_repeat su_source su_written su_self su_bool \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe parmove_parsem_map_inj_probeScript.sml parmove_parsem_map_inj_probe.out \
+  pi_one pi_chain pi_cycle pi_shared_source pi_self pi_high pi_mixed pi_collision \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"

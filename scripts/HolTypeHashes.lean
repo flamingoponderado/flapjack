@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.Parmove.ParseSemMapInj
 import Flapjack.Compiler.Backend.Parmove.SeqsemUnchanged
 import Flapjack.Compiler.Backend.WordAlloc.OracleColour
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.ReturnNoHandler
