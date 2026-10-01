@@ -49529,5 +49529,77 @@
     "lean_name": "stExMapColorsSub",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-ievu): linear_scanProofScript.sml:3542-3548, st_ex_MAP colors_sub l sth = (M_success (MAP (\\r. EL r sth.colors) l), sth) over the tagged stExMap. HOL EL is the exact holEl, good_linear_scan_state the exact goodLinearScanState, forbidden_is_from_map_color_forced the exact forbiddenIsFromMapColorForced, domain s ⊆ domain t is ∀ x, sptDomain s x → sptDomain t x, {EL r colors | MEM r l} the predicate ∃ r, c = holEl r colors ∧ r ∈ l, MEM/EVERY list membership/quantification, ¬MEM x l is x ∉ l. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "phystack_on_stack_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/PassInvariants.lean",
+    "lean_name": "phystackOnStack",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.12): linear_scanProofScript.sml:3550-3553 ∀r. MEM r l ∧ is_phy_var r ∧ 2 * st.colormax ≤ r ⇒ st.colormax ≤ EL r sth.colors; type num list -> linear_scan_state -> linear_scan_hidden_state -> bool. HOL EL is the exact holEl, SORTED holSorted, LEX holLex, transitive/total holTransitive/holTotal, ALL_DISTINCT List.Nodup, REVERSE List.reverse, the [] (lookup r m) miscThe [] (sptLookup r m), MEM/EVERY list membership/quantification, good_linear_scan_state/forbidden_is_from_forced_* the exact tagged ports, st_ex_FOLDL the tagged stExFoldl and the pass steps the tagged linearRegAllocStepPass1/2. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "linear_reg_alloc_step_pass1_invariants",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/PassInvariants.lean",
+    "lean_name": "linearRegAllocStepPass1Invariants",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.12): linear_scanProofScript.sml:3555-3634, nine hypotheses and nine conclusion conjuncts incl. the phystack_on_stack implication. HOL EL is the exact holEl, SORTED holSorted, LEX holLex, transitive/total holTransitive/holTotal, ALL_DISTINCT List.Nodup, REVERSE List.reverse, the [] (lookup r m) miscThe [] (sptLookup r m), MEM/EVERY list membership/quantification, good_linear_scan_state/forbidden_is_from_forced_* the exact tagged ports, st_ex_FOLDL the tagged stExFoldl and the pass steps the tagged linearRegAllocStepPass1/2. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "linear_reg_alloc_step_pass2_invariants",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/PassInvariants.lean",
+    "lean_name": "linearRegAllocStepPass2Invariants",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.12): linear_scanProofScript.sml:3636-3690, the same nine hypotheses and eight conclusion conjuncts. HOL EL is the exact holEl, SORTED holSorted, LEX holLex, transitive/total holTransitive/holTotal, ALL_DISTINCT List.Nodup, REVERSE List.reverse, the [] (lookup r m) miscThe [] (sptLookup r m), MEM/EVERY list membership/quantification, good_linear_scan_state/forbidden_is_from_forced_* the exact tagged ports, st_ex_FOLDL the tagged stExFoldl and the pass steps the tagged linearRegAllocStepPass1/2. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "intbeg_less_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/PassInvariants.lean",
+    "lean_name": "intbegLess",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.12): linear_scanProofScript.sml:3692-3694 intbeg_less (int_beg : int list) r1 r2 = ($< LEX $<=) (EL r1 int_beg, r1) (EL r2 int_beg, r2); type int list -> num -> num -> bool. HOL EL is the exact holEl, SORTED holSorted, LEX holLex, transitive/total holTransitive/holTotal, ALL_DISTINCT List.Nodup, REVERSE List.reverse, the [] (lookup r m) miscThe [] (sptLookup r m), MEM/EVERY list membership/quantification, good_linear_scan_state/forbidden_is_from_forced_* the exact tagged ports, st_ex_FOLDL the tagged stExFoldl and the pass steps the tagged linearRegAllocStepPass1/2. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "intbeg_less_transitive",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/PassInvariants.lean",
+    "lean_name": "intbegLessTransitive",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.12): linear_scanProofScript.sml:3696-3701. HOL EL is the exact holEl, SORTED holSorted, LEX holLex, transitive/total holTransitive/holTotal, ALL_DISTINCT List.Nodup, REVERSE List.reverse, the [] (lookup r m) miscThe [] (sptLookup r m), MEM/EVERY list membership/quantification, good_linear_scan_state/forbidden_is_from_forced_* the exact tagged ports, st_ex_FOLDL the tagged stExFoldl and the pass steps the tagged linearRegAllocStepPass1/2. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "intbeg_less_total",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/PassInvariants.lean",
+    "lean_name": "intbegLessTotal",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.12): linear_scanProofScript.sml:3703-3708. HOL EL is the exact holEl, SORTED holSorted, LEX holLex, transitive/total holTransitive/holTotal, ALL_DISTINCT List.Nodup, REVERSE List.reverse, the [] (lookup r m) miscThe [] (sptLookup r m), MEM/EVERY list membership/quantification, good_linear_scan_state/forbidden_is_from_forced_* the exact tagged ports, st_ex_FOLDL the tagged stExFoldl and the pass steps the tagged linearRegAllocStepPass1/2. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "st_ex_FOLDL_linear_reg_alloc_step_passn_invariants_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/PassInvariants.lean",
+    "lean_name": "stExFoldlLinearRegAllocStepPassnInvariantsLemma",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.12): linear_scanProofScript.sml:3710-3793, twelve hypotheses (b : bool selecting pass1/pass2) and eight conclusion conjuncts over REVERSE regl ++ l with posout existential. HOL EL is the exact holEl, SORTED holSorted, LEX holLex, transitive/total holTransitive/holTotal, ALL_DISTINCT List.Nodup, REVERSE List.reverse, the [] (lookup r m) miscThe [] (sptLookup r m), MEM/EVERY list membership/quantification, good_linear_scan_state/forbidden_is_from_forced_* the exact tagged ports, st_ex_FOLDL the tagged stExFoldl and the pass steps the tagged linearRegAllocStepPass1/2. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "st_ex_FOLDL_linear_reg_alloc_step_passn_invariants",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/PassInvariants.lean",
+    "lean_name": "stExFoldlLinearRegAllocStepPassnInvariants",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.12): linear_scanProofScript.sml:3795-3820, ten hypotheses with the empty allocated list and eight conclusion conjuncts. HOL EL is the exact holEl, SORTED holSorted, LEX holLex, transitive/total holTransitive/holTotal, ALL_DISTINCT List.Nodup, REVERSE List.reverse, the [] (lookup r m) miscThe [] (sptLookup r m), MEM/EVERY list membership/quantification, good_linear_scan_state/forbidden_is_from_forced_* the exact tagged ports, st_ex_FOLDL the tagged stExFoldl and the pass steps the tagged linearRegAllocStepPass1/2. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "HOL/src/relation/relationScript.sml",
+    "hol_name": "total_def",
+    "lean_path": "Flapjack/Misc/Relation.lean",
+    "lean_name": "holTotal",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.12): pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: relationScript.sml:56-58 total (R:'a->'a->bool) = !x y. R x y \\/ R y x; relation rendered as α → α → Prop (as for holTransitive), the same single clause."
   }
 ]
