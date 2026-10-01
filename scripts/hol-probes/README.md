@@ -32,6 +32,17 @@ with `HOL_PROBE_ONLY=stacksem_loop_recursive_probeScript.sml scripts/hol-probes/
 
 # Original Pancake HOL probes
 
+`labsem_fp_updates_probe.out` records 29 direct original `labSem$fp_upd`
+observations, paired with kernel checks in `LabSemFpUpdatesParity`. All sixteen
+constructors are exercised. Cases include NaN/sign payloads, signed zero,
+rounding ties, FMA operand order, aliased destinations, failure with retained
+overflow writes, odd-half insertion, and actual widths8/32/64/128. The IEEE
+definitions and conversions are registered in HOL's EVAL compset as in the
+existing machine IEEE probes. These finite observations do not establish full
+LabSem evaluator routing or cross-language IEEE equivalence. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=labsem_fp_updates_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `reg_alloc_clash_tree_probe.out` captures eight direct original register
 allocator checker observations: repeated deletion, duplicate colours,
 existing-name skips, partial collisions, Delta's discarded write result,
@@ -2100,3 +2111,4 @@ the states and kernel-checks generic one-step/RTC theorem applications plus
 a start/emit chain. These observations support state-shape review; the full
 universally quantified preservation proofs are independently kernel-checked.
 Full scheduler semantic correctness remains open.
+`labsem_memory_probeScript.sml` captures 46 original ordinary-memory observations across all eight mem_op cases: retained failed Load/Store writes, narrow type/alignment/aligned-domain checks, endian and resizing, unsupported16 operations, address wrap, sticky failure, and one-/eight-bit dimensions. `LabSemMemoryParity` replays them with targeted simplification and kernel computation. The original unused `is_Loc` classifies `semanticPrimitives.v` (Loc Bool/Nat), not `wordLang.word_loc`, and is tracked separately on `flapjack-og0v`; it is absent from these memory operations.
