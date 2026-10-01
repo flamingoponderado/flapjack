@@ -43123,5 +43123,13 @@
     "hol_name": "st_ex_FOREACH_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-luna-b source comparison (2026-10-01; bead .18.5.11.5.10.5.5.1), reg_allocScript139-146: original empty equation returns unit without invoking action; cons uses st_ex_ignore_bind(action x)(recursive tail). Lean retains independent element/state/action-result/exception Type carriers confirmed by fresh original constant type. Successful callback value ignored; state threaded, failure retains returned state and skips tail via accepted ignoreBind. Fresh original11 observations and kernel replay cover order, duplicates, empty/first/middle/last failure, Bool result, List and Bool state. Definition axiom-free; no representation qualifier or added premises. Native allocator phase proofs and production routing remain open. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/PreservesMoves/Pmov.lean",
+    "lean_name": "pmovPreservesMoves",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "pmov_preserves_moves",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison 2026-10-01 w1a4.9: full original1050-1061/fresh DB.fetch. Arbitrary Option alpha pair-list State; original wf/member/nonself conjunction implies destination in MAP FST actual pmov state. Canonical pmov uses computational DecidableEq alpha (propositional equality, no BEq laws); inherited accepted API, no new semantic premise. Primitive RTC derived from pmovDsteps and dsteps_steps; final witness derived from accepted stepsPreservesMoves. No supplied target output, RTC, scratch safety or invariant assumption. Original fixtures/kernel and full gates required; coordinator acceptance pending."
   }
 ]

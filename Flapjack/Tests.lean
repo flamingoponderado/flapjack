@@ -1,3 +1,4 @@
+import Flapjack.Test.ParmovePreservesMovesPmovParity
 import Flapjack.Test.ParmovePreservesMovesStepsParity
 import Flapjack.Test.RegAllocSortMovesRouteParity
 import Flapjack.Test.ParmovePreservesMovesStepParity

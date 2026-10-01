@@ -3175,3 +3175,7 @@ run_probe reg_alloc_state_partition_probeScript.sml reg_alloc_state_partition_pr
 run_probe reg_alloc_state_foreach_probeScript.sml reg_alloc_state_foreach_probe.out \
   sf_type sf_empty sf_order sf_reverse sf_duplicates sf_fail_empty sf_fail_first sf_fail_middle sf_fail_last sf_bool_result sf_list_state sf_bool_state \
   "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe parmove_preserves_moves_pmov_probeScript.sml parmove_preserves_moves_pmov_probe.out \
+  pmv_terminal pmv_pending pmv_output \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
