@@ -240,6 +240,7 @@ import Flapjack.Test.LinearScanPureDefsParity
 import Flapjack.Test.LinearScanPurePropsParity
 import Flapjack.Test.MonadArraysParity
 import Flapjack.Test.HolListElParity
+import Flapjack.Test.HolSortingParity
 import Flapjack.Test.LinearScanMonadParity
 import Flapjack.Test.LinearScanTopParity
 import Flapjack.Test.LinearScanGenericTypesParity
