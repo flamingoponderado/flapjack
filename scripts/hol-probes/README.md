@@ -2888,3 +2888,16 @@ compiler-label theorem with arbitrary assembler config, bitmap state, and frame.
 The theorem lives in `WordToStack/Proofs/CompCodeLabels.lean` and was compared
 with `word_to_stackProofScript.sml:11748-11812`. These observations are regression
 evidence, not a HOL-to-Lean equivalence proof or compiler evaluation simulation.
+
+### Native asmSem arithmetic and state operations
+
+`asmsem_arithmetic_probeScript.sml` evaluates the loaded original `asmSemTheory`
+state primitives and all eight `arith_upd_def` constructors. Its 52 captured rows
+are replayed by `Flapjack.Test.AsmSemArithmeticParity` against the native
+`AsmSem.Arithmetic` definitions, with unrelated state fields arbitrary. Cases
+cover ordered aliasing writes, retained writes on failed division and register
+shifts, immediate shifts without that register-only guard, prior failure,
+carry and signed overflow, and widths 1, 8, 32, and 64. Original DIV_0/MOD_0
+simplifications expose zero-divisor quotient/remainder results. These probes
+are regression evidence, not cross-language equivalence or full asm evaluation
+acceptance. CakeML/HOL remains read-only.
