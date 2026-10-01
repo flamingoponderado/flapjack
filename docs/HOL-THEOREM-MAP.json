@@ -49873,5 +49873,13 @@
     "lean_name": "sptLookup_sptMap",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.14): pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: sptreeScript.sml:1565-1569 ∀s x. lookup x (map f s) = OPTION_MAP f (lookup x s), f free in HOL (explicit Lean parameter); over the reviewed Spt carrier with the tagged sptMap/sptLookup, OPTION_MAP as Option.map. Kernel-checked; no premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "linear_reg_alloc_without_renaming_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/WithoutRenaming.lean",
+    "lean_name": "linearRegAllocWithoutRenamingCorrect",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.17): linear_scanProofScript.sml:5471-5564, with sth and reglist_unsorted free in HOL (DB.fetch free_vars; explicit Lean parameters) and ∀k moves ct forced; all twelve hypotheses in HOL order (incl. the duplicated LENGTH sth.int_end = LENGTH sth.int_beg, kept), and the existential ∃sthout livein flivein: do get_intervals_ct_monad ct; linear_reg_alloc_intervals k forced moves reglist_unsorted od sth = (M_success (), sthout) as ignoreBind, check_clash_tree (λr. EL r sthout.colors) ct LN LN = SOME (livein, flivein), the phy/stack colour conventions over in_clash_tree ct, forced injectivity and the colour length. HOL EL is the exact holEl; all constants are the exact tagged linear_scan/reg_alloc ports. Kernel-checked; standard axioms; no extra premise."
   }
 ]
