@@ -43767,6 +43767,15 @@
     "reviewer": "flapjack-sol3 source comparison (2026-10-01; .10.30.1): direct original asmPropsTheory kernel-inferred types queried read-only, whole source104-115 compared. Original inferred num -> (num -> alpha -> beta) -> (beta -> alpha) -> beta -> (beta -> alpha -> bool) -> bool. Both independent carriers retained (Lean alpha denotes state/beta intermediate); zero True, positive checks P s(fc s) then recurses n-1 at fi n(fc s). Structural zero/successor clauses exactly equivalent original if n=0/else. No positivity/success/target-result premise. Fresh16 direct original/kernel observations include independent Nat-state/Bool-intermediate, count-dependent fi, off-bound function changes and failed P. Full theorem-chain acceptance separate30.2; coordinator pending."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/Maximum/MaxVar.lean",
+    "lean_name": "maxVarMax",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "max_var_max",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-01: full exported original10243-10297 forall prog every_var (x <= max_var prog) prog, all native constructors and recursive Call returns/handlers, If and Loop cutsets retained. No wf, bound, successful pass or target evaluation premise. Private larger-bound induction is proof infrastructure only. Native MlString and canonical Spt carriers; only positive-width BitVec/NeZero translation. Full fresh original DB.fetch plus46 exact-input maximum/at-bound/strict-below triples,93 kernel fixtures including ignored instructions, absent-return handler, non-wellformed cutsets and widths1/32/64/80. No executed compiler change; coordinator acceptance pending."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
     "hol_name": "ssa_locals_rel_def",
     "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSALocals.lean",
