@@ -9,6 +9,7 @@ import Flapjack.Compiler.Backend.WordToStack.NativeCompile
 import Flapjack.Compiler.Backend.WordToStack.NativeHandlers
 import Flapjack.Compiler.Backend.WordToStack.NativePerf
 import Flapjack.Pancake.WordLang.MaxVarInst
+import Flapjack.Pancake.WordLang.CutsetsMax
 import Flapjack.Compiler.Backend.LabSem.FpUpdates
 import Flapjack.Compiler.Backend.LabSem.Arithmetic
 import Flapjack.Compiler.Backend.WordToStack.NativeReturn

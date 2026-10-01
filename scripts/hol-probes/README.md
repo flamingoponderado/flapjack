@@ -2161,3 +2161,7 @@ They support regression review, not a cross-prover equivalence proof or
 production compiler routing claim.
 
 `word_lang_max_var_exp_probeScript.sml` captures eight original expression frame bounds: variables, nested loads, empty and nested operators, shifts, constants, lookups and mixed expressions. `WordLangMaxVarExpParity.lean` kernel-replays identical inputs. Full program max_var and native compiler wrapper routing remain separate work.
+`wordlang_cutsets_max_probeScript.sml` captures eight original `cutsets_max`
+equations over both Spt components, including raw and non-well-formed trees.
+`WordLangCutsetsMaxParity.lean` kernel-replays the same inputs. These rows are
+regression evidence, not a full compiler or cross-prover equivalence proof.
