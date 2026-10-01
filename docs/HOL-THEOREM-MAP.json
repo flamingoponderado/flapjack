@@ -43906,5 +43906,21 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison2026-10-01: full original1816-1820 definition accepts arbitrary native wordLang program, let x=reviewed max_var prog then x+(4-(x MOD4))+1 with identical associativity and natural subtraction. Full actual native maxVarHOL, MlString/Spt/native instruction carriers, including width64-dependent FP, absent-return ignored handler and ignored Load16 registers. Only positive-width BitVec carrier translation; NeZero retained, no wf/limit/success premise. Fresh original full exported definition/type plus12 same-input maximum/limit/class/strict-bound tuples,13 kernel fixtures all4residues/zero/multiples/widths1-32-64-80/hugeNat/Call/ignoredLoad16. Body/type pinned; no executed compiler change. Actual production uses numeric helper/upstream distinct carrier; linked .30.1.2.1 remainsOPEN until native routing or measured exception accepted. Definition inventory remainsOPEN; coordinator source review pending."
-  }
+  },
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "list_next_var_rename_lemma_2'",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSARenameLookup.lean",
+  "lean_name": "listNextVarRenameLemma2Prime",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-a source4579-4593 comparison: six arbitrary input/output List Nat, Spt Nat and Nat variables; exact renamer equality followed by ALL_DISTINCT, all four map/domain/outside-lookup/inside-success conclusions retained. Proof specializes accepted lemma2 and substitutes equality. THE uses getD only on successful lookups established by fourth conclusion; existing selector-independence covers all SOME-agreeing choices without constraining THE NONE. Native Spt retains malformed trees and unbounded Nat. Generic kernel fixture applies actual theorem with arbitrary inputs and outputs. Original renamer observations freshly regenerated; local theorem source-reviewed, no exported theorem invocation claimed. Coordinator acceptance pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "merge_moves_fst",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAMergeMoveBounds.lean",
+  "lean_name": "mergeMovesFst",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-a source4667-4684 comparison: arbitrary input list, natural start, native canonical Spt Nat maps; no premises. Same let-bound five-product result, start<=counter plus EVERY MAP FST destinations strict below resulting counter and >=original counter for each move list. List membership universal renders EVERY directly. Tail-first induction/cases native original mergeMoves; no distinctness/wf/allocation-class/map relation or supplied result premise. Fresh original full renamer results replay ten empty/missing/equal/unequal/repeated/reordered/malformed/unbounded Nat cases; kernel matches full tuples and applies all three conclusions to arbitrary inputs. Original local theorem source-reviewed, no DB export invocation claimed. Coordinator acceptance pending; executed list-state route remains separate."
+}
 ]

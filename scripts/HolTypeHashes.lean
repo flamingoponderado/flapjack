@@ -787,6 +787,7 @@ import Flapjack.Pancake.PanStructs
 import Flapjack.Compiler.Backend.RegAlloc.StateForeach
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameLookup
 import Flapjack.Compiler.Backend.WordAlloc.SSAMergeMoves
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveBounds
 
 
 
