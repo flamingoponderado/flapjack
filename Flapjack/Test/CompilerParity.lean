@@ -1,3 +1,4 @@
+import Flapjack.Test.WordAllocEvenLocalsParity
 import Flapjack.Test.ParmoveDStepStepParity
 import Flapjack.Test.ParmoveSplitSourceParity
 import Flapjack.Test.ParmoveStepsCorrectParity

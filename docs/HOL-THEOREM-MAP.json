@@ -41445,5 +41445,14 @@
   "hol_name": "dstep_step",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-b source comparison (2026-10-01), original503-516: generic Option register, three List state, actual least DStep and primitive Step RTC, original sole wf premise. Five cases single primitive step; cycle Save followed by EmitHead derives r != NONE from wf real destinations, no extra assumption. Fresh six wf and nine semantic cycle observations replayed in kernel; coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvenStartingLocals.lean",
+  "lean_name": "evenStartingLocals",
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "even_starting_locals_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source comparison (2026-10-01), original3304-3307: forall natural key in actual locals domain, reviewed is_phy_var. Native Spt(WordLocW width) retains HOL word/location payload and sptree domain via lookup presence, no consecutive-key assumption or map substitution, no state/evaluation premise. Only positive type-indexed HOL word translated to BitVec width with NeZero. Six fresh original empty/zero/sparse-even/odd/mixed/overwrite domain observations kernel paired using actual insertion-domain equivalence, payload ignored exactly as source. Native definition only; whole word_alloc_correct and production composition remain open; coordinator source review pending."
 }
 ]
