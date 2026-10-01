@@ -458,6 +458,7 @@ import Flapjack.Compiler.Backend.Semantics.StackSem.Allocation
 import Flapjack.Compiler.Backend.Semantics.StackSem.Bitmap
 import Flapjack.Compiler.Backend.Semantics.StackSem.WordBitmap
 import Flapjack.Compiler.Backend.Semantics.StackSem.StackCodec
+import Flapjack.Compiler.Backend.Semantics.StackSem.FpRegisterInstructions
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateIoEventsMono
 import Flapjack.Compiler.Backend.Semantics.WordSem.Semantics
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClock
@@ -521,6 +522,7 @@ import Flapjack.Misc.FlatReplicate
 import Flapjack.Misc.FoldrMaxList
 import Flapjack.Misc.Uncurry
 import Flapjack.Misc.OptMmapCong
+import Flapjack.Misc.BinaryIeeeSqrt.RoundAgreement
 import Flapjack.Pancake.CrepInline.Pass
 import Flapjack.Pancake.CrepInline.Canonical
 import Flapjack.Pancake.CrepLang
