@@ -1,3 +1,4 @@
+import Flapjack.Test.ParmoveTempStepParity
 import Flapjack.Test.FindIndexShiftZeroParity
 import Flapjack.Test.WordAllocCanonizeMovesAuxParity
 import Flapjack.Test.HeuMaxParity

@@ -3045,3 +3045,7 @@ run_probe word_alloc_canonize_moves_aux_probeScript.sml word_alloc_canonize_move
 run_probe misc_find_index_shift_zero_probeScript.sml misc_find_index_shift_zero_probe.out \
   fiz_empty fiz_head fiz_middle fiz_last fiz_absent fiz_zero fiz_large_offset fiz_large_value fiz_bool fiz_bool_absent \
   "$cake_dir/misc/miscScript.sml" "$cake_dir/misc"
+
+run_probe parmove_temp_step_probeScript.sml parmove_temp_step_probe.out \
+  pts_remove pts_start pts_extend pts_save_cycle pts_emit_head pts_emit_last pts_save_none pts_emit_scratch pts_bool \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"

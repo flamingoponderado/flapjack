@@ -2461,3 +2461,10 @@ original offset-shift equations with kernel theorem applications in
 duplicates, zero and unbounded offsets/identifiers, and Boolean carriers.
 This supports the Move first-index characterization; it does not establish
 the full pass-correctness result.
+
+`parmove_temp_step_probeScript.sml` / `.out` captures nine combined original
+wf/source/target scratch-safety observations for all six primitive Step cases,
+cycle save, prior-written scratch reads/save, and Boolean registers. Matching
+`Flapjack/Test/ParmoveTempStepParity.lean` checks source wf/safety and derives
+target safety via the actual Step constructor and full ported theorem.
+RTC/pmov and full Move correctness remain separate open obligations.

@@ -42415,5 +42415,13 @@
   "hol_name": "find_index_shift_0",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead46.10: entire misc1241-1256 arbitrary list, target and Nat offset equality to OPTION_MAP(lambda index.index+offset) at zero-offset search. Preserves generic alpha equality, first occurrence, NONE and duplicates; no success, uniqueness, range or bounded-offset premise. Induction follows source head equality split, uses tail law at offset+1 and1, cases on tail Option result, Nat associativity. Ten fresh original whole equations matched by kernel theorem applications across Nat/Bool, empty/head/interior/last/missing/duplicates/zero, unbounded offsets and identifiers; extra ground kernel first-duplicate guard. Required first-index characterization and full Move/pass correctness remain open. Coordinator acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/TempBeforeAssign/Step.lean",
+  "lean_name": "stepNotUseTempBeforeAssign",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "step_not_use_temp_before_assign",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead46.4: full original879-907 primitive Step preservation of not_use_temp_before_assign(REVERSE(active++emitted)). Same arbitrary generic register carrier and all six exact Step clauses, source wf and source Boolean safety only; no target wf/safety/initialization hypothesis. RemoveSelf leaves chronology unchanged; Start/Extend derive ordinary inserted move from pending wf; Save uses exact append equivalence and option split, including prior scratch initialization; EmitHead derives ordinary head from active FRONT source and destination wf and removes/reinserts it; EmitLast has identical chronology. Local untagged neutral-move equation is documented Flapjack infrastructure, no extra premise. Nine fresh original combined wf/source/target observations paired with genuine native Step theorem applications cover every constructor, cycle save, prior-written scratch read/save, and Bool carrier. Full RTC/pmov/Move/compiler results remain open. Coordinator source acceptance pending."
 }
 ]
