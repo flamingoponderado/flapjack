@@ -168,7 +168,7 @@ def define_run_declarations(text: str) -> list[tuple[str, str, int, int]]:
                               masked[:match.start()], re.MULTILINE)
         if any(shadow.start('token') not in nested for shadow in shadows):
             continue
-        val_patterns = re.finditer(r'^[ \t]*(?P<token>val)\s+(?P<pattern>[^\n=]*)=',
+        val_patterns = re.finditer(r'^[ \t]*(?P<token>val)\s+(?P<pattern>[^=;]*?)=',
                                    masked[:match.start()], re.MULTILINE)
         if any(binding.start('token') not in nested and
                re.search(r'\bdefine_run\b', binding['pattern'])
@@ -187,11 +187,19 @@ def define_run_declarations(text: str) -> list[tuple[str, str, int, int]]:
         if not array_fields.startswith('['):
             binding = re.compile(r'^val\s+' + re.escape(array_fields) + r'\s*=\s*', re.MULTILINE)
             literals = []
-            bindings = 0
+            identifier = r"(?<![A-Za-z0-9_'])" + re.escape(array_fields) + r"(?![A-Za-z0-9_'])"
+            val_patterns = re.finditer(r'^[ \t]*(?P<token>val)\s+(?P<pattern>[^=;]*?)=',
+                                      masked[:match.start()], re.MULTILINE)
+            bindings = sum(candidate.start('token') not in nested and
+                           re.search(identifier, candidate['pattern']) is not None
+                           for candidate in val_patterns)
+            functions = re.finditer(r'^[ \t]*(?P<token>fun)\s+' + re.escape(array_fields) +
+                                    r'(?=\s|\(|=)', masked[:match.start()], re.MULTILINE)
+            if any(candidate.start('token') not in nested for candidate in functions):
+                continue
             for candidate in binding.finditer(masked, 0, match.start()):
                 if candidate.start() in nested:
                     continue
-                bindings += 1
                 literal = re.match(fields + r'\s*;', text[candidate.end():])
                 if literal is not None:
                     literals.append(literal.group())

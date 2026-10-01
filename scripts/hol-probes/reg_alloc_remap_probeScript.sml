@@ -1,0 +1,17 @@
+load "bossLib";
+load "preamble";
+load "reg_allocTheory";
+open bossLib HolKernel Parse preamble reg_allocTheory;
+fun observe label term = let val th = EVAL term in print (label ^ "="); print_term (rhs (concl th)); print "\n" end;
+val _ = observe "remap_empty" ``mk_bij (Delta [] []) = (LN,LN,0)``;
+val _ = observe "remap_delta" ``mk_bij (Delta [7;3] [5;7]) = ((insert 3 2 (insert 7 1 (insert 5 0 LN))),(insert 2 3 (insert 1 7 (insert 0 5 LN))),3)``;
+val _ = observe "remap_duplicate" ``mk_bij (Delta [7;7] [7;7]) = ((insert 7 0 LN),(insert 0 7 LN),1)``;
+val _ = observe "remap_seq" ``mk_bij (Seq (Delta [1] []) (Delta [2] [])) = ((insert 1 1 (insert 2 0 LN)),(insert 1 1 (insert 0 2 LN)),2)``;
+val _ = observe "remap_branch" ``mk_bij (Branch NONE (Delta [1] []) (Delta [2] [])) = ((insert 2 1 (insert 1 0 LN)),(insert 1 2 (insert 0 1 LN)),2)``;
+val _ = observe "remap_fixed" ``mk_bij (Branch (SOME (LS ())) (Delta [1] []) (Delta [2] [])) = ((insert 0 2 (insert 2 1 (insert 1 0 LN))),(insert 2 0 (insert 1 2 (insert 0 1 LN))),3)``;
+val _ = observe "remap_raw_empty" ``mk_bij (Set (BN LN LN)) = (LN,LN,0)``;
+val _ = observe "remap_raw_root" ``mk_bij (Set (BS LN () LN)) = ((insert 0 0 LN),(insert 0 0 LN),1)``;
+val _ = observe "remap_set_order" ``mk_bij (Set (BS (LS ()) () (LS ()))) = ((insert 2 2 (insert 0 1 (insert 1 0 LN))),(insert 2 2 (insert 1 0 (insert 0 1 LN))),3)``;
+val _ = observe "remap_large" ``mk_bij (Delta [18446744073709551616] []) = ((insert 18446744073709551616 0 LN),(insert 0 18446744073709551616 LN),1)``;
+val _ = observe "remap_nested" ``mk_bij (Seq (Branch NONE (Delta [1] []) (Delta [2] [])) (Delta [3;1] [])) = ((insert 2 2 (insert 1 1 (insert 3 0 LN))),(insert 2 2 (insert 1 1 (insert 0 3 LN))),3)``;
+val _ = observe "remap_initial" ``list_remap [7;8;7] (insert 7 99 LN, LN, 18446744073709551616) = (insert 8 18446744073709551616 (insert 7 99 LN), insert 18446744073709551616 8 LN, 18446744073709551617)``;

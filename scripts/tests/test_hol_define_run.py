@@ -75,6 +75,10 @@ class DefineRunTest(unittest.TestCase):
             'local\nval fields = ["items"];\nin\nend;\n' + BINDING.replace('["items"]', 'fields'),
             'val fields = ["items"];\nval fields = unknown;\n' + BINDING.replace('["items"]', 'fields'),
             'val fields = ["items"];\nval fields = ["other"];\n' + BINDING.replace('["items"]', 'fields'),
+            'val fields = ["items"];\nval (fields, other) = make;\n' + BINDING.replace('["items"]', 'fields'),
+            'val fields = ["items"];\nval (\n fields, other) = make;\n' + BINDING.replace('["items"]', 'fields'),
+            'val fields = ["items"];\nval other as fields = make;\n' + BINDING.replace('["items"]', 'fields'),
+            'val fields = ["items"];\nfun fields x = x;\n' + BINDING.replace('["items"]', 'fields'),
         ]
         for source in bad:
             with self.subTest(source=source):

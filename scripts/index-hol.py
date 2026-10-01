@@ -32,6 +32,7 @@ TOP_LEVEL = re.compile(
 DECL_RE = re.compile(
     r"^\s*(Theorem|Triviality|Definition)\s+(\S+?)\s*(?::|=)"
 )
+TYPE_RE = re.compile(r"^\s*Type\s+(" + IDENT + r")\s*=\s*(``|“)")
 OLD_DECL_RE = re.compile(
     r"^\s*val\s+(" + IDENT + r")\s*=\s*(Q\.prove|prove|store_thm|Define)\b"
 )
@@ -136,6 +137,17 @@ def declaration_end(masked: list[str], start: int, kind: str) -> int:
         for i in range(start, len(masked)):
             if re.match(r"^\s*End\b", masked[i]):
                 return i + 1
+        return len(masked)
+    if kind == "Type":
+        match = TYPE_RE.match(masked[start])
+        assert match is not None
+        closing = "``" if match.group(2) == "``" else "”"
+        for i in range(start, len(masked)):
+            content = masked[i][match.end():] if i == start else masked[i]
+            if closing in content:
+                return i + 1
+            if i > start and TOP_LEVEL.match(masked[i]):
+                return i
         return len(masked)
     raise ValueError(f"unknown declaration kind: {kind}")
 
@@ -268,6 +280,13 @@ def parse_file(root: Path, path: Path) -> tuple[list[Entry], list[tuple[str, str
             name = clean_name(raw_name)
             end = declaration_end(masked, i, kind)
             entries.append(Entry(kind, name, relative, i + 1, end, theory))
+            i = max(i + 1, end)
+            continue
+
+        type_match = TYPE_RE.match(line)
+        if type_match:
+            end = declaration_end(masked, i, "Type")
+            entries.append(Entry("Type", type_match.group(1), relative, i + 1, end, theory))
             i = max(i + 1, end)
             continue
 
