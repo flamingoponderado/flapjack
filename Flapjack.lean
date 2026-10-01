@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.Parmove.StepsCorrect
 import Flapjack.Compiler.Backend.Parmove.PmovFinal
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Inst
 import Flapjack.Compiler.Backend.Parmove.StepsSem

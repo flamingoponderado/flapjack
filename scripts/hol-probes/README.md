@@ -2185,3 +2185,9 @@ scratch-register inputs, duplicate destinations and nonempty active/history.
 Every full state is kernel paired in ParmoveFinalParity. Scratch and duplicate
 inputs deliberately exceed wf: pmov_final is unconditional. It proves empty
 pending/active lists and an existential emitted history, not semantic correctness.
+
+`parmove_stepscorrect_probeScript.sml` captures12fresh original parallel and
+reversed-sequential values for a cycle and chain. Kernel tests construct the
+actual five-step cycle and four-step chain relations and apply steps_correct
+for arbitrary environments. The temporary changes99to27 on the cycle; original
+eqenv excludes it. No pmov-to-Step relationship is assumed or claimed.

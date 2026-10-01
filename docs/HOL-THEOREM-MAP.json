@@ -41266,5 +41266,13 @@
   "hol_name": "pmov_final",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.6.13: literal655-663 originalforallstate exists emitted actualpmovstate=([],[],emitted). Unconditional, no wf/windmill/algorithmrelation/assumedterminalresult; original Option/List statecarrier and all histories retained. Generated functional induction of actualreviewedpmov: terminalclause preserves history, nonterminalclause inherits existential at actualfstepstate. Source-decreasing termination alreadypart of revieweddefinition, no fuel restriction. Original terminal/self/chain/cycle/scratch/duplicate/active observations freshly captured; malformed inputs included because theoremunconditional. This proves shape only, not semantic or deterministicSteps correctness."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/StepsCorrect.lean",
+  "lean_name": "steps_correct",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "steps_correct",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.6.7: literal459-473 allfouroriginalpremises retained: windmill pending, EVERY IS_SOME mappedFST/SND renderedforallmemberisSome=true, actualSteps(initialemptyactive/history,finalemptypending/active). Conclusionforallenv originaleqenv(parsempendingenv)(seqsemreverseemittedenv). wf is derived and acceptedsteps_sem plus literal sem_init/sem_final gives result; no stronger premise, assumedalgorithm simulation or targetresult. Same Option/List/function/genericvaluecarriers. Kernelconstructed five-step cycle and four-step chain discharge genuineStepclosure, freshoriginalparallel/sequential values paired including changedtemporary excludedbyeqenv. Fullpmov->DSteps->Steps correctness remains open."
 }
 ]

@@ -2836,3 +2836,7 @@ run_probe parmove_stepssem_probeScript.sml parmove_stepssem_probe.out \
 run_probe parmove_final_probeScript.sml parmove_final_probe.out \
   pv_final_terminal pv_final_self pv_final_chain pv_final_cycle pv_final_scratch pv_final_duplicate pv_final_active \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe parmove_stepscorrect_probeScript.sml parmove_stepscorrect_probe.out \
+  pv_correct_cycle_parallel_1 pv_correct_cycle_parallel_2 pv_correct_cycle_parallel_temp pv_correct_cycle_sequential_1 pv_correct_cycle_sequential_2 pv_correct_cycle_sequential_temp pv_correct_chain_parallel_1 pv_correct_chain_parallel_2 pv_correct_chain_parallel_temp pv_correct_chain_sequential_1 pv_correct_chain_sequential_2 pv_correct_chain_sequential_temp \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
