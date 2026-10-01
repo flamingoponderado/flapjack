@@ -3705,3 +3705,8 @@ run_probe ssa_fake_moves_correct_left_probeScript.sml ssa_fake_moves_correct_lef
   fml_full fml_type_ls fml_type_na fml_type_ssaL fml_type_ssaR fml_type_stL fml_type_cstL fml_type_prio \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_fake_moves_correct_right_probeScript.sml ssa_fake_moves_correct_right_probe.out \
+  fmr_full fmr_type_ls fmr_type_na fmr_type_ssaL fmr_type_ssaR fmr_type_stR fmr_type_cstR fmr_type_prio \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"

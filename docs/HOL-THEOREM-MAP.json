@@ -49002,5 +49002,19 @@
       "WordSemStateFiniteExact.store"
     ],
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "fake_moves_correctR",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAFakeMovesCorrectRight.lean",
+    "lean_name": "fakeMovesCorrectR",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol-a completed source comparison 2026-10-01 5qx9: original5089-5184 and fresh literal three-proof/seven-type replay from matching pinned CakeML857f0d/HOLa390cb shared builds. Full right-side allocation/Nodup/right-mapOK and locals-relation implication, actual native right fakeMoves/evaluate, all five NONE/untouched right map/old target locals/output locals/full state conclusions retained. Fresh stR alpha,beta,gamma and cstR alpha,delta,epsilon types confirm independent code/FFI and shared positive word dimension. Canonical fpRegs/store roundtrip reviewed; guarded SOME selectors, actual parallel Move and zero Const, actual Seq clock/termdep restoration. No successful-evaluation/post-state or left-mapOK premise. Inherits reals_as_rational_cuts SOUNDNESS item8. Left helper infrastructure reused from checked4847ec1e8; accepted frame30.12 checked native tree, ordinary unified18f233 mergeac8e99f6b. No executable route change.",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true
   }
 ]

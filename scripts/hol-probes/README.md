@@ -3983,3 +3983,5 @@ Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_primitives_probeScript.sml`.
 `ssa_setup_props_probe.out` freshly replays the complete original setup-SSA proof, six local prerequisite proofs and two ML tactics, plus four inferred types. State/program/move share their word dimension. The tagged native theorem retains the original allocation/domain premises and all six actual evaluator conclusions; executed setup routing is tracked separately.
 
 `ssa_fake_moves_correct_left_probeScript.sml` replays the literal left fake-move simulation and local frame/map prerequisites, capturing the full statement and seven types including independent source/target code and FFI dimensions.
+
+`ssa_fake_moves_correct_right_probeScript.sml` replays the literal right fake-move simulation and its local prerequisites, capturing the full five-conclusion statement and seven inferred types.
