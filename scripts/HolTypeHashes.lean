@@ -636,6 +636,7 @@ import Flapjack.Pancake.Semantics.PanSem.EvaluateInd
 import Flapjack.Pancake.WordLang
 import Flapjack.Pancake.WordLang.OccurrencesExact
 import Flapjack.Pancake.WordConvs
+import Flapjack.Pancake.WordConvs.WfCutsets
 import Flapjack.Pancake.WordConvs.NotCreated
 import Flapjack.RiscV.CorrectnessEncoding
 import Flapjack.Compiler.Backend.StackProps
