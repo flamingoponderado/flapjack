@@ -4045,6 +4045,12 @@
       "sha256": "c3a5c9a206d0334587c2af1a9bde2cde38fef29756506a8c8459e9cf68d9096b"
     },
     {
+      "bytes": 1128,
+      "out": "word_alloc_move_head_probe.out",
+      "rows": 14,
+      "sha256": "b9bd0faee01019ff7d28279dcdd162bb0e7f5fee0644aa5bc4e42c7585b1b165"
+    },
+    {
       "bytes": 164,
       "out": "word_alloc_oracle_colour_probe.out",
       "rows": 10,

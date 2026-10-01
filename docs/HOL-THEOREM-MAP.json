@@ -43906,5 +43906,19 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison2026-10-01: full original1816-1820 definition accepts arbitrary native wordLang program, let x=reviewed max_var prog then x+(4-(x MOD4))+1 with identical associativity and natural subtraction. Full actual native maxVarHOL, MlString/Spt/native instruction carriers, including width64-dependent FP, absent-return ignored handler and ignored Load16 registers. Only positive-width BitVec carrier translation; NeZero retained, no wf/limit/success premise. Fresh original full exported definition/type plus12 same-input maximum/limit/class/strict-bound tuples,13 kernel fixtures all4residues/zero/multiples/widths1-32-64-80/hugeNat/Call/ignoredLoad16. Body/type pinned; no executed compiler change. Actual production uses numeric helper/upstream distinct carrier; linked .30.1.2.1 remainsOPEN until native routing or measured exception accepted. Definition inventory remainsOPEN; coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAMergeMoves/MoveHead.lean",
+    "lean_name": "movEvalHead",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "mov_eval_head",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison (2026-10-01; flapjack-421z): full original word_allocProof4748-4761 local mov_eval_head, literal proof independently re-elaborated in original HOL. Arbitrary priority, moves, x/y and full original/output states; exact successful source evaluation, source-domain membership, and both original source/destination-not-written premises, with complete target evaluation/state-update equality. Native faithful evaluator, original Nat/Spt WordLoc positive BitVec width and configuration/FFI Type0 carriers retained. Qualifier covers only the canonical fpRegs/store finite maps (same-module genuine broad/exact roundtrip) and standard positive-width word translation; locals/code remain actual Spt, not finite maps. HOL THE sees only SOME due to source-domain premise: getD(.word0) selects identical payload, fallback independent by kernel theorem; no THE NONE value claimed. Original source-not-written premise retained despite proof needing only destination-not-written. Eleven fresh same-input original evaluator tuples include widths1/32/64/80, parallel copies, self-copy, existing-destination overwrite, repeated source, non-well-formed tree, huge Nat, and three failure sentinels. Full generic actual theorem and fallback-independence applications checked. No executed compiler change or full merge/SSA correctness claim; coordinator acceptance pending. The elaborated constant closure inherits reals_as_rational_cuts through the accepted wordSem evaluate Inst/FPSqrt branch (existing SOUNDNESS item8), exactly as that evaluator manifest records. The concrete Move branch proved here invokes only getVars/setVars and never inst; this does not change or endorse the global FP rendering. This marker propagates the existing evaluator boundary, not a new assumption or extra theorem premise.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]

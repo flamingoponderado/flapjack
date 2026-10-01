@@ -1,3 +1,14 @@
+`word_alloc_move_head_probe.out` freshly re-elaborates the complete local
+`mov_eval_head` from its original proof and runs eleven native Move evaluations.
+The matching `WordAllocMoveHeadParity` fixtures retain arbitrary untouched
+state fields and compare exact results, Spt traversal order and clock. Cases
+cover positive widths 1/32/64/80, parallel reads, self-copy, overwrites, repeated
+sources, malformed trees and unbounded Nat destinations. Missing-source and
+duplicate-destination failures are explicit sentinels. The public theorem
+retains all four original premises and full state equality. Its source lookup
+is SOME-guarded; neither proof nor probe claims a value for HOL THE NONE.
+Regenerate with `HOL_PROBE_ONLY=word_alloc_move_head_probeScript.sml`.
+
 `ssa_register_class_probe.out` captures eight direct MOD4 class observations, including physical-register guard boundaries and large naturals. It also rechecks the literal original local `is_alloc_var_add`/`is_stack_var_add` statements with their original proof text; source-replay rows are distinct from exported-theorem rows. `Flapjack/Test/SSARegisterClassParity.lean` kernel-replays the observations and applies both ported theorems.
 
 `ssa_locals_rel_probe.out` simplifies the original whole generic relation with literal lookup/domain/THE clauses: eight Bool-valued success/missing-map/missing-target/wrong-value/allocation-bound/malformed-tree observations. `Flapjack/Test/SSALocalsParity.lean` replays identical inputs in the kernel; the full original definition and generic inferred type are captured.
