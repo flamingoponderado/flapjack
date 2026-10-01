@@ -3194,6 +3194,10 @@ run_probe parmove_map_state_probeScript.sml parmove_map_state_probe.out \
   pms_empty pms_pending pms_active pms_emitted pms_order pms_constant pms_large pms_bool pms_cross_carrier pms_option_constant \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
+run_probe reg_alloc_worklist_probeScript.sml reg_alloc_worklist_probe.out \
+  dd_basic dd_zero dd_oob ddeg_basic ddeg_dup ddeg_out_of_dim ddeg_oob_adj asw_basic aspw_basic afw_basic aum_basic ps_basic ps_oob_move_related ps_oob rs_low rs_high_frozen rs_high_not_frozen rs_oob \
+  "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
 run_probe reg_alloc_considered_var_probeScript.sml reg_alloc_considered_var_probe.out \
   if_fixed if_atemp if_oob ia_atemp ia_stemp ia_fixed ifk_below ifk_above ifk_equal ifk_stemp cv_atemp cv_fixed_low cv_fixed_high cv_stemp cv_oob doi_fixed_low doi_fixed_high doi_atemp doi_oob doi_state \
   "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"

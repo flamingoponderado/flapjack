@@ -1124,6 +1124,7 @@ import Flapjack.Compiler.Backend.RegAlloc.SplitDegree
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.NotCoalescedFilter
 import Flapjack.Compiler.Backend.RegAlloc.ConsideredVar
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.ConsideredVarFilter
+import Flapjack.Compiler.Backend.RegAlloc.Worklists
 
 
 /- The context-aware Crep-to-Loop correctness file is being updated alongside

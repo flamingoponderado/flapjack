@@ -2773,6 +2773,15 @@ the finite fixtures do not prove cross-assistant equivalence.
 equations, including unsorted inputs. `RegAllocSortedMemParity` kernel-replays
 the same cases and the executed wrapper's equation for arbitrary keys/lists.
 
+`reg_alloc_worklist_probe` captures 18 original EVAL results of `dec_deg`,
+`dec_degree`, `add_simp_wl`, `add_spill_wl`, `add_freeze_wl`,
+`add_unavail_moves_wl`, `push_stack` and `respill` with full `ra_state`
+results (truncated decrement, duplicate neighbours, out-of-dimension no-op,
+partial updates before `Subscript`), kernel-replayed in
+`RegAllocWorklistsParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=reg_alloc_worklist_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `reg_alloc_considered_var_probe` captures 20 original EVAL results of
 `is_Fixed`, `is_Atemp`, `is_Fixed_k`, `considered_var` and `deg_or_inf`
 (tag kinds, `k` boundaries, out-of-array failures, state preservation),

@@ -45897,5 +45897,69 @@
     "lean_name": "stExFilterConsideredVar",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.8.6.8): reg_allocProofScript.sml:2350-2361 ∀ls acc s. EVERY (λx. x < LENGTH s.node_tag) ls ∧ EVERY (λx. x < LENGTH s.node_tag) acc ⇒ ∃ts fs. st_ex_FILTER (considered_var k) ls acc s = (M_success ts,s) ∧ EVERY (λx. x < LENGTH s.node_tag) ts, with k free (hence universally quantified, bound first in Lean). Lean: same premise conjunction and conclusion, EVERY as bounded ∀; the existential fs occurs nowhere in the body and HOL types are inhabited, so that vacuous binder is omitted (documented beside the theorem). Kernel-checked; proof via the Flapjack getElem read lemma mSub_success_getElem, not the held HOL EL rendering. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "dec_deg_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Worklists.lean",
+    "lean_name": "decDeg",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.8.6.26): reg_allocScript.sml:252-258 dec_deg n = do cd <- degrees_sub n; update_degrees n (cd-1) od; num subtraction truncates (Nat -). Generated accessors from .10.5.2 (opus-wordsem e234f6ad2, pending acceptance). Original EVAL rows with full ra_state results (scripts/hol-probes/reg_alloc_worklist_probe.out) kernel-replayed in Flapjack.Test.RegAllocWorklistsParity. No extra premise. Proof-side port; executed allocator unchanged. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "dec_degree_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Worklists.lean",
+    "lean_name": "decDegree",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.8.6.26): reg_allocScript.sml:260-272 dec_degree n = do d <- get_dim; if n < d then do adjs <- adj_ls_sub n; st_ex_FOREACH adjs dec_deg od else return () od. Lean: same, with the accepted stExForeach. Generated accessors from .10.5.2 (opus-wordsem e234f6ad2, pending acceptance). Original EVAL rows with full ra_state results (scripts/hol-probes/reg_alloc_worklist_probe.out) kernel-replayed in Flapjack.Test.RegAllocWorklistsParity. No extra premise. Proof-side port; executed allocator unchanged. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "add_simp_wl_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Worklists.lean",
+    "lean_name": "addSimpWl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.8.6.26): reg_allocScript.sml:274-280 add_simp_wl ls = do swl <- get_simp_wl; set_simp_wl (ls ++ swl) od. Generated accessors from .10.5.2 (opus-wordsem e234f6ad2, pending acceptance). Original EVAL rows with full ra_state results (scripts/hol-probes/reg_alloc_worklist_probe.out) kernel-replayed in Flapjack.Test.RegAllocWorklistsParity. No extra premise. Proof-side port; executed allocator unchanged. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "add_spill_wl_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Worklists.lean",
+    "lean_name": "addSpillWl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.8.6.26): reg_allocScript.sml:282-288 add_spill_wl ls = do swl <- get_spill_wl; set_spill_wl (ls ++ swl) od. Generated accessors from .10.5.2 (opus-wordsem e234f6ad2, pending acceptance). Original EVAL rows with full ra_state results (scripts/hol-probes/reg_alloc_worklist_probe.out) kernel-replayed in Flapjack.Test.RegAllocWorklistsParity. No extra premise. Proof-side port; executed allocator unchanged. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "add_freeze_wl_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Worklists.lean",
+    "lean_name": "addFreezeWl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.8.6.26): reg_allocScript.sml:290-296 add_freeze_wl ls = do fwl <- get_freeze_wl; set_freeze_wl (ls ++ fwl) od. Generated accessors from .10.5.2 (opus-wordsem e234f6ad2, pending acceptance). Original EVAL rows with full ra_state results (scripts/hol-probes/reg_alloc_worklist_probe.out) kernel-replayed in Flapjack.Test.RegAllocWorklistsParity. No extra premise. Proof-side port; executed allocator unchanged. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "push_stack_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Worklists.lean",
+    "lean_name": "pushStack",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.8.6.26): reg_allocScript.sml:299-307 push_stack x = do swl <- get_stack; update_degrees x 0; update_move_related x F; set_stack (x::swl) od. Lean: same order; a failing update stops before later steps. Generated accessors from .10.5.2 (opus-wordsem e234f6ad2, pending acceptance). Original EVAL rows with full ra_state results (scripts/hol-probes/reg_alloc_worklist_probe.out) kernel-replayed in Flapjack.Test.RegAllocWorklistsParity. No extra premise. Proof-side port; executed allocator unchanged. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "add_unavail_moves_wl_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Worklists.lean",
+    "lean_name": "addUnavailMovesWl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.8.6.26): reg_allocScript.sml:309-315 add_unavail_moves_wl ls = do swl <- get_unavail_moves_wl; set_unavail_moves_wl (ls ++ swl) od; element carrier (num # num # num). Generated accessors from .10.5.2 (opus-wordsem e234f6ad2, pending acceptance). Original EVAL rows with full ra_state results (scripts/hol-probes/reg_alloc_worklist_probe.out) kernel-replayed in Flapjack.Test.RegAllocWorklistsParity. No extra premise. Proof-side port; executed allocator unchanged. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "respill_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Worklists.lean",
+    "lean_name": "respill",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.8.6.26): reg_allocScript.sml:650-666 respill k x = do xd <- degrees_sub x; if xd < k then return () else do freeze <- get_freeze_wl; if MEM x freeze then do add_spill_wl [x]; set_freeze_wl (FILTER (λy. y≠x) freeze) od else return () od od. Lean: same nesting, MEM/FILTER with decide (every copy of x removed). Generated accessors from .10.5.2 (opus-wordsem e234f6ad2, pending acceptance). Original EVAL rows with full ra_state results (scripts/hol-probes/reg_alloc_worklist_probe.out) kernel-replayed in Flapjack.Test.RegAllocWorklistsParity. No extra premise. Proof-side port; executed allocator unchanged. Coordinator source acceptance pending."
   }
 ]

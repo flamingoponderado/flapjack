@@ -3283,6 +3283,12 @@
       "sha256": "3849b94bf71b14b9de020a777d210f9e4bebfdd343aa2a9cf03afdcb7ea25e55"
     },
     {
+      "bytes": 5859,
+      "out": "reg_alloc_worklist_probe.out",
+      "rows": 18,
+      "sha256": "2784f78edaf4977b2cd5fc1a8b032e93bb4ae6275779217c12ba07a735d3653b"
+    },
+    {
       "bytes": 124,
       "out": "ret_hdl_probe.out",
       "rows": 5,
