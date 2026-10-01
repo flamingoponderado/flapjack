@@ -41143,6 +41143,15 @@
   "reviewer": "flapjack-luna-c source comparison 2026-10-01 child25.4: literal Inst Skip and full FP constructor, HOL Inst1374-1391 plus wordSem inst_def FP821-938. Same original st/cst/f/live/lt binders, three colouring_ok/state-equality/live-scoped-locals premises, full existential applyColourPost, no IH/success/NaN/register-distinctness premise. Full FP theorem case-splits all16 WordLangFp constructors and unfolds actual reviewed inst/evaluate; identical FP reads follow state-equality, common set_fp_var frame preserves actual fixed64 map and all other fields. FP comparisons derive integer-write scoped injectivity. FPMovToReg keeps64 single update vs non64 low first/high second with actual width extracts and alias overwrite, derives both insert obligations from writes-union-live. FPMovFromReg transports original integer reads (one at64, two otherwise), preserving Loc/missing failures, high concatenated before low and fixed64 result. FPToInt keeps actual RTE/none/range guards, fixed signed word32 check, source failure without write, old FP half insertion at indexDIV2/ODD; FPFromInt uses signed word32 at64 and actual polymorphic width otherwise. FMA accumulator/source order unchanged, arithmetic and NaN values are the identical imported primitive computation, not recalculated approximations. Canonical imported state map roundtrip; words qualifier translates positive dimension. Inherited reals_as_rational_cuts assumption via wordSem evaluate/inst, SOUNDNESS item8; no direct rendering call or new cross-prover agreement claim. Whole Inst assembly remains open. Coordinator review pending."
 },
 {
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "comp_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeCompile.lean",
+  "lean_name": "compNative",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison original453-555 and fresh original constant type: AsmConfigExact width, WordLangProgHOL(BitVec width), AppListword/length, complete k/f/f-prime, total native HolProg/bitmap pair. Every source clause and impossible fallback preserved, recursive Call return+handler tuples and source Seq/If bitmap order; native helpers source-reviewed, total instruction/address codecs, constructor store-name translation fixedTemp5, validImm exact SumCmp branch. words_as_type_indexed_bitvec with positivewidth; no callback/targetresult/conversion/wf premise. Kernel structural termination38 and19fresh original directcomp rows kernel-replayed. Definition port only; compile_prog/topproduction routing and correctness remainOPEN."
+},
+{
   "hol_path": "cakeml/compiler/backend/wordLangScript.sml",
   "hol_name": "max_var_exp_def",
   "lean_path": "Flapjack/Pancake/WordLang/MaxVarExp.lean",
