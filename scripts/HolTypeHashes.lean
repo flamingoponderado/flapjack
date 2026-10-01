@@ -1,5 +1,8 @@
+<<<<<<< HEAD
 import Flapjack.Misc.FindIndex
 import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign
+=======
+>>>>>>> origin/fleet-integration-post-1185-stack
 import Flapjack.Compiler.Backend.WordAlloc.TotalColour
 import Flapjack.Compiler.Backend.Parmove.SourceMembershipWrapper
 import Flapjack.Compiler.Backend.Parmove.DStepStep

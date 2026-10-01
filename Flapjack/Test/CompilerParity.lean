@@ -1,5 +1,8 @@
+<<<<<<< HEAD
 import Flapjack.Test.FindIndexParity
 import Flapjack.Test.ParmoveTempBeforeAssignParity
+=======
+>>>>>>> origin/fleet-integration-post-1185-stack
 import Flapjack.Test.WordAllocTotalColourParity
 import Flapjack.Test.ParmoveSourceWrapperParity
 import Flapjack.Test.WordToStackNativeConfigParity

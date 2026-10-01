@@ -41597,6 +41597,7 @@
   "hol_name": "total_colour_def",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-c source comparison (2026-10-01; bead11.5.4): literal1592-1595 Spt Nat lookup at original register; NONE tests accepted reg_alloc is_phy_var and returns original key if physical else0; SOME returns2*stored colour. Nat/Spt constructor carriers retain arbitrary non-well-formed trees and keys, no wf/domain/bijection/width assumption. Spt is a num_map tree, not qualified as finite support fmap. Eight fresh direct original HOL rows replay same inputs in kernel, including absent physical/virtual and arbitrary precision keys, mapped physical/virtual/zero. Actual testroot registration. Used by native oracle checker and word_alloc; production routing stays on parent11.5/child5.3, this leaf is not compiler completion. Coordinator review pending."
+<<<<<<< HEAD
 },
 {
   "lean_path": "Flapjack/Compiler/Backend/Parmove/TempBeforeAssign.lean",
@@ -41613,5 +41614,7 @@
   "hol_name": "find_index_def",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-c source comparison (2026-10-01; bead46.7): literal1055-1058 target/list/start-offset recursion; empty returns NONE, first head equal target returns SOME current offset, unequal head searches tail with offset+1. Native generic List/equality/Nat/Option carriers, DecidableEq computes propositional equality with no BEq assumption, no bound or successful-search premise. Eight fresh original rows and identical-input rfl kernel fixtures cover absence, first and late matches, duplicates, zero and arbitrary-precision offset. Actual CompilerParity registration. Required first-index characterization remains on46.3 with bounds/append/shift prerequisites; no compiler safety completion claim. Coordinator review pending."
+=======
+>>>>>>> origin/fleet-integration-post-1185-stack
 }
 ]
