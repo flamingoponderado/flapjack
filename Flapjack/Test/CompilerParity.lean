@@ -1,3 +1,4 @@
+import Flapjack.Test.WordAllocMaxVarMaxParity
 import Flapjack.Test.StackPropsLabelSafetyParity
 import Flapjack.Test.ParmoveFstepMapInjParity
 import Flapjack.Test.AsmSemFpUpdatesParity

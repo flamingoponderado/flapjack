@@ -3050,3 +3050,10 @@ The native transition inherits the existing IEEE real-rendering assurance limit
 (SOUNDNESS item8); fixed raw arithmetic NaN payload agreement is not asserted.
 Probes remain regression evidence, not complete cross-language IEEE equivalence
 or whole ASM/compiler routing acceptance.
+
+`word_alloc_max_var_max_probe.out` captures the complete exported theorem and46
+fresh original maximum/at-bound/strict-below triples across native constructors,
+recursive Call/Loop bodies, ignored fields, non-wellformed cutsets and widths
+1/32/64/80. `WordAllocMaxVarMaxParity` checks93 kernel examples against these
+inputs and the full premise-free theorem. Run this capture alone with
+`HOL_PROBE_ONLY=word_alloc_max_var_max_probeScript.sml`.

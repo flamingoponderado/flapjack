@@ -43708,5 +43708,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead .18.5.15.3.26.16): literal full1160-1174 predicates over list(num x positive-width HolProg), arbitrary SetNat external labels, set-of-list, IMAGE and BIGUNION preserved. Original indexed stackLang carrier and accepted getter/restrict_nonzero used. Same union association and source entry0/entry1 handler ownership restriction; no finite external set, unique keys, successful evaluation or target premise. Only word dimension translation; full original inferred types and10 kernel/original rows reviewed. Coordinator acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/Maximum/MaxVar.lean",
+    "lean_name": "maxVarMax",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "max_var_max",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-01: full exported original10243-10297 forall prog every_var (x <= max_var prog) prog, all native constructors and recursive Call returns/handlers, If and Loop cutsets retained. No wf, bound, successful pass or target evaluation premise. Private larger-bound induction is proof infrastructure only. Native MlString and canonical Spt carriers; only positive-width BitVec/NeZero translation. Full fresh original DB.fetch plus46 exact-input maximum/at-bound/strict-below triples,93 kernel fixtures including ignored instructions, absent-return handler, non-wellformed cutsets and widths1/32/64/80. No executed compiler change; coordinator acceptance pending."
   }
 ]
