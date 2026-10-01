@@ -46446,5 +46446,61 @@
     ],
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.3.2): HOL Resume evaluate_remove_dead[Set] (word_allocProofScript.sml:4123) case of the theorem at 3900-3928, i.e. the HOL statement with prog fixed to Set, stated as removeDeadGoal; dead destination/store branch and live branch as HOL (live_store_rel_FLOOKUP_store/_less, strong_locals_rel_I_word_exp/_insert_insert/_insert_notin); no IH, no extra premise. Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through wordSem evaluate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_remove_dead",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateRemoveDead/Control.lean",
+    "lean_name": "evaluateRemoveDead_Seq",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.3.5): HOL Resume evaluate_remove_dead[Seq] (word_allocProofScript.sml:4137) case of the theorem at 3900-3928, stated as removeDeadGoal for the fixed constructor with removeDeadGoal hypotheses for its sub-programs only (IHs for both children; Skip elision of either child as HOL); no extra premise. Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through wordSem evaluate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_remove_dead",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateRemoveDead/Control.lean",
+    "lean_name": "evaluateRemoveDead_MustTerminate",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.3.5): HOL Resume evaluate_remove_dead[MustTerminate] (word_allocProofScript.sml:4157) case of the theorem at 3900-3928, stated as removeDeadGoal for the fixed constructor with removeDeadGoal hypotheses for its sub-programs only (IH for the body at the MustTerminate clock/termdep); no extra premise. Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through wordSem evaluate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_remove_dead",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateRemoveDead/Control.lean",
+    "lean_name": "evaluateRemoveDead_If",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.3.5): HOL Resume evaluate_remove_dead[If] (word_allocProofScript.sml:4170) case of the theorem at 3900-3928, stated as removeDeadGoal for the fixed constructor with removeDeadGoal hypotheses for its sub-programs only (IHs for both branches; Reg/Imm operand transport, union live sets and FILTER (MEM s e3_nlive) e2_nlive as HOL); no extra premise. Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through wordSem evaluate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_remove_dead",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateRemoveDead/Control.lean",
+    "lean_name": "evaluateRemoveDead_Loop",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.3.5): HOL Resume evaluate_remove_dead[Loop] (word_allocProofScript.sml:4281) case of the theorem at 3900-3928, stated as removeDeadGoal for the fixed constructor with removeDeadGoal hypotheses for its sub-programs only (IH for the body; the case is evaluate_remove_dead_Loop_helper at the body statement for (names, exit_names)::lt); no extra premise. Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through wordSem evaluate."
   }
 ]
