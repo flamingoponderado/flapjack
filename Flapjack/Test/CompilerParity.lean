@@ -1,3 +1,11 @@
+import Flapjack.Test.LabValidityNativeParity
+import Flapjack.Test.StackToLabNativeParity
+import Flapjack.Test.WordToStackNoShmemopHandlersParity
+import Flapjack.Test.WordAllocLimitPropertiesParity
+import Flapjack.Test.SSAMapStepParity
+import Flapjack.Test.SSALocalsInsertParity
+import Flapjack.Test.BinaryIeeeArithExecParity
+import Flapjack.Test.LoopToWordProgramNamesParity
 import Flapjack.Test.SSAMergeMoveLookupsParity
 import Flapjack.Test.LoopToWordLabelHandlersParity
 import Flapjack.Test.WordConvsPredicateEquationsParity

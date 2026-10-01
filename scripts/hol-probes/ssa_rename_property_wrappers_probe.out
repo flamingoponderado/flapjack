@@ -1,0 +1,4 @@
+rw_core_full=⊢ ∀ls ssa na ls' ssa' na'. list_next_var_rename ls ssa na = (ls',ssa',na') ⇒ (is_alloc_var na ∨ is_stack_var na) ∧ ssa_map_ok na ssa ⇒ na ≤ na' ∧ (is_alloc_var na ⇒ is_alloc_var na') ∧ (is_stack_var na ⇒ is_stack_var na') ∧ ssa_map_ok na' ssa'
+rw_move_full=⊢ ∀ls ssa na ls' ssa' na'. list_next_var_rename_move ssa na ls = (ls',ssa',na') ⇒ (is_alloc_var na ∨ is_stack_var na) ∧ ssa_map_ok na ssa ⇒ na ≤ na' ∧ (is_alloc_var na ⇒ is_alloc_var na') ∧ (is_stack_var na ⇒ is_stack_var na') ∧ ssa_map_ok na' ssa'
+rw_move_type=:α prog
+rw_single_full=⊢ ∀ssa' ssa na' na ls' ls. next_var_rename ls ssa na = (ls',ssa',na') ⇒ (is_alloc_var na ∨ is_stack_var na) ∧ ssa_map_ok na ssa ⇒ na ≤ na' ∧ (is_alloc_var na ⇒ is_alloc_var na') ∧ (is_stack_var na ⇒ is_stack_var na') ∧ ssa_map_ok na' ssa'
