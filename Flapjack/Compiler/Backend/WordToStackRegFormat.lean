@@ -1,4 +1,5 @@
 import Flapjack.HolRef
+import Flapjack.Compiler.Backend.Parmove
 import Flapjack.Compiler.Backend.StackCarrier
 import Flapjack.Compiler.Backend.StackLang.Prog
 import Flapjack.Compiler.Backend.WordToStack
@@ -191,6 +192,19 @@ def wMoveAux {α : Type} : List (Sum Nat Nat × Sum Nat Nat) → Nat × Nat × N
   | [], _ => .skip
   | [xy], kf => wMoveSingle xy kf
   | xy :: xys, kf => .seq (wMoveSingle xy kf) (wMoveAux xys kf)
+
+/-- Literal HOL `wMove`: divide both variable indices by two, schedule the
+parallel moves, format both optional registers using the same k, and lower
+through wMoveAux with the unchanged (k,f,f') triple. The temporary is NONE and
+is therefore formatted as register k+1. No alternative production scheduler
+or fuel bound is used. Executed compiler migration remains separately tracked. -/
+@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "wMove_def"
+  (words_as_type_indexed_bitvec)]
+def wMove {width : Nat} [NeZero width] (moves : List (Nat × Nat))
+    (kf : Nat × Nat × Nat) : ProgM (BitVec width) :=
+  let scheduled := Flapjack.Compiler.Backend.Parmove.parmove
+    (moves.map (fun move => (move.1 / 2, move.2 / 2)))
+  wMoveAux (scheduled.map (fun move => (formatVar kf.1 move.1, formatVar kf.1 move.2))) kf
 
 /-- Exact port of HOL `copy_ret_aux_def`
     (`cakeml/compiler/backend/word_to_stackScript.sml:429-441`):
