@@ -4733,6 +4733,12 @@
       "out": "word_to_stack_no_shmemop_helpers_probe.out",
       "rows": 22,
       "sha256": "519d836b71bb97fe61f14250e3f03eeae18acf09ba7eead27af11ca15789512f"
+    },
+    {
+      "bytes": 388,
+      "out": "word_to_stack_handler_frame_carriers_probe.out",
+      "rows": 14,
+      "sha256": "d80e3919f0c5b2e620a85f9b21d9acb1779f73a365e8baab1a871559113872e0"
     }
   ],
   "version": 1

@@ -3357,3 +3357,7 @@ run_probe wordconvs_label_safety_probeScript.sml wordconvs_label_safety_probe.ou
 run_probe word_to_stack_no_shmemop_helpers_probeScript.sml word_to_stack_no_shmemop_helpers_probe.out \
   nsh_move_empty nsh_move_rr nsh_move_rs nsh_move_sr nsh_move_ss nsh_move_multi nsh_move_width1 nsh_load_empty nsh_load_loads nsh_load_forbidden nsh_write1_register nsh_write1_stack nsh_write1_forbidden nsh_write2_register nsh_write2_stack nsh_write2_forbidden nsh_live_zero nsh_live_nonzero nsh_live_width1 nsh_stack_zero nsh_stack_positive nsh_stack_forbidden \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_to_stack_handler_frame_carriers_probeScript.sml word_to_stack_handler_frame_carriers_probe.out \
+  hcf_push_type hcf_pop_type hcf_push_64_F hcf_pop_64_F_skip hcf_pop_64_F_forbidden hcf_push_64_T hcf_pop_64_T_skip hcf_pop_64_T_forbidden hcf_push_1_F hcf_pop_1_F_skip hcf_pop_1_F_forbidden hcf_push_1_T hcf_pop_1_T_skip hcf_pop_1_T_forbidden \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"

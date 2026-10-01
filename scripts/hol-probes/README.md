@@ -3197,3 +3197,16 @@ bitmap frames, and forbidden continuations whose predicate stays false.
 the full public theorems with unrestricted inputs and original hypotheses.
 These regressions do not establish cross-language equivalence or full compiler
 preservation. Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_helpers_probeScript.sml`.
+
+### Independent unused handler frame carriers
+
+`word_to_stack_handler_frame_carriers_probeScript.sml` captures both complete
+original PushHandler/PopHandler types and twelve full output equality claims.
+The frame tails are independently Bool/String or List/Bool; both perf branches,
+widths64/1, and Skip/forbidden continuations are covered. All equalities resolve T.
+`WordToStackHandlerFrameCarriersParity` kernel-replays identical outputs and
+applies universal native/generic transports with arbitrary independent carriers.
+Two native erasure certificates prove that changing unused fields and their
+carriers leaves complete helper outputs unchanged. This does not establish
+cross-language equivalence, instrumentation correctness, or pass simulation.
+Selector: `HOL_PROBE_ONLY=word_to_stack_handler_frame_carriers_probeScript.sml`.
