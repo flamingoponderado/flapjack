@@ -40586,5 +40586,21 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.2): HOL evaluate_stack_swap (wordPropsScript.sml:2316-2363) at the Alloc case (proof wordPropsScript.sml:2371-2411): same binder s, no premise, the HOL case-split conclusion rendered by the untagged stackSwapPost, no IH. Proof follows HOL: the pushed frame is independent of the stack below (s_val_eq_stack_size for stack_max), gc_s_val_eq transports the collection, the popped frames coincide by s_val_and_key_eq with gc_s_key_eq, and push_env_pop_env_s_key_eq gives the key equality and the handler; has_space and AllocSize are stack-independent. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/StepSem/StartExtend.lean",
+  "lean_name": "step_sem_start",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "step_sem",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.6.5.1: Genuine Start, second constructor of original step_sem370-446. Concrete constructor states instantiate the Step premise, with full original input wf and forall environment eqenv conclusion retained. Independent generic value carrier and Option registers/List state unchanged. No stronger invariant, target evaluation, or environment-equality premise. Reviewed parsem_perm transports exactly pending/active reassociation; arbitrary emitted history remains identical and is reversed by sem. Fourteen fresh original semantic rows cover nonempty history, shared sources, snapshot reads, and duplicate-destination counterexample outside wf; full step_sem and scheduler remain open."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/StepSem/StartExtend.lean",
+  "lean_name": "step_sem_extend",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "step_sem",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.6.5.1: Genuine Extend, third constructor of original step_sem370-446. Concrete constructor states instantiate the Step premise, with full original input wf and forall environment eqenv conclusion retained. Independent generic value carrier and Option registers/List state unchanged. No stronger invariant, target evaluation, or environment-equality premise. Reviewed parsem_perm transports exactly pending/active reassociation; arbitrary emitted history remains identical and is reversed by sem. Fourteen fresh original semantic rows cover nonempty history, shared sources, snapshot reads, and duplicate-destination counterexample outside wf; full step_sem and scheduler remain open."
 }
 ]

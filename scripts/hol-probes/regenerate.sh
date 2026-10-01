@@ -2789,3 +2789,7 @@ run_probe parmove_noread_probeScript.sml parmove_noread_probe.out \
 run_probe parmove_wf_steps_probeScript.sml parmove_wf_steps_probe.out \
   pw_remove_pre pw_remove_post pw_start_pre pw_start_post pw_extend_pre pw_extend_post pw_save_pre pw_save_post pw_emit_head_pre pw_emit_head_post pw_emit_last_pre pw_emit_last_post pw_bad_source pw_bad_path \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe parmove_start_extend_probeScript.sml parmove_start_extend_probe.out \
+  ps_start_pre_1 ps_start_pre_4 ps_start_pre_5 ps_start_post_1 ps_start_post_4 ps_start_post_5 ps_extend_pre_1 ps_extend_pre_3 ps_extend_pre_5 ps_extend_post_1 ps_extend_post_3 ps_extend_post_5 ps_bad_pre ps_bad_post \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"

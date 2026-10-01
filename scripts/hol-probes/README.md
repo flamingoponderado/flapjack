@@ -2100,3 +2100,11 @@ the states and kernel-checks generic one-step/RTC theorem applications plus
 a start/emit chain. These observations support state-shape review; the full
 universally quantified preservation proofs are independently kernel-checked.
 Full scheduler semantic correctness remains open.
+
+`parmove_start_extend_probeScript.sml` captures 14 direct original HOL `sem`
+values for the Start and Extend states, with nonempty reversed emitted histories,
+shared sources and snapshot reads. The final pair deliberately repeats a
+destination and differs (27 versus 37): it is outside `wf`, not a valid-step
+semantic-equivalence claim. Lean kernel examples replay all rows; the generic
+case proofs establish the original quantified `eqenv` conclusion under `wf`.
+The other four cases and full `step_sem` assembly remain open.

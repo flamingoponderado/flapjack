@@ -1,3 +1,4 @@
+import Flapjack.Test.ParmoveStartExtendParity
 import Flapjack.Test.ParmoveWfStepsParity
 import Flapjack.Test.ParmoveNoReadParity
 import Flapjack.Test.LabSemArithmeticParity
