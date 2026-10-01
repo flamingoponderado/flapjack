@@ -4138,3 +4138,18 @@ HOL-to-Lean equivalence proof. Whole compiler semantic correctness is open.
 Selector: `HOL_PROBE_ONLY=word_to_stack_comp_no_install_probeScript.sml`.
 
 - `ssa_cc_trans_inst_props_probeScript.sml` replays literal instruction allocation/map properties with original local map-extension and allocation-add proofs, capturing the full theorem and six argument carriers.
+### Full native program-list no-install preservation
+
+`word_to_stack_no_install_programs_probeScript.sml` freshly captures exported
+original `compile_word_to_stack_no_install`, all eight carriers and sixteen
+actual source/target pairs over widths1/32/64/80. Observations retain false
+performance, generic Boolean identifiers with duplicates, empty/multiple rows,
+bitmap-changing Alloc/StoreConsts and arbitrary frame boundaries. Shared
+operations are allowed, and the ignored Install handler remains false source
+and true target. `Flapjack/Test/WordToStackNoInstallProgramsParity.lean` checks
+all pairs and two full generic-identifier applications with the original
+performance equality. Regression evidence is not a new original proof replay
+or a HOL-to-Lean equivalence proof. Code-map and compiler semantic correctness
+remain open.
+
+Selector: `HOL_PROBE_ONLY=word_to_stack_no_install_programs_probeScript.sml`.

@@ -49557,5 +49557,14 @@
     "lean_name": "removeDead_induct",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only structural induction over remove_dead results used by the tagged wordConvsProof remove_dead theorems; HOL uses remove_dead_ind with remove_dead_def directly, so no separate HOL declaration is being ported."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NoInstallPrograms.lean",
+    "lean_name": "compileWordToStackNoInstall",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "compile_word_to_stack_no_install",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02 bead47.4: full original12129-12150 and compile_prog/compile_word_to_stack583-601. Arbitrary config/perf/register count/generic independent beta identifier/source rows/full initial bitmap/output list/frame list/residual retained. Original EVERY no_install, actual compiler triple equality and perf=false are the only public hypotheses; original EVERY target no_install conclusion. List induction internally invokes full compNoInstall at actual Nat-subtraction/MAX frame and exact left-to-right bitmap threading, with unconditional StackAlloc prefix. No public IH, unique keys/equality instances, bounds, target safety/evaluation/simulation or conversion premise. Faithful WordLangProgHOL/HolProg/AsmConfigExact/AppList and Spt cutsets reviewed; lists/EVERY use List/all truth. Sole qualifier translates positive HOL words to BitVec width/NeZero. Fresh original exported theorem/all8 types/16 pairs over widths1/32/64/80, duplicate Boolean identifiers, empty/multiple rows, bitmap-changing Alloc/StoreConsts, shared operations allowed and ignored Install handler false-source/true-target sentinel. Kernel pairs and2 full arbitrary beta/perf applications retain plain equality. Proof-only syntax preservation, not code-map top theorem or compiler semantic correctness."
   }
 ]

@@ -5,6 +5,7 @@ import Flapjack.Test.StackToLabFullEncodingParity
 import Flapjack.Test.ProductionScheduler
 import Flapjack.Test.StackToLabRecursiveValidityParity
 import Flapjack.Test.StackToLabNonrecursiveValidityParity
+import Flapjack.Test.WordToStackNoInstallProgramsParity
 import Flapjack.Test.WordToStackCompNoInstallParity
 import Flapjack.Test.WordToStackNoShmemopTopParity
 import Flapjack.Test.WordToStackNoShmemopProgramsParity
