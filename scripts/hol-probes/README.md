@@ -40,6 +40,28 @@ sentinels cover the five-register primitive inside Loop and both Call bodies.
 These untagged carrier proofs do not claim HOL pass semantics, initial source
 image acceptance, fusion/hoist closure, native ABI/output correspondence, or
 production native routing.
+ssa_map_bounds_probe.out captures nine complete original map-validity pairs and a kernel replay of the full original local bound-monotonicity proof. Cases include empty/malformed trees, equal/raised/rejected bounds, physical registers, unbounded natural values and overwritten entries. SSAMapBoundsParity replays the same predicates and applies the full theorem to arbitrary maps/bounds. Recursive insertion is unfolded once before predicate simplification to avoid expanding dead recursive branches.
+`word_alloc_limit_arithmetic_probe.out` re-elaborates the numeric class and
+strict-bound obligations from the original local `limit_var_props` MOD_PLUS
+argument, then captures thirteen exact limit/class/strict-bound/alignment tuples.
+The registered `WordAllocLimitArithmeticParity` fixtures match all four residues,
+zero, multiples of four, and large unbounded Nat register IDs. Two generic kernel
+applications check the actual unconditional infrastructure. These untagged lemmas
+have no independent HOL theorem name and do not replace the full native program
+`limit_var_props`: that still needs native `max_var_max` and `limit_var_def`.
+Regenerate with `HOL_PROBE_ONLY=word_alloc_limit_arithmetic_probeScript.sml`.
+
+`word_alloc_move_head_probe.out` freshly re-elaborates the complete local
+`mov_eval_head` from its original proof and runs eleven native Move evaluations.
+The matching `WordAllocMoveHeadParity` fixtures retain arbitrary untouched
+state fields and compare exact results, Spt traversal order and clock. Cases
+cover positive widths 1/32/64/80, parallel reads, self-copy, overwrites, repeated
+sources, malformed trees and unbounded Nat destinations. Missing-source and
+duplicate-destination failures are explicit sentinels. The public theorem
+retains all four original premises and full state equality. Its source lookup
+is SOME-guarded; neither proof nor probe claims a value for HOL THE NONE.
+Regenerate with `HOL_PROBE_ONLY=word_alloc_move_head_probeScript.sml`.
+
 `ssa_register_class_probe.out` captures eight direct MOD4 class observations, including physical-register guard boundaries and large naturals. It also rechecks the literal original local `is_alloc_var_add`/`is_stack_var_add` statements with their original proof text; source-replay rows are distinct from exported-theorem rows. `Flapjack/Test/SSARegisterClassParity.lean` kernel-replays the observations and applies both ported theorems.
 
 `ssa_locals_rel_probe.out` simplifies the original whole generic relation with literal lookup/domain/THE clauses: eight Bool-valued success/missing-map/missing-target/wrong-value/allocation-bound/malformed-tree observations. `Flapjack/Test/SSALocalsParity.lean` replays identical inputs in the kernel; the full original definition and generic inferred type are captured.
@@ -3325,3 +3347,9 @@ hypotheses; `EQT_INTRO` renders its proved conclusion as T. The three local
 replays are captured separately and are not claimed exported HOL DB theorems.
 `SSARegisterFlipParity` kernel-checks identical tuples and fourteen full public
 theorem applications, without a bounded-register or additional class premise.
+`ssa_locals_bounds_probe.out` replays the literal original local
+`ssa_locals_rel_more` proof (5195–5203), preserving its generic locals payload
+and original conjunction. Existing `ssa_locals_rel_probe.out` observations and
+`SSALocalsParity` fixtures cover nonvacuous, rejected, boundary and malformed
+relations; that fixture additionally applies the complete bound theorem at
+arbitrary payload, trees and counters.

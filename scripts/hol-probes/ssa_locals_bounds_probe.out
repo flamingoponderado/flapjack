@@ -1,0 +1,3 @@
+lb_more=⊢ ∀na ssa stlocs cstlocs na'.
+    ssa_locals_rel na ssa stlocs cstlocs ∧ na ≤ na' ⇒
+    ssa_locals_rel na' ssa stlocs cstlocs
