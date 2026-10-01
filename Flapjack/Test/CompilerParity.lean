@@ -1,3 +1,4 @@
+import Flapjack.Test.WordToStackColourDomainParity
 import Flapjack.Test.WordToStackInstructionMaximumParity
 import Flapjack.Test.WordToStackCutsetMaximumParity
 import Flapjack.Test.RetainedAllocatorColour

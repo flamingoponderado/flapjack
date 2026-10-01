@@ -668,6 +668,7 @@
     {"bytes":94,"out":"word_to_stack_call_dest_probe.out","rows":8,"sha256":"ecd8c39616198af4124cb161da44ef5060dbd652592e3be6be6b6bfdb3772910"},
     {"bytes":202,"out":"word_to_stack_chunk_to_bitmap_probe.out","rows":7,"sha256":"8a74a79cbc3fed7362a497d8f1e06904757bccf6759a5302b4e9431c1e070b5d"},
     {"bytes":114,"out":"word_to_stack_chunk_to_bits_probe.out","rows":7,"sha256":"b30f4c2b3a480cb89f3ad2876b18403ba0bc312fd52ef27afc7048fd2675ccea"},
+    {"bytes":151,"out":"word_to_stack_colour_domain_probe.out","rows":13,"sha256":"da868a9e87fcb4af4689997e0d64a9d875b11abe42c21139955615f5e6de52fa"},
     {"bytes":485,"out":"word_to_stack_comp_length_probe.out","rows":18,"sha256":"45468de39ef9c6d1be497bd407ea2f612de9aa148eee3e34919eb673ad8fc364"},
     {"bytes":305,"out":"word_to_stack_comp_native_probe.out","rows":19,"sha256":"0f8577c0655cadb1128217e868b6e85e5bb712ce618a1804c3e80dd63e7595ca"},
     {"bytes":95,"out":"word_to_stack_comp_prefix_probe.out","rows":9,"sha256":"341e4eff61bb1a8c2b84890bfb18afcb4716355b8243cd7d3729309c313e3b1d"},

@@ -3050,3 +3050,7 @@ run_probe word_alloc_heu_max_probeScript.sml word_alloc_heu_max_probe.out \
 run_probe word_to_stack_instruction_maximum_probeScript.sml word_to_stack_instruction_maximum_probe.out \
   im_const im_bin_reg im_bin_imm im_shift_reg im_shift_imm im_div im_carry im_mul im_longdiv im_load im_store8 im_large im_load16 im_store16 \
   "$cake_dir/compiler/backend/wordLangScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_to_stack_colour_domain_probeScript.sml word_to_stack_colour_domain_probe.out \
+  cd_load16 cd_store16 cd_load8 cd_store32 cd_carry cd_collision cd_seq cd_must cd_if cd_loop cd_tail_handler cd_both cd_large \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
