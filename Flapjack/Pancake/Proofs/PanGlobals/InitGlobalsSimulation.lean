@@ -41,7 +41,7 @@ store and recursive free-range obligations (HOL source 2155-2229). This has no
 independently named HOL original; it reuses PanGlobalsMemStores.addresses_add
 with the multiplication order used by the initializer. Modular arithmetic permits wrapping;
 no numeric bound or evaluation premise is needed for range splitting. -/
-theorem initializerAddressesSplit {width : Nat} (base : BitVec width)
+theorem initializerAddressesSplit {width : Nat} [NeZero width] (base : BitVec width)
     (head tail : Nat) (address : BitVec width) :
     addresses base (head + tail) address ↔
       addresses base head address ∨
@@ -51,7 +51,7 @@ theorem initializerAddressesSplit {width : Nat} (base : BitVec width)
     BitVec.mul_comm] using PanGlobalsMemStores.addresses_add head tail base address
 
 /-- Prefix containment used to justify the first initializer's stores. -/
-theorem initializerAddressesPrefix {width : Nat} (base : BitVec width)
+theorem initializerAddressesPrefix {width : Nat} [NeZero width] (base : BitVec width)
     (head tail : Nat) (address : BitVec width)
     (h : addresses base head address) :
     addresses base (head + tail) address :=
@@ -59,7 +59,7 @@ theorem initializerAddressesPrefix {width : Nat} (base : BitVec width)
 
 /-- Suffix containment transports domain and disjointness premises to the
 recursive initializer. This is infrastructure, not an extra simulation premise. -/
-theorem initializerAddressesSuffix {width : Nat} (base : BitVec width)
+theorem initializerAddressesSuffix {width : Nat} [NeZero width] (base : BitVec width)
     (head tail : Nat) (address : BitVec width)
     (h : addresses (base + BitVec.ofNat width head *
       Flapjack.Compiler.Backend.StackRemove.bytesInWord width) tail address) :

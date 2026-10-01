@@ -136,6 +136,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.LiveExpressions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.Updates
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.StateRelation
 import Flapjack.Compiler.Backend.WordAlloc.Expressions
+import Flapjack.Compiler.Backend.WordAlloc.ProgramLiveness
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.StrongLocalsRel
 import Flapjack.Compiler.Backend.BackendCommon
 import Flapjack.Compiler.Backend.Semantics.WordSem
@@ -388,6 +389,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.StateRelationExact
 import Flapjack.Pancake.Proofs.PanGlobals.CompileDecsStructural
 import Flapjack.Pancake.Proofs.PanGlobals.CompileTopShapeWf
 import Flapjack.Pancake.Proofs.PanGlobals.CompileTopSemanticsExact
+import Flapjack.Pancake.Proofs.PanGlobals.CompileTopSemanticsDecls
 import Flapjack.Pancake.Proofs.PanGlobals.SemanticsInitCall
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsMemory
 import Flapjack.Pancake.Proofs.PanGlobals.InitGlobalsAlignment

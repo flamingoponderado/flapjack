@@ -2661,3 +2661,7 @@ run_probe word_to_stack_stack_size_rel_probeScript.sml word_to_stack_stack_size_
 run_probe word_lang_occurrences_exact_probeScript.sml word_lang_occurrences_exact_probe.out \
   name_empty name_even name_odd var_move_even var_move_odd var_loop_live stack_loop_live stack_alloc_odd var_call_none stack_call_none var_call_some stack_call_some \
   "$cake_dir/compiler/backend/wordLangScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_alloc_get_live_probeScript.sml word_alloc_get_live_probe.out \
+  get_live_store_consts get_live_break_outside get_live_return \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"

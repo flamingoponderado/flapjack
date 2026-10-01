@@ -1894,3 +1894,14 @@ Loop live-set scope and Call handlers under NONE/SOME returns.
 predicates and kernel-replays each row. Regenerate read-only with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_lang_occurrences_exact_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`word_alloc_get_live_probe.out` contains three fresh direct original full-program
+liveness observations: StoreConsts deletes registers1/2 while adding3/4 and
+retaining9; an out-of-range Break returns LN; Return inserts repeated value2
+as a set entry. The StoreConsts row distinguishes the earlier compiled clause
+from the shadowed duplicate source row. `WordAllocProgramLivenessParity`
+kernel-replays the identical inputs. Regenerate using the byte-identical built
+original tree with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_alloc_get_live_probeScript.sml scripts/hol-probes/regenerate.sh`.
+These observations supplement clause review; they do not establish whole-pass
+correctness or the pending production liveness route.
