@@ -1,3 +1,4 @@
+import Flapjack.Test.RegAllocRemapParity
 import Flapjack.Test.HeuCallParity
 import Flapjack.Test.MonadBaseParity
 import Flapjack.Test.RegAllocCarriers
@@ -26,6 +27,9 @@ import Flapjack.Test.ClashTreeCallNoneParity
 import Flapjack.Test.FindIndexBoundsParity
 import Flapjack.Test.ParmoveTempAppendParity
 import Flapjack.Test.WordAllocShareCheckerParity
+import Flapjack.Test.SpDefaultParity
+import Flapjack.Test.InClashTreeParity
+import Flapjack.Test.GetForcedParity
 import Flapjack.Test.WordAllocCoalesceCostParity
 import Flapjack.Test.WordAllocLoopCheckerParity
 import Flapjack.Test.WordToStackCompilePrefixParity
