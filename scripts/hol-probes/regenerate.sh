@@ -3340,10 +3340,6 @@ run_probe ssa_setup_probeScript.sml ssa_setup_probe.out \
   ss_even ss_empty ss_duplicates ss_invalid ss_one ss_setup0 ss_setup1 ss_setup3 ss_setup80 even_list_def next_var_rename_def list_next_var_rename_def setup_ssa_def ss_setup_1_to_80 ss_setup_80_to_1 ss_setup_original_type \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
 
-run_probe ssa_map_bounds_probeScript.sml ssa_map_bounds_probe.out \
-  mb_empty mb_valid mb_same mb_bound mb_physical mb_invalid mb_large_physical mb_large mb_overwrite mb_more \
-  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
-
 run_probe ssa_map_ok_probeScript.sml ssa_map_ok_probe.out \
   sm_empty sm_valid sm_at_bound sm_physical sm_invalid sm_definition \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -3423,3 +3419,6 @@ run_probe word_to_stack_no_shmemop_call_core_probeScript.sml word_to_stack_no_sh
 run_probe word_program_max_unrestricted_probeScript.sml word_program_max_unrestricted_probe.out \
   seq16_max seq16_limit tail16_max tail16_limit both16_max both16_limit loop16_max loop16_limit \
   "$cake_dir/compiler/backend/wordLangScript.sml" "$cake_dir/compiler/backend"
+run_probe ssa_locals_swap_probeScript.sml ssa_locals_swap_probe.out \
+  sw_type_ssaL sw_type_cst sw_type_st sw_type_ssaR sw_type_na sw_full \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
