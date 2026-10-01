@@ -79,6 +79,29 @@ theorem sptIsEmpty_sptUnion {α : Type} (a b : Spt α) :
     sptIsEmpty (sptUnion a b) = (sptIsEmpty a && sptIsEmpty b) := by
   cases a <;> cases b <;> simp [sptUnion, sptIsEmpty]
 
+/-- Exact HOL `wf_inter` (`HOL/src/finite_maps/sptreeScript.sml:353-358`):
+intersection is well formed for arbitrary inputs. -/
+@[hol "hol4/src/finite_maps/sptreeScript.sml" "wf_inter"]
+theorem sptWfInter {α β : Type} : ∀ (m1 : Spt α) (m2 : Spt β), sptWf (sptInter m1 m2) = true := by
+  intro m1
+  induction m1 with
+  | ln => intro m2; simp [sptInter]
+  | ls a => intro m2; cases m2 <;> simp [sptInter, sptWf]
+  | bn l r ihl ihr =>
+      intro m2
+      cases m2 with
+      | ln => simp [sptInter]
+      | ls b => simp [sptInter]
+      | bn l' r' => simp only [sptInter]; exact wfMkBN _ _ (ihl l') (ihr r')
+      | bs l' b r' => simp only [sptInter]; exact wfMkBN _ _ (ihl l') (ihr r')
+  | bs l a r ihl ihr =>
+      intro m2
+      cases m2 with
+      | ln => simp [sptInter]
+      | ls b => simp [sptInter, sptWf]
+      | bn l' r' => simp only [sptInter]; exact wfMkBN _ _ (ihl l') (ihr r')
+      | bs l' b r' => simp only [sptInter]; exact wfMkBS _ _ _ (ihl l') (ihr r')
+
 /-- Exact HOL `wf_union` (`HOL/src/finite_maps/sptreeScript.sml:247-253`). -/
 @[hol "hol4/src/finite_maps/sptreeScript.sml" "wf_union"]
 theorem sptWfUnion {α : Type} :

@@ -1,0 +1,8 @@
+sqrt_zero_pinf=0x7FF0000000000000w
+sqrt_zero_nz=0x8000000000000000w
+sqrt_positive_pinf=0x7FF0000000000000w
+sqrt_positive_nz=0x8000000000000000w
+sqrt_negative_pinf=0x7FF0000000000000w
+sqrt_negative_nz=0x8000000000000000w
+sqrt_negative_flags_all_modes=T
+sqrt_quiet_nan_flags_all_modes=T

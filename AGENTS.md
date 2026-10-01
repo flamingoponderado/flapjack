@@ -54,7 +54,10 @@ instead.
 This section coordinates internal fleet agents. External contributors may open
 their own focused PRs and do not need access to the fleet's bead database.
 
-Keep the CakeML/HOL submodule read-only. Put HOL probes and captured oracle
+Initialize both reference submodules in your own checkout with
+`git submodule update --init -- cakeml HOL`; use their committed revisions,
+not an unrelated local HOL installation. Keep both submodules read-only.
+Put HOL probes and captured oracle
 outputs on the Flapjack side under `scripts/hol-probes/`; follow that directory's
 README and `docs/PARITY-TESTING.md` for the detailed procedure.
 
@@ -138,6 +141,14 @@ Maintain one fleet integration PR. Agents push their own branches but do not
 open separate PRs; the coordinator merges reviewed work into the integration
 branch. Merge the updated integration branch back into agent branches with
 ordinary merges. Do not rebase or cherry-pick shared work.
+
+Ordinary-merge a peer's pushed branch when it supplies a dependency needed for
+your work; do not wait for coordinator integration just to consume that
+dependency. Coordinate overlapping file ownership, inspect the peer's reported
+verification scope, and run affected checks after merging. Record the peer
+branch and commit on your bead and in your next batch report. A peer merge does
+not close its beads or certify its ports: coordinator acceptance and the usual
+source-comparison requirements still apply.
 
 Before reporting a port complete, build affected Lean modules, run `lake test`,
 `scripts/check-hol-refs.py`, and `scripts/check-warnings.sh`. For executable

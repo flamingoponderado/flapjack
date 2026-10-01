@@ -1,0 +1,61 @@
+comp_l_invariant_source_replay=⊢ ∀ctxt prog l prog' l'. comp ctxt prog l = (prog',l') ⇒ FST l' = FST l
+good_handlers_comp_source_replay=⊢ ∀ctxt prog l. word_good_handlers (FST l) (FST (comp ctxt prog l))
+loop_to_word_good_handlers_source_replay=⊢ ∀prog' prog.
+    compile_prog prog = prog' ⇒
+    EVERY (λ(n,m,pp). word_good_handlers n pp) prog'
+loop_to_word_comp_SND_LE_source_replay=⊢ ∀ctxt prog l p r. comp ctxt prog l = (p,r) ⇒ SND l ≤ SND r
+lh_nested64_result=(Seq
+   (Call
+      (SOME
+         ([0],(⦕ 0 ⦖,LN),
+          Seq (LocValue 0 6)
+            (Call (SOME ([],(⦕ 0 ⦖,LN),Skip,42,11)) (SOME 5) [0] NONE),42,9))
+      NONE [0]
+      (SOME
+         (0,Call (SOME ([],(⦕ 0 ⦖,LN),Skip,42,10)) (SOME 5) [0] NONE,42,12)))
+   Tick,42,13)
+lh_nested64_owner=T
+lh_nested64_counter=T
+lh_nested64_handlers=T
+lh_nested1_result=(Seq
+   (Call
+      (SOME
+         ([0],(⦕ 0 ⦖,LN),
+          Seq (LocValue 0 6)
+            (Call (SOME ([],(⦕ 0 ⦖,LN),Skip,42,11)) (SOME 5) [0] NONE),42,9))
+      NONE [0]
+      (SOME
+         (0,Call (SOME ([],(⦕ 0 ⦖,LN),Skip,42,10)) (SOME 5) [0] NONE,42,12)))
+   Tick,42,13)
+lh_nested1_owner=T
+lh_nested1_counter=T
+lh_nested1_handlers=T
+lh_nested80_result=(Seq
+   (Call
+      (SOME
+         ([0],(⦕ 0 ⦖,LN),
+          Seq (LocValue 0 6)
+            (Call (SOME ([],(⦕ 0 ⦖,LN),Skip,42,11)) (SOME 5) [0] NONE),42,9))
+      NONE [0]
+      (SOME
+         (0,Call (SOME ([],(⦕ 0 ⦖,LN),Skip,42,10)) (SOME 5) [0] NONE,42,12)))
+   Tick,42,13)
+lh_nested80_owner=T
+lh_nested80_counter=T
+lh_nested80_handlers=T
+lh_ignored_tail_result=(Call NONE (SOME 5) [0; 0] NONE,42,9)
+lh_ignored_tail_owner=T
+lh_ignored_tail_counter=T
+lh_ignored_tail_handlers=T
+lh_program_result=[(42,1,
+  Seq
+    (Call
+       (SOME
+          ([6],(⦕ 0 ⦖,LN),
+           Seq (LocValue 4 6)
+             (Call (SOME ([],(⦕ 0 ⦖,LN),Skip,42,4)) (SOME 5) [0] NONE),42,2))
+       NONE [0]
+       (SOME (2,Call (SOME ([],(⦕ 0 ⦖,LN),Skip,42,3)) (SOME 5) [0] NONE,42,5)))
+    Tick); (42,2,Call (SOME ([],(⦕ 0 ⦖,LN),Skip,42,2)) (SOME 5) [2] NONE)]
+lh_program_handlers=T
+lh_wrong_owner=F
