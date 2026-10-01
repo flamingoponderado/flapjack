@@ -2935,6 +2935,12 @@
       "sha256": "4bc370c35b075500a3dd7b42d7d7e83cd3172e01c1648fa511ba4f116bcc8d79"
     },
     {
+      "bytes": 121,
+      "out": "parmove_preserves_moves_steps_probe.out",
+      "rows": 6,
+      "sha256": "91ce20e9527c47c7bf16436e94de6959d386866fa41b8d2b354d1d3072a4aee7"
+    },
+    {
       "bytes": 288,
       "out": "parmove_remove_last_probe.out",
       "rows": 16,
@@ -3091,6 +3097,12 @@
       "sha256": "b7e9c9c4909dc012f2c85516433cd7f367f106375d48aa788b3de726c16f85c8"
     },
     {
+      "bytes": 18608,
+      "out": "reg_alloc_phase_closure_probe.out",
+      "rows": 29,
+      "sha256": "d4a15acdfbf2afcb75f4c65afa496e1a0cc598ea4e93fc4ea9cdcee6abc007d5"
+    },
+    {
       "bytes": 983,
       "out": "reg_alloc_probe.out",
       "rows": 22,
@@ -3119,6 +3131,12 @@
       "out": "reg_alloc_state_map_probe.out",
       "rows": 20,
       "sha256": "6106364f2dde6ee7bad3fbeb2c11290957ac48f344f9c31cdd9ac079bc879d38"
+    },
+    {
+      "bytes": 481,
+      "out": "reg_alloc_state_partition_probe.out",
+      "rows": 23,
+      "sha256": "f77d83c8eb6624a79f956be3ade756841ba28b04cebf492636d49a890cdd1cec"
     },
     {
       "bytes": 131,
@@ -4403,12 +4421,6 @@
       "out": "wrap_rt_probe.out",
       "rows": 5,
       "sha256": "34b4dc9b2384c56cae695cdda57731febdbd5d7d19b90a6c6004b6c39bdf87cd"
-    },
-    {
-      "bytes": 121,
-      "out": "parmove_preserves_moves_steps_probe.out",
-      "rows": 6,
-      "sha256": "91ce20e9527c47c7bf16436e94de6959d386866fa41b8d2b354d1d3072a4aee7"
     },
     {
       "bytes": 42,
