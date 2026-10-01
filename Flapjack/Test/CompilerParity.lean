@@ -1,3 +1,4 @@
+import Flapjack.Test.WordAllocMax3Parity
 import Flapjack.Test.ParmoveAllDistinctPmovParity
 import Flapjack.Test.ParmoveTempPmovParity
 import Flapjack.Test.ParmoveInjOnStateParity

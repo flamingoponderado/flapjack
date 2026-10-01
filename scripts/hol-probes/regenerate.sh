@@ -3166,3 +3166,8 @@ run_probe reg_alloc_sort_moves_probeScript.sml reg_alloc_sort_moves_probe.out \
 run_probe parmove_all_distinct_steps_probeScript.sml parmove_all_distinct_steps_probe.out \
   adrtc_scratch adrtc_first adrtc_middle adrtc_last \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe word_alloc_max3_eq_probeScript.sml word_alloc_max3_eq_probe.out \
+  max3_eq_statement max3_zero max3_x max3_y max3_z_after_x max3_z_after_y \
+  max3_xy_tie max3_xz_tie max3_yz_tie max3_large \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/misc"

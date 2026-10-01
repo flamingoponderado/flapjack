@@ -43059,5 +43059,13 @@
     "hol_name": "ALL_DISTINCT_pmov",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol source comparison (2026-10-01; bead flapjack-w1a4.4): Full original991-1001 forall p, wf p and ALL_DISTINCT(FILTER IS_SOME(MAP FST(pending++active++emitted))) imply identical predicate on actual pmov p. Lean retains arbitrary Option alpha moves and all three lists in source order; Bool Option.isSome implements IS_SOME, Nodup implements ALL_DISTINCT. Accepted scheduler DecidableEq parameter retained, no scratch safety, target result, simulation or target invariant premise. Unconditional pmovDsteps, dsteps_steps with initial wf, then allDistinctSteps derive output. Both real proof prerequisites are represented on the bead graph (closure already CLOSED). Existing original pm_audit_ALL_DISTINCT_pmov captures full statement; five complete existing original outputs terminal/self/chain/cycle/active are kernel-replayed with non-vacuous theorem applications, plus empty/Bool/repeated scratch and duplicate emitted-history boundaries. Unsafe scratch read is intentionally admissible here because HOL does not require scratch safety. No fresh original HOL invocation claimed, CakeML read-only. Full scheduler and compilation correctness unfinished; coordinator acceptance pending."
-  }
+  },
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "max3_eq",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/Maximum/Max3.lean",
+  "lean_name": "max3Eq",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol source comparison2026-10-01 bead .30.1.1.3: literal local theorem10237-10241 forall natural x y z max3 x y z=MAX x(MAX y z), no premises. Lean max3HOL is reviewed literal miscScript641-644 same nested > branches; Nat.max matches HOL natural MAX. Universal equation proved by branch cases and omega. Local theorem not DB.fetch available; fresh original full proof replay from temporary cwd with canonical in-memory CAKEMLDIR registration passed, plus nine original EVAL branches/ties/large-Nat observations kernel-replayed in WordAllocMax3Parity. CakeML source untouched. No production implementation change; acceptance pending coordinator."
+}
 ]

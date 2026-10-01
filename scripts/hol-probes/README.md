@@ -2647,3 +2647,13 @@ Lean fixture replays them. `parmove_all_distinct_steps_probe` captures four
 destination-distinctness observations; Lean also applies the full RTC theorem
 to zero-step and concrete two-step traces. These fixtures do not establish
 cross-language equivalence or whole allocator correctness.
+
+`word_alloc_max3_eq_probe.out` records a fresh replay of the complete local
+`max3_eq` statement/proof (word_allocProof10237-10241), using original
+`miscTheory.max3_def` and `MAX_DEF`, plus nine EVAL branch/tie/large-Nat
+observations. The local theorem is reconstructed, not DB.fetch-ed.
+`WordAllocMax3Parity` kernel-checks all nine outputs and the full universal
+Lean statement. Reviewer run used a temporary cwd, canonical in-memory
+`holpathdb.extend_db` for CAKEMLDIR, and read-only prebuilt theory load paths;
+no CakeML files were generated or modified. Standard regeneration selector:
+`HOL_PROBE_ONLY=word_alloc_max3_eq_probeScript.sml`.
