@@ -1,5 +1,8 @@
 import Flapjack.Test.WordAllocCheckerAssemblyParity
 import Flapjack.Test.SptMapiParity
+import Flapjack.Test.ParmoveIndependenceParity
+import Flapjack.Test.WordAllocGetPrefsParity
+import Flapjack.Test.WordAllocStackOnlyParity
 import Flapjack.Test.WordAllocOracleColourParity
 import Flapjack.Test.WordAllocReturnCheckerParity
 import Flapjack.Test.HeuCountersParity
@@ -7,8 +10,6 @@ import Flapjack.Test.ClashTreeCallNoneParity
 import Flapjack.Test.FindIndexBoundsParity
 import Flapjack.Test.ParmoveTempAppendParity
 import Flapjack.Test.WordAllocShareCheckerParity
-import Flapjack.Test.WordAllocGetPrefsParity
-import Flapjack.Test.WordAllocStackOnlyParity
 import Flapjack.Test.WordAllocCoalesceCostParity
 import Flapjack.Test.WordAllocLoopCheckerParity
 import Flapjack.Test.WordToStackCompilePrefixParity
