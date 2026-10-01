@@ -50403,5 +50403,23 @@
     "lean_name": "holTotal",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.12): pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: relationScript.sml:56-58 total (R:'a->'a->bool) = !x y. R x y \\/ R y x; relation rendered as α → α → Prop (as for holTransitive), the same single clause."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Padding.lean",
+    "lean_name": "padCodeMap",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "pad_code_MAP",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source review: literal HOL MAP equation, quantifiers, unconditional conclusion, fixed bytes and positive word width match. No mismatch found; source/kernel verification recorded on .29."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/RemoveLabels.lean",
+    "lean_name": "progToBytesMap",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "prog_to_bytes_MAP",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source review: literal HOL MAP equation, quantifiers, unconditional conclusion, fixed bytes and positive word width match. No mismatch found; source/kernel verification recorded on .29."
   }
 ]

@@ -3053,6 +3053,11 @@ run_probe lab_to_target_removelabels_probeScript.sml lab_to_target_removelabels_
   LineBytesLabAsm ProgToBytesEmpty ProgToBytesConcrete RemoveLabelsLoopZero \
   RemoveLabelsLoopOne RemoveLabelsZero \
   "$cake_dir/compiler/backend/lab_to_targetScript.sml" "$cake_dir/compiler/backend"
+run_probe lab_to_target_maplemmas_probeScript.sml lab_to_target_maplemmas_probe.out \
+  PadCodeMapEmptyEq PadCodeMapConcreteEq PadCodeMapConcreteLhs PadCodeMapConcreteRhs \
+  ProgToBytesMapEmptyEq ProgToBytesMapConcreteEq ProgToBytesMapConcreteLhs \
+  ProgToBytesMapConcreteRhs \
+  "$cake_dir/compiler/backend/lab_to_targetScript.sml" "$cake_dir/compiler/backend"
 run_probe lab_to_target_shmeminfo_probeScript.sml lab_to_target_shmeminfo_probe.out \
   GetMemopInfoLoad GetMemopInfoLoad32 GetMemopInfoLoad16 GetMemopInfoLoad8 \
   GetMemopInfoStore GetMemopInfoStore32 GetMemopInfoStore16 GetMemopInfoStore8 \

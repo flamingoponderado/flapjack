@@ -1,3 +1,4 @@
+import Flapjack.Test.LabToTargetMapLemmasParity
 import Flapjack.Test.LabToTargetEncodingParity
 import Flapjack.Test.LabToTargetLabelsParity
 import Flapjack.Test.LabToTargetPositionsParity
@@ -1193,6 +1194,7 @@ def checkBool (name : String) (condition : Bool) : IO Bool := do
 
 def main : IO Unit := do
   let results ← [
+    Flapjack.Test.LabToTargetMapLemmasParity.runChecks,
     Flapjack.Test.LabToTargetEncodingParity.runChecks,
     Flapjack.Test.LabToTargetLabelsParity.runChecks,
     Flapjack.Test.LabToTargetPositionsParity.runChecks,
