@@ -41932,5 +41932,32 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.4.14): HOL clash_tree_colouring_ok (word_allocProofScript.sml:2813-2826) at the If case of get_clash_tree_ind, rendered by the untagged clashTreeGoal: binders lt f live flive livein flivein; the six HOL premises wf_cutsets prog, wf live, EVERY (\\(n,e). wf n /\\ wf e) lt (as membership-quantified sptWf of both components), domain flive = IMAGE f (domain live), INJ f (domain live) UNIV, check_clash_tree f (get_clash_tree prog lt) live flive = SOME (livein,flivein); and the five hide'd HOL conclusions (untagged clashTreeConcl): wf livein, INJ f (domain livein), colouring_ok f prog live lt, livein = get_live prog live lt, domain flivein = IMAGE f (domain livein). IHs: clashTreeGoal c1 and c2 (both at live). Proof follows HOL (word_allocProofScript.sml:3001-3029): both branches checked from live, check_partial_col_INJ inserts toAList (difference o2 o1) keys into o1, which equals union o1 o2 by spt_eq_thm/lookup_difference/toAList_domain (untagged insertDiffKeys_eq_union, mem_sptToAList_keys, ifCore), then the condition-register Delta; Reg operand needs wf_insert_swap; colouring_ok If clause on the merged set. No other extra premise. HOL sets as predicates, IMAGE as an existential, INJ as injectivity on the domain predicate; HOL 'a word as positive-width BitVec."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "clash_tree_colouring_ok",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/ClashTreeColouringOk/CutSets.lean",
+    "lean_name": "clashTreeColouringOk_Alloc",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.4.15): HOL clash_tree_colouring_ok (word_allocProofScript.sml:2813-2826) at the Alloc case of get_clash_tree_ind, rendered by the untagged clashTreeGoal: binders lt f live flive livein flivein; the six HOL premises wf_cutsets prog, wf live, EVERY (\\(n,e). wf n /\\ wf e) lt (as membership-quantified sptWf of both components), domain flive = IMAGE f (domain live), INJ f (domain live) UNIV, check_clash_tree f (get_clash_tree prog lt) live flive = SOME (livein,flivein); and the five hide'd HOL conclusions (untagged clashTreeConcl): wf livein, INJ f (domain livein), colouring_ok f prog live lt, livein = get_live prog live lt, domain flivein = IMAGE f (domain livein). No sub-program, no IH, no extra premise. Proof follows HOL (word_allocProofScript.sml:3030-3039): wf_cutsets gives wf_names hence wf (union (FST names) (SND names)) by wf_union; check_col_INJ on the Set returns the cut-set union, then the Delta [] [n] by check_partial_col_INJ; get_writes Alloc = LN. Untagged checkSet/readsAfterSet factor the Set and Delta steps. HOL sets as predicates, IMAGE as an existential, INJ as injectivity on the domain predicate; HOL 'a word as positive-width BitVec."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "clash_tree_colouring_ok",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/ClashTreeColouringOk/CutSets.lean",
+    "lean_name": "clashTreeColouringOk_FFI",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.4.15): HOL clash_tree_colouring_ok (word_allocProofScript.sml:2813-2826) at the FFI case of get_clash_tree_ind, rendered by the untagged clashTreeGoal: binders lt f live flive livein flivein; the six HOL premises wf_cutsets prog, wf live, EVERY (\\(n,e). wf n /\\ wf e) lt (as membership-quantified sptWf of both components), domain flive = IMAGE f (domain live), INJ f (domain live) UNIV, check_clash_tree f (get_clash_tree prog lt) live flive = SOME (livein,flivein); and the five hide'd HOL conclusions (untagged clashTreeConcl): wf livein, INJ f (domain livein), colouring_ok f prog live lt, livein = get_live prog live lt, domain flivein = IMAGE f (domain livein). No sub-program, no IH, no extra premise. Proof follows HOL (word_allocProofScript.sml:3080-3088): as Alloc with the four read registers cptr clen ptr len; get_writes FFI = LN. Untagged checkSet/readsAfterSet factor the Set and Delta steps. HOL sets as predicates, IMAGE as an existential, INJ as injectivity on the domain predicate; HOL 'a word as positive-width BitVec."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "clash_tree_colouring_ok",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/ClashTreeColouringOk/CutSets.lean",
+    "lean_name": "clashTreeColouringOk_Install",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.4.15): HOL clash_tree_colouring_ok (word_allocProofScript.sml:2813-2826) at the Install case of get_clash_tree_ind, rendered by the untagged clashTreeGoal: binders lt f live flive livein flivein; the six HOL premises wf_cutsets prog, wf live, EVERY (\\(n,e). wf n /\\ wf e) lt (as membership-quantified sptWf of both components), domain flive = IMAGE f (domain live), INJ f (domain live) UNIV, check_clash_tree f (get_clash_tree prog lt) live flive = SOME (livein,flivein); and the five hide'd HOL conclusions (untagged clashTreeConcl): wf livein, INJ f (domain livein), colouring_ok f prog live lt, livein = get_live prog live lt, domain flivein = IMAGE f (domain livein). No sub-program, no IH, no extra premise. Proof follows HOL (word_allocProofScript.sml:3040-3070): the right Seq checks Delta [r1] [] against live (INJ on domain live UNION {r1}, = get_writes Install), then check_col_INJ on the cut-set union, then the reads r4 r3 r2 r1. Untagged checkSet/readsAfterSet factor the Set and Delta steps. HOL sets as predicates, IMAGE as an existential, INJ as injectivity on the domain predicate; HOL 'a word as positive-width BitVec."
   }
 ]
