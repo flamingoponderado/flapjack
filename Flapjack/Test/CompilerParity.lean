@@ -1,4 +1,7 @@
 import Flapjack.Test.WordToStackCompilePrefixParity
+import Flapjack.Test.WordAllocMergeStackSetsParity
+import Flapjack.Test.ParmoveTempBeforeAssignParity
+import Flapjack.Test.FindIndexParity
 import Flapjack.Test.WordAllocTotalColourParity
 import Flapjack.Test.ParmoveSourceWrapperParity
 import Flapjack.Test.WordToStackInsertPrefixParity
