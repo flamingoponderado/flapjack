@@ -1,0 +1,8 @@
+sc_store=T
+sc_store8=T
+sc_store16=T
+sc_store32=T
+sc_load=T
+sc_load8=T
+sc_load16=T
+sc_load32=T
