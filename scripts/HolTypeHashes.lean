@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.LabToTarget.NopEncoding
 import Flapjack.Compiler.Backend.LabToTarget.SectionNavigation
+import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Steps
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Step
 import Flapjack.Compiler.Backend.LabToTarget.Navigation
 import Flapjack.Compiler.Backend.LabToTarget.Memory

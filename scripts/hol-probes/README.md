@@ -2588,6 +2588,7 @@ distinctness, generic three-list flattening, and RTC scratch safety respectively
 renaming statements/types as an audit aid, not a port or equivalence proof.
 Its capture omits blank separator lines between printed HOL clauses.
 
+- `parmove_all_distinct_steps_probeScript.sml`: four full destination predicates for zero-step scratch and start/save states. Lean fixtures additionally certify the RTC trace; HOL observations alone do not establish it.
 `stackprops_code_labels_probe.out` contains fifteen fresh direct original
 `stackProps$get_code_labels` and `stack_get_handler_labels` complete-set
 observations, replayed by `Flapjack.Test.StackPropsCodeLabelsParity` at the
@@ -2661,3 +2662,4 @@ original proof theory has no prebuilt object in this environment; this is
 source re-elaboration, not an observation from that prebuilt theory or a
 cross-language equivalence proof. Run `HOL/bin/hol run <absolute script path>`
 from the original backend semantics directory, optionally setting `CAKEML`.
+- `parmove_preserves_moves_steps_probeScript.sml`: six complete destination/witness observations for Start/Save states. Lean fixtures certify the RTC trace and zero-step case; HOL observations alone do not prove that trace or cross-assistant equivalence.
