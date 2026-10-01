@@ -1,6 +1,7 @@
 {
   "upstream_repository": "https://github.com/pirapira/stateless-pancaketh",
-  "upstream_revision": "b2b653bfc406fae42ac3f7f1a23397ae4716cd1b",
+  "upstream_revision": "94649fbb0115f085f8180482af63e02c6d10e730",
+  "upstream_tag": "r20261001-01",
   "original_compiler": {
     "command": "cake --pancake --target=riscv < source.pnk",
     "executable_sha256": "4768e33f6b280bfb1096beefdef96b3e6c6a69af6331e46af0d219df5f9c9c98",
