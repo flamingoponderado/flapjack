@@ -81,7 +81,9 @@ private theorem recursiveNoShareClauses {width : Nat} [NeZero width]
     (v75 := (.ln, .ln))
   exact ⟨clauses.1, clauses.2.1, clauses.2.2.1, clauses.2.2.2.1⟩
 
-/-- Full original MustTerminate case, with only the original theorem IH for each source subprogram. -/
+/-- Structural-motive MustTerminate piece. Its child hypothesis quantifies over
+all bitmap/frame inputs, unlike the argument-specific IH from HOL's `comp_ind`.
+The source hypotheses and conclusion are otherwise unchanged. -/
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
   "comp_no_shmemop" (words_as_type_indexed_bitvec)]
 theorem compNoShmemopMustTerminate {width : Nat} [NeZero width]
@@ -102,7 +104,8 @@ theorem compNoShmemopMustTerminate {width : Nat} [NeZero width]
   simp only [compNative] at result
   exact ih bs frame output residual (source ▸ guard) result
 
-/-- Full original Loop case, with only the original theorem IH for each source subprogram. -/
+/-- Structural-motive Loop piece. Its child hypothesis quantifies over all
+bitmap/frame inputs, unlike HOL's argument-specific `comp_ind` hypothesis. -/
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
   "comp_no_shmemop" (words_as_type_indexed_bitvec)]
 theorem compNoShmemopLoop {width : Nat} [NeZero width]
@@ -126,7 +129,8 @@ theorem compNoShmemopLoop {width : Nat} [NeZero width]
   rw [← result]
   exact child
 
-/-- Full original Seq case, with only the original theorem IH for each source subprogram. -/
+/-- Structural-motive Seq piece. Child hypotheses quantify over all bitmap/frame
+inputs; HOL's `comp_ind` fixes the second child's bitmap to the first output. -/
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
   "comp_no_shmemop" (words_as_type_indexed_bitvec)]
 theorem compNoShmemopSeq {width : Nat} [NeZero width]
@@ -160,8 +164,9 @@ theorem compNoShmemopSeq {width : Nat} [NeZero width]
   rw [← result]
   simp only [noShmemop, safeFirst, safeSecond, Bool.true_and]
 
-/-- Full original If case. Both branches have precisely the original theorem
-induction hypothesis; immediate acceptance is split in the proof, not assumed. -/
+/-- Structural-motive If piece. Both child hypotheses quantify over all
+bitmap/frame inputs, rather than HOL's argument-specific `comp_ind` hypotheses.
+Immediate acceptance is split in the proof, not assumed. -/
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
   "comp_no_shmemop" (words_as_type_indexed_bitvec)]
 theorem compNoShmemopIf {width : Nat} [NeZero width]

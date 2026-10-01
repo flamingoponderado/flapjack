@@ -1,0 +1,5 @@
+setup_full=⊢ is_alloc_var lim ∧ domain st.locals = set (even_list n) ⇒ (let (mov,ssa,na) = setup_ssa n lim prog; (res,cst) = evaluate (mov,st) in res = NONE ∧ word_state_eq_rel st cst ∧ ssa_map_ok na ssa ∧ ssa_locals_rel na ssa st.locals cst.locals ∧ is_alloc_var na ∧ lim ≤ na)
+setup_type_lim=:num
+setup_type_n=:num
+setup_type_st=:(α, β, γ) state
+setup_type_prog=:α prog
