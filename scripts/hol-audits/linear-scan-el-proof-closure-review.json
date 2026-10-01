@@ -72,6 +72,54 @@
     },
     "comparison": "Compared original check_col, check_intervals, find_last_stealable, check_col_output/success/equal_col, generated length types, and define_run generator fields and runner. Independent unused carrier, generic exception/result and arbitrary uninspected value carriers now retained. Existing algorithm bodies preserved.",
     "kernel_result": "Peer reported terminal gates PASS via agmsg. Exact gate logs requested; not independently rerun against this new SHA. Earlier full proof audit remains explicitly snapshot-scoped.",
-    "original_evidence": "Read committed original type capture and original HOL definitions/generator; no new HOL invocation claimed."
+    "original_evidence": "Read committed original type capture and original HOL definitions/generator; no new HOL invocation claimed.",
+    "observed_terminal_gates": {
+      "root_jobs": 2943,
+      "test_exit": 0,
+      "pinned_types": 2578,
+      "references": 2578,
+      "mapping": 4681,
+      "mapped_proof_theorems": 2650,
+      "captured_probes": 739,
+      "label_checked_probes": 734,
+      "warnings": 0,
+      "native_allowlisted": 9,
+      "checker_unit_tests": "OK",
+      "diff": "PASS",
+      "provenance": "Observed peer generic2.log and explicit peer terminal message; piped shell output is evidence, not independently reproduced gates."
+    },
+    "type_sweep_evidence": {
+      "linear_scan_constants": 111,
+      "reg_alloc_constants": 157,
+      "procedure": "HOL constants theory enumeration; dest_const and print_type each entry, linewidth1000. Original scripts and captured outputs preserved unchanged.",
+      "scope": "Capture provenance preserved. Full independent source-by-source adjudication of all111 types not yet claimed; original HOL not invoked by reviewer."
+    },
+    "evidence_artifacts": [
+      {
+        "source": "/tmp/claude-1000/-home-zksecurity-flap-opus2/1caabe0f-f49f-4ae5-b16e-cc817210fbac/scratchpad/generic2.log",
+        "artifact": "scripts/hol-audits/linear-scan-161c-evidence/generic2.log",
+        "sha256": "c474d502a4cc3a8d2046138191eb05476b2288d8ba90f96c75eb5722415ccd65"
+      },
+      {
+        "source": "/tmp/claude-1000/-home-zksecurity-flap-opus2/1caabe0f-f49f-4ae5-b16e-cc817210fbac/scratchpad/wip/ls_types.sml",
+        "artifact": "scripts/hol-audits/linear-scan-161c-evidence/ls_types.sml",
+        "sha256": "889a9fd66e33ee69d38ad95b9a581874c25b926f35458c586f55c0cfa65573de"
+      },
+      {
+        "source": "/tmp/claude-1000/-home-zksecurity-flap-opus2/1caabe0f-f49f-4ae5-b16e-cc817210fbac/scratchpad/wip/ls_types.out",
+        "artifact": "scripts/hol-audits/linear-scan-161c-evidence/ls_types.out",
+        "sha256": "c17f9b8ab4869ddd0b233300b9a150ed238fd5309a158cebfd5db0bad5b3c997"
+      },
+      {
+        "source": "/tmp/claude-1000/-home-zksecurity-flap-opus2/1caabe0f-f49f-4ae5-b16e-cc817210fbac/scratchpad/wip/ra_types.sml",
+        "artifact": "scripts/hol-audits/linear-scan-161c-evidence/ra_types.sml",
+        "sha256": "f8e2f59fe44f9bb305a125b91faf454da7e282c7c1780dbfc12c76d1d33d9713"
+      },
+      {
+        "source": "/tmp/claude-1000/-home-zksecurity-flap-opus2/1caabe0f-f49f-4ae5-b16e-cc817210fbac/scratchpad/wip/ra_types.out",
+        "artifact": "scripts/hol-audits/linear-scan-161c-evidence/ra_types.out",
+        "sha256": "f75210beda7b10c945a5688d62e0f7b906f0fdefd9e591697ee7b88bcf02c1dd"
+      }
+    ]
   }
 }
