@@ -1,0 +1,9 @@
+pd_remove=T
+pd_start=T
+pd_extend=T
+pd_save_emit=T
+pd_emit_head=T
+pd_emit_last=T
+pd_start_guard=T
+pd_read_guard=T
+pd_extend_suffix_read=T
