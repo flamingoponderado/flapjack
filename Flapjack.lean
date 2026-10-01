@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.Parmove.AllDistinct.Parmove
 import Flapjack.Compiler.Backend.Parmove.AllDistinct.Pmov
 import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Pmov
 import Flapjack.Compiler.Backend.Parmove.InjOnState
