@@ -43825,5 +43825,53 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison 2026-10-01 bead .3.47.1: full literal StackProps1175-1195 on actual reviewed34-constructor HolProg carrier, exact shared positive word dimension/asm payloads/MlString. Call return and handler options traversed independently, including handler with return NONE; Seq/If conjunction, Loop recursion, ShMemOp alone False, every other constructor True. Tuple payloads and all ignored fields unchanged; no wf/label/ownership/frame/performance or extra premise. Only positive type-indexed HOL words translated to BitVec width with NeZero. Fresh original46 fully concrete predicate-pair equality observations allT, all34 constructors plus12 recursive/optional-continuation boundaries; identical kernel fixtures plus arbitrarywidth/payload application and width1. Runtime unchanged. Regression evidence is not HOL-to-Lean equivalence; full compiler preservation chain .47 and coordinator acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/AsmProps/Assertions/Iteration.lean",
+    "lean_name": "asserts_foldr_countList",
+    "hol_path": "cakeml/compiler/encoders/asm/asmPropsScript.sml",
+    "hol_name": "asserts_IMP_FOLDR_COUNT_LIST",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 whole original source/type comparison (2026-10-01; .10.30.2): asmPropsScript209-259/277-309, fresh original kernel type/statement queries; accepted generic asserts/asserts2 from30.1. Arbitrary state and independent intermediate carrier where present, HOL predicates as Prop; source COUNT_LIST List.range, GENLIST range.map, REVERSE reverse, FOLDR foldr, FUNPOW iterate. Only original asserts premise; full Q of foldr next (next n state) over countList n. Terminal next0, descending iteration and zero case retained. Full universal kernel proofs, local trajectory infrastructure explicitly not separate HOL ports. Six fresh DIRECT original theorem applications discharge all original premises with no theorem hypotheses and verify exact resulting conclusion before EVAL; six matching Lean theorem applications including off-bound function changes, noncommutative order and Nat/Bool carriers. No word/EL/LOG2/new trust; regressions not HOL-to-Lean equivalence. Coordinator acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/AsmProps/Assertions/Iteration.lean",
+    "lean_name": "asserts_foldr_countList_less",
+    "hol_path": "cakeml/compiler/encoders/asm/asmPropsScript.sml",
+    "hol_name": "asserts_IMP_FOLDR_COUNT_LIST_LESS",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 whole original source/type comparison (2026-10-01; .10.30.2): asmPropsScript209-259/277-309, fresh original kernel type/statement queries; accepted generic asserts/asserts2 from30.1. Arbitrary state and independent intermediate carrier where present, HOL predicates as Prop; source COUNT_LIST List.range, GENLIST range.map, REVERSE reverse, FOLDR foldr, FUNPOW iterate. Only original conjunction asserts and k<n; full P of FOLDR over reversed GENLIST subtract n (SUC k), exact truncated Nat subtraction and count. Full universal kernel proofs, local trajectory infrastructure explicitly not separate HOL ports. Six fresh DIRECT original theorem applications discharge all original premises with no theorem hypotheses and verify exact resulting conclusion before EVAL; six matching Lean theorem applications including off-bound function changes, noncommutative order and Nat/Bool carriers. No word/EL/LOG2/new trust; regressions not HOL-to-Lean equivalence. Coordinator acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/AsmProps/Assertions/Iteration.lean",
+    "lean_name": "asserts_weaken",
+    "hol_path": "cakeml/compiler/encoders/asm/asmPropsScript.sml",
+    "hol_name": "asserts_WEAKEN",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 whole original source/type comparison (2026-10-01; .10.30.2): asmPropsScript209-259/277-309, fresh original kernel type/statement queries; accepted generic asserts/asserts2 from30.1. Arbitrary state and independent intermediate carrier where present, HOL predicates as Prop; source COUNT_LIST List.range, GENLIST range.map, REVERSE reverse, FOLDR foldr, FUNPOW iterate. Full original guarded forall k<=n: next k=nextprime k and implication P(actual traced state)->Pprime(same state); plus original asserts, conclusion full asserts nextprime/Pprime. No global function equality, invariant or desired-result assumption; Q unchanged, k=n guard retained. Full universal kernel proofs, local trajectory infrastructure explicitly not separate HOL ports. Six fresh DIRECT original theorem applications discharge all original premises with no theorem hypotheses and verify exact resulting conclusion before EVAL; six matching Lean theorem applications including off-bound function changes, noncommutative order and Nat/Bool carriers. No word/EL/LOG2/new trust; regressions not HOL-to-Lean equivalence. Coordinator acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/AsmProps/Assertions/Iteration.lean",
+    "lean_name": "asserts2_changeInterfer",
+    "hol_path": "cakeml/compiler/encoders/asm/asmPropsScript.sml",
+    "hol_name": "asserts2_change_interfer",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 whole original source/type comparison (2026-10-01; .10.30.2): asmPropsScript209-259/277-309, fresh original kernel type/statement queries; accepted generic asserts/asserts2 from30.1. Arbitrary state and independent intermediate carrier where present, HOL predicates as Prop; source COUNT_LIST List.range, GENLIST range.map, REVERSE reverse, FOLDR foldr, FUNPOW iterate. Only original asserts2 conjunction with function equality fi k=fi2 k for all k<=n. Both independent carriers retained; no equality beyond count bound. Full universal kernel proofs, local trajectory infrastructure explicitly not separate HOL ports. Six fresh DIRECT original theorem applications discharge all original premises with no theorem hypotheses and verify exact resulting conclusion before EVAL; six matching Lean theorem applications including off-bound function changes, noncommutative order and Nat/Bool carriers. No word/EL/LOG2/new trust; regressions not HOL-to-Lean equivalence. Coordinator acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/AsmProps/Assertions/Iteration.lean",
+    "lean_name": "asserts2_first",
+    "hol_path": "cakeml/compiler/encoders/asm/asmPropsScript.sml",
+    "hol_name": "asserts2_first",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 whole original source/type comparison (2026-10-01; .10.30.2): asmPropsScript209-259/277-309, fresh original kernel type/statement queries; accepted generic asserts/asserts2 from30.1. Arbitrary state and independent intermediate carrier where present, HOL predicates as Prop; source COUNT_LIST List.range, GENLIST range.map, REVERSE reverse, FOLDR foldr, FUNPOW iterate. Exact original 1<=n and asserts2 conjunction implies P state (fc state); independent state/intermediate carriers, no stronger bound/success condition. Full universal kernel proofs, local trajectory infrastructure explicitly not separate HOL ports. Six fresh DIRECT original theorem applications discharge all original premises with no theorem hypotheses and verify exact resulting conclusion before EVAL; six matching Lean theorem applications including off-bound function changes, noncommutative order and Nat/Bool carriers. No word/EL/LOG2/new trust; regressions not HOL-to-Lean equivalence. Coordinator acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/AsmProps/Assertions/Iteration.lean",
+    "lean_name": "asserts2_every",
+    "hol_path": "cakeml/compiler/encoders/asm/asmPropsScript.sml",
+    "hol_name": "asserts2_every",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 whole original source/type comparison (2026-10-01; .10.30.2): asmPropsScript209-259/277-309, fresh original kernel type/statement queries; accepted generic asserts/asserts2 from30.1. Arbitrary state and independent intermediate carrier where present, HOL predicates as Prop; source COUNT_LIST List.range, GENLIST range.map, REVERSE reverse, FOLDR foldr, FUNPOW iterate. Original forall n/state/j, asserts2 constant f and j<n imply P(FUNPOW(f compose g)j state)(g(same)). Full arbitrary mutually heterogeneous f/g, same composition and iteration order; no extra invariant or target-result premise. Full universal kernel proofs, local trajectory infrastructure explicitly not separate HOL ports. Six fresh DIRECT original theorem applications discharge all original premises with no theorem hypotheses and verify exact resulting conclusion before EVAL; six matching Lean theorem applications including off-bound function changes, noncommutative order and Nat/Bool carriers. No word/EL/LOG2/new trust; regressions not HOL-to-Lean equivalence. Coordinator acceptance pending."
   }
 ]

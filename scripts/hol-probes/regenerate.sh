@@ -101,6 +101,10 @@ run_probe() {
   done
 }
 
+run_probe asmprops_assertions_iteration_probeScript.sml asmprops_assertions_iteration_probe.out \
+  assert_theorem_fold assert_theorem_less assert_theorem_weaken assert_theorem_change assert_theorem_first assert_theorem_every \
+  "$cake_dir/compiler/encoders/asm/asmPropsScript.sml" "$cake_dir/compiler/encoders/asm"
+
 run_probe asmprops_assertions_probeScript.sml asmprops_assertions_probe.out \
   assert_zero_skip_p assert_zero_runs_next assert_order_ok assert_order_bad assert_count_fold assert_prefixes assert_weaken_bound assert_state_bool assert2_zero assert2_mixed_ok assert2_mixed_bad assert2_changed_above assert2_first_pair assert2_constant_ok assert2_every_pairs assert2_first_bad \
   "$cake_dir/compiler/encoders/asm/asmPropsScript.sml" "$cake_dir/compiler/encoders/asm"
