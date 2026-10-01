@@ -3080,3 +3080,7 @@ run_probe parmove_preservation_shape_probeScript.sml parmove_preservation_shape_
 run_probe parmove_all_distinct_step_probeScript.sml parmove_all_distinct_step_probe.out \
   ads_remove ads_start ads_extend ads_save_cycle ads_emit_head ads_emit_last ads_save_none ads_emit_scratch ads_bool ads_scratch_start ads_scratch_save \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe parmove_state_to_list_probeScript.sml parmove_state_to_list_probe.out \
+  stl_empty stl_pending stl_active stl_emitted stl_order stl_duplicates stl_large stl_bool stl_pairs \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"

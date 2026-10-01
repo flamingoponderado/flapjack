@@ -2522,3 +2522,5 @@ mapping of `map_state`, and support-restricted injectivity plus global NONE
 reflection in `inj_on_state`; theorem acceptance is tracked on individual beads.
 
 `parmove_all_distinct_step_probeScript.sml` captures eleven original source/target destination distinctness observations for all primitive rules, cycles, initialized scratch and repeated scratch destinations without wf, and Bool. Matching kernel fixtures apply the full theorem to actual Step constructors. Ground observations do not establish universal cross-language equivalence.
+
+`parmove_state_to_list_probeScript.sml` checks nine whole original list outputs for all empty/nonempty segments, ordering, duplicates, unbounded naturals, Bool and arbitrary raw pairs. Kernel fixtures use the literal broad polymorphic list triple definition, not a specialized Option-register state. Original type evidence is also captured by `parmove_preservation_shape_probe.out`; these finite outputs do not prove universal cross-language equality.
