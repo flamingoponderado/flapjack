@@ -50857,6 +50857,278 @@
     "reviewer": "flapjack-sol3 full source/type comparison2026-10-02 beadtcbu: Original3338 all code1/code2 and free nop binders; full code-similarity implication on every section, preserving section identity and complete per-line relation. Fresh original12-row capture confirms nop:word8 list and one shared alpha line/sec carrier; native exact HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString payloads and positive-width BitVec retained, no arbitrary carrier specialization. LIST_REL uses reviewed constructor-for-constructor LinesRel. Normalization proof infrastructure erases exactly fields ignored by original line_similar, proving actual addNop and padSection recursion invariants; no simulation law callback, successful output, extra premise, restricted accumulator or result assumption. Six original padding observations match native kernel fixtures, including empty nop/label-only/nonempty accumulator and retained resolved position19. Full generic theorem application independently exercises arbitrary accumulator. Only standard words_as_type_indexed_bitvec applies, no real/LOG2/HD/EL or full compiler correctness assertion."
   },
   {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "swap_regs_eq",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/SortCorrect.lean",
+    "lean_name": "swapRegsEq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.13): linear_scanProofScript.sml:3821-3828. HOL EL is the exact holEl, PERM the exact holPerm, LEX holLex, LUPDATE v n l is l.set n v, TAKE List.take, EVERY/MEM list quantification/membership, HOL let as Lean let, record update sth with f := v as Lean structure update, swap_regs/partition_regs/sort_regs/swap_moves/partition_moves/sort_moves the exact tagged linear_scanScript ports. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "if_thm",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/SortCorrect.lean",
+    "lean_name": "ifThm",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.13): linear_scanProofScript.sml:3831-3835, polymorphic α (TV=1); HOL b : bool rendered as Bool, (if b then x else y) = z ⇔ (b ∧ x = z) ∨ (¬b ∧ y = z) with b read as b = true. HOL EL is the exact holEl, PERM the exact holPerm, LEX holLex, LUPDATE v n l is l.set n v, TAKE List.take, EVERY/MEM list quantification/membership, HOL let as Lean let, record update sth with f := v as Lean structure update, swap_regs/partition_regs/sort_regs/swap_moves/partition_moves/sort_moves the exact tagged linear_scanScript ports. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "split_at_indice_sing",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/SortCorrect.lean",
+    "lean_name": "splitAtIndiceSing",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.13): linear_scanProofScript.sml:3837-3857, polymorphic (TV=1). HOL EL is the exact holEl, PERM the exact holPerm, LEX holLex, LUPDATE v n l is l.set n v, TAKE List.take, EVERY/MEM list quantification/membership, HOL let as Lean let, record update sth with f := v as Lean structure update, swap_regs/partition_regs/sort_regs/swap_moves/partition_moves/sort_moves the exact tagged linear_scanScript ports. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "split_at_indice",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/SortCorrect.lean",
+    "lean_name": "splitAtIndice",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.13): linear_scanProofScript.sml:3859-3877, polymorphic (TV=1). HOL EL is the exact holEl, PERM the exact holPerm, LEX holLex, LUPDATE v n l is l.set n v, TAKE List.take, EVERY/MEM list quantification/membership, HOL let as Lean let, record update sth with f := v as Lean structure update, swap_regs/partition_regs/sort_regs/swap_moves/partition_moves/sort_moves the exact tagged linear_scanScript ports. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "swap_perm_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/SortCorrect.lean",
+    "lean_name": "swapPermLemma",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.13): linear_scanProofScript.sml:3879-3912, polymorphic (TV=1); [Nonempty α] records that HOL types are inhabited (needed only by holEl's opaque out-of-range value). HOL EL is the exact holEl, PERM the exact holPerm, LEX holLex, LUPDATE v n l is l.set n v, TAKE List.take, EVERY/MEM list quantification/membership, HOL let as Lean let, record update sth with f := v as Lean structure update, swap_regs/partition_regs/sort_regs/swap_moves/partition_moves/sort_moves the exact tagged linear_scanScript ports. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "LUPDATE_TAKE",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/SortCorrect.lean",
+    "lean_name": "lupdateTake",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.13): linear_scanProofScript.sml:3914-3922, polymorphic (TV=1); hypotheses x < n ∧ n ≤ LENGTH l kept although the Lean proof does not need them. HOL EL is the exact holEl, PERM the exact holPerm, LEX holLex, LUPDATE v n l is l.set n v, TAKE List.take, EVERY/MEM list quantification/membership, HOL let as Lean let, record update sth with f := v as Lean structure update, swap_regs/partition_regs/sort_regs/swap_moves/partition_moves/sort_moves the exact tagged linear_scanScript ports. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "swap_regs_perm",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/SortCorrect.lean",
+    "lean_name": "swapRegsPerm",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.13): linear_scanProofScript.sml:3924-3935. HOL EL is the exact holEl, PERM the exact holPerm, LEX holLex, LUPDATE v n l is l.set n v, TAKE List.take, EVERY/MEM list quantification/membership, HOL let as Lean let, record update sth with f := v as Lean structure update, swap_regs/partition_regs/sort_regs/swap_moves/partition_moves/sort_moves the exact tagged linear_scanScript ports. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "partition_regs_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/SortCorrect.lean",
+    "lean_name": "partitionRegsCorrect",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.13): linear_scanProofScript.sml:3937-4014, three hypotheses and eight conclusion conjuncts incl. both let-bound LEX ordering clauses around (begrpiv, rpiv). HOL EL is the exact holEl, PERM the exact holPerm, LEX holLex, LUPDATE v n l is l.set n v, TAKE List.take, EVERY/MEM list quantification/membership, HOL let as Lean let, record update sth with f := v as Lean structure update, swap_regs/partition_regs/sort_regs/swap_moves/partition_moves/sort_moves the exact tagged linear_scanScript ports. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "PERM_EVERY_EQ",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/SortCorrect.lean",
+    "lean_name": "permEveryEq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.13): linear_scanProofScript.sml:4016-4025, polymorphic (TV=1), P : α -> bool rendered α → Prop. HOL EL is the exact holEl, PERM the exact holPerm, LEX holLex, LUPDATE v n l is l.set n v, TAKE List.take, EVERY/MEM list quantification/membership, HOL let as Lean let, record update sth with f := v as Lean structure update, swap_regs/partition_regs/sort_regs/swap_moves/partition_moves/sort_moves the exact tagged linear_scanScript ports. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "sort_regs_prop_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/SortCorrect.lean",
+    "lean_name": "sortRegsPropLemma",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.13): linear_scanProofScript.sml:4027-4069, P : num -> bool rendered Nat → Prop. HOL EL is the exact holEl, PERM the exact holPerm, LEX holLex, LUPDATE v n l is l.set n v, TAKE List.take, EVERY/MEM list quantification/membership, HOL let as Lean let, record update sth with f := v as Lean structure update, swap_regs/partition_regs/sort_regs/swap_moves/partition_moves/sort_moves the exact tagged linear_scanScript ports. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "sort_regs_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/SortCorrect.lean",
+    "lean_name": "sortRegsCorrect",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.13): linear_scanProofScript.sml:4071-4239, three hypotheses and six conclusion conjuncts incl. the let-bound pairwise LEX ordering for l ≤ i1 ≤ i2 < r. HOL EL is the exact holEl, PERM the exact holPerm, LEX holLex, LUPDATE v n l is l.set n v, TAKE List.take, EVERY/MEM list quantification/membership, HOL let as Lean let, record update sth with f := v as Lean structure update, swap_regs/partition_regs/sort_regs/swap_moves/partition_moves/sort_moves the exact tagged linear_scanScript ports. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "swap_moves_eq",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/SortCorrect.lean",
+    "lean_name": "swapMovesEq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.13): linear_scanProofScript.sml:4241-4248. HOL EL is the exact holEl, PERM the exact holPerm, LEX holLex, LUPDATE v n l is l.set n v, TAKE List.take, EVERY/MEM list quantification/membership, HOL let as Lean let, record update sth with f := v as Lean structure update, swap_regs/partition_regs/sort_regs/swap_moves/partition_moves/sort_moves the exact tagged linear_scanScript ports. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "swap_moves_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/SortCorrect.lean",
+    "lean_name": "swapMovesCorrect",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.13): linear_scanProofScript.sml:4250-4262. HOL EL is the exact holEl, PERM the exact holPerm, LEX holLex, LUPDATE v n l is l.set n v, TAKE List.take, EVERY/MEM list quantification/membership, HOL let as Lean let, record update sth with f := v as Lean structure update, swap_regs/partition_regs/sort_regs/swap_moves/partition_moves/sort_moves the exact tagged linear_scanScript ports. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "partition_moves_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/SortCorrect.lean",
+    "lean_name": "partitionMovesCorrect",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.13): linear_scanProofScript.sml:4264-4295, conclusion order (mid bounds before the record equation) as in HOL. HOL EL is the exact holEl, PERM the exact holPerm, LEX holLex, LUPDATE v n l is l.set n v, TAKE List.take, EVERY/MEM list quantification/membership, HOL let as Lean let, record update sth with f := v as Lean structure update, swap_regs/partition_regs/sort_regs/swap_moves/partition_moves/sort_moves the exact tagged linear_scanScript ports. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "sort_moves_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/SortCorrect.lean",
+    "lean_name": "sortMovesCorrect",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.13): linear_scanProofScript.sml:4297-4330. HOL EL is the exact holEl, PERM the exact holPerm, LEX holLex, LUPDATE v n l is l.set n v, TAKE List.take, EVERY/MEM list quantification/membership, HOL let as Lean let, record update sth with f := v as Lean structure update, swap_regs/partition_regs/sort_regs/swap_moves/partition_moves/sort_moves the exact tagged linear_scanScript ports. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "HOL/src/sort/sortingScript.sml",
+    "hol_name": "PERM_DEF",
+    "lean_path": "Flapjack/Misc/Sorting.lean",
+    "lean_name": "holPerm",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.13): pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: sortingScript.sml:17-18 PERM L1 L2 = !x. FILTER ($= x) L1 = FILTER ($= x) L2, type 'a list -> 'a list -> bool; Lean ∀ x, L1.filter (fun y => decide (x = y)) = L2.filter (...), the HOL boolean equality test decided classically (no DecidableEq premise). Same single clause; holPerm_iff (untagged infrastructure) relates it to List.Perm."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "list_minimum",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/IntervalsCorrect.lean",
+    "lean_name": "listMinimum",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.14): linear_scanProofScript.sml:4332-4348. HOL EL is the exact holEl, PERM holPerm, TAKE/DROP List.take/List.drop, FILTER with the Boolean test of its HOL predicate, MEM/EVERY list membership/quantification, fromAList sptFromAList, lookup sptLookup, REVERSE List.reverse, DIV Nat division, good_linear_scan_state/phystack_on_stack/forbidden_is_from_* the exact tagged ports. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "linear_reg_alloc_pass1_initial_state_invariants",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/IntervalsCorrect.lean",
+    "lean_name": "linearRegAllocPass1InitialStateInvariants",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.14): linear_scanProofScript.sml:4350-4363, polymorphic unused st : α (TV=1) kept. HOL EL is the exact holEl, PERM holPerm, TAKE/DROP List.take/List.drop, FILTER with the Boolean test of its HOL predicate, MEM/EVERY list membership/quantification, fromAList sptFromAList, lookup sptLookup, REVERSE List.reverse, DIV Nat division, good_linear_scan_state/phystack_on_stack/forbidden_is_from_* the exact tagged ports. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "linear_reg_alloc_pass2_initial_state_invariants",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/IntervalsCorrect.lean",
+    "lean_name": "linearRegAllocPass2InitialStateInvariants",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.14): linear_scanProofScript.sml:4365-4378, polymorphic unused st : α (TV=1) kept. HOL EL is the exact holEl, PERM holPerm, TAKE/DROP List.take/List.drop, FILTER with the Boolean test of its HOL predicate, MEM/EVERY list membership/quantification, fromAList sptFromAList, lookup sptLookup, REVERSE List.reverse, DIV Nat division, good_linear_scan_state/phystack_on_stack/forbidden_is_from_* the exact tagged ports. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "st_ex_FILTER_good_stack",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/IntervalsCorrect.lean",
+    "lean_name": "stExFilterGoodStack",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.14): linear_scanProofScript.sml:4380-4394, the monadic predicate written exactly as in the tagged linear_reg_alloc_intervals (decide (is_stack_var r ∨ k ≤ col)). HOL EL is the exact holEl, PERM holPerm, TAKE/DROP List.take/List.drop, FILTER with the Boolean test of its HOL predicate, MEM/EVERY list membership/quantification, fromAList sptFromAList, lookup sptLookup, REVERSE List.reverse, DIV Nat division, good_linear_scan_state/phystack_on_stack/forbidden_is_from_* the exact tagged ports. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "lookup_fromAList_MAP_not_NONE",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/IntervalsCorrect.lean",
+    "lean_name": "lookupFromAListMapNotNone",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.14): linear_scanProofScript.sml:4396-4406. HOL EL is the exact holEl, PERM holPerm, TAKE/DROP List.take/List.drop, FILTER with the Boolean test of its HOL predicate, MEM/EVERY list membership/quantification, fromAList sptFromAList, lookup sptLookup, REVERSE List.reverse, DIV Nat division, good_linear_scan_state/phystack_on_stack/forbidden_is_from_* the exact tagged ports. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "PERM_PARTITION",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/IntervalsCorrect.lean",
+    "lean_name": "permPartition",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.14): linear_scanProofScript.sml:4408-4416, polymorphic (TV=1), P : α -> bool as a Bool test, FILTER (λx. ¬P x) as decide (¬ P x = true). HOL EL is the exact holEl, PERM holPerm, TAKE/DROP List.take/List.drop, FILTER with the Boolean test of its HOL predicate, MEM/EVERY list membership/quantification, fromAList sptFromAList, lookup sptLookup, REVERSE List.reverse, DIV Nat division, good_linear_scan_state/phystack_on_stack/forbidden_is_from_* the exact tagged ports. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "forbidden_is_from_forced_take_sublist",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/IntervalsCorrect.lean",
+    "lean_name": "forbiddenIsFromForcedTakeSublist",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.14): linear_scanProofScript.sml:4418-4425, l, forced, int_beg and forced_adj free in HOL (explicit Lean parameters). HOL EL is the exact holEl, PERM holPerm, TAKE/DROP List.take/List.drop, FILTER with the Boolean test of its HOL predicate, MEM/EVERY list membership/quantification, fromAList sptFromAList, lookup sptLookup, REVERSE List.reverse, DIV Nat division, good_linear_scan_state/phystack_on_stack/forbidden_is_from_* the exact tagged ports. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "good_linear_scan_state_REVERSE",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/IntervalsCorrect.lean",
+    "lean_name": "goodLinearScanStateReverse",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.14): linear_scanProofScript.sml:4427-4435. HOL EL is the exact holEl, PERM holPerm, TAKE/DROP List.take/List.drop, FILTER with the Boolean test of its HOL predicate, MEM/EVERY list membership/quantification, fromAList sptFromAList, lookup sptLookup, REVERSE List.reverse, DIV Nat division, good_linear_scan_state/phystack_on_stack/forbidden_is_from_* the exact tagged ports. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "phystack_on_stack_REVERSE",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/IntervalsCorrect.lean",
+    "lean_name": "phystackOnStackReverse",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.14): linear_scanProofScript.sml:4437-4441. HOL EL is the exact holEl, PERM holPerm, TAKE/DROP List.take/List.drop, FILTER with the Boolean test of its HOL predicate, MEM/EVERY list membership/quantification, fromAList sptFromAList, lookup sptLookup, REVERSE List.reverse, DIV Nat division, good_linear_scan_state/phystack_on_stack/forbidden_is_from_* the exact tagged ports. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "FILTER_remove_MEM_l",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/IntervalsCorrect.lean",
+    "lean_name": "filterRemoveMemL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.14): linear_scanProofScript.sml:4443-4450, polymorphic (TV=1); MEM x l decided classically (open Classical) since α has no decidable equality in HOL's statement. HOL EL is the exact holEl, PERM holPerm, TAKE/DROP List.take/List.drop, FILTER with the Boolean test of its HOL predicate, MEM/EVERY list membership/quantification, fromAList sptFromAList, lookup sptLookup, REVERSE List.reverse, DIV Nat division, good_linear_scan_state/phystack_on_stack/forbidden_is_from_* the exact tagged ports. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "le_div_2",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/IntervalsCorrect.lean",
+    "lean_name": "leDiv2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.14): linear_scanProofScript.sml:4452-4456. HOL EL is the exact holEl, PERM holPerm, TAKE/DROP List.take/List.drop, FILTER with the Boolean test of its HOL predicate, MEM/EVERY list membership/quantification, fromAList sptFromAList, lookup sptLookup, REVERSE List.reverse, DIV Nat division, good_linear_scan_state/phystack_on_stack/forbidden_is_from_* the exact tagged ports. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "lt_div_2",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/IntervalsCorrect.lean",
+    "lean_name": "ltDiv2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.14): linear_scanProofScript.sml:4458-4462. HOL EL is the exact holEl, PERM holPerm, TAKE/DROP List.take/List.drop, FILTER with the Boolean test of its HOL predicate, MEM/EVERY list membership/quantification, fromAList sptFromAList, lookup sptLookup, REVERSE List.reverse, DIV Nat division, good_linear_scan_state/phystack_on_stack/forbidden_is_from_* the exact tagged ports. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "list_to_sorted_regs_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/IntervalsCorrect.lean",
+    "lean_name": "listToSortedRegsCorrect",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.14): linear_scanProofScript.sml:4464-4500. HOL EL is the exact holEl, PERM holPerm, TAKE/DROP List.take/List.drop, FILTER with the Boolean test of its HOL predicate, MEM/EVERY list membership/quantification, fromAList sptFromAList, lookup sptLookup, REVERSE List.reverse, DIV Nat division, good_linear_scan_state/phystack_on_stack/forbidden_is_from_* the exact tagged ports. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "sorted_regs_to_list_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/IntervalsCorrect.lean",
+    "lean_name": "sortedRegsToListCorrect",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.14): linear_scanProofScript.sml:4502-4517, last − n is Nat truncated subtraction as in HOL. HOL EL is the exact holEl, PERM holPerm, TAKE/DROP List.take/List.drop, FILTER with the Boolean test of its HOL predicate, MEM/EVERY list membership/quantification, fromAList sptFromAList, lookup sptLookup, REVERSE List.reverse, DIV Nat division, good_linear_scan_state/phystack_on_stack/forbidden_is_from_* the exact tagged ports. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "list_to_sorted_moves_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/IntervalsCorrect.lean",
+    "lean_name": "listToSortedMovesCorrect",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.14): linear_scanProofScript.sml:4519-4555. HOL EL is the exact holEl, PERM holPerm, TAKE/DROP List.take/List.drop, FILTER with the Boolean test of its HOL predicate, MEM/EVERY list membership/quantification, fromAList sptFromAList, lookup sptLookup, REVERSE List.reverse, DIV Nat division, good_linear_scan_state/phystack_on_stack/forbidden_is_from_* the exact tagged ports. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "sorted_moves_to_list_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/IntervalsCorrect.lean",
+    "lean_name": "sortedMovesToListCorrect",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.14): linear_scanProofScript.sml:4557-4572. HOL EL is the exact holEl, PERM holPerm, TAKE/DROP List.take/List.drop, FILTER with the Boolean test of its HOL predicate, MEM/EVERY list membership/quantification, fromAList sptFromAList, lookup sptLookup, REVERSE List.reverse, DIV Nat division, good_linear_scan_state/phystack_on_stack/forbidden_is_from_* the exact tagged ports. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "linear_reg_alloc_intervals_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/IntervalsCorrect.lean",
+    "lean_name": "linearRegAllocIntervalsCorrect",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.14): linear_scanProofScript.sml:4574-4996 ∀k forced moves reglist_unsorted sth with all ten hypotheses in HOL order (EVERY (\\r1,r2. ...) forced / (MAP SND moves) as ∀ x ∈ l over x.1/x.2, ALL_DISTINCT as List.Nodup, the three LENGTH equalities/bounds) and the existential conclusion: linear_reg_alloc_intervals k forced moves reglist_unsorted sth = (M_success (), sthout), the interval_intersect (tagged intervalIntersect) injectivity of EL r sthout.colors, the EVERY (\\r. if is_phy_var r then EL r sthout.colors = r DIV 2 else if is_stack_var r then k ≤ EL r sthout.colors else T) clause (Bool if-chain), forced pairs injective, and LENGTH sthout.colors = LENGTH sth.colors. HOL EL is the exact holEl; linear_reg_alloc_intervals is the exact tagged linearRegAllocIntervals. Compared with the DB.fetch show_types original incl. free variables (none); kernel-checked; standard axioms; no extra premise."
+  },
+  {
+    "hol_path": "HOL/src/finite_maps/sptreeScript.sml",
+    "hol_name": "lookup_map",
+    "lean_path": "Flapjack/Misc/Sptree/Map.lean",
+    "lean_name": "sptLookup_sptMap",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.14): pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: sptreeScript.sml:1565-1569 ∀s x. lookup x (map f s) = OPTION_MAP f (lookup x s), f free in HOL (explicit Lean parameter); over the reviewed Spt carrier with the tagged sptMap/sptLookup, OPTION_MAP as Option.map. Kernel-checked; no premise."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSimilar/Encoding.lean",
     "lean_name": "linesRel_encLine",
     "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",

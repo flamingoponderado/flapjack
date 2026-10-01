@@ -4271,3 +4271,11 @@ Kernel fixtures replay the observations and apply the full section theorem.
 `lab_to_target_line_len_probeScript.sml` captures five original `line_len_def` observations (lab_to_targetProofScript.sml:3127). They cover all three native constructors, empty bytes with a nonzero annotation, nonempty bytes with a zero annotation, and word widths8/64. The value is always the recorded length, with no byte-length consistency check. `Flapjack.Test.LabToTargetLineLenParity` kernel-replays the rows. Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=lab_to_target_line_len_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
 
 The section-length probe additionally captures five `sec_length_add` (lab_to_targetProofScript.sml:3135) observations: arbitrary nonzero additive offsets, empty/mixed lists, zero annotations and empty encoded bytes with a large recorded annotation. All original eight section-label rows remain mandatory. The same Lean parity module kernel-replays all thirteen observations.
+
+`lab_to_target_padding_similarity_probeScript.sml` captures the complete
+original add-nop, section-padding and code-padding similarity statements and
+full quantified types. Its local add-nop theorem replays the original statement
+and proof literally. Six direct padding observations include empty nop chunks,
+label-only code, nonempty accumulators and unchanged resolved offsets. Kernel
+fixtures replay them and apply the full theorem at arbitrary positive width and
+arbitrary accumulator; no full compiler or cross-language equivalence is claimed.

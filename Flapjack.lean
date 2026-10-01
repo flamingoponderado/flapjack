@@ -4,6 +4,11 @@ import Flapjack.Compiler.Encoders.AsmProps.ArithmeticPreservation
 import Flapjack.Compiler.Backend.LabToTarget.LineLength
 import Flapjack.Compiler.Backend.LabToTarget.SectionLength
 import Flapjack.Byte
+import Flapjack.Compiler.Backend.LabToTarget.LineLength
+import Flapjack.Compiler.Backend.LabToTarget.SectionLength
+import Flapjack.Byte
+import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.Padding
+import Flapjack.Compiler.Encoders.AsmProps.ArithmeticPreservation
 import Flapjack.Compiler.Backend.StackProps.InstructionConstants
 import Flapjack.Compiler.Backend.StackProps.ClockSupport
 import Flapjack.Compiler.Backend.StackProps.ExpressionClock
