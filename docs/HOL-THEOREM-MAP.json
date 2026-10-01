@@ -12350,7 +12350,7 @@
     "hol_name": "StackHandlerArgs_def",
     "lean_name": "stackHandlerArgs",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-deepseek-three (2026-09-25: matches HOL `StackHandlerArgs_def` at word_to_stackScript.sml:350 - StackArgs dest arg_count (k, f + handler_slots perf, f' + handler_slots perf). `'a` is arbitrary in HOL and only num/sum/list are touched, so the generic-alpha statement over the exact shared-word carrier ProgM is exact; HOL-EVAL rows shaF=T/shaT=T reproduced by handlerParityGuard in Flapjack/Test/WordToStackBitsParity.lean.)"
+    "reviewer": "flapjack-luna-b source comparison 2026-10-01 r1p4: Original word_to_stackScript.sml349-353 and freshly loaded theory type bool -> alpha+beta -> num -> num#num#num -> gamma stackLang prog independently quantify both destination payloads and output program carrier. Lean now retains independent delta/epsilon destination parameters and existing alpha output parameter. Body unchanged: calls StackArgs with exactly handler_slots additions to both offsets. Nat call sites explicitly instantiate erased destination carriers; original shaF/shaT kernel parity retained, plus universal generic equation and Bool/Unit unequal-carrier examples. No production behavioral delta. Prior Nat/Nat restriction corrected rather than accepted as exact."
   },
   {
     "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
@@ -40276,6 +40276,22 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-ds10 source comparison (2026-10-01, bead flapjack-pbmi) against targetSemScript.sml:52-57: encoded_bytes_in_mem c pc m md <=> ?i k. k * (2 ** c.code_alignment) < LENGTH (c.encode i) /\\ bytes_in_memory pc (DROP (k * (2 ** c.code_alignment)) (c.encode i)) m md, verbatim; 2 ** code_alignment -> 2 ^ codeAlignment, DROP -> List.drop, encode : 'a asm -> word8 list -> HolAsm width -> List (BitVec 8), words qualifier for the BitVec width/8 carriers; bytes_in_memory is the tagged bytesInMemoryHOL."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/Invariants/Preservation.lean",
+  "lean_name": "wf_step",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "wf_step",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.6.4: Original137-145: Step first second -> wf first -> wf second. Full6constructor proof preserves exactly six source conjuncts. Distinct destinations transported by sublist/permutation; pending/source realness inherited, FRONT membership under originalnonempty guard, temporarysave preserves finaldestination/path, emithead uses path_tail. No added NoRead/path/nonempty premise. Generic Option register/List triple is actual Steps carrier; wf ignored emittedcarrier specialization is dictated by Step. Private genericlist helpers have no separate named HOLclaim. Fourteen original stateobservations with kernelreplay cover all6pre/post states and badsource/path; fullscheduler semanticpreservation remainsopen. Explicitproof builds at default heartbeats, no search/performance exception."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/Invariants/Preservation.lean",
+  "lean_name": "wf_steps",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "wf_steps",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.6.4: Original148-152: wf first AND RTC step first second -> wf second. Standard reflexive/transitive induction uses literal wf_step; no prior successfulscheduler execution/output premise. Generic Option register/List triple is actual Steps carrier; wf ignored emittedcarrier specialization is dictated by Step. Private genericlist helpers have no separate named HOLclaim. Fourteen original stateobservations with kernelreplay cover all6pre/post states and badsource/path; fullscheduler semanticpreservation remainsopen. Explicitproof builds at default heartbeats, no search/performance exception."
 },
   {
     "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
