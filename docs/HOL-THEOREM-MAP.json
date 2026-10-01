@@ -39590,5 +39590,31 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-ds10 source comparison (2026-10-01, bead flapjack-pxn.18.5.15.10.3) vs asmPropsScript.sml:58-64: target_state_rel t s ms with all five conjuncts (state_ok, get_pc=pc, mem_domain memory agreement, reg_count/avoid_regs register agreement, fp_reg_count fp agreement); argument order t s ms preserved; MEM i avoid_regs rendered as avoidRegs.contains i = false. word rendering qualified."
+  },
+  {
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "bytes_in_memory_def",
+    "lean_path": "Flapjack/Misc/BytesInMemory.lean",
+    "lean_name": "bytesInMemoryHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-10-01, bead flapjack-pbmi) against miscScript.sml:4176-4180: bytes_in_memory a [] m dm <=> T and bytes_in_memory a (x::xs) m dm <=> (m a = x) /\\ a IN dm /\\ bytes_in_memory (a+1w) xs m dm, verbatim; word8 -> BitVec 8 and 'a word -> BitVec width under [NeZero width]; the address domain renders as a predicate BitVec width -> Prop as in the reviewed machine_config carrier."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/targetSemScript.sml",
+    "hol_name": "apply_oracle_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/EncodedBytes.lean",
+    "lean_name": "applyOracleHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds10 source comparison (2026-10-01, bead flapjack-pbmi) against targetSemScript.sml:46-48: apply_oracle oracle x = (oracle 0 x, shift_seq 1 oracle), verbatim; fully polymorphic in the oracle's input and output types, so no word carrier and no qualifier; shift_seq is the reviewed tagged holShiftSeq (miscScript.sml:132-134)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/targetSemScript.sml",
+    "hol_name": "encoded_bytes_in_mem_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/EncodedBytes.lean",
+    "lean_name": "encodedBytesInMemHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-10-01, bead flapjack-pbmi) against targetSemScript.sml:52-57: encoded_bytes_in_mem c pc m md <=> ?i k. k * (2 ** c.code_alignment) < LENGTH (c.encode i) /\\ bytes_in_memory pc (DROP (k * (2 ** c.code_alignment)) (c.encode i)) m md, verbatim; 2 ** code_alignment -> 2 ^ codeAlignment, DROP -> List.drop, encode : 'a asm -> word8 list -> HolAsm width -> List (BitVec 8), words qualifier for the BitVec width/8 carriers; bytes_in_memory is the tagged bytesInMemoryHOL."
   }
 ]

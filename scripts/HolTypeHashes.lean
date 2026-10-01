@@ -184,8 +184,10 @@ import Flapjack.Compiler.Encoders.AsmProps.Target
 import Flapjack.Compiler.Encoders.AsmSem.State
 import Flapjack.Compiler.Backend.Semantics.TargetSem.Machine
 import Flapjack.Misc.AsmWriteBytearray
+import Flapjack.Misc.BytesInMemory
 import Flapjack.Compiler.Backend.Semantics.TargetSem.PostAsm
 import Flapjack.Compiler.Backend.Semantics.TargetSem.FfiReads
+import Flapjack.Compiler.Backend.Semantics.TargetSem.EncodedBytes
 import Flapjack.Compiler.Backend.Semantics.StackSem.Control
 import Flapjack.Compiler.Backend.Semantics.StackSem.Labels
 import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
