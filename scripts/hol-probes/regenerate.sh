@@ -2914,3 +2914,7 @@ run_probe word_alloc_merge_stack_sets_probeScript.sml word_alloc_merge_stack_set
 run_probe parmove_correct_probeScript.sml parmove_correct_probe.out \
   pc_empty pc_self pc_chain pc_cycle pc_fanout pc_order pc_bool \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe parmove_temp_append_probeScript.sml parmove_temp_append_probe.out \
+  nta_empty nta_empty_bad nta_real_bad nta_write_stops nta_read_first nta_both_none nta_real_write nta_late_write \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"

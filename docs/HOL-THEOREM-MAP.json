@@ -41888,5 +41888,13 @@
   "hol_name": "parmove_correct",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-c source672-694: whole generic theorem, original windmill premise only; all environments and real-register eqenv conclusion, actual parmove/parsem. Derives terminal emitted list, deterministic RTC, initial wf from some-lifted unique destinations and real fields, primitive RTC and final semantic consequence; no assumed output/simulation premise. Seven universal original theorem applications and matching Lean kernel applications, Bool carriers included. Full compiler theorem remains separate."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/TempBeforeAssign/Append.lean",
+  "lean_name": "notUseTempBeforeAssignAppend",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "not_use_temp_before_assign_append",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source839-846: original generic two-list iff; Bool predicate truth and EVERY IS_SOME MAP FST as forall membership, no wf/distinctness premise. Constructor induction preserves ordered scratch-read rejection before scratch-write acceptance; only all-real destinations require suffix safety. Eight fresh original truth/prefix/all-real/suffix tuple observations and identical kernel fixtures, generic theorem application included."
 }
 ]
