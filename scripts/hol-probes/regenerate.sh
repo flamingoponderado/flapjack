@@ -3349,3 +3349,7 @@ run_probe word_alloc_limit_var_probeScript.sml word_alloc_limit_var_probe.out \
 run_probe word_to_stack_handler_safety_probeScript.sml word_to_stack_handler_safety_probe.out \
   hls_empty hls_duplicates hls_owned hls_wrong_owner hls_wrong_zero hls_wrong_one hls_tail_drop hls_same_owner_twice hls_nested hls_nested_bad hls_threaded hls_width_one \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
+run_probe wordconvs_label_safety_probeScript.sml wordconvs_label_safety_probe.out \
+  wcs_empty wcs_skip wcs_self wcs_missing wcs_external wcs_univ wcs_duplicates wcs_cross wcs_owned wcs_wrong_owner wcs_tail_foreign wcs_tail_missing wcs_nested wcs_width_one \
+  "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"

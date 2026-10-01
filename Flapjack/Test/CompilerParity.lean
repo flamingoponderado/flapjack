@@ -32,6 +32,7 @@ import Flapjack.Test.WordToStackProgramCodeLabelsParity
 import Flapjack.Test.WordToStackHandlerSafetyParity
 import Flapjack.Test.StackPropsForbiddenOperationsParity
 import Flapjack.Test.WordConvsCodeLabelsParity
+import Flapjack.Test.WordConvsLabelSafetyParity
 import Flapjack.Test.ParmovePreservesMovesStepsParity
 import Flapjack.Test.WordConvsExpMonoParity
 import Flapjack.Test.WordAllocMaxVarExpParity

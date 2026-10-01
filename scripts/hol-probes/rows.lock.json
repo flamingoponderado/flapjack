@@ -4721,6 +4721,12 @@
       "out": "word_to_stack_handler_safety_probe.out",
       "rows": 12,
       "sha256": "f185a51b195d2228ab0cfb5bd59ea471cb538973d2e5c7304badc1e547d1b054"
+    },
+    {
+      "bytes": 200,
+      "out": "wordconvs_label_safety_probe.out",
+      "rows": 14,
+      "sha256": "43ab97b4242d76cd4ec57df9d670ae3bfdee9cf8964dc5dae7503b8953f1909f"
     }
   ],
   "version": 1

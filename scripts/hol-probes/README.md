@@ -3174,3 +3174,15 @@ regressions and a nonempty full public theorem application retain arbitrary
 positive width/configuration/registers/bitmap input. These are regression checks,
 not cross-language equivalence or overall compiler correctness acceptance.
 Selector: `HOL_PROBE_ONLY=word_to_stack_handler_safety_probeScript.sml`.
+
+### Native WordConvs whole-program label safety
+
+`wordconvs_label_safety_probeScript.sml` checks fourteen original
+`good_code_labels` predicate equality claims, including three false predicates,
+infinite UNIV external labels, duplicate owners, cross references, returning and
+absent-return handler boundaries, nesting and width one. All claims resolve T.
+A local HOL finite-union lemma supports evaluation; missing-label failures use
+the concrete label 8. Matching kernel fixtures and an arbitrary positive-width,
+unrestricted external-set equation live in `WordConvsLabelSafetyParity`.
+These checks do not establish cross-language equivalence or full compiler
+preservation. Selector: `HOL_PROBE_ONLY=wordconvs_label_safety_probeScript.sml`.

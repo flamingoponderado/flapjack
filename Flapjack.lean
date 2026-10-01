@@ -39,6 +39,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCodeLabels
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ProgramCodeLabels
 import Flapjack.Compiler.Backend.WordToStack.Proofs.HandlerLabels
 import Flapjack.Pancake.WordConvs.CodeLabels
+import Flapjack.Pancake.WordConvs.LabelSafety
 import Flapjack.Compiler.Backend.StackProps.CodeLabels
 import Flapjack.Compiler.Backend.StackProps.ForbiddenOperations
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Steps

@@ -1,0 +1,14 @@
+wcs_empty=T
+wcs_skip=T
+wcs_self=T
+wcs_missing=T
+wcs_external=T
+wcs_univ=T
+wcs_duplicates=T
+wcs_cross=T
+wcs_owned=T
+wcs_wrong_owner=T
+wcs_tail_foreign=T
+wcs_tail_missing=T
+wcs_nested=T
+wcs_width_one=T
