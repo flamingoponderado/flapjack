@@ -4,6 +4,7 @@ import Flapjack.Compiler.Backend.LinearScan.Proofs.CheckIntervals
 import Flapjack.Compiler.Backend.LinearScan.Proofs.RegExchange
 import Flapjack.Compiler.Backend.LinearScan.Proofs.Bijection
 import Flapjack.Compiler.Backend.LinearScan.Proofs.ApplyBijection
+import Flapjack.Compiler.Backend.LinearScan.Proofs.IntervalMonad
 
 /-!
 # linear_scan proofs
@@ -26,6 +27,12 @@ order:
   bijection invariants.
 * `ApplyBijection`: `linear_scanProofScript.sml:5565-6006`, checking a
   renamed clash tree and reading back the colouring.
+* `IntervalMonad`: `linear_scanProofScript.sml:5206-5469`, the interval monad
+  against `get_intervals_ct` and live-tree registers.
+
+Declarations whose statements use HOL `EL` are kernel-checked but untagged
+provisional ports until the HOL `listScript` provenance review
+(bead flapjack-pxn.18.5.15.3.38.1).
 
 The top-level `linear_scan_reg_alloc_correct` is not yet ported.
 -/
