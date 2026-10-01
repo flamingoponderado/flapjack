@@ -38763,5 +38763,14 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.22) against word_allocProofScript.sml:836-851: (!st'. evaluate (prog,st) = (SOME Error,st') ==> P (SOME Error,st')) /\\ (?perm. P ((I ## (λs. s with permute := perm)) (evaluate (prog,st)))) ==> ?perm. P (evaluate (prog, st with permute := perm)); free prog st P as explicit binders, I ## g rendered as the pair map (p.1, g p.2). Exact; proof from tagged permute_swap_lemma as in HOL. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "colouring_ok_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/ColouringOk.lean",
+    "lean_name": "colouringOk",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.19) against word_allocProofScript.sml:100-146, clause by clause over WordLangProgHOL with the reviewed getLive, getWrites, numsetListInsert, sptUnion/sptInsert: Seq (s2_live = get_live s2 live lt, s1_live = get_live s1 s2_live lt, INJ on domain s1_live, colouring_ok s2 live lt, colouring_ok s1 s2_live lt); If (union of branch live sets, merged inserts r1 then Reg r2 as HOL's insert r2 () (insert r1 () union_live), INJ on merged, both branches at live lt); returning Call (args_set = numset_list_insert args LN, all_names = union (SND cutset) (FST cutset), INJ on union all_names args_set and on numset_list_insert v all_names, colouring_ok ret_handler live lt, handler NONE => T | SOME (v,prog,_,_) => INJ on insert v () all_names and colouring_ok prog live lt); MustTerminate; Loop (INJ on names and exit_names, body at names with (names,exit_names)::lt); catch-all incl. Call NONE (INJ on get_live prog live lt and on union (get_writes prog) live). INJ f s UNIV rendered as injectivity on the predicate domain (codomain UNIV trivial), as in the accepted cut_names/strong_locals ports. Positive BitVec width is the only carrier translation."
   }
 ]
