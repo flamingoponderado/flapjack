@@ -1,0 +1,8 @@
+pl_rhs_group=T
+pl_empty=T
+pl_duplicates=T
+pl_spilled=T
+pl_owned=T
+pl_wrong_owner=T
+pl_tail_drop=T
+pl_threaded=T

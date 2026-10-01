@@ -3220,6 +3220,9 @@ run_probe word_to_stack_code_labels_probeScript.sml word_to_stack_code_labels_pr
 run_probe word_to_stack_comp_code_labels_probeScript.sml word_to_stack_comp_code_labels_probe.out \
   cl_skip cl_loc_spilled cl_raise cl_store cl_sequence cl_loop cl_tail_drops_handler cl_indirect_empty cl_indirect_nonempty cl_returning cl_owned_handler cl_wrong_owner cl_zero_frame cl_width_one \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+run_probe word_to_stack_program_code_labels_probeScript.sml word_to_stack_program_code_labels_probe.out \
+  pl_rhs_group pl_empty pl_duplicates pl_spilled pl_owned pl_wrong_owner pl_tail_drop pl_threaded \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
 run_probe parmove_preserves_moves_step_probeScript.sml parmove_preserves_moves_step_probe.out \
   preserve_4_before preserve_4_after preserve_6_before preserve_6_after preserve_1_before preserve_1_after preserve_8_before preserve_8_after preserve_scratch_before preserve_scratch_after \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
