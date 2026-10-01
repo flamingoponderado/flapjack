@@ -47823,5 +47823,19 @@
     "hol_name": "option_lookup_subset_helper",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-a completed source comparison 2026-10-01 flapjack-fdho: full original5434-5446 arbitrary native SSA Spt Nat, target Spt alpha and names List Nat. Literal original proof replayed freshly; original inferred num num_map/alpha num_map/num list confirm generic target payload independent of register map. Both original premises (SSA image in target domain and input names subset SSA domain) and full optionLookup-mapped names subset target-domain conclusion unchanged, rendered by list membership quantification. Native Spt lookup/domain/optionLookup match reviewed original definitions; no wf, distinctness, width or output/evaluation assumption added. Kernel SOME-domain proof checked before tagging; no selector NONE value asserted. Untagged additional assumptions absent. This source comparison establishes reviewed statement shape, not cross-prover equivalence. Proof-only, no executed compiler change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSARenameMovePreserve.lean",
+    "lean_name": "listNextVarRenameMovePreserveWeak",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "list_next_var_rename_move_preserve_weak",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-a completed source comparison 2026-10-01 flapjack-39oz: full original5450-5520 and fresh literal original five-proof replay. Original st/cst inferred same alpha,beta,gamma state; generic native Spt Nat, arbitrary counter/names with original locals relation/domain subset/Nodup/mapOK/full state relation premises, all NONE/output locals/full state conclusions retained. No physical/allocation class, tree validity, successful evaluation or post-state premise added. Actual native listNextVarRenameMove and WordSem evaluate, guarded SOME selectors and duplicate-free parallel writes kernel checked. Canonical fpRegs/store and positive BitVec/NeZero carriers use checked roundtrip witness. Inherits reals_as_rational_cuts from full evaluator, SOUNDNESS item8; Move branch reads/writes only locals. Source replay used HOLa390cb and CakeML857f0d matching initialized checkout pins and shared builds; no cross-prover equivalence claim. Peer getVarsEq consumed checked86deea0a9 through ordinary5a05542ef merge; no executable compiler change."
   }
 ]

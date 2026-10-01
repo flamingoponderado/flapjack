@@ -3602,3 +3602,8 @@ run_probe ssa_rename_property_wrappers_probeScript.sml ssa_rename_property_wrapp
 run_probe ssa_option_lookup_subset_probeScript.sml ssa_option_lookup_subset_probe.out \
   os_full os_type_ssa os_type_cst_locs os_type_ls \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_rename_move_preserve_weak_probeScript.sml ssa_rename_move_preserve_weak_probe.out \
+  rmw_full rmw_type_st rmw_type_cst rmw_type_ssa rmw_type_na rmw_type_ls \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
