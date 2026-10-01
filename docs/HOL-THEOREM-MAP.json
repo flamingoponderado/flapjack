@@ -41393,5 +41393,13 @@
   "hol_name": "dstep_cases",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-a: source six-clause Hol_reln at 478-492 and local NoRead at 22 compared literally; generic Option registers and three List state carriers match. Prefix-only Extend guard and combined Save/Emit retained. Full rules, least-relation induction and exhaustive cases; no added well-formedness or successful-result premise."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/DStepStep.lean",
+  "lean_name": "dstep_step",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "dstep_step",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison (2026-10-01), original503-516: generic Option register, three List state, actual least DStep and primitive Step RTC, original sole wf premise. Five cases single primitive step; cycle Save followed by EmitHead derives r != NONE from wf real destinations, no extra assumption. Fresh six wf and nine semantic cycle observations replayed in kernel; coordinator source review pending."
 }
 ]

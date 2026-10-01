@@ -2219,3 +2219,5 @@ checks the source prefix-only NoRead guard. `ParmoveDStepsParity.lean` replays
 the same inputs in Lean. These finite observations are regression evidence,
 not a cross-prover equivalence proof; the complete rules, induction and cases
 statements are source-reviewed in `Parmove/DSteps.lean`.
+
+`parmove_dstep_step_probeScript.sml` captures six original wf premises and nine cycle semantic values before Save, after Save, and after EmitHead. Kernel fixtures prove all six actual DStep-to-Steps applications with the original wf premise. The temporary changes99to17 on Save; no functional scheduler simulation is assumed.
