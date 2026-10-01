@@ -2675,3 +2675,7 @@ run_probe word_lang_occurrences_exact_probeScript.sml word_lang_occurrences_exac
 run_probe word_to_stack_frames_probeScript.sml word_to_stack_frames_probe.out \
   hv_empty hv_plain hv_handler hf_none hf_some se_empty se_desc se_equal se_asc \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_abs_stack_probeScript.sml word_to_stack_abs_stack_probe.out \
+  as_base as_base_bad as_plain as_bitmap_bad as_len_bad as_short as_rest_bad as_handler as_marker_bad as_handler_short as_lens_bad \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"

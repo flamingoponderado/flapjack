@@ -182,6 +182,7 @@ import Flapjack.Compiler.Backend.WordToStack
 import Flapjack.Compiler.Backend.WordToStack.LiveBitmap
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackSize
 import Flapjack.Compiler.Backend.WordToStack.Proofs.Frames
+import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstraction
 import Flapjack.Compiler.Backend.WordToStackRegFormat
 import Flapjack.Compiler.Backend.LabSem
 import Flapjack.Compiler.Backend.LabProps
