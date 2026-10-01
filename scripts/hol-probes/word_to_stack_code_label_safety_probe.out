@@ -1,0 +1,10 @@
+cls_empty=T
+cls_self=T
+cls_missing=T
+cls_external=T
+cls_duplicates=T
+cls_owned=T
+cls_wrong_owner=T
+cls_tail_missing=T
+cls_threaded=T
+cls_width_one=T

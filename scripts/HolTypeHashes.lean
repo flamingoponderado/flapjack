@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CodeLabelSafety
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsSwap
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsPhysicalInsert
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapPreservation

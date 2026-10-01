@@ -3439,3 +3439,11 @@ run_probe ssa_locals_physical_insert_probeScript.sml ssa_locals_physical_insert_
 run_probe ssa_merge_frame_probeScript.sml ssa_merge_frame_probe.out \
   mf_full_source_replay mf_empty mf_missing_both mf_missing_left mf_missing_right mf_equal mf_unequal mf_tail_order mf_duplicate mf_invalid mf_big \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_code_label_safety_probeScript.sml word_to_stack_code_label_safety_probe.out \
+  cls_empty cls_self cls_missing cls_external cls_duplicates cls_owned cls_wrong_owner cls_tail_missing cls_threaded cls_width_one \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_convs_code_label_carriers_probeScript.sml word_convs_code_label_carriers_probe.out \
+  clc_bool clc_unit clc_list clc_option \
+  "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"

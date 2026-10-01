@@ -3438,3 +3438,28 @@ and return-list types, widths 64/1/16, zero/nonzero counts, both flags and unsaf
 Install/handler/loop continuations are replayed by
 `WordToStackCopyRetNoInstallParity`. The unrestricted native theorem retains the
 full source iff without a continuation-safety assumption.
+
+### Full incremental compiler code-label safety
+
+`word_to_stack_code_label_safety_probeScript.sml` evaluates ten original full
+compiler source/target safety pairs, including duplicate keys, spilling, owned
+and wrong-owner returning handlers, a dropped tail-handler source reference,
+threaded bitmap output and width-one words with an infinite external set.
+Missing references and wrong handler ownership give `(F,F)`; the dropped
+tail-handler reference gives `(F,T)`. Each row proves the stated pair by
+evaluating original definitions, without claiming an exported theorem
+application. `WordToStackCodeLabelSafetyParity` kernel-replays identical inputs
+and applies the unrestricted full theorem with arbitrary configuration, register
+count and bitmap state. These observations do not establish cross-language
+equivalence or complete the full compiler correctness goal.
+
+### Generic WordConvs code-label row carriers
+
+`word_convs_code_label_carriers_probeScript.sml` freshly checks the original
+`good_code_labels_def` with Bool, Unit, List Bool and Option Bool second row
+fields, at widths 64/1/16. `WordConvsLabelSafetyParity` replays the four cases
+and quantifies the independent generic field carrier. The original full-type
+query revealed that fixing this ignored field to Nat specialized the predicate;
+its existing canonical Lean definition now preserves the generic carrier.
+The actual compiler theorem still uses Nat there, as required by its original
+compiler type. No clauses or executed compiler behavior change.

@@ -1,3 +1,4 @@
+import Flapjack.Test.WordToStackCodeLabelSafetyParity
 import Flapjack.Test.WordMaxInstRouteParity
 import Flapjack.Test.SSALocalsPhysicalInsertParity
 import Flapjack.Test.SSAMapPreservationParity
