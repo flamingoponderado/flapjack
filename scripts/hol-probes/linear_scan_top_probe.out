@@ -1,0 +1,21 @@
+bijection_seq=<|bij := BN (BS LN 2 (LS 4)) (BN (BS LN 1 (LS 5)) (LS 3));
+  invbij := BN (BS LN 2 (LS 4)) (BS (LS 9) 5 (LS 3)); nmax := 5; nstack := 7;
+  nalloc := 9|>
+bijection_branch=<|bij := BS LN 0 (BS (LS 1) 5 (BN (LS 3) (LS 7)));
+  invbij := BS LN 0 (BS (LS 1) 5 (BS LN 11 (LS 7))); nmax := 7; nstack := 11;
+  nalloc := 9|>
+apply_bij_tree=Branch (SOME (BN (LS ()) LN)) (Delta [9; 4] [0])
+  (Set (BN (BN LN (LS ())) LN))
+apply_bijection=BS (BN LN (LS 5)) 0 (BN (BN LN (LS (-2))) LN)
+size_ct=6
+extract=(M_success (BN LN (BN (BS LN 3 (LS 7)) LN)),
+ <|colors := [0; 3; 0; 0; 0; 7]; int_beg := []; int_end := [];
+   sorted_regs := []; sorted_moves := []|>)
+run_i=M_success 4
+run_i_fail=M_failure Subscript
+lsra_delta=M_success (BN (LS 1) (BS (LS 0) 1 LN))
+lsra_moves=M_success (BN LN (BS (LS 1) 0 LN))
+lsra_forced=M_success (BN LN (BS (BS LN 1 (LS 2)) 0 (LS 2)))
+lsra_branch_spill=M_success (BN LN (BS (BS LN 0 (LS 0)) 1 LN))
+lsra_phys=M_success (BS (BS LN 1 (LS 2)) 0 (BN (LS 3) (BN LN (LS 3))))
+lsra_stack=M_success (BN LN (BS (LS 1) 0 (BS LN 3 (LS 2))))

@@ -29,4 +29,18 @@ theorem holOptionSome_none {α : Type} {P : α → Prop}
   · cases h
   · rename_i hn; exact fun x hx => hn ⟨x, hx⟩
 
+/-- HOL's value of `THE NONE`. `THE_DEF` (`optionScript.sml:176-180`) is a
+`new_recursive_definition` with only the `SOME` clause, so HOL proves nothing
+about `THE NONE`. An `opaque` constant is likewise a fixed value that no Lean
+proof can unfold. The `Nonempty` binder is the inhabitedness every HOL type
+has; it carries no other information. -/
+noncomputable opaque holTheNone (α : Type) [Nonempty α] : α
+
+/-- HOL `THE`: `THE (SOME x) = x`, with `THE NONE` the unspecified
+`holTheNone`. -/
+@[hol "hol4/src/coretypes/optionScript.sml" "THE_DEF"]
+noncomputable def holThe {α : Type} [Nonempty α] : Option α → α
+  | some x => x
+  | none => holTheNone α
+
 end Flapjack

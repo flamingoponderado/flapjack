@@ -1,0 +1,12 @@
+ol_hit=9
+ol_miss=0
+pr_none=(1,1)
+pr_inl=(2,1)
+pr_inr=(1,2)
+fm=Inst (Const 7 0w)
+fms_empty=(Skip,Skip,13,BN LN (LS 5),LN)
+fms_left_only=(Seq Skip (Move 2 [(13,5)]),Seq Skip (Inst (Const 13 0w)),17,BN LN (LS 13),BN LN (LS 13))
+fms_right_only=(Seq Skip (Inst (Const 13 0w)),Seq Skip (Move 2 [(13,6)]),17,BN (LS 13) LN,BN (LS 13) LN)
+fms_both=(Seq (Seq Skip (Inst (Const 13 0w))) (Move1 [(17,5)]),Seq (Seq Skip (Move1 [(13,6)])) (Inst (Const 17 0w)),21,BN (LS 13) (BS LN 17 (LS 7)),BN (LS 13) (BS LN 17 (LS 8)))
+fi_equal=(Seq (Move1 []) Skip,Seq (Move1 []) Skip,13,BN LN (LS 5))
+fi_mixed=(Seq (Move 2 [(13,7)]) (Seq (Seq Skip (Inst (Const 17 0w))) (Move 2 [(21,5)])),Seq (Move1 [(13,8)]) (Seq (Seq Skip (Move1 [(17,6)])) (Inst (Const 21 0w))),25,BN (LS 17) (BS LN 21 (LS 13)))
