@@ -42201,5 +42201,45 @@
     "lean_name": "totalColourAlt",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.6) against word_allocScript.sml:1597-1604: total_colour col = (\\x. 2 * x) o sp_default col as a function equality over Spt Nat, with the reviewed totalColour and spDefault; no premise. Proof: the missing physical-register case uses is_phy_var (x MOD 2 = 0) so 2 * (x DIV 2) = x."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "in_clash_tree_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs.lean",
+    "lean_name": "inClashTree",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.7) against reg_allocProofScript.sml:770-780, clause by clause over the reviewed ClashTree carrier: Delta w r (MEM x w \\/ MEM x r), Set names (x IN domain names as sptDomain), Branch name_opt t1 t2 (either child or, for SOME names, domain names; NONE F), Seq (either child). HOL bool as Prop."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "INJ_IMG_lookup",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs.lean",
+    "lean_name": "injImgLookup",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.7) against reg_allocProofScript.sml:3100-3109: !x. INJ g UNIV UNIV /\\ domain (gt:num_set) = IMAGE g (domain ft) ==> lookup (g x) gt = lookup x ft; free g gt ft bound as explicit parameters, INJ g UNIV UNIV as global injectivity, IMAGE as an existential, num_set = Spt Unit."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "check_partial_col_INJ",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs.lean",
+    "lean_name": "checkPartialColInjCompose",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.7) against reg_allocProofScript.sml:3111-3125 (the reg_allocProof composition lemma, not the word_allocProof check_partial_col_INJ): !ls t ft gt. INJ g UNIV UNIV /\\ domain gt = IMAGE g (domain ft) ==> case check_partial_col f ls t ft of NONE => check_partial_col (g o f) ls t gt = NONE | SOME (tt,ftt) => ?gtt. check_partial_col (g o f) ls t gt = SOME (tt,gtt) /\\ domain gtt = IMAGE g (domain ftt); free f g as explicit parameters; HOL case as a Lean match on the reviewed checkPartialCol."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "check_col_INJ",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs.lean",
+    "lean_name": "checkColInjCompose",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.7) against reg_allocProofScript.sml:3127-3150 (reg_allocProof composition form): INJ g UNIV UNIV ==> case check_col f s of NONE => check_col (g o f) s = NONE | SOME (t,ft) => ?gt. check_col (g o f) s = SOME (t,gt) /\\ domain gt = IMAGE g (domain ft), s : num_set, free f g s explicit; reviewed checkCol (ALL_DISTINCT as Pairwise ≠)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "check_clash_tree_INJ",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs.lean",
+    "lean_name": "checkClashTreeInj",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.7) against reg_allocProofScript.sml:3152-3205: !ct f g live flive glive. INJ g UNIV UNIV /\\ domain glive = IMAGE g (domain flive) ==> case check_clash_tree f ct live flive of NONE => check_clash_tree (g o f) ct live glive = NONE | SOME (liveout,fliveout) => ?gliveout. check_clash_tree (g o f) ct live glive = SOME (liveout,gliveout) /\\ domain gliveout = IMAGE g (domain fliveout); induction on ct as HOL, Delta via the composition check_partial_col_INJ with domain_numset_list_delete and injective image of difference, Set/Branch fixed via check_col_INJ."
   }
 ]
