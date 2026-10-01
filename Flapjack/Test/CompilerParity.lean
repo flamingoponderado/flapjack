@@ -1,3 +1,4 @@
+import Flapjack.Test.WordToStackCompileLookupParity
 import Flapjack.Test.WordAllocGetHeuristicsParity
 import Flapjack.Test.RegAllocSortedMemParity
 import Flapjack.Test.ParmoveAllDistinctStepsParity

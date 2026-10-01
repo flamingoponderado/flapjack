@@ -1,0 +1,4 @@
+lookup_duplicate_first=(T,T,3,6,3,[2; 0])
+lookup_later_threaded=(T,T,3,6,4,7,[2; 2; 0])
+lookup_missing=T
+lookup_bool_first=T

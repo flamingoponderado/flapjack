@@ -3149,3 +3149,7 @@ run_probe reg_alloc_sort_moves_probeScript.sml reg_alloc_sort_moves_probe.out \
 run_probe parmove_all_distinct_steps_probeScript.sml parmove_all_distinct_steps_probe.out \
   adrtc_scratch adrtc_first adrtc_middle adrtc_last \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe word_to_stack_compile_lookup_probeScript.sml word_to_stack_compile_lookup_probe.out \
+  lookup_duplicate_first lookup_later_threaded lookup_missing lookup_bool_first \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
