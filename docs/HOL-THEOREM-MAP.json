@@ -49343,18 +49343,36 @@
     "reviewer": "flapjack-opus2 source comparison 2026-10-01 (re-tag after bead flapjack-pxn.18.5.15.3.38.1 tagged holEl against the pinned HOL submodule): linear_scanProofScript.sml:5867-5919, sp_inverts both ways and the two EVERY hypotheses; extract_coloration invbij l acc sth = (M_success col, sth), the per-r if MEM (the 0 (lookup r bij)) l case split with EL (the tagged miscThe), and domain col SUBSET domain bij UNION domain acc as ∀ x, sptDomain col x → sptDomain bij x ∨ sptDomain acc x. HOL EL is the exact holEl, int num_map the reviewed Spt Int carrier with sptLookup = lookup, EVERY (\\r. P r) l is ∀ r ∈ l, P r, r IN domain s is sptDomain s r, LENGTH is List.length, record update sth with <|..|> is Lean structure update. Statement compared clause by clause with the source; kernel-checked; no extra premise."
   },
   {
-    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
-    "hol_name": "ssa_cc_trans_exp_correct",
-    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAExpressions.lean",
-    "lean_name": "ssaCcTransExpCorrect",
-    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support_relation": [
-      "WordSemStateFiniteExact.fpRegs",
-      "WordSemStateFiniteExact.store"
-    ],
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Accessors.lean",
+    "lean_name": "wordSemGetWord",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "get_word_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol-a source comparison 2026-10-02, bead flapjack-60qg: compared word_allocProofScript.sml6256-6294 and replayed its literal proof with six inferred type captures. Retains all st/w/cst/ssa/na/res quantifiers, source word_exp success, full word_state_eq_rel and ssa_locals_rel, concluding actual native word_exp on ssa_cc_trans_exp succeeds with identical result. HOL st/cst share alpha/beta/gamma and Lean shares positive BitVec width and universe-0 C/F. Reviewed constructor-identical expressions including nested Op arguments, both expression-valued Shift operands and fixed 5-bit Store Temp payload; Spt locals/SSA are tree maps, only fpRegs/store translate HOL finite maps. Same-module imported-owner witness establishes real broad/exact roundtrip. Lean proof identifies native SSA renamer with reviewed applyColourExp at optionLookup and derives its scoped local transport from SSA locals without adding premises; success/store/memory/domain behavior remains actual native wordExp. No target evaluation or extra simulation/post-state assumption."
+    "reviewer": "flapjack-sol-c source comparison (2026-10-02; bead flapjack-h29l.12): original wordSemScript.sml:278-280 specifies only the Word equation, with no Loc clause. Lean returns the original word on Word and an opaque function of both location fields on Loc; no concrete value, equality across locations, or equality with theWord is imposed. This follows accepted HOL HD unspecified-value rendering and ports the partial specification, not a claimed concrete Loc outcome. WordLocW preserves Word and Loc num num; BitVec width with [NeZero width] records words_as_type_indexed_bitvec. Existing Word-guarded accessor/evaluator paths remain independent of the opaque completions; no additional premise or changed error behavior."
   },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Accessors.lean",
+    "lean_name": "wordSemTheWord",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "theWord_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison (2026-10-02; bead flapjack-h29l.12): original wordSemScript.sml:42-44 specifies only the Word equation, with no Loc clause. Lean returns the original word on Word and an opaque function of both location fields on Loc; no concrete value, equality across locations, or equality with get_word is imposed. This follows accepted HOL HD unspecified-value rendering and ports the partial specification, not a claimed concrete Loc outcome. WordLocW preserves Word and Loc num num; BitVec width with [NeZero width] records words_as_type_indexed_bitvec. Existing Word-guarded accessor/evaluator paths remain independent of the opaque completions; no additional premise or changed error behavior."
+  },
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "ssa_cc_trans_exp_correct",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAExpressions.lean",
+  "lean_name": "ssaCcTransExpCorrect",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "WordSemStateFiniteExact.fpRegs",
+    "WordSemStateFiniteExact.store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol-a source comparison 2026-10-02, bead flapjack-60qg: compared word_allocProofScript.sml6256-6294 and replayed its literal proof with six inferred type captures. Retains all st/w/cst/ssa/na/res quantifiers, source word_exp success, full word_state_eq_rel and ssa_locals_rel, concluding actual native word_exp on ssa_cc_trans_exp succeeds with identical result. HOL st/cst share alpha/beta/gamma and Lean shares positive BitVec width and universe-0 C/F. Reviewed constructor-identical expressions including nested Op arguments, both expression-valued Shift operands and fixed 5-bit Store Temp payload; Spt locals/SSA are tree maps, only fpRegs/store translate HOL finite maps. Same-module imported-owner witness establishes real broad/exact roundtrip. Lean proof identifies native SSA renamer with reviewed applyColourExp at optionLookup and derives its scoped local transport from SSA locals without adding premises; success/store/memory/domain behavior remains actual native wordExp. No target evaluation or extra simulation/post-state assumption."
+},
 {
   "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
   "hol_name": "fix_inconsistencies_props",

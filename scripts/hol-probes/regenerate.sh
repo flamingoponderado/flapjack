@@ -1929,7 +1929,7 @@ run_probe word_sem_carriers_probeScript.sml word_sem_carriers_probe.out \
 # The wordSem accessor probe observes word_cmp, is_fwd_ptr, word_exp and the
 # state accessors over record updates of a free state (bead flapjack-h29l.2).
 run_probe word_sem_accessors_probeScript.sml word_sem_accessors_probe.out \
-  cmp_equal exp_op fix_clock var_imm_reg \
+  cmp_equal exp_op fix_clock var_imm_reg the_word_word1 the_word_word64 get_word_word32 get_word_word80 \
   "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 
@@ -3717,6 +3717,10 @@ run_probe ssa_setup_props_probeScript.sml ssa_setup_props_probe.out \
 run_probe word_to_stack_comp_no_shmemop_probeScript.sml word_to_stack_comp_no_shmemop_probe.out \
   cs_full cs_conf_type cs_perf_type cs_source_type cs_bitmap_type cs_frame_type cs_target_type cs_residual_type cs_nested_1 cs_if_1 cs_ignored_1 cs_nested_32 cs_if_32 cs_ignored_32 cs_nested_64 cs_if_64 cs_ignored_64 cs_nested_80 cs_if_80 cs_ignored_80 \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe machine_ieee_fp64_declarations_probeScript.sml machine_ieee_fp64_declarations_probe.out \
+  float_to_fp64_def fp64_abs_def fp64_add_def fp64_add_with_flags_def fp64_bottom_def fp64_compare_def fp64_div_def fp64_div_with_flags_def fp64_equal_def fp64_greaterEqual_def fp64_greaterThan_def fp64_isFinite_def fp64_isInfinite_def fp64_isIntegral_def fp64_isNan_def fp64_isNormal_def fp64_isSignallingNan_def fp64_isSubnormal_def fp64_isZero_def fp64_lessEqual_def fp64_lessThan_def fp64_mul_add_def fp64_mul_add_with_flags_def fp64_mul_def fp64_mul_sub_def fp64_mul_sub_with_flags_def fp64_mul_with_flags_def fp64_negInf_def fp64_negMin_def fp64_negZero_def fp64_negate_def fp64_posInf_def fp64_posMin_def fp64_posZero_def fp64_roundToIntegral_def fp64_sqrt_def fp64_sqrt_with_flags_def fp64_sub_def fp64_sub_with_flags_def fp64_to_float_def fp64_to_int_def fp64_to_real_def fp64_to_value_def fp64_top_def int_to_fp64_def real_to_fp64_def real_to_fp64_with_flags_def \
+  "$repo_dir/HOL/src/floating-point/machine_ieeeScript.sml" "$hol_dir/src/floating-point"
 
 run_probe ssa_rename_move_preserve_probeScript.sml ssa_rename_move_preserve_probe.out \
   rms_full rms_type_st rms_type_cst rms_type_ssa rms_type_na rms_type_ls \
