@@ -3110,3 +3110,19 @@ run_probe word_copy_codec_domain_probeScript.sml word_copy_codec_domain_probe.ou
 run_probe reg_alloc_initialization_probeScript.sml reg_alloc_initialization_probe.out \
   ira_adj ira_tag ira_degrees ira_coalesced ira_move_related ira_preserved ira_failure ira_zero \
   "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe parmove_preservation_shape_probeScript.sml parmove_preservation_shape_probe.out \
+  pm_audit_not_use_temp_before_assign_append pm_audit_not_use_temp_before_assign_insert pm_audit_not_use_temp_before_assign_thm pm_audit_step_not_use_temp_before_assign pm_audit_steps_not_use_temp_before_assign pm_audit_pmov_not_use_temp_before_assign pm_audit_parmove_not_use_temp_before_assign pm_audit_ALL_DISTINCT_step pm_audit_ALL_DISTINCT_steps pm_audit_ALL_DISTINCT_pmov pm_audit_ALL_DISTINCT_parmove pm_audit_state_to_list_def pm_audit_step_preserves_moves pm_audit_steps_preserves_moves pm_audit_pmov_preserves_moves pm_audit_parmove_preserves_moves pm_audit_map_state_def pm_audit_inj_on_state_def pm_audit_step_inj_on_state pm_audit_steps_inj_on_state pm_audit_step_MAP_INJ pm_audit_fstep_MAP_INJ pm_audit_pmov_MAP_INJ pm_audit_parmove_MAP_INJ pm_audit_type_state_to_list pm_audit_type_map_state pm_audit_type_inj_on_state \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe parmove_all_distinct_step_probeScript.sml parmove_all_distinct_step_probe.out \
+  ads_remove ads_start ads_extend ads_save_cycle ads_emit_head ads_emit_last ads_save_none ads_emit_scratch ads_bool ads_scratch_start ads_scratch_save \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe parmove_state_to_list_probeScript.sml parmove_state_to_list_probe.out \
+  stl_empty stl_pending stl_active stl_emitted stl_order stl_duplicates stl_large stl_bool stl_pairs \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe parmove_temp_steps_probeScript.sml parmove_temp_steps_probe.out \
+  ptr_remove ptr_start ptr_extend ptr_save_cycle ptr_emit_head ptr_emit_last ptr_save_none ptr_emit_scratch ptr_bool ptr_refl_empty ptr_refl_scratch ptr_cycle_three \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
