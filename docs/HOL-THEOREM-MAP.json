@@ -47069,5 +47069,734 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-a source comparison 2026-10-01 flapjack-vki8: full original physical-target setVar5557-5571/list-insert5590-5609 wrappers, literal original proofs freshly replayed. HOL inferred st:(alpha,beta,gamma) and cst:(alpha,delta,epsilon) retained with four independent code/FFI Type0 binders and shared positive word width. All original mapOK/localsRel/physical-target premises retained, including EVERY and exact list length for list wrapper; full native locals relation conclusion unchanged. Native Spt locals and canonical alistInsert/setVar. Only standard BitVec width/NeZero word translation; no finite-map fields traversed and no extra premise, evaluation, result or simulated output assumed. Kernel wrappers use accepted physical insertion and full list induction; stronger untagged generic helper does not weaken the public statement. No executed compiler change. Original proof capture is regression evidence, not cross-language equivalence. Full gates and delivery tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAMergeMoveLookups.lean",
+    "lean_name": "mergeMovesFrame3",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "merge_moves_frame3",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison (2026-10-01; flapjack-wma3): full HOL lines 4720-4745, arbitrary list/start/native num_map carriers and key; original absent-list OR outside-original-intersection guard and both unchanged lookup equalities. No allocation, well-formedness, distinctness or counter premise. Tail-first recursive definition and domain preservation from full frame2 match the source proof; consumer at line 5299. Literal original full frame2/frame3 proof replay and Lean kernel proof."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/LabelHandlers.lean",
+    "lean_name": "loopToWordCompLInvariant",
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "comp_l_invariant",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison (2026-10-01; flapjack-goq9): full source 2001-2007. Original comp equality premise and unchanged first label; arbitrary target program/final labels, no extra premise. Exact native HolLoopProg/WordLangProgHOL/Spt Nat and List carriers; only positive type-indexed word to BitVec width translation, NeZero retained. Reviewed good_handlers_def Bool=true corresponds to HOL predicate. Threaded output label equations transport ownership rather than assuming it. All four literal complete original proofs replayed; typed widths1/64/80 nested whole outputs and actual source theorem applications, duplicate-owner compiled program and false-owner sentinel have matching kernel fixtures. No executable compiler change."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/LabelHandlers.lean",
+    "lean_name": "loopToWordCompSndLE",
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "loop_to_word_comp_SND_LE",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison (2026-10-01; flapjack-goq9): full source 2039-2050. Original comp equality premise and nondecreasing second label; arbitrary labels/counter, no bound or freshness premise. Exact native HolLoopProg/WordLangProgHOL/Spt Nat and List carriers; only positive type-indexed word to BitVec width translation, NeZero retained. Reviewed good_handlers_def Bool=true corresponds to HOL predicate. Threaded output label equations transport ownership rather than assuming it. All four literal complete original proofs replayed; typed widths1/64/80 nested whole outputs and actual source theorem applications, duplicate-owner compiled program and false-owner sentinel have matching kernel fixtures. No executable compiler change."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/LabelHandlers.lean",
+    "lean_name": "loopToWordGoodHandlersComp",
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "good_handlers_comp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison (2026-10-01; flapjack-goq9): full source 2009-2018. Unconditional good_handlers on compiled FST at original initial FST; both nested Call continuations and ignored tail handler preserved. Exact native HolLoopProg/WordLangProgHOL/Spt Nat and List carriers; only positive type-indexed word to BitVec width translation, NeZero retained. Reviewed good_handlers_def Bool=true corresponds to HOL predicate. Threaded output label equations transport ownership rather than assuming it. All four literal complete original proofs replayed; typed widths1/64/80 nested whole outputs and actual source theorem applications, duplicate-owner compiled program and false-owner sentinel have matching kernel fixtures. No executable compiler change."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/LabelHandlers.lean",
+    "lean_name": "loopToWordGoodHandlers",
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "loop_to_word_good_handlers",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison (2026-10-01; flapjack-goq9): full source 2020-2035. Original compile_prog equality premise and EVERY per-owner result on arbitrary list, rendered List.all=true; no uniqueness/arity/code/result assumption. Exact native HolLoopProg/WordLangProgHOL/Spt Nat and List carriers; only positive type-indexed word to BitVec width translation, NeZero retained. Reviewed good_handlers_def Bool=true corresponds to HOL predicate. Threaded output label equations transport ownership rather than assuming it. All four literal complete original proofs replayed; typed widths1/64/80 nested whole outputs and actual source theorem applications, duplicate-owner compiled program and false-owner sentinel have matching kernel fixtures. No executable compiler change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "remove_colours_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Colouring.lean",
+    "lean_name": "removeColours",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.9) against reg_allocScript.sml:874-891: three clauses in HOL order ((ls,[]) => return []; ([],ks) => return ks; (x::xs,ks) => cx <- node_tag_sub x; r <- case cx of Fixed c => remove_colours xs (FILTER (\\x. x <> c) ks) | _ => remove_colours xs ks; return r), first-match priority as HOL's overlapping patterns; HOL type num list -> num list -> ra_state -> (num list, state_exn) exc # ra_state. HOL do-blocks as accepted bind/ignoreBind/ret; exception type state_exn as in the fresh HOL type_of; reviewed accessors (.10.5.2) and stExForeach."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "assign_Atemp_tag_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Colouring.lean",
+    "lean_name": "assignAtempTag",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.9) against reg_allocScript.sml:896-919: node_tag_sub n; Atemp => adj_ls_sub n; remove_colours adjs ks; [] => update_node_tag n Stemp | x::_ => prefs n ks; NONE => Fixed x | SOME y => Fixed y; other tags return (); prefs at HOL type num -> num list -> ra_state -> (num option, state_exn) exc # ra_state. HOL do-blocks as accepted bind/ignoreBind/ret; exception type state_exn as in the fresh HOL type_of; reviewed accessors (.10.5.2) and stExForeach."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "assign_Atemps_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Colouring.lean",
+    "lean_name": "assignAtemps",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.9) against reg_allocScript.sml:923-936: get_dim; ls <- return (FILTER (\\n. n < d) ls); ks <- return (GENLIST (\\x.x) k); cs <- return (GENLIST (\\x.x) d); st_ex_FOREACH ls (assign_Atemp_tag ks prefs); st_ex_FOREACH cs (assign_Atemp_tag ks prefs); GENLIST (\\x.x) n as List.range n, each return-bind kept literally. HOL do-blocks as accepted bind/ignoreBind/ret; exception type state_exn as in the fresh HOL type_of; reviewed accessors (.10.5.2) and stExForeach."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "first_match_col_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Colouring.lean",
+    "lean_name": "firstMatchCol",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.9) against reg_allocScript.sml:994-1003: [] => return NONE; x::xs => node_tag_sub x; Fixed m => if MEM m ks then return (SOME m) else first_match_col ks xs | _ => first_match_col ks xs. HOL do-blocks as accepted bind/ignoreBind/ret; exception type state_exn as in the fresh HOL type_of; reviewed accessors (.10.5.2) and stExForeach."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "raise_Fail_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/ExceptionFunctions.lean",
+    "lean_name": "raiseFail",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.9.2) against reg_allocScript.sml:106 define_monad_exception_functions ``:state_exn`` ``:ra_state`` (ml_monadBaseLib.sml:186-307), fresh HOL print_thm: !e1. raise_Fail e1 = (\\state. (M_failure (Fail e1), state)) at result type 'a; Fail payload as the reviewed StateException HolChar list. Name provenance via the bounded monad_exception_declarations recognizer (.10.5.9.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "raise_Subscript_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/ExceptionFunctions.lean",
+    "lean_name": "raiseSubscript",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.9.2) against reg_allocScript.sml:106 define_monad_exception_functions ``:state_exn`` ``:ra_state`` (ml_monadBaseLib.sml:186-307), fresh HOL print_thm: raise_Subscript = (\\state. (M_failure Subscript, state)) at result type 'a. Name provenance via the bounded monad_exception_declarations recognizer (.10.5.9.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "handle_Fail_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/ExceptionFunctions.lean",
+    "lean_name": "handleFail",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.9.2) against reg_allocScript.sml:106 define_monad_exception_functions ``:state_exn`` ``:ra_state`` (ml_monadBaseLib.sml:186-307), fresh HOL print_thm: !x f. handle_Fail x f = (\\state. case x state of (M_success y, state) => (M_success y, state) | (M_failure (Fail e1), state) => f e1 state | (M_failure Subscript, state) => (M_failure Subscript, state)); the inner state is the one returned by x. Name provenance via the bounded monad_exception_declarations recognizer (.10.5.9.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "handle_Subscript_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/ExceptionFunctions.lean",
+    "lean_name": "handleSubscript",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.9.2) against reg_allocScript.sml:106 define_monad_exception_functions ``:state_exn`` ``:ra_state`` (ml_monadBaseLib.sml:186-307), fresh HOL print_thm: !x f. handle_Subscript x f = (\\state. case x state of (M_success y, state) => (M_success y, state) | (M_failure (Fail e1), state) => (M_failure (Fail e1), state) | (M_failure Subscript, state) => f state). Name provenance via the bounded monad_exception_declarations recognizer (.10.5.9.1)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "assign_Stemp_tag_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/StempColouring.lean",
+    "lean_name": "assignStempTag",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.10) against reg_allocScript.sml:959-980: node_tag_sub n; Stemp => adj_ls_sub n; tags <- st_ex_MAP node_tag_sub adjs; let bads = sort (\\x y. x <= y) (MAP tag_col tags) in c <- prefs n bads; NONE => update_node_tag n (Fixed (unbound_colour k bads)) | SOME y => Fixed y; other tags return (); probe type row confirms num -> (num -> num list -> ra_state -> (num option, state_exn) exc # ra_state) -> num -> ra_state -> (unit, state_exn) exc # ra_state. HOL do-blocks as accepted bind/ret; exception type state_exn; reviewed accessors (.10.5.2), stExMap/stExForeach, MlList.sort, handleSubscript (.10.5.9.2)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "assign_Stemps_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/StempColouring.lean",
+    "lean_name": "assignStemps",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.10) against reg_allocScript.sml:984-990: get_dim; cs <- return (GENLIST (\\x.x) d); st_ex_FOREACH cs (assign_Stemp_tag k prefs); GENLIST (\\x.x) d as List.range d. HOL do-blocks as accepted bind/ret; exception type state_exn; reviewed accessors (.10.5.2), stExMap/stExForeach, MlList.sort, handleSubscript (.10.5.9.2)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "neg_first_match_col_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/StempColouring.lean",
+    "lean_name": "negFirstMatchCol",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.10) against reg_allocScript.sml:1419-1430: [] => return NONE; x::xs => node_tag_sub x; Fixed m => if MEM m bads \\/ m < k then recurse else return (SOME m) | _ => recurse. HOL do-blocks as accepted bind/ret; exception type state_exn; reviewed accessors (.10.5.2), stExMap/stExForeach, MlList.sort, handleSubscript (.10.5.9.2)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "neg_biased_pref_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/StempColouring.lean",
+    "lean_name": "negBiasedPref",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.10) against reg_allocScript.sml:1432-1446: get_dim; if n < d then let vs = case lookup n mtable of NONE => [] | SOME vs => vs in handle_Subscript (neg_first_match_col k bads vs) (return NONE) else return NONE; mtable : num list num_map as Spt (List Nat), lookup as sptLookup; probe type row confirms num -> num list num_map -> num -> num list -> ra_state -> (num option, state_exn) exc # ra_state. HOL do-blocks as accepted bind/ret; exception type state_exn; reviewed accessors (.10.5.2), stExMap/stExForeach, MlList.sort, handleSubscript (.10.5.9.2)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "remove_dead_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/RemoveDead.lean",
+    "lean_name": "removeDead",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.1) against word_allocScript.sml:891-1001, all 19 clauses in HOL order with the final catchall (prog, get_live prog live lt, nlive): Move FILTER (lookup x live = SOME ()) / Skip if empty / FOLDR delete live (MAP FST ls) then numset_list_insert (MAP SND ls); Inst via remove_dead_inst/get_live_inst; Get/OpCurrHeap (CurrHeap filtered)/LocValue dead-register Skip; Set (Var r) store-dead Skip else insert r and cons store, other Set via get_live with []; Seq right-then-left with Skip elision; MustTerminate; If both branches, union, Reg/Imm liveset, FILTER (MEM s e3_nlive) e2_nlive, both-Skip elision; returning Call (cutset union args, handler body FST, (live_set,[])); Call NONE/Alloc/Raise/Return/Break/Continue get_live with []; Loop with (names,exit_names)::lt, body FST, (names,[]). HOL type alpha prog -> num_set -> store_name list -> (num_set # num_set) list -> alpha prog # num_set # store_name list (fresh type_of). Sole carrier translation words_as_type_indexed_bitvec ('a prog -> WordLangProgHOL (BitVec width), [NeZero width]); store_name list as List WordStoreHOL; HOL `s = Skip` decided by matching .skip."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "remove_dead_prog_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/RemoveDead.lean",
+    "lean_name": "removeDeadProg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.1) against word_allocScript.sml:1004-1006: remove_dead_prog prog = FST (remove_dead prog LN [] []). Sole carrier translation words_as_type_indexed_bitvec ('a prog -> WordLangProgHOL (BitVec width), [NeZero width]); store_name list as List WordStoreHOL; HOL `s = Skip` decided by matching .skip."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "live_store_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/RemoveDead.lean",
+    "lean_name": "liveStoreRel",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "sstore",
+      "tstore"
+    ],
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.1) against word_allocProofScript.sml:3492-3497 (HOL type 'a list -> ('a |-> 'b) -> ('a |-> 'b) -> bool): live_store_rel nlive sstore tstore <=> !n. n NOTIN set nlive ==> FLOOKUP sstore n = FLOOKUP tstore n; source fmap_as_finite_support_relation: the two standalone HOL finite maps are the canonical HolFiniteMapExact carrier (bare entries sstore, tstore), FLOOKUP as .lookup, set nlive membership as list membership; polymorphic alpha beta."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "live_store_rel_less",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/RemoveDead.lean",
+    "lean_name": "liveStoreRelLess",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "st",
+      "tt"
+    ],
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.6) against word_allocProofScript.sml:3499-3506: live_store_rel ls st tt /\\ set ls SUBSET set ls' ==> live_store_rel ls' st tt; SUBSET as membership inclusion. Source fmap_as_finite_support_relation: standalone HOL finite maps as canonical HolFiniteMapExact (bare entries), FLOOKUP as .lookup; polymorphic."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "live_store_rel_FLOOKUP_store",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/RemoveDead.lean",
+    "lean_name": "liveStoreRelFlookupStore",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "sstore",
+      "tstore"
+    ],
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.6) against word_allocProofScript.sml:3508-3514: live_store_rel ls sstore tstore /\\ s NOTIN set ls ==> FLOOKUP tstore s = FLOOKUP sstore s. Source fmap_as_finite_support_relation: standalone HOL finite maps as canonical HolFiniteMapExact (bare entries), FLOOKUP as .lookup; polymorphic."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "nlive_store_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/RemoveDead.lean",
+    "lean_name": "nliveStore",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.6) against word_allocProofScript.sml:3516-3527: Op _ ls => EVERY (nlive_store nlive) ls (over the attached argument list); Lookup s => s NOTIN set nlive; Load e => recurse; Shift _ e1 e2 => both; catchall T. 12-row original probe word_alloc_nlive_store_probe + kernel replay."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "strong_locals_rel_I_get_var",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/RemoveDead.lean",
+    "lean_name": "strongLocalsRelIGetVar",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.6) against word_allocProofScript.sml:3529-3535: get_var x st = SOME v /\\ strong_locals_rel I (x INSERT live) st.locals t ==> get_var x (st with <|locals:=t;store:=tstore|>) = SOME v. Over the faithful WordSemStateFiniteExact carrier (fmap_as_finite_support_relation on fpRegs/store, words_as_type_indexed_bitvec); HOL I as id, set operations as predicates, free variables as explicit binders; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "strong_locals_rel_I_get_var'",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/RemoveDead.lean",
+    "lean_name": "strongLocalsRelIGetVar'",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.6) against word_allocProofScript.sml:3537-3543: as strong_locals_rel_I_get_var with st with <|locals:=t|>. Over the faithful WordSemStateFiniteExact carrier (fmap_as_finite_support_relation on fpRegs/store, words_as_type_indexed_bitvec); HOL I as id, set operations as predicates, free variables as explicit binders; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "strong_locals_rel_I_word_exp",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/RemoveDead.lean",
+    "lean_name": "strongLocalsRelIWordExp",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.6) against word_allocProofScript.sml:3545-3610: !st exp res. word_exp st exp = SOME res /\\ strong_locals_rel I (domain (union (get_live_exp exp) live)) st.locals t /\\ live_store_rel nlive st.store tstore /\\ nlive_store nlive exp ==> word_exp (st with <|locals:=t;store:=tstore|>) exp = SOME res; free t live nlive tstore leading; proof by word_exp_ind cases (Var via the live set, Lookup via live_store_rel, Load, Op via the_words/big_union domain, Shift). Over the faithful WordSemStateFiniteExact carrier (fmap_as_finite_support_relation on fpRegs/store, words_as_type_indexed_bitvec); HOL I as id, set operations as predicates, free variables as explicit binders; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "strong_locals_rel_insert_notin",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/RemoveDead.lean",
+    "lean_name": "strongLocalsRelInsertNotin",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.6) against word_allocProofScript.sml:3612-3619: strong_locals_rel f live s t /\\ n NOTIN live ==> strong_locals_rel f live (insert n v s) t; generic payload."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "strong_locals_rel_I_get_vars'",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/RemoveDead.lean",
+    "lean_name": "strongLocalsRelIGetVars'",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.6) against word_allocProofScript.sml:3621-3638: !ls live st t vs. (!x. MEM x ls ==> x IN live) /\\ strong_locals_rel I live st.locals t /\\ get_vars ls st = SOME vs ==> get_vars ls (st with locals:=t) = SOME vs. Over the faithful WordSemStateFiniteExact carrier (fmap_as_finite_support_relation on fpRegs/store, words_as_type_indexed_bitvec); HOL I as id, set operations as predicates, free variables as explicit binders; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "strong_locals_rel_I_cut_envs",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/RemoveDead.lean",
+    "lean_name": "strongLocalsRelICutEnvs",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.6) against word_allocProofScript.sml:3640-3654: strong_locals_rel I (domain (FST cutset) UNION domain (SND cutset)) st.locals t /\\ cut_envs cutset st.locals = SOME x ==> cut_envs cutset t = SOME x; tree equality via spt_eq_thm with wf_inter (newly tagged sptWfInter). Over the faithful WordSemStateFiniteExact carrier (fmap_as_finite_support_relation on fpRegs/store, words_as_type_indexed_bitvec); HOL I as id, set operations as predicates, free variables as explicit binders; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "strong_locals_rel_I_cut_env",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/RemoveDead.lean",
+    "lean_name": "strongLocalsRelICutEnv",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.6) against word_allocProofScript.sml:3656-3666: as cut_envs for cut_env. Over the faithful WordSemStateFiniteExact carrier (fmap_as_finite_support_relation on fpRegs/store, words_as_type_indexed_bitvec); HOL I as id, set operations as predicates, free variables as explicit binders; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "get_vars_eq",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/RemoveDead.lean",
+    "lean_name": "getVarsEq",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.6) against word_allocProofScript.sml:3668-3674: set ls SUBSET domain st.locals ==> ?z. get_vars ls st = SOME z /\\ z = MAP (\\x. THE (lookup x st.locals)) ls; THE as the tagged holThe (optionScript THE_DEF). Over the faithful WordSemStateFiniteExact carrier (fmap_as_finite_support_relation on fpRegs/store, words_as_type_indexed_bitvec); HOL I as id, set operations as predicates, free variables as explicit binders; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "get_vars_exists",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/RemoveDead.lean",
+    "lean_name": "getVarsExists",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.6) against word_allocProofScript.sml:3676-3683: !ls. (?z. get_vars ls st = SOME z) <=> set ls SUBSET domain st.locals. Over the faithful WordSemStateFiniteExact carrier (fmap_as_finite_support_relation on fpRegs/store, words_as_type_indexed_bitvec); HOL I as id, set operations as predicates, free variables as explicit binders; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "strong_locals_rel_I_insert_insert",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/RemoveDead.lean",
+    "lean_name": "strongLocalsRelIInsertInsert",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.6) against word_allocProofScript.sml:3685-3692: strong_locals_rel I (live DELETE p) A B /\\ v = v' ==> strong_locals_rel I live (insert p v A) (insert p v' B); DELETE as conjunction with k <> p, generic payload."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "st_eq",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/RemoveDead.lean",
+    "lean_name": "stEq",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.6) against word_allocProofScript.sml:3694-3700: rst with <|locals:=t;store:=tstore|> = rst with <|locals:=t';store:=tstore'|> <=> t = t' /\\ tstore = tstore'. Over the faithful WordSemStateFiniteExact carrier (fmap_as_finite_support_relation on fpRegs/store, words_as_type_indexed_bitvec); HOL I as id, set operations as predicates, free variables as explicit binders; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "live_store_rel_NIL",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/RemoveDead.lean",
+    "lean_name": "liveStoreRelNil",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "sstore",
+      "tstore"
+    ],
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.6) against word_allocProofScript.sml:3702-3708: live_store_rel [] sstore tstore <=> sstore = tstore (fmap_eq_flookup as structure extensionality of the canonical carrier). Source fmap_as_finite_support_relation: standalone HOL finite maps as canonical HolFiniteMapExact (bare entries), FLOOKUP as .lookup; polymorphic."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "live_store_rel_refl",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/RemoveDead.lean",
+    "lean_name": "liveStoreRelRefl",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "sstore"
+    ],
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.6) against word_allocProofScript.sml:3710-3714: live_store_rel ls sstore sstore. Source fmap_as_finite_support_relation: standalone HOL finite maps as canonical HolFiniteMapExact (bare entries), FLOOKUP as .lookup; polymorphic."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "with_same_store",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/RemoveDead.lean",
+    "lean_name": "withSameStore",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.6) against word_allocProofScript.sml:3716-3720: st with store := st.store = st. Over the faithful WordSemStateFiniteExact carrier (fmap_as_finite_support_relation on fpRegs/store, words_as_type_indexed_bitvec); HOL I as id, set operations as predicates, free variables as explicit binders; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "with_same_locals",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/RemoveDead.lean",
+    "lean_name": "withSameLocals",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.6) against word_allocProofScript.sml:3722-3726: st with locals := st.locals = st. Over the faithful WordSemStateFiniteExact carrier (fmap_as_finite_support_relation on fpRegs/store, words_as_type_indexed_bitvec); HOL I as id, set operations as predicates, free variables as explicit binders; no extra premise."
+  },
+  {
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "wf_inter",
+    "lean_path": "Flapjack/Misc/Sptree/Wf.lean",
+    "lean_name": "sptWfInter",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.6) against HOL sptreeScript.sml:353-358: !m1 m2. wf (inter m1 m2); induction as HOL with wf_mk_BN/wf_mk_BS (private wfMkBN/wfMkBS); generic payloads."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_remove_dead_Loop_helper",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateRemoveDead/Loop.lean",
+    "lean_name": "evaluateRemoveDeadLoopHelper",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.2) against word_allocProofScript.sml:3728-3898: same 14 universally quantified variables in HOL order; premises strong_locals_rel I (domain livein) st.locals t, live_store_rel nlivein st.store tstore, evaluate (Loop names body exit_names, st) = (res,rst), flat_exp_conventions body, remove_dead (Loop ...) live nlive lt = (prog',livein,nlivein), nlivein = [], res <> SOME Error, and the universally quantified body statement for remove_dead body names [] ((names,exit_names)::lt) with its NONE/Break/Continue/other case expression; conclusion ?t' tstore'. evaluate (prog', st with <|locals:=t;store:=tstore|>) = (res, rst with <|locals:=t';store:=tstore'|>) /\\ case res of ... (spelled by the untagged Flapjack motive removeDeadPost, same four branches; oEL as sptOel, I as id). Proof by clock induction as HOL (completeInduct_on st.clock), using strong_locals_rel_I_cut_env, live_store_rel_NIL/refl and the reviewed evaluate_def/evaluate_clock; no extra premise. Over WordSemStateFiniteExact (fpRegs/store relation + words qualifiers, same-module witness). Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through the reviewed wordSem evaluate/inst FP rendering; no real rendering is used by this declaration itself.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_remove_dead",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateRemoveDead/Leaves.lean",
+    "lean_name": "evaluateRemoveDead_Skip",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.3.1): HOL Resume evaluate_remove_dead[Skip] (word_allocProofScript.sml:4334) case of the theorem at 3900-3928, i.e. the HOL statement with prog fixed to the Skip constructor, stated as removeDeadGoal (the untagged motive spelling HOL's quantifiers, the six premises strong_locals_rel I (domain livein) st.locals t, live_store_rel nlivein st.store tstore, evaluate, flat_exp_conventions, remove_dead, res <> SOME Error, and the existential conclusion with the removeDeadPost case expression); no IH, no extra premise. Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through wordSem evaluate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_remove_dead",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateRemoveDead/Leaves.lean",
+    "lean_name": "evaluateRemoveDead_Tick",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.3.1): HOL Resume evaluate_remove_dead[Tick] (word_allocProofScript.sml:4347) case of the theorem at 3900-3928, i.e. the HOL statement with prog fixed to the Tick constructor, stated as removeDeadGoal (the untagged motive spelling HOL's quantifiers, the six premises strong_locals_rel I (domain livein) st.locals t, live_store_rel nlivein st.store tstore, evaluate, flat_exp_conventions, remove_dead, res <> SOME Error, and the existential conclusion with the removeDeadPost case expression); no IH, no extra premise. Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through wordSem evaluate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_remove_dead",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateRemoveDead/Leaves.lean",
+    "lean_name": "evaluateRemoveDead_Break",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.3.1): HOL Resume evaluate_remove_dead[Break] (word_allocProofScript.sml:4291) case of the theorem at 3900-3928, i.e. the HOL statement with prog fixed to the Break constructor, stated as removeDeadGoal (the untagged motive spelling HOL's quantifiers, the six premises strong_locals_rel I (domain livein) st.locals t, live_store_rel nlivein st.store tstore, evaluate, flat_exp_conventions, remove_dead, res <> SOME Error, and the existential conclusion with the removeDeadPost case expression); no IH, no extra premise. Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through wordSem evaluate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_remove_dead",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateRemoveDead/Leaves.lean",
+    "lean_name": "evaluateRemoveDead_Continue",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.3.1): HOL Resume evaluate_remove_dead[Continue] (word_allocProofScript.sml:4296) case of the theorem at 3900-3928, i.e. the HOL statement with prog fixed to the Continue constructor, stated as removeDeadGoal (the untagged motive spelling HOL's quantifiers, the six premises strong_locals_rel I (domain livein) st.locals t, live_store_rel nlivein st.store tstore, evaluate, flat_exp_conventions, remove_dead, res <> SOME Error, and the existential conclusion with the removeDeadPost case expression); no IH, no extra premise. Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through wordSem evaluate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_remove_dead",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateRemoveDead/Leaves.lean",
+    "lean_name": "evaluateRemoveDead_Raise",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.3.1): HOL Resume evaluate_remove_dead[Raise] (word_allocProofScript.sml:4320) case of the theorem at 3900-3928, i.e. the HOL statement with prog fixed to the Raise constructor, stated as removeDeadGoal (the untagged motive spelling HOL's quantifiers, the six premises strong_locals_rel I (domain livein) st.locals t, live_store_rel nlivein st.store tstore, evaluate, flat_exp_conventions, remove_dead, res <> SOME Error, and the existential conclusion with the removeDeadPost case expression); no IH, no extra premise. Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through wordSem evaluate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_remove_dead",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateRemoveDead/Leaves.lean",
+    "lean_name": "evaluateRemoveDead_Return",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.3.1): HOL Resume evaluate_remove_dead[Return] (word_allocProofScript.sml:4326) case of the theorem at 3900-3928, i.e. the HOL statement with prog fixed to the Return constructor, stated as removeDeadGoal (the untagged motive spelling HOL's quantifiers, the six premises strong_locals_rel I (domain livein) st.locals t, live_store_rel nlivein st.store tstore, evaluate, flat_exp_conventions, remove_dead, res <> SOME Error, and the existential conclusion with the removeDeadPost case expression); no IH, no extra premise. Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through wordSem evaluate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_remove_dead",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateRemoveDead/Leaves.lean",
+    "lean_name": "evaluateRemoveDead_LocValue",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.3.1): HOL Resume evaluate_remove_dead[LocValue] (word_allocProofScript.sml:4116) case of the theorem at 3900-3928, i.e. the HOL statement with prog fixed to the LocValue constructor, stated as removeDeadGoal (the untagged motive spelling HOL's quantifiers, the six premises strong_locals_rel I (domain livein) st.locals t, live_store_rel nlivein st.store tstore, evaluate, flat_exp_conventions, remove_dead, res <> SOME Error, and the existential conclusion with the removeDeadPost case expression); no IH, no extra premise. Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through wordSem evaluate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_remove_dead",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateRemoveDead/Store.lean",
+    "lean_name": "evaluateRemoveDead_Get",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.3.2): HOL Resume evaluate_remove_dead[Get] (word_allocProofScript.sml:4073) case of the theorem at 3900-3928, i.e. the HOL statement with prog fixed to Get, stated as removeDeadGoal; dead destination/store branch and live branch as HOL (live_store_rel_FLOOKUP_store/_less, strong_locals_rel_I_word_exp/_insert_insert/_insert_notin); no IH, no extra premise. Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through wordSem evaluate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_remove_dead",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateRemoveDead/Store.lean",
+    "lean_name": "evaluateRemoveDead_OpCurrHeap",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.3.2): HOL Resume evaluate_remove_dead[OpCurrHeap] (word_allocProofScript.sml:4090) case of the theorem at 3900-3928, i.e. the HOL statement with prog fixed to OpCurrHeap, stated as removeDeadGoal; dead destination/store branch and live branch as HOL (live_store_rel_FLOOKUP_store/_less, strong_locals_rel_I_word_exp/_insert_insert/_insert_notin); no IH, no extra premise. Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through wordSem evaluate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_remove_dead",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateRemoveDead/Store.lean",
+    "lean_name": "evaluateRemoveDead_Set",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.3.2): HOL Resume evaluate_remove_dead[Set] (word_allocProofScript.sml:4123) case of the theorem at 3900-3928, i.e. the HOL statement with prog fixed to Set, stated as removeDeadGoal; dead destination/store branch and live branch as HOL (live_store_rel_FLOOKUP_store/_less, strong_locals_rel_I_word_exp/_insert_insert/_insert_notin); no IH, no extra premise. Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through wordSem evaluate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_remove_dead",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateRemoveDead/Control.lean",
+    "lean_name": "evaluateRemoveDead_Seq",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.3.5): HOL Resume evaluate_remove_dead[Seq] (word_allocProofScript.sml:4137) case of the theorem at 3900-3928, stated as removeDeadGoal for the fixed constructor with removeDeadGoal hypotheses for its sub-programs only (IHs for both children; Skip elision of either child as HOL); no extra premise. Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through wordSem evaluate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_remove_dead",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateRemoveDead/Control.lean",
+    "lean_name": "evaluateRemoveDead_MustTerminate",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.3.5): HOL Resume evaluate_remove_dead[MustTerminate] (word_allocProofScript.sml:4157) case of the theorem at 3900-3928, stated as removeDeadGoal for the fixed constructor with removeDeadGoal hypotheses for its sub-programs only (IH for the body at the MustTerminate clock/termdep); no extra premise. Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through wordSem evaluate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_remove_dead",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateRemoveDead/Control.lean",
+    "lean_name": "evaluateRemoveDead_If",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.3.5): HOL Resume evaluate_remove_dead[If] (word_allocProofScript.sml:4170) case of the theorem at 3900-3928, stated as removeDeadGoal for the fixed constructor with removeDeadGoal hypotheses for its sub-programs only (IHs for both branches; Reg/Imm operand transport, union live sets and FILTER (MEM s e3_nlive) e2_nlive as HOL); no extra premise. Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through wordSem evaluate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_remove_dead",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateRemoveDead/Control.lean",
+    "lean_name": "evaluateRemoveDead_Loop",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.3.5): HOL Resume evaluate_remove_dead[Loop] (word_allocProofScript.sml:4281) case of the theorem at 3900-3928, stated as removeDeadGoal for the fixed constructor with removeDeadGoal hypotheses for its sub-programs only (IH for the body; the case is evaluate_remove_dead_Loop_helper at the body statement for (names, exit_names)::lt); no extra premise. Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through wordSem evaluate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_remove_dead",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateRemoveDead/StateEffect.lean",
+    "lean_name": "evaluateRemoveDead_Alloc",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.3.7): HOL Resume evaluate_remove_dead[Alloc] (word_allocProofScript.sml:4301) case of the theorem at 3900-3928, i.e. the HOL statement with prog fixed to Alloc, stated as removeDeadGoal; nlive reset to [] so stores are equal (live_store_rel_NIL); allocation register by strong_locals_rel_I_get_var, cut sets by strong_locals_rel_I_cut_envs, and the rest of alloc (push_env/gc/pop_env) reads locals only through the cut, so both sides produce the same state; no IH, no extra premise. Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through wordSem evaluate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_remove_dead",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateRemoveDead/StateEffect.lean",
+    "lean_name": "evaluateRemoveDead_StoreConsts",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.3.7): HOL Resume evaluate_remove_dead[StoreConsts] (word_allocProofScript.sml:4338) case of the theorem at 3900-3928, i.e. the HOL statement with prog fixed to StoreConsts, stated as removeDeadGoal; catch-all clause keeps nlive; address/offset registers by strong_locals_rel_I_get_var; the written/unset registers re-establish strong_locals_rel on live as HOL (lookup_insert/lookup_delete); store unchanged; no IH, no extra premise. Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through wordSem evaluate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_remove_dead",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateRemoveDead/StateEffect.lean",
+    "lean_name": "evaluateRemoveDead_Install",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.3.7): HOL Resume evaluate_remove_dead[Install] (word_allocProofScript.sml:4352) case of the theorem at 3900-3928, i.e. the HOL statement with prog fixed to Install, stated as removeDeadGoal; catch-all clause keeps nlive; four argument registers by strong_locals_rel_I_get_var, cut by strong_locals_rel_I_cut_env, so the installed locals coincide; store unchanged; no IH, no extra premise. Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through wordSem evaluate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_remove_dead",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateRemoveDead/StateEffect.lean",
+    "lean_name": "evaluateRemoveDead_CodeBufferWrite",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.3.7): HOL Resume evaluate_remove_dead[CodeBufferWrite] (word_allocProofScript.sml:4376) case of the theorem at 3900-3928, i.e. the HOL statement with prog fixed to CodeBufferWrite, stated as removeDeadGoal; catch-all clause keeps nlive; both registers by strong_locals_rel_I_get_var; locals and store unchanged, relation restricted to live (strong_locals_rel_subset); no IH, no extra premise. Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through wordSem evaluate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_remove_dead",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateRemoveDead/StateEffect.lean",
+    "lean_name": "evaluateRemoveDead_DataBufferWrite",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.3.7): HOL Resume evaluate_remove_dead[DataBufferWrite] (word_allocProofScript.sml:4393) case of the theorem at 3900-3928, i.e. the HOL statement with prog fixed to DataBufferWrite, stated as removeDeadGoal; catch-all clause keeps nlive; both registers by strong_locals_rel_I_get_var; locals and store unchanged, relation restricted to live (strong_locals_rel_subset); no IH, no extra premise. Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through wordSem evaluate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_remove_dead",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateRemoveDead/StateEffect.lean",
+    "lean_name": "evaluateRemoveDead_FFI",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.3.7): HOL Resume evaluate_remove_dead[FFI] (word_allocProofScript.sml:4410) case of the theorem at 3900-3928, i.e. the HOL statement with prog fixed to FFI, stated as removeDeadGoal; catch-all clause keeps nlive; four argument registers by strong_locals_rel_I_get_var, cut by strong_locals_rel_I_cut_env so the returned locals coincide; FFI_final flushes both states identically (flush_state_def); no IH, no extra premise. Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through wordSem evaluate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_remove_dead",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateRemoveDead/StateEffect.lean",
+    "lean_name": "evaluateRemoveDead_ShareInst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.3.7): HOL Resume evaluate_remove_dead[ShareInst] (word_allocProofScript.sml:4438) case of the theorem at 3900-3928, i.e. the HOL statement with prog fixed to ShareInst, stated as removeDeadGoal; catch-all clause keeps nlive; flat_exp_conventions makes the address Var or Op Add [Var; Const], so nlive_store holds and strong_locals_rel_I_word_exp transfers it; loads by strong_locals_rel_I_insert_insert, stores by strong_locals_rel_I_get_var; final FFI flushes both states identically; no IH, no extra premise. Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through wordSem evaluate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_remove_dead",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateRemoveDead/Move.lean",
+    "lean_name": "evaluateRemoveDead_Move",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.3.3): HOL Resume evaluate_remove_dead[Move] (word_allocProofScript.sml:3958) case of the theorem at 3900-3928, i.e. the HOL statement with prog fixed to Move, stated as removeDeadGoal; empty filter (Skip) and filtered-move branches as HOL: filtered destinations stay ALL_DISTINCT, filtered sources are read by get_vars_exists/get_vars_eq and strong_locals_rel_I_get_vars', and the first live move to each destination decides both alist_insert lookups (HOL's induction on ls with strong_locals_rel_I_insert_insert/_insert_notin); no IH, no extra premise. Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through wordSem evaluate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_remove_dead",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateRemoveDead/Inst.lean",
+    "lean_name": "evaluateRemoveDead_Inst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.3.4): HOL Resume evaluate_remove_dead[Inst] (word_allocProofScript.sml:4031) case of the theorem at 3900-3928, i.e. the HOL statement with prog fixed to Inst i for every instruction i, stated as removeDeadGoal; HOL unfolds inst_def/remove_dead_inst_def/get_live_inst_def per instruction, here factored through the untagged footprint (instReads/instWrites) and instCongr: removed instructions write only dead registers and change only locals (strong_locals_rel_insert_notin), kept ones read registers in get_live_inst and re-establish strong_locals_rel I on live (strong_locals_rel_I_get_var/_insert_insert); no IH, no extra premise. Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through wordSem evaluate/inst."
   }
 ]
