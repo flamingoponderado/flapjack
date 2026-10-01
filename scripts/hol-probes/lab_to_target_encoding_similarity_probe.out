@@ -1,0 +1,33 @@
+es_line=∀(ls :α line list) (ls' :α line list).
+  LIST_REL (line_similar :α line -> α line -> bool) ls ls' ⇔
+  LIST_REL (line_similar :α line -> α line -> bool)
+    (MAP (enc_line (enc :α asm -> word8 list) (len :num)) ls) ls'
+es_line_types=(ls :α line list)::α line list;(ls' :α line list)::α line list;(len :num)::num;(enc :α asm -> word8 list)::α asm -> word8 list;
+es_initial=∀(code1 :α sec list) (code2 :α sec list) (n :α asm -> word8 list).
+  code_similar (enc_sec_list n code1) code2 ⇔ code_similar code1 code2
+es_initial_types=(code1 :α sec list)::α sec list;(code2 :α sec list)::α sec list;(n :α asm -> word8 list)::α asm -> word8 list;
+es_again=∀(labs :num sptree$num_map sptree$num_map) (ffis :ffiname list) (pos :num)
+    (enc :α asm -> word8 list) (lines :α line list) (acc :α line list)
+    (ok :bool) (lines' :α line list) (ok' :num # bool) (curr :α line list).
+  enc_lines_again labs ffis pos enc lines (acc,ok) = (lines',ok') ⇒
+  LIST_REL (line_similar :α line -> α line -> bool) curr (REVERSE acc) ⇒
+  LIST_REL (line_similar :α line -> α line -> bool) (curr ++ lines) lines'
+es_again_types=(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(ffis :ffiname list)::ffiname list;(pos :num)::num;(enc :α asm -> word8 list)::α asm -> word8 list;(lines :α line list)::α line list;(acc :α line list)::α line list;(ok :bool)::bool;(lines' :α line list)::α line list;(ok' :num # bool)::num # bool;(curr :α line list)::α line list;
+es_sections=∀(pos :num) (labs :num sptree$num_map sptree$num_map) (ffis :ffiname list)
+    (enc :α asm -> word8 list) (code :α sec list) (code1 :α sec list)
+    (ok :bool).
+  enc_secs_again pos labs ffis enc code = (code1,ok) ⇒
+  code_similar code code1
+es_sections_types=(pos :num)::num;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(ffis :ffiname list)::ffiname list;(enc :α asm -> word8 list)::α asm -> word8 list;(code :α sec list)::α sec list;(code1 :α sec list)::α sec list;(ok :bool)::bool;
+es_initial_value=[Section 4
+   [Label 1 2 3; Asm (Asmi (Inst Skip)) [2w; 3w; 4w] 3;
+    LabAsm (Jump (Lab 1 2)) 0w [2w; 3w; 4w] 3]]
+es_again_growth=([Label 1 2 1; Asm (Asmi (Inst Skip)) [6w] 1;
+  LabAsm (Jump (Lab 1 2)) 254w [2w; 3w; 4w] 3],5,F)
+es_again_unchanged=([Asm (Asmi (Inst Skip)) [9w] 4; LabAsm (Jump (Lab 1 2)) 254w [7w] 4],6,F)
+es_again_no_growth=([Asm (Asmi (Inst Skip)) [9w] 4; LabAsm (Jump (Lab 1 2)) 254w [2w; 3w; 4w] 4],
+ 6,T)
+es_sections_value=([Section 4
+    [Label 1 2 1; Asm (Asmi (Inst Skip)) [6w] 1;
+     LabAsm (Jump (Lab 1 2)) 254w [2w; 3w; 4w] 3]; Section 8 []],F)
+es_sections_similar=T
