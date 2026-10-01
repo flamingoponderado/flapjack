@@ -5,7 +5,7 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.Seq
 # `evaluate_stack_swap` `Loop` case
 
 The `Loop` case of `wordPropsScript.sml:2316-2363` `evaluate_stack_swap`
-(proof `wordPropsScript.sml:2533-2650`), with the induction hypotheses of HOL
+(proof `wordPropsScript.sml:2533-2833`), with the induction hypotheses of HOL
 `evaluate_ind`. The untagged helpers are Flapjack proof infrastructure for the
 tagged case.
 -/
@@ -113,7 +113,7 @@ end EvaluateStackSwapLoopWitnesses
 open EvaluateStackSwapLoopWitnesses
 
 /-- HOL `evaluate_stack_swap` (`wordPropsScript.sml:2316-2363`), `Loop` case
-(proof `wordPropsScript.sml:2533-2650`): the HOL conclusion at
+(proof `wordPropsScript.sml:2533-2833`): the HOL conclusion at
 `Loop names c exitNames`, from exactly HOL `evaluate_ind`'s two `Loop`
 induction hypotheses (the next iteration after a continuing body result with a
 nonzero clock, and the body at the cut state); no extra premise. -/
