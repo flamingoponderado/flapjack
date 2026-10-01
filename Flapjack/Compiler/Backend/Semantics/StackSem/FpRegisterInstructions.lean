@@ -44,9 +44,20 @@ HOL's own case structure. Reads the source FP register and, when present,
 writes the Lean real-sqrt rendering `holFp64SqrtReal` at round-ties-to-even
 into the destination; a missing source yields the inner HOL instruction failure.
 The stated result is exactly the clause's `Option state` value, with no extra
-dispatcher `some`. -/
+dispatcher `some`.
+
+The explicit `reals_as_rational_cuts` qualifier records the surrounding real
+rendering: finite float values, threshold and largest are represented through
+`Rat` and embedded in Mathlib `Real`; the square root itself is `Real.sqrt`.
+The internal `holFp64Sqrt_agreement` compares two Lean renderings and does not
+establish HOL/Lean correspondence. Agreement with HOL's real/float specification
+remains the external assumption of `docs/SOUNDNESS.md` item 8. The actual float
+format is fixed at significand 52/exponent 11 and the FP register is word64;
+machine width retains `[NeZero width]`. HOL's unspecified quiet-NaN choice is
+preserved without a concrete-payload equality claim. -/
 @[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "inst_def" 409
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)
+  (reals_as_rational_cuts)]
 noncomputable def instFpSqrt {width : Nat} [NeZero width] {C F : Type}
     (d1 d2 : Nat) (s : StackSemStateFiniteExact width C F) :
     Option (StackSemStateFiniteExact width C F) :=
