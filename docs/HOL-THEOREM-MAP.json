@@ -42484,5 +42484,29 @@
   "hol_name": "state_exn",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-c source comparison2026-10-01 bead11.5.10.2 reg_alloc101-103: Fail string | Subscript. HOL string is char list, retained as List of reviewed MlString.HolChar=BitVec8 canonical256-element char; no UTF8 String or mlstring wrapper. Constructor arity/equality preserved including0/255 bytes/order. Fresh original probe/kernel fixtures; raising/accessors and production refinement remain open prerequisites. Coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Remap.lean",
+  "lean_name": "listRemap",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+  "hol_name": "list_remap_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.10.3): original 1096-1104, full native ClashTree, List Nat and Spt Nat maps retained with right-associated map/map/Nat product and arbitrary initial maps/counter. list_remap tests only forward lookup and increments unbounded fresh Nat only for absent names; reverse-map collisions use literal insert overwrite. Delta reads then writes; Branch left then right then optional fixed toAList names; Seq right then left. toAList retains original mixed enumeration and malformed-tree behavior. No fuel, validity or target-result premise. Twelve fresh original exact-tree observations and kernel driver replay cover duplicate names, all traversal constructors, optional branch sets, mixed set enumeration, malformed trees, large unbounded names/counter and arbitrary inconsistent initial maps. Pure analysis prerequisite, production allocator migration remains open; coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Remap.lean",
+  "lean_name": "mkBijAux",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+  "hol_name": "mk_bij_aux_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.10.3): original 1106-1119, full native ClashTree, List Nat and Spt Nat maps retained with right-associated map/map/Nat product and arbitrary initial maps/counter. list_remap tests only forward lookup and increments unbounded fresh Nat only for absent names; reverse-map collisions use literal insert overwrite. Delta reads then writes; Branch left then right then optional fixed toAList names; Seq right then left. toAList retains original mixed enumeration and malformed-tree behavior. No fuel, validity or target-result premise. Twelve fresh original exact-tree observations and kernel driver replay cover duplicate names, all traversal constructors, optional branch sets, mixed set enumeration, malformed trees, large unbounded names/counter and arbitrary inconsistent initial maps. Pure analysis prerequisite, production allocator migration remains open; coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Remap.lean",
+  "lean_name": "mkBij",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+  "hol_name": "mk_bij_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.10.3): original 1121-1125, full native ClashTree, List Nat and Spt Nat maps retained with right-associated map/map/Nat product and arbitrary initial maps/counter. list_remap tests only forward lookup and increments unbounded fresh Nat only for absent names; reverse-map collisions use literal insert overwrite. Delta reads then writes; Branch left then right then optional fixed toAList names; Seq right then left. toAList retains original mixed enumeration and malformed-tree behavior. No fuel, validity or target-result premise. Twelve fresh original exact-tree observations and kernel driver replay cover duplicate names, all traversal constructors, optional branch sets, mixed set enumeration, malformed trees, large unbounded names/counter and arbitrary inconsistent initial maps. Pure analysis prerequisite, production allocator migration remains open; coordinator review pending."
 }
 ]
