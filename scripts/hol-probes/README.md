@@ -2601,6 +2601,7 @@ correctness or cross-language equivalence. Regenerate with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=stackprops_code_labels_probeScript.sml
 scripts/hol-probes/regenerate.sh` against the read-only prebuilt theories.
+- `parmove_all_distinct_steps_probeScript.sml`: four full destination predicates for zero-step scratch and start/save states. Lean fixtures additionally certify the RTC trace; HOL observations alone do not establish it.
 `parmove_map_state_probe` captures ten original equations for mapping both
 endpoints through all three lists, including independent Nat-to-Bool carriers
 and noninjective maps. `ParmoveMapStateParity` replays the same inputs in Lean;
