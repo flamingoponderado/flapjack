@@ -2660,3 +2660,9 @@ run_probe stack_props_program_validity_probeScript.sml stack_props_program_valid
 run_probe word_alloc_get_live_probeScript.sml word_alloc_get_live_probe.out \
   get_live_store_consts get_live_break_outside get_live_return \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+# The word_to_stack wInst probe observes the instruction helper `wInst`
+# (word_to_stackScript.sml:88-175), including the width-64 FP move clauses and
+# the Load16/Store16 Skip catch-all.
+run_probe word_to_stack_winst_probeScript.sml word_to_stack_winst_probe.out \
+  wi_const wi_skip "$cake_dir/compiler/backend/word_to_stackScript.sml" \
+  "$cake_dir/compiler/backend"
