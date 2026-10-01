@@ -48536,5 +48536,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.1.7): literal HOL wordConvsScript.sml:425-429 pre_alloc_conventions p = every_stack_var is_stack_var p /\\ call_arg_convention p over the exact WordLangProgHOL carrier with the reviewed everyStackVarHOL/callArgConventionHOL and is_stack_var (isStackVar); HOL boolean conjunction as &&, no changed clauses or hypotheses; positive BitVec/NeZero is the only carrier translation. The four original pre-allocation rows of word_convs_alloc_conventions_probe.out are replayed over the exact carrier (Flapjack/Test/WordConvsPreAllocExactParity.lean)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "not_created_subprogs_def",
+    "lean_path": "Flapjack/Pancake/WordConvs/NotCreated.lean",
+    "lean_name": "notCreatedSubprogsHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.1.3): literal HOL wordConvsScript.sml:536-556, clause by clause in HOL order with HOL's catchall, over the exact WordLangProgHOL carrier with bool-valued P as in HOL; MustTerminate/Seq/Loop/If recursion, Call with both optional bodies and the normalised handler probe, Alloc/Install (LN,LN), LocValue label, ShareInst ARB 0 (Var 0). HOL ARB (boolScript new_constant, deliberately undefined) is the uninterpreted Lean opaque holArbMemOp, so no theorem can depend on its value, as in HOL. Positive BitVec/NeZero is the only carrier translation. notCreatedSubprogsHOL_eq_withMemOp relates it to the choice-parametric checker and the *_eq_notCreated lemmas link the tagged no_* specialisations, whose 15 original HOL probe rows are replayed (exact-checker rows added in Flapjack/Test/WordLangNotCreatedParity.lean)."
   }
 ]
