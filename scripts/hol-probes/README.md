@@ -1,3 +1,15 @@
+`ssa_merge_route_probe.out` captures eight complete original merge_moves outputs
+through original fromAList/toAList: empty/missing/equal/unequal, tail-first
+fresh numbering, duplicate names, duplicate input-map first-match behavior,
+and natural counters larger than64 bits. SSAMergeMovesRouteParity kernel-checks
+the actual allocator wrapper at all identical inputs and independently checks
+preserved production state counters31/47. MergeMovesRoute invokes the accepted
+native definition. ProductionMergeMoves proves an unconditional codec result:
+ordered move lists, fresh counter, independent state counters and both map
+lookups at every key. Storage order canonicalizes to the original tree traversal;
+this is not list-order equality or a full SSA simulation theorem. No performance
+exception is claimed; executed compiler parity is required for integration.
+
 `word_simp_duplicate_if_source_probe.out` captures fourteen original source
 outputs: seven whole compile_exp trees across Seq/If/MustTerminate/Loop and
 all optional Call bodies, plus no-hoist, zero-bound, is_simple and

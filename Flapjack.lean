@@ -1124,6 +1124,7 @@ import Flapjack.FfiBridge
 import Flapjack.Compiler.Backend.RegAlloc.StateForeach
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameLookup
 import Flapjack.Compiler.Backend.WordAlloc.SSAMergeMoves
+import Flapjack.Compiler.Backend.WordAlloc.ProductionMergeMoves
 
 
 /- The context-aware Crep-to-Loop correctness file is being updated alongside
