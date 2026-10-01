@@ -43,6 +43,12 @@
       "sha256": "c4406552396a5b9fa262f53fa969456b1feeb7dd6d0139fd2d846efcce4343e3"
     },
     {
+      "bytes": 740,
+      "out": "asmsem_fp_updates_probe.out",
+      "rows": 34,
+      "sha256": "68e07e4909950a079b51a7856287746c2b27e57c44e375358ce9fb270a4bb200"
+    },
+    {
       "bytes": 47,
       "out": "backend_common_word_shift_probe.out",
       "rows": 7,
