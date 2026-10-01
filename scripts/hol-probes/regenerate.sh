@@ -2978,3 +2978,7 @@ run_probe word_alloc_return_checker_probeScript.sml word_alloc_return_checker_pr
 run_probe word_alloc_oracle_colour_probeScript.sml word_alloc_oracle_colour_probe.out \
   oc_none oc_empty oc_physical_bad oc_checker_collision oc_forced_collision oc_forced_distinct oc_rename oc_stack_equal oc_stack_below oc_raw_map \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
+run_probe parmove_seqsem_unchanged_probeScript.sml parmove_seqsem_unchanged_probe.out \
+  su_empty su_chain su_cycle su_repeat su_source su_written su_self su_bool \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"

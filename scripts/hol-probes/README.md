@@ -2389,3 +2389,5 @@ proves equalities on the same inputs by kernel-checked reduction, without a
 program DecidableEq assumption, and is imported by the actual test driver.
 This is finite regression evidence, not whole-allocator correctness; the
 executed allocator route remains separate work.
+
+`parmove_seqsem_unchanged_probeScript.sml` captures eight original sequential-evaluator value/equality tuples: empty, chain, cycle, repeated destinations, source-only observed register, written-key negative sentinel, self update, and Bool registers with Nat values. Matching kernel fixtures instantiate the unrestricted preservation theorem. These tests do not establish whole allocator equivalence.

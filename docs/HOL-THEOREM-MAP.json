@@ -42258,5 +42258,13 @@
   "hol_name": "heu_data",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-c source1262: literal right-associated num#num#num#num#num Type abbreviation, exactly Nat five-product. Reference checker supports Type headers directly; dependency index omission does not prevent tagging. No word/fmap/carrier exception."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/SeqsemUnchanged.lean",
+  "lean_name": "seqsemMoveUnchanged",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "seqsem_move_unchanged",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c literal331-336: arbitrary register/value carriers, move list, environment,key; sole key nonmembership in MAP FST implies actual seqsem result atkey equals input. Standard propositional DecidableEq implementation, no windmill/distinctness/global injectivity/target evaluation premise. List induction with arbitrary environment follows literal update semantics. Eight fresh original actual value/equality tuples and matching Lean kernel fixtures exercise empty/chain/cycle/repeated destinations/keyread/written-key negative/selfupdate/Bool registers with Nat values, plus universally arbitrary-carrier theorem application. Companion parsem_MAP_INJ and full family remain open."
 }
 ]

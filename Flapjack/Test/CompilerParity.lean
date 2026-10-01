@@ -1,3 +1,4 @@
+import Flapjack.Test.ParmoveSeqsemUnchangedParity
 import Flapjack.Test.HeuCountersParity
 import Flapjack.Test.ClashTreeCallNoneParity
 import Flapjack.Test.FindIndexBoundsParity
