@@ -9,3 +9,5 @@ val _ = print_eval "ss_bad_max" ``stack_size_rel 0 (SOME 0) 1 (SOME 0) ([]:8 wor
 val _ = print_eval "ss_missing_loc" ``stack_size_rel 0 NONE 1 (SOME 1) ([]:8 wordSem$stack_frame list) [wordLang$Word 0w] 0 0``;
 val _ = print_eval "ss_missing_frame" ``stack_size_rel 0 (SOME 0) 1 (SOME 1) [wordSem$StackFrame NONE [] [] NONE : 8 wordSem$stack_frame] [wordLang$Word 0w] 0 0``;
 val _ = print_eval "ss_frame_guard" ``stack_size_rel 2 (SOME 1) 1 NONE ([]:8 wordSem$stack_frame list) [wordLang$Word 0w] 0 0``;
+val _ = print_eval "ss_target_bool" ``stack_size_rel 0 (SOME 0) 1 (SOME 1) ([]:8 wordSem$stack_frame list) [T] 0 0``;
+val _ = print_eval "ss_target_nat" ``stack_size_rel 0 (SOME 0) 1 (SOME 1) ([]:8 wordSem$stack_frame list) [37n] 0 0``;
