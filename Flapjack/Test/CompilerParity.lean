@@ -1,3 +1,4 @@
+import Flapjack.Test.AsmSemArithmeticParity
 import Flapjack.Test.TargetPropsInterferenceParity
 import Flapjack.Test.LabToTargetSectionLookupParity
 import Flapjack.Test.ParmovePreservesMovesPmovParity
@@ -1510,6 +1511,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.WordConvsPostAllocExactParity.runChecks,
     Flapjack.Test.LabToTargetSectionLookupParity.runChecks,
     Flapjack.Test.TargetPropsInterferenceParity.runChecks,
+    Flapjack.Test.AsmSemArithmeticParity.runChecks,
     Flapjack.Test.BytesInMemParity.runChecks,
     Flapjack.Test.CrepSemIoEventsMonoParity.runChecks
     ].mapM id

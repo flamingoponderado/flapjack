@@ -2748,3 +2748,16 @@ observations: terminal scratch destination, pending destination, and full pendin
 output. ParmovePreservesMovesPmovParity kernel-replays the same inputs and applies
 the source-shaped preservation theorem with internally discharged well-formedness.
 Finite observations are regression evidence, not cross-prover equivalence.
+
+### Native asmSem arithmetic and state operations
+
+`asmsem_arithmetic_probeScript.sml` evaluates the loaded original `asmSemTheory`
+state primitives and all eight `arith_upd_def` constructors. Its 52 captured rows
+are replayed by `Flapjack.Test.AsmSemArithmeticParity` against the native
+`AsmSem.Arithmetic` definitions, with unrelated state fields arbitrary. Cases
+cover ordered aliasing writes, retained writes on failed division and register
+shifts, immediate shifts without that register-only guard, prior failure,
+carry and signed overflow, and widths 1, 8, 32, and 64. Original DIV_0/MOD_0
+simplifications expose zero-divisor quotient/remainder results. These probes
+are regression evidence, not cross-language equivalence or full asm evaluation
+acceptance. CakeML/HOL remains read-only.

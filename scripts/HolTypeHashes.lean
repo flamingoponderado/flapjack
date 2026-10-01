@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabToTarget.AsmUpdates
 import Flapjack.Compiler.Backend.LabToTarget.Interference
 import Flapjack.Compiler.Backend.LabToTarget.NopEncoding
 import Flapjack.Compiler.Backend.LabToTarget.SectionNavigation
