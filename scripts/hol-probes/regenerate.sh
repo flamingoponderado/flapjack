@@ -101,6 +101,34 @@ run_probe() {
   done
 }
 
+run_probe lab_to_target_encoding_similarity_probeScript.sml lab_to_target_encoding_similarity_probe.out \
+  es_line es_line_types es_initial es_initial_types es_again es_again_types es_sections es_sections_types es_initial_value es_again_growth es_again_unchanged es_again_no_growth es_sections_value es_sections_similar \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_padding_similarity_probeScript.sml lab_to_target_padding_similarity_probe.out \
+  ps_add ps_add_types ps_section ps_section_types ps_code ps_code_types ps_add_value ps_section_value ps_empty_nop ps_acc_value ps_label_only ps_code_similar \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe asmprops_arithmetic_preservation_probeScript.sml asmprops_arithmetic_preservation_probe.out \
+  ap_upd_pc_simps ap_upd_pc_simps_types ap_binop_upd_consts ap_binop_upd_consts_types ap_arith_upd_consts ap_arith_upd_consts_types ap_add ap_shift_fail ap_div_zero ap_longmul ap_longdiv_zero ap_carry ap_addoverflow ap_suboverflow ap_pc \
+  "$cake_dir/compiler/encoders/asm/asmPropsScript.sml" "$cake_dir/compiler/encoders/asm"
+
+run_probe stacksem_fp_case_types_probeScript.sml stacksem_fp_case_types_probe.out \
+  fpc_inst fpc_constructor fpc_lookup fpc_update fpc_general_lookup fpc_general_update fpc_all_payloads \
+  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe stackprops_expression_clock_probeScript.sml stackprops_expression_clock_probe.out \
+  ec_store_statement ec_store_types ec_word_statement ec_word_types ec_assign_statement ec_assign_types ec_const ec_var_word ec_var_loc ec_var_missing ec_lookup_word ec_lookup_loc ec_lookup_missing ec_load_word ec_load_loc ec_load_oob ec_load_bad_address ec_op_empty_and ec_op_add_wrap ec_op_sub_bad_arity ec_op_bad_operand ec_shift_valid ec_shift_oob ec_shift_bad_right ec_assign_success ec_assign_failure ec_store_success ec_store_failure \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe stackprops_instruction_constants_probeScript.sml stackprops_instruction_constants_probe.out \
+  ic_fields ic_fields_types ic_map ic_map_types ic_clock ic_clock_types ic_ffi ic_ffi_types ic_const_clock ic_const_clock_zero ic_div_failure ic_or_location ic_store_success ic_store_failure ic_fp_abs ic_fp_missing ic_const_ffi ic_none_ffi \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe stackprops_clock_support_probeScript.sml stackprops_clock_support_probe.out \
+  cp_asm_const_type cp_clock_neutral_type cp_1 cp_1_types cp_2 cp_2_types cp_3 cp_3_types cp_4 cp_4_types cp_5 cp_5_types cp_6 cp_6_types cp_skip64 cp_sqrt1 cp_halt16 cp_loc1 cp_seq_good64 cp_seq_tick16 cp_if_good1 cp_if_bad64 cp_loop_skip64 cp_call_skip1 \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
 run_probe stackprops_state_constants_probeScript.sml stackprops_state_constants_probe.out \
   sc_20 sc_20_types sc_43 sc_43_types sc_49 sc_49_types sc_74 sc_74_types sc_84 sc_84_types sc_90 sc_90_types sc_110 sc_110_types sc_116 sc_116_types sc_125 sc_125_types sc_131 sc_131_types sc_137 sc_137_types sc_144 sc_144_types sc_164 sc_164_types \
   "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
@@ -1921,7 +1949,7 @@ run_probe word_sem_carriers_probeScript.sml word_sem_carriers_probe.out \
 # The wordSem accessor probe observes word_cmp, is_fwd_ptr, word_exp and the
 # state accessors over record updates of a free state (bead flapjack-h29l.2).
 run_probe word_sem_accessors_probeScript.sml word_sem_accessors_probe.out \
-  cmp_equal exp_op fix_clock var_imm_reg \
+  cmp_equal exp_op fix_clock var_imm_reg the_word_word1 the_word_word64 get_word_word32 get_word_word80 \
   "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 
@@ -2090,6 +2118,17 @@ run_probe word_convs_good_handlers_probeScript.sml word_convs_good_handlers_prob
 # union / last-write of insert for non-unit maps.
 run_probe num_set_audit_probeScript.sml num_set_audit_probe.out \
   ns_empty nsmap_insert_last \
+  "$cake_dir/misc/miscScript.sml" \
+  "$cake_dir/misc"
+
+# Direct original observations of misc$lookup_any (an spt lookup with a default
+# on a missing key) and misc$find_index (first-match search with a starting
+# offset): hit / hit at key 0 / miss-default / empty for lookup_any, and
+# hit-at-0 / later-hit / miss / earlier-duplicate for find_index (bead
+# flapjack-pxn.18.5.15.10.10).
+run_probe misc_lookup_any_find_index_probeScript.sml misc_lookup_any_find_index_probe.out \
+  lu_hit lu_hit_zero lu_miss_default lu_empty_default \
+  fi_zero fi_middle fi_absent fi_duplicate \
   "$cake_dir/misc/miscScript.sml" \
   "$cake_dir/misc"
 
@@ -2987,6 +3026,90 @@ run_probe parmove_dstep_step_probeScript.sml parmove_dstep_step_probe.out \
   pv_ds_wf_0 pv_ds_wf_1 pv_ds_wf_2 pv_ds_wf_3 pv_ds_wf_4 pv_ds_wf_5 pv_ds_cycle_0_0 pv_ds_cycle_0_1 pv_ds_cycle_0_2 pv_ds_cycle_1_0 pv_ds_cycle_1_1 pv_ds_cycle_1_2 pv_ds_cycle_2_0 pv_ds_cycle_2_1 pv_ds_cycle_2_2 \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
+run_probe lab_to_target_encoding_probeScript.sml lab_to_target_encoding_probe.out \
+  FFIOffset LabInstJump LabInstJumpCmp LabInstCall LabInstLocValue LabInstHalt LabInstInstall LabInstCallFFI \
+  CbwToAsmAsmi CbwToAsmCbw CbwToAsmShareMem \
+  EncLineLabel EncLineAsm EncLineAsmCbw EncLineLabAsm EncSec EncSecList \
+  "$cake_dir/compiler/backend/lab_to_targetScript.sml" "$cake_dir/compiler/backend"
+run_probe lab_to_target_labels_probeScript.sml lab_to_target_labels_probe.out \
+  SectionLabelsEmpty SectionLabelsEmptyLabs SectionLabelsConcrete SectionLabelsConcreteLabs \
+  ComputeLabelsAltEmpty ComputeLabelsAltConcrete \
+  ComputeLookupSection1 ComputeLookupSection2 ComputeLookupSection3Absent \
+  ComputeLookupSection1Start ComputeLookupSection1Label1 \
+  ComputeLookupSection2Start ComputeLookupSection2Label2 \
+    "$cake_dir/compiler/backend/lab_to_targetScript.sml" "$cake_dir/compiler/backend"
+run_probe lab_to_target_positions_probeScript.sml lab_to_target_positions_probe.out \
+  FindPosHit FindPosHitZero FindPosDefaultLabel FindPosDefaultSection \
+  GetLabelJump GetLabelJumpCmp GetLabelCall GetLabelLocValue GetLabelDefault \
+  GetFfiIndexHit GetFfiIndexDefault \
+  GetJumpOffsetCallFFI GetJumpOffsetInstall GetJumpOffsetHalt GetJumpOffsetJump \
+  "$cake_dir/compiler/backend/lab_to_targetScript.sml" "$cake_dir/compiler/backend"
+run_probe lab_to_target_secondpass_probeScript.sml lab_to_target_secondpass_probe.out \
+  EncLinesAgainEmpty EncLinesAgainKeep EncLinesAgainReencodeShort \
+  EncLinesAgainReencodeLong EncSecsAgainEmpty EncSecsAgainTwo \
+  LinesUpdLabLenEmpty LinesUpdLabLenEven LinesUpdLabLenOdd \
+  UpdLabLenEmpty UpdLabLenTwo \
+  "$cake_dir/compiler/backend/lab_to_targetScript.sml" "$cake_dir/compiler/backend"
+run_probe lab_to_target_padding_probeScript.sml lab_to_target_padding_probe.out \
+  PadBytesFits PadBytesAppend PadBytesLonger \
+  AddNopEmpty AddNopLabelThenAsm AddNopAsmHead AddNopLabAsmHead \
+  PadSectionEmpty PadSectionConcrete PadCodeEmpty PadCodeTwo \
+  SecLengthEmpty SecLengthConcrete GetSymbolsEmpty GetSymbolsTwo \
+  LineOkLightLabel LineOkLightAsm LineOkLightHaltOk LineOkLightHaltBad \
+  LineOkLightInstall LineOkLightCallFFIOk LineOkLightCall \
+  LineOkLightJumpCmpOk LineOkLightJumpCmpBad LineOkLightLocValue \
+  SecOkLightMixed SecOkLightCall \
+  "$cake_dir/compiler/backend/lab_to_targetScript.sml" "$cake_dir/compiler/backend"
+run_probe lab_to_target_removelabels_probeScript.sml lab_to_target_removelabels_probe.out \
+  ZeroLabsAccOfLocHit ZeroLabsAccOfLocNonzero ZeroLabsAccOfJumpHit \
+  ZeroLabsAccOfJumpNonzero ZeroLabsAccOfJumpCmpHit ZeroLabsAccOfJumpCmpNonzero \
+  ZeroLabsAccOfCatchAll LineGetZeroLabsAccLabAsm LineGetZeroLabsAccLabel \
+  LineGetZeroLabsAccAsm GetZeroLabsAccEmpty GetZeroLabsAccConcrete \
+  ZeroLabsAccExistTrue ZeroLabsAccExistFalse LineBytesLabel LineBytesAsm \
+  LineBytesLabAsm ProgToBytesEmpty ProgToBytesConcrete RemoveLabelsLoopZero \
+  RemoveLabelsLoopOne RemoveLabelsZero \
+  "$cake_dir/compiler/backend/lab_to_targetScript.sml" "$cake_dir/compiler/backend"
+run_probe lab_to_target_line_len_probeScript.sml lab_to_target_line_len_probe.out \
+  LineLenLabel LineLenAsmEmpty LineLenAsmBytesMismatch LineLenLabAsm LineLenWide \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe lab_to_target_section_length_probeScript.sml lab_to_target_section_length_probe.out \
+  SectionLengthEmpty SectionLengthMixed SectionLengthMixedPosition SectionLengthMixedLabels \
+  SectionLengthZeroLabel SectionLengthZeroLenLabel SectionLengthDuplicateLabels \
+  SectionLengthArbitraryAccumulator SecLengthAddEmpty SecLengthAddMixed SecLengthAddMixedValue \
+  SecLengthAddZeroAnnotation SecLengthAddEmptyBytesAnnotation \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe byte_word_to_bytes_aux_probeScript.sml byte_word_to_bytes_aux_probe.out \
+  ByteAuxLE16Cycle ByteAuxBE16Cycle ByteAuxLE32Cycle ByteAuxBE32Cycle \
+  ByteAuxOneByteCycle ByteAuxSubByteLEWrap ByteAuxSubByteBEWrap ByteAuxZero \
+  ByteWholeLE16 ByteWholeBE16 ByteWholeSubByte ByteIndexSubByteLE ByteIndexSubByteBE \
+  ByteGetSubByteShift \
+  "$cake_dir/compiler/backend/semantics/targetSemScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe lab_to_target_padding_length_probeScript.sml lab_to_target_padding_length_probe.out \
+  OriginalLengthPadBytes PadLengthExtend PadLengthMultiNop PadLengthExact PadLengthZero \
+  PadLengthGenericBool PadLengthEmptyNopOutsidePremise \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe lab_to_target_maplemmas_probeScript.sml lab_to_target_maplemmas_probe.out \
+  PadCodeMapEmptyEq PadCodeMapConcreteEq PadCodeMapConcreteLhs PadCodeMapConcreteRhs \
+  ProgToBytesMapEmptyEq ProgToBytesMapConcreteEq ProgToBytesMapConcreteLhs \
+  ProgToBytesMapConcreteRhs \
+  "$cake_dir/compiler/backend/lab_to_targetScript.sml" "$cake_dir/compiler/backend"
+run_probe lab_to_target_shmeminfo_probeScript.sml lab_to_target_shmeminfo_probe.out \
+  GetMemopInfoLoad GetMemopInfoLoad32 GetMemopInfoLoad16 GetMemopInfoLoad8 \
+  GetMemopInfoStore GetMemopInfoStore32 GetMemopInfoStore16 GetMemopInfoStore8 \
+  ListAddIfFreshEmpty ListAddIfFreshPresent ListAddIfFreshAbsent \
+  FindFfiNamesEmpty FindFfiNamesConcrete FindFfiNamesNonCallFFI \
+  GetShmemInfoEmpty GetShmemInfoLabelSkip GetShmemInfoShareMem \
+  GetShmemInfoAsmAdvance \
+  "$cake_dir/compiler/backend/lab_to_targetScript.sml" "$cake_dir/compiler/backend"
+run_probe lab_to_target_compile_probeScript.sml lab_to_target_compile_probe.out \
+  NotSkipSkip NotSkipAsm NotSkipLabel NotSkipLabAsm \
+  FilterSkipEmpty FilterSkipOne FilterSkipTwo \
+  ListSubsetTrue ListSubsetFalse \
+  ConfigLabels ConfigSecPosLen ConfigPos ConfigInitClock ConfigFfiNames \
+  ConfigShmemExtra ConfigHashSize \
+  CompileLabSuccess CompileLabFfiSubsetFail CompileLabRemoveLabelsNone \
+  CompileSkip CompileLabFilterSkip \
+  "$cake_dir/compiler/backend/lab_to_targetScript.sml" "$cake_dir/compiler/backend"
 run_probe word_alloc_total_colour_probeScript.sml word_alloc_total_colour_probe.out \
   tc_absent_zero tc_absent_physical tc_absent_virtual tc_absent_large_physical tc_absent_large_virtual tc_mapped_physical tc_mapped_virtual tc_mapped_zero \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
@@ -3691,6 +3814,10 @@ run_probe word_to_stack_no_shmemop_primitives_probeScript.sml word_to_stack_no_s
 run_probe stack_to_lab_full_encoding_probeScript.sml stack_to_lab_full_encoding_probe.out \
   full_flatten_source_proof full_compile_all_source_statement full_compile_all_application full_compile_all_sections \
   "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"
+# Actual scheduler route and native temporary/frame sentinels.
+run_probe word_to_stack_scheduler_route_probeScript.sml word_to_stack_scheduler_route_probe.out \
+  sr_order_empty sr_order_swap sr_order_duplicate sr_none_slot sr_spill_cycle sr_spill_zero_frame \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
 run_probe ssa_get_set_vars_probeScript.sml ssa_get_set_vars_probe.out \
   get_vars_list_insert_eq_gen_full get_vars_set_vars_eq_full \
   gvi_type_st gvi_type_ls gvi_type_x gvi_type_locs gvi_type_a gvi_type_b \
@@ -3711,3 +3838,128 @@ run_probe ssa_setup_props_probeScript.sml ssa_setup_props_probe.out \
 run_probe word_to_stack_comp_no_shmemop_probeScript.sml word_to_stack_comp_no_shmemop_probe.out \
   cs_full cs_conf_type cs_perf_type cs_source_type cs_bitmap_type cs_frame_type cs_target_type cs_residual_type cs_nested_1 cs_if_1 cs_ignored_1 cs_nested_32 cs_if_32 cs_ignored_32 cs_nested_64 cs_if_64 cs_ignored_64 cs_nested_80 cs_if_80 cs_ignored_80 \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe machine_ieee_fp64_declarations_probeScript.sml machine_ieee_fp64_declarations_probe.out \
+  float_to_fp64_def fp64_abs_def fp64_add_def fp64_add_with_flags_def fp64_bottom_def fp64_compare_def fp64_div_def fp64_div_with_flags_def fp64_equal_def fp64_greaterEqual_def fp64_greaterThan_def fp64_isFinite_def fp64_isInfinite_def fp64_isIntegral_def fp64_isNan_def fp64_isNormal_def fp64_isSignallingNan_def fp64_isSubnormal_def fp64_isZero_def fp64_lessEqual_def fp64_lessThan_def fp64_mul_add_def fp64_mul_add_with_flags_def fp64_mul_def fp64_mul_sub_def fp64_mul_sub_with_flags_def fp64_mul_with_flags_def fp64_negInf_def fp64_negMin_def fp64_negZero_def fp64_negate_def fp64_posInf_def fp64_posMin_def fp64_posZero_def fp64_roundToIntegral_def fp64_sqrt_def fp64_sqrt_with_flags_def fp64_sub_def fp64_sub_with_flags_def fp64_to_float_def fp64_to_int_def fp64_to_real_def fp64_to_value_def fp64_top_def int_to_fp64_def real_to_fp64_def real_to_fp64_with_flags_def \
+  "$repo_dir/HOL/src/floating-point/machine_ieeeScript.sml" "$hol_dir/src/floating-point"
+
+run_probe ssa_rename_move_preserve_probeScript.sml ssa_rename_move_preserve_probe.out \
+  rms_full rms_type_st rms_type_cst rms_type_ssa rms_type_na rms_type_ls \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_fake_moves_correct_left_probeScript.sml ssa_fake_moves_correct_left_probe.out \
+  fml_full fml_type_ls fml_type_na fml_type_ssaL fml_type_ssaR fml_type_stL fml_type_cstL fml_type_prio \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_fake_moves_correct_right_probeScript.sml ssa_fake_moves_correct_right_probe.out \
+  fmr_full fmr_type_ls fmr_type_na fmr_type_ssaL fmr_type_ssaR fmr_type_stR fmr_type_cstR fmr_type_prio \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_fix_inconsistencies_correct_left_probeScript.sml ssa_fix_inconsistencies_correct_left_probe.out \
+  ficl_full ficl_type_na ficl_type_ssaL ficl_type_ssaR ficl_type_prio ficl_type_stL ficl_type_cstL \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_fix_inconsistencies_correct_right_probeScript.sml ssa_fix_inconsistencies_correct_right_probe.out \
+  ficr_full ficr_type_na ficr_type_ssaL ficr_type_ssaR ficr_type_prio ficr_type_stR ficr_type_cstR \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+run_probe word_to_stack_no_shmemop_programs_probeScript.sml word_to_stack_no_shmemop_programs_probe.out \
+  pl_full pl_conf_type pl_perf_type pl_register_type pl_source_type pl_bitmap_type pl_outputs_type pl_frames_type pl_residual_type pl_empty_1 pl_safe_1 pl_ignored_1 pl_shared_1 pl_empty_32 pl_safe_32 pl_ignored_32 pl_shared_32 pl_empty_64 pl_safe_64 pl_ignored_64 pl_shared_64 pl_empty_80 pl_safe_80 pl_ignored_80 pl_shared_80 \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_no_shmemop_top_probeScript.sml word_to_stack_no_shmemop_top_probe.out \
+  tp_full tp_conf_type tp_source_type tp_bitmaps_type tp_config_type tp_frames_type tp_outputs_type tp_empty_1 tp_safe_1 tp_ignored_1 tp_shared_1 tp_empty_32 tp_safe_32 tp_ignored_32 tp_shared_32 tp_empty_64 tp_safe_64 tp_ignored_64 tp_shared_64 tp_empty_80 tp_safe_80 tp_ignored_80 tp_shared_80 \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_cc_trans_exp_correct_probeScript.sml ssa_cc_trans_exp_correct_probe.out \
+  sec_full sec_type_st sec_type_w sec_type_cst sec_type_ssa sec_type_na sec_type_res \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_fix_inconsistencies_props_probeScript.sml ssa_fix_inconsistencies_props_probe.out \
+  fip_full fip_type_prio fip_type_ssaL fip_type_ssaR fip_type_na fip_type_a fip_type_b fip_type_nextOut fip_type_ssaU \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+run_probe stack_to_lab_executed_codec_probeScript.sml stack_to_lab_executed_codec_probe.out \
+  codec_source_addcarry codec_source_addoverflow codec_source_memoffset codec_source_cbw codec_source_cbw_store_order codec_source_name_bytes codec_source_ffi codec_source_nonzero_position codec_source_wide_constant \
+  "$cake_dir/compiler/backend/stack_to_labScript.sml" "$cake_dir/compiler/backend"
+run_probe word_to_stack_comp_no_install_probeScript.sml word_to_stack_comp_no_install_probe.out \
+  ci_full ci_conf_type ci_perf_type ci_source_type ci_bitmap_type ci_frame_type ci_target_type ci_residual_type ci_skip_64 ci_move_64 ci_inst_64 ci_assign_64 ci_get_64 ci_set_64 ci_store_64 ci_alloc_64 ci_store_consts_64 ci_raise_64 ci_return_64 ci_break_64 ci_continue_64 ci_tick_64 ci_heap_64 ci_loc_64 ci_install_64 ci_code_write_64 ci_data_write_64 ci_ffi_64 ci_share_64 ci_must_64 ci_loop_64 ci_seq_64 ci_branch_64 ci_call_64 ci_nested_1 ci_if_1 ci_ignored_1 ci_nested_32 ci_if_32 ci_ignored_32 ci_nested_64 ci_if_64 ci_ignored_64 ci_nested_80 ci_if_80 ci_ignored_80 ci_ignored_install \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_cc_trans_inst_props_probeScript.sml ssa_cc_trans_inst_props_probe.out \
+  sip_full sip_type_i sip_type_ssa sip_type_na sip_type_iOut sip_type_ssaOut sip_type_naOut \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+run_probe word_to_stack_no_install_programs_probeScript.sml word_to_stack_no_install_programs_probe.out \
+  ip_full ip_conf_type ip_perf_type ip_register_type ip_source_type ip_bitmap_type ip_outputs_type ip_frames_type ip_residual_type ip_empty_1 ip_safe_1 ip_ignored_1 ip_shared_1 ip_empty_32 ip_safe_32 ip_ignored_32 ip_shared_32 ip_empty_64 ip_safe_64 ip_ignored_64 ip_shared_64 ip_empty_80 ip_safe_80 ip_ignored_80 ip_shared_80 \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_rename_shifted_properties_probeScript.sml ssa_rename_shifted_properties_probe.out \
+  srl_full srl_type_ls srl_type_ssa srl_type_na srl_type_lsOut srl_type_ssaOut srl_type_naOut \
+  srm_full srm_type_ls srm_type_ssa srm_type_na srm_type_lsOut srm_type_ssaOut srm_type_naOut \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_cc_trans_props_move_probeScript.sml ssa_cc_trans_props_move_probe.out \
+  spm_full spm_type_pri spm_type_ls spm_type_ssa spm_type_na spm_type_lt spm_type_progOut spm_type_ssaOut spm_type_naOut \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+run_probe word_props_no_install_code_probeScript.sml word_props_no_install_code_probe.out \
+  nic_def nic_code_type nic_program_type nic_argument_type nic_empty_1 nic_leaf_zero_1 nic_leaf_missing_1 nic_bad_leaf_1 nic_malformed_empty_1 nic_malformed_value_1 nic_nested_left_1 nic_nested_right_1 nic_empty_80 nic_leaf_zero_80 nic_leaf_missing_80 nic_bad_leaf_80 nic_malformed_empty_80 nic_malformed_value_80 nic_nested_left_80 nic_nested_right_80 \
+  "$cake_dir/compiler/backend/semantics/wordPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe word_to_stack_no_install_top_probeScript.sml word_to_stack_no_install_top_probe.out \
+  nt_full nt_conf_type nt_source_type nt_bitmaps_type nt_config_type nt_frames_type nt_outputs_type nt_empty_1 nt_safe_1 nt_shadow_1 nt_bad_1 nt_empty_32 nt_safe_32 nt_shadow_32 nt_bad_32 nt_empty_64 nt_safe_64 nt_shadow_64 nt_bad_64 nt_empty_80 nt_safe_80 nt_shadow_80 nt_bad_80 nt_code_empty nt_code_safe nt_code_shadow \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_cc_trans_props_allocation_probeScript.sml ssa_cc_trans_props_allocation_probe.out \
+  spa_alloc_full spa_alloc_type_num spa_alloc_type_numset spa_alloc_type_ssa spa_alloc_type_na spa_alloc_type_lt spa_alloc_type_progOut spa_alloc_type_ssaOut spa_alloc_type_naOut \
+  spa_install_full spa_install_type_ptr spa_install_type_len spa_install_type_dptr spa_install_type_dlen spa_install_type_numset spa_install_type_ssa spa_install_type_na spa_install_type_lt \
+  spa_install_type_progOut spa_install_type_ssaOut spa_install_type_naOut spa_ffi_full spa_ffi_type_ffi_index spa_ffi_type_ptr1 spa_ffi_type_len1 spa_ffi_type_ptr2 spa_ffi_type_len2 \
+  spa_ffi_type_numset spa_ffi_type_ssa spa_ffi_type_na spa_ffi_type_lt spa_ffi_type_progOut spa_ffi_type_ssaOut spa_ffi_type_naOut \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+run_probe ssa_force_rename_generic_probeScript.sml ssa_force_rename_generic_probe.out \
+  fr_definition fr_lookup_force_rename_aux fr_lookup_force_rename fr_domain_force_rename fr_type \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_cc_trans_props_loop_control_probeScript.sml ssa_cc_trans_props_loop_control_probe.out \
+  spl_full spl_type_names spl_type_body spl_type_exit_names spl_type_ssa spl_type_na spl_type_lt spl_type_progOut \
+  spl_type_ssaOut spl_type_naOut spl_type_setup_prog spl_type_ssa_refreshed spl_type_na_refreshed spl_type_ssa_names spl_type_ssa_exit spl_type_ssa_body \
+  spb_full spb_type_n spb_type_ssa spb_type_na spb_type_lt spb_type_progOut spb_type_ssaOut spb_type_naOut \
+  spc_full spc_type_n spc_type_ssa spc_type_na spc_type_lt spc_type_progOut spc_type_ssaOut spc_type_naOut \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_cc_trans_props_calls_probeScript.sml ssa_cc_trans_props_calls_probe.out \
+  spt_full spt_type_dest spt_type_args spt_type_h spt_type_ssa spt_type_na spt_type_lt spt_type_progPrime spt_type_ssaPrime spt_type_naPrime spr_full spr_type_ret spr_type_numset spr_type_ret_handler spr_type_l1 spr_type_l2 spr_type_dest spr_type_args spr_type_h spr_type_ssa spr_type_na spr_type_lt spr_type_progPrime spr_type_ssaPrime spr_type_naPrime spr_type_all_names spr_type_ls spr_type_stack_mov spr_type_stack_set spr_type_names spr_type_conv_args spr_type_move_args spr_type_ssa_cut spr_type_ret_mov spr_type_ssaPrimePrime spr_type_naPrimePrime spr_type_retPrime spr_type_ssa_2_p spr_type_na_2_p spr_type_ren_ret_handler spr_type_ssa_2 spr_type_na_2 spr_type_regs spr_type_mov_ret_handler spr_type_v spr_type_n spr_type_v2 spr_type_hPrime spr_type_v4 spr_type_l1PrimePrime spr_type_l2Prime spr_type_nPrime spr_type_ssa_3_p spr_type_na_3_p \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_cse_instruction_keys_probeScript.sml word_cse_instruction_keys_probe.out \
+  key_def_wordToNum key_def_shiftToNum key_def_arithOpToNum key_def_regImmToNumList key_def_arithToNumList key_def_memOpToNum key_def_loadToNumList key_def_fpToNumList key_def_instToNumList key_def_OpCurrHeapToNumList key_shift_lsl key_shift_lsr key_shift_asr key_shift_ror key_op_add key_heap_add key_op_sub key_heap_sub key_op_and key_heap_and key_op_or key_heap_or key_op_xor key_heap_xor key_mem_load key_load_load key_mem_load8 key_load_load8 key_mem_load16 key_load_load16 key_mem_load32 key_load_load32 key_mem_store key_load_store key_mem_store8 key_load_store8 key_mem_store16 key_load_store16 key_mem_store32 key_load_store32 key_word_1 key_imm_1 key_const_1 key_word_32 key_imm_32 key_const_32 key_word_64 key_imm_64 key_const_64 key_word_80 key_imm_80 key_const_80 key_reg key_arith_0 key_inst_arith_0 key_arith_1 key_inst_arith_1 key_arith_2 key_inst_arith_2 key_arith_3 key_inst_arith_3 key_arith_4 key_inst_arith_4 key_arith_5 key_inst_arith_5 key_arith_6 key_inst_arith_6 key_arith_7 key_inst_arith_7 key_fp_fpLess key_inst_fpLess key_fp_fpLessEqual key_inst_fpLessEqual key_fp_fpEqual key_inst_fpEqual key_fp_fpAbs key_inst_fpAbs key_fp_fpNeg key_inst_fpNeg key_fp_fpSqrt key_inst_fpSqrt key_fp_fpAdd key_inst_fpAdd key_fp_fpSub key_inst_fpSub key_fp_fpMul key_inst_fpMul key_fp_fpDiv key_inst_fpDiv key_fp_fpFma key_inst_fpFma key_fp_fpMov key_inst_fpMov key_fp_fpMovToReg key_inst_fpMovToReg key_fp_fpMovFromReg key_inst_fpMovFromReg key_fp_fpToInt key_inst_fpToInt key_fp_fpFromInt key_inst_fpFromInt key_skip key_mem_inst \
+  key_type_wordToNum key_type_shiftToNum key_type_arithOpToNum key_type_regImmToNumList key_type_arithToNumList key_type_memOpToNum key_type_loadToNumList key_type_fpToNumList key_type_instToNumList key_type_OpCurrHeapToNumList \
+  "$cake_dir/compiler/backend/word_cseScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_cse_register_keys_probeScript.sml word_cse_register_keys_probe.out \
+  rk_statement_firstRegOfArith rk_statement_arithWrites rk_statement_arithReads rk_statement_fpWrites rk_statement_can_mem_arith rk_statement_is_store rk_statement_wordToNum_unique rk_statement_arithOpToNum_eq rk_statement_memOpToNum_eq rk_statement_shiftToNum_eq rk_type_firstRegOfArith rk_type_arithWrites rk_type_arithReads rk_type_fpWrites rk_type_can_mem_arith rk_type_is_store rk_a0_firstRegOfArith_8 rk_a0_arithWrites_8 rk_a0_arithReads_8 rk_a0_can_mem_arith_8 rk_a1_firstRegOfArith_8 rk_a1_arithWrites_8 rk_a1_arithReads_8 rk_a1_can_mem_arith_8 rk_a2_firstRegOfArith_8 rk_a2_arithWrites_8 rk_a2_arithReads_8 rk_a2_can_mem_arith_8 rk_a3_firstRegOfArith_8 rk_a3_arithWrites_8 rk_a3_arithReads_8 rk_a3_can_mem_arith_8 rk_a4_firstRegOfArith_8 rk_a4_arithWrites_8 rk_a4_arithReads_8 rk_a4_can_mem_arith_8 rk_a5_firstRegOfArith_8 rk_a5_arithWrites_8 rk_a5_arithReads_8 rk_a5_can_mem_arith_8 rk_a6_firstRegOfArith_8 rk_a6_arithWrites_8 rk_a6_arithReads_8 rk_a6_can_mem_arith_8 rk_a7_firstRegOfArith_8 rk_a7_arithWrites_8 rk_a7_arithReads_8 rk_a7_can_mem_arith_8 rk_a8_firstRegOfArith_8 rk_a8_arithWrites_8 rk_a8_arithReads_8 rk_a8_can_mem_arith_8 rk_a9_firstRegOfArith_8 rk_a9_arithWrites_8 rk_a9_arithReads_8 rk_a9_can_mem_arith_8 rk_a0_firstRegOfArith_80 rk_a0_arithWrites_80 rk_a0_arithReads_80 rk_a0_can_mem_arith_80 rk_a1_firstRegOfArith_80 rk_a1_arithWrites_80 rk_a1_arithReads_80 rk_a1_can_mem_arith_80 rk_a2_firstRegOfArith_80 rk_a2_arithWrites_80 rk_a2_arithReads_80 rk_a2_can_mem_arith_80 rk_a3_firstRegOfArith_80 rk_a3_arithWrites_80 rk_a3_arithReads_80 rk_a3_can_mem_arith_80 rk_a4_firstRegOfArith_80 rk_a4_arithWrites_80 rk_a4_arithReads_80 rk_a4_can_mem_arith_80 rk_a5_firstRegOfArith_80 rk_a5_arithWrites_80 rk_a5_arithReads_80 rk_a5_can_mem_arith_80 rk_a6_firstRegOfArith_80 rk_a6_arithWrites_80 rk_a6_arithReads_80 rk_a6_can_mem_arith_80 rk_a7_firstRegOfArith_80 rk_a7_arithWrites_80 rk_a7_arithReads_80 rk_a7_can_mem_arith_80 rk_a8_firstRegOfArith_80 rk_a8_arithWrites_80 rk_a8_arithReads_80 rk_a8_can_mem_arith_80 rk_a9_firstRegOfArith_80 rk_a9_arithWrites_80 rk_a9_arithReads_80 rk_a9_can_mem_arith_80 rk_fp_fpLess rk_fp_fpLessEqual rk_fp_fpEqual rk_fp_fpAbs rk_fp_fpNeg rk_fp_fpSqrt rk_fp_fpAdd rk_fp_fpSub rk_fp_fpMul rk_fp_fpDiv rk_fp_fpFma rk_fp_fpMov rk_fp_fpMovToReg rk_fp_fpMovFromReg rk_fp_fpToInt rk_fp_fpFromInt rk_store_load rk_store_load8 rk_store_load16 rk_store_load32 rk_store_store rk_store_store8 rk_store_store16 rk_store_store32 rk_replay_wordToNum_unique rk_replay_arithOpToNum_eq rk_replay_memOpToNum_eq rk_replay_shiftToNum_eq \
+  "$cake_dir/compiler/backend/proofs/word_cseProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_cse_insert_equality_probeScript.sml word_cse_insert_equality_probe.out \
+  ie_full ie_replay ie_0_7 ie_0_8 ie_1_7 ie_1_8 ie_2_7 ie_2_8 ie_3_7 ie_3_8 ie_4_7 ie_4_8 ie_binder_types \
+  "$cake_dir/compiler/backend/proofs/word_cseProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_cse_arithmetic_keys_probeScript.sml word_cse_arithmetic_keys_probe.out \
+  ak_full ak_replay ak_arith_type ak_state_type ak_value_type ak_0_1 ak_1_1 ak_2_1 ak_3_1 ak_4_1 ak_5_1 ak_6_1 ak_7_1 ak_8_1 ak_9_1 ak_10_1 ak_11_1 ak_12_1 ak_13_1 ak_14_1 ak_0_32 ak_1_32 ak_2_32 ak_3_32 ak_4_32 ak_5_32 ak_6_32 ak_7_32 ak_8_32 ak_9_32 ak_10_32 ak_11_32 ak_12_32 ak_13_32 ak_14_32 ak_0_64 ak_1_64 ak_2_64 ak_3_64 ak_4_64 ak_5_64 ak_6_64 ak_7_64 ak_8_64 ak_9_64 ak_10_64 ak_11_64 ak_12_64 ak_13_64 ak_14_64 ak_0_80 ak_1_80 ak_2_80 ak_3_80 ak_4_80 ak_5_80 ak_6_80 ak_7_80 ak_8_80 ak_9_80 ak_10_80 ak_11_80 ak_12_80 ak_13_80 ak_14_80 \
+  "$cake_dir/compiler/backend/proofs/word_cseProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_to_lab_executed_input_probeScript.sml stack_to_lab_executed_input_probe.out \
+  guard_source_get_drop guard_source_alloc_drop guard_source_stackstore_drop guard_source_datawrite_drop guard_source_skip_section guard_source_seq_section guard_source_loc_section \
+  "$cake_dir/compiler/backend/stack_to_labScript.sml" "$cake_dir/compiler/backend"
+
+run_probe lab_implicit_section_zero_probeScript.sml lab_implicit_section_zero_probe.out \
+  zero_original_skip_late_zero zero_original_section_base zero_original_second_base zero_original_second_label zero_original_empty_section zero_original_crosssection_bytes \
+  "$cake_dir/compiler/backend/lab_to_targetScript.sml" "$cake_dir/compiler/encoders/riscv"

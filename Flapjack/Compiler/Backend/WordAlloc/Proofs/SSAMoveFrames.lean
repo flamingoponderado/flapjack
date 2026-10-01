@@ -28,7 +28,7 @@ private theorem dom_iff {α : Type} (a : Spt α) (x : Nat) :
     sptDomain a x ↔ ∃ v, sptLookup x a = some v := by
   unfold sptDomain; cases sptLookup x a <;> simp
 
-private theorem lookup_ins (x k : Nat) (v : Nat) (t : Spt Nat) :
+private theorem lookup_ins {α : Type} (x k : Nat) (v : α) (t : Spt α) :
     sptLookup x (sptInsert k v t) = if x = k then some v else sptLookup x t := by
   by_cases h : x = k
   · subst h; simp [sptLookup_sptInsert_same]
@@ -288,8 +288,8 @@ theorem ssaMapOKForceRename (na : Nat) :
 /-- HOL `lookup_force_rename_aux` (`word_allocProofScript.sml:6347-6362`); HOL
 `ALOOKUP` is the library rendering `holAlookup`. `x` is free. -/
 @[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "lookup_force_rename_aux"]
-theorem lookupForceRenameAux (x : Nat) :
-    ∀ (ls : List (Nat × Nat)) (ssa : Spt Nat),
+theorem lookupForceRenameAux {α : Type} (x : Nat) :
+    ∀ (ls : List (Nat × α)) (ssa : Spt α),
       sptLookup x (forceRename ls.reverse ssa) =
         match holAlookup ls x with
         | none => sptLookup x ssa
@@ -300,7 +300,7 @@ theorem lookupForceRenameAux (x : Nat) :
   | cons p ps ih =>
       intro ssa
       obtain ⟨k, v⟩ := p
-      have hsplit : ∀ (us : List (Nat × Nat)) (s : Spt Nat),
+      have hsplit : ∀ (us : List (Nat × α)) (s : Spt α),
           forceRename (us ++ [(k, v)]) s = sptInsert k v (forceRename us s) := by
         intro us; induction us with
         | nil => intro s; rfl
@@ -312,7 +312,7 @@ theorem lookupForceRenameAux (x : Nat) :
 
 /-- HOL `lookup_force_rename` (`word_allocProofScript.sml:6364-6371`). -/
 @[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "lookup_force_rename"]
-theorem lookupForceRename (x : Nat) (ls : List (Nat × Nat)) (ssa : Spt Nat) :
+theorem lookupForceRename {α : Type} (x : Nat) (ls : List (Nat × α)) (ssa : Spt α) :
     sptLookup x (forceRename ls ssa) =
       match holAlookup ls.reverse x with
       | none => sptLookup x ssa
@@ -322,7 +322,7 @@ theorem lookupForceRename (x : Nat) (ls : List (Nat × Nat)) (ssa : Spt Nat) :
 
 /-- HOL `domain_force_rename` (`word_allocProofScript.sml:6373-6381`). -/
 @[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "domain_force_rename"]
-theorem domainForceRename (ls : List (Nat × Nat)) (ssa : Spt Nat) :
+theorem domainForceRename {α : Type} (ls : List (Nat × α)) (ssa : Spt α) :
     sptDomain (forceRename ls ssa) = fun x => sptDomain ssa x ∨ x ∈ ls.map Prod.fst := by
   induction ls generalizing ssa with
   | nil => funext x; simp [forceRename]

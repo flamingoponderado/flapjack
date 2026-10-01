@@ -1,0 +1,32 @@
+spl_full=⊢ ∀names body exit_names ssa na lt. (∀setup_prog ssa_refreshed na_refreshed ssa_names ssa_exit ssa_body. (setup_prog,ssa_refreshed,na_refreshed) = loop_setup names exit_names ssa na ∧ ssa_names = apply_nummap_key (option_lookup ssa_refreshed) names ∧ ssa_exit = apply_nummap_key (option_lookup ssa_refreshed) exit_names ∧ ssa_body = inter ssa_refreshed names ⇒ ∀progOut ssaOut naOut. ssa_cc_trans body ssa_body na_refreshed ((ssa_refreshed,names,exit_names)::lt) = (progOut,ssaOut,naOut) ⇒ ssa_map_ok na_refreshed ssa_body ∧ is_alloc_var na_refreshed ⇒ na_refreshed ≤ naOut ∧ is_alloc_var naOut ∧ ssa_map_ok naOut ssaOut) ⇒ ∀progOut ssaOut naOut. ssa_cc_trans (Loop names body exit_names) ssa na lt = (progOut,ssaOut,naOut) ⇒ ssa_map_ok na ssa ∧ is_alloc_var na ⇒ na ≤ naOut ∧ is_alloc_var naOut ∧ ssa_map_ok naOut ssaOut
+spl_type_names=:sptree$num_set
+spl_type_body=:α prog
+spl_type_exit_names=:sptree$num_set
+spl_type_ssa=:num sptree$num_map
+spl_type_na=:num
+spl_type_lt=:(num sptree$num_map # sptree$num_set # sptree$num_set) list
+spl_type_progOut=:α prog
+spl_type_ssaOut=:num sptree$num_map
+spl_type_naOut=:num
+spl_type_setup_prog=:α prog
+spl_type_ssa_refreshed=:num sptree$num_map
+spl_type_na_refreshed=:num
+spl_type_ssa_names=:sptree$num_set
+spl_type_ssa_exit=:sptree$num_set
+spl_type_ssa_body=:num sptree$num_map
+spb_full=⊢ ∀n ssa na lt progOut ssaOut naOut. ssa_cc_trans (Break n) ssa na lt = (progOut,ssaOut,naOut) ⇒ ssa_map_ok na ssa ∧ is_alloc_var na ⇒ na ≤ naOut ∧ is_alloc_var naOut ∧ ssa_map_ok naOut ssaOut
+spb_type_n=:num
+spb_type_ssa=:num sptree$num_map
+spb_type_na=:num
+spb_type_lt=:(num sptree$num_map # sptree$num_set # sptree$num_set) list
+spb_type_progOut=:α prog
+spb_type_ssaOut=:num sptree$num_map
+spb_type_naOut=:num
+spc_full=⊢ ∀n ssa na lt progOut ssaOut naOut. ssa_cc_trans (Continue n) ssa na lt = (progOut,ssaOut,naOut) ⇒ ssa_map_ok na ssa ∧ is_alloc_var na ⇒ na ≤ naOut ∧ is_alloc_var naOut ∧ ssa_map_ok naOut ssaOut
+spc_type_n=:num
+spc_type_ssa=:num sptree$num_map
+spc_type_na=:num
+spc_type_lt=:(num sptree$num_map # sptree$num_set # sptree$num_set) list
+spc_type_progOut=:α prog
+spc_type_ssaOut=:num sptree$num_map
+spc_type_naOut=:num

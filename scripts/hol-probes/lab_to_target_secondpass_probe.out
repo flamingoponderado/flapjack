@@ -1,0 +1,16 @@
+EncLinesAgainEmpty=([],10,T)
+EncLinesAgainKeep=([LabAsm (Jump (Lab 7 0)) 0w [] 7; Label 5 0 4;
+  Asm (Asmi (Inst Skip)) [9w] 2],23,T)
+EncLinesAgainReencodeShort=([LabAsm (Jump (Lab 7 0)) 0w [1w; 2w; 3w] 3],13,F)
+EncLinesAgainReencodeLong=([LabAsm (Jump (Lab 7 0)) 0w [1w; 2w; 3w] 7],17,T)
+EncSecsAgainEmpty=([],T)
+EncSecsAgainTwo=([Section 5 [LabAsm (Jump (Lab 7 0)) 0w [1w; 2w; 3w] 3];
+  Section 6 [Label 4 0 2; Asm (Asmi (Inst Skip)) [9w] 5]],F)
+LinesUpdLabLenEmpty=([],5)
+LinesUpdLabLenEven=([Label 5 0 0; Asm (Asmi (Inst Skip)) [9w] 2;
+  LabAsm (Jump (Lab 7 3)) 3w [] 4],6)
+LinesUpdLabLenOdd=([Label 5 0 1; Asm (Asmi (Inst Skip)) [9w] 2;
+  LabAsm (Jump (Lab 7 3)) 3w [] 4],8)
+UpdLabLenEmpty=[]
+UpdLabLenTwo=[Section 5 [Label 5 0 0; Asm (Asmi (Inst Skip)) [9w] 2];
+ Section 6 [LabAsm (Jump (Lab 7 3)) 3w [] 3]]

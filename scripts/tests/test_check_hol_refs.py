@@ -57,6 +57,14 @@ class ExternalHolSourcesTest(unittest.TestCase):
         self.assertIsNone(CHECKER["hol_source_error"](CHECKER["ROOT"], path))
         self.assertIsNone(REF_ERROR(CHECKER["ROOT"] / path, "some_def", 794, {}))
 
+    def test_binary_ieee_verified_submodule_source_and_declaration(self):
+        path = "HOL/src/floating-point/binary_ieeeScript.sml"
+        self.assertIsNone(CHECKER["hol_source_error"](CHECKER["ROOT"], path))
+        self.assertIsNone(REF_ERROR(CHECKER["ROOT"] / path, "float_some_qnan_def", 495, {}))
+        self.assertIsNotNone(REF_ERROR(CHECKER["ROOT"] / path, "missing_ieee_def", None, {}))
+        self.assertIsNotNone(CHECKER["hol_source_error"](
+            CHECKER["ROOT"], "hol4/src/floating-point/binary_ieeeScript.sml"))
+
     def test_missing_option_pin_rejected(self):
         import json
         with tempfile.TemporaryDirectory() as tmp:
@@ -643,6 +651,27 @@ noncomputable def cmp : FpCmp -> Bool
         names = CHECKER["reals_rendering_names"](CHECKER["ROOT"])
         self.assertIn("holFp64Sqrt", names)
         self.assertIn("holFp64Add", names)
+
+    def test_reals_rendering_names_cover_nested_sqrt_real(self):
+        names = CHECKER["reals_rendering_names"](CHECKER["ROOT"])
+        self.assertIn("holFp64SqrtReal", names)
+        user = "noncomputable def sqrtCase : BitVec 64 -> BitVec 64 := holFp64SqrtReal .roundTiesToEven"
+        check = CHECKER["reals_as_rational_cuts_errors"]
+        self.assertEqual(check(user, True, names), [])
+        self.assertTrue(any("must carry" in e for e in check(user, False, names)))
+        self.assertEqual(check("def f : Nat := 0 -- holFp64SqrtReal", False, names), [])
+
+    def test_reals_rendering_names_recurse_beneath_binary_ieee(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            nested = root / "Flapjack/Misc/BinaryIeeeSqrt"
+            nested.mkdir(parents=True)
+            (nested / "RoundAgreement.lean").write_text(
+                "noncomputable def holFp64SqrtReal : Nat := 0\n"
+                "theorem comparisonOnly : True := trivial\n")
+            names = CHECKER["reals_rendering_names"](root)
+            self.assertIn("holFp64SqrtReal", names)
+            self.assertNotIn("comparisonOnly", names)
 
     def test_fmap_as_finite_support_fields(self):
         self.assertEqual(
@@ -2002,6 +2031,25 @@ class HolDatatypeDeclarationsTest(unittest.TestCase):
         )
         self.assertEqual(DECL(path, {})["shape"], [2])
 
+    def test_datatype_name_on_its_own_line_is_indexed(self):
+        path = self._write_sml(
+            "Datatype:\n"
+            "  shmem_info_num\n"
+            "  = <| entry_pc : num\n"
+            "     ; nbytes : word8 |>\n"
+            "End\n"
+        )
+        self.assertEqual(DECL(path, {})["shmem_info_num"], [2])
+
+    def test_lab_to_target_shmem_info_num_is_resolvable(self):
+        path = (
+            Path(__file__).resolve().parents[2]
+            / "cakeml/compiler/backend/lab_to_targetScript.sml"
+        )
+        cache = {}
+        self.assertIsNone(REF_ERROR(path, "shmem_info_num", None, cache))
+        self.assertIsNone(REF_ERROR(path, "shmem_info_num", 350, cache))
+
     def test_panlang_shape_is_resolvable(self):
         path = (
             Path(__file__).resolve().parents[2]
@@ -3324,11 +3372,18 @@ class HolSubmoduleSourcesTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             path = self.fixture(root)
-            parent = subprocess.run(
-                ["git", "-C", str(root / "HOL"), "rev-parse",
-                 CHECKER["HOL_SUBMODULE_COMMIT"] + "~1"],
+            # CI initializes HOL with --depth 1, so its parent need not exist.
+            # Create a distinct commit using the available pinned tree instead.
+            pinned = CHECKER["HOL_SUBMODULE_COMMIT"]
+            other_commit = subprocess.run(
+                ["git", "-C", str(root / "HOL"),
+                 "-c", "user.name=HOL provenance test",
+                 "-c", "user.email=hol-provenance-test@example.invalid",
+                 "commit-tree", pinned + "^{tree}", "-p", pinned,
+                 "-m", "Distinct local commit for checkout rejection test"],
                 check=True, capture_output=True, text=True).stdout.strip()
-            _run("git", "-C", str(root / "HOL"), "update-ref", "--no-deref", "HEAD", parent)
+            self.assertNotEqual(other_commit, pinned)
+            _run("git", "-C", str(root / "HOL"), "update-ref", "--no-deref", "HEAD", other_commit)
             self.assertIn("not at the pinned commit", self.error(root, path))
 
     def test_wrong_submodule_url_is_rejected(self):
@@ -3365,6 +3420,61 @@ class HolSubmoduleDeclarationTest(unittest.TestCase):
         root = Path(CHECKER["ROOT"])
         self.assertIsNotNone(
             REF_ERROR(root / "HOL/src/list/src/listScript.sml", "no_such_def", None, {}))
+
+@unittest.skipUnless((ROOT_HOL / ".git").exists(), "pinned HOL submodule not initialized")
+class MachineIeeeGeneratedDeclarationsTest(unittest.TestCase):
+    """Only the reviewed fixed-format factory and unchanged generator qualify."""
+
+    def machine_fixture(self, root):
+        HolSubmoduleSourcesTest.fixture(self, root)
+        for path in (CHECKER["MACHINE_IEEE_SCRIPT"], CHECKER["MACHINE_IEEE_GENERATOR"]):
+            _run("git", "-C", str(root / "HOL"), "checkout",
+                 CHECKER["HOL_SUBMODULE_COMMIT"], "--", path[len("HOL/"):])
+        return root / CHECKER["MACHINE_IEEE_SCRIPT"]
+
+    def test_all_reviewed_generated_names_resolve_at_literal_call(self):
+        path = Path(CHECKER["ROOT"]) / CHECKER["MACHINE_IEEE_SCRIPT"]
+        cache = {}
+        self.assertEqual(len(CHECKER["MACHINE_IEEE_FP64_NAMES"]), 47)
+        for name in CHECKER["MACHINE_IEEE_FP64_NAMES"]:
+            self.assertIsNone(REF_ERROR(path, name, 16, cache), name)
+
+    def test_generated_names_require_call_line(self):
+        path = Path(CHECKER["ROOT"]) / CHECKER["MACHINE_IEEE_SCRIPT"]
+        for line in (None, 13, 15, 17, 63):
+            self.assertIn("source line 16", REF_ERROR(path, "fp64_to_float_def", line, {}))
+
+    def test_fabricated_or_other_format_names_are_not_generated(self):
+        path = Path(CHECKER["ROOT"]) / CHECKER["MACHINE_IEEE_SCRIPT"]
+        for name in ("fp64_fake_def", "fp32_add_def", "fp64_to_float_11"):
+            self.assertIn("declares no", REF_ERROR(path, name, 16, {}))
+
+    def test_missing_or_drifted_generator_rejected(self):
+        for missing in (False, True):
+            with self.subTest(missing=missing), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                path = self.machine_fixture(root)
+                generator = root / CHECKER["MACHINE_IEEE_GENERATOR"]
+                if missing:
+                    generator.unlink()
+                else:
+                    generator.write_text(generator.read_text() + "\n(* drift *)\n")
+                self.assertIn("machine_ieeeLib.sml", REF_ERROR(path, "fp64_add_def", 16, {}))
+                self.assertIsNotNone(CHECKER["hol_source_error"](
+                    root, CHECKER["MACHINE_IEEE_SCRIPT"]))
+
+    def test_changed_fixed_format_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            path = self.machine_fixture(root)
+            path.write_text(path.read_text().replace('("fp64", 52, 11,', '("fp64", 51, 12,'))
+            self.assertIsNotNone(REF_ERROR(path, "fp64_add_def", 16, {}))
+            # Even after a provenance provider returns success, literal format
+            # checking remains independent of that provider.
+            fn = CHECKER["machine_ieee_fp64_source_error"]
+            with patch.dict(fn.__globals__, {"hol_submodule_source_error": lambda *_: None}):
+                self.assertIn("52/11/64", fn(root))
+
 
 if __name__ == "__main__":
     unittest.main()

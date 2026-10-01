@@ -1,0 +1,8 @@
+fmr_full=⊢ ∀ls na ssaL ssaR stR cstR. is_alloc_var na ∧ ALL_DISTINCT ls ∧ ssa_map_ok na ssaR ⇒ (let (moveL,moveR,na',ssaL',ssaR') = fake_moves prio ls ssaL ssaR na in ssa_locals_rel na ssaR stR.locals cstR.locals ⇒ (let (resR,rcstR) = evaluate (moveR,cstR) in resR = NONE ∧ (∀x. ¬MEM x ls ⇒ lookup x ssaR' = lookup x ssaR) ∧ (∀x y. x < na ∧ lookup x cstR.locals = SOME y ⇒ lookup x rcstR.locals = SOME y) ∧ ssa_locals_rel na' ssaR' stR.locals rcstR.locals ∧ word_state_eq_rel cstR rcstR))
+fmr_type_ls=:num list
+fmr_type_na=:num
+fmr_type_ssaL=:num sptree$num_map
+fmr_type_ssaR=:num sptree$num_map
+fmr_type_stR=:(α, β, γ) state
+fmr_type_cstR=:(α, δ, ε) state
+fmr_type_prio=:(unit + unit) option

@@ -17,8 +17,8 @@ Production-only `const`, `arith`, and `shift` macros are rejected; expanding
 those macros needs its own projection proof. A zero-offset `shMem` encodes as
 an address with offset zero and decodes to `shMemOffset ... 0`. Temp stores
 encode only below 32. Register, label, count and stack offset Nats remain Nats;
-word-valued payloads remain BitVecs. StackStore and StackLang stackStore/load
-argument orders are reversed explicitly. FFI Strings are preserved by these
+word-valued payloads remain BitVecs. StackStore and StackLoad retain register
+first and offset second, as in HOL stackSem's evaluation clauses. FFI Strings are preserved by these
 codecs; the separate MlString bridge supplies the byte-ranged exact image.
 
 The executed Lab route uses `StackProg Nat`, not this width-typed image.
@@ -99,9 +99,9 @@ def progToProduction {width : Nat} : ProgW (BitVec width) → Option (StackProg 
   | .rawCall l => some (.rawCall l)
   | .stackAlloc n => some (.stackAlloc n)
   | .stackFree n => some (.stackFree n)
-  | .stackStore offset r => some (.stackStore r offset)
+  | .stackStore r offset => some (.stackStore r offset)
   | .stackStoreAny r s => some (.stackStoreAny r s)
-  | .stackLoad offset r => some (.stackLoad r offset)
+  | .stackLoad r offset => some (.stackLoad r offset)
   | .stackLoadAny r s => some (.stackLoadAny r s)
   | .stackGetSize r => some (.stackGetSize r)
   | .stackSetSize r => some (.stackSetSize r)
@@ -153,9 +153,9 @@ def progFromProduction {width : Nat} : StackProg (BitVec width) → Option (Prog
   | .rawCall l => some (.rawCall l)
   | .stackAlloc n => some (.stackAlloc n)
   | .stackFree n => some (.stackFree n)
-  | .stackStore r offset => some (.stackStore offset r)
+  | .stackStore r offset => some (.stackStore r offset)
   | .stackStoreAny r s => some (.stackStoreAny r s)
-  | .stackLoad r offset => some (.stackLoad offset r)
+  | .stackLoad r offset => some (.stackLoad r offset)
   | .stackLoadAny r s => some (.stackLoadAny r s)
   | .stackGetSize r => some (.stackGetSize r)
   | .stackSetSize r => some (.stackSetSize r)

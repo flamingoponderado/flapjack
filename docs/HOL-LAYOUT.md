@@ -62,7 +62,9 @@ the cited name occurs in one of the two syntactic forms.
 | `compiler/backend/semantics/stackSemScript.sml` | `Flapjack/Compiler/Backend/Semantics/StackSem/State.lean` (exact state/result carriers and canonical finite-support state roundtrip), `StackSem/StateOps.lean` (memory/register/clock primitives), `StackSem/Control.lean` (code lookup and clock clamp/bound), `StackSem/Bitmap.lean` (polymorphic bitmap filter/map and length theorems), `StackSem/WordBitmap.lean` (word bit length and bitmap decoding), `StackSem/StackCodec.lean` (descriptor and recursive stack codecs; evaluator remains open) |
 | `compiler/encoders/asm/asmScript.sml` | `Flapjack/Compiler/Encoders/Asm.lean` (asm_config validity predicates: `reg_ok`, `fp_reg_ok`, `reg_imm_ok`, `offset_ok`, `arith_ok`, `fp_ok`, `cmp_ok`, `inst_ok`; exact carriers `reg_imm`, `addr`, `inst`, `arith`, `fp`, `binop`, `cmp`, `memop`, `asm`) |
 | `compiler/backend/labLangScript.sml` | `Flapjack/Compiler/Backend/LabLang.lean` (generic HOL `lab`, `line`, and `sec` syntax) |
-| `compiler/backend/lab_to_targetScript.sml` | `Flapjack/Compiler/Backend/LabProps.lean` (`cbw_to_asm` carrier boundary only; target encoding remains open) |
+| `compiler/backend/lab_to_targetScript.sml` | `Flapjack/Compiler/Backend/LabProps.lean` (`cbw_to_asm` carrier boundary only; target encoding remains open), `Flapjack/Compiler/Backend/LabToTarget/` (exact encoding/labels/positions/second-pass/padding/remove-labels/shmem-info and the `config`/`compile_lab`/`compile` entry) |
+| `compiler/backend/lab_filterScript.sml` | `Flapjack/Compiler/Backend/LabFilter.lean` |
+| `misc/miscScript.sml` (`list_subset`) | `Flapjack/Misc/ListSubset.lean` |
 | `compiler/backend/proofs/lab_to_targetProofScript.sml` | `Flapjack/Compiler/Backend/LabToTarget/` (code similarity and structural preservation) |
 | `compiler/backend/semantics/labPropsScript.sml` | `Flapjack/Compiler/Backend/LabProps.lean` (`line_ok_pre`, `sec_ok_pre`, and `all_enc_ok_pre`; asm/config carrier bridge remains explicit) |
 | `compiler/backend/semantics/labPropsScript.sml` | `Flapjack/Compiler/Backend/LabProps.lean` (`line_ok_pre`, `sec_ok_pre`, and `all_enc_ok_pre`; asm/config carrier bridge remains explicit) |
@@ -133,3 +135,6 @@ The pinned external `hol4/src/coretypes/optionScript.sml` counterpart is
 The pinned external `hol4/src/coalgebras/llistScript.sml` counterpart is
 `Flapjack/Misc/LList.lean`; `lprefix_lubScript.sml` chain and least-upper-bound
 declarations remain in `Flapjack/Misc/LprefixLub.lean`.
+
+The pinned external `HOL/src/n-bit/byteScript.sml` counterpart is
+`Flapjack/Byte.lean` (byte extraction and arbitrary-count word serialization).

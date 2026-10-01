@@ -36,7 +36,9 @@ COORDINATOR_PENDING_NOTE = re.compile(
     r"\b(?:acceptance|review)\b[^.;]{0,20}?\b(?:pending|required)\b"
     r"|\bcoordinator\s+(?:is\s+)?(?:pending|required)\b"
     r"|\bpending\s+(?:coordinator|integration)\s+(?:acceptance|review)\b"
-    r"|\b(?:acceptance|review)\s+pending\s+coordinator\b",
+    r"|\b(?:acceptance|review)\s+pending\s+coordinator\b"
+    r"|\b(?:fleet\s+merge|merge)\s+acceptance\b"
+    r"|\bacceptance\s+separate\b",
     re.IGNORECASE,
 )
 REFS = runpy.run_path(str(ROOT / "scripts" / "check-hol-refs.py"))
@@ -2110,6 +2112,15 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
     # These source/theorem pairs were checked against their HOL declaration
     # statements in the active review task, not merely copied from attributes.
     reviewed_exact = {
+        ("Flapjack/Misc/FindIndex.lean", "findIndex"),
+        ("Flapjack/Compiler/Backend/LabToTarget/Positions.lean", "findPos"),
+        ("Flapjack/Compiler/Backend/LabToTarget/Positions.lean", "getFfiIndex"),
+        ("Flapjack/Compiler/Backend/LabToTarget/Padding.lean", "padBytes"),
+        ("Flapjack/Compiler/Backend/LabToTarget/ShmemInfo.lean", "ShmemInfoNum"),
+        ("Flapjack/Compiler/Backend/LabToTarget/ShmemInfo.lean", "listAddIfFresh"),
+        ("Flapjack/Compiler/Backend/LabToTarget/ShmemInfo.lean", "getMemopInfo"),
+        ("Flapjack/Misc/ListSubset.lean", "listSubset"),
+        ("Flapjack/Compiler/Backend/LabToTarget/Compile.lean", "Config"),
         ("Flapjack/Misc/LList.lean", "lprefixAntisymHOL"),
         ("Flapjack/Misc/LList.lean", "lprefixTransHOL"),
         ("Flapjack/Misc/LList.lean", "prefixesLprefixTotalHOL"),

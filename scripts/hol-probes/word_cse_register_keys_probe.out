@@ -1,0 +1,124 @@
+rk_statement_firstRegOfArith=⊢ (∀v0 r v1 v2. firstRegOfArith (Binop v0 r v1 v2) = r) ∧ (∀v3 r v4 v5. firstRegOfArith (Shift v3 r v4 v5) = r) ∧ (∀r v6 v7. firstRegOfArith (Div r v6 v7) = r) ∧ (∀r v8 v9 v10. firstRegOfArith (LongMul r v8 v9 v10) = r) ∧ (∀r v11 v12 v13 v14. firstRegOfArith (LongDiv r v11 v12 v13 v14) = r) ∧ (∀r v15 v16 v17. firstRegOfArith (AddCarry r v15 v16 v17) = r) ∧ (∀r v18 v19 v20. firstRegOfArith (AddOverflow r v18 v19 v20) = r) ∧ ∀r v21 v22 v23. firstRegOfArith (SubOverflow r v21 v22 v23) = r
+rk_statement_arithWrites=⊢ (∀v0 r v1 v2. arithWrites (Binop v0 r v1 v2) = [r]) ∧ (∀v3 r v4 v5. arithWrites (Shift v3 r v4 v5) = [r]) ∧ (∀r v6 v7. arithWrites (Div r v6 v7) = [r]) ∧ (∀r1 r2 v8 v9. arithWrites (LongMul r1 r2 v8 v9) = [r1; r2]) ∧ (∀r1 r2 v10 v11 v12. arithWrites (LongDiv r1 r2 v10 v11 v12) = [r1; r2]) ∧ (∀r1 v13 v14 r4. arithWrites (AddCarry r1 v13 v14 r4) = [r1; r4]) ∧ (∀r1 v15 v16 r4. arithWrites (AddOverflow r1 v15 v16 r4) = [r1; r4]) ∧ ∀r1 v17 v18 r4. arithWrites (SubOverflow r1 v17 v18 r4) = [r1; r4]
+rk_statement_arithReads=⊢ arithReads (Binop v0 v1 r2 (Reg r3)) = [r2; r3] ∧ arithReads (Binop v2 v3 r2 (Imm v4)) = [r2] ∧ arithReads (Shift v5 v6 r2 (Reg r3)) = [r2; r3] ∧ arithReads (Shift v7 v8 r2 (Imm v9)) = [r2] ∧ arithReads (Div v10 r2 r3) = [r2; r3] ∧ arithReads (LongMul v11 v12 r3 r4) = [r3; r4] ∧ arithReads (LongDiv v13 v14 r3 r4 r5) = [r3; r4; r5] ∧ arithReads (AddCarry v15 r2 r3 r4) = [r2; r3; r4] ∧ arithReads (AddOverflow v16 r2 r3 v17) = [r2; r3] ∧ arithReads (SubOverflow v18 r2 r3 v19) = [r2; r3]
+rk_statement_fpWrites=⊢ fpWrites (FPLess r v0 v1) = [r] ∧ fpWrites (FPLessEqual r v2 v3) = [r] ∧ fpWrites (FPEqual r v4 v5) = [r] ∧ fpWrites (FPMovToReg r1 r2 v6) = [r1; r2] ∧ fpWrites (FPAbs v16 v17) = [] ∧ fpWrites (FPNeg v18 v19) = [] ∧ fpWrites (FPSqrt v20 v21) = [] ∧ fpWrites (FPAdd v22 v23 v24) = [] ∧ fpWrites (FPSub v25 v26 v27) = [] ∧ fpWrites (FPMul v28 v29 v30) = [] ∧ fpWrites (FPDiv v31 v32 v33) = [] ∧ fpWrites (FPFma v34 v35 v36) = [] ∧ fpWrites (FPMov v37 v38) = [] ∧ fpWrites (FPMovFromReg v42 v43 v44) = [] ∧ fpWrites (FPToInt v45 v46) = [] ∧ fpWrites (FPFromInt v47 v48) = []
+rk_statement_can_mem_arith=⊢ (can_mem_arith (Binop v0 v1 r1 (Reg r2)) ⇔ ODD r1 ∧ ODD r2) ∧ (can_mem_arith (Binop v2 v3 r1 (Imm v4)) ⇔ ODD r1) ∧ (can_mem_arith (Div v5 r1 r2) ⇔ ODD r1 ∧ ODD r2) ∧ (can_mem_arith (Shift v6 v7 r (Imm v8)) ⇔ ODD r) ∧ (can_mem_arith (Shift v13 v14 v15 (Reg v77)) ⇔ F) ∧ (can_mem_arith (LongMul v20 v21 v22 v23) ⇔ F) ∧ (can_mem_arith (LongDiv v24 v25 v26 v27 v28) ⇔ F) ∧ (can_mem_arith (AddCarry v29 v30 v31 v32) ⇔ F) ∧ (can_mem_arith (AddOverflow v33 v34 v35 v36) ⇔ F) ∧ (can_mem_arith (SubOverflow v37 v38 v39 v40) ⇔ F)
+rk_statement_is_store=⊢ (is_store Load ⇔ F) ∧ (is_store Load8 ⇔ F) ∧ (is_store Load16 ⇔ F) ∧ (is_store Load32 ⇔ F) ∧ (is_store Store ⇔ T) ∧ (is_store Store8 ⇔ T) ∧ (is_store Store16 ⇔ T) ∧ (is_store Store32 ⇔ T)
+rk_statement_wordToNum_unique=⊢ ∀c1 c2. wordToNum c1 = wordToNum c2 ⇔ c1 = c2
+rk_statement_arithOpToNum_eq=⊢ ∀op1 op2. arithOpToNum op1 = arithOpToNum op2 ⇔ op1 = op2
+rk_statement_memOpToNum_eq=⊢ ∀op1 op2. memOpToNum op1 = memOpToNum op2 ⇔ op1 = op2
+rk_statement_shiftToNum_eq=⊢ ∀s1 s2. shiftToNum s1 = shiftToNum s2 ⇔ s1 = s2
+rk_type_firstRegOfArith=:α arith -> num
+rk_type_arithWrites=:α arith -> num list
+rk_type_arithReads=:α arith -> num list
+rk_type_fpWrites=:fp -> num list
+rk_type_can_mem_arith=:α arith -> bool
+rk_type_is_store=:memop -> bool
+rk_a0_firstRegOfArith_8=99
+rk_a0_arithWrites_8=[99]
+rk_a0_arithReads_8=[3; 5]
+rk_a0_can_mem_arith_8=T
+rk_a1_firstRegOfArith_8=99
+rk_a1_arithWrites_8=[99]
+rk_a1_arithReads_8=[4]
+rk_a1_can_mem_arith_8=F
+rk_a2_firstRegOfArith_8=99
+rk_a2_arithWrites_8=[99]
+rk_a2_arithReads_8=[3]
+rk_a2_can_mem_arith_8=T
+rk_a3_firstRegOfArith_8=99
+rk_a3_arithWrites_8=[99]
+rk_a3_arithReads_8=[3; 5]
+rk_a3_can_mem_arith_8=F
+rk_a4_firstRegOfArith_8=99
+rk_a4_arithWrites_8=[99]
+rk_a4_arithReads_8=[3; 5]
+rk_a4_can_mem_arith_8=T
+rk_a5_firstRegOfArith_8=99
+rk_a5_arithWrites_8=[99; 98]
+rk_a5_arithReads_8=[3; 5]
+rk_a5_can_mem_arith_8=F
+rk_a6_firstRegOfArith_8=99
+rk_a6_arithWrites_8=[99; 98]
+rk_a6_arithReads_8=[3; 5; 7]
+rk_a6_can_mem_arith_8=F
+rk_a7_firstRegOfArith_8=99
+rk_a7_arithWrites_8=[99; 98]
+rk_a7_arithReads_8=[3; 5; 98]
+rk_a7_can_mem_arith_8=F
+rk_a8_firstRegOfArith_8=99
+rk_a8_arithWrites_8=[99; 98]
+rk_a8_arithReads_8=[3; 5]
+rk_a8_can_mem_arith_8=F
+rk_a9_firstRegOfArith_8=99
+rk_a9_arithWrites_8=[99; 98]
+rk_a9_arithReads_8=[3; 5]
+rk_a9_can_mem_arith_8=F
+rk_a0_firstRegOfArith_80=99
+rk_a0_arithWrites_80=[99]
+rk_a0_arithReads_80=[3; 5]
+rk_a0_can_mem_arith_80=T
+rk_a1_firstRegOfArith_80=99
+rk_a1_arithWrites_80=[99]
+rk_a1_arithReads_80=[4]
+rk_a1_can_mem_arith_80=F
+rk_a2_firstRegOfArith_80=99
+rk_a2_arithWrites_80=[99]
+rk_a2_arithReads_80=[3]
+rk_a2_can_mem_arith_80=T
+rk_a3_firstRegOfArith_80=99
+rk_a3_arithWrites_80=[99]
+rk_a3_arithReads_80=[3; 5]
+rk_a3_can_mem_arith_80=F
+rk_a4_firstRegOfArith_80=99
+rk_a4_arithWrites_80=[99]
+rk_a4_arithReads_80=[3; 5]
+rk_a4_can_mem_arith_80=T
+rk_a5_firstRegOfArith_80=99
+rk_a5_arithWrites_80=[99; 98]
+rk_a5_arithReads_80=[3; 5]
+rk_a5_can_mem_arith_80=F
+rk_a6_firstRegOfArith_80=99
+rk_a6_arithWrites_80=[99; 98]
+rk_a6_arithReads_80=[3; 5; 7]
+rk_a6_can_mem_arith_80=F
+rk_a7_firstRegOfArith_80=99
+rk_a7_arithWrites_80=[99; 98]
+rk_a7_arithReads_80=[3; 5; 98]
+rk_a7_can_mem_arith_80=F
+rk_a8_firstRegOfArith_80=99
+rk_a8_arithWrites_80=[99; 98]
+rk_a8_arithReads_80=[3; 5]
+rk_a8_can_mem_arith_80=F
+rk_a9_firstRegOfArith_80=99
+rk_a9_arithWrites_80=[99; 98]
+rk_a9_arithReads_80=[3; 5]
+rk_a9_can_mem_arith_80=F
+rk_fp_fpLess=[99]
+rk_fp_fpLessEqual=[99]
+rk_fp_fpEqual=[99]
+rk_fp_fpAbs=[]
+rk_fp_fpNeg=[]
+rk_fp_fpSqrt=[]
+rk_fp_fpAdd=[]
+rk_fp_fpSub=[]
+rk_fp_fpMul=[]
+rk_fp_fpDiv=[]
+rk_fp_fpFma=[]
+rk_fp_fpMov=[]
+rk_fp_fpMovToReg=[99; 98]
+rk_fp_fpMovFromReg=[]
+rk_fp_fpToInt=[]
+rk_fp_fpFromInt=[]
+rk_store_load=F
+rk_store_load8=F
+rk_store_load16=F
+rk_store_load32=F
+rk_store_store=T
+rk_store_store8=T
+rk_store_store16=T
+rk_store_store32=T
+rk_replay_wordToNum_unique=⊢ ∀c1 c2. wordToNum c1 = wordToNum c2 ⇔ c1 = c2
+rk_replay_arithOpToNum_eq=⊢ ∀op1 op2. arithOpToNum op1 = arithOpToNum op2 ⇔ op1 = op2
+rk_replay_memOpToNum_eq=⊢ ∀op1 op2. memOpToNum op1 = memOpToNum op2 ⇔ op1 = op2
+rk_replay_shiftToNum_eq=⊢ ∀s1 s2. shiftToNum s1 = shiftToNum s2 ⇔ s1 = s2

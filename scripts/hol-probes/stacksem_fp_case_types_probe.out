@@ -1,0 +1,7 @@
+fpc_inst=:α inst -> (α, β, γ) state -> (α, β, γ) state option
+fpc_constructor=:fp -> α inst
+fpc_lookup=:num -> (α, β, γ) state -> word64 option
+fpc_update=:num -> word64 -> (α, β, γ) state -> (α, β, γ) state
+fpc_general_lookup=:num -> (α, β, γ) state -> α word_loc option
+fpc_general_update=:num -> α word_loc -> (α, β, γ) state -> (α, β, γ) state
+fpc_all_payloads=FPLess::num -> num -> num -> fp;FPLessEqual::num -> num -> num -> fp;FPEqual::num -> num -> num -> fp;FPAbs::num -> num -> fp;FPNeg::num -> num -> fp;FPSqrt::num -> num -> fp;FPAdd::num -> num -> num -> fp;FPSub::num -> num -> num -> fp;FPMul::num -> num -> num -> fp;FPDiv::num -> num -> num -> fp;FPFma::num -> num -> num -> fp;FPMov::num -> num -> fp;FPMovToReg::num -> num -> num -> fp;FPMovFromReg::num -> num -> num -> fp;FPToInt::num -> num -> fp;FPFromInt::num -> num -> fp;
