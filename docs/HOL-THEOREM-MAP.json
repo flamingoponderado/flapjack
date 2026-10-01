@@ -43710,425 +43710,466 @@
     "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead .18.5.15.3.26.16): literal full1160-1174 predicates over list(num x positive-width HolProg), arbitrary SetNat external labels, set-of-list, IMAGE and BIGUNION preserved. Original indexed stackLang carrier and accepted getter/restrict_nonzero used. Same union association and source entry0/entry1 handler ownership restriction; no finite external set, unique keys, successful evaluation or target premise. Only word dimension translation; full original inferred types and10 kernel/original rows reviewed. Coordinator acceptance pending."
   },
   {
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "all_enc_ok_light",
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/RemoveLabels.lean",
-    "lean_name": "allEncOkLight",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.16): HOL lab_to_targetScript.sml:188 declares all_enc_ok_light as an Overload (which the reference checker resolves as a declaration), body `λc ls. EVERY (sec_ok_light c) ls`; Lean `sections.all (secOkLight config)` is exactly List.all over the same exact secOkLight, no clause or guard changed. The linked Section/Line carrier's only type-indexed word is translated to positive-width BitVec width with [NeZero width]."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Encoding.lean",
-    "lean_name": "ffiOffset",
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "ffi_offset_def",
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "even_list_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/SSASetup.lean",
+    "lean_name": "evenList",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.7): literal lab_to_targetScript.sml:15-17 `ffi_offset = 16:num`, transcribed as `Nat` 16. No word, list, map, string or FFI carrier, so no qualifier is needed. Replayed as the FFIOffset row of scripts/hol-probes/lab_to_target_encoding_probe.out in Flapjack.Test.LabToTargetEncodingParity. Coordinator source review pending."
+    "reviewer": "flapjack-luna-c source/body/carrier comparison: word_allocScript39-55 and1809-1815. Literal GENLIST even naturals, native Spt insert, forward recursion including duplicate keys and arbitrary initial tree/start; Move1 ZIP renamed/even arguments and unused full WordLangProgHOL body. No allocation/wf/success premise. Eleven fresh original EVAL rows with identical kernel observations. Setup retains independently quantified positive input/output word dimensions, each translated to its own BitVec width with NeZero. Independent A type_of review caught the initial coupled width; repaired with 1-to-80 and 80-to-1 original and kernel fixtures. Executed list-state routing separately tracked on .30.2.1.1; coordinator acceptance pending."
   },
   {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Encoding.lean",
-    "lean_name": "labInst",
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "lab_inst_def",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.7): literal lab_to_targetScript.sml:21-29, all seven clauses. `Jump _`, `JumpCmp c r ri _`, `Call _` use the supplied target word; `LocValue r _` becomes `Loc r w`; `Halt`, `Install`, `CallFFI n` all collapse to `Jump w`, exactly as the source discards those payloads. Stated over the exact imported LabLang.asm_with_lab instantiated at HolCmp/HolRegImm/MlString; only HOL's type-indexed `'a word` is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). Replayed as the seven LabInst* rows of lab_to_target_encoding_probe.out in Flapjack.Test.LabToTargetEncodingParity. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Encoding.lean",
-    "lean_name": "cbwToAsmExact",
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "cbw_to_asm_def",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.7): literal lab_to_targetScript.sml:31-37. `Asmi a => a`; `Cbw r1 r2 => Inst (Mem Store8 r2 (Addr r1 0w))`; `ShareMem m r ad => Inst (Mem m r ad)`. The generic untagged Flapjack.Compiler.Backend.LabProps.cbwToAsm is an AsmChecks record adapter whose signature carries an extra callback parameter, so a new exact definition over HolAsm/HolMemop/HolAddr was added in this module; LabProps.lean is unmodified. Only HOL's `'a word` is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). Replayed as the CbwToAsm* rows of lab_to_target_encoding_probe.out in Flapjack.Test.LabToTargetEncodingParity. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Encoding.lean",
-    "lean_name": "encLine",
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "enc_line_def",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.7): literal lab_to_targetScript.sml:40-47. `Label n1 n2 n3 => Label n1 n2 skip_len`; `Asm a _ _ => let bs = enc (cbw_to_asm a) in Asm a bs (LENGTH bs)`; `LabAsm l _ _ _ => let bs = enc (lab_inst 0w l) in LabAsm l 0w bs (LENGTH bs)`. The instruction encoder `enc : HolAsm width -> word8 list` is the HOL parameter of the same definition, not the production assembler encoder. Only HOL's `'a word` is translated to positive-width `BitVec width` with `[NeZero width]`; the `word8 list` bytes stay fixed 8-bit (words_as_type_indexed_bitvec). Replayed as the EncLine* rows of lab_to_target_encoding_probe.out in Flapjack.Test.LabToTargetEncodingParity. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Encoding.lean",
-    "lean_name": "encSec",
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "enc_sec_def",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.7): literal lab_to_targetScript.sml:49-52 `enc_sec enc skip_len (Section k xs) = Section k (MAP (enc_line enc skip_len) xs)`, preserving the section id and mapping the passed encoder/skip_len over the line list. Exact Section/Line carriers at one width; only HOL's `'a word` is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). Replayed as the EncSec row of lab_to_target_encoding_probe.out in Flapjack.Test.LabToTargetEncodingParity. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Encoding.lean",
-    "lean_name": "encSecList",
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "enc_sec_list_def",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.7): literal lab_to_targetScript.sml:54-57 `enc_sec_list enc xs = let skip_len = LENGTH (enc (Inst Skip)) in MAP (enc_sec enc skip_len) xs`, sharing one skip length computed from the encoding of `Inst Skip` across every section. Exact Section/Line carriers at one width; only HOL's `'a word` is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). Replayed as the EncSecList row of lab_to_target_encoding_probe.out in Flapjack.Test.LabToTargetEncodingParity. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Labels.lean",
-    "lean_name": "sectionLabels",
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "section_labels_def",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.8; carrier-repaired): literal lab_to_targetScript.sml:62-74, clause for clause. `section_labels pos [] labs = (pos,labs)`; `Label _ l2 len :: xs` keeps the exact `if l2 = 0` guard so a zero label is ignored and a nonzero label is prepended as `(l2,pos+len)` after advancing to `pos+len`; `Asm _ _ len :: xs` and `LabAsm _ _ _ len :: xs` advance to `pos+len` recording nothing. Return type is exactly `num # (num#num) list`; the imported Line/Section carriers are instantiated at HOL's actual carriers (HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString) with the shared word dimension rendered as positive-width BitVec width; the words qualifier records that type-indexed-word translation. No added hypothesis, dropped guard, or weakened clause. Replayed as the SectionLabels* rows of lab_to_target_labels_probe.out in Flapjack.Test.LabToTargetLabelsParity. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Labels.lean",
-    "lean_name": "computeLabelsAlt",
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "compute_labels_alt_def",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.8; carrier-repaired): literal lab_to_targetScript.sml:76-83, clause for clause. `compute_labels_alt pos [] labs = labs`; `Section k lines::rest` computes `let (new_pos,sec_labs) = section_labels pos lines []`, then recurses with `new_pos` and accumulates `insert k (fromAList ((0,pos)::sec_labs)) labs`, capturing the section start `pos` (not `new_pos`) under key 0. HOL `insert` and `fromAList` are the Sptree operations and render as `sptInsert`/`sptFromAList`; the accumulator type is `num_map num_map` = `num spt spt` (the generated lab_to_targetTheory doc prints `num -> α sec list -> num sptree$num_map sptree$num_map -> ...`, with `num_map = 'a spt`), i.e. Lean `Spt (Spt Nat)`, matching the `(num#num)` entries fed to `fromAList`. The imported Line/Section carriers are instantiated at HOL's actual carriers with the shared word dimension rendered as positive-width BitVec width; the words qualifier records that translation. No added hypothesis or weakened clause. Replayed as the ComputeLabelsAlt/ComputeLookup* rows of lab_to_target_labels_probe.out in Flapjack.Test.LabToTargetLabelsParity. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Positions.lean",
-    "lean_name": "findPos",
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "find_pos_def",
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "next_var_rename_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/SSASetup.lean",
+    "lean_name": "nextVarRename",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.11): literal lab_to_targetScript.sml:86-89 `find_pos (Lab k1 k2) labs = (lookup_any k2 (lookup_any k1 labs LN) 0):num`, clause for clause on the single Lab constructor. The outer default is the empty inner spt (Lean .ln) and the inner default is the numeric 0; HOL lookup_any is the reviewed lookupAny, with `labs : num spt spt` rendered as `Spt (Spt Nat)`. No word/BitVec carrier occurs, so no qualifier is needed. Replayed as the FindPos* rows of scripts/hol-probes/lab_to_target_positions_probe.out in Flapjack.Test.LabToTargetPositionsParity. Coordinator source review pending."
+    "reviewer": "flapjack-luna-c source/body/carrier comparison: word_allocScript39-55 and1809-1815. Literal GENLIST even naturals, native Spt insert, forward recursion including duplicate keys and arbitrary initial tree/start; Move1 ZIP renamed/even arguments and unused full WordLangProgHOL body. No allocation/wf/success premise. Eleven fresh original EVAL rows with identical kernel observations. Setup retains independently quantified positive input/output word dimensions, each translated to its own BitVec width with NeZero. Independent A type_of review caught the initial coupled width; repaired with 1-to-80 and 80-to-1 original and kernel fixtures. Executed list-state routing separately tracked on .30.2.1.1; coordinator acceptance pending."
   },
   {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Positions.lean",
-    "lean_name": "getLabel",
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "get_label_def",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.11; carrier-repaired): literal lab_to_targetScript.sml:91-98, clause for clause. `Jump l => l`, `JumpCmp c r ri l => l`, `Call l => l`, `LocValue r l => l`, and the catch-all `_ => Lab 0 0` covering CallFFI/Install/Halt. The carriers are HOL fixed carriers, not arbitrary opaque types: `AsmWithLab HolCmp (HolRegImm width) MlString` at positive width, so the word-indexed reg_imm renders as BitVec width and the words qualifier records that translation. Replayed as the GetLabel* rows of scripts/hol-probes/lab_to_target_positions_probe.out in Flapjack.Test.LabToTargetPositionsParity. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Positions.lean",
-    "lean_name": "getFfiIndex",
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "get_ffi_index_def",
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "list_next_var_rename_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/SSASetup.lean",
+    "lean_name": "listNextVarRename",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.11): literal lab_to_targetScript.sml:104-107 `get_ffi_index ffis s = the 0 (find_index s ffis 0)`, fully generic in the list element type. HOL `the` is rendered as Option.getD 0, HOL find_index is the reviewed findIndex, and HOL `=` on the generic element type is the standard decidable equality [DecidableEq alpha]. No word/BitVec carrier occurs, so no qualifier is needed. Replayed as the GetFfiIndex* rows of scripts/hol-probes/lab_to_target_positions_probe.out in Flapjack.Test.LabToTargetPositionsParity. Coordinator source review pending."
+    "reviewer": "flapjack-luna-c source/body/carrier comparison: word_allocScript39-55 and1809-1815. Literal GENLIST even naturals, native Spt insert, forward recursion including duplicate keys and arbitrary initial tree/start; Move1 ZIP renamed/even arguments and unused full WordLangProgHOL body. No allocation/wf/success premise. Eleven fresh original EVAL rows with identical kernel observations. Setup retains independently quantified positive input/output word dimensions, each translated to its own BitVec width with NeZero. Independent A type_of review caught the initial coupled width; repaired with 1-to-80 and 80-to-1 original and kernel fixtures. Executed list-state routing separately tracked on .30.2.1.1; coordinator acceptance pending."
   },
   {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Positions.lean",
-    "lean_name": "getJumpOffset",
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "get_jump_offset_def",
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "setup_ssa_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/SSASetup.lean",
+    "lean_name": "setupSSA",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.11): literal lab_to_targetScript.sml:109-118, all four clauses in order. `CallFFI s => 0w - n2w (pos + (3 + get_ffi_index ffis (ExtCall s)) * ffi_offset)`, `Install => 0w - n2w (pos + 2 * ffi_offset)`, `Halt => 0w - n2w (pos + ffi_offset)`, and the catch-all `a => n2w (find_pos (get_label a) labs) - n2w pos`; `pos` is HOL num (Lean Nat), `ffis` is the exact ffiname list (Lean List HolFfiName, ExtCall s = .extCall MlString), and ffi_offset is ffiOffset. The HOL probe showed the result `b word` stays independent of the instruction's `a reg_imm` word dimension (dimword (:-a) stayed free when the instruction was fixed at 64), so the port keeps two independent positive widths (regImmWidth and width) rather than specializing. Only HOL's type-indexed `a word` is translated to positive-width BitVec width with its own [NeZero] (words_as_type_indexed_bitvec) and the 0w-/n2w rendering is kept literal. Replayed as the GetJumpOffset* rows of scripts/hol-probes/lab_to_target_positions_probe.out in Flapjack.Test.LabToTargetPositionsParity. Coordinator source review pending."
+    "reviewer": "flapjack-luna-c source/body/carrier comparison: word_allocScript39-55 and1809-1815. Literal GENLIST even naturals, native Spt insert, forward recursion including duplicate keys and arbitrary initial tree/start; Move1 ZIP renamed/even arguments and unused full WordLangProgHOL body. No allocation/wf/success premise. Eleven fresh original EVAL rows with identical kernel observations. Setup retains independently quantified positive input/output word dimensions, each translated to its own BitVec width with NeZero. Independent A type_of review caught the initial coupled width; repaired with 1-to-80 and 80-to-1 original and kernel fixtures. Executed list-state routing separately tracked on .30.2.1.1; coordinator acceptance pending.",
+    "words_as_type_indexed_bitvec": true
   },
   {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/SecondPass.lean",
-    "lean_name": "encLinesAgain",
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "enc_lines_again_def",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 factual clause comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.13): literal lab_to_targetScript.sml:120-136, clause for clause. The empty list returns `(REVERSE acc, pos, ok)`; `Label k1 k2 l :: xs` and `Asm x1 x2 l :: xs` recurse at `pos + l` prepending the unchanged line; `LabAsm a w bytes l :: xs` computes `w1 = get_jump_offset a ffis labs pos`, recurses at `pos + l` when `w = w1`, and otherwise re-encodes `bs = enc (lab_inst w1 a)`, takes `l1 = MAX (LENGTH bs) l`, recurses at `pos + l1` with `LabAsm a w1 bs l1` and flag `ok AND (l1 = l)`. HOL `REVERSE`/`MAX`/`LENGTH`/`T`/conjunction are `List.reverse`/`Nat.max`/`.length`/`true`/`&& on Bool`, and the `(l1 = l)` conjunct is `decide (l1 = l)`. The instructions/position use the exact LabLang carriers at one shared word width; the words qualifier records only HOL's type-indexed word to positive-width `BitVec width` (with `[NeZero width]`) translation of the line's position field and the `get_jump_offset`/`lab_inst` results. The encoder parameter is the HOL `enc : HolAsm width -> word8 list`, not the production assembler. Replayed as the four EncLinesAgain rows of scripts/hol-probes/lab_to_target_secondpass_probe.out in Flapjack.Test.LabToTargetSecondPassParity. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/SecondPass.lean",
-    "lean_name": "encSecsAgain",
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "enc_secs_again_def",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 factual clause comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.13): literal lab_to_targetScript.sml:137-144, clause for clause. The empty list is `([], T)`; `Section s lines :: rest` computes `(lines1, pos1, ok) = enc_lines_again labs ffis pos enc lines ([], T)`, then `(rest1, ok1) = enc_secs_again pos1 labs ffis enc rest`, returning `(Section s lines1 :: rest1, ok AND ok1)`. The shared one-width LabLang Line/Section carriers are used throughout with HOL `T`/conjunction rendered as `true`/`&&` on Bool; the words qualifier records only HOL's type-indexed word to positive-width `BitVec width` translation. Replayed as the two EncSecsAgain rows of scripts/hol-probes/lab_to_target_secondpass_probe.out in Flapjack.Test.LabToTargetSecondPassParity. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/SecondPass.lean",
-    "lean_name": "linesUpdLabLen",
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "lines_upd_lab_len_def",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 factual clause comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.13): literal lab_to_targetScript.sml:147-157, clause for clause. The empty list is `(REVERSE acc, pos)`; `Label k1 k2 l :: xs` sets `l1 = if EVEN pos then 0 else 1` (HOL `EVEN pos` rendered as `pos % 2 = 0`), recurses at `pos + l1` replacing the label by `Label k1 k2 l1`; `Asm x1 x2 l :: xs` and `LabAsm a w bytes l :: xs` recurse at `pos + l` prepending the unchanged line. The line's position field is the same shared word width; the words qualifier records only HOL's type-indexed word to positive-width `BitVec width` translation. Replayed as the three LinesUpdLabLen rows of scripts/hol-probes/lab_to_target_secondpass_probe.out in Flapjack.Test.LabToTargetSecondPassParity. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/SecondPass.lean",
-    "lean_name": "updLabLen",
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "upd_lab_len_def",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 factual clause comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.13): literal lab_to_targetScript.sml:158-166, clause for clause. The empty list is `[]`; `Section s lines :: rest` computes `(lines1, pos1) = lines_upd_lab_len pos lines []`, then `rest1 = upd_lab_len pos1 rest`, returning `Section s lines1 :: rest1`. The same shared one-width Line/Section carriers and the words qualifier recording only HOL's type-indexed word to positive-width `BitVec width` translation; no extra hypothesis or clause change. Replayed as the two UpdLabLen rows of scripts/hol-probes/lab_to_target_secondpass_probe.out in Flapjack.Test.LabToTargetSecondPassParity. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Padding.lean",
-    "lean_name": "lineOkLight",
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "line_ok_light_def",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.14): literal lab_to_targetScript.sml:168-181, all seven clauses in HOL order. `Label _ _ l => T` and `Asm b bytes l => T` are `true`; `LabAsm Halt w bytes l`, `LabAsm Install w bytes l` and `LabAsm (CallFFI index) w bytes l` all check `asm_ok (Jump w) c`; `LabAsm (Call v24) w bytes l => F` is `false`; the catch-all `LabAsm a w bytes l` checks `asm_ok (lab_inst w a) c`. Stated over the exact imported LabLang.line carrier at HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and the exact `AsmConfigExact` configuration; the two asm_ok calls read the exact `asmOkExact` (`asm_ok_def`) port. Only HOL's type-indexed `'a word` shared by the config and the line is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). No added hypothesis, dropped clause, or weakened branch. Replayed as the ten LineOkLight* rows of scripts/hol-probes/lab_to_target_padding_probe.out in Flapjack.Test.LabToTargetPaddingParity. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Padding.lean",
-    "lean_name": "secOkLight",
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "sec_ok_light_def",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.14): literal lab_to_targetScript.sml:183-186, the single clause `sec_ok_light c (Section k ls) <=> EVERY (line_ok_light c) ls`. HOL `EVERY` is Lean `List.all`; the section carrier is the exact LabLang.sec over the linked line carrier, whose only type-indexed word is translated to positive-width `BitVec width` (words_as_type_indexed_bitvec). No added hypothesis or weakened clause. Replayed as the SecOkLight* rows of scripts/hol-probes/lab_to_target_padding_probe.out in Flapjack.Test.LabToTargetPaddingParity. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Padding.lean",
-    "lean_name": "padBytes",
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "pad_bytes_def",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_map_ok_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAMap.lean",
+    "lean_name": "ssaMapOK",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.14): literal lab_to_targetScript.sml:192-196 `pad_bytes bytes len nop = let len_bytes = LENGTH bytes in if len <= len_bytes then bytes else TAKE len (bytes ++ FLAT (REPLICATE len nop))`. The HOL type is fully polymorphic `α list -> num -> α list -> α list` (confirmed in the generated lab_to_targetTheory doc), so it carries no type-indexed word and is rendered as `{α : Type} (bytes : List α) (len : Nat) (nop : List α) : List α` with LENGTH/TAKE/FLAT/REPLICATE as `.length`/`List.take`/`List.flatten`/`List.replicate`. Because no type-indexed word occurs, this declaration is reviewed_exact and carries no words qualifier. Replayed as the three PadBytes* rows of scripts/hol-probes/lab_to_target_padding_probe.out in Flapjack.Test.LabToTargetPaddingParity. Coordinator source review pending."
+    "reviewer": "flapjack-luna-c source4523-4527: arbitrary Nat next and canonical native Spt Nat tree, forall x/y lookup SOME implication, nonphysical mapped register and strict next bound. Actual reviewed RegAlloc.isPhyVar is source MOD2=0; no injectivity/wf/freshness premise. Five fresh original source-clause simplifier observations and identical kernel fixtures, including malformed BN LN LN. This is a proof predicate and has no executed compiler definition route. Coordinator acceptance pending."
   },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Padding.lean",
-    "lean_name": "addNop",
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "add_nop_def",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.14): literal lab_to_targetScript.sml:199-207, all four clauses. `[] => []`; `Label l1 l2 len :: xs => Label l1 l2 len :: add_nop nop xs`; `Asm x bytes len :: xs => Asm x (bytes ++ nop) (len+1) :: xs`; `LabAsm y w bytes len :: xs => LabAsm y w (bytes ++ nop) (len+1) :: xs`. The Asm/LabAsm clauses do not recurse and keep the remaining list exactly. `nop` is the fixed HOL `word8 list` (`List (BitVec 8)`); the linked line carrier's position field is the only type-indexed word, translated to positive-width `BitVec width` (words_as_type_indexed_bitvec). No added hypothesis, dropped clause, or changed recursion. Replayed as the four AddNop* rows of scripts/hol-probes/lab_to_target_padding_probe.out in Flapjack.Test.LabToTargetPaddingParity. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Padding.lean",
-    "lean_name": "padSection",
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "pad_section_def",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.14): literal lab_to_targetScript.sml:209-217, all four clauses. `[] => REVERSE aux` (Lean `aux.reverse`); the Label clause pushes `Label l1 l2 0 :: (if len = 0 then aux else add_nop nop aux)`; the Asm and LabAsm clauses push the line with `pad_bytes bytes len nop` and unchanged length. `nop` is the fixed HOL `word8 list`; the linked line carrier's position field is the only type-indexed word, translated to positive-width `BitVec width` (words_as_type_indexed_bitvec). No added hypothesis, dropped guard, or reordered clause. Replayed as the PadSection* rows of scripts/hol-probes/lab_to_target_padding_probe.out in Flapjack.Test.LabToTargetPaddingParity. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Padding.lean",
-    "lean_name": "padCode",
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "pad_code_def",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.14): literal lab_to_targetScript.sml:220-223, both clauses. `[] => []`; `Section n xs :: ys => Section n (pad_section nop xs []) :: pad_code nop ys`. `nop` is the fixed HOL `word8 list`; the linked Section/Line carrier's only type-indexed word is translated to positive-width `BitVec width` (words_as_type_indexed_bitvec). No added hypothesis or changed clause. Replayed as the PadCode* rows of scripts/hol-probes/lab_to_target_padding_probe.out in Flapjack.Test.LabToTargetPaddingParity. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Padding.lean",
-    "lean_name": "padCodeMap",
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "pad_code_MAP",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.29): literal lab_to_targetScript.sml:226. HOL states the function equality `pad_code nop = MAP (lambda x. Section (Section_num x) (pad_section nop (Section_lines x) []))` and proves it via FUN_EQ_THM, list induction, and a section case split. The Lean theorem states exactly that function equality with `List.map` for `MAP`, the Section structure's `sectionId`/`lines` selectors for `Section_num`/`Section_lines`, and the same explicit `nop`; no hypothesis is added and no clause changed. The only carrier difference is HOL's type-indexed `'a word` translated to positive-width `BitVec width`, retained by `{width : Nat}`/`[NeZero width]` and named at the annotated section carrier; `nop` is HOL's fixed `word8` list. Proved by `funext` plus induction mirroring HOL. Direct original-HOL EVAL rows PadCodeMapEmpty/PadCodeMapTwo evaluate both sides in scripts/hol-probes/lab_to_target_maplemmas_probe.out and are replayed in Flapjack.Test.LabToTargetMapLemmasParity. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Padding.lean",
-    "lean_name": "secLength",
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "sec_length_def",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.14): literal lab_to_targetScript.sml:234-239, all four clauses. `[] => k`; `Label _ _ l :: xs`, `Asm x1 x2 l :: xs` and `LabAsm a w bytes l :: xs` all recurse on `xs` with `k + l`. The linked line carrier's position field is the only type-indexed word, translated to positive-width `BitVec width` (words_as_type_indexed_bitvec). No added hypothesis, dropped clause, or changed accumulation. Replayed as the SecLength* rows of scripts/hol-probes/lab_to_target_padding_probe.out in Flapjack.Test.LabToTargetPaddingParity. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Padding.lean",
-    "lean_name": "getSymbols",
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "get_symbols_def",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.14): literal lab_to_targetScript.sml:241-245, both clauses. `[] => []`; `Section k l :: secs => let len = sec_length l 0 in (k, pos, len) :: get_symbols (pos+len) secs`. The result is HOL `(num # num # num) list` rendered as `List (Nat × Nat × Nat)`; the linked Section/Line carrier's only type-indexed word is translated to positive-width `BitVec width` (words_as_type_indexed_bitvec). No added hypothesis or changed clause. Replayed as the GetSymbols* rows of scripts/hol-probes/lab_to_target_padding_probe.out in Flapjack.Test.LabToTargetPaddingParity. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/RemoveLabels.lean",
-    "lean_name": "zeroLabsAccOf",
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "zero_labs_acc_of_def",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.16): literal lab_to_targetScript.sml:248-256, all four clauses in HOL order. `LocValue _ (Lab n1 n2)`, `Jump (Lab n1 n2)` and `JumpCmp _ _ _ (Lab n1 n2)` all insert `n1` (value `()`, HOL `insert n1 () acc`) when `n2 = 0` and otherwise return `acc`; the catch-all returns `acc`. The accumulator is the exact `NumSet = Spt Unit`; `insert` is `sptInsert` and `()` is the unit value. The instruction carrier is the exact imported LabLang.asm_with_lab at HolCmp/HolRegImm/MlString, whose `HolRegImm width` field carries HOL's type-indexed word translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). No added hypothesis, dropped clause, or reordered branch. Replayed as the ZeroLabsAccOf* rows of scripts/hol-probes/lab_to_target_removelabels_probe.out in Flapjack.Test.LabToTargetRemoveLabelsParity. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/RemoveLabels.lean",
-    "lean_name": "lineGetZeroLabsAcc",
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "line_get_zero_labs_acc_def",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.16): literal lab_to_targetScript.sml:259-262, both clauses. `LabAsm a _ _ _` delegates to `zero_labs_acc_of a` (matching the `asm_with_lab` payload of the LabAsm line); every other line returns the accumulator. The line carrier is the exact linked LabLang.line whose only type-indexed word is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). No added hypothesis, dropped clause, or changed payload projection. Replayed as the LineGetZeroLabsAcc* rows of scripts/hol-probes/lab_to_target_removelabels_probe.out in Flapjack.Test.LabToTargetRemoveLabelsParity. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/RemoveLabels.lean",
-    "lean_name": "secGetZeroLabsAcc",
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "sec_get_zero_labs_acc_def",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.16): literal lab_to_targetScript.sml:264-267, the single clause `sec_get_zero_labs_acc (Section _ lines) acc = FOLDR line_get_zero_labs_acc acc lines`. HOL `FOLDR` is Lean `List.foldr`. The section carrier is the exact linked LabLang.sec whose only type-indexed word is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). No added hypothesis or changed fold. Replayed as the GetZeroLabsAcc* rows of scripts/hol-probes/lab_to_target_removelabels_probe.out in Flapjack.Test.LabToTargetRemoveLabelsParity. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/RemoveLabels.lean",
-    "lean_name": "getZeroLabsAcc",
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "get_zero_labs_acc_def",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.16): literal lab_to_targetScript.sml:269-272, the single clause `get_zero_labs_acc code = FOLDR sec_get_zero_labs_acc LN code`. HOL `FOLDR` is Lean `List.foldr` and `LN` is the exact empty `NumSet = Spt Unit`; the linked Section/Line carrier's only type-indexed word is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). No added hypothesis or changed fold. Replayed as the GetZeroLabsAccEmpty/GetZeroLabsAccConcrete rows of scripts/hol-probes/lab_to_target_removelabels_probe.out in Flapjack.Test.LabToTargetRemoveLabelsParity. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/RemoveLabels.lean",
-    "lean_name": "zeroLabsAccExist",
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "zero_labs_acc_exist_def",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.16): literal lab_to_targetScript.sml:274-282. `let zlabs = toAList (get_zero_labs_acc code) in EVERY (fn (n,_) => case lookup n labs of NONE => F | SOME l => lookup 0 l <> NONE) zlabs` is rendered with `sptToAList`, `List.all`, `sptLookup`, `none`/`some`, `false` and `(sptLookup 0 l).isSome` for the `lookup 0 l <> NONE` test. The lab map is the exact `Spt (Spt Nat)` (`num num_map num_map`) and the code's only type-indexed word is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). No added hypothesis, changed default, or weakened membership test. Replayed as the ZeroLabsAccExistTrue/False rows of scripts/hol-probes/lab_to_target_removelabels_probe.out in Flapjack.Test.LabToTargetRemoveLabelsParity. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/RemoveLabels.lean",
-    "lean_name": "removeLabelsLoop",
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "remove_labels_loop_def",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.16): literal lab_to_targetScript.sml:286-311, clause for clause and let-binding for let-binding, preserving HOL's shadowing. `labs = compute_labels_alt pos sec_list init_labs`; `(sec_list,done) = enc_secs_again pos labs ffis c.encode sec_list`; when `done` then `sec_list = upd_lab_len pos sec_list`, `labs = compute_labels_alt pos sec_list init_labs`, `(sec_list,done) = enc_secs_again pos labs ffis c.encode sec_list`, `sec_list = pad_code (c.encode (Inst Skip)) sec_list`, then `if done /\\ all_enc_ok_light c sec_list /\\ zero_labs_acc_exist labs sec_list then SOME (sec_list,labs) else NONE`; otherwise `if clock = 0 then NONE else remove_labels_loop (clock-1) c pos init_labs ffis sec_list` on the shadowed sec_list. `c.encode` is `config.encode` of the exact `AsmConfigExact width`; `all_enc_ok_light` is HOL's Overload `EVERY (sec_ok_light c)`, rendered as the tagged helper `allEncOkLight`; the linked Section/Line carrier's only type-indexed word is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). Lean termination is on the decremented `clock` only, matching HOL's clock recursion; no guard, conjunct, or returned pair is weakened. Replayed as the RemoveLabelsLoopZero/One rows of scripts/hol-probes/lab_to_target_removelabels_probe.out in Flapjack.Test.LabToTargetRemoveLabelsParity. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/RemoveLabels.lean",
-    "lean_name": "removeLabels",
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "remove_labels_def",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.16): literal lab_to_targetScript.sml:313-322, the single clause `remove_labels init_clock c pos labs ffis sec_list = remove_labels_loop init_clock c pos labs ffis (enc_sec_list c.encode sec_list)`. `c.encode` is `config.encode` of the exact `AsmConfigExact width` and `enc_sec_list` is the reviewed `encSecList`; the linked Section/Line carrier's only type-indexed word is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). No added hypothesis or changed seeding. Replayed as the RemoveLabelsZero row of scripts/hol-probes/lab_to_target_removelabels_probe.out in Flapjack.Test.LabToTargetRemoveLabelsParity. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/RemoveLabels.lean",
-    "lean_name": "lineBytes",
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "line_bytes_def",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.16): literal lab_to_targetScript.sml:326-330, all three clauses. `Label _ _ _ => []`; `Asm _ bytes _ => bytes`; `LabAsm _ _ bytes _ => bytes`. The byte list is the fixed HOL `word8 list` (`List (BitVec 8)`) and the linked line carrier's position field is the only type-indexed word, translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). No added hypothesis or changed clause. Replayed as the LineBytes* rows of scripts/hol-probes/lab_to_target_removelabels_probe.out in Flapjack.Test.LabToTargetRemoveLabelsParity. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/RemoveLabels.lean",
-    "lean_name": "progToBytes",
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "prog_to_bytes_def",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.16): literal lab_to_targetScript.sml:332-337, all three clauses. `[] => []`; `Section k [] :: xs => prog_to_bytes xs` (empty sections are skipped); `Section k (y::ys) :: xs => line_bytes y ++ prog_to_bytes (Section k ys :: xs)`. The result is the fixed HOL `word8 list` and the linked Section/Line carrier's only type-indexed word is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). HOL's well-founded recursion over the shrinking section line list is mirrored by Lean's recursion, whose equation lemmas are used for the kernel replay; no guard or clause is weakened. Replayed as the ProgToBytesEmpty/ProgToBytesConcrete rows of scripts/hol-probes/lab_to_target_removelabels_probe.out in Flapjack.Test.LabToTargetRemoveLabelsParity. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/RemoveLabels.lean",
-    "lean_name": "progToBytesMap",
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "prog_to_bytes_MAP",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.29): literal lab_to_targetScript.sml:341. HOL states `forall ls. prog_to_bytes ls = FLAT (MAP (FLAT o MAP line_bytes o Section_lines) ls)` and proves it with prog_to_bytes_ind. The Lean theorem states exactly that equality with `List.flatten` for `FLAT`, `List.map` for `MAP`, the composition spelled pointwise as `fun s => (s.lines.map lineBytes).flatten`, and `Section_lines` read as `s.lines`; it adds no hypothesis and changes no clause. HOL's type-indexed `'a word` is translated to positive-width `BitVec width`, retained by `{width : Nat}`/`[NeZero width]` and named in the section carrier argument; the result is HOL's fixed `word8 list`. Proved by the same well-founded induction over the shrinking section line list (Lean's generated `progToBytes.induct`). Direct original-HOL EVAL rows ProgToBytesMapEmpty/ProgToBytesMapTwo evaluate both sides in scripts/hol-probes/lab_to_target_maplemmas_probe.out and are replayed in Flapjack.Test.LabToTargetMapLemmasParity. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Misc/Sptree.lean",
-    "lean_name": "lookupAny",
-    "hol_path": "cakeml/misc/miscScript.sml",
-    "hol_name": "lookup_any_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.10): literal miscScript.sml:344-350, lookup_any x sp d is lookup x sp with default d on NONE. Lean sptLookup key tree is the exact HOL sptree lookup over the Spt carrier and Option.getD returns the default exactly on none; no bound, wf, or finite-map substitute premise. HOL key equality is Nat equality and the element type stays generic; the standard decidable equality for the generic element type is used only where HOL list/equality is rendered in the sibling find_index_def port. Direct original HOL EVAL rows and same-input kernel replay in Flapjack/Test/MiscLookupAnyFindIndexParity.lean. Coordinator review pending."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemInfo.lean",
-    "lean_name": "ShmemInfoNum",
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "shmem_info_num",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.20): literal lab_to_targetScript.sml:349-357, the Datatype `shmem_info_num = <| entry_pc: num; nbytes: word8; addr_reg: num; addr_off: num; reg: num; exit_pc: num |>`. Lean structure ShmemInfoNum has fields entryPc:Nat, nbytes:BitVec 8, addrReg:Nat, addrOff:Nat, reg:Nat, exitPc:Nat in the same order; the fixed HOL `word8` is the literal `BitVec 8` (not HOL's type-indexed `'a word`), so no words qualifier applies and the declaration is reviewed_exact. Replayed as the GetShmemInfo* rows of scripts/hol-probes/lab_to_target_shmeminfo_probe.out in Flapjack.Test.LabToTargetShmemInfoParity. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemInfo.lean",
-    "lean_name": "listAddIfFresh",
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "list_add_if_fresh_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.20): literal lab_to_targetScript.sml:372, both clauses `list_add_if_fresh e [] = [e]` and `list_add_if_fresh e (f::r) = if e = f then f::r else f::list_add_if_fresh e r`. The HOL type is fully polymorphic `'a -> 'a list -> 'a list`, so it carries no type-indexed word and no qualifier; HOL `=` is rendered by the standard decidable equality `[DecidableEq alpha]`. Replayed as the ListAddIfFresh* rows of scripts/hol-probes/lab_to_target_shmeminfo_probe.out in Flapjack.Test.LabToTargetShmemInfoParity. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemInfo.lean",
-    "lean_name": "findFfiNames",
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "find_ffi_names_def",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.20): literal lab_to_targetScript.sml:378, all three clauses in HOL order. `[] => []`; `Section k [] :: rest => find_ffi_names rest`; `Section k (x::xs) :: rest => case x of LabAsm (CallFFI s) _ _ _ => list_add_if_fresh (ExtCall s) (find_ffi_names (Section k xs :: rest)) | _ => find_ffi_names (Section k xs :: rest)`. The linked Line/Section carrier's only type-indexed word is the position field, translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec); the FFI name is the reviewed exact `HolFfiName` (`ExtCall s = .extCall MlString`) and HOL `=` on it is the derived `DecidableEq HolFfiName`. No added hypothesis, dropped clause, or reordered branch. Replayed as the FindFfiNames* rows of scripts/hol-probes/lab_to_target_shmeminfo_probe.out in Flapjack.Test.LabToTargetShmemInfoParity. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemInfo.lean",
-    "lean_name": "getMemopInfo",
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "get_memop_info_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.20): literal lab_to_targetScript.sml:388, all eight clauses. `Load`/`Load32`/`Load16`/`Load8` map to `MappedRead` with byte sizes `0w`/`4w`/`2w`/`1w`, and `Store`/`Store32`/`Store16`/`Store8` map to `MappedWrite` with the same sizes. The result pair is the reviewed `HolShmemOp` (`MappedRead`/`MappedWrite`) with the fixed HOL `word8`, rendered as the literal `BitVec 8`; since the byte size is not HOL's type-indexed `'a word`, no words qualifier applies and the declaration is reviewed_exact. Replayed as the GetMemopInfo* rows of scripts/hol-probes/lab_to_target_shmeminfo_probe.out in Flapjack.Test.LabToTargetShmemInfoParity. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemInfo.lean",
-    "lean_name": "getShmemInfo",
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "get_shmem_info_def",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.20): literal lab_to_targetScript.sml:401, all six clauses in HOL order. `[] => (ffi_names, shmem_info)`; `Section k [] :: rest` skips the empty section; `Section k (Label _ _ _ :: xs) :: rest` skips the label without advancing `pos`; `Section k (Asm (ShareMem m r ad) bytes _ :: xs) :: rest` binds `(name,nb) = get_memop_info m` and recurses at `pos + LENGTH bytes` appending `SharedMem name` and the record `<|entry_pc:=pos; nbytes:=nb; addr_reg:=(case ad of Addr r off => r); addr_off:=(case ad of Addr r off => w2n off); reg:=r; exit_pc:=pos+LENGTH bytes|>`; the `LabAsm _ _ bytes _` and other `Asm _ bytes _` clauses recurse at `pos + LENGTH bytes` recording nothing. HOL `LENGTH` is `.length` and `w2n` is `.toNat`; the record is the exact `ShmemInfoNum` and the FFI name is `HolFfiName`. The linked Line/Section carrier's only type-indexed word is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec); the fixed `word8` byte sizes stay literal. No added hypothesis, dropped clause, or changed position advance. Replayed as the GetShmemInfo* rows of scripts/hol-probes/lab_to_target_shmeminfo_probe.out in Flapjack.Test.LabToTargetShmemInfoParity. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Misc/ListSubset.lean",
-    "lean_name": "listSubset",
-    "hol_path": "cakeml/misc/miscScript.sml",
-    "hol_name": "list_subset_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.27): literal miscScript.sml:3092, the single clause `list_subset l1 l2 = EVERY (\\x. MEM x l2) l1`. Lean `listSubset l1 l2 = l1.all (fun x => decide (x ∈ l2))`; the HOL type is fully polymorphic `'a list -> 'a list -> bool`, so it carries no type-indexed word and no carrier qualifier. HOL `EVERY` is Lean `List.all`, `MEM x l2` is the proposition `x ∈ l2` decided by `decide`, and HOL's decidable equality is the `[DecidableEq alpha]` binder. No added hypothesis or changed clause. Replayed as the ListSubset* rows of scripts/hol-probes/lab_to_target_compile_probe.out in Flapjack.Test.LabToTargetCompileParity. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabFilter.lean",
-    "lean_name": "notSkip",
-    "hol_path": "cakeml/compiler/backend/lab_filterScript.sml",
-    "hol_name": "not_skip_def",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.27): literal lab_filterScript.sml:11, `not_skip l = case l of Asm (Asmi (Inst Skip)) _ _ => F | _ => T`. Lean pattern matches `.asm (.asmi (.inst .skip)) _ _` to `false` and every other `Label`/`Asm`/`LabAsm` line to `true`. Only the linked width-indexed `labLang$line` position field is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec); the decision itself is on the fixed `HolInst` constructor. No added hypothesis or changed branch. Replayed as the NotSkip* rows of scripts/hol-probes/lab_to_target_compile_probe.out in Flapjack.Test.LabToTargetCompileParity. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabFilter.lean",
-    "lean_name": "filterSkip",
-    "hol_path": "cakeml/compiler/backend/lab_filterScript.sml",
-    "hol_name": "filter_skip_def",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.27): literal lab_filterScript.sml:15-16, both clauses `filter_skip [] = []` and `filter_skip (Section n xs :: rest) = Section n (FILTER not_skip xs) :: filter_skip rest`. Lean `[] => []` and `⟨n, xs⟩ :: rest => ⟨n, xs.filter notSkip⟩ :: filterSkip rest`; HOL `FILTER` is Lean `List.filter` and the section id/lines order is preserved. Only the linked width-indexed `labLang$line` position field is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec); the predicate is the reviewed `notSkip`. No added hypothesis or changed clause. Replayed as the FilterSkip* rows of scripts/hol-probes/lab_to_target_compile_probe.out in Flapjack.Test.LabToTargetCompileParity. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Compile.lean",
-    "lean_name": "Config",
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "config",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.27): literal lab_to_targetScript.sml:358-368, the Datatype `config = <| labels : num num_map num_map; sec_pos_len : (num # num # num) list; pos : num; init_clock : num; ffi_names : ffiname list option; shmem_extra: shmem_info_num list; hash_size : num |>`. Lean structure Config has fields labels:Spt (Spt Nat), secPosLen:List (Nat x Nat x Nat), pos:Nat, initClock:Nat, ffiNames:Option (List HolFfiName), shmemExtra:List ShmemInfoNum, hashSize:Nat in the same order; `num_map` is the reviewed `Spt`, `#` is `x`, and the FFI-name list is the exact `HolFfiName`. No field carries HOL's type-indexed `'a word` (the only word is the fixed `word8` byte size inside the exact `ShmemInfoNum`), so no words qualifier applies and the declaration is reviewed_exact. Replayed as the Config* rows of scripts/hol-probes/lab_to_target_compile_probe.out in Flapjack.Test.LabToTargetCompileParity. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Compile.lean",
-    "lean_name": "compileLab",
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "compile_lab_def",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.27): literal lab_to_targetScript.sml:430/453, the single clause. `current_ffis = find_ffi_names sec_list`; `(ffis, ffis_ok)` is `(ffis, list_subset current_ffis ffis)` when `c.ffi_names = SOME ffis` and `(current_ffis, T)` otherwise; when `ffis_ok` and `remove_labels c.init_clock asm_conf c.pos c.labels ffis sec_list = SOME (sec_list, l1)`, it computes `bytes = prog_to_bytes sec_list`, `(new_ffis, shmem_infos) = get_shmem_info sec_list c.pos [] []` and returns `SOME (bytes, c with <| labels := l1; pos := LENGTH bytes + c.pos; sec_pos_len := get_symbols c.pos sec_list; ffi_names := SOME (ffis ++ new_ffis); shmem_extra := shmem_infos |>)`; otherwise `NONE`. Lean transcribes each clause with the reviewed `findFfiNames`/`listSubset`/`removeLabels`/`progToBytes`/`getShmemInfo`/`getSymbols` and the exact `Config` record update. Only the linked width-indexed `labLang$line` position field is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec); `LENGTH` is `.length`. No added hypothesis, dropped branch, or reordered argument. Replayed as the CompileLab* rows of scripts/hol-probes/lab_to_target_compile_probe.out in Flapjack.Test.LabToTargetCompileParity. Coordinator source review pending."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Compile.lean",
-    "lean_name": "compile",
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "compile_def",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.27): literal lab_to_targetScript.sml:478, the single clause `compile asm_conf c sec_list = compile_lab asm_conf c (filter_skip sec_list)`. Lean `compile asmConf c secList = compileLab asmConf c (filterSkip secList)`; `asm_conf`/`c`/`sec_list` order and the reviewed `filterSkip`/`compileLab` are preserved. Only the linked width-indexed `labLang$line` position field is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). No added hypothesis or changed call. Replayed as the CompileSkip/CompileLabFilterSkip rows of scripts/hol-probes/lab_to_target_compile_probe.out in Flapjack.Test.LabToTargetCompileParity. Coordinator source review pending."
-  }
+{
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "all_enc_ok_light",
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/RemoveLabels.lean",
+  "lean_name": "allEncOkLight",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.16): HOL lab_to_targetScript.sml:188 declares all_enc_ok_light as an Overload (which the reference checker resolves as a declaration), body `λc ls. EVERY (sec_ok_light c) ls`; Lean `sections.all (secOkLight config)` is exactly List.all over the same exact secOkLight, no clause or guard changed. The linked Section/Line carrier's only type-indexed word is translated to positive-width BitVec width with [NeZero width]."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Encoding.lean",
+  "lean_name": "ffiOffset",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "ffi_offset_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.7): literal lab_to_targetScript.sml:15-17 `ffi_offset = 16:num`, transcribed as `Nat` 16. No word, list, map, string or FFI carrier, so no qualifier is needed. Replayed as the FFIOffset row of scripts/hol-probes/lab_to_target_encoding_probe.out in Flapjack.Test.LabToTargetEncodingParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Encoding.lean",
+  "lean_name": "labInst",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "lab_inst_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.7): literal lab_to_targetScript.sml:21-29, all seven clauses. `Jump _`, `JumpCmp c r ri _`, `Call _` use the supplied target word; `LocValue r _` becomes `Loc r w`; `Halt`, `Install`, `CallFFI n` all collapse to `Jump w`, exactly as the source discards those payloads. Stated over the exact imported LabLang.asm_with_lab instantiated at HolCmp/HolRegImm/MlString; only HOL's type-indexed `'a word` is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). Replayed as the seven LabInst* rows of lab_to_target_encoding_probe.out in Flapjack.Test.LabToTargetEncodingParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Encoding.lean",
+  "lean_name": "cbwToAsmExact",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "cbw_to_asm_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.7): literal lab_to_targetScript.sml:31-37. `Asmi a => a`; `Cbw r1 r2 => Inst (Mem Store8 r2 (Addr r1 0w))`; `ShareMem m r ad => Inst (Mem m r ad)`. The generic untagged Flapjack.Compiler.Backend.LabProps.cbwToAsm is an AsmChecks record adapter whose signature carries an extra callback parameter, so a new exact definition over HolAsm/HolMemop/HolAddr was added in this module; LabProps.lean is unmodified. Only HOL's `'a word` is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). Replayed as the CbwToAsm* rows of lab_to_target_encoding_probe.out in Flapjack.Test.LabToTargetEncodingParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Encoding.lean",
+  "lean_name": "encLine",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "enc_line_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.7): literal lab_to_targetScript.sml:40-47. `Label n1 n2 n3 => Label n1 n2 skip_len`; `Asm a _ _ => let bs = enc (cbw_to_asm a) in Asm a bs (LENGTH bs)`; `LabAsm l _ _ _ => let bs = enc (lab_inst 0w l) in LabAsm l 0w bs (LENGTH bs)`. The instruction encoder `enc : HolAsm width -> word8 list` is the HOL parameter of the same definition, not the production assembler encoder. Only HOL's `'a word` is translated to positive-width `BitVec width` with `[NeZero width]`; the `word8 list` bytes stay fixed 8-bit (words_as_type_indexed_bitvec). Replayed as the EncLine* rows of lab_to_target_encoding_probe.out in Flapjack.Test.LabToTargetEncodingParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Encoding.lean",
+  "lean_name": "encSec",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "enc_sec_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.7): literal lab_to_targetScript.sml:49-52 `enc_sec enc skip_len (Section k xs) = Section k (MAP (enc_line enc skip_len) xs)`, preserving the section id and mapping the passed encoder/skip_len over the line list. Exact Section/Line carriers at one width; only HOL's `'a word` is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). Replayed as the EncSec row of lab_to_target_encoding_probe.out in Flapjack.Test.LabToTargetEncodingParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Encoding.lean",
+  "lean_name": "encSecList",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "enc_sec_list_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.7): literal lab_to_targetScript.sml:54-57 `enc_sec_list enc xs = let skip_len = LENGTH (enc (Inst Skip)) in MAP (enc_sec enc skip_len) xs`, sharing one skip length computed from the encoding of `Inst Skip` across every section. Exact Section/Line carriers at one width; only HOL's `'a word` is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). Replayed as the EncSecList row of lab_to_target_encoding_probe.out in Flapjack.Test.LabToTargetEncodingParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Labels.lean",
+  "lean_name": "sectionLabels",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "section_labels_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.8; carrier-repaired): literal lab_to_targetScript.sml:62-74, clause for clause. `section_labels pos [] labs = (pos,labs)`; `Label _ l2 len :: xs` keeps the exact `if l2 = 0` guard so a zero label is ignored and a nonzero label is prepended as `(l2,pos+len)` after advancing to `pos+len`; `Asm _ _ len :: xs` and `LabAsm _ _ _ len :: xs` advance to `pos+len` recording nothing. Return type is exactly `num # (num#num) list`; the imported Line/Section carriers are instantiated at HOL's actual carriers (HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString) with the shared word dimension rendered as positive-width BitVec width; the words qualifier records that type-indexed-word translation. No added hypothesis, dropped guard, or weakened clause. Replayed as the SectionLabels* rows of lab_to_target_labels_probe.out in Flapjack.Test.LabToTargetLabelsParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Labels.lean",
+  "lean_name": "computeLabelsAlt",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "compute_labels_alt_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.8; carrier-repaired): literal lab_to_targetScript.sml:76-83, clause for clause. `compute_labels_alt pos [] labs = labs`; `Section k lines::rest` computes `let (new_pos,sec_labs) = section_labels pos lines []`, then recurses with `new_pos` and accumulates `insert k (fromAList ((0,pos)::sec_labs)) labs`, capturing the section start `pos` (not `new_pos`) under key 0. HOL `insert` and `fromAList` are the Sptree operations and render as `sptInsert`/`sptFromAList`; the accumulator type is `num_map num_map` = `num spt spt` (the generated lab_to_targetTheory doc prints `num -> α sec list -> num sptree$num_map sptree$num_map -> ...`, with `num_map = 'a spt`), i.e. Lean `Spt (Spt Nat)`, matching the `(num#num)` entries fed to `fromAList`. The imported Line/Section carriers are instantiated at HOL's actual carriers with the shared word dimension rendered as positive-width BitVec width; the words qualifier records that translation. No added hypothesis or weakened clause. Replayed as the ComputeLabelsAlt/ComputeLookup* rows of lab_to_target_labels_probe.out in Flapjack.Test.LabToTargetLabelsParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Positions.lean",
+  "lean_name": "findPos",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "find_pos_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.11): literal lab_to_targetScript.sml:86-89 `find_pos (Lab k1 k2) labs = (lookup_any k2 (lookup_any k1 labs LN) 0):num`, clause for clause on the single Lab constructor. The outer default is the empty inner spt (Lean .ln) and the inner default is the numeric 0; HOL lookup_any is the reviewed lookupAny, with `labs : num spt spt` rendered as `Spt (Spt Nat)`. No word/BitVec carrier occurs, so no qualifier is needed. Replayed as the FindPos* rows of scripts/hol-probes/lab_to_target_positions_probe.out in Flapjack.Test.LabToTargetPositionsParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Positions.lean",
+  "lean_name": "getLabel",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "get_label_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.11; carrier-repaired): literal lab_to_targetScript.sml:91-98, clause for clause. `Jump l => l`, `JumpCmp c r ri l => l`, `Call l => l`, `LocValue r l => l`, and the catch-all `_ => Lab 0 0` covering CallFFI/Install/Halt. The carriers are HOL fixed carriers, not arbitrary opaque types: `AsmWithLab HolCmp (HolRegImm width) MlString` at positive width, so the word-indexed reg_imm renders as BitVec width and the words qualifier records that translation. Replayed as the GetLabel* rows of scripts/hol-probes/lab_to_target_positions_probe.out in Flapjack.Test.LabToTargetPositionsParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Positions.lean",
+  "lean_name": "getFfiIndex",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "get_ffi_index_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.11): literal lab_to_targetScript.sml:104-107 `get_ffi_index ffis s = the 0 (find_index s ffis 0)`, fully generic in the list element type. HOL `the` is rendered as Option.getD 0, HOL find_index is the reviewed findIndex, and HOL `=` on the generic element type is the standard decidable equality [DecidableEq alpha]. No word/BitVec carrier occurs, so no qualifier is needed. Replayed as the GetFfiIndex* rows of scripts/hol-probes/lab_to_target_positions_probe.out in Flapjack.Test.LabToTargetPositionsParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Positions.lean",
+  "lean_name": "getJumpOffset",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "get_jump_offset_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.11): literal lab_to_targetScript.sml:109-118, all four clauses in order. `CallFFI s => 0w - n2w (pos + (3 + get_ffi_index ffis (ExtCall s)) * ffi_offset)`, `Install => 0w - n2w (pos + 2 * ffi_offset)`, `Halt => 0w - n2w (pos + ffi_offset)`, and the catch-all `a => n2w (find_pos (get_label a) labs) - n2w pos`; `pos` is HOL num (Lean Nat), `ffis` is the exact ffiname list (Lean List HolFfiName, ExtCall s = .extCall MlString), and ffi_offset is ffiOffset. The HOL probe showed the result `b word` stays independent of the instruction's `a reg_imm` word dimension (dimword (:-a) stayed free when the instruction was fixed at 64), so the port keeps two independent positive widths (regImmWidth and width) rather than specializing. Only HOL's type-indexed `a word` is translated to positive-width BitVec width with its own [NeZero] (words_as_type_indexed_bitvec) and the 0w-/n2w rendering is kept literal. Replayed as the GetJumpOffset* rows of scripts/hol-probes/lab_to_target_positions_probe.out in Flapjack.Test.LabToTargetPositionsParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/SecondPass.lean",
+  "lean_name": "encLinesAgain",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "enc_lines_again_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 factual clause comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.13): literal lab_to_targetScript.sml:120-136, clause for clause. The empty list returns `(REVERSE acc, pos, ok)`; `Label k1 k2 l :: xs` and `Asm x1 x2 l :: xs` recurse at `pos + l` prepending the unchanged line; `LabAsm a w bytes l :: xs` computes `w1 = get_jump_offset a ffis labs pos`, recurses at `pos + l` when `w = w1`, and otherwise re-encodes `bs = enc (lab_inst w1 a)`, takes `l1 = MAX (LENGTH bs) l`, recurses at `pos + l1` with `LabAsm a w1 bs l1` and flag `ok AND (l1 = l)`. HOL `REVERSE`/`MAX`/`LENGTH`/`T`/conjunction are `List.reverse`/`Nat.max`/`.length`/`true`/`&& on Bool`, and the `(l1 = l)` conjunct is `decide (l1 = l)`. The instructions/position use the exact LabLang carriers at one shared word width; the words qualifier records only HOL's type-indexed word to positive-width `BitVec width` (with `[NeZero width]`) translation of the line's position field and the `get_jump_offset`/`lab_inst` results. The encoder parameter is the HOL `enc : HolAsm width -> word8 list`, not the production assembler. Replayed as the four EncLinesAgain rows of scripts/hol-probes/lab_to_target_secondpass_probe.out in Flapjack.Test.LabToTargetSecondPassParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/SecondPass.lean",
+  "lean_name": "encSecsAgain",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "enc_secs_again_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 factual clause comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.13): literal lab_to_targetScript.sml:137-144, clause for clause. The empty list is `([], T)`; `Section s lines :: rest` computes `(lines1, pos1, ok) = enc_lines_again labs ffis pos enc lines ([], T)`, then `(rest1, ok1) = enc_secs_again pos1 labs ffis enc rest`, returning `(Section s lines1 :: rest1, ok AND ok1)`. The shared one-width LabLang Line/Section carriers are used throughout with HOL `T`/conjunction rendered as `true`/`&&` on Bool; the words qualifier records only HOL's type-indexed word to positive-width `BitVec width` translation. Replayed as the two EncSecsAgain rows of scripts/hol-probes/lab_to_target_secondpass_probe.out in Flapjack.Test.LabToTargetSecondPassParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/SecondPass.lean",
+  "lean_name": "linesUpdLabLen",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "lines_upd_lab_len_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 factual clause comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.13): literal lab_to_targetScript.sml:147-157, clause for clause. The empty list is `(REVERSE acc, pos)`; `Label k1 k2 l :: xs` sets `l1 = if EVEN pos then 0 else 1` (HOL `EVEN pos` rendered as `pos % 2 = 0`), recurses at `pos + l1` replacing the label by `Label k1 k2 l1`; `Asm x1 x2 l :: xs` and `LabAsm a w bytes l :: xs` recurse at `pos + l` prepending the unchanged line. The line's position field is the same shared word width; the words qualifier records only HOL's type-indexed word to positive-width `BitVec width` translation. Replayed as the three LinesUpdLabLen rows of scripts/hol-probes/lab_to_target_secondpass_probe.out in Flapjack.Test.LabToTargetSecondPassParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/SecondPass.lean",
+  "lean_name": "updLabLen",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "upd_lab_len_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 factual clause comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.13): literal lab_to_targetScript.sml:158-166, clause for clause. The empty list is `[]`; `Section s lines :: rest` computes `(lines1, pos1) = lines_upd_lab_len pos lines []`, then `rest1 = upd_lab_len pos1 rest`, returning `Section s lines1 :: rest1`. The same shared one-width Line/Section carriers and the words qualifier recording only HOL's type-indexed word to positive-width `BitVec width` translation; no extra hypothesis or clause change. Replayed as the two UpdLabLen rows of scripts/hol-probes/lab_to_target_secondpass_probe.out in Flapjack.Test.LabToTargetSecondPassParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Padding.lean",
+  "lean_name": "lineOkLight",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "line_ok_light_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.14): literal lab_to_targetScript.sml:168-181, all seven clauses in HOL order. `Label _ _ l => T` and `Asm b bytes l => T` are `true`; `LabAsm Halt w bytes l`, `LabAsm Install w bytes l` and `LabAsm (CallFFI index) w bytes l` all check `asm_ok (Jump w) c`; `LabAsm (Call v24) w bytes l => F` is `false`; the catch-all `LabAsm a w bytes l` checks `asm_ok (lab_inst w a) c`. Stated over the exact imported LabLang.line carrier at HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and the exact `AsmConfigExact` configuration; the two asm_ok calls read the exact `asmOkExact` (`asm_ok_def`) port. Only HOL's type-indexed `'a word` shared by the config and the line is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). No added hypothesis, dropped clause, or weakened branch. Replayed as the ten LineOkLight* rows of scripts/hol-probes/lab_to_target_padding_probe.out in Flapjack.Test.LabToTargetPaddingParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Padding.lean",
+  "lean_name": "secOkLight",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "sec_ok_light_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.14): literal lab_to_targetScript.sml:183-186, the single clause `sec_ok_light c (Section k ls) <=> EVERY (line_ok_light c) ls`. HOL `EVERY` is Lean `List.all`; the section carrier is the exact LabLang.sec over the linked line carrier, whose only type-indexed word is translated to positive-width `BitVec width` (words_as_type_indexed_bitvec). No added hypothesis or weakened clause. Replayed as the SecOkLight* rows of scripts/hol-probes/lab_to_target_padding_probe.out in Flapjack.Test.LabToTargetPaddingParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Padding.lean",
+  "lean_name": "padBytes",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "pad_bytes_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.14): literal lab_to_targetScript.sml:192-196 `pad_bytes bytes len nop = let len_bytes = LENGTH bytes in if len <= len_bytes then bytes else TAKE len (bytes ++ FLAT (REPLICATE len nop))`. The HOL type is fully polymorphic `α list -> num -> α list -> α list` (confirmed in the generated lab_to_targetTheory doc), so it carries no type-indexed word and is rendered as `{α : Type} (bytes : List α) (len : Nat) (nop : List α) : List α` with LENGTH/TAKE/FLAT/REPLICATE as `.length`/`List.take`/`List.flatten`/`List.replicate`. Because no type-indexed word occurs, this declaration is reviewed_exact and carries no words qualifier. Replayed as the three PadBytes* rows of scripts/hol-probes/lab_to_target_padding_probe.out in Flapjack.Test.LabToTargetPaddingParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Padding.lean",
+  "lean_name": "addNop",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "add_nop_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.14): literal lab_to_targetScript.sml:199-207, all four clauses. `[] => []`; `Label l1 l2 len :: xs => Label l1 l2 len :: add_nop nop xs`; `Asm x bytes len :: xs => Asm x (bytes ++ nop) (len+1) :: xs`; `LabAsm y w bytes len :: xs => LabAsm y w (bytes ++ nop) (len+1) :: xs`. The Asm/LabAsm clauses do not recurse and keep the remaining list exactly. `nop` is the fixed HOL `word8 list` (`List (BitVec 8)`); the linked line carrier's position field is the only type-indexed word, translated to positive-width `BitVec width` (words_as_type_indexed_bitvec). No added hypothesis, dropped clause, or changed recursion. Replayed as the four AddNop* rows of scripts/hol-probes/lab_to_target_padding_probe.out in Flapjack.Test.LabToTargetPaddingParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Padding.lean",
+  "lean_name": "padSection",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "pad_section_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.14): literal lab_to_targetScript.sml:209-217, all four clauses. `[] => REVERSE aux` (Lean `aux.reverse`); the Label clause pushes `Label l1 l2 0 :: (if len = 0 then aux else add_nop nop aux)`; the Asm and LabAsm clauses push the line with `pad_bytes bytes len nop` and unchanged length. `nop` is the fixed HOL `word8 list`; the linked line carrier's position field is the only type-indexed word, translated to positive-width `BitVec width` (words_as_type_indexed_bitvec). No added hypothesis, dropped guard, or reordered clause. Replayed as the PadSection* rows of scripts/hol-probes/lab_to_target_padding_probe.out in Flapjack.Test.LabToTargetPaddingParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Padding.lean",
+  "lean_name": "padCode",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "pad_code_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.14): literal lab_to_targetScript.sml:220-223, both clauses. `[] => []`; `Section n xs :: ys => Section n (pad_section nop xs []) :: pad_code nop ys`. `nop` is the fixed HOL `word8 list`; the linked Section/Line carrier's only type-indexed word is translated to positive-width `BitVec width` (words_as_type_indexed_bitvec). No added hypothesis or changed clause. Replayed as the PadCode* rows of scripts/hol-probes/lab_to_target_padding_probe.out in Flapjack.Test.LabToTargetPaddingParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Padding.lean",
+  "lean_name": "padCodeMap",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "pad_code_MAP",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.29): literal lab_to_targetScript.sml:226. HOL states the function equality `pad_code nop = MAP (lambda x. Section (Section_num x) (pad_section nop (Section_lines x) []))` and proves it via FUN_EQ_THM, list induction, and a section case split. The Lean theorem states exactly that function equality with `List.map` for `MAP`, the Section structure's `sectionId`/`lines` selectors for `Section_num`/`Section_lines`, and the same explicit `nop`; no hypothesis is added and no clause changed. The only carrier difference is HOL's type-indexed `'a word` translated to positive-width `BitVec width`, retained by `{width : Nat}`/`[NeZero width]` and named at the annotated section carrier; `nop` is HOL's fixed `word8` list. Proved by `funext` plus induction mirroring HOL. Direct original-HOL EVAL rows PadCodeMapEmpty/PadCodeMapTwo evaluate both sides in scripts/hol-probes/lab_to_target_maplemmas_probe.out and are replayed in Flapjack.Test.LabToTargetMapLemmasParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Padding.lean",
+  "lean_name": "secLength",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "sec_length_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.14): literal lab_to_targetScript.sml:234-239, all four clauses. `[] => k`; `Label _ _ l :: xs`, `Asm x1 x2 l :: xs` and `LabAsm a w bytes l :: xs` all recurse on `xs` with `k + l`. The linked line carrier's position field is the only type-indexed word, translated to positive-width `BitVec width` (words_as_type_indexed_bitvec). No added hypothesis, dropped clause, or changed accumulation. Replayed as the SecLength* rows of scripts/hol-probes/lab_to_target_padding_probe.out in Flapjack.Test.LabToTargetPaddingParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Padding.lean",
+  "lean_name": "getSymbols",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "get_symbols_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.14): literal lab_to_targetScript.sml:241-245, both clauses. `[] => []`; `Section k l :: secs => let len = sec_length l 0 in (k, pos, len) :: get_symbols (pos+len) secs`. The result is HOL `(num # num # num) list` rendered as `List (Nat × Nat × Nat)`; the linked Section/Line carrier's only type-indexed word is translated to positive-width `BitVec width` (words_as_type_indexed_bitvec). No added hypothesis or changed clause. Replayed as the GetSymbols* rows of scripts/hol-probes/lab_to_target_padding_probe.out in Flapjack.Test.LabToTargetPaddingParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/RemoveLabels.lean",
+  "lean_name": "zeroLabsAccOf",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "zero_labs_acc_of_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.16): literal lab_to_targetScript.sml:248-256, all four clauses in HOL order. `LocValue _ (Lab n1 n2)`, `Jump (Lab n1 n2)` and `JumpCmp _ _ _ (Lab n1 n2)` all insert `n1` (value `()`, HOL `insert n1 () acc`) when `n2 = 0` and otherwise return `acc`; the catch-all returns `acc`. The accumulator is the exact `NumSet = Spt Unit`; `insert` is `sptInsert` and `()` is the unit value. The instruction carrier is the exact imported LabLang.asm_with_lab at HolCmp/HolRegImm/MlString, whose `HolRegImm width` field carries HOL's type-indexed word translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). No added hypothesis, dropped clause, or reordered branch. Replayed as the ZeroLabsAccOf* rows of scripts/hol-probes/lab_to_target_removelabels_probe.out in Flapjack.Test.LabToTargetRemoveLabelsParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/RemoveLabels.lean",
+  "lean_name": "lineGetZeroLabsAcc",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "line_get_zero_labs_acc_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.16): literal lab_to_targetScript.sml:259-262, both clauses. `LabAsm a _ _ _` delegates to `zero_labs_acc_of a` (matching the `asm_with_lab` payload of the LabAsm line); every other line returns the accumulator. The line carrier is the exact linked LabLang.line whose only type-indexed word is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). No added hypothesis, dropped clause, or changed payload projection. Replayed as the LineGetZeroLabsAcc* rows of scripts/hol-probes/lab_to_target_removelabels_probe.out in Flapjack.Test.LabToTargetRemoveLabelsParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/RemoveLabels.lean",
+  "lean_name": "secGetZeroLabsAcc",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "sec_get_zero_labs_acc_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.16): literal lab_to_targetScript.sml:264-267, the single clause `sec_get_zero_labs_acc (Section _ lines) acc = FOLDR line_get_zero_labs_acc acc lines`. HOL `FOLDR` is Lean `List.foldr`. The section carrier is the exact linked LabLang.sec whose only type-indexed word is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). No added hypothesis or changed fold. Replayed as the GetZeroLabsAcc* rows of scripts/hol-probes/lab_to_target_removelabels_probe.out in Flapjack.Test.LabToTargetRemoveLabelsParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/RemoveLabels.lean",
+  "lean_name": "getZeroLabsAcc",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "get_zero_labs_acc_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.16): literal lab_to_targetScript.sml:269-272, the single clause `get_zero_labs_acc code = FOLDR sec_get_zero_labs_acc LN code`. HOL `FOLDR` is Lean `List.foldr` and `LN` is the exact empty `NumSet = Spt Unit`; the linked Section/Line carrier's only type-indexed word is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). No added hypothesis or changed fold. Replayed as the GetZeroLabsAccEmpty/GetZeroLabsAccConcrete rows of scripts/hol-probes/lab_to_target_removelabels_probe.out in Flapjack.Test.LabToTargetRemoveLabelsParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/RemoveLabels.lean",
+  "lean_name": "zeroLabsAccExist",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "zero_labs_acc_exist_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.16): literal lab_to_targetScript.sml:274-282. `let zlabs = toAList (get_zero_labs_acc code) in EVERY (fn (n,_) => case lookup n labs of NONE => F | SOME l => lookup 0 l <> NONE) zlabs` is rendered with `sptToAList`, `List.all`, `sptLookup`, `none`/`some`, `false` and `(sptLookup 0 l).isSome` for the `lookup 0 l <> NONE` test. The lab map is the exact `Spt (Spt Nat)` (`num num_map num_map`) and the code's only type-indexed word is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). No added hypothesis, changed default, or weakened membership test. Replayed as the ZeroLabsAccExistTrue/False rows of scripts/hol-probes/lab_to_target_removelabels_probe.out in Flapjack.Test.LabToTargetRemoveLabelsParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/RemoveLabels.lean",
+  "lean_name": "removeLabelsLoop",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "remove_labels_loop_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.16): literal lab_to_targetScript.sml:286-311, clause for clause and let-binding for let-binding, preserving HOL's shadowing. `labs = compute_labels_alt pos sec_list init_labs`; `(sec_list,done) = enc_secs_again pos labs ffis c.encode sec_list`; when `done` then `sec_list = upd_lab_len pos sec_list`, `labs = compute_labels_alt pos sec_list init_labs`, `(sec_list,done) = enc_secs_again pos labs ffis c.encode sec_list`, `sec_list = pad_code (c.encode (Inst Skip)) sec_list`, then `if done /\\ all_enc_ok_light c sec_list /\\ zero_labs_acc_exist labs sec_list then SOME (sec_list,labs) else NONE`; otherwise `if clock = 0 then NONE else remove_labels_loop (clock-1) c pos init_labs ffis sec_list` on the shadowed sec_list. `c.encode` is `config.encode` of the exact `AsmConfigExact width`; `all_enc_ok_light` is HOL's Overload `EVERY (sec_ok_light c)`, rendered as the tagged helper `allEncOkLight`; the linked Section/Line carrier's only type-indexed word is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). Lean termination is on the decremented `clock` only, matching HOL's clock recursion; no guard, conjunct, or returned pair is weakened. Replayed as the RemoveLabelsLoopZero/One rows of scripts/hol-probes/lab_to_target_removelabels_probe.out in Flapjack.Test.LabToTargetRemoveLabelsParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/RemoveLabels.lean",
+  "lean_name": "removeLabels",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "remove_labels_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.16): literal lab_to_targetScript.sml:313-322, the single clause `remove_labels init_clock c pos labs ffis sec_list = remove_labels_loop init_clock c pos labs ffis (enc_sec_list c.encode sec_list)`. `c.encode` is `config.encode` of the exact `AsmConfigExact width` and `enc_sec_list` is the reviewed `encSecList`; the linked Section/Line carrier's only type-indexed word is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). No added hypothesis or changed seeding. Replayed as the RemoveLabelsZero row of scripts/hol-probes/lab_to_target_removelabels_probe.out in Flapjack.Test.LabToTargetRemoveLabelsParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/RemoveLabels.lean",
+  "lean_name": "lineBytes",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "line_bytes_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.16): literal lab_to_targetScript.sml:326-330, all three clauses. `Label _ _ _ => []`; `Asm _ bytes _ => bytes`; `LabAsm _ _ bytes _ => bytes`. The byte list is the fixed HOL `word8 list` (`List (BitVec 8)`) and the linked line carrier's position field is the only type-indexed word, translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). No added hypothesis or changed clause. Replayed as the LineBytes* rows of scripts/hol-probes/lab_to_target_removelabels_probe.out in Flapjack.Test.LabToTargetRemoveLabelsParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/RemoveLabels.lean",
+  "lean_name": "progToBytes",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "prog_to_bytes_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.16): literal lab_to_targetScript.sml:332-337, all three clauses. `[] => []`; `Section k [] :: xs => prog_to_bytes xs` (empty sections are skipped); `Section k (y::ys) :: xs => line_bytes y ++ prog_to_bytes (Section k ys :: xs)`. The result is the fixed HOL `word8 list` and the linked Section/Line carrier's only type-indexed word is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). HOL's well-founded recursion over the shrinking section line list is mirrored by Lean's recursion, whose equation lemmas are used for the kernel replay; no guard or clause is weakened. Replayed as the ProgToBytesEmpty/ProgToBytesConcrete rows of scripts/hol-probes/lab_to_target_removelabels_probe.out in Flapjack.Test.LabToTargetRemoveLabelsParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/RemoveLabels.lean",
+  "lean_name": "progToBytesMap",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "prog_to_bytes_MAP",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.29): literal lab_to_targetScript.sml:341. HOL states `forall ls. prog_to_bytes ls = FLAT (MAP (FLAT o MAP line_bytes o Section_lines) ls)` and proves it with prog_to_bytes_ind. The Lean theorem states exactly that equality with `List.flatten` for `FLAT`, `List.map` for `MAP`, the composition spelled pointwise as `fun s => (s.lines.map lineBytes).flatten`, and `Section_lines` read as `s.lines`; it adds no hypothesis and changes no clause. HOL's type-indexed `'a word` is translated to positive-width `BitVec width`, retained by `{width : Nat}`/`[NeZero width]` and named in the section carrier argument; the result is HOL's fixed `word8 list`. Proved by the same well-founded induction over the shrinking section line list (Lean's generated `progToBytes.induct`). Direct original-HOL EVAL rows ProgToBytesMapEmpty/ProgToBytesMapTwo evaluate both sides in scripts/hol-probes/lab_to_target_maplemmas_probe.out and are replayed in Flapjack.Test.LabToTargetMapLemmasParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Misc/Sptree.lean",
+  "lean_name": "lookupAny",
+  "hol_path": "cakeml/misc/miscScript.sml",
+  "hol_name": "lookup_any_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.10): literal miscScript.sml:344-350, lookup_any x sp d is lookup x sp with default d on NONE. Lean sptLookup key tree is the exact HOL sptree lookup over the Spt carrier and Option.getD returns the default exactly on none; no bound, wf, or finite-map substitute premise. HOL key equality is Nat equality and the element type stays generic; the standard decidable equality for the generic element type is used only where HOL list/equality is rendered in the sibling find_index_def port. Direct original HOL EVAL rows and same-input kernel replay in Flapjack/Test/MiscLookupAnyFindIndexParity.lean. Coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemInfo.lean",
+  "lean_name": "ShmemInfoNum",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "shmem_info_num",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.20): literal lab_to_targetScript.sml:349-357, the Datatype `shmem_info_num = <| entry_pc: num; nbytes: word8; addr_reg: num; addr_off: num; reg: num; exit_pc: num |>`. Lean structure ShmemInfoNum has fields entryPc:Nat, nbytes:BitVec 8, addrReg:Nat, addrOff:Nat, reg:Nat, exitPc:Nat in the same order; the fixed HOL `word8` is the literal `BitVec 8` (not HOL's type-indexed `'a word`), so no words qualifier applies and the declaration is reviewed_exact. Replayed as the GetShmemInfo* rows of scripts/hol-probes/lab_to_target_shmeminfo_probe.out in Flapjack.Test.LabToTargetShmemInfoParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemInfo.lean",
+  "lean_name": "listAddIfFresh",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "list_add_if_fresh_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.20): literal lab_to_targetScript.sml:372, both clauses `list_add_if_fresh e [] = [e]` and `list_add_if_fresh e (f::r) = if e = f then f::r else f::list_add_if_fresh e r`. The HOL type is fully polymorphic `'a -> 'a list -> 'a list`, so it carries no type-indexed word and no qualifier; HOL `=` is rendered by the standard decidable equality `[DecidableEq alpha]`. Replayed as the ListAddIfFresh* rows of scripts/hol-probes/lab_to_target_shmeminfo_probe.out in Flapjack.Test.LabToTargetShmemInfoParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemInfo.lean",
+  "lean_name": "findFfiNames",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "find_ffi_names_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.20): literal lab_to_targetScript.sml:378, all three clauses in HOL order. `[] => []`; `Section k [] :: rest => find_ffi_names rest`; `Section k (x::xs) :: rest => case x of LabAsm (CallFFI s) _ _ _ => list_add_if_fresh (ExtCall s) (find_ffi_names (Section k xs :: rest)) | _ => find_ffi_names (Section k xs :: rest)`. The linked Line/Section carrier's only type-indexed word is the position field, translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec); the FFI name is the reviewed exact `HolFfiName` (`ExtCall s = .extCall MlString`) and HOL `=` on it is the derived `DecidableEq HolFfiName`. No added hypothesis, dropped clause, or reordered branch. Replayed as the FindFfiNames* rows of scripts/hol-probes/lab_to_target_shmeminfo_probe.out in Flapjack.Test.LabToTargetShmemInfoParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemInfo.lean",
+  "lean_name": "getMemopInfo",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "get_memop_info_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.20): literal lab_to_targetScript.sml:388, all eight clauses. `Load`/`Load32`/`Load16`/`Load8` map to `MappedRead` with byte sizes `0w`/`4w`/`2w`/`1w`, and `Store`/`Store32`/`Store16`/`Store8` map to `MappedWrite` with the same sizes. The result pair is the reviewed `HolShmemOp` (`MappedRead`/`MappedWrite`) with the fixed HOL `word8`, rendered as the literal `BitVec 8`; since the byte size is not HOL's type-indexed `'a word`, no words qualifier applies and the declaration is reviewed_exact. Replayed as the GetMemopInfo* rows of scripts/hol-probes/lab_to_target_shmeminfo_probe.out in Flapjack.Test.LabToTargetShmemInfoParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemInfo.lean",
+  "lean_name": "getShmemInfo",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "get_shmem_info_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.20): literal lab_to_targetScript.sml:401, all six clauses in HOL order. `[] => (ffi_names, shmem_info)`; `Section k [] :: rest` skips the empty section; `Section k (Label _ _ _ :: xs) :: rest` skips the label without advancing `pos`; `Section k (Asm (ShareMem m r ad) bytes _ :: xs) :: rest` binds `(name,nb) = get_memop_info m` and recurses at `pos + LENGTH bytes` appending `SharedMem name` and the record `<|entry_pc:=pos; nbytes:=nb; addr_reg:=(case ad of Addr r off => r); addr_off:=(case ad of Addr r off => w2n off); reg:=r; exit_pc:=pos+LENGTH bytes|>`; the `LabAsm _ _ bytes _` and other `Asm _ bytes _` clauses recurse at `pos + LENGTH bytes` recording nothing. HOL `LENGTH` is `.length` and `w2n` is `.toNat`; the record is the exact `ShmemInfoNum` and the FFI name is `HolFfiName`. The linked Line/Section carrier's only type-indexed word is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec); the fixed `word8` byte sizes stay literal. No added hypothesis, dropped clause, or changed position advance. Replayed as the GetShmemInfo* rows of scripts/hol-probes/lab_to_target_shmeminfo_probe.out in Flapjack.Test.LabToTargetShmemInfoParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Misc/ListSubset.lean",
+  "lean_name": "listSubset",
+  "hol_path": "cakeml/misc/miscScript.sml",
+  "hol_name": "list_subset_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.27): literal miscScript.sml:3092, the single clause `list_subset l1 l2 = EVERY (\\x. MEM x l2) l1`. Lean `listSubset l1 l2 = l1.all (fun x => decide (x ∈ l2))`; the HOL type is fully polymorphic `'a list -> 'a list -> bool`, so it carries no type-indexed word and no carrier qualifier. HOL `EVERY` is Lean `List.all`, `MEM x l2` is the proposition `x ∈ l2` decided by `decide`, and HOL's decidable equality is the `[DecidableEq alpha]` binder. No added hypothesis or changed clause. Replayed as the ListSubset* rows of scripts/hol-probes/lab_to_target_compile_probe.out in Flapjack.Test.LabToTargetCompileParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabFilter.lean",
+  "lean_name": "notSkip",
+  "hol_path": "cakeml/compiler/backend/lab_filterScript.sml",
+  "hol_name": "not_skip_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.27): literal lab_filterScript.sml:11, `not_skip l = case l of Asm (Asmi (Inst Skip)) _ _ => F | _ => T`. Lean pattern matches `.asm (.asmi (.inst .skip)) _ _` to `false` and every other `Label`/`Asm`/`LabAsm` line to `true`. Only the linked width-indexed `labLang$line` position field is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec); the decision itself is on the fixed `HolInst` constructor. No added hypothesis or changed branch. Replayed as the NotSkip* rows of scripts/hol-probes/lab_to_target_compile_probe.out in Flapjack.Test.LabToTargetCompileParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabFilter.lean",
+  "lean_name": "filterSkip",
+  "hol_path": "cakeml/compiler/backend/lab_filterScript.sml",
+  "hol_name": "filter_skip_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.27): literal lab_filterScript.sml:15-16, both clauses `filter_skip [] = []` and `filter_skip (Section n xs :: rest) = Section n (FILTER not_skip xs) :: filter_skip rest`. Lean `[] => []` and `⟨n, xs⟩ :: rest => ⟨n, xs.filter notSkip⟩ :: filterSkip rest`; HOL `FILTER` is Lean `List.filter` and the section id/lines order is preserved. Only the linked width-indexed `labLang$line` position field is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec); the predicate is the reviewed `notSkip`. No added hypothesis or changed clause. Replayed as the FilterSkip* rows of scripts/hol-probes/lab_to_target_compile_probe.out in Flapjack.Test.LabToTargetCompileParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Compile.lean",
+  "lean_name": "Config",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "config",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.27): literal lab_to_targetScript.sml:358-368, the Datatype `config = <| labels : num num_map num_map; sec_pos_len : (num # num # num) list; pos : num; init_clock : num; ffi_names : ffiname list option; shmem_extra: shmem_info_num list; hash_size : num |>`. Lean structure Config has fields labels:Spt (Spt Nat), secPosLen:List (Nat x Nat x Nat), pos:Nat, initClock:Nat, ffiNames:Option (List HolFfiName), shmemExtra:List ShmemInfoNum, hashSize:Nat in the same order; `num_map` is the reviewed `Spt`, `#` is `x`, and the FFI-name list is the exact `HolFfiName`. No field carries HOL's type-indexed `'a word` (the only word is the fixed `word8` byte size inside the exact `ShmemInfoNum`), so no words qualifier applies and the declaration is reviewed_exact. Replayed as the Config* rows of scripts/hol-probes/lab_to_target_compile_probe.out in Flapjack.Test.LabToTargetCompileParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Compile.lean",
+  "lean_name": "compileLab",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "compile_lab_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.27): literal lab_to_targetScript.sml:430/453, the single clause. `current_ffis = find_ffi_names sec_list`; `(ffis, ffis_ok)` is `(ffis, list_subset current_ffis ffis)` when `c.ffi_names = SOME ffis` and `(current_ffis, T)` otherwise; when `ffis_ok` and `remove_labels c.init_clock asm_conf c.pos c.labels ffis sec_list = SOME (sec_list, l1)`, it computes `bytes = prog_to_bytes sec_list`, `(new_ffis, shmem_infos) = get_shmem_info sec_list c.pos [] []` and returns `SOME (bytes, c with <| labels := l1; pos := LENGTH bytes + c.pos; sec_pos_len := get_symbols c.pos sec_list; ffi_names := SOME (ffis ++ new_ffis); shmem_extra := shmem_infos |>)`; otherwise `NONE`. Lean transcribes each clause with the reviewed `findFfiNames`/`listSubset`/`removeLabels`/`progToBytes`/`getShmemInfo`/`getSymbols` and the exact `Config` record update. Only the linked width-indexed `labLang$line` position field is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec); `LENGTH` is `.length`. No added hypothesis, dropped branch, or reordered argument. Replayed as the CompileLab* rows of scripts/hol-probes/lab_to_target_compile_probe.out in Flapjack.Test.LabToTargetCompileParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Compile.lean",
+  "lean_name": "compile",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "compile_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.27): literal lab_to_targetScript.sml:478, the single clause `compile asm_conf c sec_list = compile_lab asm_conf c (filter_skip sec_list)`. Lean `compile asmConf c secList = compileLab asmConf c (filterSkip secList)`; `asm_conf`/`c`/`sec_list` order and the reviewed `filterSkip`/`compileLab` are preserved. Only the linked width-indexed `labLang$line` position field is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). No added hypothesis or changed call. Replayed as the CompileSkip/CompileLabFilterSkip rows of scripts/hol-probes/lab_to_target_compile_probe.out in Flapjack.Test.LabToTargetCompileParity. Coordinator source review pending."
+}
 ]
