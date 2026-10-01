@@ -1,3 +1,4 @@
+import Flapjack.Test.WordConvsNameMonoParity
 import Flapjack.Test.WordConvsExpMonoParity
 import Flapjack.Test.WordAllocMaxVarExpParity
 import Flapjack.Test.WordAllocMaxVarInstParity
