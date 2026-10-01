@@ -49377,5 +49377,18 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison 2026-10-02 bead48.5: complete original12378-12392, compile_def603-619, raise_stub_def/store_consts_stub_def. Fixed false perf, Nat identifier list, arbitrary config and full bitmap/config/frame-list/program-list quadruple retained. Only actual compile equality and original EVERY source no_share_inst hypotheses; original EVERY target no_shmemop conclusion includes both stubs. Accepted list theorem and unconditional false raise/constant-store stub syntax discharge safety internally. No public IH, target safety/evaluation/simulation, config validity, distinctness, bounds or conversion premises. Config Spt frame map is the reviewed source tree carrier; List/all represents original lists/EVERY. Sole qualifier translates positive HOL words to BitVec width/NeZero. Fresh exported theorem/six types/16 pairs plus2 arbitrary full-signature kernel applications over widths1/32/64/80, zero/underflow/large reg counts, duplicate avoid regs/ids, bitmap changes and rejected shared/ignored-handler sentinels. Proof-only syntax preservation, not whole compiler semantics."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_exp_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAExpressions.lean",
+    "lean_name": "ssaCcTransExpCorrect",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison 2026-10-02, bead flapjack-60qg: compared word_allocProofScript.sml6256-6294 and replayed its literal proof with six inferred type captures. Retains all st/w/cst/ssa/na/res quantifiers, source word_exp success, full word_state_eq_rel and ssa_locals_rel, concluding actual native word_exp on ssa_cc_trans_exp succeeds with identical result. HOL st/cst share alpha/beta/gamma and Lean shares positive BitVec width and universe-0 C/F. Reviewed constructor-identical expressions including nested Op arguments, both expression-valued Shift operands and fixed 5-bit Store Temp payload; Spt locals/SSA are tree maps, only fpRegs/store translate HOL finite maps. Same-module imported-owner witness establishes real broad/exact roundtrip. Lean proof identifies native SSA renamer with reviewed applyColourExp at optionLookup and derives its scoped local transport from SSA locals without adding premises; success/store/memory/domain behavior remains actual native wordExp. No target evaluation or extra simulation/post-state assumption."
   }
 ]
