@@ -39751,5 +39751,29 @@
   "hol_name": "parsem_perm",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.6.2: source198-241 exact windmill first AND PERM first second implies full parsem function equality. Generic same-component pair/List and function environments; List.Perm represents finite-list permutation with element multiplicities preserved; no quotient/key-set replacement is used. Retains original destination Nodup and no restrictions on sources, no global environment or target evaluation premise. Genuine permutation induction nil/cons/swap/trans uses reviewed parsem_cons and independent function-update commutation; uniqueness transported by permutation. Ten fresh original rows with Lean replay include shared sources/snapshot/swap/empty and duplicate-destination counterexample; full step_sem remains open."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/Steps.lean",
+  "lean_name": "step_rules",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "step_rules",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.6.1: original Hol_reln29-37 and actual HOL kernel print /tmp/flapjack-b-step-statements.log. Six universally quantified clauses match source and actual generated theorem, same register binders/list triples and order. Rules5/6 retain notMEM destination(MAP SND pending), rule5 also distinct head destination/final source; no wf/nonempty/real-register premises added. Primitive Step inductive has exactly these six nonrecursive constructors; not incorrectly tagged as a generated theorem. Generic Option register/List product carriers. Local RTC overload uses standard ReflTransGen with no separate named source tag. No simulator/evaluation premise; full wf and step_sem remain open."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/Steps.lean",
+  "lean_name": "step_ind",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "step_ind",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.6.1: original Hol_reln29-37 and actual HOL kernel print /tmp/flapjack-b-step-statements.log. Exact least-relation conclusion: every binary Prop relation satisfying the six rule conjunctions contains Step. There are no recursive rule hypotheses in original Hol_reln. All quantifiers and original side conditions retained. Primitive Step inductive has exactly these six nonrecursive constructors; not incorrectly tagged as a generated theorem. Generic Option register/List product carriers. Local RTC overload uses standard ReflTransGen with no separate named source tag. No simulator/evaluation premise; full wf and step_sem remain open."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/Steps.lean",
+  "lean_name": "step_cases",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "step_cases",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.6.1: original Hol_reln29-37 and actual HOL kernel print /tmp/flapjack-b-step-statements.log. Exact iff six-way existential disjunction, both pre/post tuple equalities retained in each case; NoRead/distinct remain in last two cases. All witnesses and list splits unrestricted as source. Exhaustive constructor elimination and converse reconstructors prove both directions. Primitive Step inductive has exactly these six nonrecursive constructors; not incorrectly tagged as a generated theorem. Generic Option register/List product carriers. Local RTC overload uses standard ReflTransGen with no separate named source tag. No simulator/evaluation premise; full wf and step_sem remain open."
 }
 ]

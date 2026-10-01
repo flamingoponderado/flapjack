@@ -2754,3 +2754,7 @@ run_probe parmove_environment_probeScript.sml parmove_environment_probe.out \
 run_probe parmove_permutation_probeScript.sml parmove_permutation_probe.out \
   pp_first_one pp_second_one pp_first_three pp_second_three pp_first_four pp_second_four pp_duplicate_first pp_duplicate_second pp_swap pp_empty \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe parmove_steps_probeScript.sml parmove_steps_probe.out \
+  ps_remove ps_start ps_extend ps_save ps_emit_head ps_emit_last \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"

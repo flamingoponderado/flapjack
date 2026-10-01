@@ -461,6 +461,7 @@
     {"bytes": 173, "out": "parmove_permutation_probe.out", "rows": 10, "sha256": "b5b71a59d90fd2d06416ce69ae8330d7f6dfca189c89072451b2edd4be2319e5"},
     {"bytes": 348, "out": "parmove_scheduler_probe.out", "rows": 9, "sha256": "9a52f48f9aa4d0ba87adf2f57586cbe903fb818c605ab885e0b106469a00ed6e"},
     {"bytes": 238, "out": "parmove_semantics_probe.out", "rows": 12, "sha256": "e6cf39747a7d47e75fded9b903563dc2d888216d779c2c7cc83d7b33eb245cfd"},
+    {"bytes": 75, "out": "parmove_steps_probe.out", "rows": 6, "sha256": "92da0df7db366fa99efa9ed99e747b30f8b2b4e50cfb78e67e2c602a1f1ec009"},
     {"bytes": 158, "out": "parmove_updates_probe.out", "rows": 10, "sha256": "1dbf9b5816c8136101b53b7ef4c5049c2ca5c5e7320b33bb744a02ba8c95996d"},
     {"bytes": 1467, "out": "parse_statement_probe.out", "rows": 2, "sha256": "78464aedbb34b041a2ef04eea0fd0d2842de25f576e6165dc7b6524ab93c667c"},
     {"bytes": 182, "out": "prog_if_probe.out", "rows": 2, "sha256": "86056be1950303f8195fa52dcbf2c23c065d52323da492bb4fede3d8b1af899e"},
