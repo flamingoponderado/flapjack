@@ -33,6 +33,7 @@ import Flapjack.Test.WordToStackHandlerValGeneralityParity
 import Flapjack.Test.WordToStackAbsStackGeneralityParity
 import Flapjack.Test.WordToStackExpressionMaximumParity
 import Flapjack.Test.WordToStackCompLengthParity
+import Flapjack.Test.WordToStackProgramBitmapsParity
 import Flapjack.Test.WordAllocCheckerAssemblyParity
 import Flapjack.Test.SptMapiParity
 import Flapjack.Test.ParmoveIndependenceParity

@@ -42764,6 +42764,42 @@
     "reviewer": "flapjack-luna-c source comparison2026-10-01 bead.11.5.10.5.8.6.25: literal reg_allocScript193-199 arbitrary Nat key and List Nat. Empty false; head equality true; x>head false before recursion; otherwise recursive tail. No descending-order, membership, uniqueness or range premise. Nat equality/order and Bool/List constructors retained exactly. Twelve fresh original EVAL equations replay identical inputs by kernel rfl, including unsorted early-stop rejection, unsorted continuing match, duplicates, zero, tail, and 80-bit key. Production cakeSortedMem now delegates this same definition; unconditional arbitrary-key/list kernel equality and former recursive equation replay establish this helper replacement only. Remaining allocator state and graph correctness are unproved; this routing does not claim allocator correctness. Fresh original executed corpus comparison is required on linked .25.1. Coordinator review pending."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ProgramBitmaps.lean",
+    "lean_name": "compileProgIsPrefix",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "compile_prog_isPREFIX",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.3.26.7): original word_to_stackProofScript.sml:2831-2838 compared with compileProgIsPrefix. The native compileProgNative/compileWordToStackNative definitions use the reviewed WordLangProgHOL, HolProg, AsmConfigExact and AppList carriers. All source inputs and output components are retained, including argument/register counts, perf, frame outputs and arbitrary independent identifier type for rows. The only carrier translation is positive HOL word dimension to BitVec width with [NeZero width], recorded by words_as_type_indexed_bitvec. Prefix statements retain the sole actual compiler output equation and initial flattened list as prefix of final flattened list. Length statements retain exactly the output equation and initial flattened-length bound, proving both final bound and equality of count-minus-length gaps. No frame convention, identifier uniqueness, output invariant, target execution or pass-success premise is added. Single-program proofs project the actual compNative output and use reviewed compImpIsPrefix/compImpLength; list proofs induct over the original left-to-right compiler traversal and compose prefix/gap results. Production routing remains separately open on .25.17; this proof does not establish source-to-RISC-V correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ProgramBitmaps.lean",
+    "lean_name": "compileWordToStackIsPrefix",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "compile_word_to_stack_isPREFIX",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.3.26.7): original word_to_stackProofScript.sml:2840-2855 compared with compileWordToStackIsPrefix. The native compileProgNative/compileWordToStackNative definitions use the reviewed WordLangProgHOL, HolProg, AsmConfigExact and AppList carriers. All source inputs and output components are retained, including argument/register counts, perf, frame outputs and arbitrary independent identifier type for rows. The only carrier translation is positive HOL word dimension to BitVec width with [NeZero width], recorded by words_as_type_indexed_bitvec. Prefix statements retain the sole actual compiler output equation and initial flattened list as prefix of final flattened list. Length statements retain exactly the output equation and initial flattened-length bound, proving both final bound and equality of count-minus-length gaps. No frame convention, identifier uniqueness, output invariant, target execution or pass-success premise is added. Single-program proofs project the actual compNative output and use reviewed compImpIsPrefix/compImpLength; list proofs induct over the original left-to-right compiler traversal and compose prefix/gap results. Production routing remains separately open on .25.17; this proof does not establish source-to-RISC-V correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ProgramBitmaps.lean",
+    "lean_name": "compileProgLength",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "compile_prog_LENGTH",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.3.26.7): original word_to_stackProofScript.sml:5652-5661 compared with compileProgLength. The native compileProgNative/compileWordToStackNative definitions use the reviewed WordLangProgHOL, HolProg, AsmConfigExact and AppList carriers. All source inputs and output components are retained, including argument/register counts, perf, frame outputs and arbitrary independent identifier type for rows. The only carrier translation is positive HOL word dimension to BitVec width with [NeZero width], recorded by words_as_type_indexed_bitvec. Prefix statements retain the sole actual compiler output equation and initial flattened list as prefix of final flattened list. Length statements retain exactly the output equation and initial flattened-length bound, proving both final bound and equality of count-minus-length gaps. No frame convention, identifier uniqueness, output invariant, target execution or pass-success premise is added. Single-program proofs project the actual compNative output and use reviewed compImpIsPrefix/compImpLength; list proofs induct over the original left-to-right compiler traversal and compose prefix/gap results. Production routing remains separately open on .25.17; this proof does not establish source-to-RISC-V correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ProgramBitmaps.lean",
+    "lean_name": "compileWordToStackImpLength",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "compile_word_to_stack_IMP_LENGTH",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.3.26.7): original word_to_stackProofScript.sml:5663-5680 compared with compileWordToStackImpLength. The native compileProgNative/compileWordToStackNative definitions use the reviewed WordLangProgHOL, HolProg, AsmConfigExact and AppList carriers. All source inputs and output components are retained, including argument/register counts, perf, frame outputs and arbitrary independent identifier type for rows. The only carrier translation is positive HOL word dimension to BitVec width with [NeZero width], recorded by words_as_type_indexed_bitvec. Prefix statements retain the sole actual compiler output equation and initial flattened list as prefix of final flattened list. Length statements retain exactly the output equation and initial flattened-length bound, proving both final bound and equality of count-minus-length gaps. No frame convention, identifier uniqueness, output invariant, target execution or pass-success premise is added. Single-program proofs project the actual compNative output and use reviewed compImpIsPrefix/compImpLength; list proofs induct over the original left-to-right compiler traversal and compose prefix/gap results. Production routing remains separately open on .25.17; this proof does not establish source-to-RISC-V correctness."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/WordAlloc/GetHeuristics.lean",
     "lean_name": "getHeuristics",
     "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
