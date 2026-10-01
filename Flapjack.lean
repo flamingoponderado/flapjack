@@ -1,6 +1,10 @@
 import Flapjack.Pancake.WordConvs.NameMonotonicity
 import Flapjack.Pancake.WordConvs.EveryVarInstMono
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Parmove
+import Flapjack.Compiler.Backend.Parmove.AllDistinct.Parmove
+import Flapjack.Compiler.Backend.Parmove.AllDistinct.Pmov
+import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Pmov
+import Flapjack.Compiler.Backend.Parmove.InjOnState
 import Flapjack.Compiler.Backend.BackendProps
 
 import Flapjack.Compiler.Backend.LabToTarget.Interference
@@ -20,9 +24,6 @@ import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Steps
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Step
 import Flapjack.Compiler.Backend.LabToTarget.Navigation
 import Flapjack.Compiler.Backend.LabToTarget.Memory
-import Flapjack.Compiler.Backend.Parmove.AllDistinct.Pmov
-import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Pmov
-import Flapjack.Compiler.Backend.Parmove.InjOnState
 import Flapjack.Compiler.Backend.LabToTarget.Fetch
 import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar
 import Flapjack.Compiler.Backend.RegAlloc.SortedMem
@@ -370,6 +371,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.CheckCol
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.NumSetInsertion
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ScopedInjection
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyMaps
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.Maximum.Max3
 import Flapjack.HolRef
 import Flapjack.AstHOL
 import Flapjack.Compiler.Backend.BackendCommon

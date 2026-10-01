@@ -1,6 +1,8 @@
 import Flapjack.Test.WordConvsNameMonoParity
 import Flapjack.Test.WordConvsEveryVarInstMonoParity
 import Flapjack.Test.ParmovePreservesMovesParmoveParity
+import Flapjack.Test.ParmoveAllDistinctWrapperParity
+import Flapjack.Test.WordAllocMax3Parity
 import Flapjack.Test.BackendPropsNonzeroLabelsParity
 
 import Flapjack.Test.TargetPropsInterferenceParity
