@@ -2937,6 +2937,15 @@ run_probe lab_to_target_padding_probeScript.sml lab_to_target_padding_probe.out 
   LineOkLightJumpCmpOk LineOkLightJumpCmpBad LineOkLightLocValue \
   SecOkLightMixed SecOkLightCall \
   "$cake_dir/compiler/backend/lab_to_targetScript.sml" "$cake_dir/compiler/backend"
+run_probe lab_to_target_removelabels_probeScript.sml lab_to_target_removelabels_probe.out \
+  ZeroLabsAccOfLocHit ZeroLabsAccOfLocNonzero ZeroLabsAccOfJumpHit \
+  ZeroLabsAccOfJumpNonzero ZeroLabsAccOfJumpCmpHit ZeroLabsAccOfJumpCmpNonzero \
+  ZeroLabsAccOfCatchAll LineGetZeroLabsAccLabAsm LineGetZeroLabsAccLabel \
+  LineGetZeroLabsAccAsm GetZeroLabsAccEmpty GetZeroLabsAccConcrete \
+  ZeroLabsAccExistTrue ZeroLabsAccExistFalse LineBytesLabel LineBytesAsm \
+  LineBytesLabAsm ProgToBytesEmpty ProgToBytesConcrete RemoveLabelsLoopZero \
+  RemoveLabelsLoopOne RemoveLabelsZero \
+  "$cake_dir/compiler/backend/lab_to_targetScript.sml" "$cake_dir/compiler/backend"
 run_probe word_alloc_total_colour_probeScript.sml word_alloc_total_colour_probe.out \
   tc_absent_zero tc_absent_physical tc_absent_virtual tc_absent_large_physical tc_absent_large_virtual tc_mapped_physical tc_mapped_virtual tc_mapped_zero \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
