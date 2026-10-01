@@ -50432,6 +50432,95 @@
     "reviewer": "flapjack-sol-a source comparison 2026-10-02, bead flapjack-jq7g: genuine Move case of word_allocProofScript.sml5951ff, original marked Move proof5958-5986 replayed literally after its original compiler unfolding with four literal local prerequisites; full case statement and eight inferred carriers captured. Substitutes only Move pri ls for universally quantified prog, retains arbitrary input/output Spt maps, natural counters/priority, original loop-table list of Spt map and two Spt sets, native compiler output equality, original ssa_map_ok/is_alloc_var conjunction, and all three counter monotonicity/allocation/output-map conclusions. No IH for nonrecursive Move, no extra distinctness/tree validity/evaluation or target-validity assumption. forceRename uses actual filtered zip; all selected destination bounds/nonphysicality are derived from accepted list_next_var_rename_lemma_1 and original allocation residue. Native WordLangProgHOL carrier has positive BitVec width/NeZero; Spt maps/sets and List pairs remain identity translations, with no finite-map qualifier."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/NoInstallCode.lean",
+    "lean_name": "noInstallCode",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "no_install_code_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02 beadflapjack-word-code-no-install-def: complete originalwordProps4707-4710. Input exact arbitrary (num x wordLang prog) num_map translated constructor-for-constructor to Spt(Nat x WordLangProgHOL(BitVec width)), all k/n/program quantifiers and lookup Some(n,p) implication retained, canonical noInstallSubprogsHOL p=true conclusion. No validity/finite-support/equality/safety premise; malformed trees and full argument counts retained. No finite-map qualifier: original carrier is Spt tree, not |->. Sole qualifier translates positive HOL dimension to BitVec width/NeZero. Fresh exported full definition/3type queries/16 actual lookup-to-source-predicate observations over widths1/80 and all LN/LS/BN/BS forms, bad Install and missing keys; sixteen kernel observations plus arbitrary-width empty, malformed-safe BS and forbidden-leaf convention proofs. This is a proof-side Prop predicate required by the original top theorem, no executable compiler routing or semantic correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NoInstallTop.lean",
+    "lean_name": "wordToStackCompileNoInstall",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_to_stack_compile_no_install",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02 beadflapjack-wts-code-no-install: complete original12392-12410, actual compile_def603-619, wordProps no_install_code_def4707-4710 and canonical Spt lookup/fromAList. Arbitrary original config/Nat row identifiers/full source programs/all four output carriers retained; only original ALL_DISTINCT mapped identifiers, no_install_code actual fromAList and compile equality at false perf hypotheses. Source list guard derived internally by distinct-key first-match lookup induction, not assumed or substituted. Target EVERY no_install includes both injected stubs. List.Nodup corresponds HOL ALL_DISTINCT, code Spt exact original num_map, no finite-map translation. Sole word qualifier translates positive HOL words to BitVec width/NeZero. Fresh original exported theorem/all6types/16 distinct-source-target observations over widths1/32/64/80, plus3 complete finite-code guard proofs. Duplicate safe-first/bad-later sentinel has true full code-map guard but false source/target, demonstrating original distinctness is retained. Kernel16 observations/3 arbitrary-width codeguard proofs/2 full original theorem applications. No public IH, listguard, target safety/evaluation/simulation, conversion or bounds premise. Proof-only top syntax preservation, not whole compiler semantic correctness."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsAllocation.lean",
+    "lean_name": "ssaCcTransPropsAlloc",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison 2026-10-02, bead flapjack-d6u5: genuine Alloc case of word_allocProofScript.sml5951ff. Replayed original marked Alloc6024-6037, Install6043-6070 and FFI6076-6087 tactics literally after original native compiler unfolding, with literal shifted-list derivation and eleven local prerequisites. Full three case statements and 31 inferred argument types captured. This case substitutes only its constructor for prog; retains actual compiler-output equality, original ssa_map_ok/is_alloc_var conjunction and all three output counter monotonicity/allocation/map conclusions, without extra validity, distinctness, evaluation or post-map premise, and no IH for these nonrecursive cases. Native loop-table list of Spt Nat map and two Spt Unit sets remains universally quantified and ignored by the same source clauses. Native cutsets are two Spt Unit sets, maps use exact Spt Nat and counters/registers Nat. Positive BitVec width/NeZero translates only original output program alpha word carrier. FFI function is actual MlString matching HOL mlstring, not String, requiring no names qualifier. Alloc/FFI two class-flipping native list rename producers, native map intersection and Install fresh nextVarRename/map extension are proved via accepted bounds/flip facts; no desired invariant is assumed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsAllocation.lean",
+    "lean_name": "ssaCcTransPropsInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison 2026-10-02, bead flapjack-d6u5: genuine Install case of word_allocProofScript.sml5951ff. Replayed original marked Alloc6024-6037, Install6043-6070 and FFI6076-6087 tactics literally after original native compiler unfolding, with literal shifted-list derivation and eleven local prerequisites. Full three case statements and 31 inferred argument types captured. This case substitutes only its constructor for prog; retains actual compiler-output equality, original ssa_map_ok/is_alloc_var conjunction and all three output counter monotonicity/allocation/map conclusions, without extra validity, distinctness, evaluation or post-map premise, and no IH for these nonrecursive cases. Native loop-table list of Spt Nat map and two Spt Unit sets remains universally quantified and ignored by the same source clauses. Native cutsets are two Spt Unit sets, maps use exact Spt Nat and counters/registers Nat. Positive BitVec width/NeZero translates only original output program alpha word carrier. FFI function is actual MlString matching HOL mlstring, not String, requiring no names qualifier. Alloc/FFI two class-flipping native list rename producers, native map intersection and Install fresh nextVarRename/map extension are proved via accepted bounds/flip facts; no desired invariant is assumed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsAllocation.lean",
+    "lean_name": "ssaCcTransPropsFFI",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison 2026-10-02, bead flapjack-d6u5: genuine FFI case of word_allocProofScript.sml5951ff. Replayed original marked Alloc6024-6037, Install6043-6070 and FFI6076-6087 tactics literally after original native compiler unfolding, with literal shifted-list derivation and eleven local prerequisites. Full three case statements and 31 inferred argument types captured. This case substitutes only its constructor for prog; retains actual compiler-output equality, original ssa_map_ok/is_alloc_var conjunction and all three output counter monotonicity/allocation/map conclusions, without extra validity, distinctness, evaluation or post-map premise, and no IH for these nonrecursive cases. Native loop-table list of Spt Nat map and two Spt Unit sets remains universally quantified and ignored by the same source clauses. Native cutsets are two Spt Unit sets, maps use exact Spt Nat and counters/registers Nat. Positive BitVec width/NeZero translates only original output program alpha word carrier. FFI function is actual MlString matching HOL mlstring, not String, requiring no names qualifier. Alloc/FFI two class-flipping native list rename producers, native map intersection and Install fresh nextVarRename/map extension are proved via accepted bounds/flip facts; no desired invariant is assumed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "apply_colour_lab_pres",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/ApplyColour.lean",
+    "lean_name": "applyColour_labPres",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.1.9): HOL wordConvsProofScript.sml:2782-2789 apply_colour_lab_pres: quantifiers col prog, extract_labels prog = extract_labels (apply_colour col prog). Statement over the exact WordLangProgHOL carrier and the reviewed WordAlloc.applyColour (apply_colour_def); positive BitVec/NeZero is the only carrier translation; proved by structural recursion over the program mirroring HOL apply_colour_ind; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "apply_colour_not_created_subprogs",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/ApplyColour.lean",
+    "lean_name": "applyColour_notCreatedSubprogs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.1.9): HOL wordConvsProofScript.sml:2855-2864 apply_colour_not_created_subprogs: free P prog f, not_created_subprogs P prog implies not_created_subprogs P (apply_colour f prog) over the exact notCreatedSubprogsHOL (via the untagged invariance equality notCreatedSubprogs_applyColour_eq). Statement over the exact WordLangProgHOL carrier and the reviewed WordAlloc.applyColour (apply_colour_def); positive BitVec/NeZero is the only carrier translation; proved by structural recursion over the program mirroring HOL apply_colour_ind; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_apply_colour",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/ApplyColour.lean",
+    "lean_name": "getCodeLabels_applyColour",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.1.9): HOL wordConvsProofScript.sml:2880-2888 word_get_code_labels_apply_colour: quantifiers col ps, word_get_code_labels (apply_colour col ps) = word_get_code_labels ps over the reviewed getCodeLabelsHOL. Statement over the exact WordLangProgHOL carrier and the reviewed WordAlloc.applyColour (apply_colour_def); positive BitVec/NeZero is the only carrier translation; proved by structural recursion over the program mirroring HOL apply_colour_ind; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_good_handlers_apply_colour",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/ApplyColour.lean",
+    "lean_name": "goodHandlers_applyColour",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.1.9): HOL wordConvsProofScript.sml:2890-2898 word_good_handlers_apply_colour: quantifiers col ps with free handler label n leading, word_good_handlers n (apply_colour col ps) <=> word_good_handlers n ps over the reviewed goodHandlersHOL. Statement over the exact WordLangProgHOL carrier and the reviewed WordAlloc.applyColour (apply_colour_def); positive BitVec/NeZero is the only carrier translation; proved by structural recursion over the program mirroring HOL apply_colour_ind; no extra premise."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/ApplyColour.lean",
+    "lean_name": "notCreatedSubprogs_applyColour_eq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only invariance equality used by the tagged apply_colour_not_created_subprogs implication; HOL proves the implication directly by apply_colour_ind, so no separate HOL declaration is being ported."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/StackProps/InstructionConstants.lean",
     "lean_name": "instConst",
     "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
@@ -50490,6 +50579,14 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol3 source/full-type comparison 2026-10-02, bead 9gak: Both original local theorem implications retained as a conjunction. Fresh full type capture shows input s/t:(alpha,beta,gamma)state and independent k:delta ffi_state; independent OtherF:Type and genuine type-changing native record updates preserve delta rather than specializing it to gamma. Original lines323/344/650/662 and direct primitive dependencies compared; local650/662 replay their literal original statement and proof, not exported DB claims. Positive word width, fixed64 FP registers, independent compile C and FFI hosts Type0, actual imported native state owner and same-module canonical codec retained. No extra execution premise, target result assumption, callback, dropped guard or carrier specialization. Eighteen fresh original source/type/observation rows and native parity fixtures; kernel checked. Inherits reals_as_rational_cuts from native FP operations, SOUNDNESS item8; no stronger exact-real, evaluate or compiler correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/PaddingLength.lean",
+    "lean_name": "lengthPadBytes",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "LENGTH_pad_bytes",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison: original cakeml857f0d98 lab_to_targetProofScript.sml3195-3204. Same arbitrary list element carrier, bytes/nop/l quantification and conjunction 0<LENGTH nop and LENGTH bytes<=l imply LENGTH(pad_bytes bytes l nop)=l. Lean preserves both premises with no additions; canonical reviewed generic padBytes is actual definition, List length/take/replicate/flatten are direct list translation. No word carrier or representation qualifier. Original theorem export and six EVAL observations include Nat/Bool carriers, zero, exact fit, extended/multi-element nop and empty-nop outside-premise sentinel; kernel proof uses list length and natural arithmetic only."
   },
   {
     "lean_path": "Flapjack/Compiler/Encoders/AsmProps/ArithmeticPreservation.lean",

@@ -1,0 +1,26 @@
+nt_full=⊢ ALL_DISTINCT (MAP FST prog) ∧ no_install_code (fromAList prog) ∧ compile ac F prog = (bm,c,fs,p) ⇒ EVERY (λ(n,x). no_install x) p
+nt_conf_type=:α asm_config
+nt_source_type=:(num # num # α prog) list
+nt_bitmaps_type=:α word list
+nt_config_type=:config
+nt_frames_type=:num list
+nt_outputs_type=:(num # α stackLang$prog) list
+nt_empty_1=T
+nt_safe_1=T
+nt_shadow_1=T
+nt_bad_1=T
+nt_empty_32=T
+nt_safe_32=T
+nt_shadow_32=T
+nt_bad_32=T
+nt_empty_64=T
+nt_safe_64=T
+nt_shadow_64=T
+nt_bad_64=T
+nt_empty_80=T
+nt_safe_80=T
+nt_shadow_80=T
+nt_bad_80=T
+nt_code_empty=no_install_code (fromAList [])
+nt_code_safe=no_install_code (fromAList [(20,0,Skip)])
+nt_code_shadow=no_install_code (fromAList [(20,0,Skip); (20,7,Install 0 1 2 3 (LN,LN))])

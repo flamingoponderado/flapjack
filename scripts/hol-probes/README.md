@@ -4211,3 +4211,36 @@ plus nine native observations. The arithmetic rows include failures from shift
 bounds and zero divisors while memory, domain, alignment, link register and
 endianness remain preserved. The Lean fixture derives arbitrary-operation
 domain preservation from the full theorem and checks the other observed fields.
+### WordProps code-map no-install convention
+
+`word_props_no_install_code_probeScript.sml` freshly captures full original
+`no_install_code_def`, three carrier queries and sixteen concrete lookup and
+source-predicate observations over widths1/80 and all Spt constructors.
+Malformed trees, missing keys and actual forbidden Install entries remain in
+scope. `Flapjack/Test/WordPropsNoInstallCodeParity.lean` checks the observations
+and arbitrary-width empty/safe-malformed/forbidden-map convention properties.
+Captures are regressions, not a HOL-to-Lean equivalence proof or new original
+proof replay. The predicate does not narrow the source code-map carrier.
+
+Selector: `HOL_PROBE_ONLY=word_props_no_install_code_probeScript.sml`.
+
+### Full native code-map top no-install theorem
+
+`word_to_stack_no_install_top_probeScript.sml` freshly captures full original
+`word_to_stack_compile_no_install`, six carriers, sixteen actual
+ALL_DISTINCT/source-list/target-list observations and three complete HOL
+finite-code guard proofs using original lookup/fromAList definitions.
+The safe-first/bad-later duplicate-key map has a true complete code guard but
+false source/target list predicates. The theorem therefore retains the
+original distinct-key hypothesis. Widths1/32/64/80, underflow/large register
+counts and both injected stubs are covered. Matching kernel fixtures retain
+complete map guard proofs and full-signature applications. These are
+regression observations and small concrete HOL guard proofs, not a new proof
+replay of the full compiler theorem or a HOL-to-Lean equivalence proof.
+Whole compiler semantic correctness remains unfinished.
+
+Selector: `HOL_PROBE_ONLY=word_to_stack_no_install_top_probeScript.sml`.
+
+- `ssa_cc_trans_props_allocation_probeScript.sml` replays the literal original Alloc/Install/FFI case tactics and native compiler unfolding with original shifted-list derivation and local prerequisites; three full cases and 31 type captures check the counter/map/cutset/loop-table/program and exact mlstring carriers.
+
+`lab_to_target_padding_length_probeScript.sml` exports original `LENGTH_pad_bytes` (lab_to_targetProofScript.sml:3195) and six direct `pad_bytes` EVAL observations over natural-number and Boolean lists: extension, multi-element nop truncation, exact fit, zero length, Boolean payloads, and the empty-nop sentinel outside the theorem premise. The full original premise remains nonempty nop and bytes length at most the requested length. `Flapjack.Test.LabToTargetPaddingLengthParity` kernel-replays all six concrete rows and exercises the public arbitrary-carrier theorem. Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=lab_to_target_padding_length_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
