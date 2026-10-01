@@ -1952,3 +1952,5 @@ HOL_PROBE_ONLY=word_lang_occurrences_exact_probeScript.sml scripts/hol-probes/re
   `is_handler_frame`, and `sorted_env` rows for exact stack-frame predicates.
 
 - `word_to_stack_abs_stack_probeScript.sml`: original abstraction success and failure branches.
+
+- `word_to_stack_index_list_probeScript.sml`: descending indices and physical-name division.
