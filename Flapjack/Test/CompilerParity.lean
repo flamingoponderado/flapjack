@@ -1,4 +1,5 @@
 import Flapjack.Test.LabSemArithmeticParity
+import Flapjack.Test.ParmovePermutationParity
 import Flapjack.Test.ParmoveEnvironmentParity
 import Flapjack.Test.ParmovePathParity
 import Flapjack.Test.ParmoveUpdateLemmasParity

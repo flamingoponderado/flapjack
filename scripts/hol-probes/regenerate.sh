@@ -2741,9 +2741,11 @@ run_probe parmove_updates_probeScript.sml parmove_updates_probe.out \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 run_probe labsem_navigation_probeScript.sml labsem_navigation_probe.out nav_fetch0 nav_fetch1 nav_fetch2 nav_fetch3 nav_fetch4 nav_fetch_end nav_length nav_entry1 nav_entry2 nav_empty9 nav_empty8 nav_label5 nav_label7 nav_label4 nav_missing nav_missingsection nav_return0 nav_return1 nav_return2 nav_return3 nav_return4 nav_return5 nav_first_label "$cake_dir/compiler/backend/semantics/labSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
+
 run_probe parmove_path_probeScript.sml parmove_path_probe.out \
   pv_empty pv_single pv_chain pv_cycle pv_changed_dest pv_bad_prefix pv_windmill_empty pv_windmill_fresh pv_windmill_repeated pv_windmill_sources \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
 
 run_probe parmove_environment_probeScript.sml parmove_environment_probe.out \
   pe_first_written pe_second_written pe_first_untouched pe_second_untouched \
@@ -2751,3 +2753,7 @@ run_probe parmove_environment_probeScript.sml parmove_environment_probe.out \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
 run_probe labsem_arithmetic_probeScript.sml labsem_arithmetic_probe.out lab_arith_binop_add lab_arith_binop_sub lab_arith_binop_and lab_arith_binop_or lab_arith_binop_xor lab_arith_loc_or_self lab_arith_loc_or_other_reg lab_arith_loc_or_imm lab_arith_loc_add_self lab_arith_binop_right_loc lab_arith_lsl_valid lab_arith_lsl_invalid lab_arith_lsr_invalid lab_arith_asr_invalid lab_arith_ror_invalid lab_arith_shift_source_loc lab_arith_shift_amount_loc lab_arith_div_valid lab_arith_div_zero lab_arith_div_divisor_loc lab_arith_div_dividend_loc lab_arith_carry_nonzero lab_arith_carry_zero lab_arith_carry_flag_alias lab_arith_carry_loc lab_arith_longmul_valid lab_arith_longmul_dest_alias lab_arith_longmul_loc lab_arith_longdiv_valid lab_arith_longdiv_dest_alias lab_arith_longdiv_quotient_bound lab_arith_longdiv_zero lab_arith_longdiv_loc lab_arith_add_overflow lab_arith_add_no_overflow lab_arith_add_negative_overflow lab_arith_sub_overflow lab_arith_sub_negative_rhs_overflow lab_arith_sub_no_overflow lab_arith_addOverflow_flag_alias lab_arith_addOverflow_loc lab_arith_subOverflow_flag_alias lab_arith_subOverflow_loc lab_arith_sticky_failed "$cake_dir/compiler/backend/semantics/labSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe parmove_permutation_probeScript.sml parmove_permutation_probe.out \
+  pp_first_one pp_second_one pp_first_three pp_second_three pp_first_four pp_second_four pp_duplicate_first pp_duplicate_second pp_swap pp_empty \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"

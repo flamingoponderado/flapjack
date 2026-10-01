@@ -39815,5 +39815,13 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-a source comparison2026-10-01 beadfk1h: stack_move286-291 retains zero body and recursive higher-slot movement before current StackLoad/StackStore, with same start+offset register/slot order. StackArgs293-298 retains stack_arg_count, StackAlloc and stack_move n0fk. call_dest264-273 retains SOME direct Skip/INL, NONE LENGTHargs=0 explicit raise_stub_location, otherwise guarded LAST passed to wReg2 and native wStackLoad Skip with INR returned register. Nonempty getLast proof is internally discharged by original LENGTHguard, not an added caller premise; no Option-none result branch, arbitrary empty-LAST/default or source allowlist dependency. Native HolProg width uses exact reviewed payload carrier and faithful MlString field; words_as_type_indexed_bitvec records positive-width translation with NeZero. Three universal kernel payload-codec transport proofs to accepted generic helpers cover all inputs, not a call simulation. Actual compiler/production route remains open parent25; coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/Permutation.lean",
+  "lean_name": "parsem_perm",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "parsem_perm",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.6.2: source198-241 exact windmill first AND PERM first second implies full parsem function equality. Generic same-component pair/List and function environments; List.Perm represents finite-list permutation with element multiplicities preserved; no quotient/key-set replacement is used. Retains original destination Nodup and no restrictions on sources, no global environment or target evaluation premise. Genuine permutation induction nil/cons/swap/trans uses reviewed parsem_cons and independent function-update commutation; uniqueness transported by permutation. Ten fresh original rows with Lean replay include shared sources/snapshot/swap/empty and duplicate-destination counterexample; full step_sem remains open."
 }
 ]
