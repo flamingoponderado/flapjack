@@ -12,8 +12,10 @@ The inputs below deliberately mirror the probe's HOL inputs literally:
 `testMemory` is the probe's `m` (`0 ↦ 30`, `1 ↦ 40`, else `0`), `testDomain`
 is `UNIV`, and the wrap memory is the probe's `mw` (`255 ↦ 1`, `0 ↦ 2`, else
 `0`).  Concrete `AsmConfigExact`/`HolAsm` values are used (no normalized
-substitute), and every one of the probe's ten captured rows has a matching
-kernel example.
+substitute), and every one of the probe's eleven captured rows has a matching
+kernel example (the whole `encoded_bytes_in_mem` positive row is proved on
+the HOL side by `encoded_bytes_in_mem_whole` and mirrored by the final
+`encodedBytesInMemHOL` example).
 -/
 
 namespace Flapjack.Test.TargetSemEncodedBytesParity
@@ -87,9 +89,9 @@ example : 1 * 2 ^ testConfig.codeAlignment <
 example : ¬ (2 * 2 ^ testConfig.codeAlignment <
     (testConfig.encode (HolAsm.jump (0 : BitVec 8))).length) := by decide
 
-/-- Original HOL `encoded_bytes_match=T`: the dropped bytes satisfy
-    `bytes_in_memory` at `0` under memory `m` and domain `UNIV`, with a concrete
-    `HolAsm` witness. -/
+/-- Original HOL `encoded_bytes_match=T` and `encoded_bytes_in_mem_whole=T`: the
+    whole `encoded_bytes_in_mem` predicate holds at `0` under memory `m` and
+    domain `UNIV`, witnessed by the concrete `HolAsm.jump 0` at `k = 1`. -/
 example : encodedBytesInMemHOL testConfig 0 testMemory testDomain :=
   ⟨HolAsm.jump (0 : BitVec 8), 1, by decide, by simp [bytesInMemoryHOL, testMemory, testDomain, testConfig]⟩
 

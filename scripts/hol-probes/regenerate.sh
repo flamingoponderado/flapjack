@@ -2698,7 +2698,7 @@ run_probe word_to_stack_stack_size_rel_probeScript.sml word_to_stack_stack_size_
 
 run_probe target_sem_encoded_bytes_probeScript.sml target_sem_encoded_bytes_probe.out \
   oracle_first oracle_shift bytes_empty bytes_nonempty bytes_domain_fail bytes_wrap \
-  encoded_drop encoded_guard_true encoded_guard_strict encoded_bytes_match \
+  encoded_drop encoded_guard_true encoded_guard_strict encoded_bytes_match encoded_bytes_in_mem_whole \
   "$cake_dir/compiler/backend/semantics/targetSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe misc_asm_write_bytearray_probeScript.sml misc_asm_write_bytearray_probe.out \

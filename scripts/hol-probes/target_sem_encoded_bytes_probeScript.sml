@@ -34,3 +34,10 @@ val _ = print_eval "encoded_guard_true" ``1 * 2 ** ^c.code_alignment < LENGTH (^
 val _ = print_eval "encoded_guard_strict" ``2 * 2 ** ^c.code_alignment < LENGTH (^c.encode ARB)``;
 val _ = print_eval "encoded_bytes_match" ``bytes_in_memory (0w:8 word)
     (DROP (1 * 2 ** ^c.code_alignment) (^c.encode ARB)) ^m UNIV``;
+fun print_thm label thm = (print label; print "="; print (term_to_string (snd (boolSyntax.dest_eq (concl thm)))) ; print "\n");
+val encoded_bytes_in_mem_whole = EQT_INTRO (prove(
+  ``encoded_bytes_in_mem ^c (0w:8 word) ^m UNIV``,
+  rw [encoded_bytes_in_mem_def]
+  \\ qexists_tac `1`
+  \\ EVAL_TAC));
+val _ = print_thm "encoded_bytes_in_mem_whole" encoded_bytes_in_mem_whole;
