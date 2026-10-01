@@ -50261,5 +50261,13 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-c source review: literal HOL MAP equation, quantifiers, unconditional conclusion, fixed bytes and positive word width match. No mismatch found; source/kernel verification recorded on .29."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/PaddingLength.lean",
+    "lean_name": "lengthPadBytes",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "LENGTH_pad_bytes",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison: original cakeml857f0d98 lab_to_targetProofScript.sml3195-3204. Same arbitrary list element carrier, bytes/nop/l quantification and conjunction 0<LENGTH nop and LENGTH bytes<=l imply LENGTH(pad_bytes bytes l nop)=l. Lean preserves both premises with no additions; canonical reviewed generic padBytes is actual definition, List length/take/replicate/flatten are direct list translation. No word carrier or representation qualifier. Original theorem export and six EVAL observations include Nat/Bool carriers, zero, exact fit, extended/multi-element nop and empty-nop outside-premise sentinel; kernel proof uses list length and natural arithmetic only."
   }
 ]

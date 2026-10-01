@@ -1,0 +1,7 @@
+OriginalLengthPadBytes=0 < LENGTH nop ∧ LENGTH bytes ≤ l ⇒ LENGTH (pad_bytes bytes l nop) = l
+PadLengthExtend=T
+PadLengthMultiNop=T
+PadLengthExact=T
+PadLengthZero=T
+PadLengthGenericBool=T
+PadLengthEmptyNopOutsidePremise=T
