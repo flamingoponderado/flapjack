@@ -1,0 +1,9 @@
+pm_final=([],[],[(SOME 8,SOME 9)])
+pm_temp_self=([],[],[])
+pm_empty=[]
+pm_self=[]
+pm_single=[(SOME 1,SOME 2)]
+pm_chain=[(SOME 1,SOME 2); (SOME 2,SOME 3); (SOME 3,SOME 4)]
+pm_swap=[(NONE,SOME 2); (SOME 2,SOME 1); (SOME 1,NONE)]
+pm_cycle=[(NONE,SOME 2); (SOME 2,SOME 3); (SOME 3,SOME 1); (SOME 1,NONE)]
+pm_repeated=[(SOME 1,SOME 2); (SOME 1,SOME 3)]
