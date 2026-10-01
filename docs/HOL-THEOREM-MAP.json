@@ -42391,5 +42391,29 @@
     "hol_name": "add_call_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.3.2.5.4): source1398-1401 add_call lr calls:num_set = union (map (lambda v. unit) lr) calls, arbitrary tracked payload alpha retained. Literal source operation and argument order retained, no wf/domain premise or function-backed map substitution. Source num_set is accepted unit Spt; add_call generic payload is independent universe-0 alpha, not narrowed to heuristic tuple. Accepted payload-only map1545-1550 preserves every raw BN/BS, unlike indexed mapi; original union219-239 clause by clause preserves left-biased/raw tree behavior. Sixteen fresh original exact-tree observations and identical kernel driver replay cover empty/overlap/disjoint sets, Nat/Bool/Nat-tuple payloads, deep keys, large ignored payload, raw internal nodes and raw overlap. Native get_heu prerequisite only; executed allocator route and whole correctness remain open. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Remap.lean",
+    "lean_name": "listRemap",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "list_remap_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.10.3): original 1096-1104, full native ClashTree, List Nat and Spt Nat maps retained with right-associated map/map/Nat product and arbitrary initial maps/counter. list_remap tests only forward lookup and increments unbounded fresh Nat only for absent names; reverse-map collisions use literal insert overwrite. Delta reads then writes; Branch left then right then optional fixed toAList names; Seq right then left. toAList retains original mixed enumeration and malformed-tree behavior. No fuel, validity or target-result premise. Twelve fresh original exact-tree observations and kernel driver replay cover duplicate names, all traversal constructors, optional branch sets, mixed set enumeration, malformed trees, large unbounded names/counter and arbitrary inconsistent initial maps. Pure analysis prerequisite, production allocator migration remains open; coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Remap.lean",
+    "lean_name": "mkBijAux",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "mk_bij_aux_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.10.3): original 1106-1119, full native ClashTree, List Nat and Spt Nat maps retained with right-associated map/map/Nat product and arbitrary initial maps/counter. list_remap tests only forward lookup and increments unbounded fresh Nat only for absent names; reverse-map collisions use literal insert overwrite. Delta reads then writes; Branch left then right then optional fixed toAList names; Seq right then left. toAList retains original mixed enumeration and malformed-tree behavior. No fuel, validity or target-result premise. Twelve fresh original exact-tree observations and kernel driver replay cover duplicate names, all traversal constructors, optional branch sets, mixed set enumeration, malformed trees, large unbounded names/counter and arbitrary inconsistent initial maps. Pure analysis prerequisite, production allocator migration remains open; coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Remap.lean",
+    "lean_name": "mkBij",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "mk_bij_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.10.3): original 1121-1125, full native ClashTree, List Nat and Spt Nat maps retained with right-associated map/map/Nat product and arbitrary initial maps/counter. list_remap tests only forward lookup and increments unbounded fresh Nat only for absent names; reverse-map collisions use literal insert overwrite. Delta reads then writes; Branch left then right then optional fixed toAList names; Seq right then left. toAList retains original mixed enumeration and malformed-tree behavior. No fuel, validity or target-result premise. Twelve fresh original exact-tree observations and kernel driver replay cover duplicate names, all traversal constructors, optional branch sets, mixed set enumeration, malformed trees, large unbounded names/counter and arbitrary inconsistent initial maps. Pure analysis prerequisite, production allocator migration remains open; coordinator review pending."
   }
 ]

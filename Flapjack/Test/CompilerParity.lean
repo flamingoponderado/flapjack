@@ -1,3 +1,4 @@
+import Flapjack.Test.RegAllocRemapParity
 import Flapjack.Test.HeuCallParity
 import Flapjack.Test.HeuMaxParity
 import Flapjack.Test.WordToStackBitmapMixedParity
