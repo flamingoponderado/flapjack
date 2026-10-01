@@ -1,0 +1,58 @@
+import Flapjack.HolRef
+
+/-!
+# HOL list `HD` and `EL`
+
+HOL `HD` (`listScript.sml:128-130`) has only the `h::t` clause, so `HD []` is
+an unspecified value; `EL` (`listScript.sml:225-228`) is `EL 0 l = HD l` and
+`EL (SUC n) l = EL n (TL l)` with `TL [] = []`, so `EL n l` past the end of
+`l` is that same unspecified value. `holHdNil` is an opaque constant: no Lean
+proof can unfold it, just as HOL proves nothing about `HD []`. The HOL list
+script is not among the pinned `hol4/` snapshots, so these renderings are
+untagged Flapjack infrastructure; under the bound `holEl n l` is the ordinary
+`l[n]` (`holEl_eq_getElem`).
+-/
+
+namespace Flapjack
+
+/-- HOL's unspecified `HD []` at each (inhabited) type. -/
+noncomputable opaque holHdNil (α : Type) [Nonempty α] : α
+
+/-- HOL `HD`. -/
+noncomputable def holHd {α : Type} [Nonempty α] : List α → α
+  | [] => holHdNil α
+  | h :: _ => h
+
+/-- HOL `EL`. -/
+noncomputable def holEl {α : Type} [Nonempty α] : Nat → List α → α
+  | 0, l => holHd l
+  | n + 1, l => holEl n l.tail
+
+theorem holEl_eq_getElem {α : Type} [Nonempty α] :
+    ∀ (n : Nat) (l : List α) (h : n < l.length), holEl n l = l[n]'h
+  | 0, x :: _, _ => rfl
+  | n + 1, _ :: l, h => by
+      simp only [holEl, List.tail_cons, List.getElem_cons_succ]
+      exact holEl_eq_getElem n l (by simp at h; omega)
+
+theorem holEl_of_length_le {α : Type} [Nonempty α] :
+    ∀ (n : Nat) (l : List α), l.length ≤ n → holEl n l = holHdNil α
+  | 0, [], _ => rfl
+  | n + 1, [], _ => by
+      simp only [holEl, List.tail_nil]
+      exact holEl_of_length_le n [] (by simp)
+  | n + 1, _ :: l, h => by
+      simp only [holEl, List.tail_cons]
+      exact holEl_of_length_le n l (by simp at h; omega)
+
+theorem holEl_cons_succ {α : Type} [Nonempty α] (x : α) (l : List α) (n : Nat) :
+    holEl (n + 1) (x :: l) = holEl n l := rfl
+
+theorem holEl_set {α : Type} [Nonempty α] (l : List α) (i j : Nat) (v : α) (hi : i < l.length) :
+    holEl j (l.set i v) = if i = j then v else holEl j l := by
+  by_cases hj : j < l.length
+  · rw [holEl_eq_getElem j _ (by simpa using hj), holEl_eq_getElem j l hj, List.getElem_set]
+  · rw [holEl_of_length_le j _ (by simp; omega), holEl_of_length_le j l (by omega)]
+    rw [if_neg (by omega)]
+
+end Flapjack

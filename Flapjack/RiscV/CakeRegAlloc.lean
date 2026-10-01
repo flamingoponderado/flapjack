@@ -1,6 +1,8 @@
 import Flapjack.Compiler.Backend.RegAlloc.SafeDiv
 import Flapjack.Compiler.Backend.RegAlloc.SortMoves
 import Flapjack.Compiler.Backend.RegAlloc.SortedMem
+import Flapjack.Compiler.Backend.RegAlloc.SortedInsert
+import Flapjack.Compiler.Backend.RegAlloc.TagColour
 import Flapjack.RiscV.AllocatorMemoryInvariant
 import Flapjack.RiscV.CakeAllocatorCore
 import Flapjack.RiscV.Allocator
@@ -1025,13 +1027,48 @@ def CakeRaState.empty (n : Nat) : CakeRaState :=
     availMovesWl := [], unavailMovesWl := [], stack := [] }
 
 /-- `sorted_insert` (`reg_allocScript.sml:184-189`): insert into a
-    descending adjacency list, skipping duplicates. -/
-def cakeSortedInsert (x : Nat) : List Nat → List Nat
-  | [] => [x]
-  | y :: ys =>
+    descending adjacency list, skipping duplicates. The executed helper is the
+    reviewed literal definition started, as in HOL's `insert_edge`, with an
+    empty accumulator. -/
+def cakeSortedInsert (x : Nat) (ys : List Nat) : List Nat :=
+  Flapjack.RegAlloc.sortedInsert x [] ys
+
+/-- Flapjack API correspondence, with no separate HOL original: the literal
+accumulator form is the reversed accumulator in front of the insertion into
+the remaining list. Holds for every list, sorted or not. -/
+theorem sortedInsert_eq_reverse_append (x : Nat) :
+    ∀ (acc ys : List Nat),
+      Flapjack.RegAlloc.sortedInsert x acc ys = acc.reverse ++ cakeSortedInsert x ys := by
+  intro acc ys
+  induction ys generalizing acc with
+  | nil => simp [cakeSortedInsert, Flapjack.RegAlloc.sortedInsert]
+  | cons y ys ih =>
+      unfold cakeSortedInsert
+      by_cases hxy : x = y
+      · simp [Flapjack.RegAlloc.sortedInsert, hxy]
+      · by_cases hgt : x > y
+        · simp [Flapjack.RegAlloc.sortedInsert, hxy, hgt]
+        · simp only [Flapjack.RegAlloc.sortedInsert, hxy, hgt, if_false]
+          rw [ih (y :: acc), ih [y]]
+          simp
+
+/-- The executed insertion's recursive equations (the previous Flapjack
+recursion), derived from the literal definition. -/
+theorem cakeSortedInsert_nil (x : Nat) : cakeSortedInsert x [] = [x] := by
+  simp [cakeSortedInsert, Flapjack.RegAlloc.sortedInsert]
+
+theorem cakeSortedInsert_cons (x y : Nat) (ys : List Nat) :
+    cakeSortedInsert x (y :: ys) =
       if x = y then y :: ys
       else if x > y then x :: y :: ys
-      else y :: cakeSortedInsert x ys
+      else y :: cakeSortedInsert x ys := by
+  have h := sortedInsert_eq_reverse_append x [y] ys
+  by_cases hxy : x = y
+  · simp [cakeSortedInsert, Flapjack.RegAlloc.sortedInsert, hxy]
+  · by_cases hgt : x > y
+    · simp [cakeSortedInsert, Flapjack.RegAlloc.sortedInsert, hxy, hgt]
+    · simp only [cakeSortedInsert, Flapjack.RegAlloc.sortedInsert, hxy, hgt, if_false] at h ⊢
+      simpa using h
 
 /-- `sorted_mem` (`reg_allocScript.sml:193-198`): membership in a descending
     adjacency list, stopping as soon as the list passes the sought key.  The
@@ -2207,13 +2244,23 @@ def cakeBiasedPref (state : CakeRaState) (mtable : CakeNodeMap (List Nat))
     cakeFirstMatchCol state ks (v :: vs)
   else none
 
-/-- `unbound_colour` (`reg_allocScript.sml:946-960`). -/
-def cakeUnboundColour (col : Nat) : List Nat → Nat
-  | [] => col
-  | x :: xs =>
+/-- `unbound_colour` (`reg_allocScript.sml:946-960`): the executed helper is
+the reviewed literal definition. -/
+def cakeUnboundColour (col : Nat) (xs : List Nat) : Nat :=
+  Flapjack.RegAlloc.unboundColour col xs
+
+/-- The executed helper's recursive equations (the previous Flapjack
+recursion, with `col = x` for HOL's `x = col`), derived from the literal
+definition. -/
+theorem cakeUnboundColour_nil (col : Nat) : cakeUnboundColour col [] = col := by
+  simp [cakeUnboundColour, Flapjack.RegAlloc.unboundColour]
+
+theorem cakeUnboundColour_cons (col x : Nat) (xs : List Nat) :
+    cakeUnboundColour col (x :: xs) =
       if col < x then col
       else if col = x then cakeUnboundColour (col + 1) xs
-      else cakeUnboundColour col xs
+      else cakeUnboundColour col xs := by
+  simp only [cakeUnboundColour, Flapjack.RegAlloc.unboundColour, eq_comm]
 
 /-! Cake's `unbound_colour` proof: a sorted forbidden-colour list never
     forces the negative preference below `k` or back onto a forbidden colour. -/
@@ -2224,7 +2271,7 @@ theorem cakeUnboundColour_correct
       cakeUnboundColour col colours ∉ colours := by
   induction colours generalizing col with
   | nil =>
-      simp [cakeUnboundColour]
+      simp [cakeUnboundColour_nil]
   | cons head tail ih =>
       simp only [List.pairwise_cons] at hsorted
       by_cases hlt : col < head
@@ -2233,14 +2280,14 @@ theorem cakeUnboundColour_correct
           intro hmem
           have hheadTail := hsorted.1 col hmem
           omega
-        simp [cakeUnboundColour, hlt, hnotHead, hnotTail]
+        simp [cakeUnboundColour_cons, hlt, hnotHead, hnotTail]
       · by_cases heq : col = head
         · have h := ih (col := col + 1) hsorted.2
           subst col
           have hnotHead : cakeUnboundColour (head + 1) tail ≠ head := by
             intro hsame
             omega
-          rw [cakeUnboundColour]
+          rw [cakeUnboundColour_cons]
           simp only [Nat.lt_irrefl, ↓reduceIte]
           constructor
           · omega
@@ -2251,7 +2298,7 @@ theorem cakeUnboundColour_correct
           have hnotHead : cakeUnboundColour col tail ≠ head := by
             intro hsame
             omega
-          rw [cakeUnboundColour]
+          rw [cakeUnboundColour_cons]
           simp only [hlt, ↓reduceIte, heq]
           exact ⟨h.1, by
             simp only [List.mem_cons, not_or]

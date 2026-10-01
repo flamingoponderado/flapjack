@@ -1,0 +1,123 @@
+add_if_lt_monad=(M_success (),
+ <|colors := [7; 8; 9; 6]; int_beg := [2; 2; 2; 0]; int_end := [5; 4; 6; 3];
+   sorted_regs := [0; 1; 2; 3]; sorted_moves := [(5,1,2); (2,0,3); (4,2,2)]|>)
+add_if_gt_monad=(M_success (),
+ <|colors := [7; 8; 9; 6]; int_beg := [3; 1; 2; 0]; int_end := [4; 4; 6; 4];
+   sorted_regs := [0; 1; 2; 3]; sorted_moves := [(5,1,2); (2,0,3); (4,2,2)]|>)
+add_if_subscript=(M_failure Subscript,
+ <|colors := [7; 8; 9; 6]; int_beg := [3; 1; 2; 0]; int_end := [5; 4; 6; 3];
+   sorted_regs := [0; 1; 2; 3]; sorted_moves := [(5,1,2); (2,0,3); (4,2,2)]|>)
+intervals_ct_monad=(M_success (-7),
+ <|colors := [7; 8; 9; 6]; int_beg := [1; -4; -6; -6];
+   int_end := [1; -2; 0; -3]; sorted_regs := [0; 1; 2; 3];
+   sorted_moves := [(5,1,2); (2,0,3); (4,2,2)]|>)
+remove_inactive=(M_success
+   <|active := [(2,2)]; colorpool := [8; 4]; phyregs := LN; colornum := 0;
+     colormax := 2; stacknum := 10|>,
+ <|colors := [7; 8; 9; 6]; int_beg := [3; 1; 2; 0]; int_end := [5; 4; 6; 3];
+   sorted_regs := [0; 1; 2; 3]; sorted_moves := [(5,1,2); (2,0,3); (4,2,2)]|>)
+add_active=[(1,0); (3,1); (5,2)]
+find_color_in_list=SOME (2,[1; 3])
+find_color_pool=(<|active := [(-1,1); (2,2)]; colorpool := []; phyregs := LN; colornum := 0;
+   colormax := 2; stacknum := 10|>,SOME 4)
+find_color_colornum=(<|active := [(-1,1); (2,2)]; colorpool := [4]; phyregs := LN; colornum := 1;
+   colormax := 2; stacknum := 10|>,SOME 0)
+spill=(M_success
+   <|active := [(-1,1); (2,2)]; colorpool := [4]; phyregs := LN;
+     colornum := 0; colormax := 2; stacknum := 11|>,
+ <|colors := [7; 8; 10; 6]; int_beg := [3; 1; 2; 0]; int_end := [5; 4; 6; 3];
+   sorted_regs := [0; 1; 2; 3]; sorted_moves := [(5,1,2); (2,0,3); (4,2,2)]|>)
+color_phy=(M_success
+   <|active := [(-1,1); (2,2); (7,2)]; colorpool := [4];
+     phyregs := BN LN (BN (LS ()) LN); colornum := 0; colormax := 2;
+     stacknum := 10|>,
+ <|colors := [7; 8; 5; 6]; int_beg := [3; 1; 2; 0]; int_end := [5; 4; 6; 3];
+   sorted_regs := [0; 1; 2; 3]; sorted_moves := [(5,1,2); (2,0,3); (4,2,2)]|>)
+color_virt=(M_success
+   <|active := [(-1,1); (2,2); (7,1)]; colorpool := [4]; phyregs := LN;
+     colornum := 0; colormax := 2; stacknum := 10|>,
+ <|colors := [7; 5; 9; 6]; int_beg := [3; 1; 2; 0]; int_end := [5; 4; 6; 3];
+   sorted_regs := [0; 1; 2; 3]; sorted_moves := [(5,1,2); (2,0,3); (4,2,2)]|>)
+find_last_stealable=(M_success (SOME ((2,3),[(1,1); (4,0)])),
+ <|colors := [7; 8; 9; 6]; int_beg := [3; 1; 2; 0]; int_end := [5; 4; 6; 3];
+   sorted_regs := [0; 1; 2; 3]; sorted_moves := [(5,1,2); (2,0,3); (4,2,2)]|>)
+find_spill_steal=(M_success
+   <|active := [(5,3)]; colorpool := [4]; phyregs := LN; colornum := 0;
+     colormax := 2; stacknum := 11|>,
+ <|colors := [7; 10; 9; 8]; int_beg := [3; 1; 2; 0]; int_end := [5; 4; 6; 3];
+   sorted_regs := [0; 1; 2; 3]; sorted_moves := [(5,1,2); (2,0,3); (4,2,2)]|>)
+find_spill_keep=(M_success
+   <|active := [(4,1)]; colorpool := [4]; phyregs := LN; colornum := 0;
+     colormax := 2; stacknum := 11|>,
+ <|colors := [7; 8; 9; 10]; int_beg := [3; 1; 2; 0]; int_end := [5; 4; 6; 3];
+   sorted_regs := [0; 1; 2; 3]; sorted_moves := [(5,1,2); (2,0,3); (4,2,2)]|>)
+step_aux_pref=(M_success
+   <|active := [(-1,1); (2,2); (7,1)]; colorpool := []; phyregs := LN;
+     colornum := 0; colormax := 2; stacknum := 10|>,
+ <|colors := [7; 4; 9; 6]; int_beg := [3; 1; 2; 0]; int_end := [5; 4; 6; 3];
+   sorted_regs := [0; 1; 2; 3]; sorted_moves := [(5,1,2); (2,0,3); (4,2,2)]|>)
+step_aux_spill=(M_success
+   <|active := [(-1,1); (2,2)]; colorpool := []; phyregs := LN;
+     colornum := 2; colormax := 2; stacknum := 11|>,
+ <|colors := [7; 10; 9; 6]; int_beg := [3; 1; 2; 0]; int_end := [5; 4; 6; 3];
+   sorted_regs := [0; 1; 2; 3]; sorted_moves := [(5,1,2); (2,0,3); (4,2,2)]|>)
+pass1_phy=(M_success
+   <|active := [(6,2)]; colorpool := []; phyregs := LS (); colornum := 1;
+     colormax := 2; stacknum := 2|>,
+ <|colors := [7; 8; 0; 6]; int_beg := [3; 1; 2; 0]; int_end := [5; 4; 6; 3];
+   sorted_regs := [0; 1; 2; 3]; sorted_moves := [(5,1,2); (2,0,3); (4,2,2)]|>)
+pass1_stack=(M_success
+   <|active := []; colorpool := []; phyregs := LN; colornum := 0;
+     colormax := 2; stacknum := 3|>,
+ <|colors := [7; 8; 9; 2]; int_beg := [3; 1; 2; 0]; int_end := [5; 4; 6; 3];
+   sorted_regs := [0; 1; 2; 3]; sorted_moves := [(5,1,2); (2,0,3); (4,2,2)]|>)
+pass1_forced=(M_success
+   <|active := [(4,1)]; colorpool := [7]; phyregs := LN; colornum := 0;
+     colormax := 2; stacknum := 2|>,
+ <|colors := [7; 9; 9; 6]; int_beg := [3; 1; 2; 0]; int_end := [5; 4; 6; 3];
+   sorted_regs := [0; 1; 2; 3]; sorted_moves := [(5,1,2); (2,0,3); (4,2,2)]|>)
+pass2_virt=(M_success
+   <|active := [(4,1)]; colorpool := []; phyregs := LN; colornum := 3;
+     colormax := 5; stacknum := 5|>,
+ <|colors := [7; 2; 9; 6]; int_beg := [3; 1; 2; 0]; int_end := [5; 4; 6; 3];
+   sorted_regs := [0; 1; 2; 3]; sorted_moves := [(5,1,2); (2,0,3); (4,2,2)]|>)
+find_reg_exchange=(M_success
+   (BS LN 7 (BS (BN LN (LS 1)) 9 (BN LN (LS 0))),
+    BS LN 7 (BS (BN LN (LS 1)) 9 (BN LN (LS 0)))),
+ <|colors := [7; 8; 9; 6]; int_beg := [3; 1; 2; 0]; int_end := [5; 4; 6; 3];
+   sorted_regs := [0; 1; 2; 3]; sorted_moves := [(5,1,2); (2,0,3); (4,2,2)]|>)
+apply_reg_exchange=(M_success (),
+ <|colors := [0; 8; 1; 6]; int_beg := [3; 1; 2; 0]; int_end := [5; 4; 6; 3];
+   sorted_regs := [0; 1; 2; 3]; sorted_moves := [(5,1,2); (2,0,3); (4,2,2)]|>)
+foldl=(M_success 6,
+ <|colors := [7; 8; 9; 6]; int_beg := [3; 1; 2; 0]; int_end := [5; 4; 6; 3];
+   sorted_regs := [0; 1; 2; 3]; sorted_moves := [(5,1,2); (2,0,3); (4,2,2)]|>)
+filter_good=(M_success [1; 2],
+ <|colors := [7; 8; 9; 6]; int_beg := [3; 1; 2; 0]; int_end := [5; 4; 6; 3];
+   sorted_regs := [0; 1; 2; 3]; sorted_moves := [(5,1,2); (2,0,3); (4,2,2)]|>)
+edges=(M_success (BS LN [1] (LS [3])),
+ <|colors := [7; 8; 9; 6]; int_beg := [3; 1; 2; 0]; int_end := [5; 4; 6; 3];
+   sorted_regs := [0; 1; 2; 3]; sorted_moves := [(5,1,2); (2,0,3); (4,2,2)]|>)
+sort_moves_rev=[(2,0,3); (4,2,2); (5,1,2)]
+sort_regs=(M_success (),
+ <|colors := [7; 8; 9; 6]; int_beg := [3; 1; 2; 0]; int_end := [5; 4; 6; 3];
+   sorted_regs := [3; 1; 2; 0]; sorted_moves := [(5,1,2); (2,0,3); (4,2,2)]|>)
+sorted_regs_to_list=(M_success [1; 2],
+ <|colors := [7; 8; 9; 6]; int_beg := [3; 1; 2; 0]; int_end := [5; 4; 6; 3];
+   sorted_regs := [0; 1; 2; 3]; sorted_moves := [(5,1,2); (2,0,3); (4,2,2)]|>)
+list_to_sorted_regs=(M_success (),
+ <|colors := [7; 8; 9; 6]; int_beg := [3; 1; 2; 0]; int_end := [5; 4; 6; 3];
+   sorted_regs := [0; 3; 2; 3]; sorted_moves := [(5,1,2); (2,0,3); (4,2,2)]|>)
+sort_moves=(M_success (),
+ <|colors := [7; 8; 9; 6]; int_beg := [3; 1; 2; 0]; int_end := [5; 4; 6; 3];
+   sorted_regs := [0; 1; 2; 3]; sorted_moves := [(2,0,3); (4,2,2); (5,1,2)]|>)
+sorted_moves_to_list=(M_success [(5,1,2); (2,0,3)],
+ <|colors := [7; 8; 9; 6]; int_beg := [3; 1; 2; 0]; int_end := [5; 4; 6; 3];
+   sorted_regs := [0; 1; 2; 3]; sorted_moves := [(5,1,2); (2,0,3); (4,2,2)]|>)
+list_to_sorted_moves=(M_success (),
+ <|colors := [7; 8; 9; 6]; int_beg := [3; 1; 2; 0]; int_end := [5; 4; 6; 3];
+   sorted_regs := [0; 1; 2; 3]; sorted_moves := [(5,1,2); (2,0,3); (1,1,1)]|>)
+pass_init=(<|active := []; colorpool := []; phyregs := LN; colornum := 0;
+   colormax := 3; stacknum := 3|>,
+ <|active := []; colorpool := []; phyregs := LN; colornum := 3;
+   colormax := 7; stacknum := 7|>)
