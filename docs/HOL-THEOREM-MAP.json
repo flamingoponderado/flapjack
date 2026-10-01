@@ -50438,5 +50438,41 @@
     "hol_name": "LENGTH_pad_bytes",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c source comparison: original cakeml857f0d98 lab_to_targetProofScript.sml3195-3204. Same arbitrary list element carrier, bytes/nop/l quantification and conjunction 0<LENGTH nop and LENGTH bytes<=l imply LENGTH(pad_bytes bytes l nop)=l. Lean preserves both premises with no additions; canonical reviewed generic padBytes is actual definition, List length/take/replicate/flatten are direct list translation. No word carrier or representation qualifier. Original theorem export and six EVAL observations include Nat/Bool carriers, zero, exact fit, extended/multi-element nop and empty-nop outside-premise sentinel; kernel proof uses list length and natural arithmetic only."
+  },
+  {
+    "lean_path": "Flapjack/Byte.lean",
+    "lean_name": "byteIndex",
+    "hol_path": "HOL/src/n-bit/byteScript.sml",
+    "hol_name": "byte_index_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c literal source comparison against pinned HOLa390cbabd3a4521bab4ee20281e3e42933a8a3ae byteScript.sml15-23/444-452: original positive type-indexed word dimension rendered as BitVec width with NeZero, result word8 fixed BitVec8. byte_index retains DIV8, natural MOD0, both ordered subtractions and multiplication8; get_byte retains logical right shift and low-bit word cast. Aux exactly zero/successor recursion, append singleton get_byte(n2w n), arbitrary count with cyclic extraction and modular n2w; whole conversion calls aux(width/8). No good_dimindex/count bounds or extra hypothesis, no changed endian or failure behavior. Direct original EVAL and 14 kernel observations include above-size cycles, LE/BE, subbyte dimensions and modular index wrap."
+  },
+  {
+    "lean_path": "Flapjack/Byte.lean",
+    "lean_name": "getByte",
+    "hol_path": "HOL/src/n-bit/byteScript.sml",
+    "hol_name": "get_byte_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c literal source comparison against pinned HOLa390cbabd3a4521bab4ee20281e3e42933a8a3ae byteScript.sml15-23/444-452: original positive type-indexed word dimension rendered as BitVec width with NeZero, result word8 fixed BitVec8. byte_index retains DIV8, natural MOD0, both ordered subtractions and multiplication8; get_byte retains logical right shift and low-bit word cast. Aux exactly zero/successor recursion, append singleton get_byte(n2w n), arbitrary count with cyclic extraction and modular n2w; whole conversion calls aux(width/8). No good_dimindex/count bounds or extra hypothesis, no changed endian or failure behavior. Direct original EVAL and 14 kernel observations include above-size cycles, LE/BE, subbyte dimensions and modular index wrap."
+  },
+  {
+    "lean_path": "Flapjack/Byte.lean",
+    "lean_name": "wordToBytesAux",
+    "hol_path": "HOL/src/n-bit/byteScript.sml",
+    "hol_name": "word_to_bytes_aux_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c literal source comparison against pinned HOLa390cbabd3a4521bab4ee20281e3e42933a8a3ae byteScript.sml15-23/444-452: original positive type-indexed word dimension rendered as BitVec width with NeZero, result word8 fixed BitVec8. byte_index retains DIV8, natural MOD0, both ordered subtractions and multiplication8; get_byte retains logical right shift and low-bit word cast. Aux exactly zero/successor recursion, append singleton get_byte(n2w n), arbitrary count with cyclic extraction and modular n2w; whole conversion calls aux(width/8). No good_dimindex/count bounds or extra hypothesis, no changed endian or failure behavior. Direct original EVAL and 14 kernel observations include above-size cycles, LE/BE, subbyte dimensions and modular index wrap."
+  },
+  {
+    "lean_path": "Flapjack/Byte.lean",
+    "lean_name": "wordToBytes",
+    "hol_path": "HOL/src/n-bit/byteScript.sml",
+    "hol_name": "word_to_bytes_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c literal source comparison against pinned HOLa390cbabd3a4521bab4ee20281e3e42933a8a3ae byteScript.sml15-23/444-452: original positive type-indexed word dimension rendered as BitVec width with NeZero, result word8 fixed BitVec8. byte_index retains DIV8, natural MOD0, both ordered subtractions and multiplication8; get_byte retains logical right shift and low-bit word cast. Aux exactly zero/successor recursion, append singleton get_byte(n2w n), arbitrary count with cyclic extraction and modular n2w; whole conversion calls aux(width/8). No good_dimindex/count bounds or extra hypothesis, no changed endian or failure behavior. Direct original EVAL and 14 kernel observations include above-size cycles, LE/BE, subbyte dimensions and modular index wrap."
   }
 ]
