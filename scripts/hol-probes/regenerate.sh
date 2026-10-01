@@ -3182,3 +3182,7 @@ run_probe reg_alloc_state_foreach_probeScript.sml reg_alloc_state_foreach_probe.
 run_probe parmove_preserves_moves_pmov_probeScript.sml parmove_preserves_moves_pmov_probe.out \
   pmv_terminal pmv_pending pmv_output \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe word_depth_probeScript.sml word_depth_probe.out \
+  leaf unknown const_leaf nested_const branch_max branch_unknown call_hit call_miss call_hit_nested deep_calls branch_call unknown_deep mb_identity mb_leaf_left mb_leaf_right mb_unknown_left mb_unknown_right mb_branch cg_default cg_seq cg_alloc cg_install cg_call_dest_none cg_call_lookup_miss cg_call_tail_hit cg_call_shortcircuit cg_call_guard fcg_miss fcg_hit mdg_empty mdg_frame_hit mdg_frame_miss mdg_code_miss \
+  "$cake_dir/compiler/backend/word_depthScript.sml" "$cake_dir/compiler/backend"

@@ -2708,3 +2708,24 @@ observations: terminal scratch destination, pending destination, and full pendin
 output. ParmovePreservesMovesPmovParity kernel-replays the same inputs and applies
 the source-shaped preservation theorem with internally discharged well-formedness.
 Finite observations are regression evidence, not cross-prover equivalence.
+
+`word_depth_probeScript.sml` is the original-HOL oracle for
+`cakeml/compiler/backend/word_depthScript.sml`. It loads the original
+`word_depthTheory` and captures 33 direct `EVAL` rows: twelve `max_depth` rows
+over the `Leaf`/`Unknown`/`Const`/`Branch`/`Call` constructors (including a
+frame `lookup` hit, a miss with no invented bound, nesting, and a branch that
+propagates `NONE`), six `mk_Branch` absorption/structural rows, nine
+`call_graph` rows (the `Skip` default, `Seq`, `Alloc`, `Install`, the `Call`
+`dest` NONE case, a lookup miss, a tail-call hit, the on-stack short-circuit,
+and the stack-length guard), two `full_call_graph` hit/miss rows, and four
+`max_depth_graphs` empty/frame-hit/frame-miss/whole-code-miss rows. Regenerate
+read-only against the shared built CakeML with
+`HOL4=/home/zksecurity/HOL CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_depth_probeScript.sml
+bash scripts/hol-probes/regenerate.sh`.
+`Flapjack.Test.WordDepthParity` kernel-replays every captured row against the
+Lean `maxDepth`/`mkBranch`/`callGraph`/`fullCallGraph`/`maxDepthGraphs` ports
+and also checks the four `option_lt` clauses
+(`cakeml/pancake/proofs/pan_to_targetProofScript.sml:1157-1159`); finite
+original-HOL observations are regression evidence, not cross-prover
+equivalence.
