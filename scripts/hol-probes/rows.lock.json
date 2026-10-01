@@ -2845,6 +2845,12 @@
       "sha256": "5d1012dec98326bff03632b7a61e6226d29f9bab967ae00e754ef3afa175507e"
     },
     {
+      "bytes": 58,
+      "out": "parmove_all_distinct_steps_probe.out",
+      "rows": 4,
+      "sha256": "4465f2ee1875419aae57bedee302781a1fd096e48580545143f7c0ccb6fd570f"
+    },
+    {
       "bytes": 76,
       "out": "parmove_correct_probe.out",
       "rows": 7,
@@ -3113,6 +3119,12 @@
       "out": "reg_alloc_remap_probe.out",
       "rows": 12,
       "sha256": "3852b3f4916d853750298109c8af0bd0d2b7c5dbf3d0eac4067d4762abf12459"
+    },
+    {
+      "bytes": 163,
+      "out": "reg_alloc_sort_moves_probe.out",
+      "rows": 12,
+      "sha256": "579ce859391824f83e252707dad2614eb9d63d5bc48087a51e39f57f540642fb"
     },
     {
       "bytes": 265,
@@ -4301,6 +4313,12 @@
       "out": "word_to_stack_perf_slots_probe.out",
       "rows": 4,
       "sha256": "d6c2bfb8f25cdccff2b90bedbdcc4602dbdd8e5019e7c96aced56c04dcedbb8d"
+    },
+    {
+      "bytes": 336,
+      "out": "word_to_stack_program_bitmaps_probe.out",
+      "rows": 10,
+      "sha256": "8765182f39ccdb4a95f8cea1b64beaf2fa8acd8e53f4fc02f35699e632a5889b"
     },
     {
       "bytes": 392,

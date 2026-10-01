@@ -42764,6 +42764,263 @@
     "reviewer": "flapjack-luna-c source comparison2026-10-01 bead.11.5.10.5.8.6.25: literal reg_allocScript193-199 arbitrary Nat key and List Nat. Empty false; head equality true; x>head false before recursion; otherwise recursive tail. No descending-order, membership, uniqueness or range premise. Nat equality/order and Bool/List constructors retained exactly. Twelve fresh original EVAL equations replay identical inputs by kernel rfl, including unsorted early-stop rejection, unsorted continuing match, duplicates, zero, tail, and 80-bit key. Production cakeSortedMem now delegates this same definition; unconditional arbitrary-key/list kernel equality and former recursive equation replay establish this helper replacement only. Remaining allocator state and graph correctness are unproved; this routing does not claim allocator correctness. Fresh original executed corpus comparison is required on linked .25.1. Coordinator review pending."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ProgramBitmaps.lean",
+    "lean_name": "compileProgIsPrefix",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "compile_prog_isPREFIX",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.3.26.7): original word_to_stackProofScript.sml:2831-2838 compared with compileProgIsPrefix. The native compileProgNative/compileWordToStackNative definitions use the reviewed WordLangProgHOL, HolProg, AsmConfigExact and AppList carriers. All source inputs and output components are retained, including argument/register counts, perf, frame outputs and arbitrary independent identifier type for rows. The only carrier translation is positive HOL word dimension to BitVec width with [NeZero width], recorded by words_as_type_indexed_bitvec. Prefix statements retain the sole actual compiler output equation and initial flattened list as prefix of final flattened list. Length statements retain exactly the output equation and initial flattened-length bound, proving both final bound and equality of count-minus-length gaps. No frame convention, identifier uniqueness, output invariant, target execution or pass-success premise is added. Single-program proofs project the actual compNative output and use reviewed compImpIsPrefix/compImpLength; list proofs induct over the original left-to-right compiler traversal and compose prefix/gap results. Production routing remains separately open on .25.17; this proof does not establish source-to-RISC-V correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ProgramBitmaps.lean",
+    "lean_name": "compileWordToStackIsPrefix",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "compile_word_to_stack_isPREFIX",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.3.26.7): original word_to_stackProofScript.sml:2840-2855 compared with compileWordToStackIsPrefix. The native compileProgNative/compileWordToStackNative definitions use the reviewed WordLangProgHOL, HolProg, AsmConfigExact and AppList carriers. All source inputs and output components are retained, including argument/register counts, perf, frame outputs and arbitrary independent identifier type for rows. The only carrier translation is positive HOL word dimension to BitVec width with [NeZero width], recorded by words_as_type_indexed_bitvec. Prefix statements retain the sole actual compiler output equation and initial flattened list as prefix of final flattened list. Length statements retain exactly the output equation and initial flattened-length bound, proving both final bound and equality of count-minus-length gaps. No frame convention, identifier uniqueness, output invariant, target execution or pass-success premise is added. Single-program proofs project the actual compNative output and use reviewed compImpIsPrefix/compImpLength; list proofs induct over the original left-to-right compiler traversal and compose prefix/gap results. Production routing remains separately open on .25.17; this proof does not establish source-to-RISC-V correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ProgramBitmaps.lean",
+    "lean_name": "compileProgLength",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "compile_prog_LENGTH",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.3.26.7): original word_to_stackProofScript.sml:5652-5661 compared with compileProgLength. The native compileProgNative/compileWordToStackNative definitions use the reviewed WordLangProgHOL, HolProg, AsmConfigExact and AppList carriers. All source inputs and output components are retained, including argument/register counts, perf, frame outputs and arbitrary independent identifier type for rows. The only carrier translation is positive HOL word dimension to BitVec width with [NeZero width], recorded by words_as_type_indexed_bitvec. Prefix statements retain the sole actual compiler output equation and initial flattened list as prefix of final flattened list. Length statements retain exactly the output equation and initial flattened-length bound, proving both final bound and equality of count-minus-length gaps. No frame convention, identifier uniqueness, output invariant, target execution or pass-success premise is added. Single-program proofs project the actual compNative output and use reviewed compImpIsPrefix/compImpLength; list proofs induct over the original left-to-right compiler traversal and compose prefix/gap results. Production routing remains separately open on .25.17; this proof does not establish source-to-RISC-V correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ProgramBitmaps.lean",
+    "lean_name": "compileWordToStackImpLength",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "compile_word_to_stack_IMP_LENGTH",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.3.26.7): original word_to_stackProofScript.sml:5663-5680 compared with compileWordToStackImpLength. The native compileProgNative/compileWordToStackNative definitions use the reviewed WordLangProgHOL, HolProg, AsmConfigExact and AppList carriers. All source inputs and output components are retained, including argument/register counts, perf, frame outputs and arbitrary independent identifier type for rows. The only carrier translation is positive HOL word dimension to BitVec width with [NeZero width], recorded by words_as_type_indexed_bitvec. Prefix statements retain the sole actual compiler output equation and initial flattened list as prefix of final flattened list. Length statements retain exactly the output equation and initial flattened-length bound, proving both final bound and equality of count-minus-length gaps. No frame convention, identifier uniqueness, output invariant, target execution or pass-success premise is added. Single-program proofs project the actual compNative output and use reviewed compImpIsPrefix/compImpLength; list proofs induct over the original left-to-right compiler traversal and compose prefix/gap results. Production routing remains separately open on .25.17; this proof does not establish source-to-RISC-V correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/SortMoves.lean",
+    "lean_name": "sortMoves",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "sort_moves_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead .10.5.8.6.11: 343-346: arbitrary (num # alpha) list; strict descending priority comparator passed to source-reviewed native MlList.sort. Generic payload retained; external sort helpers are untagged and not independently pinned. Fresh original type query confirms generic alpha. Twelve original equations and matching kernel fixtures. Coordinator acceptance pending; production allocator routing remains separate."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/SortMoves.lean",
+    "lean_name": "smerge",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "smerge_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead .10.5.8.6.11: 349-360: arbitrary (num # alpha) lists; empty-side equations and >= left-head selection, otherwise right-head selection; no sortedness assumption, payload untouched. Fresh original type query confirms generic alpha. Twelve original equations and matching kernel fixtures. Coordinator acceptance pending; production allocator routing remains separate."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/SortMoves.lean",
+    "lean_name": "memSmerge",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "MEM_smerge",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead .10.5.8.6.11: 2175-2182: universally quantified free x and xs/ys; membership iff union of input memberships, arbitrary payload, no sortedness/distinctness/target-result premise; functional induction on actual smerge. Fresh original type query confirms generic alpha. Twelve original equations and matching kernel fixtures. Coordinator acceptance pending; production allocator routing remains separate."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/AllDistinct/Steps.lean",
+    "lean_name": "allDistinctSteps",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "ALL_DISTINCT_steps",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead flapjack-w1a4.3: source979-989 initial ALL_DISTINCT(FILTER IS_SOME(MAP FST concatenation of pending/active/emitted)) conjunct primitive-step RTC implies same final predicate. Native State alpha retains raw Option alpha pair-list triple and source-reviewed Steps=ReflTransGen Step. Arbitrary alpha, no equality instance, no wf/scratch-safety/target-result hypothesis. Proof lifts accepted full single-step invariant by refl/tail induction. Fresh four original predicate observations plus Lean zero-step and certified two-step start/save fixtures; observations are regression evidence, not cross-assistant equivalence. Coordinator source comparison completed against the cited literal HOL clauses; fresh original observations replayed. Unified kernel gates and publication separately required."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSimilar.lean",
+    "lean_name": "lineSimilar",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "line_similar_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; bead .18.5.15.10.15): compared original lab_to_targetProofScript.sml:391-513 and labPropsScript.sml:1261-1268. Native Line retains exact HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and fixed word8 encoded bytes. Only polymorphic words use positive BitVec width with NeZero. Similarity ignores exactly encoded bytes, lengths and resolved positions; preserves instruction equality, label identities and section identities. LinesRel transcribes EVERY2/LIST_REL empty/cons clauses; universal membership transcribes EVERY. lenNoLab is the local FILTER(not o is_Label) length overload at source line49. The theorem preserves original hypotheses and conclusion with no extra evaluation, success or relation premises. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSimilar.lean",
+    "lean_name": "codeSimilar",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "code_similar_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; bead .18.5.15.10.15): compared original lab_to_targetProofScript.sml:391-513 and labPropsScript.sml:1261-1268. Native Line retains exact HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and fixed word8 encoded bytes. Only polymorphic words use positive BitVec width with NeZero. Similarity ignores exactly encoded bytes, lengths and resolved positions; preserves instruction equality, label identities and section identities. LinesRel transcribes EVERY2/LIST_REL empty/cons clauses; universal membership transcribes EVERY. lenNoLab is the local FILTER(not o is_Label) length overload at source line49. The theorem preserves original hypotheses and conclusion with no extra evaluation, success or relation premises. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSimilar.lean",
+    "lean_name": "lineSimilar_sym",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "line_similar_sym",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; bead .18.5.15.10.15): compared original lab_to_targetProofScript.sml:391-513 and labPropsScript.sml:1261-1268. Native Line retains exact HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and fixed word8 encoded bytes. Only polymorphic words use positive BitVec width with NeZero. Similarity ignores exactly encoded bytes, lengths and resolved positions; preserves instruction equality, label identities and section identities. LinesRel transcribes EVERY2/LIST_REL empty/cons clauses; universal membership transcribes EVERY. lenNoLab is the local FILTER(not o is_Label) length overload at source line49. The theorem preserves original hypotheses and conclusion with no extra evaluation, success or relation premises. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSimilar.lean",
+    "lean_name": "lineSimilar_refl",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "line_similar_refl",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; bead .18.5.15.10.15): compared original lab_to_targetProofScript.sml:391-513 and labPropsScript.sml:1261-1268. Native Line retains exact HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and fixed word8 encoded bytes. Only polymorphic words use positive BitVec width with NeZero. Similarity ignores exactly encoded bytes, lengths and resolved positions; preserves instruction equality, label identities and section identities. LinesRel transcribes EVERY2/LIST_REL empty/cons clauses; universal membership transcribes EVERY. lenNoLab is the local FILTER(not o is_Label) length overload at source line49. The theorem preserves original hypotheses and conclusion with no extra evaluation, success or relation premises. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSimilar.lean",
+    "lean_name": "lineSimilar_trans",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "line_similar_trans",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; bead .18.5.15.10.15): compared original lab_to_targetProofScript.sml:391-513 and labPropsScript.sml:1261-1268. Native Line retains exact HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and fixed word8 encoded bytes. Only polymorphic words use positive BitVec width with NeZero. Similarity ignores exactly encoded bytes, lengths and resolved positions; preserves instruction equality, label identities and section identities. LinesRel transcribes EVERY2/LIST_REL empty/cons clauses; universal membership transcribes EVERY. lenNoLab is the local FILTER(not o is_Label) length overload at source line49. The theorem preserves original hypotheses and conclusion with no extra evaluation, success or relation premises. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSimilar.lean",
+    "lean_name": "codeSimilar_refl",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "code_similar_refl",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; bead .18.5.15.10.15): compared original lab_to_targetProofScript.sml:391-513 and labPropsScript.sml:1261-1268. Native Line retains exact HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and fixed word8 encoded bytes. Only polymorphic words use positive BitVec width with NeZero. Similarity ignores exactly encoded bytes, lengths and resolved positions; preserves instruction equality, label identities and section identities. LinesRel transcribes EVERY2/LIST_REL empty/cons clauses; universal membership transcribes EVERY. lenNoLab is the local FILTER(not o is_Label) length overload at source line49. The theorem preserves original hypotheses and conclusion with no extra evaluation, success or relation premises. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSimilar.lean",
+    "lean_name": "codeSimilar_nil",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "code_similar_nil",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; bead .18.5.15.10.15): compared original lab_to_targetProofScript.sml:391-513 and labPropsScript.sml:1261-1268. Native Line retains exact HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and fixed word8 encoded bytes. Only polymorphic words use positive BitVec width with NeZero. Similarity ignores exactly encoded bytes, lengths and resolved positions; preserves instruction equality, label identities and section identities. LinesRel transcribes EVERY2/LIST_REL empty/cons clauses; universal membership transcribes EVERY. lenNoLab is the local FILTER(not o is_Label) length overload at source line49. The theorem preserves original hypotheses and conclusion with no extra evaluation, success or relation premises. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSimilar.lean",
+    "lean_name": "codeSimilar_sym",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "code_similar_sym",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; bead .18.5.15.10.15): compared original lab_to_targetProofScript.sml:391-513 and labPropsScript.sml:1261-1268. Native Line retains exact HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and fixed word8 encoded bytes. Only polymorphic words use positive BitVec width with NeZero. Similarity ignores exactly encoded bytes, lengths and resolved positions; preserves instruction equality, label identities and section identities. LinesRel transcribes EVERY2/LIST_REL empty/cons clauses; universal membership transcribes EVERY. lenNoLab is the local FILTER(not o is_Label) length overload at source line49. The theorem preserves original hypotheses and conclusion with no extra evaluation, success or relation premises. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSimilar.lean",
+    "lean_name": "codeSimilar_trans",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "code_similar_trans",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; bead .18.5.15.10.15): compared original lab_to_targetProofScript.sml:391-513 and labPropsScript.sml:1261-1268. Native Line retains exact HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and fixed word8 encoded bytes. Only polymorphic words use positive BitVec width with NeZero. Similarity ignores exactly encoded bytes, lengths and resolved positions; preserves instruction equality, label identities and section identities. LinesRel transcribes EVERY2/LIST_REL empty/cons clauses; universal membership transcribes EVERY. lenNoLab is the local FILTER(not o is_Label) length overload at source line49. The theorem preserves original hypotheses and conclusion with no extra evaluation, success or relation premises. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSimilar.lean",
+    "lean_name": "codeSimilar_append",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "code_similar_append",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; bead .18.5.15.10.15): compared original lab_to_targetProofScript.sml:391-513 and labPropsScript.sml:1261-1268. Native Line retains exact HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and fixed word8 encoded bytes. Only polymorphic words use positive BitVec width with NeZero. Similarity ignores exactly encoded bytes, lengths and resolved positions; preserves instruction equality, label identities and section identities. LinesRel transcribes EVERY2/LIST_REL empty/cons clauses; universal membership transcribes EVERY. lenNoLab is the local FILTER(not o is_Label) length overload at source line49. The theorem preserves original hypotheses and conclusion with no extra evaluation, success or relation premises. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSimilar.lean",
+    "lean_name": "lineSimilar_secLabelOk",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "line_similar_sec_label_ok",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; bead .18.5.15.10.15): compared original lab_to_targetProofScript.sml:391-513 and labPropsScript.sml:1261-1268. Native Line retains exact HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and fixed word8 encoded bytes. Only polymorphic words use positive BitVec width with NeZero. Similarity ignores exactly encoded bytes, lengths and resolved positions; preserves instruction equality, label identities and section identities. LinesRel transcribes EVERY2/LIST_REL empty/cons clauses; universal membership transcribes EVERY. lenNoLab is the local FILTER(not o is_Label) length overload at source line49. The theorem preserves original hypotheses and conclusion with no extra evaluation, success or relation premises. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSimilar.lean",
+    "lean_name": "codeSimilar_secLabelsOk",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "code_similar_sec_labels_ok",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; bead .18.5.15.10.15): compared original lab_to_targetProofScript.sml:391-513 and labPropsScript.sml:1261-1268. Native Line retains exact HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and fixed word8 encoded bytes. Only polymorphic words use positive BitVec width with NeZero. Similarity ignores exactly encoded bytes, lengths and resolved positions; preserves instruction equality, label identities and section identities. LinesRel transcribes EVERY2/LIST_REL empty/cons clauses; universal membership transcribes EVERY. lenNoLab is the local FILTER(not o is_Label) length overload at source line49. The theorem preserves original hypotheses and conclusion with no extra evaluation, success or relation premises. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSimilar.lean",
+    "lean_name": "lineSimilar_lenNoLab",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "line_similar_len_no_lab",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; bead .18.5.15.10.15): compared original lab_to_targetProofScript.sml:391-513 and labPropsScript.sml:1261-1268. Native Line retains exact HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and fixed word8 encoded bytes. Only polymorphic words use positive BitVec width with NeZero. Similarity ignores exactly encoded bytes, lengths and resolved positions; preserves instruction equality, label identities and section identities. LinesRel transcribes EVERY2/LIST_REL empty/cons clauses; universal membership transcribes EVERY. lenNoLab is the local FILTER(not o is_Label) length overload at source line49. The theorem preserves original hypotheses and conclusion with no extra evaluation, success or relation premises. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSimilar.lean",
+    "lean_name": "codeSimilar_lenNoLab",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "code_similar_len_no_lab",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; bead .18.5.15.10.15): compared original lab_to_targetProofScript.sml:391-513 and labPropsScript.sml:1261-1268. Native Line retains exact HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and fixed word8 encoded bytes. Only polymorphic words use positive BitVec width with NeZero. Similarity ignores exactly encoded bytes, lengths and resolved positions; preserves instruction equality, label identities and section identities. LinesRel transcribes EVERY2/LIST_REL empty/cons clauses; universal membership transcribes EVERY. lenNoLab is the local FILTER(not o is_Label) length overload at source line49. The theorem preserves original hypotheses and conclusion with no extra evaluation, success or relation premises. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/Labels.lean",
+    "lean_name": "secLabelOk",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "sec_label_ok_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; bead .18.5.15.10.15): compared original lab_to_targetProofScript.sml:391-513 and labPropsScript.sml:1261-1268. Native Line retains exact HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and fixed word8 encoded bytes. Only polymorphic words use positive BitVec width with NeZero. Similarity ignores exactly encoded bytes, lengths and resolved positions; preserves instruction equality, label identities and section identities. LinesRel transcribes EVERY2/LIST_REL empty/cons clauses; universal membership transcribes EVERY. lenNoLab is the local FILTER(not o is_Label) length overload at source line49. The theorem preserves original hypotheses and conclusion with no extra evaluation, success or relation premises. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/Labels.lean",
+    "lean_name": "secLabelsOk",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "sec_labels_ok_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; bead .18.5.15.10.15): compared original lab_to_targetProofScript.sml:391-513 and labPropsScript.sml:1261-1268. Native Line retains exact HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and fixed word8 encoded bytes. Only polymorphic words use positive BitVec width with NeZero. Similarity ignores exactly encoded bytes, lengths and resolved positions; preserves instruction equality, label identities and section identities. LinesRel transcribes EVERY2/LIST_REL empty/cons clauses; universal membership transcribes EVERY. lenNoLab is the local FILTER(not o is_Label) length overload at source line49. The theorem preserves original hypotheses and conclusion with no extra evaluation, success or relation premises. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSimilar.lean",
+    "lean_name": "lenNoLab",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "len_no_lab",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; .10.15 coordinator repair): original local Overload at line49 is lambda xs. LENGTH(FILTER($~ o is_Label) xs). Lean computes the length of filtering native lines by Boolean negation of the reviewed isLabelHOL; exact native ASM/register-immediate/mlstring and fixed-byte carriers retained. Only polymorphic words translate to positive BitVec width/NeZero. No bounds or extra premises. Coordinator requested explicit overload reference and body pin."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Fetch.lean",
+    "lean_name": "numPcs",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "num_pcs_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; .10.17): original num_pcs_def680-686, asm_fetch_aux_APPEND1 at7258, APPEND2 at7290 and MEM at10849. Exact native LabSem.asmFetchAux evaluator and classifier over HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and fixed word8 encoded bytes. Count clauses retain empty code/empty section/label skip/nonlabel successor; fetch proofs retain original PC inequality, plus-count offset and existential membership witness, with no assumed fetch or extra guards. Nested list induction only supplies source structural induction hypotheses. Word dimension alone translates to positive BitVec width/NeZero. Proof-only declarations; no executed compiler behavior changed. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Fetch.lean",
+    "lean_name": "asmFetchAux_append1",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "asm_fetch_aux_APPEND1",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; .10.17): original num_pcs_def680-686, asm_fetch_aux_APPEND1 at7258, APPEND2 at7290 and MEM at10849. Exact native LabSem.asmFetchAux evaluator and classifier over HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and fixed word8 encoded bytes. Count clauses retain empty code/empty section/label skip/nonlabel successor; fetch proofs retain original PC inequality, plus-count offset and existential membership witness, with no assumed fetch or extra guards. Nested list induction only supplies source structural induction hypotheses. Word dimension alone translates to positive BitVec width/NeZero. Proof-only declarations; no executed compiler behavior changed. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Fetch.lean",
+    "lean_name": "asmFetchAux_append2",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "asm_fetch_aux_APPEND2",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; .10.17): original num_pcs_def680-686, asm_fetch_aux_APPEND1 at7258, APPEND2 at7290 and MEM at10849. Exact native LabSem.asmFetchAux evaluator and classifier over HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and fixed word8 encoded bytes. Count clauses retain empty code/empty section/label skip/nonlabel successor; fetch proofs retain original PC inequality, plus-count offset and existential membership witness, with no assumed fetch or extra guards. Nested list induction only supplies source structural induction hypotheses. Word dimension alone translates to positive BitVec width/NeZero. Proof-only declarations; no executed compiler behavior changed. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Fetch.lean",
+    "lean_name": "asmFetchAux_mem",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "asm_fetch_aux_MEM",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; .10.17): original num_pcs_def680-686, asm_fetch_aux_APPEND1 at7258, APPEND2 at7290 and MEM at10849. Exact native LabSem.asmFetchAux evaluator and classifier over HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and fixed word8 encoded bytes. Count clauses retain empty code/empty section/label skip/nonlabel successor; fetch proofs retain original PC inequality, plus-count offset and existential membership witness, with no assumed fetch or extra guards. Nested list induction only supplies source structural induction hypotheses. Word dimension alone translates to positive BitVec width/NeZero. Proof-only declarations; no executed compiler behavior changed. Coordinator source review pending."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml",
     "hol_name": "live_tree",
     "lean_path": "Flapjack/Compiler/Backend/LinearScan.lean",
