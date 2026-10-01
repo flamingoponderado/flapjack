@@ -1,3 +1,18 @@
+`word_simp_constant_domain_probe.out` records thirteen complete original
+constant-pass trees. The wrapper inputs run original `Seq_assoc Skip` before
+`const_fp`; direct recursion inputs use the same two known register constants
+as the Lean knowledge list. `WordToStackConstantDomainParity` kernel-checks
+twelve matches and records trailing Skip as false: original `Seq Tick Skip`
+becomes Tick, while the production wrapper retains `Seq Tick Skip`. The actual
+counter-tree and original oracle remain distinct; repair is `flapjack-2uae`.
+`ProductionConstantDomain` proves acceptance through the actual optimized
+reassociation at arbitrary fuel, arbitrary initial constant knowledge, and the
+actual constant-pass wrapper. Its implication permits constant branches to
+remove rejected code. Rejection sentinels cover the five-register primitive
+inside Loop and both Call bodies. These untagged carrier proofs do not claim
+HOL pass semantics, initial source-image acceptance, fusion/hoist closure,
+native ABI/output correspondence, or production native routing.
+
 `ssa_map_ok_probe.out` simplifies the literal original SSA map predicate and lookup clauses for five empty/valid/bound/physical/malformed-tree cases; `Flapjack/Test/SSAMapParity.lean` kernel-replays those quantified predicates. The full original definition is printed.
 
 `ssa_setup_probe.out` captures four original word_alloc definitions and nine direct EVAL rows for empty, duplicate, malformed-tree, arbitrary-start renaming and native setup widths 1/32/64/80, plus independent 1-to-80 and 80-to-1 input/output dimensions and the full original inferred function type. `Flapjack/Test/SSASetupParity.lean` kernel-replays identical inputs and observations. Regenerate with `HOL_PROBE_ONLY=ssa_setup_probeScript.sml`.
