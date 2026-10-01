@@ -3546,3 +3546,7 @@ run_probe word_to_stack_no_shmemop_return_probeScript.sml word_to_stack_no_shmem
 run_probe word_to_stack_no_shmemop_inst_probeScript.sml word_to_stack_no_shmemop_inst_probe.out \
   ci_skip ci_const ci_binop_imm ci_binop_reg ci_shift_imm ci_shift_reg ci_div ci_long_mul ci_long_div ci_carry ci_add_overflow ci_sub_overflow ci_load ci_load8 ci_load16 ci_load32 ci_store ci_store8 ci_store16 ci_store32 ci_fpless ci_fplessequal ci_fpequal ci_fpabs ci_fpneg ci_fpsqrt ci_fpadd ci_fpsub ci_fpmul ci_fpdiv ci_fpfma ci_fpmov ci_fpmovtoreg ci_fpmovfromreg ci_fptoint ci_fpfromint ci_fpmovtoreg1 ci_fpmovfromreg1 ci_fpmovtoreg32 ci_fpmovfromreg32 ci_fpmovtoreg80 ci_fpmovfromreg80 \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
+run_probe real_sqrt_round_agreement_special_probeScript.sml real_sqrt_round_agreement_special_probe.out \
+  sqrt_zero_pinf sqrt_zero_nz sqrt_positive_pinf sqrt_positive_nz sqrt_negative_pinf sqrt_negative_nz sqrt_negative_flags_all_modes sqrt_quiet_nan_flags_all_modes \
+  "$hol_dir/src/floating-point/binary_ieeeScript.sml" "$hol_dir/src/floating-point"

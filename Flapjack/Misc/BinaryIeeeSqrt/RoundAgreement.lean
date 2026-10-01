@@ -25,11 +25,24 @@ constructors; the earlier `*_tiesToEven_*` theorems are kept as corollaries so
 existing consumers keep compiling.  `holRoundSqrtRealTiesToEven` is kept as an
 abbreviation for the `roundTiesToEven` specialization.
 
-These declarations are Flapjack-specific infrastructure. They are not an exact
-`@[hol]` port: the real-sqrt rounder is a Lean-side reference rendering, and
-the cut renderer stays the definition used by the compiler. The remaining
-external assumption (agreement with HOL `real`) is recorded in
-`docs/SOUNDNESS.md`.
+These declarations are Flapjack-specific infrastructure: the theorems compare
+our rational-cut rendering with our Mathlib `Real.sqrt` rendering entirely
+inside Lean. They assume no HOL-to-Lean equivalence and do not establish one.
+The complete mode/input agreement is a prerequisite for the separately reviewed
+faithful sqrt/StackSem instruction ports, not their acceptance or completion.
+No `@[hol]` tag is attached to these comparison declarations. The executed
+compiler continues to use the existing cut rendering.
+
+Source review (flapjack-sol3, dshl.2.1): the directed-mode candidate predicates,
+threshold/largest comparisons, overflow/underflow/precision flags and special
+NaN/infinity/signed-zero branches retain their original shapes. The lower
+rounding comparisons require a nonnegative rational radicand; the full
+`holFloatSqrt_agreement` proves this from the positive-sign finite input branch,
+so `holFp64Sqrt_agreement` has no radicand, successful rounding or target-result
+premise. Equality of epsilon choices follows from predicate equality, without
+assuming a unique closest float. Directed finite numeric oracle conversion is not supplied by this harness;
+its classical choice ranges over the finite float carrier, without an assumed
+unique minimizer. HOL real/float carrier correspondence remains separate.
 -/
 
 namespace Flapjack

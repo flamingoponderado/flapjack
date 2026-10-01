@@ -5,7 +5,7 @@ import Flapjack.Misc.BinaryIeeeSqrtFp64
 # Concrete agreement of the real-sqrt and rational-cut `fp64_sqrt` renderings
 
 For every `HolRounding` mode, `holFp64Sqrt_agreement` states that the
-rational-cut rendering `holFp64Sqrt` of HOL `fp64_sqrt` equals the
+Lean rational-cut rendering `holFp64Sqrt` equals the
 real-distance rendering `holFp64SqrtReal` from
 `Flapjack.Misc.BinaryIeeeSqrt.RoundAgreement`.  Each `roundTiesToEven` row
 below instantiates that agreement on a concrete input and then kernel-evaluates
@@ -13,9 +13,10 @@ the computable cut algorithm `holFp64Sqrt_rte`
 (`Flapjack.Misc.BinaryIeeeSqrtFp64`), so the real-rendering result is
 kernel-checked too.
 
-The other three rounding modes have no computable rendering in Flapjack: HOL's
-`round` selects through `closest`, a Hilbert choice over an infinite set, and
-the `isqrtLib` oracle only supports `roundTiesToEven`.  Their finite rows are
+The other three rounding modes have no computable rendering in Flapjack: their
+`round` uses `closest`, expressed by Hilbert choice over the finite float carrier,
+and this harness supplies no numeric conversion for that choice. The existing
+`isqrtLib` oracle path used here supports `roundTiesToEven`.  Their finite rows are
 therefore only concrete instances of the general agreement theorem, not
 evaluated numbers.  The `+infinity` and `-0` rows below are kernel-evaluated
 for the non-`roundTiesToEven` modes because those branches of `float_sqrt` do
@@ -75,7 +76,7 @@ theorem roundFourReal :
   rw [holRoundSqrt_tiesToEven_eq_real (by norm_num : (0 : Rat) ≤ 4)]
 
 /-- The `roundTowardZero` cut and real rounders agree at a concrete input
-    (finite rows of the non-`roundTiesToEven` modes are not kernel-evaluable,
+    (finite rows of the non-`roundTiesToEven` modes lack a numeric conversion here,
     so this is a concrete instance of the general theorem rather than a number). -/
 theorem roundFourTowardZero :
     (holRoundSqrtReal .roundTowardZero (4 : Rat) : HolFloat 52 11) =
@@ -124,6 +125,17 @@ theorem sqrtNzTowardPositive :
 theorem sqrtNzTowardNegative :
     holFp64SqrtReal .roundTowardNegative 0x8000000000000000 = 0x8000000000000000 := by
   decide +kernel
+
+/-- Negative finite inputs retain all original invalid-operation flags for every mode. -/
+theorem sqrtNegativeFlagsAllModes (mode : HolRounding) :
+    (holFloatSqrtReal mode (holFp64ToFloat 0xC010000000000000)).1 = holInvalidopFlags := by
+  cases mode <;> decide +kernel
+
+/-- A quiet NaN preserves the original clear flags for every mode. Payload
+choice is not replaced by a numerical representative. -/
+theorem sqrtQuietNanFlagsAllModes (mode : HolRounding) :
+    (holFloatSqrtReal mode (holFp64ToFloat 0x7FF8000000000001)).1 = holClearFlags := by
+  cases mode <;> decide +kernel
 
 def runChecks : IO Bool := do
   IO.println "PASS real-sqrt rounding agrees with the rational-cut rendering on concrete fp64_sqrt inputs for all HolRounding modes (kernel-checked)"

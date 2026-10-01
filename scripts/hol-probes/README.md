@@ -3681,3 +3681,26 @@ replays identical observations through the actual kernel-checked compiler
 equations and applies the original-shaped Inst case at arbitrary inputs.
 These regressions do not establish cross-language equivalence or full compiler
 preservation. Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_inst_probeScript.sml`.
+
+### Real-sqrt rounding agreement source review
+
+`real_sqrt_round_agreement_special_probeScript.sml` freshly records the original
+`fp64_sqrt` infinity and negative-zero results for all three directed modes.
+The six same-input kernel theorems live in `BinaryIeeeSqrtRoundAgreementParity`.
+Two further original whole-flag equalities cover negative finite and quiet-NaN
+inputs with arbitrary rounding mode, replayed by generic kernel theorems; the
+NaN payload choice is never replaced by a numerical representative.
+The existing seven exact-square RTE rows and two RTE special rows were freshly
+regenerated unchanged during the review. The built original HOL checkout and
+this checkout's read-only HOL submodule both use
+`a390cbabd3a4521bab4ee20281e3e42933a8a3ae`.
+
+The reused `RoundAgreement` theorem covers every mode and binary64 input;
+lower rational-radicand nonnegativity is discharged internally in the full
+float sqrt path. It proves a Lean cut-renderer/Mathlib-real-renderer equality,
+without assuming or proving HOL-to-Lean equivalence. Directed finite results
+are agreement theorem instances here, without a numeric oracle conversion for
+Hilbert choice on the finite float carrier. The two non-square RTE hardware
+checks remain supplemental comparisons, not original HOL oracle rows.
+Faithful HOL carrier acceptance and complete StackSem instructions/evaluation
+remain separate tracked work.
