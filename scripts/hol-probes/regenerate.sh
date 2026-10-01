@@ -3019,3 +3019,7 @@ run_probe parmove_temp_mixed_probeScript.sml parmove_temp_mixed_probe.out \
 run_probe word_alloc_checker_assembly_probeScript.sml word_alloc_checker_assembly_probe.out \
   ca_control ca_return ca_handler ca_tail_ignored ca_collision \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_to_stack_cutset_maximum_probeScript.sml word_to_stack_cutset_maximum_probe.out \
+  cs_empty cs_root cs_left cs_right cs_duplicates cs_left_max cs_reordered cs_root_duplicates cs_large cs_overlap cs_range cs_sparse \
+  "$cake_dir/pancake/loop_to_wordScript.sml" "$cake_dir/pancake"

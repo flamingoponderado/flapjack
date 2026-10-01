@@ -1,3 +1,4 @@
+import Flapjack.Test.WordToStackCutsetMaximumParity
 import Flapjack.Test.RetainedAllocatorColour
 import Flapjack.Test.WordToStackHandlerValGeneralityParity
 import Flapjack.Test.WordToStackAbsStackGeneralityParity

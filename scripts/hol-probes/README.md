@@ -2416,3 +2416,5 @@ The full theorem is assembled universally from reviewed constructor cases;
 these finite observations do not establish cross-prover equivalence or route
 the executed allocator. Regenerate with
 `HOL_PROBE_ONLY=word_alloc_checker_assembly_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`word_to_stack_cutset_maximum_probe` captures twelve original cutset maxima, including duplicate/root keys, reordered and overlapping lists, sparse names and naturals above 2^80. Kernel fixtures replay the same inputs and apply the unconditional full list-to-Spt maximum correspondence. The production frame and compiler route remain separate dependency-linked work.
