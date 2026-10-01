@@ -191,6 +191,7 @@
     {"bytes": 199, "out": "lab_props_preconditions_probe.out", "rows": 8, "sha256": "68d77c34a6e7084aef74685761f39a447c4f43b6474cbda4e008f3b3926f6298"},
     {"bytes": 74, "out": "lab_props_sec_ends_label_probe.out", "rows": 5, "sha256": "152d6742e65b67592b63a097593a4a131602feb98553eba932290ab7156f521b"},
     {"bytes": 145, "out": "lab_to_target_section_lookup_probe.out", "rows": 8, "sha256": "280b5b0f8b136fde960f097d23d0bd12518c36b19bca95c84f9e561db8f3d0e4"},
+    {"bytes": 950, "out": "lab_validity_native_probe.out", "rows": 19, "sha256": "167e997a47efd3a23257f16167854374737ed1e386c949567b3877869a51b4b6"},
     {"bytes": 1166, "out": "labsem_arithmetic_probe.out", "rows": 44, "sha256": "26c4d3a5e346398a1ef319877c2f1a2b489f1f3d83b2b1fe78e92e6507388e03"},
     {"bytes": 1618, "out": "labsem_evaluate_probe.out", "rows": 57, "sha256": "b2cabdcddd7e07bdff4e96dd00ee57f9acbc9a3860a2aaf50575090b6e425aba"},
     {"bytes": 620, "out": "labsem_fp_updates_probe.out", "rows": 29, "sha256": "4dff5e0bbda061c918294ce5f1a3e65ca16dcc773b81d4a77065c61691568244"},

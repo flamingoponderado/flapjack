@@ -3761,3 +3761,13 @@ ssa_physical_state_updates_probe.out freshly replays the literal physical-target
 ### Loop-to-Word label threading and handler ownership
 
 `loop_to_word_label_handlers_probeScript.sml` replays all four full literal source proofs: function-label preservation, next-label monotonicity, handler ownership for comp, and per-function ownership for compile_prog. Actual theorem applications use original compiler equalities supplied by EVAL; no extra guard or target evaluation assumption. Complete nested outputs at widths 1/64/80 show return labels, exception labels, both continuations and final counter; the tail case ignores its source handlers. A duplicate-owner compiled list and false-owner sentinel are retained. Matching generic-width kernel fixtures apply the public theorems and check the complete nested output.
+
+`lab_validity_native_probe.out` freshly records three original native
+conversion/validity definitions and sixteen original observations, including
+actual eight-bit assembler configuration acceptance/rejection, empty and
+mixed sections, and width1/80 memory-conversion boundaries with unbounded
+natural registers. `LabValidityNativeParity` has sixteen kernel fixtures,
+including generic payload/cache statements. The exact definitions live in
+`LabToTarget/Native.lean` and `LabProps/Native.lean`; the generic callback
+helpers are separate infrastructure. Native executable routing and full
+encoding correctness remain tracked on the fleet dependency graph.
