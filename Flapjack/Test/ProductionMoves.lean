@@ -21,6 +21,15 @@ example : (wordStackCakeOptionMoveList (α := BitVec 64) config
       (some (.stack 2), none)]).bind project =
     some (wMoveNative (width := 64) [(44, 46), (46, 44)] (22, 3, 2)) := by cbv
 
+/- Original sr_order_swap emits NONE<-1, 1<-0, 0<-NONE; literal
+wMoveSingle then uses OR register moves with temporary k+1 = 23. -/
+example : (wordStackCakeOptionMoveList (α := BitVec 64) config
+    [(none, some (.register 1)), (some (.register 1), some (.register 0)),
+      (some (.register 0), none)]).bind project =
+    some (wMoveNative (width := 64) [(0, 2), (2, 0)] (22, 0, 0)) := by cbv
+example : (wordStackLocationMove (α := BitVec 64) config (.register 4) (.register 5)).bind project =
+    some (.inst (.arith (.binop .or 4 5 (.reg 5)))) := by cbv
+
 example : optionMoveList (width := 64) config [(none, none)] = none := rfl
 example : optionMoveList (width := 64) config [(none, some (.register 22))] = none := by cbv
 example : optionMoveList (width := 64) config [(some (.register 23), none)] = none := by cbv
