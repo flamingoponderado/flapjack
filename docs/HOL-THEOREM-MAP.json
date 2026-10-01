@@ -46946,6 +46946,15 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison 2026-10-01 bead26.19: original11872-11899 full incremental code-label theorem. Retains arbitrary asm config, register count, source rows, full input bitmap app-list/index and output bodies/frame list/residual; arbitrary external Set Nat, original conjunction of two stub memberships and actual compile_word_to_stack ac F output equation followed by the original good_code_labels premise. Concludes actual stack_good_code_labels with no supplied target safety, finiteness, uniqueness, source-absent guard, HD/EL, bitmap/frame invariant or simulation premise. Accepted full compiled-label bound and generic key preservation reused; source good_code_labels supplies exactly the accepted handler guard and source union inclusion. Both zero/one entry images and owned-handler alternatives preserved through the accepted target predicate, union association reviewed. Original generic word dimension alone translated to positive BitVec width/NeZero; lists, sets, numbers and exact config/WordLang/HolProg payloads otherwise retained. Ten fresh original whole-compiler source/target predicate pairs are kernel-replayed on identical inputs, including duplicate keys, spill frame, returning owned/wrong-owner handlers, dropped tail-handler negative source, threaded bitmap and width1/infinite external universe. Original definitions evaluated without a claimed exported compiler theorem application; full Lean theorem separately applied with arbitrary width/config/registers/bitmap state. Source comparison complete; regression/kernel checking does not prove cross-language equivalence, and overall compiler correctness remains unfinished."
   },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "full_ssa_cc_trans_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/FullSSA.lean",
+    "lean_name": "fullSsaCcTrans",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.15.2.30.11): word_allocScript.sml:1822-1828 full_ssa_cc_trans n prog = let lim = limit_var prog in let (mov,ssa,na) = setup_ssa n lim prog in let (prog',ssa',na') = ssa_cc_trans prog ssa na [] in Seq mov prog'; type num -> alpha prog -> alpha prog. Lean: the same lets over the accepted limitVar and setupSSA (its independent output width instantiated at the program width, as the Seq forces) and the delivered ssaCcTrans with an empty loop-target list; WordLangProgHOL (BitVec width), [NeZero width] (words_as_type_indexed_bitvec). Original EVAL rows (scripts/hol-probes/word_alloc_full_ssa_probe.out, 5 programs) replayed in Flapjack.Test.WordAllocFullSSAParity. No extra premise. Proof-side port; the executed list-state SSA pass is not routed through it (.30.2.1.1.1)."
+  },
 {
   "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
   "hol_name": "no_alloc_def",
