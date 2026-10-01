@@ -2264,3 +2264,11 @@ applies the full source one-way membership theorem to each input. It is
 imported by the actual Lake test driver as well as the umbrella. These rows
 support regression review, not a cross-prover equivalence or algorithm
 semantic-correctness claim.
+
+`word_to_stack_live_length_probeScript.sml` observes the full native frame
+bitmap length bound and preserved count-minus-flattened-length equation on six
+inputs: zero frame, empty bitmap, positive slack, nested AppList, raw non-wf
+Spt and width-eight packing. `WordToStackLiveLengthParity` kernel-applies the
+full source theorem to the same actual native outputs; it is imported in the
+actual CompilerParity test driver. These finite observations are regression
+evidence, not a cross-prover equivalence or compiler-correctness proof.

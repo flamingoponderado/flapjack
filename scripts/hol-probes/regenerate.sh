@@ -2888,3 +2888,7 @@ run_probe parmove_dstep_step_probeScript.sml parmove_dstep_step_probe.out \
 run_probe parmove_destination_wrapper_probeScript.sml parmove_destination_wrapper_probe.out \
   dw_empty dw_self dw_chain dw_cycle dw_duplicate dw_order dw_nested_option \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe word_to_stack_live_length_probeScript.sml word_to_stack_live_length_probe.out \
+  ll_zero ll_empty ll_slack ll_tree ll_nonwf ll_width8 \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"

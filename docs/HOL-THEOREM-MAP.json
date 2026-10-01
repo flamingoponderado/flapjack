@@ -41493,4 +41493,14 @@
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-a: source753-762 compared literally. Arbitrary generic register type, List pair input, exact Option-register output from actual tagged parmove, sole SOME x output-destination membership premise and input-destination membership conclusion. DecidableEq realizes HOL polymorphic equality, no changed equality or word-width carrier. Uses accepted unconditional pmov destination theorem on actual lifted input plus original reverse; no windmill/termination/success/output-shape premise. Seven fresh original full destination lists kernel paired, including duplicate inputs, self removal, scratch NONE and a real optional register SOME NONE. Actual lake test driver imports the replay module; full compiler correctness remains open."
 }
+,
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/LiveLength.lean",
+  "lean_name": "wLiveLength",
+  "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+  "hol_name": "wLive_LENGTH",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a: source5618-5635 full arbitrary cutsets/frame/bitmap and output equation plus sole input length bound compared to native wLive. Exact Spt Unit pair, AppList and Nat pair, native HolProg, right-associated frame tuple; words_as_type_indexed_bitvec only translates positive source dimension. Conclusion preserves both output bound and count-minus-flat-length equality. Proof projects actual insertion, uses accepted append_thm and natural subtraction arithmetic; no wellformedness, success or evaluation premise. Six fresh original same-input observations and actual CompilerParity kernel replay; compiler correctness remains open."
+}
 ]
