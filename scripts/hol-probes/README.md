@@ -1,20 +1,8 @@
-`word_convs_every_var_inst_mono_probe.out` captures the complete exported original
-monotonicity theorem and 15 actual instruction predicate pairs: fourteen valid
-implication applications plus a rejecting non-64 FP second register. Kernel
-fixtures replay the inputs and prove the original pointwise/source premises
-internally. Widths1/8/32/64/80, immediate/register arithmetic, memory and ignored
-16-bit/FP operands are covered. Regression observations do not establish
-cross-prover equivalence. Regenerate with
-`HOL_PROBE_ONLY=word_convs_every_var_inst_mono_probeScript.sml` from the
-read-only prebuilt CakeML semantics theory directory.
+`wordconvs_name_mono_probe.out` prints the complete original theorem and
+five matching cut-set/predicate fixtures in `WordConvsNameMonoParity`, including
+a non-well-formed tree and a failed implication sentinel. Regenerate with
+`HOL_PROBE_ONLY=wordconvs_name_mono_probeScript.sml` using the read-only original tree.
 
-`parmove_preserves_moves_parmove_probe.out` contains six direct original scheduler
-observations for shared sources, a cycle, Bool registers, emitted order, self moves
-and empty input. `ParmovePreservesMovesParmoveParity` replays the rows and applies
-the full preservation theorem with internally checked original premises. These
-fixtures are regression evidence, not a cross-prover equivalence proof. Regenerate
-with `HOL_PROBE_ONLY=parmove_preserves_moves_parmove_probeScript.sml` and the
-read-only prebuilt CakeML register-allocation theory directory.
 `wordconvs_exp_mono_probe.out` freshly prints original every_var_exp_mono
 and eight same-expression predicate observations. Registered WordConvsExpMonoParity
 fixtures apply the full implication non-vacuously at widths1/32/64/80 for
@@ -2877,6 +2865,27 @@ observations: terminal scratch destination, pending destination, and full pendin
 output. ParmovePreservesMovesPmovParity kernel-replays the same inputs and applies
 the source-shaped preservation theorem with internally discharged well-formedness.
 Finite observations are regression evidence, not cross-prover equivalence.
+
+`parmove_all_distinct_wrapper_probe.out` freshly fetches the complete exported
+`ALL_DISTINCT_parmove` theorem and captures six whole scheduler outputs
+(empty/self/chain/swap/cycle/shared source), plus the duplicate-destination
+input/output distinctness boundary `(F,F)`. `ParmoveAllDistinctWrapperParity`
+replays all outputs and non-vacuous theorem applications in Lean, with a Bool
+carrier check. Original run used a temporary cwd and canonical in-memory
+`holpathdb` CAKEMLDIR registration/read-only theory paths; CakeML unchanged.
+Selector: `HOL_PROBE_ONLY=parmove_all_distinct_wrapper_probeScript.sml`.
+### Native asmSem arithmetic and state operations
+
+`asmsem_arithmetic_probeScript.sml` evaluates the loaded original `asmSemTheory`
+state primitives and all eight `arith_upd_def` constructors. Its 52 captured rows
+are replayed by `Flapjack.Test.AsmSemArithmeticParity` against the native
+`AsmSem.Arithmetic` definitions, with unrelated state fields arbitrary. Cases
+cover ordered aliasing writes, retained writes on failed division and register
+shifts, immediate shifts without that register-only guard, prior failure,
+carry and signed overflow, and widths 1, 8, 32, and 64. Original DIV_0/MOD_0
+simplifications expose zero-divisor quotient/remainder results. These probes
+are regression evidence, not cross-language equivalence or full asm evaluation
+acceptance. CakeML/HOL remains read-only.
 
 `stackprops_label_safety_probe.out` records ten original whole-program code/handler
 safety predicate pairs, including entry zero/one, missing/external labels, infinite

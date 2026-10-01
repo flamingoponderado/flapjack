@@ -1,0 +1,10 @@
+load "preamble";
+load "wordConvsTheory";
+open bossLib HolKernel Parse preamble wordLangTheory wordConvsTheory sptreeTheory;
+fun out label q = (print (label ^ "="); print_term (rconc (EVAL q)); print "\n");
+val _ = out "nm_empty" ``let names = (LN,LN) in (every_name (\x. x <= 0) names, every_name (\x. x <= 0) names)``;
+val _ = out "nm_single" ``let names = (LS (),LN) in (every_name (\x. x <= 0) names, every_name (\x. x <= 3) names)``;
+val _ = out "nm_both" ``let names = (BS (LS ()) () (LS ()),LS ()) in (every_name (\x. x <= 2) names, every_name (\x. x <= 9) names)``;
+val _ = out "nm_invalid" ``let names = (BN LN LN,BS LN () LN) in (every_name (\x. x <= 0) names, every_name (\x. x <= 1) names)``;
+val _ = out "nm_guard_needed" ``(every_name (\x. x <= 0) (LS (),LN), every_name (\x. F) (LS (),LN))``;
+val _ = (print "nm_original_theorem="; print_thm (DB.fetch "wordConvs" "every_name_mono"); print "\n");
