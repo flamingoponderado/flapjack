@@ -3070,6 +3070,21 @@ The native transition inherits the existing IEEE real-rendering assurance limit
 Probes remain regression evidence, not complete cross-language IEEE equivalence
 or whole ASM/compiler routing acceptance.
 
+### Generic native ASM assertions
+
+`asmprops_assertions_probeScript.sml` evaluates original `asmPropsTheory`
+`asserts`/`asserts2` using its exported `asserts_eval` numeral equations
+(the recursive `asserts_def` is marked `nocompute`) and `asserts2_def`.
+Its sixteen concrete rows check zero-count behavior, terminal `next 0`,
+descending noncommutative update order and reversed GENLIST prefixes,
+weakening context bounds, Bool states and independent Nat-state/Bool-
+intermediate iteration, count-dependent interference and failed predicates.
+`AsmPropsAssertionsParity.lean` kernel-replays the same inputs. Fresh
+original full-type queries retain both independent carriers; the definition
+ports have no word specialization. These rows are regression evidence,
+not HOL-to-Lean equivalence or complete encoder correctness. The full
+iteration/weakening theorem chain is a separate dependency.
+
 ### Whole-program Word-to-Stack code labels
 
 `word_to_stack_program_code_labels_probeScript.sml` evaluates seven actual
