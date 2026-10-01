@@ -2308,6 +2308,8 @@ evidence, not a cross-prover equivalence or whole-compiler correctness proof.
 `spt_union_algebra_probeScript.sml` checks all four literal universal Spt union/insert statements using their original kernel theorem proofs, then 28 concrete original raw-tree observations. `SptUnionAlgebraParity` applies the matching universal Lean theorems and checks malformed trees, singleton overwrites and left bias. Commutativity is restricted to unit-valued number sets; a Nat-valued counterexample is also checked. Concrete stored numerals are explicitly Nat on both sides.
 
 `word_to_stack_native_top_probeScript.sml` audits the original compile type and checks 24 full top-level result tuples. `WordToStackNativeTopParity` checks identical bitmap words, exact sparse frame maps, complete frame lists and ordered stub/program bodies in the kernel. Boundaries include both performance seeds and narrow wrap, natural register subtraction, duplicate avoid entries/identifiers, unbounded natural IDs, zero frames and ordered multiword bitmap threading. Expected stub subterms use the independently reviewed original/native stub definitions; body and bitmap values are otherwise literal expectations. Executed compiler routing remains separately tracked.
+
+`word_alloc_checker_call_none_probeScript.sml` captures six original full-checker equality observations: empty, one/two arguments, repeated argument, noninjective colour rejection and ignored optional handler. Identical kernel fixtures plus the universal six-premise/five-conclusion Call-NONE case are imported by CompilerParity; returning Call cases remain separate obligations.
 `word_to_stack_comp_prefix_probeScript.sml` freshly observes nine whole
 compiler-prefix equations: Skip, Alloc, MustTerminate, Seq, If, Loop, returning
 Call with perf enabled, returning Call with handler, and StoreConsts. Every
@@ -2343,6 +2345,7 @@ The `word_to_stack_comp_length_probe` checks eighteen actual compiler bitmap-acc
 `WordToStackExpressionMaximumParity` replays the eight original `word_lang_max_var_exp_probe` observations through the actual production `wordExpCakeMaxVar` and existing total expression codec. The unconditional correspondence proof covers every expression, recursively nested argument lists, and arbitrary initial scan maxima at every positive word width. These Flapjack carrier theorems have no HOL original; full program/frame correspondence and native production routing remain separate dependency beads.
 
 `word_to_stack_abs_stack_generality_probe` captures eight original abstraction equations with frame dimensions 1 and 16 independent of bitmap/target-stack dimension 8. Saved cutsets contain nonempty payloads and predicted sizes differ from consumed target frames. `WordToStackAbsStackGeneralityParity` replays them with the generalized declaration and applies both prefix and length lemmas at arbitrary independent positive dimensions. The abstraction remains partial with the original guards.
+`word_alloc_heu_counters_probeScript.sml` captures twenty original HOL equations for all five counter updates: absent key, existing asymmetric tuple, repeated update, and preservation of another key. Matching kernel fixtures are in `HeuCountersParity`; these observations do not establish whole allocator equivalence.
 `target_sem_mapped_memory_probeScript.sml` checks both literal mapped instruction templates in original HOL: all eight size/opcode choices, invalid sizes, mismatched register/address/bytes, missing domain, wrapped addresses, empty encodings and word8 size wrap. The ignored return-PC parameter remains independently polymorphic. `TargetSemMappedMemoryParity` checks the same 35 observations in the Lean kernel.
 
 `word_alloc_even_colour_probeScript.sml` compares the actual sparse-tree physical-colour constraint with twenty original observations: physical keys require half their key, virtual values are unrestricted, duplicate entries use original first precedence, arbitrary large natural keys and malformed trees remain accepted inputs. `WordAllocEvenColourParity` checks the same results in the Lean kernel; no well-formedness or complete-domain assumption is added.
@@ -2392,3 +2395,24 @@ This is finite regression evidence, not whole-allocator correctness; the
 executed allocator route remains separate work.
 
 `word_to_stack_handler_val_generality_probe` captures eight original `handler_val` equations with independent non-word handler, middle-field and frame-element types. Empty/plain/handler/mixed frames and function-valued middle/frame payloads are kernel replayed in `WordToStackHandlerValGeneralityParity`. The declaration now retains the full source polymorphism under an unqualified tag; it inspects only the handler option constructor and frame-list lengths.
+`spt_mapi_probe.out` contains twelve direct original `mapi0_def`/`mapi_def`
+observations, kernel-replayed as exact trees in `SptMapiParity`. Cases cover
+left/right key order, nested nodes, smart-constructor normalization of raw
+malformed trees, nonzero starting indices and Bool/Nat payload changes.
+These finite observations do not establish cross-prover equivalence or route
+the executed allocator. Regenerate read-only with
+`HOL_PROBE_ONLY=spt_mapi_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`parmove_temp_mixed_probeScript.sml` checks four literal scratch-safety clauses with independent bool destination and num source carriers. `ParmoveTempAppendParity` kernel-replays these rows and applies the append theorem to arbitrary independent carriers; existing same-carrier sentinels remain registered.
+
+
+`word_alloc_stack_only_probeScript.sml` captures fifteen original full-tree equalities for native stack analysis: right-fold Move and reverse Seq order, branch operand deletion, recursive wrappers, all Call handler forms, Delta removal and non-Delta preservation, including raw initial trees and the entry projection. Matching kernel fixtures run through CompilerParity. Production allocator routing remains separate.
+
+`word_alloc_get_prefs_probeScript.sml` captures seventeen original full-list preference equalities, with nonempty accumulators, duplicates/self moves, branch and sequential ordering, both returning handlers, tail-handler exclusion, loops, nested wrappers, ignored constructors and priority/register naturals exceeding 2^64. Matching actual CompilerParity fixtures reduce in the kernel. Native allocator assembly and production routing remain separate.
+`word_alloc_checker_assembly_probe.out` observes five mixed original checker
+equations, kernel-replayed by `WordAllocCheckerAssemblyParity`. Nested control
+(Seq/MustTerminate/If/Loop/Break/Continue), returning and handled calls, a tail
+call with an ignored malformed handler, and collision rejection are covered.
+The full theorem is assembled universally from reviewed constructor cases;
+these finite observations do not establish cross-prover equivalence or route
+the executed allocator. Regenerate with
+`HOL_PROBE_ONLY=word_alloc_checker_assembly_probeScript.sml scripts/hol-probes/regenerate.sh`.

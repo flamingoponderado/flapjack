@@ -1,0 +1,15 @@
+gso_skip=T
+gso_move=T
+gso_foldr=T
+gso_seq=T
+gso_must=T
+gso_loop=T
+gso_call_none=T
+gso_call_return=T
+gso_tick=T
+gso_return=T
+gso_alloc_nondelta=T
+gso_entry=T
+gso_if_reg=T
+gso_if_imm=T
+gso_call_both=T
