@@ -2316,3 +2316,9 @@ flattened length. `WordToStackCompilePrefixParity` applies the full original
 output-equation theorem to the same actual compiler outputs in the real Lake
 test driver. These observations are regression evidence, not a cross-prover
 equivalence or whole-compiler correctness proof.
+`word_alloc_loop_checker_probeScript.sml` freshly observes seven original
+checker equations: absent and present Break/Continue table lookups, Loop with
+Skip and Continue bodies, and a rejected colliding colour. The kernel fixtures
+in `WordAllocLoopCheckerParity` replay the same inputs through the actual test
+driver. These observations do not establish cross-prover equivalence or the
+whole allocator theorem; universal case proofs retain the original motive.
