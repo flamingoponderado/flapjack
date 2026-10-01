@@ -1,0 +1,12 @@
+pm_skip=(T,T)
+pm_moves=(T,T)
+pm_inst=(T,T)
+pm_assign=(T,T)
+pm_seq=(T,T)
+pm_alloc=(T,T)
+pm_loop=(T,T)
+pm_call_none=(T,T)
+pm_call_return=(T,T)
+pm_call_handler=(T,T)
+pm_guard_needed=(T,F)
+pm_original_theorem=⊢ ∀P prog Q. (∀x. P x ⇒ Q x) ∧ every_var P prog ⇒ every_var Q prog

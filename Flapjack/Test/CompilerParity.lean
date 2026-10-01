@@ -1,4 +1,5 @@
 import Flapjack.Test.ParmoveFstepMapInjParity
+import Flapjack.Test.WordConvsProgramMonoParity
 import Flapjack.Test.ParmoveScratchOrderWrapperParity
 import Flapjack.Test.WordConvsNameMonoParity
 import Flapjack.Test.AsmPropsPcCoverageParity
@@ -9,12 +10,12 @@ import Flapjack.Test.ParmoveAllDistinctWrapperParity
 import Flapjack.Test.WordAllocMax3Parity
 import Flapjack.Test.BackendPropsNonzeroLabelsParity
 
-import Flapjack.Test.AsmSemArithmeticParity
 import Flapjack.Test.TargetPropsInterferenceParity
 import Flapjack.Test.LabToTargetSectionLookupParity
 
 import Flapjack.Test.ParmovePreservesMovesPmovParity
 import Flapjack.Test.WordToStackCodeLabelsParity
+import Flapjack.Test.WordToStackCompCodeLabelsParity
 import Flapjack.Test.WordConvsCodeLabelsParity
 import Flapjack.Test.ParmovePreservesMovesStepsParity
 import Flapjack.Test.WordConvsExpMonoParity
