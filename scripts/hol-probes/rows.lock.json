@@ -180,6 +180,7 @@
     {"bytes": 324, "out": "lab_props_line_ok_pre_probe.out", "rows": 14, "sha256": "f8d6614cc516b543be31c7527b111a8fbde5376e42a363c95f83e5da4924016a"},
     {"bytes": 199, "out": "lab_props_preconditions_probe.out", "rows": 8, "sha256": "68d77c34a6e7084aef74685761f39a447c4f43b6474cbda4e008f3b3926f6298"},
     {"bytes": 74, "out": "lab_props_sec_ends_label_probe.out", "rows": 5, "sha256": "152d6742e65b67592b63a097593a4a131602feb98553eba932290ab7156f521b"},
+    {"bytes": 1166, "out": "labsem_arithmetic_probe.out", "rows": 44, "sha256": "26c4d3a5e346398a1ef319877c2f1a2b489f1f3d83b2b1fe78e92e6507388e03"},
     {"bytes": 322, "out": "labsem_navigation_probe.out", "rows": 23, "sha256": "dc70fdd234ff7e8ea9d7bebf3840544412c8c29a8fc1d1bfa71d5f3988ff9963"},
     {"bytes": 436, "out": "labsem_updates_probe.out", "rows": 17, "sha256": "108420ae230afe5e78fd47c5a8c02b5c4e545d949ac847be75aef2df8ab86039"},
     {"bytes": 2466, "out": "longdiv_code_probe.out", "rows": 3, "sha256": "bd61a29e95403e5a53ca9682d3632f3a7320454ecf635d5dd451501d3e923ede"},

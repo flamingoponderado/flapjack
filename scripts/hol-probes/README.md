@@ -2039,3 +2039,5 @@ snapshot sources, untouched/empty/self/swap cases and repeated-destination
 freshness failure are replayed by `ParmoveUpdateLemmasParity.lean`, alongside
 generic freshness/windmill theorem applications. Full step invariance and
 `parmove_correct` remain open.
+
+`labsem_arithmetic_probeScript.sml` captures 44 original observations across all eight LabSem integer-arithmetic constructors: Loc/self-OR guards, invalid shift/division writes, sticky failure, signed overflow and aliased destinations. Original arithmetic `DIV_0`/`MOD_0` simplify the otherwise unreduced zero-divisor cases after EVAL; no replacement arithmetic evaluator is defined. `Flapjack.Test.LabSemArithmeticParity` replays all rows by direct kernel reduction on otherwise arbitrary native source states.

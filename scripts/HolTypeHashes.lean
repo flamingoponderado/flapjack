@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabSem.Arithmetic
 import Flapjack.Compiler.Backend.LabSem.Navigation
 import Flapjack.Compiler.Backend.LabProps.SectionEnd
 import Flapjack.Compiler.Backend.LabSem.Updates
