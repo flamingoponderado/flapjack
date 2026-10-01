@@ -2215,3 +2215,18 @@ on eight arbitrary states, including scratch/duplicate/active and real history.
 `ParmoveSourceParity` replays each row and applies the unconditional original
 source-membership theorem; the cycle-save source is justified from active LAST.
 
+`parmove_dsteps_probeScript.sml` freshly proves nine observations from the original
+`reg_alloc/parmove` theory: all six deterministic rules, two guard boundaries,
+and Extend with a suffix that still reads the selected register. The last row
+checks the source prefix-only NoRead guard. `ParmoveDStepsParity.lean` replays
+the same inputs in Lean. These finite observations are regression evidence,
+not a cross-prover equivalence proof; the complete rules, induction and cases
+statements are source-reviewed in `Parmove/DSteps.lean`.
+
+`parmove_split_source_probeScript.sml` freshly evaluates original splitAtPki
+with the index-independent source predicate and pair callback used by fstep.
+Seven full partition outputs are kernel paired with actual splitSource: empty,
+first/middle/absent matches, NONE, duplicate destinations and late zero. Generic
+untagged SplitSource laws derive prefixNoRead, suffixheadmatch and empty-suffix
+NoRead equivalence. They are Flapjack infrastructure, not a general indexed
+combinator port or completed functional scheduler simulation.
