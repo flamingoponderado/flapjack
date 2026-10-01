@@ -42609,5 +42609,117 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.8) against word_allocProofScript.sml:3337-3375: !prog lt c. EVERY (\\(x,y). in_clash_tree (get_clash_tree prog lt) x /\\ in_clash_tree (get_clash_tree prog lt) y) (get_forced c prog []); reviewed inClashTree/getClashTree; the untagged generalized-accumulator lemma getForcedInClashTreeAcc replaces HOL's EVERY_get_forced rewriting inside the get_forced_ind proof. Sole carrier translation words_as_type_indexed_bitvec: HOL 'a word / 'a asm_config / 'a prog to BitVec width / AsmConfigExact width / WordLangProgHOL (BitVec width) with [NeZero width] discharging dimindex(:'a) >= 1; no other difference.",
   "words_as_type_indexed_bitvec": true
-}
+},
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "has_edge_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/Invariants.lean",
+    "lean_name": "hasEdge",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.3) against reg_allocProofScript.sml:20-25: has_edge adjls x y <=> x < LENGTH adjls /\\ y < LENGTH adjls /\\ MEM y (EL x adjls); num list list carrier. HOL EL is rendered by the untagged holEl (l.getD n (hdNil _)), equal to l[n] in range and to the opaque unspecified HOL HD [] beyond it (TL [] = [] in listScript), so out-of-range reads are unspecified exactly as in HOL; HOL bool as Prop."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "undirected_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/Invariants.lean",
+    "lean_name": "undirected",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.3) against reg_allocProofScript.sml:27-32: !x y. has_edge adjls x y ==> has_edge adjls y x."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "good_ra_state_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/Invariants.lean",
+    "lean_name": "goodRaState",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.3) against reg_allocProofScript.sml:40-56: all fourteen conjuncts in HOL order over the reviewed twelve-field ra_state carrier: five LENGTH = dim, EVERY (<dim) coalesced, nested EVERY (<dim) adj_ls, EVERY (SORTED $>) adj_ls (SORTED via untagged holSorted following sortingTheory SORTED_DEF clause by clause: [] and [x] true, x::y::rest => R x y /\\ SORTED R (y::rest)), simp/spill/freeze worklists below dim, both move worklists with both endpoints (pair projections of (p,x,y)) below dim, undirected adj_ls."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "no_clash_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/Invariants.lean",
+    "lean_name": "noClash",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.3) against reg_allocProofScript.sml:59-67: !x y. has_edge adj_ls x y ==> case (EL x node_tag, EL y node_tag) of (Fixed n, Fixed m) => n = m ==> x = y | _ => T; tag list carrier, the HOL pair case as a two-scrutinee match with the same fallthrough. HOL EL is rendered by the untagged holEl (l.getD n (hdNil _)), equal to l[n] in range and to the opaque unspecified HOL HD [] beyond it (TL [] = [] in listScript), so out-of-range reads are unspecified exactly as in HOL; HOL bool as Prop."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "good_pref_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/Invariants.lean",
+    "lean_name": "goodPref",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.3) against reg_allocProofScript.sml:73-83 (HOL type (a -> b list -> ra_state -> (b option, c) exc # ra_state) -> bool, checked by type_of): !n ks s. good_ra_state s ==> ?res. pref n ks s = (M_success res, s) /\\ case res of NONE => T | SOME k => MEM k ks; three HOL type variables as implicit Type binders; reviewed M/Exc carrier."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "good_neg_pref_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/Invariants.lean",
+    "lean_name": "goodNegPref",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.3) against reg_allocProofScript.sml:575-584 (HOL type num -> (a -> num list -> ra_state -> (num option, b) exc # ra_state) -> bool): !n bads s. good_ra_state s ==> ?res. pref n bads s = (M_success res, s) /\\ case res of NONE => T | SOME c => ~MEM c bads /\\ k <= c."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "sp_inverts_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/Invariants.lean",
+    "lean_name": "spInverts",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.3) against reg_allocProofScript.sml:783-788: !m fm. lookup m f = SOME fm ==> lookup fm g = SOME m over num num_map (Spt Nat), lookup as sptLookup."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "sp_inverts_insert",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/Invariants.lean",
+    "lean_name": "spInvertsInsert",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.3) against reg_allocProofScript.sml:790-800: sp_inverts f g /\\ x NOTIN domain f /\\ y NOTIN domain g ==> sp_inverts (insert x y f) (insert y x g); free f g x y explicit, domain membership as sptDomain."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "is_clique_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/Invariants.lean",
+    "lean_name": "isClique",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.3) against reg_allocProofScript.sml:983-987: !x y. MEM x ls /\\ MEM y ls /\\ x <> y ==> has_edge adjls x y (conjunctive antecedent kept)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "is_subgraph_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/Invariants.lean",
+    "lean_name": "isSubgraph",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.3) against reg_allocProofScript.sml:989-993: !x y. has_edge g x y ==> has_edge h x y."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "is_subgraph_refl",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/Invariants.lean",
+    "lean_name": "isSubgraphRefl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.3) against reg_allocProofScript.sml:995-999: is_subgraph s s, free s explicit."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "is_subgraph_trans",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/Invariants.lean",
+    "lean_name": "isSubgraphTrans",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.3) against reg_allocProofScript.sml:1001-1008: is_subgraph s s' /\\ is_subgraph s' s'' ==> is_subgraph s s''."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "hide_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/Invariants.lean",
+    "lean_name": "hide",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.3) against reg_allocProofScript.sml:1010-1012: hide x = x, polymorphic."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "colouring_satisfactory_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/Invariants.lean",
+    "lean_name": "colouringSatisfactory",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.3) against reg_allocProofScript.sml:1236-1241 (HOL type (num -> a) -> num list list -> bool): !x. x < LENGTH adjls ==> (!y. y < LENGTH adjls /\\ MEM y (EL x adjls) ==> col x = col y ==> x = y). HOL EL is rendered by the untagged holEl (l.getD n (hdNil _)), equal to l[n] in range and to the opaque unspecified HOL HD [] beyond it (TL [] = [] in listScript), so out-of-range reads are unspecified exactly as in HOL; HOL bool as Prop."
+  }
 ]
