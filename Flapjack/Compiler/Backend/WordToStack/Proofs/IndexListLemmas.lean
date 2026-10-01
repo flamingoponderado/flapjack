@@ -48,5 +48,4 @@ theorem elIndexList2 {α : Type} (xs : List α) (i k : Nat) (h : i < xs.length) 
       (k + xs.length - (i + 1), xs[i]) := by
   rw [elIndexList xs i k h]
   congr 1
-
 end Flapjack.WordToStackProofs

@@ -2696,6 +2696,15 @@ run_probe word_to_stack_stack_size_rel_probeScript.sml word_to_stack_stack_size_
   ss_none ss_some ss_bad_max ss_missing_loc ss_missing_frame ss_frame_guard \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe target_sem_encoded_bytes_probeScript.sml target_sem_encoded_bytes_probe.out \
+  oracle_first oracle_shift bytes_empty bytes_nonempty bytes_domain_fail bytes_wrap \
+  encoded_drop encoded_guard_true encoded_guard_strict encoded_bytes_match \
+  "$cake_dir/compiler/backend/semantics/targetSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe misc_asm_write_bytearray_probeScript.sml misc_asm_write_bytearray_probe.out \
+  wa_empty wa_wrap0 wa_wrap1 wa_wrap255 \
+  "$cake_dir/misc/miscScript.sml" "$cake_dir/compiler/backend/semantics"
+
 run_probe word_lang_occurrences_exact_probeScript.sml word_lang_occurrences_exact_probe.out \
   name_empty name_even name_odd var_move_even var_move_odd var_loop_live stack_loop_live stack_alloc_odd var_call_none stack_call_none var_call_some stack_call_some \
   "$cake_dir/compiler/backend/wordLangScript.sml" "$cake_dir/compiler/backend"
@@ -2777,3 +2786,7 @@ run_probe parmove_noread_probeScript.sml parmove_noread_probe.out \
   pn_duplicate_left pn_duplicate_right pn_untouched_left pn_untouched_right pn_boundary_left pn_boundary_right pn_self_left pn_self_right \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 run_probe labsem_fp_updates_probeScript.sml labsem_fp_updates_probe.out lab_fp_less_nan lab_fp_less_equal_zero lab_fp_equal_nan lab_fp_equal_zero lab_fp_mov_payload lab_fp_abs_payload lab_fp_neg_zero lab_fp_sqrt_four lab_fp_add_two lab_fp_sub_zero lab_fp_mul_four lab_fp_div_half lab_fp_fma_order lab_fp_to_reg64 lab_fp_to_reg_alias32 lab_fp_from_reg64 lab_fp_from_reg_loc_error lab_fp_from_reg32 lab_fp_from_reg8 lab_fp_to_int_tie_even lab_fp_to_int_negative lab_fp_to_int_overflow_bits lab_fp_to_int_overflow_failed lab_fp_to_int_inf_error lab_fp_to_int_odd32 lab_fp_from_int64 lab_fp_from_int32 lab_fp_from_int8 lab_fp_from_int128 "$cake_dir/compiler/backend/semantics/labSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe parmove_wf_steps_probeScript.sml parmove_wf_steps_probe.out \
+  pw_remove_pre pw_remove_post pw_start_pre pw_start_post pw_extend_pre pw_extend_post pw_save_pre pw_save_post pw_emit_head_pre pw_emit_head_post pw_emit_last_pre pw_emit_last_post pw_bad_source pw_bad_path \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
