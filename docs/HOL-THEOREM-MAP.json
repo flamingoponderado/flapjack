@@ -38688,5 +38688,13 @@
   "lean_name": "numsetListInsertSwap",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-c source comparison 2026-10-01 bead11.4.4.1: source2620 forall list/head/live, original wf premise and conjunction of result wf plus full literal tree equality; no target relation or lookup-only weakening. Exact existing Spt/List/Nat carriers, no representation qualifier."
+},
+{
+  "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+  "hol_name": "wf_delete",
+  "lean_path": "Flapjack/Misc/Sptree/Wf.lean",
+  "lean_name": "sptWfDelete",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c literal pinned source154-159 comparison 2026-10-01 bead11.4.6: forall generic payload Spt tree and Nat key, sole original wf tree premise gives wf of literal sptDelete. All four tree cases with exact mk_BN/mk_BS collapsing and key arithmetic; no additional nonempty/canonicality hypothesis. Private constructor-wf facts only factor the source unfolding proof."
 }
 ]
