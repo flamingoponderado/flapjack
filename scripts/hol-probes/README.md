@@ -3879,3 +3879,11 @@ types for the StackSem FP sqrt/conversion case review: `inst`, FP lookup/update,
 three machine-IEEE operations and the generic compile-oracle projection. The
 state parameters and fixed word64 FP register carrier are retained; this is
 source-shape evidence, not a HOL-to-Lean equivalence proof.
+
+`stackprops_clock_support_probeScript.sml` captures the six full original
+clock-proof support declarations and free-variable types, including the
+independent dec_clock_const states and four pair_map_eq carriers. The original
+asm Const type confirms that the program parameter indexes HOL words. Ten
+clock_neutral observations cover recursion and rejected Loop/Call/Tick cases
+at word dimensions1/16/64; StackPropsClockSupportParity kernel-replays them.
+These are source and regression captures, not evaluator equivalence.
