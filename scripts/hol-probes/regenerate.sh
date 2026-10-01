@@ -625,7 +625,7 @@ run_probe word_to_stack_chunk_to_bitmap_probeScript.sml word_to_stack_chunk_to_b
   cbm_empty cwb_split8 "$cake_dir/compiler/backend/word_to_stackScript.sml" \
   "$cake_dir/compiler/backend"
 run_probe word_to_stack_write_bitmap_probeScript.sml word_to_stack_write_bitmap_probe.out \
-  wb_empty wb_order_eq "$cake_dir/compiler/backend/word_to_stackScript.sml" \
+  wb_empty wb_single wb_two wb_offset wb_boundary wb_order_a wb_order_b wb_order_eq wb_payload_nat wb_payload_bool "$cake_dir/compiler/backend/word_to_stackScript.sml" \
   "$cake_dir/compiler/backend"
 run_probe word_to_stack_insert_bitmap_probeScript.sml word_to_stack_insert_bitmap_probe.out \
   ib_empty ib_new_len "$cake_dir/compiler/backend/word_to_stackScript.sml" \
@@ -1659,6 +1659,9 @@ run_probe loop_sem_find_code_probeScript.sml loop_sem_find_code_probe.out \
   find_code_label_first find_code_dup_first "$cake_dir/pancake/semantics/loopSemScript.sml"
 run_probe loop_sem_primop_probeScript.sml loop_sem_primop_probe.out \
   valid_no_carry invalid_nonword "$cake_dir/pancake/semantics/loopSemScript.sml"
+run_probe loop_sem_store_narrow_probeScript.sml loop_sem_store_narrow_probe.out \
+  store32_narrow store32_big store32_upper store32_unaligned store32_domain store32_memory_loc store32_address_loc store32_value_loc store32_other storeByte_narrow storeByte_big storeByte_domain storeByte_memory_loc storeByte_address_loc storeByte_value_loc storeByte_clock \
+  "$cake_dir/pancake/semantics/loopSemScript.sml"
 run_probe loop_sem_mem_store_probeScript.sml loop_sem_mem_store_probe.out \
   mem_store_hit mem_store_other "$cake_dir/pancake/semantics/loopSemScript.sml"
 run_probe loop_sem_mem_load_probeScript.sml loop_sem_mem_load_probe.out \
@@ -2656,4 +2659,8 @@ run_probe stack_props_program_validity_probeScript.sml stack_props_program_valid
 
 run_probe word_alloc_get_live_probeScript.sml word_alloc_get_live_probe.out \
   get_live_store_consts get_live_break_outside get_live_return \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_alloc_get_writes_inst_probeScript.sml word_alloc_get_writes_inst_probe.out \
+  writes_const writes_add_carry writes_long_div writes_load16_catchall writes_fp_move64 writes_fp_move32 writes_fp_from_reg_catchall \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
