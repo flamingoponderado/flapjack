@@ -18,9 +18,11 @@ def numsetListDelete {α : Type} : List Nat → Spt α → Spt α
   | [], tree => tree
   | name :: names, tree => numsetListDelete names (sptDelete name tree)
 
-/-- Reject duplicate colours before constructing the source-shaped coloured set. -/
+/-- Reject duplicate colours before constructing the source-shaped coloured set.
+As in HOL (`(num -> num) -> α num_map -> (α num_map # num_set) option`), the
+input map's value type is arbitrary and the input map is returned unchanged. -/
 @[hol "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml" "check_col_def"]
-def checkCol (f : Nat → Nat) (tree : NumSet) : Option (NumSet × NumSet) :=
+def checkCol {α : Type} (f : Nat → Nat) (tree : Spt α) : Option (Spt α × NumSet) :=
   let names := (sptToAList tree).map (fun entry => f entry.1)
   if names.Pairwise (· ≠ ·) then
     some (tree, sptFromAList (names.map (fun name => (name, ()))))

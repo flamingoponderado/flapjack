@@ -287,6 +287,80 @@ LabSem evaluator routing or cross-language IEEE equivalence. Regenerate with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=labsem_fp_updates_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
+`linear_scan_pure_props_probe.out` captures eighteen direct original
+observations of the proposition-valued `linear_scanScript.sml` definitions:
+`check_number_property` (signed bounds, branch numbering), the extra Branch
+conjunct of `check_number_property_strong` against the weak form,
+`check_startlive_prop` (in-range, `ndef` default, missing end, branch
+numbering), `live_tree_registers` membership, `interval_intersect`,
+`point_inside_interval`, `THE (SOME x)`, and two `check_intervals` instances
+proved in HOL without any fact about `THE NONE` (a missing end, and a colour
+clash). Closed instances are decided by EVAL/SIMP_CONV; the two
+`check_intervals` rows are HOL `prove` calls. `Flapjack.Test.LinearScanPurePropsParity`
+kernel-checks the same propositions over the opaque `holTheNone`. This does
+not compare an unspecified `THE NONE` value across provers. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=linear_scan_pure_props_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`linear_scan_top_probe.out` captures fourteen direct original EVAL results
+of the top-level `linear_scanScript.sml` definitions with raw sparse trees:
+`find_bijection_clash_tree` (Seq/Set and Branch with a cut set),
+`apply_bij_on_clash_tree`, `apply_bijection`, `size_of_clash_tree`,
+`extract_coloration`, the generated `run_i_linear_scan_hidden_state` (success
+and Subscript failure), and six end-to-end `linear_scan_reg_alloc` runs
+(moves, forced pairs, a spilling branch, physical and stack registers).
+`Flapjack.Test.LinearScanTopParity` kernel-checks every full result. These
+finite rows do not prove `linear_scan_reg_alloc_correct` or route the
+definitions into the compiler. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=linear_scan_top_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`linear_scan_generic_types_probe.out` captures the original HOL types of
+eleven reg_alloc/linear_scan constants whose carriers are polymorphic:
+`check_col`'s `α num_map`, `check_intervals`' colour codomain, the five
+generated `*_length` exceptions, `find_last_stealable`'s interval-end
+component, `run_i_linear_scan_hidden_state`'s result/exception, the unused
+`nmax` argument of `linear_reg_alloc_and_extract_coloration`, and the
+`define_run` carrier's field types. `LinearScanGenericTypesParity` elaborates
+the Lean declarations at non-default instances of each carrier; the type rows
+fix binder generality only. Regenerate with `CAKEML=...
+HOL_PROBE_ONLY=linear_scan_generic_types_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`linear_scan_monad_probe.out` captures thirty-four direct original EVAL
+results of the monadic `linear_scanScript.sml` definitions on a concrete
+hidden state, printed with raw sparse-tree constructors: the conditional
+interval updates (including a `Subscript` failure), `get_intervals_ct_monad`,
+`remove_inactive_intervals`, colour search, spilling, colouring, stealing,
+the pass-1/pass-2 steps, register exchange, `st_ex_FOLDL`,
+`st_ex_FILTER_good`, `edges_to_adjlist`, the in-array register/move sorts and
+list conversions, and the initial states. `Flapjack.Test.LinearScanMonadParity`
+kernel-checks every full result value. These finite rows do not prove
+allocator soundness or route these definitions into the compiler. Regenerate
+with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=linear_scan_monad_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`monad_arrays_probe.out` captures eleven direct original EVAL rows of the
+ml_monadBase fixed-array primitives (`Msub`/`Mupdate` in and out of range,
+`Marray_length`, `Marray_sub`, `Marray_update` with the unchanged state on
+failure) and reg_alloc `st_ex_MAP` (success threading the state, and the first
+failure stopping the traversal with its state), replayed in
+`Flapjack.Test.MonadArraysParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=monad_arrays_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`linear_scan_pure_defs_probe.out` captures fifteen direct original
+`linear_scanScript.sml` EVAL observations of the pure live-tree and interval
+definitions: get_live_tree with a branch cut set, get_live_backward,
+fix_domination (both branches of the `live = LN` test), check_live_tree
+(success, colour collision, branch merge), numset_list_add_if_lt/gt over a
+present key, get_intervals, get_intervals_withlive, get_intervals_ct,
+size_of_live_tree and both numset_list_insert variants, each compared with a
+full raw sparse-tree value. `Flapjack.Test.LinearScanPureDefsParity`
+kernel-replays the identical inputs and outputs. These finite rows do not
+prove the allocator theorem or route these definitions into the compiler.
+Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=linear_scan_pure_defs_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `reg_alloc_clash_tree_probe.out` captures eight direct original register
 allocator checker observations: repeated deletion, duplicate colours,
 existing-name skips, partial collisions, Delta's discarded write result,
@@ -2653,6 +2727,12 @@ the executed allocator. Regenerate read-only with
 `reg_alloc_in_clash_tree_probeScript.sml` captures eighteen original `in_clash_tree` and `check_clash_tree` rows: `Delta` write/read/miss, `Set` over inserted and raw num_sets, `Branch NONE`/`SOME` left, right, cut-set and miss cases, both `Seq` children, a key above 2^64, and `check_clash_tree` under `f`, `g o f` and a colliding colouring (read through `toAList`). `Flapjack/Test/InClashTreeParity.lean` replays each row and instantiates `checkClashTreeInj` at the probe's tree.
 
 `word_alloc_get_forced_probeScript.sml` captures twenty-eight original `get_forced` rows over `c with ISA := _`: each forced `AddCarry`/`AddOverflow`/`SubOverflow`/`LongMul` ISA guard and its rejected ISA, omitted equal-register pairs, `FPMovToReg`/`FPMovFromReg` at 32 and 64 bits, an unforced instruction, `Seq`/`If`/`MustTerminate`/`Loop`, returning calls with and without a handler, a tail call with a handler, `Skip`, and registers above 2^64. `Flapjack/Test/GetForcedParity.lean` replays each row and instantiates `getForcedInGetClashTree`. These are proof-side ports; the executed RISC-V allocator still uses its own forced-edge traversal.
+
+`reg_alloc_invariants_probeScript.sml` captures thirty original reg_allocProof invariant rows. Quantified `bool` definitions are decided by proving the row or its negation with `TAC_PROOF` and a recorded tactic: `has_edge` (hit, miss, both bounds, a key above 2^64), `undirected`, `good_ra_state` (well-formed, unsorted adjacency, out-of-range move, wrong array length), `no_clash` (distinct, clashing, non-fixed, self loop), `sp_inverts` (inverse, mismatch, inserted pair), `is_clique`, `is_subgraph`, `hide`, `colouring_satisfactory` (injective, clashing, self loop) and the `good_pref`/`good_neg_pref` oracle conditions. `Flapjack/Test/RegAllocInvariantsParity.lean` proves or refutes each row in the kernel and instantiates `spInvertsInsert`.
+
+`reg_alloc_mk_bij_lemmas_probeScript.sml` captures six original `list_remap`/`mk_bij` instances through `toAList`: a repeated and pre-mapped name list from nonempty maps, an inverse pair extended from a nonempty inverse, `wf` of both results, a mixed `Seq`/`Branch SOME`/`Set` tree, and a key above 2^64. `Flapjack/Test/RegAllocMkBijLemmasParity.lean` replays each row and applies `listRemapDomain`, `listRemapWf`, `mkBijAuxDomain`, `mkBijAuxBij` and `mkBijAuxWf` to the probe inputs.
+
+`reg_alloc_accessors_probeScript.sml` captures eighteen original rows of the `ml_monadBaseLib`-generated `ra_state` accessors on one concrete state: `get_dim`/`get_stack`/`get_avail_moves_wl`, `set_dim` and a `set_` that leaves other fields, `adj_ls_length`, in-range and out-of-range (including a key above 2^64) `node_tag_sub`/`adj_ls_sub`/`degrees_sub`/`coalesced_sub`, in-range and out-of-range `update_degrees` (failure keeps the state), `update_move_related`/`update_node_tag`, `st_ex_MAP adj_ls_sub` with and without an out-of-range index, and `Mupdate`. `Flapjack/Test/RegAllocAccessorsParity.lean` replays each row and applies `updateDegreesEqn` and the provisional `degreesSubEqn`/`stExMapAdjLsSub` to the same inputs.
 `word_alloc_checker_assembly_probe.out` observes five mixed original checker
 equations, kernel-replayed by `WordAllocCheckerAssemblyParity`. Nested control
 (Seq/MustTerminate/If/Loop/Break/Continue), returning and handled calls, a tail
@@ -2855,6 +2935,106 @@ the finite fixtures do not prove cross-assistant equivalence.
 `reg_alloc_sorted_mem_probe` captures twelve original early-stop membership
 equations, including unsorted inputs. `RegAllocSortedMemParity` kernel-replays
 the same cases and the executed wrapper's equation for arbitrary keys/lists.
+
+`word_alloc_full_ssa_probe` captures 5 original EVAL results of
+`full_ssa_cc_trans` at 64-bit words (limit, entry move, renamed body), replayed
+in `WordAllocFullSSAParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_alloc_full_ssa_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`word_alloc_ssa_cc_trans_probe` captures 31 original EVAL results of
+`ssa_cc_trans` over 64-bit programs covering every clause family (moves,
+StoreConsts, instructions, expressions, If merges, cutset restarts for
+Alloc/Install/FFI/Call with returns and handlers, ShareInst, Loop/Break/
+Continue), replayed by definitional equality in `WordAllocSSACcTransParity`.
+Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_alloc_ssa_cc_trans_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`word_alloc_ssa_helpers_probe` captures 12 original EVAL results of
+`list_next_var_rename_move`, `force_rename`, `mk_prio`, `ssa_reconcile` and
+`loop_setup` at 64-bit words, replayed by definitional equality in
+`WordAllocSSAHelpersParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_alloc_ssa_helpers_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`word_alloc_ssa_trans_inst_probe` captures 28 original EVAL results of
+`ssa_cc_trans_inst` (every clause, fixed-register moves, the Load16/FP catchall
+and both `dimindex` branches at 64 and 32 bits) and `ssa_cc_trans_exp`,
+replayed by definitional equality in `WordAllocSSATransInstParity`. Regenerate
+with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_alloc_ssa_trans_inst_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`word_alloc_fix_inconsistencies_probe` captures 12 original EVAL results of
+`option_lookup`, `priority`, `fake_move`, `fake_moves` and
+`fix_inconsistencies` at 64-bit words (raw sparse trees), replayed by
+definitional equality in `WordAllocFixInconsistenciesParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_alloc_fix_inconsistencies_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`reg_alloc_move_prep_probe` captures 13 original EVAL results of
+`extract_color` (raw sparse result), `coalesce_root`, `full_consistency_ok`
+(each rejecting check and an accepted pair) and `update_move`, kernel-replayed
+in `RegAllocMovePrepParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=reg_alloc_move_prep_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`reg_alloc_coalesce_probe` captures 29 original EVAL results of misc
+`lookup_any` and reg_alloc `inc_deg`, `consistency_ok`, `coalesce_parent`
+(including path compression), `canonize_move`, `st_ex_FIRST`,
+`reset_move_related`, `st_ex_list_MAX_deg` and `st_ex_list_MIN_cost`, with full
+`ra_state` results, kernel-replayed in `RegAllocCoalesceParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=reg_alloc_coalesce_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`reg_alloc_worklist_probe` captures 18 original EVAL results of `dec_deg`,
+`dec_degree`, `add_simp_wl`, `add_spill_wl`, `add_freeze_wl`,
+`add_unavail_moves_wl`, `push_stack` and `respill` with full `ra_state`
+results (truncated decrement, duplicate neighbours, out-of-dimension no-op,
+partial updates before `Subscript`), kernel-replayed in
+`RegAllocWorklistsParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=reg_alloc_worklist_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`reg_alloc_considered_var_probe` captures 20 original EVAL results of
+`is_Fixed`, `is_Atemp`, `is_Fixed_k`, `considered_var` and `deg_or_inf`
+(tag kinds, `k` boundaries, out-of-array failures, state preservation),
+kernel-replayed in `RegAllocConsideredVarParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=reg_alloc_considered_var_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`reg_alloc_split_degree_probe` captures 12 original EVAL results of
+`is_not_coalesced` and `split_degree` (coalesce targets, degree comparisons,
+the `v ≥ d` short-circuit, an out-of-array failure and state preservation),
+kernel-replayed in `RegAllocSplitDegreeParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=reg_alloc_split_degree_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`reg_alloc_graph_construction_probe` captures 20 original EVAL results of
+`insert_edge`, `list_insert_edge`, `clique_insert_edge`, `extend_clique`,
+`mk_tags`, `mk_graph` (Delta/Set/Branch NONE/Branch SOME/Seq), `extend_graph`
+(Bool endpoints) and `init_ra_state` over literal `ra_state` records, with
+full result states including `Subscript` failures and their partial updates.
+`RegAllocGraphConstructionParity` kernel-replays every row. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=reg_alloc_graph_construction_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`reg_alloc_move_table_probe` captures the original types and 25 EVAL results
+of `tag_col`, `extract_tag`, `unbound_colour` (gaps, duplicates, unsorted
+inputs, large naturals), `pri_move_insert`, `undir_move_insert`, `moves_to_sp`
+and `resort_moves` (raw sparse trees, Bool payloads, equal priorities).
+`RegAllocMoveTableParity` kernel-replays every row and the executed
+`cakeUnboundColour`'s definitional equality with the literal definition.
+Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=reg_alloc_move_table_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`reg_alloc_list_helpers_probe` captures the original types and 23 EVAL results
+of `st_ex_FILTER` (accumulator order, state threading, state-dependent
+predicates, failure at every position, independent Bool carriers, large
+naturals) and `sorted_insert` (accumulator, duplicates, front/middle/end,
+unsorted inputs). `RegAllocListHelpersParity` kernel-replays every row and the
+executed `cakeSortedInsert`'s definitional equality with the literal
+definition. Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=reg_alloc_list_helpers_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 - `parmove_preserves_moves_step_probeScript.sml`: ten original non-self destination predicates before/after Save, including scratch destination. Lean fixtures certify the steps and witness changes; observations do not prove transition or cross-assistant equivalence.
 `word_to_stack_program_bitmaps_probe` captures ten original single-program
@@ -3412,6 +3592,58 @@ only the original allocation-class premise and all four result conjuncts.
 Malformed/physical-counter observation rows test the definition; they do not
 claim that the allocation premise holds. No exported local theorem is claimed.
 
+### Full WordConvs no-install equations
+
+`word_convs_no_install_def_probeScript.sml` projects all 26 clauses of the
+original exported `no_install_def`, matches each complete constructor input,
+and checks assumption-free exact clause applications before evaluating the pair
+(actual predicate value, original clause conclusion). Three additional width-one
+Call rows complete all four return/handler combinations. `WordConvsNoInstallDefParity`
+projects the same clauses from the entire Lean conjunction at identical inputs;
+Install and recursive failing bodies remain false, every original clause true.
+The existing canonical `noInstallSubprogsHOL` predicate is reused. Normalized
+Install comparisons simplify by constructor disjointness, so the ShareInst
+clause requires no choice of HOL ARB. All source shared inputs remain in the
+full theorem; the only qualifier translates positive type-indexed word dimensions.
+These regression observations do not establish compiler correctness or replace
+source-level HOL/Lean correspondence review.
+
+### Full generic-frame copy-ret no-install theorem
+
+`word_to_stack_copy_ret_no_install_probeScript.sml` evaluates eight original
+full `copy_ret_no_install` iff instances together with actual output predicates.
+The original theorem is local; this capture evaluates original definitions and
+does not claim an exported theorem application. Independent generic frame tails
+and return-list types, widths 64/1/16, zero/nonzero counts, both flags and unsafe
+Install/handler/loop continuations are replayed by
+`WordToStackCopyRetNoInstallParity`. The unrestricted native theorem retains the
+full source iff without a continuation-safety assumption.
+
+### Full incremental compiler code-label safety
+
+`word_to_stack_code_label_safety_probeScript.sml` evaluates ten original full
+compiler source/target safety pairs, including duplicate keys, spilling, owned
+and wrong-owner returning handlers, a dropped tail-handler source reference,
+threaded bitmap output and width-one words with an infinite external set.
+Missing references and wrong handler ownership give `(F,F)`; the dropped
+tail-handler reference gives `(F,T)`. Each row proves the stated pair by
+evaluating original definitions, without claiming an exported theorem
+application. `WordToStackCodeLabelSafetyParity` kernel-replays identical inputs
+and applies the unrestricted full theorem with arbitrary configuration, register
+count and bitmap state. These observations do not establish cross-language
+equivalence or complete the full compiler correctness goal.
+
+### Generic WordConvs code-label row carriers
+
+`word_convs_code_label_carriers_probeScript.sml` freshly checks the original
+`good_code_labels_def` with Bool, Unit, List Bool and Option Bool second row
+fields, at widths 64/1/16. `WordConvsLabelSafetyParity` replays the four cases
+and quantifies the independent generic field carrier. The original full-type
+query revealed that fixing this ignored field to Nat specialized the predicate;
+its existing canonical Lean definition now preserves the generic carrier.
+The actual compiler theorem still uses Nat there, as required by its original
+compiler type. No clauses or executed compiler behavior change.
+
 ### Native return wrapper no-shared-memory preservation
 
 `word_to_stack_no_shmemop_return_probeScript.sml` evaluates sixteen original
@@ -3422,6 +3654,7 @@ result. `WordToStackNoShmemopReturnParity` kernel-checks the identical inputs
 and applies the full theorem at arbitrary independent carriers and positive
 width. These regressions do not establish cross-language equivalence.
 Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_return_probeScript.sml`.
+
 
 ### Native compiler instruction no-shared-memory case
 
