@@ -43419,6 +43419,33 @@
     "reviewer": "flapjack-sol3 source comparison (2026-10-01; bead .18.5.15.10.23): original targetPropsScript.sml10-90 and lab_to_targetProofScript.sml132-149/230-247. Native accepted MachineConfig/AsmState fields retained; shift changes only nextInterfer via the exact shift_seq(i+k), leaving all FFI/cache/target fields intact. Zero theorem retains function equality to I; compositions retain each original count order. bytesInMemoryHOL fixed word8 payload and all wrapped BitVec offsets retained. SUBSET uses universal predicate implication; DIFF retains domain equality to domain2-and-not-pcs, initial memory relation and full DISJOINT premise. DISJOINT is expanded as forall address not(membership and exists bounded offset equality); set-of-list membership is List membership, with no uniqueness assumption. Shorter preserves complete original conjunction and conclusion. Only polymorphic word dimension translates to positive BitVec width; no extra successful evaluation, encoder or region premise. Fresh source-derived HOL eight observations and kernel fixtures PASS; exact unchanged definition text is re-elaborated because prebuilt targetProps theory is unavailable, not a prebuilt-theory oracle or cross-language equivalence claim. Coordinator review pending."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "max_var_inst_max",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/MaxVarInst.lean",
+    "lean_name": "maxVarInstMax",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c compared full local theorem10227-10235, every_var_inst98-131, max_var_inst216-243 and imported asm constructors. Arbitrary instruction, Nat register maxima, all arithmetic/memory/FP cases, positive width and exact width64 transfers. Bool decide renders original numeric predicate. No extra bound premise; only words_as_type_indexed_bitvec translation. Coordinator acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "max_var_exp_max",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/MaxVarExp.lean",
+    "lean_name": "maxVarExpMax",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c: full literal local theorem10211-10225 source compared, actual every_var_exp85-91/max_var_exp207-214 and exp14-23 carriers. All expression constructors including arbitrary recursive Op lists/empty, shifts and loads; Const/Lookup ignored. Numeric Nat maximum with original zero-based MAX_LIST; public theorem no extra bound/success/output premise. Private numeric-bound induction infrastructure establishes the unconditional result, not a hypothesis. Only positive width BitVec translation; imported WordStoreHOL fixes store payload to original non-word carrier. Coordinator acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "every_var_exp_mono",
+    "lean_path": "Flapjack/Pancake/WordConvs/ExpressionMonotonicity.lean",
+    "lean_name": "everyVarExpMono",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c: complete original23-32 quantified P, exp, Q and conjunction antecedent retained: global pointwise Boolean implication AND actual every_var_exp P. Conclusion actual every_var_exp Q. Native WordLangExpHOL carrier, original every_var_exp85-91 and entire recursive List traversal matched including empty/nested Op, Load, Shift, Const/Lookup. No bound/evaluation/target premise beyond literal source. Only positive width BitVec carrier translation; all arbitrary Nat -> Bool predicates retained. Needed by word_allocProof max_var_max10285ff. Coordinator acceptance pending."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Encoders/AsmSem/Arithmetic.lean",
     "lean_name": "updPc",
     "hol_path": "cakeml/compiler/encoders/asm/asmSemScript.sml",
