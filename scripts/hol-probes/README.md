@@ -2645,3 +2645,4 @@ cross-language equivalence. Regenerate against read-only prebuilt theories with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=wordconvs_code_labels_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
+- `parmove_preserves_moves_steps_probeScript.sml`: six complete destination/witness observations for Start/Save states. Lean fixtures certify the RTC trace and zero-step case; HOL observations alone do not prove that trace or cross-assistant equivalence.
