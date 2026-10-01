@@ -146,6 +146,7 @@ import Flapjack.Test.WordToStack.ReturnCopy
 import Flapjack.Test.WordToStack.Special
 import Flapjack.Test.PipelineDiagnostics
 import Flapjack.Test.FullSsa
+import Flapjack.Test.ProductionAllocationLimit
 import Flapjack.Test.PanValueMemoryFfi
 import Flapjack.Test.PanValueAcceleratorFfi
 import Flapjack.Test.PanValueFfiClockMemoryFfi
