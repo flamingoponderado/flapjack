@@ -38281,5 +38281,14 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "reviewer": "flapjack-sol source comparison (2026-10-01, bead flapjack-b4v0.1): labSemScript.sml10-44. Word8Loc exactly Byte word8 | LocByte num num num. State preserves all23 fields in order: regs total num->word_loc, fp_regs total num->word64, mem total word->word_loc, mem_domain/shared_mem_domain sets, pc, be, ffi, io_regs num->ffiname->num->word option, cc_regs num->num->word option, io_fp_regs/cc_fp_regs num->num->word64, code list of sections, compile C->prog->(word8 list*C)option, compile_oracle num->C*prog, code_buffer buffer(width,8), clock, failed and five ptr/len/link register fields. Canonical WordLocW, WordSemBuffer, HolFfiState and HolFfiName imported without duplication. Concrete LabLang instantiation uses HolAsm (not merely HolInst nor generic AsmData), HolMemop/HolAddr/HolCmp/HolRegImm and opaque MlString at one shared width; all constructor arities and source payloads compared labLang16-51/asm138-145. Sets use the previously reviewed Bool membership rendering; no finite-map fields, hence no fmap qualifier. Only variable word dimension uses positive BitVec width/NeZero; fixed8/64 retained. C/F universe0 independent; no evaluator or runtime claim.",
   "words_as_type_indexed_bitvec": true
+},
+{
+  "lean_path": "Flapjack/Compiler/Encoders/AsmSem.lean",
+  "lean_name": "wordShift",
+  "hol_path": "cakeml/compiler/encoders/asm/asmSemScript.sml",
+  "hol_name": "word_shift_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol source comparison (2026-10-01, b4v0.2.1.1): asmSemScript68-73 four clauses Lsl logical left, Lsr logical right, Asr sign-extending right, Ror rotate-right. Native positive BitVec width/NeZero, arbitrary Nat amount unchanged. No option/error or masked amount; total HOL shifts retain oversize zero/sign-fill and modulo-width rotation. This is the exact operation called by labSem arith_upd104, whose separate assertion and failed-state update must be retained by parent b4v0.2.1; not backend_common word_shift constant nor wordLang option word_sh. Future native Lab evaluator must use this definition, full evaluator/runtime parent b4v0 remains open."
 }
 ]
