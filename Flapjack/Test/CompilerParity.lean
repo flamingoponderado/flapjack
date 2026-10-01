@@ -779,6 +779,7 @@ import Flapjack.Test.SSAMergeMovesParity
 import Flapjack.Test.WordAllocFixInconsistenciesParity
 import Flapjack.Test.WordAllocSSATransInstParity
 import Flapjack.Test.WordAllocSSAHelpersParity
+import Flapjack.Test.WordAllocSSACcTransParity
 import Flapjack.Test.SSAMergeMovesRouteParity
 
 
