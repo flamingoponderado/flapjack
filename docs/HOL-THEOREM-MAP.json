@@ -43653,6 +43653,6 @@
     "lean_name": "everyVarMono",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-c: complete source45-57 quantified P/native prog/Q with global predicate implication AND source every_var guard. Actual everyVarHOL over full WordLangProgHOL, original every_var_def133-176 including return-dependent handler traversal, all cutset Spt lists, instructions/expressions and catchall cases. No extra bound/wf/evaluation/success/target premise. Only positive word dimension BitVec translation; faithful MlString, List, Spt and other payload carriers retained. Coordinator acceptance pending."
+    "reviewer": "flapjack-luna-c: complete source45-57 quantified P/native prog/Q with global predicate implication AND source every_var guard. Actual everyVarHOL over full WordLangProgHOL, original every_var_def133-176 including return-dependent handler traversal, all cutset Spt lists, instructions/expressions and catchall cases. No extra bound/wf/evaluation/success/target premise. Only positive word dimension BitVec translation; faithful MlString, List, Spt and other payload carriers retained. Coordinator complete source/fixture review accepted (2026-10-01)."
   }
 ]
