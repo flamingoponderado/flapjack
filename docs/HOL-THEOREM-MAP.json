@@ -41882,6 +41882,31 @@
   "reviewer": "flapjack-luna-c: source1727-1731 literal ordered inter/difference/union composition; generic initial domain payload and ignored fixed component, generic common branch payloads; no wf premise. Eight fresh original full-tree equality rows paired kernel fixtures, including malformed trees and Bool payloads."
 },
 {
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/StackOnly.lean",
+  "lean_name": "removeTempStack",
+  "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+  "hol_name": "remove_temp_stack_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison (2026-10-01), original1734-1737: native List Nat right-fold actual sptDelete on first component, second component unchanged. Preserve original generalized Spt alpha payload and arbitrary beta second component; allocator specializes both to Spt Unit, but port does not narrow the HOL type. No wf, domain, distinctness or lookup-only premise. Eight fresh original observations/kernel equalities, including generalized Nat payload/Nat and Unit payload/Bool second components, compare full actual trees for empty/zero/duplicate/missing/fixed preservation/raw non-wf cases, registered actual CompilerParity. sptDelete follows original external sptree recursive delete/mk_BN/mk_BS; no finite-map substitute. Coordinator source review pending; recursive stack analysis/full allocator/production remain open."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/StackOnly.lean",
+  "lean_name": "mergeStackOnly",
+  "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+  "hol_name": "merge_stack_only_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison (2026-10-01), original1711-1725: exact Nat move pair and Unit Spt temporary/fixed pair. Actual lookup x = SOME unit tests source membership; present branch inserts alloc y into temporary then inserts x into fixed iff y is nonphysical; absent stack x inserts only alloc y into temporary; other x deletes y temporary and preserves fixed. Same lookup/equality, insertion/deletion, predicate convention and clause order; no wf, distinctness, success or finite-map replacement premise. Nine freshly captured original full-tree equations cover all branches, missing deletion, overwrite and raw trees; same-input kernel fixtures registered actual CompilerParity. Coordinator source review pending; recursive analysis/allocator/executed production remain open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "clash_tree_colouring_ok",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/ClashTreeColouringOk/Inst.lean",
+  "lean_name": "clashTreeColouringOk_Inst",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.4.13): HOL clash_tree_colouring_ok (word_allocProofScript.sml:2813-2826) at the Inst case of get_clash_tree_ind, rendered by the untagged clashTreeGoal: binders lt f live flive livein flivein; the six HOL premises wf_cutsets prog, wf live, EVERY (\\(n,e). wf n /\\ wf e) lt (as membership-quantified sptWf of both components), domain flive = IMAGE f (domain live), INJ f (domain live) UNIV, check_clash_tree f (get_clash_tree prog lt) live flive = SOME (livein,flivein); and the five hide'd HOL conclusions (untagged clashTreeConcl): wf livein, INJ f (domain livein), colouring_ok f prog live lt, livein = get_live prog live lt, domain flivein = IMAGE f (domain livein). No sub-program, no IH, no extra premise. Proof follows the HOL Inst branch (word_allocProofScript.sml:2840-2975, all Const/Arith/Mem/FP sub-cases): get_delta_inst is a Delta whose writes are get_writes_inst and whose result equals get_live_inst (untagged instDelta: rfl or spt_eq_thm / wf_insert_swap / wf_delete_swap per instruction, 64-bit vs other width FP moves); then HOL start_tac: the Delta step via check_partial_col_INJ on writes then reads, domain_numset_list_delete and INJ_IMP_IMAGE_DIFF (untagged checkDelta/deltaConcl), the get_live equation by numset_list_insert_eq_UNION/wf_get_live_exp/get_reads_exp_get_live_exp, wf_numset_list_delete_eq (Move) or spt_eq_thm (StoreConsts). HOL sets as predicates, IMAGE as an existential, INJ as injectivity on the domain predicate; HOL 'a word as positive-width BitVec."
+},
+{
   "lean_path": "Flapjack/Compiler/Backend/Parmove/Correct.lean",
   "lean_name": "parmove_correct",
   "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
