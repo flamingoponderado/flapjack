@@ -35,6 +35,28 @@ protected theorem actualProof : True := by trivial
 
 
 class CoordinatorPendingReviewNoteTest(unittest.TestCase):
+    def test_rejects_intervening_and_reversed_pending_notes(self):
+        notes = [
+            "Coordinator source acceptance pending.",
+            "pending coordinator acceptance",
+            "integration acceptance pending",
+            "external PR review pending",
+            "Coordinator source review is required.",
+            "integration review required",
+            "coordinator is pending",
+        ]
+        for note in notes:
+            with self.subTest(note=note):
+                self.assertIsNotNone(MAP["reviewed_note_pending_error"](
+                    ("Flapjack/Example.lean", "newPort"), "reviewed_exact", note,
+                ))
+
+    def test_does_not_confuse_pending_ci_with_pending_source_acceptance(self):
+        self.assertIsNone(MAP["reviewed_note_pending_error"](
+            ("Flapjack/Example.lean", "newPort"), "reviewed_exact",
+            "Coordinator source acceptance complete. CI pending.",
+        ))
+
     def test_rejects_new_reviewed_rows_with_pending_coordinator_note(self):
         error = MAP["reviewed_note_pending_error"](
             ("Flapjack/Example.lean", "newPort"),

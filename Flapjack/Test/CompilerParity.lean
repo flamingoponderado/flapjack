@@ -1,4 +1,6 @@
 import Flapjack.Test.WordConvsPredicateEquationsParity
+import Flapjack.Test.SSAMapStepParity
+import Flapjack.Test.SSALocalsInsertParity
 import Flapjack.Test.WordToStackCodeLabelSafetyParity
 import Flapjack.Test.WordMaxInstRouteParity
 import Flapjack.Test.SSALocalsPhysicalInsertParity

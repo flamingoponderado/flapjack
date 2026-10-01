@@ -3504,6 +3504,9 @@ run_probe word_to_stack_no_shmemop_call_core_probeScript.sml word_to_stack_no_sh
   cc_ret_zero cc_ret_one cc_ret_many cc_ret_width1 cc_prefix_1 cc_suffix_1 cc_prefix_32 cc_suffix_32 cc_prefix_64 cc_suffix_64 cc_prefix_80 cc_suffix_80 \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
 
+run_probe word_program_max_unrestricted_probeScript.sml word_program_max_unrestricted_probe.out \
+  seq16_max seq16_limit tail16_max tail16_limit both16_max both16_limit loop16_max loop16_limit \
+  "$cake_dir/compiler/backend/wordLangScript.sml" "$cake_dir/compiler/backend"
 run_probe ssa_locals_swap_probeScript.sml ssa_locals_swap_probe.out \
   sw_type_ssaL sw_type_cst sw_type_st sw_type_ssaR sw_type_na sw_full \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -3550,3 +3553,27 @@ run_probe word_to_stack_no_shmemop_inst_probeScript.sml word_to_stack_no_shmemop
 run_probe real_sqrt_round_agreement_special_probeScript.sml real_sqrt_round_agreement_special_probe.out \
   sqrt_zero_pinf sqrt_zero_nz sqrt_positive_pinf sqrt_positive_nz sqrt_negative_pinf sqrt_negative_nz sqrt_negative_flags_all_modes sqrt_quiet_nan_flags_all_modes \
   "$hol_dir/src/floating-point/binary_ieeeScript.sml" "$hol_dir/src/floating-point"
+
+run_probe ssa_map_bounds_probeScript.sml ssa_map_bounds_probe.out \
+  mb_empty mb_valid mb_same mb_bound mb_physical mb_invalid mb_large_physical mb_large mb_overwrite mb_more \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_locals_insert_probeScript.sml ssa_locals_insert_probe.out \
+  fi_full fi_source_type fi_target_type fi_value_type fi_set_var_full fi_empty fi_preserve \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_map_step_probeScript.sml ssa_map_step_probe.out \
+  ml_full ml_empty ml_valid ml_rejected ml_physical ml_invalid ml_large \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_merge_correct_right_probeScript.sml ssa_merge_correct_right_probe.out \
+  mr_full mr_type_ls mr_type_na mr_type_ssaL mr_type_ssaR mr_type_stR mr_type_cstR mr_type_pri \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_merge_correct_left_probeScript.sml ssa_merge_correct_left_probe.out \
+  mlc_full mlc_type_ls mlc_type_na mlc_type_ssaL mlc_type_ssaR mlc_type_stL mlc_type_cstL mlc_type_pri \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_physical_state_updates_probeScript.sml ssa_physical_state_updates_probe.out \
+  ph_set_full ph_set_type_st ph_set_type_cst ph_list_full ph_list_type_st ph_list_type_cst \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
