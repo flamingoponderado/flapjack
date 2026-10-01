@@ -4140,3 +4140,5 @@ Selector: `HOL_PROBE_ONLY=word_to_stack_comp_no_install_probeScript.sml`.
 - `ssa_cc_trans_inst_props_probeScript.sml` replays literal instruction allocation/map properties with original local map-extension and allocation-add proofs, capturing the full theorem and six argument carriers.
 
 - `ssa_rename_shifted_properties_probeScript.sml` replays the original raw-list derived pipeline and shifted move wrapper with nine original prerequisites; full statements and twelve type rows distinguish their input map-bound counters and conjunction orders.
+
+- `ssa_cc_trans_props_move_probeScript.sml` replays the original marked Move case of program allocation/map properties after its original native compiler unfolding, with four original local prerequisites, full case statement and eight carrier captures.

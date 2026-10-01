@@ -49574,5 +49574,14 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "reviewer": "flapjack-sol-a source comparison 2026-10-02, bead flapjack-j4qq: literal original derived list theorem pipeline5878-5891 and move theorem5901-5916 replayed with nine original local prerequisites, full statements plus twelve input/output carrier captures. Raw list theorem preserves derived quantifier order ls/ssa/na/ssaOut/naOut/lsOut, stack-before-allocated disjunction, map bound at na+2, then bound/stack-to-allocated/allocated-to-stack/map conclusions. Move wrapper retains original quantifier order, allocated-before-stack and map bound at unshifted na; shifted map bound is proved from ssa_map_ok_lem, not assumed. All producers are native listNextVarRename/listNextVarRenameMove, exact Spt maps and Nat/List carriers, no distinctness or validity/target-evaluation premises. Move program HOL alpha word carrier translates to same positive BitVec width with NeZero. Raw theorem has no word carrier and is unqualified constructor-for-constructor exact.",
   "words_as_type_indexed_bitvec": true
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "ssa_cc_trans_props",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsMove.lean",
+  "lean_name": "ssaCcTransPropsMove",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol-a source comparison 2026-10-02, bead flapjack-jq7g: genuine Move case of word_allocProofScript.sml5951ff, original marked Move proof5958-5986 replayed literally after its original compiler unfolding with four literal local prerequisites; full case statement and eight inferred carriers captured. Substitutes only Move pri ls for universally quantified prog, retains arbitrary input/output Spt maps, natural counters/priority, original loop-table list of Spt map and two Spt sets, native compiler output equality, original ssa_map_ok/is_alloc_var conjunction, and all three counter monotonicity/allocation/output-map conclusions. No IH for nonrecursive Move, no extra distinctness/tree validity/evaluation or target-validity assumption. forceRename uses actual filtered zip; all selected destination bounds/nonphysicality are derived from accepted list_next_var_rename_lemma_1 and original allocation residue. Native WordLangProgHOL carrier has positive BitVec width/NeZero; Spt maps/sets and List pairs remain identity translations, with no finite-map qualifier."
 }
 ]
