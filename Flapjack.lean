@@ -6,6 +6,7 @@ import Flapjack.Compiler.Backend.WordToStack.NativeReturn
 import Flapjack.Compiler.Backend.WordToStack.NativeSharedMemory
 import Flapjack.Compiler.Backend.WordToStack.NativeCallArgs
 import Flapjack.Compiler.Backend.WordToStack.NativeMoves
+import Flapjack.Compiler.Backend.LabSem.Memory
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.If
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.CutState
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.LoopRecursion

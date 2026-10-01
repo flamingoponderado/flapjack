@@ -12350,7 +12350,7 @@
     "hol_name": "StackHandlerArgs_def",
     "lean_name": "stackHandlerArgs",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-deepseek-three (2026-09-25: matches HOL `StackHandlerArgs_def` at word_to_stackScript.sml:350 - StackArgs dest arg_count (k, f + handler_slots perf, f' + handler_slots perf). `'a` is arbitrary in HOL and only num/sum/list are touched, so the generic-alpha statement over the exact shared-word carrier ProgM is exact; HOL-EVAL rows shaF=T/shaT=T reproduced by handlerParityGuard in Flapjack/Test/WordToStackBitsParity.lean.)"
+    "reviewer": "flapjack-luna-b source comparison 2026-10-01 r1p4: Original word_to_stackScript.sml349-353 and freshly loaded theory type bool -> alpha+beta -> num -> num#num#num -> gamma stackLang prog independently quantify both destination payloads and output program carrier. Lean now retains independent delta/epsilon destination parameters and existing alpha output parameter. Body unchanged: calls StackArgs with exactly handler_slots additions to both offsets. Nat call sites explicitly instantiate erased destination carriers; original shaF/shaT kernel parity retained, plus universal generic equation and Bool/Unit unequal-carrier examples. No production behavioral delta. Prior Nat/Nat restriction corrected rather than accepted as exact."
   },
   {
     "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
@@ -40586,6 +40586,78 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.2): HOL evaluate_stack_swap (wordPropsScript.sml:2316-2363) at the Alloc case (proof wordPropsScript.sml:2371-2411): same binder s, no premise, the HOL case-split conclusion rendered by the untagged stackSwapPost, no IH. Proof follows HOL: the pushed frame is independent of the stack below (s_val_eq_stack_size for stack_max), gc_s_val_eq transports the collection, the popped frames coincide by s_val_and_key_eq with gc_s_key_eq, and push_env_pop_env_s_key_eq gives the key equality and the handler; has_space and AllocSize are stack-independent. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/Memory.lean",
+  "lean_name": "addrValue",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "addr_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol direct source comparison 2026-10-01, bead b4v0.2.2: literal labSem225-309 eight actual operational memory declarations and all8 mem_op cases on reviewed native State/HolAddr/WordLocW, all positive word widths with no 64-only assumption. addr accepts only Word base, modulo word addition; ordinary Store/Load update memory/register first, then sticky alignment w2n MOD(width DIV8)=0 and original domain assertion, allowing Loc payloads and retaining writes on failure. Narrow32/8 reuse reviewed WordSem exact total-memory/domain/endian helpers; resize zero-extends load values and truncates stores; helper None/type errors fail without writes, successful memory replacement retains failed flag. Ordinary Load16/Store16 always assert false, no shared-memory substitution. Original46 direct observations allT/kernel replays PASS incl address wrap, aligned-base domain for narrow accesses, both endians, unsigned/narrowing, Loc/errors, sticky and retained-failure writes, width1 DIV8=0/MOD0 and width8 boundaries. Only positive word dimension and universe0 host translation qualified; no fmap/list/string exception or operation callbacks. Original unused is_Loc_def actually classifies semanticPrimitives.v with Loc Bool/Nat, confirmed loaded theorem; no source uses besides declaration. It is separately OPEN P2 og0v, not falsely ported on WordLocW or asserted a memory prerequisite. Full asm_inst/frame/evaluate and runtime/end-to-end remain open; coordinator source acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/Memory.lean",
+  "lean_name": "memStore",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "mem_store_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol direct source comparison 2026-10-01, bead b4v0.2.2: literal labSem225-309 eight actual operational memory declarations and all8 mem_op cases on reviewed native State/HolAddr/WordLocW, all positive word widths with no 64-only assumption. addr accepts only Word base, modulo word addition; ordinary Store/Load update memory/register first, then sticky alignment w2n MOD(width DIV8)=0 and original domain assertion, allowing Loc payloads and retaining writes on failure. Narrow32/8 reuse reviewed WordSem exact total-memory/domain/endian helpers; resize zero-extends load values and truncates stores; helper None/type errors fail without writes, successful memory replacement retains failed flag. Ordinary Load16/Store16 always assert false, no shared-memory substitution. Original46 direct observations allT/kernel replays PASS incl address wrap, aligned-base domain for narrow accesses, both endians, unsigned/narrowing, Loc/errors, sticky and retained-failure writes, width1 DIV8=0/MOD0 and width8 boundaries. Only positive word dimension and universe0 host translation qualified; no fmap/list/string exception or operation callbacks. Original unused is_Loc_def actually classifies semanticPrimitives.v with Loc Bool/Nat, confirmed loaded theorem; no source uses besides declaration. It is separately OPEN P2 og0v, not falsely ported on WordLocW or asserted a memory prerequisite. Full asm_inst/frame/evaluate and runtime/end-to-end remain open; coordinator source acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/Memory.lean",
+  "lean_name": "memLoad",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "mem_load_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol direct source comparison 2026-10-01, bead b4v0.2.2: literal labSem225-309 eight actual operational memory declarations and all8 mem_op cases on reviewed native State/HolAddr/WordLocW, all positive word widths with no 64-only assumption. addr accepts only Word base, modulo word addition; ordinary Store/Load update memory/register first, then sticky alignment w2n MOD(width DIV8)=0 and original domain assertion, allowing Loc payloads and retaining writes on failure. Narrow32/8 reuse reviewed WordSem exact total-memory/domain/endian helpers; resize zero-extends load values and truncates stores; helper None/type errors fail without writes, successful memory replacement retains failed flag. Ordinary Load16/Store16 always assert false, no shared-memory substitution. Original46 direct observations allT/kernel replays PASS incl address wrap, aligned-base domain for narrow accesses, both endians, unsigned/narrowing, Loc/errors, sticky and retained-failure writes, width1 DIV8=0/MOD0 and width8 boundaries. Only positive word dimension and universe0 host translation qualified; no fmap/list/string exception or operation callbacks. Original unused is_Loc_def actually classifies semanticPrimitives.v with Loc Bool/Nat, confirmed loaded theorem; no source uses besides declaration. It is separately OPEN P2 og0v, not falsely ported on WordLocW or asserted a memory prerequisite. Full asm_inst/frame/evaluate and runtime/end-to-end remain open; coordinator source acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/Memory.lean",
+  "lean_name": "memLoad32",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "mem_load32_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol direct source comparison 2026-10-01, bead b4v0.2.2: literal labSem225-309 eight actual operational memory declarations and all8 mem_op cases on reviewed native State/HolAddr/WordLocW, all positive word widths with no 64-only assumption. addr accepts only Word base, modulo word addition; ordinary Store/Load update memory/register first, then sticky alignment w2n MOD(width DIV8)=0 and original domain assertion, allowing Loc payloads and retaining writes on failure. Narrow32/8 reuse reviewed WordSem exact total-memory/domain/endian helpers; resize zero-extends load values and truncates stores; helper None/type errors fail without writes, successful memory replacement retains failed flag. Ordinary Load16/Store16 always assert false, no shared-memory substitution. Original46 direct observations allT/kernel replays PASS incl address wrap, aligned-base domain for narrow accesses, both endians, unsigned/narrowing, Loc/errors, sticky and retained-failure writes, width1 DIV8=0/MOD0 and width8 boundaries. Only positive word dimension and universe0 host translation qualified; no fmap/list/string exception or operation callbacks. Original unused is_Loc_def actually classifies semanticPrimitives.v with Loc Bool/Nat, confirmed loaded theorem; no source uses besides declaration. It is separately OPEN P2 og0v, not falsely ported on WordLocW or asserted a memory prerequisite. Full asm_inst/frame/evaluate and runtime/end-to-end remain open; coordinator source acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/Memory.lean",
+  "lean_name": "memStore32",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "mem_store32_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol direct source comparison 2026-10-01, bead b4v0.2.2: literal labSem225-309 eight actual operational memory declarations and all8 mem_op cases on reviewed native State/HolAddr/WordLocW, all positive word widths with no 64-only assumption. addr accepts only Word base, modulo word addition; ordinary Store/Load update memory/register first, then sticky alignment w2n MOD(width DIV8)=0 and original domain assertion, allowing Loc payloads and retaining writes on failure. Narrow32/8 reuse reviewed WordSem exact total-memory/domain/endian helpers; resize zero-extends load values and truncates stores; helper None/type errors fail without writes, successful memory replacement retains failed flag. Ordinary Load16/Store16 always assert false, no shared-memory substitution. Original46 direct observations allT/kernel replays PASS incl address wrap, aligned-base domain for narrow accesses, both endians, unsigned/narrowing, Loc/errors, sticky and retained-failure writes, width1 DIV8=0/MOD0 and width8 boundaries. Only positive word dimension and universe0 host translation qualified; no fmap/list/string exception or operation callbacks. Original unused is_Loc_def actually classifies semanticPrimitives.v with Loc Bool/Nat, confirmed loaded theorem; no source uses besides declaration. It is separately OPEN P2 og0v, not falsely ported on WordLocW or asserted a memory prerequisite. Full asm_inst/frame/evaluate and runtime/end-to-end remain open; coordinator source acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/Memory.lean",
+  "lean_name": "memLoadByte",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "mem_load_byte_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol direct source comparison 2026-10-01, bead b4v0.2.2: literal labSem225-309 eight actual operational memory declarations and all8 mem_op cases on reviewed native State/HolAddr/WordLocW, all positive word widths with no 64-only assumption. addr accepts only Word base, modulo word addition; ordinary Store/Load update memory/register first, then sticky alignment w2n MOD(width DIV8)=0 and original domain assertion, allowing Loc payloads and retaining writes on failure. Narrow32/8 reuse reviewed WordSem exact total-memory/domain/endian helpers; resize zero-extends load values and truncates stores; helper None/type errors fail without writes, successful memory replacement retains failed flag. Ordinary Load16/Store16 always assert false, no shared-memory substitution. Original46 direct observations allT/kernel replays PASS incl address wrap, aligned-base domain for narrow accesses, both endians, unsigned/narrowing, Loc/errors, sticky and retained-failure writes, width1 DIV8=0/MOD0 and width8 boundaries. Only positive word dimension and universe0 host translation qualified; no fmap/list/string exception or operation callbacks. Original unused is_Loc_def actually classifies semanticPrimitives.v with Loc Bool/Nat, confirmed loaded theorem; no source uses besides declaration. It is separately OPEN P2 og0v, not falsely ported on WordLocW or asserted a memory prerequisite. Full asm_inst/frame/evaluate and runtime/end-to-end remain open; coordinator source acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/Memory.lean",
+  "lean_name": "memStoreByte",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "mem_store_byte_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol direct source comparison 2026-10-01, bead b4v0.2.2: literal labSem225-309 eight actual operational memory declarations and all8 mem_op cases on reviewed native State/HolAddr/WordLocW, all positive word widths with no 64-only assumption. addr accepts only Word base, modulo word addition; ordinary Store/Load update memory/register first, then sticky alignment w2n MOD(width DIV8)=0 and original domain assertion, allowing Loc payloads and retaining writes on failure. Narrow32/8 reuse reviewed WordSem exact total-memory/domain/endian helpers; resize zero-extends load values and truncates stores; helper None/type errors fail without writes, successful memory replacement retains failed flag. Ordinary Load16/Store16 always assert false, no shared-memory substitution. Original46 direct observations allT/kernel replays PASS incl address wrap, aligned-base domain for narrow accesses, both endians, unsigned/narrowing, Loc/errors, sticky and retained-failure writes, width1 DIV8=0/MOD0 and width8 boundaries. Only positive word dimension and universe0 host translation qualified; no fmap/list/string exception or operation callbacks. Original unused is_Loc_def actually classifies semanticPrimitives.v with Loc Bool/Nat, confirmed loaded theorem; no source uses besides declaration. It is separately OPEN P2 og0v, not falsely ported on WordLocW or asserted a memory prerequisite. Full asm_inst/frame/evaluate and runtime/end-to-end remain open; coordinator source acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/Memory.lean",
+  "lean_name": "memOp",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "mem_op_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol direct source comparison 2026-10-01, bead b4v0.2.2: literal labSem225-309 eight actual operational memory declarations and all8 mem_op cases on reviewed native State/HolAddr/WordLocW, all positive word widths with no 64-only assumption. addr accepts only Word base, modulo word addition; ordinary Store/Load update memory/register first, then sticky alignment w2n MOD(width DIV8)=0 and original domain assertion, allowing Loc payloads and retaining writes on failure. Narrow32/8 reuse reviewed WordSem exact total-memory/domain/endian helpers; resize zero-extends load values and truncates stores; helper None/type errors fail without writes, successful memory replacement retains failed flag. Ordinary Load16/Store16 always assert false, no shared-memory substitution. Original46 direct observations allT/kernel replays PASS incl address wrap, aligned-base domain for narrow accesses, both endians, unsigned/narrowing, Loc/errors, sticky and retained-failure writes, width1 DIV8=0/MOD0 and width8 boundaries. Only positive word dimension and universe0 host translation qualified; no fmap/list/string exception or operation callbacks. Original unused is_Loc_def actually classifies semanticPrimitives.v with Loc Bool/Nat, confirmed loaded theorem; no source uses besides declaration. It is separately OPEN P2 og0v, not falsely ported on WordLocW or asserted a memory prerequisite. Full asm_inst/frame/evaluate and runtime/end-to-end remain open; coordinator source acceptance pending."
 },
 {
   "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
