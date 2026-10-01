@@ -43,6 +43,12 @@
       "sha256": "c4406552396a5b9fa262f53fa969456b1feeb7dd6d0139fd2d846efcce4343e3"
     },
     {
+      "bytes": 740,
+      "out": "asmsem_fp_updates_probe.out",
+      "rows": 34,
+      "sha256": "68e07e4909950a079b51a7856287746c2b27e57c44e375358ce9fb270a4bb200"
+    },
+    {
       "bytes": 47,
       "out": "backend_common_word_shift_probe.out",
       "rows": 7,
@@ -3049,6 +3055,12 @@
       "sha256": "65e6947c4b078a5d0336e7ef1c66ed08141cbfe37d3b38d53960220bc716a02f"
     },
     {
+      "bytes": 740,
+      "out": "parmove_step_map_inj_probe.out",
+      "rows": 9,
+      "sha256": "aedf37a428f34bc8ca53cce3d6419386b124cc80660b0f50d101017d0be77667"
+    },
+    {
       "bytes": 75,
       "out": "parmove_steps_probe.out",
       "rows": 6,
@@ -3497,6 +3509,12 @@
       "out": "stackprops_code_labels_probe.out",
       "rows": 15,
       "sha256": "0951919b9c2820704747f40b352ab0cf70ab9bb1ee3a2535536992f1814929e6"
+    },
+    {
+      "bytes": 250,
+      "out": "stackprops_label_safety_probe.out",
+      "rows": 10,
+      "sha256": "fc85cce61b21a596486ae2cb9283bdc70df9c55a6440d3f463cb67ff4e405c97"
     },
     {
       "bytes": 744,
