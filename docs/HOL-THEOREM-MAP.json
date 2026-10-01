@@ -41481,5 +41481,13 @@
     "hol_name": "MEM_MAP_SND_SND_SND_pmov",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-luna-c source comparison (2026-10-01, bead flapjack-pxn.18.5.15.3.45.1): literal original764-768, proof through816. Same forall arbitrary pending/active/emitted Option-register List state and real x: membership SOME x in MAP SND emitted actual pmov implies membership in MAP SND concatenated three input lists. Native tagged pmov/fstep recursion; no wf, termination, final shape, result equality, or simulation premise. DecidableEq computes HOL equality with no BEq correctness premise. Actual pmov induction and unconditional one-step source preservation; splitSource_append/frontLast_append derive membership. Cycle save source equals original active LAST source under the actual fstep condition; temporary NONE excluded exactly by SOME x, not assumed absent from input. No carrier/word/finite-map difference or qualifier. Independent prerequisite of public MEM_MAP_SND_parmove used in word_to_stackProof6173/6193; full scheduler semantics and executed routing remain separate."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/FstepDstep.lean",
+    "lean_name": "fstepDstep",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "fstep_dstep",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-c source comparison (2026-10-01; bead25.6.11): literal589-610 forall emitted state !=([],[],emitted) implies DStep state(fstep state), unrestricted native Option/List carriers and ordinary propositional equality. Six actual rules used; first-match source and prefix NoRead derived from accepted splitSource laws, pending partition recovered by splitSource_append. Active empty/singleton/nonempty distinct; cycle last source equality reconstructs actual last pair using frontLast_append, no extra wf/search/result premise. Nine nonterminal fixtures apply exact theorem; existing ten original fstep rows freshly regenerated. Coordinator review pending."
   }
 ]
