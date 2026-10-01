@@ -3324,6 +3324,10 @@ run_probe ssa_map_ok_probeScript.sml ssa_map_ok_probe.out \
 run_probe ssa_locals_rel_probeScript.sml ssa_locals_rel_probe.out \
   sl_empty sl_valid sl_missing_map sl_missing_target sl_wrong_value sl_bound sl_bound_ok sl_invalid sl_definition sl_original_type \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_register_class_probeScript.sml ssa_register_class_probe.out \
+  rc_alloc1 rc_stack3 rc_physical0 rc_physical2 rc_alloc5 rc_stack7 rc_large_alloc rc_large_stack rc_alloc_source_replay rc_stack_source_replay \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe ssa_rename_lookup_probeScript.sml ssa_rename_lookup_probe.out \
   rename_empty rename_overwrite rename_invalid rename_order rename_large \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"

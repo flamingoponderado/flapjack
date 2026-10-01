@@ -3403,6 +3403,12 @@
       "sha256": "8a679f3532e055edfaae58707eb08c29354875db7badf7fe49eac32d689db3c4"
     },
     {
+      "bytes": 328,
+      "out": "ssa_register_class_probe.out",
+      "rows": 10,
+      "sha256": "d1a7a95b4d2e730a6518608c3b3c4ebd742d43c32fa47f5325741f87b16995a4"
+    },
+    {
       "bytes": 459,
       "out": "ssa_rename_lookup_probe.out",
       "rows": 5,
