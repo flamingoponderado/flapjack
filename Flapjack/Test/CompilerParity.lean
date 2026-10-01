@@ -1,11 +1,13 @@
-import Flapjack.Test.ParmoveAllDistinctWrapperParity
-import Flapjack.Test.WordAllocMax3Parity
 import Flapjack.Test.WordConvsEveryVarInstMonoParity
 import Flapjack.Test.ParmovePreservesMovesParmoveParity
+import Flapjack.Test.ParmoveAllDistinctWrapperParity
+import Flapjack.Test.WordAllocMax3Parity
 import Flapjack.Test.BackendPropsNonzeroLabelsParity
 
+import Flapjack.Test.AsmSemArithmeticParity
 import Flapjack.Test.TargetPropsInterferenceParity
 import Flapjack.Test.LabToTargetSectionLookupParity
+
 import Flapjack.Test.ParmovePreservesMovesPmovParity
 import Flapjack.Test.WordToStackCodeLabelsParity
 import Flapjack.Test.WordConvsCodeLabelsParity
@@ -1531,6 +1533,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.WordConvsPostAllocExactParity.runChecks,
     Flapjack.Test.LabToTargetSectionLookupParity.runChecks,
     Flapjack.Test.TargetPropsInterferenceParity.runChecks,
+    Flapjack.Test.AsmSemArithmeticParity.runChecks,
     Flapjack.Test.BytesInMemParity.runChecks,
     Flapjack.Test.CrepSemIoEventsMonoParity.runChecks
     ].mapM id
