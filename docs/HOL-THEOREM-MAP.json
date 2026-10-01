@@ -44034,5 +44034,13 @@
     "lean_name": "pmovMapInj",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds10 source comparison (2026-10-01, bead flapjack-w1a4.18) against parmoveScript.sml:1257-1289: HOL '∀p. ⊢ p ∧ inj_on_state f p ⇒ pmov (map_state f p) = map_state f (pmov p)', where ⊢ is the wf invariant. Lean pmovMapInj has the same two premises (wf state, injOnState f state) and the same conclusion over the reviewed polymorphic State alpha / map_state / pmov / fstep_MAP_INJ / fstep_dstep / wf_steps / steps_inj_on_state infra; no extra target-result/safety/global-injectivity premise and no word or finite-map carrier, so no representation qualifier applies."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "parmove_MAP_INJ",
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/ParmoveMapInj.lean",
+    "lean_name": "parmoveMapInj",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds10 source comparison (2026-10-01, bead flapjack-w1a4.19) against parmoveScript.sml:1294-1331: HOL '(let ls1 = MAP FST ls ++ MAP SND ls in (forall x y, MEM x ls1 /\\ MEM y ls1 /\\ f x = f y ==> x = y)) /\\ windmill ls ==> parmove (MAP (f ## f) ls) = MAP (OPTION_MAP f ## OPTION_MAP f) (parmove ls)'. Lean parmoveMapInj keeps the same let-bound endpoint-injectivity hypothesis and the windmill premise, and the same conclusion, over the reviewed polymorphic parmove (lift SOME then pmov then reverse emitted) and mapState infra; the lifted initial state's wf and the lifted renaming's injOnState are derived internally, and pmov_MAP_INJ / pmov_final / List.map_reverse close it. No extra target-result/safety/global-injectivity premise and no word or finite-map carrier, so no representation qualifier applies."
   }
 ]
