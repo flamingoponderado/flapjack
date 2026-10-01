@@ -3084,3 +3084,38 @@ The native transition inherits the existing IEEE real-rendering assurance limit
 (SOUNDNESS item8); fixed raw arithmetic NaN payload agreement is not asserted.
 Probes remain regression evidence, not complete cross-language IEEE equivalence
 or whole ASM/compiler routing acceptance.
+
+### Generic native ASM assertions
+
+`asmprops_assertions_probeScript.sml` evaluates original `asmPropsTheory`
+`asserts`/`asserts2` using its exported `asserts_eval` numeral equations
+(the recursive `asserts_def` is marked `nocompute`) and `asserts2_def`.
+Its sixteen concrete rows check zero-count behavior, terminal `next 0`,
+descending noncommutative update order and reversed GENLIST prefixes,
+weakening context bounds, Bool states and independent Nat-state/Bool-
+intermediate iteration, count-dependent interference and failed predicates.
+`AsmPropsAssertionsParity.lean` kernel-replays the same inputs. Fresh
+original full-type queries retain both independent carriers; the definition
+ports have no word specialization. These rows are regression evidence,
+not HOL-to-Lean equivalence or complete encoder correctness. The full
+iteration/weakening theorem chain is a separate dependency.
+`word_alloc_max_var_max_probe.out` captures the complete exported theorem and46
+fresh original maximum/at-bound/strict-below triples across native constructors,
+recursive Call/Loop bodies, ignored fields, non-wellformed cutsets and widths
+1/32/64/80. `WordAllocMaxVarMaxParity` checks93 kernel examples against these
+inputs and the full premise-free theorem. Run this capture alone with
+`HOL_PROBE_ONLY=word_alloc_max_var_max_probeScript.sml`.
+### Whole-program Word-to-Stack code labels
+
+`word_to_stack_program_code_labels_probeScript.sml` evaluates seven actual
+original `compile_word_to_stack` outputs: target/source/owned-handler label
+unions, complete frame lists, bitmap cursor and original EVERY guard. Duplicate
+keys, spilled locals, owned and wrong-owner handlers, dropped tail handlers and
+bitmap threading are covered. Finite list unions are evaluated as FOLDR UNION
+EMPTY, the list form of BIGUNION; a separate original parser check confirms the
+theorem's INSERT/UNION grouping. All eight captures resolve T and the seven
+output claims are kernel-replayed in `WordToStackProgramCodeLabelsParity`,
+alongside a nonvacuous full theorem application with arbitrary configuration,
+register count and bitmap input. These are regression checks, not a
+HOL-to-Lean equivalence proof or whole compiler correctness acceptance.
+Selector: `HOL_PROBE_ONLY=word_to_stack_program_code_labels_probeScript.sml`.
