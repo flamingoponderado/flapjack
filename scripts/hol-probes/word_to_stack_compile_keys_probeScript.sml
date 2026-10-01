@@ -1,0 +1,11 @@
+load "preamble";
+load "word_to_stackTheory";
+open bossLib HolKernel Parse preamble word_to_stackTheory;
+fun out label q = (print(label ^ "="); print_term(rconc(EVAL q)); print "\n");
+val _ = out "ck_empty" ``MAP FST (FST (compile_word_to_stack (c:64 asm$asm_config) F 4 ([]:(bool#num#64 wordLang$prog) list) (List [4w],1))) = []``;
+val _ = out "ck_single" ``MAP FST (FST (compile_word_to_stack (c:64 asm$asm_config) F 4 [(i:'b,7,wordLang$Skip)] (List [4w],1))) = [i]``;
+val _ = out "ck_generic" ``MAP FST (FST (compile_word_to_stack (c:64 asm$asm_config) F 4 [(i:'b,7,wordLang$Skip);(j,0,Tick)] (List [4w],1))) = [i;j]``;
+val _ = out "ck_duplicate" ``MAP FST (FST (compile_word_to_stack (c:64 asm$asm_config) T 4 [(T,7,wordLang$Skip);(T,0,Tick)] (List [4w],1))) = [T;T]``;
+val _ = out "ck_order" ``MAP FST (FST (compile_word_to_stack (c:64 asm$asm_config) F 4 [(9,0,wordLang$Skip);(2,5,Tick);(9,7,Skip)] (List [4w],1))) = [9;2;9]``;
+val _ = out "ck_bitmap" ``MAP FST (FST (compile_word_to_stack (c:64 asm$asm_config) F 4 [(1,5,wordLang$Alloc 0 (LN,LN));(0,7,wordLang$Alloc 0 (LN,LN))] (List [4w],1))) = [1;0]``;
+val _ = out "ck_width_one" ``MAP FST (FST (compile_word_to_stack (c:1 asm$asm_config) T 0 [(T,7,wordLang$Skip);(F,0,Tick);(F,200,Skip)] (List [4w],1))) = [T;F;F]``;

@@ -1,8 +1,12 @@
 import Flapjack.Test.TargetSemMappedMemoryParity
+import Flapjack.Test.ParmoveDStepStepParity
+
+import Flapjack.Test.WordToStackCompileKeysParity
 import Flapjack.Test.ParmoveSplitSourceParity
 import Flapjack.Test.ParmoveStepsCorrectParity
 
 import Flapjack.Test.ParmoveDestinationParity
+import Flapjack.Test.ParmoveSourceParity
 import Flapjack.Test.ParmoveFinalParity
 import Flapjack.Test.WordToStackNativeProgramsParity
 import Flapjack.Test.LabSemSemanticsParity
