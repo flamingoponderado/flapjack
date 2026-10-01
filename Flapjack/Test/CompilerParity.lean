@@ -4,6 +4,7 @@ import Flapjack.Test.WordToStackCseCodecParity
 import Flapjack.Test.WordToStackDeadCodecParity
 import Flapjack.Test.WordToStackSsaCodecParity
 import Flapjack.Test.CanonizeSortParity
+import Flapjack.Test.FindIndexAppendParity
 import Flapjack.Test.HeuProgParity
 import Flapjack.Test.WordToStackProgramMaximumParity
 import Flapjack.Test.WordToStackColourDomainParity
