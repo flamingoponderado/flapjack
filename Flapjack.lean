@@ -1,3 +1,7 @@
+import Flapjack.Compiler.Backend.RegAlloc.SortedMem
+import Flapjack.Compiler.Backend.Parmove.AllDistinct.Steps
+import Flapjack.Compiler.Backend.RegAlloc.SortMoves
+import Flapjack.Compiler.Backend.WordToStack.ProductionThreeToTwoDomain
 import Flapjack.Compiler.Backend.RegAlloc.Initialization
 import Flapjack.RiscV.WordCopyCodecDomain
 import Flapjack.Compiler.Backend.WordAlloc.CanonizeMoves
@@ -58,6 +62,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.InsertBitmapPrefix
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LivePrefix
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LiveLength
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompLength
+import Flapjack.Compiler.Backend.WordToStack.Proofs.ProgramBitmaps
 import Flapjack.Compiler.Backend.WordToStack.ProductionExpressionMaximum
 import Flapjack.Compiler.Backend.WordToStack.ProductionCutsetMaximum
 import Flapjack.Compiler.Backend.WordToStack.ProductionInstructionMaximum
