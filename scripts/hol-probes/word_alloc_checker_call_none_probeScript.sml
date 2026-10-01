@@ -1,0 +1,12 @@
+load "bossLib";
+load "preamble";
+load "word_allocTheory";
+load "reg_allocTheory";
+open bossLib HolKernel Parse preamble word_allocTheory reg_allocTheory;
+fun observe label term = let val th = EVAL term in print(label ^ "="); print_term(rhs(concl th)); print "\n" end;
+val _ = observe "ccn_empty" ``check_clash_tree (I) (get_clash_tree (wordLang$Call NONE (NONE) [] (NONE) : 8 wordLang$prog) []) sptree$LN sptree$LN = SOME (numset_list_insert [] sptree$LN,numset_list_insert [] sptree$LN)``;
+val _ = observe "ccn_one" ``check_clash_tree (I) (get_clash_tree (wordLang$Call NONE (SOME 10) [0] (NONE) : 8 wordLang$prog) []) sptree$LN sptree$LN = SOME (numset_list_insert [0] sptree$LN,numset_list_insert [0] sptree$LN)``;
+val _ = observe "ccn_duplicate" ``check_clash_tree (I) (get_clash_tree (wordLang$Call NONE (NONE) [0;0] (NONE) : 8 wordLang$prog) []) sptree$LN sptree$LN = SOME (numset_list_insert [0;0] sptree$LN,numset_list_insert [0;0] sptree$LN)``;
+val _ = observe "ccn_args" ``check_clash_tree (I) (get_clash_tree (wordLang$Call NONE (SOME 10) [0;1] (NONE) : 8 wordLang$prog) []) sptree$LN sptree$LN = SOME (numset_list_insert [0;1] sptree$LN,numset_list_insert [0;1] sptree$LN)``;
+val _ = observe "ccn_collision" ``check_clash_tree (K 0) (get_clash_tree (wordLang$Call NONE (NONE) [0;1] (NONE) : 8 wordLang$prog) []) sptree$LN sptree$LN = SOME (numset_list_insert [0;1] sptree$LN,numset_list_insert [0;1] sptree$LN)``;
+val _ = observe "ccn_handler_ignored" ``check_clash_tree (I) (get_clash_tree (wordLang$Call NONE (SOME 10) [0] (SOME (7,wordLang$Skip,8,9)) : 8 wordLang$prog) []) sptree$LN sptree$LN = SOME (numset_list_insert [0] sptree$LN,numset_list_insert [0] sptree$LN)``;
