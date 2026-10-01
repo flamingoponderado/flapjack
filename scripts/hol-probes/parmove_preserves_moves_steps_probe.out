@@ -1,0 +1,6 @@
+rtc_real_before=T
+rtc_real_after=T
+rtc_scratch_before=T
+rtc_scratch_after=T
+rtc_changed_source=T
+rtc_old_source_absent=T

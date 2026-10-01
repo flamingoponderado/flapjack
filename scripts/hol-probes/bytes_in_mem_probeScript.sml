@@ -1,0 +1,16 @@
+load "preamble";
+load "miscTheory";
+open bossLib HolKernel Parse preamble miscTheory;
+fun print_eval label q = (print label; print "="; print_term (rconc (EVAL q)); print "\n");
+val m = ``(\(a:2 word). if a = 3w then (7:num) else if a = 0w then 9 else 0)``;
+val _ = print_eval "empty_ignores_guards" ``bytes_in_mem (0w:2 word) ([]:num list) ^m EMPTY UNIV``;
+val _ = print_eval "nat_wrap" ``bytes_in_mem (3w:2 word) [7;9] ^m UNIV EMPTY``;
+val _ = print_eval "excluded_head" ``bytes_in_mem (3w:2 word) [7;9] ^m UNIV (\a. a = 3w)``;
+val _ = print_eval "excluded_tail" ``bytes_in_mem (3w:2 word) [7;9] ^m UNIV (\a. a = 0w)``;
+val _ = print_eval "domain_head" ``bytes_in_mem (3w:2 word) [7;9] ^m (\a. a <> 3w) EMPTY``;
+val _ = print_eval "domain_tail" ``bytes_in_mem (3w:2 word) [7;9] ^m (\a. a <> 0w) EMPTY``;
+val _ = print_eval "wrong_value" ``bytes_in_mem (3w:2 word) [7;8] ^m UNIV EMPTY``;
+val _ = print_eval "bool_payload" ``bytes_in_mem (3w:2 word) [T;F] (\a. a = 3w) UNIV EMPTY``;
+val _ = print_eval "update_off_region" ``bytes_in_mem (3w:2 word) [7;9] ((1w =+ 88) ^m) UNIV EMPTY``;
+val _ = print_eval "update_hit_region" ``bytes_in_mem (3w:2 word) [7;9] ((0w =+ 88) ^m) UNIV EMPTY``;
+val _ = print_eval "append_wrapped" ``bytes_in_mem (3w:2 word) [7] ^m UNIV EMPTY /\ bytes_in_mem (3w + n2w 1) [9] ^m UNIV EMPTY``;

@@ -2588,6 +2588,7 @@ distinctness, generic three-list flattening, and RTC scratch safety respectively
 renaming statements/types as an audit aid, not a port or equivalence proof.
 Its capture omits blank separator lines between printed HOL clauses.
 
+- `parmove_all_distinct_steps_probeScript.sml`: four full destination predicates for zero-step scratch and start/save states. Lean fixtures additionally certify the RTC trace; HOL observations alone do not establish it.
 `stackprops_code_labels_probe.out` contains fifteen fresh direct original
 `stackProps$get_code_labels` and `stack_get_handler_labels` complete-set
 observations, replayed by `Flapjack.Test.StackPropsCodeLabelsParity` at the
@@ -2600,6 +2601,7 @@ correctness or cross-language equivalence. Regenerate with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=stackprops_code_labels_probeScript.sml
 scripts/hol-probes/regenerate.sh` against the read-only prebuilt theories.
+- `parmove_all_distinct_steps_probeScript.sml`: four full destination predicates for zero-step scratch and start/save states. Lean fixtures additionally certify the RTC trace; HOL observations alone do not establish it.
 `parmove_map_state_probe` captures ten original equations for mapping both
 endpoints through all three lists, including independent Nat-to-Bool carriers
 and noninjective maps. `ParmoveMapStateParity` replays the same inputs in Lean;
@@ -2609,6 +2611,7 @@ the finite fixtures do not prove cross-assistant equivalence.
 equations, including unsorted inputs. `RegAllocSortedMemParity` kernel-replays
 the same cases and the executed wrapper's equation for arbitrary keys/lists.
 
+- `parmove_preserves_moves_step_probeScript.sml`: ten original non-self destination predicates before/after Save, including scratch destination. Lean fixtures certify the steps and witness changes; observations do not prove transition or cross-assistant equivalence.
 `word_to_stack_program_bitmaps_probe` captures ten original single-program
 and list-compiler bitmap snapshots, replayed in `WordToStackProgramBitmapsParity`.
 Cases include invalid initial bounds, width one, repeated identifiers, and
@@ -2616,9 +2619,29 @@ independent Bool identifiers. The general prefix/accounting proofs retain
 the original compiler output equations and initial-length bound; finite
 snapshots are not a cross-language equivalence proof.
 
+`bytes_in_mem_probe.out` captures eleven fresh original miscTheory observations:
+generic Nat/Bool payloads, width-two 3-to-0 wraparound, domain/excluded-set
+failures at either position, empty-list guards, and off/hit-region updates.
+All eleven rows are kernel-replayed by `BytesInMemParity`. The companion
+`bytes_in_mem_type.sml` queries the actual polymorphic beta carrier. Regenerate
+read-only with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=bytes_in_mem_probeScript.sml scripts/hol-probes/regenerate.sh`.
+Finite observations do not establish cross-language equivalence.
 `reg_alloc_sort_moves_probe` captures twelve original priority-sort/merge
 equations, including equal priorities and unsorted merge inputs; the matching
 Lean fixture replays them. `parmove_all_distinct_steps_probe` captures four
 destination-distinctness observations; Lean also applies the full RTC theorem
 to zero-step and concrete two-step traces. These fixtures do not establish
 cross-language equivalence or whole allocator correctness.
+
+`wordconvs_code_labels_probe.out` contains twelve fresh direct original
+`wordConvs$get_code_labels` complete-set observations, replayed at identical
+width64 inputs by `Flapjack.Test.WordConvsCodeLabelsParity`. Cases cover direct
+and indirect Calls, both populated bodies, populated handlers with no return,
+excluded continuation metadata, duplicate labels, Seq/If/Loop/MustTerminate
+and LocValue. These regressions do not establish compiler label correctness or
+cross-language equivalence. Regenerate against read-only prebuilt theories with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=wordconvs_code_labels_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
+- `parmove_preserves_moves_steps_probeScript.sml`: six complete destination/witness observations for Start/Save states. Lean fixtures certify the RTC trace and zero-step case; HOL observations alone do not prove that trace or cross-assistant equivalence.
