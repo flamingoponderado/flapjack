@@ -42822,5 +42822,13 @@
     "hol_name": "inj_on_state_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol source comparison (2026-10-01; bead flapjack-w1a4.12): Original1090-1097 lets ls0=state_to_list p, ls=MAP FST ls0++MAP SND ls0, then support-restricted injectivity on both endpoints and global (f x=NONE iff x=NONE). Lean preserves both independent Option alpha/Option beta carriers, full pending/active/emitted state flattening through reviewed stateToList, exact conjunction and implication, no global injectivity/DecidableEq/safety premise. Existing original parmove_preservation_shape_probe.out pm_audit_inj_on_state_def and pm_audit_type_inj_on_state capture full equation and type. Kernel fixtures distinguish globally collapsing map accepted on singleton support, collision rejection in each state segment, global NONE failure on empty support, arbitrary/function-valued identity and generic full defining equation. No fresh original HOL execution claimed; read-only isolation unavailable, CakeML untouched. Proof-side scheduler predicate, no executable production duplicate or output change. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/TempBeforeAssign/Pmov.lean",
+    "lean_name": "pmovNotUseTempBeforeAssign",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "pmov_not_use_temp_before_assign",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison (2026-10-01; bead .15.3.46.6): Literal920-930 forall p i, wf p and scratch-safety on REVERSE(active++emitted) imply same predicate on actual pmov p. Retains unused i at its own arbitrary independent Type carrier iota, not omitted or specialized; register carrier alpha arbitrary with the accepted scheduler DecidableEq implementation parameter. Sole source conjunction preserved. Derives actual reachability through unconditional pmovDsteps then dsteps_steps under initial wf; accepted stepsNotUseTempBeforeAssign supplies target wf/safety, only proved safety projected. No supplied scheduler/result/target invariant assumption. Existing original pm_audit_pmov_not_use_temp_before_assign captures full quantified statement; existing parmove_final outputs self/chain/cycle/active are kernel-replayed with full output equality and non-vacuous theorem applications, plus empty/prior scratch/initialized history/Bool and invalid input boundaries. Function-valued i verifies independent unused carrier. No fresh original HOL execution claimed; CakeML remains read-only. Coordinator source acceptance and full compiler theorem unfinished."
   }
 ]

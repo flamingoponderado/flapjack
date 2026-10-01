@@ -1,3 +1,4 @@
+import Flapjack.Test.ParmoveTempPmovParity
 import Flapjack.Test.ParmoveInjOnStateParity
 import Flapjack.Test.ParmoveFirstIndexParity
 import Flapjack.Test.RegAllocSafeDivParity

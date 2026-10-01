@@ -40,6 +40,16 @@ with `HOL_PROBE_ONLY=stacksem_loop_recursive_probeScript.sml scripts/hol-probes/
 
 # Original Pancake HOL probes
 
+`ParmoveTempPmovParity` replays the complete self/chain/cycle/active scheduler
+outputs from `parmove_final_probe.out` and applies the full conditional
+`pmov_not_use_temp_before_assign` port to each valid, initially safe state.
+The full original quantified statement is already captured as
+`pm_audit_pmov_not_use_temp_before_assign` in
+`parmove_preservation_shape_probe.out`, including the unused arbitrary `i`.
+The kernel tests also cover prior scratch history and distinguish captured
+rows failing well-formedness or initial safety from valid theorem applications.
+This reuses existing original evidence; no fresh HOL execution is claimed.
+
 `parmove_preservation_shape_probe.out` records the original full
 `inj_on_state_def` equation and its independent Option input/output carrier
 type (`pm_audit_inj_on_state_def`, `pm_audit_type_inj_on_state`).
