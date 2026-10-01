@@ -1,0 +1,14 @@
+srl_full=⊢ ∀ls ssa na ssa' na' ls'. list_next_var_rename ls ssa (na + 2) = (ls',ssa',na') ⇒ (is_stack_var na ∨ is_alloc_var na) ∧ ssa_map_ok (na + 2) ssa ⇒ na + 2 ≤ na' ∧ (is_stack_var na ⇒ is_alloc_var na') ∧ (is_alloc_var na ⇒ is_stack_var na') ∧ ssa_map_ok na' ssa'
+srl_type_ls=:num list
+srl_type_ssa=:num sptree$num_map
+srl_type_na=:num
+srl_type_lsOut=:num list
+srl_type_ssaOut=:num sptree$num_map
+srl_type_naOut=:num
+srm_full=⊢ ∀ls ssa na ls' ssa' na'. list_next_var_rename_move ssa (na + 2) ls = (ls',ssa',na') ⇒ (is_alloc_var na ∨ is_stack_var na) ∧ ssa_map_ok na ssa ⇒ na + 2 ≤ na' ∧ (is_alloc_var na ⇒ is_stack_var na') ∧ (is_stack_var na ⇒ is_alloc_var na') ∧ ssa_map_ok na' ssa'
+srm_type_ls=:num list
+srm_type_ssa=:num sptree$num_map
+srm_type_na=:num
+srm_type_lsOut=:α prog
+srm_type_ssaOut=:num sptree$num_map
+srm_type_naOut=:num

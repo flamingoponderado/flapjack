@@ -4184,3 +4184,5 @@ type (bead `flapjack-pxn.18.5.15.10.10`). Regenerate with
 HOL_PROBE_ONLY=misc_lookup_any_find_index_probeScript.sml
 scripts/hol-probes/regenerate.sh`. These finite observations are regression
 evidence, not a cross-prover equivalence proof.
+
+- `ssa_rename_shifted_properties_probeScript.sml` replays the original raw-list derived pipeline and shifted move wrapper with nine original prerequisites; full statements and twelve type rows distinguish their input map-bound counters and conjunction orders.
