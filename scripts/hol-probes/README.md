@@ -1909,3 +1909,14 @@ original tree with `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_alloc_get_live_probeScript.sml scripts/hol-probes/regenerate.sh`.
 These observations supplement clause review; they do not establish whole-pass
 correctness or the pending production liveness route.
+
+`word_alloc_get_writes_inst_probe.out` captures seven direct original
+`get_writes_inst_def` observations (word_allocScript.sml681-703). Full-tree
+equalities cover Const, AddCarry, LongDiv, the literal Load16 catchall,
+FPMovToReg at64/32, and the FPMovFromReg catchall. The identical inputs and
+outputs are kernel replayed by `Flapjack.Test.WordAllocInstructionWritesParity`.
+These regression rows do not establish cross-language equivalence or complete
+the production route. Regenerate read-only with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_alloc_get_writes_inst_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
