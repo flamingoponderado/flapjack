@@ -4447,6 +4447,12 @@
       "sha256": "7e554eb4c4f85794408a9035532af0edf01084a1d290160025fa0690211c9acf"
     },
     {
+      "bytes": 235,
+      "out": "wordconvs_exp_mono_probe.out",
+      "rows": 9,
+      "sha256": "f3ea2141323e36cbc98ef85fd29086685dd246cb6d87e688c5edfae5567c77db"
+    },
+    {
       "bytes": 82,
       "out": "wordlang_cutsets_max_probe.out",
       "rows": 8,

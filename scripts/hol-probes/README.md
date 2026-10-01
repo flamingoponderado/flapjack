@@ -1,3 +1,12 @@
+`wordconvs_exp_mono_probe.out` freshly prints original every_var_exp_mono
+and eight same-expression predicate observations. Registered WordConvsExpMonoParity
+fixtures apply the full implication non-vacuously at widths1/32/64/80 for
+empty/nested/duplicate/Load/Shift/ignored payloads and80-bit registers.
+The final shrinking-bound sentinel rejects removal of the global implication
+guard. Regression rows do not establish cross-assistant equivalence. Regenerate
+with HOL_PROBE_ONLY=wordconvs_exp_mono_probeScript.sml and the read-only prebuilt
+CakeML backend semantics directory.
+
 `word_alloc_max_exp_probe.out` captures ten direct original maximum, inclusive
 bound, and strict-bound sentinel triples. Registered WordAllocMaxVarExpParity
 fixtures check identical recursive syntax at widths1/32/64/80 including empty

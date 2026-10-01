@@ -43222,5 +43222,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-c: full literal local theorem10211-10225 source compared, actual every_var_exp85-91/max_var_exp207-214 and exp14-23 carriers. All expression constructors including arbitrary recursive Op lists/empty, shifts and loads; Const/Lookup ignored. Numeric Nat maximum with original zero-based MAX_LIST; public theorem no extra bound/success/output premise. Private numeric-bound induction infrastructure establishes the unconditional result, not a hypothesis. Only positive width BitVec translation; imported WordStoreHOL fixes store payload to original non-word carrier. Coordinator acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "every_var_exp_mono",
+    "lean_path": "Flapjack/Pancake/WordConvs/ExpressionMonotonicity.lean",
+    "lean_name": "everyVarExpMono",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c: complete original23-32 quantified P, exp, Q and conjunction antecedent retained: global pointwise Boolean implication AND actual every_var_exp P. Conclusion actual every_var_exp Q. Native WordLangExpHOL carrier, original every_var_exp85-91 and entire recursive List traversal matched including empty/nested Op, Load, Shift, Const/Lookup. No bound/evaluation/target premise beyond literal source. Only positive width BitVec carrier translation; all arbitrary Nat -> Bool predicates retained. Needed by word_allocProof max_var_max10285ff. Coordinator acceptance pending."
   }
 ]
