@@ -1,0 +1,53 @@
+{
+  "bead": "flapjack-js4m",
+  "reviewer": "flapjack-sol",
+  "candidate_sha": "8d74461ad0d406d75936f3dbb681ddf9c43566c3",
+  "peer_audit_repair_sha": "0f9c0c0b2b8307faaefd610a906331b2ad16bc6e",
+  "peer_merge_head": "09dcc091b58ec2ee239e7ac5d6e60f211ba65375",
+  "status": "proof-closure pass; TopLevel immutable source acceptance held pending committed generality repair and terminal checks",
+  "coverage": {
+    "candidate_tags": 208,
+    "expected_candidate_tags": 208,
+    "pinned_tags": 2571,
+    "expected_pinned_tags": 2571,
+    "actual_tags": 2617,
+    "all_namespace_constants": 431035,
+    "type_and_proof_edges": 12219750,
+    "forbidden_closures_including_three_seeds": 60,
+    "tagged_forbidden_closures": 0
+  },
+  "method": "1094 unique flattened imports from immutable candidate HolTypeHashes and Flapjack root; actual HolRef identities; every imported constant namespace; type and value?(allowOpaque := true); reverse monotone fixed point, explicit witness paths. Source-checked Lake setup cache pointers loaded read-only; no OLean copying.",
+  "limitations": [
+    "Audit import names are pinned to candidate SHA; loaded source-checked artifact setup is peer build snapshot, not a claim that every artifact body equals that git SHA.",
+    "Zero forbidden closure is not full HOL source correspondence or acceptance of the allocator chain.",
+    "Old candidate specializes unused nmax to Nat and runner exception to StateException. Current uncommitted generic repair matches original source; immutable repair SHA/kernel gates pending."
+  ],
+  "source_review": {
+    "unused_nmax": "linear_scanScript.sml1083-1090: unused independent HOL alpha; generic Unused repair is required.",
+    "initializer": "ml_monadBaseLib.sml467-527 and linear_scanScript.sml326-333,1078-1081: five fields, original order, Nat\u00d7element; sorted_moves element Nat\u00d7(Nat\u00d7Nat); replicate length initial, canonical run; current carrier and runner body match.",
+    "runner": "Generated run retains arbitrary result beta and exception gamma; current generic exception repair is required."
+  },
+  "artifacts": [
+    {
+      "path": "/tmp/sol-el-full-import-proof-closure.lean",
+      "sha256": "e51eb9c66f7e293b1f2bdedbb8bb71e8c973b151a09088cdb2b3f92e06fa7b2e"
+    },
+    {
+      "path": "/tmp/sol-el-full-import-proof-closure.log",
+      "sha256": "d0e49e01c2055acf3ad55ad91a2f96fd202088928e55190a2856f2d9b8e23007"
+    },
+    {
+      "path": "/tmp/sol-peer-proof-audit.setup.json",
+      "sha256": "e6fdfa8a5ac8a49ecdf36d2a73d01a98d25ab88c85bfeeb29dc8f7221cfe7a9e"
+    }
+  ],
+  "checks": {
+    "independent_full_proof_audit": "exit 0; graph 52037ms",
+    "own_merged_root": "PASS /tmp/sol-next-merged-root.log",
+    "own_merged_test": "PASS /tmp/sol-next-merged-test.log",
+    "own_merged_pins": "PASS 2368 /tmp/sol-next-merged-pins.log",
+    "own_merged_warnings": "PASS zero /tmp/sol-next-merged-warnings.log",
+    "peer_generality_repair": "live/pending; not restarted",
+    "CI": "pending"
+  }
+}
