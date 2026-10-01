@@ -3179,6 +3179,10 @@ run_probe parmove_all_distinct_steps_probeScript.sml parmove_all_distinct_steps_
   adrtc_scratch adrtc_first adrtc_middle adrtc_last \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
+run_probe word_alloc_max3_eq_probeScript.sml word_alloc_max3_eq_probe.out \
+  max3_eq_statement max3_zero max3_x max3_y max3_z_after_x max3_z_after_y \
+  max3_xy_tie max3_xz_tie max3_yz_tie max3_large \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/misc"
 run_probe wordconvs_code_labels_probeScript.sml wordconvs_code_labels_probe.out \
   wl_skip wl_location wl_direct_tail wl_indirect_tail wl_tail_handler wl_both_bodies wl_metadata_omitted wl_return_only wl_duplicate wl_if wl_loop wl_must \
   "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
@@ -3223,6 +3227,10 @@ run_probe word_to_stack_register_labels_probeScript.sml word_to_stack_register_l
   wr_physical wr_boundary wr_spilled wr_zero wr_large wr_labelled \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
 
+run_probe parmove_all_distinct_wrapper_probeScript.sml parmove_all_distinct_wrapper_probe.out \
+  pad_original_statement pad_empty pad_self pad_chain pad_swap pad_cycle \
+  pad_shared_source pad_duplicate_boundary \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 run_probe word_alloc_max_inst_probeScript.sml word_alloc_max_inst_probe.out \
   mi_skip mi_const mi_binreg mi_binimm mi_shift mi_div mi_longdiv mi_load8 mi_fp64_to mi_fp32_to mi_fp80_from mi_fpignored mi_original_theorem \
   "$cake_dir/compiler/backend/wordLangScript.sml" "$cake_dir/compiler/backend"
