@@ -7,6 +7,7 @@
     "examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml": "f15bffc3099f367fbbffb4a66d6918be8e28281cfcde5ec594a4bf030b8bc42e",
     "src/n-bit/fcpScript.sml": "9b0a7c34b6714692ea36528bdae31b96a190d7fcd1dc36c72f5c33bebe8334be",
     "src/coalgebras/llistScript.sml": "f98d61fdbbb10fd69cea06b92a1c2317e9b32dd313f0079f8e666f1168146955",
-    "src/coretypes/optionScript.sml": "0b0ac193e454a35e3320a7b8095ebd7b88db257ea9b07f4ed2d1afbf47797752"
+    "src/coretypes/optionScript.sml": "0b0ac193e454a35e3320a7b8095ebd7b88db257ea9b07f4ed2d1afbf47797752",
+    "src/floating-point/binary_ieeeScript.sml": "37e375f3f2dacdf18fdd00c9e10285e8989dd0727256d8515ff5e29d63b31ca7"
   }
 }
