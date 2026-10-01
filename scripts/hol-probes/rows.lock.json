@@ -31,6 +31,12 @@
       "sha256": "fb00053f44698704d47ad72155116e228341abdc8a31fca36f84735d31fe6183"
     },
     {
+      "bytes": 374,
+      "out": "asmprops_assertions_probe.out",
+      "rows": 16,
+      "sha256": "18139bed8a3d7cf5f3a74e01e06b9eb90f311177aa86ecbb461aa37d57120411"
+    },
+    {
       "bytes": 356,
       "out": "asmprops_pc_coverage_probe.out",
       "rows": 13,
