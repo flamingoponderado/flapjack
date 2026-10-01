@@ -102,7 +102,8 @@ private theorem alistLookupZipSome {α : Type} :
       · simp only [h, if_false]
         exact alistLookupZipSome keys vs k (by simpa [h] using hk) (by simpa using hl)
 
-/-- HOL `ZIP_MAP_FST_SND_EQ` for lists (Flapjack infrastructure). -/
+/-- Local list-pair reassembly infrastructure used by this proof;
+not a separately claimed HOL theorem port. -/
 private theorem zipFstSnd' {α β : Type} (e : List (α × β)) :
     (e.map Prod.fst).zip (e.map Prod.snd) = e := by
   induction e with
