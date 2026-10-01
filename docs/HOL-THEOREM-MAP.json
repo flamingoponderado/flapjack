@@ -42674,5 +42674,13 @@
   "hol_name": "map_state_def",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-b source comparison 2026-10-01 w1a4.11: literal source1086-1088 let m=MAP(f##f) in m##m##m. Native List.map(Prod.map f f) then right-associated Prod.map m (Prod.map m m) preserves both endpoints and all three list orders. Fresh original type audit independent alpha -> beta and raw pair-list triple input/output; generic native alpha/beta not specialized to Option registers, no equality/injectivity/NONE-preservation premise. Ten fresh original whole outputs paired with kernel fixtures include empty/each segment/order, noninjective constant, unbounded Nat, Bool, Nat->Bool different carriers and changing NONE. Definition proof support only, no executed behavior change; injective simulation obligations remain open. Coordinator acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/CanonizeMoves.lean",
+  "lean_name": "canonizeMoves",
+  "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+  "hol_name": "canonize_moves_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead11.5.3.2.4: full literal source1650-1662 fixed Nat priority/endpoints. MAP normalizes x<=y unchanged, else swaps; accepted concrete mllist sort uses strict x/y/priority inline relation through sortCanonizeMoves, no abstract sorting callback. Empty sorted list returns empty; head initializes accepted generic canonizeMovesAux with count1/empty accumulator. Right-associated count/priority/move output, reverse group order, count and maximum priority preserved. Twelve fresh original whole outputs matched by kernel fixtures cover all branches, endpoint/order/ties/nonadjacent normalization, counts/MAX/self/zeros/unbounded Nat. Concrete sort provenance was source-reviewed on closed prerequisite4.2; untagged external helper pins remain limited as documented there. Native proof-side definition only; production route remains open on get_heuristics/allocator closure. Coordinator acceptance pending."
 }
 ]

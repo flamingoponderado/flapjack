@@ -1,0 +1,12 @@
+cmf_empty=T
+cmf_single=T
+cmf_reversed=T
+cmf_self=T
+cmf_duplicates=T
+cmf_coordinates=T
+cmf_second_coord=T
+cmf_equal_priority=T
+cmf_merged_groups=T
+cmf_count=T
+cmf_large=T
+cmf_zeros=T

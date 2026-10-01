@@ -1,3 +1,4 @@
+import Flapjack.Test.WordAllocCanonizeMovesParity
 import Flapjack.Test.ParmoveMapStateParity
 import Flapjack.Test.ParmoveTempStepsParity
 import Flapjack.Test.ParmoveStateToListParity

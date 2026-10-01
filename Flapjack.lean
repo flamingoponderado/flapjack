@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordAlloc.CanonizeMoves
 import Flapjack.Compiler.Backend.Parmove.MapState
 import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Steps
 import Flapjack.Compiler.Backend.Parmove.StateToList

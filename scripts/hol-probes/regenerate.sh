@@ -3104,3 +3104,7 @@ run_probe parmove_temp_steps_probeScript.sml parmove_temp_steps_probe.out \
 run_probe parmove_map_state_probeScript.sml parmove_map_state_probe.out \
   pms_empty pms_pending pms_active pms_emitted pms_order pms_constant pms_large pms_bool pms_cross_carrier pms_option_constant \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe word_alloc_canonize_moves_probeScript.sml word_alloc_canonize_moves_probe.out \
+  cmf_empty cmf_single cmf_reversed cmf_self cmf_duplicates cmf_coordinates cmf_second_coord cmf_equal_priority cmf_merged_groups cmf_count cmf_large cmf_zeros \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"

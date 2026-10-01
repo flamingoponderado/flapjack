@@ -1,0 +1,15 @@
+load "bossLib"; load "preamble"; load "word_allocTheory";
+open bossLib HolKernel Parse preamble word_allocTheory;
+fun observe label term = let val th = EVAL term in print (label ^ "="); print_term (rhs (concl th)); print "\n" end;
+observe "cmf_empty" ``canonize_moves [] = []``;
+observe "cmf_single" ``canonize_moves [(3,1,2)] = [(1,3,1,2)]``;
+observe "cmf_reversed" ``canonize_moves [(3,9,2)] = [(1,3,2,9)]``;
+observe "cmf_self" ``canonize_moves [(4,5,5)] = [(1,4,5,5)]``;
+observe "cmf_duplicates" ``canonize_moves [(2,1,2);(8,2,1);(3,1,2)] = [(3,8,1,2)]``;
+observe "cmf_coordinates" ``canonize_moves [(99,4,5);(1,1,2);(50,3,4)] = [(1,99,4,5);(1,50,3,4);(1,1,1,2)]``;
+observe "cmf_second_coord" ``canonize_moves [(1,1,9);(7,1,3);(2,1,6)] = [(1,1,1,9);(1,2,1,6);(1,7,1,3)]``;
+observe "cmf_equal_priority" ``canonize_moves [(4,2,3);(4,3,2);(4,2,3)] = [(3,4,2,3)]``;
+observe "cmf_merged_groups" ``canonize_moves [(1,9,2);(8,1,4);(7,2,9);(3,4,1);(2,2,9)] = [(3,7,2,9);(2,8,1,4)]``;
+observe "cmf_count" ``canonize_moves [(0,1,2);(1,1,2);(2,1,2);(3,1,2);(4,1,2);(5,1,2);(6,1,2)] = [(7,6,1,2)]``;
+observe "cmf_large" ``canonize_moves [(18446744073709551617,18446744073709551619,18446744073709551618);(18446744073709551620,18446744073709551618,18446744073709551619)] = [(2,18446744073709551620,18446744073709551618,18446744073709551619)]``;
+observe "cmf_zeros" ``canonize_moves [(0,0,0);(1,2,0);(0,0,2);(3,0,0)] = [(2,1,0,2);(2,3,0,0)]``;
