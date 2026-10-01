@@ -2463,6 +2463,16 @@ allocator routing. Regenerate read-only with
 `HOL_PROBE_ONLY=word_alloc_heu_call_probeScript.sml scripts/hol-probes/regenerate.sh`.
 `word_to_stack_cutset_maximum_probe` captures twelve original cutset maxima, including duplicate/root keys, reordered and overlapping lists, sparse names and naturals above 2^80. Kernel fixtures replay the same inputs and apply the unconditional full list-to-Spt maximum correspondence. The production frame and compiler route remain separate dependency-linked work.
 
+`word_to_stack_instruction_maximum_probe` captures fourteen original integer instruction maxima, including immediate/register arithmetic, all arithmetic production constructors with a HOL counterpart, offset-bearing memory and a register name above 2^80. The final two rows expose the zero HOL maximum for Load16/Store16; kernel fixtures verify their existing allocator-guard rejection. The distinct five-register AddCarry has no HOL counterpart and its codec rejection is tested separately. Full arithmetic Option-map equality assumes no codec success, and supported instruction correspondence uses the existing real memory guard. Full program codec closure and executed native routing remain dependency-linked work.
+
+`reg_alloc_remap_probe.out` captures twelve fresh original list remapping and
+bijection traversal observations, kernel-replayed by `RegAllocRemapParity`.
+Delta/Branch/Seq order, optional sets and their mixed enumeration, repeated
+names, raw nodes, large names/counters and arbitrary initial maps are covered.
+These finite observations do not establish general cross-prover equivalence or
+production allocator routing. Regenerate read-only with
+`HOL_PROBE_ONLY=reg_alloc_remap_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `word_alloc_canonize_moves_aux_probeScript.sml` / `.out` compares the literal
 counting recursion at word_allocScript1641-1648 against twelve full output
 lists: empty/current zero count, arbitrary accumulator, priority up/down/equal,
@@ -2484,3 +2494,13 @@ cycle save, prior-written scratch reads/save, and Boolean registers. Matching
 `Flapjack/Test/ParmoveTempStepParity.lean` checks source wf/safety and derives
 target safety via the actual Step constructor and full ported theorem.
 RTC/pmov and full Move correctness remain separate open obligations.
+
+`parmove_preservation_shape_probeScript.sml` / `.out` captures the original
+24 exported statements at parmoveScript840-1332 and the elaborated types of
+`state_to_list`, `map_state`, and `inj_on_state`. The local `steps_MAP_INJ`
+lemma at1179 is not exported by parmoveTheory and is reviewed from source.
+These are kernel HOL statement/type observations, not Boolean parity results
+or evidence that missing Lean declarations have been ported. In particular,
+retain the broad arbitrary list carrier of `state_to_list`, generic raw pair
+mapping of `map_state`, and support-restricted injectivity plus global NONE
+reflection in `inj_on_state`; theorem acceptance is tracked on individual beads.

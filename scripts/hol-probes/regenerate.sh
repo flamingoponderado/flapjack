@@ -3061,6 +3061,14 @@ run_probe word_to_stack_cutset_maximum_probeScript.sml word_to_stack_cutset_maxi
   cs_empty cs_root cs_left cs_right cs_duplicates cs_left_max cs_reordered cs_root_duplicates cs_large cs_overlap cs_range cs_sparse \
   "$cake_dir/pancake/loop_to_wordScript.sml" "$cake_dir/pancake"
 
+run_probe word_to_stack_instruction_maximum_probeScript.sml word_to_stack_instruction_maximum_probe.out \
+  im_const im_bin_reg im_bin_imm im_shift_reg im_shift_imm im_div im_carry im_mul im_longdiv im_load im_store8 im_large im_load16 im_store16 \
+  "$cake_dir/compiler/backend/wordLangScript.sml" "$cake_dir/compiler/backend"
+
+run_probe reg_alloc_remap_probeScript.sml reg_alloc_remap_probe.out \
+  remap_empty remap_delta remap_duplicate remap_seq remap_branch remap_fixed remap_raw_empty remap_raw_root remap_set_order remap_large remap_nested remap_initial \
+  "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
 run_probe word_alloc_canonize_moves_aux_probeScript.sml word_alloc_canonize_moves_aux_probe.out \
   cma_empty cma_acc cma_same_up cma_same_down cma_same_equal cma_different cma_groups cma_unsorted cma_reversed cma_self cma_large cma_bool \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
@@ -3071,4 +3079,8 @@ run_probe misc_find_index_shift_zero_probeScript.sml misc_find_index_shift_zero_
 
 run_probe parmove_temp_step_probeScript.sml parmove_temp_step_probe.out \
   pts_remove pts_start pts_extend pts_save_cycle pts_emit_head pts_emit_last pts_save_none pts_emit_scratch pts_bool \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe parmove_preservation_shape_probeScript.sml parmove_preservation_shape_probe.out \
+  pm_audit_not_use_temp_before_assign_append pm_audit_not_use_temp_before_assign_insert pm_audit_not_use_temp_before_assign_thm pm_audit_step_not_use_temp_before_assign pm_audit_steps_not_use_temp_before_assign pm_audit_pmov_not_use_temp_before_assign pm_audit_parmove_not_use_temp_before_assign pm_audit_ALL_DISTINCT_step pm_audit_ALL_DISTINCT_steps pm_audit_ALL_DISTINCT_pmov pm_audit_ALL_DISTINCT_parmove pm_audit_state_to_list_def pm_audit_step_preserves_moves pm_audit_steps_preserves_moves pm_audit_pmov_preserves_moves pm_audit_parmove_preserves_moves pm_audit_map_state_def pm_audit_inj_on_state_def pm_audit_step_inj_on_state pm_audit_steps_inj_on_state pm_audit_step_MAP_INJ pm_audit_fstep_MAP_INJ pm_audit_pmov_MAP_INJ pm_audit_parmove_MAP_INJ pm_audit_type_state_to_list pm_audit_type_map_state pm_audit_type_inj_on_state \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
