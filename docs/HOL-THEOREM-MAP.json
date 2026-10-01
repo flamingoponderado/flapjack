@@ -43179,6 +43179,33 @@
     "reviewer": "flapjack-sol2 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.3.26.10): full original word_to_stackProofScript.sml:11738-11746 and underlying word_to_stackScript.sml:52-55,252-262,286-291,417-451 compared with getCodeHandlerLabelsCopyRet. Retains both performance and handler flags, full frame triple, arbitrary return-value payload type/list and native continuation, with both original label-set preservation equalities. The actual reviewed wStackLoadNative/wLiveNative/stackMoveNative/copyRetAuxNative/copyRetNative definitions and accepted StackProps label extractors are used. Exact HolProg width preserves original constructor payloads; sole word-carrier translation is positive HOL dimension to BitVec width with NeZero width. HOL sets use Lean Set (Nat x Nat); list pairs remain List, cutsets remain Spt Unit, bitmaps remain AppList (BitVec width) x Nat. Return-list payload type is independent, as in original LENGTH-only definition. Zero/successor induction for copy_ret_aux matches source n=0/n-1 guarded recursion. No frame/register bound, convention, caller success, supplied target-label relation, evaluator/output predicate beyond the original wLive equation, or total HD/EL default is added. Fourteen fresh original complete-set assertions all evaluate to T and identical inputs are kernel-replayed, including nonempty owned handler/code sets, flags, loops, irregular counts and width one. This helper theorem does not establish the full word_to_stack_comp_code_labels statement or source-to-RISC-V correctness; cross-language source review remains distinct from kernel checking."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/GetHeuristics.lean",
+    "lean_name": "getHeuristics",
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "get_heuristics_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison2026-10-01 bead.11.5.3.2: literal word_allocScript1683-1694 arbitrary Nat algorithm/functionName/native WordLangProgHOL positive-width BitVec. Odd MOD2=1 uses reviewed getHeu on LN pair, reviewed getPrefs empty list, exact external sptMapi with getSpillCost and lookup-key calls NONE, reviewed canonizeMoves and MAP getCoalesceCost. Even branch returns raw getPrefs and NONE; no callback, successful allocator, range, well-formedness or output premise. Literal Nat/List/Spt/Option constructors retained; words_as_type_indexed_bitvec records only original word dimension translation. All helper prerequisites accepted; sptMapi0 and smart constructors reviewed in external sptree counterpart. Ten fresh full original EVAL results and four whole structural insert equalities replayed by kernel-checked fixtures, including self/other call cost, duplicate/reversed moves, even raw priority, empty odd SOME LN,80bit algorithms and16/64word dimensions. This native source composition does not claim full allocator correctness or executed route; parent.5.3 retains production obligations. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompileLookup.lean",
+    "lean_name": "compileWordToStackImpALookup",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "compile_word_to_stack_IMP_ALOOKUP",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison 2026-10-01 (.26.8), HOL lines 5692-5719: full original list-compilation and first-match source ALOOKUP equations, initial flattened-length bound, gap bound and final prefix of DROP gap x retained. Existential intermediate start/end bitmap states, frame and body retain compile_prog equation, bound, gap, prefix and compiled first-match ALOOKUP conclusion. ac/perf, register/argument counts, arbitrary independent identifier type and x retained. DecidableEq computes propositional equality in existing literal nil/cons panPropsALookupEq, not BEq or a unique-key premise. Reviewed native compileProgNative/compileWordToStackNative carriers; only positive HOL word dimension translated to BitVec width with NeZero. Head proof uses accepted tail prefix transitivity; tail proof uses accepted compileProgLength bound and exact gap equality. No target lookup/evaluation, frame, sorting, uniqueness or pass-success premise added. Fresh original duplicate-key/later-threaded/missing/Bool-key probes and Lean kernel replays accompany the theorem. Production route and full pass correctness remain separate open beads; coordinator acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/RegisterLabels.lean",
+    "lean_name": "getCodeLabelsWReg",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "get_code_labels_wReg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison 2026-10-01 bead26.13: original proved val word_to_stackProofScript.sml11698-11703 including final SIMP_RULE std_ss [IMP_CONJ_THM]. Fresh original Q.prove reconstruction kernel-proves and prints conjunction of two implications, matched literally by Lean. Arbitrary callback Nat -> HolProg width, register and entire three-Nat frame tuple retained; each sole premise universally requires empty get_code_labels of callback. Both conclusions concern actual reviewed wRegWrite1Native/2Native and accepted literal StackProps.getCodeLabels, including stackStore empty labels on spilled paths, with no frame bounds, register convention, desired output or execution premise. Only HOL positive word dimension translated to BitVec width with NeZero. Fresh six original probes cover physical/boundary/spilled/zero/80-bit register and labelled-callback sentinel; registered kernel fixtures non-vacuously apply both implications. Standard Lean axioms only; no native_decide, EL, opaque choice of program or new axiom. This helper is explicitly used in original full code-label proof11784/11796; that theorem and executable production route remain open. Coordinator source acceptance pending."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/Parmove/PreservesMoves/Parmove.lean",
     "lean_name": "parmovePreservesMoves",
     "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",

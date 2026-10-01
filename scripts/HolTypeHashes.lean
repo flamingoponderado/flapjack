@@ -4,6 +4,9 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.CodeLabels
 import Flapjack.Pancake.WordConvs.CodeLabels
 import Flapjack.Compiler.Backend.StackProps.CodeLabels
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Steps
+import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterLabels
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileLookup
+import Flapjack.Compiler.Backend.WordAlloc.GetHeuristics
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Step
 import Flapjack.Compiler.Backend.LabToTarget.Navigation
 import Flapjack.Compiler.Backend.LabToTarget.Memory
