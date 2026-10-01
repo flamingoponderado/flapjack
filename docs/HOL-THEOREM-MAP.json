@@ -50588,6 +50588,166 @@
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c source comparison: original cakeml857f0d98 lab_to_targetProofScript.sml3195-3204. Same arbitrary list element carrier, bytes/nop/l quantification and conjunction 0<LENGTH nop and LENGTH bytes<=l imply LENGTH(pad_bytes bytes l nop)=l. Lean preserves both premises with no additions; canonical reviewed generic padBytes is actual definition, List length/take/replicate/flatten are direct list translation. No word carrier or representation qualifier. Original theorem export and six EVAL observations include Nat/Bool carriers, zero, exact fit, extended/multi-element nop and empty-nop outside-premise sentinel; kernel proof uses list length and natural arithmetic only."
   },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "has_edge_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/Invariants.lean",
+    "lean_name": "hasEdge",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.3) against reg_allocProofScript.sml:20-25: has_edge adjls x y <=> x < LENGTH adjls /\\ y < LENGTH adjls /\\ MEM y (EL x adjls); num list list carrier. Re-reviewed 2026-10-02 (bead flapjack-pxn.18.5.15.3.38.2) after the HD/EL provenance approval (flapjack-pxn.18.5.15.3.38.1): HOL EL is the exact tagged Flapjack.holEl (listScript EL_def, pinned HOL submodule); statement unchanged from the original source comparison, no changed clause or hypothesis."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "undirected_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/Invariants.lean",
+    "lean_name": "undirected",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.3) against reg_allocProofScript.sml:27-32: !x y. has_edge adjls x y ==> has_edge adjls y x. Re-reviewed 2026-10-02 (bead flapjack-pxn.18.5.15.3.38.2) after the HD/EL provenance approval (flapjack-pxn.18.5.15.3.38.1): HOL EL is the exact tagged Flapjack.holEl (listScript EL_def, pinned HOL submodule); statement unchanged from the original source comparison, no changed clause or hypothesis."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "good_ra_state_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/Invariants.lean",
+    "lean_name": "goodRaState",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.3) against reg_allocProofScript.sml:40-56: all fourteen conjuncts in HOL order over the reviewed twelve-field ra_state carrier: five LENGTH = dim, EVERY (<dim) coalesced, nested EVERY (<dim) adj_ls, EVERY (SORTED $>) adj_ls (SORTED via Flapjack.holSorted following sortingTheory SORTED_DEF clause by clause: [] and [x] true, x::y::rest => R x y /\\ SORTED R (y::rest)), simp/spill/freeze worklists below dim, both move worklists with both endpoints (pair projections of (p,x,y)) below dim, undirected adj_ls. Re-reviewed 2026-10-02 (bead flapjack-pxn.18.5.15.3.38.2) after the HD/EL provenance approval (flapjack-pxn.18.5.15.3.38.1): HOL EL is the exact tagged Flapjack.holEl (listScript EL_def, pinned HOL submodule) and HOL SORTED is the exact tagged Flapjack.holSorted (sortingScript SORTED_DEF), replacing the former local copy with identical clauses; statement unchanged from the original source comparison, no changed clause or hypothesis."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "no_clash_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/Invariants.lean",
+    "lean_name": "noClash",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.3) against reg_allocProofScript.sml:59-67: !x y. has_edge adj_ls x y ==> case (EL x node_tag, EL y node_tag) of (Fixed n, Fixed m) => n = m ==> x = y | _ => T; tag list carrier, the HOL pair case as a two-scrutinee match with the same fallthrough. Re-reviewed 2026-10-02 (bead flapjack-pxn.18.5.15.3.38.2) after the HD/EL provenance approval (flapjack-pxn.18.5.15.3.38.1): HOL EL is the exact tagged Flapjack.holEl (listScript EL_def, pinned HOL submodule); statement unchanged from the original source comparison, no changed clause or hypothesis."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "good_pref_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/Invariants.lean",
+    "lean_name": "goodPref",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.3) against reg_allocProofScript.sml:73-83 (HOL type (a -> b list -> ra_state -> (b option, c) exc # ra_state) -> bool, checked by type_of): !n ks s. good_ra_state s ==> ?res. pref n ks s = (M_success res, s) /\\ case res of NONE => T | SOME k => MEM k ks; three HOL type variables as implicit Type binders; reviewed M/Exc carrier. Re-reviewed 2026-10-02 (bead flapjack-pxn.18.5.15.3.38.2) after the HD/EL provenance approval (flapjack-pxn.18.5.15.3.38.1): HOL EL is the exact tagged Flapjack.holEl (listScript EL_def, pinned HOL submodule) and HOL SORTED is the exact tagged Flapjack.holSorted (sortingScript SORTED_DEF), replacing the former local copy with identical clauses; statement unchanged from the original source comparison, no changed clause or hypothesis."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "good_neg_pref_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/Invariants.lean",
+    "lean_name": "goodNegPref",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.3) against reg_allocProofScript.sml:575-584 (HOL type num -> (a -> num list -> ra_state -> (num option, b) exc # ra_state) -> bool): !n bads s. good_ra_state s ==> ?res. pref n bads s = (M_success res, s) /\\ case res of NONE => T | SOME c => ~MEM c bads /\\ k <= c. Re-reviewed 2026-10-02 (bead flapjack-pxn.18.5.15.3.38.2) after the HD/EL provenance approval (flapjack-pxn.18.5.15.3.38.1): HOL EL is the exact tagged Flapjack.holEl (listScript EL_def, pinned HOL submodule) and HOL SORTED is the exact tagged Flapjack.holSorted (sortingScript SORTED_DEF), replacing the former local copy with identical clauses; statement unchanged from the original source comparison, no changed clause or hypothesis."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "is_clique_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/Invariants.lean",
+    "lean_name": "isClique",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.3) against reg_allocProofScript.sml:983-987: !x y. MEM x ls /\\ MEM y ls /\\ x <> y ==> has_edge adjls x y (conjunctive antecedent kept). Re-reviewed 2026-10-02 (bead flapjack-pxn.18.5.15.3.38.2) after the HD/EL provenance approval (flapjack-pxn.18.5.15.3.38.1): HOL EL is the exact tagged Flapjack.holEl (listScript EL_def, pinned HOL submodule); statement unchanged from the original source comparison, no changed clause or hypothesis."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "is_subgraph_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/Invariants.lean",
+    "lean_name": "isSubgraph",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.3) against reg_allocProofScript.sml:989-993: !x y. has_edge g x y ==> has_edge h x y. Re-reviewed 2026-10-02 (bead flapjack-pxn.18.5.15.3.38.2) after the HD/EL provenance approval (flapjack-pxn.18.5.15.3.38.1): HOL EL is the exact tagged Flapjack.holEl (listScript EL_def, pinned HOL submodule); statement unchanged from the original source comparison, no changed clause or hypothesis."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "is_subgraph_refl",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/Invariants.lean",
+    "lean_name": "isSubgraphRefl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.3) against reg_allocProofScript.sml:995-999: is_subgraph s s, free s explicit. Re-reviewed 2026-10-02 (bead flapjack-pxn.18.5.15.3.38.2) after the HD/EL provenance approval (flapjack-pxn.18.5.15.3.38.1): HOL EL is the exact tagged Flapjack.holEl (listScript EL_def, pinned HOL submodule); statement unchanged from the original source comparison, no changed clause or hypothesis."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "is_subgraph_trans",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/Invariants.lean",
+    "lean_name": "isSubgraphTrans",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.3) against reg_allocProofScript.sml:1001-1008: is_subgraph s s' /\\ is_subgraph s' s'' ==> is_subgraph s s''. Re-reviewed 2026-10-02 (bead flapjack-pxn.18.5.15.3.38.2) after the HD/EL provenance approval (flapjack-pxn.18.5.15.3.38.1): HOL EL is the exact tagged Flapjack.holEl (listScript EL_def, pinned HOL submodule); statement unchanged from the original source comparison, no changed clause or hypothesis."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "colouring_satisfactory_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/Invariants.lean",
+    "lean_name": "colouringSatisfactory",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.3) against reg_allocProofScript.sml:1236-1241 (HOL type (num -> a) -> num list list -> bool): !x. x < LENGTH adjls ==> (!y. y < LENGTH adjls /\\ MEM y (EL x adjls) ==> col x = col y ==> x = y). Re-reviewed 2026-10-02 (bead flapjack-pxn.18.5.15.3.38.2) after the HD/EL provenance approval (flapjack-pxn.18.5.15.3.38.1): HOL EL is the exact tagged Flapjack.holEl (listScript EL_def, pinned HOL submodule); statement unchanged from the original source comparison, no changed clause or hypothesis."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "Msub_eqn",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/AccessorEqns.lean",
+    "lean_name": "msubEqn",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.3.38.2) against reg_allocProofScript.sml:125-136: !e n ls v. Msub e n ls = if n < LENGTH ls then M_success (EL n ls) else M_failure e; HOL v does not occur and is omitted (documented); [Nonempty alpha] is the inhabitation HOL types always have, required by the total EL; HOL EL is the exact tagged Flapjack.holEl (listScript EL_def, pinned HOL submodule, provenance flapjack-pxn.18.5.15.3.38.1); no changed clause or hypothesis."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "adj_ls_sub_eqn",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/AccessorEqns.lean",
+    "lean_name": "adjLsSubEqn",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.3.38.2) against reg_allocProofScript.sml:138-147: adj_ls_sub n s = if n < LENGTH s.adj_ls then (M_success (EL n s.adj_ls),s) else (M_failure Subscript,s), over the reviewed generated adj_ls_sub accessor and ra_state carrier; HOL EL is the exact tagged Flapjack.holEl (listScript EL_def, pinned HOL submodule, provenance flapjack-pxn.18.5.15.3.38.1); no changed clause or hypothesis."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "node_tag_sub_eqn",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/AccessorEqns.lean",
+    "lean_name": "nodeTagSubEqn",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.3.38.2) against reg_allocProofScript.sml:149-158: node_tag_sub n s = if n < LENGTH s.node_tag then (M_success (EL n s.node_tag),s) else (M_failure Subscript,s); HOL EL is the exact tagged Flapjack.holEl (listScript EL_def, pinned HOL submodule, provenance flapjack-pxn.18.5.15.3.38.1); no changed clause or hypothesis."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "degrees_sub_eqn",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/AccessorEqns.lean",
+    "lean_name": "degreesSubEqn",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.3.38.2) against reg_allocProofScript.sml:160-169: degrees_sub n s = if n < LENGTH s.degrees then (M_success (EL n s.degrees),s) else (M_failure Subscript,s); HOL EL is the exact tagged Flapjack.holEl (listScript EL_def, pinned HOL submodule, provenance flapjack-pxn.18.5.15.3.38.1); no changed clause or hypothesis."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "coalesced_sub",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/AccessorEqns.lean",
+    "lean_name": "coalescedSubEqn",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.3.38.2) against reg_allocProofScript.sml:171-179: coalesced_sub n s = if n < LENGTH s.coalesced then (M_success (EL n s.coalesced),s) else (M_failure Subscript,s); HOL EL is the exact tagged Flapjack.holEl (listScript EL_def, pinned HOL submodule, provenance flapjack-pxn.18.5.15.3.38.1); no changed clause or hypothesis."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "move_related_sub",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/AccessorEqns.lean",
+    "lean_name": "moveRelatedSubEqn",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.3.38.2) against reg_allocProofScript.sml:181-189: move_related_sub n s = if n < LENGTH s.move_related then (M_success (EL n s.move_related),s) else (M_failure Subscript,s); HOL EL is the exact tagged Flapjack.holEl (listScript EL_def, pinned HOL submodule, provenance flapjack-pxn.18.5.15.3.38.1); no changed clause or hypothesis."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "st_ex_MAP_node_tag_sub",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/AccessorEqns.lean",
+    "lean_name": "stExMapNodeTagSub",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.3.38.2) against reg_allocProofScript.sml:269-275: !ls s. EVERY (\\v. v < LENGTH s.node_tag) ls ==> st_ex_MAP node_tag_sub ls s = (M_success (MAP (\\i. EL i s.node_tag) ls),s); EVERY as list membership; HOL EL is the exact tagged Flapjack.holEl (listScript EL_def, pinned HOL submodule, provenance flapjack-pxn.18.5.15.3.38.1); no changed clause or hypothesis."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "st_ex_MAP_adj_ls_sub",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/AccessorEqns.lean",
+    "lean_name": "stExMapAdjLsSub",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.3.38.2) against reg_allocProofScript.sml:277-283: !ls s. EVERY (\\v. v < LENGTH s.adj_ls) ls ==> st_ex_MAP adj_ls_sub ls s = (M_success (MAP (\\i. EL i s.adj_ls) ls),s); HOL EL is the exact tagged Flapjack.holEl (listScript EL_def, pinned HOL submodule, provenance flapjack-pxn.18.5.15.3.38.1); no changed clause or hypothesis."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
+    "hol_name": "st_ex_MAP_degrees_sub",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/AccessorEqns.lean",
+    "lean_name": "stExMapDegreesSub",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.3.38.2) against reg_allocProofScript.sml:285-291: !ls s. EVERY (\\v. v < LENGTH s.degrees) ls ==> st_ex_MAP degrees_sub ls s = (M_success (MAP (\\i. EL i s.degrees) ls),s); HOL EL is the exact tagged Flapjack.holEl (listScript EL_def, pinned HOL submodule, provenance flapjack-pxn.18.5.15.3.38.1); no changed clause or hypothesis."
+  },
 {
   "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
   "hol_name": "ssa_cc_trans_props",
