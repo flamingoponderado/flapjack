@@ -1,3 +1,5 @@
+`ssa_register_class_probe.out` captures eight direct MOD4 class observations, including physical-register guard boundaries and large naturals. It also rechecks the literal original local `is_alloc_var_add`/`is_stack_var_add` statements with their original proof text; source-replay rows are distinct from exported-theorem rows. `Flapjack/Test/SSARegisterClassParity.lean` kernel-replays the observations and applies both ported theorems.
+
 `ssa_locals_rel_probe.out` simplifies the original whole generic relation with literal lookup/domain/THE clauses: eight Bool-valued success/missing-map/missing-target/wrong-value/allocation-bound/malformed-tree observations. `Flapjack/Test/SSALocalsParity.lean` replays identical inputs in the kernel; the full original definition and generic inferred type are captured.
 
 `ssa_map_ok_probe.out` simplifies the literal original SSA map predicate and lookup clauses for five empty/valid/bound/physical/malformed-tree cases; `Flapjack/Test/SSAMapParity.lean` kernel-replays those quantified predicates. The full original definition is printed.
@@ -3164,6 +3166,11 @@ register count and bitmap input. These are regression checks, not a
 HOL-to-Lean equivalence proof or whole compiler correctness acceptance.
 Selector: `HOL_PROBE_ONLY=word_to_stack_program_code_labels_probeScript.sml`.
 
+`ssa_merge_moves_probe.out` captures ten complete original merge_moves results,
+both maps included, plus the exported definition and full inferred type. Native
+`SSAMergeMovesParity` kernel-replays those results, including tail-first order,
+duplicate keys, malformed trees and unbounded naturals. Production routing
+remains separately tracked; these observations are not a cross-prover proof.
 `list_next_var_rename_lemma1_probe.out` records a fresh replay of the complete
 local original theorem and proof, plus eight full renaming observations with
 selected map lookups and all three arithmetic conclusions. Cases include
@@ -3183,3 +3190,23 @@ and payload applications. The definitions use the reviewed native `HolProg`
 carrier and preserve the literal source clauses. These are regression checks,
 not cross-language equivalence or full compiler preservation acceptance.
 Selector: `HOL_PROBE_ONLY=stackprops_forbidden_operations_probeScript.sml`.
+### Full generic ASM assertion iteration
+
+`asmprops_assertions_iteration_probeScript.sml` applies all six original
+`asmPropsTheory` iteration/weakening theorems. It matches each complete
+conclusion, instantiates remaining source variables, proves every original
+premise, checks the resulting theorem has no hypotheses and exactly the
+requested conclusion, then evaluates that conclusion. All six rows are `T`;
+`AsmPropsAssertionsIterationParity.lean` applies the corresponding full Lean
+theorems to the same inputs. Weakening/interference fixtures change functions
+above the original count bound, and the intermediate carrier remains Bool
+while states are Nat. These regressions do not establish cross-language
+equivalence or complete encoder correctness.
+
+`word_alloc_limit_var_probe.out` records the full original definition/type and
+twelve native-program maximum/limit/class/strict-bound observations. Inputs
+cover all four residues, zero/multiples, widths1/32/64/80, unbounded naturals,
+returning Call bodies, ignored tail handlers and ignored Load16 fields.
+`WordAllocLimitVarParity` checks thirteen kernel examples against identical
+inputs. Select `HOL_PROBE_ONLY=word_alloc_limit_var_probeScript.sml`.
+The executed upstream maximum/limit route remains tracked on .30.1.2.1.
