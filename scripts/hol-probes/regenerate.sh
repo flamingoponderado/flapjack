@@ -3733,3 +3733,8 @@ run_probe ssa_fix_inconsistencies_correct_left_probeScript.sml ssa_fix_inconsist
   ficl_full ficl_type_na ficl_type_ssaL ficl_type_ssaR ficl_type_prio ficl_type_stL ficl_type_cstL \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_fix_inconsistencies_correct_right_probeScript.sml ssa_fix_inconsistencies_correct_right_probe.out \
+  ficr_full ficr_type_na ficr_type_ssaL ficr_type_ssaR ficr_type_prio ficr_type_stR ficr_type_cstR \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
