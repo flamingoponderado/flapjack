@@ -51307,5 +51307,32 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "ssa_cc_trans_props",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsControl.lean",
+  "lean_name": "ssaCcTransPropsSeq",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol-a source comparison flapjack-u9pq: exact native functional-induction clause7/8/9 of original ssa_cc_trans_props5951ff. Seq original guarded second IH then initial first IH; MustTerminate original same-context bodyIH; If original renamed-condition/regimm guards and first-produced branch tuple guard for second IH, second branch retains original map and advanced counter. Exact original output equality/map/allocation premises derive all3 counter/class/map conclusions including actual reconciliation; no additional caller/output/evaluation/validity premise or arbitrary-context IH. Original complete literal case tactics kernel replay and all outer/context types captured; owning native Nat/List/Spt/regimm/prog carriers and positive BitVec dimension compared. Proof-only, executed behavior unchanged."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "ssa_cc_trans_props",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsControl.lean",
+  "lean_name": "ssaCcTransPropsMustTerminate",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol-a source comparison flapjack-u9pq: exact native functional-induction clause7/8/9 of original ssa_cc_trans_props5951ff. Seq original guarded second IH then initial first IH; MustTerminate original same-context bodyIH; If original renamed-condition/regimm guards and first-produced branch tuple guard for second IH, second branch retains original map and advanced counter. Exact original output equality/map/allocation premises derive all3 counter/class/map conclusions including actual reconciliation; no additional caller/output/evaluation/validity premise or arbitrary-context IH. Original complete literal case tactics kernel replay and all outer/context types captured; owning native Nat/List/Spt/regimm/prog carriers and positive BitVec dimension compared. Proof-only, executed behavior unchanged."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "ssa_cc_trans_props",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsControl.lean",
+  "lean_name": "ssaCcTransPropsIf",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol-a source comparison flapjack-u9pq: exact native functional-induction clause7/8/9 of original ssa_cc_trans_props5951ff. Seq original guarded second IH then initial first IH; MustTerminate original same-context bodyIH; If original renamed-condition/regimm guards and first-produced branch tuple guard for second IH, second branch retains original map and advanced counter. Exact original output equality/map/allocation premises derive all3 counter/class/map conclusions including actual reconciliation; no additional caller/output/evaluation/validity premise or arbitrary-context IH. Original complete literal case tactics kernel replay and all outer/context types captured; owning native Nat/List/Spt/regimm/prog carriers and positive BitVec dimension compared. Proof-only, executed behavior unchanged."
 }
 ]
