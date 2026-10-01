@@ -3300,6 +3300,10 @@ run_probe word_alloc_fix_inconsistencies_probeScript.sml word_alloc_fix_inconsis
   ol_hit ol_miss pr_none pr_inl pr_inr fm fms_empty fms_left_only fms_right_only fms_both fi_equal fi_mixed \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
 
+run_probe hol_list_el_probeScript.sml hol_list_el_probe.out \
+  hd_type el_type hd_cons hd_bool el_zero el_last el_nested el_large \
+  "$repo_dir/HOL/src/list/src/listScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
 run_probe reg_alloc_move_prep_probeScript.sml reg_alloc_move_prep_probe.out \
   ec_basic ec_oob cr_self cr_chain cr_fixed fco_same fco_out_dim fco_adjacent fco_fixed_atemp fco_fixed_high fco_ok um_order um_keep \
   "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
@@ -3669,3 +3673,21 @@ run_probe word_to_stack_no_shmemop_handled_probeScript.sml word_to_stack_no_shme
 run_probe word_to_stack_no_shmemop_primitives_probeScript.sml word_to_stack_no_shmemop_primitives_probe.out \
   cp_skip_1 cp_assign_1 cp_store_1 cp_raise_1 cp_break_1 cp_continue_1 cp_tick_1 cp_skip_32 cp_assign_32 cp_store_32 cp_raise_32 cp_break_32 cp_continue_32 cp_tick_32 cp_skip_64 cp_assign_64 cp_store_64 cp_raise_64 cp_break_64 cp_continue_64 cp_tick_64 cp_skip_80 cp_assign_80 cp_store_80 cp_raise_80 cp_break_80 cp_continue_80 cp_tick_80 cp_load_valid cp_load_invalid cp_store_valid cp_store_invalid \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
+run_probe ssa_get_set_vars_probeScript.sml ssa_get_set_vars_probe.out \
+  get_vars_list_insert_eq_gen_full get_vars_set_vars_eq_full \
+  gvi_type_st gvi_type_ls gvi_type_x gvi_type_locs gvi_type_a gvi_type_b \
+  gsv_type_cst gsv_type_ls gsv_type_x \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_locals_list_rename_probeScript.sml ssa_locals_list_rename_probe.out \
+  lr_full lr_type_xs lr_type_ssa lr_type_na lr_type_stloc lr_type_cstloc \
+  lr_type_ys lr_type_ssaOut lr_type_naOut lr_type_ls \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_setup_props_probeScript.sml ssa_setup_props_probe.out \
+  setup_full setup_type_lim setup_type_n setup_type_st setup_type_prog \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"

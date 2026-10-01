@@ -3282,5 +3282,111 @@ class PinnedPathAllowlistAlignmentTest(unittest.TestCase):
             self.assertTrue((CHECKER["ROOT"] / path).is_file(), path)
 
 
+
+ROOT_HOL = Path(CHECKER["ROOT"]) / "HOL"
+LIST_SCRIPT = "src/list/src/listScript.sml"
+
+
+def _run(*args, cwd=None):
+    import subprocess
+    subprocess.run(list(args), cwd=cwd, check=True, capture_output=True)
+
+
+@unittest.skipUnless((ROOT_HOL / ".git").exists(), "pinned HOL submodule not initialized")
+class HolSubmoduleSourcesTest(unittest.TestCase):
+    """``HOL/<rel>.sml`` citations need gitlink, checkout and blob provenance."""
+
+    def fixture(self, root):
+        pinned = CHECKER["HOL_SUBMODULE_COMMIT"]
+        _run("git", "init", "--quiet", str(root))
+        (root / ".gitmodules").write_text(
+            '[submodule "HOL"]\n\tpath = HOL\n'
+            "\turl = https://github.com/HOL-Theorem-Prover/HOL.git\n")
+        _run("git", "clone", "--quiet", "--shared", "--no-checkout",
+             str(ROOT_HOL), str(root / "HOL"))
+        _run("git", "-C", str(root / "HOL"), "update-ref", "--no-deref", "HEAD", pinned)
+        _run("git", "-C", str(root / "HOL"), "checkout", pinned, "--", LIST_SCRIPT)
+        _run("git", "-C", str(root), "update-index", "--add", "--cacheinfo",
+             f"160000,{pinned},HOL")
+        return "HOL/" + LIST_SCRIPT
+
+    def error(self, root, path):
+        return CHECKER["hol_source_error"](root, path)
+
+    def test_verified_submodule_file_is_accepted(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            path = self.fixture(root)
+            self.assertIsNone(self.error(root, path))
+
+    def test_untracked_path_is_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.fixture(root)
+            self.assertIn("not tracked", self.error(root, "HOL/src/list/src/noSuchScript.sml"))
+
+    def test_locally_modified_file_is_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            path = self.fixture(root)
+            target = root / path
+            target.write_text(target.read_text() + "\n(* local edit *)\n")
+            self.assertIn("differs from the pinned blob", self.error(root, path))
+
+    def test_wrong_superproject_gitlink_is_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            path = self.fixture(root)
+            _run("git", "-C", str(root), "update-index", "--cacheinfo",
+                 f"160000,{'1' * 40},HOL")
+            self.assertIn("gitlink", self.error(root, path))
+
+    def test_checkout_at_other_commit_is_rejected(self):
+        import subprocess
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            path = self.fixture(root)
+            parent = subprocess.run(
+                ["git", "-C", str(root / "HOL"), "rev-parse",
+                 CHECKER["HOL_SUBMODULE_COMMIT"] + "~1"],
+                check=True, capture_output=True, text=True).stdout.strip()
+            _run("git", "-C", str(root / "HOL"), "update-ref", "--no-deref", "HEAD", parent)
+            self.assertIn("not at the pinned commit", self.error(root, path))
+
+    def test_wrong_submodule_url_is_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            path = self.fixture(root)
+            (root / ".gitmodules").write_text(
+                '[submodule "HOL"]\n\tpath = HOL\n\turl = https://example.com/HOL.git\n')
+            self.assertIn(".gitmodules", self.error(root, path))
+
+    def test_repository_checkout_accepts_pinned_list_script(self):
+        self.assertIsNone(self.error(Path(CHECKER["ROOT"]), "HOL/" + LIST_SCRIPT))
+
+    def test_existing_hol4_snapshot_paths_unchanged(self):
+        self.assertIsNone(self.error(Path(CHECKER["ROOT"]), CHECKER["EXTERNAL_HOL_PATH"]))
+
+
+
+@unittest.skipUnless((ROOT_HOL / ".git").exists(), "pinned HOL submodule not initialized")
+class HolSubmoduleDeclarationTest(unittest.TestCase):
+    """Declarations cited under ``HOL/`` resolve in the verified pinned file."""
+
+    def test_list_and_sorting_definitions_resolve(self):
+        root = Path(CHECKER["ROOT"])
+        cache = {}
+        for rel, name in [("src/list/src/listScript.sml", "EL_def"),
+                          ("src/sort/sortingScript.sml", "SORTED_DEF"),
+                          ("src/sort/sortingScript.sml", "PART_DEF"),
+                          ("src/sort/sortingScript.sml", "PARTITION_DEF")]:
+            self.assertIsNone(CHECKER["hol_source_error"](root, "HOL/" + rel))
+            self.assertIsNone(REF_ERROR(root / "HOL" / rel, name, None, cache), (rel, name))
+
+    def test_missing_declaration_is_reported(self):
+        root = Path(CHECKER["ROOT"])
+        self.assertIsNotNone(
+            REF_ERROR(root / "HOL/src/list/src/listScript.sml", "no_such_def", None, {}))
+
 if __name__ == "__main__":
     unittest.main()
