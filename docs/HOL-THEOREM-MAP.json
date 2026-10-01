@@ -51560,5 +51560,167 @@
     "lean_name": "regAlloc",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.10.5.8.6.28): reg_allocScript.sml:1490-1493 reg_alloc_aux ... (mk_bij ct). Statement-by-statement transcription of the HOL do-block over the tagged accessors and helpers (bind/ignoreBind/ret, pattern binders as matches, PARTITION as holPartition, EXISTS as List.any, NULL l as l = [], COUNT_LIST as List.range, FILTER with the Boolean test); type compared with the original type_of (TY output, all monomorphic over ra_state). Exercised by the original HOL EVAL rows of scripts/hol-probes/reg_alloc_allocator_probe.out (12 complete reg_alloc runs) kernel-replayed in Flapjack.Test.RegAllocAllocatorParity. Proof-side; the executed allocator is not routed through it."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsPrimitives.lean",
+    "lean_name": "ssaCcTransPropsSkip",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsPrimitives.lean",
+    "lean_name": "ssaCcTransPropsStoreConsts",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsPrimitives.lean",
+    "lean_name": "ssaCcTransPropsInst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsPrimitives.lean",
+    "lean_name": "ssaCcTransPropsAssign",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsPrimitives.lean",
+    "lean_name": "ssaCcTransPropsGet",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsPrimitives.lean",
+    "lean_name": "ssaCcTransPropsStore",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsPrimitives.lean",
+    "lean_name": "ssaCcTransPropsRaise",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsPrimitives.lean",
+    "lean_name": "ssaCcTransPropsOpCurrHeap",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsPrimitives.lean",
+    "lean_name": "ssaCcTransPropsReturn",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsPrimitives.lean",
+    "lean_name": "ssaCcTransPropsTick",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsPrimitives.lean",
+    "lean_name": "ssaCcTransPropsSet",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsPrimitives.lean",
+    "lean_name": "ssaCcTransPropsLocValue",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsPrimitives.lean",
+    "lean_name": "ssaCcTransPropsCodeBufferWrite",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsPrimitives.lean",
+    "lean_name": "ssaCcTransPropsDataBufferWrite",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsPrimitives.lean",
+    "lean_name": "ssaCcTransPropsShareInst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-y3i9: corresponding native nonrecursive functional-induction case of original ssa_cc_trans_props5951ff, literal source case tactics replayed. Exactly original compiler-output equality then ssa_map_ok/is_alloc_var premises imply all3 counter monotonicity/allocation/map conclusions; no IH or added distinctness/validity/evaluation/post-map premise. Native owning List/Spt/store_name/instruction/exp/memop carriers and arbitrary positive BitVec width checked against captured HOL types. Actual rename wrappers/instruction invariant or unchanged native map/counter derive result. Proof-only; executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsControl.lean",
+    "lean_name": "ssaCcTransPropsSeq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-u9pq: exact native functional-induction clause7/8/9 of original ssa_cc_trans_props5951ff. Seq original guarded second IH then initial first IH; MustTerminate original same-context bodyIH; If original renamed-condition/regimm guards and first-produced branch tuple guard for second IH, second branch retains original map and advanced counter. Exact original output equality/map/allocation premises derive all3 counter/class/map conclusions including actual reconciliation; no additional caller/output/evaluation/validity premise or arbitrary-context IH. Original complete literal case tactics kernel replay and all outer/context types captured; owning native Nat/List/Spt/regimm/prog carriers and positive BitVec dimension compared. Proof-only, executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsControl.lean",
+    "lean_name": "ssaCcTransPropsMustTerminate",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-u9pq: exact native functional-induction clause7/8/9 of original ssa_cc_trans_props5951ff. Seq original guarded second IH then initial first IH; MustTerminate original same-context bodyIH; If original renamed-condition/regimm guards and first-produced branch tuple guard for second IH, second branch retains original map and advanced counter. Exact original output equality/map/allocation premises derive all3 counter/class/map conclusions including actual reconciliation; no additional caller/output/evaluation/validity premise or arbitrary-context IH. Original complete literal case tactics kernel replay and all outer/context types captured; owning native Nat/List/Spt/regimm/prog carriers and positive BitVec dimension compared. Proof-only, executed behavior unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_props",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAProgramPropsControl.lean",
+    "lean_name": "ssaCcTransPropsIf",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison flapjack-u9pq: exact native functional-induction clause7/8/9 of original ssa_cc_trans_props5951ff. Seq original guarded second IH then initial first IH; MustTerminate original same-context bodyIH; If original renamed-condition/regimm guards and first-produced branch tuple guard for second IH, second branch retains original map and advanced counter. Exact original output equality/map/allocation premises derive all3 counter/class/map conclusions including actual reconciliation; no additional caller/output/evaluation/validity premise or arbitrary-context IH. Original complete literal case tactics kernel replay and all outer/context types captured; owning native Nat/List/Spt/regimm/prog carriers and positive BitVec dimension compared. Proof-only, executed behavior unchanged."
   }
 ]

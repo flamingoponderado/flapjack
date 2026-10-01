@@ -3960,3 +3960,11 @@ run_probe stack_to_lab_executed_input_probeScript.sml stack_to_lab_executed_inpu
 run_probe lab_implicit_section_zero_probeScript.sml lab_implicit_section_zero_probe.out \
   zero_original_skip_late_zero zero_original_section_base zero_original_second_base zero_original_second_label zero_original_empty_section zero_original_crosssection_bytes \
   "$cake_dir/compiler/backend/lab_to_targetScript.sml" "$cake_dir/compiler/encoders/riscv"
+
+run_probe ssa_cc_trans_props_primitives_probeScript.sml ssa_cc_trans_props_primitives_probe.out \
+  spp_case_0 spp_case_2 spp_case_3 spp_case_4 spp_case_5 spp_case_6 spp_case_11 spp_case_12 spp_case_13 spp_case_14 spp_case_15 spp_case_16 spp_case_18 spp_case_19 spp_case_23 spp_0_type_ssa spp_0_type_na spp_0_type_lt spp_0_type_progOut spp_0_type_ssaOut spp_0_type_naOut spp_2_type_a spp_2_type_b spp_2_type_c spp_2_type_d spp_2_type_ws spp_3_type_i spp_4_type_num spp_4_type_exp spp_5_type_num spp_5_type_store spp_6_type_exp spp_6_type_num spp_11_type_num spp_12_type_b spp_12_type_dst spp_12_type_src spp_13_type_num spp_13_type_nums spp_15_type_n spp_15_type_exp spp_16_type_r spp_16_type_l1 spp_18_type_r1 spp_18_type_r2 spp_19_type_r1 spp_19_type_r2 spp_23_type_op spp_23_type_v spp_23_type_exp \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_cc_trans_props_control_probeScript.sml ssa_cc_trans_props_control_probe.out \
+  spc_case_7 spc_case_8 spc_case_9 spc_7_type_s1 spc_7_type_s2 spc_7_type_ssa spc_7_type_na spc_7_type_lt spc_7_type_progOut spc_7_type_ssaOut spc_7_type_naOut spc_8_type_s1 spc_9_type_cmp spc_9_type_r1 spc_9_type_ri spc_9_type_e2 spc_9_type_e3 spc_9_type_r1P spc_9_type_riP spc_9_type_e2P spc_9_type_ssa2 spc_9_type_na2 \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

@@ -1,9 +1,11 @@
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsControl
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsPrimitives
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsCalls
 import Flapjack.Compiler.Backend.LabToTarget.LineLength
 import Flapjack.Compiler.Backend.LabToTarget.SectionLength
 import Flapjack.Byte
 import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.Padding
 import Flapjack.Compiler.Encoders.AsmProps.ArithmeticPreservation
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsCalls
 import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.Encoding
 import Flapjack.Compiler.Backend.StackProps.InstructionConstants
 import Flapjack.Compiler.Backend.StackProps.ClockSupport

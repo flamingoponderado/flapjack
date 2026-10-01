@@ -4277,6 +4277,9 @@ initial encoding, unchanged and changed offsets, length growth/failure flags,
 nonempty accumulators and multiple sections. The full line theorem retains
 HOL's complete result tail `(position, flag)` and arbitrary prefix premise.
 Kernel fixtures replay the observations and apply the full section theorem.
+### SSA Call allocation/map invariant
+
+`ssa_cc_trans_props_calls_probe.out` specializes the original functional induction at tail/returning Call, replays the literal original marked Calls proof, and captures the complete statements and all actual outer/guarded-handler variable types. Both exact guarded handler IHs are retained in the Lean returning-Call case; input/final map bounds are derived.
 ### Generic force_rename repair
 
 `ssa_force_rename_generic_probe.out` replays the literal three complete lookup/domain proofs at word_allocProofScript.sml:6347–6381 and captures the original arbitrary-payload definition type. The Lean Bool/Unit fixtures exercise the generalized definition and theorem instances; SSA bounds retain their Nat specialization.
@@ -4297,8 +4300,9 @@ label-only code, nonempty accumulators and unchanged resolved offsets. Kernel
 fixtures replay them and apply the full theorem at arbitrary positive width and
 arbitrary accumulator; no full compiler or cross-language equivalence is claimed.
 
-### SSA Call allocation/map invariant
+### SSA primitive program invariants
 
+`ssa_cc_trans_props_primitives_probe.out` captures the original 15 nonrecursive primitive invariant statements and actual constructor types. It replays the literal StoreConsts, instruction, expression tactic, CBW/DBW and ShareInst proofs after the original compiler simplification, including original instruction/extension/allocation prerequisites. The Lean cases derive all three invariants from only the original compiler equality and map/allocation premise.
 `ssa_cc_trans_props_calls_probe.out` specializes the original functional induction at tail/returning Call, replays the literal original marked Calls proof, and captures the complete statements and all actual outer/guarded-handler variable types. Both exact guarded handler IHs are retained in the Lean returning-Call case; input/final map bounds are derived.
 ## Native Word CSE instruction keys
 
@@ -4348,3 +4352,7 @@ implication, plus both read/eligibility conclusions.
 clocked WordSem evaluator, its reviewed finite-support state and its inherited
 IEEE rational-cut assumption (SOUNDNESS item 8). This is a CSE simulation
 prerequisite, not the entire CSE invariant/pass or compiler theorem.
+
+### SSA recursive control invariants
+
+`ssa_cc_trans_props_control_probe.out` specializes original native functional-induction Seq/MustTerminate/If clauses7/8/9, replays their literal original proof tactics, and captures the complete guarded IH statements and actual context types. The Lean cases retain original scoped guards/order and derive handler-input/final reconciliation bounds.
