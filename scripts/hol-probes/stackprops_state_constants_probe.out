@@ -1,0 +1,144 @@
+sc_20=(set_store (x :store_name) (y :β word_loc) (z :(β, γ, α) state)).ffi = z.ffi ∧
+(set_store x y z).clock = z.clock ∧
+((set_store x y z).use_alloc ⇔ z.use_alloc) ∧
+((set_store x y z).use_store ⇔ z.use_store) ∧
+((set_store x y z).use_stack ⇔ z.use_stack) ∧
+(set_store x y z).code = z.code ∧ ((set_store x y z).be ⇔ z.be) ∧
+(set_store x y z).gc_fun = z.gc_fun ∧ (set_store x y z).memory = z.memory ∧
+(set_store x y z).mdomain = z.mdomain ∧
+(set_store x y z).sh_mdomain = z.sh_mdomain ∧
+(set_store x y z).bitmaps = z.bitmaps ∧
+(set_store x y z).data_buffer = z.data_buffer ∧
+(set_store x y z).code_buffer = z.code_buffer ∧
+(set_store x y z).compile = z.compile ∧
+(set_store x y z).compile_oracle = z.compile_oracle ∧
+(set_store x y z).stack_space = z.stack_space ∧
+(set_store x y z).stack = z.stack
+sc_20_types=(z :(β, γ, α) state)
+::(β, γ, α) state;(y :β word_loc)
+::β word_loc;(x :store_name)
+::store_name;
+sc_43=set_store (x :store_name) (y :α word_loc)
+  ((z :(α, β, γ) state) with clock := (a :num)) =
+set_store x y z with clock := a
+sc_43_types=(z :(α, β, γ) state)
+::(α, β, γ) state;(a :num)
+::num;(y :α word_loc)
+::α word_loc;(x :store_name)
+::store_name;
+sc_49=(set_var (x :num) (y :β word_loc) (z :(β, γ, α) state)).ffi = z.ffi ∧
+(set_var x y z).clock = z.clock ∧ ((set_var x y z).use_alloc ⇔ z.use_alloc) ∧
+((set_var x y z).use_store ⇔ z.use_store) ∧
+((set_var x y z).use_stack ⇔ z.use_stack) ∧ (set_var x y z).code = z.code ∧
+((set_var x y z).be ⇔ z.be) ∧ (set_var x y z).fp_regs = z.fp_regs ∧
+(set_var x y z).data_buffer = z.data_buffer ∧
+(set_var x y z).code_buffer = z.code_buffer ∧
+(set_var x y z).gc_fun = z.gc_fun ∧ (set_var x y z).memory = z.memory ∧
+(set_var x y z).mdomain = z.mdomain ∧
+(set_var x y z).sh_mdomain = z.sh_mdomain ∧
+(set_var x y z).bitmaps = z.bitmaps ∧ (set_var x y z).compile = z.compile ∧
+(set_var x y z).compile_oracle = z.compile_oracle ∧
+(set_var x y z).store = z.store ∧ (set_var x y z).stack = z.stack ∧
+(set_var x y z).stack_space = z.stack_space
+sc_49_types=(z :(β, γ, α) state)
+::(β, γ, α) state;(y :β word_loc)
+::β word_loc;(x :num)
+::num;
+sc_74=set_var (x :num) (y :α word_loc)
+  ((z :(α, β, γ) state) with clock := (clk :num)) =
+set_var x y z with clock := clk ∧
+set_var x y (z with memory := (m :α word -> α word_loc)) =
+set_var x y z with memory := m ∧
+set_var x y (z with ffi := (ffi :δ ffi_state)) =
+set_var x y z with ffi := ffi ∧
+set_var x y (z with stack := (stk :α word_loc list)) =
+set_var x y z with stack := stk ∧
+set_var x y (z with stack_space := (stk_space :num)) =
+set_var x y z with stack_space := stk_space
+sc_74_types=(stk_space :num)
+::num;(stk :α word_loc list)
+::α word_loc list;(ffi :δ ffi_state)
+::δ ffi_state;(m :α word -> α word_loc)
+::α word -> α word_loc;(z :(α, β, γ) state)
+::(α, β, γ) state;(clk :num)
+::num;(y :α word_loc)
+::α word_loc;(x :num)
+::num;
+sc_84=set_fp_var (x :num) (y :word64) ((z :(α, β, γ) state) with clock := (k :num)) =
+set_fp_var x y z with clock := k
+sc_84_types=(z :(α, β, γ) state)
+::(α, β, γ) state;(k :num)
+::num;(y :word64)
+::word64;(x :num)
+::num;
+sc_90=(set_fp_var (x :num) (y :word64) (z :(β, γ, α) state)).ffi = z.ffi ∧
+(set_fp_var x y z).clock = z.clock ∧
+((set_fp_var x y z).use_alloc ⇔ z.use_alloc) ∧
+((set_fp_var x y z).use_store ⇔ z.use_store) ∧
+((set_fp_var x y z).use_stack ⇔ z.use_stack) ∧
+(set_fp_var x y z).code = z.code ∧ ((set_fp_var x y z).be ⇔ z.be) ∧
+(set_fp_var x y z).gc_fun = z.gc_fun ∧
+(set_fp_var x y z).mdomain = z.mdomain ∧
+(set_fp_var x y z).sh_mdomain = z.sh_mdomain ∧
+(set_fp_var x y z).bitmaps = z.bitmaps ∧
+(set_fp_var x y z).compile = z.compile ∧
+(set_fp_var x y z).compile_oracle = z.compile_oracle ∧
+(set_fp_var x y z).stack = z.stack ∧
+(set_fp_var x y z).stack_space = z.stack_space
+sc_90_types=(z :(β, γ, α) state)
+::(β, γ, α) state;(y :word64)
+::word64;(x :num)
+::num;
+sc_110=get_fp_var (x :num) ((y :(α, β, γ) state) with clock := (k :num)) =
+get_fp_var x y
+sc_110_types=(y :(α, β, γ) state)
+::(α, β, γ) state;(k :num)
+::num;(x :num)
+::num;
+sc_116=(get_var (r :num) ((t :(α, β, γ) state) with clock := (clk :num)) :
+ α word_loc option) = (get_var r t :α word_loc option) ∧
+(get_var r (t with stack_space := (stk_space :num)) :α word_loc option) =
+(get_var r t :α word_loc option)
+sc_116_types=(stk_space :num)
+::num;(t :(α, β, γ) state)
+::(α, β, γ) state;(clk :num)
+::num;(r :num)
+::num;
+sc_125=(get_vars (xs :num list) ((y :(α, β, γ) state) with clock := (k :num)) :
+ α word_loc list option) = (get_vars xs y :α word_loc list option)
+sc_125_types=(y :(α, β, γ) state)
+::(α, β, γ) state;(k :num)
+::num;(xs :num list)
+::num list;
+sc_131=get_var_imm (x :α reg_imm) ((y :(α, β, γ) state) with clock := (k :num)) =
+get_var_imm x y
+sc_131_types=(y :(α, β, γ) state)
+::(α, β, γ) state;(k :num)
+::num;(x :α reg_imm)
+::α reg_imm;
+sc_137=(set_fp_var (x :num) (y :word64) (z :(α, β, γ) state)).stack_space =
+z.stack_space ∧ (set_fp_var x y z).stack = z.stack
+sc_137_types=(z :(α, β, γ) state)
+::(α, β, γ) state;(y :word64)
+::word64;(x :num)
+::num;
+sc_144=(empty_env (x :(β, γ, α) state)).ffi = x.ffi ∧
+(empty_env x).clock = x.clock ∧
+((empty_env (z :(δ, ε, ζ) state)).use_alloc ⇔ z.use_alloc) ∧
+((empty_env z).use_store ⇔ z.use_store) ∧
+((empty_env z).use_stack ⇔ z.use_stack) ∧ (empty_env z).code = z.code ∧
+((empty_env z).be ⇔ z.be) ∧ (empty_env z).gc_fun = z.gc_fun ∧
+(empty_env z).mdomain = z.mdomain ∧ (empty_env z).sh_mdomain = z.sh_mdomain ∧
+(empty_env z).bitmaps = z.bitmaps ∧
+(empty_env z).data_buffer = z.data_buffer ∧
+(empty_env z).code_buffer = z.code_buffer ∧
+(empty_env z).compile = z.compile ∧
+(empty_env z).compile_oracle = z.compile_oracle
+sc_144_types=(z :(δ, ε, ζ) state)
+::(δ, ε, ζ) state;(x :(β, γ, α) state)
+::(β, γ, α) state;
+sc_164=empty_env ((x :(α, β, γ) state) with clock := (y :num)) =
+empty_env x with clock := y
+sc_164_types=(x :(α, β, γ) state)
+::(α, β, γ) state;(y :num)
+::num;

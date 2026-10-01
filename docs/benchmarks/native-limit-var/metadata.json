@@ -1,15 +1,18 @@
 {
   "architecture": "x86_64",
   "backgroundLoad": "Shared fleet host; no exclusive CPU affinity or allocator instrumentation",
-  "baselineCommit": "7de717d539b7d71007423d30bf6416cebf596ee7",
+  "baselineCommit": "ff73314fd7013bca9d8d1adac32f12be8f9e6925",
+  "corpusEntries": 166,
   "date": "2026-10-01",
+  "inputInvocations": 168,
   "leanToolchain": "leanprover/lean4:v4.33.0",
   "logicalCpus": 32,
-  "method": "Compiled noinline helpers, actual source/preSSA inputs, warmup, alternating paired order; sum observed results; native projection recomputed on every iteration",
+  "measurementBoundary": "Actual shared wordBeforeSsaAllocatorBody: instSelect(preSSA(flatten body)); no discovery-only DCE/unreachable removal",
+  "method": "Compiled noinline helpers, actual shared allocator-input preparation, warmup, alternating paired order, observed checksums; native projection recomputed every iteration",
   "rawSha256": {
-    "corpus.jsonl": "3ef7e3d2f74ba0bdd27a6667b200ec0511fe2686731e5f9d398610fd8075cc3f",
-    "full-guests.jsonl": "3c2b6410ab9ed765d5e5b3df090262e7cc1f7e9a69538776a3c2830538390ddc",
-    "guests.jsonl": "d93e886f655a9cc71c0e89327483bf7a2656cfac90823bf8eef51ebcbe7ec179"
+    "corpus.jsonl": "188e8ec0dfe58211c9ea4a8ee9022343343b0a9b516aeda489b5afba958f84ce",
+    "full-guests.jsonl": "c2968eef81c2f064b72045fe077e25d3b6952fa16ed48a8fabbf07c7fa851875",
+    "guests.jsonl": "c83097e0eb7a8e321230a60447fe751b97c8d4a16a603cf8c11f0ff4de68240e"
   },
   "sourceSha256": {
     "/tmp/flap-03rs-ci-fetch/guest-software.pp.pnk": "4d2e635b9733140aaf77dab1fa1b42a50f930750d40733b26ea05ede1941534d",
@@ -175,5 +178,12 @@
     "scripts/parity-difffuzz-findings/frame-occupancy/live1.pnk": "5ff9ac41cbdc2ab909ad05c7f9132bdca311304c3f91bc4eb3ae6b275ec3cfe1",
     "scripts/parity-difffuzz-findings/frame-occupancy/live3.pnk": "24e43f33cf37eb546f015895d2e49089992bb50df2561fe25d00028d1680237d",
     "scripts/parity-difffuzz-findings/frame-occupancy/p9.pnk": "1be7a5adca81f1ed7e010fd17b6178a3bb8b82bba71fa3e8532931372eca4dff"
-  }
+  },
+  "superseded": {
+    "directory": "discovery-superseded",
+    "scopeCorrection": "Previous preparation used wordFfiDiscoveryBody; discovery-only DCE/unreachable removal does not belong to actual allocator input",
+    "sourceCommit": "de88e014e"
+  },
+  "uniqueCorpusFiles": 161,
+  "uniqueInputFiles": 163
 }
