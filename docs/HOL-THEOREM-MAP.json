@@ -41480,7 +41480,7 @@
     "lean_path": "Flapjack/Pancake/WordConvs/WfCutsets.lean",
     "lean_name": "wfNames",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.4.8) against wordConvsScript.sml:347-350: wf_names t = (wf (FST t) /\\ wf (SND t)) over the exact cutsets carrier num_set # num_set (WordLangCutsetsHOL = Spt Unit x Spt Unit), HOL sptree$wf rendered by the Flapjack sptWf on the exact Spt carrier (Flapjack/Misc/Sptree.lean, clause-for-clause LN/LS/BN/BS with isEmpty), HOL bool as Prop (sptWf _ = true)."
+    "reviewer": "flapjack-opus source comparison (beads flapjack-pxn.18.5.11.4.8, flapjack-pjnm) against wordConvsScript.sml:347-350: wf_names t = (wf (FST t) /\\ wf (SND t)) for t : 'a spt # 'b spt with arbitrary payload types (generality restored per PR1186 review; the cutsets carrier num_set # num_set is the Unit instance used by wf_cutsets), HOL sptree$wf rendered by the Flapjack sptWf on the exact Spt carrier (clause-for-clause LN/LS/BN/BS with isEmpty), HOL bool as Prop (sptWf _ = true)."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
