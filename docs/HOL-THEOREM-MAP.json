@@ -39025,12 +39025,30 @@
   "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead15.3.40: literal HOL768-779 quantifies bitmap/frame/stack/lens/suffix/result and assumes only abs_stack success, concluding identical SOME result under bitmap append. Same exact reviewed absStack and frame/WordLocW carriers at one source positive width, BitVec/NeZero standard translation only. Structural frame induction follows every ordinary/handler/fallback branch; fullReadBitmapAppend handles successful reader and induction hypothesis supplies recursive result. No new bounds, target evaluation assumption, totalHD/default, finite-map or runtime path. Fresh original five base/ordinary/handler/nested/mixed successful prefix rows and kernel replay; full state/pass relation remains separate."
 },
 {
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StackAbstractionLengths.lean",
+  "lean_name": "absStackImpLength",
+  "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+  "hol_name": "abs_stack_IMP_LENGTH",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead15.3.43: literal1188-1195 forall bitmap/sourceframes/targetstack/lens/result, only abs_stack success premise, identical conjunction result.length=frames.length AND lens.length=frames.length. Same exact absStack/frame/WordLocW at one positive sourcewordwidth BitVec/NeZero translation. Structural frame induction extracts successful recursive result and original reconstructed result equality for ordinary and handler branches; fallback success contradictions match source. No extra guard, totalHD/default, evaluator or finite-map premise. Freshoriginal five framecountrows and kernel replay also check concrete lens counts. Actual compilerproofuses1436/1947/2022/2212/2511/2545/2725/5265; full relation/simulation separate."
+},
+{
   "lean_path": "Flapjack/Misc/Sptree/InsertUnchanged.lean",
   "lean_name": "sptInsertUnchanged",
   "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
   "hol_name": "insert_unchanged",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-c source comparison 2026-10-01 (.11.4.4.2): original2255-2264 generic tree/key/value; sole lookup=some value premise, full structural insert equality, no wf premise. Literal four constructors and recursive parity/address arithmetic. Needed by check_partial_col_INJ existing-key branch2667-2683. Coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStackRegFormat.lean",
+  "lean_name": "wMove",
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "wMove_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.5: exact83-86 maps DIV2 over both Nat coordinates, actual reviewed parmove scheduler, maps format_var k over both Option coordinates, then exact wMoveAux with unchanged k/f/fprime triple. Output ProgM(BitVec width) uses single shared positive word dimension and faithful MlString; qualifier only type-indexed word translation. No fuel/simulation premise or alternative executed scheduler. Eleven fresh direct original64-bit equality rows cover all formatting branches, register/spill swap cycles, odd DIV2/collision, underflow and fprime; width32 empty case kernel checked. Production comp/compile wiring tracked25 remains open."
 },
 {
   "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/CheckPartialCol.lean",

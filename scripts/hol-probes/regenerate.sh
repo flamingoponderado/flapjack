@@ -2727,3 +2727,10 @@ run_probe word_to_stack_bitmap_append_probeScript.sml word_to_stack_bitmap_appen
 run_probe word_to_stack_abs_stack_prefix_probeScript.sml word_to_stack_abs_stack_prefix_probe.out \
   ap_base ap_plain ap_handler ap_nested ap_mixed \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_abs_stack_lengths_probeScript.sml word_to_stack_abs_stack_lengths_probe.out \
+  al_base al_plain al_handler al_nested al_mixed \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_to_stack_wmove_probeScript.sml word_to_stack_wmove_probe.out \
+  wm_empty wm_self wm_reg wm_load wm_store wm_spill wm_swap wm_spill_swap wm_odd wm_underflow wm_fprime \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
