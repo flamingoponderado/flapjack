@@ -241,6 +241,9 @@ run_probe word_alloc_live_exp_probeScript.sml word_alloc_live_exp_probe.out \
 run_probe word_alloc_colour_exp_probeScript.sml word_alloc_colour_exp_probe.out \
   nested duplicate empty "$cake_dir/compiler/backend/word_allocScript.sml" \
   "$cake_dir/compiler/backend"
+run_probe word_alloc_reads_exp_probeScript.sml word_alloc_reads_exp_probe.out \
+  var_single load_var op_nested shift_order const_empty lookup_empty mixed_nested \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
 run_probe word_add_carry_probeScript.sml word_add_carry_probe.out \
   ordinary carry_overflow "$cake_dir/compiler/backend/backend_commonScript.sml" \
   "$cake_dir/compiler/backend"

@@ -38443,5 +38443,13 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-sol source comparison (2026-10-01, b4v0.2.1.1): asmSemScript68-73 four clauses Lsl logical left, Lsr logical right, Asr sign-extending right, Ror rotate-right. Native positive BitVec width/NeZero, arbitrary Nat amount unchanged. No option/error or masked amount; total HOL shifts retain oversize zero/sign-fill and modulo-width rotation. This is the exact operation called by labSem arith_upd104, whose separate assertion and failed-state update must be retained by parent b4v0.2.1; not backend_common word_shift constant nor wordLang option word_sh. Future native Lab evaluator must use this definition, full evaluator/runtime parent b4v0 remains open."
-}
+},
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "get_reads_exp_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/ReadsExp.lean",
+    "lean_name": "getReadsExpHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 source comparison 2026-10-01, bead flapjack-pxn.18.5.11.4.3.2: compared word_allocScript.sml:1122-1128 clause-by-clause against getReadsExpHOL. The exact polymorphic WordLangExpHOL carrier (Flapjack/Pancake/WordLang.lean:230, itself tagged exact for the wordLangScript.sml exp datatype) retains Const/Var/Lookup/Load/Op with Op taking an `exp list` and binary expression-valued Shift. Clause Var yields the singleton read list [num]; Load recurses into its address; Op is `FLAT (MAP get_reads_exp ls)`, represented by List.flatten of the mapped read lists, preserving argument order and duplicate registers; Shift is left-operand reads ++ right-operand reads, also preserving order and duplicates; the final HOL catchall returns [] and the Lean `_` arm covers Const and Lookup with []. Result is an ordered List Nat with no set normalization. No representation qualifier applies: the signature names no BitVec/word dimension, no finite-map carrier, and no mlstring. This is a proof-side port; replacing the executed caller remains separate work."
+  }
 ]
