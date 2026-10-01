@@ -39850,5 +39850,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-a source comparison2026-10-01 beadv23t: SeqStackFree260-262 retains zero body/nonzero Seq(StackFree n)body. copy_ret_aux429-441 retains zero Skip, positive predecessor n-1, load slotn-1/store slotn-1+f and recursive copy through list_Seq. Existing StackLang.listSeq specialization on HolProg width compared to original stackLangScript86-90: empty Skip, singleton identity, longer right Seq recursion; no extra trailing Skip introduced. copy_ret443-451 retains num_stack_ret k vs, zero continuation, copy offset f+handler_slots perf only if is_handle, then SeqStackFree n kont. Return list element carrier beta independent of positive-width native continuation, no added bounds/success/result/evaluation premise. HolProg width uses reviewed exact payload/MlString carrier; words_as_type_indexed_bitvec records only BitVec width/NeZero translation. Three universal kernel codec relations to accepted generic helpers establish representation transport, not return simulation. Actual compiler/production path parent25 stays open; coordinator review pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "wShareInst_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeSharedMemory.lean",
+    "lean_name": "wShareInstNative",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison2026-10-01 beadof5g: all eight wShareInst clauses186-223 compared individually. Load/Load8/Load16/Load32 stage address via wReg1, ordered native wStackLoad and destination wRegWrite1 spill; Store/Store8/Store16/Store32 stage address via wReg1 then value via wReg2, concatenate loads in source order and emit matching ShMemOp with source register/address/offset unchanged. Unlike wInst, shared-memory16 cases are explicitly handled by source. HolMemop aliases reviewed eight-constructor WordMemOp; HolAddr width and HolProg width use reviewed same positive-word-width native payloads, faithful MlString program carrier. words_as_type_indexed_bitvec authorizes only BitVec width/NeZero translation. All-input toGeneric_wShareInstNative kernel theorem transports to accepted generic helper without memory-evaluation/result/success or bounds premise. No production alias adjustment/default or behavior change; actualcomp/production route remains parent25 OPEN. Coordinator review pending."
   }
 ]
