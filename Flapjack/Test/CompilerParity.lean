@@ -4,6 +4,7 @@ import Flapjack.Test.MonadArrayLengthParity
 import Flapjack.Test.RegAllocStateMapParity
 import Flapjack.Test.MonadListPrimitivesParity
 import Flapjack.Test.CanonizeSortParity
+import Flapjack.Test.FindIndexAppendParity
 import Flapjack.Test.HeuProgParity
 import Flapjack.Test.WordToStackProgramMaximumParity
 import Flapjack.Test.WordToStackColourDomainParity
