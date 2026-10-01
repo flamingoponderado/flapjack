@@ -41173,5 +41173,19 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "Codex source comparison wordLangScript208-214: Var returns its Nat register, Load recurses, Op takes MAX_LIST of mapped bounds including zero for empty list, Shift takes MAX of both bounds, and Const/Lookup return zero. maxList independently compared with original natural MAX_LIST zero/cons MAX recursion. Signature specializes reviewed WordLangExpHOL to positive-width BitVec width with NeZero; store_name carrier retained, no extra premises or fixed-width restriction. Eight fresh direct original HOL observations and identical kernel fixtures cover each clause and nested/empty expressions. Full program max_var and native wrapper routing remain open under bead flapjack-pxn.18.5.15.3.25.15."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_apply_colour",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/Inst.lean",
+  "lean_name": "evaluateApplyColour_Inst",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Codex source review against evaluate_apply_colour1105-1130 specialized to Inst and its Resume1225-1391: all five instruction families are exhausted, including eight arithmetic and eight memory constructors and generic full sixteen-case FP theorem. Same original colouring_ok, word_state_eq_rel, strong_locals_rel premises; exact existential permutation/error-disjunction/result/state/live/loop-table locals postcondition through reviewed applyColourPost. No target evaluation, success, validity, distinctness or proof-hook premise; no subprogram IH because Inst has no subprograms. Each literal constructor theorem was source-reviewed and integrated before assembly. Canonical imported WordSemStateFiniteExact fpRegs/store roundtrip witness; Spt locals/code unqualified as original trees; positive-width word/host translation. Inherits reviewed FP dependency reals_as_rational_cuts assumption in docs/SOUNDNESS item8; no direct real primitive rendering or new qualification. Full program evaluate_apply_colour assembly remains open."
 }
 ]
