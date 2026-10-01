@@ -41508,5 +41508,13 @@
   "hol_name": "total_colour_def",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-c source comparison (2026-10-01; bead11.5.4): literal1592-1595 Spt Nat lookup at original register; NONE tests accepted reg_alloc is_phy_var and returns original key if physical else0; SOME returns2*stored colour. Nat/Spt constructor carriers retain arbitrary non-well-formed trees and keys, no wf/domain/bijection/width assumption. Spt is a num_map tree, not qualified as finite support fmap. Eight fresh direct original HOL rows replay same inputs in kernel, including absent physical/virtual and arbitrary precision keys, mapped physical/virtual/zero. Actual testroot registration. Used by native oracle checker and word_alloc; production routing stays on parent11.5/child5.3, this leaf is not compiler completion. Coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/TempBeforeAssign.lean",
+  "lean_name": "notUseTempBeforeAssign",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "not_use_temp_before_assign_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison (2026-10-01; bead46.1): literal831-836 ordered empty/read-NONE/write-NONE/recurse clauses on native List of Option register pairs. NONE,NONE is false by first applicable source-NONE clause. Destination NONE with real source returns true immediately even when tail later reads NONE. Only real-real moves recurse. No wf/distinctness/initialization assumption or altered scratch semantics. Eight fresh direct original HOL rows and same-input rfl kernel fixtures, actualCompilerParity root registration. Parent46 required by word_to_stackProof6187 remains blocked on append/find-index/step/closure proof frontier, definition alone does not prove compiler output initialized. Coordinator review pending."
 }
 ]

@@ -1,3 +1,4 @@
+import Flapjack.Test.ParmoveTempBeforeAssignParity
 import Flapjack.Test.WordAllocTotalColourParity
 import Flapjack.Test.ParmoveSourceWrapperParity
 import Flapjack.Test.ParmoveDstepsClosureParity

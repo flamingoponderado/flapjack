@@ -2260,3 +2260,10 @@ key list; it does not establish pass simulation or final binary correctness.
 `total_colour` lookups: absent physical/virtual keys (including large keys),
 mapped physical/virtual keys, and a mapped zero colour. Same-input kernel
 fixtures are registered in the actual CompilerParity test root.
+
+
+`parmove_temp_before_assign_probeScript.sml` records eight original ordered
+predicate evaluations, including NONE/NONE rejection and immediate acceptance
+after a scratch write even when a later move reads scratch. Paired kernel
+fixtures are registered in CompilerParity; full scheduler preservation remains
+a separate theorem obligation.
