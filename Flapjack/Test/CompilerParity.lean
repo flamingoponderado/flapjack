@@ -4,6 +4,7 @@ import Flapjack.Test.ByteWordToBytesAuxParity
 import Flapjack.Test.StackPropsInstructionConstantsParity
 import Flapjack.Test.LabToTargetPaddingLengthParity
 import Flapjack.Test.LabToTargetMapLemmasParity
+import Flapjack.Test.SSAForceRenameGeneric
 import Flapjack.Test.LabToTargetEncodingParity
 import Flapjack.Test.LabToTargetLabelsParity
 import Flapjack.Test.LabToTargetPositionsParity
@@ -654,6 +655,7 @@ import Flapjack.Test.WordSemShMemParity
 import Flapjack.Test.MachineIeeeCompareParity
 import Flapjack.Test.BinaryIeeeRoundParity
 import Flapjack.Test.BinaryIeeeSqrtRoundAgreementParity
+import Flapjack.Test.BinaryIeeeSqrtRealCarrierParity
 import Flapjack.Test.MachineIeeeArithSpecialParity
 import Flapjack.Test.FpSemOpsParity
 import Flapjack.Test.Fp64NanRefinementParity
@@ -1511,6 +1513,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.MachineIeeeCompareParity.runChecks,
     Flapjack.Test.BinaryIeeeRoundParity.runChecks,
     Flapjack.Test.BinaryIeeeSqrtRoundAgreementParity.runChecks,
+    Flapjack.Test.BinaryIeeeSqrtRealCarrierParity.runChecks,
     Flapjack.Test.MachineIeeeArithSpecialParity.runChecks,
     Flapjack.Test.FpSemOpsParity.runChecks,
     Flapjack.Test.Fp64NanRefinementParity.runChecks,

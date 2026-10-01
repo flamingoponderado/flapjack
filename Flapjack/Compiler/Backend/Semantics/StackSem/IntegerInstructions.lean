@@ -3,7 +3,8 @@ import Flapjack.Compiler.Backend.Semantics.StackSem.Expressions
 /-! Integer/memory cases of stackSemScript.sml inst_def:408-522.
 This partial helper returns outer NONE only for FP (not handled here).
 Inner NONE is the original instruction failure. No whole inst_def HOL tag
-applies to this assembly fragment; full assembly is on y19g.11.3. -/
+applies to this assembly fragment; `StackSemInst.instHOL` composes it with the
+FP fragment. Its stronger real-carrier acceptance is tracked separately. -/
 namespace Flapjack.StackSemIntegerInstructions
 open StackSemStateOps StackSemExpressions Compiler.Encoders.Asm
 

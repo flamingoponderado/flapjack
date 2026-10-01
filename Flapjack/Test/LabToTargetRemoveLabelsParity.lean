@@ -142,6 +142,16 @@ example : zeroLabsAccExist goodLabs zeroCode = true := by decide +kernel
 -- ZeroLabsAccExistFalse
 example : zeroLabsAccExist badLabs zeroCode = false := by decide +kernel
 
+-- The original inner payload is arbitrary, not restricted to natural numbers.
+example : zeroLabsAccExist
+    (sptInsert 1 (sptInsert 0 true .ln)
+      (sptInsert 3 (sptInsert 0 false .ln) .ln)) zeroCode = true := by
+  decide +kernel
+
+example : zeroLabsAccExist
+    (sptInsert 1 (sptInsert 0 ([] : List Nat) .ln) .ln) zeroCode = false := by
+  decide +kernel
+
 -- LineBytesLabel
 example : lineBytes (.label 1 2 3 : Line64) = [] := by decide +kernel
 

@@ -3907,3 +3907,6 @@ run_probe ssa_cc_trans_props_allocation_probeScript.sml ssa_cc_trans_props_alloc
   spa_ffi_type_numset spa_ffi_type_ssa spa_ffi_type_na spa_ffi_type_lt spa_ffi_type_progOut spa_ffi_type_ssaOut spa_ffi_type_naOut \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+run_probe ssa_force_rename_generic_probeScript.sml ssa_force_rename_generic_probe.out \
+  fr_definition fr_lookup_force_rename_aux fr_lookup_force_rename fr_domain_force_rename fr_type \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
