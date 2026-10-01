@@ -41782,4 +41782,14 @@
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-sol source comparison 2026-10-01 bead11.4.11 original sptreeScript:1523: Same key/value/arbitrary tree, singleton union equals insertion; unconditional reverse of exact insert_union, matching source equation. Exact constructor-for-constructor native Spt/Nat values; no carrier qualifier, wf, domain/disjointness, simulation or result premise added. Original kernel accepts four literal universally quantified statements via source theorem proof terms, plus28 same-input concrete raw-tree/overlap/left-bias observations allT. Lean fixtures apply all four universal interfaces and check same boundaries; Nat-valued union explicitly remains noncommutative. Existing approved externalSpt provenance reused unchanged, no listScript/trust-policy expansion. Genuine ShareInst clash-tree correctness prerequisite; full soundness/compiler theorem remains open."
 }
+,
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeTopCompile.lean",
+  "lean_name": "compileNative",
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "compile_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol source comparison 2026-10-01 bead25.16 original603-619: entire compile_def, regCount-(5+LENGTH avoidRegs) natural subtraction without validity assumptions; perf seed(List[16w],1) else(List[4w],1); actual reviewed compileWordToStackNative; exact Spt fromAList of MAP ((id,body),frame)->(id,frame) over ZIP compiled bodies/frames, retaining order/first duplicate precedence; full appended bitmap list, two-field exact Config, 0::frames, raise stub then constant-store stub then compiled bodies. Original elaborated type independently confirms Nat identifiers and full word list/config/frame list/program list tuple. Arbitrary exact AsmConfig at positive word width retained, with no precomputed compiler result/callback/width or calling convention hypothesis. Twenty-four fresh original entire-tuple observations allT plus same-input warning0 Lean kernel fixtures: perf/nonperf and narrow seed wrap includingwidth1/4, register subtraction underflow, duplicate avoid entries counted by LENGTH, frames/IDs/source body order/duplicate frame map, large Nat IDs, both exact stubs, bitmap seed/threading/order/multiword and zero-frame suppression; expected bodies/words/frames literal, stub terms reuse independently reviewed stub definitions. Qualifier only conventional positive-width words, no Spt/fmap or names difference. Proof-side native definition does not yet replace executed RiscV WordToStack fused WordProg/StackProg hardware-ABI route; remaining faithful codec/caller or measured exception work linked as25.17 and inventory25 remainsOPEN. Full compiler correctness not established."
+}
 ]

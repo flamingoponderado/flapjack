@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordToStack.NativeTopCompile
 import Flapjack.Misc.Sptree.UnionAlgebra
 import Flapjack.Compiler.Backend.WordAlloc.EvenColour
 import Flapjack.Compiler.Backend.Semantics.TargetSem.MappedMemory
