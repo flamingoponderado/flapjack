@@ -39247,8 +39247,6 @@
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-sol source comparison (2026-10-01, b4v0.3.2): labSemScript47 is_Label true exactly Label, false on other two constructors. Canonical actual LabLang Line payloads use HolAsm/HolMemop/HolAddr and HolCmp/HolRegImm/MlString with BitVec at one positive NeZero width; fixed encoded bytes BitVec8 retained. The former generic isLabel quantified arbitrary payload Types, including an arbitrary Word, which is not the source carrier even when ignored; its unqualified tag/map/pin are removed while the generic function signature/body stay unchanged as explicitly documented Flapjack-only utility. Native three-case classifier is exact under word-dimension translation. Unconditional kernel isLabelHOL_eq_generic compares actual native instances, no added hypothesis. Native navigation/evaluator consumption remains linked on b4v0.3/b4v0; no executed compiler change or performance exception."
 },
-
-
 {
   "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/ReadsLiveExpressions.lean",
   "lean_name": "getReadsExpGetLiveExp",
