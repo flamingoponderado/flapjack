@@ -41,6 +41,7 @@ example : locToPc 2 5 code = none := by
   rw [locToPc_sections _ _ _ code_valid]
   simp [code, lines, lenNoLab, isLabelHOL, locToPc]
 
-def runChecks : IO Unit :=
+def runChecks : IO Bool := do
   IO.println "PASS original section-wise label lookup (8 kernel replays via loc_to_pc_thm)"
+  return true
 end Flapjack.Test.LabToTargetSectionLookupParity
