@@ -3020,3 +3020,7 @@ run_probe word_alloc_heu_inst_probeScript.sml word_alloc_heu_inst_probe.out \
 run_probe parmove_independence_probeScript.sml parmove_independence_probe.out \
   ind_head ind_middle ind_tail ind_cycle ind_fanout ind_self ind_bool ind_empty_others ind_nil_nat ind_nil_bool \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe word_alloc_heu_max_probeScript.sml word_alloc_heu_max_probe.out \
+  hm_tuple hm_tuple_equal hm_tuple_zero hm_tuple_large hm_empty hm_left hm_right hm_overlap hm_disjoint hm_mixed hm_nested hm_raw_left_bn hm_raw_right_bn hm_raw_both_bn hm_raw_left_bs hm_raw_right_bs hm_raw_both_bs hm_raw_bs_leaf hm_raw_leaf_bs hm_raw_empty_leaf \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
