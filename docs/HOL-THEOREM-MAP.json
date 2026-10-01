@@ -40729,33 +40729,159 @@
   "reviewer": "Source review word_to_stackScript.sml319-343: literal five-node prefix and two-node suffix, signed word offsets, registers/order and source list_Seq preserved. Native HolProg positive width matches word-indexed source through words_as_type_indexed_bitvec; universal toGeneric transport kernel checked. Syntax only, no x64 instrumentation verification or production-route claim.",
   "words_as_type_indexed_bitvec": true
 },
-  {
-    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
-    "hol_name": "StackHandlerArgs_def",
-    "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeHandlers.lean",
-    "lean_name": "stackHandlerArgsNative",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "Source review word_to_stackScript.sml349-384 and original HOL object type: StackHandlerArgs independently quantifies both destination payload carriers (Sum alpha beta) and positive program word width. Both frame-size increments exact. PushHandler retains allocation, constant1, labels, saved-handler slots0-2 and perf slots3-4/source register order; PopHandler restores/free-before-continuation. Native HolProg carrier reviewed with words_as_type_indexed_bitvec; universal all-input toGeneric transport. Source list_Seq exact empty/singleton/cons specialization; no instrumentation simulation or production route claim. Generic carrier repair r1p4 accepted/published db7e433e0."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
-    "hol_name": "PopHandler_def",
-    "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeHandlers.lean",
-    "lean_name": "popHandlerNative",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "Source review word_to_stackScript.sml349-384 and original HOL object type: StackHandlerArgs independently quantifies both destination payload carriers (Sum alpha beta) and positive program word width. Both frame-size increments exact. PushHandler retains allocation, constant1, labels, saved-handler slots0-2 and perf slots3-4/source register order; PopHandler restores/free-before-continuation. Native HolProg carrier reviewed with words_as_type_indexed_bitvec; universal all-input toGeneric transport. Source list_Seq exact empty/singleton/cons specialization; no instrumentation simulation or production route claim. Generic carrier repair r1p4 accepted/published db7e433e0."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
-    "hol_name": "PushHandler_def",
-    "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeHandlers.lean",
-    "lean_name": "pushHandlerNative",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "Source review word_to_stackScript.sml349-384 and original HOL object type: StackHandlerArgs independently quantifies both destination payload carriers (Sum alpha beta) and positive program word width. Both frame-size increments exact. PushHandler retains allocation, constant1, labels, saved-handler slots0-2 and perf slots3-4/source register order; PopHandler restores/free-before-continuation. Native HolProg carrier reviewed with words_as_type_indexed_bitvec; universal all-input toGeneric transport. Source list_Seq exact empty/singleton/cons specialization; no instrumentation simulation or production route claim. Generic carrier repair r1p4 accepted/published db7e433e0."
-  },
+{
+  "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+  "hol_name": "evaluate_stack_swap",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateStackSwap/MustTerminate.lean",
+  "lean_name": "evaluateStackSwap_MustTerminate",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.3): HOL evaluate_stack_swap (wordPropsScript.sml:2316-2363) at the MustTerminate case of evaluate_ind: same binder s, the HOL case-split conclusion rendered by the untagged stackSwapPost, and as premises exactly the MustTerminate induction hypotheses of the tagged Lean evaluate_ind (wordSemScript.sml evaluate_ind rebound without fix_clock): the body at s with clock := MustTerminate_limit and termdep := s.termdep - 1, under s.termdep <> 0. No extra premise. Proof follows HOL (wordPropsScript.sml:2449-2460): TimeOut of the body becomes Error (unconstrained); every other result only restores clock/termdep, which leaves stack, handler, locals and locals_size unchanged (untagged mtPost/stackSwapRel_mt). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+  "hol_name": "evaluate_stack_swap",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateStackSwap/Seq.lean",
+  "lean_name": "evaluateStackSwap_Seq",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.3): HOL evaluate_stack_swap (wordPropsScript.sml:2316-2363) at the Seq case of evaluate_ind: same binder s, the HOL case-split conclusion rendered by the untagged stackSwapPost, and as premises exactly the Seq induction hypotheses of the tagged Lean evaluate_ind (wordSemScript.sml evaluate_ind rebound without fix_clock): c2 at every s1 with (res, s1) = evaluate c1 s and res = NONE, and c1 at s. No extra premise. Proof follows HOL (wordPropsScript.sml:2461-2508), using the rebound evaluate_def without fix_clock: a non-NONE first result is the sequence result; otherwise the second run is transported along the first run's stack via s_key_eq_trans, s_key_eq_length and s_key_eq_LASTN_exists for the exception frame (untagged stackSwapRel_mono/stackSwapRel_seqTail). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+  "hol_name": "evaluate_stack_swap",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateStackSwap/If.lean",
+  "lean_name": "evaluateStackSwap_If",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.3): HOL evaluate_stack_swap (wordPropsScript.sml:2316-2363) at the If case of evaluate_ind: same binder s, the HOL case-split conclusion rendered by the untagged stackSwapPost, and as premises exactly the If induction hypotheses of the tagged Lean evaluate_ind (wordSemScript.sml evaluate_ind rebound without fix_clock): c1 under the guard getVar/get_var_imm/word_cmp = SOME T and c2 under SOME F, in the HOL evaluate_ind variable form. No extra premise. Proof follows HOL (wordPropsScript.sml:2529-2532): the guard reads only locals, so the stack-swapped run takes the same branch. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+},
+{
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "StackHandlerArgs_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeHandlers.lean",
+  "lean_name": "stackHandlerArgsNative",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source review word_to_stackScript.sml349-384 and original HOL object type: StackHandlerArgs independently quantifies both destination payload carriers (Sum alpha beta) and positive program word width. Both frame-size increments exact. PushHandler retains allocation, constant1, labels, saved-handler slots0-2 and perf slots3-4/source register order; PopHandler restores/free-before-continuation. Native HolProg carrier reviewed with words_as_type_indexed_bitvec; universal all-input toGeneric transport. Source list_Seq exact empty/singleton/cons specialization; no instrumentation simulation or production route claim. Generic carrier repair r1p4 accepted/published db7e433e0."
+},
+{
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "PopHandler_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeHandlers.lean",
+  "lean_name": "popHandlerNative",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source review word_to_stackScript.sml349-384 and original HOL object type: StackHandlerArgs independently quantifies both destination payload carriers (Sum alpha beta) and positive program word width. Both frame-size increments exact. PushHandler retains allocation, constant1, labels, saved-handler slots0-2 and perf slots3-4/source register order; PopHandler restores/free-before-continuation. Native HolProg carrier reviewed with words_as_type_indexed_bitvec; universal all-input toGeneric transport. Source list_Seq exact empty/singleton/cons specialization; no instrumentation simulation or production route claim. Generic carrier repair r1p4 accepted/published db7e433e0."
+},
+{
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "PushHandler_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeHandlers.lean",
+  "lean_name": "pushHandlerNative",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source review word_to_stackScript.sml349-384 and original HOL object type: StackHandlerArgs independently quantifies both destination payload carriers (Sum alpha beta) and positive program word width. Both frame-size increments exact. PushHandler retains allocation, constant1, labels, saved-handler slots0-2 and perf slots3-4/source register order; PopHandler restores/free-before-continuation. Native HolProg carrier reviewed with words_as_type_indexed_bitvec; universal all-input toGeneric transport. Source list_Seq exact empty/singleton/cons specialization; no instrumentation simulation or production route claim. Generic carrier repair r1p4 accepted/published db7e433e0."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_apply_colour",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/InstArith.lean",
+  "lean_name": "evaluateApplyColour_InstDiv",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01 child25.2: HOL evaluate_apply_colour Inst shared get_vars block1264-1290 and wordSem inst_def727-775, Div constructor subcase, quantified same st/cst/f/live/lt, exact positive-width carrier, original colouring_ok/state-equality/live-scoped-locals premises only, full existential applyColourPost conclusion. Actual native inst/evaluate clauses are unfolded, not a simplified evaluator. Inputs are transported only after the actual source successful get_vars pattern; missing/Loc/zero-divisor/out-of-range quotient branches yield source Error and discharge the original Error disjunction. Div keeps [right,left] and signed sdiv; AddCarry keeps [r2,r3,r4] and writes result before carry; Add/SubOverflow use signed overflow tests and write result before flag; LongMul writes high before low; LongDiv keeps nonzero/range conjunction and writes remainder before quotient. Ordered twoWritesLocals infrastructure derives both insert obligations from original scoped injectivity on writes union live; no distinct-register, successful-evaluation or target-result premise. Canonical imported state fpRegs/store roundtrip witness; inherited reals_as_rational_cuts assumption through wordSem evaluate/inst, SOUNDNESS item8. Does not call a real rendering directly or add an IEEE review. Remaining memory/FP/Skip and full Inst assembly remain on parent25. Coordinator review pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_apply_colour",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/InstArith.lean",
+  "lean_name": "evaluateApplyColour_InstAddCarry",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01 child25.2: HOL evaluate_apply_colour Inst shared get_vars block1264-1290 and wordSem inst_def727-775, AddCarry constructor subcase, quantified same st/cst/f/live/lt, exact positive-width carrier, original colouring_ok/state-equality/live-scoped-locals premises only, full existential applyColourPost conclusion. Actual native inst/evaluate clauses are unfolded, not a simplified evaluator. Inputs are transported only after the actual source successful get_vars pattern; missing/Loc/zero-divisor/out-of-range quotient branches yield source Error and discharge the original Error disjunction. Div keeps [right,left] and signed sdiv; AddCarry keeps [r2,r3,r4] and writes result before carry; Add/SubOverflow use signed overflow tests and write result before flag; LongMul writes high before low; LongDiv keeps nonzero/range conjunction and writes remainder before quotient. Ordered twoWritesLocals infrastructure derives both insert obligations from original scoped injectivity on writes union live; no distinct-register, successful-evaluation or target-result premise. Canonical imported state fpRegs/store roundtrip witness; inherited reals_as_rational_cuts assumption through wordSem evaluate/inst, SOUNDNESS item8. Does not call a real rendering directly or add an IEEE review. Remaining memory/FP/Skip and full Inst assembly remain on parent25. Coordinator review pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_apply_colour",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/InstArith.lean",
+  "lean_name": "evaluateApplyColour_InstAddOverflow",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01 child25.2: HOL evaluate_apply_colour Inst shared get_vars block1264-1290 and wordSem inst_def727-775, AddOverflow constructor subcase, quantified same st/cst/f/live/lt, exact positive-width carrier, original colouring_ok/state-equality/live-scoped-locals premises only, full existential applyColourPost conclusion. Actual native inst/evaluate clauses are unfolded, not a simplified evaluator. Inputs are transported only after the actual source successful get_vars pattern; missing/Loc/zero-divisor/out-of-range quotient branches yield source Error and discharge the original Error disjunction. Div keeps [right,left] and signed sdiv; AddCarry keeps [r2,r3,r4] and writes result before carry; Add/SubOverflow use signed overflow tests and write result before flag; LongMul writes high before low; LongDiv keeps nonzero/range conjunction and writes remainder before quotient. Ordered twoWritesLocals infrastructure derives both insert obligations from original scoped injectivity on writes union live; no distinct-register, successful-evaluation or target-result premise. Canonical imported state fpRegs/store roundtrip witness; inherited reals_as_rational_cuts assumption through wordSem evaluate/inst, SOUNDNESS item8. Does not call a real rendering directly or add an IEEE review. Remaining memory/FP/Skip and full Inst assembly remain on parent25. Coordinator review pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_apply_colour",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/InstArith.lean",
+  "lean_name": "evaluateApplyColour_InstSubOverflow",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01 child25.2: HOL evaluate_apply_colour Inst shared get_vars block1264-1290 and wordSem inst_def727-775, SubOverflow constructor subcase, quantified same st/cst/f/live/lt, exact positive-width carrier, original colouring_ok/state-equality/live-scoped-locals premises only, full existential applyColourPost conclusion. Actual native inst/evaluate clauses are unfolded, not a simplified evaluator. Inputs are transported only after the actual source successful get_vars pattern; missing/Loc/zero-divisor/out-of-range quotient branches yield source Error and discharge the original Error disjunction. Div keeps [right,left] and signed sdiv; AddCarry keeps [r2,r3,r4] and writes result before carry; Add/SubOverflow use signed overflow tests and write result before flag; LongMul writes high before low; LongDiv keeps nonzero/range conjunction and writes remainder before quotient. Ordered twoWritesLocals infrastructure derives both insert obligations from original scoped injectivity on writes union live; no distinct-register, successful-evaluation or target-result premise. Canonical imported state fpRegs/store roundtrip witness; inherited reals_as_rational_cuts assumption through wordSem evaluate/inst, SOUNDNESS item8. Does not call a real rendering directly or add an IEEE review. Remaining memory/FP/Skip and full Inst assembly remain on parent25. Coordinator review pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_apply_colour",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/InstArith.lean",
+  "lean_name": "evaluateApplyColour_InstLongMul",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01 child25.2: HOL evaluate_apply_colour Inst shared get_vars block1264-1290 and wordSem inst_def727-775, LongMul constructor subcase, quantified same st/cst/f/live/lt, exact positive-width carrier, original colouring_ok/state-equality/live-scoped-locals premises only, full existential applyColourPost conclusion. Actual native inst/evaluate clauses are unfolded, not a simplified evaluator. Inputs are transported only after the actual source successful get_vars pattern; missing/Loc/zero-divisor/out-of-range quotient branches yield source Error and discharge the original Error disjunction. Div keeps [right,left] and signed sdiv; AddCarry keeps [r2,r3,r4] and writes result before carry; Add/SubOverflow use signed overflow tests and write result before flag; LongMul writes high before low; LongDiv keeps nonzero/range conjunction and writes remainder before quotient. Ordered twoWritesLocals infrastructure derives both insert obligations from original scoped injectivity on writes union live; no distinct-register, successful-evaluation or target-result premise. Canonical imported state fpRegs/store roundtrip witness; inherited reals_as_rational_cuts assumption through wordSem evaluate/inst, SOUNDNESS item8. Does not call a real rendering directly or add an IEEE review. Remaining memory/FP/Skip and full Inst assembly remain on parent25. Coordinator review pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_apply_colour",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/InstArith.lean",
+  "lean_name": "evaluateApplyColour_InstLongDiv",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01 child25.2: HOL evaluate_apply_colour Inst shared get_vars block1264-1290 and wordSem inst_def727-775, LongDiv constructor subcase, quantified same st/cst/f/live/lt, exact positive-width carrier, original colouring_ok/state-equality/live-scoped-locals premises only, full existential applyColourPost conclusion. Actual native inst/evaluate clauses are unfolded, not a simplified evaluator. Inputs are transported only after the actual source successful get_vars pattern; missing/Loc/zero-divisor/out-of-range quotient branches yield source Error and discharge the original Error disjunction. Div keeps [right,left] and signed sdiv; AddCarry keeps [r2,r3,r4] and writes result before carry; Add/SubOverflow use signed overflow tests and write result before flag; LongMul writes high before low; LongDiv keeps nonzero/range conjunction and writes remainder before quotient. Ordered twoWritesLocals infrastructure derives both insert obligations from original scoped injectivity on writes union live; no distinct-register, successful-evaluation or target-result premise. Canonical imported state fpRegs/store roundtrip witness; inherited reals_as_rational_cuts assumption through wordSem evaluate/inst, SOUNDNESS item8. Does not call a real rendering directly or add an IEEE review. Remaining memory/FP/Skip and full Inst assembly remain on parent25. Coordinator review pending."
+},
   {
     "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
     "hol_name": "raise_stub_def",
