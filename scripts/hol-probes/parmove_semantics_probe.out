@@ -1,0 +1,12 @@
+sem_windmill=T
+sem_repeated=F
+sem_parallel_swap1=12
+sem_parallel_swap2=11
+sem_sequential_swap2=12
+sem_parallel_last=13
+sem_sequential_last=13
+sem_untouched=17
+sem_state_first=12
+sem_state_second=15
+sem_ignore_temp=T
+sem_real_difference=F
