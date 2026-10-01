@@ -1147,6 +1147,30 @@
       "sha256": "108420ae230afe5e78fd47c5a8c02b5c4e545d949ac847be75aef2df8ab86039"
     },
     {
+      "bytes": 7322,
+      "out": "linear_scan_monad_probe.out",
+      "rows": 34,
+      "sha256": "3a112a38123c86a48e7ac2e51e76ef815dac456a0a71a90d05fc0e98741a9dba"
+    },
+    {
+      "bytes": 344,
+      "out": "linear_scan_pure_defs_probe.out",
+      "rows": 15,
+      "sha256": "e0342044f7fe5ae648ada9b4a01b9dffd35166b6fd5fb3547778434065869dd0"
+    },
+    {
+      "bytes": 346,
+      "out": "linear_scan_pure_props_probe.out",
+      "rows": 18,
+      "sha256": "054321ef3a4bd557f4a9cf75aa922cadc3390ad22375fcd640bf5620619a2c0e"
+    },
+    {
+      "bytes": 1057,
+      "out": "linear_scan_top_probe.out",
+      "rows": 14,
+      "sha256": "277f3dd3f16a3e5ed4890b5258e29d5bb9bffe69f95d3dc62e2b65bd1b18b39c"
+    },
+    {
       "bytes": 2466,
       "out": "longdiv_code_probe.out",
       "rows": 3,
@@ -1613,6 +1637,12 @@
       "out": "monad_array_length_probe.out",
       "rows": 6,
       "sha256": "407821e56eb5ebca18e92fd0bb9320bba0843b5f8e2c059f57547ecf63c1f823"
+    },
+    {
+      "bytes": 176,
+      "out": "monad_arrays_probe.out",
+      "rows": 11,
+      "sha256": "5c67190b46f6c254947a53fef2353fb6ffddf035c698564335b55d19c0959691"
     },
     {
       "bytes": 278,

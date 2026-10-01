@@ -2747,6 +2747,21 @@ run_probe parmove_scheduler_probeScript.sml parmove_scheduler_probe.out \
 run_probe reg_alloc_clash_tree_probeScript.sml reg_alloc_clash_tree_probe.out \
   delete_names col_collision partial_existing partial_collision delta_discard_writes seq_right_first branch_merge branch_fixed_collision \
   "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+run_probe linear_scan_pure_defs_probeScript.sml linear_scan_pure_defs_probe.out \
+  get_live_tree_branch_cut get_live_backward_branch fix_domination_reads fix_domination_writes check_live_tree_seq check_live_tree_collision check_live_tree_branch add_if_lt add_if_gt get_intervals_seq get_intervals_withlive_branch get_intervals_ct size_of_live_tree numset_list_insert_nottailrec numset_list_insert \
+  "$cake_dir/compiler/backend/reg_alloc/linear_scanScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+run_probe linear_scan_pure_props_probeScript.sml linear_scan_pure_props_probe.out \
+  cnp_writes cnp_signed_bound cnp_weak_branch cnp_strong_branch cnp_strong_seq_live startlive_ok startlive_ndef startlive_missing_end startlive_branch_numbers registers_mem registers_not_mem intersect_touch intersect_disjoint point_inside point_outside the_some check_intervals_missing_end check_intervals_clash \
+  "$cake_dir/compiler/backend/reg_alloc/linear_scanScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+run_probe monad_arrays_probeScript.sml monad_arrays_probe.out \
+  msub_hit msub_miss mupdate_hit mupdate_miss marray_length marray_sub_hit marray_sub_miss marray_update_hit marray_update_miss st_ex_map_ok st_ex_map_fail \
+  "$cake_dir/translator/monadic/monad_base/ml_monadBaseScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+run_probe linear_scan_monad_probeScript.sml linear_scan_monad_probe.out \
+  add_if_lt_monad add_if_gt_monad add_if_subscript intervals_ct_monad remove_inactive add_active find_color_in_list find_color_pool find_color_colornum spill color_phy color_virt find_last_stealable find_spill_steal find_spill_keep step_aux_pref step_aux_spill pass1_phy pass1_stack pass1_forced pass2_virt find_reg_exchange apply_reg_exchange foldl filter_good edges sort_moves_rev sort_regs sorted_regs_to_list list_to_sorted_regs sort_moves sorted_moves_to_list list_to_sorted_moves pass_init \
+  "$cake_dir/compiler/backend/reg_alloc/linear_scanScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+run_probe linear_scan_top_probeScript.sml linear_scan_top_probe.out \
+  bijection_seq bijection_branch apply_bij_tree apply_bijection size_ct extract run_i run_i_fail lsra_delta lsra_moves lsra_forced lsra_branch_spill lsra_phys lsra_stack \
+  "$cake_dir/compiler/backend/reg_alloc/linear_scanScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
 run_probe labsem_updates_probeScript.sml labsem_updates_probe.out lab_updates_pc_overwrite lab_updates_pc_increment lab_updates_clock_zero lab_updates_clock_positive lab_updates_reg_hit lab_updates_reg_other lab_updates_reg_loc lab_updates_mem_hit lab_updates_mem_other lab_updates_assert_sticky lab_updates_assert_false lab_updates_failed_reg_write lab_updates_failed_mem_write lab_updates_reg_imm_loc lab_updates_reg_imm_word lab_updates_fp_hit lab_updates_fp_other "$cake_dir/compiler/backend/semantics/labSemScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe parmove_invariants_probeScript.sml parmove_invariants_probe.out \

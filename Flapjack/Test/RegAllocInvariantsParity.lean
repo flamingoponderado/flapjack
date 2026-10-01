@@ -16,9 +16,9 @@ private def mkS (adj : List (List Nat)) (tags : List Tag) (deg : List Nat) (dim 
 private def empty : State := mkS [] [] [] 0 [] [] [] [] [] []
 
 -- he_hit=T
-example : hasEdge [[1], [0]] 0 1 := by simp [hasEdge, holEl]
+example : hasEdge [[1], [0]] 0 1 := by simp [hasEdge, holEl, holHd]
 -- he_miss=F
-example : ¬ hasEdge [[1], [0]] 0 0 := by simp [hasEdge, holEl]
+example : ¬ hasEdge [[1], [0]] 0 0 := by simp [hasEdge, holEl, holHd]
 -- he_y_oob=F
 example : ¬ hasEdge [[5]] 0 5 := by simp [hasEdge]
 -- he_x_oob=F
@@ -30,11 +30,11 @@ example : undirected [[1], [0]] := by
   rintro x y ⟨hx, hy, hm⟩
   simp only [List.length_cons, List.length_nil] at hx hy
   refine ⟨hy, hx, ?_⟩
-  rcases x with _ | _ | x <;> rcases y with _ | _ | y <;> simp_all [holEl] <;> omega
+  rcases x with _ | _ | x <;> rcases y with _ | _ | y <;> simp_all [holEl, holHd] <;> omega
 -- und_asym=F
 example : ¬ undirected [[1], []] := fun h => by
-  have := h 0 1 (by simp [hasEdge, holEl])
-  simp [hasEdge, holEl] at this
+  have := h 0 1 (by simp [hasEdge, holEl, holHd])
+  simp [hasEdge, holEl, holHd] at this
 -- grs_ok=T
 example : goodRaState (mkS [[1], [0]] [.Atemp, .Atemp] [1, 1] 2 [0] [1] [(0, 0, 1)] [(3, 1, 1)]
     [0, 1] [false, false]) := by
@@ -43,7 +43,7 @@ example : goodRaState (mkS [[1], [0]] [.Atemp, .Atemp] [1, 1] 2 [0] [1] [(0, 0, 
   rintro x y ⟨hx, hy, hm⟩
   simp only [List.length_cons, List.length_nil] at hx hy
   refine ⟨hy, hx, ?_⟩
-  rcases x with _ | _ | x <;> rcases y with _ | _ | y <;> simp_all [holEl] <;> omega
+  rcases x with _ | _ | x <;> rcases y with _ | _ | y <;> simp_all [holEl, holHd] <;> omega
 -- grs_unsorted=F
 example : ¬ goodRaState (mkS [[1, 2], [0], [0]] [.Atemp, .Atemp, .Atemp] [2, 1, 1] 3 [] [] [] []
     [0, 1, 2] [false, false, false]) := fun h => by
@@ -61,21 +61,21 @@ example : ¬ goodRaState (mkS [[1], [0]] [.Atemp] [1, 1] 2 [] [] [] [] [0, 1] [f
 example : noClash [[1], [0]] [.Fixed 0, .Fixed 1] := by
   rintro x y ⟨hx, hy, hm⟩
   simp only [List.length_cons, List.length_nil] at hx hy
-  rcases x with _ | _ | x <;> rcases y with _ | _ | y <;> simp_all [holEl] <;> omega
+  rcases x with _ | _ | x <;> rcases y with _ | _ | y <;> simp_all [holEl, holHd] <;> omega
 -- nc_clash=F
 example : ¬ noClash [[1], [0]] [.Fixed 0, .Fixed 0] := fun h => by
-  have := h 0 1 (by simp [hasEdge, holEl])
-  simp [holEl] at this
+  have := h 0 1 (by simp [hasEdge, holEl, holHd])
+  simp [holEl, holHd] at this
 -- nc_atemp=T
 example : noClash [[1], [0]] [.Fixed 0, .Atemp] := by
   rintro x y ⟨hx, hy, hm⟩
   simp only [List.length_cons, List.length_nil] at hx hy
-  rcases x with _ | _ | x <;> rcases y with _ | _ | y <;> simp_all [holEl] <;> omega
+  rcases x with _ | _ | x <;> rcases y with _ | _ | y <;> simp_all [holEl, holHd] <;> omega
 -- nc_self=T
 example : noClash [[0]] [.Fixed 3] := by
   rintro x y ⟨hx, hy, hm⟩
   simp only [List.length_cons, List.length_nil] at hx hy
-  rcases x with _ | x <;> rcases y with _ | y <;> simp_all [holEl] <;> omega
+  rcases x with _ | x <;> rcases y with _ | y <;> simp_all [holEl, holHd] <;> omega
 -- spi_ok=T
 example : spInverts (sptInsert 4 0 .ln) (sptInsert 0 4 .ln) := by
   intro m fm h
@@ -100,27 +100,27 @@ example : spInverts (sptInsert 7 1 (sptInsert 4 0 .ln)) (sptInsert 1 7 (sptInser
 example : isClique [0, 1] [[1], [0]] := by
   rintro x y ⟨hx, hy, hne⟩
   simp only [List.mem_cons, List.mem_nil_iff, or_false] at hx hy
-  rcases hx with rfl | rfl <;> rcases hy with rfl | rfl <;> simp_all [hasEdge, holEl]
+  rcases hx with rfl | rfl <;> rcases hy with rfl | rfl <;> simp_all [hasEdge, holEl, holHd]
 -- clq_bad=F
 example : ¬ isClique [0, 1, 2] [[1], [0], []] := fun h => by
   have := h 0 2 (by simp)
-  simp [hasEdge, holEl] at this
+  simp [hasEdge, holEl, holHd] at this
 -- sub_ok=T
 example : isSubgraph [[1], [0]] [[2, 1], [0], []] := by
   rintro x y ⟨hx, hy, hm⟩
   simp only [List.length_cons, List.length_nil] at hx hy
-  rcases x with _ | _ | x <;> rcases y with _ | _ | y <;> simp_all [hasEdge, holEl] <;> omega
+  rcases x with _ | _ | x <;> rcases y with _ | _ | y <;> simp_all [hasEdge, holEl, holHd] <;> omega
 -- sub_bad=F
 example : ¬ isSubgraph [[1], [0]] [[1], []] := fun h => by
-  have := h 1 0 (by simp [hasEdge, holEl])
-  simp [hasEdge, holEl] at this
+  have := h 1 0 (by simp [hasEdge, holEl, holHd])
+  simp [hasEdge, holEl, holHd] at this
 -- hide_num=36893488147419103232
 example : hide (36893488147419103232 : Nat) = 36893488147419103232 := rfl
 -- cs_ok=T
 example : colouringSatisfactory (fun x : Nat => x) [[1], [0]] := fun _ _ _ _ h => h
 -- cs_bad=F
 example : ¬ colouringSatisfactory (fun _ : Nat => (0 : Nat)) [[1], [0]] := fun h => by
-  have := h 0 (by simp) 1 (by simp [holEl]) rfl
+  have := h 0 (by simp) 1 (by simp [holEl, holHd]) rfl
   simp at this
 -- cs_self_loop=T
 example : colouringSatisfactory (fun _ : Nat => (0 : Nat)) [[0]] := by

@@ -1,0 +1,11 @@
+msub_hit=T
+msub_miss=T
+mupdate_hit=T
+mupdate_miss=T
+marray_length=T
+marray_sub_hit=T
+marray_sub_miss=T
+marray_update_hit=T
+marray_update_miss=T
+st_ex_map_ok=T
+st_ex_map_fail=T

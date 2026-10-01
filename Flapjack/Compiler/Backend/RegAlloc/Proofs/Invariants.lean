@@ -2,6 +2,8 @@ import Flapjack.HolRef
 import Flapjack.Compiler.Backend.RegAlloc.Carriers
 import Flapjack.Translator.Monadic.MonadBase
 import Flapjack.Misc.Sptree
+import Flapjack.Misc.ListEl
+import Flapjack.Compiler.Backend.RegAlloc.Proofs.SpInverts
 
 /-!
 # reg_alloc graph and state invariants
@@ -9,39 +11,25 @@ import Flapjack.Misc.Sptree
 The invariant definitions of `reg_allocProofScript.sml` used by
 `do_reg_alloc_correct`: edges, undirectedness, well-formed states, the
 no-clash colouring invariant, preference oracles, cliques, subgraphs and
-satisfactory colourings, and the inverse-map pair `sp_inverts`/`sp_inverts_insert`.
-HOL `bool` definitions are `Prop`s.
+satisfactory colourings. HOL `bool` definitions are `Prop`s. The inverse-map pair
+`sp_inverts`/`sp_inverts_insert` has its canonical port in
+`Flapjack.Compiler.Backend.RegAlloc.Proofs.SpInverts`.
 
-HOL `EL n l` is `l[n]` when `n < LENGTH l` and otherwise `HD []`, because
-`TL [] = []` (`HOL/src/list/src/listScript.sml` `HD`, `TL_DEF`, `EL_def`). Here it
-is `holEl`, with `HD []` an unspecified opaque constant (`hdNil`). HOL
-`sorting$SORTED R` is `holSorted R`, which follows `SORTED_DEF` clause by clause.
-Both are provisional, untagged Flapjack infrastructure, not completed HOL ports.
-The HOL standard-library `listScript.sml` source is outside the reference
-checker's reviewed external paths. Its exact `HD`/`EL` tags wait on the
-provenance approval of beads flapjack-pxn.18.5.15.3.38 and .38.1. Until that
-approval lands, every declaration below except `sp_inverts`, `sp_inverts_insert` and
-`hide` depends, directly or through `has_edge`/`good_ra_state`, on this unreviewed `EL`
-rendering, so those are untagged and their acceptance is held on bead .38. `holSorted` follows the original `sortingScript.sml` `SORTED_DEF`
-(adjacent pairs plus the recursive tail, with no transitivity assumption). It
-is likewise untagged.
+HOL `EL` is the shared untagged rendering `Flapjack.holEl` of `Flapjack.Misc.ListEl`
+(`l[n]` within bounds, the opaque unspecified HOL `HD []` beyond), and HOL
+`sorting$SORTED R` is `holSorted R`, which follows the original `sortingScript.sml`
+`SORTED_DEF` clause by clause (adjacent pairs plus the recursive tail, with no
+transitivity assumption). Both are provisional, untagged infrastructure, not completed HOL
+ports: the HOL standard-library list and sorting sources are outside the reference
+checker's reviewed external paths, and the exact `HD`/`EL` tags wait on the provenance
+approval of beads flapjack-pxn.18.5.15.3.38 and .38.1. Every declaration below except
+`hide` depends on `EL`, directly or through `has_edge`/`good_ra_state`, so those are
+untagged and their acceptance is held on bead .38.
 -/
 
 namespace Flapjack.RegAlloc
 
 open Flapjack.Translator.Monadic.MonadBase
-
-/-- Provisional rendering of HOL `HD ([] : α list)`: one fixed value of each
-type whose identity HOL leaves unspecified. It is opaque, so no property beyond
-its type is provable. Untagged pending the listScript provenance approval
-(bead flapjack-pxn.18.5.15.3.38.1); not an approved HOL dependency. -/
-opaque hdNil (α : Type) [Inhabited α] : α
-
-/-- Provisional rendering of HOL `EL n l`: the `n`-th element, and `HD []`
-beyond the end (HOL `TL [] = []`). Untagged pending bead
-flapjack-pxn.18.5.15.3.38.1; not an approved HOL dependency. -/
-def holEl {α : Type} [Inhabited α] (n : Nat) (l : List α) : α :=
-  l.getD n (hdNil α)
 
 /-- HOL `sorting$SORTED R`: every adjacent pair is related. -/
 def holSorted {α : Type} (R : α → α → Prop) : List α → Prop
@@ -132,29 +120,6 @@ def goodNegPref {α β : Type} (k : Nat) (pref : α → List Nat → M State (Op
       match res with
       | none => True
       | some c => c ∉ bads ∧ k ≤ c
-
-/-- Exact HOL `sp_inverts_def` (`reg_allocProofScript.sml:783-788`). -/
-@[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml" "sp_inverts_def"]
-def spInverts (f g : Spt Nat) : Prop :=
-  ∀ m fm, sptLookup m f = some fm → sptLookup fm g = some m
-
-/-- Exact HOL `sp_inverts_insert` (`reg_allocProofScript.sml:790-800`). -/
-@[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml" "sp_inverts_insert"]
-theorem spInvertsInsert (f g : Spt Nat) (x y : Nat) :
-    spInverts f g ∧ ¬ sptDomain f x ∧ ¬ sptDomain g y →
-      spInverts (sptInsert x y f) (sptInsert y x g) := by
-  rintro ⟨h, hx, hy⟩ m fm hm
-  by_cases hmx : m = x
-  · subst hmx
-    rw [sptLookup_sptInsert_same] at hm
-    cases hm
-    rw [sptLookup_sptInsert_same]
-  · rw [sptLookup_sptInsert_ne _ _ _ _ hmx] at hm
-    have hg := h m fm hm
-    have hfy : fm ≠ y := by
-      rintro rfl
-      exact hy (by simp [sptDomain, hg])
-    rw [sptLookup_sptInsert_ne _ _ _ _ hfy, hg]
 
 /-- HOL `is_clique_def` (`reg_allocProofScript.sml:983-987`).
 

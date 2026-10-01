@@ -51,6 +51,69 @@ LabSem evaluator routing or cross-language IEEE equivalence. Regenerate with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=labsem_fp_updates_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
+`linear_scan_pure_props_probe.out` captures eighteen direct original
+observations of the proposition-valued `linear_scanScript.sml` definitions:
+`check_number_property` (signed bounds, branch numbering), the extra Branch
+conjunct of `check_number_property_strong` against the weak form,
+`check_startlive_prop` (in-range, `ndef` default, missing end, branch
+numbering), `live_tree_registers` membership, `interval_intersect`,
+`point_inside_interval`, `THE (SOME x)`, and two `check_intervals` instances
+proved in HOL without any fact about `THE NONE` (a missing end, and a colour
+clash). Closed instances are decided by EVAL/SIMP_CONV; the two
+`check_intervals` rows are HOL `prove` calls. `Flapjack.Test.LinearScanPurePropsParity`
+kernel-checks the same propositions over the opaque `holTheNone`. This does
+not compare an unspecified `THE NONE` value across provers. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=linear_scan_pure_props_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`linear_scan_top_probe.out` captures fourteen direct original EVAL results
+of the top-level `linear_scanScript.sml` definitions with raw sparse trees:
+`find_bijection_clash_tree` (Seq/Set and Branch with a cut set),
+`apply_bij_on_clash_tree`, `apply_bijection`, `size_of_clash_tree`,
+`extract_coloration`, the generated `run_i_linear_scan_hidden_state` (success
+and Subscript failure), and six end-to-end `linear_scan_reg_alloc` runs
+(moves, forced pairs, a spilling branch, physical and stack registers).
+`Flapjack.Test.LinearScanTopParity` kernel-checks every full result. These
+finite rows do not prove `linear_scan_reg_alloc_correct` or route the
+definitions into the compiler. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=linear_scan_top_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`linear_scan_monad_probe.out` captures thirty-four direct original EVAL
+results of the monadic `linear_scanScript.sml` definitions on a concrete
+hidden state, printed with raw sparse-tree constructors: the conditional
+interval updates (including a `Subscript` failure), `get_intervals_ct_monad`,
+`remove_inactive_intervals`, colour search, spilling, colouring, stealing,
+the pass-1/pass-2 steps, register exchange, `st_ex_FOLDL`,
+`st_ex_FILTER_good`, `edges_to_adjlist`, the in-array register/move sorts and
+list conversions, and the initial states. `Flapjack.Test.LinearScanMonadParity`
+kernel-checks every full result value. These finite rows do not prove
+allocator soundness or route these definitions into the compiler. Regenerate
+with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=linear_scan_monad_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`monad_arrays_probe.out` captures eleven direct original EVAL rows of the
+ml_monadBase fixed-array primitives (`Msub`/`Mupdate` in and out of range,
+`Marray_length`, `Marray_sub`, `Marray_update` with the unchanged state on
+failure) and reg_alloc `st_ex_MAP` (success threading the state, and the first
+failure stopping the traversal with its state), replayed in
+`Flapjack.Test.MonadArraysParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=monad_arrays_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`linear_scan_pure_defs_probe.out` captures fifteen direct original
+`linear_scanScript.sml` EVAL observations of the pure live-tree and interval
+definitions: get_live_tree with a branch cut set, get_live_backward,
+fix_domination (both branches of the `live = LN` test), check_live_tree
+(success, colour collision, branch merge), numset_list_add_if_lt/gt over a
+present key, get_intervals, get_intervals_withlive, get_intervals_ct,
+size_of_live_tree and both numset_list_insert variants, each compared with a
+full raw sparse-tree value. `Flapjack.Test.LinearScanPureDefsParity`
+kernel-replays the identical inputs and outputs. These finite rows do not
+prove the allocator theorem or route these definitions into the compiler.
+Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=linear_scan_pure_defs_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `reg_alloc_clash_tree_probe.out` captures eight direct original register
 allocator checker observations: repeated deletion, duplicate colours,
 existing-name skips, partial collisions, Delta's discarded write result,
