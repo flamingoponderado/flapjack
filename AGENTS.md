@@ -54,7 +54,10 @@ instead.
 This section coordinates internal fleet agents. External contributors may open
 their own focused PRs and do not need access to the fleet's bead database.
 
-Keep the CakeML/HOL submodule read-only. Put HOL probes and captured oracle
+Initialize both reference submodules in your own checkout with
+`git submodule update --init -- cakeml HOL`; use their committed revisions,
+not an unrelated local HOL installation. Keep both submodules read-only.
+Put HOL probes and captured oracle
 outputs on the Flapjack side under `scripts/hol-probes/`; follow that directory's
 README and `docs/PARITY-TESTING.md` for the detailed procedure.
 
