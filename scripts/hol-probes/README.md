@@ -3994,6 +3994,12 @@ These regressions do not establish cross-language equivalence or full compiler c
 Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_primitives_probeScript.sml`.
 
 `ssa_rename_move_preserve_probeScript.sml` replays the literal strong SSA move-preservation proof and local prerequisites, capturing its full statement and five inferred argument types.
+`stacksem_fp_case_types_probeScript.sml` captures seven original full type
+rows for the complete StackSem FP case, including all sixteen constructor
+payloads. Together with freshly regenerated movement/sign, arithmetic and
+conversion captures, these support the i81m source review. Generic machine,
+compile and FFI carriers and fixed word64 FP registers are preserved.
+Captures are regression evidence, not a HOL-to-Lean equivalence proof.
 `ssa_locals_list_rename_probe.out` freshly replays the full original generic list-renaming locals relation, its three local theorem prerequisites and source physical-class tactic, with nine original inferred types confirming generic payload alpha and native tree/list carriers. All seven original premises are retained.
 
 `ssa_setup_props_probe.out` freshly replays the complete original setup-SSA proof, six local prerequisite proofs and two ML tactics, plus four inferred types. State/program/move share their word dimension. The tagged native theorem retains the original allocation/domain premises and all six actual evaluator conclusions; executed setup routing is tracked separately.

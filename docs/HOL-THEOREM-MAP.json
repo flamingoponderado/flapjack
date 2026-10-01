@@ -49107,5 +49107,20 @@
       "WordSemStateFiniteExact.store"
     ],
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/FpInstructions.lean",
+    "lean_name": "instFp",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "inst_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 completed source/body/carrier comparison 2026-10-01, bead i81m: complete FP constructor branch of original inst_def409 clauses519-636, split along HOL outer FP case. All16 payload types are num/Nat registers; full original types confirm machine-indexed state, independent arbitrary compile C and FFI F, fixed word64 fp_regs. Actual imported native owning state retains all22 fields and canonical finite-support regs/fpRegs/store; same-module witness forwards its codec. Structural coverage proves outer Option always present, so join retains precisely original semantic Option state. Compared comparisons writing width-indexed0/1, movement/sign updates, RTE binary arithmetic, FMA destination/addend first with mul-add f2 f3 f1; transfers ignore r2 at64, otherwise low/high slicing and high-last alias order, high@@low concat before64 conversion; ToInt signed word32 roundtrip/odd DIV2 insertion and FromInt fixed32 only at64, width-indexed otherwise. Existing reviewed sqrt/ToInt/FromInt operations reused unchanged. Inherits reals_as_rational_cuts through arithmetic/conversion/real-sqrt dependencies, SOUNDNESS item8; pure Lean sqrt agreement is not HOL-to-Lean equivalence. No direct rendering call, so no direct real qualifier. No callback, stronger premise, supplied evaluation or simplified evaluator. Original type and movement/arithmetic/conversion captures freshly regenerated, structural coverage and frame theorem kernel checked. Complete FP case only, not full inst/evaluate or compiler correctness."
   }
 ]
