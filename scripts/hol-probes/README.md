@@ -3170,3 +3170,11 @@ theorems to the same inputs. Weakening/interference fixtures change functions
 above the original count bound, and the intermediate carrier remains Bool
 while states are Nat. These regressions do not establish cross-language
 equivalence or complete encoder correctness.
+
+`word_alloc_limit_var_probe.out` records the full original definition/type and
+twelve native-program maximum/limit/class/strict-bound observations. Inputs
+cover all four residues, zero/multiples, widths1/32/64/80, unbounded naturals,
+returning Call bodies, ignored tail handlers and ignored Load16 fields.
+`WordAllocLimitVarParity` checks thirteen kernel examples against identical
+inputs. Select `HOL_PROBE_ONLY=word_alloc_limit_var_probeScript.sml`.
+The executed upstream maximum/limit route remains tracked on .30.1.2.1.
