@@ -474,6 +474,7 @@
     {"bytes": 528, "out": "parmove_save_probe.out", "rows": 20, "sha256": "911a6cf176ca90ffe034fc42021bcd0f578586626989989a5797caea0f0c1519"},
     {"bytes": 348, "out": "parmove_scheduler_probe.out", "rows": 9, "sha256": "9a52f48f9aa4d0ba87adf2f57586cbe903fb818c605ab885e0b106469a00ed6e"},
     {"bytes": 238, "out": "parmove_semantics_probe.out", "rows": 12, "sha256": "e6cf39747a7d47e75fded9b903563dc2d888216d779c2c7cc83d7b33eb245cfd"},
+    {"bytes": 253, "out": "parmove_source_probe.out", "rows": 8, "sha256": "a07d212c8d567c20ec3a2ad53302f26dd86c8dda08ff9958afa4e00a8c1da61d"},
     {"bytes": 257, "out": "parmove_start_extend_probe.out", "rows": 14, "sha256": "b14cdda2f6d4d024801d0d37afec4544f3f600525643ac95658b422b67daf130"},
     {"bytes": 75, "out": "parmove_steps_probe.out", "rows": 6, "sha256": "92da0df7db366fa99efa9ed99e747b30f8b2b4e50cfb78e67e2c602a1f1ec009"},
     {"bytes": 180, "out": "parmove_stepssem_probe.out", "rows": 12, "sha256": "89099849aac171f6b297262fb4313ce527bf0b0872fd571427b42d63654f97cc"},

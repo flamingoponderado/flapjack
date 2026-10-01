@@ -41350,5 +41350,13 @@
   "hol_name": "MEM_MAP_FST_SND_SND_pmov",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-c source comparison (2026-10-01, bead flapjack-pxn.18.5.15.3.44.1): literal original699-703, proof through751. Same forall arbitrary pending/active/emitted Option-register List state and real register x: membership SOME x in MAP FST emitted actual pmov implies membership in MAP FST concatenated three input lists. Native tagged pmov/fstep recursion; no wf, termination, final shape, result equality, or simulation premise. DecidableEq computes HOL equality with no BEq correctness premise. Proof follows actual pmov induction and unconditional one-step destination preservation; splitSource_append/frontLast_append derive list membership, temporary NONE excluded exactly by SOME x. No carrier/word/finite-map difference or qualifier. Independent prerequisite of public MEM_MAP_FST_parmove used in word_to_stackProof3479/3541/6194; scheduler semantics and executed routing remain separate."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/SourceMembership.lean",
+  "lean_name": "memMapSndSndSndPmov",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "MEM_MAP_SND_SND_SND_pmov",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison (2026-10-01, bead flapjack-pxn.18.5.15.3.45.1): literal original764-768, proof through816. Same forall arbitrary pending/active/emitted Option-register List state and real x: membership SOME x in MAP SND emitted actual pmov implies membership in MAP SND concatenated three input lists. Native tagged pmov/fstep recursion; no wf, termination, final shape, result equality, or simulation premise. DecidableEq computes HOL equality with no BEq correctness premise. Actual pmov induction and unconditional one-step source preservation; splitSource_append/frontLast_append derive membership. Cycle save source equals original active LAST source under the actual fstep condition; temporary NONE excluded exactly by SOME x, not assumed absent from input. No carrier/word/finite-map difference or qualifier. Independent prerequisite of public MEM_MAP_SND_parmove used in word_to_stackProof6173/6193; full scheduler semantics and executed routing remain separate."
 }
 ]

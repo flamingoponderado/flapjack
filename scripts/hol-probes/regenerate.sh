@@ -2847,3 +2847,7 @@ run_probe labsem_evaluate_probeScript.sml labsem_evaluate_probe.out \
 run_probe parmove_destination_probeScript.sml parmove_destination_probe.out \
   pv_destination_terminal pv_destination_self pv_destination_chain pv_destination_cycle pv_destination_scratch pv_destination_duplicate pv_destination_active \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe parmove_source_probeScript.sml parmove_source_probe.out \
+  pv_source_terminal pv_source_self pv_source_chain pv_source_cycle pv_source_scratch pv_source_duplicate pv_source_active pv_source_history \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"

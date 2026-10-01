@@ -2199,3 +2199,8 @@ pending/active lists and an existential emitted history, not semantic correctnes
 of native `pmov` on terminal, self, chain, cycle, scratch, duplicate, and active
 states. `ParmoveDestinationParity` replays each row and applies the unconditional
 original destination-membership theorem, including malformed states.
+
+`parmove_source_probeScript.sml` observes native `pmov` source-register maps
+on eight arbitrary states, including scratch/duplicate/active and real history.
+`ParmoveSourceParity` replays each row and applies the unconditional original
+source-membership theorem; the cycle-save source is justified from active LAST.
