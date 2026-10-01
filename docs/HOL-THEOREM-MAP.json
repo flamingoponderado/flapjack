@@ -47113,5 +47113,41 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-c source comparison (2026-10-01; flapjack-goq9): full source 2020-2035. Original compile_prog equality premise and EVERY per-owner result on arbitrary list, rendered List.all=true; no uniqueness/arity/code/result assumption. Exact native HolLoopProg/WordLangProgHOL/Spt Nat and List carriers; only positive type-indexed word to BitVec width translation, NeZero retained. Reviewed good_handlers_def Bool=true corresponds to HOL predicate. Threaded output label equations transport ownership rather than assuming it. All four literal complete original proofs replayed; typed widths1/64/80 nested whole outputs and actual source theorem applications, duplicate-owner compiled program and false-owner sentinel have matching kernel fixtures. No executable compiler change."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/ProgramNames.lean",
+    "lean_name": "loopToWordFirstCompileProgAllDistinct",
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "first_compile_prog_all_distinct",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c author source comparison (2026-10-01; l8d5), original line 1850: full quantified native program list, numeric names, List numeric formals and positive-width HolLoopProg/WordLangProgHOL; exact comp_func/compile_prog/compile composition retained. HOL ALL_DISTINCT becomes Lean List.Nodup and MEM becomes membership without representation change. Name-distinctness statements retain only original source distinctness premise; membership retains only source triple membership; lookup retains only original SOME(params,body) premise and proves whole compiled SOME result via native sptFromAList first-match lookup, including duplicate names. No successful allocation, target evaluation, source uniqueness or simulation premise. Four complete literal original proofs replayed with original simplifier context, complete duplicate/distinct compiled outputs and first/missing lookup sentinels matched by generic-width kernel fixtures. Standard words_as_type_indexed_bitvec is the sole carrier translation; each width has NeZero."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/ProgramNames.lean",
+    "lean_name": "loopToWordFirstCompileAllDistinct",
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "first_compile_all_distinct",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c author source comparison (2026-10-01; l8d5), original line 1867: full quantified native program list, numeric names, List numeric formals and positive-width HolLoopProg/WordLangProgHOL; exact comp_func/compile_prog/compile composition retained. HOL ALL_DISTINCT becomes Lean List.Nodup and MEM becomes membership without representation change. Name-distinctness statements retain only original source distinctness premise; membership retains only source triple membership; lookup retains only original SOME(params,body) premise and proves whole compiled SOME result via native sptFromAList first-match lookup, including duplicate names. No successful allocation, target evaluation, source uniqueness or simulation premise. Four complete literal original proofs replayed with original simplifier context, complete duplicate/distinct compiled outputs and first/missing lookup sentinels matched by generic-width kernel fixtures. Standard words_as_type_indexed_bitvec is the sole carrier translation; each width has NeZero."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/ProgramNames.lean",
+    "lean_name": "loopToWordMemProgMemCompileProg",
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "mem_prog_mem_compile_prog",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c author source comparison (2026-10-01; l8d5), original line 1875: full quantified native program list, numeric names, List numeric formals and positive-width HolLoopProg/WordLangProgHOL; exact comp_func/compile_prog/compile composition retained. HOL ALL_DISTINCT becomes Lean List.Nodup and MEM becomes membership without representation change. Name-distinctness statements retain only original source distinctness premise; membership retains only source triple membership; lookup retains only original SOME(params,body) premise and proves whole compiled SOME result via native sptFromAList first-match lookup, including duplicate names. No successful allocation, target evaluation, source uniqueness or simulation premise. Four complete literal original proofs replayed with original simplifier context, complete duplicate/distinct compiled outputs and first/missing lookup sentinels matched by generic-width kernel fixtures. Standard words_as_type_indexed_bitvec is the sole carrier translation; each width has NeZero."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/ProgramNames.lean",
+    "lean_name": "loopToWordLookupProgSomeLookupCompileProg",
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "lookup_prog_some_lookup_compile_prog",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c author source comparison (2026-10-01; l8d5), original line 1894: full quantified native program list, numeric names, List numeric formals and positive-width HolLoopProg/WordLangProgHOL; exact comp_func/compile_prog/compile composition retained. HOL ALL_DISTINCT becomes Lean List.Nodup and MEM becomes membership without representation change. Name-distinctness statements retain only original source distinctness premise; membership retains only source triple membership; lookup retains only original SOME(params,body) premise and proves whole compiled SOME result via native sptFromAList first-match lookup, including duplicate names. No successful allocation, target evaluation, source uniqueness or simulation premise. Four complete literal original proofs replayed with original simplifier context, complete duplicate/distinct compiled outputs and first/missing lookup sentinels matched by generic-width kernel fixtures. Standard words_as_type_indexed_bitvec is the sole carrier translation; each width has NeZero."
   }
 ]
