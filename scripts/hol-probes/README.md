@@ -2388,12 +2388,29 @@ proves equalities on the same inputs by kernel-checked reduction, without a
 program DecidableEq assumption, and is imported by the actual test driver.
 This is finite regression evidence, not whole-allocator correctness; the
 executed allocator route remains separate work.
+
+`spt_mapi_probe.out` contains twelve direct original `mapi0_def`/`mapi_def`
+observations, kernel-replayed as exact trees in `SptMapiParity`. Cases cover
+left/right key order, nested nodes, smart-constructor normalization of raw
+malformed trees, nonzero starting indices and Bool/Nat payload changes.
+These finite observations do not establish cross-prover equivalence or route
+the executed allocator. Regenerate read-only with
+`HOL_PROBE_ONLY=spt_mapi_probeScript.sml scripts/hol-probes/regenerate.sh`.
 `parmove_temp_mixed_probeScript.sml` checks four literal scratch-safety clauses with independent bool destination and num source carriers. `ParmoveTempAppendParity` kernel-replays these rows and applies the append theorem to arbitrary independent carriers; existing same-carrier sentinels remain registered.
 
 
 `word_alloc_stack_only_probeScript.sml` captures fifteen original full-tree equalities for native stack analysis: right-fold Move and reverse Seq order, branch operand deletion, recursive wrappers, all Call handler forms, Delta removal and non-Delta preservation, including raw initial trees and the entry projection. Matching kernel fixtures run through CompilerParity. Production allocator routing remains separate.
 
 `word_alloc_get_prefs_probeScript.sml` captures seventeen original full-list preference equalities, with nonempty accumulators, duplicates/self moves, branch and sequential ordering, both returning handlers, tail-handler exclusion, loops, nested wrappers, ignored constructors and priority/register naturals exceeding 2^64. Matching actual CompilerParity fixtures reduce in the kernel. Native allocator assembly and production routing remain separate.
+`word_alloc_checker_assembly_probe.out` observes five mixed original checker
+equations, kernel-replayed by `WordAllocCheckerAssemblyParity`. Nested control
+(Seq/MustTerminate/If/Loop/Break/Continue), returning and handled calls, a tail
+call with an ignored malformed handler, and collision rejection are covered.
+The full theorem is assembled universally from reviewed constructor cases;
+these finite observations do not establish cross-prover equivalence or route
+the executed allocator. Regenerate with
+`HOL_PROBE_ONLY=word_alloc_checker_assembly_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 
 
 `parmove_independence_probeScript.sml` proves ten original whole environment-transformer equalities using the original independence/parsem_nil theorems and evaluated windmill premises. Cases cover head/middle/tail extraction, cyclic sources, fanout, self moves, empty surrounding lists and independent Bool/Nat register/value carriers. Matching kernel theorem applications run in CompilerParity; these universal equality observations are not executable compiler parity or whole compiler correctness.
