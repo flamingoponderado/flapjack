@@ -1,0 +1,12 @@
+sort_empty=T
+sort_one=T
+sort_mixed=T
+sort_ties=T
+sort_bool=T
+merge_empty=T
+merge_left=T
+merge_right=T
+merge_ties=T
+merge_unsorted=T
+merge_duplicate=T
+merge_bool=T
