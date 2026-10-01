@@ -39269,5 +39269,29 @@
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-c source comparison 2026-10-01 (.11.1.26.1), original theorem1105-1130 and Resume Seq1811-1831: original st/cst/f/live/lt three premises and full existential permutation/error/result/state/locals conclusion at Seq. Only genuine first/second subprogram IHs applyColourGoal added. Error and early non-NONE branches reuse first oracle; NONE branch obtains second oracle then exact wordProps permute_swap_lemma combines source choices. Exact rebound evaluator removes fix_clock via proved clock bound; raw production evaluator unchanged. Qualified canonical fpRegs/store and positive-width words, imported owning carrier with same-module roundtrip. Inherits reals_as_rational_cuts from reviewed WordSem evaluator as in existing leaf cases, SOUNDNESS item8. Coordinator review pending.",
   "inherits_reals_as_rational_cuts": true
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/UpdateLemmas.lean",
+  "lean_name": "parsem_cons",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "parsem_cons",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.9: source171-183: exact not-MEM destination in MAP FST tail premise implies full environment function equality; head reads original rho y and updates parsem tail rho at x. Snapshot values retained, arbitrary key/value carriers, propositional DecidableEq only computes equality. Generic codec commutation proof is separate untagged infrastructure."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/UpdateLemmas.lean",
+  "lean_name": "parsem_untouched",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "parsem_untouched",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.9: source244-254: forall rho/moves/x, exact original conjunction windmill moves and fresh destination implies pointwise original environment equality. Original windmill premise retained even though untagged generic UPDATE_LIST codec fact needs only freshness. No target run/equality premise."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/UpdateLemmas.lean",
+  "lean_name": "eqenv_sym",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "eqenv_sym",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.9: source364-368: exact implication eqenv first second -> eqenv second first, generic Option-key and value carriers. IS_SOME guard retained; temporary ignored in both directions. Needed directly in fullparmove_correct692; no stronger relation assumed."
 }
 ]
