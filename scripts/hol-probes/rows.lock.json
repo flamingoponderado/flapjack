@@ -3493,6 +3493,12 @@
       "sha256": "81725c70ac26603766c0d15b5a01ee9855854dc7caa6bca76f3d9c5481482e6b"
     },
     {
+      "bytes": 656,
+      "out": "ssa_locals_insert_probe.out",
+      "rows": 7,
+      "sha256": "c75d1d3a2d985422e65793b5220e6fcf8d9310e10b4717828cd913f5e77de48c"
+    },
+    {
       "bytes": 463,
       "out": "ssa_locals_physical_insert_probe.out",
       "rows": 12,
@@ -3535,6 +3541,24 @@
       "sha256": "a492be8830545e1b6eb091c59adf26b841f11221a68ccee47c58c8953314647a"
     },
     {
+      "bytes": 156,
+      "out": "ssa_map_step_probe.out",
+      "rows": 7,
+      "sha256": "b7538e3a3df5cd041be0817b42cb055e7b987648b14dbf483ae0ad3da6de810a"
+    },
+    {
+      "bytes": 721,
+      "out": "ssa_merge_correct_left_probe.out",
+      "rows": 8,
+      "sha256": "3723326efa1ade51b88a8c80f4b9f5a248e8b71f75fda2952bf68446f0f2dddd"
+    },
+    {
+      "bytes": 713,
+      "out": "ssa_merge_correct_right_probe.out",
+      "rows": 8,
+      "sha256": "fcd2ce458779c907577688da537b3dcc44f4b14106e4e152bb8ff0b09349a379"
+    },
+    {
       "bytes": 949,
       "out": "ssa_merge_frame_probe.out",
       "rows": 11,
@@ -3551,6 +3575,12 @@
       "out": "ssa_merge_route_probe.out",
       "rows": 8,
       "sha256": "834e72ddfaa838a17bb10f797229b6ffcf3bfcabdb91e687d0fd5bdeb31f5f08"
+    },
+    {
+      "bytes": 501,
+      "out": "ssa_physical_state_updates_probe.out",
+      "rows": 6,
+      "sha256": "86a9050e624588c78472a905100f24f25e471e4697383c759773c41bb0015c7b"
     },
     {
       "bytes": 328,
