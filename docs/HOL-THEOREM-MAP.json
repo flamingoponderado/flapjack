@@ -39499,5 +39499,13 @@
   "hol_name": "parsem_change_env",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.11: source255-265 exact conjunction (notMEM key MAP FST moves implies first key=second key) and MAP(first o SND)moves=MAP(second o SND)moves implies pointwise parsem equality. Generic pair/List and function environments retained. No windmill, destination uniqueness, globally equal inputs or target evaluation premise added. Function-update codec lemma proves result by induction, preserving repeated destination last-write behavior. Direct prerequisite of step_sem cycle case; full scheduler correctness remains open."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/Permutation.lean",
+  "lean_name": "parsem_perm",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "parsem_perm",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.6.2: source198-241 exact windmill first AND PERM first second implies full parsem function equality. Generic same-component pair/List and function environments; List.Perm is constructor-for-constructor finite permutation relation, not key-set equality. Retains original destination Nodup and no restrictions on sources, no global environment or target evaluation premise. Genuine permutation induction nil/cons/swap/trans uses reviewed parsem_cons and independent function-update commutation; uniqueness transported by permutation. Ten fresh original rows with Lean replay include shared sources/snapshot/swap/empty and duplicate-destination counterexample; full step_sem remains open."
 }
 ]
