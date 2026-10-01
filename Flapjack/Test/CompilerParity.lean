@@ -1,11 +1,13 @@
 import Flapjack.Test.HeuProgParity
 import Flapjack.Test.RegAllocRemapParity
 import Flapjack.Test.HeuCallParity
+import Flapjack.Test.MonadBaseParity
+import Flapjack.Test.RegAllocCarriers
 import Flapjack.Test.HeuMaxParity
 import Flapjack.Test.WordToStackBitmapMixedParity
-import Flapjack.Test.RegAllocCarriers
 import Flapjack.Test.HeuInstParity
 import Flapjack.Test.SptMapParity
+import Flapjack.Test.WordToStackInstructionMaximumParity
 import Flapjack.Test.WordToStackCutsetMaximumParity
 import Flapjack.Test.RetainedAllocatorColour
 import Flapjack.Test.WordToStackHandlerValGeneralityParity

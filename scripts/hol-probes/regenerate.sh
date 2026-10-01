@@ -3051,6 +3051,9 @@ run_probe word_alloc_heu_call_probeScript.sml word_alloc_heu_call_probe.out \
 run_probe word_to_stack_full_read_bitmap_mixed_probeScript.sml word_to_stack_full_read_bitmap_mixed_probe.out \
   fra_8_1 fra_8_16 fra_1_32 fra_16_8 fra_offset fra_same fra_success8_1 fra_success1_32 fra_zero fra_loc \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe monad_base_probeScript.sml monad_base_probe.out \
+  mb_bind_ok mb_bind_fail mb_ignore_ok mb_ignore_fail mb_return mb_run_ok mb_run_fail mb_alloc_three mb_alloc_zero mb_exn_bytes \
+  "$cake_dir/translator/monadic/monad_base/ml_monadBaseScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 run_probe word_to_stack_full_read_bitmap_mixed_probeScript.sml word_to_stack_full_read_bitmap_mixed_probe.out \
   fra_8_1 fra_8_16 fra_1_32 fra_16_8 fra_offset fra_same fra_success8_1 fra_success1_32 fra_zero fra_loc \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -3074,3 +3077,7 @@ run_probe word_to_stack_comp_length_probeScript.sml word_to_stack_comp_length_pr
 run_probe word_to_stack_cutset_maximum_probeScript.sml word_to_stack_cutset_maximum_probe.out \
   cs_empty cs_root cs_left cs_right cs_duplicates cs_left_max cs_reordered cs_root_duplicates cs_large cs_overlap cs_range cs_sparse \
   "$cake_dir/pancake/loop_to_wordScript.sml" "$cake_dir/pancake"
+
+run_probe word_to_stack_instruction_maximum_probeScript.sml word_to_stack_instruction_maximum_probe.out \
+  im_const im_bin_reg im_bin_imm im_shift_reg im_shift_imm im_div im_carry im_mul im_longdiv im_load im_store8 im_large im_load16 im_store16 \
+  "$cake_dir/compiler/backend/wordLangScript.sml" "$cake_dir/compiler/backend"
