@@ -3090,3 +3090,11 @@ original full-type queries retain both independent carriers; the definition
 ports have no word specialization. These rows are regression evidence,
 not HOL-to-Lean equivalence or complete encoder correctness. The full
 iteration/weakening theorem chain is a separate dependency.
+
+`list_next_var_rename_lemma1_probe.out` records a fresh replay of the complete
+local original theorem and proof, plus eight full renaming observations with
+selected map lookups and all three arithmetic conclusions. Cases include
+duplicate names, overwritten keys, a malformed initial tree, zero and odd
+counters, and unbounded naturals. `SSAListRenameArithmeticParity` checks17
+kernel examples against identical inputs and the complete theorem. Select
+`HOL_PROBE_ONLY=list_next_var_rename_lemma1_probeScript.sml` to regenerate.

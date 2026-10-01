@@ -1189,6 +1189,12 @@
       "sha256": "108420ae230afe5e78fd47c5a8c02b5c4e545d949ac847be75aef2df8ab86039"
     },
     {
+      "bytes": 985,
+      "out": "list_next_var_rename_lemma1_probe.out",
+      "rows": 9,
+      "sha256": "c9790cbf4f3cc71fbed4ef5081511a37d24c63f04d5c05a6bc92eb04c8136429"
+    },
+    {
       "bytes": 2466,
       "out": "longdiv_code_probe.out",
       "rows": 3,

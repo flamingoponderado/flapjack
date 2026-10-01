@@ -43774,5 +43774,13 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison 2026-10-01: full exported original10243-10297 forall prog every_var (x <= max_var prog) prog, all native constructors and recursive Call returns/handlers, If and Loop cutsets retained. No wf, bound, successful pass or target evaluation premise. Private larger-bound induction is proof infrastructure only. Native MlString and canonical Spt carriers; only positive-width BitVec/NeZero translation. Full fresh original DB.fetch plus46 exact-input maximum/at-bound/strict-below triples,93 kernel fixtures including ignored instructions, absent-return handler, non-wellformed cutsets and widths1/32/64/80. No executed compiler change; coordinator acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASetup/ListNextVarRenameArithmetic.lean",
+    "lean_name": "listNextVarRenameLemma1",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "list_next_var_rename_lemma_1",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-10-01: full local theorem4529-4559 quantifies arbitrary names, canonical Spt Nat input/output maps and natural counters; sole actual list_next_var_rename equality premise. All three original conclusions retained: ALL_DISTINCT output, exact MAP(4*x+next) COUNT_LIST length, nextOut=next+4*length. Lean List.Nodup/List.range are literal list/count-list correspondence. No distinct input, wf, map invariant, freshness, bound or successful pass premise. Proof inducts actual reviewed renamer, establishes output shape privately then scoped arithmetic injection gives Nodup. Fresh original literal complete local proof replay plus eight exact-input full observations (selected map lookups included),17 kernel fixtures including duplicate keys, malformed tree, collision, zero/odd/huge counter. No representation qualifier or executed change; coordinator acceptance pending."
   }
 ]

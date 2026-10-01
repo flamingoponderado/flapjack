@@ -1,3 +1,4 @@
+import Flapjack.Test.SSAListRenameArithmeticParity
 import Flapjack.Test.WordAllocMaxVarMaxParity
 import Flapjack.Test.SSAMapParity
 import Flapjack.Test.SSASetupParity
