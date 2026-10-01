@@ -2145,3 +2145,10 @@ exact conclusion and empty hypothesis list. `TargetSemEncodedBytesParity.lean`
 replays each row, using the same `Jump 0w` and block-index `1` witnesses for the
 whole predicate. These concrete checks do not prove compiler correctness.
 `labsem_inst_probeScript.sml` checks original native asm_inst dispatch for all five constructors in fourteen direct rows: Skip/Const, Loc-sensitive arithmetic, failed division/shift writes, Loc memory and failed Store updates, unsupported ordinary16, and raw FP payload/sign/register-error paths. `Flapjack/Test/LabSemInstParity.lean` replays identical inputs and expected results in the kernel. `LabSem/Inst.lean` separately proves the full unconditional thirteen-conjunct original asm_inst_consts by unfolding every actual native Arith/Mem/FP case. The FP dependency inherits the existing real-number translation assurance boundary; full native evaluate and production routing remain separate work.
+
+`wordlang_max_var_inst_probeScript.sml` captures 26 direct original
+`max_var_inst` equations, covering every arithmetic and memory clause, integer
+FP comparison results, both 32/64-bit transfer branches, and the FP default.
+`WordLangMaxVarInstParity.lean` replays these finite observations in the kernel.
+They support regression review, not a cross-prover equivalence proof or
+production compiler routing claim.
