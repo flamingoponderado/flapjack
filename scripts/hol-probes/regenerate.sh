@@ -2892,3 +2892,7 @@ run_probe parmove_destination_wrapper_probeScript.sml parmove_destination_wrappe
 run_probe word_to_stack_live_length_probeScript.sml word_to_stack_live_length_probe.out \
   ll_zero ll_empty ll_slack ll_tree ll_nonwf ll_width8 \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_to_stack_live_prefix_probeScript.sml word_to_stack_live_prefix_probe.out \
+  lp_zero lp_empty lp_slack lp_tree lp_nonwf lp_width8 lp_shortcount \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"

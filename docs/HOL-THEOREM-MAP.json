@@ -41600,4 +41600,14 @@
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-a: source5618-5635 full arbitrary cutsets/frame/bitmap and output equation plus sole input length bound compared to native wLive. Exact Spt Unit pair, AppList and Nat pair, native HolProg, right-associated frame tuple; words_as_type_indexed_bitvec only translates positive source dimension. Conclusion preserves both output bound and count-minus-flat-length equality. Proof projects actual insertion, uses accepted append_thm and natural subtraction arithmetic; no wellformedness, success or evaluation premise. Six fresh original same-input observations and actual CompilerParity kernel replay; compiler correctness remains open."
 }
+,
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/LivePrefix.lean",
+  "lean_name": "wLiveIsPrefix",
+  "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+  "hol_name": "wLive_isPREFIX",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a: full source2805-2816 compared binder by binder: arbitrary Spt Unit cutset pair, AppList word/count pair, right-associated natural frame triple, actual native HolProg output and bitmap output; sole actual wLive output equation implies flattened input prefix of flattened output. List.IsPrefix is the original existential suffix equality. No input count bound, wellformedness or evaluation premise; words_as_type_indexed_bitvec only translates positive source dimension. Direct proof follows actual insertBitmap and accepted append_thm. Seven fresh original same-input observations include count below flattened length and malformed Spt; fixture imported by actual CompilerParity driver. This prerequisite does not establish whole comp/compiler correctness."
+}
 ]

@@ -2272,3 +2272,11 @@ Spt and width-eight packing. `WordToStackLiveLengthParity` kernel-applies the
 full source theorem to the same actual native outputs; it is imported in the
 actual CompilerParity test driver. These finite observations are regression
 evidence, not a cross-prover equivalence or compiler-correctness proof.
+
+`word_to_stack_live_prefix_probeScript.sml` freshly observes the actual frame
+bitmap prefix on seven inputs, including zero frame, nested AppList, raw
+non-wf Spt, width-eight packing and an input count below flattened length.
+`WordToStackLivePrefixParity` applies the full source theorem to the same
+actual native outputs in the real CompilerParity test driver. No input count
+bound is needed. These observations provide regression evidence, not a
+cross-prover equivalence or whole-compiler correctness proof.
