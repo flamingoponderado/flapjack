@@ -1,0 +1,16 @@
+load "preamble";
+load "word_allocTheory";
+open HolKernel Parse bossLib preamble word_allocTheory sptreeTheory;
+fun out label q = (print(label ^ "="); print_term(rconc(EVAL q)); print "\n");
+val _ = out "merge_empty" ``merge_moves [] (fromAList [(1,7)]) (fromAList [(1,9)]) 5``;
+val _ = out "merge_missing_both" ``merge_moves [1] LN LN 5``;
+val _ = out "merge_missing_left" ``merge_moves [1] LN (fromAList [(1,9)]) 5``;
+val _ = out "merge_missing_right" ``merge_moves [1] (fromAList [(1,7)]) LN 5``;
+val _ = out "merge_equal" ``merge_moves [1] (fromAList [(1,7)]) (fromAList [(1,7)]) 5``;
+val _ = out "merge_unequal" ``merge_moves [1] (fromAList [(1,7)]) (fromAList [(1,9)]) 5``;
+val _ = out "merge_tail_order" ``merge_moves [0;2] (fromAList [(0,7);(2,11)]) (fromAList [(0,9);(2,13)]) 5``;
+val _ = out "merge_duplicate" ``merge_moves [1;1] (fromAList [(1,7)]) (fromAList [(1,9)]) 5``;
+val _ = out "merge_invalid" ``merge_moves [0;4] (BN LN LN:num num_map) (fromAList [(0,7);(4,9)]) 0``;
+val _ = out "merge_big" ``merge_moves [0] (LS 18446744073709551616) (LS 3) 18446744073709551616``;
+val _ = (print "merge_definition=";print_thm(DB.fetch "word_alloc" "merge_moves_def");print "\n");
+val _ = print("merge_original_type=" ^ type_to_string(type_of ``merge_moves``) ^ "\n");
