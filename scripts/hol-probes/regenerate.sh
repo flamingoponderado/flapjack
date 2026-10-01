@@ -2891,3 +2891,7 @@ run_probe word_alloc_even_locals_probeScript.sml word_alloc_even_locals_probe.ou
 run_probe word_alloc_total_colour_probeScript.sml word_alloc_total_colour_probe.out \
   tc_absent_zero tc_absent_physical tc_absent_virtual tc_absent_large_physical tc_absent_large_virtual tc_mapped_physical tc_mapped_virtual tc_mapped_zero \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_alloc_remove_temp_stack_probeScript.sml word_alloc_remove_temp_stack_probe.out \
+  rts_empty rts_zero rts_duplicate rts_missing rts_fixed rts_raw rts_generic_payload rts_generic_fixed \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"

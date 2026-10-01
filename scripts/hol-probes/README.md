@@ -2261,3 +2261,5 @@ key list; it does not establish pass simulation or final binary correctness.
 `total_colour` lookups: absent physical/virtual keys (including large keys),
 mapped physical/virtual keys, and a mapped zero colour. Same-input kernel
 fixtures are registered in the actual CompilerParity test root.
+
+`word_alloc_remove_temp_stack_probeScript.sml` captures eight original full-tree deletion equations: empty, root key, duplicate, missing, untouched fixed tree, raw non-wf tree, and two generalized payload/second-component inputs. The native right fold and same-input kernel fixtures preserve arbitrary payload/second-component generality; actual CompilerParity registers them. This helper does not establish allocator correctness or executed compiler routing.

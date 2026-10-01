@@ -41614,5 +41614,13 @@
   "hol_name": "dsteps_steps",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-b source comparison (2026-10-01), original517-523: forall native arbitrary Option/List move states, RTC DStep first second implies original whole wf first implies RTC Step first second. Same State/Step/DStep/wf carriers, no equality instance or output/intermediate-state hypothesis. RTC induction composes accepted dstep_step with wf_steps derived from accumulated primitive closure, matching original proof dependencies. Kernel reflexive/history, start-emit and cycle-save-emit closure fixtures registered actual CompilerParity. Coordinator source review pending; full parmove/compiler correctness remains open."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/StackOnly.lean",
+  "lean_name": "removeTempStack",
+  "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+  "hol_name": "remove_temp_stack_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison (2026-10-01), original1734-1737: native List Nat right-fold actual sptDelete on first component, second component unchanged. Preserve original generalized Spt alpha payload and arbitrary beta second component; allocator specializes both to Spt Unit, but port does not narrow the HOL type. No wf, domain, distinctness or lookup-only premise. Eight fresh original observations/kernel equalities, including generalized Nat payload/Nat and Unit payload/Bool second components, compare full actual trees for empty/zero/duplicate/missing/fixed preservation/raw non-wf cases, registered actual CompilerParity. sptDelete follows original external sptree recursive delete/mk_BN/mk_BS; no finite-map substitute. Coordinator source review pending; recursive stack analysis/full allocator/production remain open."
 }
 ]
