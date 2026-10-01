@@ -2145,6 +2145,13 @@ exact conclusion and empty hypothesis list. `TargetSemEncodedBytesParity.lean`
 replays each row, using the same `Jump 0w` and block-index `1` witnesses for the
 whole predicate. These concrete checks do not prove compiler correctness.
 `labsem_inst_probeScript.sml` checks original native asm_inst dispatch for all five constructors in fourteen direct rows: Skip/Const, Loc-sensitive arithmetic, failed division/shift writes, Loc memory and failed Store updates, unsupported ordinary16, and raw FP payload/sign/register-error paths. `Flapjack/Test/LabSemInstParity.lean` replays identical inputs and expected results in the kernel. `LabSem/Inst.lean` separately proves the full unconditional thirteen-conjunct original asm_inst_consts by unfolding every actual native Arith/Mem/FP case. The FP dependency inherits the existing real-number translation assurance boundary; full native evaluate and production routing remain separate work.
+`parmove_save_probeScript.sml` captures 20 original HOL `sem` values for Save,
+including a cycle, reversed nonempty emitted history, and the permitted final
+`NONE` source. The temporary may change (99 to 67) while real-register results
+agree. A deliberately invalid pending `NONE` source yields 99 versus 27 and
+fails `wf`; no equivalence is claimed for it. Lean checks all observations and
+the input invariants. Save's generic theorem proves the original real-register
+equivalence from the full source `wf`, with no extra agreement premise.
 
 `wordlang_max_var_inst_probeScript.sml` captures 26 direct original
 `max_var_inst` equations, covering every arithmetic and memory clause, integer
@@ -2157,3 +2164,5 @@ production compiler routing claim.
 equations over both Spt components, including raw and non-well-formed trees.
 `WordLangCutsetsMaxParity.lean` kernel-replays the same inputs. These rows are
 regression evidence, not a full compiler or cross-prover equivalence proof.
+
+`word_lang_max_var_exp_probeScript.sml` captures eight original expression frame bounds: variables, nested loads, empty and nested operators, shifts, constants, lookups and mixed expressions. `WordLangMaxVarExpParity.lean` kernel-replays identical inputs. Full program max_var and native compiler wrapper routing remain separate work.
