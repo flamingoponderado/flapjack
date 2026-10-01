@@ -3367,6 +3367,18 @@
       "sha256": "567c10eaf56c07243856c191b60a982c5c554900a977305b11f33afbaf699349"
     },
     {
+      "bytes": 178,
+      "out": "ssa_map_ok_probe.out",
+      "rows": 6,
+      "sha256": "f80fb6e485ddbe0a0af427f7a4e48f1f59fb20ff8990b41098bfe1f2d0053215"
+    },
+    {
+      "bytes": 1401,
+      "out": "ssa_setup_probe.out",
+      "rows": 16,
+      "sha256": "37de8c367664510f56d1506592a74ed21182759e0221e236386e8269bab89602"
+    },
+    {
       "bytes": 162,
       "out": "stack_alloc_next_lab_probe.out",
       "rows": 7,
