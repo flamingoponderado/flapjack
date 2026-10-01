@@ -3372,11 +3372,18 @@ class HolSubmoduleSourcesTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             path = self.fixture(root)
-            parent = subprocess.run(
-                ["git", "-C", str(root / "HOL"), "rev-parse",
-                 CHECKER["HOL_SUBMODULE_COMMIT"] + "~1"],
+            # CI initializes HOL with --depth 1, so its parent need not exist.
+            # Create a distinct commit using the available pinned tree instead.
+            pinned = CHECKER["HOL_SUBMODULE_COMMIT"]
+            other_commit = subprocess.run(
+                ["git", "-C", str(root / "HOL"),
+                 "-c", "user.name=HOL provenance test",
+                 "-c", "user.email=hol-provenance-test@example.invalid",
+                 "commit-tree", pinned + "^{tree}", "-p", pinned,
+                 "-m", "Distinct local commit for checkout rejection test"],
                 check=True, capture_output=True, text=True).stdout.strip()
-            _run("git", "-C", str(root / "HOL"), "update-ref", "--no-deref", "HEAD", parent)
+            self.assertNotEqual(other_commit, pinned)
+            _run("git", "-C", str(root / "HOL"), "update-ref", "--no-deref", "HEAD", other_commit)
             self.assertIn("not at the pinned commit", self.error(root, path))
 
     def test_wrong_submodule_url_is_rejected(self):
