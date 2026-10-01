@@ -2029,3 +2029,5 @@ rows for exact DIV2/parmove/format_var/wMoveAux composition. All formatting
 branches, register and spill swaps, odd indices and DIV2 collision, truncated
 offsets and fprime are replayed by `literalWMoveParityGuard` in the normal
 compiler parity suite. Production comp/compile wiring remains open.
+
+`labsem_navigation_probeScript.sml` captures 23 original LabSem fetch, instruction-count, section-entry/positive-label lookup, and following-return-label observations across empty sections. Encoded metadata lengths deliberately differ from instruction positions. The probe simplifies the original existential label guard before EVAL; it defines no substitute evaluator. `Flapjack.Test.LabSemNavigationParity` kernel replays the native definitions using the reviewed classifier.
