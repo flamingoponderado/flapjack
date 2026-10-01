@@ -39271,22 +39271,6 @@
   "inherits_reals_as_rational_cuts": true
 },
 {
-  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
-  "hol_name": "is_Label_def",
-  "lean_path": "Flapjack/Compiler/Backend/LabSem.lean",
-  "lean_name": "isLabel",
-  "statement_status": "reviewed_exact",
-  "reviewer": "Codex (labSemScript.sml:47 is_Label returns T exactly on Label, F otherwise; Lean pattern match preserves all constructors)"
-},
-{
-  "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
-  "hol_name": "sec_ends_with_label_def",
-  "lean_path": "Flapjack/Compiler/Backend/LabProps.lean",
-  "lean_name": "secEndsWithLabelHOL",
-  "statement_status": "reviewed_exact",
-  "reviewer": "Codex (labPropsScript.sml:81 is a HOL predicate, not a Boolean result; the tagged Lean declaration returns Prop with nonempty and final-label conditions, while secEndsWithLabel is an untagged executable Bool counterpart)"
-},
-{
   "lean_path": "Flapjack/Compiler/Backend/Parmove/UpdateLemmas.lean",
   "lean_name": "parsem_cons",
   "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
