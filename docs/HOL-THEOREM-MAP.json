@@ -40668,5 +40668,32 @@
   "words_as_type_indexed_bitvec": true,
   "reals_as_rational_cuts": true,
   "reviewer": "flapjack-luna-c source comparison 2026-10-01 b4v0.2.3: all16 literal fp_upd_def158-223 clauses on imported native State, HolFp constructor carrier, actual positive polymorphic word width and fixed word64 FP registers. Source RTE primitives imported from reviewed IEEE renderings, source fpSemFpfma operand order retained with accumulator first. MovToReg sequential updates preserve alias high-half overwrite; MovFromReg concat uses actual width and Loc errors assert. FPToInt asserts signed-word32 range equality but unconditionally writes narrowed bits after failure, with old-register half insertion for non64 widths. FPFromInt non64 signed extraction uses actual width, not32. No operation callback, conversion-success premise or runtime approximation. Direct reals_as_rational_cuts translation uses the reviewed imported IEEE renderings (SOUNDNESS item8): rational finite arithmetic and comparisons, rational-cut sqrt, and RTE integer conversions, including unspecified quiet-NaN choice, without fixing raw NaN arithmetic payloads.29 direct original HOL rows/kernel matches cover allconstructors, width8/32/64/128, NaN/sign payloads, FMA order, rounding ties, alias/error/overflow write cases. Whole Lab evaluator/runtime wiring remain open. Coordinator review pending."
-}
+},
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabSem/SharedMemory.lean",
+    "lean_name": "shareMemLoad",
+    "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+    "hol_name": "share_mem_load_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol original source comparison 2026-10-01 b4v0.4: literal labSem429-488 full native load/store/eight-case shared-memory dispatcher on accepted State/HolAddr/WordLocW and canonical HolFfiResult/HolFfiState. Whole-word requests test w2n MOD(width DIV8)=0 and exact shared domain; nonzero sizes test byte_align base only, with actual LOG2 byte alignment at arbitrary positive widths. callFFIHOL mappedRead/mappedWrite config singleton n2w size; protocol bytes little endian independent of state.be. Loads send address bytes and decode all returned bytes, not TAKE size; stores send whole or TAKE size value bytes followed by full address bytes. Final returns preserve original state exactly; returned loads update only ffi/register/pc/clock, returned stores only ffi/pc/clock via original inc_pc/dec_clock. Shared16 supported unlike ordinary mem_op16. Qualified only positive width/Type0 FFI carrier translation, no map/string/list exception or extra callback. 39 direct original rows allT and paired native kernel replay include exact protocol/oracle guards/events, final and invalid return lengths, Loc failures, alias/clock0/endianness/address wrap, widths24/8/1 and size256 configuration truncation. Three untagged clock consequences are Flapjack infrastructure for original evaluator recursion, not separate HOL theorem claims. Full evaluator/executable routing/end-to-end correctness remain open; coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabSem/SharedMemory.lean",
+    "lean_name": "shareMemStore",
+    "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+    "hol_name": "share_mem_store_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol original source comparison 2026-10-01 b4v0.4: literal labSem429-488 full native load/store/eight-case shared-memory dispatcher on accepted State/HolAddr/WordLocW and canonical HolFfiResult/HolFfiState. Whole-word requests test w2n MOD(width DIV8)=0 and exact shared domain; nonzero sizes test byte_align base only, with actual LOG2 byte alignment at arbitrary positive widths. callFFIHOL mappedRead/mappedWrite config singleton n2w size; protocol bytes little endian independent of state.be. Loads send address bytes and decode all returned bytes, not TAKE size; stores send whole or TAKE size value bytes followed by full address bytes. Final returns preserve original state exactly; returned loads update only ffi/register/pc/clock, returned stores only ffi/pc/clock via original inc_pc/dec_clock. Shared16 supported unlike ordinary mem_op16. Qualified only positive width/Type0 FFI carrier translation, no map/string/list exception or extra callback. 39 direct original rows allT and paired native kernel replay include exact protocol/oracle guards/events, final and invalid return lengths, Loc failures, alias/clock0/endianness/address wrap, widths24/8/1 and size256 configuration truncation. Three untagged clock consequences are Flapjack infrastructure for original evaluator recursion, not separate HOL theorem claims. Full evaluator/executable routing/end-to-end correctness remain open; coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabSem/SharedMemory.lean",
+    "lean_name": "shareMemOp",
+    "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+    "hol_name": "share_mem_op_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol original source comparison 2026-10-01 b4v0.4: literal labSem429-488 full native load/store/eight-case shared-memory dispatcher on accepted State/HolAddr/WordLocW and canonical HolFfiResult/HolFfiState. Whole-word requests test w2n MOD(width DIV8)=0 and exact shared domain; nonzero sizes test byte_align base only, with actual LOG2 byte alignment at arbitrary positive widths. callFFIHOL mappedRead/mappedWrite config singleton n2w size; protocol bytes little endian independent of state.be. Loads send address bytes and decode all returned bytes, not TAKE size; stores send whole or TAKE size value bytes followed by full address bytes. Final returns preserve original state exactly; returned loads update only ffi/register/pc/clock, returned stores only ffi/pc/clock via original inc_pc/dec_clock. Shared16 supported unlike ordinary mem_op16. Qualified only positive width/Type0 FFI carrier translation, no map/string/list exception or extra callback. 39 direct original rows allT and paired native kernel replay include exact protocol/oracle guards/events, final and invalid return lengths, Loc failures, alias/clock0/endianness/address wrap, widths24/8/1 and size256 configuration truncation. Three untagged clock consequences are Flapjack infrastructure for original evaluator recursion, not separate HOL theorem claims. Full evaluator/executable routing/end-to-end correctness remain open; coordinator source review pending."
+  }
 ]
