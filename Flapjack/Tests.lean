@@ -1,3 +1,6 @@
+import Flapjack.Test.SSAMapParity
+import Flapjack.Test.SSASetupParity
+import Flapjack.Test.StackPropsLabelSafetyParity
 import Flapjack.Test.WordConvsProgramMonoParity
 import Flapjack.Test.WordConvsNameMonoParity
 import Flapjack.Test.WordConvsExpMonoParity

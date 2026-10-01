@@ -43692,6 +43692,65 @@
     "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-pxn.18.5.15.10.28): original asmProps380-389 exact five conjuncts in sourceorder: native fp_upd preserves mem_domain, align, mem, lr, be for every operation/native state/positive width. Complete all16cases, including both width branches and Option integerconversion outcomes; no failed/conversion success/IEEE-result callback premise. Regs/fp_regs/failed may change and are not assertedconstant (matching original). Inherits reals_as_rational_cuts through native AsmSem.fpUpd, SOUNDNESS item8; theorem own source does not directly name an IEEE rendering and therefore carries only words qualifier plus inherited marker. Kernel checked full universal statement; original34FProws regression context, no wholeASM/encoder acceptance. Coordinator flapjack-main complete declaration, fixture, original-source and existing import/qualification review accepted 2026-10-01; independent A28.1 source/kernel/original review passed. Main integration gates and CI remain pending."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/LabelSafety.lean",
+    "lean_name": "stackGoodCodeLabels",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "stack_good_code_labels_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead .18.5.15.3.26.16): literal full1160-1174 predicates over list(num x positive-width HolProg), arbitrary SetNat external labels, set-of-list, IMAGE and BIGUNION preserved. Original indexed stackLang carrier and accepted getter/restrict_nonzero used. Same union association and source entry0/entry1 handler ownership restriction; no finite external set, unique keys, successful evaluation or target premise. Only word dimension translation; full original inferred types and10 kernel/original rows reviewed. Coordinator acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/LabelSafety.lean",
+    "lean_name": "stackGoodHandlerLabels",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "stack_good_handler_labels_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead .18.5.15.3.26.16): literal full1160-1174 predicates over list(num x positive-width HolProg), arbitrary SetNat external labels, set-of-list, IMAGE and BIGUNION preserved. Original indexed stackLang carrier and accepted getter/restrict_nonzero used. Same union association and source entry0/entry1 handler ownership restriction; no finite external set, unique keys, successful evaluation or target premise. Only word dimension translation; full original inferred types and10 kernel/original rows reviewed. Coordinator acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "even_list_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/SSASetup.lean",
+    "lean_name": "evenList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-c source/body/carrier comparison: word_allocScript39-55 and1809-1815. Literal GENLIST even naturals, native Spt insert, forward recursion including duplicate keys and arbitrary initial tree/start; Move1 ZIP renamed/even arguments and unused full WordLangProgHOL body. No allocation/wf/success premise. Eleven fresh original EVAL rows with identical kernel observations. Setup retains independently quantified positive input/output word dimensions, each translated to its own BitVec width with NeZero. Independent A type_of review caught the initial coupled width; repaired with 1-to-80 and 80-to-1 original and kernel fixtures. Executed list-state routing separately tracked on .30.2.1.1; coordinator acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "next_var_rename_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/SSASetup.lean",
+    "lean_name": "nextVarRename",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-c source/body/carrier comparison: word_allocScript39-55 and1809-1815. Literal GENLIST even naturals, native Spt insert, forward recursion including duplicate keys and arbitrary initial tree/start; Move1 ZIP renamed/even arguments and unused full WordLangProgHOL body. No allocation/wf/success premise. Eleven fresh original EVAL rows with identical kernel observations. Setup retains independently quantified positive input/output word dimensions, each translated to its own BitVec width with NeZero. Independent A type_of review caught the initial coupled width; repaired with 1-to-80 and 80-to-1 original and kernel fixtures. Executed list-state routing separately tracked on .30.2.1.1; coordinator acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "list_next_var_rename_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/SSASetup.lean",
+    "lean_name": "listNextVarRename",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-c source/body/carrier comparison: word_allocScript39-55 and1809-1815. Literal GENLIST even naturals, native Spt insert, forward recursion including duplicate keys and arbitrary initial tree/start; Move1 ZIP renamed/even arguments and unused full WordLangProgHOL body. No allocation/wf/success premise. Eleven fresh original EVAL rows with identical kernel observations. Setup retains independently quantified positive input/output word dimensions, each translated to its own BitVec width with NeZero. Independent A type_of review caught the initial coupled width; repaired with 1-to-80 and 80-to-1 original and kernel fixtures. Executed list-state routing separately tracked on .30.2.1.1; coordinator acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "setup_ssa_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/SSASetup.lean",
+    "lean_name": "setupSSA",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-c source/body/carrier comparison: word_allocScript39-55 and1809-1815. Literal GENLIST even naturals, native Spt insert, forward recursion including duplicate keys and arbitrary initial tree/start; Move1 ZIP renamed/even arguments and unused full WordLangProgHOL body. No allocation/wf/success premise. Eleven fresh original EVAL rows with identical kernel observations. Setup retains independently quantified positive input/output word dimensions, each translated to its own BitVec width with NeZero. Independent A type_of review caught the initial coupled width; repaired with 1-to-80 and 80-to-1 original and kernel fixtures. Executed list-state routing separately tracked on .30.2.1.1; coordinator acceptance pending.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_map_ok_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAMap.lean",
+    "lean_name": "ssaMapOK",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-c source4523-4527: arbitrary Nat next and canonical native Spt Nat tree, forall x/y lookup SOME implication, nonphysical mapped register and strict next bound. Actual reviewed RegAlloc.isPhyVar is source MOD2=0; no injectivity/wf/freshness premise. Five fresh original source-clause simplifier observations and identical kernel fixtures, including malformed BN LN LN. This is a proof predicate and has no executed compiler definition route. Coordinator acceptance pending."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
     "hol_name": "not_use_temp_before_assign_insert",
     "lean_path": "Flapjack/Compiler/Backend/Parmove/TempBeforeAssign/Insert.lean",

@@ -3308,6 +3308,18 @@ run_probe wordconvs_name_mono_probeScript.sml wordconvs_name_mono_probe.out \
 run_probe wordconvs_program_mono_probeScript.sml wordconvs_program_mono_probe.out \
   pm_skip pm_moves pm_inst pm_assign pm_seq pm_alloc pm_loop pm_call_none pm_call_return pm_call_handler pm_guard_needed pm_original_theorem \
   "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe stackprops_label_safety_probeScript.sml stackprops_label_safety_probe.out \
+  safety_empty safety_self_zero safety_self_one safety_missing_zero safety_external_zero safety_external_one safety_missing_one safety_higher_entry safety_owned_handler safety_foreign_handler \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe parmove_step_map_inj_probeScript.sml parmove_step_map_inj_probe.out \
   smi_original_statement smi_remove_self smi_start smi_extend smi_save smi_emit_head smi_emit_last smi_scoped_collapse smi_scoped_injectivity \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe ssa_setup_probeScript.sml ssa_setup_probe.out \
+  ss_even ss_empty ss_duplicates ss_invalid ss_one ss_setup0 ss_setup1 ss_setup3 ss_setup80 even_list_def next_var_rename_def list_next_var_rename_def setup_ssa_def ss_setup_1_to_80 ss_setup_80_to_1 ss_setup_original_type \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
+run_probe ssa_map_ok_probeScript.sml ssa_map_ok_probe.out \
+  sm_empty sm_valid sm_at_bound sm_physical sm_invalid sm_definition \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
