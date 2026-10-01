@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.MaxVarInst
 import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterLabels
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileLookup
 import Flapjack.Compiler.Backend.WordAlloc.GetHeuristics
+import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Pmov
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Steps
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Step
 import Flapjack.Compiler.Backend.LabToTarget.Navigation
