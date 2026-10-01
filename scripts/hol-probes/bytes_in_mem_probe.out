@@ -1,0 +1,11 @@
+empty_ignores_guards=T
+nat_wrap=T
+excluded_head=F
+excluded_tail=F
+domain_head=F
+domain_tail=F
+wrong_value=F
+bool_payload=T
+update_off_region=T
+update_hit_region=F
+append_wrapped=T

@@ -43047,6 +43047,33 @@
     "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead flapjack-w1a4.7: source1030-1037 full primitive Step implies preservation of existential non-self source for every destination x. Native arbitrary Option alpha register and pair-list triple State, stateToList concatenation, all six Step clauses retained. No equality instance, state validity, scratch-safety or supplied target-result premise. Save may change the source to NONE; scratch destination uses the emitted original source. Proof handles every constructor, including all pending/active/emitted membership branches. Fresh original destination predicate observations and matching kernel fixtures are regression evidence, not cross-assistant equivalence. Coordinator acceptance pending."
   },
   {
+    "lean_path": "Flapjack/Misc/BytesInMem.lean",
+    "lean_name": "bytesInMemHOL",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "bytes_in_mem_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; .10.18): actual miscTheory constant type queried by bytes_in_mem_type.sml confirms generic beta list/memory values. miscScript4249-4255 domain and excluded-set guards plus equality and wrapped increment retained. Original lab_to_targetProof APPEND1214 retains iff/conjunction and n2w(length xs) offset; UPDATE1223 retains every in-range wrapped address inequality and functional-update conclusion. Only positive word dimension translates to BitVec width/NeZero; generic universe-zero Value and lists retained. Fresh original11-row boundary oracle bytes_in_mem_probe.out, all11 kernel replays BytesInMemParity. No HOL-to-Lean equivalence or production/compiler correctness claimed; coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Memory.lean",
+    "lean_name": "bytesInMem_append",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "bytes_in_mem_APPEND",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; .10.18): actual miscTheory constant type queried by bytes_in_mem_type.sml confirms generic beta list/memory values. miscScript4249-4255 domain and excluded-set guards plus equality and wrapped increment retained. Original lab_to_targetProof APPEND1214 retains iff/conjunction and n2w(length xs) offset; UPDATE1223 retains every in-range wrapped address inequality and functional-update conclusion. Only positive word dimension translates to BitVec width/NeZero; generic universe-zero Value and lists retained. Fresh original11-row boundary oracle bytes_in_mem_probe.out, all11 kernel replays BytesInMemParity. No HOL-to-Lean equivalence or production/compiler correctness claimed; coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Memory.lean",
+    "lean_name": "bytesInMem_update",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "bytes_in_mem_UPDATE",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; .10.18): actual miscTheory constant type queried by bytes_in_mem_type.sml confirms generic beta list/memory values. miscScript4249-4255 domain and excluded-set guards plus equality and wrapped increment retained. Original lab_to_targetProof APPEND1214 retains iff/conjunction and n2w(length xs) offset; UPDATE1223 retains every in-range wrapped address inequality and functional-update conclusion. Only positive word dimension translates to BitVec width/NeZero; generic universe-zero Value and lists retained. Fresh original11-row boundary oracle bytes_in_mem_probe.out, all11 kernel replays BytesInMemParity. No HOL-to-Lean equivalence or production/compiler correctness claimed; coordinator source review pending."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/WordAlloc/GetHeuristics.lean",
     "lean_name": "getHeuristics",
     "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
