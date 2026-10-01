@@ -8,7 +8,6 @@ import Flapjack.Test.ParmoveAllDistinctWrapperParity
 import Flapjack.Test.WordAllocMax3Parity
 import Flapjack.Test.BackendPropsNonzeroLabelsParity
 
-import Flapjack.Test.AsmSemArithmeticParity
 import Flapjack.Test.TargetPropsInterferenceParity
 import Flapjack.Test.LabToTargetSectionLookupParity
 
