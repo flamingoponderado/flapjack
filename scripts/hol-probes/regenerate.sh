@@ -101,6 +101,14 @@ run_probe() {
   done
 }
 
+run_probe lab_to_target_padding_similarity_probeScript.sml lab_to_target_padding_similarity_probe.out \
+  ps_add ps_add_types ps_section ps_section_types ps_code ps_code_types ps_add_value ps_section_value ps_empty_nop ps_acc_value ps_label_only ps_code_similar \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe asmprops_arithmetic_preservation_probeScript.sml asmprops_arithmetic_preservation_probe.out \
+  ap_upd_pc_simps ap_upd_pc_simps_types ap_binop_upd_consts ap_binop_upd_consts_types ap_arith_upd_consts ap_arith_upd_consts_types ap_add ap_shift_fail ap_div_zero ap_longmul ap_longdiv_zero ap_carry ap_addoverflow ap_suboverflow ap_pc \
+  "$cake_dir/compiler/encoders/asm/asmPropsScript.sml" "$cake_dir/compiler/encoders/asm"
+
 run_probe stacksem_fp_case_types_probeScript.sml stacksem_fp_case_types_probe.out \
   fpc_inst fpc_constructor fpc_lookup fpc_update fpc_general_lookup fpc_general_update fpc_all_payloads \
   "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
