@@ -316,6 +316,8 @@ import Flapjack.Basis.Pure.MlList
 import Flapjack.Compiler.Backend.RegAlloc
 import Flapjack.Compiler.Backend.RegAlloc.ClashTree
 import Flapjack.Compiler.Backend.LinearScan
+import Flapjack.Compiler.Backend.LinearScan.Proofs
+import Flapjack.Misc.Sptree.ToAList
 import Flapjack.AstHOL
 import Flapjack.Compiler.Backend.StackLang
 import Flapjack.Compiler.Backend.StackLang.Prog

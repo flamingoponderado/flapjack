@@ -970,6 +970,8 @@ import Flapjack.Compiler.Backend.StackProps
 import Flapjack.Compiler.Backend.RegAlloc
 import Flapjack.Compiler.Backend.RegAlloc.ClashTree
 import Flapjack.Compiler.Backend.LinearScan
+import Flapjack.Compiler.Backend.LinearScan.Proofs
+import Flapjack.Misc.Sptree.ToAList
 import Flapjack.Misc.AppList
 import Flapjack.Misc.Sptree
 import Flapjack.Misc.LList

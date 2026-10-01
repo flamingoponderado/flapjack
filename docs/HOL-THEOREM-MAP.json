@@ -42510,5 +42510,285 @@
     "lean_name": "checkPartialColDomain",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-v2oo), reg_allocProofScript.sml:1541-1550: forall ls f live flive v, check_partial_col f ls live flive = SOME v ==> domain (FST v) = set ls UNION domain live; Lean v : NumSet x NumSet, FST v = v.1, domain = sptDomain, set ls UNION domain live = fun x => x IN ls \\/ sptDomain live x. Same binders/order, no added premise (no wf). Proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "set_MAP_FST_toAList_eq_domain",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/LiveTree.lean",
+    "lean_name": "setMapFstToAListEqDomain",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.7), linear_scanProofScript.sml set_MAP_FST_toAList_eq_domain: generic 'a spt (Lean {α : Type} Spt α); set (MAP FST (toAList s)) as membership predicate, extensional equality with sptDomain s. HOL sets are predicates (domain = sptDomain, set l = list membership, UNION/DIFF/SUBSET/EMPTY pointwise, IMAGE f s = fun y => exists x, s x /\\ f x = y); INJ f s UNIV is scoped injectivity with the trivial UNIV codomain conjunct omitted, as in the accepted word_allocProof INJ ports. Carriers NumSet/Spt, ClashTree and the tagged linear_scan definitions; HOL free variables quantified first; no wf or other premise added. Kernel-checked (standard axioms only). Proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "numset_list_insert_FOLDL",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/LiveTree.lean",
+    "lean_name": "numsetListInsertFoldl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.7), linear_scanProofScript.sml numset_list_insert_FOLDL: FOLDL (\\live x. insert x () live) live l is List.foldl with the same step. HOL sets are predicates (domain = sptDomain, set l = list membership, UNION/DIFF/SUBSET/EMPTY pointwise, IMAGE f s = fun y => exists x, s x /\\ f x = y); INJ f s UNIV is scoped injectivity with the trivial UNIV codomain conjunct omitted, as in the accepted word_allocProof INJ ports. Carriers NumSet/Spt, ClashTree and the tagged linear_scan definitions; HOL free variables quantified first; no wf or other premise added. Kernel-checked (standard axioms only). Proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "numset_list_insert_nottailrec_FOLDR",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/LiveTree.lean",
+    "lean_name": "numsetListInsertNottailrecFoldr",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.7), linear_scanProofScript.sml numset_list_insert_nottailrec_FOLDR: FOLDR (\\x live. insert x () live) live l is List.foldr with the same step. HOL sets are predicates (domain = sptDomain, set l = list membership, UNION/DIFF/SUBSET/EMPTY pointwise, IMAGE f s = fun y => exists x, s x /\\ f x = y); INJ f s UNIV is scoped injectivity with the trivial UNIV codomain conjunct omitted, as in the accepted word_allocProof INJ ports. Carriers NumSet/Spt, ClashTree and the tagged linear_scan definitions; HOL free variables quantified first; no wf or other premise added. Kernel-checked (standard axioms only). Proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "both_numset_list_insert_equal",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/LiveTree.lean",
+    "lean_name": "bothNumsetListInsertEqual",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.7), linear_scanProofScript.sml both_numset_list_insert_equal: numset_list_insert l live = numset_list_insert_nottailrec (REVERSE l) live, raw tree equality. HOL sets are predicates (domain = sptDomain, set l = list membership, UNION/DIFF/SUBSET/EMPTY pointwise, IMAGE f s = fun y => exists x, s x /\\ f x = y); INJ f s UNIV is scoped injectivity with the trivial UNIV codomain conjunct omitted, as in the accepted word_allocProof INJ ports. Carriers NumSet/Spt, ClashTree and the tagged linear_scan definitions; HOL free variables quantified first; no wf or other premise added. Kernel-checked (standard axioms only). Proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "domain_numset_list_insert",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/LiveTree.lean",
+    "lean_name": "domainNumsetListInsert",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.7), linear_scanProofScript.sml domain_numset_list_insert: domain (numset_list_insert l s) = set l UNION domain s, no wf premise. HOL sets are predicates (domain = sptDomain, set l = list membership, UNION/DIFF/SUBSET/EMPTY pointwise, IMAGE f s = fun y => exists x, s x /\\ f x = y); INJ f s UNIV is scoped injectivity with the trivial UNIV codomain conjunct omitted, as in the accepted word_allocProof INJ ports. Carriers NumSet/Spt, ClashTree and the tagged linear_scan definitions; HOL free variables quantified first; no wf or other premise added. Kernel-checked (standard axioms only). Proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "lookup_insert_id",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/LiveTree.lean",
+    "lean_name": "lookupInsertId",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.7), linear_scanProofScript.sml lookup_insert_id: !x (y:unit) s. lookup x s = SOME () ==> s = insert x () s; the vacuous unit binder y is retained; raw tree equality without wf (via tagged sptree insert_unchanged). HOL sets are predicates (domain = sptDomain, set l = list membership, UNION/DIFF/SUBSET/EMPTY pointwise, IMAGE f s = fun y => exists x, s x /\\ f x = y); INJ f s UNIV is scoped injectivity with the trivial UNIV codomain conjunct omitted, as in the accepted word_allocProof INJ ports. Carriers NumSet/Spt, ClashTree and the tagged linear_scan definitions; HOL free variables quantified first; no wf or other premise added. Kernel-checked (standard axioms only). Proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "numset_list_insert_FILTER",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/LiveTree.lean",
+    "lean_name": "numsetListInsertFilter",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.7), linear_scanProofScript.sml numset_list_insert_FILTER: FILTER (\\x. lookup x live = NONE) l rendered List.filter (fun x => decide (sptLookup x live = none)) l; raw tree equality. HOL sets are predicates (domain = sptDomain, set l = list membership, UNION/DIFF/SUBSET/EMPTY pointwise, IMAGE f s = fun y => exists x, s x /\\ f x = y); INJ f s UNIV is scoped injectivity with the trivial UNIV codomain conjunct omitted, as in the accepted word_allocProof INJ ports. Carriers NumSet/Spt, ClashTree and the tagged linear_scan definitions; HOL free variables quantified first; no wf or other premise added. Kernel-checked (standard axioms only). Proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "domain_numset_list_delete",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/LiveTree.lean",
+    "lean_name": "domainNumsetListDeleteLinearScan",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.7), linear_scanProofScript.sml domain_numset_list_delete: linear_scanProof's own copy (generic 'a spt): domain (numset_list_delete l s) = domain s DIFF set l, proved by the reviewed reg_allocProof theorem of the same statement. HOL sets are predicates (domain = sptDomain, set l = list membership, UNION/DIFF/SUBSET/EMPTY pointwise, IMAGE f s = fun y => exists x, s x /\\ f x = y); INJ f s UNIV is scoped injectivity with the trivial UNIV codomain conjunct omitted, as in the accepted word_allocProof INJ ports. Carriers NumSet/Spt, ClashTree and the tagged linear_scan definitions; HOL free variables quantified first; no wf or other premise added. Kernel-checked (standard axioms only). Proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "check_partial_col_success_INJ_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/LiveTree.lean",
+    "lean_name": "checkPartialColSuccessInjLemma",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.7), linear_scanProofScript.sml check_partial_col_success_INJ_lemma: free live' flive' quantified first; premises domain flive = IMAGE f (domain live) /\\ INJ f (domain live) UNIV /\\ check_partial_col f l live flive = SOME (live',flive') as one conjunction; conclusion INJ f (set l UNION domain live) UNIV. HOL sets are predicates (domain = sptDomain, set l = list membership, UNION/DIFF/SUBSET/EMPTY pointwise, IMAGE f s = fun y => exists x, s x /\\ f x = y); INJ f s UNIV is scoped injectivity with the trivial UNIV codomain conjunct omitted, as in the accepted word_allocProof INJ ports. Carriers NumSet/Spt, ClashTree and the tagged linear_scan definitions; HOL free variables quantified first; no wf or other premise added. Kernel-checked (standard axioms only). Proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "check_partial_col_success_INJ",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/LiveTree.lean",
+    "lean_name": "checkPartialColSuccessInj",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.7), linear_scanProofScript.sml check_partial_col_success_INJ: same premises as the lemma; conclusion INJ f (set l UNION domain live) UNIV /\\ INJ f (domain live') UNIV. HOL sets are predicates (domain = sptDomain, set l = list membership, UNION/DIFF/SUBSET/EMPTY pointwise, IMAGE f s = fun y => exists x, s x /\\ f x = y); INJ f s UNIV is scoped injectivity with the trivial UNIV codomain conjunct omitted, as in the accepted word_allocProof INJ ports. Carriers NumSet/Spt, ClashTree and the tagged linear_scan definitions; HOL free variables quantified first; no wf or other premise added. Kernel-checked (standard axioms only). Proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "check_partial_col_input_monotone",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/LiveTree.lean",
+    "lean_name": "checkPartialColInputMonotone",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.7), linear_scanProofScript.sml check_partial_col_input_monotone: premise orientation kept: IMAGE f (domain live1) = domain flive1 /\\ IMAGE f (domain live2) = domain flive2, then curried domain live1 SUBSET domain live2, INJ f (domain live2) UNIV, check_partial_col f l live2 flive2 = SOME v (v a pair); conclusion ?livein1 flivein1. check_partial_col f l live1 flive1 = SOME (livein1, flivein1). HOL sets are predicates (domain = sptDomain, set l = list membership, UNION/DIFF/SUBSET/EMPTY pointwise, IMAGE f s = fun y => exists x, s x /\\ f x = y); INJ f s UNIV is scoped injectivity with the trivial UNIV codomain conjunct omitted, as in the accepted word_allocProof INJ ports. Carriers NumSet/Spt, ClashTree and the tagged linear_scan definitions; HOL free variables quantified first; no wf or other premise added. Kernel-checked (standard axioms only). Proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "numset_list_delete_IMAGE",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/LiveTree.lean",
+    "lean_name": "numsetListDeleteImage",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.7), linear_scanProofScript.sml numset_list_delete_IMAGE: curried premises domain flive = IMAGE f (domain live), INJ, success = SOME v; conclusion domain (numset_list_delete (MAP f l) flive) = IMAGE f (domain (numset_list_delete l live)). HOL sets are predicates (domain = sptDomain, set l = list membership, UNION/DIFF/SUBSET/EMPTY pointwise, IMAGE f s = fun y => exists x, s x /\\ f x = y); INJ f s UNIV is scoped injectivity with the trivial UNIV codomain conjunct omitted, as in the accepted word_allocProof INJ ports. Carriers NumSet/Spt, ClashTree and the tagged linear_scan definitions; HOL free variables quantified first; no wf or other premise added. Kernel-checked (standard axioms only). Proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "check_partial_col_IMAGE",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/LiveTree.lean",
+    "lean_name": "checkPartialColImage",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.7), linear_scanProofScript.sml check_partial_col_IMAGE: only the image premise (no INJ), as in HOL; conclusion domain flive' = IMAGE f (domain live'). HOL sets are predicates (domain = sptDomain, set l = list membership, UNION/DIFF/SUBSET/EMPTY pointwise, IMAGE f s = fun y => exists x, s x /\\ f x = y); INJ f s UNIV is scoped injectivity with the trivial UNIV codomain conjunct omitted, as in the accepted word_allocProof INJ ports. Carriers NumSet/Spt, ClashTree and the tagged linear_scan definitions; HOL free variables quantified first; no wf or other premise added. Kernel-checked (standard axioms only). Proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "branch_domain",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/LiveTree.lean",
+    "lean_name": "branchDomain",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.7), linear_scanProofScript.sml branch_domain: num_set binders; set (MAP FST (toAList (difference live2 live1))) UNION domain live1 = domain live1 UNION domain live2 as predicate equality. HOL sets are predicates (domain = sptDomain, set l = list membership, UNION/DIFF/SUBSET/EMPTY pointwise, IMAGE f s = fun y => exists x, s x /\\ f x = y); INJ f s UNIV is scoped injectivity with the trivial UNIV codomain conjunct omitted, as in the accepted word_allocProof INJ ports. Carriers NumSet/Spt, ClashTree and the tagged linear_scan definitions; HOL free variables quantified first; no wf or other premise added. Kernel-checked (standard axioms only). Proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "check_partial_col_branch_domain",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/LiveTree.lean",
+    "lean_name": "checkPartialColBranchDomain",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.7), linear_scanProofScript.sml check_partial_col_branch_domain: free f quantified first; check_partial_col f (MAP FST (toAList (difference live2 live1))) live1 flive1 = SOME (liveout, fliveout) ==> domain liveout = domain live1 UNION domain live2. HOL sets are predicates (domain = sptDomain, set l = list membership, UNION/DIFF/SUBSET/EMPTY pointwise, IMAGE f s = fun y => exists x, s x /\\ f x = y); INJ f s UNIV is scoped injectivity with the trivial UNIV codomain conjunct omitted, as in the accepted word_allocProof INJ ports. Carriers NumSet/Spt, ClashTree and the tagged linear_scan definitions; HOL free variables quantified first; no wf or other premise added. Kernel-checked (standard axioms only). Proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "check_partial_col_branch_comm",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/LiveTree.lean",
+    "lean_name": "checkPartialColBranchComm",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.7), linear_scanProofScript.sml check_partial_col_branch_comm: premises INJ f (domain live1) UNIV, then the two IMAGE equations as one conjunction, then success on difference live2 live1 from live1; conclusion ?c d. success on difference live1 live2 from live2. HOL sets are predicates (domain = sptDomain, set l = list membership, UNION/DIFF/SUBSET/EMPTY pointwise, IMAGE f s = fun y => exists x, s x /\\ f x = y); INJ f s UNIV is scoped injectivity with the trivial UNIV codomain conjunct omitted, as in the accepted word_allocProof INJ ports. Carriers NumSet/Spt, ClashTree and the tagged linear_scan definitions; HOL free variables quantified first; no wf or other premise added. Kernel-checked (standard axioms only). Proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "check_partial_col_list_monotone",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/LiveTree.lean",
+    "lean_name": "checkPartialColListMonotone",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.7), linear_scanProofScript.sml check_partial_col_list_monotone: num_set s1 s2; curried image, INJ, domain s1 SUBSET domain s2, success on MAP FST (toAList s2); conclusion ?c d. success on MAP FST (toAList s1). HOL sets are predicates (domain = sptDomain, set l = list membership, UNION/DIFF/SUBSET/EMPTY pointwise, IMAGE f s = fun y => exists x, s x /\\ f x = y); INJ f s UNIV is scoped injectivity with the trivial UNIV codomain conjunct omitted, as in the accepted word_allocProof INJ ports. Carriers NumSet/Spt, ClashTree and the tagged linear_scan definitions; HOL free variables quantified first; no wf or other premise added. Kernel-checked (standard axioms only). Proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "check_live_tree_success",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/LiveTree.lean",
+    "lean_name": "checkLiveTreeSuccess",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.7), linear_scanProofScript.sml check_live_tree_success: !lt live flive live' flive' f, conjunctive premises image/INJ/check_live_tree success; conclusion image /\\ INJ for the outputs; over the tagged linear_scan check_live_tree. HOL sets are predicates (domain = sptDomain, set l = list membership, UNION/DIFF/SUBSET/EMPTY pointwise, IMAGE f s = fun y => exists x, s x /\\ f x = y); INJ f s UNIV is scoped injectivity with the trivial UNIV codomain conjunct omitted, as in the accepted word_allocProof INJ ports. Carriers NumSet/Spt, ClashTree and the tagged linear_scan definitions; HOL free variables quantified first; no wf or other premise added. Kernel-checked (standard axioms only). Proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "ALL_DISTINCT_INJ_MAP",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/LiveTree.lean",
+    "lean_name": "allDistinctInjMap",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.7), linear_scanProofScript.sml ALL_DISTINCT_INJ_MAP: generic f : 'a -> 'b ({α β : Type}); ALL_DISTINCT (MAP f l) is List.Nodup (List.map f l); conclusion INJ f (set l) UNIV. HOL sets are predicates (domain = sptDomain, set l = list membership, UNION/DIFF/SUBSET/EMPTY pointwise, IMAGE f s = fun y => exists x, s x /\\ f x = y); INJ f s UNIV is scoped injectivity with the trivial UNIV codomain conjunct omitted, as in the accepted word_allocProof INJ ports. Carriers NumSet/Spt, ClashTree and the tagged linear_scan definitions; HOL free variables quantified first; no wf or other premise added. Kernel-checked (standard axioms only). Proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "check_col_output",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/LiveTree.lean",
+    "lean_name": "checkColOutput",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.7), linear_scanProofScript.sml check_col_output: over the reviewed RegAlloc.checkCol (ALL_DISTINCT as Pairwise (≠), coloured set fromAList); conclusion domain flive' = IMAGE f (domain live') /\\ INJ f (domain live') UNIV. HOL sets are predicates (domain = sptDomain, set l = list membership, UNION/DIFF/SUBSET/EMPTY pointwise, IMAGE f s = fun y => exists x, s x /\\ f x = y); INJ f s UNIV is scoped injectivity with the trivial UNIV codomain conjunct omitted, as in the accepted word_allocProof INJ ports. Carriers NumSet/Spt, ClashTree and the tagged linear_scan definitions; HOL free variables quantified first; no wf or other premise added. Kernel-checked (standard axioms only). Proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "check_col_success",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/LiveTree.lean",
+    "lean_name": "checkColSuccess",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.7), linear_scanProofScript.sml check_col_success: INJ f (domain live) UNIV ==> ?flive. check_col f live = SOME (live, flive). HOL sets are predicates (domain = sptDomain, set l = list membership, UNION/DIFF/SUBSET/EMPTY pointwise, IMAGE f s = fun y => exists x, s x /\\ f x = y); INJ f s UNIV is scoped injectivity with the trivial UNIV codomain conjunct omitted, as in the accepted word_allocProof INJ ports. Carriers NumSet/Spt, ClashTree and the tagged linear_scan definitions; HOL free variables quantified first; no wf or other premise added. Kernel-checked (standard axioms only). Proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "check_clash_tree_output",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/LiveTree.lean",
+    "lean_name": "checkClashTreeOutput",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.7), linear_scanProofScript.sml check_clash_tree_output: !f ct live flive livein flivein over the reviewed RegAlloc.checkClashTree and ClashTree carrier; conjunctive premises, image /\\ INJ conclusion. HOL sets are predicates (domain = sptDomain, set l = list membership, UNION/DIFF/SUBSET/EMPTY pointwise, IMAGE f s = fun y => exists x, s x /\\ f x = y); INJ f s UNIV is scoped injectivity with the trivial UNIV codomain conjunct omitted, as in the accepted word_allocProof INJ ports. Carriers NumSet/Spt, ClashTree and the tagged linear_scan definitions; HOL free variables quantified first; no wf or other premise added. Kernel-checked (standard axioms only). Proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "get_live_tree_correct_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/LiveTree.lean",
+    "lean_name": "getLiveTreeCorrectLemma",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.7), linear_scanProofScript.sml get_live_tree_correct_lemma: !f live flive live' flive' ct livein' flivein'; premises IMAGE f (domain live) = domain flive /\\ IMAGE f (domain live') = domain flive' (HOL orientation), then curried INJ f (domain live') UNIV, domain live SUBSET domain live', check_live_tree f (get_live_tree ct) live' flive' = SOME (livein', flivein'); conclusion ?livein flivein. check_clash_tree f ct live flive = SOME (livein, flivein) /\\ domain livein SUBSET domain livein'. No target-success or extra assumption. HOL sets are predicates (domain = sptDomain, set l = list membership, UNION/DIFF/SUBSET/EMPTY pointwise, IMAGE f s = fun y => exists x, s x /\\ f x = y); INJ f s UNIV is scoped injectivity with the trivial UNIV codomain conjunct omitted, as in the accepted word_allocProof INJ ports. Carriers NumSet/Spt, ClashTree and the tagged linear_scan definitions; HOL free variables quantified first; no wf or other premise added. Kernel-checked (standard axioms only). Proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "get_live_tree_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/LiveTree.lean",
+    "lean_name": "getLiveTreeCorrect",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.7), linear_scanProofScript.sml get_live_tree_correct: curried IMAGE f (domain live) = domain flive, INJ, check_live_tree success; conclusion check_clash_tree success. HOL sets are predicates (domain = sptDomain, set l = list membership, UNION/DIFF/SUBSET/EMPTY pointwise, IMAGE f s = fun y => exists x, s x /\\ f x = y); INJ f s UNIV is scoped injectivity with the trivial UNIV codomain conjunct omitted, as in the accepted word_allocProof INJ ports. Carriers NumSet/Spt, ClashTree and the tagged linear_scan definitions; HOL free variables quantified first; no wf or other premise added. Kernel-checked (standard axioms only). Proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "get_live_tree_correct_LN",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/LiveTree.lean",
+    "lean_name": "getLiveTreeCorrectLN",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.7), linear_scanProofScript.sml get_live_tree_correct_LN: from LN LN: check_live_tree f (get_live_tree ct) LN LN = SOME (livein, flivein) ==> ?livein' flivein'. check_clash_tree f ct LN LN = SOME (livein', flivein'). HOL sets are predicates (domain = sptDomain, set l = list membership, UNION/DIFF/SUBSET/EMPTY pointwise, IMAGE f s = fun y => exists x, s x /\\ f x = y); INJ f s UNIV is scoped injectivity with the trivial UNIV codomain conjunct omitted, as in the accepted word_allocProof INJ ports. Carriers NumSet/Spt, ClashTree and the tagged linear_scan definitions; HOL free variables quantified first; no wf or other premise added. Kernel-checked (standard axioms only). Proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "check_partial_col_numset_list_insert",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/LiveTree.lean",
+    "lean_name": "checkPartialColNumsetListInsert",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.7), linear_scanProofScript.sml check_partial_col_numset_list_insert: success implies liveout = numset_list_insert l live, raw tree equality without wf. HOL sets are predicates (domain = sptDomain, set l = list membership, UNION/DIFF/SUBSET/EMPTY pointwise, IMAGE f s = fun y => exists x, s x /\\ f x = y); INJ f s UNIV is scoped injectivity with the trivial UNIV codomain conjunct omitted, as in the accepted word_allocProof INJ ports. Carriers NumSet/Spt, ClashTree and the tagged linear_scan definitions; HOL free variables quantified first; no wf or other premise added. Kernel-checked (standard axioms only). Proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "check_live_tree_eq_get_live_backward",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/LiveTree.lean",
+    "lean_name": "checkLiveTreeEqGetLiveBackward",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.7), linear_scanProofScript.sml check_live_tree_eq_get_live_backward: success implies liveout = get_live_backward lt live, raw tree equality. HOL sets are predicates (domain = sptDomain, set l = list membership, UNION/DIFF/SUBSET/EMPTY pointwise, IMAGE f s = fun y => exists x, s x /\\ f x = y); INJ f s UNIV is scoped injectivity with the trivial UNIV codomain conjunct omitted, as in the accepted word_allocProof INJ ports. Carriers NumSet/Spt, ClashTree and the tagged linear_scan definitions; HOL free variables quantified first; no wf or other premise added. Kernel-checked (standard axioms only). Proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "fix_domination_fixes_domination",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/LiveTree.lean",
+    "lean_name": "fixDominationFixesDomination",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.7), linear_scanProofScript.sml fix_domination_fixes_domination: domain (get_live_backward (fix_domination lt) LN) = EMPTY, EMPTY as the false predicate. HOL sets are predicates (domain = sptDomain, set l = list membership, UNION/DIFF/SUBSET/EMPTY pointwise, IMAGE f s = fun y => exists x, s x /\\ f x = y); INJ f s UNIV is scoped injectivity with the trivial UNIV codomain conjunct omitted, as in the accepted word_allocProof INJ ports. Carriers NumSet/Spt, ClashTree and the tagged linear_scan definitions; HOL free variables quantified first; no wf or other premise added. Kernel-checked (standard axioms only). Proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "fix_domination_check_live_tree",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/LiveTree.lean",
+    "lean_name": "fixDominationCheckLiveTree",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.7), linear_scanProofScript.sml fix_domination_check_live_tree: success of check_live_tree f (fix_domination lt) LN LN implies success of check_live_tree f lt LN LN. HOL sets are predicates (domain = sptDomain, set l = list membership, UNION/DIFF/SUBSET/EMPTY pointwise, IMAGE f s = fun y => exists x, s x /\\ f x = y); INJ f s UNIV is scoped injectivity with the trivial UNIV codomain conjunct omitted, as in the accepted word_allocProof INJ ports. Carriers NumSet/Spt, ClashTree and the tagged linear_scan definitions; HOL free variables quantified first; no wf or other premise added. Kernel-checked (standard axioms only). Proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "size_of_live_tree_positive",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/LiveTree.lean",
+    "lean_name": "sizeOfLiveTreePositive",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.7), linear_scanProofScript.sml size_of_live_tree_positive: 0 <= size_of_live_tree lt over Int. HOL sets are predicates (domain = sptDomain, set l = list membership, UNION/DIFF/SUBSET/EMPTY pointwise, IMAGE f s = fun y => exists x, s x /\\ f x = y); INJ f s UNIV is scoped injectivity with the trivial UNIV codomain conjunct omitted, as in the accepted word_allocProof INJ ports. Carriers NumSet/Spt, ClashTree and the tagged linear_scan definitions; HOL free variables quantified first; no wf or other premise added. Kernel-checked (standard axioms only). Proof-only; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "MEM_toAList",
+    "lean_path": "Flapjack/Misc/Sptree/ToAList.lean",
+    "lean_name": "sptMemToAList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.7), pinned hol4 sptreeScript.sml 920-926: !t k v. MEM (k,v) (toAList t) <=> lookup k t = SOME v, generic Type0 payload. Exact Spt carrier, HOL sets as predicates, no wf premise. Kernel-checked; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "ALL_DISTINCT_MAP_FST_toAList",
+    "lean_path": "Flapjack/Misc/Sptree/ToAList.lean",
+    "lean_name": "sptAllDistinctMapFstToAList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.7), pinned hol4 sptreeScript.sml 1027-1076: !t. ALL_DISTINCT (MAP FST (toAList t)), ALL_DISTINCT as List.Nodup. Exact Spt carrier, HOL sets as predicates, no wf premise. Kernel-checked; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "domain_insert",
+    "lean_path": "Flapjack/Misc/Sptree/ToAList.lean",
+    "lean_name": "sptDomainInsert",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.7), pinned hol4 sptreeScript.sml 658-663: domain (insert k v t) = k INSERT domain t, INSERT as fun x => x = k \\/ s x; HOL free k v t are explicit binders. Exact Spt carrier, HOL sets as predicates, no wf premise. Kernel-checked; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "domain_difference",
+    "lean_path": "Flapjack/Misc/Sptree/ToAList.lean",
+    "lean_name": "sptDomainDifference",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.7), pinned hol4 sptreeScript.sml 665-670: !t1 t2. domain (difference t1 t2) = domain t1 DIFF domain t2, heterogeneous payloads as HOL. Exact Spt carrier, HOL sets as predicates, no wf premise. Kernel-checked; coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "domain_fromAList",
+    "lean_path": "Flapjack/Misc/Sptree/ToAList.lean",
+    "lean_name": "sptDomainFromAList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.11.7), pinned hol4 sptreeScript.sml 1491-1499: !ls. domain (fromAList ls) = set (MAP FST ls); Lean sptFromAList is fromAList's insert-from-the-head recursion. Exact Spt carrier, HOL sets as predicates, no wf premise. Kernel-checked; coordinator source acceptance pending."
   }
 ]
