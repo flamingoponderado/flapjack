@@ -20,6 +20,21 @@ from typing import Any
 ROOT = Path(__file__).resolve().parent.parent
 PROOFS_DIR = ROOT / "Flapjack" / "Pancake" / "Proofs"
 DEFAULT_MANIFEST = ROOT / "docs" / "HOL-THEOREM-MAP.json"
+PENDING_REVIEW_NOTE_ALLOWLIST_PATH = (
+    ROOT / "scripts" / "pending-review-note-allowlist.json"
+)
+PENDING_REVIEW_NOTE_ALLOWLIST_DATA = json.loads(
+    PENDING_REVIEW_NOTE_ALLOWLIST_PATH.read_text()
+)
+PENDING_REVIEW_NOTE_ALLOWLIST_ISSUE = PENDING_REVIEW_NOTE_ALLOWLIST_DATA["bead"]
+PENDING_REVIEW_NOTE_ALLOWLIST = {
+    tuple(entry) for entry in PENDING_REVIEW_NOTE_ALLOWLIST_DATA["entries"]
+}
+COORDINATOR_PENDING_NOTE = re.compile(
+    r"\bcoordinator(?:\s+(?:acceptance|review))?\s+"
+    r"(?:is\s+)?(?:pending|required)\b",
+    re.IGNORECASE,
+)
 REFS = runpy.run_path(str(ROOT / "scripts" / "check-hol-refs.py"))
 HOL_ATTRIBUTE_SITES = REFS["hol_attribute_sites"]
 FIND_LEAN_DECL = REFS["find_lean_decl"]
@@ -33,6 +48,27 @@ DATA_DECLARATION_RE = re.compile(
     r"^\s*(?:(?:private|protected|noncomputable|partial|unsafe)\s+)*"
     r"(?:def|abbrev|opaque|structure|inductive|class)\s+([^\s:({\[]+)"
 )
+
+
+def reviewed_note_pending_error(
+    key: tuple[str, str], status: str, reviewer: Any
+) -> str | None:
+    """Reject pending coordinator review notes on reviewed entries, except the tracked legacy set."""
+    if (
+        not isinstance(status, str)
+        or not status.startswith("reviewed_")
+        or not isinstance(reviewer, str)
+        or not COORDINATOR_PENDING_NOTE.search(reviewer)
+        or key in PENDING_REVIEW_NOTE_ALLOWLIST
+    ):
+        return None
+    return (
+        f"{key[0]}:{key[1]}: reviewed statement status cannot retain a "
+        "coordinator review/acceptance pending or required note; the only "
+        f"temporary legacy exceptions are enumerated for {PENDING_REVIEW_NOTE_ALLOWLIST_ISSUE}"
+    )
+
+
 # HOL definition candidates whose Lean declarations were withdrawn from
 # @[hol] because their carrier or statement shape differs. Keep this explicit
 # inventory small and source-reviewed; a mismatch row is not generated merely
@@ -2282,6 +2318,10 @@ def validate_inventory(
         reviewer = record["reviewer"]
         if not isinstance(reviewer, str) or not reviewer.strip():
             errors.append(f"{key[0]}:{key[1]}: reviewer metadata is required")
+        else:
+            pending_note_error = reviewed_note_pending_error(key, status, reviewer)
+            if pending_note_error:
+                errors.append(pending_note_error)
 
         hol_path, hol_name = record["hol_path"], record["hol_name"]
         tag = tagged.get(key)
