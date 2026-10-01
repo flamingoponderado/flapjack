@@ -3871,3 +3871,11 @@ run_probe ssa_cc_trans_props_allocation_probeScript.sml ssa_cc_trans_props_alloc
   spa_ffi_type_numset spa_ffi_type_ssa spa_ffi_type_na spa_ffi_type_lt spa_ffi_type_progOut spa_ffi_type_ssaOut spa_ffi_type_naOut \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_cc_trans_props_loop_control_probeScript.sml ssa_cc_trans_props_loop_control_probe.out \
+  spl_full spl_type_names spl_type_body spl_type_exit_names spl_type_ssa spl_type_na spl_type_lt spl_type_progOut \
+  spl_type_ssaOut spl_type_naOut spl_type_setup_prog spl_type_ssa_refreshed spl_type_na_refreshed spl_type_ssa_names spl_type_ssa_exit spl_type_ssa_body \
+  spb_full spb_type_n spb_type_ssa spb_type_na spb_type_lt spb_type_progOut spb_type_ssaOut spb_type_naOut \
+  spc_full spc_type_n spc_type_ssa spc_type_na spc_type_lt spc_type_progOut spc_type_ssaOut spc_type_naOut \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
