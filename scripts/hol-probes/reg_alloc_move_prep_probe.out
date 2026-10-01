@@ -1,0 +1,13 @@
+ec_basic=(M_success (BN (BN (LS 3) LN) (BN (LS 1) (BN LN (LS 0)))),<|adj_ls := [[1; 2]; [0; 3]; [0]; [1]]; node_tag := [Fixed 1; Atemp; Stemp; Fixed 3]; degrees := [2; 2; 1; 1]; dim := 4; simp_wl := []; spill_wl := []; freeze_wl := []; avail_moves_wl := []; unavail_moves_wl := []; coalesced := [0; 0; 2; 1]; move_related := [F; F; F; F]; stack := []|>)
+ec_oob=M_failure Subscript
+cr_self=(M_success 0,<|adj_ls := [[1; 2]; [0; 3]; [0]; [1]]; node_tag := [Fixed 1; Atemp; Stemp; Fixed 3]; degrees := [2; 2; 1; 1]; dim := 4; simp_wl := []; spill_wl := []; freeze_wl := []; avail_moves_wl := []; unavail_moves_wl := []; coalesced := [0; 0; 2; 1]; move_related := [F; F; F; F]; stack := []|>)
+cr_chain=(M_success 0,<|adj_ls := [[1; 2]; [0; 3]; [0]; [1]]; node_tag := [Atemp; Atemp; Atemp; Atemp]; degrees := [2; 2; 1; 1]; dim := 4; simp_wl := []; spill_wl := []; freeze_wl := []; avail_moves_wl := []; unavail_moves_wl := []; coalesced := [0; 0; 2; 1]; move_related := [F; F; F; F]; stack := []|>)
+cr_fixed=M_success 0
+fco_same=M_success F
+fco_out_dim=M_success F
+fco_adjacent=M_success F
+fco_fixed_atemp=M_success F
+fco_fixed_high=M_success F
+fco_ok=M_success T
+um_order=(4,7,9)
+um_keep=(4,1,3)

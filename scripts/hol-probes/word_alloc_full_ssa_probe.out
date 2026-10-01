@@ -1,0 +1,5 @@
+fs_skip=Seq (Move1 []) Skip
+fs_args=Seq (Move1 [(5,0); (9,2)]) (Seq (Move0 [(2,9)]) (Return 5 [2]))
+fs_assign=Seq (Move1 [(9,0); (13,2)]) (Seq (Assign 17 (Op Add [Var 9; Var 13])) (Seq (Move0 [(2,17)]) (Return 9 [2])))
+fs_if=Seq (Move1 [(5,0)]) (Seq (If Equal 5 (Imm 0w) (Seq (Assign 9 (Const 1w)) (Seq (Move1 [(17,9)]) Skip)) (Seq (Assign 13 (Const 2w)) (Seq (Move1 [(17,13)]) Skip))) (Seq (Move0 [(2,17)]) (Return 5 [2])))
+fs_big=Seq (Move1 [(25,0)]) (Seq (Assign 29 (Var 25)) (Seq (Move0 [(2,29)]) (Return 25 [2])))
