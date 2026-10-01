@@ -201,6 +201,7 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.MustT
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.Seq
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.If
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.Loop
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.Call
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutNames
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyRemap
 import Flapjack.Pancake.PanStructs.CompileDeclsExact
