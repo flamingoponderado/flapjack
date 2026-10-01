@@ -4,6 +4,10 @@ import Flapjack.Compiler.Backend.LabSem.Classifier
 /-! Original Lab-to-Target code similarity: encoding bytes, recorded lengths,
 and resolved word positions may change; instructions and section/label names
 must agree. Native payload carriers retain HOL's fixed byte widths and mlstring.
+The original `α line` / `α sec` types have one shared HOL word-index parameter;
+they do not quantify independent instruction, comparison, memory-operation or
+name carriers. See scripts/hol-probes/lab_to_target_navigation_types.txt for
+the inferred relation, navigation and nested constructor types.
 -/
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm

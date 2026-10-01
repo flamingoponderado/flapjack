@@ -1,0 +1,16 @@
+load "bossLib"; load "preamble"; load "word_allocTheory";
+open HolKernel Parse bossLib preamble word_allocTheory;
+fun out label q = (print(label ^ "="); print_term(rconc(EVAL q)); print "\n");
+val _ = out "dc_skip" ``remove_dead_prog (Skip:8 wordLang$prog) = Skip``;
+val _ = out "dc_move" ``remove_dead_prog (Move1 [(1,2)]:8 wordLang$prog) = Skip``;
+val _ = out "dc_const" ``remove_dead_prog (Inst (Const 1 7w):8 wordLang$prog) = Skip``;
+val _ = out "dc_load" ``remove_dead_prog (Inst (Mem Load 1 (Addr 2 7w)):8 wordLang$prog) = Skip``;
+val _ = out "dc_load16" ``remove_dead_prog (Inst (Mem Load16 1 (Addr 2 7w)):8 wordLang$prog) = Inst (Mem Load16 1 (Addr 2 7w))``;
+val _ = out "dc_store" ``remove_dead_prog (Inst (Mem Store 1 (Addr 2 7w)):8 wordLang$prog) = Inst (Mem Store 1 (Addr 2 7w))``;
+val _ = out "dc_share" ``remove_dead_prog (ShareInst Load 1 (Var 2):8 wordLang$prog) = ShareInst Load 1 (Var 2)``;
+val _ = out "dc_seq" ``remove_dead_prog (Seq (Inst (Const 1 7w)) (Inst (Mem Store 2 (Addr 3 0w))):8 wordLang$prog) = Inst (Mem Store 2 (Addr 3 0w))``;
+val _ = out "dc_if" ``remove_dead_prog (If Equal 1 (Imm 0w) (Inst (Const 2 7w)) Skip:8 wordLang$prog) = Skip``;
+val _ = out "dc_loop" ``remove_dead_prog (Loop LN (Inst (Const 1 7w)) LN:8 wordLang$prog) = Loop LN Skip LN``;
+val _ = out "dc_must" ``remove_dead_prog (MustTerminate (Inst (Const 1 7w)):8 wordLang$prog) = MustTerminate Skip``;
+val _ = out "dc_tail_handler" ``remove_dead_prog (Call NONE (SOME 7) [] (SOME(1,Inst (Const 2 7w),3,4)):8 wordLang$prog) = Call NONE (SOME 7) [] (SOME(1,Inst (Const 2 7w),3,4))``;
+val _ = out "dc_return_handler" ``remove_dead_prog (Call (SOME([], (LN,LN),Inst (Const 2 7w),3,4)) (SOME 7) [] (SOME(1,Inst (Const 5 7w),6,7)):8 wordLang$prog) = Call (SOME([], (LN,LN),Skip,3,4)) (SOME 7) [] (SOME(1,Skip,6,7))``;
