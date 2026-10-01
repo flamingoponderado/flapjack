@@ -49265,5 +49265,109 @@
     "lean_name": "findColorInvariants",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-hk7x): linear_scanProofScript.sml:2660-2695, the nine-variable statement with the same three hypotheses over find_color and the four conclusion conjuncts. HOL EL is the exact holEl, SORTED holSorted, transitive holTransitive, ALL_DISTINCT List.Nodup, EVERY P l is ∀ x ∈ l (paired \\(e,r) reads x.1/x.2), MEM list membership, domain t sptDomain t, {f r | r | P r} the predicate fun c => ∃ r, c = f r ∧ P r, SUBSET pointwise implication, record updated_by/with Lean structure update. Statement compared clause by clause with the type_of/show_types-printed original (DB.fetch linear_scanProof, incl. free variables); kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "update_color_active_colors_same",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/SpillRegister.lean",
+    "lean_name": "updateColorActiveColorsSame",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-8k3k): linear_scanProofScript.sml:2697-2706, polymorphic as in HOL (TV=3): unused e:α, active : (β # num) list, regcol : γ, colors : γ list; [Nonempty γ] records that HOL types are inhabited (needed only by holEl's opaque out-of-range value, as for msubEq). HOL EL is the exact holEl, LUPDATE v n l is l.set n v, FILTER (\\e,r. r <> reg) is filter (fun x => decide (x.2 ≠ reg)), ALL_DISTINCT List.Nodup, EVERY/MEM as list quantification/membership, good_linear_scan_state the exact goodLinearScanState. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "forced_update_stack_color_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/SpillRegister.lean",
+    "lean_name": "forcedUpdateStackColorLemma",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-8k3k): linear_scanProofScript.sml:2708-2725 over num lists. HOL EL is the exact holEl, LUPDATE v n l is l.set n v, FILTER (\\e,r. r <> reg) is filter (fun x => decide (x.2 ≠ reg)), ALL_DISTINCT List.Nodup, EVERY/MEM as list quantification/membership, good_linear_scan_state the exact goodLinearScanState. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "IS_SPARSE_SUBLIST_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/SpillRegister.lean",
+    "lean_name": "isSparseSublist",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-8k3k): linear_scanProofScript.sml:2727-2736, the three clauses IS_SPARSE_SUBLIST [] l2 = T, (x::xs) [] = F, (x::xs) (y::ys) = (x = y ∧ IS_SPARSE_SUBLIST xs ys) ∨ IS_SPARSE_SUBLIST (x::xs) ys, type α list -> α list -> bool rendered Prop-valued. HOL EL is the exact holEl, LUPDATE v n l is l.set n v, FILTER (\\e,r. r <> reg) is filter (fun x => decide (x.2 ≠ reg)), ALL_DISTINCT List.Nodup, EVERY/MEM as list quantification/membership, good_linear_scan_state the exact goodLinearScanState. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "FILTER_IS_SPARSE_SUBLIST",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/SpillRegister.lean",
+    "lean_name": "filterIsSparseSublist",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-8k3k): linear_scanProofScript.sml:2738-2745, P : α -> bool free in HOL (explicit Lean parameter, Bool-valued as FILTER's predicate). HOL EL is the exact holEl, LUPDATE v n l is l.set n v, FILTER (\\e,r. r <> reg) is filter (fun x => decide (x.2 ≠ reg)), ALL_DISTINCT List.Nodup, EVERY/MEM as list quantification/membership, good_linear_scan_state the exact goodLinearScanState. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "MEM_SPARSE_SUBLIST",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/SpillRegister.lean",
+    "lean_name": "memSparseSublist",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-8k3k): linear_scanProofScript.sml:2747-2755. HOL EL is the exact holEl, LUPDATE v n l is l.set n v, FILTER (\\e,r. r <> reg) is filter (fun x => decide (x.2 ≠ reg)), ALL_DISTINCT List.Nodup, EVERY/MEM as list quantification/membership, good_linear_scan_state the exact goodLinearScanState. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "IS_SPARSE_SUBLIST_APPEND_LEFT",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/SpillRegister.lean",
+    "lean_name": "isSparseSublistAppendLeft",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-8k3k): linear_scanProofScript.sml:2757-2762. HOL EL is the exact holEl, LUPDATE v n l is l.set n v, FILTER (\\e,r. r <> reg) is filter (fun x => decide (x.2 ≠ reg)), ALL_DISTINCT List.Nodup, EVERY/MEM as list quantification/membership, good_linear_scan_state the exact goodLinearScanState. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "IS_SPARSE_SUBLIST_APPEND_RIGHT",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/SpillRegister.lean",
+    "lean_name": "isSparseSublistAppendRight",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-8k3k): linear_scanProofScript.sml:2764-2773. HOL EL is the exact holEl, LUPDATE v n l is l.set n v, FILTER (\\e,r. r <> reg) is filter (fun x => decide (x.2 ≠ reg)), ALL_DISTINCT List.Nodup, EVERY/MEM as list quantification/membership, good_linear_scan_state the exact goodLinearScanState. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "MAP_IS_SPARSE_SUBLIST",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/SpillRegister.lean",
+    "lean_name": "mapIsSparseSublist",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-8k3k): linear_scanProofScript.sml:2775-2782, f : α -> β free in HOL (explicit Lean parameter). HOL EL is the exact holEl, LUPDATE v n l is l.set n v, FILTER (\\e,r. r <> reg) is filter (fun x => decide (x.2 ≠ reg)), ALL_DISTINCT List.Nodup, EVERY/MEM as list quantification/membership, good_linear_scan_state the exact goodLinearScanState. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "ALL_DISTINCT_IS_SPARSE_SUBLIST",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/SpillRegister.lean",
+    "lean_name": "allDistinctIsSparseSublist",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-8k3k): linear_scanProofScript.sml:2784-2801. HOL EL is the exact holEl, LUPDATE v n l is l.set n v, FILTER (\\e,r. r <> reg) is filter (fun x => decide (x.2 ≠ reg)), ALL_DISTINCT List.Nodup, EVERY/MEM as list quantification/membership, good_linear_scan_state the exact goodLinearScanState. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "spill_register_FILTER_invariants_hidden",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/SpillRegister.lean",
+    "lean_name": "spillRegisterFilterInvariantsHidden",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-8k3k): linear_scanProofScript.sml:2803-2912, including the id (¬is_phy_var reg ∨ ¬MEM reg l) wrapper; four hypotheses and eight conclusion conjuncts in HOL order. HOL EL is the exact holEl, LUPDATE v n l is l.set n v, FILTER (\\e,r. r <> reg) is filter (fun x => decide (x.2 ≠ reg)), ALL_DISTINCT List.Nodup, EVERY/MEM as list quantification/membership, good_linear_scan_state the exact goodLinearScanState. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "spill_register_FILTER_invariants",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/SpillRegister.lean",
+    "lean_name": "spillRegisterFilterInvariants",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-8k3k): linear_scanProofScript.sml:2914-2916, the hidden statement REWRITE_RULE [id_def] (id removed), otherwise identical. HOL EL is the exact holEl, LUPDATE v n l is l.set n v, FILTER (\\e,r. r <> reg) is filter (fun x => decide (x.2 ≠ reg)), ALL_DISTINCT List.Nodup, EVERY/MEM as list quantification/membership, good_linear_scan_state the exact goodLinearScanState. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "FILTER_MEM_active",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/SpillRegister.lean",
+    "lean_name": "filterMemActive",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-8k3k): linear_scanProofScript.sml:2918-2924 over (int # num) lists. HOL EL is the exact holEl, LUPDATE v n l is l.set n v, FILTER (\\e,r. r <> reg) is filter (fun x => decide (x.2 ≠ reg)), ALL_DISTINCT List.Nodup, EVERY/MEM as list quantification/membership, good_linear_scan_state the exact goodLinearScanState. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "spill_register_invariants",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/SpillRegister.lean",
+    "lean_name": "spillRegisterInvariants",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-8k3k): linear_scanProofScript.sml:2926-2945, five hypotheses and eight conclusion conjuncts in HOL order (int_beg/int_end before the colour-preservation clause, unlike the FILTER form). HOL EL is the exact holEl, LUPDATE v n l is l.set n v, FILTER (\\e,r. r <> reg) is filter (fun x => decide (x.2 ≠ reg)), ALL_DISTINCT List.Nodup, EVERY/MEM as list quantification/membership, good_linear_scan_state the exact goodLinearScanState. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
   }
 ]

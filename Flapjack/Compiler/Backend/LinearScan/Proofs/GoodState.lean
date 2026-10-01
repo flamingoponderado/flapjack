@@ -72,8 +72,10 @@ def goodLinearScanState (st : LinearScanState) (sth : LinearScanHiddenState) (l 
   mincol ≤ st.colornum ∧
   (∀ c, c ∈ st.colorpool ++ l.map (fun r => holEl r sth.colors) → mincol ≤ c)
 
-/-- The conjuncts of `goodLinearScanState`, named for the proofs below. -/
-private structure Good (st : LinearScanState) (sth : LinearScanHiddenState) (l : List Nat)
+/-- The conjuncts of `goodLinearScanState`, named for the proofs of this and
+later linear_scanProof modules. Flapjack infrastructure with no HOL original:
+`goodLinearScanState_iff` shows it is the same proposition. -/
+structure GoodFields (st : LinearScanState) (sth : LinearScanHiddenState) (l : List Nat)
     (pos : Int) (forced : List (Nat × Nat)) (mincol : Nat) : Prop where
   lenBeg : sth.int_beg.length = sth.colors.length
   lenEnd : sth.int_end.length = sth.colors.length
@@ -105,8 +107,9 @@ private structure Good (st : LinearScanState) (sth : LinearScanHiddenState) (l :
   minNum : mincol ≤ st.colornum
   minAll : ∀ c, c ∈ st.colorpool ++ l.map (fun r => holEl r sth.colors) → mincol ≤ c
 
-private theorem good_iff {st sth l pos forced mincol} :
-    goodLinearScanState st sth l pos forced mincol ↔ Good st sth l pos forced mincol := by
+/-- `goodLinearScanState` is the conjunction named by `GoodFields`. -/
+theorem goodLinearScanState_iff {st sth l pos forced mincol} :
+    goodLinearScanState st sth l pos forced mincol ↔ GoodFields st sth l pos forced mincol := by
   constructor
   · rintro ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, h15, h16, h17, h18,
       h19, h20, h21, h22⟩
@@ -162,11 +165,11 @@ theorem removeInactiveIntervalsInvariants :
   induction n using Nat.strongRecOn generalizing st with
   | ind n ih =>
   intro sth l pos forced mincol ⟨hg, hpb⟩
-  have g := good_iff.mp hg
+  have g := goodLinearScanState_iff.mp hg
   rw [removeInactiveIntervals_unfold]
   split
   · next hact =>
-    refine ⟨st, rfl, good_iff.mpr { g with
+    refine ⟨st, rfl, goodLinearScanState_iff.mpr { g with
       beg := fun r hr => Int.le_trans (g.beg r hr) hpb
       live := fun r hr ⟨h1, h2⟩ => g.live r hr ⟨Int.le_trans hpb h1, h2⟩
       ends := fun r _ hm => by rw [hact] at hm; cases hm }, rfl⟩
@@ -188,7 +191,7 @@ theorem removeInactiveIntervalsInvariants :
         have h := g.distinct
         rw [hact, List.map_cons] at h
         exact (List.perm_middle.nodup_iff).mp h
-      have g' : Good st' sth l (e + 1) forced mincol :=
+      have g' : GoodFields st' sth l (e + 1) forced mincol :=
         { g with
           distinct := hd
           pool := fun c hc => by
@@ -215,7 +218,7 @@ theorem removeInactiveIntervalsInvariants :
       have hlen : st'.active.length < n := by
         rw [← hn, hact]; simp [st']
       obtain ⟨stout, hrun, hgood, hmax⟩ :=
-        ih _ hlen st' rfl sth l (e + 1) forced mincol ⟨good_iff.mpr g', by omega⟩
+        ih _ hlen st' rfl sth l (e + 1) forced mincol ⟨goodLinearScanState_iff.mpr g', by omega⟩
       exact ⟨stout, hrun, hgood, hmax⟩
     · next hge =>
       have hall : ∀ x, x ∈ st.active → beg ≤ x.1 := by
@@ -224,7 +227,7 @@ theorem removeInactiveIntervalsInvariants :
         rcases List.mem_cons.mp hx with rfl | hx
         · simp only; omega
         · have := hle x hx; omega
-      refine ⟨st, rfl, good_iff.mpr { g with
+      refine ⟨st, rfl, goodLinearScanState_iff.mpr { g with
         beg := fun r' hr' => Int.le_trans (g.beg r' hr') hpb
         live := fun r' hr' ⟨h1, h2⟩ => g.live r' hr' ⟨Int.le_trans hpb h1, h2⟩
         ends := fun r' _ hm => by have := hall _ hm; simp only at this; omega }, rfl⟩
@@ -304,14 +307,14 @@ theorem findColorInColornumInvariants (stout : LinearScanState) (col : Nat) :
         ¬ sptDomain forbidden col ∧
         st = { stout with colorpool := st.colorpool, colornum := st.colornum } := by
   intro st forbidden sth l pos forced mincol ⟨hg, hsub, hf⟩
-  have g := good_iff.mp hg
+  have g := goodLinearScanState_iff.mp hg
   simp only [findColorInColornum] at hf
   split at hf
   · cases hf
   · next hlt =>
     simp only [Prod.mk.injEq, Option.some.injEq] at hf
     obtain ⟨rfl, rfl⟩ := hf
-    refine ⟨good_iff.mpr ?_, Nat.le_refl _, Nat.lt_succ_self _, Nat.le_succ _, ?_, rfl⟩
+    refine ⟨goodLinearScanState_iff.mpr ?_, Nat.le_refl _, Nat.lt_succ_self _, Nat.le_succ _, ?_, rfl⟩
     · refine { g with
         distinct := ?_
         pool := fun c hc => by
@@ -358,11 +361,11 @@ theorem findColorInvariants :
     simp only [Prod.mk.injEq, Option.some.injEq] at hf
     obtain ⟨rfl, rfl⟩ := hf
     obtain ⟨hm, hnd, l1, l2, hrest, hpool⟩ := findColorInListOutput forbidden c st.colorpool rest hfl
-    have g := good_iff.mp hg
+    have g := goodLinearScanState_iff.mp hg
     have hperm : (c :: rest).Perm st.colorpool := by
       rw [hrest, hpool]; exact List.perm_middle.symm
     have hmemEq : ∀ y, y ∈ c :: rest ↔ y ∈ st.colorpool := fun y => hperm.mem_iff
-    refine ⟨good_iff.mpr { g with
+    refine ⟨goodLinearScanState_iff.mpr { g with
       distinct := (hperm.append_right _).nodup_iff.mpr g.distinct
       pool := fun y hy => g.pool y ((hmemEq y).mp hy)
       minAll := fun y hy => by
