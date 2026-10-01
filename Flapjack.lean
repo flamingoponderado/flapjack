@@ -1,3 +1,4 @@
+import Flapjack.Misc.FindIndex
 import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign
 import Flapjack.Compiler.Backend.WordAlloc.TotalColour
 import Flapjack.Compiler.Backend.Parmove.SourceMembershipWrapper

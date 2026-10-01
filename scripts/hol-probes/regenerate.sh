@@ -2892,3 +2892,7 @@ run_probe word_alloc_total_colour_probeScript.sml word_alloc_total_colour_probe.
 run_probe parmove_temp_before_assign_probeScript.sml parmove_temp_before_assign_probe.out \
   nt_empty nt_read nt_both_none nt_write_stops nt_recursive_read nt_recursive_write nt_write nt_real_chain \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe find_index_probeScript.sml find_index_probe.out \
+  fi_empty fi_head fi_middle fi_absent fi_duplicate fi_zero fi_large_offset fi_last \
+  "$cake_dir/misc/miscScript.sml" "$cake_dir/misc"

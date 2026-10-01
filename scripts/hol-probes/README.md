@@ -2267,3 +2267,8 @@ predicate evaluations, including NONE/NONE rejection and immediate acceptance
 after a scratch write even when a later move reads scratch. Paired kernel
 fixtures are registered in CompilerParity; full scheduler preservation remains
 a separate theorem obligation.
+
+
+`find_index_probeScript.sml` records eight original first-match searches with
+arbitrary starting offsets, including duplicate matches and a large offset.
+Same-input kernel fixtures are registered in CompilerParity.

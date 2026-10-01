@@ -41605,5 +41605,13 @@
   "hol_name": "not_use_temp_before_assign_def",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-c source comparison (2026-10-01; bead46.1): literal831-836 ordered empty/read-NONE/write-NONE/recurse clauses on native List of Option register pairs. NONE,NONE is false by first applicable source-NONE clause. Destination NONE with real source returns true immediately even when tail later reads NONE. Only real-real moves recurse. No wf/distinctness/initialization assumption or altered scratch semantics. Eight fresh direct original HOL rows and same-input rfl kernel fixtures, actualCompilerParity root registration. Parent46 required by word_to_stackProof6187 remains blocked on append/find-index/step/closure proof frontier, definition alone does not prove compiler output initialized. Coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Misc/FindIndex.lean",
+  "lean_name": "findIndex",
+  "hol_path": "cakeml/misc/miscScript.sml",
+  "hol_name": "find_index_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison (2026-10-01; bead46.7): literal1055-1058 target/list/start-offset recursion; empty returns NONE, first head equal target returns SOME current offset, unequal head searches tail with offset+1. Native generic List/equality/Nat/Option carriers, DecidableEq computes propositional equality with no BEq assumption, no bound or successful-search premise. Eight fresh original rows and identical-input rfl kernel fixtures cover absence, first and late matches, duplicates, zero and arbitrary-precision offset. Actual CompilerParity registration. Required first-index characterization remains on46.3 with bounds/append/shift prerequisites; no compiler safety completion claim. Coordinator review pending."
 }
 ]
