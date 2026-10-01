@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordCse.Proofs.InsertEquality
 import Flapjack.Compiler.Backend.WordCse.Proofs.KeyInjectivity
 import Flapjack.Compiler.Backend.WordCse.InstructionKeys
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoInstallTop

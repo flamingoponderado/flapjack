@@ -4086,3 +4086,13 @@ overflow flags, all memory-operation store classifiers, and widths 8/80.
 `Flapjack/Test/WordCseRegisterKeysParity.lean` kernel-replays the observations
 and applies the four full injectivity theorems at arbitrary inputs. Regression
 fixtures do not prove HOL-to-Lean equivalence or the remaining CSE simulation.
+
+## Word CSE insertion equality
+
+`word_cse_insert_equality_probeScript.sml` exports the complete original
+`insert_eq` and literally replays its proof with no open hypotheses. Ten
+observations cover equal/unequal writes on empty, leaf, malformed BN/BS and
+nested sparse trees. `WordCseInsertEqualityParity.lean` kernel-checks those
+cases and applies the unrestricted theorem at arbitrary carriers/trees and an
+80-bit carrier with a large Nat key. The original unused `n2` is omitted in
+Lean only because it occurs in no premise or conclusion.

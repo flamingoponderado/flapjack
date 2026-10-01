@@ -48703,5 +48703,13 @@
     "hol_name": "shiftToNum_eq",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol2 complete source comparison 2026-10-02, flapjack-word-cse-register-keys: Original unrestricted forall equivalence, exact independent operand binders and both equality sides preserved; no range/class/knowledge guard. Full original proof replay regenerated and kernel theorem application checked. Nat/enums/lists are identity carriers. 104 original register observations replayed in kernel. Full arith_keys_eq and knowledge/invariant simulation remain open. Executed definition replacement remains linked on CSE production frontier; no whole correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/InsertEquality.lean",
+    "lean_name": "insertEq",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "insert_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 full source comparison 2026-10-02, word-cse-insert-eq: original167-175 arbitrary Nat key and generic values/tree, insertion equality iff value equality; no wf assumption. Unused universally bound n2 appears in neither equality nor any premise, so omitted with local note. Spt preserves exact HOL num_map constructors; malformed BN/BS remain quantified. Original complete theorem/proof replay plus ten empty/malformed/nested equal/unequal observations captured, actual arbitrary-carrier kernel theorem applications. Genuine prerequisite of arith_keys_eq, not CSE/compiler semantic completion."
   }
 ]
