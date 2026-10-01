@@ -4290,6 +4290,30 @@
       "out": "wrap_rt_probe.out",
       "rows": 5,
       "sha256": "34b4dc9b2384c56cae695cdda57731febdbd5d7d19b90a6c6004b6c39bdf87cd"
+    },
+    {
+      "bytes": 129,
+      "out": "monad_array_length_probe.out",
+      "rows": 6,
+      "sha256": "407821e56eb5ebca18e92fd0bb9320bba0843b5f8e2c059f57547ecf63c1f823"
+    },
+    {
+      "bytes": 456,
+      "out": "monad_list_primitives_probe.out",
+      "rows": 25,
+      "sha256": "564bd5d118f7cd0746d109b86fc758358e2a313a34352b2638a56a1d4a9dbc62"
+    },
+    {
+      "bytes": 380,
+      "out": "reg_alloc_state_map_probe.out",
+      "rows": 20,
+      "sha256": "6106364f2dde6ee7bad3fbeb2c11290957ac48f344f9c31cdd9ac079bc879d38"
+    },
+    {
+      "bytes": 237,
+      "out": "word_alloc_canonize_moves_probe.out",
+      "rows": 19,
+      "sha256": "0eba6bb18803383ae0edee43b2f5b4300176f89ef0295c6b846840c60d44672c"
     }
   ]
 }
