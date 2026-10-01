@@ -42805,7 +42805,7 @@
     "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
     "hol_name": "sort_moves_def",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead .10.5.8.6.11: 343-346: arbitrary (num # alpha) list; strict descending priority comparator passed to source-reviewed native MlList.sort. Generic payload retained; external sort helpers are untagged and not independently pinned. Fresh original type query confirms generic alpha. Twelve original equations and matching kernel fixtures. Coordinator acceptance pending; production allocator routing remains separate."
+    "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead .10.5.8.6.11: 343-346: arbitrary (num # alpha) list; strict descending priority comparator passed to source-reviewed native MlList.sort. Generic payload retained; external sort helpers are untagged and not independently pinned. Fresh original type query confirms generic alpha. Twelve original equations and matching kernel fixtures. Coordinator source accepted .11 at ea2837b35. Linked .11.1 now replaces actual cakeSortMoves/cakeSMerge with these definitions, with unconditional former-helper kernel equalities. Production route review and fresh CLI/original parity recorded on .11.1; no whole allocator correctness claim."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/RegAlloc/SortMoves.lean",
@@ -42813,7 +42813,7 @@
     "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
     "hol_name": "smerge_def",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead .10.5.8.6.11: 349-360: arbitrary (num # alpha) lists; empty-side equations and >= left-head selection, otherwise right-head selection; no sortedness assumption, payload untouched. Fresh original type query confirms generic alpha. Twelve original equations and matching kernel fixtures. Coordinator acceptance pending; production allocator routing remains separate."
+    "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead .10.5.8.6.11: 349-360: arbitrary (num # alpha) lists; empty-side equations and >= left-head selection, otherwise right-head selection; no sortedness assumption, payload untouched. Fresh original type query confirms generic alpha. Twelve original equations and matching kernel fixtures. Coordinator source accepted .11 at ea2837b35. Linked .11.1 now replaces actual cakeSortMoves/cakeSMerge with these definitions, with unconditional former-helper kernel equalities. Production route review and fresh CLI/original parity recorded on .11.1; no whole allocator correctness claim."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/RegAlloc/SortMoves.lean",
@@ -42821,7 +42821,7 @@
     "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
     "hol_name": "MEM_smerge",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead .10.5.8.6.11: 2175-2182: universally quantified free x and xs/ys; membership iff union of input memberships, arbitrary payload, no sortedness/distinctness/target-result premise; functional induction on actual smerge. Fresh original type query confirms generic alpha. Twelve original equations and matching kernel fixtures. Coordinator acceptance pending; production allocator routing remains separate."
+    "reviewer": "flapjack-luna-a source comparison 2026-10-01 bead .10.5.8.6.11: 2175-2182: universally quantified free x and xs/ys; membership iff union of input memberships, arbitrary payload, no sortedness/distinctness/target-result premise; functional induction on actual smerge. Fresh original type query confirms generic alpha. Twelve original equations and matching kernel fixtures. Coordinator source accepted .11 at ea2837b35. Linked .11.1 now replaces actual cakeSortMoves/cakeSMerge with these definitions, with unconditional former-helper kernel equalities. Production route review and fresh CLI/original parity recorded on .11.1; no whole allocator correctness claim."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/Parmove/AllDistinct/Steps.lean",
