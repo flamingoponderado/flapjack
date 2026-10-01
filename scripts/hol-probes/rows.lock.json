@@ -4553,6 +4553,12 @@
       "out": "word_to_stack_allocator_stages_probe.out",
       "rows": 4,
       "sha256": "2a0cde2e40423ec54a58d79a6004aa4209ad293a26adc27511fd6f877a6f77b1"
+    },
+    {
+      "bytes": 754,
+      "out": "word_to_stack_selector_prelude_probe.out",
+      "rows": 10,
+      "sha256": "3e0383892a0b48a9ad9d2dfaf982eb88e2f6ca28211e672db66a1c70c3c7ebff"
     }
   ],
   "version": 1

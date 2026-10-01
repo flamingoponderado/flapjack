@@ -85,6 +85,24 @@ with `HOL_PROBE_ONLY=stacksem_loop_recursive_probeScript.sml scripts/hol-probes/
 
 # Original Pancake HOL probes
 
+`word_to_stack_selector_prelude_probe.out` captures ten fresh original
+`inst_select_exp riscv_config 23 23` output trees: constant, variable, CurrHeap
+lookup, load, immediate addition, valid/out-of-range shifts, CurrHeap arithmetic,
+and valid/large load offsets. `WordToStackSelectorPreludeParity` kernel-checks
+nine matching complete trees and records the tenth comparison as false:
+the large-offset materialization is right-associated in original HOL and
+left-associated in production. Its exact production counter-tree is retained;
+bead `.17.2.16` tracks repair or justified semantic/output correspondence.
+Separate theorem applications cover
+arbitrary expressions and temporaries at positive widths, including 1/80 bits
+and natural register names above 64 bits; a load-tail rejection sentinel keeps
+unsupported incoming preludes rejected. `ProductionSelectorPrelude` proves
+actual atom/load-tail/address-wrapper carrier closure only. This does not prove
+universal HOL instruction-selector equivalence, whole-program selection,
+pre-SSA/source-image closure, or production native routing. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_to_stack_selector_prelude_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `word_to_stack_allocator_stages_probe.out` records four fresh original
 pre-allocation stage-chain outputs for Skip, Tick, Raise and tail Call, following
 `word_to_word$compile_single`'s SSA/dead/CSE/copy/three-to-two/unreachable/dead
