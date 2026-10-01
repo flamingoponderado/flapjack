@@ -2588,6 +2588,7 @@ distinctness, generic three-list flattening, and RTC scratch safety respectively
 renaming statements/types as an audit aid, not a port or equivalence proof.
 Its capture omits blank separator lines between printed HOL clauses.
 
+- `parmove_all_distinct_steps_probeScript.sml`: four full destination predicates for zero-step scratch and start/save states. Lean fixtures additionally certify the RTC trace; HOL observations alone do not establish it.
 `stackprops_code_labels_probe.out` contains fifteen fresh direct original
 `stackProps$get_code_labels` and `stack_get_handler_labels` complete-set
 observations, replayed by `Flapjack.Test.StackPropsCodeLabelsParity` at the
@@ -2633,7 +2634,19 @@ destination-distinctness observations; Lean also applies the full RTC theorem
 to zero-step and concrete two-step traces. These fixtures do not establish
 cross-language equivalence or whole allocator correctness.
 
-### Register allocator phase closure audit
+`wordconvs_code_labels_probe.out` contains twelve fresh direct original
+`wordConvs$get_code_labels` complete-set observations, replayed at identical
+width64 inputs by `Flapjack.Test.WordConvsCodeLabelsParity`. Cases cover direct
+and indirect Calls, both populated bodies, populated handlers with no return,
+excluded continuation metadata, duplicate labels, Seq/If/Loop/MustTerminate
+and LocValue. These regressions do not establish compiler label correctness or
+cross-language equivalence. Regenerate against read-only prebuilt theories with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=wordconvs_code_labels_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
+- `parmove_preserves_moves_steps_probeScript.sml`: six complete destination/witness observations for Start/Save states. Lean fixtures certify the RTC trace and zero-step case; HOL observations alone do not prove that trace or cross-assistant equivalence.
+
+## Register allocator phase closure audit
 
 `reg_alloc_phase_closure_probeScript.sml` captures 29 exported original HOL
 definition equations for the five `do_step` phases and their nested helpers.

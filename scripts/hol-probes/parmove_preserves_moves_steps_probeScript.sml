@@ -1,0 +1,9 @@
+load "bossLib"; load "preamble"; load "parmoveTheory";
+open bossLib HolKernel Parse preamble parmoveTheory;
+fun observe label term = let val th = QCONV (SIMP_CONV (srw_ss()) [boolTheory.LEFT_AND_OVER_OR, boolTheory.RIGHT_AND_OVER_OR, boolTheory.EXISTS_OR_THM]) (rhs (concl (EVAL term))) in print (label ^ "="); print_term (rhs (concl th)); print "\n" end;
+val _ = observe "rtc_real_before" ``let s = (([(SOME 1,SOME 2)],[],[(NONE,SOME 3)]) : (num option # num option) list # (num option # num option) list # (num option # num option) list) in ?y. MEM (SOME 1,y) (state_to_list s) /\ SOME 1 <> y``;
+val _ = observe "rtc_real_after" ``let s = (([],[(SOME 1,NONE)],[(NONE,SOME 2);(NONE,SOME 3)]) : (num option # num option) list # (num option # num option) list # (num option # num option) list) in ?y. MEM (SOME 1,y) (state_to_list s) /\ SOME 1 <> y``;
+val _ = observe "rtc_scratch_before" ``let s = (([(SOME 1,SOME 2)],[],[(NONE,SOME 3)]) : (num option # num option) list # (num option # num option) list # (num option # num option) list) in ?y. MEM (NONE,y) (state_to_list s) /\ NONE <> y``;
+val _ = observe "rtc_scratch_after" ``let s = (([],[(SOME 1,NONE)],[(NONE,SOME 2);(NONE,SOME 3)]) : (num option # num option) list # (num option # num option) list # (num option # num option) list) in ?y. MEM (NONE,y) (state_to_list s) /\ NONE <> y``;
+val _ = observe "rtc_changed_source" ``MEM (SOME 1,NONE) (state_to_list (([],[(SOME 1,NONE)],[(NONE,SOME 2);(NONE,SOME 3)]) : (num option # num option) list # (num option # num option) list # (num option # num option) list))``;
+val _ = observe "rtc_old_source_absent" ``~MEM (SOME 1,SOME 2) (state_to_list (([],[(SOME 1,NONE)],[(NONE,SOME 2);(NONE,SOME 3)]) : (num option # num option) list # (num option # num option) list # (num option # num option) list))``;

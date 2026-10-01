@@ -3157,14 +3157,24 @@ run_probe parmove_preserves_moves_step_probeScript.sml parmove_preserves_moves_s
   preserve_4_before preserve_4_after preserve_6_before preserve_6_after preserve_1_before preserve_1_after preserve_8_before preserve_8_after preserve_scratch_before preserve_scratch_after \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
+run_probe wordconvs_code_labels_probeScript.sml wordconvs_code_labels_probe.out \
+  wl_skip wl_location wl_direct_tail wl_indirect_tail wl_tail_handler wl_both_bodies wl_metadata_omitted wl_return_only wl_duplicate wl_if wl_loop wl_must \
+  "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe parmove_preserves_moves_steps_probeScript.sml parmove_preserves_moves_steps_probe.out \
+  rtc_real_before rtc_real_after rtc_scratch_before rtc_scratch_after rtc_changed_source rtc_old_source_absent \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
 run_probe reg_alloc_phase_closure_probeScript.sml reg_alloc_phase_closure_probe.out \
   ra_phase_do_simplify ra_phase_do_coalesce ra_phase_do_prefreeze ra_phase_do_freeze ra_phase_do_spill ra_phase_dec_deg ra_phase_dec_degree ra_phase_push_stack ra_phase_is_not_coalesced ra_phase_split_degree ra_phase_sort_moves ra_phase_smerge ra_phase_revive_moves ra_phase_unspill ra_phase_inc_deg ra_phase_is_Fixed ra_phase_is_Atemp ra_phase_is_Fixed_k ra_phase_considered_var ra_phase_deg_or_inf ra_phase_bg_ok ra_phase_consistency_ok ra_phase_coalesce_parent ra_phase_canonize_move ra_phase_st_ex_FIRST ra_phase_respill ra_phase_reset_move_related ra_phase_st_ex_list_MIN_cost ra_phase_st_ex_list_MAX_deg \
   "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
 
+
 run_probe reg_alloc_state_partition_probeScript.sml reg_alloc_state_partition_probe.out \
   sp_type sp_empty sp_singleton_true sp_singleton_false sp_all_true sp_all_false sp_mixed sp_reverse sp_duplicates sp_large sp_fail_empty sp_fail_first sp_fail_middle sp_fail_last sp_fail_duplicate sp_state_predicate sp_state_failure sp_bool_value sp_bool_state sp_list_state sp_list_error sp_tuple_state sp_empty_always_failure \
   "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
 
 run_probe reg_alloc_state_foreach_probeScript.sml reg_alloc_state_foreach_probe.out \
   sf_type sf_empty sf_order sf_reverse sf_duplicates sf_fail_empty sf_fail_first sf_fail_middle sf_fail_last sf_bool_result sf_list_state sf_bool_state \
