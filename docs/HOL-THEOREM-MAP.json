@@ -44122,5 +44122,19 @@
     "lean_name": "ssaLocalsRelMore",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-luna-a compared original5195-5203: arbitrary Nat bounds, native Spt Nat SSA map and same generic payload type for source/target locals. Sole original conjunction relation and bound ordering; identical relation conclusion at larger bound. Accepted native locals definition retains both domain/lookup clauses and guarded THE correspondence via selector independence. No word-width restriction, tree well-formedness, target-result or extra premise. Proof preserves both domain clauses and lookup equality and composes only the allocated source-key bound."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAMergeMoves/MoveHead.lean",
+    "lean_name": "movEvalHead",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "mov_eval_head",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison (2026-10-01; flapjack-421z): full original word_allocProof4748-4761 local mov_eval_head, literal proof independently re-elaborated in original HOL. Arbitrary priority, moves, x/y and full original/output states; exact successful source evaluation, source-domain membership, and both original source/destination-not-written premises, with complete target evaluation/state-update equality. Native faithful evaluator, original Nat/Spt WordLoc positive BitVec width and configuration/FFI Type0 carriers retained. Qualifier covers only the canonical fpRegs/store finite maps (same-module genuine broad/exact roundtrip) and standard positive-width word translation; locals/code remain actual Spt, not finite maps. HOL THE sees only SOME due to source-domain premise: getD(.word0) selects identical payload, fallback independent by kernel theorem; no THE NONE value claimed. Original source-not-written premise retained despite proof needing only destination-not-written. Eleven fresh same-input original evaluator tuples include widths1/32/64/80, parallel copies, self-copy, existing-destination overwrite, repeated source, non-well-formed tree, huge Nat, and three failure sentinels. Full generic actual theorem and fallback-independence applications checked. No executed compiler change or full merge/SSA correctness claim; Delivery and checks recorded on bead flapjack-421z. The elaborated constant closure inherits reals_as_rational_cuts through the accepted wordSem evaluate Inst/FPSqrt branch (existing SOUNDNESS item8), exactly as that evaluator manifest records. The concrete Move branch proved here invokes only getVars/setVars and never inst; this does not change or endorse the global FP rendering. This marker propagates the existing evaluator boundary, not a new assumption or extra theorem premise.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]

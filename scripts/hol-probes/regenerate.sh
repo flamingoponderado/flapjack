@@ -3406,3 +3406,10 @@ run_probe ssa_register_flip_probeScript.sml ssa_register_flip_probe.out \
 run_probe ssa_locals_bounds_probeScript.sml ssa_locals_bounds_probe.out \
   lb_more \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_alloc_move_head_probeScript.sml word_alloc_move_head_probe.out \
+  mh_original_statement mh_original_types mh_original_state_type mh_empty mh_single mh_parallel mh_overwrite mh_self mh_same_source mh_malformed mh_huge mh_missing_source mh_duplicate_destination mh_bad_tail \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_alloc_limit_arithmetic_probeScript.sml word_alloc_limit_arithmetic_probe.out \
+  la_original_numeric_proof la_0 la_1 la_2 la_3 la_4 la_7 la_8 la_15 la_16 la_1208925819614629174706176 la_1208925819614629174706177 la_1208925819614629174706178 la_1208925819614629174706179 \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

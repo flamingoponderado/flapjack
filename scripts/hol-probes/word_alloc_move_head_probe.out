@@ -1,0 +1,24 @@
+mh_original_statement=⊢ evaluate (Move p moves,st) = (NONE,rst) ∧ y ∈ domain st.locals ∧ ¬MEM y (MAP FST moves) ∧ ¬MEM x (MAP FST moves) ⇒ evaluate (Move p ((x,y)::moves),st) = (NONE,rst with locals := insert x (THE (lookup y st.locals)) rst.locals)
+mh_original_types=x::num;y::num;rst::(α, β, γ) state;st::(α, β, γ) state;moves::(num # num) list;p::num
+mh_original_state_type=:(32, unit, unit) state
+mh_empty=(NONE,[(1,Word 1w); (2,Word 1w)],17)
+
+mh_single=(NONE,[(1,Word 9w); (5,Word 9w); (4,Word 9w)],17)
+
+mh_parallel=(NONE,[(1,Word 9w); (5,Loc 7 8); (4,Word 9w); (2,Loc 7 8); (6,Loc 7 8)],17)
+
+mh_overwrite=(NONE,[(1,Word 9w); (5,Word 9w); (4,Word 9w)],17)
+
+mh_self=(NONE,[(1,Word 9w); (5,Word 12w); (4,Word 9w)],17)
+
+mh_same_source=(NONE,[(1,Word 1w); (5,Word 1w); (4,Word 1w); (6,Word 1w)],17)
+
+mh_malformed=(NONE,[(1,Loc 3 4); (5,Word 7w); (0,Word 7w); (4,Loc 3 4)],17)
+
+mh_huge=(NONE,[(1,Word 9w); (1208925819614629174706176,Word 9w); (4,Word 9w)],17)
+
+mh_missing_source=(SOME Error,[(1,Word 9w)],17)
+
+mh_duplicate_destination=(SOME Error,[(1,Word 9w)],17)
+
+mh_bad_tail=(SOME Error,[(1,Word 9w)],17)
