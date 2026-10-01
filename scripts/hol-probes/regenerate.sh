@@ -3573,3 +3573,7 @@ run_probe ssa_physical_state_updates_probeScript.sml ssa_physical_state_updates_
 run_probe ssa_rename_property_wrappers_probeScript.sml ssa_rename_property_wrappers_probe.out \
   rw_core_full rw_move_full rw_move_type rw_single_full \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_option_lookup_subset_probeScript.sml ssa_option_lookup_subset_probe.out \
+  os_full os_type_ssa os_type_cst_locs os_type_ls \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

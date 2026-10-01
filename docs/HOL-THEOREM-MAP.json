@@ -47086,5 +47086,13 @@
     "hol_name": "next_var_rename_props",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-a source comparison 2026-10-01 flapjack-8cmf: full original move wrapper5780-5797 and single-name wrapper5799-5817, freshly replayed literal original class-add/core-renaming/wrapper proofs. Original producer equality then allocation-or-stack and mapOK premises, all four output bound/class/map conclusions retained. Arbitrary Nat names/counters, native Spt maps, no wf/distinct or extra safety/evaluation premise. Move result HOL alpha prog translated to reviewed positive BitVec width/NeZero native WordLangProgHOL; single-name theorem word-free exact. Kernel wrappers apply accepted full listNextVarRenameProps to actual native producer (singleton list for single-name). No executed compiler change; original proof/type evidence does not claim cross-language equivalence. Delivery gates tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAOptionLookupSubset.lean",
+    "lean_name": "optionLookupSubsetHelper",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "option_lookup_subset_helper",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-a completed source comparison 2026-10-01 flapjack-fdho: full original5434-5446 arbitrary native SSA Spt Nat, target Spt alpha and names List Nat. Literal original proof replayed freshly; original inferred num num_map/alpha num_map/num list confirm generic target payload independent of register map. Both original premises (SSA image in target domain and input names subset SSA domain) and full optionLookup-mapped names subset target-domain conclusion unchanged, rendered by list membership quantification. Native Spt lookup/domain/optionLookup match reviewed original definitions; no wf, distinctness, width or output/evaluation assumption added. Kernel SOME-domain proof checked before tagging; no selector NONE value asserted. Untagged additional assumptions absent. This source comparison establishes reviewed statement shape, not cross-prover equivalence. Proof-only, no executed compiler change."
   }
 ]

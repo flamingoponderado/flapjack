@@ -597,6 +597,7 @@
     {"bytes": 949, "out": "ssa_merge_frame_probe.out", "rows": 11, "sha256": "18326d9280cd0afebb842eb62db0a43b8436b17d962cf3c2ab248af9fb9d7ab3"},
     {"bytes": 1639, "out": "ssa_merge_moves_probe.out", "rows": 12, "sha256": "8a679f3532e055edfaae58707eb08c29354875db7badf7fe49eac32d689db3c4"},
     {"bytes": 504, "out": "ssa_merge_route_probe.out", "rows": 8, "sha256": "834e72ddfaa838a17bb10f797229b6ffcf3bfcabdb91e687d0fd5bdeb31f5f08"},
+    {"bytes": 262, "out": "ssa_option_lookup_subset_probe.out", "rows": 4, "sha256": "0824e0eaec89265fd7ccbcce8567b15f2350ee1afce83321faee4cf463818c96"},
     {"bytes": 501, "out": "ssa_physical_state_updates_probe.out", "rows": 6, "sha256": "86a9050e624588c78472a905100f24f25e471e4697383c759773c41bb0015c7b"},
     {"bytes": 328, "out": "ssa_register_class_probe.out", "rows": 10, "sha256": "d1a7a95b4d2e730a6518608c3b3c4ebd742d43c32fa47f5325741f87b16995a4"},
     {"bytes": 790, "out": "ssa_register_flip_probe.out", "rows": 25, "sha256": "6f7a989504063c08b420dccce972f3dfdb6ba7d6986920ce68374727a85bb729"},
