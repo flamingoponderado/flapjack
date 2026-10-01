@@ -1,0 +1,8 @@
+nt_empty=T
+nt_read=F
+nt_both_none=F
+nt_write_stops=T
+nt_recursive_read=F
+nt_recursive_write=T
+nt_write=T
+nt_real_chain=T
