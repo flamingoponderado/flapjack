@@ -2956,3 +2956,7 @@ run_probe word_alloc_spillcost_probeScript.sml word_alloc_spillcost_probe.out \
 run_probe word_to_stack_comp_length_probeScript.sml word_to_stack_comp_length_probe.out \
   comp_length_skip comp_length_alloc comp_length_must_terminate comp_length_sequence comp_length_if_both_branches comp_length_loop comp_length_tail_ignores_handler comp_length_returning_call comp_length_call_and_handler comp_length_store_empty comp_length_call_store_nested_handler comp_length_zero_frame comp_length_multiword comp_length_width_one comp_length_bound_required comp_length_large_gap comp_length_empty_initial comp_length_sequence_store \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_to_stack_abs_stack_generality_probeScript.sml word_to_stack_abs_stack_generality_probe.out \
+  asg_base16 asg_base1 asg_plain16 asg_handler16 asg_plain1 asg_handler1 asg_nested16 asg_marker_bad \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
