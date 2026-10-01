@@ -1,5 +1,7 @@
 import Flapjack.Test.ParmoveScratchOrderWrapperParity
 import Flapjack.Test.WordConvsNameMonoParity
+import Flapjack.Test.AsmPropsPcCoverageParity
+import Flapjack.Test.AsmSemArithmeticParity
 import Flapjack.Test.WordConvsEveryVarInstMonoParity
 import Flapjack.Test.ParmovePreservesMovesParmoveParity
 import Flapjack.Test.ParmoveAllDistinctWrapperParity
@@ -1535,6 +1537,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.WordConvsPostAllocExactParity.runChecks,
     Flapjack.Test.LabToTargetSectionLookupParity.runChecks,
     Flapjack.Test.TargetPropsInterferenceParity.runChecks,
+    Flapjack.Test.AsmPropsPcCoverageParity.runChecks,
     Flapjack.Test.AsmSemArithmeticParity.runChecks,
     Flapjack.Test.BytesInMemParity.runChecks,
     Flapjack.Test.CrepSemIoEventsMonoParity.runChecks

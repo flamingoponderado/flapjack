@@ -43603,6 +43603,33 @@
     "reviewer": "flapjack-luna-c: complete source34-41 P/names/Q and global pointwise implication AND every_name P guard preserved. Actual everyNameHOL enumerates MAP FST of toAList for both canonical Spt Unit halves, matching literal every_name_def and num_set pair. Arbitrary trees including non-well-formed ones; no wf/domain/bound or target-result premise. No word/finite-map representation difference. Coordinator acceptance pending."
   },
   {
+    "lean_path": "Flapjack/Compiler/Encoders/AsmProps/PcCoverage.lean",
+    "lean_name": "allPcs",
+    "hol_path": "cakeml/compiler/encoders/asm/asmPropsScript.sml",
+    "hol_name": "all_pcs_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-pxn.18.5.15.10.26): Original asmPropsScript82-85: zero length empty set, positive n inserts original base and recurses at n-(2**k), base+n2w(2**k), same k. Lean singleton union is HOL INSERT and follows original total natural subtraction; well-founded termination uses only positivity of2**k. No list-of-PC specialization or unwrapped natural address carrier. Only HOL positive word-index to BitVec width/NeZero translation; fixed word8 bytes, HOL num to Nat and HOL sets to predicate-backed Set retained. Direct original asmPropsTheory13 oracle rows with kernel replays, universal theorem itself kernel checked. Independent encoder prerequisite; full encoder correctness not claimed. Coordinator full source/carrier review completed (2026-10-01); independent acceptance review tracked by flapjack-pxn.18.5.15.10.26.1."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/AsmProps/PcCoverage.lean",
+    "lean_name": "allPcs_eq",
+    "hol_path": "cakeml/compiler/encoders/asm/asmPropsScript.sml",
+    "hol_name": "all_pcs_thm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-pxn.18.5.15.10.26): Original asmPropsScript87-102 equality to comprehension {a+n2w(i*(2**k)) | i | i*(2**k)<n}. Lean predicate-backed set existential preserves every original count/base/alignment and wraps words normally. Complete strong-induction proof handles zero length, stride exceeding remaining length, and cyclic aliases; no uniqueness, length bound or alignment guard introduced. Only HOL positive word-index to BitVec width/NeZero translation; fixed word8 bytes, HOL num to Nat and HOL sets to predicate-backed Set retained. Direct original asmPropsTheory13 oracle rows with kernel replays, universal theorem itself kernel checked. Independent encoder prerequisite; full encoder correctness not claimed. Coordinator full source/carrier review completed (2026-10-01); independent acceptance review tracked by flapjack-pxn.18.5.15.10.26.1."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/AsmProps/PcCoverage.lean",
+    "lean_name": "bytesInMemory_allPcs",
+    "hol_path": "cakeml/compiler/encoders/asm/asmPropsScript.sml",
+    "hol_name": "bytes_in_memory_all_pcs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; flapjack-pxn.18.5.15.10.26): Original asmPropsScript136-162: universally quantified byte list/base with arbitrary memory/domain/alignment, bytes_in_memory premise implies all_pcs(LENGTH xs) pc k SUBSET d. Lean uses accepted misc bytesInMemoryHOL and exactly that sole premise/conclusion. Local byteOffsetInDomain induction establishes every in-bounds wrapped byte offset is in the original domain; allPcs_eq then supplies generated offsets. No domain validity or target evaluation assumed as additional hypotheses. Only HOL positive word-index to BitVec width/NeZero translation; fixed word8 bytes, HOL num to Nat and HOL sets to predicate-backed Set retained. Direct original asmPropsTheory13 oracle rows with kernel replays, universal theorem itself kernel checked. Independent encoder prerequisite; full encoder correctness not claimed. Coordinator full source/carrier review completed (2026-10-01); independent acceptance review tracked by flapjack-pxn.18.5.15.10.26.1."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/Parmove/TempBeforeAssign/Parmove.lean",
     "lean_name": "parmoveNotUseTempBeforeAssign",
     "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",

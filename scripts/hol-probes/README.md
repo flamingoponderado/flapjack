@@ -2896,3 +2896,22 @@ while its no-read conclusion remains true. `ParmoveScratchOrderWrapperParity`
 replays all eight observations and the full generic theorem with seven valid
 applications. This is a proof-only wrapper port; the executed scheduler is unchanged.
 Selector: `HOL_PROBE_ONLY=parmove_scratch_order_wrapper_probeScript.sml`.
+### Native asmProps stride PC coverage
+
+`asmprops_pc_coverage_probeScript.sml` evaluates loaded original
+`asmPropsTheory.all_pcs` at 13 length/stride/wrap boundaries and emits direct
+membership observations. `Flapjack.Test.AsmPropsPcCoverageParity` kernel-replays
+all rows. Cases include zero length, partial/exact stride lengths, repeated
+wrapped PCs at width 1, strides equal to or larger than word dimension, and
+32/64-bit wrapping. `AsmProps.PcCoverage` separately proves the complete
+original recursive characterization and byte-memory domain subset theorem,
+with no added length/alignment/uniqueness premise. Probes remain regression
+evidence, not cross-language equivalence or full encoder acceptance.
+`parmove_all_distinct_wrapper_probe.out` freshly fetches the complete exported
+`ALL_DISTINCT_parmove` theorem and captures six whole scheduler outputs
+(empty/self/chain/swap/cycle/shared source), plus the duplicate-destination
+input/output distinctness boundary `(F,F)`. `ParmoveAllDistinctWrapperParity`
+replays all outputs and non-vacuous theorem applications in Lean, with a Bool
+carrier check. Original run used a temporary cwd and canonical in-memory
+`holpathdb` CAKEMLDIR registration/read-only theory paths; CakeML unchanged.
+Selector: `HOL_PROBE_ONLY=parmove_all_distinct_wrapper_probeScript.sml`.
