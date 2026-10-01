@@ -2652,3 +2652,12 @@ cross-language equivalence. Regenerate against read-only prebuilt theories with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=wordconvs_code_labels_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
+
+`enc_with_nop_source_type.sml` reads the unchanged `enc_with_nop_def` text
+from original `lab_to_targetProofScript.sml` and re-elaborates it in an
+in-memory HOL theory, without exporting theory artifacts. This type query
+checks the generic encoded-list payload of the proof-local relation. The
+original proof theory has no prebuilt object in this environment; this is
+source re-elaboration, not an observation from that prebuilt theory or a
+cross-language equivalence proof. Run `HOL/bin/hol run <absolute script path>`
+from the original backend semantics directory, optionally setting `CAKEML`.

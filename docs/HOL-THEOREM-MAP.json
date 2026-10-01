@@ -43126,5 +43126,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison (2026-10-01; bead .18.5.15.10.21): original lines32-91. secLocToPc retains zero-id precedence even on empty lists, existential Label ownership-independent constructor test, label skipping and successor mapping. Local decidability resolves that existential constructor-for-constructor without classical choice. The cons identity retains the exact disjunction and conditional I/SUC. locToPc_sections retains all section/label identifiers/programs and sole EVERY sec_labels_ok premise; its section-id branch, optional local lookup, and non-label-count shift agree with HOL. Native accepted LabSem Navigation is used, not a replacement evaluator. Fixed word8 bytes, Nat label positions, native instruction/MlString payloads unchanged; only polymorphic word dimension translates to positive BitVec width. Fresh direct original loc_to_pc eight-row capture and theorem-based kernel replays exercise section-valid fixtures; no full cross-language equivalence claimed. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/NopEncoding.lean",
+    "lean_name": "encWithNop",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "enc_with_nop_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; bead .18.5.15.10.22): original lines94-115. Definition retains arbitrary encoder/instruction/encoded list, generic encoded payload, zero-NOP-length branch, truncated subtraction and natural DIV, APPEND/FLAT/REPLICATE. Exact native HolAsm includes all source constructors; only polymorphic word dimension translates to positive BitVec width. The iff retains the complete existential repetition count, with no encoder validity/nonempty/length premise. Proof handles empty encoding and derives quotient from append/repetition lengths exactly as HOL. This is the original proof-side relation, no executed compiler behavior changes. Original proof theory has no prebuilt object here; enc_with_nop_source_type.sml re-elaborates unchanged source text in an in-memory HOL theory for type inspection, not a prebuilt-theory oracle or equivalence claim. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/NopEncoding.lean",
+    "lean_name": "encWithNop_iff",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "enc_with_nop_thm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; bead .18.5.15.10.22): original lines94-115. Definition retains arbitrary encoder/instruction/encoded list, generic encoded payload, zero-NOP-length branch, truncated subtraction and natural DIV, APPEND/FLAT/REPLICATE. Exact native HolAsm includes all source constructors; only polymorphic word dimension translates to positive BitVec width. The iff retains the complete existential repetition count, with no encoder validity/nonempty/length premise. Proof handles empty encoding and derives quotient from append/repetition lengths exactly as HOL. This is the original proof-side relation, no executed compiler behavior changes. Original proof theory has no prebuilt object here; enc_with_nop_source_type.sml re-elaborates unchanged source text in an in-memory HOL theory for type inspection, not a prebuilt-theory oracle or equivalence claim. Coordinator review pending."
   }
 ]
