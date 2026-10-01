@@ -2634,6 +2634,7 @@ destination-distinctness observations; Lean also applies the full RTC theorem
 to zero-step and concrete two-step traces. These fixtures do not establish
 cross-language equivalence or whole allocator correctness.
 
+- `parmove_preserves_moves_steps_probeScript.sml`: six complete destination/witness observations for Start/Save states. Lean fixtures certify the RTC trace and zero-step case; HOL observations alone do not prove that trace or cross-assistant equivalence.
 `wordconvs_code_labels_probe.out` contains twelve fresh direct original
 `wordConvs$get_code_labels` complete-set observations, replayed at identical
 width64 inputs by `Flapjack.Test.WordConvsCodeLabelsParity`. Cases cover direct
@@ -2644,6 +2645,22 @@ cross-language equivalence. Regenerate against read-only prebuilt theories with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=wordconvs_code_labels_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
+
+# Word-to-Stack native label helpers
+
+`word_to_stack_code_labels_probeScript.sml` evaluates fourteen complete-set
+assertions from original `word_to_stackTheory` and `stackPropsTheory`. The
+identical inputs are kernel-replayed by `WordToStackCodeLabelsParity`: empty
+and repeated stack loads, zero and recursive stack moves, zero and recursive
+return copies, both performance/handler flags, arbitrary return payloads,
+width one, and zero/nonzero live frames with irregular bitmap counts. The
+nonempty continuation includes both code references and an owned handler.
+These finite regressions do not prove compiler correctness or cross-language
+equivalence. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_to_stack_code_labels_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
+
 - `parmove_preserves_moves_steps_probeScript.sml`: six complete destination/witness observations for Start/Save states. Lean fixtures certify the RTC trace and zero-step case; HOL observations alone do not prove that trace or cross-assistant equivalence.
 ### Register allocator phase closure audit
 
@@ -2685,3 +2702,9 @@ including independent Boolean callback results and List/Boolean states. These fi
 rows do not establish full allocator correctness or production routing. Regenerate
 with `HOL_PROBE_ONLY=reg_alloc_state_foreach_probeScript.sml` and the read-only
 original CakeML reg_alloc theory directory.
+
+`parmove_preserves_moves_pmov_probe.out` records three fresh original scheduler
+observations: terminal scratch destination, pending destination, and full pending
+output. ParmovePreservesMovesPmovParity kernel-replays the same inputs and applies
+the source-shaped preservation theorem with internally discharged well-formedness.
+Finite observations are regression evidence, not cross-prover equivalence.

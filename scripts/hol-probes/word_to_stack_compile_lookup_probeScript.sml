@@ -1,0 +1,8 @@
+load "preamble";
+load "word_to_stackTheory";
+open bossLib HolKernel Parse preamble word_to_stackTheory;
+fun out label q = (print (label ^ "="); print_term (rconc (EVAL q)); print "\n");
+val _ = out "lookup_duplicate_first" ``let bs = (Append (List [8w]) (List [2w]),5); code = [((7:num),5,wordLang$Alloc 0 (LN,LN));((7:num),0,wordLang$Skip)] in let (ps,fs,bs2) = compile_word_to_stack (c:64 asm$asm_config) F 4 code bs; (body,f,next) = compile_prog c F (wordLang$Alloc 0 (LN,LN)) 5 4 bs in (ALOOKUP code 7 = SOME (5,wordLang$Alloc 0 (LN,LN)), ALOOKUP ps 7 = SOME body, LENGTH(append(FST next)),SND next,SND next-LENGTH(append(FST next)),fs)``;
+val _ = out "lookup_later_threaded" ``let bs = (Append (List [8w]) (List [2w]),5); code = [((8:num),5,wordLang$Alloc 0 (LN,LN));((9:num),5,wordLang$Alloc 0 (LN,LN));((9:num),0,wordLang$Skip)] in let (_,_,next) = compile_prog (c:64 asm$asm_config) F (wordLang$Alloc 0 (LN,LN)) 5 4 bs; (ps,fs,last) = compile_word_to_stack c F 4 code bs in let (body,f,finish) = compile_prog c F (wordLang$Alloc 0 (LN,LN)) 5 4 next in (ALOOKUP code 9 = SOME (5,wordLang$Alloc 0 (LN,LN)),ALOOKUP ps 9 = SOME body,LENGTH(append(FST next)),SND next,LENGTH(append(FST finish)),SND finish,fs)``;
+val _ = out "lookup_missing" ``let (ps,_,_) = compile_word_to_stack (c:64 asm$asm_config) F 4 [((7:num),0,wordLang$Skip)] (List [],0) in ALOOKUP ps 8 = NONE``;
+val _ = out "lookup_bool_first" ``let bs = (List [8w],3); code = [(T,0,wordLang$Skip);(T,5,wordLang$Alloc 0 (LN,LN))] in let (ps,_,_) = compile_word_to_stack (c:8 asm$asm_config) T 4 code bs; (body,_,_) = compile_prog c T wordLang$Skip 0 4 bs in ALOOKUP ps T = SOME body``;
