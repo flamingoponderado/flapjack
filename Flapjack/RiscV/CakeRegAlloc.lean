@@ -2616,12 +2616,16 @@ theorem cakeColourWordSpillState_allocated_stack_slot_lt_frame
     entry moves and IRC coalescing in the returned Word program, while
     exposing the existing `WordSpillState` shape to the shared pipeline. -/
 
-def cakeAllocateWordFunction [OfNat α 0] (parameters : List Nat) (program : WordProg α)
+/-- Actual allocator with a caller-supplied full-program SSA limit. All
+memory checks and IRC inputs remain in this shared implementation. Flapjack
+production infrastructure, not a HOL allocation-correctness theorem. -/
+def cakeAllocateWordFunctionFromLimit [OfNat α 0] (limit : Nat)
+    (parameters : List Nat) (program : WordProg α)
     (currentFunction : Nat) (k : Nat) :
     Option (WordSsaState × List Nat × WordProg α × WordSpillState) :=
   if !allocatorMemorySupported program then none else
   let (state, renamedParameters, ssaProgram) :=
-    wordFullSsaCcTrans parameters.length program
+    wordFullSsaCcTransFromLimit limit parameters.length program
   if !allocatorMemorySupported ssaProgram then none else
   let tree := wordClashTree ssaProgram []
   let fs := cakeGetStackOnly ssaProgram
@@ -2639,6 +2643,21 @@ def cakeAllocateWordFunction [OfNat α 0] (parameters : List Nat) (program : Wor
   | some colouring =>
       some (state, renamedParameters, ssaProgram,
         cakeColourWordSpillState k parameters ssaProgram colouring)
+
+def cakeAllocateWordFunction [OfNat α 0] (parameters : List Nat) (program : WordProg α)
+    (currentFunction : Nat) (k : Nat) :
+    Option (WordSsaState × List Nat × WordProg α × WordSpillState) :=
+  cakeAllocateWordFunctionFromLimit (wordSsaLimitVar parameters program)
+    parameters program currentFunction k
+
+/-- The compatibility API is the same complete allocation result for every
+carrier/program, including rejection. Flapjack infrastructure with no HOL original. -/
+theorem cakeAllocateWordFunction_fromLimit [OfNat α 0]
+    (parameters : List Nat) (program : WordProg α) (currentFunction k : Nat) :
+    cakeAllocateWordFunction parameters program currentFunction k =
+      cakeAllocateWordFunctionFromLimit (wordSsaLimitVar parameters program)
+        parameters program currentFunction k := by
+  rfl
 
 /-! `get_prefs` from the original allocator driver: the move preferences fed
     to IRC (`word_allocScript.sml:1203-1215` via `get_heuristics_def`). -/
