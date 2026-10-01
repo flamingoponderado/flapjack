@@ -1,3 +1,4 @@
+import Flapjack.Test.ParmoveTempStepsParity
 import Flapjack.Test.ParmoveStateToListParity
 import Flapjack.Test.ParmoveAllDistinctStepParity
 import Flapjack.Test.HeuProgParity

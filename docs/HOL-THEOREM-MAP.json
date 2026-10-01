@@ -42658,5 +42658,13 @@
   "hol_name": "state_to_list_def",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-b source comparison 2026-10-01 w1a4.6: literal source1026-1028 APPEND(FST p)(FST(SND p)) ++ SND(SND p), preserving left association and pending/active/emitted order. Fresh original type audit alpha list # alpha list # alpha list -> alpha list requires broad arbitrary-element lists; native generic alpha is not specialized to Option register moves and requires no equality instance. List/product constructor translation exact, no extra bound/callback/premise. Nine fresh original whole output equations with kernel rfl fixtures cover empty and each segment, ordering/duplicates, Nat beyond2^64, independent Bool and raw pair carriers. Definition-only proof support, no executed behavior change; move-preservation/renaming ports remain open. Coordinator acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/TempBeforeAssign/Steps.lean",
+  "lean_name": "stepsNotUseTempBeforeAssign",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "steps_not_use_temp_before_assign",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead46.5: full literal source909-918 RTC invariant, input (wf and safety of REVERSE(active++emitted)) conjunct Steps implies both target wf and same safety, arbitrary alpha. Native ReflTransGen Step is reviewed exact RTC, chronology/order and Boolean=true translation unchanged. No target invariant/initialized scratch premise added. Tail induction invokes accepted wf_step and step_not_use_temp_before_assign with IH source conjuncts; reflexivity retains both. Twelve fresh original combined wf/safety observations plus genuine native RTC/kernel theorem applications cover all clauses, prior scratch, Bool, zero-step states and three-step cycle. No executed behavior change; pmov/full parmove remain open. Coordinator acceptance pending."
 }
 ]
