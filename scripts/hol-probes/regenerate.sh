@@ -2883,3 +2883,8 @@ run_probe labsem_semantics_probeScript.sml labsem_semantics_probe.out \
 
 run_probe parmove_dstep_step_probeScript.sml parmove_dstep_step_probe.out \
   pv_ds_wf_0 pv_ds_wf_1 pv_ds_wf_2 pv_ds_wf_3 pv_ds_wf_4 pv_ds_wf_5 pv_ds_cycle_0_0 pv_ds_cycle_0_1 pv_ds_cycle_0_2 pv_ds_cycle_1_0 pv_ds_cycle_1_1 pv_ds_cycle_1_2 pv_ds_cycle_2_0 pv_ds_cycle_2_1 pv_ds_cycle_2_2 \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe parmove_destination_wrapper_probeScript.sml parmove_destination_wrapper_probe.out \
+  dw_empty dw_self dw_chain dw_cycle dw_duplicate dw_order dw_nested_option \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
