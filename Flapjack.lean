@@ -1,3 +1,4 @@
+import Flapjack.Pancake.WordConvs.NameMonotonicity
 import Flapjack.Pancake.WordConvs.ExpressionMonotonicity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.MaxVarExp
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.MaxVarInst

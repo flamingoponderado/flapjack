@@ -3224,3 +3224,7 @@ run_probe word_alloc_max_exp_probeScript.sml word_alloc_max_exp_probe.out \
 run_probe wordconvs_exp_mono_probeScript.sml wordconvs_exp_mono_probe.out \
   em_var em_nested em_empty em_const em_lookup em_duplicate em_large em_guard_needed em_original_theorem \
   "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe wordconvs_name_mono_probeScript.sml wordconvs_name_mono_probe.out \
+  nm_empty nm_single nm_both nm_invalid nm_guard_needed nm_original_theorem \
+  "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
