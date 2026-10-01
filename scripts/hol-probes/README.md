@@ -2171,3 +2171,10 @@ NONE source. Two wf-valid boundaries violate the constructor guards: closing
 a cycle changes register2 from17 to27; a pending read changes register4 from17
 to27. These are not accepted steps. The proof derives active no-read and retains
 both original guards. Full step_sem/RTC/scheduler assembly remains open.
+
+`parmove_stepssem_probeScript.sml` freshly captures 12 original semantic
+observations along a three-step cycle chain (Save, EmitHead, EmitLast), paired
+with kernel computations and an actual RTC constructor proof. Real registers
+remain27/17, while NONE changes99 to17. The theorem uses original eqenv,
+not equality at the temporary; reflexive closure is kernel checked separately.
+No functional scheduler or production-route correctness is inferred.

@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.Parmove.StepsSem
 import Flapjack.Pancake.WordLang.MaxVarExp
 import Flapjack.Compiler.Backend.Parmove.StepSem
 import Flapjack.Compiler.Backend.Parmove.StepSem.EmitHead
