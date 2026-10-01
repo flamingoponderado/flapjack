@@ -151,6 +151,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.Updates
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.StateRelation
 import Flapjack.Compiler.Backend.WordAlloc.Expressions
 import Flapjack.Compiler.Backend.WordAlloc.ProgramLiveness
+import Flapjack.Compiler.Backend.WordAlloc.Colour
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.StrongLocalsRel
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyMaps
 import Flapjack.HolRef
@@ -770,6 +771,7 @@ import Flapjack.Pancake.CrepToLoop.Optimise
 import Flapjack.Pancake.CrepToLoop.StateRel
 import Flapjack.Test.WordAllocLiveExpressionParity
 import Flapjack.Test.WordAllocProgramLivenessParity
+import Flapjack.Test.WordAllocApplyColourExactParity
 import Flapjack.Test.CrepToLoopCompileExpExactParity
 import Flapjack.Test.CrepToLoopCompileExactParity
 import Flapjack.Test.CrepToLoopCompFuncParity
@@ -810,6 +812,7 @@ import Flapjack.Compiler.Backend.StackLang.Prog
 import Flapjack.Compiler.Backend.StackLang.ProductionCodec
 import Flapjack.Compiler.Backend.StackLang.WordPayloads.InstructionBoundary
 import Flapjack.Compiler.Backend.StackLang.MacroLeaves
+import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.StoreNarrow
 import Flapjack.Compiler.Backend.StackCarrier
 import Flapjack.Basis.Pure.MlString
 import Flapjack.Compiler.Backend.MlStringBridge
@@ -832,28 +835,4 @@ import Flapjack.Compiler.Backend.StackNames.Labels
 import Flapjack.Compiler.Backend.StackRemove
 import Flapjack.Compiler.Backend.StackAlloc
 import Flapjack.Compiler.Backend.WordToStack
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StackSize
-import Flapjack.Compiler.Backend.WordToStackRegFormat
-import Flapjack.RiscV.CakeAllocatorBitsBridge
-import Flapjack.StackAlloc
-import Flapjack.StackAlloc.Runtime
-import Flapjack.StackAlloc.Machine
-import Flapjack.StackAlloc.FrameMachine
-import Flapjack.StackAlloc.CollectorSemantics
-import Flapjack.StackAlloc.Correctness
-import Flapjack.StackAlloc.BitmapSemantics
-import Flapjack.StackRemove
-import Flapjack.Lab
-import Flapjack.RiscV.Lab
-import Flapjack.RiscV.LabDiagnostics
-import Flapjack.RiscV.WordDiagnostics
-import Flapjack.FfiHOL
-import Flapjack.FfiBridge
-
-/-!
-# Flapjack in Lean
-
-The library currently contains the first Lean representation of Flapjack's
-front-end language. The source of truth used while porting is the CakeML HOL
-development in `cakeml/pancake`.
--/
+import Flapjack.Compiler.Backend.WordToStack.LiveBitmap

@@ -6,3 +6,5 @@ wb_boundary=[0xE000000000000000w; 3w]
 wb_order_a=[192w; 3w]
 wb_order_b=[192w; 3w]
 wb_order_eq=T
+wb_payload_nat=[192w; 3w]
+wb_payload_bool=[192w; 3w]

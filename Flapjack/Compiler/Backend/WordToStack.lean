@@ -148,16 +148,17 @@ def constWordsToBitmapW {width : Nat} [NeZero width]
     word_list (GENLIST (\x. MEM x names) f' ++ [T]) (dimindex (:'a) - 1)
 ```
 
-UNTAGGED.  HOL's `live` is a `num_set` (`unit spt`), whose finite-map carrier
-and `toAList` ordering live in `HOL/src/finite_maps/sptreeScript.sml`, outside
+UNTAGGED.  HOL's `live` is a payload-polymorphic `spt` (specialized to `unit`
+by the calling `wLive` cutsets), whose tree carrier and `toAList` ordering live in `HOL/src/finite_maps/sptreeScript.sml`, outside
 the CakeML tree: `scripts/check-hol-refs.py` rejects `@[hol]` paths that are not
 under `cakeml/`, and `docs/NUM-SET-AUDIT.md` models `num_set` as an
 order-insensitive domain because the passes observe `toAList` only through
 `MEM`/`EVERY`.  `write_bitmap` reads `toAList live` only through `MEM` of the
 mapped names, so its value depends solely on the domain of `live`; this model
 takes that domain directly as a `List Nat`.  The kernel-checked
-`writeBitmapHOL_domain_insensitive` records exactly that insensitivity.  This is
-a documented carrier mismatch, not an exact port: the definition is deliberately
+`writeBitmapHOL_domain_insensitive` records exactly that insensitivity.  The exact generic-Spt port now lives at
+`WordToStack/LiveBitmap.lean::writeBitmapExact`; this retained key-list helper
+is infrastructure with a documented carrier mismatch, not an exact port: the definition is deliberately
 **not** marked `@[hol]`.
 
 The direct HOL `EVAL` evidence is checked in at
