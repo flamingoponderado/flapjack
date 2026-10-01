@@ -1,6 +1,9 @@
 import Flapjack.Test.WordToStackAbsStackGeneralityParity
 import Flapjack.Test.WordToStackExpressionMaximumParity
 import Flapjack.Test.WordToStackCompLengthParity
+import Flapjack.Test.WordAllocOracleColourParity
+import Flapjack.Test.WordAllocReturnCheckerParity
+import Flapjack.Test.WordAllocShareCheckerParity
 import Flapjack.Test.WordAllocCoalesceCostParity
 import Flapjack.Test.WordAllocLoopCheckerParity
 import Flapjack.Test.WordToStackCompilePrefixParity
