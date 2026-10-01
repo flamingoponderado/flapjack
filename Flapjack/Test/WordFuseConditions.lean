@@ -195,8 +195,8 @@ def cakePreSsaRoundTripMatchesCake : Bool :=
       (.seq (.assign 3 (.const 0)) (.assign 4 (.const 0)))] => true
   | _ => false
 
--- Original tree differs from production fusion; see flapjack-b9gd.
-#guard !cakePreSsaRoundTripMatchesCake
+-- Same retained original tree now matches the repaired composition.
+#guard cakePreSsaRoundTripMatchesCake
 
 def terminatingElseIsPushedOut : Bool :=
   match wordPushOutIf
@@ -239,8 +239,8 @@ def runChecks : IO Bool := do
         loopConditionMaterializationFuses),
       ("fusion handles the reduced nested handler condition",
         nestedHandlerConditionFuses),
-      ("known original pre-SSA fusion tree gap remains visible",
-        !cakePreSsaRoundTripMatchesCake),
+      ("original pre-SSA compile_exp tree matches after repair",
+        cakePreSsaRoundTripMatchesCake),
       ("Cake terminating conditional branches are pushed out",
         terminatingElseIsPushedOut),
       ("a clobbering materialisation uses Cake duplicate-if",

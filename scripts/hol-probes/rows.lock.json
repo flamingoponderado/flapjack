@@ -4727,6 +4727,12 @@
       "out": "word_simp_seq_assoc_source_probe.out",
       "rows": 16,
       "sha256": "2fd6b047d0c69842afe024cf07c1d1cf42e962b656da8f68bcd44bac95a662b4"
+    },
+    {
+      "bytes": 1671,
+      "out": "word_simp_duplicate_if_source_probe.out",
+      "rows": 14,
+      "sha256": "43e2a16f3007bf87e29712574d126fa5f2ff167b24d7ba12fe5f038d54bec45d"
     }
   ],
   "version": 1

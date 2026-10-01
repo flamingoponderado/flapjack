@@ -791,6 +791,11 @@ run_probe word_to_stack_retained_frame_probeScript.sml word_to_stack_retained_fr
 run_probe word_to_stack_allocator_stages_probeScript.sml word_to_stack_allocator_stages_probe.out \
   allocator_stages_skip allocator_stages_tick allocator_stages_raise allocator_stages_tail_call \
   "$cake_dir/compiler/backend/word_to_wordScript.sml" "$cake_dir/compiler/backend"
+run_probe word_simp_duplicate_if_source_probeScript.sml word_simp_duplicate_if_source_probe.out \
+  duplicate_roundtrip duplicate_must duplicate_loop duplicate_call_return duplicate_call_handler \
+  duplicate_call_both duplicate_if duplicate_no_hoist duplicate_zero_bound duplicate_non_simple \
+  duplicate_move_simple duplicate_raise_other duplicate_raise_zero duplicate_raise_three \
+  "$cake_dir/compiler/backend/word_simpScript.sml" "$cake_dir/compiler/backend"
 run_probe word_simp_seq_assoc_source_probeScript.sml word_simp_seq_assoc_source_probe.out \
   assoc_skip assoc_prefix_skip assoc_trailing_skip assoc_interior_skip assoc_all_skip \
   assoc_middle_skip assoc_right_spine assoc_if assoc_loop assoc_must assoc_tail_handler \

@@ -1,10 +1,20 @@
+`word_simp_duplicate_if_source_probe.out` captures fourteen original source
+outputs: seven whole compile_exp trees across Seq/If/MustTerminate/Loop and
+all optional Call bodies, plus no-hoist, zero-bound, is_simple and
+non-Raise/zero/three dest_Raise_num boundaries. WordSimpDuplicateIfParity
+kernel-checks identical observations. Production pre-SSA now directly composes
+Seq_assoc, original const_fp, structural simp_duplicate_if and push_out_if.
+Hoist probes use const_fp without extra Seq_assoc, enforce original first-result
+zero guard, and normalize successful hoists with original Seq_assoc Skip.
+Legacy list/fact helpers remain separate from the production composition.
+This repairs flapjack-b9gd; original captured pre-SSA tree stays unchanged.
+
 `word_simp_seq_assoc_source_probe.out` records sixteen complete original
 `Seq_assoc` outputs: empty/nonempty accumulators, interior/trailing/all Skip,
 left association, If, Loop, MustTerminate and both optional Call bodies.
 `WordSimpSeqAssocParity` kernel-checks the fifteen accumulator trees; WordFuseConditions checks the
-complete original pre-SSA compile_exp tree as an explicit mismatch
-(flapjack-b9gd): downstream fusion retains a trailing Skip and a different
-association. Its false match is preserved instead of weakening the oracle. The formerly failing
+complete original pre-SSA compile_exp tree, now matched by the repaired
+composition (flapjack-b9gd). The original expected tree was not changed. The formerly failing
 `Seq Tick Skip` input and original Tick oracle are preserved; the production
 accumulator now matches the original clause rather than the old Lean rewalk.
 
