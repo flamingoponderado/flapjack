@@ -3166,3 +3166,7 @@ run_probe word_to_stack_register_labels_probeScript.sml word_to_stack_register_l
 run_probe parmove_preserves_moves_step_probeScript.sml parmove_preserves_moves_step_probe.out \
   preserve_4_before preserve_4_after preserve_6_before preserve_6_after preserve_1_before preserve_1_after preserve_8_before preserve_8_after preserve_scratch_before preserve_scratch_after \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe wordconvs_code_labels_probeScript.sml wordconvs_code_labels_probe.out \
+  wl_skip wl_location wl_direct_tail wl_indirect_tail wl_tail_handler wl_both_bodies wl_metadata_omitted wl_return_only wl_duplicate wl_if wl_loop wl_must \
+  "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
