@@ -38547,5 +38547,31 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-ds10 source comparison (2026-10-01, bead flapjack-pxn.18.5.15.10.3) vs asmPropsScript.sml:58-64: target_state_rel t s ms with all five conjuncts (state_ok, get_pc=pc, mem_domain memory agreement, reg_count/avoid_regs register agreement, fp_reg_count fp agreement); argument order t s ms preserved; MEM i avoid_regs rendered as avoidRegs.contains i = false. word rendering qualified."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/targetSemScript.sml",
+    "hol_name": "code_loaded_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/Machine.lean",
+    "lean_name": "codeLoaded",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.15.10.4). Source comparison with targetSemScript.sml:238-243 code_loaded_def: read_bytearray (mc.target.get_pc ms) (LENGTH bytes) (\\a. if a IN mc.prog_addresses then SOME (mc.target.get_byte ms a) else NONE) = SOME bytes. Lean renders 'a word as BitVec width ([NeZero width]), word8 as BitVec 8, and reads via the reviewed tagged readBytearrayWordHOL; the HOL 'a word set prog_addresses is rendered as BitVec width -> Prop (carriers' reviewed translation) decided classically inside the definition, with no extra binder."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/targetSemScript.sml",
+    "hol_name": "target_configured_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/Machine.lean",
+    "lean_name": "targetConfigured",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.15.10.4). Source comparison with targetSemScript.sml:247-261 target_configured_def: ~t.failed /\\ t.be = config.big_endian /\\ t.align = config.code_alignment /\\ t.mem_domain = mc_conf.prog_addresses /\\ (case link_reg of NONE => T | SOME r => t.lr = r). Lean conjunct-for-conjunct over AsmState width and MachineConfig width state projection (asm_config = reviewed AsmConfigExact); bool negation rendered t.failed = false; mem_domain = prog_addresses compares the Prop-valued domain renderings."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/targetSemScript.sml",
+    "hol_name": "get_reg_value_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/Machine.lean",
+    "lean_name": "getRegValue",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.15.10.4). Source comparison with targetSemScript.sml:263-266 get_reg_value_def: get_reg_value NONE w f = w /\\ get_reg_value (SOME v) _ f = f v. Lean is the same polymorphic match over (value : Option Nat). No word-carrier difference, so no representation qualifier applies."
   }
 ]
