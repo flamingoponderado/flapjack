@@ -3340,10 +3340,6 @@ run_probe ssa_setup_probeScript.sml ssa_setup_probe.out \
   ss_even ss_empty ss_duplicates ss_invalid ss_one ss_setup0 ss_setup1 ss_setup3 ss_setup80 even_list_def next_var_rename_def list_next_var_rename_def setup_ssa_def ss_setup_1_to_80 ss_setup_80_to_1 ss_setup_original_type \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
 
-run_probe ssa_map_bounds_probeScript.sml ssa_map_bounds_probe.out \
-  mb_empty mb_valid mb_same mb_bound mb_physical mb_invalid mb_large_physical mb_large mb_overwrite mb_more \
-  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
-
 run_probe ssa_map_ok_probeScript.sml ssa_map_ok_probe.out \
   sm_empty sm_valid sm_at_bound sm_physical sm_invalid sm_definition \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -3375,13 +3371,6 @@ run_probe stackprops_forbidden_operations_probeScript.sml stackprops_forbidden_o
 run_probe word_alloc_limit_var_probeScript.sml word_alloc_limit_var_probe.out \
   lv_original_definition lv_original_type lv_residue0 lv_residue1 lv_residue2 lv_residue3 lv_residue4 lv_skip1 lv_seven lv_eight lv_ignored16 lv_tail_handler lv_call_body lv_huge \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
-
-run_probe ssa_locals_bounds_probeScript.sml ssa_locals_bounds_probe.out \
-  lb_more \
-  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
-
-run_probe ssa_locals_swap_probeScript.sml ssa_locals_swap_probe.out \
-  sw_type_ssaL sw_type_cst sw_type_st sw_type_ssaR sw_type_na sw_full \
 run_probe ssa_rename_properties_probeScript.sml ssa_rename_properties_probe.out \
   rp_empty_alloc rp_empty_stack rp_alloc_duplicates rp_stack_duplicates rp_existing rp_overwrite rp_invalid rp_huge rp_full_source_replay \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -3408,4 +3397,16 @@ run_probe ssa_map_extend_probeScript.sml ssa_map_extend_probe.out \
 
 run_probe ssa_register_flip_probeScript.sml ssa_register_flip_probe.out \
   rf_residue_0 rf_equalities_0 rf_residue_1 rf_equalities_1 rf_residue_2 rf_equalities_2 rf_residue_3 rf_equalities_3 rf_residue_4 rf_equalities_4 rf_residue_5 rf_equalities_5 rf_residue_6 rf_equalities_6 rf_residue_7 rf_equalities_7 rf_alloc_application_0 rf_alloc_application_1 rf_alloc_application_2 rf_stack_application_0 rf_stack_application_1 rf_stack_application_2 rf_is_alloc_var_flip_source_replay rf_is_stack_var_flip_source_replay rf_flip_rw_source_replay \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_map_bounds_probeScript.sml ssa_map_bounds_probe.out \
+  mb_empty mb_valid mb_same mb_bound mb_physical mb_invalid mb_large_physical mb_large mb_overwrite mb_more \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_locals_bounds_probeScript.sml ssa_locals_bounds_probe.out \
+  lb_more \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_locals_swap_probeScript.sml ssa_locals_swap_probe.out \
+  sw_type_ssaL sw_type_cst sw_type_st sw_type_ssaR sw_type_na sw_full \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
