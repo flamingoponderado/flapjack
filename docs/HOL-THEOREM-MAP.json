@@ -43099,5 +43099,13 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.3.26.11): complete wordConvsScript.sml496-508 compared clause by clause. The sole program binder is the exact WordLangProgHOL (BitVec width), preserving all original constructors, including the five-component optional return tuple, four-component optional handler tuple and Spt cutsets. The only carrier translation is positive HOL word dimension to BitVec width with [NeZero width], recorded by words_as_type_indexed_bitvec. HOL num sets are Lean Set Nat; empty, singleton and union preserve extensional membership and eliminate duplicates. Call independently unions its optional direct target, return body and handler body, including the handler when the return option is NONE; variable lists/cutsets and continuation metadata do not contribute labels. Seq/If take unions, Loop/MustTerminate recurse, LocValue contributes its code label, and all other constructors return empty. No convention, target label relation, output, pass-success or evaluation premise is added. Twelve fresh original full-set equalities evaluate to T and identical inputs/expected sets are kernel-replayed in WordConvsCodeLabelsParity, covering every source clause, both Call bodies, absent direct targets, populated tail handlers, duplicate labels and exclusion of continuation metadata. This is the source-side extractor needed in the conclusion of word_to_stack_comp_code_labels11748, not a proof of that theorem or of source-to-RISC-V correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/PreservesMoves/Steps.lean",
+    "lean_name": "stepsPreservesMoves",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "steps_preserves_moves",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison 2026-10-01 beadw1a4.8: original1039-1048 free destination x explicit as Option alpha; initial existential non-self source conjunct primitive-step RTC implies same final existential. Arbitrary raw Option alpha pair-list State, stateToList concatenation and canonical ReflTransGen Step retained, lambdas beta-reduced. No wf, scratch safety, equality instance, target output or intermediate-invariant premise. Refl/tail induction lifts accepted whole stepPreservesMoves. Certified zero-step and two-step Start/Save kernel fixtures expose changing source and scratch destination; fresh original predicates/output witness equations are regression evidence only. Coordinator acceptance pending."
   }
 ]

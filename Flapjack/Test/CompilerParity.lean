@@ -1,4 +1,5 @@
 import Flapjack.Test.WordConvsCodeLabelsParity
+import Flapjack.Test.ParmovePreservesMovesStepsParity
 import Flapjack.Test.StackPropsCodeLabelsParity
 import Flapjack.Test.BytesInMemParity
 import Flapjack.Test.RegAllocSortedMemParity
