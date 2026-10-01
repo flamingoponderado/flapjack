@@ -3151,6 +3151,14 @@ above the original count bound, and the intermediate carrier remains Bool
 while states are Nat. These regressions do not establish cross-language
 equivalence or complete encoder correctness.
 
+`word_alloc_limit_var_probe.out` records the full original definition/type and
+twelve native-program maximum/limit/class/strict-bound observations. Inputs
+cover all four residues, zero/multiples, widths1/32/64/80, unbounded naturals,
+returning Call bodies, ignored tail handlers and ignored Load16 fields.
+`WordAllocLimitVarParity` checks thirteen kernel examples against identical
+inputs. Select `HOL_PROBE_ONLY=word_alloc_limit_var_probeScript.sml`.
+The executed upstream maximum/limit route remains tracked on .30.1.2.1.
+
 ### SSA renaming properties
 
 `ssa_rename_properties_probeScript.sml` replays the complete local
@@ -3165,13 +3173,17 @@ four-conjunct conclusion** as T. This is distinct from attempting to EVAL a
 symbolic universally quantified lookup predicate. The full replay statement is
 captured separately; this local theorem is not claimed to be exported in HOL's DB.
 
-`word_alloc_limit_var_probe.out` records the full original definition/type and
-twelve native-program maximum/limit/class/strict-bound observations. Inputs
-cover all four residues, zero/multiples, widths1/32/64/80, unbounded naturals,
-returning Call bodies, ignored tail handlers and ignored Load16 fields.
-`WordAllocLimitVarParity` checks thirteen kernel examples against identical
-inputs. Select `HOL_PROBE_ONLY=word_alloc_limit_var_probeScript.sml`.
-The executed upstream maximum/limit route remains tracked on .30.1.2.1.
+### SSA map intersection and insertion
+
+`ssa_map_preservation_probeScript.sml` replays the complete literal local proofs
+from word_allocProof lines 5916–5933 and captures the independently polymorphic
+right-map binder type. Thirteen actual theorem applications discharge the full
+original premises, require empty hypotheses and the exact requested conclusion,
+then render that proven predicate as `T` with `EQT_INTRO`. These rows are not
+claimed direct evaluations of a symbolic universally quantified map predicate.
+Two false original guard evaluations are separate sentinels. Matching kernel
+applications cover empty, preserved/dropped, overwritten, malformed, branching
+and large-number maps; they are regressions, not a cross-language proof.
 
 ### SSA map extension
 
@@ -3198,15 +3210,3 @@ hypotheses; `EQT_INTRO` renders its proved conclusion as T. The three local
 replays are captured separately and are not claimed exported HOL DB theorems.
 `SSARegisterFlipParity` kernel-checks identical tuples and fourteen full public
 theorem applications, without a bounded-register or additional class premise.
-
-### SSA map intersection and insertion
-
-`ssa_map_preservation_probeScript.sml` replays the complete literal local proofs
-from word_allocProof lines 5916–5933 and captures the independently polymorphic
-right-map binder type. Thirteen actual theorem applications discharge the full
-original premises, require empty hypotheses and the exact requested conclusion,
-then render that proven predicate as `T` with `EQT_INTRO`. These rows are not
-claimed direct evaluations of a symbolic universally quantified map predicate.
-Two false original guard evaluations are separate sentinels. Matching kernel
-applications cover empty, preserved/dropped, overwritten, malformed, branching
-and large-number maps; they are regressions, not a cross-language proof.
