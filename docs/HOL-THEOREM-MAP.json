@@ -42018,6 +42018,33 @@
   "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.4.14): HOL clash_tree_colouring_ok (word_allocProofScript.sml:2813-2826) at the If case of get_clash_tree_ind, rendered by the untagged clashTreeGoal: binders lt f live flive livein flivein; the six HOL premises wf_cutsets prog, wf live, EVERY (\\(n,e). wf n /\\ wf e) lt (as membership-quantified sptWf of both components), domain flive = IMAGE f (domain live), INJ f (domain live) UNIV, check_clash_tree f (get_clash_tree prog lt) live flive = SOME (livein,flivein); and the five hide'd HOL conclusions (untagged clashTreeConcl): wf livein, INJ f (domain livein), colouring_ok f prog live lt, livein = get_live prog live lt, domain flivein = IMAGE f (domain livein). IHs: clashTreeGoal c1 and c2 (both at live). Proof follows HOL (word_allocProofScript.sml:3001-3029): both branches checked from live, check_partial_col_INJ inserts toAList (difference o2 o1) keys into o1, which equals union o1 o2 by spt_eq_thm/lookup_difference/toAList_domain (untagged insertDiffKeys_eq_union, mem_sptToAList_keys, ifCore), then the condition-register Delta; Reg operand needs wf_insert_swap; colouring_ok If clause on the merged set. No other extra premise. HOL sets as predicates, IMAGE as an existential, INJ as injectivity on the domain predicate; HOL 'a word as positive-width BitVec."
 },
 {
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "clash_tree_colouring_ok",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/ClashTreeColouringOk/LoopCases.lean",
+  "lean_name": "clashTreeColouringOk_Loop",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison: HOL 2813-2826 and case Loop at 3270-3299. Exact WordLangProgHOL positive-width BitVec carrier; original six premises and five conclusions via accepted clashTreeGoal/clashTreeConcl. Loop has only body IH, uses right-first checker and fixed-set checkColInj; Break/Continue derive indexed projection wf from EVERY table premise, including absent lookup LN. No extra evaluation, injectivity, table bounds or desired conclusion premises. words_as_type_indexed_bitvec is only carrier translation. Coordinator review pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "clash_tree_colouring_ok",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/ClashTreeColouringOk/LoopCases.lean",
+  "lean_name": "clashTreeColouringOk_Break",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison: HOL 2813-2826 and case Break at 3270-3299. Exact WordLangProgHOL positive-width BitVec carrier; original six premises and five conclusions via accepted clashTreeGoal/clashTreeConcl. Loop has only body IH, uses right-first checker and fixed-set checkColInj; Break/Continue derive indexed projection wf from EVERY table premise, including absent lookup LN. No extra evaluation, injectivity, table bounds or desired conclusion premises. words_as_type_indexed_bitvec is only carrier translation. Coordinator review pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "clash_tree_colouring_ok",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/ClashTreeColouringOk/LoopCases.lean",
+  "lean_name": "clashTreeColouringOk_Continue",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison: HOL 2813-2826 and case Continue at 3270-3299. Exact WordLangProgHOL positive-width BitVec carrier; original six premises and five conclusions via accepted clashTreeGoal/clashTreeConcl. Loop has only body IH, uses right-first checker and fixed-set checkColInj; Break/Continue derive indexed projection wf from EVERY table premise, including absent lookup LN. No extra evaluation, injectivity, table bounds or desired conclusion premises. words_as_type_indexed_bitvec is only carrier translation. Coordinator review pending."
+},
+{
   "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Heuristics.lean",
   "lean_name": "getSpillCost",
   "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
