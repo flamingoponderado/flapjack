@@ -49755,5 +49755,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.27): literal lab_to_targetScript.sml:478, the single clause `compile asm_conf c sec_list = compile_lab asm_conf c (filter_skip sec_list)`. Lean `compile asmConf c secList = compileLab asmConf c (filterSkip secList)`; `asm_conf`/`c`/`sec_list` order and the reviewed `filterSkip`/`compileLab` are preserved. Only the linked width-indexed `labLang$line` position field is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). No added hypothesis or changed call. Replayed as the CompileSkip/CompileLabFilterSkip rows of scripts/hol-probes/lab_to_target_compile_probe.out in Flapjack.Test.LabToTargetCompileParity. Source re-compared by flapjack-sol-c on 2026-10-02 against literal pinned HOL clauses and actual imported carriers during scoped ordinary DS9 dependency reuse; constructor payloads, binder dimensions, clause order, guards, recursion, defaults, and results checked. Fleet merge acceptance remains tracked separately on the existing beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Padding.lean",
+    "lean_name": "padCodeMap",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "pad_code_MAP",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source review: literal HOL MAP equation, quantifiers, unconditional conclusion, fixed bytes and positive word width match. No mismatch found; source/kernel verification recorded on .29."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/RemoveLabels.lean",
+    "lean_name": "progToBytesMap",
+    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+    "hol_name": "prog_to_bytes_MAP",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source review: literal HOL MAP equation, quantifiers, unconditional conclusion, fixed bytes and positive word width match. No mismatch found; source/kernel verification recorded on .29."
   }
 ]
