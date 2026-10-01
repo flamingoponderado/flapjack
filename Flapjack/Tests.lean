@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoves.CorrectRight
 import Flapjack.Test.SSAMapStepParity
 import Flapjack.Test.SSALocalsInsertParity
 import Flapjack.Test.SSAMapBoundsParity

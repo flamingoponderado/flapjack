@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoves.CorrectRight
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapStep
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsInsert
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsSwap

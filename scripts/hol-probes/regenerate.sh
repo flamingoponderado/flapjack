@@ -3443,3 +3443,7 @@ run_probe ssa_locals_insert_probeScript.sml ssa_locals_insert_probe.out \
 run_probe ssa_map_step_probeScript.sml ssa_map_step_probe.out \
   ml_full ml_empty ml_valid ml_rejected ml_physical ml_invalid ml_large \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_merge_correct_right_probeScript.sml ssa_merge_correct_right_probe.out \
+  mr_full mr_type_ls mr_type_na mr_type_ssaL mr_type_ssaR mr_type_stR mr_type_cstR mr_type_pri \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

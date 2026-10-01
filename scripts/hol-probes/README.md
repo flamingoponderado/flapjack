@@ -3430,3 +3430,5 @@ keys, malformed trees and unbounded natural registers.
 only the original allocation-class premise and all four result conjuncts.
 Malformed/physical-counter observation rows test the definition; they do not
 claim that the allocation premise holds. No exported local theorem is claimed.
+
+ssa_merge_correct_right_probe.out replays the complete original local merge_moves_correctR proof and its literal local prerequisites, then records all original inferred state/carrier types. CorrectRight proves the same five-conjunct native statement in Lean; no executable change or cross-language equivalence claim.
