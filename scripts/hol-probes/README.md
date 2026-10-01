@@ -40,6 +40,18 @@ with `HOL_PROBE_ONLY=stacksem_loop_recursive_probeScript.sml scripts/hol-probes/
 
 # Original Pancake HOL probes
 
+`word_to_stack_retained_frame_probe.out` captures eight fresh original
+`compile_prog` frame projections: empty, register-edge, first/second spill,
+argument-area dominance, equal demands, zero register count, and a natural
+register name above 64 bits. `WordToStackRetainedFrameParity` kernel-checks
+the same inputs/results and the five-register codec rejection sentinel.
+`ProductionFrame` relates the actual retained allocator result's occupancy
+and `cakeWordFrameSlots` to the Option-mapped native compiler frame; rejected
+codecs remain `none`. This does not establish codec success, native ABI/config
+or output correspondence, or executed native routing. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_to_stack_retained_frame_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `ParmoveAllDistinctPmovParity` replays the complete original scheduler outputs
 terminal/self/chain/cycle/active from `parmove_final_probe.out` while applying
 the full `ALL_DISTINCT_pmov` theorem under its real source premises. The

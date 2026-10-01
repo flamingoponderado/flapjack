@@ -4499,6 +4499,12 @@
       "out": "backendprops_nonzero_labels_probe.out",
       "rows": 15,
       "sha256": "79dbfaff328f99645e594adf91217ba216d2da03e230f88c3b46a1308bf1c014"
+    },
+    {
+      "bytes": 252,
+      "out": "word_to_stack_retained_frame_probe.out",
+      "rows": 8,
+      "sha256": "724cd582400ce633e427ce825b4a49b7455a297f3544a88e947151b22a29d7d0"
     }
   ],
   "version": 1
