@@ -21,6 +21,9 @@ HOL_RELN_TUPLES = runpy.run_path(
 HOL_DEFINE_RUN = runpy.run_path(
     str(Path(__file__).with_name("hol_sml_declarations.py"))
 )["define_run_declarations"]
+HOL_MONAD_ACCESSORS = runpy.run_path(
+    str(Path(__file__).with_name("hol_sml_declarations.py"))
+)["monad_accessor_declarations"]
 
 
 IDENT = r"[A-Za-z_][A-Za-z0-9_'$]*"
@@ -200,6 +203,10 @@ def parse_file(root: Path, path: Path) -> tuple[list[Entry], list[tuple[str, str
         start - 1: (carrier, runner, end)
         for carrier, runner, start, end in HOL_DEFINE_RUN(text)
     }
+    accessor_factories = {
+        start - 1: (names, end)
+        for names, start, end in HOL_MONAD_ACCESSORS(text)
+    }
     relative = path.relative_to(root).as_posix()
     entries: list[Entry] = []
 
@@ -265,6 +272,12 @@ def parse_file(root: Path, path: Path) -> tuple[list[Entry], list[tuple[str, str
             carrier, runner, end = run_factories[i]
             entries.append(Entry("Datatype", carrier, relative, i + 1, end, theory))
             entries.append(Entry("Definition", runner, relative, i + 1, end, theory))
+            recognized_style = True
+            i = end
+            continue
+        if i in accessor_factories:
+            names, end = accessor_factories[i]
+            entries.extend(Entry("Definition", name, relative, i + 1, end, theory) for name in names)
             recognized_style = True
             i = end
             continue

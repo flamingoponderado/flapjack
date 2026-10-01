@@ -105,4 +105,28 @@ example (c : AsmConfigExact 64) (lt : List (NumSet × NumSet)) :
       inClashTree (getClashTree (.call (some ([1], (.ln, .ln), o1, 17, 19)) none [] (some (1, o2, 11, 13)) : P) lt) x.2 :=
   getForcedInGetClashTree _ lt _
 
+/-- `get_forced_tail_split` at the probe's `gf_call_both` row: the `[(9,8)]`
+accumulator splits off the `[]`-accumulator result. -/
+example (c : AsmConfigExact 64) :
+    getForced { c with isa := .riscv } (.call (some ([1], (.ln, .ln), o1, 17, 19)) none []
+      (some (1, o2, 11, 13)) : P) ([] ++ acc) =
+    getForced { c with isa := .riscv } (.call (some ([1], (.ln, .ln), o1, 17, 19)) none []
+      (some (1, o2, 11, 13)) : P) [] ++ acc :=
+  getForcedTailSplit _ _ [] acc
+
+/-- `EVERY_get_forced` at the `gf_seq` row with HOL's paired distinctness predicate. -/
+example (c : AsmConfigExact 64) :
+    (∀ x ∈ getForced { c with isa := .riscv } (.seq o1 o2 : P) acc, x.1 ≠ x.2) ↔
+      (∀ x ∈ getForced { c with isa := .riscv } (.seq o1 o2 : P) [], x.1 ≠ x.2) ∧
+        ∀ x ∈ acc, x.1 ≠ x.2 :=
+  everyGetForced (fun x => x.1 ≠ x.2) _ _ acc
+
+/-- `get_forced_pairwise_distinct` at the `gf_large` row's program, whose
+starting accumulator `acc = [(9,8)]` is pairwise distinct. -/
+example (c : AsmConfigExact 64) :
+    ∀ x ∈ getForced { c with isa := .riscv }
+      (.inst (.arith (.addOverflow 36893488147419103232 0 36893488147419103233 0)) : P) acc,
+      x.1 ≠ x.2 :=
+  getForcedPairwiseDistinct _ _ acc (by simp [acc])
+
 end Flapjack.Test.GetForcedParity

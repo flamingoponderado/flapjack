@@ -1,0 +1,11 @@
+check_col=:(num -> num) -> α sptree$num_map -> (α sptree$num_map # sptree$num_set) option
+check_intervals=:(num -> α) -> int sptree$num_map -> int sptree$num_map -> bool
+colors_length=:linear_scan_hidden_state -> (num, γ) exc # linear_scan_hidden_state
+int_beg_length=:linear_scan_hidden_state -> (num, γ) exc # linear_scan_hidden_state
+int_end_length=:linear_scan_hidden_state -> (num, γ) exc # linear_scan_hidden_state
+sorted_regs_length=:linear_scan_hidden_state -> (num, γ) exc # linear_scan_hidden_state
+sorted_moves_length=:linear_scan_hidden_state -> (num, γ) exc # linear_scan_hidden_state
+find_last_stealable=:(α # num) list -> sptree$num_set -> linear_scan_hidden_state -> (((α # num) # (α # num) list) option, state_exn) exc # linear_scan_hidden_state
+run_i_linear_scan_hidden_state=:(linear_scan_hidden_state -> (β, γ) exc # linear_scan_hidden_state) -> i_linear_scan_hidden_state -> (β, γ) exc
+linear_reg_alloc_and_extract_coloration=:clash_tree -> num -> (num # num) list -> (num # num # num) list -> num list -> num sptree$num_map -> α -> linear_scan_hidden_state -> (num sptree$num_map, state_exn) exc # linear_scan_hidden_state
+i_linear_scan_hidden_state_CASE=:i_linear_scan_hidden_state -> (num # num -> num # int -> num # int -> num # num -> num # num # num # num -> α) -> α
