@@ -2220,5 +2220,17 @@ untagged SplitSource laws derive prefixNoRead, suffixheadmatch and empty-suffix
 NoRead equivalence. They are Flapjack infrastructure, not a general indexed
 combinator port or completed functional scheduler simulation.
 
-`labsem_semantics_probeScript.sml` proves four whole behavior observations through original `semantics_def`: Error, success, resource limit, and self-loop divergence with the entire arbitrary input trace retained. Evaluator equations are derived in the original HOL kernel and record-update left-hand sides normalized before rewriting the quantified clocks. The loop equation covers every natural clock by induction; the divergent trace uses the actual constant-image and prefix-chain/LUB uniqueness theorems. `Flapjack/Test/LabSemSemanticsParity.lean` proves the corresponding native observations, including arbitrary Halt word values. Neither side substitutes a finite timeout for divergence.
+`word_to_stack_native_config_probeScript.sml` captures seven fresh original
+configuration record projections and updates. Empty, singleton, raw BS and
+non-well-formed BN trees are retained without a validity restriction.
+`WordToStackNativeConfigParity.lean` kernel-replays the same records. This
+carrier prerequisite does not establish the top compiler or its executed route;
+those remain tracked on the WordToStack compiler beads.
 
+`parmove_destination_probeScript.sml` observes the real/temporary destinations
+of native `pmov` on terminal, self, chain, cycle, scratch, duplicate, and active
+states. `ParmoveDestinationParity` replays each row and applies the unconditional
+original destination-membership theorem, including malformed states.
+
+
+`labsem_semantics_probeScript.sml` proves four whole behavior observations through original `semantics_def`: Error, success, resource limit, and self-loop divergence with the entire arbitrary input trace retained. Evaluator equations are derived in the original HOL kernel and record-update left-hand sides normalized before rewriting the quantified clocks. The loop equation covers every natural clock by induction; the divergent trace uses the actual constant-image and prefix-chain/LUB uniqueness theorems. `Flapjack/Test/LabSemSemanticsParity.lean` proves the corresponding native observations, including arbitrary Halt word values. Neither side substitutes a finite timeout for divergence.
