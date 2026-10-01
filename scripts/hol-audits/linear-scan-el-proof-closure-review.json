@@ -4,7 +4,7 @@
   "candidate_sha": "8d74461ad0d406d75936f3dbb681ddf9c43566c3",
   "peer_audit_repair_sha": "0f9c0c0b2b8307faaefd610a906331b2ad16bc6e",
   "peer_merge_head": "09dcc091b58ec2ee239e7ac5d6e60f211ba65375",
-  "status": "proof-closure pass; TopLevel immutable source acceptance held pending committed generality repair and terminal checks",
+  "status": "Independent historical proof-closure PASS; immutable generality source follow-up PASS at161c881ea; exact terminal gate evidence and unified integration acceptance pending",
   "coverage": {
     "candidate_tags": 208,
     "expected_candidate_tags": 208,
@@ -55,5 +55,23 @@
     "observed_log": "scripts/hol-audits/linear-scan-el-proof-closure-review.log",
     "command": "lake env lean /absolute/path/to/linear-scan-el-proof-closure-review.lean --setup /tmp/sol-peer-proof-audit.setup.json",
     "precondition": "Peer imports built and terminal; use source-checked Lake importArts setup with audit module name. This exact historical coverage run uses 1094 candidate import names; do not substitute current root import silently."
+  },
+  "immutable_generality_followup": {
+    "sha": "161c881ea61c6e21ead4fc6bd3eaa8f37fc953d9",
+    "source_result": "PASS for reviewed generality repair and TopLevel initializer/runner; no full allocator source acceptance implied",
+    "reviewed_blob_sha256": {
+      "Flapjack/Compiler/Backend/LinearScan.lean": "549a2f0af8464c42c63f0f90ce035ccc48cd8ee0b2f27a7eef47b192710de6c1",
+      "Flapjack/Compiler/Backend/LinearScan/HiddenState.lean": "b5b3cb87786e9cd83f4077a408d95d0fa2a1575a056a2e8f0e956cc071673daa",
+      "Flapjack/Compiler/Backend/LinearScan/TopLevel.lean": "91ee619cc20680d0aaf25ff7996ce630f3ee126a4edb3d3f0955edee7957331a",
+      "Flapjack/Compiler/Backend/LinearScan/Steps.lean": "a0935269a06141836e56a095e89a30c0bf0bfa7235a88b401d1acc8de56dd0a9",
+      "Flapjack/Compiler/Backend/RegAlloc/ClashTree.lean": "d37e5c09f3098dc048100e5e75a8443b7c548c6a782bc1aaee212ccffcb22c8f",
+      "Flapjack/Compiler/Backend/LinearScan/Proofs/ApplyBijection.lean": "e43b5afcbe4e04f396ef7d2a7e3d58fc9bddd1f244069a0bd5358b015a13808f",
+      "Flapjack/Compiler/Backend/LinearScan/Proofs/LiveTree.lean": "fec3e7e2e2b8c938b8c48bb4a7c7bb6efdbf040a16f80d4c6e42cc6db4c2e209",
+      "Flapjack/Test/LinearScanGenericTypesParity.lean": "a51e39a10bac74d1377d65ec107bb6f3c2a54f3074d8da82f15d230aa988f386",
+      "scripts/hol-probes/linear_scan_generic_types_probe.out": "15f482c1fa9a9ffb0d84b1784bb4eaeb1b6a3c99c8c0c525c4b92550ee272f1d"
+    },
+    "comparison": "Compared original check_col, check_intervals, find_last_stealable, check_col_output/success/equal_col, generated length types, and define_run generator fields and runner. Independent unused carrier, generic exception/result and arbitrary uninspected value carriers now retained. Existing algorithm bodies preserved.",
+    "kernel_result": "Peer reported terminal gates PASS via agmsg. Exact gate logs requested; not independently rerun against this new SHA. Earlier full proof audit remains explicitly snapshot-scoped.",
+    "original_evidence": "Read committed original type capture and original HOL definitions/generator; no new HOL invocation claimed."
   }
 }
