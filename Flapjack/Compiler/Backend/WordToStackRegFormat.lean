@@ -239,11 +239,13 @@ copy_ret perf is_handle (k,f,f') vs kont =
 
     over the exact shared-word carrier `ProgM α`; `num_stack_ret`,
     `handler_slots` and `seq_stack_free` are the already-ported helpers.
+    The unused third frame component has an independent type γ; original full
+    HOL type is num # num # γ, not a fixed all-Nat triple.
     HOL is polymorphic in the return-value list: `num_stack_ret k vs` only
     measures `LENGTH vs`, so `vs : List β` is an INDEPENDENT carrier from the
     `ProgM α` carrier of `kont`, matching the exact HOL statement. -/
 @[hol "cakeml/compiler/backend/word_to_stackScript.sml" "copy_ret_def"]
-def copyRet {α β : Type} (perf isHandle : Bool) (kf : Nat × Nat × Nat)
+def copyRet {α β γ : Type} (perf isHandle : Bool) (kf : Nat × Nat × γ)
     (vs : List β) (kont : ProgM α) : ProgM α :=
   let n := Flapjack.Compiler.Backend.WordToStack.numStackRet kf.1 vs
   if n = 0 then kont
@@ -310,9 +312,10 @@ PopHandler perf (k,f,f') prog =
   Seq (StackLoad k 2) (Seq (Set Handler k) (Seq (StackFree (handler_slots perf)) prog))
 ```
 
-    `'a` is arbitrary in HOL, so the generic-`α` statement is exact. -/
+    The program payload and both unused frame fields are independent HOL type
+    variables; none is restricted by the helper's clauses. -/
 @[hol "cakeml/compiler/backend/word_to_stackScript.sml" "PopHandler_def"]
-def popHandler {α : Type} (perf : Bool) (kf : Nat × Nat × Nat) (prog : ProgM α) : ProgM α :=
+def popHandler {α β γ : Type} (perf : Bool) (kf : Nat × β × γ) (prog : ProgM α) : ProgM α :=
   .seq (.stackLoad kf.1 2)
     (.seq (.set .handler kf.1)
       (.seq (.stackFree (Flapjack.Compiler.Backend.WordToStack.handlerSlots perf)) prog))
@@ -340,10 +343,12 @@ PushHandler perf l1 l2 (k,f,f') =
 ```
 
     HOL's `Const k 1w` is word-indexed (`'a word`), so the exact statement is
-    the width-indexed `ProgM (BitVec width)` with `[NeZero width]`. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "PushHandler_def"]
-def pushHandlerW {width : Nat} [NeZero width]
-    (perf : Bool) (l1 l2 : Nat) (kf : Nat × Nat × Nat) : ProgM (BitVec width) :=
+    the width-indexed `ProgM (BitVec width)` with `[NeZero width]`. The two
+    unused frame fields retain their independent HOL type variables. -/
+@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "PushHandler_def"
+  (words_as_type_indexed_bitvec)]
+def pushHandlerW {width : Nat} [NeZero width] {β γ : Type}
+    (perf : Bool) (l1 l2 : Nat) (kf : Nat × β × γ) : ProgM (BitVec width) :=
   .seq (.stackAlloc (Flapjack.Compiler.Backend.WordToStack.handlerSlots perf))
     (.seq (.inst (.const kf.1 (1 : BitVec width)))
       (.seq (.stackStore kf.1 0)

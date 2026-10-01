@@ -101,6 +101,14 @@ run_probe() {
   done
 }
 
+run_probe word_to_stack_no_install_helpers_probeScript.sml word_to_stack_no_install_helpers_probe.out \
+  ni_moves_empty ni_moves_all_pairs ni_load_install ni_load_skip ni_reg1_direct ni_reg1_spill ni_reg2_direct ni_reg2_spill ni_live_zero ni_live_frame ni_stack_move_install ni_stack_move_zero ni_copy_aux_zero ni_copy_aux_many \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_copy_ret_carriers_probeScript.sml word_to_stack_copy_ret_carriers_probe.out \
+  ret_tail_bool_zero ret_tail_bool_plain ret_tail_list_handle ret_tail_list_perf ret_tail_install \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
 run_probe asmprops_assertions_iteration_probeScript.sml asmprops_assertions_iteration_probe.out \
   assert_theorem_fold assert_theorem_less assert_theorem_weaken assert_theorem_change assert_theorem_first assert_theorem_every \
   "$cake_dir/compiler/encoders/asm/asmPropsScript.sml" "$cake_dir/compiler/encoders/asm"
@@ -3370,3 +3378,26 @@ run_probe ssa_rename_properties_probeScript.sml ssa_rename_properties_probe.out 
 run_probe word_max_inst_route_probeScript.sml word_max_inst_route_probe.out \
   load16_max store16_max load32_max store8_max load16_limit store16_limit load32_limit \
   "$cake_dir/compiler/backend/wordLangScript.sml" "$cake_dir/compiler/backend"
+run_probe word_to_stack_handler_safety_probeScript.sml word_to_stack_handler_safety_probe.out \
+  hls_empty hls_duplicates hls_owned hls_wrong_owner hls_wrong_zero hls_wrong_one hls_tail_drop hls_same_owner_twice hls_nested hls_nested_bad hls_threaded hls_width_one \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
+run_probe wordconvs_label_safety_probeScript.sml wordconvs_label_safety_probe.out \
+  wcs_empty wcs_skip wcs_self wcs_missing wcs_external wcs_univ wcs_duplicates wcs_cross wcs_owned wcs_wrong_owner wcs_tail_foreign wcs_tail_missing wcs_nested wcs_width_one \
+  "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe word_to_stack_no_shmemop_helpers_probeScript.sml word_to_stack_no_shmemop_helpers_probe.out \
+  nsh_move_empty nsh_move_rr nsh_move_rs nsh_move_sr nsh_move_ss nsh_move_multi nsh_move_width1 nsh_load_empty nsh_load_loads nsh_load_forbidden nsh_write1_register nsh_write1_stack nsh_write1_forbidden nsh_write2_register nsh_write2_stack nsh_write2_forbidden nsh_live_zero nsh_live_nonzero nsh_live_width1 nsh_stack_zero nsh_stack_positive nsh_stack_forbidden \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_to_stack_handler_frame_carriers_probeScript.sml word_to_stack_handler_frame_carriers_probe.out \
+  hcf_push_type hcf_pop_type hcf_push_64_F hcf_pop_64_F_skip hcf_pop_64_F_forbidden hcf_push_64_T hcf_pop_64_T_skip hcf_pop_64_T_forbidden hcf_push_1_F hcf_pop_1_F_skip hcf_pop_1_F_forbidden hcf_push_1_T hcf_pop_1_T_skip hcf_pop_1_T_forbidden \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
+run_probe ssa_map_extend_probeScript.sml ssa_map_extend_probe.out \
+  se_empty_alloc se_empty_stack se_existing se_overwrite se_invalid se_huge_alloc se_huge_stack se_physical_premise se_at_bound_premise se_full_source_replay \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_register_flip_probeScript.sml ssa_register_flip_probe.out \
+  rf_residue_0 rf_equalities_0 rf_residue_1 rf_equalities_1 rf_residue_2 rf_equalities_2 rf_residue_3 rf_equalities_3 rf_residue_4 rf_equalities_4 rf_residue_5 rf_equalities_5 rf_residue_6 rf_equalities_6 rf_residue_7 rf_equalities_7 rf_alloc_application_0 rf_alloc_application_1 rf_alloc_application_2 rf_stack_application_0 rf_stack_application_1 rf_stack_application_2 rf_is_alloc_var_flip_source_replay rf_is_stack_var_flip_source_replay rf_flip_rw_source_replay \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"

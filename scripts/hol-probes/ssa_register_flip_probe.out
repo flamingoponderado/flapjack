@@ -1,0 +1,27 @@
+rf_residue_0=(F,F,F,F)
+rf_equalities_0=T
+rf_residue_1=(T,F,F,T)
+rf_equalities_1=T
+rf_residue_2=(F,F,F,F)
+rf_equalities_2=T
+rf_residue_3=(F,T,T,F)
+rf_equalities_3=T
+rf_residue_4=(T,F,F,T)
+rf_equalities_4=T
+rf_residue_5=(F,T,T,F)
+rf_equalities_5=T
+rf_residue_6=(T,F,F,T)
+rf_equalities_6=T
+rf_residue_7=(F,T,T,F)
+rf_equalities_7=T
+rf_alloc_application_0=T
+rf_alloc_application_1=T
+rf_alloc_application_2=T
+rf_stack_application_0=T
+rf_stack_application_1=T
+rf_stack_application_2=T
+rf_is_alloc_var_flip_source_replay=⊢ ∀na. is_alloc_var na ⇒ is_stack_var (na + 2)
+rf_is_stack_var_flip_source_replay=⊢ ∀na. is_stack_var na ⇒ is_alloc_var (na + 2)
+rf_flip_rw_source_replay=⊢ ∀na.
+    (is_stack_var (na + 2) ⇔ is_alloc_var na) ∧
+    (is_alloc_var (na + 2) ⇔ is_stack_var na)
