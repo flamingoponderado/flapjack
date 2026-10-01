@@ -1,3 +1,4 @@
+import Flapjack.Test.TargetSemMappedMemoryParity
 import Flapjack.Test.ParmoveSplitSourceParity
 import Flapjack.Test.ParmoveStepsCorrectParity
 
