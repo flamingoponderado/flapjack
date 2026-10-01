@@ -478,6 +478,7 @@
     {"bytes": 124, "out": "parmove_fstep_probe.out", "rows": 10, "sha256": "9c8a786eb072aa9b95652444d754fd3d05baee183313cf8689a451540b3e09c0"},
     {"bytes": 130, "out": "parmove_independence_probe.out", "rows": 10, "sha256": "c1020e5473368be67d9d9133bf6a2ebc502141a31e474f7f4c2dcf8fb4ff40b0"},
     {"bytes": 224, "out": "parmove_invariants_probe.out", "rows": 13, "sha256": "9e0215ba434733695ce75e6251c2190e8633130a127331ee3ff7a1f5e9894504"},
+    {"bytes": 145, "out": "parmove_map_state_probe.out", "rows": 10, "sha256": "42106d39a53d1e9a02dad2e61305db5098249f8405706d316bbbf32f6c2a6a88"},
     {"bytes": 160, "out": "parmove_noread_probe.out", "rows": 8, "sha256": "dba55ea223771055b2d4763890ffaadbf2ea0feae2d5c283955b045ef6687e5b"},
     {"bytes": 158, "out": "parmove_parsem_map_inj_probe.out", "rows": 8, "sha256": "ef1b6652cc9f85e90533f9a18a86c11544ec822dbd388dd6c44f451faf3c7b95"},
     {"bytes": 164, "out": "parmove_path_probe.out", "rows": 10, "sha256": "afdf156d01798b937e71a3db9f51b09c156f18db515a72b0653f55c551bf79d9"},

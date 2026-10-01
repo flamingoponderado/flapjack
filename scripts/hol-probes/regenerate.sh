@@ -3096,3 +3096,7 @@ run_probe parmove_state_to_list_probeScript.sml parmove_state_to_list_probe.out 
 run_probe parmove_temp_steps_probeScript.sml parmove_temp_steps_probe.out \
   ptr_remove ptr_start ptr_extend ptr_save_cycle ptr_emit_head ptr_emit_last ptr_save_none ptr_emit_scratch ptr_bool ptr_refl_empty ptr_refl_scratch ptr_cycle_three \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe parmove_map_state_probeScript.sml parmove_map_state_probe.out \
+  pms_empty pms_pending pms_active pms_emitted pms_order pms_constant pms_large pms_bool pms_cross_carrier pms_option_constant \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
