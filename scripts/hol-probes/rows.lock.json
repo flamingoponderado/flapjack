@@ -589,6 +589,7 @@
     {"bytes": 95, "out": "sptree_inter_mixed_probe.out", "rows": 4, "sha256": "9934887bf1e1502a411496fcd137c1ec0fc918fb5b563537aa3d12e2d59496f2"},
     {"bytes": 201, "out": "sptree_set_ops_probe.out", "rows": 10, "sha256": "b9997b14d8aa5eff0556183a9843de3a65ef2c968c5d8be262358beebf800841"},
     {"bytes": 809, "out": "sptree_to_alist_probe.out", "rows": 4, "sha256": "567c10eaf56c07243856c191b60a982c5c554900a977305b11f33afbaf699349"},
+    {"bytes": 730, "out": "ssa_fake_moves_correct_left_probe.out", "rows": 8, "sha256": "cdfdb9d5cd8d54f09819c5bb23b7060b8fef8b9b5d90b4dd44d82a895e432570"},
     {"bytes": 621, "out": "ssa_get_set_vars_probe.out", "rows": 11, "sha256": "5f395e4e4f37488f60d14c536a2358a4f205766d28573856841b0e5f7e8ed6e9"},
     {"bytes": 144, "out": "ssa_locals_bounds_probe.out", "rows": 1, "sha256": "81725c70ac26603766c0d15b5a01ee9855854dc7caa6bca76f3d9c5481482e6b"},
     {"bytes": 656, "out": "ssa_locals_insert_probe.out", "rows": 7, "sha256": "c75d1d3a2d985422e65793b5220e6fcf8d9310e10b4717828cd913f5e77de48c"},

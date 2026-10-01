@@ -48648,5 +48648,19 @@
     "lean_name": "domainForceRename",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.15.2.30.12): word_allocProofScript.sml:6373-6381 domain (force_rename ls ssa) = domain ssa ∪ set (MAP FST ls). HOL domain as the predicate sptDomain, set ls as list membership, union/intersection as disjunction/conjunction, the let-bound result tuple as its projections. Kernel-checked; no holEl in the proof closure. No extra premise. Proof-side."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "fake_moves_correctL",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAFakeMovesCorrectLeft.lean",
+    "lean_name": "fakeMovesCorrectL",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol-a completed source comparison 2026-10-01 npgx: original4994-5087 and fresh literal proof plus ssa_map_ok_extend/fake_moves_frame replay from matching pinned CakeML857f0d/HOLa390cb shared builds. Fresh seven inferred types confirm stL alpha,beta,gamma and cstL alpha,delta,epsilon: independent code/FFI, same positive word dimension. Original allocation/Nodup/mapOK and locals-relation implication retained, all five conclusions of actual native fakeMoves/evaluate including NONE/untouched maps/old locals/output locals/whole-state relation. No target result, successful eval, post-state or extra valid right-map premise. Canonical fpRegs/store roundtrip and positive BitVec/NeZero reviewed. HOL THE observations guarded by SOME; actual Seq fixClock restores clock/termdep from original relation. Inherits reals_as_rational_cuts SOUNDNESS item8; only Move/zero Const paths. Dependency frame30.12 consumed checked peer3a8786117/sourcea104ea64d by ordinary76b03b15d, acceptance separate. No executed compiler route change.",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true
   }
 ]
