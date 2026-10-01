@@ -50580,96 +50580,6 @@
     "reviewer": "flapjack-sol-c source comparison: original cakeml857f0d98 lab_to_targetProofScript.sml3195-3204. Same arbitrary list element carrier, bytes/nop/l quantification and conjunction 0<LENGTH nop and LENGTH bytes<=l imply LENGTH(pad_bytes bytes l nop)=l. Lean preserves both premises with no additions; canonical reviewed generic padBytes is actual definition, List length/take/replicate/flatten are direct list translation. No word carrier or representation qualifier. Original theorem export and six EVAL observations include Nat/Bool carriers, zero, exact fit, extended/multi-element nop and empty-nop outside-premise sentinel; kernel proof uses list length and natural arithmetic only."
   },
   {
-<<<<<<< HEAD
-    "lean_path": "Flapjack/Compiler/Encoders/AsmProps/ArithmeticPreservation.lean",
-    "lean_name": "updPc_simps",
-    "hol_path": "cakeml/compiler/encoders/asm/asmPropsScript.sml",
-    "hol_name": "upd_pc_simps",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol3 full source/type comparison2026-10-02 bead7xyb: original source311/359/370 complete 9-conjunct statement, all original free variables, register Nat/binop/positive-width arithmetic/word/native nine-field state carriers retained. Native Arithmetic source bodies compared to asmSem24-129; field order and original failure behavior unchanged. No extra premise, carrier restriction, missing conclusion, simulation or target-result assumption. HOL boolean equivalences are Lean Bool equalities; word/state/function/set fields retain equality. Fresh original15-row capture comprises three full statements/types and nine actual observations covering every arithmetic constructor, failing shift/div/longdiv and PC update. Generic theorem proofs kernel checked; native fixtures exercise failure changes while fields remain preserved and derive arbitrary-operation domain preservation from theorem. Only words_as_type_indexed_bitvec convention applies; no FP real rendering or total LOG2/HD/EL assumption. Whole ASM dispatcher, RTC invariants and compiler correctness remain unfinished."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Encoders/AsmProps/ArithmeticPreservation.lean",
-    "lean_name": "binopUpd_consts",
-    "hol_path": "cakeml/compiler/encoders/asm/asmPropsScript.sml",
-    "hol_name": "binop_upd_consts",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol3 full source/type comparison2026-10-02 bead7xyb: original source311/359/370 complete 6-conjunct statement, all original free variables, register Nat/binop/positive-width arithmetic/word/native nine-field state carriers retained. Native Arithmetic source bodies compared to asmSem24-129; field order and original failure behavior unchanged. No extra premise, carrier restriction, missing conclusion, simulation or target-result assumption. HOL boolean equivalences are Lean Bool equalities; word/state/function/set fields retain equality. Fresh original15-row capture comprises three full statements/types and nine actual observations covering every arithmetic constructor, failing shift/div/longdiv and PC update. Generic theorem proofs kernel checked; native fixtures exercise failure changes while fields remain preserved and derive arbitrary-operation domain preservation from theorem. Only words_as_type_indexed_bitvec convention applies; no FP real rendering or total LOG2/HD/EL assumption. Whole ASM dispatcher, RTC invariants and compiler correctness remain unfinished."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Encoders/AsmProps/ArithmeticPreservation.lean",
-    "lean_name": "arithUpd_consts",
-    "hol_path": "cakeml/compiler/encoders/asm/asmPropsScript.sml",
-    "hol_name": "arith_upd_consts",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol3 full source/type comparison2026-10-02 bead7xyb: original source311/359/370 complete 5-conjunct statement, all original free variables, register Nat/binop/positive-width arithmetic/word/native nine-field state carriers retained. Native Arithmetic source bodies compared to asmSem24-129; field order and original failure behavior unchanged. No extra premise, carrier restriction, missing conclusion, simulation or target-result assumption. HOL boolean equivalences are Lean Bool equalities; word/state/function/set fields retain equality. Fresh original15-row capture comprises three full statements/types and nine actual observations covering every arithmetic constructor, failing shift/div/longdiv and PC update. Generic theorem proofs kernel checked; native fixtures exercise failure changes while fields remain preserved and derive arbitrary-operation domain preservation from theorem. Only words_as_type_indexed_bitvec convention applies; no FP real rendering or total LOG2/HD/EL assumption. Whole ASM dispatcher, RTC invariants and compiler correctness remain unfinished."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSimilar/Padding.lean",
-    "lean_name": "lineSimilar_addNop",
-    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
-    "hol_name": "line_similar_add_nop",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol3 full source/type comparison2026-10-02 beadtcbu: Original local3298 all ls/lsPrime/h binders, full EVERY2 implication, bytes and recorded length changes only; local HOL proof replayed literally. Fresh original12-row capture confirms nop:word8 list and one shared alpha line/sec carrier; native exact HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString payloads and positive-width BitVec retained, no arbitrary carrier specialization. LIST_REL uses reviewed constructor-for-constructor LinesRel. Normalization proof infrastructure erases exactly fields ignored by original line_similar, proving actual addNop and padSection recursion invariants; no simulation law callback, successful output, extra premise, restricted accumulator or result assumption. Six original padding observations match native kernel fixtures, including empty nop/label-only/nonempty accumulator and retained resolved position19. Full generic theorem application independently exercises arbitrary accumulator. Only standard words_as_type_indexed_bitvec applies, no real/LOG2/HD/EL or full compiler correctness assertion."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSimilar/Padding.lean",
-    "lean_name": "lineSimilar_padSection",
-    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
-    "hol_name": "line_similar_pad_section",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol3 full source/type comparison2026-10-02 beadtcbu: Original3307 all nop/l2/aux/l1 binders and full premise EVERY2 l1 (REVERSE aux++l2); arbitrary accumulator retained. Actual recursive normalization invariant includes label nonzero add_nop branch, padded bytes and reverse accumulator ordering. Fresh original12-row capture confirms nop:word8 list and one shared alpha line/sec carrier; native exact HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString payloads and positive-width BitVec retained, no arbitrary carrier specialization. LIST_REL uses reviewed constructor-for-constructor LinesRel. Normalization proof infrastructure erases exactly fields ignored by original line_similar, proving actual addNop and padSection recursion invariants; no simulation law callback, successful output, extra premise, restricted accumulator or result assumption. Six original padding observations match native kernel fixtures, including empty nop/label-only/nonempty accumulator and retained resolved position19. Full generic theorem application independently exercises arbitrary accumulator. Only standard words_as_type_indexed_bitvec applies, no real/LOG2/HD/EL or full compiler correctness assertion."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSimilar/Padding.lean",
-    "lean_name": "codeSimilar_padCode",
-    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
-    "hol_name": "code_similar_pad_code",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol3 full source/type comparison2026-10-02 beadtcbu: Original3338 all code1/code2 and free nop binders; full code-similarity implication on every section, preserving section identity and complete per-line relation. Fresh original12-row capture confirms nop:word8 list and one shared alpha line/sec carrier; native exact HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString payloads and positive-width BitVec retained, no arbitrary carrier specialization. LIST_REL uses reviewed constructor-for-constructor LinesRel. Normalization proof infrastructure erases exactly fields ignored by original line_similar, proving actual addNop and padSection recursion invariants; no simulation law callback, successful output, extra premise, restricted accumulator or result assumption. Six original padding observations match native kernel fixtures, including empty nop/label-only/nonempty accumulator and retained resolved position19. Full generic theorem application independently exercises arbitrary accumulator. Only standard words_as_type_indexed_bitvec applies, no real/LOG2/HD/EL or full compiler correctness assertion."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSimilar/Encoding.lean",
-    "lean_name": "linesRel_encLine",
-    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
-    "hol_name": "LIST_REL_enc_line",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol3 full source/type comparison2026-10-02 beadpbh8: Original local3353 complete EVERY2 equivalence, arbitrary ls/lsPrime, encoder and len binders, actual MAP(enc_line enc len). Fresh original14-row capture confirms one shared alpha native line/sec/asm carrier, encoder alpha asm→word8 list, nested num Spt label maps and exact ffiname; no finite-map qualifier or specialized payload carrier. Native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and positive-width BitVec retained. Local3353/3376 source statements/proofs replayed literally; eight complete statement/type rows and six native observations. Constructor-for-constructor LinesRel realizes original LIST_REL. Normalization proof infrastructure erases only fields original line_similar ignores and derives actual encLinesAgain recursion; no callback law/supplied target relation/extra guard/empty-accumulator restriction/dropped position or flag. Kernel full proofs and observations cover changed/unchanged offsets, growth/no-growth flags, nonempty accumulator, byte lengths and multi-section identity; actual theorem application checked. Only words_as_type_indexed_bitvec convention applies; no real/HD/EL/LOG2/evaluator/whole compiler closure claim."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSimilar/Encoding.lean",
-    "lean_name": "codeSimilar_encSecList",
-    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
-    "hol_name": "code_similar_enc_sec_list",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol3 full source/type comparison2026-10-02 beadpbh8: Original3362 complete code_similar iff under actual initial encSecList, all code1/code2/n binders and encoder-dependent Skip byte length retained. Fresh original14-row capture confirms one shared alpha native line/sec/asm carrier, encoder alpha asm→word8 list, nested num Spt label maps and exact ffiname; no finite-map qualifier or specialized payload carrier. Native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and positive-width BitVec retained. Local3353/3376 source statements/proofs replayed literally; eight complete statement/type rows and six native observations. Constructor-for-constructor LinesRel realizes original LIST_REL. Normalization proof infrastructure erases only fields original line_similar ignores and derives actual encLinesAgain recursion; no callback law/supplied target relation/extra guard/empty-accumulator restriction/dropped position or flag. Kernel full proofs and observations cover changed/unchanged offsets, growth/no-growth flags, nonempty accumulator, byte lengths and multi-section identity; actual theorem application checked. Only words_as_type_indexed_bitvec convention applies; no real/HD/EL/LOG2/evaluator/whole compiler closure claim."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSimilar/Encoding.lean",
-    "lean_name": "encLinesAgain_implies_similar",
-    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
-    "hol_name": "enc_lines_again_IMP_similar",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol3 full source/type comparison2026-10-02 beadpbh8: Original local3376 all ten explicit binders labs/ffis/pos/enc/lines/acc/ok/linesPrime/okPrime/curr. Full execution equality retains okPrime:Nat×Bool, original EVERY2 curr (REVERSE acc) premise and full EVERY2(curr++lines)linesPrime conclusion. Actual recursive branch invariant includes unchanged offset, changed offset, MAX byte lengths, position and accumulated flag. Fresh original14-row capture confirms one shared alpha native line/sec/asm carrier, encoder alpha asm→word8 list, nested num Spt label maps and exact ffiname; no finite-map qualifier or specialized payload carrier. Native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and positive-width BitVec retained. Local3353/3376 source statements/proofs replayed literally; eight complete statement/type rows and six native observations. Constructor-for-constructor LinesRel realizes original LIST_REL. Normalization proof infrastructure erases only fields original line_similar ignores and derives actual encLinesAgain recursion; no callback law/supplied target relation/extra guard/empty-accumulator restriction/dropped position or flag. Kernel full proofs and observations cover changed/unchanged offsets, growth/no-growth flags, nonempty accumulator, byte lengths and multi-section identity; actual theorem application checked. Only words_as_type_indexed_bitvec convention applies; no real/HD/EL/LOG2/evaluator/whole compiler closure claim."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSimilar/Encoding.lean",
-    "lean_name": "encSecsAgain_implies_similar",
-    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
-    "hol_name": "enc_secs_again_IMP_similar",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol3 full source/type comparison2026-10-02 beadpbh8: Original3391 all pos/labs/ffis/enc/code/code1/ok binders, full result equality and code-similarity implication; complete recursion threads actual position and both section success flags. Fresh original14-row capture confirms one shared alpha native line/sec/asm carrier, encoder alpha asm→word8 list, nested num Spt label maps and exact ffiname; no finite-map qualifier or specialized payload carrier. Native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and positive-width BitVec retained. Local3353/3376 source statements/proofs replayed literally; eight complete statement/type rows and six native observations. Constructor-for-constructor LinesRel realizes original LIST_REL. Normalization proof infrastructure erases only fields original line_similar ignores and derives actual encLinesAgain recursion; no callback law/supplied target relation/extra guard/empty-accumulator restriction/dropped position or flag. Kernel full proofs and observations cover changed/unchanged offsets, growth/no-growth flags, nonempty accumulator, byte lengths and multi-section identity; actual theorem application checked. Only words_as_type_indexed_bitvec convention applies; no real/HD/EL/LOG2/evaluator/whole compiler closure claim."
-=======
     "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
     "hol_name": "has_edge_def",
     "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/Invariants.lean",
@@ -50891,6 +50801,95 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-c literal source comparison3135-3140: forall native lines ls and natural offsets n/m, sec_length ls(n+m)=sec_length ls n+m unconditionally. Same constructor payloads/fixed byte8/MlString and positive generic word translation. No annotation/byte consistency premise or length bound. Canonical reviewed secLength, list induction and addition transport only. Five original/kernel rows extend the existing section probe without removing its8 sentinel rows; empty/mixed/zero annotations and empty bytes with length100 retain original recorded lengths."
->>>>>>> origin/fleet-integration-post-1195-stack
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/AsmProps/ArithmeticPreservation.lean",
+    "lean_name": "updPc_simps",
+    "hol_path": "cakeml/compiler/encoders/asm/asmPropsScript.sml",
+    "hol_name": "upd_pc_simps",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full source/type comparison2026-10-02 bead7xyb: original source311/359/370 complete 9-conjunct statement, all original free variables, register Nat/binop/positive-width arithmetic/word/native nine-field state carriers retained. Native Arithmetic source bodies compared to asmSem24-129; field order and original failure behavior unchanged. No extra premise, carrier restriction, missing conclusion, simulation or target-result assumption. HOL boolean equivalences are Lean Bool equalities; word/state/function/set fields retain equality. Fresh original15-row capture comprises three full statements/types and nine actual observations covering every arithmetic constructor, failing shift/div/longdiv and PC update. Generic theorem proofs kernel checked; native fixtures exercise failure changes while fields remain preserved and derive arbitrary-operation domain preservation from theorem. Only words_as_type_indexed_bitvec convention applies; no FP real rendering or total LOG2/HD/EL assumption. Whole ASM dispatcher, RTC invariants and compiler correctness remain unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/AsmProps/ArithmeticPreservation.lean",
+    "lean_name": "binopUpd_consts",
+    "hol_path": "cakeml/compiler/encoders/asm/asmPropsScript.sml",
+    "hol_name": "binop_upd_consts",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full source/type comparison2026-10-02 bead7xyb: original source311/359/370 complete 6-conjunct statement, all original free variables, register Nat/binop/positive-width arithmetic/word/native nine-field state carriers retained. Native Arithmetic source bodies compared to asmSem24-129; field order and original failure behavior unchanged. No extra premise, carrier restriction, missing conclusion, simulation or target-result assumption. HOL boolean equivalences are Lean Bool equalities; word/state/function/set fields retain equality. Fresh original15-row capture comprises three full statements/types and nine actual observations covering every arithmetic constructor, failing shift/div/longdiv and PC update. Generic theorem proofs kernel checked; native fixtures exercise failure changes while fields remain preserved and derive arbitrary-operation domain preservation from theorem. Only words_as_type_indexed_bitvec convention applies; no FP real rendering or total LOG2/HD/EL assumption. Whole ASM dispatcher, RTC invariants and compiler correctness remain unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/AsmProps/ArithmeticPreservation.lean",
+    "lean_name": "arithUpd_consts",
+    "hol_path": "cakeml/compiler/encoders/asm/asmPropsScript.sml",
+    "hol_name": "arith_upd_consts",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full source/type comparison2026-10-02 bead7xyb: original source311/359/370 complete 5-conjunct statement, all original free variables, register Nat/binop/positive-width arithmetic/word/native nine-field state carriers retained. Native Arithmetic source bodies compared to asmSem24-129; field order and original failure behavior unchanged. No extra premise, carrier restriction, missing conclusion, simulation or target-result assumption. HOL boolean equivalences are Lean Bool equalities; word/state/function/set fields retain equality. Fresh original15-row capture comprises three full statements/types and nine actual observations covering every arithmetic constructor, failing shift/div/longdiv and PC update. Generic theorem proofs kernel checked; native fixtures exercise failure changes while fields remain preserved and derive arbitrary-operation domain preservation from theorem. Only words_as_type_indexed_bitvec convention applies; no FP real rendering or total LOG2/HD/EL assumption. Whole ASM dispatcher, RTC invariants and compiler correctness remain unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSimilar/Padding.lean",
+    "lean_name": "lineSimilar_addNop",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "line_similar_add_nop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full source/type comparison2026-10-02 beadtcbu: Original local3298 all ls/lsPrime/h binders, full EVERY2 implication, bytes and recorded length changes only; local HOL proof replayed literally. Fresh original12-row capture confirms nop:word8 list and one shared alpha line/sec carrier; native exact HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString payloads and positive-width BitVec retained, no arbitrary carrier specialization. LIST_REL uses reviewed constructor-for-constructor LinesRel. Normalization proof infrastructure erases exactly fields ignored by original line_similar, proving actual addNop and padSection recursion invariants; no simulation law callback, successful output, extra premise, restricted accumulator or result assumption. Six original padding observations match native kernel fixtures, including empty nop/label-only/nonempty accumulator and retained resolved position19. Full generic theorem application independently exercises arbitrary accumulator. Only standard words_as_type_indexed_bitvec applies, no real/LOG2/HD/EL or full compiler correctness assertion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSimilar/Padding.lean",
+    "lean_name": "lineSimilar_padSection",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "line_similar_pad_section",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full source/type comparison2026-10-02 beadtcbu: Original3307 all nop/l2/aux/l1 binders and full premise EVERY2 l1 (REVERSE aux++l2); arbitrary accumulator retained. Actual recursive normalization invariant includes label nonzero add_nop branch, padded bytes and reverse accumulator ordering. Fresh original12-row capture confirms nop:word8 list and one shared alpha line/sec carrier; native exact HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString payloads and positive-width BitVec retained, no arbitrary carrier specialization. LIST_REL uses reviewed constructor-for-constructor LinesRel. Normalization proof infrastructure erases exactly fields ignored by original line_similar, proving actual addNop and padSection recursion invariants; no simulation law callback, successful output, extra premise, restricted accumulator or result assumption. Six original padding observations match native kernel fixtures, including empty nop/label-only/nonempty accumulator and retained resolved position19. Full generic theorem application independently exercises arbitrary accumulator. Only standard words_as_type_indexed_bitvec applies, no real/LOG2/HD/EL or full compiler correctness assertion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSimilar/Padding.lean",
+    "lean_name": "codeSimilar_padCode",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "code_similar_pad_code",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full source/type comparison2026-10-02 beadtcbu: Original3338 all code1/code2 and free nop binders; full code-similarity implication on every section, preserving section identity and complete per-line relation. Fresh original12-row capture confirms nop:word8 list and one shared alpha line/sec carrier; native exact HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString payloads and positive-width BitVec retained, no arbitrary carrier specialization. LIST_REL uses reviewed constructor-for-constructor LinesRel. Normalization proof infrastructure erases exactly fields ignored by original line_similar, proving actual addNop and padSection recursion invariants; no simulation law callback, successful output, extra premise, restricted accumulator or result assumption. Six original padding observations match native kernel fixtures, including empty nop/label-only/nonempty accumulator and retained resolved position19. Full generic theorem application independently exercises arbitrary accumulator. Only standard words_as_type_indexed_bitvec applies, no real/LOG2/HD/EL or full compiler correctness assertion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSimilar/Encoding.lean",
+    "lean_name": "linesRel_encLine",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "LIST_REL_enc_line",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full source/type comparison2026-10-02 beadpbh8: Original local3353 complete EVERY2 equivalence, arbitrary ls/lsPrime, encoder and len binders, actual MAP(enc_line enc len). Fresh original14-row capture confirms one shared alpha native line/sec/asm carrier, encoder alpha asm→word8 list, nested num Spt label maps and exact ffiname; no finite-map qualifier or specialized payload carrier. Native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and positive-width BitVec retained. Local3353/3376 source statements/proofs replayed literally; eight complete statement/type rows and six native observations. Constructor-for-constructor LinesRel realizes original LIST_REL. Normalization proof infrastructure erases only fields original line_similar ignores and derives actual encLinesAgain recursion; no callback law/supplied target relation/extra guard/empty-accumulator restriction/dropped position or flag. Kernel full proofs and observations cover changed/unchanged offsets, growth/no-growth flags, nonempty accumulator, byte lengths and multi-section identity; actual theorem application checked. Only words_as_type_indexed_bitvec convention applies; no real/HD/EL/LOG2/evaluator/whole compiler closure claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSimilar/Encoding.lean",
+    "lean_name": "codeSimilar_encSecList",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "code_similar_enc_sec_list",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full source/type comparison2026-10-02 beadpbh8: Original3362 complete code_similar iff under actual initial encSecList, all code1/code2/n binders and encoder-dependent Skip byte length retained. Fresh original14-row capture confirms one shared alpha native line/sec/asm carrier, encoder alpha asm→word8 list, nested num Spt label maps and exact ffiname; no finite-map qualifier or specialized payload carrier. Native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and positive-width BitVec retained. Local3353/3376 source statements/proofs replayed literally; eight complete statement/type rows and six native observations. Constructor-for-constructor LinesRel realizes original LIST_REL. Normalization proof infrastructure erases only fields original line_similar ignores and derives actual encLinesAgain recursion; no callback law/supplied target relation/extra guard/empty-accumulator restriction/dropped position or flag. Kernel full proofs and observations cover changed/unchanged offsets, growth/no-growth flags, nonempty accumulator, byte lengths and multi-section identity; actual theorem application checked. Only words_as_type_indexed_bitvec convention applies; no real/HD/EL/LOG2/evaluator/whole compiler closure claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSimilar/Encoding.lean",
+    "lean_name": "encLinesAgain_implies_similar",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "enc_lines_again_IMP_similar",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full source/type comparison2026-10-02 beadpbh8: Original local3376 all ten explicit binders labs/ffis/pos/enc/lines/acc/ok/linesPrime/okPrime/curr. Full execution equality retains okPrime:Nat×Bool, original EVERY2 curr (REVERSE acc) premise and full EVERY2(curr++lines)linesPrime conclusion. Actual recursive branch invariant includes unchanged offset, changed offset, MAX byte lengths, position and accumulated flag. Fresh original14-row capture confirms one shared alpha native line/sec/asm carrier, encoder alpha asm→word8 list, nested num Spt label maps and exact ffiname; no finite-map qualifier or specialized payload carrier. Native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and positive-width BitVec retained. Local3353/3376 source statements/proofs replayed literally; eight complete statement/type rows and six native observations. Constructor-for-constructor LinesRel realizes original LIST_REL. Normalization proof infrastructure erases only fields original line_similar ignores and derives actual encLinesAgain recursion; no callback law/supplied target relation/extra guard/empty-accumulator restriction/dropped position or flag. Kernel full proofs and observations cover changed/unchanged offsets, growth/no-growth flags, nonempty accumulator, byte lengths and multi-section identity; actual theorem application checked. Only words_as_type_indexed_bitvec convention applies; no real/HD/EL/LOG2/evaluator/whole compiler closure claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSimilar/Encoding.lean",
+    "lean_name": "encSecsAgain_implies_similar",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "enc_secs_again_IMP_similar",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full source/type comparison2026-10-02 beadpbh8: Original3391 all pos/labs/ffis/enc/code/code1/ok binders, full result equality and code-similarity implication; complete recursion threads actual position and both section success flags. Fresh original14-row capture confirms one shared alpha native line/sec/asm carrier, encoder alpha asm→word8 list, nested num Spt label maps and exact ffiname; no finite-map qualifier or specialized payload carrier. Native HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and positive-width BitVec retained. Local3353/3376 source statements/proofs replayed literally; eight complete statement/type rows and six native observations. Constructor-for-constructor LinesRel realizes original LIST_REL. Normalization proof infrastructure erases only fields original line_similar ignores and derives actual encLinesAgain recursion; no callback law/supplied target relation/extra guard/empty-accumulator restriction/dropped position or flag. Kernel full proofs and observations cover changed/unchanged offsets, growth/no-growth flags, nonempty accumulator, byte lengths and multi-section identity; actual theorem application checked. Only words_as_type_indexed_bitvec convention applies; no real/HD/EL/LOG2/evaluator/whole compiler closure claim."
   }
 ]
