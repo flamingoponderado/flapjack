@@ -1,0 +1,114 @@
+key_def_wordToNum=⊢ ∀w. wordToNum w = w2n w
+key_def_shiftToNum=⊢ shiftToNum Lsl = 40 ∧ shiftToNum Lsr = 41 ∧ shiftToNum Asr = 42 ∧ shiftToNum Ror = 43
+key_def_arithOpToNum=⊢ arithOpToNum Add = 35 ∧ arithOpToNum Sub = 36 ∧ arithOpToNum And = 37 ∧ arithOpToNum Or = 38 ∧ arithOpToNum Xor = 39
+key_def_regImmToNumList=⊢ (∀r. regImmToNumList (Reg r) = [33; r + 100]) ∧ ∀w. regImmToNumList (Imm w) = [34; wordToNum w]
+key_def_arithToNumList=⊢ (∀op r1 r2 ri. arithToNumList (Binop op r1 r2 ri) = [25; arithOpToNum op; r2 + 100] ++ regImmToNumList ri) ∧ (∀r1 r2 r3 r4. arithToNumList (LongMul r1 r2 r3 r4) = [26; r3 + 100; r4 + 100]) ∧ (∀r1 r2 r3 r4 r5. arithToNumList (LongDiv r1 r2 r3 r4 r5) = [27; r3 + 100; r4 + 100; r5 + 100]) ∧ (∀s r1 r2 ri. arithToNumList (Shift s r1 r2 ri) = [28; shiftToNum s; r2 + 100] ++ regImmToNumList ri) ∧ (∀r1 r2 r3. arithToNumList (Div r1 r2 r3) = [29; r2 + 100; r3 + 100]) ∧ (∀r1 r2 r3 r4. arithToNumList (AddCarry r1 r2 r3 r4) = [30; r2 + 100; r3 + 100]) ∧ (∀r1 r2 r3 r4. arithToNumList (AddOverflow r1 r2 r3 r4) = [31; r2 + 100; r3 + 100]) ∧ ∀r1 r2 r3 r4. arithToNumList (SubOverflow r1 r2 r3 r4) = [32; r2 + 100; r3 + 100]
+key_def_memOpToNum=⊢ memOpToNum Load = 21 ∧ memOpToNum Load8 = 22 ∧ memOpToNum Load16 = 46 ∧ memOpToNum Load32 = 44 ∧ memOpToNum Store = 23 ∧ memOpToNum Store8 = 47 ∧ memOpToNum Store16 = 24 ∧ memOpToNum Store32 = 45
+key_def_loadToNumList=⊢ ∀op a ofs. loadToNumList op a ofs = [memOpToNum op; a + 100; wordToNum ofs]
+key_def_fpToNumList=⊢ (∀r1 r2 r3. fpToNumList (FPLess r1 r2 r3) = [5; r2 + 100; r3 + 100]) ∧ (∀r1 r2 r3. fpToNumList (FPLessEqual r1 r2 r3) = [6; r2 + 100; r3 + 100]) ∧ (∀r1 r2 r3. fpToNumList (FPEqual r1 r2 r3) = [7; r2 + 100; r3 + 100]) ∧ (∀r1 r2. fpToNumList (FPAbs r1 r2) = [8; r2 + 100]) ∧ (∀r1 r2. fpToNumList (FPNeg r1 r2) = [9; r2 + 100]) ∧ (∀r1 r2. fpToNumList (FPSqrt r1 r2) = [10; r2 + 100]) ∧ (∀r1 r2 r3. fpToNumList (FPAdd r1 r2 r3) = [11; r2 + 100; r3 + 100]) ∧ (∀r1 r2 r3. fpToNumList (FPSub r1 r2 r3) = [12; r2 + 100; r3 + 100]) ∧ (∀r1 r2 r3. fpToNumList (FPMul r1 r2 r3) = [13; r2 + 100; r3 + 100]) ∧ (∀r1 r2 r3. fpToNumList (FPDiv r1 r2 r3) = [14; r2 + 100; r3 + 100]) ∧ (∀r1 r2 r3. fpToNumList (FPFma r1 r2 r3) = [15; r1 + 100; r2 + 100; r3 + 100]) ∧ (∀r1 r2. fpToNumList (FPMov r1 r2) = [16; r2 + 100]) ∧ (∀r1 r2 r3. fpToNumList (FPMovToReg r1 r2 r3) = [17; r2 + 100; r3 + 100]) ∧ (∀r1 r2 r3. fpToNumList (FPMovFromReg r1 r2 r3) = [18; r2 + 100; r3 + 100]) ∧
+  (∀r1 r2. fpToNumList (FPToInt r1 r2) = [19; r2 + 100]) ∧ ∀r1 r2. fpToNumList (FPFromInt r1 r2) = [20; r2 + 100]
+key_def_instToNumList=⊢ instToNumList (Const r w) = [2; wordToNum w] ∧ instToNumList (Arith a) = 3::arithToNumList a ∧ instToNumList (FP fp) = 4::fpToNumList fp ∧ instToNumList Skip = [1] ∧ instToNumList (Mem v3 v4 v5) = [1]
+key_def_OpCurrHeapToNumList=⊢ ∀op r2. OpCurrHeapToNumList op r2 = [0; arithOpToNum op; r2 + 100]
+key_shift_lsl=40
+key_shift_lsr=41
+key_shift_asr=42
+key_shift_ror=43
+key_op_add=35
+key_heap_add=[0; 35; 107]
+key_op_sub=36
+key_heap_sub=[0; 36; 107]
+key_op_and=37
+key_heap_and=[0; 37; 107]
+key_op_or=38
+key_heap_or=[0; 38; 107]
+key_op_xor=39
+key_heap_xor=[0; 39; 107]
+key_mem_load=21
+key_load_load=[21; 109; 255]
+key_mem_load8=22
+key_load_load8=[22; 109; 255]
+key_mem_load16=46
+key_load_load16=[46; 109; 255]
+key_mem_load32=44
+key_load_load32=[44; 109; 255]
+key_mem_store=23
+key_load_store=[23; 109; 255]
+key_mem_store8=47
+key_load_store8=[47; 109; 255]
+key_mem_store16=24
+key_load_store16=[24; 109; 255]
+key_mem_store32=45
+key_load_store32=[45; 109; 255]
+key_word_1=1
+key_imm_1=[34; 1]
+key_const_1=[2; 1]
+key_word_32=4294967295
+key_imm_32=[34; 4294967295]
+key_const_32=[2; 4294967295]
+key_word_64=18446744073709551615
+key_imm_64=[34; 18446744073709551615]
+key_const_64=[2; 18446744073709551615]
+key_word_80=1208925819614629174706175
+key_imm_80=[34; 1208925819614629174706175]
+key_const_80=[2; 1208925819614629174706175]
+key_reg=[33; 877]
+key_arith_0=[25; 35; 102; 33; 103]
+key_inst_arith_0=[3; 25; 35; 102; 33; 103]
+key_arith_1=[26; 102; 103]
+key_inst_arith_1=[3; 26; 102; 103]
+key_arith_2=[27; 102; 103; 104]
+key_inst_arith_2=[3; 27; 102; 103; 104]
+key_arith_3=[28; 43; 102; 34; 255]
+key_inst_arith_3=[3; 28; 43; 102; 34; 255]
+key_arith_4=[29; 102; 103]
+key_inst_arith_4=[3; 29; 102; 103]
+key_arith_5=[30; 102; 103]
+key_inst_arith_5=[3; 30; 102; 103]
+key_arith_6=[31; 102; 103]
+key_inst_arith_6=[3; 31; 102; 103]
+key_arith_7=[32; 102; 103]
+key_inst_arith_7=[3; 32; 102; 103]
+key_fp_fpLess=[5; 102; 103]
+key_inst_fpLess=[4; 5; 102; 103]
+key_fp_fpLessEqual=[6; 102; 103]
+key_inst_fpLessEqual=[4; 6; 102; 103]
+key_fp_fpEqual=[7; 102; 103]
+key_inst_fpEqual=[4; 7; 102; 103]
+key_fp_fpAbs=[8; 102]
+key_inst_fpAbs=[4; 8; 102]
+key_fp_fpNeg=[9; 102]
+key_inst_fpNeg=[4; 9; 102]
+key_fp_fpSqrt=[10; 102]
+key_inst_fpSqrt=[4; 10; 102]
+key_fp_fpAdd=[11; 102; 103]
+key_inst_fpAdd=[4; 11; 102; 103]
+key_fp_fpSub=[12; 102; 103]
+key_inst_fpSub=[4; 12; 102; 103]
+key_fp_fpMul=[13; 102; 103]
+key_inst_fpMul=[4; 13; 102; 103]
+key_fp_fpDiv=[14; 102; 103]
+key_inst_fpDiv=[4; 14; 102; 103]
+key_fp_fpFma=[15; 199; 102; 103]
+key_inst_fpFma=[4; 15; 199; 102; 103]
+key_fp_fpMov=[16; 102]
+key_inst_fpMov=[4; 16; 102]
+key_fp_fpMovToReg=[17; 102; 103]
+key_inst_fpMovToReg=[4; 17; 102; 103]
+key_fp_fpMovFromReg=[18; 102; 103]
+key_inst_fpMovFromReg=[4; 18; 102; 103]
+key_fp_fpToInt=[19; 102]
+key_inst_fpToInt=[4; 19; 102]
+key_fp_fpFromInt=[20; 102]
+key_inst_fpFromInt=[4; 20; 102]
+key_skip=[1]
+key_mem_inst=[1]
+key_type_wordToNum=:α word -> num
+key_type_shiftToNum=:ast$shift -> num
+key_type_arithOpToNum=:binop -> num
+key_type_regImmToNumList=:α reg_imm -> num list
+key_type_arithToNumList=:α arith -> num list
+key_type_memOpToNum=:memop -> num
+key_type_loadToNumList=:memop -> num -> α word -> num list
+key_type_fpToNumList=:fp -> num list
+key_type_instToNumList=:α inst -> num list
+key_type_OpCurrHeapToNumList=:binop -> num -> num list

@@ -6,16 +6,14 @@ import Flapjack.Compiler.Encoders.AsmProps.ArithmeticPreservation
 import Flapjack.Compiler.Backend.LabToTarget.LineLength
 import Flapjack.Compiler.Backend.LabToTarget.SectionLength
 import Flapjack.Byte
-import Flapjack.Compiler.Backend.LabToTarget.LineLength
-import Flapjack.Compiler.Backend.LabToTarget.SectionLength
-import Flapjack.Byte
-import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.Padding
-import Flapjack.Compiler.Encoders.AsmProps.ArithmeticPreservation
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsCalls
 import Flapjack.Compiler.Backend.StackProps.InstructionConstants
 import Flapjack.Compiler.Backend.StackProps.ClockSupport
 import Flapjack.Compiler.Backend.StackProps.ExpressionClock
 import Flapjack.Compiler.Backend.StackProps.StateConstants
 import Flapjack.Compiler.Backend.StackLang.ProductionWordBoundary
+import Flapjack.Compiler.Backend.StackToLab.ExecutedInput
+import Flapjack.Compiler.Backend.StackLang.ProductionMacros
 import Flapjack.Compiler.Backend.StackToLab.ExecutedCodec
 import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Full
 import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Recursive
@@ -23,6 +21,10 @@ import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Nonrecursive
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
+import Flapjack.Compiler.Backend.WordCse.Proofs.ArithmeticKeys
+import Flapjack.Compiler.Backend.WordCse.Proofs.InsertEquality
+import Flapjack.Compiler.Backend.WordCse.Proofs.KeyInjectivity
+import Flapjack.Compiler.Backend.WordCse.InstructionKeys
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoInstallTop
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.NoInstallCode
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoInstallPrograms
@@ -217,6 +219,8 @@ import Flapjack.Compiler.Backend.WordToStack.ProductionFrame
 import Flapjack.Compiler.Backend.WordToStack.ProductionLocations
 import Flapjack.Compiler.Backend.WordToStack.ProductionConfiguration
 import Flapjack.Compiler.Backend.WordToStack.ProductionScheduler
+import Flapjack.Compiler.Backend.WordToStack.ProductionMoves
+import Flapjack.Compiler.Backend.RegAlloc.ProductionFixedTags
 import Flapjack.Compiler.Backend.WordToStack.ProductionAllocatorCodec
 import Flapjack.Compiler.Backend.WordToStack.ProductionSelectorPrelude
 import Flapjack.Compiler.Backend.WordToStack.ProductionSelectorDomain
@@ -1274,6 +1278,7 @@ import Flapjack.Compiler.Backend.RegAlloc.Proofs.NotCoalescedFilter
 import Flapjack.Compiler.Backend.RegAlloc.ConsideredVar
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.ConsideredVarFilter
 import Flapjack.Compiler.Backend.RegAlloc.Worklists
+import Flapjack.Compiler.Backend.RegAlloc.Allocator
 import Flapjack.Misc.LookupAny
 import Flapjack.Compiler.Backend.RegAlloc.Coalesce
 import Flapjack.Compiler.Backend.RegAlloc.SpillChoice
@@ -1296,6 +1301,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAInstructionProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameShiftedProperties
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsMove
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsAllocation
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsLoopControl
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFixInconsistenciesCorrectLeft
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeMovesCorrectRight
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeMovesCorrectLeft

@@ -1,3 +1,17 @@
+`lab_implicit_section_zero_probe.out` records six original ignored-zero,
+implicit-section-base and nonzero-label positions. Executed collectors replay
+matching pre-encoding lines using actual instruction counts. This pins the
+section-zero convention and exact original target bytes for a direct cross-section
+jump followed by Const. It is not complete encoded-line-length or finite-map
+correspondence for all inputs or duplicate section names.
+
+`stack_to_lab_executed_input_probe.out` records seven original native fallback
+and section observations. The four residual operations flatten to empty lines;
+the new Flapjack native boundary rejects them. Skip remains a valid empty
+program. Seq and distinct LocValue fields pin original final-label and target
+order without extra entry aliases or fresh-label maxima. HOL has no such guard:
+these rows do not claim a compiler simulation or original guard declaration.
+
 `stack_to_lab_executed_codec_probe.out` records nine fresh original native
 constructor/operand observations, including AddCarry's four positions, an
 unsupported overflow result, memory offsets, Cbw's address/value/store order,
@@ -2782,6 +2796,8 @@ the executed allocator. Regenerate read-only with
 
 `reg_alloc_colouring_probeScript.sml` captures eighteen original rows of `remove_colours` (empty colours taking priority, no nodes, fixed neighbours, duplicate colours, out-of-range nodes before and after the colours run out), `assign_Atemp_tag` (no-preference and last-colour oracles, no remaining colour, non-`Atemp` node unchanged, out-of-range node), `assign_Atemps` (heuristic order with an out-of-range entry, oracle choice, a single colour) and `first_match_col` (hit, colour outside `ks`, empty list, an index above 2^64). `Flapjack/Test/RegAllocColouringParity.lean` replays each row in the kernel.
 
+`reg_alloc_allocator_probeScript.sml` captures twelve original rows of the complete `reg_alloc` allocator (Simple and IRC, a coalescing move and a move chain, spill choice by cost and by degree with `k = 1`, a forced pair under a branch cutset, physical registers, stack variables, a forced-stack set, high register pressure, and the empty tree), each observed through `toAList` of the returned colouring. `Flapjack/Test/RegAllocAllocatorParity.lean` replays each row in the kernel; it exercises every phase ported in `Flapjack/Compiler/Backend/RegAlloc/Allocator.lean`.
+
 `reg_alloc_exception_functions_probeScript.sml` captures eleven original rows of the generated `raise_Fail`/`raise_Subscript`/`handle_Fail`/`handle_Subscript`: both raises, success passing through, each handler catching its own constructor and passing the other, continuation from the failing state, and `handle_Subscript` around an out-of-range `node_tag_sub`. `Flapjack/Test/RegAllocExceptionFunctionsParity.lean` replays each row in the kernel.
 
 `reg_alloc_stemp_colouring_probeScript.sml` captures the HOL types of `assign_Stemp_tag` and `neg_biased_pref` and eighteen original rows of `tag_col`, `unbound_colour` (empty, gap, entries below the start colour, duplicates), `assign_Stemp_tag` (default and oracle choices, non-`Stemp` node unchanged, out-of-range node), `assign_Stemps` (two start colours), `neg_first_match_col` (hit, excluded colour, out-of-range node) and `neg_biased_pref` (hit, missing move entry, out-of-range partner caught by `handle_Subscript`, node outside `dim`). `Flapjack/Test/RegAllocStempColouringParity.lean` replays each value row in the kernel.
@@ -4243,6 +4259,7 @@ Selector: `HOL_PROBE_ONLY=word_to_stack_no_install_top_probeScript.sml`.
 
 - `ssa_cc_trans_props_allocation_probeScript.sml` replays the literal original Alloc/Install/FFI case tactics and native compiler unfolding with original shifted-list derivation and local prerequisites; three full cases and 31 type captures check the counter/map/cutset/loop-table/program and exact mlstring carriers.
 
+- `ssa_cc_trans_props_loop_control_probeScript.sml` specializes the original functional induction rule to the full native program invariant and replays literal Resume Loop/Break/Continue tactics. Three full clauses and29 carrier captures retain Loop setup binders/guards and its actual-context body IH.
 `lab_to_target_padding_length_probeScript.sml` exports original `LENGTH_pad_bytes` (lab_to_targetProofScript.sml:3195) and six direct `pad_bytes` EVAL observations over natural-number and Boolean lists: extension, multi-element nop truncation, exact fit, zero length, Boolean payloads, and the empty-nop sentinel outside the theorem premise. The full original premise remains nonempty nop and bytes length at most the requested length. `Flapjack.Test.LabToTargetPaddingLengthParity` kernel-replays all six concrete rows and exercises the public arbitrary-carrier theorem. Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=lab_to_target_padding_length_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
 
 `lab_to_target_padding_similarity_probeScript.sml` captures the complete
@@ -4286,3 +4303,54 @@ types (28 rows), for the source review of `BinaryIeeeSqrt.RealCarrier`.
 The seven original exact-square observations remain in
 `machine_ieee_fp64_sqrt_exact_probe.out`; these source/type captures and examples
 provide review/regression evidence, not cross-assistant equivalence.
+### SSA Call allocation/map invariant
+
+`ssa_cc_trans_props_calls_probe.out` specializes the original functional induction at tail/returning Call, replays the literal original marked Calls proof, and captures the complete statements and all actual outer/guarded-handler variable types. Both exact guarded handler IHs are retained in the Lean returning-Call case; input/final map bounds are derived.
+## Native Word CSE instruction keys
+
+`word_cse_instruction_keys_probeScript.sml` regenerates all ten original
+definitions and function types plus 93 evaluations from `word_cseTheory`.
+The cases cover every shift, binop, memory operation, arithmetic and FP
+constructor, widths 1/32/64/80, unsigned all-ones words, and the instruction
+catch-all. `Flapjack/Test/WordCseInstructionKeysParity.lean` kernel-replays
+the values. FPFma retains all three registers; the other destination omissions
+follow the original. These fixtures are regression evidence, not a CSE
+simulation proof. Production carrier replacement and knowledge maps remain
+tracked on `flapjack-word-cse-defs`.
+
+## Native Word CSE register and key prerequisites
+
+`word_cse_register_keys_probeScript.sml` exports the six original register
+classifier definitions and their inferred types, plus all four unrestricted
+encoding injectivity theorems. It replays the complete original proofs with no
+remaining hypotheses, and evaluates 104 original observations. The cases cover
+all arithmetic and FP constructors, immediate/register splits, carry versus
+overflow flags, all memory-operation store classifiers, and widths 8/80.
+`Flapjack/Test/WordCseRegisterKeysParity.lean` kernel-replays the observations
+and applies the four full injectivity theorems at arbitrary inputs. Regression
+fixtures do not prove HOL-to-Lean equivalence or the remaining CSE simulation.
+
+## Word CSE insertion equality
+
+`word_cse_insert_equality_probeScript.sml` exports the complete original
+`insert_eq` and literally replays its proof with no open hypotheses. Ten
+observations cover equal/unequal writes on empty, leaf, malformed BN/BS and
+nested sparse trees. `WordCseInsertEqualityParity.lean` kernel-checks those
+cases and applies the unrestricted theorem at arbitrary carriers/trees and an
+80-bit carrier with a large Nat key. The original unused `n2` is omitted in
+Lean only because it occurs in no premise or conclusion.
+
+## Full Word CSE arithmetic-key simulation
+
+`word_cse_arithmetic_keys_probeScript.sml` captures the entire original
+`arith_keys_eq` and literally replays its proof with no open hypotheses. Three
+original carrier types and 60 full theorem applications cover all five binops
+with both register/immediate operands, all four immediate shifts and signed
+division at widths 1/32/64/80. Each application proves the original key/eligibility
+premises and retains the full universally quantified faithful evaluation
+implication, plus both read/eligibility conclusions.
+`WordCseArithmeticKeysParity.lean` applies the complete kernel theorem to all
+60 cases and at arbitrary width/state/value. The theorem uses the actual
+clocked WordSem evaluator, its reviewed finite-support state and its inherited
+IEEE rational-cut assumption (SOUNDNESS item 8). This is a CSE simulation
+prerequisite, not the entire CSE invariant/pass or compiler theorem.
