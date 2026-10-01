@@ -135,6 +135,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Motive
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Leaves
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.PermuteSwap
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StackEq
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StackSwap
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutNames
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyRemap
 import Flapjack.Pancake.PanStructs.CompileDeclsExact
@@ -224,6 +225,7 @@ import Flapjack.Compiler.Backend.WordToStackRegFormat
 import Flapjack.Compiler.Backend.Parmove
 import Flapjack.Compiler.Backend.Parmove.Semantics
 import Flapjack.Compiler.Backend.Parmove.Invariants
+import Flapjack.Compiler.Backend.Parmove.UpdateLemmas
 import Flapjack.Compiler.Backend.LabSem
 import Flapjack.Compiler.Backend.LabProps
 import Flapjack.Compiler.Backend.StackNames
