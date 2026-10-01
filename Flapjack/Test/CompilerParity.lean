@@ -1,8 +1,16 @@
 import Flapjack.Test.LabImplicitSectionZero
+import Flapjack.Test.LabToTargetLineLenParity
+import Flapjack.Test.LabToTargetSectionLengthParity
+import Flapjack.Test.ByteWordToBytesAuxParity
+import Flapjack.Test.LabToTargetPaddingSimilarityParity
+import Flapjack.Test.AsmPropsArithmeticPreservationParity
+import Flapjack.Test.StackPropsInstructionConstantsParity
+import Flapjack.Test.LabToTargetPaddingLengthParity
 import Flapjack.Test.StackToLabExecutedInput
 import Flapjack.Test.ProductionMacros
 import Flapjack.Test.StackWordBoundary
 import Flapjack.Test.LabToTargetMapLemmasParity
+import Flapjack.Test.SSAForceRenameGeneric
 import Flapjack.Test.LabToTargetEncodingParity
 import Flapjack.Test.LabToTargetLabelsParity
 import Flapjack.Test.LabToTargetPositionsParity
@@ -15,10 +23,17 @@ import Flapjack.Test.MiscLookupAnyFindIndexParity
 import Flapjack.Test.StackPropsClockSupportParity
 import Flapjack.Test.StackToLabExecutedCodecParity
 import Flapjack.Test.StackPropsExpressionClockParity
+import Flapjack.Test.StackPropsStateConstantsFfiCarrierParity
 import Flapjack.Test.StackToLabFullEncodingParity
 import Flapjack.Test.ProductionScheduler
 import Flapjack.Test.StackToLabRecursiveValidityParity
 import Flapjack.Test.StackToLabNonrecursiveValidityParity
+import Flapjack.Test.WordCseArithmeticKeysParity
+import Flapjack.Test.WordCseInsertEqualityParity
+import Flapjack.Test.WordCseRegisterKeysParity
+import Flapjack.Test.WordCseInstructionKeysParity
+import Flapjack.Test.WordToStackNoInstallTopParity
+import Flapjack.Test.WordPropsNoInstallCodeParity
 import Flapjack.Test.WordToStackNoInstallProgramsParity
 import Flapjack.Test.WordToStackCompNoInstallParity
 import Flapjack.Test.WordToStackNoShmemopTopParity
@@ -649,6 +664,7 @@ import Flapjack.Test.WordSemShMemParity
 import Flapjack.Test.MachineIeeeCompareParity
 import Flapjack.Test.BinaryIeeeRoundParity
 import Flapjack.Test.BinaryIeeeSqrtRoundAgreementParity
+import Flapjack.Test.BinaryIeeeSqrtRealCarrierParity
 import Flapjack.Test.MachineIeeeArithSpecialParity
 import Flapjack.Test.FpSemOpsParity
 import Flapjack.Test.Fp64NanRefinementParity
@@ -1198,6 +1214,10 @@ def checkBool (name : String) (condition : Bool) : IO Bool := do
 
 def main : IO Unit := do
   let results ← [
+    Flapjack.Test.LabToTargetLineLenParity.runChecks,
+    Flapjack.Test.LabToTargetSectionLengthParity.runChecks,
+    Flapjack.Test.ByteWordToBytesAuxParity.runChecks,
+    Flapjack.Test.LabToTargetPaddingLengthParity.runChecks,
     Flapjack.Test.LabToTargetMapLemmasParity.runChecks,
     Flapjack.Test.LabToTargetEncodingParity.runChecks,
     Flapjack.Test.LabToTargetLabelsParity.runChecks,
@@ -1502,6 +1522,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.MachineIeeeCompareParity.runChecks,
     Flapjack.Test.BinaryIeeeRoundParity.runChecks,
     Flapjack.Test.BinaryIeeeSqrtRoundAgreementParity.runChecks,
+    Flapjack.Test.BinaryIeeeSqrtRealCarrierParity.runChecks,
     Flapjack.Test.MachineIeeeArithSpecialParity.runChecks,
     Flapjack.Test.FpSemOpsParity.runChecks,
     Flapjack.Test.Fp64NanRefinementParity.runChecks,

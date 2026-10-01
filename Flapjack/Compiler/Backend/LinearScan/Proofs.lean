@@ -7,6 +7,10 @@ import Flapjack.Compiler.Backend.LinearScan.Proofs.SpillRegister
 import Flapjack.Compiler.Backend.LinearScan.Proofs.EdgesToAdjlist
 import Flapjack.Compiler.Backend.LinearScan.Proofs.ColorRegister
 import Flapjack.Compiler.Backend.LinearScan.Proofs.PassInvariants
+import Flapjack.Compiler.Backend.LinearScan.Proofs.SortCorrect
+import Flapjack.Compiler.Backend.LinearScan.Proofs.IntervalsCorrect
+import Flapjack.Compiler.Backend.LinearScan.Proofs.WithoutRenaming
+import Flapjack.Compiler.Backend.LinearScan.Proofs.TopLevelCorrect
 import Flapjack.Compiler.Backend.LinearScan.Proofs.Bijection
 import Flapjack.Compiler.Backend.LinearScan.Proofs.ApplyBijection
 import Flapjack.Compiler.Backend.LinearScan.Proofs.IntervalMonad
@@ -39,6 +43,14 @@ order:
   `color_register`, `find_spill` and the colouring step `linear_reg_alloc_step_aux`.
 * `PassInvariants`: `linear_scanProofScript.sml:3550-3820`, the pass1/pass2
   steps, `intbeg_less`, and the `st_ex_FOLDL` pass invariants.
+* `SortCorrect`: `linear_scanProofScript.sml:3821-4330`, the in-array
+  quicksort of registers and moves.
+* `IntervalsCorrect`: `linear_scanProofScript.sml:4332-4996`, the pass
+  initial states, array/list conversions and `linear_reg_alloc_intervals_correct`.
+* `WithoutRenaming`: `linear_scanProofScript.sml:5471-5564`,
+  `linear_reg_alloc_without_renaming_correct`.
+* `TopLevelCorrect`: `linear_scanProofScript.sml:6008-6230`, the allocator
+  correctness `linear_scan_reg_alloc_correct`.
 * `Bijection`: `linear_scanProofScript.sml:4997-5204`, the register
   bijection invariants.
 * `ApplyBijection`: `linear_scanProofScript.sml:5565-6006`, checking a
@@ -50,5 +62,4 @@ Declarations whose statements use HOL `EL` render it by the exact tagged
 `holEl` (`Flapjack.Misc.ListEl`); each was re-tagged after its own statement
 review.
 
-The top-level `linear_scan_reg_alloc_correct` is not yet ported.
 -/

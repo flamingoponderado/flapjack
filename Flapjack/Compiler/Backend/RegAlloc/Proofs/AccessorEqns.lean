@@ -10,9 +10,10 @@ The case-distribution and array accessor equations of
 `reg_allocProofScript.sml:95-292`. HOL `LUPDATE x n l` is `l.set n x`.
 
 The `Msub`/`*_sub` and `st_ex_MAP *_sub` equations read HOL `EL`, rendered by the
-shared untagged `Flapjack.holEl`. They are provisional and untagged until the HOL
-`listScript` provenance review (bead flapjack-pxn.18.5.15.3.38.1) is accepted; the
-`EL`-free `Mupdate`/`update_*` and case equations are exact. HOL's
+exact tagged `Flapjack.holEl` (HOL `listScript.sml` `EL_def`, pinned HOL submodule,
+provenance bead flapjack-pxn.18.5.15.3.38.1); they were re-reviewed individually after
+that approval (bead flapjack-pxn.18.5.15.3.38.2). The `EL`-free `Mupdate`/`update_*`
+and case equations are exact. HOL's
 `case_eq_thms` (line 95), an SML-assembled list of `TypeBase.case_eq_of`
 conjuncts used only as a simp set, is not ported.
 -/
@@ -55,12 +56,9 @@ theorem listCaseSt {α β γ : Type} (a : α → β) (b : γ → List γ → α 
   | [] => rfl
   | _ :: _ => rfl
 
-/-- HOL `Msub_eqn` (`reg_allocProofScript.sml:125-136`).
-
-Provisional and untagged: this ports HOL `Msub_eqn` but its statement reads HOL `EL`
-through `holEl`, whose HOL `listScript` provenance is pending review (bead
-flapjack-pxn.18.5.15.3.38.1). Restore the `@[hol]` tag once that review is accepted.
+/-- Exact HOL `Msub_eqn` (`reg_allocProofScript.sml:125-136`).
 HOL's unused `v` binder is omitted. -/
+@[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml" "Msub_eqn"]
 theorem msubEqn {α ε : Type} [Nonempty α] :
     ∀ (e : ε) (n : Nat) (ls : List α),
       mSub e n ls = if n < ls.length then .success (holEl n ls) else .failure e := by
@@ -144,7 +142,7 @@ theorem updateMoveRelatedEqn (n : Nat) (t : Bool) (s : State) :
   arrayUpdateEqn _ _ n t s
 
 /-- The generated `F_sub` accessor over the `Msub` equation (Flapjack
-infrastructure for the provisional `*_sub_eqn` cases). -/
+infrastructure for the `*_sub_eqn` cases). -/
 private theorem arraySubEqn {σ α : Type} [Nonempty α] (get : σ → List α) (n : Nat) (s : σ) :
     arraySub get StateException.Subscript n s =
       if n < (get s).length then (.success (holEl n (get s)), s)
@@ -153,55 +151,40 @@ private theorem arraySubEqn {σ α : Type} [Nonempty α] (get : σ → List α) 
   rw [msubEqn]
   by_cases h : n < (get s).length <;> simp [h]
 
-/-- HOL `adj_ls_sub_eqn` (`reg_allocProofScript.sml:138-147`).
-
-Provisional and untagged: this ports HOL `adj_ls_sub_eqn` but its statement reads HOL
-`EL` through `holEl`, whose HOL `listScript` provenance is pending review (bead
-flapjack-pxn.18.5.15.3.38.1). Restore the `@[hol]` tag once that review is accepted. -/
+/-- Exact HOL `adj_ls_sub_eqn` (`reg_allocProofScript.sml:138-147`). -/
+@[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml" "adj_ls_sub_eqn"]
 theorem adjLsSubEqn (n : Nat) (s : State) :
     adjLsSub n s =
       if n < s.adj_ls.length then (.success (holEl n s.adj_ls), s)
       else (.failure .Subscript, s) :=
   arraySubEqn _ n s
 
-/-- HOL `node_tag_sub_eqn` (`reg_allocProofScript.sml:149-158`).
-
-Provisional and untagged: this ports HOL `node_tag_sub_eqn` but its statement reads
-HOL `EL` through `holEl`, whose HOL `listScript` provenance is pending review (bead
-flapjack-pxn.18.5.15.3.38.1). Restore the `@[hol]` tag once that review is accepted. -/
+/-- Exact HOL `node_tag_sub_eqn` (`reg_allocProofScript.sml:149-158`). -/
+@[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml" "node_tag_sub_eqn"]
 theorem nodeTagSubEqn (n : Nat) (s : State) :
     nodeTagSub n s =
       if n < s.node_tag.length then (.success (holEl n s.node_tag), s)
       else (.failure .Subscript, s) :=
   arraySubEqn _ n s
 
-/-- HOL `degrees_sub_eqn` (`reg_allocProofScript.sml:160-169`).
-
-Provisional and untagged: this ports HOL `degrees_sub_eqn` but its statement reads HOL
-`EL` through `holEl`, whose HOL `listScript` provenance is pending review (bead
-flapjack-pxn.18.5.15.3.38.1). Restore the `@[hol]` tag once that review is accepted. -/
+/-- Exact HOL `degrees_sub_eqn` (`reg_allocProofScript.sml:160-169`). -/
+@[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml" "degrees_sub_eqn"]
 theorem degreesSubEqn (n : Nat) (s : State) :
     degreesSub n s =
       if n < s.degrees.length then (.success (holEl n s.degrees), s)
       else (.failure .Subscript, s) :=
   arraySubEqn _ n s
 
-/-- HOL `coalesced_sub` (`reg_allocProofScript.sml:171-179`).
-
-Provisional and untagged: this ports HOL `coalesced_sub` but its statement reads HOL
-`EL` through `holEl`, whose HOL `listScript` provenance is pending review (bead
-flapjack-pxn.18.5.15.3.38.1). Restore the `@[hol]` tag once that review is accepted. -/
+/-- Exact HOL `coalesced_sub` (`reg_allocProofScript.sml:171-179`). -/
+@[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml" "coalesced_sub"]
 theorem coalescedSubEqn (n : Nat) (s : State) :
     coalescedSub n s =
       if n < s.coalesced.length then (.success (holEl n s.coalesced), s)
       else (.failure .Subscript, s) :=
   arraySubEqn _ n s
 
-/-- HOL `move_related_sub` (`reg_allocProofScript.sml:181-189`).
-
-Provisional and untagged: this ports HOL `move_related_sub` but its statement reads HOL
-`EL` through `holEl`, whose HOL `listScript` provenance is pending review (bead
-flapjack-pxn.18.5.15.3.38.1). Restore the `@[hol]` tag once that review is accepted. -/
+/-- Exact HOL `move_related_sub` (`reg_allocProofScript.sml:181-189`). -/
+@[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml" "move_related_sub"]
 theorem moveRelatedSubEqn (n : Nat) (s : State) :
     moveRelatedSub n s =
       if n < s.move_related.length then (.success (holEl n s.move_related), s)
@@ -209,7 +192,7 @@ theorem moveRelatedSubEqn (n : Nat) (s : State) :
   arraySubEqn _ n s
 
 /-- `st_ex_MAP` of an array `sub` over in-range indices (Flapjack infrastructure for
-the three provisional `st_ex_MAP_*_sub` cases). -/
+the three `st_ex_MAP_*_sub` cases). -/
 private theorem stExMapArraySub {α : Type} [Nonempty α] (get : State → List α) :
     ∀ (ls : List Nat) (s : State), (∀ v ∈ ls, v < (get s).length) →
       stExMap (arraySub get StateException.Subscript) ls s =
@@ -221,33 +204,22 @@ private theorem stExMapArraySub {α : Type} [Nonempty α] (get : State → List 
       simp only [stExMap, Flapjack.Translator.Monadic.MonadBase.bind,
         Flapjack.Translator.Monadic.MonadBase.ret, arraySubEqn, hv, if_true, ih, List.map_cons]
 
-/-- HOL `st_ex_MAP_node_tag_sub` (`reg_allocProofScript.sml:269-275`).
-
-Provisional and untagged: this ports HOL `st_ex_MAP_node_tag_sub` but its statement
-reads HOL `EL` through `holEl`, whose HOL `listScript` provenance is pending review
-(bead flapjack-pxn.18.5.15.3.38.1). Restore the `@[hol]` tag once that review is
-accepted. -/
+/-- Exact HOL `st_ex_MAP_node_tag_sub` (`reg_allocProofScript.sml:269-275`). -/
+@[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml" "st_ex_MAP_node_tag_sub"]
 theorem stExMapNodeTagSub :
     ∀ (ls : List Nat) (s : State), (∀ v ∈ ls, v < s.node_tag.length) →
       stExMap nodeTagSub ls s = (.success (ls.map fun i => holEl i s.node_tag), s) :=
   stExMapArraySub (fun s => s.node_tag)
 
-/-- HOL `st_ex_MAP_adj_ls_sub` (`reg_allocProofScript.sml:277-283`).
-
-Provisional and untagged: this ports HOL `st_ex_MAP_adj_ls_sub` but its statement reads
-HOL `EL` through `holEl`, whose HOL `listScript` provenance is pending review (bead
-flapjack-pxn.18.5.15.3.38.1). Restore the `@[hol]` tag once that review is accepted. -/
+/-- Exact HOL `st_ex_MAP_adj_ls_sub` (`reg_allocProofScript.sml:277-283`). -/
+@[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml" "st_ex_MAP_adj_ls_sub"]
 theorem stExMapAdjLsSub :
     ∀ (ls : List Nat) (s : State), (∀ v ∈ ls, v < s.adj_ls.length) →
       stExMap adjLsSub ls s = (.success (ls.map fun i => holEl i s.adj_ls), s) :=
   stExMapArraySub (fun s => s.adj_ls)
 
-/-- HOL `st_ex_MAP_degrees_sub` (`reg_allocProofScript.sml:285-291`).
-
-Provisional and untagged: this ports HOL `st_ex_MAP_degrees_sub` but its statement
-reads HOL `EL` through `holEl`, whose HOL `listScript` provenance is pending review
-(bead flapjack-pxn.18.5.15.3.38.1). Restore the `@[hol]` tag once that review is
-accepted. -/
+/-- Exact HOL `st_ex_MAP_degrees_sub` (`reg_allocProofScript.sml:285-291`). -/
+@[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml" "st_ex_MAP_degrees_sub"]
 theorem stExMapDegreesSub :
     ∀ (ls : List Nat) (s : State), (∀ v ∈ ls, v < s.degrees.length) →
       stExMap degreesSub ls s = (.success (ls.map fun i => holEl i s.degrees), s) :=

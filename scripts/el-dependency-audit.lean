@@ -2,14 +2,14 @@
 Reproducible audit: list every constant defined in a `Flapjack.*` module -- in
 any namespace, including `_private.*` helpers and auxiliary declarations --
 whose type or value (theorem proof terms and opaque bodies included, via
-`value? (allowOpaque := true)`) transitively mentions the untagged total HOL
+`value? (allowOpaque := true)`) transitively mentions the reviewed total HOL
 `EL`/`HD` renderings (`holEl`, `holHd`, `holHdNil`).
 
 Reachability is a reverse-graph fixed point: the dependency edges of every
-Flapjack-module constant are inverted and searched breadth-first from the held
+Flapjack-module constant are inverted and searched breadth-first from the reviewed
 renderings, so cycles and non-`Flapjack`-prefixed names cannot cut a path.
 Constants of non-Flapjack modules (Lean core, Std, Mathlib) cannot mention the
-held renderings and are not traversed. Each hit is intersected with the
+reviewed renderings and are not traversed. Each hit is intersected with the
 `@[hol]` tags (`HolRef.all`). Since bead flapjack-pxn.18.5.15.3.38.1 tagged
 `holHd`/`holEl` against the pinned HOL submodule, a tagged hit is permitted
 only case by case: its `docs/HOL-THEOREM-MAP.json` row (matched on HOL path and

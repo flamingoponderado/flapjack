@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.Semantics.WordSem.State
+import Flapjack.HolArb
 import Flapjack.Compiler.Encoders.Asm
 import Flapjack.Pancake.Semantics.LoopSemStateExact
 
@@ -22,9 +23,9 @@ witness below). `'a word` is `BitVec width` at a positive width.
 
 HOL `theWord_def` (`:42-44`) and `get_word_def` (`:278-280`) are partial:
 there is no clause for `Loc`, so HOL leaves their value on `Loc` unspecified.
-They are ported below with independent opaque functions for their unspecified
-`Loc` cases. The functions may depend on both location fields and the word
-width; no equality between the two functions or concrete Loc value is imposed.
+HOL pattern completion uses the same `ARB` word for both missing clauses,
+independent of the location fields. Both accessors use the shared `holArb`
+at their result carrier; no concrete value is imposed.
 The evaluator accessor paths already pattern-match on `Word`, so their
 successful equations do not depend on either unspecified function.
 -/
@@ -44,22 +45,9 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C : Type} {F
 
 end WordSemAccessorsSupport
 
-/-- Flapjack infrastructure for the unconstrained `Loc` results of HOL
-`theWord_def`. No HOL declaration names this completion function. It is opaque
-and depends on the complete location and positive word dimension, so no Lean
-proof can impose a concrete value or equate distinct locations. -/
-noncomputable opaque wordSemTheWordLoc (width : Nat) [NeZero width]
-    (label offset : Nat) : BitVec width
-
-/-- Independent opaque completion for the missing `Loc` clause of HOL
-`get_word_def`. HOL does not equate its unspecified values with `theWord`'s;
-this Flapjack infrastructure retains that distinction. -/
-noncomputable opaque wordSemGetWordLoc (width : Nat) [NeZero width]
-    (label offset : Nat) : BitVec width
-
 /-- Exact HOL `theWord_def` (`wordSemScript.sml:42-44`): the sole equation is
 `theWord (Word w) = w`. Its total carrier has unspecified `Loc` results,
-represented by `wordSemTheWordLoc`; no concrete Loc behavior is claimed.
+represented by the shared `holArb (BitVec width)`; no concrete value is claimed.
 The word/Loc carrier and dimension are the reviewed `WordLocW width` and
 positive `BitVec width` translation. -/
 @[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "theWord_def"
@@ -67,17 +55,17 @@ positive `BitVec width` translation. -/
 noncomputable def wordSemTheWord {width : Nat} [NeZero width] :
     WordLocW width → BitVec width
   | .word w => w
-  | .loc label offset => wordSemTheWordLoc width label offset
+  | .loc _ _ => holArb (BitVec width)
 
 /-- Exact HOL `get_word_def` (`wordSemScript.sml:278-280`): its sole equation
-is `get_word (Word w) = w`. The unspecified Loc completion is independent of
-`theWord`'s. There is no extra premise and no equality for either Loc result. -/
+is `get_word (Word w) = w`. Its missing Loc clause uses the same ARB completion
+as `theWord`, independently of the location fields. -/
 @[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "get_word_def"
   (words_as_type_indexed_bitvec)]
 noncomputable def wordSemGetWord {width : Nat} [NeZero width] :
     WordLocW width → BitVec width
   | .word w => w
-  | .loc label offset => wordSemGetWordLoc width label offset
+  | .loc _ _ => holArb (BitVec width)
 
 /-- Kernel equation for the original specified Word clause. -/
 @[simp] theorem wordSemTheWord_word {width : Nat} [NeZero width] (w : BitVec width) :
@@ -103,8 +91,12 @@ def wordSemIsWordLoc {width : Nat} [NeZero width] : WordLocW width → Bool
   | .word _ => true
   | _ => false
 
-/-- Flapjack guarded accessors agree because both inputs are Words; this
-states no relationship between their unspecified Loc completions. -/
+/-- Kernel agreement of the two identically completed definitions. -/
+theorem wordSemTheWord_eq_getWord {width : Nat} [NeZero width]
+    (v : WordLocW width) : wordSemTheWord v = wordSemGetWord v := by
+  cases v <;> rfl
+
+/-- Compatibility specialization to the specified Word clause. -/
 theorem wordSemTheWord_eq_getWord_of_isWord {width : Nat} [NeZero width]
     (v : WordLocW width) (h : wordSemIsWordLoc v = true) :
     wordSemTheWord v = wordSemGetWord v := by

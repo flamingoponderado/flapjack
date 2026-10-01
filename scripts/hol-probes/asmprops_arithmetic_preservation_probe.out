@@ -1,0 +1,25 @@
+ap_upd_pc_simps=(upd_pc (x :α word) (s :α asm_state)).align = s.align ∧
+(upd_pc x s).mem_domain = s.mem_domain ∧ ((upd_pc x s).failed ⇔ s.failed) ∧
+((upd_pc x s).be ⇔ s.be) ∧ (upd_pc x s).mem = s.mem ∧
+(upd_pc x s).regs = s.regs ∧ (upd_pc x s).fp_regs = s.fp_regs ∧
+(upd_pc x s).lr = s.lr ∧ (upd_pc x s).pc = x
+ap_upd_pc_simps_types=(s :α asm_state)::α asm_state;(x :α word)::α word;
+ap_binop_upd_consts=(binop_upd (a :num) (b :binop) (c :α word) (d :α word) (x :α asm_state)).
+mem_domain = x.mem_domain ∧ (binop_upd a b c d x).align = x.align ∧
+((binop_upd a b c d x).failed ⇔ x.failed) ∧
+(binop_upd a b c d x).mem = x.mem ∧ (binop_upd a b c d x).lr = x.lr ∧
+((binop_upd a b c d x).be ⇔ x.be)
+ap_binop_upd_consts_types=(x :α asm_state)::α asm_state;(d :α word)::α word;(c :α word)::α word;(b :binop)::binop;(a :num)::num;
+ap_arith_upd_consts=(arith_upd (a :α arith) (x :α asm_state)).mem_domain = x.mem_domain ∧
+(arith_upd a x).align = x.align ∧ (arith_upd a x).mem = x.mem ∧
+(arith_upd a x).lr = x.lr ∧ ((arith_upd a x).be ⇔ x.be)
+ap_arith_upd_consts_types=(x :α asm_state)::α asm_state;(a :α arith)::α arith;
+ap_add=(F,T,3,9,5,T)
+ap_shift_fail=(T,T,3,9,5,T)
+ap_div_zero=(T,T,3,9,5,T)
+ap_longmul=(F,T,3,9,5,T)
+ap_longdiv_zero=(T,T,3,9,5,T)
+ap_carry=(F,T,3,9,5,T)
+ap_addoverflow=(F,T,3,9,5,T)
+ap_suboverflow=(F,T,3,9,5,T)
+ap_pc=(F,T,3,9,5,T,77)
