@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Install
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.FFI
 import Flapjack.Pancake.WordLang.MaxVar
 import Flapjack.Pancake.WordLang.CutsetsMax
@@ -29,6 +30,7 @@ import Flapjack.Compiler.Backend.WordToStack.NativeMoves
 import Flapjack.Compiler.Backend.LabSem.Memory
 import Flapjack.Compiler.Backend.LabSem.SharedMemory
 import Flapjack.Compiler.Backend.LabSem.Inst
+import Flapjack.Compiler.Backend.LabSem.Evaluate
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.If
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.CutState
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.LoopRecursion
