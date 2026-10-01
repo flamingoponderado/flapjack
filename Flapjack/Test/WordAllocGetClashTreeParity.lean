@@ -13,6 +13,12 @@ not an independent cross-language equivalence theorem. -/
 
 private abbrev setA : NumSet := sptFromAList [(1, ()), (2, ())]
 private abbrev setB : NumSet := sptFromAList [(3, ())]
+-- HOL-exact paired fixtures for the rows whose original inputs are b = [3, 4]
+-- (Alloc/Install/FFI) and a = [1], b = [2] (Loop/Break/Continue); see
+-- scripts/hol-probes/word_alloc_get_clash_tree_probeScript.sml.
+private abbrev setB34 : NumSet := sptFromAList [(3, ()), (4, ())]
+private abbrev setA1 : NumSet := sptFromAList [(1, ())]
+private abbrev setB2 : NumSet := sptFromAList [(2, ())]
 
 -- gct_skip=T
 example : getClashTree (.skip : WordLangProgHOL (BitVec 8)) [] = .delta [] [] := by
@@ -61,13 +67,13 @@ example : getClashTree (.mustTerminate .skip : WordLangProgHOL (BitVec 8)) [] =
     .delta [] [] := by decide +kernel
 
 -- gct_alloc=T
-example : getClashTree (.alloc 5 (setA, setB) : WordLangProgHOL (BitVec 8)) [] =
-    .seq (.delta [] [5]) (.set (sptUnion setA setB)) := by decide +kernel
+example : getClashTree (.alloc 5 (setA, setB34) : WordLangProgHOL (BitVec 8)) [] =
+    .seq (.delta [] [5]) (.set (sptUnion setA setB34)) := by decide +kernel
 
 -- gct_install=T
-example : getClashTree (.install 1 2 3 4 (setA, setB) : WordLangProgHOL (BitVec 8)) [] =
+example : getClashTree (.install 1 2 3 4 (setA, setB34) : WordLangProgHOL (BitVec 8)) [] =
     .seq (.delta [] [4, 3, 2, 1])
-      (.seq (.set (sptUnion setA setB)) (.delta [1] [])) := by decide +kernel
+      (.seq (.set (sptUnion setA setB34)) (.delta [1] [])) := by decide +kernel
 
 -- gct_codebufferwrite=T
 example : getClashTree (.codeBufferWrite 1 2 : WordLangProgHOL (BitVec 8)) [] =
@@ -79,8 +85,8 @@ example : getClashTree (.dataBufferWrite 1 2 : WordLangProgHOL (BitVec 8)) [] =
 
 -- gct_ffi=T
 example : getClashTree
-    (.ffi (.implode [65]) 1 2 3 4 (setA, setB) : WordLangProgHOL (BitVec 8)) [] =
-    .seq (.delta [] [1, 2, 3, 4]) (.set (sptUnion setA setB)) := by decide +kernel
+    (.ffi (.implode [65]) 1 2 3 4 (setA, setB34) : WordLangProgHOL (BitVec 8)) [] =
+    .seq (.delta [] [1, 2, 3, 4]) (.set (sptUnion setA setB34)) := by decide +kernel
 
 -- gct_raise=T
 example : getClashTree (.raise 1 : WordLangProgHOL (BitVec 8)) [] = .delta [] [1] := by
@@ -119,8 +125,8 @@ example : getClashTree (.shareInst .load 5 (.var 2) : WordLangProgHOL (BitVec 8)
     .delta [5] [2] := by decide +kernel
 
 -- gct_loop=T
-example : getClashTree (.loop setA .skip setB : WordLangProgHOL (BitVec 8)) [] =
-    .seq (.set setA) (.seq (.set setB) (.seq (.delta [] []) (.set setA))) := by
+example : getClashTree (.loop setA1 .skip setB2 : WordLangProgHOL (BitVec 8)) [] =
+    .seq (.set setA1) (.seq (.set setB2) (.seq (.delta [] []) (.set setA1))) := by
   decide +kernel
 
 -- gct_break_none=T
@@ -128,16 +134,16 @@ example : getClashTree (.break 2 : WordLangProgHOL (BitVec 8)) [] = .set .ln := 
   decide +kernel
 
 -- gct_break_some=T
-example : getClashTree (.break 0 : WordLangProgHOL (BitVec 8)) [(setA, setB)] =
-    .set setB := by decide +kernel
+example : getClashTree (.break 0 : WordLangProgHOL (BitVec 8)) [(setA1, setB2)] =
+    .set setB2 := by decide +kernel
 
 -- gct_continue_none=T
 example : getClashTree (.continue 2 : WordLangProgHOL (BitVec 8)) [] = .set .ln := by
   decide +kernel
 
 -- gct_continue_some=T
-example : getClashTree (.continue 0 : WordLangProgHOL (BitVec 8)) [(setA, setB)] =
-    .set setA := by decide +kernel
+example : getClashTree (.continue 0 : WordLangProgHOL (BitVec 8)) [(setA1, setB2)] =
+    .set setA1 := by decide +kernel
 
 -- gct_call_none=T
 example : getClashTree (.call none none [3, 4] none : WordLangProgHOL (BitVec 8)) [] =
@@ -207,13 +213,13 @@ def runChecks : IO Bool := do
         decide (getClashTree (.mustTerminate .skip : WordLangProgHOL (BitVec 8)) [] =
           .delta [] [])),
       ("getClashTree Alloc",
-        decide (getClashTree (.alloc 5 (setA, setB) : WordLangProgHOL (BitVec 8)) [] =
-          .seq (.delta [] [5]) (.set (sptUnion setA setB)))),
+        decide (getClashTree (.alloc 5 (setA, setB34) : WordLangProgHOL (BitVec 8)) [] =
+          .seq (.delta [] [5]) (.set (sptUnion setA setB34)))),
       ("getClashTree Install",
-        decide (getClashTree (.install 1 2 3 4 (setA, setB)
+        decide (getClashTree (.install 1 2 3 4 (setA, setB34)
             : WordLangProgHOL (BitVec 8)) [] =
           .seq (.delta [] [4, 3, 2, 1])
-            (.seq (.set (sptUnion setA setB)) (.delta [1] [])))),
+            (.seq (.set (sptUnion setA setB34)) (.delta [1] [])))),
       ("getClashTree CodeBufferWrite",
         decide (getClashTree (.codeBufferWrite 1 2 : WordLangProgHOL (BitVec 8)) [] =
           .delta [] [2, 1])),
@@ -222,8 +228,8 @@ def runChecks : IO Bool := do
           .delta [] [2, 1])),
       ("getClashTree FFI",
         decide (getClashTree
-          (.ffi (.implode [65]) 1 2 3 4 (setA, setB) : WordLangProgHOL (BitVec 8)) [] =
-          .seq (.delta [] [1, 2, 3, 4]) (.set (sptUnion setA setB)))),
+          (.ffi (.implode [65]) 1 2 3 4 (setA, setB34) : WordLangProgHOL (BitVec 8)) [] =
+          .seq (.delta [] [1, 2, 3, 4]) (.set (sptUnion setA setB34)))),
       ("getClashTree Raise",
         decide (getClashTree (.raise 1 : WordLangProgHOL (BitVec 8)) [] = .delta [] [1])),
       ("getClashTree Return",
@@ -250,18 +256,18 @@ def runChecks : IO Bool := do
         decide (getClashTree (.shareInst .load 5 (.var 2) : WordLangProgHOL (BitVec 8)) [] =
           .delta [5] [2])),
       ("getClashTree Loop",
-        decide (getClashTree (.loop setA .skip setB : WordLangProgHOL (BitVec 8)) [] =
-          .seq (.set setA) (.seq (.set setB) (.seq (.delta [] []) (.set setA))))),
+        decide (getClashTree (.loop setA1 .skip setB2 : WordLangProgHOL (BitVec 8)) [] =
+          .seq (.set setA1) (.seq (.set setB2) (.seq (.delta [] []) (.set setA1))))),
       ("getClashTree Break none",
         decide (getClashTree (.break 2 : WordLangProgHOL (BitVec 8)) [] = .set .ln)),
       ("getClashTree Break some",
-        decide (getClashTree (.break 0 : WordLangProgHOL (BitVec 8)) [(setA, setB)] =
-          .set setB)),
+        decide (getClashTree (.break 0 : WordLangProgHOL (BitVec 8)) [(setA1, setB2)] =
+          .set setB2)),
       ("getClashTree Continue none",
         decide (getClashTree (.continue 2 : WordLangProgHOL (BitVec 8)) [] = .set .ln)),
       ("getClashTree Continue some",
-        decide (getClashTree (.continue 0 : WordLangProgHOL (BitVec 8)) [(setA, setB)] =
-          .set setA)),
+        decide (getClashTree (.continue 0 : WordLangProgHOL (BitVec 8)) [(setA1, setB2)] =
+          .set setA1)),
       ("getClashTree Call none",
         decide (getClashTree (.call none none [3, 4] none
             : WordLangProgHOL (BitVec 8)) [] =

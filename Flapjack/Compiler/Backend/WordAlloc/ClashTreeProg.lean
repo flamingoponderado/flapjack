@@ -7,7 +7,7 @@ namespace Flapjack.WordAlloc
 open Flapjack.RegAlloc
 open Flapjack.Compiler.Encoders.Asm
 
-/-- Exact HOL `get_clash_tree_def` (`word_allocScript.sml:1131-1212`), clause by
+/-- Exact HOL `get_clash_tree_def` (`word_allocScript.sml:1131-1198`), clause by
 clause over the exact native program carrier `WordLangProgHOL (BitVec width)` and
 the literal `ClashTree` receiver. The extra loop-context argument is HOL's
 `lt : (num_set # num_set) list`.
@@ -22,7 +22,7 @@ prepends its value `num` before those reads; `Get`/`LocValue` write only.
 (Branch NONE e2t e3t)` for a `Reg` right operand and `Seq (Delta [] [r1]) (...)`
 otherwise. `Alloc`, `Install`, `FFI` use `sptUnion (FST numset) (SND numset)`;
 `Install` also writes `r1`. `CodeBufferWrite`/`DataBufferWrite` read `r2;r1`.
-`Return` writes `num1` before `nums`. `OpCurrHeap` writes `dst`, reads `src`.
+`Return` writes nothing and reads `num1 :: nums`. `OpCurrHeap` writes `dst`, reads `src`.
 `StoreConsts a b c d ws` writes `a;b;c;d`, reads `c;d`. `ShareInst` treats the
 four store widths like `Store` (value prepended before reads) and otherwise like
 `LocValue`. `Loop` wraps `Set names`, `Set exit_names`, the body at the extended
