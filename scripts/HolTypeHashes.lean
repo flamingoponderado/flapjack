@@ -1,4 +1,11 @@
 import Flapjack.Pancake.WordConvs.NameMonotonicity
+import Flapjack.Pancake.WordConvs.EveryVarInstMono
+import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Parmove
+import Flapjack.Compiler.Backend.BackendProps
+
+import Flapjack.Compiler.Backend.LabToTarget.Interference
+import Flapjack.Compiler.Backend.LabToTarget.NopEncoding
+import Flapjack.Compiler.Backend.LabToTarget.SectionNavigation
 import Flapjack.Pancake.WordConvs.ExpressionMonotonicity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.MaxVarExp
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.MaxVarInst

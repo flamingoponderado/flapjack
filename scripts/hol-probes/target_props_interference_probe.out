@@ -1,0 +1,8 @@
+shift_zero=T
+shift_three=T
+shift_composition=T
+shift_ffi_unchanged=T
+shift_target_unchanged=T
+region_empty=T
+region_safe_before_wrap=T
+region_wrap_hits_entry=T
