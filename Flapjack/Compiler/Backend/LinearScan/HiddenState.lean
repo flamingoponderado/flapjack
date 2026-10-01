@@ -50,7 +50,8 @@ abbrev LsM (value : Type) := M LinearScanHiddenState value StateException
 
 /-- Generated `colors_length` (`linear_scanScript.sml:382`). -/
 @[hol "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml" "colors_length_def"]
-def colorsLength : LsM Nat := arrayLength (fun s => s.colors)
+def colorsLength {exception : Type} : M LinearScanHiddenState Nat exception :=
+  arrayLength (fun s => s.colors)
 /-- Generated `colors_sub` (`linear_scanScript.sml:383`). -/
 @[hol "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml" "colors_sub_def"]
 def colorsSub : Nat → LsM Nat := arraySub (fun s => s.colors) .Subscript
@@ -61,7 +62,8 @@ def updateColors : Nat → Nat → LsM Unit :=
 
 /-- Generated `int_beg_length` (`linear_scanScript.sml:386`). -/
 @[hol "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml" "int_beg_length_def"]
-def intBegLength : LsM Nat := arrayLength (fun s => s.int_beg)
+def intBegLength {exception : Type} : M LinearScanHiddenState Nat exception :=
+  arrayLength (fun s => s.int_beg)
 /-- Generated `int_beg_sub` (`linear_scanScript.sml:387`). -/
 @[hol "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml" "int_beg_sub_def"]
 def intBegSub : Nat → LsM Int := arraySub (fun s => s.int_beg) .Subscript
@@ -72,7 +74,8 @@ def updateIntBeg : Nat → Int → LsM Unit :=
 
 /-- Generated `int_end_length` (`linear_scanScript.sml:390`). -/
 @[hol "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml" "int_end_length_def"]
-def intEndLength : LsM Nat := arrayLength (fun s => s.int_end)
+def intEndLength {exception : Type} : M LinearScanHiddenState Nat exception :=
+  arrayLength (fun s => s.int_end)
 /-- Generated `int_end_sub` (`linear_scanScript.sml:391`). -/
 @[hol "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml" "int_end_sub_def"]
 def intEndSub : Nat → LsM Int := arraySub (fun s => s.int_end) .Subscript
@@ -83,7 +86,8 @@ def updateIntEnd : Nat → Int → LsM Unit :=
 
 /-- Generated `sorted_regs_length` (`linear_scanScript.sml:394`). -/
 @[hol "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml" "sorted_regs_length_def"]
-def sortedRegsLength : LsM Nat := arrayLength (fun s => s.sorted_regs)
+def sortedRegsLength {exception : Type} : M LinearScanHiddenState Nat exception :=
+  arrayLength (fun s => s.sorted_regs)
 /-- Generated `sorted_regs_sub` (`linear_scanScript.sml:395`). -/
 @[hol "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml" "sorted_regs_sub_def"]
 def sortedRegsSub : Nat → LsM Nat := arraySub (fun s => s.sorted_regs) .Subscript
@@ -94,7 +98,8 @@ def updateSortedRegs : Nat → Nat → LsM Unit :=
 
 /-- Generated `sorted_moves_length` (`linear_scanScript.sml:398`). -/
 @[hol "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml" "sorted_moves_length_def"]
-def sortedMovesLength : LsM Nat := arrayLength (fun s => s.sorted_moves)
+def sortedMovesLength {exception : Type} : M LinearScanHiddenState Nat exception :=
+  arrayLength (fun s => s.sorted_moves)
 /-- Generated `sorted_moves_sub` (`linear_scanScript.sml:399`). -/
 @[hol "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml" "sorted_moves_sub_def"]
 def sortedMovesSub : Nat → LsM (Nat × (Nat × Nat)) :=

@@ -389,8 +389,8 @@ theorem lengthToAList {α : Type} : ∀ (s : Spt α), (sptToAList s).length = sp
 
 /-- Exact HOL `check_col_equal_col` (`linear_scanProofScript.sml:5932-5942`). -/
 @[hol "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml" "check_col_equal_col"]
-theorem checkColEqualCol :
-    ∀ (s : NumSet) (f1 f2 : Nat → Nat), (∀ r, sptDomain s r → f1 r = f2 r) →
+theorem checkColEqualCol {α : Type} :
+    ∀ (s : Spt α) (f1 f2 : Nat → Nat), (∀ r, sptDomain s r → f1 r = f2 r) →
       checkCol f1 s = checkCol f2 s := by
   intro s f1 f2 h
   have hm : (sptToAList s).map (fun entry => f1 entry.1) =

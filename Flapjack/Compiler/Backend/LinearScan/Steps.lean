@@ -83,10 +83,12 @@ def colorRegister (st : LinearScanState) (reg col : Nat) (rend : Int) : LsM Line
                     phyregs := sptInsert col () st.phyregs }
     else ret { st with active := addActiveInterval (rend, reg) st.active })
 
-/-- HOL `find_last_stealable` (`linear_scanScript.sml:584-605`). -/
+/-- HOL `find_last_stealable` (`linear_scanScript.sml:584-605`). As in HOL
+(`(α # num) list -> ...`), the interval-end component is an arbitrary carrier
+that the search never inspects; `find_spill` instantiates it at `Int`. -/
 @[hol "cakeml/compiler/backend/reg_alloc/linear_scanScript.sml" "find_last_stealable_def"]
-def findLastStealable : List (Int × Nat) → NumSet →
-    LsM (Option ((Int × Nat) × List (Int × Nat)))
+def findLastStealable {α : Type} : List (α × Nat) → NumSet →
+    LsM (Option ((α × Nat) × List (α × Nat)))
   | [], _ => ret none
   | x :: xs, forbidden =>
       bind (findLastStealable xs forbidden) fun recursion =>

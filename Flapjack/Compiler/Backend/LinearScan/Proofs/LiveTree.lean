@@ -446,8 +446,8 @@ theorem allDistinctInjMap {α β : Type} :
 /-- Exact HOL `check_col_output` (`linear_scanProofScript.sml:313-329`). -/
 @[hol "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml"
   "check_col_output"]
-theorem checkColOutput :
-    ∀ (f : Nat → Nat) (live live' flive' : NumSet),
+theorem checkColOutput {α : Type} :
+    ∀ (f : Nat → Nat) (live live' : Spt α) (flive' : NumSet),
       checkCol f live = some (live', flive') →
       sptDomain flive' = (fun y => ∃ x, sptDomain live' x ∧ f x = y) ∧
       (∀ x y, sptDomain live' x → sptDomain live' y → f x = f y → x = y) := by
@@ -484,8 +484,8 @@ theorem checkColOutput :
 /-- Exact HOL `check_col_success` (`linear_scanProofScript.sml:331-343`). -/
 @[hol "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml"
   "check_col_success"]
-theorem checkColSuccess :
-    ∀ (f : Nat → Nat) (live : NumSet),
+theorem checkColSuccess {α : Type} :
+    ∀ (f : Nat → Nat) (live : Spt α),
       (∀ x y, sptDomain live x → sptDomain live y → f x = f y → x = y) →
       ∃ flive, checkCol f live = some (live, flive) := by
   intro f live hi

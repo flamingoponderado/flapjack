@@ -79,6 +79,17 @@ definitions into the compiler. Regenerate with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=linear_scan_top_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
+`linear_scan_generic_types_probe.out` captures the original HOL types of
+eleven reg_alloc/linear_scan constants whose carriers are polymorphic:
+`check_col`'s `α num_map`, `check_intervals`' colour codomain, the five
+generated `*_length` exceptions, `find_last_stealable`'s interval-end
+component, `run_i_linear_scan_hidden_state`'s result/exception, the unused
+`nmax` argument of `linear_reg_alloc_and_extract_coloration`, and the
+`define_run` carrier's field types. `LinearScanGenericTypesParity` elaborates
+the Lean declarations at non-default instances of each carrier; the type rows
+fix binder generality only. Regenerate with `CAKEML=...
+HOL_PROBE_ONLY=linear_scan_generic_types_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `linear_scan_monad_probe.out` captures thirty-four direct original EVAL
 results of the monadic `linear_scanScript.sml` definitions on a concrete
 hidden state, printed with raw sparse-tree constructors: the conditional
