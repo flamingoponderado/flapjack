@@ -1,0 +1,10 @@
+max3_eq_statement=∀x y z. max3 x y z = MAX x (MAX y z)
+max3_zero=T
+max3_x=T
+max3_y=T
+max3_z_after_x=T
+max3_z_after_y=T
+max3_xy_tie=T
+max3_xz_tie=T
+max3_yz_tie=T
+max3_large=T
