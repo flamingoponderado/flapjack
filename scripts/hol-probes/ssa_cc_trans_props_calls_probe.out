@@ -1,0 +1,61 @@
+spt_full=⊢ ∀dest args h ssa na lt prog' ssa' na'. ssa_cc_trans (Call NONE dest args h) ssa na lt = (prog',ssa',na') ⇒ ssa_map_ok na ssa ∧ is_alloc_var na ⇒ na ≤ na' ∧ is_alloc_var na' ∧ ssa_map_ok na' ssa'
+spt_type_dest=:num option
+spt_type_args=:num list
+spt_type_h=:(num # α prog # num # num) option
+spt_type_ssa=:num sptree$num_map
+spt_type_na=:num
+spt_type_lt=:(num sptree$num_map # sptree$num_set # sptree$num_set) list
+spt_type_progPrime=:α prog
+spt_type_ssaPrime=:num sptree$num_map
+spt_type_naPrime=:num
+runtime: 1.5s,    gctime: 0.03997s,     systime: 0.08042s.
+Axioms: 0, Defs: 0, Disk: 0, Orcl: 0, Prims: 336763; Total: 336763
+spr_full=⊢ ∀ret numset ret_handler l1 l2 dest args h ssa na lt.
+    (∀all_names ls stack_mov ssa' na' stack_set names conv_args move_args ssa_cut ret_mov ssa'' na'' ret' ssa_2_p na_2_p ren_ret_handler ssa_2 na_2 regs mov_ret_handler v n v2 h' v4 l1'' l2' n' ssa_3_p na_3_p.
+       all_names = union (FST numset) (SND numset) ∧ ls = MAP FST (toAList all_names) ∧ (stack_mov,ssa',na') = list_next_var_rename_move ssa (na + 2) ls ∧ stack_set = apply_nummaps_key (option_lookup ssa') numset ∧ names = MAP (option_lookup ssa) args ∧ conv_args = GENLIST (λx. 2 * (x + 1)) (LENGTH names) ∧ move_args = Move1 (ZIP (conv_args,names)) ∧ ssa_cut = inter ssa' all_names ∧ (ret_mov,ssa'',na'') = list_next_var_rename_move ssa_cut (na' + 2) ls ∧ (ret',ssa_2_p,na_2_p) = list_next_var_rename ret ssa'' na'' ∧ (ren_ret_handler,ssa_2,na_2) = ssa_cc_trans ret_handler ssa_2_p na_2_p lt ∧ regs = GENLIST (λx. 2 * (x + 1)) (LENGTH ret) ∧ mov_ret_handler = Seq ret_mov (Seq (Move1 (ZIP (ret',regs))) ren_ret_handler) ∧ h = SOME v ∧ v = (n,v2) ∧ v2 = (h',v4) ∧ v4 = (l1'',l2') ∧ (n',ssa_3_p,na_3_p) = next_var_rename n ssa'' na_2 ⇒
+       ∀prog' ssa' na'. ssa_cc_trans h' ssa_3_p na_3_p lt = (prog',ssa',na') ⇒ ssa_map_ok na_3_p ssa_3_p ∧ is_alloc_var na_3_p ⇒ na_3_p ≤ na' ∧ is_alloc_var na' ∧ ssa_map_ok na' ssa') ∧
+    (∀all_names ls stack_mov ssa' na' stack_set names conv_args move_args ssa_cut ret_mov ssa'' na'' ret' ssa_2_p na_2_p. all_names = union (FST numset) (SND numset) ∧ ls = MAP FST (toAList all_names) ∧ (stack_mov,ssa',na') = list_next_var_rename_move ssa (na + 2) ls ∧ stack_set = apply_nummaps_key (option_lookup ssa') numset ∧ names = MAP (option_lookup ssa) args ∧ conv_args = GENLIST (λx. 2 * (x + 1)) (LENGTH names) ∧ move_args = Move1 (ZIP (conv_args,names)) ∧ ssa_cut = inter ssa' all_names ∧ (ret_mov,ssa'',na'') = list_next_var_rename_move ssa_cut (na' + 2) ls ∧ (ret',ssa_2_p,na_2_p) = list_next_var_rename ret ssa'' na'' ⇒ ∀prog' ssa' na'. ssa_cc_trans ret_handler ssa_2_p na_2_p lt = (prog',ssa',na') ⇒ ssa_map_ok na_2_p ssa_2_p ∧ is_alloc_var na_2_p ⇒ na_2_p ≤ na' ∧ is_alloc_var na' ∧ ssa_map_ok na' ssa') ⇒
+    ∀prog' ssa' na'. ssa_cc_trans (Call (SOME (ret,numset,ret_handler,l1,l2)) dest args h) ssa na lt = (prog',ssa',na') ⇒ ssa_map_ok na ssa ∧ is_alloc_var na ⇒ na ≤ na' ∧ is_alloc_var na' ∧ ssa_map_ok na' ssa'
+spr_type_ret=:num list
+spr_type_numset=:sptree$num_set # sptree$num_set
+spr_type_ret_handler=:α prog
+spr_type_l1=:num
+spr_type_l2=:num
+spr_type_dest=:num option
+spr_type_args=:num list
+spr_type_h=:(num # α prog # num # num) option
+spr_type_ssa=:num sptree$num_map
+spr_type_na=:num
+spr_type_lt=:(num sptree$num_map # sptree$num_set # sptree$num_set) list
+spr_type_progPrime=:α prog
+spr_type_ssaPrime=:num sptree$num_map
+spr_type_naPrime=:num
+spr_type_all_names=:sptree$num_set
+spr_type_ls=:num list
+spr_type_stack_mov=:α prog
+spr_type_stack_set=:sptree$num_set # sptree$num_set
+spr_type_names=:num list
+spr_type_conv_args=:num list
+spr_type_move_args=:α prog
+spr_type_ssa_cut=:num sptree$num_map
+spr_type_ret_mov=:α prog
+spr_type_ssaPrimePrime=:num sptree$num_map
+spr_type_naPrimePrime=:num
+spr_type_retPrime=:num list
+spr_type_ssa_2_p=:num sptree$num_map
+spr_type_na_2_p=:num
+spr_type_ren_ret_handler=:α prog
+spr_type_ssa_2=:num sptree$num_map
+spr_type_na_2=:num
+spr_type_regs=:num list
+spr_type_mov_ret_handler=:α prog
+spr_type_v=:num # α prog # num # num
+spr_type_n=:num
+spr_type_v2=:α prog # num # num
+spr_type_hPrime=:α prog
+spr_type_v4=:num # num
+spr_type_l1PrimePrime=:num
+spr_type_l2Prime=:num
+spr_type_nPrime=:num
+spr_type_ssa_3_p=:num sptree$num_map
+spr_type_na_3_p=:num
