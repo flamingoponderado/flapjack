@@ -1,3 +1,4 @@
+import Flapjack.Test.ProductionMacros
 import Flapjack.Test.StackWordBoundary
 import Flapjack.Test.LabToTargetMapLemmasParity
 import Flapjack.Test.LabToTargetEncodingParity
