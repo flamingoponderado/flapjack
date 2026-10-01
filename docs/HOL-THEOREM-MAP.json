@@ -39248,22 +39248,6 @@
   "reviewer": "flapjack-sol source comparison (2026-10-01, b4v0.3.2): labSemScript47 is_Label true exactly Label, false on other two constructors. Canonical actual LabLang Line payloads use HolAsm/HolMemop/HolAddr and HolCmp/HolRegImm/MlString with BitVec at one positive NeZero width; fixed encoded bytes BitVec8 retained. The former generic isLabel quantified arbitrary payload Types, including an arbitrary Word, which is not the source carrier even when ignored; its unqualified tag/map/pin are removed while the generic function signature/body stay unchanged as explicitly documented Flapjack-only utility. Native three-case classifier is exact under word-dimension translation. Unconditional kernel isLabelHOL_eq_generic compares actual native instances, no added hypothesis. Native navigation/evaluator consumption remains linked on b4v0.3/b4v0; no executed compiler change or performance exception."
 },
 {
-  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
-  "hol_name": "is_Label_def",
-  "lean_path": "Flapjack/Compiler/Backend/LabSem.lean",
-  "lean_name": "isLabel",
-  "statement_status": "reviewed_exact",
-  "reviewer": "Codex (labSemScript.sml:47 is_Label returns T exactly on Label, F otherwise; Lean pattern match preserves all constructors)"
-},
-{
-  "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
-  "hol_name": "sec_ends_with_label_def",
-  "lean_path": "Flapjack/Compiler/Backend/LabProps.lean",
-  "lean_name": "secEndsWithLabelHOL",
-  "statement_status": "reviewed_exact",
-  "reviewer": "Codex (labPropsScript.sml:81 is a HOL predicate, not a Boolean result; the tagged Lean declaration returns Prop with nonempty and final-label conditions, while secEndsWithLabel is an untagged executable Bool counterpart)"
-},
-{
   "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/ReadsLiveExpressions.lean",
   "lean_name": "getReadsExpGetLiveExp",
   "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
