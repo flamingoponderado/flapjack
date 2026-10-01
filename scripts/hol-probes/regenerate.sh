@@ -3234,3 +3234,11 @@ run_probe word_alloc_max_exp_probeScript.sml word_alloc_max_exp_probe.out \
 run_probe wordconvs_exp_mono_probeScript.sml wordconvs_exp_mono_probe.out \
   em_var em_nested em_empty em_const em_lookup em_duplicate em_large em_guard_needed em_original_theorem \
   "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe parmove_preserves_moves_parmove_probeScript.sml parmove_preserves_moves_parmove_probe.out \
+  pmm_shared pmm_cycle pmm_bool pmm_output pmm_self pmm_empty \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe word_convs_every_var_inst_mono_probeScript.sml word_convs_every_var_inst_mono_probe.out \
+  im_original_theorem im_skip im_const im_binreg im_binimm im_shift im_div im_longdiv im_load8 im_load16_ignored im_fpless im_fp64_to im_fp32_to im_fp80_from im_fpignored im_fp32_reject \
+  "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
