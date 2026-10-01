@@ -38104,5 +38104,31 @@
   ],
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.2.22.15): exact source comparison with pan_globalsProofScript.sml:3010-3029 compile_top_semantics_decls. Fourteen HOL conjuncts kept in order: ALL_DISTINCT (MAP FST (functions code)); t = s with top_addr/memaddrs (s.memaddrs UNION free_addrs as pointwise disjunction)/memory := tmem/locals := tlocals; s.code = FEMPTY; s.globals = FEMPTY; byte_aligned s.top_addr; good_dimindex; mgs = bytes_in_word * n2w (SUM (MAP size_of_shape (dec_shapes code))); free_addrs = addresses s.top_addr (SUM ...); DISJOINT s.memaddrs free_addrs (pointwise); memory agreement on s.memaddrs; s.top_addr + mgs NOTIN s.memaddrs; w2n bytes_in_word * SUM < dimword (2^width); EVERY is_function/is_decl/is_exn_decl; semantics_decls s start code <> Fail. Conclusion exact semantics_decls s start code = semantics_decls t start (compile_top code start). No target-run, success or post-state premise; proof composes tagged has_main', evaluate_decls_compile_top, resort_decls_evaluate, evaluate_decls_init_globals_lemma, semantics_init_call', semantics_fperm, semantics_empty_locals, evaluate_invariants and pan_globals state_rel_imp_semantics. HOL finite maps via fmap_as_finite_support, word dimension via words_as_type_indexed_bitvec; addresses_thm rewrite replaced by tagged mem_addresses."
+},
+{
+  "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+  "hol_name": "numset_list_insert_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/ProgramLiveness.lean",
+  "lean_name": "numsetListInsert",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01, bead11.1.13.1: literal768-771 [] returns supplied NumSet, cons inserts head Unit into the recursively constructed tail tree; exact List Nat/Spt Unit, no word carrier or extra premise."
+},
+{
+  "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+  "hol_name": "get_live_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/ProgramLiveness.lean",
+  "lean_name": "getLive",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01, bead11.1.13.1: compared all27 compiled HOL clauses773-850 and original word_allocTheory get_live_def. Exact WordLangProgHOL at positive BitVec/NeZero, Spt Unit live/cutsets and List of paired loop trees. Move uses FOLDR delete then literal head-after-tail numset insertion; Seq visits second then first; If union order and Reg/Imm inserts literal; Alloc/Install/FFI/Call use source cutsets and ignore supplied live where HOL does. StoreConsts uses first source clause (delete a/delete b before c/d inserts); original generated HOL theorem omits shadowed second row, fresh direct EVAL get_live_store_consts=T confirms it. ShareInst includes allfour store widths, otherwise kills name. Loop returns entry tree without body recursion; Break/Continue use optional indexed lookup with LN fallback. Other constructors are literal source equations, no strengthened condition. Fresh original3rows captured and kernel replayed. Production route remains OPEN separately on11.1.13.2; inventory13 not completed by proof-only definition."
+},
+{
+  "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+  "hol_name": "apply_colour_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Colour.lean",
+  "lean_name": "applyColour",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.14) against word_allocScript.sml apply_colour_def, clause by clause over the tagged WordLangProgHOL carrier: Skip; Move keeps literal ZIP (MAP (f o FST) ls, MAP (f o SND) ls); Inst via tagged apply_colour_inst; Assign/Store/Set/ShareInst via tagged apply_colour_exp; Get renames dest only; Call renames returned vars, cut sets via apply_nummaps_key, return handler, args, handler exception var and handler body, labels/dest unchanged; Seq/MustTerminate/If (apply_colour_imm) recursive; Install/FFI/Alloc cut sets via apply_nummaps_key; CodeBufferWrite/DataBufferWrite/LocValue/StoreConsts/Raise/Return/OpCurrHeap rename register fields only (FFI name, labels, constants, store names unchanged); Tick; Loop via apply_nummap_key on both live sets; catchall Break/Continue unchanged. Positive BitVec width is the sole carrier translation. Six original HOL EVAL rows (scripts/hol-probes/apply_colour_probe.out) replayed by Flapjack.Test.WordAllocApplyColourExactParity. Proof-side exact definition; executed allocator still uses wordApplyColour (production routing separate)."
 }
 ]
