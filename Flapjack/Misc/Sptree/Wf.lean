@@ -265,12 +265,12 @@ theorem sptEqThm {α : Type} :
           rw [hl, hr, h0]
 
 /-- Lookup through `mk_BN` (HOL `lookup_mk_BN`; Flapjack infrastructure). -/
-theorem sptLookup_sptMkBN {α : Type} (k : Nat) (l r : Spt α) :
+theorem sptLookupMkBN {α : Type} (k : Nat) (l r : Spt α) :
     sptLookup k (sptMkBN l r) = sptLookup k (.bn l r) := by
   cases l <;> cases r <;> simp [sptMkBN, sptLookup] <;> split <;> rfl
 
 /-- Lookup through `mk_BS` (HOL `lookup_mk_BS`; Flapjack infrastructure). -/
-theorem sptLookup_sptMkBS {α : Type} (k : Nat) (l : Spt α) (a : α) (r : Spt α) :
+theorem sptLookupMkBS {α : Type} (k : Nat) (l : Spt α) (a : α) (r : Spt α) :
     sptLookup k (sptMkBS l a r) = sptLookup k (.bs l a r) := by
   cases l <;> cases r <;> simp [sptMkBS, sptLookup] <;> split <;> rfl
 
@@ -296,14 +296,14 @@ theorem sptLookupDifference {α β : Type} :
           by_cases hk : k = 0 <;> simp [sptLookup, hk]
       | bn l' r' =>
           simp only [sptDifference]
-          rw [sptLookup_sptMkBN]
+          rw [sptLookupMkBN]
           by_cases hk : k = 0
           · simp [sptLookup, hk]
           · simp only [sptLookup, hk, if_false]
             split <;> first | exact ihl _ _ | exact ihr _ _
       | bs l' b r' =>
           simp only [sptDifference]
-          rw [sptLookup_sptMkBN]
+          rw [sptLookupMkBN]
           by_cases hk : k = 0
           · simp [sptLookup, hk]
           · simp only [sptLookup, hk, if_false]
@@ -317,14 +317,14 @@ theorem sptLookupDifference {α β : Type} :
           by_cases hk : k = 0 <;> simp [sptLookup, hk]
       | bn l' r' =>
           simp only [sptDifference]
-          rw [sptLookup_sptMkBS]
+          rw [sptLookupMkBS]
           by_cases hk : k = 0
           · simp [sptLookup, hk]
           · simp only [sptLookup, hk, if_false]
             split <;> first | exact ihl _ _ | exact ihr _ _
       | bs l' b r' =>
           simp only [sptDifference]
-          rw [sptLookup_sptMkBN]
+          rw [sptLookupMkBN]
           by_cases hk : k = 0
           · simp [sptLookup, hk]
           · simp only [sptLookup, hk, if_false]
