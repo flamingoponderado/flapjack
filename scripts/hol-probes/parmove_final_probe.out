@@ -1,0 +1,7 @@
+pv_final_terminal=([],[],[(SOME 7,NONE)])
+pv_final_self=([],[],[])
+pv_final_chain=([],[],[(SOME 2,SOME 3); (SOME 1,SOME 2)])
+pv_final_cycle=([],[],[(SOME 1,NONE); (SOME 2,SOME 1); (NONE,SOME 2)])
+pv_final_scratch=([],[],[(NONE,SOME 2); (SOME 1,NONE)])
+pv_final_duplicate=([],[],[(SOME 1,SOME 3); (SOME 1,SOME 2)])
+pv_final_active=([],[],[(SOME 2,NONE); (SOME 1,SOME 2); (NONE,SOME 1)])
