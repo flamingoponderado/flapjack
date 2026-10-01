@@ -1,3 +1,5 @@
+import Flapjack.Test.ParmoveEnvironmentParity
+import Flapjack.Test.ParmovePathParity
 import Flapjack.Test.ParmoveUpdateLemmasParity
 import Flapjack.Test.LabSemNavigationParity
 import Flapjack.Test.LabSectionEndParity

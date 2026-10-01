@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.If
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.CutState
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.LoopRecursion
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.MustTerminate
+import Flapjack.Compiler.Backend.WordToStack.NativeInstructions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Seq
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ReadsLiveExpressions
 import Flapjack.Compiler.Backend.LabSem.Navigation
@@ -885,6 +886,8 @@ import Flapjack.Compiler.Backend.WordToStackRegFormat
 import Flapjack.Compiler.Backend.Parmove
 import Flapjack.Compiler.Backend.Parmove.Semantics
 import Flapjack.Compiler.Backend.Parmove.Invariants
+import Flapjack.Compiler.Backend.Parmove.Invariants.Path
+import Flapjack.Compiler.Backend.Parmove.EnvironmentChange
 import Flapjack.Compiler.Backend.Parmove.UpdateLemmas
 import Flapjack.RiscV.CakeAllocatorBitsBridge
 import Flapjack.StackAlloc
