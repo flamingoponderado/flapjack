@@ -1,0 +1,12 @@
+{"codecRejectedIndices":[],"functions":823,"kind":"coverage","mismatchedIndices":[],"path":"/tmp/flap-03rs-ci-fetch/guest.pp.pnk","repeats":5}
+{"directChecksum":149075,"directNs":82784406,"kind":"sample","nativeChecksum":149075,"nativeNs":169912604,"path":"/tmp/flap-03rs-ci-fetch/guest.pp.pnk","sample":0,"warmDirect":29815,"warmNative":29815}
+{"directChecksum":149075,"directNs":81610931,"kind":"sample","nativeChecksum":149075,"nativeNs":152780853,"path":"/tmp/flap-03rs-ci-fetch/guest.pp.pnk","sample":1,"warmDirect":29815,"warmNative":29815}
+{"directChecksum":149075,"directNs":71029358,"kind":"sample","nativeChecksum":149075,"nativeNs":164172718,"path":"/tmp/flap-03rs-ci-fetch/guest.pp.pnk","sample":2,"warmDirect":29815,"warmNative":29815}
+{"directChecksum":149075,"directNs":82320544,"kind":"sample","nativeChecksum":149075,"nativeNs":159245570,"path":"/tmp/flap-03rs-ci-fetch/guest.pp.pnk","sample":3,"warmDirect":29815,"warmNative":29815}
+{"directChecksum":149075,"directNs":82907667,"kind":"sample","nativeChecksum":149075,"nativeNs":156091163,"path":"/tmp/flap-03rs-ci-fetch/guest.pp.pnk","sample":4,"warmDirect":29815,"warmNative":29815}
+{"codecRejectedIndices":[],"functions":805,"kind":"coverage","mismatchedIndices":[],"path":"/tmp/flap-03rs-ci-fetch/guest-software.pp.pnk","repeats":5}
+{"directChecksum":151905,"directNs":82800656,"kind":"sample","nativeChecksum":151905,"nativeNs":136954493,"path":"/tmp/flap-03rs-ci-fetch/guest-software.pp.pnk","sample":0,"warmDirect":30381,"warmNative":30381}
+{"directChecksum":151905,"directNs":84151123,"kind":"sample","nativeChecksum":151905,"nativeNs":81986967,"path":"/tmp/flap-03rs-ci-fetch/guest-software.pp.pnk","sample":1,"warmDirect":30381,"warmNative":30381}
+{"directChecksum":151905,"directNs":93510350,"kind":"sample","nativeChecksum":151905,"nativeNs":179108462,"path":"/tmp/flap-03rs-ci-fetch/guest-software.pp.pnk","sample":2,"warmDirect":30381,"warmNative":30381}
+{"directChecksum":151905,"directNs":90717171,"kind":"sample","nativeChecksum":151905,"nativeNs":184824071,"path":"/tmp/flap-03rs-ci-fetch/guest-software.pp.pnk","sample":3,"warmDirect":30381,"warmNative":30381}
+{"directChecksum":151905,"directNs":92430631,"kind":"sample","nativeChecksum":151905,"nativeNs":200020276,"path":"/tmp/flap-03rs-ci-fetch/guest-software.pp.pnk","sample":4,"warmDirect":30381,"warmNative":30381}

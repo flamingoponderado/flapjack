@@ -2,7 +2,8 @@
 
 This identifies source locations, not theorem truth or new trusted sources.
 It covers Hol_reln's reviewed tuple form, bounded define_run calls, and the
-bounded define_monad_access_funs / define_MFarray_manip_funs accessor factories.
+bounded define_monad_access_funs / define_MFarray_manip_funs accessor factories
+and the bounded define_monad_exception_functions factory.
 """
 
 import re
@@ -340,4 +341,77 @@ def monad_accessor_declarations(text: str) -> list[tuple[tuple[str, ...], int, i
                               for name in (field + '_length_def', field + '_sub_def',
                                            'update_' + field + '_def'))
                 result.append((names, line(match.start()), line(match.end())))
+    return result
+
+
+def _variant_constructors(comment_masked: str, type_name: str, before: int) -> list[str] | None:
+    """Constructor names, in order, of the unique top-level `Datatype:` variant
+    `type_name = C1 ... | C2 ... | ...` declared before offset `before`."""
+    block = re.compile(
+        r'^Datatype\s*:?\s*\n\s*' + re.escape(type_name) + r'\s*=(?P<body>.*?)\nEnd\b',
+        re.MULTILINE | re.DOTALL)
+    found = [m for m in block.finditer(comment_masked, 0, before)]
+    if len(found) != 1:
+        return None
+    body = found[0]['body']
+    # Only a plain variant: no record, no nested datatype, no bracketed alternatives.
+    if any(token in body for token in ('<|', '|>', ';', '(', ')')):
+        return None
+    constructors = []
+    for alternative in body.split('|'):
+        head = re.match(r'\s*(' + _NAME + r')\b', alternative)
+        if head is None or not head.group(1)[0].isupper():
+            return None
+        constructors.append(head.group(1))
+    return constructors if len(set(constructors)) == len(constructors) else None
+
+
+def monad_exception_declarations(text: str) -> list[tuple[tuple[str, ...], int, int]]:
+    """Recognize ml_monadBaseLib's generated exception functions.
+
+    A top-level `val NAME = define_monad_exception_functions ``:EXN`` ``:STATE``;`
+    call, with `EXN` the unique literal `Datatype:` variant declared earlier in
+    the same file, generates `raise_C_def` and `handle_C_def` for every
+    constructor `C` of `EXN`, in order
+    (`cakeml/translator/monadic/monad_base/ml_monadBaseLib.sml:186-307`). This
+    records source provenance only, not elaboration or type equivalence. A call
+    whose exception type is declared elsewhere (for example in an ancestor
+    theory), shadowed factories, nested or rebound bindings, non-literal types,
+    record or parenthesised alternatives and unterminated calls are excluded.
+    """
+    comment_masked, quotes = _headers_and_quotes(text)
+    masked = _mask_modern_blocks(text, comment_masked)
+    nested = _nested_positions(masked)
+    result: list[tuple[tuple[str, ...], int, int]] = []
+    header = re.compile(
+        r'^val\s+(?P<lhs>' + _NAME + r')\s*=\s*define_monad_exception_functions\s+(?P<q1>``)',
+        re.MULTILINE)
+    for match in header.finditer(masked):
+        if match.start() in nested:
+            continue
+        if _top_level_bindings(masked, nested, 'define_monad_exception_functions', match.start()):
+            continue
+        close1 = quotes.get(match.start('q1'))
+        if close1 is None:
+            continue
+        exn = re.fullmatch(r'``\s*:\s*(' + _NAME + r')\s*``', text[match.start('q1'):close1])
+        if exn is None:
+            continue
+        second = re.match(r'\s*(?=``)', text[close1:])
+        if second is None:
+            continue
+        q2 = close1 + second.end()
+        close2 = quotes.get(q2)
+        if close2 is None or re.fullmatch(r'``\s*:\s*' + _NAME + r'\s*``', text[q2:close2]) is None:
+            continue
+        end = re.match(r'\s*;', text[close2:])
+        if end is None:
+            continue
+        constructors = _variant_constructors(comment_masked, exn.group(1), match.start())
+        if constructors is None:
+            continue
+        names = tuple(prefix + c + '_def' for c in constructors for prefix in ('raise_', 'handle_'))
+        start_line = text.count('\n', 0, match.start()) + 1
+        end_line = text.count('\n', 0, close2 + end.end()) + 1
+        result.append((names, start_line, end_line))
     return result

@@ -40,7 +40,8 @@ theorem retainedAllocator_programCodec {width : Nat} [NeZero width]
     (allocated : cakeAllocateWordFunctionAfterDeadWithColour label parameters program = some output) :
     (wordLangProgToHOL output.program).isSome = true := by
   have stages := allocatorStagesCodec parameters program accepted
-  unfold cakeAllocateWordFunctionAfterDeadWithColour at allocated
+  unfold cakeAllocateWordFunctionAfterDeadWithColour
+    cakeAllocateWordFunctionAfterDeadWithColourFromLimit at allocated
   repeat' (split at allocated <;> simp_all)
   all_goals rcases allocated with ⟨_, _, _, rfl⟩
   all_goals exact stages
