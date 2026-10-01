@@ -1,0 +1,12 @@
+wl_skip=T
+wl_location=T
+wl_direct_tail=T
+wl_indirect_tail=T
+wl_tail_handler=T
+wl_both_bodies=T
+wl_metadata_omitted=T
+wl_return_only=T
+wl_duplicate=T
+wl_if=T
+wl_loop=T
+wl_must=T
