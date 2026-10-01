@@ -2411,6 +2411,12 @@ the executed allocator. Regenerate read-only with
 
 `parmove_parsem_map_inj_probeScript.sml` captures eight original renamed/original value/equality tuples, including cycles, shared sources, large register IDs, independent Nat-to-Bool register carriers, and a failing domain-injectivity sentinel. Matching kernel fixtures retain arbitrary-carrier theorem application. Finite observations do not prove whole allocator equivalence.
 `word_alloc_get_prefs_probeScript.sml` captures seventeen original full-list preference equalities, with nonempty accumulators, duplicates/self moves, branch and sequential ordering, both returning handlers, tail-handler exclusion, loops, nested wrappers, ignored constructors and priority/register naturals exceeding 2^64. Matching actual CompilerParity fixtures reduce in the kernel. Native allocator assembly and production routing remain separate.
+
+`word_alloc_sp_default_probeScript.sml` captures fifteen original `sp_default` and `total_colour` rows: missing physical and virtual registers, present colours overriding the physical default (including zero), raw `BS`/`BN` trees, and keys above 2^64, plus `total_colour` paired with `(\x. 2 * x) o sp_default` at the same inputs. `Flapjack/Test/SpDefaultParity.lean` replays each row in the kernel and applies `totalColourAlt` at every `tc_*` input.
+
+`reg_alloc_in_clash_tree_probeScript.sml` captures eighteen original `in_clash_tree` and `check_clash_tree` rows: `Delta` write/read/miss, `Set` over inserted and raw num_sets, `Branch NONE`/`SOME` left, right, cut-set and miss cases, both `Seq` children, a key above 2^64, and `check_clash_tree` under `f`, `g o f` and a colliding colouring (read through `toAList`). `Flapjack/Test/InClashTreeParity.lean` replays each row and instantiates `checkClashTreeInj` at the probe's tree.
+
+`word_alloc_get_forced_probeScript.sml` captures twenty-eight original `get_forced` rows over `c with ISA := _`: each forced `AddCarry`/`AddOverflow`/`SubOverflow`/`LongMul` ISA guard and its rejected ISA, omitted equal-register pairs, `FPMovToReg`/`FPMovFromReg` at 32 and 64 bits, an unforced instruction, `Seq`/`If`/`MustTerminate`/`Loop`, returning calls with and without a handler, a tail call with a handler, `Skip`, and registers above 2^64. `Flapjack/Test/GetForcedParity.lean` replays each row and instantiates `getForcedInGetClashTree`. These are proof-side ports; the executed RISC-V allocator still uses its own forced-edge traversal.
 `word_alloc_checker_assembly_probe.out` observes five mixed original checker
 equations, kernel-replayed by `WordAllocCheckerAssemblyParity`. Nested control
 (Seq/MustTerminate/If/Loop/Break/Continue), returning and handled calls, a tail
@@ -2470,3 +2476,10 @@ allocator routing. Regenerate read-only with
 `word_to_stack_instruction_maximum_probe` captures fourteen original integer instruction maxima, including immediate/register arithmetic, all arithmetic production constructors with a HOL counterpart, offset-bearing memory and a register name above 2^80. The final two rows expose the zero HOL maximum for Load16/Store16; kernel fixtures verify their existing allocator-guard rejection. The distinct five-register AddCarry has no HOL counterpart and its codec rejection is tested separately. Full arithmetic Option-map equality assumes no codec success, and supported instruction correspondence uses the existing real memory guard. Full program codec closure and executed native routing remain dependency-linked work.
 
 `word_to_stack_program_maximum_probe` captures thirty-two original full program maxima and kernel-replays the same inputs through the actual production/native codec. Every production constructor appears, including all Call forms, ignored tail handlers, tuple-move scans, duplicate cutsets/loop live sets, nonzero Return accumulators, shared 16-bit memory and names above 2^80. The complete Option-map correspondence uses only the existing allocator memory guard and preserves codec rejection; separate sentinels expose nested five-register AddCarry and ordinary 16-bit rejection. This carrier proof does not establish initial source-to-SSA codec image, native frame/config correspondence or the executed route.
+`reg_alloc_remap_probe.out` captures twelve fresh original list remapping and
+bijection traversal observations, kernel-replayed by `RegAllocRemapParity`.
+Delta/Branch/Seq order, optional sets and their mixed enumeration, repeated
+names, raw nodes, large names/counters and arbitrary initial maps are covered.
+These finite observations do not establish general cross-prover equivalence or
+production allocator routing. Regenerate read-only with
+`HOL_PROBE_ONLY=reg_alloc_remap_probeScript.sml scripts/hol-probes/regenerate.sh`.
