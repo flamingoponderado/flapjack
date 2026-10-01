@@ -122,4 +122,12 @@ def runChecks : IO Bool := do
     IO.println "FAIL wordSem accessor HOL oracle rows"
   pure pureRows
 
+/-- Symbolic original ARB completion, without choosing a concrete word. -/
+example {width : Nat} [NeZero width] (a b c d : Nat) :
+    wordSemTheWord (.loc a b : WordLocW width) =
+      wordSemGetWord (.loc c d : WordLocW width) := rfl
+
+example {width : Nat} [NeZero width] (a b : Nat) :
+    wordSemTheWord (.loc a b : WordLocW width) = holArb (BitVec width) := rfl
+
 end Flapjack.Test.WordSemAccessorsParity

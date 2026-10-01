@@ -92,7 +92,7 @@ its inner map must hold key `0` (`lookup 0 l ≠ NONE`, rendered as
 `(sptLookup 0 l).isSome`). -/
 @[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "zero_labs_acc_exist_def"
   (words_as_type_indexed_bitvec)]
-def zeroLabsAccExist {width : Nat} [NeZero width] (labs : Spt (Spt Nat))
+def zeroLabsAccExist {width : Nat} [NeZero width] {α : Type} (labs : Spt (Spt α))
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) : Bool :=
   (sptToAList (getZeroLabsAcc code)).all (fun p =>
