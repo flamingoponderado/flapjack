@@ -2062,6 +2062,8 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         ("Flapjack/Compiler/Backend/LabToTarget/ShmemInfo.lean", "ShmemInfoNum"),
         ("Flapjack/Compiler/Backend/LabToTarget/ShmemInfo.lean", "listAddIfFresh"),
         ("Flapjack/Compiler/Backend/LabToTarget/ShmemInfo.lean", "getMemopInfo"),
+        ("Flapjack/Misc/ListSubset.lean", "listSubset"),
+        ("Flapjack/Compiler/Backend/LabToTarget/Compile.lean", "Config"),
         ("Flapjack/Misc/LList.lean", "lprefixAntisymHOL"),
         ("Flapjack/Misc/LList.lean", "lprefixTransHOL"),
         ("Flapjack/Misc/LList.lean", "prefixesLprefixTotalHOL"),

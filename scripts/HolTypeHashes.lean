@@ -419,6 +419,7 @@ import Flapjack.Compiler.Backend.Parmove.Steps
 import Flapjack.Compiler.Backend.Parmove.NoRead
 import Flapjack.Compiler.Backend.LabSem
 import Flapjack.Compiler.Backend.LabProps
+import Flapjack.Compiler.Backend.LabFilter
 import Flapjack.Compiler.Backend.LabToTarget.Encoding
 import Flapjack.Compiler.Backend.LabToTarget.Labels
 import Flapjack.Compiler.Backend.LabToTarget.Positions
@@ -426,6 +427,7 @@ import Flapjack.Compiler.Backend.LabToTarget.SecondPass
 import Flapjack.Compiler.Backend.LabToTarget.Padding
 import Flapjack.Compiler.Backend.LabToTarget.RemoveLabels
 import Flapjack.Compiler.Backend.LabToTarget.ShmemInfo
+import Flapjack.Compiler.Backend.LabToTarget.Compile
 import Flapjack.Compiler.Backend.StackNames
 import Flapjack.Compiler.Backend.StackNames.NamesOk
 import Flapjack.Compiler.Backend.StackNames.Labels
@@ -437,6 +439,7 @@ import Flapjack.Misc.FlatReplicate
 import Flapjack.Misc.FoldrMaxList
 import Flapjack.Misc.Uncurry
 import Flapjack.Misc.OptMmapCong
+import Flapjack.Misc.ListSubset
 import Flapjack.Pancake.CrepInline.Pass
 import Flapjack.Pancake.CrepInline.Canonical
 import Flapjack.Pancake.CrepLang

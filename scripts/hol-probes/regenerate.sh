@@ -2966,6 +2966,15 @@ run_probe lab_to_target_shmeminfo_probeScript.sml lab_to_target_shmeminfo_probe.
   GetShmemInfoEmpty GetShmemInfoLabelSkip GetShmemInfoShareMem \
   GetShmemInfoAsmAdvance \
   "$cake_dir/compiler/backend/lab_to_targetScript.sml" "$cake_dir/compiler/backend"
+run_probe lab_to_target_compile_probeScript.sml lab_to_target_compile_probe.out \
+  NotSkipSkip NotSkipAsm NotSkipLabel NotSkipLabAsm \
+  FilterSkipEmpty FilterSkipOne FilterSkipTwo \
+  ListSubsetTrue ListSubsetFalse \
+  ConfigLabels ConfigSecPosLen ConfigPos ConfigInitClock ConfigFfiNames \
+  ConfigShmemExtra ConfigHashSize \
+  CompileLabSuccess CompileLabFfiSubsetFail CompileLabRemoveLabelsNone \
+  CompileSkip CompileLabFilterSkip \
+  "$cake_dir/compiler/backend/lab_to_targetScript.sml" "$cake_dir/compiler/backend"
 run_probe word_alloc_total_colour_probeScript.sml word_alloc_total_colour_probe.out \
   tc_absent_zero tc_absent_physical tc_absent_virtual tc_absent_large_physical tc_absent_large_virtual tc_mapped_physical tc_mapped_virtual tc_mapped_zero \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"

@@ -43945,5 +43945,57 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.20): literal lab_to_targetScript.sml:401, all six clauses in HOL order. `[] => (ffi_names, shmem_info)`; `Section k [] :: rest` skips the empty section; `Section k (Label _ _ _ :: xs) :: rest` skips the label without advancing `pos`; `Section k (Asm (ShareMem m r ad) bytes _ :: xs) :: rest` binds `(name,nb) = get_memop_info m` and recurses at `pos + LENGTH bytes` appending `SharedMem name` and the record `<|entry_pc:=pos; nbytes:=nb; addr_reg:=(case ad of Addr r off => r); addr_off:=(case ad of Addr r off => w2n off); reg:=r; exit_pc:=pos+LENGTH bytes|>`; the `LabAsm _ _ bytes _` and other `Asm _ bytes _` clauses recurse at `pos + LENGTH bytes` recording nothing. HOL `LENGTH` is `.length` and `w2n` is `.toNat`; the record is the exact `ShmemInfoNum` and the FFI name is `HolFfiName`. The linked Line/Section carrier's only type-indexed word is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec); the fixed `word8` byte sizes stay literal. No added hypothesis, dropped clause, or changed position advance. Replayed as the GetShmemInfo* rows of scripts/hol-probes/lab_to_target_shmeminfo_probe.out in Flapjack.Test.LabToTargetShmemInfoParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Misc/ListSubset.lean",
+  "lean_name": "listSubset",
+  "hol_path": "cakeml/misc/miscScript.sml",
+  "hol_name": "list_subset_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.27): literal miscScript.sml:3092, the single clause `list_subset l1 l2 = EVERY (\\x. MEM x l2) l1`. Lean `listSubset l1 l2 = l1.all (fun x => decide (x ∈ l2))`; the HOL type is fully polymorphic `'a list -> 'a list -> bool`, so it carries no type-indexed word and no carrier qualifier. HOL `EVERY` is Lean `List.all`, `MEM x l2` is the proposition `x ∈ l2` decided by `decide`, and HOL's decidable equality is the `[DecidableEq alpha]` binder. No added hypothesis or changed clause. Replayed as the ListSubset* rows of scripts/hol-probes/lab_to_target_compile_probe.out in Flapjack.Test.LabToTargetCompileParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabFilter.lean",
+  "lean_name": "notSkip",
+  "hol_path": "cakeml/compiler/backend/lab_filterScript.sml",
+  "hol_name": "not_skip_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.27): literal lab_filterScript.sml:11, `not_skip l = case l of Asm (Asmi (Inst Skip)) _ _ => F | _ => T`. Lean pattern matches `.asm (.asmi (.inst .skip)) _ _` to `false` and every other `Label`/`Asm`/`LabAsm` line to `true`. Only the linked width-indexed `labLang$line` position field is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec); the decision itself is on the fixed `HolInst` constructor. No added hypothesis or changed branch. Replayed as the NotSkip* rows of scripts/hol-probes/lab_to_target_compile_probe.out in Flapjack.Test.LabToTargetCompileParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabFilter.lean",
+  "lean_name": "filterSkip",
+  "hol_path": "cakeml/compiler/backend/lab_filterScript.sml",
+  "hol_name": "filter_skip_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.27): literal lab_filterScript.sml:15-16, both clauses `filter_skip [] = []` and `filter_skip (Section n xs :: rest) = Section n (FILTER not_skip xs) :: filter_skip rest`. Lean `[] => []` and `⟨n, xs⟩ :: rest => ⟨n, xs.filter notSkip⟩ :: filterSkip rest`; HOL `FILTER` is Lean `List.filter` and the section id/lines order is preserved. Only the linked width-indexed `labLang$line` position field is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec); the predicate is the reviewed `notSkip`. No added hypothesis or changed clause. Replayed as the FilterSkip* rows of scripts/hol-probes/lab_to_target_compile_probe.out in Flapjack.Test.LabToTargetCompileParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Compile.lean",
+  "lean_name": "Config",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "config",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.27): literal lab_to_targetScript.sml:358-368, the Datatype `config = <| labels : num num_map num_map; sec_pos_len : (num # num # num) list; pos : num; init_clock : num; ffi_names : ffiname list option; shmem_extra: shmem_info_num list; hash_size : num |>`. Lean structure Config has fields labels:Spt (Spt Nat), secPosLen:List (Nat x Nat x Nat), pos:Nat, initClock:Nat, ffiNames:Option (List HolFfiName), shmemExtra:List ShmemInfoNum, hashSize:Nat in the same order; `num_map` is the reviewed `Spt`, `#` is `x`, and the FFI-name list is the exact `HolFfiName`. No field carries HOL's type-indexed `'a word` (the only word is the fixed `word8` byte size inside the exact `ShmemInfoNum`), so no words qualifier applies and the declaration is reviewed_exact. Replayed as the Config* rows of scripts/hol-probes/lab_to_target_compile_probe.out in Flapjack.Test.LabToTargetCompileParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Compile.lean",
+  "lean_name": "compileLab",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "compile_lab_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.27): literal lab_to_targetScript.sml:430/453, the single clause. `current_ffis = find_ffi_names sec_list`; `(ffis, ffis_ok)` is `(ffis, list_subset current_ffis ffis)` when `c.ffi_names = SOME ffis` and `(current_ffis, T)` otherwise; when `ffis_ok` and `remove_labels c.init_clock asm_conf c.pos c.labels ffis sec_list = SOME (sec_list, l1)`, it computes `bytes = prog_to_bytes sec_list`, `(new_ffis, shmem_infos) = get_shmem_info sec_list c.pos [] []` and returns `SOME (bytes, c with <| labels := l1; pos := LENGTH bytes + c.pos; sec_pos_len := get_symbols c.pos sec_list; ffi_names := SOME (ffis ++ new_ffis); shmem_extra := shmem_infos |>)`; otherwise `NONE`. Lean transcribes each clause with the reviewed `findFfiNames`/`listSubset`/`removeLabels`/`progToBytes`/`getShmemInfo`/`getSymbols` and the exact `Config` record update. Only the linked width-indexed `labLang$line` position field is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec); `LENGTH` is `.length`. No added hypothesis, dropped branch, or reordered argument. Replayed as the CompileLab* rows of scripts/hol-probes/lab_to_target_compile_probe.out in Flapjack.Test.LabToTargetCompileParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Compile.lean",
+  "lean_name": "compile",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "compile_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.27): literal lab_to_targetScript.sml:478, the single clause `compile asm_conf c sec_list = compile_lab asm_conf c (filter_skip sec_list)`. Lean `compile asmConf c secList = compileLab asmConf c (filterSkip secList)`; `asm_conf`/`c`/`sec_list` order and the reviewed `filterSkip`/`compileLab` are preserved. Only the linked width-indexed `labLang$line` position field is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). No added hypothesis or changed call. Replayed as the CompileSkip/CompileLabFilterSkip rows of scripts/hol-probes/lab_to_target_compile_probe.out in Flapjack.Test.LabToTargetCompileParity. Coordinator source review pending."
 }
 ]

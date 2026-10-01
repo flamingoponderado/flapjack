@@ -1049,7 +1049,9 @@ import Flapjack.Misc.FlatReplicate
 import Flapjack.Misc.FoldrMaxList
 import Flapjack.Misc.Uncurry
 import Flapjack.Misc.OptMmapCong
+import Flapjack.Misc.ListSubset
 import Flapjack.Compiler.Backend.LabLang
+import Flapjack.Compiler.Backend.LabFilter
 import Flapjack.Compiler.Backend.LabSem
 import Flapjack.Compiler.Backend.LabProps
 import Flapjack.Compiler.Backend.LabToTarget.Encoding
@@ -1059,6 +1061,7 @@ import Flapjack.Compiler.Backend.LabToTarget.SecondPass
 import Flapjack.Compiler.Backend.LabToTarget.Padding
 import Flapjack.Compiler.Backend.LabToTarget.RemoveLabels
 import Flapjack.Compiler.Backend.LabToTarget.ShmemInfo
+import Flapjack.Compiler.Backend.LabToTarget.Compile
 import Flapjack.Compiler.Backend.StackNames
 import Flapjack.Compiler.Backend.StackNames.NamesOk
 import Flapjack.Compiler.Backend.StackNames.Labels
