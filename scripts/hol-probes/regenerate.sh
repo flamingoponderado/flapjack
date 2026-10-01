@@ -3160,3 +3160,6 @@ run_probe word_to_stack_compile_lookup_probeScript.sml word_to_stack_compile_loo
 run_probe word_to_stack_register_labels_probeScript.sml word_to_stack_register_labels_probe.out \
   wr_physical wr_boundary wr_spilled wr_zero wr_large wr_labelled \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+run_probe parmove_preserves_moves_step_probeScript.sml parmove_preserves_moves_step_probe.out \
+  preserve_4_before preserve_4_after preserve_6_before preserve_6_after preserve_1_before preserve_1_after preserve_8_before preserve_8_after preserve_scratch_before preserve_scratch_after \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
