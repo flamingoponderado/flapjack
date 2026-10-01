@@ -32,6 +32,18 @@ INVENTORY = _load("hol_dependency_inventory", "hol-dependency-inventory.py")
 
 
 class HolRelnTupleIndexTests(unittest.TestCase):
+    def test_unindented_nested_bindings_not_indexed(self):
+        binding = "val (step_rules,step_ind,step_cases) = Hol_reln`step x y`;\n"
+        for opening, closing in (("local\n", "in end;\n"),
+                                 ("val x = let\n", "in 1 end;\n"),
+                                 ("structure X = struct\n", "end;\n")):
+            with self.subTest(opening=opening), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                path = root / "fixtureScript.sml"
+                path.write_text("Theory fixture\n" + opening + binding + closing)
+                entries, _, _ = INDEX_HOL.parse_file(root, path)
+                self.assertFalse(any(e.name == "step_rules" for e in entries))
+
     def test_shared_names_and_span(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

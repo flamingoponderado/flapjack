@@ -1970,6 +1970,21 @@ class HolRelnTupleDeclarationsTest(unittest.TestCase):
             path = self.fixture("val (step_rules,step_ind,step_cases) = Hol_reln`" + ending)
             self.assertNotIn("step_rules", DECL(path, {}))
 
+    def test_unindented_nested_sml_bindings_rejected(self):
+        binding = "val (step_rules,step_ind,step_cases) = Hol_reln`step x y`;\n"
+        for opening, closing in (
+            ("local\n", "in\nval exported = 1;\nend;\n"),
+            ("val value = let\n", "in 1 end;\n"),
+            ("structure Hidden = struct\n", "end;\n"),
+            ("local\nlocal\n", "in end\nin end;\n"),
+        ):
+            with self.subTest(opening=opening):
+                path = self.fixture(opening + binding + closing)
+                self.assertNotIn("step_rules", DECL(path, {}))
+                # Recognition resumes after the containing scope ends.
+                path = self.fixture(opening + binding + closing + binding)
+                self.assertEqual(len(DECL(path, {})["step_rules"]), 1)
+
 
 class HolDatatypeDeclarationsTest(unittest.TestCase):
     def _write_sml(self, text):

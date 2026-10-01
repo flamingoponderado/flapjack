@@ -83,8 +83,26 @@ def hol_reln_tuple_declarations(text: str) -> list[tuple[tuple[str, ...], int, i
     This deliberately excludes aliases and arbitrary tuple-producing calls.
     """
     masked, quotes = _headers_and_quotes(text)
+    # SML block keywords remain visible after comments, strings and HOL terms
+    # are masked. Both halves of local/let remain nested until their end.
+    scopes = []
+    nested = set()
+    for token in re.finditer(_NAME, masked):
+        word = token.group()
+        # HOL command annotations such as Overload NoRead[local] are not
+        # SML block openings.
+        if word == "local" and masked[:token.start()].rstrip().endswith("["):
+            continue
+        if word in ("local", "let", "struct", "sig", "abstype"):
+            scopes.append(word)
+        elif word == "end" and scopes:
+            scopes.pop()
+        if scopes:
+            nested.add(token.start())
     result = []
     for match in _TUPLE.finditer(masked):
+        if match.start() in nested:
+            continue
         close = quotes.get(match.start("quote"))
         if close is None or not text[close:].lstrip().startswith(";"):
             continue
