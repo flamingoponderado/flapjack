@@ -1,0 +1,11 @@
+ads_remove=T
+ads_start=T
+ads_extend=T
+ads_save_cycle=T
+ads_emit_head=T
+ads_emit_last=T
+ads_save_none=T
+ads_emit_scratch=T
+ads_bool=T
+ads_scratch_start=T
+ads_scratch_save=T

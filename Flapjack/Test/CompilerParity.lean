@@ -6,6 +6,10 @@ import Flapjack.Test.RegAllocStateMapParity
 import Flapjack.Test.MonadListPrimitivesParity
 import Flapjack.Test.CanonizeSortParity
 import Flapjack.Test.FindIndexAppendParity
+import Flapjack.Test.ParmoveMapStateParity
+import Flapjack.Test.ParmoveTempStepsParity
+import Flapjack.Test.ParmoveStateToListParity
+import Flapjack.Test.ParmoveAllDistinctStepParity
 import Flapjack.Test.HeuProgParity
 import Flapjack.Test.WordToStackProgramMaximumParity
 import Flapjack.Test.WordToStackColourDomainParity

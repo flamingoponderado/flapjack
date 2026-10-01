@@ -2809,6 +2809,12 @@
       "sha256": "1087f8c89b4f68e7d0e0e4ade5f93a0acf6316a5505fb5148e43d268ac758b80"
     },
     {
+      "bytes": 172,
+      "out": "parmove_all_distinct_step_probe.out",
+      "rows": 11,
+      "sha256": "5d1012dec98326bff03632b7a61e6226d29f9bab967ae00e754ef3afa175507e"
+    },
+    {
       "bytes": 76,
       "out": "parmove_correct_probe.out",
       "rows": 7,
@@ -2875,6 +2881,12 @@
       "sha256": "9e0215ba434733695ce75e6251c2190e8633130a127331ee3ff7a1f5e9894504"
     },
     {
+      "bytes": 145,
+      "out": "parmove_map_state_probe.out",
+      "rows": 10,
+      "sha256": "42106d39a53d1e9a02dad2e61305db5098249f8405706d316bbbf32f6c2a6a88"
+    },
+    {
       "bytes": 160,
       "out": "parmove_noread_probe.out",
       "rows": 8,
@@ -2897,6 +2909,12 @@
       "out": "parmove_permutation_probe.out",
       "rows": 10,
       "sha256": "b5b71a59d90fd2d06416ce69ae8330d7f6dfca189c89072451b2edd4be2319e5"
+    },
+    {
+      "bytes": 4478,
+      "out": "parmove_preservation_shape_probe.out",
+      "rows": 27,
+      "sha256": "8acca401164b2a25b67279049d2a1ce3bf09029e8cbeb85f6ba764c4232fd8dd"
     },
     {
       "bytes": 288,
@@ -2947,6 +2965,12 @@
       "sha256": "b14cdda2f6d4d024801d0d37afec4544f3f600525643ac95658b422b67daf130"
     },
     {
+      "bytes": 117,
+      "out": "parmove_state_to_list_probe.out",
+      "rows": 9,
+      "sha256": "65e6947c4b078a5d0336e7ef1c66ed08141cbfe37d3b38d53960220bc716a02f"
+    },
+    {
       "bytes": 75,
       "out": "parmove_steps_probe.out",
       "rows": 6,
@@ -2987,6 +3011,12 @@
       "out": "parmove_temp_step_probe.out",
       "rows": 9,
       "sha256": "43326d00ea48d54e0a316c1689d9a4d0e5ce7aec6f91bb44ebc9d1f99dcc11c0"
+    },
+    {
+      "bytes": 187,
+      "out": "parmove_temp_steps_probe.out",
+      "rows": 12,
+      "sha256": "7836506d1c85cbdbd6011d5ba0641d49d951b3a09924444af7e9367152624188"
     },
     {
       "bytes": 158,
