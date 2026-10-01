@@ -1904,6 +1904,73 @@ noncomputable def cmp : FpCmp -> Bool
 DECL = CHECKER["hol_declaration_lines"]
 
 
+class HolRelnTupleDeclarationsTest(unittest.TestCase):
+    def fixture(self, text):
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        path = Path(directory.name) / "fixtureScript.sml"
+        path.write_text(text)
+        return path
+
+    def test_direct_generated_triple_and_exact_line(self):
+        path = self.fixture("Theory fixture\nval (step_rules, step_ind, step_cases) = Hol_reln`\n  step x y\n`;\n")
+        for name in ("step_rules", "step_ind", "step_cases"):
+            self.assertEqual(DECL(path, {})[name], [2])
+            self.assertIsNone(REF_ERROR(path, name, 2, {}))
+            self.assertIn("not at line", REF_ERROR(path, name, 3, {}))
+
+    def test_actual_parmove_composition_bindings(self):
+        path = CHECKER["ROOT"] / "cakeml/compiler/backend/reg_alloc/parmoveScript.sml"
+        for stem, line in (("step", 29), ("dstep", 478)):
+            for suffix in ("_rules", "_ind", "_cases"):
+                self.assertEqual(DECL(path, {})[stem + suffix], [line])
+                self.assertIsNone(REF_ERROR(path, stem + suffix, line, {}))
+
+    def test_repeated_generated_name_requires_line(self):
+        binding = "val (step_rules,step_ind,step_cases) = Hol_reln`step x y`;\n"
+        path = self.fixture(binding + binding)
+        self.assertEqual(DECL(path, {})["step_rules"], [1, 2])
+        self.assertIn("multiple lines", REF_ERROR(path, "step_rules", None, {}))
+        self.assertIsNone(REF_ERROR(path, "step_rules", 2, {}))
+
+    def test_generated_and_modern_collision_requires_line(self):
+        path = self.fixture(
+            "val (step_rules,step_ind,step_cases) = Hol_reln`step x y`;\n"
+            "Theorem step_rules: T Proof simp[] QED\n"
+        )
+        self.assertEqual(DECL(path, {})["step_rules"], [1, 2])
+        self.assertIn("multiple lines", REF_ERROR(path, "step_rules", None, {}))
+        self.assertIsNone(REF_ERROR(path, "step_rules", 1, {}))
+        self.assertIsNone(REF_ERROR(path, "step_rules", 2, {}))
+
+    def test_arbitrary_tuple_alias_and_inconsistent_names_rejected(self):
+        for rhs in ("other_generator`step x y`", "make (Hol_reln`step x y`)", "Hol_reln_alias`step x y`"):
+            with self.subTest(rhs=rhs):
+                path = self.fixture("val (step_rules,step_ind,step_cases) = " + rhs + ";\n")
+                self.assertNotIn("step_rules", DECL(path, {}))
+        path = self.fixture("val (step_rules,other_ind,step_cases) = Hol_reln`step x y`;\n")
+        self.assertNotIn("step_rules", DECL(path, {}))
+
+    def test_comment_string_quotation_and_local_binding_rejected(self):
+        binding = "val (step_rules,step_ind,step_cases) = Hol_reln`step x y`;"
+        texts = (
+            "(* outer (* nested *)\n" + binding + "\n*)\n",
+            'val text = "\n' + binding + '\n";\n',
+            "val term = ``\n" + binding + "\n``;\n",
+            "val term = “\n" + binding + "\n”;\n",
+            "val term = ‘\n" + binding + "\n’;\n",
+            "  " + binding + "\n",
+        )
+        for text in texts:
+            with self.subTest(text=text):
+                self.assertNotIn("step_rules", DECL(self.fixture(text), {}))
+
+    def test_unterminated_quote_and_unterminated_binding_rejected(self):
+        for ending in ("step x y", "step x y`"):
+            path = self.fixture("val (step_rules,step_ind,step_cases) = Hol_reln`" + ending)
+            self.assertNotIn("step_rules", DECL(path, {}))
+
+
 class HolDatatypeDeclarationsTest(unittest.TestCase):
     def _write_sml(self, text):
         handle = tempfile.NamedTemporaryFile(
