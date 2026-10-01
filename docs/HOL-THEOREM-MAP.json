@@ -41738,5 +41738,13 @@
   "hol_name": "find_index_def",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-c source comparison (2026-10-01; bead46.7): literal1055-1058 target/list/start-offset recursion; empty returns NONE, first head equal target returns SOME current offset, unequal head searches tail with offset+1. Native generic List/equality/Nat/Option carriers, DecidableEq computes propositional equality with no BEq assumption, no bound or successful-search premise. Eight fresh original rows and identical-input rfl kernel fixtures cover absence, first and late matches, duplicates, zero and arbitrary-precision offset. Actual CompilerParity registration. Required first-index characterization remains on46.3 with bounds/append/shift prerequisites; no compiler safety completion claim. Coordinator review pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+  "hol_name": "merge_stack_sets_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/MergeStackSets.lean",
+  "lean_name": "mergeStackSets",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c: source1727-1731 literal ordered inter/difference/union composition; generic initial domain payload and ignored fixed component, generic common branch payloads; no wf premise. Eight fresh original full-tree equality rows paired kernel fixtures, including malformed trees and Bool payloads."
 }
 ]

@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordAlloc.MergeStackSets
 import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign
 import Flapjack.Misc.FindIndex
 import Flapjack.Compiler.Backend.WordAlloc.TotalColour
