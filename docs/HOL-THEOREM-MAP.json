@@ -41988,5 +41988,23 @@
   "hol_name": "get_spillcost_def",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-b source comparison (2026-10-01), original1666-1670: five right-associated Nat counters c,lr,lm,rr,rm retain exact product order; weighted natural sum c+2lr+4lm+2rr+4rm multiplied in entirety by Bool tail branch 5 or 1. Exact unbounded Nat arithmetic, no machine-word conversion, overflow, success or range premise. Ten freshly captured original numeric rows/kernel identical inputs include each individual counter weight, asymmetric both tail branches, zero and 2^64 fifth counter; actual CompilerParity import. Coordinator source review pending; native get_heuristics/full word_alloc/executed production remain open."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/GetStackOnly.lean",
+  "lean_name": "getStackOnlyAux",
+  "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+  "hol_name": "get_stack_only_aux_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 word_alloc1741-1779: actual native WordLangProgHOL at positive BitVec width and Spt unit pair; seven recursive equations retain foldr, Seq second-before-first, branch initial contexts and operand deletion, Call NONE ignoring handler, return and exception independently from initial trees, Loop body and actual getClashTree Delta fallback. Entry discards first component after empty pair. No new premise or production replacement. Fresh original branch observations and kernel fixtures; coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/GetStackOnly.lean",
+  "lean_name": "getStackOnly",
+  "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+  "hol_name": "get_stack_only_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 word_alloc1741-1779: actual native WordLangProgHOL at positive BitVec width and Spt unit pair; seven recursive equations retain foldr, Seq second-before-first, branch initial contexts and operand deletion, Call NONE ignoring handler, return and exception independently from initial trees, Loop body and actual getClashTree Delta fallback. Entry discards first component after empty pair. No new premise or production replacement. Fresh original branch observations and kernel fixtures; coordinator review pending."
 }
 ]

@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordAlloc.GetStackOnly
 import Flapjack.Compiler.Backend.WordAlloc.Heuristics
 import Flapjack.Compiler.Backend.Parmove.Correct
 import Flapjack.Compiler.Backend.WordAlloc.MergeStackSets
