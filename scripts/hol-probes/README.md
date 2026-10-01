@@ -2308,6 +2308,15 @@ evidence, not a cross-prover equivalence or whole-compiler correctness proof.
 `spt_union_algebra_probeScript.sml` checks all four literal universal Spt union/insert statements using their original kernel theorem proofs, then 28 concrete original raw-tree observations. `SptUnionAlgebraParity` applies the matching universal Lean theorems and checks malformed trees, singleton overwrites and left bias. Commutativity is restricted to unit-valued number sets; a Nat-valued counterexample is also checked. Concrete stored numerals are explicitly Nat on both sides.
 
 `word_to_stack_native_top_probeScript.sml` audits the original compile type and checks 24 full top-level result tuples. `WordToStackNativeTopParity` checks identical bitmap words, exact sparse frame maps, complete frame lists and ordered stub/program bodies in the kernel. Boundaries include both performance seeds and narrow wrap, natural register subtraction, duplicate avoid entries/identifiers, unbounded natural IDs, zero frames and ordered multiword bitmap threading. Expected stub subterms use the independently reviewed original/native stub definitions; body and bitmap values are otherwise literal expectations. Executed compiler routing remains separately tracked.
+`word_to_stack_comp_prefix_probeScript.sml` freshly observes nine whole
+compiler-prefix equations: Skip, Alloc, MustTerminate, Seq, If, Loop, returning
+Call with perf enabled, returning Call with handler, and StoreConsts. Every
+input starts from a nested AppList whose count is deliberately below its
+flattened length. `WordToStackCompilePrefixParity` applies the full original
+output-equation theorem to the same actual compiler outputs in the real Lake
+test driver. These observations are regression evidence, not a cross-prover
+equivalence or whole-compiler correctness proof.
+
 
 
 `word_alloc_spillcost_probeScript.sml` captures ten original natural costs: zero, each counter weight, both tail branches on asymmetric counters, and a fifth counter at 2^64. Same-input kernel numeric fixtures are in the actual CompilerParity root. The formula retains source tuple order and multiplies the entire sum; this helper does not establish allocator or executed compiler correctness.

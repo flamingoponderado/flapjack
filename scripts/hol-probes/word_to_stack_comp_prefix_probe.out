@@ -1,0 +1,9 @@
+cp_skip=T
+cp_alloc=T
+cp_must=T
+cp_seq=T
+cp_if=T
+cp_loop=T
+cp_return=T
+cp_handler=T
+cp_consts=T
