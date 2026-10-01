@@ -3767,3 +3767,17 @@ inputs in the kernel and applies the complete generic original-shaped case.
 The guarded nonempty LAST path needs no total-list default assumption.
 These fixtures do not prove cross-language equivalence or full compiler correctness.
 Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_tail_probeScript.sml`.
+
+### Full returning Call without a handler
+
+`word_to_stack_no_shmemop_returning_probeScript.sml` captures twenty-two
+original source/compiled-target predicate pairs for returning Calls with no
+handler. Widths1/32/64/80, both perf flags, direct/indirect destinations and
+empty/single/multiple arguments and return values are retained. Nested Alloc
+and Return bodies exercise actual bitmap threading; valid shared and invalid
+address bodies retain false/false and false/true source/target sentinels.
+`WordToStackNoShmemopReturningCallParity` kernel-reduces identical compiler
+inputs and applies the full generic original-shaped theorem with its genuine
+return-body induction hypothesis. These regressions do not establish
+cross-language equivalence or full compiler correctness.
+Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_returning_probeScript.sml`.

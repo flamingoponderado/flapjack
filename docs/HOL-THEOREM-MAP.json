@@ -47258,5 +47258,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison2026-10-01 bead48.3.4: full original comp_no_shmemop12259-12357 Call12318-12340 return NONE constructor case. Same arbitrary assembler config/perf/source destination/argument list/independent optional handler/full AppList bitmap state/full Nat triple frame/output and residual pair, original no_share_inst guard and actual native comp equality. Original conclusion no_shmemop target retained, with no bounds, validity, target-evaluation, supplied safety or handler IH. Compiler ignores optional handler exactly in this source tail branch; guard still scans it. Exact call_dest branches retain guarded nonempty LAST access without total-list default reliance; stackfree branches and actual wStackLoad preservation. Sole qualifier translates positive HOL type-indexed words to BitVec/NeZero. Fresh original22 complete source guard/target pairs match kernel compiler reductions, including safe and forbidden ignored handler source guards; generic fixture applies full theorem. No executed compiler change or whole compiler correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NoShmemopCalls.lean",
+    "lean_name": "compNoShmemopReturningCall",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "comp_no_shmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-01 bead48.3.5: full original comp_no_shmemop12259-12357 Call12318-12340 SOME return/NONE handler constructor case. Retains arbitrary assembler config/perf, return values/live cutsets/body/two labels, source destination/argument list/full bitmap/frame/output-residual pair, original no_share_inst guard and actual comp equality. Only genuine return-body IH uses same conf/perf and original guard/actual compile equality with arbitrary child bitmap/frame/output pair; no target safety or desired simulation premise for this program. Original wLive returned bitmap feeds recursive return compile; accepted copyRet/StackArgs/move and both perf prefix/suffix preserved. Full accepted no_share_inst_def projection supplies return guard with no specialized actual Call input. Sole qualifier translates HOL positive type-indexed words to BitVec/NeZero. Fresh original22 guard/compiled-target pairs kernel replay identical configs/frames/args/return payloads/nested bitmap-producing return bodies, false/false shared and false/true invalid-address sentinels; generic fixture applies full theorem/IH. Guarded nonempty LAST needs no total-list default assumption. Proof-only slice does not claim full compiler preservation or executed path changes."
   }
 ]
