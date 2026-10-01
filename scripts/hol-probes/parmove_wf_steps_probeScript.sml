@@ -1,0 +1,20 @@
+load "bossLib";
+load "preamble";
+load "parmoveTheory";
+open bossLib HolKernel Parse preamble parmoveTheory;
+fun print_eval label q =
+  let val th = EVAL q in (print(label ^ "="); print_term(rconc th); print "\n") end;
+val _ = print_eval "pw_remove_pre" ``parmove$wf ([(SOME (1:num),SOME 1)],[],[])``;
+val _ = print_eval "pw_remove_post" ``parmove$wf ([]:(num option#num option)list,[],[])``;
+val _ = print_eval "pw_start_pre" ``parmove$wf ([(SOME (1:num),SOME 2)],[],[])``;
+val _ = print_eval "pw_start_post" ``parmove$wf ([],[(SOME (1:num),SOME 2)],[])``;
+val _ = print_eval "pw_extend_pre" ``parmove$wf ([(SOME (3:num),SOME 1)],[(SOME 1,SOME 2)],[])``;
+val _ = print_eval "pw_extend_post" ``parmove$wf ([],[(SOME (3:num),SOME 1);(SOME 1,SOME 2)],[])``;
+val _ = print_eval "pw_save_pre" ``parmove$wf ([],[(SOME (1:num),SOME 2)],[])``;
+val _ = print_eval "pw_save_post" ``parmove$wf ([],[(SOME (1:num),NONE)],[(NONE,SOME 2)])``;
+val _ = print_eval "pw_emit_head_pre" ``parmove$wf ([],[(SOME (3:num),SOME 1);(SOME 1,SOME 2)],[])``;
+val _ = print_eval "pw_emit_head_post" ``parmove$wf ([],[(SOME (1:num),SOME 2)],[(SOME 3,SOME 1)])``;
+val _ = print_eval "pw_emit_last_pre" ``parmove$wf ([],[(SOME (1:num),SOME 2)],[])``;
+val _ = print_eval "pw_emit_last_post" ``parmove$wf ([]:(num option#num option)list,[],[(SOME 1,SOME 2)])``;
+val _ = print_eval "pw_bad_source" ``parmove$wf ([(SOME (1:num),NONE)],[],[])``;
+val _ = print_eval "pw_bad_path" ``parmove$wf ([],[(SOME (3:num),SOME 2);(SOME 1,SOME 2)],[])``;

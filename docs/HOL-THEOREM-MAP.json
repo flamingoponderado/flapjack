@@ -39883,5 +39883,21 @@
   "hol_name": "parsem_NoRead",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.6.3: original267-283 exact sole NoRead moves x premise (local overload notMEM x MAP SND), conclusion full function equality parsem((x,y)::moves)env=parsem moves((x=+env y)env). Generic same-component pair/List and function environments retained; no windmill/no-write/global environment equality premise. Tail source-map equality follows because every source differs from x; update-list definition then yields original equation. Repeated destinations allowed, snapshot vs updated-read boundary covered by8fresh original rows and Lean guards/full-function generic use. step_sem429/443 actual prerequisite; whole semantic preservation remains open."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/Invariants/Preservation.lean",
+  "lean_name": "wf_step",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "wf_step",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.6.4: Original137-145: Step first second -> wf first -> wf second. Full6constructor proof preserves exactly six source conjuncts. Distinct destinations transported by sublist/permutation; pending/source realness inherited, FRONT membership under originalnonempty guard, temporarysave preserves finaldestination/path, emithead uses path_tail. No added NoRead/path/nonempty premise. Generic Option register/List triple is actual Steps carrier; wf ignored emittedcarrier specialization is dictated by Step. Private genericlist helpers have no separate named HOLclaim. Fourteen original stateobservations with kernelreplay cover all6pre/post states and badsource/path; fullscheduler semanticpreservation remainsopen. Explicitproof builds at default heartbeats, no search/performance exception."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/Invariants/Preservation.lean",
+  "lean_name": "wf_steps",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "wf_steps",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.6.4: Original148-152: wf first AND RTC step first second -> wf second. Standard reflexive/transitive induction uses literal wf_step; no prior successfulscheduler execution/output premise. Generic Option register/List triple is actual Steps carrier; wf ignored emittedcarrier specialization is dictated by Step. Private genericlist helpers have no separate named HOLclaim. Fourteen original stateobservations with kernelreplay cover all6pre/post states and badsource/path; fullscheduler semanticpreservation remainsopen. Explicitproof builds at default heartbeats, no search/performance exception."
 }
 ]
