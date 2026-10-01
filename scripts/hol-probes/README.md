@@ -1,17 +1,23 @@
-`word_simp_constant_domain_probe.out` records thirteen complete original
-constant-pass trees. The wrapper inputs run original `Seq_assoc Skip` before
-`const_fp`; direct recursion inputs use the same two known register constants
-as the Lean knowledge list. `WordToStackConstantDomainParity` kernel-checks
-twelve matches and records trailing Skip as false: original `Seq Tick Skip`
-becomes Tick, while the production wrapper retains `Seq Tick Skip`. The actual
-counter-tree and original oracle remain distinct; repair is `flapjack-2uae`.
-`ProductionConstantDomain` proves acceptance through the actual optimized
-reassociation at arbitrary fuel, arbitrary initial constant knowledge, and the
-actual constant-pass wrapper. Its implication permits constant branches to
-remove rejected code. Rejection sentinels cover the five-register primitive
-inside Loop and both Call bodies. These untagged carrier proofs do not claim
-HOL pass semantics, initial source-image acceptance, fusion/hoist closure,
-native ABI/output correspondence, or production native routing.
+`word_simp_seq_assoc_source_probe.out` records sixteen complete original
+`Seq_assoc` outputs: empty/nonempty accumulators, interior/trailing/all Skip,
+left association, If, Loop, MustTerminate and both optional Call bodies.
+`WordSimpSeqAssocParity` kernel-checks the fifteen accumulator trees; WordFuseConditions checks the
+complete original pre-SSA compile_exp tree as an explicit mismatch
+(flapjack-b9gd): downstream fusion retains a trailing Skip and a different
+association. Its false match is preserved instead of weakening the oracle. The formerly failing
+`Seq Tick Skip` input and original Tick oracle are preserved; the production
+accumulator now matches the original clause rather than the old Lean rewalk.
+
+`word_simp_constant_domain_probe.out` retains all thirteen original constant-pass
+trees unchanged. `WordToStackConstantDomainParity` now kernel-checks thirteen
+matches, including the repaired trailing Skip. `ProductionConstantDomain`
+proves codec acceptance through the actual accumulator with arbitrary accepted
+prefix, arbitrary initial constant knowledge, and the actual wrapper. Its
+implication permits constant branches to remove rejected code. Rejection
+sentinels cover the five-register primitive inside Loop and both Call bodies.
+These untagged carrier proofs do not claim HOL pass semantics, initial source
+image acceptance, fusion/hoist closure, native ABI/output correspondence, or
+production native routing.
 
 `ssa_map_ok_probe.out` simplifies the literal original SSA map predicate and lookup clauses for five empty/valid/bound/physical/malformed-tree cases; `Flapjack/Test/SSAMapParity.lean` kernel-replays those quantified predicates. The full original definition is printed.
 

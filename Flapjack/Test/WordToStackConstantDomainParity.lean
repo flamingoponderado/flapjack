@@ -9,8 +9,8 @@ open Flapjack RiscV
 private def cs : NatInfoMap (BitVec 64) := [(1,7),(2,9)]
 
 -- Full original program outputs, with the real wrapper's preceding Seq_assoc.
--- The last row preserves the original Tick output and records the production
--- trailing-Skip discrepancy (flapjack-2uae), rather than replacing the oracle.
+-- The last row retains the formerly failing input and original Tick oracle,
+-- now matched by the repaired production wrapper (flapjack-2uae).
 private def rows : List Bool :=
   [match wordConstFp (.skip : WordProg (BitVec 64)) with
    | .skip => true | _ => false,
@@ -47,12 +47,11 @@ private def rows : List Bool :=
    match wordConstFp (.seq .tick .skip : WordProg (BitVec 64)) with
    | .tick => true | _ => false]
 
-example : rows = [true,true,true,true,true,true,true,true,true,true,true,true,false] := by
+example : rows = [true,true,true,true,true,true,true,true,true,true,true,true,true] := by
   decide +kernel
 
-example : wordConstFp (.seq .tick .skip : WordProg (BitVec 64)) = .seq .tick .skip := by
-  simp [wordConstFp, wordSimpSeqAssoc, wordSimpSeqAssocItems, wordSimpProgFuel,
-    wordSimpSeqAssocItemsFuel, wordSimpLeftSeqItems, wordSimpLeftSeq,
+example : wordConstFp (.seq .tick .skip : WordProg (BitVec 64)) = .tick := by
+  simp [wordConstFp, wordSimpSeqAssoc, wordSimpSeqAssocAcc,
     wordSimpSmartSeq, wordConstFpLoop]
 
 private def rejected : WordProg (BitVec 64) := .inst (.arith (.addCarry 1 2 3 4 5))
@@ -77,7 +76,7 @@ example (p : WordProg (BitVec 80)) (h : (wordLangProgToHOL p).isSome = true) :
     (wordLangProgToHOL (wordConstFp p)).isSome = true := wordLangProgToHOL_wordConstFp_isSome p h
 
 def runChecks : IO Bool := do
-  IO.println "PASS actual constant-pass codec closure (12 original trees; trailing-Skip mismatch retained)"
+  IO.println "PASS actual constant-pass codec closure (13 original trees; trailing Skip repaired)"
   pure true
 
 end Flapjack.Test.WordToStackConstantDomainParity

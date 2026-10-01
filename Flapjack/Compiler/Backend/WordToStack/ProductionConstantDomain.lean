@@ -10,57 +10,18 @@ private theorem smartSeqDomain {α : Type u} (first second : WordProg α) :
   unfold wordSimpSmartSeq
   split <;> simp_all [supportsCodec]
 
-private theorem foldDomain {α : Type u} (pieces : List (WordProg α))
-    (first : WordProg α) (initial : supportsCodec first = true)
-    (accepted : ∀ p ∈ pieces, supportsCodec p = true) :
-    supportsCodec (pieces.foldl wordSimpSmartSeq first) = true := by
-  induction pieces generalizing first with
-  | nil => exact initial
-  | cons p ps ih =>
-    apply ih
-    · simp [smartSeqDomain, initial, accepted p (by simp)]
-    · intro p hp; exact accepted p (by simp [hp])
-
-private theorem leftSeqDomain {α : Type u} (pieces : List (WordProg α))
-    (accepted : ∀ p ∈ pieces, supportsCodec p = true) :
-    supportsCodec (wordSimpLeftSeq pieces) = true := by
-  cases pieces with
-  | nil => simp [wordSimpLeftSeq, supportsCodec]
-  | cons p ps =>
-    exact foldDomain ps p (accepted p (by simp)) (by
-      intro q hq; exact accepted q (by simp [hq]))
-
-private theorem leftItemsDomain {α : Type u} (pieces : List (WordProg α))
-    (accepted : ∀ p ∈ pieces, supportsCodec p = true) :
-    ∀ p ∈ wordSimpLeftSeqItems pieces, supportsCodec p = true := by
-  fun_induction wordSimpLeftSeqItems pieces <;>
-    simp_all [supportsCodec]
-
-private theorem assocItemsDomain {α : Type u} (fuel : Nat) (program : WordProg α)
+private theorem assocAccDomain {α : Type u} (before program : WordProg α)
+    (beforeAccepted : supportsCodec before = true)
     (accepted : supportsCodec program = true) :
-    ∀ p ∈ wordSimpSeqAssocItemsFuel fuel program, supportsCodec p = true := by
-  induction fuel generalizing program with
-  | zero => simpa [wordSimpSeqAssocItemsFuel] using accepted
-  | succ fuel ih =>
-    have left (p : WordProg α) (h : supportsCodec p = true) :
-        supportsCodec (wordSimpLeftSeq (wordSimpSeqAssocItemsFuel fuel p)) = true :=
-      leftSeqDomain _ (ih p h)
-    cases program <;> simp_all [wordSimpSeqAssocItemsFuel, supportsCodec]
-    case seq first second =>
-      apply leftItemsDomain
-      intro p hp
-      rcases List.mem_append.mp hp with hp | hp
-      · exact ih first accepted.1 p hp
-      · exact ih second accepted.2 p hp
-    case call returns target arguments handler =>
-      rcases returns with (_ | ⟨names, cutsets, body, label, entry⟩) <;>
-        rcases handler with (_ | ⟨exception, handlerBody, handlerLabel, handlerEntry⟩) <;>
-        simp_all [supportsCodec]
+    supportsCodec (wordSimpSeqAssocAcc before program) = true := by
+  fun_induction wordApplyColour (fun name => name) program generalizing before
+  all_goals try dsimp +zetaDelta only at *
+  all_goals simp_all [wordSimpSeqAssocAcc, supportsCodec, smartSeqDomain]
 
 private theorem assocDomain {α : Type u} (program : WordProg α)
     (accepted : supportsCodec program = true) :
     supportsCodec (wordSimpSeqAssoc program) = true :=
-  leftSeqDomain _ (assocItemsDomain _ program accepted)
+  assocAccDomain .skip program (by simp [supportsCodec]) accepted
 
 private theorem dropDomain {α : Type} (constants : NatInfoMap α) (names : List Nat) :
     supportsCodec (wordSimpDropConsts constants names) = true := by

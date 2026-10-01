@@ -4673,6 +4673,12 @@
       "out": "word_simp_constant_domain_probe.out",
       "rows": 13,
       "sha256": "85b5c2011df7e872ae4754a58b0920f51d2cbb62d2a51bf01b45539324652188"
+    },
+    {
+      "bytes": 792,
+      "out": "word_simp_seq_assoc_source_probe.out",
+      "rows": 16,
+      "sha256": "2fd6b047d0c69842afe024cf07c1d1cf42e962b656da8f68bcd44bac95a662b4"
     }
   ],
   "version": 1
