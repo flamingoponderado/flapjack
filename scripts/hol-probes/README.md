@@ -2030,7 +2030,6 @@ branches, register and spill swaps, odd indices and DIV2 collision, truncated
 offsets and fprime are replayed by `literalWMoveParityGuard` in the normal
 compiler parity suite. Production comp/compile wiring remains open.
 
-`labsem_navigation_probeScript.sml` captures 23 original LabSem fetch, instruction-count, section-entry/positive-label lookup, and following-return-label observations across empty sections. Encoded metadata lengths deliberately differ from instruction positions. The probe simplifies the original existential label guard before EVAL; it defines no substitute evaluator. `Flapjack.Test.LabSemNavigationParity` kernel replays the native definitions using the reviewed classifier.
 ### Parallel-move update lemmas
 
 `parmove_updates_probeScript.sml` captures eight original parallel environment
@@ -2039,5 +2038,24 @@ snapshot sources, untouched/empty/self/swap cases and repeated-destination
 freshness failure are replayed by `ParmoveUpdateLemmasParity.lean`, alongside
 generic freshness/windmill theorem applications. Full step invariance and
 `parmove_correct` remain open.
+`labsem_navigation_probeScript.sml` captures 23 original LabSem fetch, instruction-count, section-entry/positive-label lookup, and following-return-label observations across empty sections. Encoded metadata lengths deliberately differ from instruction positions. The probe simplifies the original existential label guard before EVAL; it defines no substitute evaluator. `Flapjack.Test.LabSemNavigationParity` kernel replays the native definitions using the reviewed classifier.
+
+### Parallel-move path preservation prerequisites
+
+`parmove_path_probeScript.sml` captures ten original SNOC-path and windmill
+observations. Empty/single/chain/cycle paths, changed-final-destination and
+broken-prefix failures, and fresh/repeated destinations with repeated sources
+are replayed in the kernel by `ParmovePathParity.lean`. Generic source-shaped
+path_change_start/windmill_cons applications retain the original premises.
+Full wf preservation and scheduler correctness remain open.
+
+### ParMove environment-change observations
+
+`parmove_environment_probeScript.sml` evaluates eight direct original HOL rows.
+Repeated destinations with equal source maps overwrite differing input values;
+untouched values differ when the conditional premise is absent, and changed
+source values break equality. Empty and snapshot observations are included.
+`ParmoveEnvironmentParity.lean` replays the rows and applies the exact lemma
+with its original conjunction. Full scheduler preservation remains open.
 
 `labsem_arithmetic_probeScript.sml` captures 44 original observations across all eight LabSem integer-arithmetic constructors: Loc/self-OR guards, invalid shift/division writes, sticky failure, signed overflow and aliased destinations. Original arithmetic `DIV_0`/`MOD_0` simplify the otherwise unreduced zero-divisor cases after EVAL; no replacement arithmetic evaluator is defined. `Flapjack.Test.LabSemArithmeticParity` replays all rows by direct kernel reduction on otherwise arbitrary native source states.
