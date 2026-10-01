@@ -2198,3 +2198,11 @@ reversed-sequential values for a cycle and chain. Kernel tests construct the
 actual five-step cycle and four-step chain relations and apply steps_correct
 for arbitrary environments. The temporary changes99to27 on the cycle; original
 eqenv excludes it. No pmov-to-Step relationship is assumed or claimed.
+
+`parmove_split_source_probeScript.sml` freshly evaluates original splitAtPki
+with the index-independent source predicate and pair callback used by fstep.
+Seven full partition outputs are kernel paired with actual splitSource: empty,
+first/middle/absent matches, NONE, duplicate destinations and late zero. Generic
+untagged SplitSource laws derive prefixNoRead, suffixheadmatch and empty-suffix
+NoRead equivalence. They are Flapjack infrastructure, not a general indexed
+combinator port or completed functional scheduler simulation.

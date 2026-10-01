@@ -2844,3 +2844,7 @@ run_probe parmove_final_probeScript.sml parmove_final_probe.out \
 run_probe parmove_stepscorrect_probeScript.sml parmove_stepscorrect_probe.out \
   pv_correct_cycle_parallel_1 pv_correct_cycle_parallel_2 pv_correct_cycle_parallel_temp pv_correct_cycle_sequential_1 pv_correct_cycle_sequential_2 pv_correct_cycle_sequential_temp pv_correct_chain_parallel_1 pv_correct_chain_parallel_2 pv_correct_chain_parallel_temp pv_correct_chain_sequential_1 pv_correct_chain_sequential_2 pv_correct_chain_sequential_temp \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe parmove_split_source_probeScript.sml parmove_split_source_probe.out \
+  pv_split_empty pv_split_first pv_split_middle pv_split_absent pv_split_none pv_split_duplicate_dest pv_split_late_zero \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
