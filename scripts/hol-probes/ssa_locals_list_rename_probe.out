@@ -1,0 +1,10 @@
+lr_full=⊢ ∀xs ssa na stloc cstloc ys ssa' na' ls. list_next_var_rename xs ssa na = (ys,ssa',na') ∧ ssa_locals_rel na ssa stloc cstloc ∧ ssa_map_ok na ssa ∧ LENGTH xs = LENGTH ls ∧ EVERY (λx. x < na) xs ∧ ALL_DISTINCT xs ∧ ¬is_phy_var na ⇒ ssa_locals_rel na' ssa' (alist_insert xs ls stloc) (alist_insert ys ls cstloc)
+lr_type_xs=:num list
+lr_type_ssa=:num sptree$num_map
+lr_type_na=:num
+lr_type_stloc=:α sptree$num_map
+lr_type_cstloc=:α sptree$num_map
+lr_type_ys=:num list
+lr_type_ssaOut=:num sptree$num_map
+lr_type_naOut=:num
+lr_type_ls=:α list

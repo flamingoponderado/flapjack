@@ -48007,5 +48007,13 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-a completed source comparison 2026-10-01 flapjack-7pat: full original5546-5555 literal source proof replayed freshly, nine state/name/value/tree inferred types recorded for pair. Original state retains generic code/FFI carriers and positive word width; native Spt and List payloads unchanged. All original conjunctive length/Nodup/disjoint premises and complete actual WordSem getVars conclusion retained. Generalized theorem starts with arbitrary replacement locals and preserves prefix insertion priority; set/read theorem uses actual setVars. No read success, lookup result, post-state relation or validity assumption added. fpRegs/store canonical finite support plus BitVec/NeZero translations explicit with same-module real roundtrip witness. Kernel proof uses generic lookup/write algebra; no cross-prover equivalence claim. Original replay from own CakeML857f0d source using matching pinned HOLa390cb and CakeML857f0d build. No executable compiler change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSALocalsListRename.lean",
+    "lean_name": "ssaLocalsRelListNextVarRename",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_locals_rel_list_next_var_rename",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-a completed source comparison 2026-10-01 flapjack-wvkd: full original5673-5708 literal four-proof/localtactic replay and nine original inferred carrier types PASS. Payload alpha is generic, source/target Spt alpha, native SSA Spt Nat and List Nat/alpha with arbitrary counters; no word/state/maps representation qualifier applies. All seven original conjunctive premises retained: actual native producer equality, locals relation, mapOK, length match, EVERY input name below counter, Nodup input, and nonphysical counter. Complete output SSA relation uses both actual native alist inserts and actual producer map/counter. No wf, successful execution, target result, post-state relation or stronger allocation-class hypothesis added. Kernel induction uses accepted generic insertion, source map extension, exact renaming arithmetic and native insert commutation; source and target prefix priority match HOL. Fresh original source from own CakeML857f0d plus matching pinned HOLa390cb build; no cross-prover equivalence claim. Proof-only; no executable compiler change."
   }
 ]

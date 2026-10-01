@@ -3619,3 +3619,9 @@ run_probe ssa_get_set_vars_probeScript.sml ssa_get_set_vars_probe.out \
   gsv_type_cst gsv_type_ls gsv_type_x \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_locals_list_rename_probeScript.sml ssa_locals_list_rename_probe.out \
+  lr_full lr_type_xs lr_type_ssa lr_type_na lr_type_stloc lr_type_cstloc \
+  lr_type_ys lr_type_ssaOut lr_type_naOut lr_type_ls \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
