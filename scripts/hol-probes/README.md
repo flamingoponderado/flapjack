@@ -3987,3 +3987,17 @@ projections. Captures are regression evidence, not a new proof replay or a
 HOL-to-Lean equivalence proof. Whole compiler semantic correctness remains open.
 
 Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_programs_probeScript.sml`.
+
+### Full native top-level no-shared-memory preservation
+
+`word_to_stack_no_shmemop_top_probeScript.sml` captures original exported
+`compile_no_shmemop`, its six carriers and sixteen source/actual-target pairs.
+Performance is false as in HOL. Both injected stubs, widths1/32/64/80,
+zero/underflow/large register counts, duplicate avoid registers/identifiers,
+empty/multiple rows, bitmap changes and rejected shared/ignored-handler cases
+are covered. `Flapjack/Test/WordToStackNoShmemopTopParity.lean` checks those
+pairs and two full-signature applications retaining all four outputs.
+Captures are regression evidence, not a new original proof replay or a
+HOL-to-Lean equivalence proof. Compiler semantic preservation remains open.
+
+Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_top_probeScript.sml`.

@@ -3677,3 +3677,7 @@ run_probe word_to_stack_comp_no_shmemop_probeScript.sml word_to_stack_comp_no_sh
 run_probe word_to_stack_no_shmemop_programs_probeScript.sml word_to_stack_no_shmemop_programs_probe.out \
   pl_full pl_conf_type pl_perf_type pl_register_type pl_source_type pl_bitmap_type pl_outputs_type pl_frames_type pl_residual_type pl_empty_1 pl_safe_1 pl_ignored_1 pl_shared_1 pl_empty_32 pl_safe_32 pl_ignored_32 pl_shared_32 pl_empty_64 pl_safe_64 pl_ignored_64 pl_shared_64 pl_empty_80 pl_safe_80 pl_ignored_80 pl_shared_80 \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_no_shmemop_top_probeScript.sml word_to_stack_no_shmemop_top_probe.out \
+  tp_full tp_conf_type tp_source_type tp_bitmaps_type tp_config_type tp_frames_type tp_outputs_type tp_empty_1 tp_safe_1 tp_ignored_1 tp_shared_1 tp_empty_32 tp_safe_32 tp_ignored_32 tp_shared_32 tp_empty_64 tp_safe_64 tp_ignored_64 tp_shared_64 tp_empty_80 tp_safe_80 tp_ignored_80 tp_shared_80 \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"

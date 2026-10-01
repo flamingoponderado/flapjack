@@ -1,3 +1,4 @@
+import Flapjack.Test.WordToStackNoShmemopTopParity
 import Flapjack.Test.WordToStackNoShmemopProgramsParity
 import Flapjack.Test.WordToStackCompNoShmemopParity
 import Flapjack.Test.LabValidityNativeParity

@@ -48488,5 +48488,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison 2026-10-02 bead48.4: complete original12359-12376 and compile_prog/compile_word_to_stack583-601. Arbitrary config/perf/register count/program list with independent generic identifier beta/full input bitmap/output list/frame list/residual retained. Only original EVERY no_share_inst and actual full compiler triple equality hypotheses; target EVERY no_shmemop conclusion. List/EVERY translated to List/all truth. Nat subtraction/MAX frame arithmetic, unconditional StackAlloc prefix and left-to-right bitmap threading reviewed; full accepted compNoShmemop and list IH discharged internally. No public IH, identifier equality/distinctness, target safety/evaluation, bounds, conversion or simulation premises. Sole qualifier translates positive HOL words to BitVec width/NeZero. Fresh original exported theorem, all eight types and sixteen pairs cover empty/multiple rows, duplicate Bool identifiers, bitmap-changing Alloc/StoreConsts, frame boundaries, rejected shared and ignored-handler sentinels over widths1/32/64/80/both perf. Kernel fixtures replay original pairs and apply complete generic signature and actual compiler projections. Proof-only syntax preservation, not whole compiler semantic correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/NoShmemopTop.lean",
+    "lean_name": "compileNoShmemop",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "compile_no_shmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-02 bead48.5: complete original12378-12392, compile_def603-619, raise_stub_def/store_consts_stub_def. Fixed false perf, Nat identifier list, arbitrary config and full bitmap/config/frame-list/program-list quadruple retained. Only actual compile equality and original EVERY source no_share_inst hypotheses; original EVERY target no_shmemop conclusion includes both stubs. Accepted list theorem and unconditional false raise/constant-store stub syntax discharge safety internally. No public IH, target safety/evaluation/simulation, config validity, distinctness, bounds or conversion premises. Config Spt frame map is the reviewed source tree carrier; List/all represents original lists/EVERY. Sole qualifier translates positive HOL words to BitVec width/NeZero. Fresh exported theorem/six types/16 pairs plus2 arbitrary full-signature kernel applications over widths1/32/64/80, zero/underflow/large reg counts, duplicate avoid regs/ids, bitmap changes and rejected shared/ignored-handler sentinels. Proof-only syntax preservation, not whole compiler semantics."
   }
 ]
