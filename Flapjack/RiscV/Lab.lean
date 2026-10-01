@@ -171,7 +171,8 @@ def labCollectLabels (_sectionId : Nat) (position : Nat) :
     List (LabLine (Word width)) → List (Nat × Nat)
   | [] => []
   | .label _ label _ :: lines =>
-      (label, position) :: labCollectLabels _sectionId position lines
+      if label = 0 then labCollectLabels _sectionId position lines
+      else (label, position) :: labCollectLabels _sectionId position lines
   | line :: lines =>
       labCollectLabels _sectionId
         (position + 4 * labLineInstructionCount line) lines
@@ -578,7 +579,8 @@ def labCollectLabelsWithContext [NeZero width]
     List (LabLine (Word width)) → List (Nat × Nat)
   | [] => []
   | .label _ label _ :: lines =>
-      (label, position) :: labCollectLabelsWithContext context sectionId guess position lines
+      if label = 0 then labCollectLabelsWithContext context sectionId guess position lines
+      else (label, position) :: labCollectLabelsWithContext context sectionId guess position lines
   | line :: lines =>
       let count := labLineCompiledInstructionCount context sectionId guess position line
       labCollectLabelsWithContext context sectionId guess
@@ -591,7 +593,7 @@ def labCollectLabelsStable [NeZero width] (fuel : Nat)
   match fuel with
   | 0 => guess
   | fuel + 1 =>
-      let next := labCollectLabelsWithContext context sectionId guess 0 lines
+      let next := (0, 0) :: labCollectLabelsWithContext context sectionId guess 0 lines
       if next == guess then next
       else labCollectLabelsStable fuel context sectionId next lines
 
@@ -646,7 +648,7 @@ def labLookupProgramPosition (sectionId label : Nat)
 
 def compileLabSection [NeZero width] (context : WordFfiContext)
     (sectionData : LabSection (Word width)) : Option (List (Instruction width)) :=
-  let initial := labCollectLabels sectionData.name 0 sectionData.lines
+  let initial := (0, 0) :: labCollectLabels sectionData.name 0 sectionData.lines
   let labels := labCollectLabelsStable 8 context sectionData.name initial sectionData.lines
   labCompileLines context sectionData.name labels 0 sectionData.lines
 
@@ -752,6 +754,10 @@ def labSectionInstructionCount (sectionData : LabSection (Word width)) : Nat :=
   sectionData.lines.foldl
     (fun count line => count + labLineInstructionCount line) 0
 
+/-- Executed static label-position estimate. As in HOL compute_labels_alt,
+section zero denotes the section base, independent of explicit zero labels.
+This is untagged infrastructure: positions here use production instruction
+counts rather than the original encoded line lengths. -/
 def labCollectProgramLabels (base : Nat) :
     LabProgram (Word width) → List (Nat × Nat × Nat)
   | [] => []
@@ -759,7 +765,7 @@ def labCollectProgramLabels (base : Nat) :
       let localLabels := labCollectLabels sectionData.name 0 sectionData.lines
       let globalLabels := localLabels.map
         (fun (label, position) => (sectionData.name, label, base + position))
-      globalLabels ++ labCollectProgramLabels
+      (sectionData.name, 0, base) :: globalLabels ++ labCollectProgramLabels
         (base + 4 * labSectionInstructionCount sectionData) sections
 
 def labResolveProgramRef (labels : LabLabelIndex) (ref : LabRef) :
@@ -838,7 +844,8 @@ def labCollectProgramSectionLabels [NeZero width]
     (sectionId base : Nat) : List (LabLine (Word width)) → List (Nat × Nat × Nat)
   | [] => []
   | .label _ label _ :: lines =>
-      (sectionId, label, base) ::
+      if label = 0 then labCollectProgramSectionLabels context labels sectionId base lines
+      else (sectionId, label, base) ::
         labCollectProgramSectionLabels context labels sectionId base lines
   | line :: lines =>
       let count := labProgramLineCompiledInstructionCount context labels base line
@@ -869,7 +876,7 @@ def labCollectProgramLabelsWithContext [NeZero width]
         sectionData.name base sectionData.lines
       let sectionLength := labSectionCompiledInstructionCount context labels
         sectionData.name base sectionData.lines
-      sectionLabels ++ labCollectProgramLabelsWithContext context
+      (sectionData.name, 0, base) :: sectionLabels ++ labCollectProgramLabelsWithContext context
         (base + 4 * sectionLength) labels sections
 
 def labCollectProgramLabelsStable [NeZero width] (fuel : Nat)
@@ -2007,5 +2014,6 @@ theorem compileLabProgram_cross_section_jump [NeZero width] :
     labCompilePlain,
     labLookupProgramPosition, labResolveProgramRef, labLabelIndexOf,
     labOffset, labJumpInstructions, labJumpOffsetFits, hcount]
+  rfl
 
 end Flapjack.RiscV
