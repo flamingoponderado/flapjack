@@ -1,3 +1,4 @@
+import Flapjack.Test.WordAllocMergeStackOnlyParity
 import Flapjack.Test.ParmoveDStepsSteps
 import Flapjack.Test.WordAllocRemoveTempStackParity
 import Flapjack.Test.WordAllocTotalColourParity

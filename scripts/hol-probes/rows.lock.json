@@ -588,6 +588,7 @@
     {"bytes": 81, "out": "word_alloc_live_exp_probe.out", "rows": 6, "sha256": "49ee2d4812b93aacb53a2bbcc96b208d8f5b8cd357a55c2e2548a163fa47cfcd"},
     {"bytes": 198, "out": "word_alloc_live_inst_probe.out", "rows": 9, "sha256": "2a9c8dd84dc141c5471dac7fa6ccaa38c8e0cf47126171a07a2416903f771259"},
     {"bytes": 110, "out": "word_alloc_mem8_probe.out", "rows": 2, "sha256": "ab84e3ccbeef0d07642d95a5547c3ed1d6a635ef9ee74df805d57f47de61649e"},
+    {"bytes": 203, "out": "word_alloc_merge_stack_only_probe.out", "rows": 9, "sha256": "dae01d18f7658c3c92a78ef1252baee2f76a51769ad7be025de4f04363433e44"},
     {"bytes": 93, "out": "word_alloc_pair_keys_probe.out", "rows": 3, "sha256": "e0a039c9350fac0baad3e163e3ae62f693d0eddc4d47a49e64e131bc3ac6dda2"},
     {"bytes": 121, "out": "word_alloc_reads_exp_probe.out", "rows": 7, "sha256": "a3281fc000ffe3bbb0060d2cb73b86ec3509a4d30bca60bc4fe916185811b011"},
     {"bytes": 125, "out": "word_alloc_remove_dead_inst_probe.out", "rows": 12, "sha256": "24f25a6713937f41a3a065af0fbf87f310f8858fbbcba3dbce2030e1e2a367de"},
