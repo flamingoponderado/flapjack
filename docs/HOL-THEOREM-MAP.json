@@ -41453,5 +41453,13 @@
   "hol_name": "fstep_dstep",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-c source comparison (2026-10-01; bead25.6.11): literal589-610 forall emitted state !=([],[],emitted) implies DStep state(fstep state), unrestricted native Option/List carriers and ordinary propositional equality. Six actual rules used; first-match source and prefix NoRead derived from accepted splitSource laws, pending partition recovered by splitSource_append. Active empty/singleton/nonempty distinct; cycle last source equality reconstructs actual last pair using frontLast_append, no extra wf/search/result premise. Nine nonterminal fixtures apply exact theorem; existing ten original fstep rows freshly regenerated. Coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/PmovDsteps.lean",
+  "lean_name": "pmovDsteps",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "pmov_dsteps",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison (2026-10-01; bead25.6.12): literal642-653 unconditional forall state RTC DStep state(pmov state), native arbitrary Option/List state, same scheduler and six-rule relation. Actual pmov.induct, finished reflexivity, unfinished exact fstepDstep single step followed by recursive closure. No wf/termination/output/semantic simulation hypothesis; terminal emitted history retained. Seven original final-output fixtures replay closure; fresh original captured outputs checked. Coordinator review pending."
 }
 ]
