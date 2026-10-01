@@ -1,0 +1,7 @@
+rc_empty=T
+rc_cuts=T
+rc_duplicate_args=T
+rc_return_tick=T
+rc_return_break=T
+rc_return_collision=T
+rc_args_collision=T

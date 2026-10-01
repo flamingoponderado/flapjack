@@ -2,6 +2,8 @@ import Flapjack.Test.HeuCountersParity
 import Flapjack.Test.ClashTreeCallNoneParity
 import Flapjack.Test.FindIndexBoundsParity
 import Flapjack.Test.ParmoveTempAppendParity
+import Flapjack.Test.WordAllocOracleColourParity
+import Flapjack.Test.WordAllocReturnCheckerParity
 import Flapjack.Test.WordAllocShareCheckerParity
 import Flapjack.Test.WordAllocCoalesceCostParity
 import Flapjack.Test.WordAllocLoopCheckerParity

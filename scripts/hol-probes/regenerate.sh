@@ -2907,6 +2907,9 @@ run_probe word_to_stack_insert_prefix_probeScript.sml word_to_stack_insert_prefi
   ip_empty ip_append ip_nested ip_shortcount ip_slack ip_bool ip_option \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
 
+run_probe word_to_stack_comp_prefix_probeScript.sml word_to_stack_comp_prefix_probe.out \
+  cp_skip cp_alloc cp_must cp_seq cp_if cp_loop cp_return cp_handler cp_consts \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
 run_probe word_alloc_merge_stack_sets_probeScript.sml word_alloc_merge_stack_sets_probe.out \
   mss_empty mss_retained_right mss_new_left_bias mss_new_right mss_removed mss_fixed_left_bias mss_raw mss_generic \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
@@ -2968,3 +2971,10 @@ run_probe word_alloc_heu_counters_probeScript.sml word_alloc_heu_counters_probe.
 run_probe parmove_temp_mixed_probeScript.sml parmove_temp_mixed_probe.out \
   ntm_real ntm_read ntm_write ntm_both \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+run_probe word_alloc_return_checker_probeScript.sml word_alloc_return_checker_probe.out \
+  rc_empty rc_cuts rc_duplicate_args rc_return_tick rc_return_break rc_return_collision rc_args_collision \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_alloc_oracle_colour_probeScript.sml word_alloc_oracle_colour_probe.out \
+  oc_none oc_empty oc_physical_bad oc_checker_collision oc_forced_collision oc_forced_distinct oc_rename oc_stack_equal oc_stack_below oc_raw_map \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
