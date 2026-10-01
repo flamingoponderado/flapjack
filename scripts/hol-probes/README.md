@@ -2632,3 +2632,13 @@ Lean fixture replays them. `parmove_all_distinct_steps_probe` captures four
 destination-distinctness observations; Lean also applies the full RTC theorem
 to zero-step and concrete two-step traces. These fixtures do not establish
 cross-language equivalence or whole allocator correctness.
+
+`lab_to_target_section_lookup_probe.out` captures eight direct original
+`labSem$loc_to_pc` observations on section-valid native fixtures. The Lean
+`LabToTargetSectionLookupParity` replay rewrites actual lookup through the
+original-shaped section-decomposition theorem, covering local labels, missing
+labels, preceding instruction offsets and empty-section entries. Recorded byte
+lengths deliberately differ from PC counts. This is regression evidence for
+that boundary, not a separate oracle for the proof-local helper or a
+cross-language equivalence proof. Regenerate with
+`HOL_PROBE_ONLY=lab_to_target_section_lookup_probeScript.sml scripts/hol-probes/regenerate.sh`.

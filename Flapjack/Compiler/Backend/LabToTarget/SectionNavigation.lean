@@ -1,4 +1,5 @@
-import Flapjack.Compiler.Backend.LabToTarget.Navigation
+import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar
+import Flapjack.Compiler.Backend.LabSem.Navigation
 
 /-! Original section-local lookup and decomposition of native label navigation.
 Section label validity supplies exactly the ownership and nonzero-label facts
