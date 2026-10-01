@@ -49857,5 +49857,21 @@
     "lean_name": "sortedMovesToListCorrect",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.14): linear_scanProofScript.sml:4557-4572. HOL EL is the exact holEl, PERM holPerm, TAKE/DROP List.take/List.drop, FILTER with the Boolean test of its HOL predicate, MEM/EVERY list membership/quantification, fromAList sptFromAList, lookup sptLookup, REVERSE List.reverse, DIV Nat division, good_linear_scan_state/phystack_on_stack/forbidden_is_from_* the exact tagged ports. Statement compared clause by clause with the DB.fetch show_types original incl. type variables and free variables; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "linear_reg_alloc_intervals_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/IntervalsCorrect.lean",
+    "lean_name": "linearRegAllocIntervalsCorrect",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.14): linear_scanProofScript.sml:4574-4996 ∀k forced moves reglist_unsorted sth with all ten hypotheses in HOL order (EVERY (\\r1,r2. ...) forced / (MAP SND moves) as ∀ x ∈ l over x.1/x.2, ALL_DISTINCT as List.Nodup, the three LENGTH equalities/bounds) and the existential conclusion: linear_reg_alloc_intervals k forced moves reglist_unsorted sth = (M_success (), sthout), the interval_intersect (tagged intervalIntersect) injectivity of EL r sthout.colors, the EVERY (\\r. if is_phy_var r then EL r sthout.colors = r DIV 2 else if is_stack_var r then k ≤ EL r sthout.colors else T) clause (Bool if-chain), forced pairs injective, and LENGTH sthout.colors = LENGTH sth.colors. HOL EL is the exact holEl; linear_reg_alloc_intervals is the exact tagged linearRegAllocIntervals. Compared with the DB.fetch show_types original incl. free variables (none); kernel-checked; standard axioms; no extra premise."
+  },
+  {
+    "hol_path": "HOL/src/finite_maps/sptreeScript.sml",
+    "hol_name": "lookup_map",
+    "lean_path": "Flapjack/Misc/Sptree/Map.lean",
+    "lean_name": "sptLookup_sptMap",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.14): pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: sptreeScript.sml:1565-1569 ∀s x. lookup x (map f s) = OPTION_MAP f (lookup x s), f free in HOL (explicit Lean parameter); over the reviewed Spt carrier with the tagged sptMap/sptLookup, OPTION_MAP as Option.map. Kernel-checked; no premise."
   }
 ]
