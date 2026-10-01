@@ -41272,5 +41272,14 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "Codex source review against evaluate_apply_colour1105-1130 specialized to FFI and Resume2182-2205: original three premises and exact full existential postcondition, with no callback, success, target evaluation/result, or alias restriction premise. Four native input reads (len1,ptr1,len2,ptr2) are transported using live membership; scoped injection and relation on both cut-set domains derived from original hypotheses; existing exact cutEnvLemma proves target cut success and source-domain equality, enabling any live-after relation through strongLocalsRelExtendAux. Native evaluate FFI clause retains byte reads/errors, deterministic callFFIHOL on identical exact MlString name/input memory/FFI fields, final outcome flushState true, or returning byte-array memory update, cut locals, empty fpRegs and returned FFI state. Same canonical state fpRegs/store qualifier and local imported roundtrip; Spt locals/code remain original trees, word dimensions positive. Inherits existing native evaluator reals_as_rational_cuts assumption (docs/SOUNDNESS item8), with no direct rendering primitive. No executable behavior changes; full Install/ShareInst and whole program assembly remain open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/wordLangScript.sml",
+  "hol_name": "max_var_def",
+  "lean_path": "Flapjack/Pancake/WordLang/MaxVar.lean",
+  "lean_name": "maxVarHOL",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison wordLangScript252-300, exact prog/exp/inst/cutsets carriers at14-68 and asm85-134: all constructor clauses and defaults retained over WordLangProgHOL(BitVec width), native MlString, canonical Spt Unit cut sets and fixed Temp5 store names. Positivewidth words_as_type_indexed_bitvec. Move MAP FST++MAP SND, guarded Call return/handler recursion and argument/value/both-cutset maxima, If reg/imm branches, Loop entry/body/exit maxima and every frame operand match source; destination and labels ignored exactly where source ignores them. Uses accepted exact maxVarInstHOL/maxVarExpHOL/cutsetsMaxHOL/max3HOL plus standard natural MAX_LIST. No wf/domain/callback/targetresult/success premise; nested structural-size termination kernel checked. Fresh37 direct original rows cover all source constructors, Call guard and32/64 FP instruction transfer, kernel replay. Full native wrappers, executed production route and correctness remainOPEN."
 }
 ]
