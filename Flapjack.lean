@@ -1,9 +1,9 @@
-import Flapjack.Compiler.Backend.Parmove.SourceMembership
-import Flapjack.Compiler.Backend.Parmove.FstepDstep
 import Flapjack.Compiler.Backend.WordToStack.NativeConfig
 import Flapjack.Compiler.Backend.Parmove.DSteps
 
 import Flapjack.Compiler.Backend.Parmove.DestinationMembership
+import Flapjack.Compiler.Backend.Parmove.FstepDstep
+import Flapjack.Compiler.Backend.Parmove.SourceMembership
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Install
 import Flapjack.Compiler.Backend.Parmove.SplitSource
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.FFI
