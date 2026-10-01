@@ -1,6 +1,8 @@
 import Flapjack.Compiler.Encoders.AsmProps.Assertions
+import Flapjack.Compiler.Backend.Parmove.FstepMapInj
 import Flapjack.Compiler.Encoders.AsmProps.FpPreservation
 import Flapjack.Pancake.WordConvs.ProgramMonotonicity
+import Flapjack.Compiler.Backend.Parmove.StepMapInj
 import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Parmove
 import Flapjack.Pancake.WordConvs.NameMonotonicity
 import Flapjack.Compiler.Encoders.AsmProps.PcCoverage

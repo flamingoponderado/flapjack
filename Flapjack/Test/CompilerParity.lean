@@ -1,6 +1,8 @@
 import Flapjack.Test.AsmPropsAssertionsParity
+import Flapjack.Test.ParmoveFstepMapInjParity
 import Flapjack.Test.AsmSemFpUpdatesParity
 import Flapjack.Test.WordConvsProgramMonoParity
+import Flapjack.Test.ParmoveStepMapInjParity
 import Flapjack.Test.ParmoveScratchOrderWrapperParity
 import Flapjack.Test.WordConvsNameMonoParity
 import Flapjack.Test.AsmPropsPcCoverageParity
