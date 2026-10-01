@@ -3349,6 +3349,12 @@
       "sha256": "567c10eaf56c07243856c191b60a982c5c554900a977305b11f33afbaf699349"
     },
     {
+      "bytes": 178,
+      "out": "ssa_map_ok_probe.out",
+      "rows": 6,
+      "sha256": "f80fb6e485ddbe0a0af427f7a4e48f1f59fb20ff8990b41098bfe1f2d0053215"
+    },
+    {
       "bytes": 1140,
       "out": "ssa_setup_probe.out",
       "rows": 13,

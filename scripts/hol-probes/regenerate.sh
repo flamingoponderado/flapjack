@@ -3288,3 +3288,7 @@ run_probe wordconvs_program_mono_probeScript.sml wordconvs_program_mono_probe.ou
 run_probe ssa_setup_probeScript.sml ssa_setup_probe.out \
   ss_even ss_empty ss_duplicates ss_invalid ss_one ss_setup0 ss_setup1 ss_setup3 ss_setup80 even_list_def next_var_rename_def list_next_var_rename_def setup_ssa_def \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
+run_probe ssa_map_ok_probeScript.sml ssa_map_ok_probe.out \
+  sm_empty sm_valid sm_at_bound sm_physical sm_invalid sm_definition \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
