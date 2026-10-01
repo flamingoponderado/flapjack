@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordAlloc.CanonizeSort
 import Flapjack.Compiler.Backend.WordAlloc.HeuProg
 import Flapjack.Compiler.Backend.RegAlloc.Remap
 import Flapjack.Compiler.Backend.WordAlloc.CanonizeMovesAux
@@ -50,6 +51,8 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.CompLength
 import Flapjack.Compiler.Backend.WordToStack.ProductionExpressionMaximum
 import Flapjack.Compiler.Backend.WordToStack.ProductionCutsetMaximum
 import Flapjack.Compiler.Backend.WordToStack.ProductionInstructionMaximum
+import Flapjack.Compiler.Backend.WordToStack.ProductionColourDomain
+import Flapjack.Compiler.Backend.WordToStack.ProductionProgramMaximum
 import Flapjack.Compiler.Backend.Parmove.DestinationWrapper
 import Flapjack.Compiler.Backend.Parmove.DStepStep
 
