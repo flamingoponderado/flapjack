@@ -1,4 +1,5 @@
 import Flapjack.Test.WordAllocSpillCostParity
+import Flapjack.Test.ParmoveCorrectParity
 import Flapjack.Test.WordAllocMergeStackSetsParity
 import Flapjack.Test.ParmoveTempBeforeAssignParity
 import Flapjack.Test.FindIndexParity
