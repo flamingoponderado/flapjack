@@ -43110,6 +43110,30 @@
     "reviewer": "flapjack-luna-a source comparison 2026-10-01 beadw1a4.8: original1039-1048 free destination x explicit as Option alpha; initial existential non-self source conjunct primitive-step RTC implies same final existential. Arbitrary raw Option alpha pair-list State, stateToList concatenation and canonical ReflTransGen Step retained, lambdas beta-reduced. No wf, scratch safety, equality instance, target output or intermediate-invariant premise. Refl/tail induction lifts accepted whole stepPreservesMoves. Certified zero-step and two-step Start/Save kernel fixtures expose changing source and scratch destination; fresh original predicates/output witness equations are regression evidence only. Coordinator acceptance pending."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/StatePartition.lean",
+    "lean_name": "stExPartition",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "st_ex_PARTITION_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-b source comparison (2026-10-01, bead .18.5.11.5.10.5.8.6.24): reg_allocScript158-168 two literal recursive equations. Original type printed fresh: (alpha -> beta -> (bool,gamma) exc # beta) -> alpha list -> alpha list -> alpha list -> beta -> (alpha list # alpha list,gamma) exc # beta. Lean preserves independent value/state/exception Type carriers and reviewed M/Exc, List and Bool. Empty input returns existing yes/no accumulators and unchanged state without predicate execution. Nonempty input binds head predicate then recurses on tail with head prepended to selected accumulator, preserving left-to-right effects, reversed selected input order, failure exception and failure-returned state through accepted bind. No added premise, fuel, array/map substitution or post-state assumption. Fresh original reg_alloc_state_partition_probe captures type plus 22 T observations; matching kernel decide fixtures and generic empty-input rfl in RegAllocStatePartitionParity. Native allocator phases and actual compiler routing remain open under .10.5.8; coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/StateForeach.lean",
+    "lean_name": "stExForeach",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "st_ex_FOREACH_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-b source comparison (2026-10-01; bead .18.5.11.5.10.5.5.1), reg_allocScript139-146: original empty equation returns unit without invoking action; cons uses st_ex_ignore_bind(action x)(recursive tail). Lean retains independent element/state/action-result/exception Type carriers confirmed by fresh original constant type. Successful callback value ignored; state threaded, failure retains returned state and skips tail via accepted ignoreBind. Fresh original11 observations and kernel replay cover order, duplicates, empty/first/middle/last failure, Bool result, List and Bool state. Definition axiom-free; no representation qualifier or added premises. Native allocator phase proofs and production routing remain open. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/PreservesMoves/Pmov.lean",
+    "lean_name": "pmovPreservesMoves",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "pmov_preserves_moves",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison 2026-10-01 w1a4.9: full original1050-1061/fresh DB.fetch. Arbitrary Option alpha pair-list State; original wf/member/nonself conjunction implies destination in MAP FST actual pmov state. Canonical pmov uses computational DecidableEq alpha (propositional equality, no BEq laws); inherited accepted API, no new semantic premise. Primitive RTC derived from pmovDsteps and dsteps_steps; final witness derived from accepted stepsPreservesMoves. No supplied target output, RTC, scratch safety or invariant assumption. Original fixtures/kernel and full gates required; coordinator acceptance pending."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CodeLabels.lean",
     "lean_name": "getCodeHandlerLabelsWStackLoad",
     "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",

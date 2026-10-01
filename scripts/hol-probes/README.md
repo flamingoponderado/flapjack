@@ -2634,6 +2634,7 @@ destination-distinctness observations; Lean also applies the full RTC theorem
 to zero-step and concrete two-step traces. These fixtures do not establish
 cross-language equivalence or whole allocator correctness.
 
+- `parmove_preserves_moves_steps_probeScript.sml`: six complete destination/witness observations for Start/Save states. Lean fixtures certify the RTC trace and zero-step case; HOL observations alone do not prove that trace or cross-assistant equivalence.
 `wordconvs_code_labels_probe.out` contains twelve fresh direct original
 `wordConvs$get_code_labels` complete-set observations, replayed at identical
 width64 inputs by `Flapjack.Test.WordConvsCodeLabelsParity`. Cases cover direct
@@ -2676,3 +2677,50 @@ rejected. These regressions do not prove cross-language equivalence.
 Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=backendprops_nonzero_labels_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
+
+### Register allocator phase closure audit
+
+`reg_alloc_phase_closure_probeScript.sml` captures 29 exported original HOL
+definition equations for the five `do_step` phases and their nested helpers.
+These are statement captures, not Boolean behavioral parity or Lean theorem
+replays. The five success results are local HOL lemmas and were reviewed in
+`reg_alloc/proofs/reg_allocProofScript.sml:2075-2838`; no DB export or completed
+port is claimed for them. `reg_alloc_phase_closure_audit.json` records the
+source-confirmed helper frontier and shared bead IDs under `.10.5.8.6`.
+
+The five phase children remain blocked on genuine helpers. Important retained
+details include unspill's two partitions and update order, coalescing's parent
+compression even on rejected moves, prefreeze's stateful unavailable-worklist
+update, strict spill selector comparisons/tie accumulation, and the full
+success existential with good-state/subgraph/dimension/node-tag conclusions.
+Native `CakeRegAlloc` helpers are not thereby reviewed as literal state-monad
+ports. No source implementation or executed compiler route changes here.
+
+### Native state-exception partition
+
+`reg_alloc_state_partition_probeScript.sml` captures the original generic
+`st_ex_PARTITION` type and 22 Boolean equalities over full result/state pairs.
+`RegAllocStatePartitionParity.lean` replays the same inputs and outputs in the
+Lean kernel. Fixtures cover prepend accumulators, duplicates, reversed input,
+large Nat values, state-dependent decisions, all failure positions and
+independent Bool/list/product state and exception carriers. The generic empty
+case is also checked by `rfl`. Finite parity observations support the literal
+source comparison; they do not prove cross-prover equivalence or execute a
+production allocator replacement. Native phase proofs and production routing
+remain separate work.
+
+## Native state-exception iteration
+
+`reg_alloc_state_foreach_probeScript.sml` captures the generic original
+`st_ex_FOREACH` type and eleven direct observations. `RegAllocStateForeachParity`
+replays order, discarded success values, failure-state retention and tail skipping,
+including independent Boolean callback results and List/Boolean states. These finite
+rows do not establish full allocator correctness or production routing. Regenerate
+with `HOL_PROBE_ONLY=reg_alloc_state_foreach_probeScript.sml` and the read-only
+original CakeML reg_alloc theory directory.
+
+`parmove_preserves_moves_pmov_probe.out` records three fresh original scheduler
+observations: terminal scratch destination, pending destination, and full pending
+output. ParmovePreservesMovesPmovParity kernel-replays the same inputs and applies
+the source-shaped preservation theorem with internally discharged well-formedness.
+Finite observations are regression evidence, not cross-prover equivalence.
