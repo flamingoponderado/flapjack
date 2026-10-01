@@ -3631,3 +3631,6 @@ run_probe ssa_rename_move_preserve_weak_probeScript.sml ssa_rename_move_preserve
   rmw_full rmw_type_st rmw_type_cst rmw_type_ssa rmw_type_na rmw_type_ls \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+run_probe loop_to_word_program_names_probeScript.sml loop_to_word_program_names_probe.out \
+  first_compile_prog_all_distinct_source_replay first_compile_all_distinct_source_replay mem_prog_mem_compile_prog_source_replay lookup_prog_some_lookup_compile_prog_source_replay pn_duplicate_result pn_distinct_result pn_duplicate_names pn_distinct_names pn_first_lookup pn_missing_lookup pn_distinct_theorem pn_compile_theorem pn_member_theorem pn_lookup_theorem \
+  "$cake_dir/pancake/proofs/loop_to_wordProofScript.sml" "$cake_dir/pancake/proofs"

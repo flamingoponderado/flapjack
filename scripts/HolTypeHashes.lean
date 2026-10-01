@@ -4,6 +4,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.LimitVar.Properties
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMovePreserve
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAOptionLookupSubset
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenamePropertyWrappers
+import Flapjack.Pancake.LoopToWord.Proofs.ProgramNames
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveLookups
 import Flapjack.Pancake.LoopToWord.Proofs.LabelHandlers
 import Flapjack.Pancake.WordConvs.PredicateEquations
