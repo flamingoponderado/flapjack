@@ -73,4 +73,22 @@ example {width : Nat} [NeZero width] (owner arguments referenced : Nat) (externa
       referenced = owner ∨ referenced ∈ external := by
   source_label_safety_replay
 
+-- Same-input fresh original observations retain independent second carriers.
+example : goodCodeLabelsHOL ([(7,true,.locValue 0 8)] : List (Nat × Bool × WordLangProgHOL (BitVec 64))) {8} ↔ True := by
+  source_label_safety_replay
+example : goodCodeLabelsHOL ([(7,(),.locValue 0 8)] : List (Nat × Unit × WordLangProgHOL (BitVec 64))) ∅ ↔ False := by
+  source_label_safety_replay
+example : goodCodeLabelsHOL ([(7,[true,false],.locValue 99 7),(7,[],.skip)] : List (Nat × List Bool × WordLangProgHOL (BitVec 1))) ∅ ↔ True := by
+  source_label_safety_replay
+example : goodCodeLabelsHOL ([(7,none,.locValue 99 8)] : List (Nat × Option Bool × WordLangProgHOL (BitVec 16))) Set.univ ↔ True := by
+  source_label_safety_replay
+
+-- The exact original independent carrier is quantified, rather than a
+-- representative value or a source-absent conversion requirement.
+example {width : Nat} [NeZero width] {α : Type} (field : α)
+    (owner referenced : Nat) (external : Set Nat) :
+    goodCodeLabelsHOL ([(owner,field,.locValue 99 referenced)] : List (Nat × α × WordLangProgHOL (BitVec width))) external ↔
+      referenced = owner ∨ referenced ∈ external := by
+  source_label_safety_replay
+
 end Flapjack.Test.WordConvsLabelSafetyParity

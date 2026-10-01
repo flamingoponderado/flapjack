@@ -101,6 +101,14 @@ run_probe() {
   done
 }
 
+run_probe word_to_stack_copy_ret_no_install_probeScript.sml word_to_stack_copy_ret_no_install_probe.out \
+  crni_zero_bad crni_plain_good crni_handler_bad crni_perf_good crni_perf_bad crni_option_tail_handler crni_empty_list_loop crni_exact_count_zero \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_convs_no_install_def_probeScript.sml word_convs_no_install_def_probe.out \
+  wcni_01_mt wcni_02_seq wcni_03_loop wcni_04_if wcni_05_call wcni_06_alloc wcni_07_loc wcni_08_share wcni_09_install wcni_10_skip wcni_11_move wcni_12_inst wcni_13_assign wcni_14_get wcni_15_set wcni_16_store wcni_17_consts wcni_18_raise wcni_19_return wcni_20_break wcni_21_continue wcni_22_tick wcni_23_heap wcni_24_code wcni_25_data wcni_26_ffi wcni_call_none_none_width1 wcni_call_return_only_width1 wcni_call_both_present_width1 \
+  "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
+
 run_probe word_to_stack_no_install_helpers_probeScript.sml word_to_stack_no_install_helpers_probe.out \
   ni_moves_empty ni_moves_all_pairs ni_load_install ni_load_skip ni_reg1_direct ni_reg1_spill ni_reg2_direct ni_reg2_spill ni_live_zero ni_live_frame ni_stack_move_install ni_stack_move_zero ni_copy_aux_zero ni_copy_aux_many \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -3507,3 +3515,11 @@ run_probe ssa_locals_physical_insert_probeScript.sml ssa_locals_physical_insert_
 run_probe ssa_merge_frame_probeScript.sml ssa_merge_frame_probe.out \
   mf_full_source_replay mf_empty mf_missing_both mf_missing_left mf_missing_right mf_equal mf_unequal mf_tail_order mf_duplicate mf_invalid mf_big \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_code_label_safety_probeScript.sml word_to_stack_code_label_safety_probe.out \
+  cls_empty cls_self cls_missing cls_external cls_duplicates cls_owned cls_wrong_owner cls_tail_missing cls_threaded cls_width_one \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_convs_code_label_carriers_probeScript.sml word_convs_code_label_carriers_probe.out \
+  clc_bool clc_unit clc_list clc_option \
+  "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
