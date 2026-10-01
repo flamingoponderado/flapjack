@@ -1,0 +1,9 @@
+mso_present_alloc=T
+mso_present_physical=T
+mso_present_stack=T
+mso_absent_stack_alloc=T
+mso_absent_stack_physical=T
+mso_absent_delete_missing=T
+mso_absent_delete_root=T
+mso_present_overwrite=T
+mso_raw=T
