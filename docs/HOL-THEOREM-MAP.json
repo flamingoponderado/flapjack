@@ -41529,6 +41529,22 @@
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.7): literal lab_to_targetScript.sml:54-57 `enc_sec_list enc xs = let skip_len = LENGTH (enc (Inst Skip)) in MAP (enc_sec enc skip_len) xs`, sharing one skip length computed from the encoding of `Inst Skip` across every section. Exact Section/Line carriers at one width; only HOL's `'a word` is translated to positive-width `BitVec width` with `[NeZero width]` (words_as_type_indexed_bitvec). Replayed as the EncSecList row of lab_to_target_encoding_probe.out in Flapjack.Test.LabToTargetEncodingParity. Coordinator source review pending."
 },
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Labels.lean",
+  "lean_name": "sectionLabels",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "section_labels_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.8): literal lab_to_targetScript.sml:62-74, clause for clause. `section_labels pos [] labs = (pos,labs)`; `Label _ l2 len :: xs` keeps the exact `if l2 = 0` guard so a zero label is ignored and a nonzero label is prepended as `(l2,pos+len)` after advancing to `pos+len`; `Asm _ _ len :: xs` and `LabAsm _ _ _ len :: xs` advance to `pos+len` recording nothing. Return type is exactly `num # (num#num) list`; the line parameters stay fully polymorphic (no word/`BitVec` carrier occurs in the signature), so no qualifier is used. No added hypothesis, dropped guard, or weakened clause. Replayed as the SectionLabels* rows of lab_to_target_labels_probe.out in Flapjack.Test.LabToTargetLabelsParity. Coordinator source review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Labels.lean",
+  "lean_name": "computeLabelsAlt",
+  "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
+  "hol_name": "compute_labels_alt_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-ds9 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.10.8): literal lab_to_targetScript.sml:76-83, clause for clause. `compute_labels_alt pos [] labs = labs`; `Section k lines::rest` computes `let (new_pos,sec_labs) = section_labels pos lines []`, then recurses with `new_pos` and accumulates `insert k (fromAList ((0,pos)::sec_labs)) labs`, capturing the section start `pos` (not `new_pos`) under key 0. HOL `insert` and `fromAList` are the Sptree operations and render as `sptInsert`/`sptFromAList`; the accumulator type is `num_map num_map` = `num spt spt` (the generated lab_to_targetTheory doc prints `num -> α sec list -> num sptree$num_map sptree$num_map -> ...`, with `num_map = 'a spt`), i.e. Lean `Spt (Spt Nat)`, matching the `(num#num)` entries fed to `fromAList`. The line parameters stay fully polymorphic (no word/`BitVec` occurs in the signature). No added hypothesis or weakened clause. Replayed as the ComputeLabelsAlt/ComputeLookup* rows of lab_to_target_labels_probe.out in Flapjack.Test.LabToTargetLabelsParity. Coordinator source review pending."
+},
   {
     "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
     "hol_name": "wf_union",

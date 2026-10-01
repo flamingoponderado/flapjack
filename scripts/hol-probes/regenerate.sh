@@ -2897,6 +2897,13 @@ run_probe lab_to_target_encoding_probeScript.sml lab_to_target_encoding_probe.ou
   CbwToAsmAsmi CbwToAsmCbw CbwToAsmShareMem \
   EncLineLabel EncLineAsm EncLineAsmCbw EncLineLabAsm EncSec EncSecList \
   "$cake_dir/compiler/backend/lab_to_targetScript.sml" "$cake_dir/compiler/backend"
+run_probe lab_to_target_labels_probeScript.sml lab_to_target_labels_probe.out \
+  SectionLabelsEmpty SectionLabelsEmptyLabs SectionLabelsConcrete SectionLabelsConcreteLabs \
+  ComputeLabelsAltEmpty ComputeLabelsAltConcrete \
+  ComputeLookupSection1 ComputeLookupSection2 ComputeLookupSection3Absent \
+  ComputeLookupSection1Start ComputeLookupSection1Label1 \
+  ComputeLookupSection2Start ComputeLookupSection2Label2 \
+  "$cake_dir/compiler/backend/lab_to_targetScript.sml" "$cake_dir/compiler/backend"
 run_probe word_alloc_total_colour_probeScript.sml word_alloc_total_colour_probe.out \
   tc_absent_zero tc_absent_physical tc_absent_virtual tc_absent_large_physical tc_absent_large_virtual tc_mapped_physical tc_mapped_virtual tc_mapped_zero \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
