@@ -2692,3 +2692,9 @@ including independent Boolean callback results and List/Boolean states. These fi
 rows do not establish full allocator correctness or production routing. Regenerate
 with `HOL_PROBE_ONLY=reg_alloc_state_foreach_probeScript.sml` and the read-only
 original CakeML reg_alloc theory directory.
+
+`parmove_preserves_moves_pmov_probe.out` records three fresh original scheduler
+observations: terminal scratch destination, pending destination, and full pending
+output. ParmovePreservesMovesPmovParity kernel-replays the same inputs and applies
+the source-shaped preservation theorem with internally discharged well-formedness.
+Finite observations are regression evidence, not cross-prover equivalence.
