@@ -41888,5 +41888,32 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-a: entire source2818-2830 compared binder by binder: arbitrary assembly config, perf, native source program, AppList word/count input, natural frame triple, native target program and AppList/count output; sole actual comp output equation implies flattened input prefix of flattened output. Canonical native WordLangProgHOL/HolProg/AsmConfigExact and Spt/AppList carriers reviewed against accepted comp definition; words_as_type_indexed_bitvec only translates the positive source dimension. Actual compiler functional induction covers all32 branches, including recursion in MustTerminate/Seq/If/Loop and returning Call plus handler; actual wLive/insertBitmap prefixes and prefix transitivity supply all bitmap mutation cases. No input count bound, wellformedness, evaluation, compile-success or desired-prefix premise. Nine fresh original prefix observations, including nested input tree with count zero and perf returning Call, are kernel paired in the actual CompilerParity driver. Remaining length/lookup/compiler correctness chain remains open."
-}
+},
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "clash_tree_colouring_ok",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/ClashTreeColouringOk/LoopCases.lean",
+    "lean_name": "clashTreeColouringOk_Loop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison: HOL 2813-2826 and case Loop at 3270-3299. Exact WordLangProgHOL positive-width BitVec carrier; original six premises and five conclusions via accepted clashTreeGoal/clashTreeConcl. Loop has only body IH, uses right-first checker and fixed-set checkColInj; Break/Continue derive indexed projection wf from EVERY table premise, including absent lookup LN. No extra evaluation, injectivity, table bounds or desired conclusion premises. words_as_type_indexed_bitvec is only carrier translation. Coordinator review pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "clash_tree_colouring_ok",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/ClashTreeColouringOk/LoopCases.lean",
+    "lean_name": "clashTreeColouringOk_Break",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison: HOL 2813-2826 and case Break at 3270-3299. Exact WordLangProgHOL positive-width BitVec carrier; original six premises and five conclusions via accepted clashTreeGoal/clashTreeConcl. Loop has only body IH, uses right-first checker and fixed-set checkColInj; Break/Continue derive indexed projection wf from EVERY table premise, including absent lookup LN. No extra evaluation, injectivity, table bounds or desired conclusion premises. words_as_type_indexed_bitvec is only carrier translation. Coordinator review pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "clash_tree_colouring_ok",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/ClashTreeColouringOk/LoopCases.lean",
+    "lean_name": "clashTreeColouringOk_Continue",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison: HOL 2813-2826 and case Continue at 3270-3299. Exact WordLangProgHOL positive-width BitVec carrier; original six premises and five conclusions via accepted clashTreeGoal/clashTreeConcl. Loop has only body IH, uses right-first checker and fixed-set checkColInj; Break/Continue derive indexed projection wf from EVERY table premise, including absent lookup LN. No extra evaluation, injectivity, table bounds or desired conclusion premises. words_as_type_indexed_bitvec is only carrier translation. Coordinator review pending."
+  }
 ]

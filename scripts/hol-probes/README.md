@@ -2304,3 +2304,10 @@ output-equation theorem to the same actual compiler outputs in the real Lake
 test driver. These observations are regression evidence, not a cross-prover
 equivalence or whole-compiler correctness proof.
 `word_alloc_merge_stack_sets_probeScript.sml` evaluates eight literal full-tree merge equations: empty, retained right payload, left-biased new entries, right-only entries, removal, fixed-set bias, malformed tree, and generic payloads. Same-input kernel fixtures are imported by CompilerParity. This helper does not establish the whole allocator theorem.
+
+`word_alloc_loop_checker_probeScript.sml` freshly observes seven original
+checker equations: absent and present Break/Continue table lookups, Loop with
+Skip and Continue bodies, and a rejected colliding colour. The kernel fixtures
+in `WordAllocLoopCheckerParity` replay the same inputs through the actual test
+driver. These observations do not establish cross-prover equivalence or the
+whole allocator theorem; universal case proofs retain the original motive.

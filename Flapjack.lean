@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.LoopCases
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompilePrefix
 import Flapjack.Compiler.Backend.WordAlloc.MergeStackSets
 import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign
