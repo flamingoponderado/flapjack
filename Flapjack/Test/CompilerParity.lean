@@ -1,3 +1,4 @@
+import Flapjack.Test.ParmoveFirstIndexParity
 import Flapjack.Test.RegAllocSafeDivParity
 import Flapjack.Test.WordToStackUnreachCodecParity
 import Flapjack.Test.WordToStackCseCodecParity

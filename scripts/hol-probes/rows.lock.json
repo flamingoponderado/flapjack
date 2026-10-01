@@ -475,6 +475,7 @@
     {"bytes":689,"out":"parmove_emithead_probe.out","rows":26,"sha256":"dda7aa9299652a795d587f0e52c7a63caf53369bcc793d032458d4704992a117"},
     {"bytes":153,"out":"parmove_environment_probe.out","rows":8,"sha256":"c0ea060f5ddc87d9fbaf0916b05174c62550ce8faa557763d5a203c62ea0d9dd"},
     {"bytes":386,"out":"parmove_final_probe.out","rows":7,"sha256":"12dc56e3354f8ae0190fb9c1ea937f8f3329a2c19644f3059cef1b548eeab834"},
+    {"bytes":119,"out":"parmove_first_index_probe.out","rows":15,"sha256":"eaeca280f556d0868b98c2ab3b7d725e400d5f0aeba27db04ecda90eb05a7bf4"},
     {"bytes":124,"out":"parmove_fstep_probe.out","rows":10,"sha256":"9c8a786eb072aa9b95652444d754fd3d05baee183313cf8689a451540b3e09c0"},
     {"bytes":130,"out":"parmove_independence_probe.out","rows":10,"sha256":"c1020e5473368be67d9d9133bf6a2ebc502141a31e474f7f4c2dcf8fb4ff40b0"},
     {"bytes":224,"out":"parmove_invariants_probe.out","rows":13,"sha256":"9e0215ba434733695ce75e6251c2190e8633130a127331ee3ff7a1f5e9894504"},

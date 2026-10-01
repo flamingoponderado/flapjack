@@ -42658,5 +42658,13 @@
     "hol_name": "safe_div_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol source comparison 2026-10-01 bead .11.5.10.5.8.2: original reg_allocScript774-776 safe_div x v = if v=0 then0 else x DIV v over arbitrary HOL num/Lean Nat. Literal guard, both branches and parameter order retained without positivity/range/success premise; ordinary Nat division agrees on nonzero denominators. Production cakeSafeDiv now delegates definitionally to this reviewed counterpart and actual spill-cost scan/selection continue through that wrapper. Fresh original fourteen zero/nonzero/remainder/large-numeral equations and same-input kernel replay, plus universal wrapper equation; full gates and coordinator source review required."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/TempBeforeAssign/FirstIndex.lean",
+    "lean_name": "notUseTempBeforeAssignFirstIndex",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "not_use_temp_before_assign_thm",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-10-01 bead .15.3.46.3: complete original858-877 predicate equality translated as predicate=true iff forall firstreadindex i, source find_index NONE (MAP SND ls)0=SOME i implies exists firstwriteindex j with destination find_index NONE (MAP FST ls)0=SOME j and j<i. Independent arbitrary destination/source Type carriers, all Option-pair lists and both literal offset0 searches retained. No validity/distinctness/success/targetrun premise; local classical DecidableEq implements HOL equality without adding public caller typeclass binders. Structural list/Option cases and accepted arbitrary-offset shift_0 derive strict order, including simultaneous NONE/NONE failure. Fresh fifteen original full predicate/read/write equations include duplicates, absent reads/writes, mixed Bool/Nat and function-valued source; identical-input kernel replay plus unrestricted public theorem fixture. Coordinator review and complete compiler/move safety assembly remain required."
   }
 ]

@@ -35,6 +35,7 @@ import Flapjack.Compiler.Backend.Parmove.Correct
 import Flapjack.Compiler.Backend.WordAlloc.Heuristics
 import Flapjack.Compiler.Backend.WordAlloc.MergeStackSets
 import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign
+import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.FirstIndex
 import Flapjack.Misc.FindIndex
 import Flapjack.Compiler.Backend.Parmove.DStepsSteps
 import Flapjack.Compiler.Backend.WordAlloc.StackOnly

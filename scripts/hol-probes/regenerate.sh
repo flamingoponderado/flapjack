@@ -3104,3 +3104,7 @@ run_probe word_to_stack_unreach_codec_probeScript.sml word_to_stack_unreach_code
 run_probe reg_alloc_safe_div_probeScript.sml reg_alloc_safe_div_probe.out \
   sd_0 sd_1 sd_2 sd_3 sd_4 sd_5 sd_6 sd_7 sd_8 sd_9 sd_10 sd_11 sd_12 sd_13 \
   "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe parmove_first_index_probeScript.sml parmove_first_index_probe.out \
+  fi_0 fi_1 fi_2 fi_3 fi_4 fi_5 fi_6 fi_7 fi_8 fi_9 fi_10 fi_11 fi_12 fi_mixed fi_function \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
