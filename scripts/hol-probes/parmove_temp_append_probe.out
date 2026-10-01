@@ -1,0 +1,8 @@
+nta_empty=(T,T,T,T)
+nta_empty_bad=(F,T,T,F)
+nta_real_bad=(F,T,T,F)
+nta_write_stops=(T,T,F,F)
+nta_read_first=(F,F,T,T)
+nta_both_none=(F,F,F,T)
+nta_real_write=(T,T,T,T)
+nta_late_write=(T,T,F,F)
