@@ -630,6 +630,7 @@
     {"bytes": 202, "out": "word_to_stack_chunk_to_bitmap_probe.out", "rows": 7, "sha256": "8a74a79cbc3fed7362a497d8f1e06904757bccf6759a5302b4e9431c1e070b5d"},
     {"bytes": 114, "out": "word_to_stack_chunk_to_bits_probe.out", "rows": 7, "sha256": "b30f4c2b3a480cb89f3ad2876b18403ba0bc312fd52ef27afc7048fd2675ccea"},
     {"bytes": 305, "out": "word_to_stack_comp_native_probe.out", "rows": 19, "sha256": "0f8577c0655cadb1128217e868b6e85e5bb712ce618a1804c3e80dd63e7595ca"},
+    {"bytes": 89, "out": "word_to_stack_compile_keys_probe.out", "rows": 7, "sha256": "3382a2768e65eb445165c701c9bc75607ce78391ad302e08a32a9a56df4e3eae"},
     {"bytes": 64, "out": "word_to_stack_copy_ret_probe.out", "rows": 6, "sha256": "b8e27124fa021d27663b0795106ece3816fb9c7e3f1f54d7714f09b68f1942c5"},
     {"bytes": 96, "out": "word_to_stack_frames_probe.out", "rows": 9, "sha256": "c4e7a2e20f1d5f8af9d608f55184b6911bc5a6200ad847755bc7be1bd9745998"},
     {"bytes": 61, "out": "word_to_stack_handler_probe.out", "rows": 7, "sha256": "e30a15af61e93975a55c10520f64a315ae26d38cde6862d24125eb022f089a04"},

@@ -2857,3 +2857,7 @@ run_probe parmove_stepscorrect_probeScript.sml parmove_stepscorrect_probe.out \
 run_probe word_to_stack_programs_native_probeScript.sml word_to_stack_programs_native_probe.out \
   wts_prog_zero_registers wts_prog_register_only wts_prog_exact_register_args wts_prog_first_stack_arg wts_prog_three_stack_args wts_prog_all_stack_args wts_prog_huge_register_count wts_prog_var_boundary wts_prog_var_first_stack wts_prog_var_odd_stack wts_prog_vars_exceed_args wts_prog_args_exceed_vars wts_prog_perf_tick wts_prog_width_one wts_prog_list_empty wts_prog_list_generic wts_prog_list_duplicates wts_prog_bitmap_order wts_prog_bitmap_reverse wts_prog_bitmap_multiword wts_prog_bitmap_zero_frame \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_to_stack_compile_keys_probeScript.sml word_to_stack_compile_keys_probe.out \
+  ck_empty ck_single ck_generic ck_duplicate ck_order ck_bitmap ck_width_one \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend"

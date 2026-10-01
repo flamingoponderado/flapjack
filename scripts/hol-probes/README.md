@@ -2215,3 +2215,9 @@ statements are source-reviewed in `Parmove/DSteps.lean`.
 `word_to_stack_native_config_probeScript.sml` captures seven fresh original
 configuration record projections and updates. Empty, singleton, raw BS and
 non-well-formed BN trees are retained without a validity restriction.
+`word_to_stack_compile_keys_probeScript.sml` captures seven fresh original
+key-list projections of the actual recursive compiler, retaining empty, generic,
+duplicate and reordered identifiers, bitmap-changing bodies and width-one
+inputs. `WordToStackCompileKeysParity.lean` applies the full reviewed theorem
+to the same actual compiler results. The source theorem preserves the entire
+key list; it does not establish pass simulation or final binary correctness.
