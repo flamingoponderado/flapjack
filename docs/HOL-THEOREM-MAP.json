@@ -41194,5 +41194,13 @@
   "hol_name": "step_sem",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.6.5.4: genuine fifth step_sem case source412-438, full original wf and both constructor pending NoRead/endpoint inequality retained, arbitrary history/env and original eqenv conclusion. Path/destination uniqueness derives tail NoRead; reviewed permutation and parsem_NoRead then reverse/seqsem_append establish equality. No target evaluation, agreement, result or extra no-read premise. Option/List/function/value carriers unchanged. Coordinator acceptance pending; full assembly remains open."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/StepSem.lean",
+  "lean_name": "step_sem",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "step_sem",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 child25.6.5.5: full original local step_sem370-444, forall states Step first second -> entire input wf -> forallenv eqenv; same Option/List/function carriers and arbitrary value carrier. Literal six-constructor case assembly, no assumed target evaluation/equality or stronger premise. All six concrete constructor applications kernel checked in ParmoveStepSemParity, arbitrary env. Original per-case captures retained (14 Start/Extend,16 RemoveSelf/EmitLast,20 Save,26 EmitHead); EmitHead independent coordinator review pending. No production behavior change; RTC/functional scheduler correctness remains open."
 }
 ]

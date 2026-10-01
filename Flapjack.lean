@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.Parmove.StepSem
 import Flapjack.Compiler.Backend.Parmove.StepSem.EmitHead
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.InstFp
 import Flapjack.Compiler.Backend.WordToStack.NativeLive
