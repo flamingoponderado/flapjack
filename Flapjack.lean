@@ -2,14 +2,20 @@ import Flapjack.Pancake.WordConvs.EveryVarInstMono
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Parmove
 import Flapjack.Compiler.Backend.BackendProps
 
+import Flapjack.Compiler.Backend.LabToTarget.Interference
+import Flapjack.Compiler.Backend.LabToTarget.NopEncoding
+import Flapjack.Compiler.Backend.LabToTarget.SectionNavigation
+import Flapjack.Pancake.WordConvs.ExpressionMonotonicity
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.MaxVarExp
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.MaxVarInst
+import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterLabels
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileLookup
+import Flapjack.Compiler.Backend.WordAlloc.GetHeuristics
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Pmov
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CodeLabels
 import Flapjack.Pancake.WordConvs.CodeLabels
 import Flapjack.Compiler.Backend.StackProps.CodeLabels
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Steps
-import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterLabels
-import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileLookup
-import Flapjack.Compiler.Backend.WordAlloc.GetHeuristics
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Step
 import Flapjack.Compiler.Backend.LabToTarget.Navigation
 import Flapjack.Compiler.Backend.LabToTarget.Memory

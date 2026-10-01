@@ -101,6 +101,12 @@ run_probe() {
   done
 }
 
+run_probe lab_to_target_section_lookup_probeScript.sml lab_to_target_section_lookup_probe.out \
+  section_entry section_label5 section_label7 section_missing preceding_entry preceding_label5 empty_tail_entry empty_tail_missing \
+  "$cake_dir/compiler/backend/semantics/labSemScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe target_props_interference_probeScript.sml target_props_interference_probe.out \
+  shift_zero shift_three shift_composition shift_ffi_unchanged shift_target_unchanged region_empty region_safe_before_wrap region_wrap_hits_entry \
+  "$cake_dir/compiler/backend/semantics/targetPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe bytes_in_mem_probeScript.sml bytes_in_mem_probe.out \
   empty_ignores_guards nat_wrap excluded_head excluded_tail domain_head domain_tail wrong_value bool_payload update_off_region update_hit_region append_wrapped \
   "$cake_dir/misc/miscScript.sml" "$cake_dir/misc"
@@ -3216,6 +3222,18 @@ run_probe word_to_stack_compile_lookup_probeScript.sml word_to_stack_compile_loo
 run_probe word_to_stack_register_labels_probeScript.sml word_to_stack_register_labels_probe.out \
   wr_physical wr_boundary wr_spilled wr_zero wr_large wr_labelled \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_alloc_max_inst_probeScript.sml word_alloc_max_inst_probe.out \
+  mi_skip mi_const mi_binreg mi_binimm mi_shift mi_div mi_longdiv mi_load8 mi_fp64_to mi_fp32_to mi_fp80_from mi_fpignored mi_original_theorem \
+  "$cake_dir/compiler/backend/wordLangScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_alloc_max_exp_probeScript.sml word_alloc_max_exp_probe.out \
+  me_const me_lookup me_var me_load me_empty me_nested me_duplicate me_shiftleft me_shiftright me_zero me_original_theorem \
+  "$cake_dir/compiler/backend/wordLangScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe wordconvs_exp_mono_probeScript.sml wordconvs_exp_mono_probe.out \
+  em_var em_nested em_empty em_const em_lookup em_duplicate em_large em_guard_needed em_original_theorem \
+  "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe parmove_preserves_moves_parmove_probeScript.sml parmove_preserves_moves_parmove_probe.out \
   pmm_shared pmm_cycle pmm_bool pmm_output pmm_self pmm_empty \

@@ -15,6 +15,33 @@ the full preservation theorem with internally checked original premises. These
 fixtures are regression evidence, not a cross-prover equivalence proof. Regenerate
 with `HOL_PROBE_ONLY=parmove_preserves_moves_parmove_probeScript.sml` and the
 read-only prebuilt CakeML register-allocation theory directory.
+`wordconvs_exp_mono_probe.out` freshly prints original every_var_exp_mono
+and eight same-expression predicate observations. Registered WordConvsExpMonoParity
+fixtures apply the full implication non-vacuously at widths1/32/64/80 for
+empty/nested/duplicate/Load/Shift/ignored payloads and80-bit registers.
+The final shrinking-bound sentinel rejects removal of the global implication
+guard. Regression rows do not establish cross-assistant equivalence. Regenerate
+with HOL_PROBE_ONLY=wordconvs_exp_mono_probeScript.sml and the read-only prebuilt
+CakeML backend semantics directory.
+
+`word_alloc_max_exp_probe.out` captures ten direct original maximum, inclusive
+bound, and strict-bound sentinel triples. Registered WordAllocMaxVarExpParity
+fixtures check identical recursive syntax at widths1/32/64/80 including empty
+Op, duplicate/nested arguments, ignored Const/Lookup and80-bit register numbers.
+The final row freshly reconstructs the complete local max_var_exp_max from
+its literal proof, using original imported WordConvs monotonicity. These are
+regression evidence, not cross-assistant equivalence or full pass correctness.
+Regenerate with HOL_PROBE_ONLY=word_alloc_max_exp_probeScript.sml using the
+read-only prebuilt CakeML backend semantics theory directory.
+
+`word_alloc_max_inst_probe.out` records 12 direct original maximum/safety rows
+and fresh Q.prove re-elaboration of the complete local max_var_inst_max theorem.
+The registered WordAllocMaxVarInstParity fixtures check the same instructions
+and non-vacuously instantiate the universal bound. Width64 excludes the second
+FP transfer register; widths32/80 retain it, and FP-only register numbers are ignored.
+These are regression evidence, not cross-assistant equivalence or production routing.
+Regenerate with HOL_PROBE_ONLY=word_alloc_max_inst_probeScript.sml and the read-only
+prebuilt CakeML backend theory directory.
 
 `word_to_stack_comp_native_probe.out` contains 19 direct original comp_def observations,
 kernel-replayed by WordToStackNativeCompileParity. Includes recursive returning/handled
@@ -2689,6 +2716,15 @@ destination-distinctness observations; Lean also applies the full RTC theorem
 to zero-step and concrete two-step traces. These fixtures do not establish
 cross-language equivalence or whole allocator correctness.
 
+`lab_to_target_section_lookup_probe.out` captures eight direct original
+`labSem$loc_to_pc` observations on section-valid native fixtures. The Lean
+`LabToTargetSectionLookupParity` replay rewrites actual lookup through the
+original-shaped section-decomposition theorem, covering local labels, missing
+labels, preceding instruction offsets and empty-section entries. Recorded byte
+lengths deliberately differ from PC counts. This is regression evidence for
+that boundary, not a separate oracle for the proof-local helper or a
+cross-language equivalence proof. Regenerate with
+`HOL_PROBE_ONLY=lab_to_target_section_lookup_probeScript.sml scripts/hol-probes/regenerate.sh`.
 - `parmove_preserves_moves_steps_probeScript.sml`: six complete destination/witness observations for Start/Save states. Lean fixtures certify the RTC trace and zero-step case; HOL observations alone do not prove that trace or cross-assistant equivalence.
 `wordconvs_code_labels_probe.out` contains twelve fresh direct original
 `wordConvs$get_code_labels` complete-set observations, replayed at identical
@@ -2701,6 +2737,14 @@ cross-language equivalence. Regenerate against read-only prebuilt theories with
 HOL_PROBE_ONLY=wordconvs_code_labels_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
 
+`enc_with_nop_source_type.sml` reads the unchanged `enc_with_nop_def` text
+from original `lab_to_targetProofScript.sml` and re-elaborates it in an
+in-memory HOL theory, without exporting theory artifacts. This type query
+checks the generic encoded-list payload of the proof-local relation. The
+original proof theory has no prebuilt object in this environment; this is
+source re-elaboration, not an observation from that prebuilt theory or a
+cross-language equivalence proof. Run `HOL/bin/hol run <absolute script path>`
+from the original backend semantics directory, optionally setting `CAKEML`.
 # Word-to-Stack native label helpers
 
 `word_to_stack_code_labels_probeScript.sml` evaluates fourteen complete-set
@@ -2715,7 +2759,6 @@ equivalence. Regenerate with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_to_stack_code_labels_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
-
 - `parmove_preserves_moves_steps_probeScript.sml`: six complete destination/witness observations for Start/Save states. Lean fixtures certify the RTC trace and zero-step case; HOL observations alone do not prove that trace or cross-assistant equivalence.
 
 `parmove_preserves_moves_pmov_probe.out` records three fresh original scheduler
@@ -2769,6 +2812,17 @@ source comparison; they do not prove cross-prover equivalence or execute a
 production allocator replacement. Native phase proofs and production routing
 remain separate work.
 
+`target_props_interference_probe.out` contains eight source-derived HOL
+observations of oracle shifts and wrapped FFI regions, replayed by
+`TargetPropsInterferenceParity`. The probe reads unchanged original
+`shift_interfer_def` and `ffi_entry_pcs_disjoint_def` bodies and re-elaborates
+them in memory using the original machine carriers. The original targetProps
+proof theory has no prebuilt object here; this is explicitly source-derived
+execution, not a prebuilt-theory oracle or cross-language equivalence proof.
+No theory artifact is exported. Rows cover identity/composition, preservation
+of FFI/target fields, duplicate FFI entries, empty intervals, and wraparound
+that first hits an FFI entry. Unresolved logical observations are rejected.
+Regenerate with `HOL_PROBE_ONLY=target_props_interference_probeScript.sml scripts/hol-probes/regenerate.sh`.
 ## Native state-exception iteration
 
 `reg_alloc_state_foreach_probeScript.sml` captures the generic original
@@ -2779,6 +2833,19 @@ rows do not establish full allocator correctness or production routing. Regenera
 with `HOL_PROBE_ONLY=reg_alloc_state_foreach_probeScript.sml` and the read-only
 original CakeML reg_alloc theory directory.
 
+`lab_to_target_navigation_types.sml` and its complete `.txt` transcript audit
+all three SectionNavigation declarations, their direct dependencies, the
+CodeSimilar relation types, the earlier fetch/location theorem binders, and
+native nested constructor types. Existing labSem constants are queried from
+the original loaded theory. Proof-local definitions and labProps definitions
+are re-elaborated from unchanged original source in memory; theorem statements
+are parsed from unchanged source and their bound/free variable types printed.
+This is type evidence, not a replay of the original proof or a cross-language
+equivalence proof. HOL `α line` has one shared word-index parameter; its
+instruction/name/memory-operation carriers are fixed by labLang's datatype.
+Run `HOL/bin/hol run <absolute script path>` from the original backend semantics
+directory and redirect stdout to the paired `.txt`, trimming trailing whitespace
+(optionally set `CAKEML`). All printed type and statement content is retained.
 `parmove_preserves_moves_pmov_probe.out` records three fresh original scheduler
 observations: terminal scratch destination, pending destination, and full pending
 output. ParmovePreservesMovesPmovParity kernel-replays the same inputs and applies
