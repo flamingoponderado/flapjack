@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Encoders.AsmProps.Assertions
 import Flapjack.Compiler.Encoders.AsmProps.FpPreservation
 import Flapjack.Pancake.WordConvs.ProgramMonotonicity
 import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Parmove
