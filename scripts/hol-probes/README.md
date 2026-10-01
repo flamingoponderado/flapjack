@@ -42,6 +42,23 @@ FP transfer register; widths32/80 retain it, and FP-only register numbers are ig
 These are regression evidence, not cross-assistant equivalence or production routing.
 Regenerate with HOL_PROBE_ONLY=word_alloc_max_inst_probeScript.sml and the read-only
 prebuilt CakeML backend theory directory.
+`word_convs_every_var_inst_mono_probe.out` captures the complete exported original
+monotonicity theorem and 15 actual instruction predicate pairs: fourteen valid
+implication applications plus a rejecting non-64 FP second register. Kernel
+fixtures replay the inputs and prove the original pointwise/source premises
+internally. Widths1/8/32/64/80, immediate/register arithmetic, memory and ignored
+16-bit/FP operands are covered. Regression observations do not establish
+cross-prover equivalence. Regenerate with
+`HOL_PROBE_ONLY=word_convs_every_var_inst_mono_probeScript.sml` from the
+read-only prebuilt CakeML semantics theory directory.
+
+`parmove_preserves_moves_parmove_probe.out` contains six direct original scheduler
+observations for shared sources, a cycle, Bool registers, emitted order, self moves
+and empty input. `ParmovePreservesMovesParmoveParity` replays the rows and applies
+the full preservation theorem with internally checked original premises. These
+fixtures are regression evidence, not a cross-prover equivalence proof. Regenerate
+with `HOL_PROBE_ONLY=parmove_preserves_moves_parmove_probeScript.sml` and the
+read-only prebuilt CakeML register-allocation theory directory.
 
 `word_to_stack_comp_native_probe.out` contains 19 direct original comp_def observations,
 kernel-replayed by WordToStackNativeCompileParity. Includes recursive returning/handled
