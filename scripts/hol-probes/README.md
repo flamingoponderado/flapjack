@@ -2579,3 +2579,11 @@ or executed allocator routing. Regenerate with
 `WordCopyCodecDomainParity.lean` replays them and separately checks nested
 five-register AddCarry rejection. Codec-domain preservation is Flapjack
 infrastructure, not a HOL semantic equivalence theorem.
+
+`parmove_all_distinct_step_probe`, `parmove_state_to_list_probe`, and
+`parmove_temp_steps_probe` capture original observations replayed by the
+corresponding Lean parity modules. They cover primitive real-destination
+distinctness, generic three-list flattening, and RTC scratch safety respectively.
+`parmove_preservation_shape_probe` records the original preservation and
+renaming statements/types as an audit aid, not a port or equivalence proof.
+Its capture omits blank separator lines between printed HOL clauses.
