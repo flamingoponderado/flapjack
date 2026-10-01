@@ -1,0 +1,7 @@
+load16_max=0
+store16_max=0
+load32_max=19
+store8_max=19
+load16_limit=5
+store16_limit=5
+load32_limit=21

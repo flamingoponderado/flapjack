@@ -1,0 +1,23 @@
+mi_empty=T
+mi_retain_alloc=T
+mi_retain_stack=T
+mi_drop=T
+mi_invalid=T
+mi_branch=T
+mi_huge=T
+ms_empty=T
+ms_stack=T
+ms_overwrite=T
+ms_extend=T
+ms_invalid=T
+ms_huge=T
+ms_physical_guard=F
+ms_bound_guard=F
+ssa_map_ok_inter_source_replay=⊢ ∀ssa' ssa na. ssa_map_ok na ssa ⇒ ssa_map_ok na (inter ssa ssa')
+ssa_map_ok_insert_source_replay=⊢ ∀y x ssa na.
+    ssa_map_ok na ssa ∧ y < na ∧ ¬is_phy_var y ⇒
+    ssa_map_ok na (insert x y ssa)
+mi_original_types=ssa'
+::α sptree$num_map;ssa
+::num sptree$num_map;na
+::num;
