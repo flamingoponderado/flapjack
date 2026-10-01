@@ -1,4 +1,6 @@
+import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Parmove
 import Flapjack.Pancake.WordConvs.NameMonotonicity
+import Flapjack.Compiler.Encoders.AsmProps.PcCoverage
 import Flapjack.Pancake.WordConvs.EveryVarInstMono
 import Flapjack.Compiler.Backend.Parmove.PreservesMoves.Parmove
 import Flapjack.Compiler.Backend.Parmove.AllDistinct.Parmove
@@ -101,6 +103,9 @@ import Flapjack.Compiler.Backend.WordToStack.ProductionCutsetMaximum
 import Flapjack.Compiler.Backend.WordToStack.ProductionInstructionMaximum
 import Flapjack.Compiler.Backend.WordToStack.ProductionColourDomain
 import Flapjack.Compiler.Backend.WordToStack.ProductionProgramMaximum
+import Flapjack.Compiler.Backend.WordToStack.ProductionFrame
+import Flapjack.Compiler.Backend.WordToStack.ProductionAllocatorCodec
+import Flapjack.Compiler.Backend.WordToStack.ProductionSelectorPrelude
 import Flapjack.Compiler.Backend.WordToStack.ProductionSsaCodecDomain
 import Flapjack.Compiler.Backend.WordToStack.ProductionDeadCodecDomain
 import Flapjack.Compiler.Backend.WordToStack.ProductionCseCodecDomain
