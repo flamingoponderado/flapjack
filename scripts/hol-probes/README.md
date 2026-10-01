@@ -2178,3 +2178,10 @@ with kernel computations and an actual RTC constructor proof. Real registers
 remain27/17, while NONE changes99 to17. The theorem uses original eqenv,
 not equality at the temporary; reflexive closure is kernel checked separately.
 No functional scheduler or production-route correctness is inferred.
+
+`wordlang_max_var_probeScript.sml` captures 37 direct original full-program
+`max_var` equations. Cases include every constructor, tail-call handler
+suppression, returning and exceptional continuations, both Loop cut sets,
+and 32/64-bit instruction transfer branches. `WordLangMaxVarParity.lean`
+kernel-replays the same inputs. These finite rows support source review;
+they do not establish a cross-prover equivalence or production route.
