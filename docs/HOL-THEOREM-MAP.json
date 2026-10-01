@@ -38121,5 +38121,29 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-c source comparison 2026-10-01, bead11.1.16.1: literal681-703 on exact WordLangInst at positive BitVec/NeZero and NumSet Spt Unit. Const/Binop/Shift/Div write destination; AddCarry/AddOverflow/SubOverflow insert r4 outside r1; LongMul/LongDiv insert r2 outside r1; only Load/Load32/Load8 write target (Load16 falls through to LN). FPLess/FPLessEqual/FPEqual write integer result; FPMovToReg writes r1 only at64, else r2 outside r1. Every unlisted instruction gives LN, no extra premise. Same imported constructor carriers as reviewed instruction liveness. Seven fresh direct original HOL full-tree equalities kernel replayed; production route remains separate OPEN16.2."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "lookup_numset_list_insert",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/NumSets.lean",
+  "lean_name": "lookupNumsetListInsert",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01, bead11.1.18: literal2720-2727 unconditional full Option lookup equality; MEM names selects SOME Unit, otherwise preserves original lookup. Literal head-after-tail recursion with exact same-key/different-key sptInsert lookup proofs; duplicates retained; no wf premise. No executable caller change; source proof prerequisites of allocator liveness/colouring, full pass correctness remains open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "domain_numset_list_insert",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/NumSets.lean",
+  "lean_name": "domainNumsetListInsert",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01, bead11.1.18: literal200-206 unconditional full set equality, source domain UNION set names in this order; sets rendered as Nat predicates, original List Nat and Spt Unit. Derived from exact lookup equation by Option.isSome; no wf or additional membership premise. No executable caller change; source proof prerequisites of allocator liveness/colouring, full pass correctness remains open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "domain_numset_list_insert_eq_union",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/NumSets.lean",
+  "lean_name": "domainNumsetListInsertEqUnion",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01, bead11.1.18: literal2692-2696 unconditional full domain equality between numeric-name insertion and union(insert names LN,live); source left-biased tree union exact, predicate domain set equality with no tree wf premise. No executable caller change; source proof prerequisites of allocator liveness/colouring, full pass correctness remains open."
 }
 ]
