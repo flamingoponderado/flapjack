@@ -38087,76 +38087,173 @@
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-opus (bead flapjack-pxn.18.5.2.22.15): exact source comparison with pan_globalsProofScript.sml:3010-3029 compile_top_semantics_decls. Fourteen HOL conjuncts kept in order: ALL_DISTINCT (MAP FST (functions code)); t = s with top_addr/memaddrs (s.memaddrs UNION free_addrs as pointwise disjunction)/memory := tmem/locals := tlocals; s.code = FEMPTY; s.globals = FEMPTY; byte_aligned s.top_addr; good_dimindex; mgs = bytes_in_word * n2w (SUM (MAP size_of_shape (dec_shapes code))); free_addrs = addresses s.top_addr (SUM ...); DISJOINT s.memaddrs free_addrs (pointwise); memory agreement on s.memaddrs; s.top_addr + mgs NOTIN s.memaddrs; w2n bytes_in_word * SUM < dimword (2^width); EVERY is_function/is_decl/is_exn_decl; semantics_decls s start code <> Fail. Conclusion exact semantics_decls s start code = semantics_decls t start (compile_top code start). No target-run, success or post-state premise; proof composes tagged has_main', evaluate_decls_compile_top, resort_decls_evaluate, evaluate_decls_init_globals_lemma, semantics_init_call', semantics_fperm, semantics_empty_locals, evaluate_invariants and pan_globals state_rel_imp_semantics. HOL finite maps via fmap_as_finite_support, word dimension via words_as_type_indexed_bitvec; addresses_thm rewrite replaced by tagged mem_addresses."
 },
-  {
-    "lean_path": "Flapjack/SemanticsProps/Implements.lean",
-    "lean_name": "isPrefixImpLprefixHOL",
-    "hol_path": "cakeml/semantics/proofs/semanticsPropsScript.sml",
-    "hol_name": "isPREFIX_IMP_LPREFIX",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-sol source comparison (2026-10-01, bead flapjack-pxn.18.5.15.10.1.3): original semanticsPropsScript204-295 on already reviewed native HolBehaviour/HolOutcome/HolIoEvent/HolLList from FfiHOL. HOL sets are membership predicates, ordinary list prefix is List.IsPrefix and LPREFIX is HolLList.lprefix. Extension retains original behaviors and adds exactly Resource_limit_hit finite prefixes of terminating/diverging traces; true precise flag retains original set, false extends. Implements keeps original Fail-not-in-source guard and subset conclusion. Full prime trans retains compiled/intermediate/source/bool universal binders and original conjunction, deriving intermediate non-Fail internally. Unprimed trans retains two implications, false-flag theorem function equality, not-fail original conjunction, finite-prefix lemma original polymorphic list statement. No added evaluation, success, target result or IH premise. No variable word dimension or String/Array translation: canonical event bytes are exact fixed BitVec8, names HolFfiName/MlS. Synthesized monotonicity/idempotence helpers have no separate HOL original; legacy CakeBehaviour is not used and remains untagged."
-  },
-  {
-    "lean_path": "Flapjack/SemanticsProps/Implements.lean",
-    "lean_name": "extendWithResourceLimitHOL",
-    "hol_path": "cakeml/semantics/proofs/semanticsPropsScript.sml",
-    "hol_name": "extend_with_resource_limit_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-sol source comparison (2026-10-01, bead flapjack-pxn.18.5.15.10.1.3): original semanticsPropsScript204-295 on already reviewed native HolBehaviour/HolOutcome/HolIoEvent/HolLList from FfiHOL. HOL sets are membership predicates, ordinary list prefix is List.IsPrefix and LPREFIX is HolLList.lprefix. Extension retains original behaviors and adds exactly Resource_limit_hit finite prefixes of terminating/diverging traces; true precise flag retains original set, false extends. Implements keeps original Fail-not-in-source guard and subset conclusion. Full prime trans retains compiled/intermediate/source/bool universal binders and original conjunction, deriving intermediate non-Fail internally. Unprimed trans retains two implications, false-flag theorem function equality, not-fail original conjunction, finite-prefix lemma original polymorphic list statement. No added evaluation, success, target result or IH premise. No variable word dimension or String/Array translation: canonical event bytes are exact fixed BitVec8, names HolFfiName/MlS. Synthesized monotonicity/idempotence helpers have no separate HOL original; legacy CakeBehaviour is not used and remains untagged."
-  },
-  {
-    "lean_path": "Flapjack/SemanticsProps/Implements.lean",
-    "lean_name": "extendWithResourceLimitPrimeHOL",
-    "hol_path": "cakeml/semantics/proofs/semanticsPropsScript.sml",
-    "hol_name": "extend_with_resource_limit'_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-sol source comparison (2026-10-01, bead flapjack-pxn.18.5.15.10.1.3): original semanticsPropsScript204-295 on already reviewed native HolBehaviour/HolOutcome/HolIoEvent/HolLList from FfiHOL. HOL sets are membership predicates, ordinary list prefix is List.IsPrefix and LPREFIX is HolLList.lprefix. Extension retains original behaviors and adds exactly Resource_limit_hit finite prefixes of terminating/diverging traces; true precise flag retains original set, false extends. Implements keeps original Fail-not-in-source guard and subset conclusion. Full prime trans retains compiled/intermediate/source/bool universal binders and original conjunction, deriving intermediate non-Fail internally. Unprimed trans retains two implications, false-flag theorem function equality, not-fail original conjunction, finite-prefix lemma original polymorphic list statement. No added evaluation, success, target result or IH premise. No variable word dimension or String/Array translation: canonical event bytes are exact fixed BitVec8, names HolFfiName/MlS. Synthesized monotonicity/idempotence helpers have no separate HOL original; legacy CakeBehaviour is not used and remains untagged."
-  },
-  {
-    "lean_path": "Flapjack/SemanticsProps/Implements.lean",
-    "lean_name": "implementsPrimeHOL",
-    "hol_path": "cakeml/semantics/proofs/semanticsPropsScript.sml",
-    "hol_name": "implements'_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-sol source comparison (2026-10-01, bead flapjack-pxn.18.5.15.10.1.3): original semanticsPropsScript204-295 on already reviewed native HolBehaviour/HolOutcome/HolIoEvent/HolLList from FfiHOL. HOL sets are membership predicates, ordinary list prefix is List.IsPrefix and LPREFIX is HolLList.lprefix. Extension retains original behaviors and adds exactly Resource_limit_hit finite prefixes of terminating/diverging traces; true precise flag retains original set, false extends. Implements keeps original Fail-not-in-source guard and subset conclusion. Full prime trans retains compiled/intermediate/source/bool universal binders and original conjunction, deriving intermediate non-Fail internally. Unprimed trans retains two implications, false-flag theorem function equality, not-fail original conjunction, finite-prefix lemma original polymorphic list statement. No added evaluation, success, target result or IH premise. No variable word dimension or String/Array translation: canonical event bytes are exact fixed BitVec8, names HolFfiName/MlS. Synthesized monotonicity/idempotence helpers have no separate HOL original; legacy CakeBehaviour is not used and remains untagged."
-  },
-  {
-    "lean_path": "Flapjack/SemanticsProps/Implements.lean",
-    "lean_name": "implementsPrimeTransHOL",
-    "hol_path": "cakeml/semantics/proofs/semanticsPropsScript.sml",
-    "hol_name": "implements'_trans",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-sol source comparison (2026-10-01, bead flapjack-pxn.18.5.15.10.1.3): original semanticsPropsScript204-295 on already reviewed native HolBehaviour/HolOutcome/HolIoEvent/HolLList from FfiHOL. HOL sets are membership predicates, ordinary list prefix is List.IsPrefix and LPREFIX is HolLList.lprefix. Extension retains original behaviors and adds exactly Resource_limit_hit finite prefixes of terminating/diverging traces; true precise flag retains original set, false extends. Implements keeps original Fail-not-in-source guard and subset conclusion. Full prime trans retains compiled/intermediate/source/bool universal binders and original conjunction, deriving intermediate non-Fail internally. Unprimed trans retains two implications, false-flag theorem function equality, not-fail original conjunction, finite-prefix lemma original polymorphic list statement. No added evaluation, success, target result or IH premise. No variable word dimension or String/Array translation: canonical event bytes are exact fixed BitVec8, names HolFfiName/MlS. Synthesized monotonicity/idempotence helpers have no separate HOL original; legacy CakeBehaviour is not used and remains untagged."
-  },
-  {
-    "lean_path": "Flapjack/SemanticsProps/Implements.lean",
-    "lean_name": "implementsHOL",
-    "hol_path": "cakeml/semantics/proofs/semanticsPropsScript.sml",
-    "hol_name": "implements_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-sol source comparison (2026-10-01, bead flapjack-pxn.18.5.15.10.1.3): original semanticsPropsScript204-295 on already reviewed native HolBehaviour/HolOutcome/HolIoEvent/HolLList from FfiHOL. HOL sets are membership predicates, ordinary list prefix is List.IsPrefix and LPREFIX is HolLList.lprefix. Extension retains original behaviors and adds exactly Resource_limit_hit finite prefixes of terminating/diverging traces; true precise flag retains original set, false extends. Implements keeps original Fail-not-in-source guard and subset conclusion. Full prime trans retains compiled/intermediate/source/bool universal binders and original conjunction, deriving intermediate non-Fail internally. Unprimed trans retains two implications, false-flag theorem function equality, not-fail original conjunction, finite-prefix lemma original polymorphic list statement. No added evaluation, success, target result or IH premise. No variable word dimension or String/Array translation: canonical event bytes are exact fixed BitVec8, names HolFfiName/MlS. Synthesized monotonicity/idempotence helpers have no separate HOL original; legacy CakeBehaviour is not used and remains untagged."
-  },
-  {
-    "lean_path": "Flapjack/SemanticsProps/Implements.lean",
-    "lean_name": "implementsPrimeFalseHOL",
-    "hol_path": "cakeml/semantics/proofs/semanticsPropsScript.sml",
-    "hol_name": "implements'_F",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-sol source comparison (2026-10-01, bead flapjack-pxn.18.5.15.10.1.3): original semanticsPropsScript204-295 on already reviewed native HolBehaviour/HolOutcome/HolIoEvent/HolLList from FfiHOL. HOL sets are membership predicates, ordinary list prefix is List.IsPrefix and LPREFIX is HolLList.lprefix. Extension retains original behaviors and adds exactly Resource_limit_hit finite prefixes of terminating/diverging traces; true precise flag retains original set, false extends. Implements keeps original Fail-not-in-source guard and subset conclusion. Full prime trans retains compiled/intermediate/source/bool universal binders and original conjunction, deriving intermediate non-Fail internally. Unprimed trans retains two implications, false-flag theorem function equality, not-fail original conjunction, finite-prefix lemma original polymorphic list statement. No added evaluation, success, target result or IH premise. No variable word dimension or String/Array translation: canonical event bytes are exact fixed BitVec8, names HolFfiName/MlS. Synthesized monotonicity/idempotence helpers have no separate HOL original; legacy CakeBehaviour is not used and remains untagged."
-  },
-  {
-    "lean_path": "Flapjack/SemanticsProps/Implements.lean",
-    "lean_name": "implementsTransHOL",
-    "hol_path": "cakeml/semantics/proofs/semanticsPropsScript.sml",
-    "hol_name": "implements_trans",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-sol source comparison (2026-10-01, bead flapjack-pxn.18.5.15.10.1.3): original semanticsPropsScript204-295 on already reviewed native HolBehaviour/HolOutcome/HolIoEvent/HolLList from FfiHOL. HOL sets are membership predicates, ordinary list prefix is List.IsPrefix and LPREFIX is HolLList.lprefix. Extension retains original behaviors and adds exactly Resource_limit_hit finite prefixes of terminating/diverging traces; true precise flag retains original set, false extends. Implements keeps original Fail-not-in-source guard and subset conclusion. Full prime trans retains compiled/intermediate/source/bool universal binders and original conjunction, deriving intermediate non-Fail internally. Unprimed trans retains two implications, false-flag theorem function equality, not-fail original conjunction, finite-prefix lemma original polymorphic list statement. No added evaluation, success, target result or IH premise. No variable word dimension or String/Array translation: canonical event bytes are exact fixed BitVec8, names HolFfiName/MlS. Synthesized monotonicity/idempotence helpers have no separate HOL original; legacy CakeBehaviour is not used and remains untagged."
-  },
-  {
-    "lean_path": "Flapjack/SemanticsProps/Implements.lean",
-    "lean_name": "extendWithResourceLimitNotFailHOL",
-    "hol_path": "cakeml/semantics/proofs/semanticsPropsScript.sml",
-    "hol_name": "extend_with_resource_limit_not_fail",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-sol source comparison (2026-10-01, bead flapjack-pxn.18.5.15.10.1.3): original semanticsPropsScript204-295 on already reviewed native HolBehaviour/HolOutcome/HolIoEvent/HolLList from FfiHOL. HOL sets are membership predicates, ordinary list prefix is List.IsPrefix and LPREFIX is HolLList.lprefix. Extension retains original behaviors and adds exactly Resource_limit_hit finite prefixes of terminating/diverging traces; true precise flag retains original set, false extends. Implements keeps original Fail-not-in-source guard and subset conclusion. Full prime trans retains compiled/intermediate/source/bool universal binders and original conjunction, deriving intermediate non-Fail internally. Unprimed trans retains two implications, false-flag theorem function equality, not-fail original conjunction, finite-prefix lemma original polymorphic list statement. No added evaluation, success, target result or IH premise. No variable word dimension or String/Array translation: canonical event bytes are exact fixed BitVec8, names HolFfiName/MlS. Synthesized monotonicity/idempotence helpers have no separate HOL original; legacy CakeBehaviour is not used and remains untagged."
-  }
+{
+  "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+  "hol_name": "numset_list_insert_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/ProgramLiveness.lean",
+  "lean_name": "numsetListInsert",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01, bead11.1.13.1: literal768-771 [] returns supplied NumSet, cons inserts head Unit into the recursively constructed tail tree; exact List Nat/Spt Unit, no word carrier or extra premise."
+},
+{
+  "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+  "hol_name": "get_live_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/ProgramLiveness.lean",
+  "lean_name": "getLive",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01, bead11.1.13.1: compared all27 compiled HOL clauses773-850 and original word_allocTheory get_live_def. Exact WordLangProgHOL at positive BitVec/NeZero, Spt Unit live/cutsets and List of paired loop trees. Move uses FOLDR delete then literal head-after-tail numset insertion; Seq visits second then first; If union order and Reg/Imm inserts literal; Alloc/Install/FFI/Call use source cutsets and ignore supplied live where HOL does. StoreConsts uses first source clause (delete a/delete b before c/d inserts); original generated HOL theorem omits shadowed second row, fresh direct EVAL get_live_store_consts=T confirms it. ShareInst includes allfour store widths, otherwise kills name. Loop returns entry tree without body recursion; Break/Continue use optional indexed lookup with LN fallback. Other constructors are literal source equations, no strengthened condition. Fresh original3rows captured and kernel replayed. Production route remains OPEN separately on11.1.13.2; inventory13 not completed by proof-only definition."
+},
+{
+  "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+  "hol_name": "apply_colour_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Colour.lean",
+  "lean_name": "applyColour",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.14) against word_allocScript.sml apply_colour_def, clause by clause over the tagged WordLangProgHOL carrier: Skip; Move keeps literal ZIP (MAP (f o FST) ls, MAP (f o SND) ls); Inst via tagged apply_colour_inst; Assign/Store/Set/ShareInst via tagged apply_colour_exp; Get renames dest only; Call renames returned vars, cut sets via apply_nummaps_key, return handler, args, handler exception var and handler body, labels/dest unchanged; Seq/MustTerminate/If (apply_colour_imm) recursive; Install/FFI/Alloc cut sets via apply_nummaps_key; CodeBufferWrite/DataBufferWrite/LocValue/StoreConsts/Raise/Return/OpCurrHeap rename register fields only (FFI name, labels, constants, store names unchanged); Tick; Loop via apply_nummap_key on both live sets; catchall Break/Continue unchanged. Positive BitVec width is the sole carrier translation. Six original HOL EVAL rows (scripts/hol-probes/apply_colour_probe.out) replayed by Flapjack.Test.WordAllocApplyColourExactParity. Proof-side exact definition; executed allocator still uses wordApplyColour (production routing separate)."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/LiveBitmap.lean",
+  "lean_name": "writeBitmapExact",
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "write_bitmap_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01, bead15.3.24: Source240-244: Original HOL kernel type probe confirms alpha sptree$num_map -> num -> num -> beta word list; live is arbitrary-payload Spt alpha (not restricted to Unit); sptToAList enumeration, MAP pair keys with truncating ((frame-1)-(r DIV2-k)), GENLIST membership plus true, word_list width-1. No wf or extra bounds; BitVec positive width records only word translation. Existing seven HOL captured bitmap rows replayed on Spt. Full comp/compile_prog/pass proof and production routing remain open; coordinator acceptance pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/LiveBitmap.lean",
+  "lean_name": "wLiveExact",
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "wLive_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01, bead15.3.24: Source252-258: full cutsets=Spt Unit pair and (k,f,fprime) triple retained. f=0 leaves bitmaps unchanged; otherwise exact write_bitmap of SND live, insert_bitmap, Const k (n2w(i+1)), StackStore k0. Shared-word ProgM uses exact MlString constructor carrier, untouched here. No dropped inputs/convenience domain-list signature or extra hypotheses. Full comp/compile_prog/pass proof and production routing remain open; coordinator acceptance pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+  "hol_name": "get_writes_inst_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/InstructionWrites.lean",
+  "lean_name": "getWritesInst",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01, bead11.1.16.1: literal681-703 on exact WordLangInst at positive BitVec/NeZero and NumSet Spt Unit. Const/Binop/Shift/Div write destination; AddCarry/AddOverflow/SubOverflow insert r4 outside r1; LongMul/LongDiv insert r2 outside r1; only Load/Load32/Load8 write target (Load16 falls through to LN). FPLess/FPLessEqual/FPEqual write integer result; FPMovToReg writes r1 only at64, else r2 outside r1. Every unlisted instruction gives LN, no extra premise. Same imported constructor carriers as reviewed instruction liveness. Seven fresh direct original HOL full-tree equalities kernel replayed; production route remains separate OPEN16.2."
+},
+{
+  "lean_path": "Flapjack/Pancake/WordLang/OccurrencesExact.lean",
+  "lean_name": "everyNameHOL",
+  "hol_path": "cakeml/compiler/backend/wordLangScript.sml",
+  "hol_name": "every_name_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.15.3.33): HOL wordLangScript.sml:127-131 compared constructor by constructor with literal Bool recursor. Native WordLangProgHOL carries exact Spt Unit cutsets, constructor fields and arities match; every_name uses original MAP FST(toAList) order on both cutsets with EVERY translated to List.all. every_var preserves all local registers, expression/inst/immediate predicates, Loop entry/exit enumeration and Call return handler plus exception handler only under SOME return. every_stack_var traverses only source cutsets/recursive bodies, and Loop ignores live sets as in HOL. No extra hypotheses, omitted failure branches, production helper substitution or finite-map qualifier; these are Spt trees. The numeric-only Spt cutset predicate needs no word translation. No executed compiler change. Coordinator review required."
+},
+{
+  "lean_path": "Flapjack/Pancake/WordLang/OccurrencesExact.lean",
+  "lean_name": "everyVarHOL",
+  "hol_path": "cakeml/compiler/backend/wordLangScript.sml",
+  "hol_name": "every_var_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.15.3.33): HOL wordLangScript.sml:133-176 compared constructor by constructor with literal Bool recursor. Native WordLangProgHOL carries exact Spt Unit cutsets, constructor fields and arities match; every_name uses original MAP FST(toAList) order on both cutsets with EVERY translated to List.all. every_var preserves all local registers, expression/inst/immediate predicates, Loop entry/exit enumeration and Call return handler plus exception handler only under SOME return. every_stack_var traverses only source cutsets/recursive bodies, and Loop ignores live sets as in HOL. No extra hypotheses, omitted failure branches, production helper substitution or finite-map qualifier; these are Spt trees. words_as_type_indexed_bitvec records only positive BitVec width/NeZero translation; fixed-width and exact MlString FFI fields in WordLangProgHOL retain original carriers. No executed compiler change. Coordinator review required.",
+  "words_as_type_indexed_bitvec": true
+},
+{
+  "lean_path": "Flapjack/Pancake/WordLang/OccurrencesExact.lean",
+  "lean_name": "everyStackVarHOL",
+  "hol_path": "cakeml/compiler/backend/wordLangScript.sml",
+  "hol_name": "every_stack_var_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.15.3.33): HOL wordLangScript.sml:179-205 compared constructor by constructor with literal Bool recursor. Native WordLangProgHOL carries exact Spt Unit cutsets, constructor fields and arities match; every_name uses original MAP FST(toAList) order on both cutsets with EVERY translated to List.all. every_var preserves all local registers, expression/inst/immediate predicates, Loop entry/exit enumeration and Call return handler plus exception handler only under SOME return. every_stack_var traverses only source cutsets/recursive bodies, and Loop ignores live sets as in HOL. No extra hypotheses, omitted failure branches, production helper substitution or finite-map qualifier; these are Spt trees. words_as_type_indexed_bitvec records only positive BitVec width/NeZero translation; fixed-width and exact MlString FFI fields in WordLangProgHOL retain original carriers. No executed compiler change. Coordinator review required.",
+  "words_as_type_indexed_bitvec": true
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StackSize.lean",
+  "lean_name": "stackSizeRel",
+  "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+  "hol_name": "stack_size_rel_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.15.3.34): literal stack_size_rel_def and stack_size_rel_iff group compared with word_to_stackProofScript.sml:866-893. Same eight explicit parameters f/locals-size/stack-limit/stack-max/source-stack/target-stack/stack-space/extra. Definition retains guarded local-frame equation, target length equality, universally quantified successful optional maximum, conservative bound, present locals and existential exact wordSem stack_size equation. Equivalence has no premises and retains all six conjuncts, including optional stack-size and local-size existence plus defaulted exact equality. HOL the default is Option.getD, all Nat subtraction remains left-associated saturating subtraction. Exact WordSemStackFrame and WordLocW list carriers; words_as_type_indexed_bitvec records only positive BitVec width/NeZero. No finite-map qualifier, compiler-function parameter, evaluated target, or post-state assumption. No executable change; coordinator review required."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StackSize.lean",
+  "lean_name": "stackSizeRel_iff",
+  "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+  "hol_name": "stack_size_rel_iff",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.15.3.34): literal stack_size_rel_def and stack_size_rel_iff group compared with word_to_stackProofScript.sml:866-893. Same eight explicit parameters f/locals-size/stack-limit/stack-max/source-stack/target-stack/stack-space/extra. Definition retains guarded local-frame equation, target length equality, universally quantified successful optional maximum, conservative bound, present locals and existential exact wordSem stack_size equation. Equivalence has no premises and retains all six conjuncts, including optional stack-size and local-size existence plus defaulted exact equality. HOL the default is Option.getD, all Nat subtraction remains left-associated saturating subtraction. Exact WordSemStackFrame and WordLocW list carriers; words_as_type_indexed_bitvec records only positive BitVec width/NeZero. No finite-map qualifier, compiler-function parameter, evaluated target, or post-state assumption. No executable change; coordinator review required."
+},
+{
+  "lean_path": "Flapjack/SemanticsProps/Implements.lean",
+  "lean_name": "isPrefixImpLprefixHOL",
+  "hol_path": "cakeml/semantics/proofs/semanticsPropsScript.sml",
+  "hol_name": "isPREFIX_IMP_LPREFIX",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol source comparison (2026-10-01, bead flapjack-pxn.18.5.15.10.1.3): original semanticsPropsScript204-295 on already reviewed native HolBehaviour/HolOutcome/HolIoEvent/HolLList from FfiHOL. HOL sets are membership predicates, ordinary list prefix is List.IsPrefix and LPREFIX is HolLList.lprefix. Extension retains original behaviors and adds exactly Resource_limit_hit finite prefixes of terminating/diverging traces; true precise flag retains original set, false extends. Implements keeps original Fail-not-in-source guard and subset conclusion. Full prime trans retains compiled/intermediate/source/bool universal binders and original conjunction, deriving intermediate non-Fail internally. Unprimed trans retains two implications, false-flag theorem function equality, not-fail original conjunction, finite-prefix lemma original polymorphic list statement. No added evaluation, success, target result or IH premise. No variable word dimension or String/Array translation: canonical event bytes are exact fixed BitVec8, names HolFfiName/MlS. Synthesized monotonicity/idempotence helpers have no separate HOL original; legacy CakeBehaviour is not used and remains untagged."
+},
+{
+  "lean_path": "Flapjack/SemanticsProps/Implements.lean",
+  "lean_name": "extendWithResourceLimitHOL",
+  "hol_path": "cakeml/semantics/proofs/semanticsPropsScript.sml",
+  "hol_name": "extend_with_resource_limit_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol source comparison (2026-10-01, bead flapjack-pxn.18.5.15.10.1.3): original semanticsPropsScript204-295 on already reviewed native HolBehaviour/HolOutcome/HolIoEvent/HolLList from FfiHOL. HOL sets are membership predicates, ordinary list prefix is List.IsPrefix and LPREFIX is HolLList.lprefix. Extension retains original behaviors and adds exactly Resource_limit_hit finite prefixes of terminating/diverging traces; true precise flag retains original set, false extends. Implements keeps original Fail-not-in-source guard and subset conclusion. Full prime trans retains compiled/intermediate/source/bool universal binders and original conjunction, deriving intermediate non-Fail internally. Unprimed trans retains two implications, false-flag theorem function equality, not-fail original conjunction, finite-prefix lemma original polymorphic list statement. No added evaluation, success, target result or IH premise. No variable word dimension or String/Array translation: canonical event bytes are exact fixed BitVec8, names HolFfiName/MlS. Synthesized monotonicity/idempotence helpers have no separate HOL original; legacy CakeBehaviour is not used and remains untagged."
+},
+{
+  "lean_path": "Flapjack/SemanticsProps/Implements.lean",
+  "lean_name": "extendWithResourceLimitPrimeHOL",
+  "hol_path": "cakeml/semantics/proofs/semanticsPropsScript.sml",
+  "hol_name": "extend_with_resource_limit'_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol source comparison (2026-10-01, bead flapjack-pxn.18.5.15.10.1.3): original semanticsPropsScript204-295 on already reviewed native HolBehaviour/HolOutcome/HolIoEvent/HolLList from FfiHOL. HOL sets are membership predicates, ordinary list prefix is List.IsPrefix and LPREFIX is HolLList.lprefix. Extension retains original behaviors and adds exactly Resource_limit_hit finite prefixes of terminating/diverging traces; true precise flag retains original set, false extends. Implements keeps original Fail-not-in-source guard and subset conclusion. Full prime trans retains compiled/intermediate/source/bool universal binders and original conjunction, deriving intermediate non-Fail internally. Unprimed trans retains two implications, false-flag theorem function equality, not-fail original conjunction, finite-prefix lemma original polymorphic list statement. No added evaluation, success, target result or IH premise. No variable word dimension or String/Array translation: canonical event bytes are exact fixed BitVec8, names HolFfiName/MlS. Synthesized monotonicity/idempotence helpers have no separate HOL original; legacy CakeBehaviour is not used and remains untagged."
+},
+{
+  "lean_path": "Flapjack/SemanticsProps/Implements.lean",
+  "lean_name": "implementsPrimeHOL",
+  "hol_path": "cakeml/semantics/proofs/semanticsPropsScript.sml",
+  "hol_name": "implements'_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol source comparison (2026-10-01, bead flapjack-pxn.18.5.15.10.1.3): original semanticsPropsScript204-295 on already reviewed native HolBehaviour/HolOutcome/HolIoEvent/HolLList from FfiHOL. HOL sets are membership predicates, ordinary list prefix is List.IsPrefix and LPREFIX is HolLList.lprefix. Extension retains original behaviors and adds exactly Resource_limit_hit finite prefixes of terminating/diverging traces; true precise flag retains original set, false extends. Implements keeps original Fail-not-in-source guard and subset conclusion. Full prime trans retains compiled/intermediate/source/bool universal binders and original conjunction, deriving intermediate non-Fail internally. Unprimed trans retains two implications, false-flag theorem function equality, not-fail original conjunction, finite-prefix lemma original polymorphic list statement. No added evaluation, success, target result or IH premise. No variable word dimension or String/Array translation: canonical event bytes are exact fixed BitVec8, names HolFfiName/MlS. Synthesized monotonicity/idempotence helpers have no separate HOL original; legacy CakeBehaviour is not used and remains untagged."
+},
+{
+  "lean_path": "Flapjack/SemanticsProps/Implements.lean",
+  "lean_name": "implementsPrimeTransHOL",
+  "hol_path": "cakeml/semantics/proofs/semanticsPropsScript.sml",
+  "hol_name": "implements'_trans",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol source comparison (2026-10-01, bead flapjack-pxn.18.5.15.10.1.3): original semanticsPropsScript204-295 on already reviewed native HolBehaviour/HolOutcome/HolIoEvent/HolLList from FfiHOL. HOL sets are membership predicates, ordinary list prefix is List.IsPrefix and LPREFIX is HolLList.lprefix. Extension retains original behaviors and adds exactly Resource_limit_hit finite prefixes of terminating/diverging traces; true precise flag retains original set, false extends. Implements keeps original Fail-not-in-source guard and subset conclusion. Full prime trans retains compiled/intermediate/source/bool universal binders and original conjunction, deriving intermediate non-Fail internally. Unprimed trans retains two implications, false-flag theorem function equality, not-fail original conjunction, finite-prefix lemma original polymorphic list statement. No added evaluation, success, target result or IH premise. No variable word dimension or String/Array translation: canonical event bytes are exact fixed BitVec8, names HolFfiName/MlS. Synthesized monotonicity/idempotence helpers have no separate HOL original; legacy CakeBehaviour is not used and remains untagged."
+},
+{
+  "lean_path": "Flapjack/SemanticsProps/Implements.lean",
+  "lean_name": "implementsHOL",
+  "hol_path": "cakeml/semantics/proofs/semanticsPropsScript.sml",
+  "hol_name": "implements_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol source comparison (2026-10-01, bead flapjack-pxn.18.5.15.10.1.3): original semanticsPropsScript204-295 on already reviewed native HolBehaviour/HolOutcome/HolIoEvent/HolLList from FfiHOL. HOL sets are membership predicates, ordinary list prefix is List.IsPrefix and LPREFIX is HolLList.lprefix. Extension retains original behaviors and adds exactly Resource_limit_hit finite prefixes of terminating/diverging traces; true precise flag retains original set, false extends. Implements keeps original Fail-not-in-source guard and subset conclusion. Full prime trans retains compiled/intermediate/source/bool universal binders and original conjunction, deriving intermediate non-Fail internally. Unprimed trans retains two implications, false-flag theorem function equality, not-fail original conjunction, finite-prefix lemma original polymorphic list statement. No added evaluation, success, target result or IH premise. No variable word dimension or String/Array translation: canonical event bytes are exact fixed BitVec8, names HolFfiName/MlS. Synthesized monotonicity/idempotence helpers have no separate HOL original; legacy CakeBehaviour is not used and remains untagged."
+},
+{
+  "lean_path": "Flapjack/SemanticsProps/Implements.lean",
+  "lean_name": "implementsPrimeFalseHOL",
+  "hol_path": "cakeml/semantics/proofs/semanticsPropsScript.sml",
+  "hol_name": "implements'_F",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol source comparison (2026-10-01, bead flapjack-pxn.18.5.15.10.1.3): original semanticsPropsScript204-295 on already reviewed native HolBehaviour/HolOutcome/HolIoEvent/HolLList from FfiHOL. HOL sets are membership predicates, ordinary list prefix is List.IsPrefix and LPREFIX is HolLList.lprefix. Extension retains original behaviors and adds exactly Resource_limit_hit finite prefixes of terminating/diverging traces; true precise flag retains original set, false extends. Implements keeps original Fail-not-in-source guard and subset conclusion. Full prime trans retains compiled/intermediate/source/bool universal binders and original conjunction, deriving intermediate non-Fail internally. Unprimed trans retains two implications, false-flag theorem function equality, not-fail original conjunction, finite-prefix lemma original polymorphic list statement. No added evaluation, success, target result or IH premise. No variable word dimension or String/Array translation: canonical event bytes are exact fixed BitVec8, names HolFfiName/MlS. Synthesized monotonicity/idempotence helpers have no separate HOL original; legacy CakeBehaviour is not used and remains untagged."
+},
+{
+  "lean_path": "Flapjack/SemanticsProps/Implements.lean",
+  "lean_name": "implementsTransHOL",
+  "hol_path": "cakeml/semantics/proofs/semanticsPropsScript.sml",
+  "hol_name": "implements_trans",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol source comparison (2026-10-01, bead flapjack-pxn.18.5.15.10.1.3): original semanticsPropsScript204-295 on already reviewed native HolBehaviour/HolOutcome/HolIoEvent/HolLList from FfiHOL. HOL sets are membership predicates, ordinary list prefix is List.IsPrefix and LPREFIX is HolLList.lprefix. Extension retains original behaviors and adds exactly Resource_limit_hit finite prefixes of terminating/diverging traces; true precise flag retains original set, false extends. Implements keeps original Fail-not-in-source guard and subset conclusion. Full prime trans retains compiled/intermediate/source/bool universal binders and original conjunction, deriving intermediate non-Fail internally. Unprimed trans retains two implications, false-flag theorem function equality, not-fail original conjunction, finite-prefix lemma original polymorphic list statement. No added evaluation, success, target result or IH premise. No variable word dimension or String/Array translation: canonical event bytes are exact fixed BitVec8, names HolFfiName/MlS. Synthesized monotonicity/idempotence helpers have no separate HOL original; legacy CakeBehaviour is not used and remains untagged."
+},
+{
+  "lean_path": "Flapjack/SemanticsProps/Implements.lean",
+  "lean_name": "extendWithResourceLimitNotFailHOL",
+  "hol_path": "cakeml/semantics/proofs/semanticsPropsScript.sml",
+  "hol_name": "extend_with_resource_limit_not_fail",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol source comparison (2026-10-01, bead flapjack-pxn.18.5.15.10.1.3): original semanticsPropsScript204-295 on already reviewed native HolBehaviour/HolOutcome/HolIoEvent/HolLList from FfiHOL. HOL sets are membership predicates, ordinary list prefix is List.IsPrefix and LPREFIX is HolLList.lprefix. Extension retains original behaviors and adds exactly Resource_limit_hit finite prefixes of terminating/diverging traces; true precise flag retains original set, false extends. Implements keeps original Fail-not-in-source guard and subset conclusion. Full prime trans retains compiled/intermediate/source/bool universal binders and original conjunction, deriving intermediate non-Fail internally. Unprimed trans retains two implications, false-flag theorem function equality, not-fail original conjunction, finite-prefix lemma original polymorphic list statement. No added evaluation, success, target result or IH premise. No variable word dimension or String/Array translation: canonical event bytes are exact fixed BitVec8, names HolFfiName/MlS. Synthesized monotonicity/idempotence helpers have no separate HOL original; legacy CakeBehaviour is not used and remains untagged."
+}
 ]

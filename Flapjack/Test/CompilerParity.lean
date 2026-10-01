@@ -378,6 +378,8 @@ import Flapjack.Test.StackSemMeasureParity
 import Flapjack.Test.StackProductionCodecParity
 import Flapjack.Test.StackWordPayloadParity
 import Flapjack.Test.StackMacroLeavesParity
+import Flapjack.Test.LoopStoreNarrowParity
+import Flapjack.Test.WordToStackLiveBitmapParity
 import Flapjack.Test.StackSemControlCasesParity
 import Flapjack.Test.PanGlobalsFpermCodeParity
 import Flapjack.Test.PanGlobalsFpermShMemLoadParity
@@ -407,6 +409,8 @@ import Flapjack.Test.WordLangGoodHandlersParity
 import Flapjack.Test.NumSetAuditParity
 import Flapjack.Test.WordLangEveryNameParity
 import Flapjack.Test.WordLangAllocConventionsParity
+import Flapjack.Test.WordLangOccurrencesExactParity
+import Flapjack.Test.WordToStackStackSizeParity
 import Flapjack.Test.LabPropsLineOkPreParity
 import Flapjack.Test.LabPropsSecEndsLabelParity
 import Flapjack.Test.CakeAllocatorBitsBridgeParity
@@ -502,6 +506,9 @@ import Flapjack.Test.CakeSsaCallParity
 import Flapjack.Test.CakeSsaInstParity
 import Flapjack.Test.CakeWordAllocParity
 import Flapjack.Test.WordAllocLiveExpressionParity
+import Flapjack.Test.WordAllocProgramLivenessParity
+import Flapjack.Test.WordAllocApplyColourExactParity
+import Flapjack.Test.WordAllocInstructionWritesParity
 import Flapjack.Test.CakeSsaSharedParity
 import Flapjack.Test.CakeSsaMemoryParity
 import Flapjack.Test.CakeSsaLeafParity
@@ -1188,6 +1195,8 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.StackProductionCodecParity.runChecks,
     Flapjack.Test.StackWordPayloadParity.runChecks,
     Flapjack.Test.StackMacroLeavesParity.runChecks,
+    Flapjack.Test.LoopStoreNarrowParity.runChecks,
+    Flapjack.Test.WordToStackLiveBitmapParity.runChecks,
     Flapjack.Test.StackSemCopyWordsParity.runChecks,
     Flapjack.Test.StackSemStoreConstSemParity.runChecks,
     Flapjack.Test.StackSemStoreConstsParity.runChecks,
@@ -1219,6 +1228,8 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.NumSetAuditParity.runChecks,
     Flapjack.Test.WordLangEveryNameParity.runChecks,
     Flapjack.Test.WordLangAllocConventionsParity.runChecks,
+    Flapjack.Test.WordLangOccurrencesExactParity.runChecks,
+    Flapjack.Test.WordToStackStackSizeParity.runChecks,
     Flapjack.Test.LabPropsLineOkPreParity.runChecks,
     Flapjack.Test.LabPropsSecEndsLabelParity.runChecks,
     Flapjack.Test.CakeAllocatorBitsBridgeParity.runChecks,

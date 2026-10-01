@@ -1,0 +1,16 @@
+store32_narrow=SOME (Word 0x11223344w)
+store32_big=SOME (Word 0x1122334400000000w)
+store32_upper=SOME (Word 0x1122334400000000w)
+store32_unaligned=T
+store32_domain=T
+store32_memory_loc=T
+store32_address_loc=T
+store32_value_loc=T
+store32_other=SOME (Word 0w)
+storeByte_narrow=SOME (Word 60928w)
+storeByte_big=SOME (Word 0xEE000000000000w)
+storeByte_domain=T
+storeByte_memory_loc=T
+storeByte_address_loc=T
+storeByte_value_loc=T
+storeByte_clock=SOME 7

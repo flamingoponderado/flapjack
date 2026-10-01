@@ -18,9 +18,9 @@ fun print_eval label q =
        let names = MAP (\(r,y). (f' - 1) - (r DIV 2 - k)) (toAList live) in
          word_list (GENLIST (\x. MEM x names) f' ++ [T]) (dimindex (:'a) - 1)
 
-   `live` is a HOL `num_set` (`unit spt`, see `toAList`/`list_to_num_set` in
-   HOL/src/finite_maps/sptreeScript.sml), a carrier that has no faithful Lean
-   counterpart, so this declaration is deliberately NOT tagged; the rows below
+   `write_bitmap` is payload-polymorphic in its Spt input; these fixtures
+   specialize it to unit-valued `num_set`. The exact generic-Spt Lean port
+   is WordToStack/LiveBitmap.lean::writeBitmapExact. The rows below
    isolate the finite-map/ordering prerequisite and, in particular, show the
    result depends only on the *domain* of `live` (insertion order is
    unobservable because `write_bitmap` reads `toAList live` only through `MEM`).
@@ -57,3 +57,8 @@ val _ = print_eval "wb_order_b"
 val _ = print_eval "wb_order_eq"
   ``((word_to_stack$write_bitmap (sptree$list_to_num_set [0;1;2]) 0 8 : word8 list) =
      (word_to_stack$write_bitmap (sptree$list_to_num_set [2;0;1]) 0 8 : word8 list))``;
+
+val _ = print_eval "wb_payload_nat"
+  ``(word_to_stack$write_bitmap (sptree$fromAList [(0,37:num);(2,99)]) 0 8) : word8 list``;
+val _ = print_eval "wb_payload_bool"
+  ``(word_to_stack$write_bitmap (sptree$fromAList [(0,T);(2,F)]) 0 8) : word8 list``;

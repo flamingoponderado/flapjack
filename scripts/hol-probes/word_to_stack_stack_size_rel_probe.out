@@ -1,0 +1,6 @@
+ss_none=T
+ss_some=T
+ss_bad_max=F
+ss_missing_loc=F
+ss_missing_frame=F
+ss_frame_guard=F
