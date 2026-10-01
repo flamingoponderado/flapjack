@@ -1,0 +1,28 @@
+ZeroLabsAccOfLocHit=[(4,())]
+ZeroLabsAccOfLocNonzero=[]
+ZeroLabsAccOfJumpHit=[(6,())]
+ZeroLabsAccOfJumpNonzero=[]
+ZeroLabsAccOfJumpCmpHit=[(8,())]
+ZeroLabsAccOfJumpCmpNonzero=[]
+ZeroLabsAccOfCatchAll=[]
+LineGetZeroLabsAccLabAsm=[(6,())]
+LineGetZeroLabsAccLabel=[]
+LineGetZeroLabsAccAsm=[]
+GetZeroLabsAccEmpty=[]
+GetZeroLabsAccConcrete=[(3,()); (1,())]
+ZeroLabsAccExistTrue=T
+ZeroLabsAccExistFalse=F
+LineBytesLabel=[]
+LineBytesAsm=[1w; 2w]
+LineBytesLabAsm=[]
+ProgToBytesEmpty=[]
+ProgToBytesConcrete=[1w; 2w; 3w]
+RemoveLabelsLoopZero=SOME
+  ([Section 1 [Label 1 5 0; LabAsm (Jump (Lab 1 0)) 0w [] 1]],
+   ⦕ 1 ↦ ⦕ 0 ↦ 10; 5 ↦ 10 ⦖ ⦖)
+RemoveLabelsLoopOne=SOME
+  ([Section 1 [Label 1 5 0; LabAsm (Jump (Lab 1 0)) 0w [] 1]],
+   ⦕ 1 ↦ ⦕ 0 ↦ 10; 5 ↦ 10 ⦖ ⦖)
+RemoveLabelsZero=SOME
+  ([Section 1 [Label 1 5 0; LabAsm (Jump (Lab 1 0)) 0w [] 0]],
+   ⦕ 1 ↦ ⦕ 0 ↦ 10; 5 ↦ 10 ⦖ ⦖)

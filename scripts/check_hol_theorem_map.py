@@ -2110,6 +2110,15 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
     # These source/theorem pairs were checked against their HOL declaration
     # statements in the active review task, not merely copied from attributes.
     reviewed_exact = {
+        ("Flapjack/Misc/FindIndex.lean", "findIndex"),
+        ("Flapjack/Compiler/Backend/LabToTarget/Positions.lean", "findPos"),
+        ("Flapjack/Compiler/Backend/LabToTarget/Positions.lean", "getFfiIndex"),
+        ("Flapjack/Compiler/Backend/LabToTarget/Padding.lean", "padBytes"),
+        ("Flapjack/Compiler/Backend/LabToTarget/ShmemInfo.lean", "ShmemInfoNum"),
+        ("Flapjack/Compiler/Backend/LabToTarget/ShmemInfo.lean", "listAddIfFresh"),
+        ("Flapjack/Compiler/Backend/LabToTarget/ShmemInfo.lean", "getMemopInfo"),
+        ("Flapjack/Misc/ListSubset.lean", "listSubset"),
+        ("Flapjack/Compiler/Backend/LabToTarget/Compile.lean", "Config"),
         ("Flapjack/Misc/LList.lean", "lprefixAntisymHOL"),
         ("Flapjack/Misc/LList.lean", "lprefixTransHOL"),
         ("Flapjack/Misc/LList.lean", "prefixesLprefixTotalHOL"),
