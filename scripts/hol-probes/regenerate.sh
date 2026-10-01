@@ -101,6 +101,10 @@ run_probe() {
   done
 }
 
+run_probe stackprops_clock_support_probeScript.sml stackprops_clock_support_probe.out \
+  cp_asm_const_type cp_clock_neutral_type cp_1 cp_1_types cp_2 cp_2_types cp_3 cp_3_types cp_4 cp_4_types cp_5 cp_5_types cp_6 cp_6_types cp_skip64 cp_sqrt1 cp_halt16 cp_loc1 cp_seq_good64 cp_seq_tick16 cp_if_good1 cp_if_bad64 cp_loop_skip64 cp_call_skip1 \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
 run_probe stackprops_state_constants_probeScript.sml stackprops_state_constants_probe.out \
   sc_20 sc_20_types sc_43 sc_43_types sc_49 sc_49_types sc_74 sc_74_types sc_84 sc_84_types sc_90 sc_90_types sc_110 sc_110_types sc_116 sc_116_types sc_125 sc_125_types sc_131 sc_131_types sc_137 sc_137_types sc_144 sc_144_types sc_164 sc_164_types \
   "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
@@ -3678,6 +3682,9 @@ run_probe word_to_stack_no_shmemop_primitives_probeScript.sml word_to_stack_no_s
   cp_skip_1 cp_assign_1 cp_store_1 cp_raise_1 cp_break_1 cp_continue_1 cp_tick_1 cp_skip_32 cp_assign_32 cp_store_32 cp_raise_32 cp_break_32 cp_continue_32 cp_tick_32 cp_skip_64 cp_assign_64 cp_store_64 cp_raise_64 cp_break_64 cp_continue_64 cp_tick_64 cp_skip_80 cp_assign_80 cp_store_80 cp_raise_80 cp_break_80 cp_continue_80 cp_tick_80 cp_load_valid cp_load_invalid cp_store_valid cp_store_invalid \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
 
+run_probe stack_to_lab_full_encoding_probeScript.sml stack_to_lab_full_encoding_probe.out \
+  full_flatten_source_proof full_compile_all_source_statement full_compile_all_application full_compile_all_sections \
+  "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe ssa_get_set_vars_probeScript.sml ssa_get_set_vars_probe.out \
   get_vars_list_insert_eq_gen_full get_vars_set_vars_eq_full \
   gvi_type_st gvi_type_ls gvi_type_x gvi_type_locs gvi_type_a gvi_type_b \
@@ -3695,6 +3702,9 @@ run_probe ssa_setup_props_probeScript.sml ssa_setup_props_probe.out \
   setup_full setup_type_lim setup_type_n setup_type_st setup_type_prog \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+run_probe word_to_stack_comp_no_shmemop_probeScript.sml word_to_stack_comp_no_shmemop_probe.out \
+  cs_full cs_conf_type cs_perf_type cs_source_type cs_bitmap_type cs_frame_type cs_target_type cs_residual_type cs_nested_1 cs_if_1 cs_ignored_1 cs_nested_32 cs_if_32 cs_ignored_32 cs_nested_64 cs_if_64 cs_ignored_64 cs_nested_80 cs_if_80 cs_ignored_80 \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe ssa_rename_move_preserve_probeScript.sml ssa_rename_move_preserve_probe.out \
   rms_full rms_type_st rms_type_cst rms_type_ssa rms_type_na rms_type_ls \

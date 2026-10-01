@@ -12,9 +12,9 @@ Nonrecursive constructor cases of the local `flatten_line_ok_pre` at
 zero byte-offset validity, source program assembly validity, actual flatten
 result equality, and EVERY conclusion over the resulting app_list.
 
-These are constructor specializations, not the assembled theorem. Seq, If,
-Loop, and returned Call require their genuine subprogram induction hypotheses
-and remain separate open work. Tail Call deliberately leaves its handler
+These are constructor specializations. Recursive.lean supplies Seq, If, Loop
+and returned Call pieces under whole-statement structural motives; Full.lean
+discharges those motives and assembles the complete original statements. Tail Call deliberately leaves its handler
 arbitrary: the original NONE-return clauses ignore it. The original line
 precheck accepts all LabAsm lines, including jumps; no stronger target validity
 assumption is inserted here. FFI names use the exact MlString carrier.
