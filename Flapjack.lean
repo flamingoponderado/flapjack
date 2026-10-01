@@ -149,6 +149,8 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.LiveExpressions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.Updates
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.StateRelation
 import Flapjack.Compiler.Backend.WordAlloc.Expressions
+import Flapjack.Compiler.Backend.WordAlloc.ProgramLiveness
+import Flapjack.Compiler.Backend.WordAlloc.Colour
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.StrongLocalsRel
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyMaps
 import Flapjack.HolRef
@@ -454,6 +456,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.StateRelationExact
 import Flapjack.Pancake.Proofs.PanGlobals.CompileDecsStructural
 import Flapjack.Pancake.Proofs.PanGlobals.CompileTopShapeWf
 import Flapjack.Pancake.Proofs.PanGlobals.CompileTopSemanticsExact
+import Flapjack.Pancake.Proofs.PanGlobals.CompileTopSemanticsDecls
 import Flapjack.Pancake.Proofs.PanGlobals.SemanticsInitCall
 import Flapjack.Pancake.Proofs.PanGlobals.CallObservation
 import Flapjack.Pancake.Proofs.PanGlobals.SemanticsCongruence
@@ -766,6 +769,8 @@ import Flapjack.Pancake.CrepToLoop.Proofs.CallPreserveStateCodeLocalsRel
 import Flapjack.Pancake.CrepToLoop.Optimise
 import Flapjack.Pancake.CrepToLoop.StateRel
 import Flapjack.Test.WordAllocLiveExpressionParity
+import Flapjack.Test.WordAllocProgramLivenessParity
+import Flapjack.Test.WordAllocApplyColourExactParity
 import Flapjack.Test.CrepToLoopCompileExpExactParity
 import Flapjack.Test.CrepToLoopCompileExactParity
 import Flapjack.Test.CrepToLoopCompFuncParity
@@ -806,6 +811,7 @@ import Flapjack.Compiler.Backend.StackLang.Prog
 import Flapjack.Compiler.Backend.StackLang.ProductionCodec
 import Flapjack.Compiler.Backend.StackLang.WordPayloads.InstructionBoundary
 import Flapjack.Compiler.Backend.StackLang.MacroLeaves
+import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.StoreNarrow
 import Flapjack.Compiler.Backend.StackCarrier
 import Flapjack.Basis.Pure.MlString
 import Flapjack.Compiler.Backend.MlStringBridge
@@ -828,6 +834,7 @@ import Flapjack.Compiler.Backend.StackNames.Labels
 import Flapjack.Compiler.Backend.StackRemove
 import Flapjack.Compiler.Backend.StackAlloc
 import Flapjack.Compiler.Backend.WordToStack
+import Flapjack.Compiler.Backend.WordToStack.LiveBitmap
 import Flapjack.Compiler.Backend.WordToStackRegFormat
 import Flapjack.RiscV.CakeAllocatorBitsBridge
 import Flapjack.StackAlloc
