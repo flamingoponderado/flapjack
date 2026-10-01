@@ -4,9 +4,8 @@ namespace Flapjack.Test.WordToStackSelectorPreludeParity
 open Flapjack Flapjack.RiscV
 
 -- Same-input full-tree comparison with original inst_select_exp, using
--- riscv_config and tar=temp=23. The tenth comparison is deliberately false:
--- the actual selector left-associates the large-offset materialization while
--- original HOL right-associates it. Bead17.2.16 tracks that source-shape gap.
+-- riscv_config and tar=temp=23. All ten complete trees agree, including
+-- the right-associated large-offset materialization nested under Load.
 private def rows : List Bool :=
   [match (wordInstSelectAtom 23 (.const 7 : WordExp (BitVec 64))).1 with
    | .inst (.const 23 7) => true | _ => false,
@@ -31,18 +30,18 @@ private def rows : List Bool :=
        (.seq (.inst (.const 24 4096)) (.inst (.arith (.binOp .add 23 23 (.reg 24))))))
        (.inst (.mem .load 23 23)) => true | _ => false]
 
-example : rows = [true,true,true,true,true,true,true,true,true,false] := by
+example : rows = [true,true,true,true,true,true,true,true,true,true] := by
   simp only [rows, wordInstSelectAtom, wordInstSelectLoadTail, wordDeadSelectSeq]
   decide +kernel
 
--- Retain the exact production counter-tree; do not replace the original oracle.
+-- Reject the former production counter-tree; the original oracle is unchanged.
 private def largeOffsetProduction : Bool :=
   match (wordInstSelectAtom 23
       (.load (.op .add [.var 18,.const 4096]) : WordExp (BitVec 64))).1 with
   | .seq (.seq (.seq (.move 0 [(23,18)]) (.inst (.const 24 4096)))
       (.inst (.arith (.binOp .add 23 23 (.reg 24))))) (.inst (.mem .load 23 23)) => true
   | _ => false
-example : largeOffsetProduction = true := by
+example : largeOffsetProduction = false := by
   simp only [largeOffsetProduction, wordInstSelectAtom, wordInstSelectLoadTail, wordDeadSelectSeq]
   decide +kernel
 

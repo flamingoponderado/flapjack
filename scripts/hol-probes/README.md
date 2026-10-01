@@ -94,10 +94,11 @@ with `HOL_PROBE_ONLY=stacksem_loop_recursive_probeScript.sml scripts/hol-probes/
 `inst_select_exp riscv_config 23 23` output trees: constant, variable, CurrHeap
 lookup, load, immediate addition, valid/out-of-range shifts, CurrHeap arithmetic,
 and valid/large load offsets. `WordToStackSelectorPreludeParity` kernel-checks
-nine matching complete trees and records the tenth comparison as false:
-the large-offset materialization is right-associated in original HOL and
-left-associated in production. Its exact production counter-tree is retained;
-bead `.17.2.16` tracks repair or justified semantic/output correspondence.
+all ten matching complete trees after the `.17.2.16` repair: constant
+materialization preserves original HOL's right-associated Const/Binop subtree
+inside the expression prelude and outer Load sequence. A separate kernel check
+rejects the former left-associated production counter-tree. The original oracle
+capture is unchanged; these samples do not establish universal selector equality.
 Separate theorem applications cover
 arbitrary expressions and temporaries at positive widths, including 1/80 bits
 and natural register names above 64 bits; a load-tail rejection sentinel keeps
