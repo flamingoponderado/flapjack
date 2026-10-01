@@ -48711,5 +48711,19 @@
     "hol_name": "insert_eq",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol2 full source comparison 2026-10-02, word-cse-insert-eq: original167-175 arbitrary Nat key and generic values/tree, insertion equality iff value equality; no wf assumption. Unused universally bound n2 appears in neither equality nor any premise, so omitted with local note. Spt preserves exact HOL num_map constructors; malformed BN/BS remain quantified. Original complete theorem/proof replay plus ten empty/malformed/nested equal/unequal observations captured, actual arbitrary-carrier kernel theorem applications. Genuine prerequisite of arith_keys_eq, not CSE/compiler semantic completion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/ArithmeticKeys.lean",
+    "lean_name": "arithKeysEq",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "arith_keys_eq",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 complete source comparison 2026-10-02, word-cse-arith-keys: entire original1174-1202 quantified a1/a2, conjunction of can_mem_arith a1 and key equality, both eligibility/reads conclusions, and forall faithful state/value original source evaluation implies destination-adjusted target evaluation are retained. No successful pass, target result, output relation, extra IH, width/range/wf or operand premise. Public guard excludes all multi-output cases exactly as original. Internal keyDestination derives full source constructor/operator/operand equality (all eight constructors considered); internal resultTransfer uses actual faithful evaluate Inst and set_var, with unrestricted insert_eq recovering the computed value. Binop both reg/imm, immediate Shift and signed Div transport internally, no simplified tagged evaluator. Native HolArith-to-WordLangArith codecs are constructor-for-constructor; state words translate to positive BitVec/[NeZero], C and F retain arbitrary universe-0 host types. fmap_as_finite_support_relation names only reviewed owning WordSemStateFiniteExact.fpRegs/store; locals/code are original Spt num_map and unqualified. Imported owner is not duplicated, same-module witness reuses genuine reviewed broad/exact roundtrip. Inherits reals_as_rational_cuts through faithful evaluate/inst, SOUNDNESS item8, no additional IEEE assumption. Literal complete original proof replay and original complete statement/carrier types plus60 full theorem applications across widths1/32/64/80, with arbitrary config/FFI/state/value quantification; matching60 full kernel theorem applications plusone arbitrary-width evaluation transfer. Source/kernel regression evidence is not cross-language equivalence; CSE knowledge invariant and whole pass/compiler chain remain unfinished."
   }
 ]
