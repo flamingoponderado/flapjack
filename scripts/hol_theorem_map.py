@@ -15,7 +15,7 @@ a later step switches the gates to the shards with a round-trip/drift check.
 This module only derives shard paths, loads and validates records, and renders
 byte-stable shard text. It does not change any review status or source-review
 semantics; the gates in ``scripts/check_hol_theorem_map.py`` and
-``scripts/check_hol_type_hashes.py`` remain authoritative.
+``scripts/check_hol_ref_export.py`` remain authoritative.
 """
 
 from __future__ import annotations
