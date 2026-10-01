@@ -39262,5 +39262,19 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-c source comparison 2026-10-01 (.11.4.7), original2698-2716: universally quantified exact wordLang expression, no hypotheses, entire set(get_reads_exp) = domain(get_live_exp). All six constructors; Op FLAT/MAP read membership agrees with right-fold Spt union domain, Shift combines both operands. HOL word dimension translated to positive BitVec width with NeZero. Source clause arity/store/operator carriers unchanged. Coordinator review pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_apply_colour",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/Seq.lean",
+  "lean_name": "evaluateApplyColour_Seq",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-c source comparison 2026-10-01 (.11.1.26.1), original theorem1105-1130 and Resume Seq1811-1831: original st/cst/f/live/lt three premises and full existential permutation/error/result/state/locals conclusion at Seq. Only genuine first/second subprogram IHs applyColourGoal added. Error and early non-NONE branches reuse first oracle; NONE branch obtains second oracle then exact wordProps permute_swap_lemma combines source choices. Exact rebound evaluator removes fix_clock via proved clock bound; raw production evaluator unchanged. Qualified canonical fpRegs/store and positive-width words, imported owning carrier with same-module roundtrip. Inherits reals_as_rational_cuts from reviewed WordSem evaluator as in existing leaf cases, SOUNDNESS item8. Coordinator review pending.",
+  "inherits_reals_as_rational_cuts": true
 }
 ]
