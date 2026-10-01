@@ -3033,3 +3033,7 @@ run_probe word_alloc_heu_inst_probeScript.sml word_alloc_heu_inst_probe.out \
 run_probe word_to_stack_full_read_bitmap_mixed_probeScript.sml word_to_stack_full_read_bitmap_mixed_probe.out \
   fra_8_1 fra_8_16 fra_1_32 fra_16_8 fra_offset fra_same fra_success8_1 fra_success1_32 fra_zero fra_loc \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_alloc_canonize_moves_aux_probeScript.sml word_alloc_canonize_moves_aux_probe.out \
+  cma_empty cma_acc cma_same_up cma_same_down cma_same_equal cma_different cma_groups cma_unsorted cma_reversed cma_self cma_large cma_bool \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"

@@ -1,3 +1,4 @@
+import Flapjack.Test.WordAllocCanonizeMovesAuxParity
 import Flapjack.Test.WordToStackBitmapMixedParity
 import Flapjack.Test.HeuInstParity
 import Flapjack.Test.SptMapParity
