@@ -43664,6 +43664,14 @@
     "reviewer": "flapjack-sol source comparison2026-10-01 w1a4.15: full original1121-1178 forall source/target states, source primitive Step then inj_on_state f source imply mapped Step. Independent Option alpha to Option beta retained; no DecidableEq, global injectivity, wf, simulation, target result or safety premise. Same six literal Step constructors/carriers. Source-endpoint scoped injectivity derives mapped no-read conditions and head/last-source inequality; global NONE iff derives f NONE=NONE for save. Membership uses exact state_to_list pending/active/emitted order. Fresh exported DB.fetch original full theorem, six complete mapped source/target states Bool-to-Nat, and original proof of scoped injectivity for globally collapsing Option Nat-to-Option Bool map on singleton source support. Eleven kernel fixtures replay all six mapped pairs, all six genuine theorem applications, scoped-collapse/proof/application, and arbitrary input carrier identity with no equality instance. No external splitAtPki or unreviewed library theorem prerequisite, proof-only unchanged scheduler. Coordinator acceptance pending."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/FstepMapInj.lean",
+    "lean_name": "fstepMapInj",
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "fstep_MAP_INJ",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-b source comparison 2026-10-01 w1a4.17: complete original1191-1253 forall p inj_on_state f p implies fstep(map_state f p)=map_state f(fstep p). Independent Option alpha/Option beta state carriers retained; native DecidableEq implementation parameters only, no global injectivity, wf, safety or target-result premise. Literal fstep526-545/map_state1086-1088/inj_on_state1090-1097 compared; native splitSource and frontLast proven to commute with local endpoint reflection/renaming, including first-source search, active LAST/FRONT and f NONE=NONE derived from original global NONE equivalence. Eight fresh original whole-output pairs with HOL-proved local premises and kernel theorem applications cover every step branch and a globally noninjective Nat-to-Bool map. Proof-only theorem, no executable change. Coordinator source review pending."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
     "hol_name": "even_list_def",
     "lean_path": "Flapjack/Compiler/Backend/WordAlloc/SSASetup.lean",
