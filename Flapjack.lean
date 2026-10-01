@@ -1,5 +1,6 @@
 import Flapjack.Misc.FindIndex.Append
 import Flapjack.Compiler.Backend.RegAlloc.Exceptions
+import Flapjack.Compiler.Backend.WordAlloc.CanonizeSort
 import Flapjack.Compiler.Backend.WordAlloc.HeuProg
 import Flapjack.Compiler.Backend.RegAlloc.Remap
 import Flapjack.Compiler.Backend.WordAlloc.CanonizeMovesAux
@@ -1057,3 +1058,4 @@ The library currently contains the first Lean representation of Flapjack's
 front-end language. The source of truth used while porting is the CakeML HOL
 development in `cakeml/pancake`.
 -/
+import Flapjack.RiscV.WordCopyCodecDomain
