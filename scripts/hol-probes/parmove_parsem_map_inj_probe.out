@@ -1,0 +1,8 @@
+pi_one=(21,21,T)
+pi_chain=(21,21,T)
+pi_cycle=(20,20,T)
+pi_shared_source=(22,22,T)
+pi_self=(20,20,T)
+pi_high=(23,23,T)
+pi_mixed=(3,3,T)
+pi_collision=(10,11,F)
