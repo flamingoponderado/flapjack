@@ -101,6 +101,9 @@ run_probe() {
   done
 }
 
+run_probe bytes_in_mem_probeScript.sml bytes_in_mem_probe.out \
+  empty_ignores_guards nat_wrap excluded_head excluded_tail domain_head domain_tail wrong_value bool_payload update_off_region update_hit_region append_wrapped \
+  "$cake_dir/misc/miscScript.sml" "$cake_dir/misc"
 run_probe pan_globals_fperm_code_probeScript.sml pan_globals_fperm_code_probe.out \
   swap_f swap_g other missing equal_names \
   "$cake_dir/pancake/proofs/pan_globalsProofScript.sml" "$cake_dir/pancake/proofs"

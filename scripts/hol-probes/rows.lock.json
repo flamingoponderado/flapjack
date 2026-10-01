@@ -10,6 +10,7 @@
     {"bytes": 665, "out": "binary_ieee_round_constants_probe.out", "rows": 3, "sha256": "f53f389810396ba1a0088944c8507d23c285cfa8841cdeaa6ba216637a5f6e71"},
     {"bytes": 563, "out": "binary_ieee_round_fp64_probe.out", "rows": 20, "sha256": "f07dbddbf44e96eae72f3d6a25feab61aeaead0a558b65848aef4d39768ad4ca"},
     {"bytes": 50, "out": "byte_align_probe.out", "rows": 5, "sha256": "ba826808f31edd34c54e4f69e91dfdebf3fe41f9c3673bd5e242fd43039fe0bd"},
+    {"bytes": 180, "out": "bytes_in_mem_probe.out", "rows": 11, "sha256": "aef4113ab38533177acbfc7924d7bcb3aaea556c90a5c8497e5f662f7fe1d037"},
     {"bytes": 307, "out": "cake_ssa_temp_probe.out", "rows": 6, "sha256": "9974c7e547860563fe73420d6024e4b8df4c81cb645991cece09c1a84161b677"},
     {"bytes": 121, "out": "cexp_heads_probe.out", "rows": 5, "sha256": "6008ea6cbd045b498a9b2ab282fbd0734ddd6c4760faa5e59cd7aa29a438f184"},
     {"bytes": 1359, "out": "code_rel_probe.out", "rows": 12, "sha256": "0559bf17f96c64ae36db4fa489b78498f46371b7283616c9ec61145900840cf0"},
