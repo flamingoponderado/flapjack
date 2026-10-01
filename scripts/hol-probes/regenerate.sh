@@ -2709,7 +2709,7 @@ run_probe word_alloc_get_writes_probeScript.sml word_alloc_get_writes_probe.out 
   writes_move writes_store_consts writes_inst_load16 writes_shared_load16 writes_shared_store16 writes_seq_catchall writes_install \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
 run_probe word_to_stack_stack_size_rel_probeScript.sml word_to_stack_stack_size_rel_probe.out \
-  ss_none ss_some ss_bad_max ss_missing_loc ss_missing_frame ss_frame_guard \
+  ss_none ss_some ss_bad_max ss_missing_loc ss_missing_frame ss_frame_guard ss_target_bool ss_target_nat \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe target_sem_encoded_bytes_probeScript.sml target_sem_encoded_bytes_probe.out \
