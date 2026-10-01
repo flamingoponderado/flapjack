@@ -50650,5 +50650,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-c literal source comparison3135-3140: forall native lines ls and natural offsets n/m, sec_length ls(n+m)=sec_length ls n+m unconditionally. Same constructor payloads/fixed byte8/MlString and positive generic word translation. No annotation/byte consistency premise or length bound. Canonical reviewed secLength, list induction and addition transport only. Five original/kernel rows extend the existing section probe without removing its8 sentinel rows; empty/mixed/zero annotations and empty bytes with length100 retain original recorded lengths."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/SectionLength.lean",
+    "lean_name": "secLengthSumLineLen",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "sec_length_sum_line_len",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c literal source comparison at3142: retains every original quantified list/position/accumulator and unconditional conclusion. Sum is SUM(MAP line_len lines)+n; append is the full section_labels pair with pos+SUM(MAP line_len left) and SND(section_labels pos left labs). No accumulator uniqueness/byte annotation consistency or target result hypothesis. Canonical source-compared lineLen consumed at pushed abd7cf3a6 under coordinator23:18 delivered-dependency instruction, acceptance bead remains open. Native Line fixed byte8/MlString payloads and positive generic word translation only. Generalized list induction covers every constructor and label-zero branch. Six fresh original/kernel rows supplement all13previous rows, pinning duplicate-label accumulation and whole result pair."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/SectionLength.lean",
+    "lean_name": "sectionLabelsAppend",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "section_labels_append",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c literal source comparison at3213: retains every original quantified list/position/accumulator and unconditional conclusion. Sum is SUM(MAP line_len lines)+n; append is the full section_labels pair with pos+SUM(MAP line_len left) and SND(section_labels pos left labs). No accumulator uniqueness/byte annotation consistency or target result hypothesis. Canonical source-compared lineLen consumed at pushed abd7cf3a6 under coordinator23:18 delivered-dependency instruction, acceptance bead remains open. Native Line fixed byte8/MlString payloads and positive generic word translation only. Generalized list induction covers every constructor and label-zero branch. Six fresh original/kernel rows supplement all13previous rows, pinning duplicate-label accumulation and whole result pair."
   }
 ]
