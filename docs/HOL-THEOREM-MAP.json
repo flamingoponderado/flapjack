@@ -40744,5 +40744,21 @@
   "hol_name": "step_sem",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.6.5.1: Genuine Extend, third constructor of original step_sem370-446. Concrete constructor states instantiate the Step premise, with full original input wf and forall environment eqenv conclusion retained. Independent generic value carrier and Option registers/List state unchanged. No stronger invariant, target evaluation, or environment-equality premise. Reviewed parsem_perm transports exactly pending/active reassociation; arbitrary emitted history remains identical and is reversed by sem. Fourteen fresh original semantic rows cover nonempty history, shared sources, snapshot reads, and duplicate-destination counterexample outside wf; full step_sem and scheduler remain open."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/StepSem/RemoveSelfEmitLast.lean",
+  "lean_name": "step_sem_removeSelf",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "step_sem",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.6.5.2: Genuine RemoveSelf, first constructor of original step_sem370. Concrete constructor states instantiate Step, full original input wf and arbitrary environment/emitted history retained, exact eqenv every real register conclusion. EmitLast retains only original constructor NoRead condition; RemoveSelf adds no side condition. Generic Option register/List/function carriers unchanged. RemoveSelf follows reviewed parsem_perm/cons/untouched; EmitLast follows parsem_perm/NoRead plus reverse and seqsem_append. Sixteen fresh original sem values kernel-paired with source-premise guards, nonempty emitted histories and snapshot reads; duplicate-destination and violated-NoRead pairs differ outside their original premises. Other cases and full scheduler remain open."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/StepSem/RemoveSelfEmitLast.lean",
+  "lean_name": "step_sem_emitLast",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "step_sem",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.6.5.2: Genuine EmitLast, sixth constructor of original step_sem370. Concrete constructor states instantiate Step, full original input wf and arbitrary environment/emitted history retained, exact eqenv every real register conclusion. EmitLast retains only original constructor NoRead condition; RemoveSelf adds no side condition. Generic Option register/List/function carriers unchanged. RemoveSelf follows reviewed parsem_perm/cons/untouched; EmitLast follows parsem_perm/NoRead plus reverse and seqsem_append. Sixteen fresh original sem values kernel-paired with source-premise guards, nonempty emitted histories and snapshot reads; duplicate-destination and violated-NoRead pairs differ outside their original premises. Other cases and full scheduler remain open."
 }
 ]

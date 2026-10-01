@@ -2120,3 +2120,11 @@ destination and differs (27 versus 37): it is outside `wf`, not a valid-step
 semantic-equivalence claim. Lean kernel examples replay all rows; the generic
 case proofs establish the original quantified `eqenv` conclusion under `wf`.
 The other four cases and full `step_sem` assembly remain open.
+
+`parmove_remove_last_probeScript.sml` captures 16 direct original HOL `sem`
+values for RemoveSelf and EmitLast, including nonempty reversed emitted history
+and parallel snapshot reads. Two deliberately invalid pairs differ: a repeated
+destination fails `wf` (17 versus 37), and a pending source reads the emitted
+destination despite valid `wf` (17 versus 27). Lean checks every row and these
+premise boundaries. The generic case proofs retain both original premises;
+Save, EmitHead and the full semantic-preservation assembly remain open.

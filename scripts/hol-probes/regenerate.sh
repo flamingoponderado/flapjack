@@ -2795,3 +2795,7 @@ run_probe labsem_memory_probeScript.sml labsem_memory_probe.out lab_mem_load_wor
 run_probe parmove_start_extend_probeScript.sml parmove_start_extend_probe.out \
   ps_start_pre_1 ps_start_pre_4 ps_start_pre_5 ps_start_post_1 ps_start_post_4 ps_start_post_5 ps_extend_pre_1 ps_extend_pre_3 ps_extend_pre_5 ps_extend_post_1 ps_extend_post_3 ps_extend_post_5 ps_bad_pre ps_bad_post \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe parmove_remove_last_probeScript.sml parmove_remove_last_probe.out \
+  pr_self_pre_1 pr_self_pre_4 pr_self_pre_5 pr_self_post_1 pr_self_post_4 pr_self_post_5 pr_last_pre_1 pr_last_pre_4 pr_last_pre_5 pr_last_post_1 pr_last_post_4 pr_last_post_5 pr_bad_self_pre pr_bad_self_post pr_bad_read_pre pr_bad_read_post \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
