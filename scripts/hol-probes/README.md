@@ -2000,6 +2000,7 @@ and eqenv ignores only NONE. The two eqenv rows use the original
 premise is imposed on repeated destinations. Full scheduler correctness and
 production wiring remain open.
 
+`labsem_updates_probeScript.sml` observes the original LabSem total register/memory updates, sticky assertion failure with retained writes, PC/clock updates, register/immediate decoding, and fixed64 FP register payloads. Its 17 rows are kernel-replayed in `Flapjack.Test.LabSemUpdatesParity`; it does not claim FP arithmetic or a full evaluator port.
 - `word_to_stack_map_fst_probeScript.sml`: exact pair-key mapping, collision retention and value projection.
 ### Literal parallel-move scheduler
 
@@ -2037,3 +2038,4 @@ snapshot sources, untouched/empty/self/swap cases and repeated-destination
 freshness failure are replayed by `ParmoveUpdateLemmasParity.lean`, alongside
 generic freshness/windmill theorem applications. Full step invariance and
 `parmove_correct` remain open.
+`labsem_navigation_probeScript.sml` captures 23 original LabSem fetch, instruction-count, section-entry/positive-label lookup, and following-return-label observations across empty sections. Encoded metadata lengths deliberately differ from instruction positions. The probe simplifies the original existential label guard before EVAL; it defines no substitute evaluator. `Flapjack.Test.LabSemNavigationParity` kernel replays the native definitions using the reviewed classifier.

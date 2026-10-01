@@ -3,6 +3,9 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.CutState
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.MustTerminate
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Seq
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ReadsLiveExpressions
+import Flapjack.Compiler.Backend.LabSem.Navigation
+import Flapjack.Compiler.Backend.LabProps.SectionEnd
+import Flapjack.Compiler.Backend.LabSem.Updates
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CheckPartialCol
 import Flapjack.Misc.Sptree.InsertUnchanged
 import Flapjack.Compiler.Backend.LabSem.Classifier

@@ -1,4 +1,7 @@
 import Flapjack.Test.ParmoveUpdateLemmasParity
+import Flapjack.Test.LabSemNavigationParity
+import Flapjack.Test.LabSectionEndParity
+import Flapjack.Test.LabSemUpdatesParity
 import Flapjack.Test.ParmoveInvariantsParity
 import Flapjack.Test.WordToStackAbsStackLengthsParity
 import Flapjack.Test.WordToStackAbsStackPrefixParity
