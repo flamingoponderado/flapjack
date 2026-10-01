@@ -15,20 +15,30 @@ HOL `EL n l` is `l[n]` when `n < LENGTH l` and otherwise `HD []`, because
 `TL [] = []` (`HOL/src/list/src/listScript.sml` `HD`, `TL_DEF`, `EL_def`). Here it
 is `holEl`, with `HD []` an unspecified opaque constant (`hdNil`). HOL
 `sorting$SORTED R` is `holSorted R`, which follows `SORTED_DEF` clause by clause.
-Both are untagged Flapjack infrastructure: the HOL standard-library list and
-sorting sources are outside the reference checker's reviewed external paths
-(see bead flapjack-pxn.18.5.15.3.38.1).
+Both are provisional, untagged Flapjack infrastructure, not completed HOL ports.
+The HOL standard-library `listScript.sml` source is outside the reference
+checker's reviewed external paths. Its exact `HD`/`EL` tags wait on the
+provenance approval of beads flapjack-pxn.18.5.15.3.38 and .38.1. Until that
+approval lands, the `has_edge`, `no_clash` and `colouring_satisfactory` ports
+below depend on this unreviewed `EL` rendering, and their acceptance is held
+on bead .38. `holSorted` follows the original `sortingScript.sml` `SORTED_DEF`
+(adjacent pairs plus the recursive tail, with no transitivity assumption). It
+is likewise untagged.
 -/
 
 namespace Flapjack.RegAlloc
 
 open Flapjack.Translator.Monadic.MonadBase
 
-/-- HOL `HD ([] : α list)`: one fixed value of each type whose identity HOL
-leaves unspecified. It is opaque, so no property beyond its type is provable. -/
+/-- Provisional rendering of HOL `HD ([] : α list)`: one fixed value of each
+type whose identity HOL leaves unspecified. It is opaque, so no property beyond
+its type is provable. Untagged pending the listScript provenance approval
+(bead flapjack-pxn.18.5.15.3.38.1); not an approved HOL dependency. -/
 opaque hdNil (α : Type) [Inhabited α] : α
 
-/-- HOL `EL n l`: the `n`-th element, and `HD []` beyond the end. -/
+/-- Provisional rendering of HOL `EL n l`: the `n`-th element, and `HD []`
+beyond the end (HOL `TL [] = []`). Untagged pending bead
+flapjack-pxn.18.5.15.3.38.1; not an approved HOL dependency. -/
 def holEl {α : Type} [Inhabited α] (n : Nat) (l : List α) : α :=
   l.getD n (hdNil α)
 
