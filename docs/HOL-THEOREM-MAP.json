@@ -41178,5 +41178,13 @@
   "words_as_type_indexed_bitvec": true,
   "inherits_reals_as_rational_cuts": true,
   "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.1.32.6): HOL evaluate_stack_swap (wordPropsScript.sml:2316-2363) itself: binders !c s, conclusion the HOL case expression over evaluate (c,s) rendered by the untagged stackSwapPost (Error unconstrained; FinalFFI/TimeOut/NotEnoughSpace with empty stack/locals and equal swapped run; Exception with the LASTN (handler+1) frame witnesses and transported run; otherwise s_key_eq, handler and transported run), no premise. Proof is HOL's: ho_match_mp_tac evaluate_ind (the tagged Lean evaluate_ind, rebound without fix_clock) applied to the 26 tagged per-constructor evaluateStackSwap_<Case> theorems, whose premises are exactly the corresponding evaluate_ind clause hypotheses. Axioms: propext, Classical.choice, Quot.sound. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the tagged wordSem evaluate, as computed by the scripts/HolTypeHashes.lean constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/StepSem/Save.lean",
+  "lean_name": "step_sem_save",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "step_sem",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.6.5.3: Genuine fourth Save constructor case of original step_sem370. Concrete source states instantiate unconditional Step.save, with entire original input wf and forallenv eqenv every real register retained. No environment-agreement/target evaluation or stronger source premise. Pending/active-prefix sources are real by original pending-source and nonempty FRONT conjuncts; last source may be NONE. Full arbitrary emitted history is reversed before literal NONE save. Reviewed wf_step transports invariant independently, parsem_perm/cons expose final destination, parsem_change_env proves real-register agreement from those source facts. Option registers/List/function/value carriers unchanged.20fresh original rows kernel-paired: reversed history, cycle, valid final NONE source, changed temporary ignored by eqenv, invalid pending NONE source99vs27 outsidewf. EmitHead/fullassembly remain open."
 }
 ]
