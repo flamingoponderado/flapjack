@@ -5,16 +5,17 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.State
 
 Counterpart of word_to_stackProofScript.sml's stack_size_rel group. HOL
 `the default option` is `Option.getD default`; subtraction remains saturating
-Nat subtraction. Source and target stacks keep their exact list carriers.
+Nat subtraction. Source frames retain the exact word carrier; the target
+list has an independent arbitrary payload, since HOL inspects only its length.
 -/
 namespace Flapjack.WordToStackProofs
 
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "stack_size_rel_def"
   (words_as_type_indexed_bitvec)]
-def stackSizeRel {width : Nat} [NeZero width]
+def stackSizeRel {width : Nat} [NeZero width] {α : Type}
     (frame : Nat) (localsSize : Option Nat) (stackLimit : Nat) (stackMax : Option Nat)
     (sourceStack : List (WordSemStackFrame width))
-    (targetStack : List (WordLocW width)) (stackSpace extra : Nat) : Prop :=
+    (targetStack : List α) (stackSpace extra : Nat) : Prop :=
   (frame ≠ 0 → localsSize.getD frame = frame) ∧
     stackLimit = targetStack.length ∧
     ∀ maximum, stackMax = some maximum →
@@ -27,10 +28,10 @@ def stackSizeRel {width : Nat} [NeZero width]
 conservative bound, successful evaluation, or initialized state is assumed. -/
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "stack_size_rel_iff"
   (words_as_type_indexed_bitvec)]
-theorem stackSizeRel_iff {width : Nat} [NeZero width]
+theorem stackSizeRel_iff {width : Nat} [NeZero width] {α : Type}
     (frame : Nat) (localsSize : Option Nat) (stackLimit : Nat) (stackMax : Option Nat)
     (sourceStack : List (WordSemStackFrame width))
-    (targetStack : List (WordLocW width)) (stackSpace extra : Nat) :
+    (targetStack : List α) (stackSpace extra : Nat) :
     stackSizeRel frame localsSize stackLimit stackMax sourceStack targetStack stackSpace extra ↔
       (frame ≠ 0 → localsSize.getD frame = frame) ∧
       stackLimit = targetStack.length ∧

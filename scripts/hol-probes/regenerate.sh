@@ -2709,7 +2709,7 @@ run_probe word_alloc_get_writes_probeScript.sml word_alloc_get_writes_probe.out 
   writes_move writes_store_consts writes_inst_load16 writes_shared_load16 writes_shared_store16 writes_seq_catchall writes_install \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
 run_probe word_to_stack_stack_size_rel_probeScript.sml word_to_stack_stack_size_rel_probe.out \
-  ss_none ss_some ss_bad_max ss_missing_loc ss_missing_frame ss_frame_guard \
+  ss_none ss_some ss_bad_max ss_missing_loc ss_missing_frame ss_frame_guard ss_target_bool ss_target_nat \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe target_sem_encoded_bytes_probeScript.sml target_sem_encoded_bytes_probe.out \
@@ -3040,3 +3040,6 @@ run_probe word_alloc_heu_max_probeScript.sml word_alloc_heu_max_probe.out \
 run_probe word_alloc_heu_call_probeScript.sml word_alloc_heu_call_probe.out \
   hc_merge_empty hc_merge_left hc_merge_right hc_merge_overlap hc_merge_disjoint hc_merge_raw_left hc_merge_raw_right hc_merge_raw_root hc_add_empty hc_add_nat hc_add_bool hc_add_tuple hc_add_nested hc_add_raw_bn hc_add_raw_bs hc_add_raw_overlap \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+run_probe word_to_stack_full_read_bitmap_mixed_probeScript.sml word_to_stack_full_read_bitmap_mixed_probe.out \
+  fra_8_1 fra_8_16 fra_1_32 fra_16_8 fra_offset fra_same fra_success8_1 fra_success1_32 fra_zero fra_loc \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
