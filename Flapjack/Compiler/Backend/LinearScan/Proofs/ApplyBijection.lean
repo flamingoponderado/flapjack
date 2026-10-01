@@ -763,10 +763,8 @@ theorem checkClashTreeApplyBijection :
 
 /-- HOL `extract_coloration_output` (`linear_scanProofScript.sml:5867-5919`).
 
-Provisional and untagged: this ports HOL `extract_coloration_output` but uses HOL
-`EL` (the untagged total `holEl`), whose `listScript` provenance is pending
-review (bead flapjack-pxn.18.5.15.3.38.1). Restore the `@[hol]` tag once
-accepted. -/
+HOL `EL` is the exact `holEl`. -/
+@[hol "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml" "extract_coloration_output"]
 theorem extractColorationOutput :
     ∀ (bij invbij : Spt Nat) (sth : LinearScanHiddenState) (l : List Nat) (acc : Spt Nat),
       spInverts bij invbij ∧ spInverts invbij bij ∧

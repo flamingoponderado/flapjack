@@ -49109,6 +49109,36 @@
     "inherits_reals_as_rational_cuts": true
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/FpInstructions.lean",
+    "lean_name": "instFp",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "inst_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 completed source/body/carrier comparison 2026-10-01, bead i81m: complete FP constructor branch of original inst_def409 clauses519-636, split along HOL outer FP case. All16 payload types are num/Nat registers; full original types confirm machine-indexed state, independent arbitrary compile C and FFI F, fixed word64 fp_regs. Actual imported native owning state retains all22 fields and canonical finite-support regs/fpRegs/store; same-module witness forwards its codec. Structural coverage proves outer Option always present, so join retains precisely original semantic Option state. Compared comparisons writing width-indexed0/1, movement/sign updates, RTE binary arithmetic, FMA destination/addend first with mul-add f2 f3 f1; transfers ignore r2 at64, otherwise low/high slicing and high-last alias order, high@@low concat before64 conversion; ToInt signed word32 roundtrip/odd DIV2 insertion and FromInt fixed32 only at64, width-indexed otherwise. Existing reviewed sqrt/ToInt/FromInt operations reused unchanged. Inherits reals_as_rational_cuts through arithmetic/conversion/real-sqrt dependencies, SOUNDNESS item8; pure Lean sqrt agreement is not HOL-to-Lean equivalence. No direct rendering call, so no direct real qualifier. No callback, stronger premise, supplied evaluation or simplified evaluator. Original type and movement/arithmetic/conversion captures freshly regenerated, structural coverage and frame theorem kernel checked. Complete FP case only, not full inst/evaluate or compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Inst.lean",
+    "lean_name": "instHOL",
+    "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
+    "hol_name": "inst_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 completed full source/body/carrier comparison2026-10-01 bead y19g.11.3, source409-640. Exact HolInst five outer constructors and all16 HolFp opcodes; all numeric payloads, positive machine width, fixed64 FP register words, arbitrary independent compile C and FFI F retained. Actual imported22-field native owning state and canonical regs/fpRegs/store codec, same-module witness. Full inst composes actual source-reviewed integer/memory and completeFP clauses; generic structural coverage proves selected fragment outerOption always present even on semantic failure. Source comparison retains Skip identity/Const assign, Or same-register Word-or-Loc copy, all shifts/div/carry/overflow/longmul/longdiv guards and write order, complete load/store address/domain/endian operations, unsupported16-bit memory returningNONE, allFP guards/modes/order/conversions reviewed under i81m. No callbacks, success assumption, target result, stronger carrier bound, alternate evaluator or dropped field. Inherits reals_as_rational_cuts from actualFP arithmetic/conversion/sqrt renderings, SOUNDNESS item8; pure Lean sqrt comparison is not cross-HOL equivalence. No direct rendering call requires a directreal qualifier. Kernel full constructor coverage and clock preservation; fresh original integer andFP observation groups. This is full primitive inst_def only, not evaluate_def, production route or whole compiler correctness."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
     "hol_name": "fix_inconsistencies_correctL",
     "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAFixInconsistenciesCorrectLeft.lean",
@@ -49136,17 +49166,193 @@
     ],
     "inherits_reals_as_rational_cuts": true
   },
-{
-  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
-  "hol_name": "ssa_cc_trans_exp_correct",
-  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAExpressions.lean",
-  "lean_name": "ssaCcTransExpCorrect",
-  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
-  "fmap_as_finite_support_relation": [
-    "WordSemStateFiniteExact.fpRegs",
-    "WordSemStateFiniteExact.store"
-  ],
-  "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-sol-a source comparison 2026-10-02, bead flapjack-60qg: compared word_allocProofScript.sml6256-6294 and replayed its literal proof with six inferred type captures. Retains all st/w/cst/ssa/na/res quantifiers, source word_exp success, full word_state_eq_rel and ssa_locals_rel, concluding actual native word_exp on ssa_cc_trans_exp succeeds with identical result. HOL st/cst share alpha/beta/gamma and Lean shares positive BitVec width and universe-0 C/F. Reviewed constructor-identical expressions including nested Op arguments, both expression-valued Shift operands and fixed 5-bit Store Temp payload; Spt locals/SSA are tree maps, only fpRegs/store translate HOL finite maps. Same-module imported-owner witness establishes real broad/exact roundtrip. Lean proof identifies native SSA renamer with reviewed applyColourExp at optionLookup and derives its scoped local transport from SSA locals without adding premises; success/store/memory/domain behavior remains actual native wordExp. No target evaluation or extra simulation/post-state assumption."
-}
+  {
+    "hol_path": "HOL/src/sort/sortingScript.sml",
+    "hol_name": "SORTED_DEF",
+    "lean_path": "Flapjack/Misc/Sorting.lean",
+    "lean_name": "holSorted",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-rkkf), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: sortingScript.sml:564-568 SORTED R [] = T, SORTED R [x] = T, SORTED R (x::y::rst) <=> R x y /\\ SORTED R (y::rst); type ('a -> 'a -> bool) -> 'a list -> bool, the relation rendered as α → α → Prop. Same three clauses; no transitivity assumed. Original type confirmed by type_of; original EVAL rows (scripts/hol-probes/hol_sorting_probe.out) kernel-replayed in Flapjack.Test.HolSortingParity. No extra premise."
+  },
+  {
+    "hol_path": "HOL/src/sort/sortingScript.sml",
+    "hol_name": "PART_DEF",
+    "lean_path": "Flapjack/Misc/Sorting.lean",
+    "lean_name": "holPart",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-rkkf), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: sortingScript.sml:643-648 PART P [] l1 l2 = (l1,l2), PART P (h::rst) l1 l2 = if P h then PART P rst (h::l1) l2 else PART P rst l1 (h::l2); type ('a -> bool) -> 'a list -> 'a list -> 'a list -> 'a list # 'a list, predicate as α → Bool. Same clauses. Original type confirmed by type_of; original EVAL rows (scripts/hol-probes/hol_sorting_probe.out) kernel-replayed in Flapjack.Test.HolSortingParity. No extra premise."
+  },
+  {
+    "hol_path": "HOL/src/sort/sortingScript.sml",
+    "hol_name": "PARTITION_DEF",
+    "lean_path": "Flapjack/Misc/Sorting.lean",
+    "lean_name": "holPartition",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-rkkf), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: sortingScript.sml:740-741 PARTITION P l = PART P l [] []; type ('a -> bool) -> 'a list -> 'a list # 'a list. Original type confirmed by type_of; original EVAL rows (scripts/hol-probes/hol_sorting_probe.out) kernel-replayed in Flapjack.Test.HolSortingParity. No extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "colors_sub_eqn",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/RegExchange.lean",
+    "lean_name": "colorsSubEqn",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (re-tag after bead flapjack-pxn.18.5.15.3.38.1 tagged holHd/holEl against the pinned HOL submodule): linear_scanProofScript.sml:2020-2029 colors_sub n s = if n < LENGTH s.colors then (M_success (EL n s.colors),s) else (M_failure Subscript,s). HOL EL is the exact holEl (unbounded where HOL is unbounded), ALL_DISTINCT List.Nodup, MEM list membership, DIV Nat division, LUPDATE List.set. Statement re-compared clause by clause with the type_of-checked original statement (DB.fetch linear_scanProof, show_types). Kernel-checked. No extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "int_beg_sub_eqn",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/RegExchange.lean",
+    "lean_name": "intBegSubEqn",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (re-tag after bead flapjack-pxn.18.5.15.3.38.1 tagged holHd/holEl against the pinned HOL submodule): linear_scanProofScript.sml:2042-2051, the same shape for int_beg. HOL EL is the exact holEl (unbounded where HOL is unbounded), ALL_DISTINCT List.Nodup, MEM list membership, DIV Nat division, LUPDATE List.set. Statement re-compared clause by clause with the type_of-checked original statement (DB.fetch linear_scanProof, show_types). Kernel-checked. No extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "int_end_sub_eqn",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/RegExchange.lean",
+    "lean_name": "intEndSubEqn",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (re-tag after bead flapjack-pxn.18.5.15.3.38.1 tagged holHd/holEl against the pinned HOL submodule): linear_scanProofScript.sml:2064-2073, the same shape for int_end. HOL EL is the exact holEl (unbounded where HOL is unbounded), ALL_DISTINCT List.Nodup, MEM list membership, DIV Nat division, LUPDATE List.set. Statement re-compared clause by clause with the type_of-checked original statement (DB.fetch linear_scanProof, show_types). Kernel-checked. No extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "sorted_regs_sub_eqn",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/RegExchange.lean",
+    "lean_name": "sortedRegsSubEqn",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (re-tag after bead flapjack-pxn.18.5.15.3.38.1 tagged holHd/holEl against the pinned HOL submodule): linear_scanProofScript.sml:2086-2095, the same shape for sorted_regs. HOL EL is the exact holEl (unbounded where HOL is unbounded), ALL_DISTINCT List.Nodup, MEM list membership, DIV Nat division, LUPDATE List.set. Statement re-compared clause by clause with the type_of-checked original statement (DB.fetch linear_scanProof, show_types). Kernel-checked. No extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "sorted_moves_sub_eqn",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/RegExchange.lean",
+    "lean_name": "sortedMovesSubEqn",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (re-tag after bead flapjack-pxn.18.5.15.3.38.1 tagged holHd/holEl against the pinned HOL submodule): linear_scanProofScript.sml:2108-2117, the same shape for sorted_moves (num # num # num elements). HOL EL is the exact holEl (unbounded where HOL is unbounded), ALL_DISTINCT List.Nodup, MEM list membership, DIV Nat division, LUPDATE List.set. Statement re-compared clause by clause with the type_of-checked original statement (DB.fetch linear_scanProof, show_types). Kernel-checked. No extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "find_reg_exchange_step_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/RegExchange.lean",
+    "lean_name": "findRegExchangeStep",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (re-tag after bead flapjack-pxn.18.5.15.3.38.1 tagged holHd/holEl against the pinned HOL submodule): linear_scanProofScript.sml:2136-2143 find_reg_exchange_step colors r (exch,invexch): col1 = EL r colors (unbounded), fcol1 = r DIV 2, col2/fcol2 via lookup_default_id, two inserts into each map; type num list -> num -> num num_map # num num_map -> ... HOL EL is the exact holEl (unbounded where HOL is unbounded), ALL_DISTINCT List.Nodup, MEM list membership, DIV Nat division, LUPDATE List.set. Statement re-compared clause by clause with the type_of-checked original statement (DB.fetch linear_scanProof, show_types). Kernel-checked. No extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "find_reg_exchange_FOLDL",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/RegExchange.lean",
+    "lean_name": "findRegExchangeFoldl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (re-tag after bead flapjack-pxn.18.5.15.3.38.1 tagged holHd/holEl against the pinned HOL submodule): linear_scanProofScript.sml:2145-2153 ∀l colors exch invexch sth. (∀r. MEM r l ⇒ r < LENGTH sth.colors) ⇒ find_reg_exchange l exch invexch sth = (M_success (FOLDL (λa b. find_reg_exchange_step sth.colors b a) (exch,invexch) l), sth). The binder colors is unused and has the polymorphic type alpha in the original (type_vars_in_term = [alpha]); the Lean binder is (_colors : β) with {β : Type}. HOL EL is the exact holEl (unbounded where HOL is unbounded), ALL_DISTINCT List.Nodup, MEM list membership, DIV Nat division, LUPDATE List.set. Statement re-compared clause by clause with the type_of-checked original statement (DB.fetch linear_scanProof, show_types). Kernel-checked. No extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "find_reg_exchange_FOLDR_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/RegExchange.lean",
+    "lean_name": "findRegExchangeFoldrCorrect",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (re-tag after bead flapjack-pxn.18.5.15.3.38.1 tagged holHd/holEl against the pinned HOL submodule): linear_scanProofScript.sml:2166-2281, all five conclusion conjuncts (inverse compositions, r DIV 2 targets, the three k-threshold implications with id) over FOLDR of find_reg_exchange_step. HOL EL is the exact holEl (unbounded where HOL is unbounded), ALL_DISTINCT List.Nodup, MEM list membership, DIV Nat division, LUPDATE List.set. Statement re-compared clause by clause with the type_of-checked original statement (DB.fetch linear_scanProof, show_types). Kernel-checked. No extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "find_reg_exchange_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/RegExchange.lean",
+    "lean_name": "findRegExchangeCorrect",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (re-tag after bead flapjack-pxn.18.5.15.3.38.1 tagged holHd/holEl against the pinned HOL submodule): linear_scanProofScript.sml:2283-2311, monadic find_reg_exchange from LN LN, same conclusions with sth.colors. HOL EL is the exact holEl (unbounded where HOL is unbounded), ALL_DISTINCT List.Nodup, MEM list membership, DIV Nat division, LUPDATE List.set. Statement re-compared clause by clause with the type_of-checked original statement (DB.fetch linear_scanProof, show_types). Kernel-checked. No extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "MAP_colors_eq_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/RegExchange.lean",
+    "lean_name": "mapColorsEqLemma",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (re-tag after bead flapjack-pxn.18.5.15.3.38.1 tagged holHd/holEl against the pinned HOL submodule): linear_scanProofScript.sml:2313-2350 incl. the unbounded ∀n'. n ≤ n' ⇒ EL n' sthout.colors = EL n' sth.colors clause. HOL EL is the exact holEl (unbounded where HOL is unbounded), ALL_DISTINCT List.Nodup, MEM list membership, DIV Nat division, LUPDATE List.set. Statement re-compared clause by clause with the type_of-checked original statement (DB.fetch linear_scanProof, show_types). Kernel-checked. No extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "MAP_colors_eq",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/RegExchange.lean",
+    "lean_name": "mapColorsEq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (re-tag after bead flapjack-pxn.18.5.15.3.38.1 tagged holHd/holEl against the pinned HOL submodule): linear_scanProofScript.sml:2352-2362. HOL EL is the exact holEl (unbounded where HOL is unbounded), ALL_DISTINCT List.Nodup, MEM list membership, DIV Nat division, LUPDATE List.set. Statement re-compared clause by clause with the type_of-checked original statement (DB.fetch linear_scanProof, show_types). Kernel-checked. No extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "apply_reg_exchange_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/RegExchange.lean",
+    "lean_name": "applyRegExchangeCorrect",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (re-tag after bead flapjack-pxn.18.5.15.3.38.1 tagged holHd/holEl against the pinned HOL submodule): linear_scanProofScript.sml:2364-2402, all seven conclusion conjuncts. HOL EL is the exact holEl (unbounded where HOL is unbounded), ALL_DISTINCT List.Nodup, MEM list membership, DIV Nat division, LUPDATE List.set. Statement re-compared clause by clause with the type_of-checked original statement (DB.fetch linear_scanProof, show_types). Kernel-checked. No extra premise."
+  },
+  {
+    "hol_path": "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml",
+    "hol_name": "Msub_eq",
+    "lean_path": "Flapjack/Translator/Monadic/MonadBase/Arrays.lean",
+    "lean_name": "msubEq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (re-tag after bead flapjack-pxn.18.5.15.3.38.1 tagged holHd/holEl against the pinned HOL submodule): ml_monadBaseScript.sml:131-138 ∀l n e. n < LENGTH l ⇒ Msub e n l = M_success (EL n l). Lean: the same implication over the canonical mSub with EL as holEl; [Nonempty value] records HOL's inhabited types (needed only by holEl's opaque out-of-range value). Previously stated with a dependent getElem; restated literally. Kernel-checked."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "sptree_eq_list_def",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/IntervalMonad.lean",
+    "lean_name": "sptreeEqList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (re-tag after bead flapjack-pxn.18.5.15.3.38.1 tagged holEl against the pinned HOL submodule): linear_scanProofScript.sml:5206-5211 sptree_eq_list (s : int num_map) l = ∀i. i < LENGTH l ⇒ (0 < EL i l ⇔ lookup i s = NONE) ∧ (EL i l ≤ 0 ⇔ lookup i s = SOME (EL i l)); the Lean def has the same body over Spt Int and List Int. HOL EL is the exact holEl, int num_map the reviewed Spt Int carrier with sptLookup = lookup, EVERY (\\r. P r) l is ∀ r ∈ l, P r, r IN domain s is sptDomain s r, LENGTH is List.length, record update sth with <|..|> is Lean structure update. Statement compared clause by clause with the source; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "numset_list_add_if_lt_monad_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/IntervalMonad.lean",
+    "lean_name": "numsetListAddIfLtMonadCorrect",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (re-tag after bead flapjack-pxn.18.5.15.3.38.1 tagged holEl against the pinned HOL submodule): linear_scanProofScript.sml:5213-5232, hypotheses v ≤ 0, sptree_eq_list int_beg sth.int_beg, EVERY bound; the four conclusion conjuncts. HOL EL is the exact holEl, int num_map the reviewed Spt Int carrier with sptLookup = lookup, EVERY (\\r. P r) l is ∀ r ∈ l, P r, r IN domain s is sptDomain s r, LENGTH is List.length, record update sth with <|..|> is Lean structure update. Statement compared clause by clause with the source; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "numset_list_add_if_gt_monad_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/IntervalMonad.lean",
+    "lean_name": "numsetListAddIfGtMonadCorrect",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (re-tag after bead flapjack-pxn.18.5.15.3.38.1 tagged holEl against the pinned HOL submodule): linear_scanProofScript.sml:5234-5253, the int_end counterpart with the same hypotheses and conclusion conjuncts. HOL EL is the exact holEl, int num_map the reviewed Spt Int carrier with sptLookup = lookup, EVERY (\\r. P r) l is ∀ r ∈ l, P r, r IN domain s is sptDomain s r, LENGTH is List.length, record update sth with <|..|> is Lean structure update. Statement compared clause by clause with the source; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "get_intervals_ct_monad_aux_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/IntervalMonad.lean",
+    "lean_name": "getIntervalsCtMonadAuxCorrect",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (re-tag after bead flapjack-pxn.18.5.15.3.38.1 tagged holEl against the pinned HOL submodule): linear_scanProofScript.sml:5255-5347, the ten-variable statement with seven hypotheses and eight conclusion conjuncts, in the same order. HOL EL is the exact holEl, int num_map the reviewed Spt Int carrier with sptLookup = lookup, EVERY (\\r. P r) l is ∀ r ∈ l, P r, r IN domain s is sptDomain s r, LENGTH is List.length, record update sth with <|..|> is Lean structure update. Statement compared clause by clause with the source; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "get_intervals_ct_monad_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/IntervalMonad.lean",
+    "lean_name": "getIntervalsCtMonadCorrect",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (re-tag after bead flapjack-pxn.18.5.15.3.38.1 tagged holEl against the pinned HOL submodule): linear_scanProofScript.sml:5349-5384, positivity of every EL of int_beg/int_end, get_intervals_ct ct = (n,int_beg,int_end), equal lengths and the in_clash_tree bound; the six conclusion conjuncts. HOL EL is the exact holEl, int num_map the reviewed Spt Int carrier with sptLookup = lookup, EVERY (\\r. P r) l is ∀ r ∈ l, P r, r IN domain s is sptDomain s r, LENGTH is List.length, record update sth with <|..|> is Lean structure update. Statement compared clause by clause with the source; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml",
+    "hol_name": "extract_coloration_output",
+    "lean_path": "Flapjack/Compiler/Backend/LinearScan/Proofs/ApplyBijection.lean",
+    "lean_name": "extractColorationOutput",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (re-tag after bead flapjack-pxn.18.5.15.3.38.1 tagged holEl against the pinned HOL submodule): linear_scanProofScript.sml:5867-5919, sp_inverts both ways and the two EVERY hypotheses; extract_coloration invbij l acc sth = (M_success col, sth), the per-r if MEM (the 0 (lookup r bij)) l case split with EL (the tagged miscThe), and domain col SUBSET domain bij UNION domain acc as ∀ x, sptDomain col x → sptDomain bij x ∨ sptDomain acc x. HOL EL is the exact holEl, int num_map the reviewed Spt Int carrier with sptLookup = lookup, EVERY (\\r. P r) l is ∀ r ∈ l, P r, r IN domain s is sptDomain s r, LENGTH is List.length, record update sth with <|..|> is Lean structure update. Statement compared clause by clause with the source; kernel-checked; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_exp_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAExpressions.lean",
+    "lean_name": "ssaCcTransExpCorrect",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison 2026-10-02, bead flapjack-60qg: compared word_allocProofScript.sml6256-6294 and replayed its literal proof with six inferred type captures. Retains all st/w/cst/ssa/na/res quantifiers, source word_exp success, full word_state_eq_rel and ssa_locals_rel, concluding actual native word_exp on ssa_cc_trans_exp succeeds with identical result. HOL st/cst share alpha/beta/gamma and Lean shares positive BitVec width and universe-0 C/F. Reviewed constructor-identical expressions including nested Op arguments, both expression-valued Shift operands and fixed 5-bit Store Temp payload; Spt locals/SSA are tree maps, only fpRegs/store translate HOL finite maps. Same-module imported-owner witness establishes real broad/exact roundtrip. Lean proof identifies native SSA renamer with reviewed applyColourExp at optionLookup and derives its scoped local transport from SSA locals without adding premises; success/store/memory/domain behavior remains actual native wordExp. No target evaluation or extra simulation/post-state assumption."
+  }
 ]

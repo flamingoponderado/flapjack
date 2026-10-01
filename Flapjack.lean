@@ -1,11 +1,11 @@
+import Flapjack.Compiler.Backend.StackProps.ClockSupport
+import Flapjack.Compiler.Backend.StackProps.StateConstants
 import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Full
 import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Recursive
 import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Nonrecursive
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsListRename
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAGetSetVars
-import Flapjack.Compiler.Backend.StackProps.ClockSupport
-import Flapjack.Compiler.Backend.StackProps.StateConstants
 import Flapjack.Compiler.Backend.LabProps.Native
 import Flapjack.Compiler.Backend.StackToLab.Native
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopPrimitives
@@ -191,6 +191,9 @@ import Flapjack.Compiler.Backend.WordToStack.ProductionInstructionMaximum
 import Flapjack.Compiler.Backend.WordToStack.ProductionColourDomain
 import Flapjack.Compiler.Backend.WordToStack.ProductionProgramMaximum
 import Flapjack.Compiler.Backend.WordToStack.ProductionFrame
+import Flapjack.Compiler.Backend.WordToStack.ProductionLocations
+import Flapjack.Compiler.Backend.WordToStack.ProductionConfiguration
+import Flapjack.Compiler.Backend.WordToStack.ProductionScheduler
 import Flapjack.Compiler.Backend.WordToStack.ProductionAllocatorCodec
 import Flapjack.Compiler.Backend.WordToStack.ProductionSelectorPrelude
 import Flapjack.Compiler.Backend.WordToStack.ProductionSelectorDomain
@@ -522,6 +525,8 @@ import Flapjack.Test.StackSemAllocationParity
 import Flapjack.Compiler.Backend.Semantics.StackSem.Bitmap
 import Flapjack.Compiler.Backend.Semantics.StackSem.WordBitmap
 import Flapjack.Compiler.Backend.Semantics.StackSem.StackCodec
+import Flapjack.Compiler.Backend.Semantics.StackSem.FpInstructions
+import Flapjack.Compiler.Backend.Semantics.StackSem.Inst
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateIoEventsMono
 import Flapjack.Compiler.Backend.Semantics.WordSem.Semantics
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClock
@@ -1155,6 +1160,7 @@ import Flapjack.Compiler.Backend.LinearScan.TopLevel
 import Flapjack.Misc.Sptree.Foldi
 import Flapjack.Misc.MiscThe
 import Flapjack.Misc.ListEl
+import Flapjack.Misc.Sorting
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.SpInverts
 import Flapjack.Compiler.Backend.LinearScan.Proofs
 import Flapjack.Misc.Sptree.ToAList
