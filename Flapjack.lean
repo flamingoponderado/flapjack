@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.FFI
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Inst
 import Flapjack.Compiler.Backend.Parmove.StepsSem
 import Flapjack.Pancake.WordLang.MaxVarExp

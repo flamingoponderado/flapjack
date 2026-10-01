@@ -41258,5 +41258,19 @@
   "hol_name": "steps_sem",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-b source comparison 2026-10-01 child25.6.6: literal source446-456, forall states actual RTCStep and entire inputwf conjunction -> forallenv originaleqenv. Same Option/List/function/arbitraryvaluecarrier; reflexive case equality and tail induction using actualwf_steps transport thenfullstep_sem. No assumed intermediate/targetequivalence or omitted sourcecondition. Kernel chain includes Save/EmitHead/EmitLast on a cycle with literalNONE scratch, plus reflexive closure; original semantic values freshly captured. One-step fullassembly independentreview pending; no compilerexecution/fullschedulerclaim."
+},
+{
+  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+  "hol_name": "evaluate_apply_colour",
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateApplyColour/FFI.lean",
+  "lean_name": "evaluateApplyColour_FFI",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "fpRegs",
+    "store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "inherits_reals_as_rational_cuts": true,
+  "reviewer": "Codex source review against evaluate_apply_colour1105-1130 specialized to FFI and Resume2182-2205: original three premises and exact full existential postcondition, with no callback, success, target evaluation/result, or alias restriction premise. Four native input reads (len1,ptr1,len2,ptr2) are transported using live membership; scoped injection and relation on both cut-set domains derived from original hypotheses; existing exact cutEnvLemma proves target cut success and source-domain equality, enabling any live-after relation through strongLocalsRelExtendAux. Native evaluate FFI clause retains byte reads/errors, deterministic callFFIHOL on identical exact MlString name/input memory/FFI fields, final outcome flushState true, or returning byte-array memory update, cut locals, empty fpRegs and returned FFI state. Same canonical state fpRegs/store qualifier and local imported roundtrip; Spt locals/code remain original trees, word dimensions positive. Inherits existing native evaluator reals_as_rational_cuts assumption (docs/SOUNDNESS item8), with no direct rendering primitive. No executable behavior changes; full Install/ShareInst and whole program assembly remain open."
 }
 ]
