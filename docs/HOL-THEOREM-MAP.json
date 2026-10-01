@@ -38141,6 +38141,50 @@
   "reviewer": "flapjack-luna-c source comparison 2026-10-01, bead11.1.16.1: literal681-703 on exact WordLangInst at positive BitVec/NeZero and NumSet Spt Unit. Const/Binop/Shift/Div write destination; AddCarry/AddOverflow/SubOverflow insert r4 outside r1; LongMul/LongDiv insert r2 outside r1; only Load/Load32/Load8 write target (Load16 falls through to LN). FPLess/FPLessEqual/FPEqual write integer result; FPMovToReg writes r1 only at64, else r2 outside r1. Every unlisted instruction gives LN, no extra premise. Same imported constructor carriers as reviewed instruction liveness. Seven fresh direct original HOL full-tree equalities kernel replayed; production route remains separate OPEN16.2."
 },
 {
+  "lean_path": "Flapjack/Pancake/WordLang/OccurrencesExact.lean",
+  "lean_name": "everyNameHOL",
+  "hol_path": "cakeml/compiler/backend/wordLangScript.sml",
+  "hol_name": "every_name_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.15.3.33): HOL wordLangScript.sml:127-131 compared constructor by constructor with literal Bool recursor. Native WordLangProgHOL carries exact Spt Unit cutsets, constructor fields and arities match; every_name uses original MAP FST(toAList) order on both cutsets with EVERY translated to List.all. every_var preserves all local registers, expression/inst/immediate predicates, Loop entry/exit enumeration and Call return handler plus exception handler only under SOME return. every_stack_var traverses only source cutsets/recursive bodies, and Loop ignores live sets as in HOL. No extra hypotheses, omitted failure branches, production helper substitution or finite-map qualifier; these are Spt trees. The numeric-only Spt cutset predicate needs no word translation. No executed compiler change. Coordinator review required."
+},
+{
+  "lean_path": "Flapjack/Pancake/WordLang/OccurrencesExact.lean",
+  "lean_name": "everyVarHOL",
+  "hol_path": "cakeml/compiler/backend/wordLangScript.sml",
+  "hol_name": "every_var_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.15.3.33): HOL wordLangScript.sml:133-176 compared constructor by constructor with literal Bool recursor. Native WordLangProgHOL carries exact Spt Unit cutsets, constructor fields and arities match; every_name uses original MAP FST(toAList) order on both cutsets with EVERY translated to List.all. every_var preserves all local registers, expression/inst/immediate predicates, Loop entry/exit enumeration and Call return handler plus exception handler only under SOME return. every_stack_var traverses only source cutsets/recursive bodies, and Loop ignores live sets as in HOL. No extra hypotheses, omitted failure branches, production helper substitution or finite-map qualifier; these are Spt trees. words_as_type_indexed_bitvec records only positive BitVec width/NeZero translation; fixed-width and exact MlString FFI fields in WordLangProgHOL retain original carriers. No executed compiler change. Coordinator review required.",
+  "words_as_type_indexed_bitvec": true
+},
+{
+  "lean_path": "Flapjack/Pancake/WordLang/OccurrencesExact.lean",
+  "lean_name": "everyStackVarHOL",
+  "hol_path": "cakeml/compiler/backend/wordLangScript.sml",
+  "hol_name": "every_stack_var_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.15.3.33): HOL wordLangScript.sml:179-205 compared constructor by constructor with literal Bool recursor. Native WordLangProgHOL carries exact Spt Unit cutsets, constructor fields and arities match; every_name uses original MAP FST(toAList) order on both cutsets with EVERY translated to List.all. every_var preserves all local registers, expression/inst/immediate predicates, Loop entry/exit enumeration and Call return handler plus exception handler only under SOME return. every_stack_var traverses only source cutsets/recursive bodies, and Loop ignores live sets as in HOL. No extra hypotheses, omitted failure branches, production helper substitution or finite-map qualifier; these are Spt trees. words_as_type_indexed_bitvec records only positive BitVec width/NeZero translation; fixed-width and exact MlString FFI fields in WordLangProgHOL retain original carriers. No executed compiler change. Coordinator review required.",
+  "words_as_type_indexed_bitvec": true
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StackSize.lean",
+  "lean_name": "stackSizeRel",
+  "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+  "hol_name": "stack_size_rel_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.15.3.34): literal stack_size_rel_def and stack_size_rel_iff group compared with word_to_stackProofScript.sml:866-893. Same eight explicit parameters f/locals-size/stack-limit/stack-max/source-stack/target-stack/stack-space/extra. Definition retains guarded local-frame equation, target length equality, universally quantified successful optional maximum, conservative bound, present locals and existential exact wordSem stack_size equation. Equivalence has no premises and retains all six conjuncts, including optional stack-size and local-size existence plus defaulted exact equality. HOL the default is Option.getD, all Nat subtraction remains left-associated saturating subtraction. Exact WordSemStackFrame and WordLocW list carriers; words_as_type_indexed_bitvec records only positive BitVec width/NeZero. No finite-map qualifier, compiler-function parameter, evaluated target, or post-state assumption. No executable change; coordinator review required."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StackSize.lean",
+  "lean_name": "stackSizeRel_iff",
+  "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+  "hol_name": "stack_size_rel_iff",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.15.3.34): literal stack_size_rel_def and stack_size_rel_iff group compared with word_to_stackProofScript.sml:866-893. Same eight explicit parameters f/locals-size/stack-limit/stack-max/source-stack/target-stack/stack-space/extra. Definition retains guarded local-frame equation, target length equality, universally quantified successful optional maximum, conservative bound, present locals and existential exact wordSem stack_size equation. Equivalence has no premises and retains all six conjuncts, including optional stack-size and local-size existence plus defaulted exact equality. HOL the default is Option.getD, all Nat subtraction remains left-associated saturating subtraction. Exact WordSemStackFrame and WordLocW list carriers; words_as_type_indexed_bitvec records only positive BitVec width/NeZero. No finite-map qualifier, compiler-function parameter, evaluated target, or post-state assumption. No executable change; coordinator review required."
+},
+{
   "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
   "hol_name": "lookup_numset_list_insert",
   "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/NumSets.lean",

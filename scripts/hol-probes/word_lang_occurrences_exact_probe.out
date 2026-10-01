@@ -1,0 +1,12 @@
+name_empty=T
+name_even=T
+name_odd=F
+var_move_even=T
+var_move_odd=F
+var_loop_live=F
+stack_loop_live=T
+stack_alloc_odd=F
+var_call_none=T
+stack_call_none=T
+var_call_some=F
+stack_call_some=F

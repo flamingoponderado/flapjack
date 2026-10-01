@@ -100,6 +100,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.ShMemLoadLemmas
 import Flapjack.Compiler.Backend.StackProps.RemoveNames
 import Flapjack.Pancake.Proofs.WordConvs.SmartSeqLabels
 import Flapjack.Pancake.WordLang.OccurrenceCorrespondence
+import Flapjack.Pancake.WordLang.OccurrencesExact
 import Flapjack.Pancake.Proofs.PanGlobals.CompileExpOperators
 import Flapjack.Pancake.Proofs.PanGlobals.CompileExpNamed
 import Flapjack.Pancake.Proofs.PanGlobals.CompileExpCmpShift
@@ -840,6 +841,7 @@ import Flapjack.Compiler.Backend.StackRemove
 import Flapjack.Compiler.Backend.StackAlloc
 import Flapjack.Compiler.Backend.WordToStack
 import Flapjack.Compiler.Backend.WordToStack.LiveBitmap
+import Flapjack.Compiler.Backend.WordToStack.Proofs.StackSize
 import Flapjack.Compiler.Backend.WordToStackRegFormat
 import Flapjack.RiscV.CakeAllocatorBitsBridge
 import Flapjack.StackAlloc
