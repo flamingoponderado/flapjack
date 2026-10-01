@@ -1,3 +1,4 @@
+import Flapjack.Test.ParmoveDestinationWrapperParity
 import Flapjack.Test.WordToStackCompileKeysParity
 import Flapjack.Test.WordToStackNativeConfigParity
 import Flapjack.Test.ParmoveDStepsParity

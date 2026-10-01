@@ -2239,3 +2239,13 @@ inputs. `WordToStackCompileKeysParity.lean` applies the full reviewed theorem
 to the same actual compiler results. The source theorem preserves the entire
 key list; it does not establish pass simulation or final binary correctness.
 
+
+`parmove_destination_wrapper_probeScript.sml` freshly captures seven whole
+public-wrapper destination lists. Self removal and duplicate destinations are
+unrestricted; the cycle emits scratch NONE while nested-option registers
+include the distinct real identifier SOME NONE.
+`ParmoveDestinationWrapperParity.lean` kernel-computes the same lists and
+applies the full source one-way membership theorem to each input. It is
+imported by the actual Lake test driver as well as the umbrella. These rows
+support regression review, not a cross-prover equivalence or algorithm
+semantic-correctness claim.

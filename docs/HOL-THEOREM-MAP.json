@@ -41436,5 +41436,13 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-luna-a: full source5609-5616 compared binder by binder; generic identifier beta independent of positive word width, actual accepted native compile_word_to_stack, right-associated output remainder (frame list and bitmap pair), sole source compiler-output equality premise and whole MAP FST equality conclusion. Exact List/AppList/native HolProg/AsmConfig carriers; words_as_type_indexed_bitvec only translates the source dimension, no added frame/uniqueness/success premise. Induction on actual recursive wrapper threads its real bitmap result. Seven freshly regenerated original key-list equations kernel paired; production/compiler correctness parent remains open."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/DestinationWrapper.lean",
+  "lean_name": "memMapFstParmove",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "MEM_MAP_FST_parmove",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-a: source753-762 compared literally. Arbitrary generic register type, List pair input, exact Option-register output from actual tagged parmove, sole SOME x output-destination membership premise and input-destination membership conclusion. DecidableEq realizes HOL polymorphic equality, no changed equality or word-width carrier. Uses accepted unconditional pmov destination theorem on actual lifted input plus original reverse; no windmill/termination/success/output-shape premise. Seven fresh original full destination lists kernel paired, including duplicate inputs, self removal, scratch NONE and a real optional register SOME NONE. Actual lake test driver imports the replay module; full compiler correctness remains open."
 }
 ]

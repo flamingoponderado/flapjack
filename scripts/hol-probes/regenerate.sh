@@ -2872,3 +2872,7 @@ run_probe word_to_stack_native_config_probeScript.sml word_to_stack_native_confi
 run_probe parmove_destination_probeScript.sml parmove_destination_probe.out \
   pv_destination_terminal pv_destination_self pv_destination_chain pv_destination_cycle pv_destination_scratch pv_destination_duplicate pv_destination_active \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe parmove_destination_wrapper_probeScript.sml parmove_destination_wrapper_probe.out \
+  dw_empty dw_self dw_chain dw_cycle dw_duplicate dw_order dw_nested_option \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
