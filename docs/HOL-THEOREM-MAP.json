@@ -42907,5 +42907,41 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison (2026-10-01; .10.15 coordinator repair): original local Overload at line49 is lambda xs. LENGTH(FILTER($~ o is_Label) xs). Lean computes the length of filtering native lines by Boolean negation of the reviewed isLabelHOL; exact native ASM/register-immediate/mlstring and fixed-byte carriers retained. Only polymorphic words translate to positive BitVec width/NeZero. No bounds or extra premises. Coordinator requested explicit overload reference and body pin."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Fetch.lean",
+    "lean_name": "numPcs",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "num_pcs_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; .10.17): original num_pcs_def680-686, asm_fetch_aux_APPEND1 at7258, APPEND2 at7290 and MEM at10849. Exact native LabSem.asmFetchAux evaluator and classifier over HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and fixed word8 encoded bytes. Count clauses retain empty code/empty section/label skip/nonlabel successor; fetch proofs retain original PC inequality, plus-count offset and existential membership witness, with no assumed fetch or extra guards. Nested list induction only supplies source structural induction hypotheses. Word dimension alone translates to positive BitVec width/NeZero. Proof-only declarations; no executed compiler behavior changed. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Fetch.lean",
+    "lean_name": "asmFetchAux_append1",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "asm_fetch_aux_APPEND1",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; .10.17): original num_pcs_def680-686, asm_fetch_aux_APPEND1 at7258, APPEND2 at7290 and MEM at10849. Exact native LabSem.asmFetchAux evaluator and classifier over HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and fixed word8 encoded bytes. Count clauses retain empty code/empty section/label skip/nonlabel successor; fetch proofs retain original PC inequality, plus-count offset and existential membership witness, with no assumed fetch or extra guards. Nested list induction only supplies source structural induction hypotheses. Word dimension alone translates to positive BitVec width/NeZero. Proof-only declarations; no executed compiler behavior changed. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Fetch.lean",
+    "lean_name": "asmFetchAux_append2",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "asm_fetch_aux_APPEND2",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; .10.17): original num_pcs_def680-686, asm_fetch_aux_APPEND1 at7258, APPEND2 at7290 and MEM at10849. Exact native LabSem.asmFetchAux evaluator and classifier over HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and fixed word8 encoded bytes. Count clauses retain empty code/empty section/label skip/nonlabel successor; fetch proofs retain original PC inequality, plus-count offset and existential membership witness, with no assumed fetch or extra guards. Nested list induction only supplies source structural induction hypotheses. Word dimension alone translates to positive BitVec width/NeZero. Proof-only declarations; no executed compiler behavior changed. Coordinator source review pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Fetch.lean",
+    "lean_name": "asmFetchAux_mem",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "asm_fetch_aux_MEM",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-01; .10.17): original num_pcs_def680-686, asm_fetch_aux_APPEND1 at7258, APPEND2 at7290 and MEM at10849. Exact native LabSem.asmFetchAux evaluator and classifier over HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString and fixed word8 encoded bytes. Count clauses retain empty code/empty section/label skip/nonlabel successor; fetch proofs retain original PC inequality, plus-count offset and existential membership witness, with no assumed fetch or extra guards. Nested list induction only supplies source structural induction hypotheses. Word dimension alone translates to positive BitVec width/NeZero. Proof-only declarations; no executed compiler behavior changed. Coordinator source review pending."
   }
 ]
