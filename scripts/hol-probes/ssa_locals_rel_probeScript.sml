@@ -1,0 +1,15 @@
+load "preamble";
+load "word_allocProofTheory";
+open bossLib HolKernel Parse preamble word_allocProofTheory sptreeTheory reg_allocTheory;
+fun out label q = (print(label ^ "=");print_term(rconc(SIMP_CONV (srw_ss()) [ssa_locals_rel_def,lookup_def,lookup_insert,domain_lookup,is_alloc_var_def] q));print "\n");
+val _ = out "sl_empty" ``ssa_locals_rel 0 LN (LN:bool num_map) LN``;
+val _ = out "sl_valid" ``ssa_locals_rel 0 (LS 5) (LS T) (fromAList [(5,T)])``;
+val _ = out "sl_missing_map" ``ssa_locals_rel 0 LN (LS T) (LS T)``;
+val _ = out "sl_missing_target" ``ssa_locals_rel 0 (LS 5) (LN:bool num_map) LN``;
+val _ = out "sl_wrong_value" ``ssa_locals_rel 0 (LS 5) (LS T) (fromAList [(5,F)])``;
+val _ = out "sl_bound" ``ssa_locals_rel 1 (fromAList [(1,5)]) (fromAList [(1,T)]) (fromAList [(5,T)])``;
+val _ = out "sl_bound_ok" ``ssa_locals_rel 2 (fromAList [(1,5)]) (fromAList [(1,T)]) (fromAList [(5,T)])``;
+val _ = out "sl_invalid" ``ssa_locals_rel 0 (BN LN LN) (LN:bool num_map) (BN LN LN)``;
+val _ = (print "sl_definition=";print_thm(DB.fetch "word_allocProof" "ssa_locals_rel_def");print "\n");
+val sl_type = type_to_string(type_of ``ssa_locals_rel``);
+val _ = print ("sl_original_type=" ^ sl_type ^ "\n");

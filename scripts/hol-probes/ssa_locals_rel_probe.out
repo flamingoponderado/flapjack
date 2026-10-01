@@ -1,0 +1,16 @@
+sl_empty=T
+sl_valid=T
+sl_missing_map=F
+sl_missing_target=F
+sl_wrong_value=F
+sl_bound=F
+sl_bound_ok=T
+sl_invalid=T
+sl_definition=⊢ ∀na ssa st_locs cst_locs.
+    ssa_locals_rel na ssa st_locs cst_locs ⇔
+    (∀x y. lookup x ssa = SOME y ⇒ y ∈ domain cst_locs) ∧
+    ∀x y.
+      lookup x st_locs = SOME y ⇒
+      x ∈ domain ssa ∧ lookup (THE (lookup x ssa)) cst_locs = SOME y ∧
+      (is_alloc_var x ⇒ x < na)
+sl_original_type=:num -> num sptree$num_map -> α sptree$num_map -> α sptree$num_map -> bool

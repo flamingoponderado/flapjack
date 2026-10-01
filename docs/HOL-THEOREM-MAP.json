@@ -43784,14 +43784,30 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison 2026-10-01 bead .26.15: full original11814-11844. Arbitrary assembler config, perf, register count, complete Nat-owner/argument/program list, AppList bitmap input and complete compiled bodies/frame-list/bitmap residual equation retained. Only original EVERY good_handlers and perf=F premises. Literal target BIGUNION IMAGE getter over body list, two inserted stub pairs, image(n -> (n,0)) of source BIGUNION and compiled owned-handler BIGUNION; original parser grouping separately checked T. Per-row actual compileProgNative frame sizing derives from accepted full comp label theorem, followed by actual compileWordToStackNative row induction; no key uniqueness, frame/bitmap bound, target subset/evaluation, successful-pass, simulation or HD/EL premise. Only positive type-indexed HOL word dimension translated to BitVec width with NeZero. Private packaging/set-membership lemmas are Flapjack-specific infrastructure. Seven freshly regenerated original actual whole-list set/frame/cursor/guard observations plus parsed-group sentinel all T; identical-input kernel fixture includes duplicate keys, spilled locals, owned/wrong-owner handlers, dropped tail handlers and bitmap threading. Full public theorem applied to a nonempty returning handler row with arbitrary config/registers/bitmap input. Regression evidence is not cross-language equivalence. Coordinator review/acceptance pending."
   },
-{
-  "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
-  "hol_name": "list_next_var_rename_lemma_2",
-  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSARenameLookup.lean",
-  "lean_name": "listNextVarRenameLemma2",
-  "statement_status": "reviewed_exact",
-  "reviewer": "flapjack-luna-a source4561-4577 comparison: arbitrary Nat input names/start and canonical Spt Nat initial/output trees, sole ALL_DISTINCT premise; all four output-map/domain-union/outside-lookup/inside-success conjuncts retained. THE is represented by getD 0 only for each successful lookup, independently established by the fourth conjunct; kernel listNextVarRenameSelectorIndependent proves every selector agreeing on SOME gives identical names, so HOL THE NONE is never constrained. No tree-wf, freshness, physical-register or target-relation premise. Five freshly run original EVAL observations and kernel replays include malformed BN LN LN, overwrite, arbitrary order, and unbounded natural numbers; an actual theorem application retains all conjuncts for arbitrary initial tree/start. Local HOL theorem is reviewed from source; fresh exported theorem invocation is not claimed. Coordinator acceptance pending."
-},
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_locals_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSALocals.lean",
+    "lean_name": "ssaLocalsRel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-c source4510-4518 and full exported type: arbitrary Nat bound, Spt Nat renaming map and generic shared alpha-valued Spt source/target. Both full forall clauses: mapped target domain, source-domain membership, THE mapped lookup equality, alloc-variable strict bound. Actual reviewed native Spt lookup/domain and isAllocVar. No wf/injectivity/bound/success premise added. Lean local selector uses getD0 ONLY under source-domain conjunct; kernel ssaLocalsRel_selectorIndependent proves entire relation independent of any selector agreeing on SOME, with no relation assumption. HOL option THE_DEF176-179 constrains only SOME; no equality about THE NONE claimed. Eight fresh original source-clause simplified Bool-valued relation observations (T,T,F,F,F,F,T,T) and full original type/definition prints, identical kernel fixtures. Proof predicate has no executed compiler definition route. Coordinator whole source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "list_next_var_rename_lemma_2",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSARenameLookup.lean",
+    "lean_name": "listNextVarRenameLemma2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source4561-4577 comparison: arbitrary Nat input names/start and canonical Spt Nat initial/output trees, sole ALL_DISTINCT premise; all four output-map/domain-union/outside-lookup/inside-success conjuncts retained. THE is represented by getD 0 only for each successful lookup, independently established by the fourth conjunct; kernel listNextVarRenameSelectorIndependent proves every selector agreeing on SOME gives identical names, so HOL THE NONE is never constrained. No tree-wf, freshness, physical-register or target-relation premise. Five freshly run original EVAL observations and kernel replays include malformed BN LN LN, overwrite, arbitrary order, and unbounded natural numbers; an actual theorem application retains all conjuncts for arbitrary initial tree/start. Local HOL theorem is reviewed from source; fresh exported theorem invocation is not claimed. Coordinator acceptance pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASetup/ListNextVarRenameArithmetic.lean",
+    "lean_name": "listNextVarRenameLemma1",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "list_next_var_rename_lemma_1",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-10-01: full local theorem4529-4559 quantifies arbitrary names, canonical Spt Nat input/output maps and natural counters; sole actual list_next_var_rename equality premise. All three original conclusions retained: ALL_DISTINCT output, exact MAP(4*x+next) COUNT_LIST length, nextOut=next+4*length. Lean List.Nodup/List.range are literal list/count-list correspondence. No distinct input, wf, map invariant, freshness, bound or successful pass premise. Proof inducts actual reviewed renamer, establishes output shape privately then scoped arithmetic injection gives Nodup. Fresh original literal complete local proof replay plus eight exact-input full observations (selected map lookups included),17 kernel fixtures including duplicate keys, malformed tree, collision, zero/odd/huge counter. No representation qualifier or executed change; coordinator acceptance pending."
+  },
 {
   "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
   "hol_name": "merge_moves_def",

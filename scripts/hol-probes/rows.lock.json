@@ -1189,6 +1189,12 @@
       "sha256": "108420ae230afe5e78fd47c5a8c02b5c4e545d949ac847be75aef2df8ab86039"
     },
     {
+      "bytes": 985,
+      "out": "list_next_var_rename_lemma1_probe.out",
+      "rows": 9,
+      "sha256": "c9790cbf4f3cc71fbed4ef5081511a37d24c63f04d5c05a6bc92eb04c8136429"
+    },
+    {
       "bytes": 2466,
       "out": "longdiv_code_probe.out",
       "rows": 3,
@@ -3371,6 +3377,12 @@
       "out": "sptree_to_alist_probe.out",
       "rows": 4,
       "sha256": "567c10eaf56c07243856c191b60a982c5c554900a977305b11f33afbaf699349"
+    },
+    {
+      "bytes": 526,
+      "out": "ssa_locals_rel_probe.out",
+      "rows": 10,
+      "sha256": "6dd57ee5c171ed3a5f0c2b346cbf85ba68409ed6320b180b19a4cca89291b7f0"
     },
     {
       "bytes": 178,
