@@ -3863,3 +3863,11 @@ run_probe ssa_cc_trans_props_move_probeScript.sml ssa_cc_trans_props_move_probe.
   spm_full spm_type_pri spm_type_ls spm_type_ssa spm_type_na spm_type_lt spm_type_progOut spm_type_ssaOut spm_type_naOut \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe ssa_cc_trans_props_allocation_probeScript.sml ssa_cc_trans_props_allocation_probe.out \
+  spa_alloc_full spa_alloc_type_num spa_alloc_type_numset spa_alloc_type_ssa spa_alloc_type_na spa_alloc_type_lt spa_alloc_type_progOut spa_alloc_type_ssaOut spa_alloc_type_naOut \
+  spa_install_full spa_install_type_ptr spa_install_type_len spa_install_type_dptr spa_install_type_dlen spa_install_type_numset spa_install_type_ssa spa_install_type_na spa_install_type_lt \
+  spa_install_type_progOut spa_install_type_ssaOut spa_install_type_naOut spa_ffi_full spa_ffi_type_ffi_index spa_ffi_type_ptr1 spa_ffi_type_len1 spa_ffi_type_ptr2 spa_ffi_type_len2 \
+  spa_ffi_type_numset spa_ffi_type_ssa spa_ffi_type_na spa_ffi_type_lt spa_ffi_type_progOut spa_ffi_type_ssaOut spa_ffi_type_naOut \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"

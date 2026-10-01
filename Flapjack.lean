@@ -1274,6 +1274,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFixInconsistenciesProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAInstructionProps
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameShiftedProperties
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsMove
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAProgramPropsAllocation
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFixInconsistenciesCorrectLeft
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeMovesCorrectRight
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFakeMovesCorrectLeft
