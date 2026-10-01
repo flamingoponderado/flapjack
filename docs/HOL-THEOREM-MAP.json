@@ -41220,5 +41220,13 @@
   "lean_name": "cutsetsMaxHOL",
   "statement_status": "reviewed_exact",
   "reviewer": "Source comparison wordLangScript247-250, cutsets abbreviation33 and misc num_set787: exact canonical Spt Unit pair (not raw fmap), both toAList/FST/MAX_LIST enumerations and outerMAX retained. Existing sptToAList mirrors raw HOL traversal and maxList is standard natural MAX_LIST empty0/consMAX; no added wf/support/domain premise or array/finite-map translation. Original8directrows include both components, deep inserts and nonwf/raw trees, kernel replay. Full max_var assembly/native wrapper production routing remainOPEN."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/Parmove/StepSem/EmitHead.lean",
+  "lean_name": "step_sem_emitHead",
+  "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+  "hol_name": "step_sem",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.6.5.4: genuine fifth step_sem case source412-438, full original wf and both constructor pending NoRead/endpoint inequality retained, arbitrary history/env and original eqenv conclusion. Path/destination uniqueness derives tail NoRead; reviewed permutation and parsem_NoRead then reverse/seqsem_append establish equality. No target evaluation, agreement, result or extra no-read premise. Option/List/function/value carriers unchanged. Coordinator acceptance pending; full assembly remains open."
 }
 ]

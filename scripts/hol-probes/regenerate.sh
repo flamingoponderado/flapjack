@@ -2824,3 +2824,7 @@ run_probe parmove_save_probeScript.sml parmove_save_probe.out \
 run_probe word_lang_max_var_exp_probeScript.sml word_lang_max_var_exp_probe.out \
   max_var max_load max_op_empty max_op_nested max_shift max_const max_lookup max_mixed \
   "$cake_dir/compiler/backend/wordLangScript.sml" "$cake_dir/compiler/backend"
+
+run_probe parmove_emithead_probeScript.sml parmove_emithead_probe.out \
+  pv_head_history_pre_1 pv_head_history_pre_2 pv_head_history_pre_3 pv_head_history_pre_4 pv_head_history_pre_5 pv_head_history_post_1 pv_head_history_post_2 pv_head_history_post_3 pv_head_history_post_4 pv_head_history_post_5 pv_head_none_pre_1 pv_head_none_pre_2 pv_head_none_pre_4 pv_head_none_post_1 pv_head_none_post_2 pv_head_none_post_4 pv_head_bad_endpoint_pre_1 pv_head_bad_endpoint_pre_2 pv_head_bad_endpoint_post_1 pv_head_bad_endpoint_post_2 pv_head_bad_pending_pre_1 pv_head_bad_pending_pre_2 pv_head_bad_pending_pre_4 pv_head_bad_pending_post_1 pv_head_bad_pending_post_2 pv_head_bad_pending_post_4 \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
