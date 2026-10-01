@@ -3990,3 +3990,18 @@ Structural size termination retains complete Call tuple equalities. The captured
 exported theorem is not a new literal replay of its original proof. These
 regressions do not prove HOL-to-Lean equivalence or whole compiler semantics.
 Selector: `HOL_PROBE_ONLY=word_to_stack_comp_no_shmemop_probeScript.sml`.
+
+### Generated machine IEEE FP64 source identities
+
+`machine_ieee_fp64_declarations_probeScript.sml` fetches all 47 reviewed FP64
+definitions from the original `machine_ieee` theory and captures their actual
+conclusions. The script invokes `machine_ieeeLib.mk_fp_encoding` at
+`HOL/src/floating-point/machine_ieeeScript.sml:13-16`; its FP64 tuple at line 16
+is `("fp64", 52, 11, SOME "double")`, giving a 64-bit encoding.
+The reference checker accepts these generated definition names only with
+source line 16, and verifies both Script and Lib against the pinned HOL gitlink
+and tracked blobs. Generated theorem names and other formats are outside this
+reviewed expansion. These source identities do not approve a Lean statement,
+real rendering, carrier translation, or choice behavior; review each port
+before tagging it. Regenerate with
+`HOL_PROBE_ONLY=machine_ieee_fp64_declarations_probeScript.sml`.
