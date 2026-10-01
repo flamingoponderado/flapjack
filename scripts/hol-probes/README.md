@@ -90,6 +90,53 @@ with `HOL_PROBE_ONLY=stacksem_loop_recursive_probeScript.sml scripts/hol-probes/
 
 # Original Pancake HOL probes
 
+`word_to_stack_selector_prelude_probe.out` captures ten fresh original
+`inst_select_exp riscv_config 23 23` output trees: constant, variable, CurrHeap
+lookup, load, immediate addition, valid/out-of-range shifts, CurrHeap arithmetic,
+and valid/large load offsets. `WordToStackSelectorPreludeParity` kernel-checks
+all ten matching complete trees after the `.17.2.16` repair: constant
+materialization preserves original HOL's right-associated Const/Binop subtree
+inside the expression prelude and outer Load sequence. A separate kernel check
+rejects the former left-associated production counter-tree. The original oracle
+capture is unchanged; these samples do not establish universal selector equality.
+Separate theorem applications cover
+arbitrary expressions and temporaries at positive widths, including 1/80 bits
+and natural register names above 64 bits; a load-tail rejection sentinel keeps
+unsupported incoming preludes rejected. `ProductionSelectorPrelude` proves
+actual atom/load-tail/address-wrapper carrier closure only. This does not prove
+universal HOL instruction-selector equivalence, whole-program selection,
+pre-SSA/source-image closure, or production native routing. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_to_stack_selector_prelude_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`word_to_stack_allocator_stages_probe.out` records four fresh original
+pre-allocation stage-chain outputs for Skip, Tick, Raise and tail Call, following
+`word_to_word$compile_single`'s SSA/dead/CSE/copy/three-to-two/unreachable/dead
+order with original `two_reg_arith = F`. `WordToStackAllocatorCodecParity`
+replays the same complete output trees and separately checks actual allocator
+success, memory-guard failure and five-register codec rejection.
+`ProductionAllocatorCodec` composes the accepted codec closures through the
+real allocator wrapper and derives an existential native encoding of its actual
+coloured output from accepted input and the real result equation. These finite
+observations do not establish universal pass equivalence, acceptance of the
+initial source-to-Word image, native ABI/output equivalence, or executed routing.
+In particular, this does not source-review the production assignment-based
+three-to-two implementation as a universal port of the original pass.
+Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_to_stack_allocator_stages_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`word_to_stack_retained_frame_probe.out` captures eight fresh original
+`compile_prog` frame projections: empty, register-edge, first/second spill,
+argument-area dominance, equal demands, zero register count, and a natural
+register name above 64 bits. `WordToStackRetainedFrameParity` kernel-checks
+the same inputs/results and the five-register codec rejection sentinel.
+`ProductionFrame` relates the actual retained allocator result's occupancy
+and `cakeWordFrameSlots` to the Option-mapped native compiler frame; rejected
+codecs remain `none`. This does not establish codec success, native ABI/config
+or output correspondence, or executed native routing. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_to_stack_retained_frame_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `ParmoveAllDistinctPmovParity` replays the complete original scheduler outputs
 terminal/self/chain/cycle/active from `parmove_final_probe.out` while applying
 the full `ALL_DISTINCT_pmov` theorem under its real source premises. The
