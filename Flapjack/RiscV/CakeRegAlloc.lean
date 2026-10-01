@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.RegAlloc.SafeDiv
 import Flapjack.Compiler.Backend.RegAlloc.SortMoves
 import Flapjack.Compiler.Backend.RegAlloc.SortedMem
 import Flapjack.RiscV.AllocatorMemoryInvariant
@@ -1940,8 +1941,10 @@ theorem cakeDoFreeze_selected_stack_lt_dim
   simp [cakeDoFreeze, hfreeze, cakePushStack, cakeDecDegree, hitem,
     hdecDeg, cakeUnspill, cakeReviveMoves, cakeAddSimpWl, cakeAddFreezeWl]
 
-/-- `safe_div` (`reg_allocScript.sml:771`). -/
-def cakeSafeDiv (x v : Nat) : Nat := if v = 0 then 0 else x / v
+/-- Flapjack executable compatibility wrapper for the reviewed natural spill-
+cost division. This wrapper has no separate HOL original; the production
+minimum-cost scan and spill selection call the shared tagged definition. -/
+def cakeSafeDiv (x v : Nat) : Nat := RegAlloc.safeDiv x v
 
 /-- `st_ex_list_MIN_cost` (`reg_allocScript.sml:773-790`). -/
 def cakeStExListMinCost (degrees : CakeNodeMap Nat) (scost : CakeNodeMap Nat) :

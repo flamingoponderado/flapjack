@@ -1,7 +1,34 @@
+import Flapjack.Test.WordConvsEveryVarInstMonoParity
+import Flapjack.Test.ParmovePreservesMovesParmoveParity
+import Flapjack.Test.ParmoveAllDistinctWrapperParity
+import Flapjack.Test.WordAllocMax3Parity
+import Flapjack.Test.BackendPropsNonzeroLabelsParity
+
+import Flapjack.Test.AsmSemArithmeticParity
+import Flapjack.Test.TargetPropsInterferenceParity
+import Flapjack.Test.LabToTargetSectionLookupParity
+
+import Flapjack.Test.ParmovePreservesMovesPmovParity
+import Flapjack.Test.WordToStackCodeLabelsParity
 import Flapjack.Test.WordConvsCodeLabelsParity
 import Flapjack.Test.ParmovePreservesMovesStepsParity
+import Flapjack.Test.WordConvsExpMonoParity
+import Flapjack.Test.WordAllocMaxVarExpParity
+import Flapjack.Test.WordAllocMaxVarInstParity
+import Flapjack.Test.WordToStackRegisterLabelsParity
+import Flapjack.Test.WordToStackCompileLookupParity
+import Flapjack.Test.WordAllocGetHeuristicsParity
 import Flapjack.Test.StackPropsCodeLabelsParity
 import Flapjack.Test.BytesInMemParity
+import Flapjack.Test.ParmoveAllDistinctPmovParity
+import Flapjack.Test.ParmoveTempPmovParity
+import Flapjack.Test.ParmoveInjOnStateParity
+import Flapjack.Test.ParmoveFirstIndexParity
+import Flapjack.Test.RegAllocSafeDivParity
+import Flapjack.Test.WordToStackUnreachCodecParity
+import Flapjack.Test.WordToStackCseCodecParity
+import Flapjack.Test.WordToStackDeadCodecParity
+import Flapjack.Test.WordToStackSsaCodecParity
 import Flapjack.Test.RegAllocSortedMemParity
 import Flapjack.Test.RegAllocSortMovesRouteParity
 import Flapjack.Test.ParmovePreservesMovesStepParity
@@ -1081,6 +1108,7 @@ def main : IO Unit := do
     checkBool "Pancake computed local-store address compiles" nestedLocalStoreBytesAccepted,
     checkBool "Pancake RISC-V artifact envelope markers" ArtifactFormat.pancakeEnvelopeMatches,
     checkBool "Pancake RISC-V artifact prologue" ArtifactFormat.pancakePrologueMatches,
+    Flapjack.Test.WordConvsEveryVarInstMonoParity.runChecks,
     Flapjack.Test.SourceGlobalParity.runChecks,
     checkBool "shadowing global source remains accepted"
       Flapjack.Test.SourceGlobalParity.shadowingBytesAccepted,
@@ -1513,6 +1541,9 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.WordToStackAbsStackParity.runChecks,
     Flapjack.Test.WordToStackFramesParity.runChecks,
     Flapjack.Test.WordConvsPostAllocExactParity.runChecks,
+    Flapjack.Test.LabToTargetSectionLookupParity.runChecks,
+    Flapjack.Test.TargetPropsInterferenceParity.runChecks,
+    Flapjack.Test.AsmSemArithmeticParity.runChecks,
     Flapjack.Test.BytesInMemParity.runChecks,
     Flapjack.Test.CrepSemIoEventsMonoParity.runChecks,
     Flapjack.Test.LabToTargetEncodingParity.runChecks,

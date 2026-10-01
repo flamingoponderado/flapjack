@@ -1,0 +1,17 @@
+load "bossLib"; load "preamble"; load "reg_allocTheory";
+open HolKernel Parse bossLib preamble reg_allocTheory;
+fun out label q = (print(label ^ "="); print_term(rconc(EVAL q)); print "\n");
+val _ = out "sd_0" ``safe_div 0 0 = 0``;
+val _ = out "sd_1" ``safe_div 1 0 = 0``;
+val _ = out "sd_2" ``safe_div 1208925819614629174706176 0 = 0``;
+val _ = out "sd_3" ``safe_div 0 7 = 0``;
+val _ = out "sd_4" ``safe_div 7 1 = 7``;
+val _ = out "sd_5" ``safe_div 6 7 = 0``;
+val _ = out "sd_6" ``safe_div 7 7 = 1``;
+val _ = out "sd_7" ``safe_div 8 7 = 1``;
+val _ = out "sd_8" ``safe_div 20 3 = 6``;
+val _ = out "sd_9" ``safe_div 18 3 = 6``;
+val _ = out "sd_10" ``safe_div 1208925819614629174706193 16 = 75557863725914323419137``;
+val _ = out "sd_11" ``safe_div 1208925819614629174706193 1208925819614629174706176 = 1``;
+val _ = out "sd_12" ``safe_div 1208925819614629174706176 1267650600228229401496703205376 = 0``;
+val _ = out "sd_13" ``safe_div 18446744073709551615 4294967296 = 4294967295``;
