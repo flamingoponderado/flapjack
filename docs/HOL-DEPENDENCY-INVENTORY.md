@@ -11,9 +11,9 @@ The cited-declaration counts below are a **lexical reachability set** computed f
 ## Counts
 
 - Scripts/theories in the transitive ancestor closure: `267`
-- Declarations in those theories (source pool): `13675`
-  - by kind: Datatype: 223, Definition: 3538, Theorem: 9914
-  - by area: pancake: 1329, cakeml_backend: 10493, cakeml_semantics: 912, cakeml_other: 88, basis: 354, other: 499
+- Declarations in those theories (source pool): `13669`
+  - by kind: Datatype: 223, Definition: 3538, Theorem: 9908
+  - by area: pancake: 1329, cakeml_backend: 10487, cakeml_semantics: 912, cakeml_other: 88, basis: 354, other: 499
 - Lexically cited declarations (citation closure of the root; not a dependency bound): `6594` unique declaration names (not declaration identities)
   - by kind: Datatype: 118, Definition: 1848, Theorem: 4628
   - by area: pancake: 544, cakeml_backend: 5708, cakeml_semantics: 167, cakeml_other: 21, basis: 29, other: 125
@@ -29,10 +29,10 @@ All count invariants hold:
 
 ## Lean coverage of the lexically cited set
 
-- Distinct textual `@[hol]` `(theory, name)` matches under `Flapjack/`: `1537` (not the validated tag count)
-- Lexically cited names with a textual `(theory, name)` match: `630`
-- Lexically cited names with no textual `(theory, name)` match: `5964`
-- ... of which also have no same-name textual match anywhere: `5877` (name heuristic: neither an over- nor an under-approximation of genuinely missing ports)
+- Distinct textual `@[hol]` `(theory, name)` matches under `Flapjack/`: `1553` (not the validated tag count)
+- Lexically cited names with a textual `(theory, name)` match: `636`
+- Lexically cited names with no textual `(theory, name)` match: `5958`
+- ... of which also have no same-name textual match anywhere: `5871` (name heuristic: neither an over- nor an under-approximation of genuinely missing ports)
 
 ## Direct citations of the root theorem
 
