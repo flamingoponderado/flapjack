@@ -1,0 +1,10 @@
+sm_empty=T
+sm_leaf=T
+sm_children=T
+sm_root=T
+sm_raw_bn=T
+sm_raw_bs=T
+sm_raw_nested=T
+sm_bool_nat=T
+sm_nat_bool=T
+sm_unit_raw=T

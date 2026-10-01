@@ -1,4 +1,6 @@
 import Flapjack.Test.RegAllocCarriers
+import Flapjack.Test.HeuInstParity
+import Flapjack.Test.SptMapParity
 import Flapjack.Test.WordAllocCheckerAssemblyParity
 import Flapjack.Test.SptMapiParity
 import Flapjack.Test.ParmoveIndependenceParity
