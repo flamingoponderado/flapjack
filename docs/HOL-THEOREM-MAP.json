@@ -43039,24 +43039,6 @@
     "reviewer": "flapjack-sol2 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.3.26.9): complete stackPropsScript.sml:1144-1157 compared with getCodeLabels. The definition retains original owner/program binders and uses exact HolProg width, the reviewed StackLang.Prog specialization over HolInst/HolCmp/HolRegImm/HolBinop/HolMemop/HolAddr and exact MlString, with all original constructor and continuation tuple shapes. The only carrier translation is positive type-indexed HOL word dimension to BitVec width with [NeZero width], recorded by words_as_type_indexed_bitvec. HOL sets are Lean Set (Nat x Nat), with empty/singleton/union preserving membership and duplicate elimination. Handler extraction returns empty for Call NONE regardless of a populated handler, and for Call SOME recurses into the return body and handler body, adding the handler tuple only when its first label equals owner. Code extraction independently traverses both populated bodies regardless of the return option, adds (target,0) for INL targets, (target,0) for JumpLower, (target,1) for RawCall, the full LocValue tuple and (stub,0) for StoreConsts SOME. Both traverse Seq/If by union and Loop by recursion; every other source constructor yields empty. No source convention, target label relation, caller success or evaluation premise is added. Fifteen fresh direct original HOL complete-set equalities all evaluate to T and the identical inputs/sets are kernel-replayed in StackPropsCodeLabelsParity, including Call NONE asymmetry, owner mismatch, both nested bodies and duplicates. This is proof-side label analysis required by word_to_stack_comp_code_labels, not a proof of that compiler theorem or source-to-RISC-V correctness."
   },
   {
-    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
-    "hol_name": "stack_rel_aux_def",
-    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StackRelAux.lean",
-    "lean_name": "stackRelAux",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds10 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.3.29.1) against word_to_stackProofScript.sml:815-838: literal four-clause stack_rel_aux over exact WordSemStackFrame/WordLocW with independent arbitrary cutset/frame carriers and no success/range premise beyond the source implications."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
-    "hol_name": "stack_rel_def",
-    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StackRel.lean",
-    "lean_name": "stackRel",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds10 source comparison (2026-10-01; bead flapjack-xza2) against word_to_stackProofScript.sml:846-859: literal stack_rel with EVERY sorted_env, existential abs_stack result, handler equation guarded by is_handler_frame(EL ...) using handler_val(LASTN ...), and the stack_rel_aux conjunct; no added premise."
-  },
-  {
     "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
     "hol_name": "not_use_temp_before_assign_insert",
     "lean_path": "Flapjack/Compiler/Backend/Parmove/TempBeforeAssign/Insert.lean",

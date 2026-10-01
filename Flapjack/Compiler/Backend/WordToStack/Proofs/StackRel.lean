@@ -3,9 +3,11 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.StackRelAux
 /-! Literal Word-to-Stack `stack_rel` over exact carriers. -/
 namespace Flapjack.WordToStackProofs
 
-/-- Literal source `stack_rel` (`word_to_stackProofScript.sml:846`). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "stack_rel_def"
-  (words_as_type_indexed_bitvec)]
+/-- Literal source `stack_rel` (`word_to_stackProofScript.sml:846`), kept
+PROVISIONAL and untagged: like `stackRelAux` it uses the untagged `holEl`/
+`holElDefaultFrame`/`holThe`/`lastN` renderings of HOL's total `EL`/`the`.
+Faithful total-list rendering + HOL `listScript` provenance are tracked by
+`flapjack-pxn.18.5.15.3.38` and `.38.1`; not an accepted exact HOL port yet. -/
 def stackRel {width : Nat} [NeZero width] (k sHandler : Nat)
     (sStack : List (WordSemStackFrame width))
     (tHandler : Option (WordLocW width)) (tRestOfStack : List (WordLocW width))

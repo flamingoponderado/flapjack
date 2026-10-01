@@ -31,9 +31,13 @@ def holEl {α : Type} (i : Nat) (l : List α) (d : α) : α := l.getD i d
 def holElDefaultFrame {width : Nat} [NeZero width] : WordSemStackFrame width :=
   .stackFrame none [] [] none
 
-/-- Literal source `stack_rel_aux` (`word_to_stackProofScript.sml:815`). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "stack_rel_aux_def"
-  (words_as_type_indexed_bitvec)]
+/-- Literal source `stack_rel_aux` (`word_to_stackProofScript.sml:815`), kept
+PROVISIONAL and untagged: its body uses the untagged renderings `holEl` (HOL
+total `EL`, ARB out-of-range), `holThe` (HOL `the`), `lastN` and
+`holElDefaultFrame` (an arbitrary ARB witness). The faithful total HD/EL/`the`
+rendering and the HOL `listScript` provenance pin are tracked by
+`flapjack-pxn.18.5.15.3.38` and `.38.1`; until those are source-reviewed this
+is not an accepted exact HOL port. -/
 def stackRelAux {width : Nat} [NeZero width] (k len : Nat)
     (sourceStack : List (WordSemStackFrame width))
     (stack : List (Option (WordLocW width × WordLocW width) × List Bool × List (WordLocW width))) :
