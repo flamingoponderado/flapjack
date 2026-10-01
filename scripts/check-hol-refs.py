@@ -32,11 +32,12 @@ from __future__ import annotations
 
 import os
 import hashlib
+import copy
 import json
 import re
 import runpy
 import sys
-from functools import lru_cache
+from functools import lru_cache, wraps
 from stat import S_ISREG
 from collections.abc import Iterable
 from pathlib import Path
@@ -426,6 +427,26 @@ _STRING_TOKEN_RE = re.compile(r'\\.|"', re.S)
 _NOT_NEWLINE_RE = re.compile(r"[^\n]")
 
 
+def _cached_by_module_text(parse):
+    """Parse a module's lines once per distinct text.
+
+    Several qualifier checks re-parse the same module for every tagged
+    declaration in it. Callers may extend the returned containers, so each
+    caller receives its own deep copy of the cached result.
+    """
+    cache: dict[str, object] = {}
+
+    @wraps(parse)
+    def cached(lines: list[str]):
+        text = "\n".join(lines)
+        if text not in cache:
+            cache[text] = parse(lines)
+        return copy.deepcopy(cache[text])
+
+    return cached
+
+
+@lru_cache(maxsize=None)
 def strip_lean_comments(text: str) -> str:
     """Remove nested Lean comments while preserving strings and line breaks.
 
@@ -502,6 +523,7 @@ def structure_fields(lines: list[str]) -> set[str]:
     return fields
 
 
+@_cached_by_module_text
 def structure_field_types(lines: list[str]) -> dict[str, dict[str, str]]:
     """Text of each structure field declaration's type, keyed by structure.
 
@@ -540,6 +562,7 @@ def structure_field_types(lines: list[str]) -> dict[str, dict[str, str]]:
     return field_types
 
 
+@_cached_by_module_text
 def structure_field_map(lines: list[str]) -> dict[str, set[str]]:
     """Field names of every structure declared in this module."""
     members: dict[str, set[str]] = {}
@@ -569,6 +592,7 @@ def structure_field_map(lines: list[str]) -> dict[str, set[str]]:
     return members
 
 
+@_cached_by_module_text
 def structure_headers(lines: list[str]) -> dict[str, str]:
     """Binders declared before `where` for every structure in this module.
 
@@ -586,6 +610,7 @@ def structure_headers(lines: list[str]) -> dict[str, str]:
     return headers
 
 
+@_cached_by_module_text
 def inductive_constructor_types(lines: list[str]) -> dict[str, dict[str, str]]:
     """Constructor payload text for indexed inductive word carriers."""
     owners: dict[str, dict[str, str]] = {}
@@ -643,6 +668,7 @@ def inductive_constructor_types(lines: list[str]) -> dict[str, dict[str, str]]:
     return owners
 
 
+@_cached_by_module_text
 def inductive_headers(lines: list[str]) -> dict[str, str]:
     """Binders before `where` for width-indexed inductive carriers."""
     headers: dict[str, str] = {}
@@ -1118,7 +1144,13 @@ def has_fmap_relation_witness(lines: list[str], carrier: str) -> bool:
     """
     if not carrier:
         return False
-    source = strip_lean_comments("\n".join(lines))
+    return _fmap_relation_witness_in("\n".join(lines), carrier)
+
+
+@lru_cache(maxsize=None)
+def _fmap_relation_witness_in(text: str, carrier: str) -> bool:
+    """Cached body of `has_fmap_relation_witness` for one module and carrier."""
+    source = strip_lean_comments(text)
     pattern = re.compile(
         rf"^\s*(?:@\[[\s\S]*?\]\s*)?(?:private\s+|protected\s+)?"
         rf"(?:theorem|lemma)\s+"
@@ -2985,6 +3017,29 @@ def reviewed_hol_prog_word_alias(signature: str, module: str, root: str) -> bool
         for w in uses
     ):
         return False
+    return _hol_prog_alias_module_ok(module, root)
+
+
+def _carrier_declaration_starts(info: _LeanFileInfo, carrier: str) -> list[int]:
+    """Offsets of every comment-free declaration of `carrier` in one file."""
+    return info.parsed(
+        f"carrier_declaration_starts:{carrier}",
+        lambda i: [
+            match.start() for match in re.finditer(
+                r"^\s*(?:abbrev|def|opaque|structure|inductive)\s+"
+                r"(?:[A-Za-z_][A-Za-z0-9_']*\.)*" + re.escape(carrier) + r"\b",
+                strip_lean_comments(i.text), re.M)
+        ],
+    )
+
+
+@lru_cache(maxsize=None)
+def _hol_prog_alias_module_ok(module: str, root: str) -> bool:
+    """The module-dependent half of `reviewed_hol_prog_word_alias`.
+
+    It reads only the import closure of `module`, never the signature, so one
+    result serves every tagged declaration of the module in a checker run.
+    """
     pending = [module]
     infos = {}
     while pending:
@@ -3002,10 +3057,8 @@ def reviewed_hol_prog_word_alias(signature: str, module: str, root: str) -> bool
     declarations = []
     for name, info in infos.items():
         text = strip_lean_comments(info.text)
-        for match in re.finditer(
-            r"^\s*(?:abbrev|def|opaque|structure|inductive)\s+(?:[A-Za-z_][A-Za-z0-9_']*\.)*HolProg\b", text, re.M
-        ):
-            declarations.append((name, text[match.start():]))
+        for start in _carrier_declaration_starts(info, "HolProg"):
+            declarations.append((name, text[start:]))
     if len(declarations) != 1 or declarations[0][0] != owner:
         return False
     expected = """abbrev HolProg (width : Nat) [NeZero width] :=
@@ -3023,10 +3076,7 @@ def reviewed_hol_prog_word_alias(signature: str, module: str, root: str) -> bool
     owners = imported_inductive_owners(module, root)
     for payload in ("HolInst", "HolRegImm", "HolAddr"):
         payload_declarations = [name for name, info in infos.items()
-            for _ in re.finditer(
-                r"^\s*(?:abbrev|def|opaque|structure|inductive)\s+"
-                r"(?:[A-Za-z_][A-Za-z0-9_']*\.)*" + payload + r"\b",
-                strip_lean_comments(info.text), re.M)]
+            for _ in _carrier_declaration_starts(info, payload)]
         if payload_declarations != [asm]:
             return False
         candidates = owners.get(payload, [])

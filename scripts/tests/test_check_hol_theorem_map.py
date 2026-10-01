@@ -1,5 +1,6 @@
 """Regression tests for HOL theorem-map coverage and metadata validation."""
 
+import copy
 import runpy
 import json
 import unittest
@@ -9,6 +10,30 @@ from pathlib import Path
 MAP = runpy.run_path(
     str(Path(__file__).resolve().parents[1] / "check_hol_theorem_map.py")
 )
+
+
+def _memoize_repository_scan(scan):
+    """Scan the checked-out repository once; every caller gets its own copy.
+
+    The tests only read these scans, and the repository does not change while
+    they run, so repeating a whole-tree scan per test adds no checking.
+    Calls with explicit arguments (for example a temporary root) still scan.
+    """
+    cache = []
+
+    def cached(*args, **kwargs):
+        if args or kwargs:
+            return scan(*args, **kwargs)
+        if not cache:
+            cache.append(scan())
+        return copy.deepcopy(cache[0])
+
+    return cached
+
+
+for _scan in ("build_inventory", "tagged_declarations", "data_declarations",
+              "proof_theorem_declarations"):
+    MAP[_scan] = _memoize_repository_scan(MAP[_scan])
 MANIFEST = runpy.run_path(
     str(Path(__file__).resolve().parents[1] / "hol_theorem_map.py")
 )
