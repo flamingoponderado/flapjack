@@ -3910,3 +3910,7 @@ run_probe ssa_cc_trans_props_allocation_probeScript.sml ssa_cc_trans_props_alloc
 run_probe ssa_force_rename_generic_probeScript.sml ssa_force_rename_generic_probe.out \
   fr_definition fr_lookup_force_rename_aux fr_lookup_force_rename fr_domain_force_rename fr_type \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe target_sem_evaluate_probeScript.sml target_sem_evaluate_probe.out \
+  te_zero te_unknown te_halt_success te_halt_resource te_cache te_shared_missing te_external_mmio te_cache_shift te_empty_external te_empty_external_shift te_normal_priority_encoding_fail te_normal_success te_normal_shift te_normal_guard_rollback te_mm_read_return te_mm_write_return te_mm_write_narrow te_mm_read_final te_mm_unshared te_mm_invalid_size \
+  "$cake_dir/compiler/backend/semantics/targetSemScript.sml" "$cake_dir/compiler/backend/semantics"

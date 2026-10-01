@@ -4250,3 +4250,18 @@ Selector: `HOL_PROBE_ONLY=word_to_stack_no_install_top_probeScript.sml`.
 The section-length probe additionally captures five `sec_length_add` (lab_to_targetProofScript.sml:3135) observations: arbitrary nonzero additive offsets, empty/mixed lists, zero annotations and empty encoded bytes with a large recorded annotation. All original eight section-label rows remain mandatory. The same Lean parity module kernel-replays all thirteen observations.
 
 Six further section-length probe rows exercise `sec_length_sum_line_len` (3142) and the whole-pair `section_labels_append` (3213): empty and mixed lists, duplicate labels on both sides, zero-labelled prefix position advancement, and the exact accumulated-label order. All thirteen prior oracle labels remain required, giving nineteen kernel replays in the same parity module. The universal Lean results keep arbitrary positions, line annotations, and label accumulators without additional validity premises.
+
+### Full target machine evaluator
+
+`target_sem_evaluate_probeScript.sml` evaluates the original `targetSem`
+`evaluate_def` over 8-bit configurations, arbitrary untouched target fields,
+and natural-number machine/FFI host states. Twenty rows check clock exhaustion,
+branch priority, both halt outcomes, cache/FFI oracle shifts, normal success and
+post-interference rollback, missing/conflicting MMIO, mapped full/narrow reads
+and writes, returned host/event state, terminal-event rollback and guard errors.
+The normal-step rows first prove the exact encoded-memory existential with an
+`Inst Skip`/zero-drop witness, then use its normalized kernel theorem after
+bounded `EVAL`; they do not simplify with the recursive evaluator as an unbounded
+rewrite. Every captured row has a kernel example in
+`Flapjack.Test.TargetSemEvaluateParity`. These are regression checks, not a
+cross-assistant equivalence proof. The compiler executable is not rerouted.

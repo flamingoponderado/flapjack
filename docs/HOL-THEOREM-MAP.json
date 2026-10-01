@@ -50819,5 +50819,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-c literal source comparison at3213: retains every original quantified list/position/accumulator and unconditional conclusion. Sum is SUM(MAP line_len lines)+n; append is the full section_labels pair with pos+SUM(MAP line_len left) and SND(section_labels pos left labs). No accumulator uniqueness/byte annotation consistency or target result hypothesis. Canonical source-compared lineLen consumed at pushed abd7cf3a6 under coordinator23:18 delivered-dependency instruction, acceptance bead remains open. Native Line fixed byte8/MlString payloads and positive generic word translation only. Generalized list induction covers every constructor and label-zero branch. Six fresh original/kernel rows supplement all13previous rows, pinning duplicate-label accumulation and whole result pair."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/Evaluate.lean",
+    "lean_name": "evaluateTargetHOL",
+    "hol_path": "cakeml/compiler/backend/semantics/targetSemScript.sml",
+    "hol_name": "evaluate_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-c source comparison (2026-10-02; bead flapjack-pxn.18.5.15.10.5): Compared the entire original targetSemScript.sml:118-219. Retains machine_config and universe-0 FFI host, arbitrary positive word width, clock-only recursion, program-domain minus FFI-entry priority before halt/cache, encoded-memory existential, all three state_ok guards and frame only on ms1, failure rollback to original machine/FFI, separate shifted next/cache/FFI oracles, first-match find_index and ALOOKUP, total EL using shared HOL ARB without a length premise, both mapped templates and full-word alignment, canonical little-endian arbitrary-count bytes, external MMIO rejection and two optional reads, original FFI_final event and old FFI state, and FFI_return new host/events. words_as_type_indexed_bitvec records only the standard positive word/FFI carrier translation. No callback, successful-run premise, concrete unspecified FFI name, or executable compiler routing change. Original target_sem_evaluate probes and matching kernel examples provide regressions, not cross-language equivalence."
   }
 ]

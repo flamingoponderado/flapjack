@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.Semantics.TargetSem.Evaluate
 import Flapjack.Compiler.Backend.LabToTarget.LineLength
 import Flapjack.Compiler.Backend.LabToTarget.SectionLength
 import Flapjack.Byte
