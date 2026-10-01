@@ -268,6 +268,7 @@
     {"bytes":174,"out":"mksubtree_probe.out","rows":2,"sha256":"91f7cb50b5c4d177f3a2e810ad42c815fdf8d38bdf4f31a60c385c51c8ee523c"},
     {"bytes":124,"out":"mlstring_carrier_probe.out","rows":8,"sha256":"e8b8357a39a6b420d116bbc50825e2a3524450ef6e638d914bc8639d4dccbaf8"},
     {"bytes":278,"out":"monad_base_probe.out","rows":10,"sha256":"676b6f2fa69d0482ac1fd8f7b2e0d5bfa5eeacc973929d93562f31086cb58e56"},
+    {"bytes":456,"out":"monad_list_primitives_probe.out","rows":25,"sha256":"564bd5d118f7cd0746d109b86fc758358e2a313a34352b2638a56a1d4a9dbc62"},
     {"bytes":319,"out":"num_set_audit_probe.out","rows":16,"sha256":"ab1cf111a588d2a04174ae550b4a2a035ab537b3d86ab69d795e182755a8285b"},
     {"bytes":152,"out":"num_set_spt_probe.out","rows":11,"sha256":"e6d7df80a2aed661f16a32c880c7ff784dfd0eb203a84ddba006d56e16c4d928"},
     {"bytes":180,"out":"num_set_to_alist_probe.out","rows":6,"sha256":"fcd321225787ad169f2586222f58229af7287c24ac453dc6592d7fc43eabf8a5"},

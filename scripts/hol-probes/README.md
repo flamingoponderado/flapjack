@@ -2501,3 +2501,13 @@ external-source checker trust nor completes normalization/grouping or executed
 allocator routing. Source revision/span digest are beside `canonizeMoveLess`.
 Regenerate read-only with
 `HOL_PROBE_ONLY=word_alloc_canonize_sort_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`monad_list_primitives_probe.out` captures twenty-five fresh original Msub,
+Mupdate and failure-bound observations, replayed by `MonadListPrimitivesParity`
+in the kernel. Head/middle/last/empty/boundary/large indices, duplicates and
+independent Nat/Bool/tuple value/exception carriers are covered. Generic theorem
+applications retain only the original out-of-range premise. Finite observations
+do not establish cross-prover equivalence or completion of successful EL/LUPDATE
+equations, state-array accessors or production allocator routing. Regenerate
+read-only with
+`HOL_PROBE_ONLY=monad_list_primitives_probeScript.sml scripts/hol-probes/regenerate.sh`.
