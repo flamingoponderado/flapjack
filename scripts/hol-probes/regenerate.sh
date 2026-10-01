@@ -3222,6 +3222,10 @@ run_probe parmove_map_state_probeScript.sml parmove_map_state_probe.out \
   pms_empty pms_pending pms_active pms_emitted pms_order pms_constant pms_large pms_bool pms_cross_carrier pms_option_constant \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
+run_probe word_alloc_ssa_trans_inst_probeScript.sml word_alloc_ssa_trans_inst_probe.out \
+  sti_skip sti_const sti_binop_reg sti_binop_imm sti_shift_reg sti_shift_imm sti_div sti_addcarry sti_addoverflow sti_suboverflow sti_longmul sti_longdiv sti_load sti_store sti_load32 sti_store8 sti_load16 sti_fpless sti_fpadd sti_movto64 sti_movto32 sti_movfrom64 sti_movfrom32_distinct sti_movfrom32_same ste_var ste_missing ste_nested ste_lookup \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
 run_probe word_alloc_fix_inconsistencies_probeScript.sml word_alloc_fix_inconsistencies_probe.out \
   ol_hit ol_miss pr_none pr_inl pr_inr fm fms_empty fms_left_only fms_right_only fms_both fi_equal fi_mixed \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"

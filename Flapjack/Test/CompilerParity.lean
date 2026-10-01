@@ -763,6 +763,7 @@ import Flapjack.Test.RegAllocStateForeachParity
 import Flapjack.Test.SSARenameLookupParity
 import Flapjack.Test.SSAMergeMovesParity
 import Flapjack.Test.WordAllocFixInconsistenciesParity
+import Flapjack.Test.WordAllocSSATransInstParity
 
 
 

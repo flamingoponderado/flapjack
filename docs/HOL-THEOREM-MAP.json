@@ -46540,5 +46540,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.15.2.30.6): word_allocScript.sml:116-127 fix_inconsistencies prio ssa_L ssa_R na: var_union = MAP FST (toAList (union ssa_L ssa_R)); merge_moves then fake_moves over var_union; result (Seq (Move (priority prio T) Lmov) Lseq, Seq (Move (priority prio F) Rmov) Rseq, na'', ssa_L''). Lean: reviewed sptToAList, sptree union as the existing left-biased sptUnion rendering (untagged infrastructure), accepted mergeMoves. HOL α prog with α the word dimension is WordLangProgHOL (BitVec width) with [NeZero width] (words_as_type_indexed_bitvec). Original EVAL rows (scripts/hol-probes/word_alloc_fix_inconsistencies_probe.out, 64-bit) replayed by definitional equality in Flapjack.Test.WordAllocFixInconsistenciesParity. No extra premise. Proof-side port; the executed list-state SSA pass is not routed through it (see .30.2.1.1.1). Coordinator source acceptance pending.",
     "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "ssa_cc_trans_inst_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/SSATransInst.lean",
+    "lean_name": "ssaCcTransInst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.15.2.30.8): word_allocScript.sml:129-266 ssa_cc_trans_inst, all 26 clauses in source order: Skip; Const (rename destination); Binop/Shift with Reg vs other right operand (Shift Reg routes the amount through Move1 [(8,r3')] and Reg 8); Div; AddCarry (Move1 in to 0, AddCarry ... 0, rename r4, Move1 out); AddOverflow/SubOverflow (r4 renamed after r1, Move1 out from 0); LongMul (moves into 0/4, fixed LongMul 6 0 0 4, moves out); LongDiv (moves into 6/0, LongDiv 0 6 6 0 r5'); Load/Load32/Load8 rename destination, Store/Store32/Store8 read both; FPLess/FPLessEqual/FPEqual rename destination; FPMovToReg/FPMovFromReg split on dimindex (:α) = 64 with the extra Move0 when the two sources coincide; catchall Inst x (Load16/Store16, remaining FP). Lean: same clauses, lookups via the tagged optionLookup, renames via the accepted nextVarRename, the same let order (option_lookup before or after renames exactly as in HOL). HOL α inst/exp/prog with α the word dimension are WordLangInst/WordLangExpHOL/WordLangProgHOL (BitVec width) with [NeZero width] (words_as_type_indexed_bitvec); dimindex (:α) is width. Original EVAL rows (scripts/hol-probes/word_alloc_ssa_trans_inst_probe.out, 28 rows at 64 and 32 bits) replayed by definitional equality in Flapjack.Test.WordAllocSSATransInstParity. No extra premise. Proof-side port; the executed list-state SSA pass is not routed through it. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "ssa_cc_trans_exp_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/SSATransInst.lean",
+    "lean_name": "ssaCcTransExp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.15.2.30.8): word_allocScript.sml:270-283 ssa_cc_trans_exp t (Var num) = Var (option_lookup t num); Load; Op wop (MAP (ssa_cc_trans_exp t) ls); Shift sh exp nexp both renamed; catchall unchanged (Const, Lookup). Lean: same clauses; the Op case maps over ls.attach for structural termination and theorem ssaCcTransExp_op restates it as the literal MAP. HOL α inst/exp/prog with α the word dimension are WordLangInst/WordLangExpHOL/WordLangProgHOL (BitVec width) with [NeZero width] (words_as_type_indexed_bitvec); dimindex (:α) is width. Original EVAL rows (scripts/hol-probes/word_alloc_ssa_trans_inst_probe.out, 28 rows at 64 and 32 bits) replayed by definitional equality in Flapjack.Test.WordAllocSSATransInstParity. No extra premise. Proof-side port; the executed list-state SSA pass is not routed through it. Coordinator source acceptance pending."
   }
 ]
