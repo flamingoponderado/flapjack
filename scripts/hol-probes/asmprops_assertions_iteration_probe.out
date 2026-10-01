@@ -1,0 +1,6 @@
+assert_theorem_fold=T
+assert_theorem_less=T
+assert_theorem_weaken=T
+assert_theorem_change=T
+assert_theorem_first=T
+assert_theorem_every=T

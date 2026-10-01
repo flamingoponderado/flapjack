@@ -1,4 +1,8 @@
+import Flapjack.Test.SSAListRenameArithmeticParity
+import Flapjack.Test.AsmPropsAssertionsIterationParity
 import Flapjack.Test.WordAllocMaxVarMaxParity
+import Flapjack.Test.SSARegisterClassParity
+import Flapjack.Test.SSALocalsParity
 import Flapjack.Test.SSAMapParity
 import Flapjack.Test.SSASetupParity
 import Flapjack.Test.AsmPropsAssertionsParity
@@ -24,6 +28,7 @@ import Flapjack.Test.ParmovePreservesMovesPmovParity
 import Flapjack.Test.WordToStackCodeLabelsParity
 import Flapjack.Test.WordToStackCompCodeLabelsParity
 import Flapjack.Test.WordToStackProgramCodeLabelsParity
+import Flapjack.Test.StackPropsForbiddenOperationsParity
 import Flapjack.Test.WordConvsCodeLabelsParity
 import Flapjack.Test.ParmovePreservesMovesStepsParity
 import Flapjack.Test.WordConvsExpMonoParity
@@ -755,6 +760,8 @@ import Flapjack.Test.PanLangGeneratedSizeParity
 import Flapjack.Test.CrepLangGeneratedSizeParity
 import Flapjack.Test.PanSimpProgBridgeParity
 import Flapjack.Test.RegAllocStateForeachParity
+import Flapjack.Test.SSARenameLookupParity
+import Flapjack.Test.SSAMergeMovesParity
 
 
 
@@ -1566,6 +1573,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.LabToTargetSectionLookupParity.runChecks,
     Flapjack.Test.TargetPropsInterferenceParity.runChecks,
     Flapjack.Test.AsmPropsPcCoverageParity.runChecks,
+    Flapjack.Test.AsmPropsAssertionsIterationParity.runChecks,
     Flapjack.Test.AsmPropsAssertionsParity.runChecks,
     Flapjack.Test.AsmSemFpUpdatesParity.runChecks,
     Flapjack.Test.AsmSemArithmeticParity.runChecks,
