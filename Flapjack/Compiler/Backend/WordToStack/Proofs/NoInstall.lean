@@ -87,4 +87,18 @@ theorem copyRetAuxNoInstall {width : Nat} [NeZero width] (k f n : Nat) :
   | succ n ih => simp [copyRetAuxNative, listSeq, noInstall, ih]
 
 
+/-- Full local source iff for both flags, independent return-list and unused
+frame-tail carriers, and arbitrary native continuations. No safety premise. -/
+@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
+  "copy_ret_no_install" (words_as_type_indexed_bitvec)]
+theorem copyRetNoInstall {width : Nat} [NeZero width] {β γ : Type}
+    (perf b : Bool) (kf : Nat × Nat × γ) (vs : List β) (kont : HolProg width) :
+    noInstall (copyRetNative perf b kf vs kont) = true ↔ noInstall kont = true := by
+  simp only [copyRetNative]
+  split
+  · rfl
+  · simp only [noInstall, copyRetAuxNoInstall, Bool.true_and]
+    simp only [seqStackFreeNative]
+    split <;> simp [noInstall]
+
 end Flapjack.Compiler.Backend.WordToStack.Native

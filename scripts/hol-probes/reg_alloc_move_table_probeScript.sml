@@ -1,0 +1,43 @@
+(* Original reg_alloc pure colour/move helpers: tag_col, unbound_colour,
+   extract_tag, pri_move_insert, undir_move_insert, moves_to_sp, resort_moves.
+   CakeML remains read-only; sparse trees print raw. *)
+load "bossLib";
+load "preamble";
+load "reg_allocTheory";
+open bossLib HolKernel Parse preamble reg_allocTheory;
+val _ = Globals.linewidth := 1000;
+val _ = Parse.temp_remove_user_printer ("sptreepp.sptreepp", ``x : 'a spt``);
+fun observe label term = let val th = EVAL term in print (label ^ "="); print_term (rhs (concl th)); print "\n" end;
+fun observe_type label c = (print (label ^ "="); print_type (type_of c); print "\n");
+val _ = observe_type "tc_type" ``reg_alloc$tag_col``;
+val _ = observe_type "uc_type" ``reg_alloc$unbound_colour``;
+val _ = observe_type "et_type" ``reg_alloc$extract_tag``;
+val _ = observe_type "pmi_type" ``reg_alloc$pri_move_insert``;
+val _ = observe_type "umi_type" ``reg_alloc$undir_move_insert``;
+val _ = observe_type "mts_type" ``reg_alloc$moves_to_sp``;
+val _ = observe_type "rm_type" ``reg_alloc$resort_moves``;
+val _ = observe "tc_fixed" ``tag_col (Fixed 5)``;
+val _ = observe "tc_atemp" ``tag_col Atemp``;
+val _ = observe "tc_stemp" ``tag_col Stemp``;
+val _ = observe "et_fixed" ``extract_tag (Fixed 18446744073709551616)``;
+val _ = observe "et_atemp" ``extract_tag Atemp``;
+val _ = observe "et_stemp" ``extract_tag Stemp``;
+val _ = observe "uc_empty" ``unbound_colour 4 []``;
+val _ = observe "uc_gap" ``unbound_colour 3 [0;1;3;4;7]``;
+val _ = observe "uc_below" ``unbound_colour 2 [5]``;
+val _ = observe "uc_dup" ``unbound_colour 1 [1;1;2]``;
+val _ = observe "uc_run" ``unbound_colour 0 [0;1;2;3]``;
+val _ = observe "uc_unsorted" ``unbound_colour 2 [5;2;3]``;
+val _ = observe "uc_unsorted_miss" ``unbound_colour 2 [2;0;3;2]``;
+val _ = observe "uc_large" ``unbound_colour 18446744073709551616 [18446744073709551616;18446744073709551618]``;
+val _ = observe "pmi_empty" ``pri_move_insert (7:num) 3 (9:num) LN``;
+val _ = observe "pmi_existing" ``pri_move_insert (7:num) 3 (9:num) (insert 3 [(1,2)] (insert 0 [] LN))``;
+val _ = observe "pmi_bool" ``pri_move_insert T 0 F (insert 0 [(F,T)] LN)``;
+val _ = observe "umi_empty" ``undir_move_insert (7:num) 1 2 LN``;
+val _ = observe "umi_self" ``undir_move_insert (7:num) 4 4 LN``;
+val _ = observe "mts_empty" ``moves_to_sp ([]:(num#num#num) list) (insert 5 [(1,1)] LN)``;
+val _ = observe "mts_three" ``moves_to_sp [(5:num,1,2);(3,2,3);(5,1,2)] LN``;
+val _ = observe "mts_bool" ``moves_to_sp [(T,0,1);(F,1,0)] LN``;
+val _ = observe "rm_three" ``resort_moves (moves_to_sp [(5:num,1,2);(3,2,3);(5,1,2)] LN)``;
+val _ = observe "rm_ties" ``resort_moves (insert 0 [(2,T);(2,F);(9,F);(0,T)] LN)``;
+val _ = observe "rm_empty_list" ``resort_moves (insert 1 ([]:(num#num) list) LN)``;
