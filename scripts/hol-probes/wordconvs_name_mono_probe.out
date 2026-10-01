@@ -1,0 +1,6 @@
+nm_empty=(T,T)
+nm_single=(T,T)
+nm_both=(T,T)
+nm_invalid=(T,T)
+nm_guard_needed=(T,F)
+nm_original_theorem=⊢ ∀P names Q. (∀x. P x ⇒ Q x) ∧ every_name P names ⇒ every_name Q names
