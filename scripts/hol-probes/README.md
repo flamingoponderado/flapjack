@@ -1,3 +1,12 @@
+`word_alloc_max_inst_probe.out` records 12 direct original maximum/safety rows
+and fresh Q.prove re-elaboration of the complete local max_var_inst_max theorem.
+The registered WordAllocMaxVarInstParity fixtures check the same instructions
+and non-vacuously instantiate the universal bound. Width64 excludes the second
+FP transfer register; widths32/80 retain it, and FP-only register numbers are ignored.
+These are regression evidence, not cross-assistant equivalence or production routing.
+Regenerate with HOL_PROBE_ONLY=word_alloc_max_inst_probeScript.sml and the read-only
+prebuilt CakeML backend theory directory.
+
 `word_to_stack_comp_native_probe.out` contains 19 direct original comp_def observations,
 kernel-replayed by WordToStackNativeCompileParity. Includes recursive returning/handled
 Calls, valid/invalid immediates and Seq/If/Call bitmap threading. The complete
