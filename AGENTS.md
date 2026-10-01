@@ -63,9 +63,16 @@ outputs from the original CakeML/HOL source. Probes provide regression evidence,
 not a HOL-to-Lean equivalence proof.
 
 Claim a commit-sized bead before starting work. Record the pushed branch and
-commit, verification results, or exact blocked reason on the bead, and notify
-the coordinator. Keep dependency beads open until their own acceptance criteria
-are met.
+commit, verification results, or exact blocked reason on the bead. Keep
+dependency beads open until their own acceptance criteria are met.
+
+Batch routine coordinator messages: roughly ten meaningful content commits is
+a useful reporting interval, not a quota. Keep pushing your own branch and
+updating individual beads throughout the batch; do not wait to publish work.
+Send one summary with the branch/head, covered beads, and actual checks instead
+of a message for every commit or small task. Report urgent blockers, conflicts,
+coordination needs, or a requested delivery sooner. Do not interrupt ongoing
+work merely to report; use a clean between-task boundary.
 
 Before creating or claiming a child bead, read the fleet inbox and list the
 parent's children in the shared bead database. Do not duplicate a constructor
@@ -95,8 +102,8 @@ really needs that prerequisite. Do not serialize independent ports merely to
 make a tidy-looking chain. Assign P1 work only from unblocked, commit-sized
 leaves; leave blocked parents unassigned and record the exact frontier there.
 
-Agents leave completed slices open and report them as ready for review with
-branch, commit, and checks. The coordinator reviews the source and Lean
+Agents leave completed slices open, record readiness on their beads, and include
+them in the next batched report with branch, commit, and checks. The coordinator reviews the source and Lean
 statement, merges the commit into the single integration PR, then closes the
 bead only if its acceptance criteria are met. A pushed agent branch alone is
 not completion.

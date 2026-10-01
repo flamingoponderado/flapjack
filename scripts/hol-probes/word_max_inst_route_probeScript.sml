@@ -1,0 +1,11 @@
+load "preamble"; load "wordLangTheory"; load "word_allocTheory";
+open HolKernel Parse bossLib preamble wordLangTheory word_allocTheory;
+val _ = Globals.linewidth := 1000;
+fun out label term = (print(label ^ "="); print_term(rconc(EVAL term)); print "\n");
+val _ = out "load16_max" ``max_var_inst (Mem Load16 7 (Addr 19 3w) : 64 inst)``;
+val _ = out "store16_max" ``max_var_inst (Mem Store16 7 (Addr 19 3w) : 64 inst)``;
+val _ = out "load32_max" ``max_var_inst (Mem Load32 7 (Addr 19 3w) : 64 inst)``;
+val _ = out "store8_max" ``max_var_inst (Mem Store8 7 (Addr 19 0w) : 32 inst)``;
+val _ = out "load16_limit" ``limit_var (Inst (Mem Load16 7 (Addr 19 3w)) : 64 wordLang$prog)``;
+val _ = out "store16_limit" ``limit_var (Inst (Mem Store16 7 (Addr 19 3w)) : 64 wordLang$prog)``;
+val _ = out "load32_limit" ``limit_var (Inst (Mem Load32 7 (Addr 19 3w)) : 64 wordLang$prog)``;
