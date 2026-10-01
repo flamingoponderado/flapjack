@@ -1,0 +1,7 @@
+dw_empty=[]
+dw_self=[]
+dw_chain=[SOME 1; SOME 2]
+dw_cycle=[NONE; SOME 2; SOME 1]
+dw_duplicate=[SOME 1; SOME 1]
+dw_order=[SOME 9; SOME 2; SOME 8]
+dw_nested_option=[SOME (SOME 1); SOME NONE]

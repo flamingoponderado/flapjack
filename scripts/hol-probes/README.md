@@ -2261,6 +2261,39 @@ key list; it does not establish pass simulation or final binary correctness.
 mapped physical/virtual keys, and a mapped zero colour. Same-input kernel
 fixtures are registered in the actual CompilerParity test root.
 `word_alloc_even_locals_probeScript.sml` computes the original starting-local domain predicate on six full native word/location trees: empty, zero, sparse even keys, odd, mixed and duplicate overwrite. Standard finite-domain logical rewrites normalize its universal quantifier; actual Spt insertion-domain lemmas replay the same six inputs in kernel fixtures imported by CompilerParity. This predicate is a prerequisite, not the whole allocator theorem.
+`parmove_destination_wrapper_probeScript.sml` freshly captures seven whole
+public-wrapper destination lists. Self removal and duplicate destinations are
+unrestricted; the cycle emits scratch NONE while nested-option registers
+include the distinct real identifier SOME NONE.
+`ParmoveDestinationWrapperParity.lean` kernel-computes the same lists and
+applies the full source one-way membership theorem to each input. It is
+imported by the actual Lake test driver as well as the umbrella. These rows
+support regression review, not a cross-prover equivalence or algorithm
+semantic-correctness claim.
+
+`word_to_stack_live_length_probeScript.sml` observes the full native frame
+bitmap length bound and preserved count-minus-flattened-length equation on six
+inputs: zero frame, empty bitmap, positive slack, nested AppList, raw non-wf
+Spt and width-eight packing. `WordToStackLiveLengthParity` kernel-applies the
+full source theorem to the same actual native outputs; it is imported in the
+actual CompilerParity test driver. These finite observations are regression
+evidence, not a cross-prover equivalence or compiler-correctness proof.
+
+`word_to_stack_live_prefix_probeScript.sml` freshly observes the actual frame
+bitmap prefix on seven inputs, including zero frame, nested AppList, raw
+non-wf Spt, width-eight packing and an input count below flattened length.
+`WordToStackLivePrefixParity` applies the full source theorem to the same
+actual native outputs in the real CompilerParity test driver. No input count
+bound is needed. These observations provide regression evidence, not a
+cross-prover equivalence or whole-compiler correctness proof.
+
+`word_to_stack_insert_prefix_probeScript.sml` freshly observes seven insertion
+prefix equations over the original payload-polymorphic operation: empty and
+nested trees, a count below flattened length, positive slack, Bool and Option
+Nat payloads. `WordToStackInsertPrefixParity` kernel-applies the full original
+statement to the same actual insertion outputs in the CompilerParity driver.
+No word dimension or count bound is required. These observations are regression
+evidence, not a cross-prover equivalence or whole-compiler correctness proof.
 
 `word_alloc_remove_temp_stack_probeScript.sml` captures eight original full-tree deletion equations: empty, root key, duplicate, missing, untouched fixed tree, raw non-wf tree, and two generalized payload/second-component inputs. The native right fold and same-input kernel fixtures preserve arbitrary payload/second-component generality; actual CompilerParity registers them. This helper does not establish allocator correctness or executed compiler routing.
 

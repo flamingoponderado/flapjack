@@ -1,0 +1,11 @@
+load "preamble";
+load "word_to_stackTheory";
+open bossLib HolKernel Parse preamble word_to_stackTheory;
+fun out label q = (print(label ^ "="); print_term(rconc(EVAL q)); print "\n");
+val _ = out "lp_zero" ``let bs = (List [4w:64 word],1); bs2 = SND (wLive (LN,LN) bs (4,0,7)) in append (FST bs) ≼ append (FST bs2)``;
+val _ = out "lp_empty" ``let bs = (Nil:64 word app_list,0); bs2 = SND (wLive (LN,LN) bs (4,1,1)) in append (FST bs) ≼ append (FST bs2)``;
+val _ = out "lp_slack" ``let bs = (List [4w:64 word],9); bs2 = SND (wLive (LN,LN) bs (4,2,5)) in append (FST bs) ≼ append (FST bs2)``;
+val _ = out "lp_tree" ``let bs = (Append (List [4w:64 word]) (Append Nil (List [7w;8w])),3); bs2 = SND (wLive (LN,LS ()) bs (0,3,8)) in append (FST bs) ≼ append (FST bs2)``;
+val _ = out "lp_nonwf" ``let bs = (Nil:64 word app_list,12); bs2 = SND (wLive (BS LN () LN,BN LN LN) bs (0,1,0)) in append (FST bs) ≼ append (FST bs2)``;
+val _ = out "lp_width8" ``let bs = (List [4w:8 word],2); bs2 = SND (wLive (LN,LN) bs (2,1,9)) in append (FST bs) ≼ append (FST bs2)``;
+val _ = out "lp_shortcount" ``let bs = (List [4w:64 word],0); bs2 = SND (wLive (LN,LN) bs (4,2,7)) in append (FST bs) ≼ append (FST bs2)``;

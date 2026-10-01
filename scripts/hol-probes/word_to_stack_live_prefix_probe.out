@@ -1,0 +1,7 @@
+lp_zero=T
+lp_empty=T
+lp_slack=T
+lp_tree=T
+lp_nonwf=T
+lp_width8=T
+lp_shortcount=T
