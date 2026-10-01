@@ -3658,3 +3658,26 @@ binders and simplify only constant constructor inequalities/self-equalities;
 no ARB representative or extra premise is introduced. The canonical reviewed
 predicates are reused. This supporting group does not establish full compiler
 preservation or cross-language equivalence.
+### Native return wrapper no-shared-memory preservation
+
+`word_to_stack_no_shmemop_return_probeScript.sml` evaluates sixteen original
+predicate pairs with safe and forbidden continuations, zero/nonzero return
+counts, both flags, widths1/32/64/80, a String frame tail and independent Bool
+return list. Each pair is checked against its explicit true/true or false/false
+result. `WordToStackNoShmemopReturnParity` kernel-checks the identical inputs
+and applies the full theorem at arbitrary independent carriers and positive
+width. These regressions do not establish cross-language equivalence.
+Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_return_probeScript.sml`.
+
+### Native compiler instruction no-shared-memory case
+
+`word_to_stack_no_shmemop_inst_probeScript.sml` checks all source instruction
+subconstructors and extra width1/32/80 FP moves. Forty-two original EVAL
+observations jointly check the source no-share guard, actual compiled target
+no-shared-memory predicate and unchanged full bitmap pair. The samples include
+zero/large registers, zero/nonzero frames, both perf flags, width64/non64 FP
+moves and unhandled Load16/Store16. `WordToStackNoShmemopInstructionsParity`
+replays identical observations through the actual kernel-checked compiler
+equations and applies the original-shaped Inst case at arbitrary inputs.
+These regressions do not establish cross-language equivalence or full compiler
+preservation. Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_inst_probeScript.sml`.
