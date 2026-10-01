@@ -2990,6 +2990,12 @@ definitional equality in `WordAllocFixInconsistenciesParity`. Regenerate with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=word_alloc_fix_inconsistencies_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
+`hol_list_el_probe` captures the original HOL `HD`/`EL` types and six in-range
+values at the pinned HOL revision (`HD []` and out-of-range `EL` are
+unspecified and not probed), kernel-replayed in `HolListElParity`. Regenerate
+with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=hol_list_el_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `reg_alloc_move_prep_probe` captures 13 original EVAL results of
 `extract_color` (raw sparse result), `coalesce_root`, `full_consistency_ok`
 (each rejecting check and an accepted pair) and `update_move`, kernel-replayed

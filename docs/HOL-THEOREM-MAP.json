@@ -47857,5 +47857,21 @@
     "lean_name": "domainForceRename",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.15.2.30.12): word_allocProofScript.sml:6373-6381 domain (force_rename ls ssa) = domain ssa ∪ set (MAP FST ls). HOL domain as the predicate sptDomain, set ls as list membership, union/intersection as disjunction/conjunction, the let-bound result tuple as its projections. Kernel-checked; no holEl in the proof closure. No extra premise. Proof-side."
+  },
+  {
+    "hol_path": "HOL/src/list/src/listScript.sml",
+    "hol_name": "HD",
+    "lean_path": "Flapjack/Misc/ListEl.lean",
+    "lean_name": "holHd",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.15.3.38.1), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: listScript.sml:128-130 Definition HD: HD (h::t) = h, the only clause, so HD [] is unspecified; type 'a list -> 'a. Lean: the h::t clause and, for [], the opaque holHdNil (no Lean proof can learn anything about it, matching HOL). HOL types are inhabited; Lean requires [Nonempty α] for the opaque value. Original type confirmed by type_of; original in-range EVAL rows (scripts/hol-probes/hol_list_el_probe.out) kernel-replayed in Flapjack.Test.HolListElParity. No extra premise."
+  },
+  {
+    "hol_path": "HOL/src/list/src/listScript.sml",
+    "hol_name": "EL_def",
+    "lean_path": "Flapjack/Misc/ListEl.lean",
+    "lean_name": "holEl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.15.3.38.1), pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: listScript.sml:225-228 EL 0 l = HD l /\\ EL (SUC n) l = EL n (TL l); type num -> 'a list -> 'a. Lean: same two clauses over holHd and List.tail (HOL TL_DEF 132-135: TL [] = [], TL (h::t) = t, i.e. List.tail). Original type confirmed by type_of; original in-range EVAL rows (scripts/hol-probes/hol_list_el_probe.out) kernel-replayed in Flapjack.Test.HolListElParity. No extra premise."
   }
 ]
