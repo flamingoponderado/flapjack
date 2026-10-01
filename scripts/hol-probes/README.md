@@ -3164,3 +3164,11 @@ hypothesis list. Rows contain `(next,T)`: `EQT_INTRO` renders the **proved full
 four-conjunct conclusion** as T. This is distinct from attempting to EVAL a
 symbolic universally quantified lookup predicate. The full replay statement is
 captured separately; this local theorem is not claimed to be exported in HOL's DB.
+
+`word_alloc_limit_var_probe.out` records the full original definition/type and
+twelve native-program maximum/limit/class/strict-bound observations. Inputs
+cover all four residues, zero/multiples, widths1/32/64/80, unbounded naturals,
+returning Call bodies, ignored tail handlers and ignored Load16 fields.
+`WordAllocLimitVarParity` checks thirteen kernel examples against identical
+inputs. Select `HOL_PROBE_ONLY=word_alloc_limit_var_probeScript.sml`.
+The executed upstream maximum/limit route remains tracked on .30.1.2.1.

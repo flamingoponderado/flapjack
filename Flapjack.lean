@@ -1,4 +1,6 @@
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameProperties
+
+import Flapjack.Compiler.Backend.WordAlloc.LimitVar
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetup.ListNextVarRenameArithmetic
 import Flapjack.Compiler.Encoders.AsmProps.Assertions.Iteration
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.Maximum.MaxVar
