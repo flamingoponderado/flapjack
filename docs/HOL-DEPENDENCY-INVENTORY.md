@@ -29,10 +29,17 @@ All count invariants hold:
 
 ## Lean coverage of the lexically cited set
 
+<<<<<<< HEAD
 - Distinct textual `@[hol]` `(theory, name)` matches under `Flapjack/`: `1853` (not the validated tag count)
 - Lexically cited names with a textual `(theory, name)` match: `755`
 - Lexically cited names with no textual `(theory, name)` match: `5839`
 - ... of which also have no same-name textual match anywhere: `5748` (name heuristic: neither an over- nor an under-approximation of genuinely missing ports)
+=======
+- Distinct textual `@[hol]` `(theory, name)` matches under `Flapjack/`: `1836` (not the validated tag count)
+- Lexically cited names with a textual `(theory, name)` match: `760`
+- Lexically cited names with no textual `(theory, name)` match: `5882`
+- ... of which also have no same-name textual match anywhere: `5788` (name heuristic: neither an over- nor an under-approximation of genuinely missing ports)
+>>>>>>> origin/fleet-integration-post-1189-stack
 
 ## Direct citations of the root theorem
 
