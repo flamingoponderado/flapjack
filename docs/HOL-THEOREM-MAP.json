@@ -46404,5 +46404,47 @@
     ],
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.3.1): HOL Resume evaluate_remove_dead[LocValue] (word_allocProofScript.sml:4116) case of the theorem at 3900-3928, i.e. the HOL statement with prog fixed to the LocValue constructor, stated as removeDeadGoal (the untagged motive spelling HOL's quantifiers, the six premises strong_locals_rel I (domain livein) st.locals t, live_store_rel nlivein st.store tstore, evaluate, flat_exp_conventions, remove_dead, res <> SOME Error, and the existential conclusion with the removeDeadPost case expression); no IH, no extra premise. Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through wordSem evaluate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_remove_dead",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateRemoveDead/Store.lean",
+    "lean_name": "evaluateRemoveDead_Get",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.3.2): HOL Resume evaluate_remove_dead[Get] (word_allocProofScript.sml:4073) case of the theorem at 3900-3928, i.e. the HOL statement with prog fixed to Get, stated as removeDeadGoal; dead destination/store branch and live branch as HOL (live_store_rel_FLOOKUP_store/_less, strong_locals_rel_I_word_exp/_insert_insert/_insert_notin); no IH, no extra premise. Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through wordSem evaluate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_remove_dead",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateRemoveDead/Store.lean",
+    "lean_name": "evaluateRemoveDead_OpCurrHeap",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.3.2): HOL Resume evaluate_remove_dead[OpCurrHeap] (word_allocProofScript.sml:4090) case of the theorem at 3900-3928, i.e. the HOL statement with prog fixed to OpCurrHeap, stated as removeDeadGoal; dead destination/store branch and live branch as HOL (live_store_rel_FLOOKUP_store/_less, strong_locals_rel_I_word_exp/_insert_insert/_insert_notin); no IH, no extra premise. Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through wordSem evaluate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "evaluate_remove_dead",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/EvaluateRemoveDead/Store.lean",
+    "lean_name": "evaluateRemoveDead_Set",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.15.2.31.3.2): HOL Resume evaluate_remove_dead[Set] (word_allocProofScript.sml:4123) case of the theorem at 3900-3928, i.e. the HOL statement with prog fixed to Set, stated as removeDeadGoal; dead destination/store branch and live branch as HOL (live_store_rel_FLOOKUP_store/_less, strong_locals_rel_I_word_exp/_insert_insert/_insert_notin); no IH, no extra premise. Inherits reals_as_rational_cuts (docs/SOUNDNESS.md item 8) through wordSem evaluate."
   }
 ]
