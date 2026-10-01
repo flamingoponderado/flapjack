@@ -1,3 +1,11 @@
+`word_to_stack_comp_native_probe.out` contains 19 direct original comp_def observations,
+kernel-replayed by WordToStackNativeCompileParity. Includes recursive returning/handled
+Calls, valid/invalid immediates and Seq/If/Call bitmap threading. The complete
+native traversal is source-reviewed; these rows do not prove cross-prover
+equivalence or establish production routing/compiler correctness. Regenerate
+with HOL_PROBE_ONLY=word_to_stack_comp_native_probeScript.sml and the read-only
+prebuilt CakeML backend theory directory.
+
 `word_to_stack_write_bitmap_type.sml` queries the original HOL constant type
 (`α sptree$num_map -> num -> num -> β word list`) from the prebuilt
 `word_to_stackTheory`; run `HOL/bin/hol run <absolute script path>` from the
@@ -2137,3 +2145,29 @@ exact conclusion and empty hypothesis list. `TargetSemEncodedBytesParity.lean`
 replays each row, using the same `Jump 0w` and block-index `1` witnesses for the
 whole predicate. These concrete checks do not prove compiler correctness.
 `labsem_inst_probeScript.sml` checks original native asm_inst dispatch for all five constructors in fourteen direct rows: Skip/Const, Loc-sensitive arithmetic, failed division/shift writes, Loc memory and failed Store updates, unsupported ordinary16, and raw FP payload/sign/register-error paths. `Flapjack/Test/LabSemInstParity.lean` replays identical inputs and expected results in the kernel. `LabSem/Inst.lean` separately proves the full unconditional thirteen-conjunct original asm_inst_consts by unfolding every actual native Arith/Mem/FP case. The FP dependency inherits the existing real-number translation assurance boundary; full native evaluate and production routing remain separate work.
+`parmove_save_probeScript.sml` captures 20 original HOL `sem` values for Save,
+including a cycle, reversed nonempty emitted history, and the permitted final
+`NONE` source. The temporary may change (99 to 67) while real-register results
+agree. A deliberately invalid pending `NONE` source yields 99 versus 27 and
+fails `wf`; no equivalence is claimed for it. Lean checks all observations and
+the input invariants. Save's generic theorem proves the original real-register
+equivalence from the full source `wf`, with no extra agreement premise.
+
+`wordlang_max_var_inst_probeScript.sml` captures 26 direct original
+`max_var_inst` equations, covering every arithmetic and memory clause, integer
+FP comparison results, both 32/64-bit transfer branches, and the FP default.
+`WordLangMaxVarInstParity.lean` replays these finite observations in the kernel.
+They support regression review, not a cross-prover equivalence proof or
+production compiler routing claim.
+
+`word_lang_max_var_exp_probeScript.sml` captures eight original expression frame bounds: variables, nested loads, empty and nested operators, shifts, constants, lookups and mixed expressions. `WordLangMaxVarExpParity.lean` kernel-replays identical inputs. Full program max_var and native compiler wrapper routing remain separate work.
+`wordlang_cutsets_max_probeScript.sml` captures eight original `cutsets_max`
+equations over both Spt components, including raw and non-well-formed trees.
+`WordLangCutsetsMaxParity.lean` kernel-replays the same inputs. These rows are
+regression evidence, not a full compiler or cross-prover equivalence proof.
+`parmove_emithead_probeScript.sml` captures 26 fresh original sem values, paired
+with kernel checks: reversed history, a three-move active path and valid final
+NONE source. Two wf-valid boundaries violate the constructor guards: closing
+a cycle changes register2 from17 to27; a pending read changes register4 from17
+to27. These are not accepted steps. The proof derives active no-read and retains
+both original guards. Full step_sem/RTC/scheduler assembly remains open.
