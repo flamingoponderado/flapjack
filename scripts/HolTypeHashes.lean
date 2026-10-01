@@ -199,6 +199,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.StackSize
 import Flapjack.Compiler.Backend.WordToStack.Proofs.Frames
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstraction
 import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexList
+import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapAppend
 import Flapjack.Compiler.Backend.WordToStackRegFormat
 import Flapjack.Compiler.Backend.Parmove
 import Flapjack.Compiler.Backend.Parmove.Semantics

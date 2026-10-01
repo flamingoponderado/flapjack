@@ -1997,3 +1997,5 @@ and eqenv ignores only NONE. The two eqenv rows use the original
 `ParmoveSemanticsParity.lean` checks every captured observation; no windmill
 premise is imposed on repeated destinations. Full scheduler correctness and
 production wiring remain open.
+
+- `word_to_stack_bitmap_append_probeScript.sml`: successful bitmap decoding remains unchanged after appending words.
