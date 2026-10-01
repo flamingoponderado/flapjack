@@ -3142,3 +3142,10 @@ run_probe word_to_stack_program_bitmaps_probeScript.sml word_to_stack_program_bi
 run_probe word_alloc_get_heuristics_probeScript.sml word_alloc_get_heuristics_probe.out \
   gh_empty_even gh_empty_odd gh_move_even gh_move_odd gh_duplicates gh_self_call gh_other_call gh_get_cost gh_large_even gh_large_odd gh_move_structure gh_dup_structure gh_self_structure gh_get_structure \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+run_probe reg_alloc_sort_moves_probeScript.sml reg_alloc_sort_moves_probe.out \
+  sort_empty sort_one sort_mixed sort_ties sort_bool merge_empty merge_left merge_right merge_ties merge_unsorted merge_duplicate merge_bool \
+  "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe parmove_all_distinct_steps_probeScript.sml parmove_all_distinct_steps_probe.out \
+  adrtc_scratch adrtc_first adrtc_middle adrtc_last \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"

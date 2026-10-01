@@ -2603,3 +2603,10 @@ Cases include invalid initial bounds, width one, repeated identifiers, and
 independent Bool identifiers. The general prefix/accounting proofs retain
 the original compiler output equations and initial-length bound; finite
 snapshots are not a cross-language equivalence proof.
+
+`reg_alloc_sort_moves_probe` captures twelve original priority-sort/merge
+equations, including equal priorities and unsorted merge inputs; the matching
+Lean fixture replays them. `parmove_all_distinct_steps_probe` captures four
+destination-distinctness observations; Lean also applies the full RTC theorem
+to zero-step and concrete two-step traces. These fixtures do not establish
+cross-language equivalence or whole allocator correctness.
