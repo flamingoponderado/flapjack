@@ -2709,7 +2709,7 @@ run_probe word_alloc_get_writes_probeScript.sml word_alloc_get_writes_probe.out 
   writes_move writes_store_consts writes_inst_load16 writes_shared_load16 writes_shared_store16 writes_seq_catchall writes_install \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
 run_probe word_to_stack_stack_size_rel_probeScript.sml word_to_stack_stack_size_rel_probe.out \
-  ss_none ss_some ss_bad_max ss_missing_loc ss_missing_frame ss_frame_guard \
+  ss_none ss_some ss_bad_max ss_missing_loc ss_missing_frame ss_frame_guard ss_target_bool ss_target_nat \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe target_sem_encoded_bytes_probeScript.sml target_sem_encoded_bytes_probe.out \
@@ -3023,3 +3023,26 @@ run_probe word_alloc_checker_assembly_probeScript.sml word_alloc_checker_assembl
 run_probe word_to_stack_cutset_maximum_probeScript.sml word_to_stack_cutset_maximum_probe.out \
   cs_empty cs_root cs_left cs_right cs_duplicates cs_left_max cs_reordered cs_root_duplicates cs_large cs_overlap cs_range cs_sparse \
   "$cake_dir/pancake/loop_to_wordScript.sml" "$cake_dir/pancake"
+run_probe parmove_independence_probeScript.sml parmove_independence_probe.out \
+  ind_head ind_middle ind_tail ind_cycle ind_fanout ind_self ind_bool ind_empty_others ind_nil_nat ind_nil_bool \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe parmove_seqsem_unchanged_probeScript.sml parmove_seqsem_unchanged_probe.out \
+  su_empty su_chain su_cycle su_repeat su_source su_written su_self su_bool \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe parmove_parsem_map_inj_probeScript.sml parmove_parsem_map_inj_probe.out \
+  pi_one pi_chain pi_cycle pi_shared_source pi_self pi_high pi_mixed pi_collision \
+  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe spt_map_probeScript.sml spt_map_probe.out \
+  sm_empty sm_leaf sm_children sm_root sm_raw_bn sm_raw_bs sm_raw_nested sm_bool_nat sm_nat_bool sm_unit_raw \
+  "$hol_dir/src/finite_maps/sptreeScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_alloc_heu_inst_probeScript.sml word_alloc_heu_inst_probe.out \
+  hi_skip hi_const hi_binreg hi_shiftreg hi_div hi_binimm hi_shiftimm hi_carry hi_addoverflow hi_suboverflow hi_longmul hi_longdiv hi_load hi_load32 hi_load8 hi_store hi_store32 hi_store8 hi_fpless hi_fplessequal hi_fpequal hi_to_1 hi_from_1 hi_to_32 hi_from_32 hi_to_64 hi_from_64 hi_to_128 hi_from_128 hi_bin_alias hi_carry_alias hi_longdiv_alias hi_to_alias hi_from_alias hi_existing hi_large hi_const_raw hi_load16_raw hi_store16_raw hi_fpabs_raw hi_fpneg_raw hi_fpsqrt_raw hi_fpadd_raw hi_fpsub_raw hi_fpmul_raw hi_fpdiv_raw hi_fpfma_raw hi_fpmov_raw hi_fptoint_raw hi_fpfromint_raw \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_alloc_heu_max_probeScript.sml word_alloc_heu_max_probe.out \
+  hm_tuple hm_tuple_equal hm_tuple_zero hm_tuple_large hm_empty hm_left hm_right hm_overlap hm_disjoint hm_mixed hm_nested hm_raw_left_bn hm_raw_right_bn hm_raw_both_bn hm_raw_left_bs hm_raw_right_bs hm_raw_both_bs hm_raw_bs_leaf hm_raw_leaf_bs hm_raw_empty_leaf \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"

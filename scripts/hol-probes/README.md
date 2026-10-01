@@ -2361,6 +2361,7 @@ in `WordAllocShareCheckerParity`, imported by the actual CompilerParity driver.
 These finite observations supplement the full original-motive case proofs;
 they do not establish cross-prover equivalence or whole allocator correctness.
 
+`parmove_temp_mixed_probeScript.sml` checks four literal scratch-safety clauses with independent bool destination and num source carriers. `ParmoveTempAppendParity` kernel-replays these rows and applies the append theorem to arbitrary independent carriers; existing same-carrier sentinels remain registered.
 `word_alloc_share_checker_probeScript.sml` freshly observes all eight ShareInst
 checker cases (Store/Store8/Store16/Store32 and Load/Load8/Load16/Load32) under
 identity colouring, with a variable address. The same inputs are kernel-replayed
@@ -2402,11 +2403,13 @@ malformed trees, nonzero starting indices and Bool/Nat payload changes.
 These finite observations do not establish cross-prover equivalence or route
 the executed allocator. Regenerate read-only with
 `HOL_PROBE_ONLY=spt_mapi_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`parmove_seqsem_unchanged_probeScript.sml` captures eight original sequential-evaluator value/equality tuples: empty, chain, cycle, repeated destinations, source-only observed register, written-key negative sentinel, self update, and Bool registers with Nat values. Matching kernel fixtures instantiate the unrestricted preservation theorem. These tests do not establish whole allocator equivalence.
 `parmove_temp_mixed_probeScript.sml` checks four literal scratch-safety clauses with independent bool destination and num source carriers. `ParmoveTempAppendParity` kernel-replays these rows and applies the append theorem to arbitrary independent carriers; existing same-carrier sentinels remain registered.
 
 
 `word_alloc_stack_only_probeScript.sml` captures fifteen original full-tree equalities for native stack analysis: right-fold Move and reverse Seq order, branch operand deletion, recursive wrappers, all Call handler forms, Delta removal and non-Delta preservation, including raw initial trees and the entry projection. Matching kernel fixtures run through CompilerParity. Production allocator routing remains separate.
 
+`parmove_parsem_map_inj_probeScript.sml` captures eight original renamed/original value/equality tuples, including cycles, shared sources, large register IDs, independent Nat-to-Bool register carriers, and a failing domain-injectivity sentinel. Matching kernel fixtures retain arbitrary-carrier theorem application. Finite observations do not prove whole allocator equivalence.
 `word_alloc_get_prefs_probeScript.sml` captures seventeen original full-list preference equalities, with nonempty accumulators, duplicates/self moves, branch and sequential ordering, both returning handlers, tail-handler exclusion, loops, nested wrappers, ignored constructors and priority/register naturals exceeding 2^64. Matching actual CompilerParity fixtures reduce in the kernel. Native allocator assembly and production routing remain separate.
 `word_alloc_checker_assembly_probe.out` observes five mixed original checker
 equations, kernel-replayed by `WordAllocCheckerAssemblyParity`. Nested control
@@ -2418,3 +2421,33 @@ the executed allocator. Regenerate with
 `HOL_PROBE_ONLY=word_alloc_checker_assembly_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `word_to_stack_cutset_maximum_probe` captures twelve original cutset maxima, including duplicate/root keys, reordered and overlapping lists, sparse names and naturals above 2^80. Kernel fixtures replay the same inputs and apply the unconditional full list-to-Spt maximum correspondence. The production frame and compiler route remain separate dependency-linked work.
+`parmove_independence_probeScript.sml` proves ten original whole environment-transformer equalities using the original independence/parsem_nil theorems and evaluated windmill premises. Cases cover head/middle/tail extraction, cyclic sources, fanout, self moves, empty surrounding lists and independent Bool/Nat register/value carriers. Matching kernel theorem applications run in CompilerParity; these universal equality observations are not executable compiler parity or whole compiler correctness.
+`word_alloc_stack_only_probeScript.sml` captures fifteen original full-tree equalities for native stack analysis: right-fold Move and reverse Seq order, branch operand deletion, recursive wrappers, all Call handler forms, Delta removal and non-Delta preservation, including raw initial trees and the entry projection. Matching kernel fixtures run through CompilerParity. Production allocator routing remains separate.
+
+`word_alloc_get_prefs_probeScript.sml` captures seventeen original full-list preference equalities, with nonempty accumulators, duplicates/self moves, branch and sequential ordering, both returning handlers, tail-handler exclusion, loops, nested wrappers, ignored constructors and priority/register naturals exceeding 2^64. Matching actual CompilerParity fixtures reduce in the kernel. Native allocator assembly and production routing remain separate.
+
+`spt_map_probe.out` contains ten direct original payload-only `sptree$map`
+observations, kernel-replayed by `SptMapParity`. Every constructor, malformed
+empty internal nodes (which must be retained), nested raw trees and independent
+Bool/Nat/Unit payload types are covered. These finite observations do not
+establish cross-prover equivalence or route the executed allocator. Regenerate
+read-only with `HOL_PROBE_ONLY=spt_map_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`word_alloc_heu_inst_probe.out` contains fifty direct original instruction
+heuristic observations, kernel-replayed as explicit numeric counter trees by
+`HeuInstParity`. Every counted clause and FP catchall is covered, including
+aliasing, ignored addresses, raw trees, unchanged keys, large Nat counters and
+FP moves at widths1/32/64/128 (both integer registers counted at every width).
+Finite observations do not establish cross-prover equivalence or route the
+executed allocator. Regenerate read-only with
+`HOL_PROBE_ONLY=word_alloc_heu_inst_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`parmove_independence_probeScript.sml` proves ten original whole environment-transformer equalities using the original independence/parsem_nil theorems and evaluated windmill premises. Cases cover head/middle/tail extraction, cyclic sources, fanout, self moves, empty surrounding lists and independent Bool/Nat register/value carriers. Matching kernel theorem applications run in CompilerParity; these universal equality observations are not executable compiler parity or whole compiler correctness.
+
+`word_alloc_heu_max_probe.out` captures twenty original componentwise maximum
+and branch-tree join observations, kernel-replayed by `HeuMaxParity`. Cases
+cover large Nat counters, overlapping/disjoint/mixed/nested keys and raw-tree
+orientation: untouched left nodes can remain malformed while the indexed map
+normalizes the right nodes. Exact trees are compared, not only domains. Finite
+observations do not establish cross-prover equivalence or executed allocator
+routing. Regenerate read-only with
+`HOL_PROBE_ONLY=word_alloc_heu_max_probeScript.sml scripts/hol-probes/regenerate.sh`.

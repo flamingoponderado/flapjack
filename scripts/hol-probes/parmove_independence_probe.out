@@ -1,0 +1,10 @@
+ind_head=T
+ind_middle=T
+ind_tail=T
+ind_cycle=T
+ind_fanout=T
+ind_self=T
+ind_bool=T
+ind_empty_others=T
+ind_nil_nat=T
+ind_nil_bool=T
