@@ -1,3 +1,4 @@
+import Flapjack.Test.LabSemSemanticsParity
 import Flapjack.Test.WordToStackNativeProgramsParity
 import Flapjack.Test.ParmoveFinalParity
 import Flapjack.Test.ParmoveStepsSemParity
