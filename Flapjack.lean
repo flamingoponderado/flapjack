@@ -1128,6 +1128,7 @@ import Flapjack.Compiler.Backend.RegAlloc.Worklists
 import Flapjack.Misc.LookupAny
 import Flapjack.Compiler.Backend.RegAlloc.Coalesce
 import Flapjack.Compiler.Backend.RegAlloc.SpillChoice
+import Flapjack.Compiler.Backend.RegAlloc.MovePrep
 
 
 /- The context-aware Crep-to-Loop correctness file is being updated alongside

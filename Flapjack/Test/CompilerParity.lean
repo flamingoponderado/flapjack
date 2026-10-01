@@ -37,6 +37,7 @@ import Flapjack.Test.RegAllocSplitDegreeParity
 import Flapjack.Test.RegAllocConsideredVarParity
 import Flapjack.Test.RegAllocWorklistsParity
 import Flapjack.Test.RegAllocCoalesceParity
+import Flapjack.Test.RegAllocMovePrepParity
 import Flapjack.Test.RegAllocSortMovesRouteParity
 import Flapjack.Test.ParmovePreservesMovesStepParity
 import Flapjack.Test.ParmoveAllDistinctStepsParity

@@ -3217,6 +3217,12 @@
       "sha256": "b7e9c9c4909dc012f2c85516433cd7f367f106375d48aa788b3de726c16f85c8"
     },
     {
+      "bytes": 1192,
+      "out": "reg_alloc_move_prep_probe.out",
+      "rows": 13,
+      "sha256": "dd9892016c48671f94e66cdb94ca75a0de70b3720bc26a5e09b12a6469d1a942"
+    },
+    {
       "bytes": 1084,
       "out": "reg_alloc_move_table_probe.out",
       "rows": 32,

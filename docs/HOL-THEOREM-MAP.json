@@ -46033,5 +46033,37 @@
     "lean_name": "lookupAny",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.8.6.27): miscScript.sml:344-348 lookup_any x sp d = case lookup x sp of NONE => d | SOME m => m; original type num -> α num_map -> α -> α, so {α : Type}; HOL lookup is the reviewed sptLookup. Original EVAL rows (scripts/hol-probes/reg_alloc_coalesce_probe.out) kernel-replayed in Flapjack.Test.RegAllocCoalesceParity. No extra premise. Proof-side port; executed allocator unchanged. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "extract_color_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/MovePrep.lean",
+    "lean_name": "extractColor",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.13): reg_allocScript.sml:1306-1317 extract_color ta = do taa <- return (toAList ta); itags <- st_ex_MAP (λ(k,v). do t <- node_tag_sub v; return (k,extract_tag t) od) taa; return (fromAList itags) od. Lean: reviewed sptToAList/sptFromAList, accepted stExMap, tagged extractTag. Generated accessors from .10.5.2 (opus-wordsem e234f6ad2, pending acceptance). Original type confirmed by type_of; original EVAL rows (scripts/hol-probes/reg_alloc_move_prep_probe.out) kernel-replayed in Flapjack.Test.RegAllocMovePrepParity. No extra premise. Proof-side port; executed allocator unchanged. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "coalesce_root_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/MovePrep.lean",
+    "lean_name": "coalesceRoot",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.13): reg_allocScript.sml:1353-1366 coalesce_root x = do xt <- coalesced_sub x; bx <- is_Fixed xt; if bx then return xt else if x <= xt then return x else coalesce_root xt od. Lean: same, well-founded on x (recursion only when xt < x), no state update. Generated accessors from .10.5.2 (opus-wordsem e234f6ad2, pending acceptance). Original type confirmed by type_of; original EVAL rows (scripts/hol-probes/reg_alloc_move_prep_probe.out) kernel-replayed in Flapjack.Test.RegAllocMovePrepParity. No extra premise. Proof-side port; executed allocator unchanged. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "full_consistency_ok_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/MovePrep.lean",
+    "lean_name": "fullConsistencyOk",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.13): reg_allocScript.sml:1385-1406 full_consistency_ok k x y: F if x = y, F if x ≥ d ∨ y ≥ d (get_dim), F if sorted_mem x (adj_ls_sub y), else (bx ∨ ax) ∧ (by ∨ ay) ∧ ¬(bx ∧ by) with is_Fixed_k k and is_Atemp read in the order bx, by, ax, ay. Lean: same order, Bool connectives. Generated accessors from .10.5.2 (opus-wordsem e234f6ad2, pending acceptance). Original type confirmed by type_of; original EVAL rows (scripts/hol-probes/reg_alloc_move_prep_probe.out) kernel-replayed in Flapjack.Test.RegAllocMovePrepParity. No extra premise. Proof-side port; executed allocator unchanged. Coordinator source acceptance pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
+    "hol_name": "update_move_def",
+    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/MovePrep.lean",
+    "lean_name": "updateMove",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.11.5.10.5.13): reg_allocScript.sml:1409-1416 update_move spta (p,(x,y)) = let spx = spta x in let spy = spta y in if spx ≤ spy then (p,(spx,spy)) else (p,(spy,spx)); type (num -> num) -> num # num # num -> num # num # num. Lean: same pure function. Generated accessors from .10.5.2 (opus-wordsem e234f6ad2, pending acceptance). Original type confirmed by type_of; original EVAL rows (scripts/hol-probes/reg_alloc_move_prep_probe.out) kernel-replayed in Flapjack.Test.RegAllocMovePrepParity. No extra premise. Proof-side port; executed allocator unchanged. Coordinator source acceptance pending."
   }
 ]
