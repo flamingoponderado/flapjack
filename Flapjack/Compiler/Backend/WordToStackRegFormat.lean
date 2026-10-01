@@ -291,9 +291,11 @@ StackHandlerArgs perf dest arg_count (k,f,f') =
 ```
 
     `'a` is arbitrary in HOL (no word operation and no `dimindex (:'a)`), so the
-    generic-`α` statement over the shared-word carrier `ProgM` is exact. -/
+    generic-`α` statement over the shared-word carrier `ProgM` is exact.
+    The two destination payload types are independently quantified by HOL;
+    neither is restricted to the output program carrier or to natural numbers. -/
 @[hol "cakeml/compiler/backend/word_to_stackScript.sml" "StackHandlerArgs_def"]
-def stackHandlerArgs {α : Type} (perf : Bool) (dest : Sum Nat Nat) (arg_count : Nat)
+def stackHandlerArgs {α δ ε : Type} (perf : Bool) (dest : Sum δ ε) (arg_count : Nat)
     (kf : Nat × Nat × Nat) : ProgM α :=
   stackArgs dest arg_count
     (kf.1,

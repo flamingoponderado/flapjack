@@ -12350,7 +12350,7 @@
     "hol_name": "StackHandlerArgs_def",
     "lean_name": "stackHandlerArgs",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-deepseek-three (2026-09-25: matches HOL `StackHandlerArgs_def` at word_to_stackScript.sml:350 - StackArgs dest arg_count (k, f + handler_slots perf, f' + handler_slots perf). `'a` is arbitrary in HOL and only num/sum/list are touched, so the generic-alpha statement over the exact shared-word carrier ProgM is exact; HOL-EVAL rows shaF=T/shaT=T reproduced by handlerParityGuard in Flapjack/Test/WordToStackBitsParity.lean.)"
+    "reviewer": "flapjack-luna-b source comparison 2026-10-01 r1p4: Original word_to_stackScript.sml349-353 and freshly loaded theory type bool -> alpha+beta -> num -> num#num#num -> gamma stackLang prog independently quantify both destination payloads and output program carrier. Lean now retains independent delta/epsilon destination parameters and existing alpha output parameter. Body unchanged: calls StackArgs with exactly handler_slots additions to both offsets. Nat call sites explicitly instantiate erased destination carriers; original shaF/shaT kernel parity retained, plus universal generic equation and Bool/Unit unequal-carrier examples. No production behavioral delta. Prior Nat/Nat restriction corrected rather than accepted as exact."
   },
   {
     "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
