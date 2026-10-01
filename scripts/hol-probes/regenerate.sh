@@ -3145,26 +3145,12 @@ run_probe word_to_stack_program_bitmaps_probeScript.sml word_to_stack_program_bi
   pb_single_skip pb_single_zero_frame pb_single_alloc pb_single_seq pb_single_invalid_bound pb_single_width_one pb_rows_empty pb_rows_repeat_id pb_rows_mixed pb_rows_bool \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
 
-run_probe word_alloc_get_heuristics_probeScript.sml word_alloc_get_heuristics_probe.out \
-  gh_empty_even gh_empty_odd gh_move_even gh_move_odd gh_duplicates gh_self_call gh_other_call gh_get_cost gh_large_even gh_large_odd gh_move_structure gh_dup_structure gh_self_structure gh_get_structure \
-  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
 run_probe reg_alloc_sort_moves_probeScript.sml reg_alloc_sort_moves_probe.out \
   sort_empty sort_one sort_mixed sort_ties sort_bool merge_empty merge_left merge_right merge_ties merge_unsorted merge_duplicate merge_bool \
   "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
 run_probe parmove_all_distinct_steps_probeScript.sml parmove_all_distinct_steps_probe.out \
   adrtc_scratch adrtc_first adrtc_middle adrtc_last \
-  "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
-
-run_probe word_to_stack_compile_lookup_probeScript.sml word_to_stack_compile_lookup_probe.out \
-  lookup_duplicate_first lookup_later_threaded lookup_missing lookup_bool_first \
-  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
-
-run_probe word_to_stack_register_labels_probeScript.sml word_to_stack_register_labels_probe.out \
-  wr_physical wr_boundary wr_spilled wr_zero wr_large wr_labelled \
-  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
-run_probe parmove_preserves_moves_step_probeScript.sml parmove_preserves_moves_step_probe.out \
-  preserve_4_before preserve_4_after preserve_6_before preserve_6_after preserve_1_before preserve_1_after preserve_8_before preserve_8_after preserve_scratch_before preserve_scratch_after \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
 run_probe wordconvs_code_labels_probeScript.sml wordconvs_code_labels_probe.out \
@@ -3182,9 +3168,6 @@ run_probe parmove_preserves_moves_steps_probeScript.sml parmove_preserves_moves_
   rtc_real_before rtc_real_after rtc_scratch_before rtc_scratch_after rtc_changed_source rtc_old_source_absent \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
-run_probe word_alloc_max_inst_probeScript.sml word_alloc_max_inst_probe.out \
-  mi_skip mi_const mi_binreg mi_binimm mi_shift mi_div mi_longdiv mi_load8 mi_fp64_to mi_fp32_to mi_fp80_from mi_fpignored mi_original_theorem \
-  "$cake_dir/compiler/backend/wordLangScript.sml" "$cake_dir/compiler/backend"
 run_probe reg_alloc_phase_closure_probeScript.sml reg_alloc_phase_closure_probe.out \
   ra_phase_do_simplify ra_phase_do_coalesce ra_phase_do_prefreeze ra_phase_do_freeze ra_phase_do_spill ra_phase_dec_deg ra_phase_dec_degree ra_phase_push_stack ra_phase_is_not_coalesced ra_phase_split_degree ra_phase_sort_moves ra_phase_smerge ra_phase_revive_moves ra_phase_unspill ra_phase_inc_deg ra_phase_is_Fixed ra_phase_is_Atemp ra_phase_is_Fixed_k ra_phase_considered_var ra_phase_deg_or_inf ra_phase_bg_ok ra_phase_consistency_ok ra_phase_coalesce_parent ra_phase_canonize_move ra_phase_st_ex_FIRST ra_phase_respill ra_phase_reset_move_related ra_phase_st_ex_list_MIN_cost ra_phase_st_ex_list_MAX_deg \
   "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
@@ -3199,6 +3182,20 @@ run_probe reg_alloc_state_foreach_probeScript.sml reg_alloc_state_foreach_probe.
 run_probe parmove_preserves_moves_pmov_probeScript.sml parmove_preserves_moves_pmov_probe.out \
   pmv_terminal pmv_pending pmv_output \
   "$cake_dir/compiler/backend/reg_alloc/parmoveScript.sml" "$cake_dir/compiler/backend/reg_alloc"
+
+run_probe word_alloc_get_heuristics_probeScript.sml word_alloc_get_heuristics_probe.out \
+  gh_empty_even gh_empty_odd gh_move_even gh_move_odd gh_duplicates gh_self_call gh_other_call gh_get_cost gh_large_even gh_large_odd gh_move_structure gh_dup_structure gh_self_structure gh_get_structure \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend"
+run_probe word_to_stack_compile_lookup_probeScript.sml word_to_stack_compile_lookup_probe.out \
+  lookup_duplicate_first lookup_later_threaded lookup_missing lookup_bool_first \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+run_probe word_to_stack_register_labels_probeScript.sml word_to_stack_register_labels_probe.out \
+  wr_physical wr_boundary wr_spilled wr_zero wr_large wr_labelled \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_alloc_max_inst_probeScript.sml word_alloc_max_inst_probe.out \
+  mi_skip mi_const mi_binreg mi_binimm mi_shift mi_div mi_longdiv mi_load8 mi_fp64_to mi_fp32_to mi_fp80_from mi_fpignored mi_original_theorem \
+  "$cake_dir/compiler/backend/wordLangScript.sml" "$cake_dir/compiler/backend"
 
 run_probe word_alloc_max_exp_probeScript.sml word_alloc_max_exp_probe.out \
   me_const me_lookup me_var me_load me_empty me_nested me_duplicate me_shiftleft me_shiftright me_zero me_original_theorem \
