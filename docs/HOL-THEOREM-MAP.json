@@ -38255,5 +38255,22 @@
   "hol_name": "extend_with_resource_limit_not_fail",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-sol source comparison (2026-10-01, bead flapjack-pxn.18.5.15.10.1.3): original semanticsPropsScript204-295 on already reviewed native HolBehaviour/HolOutcome/HolIoEvent/HolLList from FfiHOL. HOL sets are membership predicates, ordinary list prefix is List.IsPrefix and LPREFIX is HolLList.lprefix. Extension retains original behaviors and adds exactly Resource_limit_hit finite prefixes of terminating/diverging traces; true precise flag retains original set, false extends. Implements keeps original Fail-not-in-source guard and subset conclusion. Full prime trans retains compiled/intermediate/source/bool universal binders and original conjunction, deriving intermediate non-Fail internally. Unprimed trans retains two implications, false-flag theorem function equality, not-fail original conjunction, finite-prefix lemma original polymorphic list statement. No added evaluation, success, target result or IH premise. No variable word dimension or String/Array translation: canonical event bytes are exact fixed BitVec8, names HolFfiName/MlS. Synthesized monotonicity/idempotence helpers have no separate HOL original; legacy CakeBehaviour is not used and remains untagged."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/State.lean",
+  "lean_name": "Word8Loc",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "word8_loc",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-sol source comparison (2026-10-01, bead flapjack-b4v0.1): labSemScript.sml10-44. Word8Loc exactly Byte word8 | LocByte num num num. State preserves all23 fields in order: regs total num->word_loc, fp_regs total num->word64, mem total word->word_loc, mem_domain/shared_mem_domain sets, pc, be, ffi, io_regs num->ffiname->num->word option, cc_regs num->num->word option, io_fp_regs/cc_fp_regs num->num->word64, code list of sections, compile C->prog->(word8 list*C)option, compile_oracle num->C*prog, code_buffer buffer(width,8), clock, failed and five ptr/len/link register fields. Canonical WordLocW, WordSemBuffer, HolFfiState and HolFfiName imported without duplication. Concrete LabLang instantiation uses HolAsm (not merely HolInst nor generic AsmData), HolMemop/HolAddr/HolCmp/HolRegImm and opaque MlString at one shared width; all constructor arities and source payloads compared labLang16-51/asm138-145. Sets use the previously reviewed Bool membership rendering; no finite-map fields, hence no fmap qualifier. Only variable word dimension uses positive BitVec width/NeZero; fixed8/64 retained. C/F universe0 independent; no evaluator or runtime claim."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/LabSem/State.lean",
+  "lean_name": "State",
+  "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
+  "hol_name": "state",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "reviewer": "flapjack-sol source comparison (2026-10-01, bead flapjack-b4v0.1): labSemScript.sml10-44. Word8Loc exactly Byte word8 | LocByte num num num. State preserves all23 fields in order: regs total num->word_loc, fp_regs total num->word64, mem total word->word_loc, mem_domain/shared_mem_domain sets, pc, be, ffi, io_regs num->ffiname->num->word option, cc_regs num->num->word option, io_fp_regs/cc_fp_regs num->num->word64, code list of sections, compile C->prog->(word8 list*C)option, compile_oracle num->C*prog, code_buffer buffer(width,8), clock, failed and five ptr/len/link register fields. Canonical WordLocW, WordSemBuffer, HolFfiState and HolFfiName imported without duplication. Concrete LabLang instantiation uses HolAsm (not merely HolInst nor generic AsmData), HolMemop/HolAddr/HolCmp/HolRegImm and opaque MlString at one shared width; all constructor arities and source payloads compared labLang16-51/asm138-145. Sets use the previously reviewed Bool membership rendering; no finite-map fields, hence no fmap qualifier. Only variable word dimension uses positive BitVec width/NeZero; fixed8/64 retained. C/F universe0 independent; no evaluator or runtime claim.",
+  "words_as_type_indexed_bitvec": true
 }
 ]
