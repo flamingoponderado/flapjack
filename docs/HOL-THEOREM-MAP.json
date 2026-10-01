@@ -40897,5 +40897,32 @@
   "hol_name": "step_sem",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.6.5.1: Genuine Extend, third constructor of original step_sem370-446. Concrete constructor states instantiate the Step premise, with full original input wf and forall environment eqenv conclusion retained. Independent generic value carrier and Option registers/List state unchanged. No stronger invariant, target evaluation, or environment-equality premise. Reviewed parsem_perm transports exactly pending/active reassociation; arbitrary emitted history remains identical and is reversed by sem. Fourteen fresh original semantic rows cover nonempty history, shared sources, snapshot reads, and duplicate-destination counterexample outside wf; full step_sem and scheduler remain open."
+},
+{
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "raise_stub_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeStubs.lean",
+  "lean_name": "raiseStubNative",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "reviewer": "Source review word_to_stackScript.sml557-580: literal raise stub Get/StackSetSize, perf restore slots3/4 with Or registers, then next handler slot2/Set, PCslot1/free/Raise; constant stub StoreConsts k(k+1)NONE then Return0. Native HolProg positive width under words_as_type_indexed_bitvec; universal all-input transport kernel checked. Source list_Seq retained, no instrumentation simulation or production-path completion claim.",
+  "words_as_type_indexed_bitvec": true
+},
+{
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "store_consts_stub_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeStubs.lean",
+  "lean_name": "storeConstsStubNative",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "reviewer": "Source review word_to_stackScript.sml557-580: literal raise stub Get/StackSetSize, perf restore slots3/4 with Or registers, then next handler slot2/Set, PCslot1/free/Raise; constant stub StoreConsts k(k+1)NONE then Return0. Native HolProg positive width under words_as_type_indexed_bitvec; universal all-input transport kernel checked. Source list_Seq retained, no instrumentation simulation or production-path completion claim.",
+  "words_as_type_indexed_bitvec": true
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeLive.lean",
+  "lean_name": "wLiveNative",
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "wLive_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "Source comparison word_to_stackScript.sml252-258: full cutsets num_set pair (source wordLang33, canonical Spt Unit), AppList word bitmap pair, k/f/f-prime tuple retained. Source f=0 identity; otherwise insert_bitmap(write_bitmap(SND live)k f-prime), constant n2w(index+1), StackStore k0 and returned insertedbitmap unchanged. Native HolProg width with positivewidth words_as_type_indexed_bitvec reviewed; universal both-component transport to reviewed wLiveExact kernelchecked, no wf/domain/targetrun premise. Actual fullcompiler/productionroute remains open."
 }
 ]
