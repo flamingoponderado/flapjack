@@ -44,6 +44,7 @@ import Flapjack.Test.ParmoveAllDistinctPmovParity
 import Flapjack.Test.ParmoveTempPmovParity
 import Flapjack.Test.ParmoveInjOnStateParity
 import Flapjack.Test.ParmoveInjOnStateStepsParity
+import Flapjack.Test.ParmoveStepsMapInjParity
 import Flapjack.Test.ParmoveFirstIndexParity
 import Flapjack.Test.RegAllocSafeDivParity
 import Flapjack.Test.WordToStackUnreachCodecParity
@@ -1565,6 +1566,8 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.AsmSemFpUpdatesParity.runChecks,
     Flapjack.Test.AsmSemArithmeticParity.runChecks,
     Flapjack.Test.BytesInMemParity.runChecks,
+    Flapjack.Test.ParmoveInjOnStateStepsParity.runChecks,
+    Flapjack.Test.ParmoveStepsMapInjParity.runChecks,
     Flapjack.Test.CrepSemIoEventsMonoParity.runChecks
     ].mapM id
   unless results.all id do

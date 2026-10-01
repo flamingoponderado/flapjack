@@ -44018,5 +44018,13 @@
     "lean_name": "stepsInjOnState",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds10 source comparison (bead flapjack-w1a4.14): HOL steps_inj_on_state parmoveScript.sml:1115 states forall s1 s2. inj_on_state f s1 /\\ s1 |> * s2 ==> inj_on_state f s2, where |> * is the reflexive transitive closure of the primitive step relation. Lean keeps the same two premises (injOnState f first and Steps first second, with Steps = Relation.ReflTransGen Step) and the same conclusion; each step is discharged by the already-reviewed literal step_inj_on_state (stepInjOnState). No global-injectivity, safety, target-result or EL premise is added; carriers Option alpha/Option beta are fully generic with no word dimension."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "steps_MAP_INJ",
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/StepsMapInj.lean",
+    "lean_name": "stepsMapInj",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds10 source comparison parmoveScript.sml:1179-1189. HOL steps_MAP_INJ[local] : !s1 s2. s1 |> s2 ==> inj_on_state f s1 ==> map_state f s1 |>* map_state f s2. Lean stepsMapInj {a b} (f : Option a -> Option b) (first second : State a) : Steps first second -> injOnState f first -> Steps (mapState f first) (mapState f second). Route-local inductive Steps (= ReflTransGen Step) over the list state, no word carrier; proof uses stepsInjOnState to carry injectivity and stepMapInj per step. Reviewed_exact (no word/finite-map carrier qualifier needed)."
   }
 ]
