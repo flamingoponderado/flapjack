@@ -1,3 +1,7 @@
+asw_type=:num list -> ra_state -> (unit, α) exc # ra_state
+aspw_type=:num list -> ra_state -> (unit, α) exc # ra_state
+afw_type=:num list -> ra_state -> (unit, α) exc # ra_state
+aum_type=:(num # num # num) list -> ra_state -> (unit, α) exc # ra_state
 dd_basic=(M_success (),<|adj_ls := [[1; 2]; [0]; [0; 0]; []]; node_tag := [Atemp; Atemp; Atemp; Atemp]; degrees := [1; 0; 5; 1]; dim := 3; simp_wl := [7]; spill_wl := [8]; freeze_wl := [2; 9; 2]; avail_moves_wl := []; unavail_moves_wl := [(1,0,1)]; coalesced := [0; 1; 2; 3]; move_related := [T; T; F; T]; stack := [6]|>)
 dd_zero=(M_success (),<|adj_ls := [[1; 2]; [0]; [0; 0]; []]; node_tag := [Atemp; Atemp; Atemp; Atemp]; degrees := [2; 0; 5; 1]; dim := 3; simp_wl := [7]; spill_wl := [8]; freeze_wl := [2; 9; 2]; avail_moves_wl := []; unavail_moves_wl := [(1,0,1)]; coalesced := [0; 1; 2; 3]; move_related := [T; T; F; T]; stack := [6]|>)
 dd_oob=(M_failure Subscript,<|adj_ls := [[1; 2]; [0]; [0; 0]; []]; node_tag := [Atemp; Atemp; Atemp; Atemp]; degrees := [2; 0; 5; 1]; dim := 3; simp_wl := [7]; spill_wl := [8]; freeze_wl := [2; 9; 2]; avail_moves_wl := []; unavail_moves_wl := [(1,0,1)]; coalesced := [0; 1; 2; 3]; move_related := [T; T; F; T]; stack := [6]|>)

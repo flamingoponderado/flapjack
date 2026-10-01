@@ -78,6 +78,8 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopHelpers
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopCallCore
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopReturn
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopInstructions
+import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopFlatEffects
+import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopRecursive
 import Flapjack.Pancake.WordConvs.CodeLabels
 import Flapjack.Pancake.WordConvs.LabelSafety
 import Flapjack.Compiler.Backend.StackProps.CodeLabels

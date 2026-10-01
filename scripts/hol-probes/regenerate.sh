@@ -3297,7 +3297,7 @@ run_probe reg_alloc_coalesce_probeScript.sml reg_alloc_coalesce_probe.out \
   "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
 run_probe reg_alloc_worklist_probeScript.sml reg_alloc_worklist_probe.out \
-  dd_basic dd_zero dd_oob ddeg_basic ddeg_dup ddeg_out_of_dim ddeg_oob_adj asw_basic aspw_basic afw_basic aum_basic ps_basic ps_oob_move_related ps_oob rs_low rs_high_frozen rs_high_not_frozen rs_oob \
+  asw_type aspw_type afw_type aum_type dd_basic dd_zero dd_oob ddeg_basic ddeg_dup ddeg_out_of_dim ddeg_oob_adj asw_basic aspw_basic afw_basic aum_basic ps_basic ps_oob_move_related ps_oob rs_low rs_high_frozen rs_high_not_frozen rs_oob \
   "$cake_dir/compiler/backend/reg_alloc/reg_allocScript.sml" "$cake_dir/compiler/backend/reg_alloc"
 
 run_probe reg_alloc_considered_var_probeScript.sml reg_alloc_considered_var_probe.out \
@@ -3595,6 +3595,13 @@ run_probe ssa_merge_move_lookups_probeScript.sml ssa_merge_move_lookups_probe.ou
 run_probe loop_to_word_label_handlers_probeScript.sml loop_to_word_label_handlers_probe.out \
   comp_l_invariant_source_replay good_handlers_comp_source_replay loop_to_word_good_handlers_source_replay loop_to_word_comp_SND_LE_source_replay lh_nested64_result lh_nested64_owner lh_nested64_counter lh_nested64_handlers lh_nested1_result lh_nested1_owner lh_nested1_counter lh_nested1_handlers lh_nested80_result lh_nested80_owner lh_nested80_counter lh_nested80_handlers lh_ignored_tail_result lh_ignored_tail_owner lh_ignored_tail_counter lh_ignored_tail_handlers lh_program_result lh_program_handlers lh_wrong_owner \
   "$cake_dir/pancake/proofs/loop_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe word_to_stack_no_shmemop_flat_probeScript.sml word_to_stack_no_shmemop_flat_probe.out \
+  fe_move_1 fe_return_1 fe_heap_1 fe_set_1 fe_get_1 fe_alloc_1 fe_consts_1 fe_loc_1 fe_install_1 fe_code_1 fe_data_1 fe_ffi_1 fe_move_32 fe_return_32 fe_heap_32 fe_set_32 fe_get_32 fe_alloc_32 fe_consts_32 fe_loc_32 fe_install_32 fe_code_32 fe_data_32 fe_ffi_32 fe_move_64 fe_return_64 fe_heap_64 fe_set_64 fe_get_64 fe_alloc_64 fe_consts_64 fe_loc_64 fe_install_64 fe_code_64 fe_data_64 fe_ffi_64 fe_move_80 fe_return_80 fe_heap_80 fe_set_80 fe_get_80 fe_alloc_80 fe_consts_80 fe_loc_80 fe_install_80 fe_code_80 fe_data_80 fe_ffi_80 fe_set_bitmap fe_set_const fe_set_lookup fe_set_load fe_set_op fe_set_shift \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_to_stack_no_shmemop_recursive_probeScript.sml word_to_stack_no_shmemop_recursive_probe.out \
+  rc_must_1 rc_loop_1 rc_seq_1 rc_reg_1 rc_imm_yes_1 rc_imm_no_1 rc_must_32 rc_loop_32 rc_seq_32 rc_reg_32 rc_imm_yes_32 rc_imm_no_32 rc_must_64 rc_loop_64 rc_seq_64 rc_reg_64 rc_imm_yes_64 rc_imm_no_64 rc_must_80 rc_loop_80 rc_seq_80 rc_reg_80 rc_imm_yes_80 rc_imm_no_80 rc_must_shared rc_must_invalid rc_must_ignored_handler rc_loop_shared rc_loop_invalid rc_loop_ignored_handler rc_seq_shared rc_seq_invalid rc_seq_ignored_handler rc_reg_shared rc_reg_invalid rc_reg_ignored_handler rc_imm_yes_shared rc_imm_yes_invalid rc_imm_yes_ignored_handler rc_imm_no_shared rc_imm_no_invalid rc_imm_no_ignored_handler \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
 
 run_probe ssa_rename_property_wrappers_probeScript.sml ssa_rename_property_wrappers_probe.out \
   rw_core_full rw_move_full rw_move_type rw_single_full \
@@ -3602,12 +3609,10 @@ run_probe ssa_rename_property_wrappers_probeScript.sml ssa_rename_property_wrapp
 run_probe ssa_option_lookup_subset_probeScript.sml ssa_option_lookup_subset_probe.out \
   os_full os_type_ssa os_type_cst_locs os_type_ls \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
-
 run_probe ssa_rename_move_preserve_weak_probeScript.sml ssa_rename_move_preserve_weak_probe.out \
   rmw_full rmw_type_st rmw_type_cst rmw_type_ssa rmw_type_na rmw_type_ls \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
-
 run_probe ssa_get_set_vars_probeScript.sml ssa_get_set_vars_probe.out \
   get_vars_list_insert_eq_gen_full get_vars_set_vars_eq_full \
   gvi_type_st gvi_type_ls gvi_type_x gvi_type_locs gvi_type_a gvi_type_b \
