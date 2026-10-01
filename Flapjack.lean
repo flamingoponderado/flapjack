@@ -7,6 +7,7 @@ import Flapjack.Pancake.WordLang.MaxVarInst
 import Flapjack.Compiler.Backend.WordToStack.NativeCompile
 import Flapjack.Compiler.Backend.Parmove.StepsCorrect
 import Flapjack.Compiler.Backend.Parmove.PmovFinal
+import Flapjack.Compiler.Backend.WordToStack.NativePrograms
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.Inst
 import Flapjack.Compiler.Backend.Parmove.StepsSem
 import Flapjack.Pancake.WordLang.MaxVarExp

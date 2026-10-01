@@ -2208,3 +2208,6 @@ first/middle/absent matches, NONE, duplicate destinations and late zero. Generic
 untagged SplitSource laws derive prefixNoRead, suffixheadmatch and empty-suffix
 NoRead equivalence. They are Flapjack infrastructure, not a general indexed
 combinator port or completed functional scheduler simulation.
+
+
+`word_to_stack_programs_native_probeScript.sml` observes the literal native `compile_prog` and generic `compile_word_to_stack` in 21 original executions. Cases cover frame subtraction/MAX boundaries, widths1/8/64, perf, arbitrary identifiers, duplicate preservation, and left-to-right bitmap content/length across multiple programs and multiword insertions. `Flapjack/Test/WordToStackNativeProgramsParity.lean` replays identical inputs and results in the kernel. Native top-level compilation and production caller routing remain separate work.
