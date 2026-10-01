@@ -46881,7 +46881,7 @@
     "lean_path": "Flapjack/Compiler/Backend/WordAlloc/SSAHelpers.lean",
     "lean_name": "forceRename",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.15.2.30.9): word_allocScript.sml:294-298 force_rename [] ssa = ssa; force_rename ((x,y)::xs) ssa = force_rename xs (insert x y ssa). Original EVAL rows (scripts/hol-probes/word_alloc_ssa_helpers_probe.out, 12 rows, 64-bit) replayed by definitional equality in Flapjack.Test.WordAllocSSAHelpersParity. No extra premise. Proof-side port; executed list-state SSA pass not routed through it. Coordinator integration acceptance complete; author source comparison recorded."
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.15.2.30.9): word_allocScript.sml:294-298 force_rename [] ssa = ssa; force_rename ((x,y)::xs) ssa = force_rename xs (insert x y ssa). Original EVAL rows (scripts/hol-probes/word_alloc_ssa_helpers_probe.out, 12 rows, 64-bit) replayed by definitional equality in Flapjack.Test.WordAllocSSAHelpersParity. No extra premise. Proof-side port; executed list-state SSA pass not routed through it. Coordinator integration acceptance complete; author source comparison recorded. Payload repair flapjack-pr1195-review.2: original HOL payload alpha is arbitrary; actual Lean definition and lookup/domain lemmas quantify {α : Type}, List (Nat × α), Spt α, with no payload equality or additional premise. Fresh literal HOL proof/type replay and Bool/Unit kernel fixtures; SSA map-bound uses remain Nat instances."
   },
   {
     "words_as_type_indexed_bitvec": true,
@@ -48618,7 +48618,7 @@
     "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAMoveFrames.lean",
     "lean_name": "lookupForceRenameAux",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.15.2.30.12): word_allocProofScript.sml:6347-6362 ∀ls ssa. lookup x (force_rename (REVERSE ls) ssa) = case ALOOKUP ls x of NONE => lookup x ssa | SOME y => SOME y, x free. Lean: ALOOKUP as the HOL-library rendering holAlookup, REVERSE as List.reverse. HOL domain as the predicate sptDomain, set ls as list membership, union/intersection as disjunction/conjunction, the let-bound result tuple as its projections. Kernel-checked; no holEl in the proof closure. No extra premise. Proof-side."
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.15.2.30.12): word_allocProofScript.sml:6347-6362 ∀ls ssa. lookup x (force_rename (REVERSE ls) ssa) = case ALOOKUP ls x of NONE => lookup x ssa | SOME y => SOME y, x free. Lean: ALOOKUP as the HOL-library rendering holAlookup, REVERSE as List.reverse. HOL domain as the predicate sptDomain, set ls as list membership, union/intersection as disjunction/conjunction, the let-bound result tuple as its projections. Kernel-checked; no holEl in the proof closure. No extra premise. Proof-side. Payload repair flapjack-pr1195-review.2: original HOL payload alpha is arbitrary; actual Lean definition and lookup/domain lemmas quantify {α : Type}, List (Nat × α), Spt α, with no payload equality or additional premise. Fresh literal HOL proof/type replay and Bool/Unit kernel fixtures; SSA map-bound uses remain Nat instances."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
@@ -48626,7 +48626,7 @@
     "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAMoveFrames.lean",
     "lean_name": "lookupForceRename",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.15.2.30.12): word_allocProofScript.sml:6364-6371 lookup x (force_rename ls ssa) = case ALOOKUP (REVERSE ls) x of NONE => lookup x ssa | SOME y => SOME y. HOL domain as the predicate sptDomain, set ls as list membership, union/intersection as disjunction/conjunction, the let-bound result tuple as its projections. Kernel-checked; no holEl in the proof closure. No extra premise. Proof-side."
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.15.2.30.12): word_allocProofScript.sml:6364-6371 lookup x (force_rename ls ssa) = case ALOOKUP (REVERSE ls) x of NONE => lookup x ssa | SOME y => SOME y. HOL domain as the predicate sptDomain, set ls as list membership, union/intersection as disjunction/conjunction, the let-bound result tuple as its projections. Kernel-checked; no holEl in the proof closure. No extra premise. Proof-side. Payload repair flapjack-pr1195-review.2: original HOL payload alpha is arbitrary; actual Lean definition and lookup/domain lemmas quantify {α : Type}, List (Nat × α), Spt α, with no payload equality or additional premise. Fresh literal HOL proof/type replay and Bool/Unit kernel fixtures; SSA map-bound uses remain Nat instances."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
@@ -48634,7 +48634,7 @@
     "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAMoveFrames.lean",
     "lean_name": "domainForceRename",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.15.2.30.12): word_allocProofScript.sml:6373-6381 domain (force_rename ls ssa) = domain ssa ∪ set (MAP FST ls). HOL domain as the predicate sptDomain, set ls as list membership, union/intersection as disjunction/conjunction, the let-bound result tuple as its projections. Kernel-checked; no holEl in the proof closure. No extra premise. Proof-side."
+    "reviewer": "flapjack-opus2 source comparison 2026-10-01 (bead flapjack-pxn.18.5.15.2.30.12): word_allocProofScript.sml:6373-6381 domain (force_rename ls ssa) = domain ssa ∪ set (MAP FST ls). HOL domain as the predicate sptDomain, set ls as list membership, union/intersection as disjunction/conjunction, the let-bound result tuple as its projections. Kernel-checked; no holEl in the proof closure. No extra premise. Proof-side. Payload repair flapjack-pr1195-review.2: original HOL payload alpha is arbitrary; actual Lean definition and lookup/domain lemmas quantify {α : Type}, List (Nat × α), Spt α, with no payload equality or additional premise. Fresh literal HOL proof/type replay and Bool/Unit kernel fixtures; SSA map-bound uses remain Nat instances."
   },
   {
     "hol_path": "HOL/src/list/src/listScript.sml",

@@ -26,7 +26,7 @@ def listNextVarRenameMove {width : Nat} [NeZero width] (ssa : Spt Nat) (n : Nat)
 
 /-- Literal `force_rename` (`word_allocScript.sml:294-298`). -/
 @[hol "cakeml/compiler/backend/word_allocScript.sml" "force_rename_def"]
-def forceRename : List (Nat × Nat) → Spt Nat → Spt Nat
+def forceRename {α : Type} : List (Nat × α) → Spt α → Spt α
   | [], ssa => ssa
   | (x, y) :: xs, ssa => forceRename xs (sptInsert x y ssa)
 
