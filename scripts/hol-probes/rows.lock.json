@@ -268,6 +268,7 @@
     {"bytes":344,"out":"mknode_probe.out","rows":3,"sha256":"28c4ad224cbd50e28ce00412f7d61105bae92a4a8d3dea9457d2646badbc3009"},
     {"bytes":174,"out":"mksubtree_probe.out","rows":2,"sha256":"91f7cb50b5c4d177f3a2e810ad42c815fdf8d38bdf4f31a60c385c51c8ee523c"},
     {"bytes":124,"out":"mlstring_carrier_probe.out","rows":8,"sha256":"e8b8357a39a6b420d116bbc50825e2a3524450ef6e638d914bc8639d4dccbaf8"},
+    {"bytes":129,"out":"monad_array_length_probe.out","rows":6,"sha256":"407821e56eb5ebca18e92fd0bb9320bba0843b5f8e2c059f57547ecf63c1f823"},
     {"bytes":278,"out":"monad_base_probe.out","rows":10,"sha256":"676b6f2fa69d0482ac1fd8f7b2e0d5bfa5eeacc973929d93562f31086cb58e56"},
     {"bytes":456,"out":"monad_list_primitives_probe.out","rows":25,"sha256":"564bd5d118f7cd0746d109b86fc758358e2a313a34352b2638a56a1d4a9dbc62"},
     {"bytes":319,"out":"num_set_audit_probe.out","rows":16,"sha256":"ab1cf111a588d2a04174ae550b4a2a035ab537b3d86ab69d795e182755a8285b"},

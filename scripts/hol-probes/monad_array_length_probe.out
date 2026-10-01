@@ -1,0 +1,6 @@
+al_type=:(α -> β list) -> α -> (num, γ) exc # α
+al_empty=T
+al_duplicates=T
+al_bool_state=T
+al_list_state=T
+al_bool_values=T

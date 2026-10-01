@@ -1,3 +1,4 @@
+import Flapjack.Test.MonadArrayLengthParity
 import Flapjack.Test.RegAllocStateMapParity
 import Flapjack.Test.MonadListPrimitivesParity
 import Flapjack.Test.CanonizeSortParity

@@ -2543,3 +2543,10 @@ cycle save, prior-written scratch reads/save, and Boolean registers. Matching
 `Flapjack/Test/ParmoveTempStepParity.lean` checks source wf/safety and derives
 target safety via the actual Step constructor and full ported theorem.
 RTC/pmov and full Move correctness remain separate open obligations.
+
+`monad_array_length_probe.out` captures five fresh original Marray_length
+equations, kernel replayed in `MonadArrayLengthParity`: empty/duplicate lists,
+Bool/list states, Bool values and a large Nat state. Generic pointwise equation
+is separately kernel checked. Finite observations do not establish
+cross-assistant equivalence or production allocator routing. Regenerate with
+`HOL_PROBE_ONLY=monad_array_length_probeScript.sml scripts/hol-probes/regenerate.sh`.

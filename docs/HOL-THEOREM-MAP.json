@@ -42682,5 +42682,13 @@
     "hol_name": "st_ex_MAP_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.11.1.2): full original148-156 and independently captured source type (input -> state -> Exc result exception # state) -> input list -> state -> Exc (result list) exception # state. All four carriers independently universe-0 Type, no specialization to allocator state_exn, fixed register type, successful callback, validity or DecidableEq hypothesis. Source empty return[] and head effect/bind then recursive tail effect/bind then cons-return are literal, using accepted exact MonadBase.M/Exc/bind/ret definitions. Failure short-circuits and retains the state returned by the failing computation, including prior head effects; no rollback or map-over-results substitute. Original type row plus nineteen fresh complete result/state equations and identical registered kernel replay cover empty callbacks, head/middle/last failure, state-dependent failure, order/reverse/duplicates/large values, independent Bool/Nat/list/tuple state/value/result/exception carriers and arbitrary generic empty-list equation. Pure monadic analysis dependency only: generated array/accessor functions and executed allocator/correctness route remain open. Coordinator review pending."
+  },
+  {
+    "lean_path": "Flapjack/Translator/Monadic/MonadBase/ArrayLength.lean",
+    "lean_name": "arrayLength",
+    "hol_path": "cakeml/translator/monadic/monad_base/ml_monadBaseScript.sml",
+    "hol_name": "Marray_length_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.11.1.3): original ml_monadBaseScript.sml200-203. Generic getter state -> List value, independent state/value/exception Type carriers, result M state Nat exception. HOL LENGTH becomes List.length, M_success becomes accepted Exc.success and the entire input state is returned unchanged. No bounds, equality instance, validity, successful callback or fixed allocator state. Same total lambda equation. Five fresh original equations and identical kernel replay cover empty/duplicate lists, independent Bool/list states and Bool values with large Nat state; universal pointwise rfl checks all three carriers. Finite observations are regression evidence, not cross-assistant equivalence. Native analysis primitive only; other array accessors and actual production allocator route stay open. Coordinator review pending."
   }
 ]
