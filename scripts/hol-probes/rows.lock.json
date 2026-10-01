@@ -3979,6 +3979,12 @@
       "sha256": "545ae70e2aa85b72b6ef7cab66a3ab6fce73527f371bf38e334f52b5666df961"
     },
     {
+      "bytes": 1119,
+      "out": "word_alloc_max_var_max_probe.out",
+      "rows": 47,
+      "sha256": "e63edbb0591eda24126f672815f82053c231513637814002801f1394fa324a40"
+    },
+    {
       "bytes": 110,
       "out": "word_alloc_mem8_probe.out",
       "rows": 2,
@@ -4511,6 +4517,12 @@
       "out": "word_to_stack_program_bitmaps_probe.out",
       "rows": 10,
       "sha256": "8765182f39ccdb4a95f8cea1b64beaf2fa8acd8e53f4fc02f35699e632a5889b"
+    },
+    {
+      "bytes": 112,
+      "out": "word_to_stack_program_code_labels_probe.out",
+      "rows": 8,
+      "sha256": "b847721678f908ce0431152c5230b9556dc54826487925dac80b4eaebd829372"
     },
     {
       "bytes": 392,

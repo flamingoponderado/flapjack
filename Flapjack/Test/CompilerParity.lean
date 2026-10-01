@@ -1,4 +1,5 @@
 import Flapjack.Test.AsmPropsAssertionsIterationParity
+import Flapjack.Test.WordAllocMaxVarMaxParity
 import Flapjack.Test.SSAMapParity
 import Flapjack.Test.SSASetupParity
 import Flapjack.Test.AsmPropsAssertionsParity
@@ -23,6 +24,7 @@ import Flapjack.Test.LabToTargetSectionLookupParity
 import Flapjack.Test.ParmovePreservesMovesPmovParity
 import Flapjack.Test.WordToStackCodeLabelsParity
 import Flapjack.Test.WordToStackCompCodeLabelsParity
+import Flapjack.Test.WordToStackProgramCodeLabelsParity
 import Flapjack.Test.WordConvsCodeLabelsParity
 import Flapjack.Test.ParmovePreservesMovesStepsParity
 import Flapjack.Test.WordConvsExpMonoParity
