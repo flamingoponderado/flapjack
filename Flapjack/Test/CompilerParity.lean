@@ -6,6 +6,7 @@ import Flapjack.Test.HeuMaxParity
 import Flapjack.Test.WordToStackBitmapMixedParity
 import Flapjack.Test.HeuInstParity
 import Flapjack.Test.SptMapParity
+import Flapjack.Test.WordToStackInstructionMaximumParity
 import Flapjack.Test.WordToStackCutsetMaximumParity
 import Flapjack.Test.RetainedAllocatorColour
 import Flapjack.Test.WordToStackHandlerValGeneralityParity
