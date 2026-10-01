@@ -41500,5 +41500,13 @@
   "hol_name": "MEM_MAP_SND_parmove",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-c source comparison (2026-10-01; bead45.2): literal818-827 arbitrary moves/x, SOME x source membership in actual parmove output implies x source membership in original input. Native List/Option carriers and propositional equality, actual parmove lifting/reversal, accepted unconditional MEM_MAP_SND_SND_SND_pmov; no windmill/distinctness/wf/termination/result premise. Seven original wrapper inputs carry universal register theorem applications; original scheduler rows freshly regenerated. Direct WordToStack uses6173/6193. Coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordAlloc/TotalColour.lean",
+  "lean_name": "totalColour",
+  "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+  "hol_name": "total_colour_def",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-luna-c source comparison (2026-10-01; bead11.5.4): literal1592-1595 Spt Nat lookup at original register; NONE tests accepted reg_alloc is_phy_var and returns original key if physical else0; SOME returns2*stored colour. Nat/Spt constructor carriers retain arbitrary non-well-formed trees and keys, no wf/domain/bijection/width assumption. Spt is a num_map tree, not qualified as finite support fmap. Eight fresh direct original HOL rows replay same inputs in kernel, including absent physical/virtual and arbitrary precision keys, mapped physical/virtual/zero. Actual testroot registration. Used by native oracle checker and word_alloc; production routing stays on parent11.5/child5.3, this leaf is not compiler completion. Coordinator review pending."
 }
 ]

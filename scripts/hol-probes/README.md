@@ -2254,3 +2254,9 @@ duplicate and reordered identifiers, bitmap-changing bodies and width-one
 inputs. `WordToStackCompileKeysParity.lean` applies the full reviewed theorem
 to the same actual compiler results. The source theorem preserves the entire
 key list; it does not establish pass simulation or final binary correctness.
+
+
+`word_alloc_total_colour_probeScript.sml` records eight direct original
+`total_colour` lookups: absent physical/virtual keys (including large keys),
+mapped physical/virtual keys, and a mapped zero colour. Same-input kernel
+fixtures are registered in the actual CompilerParity test root.
