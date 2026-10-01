@@ -16,7 +16,7 @@ FPFromInt's non64 extracted half has the actual word width before signed
 interpretation; no assumption that this width equals32 is made. Register
 updates are sequential, including when the two destinations alias. -/
 @[hol "cakeml/compiler/backend/semantics/labSemScript.sml" "fp_upd_def"
-  (words_as_type_indexed_bitvec)]
+  (words_as_type_indexed_bitvec) (reals_as_rational_cuts)]
 noncomputable def fpUpd {width : Nat} [NeZero width] {C F : Type}
     (operation : HolFp) (state : Flapjack.Compiler.Backend.LabSem.State width C F) :
     Flapjack.Compiler.Backend.LabSem.State width C F :=
