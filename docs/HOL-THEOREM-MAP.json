@@ -41321,6 +41321,24 @@
   "hol_name": "steps_correct",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-luna-b source comparison 2026-10-01 bead25.6.7: literal459-473 allfouroriginalpremises retained: windmill pending, EVERY IS_SOME mappedFST/SND renderedforallmemberisSome=true, actualSteps(initialemptyactive/history,finalemptypending/active). Conclusionforallenv originaleqenv(parsempendingenv)(seqsemreverseemittedenv). wf is derived and acceptedsteps_sem plus literal sem_init/sem_final gives result; no stronger premise, assumedalgorithm simulation or targetresult. Same Option/List/function/genericvaluecarriers. Kernelconstructed five-step cycle and four-step chain discharge genuineStepclosure, freshoriginalparallel/sequential values paired including changedtemporary excludedbyeqenv. Fullpmov->DSteps->Steps correctness remains open."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativePrograms.lean",
+  "lean_name": "compileProgNative",
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "compile_prog_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol source comparison 2026-10-01 wrapper25.14: literal compile_prog583-593 and compile_word_to_stack595-601 over accepted positive-width WordLangProgHOL/AsmConfigExact, full native compNative and source maxVarHOL; native output HolProg with same word dimension and exact AppList bitmap carrier. Natural arg_count-reg_count and MAX((max_var DIV2+1)-reg_count,stack_args), zero/nonzero frame branch, allocation frame-stack_args retained without well-formedness assumptions. Returned triple contains actual compiled body/frame/full updated bitmaps. Recursive list wrapper preserves independent arbitrary identifier beta:Type, input and duplicate order, each compiled frame, and source left-to-right bitmap threading. No callbacks, conversions or successful-compilation premise. 21 original HOL observations paired with kernel fixtures: underflow/zero-register/first spilled/even-odd variable boundaries, args vs vars maximum, widths1/8/64, perf, empty and arbitrary-beta lists, duplicates, ordered distinct bitmap contents and multiword insertion. Production compiler remains independent; parent25 inventory stays open and linked16 tracks missing native top config/compile. Full compiler theorem and production correspondence are not claimed; independent coordinator review pending."
+},
+{
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativePrograms.lean",
+  "lean_name": "compileWordToStackNative",
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "compile_word_to_stack_def",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-sol source comparison 2026-10-01 wrapper25.14: literal compile_prog583-593 and compile_word_to_stack595-601 over accepted positive-width WordLangProgHOL/AsmConfigExact, full native compNative and source maxVarHOL; native output HolProg with same word dimension and exact AppList bitmap carrier. Natural arg_count-reg_count and MAX((max_var DIV2+1)-reg_count,stack_args), zero/nonzero frame branch, allocation frame-stack_args retained without well-formedness assumptions. Returned triple contains actual compiled body/frame/full updated bitmaps. Recursive list wrapper preserves independent arbitrary identifier beta:Type, input and duplicate order, each compiled frame, and source left-to-right bitmap threading. No callbacks, conversions or successful-compilation premise. 21 original HOL observations paired with kernel fixtures: underflow/zero-register/first spilled/even-odd variable boundaries, args vs vars maximum, widths1/8/64, perf, empty and arbitrary-beta lists, duplicates, ordered distinct bitmap contents and multiword insertion. Production compiler remains independent; parent25 inventory stays open and linked16 tracks missing native top config/compile. Full compiler theorem and production correspondence are not claimed; independent coordinator review pending."
 }
 ,
   {
