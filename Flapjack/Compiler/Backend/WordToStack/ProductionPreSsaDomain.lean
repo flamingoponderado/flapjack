@@ -175,4 +175,18 @@ theorem wordLangProgToHOL_sourceAllocatorInput_isSome
   wordLangProgToHOL_wordBeforeSsaAllocatorBody_isSome _
     (wordLangProgToHOL_loopToWordCompFuncRouted_isSome name parameters body)
 
+/-- The executed allocation boundary uses native full-program limit for every
+routed source function. There is no caller-supplied codec or successful
+allocation premise: source closure discharges the native branch condition.
+This establishes routing, not allocation/evaluation correctness. -/
+theorem sourceAllocatorInput_usesNativeLimit
+    {width : Nat} [NeZero width] (name : Nat) (parameters : List Nat)
+    (body : LoopProg (BitVec width)) (wordParameters : List Nat) :
+    CakeRegAlloc.cakeAllocateWordFunctionAfterDeadRoutedLimit name wordParameters
+        (wordBeforeSsaAllocatorBody (loopToWordCompFuncRouted name parameters body)) =
+      CakeRegAlloc.cakeAllocateWordFunctionAfterDeadNativeLimit name wordParameters
+        (wordBeforeSsaAllocatorBody (loopToWordCompFuncRouted name parameters body)) :=
+  CakeRegAlloc.cakeAllocateWordFunctionAfterDeadRoutedLimit_native _ _ _
+    (wordLangProgToHOL_sourceAllocatorInput_isSome name parameters body)
+
 end Flapjack

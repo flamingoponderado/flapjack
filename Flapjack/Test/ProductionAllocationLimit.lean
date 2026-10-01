@@ -46,4 +46,26 @@ example {width : Nat} [NeZero width] (label : Nat) (parameters : List Nat)
         cakeAllocateWordFunctionAfterDead label parameters program) :=
   cakeAllocateWordFunctionAfterDeadNativeLimit_eq label parameters program
 
+-- Routing preserves the complete result for arbitrary inputs and failures.
+example {width : Nat} [NeZero width] (label : Nat) (parameters : List Nat)
+    (program : WordProg (BitVec width)) :
+    cakeAllocateWordFunctionAfterDeadRoutedLimit label parameters program =
+      cakeAllocateWordFunctionAfterDead label parameters program :=
+  cakeAllocateWordFunctionAfterDeadRoutedLimit_eq label parameters program
+
+-- Unsupported extension follows its historical compatibility path, rather
+-- than becoming a new codec-rejection allocation failure.
+example : cakeAllocateWordFunctionAfterDeadRoutedLimit 0 []
+    (.inst (.arith (.addCarry 1 2 3 4 5)) : WordProg (BitVec 64)) =
+    cakeAllocateWordFunctionAfterDead 0 []
+      (.inst (.arith (.addCarry 1 2 3 4 5)) : WordProg (BitVec 64)) := by
+  rfl
+
+-- Codec acceptance does not alter the allocator's separate memory guard.
+example : cakeAllocateWordFunctionAfterDeadRoutedLimit 0 []
+    (.inst (.mem .load16 4 8) : WordProg (BitVec 64)) = none := by
+  rw [cakeAllocateWordFunctionAfterDeadRoutedLimit_eq]
+  simp [cakeAllocateWordFunctionAfterDead, cakeAllocateWordFunctionAfterDeadWithColour,
+    cakeAllocateWordFunctionAfterDeadWithColourFromLimit, RiscV.allocatorMemorySupported]
+
 end Flapjack.Test.ProductionAllocationLimit
