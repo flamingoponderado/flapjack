@@ -42881,29 +42881,5 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-ds10 source comparison (bead flapjack-pxn.18.5.15.10.11): HOL get_jump_offset_def lab_to_targetScript.sml:109-118 with CallFFI/Install/Halt back-offsets using ffi_offset and get_ffi_index and the generic find_pos - pos form, n2w rendered as BitVec.ofNat width; positive-width words qualifier over the reviewed lab_to_target carriers."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
-    "hol_name": "inj_on_state_def",
-    "lean_path": "Flapjack/Compiler/Backend/Parmove/InjOnState.lean",
-    "lean_name": "injOnState",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds10 source comparison (2026-10-01, bead flapjack-w1a4.12) against parmoveScript.sml:1090-1096: HOL `inj_on_state f p = let ls0 = state_to_list p in let ls = MAP FST ls0 ++ MAP SND ls0 in (forall x y. MEM x ls /\\ MEM y ls /\\ f x = f y ==> x = y) /\\ (forall x. f x = NONE <=> x = NONE)`. Lean keeps the literal carriers (state is a triple of optional-pair lists, f : Option alpha -> Option beta), the membership and injectivity conjuncts, and the NONE iff clause; no target/global-injectivity premise added."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
-    "hol_name": "sp_inverts_def",
-    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/SpInverts.lean",
-    "lean_name": "spInverts",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds10 source comparison (2026-10-01, bead flapjack-9lbn) against reg_allocProofScript.sml:783-788: HOL `sp_inverts f g <=> (!m fm. lookup m f = SOME fm ==> lookup fm g = SOME m)` over `num num_map`, rendered as Spt Nat with sptLookup. No added premise."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
-    "hol_name": "sp_inverts_insert",
-    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs/SpInverts.lean",
-    "lean_name": "spInvertsInsert",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds10 source comparison (2026-10-01, bead flapjack-9lbn) against reg_allocProofScript.sml:790-801: HOL `sp_inverts f g /\\ x NOTIN domain f /\\ y NOTIN domain g ==> sp_inverts (insert x y f) (insert y x g)`. Lean keeps both freshness premises (domain membership rendered sptLookup = none) and the inversion conclusion; no target-result/global premise added."
   }
 ]

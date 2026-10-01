@@ -10,7 +10,7 @@ import Flapjack.Misc.FindIndex.Append
 import Flapjack.Compiler.Backend.RegAlloc.Exceptions
 import Flapjack.Compiler.Backend.Parmove.MapState
 import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Steps
-import Flapjack.Compiler.Backend.Parmove.InjOnState
+import Flapjack.Compiler.Backend.Parmove.StateToList
 import Flapjack.Compiler.Backend.Parmove.AllDistinct.Step
 import Flapjack.Compiler.Backend.WordAlloc.HeuProg
 import Flapjack.Compiler.Backend.RegAlloc.Remap
@@ -298,7 +298,6 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.StrongLocalsRel
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.NumSets
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.NumSetDeletion
 import Flapjack.Compiler.Backend.RegAlloc.Proofs
-import Flapjack.Compiler.Backend.RegAlloc.Proofs.SpInverts
 import Flapjack.Compiler.Backend.RegAlloc.SpDefault
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Motive
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Leaves
