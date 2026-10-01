@@ -117,9 +117,36 @@ example : reviewedToWordClashTree
     (by simp [CanonicalTree, CanonicalList, numSetToList, listToNumSet,
       sptFromAList, sptToAList, sptFoldi])
 
+/-- The reviewed-check routing keeps the executed checker's success/failure
+verdict. -/
+example :
+    (wordClashTreeCheckViaReviewed (fun x => x) (.delta [1] [2]) [] []).isSome =
+      (wordClashTreeCheck (fun x => x) (.delta [1] [2]) [] []).isSome :=
+  wordClashTreeCheckViaReviewed_isSome (fun x => x) (.delta [1] [2]) [] []
+
+/-- A concrete routing guard over the same trees as the agreement guards: the
+routing result's member sets match the executed checker's. -/
+def routingGuard : Bool :=
+  (match wordClashTreeCheckViaReviewed (fun x => x) (.delta [1] [2]) [] [],
+     wordClashTreeCheck (fun x => x) (.delta [1] [2]) [] [] with
+   | some (n, c), some (n', c') => sameSet n n' && sameSet c c'
+   | none, none => true
+   | _, _ => false) &&
+  (match wordClashTreeCheckViaReviewed (fun _ => 0) (.set [1, 2]) [] [],
+     wordClashTreeCheck (fun _ => 0) (.set [1, 2]) [] [] with
+   | none, none => true
+   | _, _ => false)
+
+#guard routingGuard
+example :
+    (wordClashTreeCheckViaReviewed (fun _ => 0) (.set [1, 2]) [] []).isSome =
+      (wordClashTreeCheck (fun _ => 0) (.set [1, 2]) [] []).isSome :=
+  wordClashTreeCheckViaReviewed_isSome (fun _ => 0) (.set [1, 2]) [] []
+
 def parityGuard : Bool :=
   codecGuard && deltaAgreementGuard && setAgreementGuard && seqAgreementGuard &&
-    branchSomeAgreementGuard && branchNoneAgreementGuard && failureAgreementGuard
+    branchSomeAgreementGuard && branchNoneAgreementGuard && failureAgreementGuard &&
+    routingGuard
 
 def runChecks : IO Bool := do
   if parityGuard then

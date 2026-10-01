@@ -79,7 +79,8 @@ theorem wordAllocateGraphFunctionWithHeuristicsEntryRenamed_maps_parameters [OfN
       some (state, renamedParameters, allocation, renamedProgram)) :
     ∀ name, name ∈ renamedParameters →
       ∃ node, lookupNatInfo name allocation.bijection.toNode = some node := by
-  simp [wordAllocateGraphFunctionWithHeuristicsEntryRenamed] at halloc
+  simp only [wordAllocateGraphFunctionWithHeuristicsEntryRenamed, Option.map_eq_some_iff,
+    Prod.mk.injEq] at halloc
   rcases halloc with ⟨allocation', hgraph, hstate, hparameters,
     hallocation, hprogram⟩
   subst allocation'
@@ -133,7 +134,8 @@ theorem wordAllocateGraphFunctionWithHeuristicsEntryRenamed_maps_locations [OfNa
       ∃ location,
         lookupNatInfo name (wordGraphLocations allocation colours stackStart) =
           some location := by
-  simp [wordAllocateGraphFunctionWithHeuristicsEntryRenamed] at halloc
+  simp only [wordAllocateGraphFunctionWithHeuristicsEntryRenamed, Option.map_eq_some_iff,
+    Prod.mk.injEq] at halloc
   rcases halloc with ⟨allocation', hgraph, hstate, hparameters,
     hallocation, hprogram⟩
   subst allocation'

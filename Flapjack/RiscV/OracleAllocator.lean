@@ -1,5 +1,6 @@
 import Flapjack.RiscV.RegAlloc
 import Flapjack.RiscV.CakeAllocatorCore
+import Flapjack.RiscV.ClashTreeCodec
 
 /-!
 An oracle-backed entry point for the CakeML-shaped Word allocator.
@@ -14,6 +15,7 @@ colouring can be consumed by the existing Word pipeline.
 namespace Flapjack
 
 open Flapjack.RiscV.CakeAlloc
+open Flapjack.ClashTreeCodec
 
 def wordClashTreeNames : WordClashTree → List Nat
   | .delta writes reads => writes ++ reads
@@ -49,14 +51,41 @@ def wordOracleStackSafe (colour : Nat → Nat) (stackStart : Nat) :
       (if name % 4 == 3 then colour name ≥ stackStart else true) &&
         wordOracleStackSafe colour stackStart names
 
+/-- The oracle's clash-tree check, routed through the reviewed
+`RegAlloc.checkClashTree` via the `ClashTreeCodec` codec.  The executed verdict
+is the `isSome` of the reviewed checker's result; `wordOracleClashTreeCheck_eq`
+proves it is exactly the `wordClashTreeCheck` verdict. -/
+def wordOracleClashTreeCheck (colour : Nat → Nat) (tree : WordClashTree) : Bool :=
+  (wordClashTreeCheckViaReviewed colour tree [] []).isSome
+
+theorem wordOracleClashTreeCheck_eq (colour : Nat → Nat) (tree : WordClashTree) :
+    wordOracleClashTreeCheck colour tree =
+      (wordClashTreeCheck colour tree [] []).isSome :=
+  wordClashTreeCheckViaReviewed_isSome colour tree [] []
+
 def wordOracleColouringOk (_colours stackStart : Nat)
     (tree : WordClashTree) (forced : List (Nat × Nat))
     (oracle : NatInfoMap Nat) : Bool :=
   let colour := wordOracleColour oracle
-  (wordClashTreeCheck colour tree [] []).isSome &&
+  wordOracleClashTreeCheck colour tree &&
     wordOracleEdgesSafe colour forced &&
       wordOracleStackSafe colour stackStart
         (wordClashTreeNames tree).eraseDups
+
+/-- Routing the oracle clash-tree check through the reviewed checker leaves the
+executed oracle decision unchanged: it is the executed `wordClashTreeCheck`
+verdict. -/
+theorem wordOracleColouringOk_eq_wordClashTreeCheck
+    (colours stackStart : Nat) (tree : WordClashTree)
+    (forced : List (Nat × Nat)) (oracle : NatInfoMap Nat) :
+    wordOracleColouringOk colours stackStart tree forced oracle =
+      (let colour := wordOracleColour oracle
+       (wordClashTreeCheck colour tree [] []).isSome &&
+         wordOracleEdgesSafe colour forced &&
+           wordOracleStackSafe colour stackStart
+             (wordClashTreeNames tree).eraseDups) := by
+  simp only [wordOracleColouringOk, wordOracleClashTreeCheck,
+    wordClashTreeCheckViaReviewed_isSome]
 
 def wordAllocateFunctionWithOracle [OfNat α 0] (parameters : List Nat)
     (program : WordProg α) (colours stackStart : Nat)

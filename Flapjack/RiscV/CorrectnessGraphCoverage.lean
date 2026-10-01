@@ -187,7 +187,7 @@ theorem wordAllocateGraphFunctionWithEntryRenamed_maps_clash_names [OfNat α 0]
         (WordClashTree.seq (.set renamedParameters)
           (wordClashTree renamedProgram [])) →
       ∃ node, lookupNatInfo name allocation.bijection.toNode = some node := by
-  simp [wordAllocateGraphFunctionWithEntryRenamed] at halloc
+  simp only [wordAllocateGraphFunctionWithEntryRenamed, Option.map_eq_some_iff, Prod.mk.injEq] at halloc
   rcases halloc with ⟨allocation', hgraph, rfl, rfl, rfl, rfl⟩
   exact wordAllocateGraph_maps_clash_names
     (WordClashTree.seq

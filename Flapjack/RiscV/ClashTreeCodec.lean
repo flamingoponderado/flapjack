@@ -29,7 +29,15 @@ declaration, so it carries no `@[hol]` tag.  It provides
   roundtrips (`DomEq`);
 * `wordClashTreeCheck_agrees`: the executed checker's `Option` result corresponds
   to the reviewed checker's `Option` result under the codec, including the
-  domains of the returned live/coloured sets.
+  domains of the returned live/coloured sets;
+* `wordClashTreeCheckViaReviewed` (and `wordClashTreeCheckViaReviewed_isSome`):
+  the reviewed checker routed back into the executed `Option (List Nat × List
+  Nat)` shape, with a kernel proof that its success/failure verdict is exactly
+  the executed checker's.  The executed allocator oracle decision
+  (`Flapjack.wordOracleColouringOk`, `OracleAllocator.lean`) now calls this
+  routing function instead of `wordClashTreeCheck` directly, and
+  `wordOracleColouringOk_eq_wordClashTreeCheck` proves the oracle's `Bool` is
+  unchanged.
 
 ## Source comparison (executed vs reviewed checker)
 
@@ -1020,5 +1028,64 @@ theorem reviewedToWordClashTree_toReviewed (tree : WordClashTree)
   | set names =>
       simp only [wordClashTreeToReviewed, reviewedToWordClashTree]
       rw [h]
+
+/-! ## Routing the executed decision through the reviewed checker
+
+`wordClashTreeCheckViaReviewed` runs the reviewed `checkClashTree` on the codec
+image of the executed tree and returns the executed `Option (List Nat × List
+Nat)` shape by enumerating the reviewed result sets.  It is used to route the
+executed allocator oracle decision (`wordOracleColouringOk`) through the
+reviewed checker: the caller only consumes `.isSome`, and
+`wordClashTreeCheckViaReviewed_isSome` proves that verdict is exactly the
+executed `wordClashTreeCheck` verdict.  The executed result construction
+(the particular list order/content of a successful check) is intentionally not
+reproduced, because the reviewed checker returns `NumSet`s whose `toAList`
+enumeration need not match the executed prepend order. -/
+
+/-- The reviewed `checkClashTree`, invoked through the codec, returns the
+executed `Option (List Nat × List Nat)` shape. -/
+def wordClashTreeCheckViaReviewed (colour : Nat → Nat) (tree : WordClashTree)
+    (live flive : List Nat) : Option (List Nat × List Nat) :=
+  match checkClashTree colour (wordClashTreeToReviewed tree)
+      (listToNumSet live) (listToNumSet flive) with
+  | none => none
+  | some (namesSet, colouredSet) =>
+      some (numSetToList namesSet, numSetToList colouredSet)
+
+/-- Corresponding executed/reviewed checker results agree on success/failure. -/
+theorem CheckResultRel.isSome_eq {exec : Option (List Nat × List Nat)}
+    {rev : Option (NumSet × NumSet)} (h : CheckResultRel exec rev) :
+    exec.isSome = rev.isSome := by
+  cases exec with
+  | none =>
+      cases rev with
+      | none => rfl
+      | some r => simp only [CheckResultRel] at h
+  | some e =>
+      cases rev with
+      | none => simp only [CheckResultRel] at h
+      | some r => rfl
+
+/-- Routing through the reviewed checker preserves the reviewed `isSome`
+verdict definitionally. -/
+theorem wordClashTreeCheckViaReviewed_isSome_checkClashTree (colour : Nat → Nat)
+    (tree : WordClashTree) (live flive : List Nat) :
+    (wordClashTreeCheckViaReviewed colour tree live flive).isSome =
+      (checkClashTree colour (wordClashTreeToReviewed tree)
+        (listToNumSet live) (listToNumSet flive)).isSome := by
+  unfold wordClashTreeCheckViaReviewed
+  cases checkClashTree colour (wordClashTreeToReviewed tree)
+    (listToNumSet live) (listToNumSet flive) <;> rfl
+
+/-- The reviewed-checker routing preserves the executed checker's
+success/failure verdict on the executed inputs. -/
+theorem wordClashTreeCheckViaReviewed_isSome (colour : Nat → Nat)
+    (tree : WordClashTree) (live flive : List Nat) :
+    (wordClashTreeCheckViaReviewed colour tree live flive).isSome =
+      (wordClashTreeCheck colour tree live flive).isSome := by
+  rw [wordClashTreeCheckViaReviewed_isSome_checkClashTree]
+  exact (CheckResultRel.isSome_eq (wordClashTreeCheck_agrees colour tree live flive
+    (listToNumSet live) (listToNumSet flive)
+    (DomEq_listToNumSet live) (DomEq_listToNumSet flive))).symm
 
 end Flapjack.ClashTreeCodec
