@@ -40686,5 +40686,32 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "reviewer": "Source review word_to_stackScript.sml319-343: literal five-node prefix and two-node suffix, signed word offsets, registers/order and source list_Seq preserved. Native HolProg positive width matches word-indexed source through words_as_type_indexed_bitvec; universal toGeneric transport kernel checked. Syntax only, no x64 instrumentation verification or production-route claim.",
     "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "StackHandlerArgs_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeHandlers.lean",
+    "lean_name": "stackHandlerArgsNative",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_to_stackScript.sml349-384 and original HOL object type: StackHandlerArgs independently quantifies both destination payload carriers (Sum alpha beta) and positive program word width. Both frame-size increments exact. PushHandler retains allocation, constant1, labels, saved-handler slots0-2 and perf slots3-4/source register order; PopHandler restores/free-before-continuation. Native HolProg carrier reviewed with words_as_type_indexed_bitvec; universal all-input toGeneric transport. Source list_Seq exact empty/singleton/cons specialization; no instrumentation simulation or production route claim. Generic carrier repair r1p4 accepted/published db7e433e0."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "PopHandler_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeHandlers.lean",
+    "lean_name": "popHandlerNative",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_to_stackScript.sml349-384 and original HOL object type: StackHandlerArgs independently quantifies both destination payload carriers (Sum alpha beta) and positive program word width. Both frame-size increments exact. PushHandler retains allocation, constant1, labels, saved-handler slots0-2 and perf slots3-4/source register order; PopHandler restores/free-before-continuation. Native HolProg carrier reviewed with words_as_type_indexed_bitvec; universal all-input toGeneric transport. Source list_Seq exact empty/singleton/cons specialization; no instrumentation simulation or production route claim. Generic carrier repair r1p4 accepted/published db7e433e0."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "PushHandler_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeHandlers.lean",
+    "lean_name": "pushHandlerNative",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_to_stackScript.sml349-384 and original HOL object type: StackHandlerArgs independently quantifies both destination payload carriers (Sum alpha beta) and positive program word width. Both frame-size increments exact. PushHandler retains allocation, constant1, labels, saved-handler slots0-2 and perf slots3-4/source register order; PopHandler restores/free-before-continuation. Native HolProg carrier reviewed with words_as_type_indexed_bitvec; universal all-input toGeneric transport. Source list_Seq exact empty/singleton/cons specialization; no instrumentation simulation or production route claim. Generic carrier repair r1p4 accepted/published db7e433e0."
   }
 ]
