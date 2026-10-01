@@ -40136,5 +40136,14 @@
   "words_as_type_indexed_bitvec": true,
   "reals_as_rational_cuts": true,
   "reviewer": "flapjack-luna-c source comparison 2026-10-01 b4v0.2.3: all16 literal fp_upd_def158-223 clauses on imported native State, HolFp constructor carrier, actual positive polymorphic word width and fixed word64 FP registers. Source RTE primitives imported from reviewed IEEE renderings, source fpSemFpfma operand order retained with accumulator first. MovToReg sequential updates preserve alias high-half overwrite; MovFromReg concat uses actual width and Loc errors assert. FPToInt asserts signed-word32 range equality but unconditionally writes narrowed bits after failure, with old-register half insertion for non64 widths. FPFromInt non64 signed extraction uses actual width, not32. No operation callback, conversion-success premise or runtime approximation. Direct reals_as_rational_cuts translation uses the reviewed imported IEEE renderings (SOUNDNESS item8): rational finite arithmetic and comparisons, rational-cut sqrt, and RTE integer conversions, including unspecified quiet-NaN choice, without fixing raw NaN arithmetic payloads.29 direct original HOL rows/kernel matches cover allconstructors, width8/32/64/128, NaN/sign payloads, FMA order, rounding ties, alias/error/overflow write cases. Whole Lab evaluator/runtime wiring remain open. Coordinator review pending."
+},
+{
+  "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+  "hol_name": "wShareInst_def",
+  "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeSharedMemory.lean",
+  "lean_name": "wShareInstNative",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-luna-a source comparison2026-10-01 beadof5g: all eight wShareInst clauses186-223 compared individually. Load/Load8/Load16/Load32 stage address via wReg1, ordered native wStackLoad and destination wRegWrite1 spill; Store/Store8/Store16/Store32 stage address via wReg1 then value via wReg2, concatenate loads in source order and emit matching ShMemOp with source register/address/offset unchanged. Unlike wInst, shared-memory16 cases are explicitly handled by source. HolMemop aliases reviewed eight-constructor WordMemOp; HolAddr width and HolProg width use reviewed same positive-word-width native payloads, faithful MlString program carrier. words_as_type_indexed_bitvec authorizes only BitVec width/NeZero translation. All-input toGeneric_wShareInstNative kernel theorem transports to accepted generic helper without memory-evaluation/result/success or bounds premise. No production alias adjustment/default or behavior change; actualcomp/production route remains parent25 OPEN. Coordinator review pending."
 }
 ]
