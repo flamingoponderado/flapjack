@@ -31,6 +31,12 @@
       "sha256": "fb00053f44698704d47ad72155116e228341abdc8a31fca36f84735d31fe6183"
     },
     {
+      "bytes": 356,
+      "out": "asmprops_pc_coverage_probe.out",
+      "rows": 13,
+      "sha256": "814f36970d25cf9562097638bda0f1bd91a023c11996586e3c567aeb306c129a"
+    },
+    {
       "bytes": 1640,
       "out": "asmsem_arithmetic_probe.out",
       "rows": 52,
@@ -3031,6 +3037,12 @@
       "sha256": "9a52f48f9aa4d0ba87adf2f57586cbe903fb818c605ab885e0b106469a00ed6e"
     },
     {
+      "bytes": 711,
+      "out": "parmove_scratch_order_wrapper_probe.out",
+      "rows": 9,
+      "sha256": "059425b8e9abd875c668e2c6041d15639578433c828d6d4f185690e6fad336d1"
+    },
+    {
       "bytes": 238,
       "out": "parmove_semantics_probe.out",
       "rows": 12,
@@ -4601,6 +4613,12 @@
       "out": "wordconvs_exp_mono_probe.out",
       "rows": 9,
       "sha256": "f3ea2141323e36cbc98ef85fd29086685dd246cb6d87e688c5edfae5567c77db"
+    },
+    {
+      "bytes": 188,
+      "out": "wordconvs_name_mono_probe.out",
+      "rows": 6,
+      "sha256": "13e29790deb918245cfe46ca9ae526da5b2765c00e622e83afd29a2bb0457808"
     },
     {
       "bytes": 82,
