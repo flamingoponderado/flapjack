@@ -2588,3 +2588,5 @@ distinctness, generic three-list flattening, and RTC scratch safety respectively
 `parmove_preservation_shape_probe` records the original preservation and
 renaming statements/types as an audit aid, not a port or equivalence proof.
 Its capture omits blank separator lines between printed HOL clauses.
+
+- `parmove_all_distinct_steps_probeScript.sml`: four full destination predicates for zero-step scratch and start/save states. Lean fixtures additionally certify the RTC trace; HOL observations alone do not establish it.
