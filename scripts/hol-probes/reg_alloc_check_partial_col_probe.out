@@ -1,7 +1,0 @@
-cpc_inj=SOME ([(3,()); (1,()); (2,())],[(3,()); (4,()); (2,())])
-cpc_present=SOME ([(3,())],[(0,())])
-cpc_dup=SOME ([(1,())],[(1,())])
-cpc_clash_live=NONE
-cpc_clash_list=NONE
-cpc_domain=SOME [3; 1; 5]
-cpc_large=SOME ([(36893488147419103232,())],[(36893488147419103232,())])

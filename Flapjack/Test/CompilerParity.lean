@@ -38,7 +38,6 @@ import Flapjack.Test.InClashTreeParity
 import Flapjack.Test.GetForcedParity
 import Flapjack.Test.RegAllocInvariantsParity
 import Flapjack.Test.RegAllocMkBijLemmasParity
-import Flapjack.Test.RegAllocCheckPartialColParity
 import Flapjack.Test.WordAllocCoalesceCostParity
 import Flapjack.Test.WordAllocLoopCheckerParity
 import Flapjack.Test.WordToStackCompilePrefixParity

@@ -42786,21 +42786,5 @@
     "lean_name": "mkBijAuxWf",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.11.5.10.5.4) against reg_allocProofScript.sml:935-982: !ct ta fa n ta' fa' n'. mk_bij_aux ct (ta,fa,n) = (ta',fa',n') /\\ wf ta /\\ wf fa ==> Abbrev (wf ta' /\\ wf fa'); markerTheory Abbrev x = x, so the conclusion is the plain conjunction; wf as sptWf = true."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
-    "hol_name": "check_partial_col_success",
-    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs.lean",
-    "lean_name": "checkPartialColSuccess",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus source comparison (bead flapjack-v2oo) against reg_allocProofScript.sml:1253-1294: !ls live flive col. domain flive = IMAGE col (domain live) /\\ INJ col (set ls UNION domain live) UNIV ==> ?livein flivein. check_partial_col col ls live flive = SOME (livein,flivein) /\\ domain flivein = IMAGE col (domain livein); INJ f S UNIV as injectivity on S (codomain membership in UNIV trivial), IMAGE as an existential, domain as sptDomain predicate equality, reviewed checkPartialCol; local helper INJ_less inlined."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml",
-    "hol_name": "check_partial_col_domain",
-    "lean_path": "Flapjack/Compiler/Backend/RegAlloc/Proofs.lean",
-    "lean_name": "checkPartialColDomain",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus source comparison (bead flapjack-v2oo) against reg_allocProofScript.sml:1541-1550: !ls f live flive v. check_partial_col f ls live flive = SOME v ==> domain (FST v) = set ls UNION domain live; FST v as v.1."
   }
 ]
