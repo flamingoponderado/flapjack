@@ -3876,6 +3876,14 @@ including generic payload/cache statements. The exact definitions live in
 helpers are separate infrastructure. Native executable routing and full
 encoding correctness remain tracked on the fleet dependency graph.
 
+`stack_to_lab_nonrecursive_validity_probe.out` replays the complete literal
+original local `flatten_line_ok_pre` proof, then evaluates source validity,
+zero-byte-offset validity and the full output-line predicate for CodeBufferWrite
+and shared Load inputs. `StackToLabNonrecursiveValidityParity` applies all
+31 native nonrecursive cases at arbitrary carriers/parameters and includes
+those two concrete theorem applications. Every case retains all original
+premises and the full app-list output conclusion. Recursive Seq/If/Loop and
+returned Call, the assembling theorem and executable route remain open.
 `stacksem_fp_conversion_types_probeScript.sml` captures seven original full
 types for the StackSem FP sqrt/conversion case review: `inst`, FP lookup/update,
 three machine-IEEE operations and the generic compile-oracle projection. The

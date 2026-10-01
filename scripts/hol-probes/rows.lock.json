@@ -643,6 +643,7 @@
     {"bytes": 262, "out": "stack_to_lab_flatten_ops_probe.out", "rows": 10, "sha256": "806767b4712ff30c41ad8e19efbbee6ac94a1961bd35a3467c7f02e3e7728591"},
     {"bytes": 1043, "out": "stack_to_lab_flatten_probe.out", "rows": 32, "sha256": "54a79a9880ec84098f8719f8bff7c2e57ec163f7cda13f55a2118269c2d81382"},
     {"bytes": 7335, "out": "stack_to_lab_native_probe.out", "rows": 46, "sha256": "9d0a065df6dc3d311c4543318e4907ad57fe4ac2d16a850ced470e8213b3845f"},
+    {"bytes": 241, "out": "stack_to_lab_nonrecursive_validity_probe.out", "rows": 3, "sha256": "74fe1adcec42b08218314055e1e5d94f154cb49d188c6aac6af6fa6bbee12e88"},
     {"bytes": 267, "out": "stackprops_code_labels_probe.out", "rows": 15, "sha256": "0951919b9c2820704747f40b352ab0cf70ab9bb1ee3a2535536992f1814929e6"},
     {"bytes": 852, "out": "stackprops_forbidden_operations_probe.out", "rows": 46, "sha256": "718e64268abb7c05d330507ff019f684e9f6d44c5c0f53f2ca65ac3cf8ca78e7"},
     {"bytes": 250, "out": "stackprops_label_safety_probe.out", "rows": 10, "sha256": "fc85cce61b21a596486ae2cb9283bdc70df9c55a6440d3f463cb67ff4e405c97"},
