@@ -1,11 +1,14 @@
+import Flapjack.Test.ParmoveDStepStepParity
 import Flapjack.Test.ParmoveSplitSourceParity
 import Flapjack.Test.ParmoveStepsCorrectParity
 import Flapjack.Test.ParmoveDStepsParity
 import Flapjack.Test.WordToStackNativeConfigParity
 
 import Flapjack.Test.ParmoveDestinationParity
+import Flapjack.Test.ParmoveSourceParity
 import Flapjack.Test.ParmoveFinalParity
 import Flapjack.Test.WordToStackNativeProgramsParity
+import Flapjack.Test.LabSemSemanticsParity
 import Flapjack.Test.ParmoveStepsSemParity
 import Flapjack.Test.ParmoveStepSemParity
 import Flapjack.Test.ParmoveEmitHeadParity

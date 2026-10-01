@@ -2217,6 +2217,17 @@ eqenv excludes it. No pmov-to-Step relationship is assumed or claimed.
 
 `word_to_stack_programs_native_probeScript.sml` observes the literal native `compile_prog` and generic `compile_word_to_stack` in 21 original executions. Cases cover frame subtraction/MAX boundaries, widths1/8/64, perf, arbitrary identifiers, duplicate preservation, and left-to-right bitmap content/length across multiple programs and multiword insertions. `Flapjack/Test/WordToStackNativeProgramsParity.lean` replays identical inputs and results in the kernel. Native top-level compilation and production caller routing remain separate work.
 
+
+`parmove_destination_probeScript.sml` observes the real/temporary destinations
+of native `pmov` on terminal, self, chain, cycle, scratch, duplicate, and active
+states. `ParmoveDestinationParity` replays each row and applies the unconditional
+original destination-membership theorem, including malformed states.
+
+`parmove_source_probeScript.sml` observes native `pmov` source-register maps
+on eight arbitrary states, including scratch/duplicate/active and real history.
+`ParmoveSourceParity` replays each row and applies the unconditional original
+source-membership theorem; the cycle-save source is justified from active LAST.
+
 `parmove_dsteps_probeScript.sml` freshly proves nine observations from the original
 `reg_alloc/parmove` theory: all six deterministic rules, two guard boundaries,
 and Extend with a suffix that still reads the selected register. The last row
@@ -2244,3 +2255,8 @@ those remain tracked on the WordToStack compiler beads.
 of native `pmov` on terminal, self, chain, cycle, scratch, duplicate, and active
 states. `ParmoveDestinationParity` replays each row and applies the unconditional
 original destination-membership theorem, including malformed states.
+
+
+`labsem_semantics_probeScript.sml` proves four whole behavior observations through original `semantics_def`: Error, success, resource limit, and self-loop divergence with the entire arbitrary input trace retained. Evaluator equations are derived in the original HOL kernel and record-update left-hand sides normalized before rewriting the quantified clocks. The loop equation covers every natural clock by induction; the divergent trace uses the actual constant-image and prefix-chain/LUB uniqueness theorems. `Flapjack/Test/LabSemSemanticsParity.lean` proves the corresponding native observations, including arbitrary Halt word values. Neither side substitutes a finite timeout for divergence.
+
+`parmove_dstep_step_probeScript.sml` captures six original wf premises and nine cycle semantic values before Save, after Save, and after EmitHead. Kernel fixtures prove all six actual DStep-to-Steps applications with the original wf premise. The temporary changes99to17 on Save; no functional scheduler simulation is assumed.

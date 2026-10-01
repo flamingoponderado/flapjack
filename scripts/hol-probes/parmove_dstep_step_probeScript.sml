@@ -1,0 +1,22 @@
+load "bossLib";
+load "preamble";
+load "parmoveTheory";
+open bossLib HolKernel Parse preamble parmoveTheory;
+fun print_eval label q = let val th = EVAL q in
+ (print (label ^ "="); print_term (rconc th); print "\n") end;
+print_eval "pv_ds_wf_0" ``parmove$wf ([(SOME (1:num),SOME 1)],[],[])``;
+print_eval "pv_ds_wf_1" ``parmove$wf ([(SOME (1:num),SOME 2)],[],[])``;
+print_eval "pv_ds_wf_2" ``parmove$wf ([(SOME (3:num),SOME 1)],[(SOME 1,SOME 2)],[])``;
+print_eval "pv_ds_wf_3" ``parmove$wf ([],[(SOME (1:num),SOME 2);(SOME 2,SOME 1)],[])``;
+print_eval "pv_ds_wf_4" ``parmove$wf ([],[(SOME (3:num),SOME 1);(SOME 1,SOME 2)],[])``;
+print_eval "pv_ds_wf_5" ``parmove$wf ([],[(SOME (1:num),SOME 2)],[])``;
+val env = ``\x:num option. case x of NONE => 99n | SOME k => 10*k+7``;
+print_eval "pv_ds_cycle_0_0" ``parmove$sem ([],[(SOME 1,SOME 2);(SOME 2,SOME 1)],[]) ^env (SOME 1)``;
+print_eval "pv_ds_cycle_0_1" ``parmove$sem ([],[(SOME 1,SOME 2);(SOME 2,SOME 1)],[]) ^env (SOME 2)``;
+print_eval "pv_ds_cycle_0_2" ``parmove$sem ([],[(SOME 1,SOME 2);(SOME 2,SOME 1)],[]) ^env (NONE)``;
+print_eval "pv_ds_cycle_1_0" ``parmove$sem ([],[(SOME 1,SOME 2);(SOME 2,NONE)],[(NONE,SOME 1)]) ^env (SOME 1)``;
+print_eval "pv_ds_cycle_1_1" ``parmove$sem ([],[(SOME 1,SOME 2);(SOME 2,NONE)],[(NONE,SOME 1)]) ^env (SOME 2)``;
+print_eval "pv_ds_cycle_1_2" ``parmove$sem ([],[(SOME 1,SOME 2);(SOME 2,NONE)],[(NONE,SOME 1)]) ^env (NONE)``;
+print_eval "pv_ds_cycle_2_0" ``parmove$sem ([],[(SOME 2,NONE)],[(SOME 1,SOME 2);(NONE,SOME 1)]) ^env (SOME 1)``;
+print_eval "pv_ds_cycle_2_1" ``parmove$sem ([],[(SOME 2,NONE)],[(SOME 1,SOME 2);(NONE,SOME 1)]) ^env (SOME 2)``;
+print_eval "pv_ds_cycle_2_2" ``parmove$sem ([],[(SOME 2,NONE)],[(SOME 1,SOME 2);(NONE,SOME 1)]) ^env (NONE)``;
