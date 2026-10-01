@@ -99,6 +99,14 @@ temporary strategic focus here or claim a blocked parent merely because it is
 high priority. The coordinator keeps bead priorities aligned with the current
 goal.
 
+Do not wait for a coordinator assignment to continue. Claim ready work in your
+area and coordinate directly with peers about sharing or taking over a
+prerequisite, especially one blocking your own work. Check existing claims and
+pending deliveries first; agree on ownership before taking over active work.
+If blocked, record the genuine dependency, release the blocked parent, and pick
+an available prerequisite or another ready task. Work awaiting integration may
+be consumed by an ordinary peer merge; its acceptance status stays unchanged.
+
 Persistent agent goals describe the overall fleet mission, not a particular
 bead or temporary assignment. Send individual assignments as ordinary messages
 and use the shared database to choose subsequent work. Completing a bead is a
