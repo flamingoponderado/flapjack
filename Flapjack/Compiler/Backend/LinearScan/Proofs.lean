@@ -10,6 +10,7 @@ import Flapjack.Compiler.Backend.LinearScan.Proofs.PassInvariants
 import Flapjack.Compiler.Backend.LinearScan.Proofs.SortCorrect
 import Flapjack.Compiler.Backend.LinearScan.Proofs.IntervalsCorrect
 import Flapjack.Compiler.Backend.LinearScan.Proofs.WithoutRenaming
+import Flapjack.Compiler.Backend.LinearScan.Proofs.TopLevelCorrect
 import Flapjack.Compiler.Backend.LinearScan.Proofs.Bijection
 import Flapjack.Compiler.Backend.LinearScan.Proofs.ApplyBijection
 import Flapjack.Compiler.Backend.LinearScan.Proofs.IntervalMonad
@@ -48,6 +49,8 @@ order:
   initial states, array/list conversions and `linear_reg_alloc_intervals_correct`.
 * `WithoutRenaming`: `linear_scanProofScript.sml:5471-5564`,
   `linear_reg_alloc_without_renaming_correct`.
+* `TopLevelCorrect`: `linear_scanProofScript.sml:6008-6230`, the allocator
+  correctness `linear_scan_reg_alloc_correct`.
 * `Bijection`: `linear_scanProofScript.sml:4997-5204`, the register
   bijection invariants.
 * `ApplyBijection`: `linear_scanProofScript.sml:5565-6006`, checking a
@@ -59,5 +62,4 @@ Declarations whose statements use HOL `EL` render it by the exact tagged
 `holEl` (`Flapjack.Misc.ListEl`); each was re-tagged after its own statement
 review.
 
-The top-level `linear_scan_reg_alloc_correct` is not yet ported.
 -/
