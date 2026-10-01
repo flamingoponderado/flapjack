@@ -42668,5 +42668,13 @@
     "lean_name": "notUseTempBeforeAssignInsert",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds10 source comparison (bead flapjack-w1a4.1): exact port of HOL parmoveScript.sml:849-853 not_use_temp_before_assign_insert; source uses independent type variables for the destination and source option carriers and inserts (SOME x, SOME y); the Lean statement keeps {destination source : Type} as separate binders and the same Bool-equality guard/conclusion with no extra premise. Proof via the accepted not_use_temp_before_assign_append equivalence."
+  },
+  {
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "wf_def",
+    "lean_path": "Flapjack/Misc/Sptree.lean",
+    "lean_name": "sptWf",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds10 source comparison (bead flapjack-pxn.18.5.15.3.29.2): exact port of the pinned external HOL sptreeScript.sml:39-42 wf_def over the reviewed Lean Spt carrier (LN/LS/BN/BS, same as spt). HOL's Prop-valued well-formedness is rendered as a Bool function, matching the accepted convention for the Word-to-Stack frame predicates (isHandlerFrame/sortedEnv); clauses are literal: LN/LS true, BN/BS require both children well-formed and not both empty. Needed by Word-to-Stack state_rel_def ('wf s.locals' where locals is an sptree)."
   }
 ]

@@ -52,7 +52,10 @@ def sptIsEmpty {α : Type} : Spt α → Bool
   | .ln => true
   | _ => false
 
-/-- HOL `sptree$wf`: well-formedness (no internal node whose both children are empty). -/
+/-- HOL `sptree$wf`: well-formedness (no internal node whose both children are empty).
+The Prop-valued HOL predicate is rendered as a `Bool`-valued function, matching the
+accepted convention used for the Word-to-Stack frame predicates. -/
+@[hol "hol4/src/finite_maps/sptreeScript.sml" "wf_def"]
 def sptWf {α : Type} : Spt α → Bool
   | .ln => true
   | .ls _ => true
