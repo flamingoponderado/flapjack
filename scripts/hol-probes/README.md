@@ -2936,6 +2936,12 @@ the finite fixtures do not prove cross-assistant equivalence.
 equations, including unsorted inputs. `RegAllocSortedMemParity` kernel-replays
 the same cases and the executed wrapper's equation for arbitrary keys/lists.
 
+`word_alloc_full_ssa_probe` captures 5 original EVAL results of
+`full_ssa_cc_trans` at 64-bit words (limit, entry move, renamed body), replayed
+in `WordAllocFullSSAParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_alloc_full_ssa_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `word_alloc_ssa_cc_trans_probe` captures 31 original EVAL results of
 `ssa_cc_trans` over 64-bit programs covering every clause family (moves,
 StoreConsts, instructions, expressions, If merges, cutset restarts for
@@ -3637,6 +3643,44 @@ query revealed that fixing this ignored field to Nat specialized the predicate;
 its existing canonical Lean definition now preserves the generic carrier.
 The actual compiler theorem still uses Nat there, as required by its original
 compiler type. No clauses or executed compiler behavior change.
+
+### Full WordConvs forbidden-constructor equation group
+
+`word_convs_no_alloc_def_probeScript.sml`, `word_convs_no_mt_def_probeScript.sml`
+and `word_convs_no_share_inst_def_probeScript.sml` each instantiate all 26
+original exported clauses and three further Call option combinations at width
+one. Every row records actual predicate truth and the original clause
+conclusion. Failing recursive/rejected constructor values remain false;
+all original clause conclusions are true. `WordConvsPredicateEquationsParity`
+replays the 87 observations through complete conjunction projections, preserving
+both optional Call bodies. The public theorems retain all original shared
+binders and simplify only constant constructor inequalities/self-equalities;
+no ARB representative or extra premise is introduced. The canonical reviewed
+predicates are reused. This supporting group does not establish full compiler
+preservation or cross-language equivalence.
+### Native return wrapper no-shared-memory preservation
+
+`word_to_stack_no_shmemop_return_probeScript.sml` evaluates sixteen original
+predicate pairs with safe and forbidden continuations, zero/nonzero return
+counts, both flags, widths1/32/64/80, a String frame tail and independent Bool
+return list. Each pair is checked against its explicit true/true or false/false
+result. `WordToStackNoShmemopReturnParity` kernel-checks the identical inputs
+and applies the full theorem at arbitrary independent carriers and positive
+width. These regressions do not establish cross-language equivalence.
+Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_return_probeScript.sml`.
+
+### Native compiler instruction no-shared-memory case
+
+`word_to_stack_no_shmemop_inst_probeScript.sml` checks all source instruction
+subconstructors and extra width1/32/80 FP moves. Forty-two original EVAL
+observations jointly check the source no-share guard, actual compiled target
+no-shared-memory predicate and unchanged full bitmap pair. The samples include
+zero/large registers, zero/nonzero frames, both perf flags, width64/non64 FP
+moves and unhandled Load16/Store16. `WordToStackNoShmemopInstructionsParity`
+replays identical observations through the actual kernel-checked compiler
+equations and applies the original-shaped Inst case at arbitrary inputs.
+These regressions do not establish cross-language equivalence or full compiler
+preservation. Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_inst_probeScript.sml`.
 
 ### SSA merge unchanged lookups
 
