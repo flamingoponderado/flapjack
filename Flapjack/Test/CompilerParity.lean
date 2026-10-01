@@ -1,9 +1,14 @@
+import Flapjack.Test.ParmoveCorrectParity
 import Flapjack.Test.WordAllocMergeStackSetsParity
 import Flapjack.Test.ParmoveTempBeforeAssignParity
 import Flapjack.Test.FindIndexParity
 import Flapjack.Test.WordAllocMergeStackOnlyParity
 import Flapjack.Test.ParmoveDStepsSteps
 import Flapjack.Test.WordAllocRemoveTempStackParity
+import Flapjack.Test.WordToStackNativeTopParity
+import Flapjack.Test.SptUnionAlgebraParity
+import Flapjack.Test.WordAllocEvenColourParity
+import Flapjack.Test.TargetSemMappedMemoryParity
 import Flapjack.Test.WordAllocTotalColourParity
 import Flapjack.Test.ParmoveSourceWrapperParity
 import Flapjack.Test.WordToStackInsertPrefixParity
