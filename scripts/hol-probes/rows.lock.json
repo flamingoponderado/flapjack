@@ -3979,6 +3979,12 @@
       "sha256": "545ae70e2aa85b72b6ef7cab66a3ab6fce73527f371bf38e334f52b5666df961"
     },
     {
+      "bytes": 1119,
+      "out": "word_alloc_max_var_max_probe.out",
+      "rows": 47,
+      "sha256": "e63edbb0591eda24126f672815f82053c231513637814002801f1394fa324a40"
+    },
+    {
       "bytes": 110,
       "out": "word_alloc_mem8_probe.out",
       "rows": 2,

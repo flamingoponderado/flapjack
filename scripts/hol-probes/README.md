@@ -3089,3 +3089,9 @@ original full-type queries retain both independent carriers; the definition
 ports have no word specialization. These rows are regression evidence,
 not HOL-to-Lean equivalence or complete encoder correctness. The full
 iteration/weakening theorem chain is a separate dependency.
+`word_alloc_max_var_max_probe.out` captures the complete exported theorem and46
+fresh original maximum/at-bound/strict-below triples across native constructors,
+recursive Call/Loop bodies, ignored fields, non-wellformed cutsets and widths
+1/32/64/80. `WordAllocMaxVarMaxParity` checks93 kernel examples against these
+inputs and the full premise-free theorem. Run this capture alone with
+`HOL_PROBE_ONLY=word_alloc_max_var_max_probeScript.sml`.
