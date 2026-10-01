@@ -1,0 +1,4 @@
+wa_empty=λa. 0w
+wa_wrap0=1w
+wa_wrap1=2w
+wa_wrap255=2w
