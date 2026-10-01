@@ -101,6 +101,14 @@ run_probe() {
   done
 }
 
+run_probe word_to_stack_copy_ret_no_install_probeScript.sml word_to_stack_copy_ret_no_install_probe.out \
+  crni_zero_bad crni_plain_good crni_handler_bad crni_perf_good crni_perf_bad crni_option_tail_handler crni_empty_list_loop crni_exact_count_zero \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_convs_no_install_def_probeScript.sml word_convs_no_install_def_probe.out \
+  wcni_01_mt wcni_02_seq wcni_03_loop wcni_04_if wcni_05_call wcni_06_alloc wcni_07_loc wcni_08_share wcni_09_install wcni_10_skip wcni_11_move wcni_12_inst wcni_13_assign wcni_14_get wcni_15_set wcni_16_store wcni_17_consts wcni_18_raise wcni_19_return wcni_20_break wcni_21_continue wcni_22_tick wcni_23_heap wcni_24_code wcni_25_data wcni_26_ffi wcni_call_none_none_width1 wcni_call_return_only_width1 wcni_call_both_present_width1 \
+  "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
+
 run_probe word_to_stack_no_install_helpers_probeScript.sml word_to_stack_no_install_helpers_probe.out \
   ni_moves_empty ni_moves_all_pairs ni_load_install ni_load_skip ni_reg1_direct ni_reg1_spill ni_reg2_direct ni_reg2_spill ni_live_zero ni_live_frame ni_stack_move_install ni_stack_move_zero ni_copy_aux_zero ni_copy_aux_many \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -3511,3 +3519,30 @@ run_probe ssa_locals_physical_insert_probeScript.sml ssa_locals_physical_insert_
 run_probe ssa_merge_frame_probeScript.sml ssa_merge_frame_probe.out \
   mf_full_source_replay mf_empty mf_missing_both mf_missing_left mf_missing_right mf_equal mf_unequal mf_tail_order mf_duplicate mf_invalid mf_big \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_code_label_safety_probeScript.sml word_to_stack_code_label_safety_probe.out \
+  cls_empty cls_self cls_missing cls_external cls_duplicates cls_owned cls_wrong_owner cls_tail_missing cls_threaded cls_width_one \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_convs_code_label_carriers_probeScript.sml word_convs_code_label_carriers_probe.out \
+  clc_bool clc_unit clc_list clc_option \
+  "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe word_convs_no_alloc_def_probeScript.sml word_convs_no_alloc_def_probe.out \
+  wcna_01_mt wcna_02_seq wcna_03_loop wcna_04_if wcna_05_call wcna_06_alloc wcna_07_loc wcna_08_share wcna_09_install wcna_10_skip wcna_11_move wcna_12_inst wcna_13_assign wcna_14_get wcna_15_set wcna_16_store wcna_17_consts wcna_18_raise wcna_19_return wcna_20_break wcna_21_continue wcna_22_tick wcna_23_heap wcna_24_code wcna_25_data wcna_26_ffi wcna_call_none_none_width1 wcna_call_return_only_width1 wcna_call_both_present_width1 \
+  "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe word_convs_no_mt_def_probeScript.sml word_convs_no_mt_def_probe.out \
+  wcnm_01_mt wcnm_02_seq wcnm_03_loop wcnm_04_if wcnm_05_call wcnm_06_alloc wcnm_07_loc wcnm_08_share wcnm_09_install wcnm_10_skip wcnm_11_move wcnm_12_inst wcnm_13_assign wcnm_14_get wcnm_15_set wcnm_16_store wcnm_17_consts wcnm_18_raise wcnm_19_return wcnm_20_break wcnm_21_continue wcnm_22_tick wcnm_23_heap wcnm_24_code wcnm_25_data wcnm_26_ffi wcnm_call_none_none_width1 wcnm_call_return_only_width1 wcnm_call_both_present_width1 \
+  "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe word_convs_no_share_inst_def_probeScript.sml word_convs_no_share_inst_def_probe.out \
+  wcns_01_mt wcns_02_seq wcns_03_loop wcns_04_if wcns_05_call wcns_06_alloc wcns_07_loc wcns_08_share wcns_09_install wcns_10_skip wcns_11_move wcns_12_inst wcns_13_assign wcns_14_get wcns_15_set wcns_16_store wcns_17_consts wcns_18_raise wcns_19_return wcns_20_break wcns_21_continue wcns_22_tick wcns_23_heap wcns_24_code wcns_25_data wcns_26_ffi wcns_call_none_none_width1 wcns_call_return_only_width1 wcns_call_both_present_width1 \
+  "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe word_to_stack_no_shmemop_return_probeScript.sml word_to_stack_no_shmemop_return_probe.out \
+  cr_0_safe cr_0_forbidden cr_1_safe cr_1_forbidden cr_2_safe cr_2_forbidden cr_3_safe cr_3_forbidden cr_4_safe cr_4_forbidden cr_5_safe cr_5_forbidden cr_6_safe cr_6_forbidden cr_7_safe cr_7_forbidden \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_to_stack_no_shmemop_inst_probeScript.sml word_to_stack_no_shmemop_inst_probe.out \
+  ci_skip ci_const ci_binop_imm ci_binop_reg ci_shift_imm ci_shift_reg ci_div ci_long_mul ci_long_div ci_carry ci_add_overflow ci_sub_overflow ci_load ci_load8 ci_load16 ci_load32 ci_store ci_store8 ci_store16 ci_store32 ci_fpless ci_fplessequal ci_fpequal ci_fpabs ci_fpneg ci_fpsqrt ci_fpadd ci_fpsub ci_fpmul ci_fpdiv ci_fpfma ci_fpmov ci_fpmovtoreg ci_fpmovfromreg ci_fptoint ci_fpfromint ci_fpmovtoreg1 ci_fpmovfromreg1 ci_fpmovtoreg32 ci_fpmovfromreg32 ci_fpmovtoreg80 ci_fpmovfromreg80 \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"

@@ -1,3 +1,5 @@
+import Flapjack.Pancake.WordConvs.PredicateEquations
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CodeLabelSafety
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsSwap
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSALocalsPhysicalInsert
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMapPreservation
@@ -56,6 +58,8 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.ProgramCodeLabels
 import Flapjack.Compiler.Backend.WordToStack.Proofs.HandlerLabels
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopHelpers
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopCallCore
+import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopReturn
+import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopInstructions
 import Flapjack.Pancake.WordConvs.CodeLabels
 import Flapjack.Pancake.WordConvs.LabelSafety
 import Flapjack.Compiler.Backend.StackProps.CodeLabels
@@ -817,6 +821,7 @@ import Flapjack.Pancake.WordLang.OccurrencesExact
 import Flapjack.Pancake.WordConvs
 import Flapjack.Pancake.WordConvs.WfCutsets
 import Flapjack.Pancake.WordConvs.NotCreated
+import Flapjack.Pancake.WordConvs.NoInstall
 import Flapjack.RiscV.CorrectnessEncoding
 import Flapjack.Compiler.Backend.StackProps
 import Flapjack.Pancake.PanStructs

@@ -3591,3 +3591,93 @@ keys, malformed trees and unbounded natural registers.
 only the original allocation-class premise and all four result conjuncts.
 Malformed/physical-counter observation rows test the definition; they do not
 claim that the allocation premise holds. No exported local theorem is claimed.
+
+### Full WordConvs no-install equations
+
+`word_convs_no_install_def_probeScript.sml` projects all 26 clauses of the
+original exported `no_install_def`, matches each complete constructor input,
+and checks assumption-free exact clause applications before evaluating the pair
+(actual predicate value, original clause conclusion). Three additional width-one
+Call rows complete all four return/handler combinations. `WordConvsNoInstallDefParity`
+projects the same clauses from the entire Lean conjunction at identical inputs;
+Install and recursive failing bodies remain false, every original clause true.
+The existing canonical `noInstallSubprogsHOL` predicate is reused. Normalized
+Install comparisons simplify by constructor disjointness, so the ShareInst
+clause requires no choice of HOL ARB. All source shared inputs remain in the
+full theorem; the only qualifier translates positive type-indexed word dimensions.
+These regression observations do not establish compiler correctness or replace
+source-level HOL/Lean correspondence review.
+
+### Full generic-frame copy-ret no-install theorem
+
+`word_to_stack_copy_ret_no_install_probeScript.sml` evaluates eight original
+full `copy_ret_no_install` iff instances together with actual output predicates.
+The original theorem is local; this capture evaluates original definitions and
+does not claim an exported theorem application. Independent generic frame tails
+and return-list types, widths 64/1/16, zero/nonzero counts, both flags and unsafe
+Install/handler/loop continuations are replayed by
+`WordToStackCopyRetNoInstallParity`. The unrestricted native theorem retains the
+full source iff without a continuation-safety assumption.
+
+### Full incremental compiler code-label safety
+
+`word_to_stack_code_label_safety_probeScript.sml` evaluates ten original full
+compiler source/target safety pairs, including duplicate keys, spilling, owned
+and wrong-owner returning handlers, a dropped tail-handler source reference,
+threaded bitmap output and width-one words with an infinite external set.
+Missing references and wrong handler ownership give `(F,F)`; the dropped
+tail-handler reference gives `(F,T)`. Each row proves the stated pair by
+evaluating original definitions, without claiming an exported theorem
+application. `WordToStackCodeLabelSafetyParity` kernel-replays identical inputs
+and applies the unrestricted full theorem with arbitrary configuration, register
+count and bitmap state. These observations do not establish cross-language
+equivalence or complete the full compiler correctness goal.
+
+### Generic WordConvs code-label row carriers
+
+`word_convs_code_label_carriers_probeScript.sml` freshly checks the original
+`good_code_labels_def` with Bool, Unit, List Bool and Option Bool second row
+fields, at widths 64/1/16. `WordConvsLabelSafetyParity` replays the four cases
+and quantifies the independent generic field carrier. The original full-type
+query revealed that fixing this ignored field to Nat specialized the predicate;
+its existing canonical Lean definition now preserves the generic carrier.
+The actual compiler theorem still uses Nat there, as required by its original
+compiler type. No clauses or executed compiler behavior change.
+
+### Full WordConvs forbidden-constructor equation group
+
+`word_convs_no_alloc_def_probeScript.sml`, `word_convs_no_mt_def_probeScript.sml`
+and `word_convs_no_share_inst_def_probeScript.sml` each instantiate all 26
+original exported clauses and three further Call option combinations at width
+one. Every row records actual predicate truth and the original clause
+conclusion. Failing recursive/rejected constructor values remain false;
+all original clause conclusions are true. `WordConvsPredicateEquationsParity`
+replays the 87 observations through complete conjunction projections, preserving
+both optional Call bodies. The public theorems retain all original shared
+binders and simplify only constant constructor inequalities/self-equalities;
+no ARB representative or extra premise is introduced. The canonical reviewed
+predicates are reused. This supporting group does not establish full compiler
+preservation or cross-language equivalence.
+### Native return wrapper no-shared-memory preservation
+
+`word_to_stack_no_shmemop_return_probeScript.sml` evaluates sixteen original
+predicate pairs with safe and forbidden continuations, zero/nonzero return
+counts, both flags, widths1/32/64/80, a String frame tail and independent Bool
+return list. Each pair is checked against its explicit true/true or false/false
+result. `WordToStackNoShmemopReturnParity` kernel-checks the identical inputs
+and applies the full theorem at arbitrary independent carriers and positive
+width. These regressions do not establish cross-language equivalence.
+Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_return_probeScript.sml`.
+
+### Native compiler instruction no-shared-memory case
+
+`word_to_stack_no_shmemop_inst_probeScript.sml` checks all source instruction
+subconstructors and extra width1/32/80 FP moves. Forty-two original EVAL
+observations jointly check the source no-share guard, actual compiled target
+no-shared-memory predicate and unchanged full bitmap pair. The samples include
+zero/large registers, zero/nonzero frames, both perf flags, width64/non64 FP
+moves and unhandled Load16/Store16. `WordToStackNoShmemopInstructionsParity`
+replays identical observations through the actual kernel-checked compiler
+equations and applies the original-shaped Inst case at arbitrary inputs.
+These regressions do not establish cross-language equivalence or full compiler
+preservation. Selector: `HOL_PROBE_ONLY=word_to_stack_no_shmemop_inst_probeScript.sml`.

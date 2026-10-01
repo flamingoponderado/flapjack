@@ -1,3 +1,5 @@
+import Flapjack.Test.WordConvsPredicateEquationsParity
+import Flapjack.Test.WordToStackCodeLabelSafetyParity
 import Flapjack.Test.WordMaxInstRouteParity
 import Flapjack.Test.SSALocalsPhysicalInsertParity
 import Flapjack.Test.SSAMapPreservationParity
@@ -39,6 +41,7 @@ import Flapjack.Test.LabToTargetSectionLookupParity
 import Flapjack.Test.ParmovePreservesMovesPmovParity
 import Flapjack.Test.WordToStackCodeLabelsParity
 import Flapjack.Test.WordToStackNoInstallHelpersParity
+import Flapjack.Test.WordToStackCopyRetNoInstallParity
 import Flapjack.Test.WordToStackCopyRetCarriersParity
 import Flapjack.Test.WordToStackCompCodeLabelsParity
 import Flapjack.Test.WordToStackProgramCodeLabelsParity
@@ -48,6 +51,8 @@ import Flapjack.Test.WordConvsCodeLabelsParity
 import Flapjack.Test.WordConvsLabelSafetyParity
 import Flapjack.Test.WordToStackNoShmemopHelpersParity
 import Flapjack.Test.WordToStackNoShmemopCallCoreParity
+import Flapjack.Test.WordToStackNoShmemopReturnParity
+import Flapjack.Test.WordToStackNoShmemopInstructionsParity
 import Flapjack.Test.WordToStackHandlerFrameCarriersParity
 import Flapjack.Test.ParmovePreservesMovesStepsParity
 import Flapjack.Test.WordConvsExpMonoParity
@@ -566,6 +571,7 @@ import Flapjack.Test.WordLangFullInstOkLessParity
 import Flapjack.Test.WordLangCallArgParity
 import Flapjack.Test.RegAllocVarParity
 import Flapjack.Test.WordLangNotCreatedParity
+import Flapjack.Test.WordConvsNoInstallDefParity
 import Flapjack.Test.StackSemLoopControlParity
 import Flapjack.Test.StackSemLeafTransfersParity
 import Flapjack.Test.StackSemRegisterTransfersParity
