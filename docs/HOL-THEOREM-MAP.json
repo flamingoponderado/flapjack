@@ -43774,63 +43774,28 @@
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds10 source comparison (bead flapjack-pxn.18.5.15.10.11): HOL lookup_any_def miscScript.sml:344-348 is lookup with a caller-supplied default; the Lean port matches clauses with Spt/sptLookup over the reviewed num_map carrier."
   },
-  {
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "ffi_offset_def",
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Positions.lean",
-    "lean_name": "ffiOffset",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds10 source comparison (bead flapjack-pxn.18.5.15.10.11): HOL ffi_offset_def lab_to_targetScript.sml:15-16 is the constant 16; word-free reviewed_exact."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "find_pos_def",
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Positions.lean",
-    "lean_name": "findPos",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds10 source comparison (bead flapjack-pxn.18.5.15.10.11): HOL find_pos_def lab_to_targetScript.sml:86-89 uses lookup_any k2 (lookup_any k1 labs LN) 0 over num_map num_map; the Lean port reuses reviewed lookupAny over Spt (Spt Nat); word-free."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "get_label_def",
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Positions.lean",
-    "lean_name": "getLabel",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds10 source comparison (bead flapjack-pxn.18.5.15.10.11): HOL get_label_def lab_to_targetScript.sml:91-97 Jump/JumpCmp/Call/LocValue carry their label and the catch-all is Lab 0 0. HOL asm_with_lab carries the fixed cmp/name carriers and one type-indexed reg_imm word, so the port is AsmWithLab HolCmp (HolRegImm width) MlString with the reg_imm word translated to BitVec width; the instruction carrier is therefore width-indexed."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "get_ffi_index_def",
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Positions.lean",
-    "lean_name": "getFfiIndex",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds10 source comparison (bead flapjack-pxn.18.5.15.10.11): HOL get_ffi_index_def lab_to_targetScript.sml:104-107 is the 0 (find_index s ffis 0) over the ffiname list; Lean reuses reviewed findIndex and Option.getD 0; word-free."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
-    "hol_name": "get_jump_offset_def",
-    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Positions.lean",
-    "lean_name": "getJumpOffset",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds10 source comparison (bead flapjack-pxn.18.5.15.10.11): HOL get_jump_offset_def lab_to_targetScript.sml:109-118 with CallFFI/Install/Halt back-offsets using ffi_offset and get_ffi_index and the generic find_pos - pos form, n2w rendered as BitVec.ofNat width; positive-width words qualifier over the reviewed lab_to_target carriers."
-  },
+
+
+
+
+
   {
     "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
     "hol_name": "section_labels_def",
     "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Labels.lean",
     "lean_name": "sectionLabels",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.15.10.8): source comparison against cakeml/compiler/backend/lab_to_targetScript.sml:62-74 section_labels_def. Literal clause order: nil returns (pos,labs); Label _ l2 len advances pos by len and either skips zero labels or conses (l2,pos+len); Asm _ _ len and LabAsm _ _ _ len advance pos by len. Fully polymorphic in the Line parameters; no word carrier is named, so no word qualifier applies."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-ds10 source comparison lab_to_targetScript.sml:62-74. HOL section_labels : num -> α line list -> (num # num) list -> num # (num # num) list is polymorphic in the single word dimension of the native α line; ported over the canonical native shared-width line (fixed HolCmp/HolMemop/HolAsm/HolAddr/HolRegImm and native MlString) with [NeZero width], hence words_as_type_indexed_bitvec. Clauses/position arithmetic literal.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "cakeml/compiler/backend/lab_to_targetScript.sml",
     "hol_name": "compute_labels_alt_def",
     "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Labels.lean",
     "lean_name": "computeLabelsAlt",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds10 (bead flapjack-pxn.18.5.15.10.8): source comparison against cakeml/compiler/backend/lab_to_targetScript.sml:76-83 compute_labels_alt_def. Literal clause order: nil returns labs; Section k lines cons computes (newPos,secLabs)=section_labels pos lines [] then recurses on rest with insert k (fromAList ((0,pos)::secLabs)) labs (sptInsert/sptFromAList). Fully polymorphic in the Line parameters; no word carrier is named."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-ds10 source comparison lab_to_targetScript.sml:76-83. HOL compute_labels_alt : num -> α sec list -> num sptree$num_map sptree$num_map ... polymorphic in the single word dimension of native α sec; ported over canonical native shared-width section with [NeZero width], words_as_type_indexed_bitvec. Fold/sptInsert/sptFromAList literal.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
