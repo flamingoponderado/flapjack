@@ -184,6 +184,7 @@
     {"bytes": 620, "out": "labsem_fp_updates_probe.out", "rows": 29, "sha256": "4dff5e0bbda061c918294ce5f1a3e65ca16dcc773b81d4a77065c61691568244"},
     {"bytes": 1197, "out": "labsem_memory_probe.out", "rows": 46, "sha256": "2db08cc9680ab9d4201c8a32b4d5aa8bf6b1943567bf82db0b41fb310cb1b0f4"},
     {"bytes": 322, "out": "labsem_navigation_probe.out", "rows": 23, "sha256": "dc70fdd234ff7e8ea9d7bebf3840544412c8c29a8fc1d1bfa71d5f3988ff9963"},
+    {"bytes": 1084, "out": "labsem_shared_memory_probe.out", "rows": 39, "sha256": "0f5fcc12d0bdc13b88fcf5f92ffe62de72ed12ea38a89c01c7228b89f3ba337f"},
     {"bytes": 436, "out": "labsem_updates_probe.out", "rows": 17, "sha256": "108420ae230afe5e78fd47c5a8c02b5c4e545d949ac847be75aef2df8ab86039"},
     {"bytes": 2466, "out": "longdiv_code_probe.out", "rows": 3, "sha256": "bd61a29e95403e5a53ca9682d3632f3a7320454ecf635d5dd451501d3e923ede"},
     {"bytes": 531, "out": "loop_call_comp_probe.out", "rows": 21, "sha256": "3f7c5941d190013edf8116670109e1ff824c1465ae886b4c246b34fa8855c32b"},
