@@ -4375,6 +4375,12 @@
       "sha256": "20f9ac3ebbddbe0fa0ee2f2a3ed87844803c7fce44d2c8e742efacc6bbfd64b5"
     },
     {
+      "bytes": 177,
+      "out": "wordconvs_code_labels_probe.out",
+      "rows": 12,
+      "sha256": "7e554eb4c4f85794408a9035532af0edf01084a1d290160025fa0690211c9acf"
+    },
+    {
       "bytes": 82,
       "out": "wordlang_cutsets_max_probe.out",
       "rows": 8,
@@ -4399,10 +4405,10 @@
       "sha256": "34b4dc9b2384c56cae695cdda57731febdbd5d7d19b90a6c6004b6c39bdf87cd"
     },
     {
-      "bytes": 177,
-      "out": "wordconvs_code_labels_probe.out",
-      "rows": 12,
-      "sha256": "7e554eb4c4f85794408a9035532af0edf01084a1d290160025fa0690211c9acf"
+      "bytes": 121,
+      "out": "parmove_preserves_moves_steps_probe.out",
+      "rows": 6,
+      "sha256": "91ce20e9527c47c7bf16436e94de6959d386866fa41b8d2b354d1d3072a4aee7"
     },
     {
       "bytes": 219,
