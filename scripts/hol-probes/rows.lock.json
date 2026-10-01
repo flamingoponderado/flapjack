@@ -4805,6 +4805,12 @@
       "out": "word_to_stack_handler_frame_carriers_probe.out",
       "rows": 14,
       "sha256": "d80e3919f0c5b2e620a85f9b21d9acb1779f73a365e8baab1a871559113872e0"
+    },
+    {
+      "bytes": 949,
+      "out": "ssa_merge_frame_probe.out",
+      "rows": 11,
+      "sha256": "18326d9280cd0afebb842eb62db0a43b8436b17d962cf3c2ab248af9fb9d7ab3"
     }
   ],
   "version": 1

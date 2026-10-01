@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveFrame
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoves.MoveHead
 import Flapjack.Compiler.Backend.WordAlloc.LimitVar
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameProperties
